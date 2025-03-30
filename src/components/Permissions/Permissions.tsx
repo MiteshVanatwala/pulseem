@@ -280,11 +280,11 @@ const Permissions = ({ classes, isOpen, subUser, onClose, onConfirm, showButtons
 										activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
 										height={15}
 										className={clsx({ [classes.rtlSwitch]: isRTL })}
-										checked={userDetails.IsActive}
+										checked={userDetails.IsApproved}
 										onChange={(e: any) => {
 											setUserDetails({
 												...userDetails,
-												IsActive: e.target.checked
+												IsApproved: e.target.checked
 											})
 										}}
 									/>
