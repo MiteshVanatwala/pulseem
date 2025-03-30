@@ -162,12 +162,12 @@ const LanguageSelector = ({ windowSize, classes }) => {
       value: 'en-US',
       isShow: true
     },
-    {
-      title: 'Polski',
-      mobileTitle: 'PL',
-      value: 'pl',
-      isShow: true
-    }
+    // {
+    //   title: 'Polski',
+    //   mobileTitle: 'PL',
+    //   value: 'pl-PL',
+    //   isShow: true
+    // }
   ]
 
   const item = {
