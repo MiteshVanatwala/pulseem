@@ -1,0 +1,190 @@
+{
+	"accountSettings": {
+		"title": "Ustawienia konta",
+		"fixedComDetails": {
+			"title": "Dane firmy",
+			"fields": {
+				"compName": "Nazwa firmy",
+				"contactName": "Osoba kontaktowa",
+				"mobile": "Telefon komórkowy",
+				"enableTwoFactorAuth": "Włącz uwierzytelnianie dwuskładnikowe",
+				"sendMeCode": "Wyślij mi kod"
+			},
+			"errors": {
+				"invalidEmail": "Nieprawidłowy email",
+				"reqEmail": "Email jest wymagany",
+				"invalidMobile": "Nieprawidłowy numer telefonu komórkowego",
+				"reqMobile": "Telefon komórkowy jest wymagany",
+				"reqCompName": "Nazwa firmy jest wymagana",
+				"reqContctName": "Imię kontaktowe jest wymagane",
+				"verifyEmail": "Proszę zweryfikować wpisany email",
+				"verifyPhone": "Proszę zweryfikować wpisany numer telefonu"
+			},
+			"securitySettings": "Ustawienia bezpieczeństwa",
+			"btnChangePwd": "Zmień hasło",
+			"btnUpdate": "Aktualizuj ustawienia",
+			"btnVerifyEmail": "Weryfikacja emaila do wysyłki",
+			"btnVerifyNumber": "Weryfikacja numeru do wysyłki"
+		},
+		"actDetails": {
+			"title": "Szczegóły konta",
+			"fields": {
+				"fromPhoneNumber": "Z numeru telefonu",
+				"unsubSettings": "Ustawienia wypisywania",
+				"smsUnsubLink": "Link do wypisania z SMS",
+				"unsubByEmailOrCell": "Wypisz przez email lub telefon komórkowy",
+				"unsubByEmailAndCell": "Wypisz zarówno email, jak i telefon komórkowy",
+				"regSmsUnsubLink": "Regularny link do wypisania z SMS",
+				"imdSmsUnsubLink": "Natychmiastowy link do wypisania z SMS (bez weryfikacji)",
+				"setupWhatsappTier": "Ustaw poziom WhatsApp",
+				"checkTier": "Sprawdź swój poziom",
+				"tier": "Poziom",
+				"tier1": "1 000 wiadomości w ciągu 24h",
+				"tier2": "10 000 wiadomości w ciągu 24h",
+				"tier3": "100 000 wiadomości w ciągu 24h",
+				"tier4": "Bez limitu",
+				"exceedLimitMessage": "Ta kampania przekracza dzienny limit wysyłki",
+				"exceedLimitNumberMessage": "Pozostałe wiadomości na dziś: ",
+				"sendRandomlyTo": "Wyślij losowo do -",
+				"insert": "Wstaw",
+				"recipientsOutOfTotal": "odbiorców z łącznej liczby",
+				"sendingTier": "Poziom wysyłki:",
+				"exceedLimitMpdalMessage": "Przekroczyłeś dzienny limit wysyłki zgodnie z Twoim poziomem",
+				"exceedLimitMpdalTimeMessage": "Będziesz mógł wysyłać wiadomości WhatsApp ponownie za",
+				"doYouWantToProceed": "Czy chcesz kontynuować?",
+				"stopSending": "W przypadku, gdy kampania przekroczy dzienny limit wysyłki w wybranej dacie, system zatrzyma wysyłkę zgodnie z poziomem wysyłki ustawionym w \"Ustawieniach konta\"",
+				"yourResponsibility": "Twoim obowiązkiem jest sprawdzenie, czy poziom został zaktualizowany w wybranej dacie",
+				"recipientsRequired": "Kampania przekracza dzienny limit wysyłki, wprowadź liczbę losowych odbiorców w granicach dziennego limitu",
+				"messageLeftToday": "wiadomości pozostało na dziś.",
+				"messageLeft": "wiadomości pozostało.",
+				"youHave": "masz",
+				"recipientsRangeError": "Wprowadź liczbę losowych odbiorców w granicach swojego dziennego limitu",
+				"oneMessageLeft": "Tylko 1 wiadomość pozostała na dziś"
+			},
+			"btnUpdate": "Aktualizuj szczegóły konta"
+		},
+		"auth": {
+			"everyDay": "Codziennie",
+			"everyTwoWeeks": "Co dwa tygodnie",
+			"activatedSuccessfuly": "Uwierzytelnianie dwuskładnikowe aktywowane!",
+			"inActivetedSuccessfuly": "Uwierzytelnianie dwuskładnikowe dezaktywowane!",
+			"notSaved": "Uwierzytelnianie dwuskładnikowe nie zostało zapisane. Skontaktuj się z pomocą techniczną."
+		},
+		"savedSuccessfuly": "Ustawienia zostały pomyślnie zapisane!",
+		"2fa": {
+			"addEmail": "Dodaj email do 2FA",
+			"addNumber": "Dodaj numer do 2FA",
+			"addToFromEmailToSend": "Czy chcesz również zweryfikować ten email do wysyłania kampanii?",
+			"addToFromNumberToSend": "Czy chcesz również zweryfikować ten numer telefonu komórkowego do wysyłania kampanii? ",
+			"deleteValueTitle": "Potwierdzenie usunięcia",
+			"deleteValueDescription": "Czy na pewno chcesz usunąć tę wartość z listy uwierzytelniania dwuskładnikowego?",
+			"email": {
+				"firstSlide": {
+					"title": "Weryfikacja emaila do uwierzytelniania dwuskładnikowego",
+					"descirption": "Ze względów bezpieczeństwa musimy upewnić się, że email wprowadzony do uwierzytelniania dwuskładnikowego należy do Ciebie. Jest to jednorazowy proces dla każdego numeru zgłoszenia."
+				},
+				"successSlide": {
+					"title": ""
+				}
+			},
+			"cellphone": {
+				"firstSlide": {
+					"title": "Weryfikacja numeru telefonu komórkowego do uwierzytelniania dwuskładnikowego",
+					"descirption": "Ze względów bezpieczeństwa musimy upewnić się, że numer telefonu komórkowego wprowadzony do uwierzytelniania dwuskładnikowego należy do Ciebie. Jest to jednorazowy proces dla każdego numeru zgłoszenia."
+				},
+				"successSlide": {
+					"title": ""
+				}
+			}
+		},
+		"whatsAppTier": {
+			"tierUpdatedSuccessfully": "Poziom zapisany pomyślnie",
+			"tierUpdatedFailed": "Poziom nie został zapisany. Skontaktuj się z pomocą techniczną."
+		},
+		"bypassOtp": {
+			"checkboxTitle": "Wprowadź odbiorców \"Oczekujących\" jako \"Aktywnych\"",
+			"regulationPopup": {
+				"title": "Uwaga!",
+				"text": "Zwracamy uwagę, że aktywując ustawienie <b>Wprowadź odbiorców \"Oczekujących\" jako \"Aktywnych\"</b>, prosisz o anulowanie, w stosunku do wszystkich odbiorców dodanych do systemu Pulseem przez integracje z systemami zewnętrznymi, wysyłania wiadomości e-mail potwierdzającej otrzymanie poczty przez firmę Pulseem zgodnie z wymogami prawa.<br/>Zmiana wyżej wymienionych ustawień odbywa się na Twoją wyłączną odpowiedzialność i dokonując tego potwierdzasz, że Pulseem nie ponosi żadnej odpowiedzialności za jakiekolwiek szkody wyrządzone Tobie i/lub Pulseem w wyniku tego, a szkody te będą dotyczyć wyłącznie Ciebie.",
+				"acceptAgreement": "Klikając OK, zgadzam się i akceptuję odpowiedzialność prawną",
+				"reEnterPassword": "Wprowadź ponownie hasło, aby zakończyć akcję",
+				"selectAuthType": "Wybierz sposób weryfikacji konta przez email lub SMS powiązany z tym kontem:",
+				"typePassword": "Hasło konta"
+			}
+		},
+		"unsubscribeOtp": {
+			"popup": {
+				"text": "<b>Uwaga,</b> zamierzasz zmienić domyślne ustawienia usuwania odbiorców.<br/>Zmiana ustawień, którą zamierzasz wprowadzić, będzie oznaczać, że gdy odbiorca poprosi o usunięcie go z listy dystrybucyjnej, zostanie usunięty tylko ten środek komunikacji, za pomocą którego odbiorca poprosił o usunięcie - numer telefonu lub adres e-mail, w przeciwieństwie do usunięcia wszystkich środków komunikacji podanych przez odbiorcę. <br/><br/><b>Zmiana wyżej wymienionych ustawień odbywa się na Twoją wyłączną odpowiedzialność,</b> i dokonując tego potwierdzasz, że Pulseem nie ponosi żadnej odpowiedzialności za jakiekolwiek szkody wyrządzone Tobie i/lub Pulseem w wyniku tego, a szkody te będą dotyczyć wyłącznie Ciebie."
+			}
+		}
+	},
+	"billingSettings": {
+		"title": "Ustawienia rozliczeń",
+		"pageTitle": "Ustawienia rozliczeń i informacje o płatności",
+		"fields": {
+			"compRegNumber": "Numer rejestracyjny firmy",
+			"invoiceEmail": "Email do faktur",
+			"invoiceLang": "Język faktury",
+			"cardNumber": "Numer karty",
+			"expMonth": "Miesiąc ważności",
+			"expYear": "Rok ważności",
+			"secCode": "Kod bezpieczeństwa",
+			"id": "ID"
+		},
+		"errors": {
+			"invalidCardNum": "Nieprawidłowy numer karty",
+			"invalidMonth": "Nieprawidłowa data ważności",
+			"invalidYear": "Nieprawidłowa data ważności",
+			"invalidCvv": "Nieprawidłowy kod CVV",
+			"invalidId": "Nieprawidłowy numer ID"
+		},
+		"btnUpdate": "Aktualizuj rozliczenia",
+		"btnAddCard": "Dodaj kartę kredytową",
+		"lastPurchases": "Ostatnie zakupy",
+		"openInvoices": "Otwarte faktury",
+		"editCard": "Edytuj kartę kredytową"
+	},
+	"changePassword": {
+		"title": "Zmień hasło",
+		"subTitle": "Wpisz stare hasło, a następnie wpisz nowe",
+		"oldPassword": "Stare hasło",
+		"newPassword": "Nowe hasło",
+		"confirmPassword": "Potwierdź hasło",
+		"error": {
+			"required": "Pole wymagane",
+			"notMatch": "Potwierdzenie hasła nie pasuje"
+		},
+		"responses": {
+			"201": "Hasło zostało pomyślnie zmienione!",
+			"403": "Nieprawidłowe hasło",
+			"406": "Hasło nie może być puste!",
+			"407": "Potwierdzenie hasła nie jest zgodne",
+			"408": "Nowe hasło musi spełniać zasady",
+			"409": "Nowe hasło musi być inne niż stare!"
+		},
+		"passwordHint": {
+			"title": "Hasło musi zawierać",
+			"length": "Co najmniej 8 znaków",
+			"specialChar": "Znak specjalny",
+			"upperChar": "Wielką literę (En)",
+			"lowerChar": "Małą literę (En)",
+			"number": "Cyfrę"
+		}
+	},
+	"apiSettings": {
+		"title": "Ustawienia API",
+		"exportDirectRemovals": "Eksportuj bezpośrednie usunięcia",
+		"mainApiDesc": "<b>Główne API</b> - Zapewnia możliwość dodania kampanii e-mail, zarządzania subskrybentami i grupami z Twojego systemu.",
+		"directSendApiDesc": "<b>API bezpośredniej wysyłki</b> - Bezpośrednia wysyłka zapewnia możliwość wysyłania e-maili jak serwer SMTP. Najbardziej efektywne dla systemów CRM i ERP. Wszystkie raporty dostępne tylko przez API.",
+		"mainApiExplainTitle": "<b><u>Korzystanie z usługi sieciowej do połączenia z Pulseem:</u></b>",
+		"mainApiExplainDesc": "<p>Pozwala aplikacjom komunikować się przez Internet bez zależności od systemów operacyjnych, oprogramowania czy sprzętu.</p><p style='margin-top: 20px'><b>NOWOŚĆ!</b><span> Zaktualizowaliśmy nasz system API, aby był bardziej przyjazny dla użytkownika i wydajniejszy w użyciu.</span><span> Aby zobaczyć metody i instrukcje dla naszego nowego systemu, kliknij ten</span> <a href='https://ui-api.pulseem.com/swagger/index.html' class='direct-send-link' target='_blank'>link.</a> </p><p style='margin-top: 20px'>Jeśli masz jakiekolwiek pytania, skontaktuj się z naszym zespołem wsparcia pod numerem <a href='tel:03-5240290'>03-5240290</a> lub na <a href='mailto:support@pulseem.com'>support@pulseem.com</a>.</p><p style='margin-top: 20px'>*Pamiętaj, że raporty utworzone przy użyciu nowego API będą pokazywać tylko dane kampanii wysłanych przez nowy system.</p>",
+		"apiAddress": "Adres API: ",
+		"reGenerateConfirm": "Utworzenie nowego klucza API unieważni poprzedni klucz.<br/>Czy na pewno chcesz utworzyć nowy klucz API?",
+		"createNewApiKey": "Wygeneruj ponownie klucz API",
+		"showApiKey": "<p style='direction: ltr'>Pokaż/Ukryj klucz API</p>",
+		"mainApi": "Główny adres URL API",
+		"directApi": "Adres URL API bezpośredniej wysyłki",
+		"noAPIKeyAccess": "Aby rozpocząć korzystanie z naszego API, skontaktuj się z naszym zespołem wsparcia na <a href = 'mailto:support@pulseem.com'>support@pulseem.com</a> / <a href='tel:03-7172274'>03-7172274</a>"
+	},
+	"displayRevenueIn": "Wyświetl przychód w"
+}

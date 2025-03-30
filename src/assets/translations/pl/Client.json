@@ -1,0 +1,68 @@
+{
+  "removeClientFromGroupTitle": "Usuń odbiorcę z grup",
+  "removeClientFromGroupDescription": "Czy na pewno chcesz usunąć odbiorcę ze wszystkich grup?",
+  "removeClientFromAccountTitle": "Usuń odbiorcę z konta",
+  "removeClientFromAccountDescription": "Czy na pewno chcesz usunąć odbiorcę z konta?",
+  "removeClientFromSmsTitle": "Usuń odbiorcę z SMS",
+  "removeClientFromSmsDescription": "Czy na pewno chcesz usunąć odbiorcę z SMS?",
+  "confirmMakeInvalidTitle": "Oznacz jako nieprawidłowy",
+  "confirmMakeInvalidText": "Czy na pewno chcesz oznaczyć tych klientów jako nieprawidłowych?",
+  "confirmDeleteFromAllGroups": "Czy na pewno chcesz usunąć klientów ze wszystkich grup?",
+  "confirmRemoveEmail": "Czy na pewno chcesz usunąć odbiorcę z konta?",
+  "confirmRemovePhone": "Czy na pewno chcesz usunąć tego odbiorcę SMS?",
+  "automationClientsUpdated": "Klienci automatyzacji zostali zaktualizowani",
+  "statusUpdated": "Status zaktualizowany",
+  "invalidClientId": "Nieprawidłowy identyfikator klienta",
+  "errors": {
+    "zeroSelected": "Nie wybrano klienta",
+    "noClientsFound": "Nie znaleziono klientów do aktualizacji",
+    "somethingWentWrong": "Coś poszło nie tak",
+    "genericError": "Błąd ogólny"
+  },
+  "logPageHeaderResource1": {
+    "Text": "Wynik wyszukiwania odbiorców",
+    "search": "Wyszukiwanie odbiorców"
+  },
+  "avaregeIncome": "Średni przychód:",
+  "makeInvalid": "Oznacz jako nieprawidłowy",
+  "Purchased": "Zakupione",
+  "totalRevenue": "Całkowity przychód",
+  "avgOrderRevenue": "Średni przychód z zamówienia",
+  "conversionRate": "Współczynnik konwersji",
+  "titles": {
+    "searchResult": {
+      "newsletter": {
+        "total": "Newslettery - Wszyscy klienci",
+        "error": "Newslettery - Klienci z błędami",
+        "active": "Newslettery - Aktywni klienci",
+        "removed": "Newslettery - Usunięci klienci"
+      },
+      "sms": {
+        "total": "SMS/MMS - Wszyscy klienci",
+        "error": "SMS/MMS - Klienci z błędami",
+        "active": "SMS/MMS - Aktywni klienci",
+        "removed": "SMS/MMS - Usunięci klienci"
+      }
+    }
+  },
+  "setInvalidSucceeded": "Klienci zostali oznaczeni jako nieprawidłowi",
+  "subscribedOn": "Data subskrypcji",
+  "clientStatus": {
+    "email": {
+      "NoEmail": "Brak statusu",
+      "Active": "Aktywny",
+      "Removed": "Wypisany",
+      "Restricted": "Ograniczony",
+      "Invalid": "Nieprawidłowy",
+      "Pending": "Oczekujący"
+    },
+    "sms": {
+      "NoSms": "Brak statusu",
+      "Active": "Aktywny",
+      "Removed": "Usunięty",
+      "Invalid": "Nieprawidłowy",
+      "Pending": "Oczekujący"
+    }
+  },
+  "ClientId": "ID klienta"
+}

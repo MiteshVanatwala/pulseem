@@ -1,0 +1,66 @@
+{
+  "CloneResource1": {
+    "HeaderText": "Klonuj"
+  },
+  "createResource": {
+    "Text": "Utwórz Automatyzację"
+  },
+  "DeleteResource1": {
+    "HeaderText": "Usuń"
+  },
+  "EditCampaignResource1": {
+    "HeaderText": "Edytuj"
+  },
+  "logPageHeaderResource1": {
+    "Text": "Zarządzanie Automatyzacjami"
+  },
+  "restoreResource": {
+    "Text": "Przywróć Usunięte"
+  },
+  "ShowCampaignResource1": {
+    "HeaderText": "Podgląd"
+  },
+  "GridButtonColumnResource2": {
+    "ConfirmText": "Czy chcesz usunąć automatyzację?",
+    "ConfirmTitle": "Usuń Automatyzację"
+  },
+  "locSearchAutomationResource1": {
+    "Text": "Szukaj"
+  },
+  "EditConfirm": {
+    "Text": "Edycja aktywnego procesu Automatyzacji spowoduje jego wstrzymanie. Możesz ponownie aktywować go z ekranu Zarządzanie-Automatyzacje.",
+    "Title": "Edytuj Aktywną Automatyzację"
+  },
+  "Automations": "Automatyzacje",
+  "DaysActive": "Dni Aktywności",
+  "AutomationActiveStatusText": "Aktywna",
+  "AutomatoionInActiveStatusText": "Nieaktywna",
+  "HeaderActivateAutomationProcess": "Aktywuj Proces Automatyzacji",
+  "HeaderDeactivateAutomationProcess": "Dezaktywuj Proces Automatyzacji",
+  "TextActivateAutomationProcess": "Kliknięcie Ok ponownie aktywuje wstrzymany proces Automatyzacji Marketingowej.",
+  "TextDeactivateAutomationProcess": "Kliknięcie Ok zatrzyma trwający proces Automatyzacji Marketingowej. Możesz go później ponownie aktywować ze strony Zarządzanie Automatyzacjami.",
+  "Report": "Raport",
+  "labelAutomationName": "Nazwa Automatyzacji",
+  "labelAutomationSubHeader": "Zaczynamy! Utwórz nową Automatyzację.",
+  "TextConfirmLeaveWithoutSave": "Masz niezapisany przepływ pracy, czy chcesz zamknąć bez zapisywania?",
+  "DayActive": "Dzień Aktywności",
+  "Recipient": "Odbiorca",
+  "days": "Dni",
+  "errorTitle": "Błąd!",
+  "errorContent": "Wystąpiły błędy automatyzacji. Napraw je najpierw, aby aktywować automatyzację.",
+  "click": "Kliknij",
+  "here": "tutaj",
+  "edit": "aby edytować automatyzację",
+  "close": "Zamknij",
+  "duplicateTitle": "Duplikuj automatyzację",
+  "duplicateContent": "Czy chcesz zduplikować automatyzację?",
+  "restoreCampaignTitle": "Wybierz automatyzacje, które chcesz przywrócić",
+  "NoNodesFound": "Automatyzacja nie ma zapisanego przepływu pracy, najpierw utwórz przepływ pracy.",
+  "pressHereToEditAutomation": "Kliknij <b>OK</b>, aby edytować automatyzację",
+  "selectTemplate": "Wybierz Szablon",
+  "searchemplate": "Szukaj Szablonu",
+  "automationNameIsRequired": "Nazwa automatyzacji jest wymagana",
+  "automationcreated": "Automatyzacja została utworzona",
+  "startFromScratch": "Zacznij od Podstaw",
+  "startFromScratchDesc": "Czy chcesz móc wybrać własny wyzwalacz i akcje? Zacznij od Podstaw."
+}
