@@ -1,0 +1,27 @@
+{
+  "contactUs": "Telefon <a href='tel:03-9192513'>03-9192513</a> lub Email <a href='mailto:Support@simplyclub.co.il'>Support@simplyclub.co.il</a>",
+  "popup": {
+    "sections": {
+      "buyVerifiedDomain": {
+        "text": "Jeśli nie masz własnej domeny biznesowej, <b>nasza rekomendacja</b> to zakup takiej domeny. Masz 2 alternatywy: <ul style='list-style-type: decimal;'><li>Możesz samodzielnie zakupić domenę, a następnie zweryfikować zakupioną domenę zgodnie z instrukcjami szczegółowo opisanymi na końcu <a href='https: //site.pulseem.co.il/%D7%9E%D7%93%D7%A8%D7%9B%D7%99%D7%9D/%d7%91%d7%93%d7%99%d7%a7%d7%aa-%d7%90%d7%99%d7%9E%d7%95%d7%aa-%d7%93%d7%95%d7%9E%d7%99%d7%99%d7%a0%d7%99%d7%9D/' title='Przewodnik weryfikacji istniejącej domeny' target='_blank'>przewodnika</a>.</li><li>Skorzystaj z zespołu sprzedaży Pulseem, aby zakupić domenę biznesową i zweryfikować ją zgodnie z wymaganiami.Skontaktuj się z zespołem wsparcia telefonicznie: <a href='tel: 03-9192513'>03-9192513</a> lub wyślij e-mail: <a href='mailto:Support@simplyclub.co.il'>Support@simplyclub.co.il</a></li></ul>"
+      }
+    }
+  },
+  "gmailVerificationDescription": "Ta kolumna pokazuje odpowiadający status wybranej domeny z serwerami GMAIL. Proces testowy trwa kilka minut. Możesz kliknąć przycisk odświeżania, aby uzyskać zaktualizowany status zgodnie z następującymi szczegółami: <svg stroke='currentColor' fill='currentColor' stroke-width='0' viewBox='0 0 1024 1024' height='1em' width='1em' xmlns='http: //www.w3.org/2000/svg' style='color: red; font-size: 20px; vertical-align: middle'><path d='M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm0 820c-205.4 0-372-166.6-372-372 0-89 31.3-170.8 83.5-234.8l523.3 523.3C682.8 852.7 601 884 512 884zm288.5-137.2L277.2 223.5C341.2 171.3 423 140 512 140c205.4 0 372 166.6 372 372 0 89-31.3 170.8-83.5 234.8z'></path></svg>&nbsp;Domena niezweryfikowana - proszę skontaktować się z działem wsparcia Pulseem telefonicznie: 03-9192513 lub e-mailem: Support@simplyclub.com. <svg stroke='currentColor' fill='currentColor' stroke-width='0' viewBox='0 0 24 24' height='1em' width='1em' xmlns='http: //www.w3.org/2000/svg' style='color: green; font-size: 20px; vertical-align: middle'><path fill='none' d='M0 0h24v24H0z'></path><path d='M23 11.99L20.56 9.2l.34-3.69-3.61-.82L15.4 1.5 12 2.96 8.6 1.5 6.71 4.69 3.1 5.5l.34 3.7L1 11.99l2.44 2.79-.34 3.7 3.61.82 1.89 3.2 3.4-1.47 3.4 1.46 1.89-3.19 3.61-.82-.34-3.69 2.44-2.8zm-3.95 1.48l-.56.65.08.85.18 1.95-1.9.43-.84.19-.44.74-.99 1.68-1.78-.77-.8-.34-.79.34-1.78.77-.99-1.67-.44-.74-.84-.19-1.9-.43.18-1.96.08-.85-.56-.65L3.67 12l1.29-1.48.56-.65-.09-.86-.18-1.94 1.9-.43.84-.19.44-.74.99-1.68 1.78.77.8.34.79-.34 1.78-.77.99 1.68.44.74.84.19 1.9.43-.18 1.95-.08.85.56.65 1.29 1.47-1.28 1.48z'></path><path d='M10.09 13.75l-2.32-2.33-1.48 1.49 3.8 3.81 7.34-7.36-1.48-1.49z'></path></svg> - Domena pomyślnie zweryfikowana",
+  "tooltipPurchaseNewFeature": "Zakup bezpośrednio z pulpitu nawigacyjnego, klikając opcje SMS lub Newsletter poniżej. Masz pytania? Zadzwoń do wsparcia pod numer 03-9192513",
+  "welcomeNewDesignDesc": "<label><p></p><h3>Nowy design, nowe doświadczenie</h3>Z radością dzielimy się z Tobą nowym i nowoczesnym designem naszego systemu, który zapewni Ci komfortowe i przyjazne doświadczenie użytkownika. Mamy nadzieję, że spodoba Ci się ta zmiana i będziesz kontynuować wysyłanie kampanii w sposób jakościowy i efektywny. Jeśli masz pytania lub uwagi, skontaktuj się z nami w dowolnym momencie telefonicznie <a href='tel: 03-9192513'>03-9192513</a> lub e-mailem <a href='mailto:Support@simplyclub.com'>Support@simplyclub.com</a></label>",
+  "contact": "Telefon <a href='tel:03-9192513'>03-9192513</a> lub Email <a href='mailto:Support@simplyclub.co.il'>Support@simplyclub.co.il</a>",
+  "linkSupportResource1": {
+    "NavigateUrl": "tel:+97239192513"
+  },
+  "locPhoneNumberResource1": {
+    "Text": "+972 39192513"
+  },
+  "noAPIKeyAccess": "Aby rozpocząć korzystanie z naszego API, proszę skontaktować się z naszym zespołem wsparcia pod adresem <a href='mailto:Support@simplyclub.co.il'>Support@simplyclub.co.il</a>",
+  "addFeatureTooltip": "Chcesz skonfigurować śledzenie na swojej stronie? Porozmawiaj z naszym zespołem sprzedaży już dziś pod numerem 03-9192513!",
+  "havingIssuesMessage": "Masz problemy? Skontaktuj się z nami \nat 03-9192513 lub e-mailem Support@simplyclub.co.il",
+  "helplineSMS": "Pod numerem 03-9192513 lub e-mailem Support@simplyclub.co.il",
+  "contactSupportForBilling": "Aby kontynuować, proszę skontaktować się z naszym działem sprzedaży pod <a href='tel: 03-9192513'>03-9192513</a> lub na <a href='mailto:Support@simplyclub.co.il'>Support@simplyclub.co.il</a>",
+  "notEnoughCreditLeftDesc": "Aby doładować swoje konto,<br/>proszę skontaktować się z nami pod numerem <a href='tel:03-9192513'>03-9192513</a> lub na adres <a href='mailto:Support@simplyclub.co.il'>Support@simplyclub.co.il</a>",
+  "englishLetterNotApprovedDescription": "Aby otworzyć tę opcję, musisz przejść przez proces weryfikacji wideo z naszym wsparciem klienta<br/>proszę skontaktować się telefonicznie pod numerem <a href='tel:03-9192513'>03-9192513</a><br/>lub wysłać e-mail na adres <a href='mailto:Support@simplyclub.co.il'>Support@simplyclub.co.il</a>"
+}
