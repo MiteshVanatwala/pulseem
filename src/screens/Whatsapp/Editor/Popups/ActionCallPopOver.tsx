@@ -89,6 +89,7 @@ const ActionCallPopOver = ({
 				if (r.id !== row.id) return r;
 				const updatedFields = r.fields.map((f: callToActionFieldProps) => {
 					if (field?.fieldName === f?.fieldName) {
+						if (field.fieldName === 'whatsapp.websiteURL') return { ...f, value };
 						if (field.fieldName !== 'whatsapp.phoneNumber')
 							return { ...f, value: value?.replace(/_/g, '') };
 						return { ...f, value: value?.replace(/\D/g, '') };
