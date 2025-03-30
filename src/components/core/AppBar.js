@@ -161,6 +161,12 @@ const LanguageSelector = ({ windowSize, classes }) => {
       mobileTitle: 'EN',
       value: 'en-US',
       isShow: true
+    },
+    {
+      title: 'Polski',
+      mobileTitle: 'PL',
+      value: 'pl',
+      isShow: true
     }
   ]
 
