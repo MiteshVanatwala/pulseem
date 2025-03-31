@@ -165,7 +165,7 @@ const LanguageSelector = ({ windowSize, classes }) => {
   ]
 
   const item = {
-    title: <Box className={clsx(classes.flex, classes.justifyEvenly)} ><BsGlobe2 style={{ marginInline: 6 }} /> <p>{(languages && languages.find(lang => lang.value.toLocaleLowerCase() === language.toLocaleLowerCase()).title) ?? ''}</p></Box>,
+    title: <Box className={clsx(classes.flex, classes.justifyEvenly)} ><BsGlobe2 style={{ marginInline: 6 }} /> <p>{(languages && languages.find(lang => lang.value.toLocaleLowerCase() === language.toLocaleLowerCase())?.title) ?? ''}</p></Box>,
     options: languages
   }
 

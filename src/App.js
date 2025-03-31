@@ -399,16 +399,16 @@ const renderRoutes = (classes, redirect, userRoles) => {
         path={`/DirectEmailReport`}
         component={transferUrl('/Pulseem/DirectEmailReport.aspx')}
       />
-      <Route
+      {!userRoles?.HideRecipients && <Route
         exact
         path={`${sitePrefix}Reports/DirectSendReport`}
         element={<DirectSendReport classes={classes} isArchive={false} />}
-      />
-      <Route
+      />}
+      {!userRoles?.HideRecipients && <Route
         exact
         path={`${sitePrefix}Reports/DirectSendReport/Archive`}
         element={<DirectSendReport classes={classes} isArchive={true} />}
-      />
+      />}
       <Route
         path={`/EmailCampaignStatistics`}
         component={transferUrl('/Pulseem/EmailCampaignStatistics.aspx')}
@@ -461,16 +461,16 @@ const renderRoutes = (classes, redirect, userRoles) => {
         element={<NotificationSend classes={classes} key="send" />}
       />
       {/* Settings */}
-      <Route
+      {userRoles === UserRoles.Admin && <Route
         exact
         path={`${sitePrefix}AccountSettings`}
         element={<AccountSettingsEditor classes={classes} />}
-      />
-      <Route
+      />}
+      {userRoles === UserRoles.Admin && <Route
         exact
         path={`${sitePrefix}BillingSettings`}
         element={<BillingSettingsPage classes={classes} />}
-      />
+      />}
       <Route
         path={`/AccountBilling`}
         component={transferUrl('/Pulseem/AccountBilling.aspx')}
@@ -488,10 +488,10 @@ const renderRoutes = (classes, redirect, userRoles) => {
         path={`/ExtraFieldsDefinition`}
         component={transferUrl('/Pulseem/ExtraFieldsDefinition.aspx')}
       />
-      <Route
+      {userRoles?.AllowSend && <Route
         path={`${sitePrefix}ApiSettings`}
         element={<ApiSettings classes={classes} />}
-      />
+      />}
       <Route
         path={`${sitePrefix}SubUsers`}
         element={<SubUsers classes={classes} />}
@@ -504,39 +504,39 @@ const renderRoutes = (classes, redirect, userRoles) => {
           return null
         }}
       />
-      <Route
+      {userRoles?.AllowSend && <Route
         exact
         path={`${sitePrefix}SiteTracking`}
         element={<SiteTrackingEditor classes={classes} />}
-      />
+      />}
       <Route
         exact
         path={`${sitePrefix}SystemMessage`}
         element={<SystemMessage classes={classes} />}
       />
-      <Route exact
+      {userRoles?.AllowSend && <Route exact
         path={`${sitePrefix}Integrations`}
         element={<Integrations classes={classes} />}
-      />
+      />}
       <Route exact
         path={`${sitePrefix}whatsapp-onboarding`}
         element={<WhatsappOnBoarding classes={classes} />}
       />
-      <Route
+      {!userRoles?.HideRecipients && <Route
         exact
         path={`${sitePrefix}reports/Inbound`}
         element={<InboundMessages classes={classes} key="all" />}
-      />
-      <Route
+      />}
+      {!userRoles?.HideRecipients && <Route
         exact
         path={`${sitePrefix}reports/Inbound/:type`}
         element={<InboundMessages classes={classes} />}
-      />
-      <Route
+      />}
+      {!userRoles?.HideRecipients && <Route
         exact
         path={`${sitePrefix}reports/Inbound/:type/:id`}
         element={<InboundMessages classes={classes} key="byTypeId" />}
-      />
+      />}
       <Route
         exact
         path={`${sitePrefix}Groups/FileUploads`}
@@ -580,11 +580,11 @@ const renderRoutes = (classes, redirect, userRoles) => {
         path={`${sitePrefix}Previewer/:type/:id`}
         element={<HtmlPreview classes={classes} />}
       />
-      <Route
+      {userRoles === UserRoles.Admin && <Route
         exact
         path={`${sitePrefix}AffiliateManagement`}
         element={<AffiliateProgram classes={classes} />}
-      />
+      />}
       <Route
         exact
         path={`${sitePrefix}TermsOfUse`}
