@@ -860,5 +860,6 @@
   "hide": "הסתר",
   "landingPageId": "מספר דף נחיתה",
   "payAttention": "שים לב!",
-  "allChannels": "כל הערוצים"
+  "allChannels": "כל הערוצים",
+  "internalError": "שגיאה כללית"
 }

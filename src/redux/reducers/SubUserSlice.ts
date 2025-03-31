@@ -69,6 +69,7 @@ const SubUserSlice = createSlice({
       CONFIRMATION_SENT: { severity: 'success', color: 'success', message: 'SubUsers.form.confirmationLinkSent', showAnimtionCheck: true },
       USER_DELETED: { severity: 'success', color: 'success', message: 'SubUsers.form.deleteUserSuccess', showAnimtionCheck: true },
       EMAIL_ALREADY_EXISTS: { severity: 'error', color: 'error', message: 'SubUsers.form.emailAlreadyExists', showAnimtionCheck: false },
+      INTERNAL_ERROR: { severity: 'error', color: 'error', message: 'common.internalError', showAnimtionCheck: false },
 
     },
     test: 'hello'

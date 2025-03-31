@@ -128,7 +128,7 @@ const SubUsers = ({ classes }: any) => {
         break;
       }
       case 405: {
-        setToastMessage(ToastMessages.USERNAME_ALREADY_EXISTS);
+        setToastMessage(ToastMessages.INTERNAL_ERROR);
         break;
       }
       case 406: {
