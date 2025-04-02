@@ -32,6 +32,7 @@
     "i18next": "^19.9.2",
     "jss-rtl": "^0.3.0",
     "jwt-decode": "^3.1.2",
+    "libphonenumber-js": "^1.12.6",
     "lodash": "^4.17.21",
     "moment": "^2.29.1",
     "npm": "^10.8.1",

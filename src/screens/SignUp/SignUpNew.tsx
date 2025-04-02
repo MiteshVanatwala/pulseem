@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { StateType } from "../../Models/StateTypes";
 import { IoIosArrowDown, IoIosEye, IoIosEyeOff } from "react-icons/io";
-import { FieldOfInterest, lowerCaseLetters, numbers, specialLetters, upperCaseLetters } from "../../helpers/Constants";
+import { CountryCodes, DefaultCountryCodeIsrael, FieldOfInterest, lowerCaseLetters, numbers, specialLetters, upperCaseLetters } from "../../helpers/Constants";
 import { MdDvr, MdKeyboardArrowDown, MdKeyboardArrowLeft, MdKeyboardArrowRight, MdMobileFriendly, MdNotifications, MdOutlineAddShoppingCart, MdOutlineAutoMode, MdOutlineMarkEmailRead, MdOutlineWhatsapp } from "react-icons/md";
 import { RenderHtml, useStylesBootstrapPasswordHint } from "../../helpers/Utils/HtmlUtils";
 import { Loader } from "../../components/Loader/Loader";
@@ -25,6 +25,9 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { setCookie } from "../../helpers/Functions/cookies";
 import EnImage from '../../assets/images/british.svg';
 import IsraelImage from "../../assets/images/israel-flag-icon.svg";
+import { Autocomplete } from "@mui/material";
+import { filter, first } from "lodash";
+import { isValidPhoneNumber } from "libphonenumber-js";
 
 const SignUpNew = ({ classes }: any) => {
   const dispatch = useDispatch();
@@ -36,6 +39,7 @@ const SignUpNew = ({ classes }: any) => {
     fullName: '',
     emailId: qs?.emailid || '',
     phone: '',
+    countryCode: DefaultCountryCodeIsrael,
     cellPhone: '',
     userName: '',
     password: '',
@@ -51,6 +55,7 @@ const SignUpNew = ({ classes }: any) => {
   const [errors, setErrors] = useState({
     fullName: '',
     emailId: '',
+    countryCode: '',
     cellPhone: '',
     userName: '',
     password: '',
@@ -101,11 +106,20 @@ const SignUpNew = ({ classes }: any) => {
     setLoader(false);
     if (status === 200) {
       if (Message === 'Success') {
+        let cellPhone = Data?.Mobile || '';
+        let countryCode = DefaultCountryCodeIsrael;
+        if (cellPhone !== '') {
+          const CellPhoneWithCode = cellPhone.split("-");
+          countryCode = first(filter(CountryCodes, { code: `${CellPhoneWithCode[0]}` })) || countryCode;
+          cellPhone = CellPhoneWithCode[1];
+        }
+        
         setUserDetails({
           ...userDetails,
           fullName: `${Data?.FirstName || ''} ${Data?.LastName || ''}`,
           emailId: qs?.emailid || '',
-          cellPhone: Data?.Mobile || '',
+          cellPhone: cellPhone || '',
+          countryCode,
           companyName: Data?.Company || '',
           fieldOfInterest: Data?.ProductType?.split(',') || []
         })
@@ -128,7 +142,11 @@ const SignUpNew = ({ classes }: any) => {
       UserID: qs?.id,
     }
     errorsTemp.fullName = userDetails.fullName ? '' : t('SignUp.fullNameRequired');
-    errorsTemp.cellPhone = userDetails.cellPhone ? '' : t('SignUp.CellPhoneRequired');
+    errorsTemp.cellPhone = userDetails.cellPhone.trim() !== '' ? '' : t('SignUp.CellPhoneRequired');
+    if (errorsTemp.cellPhone === '') {
+      // @ts-ignore
+      errorsTemp.cellPhone = !isValidPhoneNumber(userDetails.cellPhone, userDetails.countryCode.country) ? t('SignUp.InvalidCellPhone') : '';
+    }
     errorsTemp.emailId = userDetails.emailId ? (IsValidEmail(`${userDetails.emailId}`) ? '' : t('common.invalidEmail')) : t('common.Required');
 
     setErrors({
@@ -143,7 +161,7 @@ const SignUpNew = ({ classes }: any) => {
       const nameArr = userDetails.fullName.split(' ');
       payload.FirstName = nameArr[0];
       payload.LastName = nameArr.slice(1).join(" ");
-      payload.Mobile = userDetails.cellPhone;
+      payload.Mobile = `${userDetails.countryCode.code}-${userDetails.cellPhone}`;
       payload.Email = userDetails.emailId;
     }
 
@@ -285,8 +303,8 @@ const SignUpNew = ({ classes }: any) => {
       const { data: { Message }, status } = await PulseemReactInstance.post(`User/Signup`, {
         FirstName: nameArr[0],
         LastName: nameArr.slice(1).join(" "),
-        Mobile: userDetails.cellPhone,
-        Phone: userDetails.phone,
+        Mobile: `${userDetails.countryCode.code.replace('+', '')}${userDetails.cellPhone}`,
+        Phone: `${userDetails.phone}`,
         UserName: userDetails.userName,
         Password: userDetails.password,
         Company: userDetails.companyName,
@@ -575,33 +593,121 @@ const SignUpNew = ({ classes }: any) => {
         </Box>
 
         <Box className={clsx(windowSize !== 'xs' ? classes.paddingInline30 : '')}>
-          <Typography className={clsx(classes.f18, classes.mt24)}>
-            {t("SignUp.CellPhone")}
-            <span className={clsx(classes.pl5, classes.colrPrimary, classes.f18)}>*</span>
-          </Typography>
-          <TextField
-            variant="outlined"
-            size="small"
-            name="CellPhone"
-            value={userDetails?.cellPhone}
-            onChange={(event: any) => IsValidPhoneNumber(event.target.value) && setUserDetails({
-              ...userDetails,
-              cellPhone: event.target.value
-            })}
-            className={clsx(classes.textField, classes.minWidth252)}
-            error={!!errors.cellPhone}
-            inputProps={{
-              maxLength: 15,
-              style: {
-                textAlign: 'center'
-              }
-            }}
-          />
-          {!!errors.cellPhone && (
-            <Typography className={clsx(classes.errorText, classes.f14, classes.textCapitalize)}>
-              {errors.cellPhone}
-            </Typography>
-          )}
+          <Grid container className={clsx(classes.directionLTR)}>
+            <Grid item md={5} xs={12}>
+              <FormControl
+                variant='standard'
+                className={clsx(classes.selectInputFormControl, classes.SignUpCountryDropdown, classes.bgWhite, classes.mb10, classes.w100)} 
+                style={{ borderRadius: 0, paddingTop: '0px', direction: 'ltr' }}
+              >
+                <Typography className={clsx(classes.f18, classes.mt24)}>
+                  {t("SignUp.countryCode")}
+                  <span className={clsx(classes.pl5, classes.colrPrimary, classes.f18)}>*</span>
+                </Typography>
+                <Autocomplete
+                  value={userDetails?.countryCode}
+                  multiple={false}
+                  includeInputInList={true}
+                  id="CountryCode"
+                  options={CountryCodes}
+                  disableCloseOnSelect
+                  // @ts-ignore
+                  onChange={(option, selected) => setUserDetails({...userDetails, countryCode: selected})}
+                  getOptionLabel={(option) => `${option?.flag} (${option?.code}) ${option?.name}`}
+                  renderGroup={(option: any) => (
+                    <MenuItem value={option} className={clsx(classes.cursorPointer, classes.directionLTR)}>
+                      <label className={clsx(classes.paddingInline5)}>
+                        {option?.flag}&nbsp;({option?.code})&nbsp;{option?.name}
+                      </label>
+                    </MenuItem>
+                  )}
+                  renderOption={(props, option: any) => (
+                    <MenuItem {...props} value={option} className={clsx(classes.cursorPointer, classes.directionLTR)}>
+                      <label className={clsx(classes.paddingInline5)}>
+                        {option?.flag}&nbsp;({option?.code})&nbsp;{option?.name}
+                      </label>
+                    </MenuItem>
+                  )}
+                  style={{ 
+                    direction: 'ltr',
+                    paddingRight: '30px !important'
+                  }}
+                  renderInput={(params) => {
+                    //@ts-ignore
+                    return (<TextField
+                      {...params}
+                      color="primary" className={clsx(classes.textField, classes.w100)}
+                    />)
+                  }}
+                />
+                {/* <Select
+                  variant="standard"
+                  value={userDetails?.countryCode}
+                  name='CountryCode'
+                  onChange={(e: SelectChangeEvent) => setUserDetails({
+                    ...userDetails,
+                    countryCode: e.target.value
+                  })}
+                  IconComponent={() => <IoIosArrowDown size={20} className={clsx(classes.dropdownIconComponent, classes.bgWhite, classes.paddingInline10)} style={{ right: isRTL ? 0 : 'auto', left: isRTL ? 'auto' : 0, width: 20, height: '100%' }} />}
+                  style={{
+                    direction: 'ltr',
+                    justifyContent: 'flex-start',
+                    marginTop: '3.5px'
+                  }}
+                  MenuProps={{
+                    PaperProps: {
+                      style: {
+                        width: 100,
+                        maxHeight: 200,
+                        direction: isRTL ? 'rtl' : 'ltr',
+                        justifyContent: 'flex-start'
+                      },
+                    },
+                  }}
+                  className={clsx(classes.w100, classes.directionLTR, classes.SignUpCountryDropdown)}
+                >
+                  {
+                    CountryCodes.map((country: any) => 
+                      <MenuItem value={country?.code} className={clsx(classes.cursorPointer, classes.directionLTR)}>
+                        <label className={clsx(classes.paddingInline5)}>
+                          {country?.flag}&nbsp;({country?.code})&nbsp;{country?.name}
+                        </label>
+                      </MenuItem>
+                    )
+                  }
+                </Select> */}
+              </FormControl>
+            </Grid>
+            <Grid item md={7} xs={12}>
+              <Typography className={clsx(classes.f18, classes.mt24)}>
+                {t("SignUp.CellPhone")}
+                <span className={clsx(classes.pl5, classes.colrPrimary, classes.f18)}>*</span>
+              </Typography>
+              <TextField
+                variant="outlined"
+                size="small"
+                name="CellPhone"
+                value={userDetails?.cellPhone}
+                onChange={(event: any) => IsValidPhoneNumber(event.target.value) && setUserDetails({
+                  ...userDetails,
+                  cellPhone: event.target.value
+                })}
+                className={clsx(classes.textField, classes.minWidth252)}
+                error={!!errors.cellPhone}
+                inputProps={{
+                  maxLength: 15,
+                  style: {
+                    textAlign: 'center'
+                  }
+                }}
+              />
+              {!!errors.cellPhone && (
+                <Typography className={clsx(classes.errorText, classes.f14, classes.textCapitalize)}>
+                  {errors.cellPhone}
+                </Typography>
+              )}
+            </Grid>
+          </Grid>
         </Box>
 
         <Box className={clsx(windowSize !== 'xs' ? classes.paddingInline30 : '')}>
@@ -923,7 +1029,7 @@ const SignUpNew = ({ classes }: any) => {
 
   const languageSelector = () => {
     return (
-      <FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.SignUpLanguageDropdown, classes.bgWhite, classes.mb10)}>
+      <FormControl variant='standard' className={clsx(classes.SignUpLanguageDropdown, classes.bgWhite, classes.mb10)}>
         <Select
           variant="standard"
           value={isRTL ? 'he' : 'en'}

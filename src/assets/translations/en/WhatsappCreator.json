@@ -82,7 +82,7 @@
 
 	"quickReply": {
 		"title": "Quick Reply",
-		"titleDescription": "Create up to 3 buttons that let customers respond to your messages with the chosen text",
+		"titleDescription": "Create up to 10 buttons that let customers respond to your messages with the chosen text",
 		"addMore": "Add More",
 		"exit": "Exit",
 		"save": "Save",

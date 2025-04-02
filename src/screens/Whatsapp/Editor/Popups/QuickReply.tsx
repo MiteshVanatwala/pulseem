@@ -160,7 +160,7 @@ const QuickReply = ({
 								<Button
 									variant='contained'
 									onClick={addMore}
-									disabled={quickReplyButtons?.length >= 3 ? true : false}
+									disabled={quickReplyButtons?.length >= 10 ? true : false}
 									className={clsx(classes.btn, classes.btnRounded)}
 								>
 									<AiOutlinePlusCircle className={clsx(classes.addOptionsIcon, classes.fBlack)} />
