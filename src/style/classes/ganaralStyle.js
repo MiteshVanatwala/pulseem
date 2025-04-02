@@ -3839,6 +3839,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   paddingInline5: {
     paddingInline: 5
   },
+  paddingInline10: {
+    paddingInline: 10
+  },
   paddingInline25: {
     paddingInline: 25
   },
@@ -4173,6 +4176,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     [theme.breakpoints.down('xs')]: {
       display: 'inline-flex',
       marginBottom: 0,
+    },
+  },
+  SignUpCountryDropdown: {
+    '& .MuiSelect-select': {
+      justifyContent: 'flex-start'
+    },
+    '& .MuiInput-root': {
+      direction: 'ltr !important',
     },
   },
   SignUpLanguageDropdown: {

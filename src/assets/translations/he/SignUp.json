@@ -10,6 +10,7 @@
   "Phone": "טלפון",
   "CellPhone": "טלפון סלולרי",
   "CellPhoneRequired": "יש למלא סלולרי",
+  "InvalidCellPhone": "מספר סלולרי שגוי",
   "UserName": "שם משתמש",
   "UserNameRequired": "יש למלא שם משתמש",
   "Password": "סיסמא",
@@ -88,5 +89,6 @@
   "typeEmailForSignUpDesc": "יש להזין כתובת מייל עבור פתיחת החשבון",
   "accountCreated": "החשבון נוצר בהצלחה",
   "fullName": "שם מלא",
-  "fullNameRequired": "שם מלא הוא שדה חובה"
+  "fullNameRequired": "שם מלא הוא שדה חובה",
+  "countryCode": "קוד מדינה"
 }
