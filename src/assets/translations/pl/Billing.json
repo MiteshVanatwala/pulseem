@@ -32,7 +32,7 @@
   "cash": "Faktura transakcyjna",
   "personalyCharge": "Obciążenie osobiste",
   "debtBalance": "Saldo zadłużenia",
-  "debtWelcomeMessage": "Witaj,<br/>Zgodnie z naszymi danymi, masz zadłużenie w systemie.<br/>Na tym ekranie możesz zobaczyć faktury otwarte do zapłaty, zaktualizować kredyt i dokonać płatności. <br/>Jeśli masz problem z dokonaniem płatności lub pytania dotyczące zadłużenia, możesz skontaktować się z obsługą pod numerem <a href=\"tel:035240290\">03-5240290</a> lub <a href=\"mailto:support@pulseem.com\">support@pulseem.com</a><br/>Pozdrawiamy, zespół Pulseem",
+  "debtWelcomeMessage": "Witaj,<br/>Zgodnie z naszymi danymi, masz zadłużenie w systemie.<br/>Na tym ekranie możesz zobaczyć faktury otwarte do zapłaty, zaktualizować kredyt i dokonać płatności. <br/>Jeśli masz problem z dokonaniem płatności lub pytania dotyczące zadłużenia, możesz skontaktować się z obsługą pod numerem <a href=\"tel:+972-3-5240290\">03-5240290</a> lub <a href=\"mailto:support@pulseem.com\">support@pulseem.com</a><br/>Pozdrawiamy, zespół Pulseem",
   "paymentFailedTitle": "Płatność nie powiodła się",
   "paymentFailed": "Nie mogliśmy obciążyć Twojej karty kredytowej.<br/>Spróbuj ponownie lub zaktualizuj zapisane dane karty",
   "paymentSuccessfulTitle": "Płatność udana",
@@ -43,6 +43,6 @@
   "confirmDeleteCardTitle": "Usuń kartę kredytową",
   "confirmDeleteCardText": "Czy na pewno chcesz usunąć kartę kredytową?",
   "priceWithoutVAT": "Cena bez VAT",
-  "multipleInvoiceTypeMessage": "Nie można opłacić faktury transakcyjnej i faktury VAT w tej samej płatności<br/><br/>Możesz opłacić <b>faktury transakcyjne lub faktury VAT oddzielnie.</b><br/><br/>Aby uzyskać więcej informacji, skontaktuj się z obsługą w sprawie płatności<br/><a href=\"tel:035240290\">03-5240290</a><br/><a href=\"mailto:support@pulseem.com\">support@pulseem.com </a>",
+  "multipleInvoiceTypeMessage": "Nie można opłacić faktury transakcyjnej i faktury VAT w tej samej płatności<br/><br/>Możesz opłacić <b>faktury transakcyjne lub faktury VAT oddzielnie.</b><br/><br/>Aby uzyskać więcej informacji, skontaktuj się z obsługą w sprawie płatności<br/><a href=\"tel:+972-3-5240290\">+972-3-5240290</a><br/><a href=\"mailto:support@pulseem.com\">support@pulseem.com </a>",
   "creditCardPurchase": "Zakup kartą kredytową"
 }
