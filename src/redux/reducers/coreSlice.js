@@ -36,7 +36,32 @@ export const coreSlice = createSlice({
       XSS_ERROR: { severity: 'error', color: 'error', message: 'common.xssError', showAnimtionCheck: false }
     },
     isLoader: false,
-    subUserName: ''
+    subUserName: '',
+    subUserObject: {
+      Data: {
+        UserName: '',
+        Emails: [
+          {
+            Id: 0,
+            TwoFactorAuthTypeID: 1,
+            AuthValue: "",
+            CreatedDate: "0001-01-01T00:00:00",
+            IsDeleted: false,
+            AddToFromValues: false
+          }
+        ],
+        Cellphones: [
+          {
+            Id: 0,
+            TwoFactorAuthTypeID: 2,
+            AuthValue: "",
+            CreatedDate: "0001-01-01T00:00:00",
+            IsDeleted: false,
+            AddToFromValues: false
+          }
+        ]
+      }
+    }
   },
   reducers: {
     setIsClal: (state, action) => {
@@ -71,6 +96,9 @@ export const coreSlice = createSlice({
       const isSuperUser = isSuperUserSelector(userToken?.UserPermissions);
       const isReadOnly = userToken?.UserPermissions?.indexOf(5) > -1;
       state.subUserName = userToken?.Name;
+      state.subUserObject.Data.UserName = userToken?.Name;
+      state.subUserObject.Data.Emails[0].AuthValue = userToken?.Email;
+      state.subUserObject.Data.Cellphones[0].AuthValue = userToken?.Cellphone;
 
       if (isSuperUser) {
         state.userRoles = UserRoles.Admin;
@@ -96,6 +124,7 @@ export const coreSlice = createSlice({
   }
 })
 
+export const selectUserObject = (state) => state.core.subUserObject;
 export const { setLanguage, setWindowSize, setCoreData, setRowsPerPage, setIsClal, setIsLoader } = coreSlice.actions // setSmsOldVersion
 
 export default coreSlice.reducer
