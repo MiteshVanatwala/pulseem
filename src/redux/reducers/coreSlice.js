@@ -94,7 +94,7 @@ export const coreSlice = createSlice({
       const userToken = payload?.unique_name ? JSON.parse(payload?.unique_name) : -1;
 
       const isSuperUser = isSuperUserSelector(userToken?.UserPermissions);
-      const isReadOnly = userToken?.UserPermissions?.indexOf(5) > -1;
+      const isReadOnly = userToken?.UserPermissions?.indexOf(4) > -1;
       state.subUserName = userToken?.Name;
       state.subUserObject.Data.UserName = userToken?.Name;
       state.subUserObject.Data.Emails[0].AuthValue = userToken?.Email;
