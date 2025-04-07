@@ -14,7 +14,7 @@ const PermissionList: React.FC<PermissionListProps> = ({ list }) => {
     const texts = list.map(getPermissionText);
     let permissionText = <></> as any;
 
-    if (permissionList.indexOf(5) > -1 || permissionList.indexOf('5') > -1) {
+    if (permissionList.indexOf(4) > -1 || permissionList.indexOf('4') > -1) {
       permissionText = <b>{t('SubUsers.readOnly')}</b>
     }
     else {
