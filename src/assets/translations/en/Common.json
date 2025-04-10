@@ -866,5 +866,7 @@
   "landingPageId": "Landing Page ID",
   "payAttention": "Pay attention!",
   "allChannels": "All Channels",
-  "internalError": "Internal Error"
+  "internalError": "Internal Error",
+  "selectEmail": "Select Email",
+  "selectCellphone": "Select Cellphone"
 }

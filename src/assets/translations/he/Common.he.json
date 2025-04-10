@@ -861,5 +861,7 @@
   "landingPageId": "מספר דף נחיתה",
   "payAttention": "שים לב!",
   "allChannels": "כל הערוצים",
-  "internalError": "שגיאה כללית"
+  "internalError": "שגיאה כללית",
+  "selectEmail": "בחר אימייל",
+  "selectCellphone": "בחר סלולרי"
 }

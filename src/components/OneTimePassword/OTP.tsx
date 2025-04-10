@@ -168,7 +168,7 @@ const OTP = ({ classes, preText, onClose, onConfirm, userCodeConfirmed, response
                   key={''}
                   value={t('common.select')}
                 >
-                  {t('common.select')}
+                  {selectedOption === '6' ? t('common.selectCellphone') : t('common.selectEmail')}
                 </option>
                 {selectedOption === '7' && emailList?.map((item: any, index) => {
                   return (
