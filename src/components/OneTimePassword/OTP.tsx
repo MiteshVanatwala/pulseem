@@ -123,75 +123,109 @@ const OTP = ({ classes, preText, onClose, onConfirm, userCodeConfirmed, response
                   value: "7",
                   className: selectedOption === '6' ? classes.radioButtonDisabled : classes.radioButtonActive,
                   label: t("common.verifyByEmail"),
-                  child: null
+                  child: selectedOption === '7' && <FormControl
+                    variant='standard'
+                    className={clsx(classes.selectInputFormControl, classes.w100, classes.mt15)}
+                    style={{ maxWidth: 300 }}>
+                    <Select
+                      native
+                      variant="standard"
+                      // disabled
+                      autoWidth
+                      value={authSelected || ''}
+                      name='TwoFactorAuthOptionID'
+                      required
+                      onChange={(e: any) => {
+                        setShowError(false);
+                        setAuthSelected(e.target.value)
+                      }
+                      }
+                      IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+                      MenuProps={{
+                        PaperProps: {
+                          style: {
+                            maxHeight: 300,
+                            direction: isRTL ? 'rtl' : 'ltr'
+                          },
+                        },
+                      }}
+                    >
+                      <option
+                        disabled
+                        key={''}
+                        value={t('common.select')}
+                      >
+                        {t('common.selectEmail')}
+                      </option>
+                      {emailList?.map((item: any, index) => {
+                        return (
+                          <option
+                            key={index}
+                            value={item?.AuthValue}
+                          >
+                            {t(item?.AuthValue)}
+                          </option>
+                        );
+                      })}
+                    </Select>
+                  </FormControl>
                 },
                 {
                   value: "6",
                   className: selectedOption === '7' ? classes.radioButtonDisabled : classes.radioButtonActive,
                   label: t("common.verifyBySms"),
-                  child: null
+                  child: selectedOption === '6' && <FormControl
+                    variant='standard'
+                    className={clsx(classes.selectInputFormControl, classes.w100, classes.mt15)}
+                    style={{ maxWidth: 300 }}>
+                    <Select
+                      native
+                      variant="standard"
+                      // disabled
+                      autoWidth
+                      value={authSelected || ''}
+                      name='TwoFactorAuthOptionID'
+                      required
+                      onChange={(e: any) => {
+                        setShowError(false);
+                        setAuthSelected(e.target.value)
+                      }
+                      }
+                      IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+                      MenuProps={{
+                        PaperProps: {
+                          style: {
+                            maxHeight: 300,
+                            direction: isRTL ? 'rtl' : 'ltr'
+                          },
+                        },
+                      }}
+                    >
+                      <option
+                        disabled
+                        key={''}
+                        value={t('common.select')}
+                      >
+                        {t('common.selectCellphone')}
+                      </option>
+                      {cellphoneList?.map((item: any, index) => {
+                        return (
+                          <option
+                            key={index}
+                            value={item?.AuthValue}
+                          >
+                            {t(item?.AuthValue)}
+                          </option>
+                        );
+                      })}
+                    </Select>
+                  </FormControl>
                 }
               ]}
               value={selectedOption}
             />
           </Grid>
           <Grid item md={12} xs={12}>
-            <FormControl
-              variant='standard'
-              className={clsx(classes.selectInputFormControl, classes.w100, classes.mt15)}
-              style={{ maxWidth: 300 }}>
-              <Select
-                native
-                variant="standard"
-                // disabled
-                autoWidth
-                value={authSelected || ''}
-                name='TwoFactorAuthOptionID'
-                required
-                onChange={(e: any) => {
-                  setShowError(false);
-                  setAuthSelected(e.target.value)
-                }
-                }
-                IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
-                MenuProps={{
-                  PaperProps: {
-                    style: {
-                      maxHeight: 300,
-                      direction: isRTL ? 'rtl' : 'ltr'
-                    },
-                  },
-                }}
-              >
-                <option
-                  disabled
-                  key={''}
-                  value={t('common.select')}
-                >
-                  {selectedOption === '6' ? t('common.selectCellphone') : t('common.selectEmail')}
-                </option>
-                {selectedOption === '7' && emailList?.map((item: any, index) => {
-                  return (
-                    <option
-                      key={index}
-                      value={item?.AuthValue}
-                    >
-                      {t(item?.AuthValue)}
-                    </option>
-                  );
-                })}
-                {selectedOption === '6' && cellphoneList?.map((item: any, index) => {
-                  return (
-                    <option
-                      key={index}
-                      value={item?.AuthValue}
-                    >
-                      {t(item?.AuthValue)}
-                    </option>
-                  );
-                })}
-              </Select>
-            </FormControl>
             {showError && <FormHelperText>{t('common.requiredField')}</FormHelperText>}
           </Grid>
         </Grid>
