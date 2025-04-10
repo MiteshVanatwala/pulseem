@@ -200,7 +200,6 @@ const SubUserChangePassword = ({
     const missingRules: any = [];
 
     Object.keys(passwordValidation).forEach((key: any) => {
-      console.log(Object.values(passwordValidation));
       //@ts-ignore
       if (passwordValidation[key] === false) {
         missingRules.push(missingErrorsObj[key]);
