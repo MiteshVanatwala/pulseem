@@ -221,7 +221,7 @@ const NewsLetterInfo = ({ classes }) => {
         // ReplyEmail: t('campaigns.newsLetterEditor.errors.ReplyEmail'),
     }
 
-    const defaultLanguage = { 'he': 0, 'en': 1 };
+    const defaultLanguage = { 'he': 0, 'en': 1, 'pl': 14 };
 
     useEffect(() => {
         setCampaingnValues({ ...campaingnValues, LanguageCode: defaultLanguage[language] })
