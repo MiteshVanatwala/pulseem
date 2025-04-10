@@ -294,7 +294,7 @@ const Permissions = ({ classes, isOpen, subUser, onClose, onConfirm, showButtons
 						</Box>
 						<Divider className={clsx(classes.mb10, classes.bgBlack)} />
 					</Grid>
-					<Grid item md={1} xs={1} className={clsx(classes.textRight)}>
+					<Grid item md={1} xs={1} className={clsx(isRTL && classes.textRight)}>
 						<FormControlLabel
 							id="permissionAnchor"
 							control={
@@ -328,14 +328,14 @@ const Permissions = ({ classes, isOpen, subUser, onClose, onConfirm, showButtons
 						/>
 					</Grid>
 					<Grid item md={11} xs={11} className={clsx(classes.pt10, classes.dFlex, classes.alignItemsCenter)}>
-						<Typography>
+						<Typography style={{ marginInline: 10 }}>
 							{t('SubUsers.admin')}
 						</Typography>
 					</Grid>
 				</Grid>
 
 				<Grid container>
-					<Grid item md={1} xs={1} className={clsx(classes.textRight, classes.pt10)}>
+					<Grid item md={1} xs={1} className={clsx(isRTL && classes.textRight, classes.pt10)}>
 						<FormControlLabel
 							control={
 								<PulseemSwitch
@@ -387,7 +387,7 @@ const Permissions = ({ classes, isOpen, subUser, onClose, onConfirm, showButtons
 						/>
 					</Grid>
 					<Grid item md={11} xs={11} className={clsx(classes.pt10, classes.dFlex, classes.alignItemsCenter)}>
-						<Typography>
+						<Typography style={{ marginInline: 10 }}>
 							{t('SubUsers.limitedAccess')}
 							<Typography className={clsx(errors.limitedAccess ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
 								{errors.limitedAccess}
@@ -539,7 +539,7 @@ const Permissions = ({ classes, isOpen, subUser, onClose, onConfirm, showButtons
 				</Grid>
 
 				<Grid container>
-					<Grid item md={1} xs={1} className={clsx(classes.textRight, classes.pt10)}>
+					<Grid item md={1} xs={1} className={clsx(isRTL && classes.textRight, classes.pt10)}>
 						<FormControlLabel
 							control={
 								<PulseemSwitch
@@ -557,7 +557,7 @@ const Permissions = ({ classes, isOpen, subUser, onClose, onConfirm, showButtons
 										if (permissions.accessType !== PermissionTypes.ReadOnly) {
 											setUserDetails({
 												...userDetails,
-												SubUserPermissions: '5',
+												SubUserPermissions: '4',
 												UserPermissionsList: [eSubUserPermissions.HideRecipients]
 											})
 										}
@@ -579,7 +579,7 @@ const Permissions = ({ classes, isOpen, subUser, onClose, onConfirm, showButtons
 						/>
 					</Grid>
 					<Grid item md={11} xs={11} className={clsx(classes.pt10, classes.dFlex, classes.alignItemsCenter)}>
-						{t('SubUsers.readOnly')}
+						<Typography style={{ marginInline: 10 }}>{t('SubUsers.readOnly')}</Typography>
 					</Grid>
 				</Grid>
 
