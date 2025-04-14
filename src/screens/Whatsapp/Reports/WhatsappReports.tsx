@@ -738,7 +738,8 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 					align='center'
 					className={clsx(
 						classes.tableCellBody,
-						classes.flex2
+						classes.flex2,
+						userRoles?.HideRecipients && classes.disabled
 					)}>
 					<Grid container justifyContent='space-around'>
 						<Grid item>
@@ -770,7 +771,8 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 						classes.tableCellBody,
 						`${report?.Read >= 1 && classes.underline}`,
 						classes.flex1,
-						classes.greenTextColor
+						classes.greenTextColor,
+						userRoles?.HideRecipients && classes.disabled
 					)}>
 					{getTableTypographyCells(
 						translator('whatsappReport.read'),
@@ -786,7 +788,8 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 					className={clsx(
 						classes.tableCellBody,
 						classes.flex2,
-						classes.blueTextColor
+						classes.blueTextColor,
+						userRoles?.HideRecipients && classes.disabled
 					)}>
 					<Grid container justifyContent='space-around'>
 						<Grid item>
@@ -818,7 +821,8 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 					className={clsx(
 						classes.tableCellBody,
 						classes.flex2,
-						`${!hasRevenue && classes.tableCellNoBorder}`
+						`${!hasRevenue && classes.tableCellNoBorder}`,
+						userRoles?.HideRecipients && classes.disabled
 					)}>
 					<Grid container justifyContent='space-around'>
 						<Grid
@@ -859,7 +863,8 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 					className={clsx(
 						classes.tableCellBody,
 						classes.flex1,
-						classes.revenueTableCell
+						classes.revenueTableCell,
+						userRoles?.HideRecipients && classes.disabled
 					)}>
 					<Typography className={clsx(classes.middleText)}>
 						{getTableTypographyCells(
@@ -888,7 +893,8 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 							`${report && report?.Revenue > 0
 								? classes.revenueTableCellPointer
 								: ''
-							}`
+							}`,
+							userRoles?.HideRecipients && classes.disabled
 						)}>
 						{getTableTypographyCells(
 							translator('common.revenue'),

@@ -550,11 +550,11 @@ const renderRoutes = (classes, redirect, userRoles) => {
       <Route
         path="*" element={<PageNotFound classes={classes} />}
       />
-      <Route
+      {!userRoles?.HideRecipients && <Route
         exact
         path={`${sitePrefix}reports/recipient`}
         element={<RecipientReport classes={classes} />}
-      />
+      />}
       <Route
         exact
         path={`${sitePrefix}Groups/Dynamic`}
