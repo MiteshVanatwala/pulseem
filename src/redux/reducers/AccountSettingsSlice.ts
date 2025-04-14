@@ -5,6 +5,7 @@ import { LoginPassword } from '../../Models/Account/Password';
 import { TwoFactorAuthAllowed } from '../../Models/Auth/TwoFactorAuth';
 import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
 import { AuditLog } from '../../Models/AuditLog/AuditLog';
+import { selectUserObject } from './coreSlice';
 
 export const getAccountSettings = createAsyncThunk(
     'AccountSettings/Get',
@@ -112,8 +113,16 @@ export const checkCellphoneAuthorization = createAsyncThunk(
 
 export const getAllTwoFactorAuthValues = createAsyncThunk(
     'authorization/GetAllTwoFactorAuthValues',
-    async (_, thunkAPI) => {
+    async (_, { getState, rejectWithValue }) => {
         try {
+            const state = getState();
+            const userObject = selectUserObject(state);
+            if (userObject?.Data?.Emails[0].AuthValue !== '' &&
+                userObject?.Data?.Cellphones && userObject?.Data?.Cellphones[0].AuthValue !== ''
+            ) {
+                return userObject;
+            }
+
             const response = await PulseemReactInstance.get(`authorization/GetAllTwoFactorAuthValues`)
             return response.data;
         } catch (error) {
@@ -161,25 +170,25 @@ export const confimrOtp = createAsyncThunk(
 export const setAuditLog = createAsyncThunk(
     'setAuditLog',
     async (request: AuditLog, thunkAPI) => {
-      try {
-        const response = await PulseemReactInstance.post(`setAuditLog`, request);
-        return response.data;
-      } catch (error: any) {
-        return thunkAPI.rejectWithValue({ error: error.message });
-      }
+        try {
+            const response = await PulseemReactInstance.post(`setAuditLog`, request);
+            return response.data;
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
     }
-  );
+);
 
 export const SetRevenueFeature = createAsyncThunk(
-'AccountSettings/SetRevenueFeature',
-async (request: any, thunkAPI) => {
-    try {
-        const response = await PulseemReactInstance.post(`AccountSettings/SetRevenueFeature`, request);
-        return response.data;
-    } catch (error: any) {
-        return thunkAPI.rejectWithValue({ error: error.message });
-    }
-})
+    'AccountSettings/SetRevenueFeature',
+    async (request: any, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.post(`AccountSettings/SetRevenueFeature`, request);
+            return response.data;
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    })
 
 
 

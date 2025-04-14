@@ -76,7 +76,7 @@ import DynamicGroups from './screens/Groups/Dynamic/DynamicGroups';
 import EditDynamicGroup from './screens/Groups/Dynamic/EditDynamicGroup';
 import CreateLandingPage from './screens/LandingPages/Wizard/CreateLandingPage';
 import ExtraFields from './screens/Settings/ExtraFields/ExtraFields';
-import { isSignupPage } from './helpers/Utils/common';
+import { isSignupPage, isSubUserConfirmationPage } from './helpers/Utils/common';
 import './helpers/global';
 import SignUp from './screens/SignUp/SignUp.tsx';
 import SurveyDetails from './screens/LandingPages/Survey/SurveyDetails';
@@ -87,13 +87,16 @@ import AmpRegistration from './screens/Newsletter/AMP/AmpRegistration';
 import AffiliateProgram from './screens/Affiliate/Management/AffiliateProgram';
 import AccountUsers from './screens/AccountUsers/AccountUsers';
 import TermsOfUsePage from './screens/TermsOfUse/TermsOfUsePage';
+import SubUsers from './screens/UsersAndPermissions/SubUsers';
 import WhatsappOnBoarding from './screens/Whatsapp/OnBoarding/WhatsappOnBoarding';
+import SubUserConfirmationPage from './screens/UsersAndPermissions/SubUserConfirmationPage';
 import { Loader } from './components/Loader/Loader';
 import ClientSearch from './screens/ClientSearch/ClientSearch';
 import CreateAutomationTemplate from './screens/Automations/CreateAutomation';
 import SignUpNew from './screens/SignUp/SignUpNew';
+import { UserRoles } from './Models/SubUser/SubUsers';
 
-const renderRoutes = (classes, redirect) => {
+const renderRoutes = (classes, redirect, userRoles) => {
   const transferUrl =
     (url = '', param = '') =>
       () => {
@@ -114,6 +117,11 @@ const renderRoutes = (classes, redirect) => {
         exact
         path={`${sitePrefix}sign-up`}
         element={<SignUpNew classes={classes} />}
+      />
+      <Route
+        exact
+        path={`${sitePrefix}UserConfirmation`}
+        element={<SubUserConfirmationPage classes={classes} />}
       />
       <Route
         exact
@@ -313,14 +321,14 @@ const renderRoutes = (classes, redirect) => {
         path='/NewWebForm/NewFormEdit/:id'
         component={transferUrl('/Pulseem/NewWebForm/NewFormEdit/', 'id')}
       />
-      <Route
+      {!userRoles?.HideRecipients && <Route
         path={`${sitePrefix}ClientSearchResult/:referrer/:id`}
         element={<ClientSearchResult classes={classes} />}
-      />
-      <Route
+      />}
+      {!userRoles?.HideRecipients && <Route
         path={`${sitePrefix}ClientSearchResult`}
         element={<ClientSearchResult classes={classes} />}
-      />
+      />}
       <Route
         path={`${sitePrefix}EditRegistrationPage`}
         element={<LandingPagesesManagment classes={classes} />}
@@ -391,16 +399,16 @@ const renderRoutes = (classes, redirect) => {
         path={`/DirectEmailReport`}
         component={transferUrl('/Pulseem/DirectEmailReport.aspx')}
       />
-      <Route
+      {!userRoles?.HideRecipients && <Route
         exact
         path={`${sitePrefix}Reports/DirectSendReport`}
         element={<DirectSendReport classes={classes} isArchive={false} />}
-      />
-      <Route
+      />}
+      {!userRoles?.HideRecipients && <Route
         exact
         path={`${sitePrefix}Reports/DirectSendReport/Archive`}
         element={<DirectSendReport classes={classes} isArchive={true} />}
-      />
+      />}
       <Route
         path={`/EmailCampaignStatistics`}
         component={transferUrl('/Pulseem/EmailCampaignStatistics.aspx')}
@@ -453,36 +461,40 @@ const renderRoutes = (classes, redirect) => {
         element={<NotificationSend classes={classes} key="send" />}
       />
       {/* Settings */}
-      <Route
+      {userRoles === UserRoles.Admin && <Route
         exact
         path={`${sitePrefix}AccountSettings`}
         element={<AccountSettingsEditor classes={classes} />}
-      />
-      <Route
+      />}
+      {userRoles === UserRoles.Admin && <Route
         exact
         path={`${sitePrefix}BillingSettings`}
         element={<BillingSettingsPage classes={classes} />}
-      />
+      />}
       <Route
         path={`/AccountBilling`}
         component={transferUrl('/Pulseem/AccountBilling.aspx')}
       />
-      <Route
+      {userRoles === UserRoles.Admin && <Route
         exact
         path={`${sitePrefix}AccountUsers`}
         element={<AccountUsers classes={classes} />}
-      />
-      <Route
+      />}
+      {userRoles === UserRoles.Admin && <Route
         path={`/AccountUsersReport`}
         component={transferUrl('/Pulseem/AccountUsersReport.aspx')}
-      />
+      />}
       <Route
         path={`/ExtraFieldsDefinition`}
         component={transferUrl('/Pulseem/ExtraFieldsDefinition.aspx')}
       />
-      <Route
+      {userRoles?.AllowSend && <Route
         path={`${sitePrefix}ApiSettings`}
         element={<ApiSettings classes={classes} />}
+      />}
+      <Route
+        path={`${sitePrefix}SubUsers`}
+        element={<SubUsers classes={classes} />}
       />
       {/* Support */}
       <Route
@@ -492,39 +504,39 @@ const renderRoutes = (classes, redirect) => {
           return null
         }}
       />
-      <Route
+      {userRoles?.AllowSend && <Route
         exact
         path={`${sitePrefix}SiteTracking`}
         element={<SiteTrackingEditor classes={classes} />}
-      />
+      />}
       <Route
         exact
         path={`${sitePrefix}SystemMessage`}
         element={<SystemMessage classes={classes} />}
       />
-      <Route exact
+      {userRoles?.AllowSend && <Route exact
         path={`${sitePrefix}Integrations`}
         element={<Integrations classes={classes} />}
-      />
+      />}
       <Route exact
         path={`${sitePrefix}whatsapp-onboarding`}
         element={<WhatsappOnBoarding classes={classes} />}
       />
-      <Route
+      {!userRoles?.HideRecipients && <Route
         exact
         path={`${sitePrefix}reports/Inbound`}
         element={<InboundMessages classes={classes} key="all" />}
-      />
-      <Route
+      />}
+      {!userRoles?.HideRecipients && <Route
         exact
         path={`${sitePrefix}reports/Inbound/:type`}
         element={<InboundMessages classes={classes} />}
-      />
-      <Route
+      />}
+      {!userRoles?.HideRecipients && <Route
         exact
         path={`${sitePrefix}reports/Inbound/:type/:id`}
         element={<InboundMessages classes={classes} key="byTypeId" />}
-      />
+      />}
       <Route
         exact
         path={`${sitePrefix}Groups/FileUploads`}
@@ -538,11 +550,11 @@ const renderRoutes = (classes, redirect) => {
       <Route
         path="*" element={<PageNotFound classes={classes} />}
       />
-      <Route
+      {!userRoles?.HideRecipients && <Route
         exact
         path={`${sitePrefix}reports/recipient`}
         element={<RecipientReport classes={classes} />}
-      />
+      />}
       <Route
         exact
         path={`${sitePrefix}Groups/Dynamic`}
@@ -568,21 +580,21 @@ const renderRoutes = (classes, redirect) => {
         path={`${sitePrefix}Previewer/:type/:id`}
         element={<HtmlPreview classes={classes} />}
       />
-      <Route
+      {userRoles === UserRoles.Admin && <Route
         exact
         path={`${sitePrefix}AffiliateManagement`}
         element={<AffiliateProgram classes={classes} />}
-      />
+      />}
       <Route
         exact
         path={`${sitePrefix}TermsOfUse`}
         element={<TermsOfUsePage classes={classes} />}
       />
-      <Route
+      {!userRoles?.HideRecipients && <Route
         exact
         path={`${sitePrefix}ClientSearch`}
         element={<ClientSearch classes={classes} />}
-      />
+      />}
     </Routes>
   )
 }
@@ -591,14 +603,15 @@ const App = ({ screenSize }) => {
   let location = useLocation();
   const dispatch = useDispatch();
 
-  const { language, isRTL, windowSize, isClal, isDebtAccount, isAdmin, isLoader } = useSelector(state => state.core)
+  const { language, isRTL, windowSize, isClal, isDebtAccount, isAdmin, isLoader, userRoles } = useSelector(state => state.core)
   const { accountSettings, currencyList } = useSelector(state => state.common)
   const classes = useClasses(windowSize, isRTL)();
   setCookie('accountSettings', '');
   const isSignup = isSignupPage(location.pathname);
+  const isConfirmationPage = isSubUserConfirmationPage(location.pathname)
 
   React.useEffect(() => {
-    !isSignup && dispatch(getNotificationUpdates());
+    !isSignup && !isConfirmationPage && dispatch(getNotificationUpdates());
   }, [location]);
 
   useEffect(() => {
@@ -606,7 +619,7 @@ const App = ({ screenSize }) => {
   }, [screenSize]);
 
   useEffect(() => {
-    if (!isSignup && currencyList?.length > 0) {
+    if (!isSignup && !isConfirmationPage && currencyList?.length > 0) {
       dispatch(GetGlobalAccountPackagesDetails());
     }
   }, [currencyList]);
@@ -630,7 +643,7 @@ const App = ({ screenSize }) => {
       const jwt = jwt_decode(token);
       const {
         email = '',
-        // unique_name = '',
+        unique_name = '', // SubUser permissions
         nameid: companyName,
         certthumbprint: billingTypeId,
         role: isAdmin,
@@ -662,6 +675,7 @@ const App = ({ screenSize }) => {
           isAdmin,
           isAllowSwitchAccount,
           billingTypeId,
+          unique_name
         })
       );
       let lang = culture || locality; //||'he'
@@ -684,11 +698,11 @@ const App = ({ screenSize }) => {
       if (!!cookieFunction)
         cookieFunction()
     })
-    !isSignup && updateToken()
-    !isSignup && initFeatures()
-    !isSignup && dispatch(GetCurrencyList());
-    !isSignup && dispatch(GetSmsCountries());
-    !isSignup && dispatch(GetAfterLoginInitialData());
+    !isSignup && !isConfirmationPage && updateToken()
+    !isSignup && !isConfirmationPage && initFeatures()
+    !isSignup && !isConfirmationPage && dispatch(GetCurrencyList());
+    !isSignup && !isConfirmationPage && dispatch(GetSmsCountries());
+    !isSignup && !isConfirmationPage && dispatch(GetAfterLoginInitialData());
   }, [dispatch])
 
 
@@ -779,12 +793,12 @@ const App = ({ screenSize }) => {
       </Routes>
     }
     else {
-      return renderRoutes(classes, redirect);
+      return renderRoutes(classes, redirect, userRoles);
     }
 
   }
 
-  return (accountSettings || isSignup) && (
+  return (accountSettings || isSignup || isConfirmationPage) && (
     <MuiPickersUtilsProvider utils={MomentUtils} libInstance={moment} locale={language}>
       <MuiThemeProvider theme={theme}>
         <div dir={isRTL ? 'rtl' : 'ltr'} className={classes.appBody}>

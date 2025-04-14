@@ -40,7 +40,7 @@ const SmsReport = ({ classes }) => {
   const { state } = useLocation();
   const from = state?.from || "/";
   const { accountFeatures, currencySymbol, isCurrencySymbolPrefix } = useSelector(state => state.common);
-  const { language, windowSize, isRTL } = useSelector(state => state.core)
+  const { language, windowSize, isRTL, userRoles } = useSelector(state => state.core)
   const { smsReport, smsGraph } = useSelector(state => state.sms)
   const { t } = useTranslation()
   const rowsOptions = [6, 10, 20, 50]
@@ -66,7 +66,7 @@ const SmsReport = ({ classes }) => {
   const getHrefs = (id) => ({
     TotalSendTo: {
       href: `/Pulseem/ClientSearchResult.aspx?TotalCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`,
-      onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
+      onClick: () => !userRoles?.HideRecipients && navigate(CLIENT_CONSTANTS.BASEURL, {
         state: {
           ...CLIENT_CONSTANTS.QUERY_PARAMS, CampaignID: id, PageType: CLIENT_CONSTANTS.PAGE_TYPES.TotalCountSMSCampaignID,
           PageProperty: GetPageNyName('reports/SMSMainReport')
@@ -76,12 +76,22 @@ const SmsReport = ({ classes }) => {
     ClickCountUnique: {
       title: t('common.Unique'),
       href: `/Pulseem/SMSLinksClicksReport.aspx?CampaignID=${id}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`,
-      onClick: () => window.location = `/Pulseem/SMSLinksClicksReport.aspx?CampaignID=${id}&fromreact=true&type=unique&Culture=${isRTL ? 'he-IL' : 'en-US'}`
+      onClick: () => {
+        if (userRoles?.HideRecipients) {
+          return;
+        }
+        window.location = `/Pulseem/SMSLinksClicksReport.aspx?CampaignID=${id}&fromreact=true&type=unique&Culture=${isRTL ? 'he-IL' : 'en-US'}`
+      }
     },
     VerifiedCount: {
       title: t('mainReport.verifiedCount'),
       href: `/Pulseem/SMSLinksClicksReport.aspx?CampaignID=${id}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`,
-      onClick: () => window.location = `/Pulseem/SMSLinksClicksReport.aspx?CampaignID=${id}&fromreact=true&type=verified&Culture=${isRTL ? 'he-IL' : 'en-US'}`
+      onClick: () => {
+        if (userRoles?.HideRecipients) {
+          return;
+        }
+        window.location = `/Pulseem/SMSLinksClicksReport.aspx?CampaignID=${id}&fromreact=true&type=verified&Culture=${isRTL ? 'he-IL' : 'en-US'}`
+      }
     },
     ClickCount: {
       title: SizeOptionsOfHandHeldDevices.indexOf(windowSize) > -1 ? t('common.Total') : t('common.Clicks'),
@@ -91,12 +101,17 @@ const SmsReport = ({ classes }) => {
     PercetangeClicks: {
       title: t('mainReport.locUniqueClicksPercents.HeaderText'),
       href: `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`,
-      onClick: () => window.location = `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`
+      onClick: () => {
+        if (userRoles?.HideRecipients) {
+          return;
+        }
+        window.location = `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`
+      }
     },
     Failed: {
       title: SizeOptionsOfHandHeldDevices.indexOf(windowSize) > -1 ? '' : t("common.failedStatus"),
       href: `/Pulseem/ClientSearchResult.aspx?FailureCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`,
-      onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
+      onClick: () => !userRoles?.HideRecipients && navigate(CLIENT_CONSTANTS.BASEURL, {
         state: {
           ...CLIENT_CONSTANTS.QUERY_PARAMS, CampaignID: id, PageType: CLIENT_CONSTANTS.PAGE_TYPES.FailureCountSMSCampaignID,
           PageProperty: GetPageNyName('reports/SMSMainReport')
@@ -105,7 +120,7 @@ const SmsReport = ({ classes }) => {
     },
     Removed: {
       title: SizeOptionsOfHandHeldDevices.indexOf(windowSize) > -1 ? '' : t('mainReport.removed'),
-      onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
+      onClick: () => !userRoles?.HideRecipients && navigate(CLIENT_CONSTANTS.BASEURL, {
         state: {
           ...CLIENT_CONSTANTS.QUERY_PARAMS, CampaignID: id, PageType: CLIENT_CONSTANTS.PAGE_TYPES.RemovedCountSMSCampaignID,
           PageProperty: GetPageNyName('reports/SMSMainReport')
@@ -115,12 +130,17 @@ const SmsReport = ({ classes }) => {
     Replies: {
       title: t('common.Total'),
       href: `/Pulseem/ResponsesReport.aspx?SmsCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`,
-      onClick: () => window.location = `/Pulseem/ResponsesReport.aspx?SmsCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`
+      onClick: () => {
+        if (userRoles?.HideRecipients) {
+          return;
+        }
+        window.location = `/Pulseem/ResponsesReport.aspx?SmsCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`
+      }
     },
     DLR: {
       title: SizeOptionsOfHandHeldDevices.indexOf(windowSize) > -1 ? '' : t('common.DLR'),
       href: `/Pulseem/ClientSearchResult.aspx?SuccessCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`,
-      onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
+      onClick: () => !userRoles?.HideRecipients && navigate(CLIENT_CONSTANTS.BASEURL, {
         state: {
           ...CLIENT_CONSTANTS.QUERY_PARAMS, CampaignID: id, PageType: CLIENT_CONSTANTS.PAGE_TYPES.SuccessCountSMSCampaignID,
           PageProperty: GetPageNyName('reports/SMSMainReport')
@@ -455,7 +475,7 @@ const SmsReport = ({ classes }) => {
     const dataLength = smsReport.length;
     return (
       <Grid container spacing={2} className={clsx(classes.linePadding, classes.pb10)} >
-        {accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 && SizeOptionsOfHandHeldDevices.indexOf(windowSize) === -1 && <Grid item>
+        {userRoles?.AllowExport && accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 && SizeOptionsOfHandHeldDevices.indexOf(windowSize) === -1 && <Grid item>
           <Button
             className={clsx(
               classes.btn, classes.btnRounded,
@@ -540,7 +560,7 @@ const SmsReport = ({ classes }) => {
     const { title = SizeOptionsOfHandHeldDevices.indexOf(windowSize) > -1 ? '' : t("notifications.tblBody.total"), textStyle = null, onClick = null } = data
     const isLink = value > 0 && !!onClick;
     return (
-      <Box style={{ display: 'flex', flexDirection: 'column', cursor: isLink ? 'pointer' : null }}
+      <Box className={userRoles?.HideRecipients && classes.disabled} style={{ display: 'flex', flexDirection: 'column', cursor: isLink ? 'pointer' : null }}
         onClick={isLink ? onClick : VoidFunction}>
         <Typography
           component={'a'}
@@ -560,7 +580,7 @@ const SmsReport = ({ classes }) => {
   const renderRevenueData = (value, type, data = {}) => {
     const { textStyle = null, onClick = null } = data
     return (
-      <Box style={{ display: 'flex', flexDirection: 'column' }} >
+      <Box className={userRoles?.HideRecipients && classes.disabled} style={{ display: 'flex', flexDirection: 'column' }} >
         <Typography component={value > 0 ? 'a' : 'p'}
           onClick={() => {
             if (value > 0) {
@@ -569,7 +589,7 @@ const SmsReport = ({ classes }) => {
           }}
           className={clsx(classes.middleText, colorTextStyle[type] || '')}
           style={{ ...textStyle, textDecoration: value > 0 && 'underline', cursor: value > 0 && 'pointer' }}>
-            { isCurrencySymbolPrefix ? currencySymbol : '' } {(value && value.toLocaleString()) || '0'} { !isCurrencySymbolPrefix ? currencySymbol : '' }
+          {isCurrencySymbolPrefix ? currencySymbol : ''} {(value && value.toLocaleString()) || '0'} {!isCurrencySymbolPrefix ? currencySymbol : ''}
         </Typography>
       </Box>
     )

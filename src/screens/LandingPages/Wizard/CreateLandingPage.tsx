@@ -45,7 +45,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 	const dispatch: any = useDispatch();
 	const navigate = useNavigate();
 	const { t } = useTranslation();
-	const { isRTL, windowSize } = useSelector(
+	const { isRTL, windowSize, userRoles } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
 	const [isLoader, setIsLoader] = useState<boolean>(false);
@@ -910,7 +910,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 							callback: () => setDialogType({ type: 'confirmExit' })
 						}}
 						// @ts-ignore
-						onDelete={id ? () => setDialogType({ type: "delete" }) : null}
+						onDelete={userRoles?.AllowDelete && id ? () => setDialogType({ type: "delete" }) : null}
 						// @ts-ignore
 						onExit={() => setDialogType({ type: 'confirmExit' })}
 						// @ts-ignore

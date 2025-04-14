@@ -122,6 +122,7 @@ export type coreProps = {
 	isRTL: boolean;
 	rowsPerPage: string | number;
 	accountFeatures: string;
+	userRoles: any;
 };
 
 export type CommonRedux = {

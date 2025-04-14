@@ -57,7 +57,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
   const moduleType = params?.type;
 
   const { extraData, previousLandingData } = useSelector((state: { sms: SMSStoreProps }) => state.sms);
-  const { language, isRTL } = useSelector((state: StateType) => state.core);
+  const { language, isRTL, userRoles } = useSelector((state: StateType) => state.core);
   const { tokenAlive, accountSettings, accountFeatures } = useSelector((state: { common: commonProps }) => state.common);
   const { landingPage, landingPageUserBlocks, ToastMessages, LPBeeToken, publicTemplates, templatesBySubAccount } = useSelector((state: { landingPages: BeeEditorStoreModel }) => state.landingPages)
   const [showLoader, setLoader] = useState(true);
@@ -288,7 +288,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
             isLocal: true,
             behaviors: {
               canEdit: true,
-              canDelete: true,
+              canDelete: userRoles?.AllowDelete,
             },
           };
           tempRows.push(tagObj);
@@ -700,6 +700,9 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
     });
   }
   const handleDeleteBlock = (e: any, row_id: string) => {
+    if (!userRoles?.AllowDelete) {
+      return false;
+    }
     //@ts-ignore
     dispatch(deleteLPUserBlock(row_id)).then((result) => {
       console.log(result);
@@ -1281,7 +1284,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
           }
         }
         //@ts-ignore
-        onDelete={fromLink?.toLowerCase() !== 'autoresponder' && onDelete}
+        onDelete={userRoles?.AllowDelete && fromLink?.toLowerCase() !== 'autoresponder' && onDelete}
         // onShowGallery={() => { setShowGallery(true) }}
         //@ts-ignore
         onShowDocuments={() => { setShowDocuments(true) }}

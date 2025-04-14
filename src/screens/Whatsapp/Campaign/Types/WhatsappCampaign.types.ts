@@ -13,6 +13,7 @@ export type coreProps = {
 	isRTL: boolean;
 	language: string;
 	isLoader: boolean;
+	userRoles: any;
 };
 
 export type WhatsappCampaignProps = {

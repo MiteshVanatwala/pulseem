@@ -40,7 +40,7 @@ const SmsReplies = ({ classes }) => {
     const { ToastMessages } = useSelector(state => state.client);
     const { smsReplies, extraData, finishedCampaigns } = useSelector(state => state.sms);
     const { subAccountAllGroups } = useSelector((state) => state.group);
-    const { windowSize, isRTL, rowsPerPage } = useSelector(state => state.core);
+    const { windowSize, isRTL, rowsPerPage, userRoles } = useSelector(state => state.core);
     const { accountFeatures } = useSelector(state => state.common);
     const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot) }
     const cellBodyStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot) }
@@ -105,7 +105,7 @@ const SmsReplies = ({ classes }) => {
             <>
                 {/* <Divider /> */}
                 <Grid container spacing={2} className={clsx(classes.p20)}>
-                    {accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 && windowSize !== 'xs' && <Grid item>
+                    {userRoles?.AllowExport && accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 && windowSize !== 'xs' && <Grid item>
                         <Button
                             className={clsx(
                                 classes.btn, classes.btnRounded,
@@ -151,7 +151,7 @@ const SmsReplies = ({ classes }) => {
 
         try {
             let result = await HandleExportData(finalData, exportOptions);
-        
+
             result = await ReplaceNull(result, 'FirstName', '');
             result = await ReplaceNull(result, 'LastName', '');
             result = await ReplaceNull(result, 'CellPhone', '');

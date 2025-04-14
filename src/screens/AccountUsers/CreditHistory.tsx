@@ -23,15 +23,16 @@ import { ExportFile } from '../../helpers/Export/ExportFile';
 const CreditHistory = ({ classes, id = '' }: any) => {
 	const dispatch: any = useDispatch();
 	const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot) }
-  const cellStyle = { head: classes.tableCellHead, root: clsx(classes.tableCellRoot) }
+	const cellStyle = { head: classes.tableCellHead, root: clsx(classes.tableCellRoot) }
 	const cellBodyStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot) }
-  const { t } = useTranslation();
+	const { t } = useTranslation();
 	const { isRTL, language, windowSize } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
-	const { isGlobal, accountIsCurrencySymbolPrefix, accountCurrencySymbol  } = useSelector(
+	const { isGlobal, accountIsCurrencySymbolPrefix, accountCurrencySymbol } = useSelector(
 		(state: { common: any }) => state.common
 	);
+	const { userRoles } = useSelector((state: { core: any }) => state.core);
 	const defaultFilter = {
 		type: '',
 		accountType: '',
@@ -41,12 +42,12 @@ const CreditHistory = ({ classes, id = '' }: any) => {
 		IsGlobalAccount: isGlobal,
 		CustomGuidEnc: id
 	}
-	const [ isLoader, setIsLoader ] = useState<boolean>(false);
-	const [ filter, setFilter ] = useState<any>(defaultFilter);
-	const [ history, setHistory ] = useState<BulkHistory[]>([]);
-	const [ dialogType, setDialog ] = useState<string | null>(null);
+	const [isLoader, setIsLoader] = useState<boolean>(false);
+	const [filter, setFilter] = useState<any>(defaultFilter);
+	const [history, setHistory] = useState<BulkHistory[]>([]);
+	const [dialogType, setDialog] = useState<string | null>(null);
 	moment.locale(language);
-	
+
 	useEffect(() => {
 		getData();
 	}, []);
@@ -60,7 +61,7 @@ const CreditHistory = ({ classes, id = '' }: any) => {
 	}
 
 	const renderSearchSection = () => {
-    return (
+		return (
 			<Grid container spacing={2}>
 				{
 					!isGlobal && (
@@ -91,14 +92,14 @@ const CreditHistory = ({ classes, id = '' }: any) => {
 									>
 										<option value=''>{t("common.all")}</option>
 										{
-											Object.keys(CreditHistoryType).map((item: any) => 
+											Object.keys(CreditHistoryType).map((item: any) =>
 												<option value={item} key={item}>{t(`${get(CreditHistoryType, item, '')}`)}</option>
 											)
 										}
 									</Select>
 								</FormControl>
 							</Grid>
-						
+
 							<Grid item md={3} xs={12}>
 								<Typography>{t("SubAccount.accountType")}</Typography>
 								<FormControl className={clsx(classes.selectInputFormControl, classes.w100, classes.pt10)}>
@@ -125,7 +126,7 @@ const CreditHistory = ({ classes, id = '' }: any) => {
 									>
 										<option value=''>{t("common.all")}</option>
 										{
-											Object.keys(CreditHistoryAccountType).map((item: any) => 
+											Object.keys(CreditHistoryAccountType).map((item: any) =>
 												<option value={item} key={item}>{t(`${get(CreditHistoryAccountType, item, '')}`)}</option>
 											)
 										}
@@ -218,42 +219,42 @@ const CreditHistory = ({ classes, id = '' }: any) => {
 						className={clsx(classes.btn, classes.btnRounded, classes.mlr10)}
 						endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
 					>
-							{t("common.clear")}
+						{t("common.clear")}
 					</Button>
-					<Button
+					{userRoles?.AllowExport && <Button
 						onClick={() => setDialog('exportFormat')}
 						className={clsx(classes.btn, classes.btnRounded)}
 						endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
 					>
 						{t("common.Export")}
-					</Button>
+					</Button>}
 				</Grid>
-		</Grid>);
-  };
+			</Grid >);
+	};
 
 	const renderTableHead = () => {
-    return (
-      <TableHead>
-        <TableRow classes={rowStyle}>
-          <TableCell classes={cellStyle} className={clsx(classes.flex2, classes.f16)} align='center'>{t('common.Dates')}</TableCell>
-          <TableCell classes={cellStyle} className={clsx(classes.flex1, classes.f16)} align='center'>{t('SubAccount.amount')}</TableCell>
-          {
+		return (
+			<TableHead>
+				<TableRow classes={rowStyle}>
+					<TableCell classes={cellStyle} className={clsx(classes.flex2, classes.f16)} align='center'>{t('common.Dates')}</TableCell>
+					<TableCell classes={cellStyle} className={clsx(classes.flex1, classes.f16)} align='center'>{t('SubAccount.amount')}</TableCell>
+					{
 						!isGlobal && <TableCell classes={cellStyle} className={clsx(classes.flex1, classes.f16)} align='center'>{t('SubAccount.type')}</TableCell>
 					}
-          <TableCell classes={cellStyle} className={clsx(classes.flex1, classes.f16)} align='center'>{t('SubAccount.accountType')}</TableCell>
-          <TableCell classes={cellStyle} className={clsx(classes.flex2, classes.f16)} align='center'>{t('SubAccount.transferringFromAccount')}</TableCell>
-          <TableCell classes={cellStyle} className={clsx(classes.flex2, classes.f16)} align='center'>{t('SubAccount.transferredToAccount')}</TableCell>
-        </TableRow>
-      </TableHead>
-    )
-  }
+					<TableCell classes={cellStyle} className={clsx(classes.flex1, classes.f16)} align='center'>{t('SubAccount.accountType')}</TableCell>
+					<TableCell classes={cellStyle} className={clsx(classes.flex2, classes.f16)} align='center'>{t('SubAccount.transferringFromAccount')}</TableCell>
+					<TableCell classes={cellStyle} className={clsx(classes.flex2, classes.f16)} align='center'>{t('SubAccount.transferredToAccount')}</TableCell>
+				</TableRow>
+			</TableHead>
+		)
+	}
 
 	const renderRow = (row: BulkHistory) => {
 		return (
-      <TableRow
-        key={uniqid()}
-        classes={rowStyle}
-      >
+			<TableRow
+				key={uniqid()}
+				classes={rowStyle}
+			>
 				<TableCell
 					classes={cellBodyStyle}
 					align='center'
@@ -266,7 +267,7 @@ const CreditHistory = ({ classes, id = '' }: any) => {
 					align='center'
 					className={classes.flex1}
 				>
-					{ isGlobal && accountIsCurrencySymbolPrefix ? accountCurrencySymbol : '' } {row.Amount} { isGlobal && !accountIsCurrencySymbolPrefix ? accountCurrencySymbol : '' }
+					{isGlobal && accountIsCurrencySymbolPrefix ? accountCurrencySymbol : ''} {row.Amount} {isGlobal && !accountIsCurrencySymbolPrefix ? accountCurrencySymbol : ''}
 				</TableCell>
 				{
 					!isGlobal && (
@@ -306,68 +307,68 @@ const CreditHistory = ({ classes, id = '' }: any) => {
 
 	const renderPhoneRow = (row: BulkHistory) => {
 		return (
-      <TableRow
+			<TableRow
 				key={uniqid()}
-        component='div'
-        classes={rowStyle}
-      >
-        <TableCell style={{ flex: 1 }} classes={{ root: clsx(classes.tableCellRoot, classes.p10, classes.f16) }}>
-          <Box className={classes.inlineGrid}>
+				component='div'
+				classes={rowStyle}
+			>
+				<TableCell style={{ flex: 1 }} classes={{ root: clsx(classes.tableCellRoot, classes.p10, classes.f16) }}>
+					<Box className={classes.inlineGrid}>
 						<div className={clsx(classes.pt5)}>
-						{t("SubAccount.transferringFromAccount")}: {row.TransferedFromSubAccountName}
+							{t("SubAccount.transferringFromAccount")}: {row.TransferedFromSubAccountName}
 						</div>
-          </Box>
-          <Box className={clsx(classes.pt5)}>
-            {t("SubAccount.transferredToAccount")}: {row.TransferredToName}
-          </Box>
-          <Box className={clsx(classes.pt5)}>
-            {t("SubAccount.type")}: {t(`${get(CreditHistoryType, row.Type, '')}`)}
-          </Box>
-          <Box className={clsx(classes.pt5)}>
+					</Box>
+					<Box className={clsx(classes.pt5)}>
+						{t("SubAccount.transferredToAccount")}: {row.TransferredToName}
+					</Box>
+					<Box className={clsx(classes.pt5)}>
+						{t("SubAccount.type")}: {t(`${get(CreditHistoryType, row.Type, '')}`)}
+					</Box>
+					<Box className={clsx(classes.pt5)}>
 						{t('amount')}: <b>{row.Amount}</b>
-          </Box>
-          <Box className={clsx(classes.pt5)}>
-            <Typography className={classes.grayTextCell}>
-              {t('common.Dates')}: <b>{moment(row.Date).format(DateFormats.DATE_TIME_24)}</b>
-            </Typography>
-          </Box>
-        </TableCell>
-      </TableRow>
-    )
+					</Box>
+					<Box className={clsx(classes.pt5)}>
+						<Typography className={classes.grayTextCell}>
+							{t('common.Dates')}: <b>{moment(row.Date).format(DateFormats.DATE_TIME_24)}</b>
+						</Typography>
+					</Box>
+				</TableCell>
+			</TableRow>
+		)
 	}
 
 	const renderTableBody = () => {
-    if (history.length > 0) {
-      return (
-        <TableBody>
-          {history
-            .map((item: any, index: number) => SizeOptionsOfHandHeldDevices.indexOf(windowSize) > -1 ? renderPhoneRow(item) : renderRow(item))}
-        </TableBody>
-      )
-    }
-    return (
+		if (history.length > 0) {
+			return (
+				<TableBody>
+					{history
+						.map((item: any, index: number) => SizeOptionsOfHandHeldDevices.indexOf(windowSize) > -1 ? renderPhoneRow(item) : renderRow(item))}
+				</TableBody>
+			)
+		}
+		return (
 			<Box className={clsx(classes.p10)}>
 				<Grid container spacing={2} className={clsx(classes.flexJustifyCenter, classes.alignCenter, classes.textCenter, classes.pr25, classes.pe25)} style={{ minHeight: 70 }}>
 					{t('common.NoDataTryFilter')}
 				</Grid>
 			</Box>
 		)
-  }
+	}
 
 	const renderTable = () => {
-    return (
-      <TableContainer className={clsx(classes.tableStyle, classes.mt4, classes.mb15)} style={{ width: 'auto' }}>
-        <Table className={clsx(classes.tableContainer, classes.borderRadius30)}>
-          {SizeOptionsOfHandHeldDevices.indexOf(windowSize) === -1 && renderTableHead()}
-          {renderTableBody()}
-        </Table>
-      </TableContainer>
-    )
-  }
+		return (
+			<TableContainer className={clsx(classes.tableStyle, classes.mt4, classes.mb15)} style={{ width: 'auto' }}>
+				<Table className={clsx(classes.tableContainer, classes.borderRadius30)}>
+					{SizeOptionsOfHandHeldDevices.indexOf(windowSize) === -1 && renderTableHead()}
+					{renderTableBody()}
+				</Table>
+			</TableContainer>
+		)
+	}
 
 	const handleDownloadCsv = async (formatType: string) => {
 		setIsLoader(true);
-    setDialog(null);
+		setDialog(null);
 
 		const exportColumnHeader = {
 			"Date": t('common.Dates'),
@@ -390,41 +391,41 @@ const CreditHistory = ({ classes, id = '' }: any) => {
 					TransferredToName: record.TransferredToName
 				})
 			});
-    }
+		}
 
 		const deleteProperties = ["Status"];
 		if (isGlobal) {
 			deleteProperties.push("Type");
 			delete exportColumnHeader["Type"];
 		}
-		
+
 		const fields = { ...exportColumnHeader };
 		const exportOptions = {
-      OrderItems: true,
-      FormatDate: true,
-      ConvertStatusToString: true,
-      Order: Object.keys(exportColumnHeader),
-      DeleteProperties: deleteProperties
-    };
+			OrderItems: true,
+			FormatDate: true,
+			ConvertStatusToString: true,
+			Order: Object.keys(exportColumnHeader),
+			DeleteProperties: deleteProperties
+		};
 
-    try {
+		try {
 			// @ts-ignore
-      const result = await HandleExportData(listToExport, exportOptions);
-      
-      ExportFile({
-        data: result,
-        fileName: 'transaction-history',
-        exportType: formatType,
-        fields: fields
-      });
+			const result = await HandleExportData(listToExport, exportOptions);
 
-      setDialog(null)
-    } catch (error) {
-      console.log(error);
-    }
-    finally {
-      setIsLoader(false);
-    }
+			ExportFile({
+				data: result,
+				fileName: 'transaction-history',
+				exportType: formatType,
+				fields: fields
+			});
+
+			setDialog(null)
+		} catch (error) {
+			console.log(error);
+		}
+		finally {
+			setIsLoader(false);
+		}
 	}
 
 	return (
@@ -432,16 +433,16 @@ const CreditHistory = ({ classes, id = '' }: any) => {
 			{renderSearchSection()}
 			{renderTable()}
 			<ConfirmRadioDialog
-        classes={classes}
-        isOpen={dialogType === 'exportFormat'}
-        title={t('campaigns.exportFile')}
-        radioTitle={t('common.SelectFormat')}
-        onConfirm={(e: any) => handleDownloadCsv(e)}
-        onCancel={() => setDialog(null)}
-        cookieName={'exportFormat'}
-        defaultValue="xlsx"
-        options={ExportFileTypes}
-      />
+				classes={classes}
+				isOpen={dialogType === 'exportFormat'}
+				title={t('campaigns.exportFile')}
+				radioTitle={t('common.SelectFormat')}
+				onConfirm={(e: any) => handleDownloadCsv(e)}
+				onCancel={() => setDialog(null)}
+				cookieName={'exportFormat'}
+				defaultValue="xlsx"
+				options={ExportFileTypes}
+			/>
 			<Loader isOpen={isLoader} />
 		</>
 	);

@@ -865,5 +865,8 @@
   "hide": "Hide",
   "landingPageId": "Landing Page ID",
   "payAttention": "Pay attention!",
-  "allChannels": "All Channels"
+  "allChannels": "All Channels",
+  "internalError": "Internal Error",
+  "selectEmail": "Select Email",
+  "selectCellphone": "Select Cellphone"
 }

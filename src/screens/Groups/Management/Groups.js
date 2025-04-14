@@ -64,7 +64,7 @@ const Groups = ({ classes }) => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF';
-    const { language, windowSize, isRTL, rowsPerPage, CoreToastMessages } = useSelector(state => state.core)
+    const { language, windowSize, isRTL, rowsPerPage, CoreToastMessages, userRoles } = useSelector(state => state.core)
     const { accountFeatures } = useSelector(state => state.common);
     const { groupData, ToastMessages, subAccountAllGroups } = useSelector((state) => state.group);
     const { extraData } = useSelector(state => state.sms);
@@ -182,10 +182,10 @@ const Groups = ({ classes }) => {
         {
             label: t("recipient.sms/mms"),
             classes: cellStyle,
-            className: clsx(classes.flex3),
+            className: classes.flex3,
             align: "center",
         },
-        {
+        !userRoles?.HideRecipients && {
             label: "",
             classes: cellStyle,
             className: clsx(classes.flex5),
@@ -402,7 +402,7 @@ const Groups = ({ classes }) => {
         const colSize = windowSize === "xs" ? 12 : null;
         return (
             <Grid container spacing={2} className={classes.linePadding}>
-                <Grid item xs={colSize}>
+                {!userRoles?.HideRecipients && <Grid item xs={colSize}>
                     <Button
                         className={clsx(classes.btn, classes.btnRounded)}
                         endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
@@ -411,8 +411,8 @@ const Groups = ({ classes }) => {
                     >
                         {t("group.new")}
                     </Button>
-                </Grid>
-                <Grid item xs={colSize}>
+                </Grid>}
+                {!userRoles?.HideRecipients && <Grid item xs={colSize}>
                     <Button
                         className={clsx(classes.btn, classes.btnRounded, selectedGroups.length < 2 ? classes.disabled : null)}
                         endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
@@ -423,8 +423,8 @@ const Groups = ({ classes }) => {
                     >
                         {t("group.mergeGroup")}
                     </Button>
-                </Grid>
-                {windowSize !== "xs" && (
+                </Grid>}
+                {userRoles?.AllowDelete && windowSize !== "xs" && (
                     <Grid item>
                         <Button
                             className={clsx(classes.btn, classes.btnRounded)}
@@ -437,7 +437,7 @@ const Groups = ({ classes }) => {
                         </Button>
                     </Grid>
                 )}
-                <Grid item xs={colSize}>
+                {userRoles?.AllowDelete && <Grid item xs={colSize}>
                     <Button
                         className={clsx(classes.btn, classes.btnRounded)}
                         endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
@@ -445,8 +445,8 @@ const Groups = ({ classes }) => {
                     >
                         {t("recipient.deleteRecipient")}
                     </Button>
-                </Grid>
-                {accountFeatures && accountFeatures?.indexOf(PulseemFeatures.SIMPLY_CLUB) > -1 && (<Grid item xs={colSize}>
+                </Grid>}
+                {accountFeatures && accountFeatures?.indexOf(PulseemFeatures.SIMPLY_CLUB) > -1 && !userRoles?.HideRecipients && (<Grid item xs={colSize}>
                     <Button
                         className={clsx(classes.btn, classes.btnRounded)}
                         endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
@@ -457,7 +457,7 @@ const Groups = ({ classes }) => {
                     </Button>
                 </Grid>)}
                 {
-                    accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 &&
+                    userRoles?.AllowExport && accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 &&
                     <Grid item xs={colSize}>
                         <Button
                             className={clsx(classes.btn, classes.btnRounded)}
@@ -592,15 +592,17 @@ const Groups = ({ classes }) => {
                     ) > 0),
                 onClick:
                     (e) => {
-                        navigate(CLIENT_CONSTANTS.BASEURL, {
-                            state: {
-                                ...CLIENT_CONSTANTS.QUERY_PARAMS,
-                                PageType: CLIENT_CONSTANTS.PAGE_TYPES.ShowGroup,
-                                GroupIds: [GroupID],
-                                ResultTitle: GroupName,
-                                PageProperty: pageProperty.current
-                            }
-                        })
+                        if (!userRoles?.HideRecipients) {
+                            navigate(CLIENT_CONSTANTS.BASEURL, {
+                                state: {
+                                    ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                    PageType: CLIENT_CONSTANTS.PAGE_TYPES.ShowGroup,
+                                    GroupIds: [GroupID],
+                                    ResultTitle: GroupName,
+                                    PageProperty: pageProperty.current
+                                }
+                            })
+                        }
                     }
             },
             {
@@ -627,7 +629,7 @@ const Groups = ({ classes }) => {
                 key: 'reset',
                 uIcon: ResetIcon,
                 lable: t("recipient.reset"),
-                remove: windowSize === 'xs',
+                remove: !userRoles?.AllowDelete || windowSize === 'xs',
                 rootClass: classes.paddingIcon,
                 onClick: () => {
                     setSelectedGroups([GroupID])
@@ -660,6 +662,7 @@ const Groups = ({ classes }) => {
                 key: 'delete',
                 uIcon: DeleteIcon,
                 lable: t("recipient.delete"),
+                remove: !userRoles?.AllowDelete,
                 disable: (AutomationID || IsConnectedToWebForm || IsAutoResponder),
                 rootClass: classes.paddingIcon,
                 onClick: () => {
@@ -796,13 +799,13 @@ const Groups = ({ classes }) => {
                                                 name: t("campaigns.recipients"),
                                                 value: ((ActiveEmails || 0) + (RemovedEmails || 0) + (RestrictedEmails || 0) + (InvalidEmails || 0) + (PendingClients || 0)).toLocaleString(),
                                                 classes: {
-                                                    name: clsx(colorTextStyle.blue, classes.f09rem, classes.noDecoration),
-                                                    value: clsx(colorTextStyle.blue, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
+                                                    name: clsx(colorTextStyle.blue, classes.f09rem, classes.noDecoration, userRoles?.HideRecipients && classes.disabled),
+                                                    value: clsx(colorTextStyle.blue, classes.grpDataBoxText, classes.f09rem, classes.noDecoration, userRoles?.HideRecipients && classes.disabled),
                                                     href: ''
                                                 },
                                                 onClick: (e) => {
                                                     e?.preventDefault();
-                                                    if (((ActiveEmails || 0) + (RemovedEmails || 0) + (RestrictedEmails || 0) + (InvalidEmails || 0) + (PendingClients || 0)) > 0) {
+                                                    if (!userRoles?.HideRecipients && ((ActiveEmails || 0) + (RemovedEmails || 0) + (RestrictedEmails || 0) + (InvalidEmails || 0) + (PendingClients || 0)) > 0) {
                                                         navigate(CLIENT_CONSTANTS.BASEURL, {
                                                             state:
                                                             {
@@ -834,13 +837,13 @@ const Groups = ({ classes }) => {
                                                 name: t("recipient.Active"),
                                                 value: ActiveEmails.toLocaleString(),
                                                 classes: {
-                                                    name: clsx(colorTextStyle.green, classes.f09rem, classes.noDecoration),
-                                                    value: clsx(colorTextStyle.green, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
+                                                    name: clsx(colorTextStyle.green, classes.f09rem, classes.noDecoration, userRoles?.HideRecipients && classes.disabled),
+                                                    value: clsx(colorTextStyle.green, classes.grpDataBoxText, classes.f09rem, classes.noDecoration, userRoles?.HideRecipients && classes.disabled),
                                                     href: ''
                                                 },
                                                 onClick: (e) => {
                                                     e?.preventDefault();
-                                                    if ((ActiveEmails || 0) > 0) {
+                                                    if (!userRoles?.HideRecipients && (ActiveEmails || 0) > 0) {
                                                         navigate(CLIENT_CONSTANTS.BASEURL, {
                                                             state:
                                                             {
@@ -872,13 +875,13 @@ const Groups = ({ classes }) => {
                                                 name: t("recipient.Removed"),
                                                 value: RemovedEmails.toLocaleString(),
                                                 classes: {
-                                                    name: clsx(colorTextStyle.red, classes.f09rem, classes.noDecoration),
-                                                    value: clsx(colorTextStyle.red, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
+                                                    name: clsx(colorTextStyle.red, classes.f09rem, classes.noDecoration, userRoles?.HideRecipients && classes.disabled),
+                                                    value: clsx(colorTextStyle.red, classes.grpDataBoxText, classes.f09rem, classes.noDecoration, userRoles?.HideRecipients && classes.disabled),
                                                     href: ''
                                                 },
                                                 onClick: (e) => {
                                                     e?.preventDefault();
-                                                    if ((RemovedEmails || 0) > 0) {
+                                                    if (!userRoles?.HideRecipients && (RemovedEmails || 0) > 0) {
                                                         navigate(CLIENT_CONSTANTS.BASEURL, {
                                                             state:
                                                             {
@@ -911,13 +914,13 @@ const Groups = ({ classes }) => {
                                                 name: t("recipient.Bounced"),
                                                 value: InvalidEmails.toLocaleString(),
                                                 classes: {
-                                                    name: clsx(colorTextStyle.red, classes.f09rem, classes.noDecoration),
-                                                    value: clsx(colorTextStyle.red, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
+                                                    name: clsx(colorTextStyle.red, classes.f09rem, classes.noDecoration, userRoles?.HideRecipients && classes.disabled),
+                                                    value: clsx(colorTextStyle.red, classes.grpDataBoxText, classes.f09rem, classes.noDecoration, userRoles?.HideRecipients && classes.disabled),
                                                     href: ''
                                                 },
                                                 onClick: (e) => {
                                                     e?.preventDefault();
-                                                    if ((InvalidEmails || 0) > 0) {
+                                                    if (!userRoles?.HideRecipients && (InvalidEmails || 0) > 0) {
                                                         navigate(CLIENT_CONSTANTS.BASEURL, {
                                                             state:
                                                             {
@@ -950,13 +953,13 @@ const Groups = ({ classes }) => {
                                                 name: t("recipient.Pending"),
                                                 value: PendingClients.toLocaleString() || 0,
                                                 classes: {
-                                                    name: clsx(colorTextStyle.grey, classes.f09rem, classes.noDecoration),
-                                                    value: clsx(colorTextStyle.grey, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
+                                                    name: clsx(colorTextStyle.grey, classes.f09rem, classes.noDecoration, userRoles?.HideRecipients && classes.disabled),
+                                                    value: clsx(colorTextStyle.grey, classes.grpDataBoxText, classes.f09rem, classes.noDecoration, userRoles?.HideRecipients && classes.disabled),
                                                     href: ''
                                                 },
                                                 onClick: (e) => {
                                                     e?.preventDefault();
-                                                    if ((PendingClients || 0) > 0) {
+                                                    if (!userRoles?.HideRecipients && (PendingClients || 0) > 0) {
                                                         navigate(CLIENT_CONSTANTS.BASEURL, {
                                                             state:
                                                             {
@@ -999,13 +1002,13 @@ const Groups = ({ classes }) => {
                                                 name: t("campaigns.recipients"),
                                                 value: ((ActiveCell || 0) + (RemovedCell || 0) + (InvalidCell || 0) + (PendingSmsClients || 0)).toLocaleString(),
                                                 classes: {
-                                                    name: clsx(colorTextStyle.blue, classes.f09rem, classes.noDecoration),
-                                                    value: clsx(colorTextStyle.blue, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
+                                                    name: clsx(colorTextStyle.blue, classes.f09rem, classes.noDecoration, userRoles?.HideRecipients && classes.disabled),
+                                                    value: clsx(colorTextStyle.blue, classes.grpDataBoxText, classes.f09rem, classes.noDecoration, userRoles?.HideRecipients && classes.disabled),
                                                     href: ''
                                                 },
                                                 onClick: (e) => {
                                                     e?.preventDefault();
-                                                    if (((ActiveCell || 0) + (RemovedCell || 0) + (InvalidCell || 0) + (PendingSmsClients || 0)) > 0) {
+                                                    if (!userRoles?.HideRecipients((ActiveCell || 0) + (RemovedCell || 0) + (InvalidCell || 0) + (PendingSmsClients || 0)) > 0) {
                                                         navigate(CLIENT_CONSTANTS.BASEURL, {
                                                             state:
                                                             {
@@ -1037,13 +1040,13 @@ const Groups = ({ classes }) => {
                                                 name: t("recipient.Active"),
                                                 value: ActiveCell.toLocaleString(),
                                                 classes: {
-                                                    name: clsx(colorTextStyle.green, classes.f09rem, classes.noDecoration),
-                                                    value: clsx(colorTextStyle.green, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
+                                                    name: clsx(colorTextStyle.green, classes.f09rem, classes.noDecoration, userRoles?.HideRecipients && classes.disabled),
+                                                    value: clsx(colorTextStyle.green, classes.grpDataBoxText, classes.f09rem, classes.noDecoration, userRoles?.HideRecipients && classes.disabled),
                                                     href: ''
                                                 },
                                                 onClick: (e) => {
                                                     e?.preventDefault();
-                                                    if ((ActiveCell || 0) > 0) {
+                                                    if (!userRoles?.HideRecipients && (ActiveCell || 0) > 0) {
                                                         navigate(CLIENT_CONSTANTS.BASEURL, {
                                                             state:
                                                             {
@@ -1075,13 +1078,13 @@ const Groups = ({ classes }) => {
                                                 name: t("recipient.Removed"),
                                                 value: RemovedCell.toLocaleString(),
                                                 classes: {
-                                                    name: clsx(colorTextStyle.red, classes.f09rem, classes.noDecoration),
-                                                    value: clsx(colorTextStyle.red, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
+                                                    name: clsx(colorTextStyle.red, classes.f09rem, classes.noDecoration, userRoles?.HideRecipients && classes.disabled),
+                                                    value: clsx(colorTextStyle.red, classes.grpDataBoxText, classes.f09rem, classes.noDecoration, userRoles?.HideRecipients && classes.disabled),
                                                     href: ''
                                                 },
                                                 onClick: (e) => {
                                                     e?.preventDefault();
-                                                    if ((RemovedCell || 0) > 0) {
+                                                    if (!userRoles?.HideRecipients && (RemovedCell || 0) > 0) {
                                                         navigate(CLIENT_CONSTANTS.BASEURL, {
                                                             state:
                                                             {
@@ -1114,13 +1117,13 @@ const Groups = ({ classes }) => {
                                                 name: t("recipient.Bounced"),
                                                 value: InvalidCell.toLocaleString(),
                                                 classes: {
-                                                    name: clsx(colorTextStyle.red, classes.f09rem, classes.noDecoration),
-                                                    value: clsx(colorTextStyle.red, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
+                                                    name: clsx(colorTextStyle.red, classes.f09rem, classes.noDecoration, userRoles?.HideRecipients && classes.disabled),
+                                                    value: clsx(colorTextStyle.red, classes.grpDataBoxText, classes.f09rem, classes.noDecoration, userRoles?.HideRecipients && classes.disabled),
                                                     href: ''
                                                 },
                                                 onClick: (e) => {
                                                     e?.preventDefault();
-                                                    if ((InvalidCell || 0) > 0) {
+                                                    if (!userRoles?.HideRecipients && (InvalidCell || 0) > 0) {
                                                         navigate(CLIENT_CONSTANTS.BASEURL, {
                                                             state:
                                                             {
@@ -1153,13 +1156,13 @@ const Groups = ({ classes }) => {
                                                 name: t("recipient.Pending"),
                                                 value: PendingSmsClients.toLocaleString() || 0,
                                                 classes: {
-                                                    name: clsx(colorTextStyle.grey, classes.f09rem, classes.noDecoration),
-                                                    value: clsx(colorTextStyle.grey, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
+                                                    name: clsx(colorTextStyle.grey, classes.f09rem, classes.noDecoration, userRoles?.HideRecipients && classes.disabled),
+                                                    value: clsx(colorTextStyle.grey, classes.grpDataBoxText, classes.f09rem, classes.noDecoration, userRoles?.HideRecipients && classes.disabled),
                                                     href: ''
                                                 },
                                                 onClick: (e) => {
                                                     e?.preventDefault();
-                                                    if ((PendingSmsClients || 0) > 0) {
+                                                    if (!userRoles?.HideRecipients && (PendingSmsClients || 0) > 0) {
                                                         navigate(CLIENT_CONSTANTS.BASEURL, {
                                                             state:
                                                             {
@@ -1189,13 +1192,13 @@ const Groups = ({ classes }) => {
                         align="center"
                     />
                 </TableCell>
-                <TableCell
+                {!userRoles?.HideRecipients && <TableCell
                     classes={noBorderCellStyle}
                     align="center"
                     className={clsx(classes.flex5, classes.p0)}
                 >
                     {renderCellIcons(row)}
-                </TableCell>
+                </TableCell>}
             </TableRow>
         )
 
@@ -1251,13 +1254,13 @@ const Groups = ({ classes }) => {
                                                 name: t("campaigns.recipients"),
                                                 value: TotalRecipients?.toLocaleString(),
                                                 classes: {
-                                                    name: colorTextStyle.blue,
-                                                    value: colorTextStyle.blue,
+                                                    name: clsx(colorTextStyle.blue, userRoles?.HideRecipients && classes.disabled),
+                                                    value: clsx(colorTextStyle.blue, userRoles?.HideRecipients && classes.disabled),
                                                     href: ''
                                                 },
                                                 onClick: (e) => {
                                                     e?.preventDefault();
-                                                    if (((ActiveEmails || 0) + (RemovedEmails || 0) + (RestrictedEmails || 0) + (InvalidEmails || 0)) > 0) {
+                                                    if (!userRoles?.HideRecipients && ((ActiveEmails || 0) + (RemovedEmails || 0) + (RestrictedEmails || 0) + (InvalidEmails || 0)) > 0) {
                                                         navigate(CLIENT_CONSTANTS.BASEURL, {
                                                             state:
                                                             {
@@ -1286,13 +1289,13 @@ const Groups = ({ classes }) => {
                                                 name: t("recipient.Active"),
                                                 value: ActiveEmails?.toLocaleString(),
                                                 classes: {
-                                                    name: colorTextStyle.green,
-                                                    value: colorTextStyle.green,
+                                                    name: clsx(colorTextStyle.green, userRoles?.HideRecipients && classes.disabled),
+                                                    value: clsx(colorTextStyle.green, userRoles?.HideRecipients && classes.disabled),
                                                     href: ''
                                                 },
                                                 onClick: (e) => {
                                                     e?.preventDefault();
-                                                    if ((ActiveEmails || 0) > 0) {
+                                                    if (!userRoles?.HideRecipients && (ActiveEmails || 0) > 0) {
                                                         navigate(CLIENT_CONSTANTS.BASEURL, {
                                                             state:
                                                             {
@@ -1321,13 +1324,13 @@ const Groups = ({ classes }) => {
                                                 name: t("recipient.Removed"),
                                                 value: RemovedEmails?.toLocaleString(),
                                                 classes: {
-                                                    name: colorTextStyle.red,
-                                                    value: colorTextStyle.red,
+                                                    name: clsx(colorTextStyle.red, userRoles?.HideRecipients && classes.disabled),
+                                                    value: clsx(colorTextStyle.red, userRoles?.HideRecipients && classes.disabled),
                                                     href: ''
                                                 },
                                                 onClick: (e) => {
                                                     e?.preventDefault();
-                                                    if ((RemovedEmails || 0) > 0) {
+                                                    if (!userRoles?.HideRecipients && (RemovedEmails || 0) > 0) {
                                                         navigate(CLIENT_CONSTANTS.BASEURL, {
                                                             state:
                                                             {
@@ -1357,13 +1360,13 @@ const Groups = ({ classes }) => {
                                                 name: t("recipient.Bounced"),
                                                 value: InvalidEmails?.toLocaleString(),
                                                 classes: {
-                                                    name: colorTextStyle.red,
-                                                    value: colorTextStyle.red,
+                                                    name: clsx(colorTextStyle.red, userRoles?.HideRecipients && classes.disabled),
+                                                    value: clsx(colorTextStyle.red, userRoles?.HideRecipients && classes.disabled),
                                                     href: ''
                                                 },
                                                 onClick: (e) => {
                                                     e?.preventDefault();
-                                                    if ((InvalidEmails || 0) > 0) {
+                                                    if (!userRoles?.HideRecipients && (InvalidEmails || 0) > 0) {
                                                         navigate(CLIENT_CONSTANTS.BASEURL, {
                                                             state:
                                                             {
@@ -1392,13 +1395,13 @@ const Groups = ({ classes }) => {
                                                 name: t("recipient.Pending"),
                                                 value: PendingClients?.toLocaleString() || 0,
                                                 classes: {
-                                                    name: colorTextStyle.grey,
-                                                    value: colorTextStyle.grey,
+                                                    name: clsx(colorTextStyle.grey, userRoles?.HideRecipients && classes.disabled),
+                                                    value: clsx(colorTextStyle.grey, userRoles?.HideRecipients && classes.disabled),
                                                     href: ''
                                                 },
                                                 onClick: (e) => {
                                                     e?.preventDefault();
-                                                    if ((PendingSmsClients || 0) > 0) {
+                                                    if (!userRoles?.HideRecipients && (PendingSmsClients || 0) > 0) {
                                                         navigate(CLIENT_CONSTANTS.BASEURL, {
                                                             state:
                                                             {
@@ -1438,13 +1441,13 @@ const Groups = ({ classes }) => {
                                                 name: t("campaigns.recipients"),
                                                 value: TotalRecipients?.toLocaleString(),
                                                 classes: {
-                                                    name: colorTextStyle.blue,
-                                                    value: colorTextStyle.blue,
+                                                    name: clsx(colorTextStyle.blue, userRoles?.HideRecipients && classes.disabled),
+                                                    value: clsx(colorTextStyle.blue, userRoles?.HideRecipients && classes.disabled),
                                                     href: ''
                                                 },
                                                 onClick: (e) => {
                                                     e?.preventDefault();
-                                                    if (((ActiveCell || 0) + (RemovedCell || 0) + (InvalidCell || 0)) > 0) {
+                                                    if (!userRoles?.HideRecipients && ((ActiveCell || 0) + (RemovedCell || 0) + (InvalidCell || 0)) > 0) {
                                                         navigate(CLIENT_CONSTANTS.BASEURL, {
                                                             state:
                                                             {
@@ -1473,13 +1476,13 @@ const Groups = ({ classes }) => {
                                                 name: t("recipient.Active"),
                                                 value: ActiveCell?.toLocaleString(),
                                                 classes: {
-                                                    name: colorTextStyle.green,
-                                                    value: colorTextStyle.green,
+                                                    name: clsx(colorTextStyle.green, userRoles?.HideRecipients && classes.disabled),
+                                                    value: clsx(colorTextStyle.green, userRoles?.HideRecipients && classes.disabled),
                                                     href: ''
                                                 },
                                                 onClick: (e) => {
                                                     e?.preventDefault();
-                                                    if ((ActiveCell || 0) > 0) {
+                                                    if (!userRoles?.HideRecipients && (ActiveCell || 0) > 0) {
                                                         navigate(CLIENT_CONSTANTS.BASEURL, {
                                                             state:
                                                             {
@@ -1508,13 +1511,13 @@ const Groups = ({ classes }) => {
                                                 name: t("recipient.Removed"),
                                                 value: RemovedCell?.toLocaleString(),
                                                 classes: {
-                                                    name: colorTextStyle.red,
-                                                    value: colorTextStyle.red,
+                                                    name: clsx(colorTextStyle.red, userRoles?.HideRecipients && classes.disabled),
+                                                    value: clsx(colorTextStyle.red, userRoles?.HideRecipients && classes.disabled),
                                                     href: ''
                                                 },
                                                 onClick: (e) => {
                                                     e?.preventDefault();
-                                                    if ((RemovedCell || 0) > 0) {
+                                                    if (!userRoles?.HideRecipients && (RemovedCell || 0) > 0) {
                                                         navigate(CLIENT_CONSTANTS.BASEURL, {
                                                             state:
                                                             {
@@ -1543,13 +1546,13 @@ const Groups = ({ classes }) => {
                                                 name: t("recipient.Bounced"),
                                                 value: InvalidCell?.toLocaleString(),
                                                 classes: {
-                                                    name: colorTextStyle.red,
-                                                    value: colorTextStyle.red,
+                                                    name: clsx(colorTextStyle.red, userRoles?.HideRecipients && classes.disabled),
+                                                    value: clsx(colorTextStyle.red, userRoles?.HideRecipients && classes.disabled),
                                                     href: ''
                                                 },
                                                 onClick: (e) => {
                                                     e?.preventDefault();
-                                                    if ((InvalidCell || 0) > 0) {
+                                                    if (!userRoles?.HideRecipients && (InvalidCell || 0) > 0) {
                                                         navigate(CLIENT_CONSTANTS.BASEURL, {
                                                             state:
                                                             {
@@ -1578,13 +1581,13 @@ const Groups = ({ classes }) => {
                                                 name: t("recipient.Pending"),
                                                 value: PendingSmsClients?.toLocaleString() || 0,
                                                 classes: {
-                                                    name: colorTextStyle.grey,
-                                                    value: colorTextStyle.grey,
+                                                    name: clsx(colorTextStyle.grey, userRoles?.HideRecipients && classes.disabled),
+                                                    value: clsx(colorTextStyle.grey, userRoles?.HideRecipients && classes.disabled),
                                                     href: ''
                                                 },
                                                 onClick: (e) => {
                                                     e?.preventDefault();
-                                                    if ((PendingClients || 0) > 0) {
+                                                    if (!userRoles?.HideRecipients && (PendingClients || 0) > 0) {
                                                         navigate(CLIENT_CONSTANTS.BASEURL, {
                                                             state:
                                                             {

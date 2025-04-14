@@ -165,7 +165,7 @@ const LanguageSelector = ({ windowSize, classes }) => {
   ]
 
   const item = {
-    title: <Box className={clsx(classes.flex, classes.justifyEvenly)} ><BsGlobe2 style={{ marginInline: 6 }} /> <p>{(languages && languages.find(lang => lang.value.toLocaleLowerCase() === language.toLocaleLowerCase()).title) ?? ''}</p></Box>,
+    title: <Box className={clsx(classes.flex, classes.justifyEvenly)} ><BsGlobe2 style={{ marginInline: 6 }} /> <p>{(languages && languages.find(lang => lang.value.toLocaleLowerCase() === language.toLocaleLowerCase())?.title) ?? ''}</p></Box>,
     options: languages
   }
 
@@ -193,7 +193,7 @@ const LanguageSelector = ({ windowSize, classes }) => {
 export const TopAppBar = ({ classes, currentPage = '', showAppBar = true }) => {
   const Redirect = useRedirect();
 
-  const { windowSize, isRTL, imageURL, cameFromSubAccount, isAdmin, isAllowSwitchAccount, isClal } = useSelector(state => state.core) // smsOldVersion
+  const { windowSize, isRTL, imageURL, cameFromSubAccount, isAdmin, isAllowSwitchAccount, isClal, userRoles } = useSelector(state => state.core) // smsOldVersion
   const { accountSettings, accountFeatures, subAccount } = useSelector(state => state.common);
   const phoneMenuButtonRef = useRef(null)
   const [open, setOpen] = useState(false)
@@ -211,9 +211,9 @@ export const TopAppBar = ({ classes, currentPage = '', showAppBar = true }) => {
   }
   const { t } = useTranslation();
   const { username } = useSelector(state => state.user)
-  const routes = getRoutes(t, isClal, accountFeatures, accountSettings, windowSize, isRTL) // smsOldVersion
+  const routes = getRoutes(t, isClal, accountFeatures, accountSettings, windowSize, isRTL, userRoles) // smsOldVersion
   const settings = getSettingsItem(t, classes.appBarSettingIcon,
-    (isAllowSwitchAccount && (isAllowSwitchAccount.toLowerCase() === 'true' || isAdmin !== '')), username.length > 20 ? `${username.slice(0, 20)}...` : username, isRTL, accountSettings, accountFeatures, get(subAccount, 'CompanyAdmin', false))
+    (isAllowSwitchAccount && (isAllowSwitchAccount.toLowerCase() === 'true' || isAdmin !== '')), username.length > 20 ? `${username.slice(0, 20)}...` : username, isRTL, accountSettings, accountFeatures, get(subAccount, 'CompanyAdmin', false), userRoles)
 
   const returnToAdmin = () => {
     window.location = '/Pulseem/ReactRedirect.aspx';

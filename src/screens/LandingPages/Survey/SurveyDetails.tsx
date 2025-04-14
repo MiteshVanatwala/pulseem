@@ -31,7 +31,7 @@ const SurveyDetails = ({ classes }: any) => {
   const { t } = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
-  const { windowSize, isRTL } = useSelector((state: StateType) => state.core);
+  const { windowSize, isRTL, userRoles } = useSelector((state: StateType) => state.core);
   const [showLoader, setShowLoader] = useState<boolean>(true);
   const cookie_colorPalette = getCookie('chartsColorPalette');
   // const cookie_surveyGridSize = getCookie('surveyGridSize');
@@ -204,7 +204,7 @@ const SurveyDetails = ({ classes }: any) => {
                   </>
                   } */}
                 </Box>
-                <Button
+                {userRoles?.AllowExport && !userRoles?.HideRecipients && <Button
                   onClick={onExportSurvey}
                   className={clsx(
                     windowSize !== "xs" ? classes.implementButtonFlex : classes.mt10,
@@ -213,7 +213,7 @@ const SurveyDetails = ({ classes }: any) => {
                   style={{ alignSelf: 'flex-end' }}
                   endIcon={<FaFileExcel className={clsx(classes.f25)} />}>
                   {t('master.download')}
-                </Button>
+                </Button>}
                 <Button
                   onClick={() => {
                     navigate(`${sitePrefix}EditRegistrationPage`, {

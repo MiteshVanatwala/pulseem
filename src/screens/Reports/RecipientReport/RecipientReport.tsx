@@ -36,7 +36,7 @@ import { ExportFile } from '../../../helpers/Export/ExportFile';
 import { DateFormats } from '../../../helpers/Constants';
 
 const RecipientReport = ({ classes }: any) => {
-  const { windowSize, isRTL } = useSelector((state: any) => state.core);
+  const { windowSize, isRTL, userRoles } = useSelector((state: any) => state.core);
   const { recipientsReportData } = useSelector((state: any) => state.recipientReports)
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -1075,7 +1075,7 @@ const RecipientReport = ({ classes }: any) => {
           {t('common.recipientGroups')}
         </div>
       </Grid>
-      <Grid item md={1} className={clsx(classes.flexGrow1, classes.pt20)}>
+      {userRoles?.AllowExport && <Grid item md={1} className={clsx(classes.flexGrow1, classes.pt20)}>
         <Button
           onClick={() => setDialogType({ type: 'exportFormat', data: '' })}
           className={clsx(classes.btn, classes.btnRounded, classes.mt1)}
@@ -1083,7 +1083,7 @@ const RecipientReport = ({ classes }: any) => {
           endIcon={<FaFileExcel className={clsx(classes.f25)} />}>
           {t('master.download')}
         </Button>
-      </Grid>
+      </Grid>}
     </Grid>
   }
 

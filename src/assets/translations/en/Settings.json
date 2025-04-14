@@ -150,6 +150,7 @@
 		"oldPassword": "Old Password",
 		"newPassword": "New Password",
 		"confirmPassword": "Confirm Password",
+		"enterNewPassword": "Enter new password",
 		"error": {
 			"required": "Required field",
 			"notMatch": "Password confirmation doesnt match"

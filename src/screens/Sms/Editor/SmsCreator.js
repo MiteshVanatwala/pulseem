@@ -124,7 +124,7 @@ const SmsCreator = ({ classes }) => {
 
   const Redirect = useRedirect();
   const dispatch = useDispatch();
-  const { windowSize, isRTL, CoreToastMessages } = useSelector(
+  const { windowSize, isRTL, CoreToastMessages, userRoles } = useSelector(
     (state) => state.core
   );
   const {
@@ -1120,7 +1120,7 @@ const SmsCreator = ({ classes }) => {
         <div
           className={classes.testDiv}
         >
-          <FormControlLabel
+          {userRoles?.AllowSend && <FormControlLabel
             control={
               <PulseemSwitch
                 switchType='ios'
@@ -1142,7 +1142,7 @@ const SmsCreator = ({ classes }) => {
                 {t("mainReport.testDesc")}
               </span>
             </div>}
-          />
+          />}
         </div>
         {checked ? (
           <div className={classes.testRadios}>
@@ -1517,7 +1517,7 @@ const SmsCreator = ({ classes }) => {
   const renderButtons = () => {
     return (
       <div style={isRTL ? { marginRight: "auto" } : { marginLeft: "auto", paddingBottom: 40 }} className={clsx(classes.baseButtonsContainer, "baseButtonsContainer")}>
-        <Button
+        {userRoles?.AllowDelete && <Button
           className={clsx(
             classes.btn,
             classes.btnRounded,
@@ -1526,7 +1526,7 @@ const SmsCreator = ({ classes }) => {
           onClick={() => { setDialogType({ type: 'deleteSms' }) }}
         >
           <BsTrash style={{ fontSize: "18", marginInlineStart: 0, color: '#000', padding: '3px' }} />
-        </Button>
+        </Button>}
         <Button
           className={clsx(
             classes.btn,

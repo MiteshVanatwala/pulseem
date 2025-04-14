@@ -1,6 +1,15 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { setCookie, getCookie } from '../../helpers/Functions/cookies'
+import { eSubUserPermissions, UserRoles } from '../../Models/SubUser/SubUsers';
 const rtlLanguages = ['he', 'ar']
+
+export const isSuperUserSelector = (permissions) => {
+  if (permissions.indexOf(-1) > -1) return true;
+  const adminPermissions = [1, 2, 3];
+  return adminPermissions?.every(permission =>
+    permissions?.indexOf(permission) > -1
+  );
+};
 
 export const coreSlice = createSlice({
   name: 'core',
@@ -21,10 +30,38 @@ export const coreSlice = createSlice({
     billingTypeId: null,
     accountFeatures: null,
     isDebtAccount: null,
+    userRoles: UserRoles?.Admin,
+    subUserPermissions: [],
     CoreToastMessages: {
       XSS_ERROR: { severity: 'error', color: 'error', message: 'common.xssError', showAnimtionCheck: false }
     },
     isLoader: false,
+    subUserName: '',
+    subUserObject: {
+      Data: {
+        UserName: '',
+        Emails: [
+          {
+            Id: 0,
+            TwoFactorAuthTypeID: 1,
+            AuthValue: "",
+            CreatedDate: "0001-01-01T00:00:00",
+            IsDeleted: false,
+            AddToFromValues: false
+          }
+        ],
+        Cellphones: [
+          {
+            Id: 0,
+            TwoFactorAuthTypeID: 2,
+            AuthValue: "",
+            CreatedDate: "0001-01-01T00:00:00",
+            IsDeleted: false,
+            AddToFromValues: false
+          }
+        ]
+      }
+    }
   },
   reducers: {
     setIsClal: (state, action) => {
@@ -53,6 +90,33 @@ export const coreSlice = createSlice({
       state.isAllowSwitchAccount = payload.isAllowSwitchAccount
       state.billingTypeId = payload.billingTypeId
       state.isDebtAccount = (payload.isDebtAccount === true || payload.isDebtAccount === 'True')
+
+      const userToken = payload?.unique_name ? JSON.parse(payload?.unique_name) : -1;
+
+      const isSuperUser = isSuperUserSelector(userToken?.UserPermissions);
+      const isReadOnly = userToken?.UserPermissions?.indexOf(4) > -1;
+      state.subUserName = userToken?.Name;
+      state.subUserObject.Data.UserName = userToken?.Name;
+      state.subUserObject.Data.Emails[0].AuthValue = userToken?.Email;
+      state.subUserObject.Data.Cellphones[0].AuthValue = userToken?.Cellphone;
+
+      if (isSuperUser) {
+        state.userRoles = UserRoles.Admin;
+      }
+      else if (isReadOnly) {
+        state.userRoles = UserRoles.ReadOnly;
+      }
+      else {
+        const roles = {
+          ...UserRoles,
+          Restricted: {
+            AllowSend: userToken.UserPermissions.indexOf(eSubUserPermissions.AllowSend) > -1,
+            AllowExport: userToken.UserPermissions.indexOf(eSubUserPermissions.AllowExport) > -1,
+            AllowDelete: userToken.UserPermissions.indexOf(eSubUserPermissions.AllowDelete) > -1
+          }
+        }
+        state.userRoles = roles.Restricted;
+      }
     },
     setIsLoader: (state, { payload }) => {
       state.isLoader = payload
@@ -60,6 +124,7 @@ export const coreSlice = createSlice({
   }
 })
 
+export const selectUserObject = (state) => state.core.subUserObject;
 export const { setLanguage, setWindowSize, setCoreData, setRowsPerPage, setIsClal, setIsLoader } = coreSlice.actions // setSmsOldVersion
 
 export default coreSlice.reducer

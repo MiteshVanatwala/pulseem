@@ -25,7 +25,7 @@ const WizardActions = ({
     ignorePaddingBottom = false
 }) => {
     const { t } = useTranslation();
-    const { isRTL, windowSize } = useSelector(state => state.core);
+    const { isRTL, windowSize, userRoles } = useSelector(state => state.core);
     return (
         <Grid container style={{ ...innerStyle }}
             className={disabled ? classes.disableChildButtons : null}>
@@ -47,7 +47,7 @@ const WizardActions = ({
                         {
                             helperText && <span className={clsx(classes.paddingSides5, classes.semibold)}>{helperText}</span>
                         }
-                        {onDelete &&
+                        {userRoles?.AllowDelete && onDelete &&
                             <Button
                                 className={clsx(
                                     classes.btn,
@@ -81,7 +81,7 @@ const WizardActions = ({
                                 {t("common.imageGallery")}
                             </Button>
                         }
-                        {onTestSend &&
+                        {onTestSend && userRoles?.AllowSend &&
                             <Button
                                 onClick={() => onTestSend()}
                                 style={{ marginInline: 8, paddingInline: 10 }}

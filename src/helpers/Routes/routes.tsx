@@ -25,6 +25,7 @@ import { WhatsappIcon } from '../../assets/images/drawer/index';
 import { PulseemFeatures } from '../../model/PulseemFields/Fields';
 import { WhiteLabelObject } from '../../components/WhiteLabel/WhiteLabelMigrate';
 import { MdOutlineWhatsapp } from 'react-icons/md';
+import { UserRoles } from '../../Models/SubUser/SubUsers';
 // export const rootDomain = !isProdMode ? 'http://localhost:58123' : '/Pulseem/';
 export const rootDomain = '/Pulseem';
 
@@ -36,22 +37,24 @@ export const getSettingsItem = (
   isRTL: Boolean = false,
   accountSettings: any,
   features: any = null,
-  companyAdmin: boolean = false
+  companyAdmin: boolean = false,
+  userRoles: any = null
 ) => ({
   key: "settings",
   title: title,
   href: `${sitePrefix}AccountSettings`,
   options: [
-    { key: 'accountSettings', title: t('master.RadMenuItemResource2.Text'), href: `${sitePrefix}AccountSettings`, iconSrc: SettingsMenuIcon, isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount },
-    { key: 'billingSettings', title: t('master.linkAccountBilling.Text'), href: `${sitePrefix}BillingSettings`, iconSrc: DolarMenuIcon, isShow: companyAdmin && !accountSettings?.SubAccountSettings?.IsTokenAccount },
-    { key: 'affiliateManagement', title: t('master.affiliateManagement'), href: `${sitePrefix}AffiliateManagement`, iconSrc: DolarMenuIcon, isShow: features && features?.indexOf(PulseemFeatures.AFFILIATE) > -1 && !accountSettings?.SubAccountSettings?.IsTokenAccount },
-    { title: t('master.RadMenuItemResource3.Text'), href: `${sitePrefix}AccountUsers`, iconSrc: GroupMenuIcon, isShow: companyAdmin && !accountSettings?.SubAccountSettings?.IsTokenAccount },
-    { title: t('master.RadMenuItemResource4.Text'), href: `${rootDomain}/AccountUsersReport.aspx?fromreact=true`, iconSrc: GrafMenuIcon, isShow: companyAdmin && !accountSettings?.SubAccountSettings?.IsTokenAccount },
+    { key: 'accountSettings', title: t('master.RadMenuItemResource2.Text'), href: `${sitePrefix}AccountSettings`, iconSrc: SettingsMenuIcon, isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount && userRoles === UserRoles.Admin },
+    { key: 'billingSettings', title: t('master.linkAccountBilling.Text'), href: `${sitePrefix}BillingSettings`, iconSrc: DolarMenuIcon, isShow: companyAdmin && !accountSettings?.SubAccountSettings?.IsTokenAccount && userRoles === UserRoles.Admin },
+    { key: 'affiliateManagement', title: t('master.affiliateManagement'), href: `${sitePrefix}AffiliateManagement`, iconSrc: DolarMenuIcon, isShow: features && features?.indexOf(PulseemFeatures.AFFILIATE) > -1 && !accountSettings?.SubAccountSettings?.IsTokenAccount && userRoles === UserRoles.Admin },
+    { key: 'accountUsers', title: t('master.RadMenuItemResource3.Text'), href: `${sitePrefix}AccountUsers`, iconSrc: GroupMenuIcon, isShow: companyAdmin && !accountSettings?.SubAccountSettings?.IsTokenAccount && userRoles === UserRoles.Admin },
+    { title: t('master.RadMenuItemResource4.Text'), href: `${rootDomain}/AccountUsersReport.aspx?fromreact=true`, iconSrc: GrafMenuIcon, isShow: companyAdmin && !accountSettings?.SubAccountSettings?.IsTokenAccount && userRoles === UserRoles.Admin },
     { title: t('master.RadMenuItemResource23.Text'), href: `${sitePrefix}AccountSettings/ExtraFields`, iconSrc: StarMenuIcon, isShow: true },
     //@ts-ignore
-    { title: t('master.linkApiSettingsResource1.Text'), href: `${sitePrefix}ApiSettings`, iconSrc: CodeMenuIcon, isShow: (!accountSettings?.SubAccountSettings?.IsTokenAccount && (WhiteLabelObject[accountSettings?.Account?.ReferrerID] === undefined || !accountSettings?.Account?.ReferrerID || accountSettings?.Account?.ReferrerID === 0)) ? true : false },
-    { key: 'SiteTracking', title: t('master.siteTracking'), href: `${sitePrefix}SiteTracking`, iconSrc: FaBinoculars, isFaIcon: true, isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount },
-    { key: 'Integrations', title: t('integrations.title'), href: `${sitePrefix}Integrations`, iconSrc: SettingsMenuIcon, isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount },
+    { title: t('master.linkApiSettingsResource1.Text'), href: `${sitePrefix}ApiSettings`, iconSrc: CodeMenuIcon, isShow: userRoles.AllowSend && (!accountSettings?.SubAccountSettings?.IsTokenAccount && (WhiteLabelObject[accountSettings?.Account?.ReferrerID] === undefined || !accountSettings?.Account?.ReferrerID || accountSettings?.Account?.ReferrerID === 0)) ? true : false },
+    { key: 'SiteTracking', title: t('master.siteTracking'), href: `${sitePrefix}SiteTracking`, iconSrc: FaBinoculars, isFaIcon: true, isShow: userRoles.AllowSend && !accountSettings?.SubAccountSettings?.IsTokenAccount },
+    { key: 'Integrations', title: t('integrations.title'), href: `${sitePrefix}Integrations`, iconSrc: SettingsMenuIcon, isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount && userRoles.AllowSend },
+    { key: 'SubUsers', title: t('SubUsers.title'), href: `${sitePrefix}SubUsers`, iconSrc: SettingsMenuIcon, isShow: true },
     //@ts-ignore
     { key: 'Guides', title: t('common.UserGuides'), href: `https://site.pulseem.co.il/%D7%9E%D7%93%D7%A8%D7%99%D7%9B%D7%99%D7%9D/`, iconSrc: SettingsMenuIcon, isShow: (!accountSettings?.SubAccountSettings?.IsTokenAccount && (WhiteLabelObject[accountSettings?.Account?.ReferrerID] === undefined || !accountSettings?.Account?.ReferrerID || accountSettings?.Account?.ReferrerID === 0)) ? true : false, openInNewWindow: true },
     { title: t("appBar.logout"), onClick: logout, iconSrc: isRTL ? HiArrowLeft : HiArrowRight, isFaIcon: true, isShow: true },
@@ -65,7 +68,8 @@ export const getRoutes = (
   features: any = null,
   accountSettings: any = null,
   windowSize: string | number | null = null,
-  isRTL: Boolean = false
+  isRTL: Boolean = false,
+  userRoles: any = null
 ) => [
     // smsOldVersion
     {
@@ -94,7 +98,7 @@ export const getRoutes = (
           key: 'clientSearch',
           title: t("client.logPageHeaderResource1.search"),
           href: `${sitePrefix}ClientSearch`,
-          isShow: true,
+          isShow: !userRoles?.HideRecipients
         },
         {
           title: t("master.RadMenuItemResource37.Text"),
@@ -411,14 +415,14 @@ export const getRoutes = (
         // { title: t('master.AbTestsReport.Text'), href: `${rootDomain}/AbTestsReport.aspx?fromreact=true`, isShow: true },
         { title: t('master.RadMenuItemResource15.Text'), href: `${rootDomain}/AccountReport.aspx?fromreact=true`, isShow: true },
         { title: t('master.RadMenuItemResource16.Text'), href: `${rootDomain}/CampaignComparison.aspx?fromreact=true`, isShow: false },
-        { key: 'recipientReport', title: t('master.RadMenuItemResource18.Text'), href: `${sitePrefix}Reports/Recipient`, isShow: true },
+        { key: 'recipientReport', title: t('master.RadMenuItemResource18.Text'), href: `${sitePrefix}Reports/Recipient`, isShow: !userRoles?.HideRecipients },
         { title: t('master.RadMenuItemResource30.Text'), href: `${rootDomain}/EmailAutoReports.aspx?fromreact=true`, isShow: true },
         { title: t('master.locRemovedReason.Text'), href: `${rootDomain}/RemovedStats.aspx?fromreact=true`, isShow: true },
         { key: 'productsReport', title: t('report.ProductsReport.products'), href: `${sitePrefix}Reports/ProductsReport`, isShow: true },
-        { key: 'directSendReport', title: t('report.DirectSendReport'), href: `${sitePrefix}Reports/DirectSendReport`, isShow: accountSettings && accountSettings?.IsDirectAccount === true },
-        { key: 'directSendReportArchive', title: t('report.ArchiveDirectSendReport'), href: `${sitePrefix}Reports/DirectSendReport/Archive`, isShow: accountSettings && accountSettings?.IsDirectAccount === true },
+        { key: 'directSendReport', title: t('report.DirectSendReport'), href: `${sitePrefix}Reports/DirectSendReport`, isShow: accountSettings && accountSettings?.IsDirectAccount === true && !userRoles?.HideRecipients },
+        { key: 'directSendReportArchive', title: t('report.ArchiveDirectSendReport'), href: `${sitePrefix}Reports/DirectSendReport/Archive`, isShow: accountSettings && accountSettings?.IsDirectAccount === true && !userRoles?.HideRecipients },
         { title: t('master.OpenedClickedReport'), href: `${rootDomain}/EmailCampaignStatistics.aspx?fromreact=true`, isShow: true },
-        { key: 'inboundMessages', title: t('master.responses'), href: `${sitePrefix}Reports/Inbound`, isShow: true },
+        { key: 'inboundMessages', title: t('master.responses'), href: `${sitePrefix}Reports/Inbound`, isShow: !userRoles?.HideRecipients },
       ],
     },
     { key: 'termOfUse', title: t('TermsOfUse.title'), href: `${sitePrefix}TermsOfUse`, iconSrc: '', isShow: false }

@@ -68,7 +68,7 @@ const DynamicGroups = ({ classes }: any) => {
     const { extraData } = useSelector((state: any) => state.sms);
     const { accountFeatures } = useSelector((state: any) => state.common);
     const { groupData, ToastMessages, subAccountAllGroups } = useSelector((state: any) => state.group);
-    const { language, windowSize, isRTL, rowsPerPage, CoreToastMessages } = useSelector((state: any) => state.core)
+    const { language, windowSize, isRTL, rowsPerPage, CoreToastMessages, userRoles } = useSelector((state: any) => state.core)
     const [selectedGroups, setSelectedGroups] = useState<any>([]);
     const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot) };
     const cellStyle = { head: classes.tableCellHead, body: classes.tableCellBody, root: clsx(classes.tableCellRoot) };
@@ -365,7 +365,7 @@ const DynamicGroups = ({ classes }: any) => {
                         {t("group.new")}
                     </Button>
                 </Grid>
-                {windowSize !== "xs" && (
+                {userRoles?.AllowDelete && windowSize !== "xs" && (
                     <Grid item>
                         <Button
                             className={clsx(classes.btn, classes.btnRounded)}
@@ -379,7 +379,7 @@ const DynamicGroups = ({ classes }: any) => {
                     </Grid>
                 )}
                 {
-                    accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 &&
+                    userRoles?.AllowExport && accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 &&
                     <Grid item xs={colSize}>
                         <Button
                             className={clsx(classes.btn, classes.btnRounded)}
@@ -483,7 +483,7 @@ const DynamicGroups = ({ classes }: any) => {
                 lable: t("recipient.preview"),
                 remove: windowSize === 'xs',
                 rootClass: classes.paddingIcon,
-                disable: !((
+                disable: userRoles?.HideRecipients || !((
                     (ActiveEmails || 0) +
                     (RemovedEmails || 0) +
                     (RestrictedEmails || 0) +
@@ -499,16 +499,18 @@ const DynamicGroups = ({ classes }: any) => {
                     ) > 0),
                 onClick:
                     (e: any) => {
-                        navigate(CLIENT_CONSTANTS.BASEURL, {
-                            state: {
-                                ...CLIENT_CONSTANTS.QUERY_PARAMS,
-                                PageType: CLIENT_CONSTANTS.PAGE_TYPES.ShowGroup,
-                                GroupIds: [GroupID],
-                                ResultTitle: GroupName,
-                                PageProperty: pageProperty.current,
-                                IsDynamic: true
-                            }
-                        })
+                        if (!userRoles?.HideRecipients) {
+                            navigate(CLIENT_CONSTANTS.BASEURL, {
+                                state: {
+                                    ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                    PageType: CLIENT_CONSTANTS.PAGE_TYPES.ShowGroup,
+                                    GroupIds: [GroupID],
+                                    ResultTitle: GroupName,
+                                    PageProperty: pageProperty.current,
+                                    IsDynamic: true
+                                }
+                            })
+                        }
                     }
             },
             {
@@ -524,7 +526,7 @@ const DynamicGroups = ({ classes }: any) => {
                 key: 'reset',
                 uIcon: ResetIcon,
                 lable: t("recipient.reset"),
-                remove: windowSize === 'xs',
+                remove: !userRoles?.AllowDelete || windowSize === 'xs',
                 rootClass: classes.paddingIcon,
                 onClick: () => {
                     setSelectedGroups([GroupID])
@@ -557,6 +559,7 @@ const DynamicGroups = ({ classes }: any) => {
                 key: 'delete',
                 uIcon: DeleteIcon,
                 lable: t("recipient.delete"),
+                remove: !userRoles?.AllowDelete,
                 disable: (AutomationID || IsConnectedToWebForm || IsAutoResponder),
                 rootClass: classes.paddingIcon,
                 onClick: () => {
@@ -571,7 +574,7 @@ const DynamicGroups = ({ classes }: any) => {
             <Grid
                 container
                 direction={windowSize === 'sm' ? 'column' : 'row'}
-                justifyContent={windowSize === 'xs' ? 'flex-start' : 'space-between'}
+                justifyContent={windowSize === 'xs' ? 'flex-start' : 'center'}
                 className={classes.paddingSides15}
             >
                 {iconsMap.map(icon => (
@@ -612,13 +615,13 @@ const DynamicGroups = ({ classes }: any) => {
                 name: t("campaigns.recipients"),
                 value: ((ActiveEmails || 0) + (RemovedEmails || 0) + (RestrictedEmails || 0) + (InvalidEmails || 0) + (PendingClients || 0))?.toLocaleString(),
                 classes: {
-                    name: isMobile ? colorTextStyle.blue : clsx(colorTextStyle.blue, classes.f09rem, classes.noDecoration),
-                    value: isMobile ? colorTextStyle.blue : clsx(colorTextStyle.blue, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
+                    name: isMobile ? colorTextStyle.blue : clsx(colorTextStyle.blue, classes.f09rem, classes.noDecoration, userRoles?.HideRecipients && classes.disabled),
+                    value: isMobile ? colorTextStyle.blue : clsx(colorTextStyle.blue, classes.grpDataBoxText, classes.f09rem, classes.noDecoration, userRoles?.HideRecipients && classes.disabled),
                     href: ''
                 },
                 onClick: (e: any) => {
                     e?.preventDefault();
-                    if (((ActiveEmails || 0) + (RemovedEmails || 0) + (RestrictedEmails || 0) + (InvalidEmails || 0) + (PendingClients || 0)) > 0) {
+                    if (!userRoles?.HideRecipients && ((ActiveEmails || 0) + (RemovedEmails || 0) + (RestrictedEmails || 0) + (InvalidEmails || 0) + (PendingClients || 0)) > 0) {
                         navigate(CLIENT_CONSTANTS.BASEURL, {
                             state:
                             {
@@ -641,13 +644,13 @@ const DynamicGroups = ({ classes }: any) => {
                 name: t("recipient.Active"),
                 value: ActiveEmails?.toLocaleString(),
                 classes: {
-                    name: isMobile ? colorTextStyle.green : clsx(colorTextStyle.green, classes.f09rem, classes.noDecoration),
-                    value: isMobile ? colorTextStyle.green : clsx(colorTextStyle.green, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
+                    name: isMobile ? colorTextStyle.green : clsx(colorTextStyle.green, classes.f09rem, classes.noDecoration, userRoles?.HideRecipients && classes.disabled),
+                    value: isMobile ? colorTextStyle.green : clsx(colorTextStyle.green, classes.grpDataBoxText, classes.f09rem, classes.noDecoration, userRoles?.HideRecipients && classes.disabled),
                     href: ''
                 },
                 onClick: (e: any) => {
                     e?.preventDefault();
-                    if ((ActiveEmails || 0) > 0) {
+                    if (!userRoles?.HideRecipients && (ActiveEmails || 0) > 0) {
                         navigate(CLIENT_CONSTANTS.BASEURL, {
                             state:
                             {
@@ -670,13 +673,13 @@ const DynamicGroups = ({ classes }: any) => {
                 name: t("recipient.Removed"),
                 value: RemovedEmails?.toLocaleString(),
                 classes: {
-                    name: isMobile ? colorTextStyle.red : clsx(colorTextStyle.red, classes.f09rem, classes.noDecoration),
-                    value: isMobile ? colorTextStyle.red : clsx(colorTextStyle.red, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
+                    name: isMobile ? colorTextStyle.red : clsx(colorTextStyle.red, classes.f09rem, classes.noDecoration, userRoles?.HideRecipients && classes.disabled),
+                    value: isMobile ? colorTextStyle.red : clsx(colorTextStyle.red, classes.grpDataBoxText, classes.f09rem, classes.noDecoration, userRoles?.HideRecipients && classes.disabled),
                     href: ''
                 },
                 onClick: (e: any) => {
                     e?.preventDefault();
-                    if ((RemovedEmails || 0) > 0) {
+                    if (!userRoles?.HideRecipients && (RemovedEmails || 0) > 0) {
                         navigate(CLIENT_CONSTANTS.BASEURL, {
                             state:
                             {
@@ -699,13 +702,13 @@ const DynamicGroups = ({ classes }: any) => {
                 name: t("recipient.Bounced"),
                 value: InvalidEmails?.toLocaleString(),
                 classes: {
-                    name: isMobile ? colorTextStyle.red : clsx(colorTextStyle.red, classes.f09rem, classes.noDecoration),
-                    value: isMobile ? colorTextStyle.red : clsx(colorTextStyle.red, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
+                    name: isMobile ? colorTextStyle.red : clsx(colorTextStyle.red, classes.f09rem, classes.noDecoration, userRoles?.HideRecipients && classes.disabled),
+                    value: isMobile ? colorTextStyle.red : clsx(colorTextStyle.red, classes.grpDataBoxText, classes.f09rem, classes.noDecoration, userRoles?.HideRecipients && classes.disabled),
                     href: ''
                 },
                 onClick: (e: any) => {
                     e?.preventDefault();
-                    if ((InvalidEmails || 0) > 0) {
+                    if (!userRoles?.HideRecipients && (InvalidEmails || 0) > 0) {
                         navigate(CLIENT_CONSTANTS.BASEURL, {
                             state:
                             {
@@ -728,13 +731,13 @@ const DynamicGroups = ({ classes }: any) => {
                 name: t("recipient.Pending"),
                 value: PendingClients?.toLocaleString() || 0,
                 classes: {
-                    name: isMobile ? colorTextStyle.grey : clsx(colorTextStyle.grey, classes.f09rem, classes.noDecoration),
-                    value: isMobile ? colorTextStyle.grey : clsx(colorTextStyle.grey, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
+                    name: isMobile ? colorTextStyle.grey : clsx(colorTextStyle.grey, classes.f09rem, classes.noDecoration, userRoles?.HideRecipients && classes.disabled),
+                    value: isMobile ? colorTextStyle.grey : clsx(colorTextStyle.grey, classes.grpDataBoxText, classes.f09rem, classes.noDecoration, userRoles?.HideRecipients && classes.disabled),
                     href: ''
                 },
                 onClick: (e: any) => {
                     e?.preventDefault();
-                    if ((PendingClients || 0) > 0) {
+                    if (!userRoles?.HideRecipients && (PendingClients || 0) > 0) {
                         navigate(CLIENT_CONSTANTS.BASEURL, {
                             state:
                             {
@@ -757,13 +760,13 @@ const DynamicGroups = ({ classes }: any) => {
                 name: t("campaigns.recipients"),
                 value: ((ActiveCell || 0) + (RemovedCell || 0) + (InvalidCell || 0) + (PendingSmsClients || 0))?.toLocaleString(),
                 classes: {
-                    name: isMobile ? colorTextStyle.blue : clsx(colorTextStyle.blue, classes.f09rem, classes.noDecoration),
-                    value: isMobile ? colorTextStyle.blue : clsx(colorTextStyle.blue, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
+                    name: isMobile ? colorTextStyle.blue : clsx(colorTextStyle.blue, classes.f09rem, classes.noDecoration, userRoles?.HideRecipients && classes.disabled),
+                    value: isMobile ? colorTextStyle.blue : clsx(colorTextStyle.blue, classes.grpDataBoxText, classes.f09rem, classes.noDecoration, userRoles?.HideRecipients && classes.disabled),
                     href: ''
                 },
                 onClick: (e: any) => {
                     e?.preventDefault();
-                    if (((ActiveCell || 0) + (RemovedCell || 0) + (InvalidCell || 0) + (PendingSmsClients || 0)) > 0) {
+                    if (!userRoles?.HideRecipients && ((ActiveCell || 0) + (RemovedCell || 0) + (InvalidCell || 0) + (PendingSmsClients || 0)) > 0) {
                         navigate(CLIENT_CONSTANTS.BASEURL, {
                             state:
                             {
@@ -786,13 +789,13 @@ const DynamicGroups = ({ classes }: any) => {
                 name: t("recipient.Active"),
                 value: ActiveCell?.toLocaleString(),
                 classes: {
-                    name: isMobile ? colorTextStyle.green : clsx(colorTextStyle.green, classes.f09rem, classes.noDecoration),
-                    value: isMobile ? colorTextStyle.green : clsx(colorTextStyle.green, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
+                    name: isMobile ? colorTextStyle.green : clsx(colorTextStyle.green, classes.f09rem, classes.noDecoration, userRoles?.HideRecipients && classes.disabled),
+                    value: isMobile ? colorTextStyle.green : clsx(colorTextStyle.green, classes.grpDataBoxText, classes.f09rem, classes.noDecoration, userRoles?.HideRecipients && classes.disabled),
                     href: ''
                 },
                 onClick: (e: any) => {
                     e?.preventDefault();
-                    if ((ActiveCell || 0) > 0) {
+                    if (!userRoles?.HideRecipients && (ActiveCell || 0) > 0) {
                         navigate(CLIENT_CONSTANTS.BASEURL, {
                             state:
                             {
@@ -815,13 +818,13 @@ const DynamicGroups = ({ classes }: any) => {
                 name: t("recipient.Removed"),
                 value: RemovedCell?.toLocaleString(),
                 classes: {
-                    name: isMobile ? colorTextStyle.red : clsx(colorTextStyle.red, classes.f09rem, classes.noDecoration),
-                    value: isMobile ? colorTextStyle.red : clsx(colorTextStyle.red, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
+                    name: isMobile ? colorTextStyle.red : clsx(colorTextStyle.red, classes.f09rem, classes.noDecoration, userRoles?.HideRecipients && classes.disabled),
+                    value: isMobile ? colorTextStyle.red : clsx(colorTextStyle.red, classes.grpDataBoxText, classes.f09rem, classes.noDecoration, userRoles?.HideRecipients && classes.disabled),
                     href: ''
                 },
                 onClick: (e: any) => {
                     e?.preventDefault();
-                    if ((RemovedCell || 0) > 0) {
+                    if (!userRoles?.HideRecipients && (RemovedCell || 0) > 0) {
                         navigate(CLIENT_CONSTANTS.BASEURL, {
                             state:
                             {
@@ -844,13 +847,13 @@ const DynamicGroups = ({ classes }: any) => {
                 name: t("recipient.Bounced"),
                 value: InvalidCell?.toLocaleString(),
                 classes: {
-                    name: isMobile ? colorTextStyle.red : clsx(colorTextStyle.red, classes.f09rem, classes.noDecoration),
-                    value: isMobile ? colorTextStyle.red : clsx(colorTextStyle.red, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
+                    name: isMobile ? colorTextStyle.red : clsx(colorTextStyle.red, classes.f09rem, classes.noDecoration, userRoles?.HideRecipients && classes.disabled),
+                    value: isMobile ? colorTextStyle.red : clsx(colorTextStyle.red, classes.grpDataBoxText, classes.f09rem, classes.noDecoration, userRoles?.HideRecipients && classes.disabled),
                     href: ''
                 },
                 onClick: (e: any) => {
                     e?.preventDefault();
-                    if ((InvalidCell || 0) > 0) {
+                    if (!userRoles?.HideRecipients && (InvalidCell || 0) > 0) {
                         navigate(CLIENT_CONSTANTS.BASEURL, {
                             state:
                             {
@@ -873,13 +876,13 @@ const DynamicGroups = ({ classes }: any) => {
                 name: t("recipient.Pending"),
                 value: PendingSmsClients?.toLocaleString() || 0,
                 classes: {
-                    name: isMobile ? colorTextStyle.grey : clsx(colorTextStyle.grey, classes.f09rem, classes.noDecoration),
-                    value: isMobile ? colorTextStyle.grey : clsx(colorTextStyle.grey, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
+                    name: isMobile ? colorTextStyle.grey : clsx(colorTextStyle.grey, classes.f09rem, classes.noDecoration, userRoles?.HideRecipients && classes.disabled),
+                    value: isMobile ? colorTextStyle.grey : clsx(colorTextStyle.grey, classes.grpDataBoxText, classes.f09rem, classes.noDecoration, userRoles?.HideRecipients && classes.disabled),
                     href: ''
                 },
                 onClick: (e: any) => {
                     e?.preventDefault();
-                    if ((PendingSmsClients || 0) > 0) {
+                    if (!userRoles?.HideRecipients && (PendingSmsClients || 0) > 0) {
                         navigate(CLIENT_CONSTANTS.BASEURL, {
                             state:
                             {

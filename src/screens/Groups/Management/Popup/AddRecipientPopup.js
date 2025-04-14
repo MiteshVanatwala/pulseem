@@ -102,7 +102,7 @@ const AddRecipientPopup = ({ classes,
     const dispatch = useDispatch();
     const localClasses = useStyles()
     const { extraData } = useSelector((state) => state.sms);
-    const { isRTL } = useSelector((state) => state.core);
+    const { isRTL, userRoles } = useSelector((state) => state.core);
     const { countryCodeList, isGlobal } = useSelector((state) => state.common);
     const [addRecipientData, setAddRecipientData] = useState(DEFAULT_RECIPIENT_DATA);
     const [showLaoder, setLoader] = useState(false)
@@ -279,21 +279,21 @@ const AddRecipientPopup = ({ classes,
 
             return;
         }
-        
+
         if (data.ClientsData.Email && !IsValidEmail(data.ClientsData.Email)) {
             tempError.Email = t(ADD_RECIPIENT_REQUIRED_ERRORS.Email)
             setErrors({ ...tempError })
             setExpandedIndexes([0]);
             return
         }
-        
+
         if (data.ClientsData.Cellphone && (isGlobal ? !IsValidPhoneNumberWithCountryCode(data.ClientsData.Cellphone, countryCodeList) : !IsValidNonGlobalPhoneNumber(data.ClientsData.Cellphone))) {
             tempError.Cellphone = t(ADD_RECIPIENT_REQUIRED_ERRORS.Cellphone)
             setErrors({ ...tempError })
             setExpandedIndexes([0]);
             return
         }
-        
+
         if (!recipientData && selectedGroups.length === 0 && selectedLocalGroups.length === 0) {
             tempError.Groups = t(ADD_RECIPIENT_REQUIRED_ERRORS.Groups)
             setErrors({ ...tempError })
@@ -1070,6 +1070,11 @@ const AddRecipientPopup = ({ classes,
                 dropdown
                 dropDownProps={{
                     onChange: (e, val, reason, details) => {
+                        if (!userRoles?.AllowDelete) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            return false;
+                        }
                         if (reason === "remove-option" || val.length === 0) {
                             handleRemoveFromGroups(recipientData?.Cellphone || recipientData?.Email, reason === "remove-option" ? [details?.option?.GroupID] : selectedLocalGroups)
                         }

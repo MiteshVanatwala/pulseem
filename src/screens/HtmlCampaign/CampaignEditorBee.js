@@ -60,6 +60,7 @@ import { getCategories, GetProductsList } from '../../redux/reducers/productSlic
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 import { NO_IMAGE_URL } from '../../helpers/Constants';
 import { logout } from '../../helpers/Api/PulseemReactAPI';
+import { UserRoles } from '../../Models/SubUser/SubUsers';
 
 const CampaignEditor = ({ classes, ...props }) => {
   //#region State
@@ -76,7 +77,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   const { productList } = useSelector(state => state.product)
   const { campaign, userBlocks, ToastMessages, beeToken, publicTemplates, templatesBySubAccount } = useSelector(state => state.campaignEditor);
   const { extraData, previousLandingData } = useSelector(state => state.sms);
-  const { language, isRTL } = useSelector(state => state.core)
+  const { language, isRTL, userRoles } = useSelector(state => state.core)
   const { tokenAlive, accountSettings, accountFeatures, verifiedEmails } = useSelector(state => state.common)
   const { productCategories } = useSelector(state => state.product);
   const [dialog, setDialog] = useState(null);
@@ -285,7 +286,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       isLocal: true,
       behaviors: {
         canEdit: true,
-        canDelete: true,
+        canDelete: userRoles?.AllowDelete,
       }
     }]
     if (tags && tags?.length > 0) {
@@ -299,7 +300,7 @@ const CampaignEditor = ({ classes, ...props }) => {
             isLocal: true,
             behaviors: {
               canEdit: true,
-              canDelete: true,
+              canDelete: userRoles?.AllowDelete,
             },
           };
           tempRows.push(tagObj);
@@ -1171,7 +1172,7 @@ const CampaignEditor = ({ classes, ...props }) => {
             text: t('campaigns.newsletterSetUp')
           }
         }
-        onDelete={fromLink?.toLowerCase() !== 'autoresponder' && onDelete}
+        onDelete={userRoles?.AllowDelete && fromLink?.toLowerCase() !== 'autoresponder' && onDelete}
         // onShowGallery={() => { setShowGallery(true) }}
         onShowDocuments={() => { setShowDocuments(true) }}
         additionalButtons={renderButtons()}

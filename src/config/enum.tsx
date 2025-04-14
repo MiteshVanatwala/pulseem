@@ -33,6 +33,11 @@ export enum ProductDetails {
   Price = '#price#'
 }
 
+export enum PermissionTypes {
+  Admin = 'Admin',
+  LimitedAccess = 'LimitedAccess',
+  ReadOnly = 'ReadOnly'
+}
 export enum WhatsappCampaignStatus {
   META_BUSINESS_NOTVERIFIED = 11,
   META_PHONENUMBER_NOTVERIFIED = 12

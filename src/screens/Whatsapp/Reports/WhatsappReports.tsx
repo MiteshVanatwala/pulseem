@@ -65,7 +65,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 	const { t: translator } = useTranslation();
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
-	const { isRTL, windowSize, rowsPerPage } = useSelector(
+	const { isRTL, windowSize, rowsPerPage, userRoles } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
 	const { accountFeatures, currencySymbol, isCurrencySymbolPrefix } = useSelector(
@@ -242,6 +242,10 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 	};
 
 	const onTableCellClick = (cellName: string, campaignId: number) => {
+		if (userRoles?.HideRecipients) {
+			return;
+		}
+
 		const pageTypeRequest: PageTypeRequest = {
 			Failed: CLIENT_CONSTANTS.PAGE_TYPES.WhatsappFailed,
 			Read: CLIENT_CONSTANTS.PAGE_TYPES.WhatsappRead,
@@ -307,9 +311,9 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 					)}>
 					{amountCell.includes(cellName)
 						? (
-							cellName === reportCellNames.REVENUE ? 
-							`${ isCurrencySymbolPrefix ? currencySymbol : '' } ${cellValue ? cellValue.toFixed(2) : '0'}  ${ !isCurrencySymbolPrefix ? currencySymbol : '' }`
-							: `${cellValue ? cellValue.toFixed(2) : '0'} ${translator('common.NIS')}`
+							cellName === reportCellNames.REVENUE ?
+								`${isCurrencySymbolPrefix ? currencySymbol : ''} ${cellValue ? cellValue.toFixed(2) : '0'}  ${!isCurrencySymbolPrefix ? currencySymbol : ''}`
+								: `${cellValue ? cellValue.toFixed(2) : '0'} ${translator('common.NIS')}`
 						)
 						: cellValue || '0'
 					}
@@ -559,7 +563,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 		return (
 			<Grid container spacing={2} className={clsx(classes.linePadding, classes.pb10)}>
 				{
-					windowSize !== 'xs' && (
+					userRoles?.AllowExport && windowSize !== 'xs' && (
 						<Grid item>
 							<Button
 								className={clsx(
@@ -734,7 +738,8 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 					align='center'
 					className={clsx(
 						classes.tableCellBody,
-						classes.flex2
+						classes.flex2,
+						userRoles?.HideRecipients && classes.disabled
 					)}>
 					<Grid container justifyContent='space-around'>
 						<Grid item>
@@ -766,7 +771,8 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 						classes.tableCellBody,
 						`${report?.Read >= 1 && classes.underline}`,
 						classes.flex1,
-						classes.greenTextColor
+						classes.greenTextColor,
+						userRoles?.HideRecipients && classes.disabled
 					)}>
 					{getTableTypographyCells(
 						translator('whatsappReport.read'),
@@ -782,7 +788,8 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 					className={clsx(
 						classes.tableCellBody,
 						classes.flex2,
-						classes.blueTextColor
+						classes.blueTextColor,
+						userRoles?.HideRecipients && classes.disabled
 					)}>
 					<Grid container justifyContent='space-around'>
 						<Grid item>
@@ -814,7 +821,8 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 					className={clsx(
 						classes.tableCellBody,
 						classes.flex2,
-						`${!hasRevenue && classes.tableCellNoBorder}`
+						`${!hasRevenue && classes.tableCellNoBorder}`,
+						userRoles?.HideRecipients && classes.disabled
 					)}>
 					<Grid container justifyContent='space-around'>
 						<Grid
@@ -855,16 +863,17 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 					className={clsx(
 						classes.tableCellBody,
 						classes.flex1,
-						classes.revenueTableCell
+						classes.revenueTableCell,
+						userRoles?.HideRecipients && classes.disabled
 					)}>
-						<Typography className={clsx(classes.middleText)}>
-							{getTableTypographyCells(
-								translator('whatsappReport.cost'),
-								report?.Cost,
-								reportCellNames.COST,
-								report
-							)}
-						</Typography>
+					<Typography className={clsx(classes.middleText)}>
+						{getTableTypographyCells(
+							translator('whatsappReport.cost'),
+							report?.Cost,
+							reportCellNames.COST,
+							report
+						)}
+					</Typography>
 					{/* {getTableTypographyCells(
 						translator('whatsappReport.cost'),
 						report?.Cost,
@@ -884,7 +893,8 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 							`${report && report?.Revenue > 0
 								? classes.revenueTableCellPointer
 								: ''
-							}`
+							}`,
+							userRoles?.HideRecipients && classes.disabled
 						)}>
 						{getTableTypographyCells(
 							translator('common.revenue'),

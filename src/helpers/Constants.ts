@@ -259,6 +259,8 @@ export const NoAuthenticationAPIs = [
     'User/ResendEmail',
     'User/CheckRef',
     'User/SetupNewEmail',
+    'User/CheckSubUserRef',
+    'User/ConfirmSubUser',
     'User/SaveInfoAccounts',
     'User/GetStepWiseAccountInfo'
 ]

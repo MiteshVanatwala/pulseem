@@ -124,7 +124,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const params = useParams();
     const severe = useSnackSevere();
     const recipientSuccess = useSnackRecipients();
-    const { isRTL } = useSelector((state) => state.core);
+    const { isRTL, userRoles } = useSelector((state) => state.core);
     const { verifiedEmails, WhatsAppPlatformID } = useSelector(state => state.common);
     const { subAccountAllGroups } = useSelector((state) => state.group);
     const { previousCampaignData, testGroups } = useSelector((state) => state.sms);
@@ -778,7 +778,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                     color="primary"
                 >{t("common.save")}
                 </Button>
-                <Button
+                {userRoles?.AllowSend && <Button
                     variant='contained'
                     size='medium'
                     className={clsx(
@@ -818,7 +818,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                     }}
                 >
                     {t("mainReport.summary")}
-                </Button>
+                </Button>}
             </>
         );
     }
@@ -1171,7 +1171,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                         justifyContent="flex-start"
                                         className={classes.wizardFlex}
                                     >
-                                        <Stack className={classes.tabDiv} direction="row" justifyContent="space-around">
+                                        <Stack className={classes.tabDiv} direction="row" justifyContent="space-around" style={{ gridTemplateColumns: !userRoles?.HideRecipients ? '100%' : '50% 50%' }}>
                                             <Stack key={`tabTitle0`}
                                                 justifyContent="center"
                                                 direction="row"
@@ -1186,7 +1186,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                                     {t("mainReport.groups")}
                                                 </span>
                                             </Stack>
-                                            <Stack key={`tabTitle1`}
+                                            {!userRoles?.HideRecipients && <Stack key={`tabTitle1`}
                                                 justifyContent="center"
                                                 direction="row"
                                                 className={
@@ -1206,7 +1206,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                                         <BsInfoCircle />
                                                     </IconButton>
                                                 </Tooltip>
-                                            </Stack>
+                                            </Stack>}
                                         </Stack>
                                     </Stack>
                                     <Stack justifyContent="center" >
@@ -1226,7 +1226,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                                 innerHeight={325}
                                             />
                                         }
-                                        {activeTab === 1 && <Stack
+                                        {activeTab === 1 && !userRoles?.HideRecipients && <Stack
                                         >
                                             <UploadXL
                                                 classes={classes}
@@ -1265,7 +1265,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                                 }
                                             />
                                         </Stack>}
-                                        {activeTab === 0 && <Stack className={classes.groupsFooter}>
+                                        {activeTab === 0 && !userRoles?.HideRecipients && <Stack className={classes.groupsFooter}>
                                             <Stack direction="column">
                                                 <Stack direction="row" justifyContent="space-between">
                                                     <Stack
