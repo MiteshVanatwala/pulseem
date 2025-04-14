@@ -118,19 +118,19 @@ export const DASHBOARD_SHORTCUT = {
       }
     ]
   },
-  'appBar.mms.title': {
-    title: "appBar.mms.title",
-    pages: [
-      {
-        title: 'common.CreateMMS',
-        link: '/Pulseem/MmsCampaignEdit.aspx'
-      },
-      {
-        title: 'dashboard.mmsManagement',
-        link: '/react/MmsCampaigns'
-      }
-    ],
-  },
+  // 'appBar.mms.title': {
+  //   title: "appBar.mms.title",
+  //   pages: [
+  //     {
+  //       title: 'common.CreateMMS',
+  //       link: '/Pulseem/MmsCampaignEdit.aspx'
+  //     },
+  //     {
+  //       title: 'dashboard.mmsManagement',
+  //       link: '/react/MmsCampaigns'
+  //     }
+  //   ],
+  // },
   'appBar.landingPages.title': {
     title: "appBar.landingPages.title",
     pages: [
@@ -155,10 +155,10 @@ export const DASHBOARD_SHORTCUT = {
         title: 'master.RadMenuItemResource24.Text',
         link: '/react/reports/SMSMainReport'
       },
-      {
-        title: 'master.MmsMainReport.Text',
-        link: '/react/reports/MMSMainReport'
-      },
+      // {
+      //   title: 'master.MmsMainReport.Text',
+      //   link: '/react/reports/MMSMainReport'
+      // },
       // {
       //   title: 'master.AbTestsReport.Text',
       //   link: '/Pulseem/AbTestsReport.aspx'
