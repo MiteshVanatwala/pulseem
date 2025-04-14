@@ -118,19 +118,19 @@ export const DASHBOARD_SHORTCUT = {
       }
     ]
   },
-  'appBar.mms.title': {
-    title: "appBar.mms.title",
-    pages: [
-      {
-        title: 'common.CreateMMS',
-        link: '/Pulseem/MmsCampaignEdit.aspx'
-      },
-      {
-        title: 'dashboard.mmsManagement',
-        link: '/react/MmsCampaigns'
-      }
-    ],
-  },
+  // 'appBar.mms.title': {
+  //   title: "appBar.mms.title",
+  //   pages: [
+  //     {
+  //       title: 'common.CreateMMS',
+  //       link: '/Pulseem/MmsCampaignEdit.aspx'
+  //     },
+  //     {
+  //       title: 'dashboard.mmsManagement',
+  //       link: '/react/MmsCampaigns'
+  //     }
+  //   ],
+  // },
   'appBar.landingPages.title': {
     title: "appBar.landingPages.title",
     pages: [
