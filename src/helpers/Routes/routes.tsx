@@ -224,22 +224,22 @@ export const getRoutes = (
           title: t("master.chatbotSMS"),
           href: `${rootDomain}/SMSSmartResponses.aspx?fromreact=true`,
           isShow: true,
-        }
+        },
         // {
         //   title: t("master.linkSMSResponsesReport.Text"),
         //   href: `${sitePrefix}reports/Inbound`,
         //   isShow: true,
         // },
-        // {
-        //   title: t("master.NewMMSCampaign.Text"),
-        //   href: `${rootDomain}/MmsCampaignEdit.aspx?fromreact=true`,
-        //   isShow: true,
-        // },
-        // {
-        //   title: t("master.MmsCampaignMnage.Text"),
-        //   href: `${sitePrefix}MmsCampaigns`,
-        //   isShow: true,
-        // }
+        {
+          title: t("master.NewMMSCampaign.Text"),
+          href: `${rootDomain}/MmsCampaignEdit.aspx?fromreact=true`,
+          isShow: features && features?.indexOf(PulseemFeatures.MMS) > -1,
+        },
+        {
+          title: t("master.MmsCampaignMnage.Text"),
+          href: `${sitePrefix}MmsCampaigns`,
+          isShow: features && features?.indexOf(PulseemFeatures.MMS) > -1,
+        }
       ],
     },
     {
