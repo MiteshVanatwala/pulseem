@@ -9,10 +9,10 @@
   "eraseDataDescription4": "כתוצאה מכך, ייתכן שלא תקבלו עוד הודעות חשובות, כולל עדכונים, התראות שירות או מידע תפעולי חיוני.",
   "eraseDataDescription5": "קראתי והבנתי את ההשלכות וברצוני למחוק את כל המידע שלי.",
   "YesEraseData": "כן, מחקו את המידע שלי",
-  "enterOTP": "Enter OTP",
-  "enterValidOTP": "Enter Valid OTP",
-  "enterOTPPlaceholder": "Enter the OTP sent to your email/phone",
-  "otpVerificationFailed": "OTP verification failed. Please try again.",
-  "validateOTP": "Validate OTP",
-  "dataDeletionBegins": "We have received your request to delete your data. We will notify you via an email on completion."
+  "enterOTP": "הזינו קוד אימות",
+  "enterValidOTP": "הזינו קוד אימות תקף",
+  "enterOTPPlaceholder": "הזינו את קוד האימות שנשלח אליכם בדוא\"ל / בטלפון",
+  "otpVerificationFailed": "אימות הקוד נכשל. אנא נסו שוב.",
+  "validateOTP": "אימות קוד",
+  "dataDeletionBegins": "קיבלנו את הבקשה למחיקת המידע האישי שלכם. תישלח אליכם הודעת דוא\"ל עם סיום התהליך."
 }
