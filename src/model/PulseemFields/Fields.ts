@@ -185,5 +185,8 @@ export const PulseemFeatures = {
   AFFILIATE: '59',
   WhatsAppOnboardingVirtualNumbers: '61',
   DisableTermOfUse: '62',
-  DuplicateOldCampaignToBee: '63'
+  DuplicateOldCampaignToBee: '63',
+  NewAPIEmailKosher: '64',
+  WhatsNew: '65',
+  MMS: '66'
 }
