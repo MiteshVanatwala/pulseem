@@ -78,7 +78,6 @@ import CreateLandingPage from './screens/LandingPages/Wizard/CreateLandingPage';
 import ExtraFields from './screens/Settings/ExtraFields/ExtraFields';
 import { isSignupPage, isSubUserConfirmationPage } from './helpers/Utils/common';
 import './helpers/global';
-import SignUp from './screens/SignUp/SignUp.tsx';
 import SurveyDetails from './screens/LandingPages/Survey/SurveyDetails';
 import WebformSummary from './screens/LandingPages/Wizard/WebformSummary';
 import HtmlPreview from './screens/Preview/HtmlPreview';
@@ -96,6 +95,7 @@ import CreateAutomationTemplate from './screens/Automations/CreateAutomation';
 import SignUpNew from './screens/SignUp/SignUpNew';
 import { UserRoles } from './Models/SubUser/SubUsers';
 import { PulseemFeatures } from './model/PulseemFields/Fields';
+import RemoveMyData from './screens/RemoveMyData/RemoveMyData';
 
 const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
   const transferUrl =
@@ -123,6 +123,11 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
         exact
         path={`${sitePrefix}UserConfirmation`}
         element={<SubUserConfirmationPage classes={classes} />}
+      />
+      <Route
+        exact
+        path={`${sitePrefix}remove-my-data`}
+        element={<RemoveMyData classes={classes} />}
       />
       <Route
         exact

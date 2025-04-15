@@ -994,13 +994,13 @@ const SignUpNew = ({ classes }: any) => {
 
   const languageSelector = () => {
     return (
-      <FormControl variant='standard' className={clsx(classes.SignUpLanguageDropdown, classes.bgWhite, classes.mb10)}>
+      <FormControl variant='standard' className={clsx(classes.SignUpLanguageDropdown, classes.bgWhite, classes.mb10)} style={{ direction: isRTL ? 'ltr' : 'rtl' }}>
         <Select
           variant="standard"
           value={isRTL ? 'he' : 'en'}
           name='TwoFactorAuthOptionID'
           onChange={(e: SelectChangeEvent) => changeLanguage(e.target.value)}
-          IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} style={{ right: isRTL ? 15 : 'auto', left: isRTL ? 'auto' : 15 }} />}
+          IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} style={{ right: isRTL ? 'auto' : 10, left: isRTL ? 10 : 'auto' }} />}
           MenuProps={{
             PaperProps: {
               style: {
@@ -1010,15 +1010,15 @@ const SignUpNew = ({ classes }: any) => {
               },
             },
           }}
-          className={clsx(classes.SignUpLanguageDropdown)}
+          className={clsx(classes.SignUpLanguageDropdown, classes.pbt5)}
         >
           <MenuItem value={'he'} className={clsx(classes.SignUpLanguageDropdown, classes.cursorPointer)}>
-            <img width={35} src={IsraelImage} alt={t('languages.langCodes.hebrew')} />
+            <img width={25} src={IsraelImage} className={clsx(classes.paddingInline10)} alt={t('languages.langCodes.hebrew')} />
             <label>{t('languages.langCodes.hebrew')}</label>
           </MenuItem>
 
           <MenuItem value={'en'} className={clsx(classes.SignUpLanguageDropdown, classes.cursorPointer)}>
-            <img width={35} src={EnImage} alt={t('languages.langCodes.english')} />
+            <img width={25} src={EnImage} className={clsx(classes.paddingInline10)} alt={t('languages.langCodes.english')} />
             <label>{t('languages.langCodes.english')}</label>
           </MenuItem>
         </Select>

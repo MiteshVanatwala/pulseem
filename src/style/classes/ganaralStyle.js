@@ -599,13 +599,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     fontSize: '16px !important',
   },
   f18: {
-    fontSize: 18,
+    fontSize: '18px !important',
   },
   f20: {
     fontSize: 20,
   },
   f22: {
-    fontSize: 22,
+    fontSize: '22px !important',
   },
   f25: {
     fontSize: 25,
@@ -4198,10 +4198,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     },
   },
   SignUpLanguageDropdown: {
-    width: 150,
+    width: 200,
     borderRadius: 5,
     '& .MuiSelect-select': {
-      padding: '5px 7px !important',
+      padding: '5px 10px !important',
       display: 'flex !important',
       justifyContent: 'flex-end'
     },
@@ -4384,6 +4384,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
         padding: '20px 50px',
         boxShadow: '0 10px 30px -6px black',
         fontSize: '2rem',
+        '&.remove-my-data': {
+          width: '35%',
+          padding: '20px',
+          paddingBottom: '2rem',
+          "& input::placeholder": {
+            fontSize: "20px",
+          },
+        },
         "@media screen and (max-width: 768px)": {
           width: '85%',
           padding: '15px',
@@ -4444,5 +4452,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   agentNameContainer: {
     backgroundColor: '#5EBD6A',
     paddingInline: 7
+  },
+  removeMyDataButton: {
+    fontSize: '1.2rem',
+    borderRadius: 5,
+    width: '70%',
+    '& *': {
+      fontSize: '1.2rem',
+    }
   }
 });

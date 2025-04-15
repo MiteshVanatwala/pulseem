@@ -1,0 +1,18 @@
+{
+  "title": "Secure Data Deletion Request",
+  "insertEmailPhone": "הזינו את כתובת האימייל או את מספר הטלפון הנייד שלכם",
+  "insertEmailPhonePlaceholder": "Enter email or phone number",
+  "eraseDataConfirmation": "האם אתם בטוחים שברצונכם למחוק את המידע שלכם?",
+  "eraseDataDescription1": "פעולה זו בלתי הפיכה ואינה ניתנת לביטול.",
+  "eraseDataDescription2": "באישור הבקשה, כל המידע האישי המשויך לכתובת האימייל או למספר הטלפון שלכם יימחק לצמיתות.",
+  "eraseDataDescription3": "המחיקה כוללת גם נתונים המשמשים לשליחת הודעות.",
+  "eraseDataDescription4": "כתוצאה מכך, ייתכן שלא תקבלו עוד הודעות חשובות, כולל עדכונים, התראות שירות או מידע תפעולי חיוני.",
+  "eraseDataDescription5": "קראתי והבנתי את ההשלכות וברצוני למחוק את כל המידע שלי.",
+  "YesEraseData": "כן, מחקו את המידע שלי",
+  "enterOTP": "Enter OTP",
+  "enterValidOTP": "Enter Valid OTP",
+  "enterOTPPlaceholder": "Enter the OTP sent to your email/phone",
+  "otpVerificationFailed": "OTP verification failed. Please try again.",
+  "validateOTP": "Validate OTP",
+  "dataDeletionBegins": "We have received your request to delete your data. We will notify you via an email on completion."
+}
