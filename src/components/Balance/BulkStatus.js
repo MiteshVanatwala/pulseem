@@ -18,10 +18,11 @@ import { sitePrefix } from '../../config';
 import { WhiteLabelObject } from '../WhiteLabel/WhiteLabelMigrate';
 import { MdVoiceChat } from "react-icons/md";
 import { URLS } from '../../config/enum';
+import { POLISH_ZLOTY_CURRENCY_ID } from '../../helpers/Constants';
 
 const BulkStatus = ({ classes }) => {
   const { billingTypeId, windowSize, isRTL } = useSelector(state => state.core)
-  const { accountSettings, accountFeatures, isGlobal } = useSelector(state => state.common);
+  const { accountSettings, accountFeatures, isGlobal, currencyId } = useSelector(state => state.common);
   const { packagesDetails, accountAvailablePackages } = useSelector(state => state.dashboard);
   const [isOpenPackageDialog, setIsOpenPackageDialog] = useState(false);
   const [selectedPackageType, setPackageType] = useState({ type: 1, title: '' });
@@ -155,7 +156,7 @@ const BulkStatus = ({ classes }) => {
     setIsOpenPackageDialog(true);
   }
 
-  if (isGlobal !== false) return <></>;
+  if (isGlobal === true && currencyId !== POLISH_ZLOTY_CURRENCY_ID) return <></>;
 
   return (
     <>
