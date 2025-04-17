@@ -116,6 +116,17 @@
 			"popup": {
 				"text": "<b>Please note,</b> you are about to change the default recipient removal settings.<br/>The change of settings you intend to make will mean that when a recipient requests to remove himself from the distribution list, only the means of communication through which the recipient requested the removal will be removed - the phone number or the email address, as opposed to removing any means of communication provided by the recipient. <br/><br/><b>Changing the aforementioned settings is done at your sole responsibility,</b> and by doing so you confirm that Pulseem will not bear any responsibility for any damage caused to you and/or Pulseem as a result and they will apply only to you."
 			}
+		},
+		"optIn": {
+			"checkboxTitle":" Send double opt-in Email to new “Pending” status recipients",
+			"regulationPopup": {
+				"title": "Pay attention!",
+				"text": "For your attention, by activating <b>Send double opt-in Email to new “Pending” status recipients setting</b>, you are requesting to activate, in relation to all recipients who are added to the Pulseem system through external systems integrations, the sending of a confirmation email for the receipt of mail by Pulseem company in accordance with the requirements of the law. Changing the aforementioned settings is carried out at your sole responsibility, and in doing so you confirm that Pulseem will not bear any responsibility for any damage caused to you and/or to Pulseem as a result, and therefore these damages will apply only to you.",
+				"acceptAgreement": "By clicking OK, I agree and accept the legal responsibility",
+				"reEnterPassword": "Re-Enter Password to complete the action",
+				"selectAuthType": "Choose a way to verify the account via email or SMS associated with this account:",
+				"typePassword": "Account Password"
+			}
 		}
 	},
 	"billingSettings": {

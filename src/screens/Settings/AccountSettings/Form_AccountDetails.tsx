@@ -31,6 +31,7 @@ import { logout } from '../../../helpers/Api/PulseemReactAPI';
 import { OtpRequestFor } from '../../../Models/Authorization/AuthorizationModels';
 import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 import { AuditLog, eAuditActionType } from '../../../Models/AuditLog/AuditLog';
+import DoubleOptInSettingsPopUp from './Popups/DoubleOptInSettingsPopUp';
 
 const FORM_ACCOUNT_DETAILS = ({
 	classes,
@@ -53,10 +54,17 @@ const FORM_ACCOUNT_DETAILS = ({
 		DefaultCellNumber: '',
 		UnsubscribeType: false,
 		IsSmsImmediateUnsubscribeLink: false,
-		DisablePluginOTP: false
+		DisablePluginOTP: false,
+		OptInActive: false,
+		OptInFromEmail: '',
+		OptInFromName: '',
+		OptInSubject: ''
 	} as AccountSettings);
 	const [showOtpRegulationDialog, setShowOtpRegulationDialog] = useState<boolean>(false);
 	const [showUnsubscribeOtpDialog, setShowUnsubscribeOtpDialog] = useState<boolean>(false);
+	const [showDoubleOtpInDialog, setShowDoubleOtpInDialog] = useState<boolean>(false);
+	const [showDoubleOptInSettings, setShowDoubleOptInSettings] = useState<boolean>(false);
+
 	const [errorMessage, setErrorMessage] = useState<string>('');
 	const [userCodeConfirmed, setUserCodeConfirmed] = useState<boolean>(false);
 	const [unsubscribeType, setUnsubscribeType] = useState<string>('0');
@@ -126,6 +134,43 @@ const FORM_ACCOUNT_DETAILS = ({
 				DisablePluginOTP:
 					false
 			} as AccountSettings);
+		}
+	}
+
+	const handleDoubleOptInSetting = async (event: any, selected: any) => {
+		if (selected) {
+			setShowDoubleOtpInDialog(true);
+		}
+		else {
+			//await dispatch(cancelDisablePluginOTP());
+
+			setAccountDetails({
+				...accountDetails,
+				OptInActive:
+					false
+			} as AccountSettings);
+		}
+	}
+
+	const handleConfirmDoubleOtpInRegulation = async (req: any) => {
+		setErrorMessage('')
+		if (!req?.Code || req?.Code === '') {
+			setErrorMessage(t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.error2'));
+			return false;
+		}
+		// @ts-ignore
+		const response = await dispatch(confimrOtp({ ...req, otpRequestFor: OtpRequestFor.eActivateDoubleOptIn })) as any;
+
+		const results = response?.payload;
+
+		if (results?.StatusCode === 201) {
+			setErrorMessage('');
+			// show opt settings popup
+			setShowDoubleOtpInDialog(false);
+			setShowDoubleOptInSettings(true);
+		}
+		else {
+			handleErrorOTPResponse(results?.StatusCode);
 		}
 	}
 
@@ -410,16 +455,16 @@ const FORM_ACCOUNT_DETAILS = ({
 					</Grid>
 				</Grid>}
 				<Grid container>
-					<Grid item xs={12} sm={6} md={3} className={'textBoxWrapper'}>
+					<Grid item xs={12} sm={12} md={12} className={'textBoxWrapper'}>
 						<FormControlLabel
 							control={
 								<PulseemSwitch
 									switchType={'ios'}
 									isRTL={false}
-									key='bypassPending'
+									key='doubleOptInSetting'
 									id="type"
 									classes={classes}
-									checked={!!accountDetails?.DisablePluginOTP}
+									checked={!!accountDetails?.OptInActive}
 									onColor="#0371ad"
 									handleDiameter={20}
 									boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
@@ -427,10 +472,10 @@ const FORM_ACCOUNT_DETAILS = ({
 									height={15}
 									width={40}
 									className={clsx(classes.inputSwitch, { [classes.rtlSwitch]: isRTL })}
-									onChange={handleByPassPending}
+									onChange={handleDoubleOptInSetting}
 								/>
 							}
-							label={t('settings.accountSettings.bypassOtp.checkboxTitle')}
+							label={t('settings.accountSettings.optIn.checkboxTitle')}
 						/>
 					</Grid>
 				</Grid>
@@ -462,6 +507,23 @@ const FORM_ACCOUNT_DETAILS = ({
 				responseError={errorMessage}
 				actionName='DisablePendingFeature'
 			/>}
+			{showDoubleOtpInDialog && <OTP
+				classes={classes}
+				onClose={() => {
+					setShowDoubleOtpInDialog(false);
+					setErrorMessage('');
+					setAccountDetails({
+						...accountDetails,
+						OptInActive:
+							false
+					} as AccountSettings);
+				}}
+				onConfirm={handleConfirmDoubleOtpInRegulation}
+				userCodeConfirmed={userCodeConfirmed}
+				preText={RenderHtml(t("settings.accountSettings.optIn.regulationPopup.text"))}
+				responseError={errorMessage}
+				actionName='DoubleOptInSettings'
+			/>}
 			{showUnsubscribeOtpDialog && <OTP
 				classes={classes}
 				onClose={() => { setShowUnsubscribeOtpDialog(false); setErrorMessage('') }}
@@ -470,6 +532,15 @@ const FORM_ACCOUNT_DETAILS = ({
 				preText={RenderHtml(t("settings.accountSettings.unsubscribeOtp.popup.text"))}
 				responseError={errorMessage}
 				actionName='UnsubscribeSettings'
+			/>}
+			{showDoubleOptInSettings && <DoubleOptInSettingsPopUp
+				classes={classes}
+				isOpen={showDoubleOptInSettings}
+				onClose={() => {
+					setShowDoubleOptInSettings(false);
+				}}
+				onConfirm={null}
+				optInSettings={accountDetails}
 			/>}
 		</Box>
 	);
