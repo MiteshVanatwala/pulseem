@@ -142,6 +142,7 @@ export type CommonRedux = {
 	subAccount?: any,
 	WhatsAppPlatformID?: number | null
 	TierData?: any;
+	currencyId?: number;
 };
 
 export type actionButtonProps = {
