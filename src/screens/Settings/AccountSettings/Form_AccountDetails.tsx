@@ -409,6 +409,31 @@ const FORM_ACCOUNT_DETAILS = ({
 						/>
 					</Grid>
 				</Grid>}
+				<Grid container>
+					<Grid item xs={12} sm={6} md={3} className={'textBoxWrapper'}>
+						<FormControlLabel
+							control={
+								<PulseemSwitch
+									switchType={'ios'}
+									isRTL={false}
+									key='bypassPending'
+									id="type"
+									classes={classes}
+									checked={!!accountDetails?.DisablePluginOTP}
+									onColor="#0371ad"
+									handleDiameter={20}
+									boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+									activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+									height={15}
+									width={40}
+									className={clsx(classes.inputSwitch, { [classes.rtlSwitch]: isRTL })}
+									onChange={handleByPassPending}
+								/>
+							}
+							label={t('settings.accountSettings.bypassOtp.checkboxTitle')}
+						/>
+					</Grid>
+				</Grid>
 				<Grid container className={'form'} style={{ maxWidth: '100%' }}>
 					<Grid item xs={12} className={classes.justifyContentEnd}>
 						<Button
