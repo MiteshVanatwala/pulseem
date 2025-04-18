@@ -489,6 +489,7 @@ export const DEFAULT_CLIENT_SEARCH = {
 }
 
 export const DefaultCountryCodeIsrael = { code: '+972', country: 'IL', name: 'Israel', flag: '🇮🇱' };
+export const DefaultCountryCodePoland = { code: '+48', country: 'PL', name: 'Poland', flag: '🇵🇱' };
 export const CountryCodes = [
     { code: '+93', country: 'AF', name: 'Afghanistan', flag: '🇦🇫' },
     { code: '+355', country: 'AL', name: 'Albania', flag: '🇦🇱' },

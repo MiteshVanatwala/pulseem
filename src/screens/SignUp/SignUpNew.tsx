@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { StateType } from "../../Models/StateTypes";
 import { IoIosArrowDown, IoIosEye, IoIosEyeOff } from "react-icons/io";
-import { CountryCodes, DefaultCountryCodeIsrael, FieldOfInterest, lowerCaseLetters, numbers, specialLetters, upperCaseLetters } from "../../helpers/Constants";
+import { CountryCodes, DefaultCountryCodeIsrael, DefaultCountryCodePoland, FieldOfInterest, lowerCaseLetters, numbers, specialLetters, upperCaseLetters } from "../../helpers/Constants";
 import { MdDvr, MdKeyboardArrowDown, MdKeyboardArrowLeft, MdKeyboardArrowRight, MdMobileFriendly, MdNotifications, MdOutlineAddShoppingCart, MdOutlineAutoMode, MdOutlineMarkEmailRead, MdOutlineWhatsapp } from "react-icons/md";
 import { RenderHtml, useStylesBootstrapPasswordHint } from "../../helpers/Utils/HtmlUtils";
 import { Loader } from "../../components/Loader/Loader";
@@ -35,11 +35,12 @@ const SignUpNew = ({ classes }: any) => {
   const { t } = useTranslation();
   const [showLoader, setLoader] = useState(false);
   const qs = queryString.parse(window.location.search);
+  const isPolish = window.location.origin.includes('pulseem.pl');
   const [userDetails, setUserDetails] = useState({
     fullName: '',
     emailId: qs?.emailid || '',
     phone: '',
-    countryCode: DefaultCountryCodeIsrael,
+    countryCode: isPolish ? DefaultCountryCodePoland : DefaultCountryCodeIsrael,
     cellPhone: '',
     userName: '',
     password: '',
@@ -107,7 +108,7 @@ const SignUpNew = ({ classes }: any) => {
     if (status === 200) {
       if (Message === 'Success') {
         let cellPhone = Data?.Mobile || '';
-        let countryCode = DefaultCountryCodeIsrael;
+        let countryCode = isPolish ? DefaultCountryCodePoland : DefaultCountryCodeIsrael;
         if (cellPhone !== '') {
           const CellPhoneWithCode = cellPhone.split("-");
           countryCode = first(filter(CountryCodes, { code: `${CellPhoneWithCode[0]}` })) || countryCode;
