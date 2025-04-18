@@ -305,7 +305,7 @@ const AccountUsers = ({ classes }: any) => {
           {/* @ts-ignore */}
           <TableCell classes={cellStyle} className={(isGlobal && currencyId !== POLISH_ZLOTY_CURRENCY_ID) ? classes.flex1 : classes.flex2} align='center'>{t("SubAccount.userManager")}</TableCell>
           {
-            (isGlobal && currencyId !== POLISH_ZLOTY_CURRENCY_ID) && <TableCell classes={cellStyle} className={(isGlobal || currencyId === POLISH_ZLOTY_CURRENCY_ID) ? classes.flex1 : classes.flex2} align='center'>{t("SubAccount.balance")}</TableCell>
+            (isGlobal && currencyId !== POLISH_ZLOTY_CURRENCY_ID) && <TableCell classes={cellStyle} className={(isGlobal && currencyId !== POLISH_ZLOTY_CURRENCY_ID) ? classes.flex1 : classes.flex2} align='center'>{t("SubAccount.balance")}</TableCell>
           }
           {
             (!isGlobal || currencyId === POLISH_ZLOTY_CURRENCY_ID) && (
@@ -494,7 +494,7 @@ const AccountUsers = ({ classes }: any) => {
           {row.SubAccountManager}
         </TableCell>
         {
-          isGlobal && (
+          isGlobal && currencyId !== POLISH_ZLOTY_CURRENCY_ID && (
             <TableCell
               classes={cellBodyStyle}
               align='center'
@@ -562,7 +562,7 @@ const AccountUsers = ({ classes }: any) => {
         <TableCell
           classes={cellBodyStyle}
           align='center'
-          className={clsx((isGlobal || currencyId === POLISH_ZLOTY_CURRENCY_ID) ? classes.flex3 : classes.flex1, classes.noBorderOnLastCell)}>
+          className={clsx((isGlobal && currencyId !== POLISH_ZLOTY_CURRENCY_ID) ? classes.flex3 : classes.flex1, classes.noBorderOnLastCell)}>
           {renderCellIcons(row)}
         </TableCell>
       </TableRow>
@@ -712,7 +712,7 @@ const AccountUsers = ({ classes }: any) => {
       {isGlobal !== null && renderTable()}
       {renderTablePagination()}
       {
-        !isGlobal && (
+        !isGlobal && currencyId === POLISH_ZLOTY_CURRENCY_ID && (
           <Box className={clsx(classes.justifyCenterOfCenter, classes.w100, classes.semibold)}>
             {direct.emailDirect !== null && getDirectBox('SubAccount.emailDirect', direct.emailDirect)}
             {direct.SMSDirect !== null && getDirectBox('SubAccount.SMSDirect', direct.SMSDirect)}
