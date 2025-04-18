@@ -10,7 +10,7 @@ import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { Select } from '@mui/material';
 import { IoIosArrowDown } from 'react-icons/io';
 import { DateField } from '../../components/managment';
-import { CreditHistoryAccountType, CreditHistoryType, DateFormats, SizeOptionsOfHandHeldDevices } from '../../helpers/Constants';
+import { CreditHistoryAccountType, CreditHistoryType, DateFormats, POLISH_ZLOTY_CURRENCY_ID, SizeOptionsOfHandHeldDevices } from '../../helpers/Constants';
 import { GetBulkHistory } from '../../redux/reducers/SubAccountSlice';
 import { BulkHistory } from '../../Models/SubAccount/SubAccounts';
 import moment from 'moment';
@@ -29,7 +29,7 @@ const CreditHistory = ({ classes, id = '' }: any) => {
 	const { isRTL, language, windowSize } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
-	const { isGlobal, accountIsCurrencySymbolPrefix, accountCurrencySymbol } = useSelector(
+	const { isGlobal, accountIsCurrencySymbolPrefix, accountCurrencySymbol, currencyId } = useSelector(
 		(state: { common: any }) => state.common
 	);
 	const { userRoles } = useSelector((state: { core: any }) => state.core);
@@ -64,7 +64,7 @@ const CreditHistory = ({ classes, id = '' }: any) => {
 		return (
 			<Grid container spacing={2}>
 				{
-					!isGlobal && (
+					(!isGlobal || currencyId === POLISH_ZLOTY_CURRENCY_ID) && (
 						<>
 							<Grid item md={3} xs={12}>
 								<Typography>{t("SubAccount.type")}</Typography>
@@ -190,7 +190,7 @@ const CreditHistory = ({ classes, id = '' }: any) => {
 				</Grid>
 				<Grid item md={12} xs={12} className={clsx(isRTL ? classes.textRight : classes.textLeft)}>
 					{
-						!isGlobal && (
+						(!isGlobal || currencyId === POLISH_ZLOTY_CURRENCY_ID) && (
 							<FormControlLabel
 								control={
 									<Checkbox
@@ -239,7 +239,7 @@ const CreditHistory = ({ classes, id = '' }: any) => {
 					<TableCell classes={cellStyle} className={clsx(classes.flex2, classes.f16)} align='center'>{t('common.Dates')}</TableCell>
 					<TableCell classes={cellStyle} className={clsx(classes.flex1, classes.f16)} align='center'>{t('SubAccount.amount')}</TableCell>
 					{
-						!isGlobal && <TableCell classes={cellStyle} className={clsx(classes.flex1, classes.f16)} align='center'>{t('SubAccount.type')}</TableCell>
+						(!isGlobal || currencyId === POLISH_ZLOTY_CURRENCY_ID) && <TableCell classes={cellStyle} className={clsx(classes.flex1, classes.f16)} align='center'>{t('SubAccount.type')}</TableCell>
 					}
 					<TableCell classes={cellStyle} className={clsx(classes.flex1, classes.f16)} align='center'>{t('SubAccount.accountType')}</TableCell>
 					<TableCell classes={cellStyle} className={clsx(classes.flex2, classes.f16)} align='center'>{t('SubAccount.transferringFromAccount')}</TableCell>
@@ -267,10 +267,10 @@ const CreditHistory = ({ classes, id = '' }: any) => {
 					align='center'
 					className={classes.flex1}
 				>
-					{isGlobal && accountIsCurrencySymbolPrefix ? accountCurrencySymbol : ''} {row.Amount} {isGlobal && !accountIsCurrencySymbolPrefix ? accountCurrencySymbol : ''}
+					{isGlobal && currencyId !== POLISH_ZLOTY_CURRENCY_ID && accountIsCurrencySymbolPrefix ? accountCurrencySymbol : ''} {row.Amount} {isGlobal && currencyId !== POLISH_ZLOTY_CURRENCY_ID && !accountIsCurrencySymbolPrefix ? accountCurrencySymbol : ''}
 				</TableCell>
 				{
-					!isGlobal && (
+					(!isGlobal || currencyId === POLISH_ZLOTY_CURRENCY_ID) && (
 						<TableCell
 							classes={cellBodyStyle}
 							align='center'
@@ -384,7 +384,7 @@ const CreditHistory = ({ classes, id = '' }: any) => {
 			history.map((record: BulkHistory) => {
 				listToExport.push({
 					Date: record.Date,
-					Amount: `${isGlobal && accountIsCurrencySymbolPrefix ? accountCurrencySymbol : ''} ${record.Amount} ${isGlobal && !accountIsCurrencySymbolPrefix ? accountCurrencySymbol : ''}`,
+					Amount: `${isGlobal && currencyId !== POLISH_ZLOTY_CURRENCY_ID && accountIsCurrencySymbolPrefix ? accountCurrencySymbol : ''} ${record.Amount} ${isGlobal && currencyId !== POLISH_ZLOTY_CURRENCY_ID && !accountIsCurrencySymbolPrefix ? accountCurrencySymbol : ''}`,
 					Type: t(`${get(CreditHistoryType, record.Type, '')}`),
 					AccountType: t(`${get(CreditHistoryAccountType, record.AccountType ? 1 : 0, '')}`),
 					TransferedFromSubAccountName: record.TransferedFromSubAccountName,

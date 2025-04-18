@@ -12,7 +12,7 @@ import { get, isNull } from 'lodash';
 import { AddEditDirectAccounts } from '../../redux/reducers/SubAccountSlice';
 import { logout } from '../../helpers/Api/PulseemReactAPI';
 import { CommonRedux } from '../Whatsapp/Editor/Types/WhatsappCreator.types';
-import { NumberWithMinusRegEx } from '../../helpers/Constants';
+import { NumberWithMinusRegEx, POLISH_ZLOTY_CURRENCY_ID } from '../../helpers/Constants';
 import { Stack } from '@mui/material';
 
 const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}, mainAccountBalance = {} }: any) => {
@@ -21,7 +21,7 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 	const { isRTL  } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
-	const { isGlobal } = useSelector((state: { common: CommonRedux }) => state.common);
+	const { isGlobal, currencyId } = useSelector((state: { common: CommonRedux }) => state.common);
 	const [ isLoader, setIsLoader ] = useState<boolean>(false);
 	const [ toastMessage, setToastMessage ] = useState(null);
 	const [errors, setErrors] = useState({
@@ -332,7 +332,7 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 				</Grid>
 
 				{
-					!isGlobal && (
+					(!isGlobal || currencyId === POLISH_ZLOTY_CURRENCY_ID) && (
 						<>
 							<div className={clsx(classes.f18, classes.bold, classes.pb10, classes.pt30)}>{t('SubAccount.creditDetails')}</div>
 							<Divider className={clsx(classes.mb10, classes.bgBlack)} />
@@ -341,7 +341,7 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 				}
 				<Grid container className={clsx(classes.pb15, classes.pt10)} spacing={3}>
 					{
-						!isGlobal && (
+						(!isGlobal || currencyId === POLISH_ZLOTY_CURRENCY_ID) && (
 							<>
 								<Grid item md={4}>
 									{t("SubAccount.emailDirectBalance")}: {directAccountDetails.emailBulk || 0}

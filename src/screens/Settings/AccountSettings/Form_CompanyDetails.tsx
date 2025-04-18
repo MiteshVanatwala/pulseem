@@ -38,6 +38,7 @@ import { Title } from "../../../components/managment/Title";
 import { PulseemFeatures } from "../../../model/PulseemFields/Fields";
 import ILLUSTRATION_DATA_ANALYSIS from "../../../assets/images/settings/Illustration_data_Analysis";
 import { IoIosArrowDown } from "react-icons/io";
+import { POLISH_ZLOTY_CURRENCY_ID } from "../../../helpers/Constants";
 
 
 const FORM_COMPANY_DETAILS = ({
@@ -50,7 +51,7 @@ const FORM_COMPANY_DETAILS = ({
 }: CompDtlPropTypes) => {
   const { t } = useTranslation();
   const { isRTL, windowSize } = useSelector((state: any) => state.core);
-  const { accountSettings, accountFeatures, currencyList, countryCodeList, isGlobal } = useSelector((state: any) => state.common);
+  const { accountSettings, accountFeatures, currencyList, countryCodeList, isGlobal, currencyId } = useSelector((state: any) => state.common);
   const { twoFAUpdated } = useSelector((state: any) => state?.accountSettings);
   const dispatch = useDispatch();
 
@@ -412,7 +413,7 @@ const FORM_COMPANY_DETAILS = ({
               />
             </Grid>
             {
-              isGlobal && (
+              isGlobal && currencyId === POLISH_ZLOTY_CURRENCY_ID && (
                 <Grid item xs={12} sm={6} md={4} className={"textBoxWrapper"}>
                   <Typography>
                     {t("settings.displayRevenueIn")}
