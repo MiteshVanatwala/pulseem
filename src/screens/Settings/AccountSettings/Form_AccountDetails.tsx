@@ -24,7 +24,7 @@ import { tierSetting } from '../../Whatsapp/Constant';
 import Illustration_app_Settings from '../../../assets/images/settings/Illustration_app_Settings';
 import { IoIosArrowDown } from 'react-icons/io';
 import PulseemSwitch from '../../../components/Controlls/PulseemSwitch';
-import { cancelDisablePluginOTP, confimrOtp, setAuditLog } from '../../../redux/reducers/AccountSettingsSlice';
+import { cancelDisablePluginOTP, confimrOtp, disableDoubleOptItSettings, setAuditLog } from '../../../redux/reducers/AccountSettingsSlice';
 import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 import OTP from '../../../components/OneTimePassword/OTP';
 import { logout } from '../../../helpers/Api/PulseemReactAPI';
@@ -142,13 +142,13 @@ const FORM_ACCOUNT_DETAILS = ({
 			setShowDoubleOtpInDialog(true);
 		}
 		else {
-			//await dispatch(cancelDisablePluginOTP());
-
 			setAccountDetails({
 				...accountDetails,
 				OptInActive:
 					false
 			} as AccountSettings);
+
+			await dispatch(disableDoubleOptItSettings(null));
 		}
 	}
 
@@ -514,8 +514,7 @@ const FORM_ACCOUNT_DETAILS = ({
 					setErrorMessage('');
 					setAccountDetails({
 						...accountDetails,
-						OptInActive:
-							false
+						OptInActive: false
 					} as AccountSettings);
 				}}
 				onConfirm={handleConfirmDoubleOtpInRegulation}
@@ -539,7 +538,19 @@ const FORM_ACCOUNT_DETAILS = ({
 				onClose={() => {
 					setShowDoubleOptInSettings(false);
 				}}
-				onConfirm={null}
+				onConfirm={(retVal: any) => {
+					setAccountDetails((prevState) => {
+						if (!prevState) return null;
+						return {
+							...prevState,
+							OptInActive: true,
+							OptInFromEmail: retVal?.OptInFromEmail,
+							OptInFromName: retVal?.OptInFromName,
+							OptInSubject: retVal?.OptInSubject
+						} as AccountSettings;
+					})
+					setShowDoubleOptInSettings(false);
+				}}
 				optInSettings={accountDetails}
 			/>}
 		</Box>
