@@ -450,8 +450,8 @@ const ApiSettings = ({ classes }: any) => {
                                     isVerical={windowSize !== 'xs'}
                                 />
                                 <Box className={clsx(classes.mr10, classes.ml10)}>
-                                    {isMainApi && <Link className={windowSize !== 'xs' ? classes.font18 : classes.font14} style={{ width: '100%', alignSelf: 'center', marginTop: 2, display: 'block', textDecoration: 'underline' }} href={UIApiSwaggerURL}>{UIApiSwaggerURL}</Link>}
-                                    {!isMainApi && <Link className={windowSize !== 'xs' ? classes.font18 : classes.font14} style={{ width: '100%', alignSelf: 'center', marginTop: 2, display: 'block', textDecoration: 'underline' }} href={DirectApiSwaggerURL}>{DirectApiSwaggerURL}</Link>}
+                                    {isMainApi && <Link className={windowSize !== 'xs' ? classes.font18 : classes.font14} style={{ width: '100%', alignSelf: 'center', marginTop: 2, display: 'block', textDecoration: 'underline' }} href={UIApiSwaggerURL} target='_blank'>{UIApiSwaggerURL}</Link>}
+                                    {!isMainApi && <Link className={windowSize !== 'xs' ? classes.font18 : classes.font14} style={{ width: '100%', alignSelf: 'center', marginTop: 2, display: 'block', textDecoration: 'underline' }} href={DirectApiSwaggerURL} target='_blank'>{DirectApiSwaggerURL}</Link>}
                                 </Box>
                             </Box>
                         </Box>
