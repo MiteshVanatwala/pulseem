@@ -159,7 +159,7 @@ const SignUpNew = ({ classes }: any) => {
       return false;
     }
     else {
-      const nameArr = userDetails.fullName.split(' ');
+      const nameArr = userDetails.fullName.trim().split(' ');
       payload.FirstName = nameArr[0];
       payload.LastName = nameArr.slice(1).join(" ");
       payload.Mobile = `${userDetails.countryCode.code}-${Number(userDetails.cellPhone).toString()}`;
@@ -297,7 +297,7 @@ const SignUpNew = ({ classes }: any) => {
     });
 
     if (!errorsTemp.fullName && !errorsTemp.cellPhone && !errorsTemp.userName && !errorsTemp.password && !errorsTemp.companyName && !errorsTemp.fieldOfInterest && !errorsTemp.chkPolicy && !errorsTemp.confirmPassword && !errorsTemp.emailId) {
-      const nameArr = userDetails.fullName.split(' ');
+      const nameArr = userDetails.fullName.trim().split(' ');
       setLoader(true);
       const interests: any = [];
       userDetails.fieldOfInterest.map((item: any) => item !== '' && interests.push(item));
