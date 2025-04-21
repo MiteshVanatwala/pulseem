@@ -26,6 +26,7 @@ export interface ConfigOptions {
   form: any;
   onFormAdded: Function;
   BasedOnRTL: any;
+  languageCode: any;
 }
 export const BeeConfig = (Options: ConfigOptions) => {
   const {
@@ -49,7 +50,8 @@ export const BeeConfig = (Options: ConfigOptions) => {
     t,
     form,
     onFormAdded,
-    BasedOnRTL
+    BasedOnRTL,
+    languageCode
   } = Options;
 
   const layout = [];
@@ -59,11 +61,28 @@ export const BeeConfig = (Options: ConfigOptions) => {
   layout.push(['optIn']);
   layout.push(['submit']);
 
+  const editorLanguage = {
+    'he': 'he-IL',
+    'en': 'en-US',
+    'fr': 'fr-FR', // French
+    'es': 'es-ES', // Spanish
+    'de': 'de-DE', // German
+    'ru': 'ru-RU', // Russian
+    'ja': 'ja-JP', // Japanese
+    'ro': 'ro-RO', // Romanian
+    'ar': 'ar-SA', // Arabic
+    'hu': 'hu-HU', // Hungarian
+    'sk': 'sk-SK', // Slovak
+    'pt': 'pt-PT', // Portuguese
+    'nl': 'nl-NL', // Dutch
+    'pl': 'pl-PL'  // Polish
+  } as any;
+
 
   return {
     uid: 'e945eb6b-249c-4dea-bee1-e4b98b8719cc', //needed for identify resources of the that user and billing stuff
     container: 'page-bee-plugin-container', //Identifies the id of div element that contains BEE Plugin
-    language: IsRTL ? 'he-IL' : 'en-US',
+    language: editorLanguage[languageCode], //IsRTL ? 'he-IL' : 'en-US',
     customCss: 'https://www.pulseem.co.il/Pulseem/Css/beefreeRtlFixes.css',
     trackChanges: true,
     //autosave: AUTO_SAVE_SECONDS,
