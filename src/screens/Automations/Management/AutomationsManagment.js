@@ -352,9 +352,10 @@ const AutomationsManagnentScreen = ({ classes }) => {
     return (
       <Box className={userRoles?.HideRecipients && classes.disabled}>
         <Switch
+          className={!userRoles?.AllowSend && classes.disabled}
           checked={IsActive}
           onChange={() => {
-            if (userRoles?.HideRecipients) {
+            if (userRoles?.HideRecipients || !userRoles?.AllowSend) {
               return;
             }
             if (!row.HasNodes) {

@@ -1233,7 +1233,8 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       handleDeleteRow,
       t: t,
       form: clientForm,
-      onFormAdded: onFormAdded
+      onFormAdded: onFormAdded,
+      languageCode: language
     }) as any;
   }
   const config = getConfig();
