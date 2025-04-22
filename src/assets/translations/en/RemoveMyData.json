@@ -14,5 +14,8 @@
   "enterOTPPlaceholder": "Enter the OTP sent to your email/phone",
   "otpVerificationFailed": "OTP verification failed. Please try again.",
   "validateOTP": "Validate OTP",
-  "dataDeletionBegins": "We have received your request to delete your data. We will notify you via an email on completion."
+  "dataDeletionBegins": "We have received your request to delete your data. We will notify you via an email on completion.",
+  "invalidCaptcha": "Invalid Captcha. Please try again.",
+  "errorMessage": "Oops! Something went wrong. Please try again.",
+  "invalidOTP": "Invalid OTP. Please try again."
 }

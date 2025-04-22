@@ -18,6 +18,7 @@ import EnImage from '../../assets/images/british.svg';
 import IsraelImage from "../../assets/images/israel-flag-icon.svg";
 import { IsValidEmail, IsValidOTP } from "../../helpers/Utils/Validations";
 import { isValidPhoneNumber } from "libphonenumber-js";
+import { reCAPTCHAKey } from "../../helpers/Constants";
 
 const RemoveMyData = ({ classes }: any) => {
   const dispatch = useDispatch();
@@ -200,70 +201,115 @@ const RemoveMyData = ({ classes }: any) => {
     )
   }
 
-  const actionButtonClick = async () => {
+  const authenticateUser = async (token: string) => {
+    setLoader(true);
+    const response = await PulseemReactInstance.post('GDPR/ForgetMe' ,{
+      client: emailOrPhoneNumber,
+      token: {
+        Token: token
+      }
+    }).catch((error) => {
+      setLoader(false);
+      setToastMessage({ type: 'error', message: error?.response?.data?.message || t('RemoveMyData.errorMessage') });
+    });
+    setLoader(false);
+    if (response?.status === 1) {
+      setActiveStep(1);
+      setEmailOrPhoneNumberError('');
+      setEmailOrPhoneNumber('');
+    } else if (response?.status === 2) {
+      setToastMessage({ type: 'error', message: t('RemoveMyData.invalidCaptcha') });
+    } else {
+      setToastMessage({ type: 'error', message: response?.data?.message || t('RemoveMyData.errorMessage') });
+    }
+  }
+
+  const validateOTP = async (token: string) => {
+    setLoader(true);
+    const response = await PulseemReactInstance.post('GDPR/ValidateOTP' ,{
+      clientGuid: "",
+      otp: OTP,
+      token: {
+        Token: token
+      }
+    }).catch((error) => {
+      setLoader(false);
+      setToastMessage({ type: 'error', message: error?.response?.data?.message || t('RemoveMyData.errorMessage') });
+    });
+    setLoader(false);
+    if (response?.status === 1) {
+      setActiveStep(2);
+      setOTP('');
+      setOTPError('');
+    } else if (response?.status === 2) {
+      setToastMessage({ type: 'error', message: t('RemoveMyData.invalidOTP') });
+    } else {
+      setToastMessage({ type: 'error', message: response?.data?.message || t('RemoveMyData.errorMessage') });
+    }
+  }
+
+  const eraseClient = async (token: string) => {
+    setLoader(true);
+    const response = await PulseemReactInstance.post('GDPR/EraseClient' ,{
+      clientGuid: "",
+      token: {
+        Token: token
+      }
+    }).catch((error) => {
+      setLoader(false);
+      setToastMessage({ type: 'error', message: error?.response?.data?.message || t('RemoveMyData.errorMessage') });
+    });
+    setLoader(false);
+    if (response?.status === 1) {
+      setActiveStep(0);
+      setToastMessage({ severity: 'success', color: 'success', message: t('RemoveMyData.dataDeletionBegins'), showAnimtionCheck: false });
+    } else if (response?.status === 2) {
+      setToastMessage({ type: 'error', message: t('RemoveMyData.errorMessage') });
+    } else {
+      setToastMessage({ type: 'error', message: response?.data?.message || t('RemoveMyData.errorMessage') });
+    }
+  }
+
+  const actionButtonClick = async (e: any) => {
     if (activeStep === 0) {
       if (!IsValidEmail(emailOrPhoneNumber) && !isValidPhoneNumber(emailOrPhoneNumber)) {
         setEmailOrPhoneNumberError(t('RemoveMyData.insertEmailPhone'));
         return;
       } else {
         setLoader(true);
-        
-        // const response = await PulseemReactInstance.post('User/auth-user' ,{
-        //   emailOrPhoneNumber: emailOrPhoneNumber
-        // }).catch((error) => {
-        //   setLoader(false);
-        //   setToastMessage({ type: 'error', message: error?.response?.data?.message || t('RemoveMyData.errorMessage') });
-        // });
-        setLoader(false);
-        // if (response?.status === 200) {
-        //   setToastMessage({ type: 'success', message: t('RemoveMyData.successMessage') });
-        //   setActiveStep(1);
-        // } else {
-        //   setToastMessage({ type: 'error', message: response?.data?.message || t('RemoveMyData.errorMessage') });
-        // }
-        setActiveStep(activeStep + 1);
-        setEmailOrPhoneNumberError('');
-        setEmailOrPhoneNumber('');
+        e.preventDefault();
+        // @ts-ignore
+        grecaptcha.ready(function() {
+          // @ts-ignore
+          grecaptcha.execute(reCAPTCHAKey, {action: 'submit'}).then(function(token: string) {
+            console.log(token)
+            authenticateUser(token);
+          });
+        });
       }
     } else if (activeStep === 1) {
       if (OTP.length < 6) {
         setOTPError(t('RemoveMyData.enterValidOTP'));
         return false;
       } else {
-        setLoader(true);
-        // const response = await PulseemReactInstance.post('User/auth-user' ,{
-        //   emailOrPhoneNumber: emailOrPhoneNumber
-        // }).catch((error) => {
-        //   setLoader(false);
-        //   setToastMessage({ type: 'error', message: error?.response?.data?.message || t('RemoveMyData.errorMessage') });
-        // });
-        setLoader(false);
-        // if (response?.status === 200) {
-        //   setToastMessage({ type: 'success', message: t('RemoveMyData.successMessage') });
-        //   setActiveStep(1);
-        // } else {
-        //   setToastMessage({ type: 'error', message: response?.data?.message || t('RemoveMyData.errorMessage') });
-        // }
-        setActiveStep(activeStep + 1);
-        setOTP('');
-        setOTPError('');
+        // @ts-ignore
+        grecaptcha.ready(function() {
+          // @ts-ignore
+          grecaptcha.execute(reCAPTCHAKey, {action: 'submit'}).then(function(token: string) {
+            console.log(token)
+            validateOTP(token);
+          });
+        });
       }
     } else if (activeStep === 2) {
-      setLoader(true);
-        
-      // const response = await PulseemReactInstance.post('User/auth-user' ,{
-      //   emailOrPhoneNumber: emailOrPhoneNumber
-      // }).catch((error) => {
-      //   setLoader(false);
-      //   setToastMessage({ type: 'error', message: error?.response?.data?.message || t('RemoveMyData.errorMessage') });
-      // });
-      setLoader(false);
-      // if (response?.status === 200) {
-        setToastMessage({ type: 'success', message: t('RemoveMyData.successMessage') });
-      //   setActiveStep(1);
-      // } else {
-      //   setToastMessage({ type: 'error', message: response?.data?.message || t('RemoveMyData.errorMessage') });
-      // }
+      // @ts-ignore
+      grecaptcha.ready(function() {
+        // @ts-ignore
+        grecaptcha.execute(reCAPTCHAKey, {action: 'submit'}).then(function(token: string) {
+          console.log(token)
+          eraseClient(token)
+        });
+      });
     }
   }
 

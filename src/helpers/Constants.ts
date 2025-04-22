@@ -262,7 +262,10 @@ export const NoAuthenticationAPIs = [
     'User/CheckSubUserRef',
     'User/ConfirmSubUser',
     'User/SaveInfoAccounts',
-    'User/GetStepWiseAccountInfo'
+    'User/GetStepWiseAccountInfo',
+    'GDPR/ForgetMe',
+    'GDPR/ValidateOTP',
+    'GDPR/EraseClient'
 ]
 
 export const FieldOfActivities = [
@@ -704,3 +707,5 @@ export const BASED_ON_LANG = {
     12: 'nl',
     13: 'pl'
 }
+
+export const reCAPTCHAKey = "6LeJkBorAAAAAC1q2G6fGQqIr-GuqSEF3L91AsT9";

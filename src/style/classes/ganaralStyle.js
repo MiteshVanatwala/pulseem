@@ -4460,5 +4460,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     '& *': {
       fontSize: '1.2rem',
     }
+  },
+  reCAPTCHA: {
+    "& div:first-child": {
+      margin: 'auto'
+    }
   }
 });
