@@ -312,7 +312,7 @@ const BulkStatus = ({ classes }) => {
             <Divider />
           </>)}
           {
-            Mms.Credits > 0 && (
+            accountFeatures && accountFeatures?.indexOf(PulseemFeatures.MMS) > -1 && Mms.Credits > 0 && (
               <>
                 <Grid
                   container
