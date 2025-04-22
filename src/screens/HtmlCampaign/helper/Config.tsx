@@ -26,6 +26,7 @@ export interface ConfigOptions {
     handleEditRow: Function;
     // HandleAutoSave: Function,
     t: any;
+    languageCode: number;
     // handleUndoChange: Function;
 }
 
@@ -47,13 +48,32 @@ export const BeeConfig = (Options: ConfigOptions) => {
         // HandleAutoSave,
         handleDeleteRow,
         PulseemEditBlock,
-        t
+        t,
+        languageCode
         // handleUndoChange
     } = Options;
+
+    const editorLanguage = {
+        'he': 'he-IL',
+        'en': 'en-US',
+        'fr': 'fr-FR', // French
+        'es': 'es-ES', // Spanish
+        'de': 'de-DE', // German
+        'ru': 'ru-RU', // Russian
+        'ja': 'ja-JP', // Japanese
+        'ro': 'ro-RO', // Romanian
+        'ar': 'ar-SA', // Arabic
+        'hu': 'hu-HU', // Hungarian
+        'sk': 'sk-SK', // Slovak
+        'pt': 'pt-PT', // Portuguese
+        'nl': 'nl-NL', // Dutch
+        'pl': 'pl-PL'  // Polish
+    } as any;
+
     return {
         uid: 'f7768f7b-06af-4ada-bbd3-18a237524c31', //needed for identify resources of the that user and billing stuff
         container: 'bee-plugin-container', //Identifies the id of div element that contains BEE Plugin
-        language: Options.IsRTL ? 'he-IL' : 'en-US',
+        language: editorLanguage[languageCode], //Options.IsRTL ? 'he-IL' : 'en-US',
         customCss: 'https://pulseem.co.il/pulseem/css/beefreeRtlFixes.css',
         trackChanges: true,
         //autosave: AUTO_SAVE_SECONDS,

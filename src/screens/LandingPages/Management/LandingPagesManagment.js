@@ -313,6 +313,7 @@ const LandingPagesesManagment = ({ classes }) => {
         uIcon: IsNewEditor ? FaChartPie : SurveryResultsIcon,
         lable: IsNewEditor ? t('landingPages.SurveyExportTitle') : `${t('landingPages.SurveyExportTitle')} (${SurveyCount})`,
         remove: (windowSize === 'xs' || (!IsSurvey || SurveyCount === 0)),
+        disable: !IsNewEditor && !userRoles?.AllowExport,
         onClick: () => {
           if (IsNewEditor) {
             navigate(`${sitePrefix}LandingPages/SurveyDetails/${ID}`, {
@@ -322,10 +323,11 @@ const LandingPagesesManagment = ({ classes }) => {
             })
           }
           else {
-            onExportSurvey(ID);
+            if (userRoles?.AllowExport)
+              onExportSurvey(ID);
           }
         },
-        rootClass: classes.paddingIcon,
+        rootClass: clsx(classes.paddingIcon, !IsNewEditor && !userRoles?.AllowExport && classes.disabled),
       },
       {
         key: `${ID}_purchase/survey`,
@@ -333,9 +335,11 @@ const LandingPagesesManagment = ({ classes }) => {
         lable: t('landingPages.PurchaseExportTitle'),
         remove: (windowSize === 'xs' || !IsPayment),
         rootClass: clsx(classes.paddingIcon, classes.minWidth95),
-        disable: accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) > -1,
+        disable: !userRoles?.AllowExport || accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) > -1,
         onClick: async () => {
-          onExportPayment(ID);
+          if (userRoles?.AllowExport) {
+            onExportPayment(ID);
+          }
         }
       },
       {

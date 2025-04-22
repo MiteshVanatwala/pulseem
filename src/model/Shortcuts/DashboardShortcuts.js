@@ -155,10 +155,10 @@ export const DASHBOARD_SHORTCUT = {
         title: 'master.RadMenuItemResource24.Text',
         link: '/react/reports/SMSMainReport'
       },
-      {
-        title: 'master.MmsMainReport.Text',
-        link: '/react/reports/MMSMainReport'
-      },
+      // {
+      //   title: 'master.MmsMainReport.Text',
+      //   link: '/react/reports/MMSMainReport'
+      // },
       // {
       //   title: 'master.AbTestsReport.Text',
       //   link: '/Pulseem/AbTestsReport.aspx'

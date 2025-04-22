@@ -155,7 +155,7 @@ const NewsLetterInfo = ({ classes }) => {
     const isFromAutomation = queryParams.get("FromAutomation")
     const NodeToEdit = queryParams.get("NodeToEdit")
 
-    const { windowSize, isRTL, CoreToastMessages } = useSelector((state) => state.core);
+    const { windowSize, isRTL, CoreToastMessages, language } = useSelector((state) => state.core);
     const { publicTemplates, templatesBySubAccount } = useSelector(state => state.campaignEditor);
     const { t } = useTranslation();
     const localClasses = useStyles()
@@ -221,8 +221,14 @@ const NewsLetterInfo = ({ classes }) => {
         // ReplyEmail: t('campaigns.newsLetterEditor.errors.ReplyEmail'),
     }
 
+    const defaultLanguage = { 'he': 0, 'en': 1 };
+
+    useEffect(() => {
+        setCampaingnValues({ ...campaingnValues, LanguageCode: defaultLanguage[language] })
+    }, [language])
+
     const [campaingnValues, setCampaingnValues] = useState({
-        LanguageCode: 0,
+        LanguageCode: defaultLanguage[language],
         CampaignID: "",
         Name: "",
         Subject: "",

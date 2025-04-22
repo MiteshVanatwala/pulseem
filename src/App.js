@@ -95,8 +95,9 @@ import ClientSearch from './screens/ClientSearch/ClientSearch';
 import CreateAutomationTemplate from './screens/Automations/CreateAutomation';
 import SignUpNew from './screens/SignUp/SignUpNew';
 import { UserRoles } from './Models/SubUser/SubUsers';
+import { PulseemFeatures } from './model/PulseemFields/Fields';
 
-const renderRoutes = (classes, redirect, userRoles) => {
+const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
   const transferUrl =
     (url = '', param = '') =>
       () => {
@@ -243,10 +244,10 @@ const renderRoutes = (classes, redirect, userRoles) => {
       />
 
       {/* MMS */}
-      <Route
+      {accountFeatures && accountFeatures?.indexOf(PulseemFeatures.MMS) > -1 && <Route
         path={`${sitePrefix}MmsCampaigns`}
         element={<MmsManagment classes={classes} />}
-      />
+      />}
       <Route
         path="/CreateMmsCampaign"
         component={transferUrl('/Pulseem/MmsCampaignEdit.aspx')}
@@ -604,7 +605,7 @@ const App = ({ screenSize }) => {
   const dispatch = useDispatch();
 
   const { language, isRTL, windowSize, isClal, isDebtAccount, isAdmin, isLoader, userRoles } = useSelector(state => state.core)
-  const { accountSettings, currencyList } = useSelector(state => state.common)
+  const { accountSettings, currencyList, accountFeatures } = useSelector(state => state.common)
   const classes = useClasses(windowSize, isRTL)();
   setCookie('accountSettings', '');
   const isSignup = isSignupPage(location.pathname);
@@ -793,7 +794,7 @@ const App = ({ screenSize }) => {
       </Routes>
     }
     else {
-      return renderRoutes(classes, redirect, userRoles);
+      return renderRoutes(classes, redirect, userRoles, accountFeatures);
     }
 
   }

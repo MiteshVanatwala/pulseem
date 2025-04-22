@@ -233,12 +233,12 @@ export const getRoutes = (
         {
           title: t("master.NewMMSCampaign.Text"),
           href: `${rootDomain}/MmsCampaignEdit.aspx?fromreact=true`,
-          isShow: true,
+          isShow: features && features?.indexOf(PulseemFeatures.MMS) > -1,
         },
         {
           title: t("master.MmsCampaignMnage.Text"),
           href: `${sitePrefix}MmsCampaigns`,
-          isShow: true,
+          isShow: features && features?.indexOf(PulseemFeatures.MMS) > -1,
         }
       ],
     },
@@ -410,7 +410,7 @@ export const getRoutes = (
         { title: t('master.clalCollage'), href: `${rootDomain}/ClalReport.aspx?fromreact=true`, isShow: (isClalAccount === 'true' || isClalAccount === true) },
         { title: t('master.RadMenuItemResource13.Text'), href: `${sitePrefix}reports/NewsletterReports`, isShow: true },
         { key: 'SmsReport', title: t('master.RadMenuItemResource24.Text'), href: `${sitePrefix}reports/SMSMainReport`, isShow: true },
-        { key: 'MmsReport', title: t('mmsreport.mmsReport'), href: `${sitePrefix}Reports/MMSMainReport`, isShow: true },
+        // { key: 'MmsReport', title: t('mmsreport.mmsReport'), href: `${sitePrefix}Reports/MMSMainReport`, isShow: true },
         { key: 'whatsappReports', title: t('whatsapp.ReportsWhatsapp'), href: whatsappRoutes.REPORTS, isShow: true },
         // { title: t('master.AbTestsReport.Text'), href: `${rootDomain}/AbTestsReport.aspx?fromreact=true`, isShow: true },
         { title: t('master.RadMenuItemResource15.Text'), href: `${rootDomain}/AccountReport.aspx?fromreact=true`, isShow: true },

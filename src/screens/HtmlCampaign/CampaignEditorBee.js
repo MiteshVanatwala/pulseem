@@ -765,7 +765,8 @@ const CampaignEditor = ({ classes, ...props }) => {
       getRows,
       handleEditRow,
       handleDeleteRow,
-      t: t
+      t: t,
+      languageCode: language
       // handleUndoChange
     });
   }
