@@ -12,10 +12,14 @@ import { DoubleOptInSettings } from "../../../../Models/Account/AccountSettings"
 import { IoIosArrowDown } from "react-icons/io";
 import { RenderHtml } from "../../../../helpers/Utils/HtmlUtils";
 import { setDoubleOptItSettings } from "../../../../redux/reducers/AccountSettingsSlice";
+import { SharedEmailDomain } from "../../../../config";
+import { IsSharedDomain } from "../../../../helpers/Functions/DomainVerificationHelper";
+import { PulseemFeatures } from "../../../../model/PulseemFields/Fields";
+import VerificationDialog from "../../../../components/DialogTemplates/VerificationDialog";
 
-const DoubleOptInSettingsPopUp = ({ classes, isOpen, onClose, onConfirm, optInSettings }: any) => {
+const DoubleOptInSettingsPopUp = ({ classes, isOpen, onClose, onConfirm, optInSettings, onVerificationEmail }: any) => {
     const { t } = useTranslation();
-    const { verifiedEmails } = useSelector((state: StateType) => state.common);
+    const { verifiedEmails, accountSettings, accountFeatures } = useSelector((state: StateType) => state.common);
     const [responseError, setResponseError] = useState<any>();
     const [optIn, setOptIn] = useState<DoubleOptInSettings>({
         OptInActive: true,
@@ -40,7 +44,7 @@ const DoubleOptInSettingsPopUp = ({ classes, isOpen, onClose, onConfirm, optInSe
         if (!verifiedEmails || verifiedEmails?.length < 1) {
             initVerifiedEmails();
         }
-    }, [optInSettings]);
+    }, []);
 
     useEffect(() => {
         if (!optIn?.OptInFromEmail || optIn?.OptInFromEmail === '') {
@@ -74,6 +78,37 @@ const DoubleOptInSettingsPopUp = ({ classes, isOpen, onClose, onConfirm, optInSe
         }
     }
 
+    const [errors, setErrors] = useState({
+        OptInFromEmail: "",
+        OptInSubject: "",
+        OptInFromName: ""
+    })
+
+    useEffect(() => {
+        if (optIn && optIn?.OptInFromEmail && verifiedEmails?.length > 0) {
+            if (optIn?.OptInFromEmail?.FromEmail !== '') {
+                const isVerified = verifiedEmails?.filter((ve: any) => { return ve.Number === optIn?.OptInFromEmail })[0]?.IsVerified;
+                const isSharedDomain = IsSharedDomain(optIn?.OptInFromEmail)
+                setIsVerifiedDomain(isSharedDomain || isVerified);
+            }
+        }
+    }, [optIn, verifiedEmails])
+
+    const handleFromEmailChange = (event: any) => {
+        setOptIn({ ...optIn, OptInFromEmail: event.target.value })
+        setErrors({ ...errors, OptInFromEmail: '' });
+    }
+    const [isVerifiedDomain, setIsVerifiedDomain] = useState(false);
+
+    const helperTexts = {
+        Name: t('campaigns.newsLetterEditor.helpTexts.Name'),
+        Subject: t('campaigns.newsLetterEditor.helpTexts.Subject'),
+        FromName: t('common.requiredField'),
+        FromEmail: t('campaigns.newsLetterEditor.helpTexts.FromEmail'),
+        ReplyEmail: t('campaigns.newsLetterEditor.helpTexts.ReplyEmail'),
+        PreviewText: t('campaigns.newsLetterEditor.helpTexts.pre_helper_text')
+    }
+
     return <BaseDialog
         customContainerStyle={classes.summaryContainer}
         disableBackdropClick={false}
@@ -86,6 +121,54 @@ const DoubleOptInSettingsPopUp = ({ classes, isOpen, onClose, onConfirm, optInSe
             <Box className='selectWrapper'>
                 <Typography title={t("campaigns.newsLetterEditor.fromEmail").replace('<b>', '').replace('</b>', '')} className={classes.alignDir}>{RenderHtml(t("campaigns.newsLetterEditor.fromEmail"))}</Typography>
                 <FormControl
+                    className={clsx(classes.selectInputFormControl, classes.w100)}
+                >
+                    <Select
+                        native
+                        variant="standard"
+                        name="FromEmail"
+                        value={optIn?.OptInFromEmail}
+                        className={clsx(classes.pbt5, classes.fromEmailSelect, !isVerifiedDomain ? classes.errorBg : null)}
+                        onChange={(event, val) => {
+                            handleFromEmailChange(event);
+                        }}
+                        IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+                        MenuProps={{
+                            PaperProps: {
+                                style: {
+                                    maxHeight: 300,
+                                },
+                            },
+                        }}
+                    >
+                        <option
+                            key='-1'
+                            value='-1'
+                            disabled
+                        >
+                            {t("common.select")}
+                        </option>
+                        {verifiedEmails.map((item: any, index: any) => {
+                            return <option
+                                key={index}
+                                value={item.Number}
+                            >
+                                {t(item.Number)}
+                            </option>
+                        })}
+                        {accountFeatures?.indexOf(PulseemFeatures.HIDE_SHARED_DOMAIN) === -1 && accountSettings?.SubAccountSettings?.SharedEmailDomain && <option
+                            key={verifiedEmails.length + 1}
+                            value={accountSettings?.SubAccountSettings?.SharedEmailDomain}
+                        >
+                            {t(accountSettings?.SubAccountSettings?.SharedEmailDomain)}
+                        </option>}
+                    </Select>
+                </FormControl>
+                <Typography className={clsx(errors.OptInFromEmail ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
+                    {errors.OptInFromEmail ? errors.OptInFromEmail : helperTexts.FromEmail + ' '}
+                    <strong className={clsx(classes.link, classes.textRed)} onClick={() => onVerificationEmail(true)}>{t('campaigns.newsLetterEditor.helpTexts.clickToVerify')}</strong>
+                </Typography>
+                {/* <FormControl
                     className={clsx(classes.selectInputFormControl, classes.w100)}
                 >
                     <Select
@@ -122,7 +205,7 @@ const DoubleOptInSettingsPopUp = ({ classes, isOpen, onClose, onConfirm, optInSe
                             </option>
                         })}
                     </Select>
-                </FormControl>
+                </FormControl> */}
             </Box>
             <Box className={classes.mt5}>
                 <Box>{t('campaigns.newsLetterEditor.fromName')}</Box>

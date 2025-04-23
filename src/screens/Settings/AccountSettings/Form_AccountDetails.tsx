@@ -41,6 +41,7 @@ const FORM_ACCOUNT_DETAILS = ({
 	OnUpdate,
 	selectedTier,
 	onTierChange = () => { },
+	onVerificationEmail
 }: AccDtlPropTypes) => {
 	const dispatch = useDispatch();
 	const { t } = useTranslation();
@@ -70,8 +71,6 @@ const FORM_ACCOUNT_DETAILS = ({
 	const [errorMessage, setErrorMessage] = useState<string>('');
 	const [userCodeConfirmed, setUserCodeConfirmed] = useState<boolean>(false);
 	const [unsubscribeType, setUnsubscribeType] = useState<string>('0');
-	const [flickerClass, setFlickerClass] = useState<Array<string>>([]);
-	const [isFlickering, setIsFlickering] = useState<boolean>(false);
 	const [animationState, setAnimationState] = useState('none'); // 'none', 'flickering', 'fading'
 
 	const qs = (window.location.search && queryString.parse(window.location.search)) as any;
@@ -528,7 +527,7 @@ const FORM_ACCOUNT_DETAILS = ({
 								}
 								label={t('settings.accountSettings.optIn.checkboxTitle')}
 							/>
-							{accountDetails?.OptInActive && <Link
+							{!accountDetails?.OptInActive && <Link
 								style={{ cursor: 'pointer' }}
 								className={classes.font14} onClick={() => {
 									setShowDoubleOptInSettings(true)
@@ -616,6 +615,8 @@ const FORM_ACCOUNT_DETAILS = ({
 						setShowDoubleOptInSettings(false);
 					}}
 					optInSettings={accountDetails}
+					//@ts-ignore
+					onVerificationEmail={() => { onVerificationEmail() }}
 				/>
 			}
 		</Box >

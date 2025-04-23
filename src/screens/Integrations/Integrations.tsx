@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Tabs, Tab, Box } from "@material-ui/core";
+import { Tabs, Tab, Box, Button, Typography } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import DefaultScreen from "../DefaultScreen";
 import clsx from "clsx";
@@ -21,11 +21,15 @@ import Ecwid from "./Ecwid";
 import EShop from "./EShop";
 import Wix from "./Wix";
 import Klaviyo from "./Klaviyo";
+import { RxOpenInNewWindow } from "react-icons/rx";
+import { ListIcon } from "../../assets/images/managment";
+import { useSelector } from "react-redux";
 
 
 const Integrations = ({ classes }: any) => {
   const { t } = useTranslation();
   const [tabValue, setTabValue] = useState('0');
+  const { windowSize } = useSelector((state: any) => state.core)
 
   useEffect(() => {
     const integrationTitles = {
@@ -54,8 +58,36 @@ const Integrations = ({ classes }: any) => {
       <Box className={"head"}>
         <Box className={'topSection'}>
           <Title
-            Text={t('integrations.title')}
             classes={classes}
+            Element={
+              <Box className={clsx(classes.flex, windowSize !== 'xs' ? classes.spaceBetween : '', classes.flexWrap)}>
+                {
+                  windowSize === 'xs' && <ListIcon className={classes.mr15} />
+                }
+                <Typography
+                  style={{ width: 'auto' }}
+                  className={clsx(classes.managementTitle, "mgmtTitle")}
+                >
+                  {t('integrations.title')}
+                </Typography>
+                <Button
+                  style={{ width: windowSize === 'xs' ? '100%' : '', maxWidth: windowSize === 'xs' ? '100%' : 'unset', marginTop: windowSize !== 'xs' ? 'unset' : 10 }}
+                  className={clsx(
+                    classes.btn,
+                    classes.btnRounded,
+                    classes.mr10
+                  )}
+                  onClick={() =>
+                    window.open('/react/AccountSettings?doi=true', '_blank')
+                  }
+                  startIcon={<RxOpenInNewWindow />}
+                >
+                  <>
+                    {t("settings.accountSettings.optIn.redirectButton")}
+                  </>
+                </Button>
+              </Box>
+            }
           />
         </Box>
       </Box>

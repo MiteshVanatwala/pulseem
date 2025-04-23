@@ -379,6 +379,7 @@ const AccountSettingsEditor = ({ classes }: any) => {
 						OnUpdate={(updatedObject: AccountSettings) => handleUpdate(updatedObject, 'account', true)}
 						selectedTier={selectedTier}
 						onTierChange={onTierChange}
+						onVerificationEmail={() => { setEmailVerificationPopup(true) }}
 					/>
 				</Box>
 			</Box>

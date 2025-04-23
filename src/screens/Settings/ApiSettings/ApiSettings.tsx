@@ -255,22 +255,6 @@ const ApiSettings = ({ classes }: any) => {
                                         classes.mr10
                                     )}
                                     onClick={() =>
-                                        window.open('/react/AccountSettings?doi=true', '_blank')
-                                    }
-                                    startIcon={<RxOpenInNewWindow />}
-                                >
-                                    <>
-                                        {t("settings.accountSettings.optIn.redirectButton")}
-                                    </>
-                                </Button>
-                                <Button
-                                    style={{ width: windowSize === 'xs' ? '100%' : '', maxWidth: windowSize === 'xs' ? '100%' : 'unset', marginTop: windowSize !== 'xs' ? 'unset' : 10 }}
-                                    className={clsx(
-                                        classes.btn,
-                                        classes.btnRounded,
-                                        classes.mr10
-                                    )}
-                                    onClick={() =>
                                         handleVerification('cellphone')
                                     }
                                     startIcon={<MdMobileFriendly />}
