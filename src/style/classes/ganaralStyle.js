@@ -3581,9 +3581,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
         minHeight: 25,
         display: 'block',
         alignItems: 'center',
-        '&:focus': {
-          backgroundColor: '#fff !important'
-        }
+        // '&:focus': {
+        //   backgroundColor: '#fff !important'
+        // }
       },
       '& svg': {
         color: '#ff3343',

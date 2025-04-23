@@ -121,7 +121,7 @@ const DoubleOptInSettingsPopUp = ({ classes, isOpen, onClose, onConfirm, optInSe
             <Box className='selectWrapper'>
                 <Typography title={t("campaigns.newsLetterEditor.fromEmail").replace('<b>', '').replace('</b>', '')} className={classes.alignDir}>{RenderHtml(t("campaigns.newsLetterEditor.fromEmail"))}</Typography>
                 <FormControl
-                    className={clsx(classes.selectInputFormControl, classes.w100)}
+                    className={clsx(classes.selectInputFormControl, classes.maxWidth400)}
                 >
                     <Select
                         native
@@ -168,44 +168,6 @@ const DoubleOptInSettingsPopUp = ({ classes, isOpen, onClose, onConfirm, optInSe
                     {errors.OptInFromEmail ? errors.OptInFromEmail : helperTexts.FromEmail + ' '}
                     <strong className={clsx(classes.link, classes.textRed)} onClick={() => onVerificationEmail(true)}>{t('campaigns.newsLetterEditor.helpTexts.clickToVerify')}</strong>
                 </Typography>
-                {/* <FormControl
-                    className={clsx(classes.selectInputFormControl, classes.w100)}
-                >
-                    <Select
-                        native
-                        variant="standard"
-                        name="FromEmail"
-                        value={optIn?.OptInFromEmail}
-                        className={clsx(classes.pbt5, classes.fromEmailSelect)}
-                        onChange={(event: React.ChangeEvent<{ value: unknown }>) => {
-                            setOptIn({ ...optIn, OptInFromEmail: event.target.value })
-                        }}
-                        IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
-                        MenuProps={{
-                            PaperProps: {
-                                style: {
-                                    maxHeight: 300,
-                                },
-                            },
-                        }}
-                    >
-                        <option
-                            key='-1'
-                            value='-1'
-                            disabled
-                        >
-                            {t("common.select")}
-                        </option>
-                        {verifiedEmails?.filter((ve: any) => { return ve.IsVerified && ve.IsVerified }).map((item: any, index: any) => {
-                            return <option
-                                key={index}
-                                value={item.Number}
-                            >
-                                {t(item.Number)}
-                            </option>
-                        })}
-                    </Select>
-                </FormControl> */}
             </Box>
             <Box className={classes.mt5}>
                 <Box>{t('campaigns.newsLetterEditor.fromName')}</Box>
