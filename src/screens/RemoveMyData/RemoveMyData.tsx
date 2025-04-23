@@ -31,6 +31,7 @@ const RemoveMyData = ({ classes }: any) => {
   const [ emailOrPhoneNumberError, setEmailOrPhoneNumberError ] = useState<string>('');
   const [ OTP, setOTP ] = useState<string>('');
   const [ OTPError, setOTPError ] = useState<string>('');
+  const [ GUID, setGUID ] = useState<string>('');
   const qs = queryString.parse(window.location.search);
 
   const changeLanguage = (value: any) => {
@@ -203,74 +204,80 @@ const RemoveMyData = ({ classes }: any) => {
 
   const authenticateUser = async (token: string) => {
     setLoader(true);
-    const response = await PulseemReactInstance.post('GDPR/ForgetMe' ,{
+    const { data }: any = await PulseemReactInstance.post('GDPR/ForgetMe' ,{
       client: emailOrPhoneNumber,
       token: {
         Token: token
       }
     }).catch((error) => {
       setLoader(false);
-      setToastMessage({ type: 'error', message: error?.response?.data?.message || t('RemoveMyData.errorMessage') });
+      setToastMessage({ severity: 'error', color: 'error', message: error?.response?.data?.message || t('RemoveMyData.errorMessage') });
     });
     setLoader(false);
-    if (response?.status === 1) {
+    if (data?.StatusCode === 1) {
       setActiveStep(1);
       setEmailOrPhoneNumberError('');
       setEmailOrPhoneNumber('');
-    } else if (response?.status === 2) {
-      setToastMessage({ type: 'error', message: t('RemoveMyData.invalidCaptcha') });
+      setGUID(data?.Data?.ClientRequest || '');
+    } else if (data?.StatusCode === 2) {
+      setToastMessage({ severity: 'error', color: 'error', message: t('RemoveMyData.invalidCaptcha') });
     } else {
-      setToastMessage({ type: 'error', message: response?.data?.message || t('RemoveMyData.errorMessage') });
+      setToastMessage({ severity: 'error', color: 'error', message: data?.message || t('RemoveMyData.errorMessage') });
     }
   }
 
   const validateOTP = async (token: string) => {
     setLoader(true);
-    const response = await PulseemReactInstance.post('GDPR/ValidateOTP' ,{
-      clientGuid: "",
+    const { data }: any = await PulseemReactInstance.post('GDPR/ValidateOTP' ,{
+      clientGuid: GUID,
       otp: OTP,
       token: {
         Token: token
       }
     }).catch((error) => {
       setLoader(false);
-      setToastMessage({ type: 'error', message: error?.response?.data?.message || t('RemoveMyData.errorMessage') });
+      setToastMessage({ severity: 'error', color: 'error', message: error?.response?.data?.message || t('RemoveMyData.errorMessage') });
     });
     setLoader(false);
-    if (response?.status === 1) {
-      setActiveStep(2);
-      setOTP('');
-      setOTPError('');
-    } else if (response?.status === 2) {
-      setToastMessage({ type: 'error', message: t('RemoveMyData.invalidOTP') });
+    if (data?.StatusCode === 1) {
+      if (data?.Data?.isAuthenticate === true) {
+        setActiveStep(2);
+        setOTP('');
+        setOTPError('');
+      } else {
+        setToastMessage({ severity: 'error', color: 'error', message: t('RemoveMyData.invalidOTP') });  
+      }
+    } else if (data?.StatusCode === 2) {
+      setToastMessage({ severity: 'error', color: 'error', message: t('RemoveMyData.invalidOTP') });
     } else {
-      setToastMessage({ type: 'error', message: response?.data?.message || t('RemoveMyData.errorMessage') });
+      setToastMessage({ severity: 'error', color: 'error', message: data?.Data?.message || t('RemoveMyData.errorMessage') });
     }
   }
 
   const eraseClient = async (token: string) => {
     setLoader(true);
-    const response = await PulseemReactInstance.post('GDPR/EraseClient' ,{
-      clientGuid: "",
+    const { data }: any = await PulseemReactInstance.post('GDPR/EraseClient' ,{
+      clientGuid: GUID,
       token: {
         Token: token
       }
     }).catch((error) => {
       setLoader(false);
-      setToastMessage({ type: 'error', message: error?.response?.data?.message || t('RemoveMyData.errorMessage') });
+      setToastMessage({ severity: 'error', color: 'error', message: error?.response?.data?.message || t('RemoveMyData.errorMessage') });
     });
     setLoader(false);
-    if (response?.status === 1) {
-      setActiveStep(0);
+    if (data?.StatusCode === 1) {
+      setActiveStep(1);
       setToastMessage({ severity: 'success', color: 'success', message: t('RemoveMyData.dataDeletionBegins'), showAnimtionCheck: false });
-    } else if (response?.status === 2) {
-      setToastMessage({ type: 'error', message: t('RemoveMyData.errorMessage') });
+    } else if (data?.StatusCode === 2) {
+      setToastMessage({ severity: 'error', color: 'error', message: t('RemoveMyData.errorMessage') });
     } else {
-      setToastMessage({ type: 'error', message: response?.data?.message || t('RemoveMyData.errorMessage') });
+      setToastMessage({ severity: 'error', color: 'error', message: data?.Data?.message || t('RemoveMyData.errorMessage') });
     }
   }
 
   const actionButtonClick = async (e: any) => {
+    console.log(activeStep)
     if (activeStep === 0) {
       if (!IsValidEmail(emailOrPhoneNumber) && !isValidPhoneNumber(emailOrPhoneNumber)) {
         setEmailOrPhoneNumberError(t('RemoveMyData.insertEmailPhone'));
@@ -282,7 +289,7 @@ const RemoveMyData = ({ classes }: any) => {
         grecaptcha.ready(function() {
           // @ts-ignore
           grecaptcha.execute(reCAPTCHAKey, {action: 'submit'}).then(function(token: string) {
-            console.log(token)
+            // console.log(token)
             authenticateUser(token);
           });
         });
@@ -296,7 +303,7 @@ const RemoveMyData = ({ classes }: any) => {
         grecaptcha.ready(function() {
           // @ts-ignore
           grecaptcha.execute(reCAPTCHAKey, {action: 'submit'}).then(function(token: string) {
-            console.log(token)
+            // console.log(token)
             validateOTP(token);
           });
         });
@@ -306,7 +313,7 @@ const RemoveMyData = ({ classes }: any) => {
       grecaptcha.ready(function() {
         // @ts-ignore
         grecaptcha.execute(reCAPTCHAKey, {action: 'submit'}).then(function(token: string) {
-          console.log(token)
+          // console.log(token)
           eraseClient(token)
         });
       });
