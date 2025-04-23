@@ -33,6 +33,7 @@ import { ExportData, ExportOption, HandleExportData } from '../../../helpers/Exp
 import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog';
 import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
 import { ExportFile } from '../../../helpers/Export/ExportFile';
+import { RxOpenInNewWindow } from 'react-icons/rx';
 
 const useStyles = makeStyles({
     pwdEveButton: {
@@ -246,7 +247,22 @@ const ApiSettings = ({ classes }: any) => {
                         Element={<Box className={clsx(classes.dFlex, classes.flexWrap)} justifyContent='center' alignItems='center'>
                             <Typography className={clsx(classes.managementTitle, "mgmtTitle")} style={{ width: 'auto' }}>{t('settings.apiSettings.title')}</Typography>
                             <Box style={{ marginInlineStart: 'auto' }}>
-
+                                <Button
+                                    style={{ width: windowSize === 'xs' ? '100%' : '', maxWidth: windowSize === 'xs' ? '100%' : 'unset', marginTop: windowSize !== 'xs' ? 'unset' : 10 }}
+                                    className={clsx(
+                                        classes.btn,
+                                        classes.btnRounded,
+                                        classes.mr10
+                                    )}
+                                    onClick={() =>
+                                        window.open('/react/AccountSettings?doi=true', '_blank')
+                                    }
+                                    startIcon={<RxOpenInNewWindow />}
+                                >
+                                    <>
+                                        {t("settings.accountSettings.optIn.redirectButton")}
+                                    </>
+                                </Button>
                                 <Button
                                     style={{ width: windowSize === 'xs' ? '100%' : '', maxWidth: windowSize === 'xs' ? '100%' : 'unset', marginTop: windowSize !== 'xs' ? 'unset' : 10 }}
                                     className={clsx(

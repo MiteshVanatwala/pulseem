@@ -8,7 +8,6 @@ import { StateType } from "../../../../Models/StateTypes";
 import { useEffect, useState } from "react";
 import { getAuthorizedEmails } from "../../../../redux/reducers/commonSlice";
 import { logout } from "../../../../helpers/Api/PulseemReactAPI";
-import { setIsLoader } from "../../../../redux/reducers/coreSlice";
 import { DoubleOptInSettings } from "../../../../Models/Account/AccountSettings";
 import { IoIosArrowDown } from "react-icons/io";
 import { RenderHtml } from "../../../../helpers/Utils/HtmlUtils";
@@ -25,9 +24,9 @@ const DoubleOptInSettingsPopUp = ({ classes, isOpen, onClose, onConfirm, optInSe
         OptInSubject: ''
     });
     const dispatch = useDispatch();
+
     const initVerifiedEmails = async () => {
         await dispatch(getAuthorizedEmails());
-        dispatch(setIsLoader(false));
     }
     useEffect(() => {
         if (optInSettings) {
@@ -41,7 +40,6 @@ const DoubleOptInSettingsPopUp = ({ classes, isOpen, onClose, onConfirm, optInSe
         if (!verifiedEmails || verifiedEmails?.length < 1) {
             initVerifiedEmails();
         }
-        dispatch(setIsLoader(false));
     }, [optInSettings]);
 
     useEffect(() => {
@@ -165,7 +163,7 @@ const DoubleOptInSettingsPopUp = ({ classes, isOpen, onClose, onConfirm, optInSe
                         classes.btnRounded,
                         "saveFixedDetails"
                     )}
-                    onClick={() => { handleSaveOptInSettings() }}>{t('common.continue')}
+                    onClick={() => { handleSaveOptInSettings() }}>{t('common.save')}
                 </Button>
             </Box>
         </Box>}

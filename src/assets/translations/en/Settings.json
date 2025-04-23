@@ -118,7 +118,8 @@
 			}
 		},
 		"optIn": {
-			"checkboxTitle":" Send double opt-in Email to new “Pending” status recipients",
+			"checkboxTitle": "Send double opt-in Email to new “Pending” status recipients",
+			"redirectButton": "Email Settings for New Subscribers",
 			"regulationPopup": {
 				"title": "Pay attention!",
 				"text": "For your attention, by activating <b>Send double opt-in Email to new “Pending” status recipients setting</b>, you are requesting to activate, in relation to all recipients who are added to the Pulseem system through external systems integrations, the sending of a confirmation email for the receipt of mail by Pulseem company in accordance with the requirements of the law. Changing the aforementioned settings is carried out at your sole responsibility, and in doing so you confirm that Pulseem will not bear any responsibility for any damage caused to you and/or to Pulseem as a result, and therefore these damages will apply only to you.",

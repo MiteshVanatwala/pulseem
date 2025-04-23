@@ -5,6 +5,7 @@ import {
 	FormControl,
 	FormControlLabel,
 	Grid,
+	Link,
 	MenuItem,
 	Radio,
 	RadioGroup,
@@ -20,9 +21,9 @@ import { Title } from '../../../components/managment/Title';
 import { AccDtlPropTypes } from '../../../Models/Settings/AccountDetails';
 import { IsNumberField, IsValidEmail, IsValidPhoneNumber } from '../../../helpers/Utils/Validations';
 import { AccountSettings } from '../../../Models/Account/AccountSettings';
-import { tierSetting } from '../../Whatsapp/Constant';
+// import { tierSetting } from '../../Whatsapp/Constant';
 import Illustration_app_Settings from '../../../assets/images/settings/Illustration_app_Settings';
-import { IoIosArrowDown } from 'react-icons/io';
+// import { IoIosArrowDown } from 'react-icons/io';
 import PulseemSwitch from '../../../components/Controlls/PulseemSwitch';
 import { cancelDisablePluginOTP, confimrOtp, disableDoubleOptItSettings, setAuditLog } from '../../../redux/reducers/AccountSettingsSlice';
 import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
@@ -32,6 +33,7 @@ import { OtpRequestFor } from '../../../Models/Authorization/AuthorizationModels
 import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 import { AuditLog, eAuditActionType } from '../../../Models/AuditLog/AuditLog';
 import DoubleOptInSettingsPopUp from './Popups/DoubleOptInSettingsPopUp';
+import queryString from 'query-string';
 
 const FORM_ACCOUNT_DETAILS = ({
 	classes,
@@ -68,6 +70,11 @@ const FORM_ACCOUNT_DETAILS = ({
 	const [errorMessage, setErrorMessage] = useState<string>('');
 	const [userCodeConfirmed, setUserCodeConfirmed] = useState<boolean>(false);
 	const [unsubscribeType, setUnsubscribeType] = useState<string>('0');
+	const [flickerClass, setFlickerClass] = useState<Array<string>>([]);
+	const [isFlickering, setIsFlickering] = useState<boolean>(false);
+	const [animationState, setAnimationState] = useState('none'); // 'none', 'flickering', 'fading'
+
+	const qs = (window.location.search && queryString.parse(window.location.search)) as any;
 
 	const errorMessages = {
 		401: t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.email_error_abused'),
@@ -88,6 +95,47 @@ const FORM_ACCOUNT_DETAILS = ({
 			return false;
 		}
 		return true;
+	};
+
+	useEffect(() => {
+		if (qs && qs.doi === "true") {
+			// Start flickering
+			setAnimationState('flickering');
+
+			// Find and scroll to the element
+			const doubleOptInElement = document.getElementById('doubleOptInContainer');
+			if (doubleOptInElement) {
+				doubleOptInElement.scrollIntoView({
+					behavior: 'smooth',
+					block: 'center'
+				});
+			}
+
+			// After 5 seconds, start the fade out
+			const flickerTimer = setTimeout(() => {
+				setAnimationState('flickering');
+
+				// After fade out completes, set to none
+				const fadeTimer = setTimeout(() => {
+					setAnimationState('none');
+				}, 900); // Match this to the CSS transition time
+
+				return () => clearTimeout(fadeTimer);
+			}, 1500);
+
+			return () => clearTimeout(flickerTimer);
+		}
+	}, []);
+
+	const getAnimationClass = () => {
+		switch (animationState) {
+			case 'flickering':
+				return [classes.errorBg, classes.flickering];
+			case 'fading':
+				return [classes.errorBg, classes.smoothEnd];
+			default:
+				return '';
+		}
 	};
 
 	useEffect(() => {
@@ -432,6 +480,7 @@ const FORM_ACCOUNT_DETAILS = ({
 				{accountFeatures?.indexOf(PulseemFeatures.DISABLE_OPTIN_PLUGIN) > -1 && <Grid container>
 					<Grid item xs={12} sm={6} md={3} className={'textBoxWrapper'}>
 						<FormControlLabel
+							style={{ paddingInline: 10 }}
 							control={
 								<PulseemSwitch
 									switchType={'ios'}
@@ -454,29 +503,37 @@ const FORM_ACCOUNT_DETAILS = ({
 						/>
 					</Grid>
 				</Grid>}
-				<Grid container>
-					<Grid item xs={12} sm={12} md={12} className={'textBoxWrapper'}>
-						<FormControlLabel
-							control={
-								<PulseemSwitch
-									switchType={'ios'}
-									isRTL={false}
-									key='doubleOptInSetting'
-									id="type"
-									classes={classes}
-									checked={!!accountDetails?.OptInActive}
-									onColor="#0371ad"
-									handleDiameter={20}
-									boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
-									activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
-									height={15}
-									width={40}
-									className={clsx(classes.inputSwitch, { [classes.rtlSwitch]: isRTL })}
-									onChange={handleDoubleOptInSetting}
-								/>
-							}
-							label={t('settings.accountSettings.optIn.checkboxTitle')}
-						/>
+				<Grid container id="doubleOptInContainer">
+					<Grid item xs={12} sm={12} md={12} className={'textBoxWrapper'} style={{ paddingTop: 15 }}>
+						<Box className={clsx(getAnimationClass())}>
+							<FormControlLabel
+								style={{ paddingInline: 10, paddingBlock: 15 }}
+								control={
+									<PulseemSwitch
+										switchType={'ios'}
+										isRTL={false}
+										key='doubleOptInSetting'
+										id="type"
+										classes={classes}
+										checked={!!accountDetails?.OptInActive}
+										onColor="#0371ad"
+										handleDiameter={20}
+										boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+										activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+										height={15}
+										width={40}
+										className={clsx(classes.inputSwitch, { [classes.rtlSwitch]: isRTL })}
+										onChange={handleDoubleOptInSetting}
+									/>
+								}
+								label={t('settings.accountSettings.optIn.checkboxTitle')}
+							/>
+							{accountDetails?.OptInActive && <Link
+								style={{ cursor: 'pointer' }}
+								className={classes.font14} onClick={() => {
+									setShowDoubleOptInSettings(true)
+								}}>{t('common.edit')}</Link>}
+						</Box>
 					</Grid>
 				</Grid>
 				<Grid container className={'form'} style={{ maxWidth: '100%' }}>
@@ -498,62 +555,70 @@ const FORM_ACCOUNT_DETAILS = ({
 					</Grid>
 				</Grid>
 			</Box>
-			{showOtpRegulationDialog && <OTP
-				classes={classes}
-				onClose={() => { setShowOtpRegulationDialog(false); setErrorMessage('') }}
-				onConfirm={handleConfirmOtpRegulation}
-				userCodeConfirmed={userCodeConfirmed}
-				preText={RenderHtml(t("settings.accountSettings.bypassOtp.regulationPopup.text"))}
-				responseError={errorMessage}
-				actionName='DisablePendingFeature'
-			/>}
-			{showDoubleOtpInDialog && <OTP
-				classes={classes}
-				onClose={() => {
-					setShowDoubleOtpInDialog(false);
-					setErrorMessage('');
-					setAccountDetails({
-						...accountDetails,
-						OptInActive: false
-					} as AccountSettings);
-				}}
-				onConfirm={handleConfirmDoubleOtpInRegulation}
-				userCodeConfirmed={userCodeConfirmed}
-				preText={RenderHtml(t("settings.accountSettings.optIn.regulationPopup.text"))}
-				responseError={errorMessage}
-				actionName='DoubleOptInSettings'
-			/>}
-			{showUnsubscribeOtpDialog && <OTP
-				classes={classes}
-				onClose={() => { setShowUnsubscribeOtpDialog(false); setErrorMessage('') }}
-				onConfirm={handleConfirmUnsubscribe}
-				userCodeConfirmed={userCodeConfirmed}
-				preText={RenderHtml(t("settings.accountSettings.unsubscribeOtp.popup.text"))}
-				responseError={errorMessage}
-				actionName='UnsubscribeSettings'
-			/>}
-			{showDoubleOptInSettings && <DoubleOptInSettingsPopUp
-				classes={classes}
-				isOpen={showDoubleOptInSettings}
-				onClose={() => {
-					setShowDoubleOptInSettings(false);
-				}}
-				onConfirm={(retVal: any) => {
-					setAccountDetails((prevState) => {
-						if (!prevState) return null;
-						return {
-							...prevState,
-							OptInActive: true,
-							OptInFromEmail: retVal?.OptInFromEmail,
-							OptInFromName: retVal?.OptInFromName,
-							OptInSubject: retVal?.OptInSubject
-						} as AccountSettings;
-					})
-					setShowDoubleOptInSettings(false);
-				}}
-				optInSettings={accountDetails}
-			/>}
-		</Box>
+			{
+				showOtpRegulationDialog && <OTP
+					classes={classes}
+					onClose={() => { setShowOtpRegulationDialog(false); setErrorMessage('') }}
+					onConfirm={handleConfirmOtpRegulation}
+					userCodeConfirmed={userCodeConfirmed}
+					preText={RenderHtml(t("settings.accountSettings.bypassOtp.regulationPopup.text"))}
+					responseError={errorMessage}
+					actionName='DisablePendingFeature'
+				/>
+			}
+			{
+				showDoubleOtpInDialog && <OTP
+					classes={classes}
+					onClose={() => {
+						setShowDoubleOtpInDialog(false);
+						setErrorMessage('');
+						setAccountDetails({
+							...accountDetails,
+							OptInActive: false
+						} as AccountSettings);
+					}}
+					onConfirm={handleConfirmDoubleOtpInRegulation}
+					userCodeConfirmed={userCodeConfirmed}
+					preText={RenderHtml(t("settings.accountSettings.optIn.regulationPopup.text"))}
+					responseError={errorMessage}
+					actionName='DoubleOptInSettings'
+				/>
+			}
+			{
+				showUnsubscribeOtpDialog && <OTP
+					classes={classes}
+					onClose={() => { setShowUnsubscribeOtpDialog(false); setErrorMessage('') }}
+					onConfirm={handleConfirmUnsubscribe}
+					userCodeConfirmed={userCodeConfirmed}
+					preText={RenderHtml(t("settings.accountSettings.unsubscribeOtp.popup.text"))}
+					responseError={errorMessage}
+					actionName='UnsubscribeSettings'
+				/>
+			}
+			{
+				showDoubleOptInSettings && <DoubleOptInSettingsPopUp
+					classes={classes}
+					isOpen={showDoubleOptInSettings}
+					onClose={() => {
+						setShowDoubleOptInSettings(false);
+					}}
+					onConfirm={(retVal: any) => {
+						setAccountDetails((prevState) => {
+							if (!prevState) return null;
+							return {
+								...prevState,
+								OptInActive: true,
+								OptInFromEmail: retVal?.OptInFromEmail,
+								OptInFromName: retVal?.OptInFromName,
+								OptInSubject: retVal?.OptInSubject
+							} as AccountSettings;
+						})
+						setShowDoubleOptInSettings(false);
+					}}
+					optInSettings={accountDetails}
+				/>
+			}
+		</Box >
 	);
 };
 export default FORM_ACCOUNT_DETAILS;
