@@ -527,7 +527,7 @@ const FORM_ACCOUNT_DETAILS = ({
 								}
 								label={t('settings.accountSettings.optIn.checkboxTitle')}
 							/>
-							{!accountDetails?.OptInActive && <Link
+							{accountDetails?.OptInActive && <Link
 								style={{ cursor: 'pointer' }}
 								className={classes.font14} onClick={() => {
 									setShowDoubleOptInSettings(true)
