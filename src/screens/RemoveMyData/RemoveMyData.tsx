@@ -206,7 +206,7 @@ const RemoveMyData = ({ classes }: any) => {
     setLoader(true);
     const { data }: any = await PulseemReactInstance.post('GDPR/ForgetMe' ,{
       client: emailOrPhoneNumber,
-      token: {
+      request: {
         Token: token
       }
     }).catch((error) => {
@@ -231,7 +231,7 @@ const RemoveMyData = ({ classes }: any) => {
     const { data }: any = await PulseemReactInstance.post('GDPR/ValidateOTP' ,{
       clientGuid: GUID,
       otp: OTP,
-      token: {
+      request: {
         Token: token
       }
     }).catch((error) => {
@@ -258,7 +258,7 @@ const RemoveMyData = ({ classes }: any) => {
     setLoader(true);
     const { data }: any = await PulseemReactInstance.post('GDPR/EraseClient' ,{
       clientGuid: GUID,
-      token: {
+      request: {
         Token: token
       }
     }).catch((error) => {
