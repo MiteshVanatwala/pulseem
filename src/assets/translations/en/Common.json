@@ -868,5 +868,7 @@
   "allChannels": "All Channels",
   "internalError": "Internal Error",
   "selectEmail": "Select Email",
-  "selectCellphone": "Select Cellphone"
+  "selectCellphone": "Select Cellphone",
+  "domainVerificationRequired": "Domain is not verified",
+  "settingsSavedSuccessfuly": "Settings successfuly saved!"
 }

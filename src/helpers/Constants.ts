@@ -687,3 +687,11 @@ export const CountryCodes = [
     { code: '+260', country: 'ZM', name: 'Zambia', flag: '🇿🇲' },
     { code: '+263', country: 'ZW', name: 'Zimbabwe', flag: '🇿🇼' }
 ];
+
+
+export const MAX_TEXTFIELD_LENGTH = {
+    CAMPAIGN_NAME: 100,
+    NAME: 100,
+    CAMPAIGN_SUBJECT: 150,
+    EMAIL_ADDRESS: 100
+}

@@ -12,26 +12,48 @@ import { DoubleOptInSettings } from "../../../../Models/Account/AccountSettings"
 import { IoIosArrowDown } from "react-icons/io";
 import { RenderHtml } from "../../../../helpers/Utils/HtmlUtils";
 import { setDoubleOptItSettings } from "../../../../redux/reducers/AccountSettingsSlice";
-import { SharedEmailDomain } from "../../../../config";
 import { IsSharedDomain } from "../../../../helpers/Functions/DomainVerificationHelper";
 import { PulseemFeatures } from "../../../../model/PulseemFields/Fields";
-import VerificationDialog from "../../../../components/DialogTemplates/VerificationDialog";
+import { MAX_TEXTFIELD_LENGTH } from "../../../../helpers/Constants";
+import Toast from "../../../../components/Toast/Toast.component";
 
 const DoubleOptInSettingsPopUp = ({ classes, isOpen, onClose, onConfirm, optInSettings, onVerificationEmail }: any) => {
     const { t } = useTranslation();
     const { verifiedEmails, accountSettings, accountFeatures } = useSelector((state: StateType) => state.common);
-    const [responseError, setResponseError] = useState<any>();
+    const [isVerifiedDomain, setIsVerifiedDomain] = useState(false);
+    const [toastMessage, setToastMessage] = useState<any>();
     const [optIn, setOptIn] = useState<DoubleOptInSettings>({
         OptInActive: true,
         OptInFromEmail: '',
         OptInFromName: '',
         OptInSubject: ''
     });
+    const [errors, setErrors] = useState({
+        OptInFromEmail: "",
+        OptInSubject: "",
+        OptInFromName: ""
+    })
+    const helperTexts = {
+        Name: t('common.requiredField'),
+        Subject: t('campaigns.newsLetterEditor.helpTexts.Subject'),
+        FromName: t('common.requiredField'),
+        FromEmail: t('campaigns.newsLetterEditor.helpTexts.FromEmail'),
+        ReplyEmail: t('campaigns.newsLetterEditor.helpTexts.ReplyEmail'),
+        PreviewText: t('campaigns.newsLetterEditor.helpTexts.pre_helper_text')
+    }
     const dispatch = useDispatch();
 
     const initVerifiedEmails = async () => {
         await dispatch(getAuthorizedEmails());
     }
+    // Initialize verified emails if needed
+    useEffect(() => {
+        if (!verifiedEmails || verifiedEmails?.length < 1) {
+            initVerifiedEmails();
+        }
+    }, [verifiedEmails]); // Add verifiedEmails as dependency
+
+    // Update optIn state when optInSettings changes
     useEffect(() => {
         if (optInSettings) {
             setOptIn({
@@ -41,21 +63,61 @@ const DoubleOptInSettingsPopUp = ({ classes, isOpen, onClose, onConfirm, optInSe
                 OptInSubject: optInSettings?.OptInSubject || ''
             });
         }
-        if (!verifiedEmails || verifiedEmails?.length < 1) {
-            initVerifiedEmails();
-        }
-    }, []);
+    }, [optInSettings]); // Add optInSettings as dependency
 
+    // Set default email if none is selected and verified emails are available
     useEffect(() => {
-        if (!optIn?.OptInFromEmail || optIn?.OptInFromEmail === '') {
-            setOptIn({ ...optIn, OptInFromEmail: verifiedEmails.filter((ve: any) => { return ve.IsVerified && ve.IsVerified })[0]?.Number })
+        if ((!optIn?.OptInFromEmail || optIn?.OptInFromEmail === '') && verifiedEmails && verifiedEmails.length > 0) {
+            const verifiedEmailsFiltered = verifiedEmails.filter((ve: any) => ve.IsVerified);
+            if (verifiedEmailsFiltered.length > 0) {
+                setOptIn(prev => ({ ...prev, OptInFromEmail: verifiedEmailsFiltered[0]?.Number }));
+            }
         }
-    }, [verifiedEmails])
+    }, [verifiedEmails, optIn?.OptInFromEmail]);
+
+    // Check if email domain is verified
+    useEffect(() => {
+        if (optIn?.OptInFromEmail && verifiedEmails?.length > 0) {
+            const isVerified = verifiedEmails?.filter((ve: any) => ve.Number === optIn?.OptInFromEmail)[0]?.IsVerified;
+            const isSharedDomain = IsSharedDomain(optIn?.OptInFromEmail);
+            setIsVerifiedDomain(isSharedDomain || isVerified);
+        }
+    }, [optIn?.OptInFromEmail, verifiedEmails]);
 
     const handleSaveOptInSettings = async () => {
-        const response: any = await dispatch(setDoubleOptItSettings(optIn));
-        handleResponses(response?.payload)
+        const isValid: boolean = validateSettings();
+
+        if (isValid) {
+            const response: any = await dispatch(setDoubleOptItSettings(optIn));
+            handleResponses(response?.payload)
+        }
     }
+
+    const validateSettings = () => {
+        let isValid = true;
+        const selectedEmail = verifiedEmails.filter((e: any) => { return e.Number === optIn.OptInFromEmail })[0];
+        const newErr: any = {
+            OptInEmail: '',
+            OptInFromName: '',
+            OptInSubject: ''
+        };
+        if (optIn.OptInFromEmail === '' || !selectedEmail.IsVerified) {
+            isValid = false;
+            newErr.OptInEmail = t('common.domainVerificationRequired');
+        }
+        if (optIn.OptInFromName === '') {
+            isValid = false;
+            newErr.OptInFromName = t('common.requiredField');
+        }
+        if (optIn.OptInSubject === '') {
+            isValid = false;
+            newErr.OptInSubject = t('common.requiredField');
+        }
+
+        setErrors(newErr)
+        return isValid;
+    }
+
     const handleResponses = (response: any) => {
         switch (response?.StatusCode) {
             case 0: {
@@ -63,7 +125,10 @@ const DoubleOptInSettingsPopUp = ({ classes, isOpen, onClose, onConfirm, optInSe
                 break;
             }
             case 201: {
-                onConfirm(optIn)
+                setToastMessage({ severity: 'success', color: 'success', message: t('common.settingsSavedSuccessfuly'), showAnimtionCheck: true });
+                setTimeout(() => {
+                    onConfirm(optIn);
+                }, 3000);
                 break;
             }
             case 401: {
@@ -78,35 +143,21 @@ const DoubleOptInSettingsPopUp = ({ classes, isOpen, onClose, onConfirm, optInSe
         }
     }
 
-    const [errors, setErrors] = useState({
-        OptInFromEmail: "",
-        OptInSubject: "",
-        OptInFromName: ""
-    })
-
-    useEffect(() => {
-        if (optIn && optIn?.OptInFromEmail && verifiedEmails?.length > 0) {
-            if (optIn?.OptInFromEmail?.FromEmail !== '') {
-                const isVerified = verifiedEmails?.filter((ve: any) => { return ve.Number === optIn?.OptInFromEmail })[0]?.IsVerified;
-                const isSharedDomain = IsSharedDomain(optIn?.OptInFromEmail)
-                setIsVerifiedDomain(isSharedDomain || isVerified);
-            }
-        }
-    }, [optIn, verifiedEmails])
-
     const handleFromEmailChange = (event: any) => {
         setOptIn({ ...optIn, OptInFromEmail: event.target.value })
         setErrors({ ...errors, OptInFromEmail: '' });
     }
-    const [isVerifiedDomain, setIsVerifiedDomain] = useState(false);
 
-    const helperTexts = {
-        Name: t('campaigns.newsLetterEditor.helpTexts.Name'),
-        Subject: t('campaigns.newsLetterEditor.helpTexts.Subject'),
-        FromName: t('common.requiredField'),
-        FromEmail: t('campaigns.newsLetterEditor.helpTexts.FromEmail'),
-        ReplyEmail: t('campaigns.newsLetterEditor.helpTexts.ReplyEmail'),
-        PreviewText: t('campaigns.newsLetterEditor.helpTexts.pre_helper_text')
+    const renderToast = () => {
+        if (toastMessage) {
+            setTimeout(() => {
+                setToastMessage(null);
+            }, 3000);
+            return (
+                <Toast data={toastMessage} />
+            );
+        }
+        return null;
     }
 
     return <BaseDialog
@@ -179,10 +230,15 @@ const DoubleOptInSettingsPopUp = ({ classes, isOpen, onClose, onConfirm, optInSe
                         onChange={(e) => {
                             setOptIn({ ...optIn, OptInFromName: e.target.value });
                         }}
+                        inputProps={{
+                            maxLength: MAX_TEXTFIELD_LENGTH.NAME
+                        }}
                         placeholder={t('campaigns.newsLetterMgmt.emailVerification.secondSlide.placeholder')}
-                        error={!!responseError}
                         value={optIn.OptInFromName}
                     />
+                    <Box>
+                        {errors.OptInFromName !== '' && <strong className={clsx(classes.textRed, classes.font14)}>{errors.OptInFromName}</strong>}
+                    </Box>
                 </Box>
             </Box>
             <Box className={classes.mt5}>
@@ -195,10 +251,15 @@ const DoubleOptInSettingsPopUp = ({ classes, isOpen, onClose, onConfirm, optInSe
                         onChange={(e) => {
                             setOptIn({ ...optIn, OptInSubject: e.target.value });
                         }}
+                        inputProps={{
+                            maxLength: MAX_TEXTFIELD_LENGTH.CAMPAIGN_SUBJECT
+                        }}
                         placeholder={t('campaigns.newsLetterMgmt.emailVerification.secondSlide.placeholder')}
-                        error={!!responseError}
                         value={optIn.OptInSubject}
                     />
+                    <Box>
+                        {errors.OptInSubject !== '' && <strong className={clsx(classes.textRed, classes.font14)}>{errors.OptInSubject}</strong>}
+                    </Box>
                 </Box>
             </Box>
             <Box className={classes.mt25} style={{ textAlign: 'center' }}>
@@ -211,6 +272,7 @@ const DoubleOptInSettingsPopUp = ({ classes, isOpen, onClose, onConfirm, optInSe
                     onClick={() => { handleSaveOptInSettings() }}>{t('common.save')}
                 </Button>
             </Box>
+            {renderToast()}
         </Box>}
         onClose={() => {
             onClose && onClose();

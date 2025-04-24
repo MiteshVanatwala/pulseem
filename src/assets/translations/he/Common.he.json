@@ -863,5 +863,7 @@
   "allChannels": "כל הערוצים",
   "internalError": "שגיאה כללית",
   "selectEmail": "בחר אימייל",
-  "selectCellphone": "בחר סלולרי"
+  "selectCellphone": "בחר סלולרי",
+  "domainVerificationRequired": "דומיין לא מאומת",
+  "settingsSavedSuccessfuly": "הגדרות נשמרו בהצלחה!"
 }

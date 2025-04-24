@@ -531,7 +531,7 @@ const FORM_ACCOUNT_DETAILS = ({
 								style={{ cursor: 'pointer' }}
 								className={classes.font14} onClick={() => {
 									setShowDoubleOptInSettings(true)
-								}}>{t('common.edit')}</Link>}
+								}}>{t("settings.accountSettings.optIn.edit")}</Link>}
 						</Box>
 					</Grid>
 				</Grid>
