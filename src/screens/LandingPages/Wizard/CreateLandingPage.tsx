@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import DefaultScreen from '../../DefaultScreen';
 import { Title } from '../../../components/managment/Title';
@@ -35,6 +35,8 @@ import { PulseemResponse } from '../../../Models/APIResponse';
 import { logout } from '../../../helpers/Api/PulseemReactAPI';
 import Toast from '../../../components/Toast/Toast.component';
 import SubscriberGroup from './Tabs/SubscriberGroup';
+import EmailConfirmationSettingsPopUp from './Popups/EmailConfirmationSettingsPopUp';
+import { getCookie, setCookie } from '../../../helpers/Functions/cookies';
 
 const CreateLandingPage = ({ classes }: ClassesType) => {
 	const { id } = useParams();
@@ -151,14 +153,21 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 		GoogleTagManagerCode: '',
 		FacebookPixelCode: '',
 		IsNewEditor: null,
-		WebformsToReportLeadByApi: null
+		WebformsToReportLeadByApi: null,
+		IsEmailConfirmationActive: false,
+		ConfirmationFromEmail: '',
+		ConfirmationFromName: '',
+		ConfirmationSubject: ''
 	});
 
 	const [tabValue, setTabValue] = useState<string>('1');
+	const [showConfirmationSettings, setShowConfirmationSettings] = useState<boolean>(false);
+	const isFirstRender = useRef(true);
 	// const [template, setTemplate] = useState('');
 	const { publicTemplates, templatesBySubAccount } = useSelector(
 		(state: { landingPages: any }) => state.landingPages
 	);
+
 
 	enum EditorType {
 		SAVE_ONLY = 0,
@@ -174,6 +183,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 
 	const getData = async () => {
 		setIsLoader(true);
+		const emailConfirmatopmCookie = getCookie('LP-EmailConfirmation');
 
 		const lpId: number | any = id || -1;
 		// @ts-ignore
@@ -224,7 +234,12 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 				IsAccessibility: (lpId && lpId > 0) ? response.Data?.WebForm?.IsAccessibility : true,
 				AnswerType: (lpId && lpId > 0) ? response.Data?.WebForm?.AnswerType : 1,
 				IsResponsive: (lpId && lpId > 0) ? response.Data?.WebForm?.IsResponsive : true,
-				IsTemplate: (lpId && lpId > 0) ? response.Data?.WebForm?.IsTemplate : false
+				IsTemplate: (lpId && lpId > 0) ? response.Data?.WebForm?.IsTemplate : false,
+				IsEmailConfirmationActive: (lpId && lpId > 0) ? response.Data?.WebForm?.IsEmailConfirmationActive : emailConfirmatopmCookie?.IsEmailConfirmationActive ?? true,
+				ConfirmationFromEmail: (lpId && lpId > 0) ? response.Data?.WebForm?.ConfirmationFromEmail : emailConfirmatopmCookie?.ConfirmationFromEmail ?? '',
+				ConfirmationSubject: (lpId && lpId > 0) ? response.Data?.WebForm?.ConfirmationSubject : emailConfirmatopmCookie?.ConfirmationSubject ?? '',
+				ConfirmationFromName: (lpId && lpId > 0) ? response.Data?.WebForm?.ConfirmationFromName : emailConfirmatopmCookie?.ConfirmationFromName ?? '',
+				DoubleOptin: (lpId && lpId > 0) ? response.Data?.WebForm?.DoubleOptin : emailConfirmatopmCookie?.DoubleOptin ?? ''
 			});
 			if (response.Data?.WebForm?.LinkPreviewIconName !== '') {
 				handleSelectedImage(response.Data?.WebForm?.LinkPreviewIconName, true);
@@ -576,6 +591,13 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 			const response = await dispatch(saveLandingPage(req));
 			setIsLoader(false);
 			handleSaveResponse(response?.payload, editorType);
+			setCookie('LP-EmailConfirmation', JSON.stringify({
+				DoubleOptin: landingPageModel.DoubleOptin,
+				ConfirmationFromEmail: landingPageModel.ConfirmationFromEmail,
+				ConfirmationFromName: landingPageModel.ConfirmationFromName,
+				ConfirmationSubject: landingPageModel.ConfirmationSubject,
+				IsEmailConfirmationActive: landingPageModel.IsEmailConfirmationActive
+			}));
 			return true;
 		} else {
 			setDialogType({ type: 'validationDialog' })
@@ -745,6 +767,34 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 		return <Toast customData={null} data={toastMessage} />;
 	};
 
+	const onRefresh = () => {
+		getData()
+		return;
+	}
+
+	const onConfirmEmailSettings = (retVal: any) => {
+		const newDetails = {
+			...landingPageModel,
+			...retVal
+		};
+		setLandingPageModel(newDetails)
+		setShowConfirmationSettings(false);
+	}
+
+	// useEffect(() => {
+	// 	if (isFirstRender.current && !landingPageModel.ID) {
+	// 		return;
+	// 	}
+	// 	if (isFirstRender.current && landingPageModel?.IsEmailConfirmationActive === true) {
+	// 		isFirstRender.current = false;
+	// 		return;
+	// 	}
+
+	// 	if (landingPageModel?.IsEmailConfirmationActive === true) {
+	// 		setShowConfirmationSettings(true);
+	// 	}
+	// }, [landingPageModel.IsEmailConfirmationActive])
+
 	return (
 		<DefaultScreen
 			currentPage="landingPages"
@@ -839,6 +889,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 									removeEmailId={removeEmailId}
 									errors={errors}
 									onDone={getData}
+									onShowEmailConfirmationSettings={(show: boolean) => setShowConfirmationSettings(show)}
 								/>
 							</Grid>}
 							{landingPageModel.PageType < 3 && <Grid item md={6}>
@@ -921,7 +972,23 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 			</Box >
 			{renderDialog()}
 			{toastMessage && renderToast()}
-		</DefaultScreen >
+			{
+				showConfirmationSettings && <EmailConfirmationSettingsPopUp
+					classes={classes}
+					isOpen={showConfirmationSettings}
+					onClose={() => {
+						setShowConfirmationSettings(false);
+						onRefresh();
+					}}
+					onConfirm={(retVal: any) => {
+						onConfirmEmailSettings(retVal);
+					}}
+					optInSettings={landingPageModel}
+					//@ts-ignore
+					onVerificationEmail={() => { onVerificationEmail() }}
+				/>
+			}
+		</DefaultScreen>
 	)
 }
 

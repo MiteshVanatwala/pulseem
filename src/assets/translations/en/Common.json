@@ -870,5 +870,7 @@
   "selectEmail": "Select Email",
   "selectCellphone": "Select Cellphone",
   "domainVerificationRequired": "Domain is not verified",
-  "settingsSavedSuccessfuly": "Settings successfuly saved!"
+  "settingsSavedSuccessfuly": "Settings successfuly saved!",
+  "typeFromName": "Type From Name",
+  "typeSubject": "Type Subject"
 }

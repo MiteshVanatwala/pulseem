@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
-import { Box, Button, Checkbox, FormControl, FormControlLabel, Grid, Input, ListItemText, MenuItem, Radio, RadioGroup, TextField, Typography } from '@material-ui/core';
+import { Box, Button, Checkbox, FormControl, FormControlLabel, Grid, Input, Link, ListItemText, MenuItem, Radio, RadioGroup, TextField, Typography } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import { Select } from '@mui/material';
 import { IoIosArrowDown } from 'react-icons/io';
@@ -14,7 +14,7 @@ import ConfirmRadioDialog from '../../../../components/DialogTemplates/ConfirmRa
 import { RenderHtml } from '../../../../helpers/Utils/HtmlUtils';
 import { AiOutlineExclamationCircle } from 'react-icons/ai';
 
-const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialog, errors, onDone }: any) => {
+const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialog, errors, onDone, onShowEmailConfirmationSettings }: any) => {
     const { t: translator } = useTranslation();
     const { isRTL } = useSelector(
         (state: { core: coreProps }) => state.core
@@ -226,6 +226,33 @@ const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialo
                         />
                         }
                     />
+                    {(data?.DoubleOptin === null || (data?.DoubleOptin === null && isNewPage)) && <Box className={classes.dFlex} alignItems={'center'}>
+                        <FormControlLabel
+                            className={clsx(classes.fullWidth, classes.ps25)}
+                            label={translator('landingPages.emailConfirmationCheckbox')}
+                            value={null}
+                            control={<Checkbox
+                                color="primary"
+                                name={'optinGroup'}
+                                inputProps={{ "aria-label": "secondary checkbox" }}
+                                checked={data?.IsEmailConfirmationActive === true || (data?.IsEmailConfirmationActive === null && isNewPage)}
+                                onChange={(e: any) => {
+                                    onUpdate({
+                                        ...data,
+                                        IsEmailConfirmationActive: e.target.checked
+                                    })
+                                    onShowEmailConfirmationSettings(e.target.checked);
+                                }}
+                            />
+                            }
+                        />
+                        {data?.IsEmailConfirmationActive && <Link
+                            style={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
+                            className={classes.font14} onClick={() => {
+                                onShowEmailConfirmationSettings(true)
+                            }}>{translator("settings.accountSettings.optIn.edit")}</Link>
+                        }
+                    </Box>}
                     <FormControlLabel
                         className={classes.fullWidth}
                         label={translator('landingPages.addClientAsActive')}
@@ -259,6 +286,33 @@ const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialo
                         />
                         }
                     />
+                    {data?.DoubleOptin && <Box className={classes.dFlex} alignItems={'center'}>
+                        <FormControlLabel
+                            className={clsx(classes.fullWidth, classes.ps25)}
+                            label={translator('landingPages.emailConfirmationCheckbox')}
+                            value={null}
+                            control={<Checkbox
+                                color="primary"
+                                name={'optinGroup'}
+                                inputProps={{ "aria-label": "secondary checkbox" }}
+                                checked={data?.IsEmailConfirmationActive}
+                                onChange={(e: any) => {
+                                    onUpdate({
+                                        ...data,
+                                        IsEmailConfirmationActive: e.target.checked
+                                    })
+                                    onShowEmailConfirmationSettings(e.target.checked);
+                                }}
+                            />
+                            }
+                        />
+                        {data?.IsEmailConfirmationActive && <Link
+                            style={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
+                            className={classes.font14} onClick={() => {
+                                onShowEmailConfirmationSettings(true)
+                            }}>{translator("settings.accountSettings.optIn.edit")}</Link>
+                        }
+                    </Box>}
                 </RadioGroup>
             </Grid>
             <RegistrationToApiForm

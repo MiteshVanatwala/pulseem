@@ -865,5 +865,7 @@
   "selectEmail": "בחר אימייל",
   "selectCellphone": "בחר סלולרי",
   "domainVerificationRequired": "דומיין לא מאומת",
-  "settingsSavedSuccessfuly": "הגדרות נשמרו בהצלחה!"
+  "settingsSavedSuccessfuly": "הגדרות נשמרו בהצלחה!",
+  "typeFromName": "הקלד שם שולח",
+  "typeSubject": "הקלד נושא"
 }
