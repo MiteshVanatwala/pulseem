@@ -41,7 +41,8 @@ const FORM_ACCOUNT_DETAILS = ({
 	OnUpdate,
 	selectedTier,
 	onTierChange = () => { },
-	onVerificationEmail
+	onVerificationEmail,
+	onRefresh = () => { }
 }: AccDtlPropTypes) => {
 	const dispatch = useDispatch();
 	const { t } = useTranslation();
@@ -175,7 +176,6 @@ const FORM_ACCOUNT_DETAILS = ({
 		}
 		else {
 			await dispatch(cancelDisablePluginOTP());
-
 			setAccountDetails({
 				...accountDetails,
 				DisablePluginOTP:
@@ -234,7 +234,12 @@ const FORM_ACCOUNT_DETAILS = ({
 
 		if (results?.StatusCode === 201) {
 			setErrorMessage('');
-			setAccountDetails({ ...accountDetails, DisablePluginOTP: true } as AccountSettings);
+			setAccountDetails({
+				...accountDetails,
+				DisablePluginOTP: true,
+				OptInActive:
+					false
+			} as AccountSettings);
 			setShowOtpRegulationDialog(false);
 			dispatch(setAuditLog({
 				ActionName: 'DisablePendingFeature',
@@ -243,6 +248,8 @@ const FORM_ACCOUNT_DETAILS = ({
 				ResponseValue: '',
 				RequestValue: ''
 			} as AuditLog))
+
+			await dispatch(disableDoubleOptItSettings(null));
 		}
 		else {
 			handleErrorOTPResponse(results?.StatusCode);
@@ -298,6 +305,31 @@ const FORM_ACCOUNT_DETAILS = ({
 				break;
 			}
 		}
+	}
+
+	const onConfirmDoubleOptIn = (retVal: any) => {
+		const newDetails = {
+			...accountDetails,
+			OptInActive: true,
+			DisablePluginOTP: false,
+			OptInFromEmail: retVal?.OptInFromEmail,
+			OptInFromName: retVal?.OptInFromName,
+			OptInSubject: retVal?.OptInSubject
+		};
+		setAccountDetails((prevState) => {
+			if (!prevState) return null;
+			return {
+				...prevState,
+				newDetails
+			} as AccountSettings;
+		})
+		setShowDoubleOptInSettings(false);
+
+		OnUpdate(newDetails);
+	}
+
+	const checkState = () => {
+
 	}
 
 	return (
@@ -569,12 +601,8 @@ const FORM_ACCOUNT_DETAILS = ({
 				showDoubleOtpInDialog && <OTP
 					classes={classes}
 					onClose={() => {
+						onRefresh();
 						setShowDoubleOtpInDialog(false);
-						setErrorMessage('');
-						setAccountDetails({
-							...accountDetails,
-							OptInActive: false
-						} as AccountSettings);
 					}}
 					onConfirm={handleConfirmDoubleOtpInRegulation}
 					userCodeConfirmed={userCodeConfirmed}
@@ -600,19 +628,10 @@ const FORM_ACCOUNT_DETAILS = ({
 					isOpen={showDoubleOptInSettings}
 					onClose={() => {
 						setShowDoubleOptInSettings(false);
+						onRefresh();
 					}}
 					onConfirm={(retVal: any) => {
-						setAccountDetails((prevState) => {
-							if (!prevState) return null;
-							return {
-								...prevState,
-								OptInActive: true,
-								OptInFromEmail: retVal?.OptInFromEmail,
-								OptInFromName: retVal?.OptInFromName,
-								OptInSubject: retVal?.OptInSubject
-							} as AccountSettings;
-						})
-						setShowDoubleOptInSettings(false);
+						onConfirmDoubleOptIn(retVal);
 					}}
 					optInSettings={accountDetails}
 					//@ts-ignore

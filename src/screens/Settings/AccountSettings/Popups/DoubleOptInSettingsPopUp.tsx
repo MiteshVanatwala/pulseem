@@ -24,9 +24,9 @@ const DoubleOptInSettingsPopUp = ({ classes, isOpen, onClose, onConfirm, optInSe
     const [toastMessage, setToastMessage] = useState<any>();
     const [optIn, setOptIn] = useState<DoubleOptInSettings>({
         OptInActive: true,
-        OptInFromEmail: '',
-        OptInFromName: '',
-        OptInSubject: ''
+        OptInFromEmail: optInSettings?.OptInFromEmail ?? '',
+        OptInFromName: optInSettings?.OptInFromName ?? '',
+        OptInSubject: optInSettings?.OptInSubject ?? ''
     });
     const [errors, setErrors] = useState({
         OptInFromEmail: "",
@@ -88,7 +88,7 @@ const DoubleOptInSettingsPopUp = ({ classes, isOpen, onClose, onConfirm, optInSe
         const isValid: boolean = validateSettings();
 
         if (isValid) {
-            const response: any = await dispatch(setDoubleOptItSettings(optIn));
+            const response: any = await dispatch(setDoubleOptItSettings({ ...optIn, OptInActive: true }));
             handleResponses(response?.payload)
         }
     }
@@ -162,7 +162,7 @@ const DoubleOptInSettingsPopUp = ({ classes, isOpen, onClose, onConfirm, optInSe
 
     return <BaseDialog
         customContainerStyle={classes.summaryContainer}
-        disableBackdropClick={false}
+        disableBackdropClick={true}
         classes={classes}
         icon={<MdDomain className={classes.notifyIconWhite} />}
         open={isOpen}

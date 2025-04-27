@@ -380,6 +380,7 @@ const AccountSettingsEditor = ({ classes }: any) => {
 						selectedTier={selectedTier}
 						onTierChange={onTierChange}
 						onVerificationEmail={() => { setEmailVerificationPopup(true) }}
+						onRefresh={getData}
 					/>
 				</Box>
 			</Box>
