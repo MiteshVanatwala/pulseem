@@ -189,6 +189,7 @@ const FORM_ACCOUNT_DETAILS = ({
 			setShowDoubleOtpInDialog(true);
 		}
 		else {
+			// TODO: Add confirm
 			setAccountDetails({
 				...accountDetails,
 				OptInActive:
@@ -546,7 +547,7 @@ const FORM_ACCOUNT_DETAILS = ({
 										key='doubleOptInSetting'
 										id="type"
 										classes={classes}
-										checked={!!accountDetails?.OptInActive}
+										checked={accountDetails?.OptInActive}
 										onColor="#0371ad"
 										handleDiameter={20}
 										boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
