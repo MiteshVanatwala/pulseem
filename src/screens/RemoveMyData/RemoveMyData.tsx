@@ -13,8 +13,9 @@ import { setLanguage } from "../../redux/reducers/coreSlice";
 import { useDispatch } from 'react-redux';
 import i18n from "../../i18n";
 import Select, { SelectChangeEvent } from '@mui/material/Select';
-import { setCookie } from "../../helpers/Functions/cookies";
+import { getCookie, setCookie } from "../../helpers/Functions/cookies";
 import EnImage from '../../assets/images/british.svg';
+import PlImage from '../../assets/images/poland-flag.svg';
 import IsraelImage from "../../assets/images/israel-flag-icon.svg";
 import { IsValidEmail, IsValidOTP } from "../../helpers/Utils/Validations";
 import { isValidPhoneNumber } from "libphonenumber-js";
@@ -22,32 +23,39 @@ import { reCAPTCHAKey } from "../../helpers/Constants";
 
 const RemoveMyData = ({ classes }: any) => {
   const dispatch = useDispatch();
-  const { windowSize, isRTL } = useSelector((state: StateType) => state.core);
+  const { windowSize, isRTL, language } = useSelector((state: StateType) => state.core);
   const { t } = useTranslation();
   const [ showLoader, setLoader ] = useState(false);
   const [ toastMessage, setToastMessage ] = useState<any | never>(null);
   const [ activeStep, setActiveStep ] = useState(0);
-  const [ emailOrPhoneNumber, setEmailOrPhoneNumber ] = useState<string>('a@b.com');
+  const [ emailOrPhoneNumber, setEmailOrPhoneNumber ] = useState<string>('');
   const [ emailOrPhoneNumberError, setEmailOrPhoneNumberError ] = useState<string>('');
   const [ OTP, setOTP ] = useState<string>('');
   const [ OTPError, setOTPError ] = useState<string>('');
   const [ GUID, setGUID ] = useState<string>('');
   const qs = queryString.parse(window.location.search);
+  const cookieData = getCookie('Culture');
 
   const changeLanguage = (value: any) => {
-    setCookie('Culture', `${value}-${value === 'he' ? 'IL' : 'US'}`);
+    let langCode = '';
+    if (value === 'he') langCode = 'IL';
+    else if (value === 'en') langCode = 'US';
+    else if (value === 'pl') langCode = 'PL';
+
+    setCookie('Culture', `${value}-${langCode}`);
     i18n.changeLanguage(value);
     dispatch(setLanguage(value));
   }
 
   useEffect(() => {
-    dispatch(setLanguage(qs?.culture || 'en'));
-    i18n.changeLanguage('he-IL');
+    const defaultLang = qs?.culture || cookieData;
+    let langCode = '';
+    if (defaultLang === 'he-IL') langCode = 'he';
+    else if (defaultLang === 'en-US') langCode = 'en';
+    else if (defaultLang === 'pl-PL') langCode = 'pl';
+    dispatch(setLanguage(langCode));
+    i18n.changeLanguage(langCode);
   }, []);
-
-  useEffect(() => {
-    i18n.changeLanguage(isRTL ? 'he-IL' : 'en-US');
-  }, [isRTL]);
 
   const renderToast = () => {
     if (toastMessage) {
@@ -168,12 +176,27 @@ const RemoveMyData = ({ classes }: any) => {
     </Box>
   }
 
+  const Step4 = () => {
+    return <Box className={clsx(classes.pb25)}>
+      <h3 className={clsx(classes.colrPrimary, classes.mt24, classes.mb8, classes.f30)}>
+        {t('RemoveMyData.title')}
+      </h3>
+      <Box className={clsx(isRTL ? classes.textRight : classes.textLeft)}>
+        <Box className={clsx(windowSize !== 'xs' ? classes.paddingInline10 : '')}>
+          <Typography className={clsx(classes.f18, classes.mb20)}>
+            {t("RemoveMyData.dataDeletionBegins")}
+          </Typography>
+        </Box>
+      </Box>
+    </Box>
+  }
+
   const languageSelector = () => {
     return (
       <FormControl variant='standard' className={clsx(classes.SignUpLanguageDropdown, classes.bgWhite, classes.mb10)} style={{ direction: isRTL ? 'ltr' : 'rtl' }}>
         <Select
           variant="standard"
-          value={isRTL ? 'he' : 'en'}
+          value={language}
           name='TwoFactorAuthOptionID'
           onChange={(e: SelectChangeEvent) => changeLanguage(e.target.value)}
           IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} style={{ right: isRTL ? 'auto' : 10, left: isRTL ? 10 : 'auto' }} />}
@@ -196,6 +219,11 @@ const RemoveMyData = ({ classes }: any) => {
           <MenuItem value={'en'} className={clsx(classes.SignUpLanguageDropdown, classes.cursorPointer)}>
             <img width={25} src={EnImage} className={clsx(classes.paddingInline10)} alt={t('languages.langCodes.english')} />
             <label>{t('languages.langCodes.english')}</label>
+          </MenuItem>
+          
+          <MenuItem value={'pl'} className={clsx(classes.SignUpLanguageDropdown, classes.cursorPointer)}>
+            <img width={25} src={PlImage} className={clsx(classes.paddingInline10)} alt={t('languages.langCodes.polish')} />
+            <label>{t('languages.langCodes.polish')}</label>
           </MenuItem>
         </Select>
       </FormControl>
@@ -267,7 +295,7 @@ const RemoveMyData = ({ classes }: any) => {
     });
     setLoader(false);
     if (data?.StatusCode === 1) {
-      setActiveStep(1);
+      setActiveStep(3);
       setToastMessage({ severity: 'success', color: 'success', message: t('RemoveMyData.dataDeletionBegins'), showAnimtionCheck: false });
     } else if (data?.StatusCode === 2) {
       setToastMessage({ severity: 'error', color: 'error', message: t('RemoveMyData.errorMessage') });
@@ -277,7 +305,6 @@ const RemoveMyData = ({ classes }: any) => {
   }
 
   const actionButtonClick = async (e: any) => {
-    console.log(activeStep)
     if (activeStep === 0) {
       if (!IsValidEmail(emailOrPhoneNumber) && !isValidPhoneNumber(emailOrPhoneNumber)) {
         setEmailOrPhoneNumberError(t('RemoveMyData.insertEmailPhone'));
@@ -289,7 +316,6 @@ const RemoveMyData = ({ classes }: any) => {
         grecaptcha.ready(function() {
           // @ts-ignore
           grecaptcha.execute(reCAPTCHAKey, {action: 'submit'}).then(function(token: string) {
-            // console.log(token)
             authenticateUser(token);
           });
         });
@@ -303,7 +329,6 @@ const RemoveMyData = ({ classes }: any) => {
         grecaptcha.ready(function() {
           // @ts-ignore
           grecaptcha.execute(reCAPTCHAKey, {action: 'submit'}).then(function(token: string) {
-            // console.log(token)
             validateOTP(token);
           });
         });
@@ -313,7 +338,6 @@ const RemoveMyData = ({ classes }: any) => {
       grecaptcha.ready(function() {
         // @ts-ignore
         grecaptcha.execute(reCAPTCHAKey, {action: 'submit'}).then(function(token: string) {
-          // console.log(token)
           eraseClient(token)
         });
       });
@@ -333,17 +357,22 @@ const RemoveMyData = ({ classes }: any) => {
             { activeStep === 0 && Step1() }
             { activeStep === 1 && Step2() }
             { activeStep === 2 && Step3() }
+            { activeStep === 3 && Step4() }
             <Box>
               <Grid container>
                 <Grid item md={12} xs={12} className={clsx(classes.textCenter)}>
-                  <Button
-                    onClick={actionButtonClick}
-                    className={clsx(classes.btn, classes.btnRounded, classes.f12, classes.redButton, classes.removeMyDataButton)}
-                  >
-                    {activeStep === 0 && t(`common.next`)}
-                    {activeStep === 1 && t(`RemoveMyData.validateOTP`)}
-                    {activeStep === 2 && t(`RemoveMyData.YesEraseData`)}
-                  </Button>
+                  {
+                    activeStep !== 3 && (
+                      <Button
+                        onClick={actionButtonClick}
+                        className={clsx(classes.btn, classes.btnRounded, classes.f12, classes.redButton, classes.removeMyDataButton)}
+                      >
+                        {activeStep === 0 && t(`common.next`)}
+                        {activeStep === 1 && t(`RemoveMyData.validateOTP`)}
+                        {activeStep === 2 && t(`RemoveMyData.YesEraseData`)}
+                      </Button>
+                    )
+                  }
                 </Grid>
               </Grid>
             </Box>

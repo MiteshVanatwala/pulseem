@@ -1,7 +1,7 @@
 {
-  "title": "Secure Data Deletion Request",
+  "title": "בקשה למחיקת נתונים מאובטחת",
   "insertEmailPhone": "הזינו את כתובת האימייל או את מספר הטלפון הנייד שלכם",
-  "insertEmailPhonePlaceholder": "Enter email or phone number",
+  "insertEmailPhonePlaceholder": "הזן דוא\"ל או מספר טלפון",
   "eraseDataConfirmation": "האם אתם בטוחים שברצונכם למחוק את המידע שלכם?",
   "eraseDataDescription1": "פעולה זו בלתי הפיכה ואינה ניתנת לביטול.",
   "eraseDataDescription2": "באישור הבקשה, כל המידע האישי המשויך לכתובת האימייל או למספר הטלפון שלכם יימחק לצמיתות.",
