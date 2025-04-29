@@ -24,13 +24,14 @@ import Klaviyo from "./Klaviyo";
 import { RxOpenInNewWindow } from "react-icons/rx";
 import { ListIcon } from "../../assets/images/managment";
 import { useSelector } from "react-redux";
+import DoubleOptInSettingsExplanationPopUp from "../Settings/AccountSettings/Popups/DoubleOptInSettingsExplanationPopUp";
 
 
 const Integrations = ({ classes }: any) => {
   const { t } = useTranslation();
   const [tabValue, setTabValue] = useState('0');
   const { windowSize } = useSelector((state: any) => state.core)
-
+  const [showOptInExplanationPopup, setShowOptInExplanationPopup] = useState<boolean>(false);
   useEffect(() => {
     const integrationTitles = {
       '0': { title: `${t('integrations.shopify.title')}` },
@@ -78,9 +79,8 @@ const Integrations = ({ classes }: any) => {
                     classes.mr10
                   )}
                   onClick={() =>
-                    window.open('/react/AccountSettings?doi=true', '_blank')
+                    setShowOptInExplanationPopup(true)
                   }
-                  startIcon={<RxOpenInNewWindow />}
                 >
                   <>
                     {t("settings.accountSettings.optIn.redirectButton")}
@@ -91,6 +91,30 @@ const Integrations = ({ classes }: any) => {
           />
         </Box>
       </Box>
+      {showOptInExplanationPopup && <DoubleOptInSettingsExplanationPopUp
+        classes={classes}
+        isOpen={showOptInExplanationPopup}
+        onClose={() => {
+          setShowOptInExplanationPopup(false);
+        }}
+        onCancel={() => {
+          setShowOptInExplanationPopup(false);
+        }}
+        redirectButton={<Button
+          className={clsx(
+            classes.btn,
+            classes.btnRounded
+          )}
+          onClick={() =>
+            window.open('/react/AccountSettings?doi=true', '_blank')
+          }
+          startIcon={<RxOpenInNewWindow />}
+        >
+          <>
+            {t("settings.accountSettings.optIn.redirectButton")}
+          </>
+        </Button>}
+      />}
       <Box className={'containerBody'}>
         <Tabs
           value={tabValue}

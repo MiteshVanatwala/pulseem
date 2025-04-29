@@ -17,6 +17,7 @@ import { PulseemFeatures } from "../../../../model/PulseemFields/Fields";
 import { MAX_TEXTFIELD_LENGTH } from "../../../../helpers/Constants";
 import Toast from "../../../../components/Toast/Toast.component";
 import DomainsVerificationPopUp from "./DomainsVerificationPopUp";
+import { VerifiedEmail } from "../../../../model/Common/commonProps.types";
 
 const DoubleOptInSettingsPopUp = ({ classes, isOpen, onClose, onConfirm, optInSettings, onVerificationEmail }: any) => {
     const { t } = useTranslation();
@@ -201,7 +202,7 @@ const DoubleOptInSettingsPopUp = ({ classes, isOpen, onClose, onConfirm, optInSe
                         >
                             {t("common.select")}
                         </option>
-                        {verifiedEmails.map((item: any, index: any) => {
+                        {verifiedEmails.filter((email: VerifiedEmail) => { return email.IsVerified && email.IsOptIn }).map((item: any, index: any) => {
                             return <option
                                 key={index}
                                 value={item.Number}

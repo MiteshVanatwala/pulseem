@@ -35,6 +35,7 @@ import { AuditLog, eAuditActionType } from '../../../Models/AuditLog/AuditLog';
 import DoubleOptInSettingsPopUp from './Popups/DoubleOptInSettingsPopUp';
 import queryString from 'query-string';
 import DynamicConfirmDialog from '../../../components/DialogTemplates/DynamicConfirmDialog';
+import DoubleOptInSettingsExplanationPopUp from './Popups/DoubleOptInSettingsExplanationPopUp';
 
 const FORM_ACCOUNT_DETAILS = ({
 	classes,
@@ -52,6 +53,7 @@ const FORM_ACCOUNT_DETAILS = ({
 	const [fromEmailError, setFromEmailError] = useState<boolean>(false);
 	const [fromCellphonError, setFromCellphonError] = useState<boolean>(false);
 	const [showConfirmEmailConfirmationDialog, setShowConfirmEmailConfirmationDialog] = useState<boolean>(false);
+	const [showOptInExplanationPopup, setShowOptInExplanationPopup] = useState<boolean>(false);
 
 	const [accountDetails, setAccountDetails] = useState<AccountSettings | null>({
 		DefaultFromMail: '',
@@ -507,65 +509,6 @@ const FORM_ACCOUNT_DETAILS = ({
 						</Grid> */}
 					</Grid>
 				</Grid>
-				{accountFeatures?.indexOf(PulseemFeatures.DISABLE_OPTIN_PLUGIN) > -1 && <Grid container>
-					<Grid item xs={12} sm={6} md={3} className={'textBoxWrapper'}>
-						<FormControlLabel
-							style={{ paddingInline: 10 }}
-							control={
-								<PulseemSwitch
-									switchType={'ios'}
-									isRTL={false}
-									key='bypassPending'
-									id="type"
-									classes={classes}
-									checked={!!accountDetails?.DisablePluginOTP}
-									onColor="#0371ad"
-									handleDiameter={20}
-									boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
-									activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
-									height={15}
-									width={40}
-									className={clsx(classes.inputSwitch, { [classes.rtlSwitch]: isRTL })}
-									onChange={handleByPassPending}
-								/>
-							}
-							label={t('settings.accountSettings.bypassOtp.checkboxTitle')}
-						/>
-					</Grid>
-				</Grid>}
-				<Grid container id="doubleOptInContainer">
-					<Grid item xs={12} sm={12} md={12} className={'textBoxWrapper'} style={{ paddingTop: 15 }}>
-						<Box className={clsx(getAnimationClass())}>
-							<FormControlLabel
-								style={{ paddingInline: 10, paddingBlock: 15 }}
-								control={
-									<PulseemSwitch
-										switchType={'ios'}
-										isRTL={false}
-										key='doubleOptInSetting'
-										id="type"
-										classes={classes}
-										checked={accountDetails?.OptInActive}
-										onColor="#0371ad"
-										handleDiameter={20}
-										boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
-										activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
-										height={15}
-										width={40}
-										className={clsx(classes.inputSwitch, { [classes.rtlSwitch]: isRTL })}
-										onChange={handleDoubleOptInSetting}
-									/>
-								}
-								label={t('settings.accountSettings.optIn.checkboxTitle')}
-							/>
-							{accountDetails?.OptInActive && <Link
-								style={{ cursor: 'pointer' }}
-								className={classes.font14} onClick={() => {
-									setShowDoubleOptInSettings(true)
-								}}>{t("settings.accountSettings.optIn.edit")}</Link>}
-						</Box>
-					</Grid>
-				</Grid>
 				<Grid container className={'form'} style={{ maxWidth: '100%' }}>
 					<Grid item xs={12} className={classes.justifyContentEnd}>
 						<Button
@@ -584,6 +527,86 @@ const FORM_ACCOUNT_DETAILS = ({
 						</Button>
 					</Grid>
 				</Grid>
+			</Box>
+			<Box className={'settingsWrapper'}>
+				<Title
+					Text={t('settings.accountSettings.optIn.title')}
+					classes={classes}
+					isIcon={false}
+					ContainerStyle={{
+						padding: `6px ${isRTL ? "14.69px" : 0} 5px ${isRTL ? 0 : "14.69px"
+							}`,
+					}}
+					Element={<Button
+						style={{ marginInline: 15 }}
+						className={clsx(
+							classes.btn,
+							classes.btnRounded,
+							"saveFixedDetails"
+						)}
+						onClick={() => { setShowOptInExplanationPopup(true) }}>{t('settings.accountSettings.optIn.explanationButton')}</Button>}
+				/>
+				<Box className={'formContainer'}>
+					{accountFeatures?.indexOf(PulseemFeatures.DISABLE_OPTIN_PLUGIN) > -1 && <Grid container>
+						<Grid item xs={12} sm={6} md={3} className={'textBoxWrapper'}>
+							<FormControlLabel
+								style={{ paddingInline: 10 }}
+								control={
+									<PulseemSwitch
+										switchType={'ios'}
+										isRTL={false}
+										key='bypassPending'
+										id="type"
+										classes={classes}
+										checked={!!accountDetails?.DisablePluginOTP}
+										onColor="#0371ad"
+										handleDiameter={20}
+										boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+										activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+										height={15}
+										width={40}
+										className={clsx(classes.inputSwitch, { [classes.rtlSwitch]: isRTL })}
+										onChange={handleByPassPending}
+									/>
+								}
+								label={t('settings.accountSettings.bypassOtp.checkboxTitle')}
+							/>
+						</Grid>
+					</Grid>}
+					<Grid container id="doubleOptInContainer">
+						<Grid item xs={12} sm={12} md={12} className={'textBoxWrapper'} style={{ paddingTop: 15 }}>
+							<Box className={clsx(getAnimationClass())}>
+								<FormControlLabel
+									style={{ paddingInline: 10, paddingBlock: 15 }}
+									control={
+										<PulseemSwitch
+											switchType={'ios'}
+											isRTL={false}
+											key='doubleOptInSetting'
+											id="type"
+											classes={classes}
+											checked={accountDetails?.OptInActive}
+											onColor="#0371ad"
+											handleDiameter={20}
+											boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+											activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+											height={15}
+											width={40}
+											className={clsx(classes.inputSwitch, { [classes.rtlSwitch]: isRTL })}
+											onChange={handleDoubleOptInSetting}
+										/>
+									}
+									label={t('settings.accountSettings.optIn.checkboxTitle')}
+								/>
+								{accountDetails?.OptInActive && <Link
+									style={{ cursor: 'pointer' }}
+									className={classes.font14} onClick={() => {
+										setShowDoubleOptInSettings(true)
+									}}>{t("settings.accountSettings.optIn.edit")}</Link>}
+							</Box>
+						</Grid>
+					</Grid>
+				</Box>
 			</Box>
 			{
 				showOtpRegulationDialog && <OTP
@@ -660,7 +683,17 @@ const FORM_ACCOUNT_DETAILS = ({
 					setShowConfirmEmailConfirmationDialog(false)
 				}}
 			/>
-		</Box >
+			{showOptInExplanationPopup && <DoubleOptInSettingsExplanationPopUp
+				classes={classes}
+				isOpen={showOptInExplanationPopup}
+				onClose={() => {
+					setShowOptInExplanationPopup(false);
+				}}
+				onCancel={() => {
+					setShowOptInExplanationPopup(false);
+				}}
+			/>}
+		</Box>
 	);
 };
 export default FORM_ACCOUNT_DETAILS;

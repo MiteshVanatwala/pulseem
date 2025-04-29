@@ -2957,7 +2957,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
           },
           '& .svg_app_settings': {
             position: 'absolute',
-            top: 121.3,
+            top: 40,
             right: isRTL ? 'auto' : 90,
             left: isRTL ? 90 : 'auto',
             transform: isRTL ? 'scaleX(1)' : 'scaleX(-1)'

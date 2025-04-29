@@ -118,6 +118,7 @@
 			}
 		},
 		"optIn": {
+			"title": "“Pending” Status Settings",
 			"checkboxTitle": "Send double opt-in Email to new “Pending” status recipients",
 			"redirectButton": "Email Settings for New Subscribers",
 			"edit": "Edit Double Opt in Email",
@@ -130,7 +131,10 @@
 				"typePassword": "Account Password"
 			},
 			"confirmTitle": "disable double opt-in emails",
-			"confirmDisable": "Disabling this setting will remove the double opt-in verification step for new subscribers.<br/>Recipients will be added directly without confirming their email address first.<br/>This may affect compliance with certain privacy regulations and could impact your deliverability rates.<br/><b>Are you sure you want to disable double opt-in emails?</b>"
+			"confirmDisable": "Disabling this setting will remove the double opt-in verification step for new subscribers.<br/>Recipients will be added directly without confirming their email address first.<br/>This may affect compliance with certain privacy regulations and could impact your deliverability rates.<br/><b>Are you sure you want to disable double opt-in emails?</b>",
+			"explanationPopUp": "A recipient with “Pending” status is someone who registered through a form on your website (e.g., during signup or checkout) but has not yet confirmed their subscription to receive mailings.<br/>The recipient will be added to the system along with any additional information received through the integration (such as cart details), but you will not be able to send mailings to them until they provide consent.<br/><br/><u><b>You can:</b></u><br/><ul style='list-style: disc'><li>Automatically set “Pending” recipient as active – this is at your own legal responsibility.</li><li>Send a confirmation email asking them to approve receiving your mailings.</li></ul><br/><b>Please Note:</b><br/>This setting does not apply to recipient entering with ”Pending” status through landing pages.<br/>For landing pages, the recipient status is defined separately for each page within the ”Create Landing Page” section.<br/>",
+			"explanationButton": "What does “Pending” status mean?",
+			"redirectToAccountSettings": "Go to account settings"
 		}
 	},
 	"billingSettings": {

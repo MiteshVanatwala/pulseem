@@ -268,26 +268,36 @@ const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialo
                         />
                         }
                     />
-                    <FormControlLabel
-                        className={classes.fullWidth}
-                        label={translator('landingPages.duplicateEmailConfirmation')}
-                        value={true}
-                        control={<Radio
-                            color="primary"
-                            name={'optinGroup'}
-                            inputProps={{ "aria-label": "secondary checkbox" }}
-                            checked={data?.DoubleOptin === true}
-                            onChange={() => {
-                                onUpdate({
-                                    ...data,
-                                    DoubleOptin: true
-                                })
-                            }}
-                        />
-                        }
-                    />
-                    {data?.DoubleOptin && <Box className={classes.dFlex} alignItems={'center'}>
+                    <Box className={classes.dFlex} alignItems={'center'}>
                         <FormControlLabel
+                            className={classes.fullWidth}
+                            label={translator('landingPages.duplicateEmailConfirmation')}
+                            value={true}
+                            control={<Radio
+                                color="primary"
+                                name={'optinGroup'}
+                                inputProps={{ "aria-label": "secondary checkbox" }}
+                                checked={data?.DoubleOptin === true}
+                                onChange={() => {
+                                    onShowEmailConfirmationSettings(true);
+                                    onUpdate({
+                                        ...data,
+                                        DoubleOptin: true,
+                                        IsEmailConfirmationActive: true
+                                    })
+                                }}
+                            />
+                            }
+                        />
+                        {data?.IsEmailConfirmationActive && <Link
+                            style={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
+                            className={classes.font14} onClick={() => {
+                                onShowEmailConfirmationSettings(true)
+                            }}>{translator("settings.accountSettings.optIn.edit")}</Link>
+                        }
+                    </Box>
+                    {/*{data?.DoubleOptin && <Box className={classes.dFlex} alignItems={'center'}>
+                         <FormControlLabel
                             className={clsx(classes.fullWidth, classes.ps25)}
                             label={translator('landingPages.emailConfirmationCheckbox')}
                             value={null}
@@ -311,8 +321,8 @@ const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialo
                             className={classes.font14} onClick={() => {
                                 onShowEmailConfirmationSettings(true)
                             }}>{translator("settings.accountSettings.optIn.edit")}</Link>
-                        }
-                    </Box>}
+                        } 
+                    </Box>}*/}
                 </RadioGroup>
             </Grid>
             <RegistrationToApiForm
