@@ -2,7 +2,6 @@ import LazyBackground from './Lazy/LazyBackground';
 import { AiOutlineCheckCircle } from 'react-icons/ai';
 import { Typography, Grid, Box } from '@material-ui/core'
 import { PulseemFolderType } from '../../model/PulseemFields/Fields';
-import { BsFiletypeMp3 } from "react-icons/bs";
 
 import {
     Word,
@@ -14,6 +13,7 @@ import {
 } from '../../assets/images/managment/index';
 import clsx from 'clsx';
 import { useSelector } from 'react-redux';
+import { FaRegCalendarAlt } from 'react-icons/fa';
 
 export const Image = ({
     classes,
@@ -41,7 +41,8 @@ export const Image = ({
         txt: Txt,
         '': File,
         mp3: File,
-        wav: File
+        wav: File,
+        ics: File
     }
 
     const imageEnter = (fileId) => () => {
