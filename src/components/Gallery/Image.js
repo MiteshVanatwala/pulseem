@@ -13,7 +13,6 @@ import {
 } from '../../assets/images/managment/index';
 import clsx from 'clsx';
 import { useSelector } from 'react-redux';
-import { FaRegCalendarAlt } from 'react-icons/fa';
 
 export const Image = ({
     classes,
