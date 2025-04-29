@@ -128,7 +128,9 @@
 				"reEnterPassword": "Re-Enter Password to complete the action",
 				"selectAuthType": "Choose a way to verify the account via email or SMS associated with this account:",
 				"typePassword": "Account Password"
-			}
+			},
+			"confirmTitle": "disable double opt-in emails",
+			"confirmDisable": "Disabling this setting will remove the double opt-in verification step for new subscribers.<br/>Recipients will be added directly without confirming their email address first.<br/>This may affect compliance with certain privacy regulations and could impact your deliverability rates.<br/><b>Are you sure you want to disable double opt-in emails?</b>"
 		}
 	},
 	"billingSettings": {

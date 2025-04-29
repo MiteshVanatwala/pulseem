@@ -34,6 +34,7 @@ import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 import { AuditLog, eAuditActionType } from '../../../Models/AuditLog/AuditLog';
 import DoubleOptInSettingsPopUp from './Popups/DoubleOptInSettingsPopUp';
 import queryString from 'query-string';
+import DynamicConfirmDialog from '../../../components/DialogTemplates/DynamicConfirmDialog';
 
 const FORM_ACCOUNT_DETAILS = ({
 	classes,
@@ -50,7 +51,7 @@ const FORM_ACCOUNT_DETAILS = ({
 	const { accountFeatures } = useSelector((state: any) => state.common);
 	const [fromEmailError, setFromEmailError] = useState<boolean>(false);
 	const [fromCellphonError, setFromCellphonError] = useState<boolean>(false);
-
+	const [showConfirmEmailConfirmationDialog, setShowConfirmEmailConfirmationDialog] = useState<boolean>(false);
 
 	const [accountDetails, setAccountDetails] = useState<AccountSettings | null>({
 		DefaultFromMail: '',
@@ -189,14 +190,15 @@ const FORM_ACCOUNT_DETAILS = ({
 			setShowDoubleOtpInDialog(true);
 		}
 		else {
-			// TODO: Add confirm
-			setAccountDetails({
-				...accountDetails,
-				OptInActive:
-					false
-			} as AccountSettings);
+			setShowConfirmEmailConfirmationDialog(true);
+			// // TODO: Add confirm
+			// setAccountDetails({
+			// 	...accountDetails,
+			// 	OptInActive:
+			// 		false
+			// } as AccountSettings);
 
-			await dispatch(disableDoubleOptItSettings(null));
+			// await dispatch(disableDoubleOptItSettings(null));
 		}
 	}
 
@@ -327,10 +329,6 @@ const FORM_ACCOUNT_DETAILS = ({
 		setShowDoubleOptInSettings(false);
 
 		OnUpdate(newDetails);
-	}
-
-	const checkState = () => {
-
 	}
 
 	return (
@@ -639,6 +637,29 @@ const FORM_ACCOUNT_DETAILS = ({
 					onVerificationEmail={() => { onVerificationEmail() }}
 				/>
 			}
+			<DynamicConfirmDialog
+				classes={classes}
+				confirmButtonText={''}
+				isOpen={showConfirmEmailConfirmationDialog}
+				onCancel={() => {
+					setShowConfirmEmailConfirmationDialog(false)
+				}}
+				onConfirm={async () => {
+					setAccountDetails({
+						...accountDetails,
+						OptInActive:
+							false
+					} as AccountSettings);
+
+					await dispatch(disableDoubleOptItSettings(null));
+					setShowConfirmEmailConfirmationDialog(false)
+				}}
+				text={t('settings.accountSettings.optIn.confirmDisable')}
+				title={t('settings.accountSettings.optIn.confirmTitle')}
+				onClose={() => {
+					setShowConfirmEmailConfirmationDialog(false)
+				}}
+			/>
 		</Box >
 	);
 };
