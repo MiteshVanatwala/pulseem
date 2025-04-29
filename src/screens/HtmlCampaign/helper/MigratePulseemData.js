@@ -4,7 +4,9 @@ export const initExtraDataField = (extraData, t) => {
 
     return new Promise((resolve, reject) => {
         try {
-            let exData = [...ClientFields];
+            // let exData = [...ClientFields];
+            let exData = ClientFields.map(field => ({...field}));
+
             Object.keys(extraData).forEach((item, i) => {
                 if (Object.values(extraData)[i] && Object.values(extraData)[i] !== '') {
                     exData.push({ value: item, name: Object.values(extraData)[i], isExtraField: true })
