@@ -284,81 +284,91 @@ const getFormsCount = (obj: any) => {
 
   return formsCount;
 }
-export const DefaultContent = (IsRTL: Boolean) => {
+export const DefaultContent = (IsRTL: Boolean, languageCode: number) => {
   return {
     titleDefaultStyles: {
       h1: {
-        direction: IsRTL ? "rtl" : "ltr",
-        "text-align": IsRTL ? "right" : "left",
+        direction: languageCode === 0 || languageCode === 8 ? "rtl" : "ltr",
+        "text-align": languageCode === 0 || languageCode === 8 ? "right" : "left",
       },
       h2: {
-        direction: IsRTL ? "rtl" : "ltr",
-        "text-align": IsRTL ? "right" : "left",
+        direction: languageCode === 0 || languageCode === 8 ? "rtl" : "ltr",
+        "text-align": languageCode === 0 || languageCode === 8 ? "right" : "left",
       },
       h3: {
-        direction: IsRTL ? "rtl" : "ltr",
-        "text-align": IsRTL ? "right" : "left",
+        direction: languageCode === 0 || languageCode === 8 ? "rtl" : "ltr",
+        "text-align": languageCode === 0 || languageCode === 8 ? "right" : "left",
       },
       h4: {
-        direction: IsRTL ? "rtl" : "ltr",
-        "text-align": IsRTL ? "right" : "left",
+        direction: languageCode === 0 || languageCode === 8 ? "rtl" : "ltr",
+        "text-align": languageCode === 0 || languageCode === 8 ? "right" : "left",
       },
       h5: {
-        direction: IsRTL ? "rtl" : "ltr",
-        "text-align": IsRTL ? "right" : "left",
+        direction: languageCode === 0 || languageCode === 8 ? "rtl" : "ltr",
+        "text-align": languageCode === 0 || languageCode === 8 ? "right" : "left",
       },
     },
     contentDefaults: {
       title: {
+        html: languageCode === 0
+          ? "אני כותרת מוכנה לתוכן שלך."
+          : "I&apos;m a new title block.",
+        styles: {
+          textAlign: languageCode === 0 || languageCode === 8 ? "right" : "left",
+          direction: languageCode === 0 || languageCode === 8 ? "rtl" : "ltr",
+        },
         blockOptions: {
-          align: IsRTL ? "right" : "left",
+          align: languageCode === 0 || languageCode === 8 ? "right" : "left",
         },
       },
       text: {
-        html: IsRTL
+        html: languageCode === 0
           ? "<p style='font-size: 14px;text-align: right; direction: rtl;'>אני בלוק טקסט מוכן לתוכן שלך.</p>"
           : "<p style='font-size: 14px;text-align:left; direction: ltr;'>I&apos;m a new Text block ready for your content.</p>",
         styles: {
-          textAlign: IsRTL ? "right" : "left",
-          direction: IsRTL ? "rtl" : "ltr",
+          textAlign: languageCode === 0 || languageCode === 8 ? "right" : "left",
+          direction: languageCode === 0 || languageCode === 8 ? "rtl" : "ltr",
         },
         blockOptions: {
-          textAlign: IsRTL ? "right" : "left",
-          direction: IsRTL ? "rtl" : "ltr",
+          textAlign: languageCode === 0 || languageCode === 8 ? "right" : "left",
+          direction: languageCode === 0 || languageCode === 8 ? "rtl" : "ltr",
         },
       },
       paragraph: {
+        html: languageCode === 0
+          ? "אני שורת טקסט מוכן לתוכן שלך."
+          : "I&apos;m a new text block.",
         styles: {
-          textAlign: IsRTL ? "right" : "left",
-          direction: IsRTL ? "rtl" : "ltr",
+          textAlign: languageCode === 0 || languageCode === 8 ? "right" : "left",
+          direction: languageCode === 0 || languageCode === 8 ? "rtl" : "ltr",
         },
         blockOptions: {
-          textAlign: IsRTL ? "right" : "left",
-          direction: IsRTL ? "rtl" : "ltr",
+          textAlign: languageCode === 0 || languageCode === 8 ? "right" : "left",
+          direction: languageCode === 0 || languageCode === 8 ? "rtl" : "ltr",
         },
       },
       list: {
         styles: {
-          textAlign: IsRTL ? "right" : "left",
-          direction: IsRTL ? "rtl" : "ltr",
+          textAlign: languageCode === 0 || languageCode === 8 ? "right" : "left",
+          direction: languageCode === 0 || languageCode === 8 ? "rtl" : "ltr",
         },
         blockOptions: {
-          textAlign: IsRTL ? "right" : "left",
-          direction: IsRTL ? "rtl" : "ltr",
+          textAlign: languageCode === 0 || languageCode === 8 ? "right" : "left",
+          direction: languageCode === 0 || languageCode === 8 ? "rtl" : "ltr",
         },
       },
       form: {
         labelsOptions: {
-          align: IsRTL ? "right" : "left"
+          align: languageCode === 0 || languageCode === 8 ? "right" : "left"
         },
         fieldsOptions: {
-          align: IsRTL ? "right" : "left"
+          align: languageCode === 0 || languageCode === 8 ? "right" : "left"
         },
         buttonsOptions: {
-          align: IsRTL ? "right" : "left"
+          align: languageCode === 0 || languageCode === 8 ? "right" : "left"
         },
         blockOptions: {
-          align: IsRTL ? "right" : "left"
+          align: languageCode === 0 || languageCode === 8 ? "right" : "left"
         }
       }
     },
