@@ -86,7 +86,7 @@ const SmsSummary = ({ classes,
                 </span>}
                 {summaryPayload?.SmsBillingType === 0 && <>
                   <span className={classes.bodySum}>
-                    {t("mmsreport.creditsPerMms")}:
+                    {t("common.creditsPerMessage")}:
                     <span className={classes.bodySum}> {summaryPayload?.CreditPerSms?.toLocaleString()}</span>
                   </span>
                   <span className={classes.bodySum}>
