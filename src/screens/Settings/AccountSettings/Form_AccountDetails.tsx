@@ -61,6 +61,8 @@ const FORM_ACCOUNT_DETAILS = ({
 	const [errorMessage, setErrorMessage] = useState<string>('');
 	const [userCodeConfirmed, setUserCodeConfirmed] = useState<boolean>(false);
 	const [unsubscribeType, setUnsubscribeType] = useState<string>('0');
+	const FROM_NUMBER_MAX_LETTERS = 11;
+	const FROM_NUMBER_MAX_NUMBERS = 13;
 
 	const errorMessages = {
 		401: t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.email_error_abused'),
@@ -90,18 +92,38 @@ const FORM_ACCOUNT_DETAILS = ({
 
 	const handleChange = (e: any, name = '') => {
 		let actualValue = e?.target?.value;
-		let trimValue = e?.target?.value.trim();
+		// let trimValue = e?.target?.value.trim();
 		if (e?.target?.name === 'DefaultFromMail') {
 			setFromEmailError(false);
 		}
 		if (e?.target?.name === 'DefaultCellNumber') {
+			var onlyNumbersWithHyphenAndSpace = /^[0-9 -]*$/;
+			var onlyNumbers = /^[0-9]*$/;
+			var english = /^[A-Za-z0-9_ -]*$/
+
+			if (!actualValue.match(onlyNumbersWithHyphenAndSpace) && actualValue.match(english) && actualValue.length >= FROM_NUMBER_MAX_LETTERS) {
+				actualValue = actualValue.substring(0, FROM_NUMBER_MAX_LETTERS);
+			}
+			if (actualValue.match(onlyNumbersWithHyphenAndSpace) && actualValue.length >= FROM_NUMBER_MAX_NUMBERS) {
+				actualValue = actualValue.substring(0, FROM_NUMBER_MAX_NUMBERS);
+			}
+
+			if (actualValue.match(onlyNumbersWithHyphenAndSpace) && !actualValue.match(onlyNumbers)) {
+				actualValue = e.target.value.replace(/[^0-9]/g, '');
+			} else if (!actualValue.match(english)) {
+				actualValue = actualValue.replace(/[^A-Za-z0-9_ -]/g, '');
+			}
+
 			setFromCellphonError(false);
 		}
 		setAccountDetails({
 			...accountDetails,
-			[e?.target?.name]:
-				trimValue.length + 1 === actualValue?.length ? actualValue : trimValue,
+			[e?.target?.name]: actualValue.trim()
 		} as AccountSettings);
+		OnUpdate({
+			...accountDetails,
+			[e?.target?.name]: actualValue.trim()
+		} as AccountSettings, 'account', false);
 	};
 
 	const handleSave = (overwriteDetails: AccountSettings | null | never) => {
