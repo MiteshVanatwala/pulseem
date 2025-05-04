@@ -84,6 +84,16 @@ const SmsSummary = ({ classes,
                   {t("sms.smsSummaryDialogTotalVoiceRecipients")}:
                   <span className={classes.bodySum}> {summaryPayload.FinalVoiceCount?.toLocaleString()}</span>
                 </span>}
+                {summaryPayload?.SmsBillingType === 0 && <>
+                  <span className={classes.bodySum}>
+                    {t("mmsreport.creditsPerMms")}:
+                    <span className={classes.bodySum}> {summaryPayload?.CreditPerSms?.toLocaleString()}</span>
+                  </span>
+                  <span className={classes.bodySum}>
+                    {t("report.TotalCredits")}:
+                    <span className={classes.bodySum}> {summaryPayload?.TotalCredits?.toLocaleString()}</span>
+                  </span>
+                </>}
                 <Link onClick={() => { setdetailsHide(!detailsHide) }}
                   style={{
                     textDecoration: 'underline',
