@@ -18,7 +18,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { Title } from '../../../components/managment/Title';
 import { AccDtlPropTypes } from '../../../Models/Settings/AccountDetails';
-import { IsNumberField, IsValidEmail, IsValidPhoneNumber } from '../../../helpers/Utils/Validations';
+import { IsEnglishAndNumbers, IsNumberField, IsValidEmail, IsValidPhoneNumber } from '../../../helpers/Utils/Validations';
 import { AccountSettings } from '../../../Models/Account/AccountSettings';
 import { tierSetting } from '../../Whatsapp/Constant';
 import Illustration_app_Settings from '../../../assets/images/settings/Illustration_app_Settings';
@@ -39,10 +39,11 @@ const FORM_ACCOUNT_DETAILS = ({
 	selectedTier,
 	onTierChange = () => { },
 }: AccDtlPropTypes) => {
+	console.log(Settings);
 	const dispatch = useDispatch();
 	const { t } = useTranslation();
 	const { isRTL, windowSize } = useSelector((state: any) => state.core);
-	const { accountFeatures } = useSelector((state: any) => state.common);
+	const { accountFeatures, accountSettings } = useSelector((state: any) => state.common);
 	const [fromEmailError, setFromEmailError] = useState<boolean>(false);
 	const [fromCellphonError, setFromCellphonError] = useState<boolean>(false);
 
@@ -71,11 +72,11 @@ const FORM_ACCOUNT_DETAILS = ({
 	} as any;
 
 	const isValidPayload = () => {
-		if (accountDetails?.DefaultFromMail && accountDetails?.DefaultFromMail !== '' && !IsValidEmail(accountDetails?.DefaultFromMail)) {
+		if (accountDetails?.DefaultFromMail && accountDetails?.DefaultFromMail !== '' && (accountSettings?.AllowEnglishInFromNumber && !IsValidEmail(accountDetails?.DefaultFromMail))) {
 			setFromEmailError(true);
 			return false;
 		}
-		else if (accountDetails?.DefaultCellNumber && accountDetails?.DefaultCellNumber !== '' && !IsValidPhoneNumber(accountDetails?.DefaultCellNumber)) {
+		else if (accountDetails?.DefaultCellNumber && accountDetails?.DefaultCellNumber !== '' && (!accountSettings?.AllowEnglishInFromNumber && !IsValidPhoneNumber(accountDetails?.DefaultCellNumber))) {
 			setFromCellphonError(true);
 			return false;
 		}
@@ -262,7 +263,18 @@ const FORM_ACCOUNT_DETAILS = ({
 							size='small'
 							name='DefaultCellNumber'
 							value={accountDetails?.DefaultCellNumber}
-							onKeyPress={IsNumberField}
+							onKeyDown={(event: any) => {
+								if (!accountSettings?.AllowEnglishInFromNumber) {
+									IsNumberField(event);
+								}
+								else if (accountSettings?.AllowEnglishInFromNumber) {
+									const newValue = event.target.value + event.key;
+									if (!IsEnglishAndNumbers(newValue) &&
+										!['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'].includes(event.key)) {
+										event.preventDefault();
+									}
+								}
+							}}
 							onChange={handleChange}
 							className={clsx(classes.textField, classes.minWidth252, fromCellphonError && classes.error)}
 						/>
