@@ -868,5 +868,6 @@
   "allChannels": "All Channels",
   "internalError": "Internal Error",
   "selectEmail": "Select Email",
-  "selectCellphone": "Select Cellphone"
+  "selectCellphone": "Select Cellphone",
+  "creditsPerMessage": "Credits Per Message"
 }
