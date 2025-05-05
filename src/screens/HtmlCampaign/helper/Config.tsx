@@ -260,67 +260,112 @@ export const BeeConfig = (Options: ConfigOptions) => {
         //#endregion
     }
 };
-export const DefaultContent = (IsRTL: Boolean) => {
+export const DefaultContent = (IsRTL: Boolean, languageCode: number) => {
     return {
         titleDefaultStyles: {
             h1: {
-                direction: IsRTL ? "rtl" : "ltr",
-                "text-align": IsRTL ? "right" : "left",
+                direction: languageCode === 0 || languageCode === 8 ? "rtl" : "ltr",
+                "text-align": languageCode === 0 || languageCode === 8 ? "right" : "left",
             },
             h2: {
-                direction: IsRTL ? "rtl" : "ltr",
-                "text-align": IsRTL ? "right" : "left",
+                direction: languageCode === 0 || languageCode === 8 ? "rtl" : "ltr",
+                "text-align": languageCode === 0 || languageCode === 8 ? "right" : "left",
             },
             h3: {
-                direction: IsRTL ? "rtl" : "ltr",
-                "text-align": IsRTL ? "right" : "left",
+                direction: languageCode === 0 || languageCode === 8 ? "rtl" : "ltr",
+                "text-align": languageCode === 0 || languageCode === 8 ? "right" : "left",
             },
             h4: {
-                direction: IsRTL ? "rtl" : "ltr",
-                "text-align": IsRTL ? "right" : "left",
+                direction: languageCode === 0 || languageCode === 8 ? "rtl" : "ltr",
+                "text-align": languageCode === 0 || languageCode === 8 ? "right" : "left",
             },
             h5: {
-                direction: IsRTL ? "rtl" : "ltr",
-                "text-align": IsRTL ? "right" : "left",
+                direction: languageCode === 0 || languageCode === 8 ? "rtl" : "ltr",
+                "text-align": languageCode === 0 || languageCode === 8 ? "right" : "left",
             },
         },
         contentDefaults: {
             title: {
+                html: languageCode === 0
+                    ? "<h3>אני כותרת מוכנה לתוכן שלך.</h3>"
+                    : "<h3>I&apos;m a new title 1111.</h3>",
+                text: languageCode === 0
+                    ? "<h3>אני כותרת מוכנה לתוכן שלך.</h3>"
+                    : "<h3>I&apos;m a new title 1111.</h3>",
+                styles: {
+                    textAlign: languageCode === 0 || languageCode === 8 ? "right" : "left",
+                    direction: languageCode === 0 || languageCode === 8 ? "rtl" : "ltr",
+                },
                 blockOptions: {
-                    align: IsRTL ? "right" : "left",
+                    align: languageCode === 0 || languageCode === 8 ? "right" : "left",
+                    textAlign: languageCode === 0 || languageCode === 8 ? "right" : "left",
+                    direction: languageCode === 0 || languageCode === 8 ? "rtl" : "ltr",
                 },
             },
             text: {
-                html: IsRTL
+                html: languageCode === 0
                     ? "<p style='font-size: 14px;text-align: right; direction: rtl;'>אני בלוק טקסט מוכן לתוכן שלך.</p>"
                     : "<p style='font-size: 14px;text-align:left; direction: ltr;'>I&apos;m a new Text block ready for your content.</p>",
                 styles: {
-                    textAlign: IsRTL ? "right" : "left",
-                    direction: IsRTL ? "rtl" : "ltr",
+                    textAlign: languageCode === 0 || languageCode === 8 ? "right" : "left",
+                    direction: languageCode === 0 || languageCode === 8 ? "rtl" : "ltr",
                 },
                 blockOptions: {
-                    textAlign: IsRTL ? "right" : "left",
-                    direction: IsRTL ? "rtl" : "ltr",
+                    textAlign: languageCode === 0 || languageCode === 8 ? "right" : "left",
+                    direction: languageCode === 0 || languageCode === 8 ? "rtl" : "ltr",
                 },
             },
             paragraph: {
+                html: languageCode === 0
+                    ? "אני שורת טקסט מוכן לתוכן שלך."
+                    : "I&apos;m a new text block.",
                 styles: {
-                    textAlign: IsRTL ? "right" : "left",
-                    direction: IsRTL ? "rtl" : "ltr",
+                    textAlign: languageCode === 0 || languageCode === 8 ? "right" : "left",
+                    direction: languageCode === 0 || languageCode === 8 ? "rtl" : "ltr",
                 },
                 blockOptions: {
-                    textAlign: IsRTL ? "right" : "left",
-                    direction: IsRTL ? "rtl" : "ltr",
+                    textAlign: languageCode === 0 || languageCode === 8 ? "right" : "left",
+                    direction: languageCode === 0 || languageCode === 8 ? "rtl" : "ltr",
                 },
             },
             list: {
+                html: languageCode === 0
+                    ? "<li>שורה 1 ברשימה</li>"
+                    : "<li>This is an unordered list</li>",
                 styles: {
-                    textAlign: IsRTL ? "right" : "left",
-                    direction: IsRTL ? "rtl" : "ltr",
+                    textAlign: languageCode === 0 || languageCode === 8 ? "right" : "left",
+                    direction: languageCode === 0 || languageCode === 8 ? "rtl" : "ltr",
                 },
                 blockOptions: {
-                    textAlign: IsRTL ? "right" : "left",
-                    direction: IsRTL ? "rtl" : "ltr",
+                    textAlign: languageCode === 0 || languageCode === 8 ? "right" : "left",
+                    direction: languageCode === 0 || languageCode === 8 ? "rtl" : "ltr",
+                },
+            },
+            button: {
+                label: languageCode === 0 ? 'כפתור' : 'Button'
+            },
+            table: {
+                rows: [{
+                    cells: [
+                        { html: languageCode === 0 ? "עמודת-טקסט" : "new-default-text" }, { html: languageCode === 0 ? "טקסט-משני" : "second text" }
+                    ]
+                }, {
+                    cells: [
+                        { html: languageCode === 0 ? "עמודת-טקסט" : "third" }, { html: languageCode === 0 ? "טקסט-משני" : "last text" }
+                    ]
+                }],
+                headers: [{
+                    cells: [{ html: languageCode === 0 ? "כותרת 1" : "header 1" }, { html: languageCode === 0 ? "כותרת 2" : "header 2" }]
+                }],
+                styles: {
+                    fontWeight: "200",
+                    fontSize: "14px",
+                    textAlign: languageCode === 0 ? "right" : "left",
+                    lineHeight: "200%",
+                    direction: languageCode === 0 ? "rtl" : "ltr",
+                    headersFontSize: "16px",
+                    headersFontWeight: "400",
+                    headersTextAlign: languageCode === 0 ? "right" : "left"
                 },
             },
         },

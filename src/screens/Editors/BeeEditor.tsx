@@ -129,7 +129,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
     loadAccountExtraData().then((ed: any) => {
       initExtraDataField(extraData, t).then((exData) => {
         setPulseemMergeData(exData);
-        initClientForm(ed, t, isRTL).then((res) => {
+        initClientForm(ed, t, landingPage?.Data?.WebForm?.BaseLanguage).then((res) => {
           setClientForm(res);
         })
       })
@@ -310,7 +310,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       const webform = landingPage?.Data?.WebForm;
       const isRtlLang = webform?.BaseLanguage === 0 || webform?.BaseLanguage === 8 ? true : false;
       let forceTemplate = null;
-      let defaultContent = DefaultContent(isRtlLang);
+      let defaultContent = DefaultContent(isRtlLang, webform?.BaseLanguage);
       if (templateId !== null) {
         //@ts-ignore
         const templateResponse = await dispatch(getLPTemplateById(templateId)) as any;
