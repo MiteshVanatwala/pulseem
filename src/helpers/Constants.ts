@@ -687,3 +687,20 @@ export const CountryCodes = [
     { code: '+260', country: 'ZM', name: 'Zambia', flag: '🇿🇲' },
     { code: '+263', country: 'ZW', name: 'Zimbabwe', flag: '🇿🇼' }
 ];
+
+export const BASED_ON_LANG = {
+    0: 'he',
+    1: 'en',
+    2: 'fr',
+    3: 'es',
+    4: 'de',
+    5: 'ru',
+    6: 'ja',
+    7: 'ro',
+    8: 'ar',
+    9: 'hu',
+    10: 'sk',
+    11: 'pt',
+    12: 'nl',
+    13: 'pl'
+}

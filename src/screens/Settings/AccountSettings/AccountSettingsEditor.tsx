@@ -376,7 +376,7 @@ const AccountSettingsEditor = ({ classes }: any) => {
 						setToastMessage={setToastMessage}
 						ToastMessages={ToastMessages}
 						Settings={{ ...settingRequest as AccountSettings }}
-						OnUpdate={(updatedObject: AccountSettings) => handleUpdate(updatedObject, 'account', true)}
+						OnUpdate={(updatedObject: AccountSettings, saveType: string = 'account', saveRequest: boolean = true) => handleUpdate(updatedObject, saveType, saveRequest)}
 						selectedTier={selectedTier}
 						onTierChange={onTierChange}
 					/>

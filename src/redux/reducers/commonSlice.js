@@ -282,7 +282,8 @@ export const commonSlice = createSlice({
           IsDirectAccount: data?.IsDirectAccount,
           SubAccountSettings: data?.SubAccountSettings,
           DomainAddress: data?.DomainAddress,
-          HasSmsVoice: data?.HasSmsVoice
+          HasSmsVoice: data?.HasSmsVoice,
+          AllowEnglishInFromNumber: data?.AllowEnglishInFromNumber
         };
 
         state.accountFeatures = data?.Account?.AccountFeatures?.map(String);
