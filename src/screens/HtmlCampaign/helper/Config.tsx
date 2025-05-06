@@ -261,28 +261,35 @@ export const BeeConfig = (Options: ConfigOptions) => {
     }
 };
 export const DefaultContent = (IsRTL: Boolean, languageCode: number) => {
+    const isRTLdirection: boolean = languageCode === 0 || languageCode === 8;
+
     return {
         titleDefaultStyles: {
             h1: {
-                direction: languageCode === 0 || languageCode === 8 ? "rtl" : "ltr",
-                "text-align": languageCode === 0 || languageCode === 8 ? "right" : "left",
+                direction: isRTLdirection ? "rtl" : "ltr",
+                "text-align": isRTLdirection ? "right" : "left",
             },
             h2: {
-                direction: languageCode === 0 || languageCode === 8 ? "rtl" : "ltr",
-                "text-align": languageCode === 0 || languageCode === 8 ? "right" : "left",
+                direction: isRTLdirection ? "rtl" : "ltr",
+                "text-align": isRTLdirection ? "right" : "left",
             },
             h3: {
-                direction: languageCode === 0 || languageCode === 8 ? "rtl" : "ltr",
-                "text-align": languageCode === 0 || languageCode === 8 ? "right" : "left",
+                direction: isRTLdirection ? "rtl" : "ltr",
+                "text-align": isRTLdirection ? "right" : "left",
             },
             h4: {
-                direction: languageCode === 0 || languageCode === 8 ? "rtl" : "ltr",
-                "text-align": languageCode === 0 || languageCode === 8 ? "right" : "left",
+                direction: isRTLdirection ? "rtl" : "ltr",
+                "text-align": isRTLdirection ? "right" : "left",
             },
             h5: {
-                direction: languageCode === 0 || languageCode === 8 ? "rtl" : "ltr",
-                "text-align": languageCode === 0 || languageCode === 8 ? "right" : "left",
+                direction: isRTLdirection ? "rtl" : "ltr",
+                "text-align": isRTLdirection ? "right" : "left",
             },
+        },
+        translations: {
+            "mailup-bee-common-widgets-heading": {
+                "default-text": languageCode === 0 ? "אני כותרת מוכנה לתוכן שלך" : "I&apos;m a new title block",
+            }
         },
         contentDefaults: {
             title: {
@@ -293,13 +300,13 @@ export const DefaultContent = (IsRTL: Boolean, languageCode: number) => {
                     ? "<h3>אני כותרת מוכנה לתוכן שלך.</h3>"
                     : "<h3>I&apos;m a new title 1111.</h3>",
                 styles: {
-                    textAlign: languageCode === 0 || languageCode === 8 ? "right" : "left",
-                    direction: languageCode === 0 || languageCode === 8 ? "rtl" : "ltr",
+                    textAlign: isRTLdirection ? "right" : "left",
+                    direction: isRTLdirection ? "rtl" : "ltr",
                 },
                 blockOptions: {
-                    align: languageCode === 0 || languageCode === 8 ? "right" : "left",
-                    textAlign: languageCode === 0 || languageCode === 8 ? "right" : "left",
-                    direction: languageCode === 0 || languageCode === 8 ? "rtl" : "ltr",
+                    align: isRTLdirection ? "right" : "left",
+                    textAlign: isRTLdirection ? "right" : "left",
+                    direction: isRTLdirection ? "rtl" : "ltr",
                 },
             },
             text: {
@@ -307,12 +314,12 @@ export const DefaultContent = (IsRTL: Boolean, languageCode: number) => {
                     ? "<p style='font-size: 14px;text-align: right; direction: rtl;'>אני בלוק טקסט מוכן לתוכן שלך.</p>"
                     : "<p style='font-size: 14px;text-align:left; direction: ltr;'>I&apos;m a new Text block ready for your content.</p>",
                 styles: {
-                    textAlign: languageCode === 0 || languageCode === 8 ? "right" : "left",
-                    direction: languageCode === 0 || languageCode === 8 ? "rtl" : "ltr",
+                    textAlign: isRTLdirection ? "right" : "left",
+                    direction: isRTLdirection ? "rtl" : "ltr",
                 },
                 blockOptions: {
-                    textAlign: languageCode === 0 || languageCode === 8 ? "right" : "left",
-                    direction: languageCode === 0 || languageCode === 8 ? "rtl" : "ltr",
+                    textAlign: isRTLdirection ? "right" : "left",
+                    direction: isRTLdirection ? "rtl" : "ltr",
                 },
             },
             paragraph: {
@@ -320,12 +327,12 @@ export const DefaultContent = (IsRTL: Boolean, languageCode: number) => {
                     ? "אני שורת טקסט מוכן לתוכן שלך."
                     : "I&apos;m a new text block.",
                 styles: {
-                    textAlign: languageCode === 0 || languageCode === 8 ? "right" : "left",
-                    direction: languageCode === 0 || languageCode === 8 ? "rtl" : "ltr",
+                    textAlign: isRTLdirection ? "right" : "left",
+                    direction: isRTLdirection ? "rtl" : "ltr",
                 },
                 blockOptions: {
-                    textAlign: languageCode === 0 || languageCode === 8 ? "right" : "left",
-                    direction: languageCode === 0 || languageCode === 8 ? "rtl" : "ltr",
+                    textAlign: isRTLdirection ? "right" : "left",
+                    direction: isRTLdirection ? "rtl" : "ltr",
                 },
             },
             list: {
@@ -333,12 +340,12 @@ export const DefaultContent = (IsRTL: Boolean, languageCode: number) => {
                     ? "<li>שורה 1 ברשימה</li>"
                     : "<li>This is an unordered list</li>",
                 styles: {
-                    textAlign: languageCode === 0 || languageCode === 8 ? "right" : "left",
-                    direction: languageCode === 0 || languageCode === 8 ? "rtl" : "ltr",
+                    textAlign: isRTLdirection ? "right" : "left",
+                    direction: isRTLdirection ? "rtl" : "ltr",
                 },
                 blockOptions: {
-                    textAlign: languageCode === 0 || languageCode === 8 ? "right" : "left",
-                    direction: languageCode === 0 || languageCode === 8 ? "rtl" : "ltr",
+                    textAlign: isRTLdirection ? "right" : "left",
+                    direction: isRTLdirection ? "rtl" : "ltr",
                 },
             },
             button: {
@@ -368,6 +375,9 @@ export const DefaultContent = (IsRTL: Boolean, languageCode: number) => {
                     headersTextAlign: languageCode === 0 ? "right" : "left"
                 },
             },
+            menu: {
+                html: languageCode === 0 ? "תפריט" : "Menu"
+            }
         },
         defaultTemplate: {
             page: {
