@@ -374,9 +374,6 @@ export const DefaultContent = (IsRTL: Boolean, languageCode: number) => {
                     headersFontWeight: "400",
                     headersTextAlign: languageCode === 0 ? "right" : "left"
                 },
-            },
-            menu: {
-                html: languageCode === 0 ? "תפריט" : "Menu"
             }
         },
         defaultTemplate: {
