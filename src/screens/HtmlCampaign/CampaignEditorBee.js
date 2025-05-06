@@ -319,7 +319,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     initSpecialLinks().then(async (specialLinksFiles) => {
       const isRtlLang = campaign?.LanguageCode === 0 || campaign?.LanguageCode === 8 ? true : false;
       let forceTemplate = null;
-      let defaultContent = DefaultContent(isRtlLang);
+      let defaultContent = DefaultContent(isRtlLang, campaign?.LanguageCode);
       if (templateId !== null) {
         const templateResponse = await dispatch(getTemplateById(templateId));
 

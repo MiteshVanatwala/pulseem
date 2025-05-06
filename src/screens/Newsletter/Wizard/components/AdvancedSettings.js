@@ -146,10 +146,10 @@ export const AdvancedSettings = ({
                         interactive={true}
                         arrow={true}
                         placement={'top'}
-                        title={<Typography noWrap={false}>{t("Upload File")} - doc, docx, pdf, rtf, xls, xlsv, csv, txt, jpg, jpeg, ppt, pptx, mp3, wav</Typography>}
-                        text={t("Upload File - doc, docx, pdf, rtf, xls, xlsv, csv, txt, jpg, jpeg, ppt, pptx, mp3, wav")}
+                        title={<Typography noWrap={false}>{t("Upload File")} - ics, doc, docx, pdf, rtf, xls, xlsv, csv, txt, jpg, jpeg, ppt, pptx, mp3, wav</Typography>}
+                        text={t("Upload File - ics, doc, docx, pdf, rtf, xls, xlsv, csv, txt, jpg, jpeg, ppt, pptx, mp3, wav")}
                     >
-                        <Typography noWrap={false}>{t("common.UploadFile")} - doc, docx, pdf, rtf, xls, xlsv, csv, txt, jpg, jpeg, ppt, pptx, mp3, wav</Typography>
+                        <Typography noWrap={false}>{t("common.UploadFile")} - ics, doc, docx, pdf, rtf, xls, xlsv, csv, txt, jpg, jpeg, ppt, pptx, mp3, wav</Typography>
                     </CustomTooltip>
                         <>
                             <PulseemTags

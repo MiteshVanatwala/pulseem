@@ -872,5 +872,6 @@
   "domainVerificationRequired": "Domain is not verified",
   "settingsSavedSuccessfuly": "Settings successfuly saved!",
   "typeFromName": "Type From Name",
-  "typeSubject": "Type Subject"
+  "typeSubject": "Type Subject",
+  "creditsPerMessage": "Credits Per Message"
 }

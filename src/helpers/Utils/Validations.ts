@@ -41,7 +41,7 @@ export const IsValidNonGlobalPhoneNumber = (phoneNumber: string) => {
   if (phoneNumber === "" || phoneNumber === undefined || (phoneNumber.charAt(0) === '0' ? phoneNumber.length < 10 : phoneNumber.length < 11) || phoneNumber.length > 16) {
     return false;
   }
-  return PhoneNumberRegEx.test(phoneNumber) && (phoneNumber.substring(0,2) === '05' || phoneNumber.substring(0,4) === '9725');
+  return PhoneNumberRegEx.test(phoneNumber) && (phoneNumber.substring(0, 2) === '05' || phoneNumber.substring(0, 4) === '9725');
 };
 
 export const IsValidURL = (value: string) => {
@@ -84,7 +84,7 @@ export const VerifyGetUrl = (value: string) => {
 };
 
 export const IsValidPhoneNumberWithCountryCode = (phoneNumber: string, countryCodeList: CountryCode[] = []) => {
-  
+
   if (phoneNumber === "" || phoneNumber === undefined || (phoneNumber.charAt(0) === '0' ? phoneNumber.length < 10 : phoneNumber.length < 11) || !phoneNumber.match(PhoneNumberRegEx)) {
     return false;
   }
@@ -98,3 +98,10 @@ export const IsValidPhoneNumberWithCountryCode = (phoneNumber: string, countryCo
   })
   return isMatched;
 };
+
+export const IsEnglishAndNumbers = (event: any) => {
+  const value = typeof event === 'object' && event.target ? event.target.value : event;
+  const englishAndNumbersRegex = /^[a-zA-Z0-9]+$/;
+
+  return englishAndNumbersRegex.test(value);
+}

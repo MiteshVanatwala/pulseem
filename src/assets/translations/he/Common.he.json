@@ -867,5 +867,6 @@
   "domainVerificationRequired": "דומיין לא מאומת",
   "settingsSavedSuccessfuly": "הגדרות נשמרו בהצלחה!",
   "typeFromName": "הקלד שם שולח",
-  "typeSubject": "הקלד נושא"
+  "typeSubject": "הקלד נושא",
+  "creditsPerMessage": "קרדיטים להודעה"
 }

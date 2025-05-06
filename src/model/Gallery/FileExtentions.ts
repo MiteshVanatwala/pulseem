@@ -1,4 +1,5 @@
 export const AllowedExentions = [
+    'ics',
     'doc',
     'docx',
     'pdf',

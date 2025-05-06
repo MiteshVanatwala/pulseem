@@ -153,7 +153,7 @@ export const GalleryDocuments = ({
                         ref={hiddenFileInput}
                         onChange={changeHandler}
                         hidden
-                        accept=".doc,.docx,.pdf,.rtf,.xls,.xlsx,.xlsv,.csv,.txt,.jpg,.jpeg,.png,.ppt,.pptx,.mp3,.wav" />
+                        accept=".ics,.doc,.docx,.pdf,.rtf,.xls,.xlsx,.xlsv,.csv,.txt,.jpg,.jpeg,.png,.ppt,.pptx,.mp3,.wav" />
                     <Box className="img-container drag-here">
                         <AiOutlineCloudUpload style={{ fontSize: 30 }} />
                         {t('common.chooseFile')}
