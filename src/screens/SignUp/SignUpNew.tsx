@@ -594,7 +594,7 @@ const SignUpNew = ({ classes }: any) => {
 
         <Box className={clsx(windowSize !== 'xs' ? classes.paddingInline30 : '')}>
           <Grid container className={clsx(classes.directionLTR)}>
-            <Grid item md={5} xs={12}>
+            <Grid item md={4} xs={12}>
               <FormControl
                 variant='standard'
                 className={clsx(classes.selectInputFormControl, classes.SignUpCountryDropdown, classes.bgWhite, classes.mb10, classes.w100)} 
@@ -605,6 +605,7 @@ const SignUpNew = ({ classes }: any) => {
                   <span className={clsx(classes.pl5, classes.colrPrimary, classes.f18)}>*</span>
                 </Typography>
                 <Autocomplete
+                  disableClearable
                   value={userDetails?.countryCode}
                   multiple={false}
                   includeInputInList={true}
@@ -613,18 +614,18 @@ const SignUpNew = ({ classes }: any) => {
                   disableCloseOnSelect
                   // @ts-ignore
                   onChange={(option, selected) => setUserDetails({...userDetails, countryCode: selected})}
-                  getOptionLabel={(option) => `${option?.flag} (${option?.code}) ${option?.name}`}
+                  getOptionLabel={(option) => `${option?.country} (${option?.code})`}
                   renderGroup={(option: any) => (
                     <MenuItem value={option} className={clsx(classes.cursorPointer, classes.directionLTR)}>
                       <label className={clsx(classes.paddingInline5)}>
-                        {option?.flag}&nbsp;({option?.code})&nbsp;{option?.name}
+                        {option?.country}&nbsp;({option?.code})
                       </label>
                     </MenuItem>
                   )}
                   renderOption={(props, option: any) => (
                     <MenuItem {...props} value={option} className={clsx(classes.cursorPointer, classes.directionLTR)}>
                       <label className={clsx(classes.paddingInline5)}>
-                        {option?.flag}&nbsp;({option?.code})&nbsp;{option?.name}
+                        {option?.country}&nbsp;({option?.code})
                       </label>
                     </MenuItem>
                   )}
@@ -640,45 +641,9 @@ const SignUpNew = ({ classes }: any) => {
                     />)
                   }}
                 />
-                {/* <Select
-                  variant="standard"
-                  value={userDetails?.countryCode}
-                  name='CountryCode'
-                  onChange={(e: SelectChangeEvent) => setUserDetails({
-                    ...userDetails,
-                    countryCode: e.target.value
-                  })}
-                  IconComponent={() => <IoIosArrowDown size={20} className={clsx(classes.dropdownIconComponent, classes.bgWhite, classes.paddingInline10)} style={{ right: isRTL ? 0 : 'auto', left: isRTL ? 'auto' : 0, width: 20, height: '100%' }} />}
-                  style={{
-                    direction: 'ltr',
-                    justifyContent: 'flex-start',
-                    marginTop: '3.5px'
-                  }}
-                  MenuProps={{
-                    PaperProps: {
-                      style: {
-                        width: 100,
-                        maxHeight: 200,
-                        direction: isRTL ? 'rtl' : 'ltr',
-                        justifyContent: 'flex-start'
-                      },
-                    },
-                  }}
-                  className={clsx(classes.w100, classes.directionLTR, classes.SignUpCountryDropdown)}
-                >
-                  {
-                    CountryCodes.map((country: any) => 
-                      <MenuItem value={country?.code} className={clsx(classes.cursorPointer, classes.directionLTR)}>
-                        <label className={clsx(classes.paddingInline5)}>
-                          {country?.flag}&nbsp;({country?.code})&nbsp;{country?.name}
-                        </label>
-                      </MenuItem>
-                    )
-                  }
-                </Select> */}
               </FormControl>
             </Grid>
-            <Grid item md={7} xs={12}>
+            <Grid item md={8} xs={12}>
               <Typography className={clsx(classes.f18, classes.mt24)}>
                 {t("SignUp.CellPhone")}
                 <span className={clsx(classes.pl5, classes.colrPrimary, classes.f18)}>*</span>
