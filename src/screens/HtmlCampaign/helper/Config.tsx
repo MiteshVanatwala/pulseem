@@ -470,5 +470,6 @@ export const DialogType = {
     NO_CREDITS_LEFT: "sms.noCredits",
     Templates: "templates",
     SET_USER_BLOCK: "campaigns.saveBlock",
-    SAVE_TEMPLATE: "campaigns.saveTemplate"
+    SAVE_TEMPLATE: "campaigns.saveTemplate",
+    PENDING_APPROVAL: "pending_approval"
 };

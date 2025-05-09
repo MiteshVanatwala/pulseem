@@ -52,5 +52,21 @@
     "small": "Small (1-10 employees)",
     "medium": "Medium (10-100 employees)",
     "large": "Large (+100 employees)"
+  },
+  "polishUnsubscribe": {
+    "title": "Cancel Subscription",
+    "desc1": "Are you sure you want to cancel your subscription?",
+    "desc2": "You will still be able to send emails until the end of your current subscription period.",
+    "desc3": "After that, your account will no longer be able to send emails.",
+    "desc4": "You will not be charged again."
+  },
+  "polishSubscribe": {
+    "question": "How many recipients do you need?",
+    "monthlyPayment": "Monthly Payment",
+    "recipients": "Recipients",
+    "unlimitedEmailSending": "Unlimited Email Sending",
+    "confirmation": "By clicking \"Subscribe\", I confirm that I agree to be charged based on the selected pricing tier above.",
+    "featureNotAllowed": "This feature is not allowed for your account. Please contact support to enable it.",
+    "success": "Your have successfully unsubscribed."
   }
 }

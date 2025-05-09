@@ -807,7 +807,11 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 							...errorToastData,
 							message: translator('whatsappCampaign.metaPhoneNumberNotVerified')
 						});
-					} else {
+					} else if ([550, 551].indexOf(quickSendData?.StatusCode)) {
+            setDialogType({
+							type: 'PendingApproval'
+						})
+        	} else {
 						setRandomlyCount('');
 						if (quickSendData?.Message === 'Invalid phonenumber') {
 							setToastMessage(ToastMessages.INVALID_NUMBER);
@@ -1201,6 +1205,22 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		}
 	})
 
+	const getPendingApprovalModal = () => ({
+		title: translator('campaigns.newsLetterEditor.errors.pendingApproval'),
+		showDivider: false,
+		content: (
+			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+				{translator('campaigns.newsLetterEditor.errors.PendingApprovalDesc')}
+			</Typography>
+		),
+		onConfirm: async () => {
+			setDialogType({
+				type: '',
+				data: ''
+			});
+		}
+	})
+
 	const getCallToAction = () => ({
 		title: translator('whatsapp.callToActionTitle'),
 		showDivider: false,
@@ -1298,6 +1318,8 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			currentDialog = getTestGroupDialog();
 		} else if (type === 'exceedDailyLimit') {
 			currentDialog = getExceedDailyLimit();
+		} else if (type === 'PendingApproval') {
+			currentDialog = getPendingApprovalModal();
 		} else if (type === 'summary') {
 			currentDialog = getSummary();
 		} else if (type === 'callToAction') {

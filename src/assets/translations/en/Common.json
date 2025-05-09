@@ -43,6 +43,7 @@
   "Cancel": "Cancel",
   "RemoveClient": "Unsubscribe From List",
   "RemoveClientInfo": "Are you sure you want to remove yourself from this list?",
+  "SubscribeButton": "Subscribe",
   "UnsubscribeButton": "Unsubscribe",
   "DefaultGroupName": "My Recipients",
   "NotAllowedFeature": "Following functionality is disabled, for more details contact to support.",

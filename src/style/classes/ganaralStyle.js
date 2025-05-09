@@ -1,3 +1,5 @@
+import { grey } from "@material-ui/core/colors";
+
 const dialogWidth = {
   xs: "200px",
   sm: "350px",
@@ -403,6 +405,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   maxWidth400: {
     maxWidth: 400,
+  },
+  maxWidth500: {
+    maxWidth: 500,
   },
   maxWidth190: {
     maxWidth: 190,
@@ -4465,5 +4470,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     "& div:first-child": {
       margin: 'auto'
     }
+  },
+  polishSubscribeGreyBox: {
+    background: grey[100],
+    borderRadius: 5,  
   }
 });
