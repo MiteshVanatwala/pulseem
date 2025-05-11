@@ -71,7 +71,7 @@ const AITemplateCreator = ({ campaignId, onUpdate }: any) => {
   const dispatch = useDispatch();
   const [model, setModel] = useState<AnthropicUserRequest>({
     campaignId: campaignId,
-    maxToken: 8192,
+    maxToken: 16384,
     messageRequest: ''
   });
 
