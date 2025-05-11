@@ -1,7 +1,9 @@
 export interface AnthropicUserRequest {
-  messageRequest: string;
+  campaignId: any;
   maxToken: number;
-  campaignId: number;
+  messageRequest: string;
+  file: string;
+  originalFile?: File | null;
 }
 
 export interface AnthropicRequest {

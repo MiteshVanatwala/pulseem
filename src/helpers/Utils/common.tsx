@@ -51,3 +51,19 @@ export const ValidateEmailAddress = (email: any) => /^([A-Za-z0-9_\-\.])+\@([A-Z
 
 export const isSignupPage = (pathname: string) => pathname.indexOf('sign-up') >= 0;
 export const isSubUserConfirmationPage = (pathname: string) => pathname.toLowerCase().indexOf('userconfirmation') >= 0;
+
+export const convertFileToBase64 = (file: File): Promise<string> => {
+	return new Promise((resolve, reject) => {
+		const reader = new FileReader();
+		reader.readAsDataURL(file);
+		reader.onload = () => {
+			// The result includes the data URL prefix (e.g., "data:image/jpeg;base64,")
+			// We can either keep it or remove it depending on your needs
+			const base64String = reader.result as string;
+			resolve(base64String);
+		};
+		reader.onerror = (error) => {
+			reject(error);
+		};
+	});
+};
