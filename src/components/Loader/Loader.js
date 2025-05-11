@@ -49,7 +49,7 @@ export const Loader = ({
   thickness = 3.6,
   variant = 'indeterminate',
   showBackdrop = true,
-  zIndex = 1300,
+  zIndex = 2300,
   progress = null,
   message = null,
   ...props

@@ -1,0 +1,18 @@
+{
+  "popup": {
+    "title": "Create a designed template using artificial intelligence",
+    "placeholder": "Describe the desired newsletter style (for example: \"Summer sale - colorful and playful, 3 product blocks, large call-to-action button)\"",
+    "tips": {
+      "title": "Details for better results:",
+      "toneTitle": "Define the tone",
+      "toneDesc": "Specify the desired tone (bold, minimalist, elegant, fun, professional)",
+      "elementsTitle": "Brand elements",
+      "elementsDesc": "Specify colors or visual style you would like to incorporate",
+      "specificTitle": "Be specific",
+      "specificDesc": "Specify the topic (sale, event, season) and the purpose of the newsletter",
+      "structureTitle": "Describe the structure",
+      "structureDesc": "Detail the structure (headline, product grid, button, image, footer)"
+    },
+    "createDesign": "Create design"
+  }
+}

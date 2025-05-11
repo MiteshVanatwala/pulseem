@@ -39,6 +39,8 @@ import { getFileGallery } from '../../redux/reducers/gallerySlice';
 import { BiSave } from 'react-icons/bi'
 // User input controls
 import { EditRow } from './components/ContentDialogs'
+import { GiMagicBroom } from "react-icons/gi";
+
 
 // Generic modal component with event hooks
 import useModals from './hooks/useModals'
@@ -61,6 +63,7 @@ import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 import { NO_IMAGE_URL } from '../../helpers/Constants';
 import { logout } from '../../helpers/Api/PulseemReactAPI';
 import { UserRoles } from '../../Models/SubUser/SubUsers';
+import AITemplateCreator from './modals/AI_TemplateCreator';
 
 const CampaignEditor = ({ classes, ...props }) => {
   //#region State
@@ -953,6 +956,19 @@ const CampaignEditor = ({ classes, ...props }) => {
     };
   }
 
+  const AI_Dialog = () => {
+    return {
+      showDivider: false,
+      title: t("AI.popup.title"),
+      content: (
+        <AITemplateCreator campaignId={campaignId} onUpdate={() => {
+          window.location.reload(true);
+        }} />
+      ),
+      showDefaultButtons: false
+    };
+  }
+
   const moreThanOneDynamicBlockModal = (data = '') => {
     const message = t(
       data === 'save' ? "common.noMoreThanOneDynamicBlockSave"
@@ -999,6 +1015,9 @@ const CampaignEditor = ({ classes, ...props }) => {
     } else if (type === 'moreThanOneDynamicBlock') {
       currentDialog = moreThanOneDynamicBlockModal(data);
     }
+    else if (type === 'AIDialog') {
+      currentDialog = AI_Dialog();
+    }
 
     if (type) {
       return (
@@ -1020,6 +1039,18 @@ const CampaignEditor = ({ classes, ...props }) => {
     if (!isFromAutomation) {
       wizardButtons.push(<>
         <Button
+          onClick={() => { setDialogType({ type: "AIDialog" }) }}
+          className={clsx(
+            classes.btn,
+            classes.btnRounded,
+            classes.backButton
+          )}
+          style={{ margin: 8 }}
+          startIcon={<GiMagicBroom />}
+          color="primary"
+          key={'aiButton'}
+        >AI</Button>
+        <Button
           onClick={() =>
             saveDesign(false, null, true, true, 'save')}
           className={clsx(
@@ -1030,6 +1061,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           style={{ margin: '8px' }}
           startIcon={silentSave ? <Loader isOpen={silentSave} size={20} showBackdrop={false} contained={true} /> : <BiSave />}
           color="primary"
+          key={'saveButton'}
         >{t("common.save")}
         </Button>
         {fromLink?.toLowerCase() !== 'autoresponder' && <Button onClick={() => {
@@ -1069,6 +1101,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
           style={{ marginInlineStart: '8px' }}
           color="primary"
+          key={'createButton'}
         >{t('common.continue')}</Button>
         }
       </>)
@@ -1087,6 +1120,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           style={{ margin: '8px' }}
           startIcon={<BiSave />}
           color="primary"
+          key={'saveAutomationButton'}
         >{t("common.save")}
         </Button>
         <Button onClick={() => {
@@ -1100,6 +1134,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
           style={{ marginInlineStart: '8px' }}
           color="primary"
+          key={'createAutomationButton'}
         >{t('common.backToAutomation')}</Button>
       </>)
     }
