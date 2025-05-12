@@ -11,6 +11,7 @@ import { Loader } from '../Loader/Loader';
 import { EmailPricingSubscriptionPoland, GetEmailPackagePrices } from '../../redux/reducers/BillingSlice';
 import { first, get, last } from 'lodash';
 import Toast from '../Toast/Toast.component';
+import { formatNumberWithCommas } from '../../helpers/Utils/TextHelper';
 
 const PayPerRecipient = ({ classes, isOpen, onClose }: any) => {
 	const { t } = useTranslation();
@@ -39,7 +40,7 @@ const PayPerRecipient = ({ classes, isOpen, onClose }: any) => {
         id: item.Id,
         value: item.Price,
         label: '',
-        displayText: `${item.LevelLow}-${item.LevelHigh}`,
+        displayText: `${formatNumberWithCommas(item.LevelLow)} - ${formatNumberWithCommas(item.LevelHigh)}`,
       }));
       setMarks(marks);
     }
@@ -132,6 +133,9 @@ const PayPerRecipient = ({ classes, isOpen, onClose }: any) => {
           min={get(first(marks), 'value', 0)}
           max={get(last(marks), 'value', 100)}
           onChange={handleChange}
+          color="primary"
+          className={clsx(classes.colrPrimary)}
+          style={{ color: "#ff3343" }}
         />
 
         <Grid container className={clsx(classes.mt15)} spacing={2}>

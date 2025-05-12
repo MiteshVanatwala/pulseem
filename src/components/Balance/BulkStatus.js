@@ -223,8 +223,8 @@ const BulkStatus = ({ classes }) => {
     return Newsletters?.FeatureAllowed && accountFeatures && accountFeatures?.indexOf(PulseemFeatures.PURCHASE_NEWSLETTER_PACKAGES) > -1 && billingTypeId !== "1" && Newsletters.eBillingType === 0 && accountAvailablePackages.length > 0 && currencyId !== POLISH_ZLOTY_CURRENCY_ID;
   }
 
-  const isAllowNewsletterForPaland = () => {
-    return Newsletters?.FeatureAllowed && accountFeatures && accountFeatures?.indexOf(PulseemFeatures.PURCHASE_NEWSLETTER_PACKAGES) > -1 && billingTypeId !== "1" && Newsletters.eBillingType === 0 && accountAvailablePackages.length > 0 && isGlobal === true && currencyId === POLISH_ZLOTY_CURRENCY_ID;
+  const isAllowNewsletterForPoland = () => {
+    return Newsletters?.FeatureAllowed && accountFeatures && accountFeatures?.indexOf(PulseemFeatures.PURCHASE_NEWSLETTER_PACKAGES) > -1 && billingTypeId !== "1" && isGlobal === true && currencyId === POLISH_ZLOTY_CURRENCY_ID;
   }
 
   const showPackageDialogType = async (packageType) => {
@@ -337,22 +337,28 @@ const BulkStatus = ({ classes }) => {
             </Grid>
 
             <Grid item md={3} xs={4} className={clsx(classes.paddingSides10, windowSize === 'xs' ? classes.textRight : '')}>
-              <Tooltip
-                title={getBillingTypeText(Newsletters)}
-                placement='top-start'
-                interactive={true}
-                classes={{
-                  tooltip: clsx(classes.tooltipPrimary, classes.f12),
-                  arrow: classes.colrPrimary
-                }}
-              >
-                <Typography
-                  className={clsx(classes.bold, classes.elipsis)}
-                  title={`${getBillingTypeText(Newsletters)} ${t('report.Credits')}`}
-                  aria-label={`${getBillingTypeText(Newsletters)} ${t('report.Credits')}`}>
-                  {getBillingTypeText(Newsletters)}
-                </Typography>
-              </Tooltip>
+              {
+                (isGlobal === true && currencyId === POLISH_ZLOTY_CURRENCY_ID && Newsletters?.eBillingType !== 2) 
+                ? ''
+                : <>  
+                  <Tooltip
+                    title={getBillingTypeText(Newsletters)}
+                    placement='top-start'
+                    interactive={true}
+                    classes={{
+                      tooltip: clsx(classes.tooltipPrimary, classes.f12),
+                      arrow: classes.colrPrimary
+                    }}
+                  >
+                    <Typography
+                      className={clsx(classes.bold, classes.elipsis)}
+                      title={`${getBillingTypeText(Newsletters)} ${t('report.Credits')}`}
+                      aria-label={`${getBillingTypeText(Newsletters)} ${t('report.Credits')}`}>
+                      {getBillingTypeText(Newsletters)}
+                    </Typography>
+                  </Tooltip>
+                </>
+              }
             </Grid>
 
             <Grid item md={4} xs={4} className={isRTL ? classes.textLeft : classes.textRight}>
@@ -365,7 +371,7 @@ const BulkStatus = ({ classes }) => {
                 )
               }
               {
-                isAllowNewsletterForPaland() && (
+                isAllowNewsletterForPoland() && (
                   <Button
                     className={clsx(classes.btn, classes.btnRounded, classes.f12)}
                     onClick={() => !Newsletters.IsEmailPolandSubscribed ? setIsOpenPayPerRecipient(true) : setIsOpenUnsubscribeDialog(true)}
