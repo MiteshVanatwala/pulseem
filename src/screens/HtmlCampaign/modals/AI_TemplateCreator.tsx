@@ -27,14 +27,13 @@ import { requestTemplate } from '../../../redux/reducers/AISlice';
 import { logout } from '../../../helpers/Api/PulseemReactAPI';
 import { setIsLoader } from '../../../redux/reducers/coreSlice';
 import { convertFileToBase64 } from '../../../helpers/Utils/common';
+import PulseemColorPicker from '../../../components/Controlls/PulseemColorPicker';
 
 // Custom styles using makeStyles
 const useStyles = makeStyles((theme) => ({
   root: {
     maxWidth: 800,
     margin: '0 auto',
-    //direction: 'rtl', // RTL direction for Hebrew
-    // fontFamily: '"Segoe UI", Tahoma, Geneva, Verdana, sans-serif',
   },
   textArea: {
     width: '100%',
@@ -44,8 +43,7 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(1),
     fontWeight: 'bold',
     fontSize: '1rem',
-    color: '#333',
-    // textAlign: 'right',
+    color: '#333'
   },
   submitButton: {
     backgroundColor: pink[500],
@@ -165,20 +163,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-// Array of color options
-const colorOptions = [
-  { name: 'אדום', value: red[500], hex: '#f44336' },
-  { name: 'ורוד', value: pink[500], hex: '#e91e63' },
-  { name: 'סגול', value: purple[500], hex: '#9c27b0' },
-  { name: 'אינדיגו', value: indigo[500], hex: '#3f51b5' },
-  { name: 'כחול', value: blue[500], hex: '#2196f3' },
-  { name: 'ציאן', value: cyan[500], hex: '#00bcd4' },
-  { name: 'טורקיז', value: teal[500], hex: '#009688' },
-  { name: 'ירוק', value: green[500], hex: '#4caf50' },
-  { name: 'צהוב', value: amber[500], hex: '#ffc107' },
-  { name: 'כתום', value: orange[500], hex: '#ff9800' },
-];
-
 interface AITemplateCreatorProps {
   campaignId: any;
   onUpdate: (status: string) => void;
@@ -241,31 +225,6 @@ const AITemplateCreator = ({ campaignId, onUpdate }: AITemplateCreatorProps) => 
 
   const handleColorDialogClose = () => {
     setColorDialogOpen(false);
-  };
-
-  const toggleColor = (color: { name: string, value: string, hex: string }) => {
-    const currentColors = [...(model.selectedColors || [])];
-    const colorIndex = currentColors.findIndex(c => c.hex === color.hex);
-
-    if (colorIndex > -1) {
-      // Remove color if already selected
-      currentColors.splice(colorIndex, 1);
-    } else {
-      // Add color if not already selected
-      currentColors.push(color);
-    }
-
-    setModel({
-      ...model,
-      messageRequest: model.messageRequest += currentColors.map((c: any) => { return c.hex })
-    });
-  };
-
-  const removeColor = (colorToRemove: { name: string, value: string, hex: string }) => {
-    setModel({
-      ...model,
-      selectedColors: (model.selectedColors || []).filter(color => color.hex !== colorToRemove.hex)
-    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -337,7 +296,7 @@ const AITemplateCreator = ({ campaignId, onUpdate }: AITemplateCreatorProps) => 
             <Grid item xs={6}>
               <Typography className={classes.newFeatureTitle}>
                 <span className={classes.icon}>📎</span>
-                העלאת קובץ
+                {t('mainReport.files')}
               </Typography>
 
               <input
@@ -351,7 +310,7 @@ const AITemplateCreator = ({ campaignId, onUpdate }: AITemplateCreatorProps) => 
               <label htmlFor="file-upload">
                 <Box className={classes.uploadButton}>
                   <CloudUploadIcon className={classes.uploadIcon} />
-                  <Typography variant="body2">בחר קובץ</Typography>
+                  <Typography variant="body2">{t('common.selectFile')}</Typography>
                 </Box>
               </label>
 
@@ -367,27 +326,13 @@ const AITemplateCreator = ({ campaignId, onUpdate }: AITemplateCreatorProps) => 
             <Grid item xs={6}>
               <Typography className={classes.newFeatureTitle}>
                 <span className={classes.icon}>🎨</span>
-                בחירה מרובה של צבעים
+                {t('colorPalette.multipleColorSelection')}
               </Typography>
 
               <Box className={classes.colorPaletteButton} onClick={handleColorDialogOpen}>
                 <PaletteIcon className={classes.uploadIcon} />
-                <Typography variant="body2">בחר צבעים</Typography>
+                <Typography variant="body2"> {t('colorPalette.selectColors')}</Typography>
               </Box>
-
-              {model.selectedColors && model.selectedColors.length > 0 && (
-                <Box mt={1} display="flex" flexWrap="wrap">
-                  {model.selectedColors.map((color) => (
-                    <Chip
-                      key={color.hex}
-                      label={`${color.name} ${color.hex}`}
-                      onDelete={() => removeColor(color)}
-                      className={classes.colorChip}
-                      style={{ backgroundColor: color.value, color: '#fff' }}
-                    />
-                  ))}
-                </Box>
-              )}
             </Grid>
           </Grid>
         </Paper>
@@ -466,29 +411,21 @@ const AITemplateCreator = ({ campaignId, onUpdate }: AITemplateCreatorProps) => 
       <Dialog
         open={colorDialogOpen}
         onClose={handleColorDialogClose}
-        maxWidth="xs"
+        maxWidth="md"
         fullWidth
       >
-        <DialogTitle style={{ direction: 'rtl' }}>בחר צבעים</DialogTitle>
+        <DialogTitle style={{ direction: 'rtl' }}>{t('colorPalette.selectColors')}</DialogTitle>
         <DialogContent>
           <Box display="flex" flexWrap="wrap" justifyContent="center">
-            {colorOptions.map((color) => (
-              <Box
-                key={color.hex}
-                className={`${classes.colorBox} ${model.selectedColors && model.selectedColors.some(c => c.hex === color.hex) ? classes.colorSelected : ''
-                  }`}
-                style={{ backgroundColor: color.value }}
-                onClick={() => toggleColor(color)}
-                title={`${color.name} ${color.hex}`}
-              />
-            ))}
+            <PulseemColorPicker onSelecteColors={(selectedColor: any[]) => {
+              setModel({
+                ...model,
+                messageRequest: model.messageRequest += selectedColor.map((sc: any) => { return sc.hexCode })
+              });
+              setColorDialogOpen(false);
+            }} />
           </Box>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleColorDialogClose} color="primary">
-            סיום
-          </Button>
-        </DialogActions>
       </Dialog>
     </Box>
   );

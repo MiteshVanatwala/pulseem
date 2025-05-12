@@ -869,5 +869,6 @@
   "internalError": "Internal Error",
   "selectEmail": "Select Email",
   "selectCellphone": "Select Cellphone",
-  "creditsPerMessage": "Credits Per Message"
+  "creditsPerMessage": "Credits Per Message",
+  "selectFile": "Select file"
 }

@@ -38,6 +38,7 @@ import TermsOfUse from './TermsOfUse.json'
 import SubUsers from './SubUsers.json'
 import WhatsappOnBoarding from './WhatsappOnBoarding.json'
 import AI from './AI.json'
+import colorPalette from './colorPalette.json'
 
 export const en = {
 	automations,
@@ -79,5 +80,6 @@ export const en = {
 	TermsOfUse,
 	SubUsers,
 	WhatsappOnBoarding,
-	AI
+	AI,
+	colorPalette
 };
