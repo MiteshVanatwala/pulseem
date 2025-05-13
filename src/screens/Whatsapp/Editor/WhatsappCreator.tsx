@@ -50,6 +50,7 @@ import Toast from '../../../components/Toast/Toast.component';
 import { JSONProps } from './Types/JSON.types';
 import {
 	checkLanguage,
+	detecLanguageMixup,
 	getDynamicFieldIndex,
 	getDynamicFields,
 	getLastDynamicFieldByValue,
@@ -852,7 +853,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 
 		if (
 			templateData.templateText?.length > 0 &&
-			checkLanguage(templateData.templateText, isRTL) === 'Both'
+			detecLanguageMixup(templateData.templateText)
 		) {
 			validationErrors.push(translator('whatsapp.alertModal.languageError'));
 			isValidated = false;
