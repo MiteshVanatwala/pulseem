@@ -50,7 +50,6 @@ import Toast from '../../../components/Toast/Toast.component';
 import { JSONProps } from './Types/JSON.types';
 import {
 	checkLanguage,
-	detecLanguageMixup,
 	getDynamicFieldIndex,
 	getDynamicFields,
 	getLastDynamicFieldByValue,
@@ -848,14 +847,6 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			validationErrors.push(
 				`Template length should be less then or equals to ${buttonTextLimits.quickReply}`
 			);
-			isValidated = false;
-		}
-
-		if (
-			templateData.templateText?.length > 0 &&
-			detecLanguageMixup(templateData.templateText)
-		) {
-			validationErrors.push(translator('whatsapp.alertModal.languageError'));
 			isValidated = false;
 		}
 
