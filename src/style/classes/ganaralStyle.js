@@ -397,6 +397,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   w70VW: {
     width: "70vw",
   },
+  w80VW: {
+    width: "80vw",
+  },
   minWidth100: {
     minWidth: 100,
   },

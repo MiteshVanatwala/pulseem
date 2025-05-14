@@ -13,7 +13,7 @@ import { first, get, last } from 'lodash';
 import Toast from '../Toast/Toast.component';
 import { formatNumberWithCommas } from '../../helpers/Utils/TextHelper';
 
-const PayPerRecipient = ({ classes, isOpen, onClose }: any) => {
+const PayPerRecipientNew = ({ classes, isOpen, onClose }: any) => {
 	const { t } = useTranslation();
 	const { windowSize, isRTL } = useSelector(
 		(state: { core: coreProps }) => state.core
@@ -84,7 +84,7 @@ const PayPerRecipient = ({ classes, isOpen, onClose }: any) => {
 			onCancel={() => onClose()}
 			reduceTitle
 			style={{ minWidth: 240 }}
-      contentStyle={classes.maxWidth70VW}
+      contentStyle={clsx(classes.maxWidth70VW, 'payPerRecipient')}
       paperStyle={clsx(windowSize !== 'xs' ? classes.w70VW : null)}
       hideHeader={true}
 			renderButtons={() => (
@@ -175,4 +175,4 @@ const PayPerRecipient = ({ classes, isOpen, onClose }: any) => {
 	);
 };
 
-export default PayPerRecipient;
+export default PayPerRecipientNew;

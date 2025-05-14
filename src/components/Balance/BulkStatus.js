@@ -23,6 +23,7 @@ import PayPerRecipient from '../PayPerRecipient/PayPerRecipient';
 import AddCardDialog from '../AddCardDialog/AddCardDialog';
 import UnsubscribePayPerRecipient from '../PayPerRecipient/UnsubscribePayPerRecipient';
 import Toast from '../Toast/Toast.component';
+import PayPerRecipientNew from '../PayPerRecipient/PayPerRecipientNew';
 
 const BulkStatus = ({ classes }) => {
   const { billingTypeId, windowSize, isRTL } = useSelector(state => state.core)
@@ -490,7 +491,7 @@ const BulkStatus = ({ classes }) => {
             </Grid>
           </>)}
         </Grid>
-        <PayPerRecipient
+        <PayPerRecipientNew
           classes={classes}
           isOpen={isOpenPayPerRecipient}
           onClose={(PricePackageId) => {

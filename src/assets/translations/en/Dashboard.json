@@ -67,6 +67,12 @@
     "unlimitedEmailSending": "Unlimited Email Sending",
     "confirmation": "By clicking \"Subscribe\", I confirm that I agree to be charged based on the selected pricing tier above.",
     "featureNotAllowed": "This feature is not allowed for your account. Please contact support to enable it.",
-    "success": "Your have successfully unsubscribed."
+    "success": "Your have successfully unsubscribed.",
+    "planNotSelected": "Oops, you haven't selected a mailing plan!",
+    "joinPlan": "In order to send the mailing you've prepared, please join one of the plans:",
+    "targetPlan": "To how many people would you like to send emails?",
+    "totalToPay": "Total to pay",
+    "perMonth": "Per month, no commitment",
+    "securePurchase": "For secure purchase on the website"
   }
 }
