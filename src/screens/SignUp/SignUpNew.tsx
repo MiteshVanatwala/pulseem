@@ -161,7 +161,7 @@ const SignUpNew = ({ classes }: any) => {
       const nameArr = userDetails.fullName.split(' ');
       payload.FirstName = nameArr[0];
       payload.LastName = nameArr.slice(1).join(" ");
-      payload.Mobile = `${userDetails.countryCode.code}-${userDetails.cellPhone}`;
+      payload.Mobile = `${userDetails.countryCode.code}-${Number(userDetails.cellPhone).toString()}`;
       payload.Email = userDetails.emailId;
     }
 
@@ -303,7 +303,7 @@ const SignUpNew = ({ classes }: any) => {
       const { data: { Message }, status } = await PulseemReactInstance.post(`User/Signup`, {
         FirstName: nameArr[0],
         LastName: nameArr.slice(1).join(" "),
-        Mobile: `${userDetails.countryCode.code.replace('+', '')}${userDetails.cellPhone}`,
+        Mobile: `${userDetails.countryCode.code.replace('+', '')}${Number(userDetails.cellPhone).toString()}`,
         Phone: `${userDetails.phone}`,
         UserName: userDetails.userName,
         Password: userDetails.password,

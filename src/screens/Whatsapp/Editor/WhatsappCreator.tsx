@@ -850,14 +850,6 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			isValidated = false;
 		}
 
-		if (
-			templateData.templateText?.length > 0 &&
-			checkLanguage(templateData.templateText, isRTL) === 'Both'
-		) {
-			validationErrors.push(translator('whatsapp.alertModal.languageError'));
-			isValidated = false;
-		}
-
 		if ((category === authenticationTypes.AUTHENTICATIONEN || category === authenticationTypes.AUTHENTICATIONHEBREW) && (codeExpirationTime || 0) > 90) {
 			validationErrors.push(translator('whatsapp.codeExpirationMessage'));
 			isValidated = false;
