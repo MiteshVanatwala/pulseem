@@ -961,7 +961,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       showDivider: false,
       title: t("AI.popup.title"),
       content: (
-        <AITemplateCreator campaignId={campaignId} onUpdate={() => {
+        <AITemplateCreator classes={classes} campaignId={campaignId} onUpdate={() => {
           window.location.reload(true);
         }} />
       ),

@@ -187,7 +187,7 @@ interface PulseemColorPickerProps {
   onSelecteColors: (colors: SavedColor[]) => void;
 }
 
-const PulseemColorPicker: React.FC<PulseemColorPickerProps> = ({ onSelecteColors }) => {
+const PulseemColorPalette: React.FC<PulseemColorPickerProps> = ({ onSelecteColors }) => {
   const classes = useStyles();
   const { isRTL } = useSelector((state: any) => state.core);
   const [selectedColorIndex, setSelectedColorIndex] = useState<number>(5);
@@ -462,4 +462,4 @@ const PulseemColorPicker: React.FC<PulseemColorPickerProps> = ({ onSelecteColors
   );
 };
 
-export default PulseemColorPicker;
+export default PulseemColorPalette;

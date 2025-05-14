@@ -6,20 +6,16 @@ import {
   Button,
   Paper,
   Grid,
-  makeStyles,
   Divider,
   Dialog,
   DialogTitle,
-  DialogContent,
-  DialogActions,
-  Chip
+  DialogContent
 } from '@material-ui/core';
 import {
   CloudUpload as CloudUploadIcon,
   Close as CloseIcon,
   Palette as PaletteIcon
 } from '@material-ui/icons';
-import { pink, red, blue, green, purple, orange, teal, amber, indigo, cyan } from '@material-ui/core/colors';
 import { AnthropicUserRequest } from '../../../Models/AI/Anthropic';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
@@ -27,151 +23,31 @@ import { requestTemplate } from '../../../redux/reducers/AISlice';
 import { logout } from '../../../helpers/Api/PulseemReactAPI';
 import { setIsLoader } from '../../../redux/reducers/coreSlice';
 import { convertFileToBase64 } from '../../../helpers/Utils/common';
-import PulseemColorPicker from '../../../components/Controlls/PulseemColorPicker';
-
-// Custom styles using makeStyles
-const useStyles = makeStyles((theme) => ({
-  root: {
-    maxWidth: 800,
-    margin: '0 auto',
-  },
-  textArea: {
-    width: '100%',
-    marginBottom: theme.spacing(2),
-  },
-  sectionTitle: {
-    marginBottom: theme.spacing(1),
-    fontWeight: 'bold',
-    fontSize: '1rem',
-    color: '#333'
-  },
-  submitButton: {
-    backgroundColor: pink[500],
-    color: 'white',
-    '&:hover': {
-      backgroundColor: pink[700],
-    },
-    borderRadius: 25,
-    padding: '8px 20px',
-    marginTop: theme.spacing(2),
-    height: 40
-  },
-  checkboxLabel: {
-    fontSize: '1rem',
-  },
-  checkboxDesc: {
-    fontSize: 14,
-    whiteSpace: 'nowrap'
-  },
-  optionBox: {
-    backgroundColor: '#f9f9f9',
-    padding: theme.spacing(2),
-    borderRadius: 4,
-  },
-  icon: {
-    marginInlineEnd: 5,
-    color: '#ff7777',
-  },
-  // New styles for file upload
-  uploadButton: {
-    margin: theme.spacing(1, 0),
-    borderRadius: 4,
-    backgroundColor: '#f0f0f0',
-    padding: theme.spacing(1, 2),
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    cursor: 'pointer',
-    border: '1px dashed #ccc',
-    '&:hover': {
-      backgroundColor: '#e5e5e5',
-    },
-  },
-  uploadIcon: {
-    marginInlineEnd: theme.spacing(1),
-    color: '#555',
-  },
-  filePreview: {
-    marginTop: theme.spacing(1),
-    padding: theme.spacing(1),
-    backgroundColor: '#eee',
-    borderRadius: 4,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  removeIcon: {
-    cursor: 'pointer',
-    color: '#777',
-    '&:hover': {
-      color: red[500],
-    },
-  },
-  // New styles for color picker
-  colorBox: {
-    width: 30,
-    height: 30,
-    margin: theme.spacing(0.5),
-    cursor: 'pointer',
-    borderRadius: 4,
-    display: 'inline-block',
-    position: 'relative',
-    border: '1px solid #ddd',
-    '&:hover': {
-      transform: 'scale(1.1)',
-    },
-  },
-  colorSelected: {
-    border: '2px solid #333',
-    '&::after': {
-      content: '"✓"',
-      position: 'absolute',
-      top: '50%',
-      left: '50%',
-      transform: 'translate(-50%, -50%)',
-      color: '#fff',
-      textShadow: '0px 0px 2px #000',
-    },
-  },
-  colorPaletteButton: {
-    margin: theme.spacing(1, 0),
-    borderRadius: 4,
-    backgroundColor: '#f0f0f0',
-    padding: theme.spacing(1, 2),
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    cursor: 'pointer',
-    border: '1px dashed #ccc',
-    '&:hover': {
-      backgroundColor: '#e5e5e5',
-    },
-  },
-  colorChip: {
-    margin: theme.spacing(0.5),
-    direction: 'ltr',
-  },
-  newFeatureSection: {
-    marginBottom: theme.spacing(2),
-  },
-  newFeatureTitle: {
-    fontWeight: 'bold',
-    fontSize: '0.9rem',
-    marginBottom: theme.spacing(1),
-    display: 'flex',
-    alignItems: 'center',
-  },
-}));
+import clsx from 'clsx';
+import Gallery from '../../../components/Gallery/Gallery.component';
+import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
+import { PulseemFolderType } from '../../../model/PulseemFields/Fields';
+import { IoMdImages } from 'react-icons/io';
+import { FileGallery } from '../../../Models/Files/FileGallery';
+import { RandomID } from '../../../helpers/Functions/functions';
+import PulseemColorPickerUI from '../../../components/Controlls/PulseemColorPickerUI';
 
 interface AITemplateCreatorProps {
+  classes: any,
   campaignId: any;
   onUpdate: (status: string) => void;
 }
 
-const AITemplateCreator = ({ campaignId, onUpdate }: AITemplateCreatorProps) => {
-  const classes = useStyles();
+const AITemplateCreator = ({ classes, campaignId, onUpdate }: AITemplateCreatorProps) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const [submitDisabled, setSubmitDisabled] = useState<boolean>(true);
+  const [showDocs, setShowDocuments] = useState<boolean>(false);
+  const [showGallery, setShowGallery] = useState<boolean>(false);
+  const [filesProperties, setFilesProperties] = useState<FileGallery[]>([]);
+  const [isGalleryConfirmed, setIsFileSelected] = useState(false);
+  const [colors, setColors] = useState<string[]>([]);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [model, setModel] = useState<AnthropicUserRequest & {
     originalFile?: File | null,
     selectedColors?: Array<{ name: string, value: string, hex: string }>
@@ -194,23 +70,6 @@ const AITemplateCreator = ({ campaignId, onUpdate }: AITemplateCreatorProps) => 
     });
   };
 
-  // File upload handlers
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      try {
-        const ofile = e.target.files[0];
-        const base64 = await convertFileToBase64(ofile);
-
-        setModel({
-          ...model,
-          file: base64
-        });
-      } catch (error) {
-        console.error("Error converting file to Base64:", error);
-      }
-    }
-  };
-
   const removeFile = () => {
     setModel({
       ...model,
@@ -229,19 +88,18 @@ const AITemplateCreator = ({ campaignId, onUpdate }: AITemplateCreatorProps) => 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Prepare message request with additional info about files and colors
     let enhancedMessageRequest = model.messageRequest;
 
-    // Add file info if present
     if (model.originalFile) {
       enhancedMessageRequest += `\n\nFile attached: ${model.originalFile.name} (${model.originalFile.type})`;
     }
 
-    // Add color info if present
-    if (model.selectedColors && model.selectedColors.length > 0) {
-      enhancedMessageRequest += `\n\nSelected colors: ${model.selectedColors.map(c => `${c.name} (${c.hex})`).join(', ')}`;
+    if (colors && colors.length > 0) {
+      enhancedMessageRequest += `\n\nSelected colors: ${colors.map(c => c).join(', ')}`;
     }
+    // if (model.selectedColors && model.selectedColors.length > 0) {
+    //   enhancedMessageRequest += `\n\nSelected colors: ${model.selectedColors.map(c => `${c.name} (${c.hex})`).join(', ')}`;
+    // }
 
     // Create a new request object with the enhanced message
     const requestModel: AnthropicUserRequest = {
@@ -272,8 +130,68 @@ const AITemplateCreator = ({ campaignId, onUpdate }: AITemplateCreatorProps) => 
     dispatch(setIsLoader(false));
   };
 
+  const handleGalleryConfirm = () => {
+    setIsFileSelected(true);
+  }
+
+  const handleSelectedFile = async (file: string, preventUpdateModel: boolean) => {
+    let fileObject: File | null = null;
+
+    try {
+      if (file && file[0] !== '') {
+        const response = await fetch(file);
+        const blob = await response.blob();
+        const fileName = file.split('/')[file.split('/').length - 1];
+
+        const fileType = response.headers.get('content-type') ||
+          'application/' + fileName.split('.').pop();
+
+        fileObject = new File([blob], fileName, { type: fileType });
+        console.log('File created successfully:', fileObject);
+      }
+    } catch (error) {
+      console.error('Error converting URL to File:', error);
+    }
+
+    if (!file || file[0] === '') {
+      setIsFileSelected(false);
+      return;
+    }
+
+    const existsFiles = [...filesProperties];
+    const existFile = filesProperties.find((f) => {
+      return f.FileURL === file
+    });
+
+    if (!existFile) {
+      let fileName = file.split('/')[file.split('/').length - 1];
+      const newFile = {
+        Name: fileName,
+        FileName: fileName,
+        FolderType: PulseemFolderType.CLIENT_IMAGES,
+        FileURL: file,
+        ID: RandomID(),
+        File: fileObject
+      }
+      existsFiles.push(newFile as any);
+    }
+
+    setFilesProperties(existsFiles);
+    if (fileObject && fileObject !== null) {
+      const base64 = await convertFileToBase64(fileObject);
+      setModel({
+        ...model,
+        file: base64,
+        originalFile: fileObject
+      });
+    }
+
+    setShowDocuments(false);
+    setShowGallery(false);
+  }
+
   return (
-    <Box className={classes.root}>
+    <Box className={classes.aiContainer}>
       <form onSubmit={handleSubmit}>
         {/* Text area input */}
         <TextField
@@ -282,7 +200,15 @@ const AITemplateCreator = ({ campaignId, onUpdate }: AITemplateCreatorProps) => 
           rows={4}
           variant="outlined"
           value={model.messageRequest}
-          onChange={handleTextChange}
+          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+            handleTextChange(e);
+            if (e.target.value === '') {
+              setSubmitDisabled(true);
+            }
+            else {
+              setSubmitDisabled(false);
+            }
+          }}
           placeholder={`${t('AI.popup.placeholder')} 🥰`}
           InputProps={{
             style: { textAlign: 'right' }
@@ -293,33 +219,35 @@ const AITemplateCreator = ({ campaignId, onUpdate }: AITemplateCreatorProps) => 
         <Paper className={classes.optionBox} elevation={0} style={{ marginBottom: '16px' }}>
           <Grid container spacing={2}>
             {/* File Upload */}
-            <Grid item xs={6}>
+            <Grid item xs={3}>
               <Typography className={classes.newFeatureTitle}>
                 <span className={classes.icon}>📎</span>
-                {t('mainReport.files')}
+                {t('common.imageGallery')}
               </Typography>
-
-              <input
-                accept="image/*,.pdf"
-                style={{ display: 'none' }}
-                id="file-upload"
-                type="file"
-                onChange={handleFileChange}
-              />
-
-              <label htmlFor="file-upload">
-                <Box className={classes.uploadButton}>
+              <Button onClick={(e: any) => {
+                e.preventDefault();
+                setShowGallery(true);
+              }} style={{ paddingTop: 0 }}>
+                <Box className={classes.uploadButton} style={{ marginTop: 0 }}>
                   <CloudUploadIcon className={classes.uploadIcon} />
                   <Typography variant="body2">{t('common.selectFile')}</Typography>
                 </Box>
-              </label>
-
-              {model.originalFile && (
-                <Box className={classes.filePreview}>
-                  <Typography variant="body2">{model.originalFile.name}</Typography>
-                  <CloseIcon className={classes.removeIcon} onClick={removeFile} />
+              </Button>
+            </Grid>
+            <Grid item xs={3}>
+              <Typography className={classes.newFeatureTitle}>
+                <span className={classes.icon}>📎</span>
+                {t('common.documentGallery')}
+              </Typography>
+              <Button onClick={(e: any) => {
+                e.preventDefault();
+                setShowDocuments(true);
+              }} style={{ paddingTop: 0 }}>
+                <Box className={classes.uploadButton} style={{ marginTop: 0 }}>
+                  <CloudUploadIcon className={classes.uploadIcon} />
+                  <Typography variant="body2">{t('common.selectFile')}</Typography>
                 </Box>
-              )}
+              </Button>
             </Grid>
 
             {/* Color Selector */}
@@ -333,6 +261,38 @@ const AITemplateCreator = ({ campaignId, onUpdate }: AITemplateCreatorProps) => 
                 <PaletteIcon className={classes.uploadIcon} />
                 <Typography variant="body2"> {t('colorPalette.selectColors')}</Typography>
               </Box>
+              <Box style={{ display: 'flex', flexDirection: 'row' }}>
+                {colors.map((c: string, index: number) => {
+                  return <Box
+                    onMouseEnter={() => setHoveredIndex(index)}
+                    onMouseLeave={() => setHoveredIndex(null)}>
+                    <Box
+                      style={{ display: 'flex', flexDirection: 'column', marginInlineEnd: 5, alignItems: 'center' }}>
+                      <Box
+                        style={{ borderRadius: 2, backgroundColor: c, width: 25, height: 25 }}>
+                      </Box>
+                      <Box style={{ height: 20 }}>
+                        {hoveredIndex === index && <Box style={{ cursor: 'pointer' }} onClick={() => {
+                          const removeColor = colors.filter((col: any) => { return c !== col });
+                          setColors(removeColor);
+                        }}>x</Box>}
+                      </Box>
+                    </Box>
+                  </Box>
+                })}
+              </Box>
+            </Grid>
+          </Grid>
+          <Grid item xs={6}>
+            <Grid container>
+              <Grid item xs={12}>
+                {model.originalFile && (
+                  <Box className={classes.filePreview}>
+                    <Typography variant="body2">{model.originalFile.name}</Typography>
+                    <CloseIcon className={classes.removeIcon} onClick={removeFile} />
+                  </Box>
+                )}
+              </Grid>
             </Grid>
           </Grid>
         </Paper>
@@ -399,7 +359,7 @@ const AITemplateCreator = ({ campaignId, onUpdate }: AITemplateCreatorProps) => 
         <Box display="flex" justifyContent="flex-end">
           <Button
             type="submit"
-            className={classes.submitButton}
+            className={clsx(classes.submitButton, submitDisabled && classes.disabled)}
             endIcon={<span>✨</span>}
           >
             {t('AI.popup.createDesign')}
@@ -411,22 +371,76 @@ const AITemplateCreator = ({ campaignId, onUpdate }: AITemplateCreatorProps) => 
       <Dialog
         open={colorDialogOpen}
         onClose={handleColorDialogClose}
-        maxWidth="md"
+        maxWidth="xs"
         fullWidth
       >
         <DialogTitle style={{ direction: 'rtl' }}>{t('colorPalette.selectColors')}</DialogTitle>
         <DialogContent>
           <Box display="flex" flexWrap="wrap" justifyContent="center">
-            <PulseemColorPicker onSelecteColors={(selectedColor: any[]) => {
-              setModel({
-                ...model,
-                messageRequest: model.messageRequest += selectedColor.map((sc: any) => { return sc.hexCode })
-              });
-              setColorDialogOpen(false);
-            }} />
+            <PulseemColorPickerUI
+              onSelectColor={(color: any) => {
+                const finalColors = [...colors];
+                finalColors.push(color);
+                setColors(finalColors);
+                setColorDialogOpen(false);
+              }}
+              onCancel={() => { setColorDialogOpen(false); }}
+            />
           </Box>
         </DialogContent>
       </Dialog>
+      {showGallery && (
+        <BaseDialog
+          showDivider={false}
+          maxHeight="calc(70vh)"
+          disableBackdropClick={true}
+          style={{ minHeight: 400 }}
+          classes={classes}
+          open={showGallery}
+          onClose={() => { setShowGallery(false); }}
+          onCancel={() => { setShowGallery(false); }}
+          onConfirm={(x: any) => { handleGalleryConfirm(); }}
+          icon={<IoMdImages />}
+          title={t("common.imageGallery")}
+        >
+          <Gallery
+            classes={classes}
+            //@ts-ignore
+            style={{ minWidth: 400 }}
+            multiSelect={false}
+            forceReload={true}
+            folderType={PulseemFolderType.CLIENT_IMAGES}
+            isConfirm={isGalleryConfirmed}
+            callbackSelectFile={handleSelectedFile}
+          />
+        </BaseDialog>
+      )}
+
+      {showDocs && (
+        <BaseDialog
+          maxHeight="calc(70vh)"
+          disableBackdropClick={true}
+          style={{ minHeight: 400 }}
+          showDivider={false}
+          classes={classes}
+          open={showDocs}
+          onClose={() => { setShowDocuments(false); }}
+          onCancel={() => { setShowDocuments(false); }}
+          onConfirm={(x: any) => { handleGalleryConfirm(); }}
+          title={t("common.documentGallery")}
+        >
+          <Gallery
+            classes={classes}
+            //@ts-ignore
+            style={{ minWidth: 400 }}
+            multiSelect={false}
+            forceReload={true}
+            folderType={PulseemFolderType.DOCUMENT}
+            isConfirm={isGalleryConfirmed}
+            callbackSelectFile={handleSelectedFile}
+          />
+        </BaseDialog>
+      )}
     </Box>
   );
 };
