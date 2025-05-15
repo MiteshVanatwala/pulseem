@@ -35,7 +35,7 @@ interface ColorPickerProps {
 }
 
 const PulseemColorPicker: React.FC<ColorPickerProps> = ({
-  initialColor = '#B200B6',
+  initialColor = '#000',
   onSelectColor,
   onCancel
 }) => {

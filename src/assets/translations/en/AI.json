@@ -14,5 +14,17 @@
       "structureDesc": "Detail the structure (headline, product grid, button, image, footer)"
     },
     "createDesign": "Create design"
+  },
+  "responses": {
+    "201": "Success",
+    "400": "There was an issue with the format or content of your request",
+    "401": "Invalid API Key",
+    "403": "Permission error",
+    "404": "Resource not found",
+    "405": "Prompt is too long",
+    "413": "Request exceeds the maximum allowed number of bytes",
+    "429": "Your account has hit a rate limit",
+    "500": "An unexpected error has occurred internal",
+    "529": "API is temporarily overloaded"
   }
 }

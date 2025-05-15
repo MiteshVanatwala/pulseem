@@ -18,9 +18,8 @@ import {
 } from '@material-ui/icons';
 import { AnthropicUserRequest } from '../../../Models/AI/Anthropic';
 import { useTranslation } from 'react-i18next';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { requestTemplate } from '../../../redux/reducers/AISlice';
-import { logout } from '../../../helpers/Api/PulseemReactAPI';
 import { setIsLoader } from '../../../redux/reducers/coreSlice';
 import { convertFileToBase64 } from '../../../helpers/Utils/common';
 import clsx from 'clsx';
@@ -31,6 +30,7 @@ import { IoMdImages } from 'react-icons/io';
 import { FileGallery } from '../../../Models/Files/FileGallery';
 import { RandomID } from '../../../helpers/Functions/functions';
 import PulseemColorPickerUI from '../../../components/Controlls/PulseemColorPickerUI';
+import Toast from '../../../components/Toast/Toast.component';
 
 interface AITemplateCreatorProps {
   classes: any,
@@ -41,6 +41,7 @@ interface AITemplateCreatorProps {
 const AITemplateCreator = ({ classes, campaignId, onUpdate }: AITemplateCreatorProps) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const { ToastMessages } = useSelector((state: any) => state?.Ai);
   const [submitDisabled, setSubmitDisabled] = useState<boolean>(true);
   const [showDocs, setShowDocuments] = useState<boolean>(false);
   const [showGallery, setShowGallery] = useState<boolean>(false);
@@ -48,15 +49,14 @@ const AITemplateCreator = ({ classes, campaignId, onUpdate }: AITemplateCreatorP
   const [isGalleryConfirmed, setIsFileSelected] = useState(false);
   const [colors, setColors] = useState<string[]>([]);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [toastMessage, setToastMessage] = useState<any>();
   const [model, setModel] = useState<AnthropicUserRequest & {
-    originalFile?: File | null,
     selectedColors?: Array<{ name: string, value: string, hex: string }>
   }>({
     campaignId: campaignId,
-    maxToken: 16384,
+    maxToken: null,
     messageRequest: '',
-    file: '',
-    originalFile: null,
+    file: null,
     selectedColors: []
   });
 
@@ -73,7 +73,7 @@ const AITemplateCreator = ({ classes, campaignId, onUpdate }: AITemplateCreatorP
   const removeFile = () => {
     setModel({
       ...model,
-      originalFile: null
+      file: null
     });
   };
 
@@ -86,12 +86,24 @@ const AITemplateCreator = ({ classes, campaignId, onUpdate }: AITemplateCreatorP
     setColorDialogOpen(false);
   };
 
+  const renderToast = () => {
+    if (toastMessage) {
+      setTimeout(() => {
+        setToastMessage(null);
+      }, 4000);
+      return (
+        <Toast data={toastMessage} />
+      );
+    }
+    return null;
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     let enhancedMessageRequest = model.messageRequest;
 
-    if (model.originalFile) {
-      enhancedMessageRequest += `\n\nFile attached: ${model.originalFile.name} (${model.originalFile.type})`;
+    if (model?.file?.name) {
+      enhancedMessageRequest += `\n\nFile attached: ${model?.file?.name} (${model?.file?.name})`;
     }
 
     if (colors && colors.length > 0) {
@@ -106,85 +118,55 @@ const AITemplateCreator = ({ classes, campaignId, onUpdate }: AITemplateCreatorP
       campaignId: model.campaignId,
       maxToken: model.maxToken,
       messageRequest: enhancedMessageRequest,
-      file: model.file,
-      originalFile: model.originalFile
+      file: model.file
     };
 
     dispatch(setIsLoader(true));
     const response: any = await dispatch(requestTemplate(requestModel));
-
-    switch (response?.payload?.StatusCode) {
-      case 201: {
-        onUpdate('success');
-        break;
-      }
-      case 401: {
-        logout();
-        break;
-      }
-      case 500: {
-        alert('error occured');
-      }
+    dispatch(setIsLoader(false));
+    if (response?.payload?.StatusCode === 201) {
+      onUpdate('success');
+    }
+    else {
+      setToastMessage(ToastMessages.RESPONSES[response?.payload?.StatusCode]);
     }
 
-    dispatch(setIsLoader(false));
   };
 
   const handleGalleryConfirm = () => {
     setIsFileSelected(true);
   }
 
-  const handleSelectedFile = async (file: string, preventUpdateModel: boolean) => {
-    let fileObject: File | null = null;
-
-    try {
-      if (file && file[0] !== '') {
-        const response = await fetch(file);
-        const blob = await response.blob();
-        const fileName = file.split('/')[file.split('/').length - 1];
-
-        const fileType = response.headers.get('content-type') ||
-          'application/' + fileName.split('.').pop();
-
-        fileObject = new File([blob], fileName, { type: fileType });
-        console.log('File created successfully:', fileObject);
-      }
-    } catch (error) {
-      console.error('Error converting URL to File:', error);
-    }
-
-    if (!file || file[0] === '') {
-      setIsFileSelected(false);
-      return;
-    }
-
+  const handleSelectedFile = async (fileUrl: string, fileType: string) => {
     const existsFiles = [...filesProperties];
     const existFile = filesProperties.find((f) => {
-      return f.FileURL === file
+      return f.FileURL === fileUrl
     });
 
+    let fileName = fileUrl.split('/')[fileUrl.split('/').length - 1];
+
     if (!existFile) {
-      let fileName = file.split('/')[file.split('/').length - 1];
       const newFile = {
         Name: fileName,
         FileName: fileName,
         FolderType: PulseemFolderType.CLIENT_IMAGES,
-        FileURL: file,
-        ID: RandomID(),
-        File: fileObject
+        FileURL: fileUrl,
+        ID: RandomID()
       }
       existsFiles.push(newFile as any);
     }
 
     setFilesProperties(existsFiles);
-    if (fileObject && fileObject !== null) {
-      const base64 = await convertFileToBase64(fileObject);
-      setModel({
-        ...model,
-        file: base64,
-        originalFile: fileObject
-      });
-    }
+
+    setModel({
+      ...model,
+      file: {
+        fileType: fileType,
+        name: fileName,
+        fileUrl: fileUrl,
+        text: ''
+      }
+    });
 
     setShowDocuments(false);
     setShowGallery(false);
@@ -286,9 +268,9 @@ const AITemplateCreator = ({ classes, campaignId, onUpdate }: AITemplateCreatorP
           <Grid item xs={6}>
             <Grid container>
               <Grid item xs={12}>
-                {model.originalFile && (
+                {model?.file?.name && (
                   <Box className={classes.filePreview}>
-                    <Typography variant="body2">{model.originalFile.name}</Typography>
+                    <Typography variant="body2">{model?.file?.name}</Typography>
                     <CloseIcon className={classes.removeIcon} onClick={removeFile} />
                   </Box>
                 )}
@@ -411,7 +393,7 @@ const AITemplateCreator = ({ classes, campaignId, onUpdate }: AITemplateCreatorP
             forceReload={true}
             folderType={PulseemFolderType.CLIENT_IMAGES}
             isConfirm={isGalleryConfirmed}
-            callbackSelectFile={handleSelectedFile}
+            callbackSelectFile={(fileUrl: string) => handleSelectedFile(fileUrl, 'image')}
           />
         </BaseDialog>
       )}
@@ -437,10 +419,11 @@ const AITemplateCreator = ({ classes, campaignId, onUpdate }: AITemplateCreatorP
             forceReload={true}
             folderType={PulseemFolderType.DOCUMENT}
             isConfirm={isGalleryConfirmed}
-            callbackSelectFile={handleSelectedFile}
+            callbackSelectFile={(fileUrl: string) => handleSelectedFile(fileUrl, 'document')}
           />
         </BaseDialog>
       )}
+      {renderToast()}
     </Box>
   );
 };

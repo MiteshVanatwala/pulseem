@@ -1,9 +1,15 @@
 export interface AnthropicUserRequest {
   campaignId: any;
-  maxToken: number;
+  maxToken?: number | null;
   messageRequest: string;
-  file: string;
-  originalFile?: File | null;
+  file?: AnthropicFileItem | null;
+}
+
+export interface AnthropicFileItem {
+  fileType?: string | null;
+  name?: string | null;
+  fileUrl: string;
+  text: string;
 }
 
 export interface AnthropicRequest {

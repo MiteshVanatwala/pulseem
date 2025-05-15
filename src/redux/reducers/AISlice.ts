@@ -23,6 +23,20 @@ const AiSlice = createSlice({
             Message: '',
             Data: {} as any,
         } as PulseemResponse,
+        ToastMessages: {
+            RESPONSES: {
+                201: { severity: 'success', color: 'success', message: 'settings.changePassword.responses.201', showAnimtionCheck: false },
+                400: { severity: 'error', color: 'error', message: 'AI.responses.400', showAnimtionCheck: false },
+                401: { severity: 'error', color: 'error', message: 'AI.responses.401', showAnimtionCheck: false },
+                403: { severity: 'error', color: 'error', message: 'AI.responses.403', showAnimtionCheck: false },
+                404: { severity: 'error', color: 'error', message: 'AI.responses.404', showAnimtionCheck: false },
+                405: { severity: 'error', color: 'error', message: 'AI.responses.405', showAnimtionCheck: false },
+                413: { severity: 'error', color: 'error', message: 'AI.responses.413', showAnimtionCheck: false },
+                429: { severity: 'error', color: 'error', message: 'AI.responses.429', showAnimtionCheck: false },
+                500: { severity: 'error', color: 'error', message: 'AI.responses.500', showAnimtionCheck: false },
+                529: { severity: 'error', color: 'error', message: 'AI.responses.529', showAnimtionCheck: false }
+            }
+        },
     },
     reducers: {},
     extraReducers: (builder) => {
