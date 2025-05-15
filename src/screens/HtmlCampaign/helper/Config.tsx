@@ -28,7 +28,6 @@ export interface ConfigOptions {
     t: any;
     languageCode: number;
     // handleUndoChange: Function;
-    languageCode: number;
 }
 
 export const BeeConfig = (Options: ConfigOptions) => {
