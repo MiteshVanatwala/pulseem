@@ -19,7 +19,6 @@ import { WhiteLabelObject } from '../WhiteLabel/WhiteLabelMigrate';
 import { MdVoiceChat } from "react-icons/md";
 import { URLS } from '../../config/enum';
 import { POLISH_ZLOTY_CURRENCY_ID } from '../../helpers/Constants';
-import PayPerRecipient from '../PayPerRecipient/PayPerRecipient';
 import AddCardDialog from '../AddCardDialog/AddCardDialog';
 import UnsubscribePayPerRecipient from '../PayPerRecipient/UnsubscribePayPerRecipient';
 import Toast from '../Toast/Toast.component';
@@ -88,7 +87,7 @@ const BulkStatus = ({ classes }) => {
       if (selectedPackageType?.isPoland && isGlobal === true && currencyId === POLISH_ZLOTY_CURRENCY_ID) {
         dialog = Newsletters.IsEmailPolandSubscribed ? renderUnsubscribePayPerRecipientPolandDialog() : renderSubscribePayPerRecipientPolandDialog();
       } else {
-        if (accountSettings.Account.IsBillingAccount === false || selectedPackageType.type === -1 || !accountSettings.Account?.IsPaying) {
+        if (accountSettings.Account.IsBillingAccount === false || selectedPackageType.type === -1 || (!accountSettings.Account?.IsPaying && currencyId !== POLISH_ZLOTY_CURRENCY_ID)) {
           dialog = renderBillingSupportDialog();
         }
         else {
@@ -385,6 +384,29 @@ const BulkStatus = ({ classes }) => {
             </Grid>
           </Grid>
           <Divider />
+          {
+            isAllowNewsletterForPoland() && Newsletters.eBillingType === 2 && (
+              <>
+                <Grid container spacing={2} className={clsx(classes.p10)}>
+                  <Grid item md={6}>
+                    {getBillingTypeText(Newsletters)}
+                  </Grid>
+                  <Grid item md={6}>
+                    {
+                      Newsletters.LevelLow > 0 && Newsletters.LevelHigh > 0 && (
+                        <>
+                          {Newsletters.LevelLow}
+                          -
+                          {Newsletters.LevelHigh}
+                        </>
+                      )
+                    }
+                  </Grid>
+                </Grid>
+                <Divider />
+              </>
+            )
+          }
           {Notifications.FeatureExist && (
             <>
               <Grid
@@ -512,7 +534,7 @@ const BulkStatus = ({ classes }) => {
           onClose={async (response) => {
             setIsOpenUnsubscribeDialog(false);
             if (response) {
-              setToastMessage({ severity: 'success', color: 'success', message: t('dashboard.polishSubscribe.success'), showAnimtionCheck: false });
+              setToastMessage({ severity: 'success', color: 'success', message: t('dashboard.polishUnsubscribe.success'), showAnimtionCheck: false });
               await dispatch(getPackagesDetails());
             }
           }}

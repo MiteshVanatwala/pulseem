@@ -1153,6 +1153,27 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   buttonContent: {
     fontSize: 14,
   },
+  closeModalButton: {
+    position: "absolute",
+    right: isRTL ? 'initial' : 0,
+    left: !isRTL ? 'initial' : 0,
+    top: 0,
+    background: "#fff",
+  },
+  lightGreenButton: {
+    background: '#beff00',
+    border: 'solid 2px #000',
+    boxShadow: '0px 0px 2px 0px #000',
+    padding: '0px 20px',
+    '&:hover': {
+      background: '#89b800',
+      color: '#000',
+      '& svg': {
+        color: '#000',
+        fill: '#000'
+      }
+    },
+  },
   alertMsg: {
     color: "#ca332f",
   },
@@ -4304,6 +4325,54 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     "&:before": {
       backgroundColor: 'transparent'
     }
+  },
+  rocketImage: {
+    width: '80%',
+  },
+  celebrationImage: {
+    height: '200px',
+  },
+  payPerRecipientPlanDetail: {
+    border: "solid 1px grey",
+    borderRadius: 10,
+    '& .MuiGrid-item': {
+      "&:first-child": {
+        borderRight: "solid 1px grey",
+      }
+    }
+  },
+  customSlider: {
+    height: 12,
+    padding: '20px 0',
+    '& .MuiSlider-rail': {
+      height: 12,
+      borderRadius: 6,
+      // backgroundColor: '#eee',
+    },
+    '& .MuiSlider-track': {
+      height: 12,
+      borderRadius: 6,
+      backgroundColor: '#f73378',
+    },
+    '& .MuiSlider-thumb': {
+      height: 32,
+      width: 32,
+      backgroundColor: '#fff',
+      border: '2px solid #f73378',
+      boxShadow: '0 0 10px #f73378',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      '&:before': {
+        // content: '"<<"',
+        display: 'block',
+        color: '#f73378',
+        fontWeight: 'bold',
+      },
+      '&:hover, &.Mui-focusVisible': {
+        boxShadow: '0 0 15px #f73378',
+      },
+    },
   },
   maxWidthMinContent: {
     maxWidth: 'min-content !important',

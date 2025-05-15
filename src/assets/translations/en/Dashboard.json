@@ -58,7 +58,8 @@
     "desc1": "Are you sure you want to cancel your subscription?",
     "desc2": "You will still be able to send emails until the end of your current subscription period.",
     "desc3": "After that, your account will no longer be able to send emails.",
-    "desc4": "You will not be charged again."
+    "desc4": "You will not be charged again.",
+    "success": "Your have successfully unsubscribed."
   },
   "polishSubscribe": {
     "question": "How many recipients do you need?",
@@ -67,12 +68,14 @@
     "unlimitedEmailSending": "Unlimited Email Sending",
     "confirmation": "By clicking \"Subscribe\", I confirm that I agree to be charged based on the selected pricing tier above.",
     "featureNotAllowed": "This feature is not allowed for your account. Please contact support to enable it.",
-    "success": "Your have successfully unsubscribed.",
+    "success": "Your have successfully subscribed.",
     "planNotSelected": "Oops, you haven't selected a mailing plan!",
-    "joinPlan": "In order to send the mailing you've prepared, please join one of the plans:",
+    "joinPlan1": "In order to send the mailing you've prepared,",
+    "joinPlan2": "please join one of the plans:",
     "targetPlan": "To how many people would you like to send emails?",
     "totalToPay": "Total to pay",
     "perMonth": "Per month, no commitment",
-    "securePurchase": "For secure purchase on the website"
+    "securePurchase": "For secure purchase on the website",
+    "customizePlan": "Customize your plan"
   }
 }
