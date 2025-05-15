@@ -23,6 +23,7 @@ import AddCardDialog from '../AddCardDialog/AddCardDialog';
 import UnsubscribePayPerRecipient from '../PayPerRecipient/UnsubscribePayPerRecipient';
 import Toast from '../Toast/Toast.component';
 import PayPerRecipientNew from '../PayPerRecipient/PayPerRecipientNew';
+import { BiCog } from 'react-icons/bi';
 
 const BulkStatus = ({ classes }) => {
   const { billingTypeId, windowSize, isRTL } = useSelector(state => state.core)
@@ -87,7 +88,7 @@ const BulkStatus = ({ classes }) => {
       if (selectedPackageType?.isPoland && isGlobal === true && currencyId === POLISH_ZLOTY_CURRENCY_ID) {
         dialog = Newsletters.IsEmailPolandSubscribed ? renderUnsubscribePayPerRecipientPolandDialog() : renderSubscribePayPerRecipientPolandDialog();
       } else {
-        if (accountSettings.Account.IsBillingAccount === false || selectedPackageType.type === -1 || (!accountSettings.Account?.IsPaying && currencyId !== POLISH_ZLOTY_CURRENCY_ID)) {
+        if (currencyId !== POLISH_ZLOTY_CURRENCY_ID && (accountSettings.Account.IsBillingAccount === false || selectedPackageType.type === -1 || !accountSettings.Account?.IsPaying)) {
           dialog = renderBillingSupportDialog();
         }
         else {
@@ -230,7 +231,7 @@ const BulkStatus = ({ classes }) => {
   const showPackageDialogType = async (packageType) => {
     const settings = await dispatch(getCommonFeatures({ forceRequest: true }));
     if (!settings?.payload?.Data?.Account?.IsPaying) {
-      packageType = { type: -1, title: '' };
+      packageType = currencyId !== POLISH_ZLOTY_CURRENCY_ID ? { type: -1, title: '' } : { type: 3, title: t('common.smsBulkTitle') };
       setPackageType(packageType);
     }
     else {
@@ -372,19 +373,31 @@ const BulkStatus = ({ classes }) => {
               }
               {
                 isAllowNewsletterForPoland() && (
-                  <Button
-                    className={clsx(classes.btn, classes.btnRounded, classes.f12)}
-                    onClick={() => !Newsletters.IsEmailPolandSubscribed ? setIsOpenPayPerRecipient(true) : setIsOpenUnsubscribeDialog(true)}
-                  >
-                    {t(`common.${ !Newsletters.IsEmailPolandSubscribed ? 'SubscribeButton' : 'UnsubscribeButton'}`)}
-                    {isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-                  </Button>
+                  <>
+                    {
+                      Newsletters.IsEmailPolandSubscribed ? (
+                        <>
+                          <IconButton className={clsx(classes.p5)} onClick={() => setIsOpenPayPerRecipient(true)}>
+                            <BiCog />
+                          </IconButton>
+                        </>
+                      ) : (
+                        <Button
+                          className={clsx(classes.btn, classes.btnRounded, classes.f12)}
+                          onClick={() => !Newsletters.IsEmailPolandSubscribed ? setIsOpenPayPerRecipient(true) : setIsOpenUnsubscribeDialog(true)}
+                        >
+                          {t(`common.${ !Newsletters.IsEmailPolandSubscribed ? 'SubscribeButton' : 'cancel'}`)}
+                          {isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+                        </Button>
+                      )
+                    }
+                  </>
                 )
               }
             </Grid>
           </Grid>
           <Divider />
-          {
+          {/* {
             isAllowNewsletterForPoland() && Newsletters.eBillingType === 2 && (
               <>
                 <Grid container spacing={2} className={clsx(classes.p10)}>
@@ -406,7 +419,7 @@ const BulkStatus = ({ classes }) => {
                 <Divider />
               </>
             )
-          }
+          } */}
           {Notifications.FeatureExist && (
             <>
               <Grid

@@ -43,6 +43,7 @@
   "Cancel": "Anuluj",
   "RemoveClient": "Wypisz się z listy",
   "RemoveClientInfo": "Czy na pewno chcesz usunąć się z tej listy?",
+  "SubscribeButton": "Zakup",
   "UnsubscribeButton": "Wypisz się",
   "DefaultGroupName": "Moi odbiorcy",
   "NotAllowedFeature": "Ta funkcjonalność jest wyłączona, aby uzyskać więcej informacji, skontaktuj się z obsługą.",
@@ -865,5 +866,6 @@
   "hide": "Ukryj",
   "landingPageId": "ID strony docelowej",
   "payAttention": "Zwróć uwagę!",
-  "allChannels": "Wszystkie kanały"
+  "allChannels": "Wszystkie kanały",
+  "contactUs": "Skontaktuj się z nami"
 }

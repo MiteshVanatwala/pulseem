@@ -15,6 +15,9 @@ import { formatNumberWithCommas } from '../../helpers/Utils/TextHelper';
 import Rocket from '../../assets/images/rocket_transparent.png';
 import Celebration from '../../assets/images/transparent_celebration.png';
 import { IoCloseCircleOutline } from 'react-icons/io5';
+import UnsubscribePayPerRecipient from './UnsubscribePayPerRecipient';
+import { getPackagesDetails } from '../../redux/reducers/dashboardSlice';
+import { URLS } from '../../config/enum';
 
 const steps = [
   '',
@@ -27,13 +30,16 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose }: any) => {
 	const { windowSize, isRTL } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
+  const { packagesDetails } = useSelector((state: any) => state.dashboard);
   const [ isLoader, setIsLoader ] = useState(false);
   const [ toastMessage, setToastMessage ] = useState(null);
   const [ marks, setMarks ] = useState([]);
   const [ selectedPricing, setSelectedPricing ] = useState(0);
   const [ activeStep, setActiveStep ] = useState(1);
   const [ paymentIframe, setPaymentIframe ] = useState<string>('');
+  const [ isOpenUnsubscribeDialog, setIsOpenUnsubscribeDialog ] = useState(false);
   const dispatch = useDispatch();
+  const { Newsletters = {} } = packagesDetails || {};
 
 	useEffect(() => {
 		if (isOpen) {
@@ -94,17 +100,22 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose }: any) => {
   const step1 = () => {
     return (
       <Box className={clsx(classes.textCenter, classes.mlr10)}>
-        <Typography className={clsx(classes.f20)}>
-          {t('dashboard.polishSubscribe.planNotSelected')}
-        </Typography>
-        
-        <Typography className={clsx(classes.f28, classes.bold)}>
-          {t('dashboard.polishSubscribe.joinPlan1')}
-        </Typography>
+        {
+          !Newsletters.IsEmailPolandSubscribed && (
+            <Typography className={clsx(classes.f28, classes.bold)}>
+              {t('dashboard.polishSubscribe.joinPlan1')}
+            </Typography>
+          )
+        }
 
-        <Typography className={clsx(classes.f28, classes.bold, classes.mb10)}>
-          {t('dashboard.polishSubscribe.joinPlan2')}
-        </Typography>
+        {
+          !Newsletters.IsEmailPolandSubscribed && (
+            <Typography className={clsx(classes.f28, classes.bold, classes.mb10)}>
+              {t('dashboard.polishSubscribe.joinPlan2')}
+            </Typography>
+          )
+        }
+
 
         <Grid
           container
@@ -120,7 +131,7 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose }: any) => {
               </Grid>
 
               <Grid item xs={6} className={clsx(classes.textCenter)}>
-                <Typography className={clsx(classes.f22, classes.bold, classes.mb10, classes.mt15, classes.colrPrimary)}>
+                <Typography className={clsx(classes.f22, classes.bold, classes.mb10, classes.mt15, classes.colrPrimary, classes.directionLTR)}>
                   {getSelectedLabel()}
                 </Typography>
               </Grid>
@@ -164,14 +175,16 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose }: any) => {
                           {t('dashboard.polishSubscribe.customizePlan')}
                         </Typography>
 
-                        <a href="https://site.pulseem.co.il/en/%D7%9E%D7%97%D7%99%D7%A8/full-price/" target='_blank'>See Pricing</a>
+                        <a href={isRTL ? URLS.ContactUs : URLS.ContactUsEn} target='_blank'>
+                          {t('common.contactUs')}
+                        </a>
                       </>
                     )
                   }
                 </Box>
               </Grid>
               <Grid item xs={7} className={clsx(classes.textRight)}>
-                <Box className={clsx(classes.p10, classes.textLeft)}>
+                <Box className={clsx(classes.p10, isRTL ? classes.textRight : classes.textLeft)}>
                   <Typography className={clsx(classes.f16, classes.mb5)}>
                     <AiOutlineCheck style={{ verticalAlign: 'middle', marginRight: 5 }} /> {t('dashboard.polishSubscribe.recipients')} : {getSelectedLabel()}
                   </Typography>
@@ -197,6 +210,9 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose }: any) => {
         </Typography> */}
         <Loader isOpen={isLoader} showBackdrop={true} />
         {renderToast()}
+        <Typography className={clsx(classes.f18, classes.pt25)}>
+          {t('dashboard.polishSubscribe.confirmation')}
+        </Typography>
       </Box>
     )
   }
@@ -218,7 +234,7 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose }: any) => {
               src={`${paymentIframe}`}
               width={windowSize !== 'xs' ? 400 : 250}
               height="420"
-              style={{ border: "none !important" }} 
+              style={{ border: "none" }} 
             />
           </Grid>
           <Grid item md={3}>
@@ -256,6 +272,37 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose }: any) => {
     setPaymentIframe(response?.payload?.Data);
   }
 
+  const step1UnsubscribeActionButtons = () => {
+    return (
+      <Box className={clsx(isRTL ? classes.textLeft : classes.textRight)}>
+        <Button
+          onClick={async () => {
+            setIsOpenUnsubscribeDialog(true);
+          }}
+          className={clsx(
+            classes.btn,
+            classes.btnRounded
+          )}>
+          {t('dashboard.polishUnsubscribe.title')}
+        </Button>
+      </Box>
+    )
+  };
+
+  const Steppers = (activeStep: number) => {
+    return (
+      <Box sx={{ width: '100%' }}>
+        <Stepper activeStep={activeStep} alternativeLabel style={{ padding: 0 }}>
+          {steps.map((label) => (
+            <Step key={label}>
+              <StepLabel>{label}</StepLabel>
+            </Step>
+          ))}
+        </Stepper>
+      </Box>
+    )
+  }
+
   const step1ActionButtons = () => {
     if (selectedPricing === get(last(marks), 'value', 100)) return <></>;
     return (
@@ -264,7 +311,9 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose }: any) => {
         spacing={2}
         className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, classes.pt15)}
       >
-        <Grid item md={3} xs={12} className={clsx(classes.textCenter)}></Grid>
+        <Grid item md={3} xs={12} className={clsx(classes.textCenter)}>
+          {isRTL && Steppers(0)}
+        </Grid>
         <Grid item md={6} xs={12} className={clsx(classes.textCenter)}>
           <Button
             onClick={async () => {
@@ -290,15 +339,7 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose }: any) => {
           </Button>
         </Grid>
         <Grid item md={3} xs={12} className={clsx(classes.textCenter)}>
-          <Box sx={{ width: '100%' }}>
-            <Stepper activeStep={0} alternativeLabel style={{ padding: 0 }}>
-              {steps.map((label) => (
-                <Step key={label}>
-                  <StepLabel>{label}</StepLabel>
-                </Step>
-              ))}
-            </Stepper>
-          </Box>
+          {!isRTL && Steppers(0)}
         </Grid>
       </Grid>
     )
@@ -311,19 +352,13 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose }: any) => {
         spacing={2}
         className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, classes.pt15)}
       >
-        <Grid item md={3} xs={12} className={clsx(classes.textCenter)}></Grid>
+        <Grid item md={3} xs={12} className={clsx(classes.textCenter)}>
+          {isRTL && Steppers(1)}
+        </Grid>
         <Grid item md={6} xs={12} className={clsx(classes.textCenter)}>
         </Grid>
         <Grid item md={2} xs={12} className={clsx(classes.textCenter)}>
-          <Box sx={{ width: '100%' }}>
-            <Stepper activeStep={1} alternativeLabel style={{ padding: 0 }}>
-              {steps.map((label) => (
-                <Step key={label}>
-                  <StepLabel>{label}</StepLabel>
-                </Step>
-              ))}
-            </Stepper>
-          </Box>
+          {!isRTL && Steppers(1)}
         </Grid>
       </Grid>
     )
@@ -336,19 +371,13 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose }: any) => {
         spacing={2}
         className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, classes.pt15)}
       >
-        <Grid item md={3} xs={12} className={clsx(classes.textCenter)}></Grid>
+        <Grid item md={3} xs={12} className={clsx(classes.textCenter)}>
+          {isRTL && Steppers(2)}
+        </Grid>
         <Grid item md={6} xs={12} className={clsx(classes.textCenter)}>
         </Grid>
         <Grid item md={3} xs={12} className={clsx(classes.textCenter)}>
-          <Box sx={{ width: '100%' }}>
-            <Stepper activeStep={2} alternativeLabel style={{ padding: 0 }}>
-              {steps.map((label) => (
-                <Step key={label}>
-                  <StepLabel>{label}</StepLabel>
-                </Step>
-              ))}
-            </Stepper>
-          </Box>
+          {isRTL && Steppers(2)}
         </Grid>
       </Grid>
     )
@@ -369,12 +398,13 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose }: any) => {
 			onCancel={() => onClose()}
 			reduceTitle
 			style={{ minWidth: 240 }}
-      contentStyle={clsx(classes.maxWidth70VW, 'payPerRecipient')}
+      contentStyle={clsx(classes.payPerRecipientDialog)}
       paperStyle={clsx(windowSize !== 'xs' ? classes.w70VW : null)}
       hideHeader={true}
 			renderButtons={() => (
 				<>
-          {activeStep === 1 && step1ActionButtons()}
+          {activeStep === 1 && !Newsletters.IsEmailPolandSubscribed && step1ActionButtons()}
+          {activeStep === 1 && Newsletters.IsEmailPolandSubscribed && step1UnsubscribeActionButtons()}
           {activeStep === 2 && step2ActionButtons()}
           {activeStep === 3 && step3ActionButtons()}
         </>
@@ -387,6 +417,18 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose }: any) => {
         {activeStep === 1 && step1()}
         {activeStep === 2 && step2()}
         {activeStep === 3 && step3()}
+        <UnsubscribePayPerRecipient
+          classes={classes}
+          isOpen={isOpenUnsubscribeDialog}
+          onClose={async (response: any) => {
+            setIsOpenUnsubscribeDialog(false);
+            if (response) {
+              // @ts-ignore
+              setToastMessage({ severity: 'success', color: 'success', message: t('dashboard.polishUnsubscribe.success'), showAnimtionCheck: false });
+              await dispatch(getPackagesDetails());
+            }
+          }}
+        />
       </>
 		</BaseDialog>
 	);

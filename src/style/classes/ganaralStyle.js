@@ -415,6 +415,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   maxWidth190: {
     maxWidth: 190,
   },
+  maxWidth70VW: {
+    maxWidth: '70vw',
+  },
+  maxWidth80VW: {
+    maxWidth: '80vw',
+  },
   width160: {
     width: 160,
     maxWidth: 160,
@@ -4337,8 +4343,15 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     borderRadius: 10,
     '& .MuiGrid-item': {
       "&:first-child": {
-        borderRight: "solid 1px grey",
+        borderRight: !isRTL ? "solid 1px grey" : '',
+        borderLeft: isRTL ? "solid 1px grey" : '',
       }
+    }
+  },
+  payPerRecipientDialog: {
+    maxWidth: '100%',
+    iframe: {
+      border: 'none'
     }
   },
   customSlider: {

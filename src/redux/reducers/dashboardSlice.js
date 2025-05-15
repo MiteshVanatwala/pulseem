@@ -75,6 +75,7 @@ export const dashboardSlice = createSlice({
       })
       .addCase(getPackagesDetails.fulfilled, (state, { payload }) => {
         state.packagesDetails = payload.PackageDetails;
+        // state.packagesDetails.Newsletters.IsEmailPolandSubscribed = true;
         state.accountAvailablePackages = payload.AccountAvailablePackages;
       })
       .addCase(getPackagesDetails.rejected, (state, action) => {
