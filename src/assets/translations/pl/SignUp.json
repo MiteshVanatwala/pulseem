@@ -88,5 +88,7 @@
   "typeEmailForSignUpDesc": "Wpisz adres e-mail do procesu tworzenia konta",
   "accountCreated": "Konto zostało utworzone pomyślnie.",
   "fullName": "Imię i nazwisko",
-  "fullNameRequired": "Imię i nazwisko jest wymagane"
+  "fullNameRequired": "Imię i nazwisko jest wymagane",
+  "countryCode": "Kod kraju",
+  "Ecommerce":"Handel elektroniczny"
 }

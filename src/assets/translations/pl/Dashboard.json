@@ -52,5 +52,30 @@
     "small": "Mała (1-10 pracowników)",
     "medium": "Średnia (10-100 pracowników)",
     "large": "Duża (+100 pracowników)"
+  },
+  "polishUnsubscribe": {
+    "title": "Anuluj Subskrypcję",
+    "desc1": "Czy na pewno chcesz anulować swoją subskrypcję?",
+    "desc2": "Nadal będziesz mógł wysyłać e-maile do końca bieżącego okresu subskrypcji.",
+    "desc3": "Po tym czasie Twoje konto nie będzie mogło wysyłać e-maili.",
+    "desc4": "Nie zostaniesz ponownie obciążony opłatą.",
+    "success": "Pomyślnie anulowałeś subskrypcję."
+  },
+  "polishSubscribe": {
+    "question": "Ilu odbiorców potrzebujesz?",
+    "monthlyPayment": "Miesięczna Płatność",
+    "recipients": "Odbiorcy",
+    "unlimitedEmailSending": "Nieograniczone Wysyłanie E-maili",
+    "confirmation": "Klikając \"Subskrybuj\", potwierdzam, że zgadzam się na obciążenie mnie opłatą zgodnie z wybranym powyżej planem cenowym.",
+    "featureNotAllowed": "Ta funkcja nie jest dostępna dla Twojego konta. Skontaktuj się z działem wsparcia, aby ją aktywować.",
+    "success": "Pomyślnie zasubskrybowałeś.",
+    "planNotSelected": "Ups, nie wybrałeś planu wysyłkowego!",
+    "joinPlan1": "Aby wysłać przygotowaną wiadomość,",
+    "joinPlan2": "dołącz do jednego z planów:",
+    "targetPlan": "Do ilu osób chciałbyś wysyłać e-maile?",
+    "totalToPay": "Łączna kwota do zapłaty",
+    "perMonth": "Miesięcznie",
+    "securePurchase": "Bezpieczny zakup na stronie",
+    "customizePlan": "Dostosuj swój plan"
   }
 }

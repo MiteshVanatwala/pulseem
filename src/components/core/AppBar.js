@@ -22,6 +22,7 @@ import { BsGlobe2 } from 'react-icons/bs';
 import { sitePrefix } from '../../config';
 import PulseemNewLogo from '../../assets/images/PulseemNewLogo';
 import { get } from 'lodash';
+import { POLISH_ZLOTY_CURRENCY_ID } from '../../helpers/Constants';
 
 const AppBarItem = ({
   item,
@@ -36,7 +37,6 @@ const AppBarItem = ({
   const { t } = useTranslation();
   const Redirect = useRedirect();
   const [open, setOpen] = useState(false)
-
   // const [buttonWidth, setButtonWidth] = useState(0)
   const buttonRef = useRef(null)
 
@@ -104,7 +104,7 @@ const AppBarItem = ({
                         key={index}
                         component='a'
                         href={option.href}
-                        className={classes.appBarItemMenuItem}>
+                        className={clsx(classes.appBarItemMenuItem, classes.textLeft)}>
                         {/* {index !== 0 && option.title !== t("appBar.logout") && <Box className={classes.appBarItemBorder} />} */}
                         <MenuItem
                           key={option.title}
@@ -147,7 +147,13 @@ const returnToMainAccount = () => {
 }
 const LanguageSelector = ({ windowSize, classes }) => {
   const cookieData = getCookie('Culture');
-  const language = !!cookieData ? cookieData : 'he-IL';
+  const { isGlobal, currencyId } = useSelector(state => state.common);
+  const isPolandAccount = isGlobal === true && currencyId === POLISH_ZLOTY_CURRENCY_ID;
+  let language = !!cookieData
+                      ? cookieData 
+                      : (isPolandAccount ? 'en-US' : 'he-IL');
+  if (language === 'he-IL' && isPolandAccount) language = 'en-US';
+  
   const dispatch = useDispatch();
   const languages = [
     {
@@ -169,6 +175,10 @@ const LanguageSelector = ({ windowSize, classes }) => {
       isShow: true
     }
   ]
+
+  if (isPolandAccount) {
+    languages.shift();
+  }
 
   const item = {
     title: <Box className={clsx(classes.flex, classes.justifyEvenly)} ><BsGlobe2 style={{ marginInline: 6 }} /> <p>{(languages && languages.find(lang => lang.value.toLocaleLowerCase() === language.toLocaleLowerCase())?.title) ?? ''}</p></Box>,

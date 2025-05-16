@@ -25,6 +25,7 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { setCookie } from "../../helpers/Functions/cookies";
 import EnImage from '../../assets/images/british.svg';
 import IsraelImage from "../../assets/images/israel-flag-icon.svg";
+import PolandImage from "../../assets/images/poland-flag-icon.svg";
 import { Autocomplete } from "@mui/material";
 import { filter, first } from "lodash";
 import { isValidPhoneNumber } from "libphonenumber-js";
@@ -96,7 +97,13 @@ const SignUpNew = ({ classes }: any) => {
   const passwordHintClasses = useStylesBootstrapPasswordHint();
 
   const changeLanguage = (value: any) => {
-    setCookie('Culture', `${value}-${value === 'he' ? 'IL' : 'US'}`);
+    let culture = 'he-IL';
+    if (value === 'en') {
+      culture = 'en-US';
+    } else if (value === 'pl') {
+      culture = 'pl-PL';
+    }
+    setCookie('Culture', culture);
     i18n.changeLanguage(value);
     dispatch(setLanguage(value));
   }
@@ -490,7 +497,7 @@ const SignUpNew = ({ classes }: any) => {
       case 201: {
         // for stage
         const newUrl = Data?.RedirectLink.replace('https://www.pulseem.co.il', actionURL?.replace('/Pulseem/', ''));
-        window.location.href = `${newUrl}&refId=${qs?.refId}&culture=${isRTL ? 'he' : 'en'}`;
+        window.location.href = `${newUrl}&refId=${qs?.refId}&culture=${isRTL ? 'he' : (isPolish ? 'pl' : 'en')}`;
         // for production
         // window.location.href = `${Data?.RedirectLink}&refId=${qs?.refId}`;
         break;
@@ -998,7 +1005,7 @@ const SignUpNew = ({ classes }: any) => {
       <FormControl variant='standard' className={clsx(classes.SignUpLanguageDropdown, classes.bgWhite, classes.mb10)} style={{ direction: isRTL ? 'ltr' : 'rtl' }}>
         <Select
           variant="standard"
-          value={isRTL ? 'he' : 'en'}
+          value={isRTL ? 'he' : (isPolish ? 'pl' : 'en')}
           name='TwoFactorAuthOptionID'
           onChange={(e: SelectChangeEvent) => changeLanguage(e.target.value)}
           IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} style={{ right: isRTL ? 'auto' : 10, left: isRTL ? 10 : 'auto' }} />}
@@ -1013,14 +1020,23 @@ const SignUpNew = ({ classes }: any) => {
           }}
           className={clsx(classes.SignUpLanguageDropdown, classes.pbt5)}
         >
-          <MenuItem value={'he'} className={clsx(classes.SignUpLanguageDropdown, classes.cursorPointer)}>
-            <img width={25} src={IsraelImage} className={clsx(classes.paddingInline10)} alt={t('languages.langCodes.hebrew')} />
-            <label>{t('languages.langCodes.hebrew')}</label>
-          </MenuItem>
+          {
+            !isPolish && (
+              <MenuItem value={'he'} className={clsx(classes.SignUpLanguageDropdown, classes.cursorPointer)}>
+                <img width={35} src={IsraelImage} alt={t('languages.langCodes.hebrew')} />
+                <label>{t('languages.langCodes.hebrew')}</label>
+              </MenuItem>
+            )
+          }
 
           <MenuItem value={'en'} className={clsx(classes.SignUpLanguageDropdown, classes.cursorPointer)}>
             <img width={25} src={EnImage} className={clsx(classes.paddingInline10)} alt={t('languages.langCodes.english')} />
             <label>{t('languages.langCodes.english')}</label>
+          </MenuItem>
+          
+          <MenuItem value={'pl'} className={clsx(classes.SignUpLanguageDropdown, classes.cursorPointer)}>
+            <img width={35} src={PolandImage} alt={t('languages.langCodes.english')} />
+            <label>{t('languages.langCodes.polish')}</label>
           </MenuItem>
         </Select>
       </FormControl>

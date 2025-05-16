@@ -105,12 +105,17 @@ const Groups = ({ classes,
                         }
                     </Avatar>
                 </ListItemAvatar>
-                <ListItemText className={'groupText'} title={group.GroupName}
-                    primary={group.GroupName}
-                />
-                <ListItemSecondaryAction className={clsx('groupText', classes.itemAvatar)}>
-                    {group[groupRecipientsKey].toLocaleString()} {group[groupRecipientsKey] !== 1 ? t("notifications.recipients") : t("notifications.recipient")}
-                </ListItemSecondaryAction>
+                <Box dir={ isRTL ? "rtl" : "ltr" } width="100%">
+                    <ListItemText className={clsx('groupText', !isRTL && classes.textLeft)} title={group.GroupName}
+                        primaryTypographyProps={{ variant: 'body1', style: { lineHeight: 1.5 } }}
+                        primary={group.GroupName}
+                    />
+                </Box>
+                <Box dir={ isRTL ? "rtl" : "ltr" } width="100%">
+                    <Box className={clsx('groupText', classes.itemAvatar, isRTL ? classes.textLeft : classes.textRight)}>
+                        {group[groupRecipientsKey].toLocaleString()} {group[groupRecipientsKey] !== 1 ? t("notifications.recipients") : t("notifications.recipient")}
+                    </Box>
+                </Box>
             </ListItem>)
         }) : ''
     }
@@ -140,7 +145,7 @@ const Groups = ({ classes,
                             }
                         </Avatar>
                     </ListItemAvatar>
-                    <ListItemText className={'groupText'} title={camp.Name}
+                    <ListItemText className={clsx('groupText', !isRTL && classes.textLeft)} title={camp.Name}
                         primary={camp.Name}
                     />
                 </ListItem>)
@@ -166,7 +171,7 @@ const Groups = ({ classes,
                             }
                         </Avatar>
                     </ListItemAvatar>
-                    <ListItemText className={'groupText'} title={camp.Name}
+                    <ListItemText className={clsx('groupText', !isRTL && classes.textLeft)} title={camp.Name}
                         primary={camp.Name}
                     />
                 </ListItem>)
@@ -189,7 +194,7 @@ const Groups = ({ classes,
                     }
                 </Avatar>
             </ListItemAvatar>
-            <ListItemText className={'groupText'} title={t("notifications.selectAll")}
+            <ListItemText className={clsx('groupText', !isRTL && classes.textLeft)} title={t("notifications.selectAll")}
                 primary={t("notifications.selectAll")}
             />
         </ListItem>)
