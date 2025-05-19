@@ -15,6 +15,43 @@ export const requestTemplate = createAsyncThunk(
     }
 );
 
+export const getRequestDetails = createAsyncThunk(
+    'AI/Anthropic/GetRequestDetails',
+    async (anthropicRequestId: string, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.get(`AI/Anthropic/GetRequestDetails?anthropicRequestId=${anthropicRequestId}`);
+            return response.data
+        } catch (error) {
+            return console.log(error);
+        }
+    }
+);
+
+export const continueConversation = createAsyncThunk(
+    'AI/Anthropic/ContinueConversation',
+    async (request: AnthropicUserRequest, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.post(`AI/Anthropic/ContinueConversation`, request);
+            return response.data
+        } catch (error) {
+            return console.log(error);
+        }
+    }
+);
+
+export const getHistoryRequests = createAsyncThunk(
+    'AI/Anthropic/GetHistoryRequests',
+    async (campaignId: number, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.get(`AI/Anthropic/GetHistoryRequests/${campaignId}`);
+            return response.data
+        } catch (error) {
+            return console.log(error);
+        }
+    }
+);
+
+
 const AiSlice = createSlice({
     name: 'Ai',
     initialState: {

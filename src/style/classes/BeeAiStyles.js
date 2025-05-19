@@ -130,5 +130,56 @@ export const BeeAiStyles = (windowSize, isRTL, theme) => ({
     marginBottom: theme.spacing(1),
     display: 'flex',
     alignItems: 'center',
-  }
+  },
+  historyContainer: {
+    marginBottom: theme.spacing(3),
+  },
+  fullWidth: {
+    width: '100%',
+  },
+  accordionSummary: {
+    backgroundColor: theme.palette.grey[100],
+  },
+  accordionTitle: {
+    fontWeight: 500,
+  },
+  accordionDetails: {
+    display: 'block',
+    padding: theme.spacing(2),
+  },
+  radioGroup: {
+    width: '100%',
+  },
+  historyItem: {
+    marginBottom: theme.spacing(2),
+    padding: theme.spacing(2),
+    borderRadius: theme.shape.borderRadius,
+    backgroundColor: theme.palette.background.paper,
+    boxShadow: theme.shadows[1],
+  },
+  historyItemHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: theme.spacing(1),
+  },
+  historyDate: {
+    fontWeight: 500,
+  },
+  historyItemContent: {
+    marginLeft: theme.spacing(3),
+    paddingTop: theme.spacing(1),
+    borderTop: `1px solid ${theme.palette.divider}`,
+  },
+  historyMessage: {
+    maxHeight: '100px',
+    overflow: 'auto',
+    whiteSpace: 'pre-wrap',
+    fontSize: '0.875rem',
+    color: theme.palette.text.secondary,
+  },
+  revertButton: {
+    minWidth: 130,
+    direction: isRTL ? 'rtl' : 'ltr',
+  },
 })

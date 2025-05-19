@@ -10,8 +10,17 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  Select
+  // Select,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  Radio,
+  RadioGroup,
+  FormControlLabel,
+  FormControl
 } from '@material-ui/core';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import RestoreIcon from '@material-ui/icons/Restore';
 import {
   CloudUpload as CloudUploadIcon,
   Close as CloseIcon,
@@ -22,7 +31,6 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { continueConversation, getHistoryRequests, getRequestDetails, requestTemplate } from '../../../redux/reducers/AISlice';
 import { setIsLoader } from '../../../redux/reducers/coreSlice';
-import { convertFileToBase64 } from '../../../helpers/Utils/common';
 import clsx from 'clsx';
 import Gallery from '../../../components/Gallery/Gallery.component';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
@@ -32,7 +40,8 @@ import { FileGallery } from '../../../Models/Files/FileGallery';
 import { RandomID } from '../../../helpers/Functions/functions';
 import PulseemColorPickerUI from '../../../components/Controlls/PulseemColorPickerUI';
 import Toast from '../../../components/Toast/Toast.component';
-import { StateType } from '../../../Models/StateTypes';
+// import { StateType } from '../../../Models/StateTypes';
+import moment from 'moment'
 
 interface AITemplateCreatorProps {
   classes: any,
@@ -40,10 +49,10 @@ interface AITemplateCreatorProps {
   onUpdate: (status: string, templateData?: any) => void;
 }
 
-const AITemplateCreator = ({ classes, campaignId, onUpdate }: AITemplateCreatorProps) => {
+const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate }: AITemplateCreatorProps) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const { isRTL } = useSelector((state: StateType) => state.core);
+  // const { isRTL } = useSelector((state: StateType) => state.core);
   const { ToastMessages } = useSelector((state: any) => state?.Ai);
   const [submitDisabled, setSubmitDisabled] = useState<boolean>(true);
   const [showDocs, setShowDocuments] = useState<boolean>(false);
@@ -64,7 +73,8 @@ const AITemplateCreator = ({ classes, campaignId, onUpdate }: AITemplateCreatorP
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [originalResponse, setOriginalResponse] = useState<string>('');
   const [selectedLogDetails, setSelectedLogDetails] = useState<AnthropicDetailedLog | null>(null);
-  const [selectedLog, setSelectedLog] = useState<string>('null');
+  const [selectedHistoryId, setSelectedHistoryId] = useState<string>('');
+  const [mostRecentHistory, setMostRecentHistory] = useState<AnthropicHistoryLog | null>(null);
   const [model, setModel] = useState<AnthropicUserRequest & {
     selectedColors?: Array<{ name: string, value: string, hex: string }>
   }>({
@@ -123,14 +133,31 @@ const AITemplateCreator = ({ classes, campaignId, onUpdate }: AITemplateCreatorP
   const initHistoryRequests = async () => {
     const response = await dispatch(getHistoryRequests(campaignId)) as any;
     if (response && response.payload?.StatusCode === 201) {
-      const history: AnthropicHistoryLog[] = response?.payload?.Data;
-      setHistory(history);
+      const historyData: AnthropicHistoryLog[] = response?.payload?.Data;
+
+      // Sort history by date (newest first)
+      const sortedHistory = [...historyData].sort((a, b) => {
+        const dateA = a.RequestDate ? new Date(a.RequestDate).getTime() : 0;
+        const dateB = b.RequestDate ? new Date(b.RequestDate).getTime() : 0;
+        return dateB - dateA;
+      });
+
+      setHistory(sortedHistory);
+
+      // Set the most recent history item
+      if (sortedHistory.length > 0 && sortedHistory[0].AnthropicRequestId) {
+        setMostRecentHistory(sortedHistory[0]);
+        setSelectedHistoryId(sortedHistory[0].AnthropicRequestId || '');
+
+        // Optionally load the most recent template automatically
+        handleLogSelection(sortedHistory[0].AnthropicRequestId || '');
+      }
     }
   }
 
   const handleLogSelection = async (anthropicRequestId: string) => {
-    setSelectedLog(anthropicRequestId);
-    if (anthropicRequestId === 'null' || !anthropicRequestId) {
+    setSelectedHistoryId(anthropicRequestId);
+    if (anthropicRequestId === '' || !anthropicRequestId) {
       setIsEditing(false);
       return;
     }
@@ -150,10 +177,15 @@ const AITemplateCreator = ({ classes, campaignId, onUpdate }: AITemplateCreatorP
       setModel({
         ...model,
         continuationId: anthropicRequestId,
-        messageRequest: ''
+        messageRequest: '' // Clear the message for new instructions
       });
     }
   };
+
+  const handleRevertToHistoryLog = async (anthropicRequestId: string) => {
+    console.log(anthropicRequestId);
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -194,28 +226,6 @@ const AITemplateCreator = ({ classes, campaignId, onUpdate }: AITemplateCreatorP
         setToastMessage(ToastMessages.RESPONSES[response?.payload?.StatusCode]);
       }
     }
-  };
-
-  const renderOriginalTemplatePreview = () => {
-    if (isEditing && originalResponse) {
-      return (
-        <Paper className={classes.optionBox} elevation={0}>
-          <Typography className={classes.sectionTitle}>
-            Original Template
-          </Typography>
-          <Divider style={{ marginBottom: 15 }} />
-          <Box maxHeight="200px" overflow="auto" padding={2} bgcolor="#f5f5f5" borderRadius={1}>
-            {/* Show a preview of the template */}
-            <Typography variant="body2">
-              {originalResponse.length > 500
-                ? originalResponse.substring(0, 500) + '...'
-                : originalResponse}
-            </Typography>
-          </Box>
-        </Paper>
-      );
-    }
-    return null;
   };
 
   const handleGalleryConfirm = () => {
@@ -259,58 +269,118 @@ const AITemplateCreator = ({ classes, campaignId, onUpdate }: AITemplateCreatorP
 
   return (
     <Box className={classes.aiContainer}>
-      <Box>
+      {history?.length > 0 && <Box>
         <Typography className={classes.newFeatureTitle}>
           {t('AI.popup.historyRequests')}
         </Typography>
         <Box className={classes.mb10}>
-          <Select
-            value={selectedLog}
-            onChange={(e: React.ChangeEvent<{ value: unknown }>) => {
-              const value = e.target.value as string;
-              handleLogSelection(value);
-            }}
-            MenuProps={{
-              PaperProps: {
-                style: {
-                  maxHeight: 200,
-                  direction: isRTL ? 'rtl' : 'ltr'
-                },
-              },
-            }}
-          >
-            <option value="null">{t('AI.popup.historyRequests')}</option>
-            {history?.map((log: AnthropicHistoryLog) => (
-              <option key={log.AnthropicRequestId} value={log.AnthropicRequestId || ''}>
-                {log.MessageRequest?.substring(0, 50)}... ({new Date(log.RequestDate || '').toLocaleString()})
-              </option>
-            ))}
-          </Select>
+          {mostRecentHistory && (
+            <Box className={clsx(classes.historyItem, classes.mostRecentItem)}>
+              <Box className={classes.historyItemHeader}>
+                <Typography variant="body2" className={classes.historyMessage}>
+                  {mostRecentHistory.MessageRequest || t('common.noMessageAvailable')}
+                </Typography>
+                <Button
+                  size="small"
+                  variant="contained"
+                  color="primary"
+                  startIcon={<RestoreIcon />}
+                  onClick={() => handleLogSelection(mostRecentHistory.AnthropicRequestId || '')}
+                  className={classes.revertButton}
+                  disabled={selectedHistoryId === mostRecentHistory.AnthropicRequestId}
+                >
+                  {selectedHistoryId === mostRecentHistory.AnthropicRequestId ?
+                    t('AI.popup.selectedLog') : t('AI.popup.useThis')}
+                </Button>
+              </Box>
+              <Box className={classes.historyItemContent}>
+                <Typography variant="body1" className={classes.historyDate} style={{ fontSize: 12 }}>
+                  <strong> {mostRecentHistory.RequestDate ?
+                    moment(mostRecentHistory.RequestDate).format('DD-MM-YYYY HH:mm:ss') :
+                    t('common.unknown')}
+                  </strong>
+                </Typography>
+              </Box>
+            </Box>
+          )}
+
+          {/* Older templates in accordion */}
+          {history.length > 1 ? (
+            <Accordion defaultExpanded={false}>
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="history-content"
+                id="history-header"
+                className={classes.accordionSummary}
+              >
+                <Typography className={classes.accordionTitle}>
+                  {t('AI.popup.olderTemplates')} ({history.length - 1})
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails className={classes.accordionDetails}>
+                <FormControl component="fieldset" className={classes.fullWidth}>
+                  <RadioGroup
+                    value={selectedHistoryId}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setSelectedHistoryId(value);
+                      handleLogSelection(value);
+                    }}
+                    className={classes.radioGroup}
+                  >
+                    {history
+                      .filter(item => item.AnthropicRequestId && item.AnthropicRequestId !== mostRecentHistory?.AnthropicRequestId) // Skip the most recent item
+                      .map((log: AnthropicHistoryLog) => (
+                        <Box key={log.AnthropicRequestId} className={classes.historyItem}>
+                          <Box className={classes.historyItemHeader}>
+                            <FormControlLabel
+                              value={log.AnthropicRequestId || ''}
+                              control={<Radio color="primary" />}
+                              label={
+                                <Box>
+                                  <Typography variant="body2" className={classes.historyMessage}>
+                                    {log.MessageRequest || t('AI.popup.noMessageAvailable')}
+                                  </Typography>
+                                </Box>
+                              }
+                            />
+                            <Button
+                              size="small"
+                              variant="outlined"
+                              color="primary"
+                              startIcon={<RestoreIcon />}
+                              onClick={() => handleRevertToHistoryLog(log.AnthropicRequestId || '')}
+                              className={classes.revertButton}
+                            >
+                              {t('AI.popup.useThis')}
+                            </Button>
+                          </Box>
+                          <Box className={classes.historyItemContent}>
+                            <Typography variant="body2" className={classes.historyDate}>
+                              {log.RequestDate ? moment(log.RequestDate).format('DD-MM-YYYY HH:mm:ss') :
+                                t('common.unknown')}
+                            </Typography>
+                          </Box>
+                        </Box>
+                      ))}
+                  </RadioGroup>
+                </FormControl>
+              </AccordionDetails>
+            </Accordion>
+          ) : (
+            <></>
+            // <Typography variant="body2" color="textSecondary" className={classes.noOlderTemplates} style={{ marginInline: 15 }}>
+            //   {t('AI.popup.noOlderTemplates')}
+            // </Typography>
+          )}
         </Box>
-      </Box>
-      {isEditing && (
-        <Box mt={2} className={clsx(classes.optionBox, classes.mb10)}>
-          <Box>
-            <b>{t('AI.popup.previewHistoryLog')}</b>
-          </Box>
-          <Box>
-            <i>{selectedLogDetails?.MessageRequest}</i>
-          </Box>
-          {/* <Typography variant="subtitle1" color="primary">
-            {t('AI.popup.editingMode')}
-          </Typography>
-          <Typography variant="body2">
-            {t('AI.popup.editingInstructions')}
-          </Typography> */}
-        </Box>
-      )}
-      {/* {renderOriginalTemplatePreview()} */}
+      </Box>}
       <form onSubmit={handleSubmit}>
         {/* Text area input */}
         <TextField
           className={classes.textArea}
           multiline
-          rows={4}
+          rows={2}
           variant="outlined"
           value={model.messageRequest}
           onChange={handleTextChange}
@@ -586,4 +656,4 @@ const AITemplateCreator = ({ classes, campaignId, onUpdate }: AITemplateCreatorP
   );
 };
 
-export default AITemplateCreator;
+export default AITemplateCreatorAccordion;

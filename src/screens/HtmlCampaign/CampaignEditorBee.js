@@ -63,7 +63,7 @@ import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 import { NO_IMAGE_URL } from '../../helpers/Constants';
 import { logout } from '../../helpers/Api/PulseemReactAPI';
 import { UserRoles } from '../../Models/SubUser/SubUsers';
-import AITemplateCreator from './modals/AI_TemplateCreator';
+import AITemplateCreatorAccordion from './modals/AI_TemplateCreatorAccordion';
 
 const CampaignEditor = ({ classes, ...props }) => {
   //#region State
@@ -961,13 +961,39 @@ const CampaignEditor = ({ classes, ...props }) => {
       showDivider: false,
       title: t("AI.popup.title"),
       content: (
-        <AITemplateCreator classes={classes} campaignId={campaignId} onUpdate={() => {
-          window.location.reload(true);
+        <AITemplateCreatorAccordion classes={classes} campaignId={campaignId} onUpdate={(status, templateData) => {
+          if (status === 'success' && templateData) {
+            setDialogType(null);
+            loadNewTemplate(templateData);
+          }
         }} />
       ),
       showDefaultButtons: false
     };
   }
+
+  const loadNewTemplate = async (templateData) => {
+    setLoader(true);
+    try {
+      if (editorRef.current) {
+        // If template is a string, parse it to JSON
+        const templateJson = typeof templateData === 'string'
+          ? JSON.parse(templateData)
+          : templateData;
+
+        // Load the template into the existing editor
+        await editorRef.current.load(templateJson);
+
+        // Save the newly loaded template
+        saveDesign(false, null, false);
+      }
+    } catch (error) {
+      console.error('Error loading template:', error);
+      setToastMessage({ severity: 'error', color: 'error', message: 'Failed to load template', showAnimtionCheck: false });
+    } finally {
+      setLoader(false);
+    }
+  };
 
   const moreThanOneDynamicBlockModal = (data = '') => {
     const message = t(

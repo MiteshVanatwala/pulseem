@@ -2,6 +2,7 @@
   "popup": {
     "title": "Create a designed template using artificial intelligence",
     "placeholder": "Describe the desired newsletter style (for example: \"Summer sale - colorful and playful, 3 product blocks, large call-to-action button)\"",
+    "historyRequests": "Previous Prompt",
     "tips": {
       "title": "Details for better results:",
       "toneTitle": "Define the tone",
@@ -11,9 +12,17 @@
       "specificTitle": "Be specific",
       "specificDesc": "Specify the topic (sale, event, season) and the purpose of the newsletter",
       "structureTitle": "Describe the structure",
-      "structureDesc": "Detail the structure (headline, product grid, button, image, footer)"
+      "structureDesc": "Detail the structure (headline, product grid, button, image, footer)",
+      "fileTextPlaceholder": "e.g: Take the colors from the attached file"
     },
-    "createDesign": "Create design"
+    "createDesign": "Create design",
+    "editPlaceholder": "Type the changes you'd like to request",
+    "previewHistoryLog": "History Preview:",
+    "updateDesign": "Update Design",
+    "selectedLog": "Load Template",
+    "noMessageAvailable": "No Message Available",
+    "olderTemplates": "Show History",
+    "noOlderTemplates": "No older messages"
   },
   "responses": {
     "201": "Success",

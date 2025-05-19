@@ -2,14 +2,19 @@ export interface AnthropicUserRequest {
   campaignId: any;
   maxToken?: number | null;
   messageRequest: string;
-  file?: AnthropicFileItem | null;
+  file?: AnthropicFileItem | null | undefined;
+  continuationId?: string | null;
+}
+
+export interface AnthropicDetailedLog extends AnthropicHistoryLog {
+  Response?: string | null;
 }
 
 export interface AnthropicFileItem {
   fileType?: string | null;
   name?: string | null;
-  fileUrl: string;
-  text: string;
+  fileUrl: string | null | any;
+  text: any | null;
 }
 
 export interface AnthropicRequest {
@@ -44,4 +49,13 @@ export interface AnthropicResponseUsage {
   cache_creation_input_tokens: number;
   cache_read_input_tokens: number;
   output_tokens: number;
+}
+
+export interface AnthropicHistoryLog {
+  AnthropicRequestId?: string | null;
+  MessageRequest?: string | null;
+  RequestDate?: string | null;
+  TotalPrice?: number | null;
+  InputTokens?: number | null;
+  OutputTokens?: number | null;
 }
