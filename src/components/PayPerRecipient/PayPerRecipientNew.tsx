@@ -18,6 +18,7 @@ import { IoCloseCircleOutline } from 'react-icons/io5';
 import UnsubscribePayPerRecipient from './UnsubscribePayPerRecipient';
 import { getPackagesDetails } from '../../redux/reducers/dashboardSlice';
 import { URLS } from '../../config/enum';
+import TranzilaIframe from '../Balance/PaymentWizard/Dialogs/TranzilaIframe';
 
 const steps = [
   '',
@@ -116,6 +117,13 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose }: any) => {
           )
         }
 
+        {
+          Newsletters.IsEmailPolandSubscribed && (
+            <Typography className={clsx(classes.f28, classes.bold, classes.textCenter, classes.mb10)}>
+              {t('dashboard.polishSubscribe.yourCurrentTier')}
+            </Typography>
+          )
+        }
 
         <Grid
           container
@@ -138,6 +146,7 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose }: any) => {
             </Grid>
 
             <Slider
+              disabled={Newsletters.IsEmailPolandSubscribed}
               aria-label="pricing"
               defaultValue={0}
               step={null}
@@ -175,7 +184,7 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose }: any) => {
                           {t('dashboard.polishSubscribe.customizePlan')}
                         </Typography>
 
-                        <a href={isRTL ? URLS.ContactUs : URLS.ContactUsEn} target='_blank'>
+                        <a href={isRTL ? URLS.ContactUs : URLS.ContactUsEn} target='_blank' className={clsx(classes.pt10, classes.pb10, classes.mb5, classes.dBlock)}>
                           {t('common.contactUs')}
                         </a>
                       </>
@@ -186,7 +195,10 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose }: any) => {
               <Grid item xs={7} className={clsx(classes.textRight)}>
                 <Box className={clsx(classes.p10, isRTL ? classes.textRight : classes.textLeft)}>
                   <Typography className={clsx(classes.f16, classes.mb5)}>
-                    <AiOutlineCheck style={{ verticalAlign: 'middle', marginRight: 5 }} /> {t('dashboard.polishSubscribe.recipients')} : {getSelectedLabel()}
+                    <AiOutlineCheck style={{ verticalAlign: 'middle', marginRight: 5 }} /> {t('dashboard.polishSubscribe.recipients')}
+                    <div className={clsx(classes.f16, classes.mb5, classes.dInlineBlock, classes.paddingInline5)} style={{ direction: 'ltr' }}>
+                      {getSelectedLabel()}
+                    </div>
                   </Typography>
 
                   <Typography className={clsx(classes.f16)}>
@@ -205,14 +217,15 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose }: any) => {
           </Grid>
         </Grid>
 
-        {/* <Typography className={clsx(classes.f16, classes.mb10, classes.mt25)}>
-          {t('dashboard.polishSubscribe.confirmation')}
-        </Typography> */}
         <Loader isOpen={isLoader} showBackdrop={true} />
         {renderToast()}
-        <Typography className={clsx(classes.f18, classes.pt25)}>
-          {t('dashboard.polishSubscribe.confirmation')}
-        </Typography>
+        {
+          !Newsletters.IsEmailPolandSubscribed && (
+            <Typography className={clsx(classes.f18, classes.pt25)}>
+              {t('dashboard.polishSubscribe.confirmation')}
+            </Typography>
+          )
+        }
       </Box>
     )
   }
@@ -229,13 +242,16 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose }: any) => {
         >
           <Grid item md={3}></Grid>
           <Grid item md={6}>
-            <iframe
-              title="Tranzila Url"
-              src={`${paymentIframe}`}
-              width={windowSize !== 'xs' ? 400 : 250}
-              height="420"
-              style={{ border: "none" }} 
-            />
+            <TranzilaIframe
+              data={{}}
+              classes={classes}
+              isRTL={isRTL}
+              packageId={null}
+              onComplete={() => setActiveStep(3)}
+              // @ts-ignore
+              paymentUrl={`${paymentIframe}`}
+              hideSummary={true}
+          />
           </Grid>
           <Grid item md={3}>
             <img
@@ -274,7 +290,7 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose }: any) => {
 
   const step1UnsubscribeActionButtons = () => {
     return (
-      <Box className={clsx(isRTL ? classes.textLeft : classes.textRight)}>
+      <Box className={clsx(isRTL ? classes.textLeft : classes.textRight, classes.pt15)}>
         <Button
           onClick={async () => {
             setIsOpenUnsubscribeDialog(true);
@@ -304,14 +320,14 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose }: any) => {
   }
 
   const step1ActionButtons = () => {
-    if (selectedPricing === get(last(marks), 'value', 100)) return <></>;
     return (
       <Grid
         container
         spacing={2}
-        className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, classes.pt15)}
+        className={clsx(classes.dialogButtonsContainer, classes.pt15)}
+        style={{ direction: 'ltr' }}
       >
-        <Grid item md={3} xs={12} className={clsx(classes.textCenter)}>
+        <Grid item md={3} xs={12}>
           {isRTL && Steppers(0)}
         </Grid>
         <Grid item md={6} xs={12} className={clsx(classes.textCenter)}>
@@ -334,7 +350,11 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose }: any) => {
               classes.btn,
               classes.btnRounded,
               classes.lightGreenButton
-            )}>
+            )}
+            style={{
+              opacity: selectedPricing === get(last(marks), 'value', 100) ? 0 : 100
+            }}
+          >
             {t('dashboard.polishSubscribe.securePurchase')}
           </Button>
         </Grid>
@@ -350,14 +370,14 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose }: any) => {
       <Grid
         container
         spacing={2}
-        className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, classes.pt15)}
+        className={clsx(classes.dialogButtonsContainer, classes.pt15, isRTL ? classes.rowReverse : null)}
       >
         <Grid item md={3} xs={12} className={clsx(classes.textCenter)}>
           {isRTL && Steppers(1)}
         </Grid>
         <Grid item md={6} xs={12} className={clsx(classes.textCenter)}>
         </Grid>
-        <Grid item md={2} xs={12} className={clsx(classes.textCenter)}>
+        <Grid item md={3} xs={12} className={clsx(classes.textCenter)}>
           {!isRTL && Steppers(1)}
         </Grid>
       </Grid>
@@ -369,7 +389,7 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose }: any) => {
       <Grid
         container
         spacing={2}
-        className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, classes.pt15)}
+        className={clsx(classes.dialogButtonsContainer, classes.pt15, isRTL ? classes.rowReverse : null)}
       >
         <Grid item md={3} xs={12} className={clsx(classes.textCenter)}>
           {isRTL && Steppers(2)}
@@ -397,9 +417,10 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose }: any) => {
 			onClose={() => onClose()}
 			onCancel={() => onClose()}
 			reduceTitle
-			style={{ minWidth: 240 }}
-      contentStyle={clsx(classes.payPerRecipientDialog)}
-      paperStyle={clsx(windowSize !== 'xs' ? classes.w70VW : null)}
+			style={{ minWidth: '70vw' }}
+      customContainerStyle={clsx(classes.payPerRecipientDialog)}
+      maxHeight={"70vh"}
+      childrenStyle={"payPerRecipientChild"}
       hideHeader={true}
 			renderButtons={() => (
 				<>

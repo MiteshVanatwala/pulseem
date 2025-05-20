@@ -76,6 +76,7 @@
     "totalToPay": "Total to pay",
     "perMonth": "Per month",
     "securePurchase": "Purchase Now",
-    "customizePlan": "Customize your plan"
+    "customizePlan": "Customize your plan",
+    "yourCurrentTier": "Your current tier"
   }
 }

@@ -415,11 +415,17 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   maxWidth190: {
     maxWidth: 190,
   },
+  minWidth70VW: {
+    minWidth: '70vw',
+  },
   maxWidth70VW: {
     maxWidth: '70vw',
   },
   maxWidth80VW: {
     maxWidth: '80vw',
+  },
+  minHeight70VH: {
+    minHeight: '70vh',
   },
   width160: {
     width: 160,
@@ -4352,6 +4358,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     maxWidth: '100%',
     iframe: {
       border: 'none'
+    },
+    '& .MuiDialog-paper': {
+      minWidth: '80vw',
+      maxWidth: '80vw'
+    },
+    '& .payPerRecipientChild': {
+      minHeight: '70vh',
+      maxHeight: '70vh'
     }
   },
   customSlider: {

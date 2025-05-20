@@ -76,6 +76,7 @@
     "totalToPay": "Łączna kwota do zapłaty",
     "perMonth": "Miesięcznie",
     "securePurchase": "Bezpieczny zakup na stronie",
-    "customizePlan": "Dostosuj swój plan"
+    "customizePlan": "Dostosuj swój plan",
+    "yourCurrentTier": "Twój obecny poziom"
   }
 }

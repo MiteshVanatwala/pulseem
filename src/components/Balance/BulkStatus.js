@@ -338,27 +338,23 @@ const BulkStatus = ({ classes }) => {
             </Grid>
 
             <Grid item md={3} xs={4} className={clsx(classes.paddingSides10, windowSize === 'xs' ? classes.textRight : '')}>
-              {
-                (isGlobal === true && currencyId === POLISH_ZLOTY_CURRENCY_ID && Newsletters?.eBillingType !== 2) 
-                ? ''
-                : <>  
-                  <Tooltip
-                    title={getBillingTypeText(Newsletters)}
-                    placement='top-start'
-                    interactive={true}
-                    classes={{
-                      tooltip: clsx(classes.tooltipPrimary, classes.f12),
-                      arrow: classes.colrPrimary
-                    }}
-                  >
-                    <Typography
-                      className={clsx(classes.bold, classes.elipsis)}
-                      title={`${getBillingTypeText(Newsletters)} ${t('report.Credits')}`}
-                      aria-label={`${getBillingTypeText(Newsletters)} ${t('report.Credits')}`}>
-                      {getBillingTypeText(Newsletters)}
-                    </Typography>
-                  </Tooltip>
-                </>
+              {  
+                <Tooltip
+                  title={getBillingTypeText(Newsletters)}
+                  placement='top-start'
+                  interactive={true}
+                  classes={{
+                    tooltip: clsx(classes.tooltipPrimary, classes.f12),
+                    arrow: classes.colrPrimary
+                  }}
+                >
+                  <Typography
+                    className={clsx(classes.bold, classes.elipsis)}
+                    title={`${getBillingTypeText(Newsletters)} ${t('report.Credits')}`}
+                    aria-label={`${getBillingTypeText(Newsletters)} ${t('report.Credits')}`}>
+                    {getBillingTypeText(Newsletters)}
+                  </Typography>
+                </Tooltip>
               }
             </Grid>
 
@@ -384,7 +380,7 @@ const BulkStatus = ({ classes }) => {
                       ) : (
                         <Button
                           className={clsx(classes.btn, classes.btnRounded, classes.f12)}
-                          onClick={() => !Newsletters.IsEmailPolandSubscribed ? setIsOpenPayPerRecipient(true) : setIsOpenUnsubscribeDialog(true)}
+                          onClick={() => setIsOpenPayPerRecipient(true)}
                         >
                           {t(`common.${ !Newsletters.IsEmailPolandSubscribed ? 'SubscribeButton' : 'cancel'}`)}
                           {isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
