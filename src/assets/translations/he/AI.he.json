@@ -3,6 +3,7 @@
     "title": "יצירת תבנית מעוצבת באמצעות בינה מלאכותית",
     "placeholder": "תארו את סגנון הניוזלטר הרצוי (לדוגמא: \"מבצע קיץ - צבעוני ושובב, 3 בלוקים של מוצרים, כפתור הענה לפעולה גדול)\"",
     "historyRequests": "פרומפט קודם",
+    "lastPromopSubTitle":"תהליך העיצוב ימשיך מנקודה זו",
     "tips": {
       "title": "טיפים לתוצאות טובות יותר:",
       "toneTitle": "הגדירו את הטון",
@@ -19,8 +20,8 @@
     "previewHistoryLog": "תצוגה מקדימה:",
     "editPlaceholder": "ערוך את השינויים שברצונך לשנות",
     "updateDesign": "עדכן עיצוב",
-    "selectedLog": "המשך שיחה",
-    "useThis": "טעינת תבנית",
+    "continueConversation": "המשיכו מפרומפט זה",
+    "loadTemplate": "טעינת תבנית",
     "noMessageAvailable": "אין הודעה להצגה / שיחה נכשלה",
     "olderTemplates": "הצג היסטוריה",
     "noOlderTemplates": "אין פרומפטים נוספים"

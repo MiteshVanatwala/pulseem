@@ -961,12 +961,21 @@ const CampaignEditor = ({ classes, ...props }) => {
       showDivider: false,
       title: t("AI.popup.title"),
       content: (
-        <AITemplateCreatorAccordion classes={classes} campaignId={campaignId} onUpdate={(status, templateData) => {
-          if (status === 'success' && templateData) {
-            setDialogType(null);
-            loadNewTemplate(templateData);
-          }
-        }} />
+        <AITemplateCreatorAccordion
+          classes={classes}
+          campaignId={campaignId}
+          onRestore={(templateData) => {
+            if (templateData) {
+              setDialogType(null);
+              loadNewTemplate(templateData);
+            }
+          }}
+          onUpdate={(status, templateData) => {
+            if (status === 'success' && templateData) {
+              setDialogType(null);
+              loadNewTemplate(templateData);
+            }
+          }} />
       ),
       showDefaultButtons: false
     };

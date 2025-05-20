@@ -14,9 +14,6 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
-  Radio,
-  RadioGroup,
-  FormControlLabel,
   FormControl
 } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
@@ -29,7 +26,7 @@ import {
 import { AnthropicDetailedLog, AnthropicFileItem, AnthropicHistoryLog, AnthropicUserRequest } from '../../../Models/AI/Anthropic';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
-import { continueConversation, getHistoryRequests, getRequestDetails, requestTemplate } from '../../../redux/reducers/AISlice';
+import { continueConversation, getHistoryRequests, getRequestDetails, requestTemplate, restoreConversationDesign } from '../../../redux/reducers/AISlice';
 import { setIsLoader } from '../../../redux/reducers/coreSlice';
 import clsx from 'clsx';
 import Gallery from '../../../components/Gallery/Gallery.component';
@@ -42,14 +39,19 @@ import PulseemColorPickerUI from '../../../components/Controlls/PulseemColorPick
 import Toast from '../../../components/Toast/Toast.component';
 // import { StateType } from '../../../Models/StateTypes';
 import moment from 'moment'
+import { RiChatAiLine } from 'react-icons/ri';
+import { PulseemResponse } from '../../../Models/APIResponse';
+import { logout } from '../../../helpers/Api/PulseemReactAPI';
 
 interface AITemplateCreatorProps {
   classes: any,
   campaignId: any;
   onUpdate: (status: string, templateData?: any) => void;
+  onRestore: (templateData?: any) => void;
 }
 
-const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate }: AITemplateCreatorProps) => {
+
+const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }: AITemplateCreatorProps) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   // const { isRTL } = useSelector((state: StateType) => state.core);
@@ -87,6 +89,19 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate }: AITemplat
 
   // State for color dialog
   const [colorDialogOpen, setColorDialogOpen] = useState(false);
+  const [historyExpanded, setHistoryExpanded] = useState<boolean>(false);
+  
+  // Function to scroll to the aiContainer
+  const scrollToAiContainer = () => {
+    const element = document.getElementById('ai-container');
+    if (element) {
+      element.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+      setHistoryExpanded(false);
+    }
+  };
 
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     if (e.target.value !== '') {
@@ -150,12 +165,14 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate }: AITemplat
         setSelectedHistoryId(sortedHistory[0].AnthropicRequestId || '');
 
         // Optionally load the most recent template automatically
-        handleLogSelection(sortedHistory[0].AnthropicRequestId || '');
+        //handleLogSelection(sortedHistory[0].AnthropicRequestId || '');
       }
+      scrollToAiContainer();
     }
   }
 
   const handleLogSelection = async (anthropicRequestId: string) => {
+    dispatch(setIsLoader(true));
     setSelectedHistoryId(anthropicRequestId);
     if (anthropicRequestId === '' || !anthropicRequestId) {
       setIsEditing(false);
@@ -180,9 +197,35 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate }: AITemplat
         messageRequest: '' // Clear the message for new instructions
       });
     }
+    initHistoryRequests();
+    dispatch(setIsLoader(false));
   };
 
-  const handleRevertToHistoryLog = async (anthropicRequestId: string) => {
+  const handleRestoreDesign = async (anthropicRequestId: string) => {
+    const response = await dispatch(restoreConversationDesign(anthropicRequestId)) as any;
+    // response.payload.Data 
+    // call reload bee
+    const { StatusCode, Data }: PulseemResponse = response.payload;
+    switch (StatusCode) {
+      case 201: {
+        onRestore(Data);
+        setHistoryExpanded(false);
+        initHistoryRequests();
+        break;
+      }
+      case 401: {
+        logout();
+        break;
+      }
+      case 404: {
+        setToastMessage(ToastMessages.RESPONSES[404]);
+        break;
+      }
+      case 500: {
+        setToastMessage(ToastMessages.RESPONSES[500]);
+        break;
+      }
+    }
     console.log(anthropicRequestId);
   }
 
@@ -268,10 +311,13 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate }: AITemplat
   }
 
   return (
-    <Box className={classes.aiContainer}>
+    <Box className={classes.aiContainer} id="ai-container">
       {history?.length > 0 && <Box>
-        <Typography className={classes.newFeatureTitle}>
+        <Typography className={clsx(classes.newFeatureTitle, classes.font18)}>
           {t('AI.popup.historyRequests')}
+        </Typography>
+        <Typography className={clsx(classes.font14)}>
+          {t('AI.popup.lastPromopSubTitle')}
         </Typography>
         <Box className={classes.mb10}>
           {mostRecentHistory && (
@@ -280,18 +326,6 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate }: AITemplat
                 <Typography variant="body2" className={classes.historyMessage}>
                   {mostRecentHistory.MessageRequest || t('common.noMessageAvailable')}
                 </Typography>
-                <Button
-                  size="small"
-                  variant="contained"
-                  color="primary"
-                  startIcon={<RestoreIcon />}
-                  onClick={() => handleLogSelection(mostRecentHistory.AnthropicRequestId || '')}
-                  className={classes.revertButton}
-                  disabled={selectedHistoryId === mostRecentHistory.AnthropicRequestId}
-                >
-                  {selectedHistoryId === mostRecentHistory.AnthropicRequestId ?
-                    t('AI.popup.selectedLog') : t('AI.popup.useThis')}
-                </Button>
               </Box>
               <Box className={classes.historyItemContent}>
                 <Typography variant="body1" className={classes.historyDate} style={{ fontSize: 12 }}>
@@ -306,8 +340,11 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate }: AITemplat
 
           {/* Older templates in accordion */}
           {history.length > 1 ? (
-            <Accordion defaultExpanded={false}>
+            <Accordion defaultExpanded={false} expanded={historyExpanded}>
               <AccordionSummary
+                onClick={() => {
+                  setHistoryExpanded(!historyExpanded)
+                }}
                 expandIcon={<ExpandMoreIcon />}
                 aria-controls="history-content"
                 id="history-header"
@@ -319,59 +356,59 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate }: AITemplat
               </AccordionSummary>
               <AccordionDetails className={classes.accordionDetails}>
                 <FormControl component="fieldset" className={classes.fullWidth}>
-                  <RadioGroup
-                    value={selectedHistoryId}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      setSelectedHistoryId(value);
-                      handleLogSelection(value);
-                    }}
-                    className={classes.radioGroup}
-                  >
-                    {history
-                      .filter(item => item.AnthropicRequestId && item.AnthropicRequestId !== mostRecentHistory?.AnthropicRequestId) // Skip the most recent item
-                      .map((log: AnthropicHistoryLog) => (
-                        <Box key={log.AnthropicRequestId} className={classes.historyItem}>
-                          <Box className={classes.historyItemHeader}>
-                            <FormControlLabel
-                              value={log.AnthropicRequestId || ''}
-                              control={<Radio color="primary" />}
-                              label={
-                                <Box>
-                                  <Typography variant="body2" className={classes.historyMessage}>
-                                    {log.MessageRequest || t('AI.popup.noMessageAvailable')}
-                                  </Typography>
-                                </Box>
-                              }
-                            />
+                  {history
+                    .filter(item => item.AnthropicRequestId && item.AnthropicRequestId !== mostRecentHistory?.AnthropicRequestId) // Skip the most recent item
+                    .map((log: AnthropicHistoryLog) => (
+                      <Box key={log.AnthropicRequestId} className={classes.historyItem}>
+                        <Box className={classes.historyItemHeader}>
+                          <Box>
+                            <Typography variant="body2" className={classes.historyMessage}>
+                              {log.MessageRequest || t('AI.popup.noMessageAvailable')}
+                            </Typography>
+                          </Box>
+                          <Box style={{ display: 'flex', flexDirection: 'column' }}>
+                            <Button
+                              size="small"
+                              variant="contained"
+                              color="primary"
+                              startIcon={<RiChatAiLine />}
+                              disabled={selectedHistoryId === log.AnthropicRequestId}
+                              onClick={() => {
+                                handleLogSelection(log.AnthropicRequestId || '');
+                              }}
+                              className={classes.revertButton}
+                              style={{ marginBlock: 10 }}
+                            >
+                              {t('AI.popup.continueConversation')}
+                            </Button>
                             <Button
                               size="small"
                               variant="outlined"
-                              color="primary"
+                              color="secondary"
                               startIcon={<RestoreIcon />}
-                              onClick={() => handleRevertToHistoryLog(log.AnthropicRequestId || '')}
+                              onClick={(e: any) => {
+                                handleRestoreDesign(log.AnthropicRequestId || '')
+                              }}
                               className={classes.revertButton}
                             >
-                              {t('AI.popup.useThis')}
+                              {t('AI.popup.loadTemplate')}
                             </Button>
                           </Box>
-                          <Box className={classes.historyItemContent}>
-                            <Typography variant="body2" className={classes.historyDate}>
-                              {log.RequestDate ? moment(log.RequestDate).format('DD-MM-YYYY HH:mm:ss') :
-                                t('common.unknown')}
-                            </Typography>
-                          </Box>
                         </Box>
-                      ))}
-                  </RadioGroup>
+                        <Box className={classes.historyItemContent}>
+                          <Typography variant="body2" className={classes.historyDate}>
+                            {log.RequestDate ? moment(log.RequestDate).format('DD-MM-YYYY HH:mm:ss') :
+                              t('common.unknown')}
+                          </Typography>
+                        </Box>
+                      </Box>
+                    ))}
+                  {/* </RadioGroup> */}
                 </FormControl>
               </AccordionDetails>
             </Accordion>
           ) : (
             <></>
-            // <Typography variant="body2" color="textSecondary" className={classes.noOlderTemplates} style={{ marginInline: 15 }}>
-            //   {t('AI.popup.noOlderTemplates')}
-            // </Typography>
           )}
         </Box>
       </Box>}

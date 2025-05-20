@@ -51,6 +51,17 @@ export const getHistoryRequests = createAsyncThunk(
     }
 );
 
+export const restoreConversationDesign = createAsyncThunk(
+    'AI/Anthropic/RestoreConversationDesign',
+    async (anthropicId: string, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.get(`AI/Anthropic/RestoreConversationDesign/${anthropicId}`);
+            return response.data
+        } catch (error) {
+            return console.log(error);
+        }
+    }
+);
 
 const AiSlice = createSlice({
     name: 'Ai',

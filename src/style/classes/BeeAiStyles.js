@@ -126,7 +126,6 @@ export const BeeAiStyles = (windowSize, isRTL, theme) => ({
   },
   newFeatureTitle: {
     fontWeight: 'bold',
-    fontSize: '0.9rem',
     marginBottom: theme.spacing(1),
     display: 'flex',
     alignItems: 'center',
@@ -165,6 +164,7 @@ export const BeeAiStyles = (windowSize, isRTL, theme) => ({
   },
   historyDate: {
     fontWeight: 500,
+    color: theme.palette.text.secondary,
   },
   historyItemContent: {
     marginLeft: theme.spacing(3),
@@ -176,10 +176,10 @@ export const BeeAiStyles = (windowSize, isRTL, theme) => ({
     overflow: 'auto',
     whiteSpace: 'pre-wrap',
     fontSize: '0.875rem',
-    color: theme.palette.text.secondary,
+    color: theme.palette.text.primary,
   },
   revertButton: {
-    minWidth: 130,
+    minWidth: 150,
     direction: isRTL ? 'rtl' : 'ltr',
   },
 })
