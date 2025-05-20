@@ -5,7 +5,7 @@
     "historyRequests": "Previous Prompt",
     "lastPromopSubTitle":"The design process will continue from this point",
     "tips": {
-      "title": "Details for better results:",
+      "title": "Details for better results",
       "toneTitle": "Define the tone",
       "toneDesc": "Specify the desired tone (bold, minimalist, elegant, fun, professional)",
       "elementsTitle": "Brand elements",
@@ -17,14 +17,18 @@
       "fileTextPlaceholder": "e.g: Take the colors from the attached file"
     },
     "createDesign": "Create design",
-    "editPlaceholder": "Type the changes you'd like to request",
+    "editPlaceholder": "Describe the changes you'd like to make to the design. For example: \"Replace all colors with green tones\", \"Increase the size of all headings\"",
     "previewHistoryLog": "History Preview:",
     "updateDesign": "Update Design",
     "continueConversation": "Continue from this prompt",
     "loadTemplate": "Load template",
     "noMessageAvailable": "No Message Available",
     "olderTemplates": "Show History",
-    "noOlderTemplates": "No older messages"
+    "noOlderTemplates": "No older messages",
+    "tooltip":{
+      "continuePrompt": "The design process will continue from this point",
+      "loadTemplate": "The editor will load the result you received for this prompt"
+    }
   },
   "responses": {
     "201": "Success",

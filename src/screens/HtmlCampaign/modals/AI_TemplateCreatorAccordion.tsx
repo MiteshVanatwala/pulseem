@@ -6,7 +6,6 @@ import {
   Button,
   Paper,
   Grid,
-  Divider,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -14,7 +13,9 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
-  FormControl
+  FormControl,
+  Tooltip,
+  makeStyles
 } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import RestoreIcon from '@material-ui/icons/Restore';
@@ -50,10 +51,30 @@ interface AITemplateCreatorProps {
   onRestore: (templateData?: any) => void;
 }
 
+const useTooltipStyles = makeStyles((theme) => ({
+  tooltip: {
+    zIndex: 99999, // Extremely high z-index to ensure it's above everything
+    backgroundColor: '#000', // Change background color here
+    color: '#ffffff', // Text color
+    fontSize: '14px', // Change font/text size here
+    fontWeight: 400, // Adjust font weight if needed
+    padding: '8px 12px',
+    maxWidth: 300,
+    boxShadow: '0 2px 10px rgba(0, 0, 0, 0.2)',
+    borderRadius: '4px'
+  },
+  arrow: {
+    color: '#000' // Make sure arrow color matches tooltip background
+  },
+  popper: {
+    zIndex: 99999
+  }
+}));
 
 const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }: AITemplateCreatorProps) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const tooltipClasses = useTooltipStyles();
   // const { isRTL } = useSelector((state: StateType) => state.core);
   const { ToastMessages } = useSelector((state: any) => state?.Ai);
   const [submitDisabled, setSubmitDisabled] = useState<boolean>(true);
@@ -90,7 +111,12 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
   // State for color dialog
   const [colorDialogOpen, setColorDialogOpen] = useState(false);
   const [historyExpanded, setHistoryExpanded] = useState<boolean>(false);
-  
+
+  // New state for options and tips accordions
+  const [optionsExpanded, setOptionsExpanded] = useState<boolean>(false);
+  const [tipsExpanded, setTipsExpanded] = useState<boolean>(false);
+
+
   // Function to scroll to the aiContainer
   const scrollToAiContainer = () => {
     const element = document.getElementById('ai-container');
@@ -367,32 +393,52 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
                             </Typography>
                           </Box>
                           <Box style={{ display: 'flex', flexDirection: 'column' }}>
-                            <Button
-                              size="small"
-                              variant="contained"
-                              color="primary"
-                              startIcon={<RiChatAiLine />}
-                              disabled={selectedHistoryId === log.AnthropicRequestId}
-                              onClick={() => {
-                                handleLogSelection(log.AnthropicRequestId || '');
+                            <Tooltip title={t('AI.popup.tooltip.continuePrompt')}
+                              placement="top"
+                              classes={tooltipClasses}
+                              PopperProps={{
+                                style: { zIndex: 999999 },
+                                disablePortal: true,
+                                container: document.body
                               }}
-                              className={classes.revertButton}
-                              style={{ marginBlock: 10 }}
-                            >
-                              {t('AI.popup.continueConversation')}
-                            </Button>
-                            <Button
-                              size="small"
-                              variant="outlined"
-                              color="secondary"
-                              startIcon={<RestoreIcon />}
-                              onClick={(e: any) => {
-                                handleRestoreDesign(log.AnthropicRequestId || '')
+                              arrow>
+                              <Button
+                                size="small"
+                                variant="contained"
+                                color="primary"
+                                startIcon={<RiChatAiLine />}
+                                disabled={selectedHistoryId === log.AnthropicRequestId}
+                                onClick={() => {
+                                  handleLogSelection(log.AnthropicRequestId || '');
+                                }}
+                                className={classes.revertButton}
+                                style={{ marginBlock: 10 }}
+                              >
+                                {t('AI.popup.continueConversation')}
+                              </Button>
+                            </Tooltip>
+                            <Tooltip title={t('AI.popup.tooltip.loadTemplate')}
+                              placement="top"
+                              classes={tooltipClasses}
+                              PopperProps={{
+                                style: { zIndex: 999999 },
+                                disablePortal: true,
+                                container: document.body
                               }}
-                              className={classes.revertButton}
-                            >
-                              {t('AI.popup.loadTemplate')}
-                            </Button>
+                              arrow>
+                              <Button
+                                size="small"
+                                variant="outlined"
+                                color="secondary"
+                                startIcon={<RestoreIcon />}
+                                onClick={(e: any) => {
+                                  handleRestoreDesign(log.AnthropicRequestId || '')
+                                }}
+                                className={classes.revertButton}
+                              >
+                                {t('AI.popup.loadTemplate')}
+                              </Button>
+                            </Tooltip>
                           </Box>
                         </Box>
                         <Box className={classes.historyItemContent}>
@@ -429,176 +475,202 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
           }}
         />
 
-        {/* New Features Section */}
-        <Paper className={classes.optionBox} elevation={0} style={{ marginBottom: '16px' }}>
-          <Grid container spacing={2}>
-            {/* File Upload */}
-            <Grid item xs={3}>
-              <Typography className={classes.newFeatureTitle}>
-                <span className={classes.icon}>📎</span>
-                {t('common.imageGallery')}
-              </Typography>
-              <Button onClick={(e: any) => {
-                e.preventDefault();
-                setShowGallery(true);
-              }} style={{ paddingTop: 0 }}>
-                <Box className={classes.uploadButton} style={{ marginTop: 0 }}>
-                  <CloudUploadIcon className={classes.uploadIcon} />
-                  <Typography variant="body2">{t('common.selectFile')}</Typography>
-                </Box>
-              </Button>
-            </Grid>
-            <Grid item xs={3}>
-              <Typography className={classes.newFeatureTitle}>
-                <span className={classes.icon}>📎</span>
-                {t('common.documentGallery')}
-              </Typography>
-              <Button onClick={(e: any) => {
-                e.preventDefault();
-                setShowDocuments(true);
-              }} style={{ paddingTop: 0 }}>
-                <Box className={classes.uploadButton} style={{ marginTop: 0 }}>
-                  <CloudUploadIcon className={classes.uploadIcon} />
-                  <Typography variant="body2">{t('common.selectFile')}</Typography>
-                </Box>
-              </Button>
-            </Grid>
-
-            {/* Color Selector */}
-            <Grid item xs={6}>
-              <Typography className={classes.newFeatureTitle}>
-                <span className={classes.icon}>🎨</span>
-                {t('colorPalette.multipleColorSelection')}
-              </Typography>
-
-              <Box className={classes.colorPaletteButton} onClick={handleColorDialogOpen}>
-                <PaletteIcon className={classes.uploadIcon} />
-                <Typography variant="body2"> {t('colorPalette.selectColors')}</Typography>
-              </Box>
-              <Box style={{ display: 'flex', flexDirection: 'row' }}>
-                {colors.map((c: string, index: number) => {
-                  return <Box
-                    onMouseEnter={() => setHoveredIndex(index)}
-                    onMouseLeave={() => setHoveredIndex(null)}>
-                    <Box
-                      style={{ display: 'flex', flexDirection: 'column', marginInlineEnd: 5, alignItems: 'center' }}>
-                      <Box
-                        style={{ borderRadius: 2, backgroundColor: c, width: 25, height: 25 }}>
-                      </Box>
-                      <Box style={{ height: 20 }}>
-                        {hoveredIndex === index && <Box style={{ cursor: 'pointer' }} onClick={() => {
-                          const removeColor = colors.filter((col: any) => { return c !== col });
-                          setColors(removeColor);
-                        }}>x</Box>}
-                      </Box>
+        {/* File Upload and Colors Options Section */}
+        <Accordion defaultExpanded={false} expanded={optionsExpanded} className={classes.mb10}>
+          <AccordionSummary
+            onClick={() => setOptionsExpanded(!optionsExpanded)}
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="options-content"
+            id="options-header"
+            className={classes.accordionSummary}
+          >
+            <Typography className={classes.accordionTitle}>
+              {t('common.AdvancedSettings')}
+            </Typography>
+          </AccordionSummary>
+          <AccordionDetails className={classes.accordionDetails}>
+            <Paper className={classes.optionBox} elevation={0} style={{ marginBottom: '16px' }}>
+              <Grid container spacing={2}>
+                {/* File Upload */}
+                <Grid item xs={3}>
+                  <Typography className={classes.newFeatureTitle}>
+                    <span className={classes.icon}>📎</span>
+                    {t('common.imageGallery')}
+                  </Typography>
+                  <Button onClick={(e: any) => {
+                    e.preventDefault();
+                    setShowGallery(true);
+                  }} style={{ paddingTop: 0 }}>
+                    <Box className={classes.uploadButton} style={{ marginTop: 0 }}>
+                      <CloudUploadIcon className={classes.uploadIcon} />
+                      <Typography variant="body2">{t('common.selectFile')}</Typography>
                     </Box>
-                  </Box>
-                })}
-              </Box>
-            </Grid>
-          </Grid>
-          <Grid item xs={6}>
-            <Grid container>
-              <Grid item xs={12}>
-                {model?.file?.name && (
-                  <Box className={classes.dFlex} style={{ flexDirection: 'column' }}>
-                    <Box className={classes.filePreview}>
-                      <Typography variant="body2">{model?.file?.name}</Typography>
-                      <CloseIcon className={classes.removeIcon} onClick={removeFile} />
+                  </Button>
+                </Grid>
+                <Grid item xs={3}>
+                  <Typography className={classes.newFeatureTitle}>
+                    <span className={classes.icon}>📎</span>
+                    {t('common.documentGallery')}
+                  </Typography>
+                  <Button onClick={(e: any) => {
+                    e.preventDefault();
+                    setShowDocuments(true);
+                  }} style={{ paddingTop: 0 }}>
+                    <Box className={classes.uploadButton} style={{ marginTop: 0 }}>
+                      <CloudUploadIcon className={classes.uploadIcon} />
+                      <Typography variant="body2">{t('common.selectFile')}</Typography>
                     </Box>
+                  </Button>
+                </Grid>
+
+                {/* Color Selector */}
+                <Grid item xs={6}>
+                  <Typography className={classes.newFeatureTitle}>
+                    <span className={classes.icon}>🎨</span>
+                    {t('colorPalette.multipleColorSelection')}
+                  </Typography>
+
+                  <Box className={classes.colorPaletteButton} onClick={handleColorDialogOpen}>
+                    <PaletteIcon className={classes.uploadIcon} />
+                    <Typography variant="body2"> {t('colorPalette.selectColors')}</Typography>
                   </Box>
-                )}
+                  <Box style={{ display: 'flex', flexDirection: 'row' }}>
+                    {colors.map((c: string, index: number) => {
+                      return <Box
+                        onMouseEnter={() => setHoveredIndex(index)}
+                        onMouseLeave={() => setHoveredIndex(null)}>
+                        <Box
+                          style={{ display: 'flex', flexDirection: 'column', marginInlineEnd: 5, alignItems: 'center' }}>
+                          <Box
+                            style={{ borderRadius: 2, backgroundColor: c, width: 25, height: 25 }}>
+                          </Box>
+                          <Box style={{ height: 20 }}>
+                            {hoveredIndex === index && <Box style={{ cursor: 'pointer' }} onClick={() => {
+                              const removeColor = colors.filter((col: any) => { return c !== col });
+                              setColors(removeColor);
+                            }}>x</Box>}
+                          </Box>
+                        </Box>
+                      </Box>
+                    })}
+                  </Box>
+                </Grid>
               </Grid>
-            </Grid>
-          </Grid>
-          {model?.file && <Grid item xs={12}>
-            <TextField
-              autoFocus
-              type='text'
-              label=""
-              multiline={true}
-              variant="outlined"
-              name={'topUpBalance'}
-              value={model?.file?.text}
-              className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField)}
-              autoComplete="off"
-              style={{ marginInlineEnd: 20 }}
-              placeholder={t('AI.popup.tips.fileTextPlaceholder')}
-              onChange={(e: any) => {
-                const updatedFile: AnthropicFileItem = {
-                  ...model.file,
-                  text: e.target.value,
-                  fileUrl: model?.file?.fileUrl,
-                  fileType: model?.file?.fileType,
-                  name: model?.file?.name
-                }
+              <Grid item xs={6}>
+                <Grid container>
+                  <Grid item xs={12}>
+                    {model?.file?.name && (
+                      <Box className={classes.dFlex} style={{ flexDirection: 'column' }}>
+                        <Box className={classes.filePreview}>
+                          <Typography variant="body2">{model?.file?.name}</Typography>
+                          <CloseIcon className={classes.removeIcon} onClick={removeFile} />
+                        </Box>
+                      </Box>
+                    )}
+                  </Grid>
+                </Grid>
+              </Grid>
+              {model?.file && <Grid item xs={12}>
+                <TextField
+                  autoFocus
+                  type='text'
+                  label=""
+                  multiline={true}
+                  variant="outlined"
+                  name={'topUpBalance'}
+                  value={model?.file?.text}
+                  className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField)}
+                  autoComplete="off"
+                  style={{ marginInlineEnd: 20 }}
+                  placeholder={t('AI.popup.tips.fileTextPlaceholder')}
+                  onChange={(e: any) => {
+                    const updatedFile: AnthropicFileItem = {
+                      ...model.file,
+                      text: e.target.value,
+                      fileUrl: model?.file?.fileUrl,
+                      fileType: model?.file?.fileType,
+                      name: model?.file?.name
+                    }
 
-                setModel({
-                  ...model,
-                  file: updatedFile
-                })
-              }}
-            />
-          </Grid>}
-        </Paper>
+                    setModel({
+                      ...model,
+                      file: updatedFile
+                    })
+                  }}
+                />
+              </Grid>}
+            </Paper>
+          </AccordionDetails>
+        </Accordion>
 
-        {/* Options section */}
-        <Paper className={classes.optionBox} elevation={0}>
-          <Typography className={classes.sectionTitle}>
-            {t('AI.popup.tips.title')}
-          </Typography>
-          <Divider style={{ marginBottom: 15 }} />
-          <Grid container spacing={2}>
-            {/* First column */}
-            <Grid item xs={6}>
-              <Box display="flex" alignItems="center" mb={1}>
-                <span className={classes.icon}>🎨</span>
-                <Typography variant="body2" className={classes.checkboxLabel} style={{ fontWeight: 'bold' }}>
-                  {t('AI.popup.tips.toneTitle')}
-                </Typography>
-              </Box>
-              <Typography className={classes.checkboxDesc}>
-                {t('AI.popup.tips.toneDesc')}
-              </Typography>
-              <Box mt={2}>
-                <Box display="flex" alignItems="center" mb={1}>
-                  <span className={classes.icon}>📝</span>
-                  <Typography variant="body2" className={classes.checkboxLabel} style={{ fontWeight: 'bold' }}>
-                    {t('AI.popup.tips.specificTitle')}
+        {/* Tips Section in Accordion */}
+        <Accordion defaultExpanded={false} expanded={tipsExpanded} className={classes.mb10}>
+          <AccordionSummary
+            onClick={() => setTipsExpanded(!tipsExpanded)}
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="tips-content"
+            id="tips-header"
+            className={classes.accordionSummary}
+          >
+            <Typography className={classes.accordionTitle}>
+              {t('AI.popup.tips.title')}
+            </Typography>
+          </AccordionSummary>
+          <AccordionDetails className={classes.accordionDetails}>
+            <Paper className={classes.optionBox} elevation={0}>
+              <Grid container spacing={2}>
+                {/* First column */}
+                <Grid item xs={6}>
+                  <Box display="flex" alignItems="center" mb={1}>
+                    <span className={classes.icon}>🎨</span>
+                    <Typography variant="body2" className={classes.checkboxLabel} style={{ fontWeight: 'bold' }}>
+                      {t('AI.popup.tips.toneTitle')}
+                    </Typography>
+                  </Box>
+                  <Typography className={classes.checkboxDesc}>
+                    {t('AI.popup.tips.toneDesc')}
                   </Typography>
-                </Box>
-                <Typography className={classes.checkboxDesc}>
-                  {t('AI.popup.tips.specificDesc')}
-                </Typography>
-              </Box>
-            </Grid>
+                  <Box mt={2}>
+                    <Box display="flex" alignItems="center" mb={1}>
+                      <span className={classes.icon}>📝</span>
+                      <Typography variant="body2" className={classes.checkboxLabel} style={{ fontWeight: 'bold' }}>
+                        {t('AI.popup.tips.specificTitle')}
+                      </Typography>
+                    </Box>
+                    <Typography className={classes.checkboxDesc}>
+                      {t('AI.popup.tips.specificDesc')}
+                    </Typography>
+                  </Box>
+                </Grid>
 
-            {/* Second column */}
-            <Grid item xs={6}>
-              <Box display="flex" alignItems="center" mb={1}>
-                <span className={classes.icon}>👗</span>
-                <Typography variant="body2" className={classes.checkboxLabel} style={{ fontWeight: 'bold' }}>
-                  {t('AI.popup.tips.elementsTitle')}
-                </Typography>
-              </Box>
-              <Typography className={classes.checkboxDesc}>
-                {t('AI.popup.tips.elementsDesc')}
-              </Typography>
-
-              <Box mt={2}>
-                <Box display="flex" alignItems="center" mb={1}>
-                  <span className={classes.icon}>🎯</span>
-                  <Typography variant="body2" className={classes.checkboxLabel} style={{ fontWeight: 'bold' }}>
-                    {t('AI.popup.tips.structureTitle')}
+                {/* Second column */}
+                <Grid item xs={6}>
+                  <Box display="flex" alignItems="center" mb={1}>
+                    <span className={classes.icon}>👗</span>
+                    <Typography variant="body2" className={classes.checkboxLabel} style={{ fontWeight: 'bold' }}>
+                      {t('AI.popup.tips.elementsTitle')}
+                    </Typography>
+                  </Box>
+                  <Typography className={classes.checkboxDesc}>
+                    {t('AI.popup.tips.elementsDesc')}
                   </Typography>
-                </Box>
-                <Typography className={classes.checkboxDesc}>
-                  {t('AI.popup.tips.structureDesc')}
-                </Typography>
-              </Box>
-            </Grid>
-          </Grid>
-        </Paper>
+
+                  <Box mt={2}>
+                    <Box display="flex" alignItems="center" mb={1}>
+                      <span className={classes.icon}>🎯</span>
+                      <Typography variant="body2" className={classes.checkboxLabel} style={{ fontWeight: 'bold' }}>
+                        {t('AI.popup.tips.structureTitle')}
+                      </Typography>
+                    </Box>
+                    <Typography className={classes.checkboxDesc}>
+                      {t('AI.popup.tips.structureDesc')}
+                    </Typography>
+                  </Box>
+                </Grid>
+              </Grid>
+            </Paper>
+          </AccordionDetails>
+        </Accordion>
 
         {/* Submit button */}
         <Box display="flex" justifyContent="flex-end">

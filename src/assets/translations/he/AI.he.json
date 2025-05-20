@@ -5,7 +5,7 @@
     "historyRequests": "פרומפט קודם",
     "lastPromopSubTitle":"תהליך העיצוב ימשיך מנקודה זו",
     "tips": {
-      "title": "טיפים לתוצאות טובות יותר:",
+      "title": "טיפים לתוצאות טובות יותר",
       "toneTitle": "הגדירו את הטון",
       "toneDesc": "ציינו את הטון הרצוי (בולט, מינימליסטי, אלגנטי, כיפי, מקצועי)",
       "elementsTitle": "אלמנטים של המותג",
@@ -18,13 +18,17 @@
     },
     "createDesign": "יצירת עיצוב",
     "previewHistoryLog": "תצוגה מקדימה:",
-    "editPlaceholder": "ערוך את השינויים שברצונך לשנות",
+    "editPlaceholder": "\"תארו את השינויים אותם אתם רוצים לבצע בעריכה. לדוגמא: \"החלף את כל הצבעים לגווני ירוק\", \"הגדל את כל הכותרות",
     "updateDesign": "עדכן עיצוב",
     "continueConversation": "המשיכו מפרומפט זה",
     "loadTemplate": "טעינת תבנית",
     "noMessageAvailable": "אין הודעה להצגה / שיחה נכשלה",
     "olderTemplates": "הצג היסטוריה",
-    "noOlderTemplates": "אין פרומפטים נוספים"
+    "noOlderTemplates": "אין פרומפטים נוספים",
+    "tooltip":{
+      "continuePrompt": "תהליך העיצוב ימשיך מנקודה זו",
+      "loadTemplate": "העורך יטען את התוצאה שקיבלתם לפרומפט זה"
+    }
   },
   "responses": {
     "201": "עיצוב נוצר בהצלחה!",
