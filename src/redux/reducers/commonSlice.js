@@ -254,7 +254,8 @@ export const commonSlice = createSlice({
     currencyList: [],
     countryCodeList: [],
     WhatsAppPlatformID: null,
-    TierData: []
+    TierData: [],
+    IsPoland: false
   },
   extraReducers: builder => {
     builder
@@ -343,6 +344,7 @@ export const commonSlice = createSlice({
       .addCase(GetAfterLoginInitialData.fulfilled, (state, { payload }) => {
         state.WhatsAppPlatformID = get(payload, 'Data.WhatsappPlatformId', null)
         state.TierData = get(payload, 'Data.TierData', [])
+        state.IsPoland = get(payload, 'Data.IsPoland', false)
       });
   },
   reducers: {

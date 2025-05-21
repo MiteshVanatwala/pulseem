@@ -13,7 +13,6 @@ import { getPackagesDetails } from '../../../../redux/reducers/dashboardSlice'
 import { WhiteLabelObject } from '../../../../components/WhiteLabel/WhiteLabelMigrate'
 import AddCardDialog from '../../../../components/AddCardDialog/AddCardDialog'
 import PayPerRecipient from '../../../../components/PayPerRecipient/PayPerRecipient'
-import { POLISH_ZLOTY_CURRENCY_ID } from '../../../../helpers/Constants'
 
 const NoCreditDialog = ({
     classes,
@@ -22,7 +21,7 @@ const NoCreditDialog = ({
     onCancel }) => {
     const { t } = useTranslation()
     const { isRTL } = useSelector(state => state.core)
-    const { accountSettings, subAccount, isGlobal, currencyId } = useSelector(state => state.common)
+    const { accountSettings, subAccount, isGlobal, IsPoland } = useSelector(state => state.common)
     const [ isOpenPackageDialog, setIsOpenPackageDialog ] = useState(false);
     const [ isAllowedToPurchase, setIsAllowedToPurchase ] = useState(false);
     const [ isOpenPayPerRecipient, setIsOpenPayPerRecipient ] = useState(false);
@@ -129,7 +128,7 @@ const NoCreditDialog = ({
                             variant='contained'
                             size='small'
                             onClick={() => { 
-                                if (isGlobal === true && currencyId === POLISH_ZLOTY_CURRENCY_ID) {
+                                if (isGlobal === true && IsPoland) {
                                     setIsOpenPayPerRecipient(true);
                                 }
                                 else {

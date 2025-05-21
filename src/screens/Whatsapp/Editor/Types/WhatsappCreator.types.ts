@@ -143,6 +143,7 @@ export type CommonRedux = {
 	WhatsAppPlatformID?: number | null
 	TierData?: any;
 	currencyId?: number;
+	IsPoland?: boolean;
 };
 
 export type actionButtonProps = {

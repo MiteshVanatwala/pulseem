@@ -18,7 +18,6 @@ import { sitePrefix } from '../../config';
 import { WhiteLabelObject } from '../WhiteLabel/WhiteLabelMigrate';
 import { MdVoiceChat } from "react-icons/md";
 import { URLS } from '../../config/enum';
-import { POLISH_ZLOTY_CURRENCY_ID } from '../../helpers/Constants';
 import AddCardDialog from '../AddCardDialog/AddCardDialog';
 import UnsubscribePayPerRecipient from '../PayPerRecipient/UnsubscribePayPerRecipient';
 import Toast from '../Toast/Toast.component';
@@ -27,7 +26,7 @@ import { BiCog } from 'react-icons/bi';
 
 const BulkStatus = ({ classes }) => {
   const { billingTypeId, windowSize, isRTL } = useSelector(state => state.core)
-  const { accountSettings, accountFeatures, isGlobal, currencyId } = useSelector(state => state.common);
+  const { accountSettings, accountFeatures, isGlobal, IsPoland } = useSelector(state => state.common);
   const { packagesDetails, accountAvailablePackages } = useSelector(state => state.dashboard);
   const [ isOpenPackageDialog, setIsOpenPackageDialog ] = useState(false);
   const [ isOpenAddCardDialog, setIsOpenAddCardDialog ] = useState(false);
@@ -85,10 +84,10 @@ const BulkStatus = ({ classes }) => {
       let dialog = {};
       let availablePack = null;
 
-      if (selectedPackageType?.isPoland && isGlobal === true && currencyId === POLISH_ZLOTY_CURRENCY_ID) {
+      if (selectedPackageType?.isPoland && isGlobal === true && IsPoland) {
         dialog = Newsletters.IsEmailPolandSubscribed ? renderUnsubscribePayPerRecipientPolandDialog() : renderSubscribePayPerRecipientPolandDialog();
       } else {
-        if (currencyId !== POLISH_ZLOTY_CURRENCY_ID && (accountSettings.Account.IsBillingAccount === false || selectedPackageType.type === -1 || !accountSettings.Account?.IsPaying)) {
+        if (!IsPoland && (accountSettings.Account.IsBillingAccount === false || selectedPackageType.type === -1 || !accountSettings.Account?.IsPaying)) {
           dialog = renderBillingSupportDialog();
         }
         else {
@@ -221,17 +220,17 @@ const BulkStatus = ({ classes }) => {
     return Sms?.FeatureAllowed && billingTypeId !== "1" && Sms.eBillingType === 0 && accountAvailablePackages.length > 0;
   }
   const isAllowNewsletter = () => {
-    return Newsletters?.FeatureAllowed && accountFeatures && accountFeatures?.indexOf(PulseemFeatures.PURCHASE_NEWSLETTER_PACKAGES) > -1 && billingTypeId !== "1" && Newsletters.eBillingType === 0 && accountAvailablePackages.length > 0 && currencyId !== POLISH_ZLOTY_CURRENCY_ID;
+    return Newsletters?.FeatureAllowed && accountFeatures && accountFeatures?.indexOf(PulseemFeatures.PURCHASE_NEWSLETTER_PACKAGES) > -1 && billingTypeId !== "1" && Newsletters.eBillingType === 0 && accountAvailablePackages.length > 0 && !IsPoland;
   }
 
   const isAllowNewsletterForPoland = () => {
-    return Newsletters?.FeatureAllowed && accountFeatures && accountFeatures?.indexOf(PulseemFeatures.PURCHASE_NEWSLETTER_PACKAGES) > -1 && billingTypeId !== "1" && isGlobal === true && currencyId === POLISH_ZLOTY_CURRENCY_ID;
+    return Newsletters?.FeatureAllowed && accountFeatures && accountFeatures?.indexOf(PulseemFeatures.PURCHASE_NEWSLETTER_PACKAGES) > -1 && billingTypeId !== "1" && isGlobal === true && IsPoland;
   }
 
   const showPackageDialogType = async (packageType) => {
     const settings = await dispatch(getCommonFeatures({ forceRequest: true }));
     if (!settings?.payload?.Data?.Account?.IsPaying) {
-      packageType = currencyId !== POLISH_ZLOTY_CURRENCY_ID ? { type: -1, title: '' } : { type: 3, title: t('common.smsBulkTitle') };
+      packageType = !IsPoland ? { type: -1, title: '' } : { type: 3, title: t('common.smsBulkTitle') };
       setPackageType(packageType);
     }
     else {
@@ -252,7 +251,7 @@ const BulkStatus = ({ classes }) => {
     return null;
   }
 
-  if (isGlobal === true && currencyId !== POLISH_ZLOTY_CURRENCY_ID) return <></>;
+  if (isGlobal === true && !IsPoland) return <></>;
 
   return (
     <>

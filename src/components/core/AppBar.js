@@ -22,7 +22,6 @@ import { BsGlobe2 } from 'react-icons/bs';
 import { sitePrefix } from '../../config';
 import PulseemNewLogo from '../../assets/images/PulseemNewLogo';
 import { get } from 'lodash';
-import { POLISH_ZLOTY_CURRENCY_ID } from '../../helpers/Constants';
 
 const AppBarItem = ({
   item,
@@ -147,12 +146,11 @@ const returnToMainAccount = () => {
 }
 const LanguageSelector = ({ windowSize, classes }) => {
   const cookieData = getCookie('Culture');
-  const { isGlobal, currencyId } = useSelector(state => state.common);
-  const isPolandAccount = isGlobal === true && currencyId === POLISH_ZLOTY_CURRENCY_ID;
+  const { IsPoland } = useSelector(state => state.common);
   let language = !!cookieData
                       ? cookieData 
-                      : (isPolandAccount ? 'en-US' : 'he-IL');
-  if (language === 'he-IL' && isPolandAccount) language = 'en-US';
+                      : (IsPoland ? 'en-US' : 'he-IL');
+  if (language === 'he-IL' && IsPoland) language = 'pl-PL';
   
   const dispatch = useDispatch();
   const languages = [
@@ -176,7 +174,7 @@ const LanguageSelector = ({ windowSize, classes }) => {
     }
   ]
 
-  if (isPolandAccount) {
+  if (IsPoland) {
     languages.shift();
   }
 

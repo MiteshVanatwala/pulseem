@@ -7,12 +7,11 @@ import { CardIcon } from '../../assets/images/dashboard/index'
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import GlobalBalancePaymentWizard from './GlobalBalancePaymentWizard';
 import { GetGlobalAccountPackagesDetails } from '../../redux/reducers/commonSlice';
-import { POLISH_ZLOTY_CURRENCY_ID } from '../../helpers/Constants';
 
 const GlobalBalance = ({ classes }: any) => {
   const { isRTL } = useSelector((state: any) => state.core)
   const dispatch: any = useDispatch();
-  const { accountIsCurrencySymbolPrefix, accountCurrencySymbol, finalGlobalBalance, isGlobal, currencyId } = useSelector((state: any) => state.common)
+  const { accountIsCurrencySymbolPrefix, accountCurrencySymbol, finalGlobalBalance, isGlobal, IsPoland } = useSelector((state: any) => state.common)
   const { t } = useTranslation();
   const [dialogType, setDialogType] = useState<{
     type: string;
@@ -24,7 +23,7 @@ const GlobalBalance = ({ classes }: any) => {
   }, [])
 
   if (isGlobal === false) return <></>;
-  else if (isGlobal === true && currencyId === POLISH_ZLOTY_CURRENCY_ID) return <></>;
+  else if (isGlobal === true && IsPoland) return <></>;
 
   return (
     <>
