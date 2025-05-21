@@ -1,3 +1,10 @@
+export interface AITemplateCreatorProps {
+  classes: any,
+  campaignId: any;
+  onUpdate: (status: string, templateData?: any) => void;
+  onRestore: (templateData?: any) => void;
+}
+
 export interface AnthropicUserRequest {
   campaignId: any;
   maxToken?: number | null;

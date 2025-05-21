@@ -1,30 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import {
-  Box,
-  TextField,
-  Typography,
-  Button,
-  Paper,
-  Grid,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  // Select,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  FormControl,
-  Tooltip,
-  makeStyles
-} from '@material-ui/core';
+import { Box, TextField, Typography, Button, Paper, Grid, Dialog, DialogTitle, DialogContent, Accordion, AccordionSummary, AccordionDetails, FormControl, Tooltip, makeStyles } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import RestoreIcon from '@material-ui/icons/Restore';
-import {
-  CloudUpload as CloudUploadIcon,
-  Close as CloseIcon,
-  Palette as PaletteIcon
-} from '@material-ui/icons';
-import { AnthropicDetailedLog, AnthropicFileItem, AnthropicHistoryLog, AnthropicUserRequest } from '../../../Models/AI/Anthropic';
+import { CloudUpload as CloudUploadIcon, Close as CloseIcon, Palette as PaletteIcon } from '@material-ui/icons';
+import { AITemplateCreatorProps, AnthropicDetailedLog, AnthropicFileItem, AnthropicHistoryLog, AnthropicUserRequest } from '../../../Models/AI/Anthropic';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { continueConversation, getHistoryRequests, getRequestDetails, requestTemplate, restoreConversationDesign } from '../../../redux/reducers/AISlice';
@@ -38,18 +17,10 @@ import { FileGallery } from '../../../Models/Files/FileGallery';
 import { RandomID } from '../../../helpers/Functions/functions';
 import PulseemColorPickerUI from '../../../components/Controlls/PulseemColorPickerUI';
 import Toast from '../../../components/Toast/Toast.component';
-// import { StateType } from '../../../Models/StateTypes';
 import moment from 'moment'
 import { RiChatAiLine } from 'react-icons/ri';
 import { PulseemResponse } from '../../../Models/APIResponse';
 import { logout } from '../../../helpers/Api/PulseemReactAPI';
-
-interface AITemplateCreatorProps {
-  classes: any,
-  campaignId: any;
-  onUpdate: (status: string, templateData?: any) => void;
-  onRestore: (templateData?: any) => void;
-}
 
 const useTooltipStyles = makeStyles((theme) => ({
   tooltip: {
@@ -75,7 +46,6 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const tooltipClasses = useTooltipStyles();
-  // const { isRTL } = useSelector((state: StateType) => state.core);
   const { ToastMessages } = useSelector((state: any) => state?.Ai);
   const [submitDisabled, setSubmitDisabled] = useState<boolean>(true);
   const [showDocs, setShowDocuments] = useState<boolean>(false);
@@ -94,10 +64,12 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
     TotalPrice: 0
   }]);
   const [isEditing, setIsEditing] = useState<boolean>(false);
-  const [originalResponse, setOriginalResponse] = useState<string>('');
-  const [selectedLogDetails, setSelectedLogDetails] = useState<AnthropicDetailedLog | null>(null);
   const [selectedHistoryId, setSelectedHistoryId] = useState<string>('');
   const [mostRecentHistory, setMostRecentHistory] = useState<AnthropicHistoryLog | null>(null);
+  const [colorDialogOpen, setColorDialogOpen] = useState(false);
+  const [historyExpanded, setHistoryExpanded] = useState<boolean>(false);
+  const [optionsExpanded, setOptionsExpanded] = useState<boolean>(false);
+  const [tipsExpanded, setTipsExpanded] = useState<boolean>(false);
   const [model, setModel] = useState<AnthropicUserRequest & {
     selectedColors?: Array<{ name: string, value: string, hex: string }>
   }>({
@@ -108,16 +80,10 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
     selectedColors: []
   });
 
-  // State for color dialog
-  const [colorDialogOpen, setColorDialogOpen] = useState(false);
-  const [historyExpanded, setHistoryExpanded] = useState<boolean>(false);
+  useEffect(() => {
+    initHistoryRequests();
+  }, []);
 
-  // New state for options and tips accordions
-  const [optionsExpanded, setOptionsExpanded] = useState<boolean>(false);
-  const [tipsExpanded, setTipsExpanded] = useState<boolean>(false);
-
-
-  // Function to scroll to the aiContainer
   const scrollToAiContainer = () => {
     const element = document.getElementById('ai-container');
     if (element) {
@@ -146,7 +112,6 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
     });
   };
 
-  // Color palette handlers
   const handleColorDialogOpen = () => {
     setColorDialogOpen(true);
   };
@@ -167,11 +132,8 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
     return null;
   }
 
-  useEffect(() => {
-    initHistoryRequests();
-  }, [])
-
   const initHistoryRequests = async () => {
+    dispatch(setIsLoader(true));
     const response = await dispatch(getHistoryRequests(campaignId)) as any;
     if (response && response.payload?.StatusCode === 201) {
       const historyData: AnthropicHistoryLog[] = response?.payload?.Data;
@@ -185,16 +147,13 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
 
       setHistory(sortedHistory);
 
-      // Set the most recent history item
       if (sortedHistory.length > 0 && sortedHistory[0].AnthropicRequestId) {
         setMostRecentHistory(sortedHistory[0]);
         setSelectedHistoryId(sortedHistory[0].AnthropicRequestId || '');
-
-        // Optionally load the most recent template automatically
-        //handleLogSelection(sortedHistory[0].AnthropicRequestId || '');
       }
       scrollToAiContainer();
     }
+    dispatch(setIsLoader(false));
   }
 
   const handleLogSelection = async (anthropicRequestId: string) => {
@@ -207,20 +166,12 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
 
     setIsEditing(true);
 
-    // Get detailed information
     const response = await dispatch(getRequestDetails(anthropicRequestId)) as any;
     if (response && response.payload?.StatusCode === 201) {
-      const details: AnthropicDetailedLog = response.payload.Data;
-      setSelectedLogDetails(details);
-
-      // Set original message and response
-      setOriginalResponse(details.Response || '');
-
-      // Update model with continuationId
       setModel({
         ...model,
         continuationId: anthropicRequestId,
-        messageRequest: '' // Clear the message for new instructions
+        messageRequest: ''
       });
     }
     initHistoryRequests();
@@ -229,8 +180,6 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
 
   const handleRestoreDesign = async (anthropicRequestId: string) => {
     const response = await dispatch(restoreConversationDesign(anthropicRequestId)) as any;
-    // response.payload.Data 
-    // call reload bee
     const { StatusCode, Data }: PulseemResponse = response.payload;
     switch (StatusCode) {
       case 201: {
@@ -257,8 +206,6 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Create request model
     const requestModel: AnthropicUserRequest = {
       campaignId: model.campaignId,
       maxToken: model.maxToken,
@@ -270,7 +217,6 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
       requestModel.messageRequest += `\n\n${t('colorPalette.selectedColors')}: ${colors.map(c => c).join(', ')}`;
     }
 
-    // If in editing mode, use continuation endpoint
     if (isEditing && model.continuationId) {
       requestModel.continuationId = model.continuationId;
 
@@ -284,7 +230,6 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
         setToastMessage(ToastMessages.RESPONSES[response?.payload?.StatusCode]);
       }
     } else {
-      // Original behavior for new requests
       dispatch(setIsLoader(true));
       const response: any = await dispatch(requestTemplate(requestModel));
       dispatch(setIsLoader(false));
@@ -449,7 +394,6 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
                         </Box>
                       </Box>
                     ))}
-                  {/* </RadioGroup> */}
                 </FormControl>
               </AccordionDetails>
             </Accordion>
