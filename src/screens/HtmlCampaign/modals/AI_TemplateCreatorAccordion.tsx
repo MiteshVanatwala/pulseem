@@ -6,7 +6,7 @@ import { CloudUpload as CloudUploadIcon, Close as CloseIcon, Palette as PaletteI
 import { AITemplateCreatorProps, AnthropicDetailedLog, AnthropicFileItem, AnthropicHistoryLog, AnthropicUserRequest } from '../../../Models/AI/Anthropic';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
-import { continueConversation, getHistoryRequests, getRequestDetails, requestTemplate, restoreConversationDesign } from '../../../redux/reducers/AISlice';
+import { continueConversation, getHistoryRequests, getRequestDetails, requestTemplate, resetSession, restoreConversationDesign } from '../../../redux/reducers/AISlice';
 import { setIsLoader } from '../../../redux/reducers/coreSlice';
 import clsx from 'clsx';
 import Gallery from '../../../components/Gallery/Gallery.component';
@@ -21,6 +21,8 @@ import moment from 'moment'
 import { RiChatAiLine } from 'react-icons/ri';
 import { PulseemResponse } from '../../../Models/APIResponse';
 import { logout } from '../../../helpers/Api/PulseemReactAPI';
+import { ResetIcon } from '../../../assets/images/managment';
+import { AiOutlineWechatWork } from 'react-icons/ai';
 
 const useTooltipStyles = makeStyles((theme) => ({
   tooltip: {
@@ -281,6 +283,11 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
     setShowGallery(false);
   }
 
+  const resetChatSession = async () => {
+    await dispatch(resetSession(campaignId));
+    initHistoryRequests()
+  }
+
   return (
     <Box className={classes.aiContainer} id="ai-container">
       {history?.length > 0 && <Box>
@@ -411,7 +418,7 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
           variant="outlined"
           value={model.messageRequest}
           onChange={handleTextChange}
-          placeholder={isEditing
+          placeholder={history.length > 0
             ? t('AI.popup.editPlaceholder')
             : t('AI.popup.placeholder')}
           InputProps={{
@@ -617,13 +624,21 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
         </Accordion>
 
         {/* Submit button */}
-        <Box display="flex" justifyContent="flex-end">
+        <Box display="flex" justifyContent={history.length > 1 ? "space-between" : "flex-end"}>
+          {history.length > 1 && <Button
+            className={clsx(classes.submitButton)}
+            endIcon={<AiOutlineWechatWork />}
+            onClick={() => {
+              resetChatSession();
+            }}
+          >{t('AI.popup.resetChat')}
+          </Button>}
           <Button
             type="submit"
             className={clsx(classes.submitButton, submitDisabled && classes.disabled)}
             endIcon={<span>✨</span>}
           >
-            {isEditing
+            {history.length > 1
               ? t('AI.popup.updateDesign')
               : t('AI.popup.createDesign')}
           </Button>

@@ -3,7 +3,7 @@
     "title": "Create a designed template using artificial intelligence",
     "placeholder": "Describe the desired newsletter style (for example: \"Summer sale - colorful and playful, 3 product blocks, large call-to-action button)\"",
     "historyRequests": "Previous Prompt",
-    "lastPromopSubTitle":"The design process will continue from this point",
+    "lastPromopSubTitle": "The design process will continue from this point",
     "tips": {
       "title": "Details for better results",
       "toneTitle": "Define the tone",
@@ -25,10 +25,11 @@
     "noMessageAvailable": "No Message Available",
     "olderTemplates": "Show History",
     "noOlderTemplates": "No older messages",
-    "tooltip":{
+    "tooltip": {
       "continuePrompt": "The design process will continue from this point",
       "loadTemplate": "The editor will load the result you received for this prompt"
-    }
+    },
+    "resetChat": "Restart Session"
   },
   "responses": {
     "201": "Success",

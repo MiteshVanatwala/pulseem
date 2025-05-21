@@ -63,6 +63,19 @@ export const restoreConversationDesign = createAsyncThunk(
     }
 );
 
+export const resetSession = createAsyncThunk(
+    'AI/Anthropic/ResetSession',
+    async (campaignId: number, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.put(`AI/Anthropic/ResetSession/${campaignId}`);
+            return response.data
+        } catch (error) {
+            return console.log(error);
+        }
+    }
+);
+
+
 const AiSlice = createSlice({
     name: 'Ai',
     initialState: {
