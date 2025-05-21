@@ -64,6 +64,7 @@ import { NO_IMAGE_URL } from '../../helpers/Constants';
 import { logout } from '../../helpers/Api/PulseemReactAPI';
 import { UserRoles } from '../../Models/SubUser/SubUsers';
 import AITemplateCreatorAccordion from './modals/AI_TemplateCreatorAccordion';
+import { BsMagic } from 'react-icons/bs';
 
 const CampaignEditor = ({ classes, ...props }) => {
   //#region State
@@ -959,7 +960,8 @@ const CampaignEditor = ({ classes, ...props }) => {
   const AI_Dialog = () => {
     return {
       showDivider: false,
-      title: t("AI.popup.title"),
+      icon: <BsMagic />,
+      title: t("AI.popup.designWithAI"),
       content: (
         <AITemplateCreatorAccordion
           classes={classes}

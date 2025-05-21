@@ -138,6 +138,11 @@ export const BeeAiStyles = (windowSize, isRTL, theme) => ({
   },
   accordionSummary: {
     backgroundColor: theme.palette.grey[100],
+    color: '#000'
+  },
+  accordionSummaryGradient: {
+    background: 'linear-gradient(90deg, rgb(255, 0, 110) 0%, rgb(255, 0, 64) 25.0%, rgb(255, 77, 42) 100%)',
+    color: '#fff'
   },
   accordionTitle: {
     fontWeight: 500,

@@ -23,6 +23,7 @@ import { PulseemResponse } from '../../../Models/APIResponse';
 import { logout } from '../../../helpers/Api/PulseemReactAPI';
 import { ResetIcon } from '../../../assets/images/managment';
 import { AiOutlineWechatWork } from 'react-icons/ai';
+import { MdHistory, MdOutlineSettingsSuggest, MdTipsAndUpdates } from 'react-icons/md';
 
 const useTooltipStyles = makeStyles((theme) => ({
   tooltip: {
@@ -152,6 +153,8 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
       if (sortedHistory.length > 0 && sortedHistory[0].AnthropicRequestId) {
         setMostRecentHistory(sortedHistory[0]);
         setSelectedHistoryId(sortedHistory[0].AnthropicRequestId || '');
+        setIsEditing(true);
+        setModel({ ...model, continuationId: sortedHistory[0].AnthropicRequestId });
       }
       scrollToAiContainer();
     }
@@ -292,9 +295,6 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
     <Box className={classes.aiContainer} id="ai-container">
       {history?.length > 0 && <Box>
         <Typography className={clsx(classes.newFeatureTitle, classes.font18)}>
-          {t('AI.popup.historyRequests')}
-        </Typography>
-        <Typography className={clsx(classes.font14)}>
           {t('AI.popup.lastPromopSubTitle')}
         </Typography>
         <Box className={classes.mb10}>
@@ -317,20 +317,23 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
           )}
 
           {/* Older templates in accordion */}
-          {history.length > 1 ? (
+          {history.length >= 1 ? (
             <Accordion defaultExpanded={false} expanded={historyExpanded}>
               <AccordionSummary
                 onClick={() => {
                   setHistoryExpanded(!historyExpanded)
                 }}
-                expandIcon={<ExpandMoreIcon />}
+                expandIcon={<ExpandMoreIcon style={{ color: '#000' }} />}
                 aria-controls="history-content"
                 id="history-header"
                 className={classes.accordionSummary}
               >
-                <Typography className={classes.accordionTitle}>
-                  {t('AI.popup.olderTemplates')} ({history.length - 1})
-                </Typography>
+                <Box className={clsx(classes.dFlex, classes.alignItemsCenter)}>
+                  <MdHistory style={{ color: '#000', marginInlineEnd: 15, fontSize: 26 }} />
+                  <Typography className={classes.accordionTitle}>
+                    {t('AI.popup.olderTemplates')} ({history.length - 1})
+                  </Typography>
+                </Box>
               </AccordionSummary>
               <AccordionDetails className={classes.accordionDetails}>
                 <FormControl component="fieldset" className={classes.fullWidth}>
@@ -430,14 +433,17 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
         <Accordion defaultExpanded={false} expanded={optionsExpanded} className={classes.mb10}>
           <AccordionSummary
             onClick={() => setOptionsExpanded(!optionsExpanded)}
-            expandIcon={<ExpandMoreIcon />}
+            expandIcon={<ExpandMoreIcon style={{ color: '#fff' }} />}
             aria-controls="options-content"
             id="options-header"
-            className={classes.accordionSummary}
+            className={classes.accordionSummaryGradient}
           >
-            <Typography className={classes.accordionTitle}>
-              {t('common.AdvancedSettings')}
-            </Typography>
+            <Box className={clsx(classes.dFlex, classes.alignItemsCenter)}>
+              <MdOutlineSettingsSuggest style={{ color: '#fff', marginInlineEnd: 15, fontSize: 26 }} />
+              <Typography className={classes.accordionTitle}>
+                {t('common.AdvancedSettings')}
+              </Typography>
+            </Box>
           </AccordionSummary>
           <AccordionDetails className={classes.accordionDetails}>
             <Paper className={classes.optionBox} elevation={0} style={{ marginBottom: '16px' }}>
@@ -558,14 +564,17 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
         <Accordion defaultExpanded={false} expanded={tipsExpanded} className={classes.mb10}>
           <AccordionSummary
             onClick={() => setTipsExpanded(!tipsExpanded)}
-            expandIcon={<ExpandMoreIcon />}
+            expandIcon={<ExpandMoreIcon style={{ color: '#fff' }} />}
             aria-controls="tips-content"
             id="tips-header"
-            className={classes.accordionSummary}
+            className={classes.accordionSummaryGradient}
           >
-            <Typography className={classes.accordionTitle}>
-              {t('AI.popup.tips.title')}
-            </Typography>
+            <Box className={clsx(classes.dFlex, classes.alignItemsCenter)}>
+              <MdTipsAndUpdates style={{ color: '#fff', marginInlineEnd: 15, fontSize: 26 }} />
+              <Typography className={classes.accordionTitle}>
+                {t('AI.popup.tips.title')}
+              </Typography>
+            </Box>
           </AccordionSummary>
           <AccordionDetails className={classes.accordionDetails}>
             <Paper className={classes.optionBox} elevation={0}>
@@ -624,13 +633,14 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
         </Accordion>
 
         {/* Submit button */}
-        <Box display="flex" justifyContent={history.length > 1 ? "space-between" : "flex-end"}>
-          {history.length > 1 && <Button
+        <Box display="flex" justifyContent={history.length >= 1 ? "space-between" : "flex-end"}>
+          {history.length >= 1 && <Button
             className={clsx(classes.submitButton)}
             endIcon={<AiOutlineWechatWork />}
             onClick={() => {
               resetChatSession();
             }}
+            style={{ backgroundColor: "rgb(255, 77, 42)" }}
           >{t('AI.popup.resetChat')}
           </Button>}
           <Button
@@ -638,7 +648,7 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
             className={clsx(classes.submitButton, submitDisabled && classes.disabled)}
             endIcon={<span>✨</span>}
           >
-            {history.length > 1
+            {history.length >= 1
               ? t('AI.popup.updateDesign')
               : t('AI.popup.createDesign')}
           </Button>
