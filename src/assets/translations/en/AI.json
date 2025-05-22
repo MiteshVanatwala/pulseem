@@ -30,7 +30,9 @@
       "continuePrompt": "The design process will continue from this point",
       "loadTemplate": "The editor will load the result you received for this prompt"
     },
-    "resetChat": "Restart Session"
+    "resetChat": "Restart Session",
+    "resetChatConfirmation": "This action will clear all previous instructions and start a new design session.<br/>The current instructions cannot be recovered.",
+    "loadTemplateConfirmation": "Loading this template will overwrite your current design.<br/>The design process will continue from the selected point."
   },
   "responses": {
     "201": "Success",

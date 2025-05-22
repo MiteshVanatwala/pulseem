@@ -21,9 +21,10 @@ import moment from 'moment'
 import { RiChatAiLine } from 'react-icons/ri';
 import { PulseemResponse } from '../../../Models/APIResponse';
 import { logout } from '../../../helpers/Api/PulseemReactAPI';
-import { ResetIcon } from '../../../assets/images/managment';
 import { AiOutlineWechatWork } from 'react-icons/ai';
 import { MdHistory, MdOutlineSettingsSuggest, MdTipsAndUpdates } from 'react-icons/md';
+import DynamicConfirmDialog from '../../../components/DialogTemplates/DynamicConfirmDialog';
+import { DynamicContentProps } from '../../../components/DialogTemplates/Types/Dialog';
 
 const useTooltipStyles = makeStyles((theme) => ({
   tooltip: {
@@ -73,6 +74,18 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
   const [historyExpanded, setHistoryExpanded] = useState<boolean>(false);
   const [optionsExpanded, setOptionsExpanded] = useState<boolean>(false);
   const [tipsExpanded, setTipsExpanded] = useState<boolean>(false);
+  const [showConfirmPopUp, setShowConfirmPopup] = useState<boolean>(false);
+  const [confirmDialog, setConfirmDialog] = useState<DynamicContentProps | null | any>({
+    confirmButtonText: '',
+    cancelButtonText: 'common.cancel',
+    classes: classes,
+    isOpen: false,
+    onCancel: () => null,
+    onClose: () => null,
+    onConfirm: () => null,
+    text: '',
+    title: t('mainReport.confirmSure')
+  });
   const [model, setModel] = useState<AnthropicUserRequest & {
     selectedColors?: Array<{ name: string, value: string, hex: string }>
   }>({
@@ -206,7 +219,7 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
         break;
       }
     }
-    console.log(anthropicRequestId);
+    setShowConfirmPopup(false);
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -288,7 +301,50 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
 
   const resetChatSession = async () => {
     await dispatch(resetSession(campaignId));
-    initHistoryRequests()
+    initHistoryRequests();
+    setShowConfirmPopup(false);
+  }
+
+  const handleConfirmDialog = (type: string, requestId: string) => {
+    let dialog: DynamicContentProps = { ...confirmDialog };
+
+    const restartChatObj: DynamicContentProps = {
+      ...confirmDialog,
+      isOpen: true,
+      classes: classes,
+      onConfirm: () => resetChatSession(),
+      text: t('AI.popup.resetChatConfirmation'),
+      onClose: () => setShowConfirmPopup(false),
+      onCancel: () => setShowConfirmPopup(false)
+    }
+    const loadTemplateObj: DynamicContentProps = {
+      ...confirmDialog,
+      isOpen: true,
+      classes: classes,
+      onClose: () => setShowConfirmPopup(false),
+      onCancel: () => setShowConfirmPopup(false),
+      text: t('AI.popup.loadTemplateConfirmation'),
+      onConfirm: () => handleRestoreDesign(requestId || '')
+    }
+
+    switch (type) {
+      case 'restartChat': {
+        dialog = restartChatObj;
+        break;
+      }
+      case 'loadTemplate': {
+        dialog = loadTemplateObj
+        break;
+      }
+      default: {
+        setConfirmDialog(null);
+        setShowConfirmPopup(false);
+        return false;
+      }
+    }
+
+    setConfirmDialog(dialog);
+    setShowConfirmPopup(true);
   }
 
   return (
@@ -386,8 +442,8 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
                                 variant="outlined"
                                 color="secondary"
                                 startIcon={<RestoreIcon />}
-                                onClick={(e: any) => {
-                                  handleRestoreDesign(log.AnthropicRequestId || '')
+                                onClick={() => {
+                                  handleConfirmDialog('loadTemplate', log.AnthropicRequestId || '');
                                 }}
                                 className={classes.revertButton}
                               >
@@ -638,7 +694,7 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
             className={clsx(classes.submitButton)}
             endIcon={<AiOutlineWechatWork />}
             onClick={() => {
-              resetChatSession();
+              handleConfirmDialog('restartChat', '');
             }}
             style={{ backgroundColor: "rgb(255, 77, 42)" }}
           >{t('AI.popup.resetChat')}
@@ -677,60 +733,68 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
           </Box>
         </DialogContent>
       </Dialog>
-      {showGallery && (
-        <BaseDialog
-          showDivider={false}
-          maxHeight="calc(70vh)"
-          disableBackdropClick={true}
-          style={{ minHeight: 400 }}
-          classes={classes}
-          open={showGallery}
-          onClose={() => { setShowGallery(false); }}
-          onCancel={() => { setShowGallery(false); }}
-          onConfirm={(x: any) => { handleGalleryConfirm(); }}
-          icon={<IoMdImages />}
-          title={t("common.imageGallery")}
-        >
-          <Gallery
+      {showConfirmPopUp && <DynamicConfirmDialog
+        {...confirmDialog}
+        isOpen={true}
+      />}
+      {
+        showGallery && (
+          <BaseDialog
+            showDivider={false}
+            maxHeight="calc(70vh)"
+            disableBackdropClick={true}
+            style={{ minHeight: 400 }}
             classes={classes}
-            //@ts-ignore
-            style={{ minWidth: 400 }}
-            multiSelect={false}
-            forceReload={true}
-            folderType={PulseemFolderType.CLIENT_IMAGES}
-            isConfirm={isGalleryConfirmed}
-            callbackSelectFile={(fileUrl: string) => handleSelectedFile(fileUrl, 'image')}
-          />
-        </BaseDialog>
-      )}
+            open={showGallery}
+            onClose={() => { setShowGallery(false); }}
+            onCancel={() => { setShowGallery(false); }}
+            onConfirm={(x: any) => { handleGalleryConfirm(); }}
+            icon={<IoMdImages />}
+            title={t("common.imageGallery")}
+          >
+            <Gallery
+              classes={classes}
+              //@ts-ignore
+              style={{ minWidth: 400 }}
+              multiSelect={false}
+              forceReload={true}
+              folderType={PulseemFolderType.CLIENT_IMAGES}
+              isConfirm={isGalleryConfirmed}
+              callbackSelectFile={(fileUrl: string) => handleSelectedFile(fileUrl, 'image')}
+            />
+          </BaseDialog>
+        )
+      }
 
-      {showDocs && (
-        <BaseDialog
-          maxHeight="calc(70vh)"
-          disableBackdropClick={true}
-          style={{ minHeight: 400 }}
-          showDivider={false}
-          classes={classes}
-          open={showDocs}
-          onClose={() => { setShowDocuments(false); }}
-          onCancel={() => { setShowDocuments(false); }}
-          onConfirm={(x: any) => { handleGalleryConfirm(); }}
-          title={t("common.documentGallery")}
-        >
-          <Gallery
+      {
+        showDocs && (
+          <BaseDialog
+            maxHeight="calc(70vh)"
+            disableBackdropClick={true}
+            style={{ minHeight: 400 }}
+            showDivider={false}
             classes={classes}
-            //@ts-ignore
-            style={{ minWidth: 400 }}
-            multiSelect={false}
-            forceReload={true}
-            folderType={PulseemFolderType.DOCUMENT}
-            isConfirm={isGalleryConfirmed}
-            callbackSelectFile={(fileUrl: string) => handleSelectedFile(fileUrl, 'document')}
-          />
-        </BaseDialog>
-      )}
+            open={showDocs}
+            onClose={() => { setShowDocuments(false); }}
+            onCancel={() => { setShowDocuments(false); }}
+            onConfirm={(x: any) => { handleGalleryConfirm(); }}
+            title={t("common.documentGallery")}
+          >
+            <Gallery
+              classes={classes}
+              //@ts-ignore
+              style={{ minWidth: 400 }}
+              multiSelect={false}
+              forceReload={true}
+              folderType={PulseemFolderType.DOCUMENT}
+              isConfirm={isGalleryConfirmed}
+              callbackSelectFile={(fileUrl: string) => handleSelectedFile(fileUrl, 'document')}
+            />
+          </BaseDialog>
+        )
+      }
       {renderToast()}
-    </Box>
+    </Box >
   );
 };
 
