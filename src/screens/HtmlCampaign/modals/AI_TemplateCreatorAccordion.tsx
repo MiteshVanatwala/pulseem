@@ -473,7 +473,7 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
         <TextField
           className={classes.textArea}
           multiline
-          rows={2}
+          rows={3}
           variant="outlined"
           value={model.messageRequest}
           onChange={handleTextChange}
