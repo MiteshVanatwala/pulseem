@@ -9,13 +9,14 @@ import { setLanguage } from "../../redux/reducers/coreSlice";
 import { IoIosArrowDown } from 'react-icons/io';
 import EnImage from '../../assets/images/british.svg';
 import IsraelImage from "../../assets/images/israel-flag-icon.svg";
+import PolandImage from "../../assets/images/poland-flag-icon.svg";
 import { setCookie } from '../../helpers/Functions/cookies';
 import i18n from '../../i18n';
 
 const SharedAppBar = ({ classes, title }: any) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const { windowSize, isRTL } = useSelector((state: StateType) => state.core);
+  const { windowSize, isRTL, language } = useSelector((state: StateType) => state.core);
 
   const changeLanguage = (value: any) => {
     setCookie('Culture', `${value}-${value === 'he' ? 'IL' : 'US'}`);
@@ -42,7 +43,7 @@ const SharedAppBar = ({ classes, title }: any) => {
         <FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.SignUpLanguageDropdown, classes.bgWhite)}>
           <Select
             variant="standard"
-            value={isRTL ? 'he' : 'en'}
+            value={language}
             name='TwoFactorAuthOptionID'
             onChange={(e: SelectChangeEvent) => changeLanguage(e.target.value)}
             IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} style={{ right: isRTL ? 15 : 'auto', left: isRTL ? 'auto' : 15 }} />}
@@ -65,6 +66,11 @@ const SharedAppBar = ({ classes, title }: any) => {
             <MenuItem value={'en'} className={clsx(classes.SignUpLanguageDropdown, classes.cursorPointer)}>
               <img width={35} src={EnImage} alt={t('languages.langCodes.english')} />
               <label>{t('languages.langCodes.english')}</label>
+            </MenuItem>
+            
+            <MenuItem value={'pl'} className={clsx(classes.SignUpLanguageDropdown, classes.cursorPointer)}>
+              <img width={35} src={PolandImage} alt={t('languages.langCodes.polish')} />
+              <label>{t('languages.langCodes.polish')}</label>
             </MenuItem>
           </Select>
         </FormControl>

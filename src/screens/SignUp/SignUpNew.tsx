@@ -32,7 +32,7 @@ import { isValidPhoneNumber } from "libphonenumber-js";
 
 const SignUpNew = ({ classes }: any) => {
   const dispatch = useDispatch();
-  const { windowSize, isRTL } = useSelector((state: StateType) => state.core);
+  const { windowSize, isRTL, language } = useSelector((state: StateType) => state.core);
   const { t } = useTranslation();
   const [showLoader, setLoader] = useState(false);
   const qs = queryString.parse(window.location.search);
@@ -223,7 +223,9 @@ const SignUpNew = ({ classes }: any) => {
 
   useEffect(() => {
     dispatch(setLanguage(qs?.culture || 'he'));
-    i18n.changeLanguage('he-IL');
+    if (qs?.culture === 'en') i18n.changeLanguage('en-US');
+    else if (qs?.culture === 'he') i18n.changeLanguage('he-IL');
+    else if (qs?.culture === 'pl') i18n.changeLanguage('pl-PL');
 
     getUserInfo();
     if ((qs?.refId && qs?.refId !== '') && ((!qs?.emailid || qs?.emailid === '') || !qs?.id)) {
@@ -234,7 +236,7 @@ const SignUpNew = ({ classes }: any) => {
   }, []);
 
   useEffect(() => {
-    i18n.changeLanguage(isRTL ? 'he-IL' : 'en-US');
+    i18n.changeLanguage(isRTL ? 'he-IL' : (isPolish ? 'pl-PL' : 'en-US'));
   }, [isRTL]);
 
   const renderToast = () => {
@@ -497,7 +499,7 @@ const SignUpNew = ({ classes }: any) => {
       case 201: {
         // for stage
         const newUrl = Data?.RedirectLink.replace('https://www.pulseem.co.il', actionURL?.replace('/Pulseem/', ''));
-        window.location.href = `${newUrl}&refId=${qs?.refId}&culture=${isRTL ? 'he' : (isPolish ? 'pl' : 'en')}`;
+        window.location.href = `${newUrl}&refId=${qs?.refId}&culture=${language}`;
         // for production
         // window.location.href = `${Data?.RedirectLink}&refId=${qs?.refId}`;
         break;
@@ -1005,7 +1007,7 @@ const SignUpNew = ({ classes }: any) => {
       <FormControl variant='standard' className={clsx(classes.SignUpLanguageDropdown, classes.bgWhite, classes.mb10)} style={{ direction: isRTL ? 'ltr' : 'rtl' }}>
         <Select
           variant="standard"
-          value={isRTL ? 'he' : (isPolish ? 'pl' : 'en')}
+          value={language}
           name='TwoFactorAuthOptionID'
           onChange={(e: SelectChangeEvent) => changeLanguage(e.target.value)}
           IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} style={{ right: isRTL ? 'auto' : 10, left: isRTL ? 10 : 'auto' }} />}
@@ -1035,7 +1037,7 @@ const SignUpNew = ({ classes }: any) => {
           </MenuItem>
           
           <MenuItem value={'pl'} className={clsx(classes.SignUpLanguageDropdown, classes.cursorPointer)}>
-            <img width={35} src={PolandImage} alt={t('languages.langCodes.english')} />
+            <img width={35} src={PolandImage} alt={t('languages.langCodes.polish')} />
             <label>{t('languages.langCodes.polish')}</label>
           </MenuItem>
         </Select>

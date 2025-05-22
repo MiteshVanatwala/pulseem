@@ -123,6 +123,7 @@ export type coreProps = {
 	rowsPerPage: string | number;
 	accountFeatures: string;
 	userRoles: any;
+	language?: string;
 };
 
 export type CommonRedux = {

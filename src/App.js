@@ -616,6 +616,11 @@ const App = ({ screenSize }) => {
   const isSignup = isSignupPage(location.pathname);
   const isConfirmationPage = isSubUserConfirmationPage(location.pathname)
 
+  useEffect(() => {
+    const direction = getDirection(i18n.language);
+    document.documentElement.setAttribute('dir', direction);
+  }, []);
+
   React.useEffect(() => {
     !isSignup && !isConfirmationPage && dispatch(getNotificationUpdates());
   }, [location]);
@@ -711,6 +716,10 @@ const App = ({ screenSize }) => {
     !isSignup && !isConfirmationPage && dispatch(GetAfterLoginInitialData());
   }, [dispatch])
 
+  const getDirection = (lang) => {
+    const rtlLanguages = ['ar', 'he', 'fa', 'ur'];
+    return rtlLanguages.includes(lang) ? 'rtl' : 'ltr';
+  };
 
   const theme = getTheme(language)
   const redirect = useNavigate()
