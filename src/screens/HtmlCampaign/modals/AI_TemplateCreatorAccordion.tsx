@@ -25,6 +25,7 @@ import { AiOutlineWechatWork } from 'react-icons/ai';
 import { MdHistory, MdOutlineSettingsSuggest, MdTipsAndUpdates } from 'react-icons/md';
 import DynamicConfirmDialog from '../../../components/DialogTemplates/DynamicConfirmDialog';
 import { DynamicContentProps } from '../../../components/DialogTemplates/Types/Dialog';
+import Templates from './Templates';
 
 const useTooltipStyles = makeStyles((theme) => ({
   tooltip: {
@@ -75,6 +76,7 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
   const [optionsExpanded, setOptionsExpanded] = useState<boolean>(false);
   const [tipsExpanded, setTipsExpanded] = useState<boolean>(false);
   const [showConfirmPopUp, setShowConfirmPopup] = useState<boolean>(false);
+  const [showTemplates, setShowTemplates] = useState<boolean>(false);
   const [confirmDialog, setConfirmDialog] = useState<DynamicContentProps | null | any>({
     confirmButtonText: '',
     cancelButtonText: 'common.cancel',
@@ -93,7 +95,8 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
     maxToken: null,
     messageRequest: '',
     file: null,
-    selectedColors: []
+    selectedColors: [],
+    templateRef: null
   });
 
   useEffect(() => {
@@ -228,7 +231,8 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
       campaignId: model.campaignId,
       maxToken: model.maxToken,
       messageRequest: model.messageRequest,
-      file: model.file
+      file: model.file,
+      templateRef: model.templateRef
     };
 
     if (colors && colors.length > 0) {
@@ -503,8 +507,8 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
           </AccordionSummary>
           <AccordionDetails className={classes.accordionDetails}>
             <Paper className={classes.optionBox} elevation={0} style={{ marginBottom: '16px' }}>
-              <Grid container spacing={2}>
-                {/* File Upload */}
+              <Grid container spacing={1}>
+                {/* Image Gallery */}
                 <Grid item xs={3}>
                   <Typography className={classes.newFeatureTitle}>
                     <span className={classes.icon}>📎</span>
@@ -520,6 +524,7 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
                     </Box>
                   </Button>
                 </Grid>
+                {/* Document Gallery */}
                 <Grid item xs={3}>
                   <Typography className={classes.newFeatureTitle}>
                     <span className={classes.icon}>📎</span>
@@ -535,9 +540,8 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
                     </Box>
                   </Button>
                 </Grid>
-
                 {/* Color Selector */}
-                <Grid item xs={6}>
+                <Grid item xs={3}>
                   <Typography className={classes.newFeatureTitle}>
                     <span className={classes.icon}>🎨</span>
                     {t('colorPalette.multipleColorSelection')}
@@ -568,20 +572,34 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
                     })}
                   </Box>
                 </Grid>
-              </Grid>
-              <Grid item xs={6}>
-                <Grid container>
-                  <Grid item xs={12}>
-                    {model?.file?.name && (
-                      <Box className={classes.dFlex} style={{ flexDirection: 'column' }}>
-                        <Box className={classes.filePreview}>
-                          <Typography variant="body2">{model?.file?.name}</Typography>
-                          <CloseIcon className={classes.removeIcon} onClick={removeFile} />
-                        </Box>
-                      </Box>
-                    )}
-                  </Grid>
+                {/* Templates */}
+                <Grid item xs={3}>
+                  <Typography className={classes.newFeatureTitle}>
+                    <span className={classes.icon}></span>
+                    {t('AI.popup.selectFromTemplate')}
+                  </Typography>
+                  <Box className={classes.colorPaletteButton} onClick={() => setShowTemplates(true)}>
+                    <PaletteIcon className={classes.uploadIcon} />
+                    <Typography variant="body2"> {t('common.SelectTemplate')}</Typography>
+                  </Box>
+                  {model?.templateRef && <Box className={classes.filePreview}>
+                    <Typography variant="body2">{model?.templateRef?.Name}</Typography>
+                    <CloseIcon className={classes.removeIcon} onClick={() => {
+                      setModel({ ...model, templateRef: null })
+                    }} />
+                  </Box>
+                  }
                 </Grid>
+                {model?.file?.name && (<Grid item xs={12}>
+
+                  <Box className={classes.dFlex} style={{ flexDirection: 'column' }}>
+                    <Box className={classes.filePreview}>
+                      <Typography variant="body2">{model?.file?.name}</Typography>
+                      <CloseIcon className={classes.removeIcon} onClick={removeFile} />
+                    </Box>
+                  </Box>
+                </Grid>
+                )}
               </Grid>
               {model?.file && <Grid item xs={12}>
                 <TextField
@@ -733,10 +751,12 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
           </Box>
         </DialogContent>
       </Dialog>
+      {/* Confirm Popup */}
       {showConfirmPopUp && <DynamicConfirmDialog
         {...confirmDialog}
         isOpen={true}
       />}
+      {/* Gallery Popup */}
       {
         showGallery && (
           <BaseDialog
@@ -765,7 +785,7 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
           </BaseDialog>
         )
       }
-
+      {/* Documents Popup */}
       {
         showDocs && (
           <BaseDialog
@@ -793,6 +813,18 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
           </BaseDialog>
         )
       }
+      {/* Templates Popup */}
+      <Templates
+        classes={classes}
+        isCreateCampaign={true}
+        onClose={(template: any) => {
+          setShowTemplates(false);
+          if (template !== undefined) {
+            setModel({ ...model, templateRef: template })
+          }
+        }}
+        isOpen={showTemplates}
+      />
       {renderToast()}
     </Box >
   );
