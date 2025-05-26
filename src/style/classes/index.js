@@ -12,6 +12,7 @@ import { getGroupStyle } from './groupStyle'
 import { getWhatsappStyle } from './whatsappStyles';
 import { dynamicProductCatalog } from './dynamicProductCatalog';
 import { surveyStyle } from './surveyStyles';
+import { BeeAiStyles } from './BeeAiStyles';
 
 export const useClasses = (windowSize, isRTL = false) => makeStyles(theme => ({
   ...getDrawerStyle(windowSize, isRTL, theme),
@@ -26,5 +27,6 @@ export const useClasses = (windowSize, isRTL = false) => makeStyles(theme => ({
   ...getGroupStyle(windowSize, isRTL, theme),
   ...getWhatsappStyle(windowSize, isRTL, theme),
   ...dynamicProductCatalog(isRTL),
-  ...surveyStyle(windowSize, isRTL, theme)
+  ...surveyStyle(windowSize, isRTL, theme),
+  ...BeeAiStyles(windowSize, isRTL, theme)
 }))

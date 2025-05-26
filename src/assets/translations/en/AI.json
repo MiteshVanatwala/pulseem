@@ -1,0 +1,49 @@
+{
+  "popup": {
+    "title": "Create a designed template using artificial intelligence",
+    "placeholder": "Describe the desired newsletter style (for example: \"Summer sale - colorful and playful, 3 product blocks, large call-to-action button)\"",
+    "historyRequests": "Previous Prompt",
+    "lastPromopSubTitle": "The design process will continue from this point",
+    "designWithAI": "Design with AI",
+    "tips": {
+      "title": "Details for better results",
+      "toneTitle": "Define the tone",
+      "toneDesc": "Specify the desired tone (bold, minimalist, elegant, fun, professional)",
+      "elementsTitle": "Brand elements",
+      "elementsDesc": "Specify colors or visual style you would like to incorporate",
+      "specificTitle": "Be specific",
+      "specificDesc": "Specify the topic (sale, event, season) and the purpose of the newsletter",
+      "structureTitle": "Describe the structure",
+      "structureDesc": "Detail the structure (headline, product grid, button, image, footer)",
+      "fileTextPlaceholder": "e.g: Take the colors from the attached file"
+    },
+    "createDesign": "Create design",
+    "editPlaceholder": "Describe the changes you'd like to make to the design. For example: \"Replace all colors with green tones\", \"Increase the size of all headings\"",
+    "previewHistoryLog": "History Preview:",
+    "updateDesign": "Update Design",
+    "continueConversation": "Continue from this prompt",
+    "loadTemplate": "Load template",
+    "noMessageAvailable": "No Message Available",
+    "olderTemplates": "Show History",
+    "noOlderTemplates": "No older messages",
+    "tooltip": {
+      "continuePrompt": "The design process will continue from this point",
+      "loadTemplate": "The editor will load the result you received for this prompt"
+    },
+    "resetChat": "Restart Session",
+    "resetChatConfirmation": "This action will clear all previous instructions and start a new design session.<br/>The current instructions cannot be recovered.",
+    "loadTemplateConfirmation": "Loading this template will overwrite your current design.<br/>The design process will continue from the selected point."
+  },
+  "responses": {
+    "201": "Success",
+    "400": "There was an issue with the format or content of your request",
+    "401": "Invalid API Key",
+    "403": "Permission error",
+    "404": "Resource not found",
+    "405": "Prompt is too long",
+    "413": "Request exceeds the maximum allowed number of bytes",
+    "429": "Your account has hit a rate limit",
+    "500": "An unexpected error has occurred internal",
+    "529": "API is temporarily overloaded"
+  }
+}
