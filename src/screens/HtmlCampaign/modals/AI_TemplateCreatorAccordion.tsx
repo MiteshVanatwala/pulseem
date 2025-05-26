@@ -303,6 +303,7 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
     await dispatch(resetSession(campaignId));
     setModel({
       ...model,
+      continuationId: null,
       file: {
         fileType: '',
         name: '',
