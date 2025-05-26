@@ -1,3 +1,5 @@
+import { BeeTemplate } from "../Campaigns/BeeTemplate";
+
 export interface AITemplateCreatorProps {
   classes: any,
   campaignId: any;
@@ -11,6 +13,7 @@ export interface AnthropicUserRequest {
   messageRequest: string;
   file?: AnthropicFileItem | null | undefined;
   continuationId?: string | null;
+  templateRef?: BeeTemplate | any | null;
 }
 
 export interface AnthropicDetailedLog extends AnthropicHistoryLog {
