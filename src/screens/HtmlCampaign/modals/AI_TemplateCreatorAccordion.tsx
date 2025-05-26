@@ -519,7 +519,7 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
             <Paper className={classes.optionBox} elevation={0} style={{ marginBottom: '16px' }}>
               <Grid container spacing={1}>
                 {/* Image Gallery */}
-                <Grid item xs={3}>
+                {/* <Grid item xs={3}>
                   <Typography className={classes.newFeatureTitle}>
                     <span className={classes.icon}>📎</span>
                     {t('common.imageGallery')}
@@ -533,9 +533,9 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
                       <Typography variant="body2">{t('common.selectFile')}</Typography>
                     </Box>
                   </Button>
-                </Grid>
+                </Grid> */}
                 {/* Document Gallery */}
-                <Grid item xs={3}>
+                {/* <Grid item xs={3}>
                   <Typography className={classes.newFeatureTitle}>
                     <span className={classes.icon}>📎</span>
                     {t('common.documentGallery')}
@@ -549,9 +549,9 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
                       <Typography variant="body2">{t('common.selectFile')}</Typography>
                     </Box>
                   </Button>
-                </Grid>
+                </Grid> */}
                 {/* Color Selector */}
-                <Grid item xs={3}>
+                <Grid item xs={6}>
                   <Typography className={classes.newFeatureTitle}>
                     <span className={classes.icon}>🎨</span>
                     {t('colorPalette.multipleColorSelection')}
@@ -583,7 +583,7 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
                   </Box>
                 </Grid>
                 {/* Templates */}
-                <Grid item xs={3}>
+                <Grid item xs={6}>
                   <Typography className={classes.newFeatureTitle}>
                     <span className={classes.icon}></span>
                     {t('AI.popup.selectFromTemplate')}
@@ -600,7 +600,7 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
                   </Box>
                   }
                 </Grid>
-                {model?.file?.name && (<Grid item xs={12}>
+                {/* {model?.file?.name && (<Grid item xs={12}>
 
                   <Box className={classes.dFlex} style={{ flexDirection: 'column' }}>
                     <Box className={classes.filePreview}>
@@ -609,9 +609,9 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
                     </Box>
                   </Box>
                 </Grid>
-                )}
+                )} */}
               </Grid>
-              {model?.file && <Grid item xs={12}>
+              {/* {model?.file && <Grid item xs={12}>
                 <TextField
                   autoFocus
                   type='text'
@@ -639,7 +639,7 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
                     })
                   }}
                 />
-              </Grid>}
+              </Grid>} */}
             </Paper>
           </AccordionDetails>
         </Accordion>
