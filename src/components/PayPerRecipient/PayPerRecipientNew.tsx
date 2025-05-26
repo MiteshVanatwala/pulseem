@@ -150,7 +150,7 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose }: any) => {
               aria-label="pricing"
               defaultValue={0}
               step={null}
-              valueLabelDisplay="auto"
+              // valueLabelDisplay="auto"
               marks={marks}
               min={get(first(marks), 'value', 0)}
               max={get(last(marks), 'value', 100)}

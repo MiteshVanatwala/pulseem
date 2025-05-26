@@ -84,8 +84,11 @@ const BulkStatus = ({ classes }) => {
       let dialog = {};
       let availablePack = null;
 
-      if (selectedPackageType?.isPoland && isGlobal === true && IsPoland) {
-        dialog = Newsletters.IsEmailPolandSubscribed ? renderUnsubscribePayPerRecipientPolandDialog() : renderSubscribePayPerRecipientPolandDialog();
+      if (isGlobal === true && IsPoland) {
+        // TODO - Uncomment below line to enable Poland specific dialogs
+        // dialog = Newsletters.IsEmailPolandSubscribed ? renderUnsubscribePayPerRecipientPolandDialog() : renderSubscribePayPerRecipientPolandDialog();
+        // TODO - Remove below line to disable Poland specific dialogs
+        dialog = renderBillingSupportDialog();
       } else {
         if (!IsPoland && (accountSettings.Account.IsBillingAccount === false || selectedPackageType.type === -1 || !accountSettings.Account?.IsPaying)) {
           dialog = renderBillingSupportDialog();
@@ -372,14 +375,17 @@ const BulkStatus = ({ classes }) => {
                     {
                       Newsletters.IsEmailPolandSubscribed ? (
                         <>
-                          <IconButton className={clsx(classes.p5)} onClick={() => setIsOpenPayPerRecipient(true)}>
+                          {/* <IconButton className={clsx(classes.p5)} onClick={() => setIsOpenPayPerRecipient(true)}>
                             <BiCog />
-                          </IconButton>
+                          </IconButton> */}
                         </>
                       ) : (
                         <Button
                           className={clsx(classes.btn, classes.btnRounded, classes.f12)}
-                          onClick={() => setIsOpenPayPerRecipient(true)}
+                          onClick={() => {
+                            // setIsOpenPayPerRecipient(true)
+                            showPackageDialogType({ type: 2, title: t('common.newsletterBulkTitle') })
+                          }}
                         >
                           {t(`common.${ !Newsletters.IsEmailPolandSubscribed ? 'SubscribeButton' : 'cancel'}`)}
                           {isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
