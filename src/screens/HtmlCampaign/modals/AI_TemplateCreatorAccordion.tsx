@@ -301,6 +301,15 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
 
   const resetChatSession = async () => {
     await dispatch(resetSession(campaignId));
+    setModel({
+      ...model,
+      file: {
+        fileType: '',
+        name: '',
+        fileUrl: '',
+        text: ''
+      }
+    });
     initHistoryRequests();
     setShowConfirmPopup(false);
   }
