@@ -884,11 +884,24 @@ const CampaignEditor = ({ classes, ...props }) => {
           classes.btn,
           classes.btnRounded
         )}
-        style={{ margin: '8px' }}
+        style={{ margin: '8px', boxShadow: '0px 3px 1px -2px rgba(0,0,0,0.2),0px 2px 2px 0px rgba(0,0,0,0.14),0px 1px 5px 0px rgba(0,0,0,0.12)' }}
         startIcon={<BiSave />}
       >
         {t('common.saveTemplate')}
-      </Button></>
+      </Button>
+      <Button
+        onClick={() => { setDialogType({ type: "AIDialog" }) }}
+        className={clsx(
+          classes.btn,
+          classes.btnRounded,
+          classes.redButton
+        )}
+        style={{ margin: 8 }}
+        startIcon={<GiMagicBroom />}
+        // color="primary"
+        key={'aiButton'}
+      >{t('campaigns.aiDeisgner')}</Button>
+    </>
   }
 
   //       setTimeout(() => {
@@ -1075,18 +1088,6 @@ const CampaignEditor = ({ classes, ...props }) => {
     const wizardButtons = [];
     if (!isFromAutomation) {
       wizardButtons.push(<>
-        <Button
-          onClick={() => { setDialogType({ type: "AIDialog" }) }}
-          className={clsx(
-            classes.btn,
-            classes.btnRounded,
-            classes.backButton
-          )}
-          style={{ margin: 8 }}
-          startIcon={<GiMagicBroom />}
-          color="primary"
-          key={'aiButton'}
-        >AI</Button>
         <Button
           onClick={() =>
             saveDesign(false, null, true, true, 'save')}

@@ -1098,6 +1098,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       // maxWidth: 300,
       minHeight: 34,
       color: '#000',
+      '& svg': {
+        fill: '#000'
+      },
       '& path': {
         stroke: 'inherit'
       },
