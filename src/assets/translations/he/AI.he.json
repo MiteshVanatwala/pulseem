@@ -36,7 +36,9 @@
     "selectFromTemplate": "השתמשו בתבנית כרפרנס",
     "useFirstColorAsBackground": "השתמש בצבע הראשון ברשימה כרקע, ובשאר הצבעים בעדיפות לפי הסדר",
     "useLatestDesignElements": "השתמשו באלמנטים עיצוביים מקמפיינים קודמים",
-    "extractColorsFromImage": "חלצו צבעים מתמונה"
+    "extractColorsFromImage": "חלצו צבעים מתמונה",
+    "useUrlImageAsLogo": "השתמש בתמונה מהקישור הבא כתמונת לוגו בראש התבנית",
+    "selectLogo": "ביחרו לוגו"
   },
   "responses": {
     "201": "עיצוב נוצר בהצלחה!",

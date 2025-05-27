@@ -54,10 +54,10 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
   const tooltipClasses = useTooltipStyles();
   const { ToastMessages } = useSelector((state: any) => state?.Ai);
   const [submitDisabled, setSubmitDisabled] = useState<boolean>(true);
-  const [showDocs, setShowDocuments] = useState<boolean>(false);
   const [showGallery, setShowGallery] = useState<boolean>(false);
   const [filesProperties, setFilesProperties] = useState<FileGallery[]>([]);
   const [isGalleryConfirmed, setIsFileSelected] = useState(false);
+  const [isLogoSelected, setIsLogoSelected] = useState<boolean>(false);
   const [colors, setColors] = useState<string[]>([]);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [toastMessage, setToastMessage] = useState<any>();
@@ -78,6 +78,9 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
   const [tipsExpanded, setTipsExpanded] = useState<boolean>(false);
   const [showConfirmPopUp, setShowConfirmPopup] = useState<boolean>(false);
   const [showTemplates, setShowTemplates] = useState<boolean>(false);
+  const [selectedLogo, setSelectedLogo] = useState<string>('');
+  const [showLogo, setShowLogo] = useState<boolean>(false);
+  const [selectedLogoName, setSelectedLogoName] = useState<string>('');
   const [confirmDialog, setConfirmDialog] = useState<DynamicContentProps | null | any>({
     confirmButtonText: '',
     cancelButtonText: 'common.cancel',
@@ -248,6 +251,9 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
     if (colors && colors.length > 0) {
       requestModel.messageRequest += `\n\n${t('AI.popup.useFirstColorAsBackground')}: ${colors.map(c => c).join(', ')}`;
     }
+    if (selectedLogo !== '') {
+      requestModel.messageRequest += `\n\n${t('AI.popup.useUrlImageAsLogo')}: ${selectedLogo}`;
+    }
 
     if (isEditing && model.continuationId) {
       requestModel.continuationId = model.continuationId;
@@ -276,6 +282,10 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
 
   const handleGalleryConfirm = () => {
     setIsFileSelected(true);
+  }
+
+  const handleLogoConfirm = () => {
+    setIsLogoSelected(true);
   }
 
   const handleSelectedFile = async (fileUrl: string, fileType: string) => {
@@ -309,7 +319,6 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
       }
     });
 
-    setShowDocuments(false);
     setShowGallery(false);
 
     const colorResponse = await dispatch(extractColorsFromImageUrl({ ImageUrl: fileUrl } as ImageUrlLink)) as any;
@@ -319,6 +328,15 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
       setColors(colorArr);
     }
 
+  }
+
+  const handleSelectedLogo = async (fileUrl: string) => {
+    const fileName = fileUrl?.split('/')[fileUrl?.split('/')?.length - 1];
+    if (fileName !== '') {
+      setSelectedLogo(fileUrl);
+      setSelectedLogoName(fileName);
+    }
+    setShowLogo(false);
   }
 
   const resetChatSession = async () => {
@@ -406,7 +424,7 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
 
           {/* Older templates in accordion */}
           {history.length >= 1 ? (
-            <Accordion defaultExpanded={false} expanded={historyExpanded}>
+            <Accordion defaultExpanded={false} expanded={historyExpanded} key={'acc_1'}>
               <AccordionSummary
                 onClick={() => {
                   setHistoryExpanded(!historyExpanded)
@@ -530,7 +548,7 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
         />
 
         {/* File Upload and Colors Options Section */}
-        <Accordion defaultExpanded={false} expanded={optionsExpanded} className={classes.mb10}>
+        <Accordion defaultExpanded={false} expanded={optionsExpanded} className={classes.mb10} key={'acc_2'}>
           <AccordionSummary
             onClick={() => setOptionsExpanded(!optionsExpanded)}
             expandIcon={<ExpandMoreIcon style={{ color: '#fff' }} />}
@@ -549,7 +567,7 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
             <Paper className={classes.optionBox} elevation={0} style={{ marginBottom: '16px' }}>
               <Grid container spacing={1}>
                 {/* Image Gallery */}
-                <Grid item xs={4} className={model.useLatestElements && classes.disabled}>
+                <Grid item xs={3} className={model.useLatestElements && classes.disabled}>
                   <Typography className={classes.newFeatureTitle}>
                     <span className={classes.icon}>📎</span>
                     {t('AI.popup.extractColorsFromImage')}
@@ -573,22 +591,34 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
                   )}
 
                 </Grid>
-                {/* Document Gallery */}
-                {/* <Grid item xs={3}>
+                {/* Logo Gallery */}
+                <Grid item xs={3}>
                   <Typography className={classes.newFeatureTitle}>
-                    <span className={classes.icon}>📎</span>
-                    {t('common.documentGallery')}
+                    <span className={classes.icon}>🏷️</span>
+                    {t('AI.popup.selectLogo')}
                   </Typography>
                   <Box className={classes.colorPaletteButton} onClick={(e: any) => {
                     e.preventDefault();
-                    setShowDocuments(true);
+                    setShowLogo(true);
                   }}>
                     <CloudUploadIcon className={classes.uploadIcon} />
-                    <Typography variant="body2">{t('common.selectFile')}</Typography>
+                    <Typography variant="body2">{t('AI.popup.selectLogo')}</Typography>
+
                   </Box>
-                </Grid> */}
+                  {selectedLogoName !== '' && (
+                    <Box className={classes.dFlex} style={{ flexDirection: 'column' }}>
+                      <Box className={classes.filePreview}>
+                        <Typography variant="body2">{selectedLogoName}</Typography>
+                        <CloseIcon className={classes.removeIcon} onClick={() => {
+                          setSelectedLogo('');
+                          setSelectedLogoName('');
+                        }} />
+                      </Box>
+                    </Box>
+                  )}
+                </Grid>
                 {/* Color Selector */}
-                <Grid item xs={4} className={model.useLatestElements && classes.disabled}>
+                <Grid item xs={3} className={model.useLatestElements && classes.disabled}>
                   <Typography className={classes.newFeatureTitle}>
                     <span className={classes.icon}>🎨</span>
                     {t('colorPalette.multipleColorSelection')}
@@ -620,7 +650,7 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
                   </Box>
                 </Grid>
                 {/* Templates */}
-                <Grid item xs={4} className={model.useLatestElements && classes.disabled}>
+                <Grid item xs={3} className={model.useLatestElements && classes.disabled}>
                   <Typography className={classes.newFeatureTitle}>
                     <span className={classes.icon}>📋</span>
                     {t('AI.popup.selectFromTemplate')}
@@ -676,7 +706,7 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
         </Accordion>
 
         {/* Tips Section in Accordion */}
-        <Accordion defaultExpanded={false} expanded={tipsExpanded} className={classes.mb10}>
+        <Accordion defaultExpanded={false} expanded={tipsExpanded} className={classes.mb10} key={'acc_3'}>
           <AccordionSummary
             onClick={() => setTipsExpanded(!tipsExpanded)}
             expandIcon={<ExpandMoreIcon style={{ color: '#fff' }} />}
@@ -826,19 +856,18 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
           </BaseDialog>
         )
       }
-      {/* Documents Popup */}
       {
-        showDocs && (
+        showLogo && (
           <BaseDialog
             maxHeight="calc(70vh)"
             disableBackdropClick={true}
             style={{ minHeight: 400 }}
             showDivider={false}
             classes={classes}
-            open={showDocs}
-            onClose={() => { setShowDocuments(false); }}
-            onCancel={() => { setShowDocuments(false); }}
-            onConfirm={(x: any) => { handleGalleryConfirm(); }}
+            open={showLogo}
+            onClose={() => { setShowLogo(false); }}
+            onCancel={() => { setShowLogo(false); }}
+            onConfirm={(x: any) => { handleLogoConfirm(); }}
             title={t("common.documentGallery")}
           >
             <Gallery
@@ -847,9 +876,11 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
               style={{ minWidth: 400 }}
               multiSelect={false}
               forceReload={true}
-              folderType={PulseemFolderType.DOCUMENT}
-              isConfirm={isGalleryConfirmed}
-              callbackSelectFile={(fileUrl: string) => handleSelectedFile(fileUrl, 'document')}
+              folderType={PulseemFolderType.CLIENT_IMAGES}
+              isConfirm={isLogoSelected}
+              callbackSelectFile={(fileUrl: string) => {
+                handleSelectedLogo(fileUrl)
+              }}
             />
           </BaseDialog>
         )

@@ -108,6 +108,7 @@ export const BeeAiStyles = (windowSize, isRTL, theme) => ({
     borderRadius: 4,
     backgroundColor: '#f0f0f0',
     padding: theme.spacing(1, 2),
+    minHeight: '30px !important',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',

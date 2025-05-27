@@ -36,7 +36,9 @@
     "selectFromTemplate": "Template as reference",
     "useFirstColorAsBackground": "Use the first color as a background, and the other colors in priority by its order",
     "useLatestDesignElements": "Use design elements from previous campaigns",
-    "extractColorsFromImage": "Extract colors from image"
+    "extractColorsFromImage": "Extract colors from image",
+    "useUrlImageAsLogo": "Use the image from the following link as the logo image at the top of the template",
+    "selectLogo": "Select Logo"
   },
   "responses": {
     "201": "Success",
