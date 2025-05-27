@@ -129,7 +129,10 @@ const NoCreditDialog = ({
                             size='small'
                             onClick={() => { 
                                 if (isGlobal === true && IsPoland) {
-                                    setIsOpenPayPerRecipient(true);
+                                    // TODO: Uncomment when PayPerRecipient is ready
+                                    // setIsOpenPayPerRecipient(true);
+                                    // TODO: Comment when PayPerRecipient is ready
+                                    setIsOpenPackageDialog(true);
                                 }
                                 else {
                                     setIsOpenPackageDialog(true);
@@ -167,9 +170,9 @@ const NoCreditDialog = ({
         <BaseDialog
             classes={classes}
             open={isOpenPackageDialog}
-            {...!isAllowedToPurchase ? renderBillingSupportDialog() : renderPackagesListDialog()}
+            {...!isAllowedToPurchase || IsPoland ? renderBillingSupportDialog() : renderPackagesListDialog()}
         >
-            {!isAllowedToPurchase ? renderBillingSupportDialog().content : renderPackagesListDialog().content}
+            {!isAllowedToPurchase || IsPoland ? renderBillingSupportDialog().content : renderPackagesListDialog().content}
         </BaseDialog>
         <PayPerRecipient
             classes={classes}
