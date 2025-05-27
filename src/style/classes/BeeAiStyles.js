@@ -62,7 +62,7 @@ export const BeeAiStyles = (windowSize, isRTL, theme) => ({
     color: '#555',
   },
   filePreview: {
-    marginTop: theme.spacing(1),
+    // marginTop: theme.spacing(1),
     padding: theme.spacing(1),
     backgroundColor: '#eee',
     borderRadius: 4,
@@ -129,6 +129,7 @@ export const BeeAiStyles = (windowSize, isRTL, theme) => ({
     marginBottom: theme.spacing(1),
     display: 'flex',
     alignItems: 'center',
+    whiteSpace: 'nowrap'
   },
   historyContainer: {
     marginBottom: theme.spacing(3),

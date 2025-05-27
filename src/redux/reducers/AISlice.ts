@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { PulseemResponse } from '../../Models/APIResponse';
 import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
-import { AnthropicUserRequest } from '../../Models/AI/Anthropic';
+import { AnthropicUserRequest, ImageUrlLink } from '../../Models/AI/Anthropic';
 
 export const requestTemplate = createAsyncThunk(
     'AI/Anthropic/RequestTemplate',
@@ -74,6 +74,19 @@ export const resetSession = createAsyncThunk(
         }
     }
 );
+
+export const extractColorsFromImageUrl = createAsyncThunk(
+    'AI/Anthropic/ExtractColorFromImageUrl',
+    async (image: ImageUrlLink, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.post(`AI/Anthropic/ExtractColorFromImageUrl`, image);
+            return response.data
+        } catch (error) {
+            return console.log(error);
+        }
+    }
+);
+
 
 
 const AiSlice = createSlice({

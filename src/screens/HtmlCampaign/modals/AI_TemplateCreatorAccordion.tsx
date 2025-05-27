@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Box, TextField, Typography, Button, Paper, Grid, Dialog, DialogTitle, DialogContent, Accordion, AccordionSummary, AccordionDetails, FormControl, Tooltip, makeStyles } from '@material-ui/core';
+import { Box, TextField, Typography, Button, Paper, Grid, Dialog, DialogTitle, DialogContent, Accordion, AccordionSummary, AccordionDetails, FormControl, Tooltip, makeStyles, FormControlLabel, Checkbox } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import RestoreIcon from '@material-ui/icons/Restore';
 import { CloudUpload as CloudUploadIcon, Close as CloseIcon, Palette as PaletteIcon } from '@material-ui/icons';
-import { AITemplateCreatorProps, AnthropicDetailedLog, AnthropicFileItem, AnthropicHistoryLog, AnthropicUserRequest } from '../../../Models/AI/Anthropic';
+import { AITemplateCreatorProps, AnthropicDetailedLog, AnthropicFileItem, AnthropicHistoryLog, AnthropicUserRequest, ImageUrlLink } from '../../../Models/AI/Anthropic';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
-import { continueConversation, getHistoryRequests, getRequestDetails, requestTemplate, resetSession, restoreConversationDesign } from '../../../redux/reducers/AISlice';
+import { continueConversation, extractColorsFromImageUrl, getHistoryRequests, getRequestDetails, requestTemplate, resetSession, restoreConversationDesign } from '../../../redux/reducers/AISlice';
 import { setIsLoader } from '../../../redux/reducers/coreSlice';
 import clsx from 'clsx';
 import Gallery from '../../../components/Gallery/Gallery.component';
@@ -96,7 +96,8 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
     messageRequest: '',
     file: null,
     selectedColors: [],
-    templateRef: null
+    templateRef: null,
+    useLatestElements: false
   });
 
   useEffect(() => {
@@ -129,10 +130,17 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
       ...model,
       file: null
     });
+
+    // Reset gallery-related states
+    setFilesProperties([]);
+    setIsFileSelected(false);
+    setColors([]); // Also reset extracted colors since they came from the image
   };
 
   const handleColorDialogOpen = () => {
-    setColorDialogOpen(true);
+    if (!model.useLatestElements) {
+      setColorDialogOpen(true);
+    }
   };
 
   const handleColorDialogClose = () => {
@@ -232,11 +240,12 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
       maxToken: model.maxToken,
       messageRequest: model.messageRequest,
       file: model.file,
-      templateRef: model.templateRef
+      templateRef: model.templateRef,
+      useLatestElements: model.useLatestElements
     };
 
     if (colors && colors.length > 0) {
-      requestModel.messageRequest += `\n\n${t('colorPalette.selectedColors')}: ${colors.map(c => c).join(', ')}`;
+      requestModel.messageRequest += `\n\n${t('AI.popup.useFirstColorAsBackground')}: ${colors.map(c => c).join(', ')}`;
     }
 
     if (isEditing && model.continuationId) {
@@ -301,6 +310,14 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
 
     setShowDocuments(false);
     setShowGallery(false);
+
+    const colorResponse = await dispatch(extractColorsFromImageUrl({ ImageUrl: fileUrl } as ImageUrlLink)) as any;
+    const { StatusCode, Data } = colorResponse?.payload;
+    if (StatusCode === 201) {
+      const colorArr = Data?.split(',');
+      setColors(colorArr);
+    }
+
   }
 
   const resetChatSession = async () => {
@@ -486,6 +503,7 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
         {/* Text area input */}
         <TextField
           className={classes.textArea}
+          style={{ marginBottom: 0 }}
           multiline
           rows={3}
           variant="outlined"
@@ -497,6 +515,17 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
           InputProps={{
             style: { textAlign: 'right' }
           }}
+        />
+        <FormControlLabel
+          control={
+            <Checkbox
+              color="primary"
+              inputProps={{ "aria-label": "secondary checkbox" }}
+              onClick={() => setModel({ ...model, useLatestElements: !model.useLatestElements })}
+              checked={model.useLatestElements}
+            />
+          }
+          label={t("AI.popup.useLatestDesignElements")}
         />
 
         {/* File Upload and Colors Options Section */}
@@ -519,39 +548,46 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
             <Paper className={classes.optionBox} elevation={0} style={{ marginBottom: '16px' }}>
               <Grid container spacing={1}>
                 {/* Image Gallery */}
-                {/* <Grid item xs={3}>
+                <Grid item xs={4} className={model.useLatestElements && classes.disabled}>
                   <Typography className={classes.newFeatureTitle}>
                     <span className={classes.icon}>📎</span>
-                    {t('common.imageGallery')}
+                    {t('AI.popup.extractColorsFromImage')}
                   </Typography>
-                  <Button onClick={(e: any) => {
-                    e.preventDefault();
-                    setShowGallery(true);
-                  }} style={{ paddingTop: 0 }}>
-                    <Box className={classes.uploadButton} style={{ marginTop: 0 }}>
-                      <CloudUploadIcon className={classes.uploadIcon} />
-                      <Typography variant="body2">{t('common.selectFile')}</Typography>
+                  <Box className={classes.colorPaletteButton} onClick={(e: any) => {
+                    if (!model.useLatestElements) {
+                      e.preventDefault();
+                      setShowGallery(true);
+                    }
+                  }}>
+                    <CloudUploadIcon className={classes.uploadIcon} />
+                    <Typography variant="body2">{t('common.selectFile')}</Typography>
+                  </Box>
+                  {model?.file?.name && (
+                    <Box className={classes.dFlex} style={{ flexDirection: 'column' }}>
+                      <Box className={classes.filePreview}>
+                        <Typography variant="body2">{model?.file?.name}</Typography>
+                        <CloseIcon className={classes.removeIcon} onClick={removeFile} />
+                      </Box>
                     </Box>
-                  </Button>
-                </Grid> */}
+                  )}
+
+                </Grid>
                 {/* Document Gallery */}
                 {/* <Grid item xs={3}>
                   <Typography className={classes.newFeatureTitle}>
                     <span className={classes.icon}>📎</span>
                     {t('common.documentGallery')}
                   </Typography>
-                  <Button onClick={(e: any) => {
+                  <Box className={classes.colorPaletteButton} onClick={(e: any) => {
                     e.preventDefault();
                     setShowDocuments(true);
-                  }} style={{ paddingTop: 0 }}>
-                    <Box className={classes.uploadButton} style={{ marginTop: 0 }}>
-                      <CloudUploadIcon className={classes.uploadIcon} />
-                      <Typography variant="body2">{t('common.selectFile')}</Typography>
-                    </Box>
-                  </Button>
+                  }}>
+                    <CloudUploadIcon className={classes.uploadIcon} />
+                    <Typography variant="body2">{t('common.selectFile')}</Typography>
+                  </Box>
                 </Grid> */}
                 {/* Color Selector */}
-                <Grid item xs={6}>
+                <Grid item xs={4} className={model.useLatestElements && classes.disabled}>
                   <Typography className={classes.newFeatureTitle}>
                     <span className={classes.icon}>🎨</span>
                     {t('colorPalette.multipleColorSelection')}
@@ -583,12 +619,16 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
                   </Box>
                 </Grid>
                 {/* Templates */}
-                <Grid item xs={6}>
+                <Grid item xs={4} className={model.useLatestElements && classes.disabled}>
                   <Typography className={classes.newFeatureTitle}>
                     <span className={classes.icon}></span>
                     {t('AI.popup.selectFromTemplate')}
                   </Typography>
-                  <Box className={classes.colorPaletteButton} onClick={() => setShowTemplates(true)}>
+                  <Box className={classes.colorPaletteButton} onClick={() => {
+                    if (!model.useLatestElements) {
+                      setShowTemplates(true)
+                    }
+                  }}>
                     <PaletteIcon className={classes.uploadIcon} />
                     <Typography variant="body2"> {t('common.SelectTemplate')}</Typography>
                   </Box>
@@ -600,18 +640,8 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
                   </Box>
                   }
                 </Grid>
-                {/* {model?.file?.name && (<Grid item xs={12}>
-
-                  <Box className={classes.dFlex} style={{ flexDirection: 'column' }}>
-                    <Box className={classes.filePreview}>
-                      <Typography variant="body2">{model?.file?.name}</Typography>
-                      <CloseIcon className={classes.removeIcon} onClick={removeFile} />
-                    </Box>
-                  </Box>
-                </Grid>
-                )} */}
               </Grid>
-              {/* {model?.file && <Grid item xs={12}>
+              {/* {model?.file && <Grid item xs={6}>
                 <TextField
                   autoFocus
                   type='text'

@@ -33,7 +33,10 @@
     "resetChat": "Restart Session",
     "resetChatConfirmation": "This action will clear all previous instructions and start a new design session.<br/>The current instructions cannot be recovered.",
     "loadTemplateConfirmation": "Loading this template will overwrite your current design.<br/>The design process will continue from the selected point.",
-    "selectFromTemplate": "Template as reference"
+    "selectFromTemplate": "Template as reference",
+    "useFirstColorAsBackground": "Use the first color as a background, and the other colors in priority by its order",
+    "useLatestDesignElements": "Use design elements from previous campaigns",
+    "extractColorsFromImage": "Extract colors from image"
   },
   "responses": {
     "201": "Success",

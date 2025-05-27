@@ -14,6 +14,7 @@ export interface AnthropicUserRequest {
   file?: AnthropicFileItem | null | undefined;
   continuationId?: string | null;
   templateRef?: BeeTemplate | any | null;
+  useLatestElements: boolean | any | null;
 }
 
 export interface AnthropicDetailedLog extends AnthropicHistoryLog {
@@ -68,4 +69,8 @@ export interface AnthropicHistoryLog {
   TotalPrice?: number | null;
   InputTokens?: number | null;
   OutputTokens?: number | null;
+}
+
+export interface ImageUrlLink {
+  ImageUrl: string;
 }
