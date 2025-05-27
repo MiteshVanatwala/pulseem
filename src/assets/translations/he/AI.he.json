@@ -38,7 +38,8 @@
     "useLatestDesignElements": "השתמשו באלמנטים עיצוביים מקמפיינים קודמים",
     "extractColorsFromImage": "חלצו צבעים מתמונה",
     "useUrlImageAsLogo": "השתמש בתמונה מהקישור הבא כתמונת לוגו בראש התבנית",
-    "selectLogo": "ביחרו לוגו"
+    "selectLogo": "בחרו לוגו",
+    "addLogo": "הוספת לוגו"
   },
   "responses": {
     "201": "עיצוב נוצר בהצלחה!",

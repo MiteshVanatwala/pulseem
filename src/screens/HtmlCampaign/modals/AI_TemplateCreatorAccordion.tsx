@@ -27,6 +27,7 @@ import DynamicConfirmDialog from '../../../components/DialogTemplates/DynamicCon
 import { DynamicContentProps } from '../../../components/DialogTemplates/Types/Dialog';
 import Templates from './Templates';
 import { GrTemplate } from 'react-icons/gr';
+import { FaIcons } from 'react-icons/fa';
 
 const useTooltipStyles = makeStyles((theme) => ({
   tooltip: {
@@ -567,35 +568,65 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
             <Paper className={classes.optionBox} elevation={0} style={{ marginBottom: '16px' }}>
               <Grid container spacing={1}>
                 {/* Image Gallery */}
-                <Grid item xs={3} className={model.useLatestElements && classes.disabled}>
-                  <Typography className={classes.newFeatureTitle}>
-                    <span className={classes.icon}>📎</span>
-                    {t('AI.popup.extractColorsFromImage')}
-                  </Typography>
-                  <Box className={classes.colorPaletteButton} onClick={(e: any) => {
-                    if (!model.useLatestElements) {
-                      e.preventDefault();
-                      setShowGallery(true);
-                    }
-                  }}>
-                    <CloudUploadIcon className={classes.uploadIcon} />
-                    <Typography variant="body2">{t('common.selectFile')}</Typography>
-                  </Box>
-                  {model?.file?.name && (
-                    <Box className={classes.dFlex} style={{ flexDirection: 'column' }}>
-                      <Box className={classes.filePreview}>
-                        <Typography variant="body2">{model?.file?.name}</Typography>
-                        <CloseIcon className={classes.removeIcon} onClick={removeFile} />
-                      </Box>
-                    </Box>
-                  )}
+                <Grid item xs={4} className={model.useLatestElements && classes.disabled}>
+                  <>
+                    <Typography className={classes.newFeatureTitle}>
+                      <span className={classes.icon}>🎨</span>
+                      {t('colorPalette.multipleColorSelection')}
+                    </Typography>
 
+                    <Box className={classes.colorPaletteButton} onClick={handleColorDialogOpen}>
+                      <PaletteIcon className={classes.uploadIcon} />
+                      <Typography variant="body2"> {t('colorPalette.colorPalette')}</Typography>
+                    </Box>
+                  </>
+                  <>
+                    <Box className={classes.colorPaletteButton} onClick={(e: any) => {
+                      if (!model.useLatestElements) {
+                        e.preventDefault();
+                        setShowGallery(true);
+                      }
+                    }}>
+                      <CloudUploadIcon className={classes.uploadIcon} />
+                      <Typography variant="body2">{t('AI.popup.extractColorsFromImage')}</Typography>
+                    </Box>
+                    {model?.file?.name && (
+                      <Box className={classes.dFlex} style={{ flexDirection: 'column' }}>
+                        <Box className={classes.filePreview}>
+                          <Typography variant="body2">{model?.file?.name}</Typography>
+                          <CloseIcon className={classes.removeIcon} onClick={removeFile} />
+                        </Box>
+                      </Box>
+                    )}
+                  </>
+                  <>
+                    <Box style={{ display: 'flex', flexDirection: 'row', marginTop: 10 }}>
+                      {colors.map((c: string, index: number) => {
+                        return <Box
+                          onMouseEnter={() => setHoveredIndex(index)}
+                          onMouseLeave={() => setHoveredIndex(null)}>
+                          <Box
+                            style={{ display: 'flex', flexDirection: 'column', marginInlineEnd: 5, alignItems: 'center' }}>
+                            <Box
+                              style={{ borderRadius: 2, backgroundColor: c, width: 25, height: 25 }}>
+                            </Box>
+                            <Box style={{ height: 20 }}>
+                              {hoveredIndex === index && <Box style={{ cursor: 'pointer' }} onClick={() => {
+                                const removeColor = colors.filter((col: any) => { return c !== col });
+                                setColors(removeColor);
+                              }}>x</Box>}
+                            </Box>
+                          </Box>
+                        </Box>
+                      })}
+                    </Box>
+                  </>
                 </Grid>
                 {/* Logo Gallery */}
-                <Grid item xs={3}>
+                <Grid item xs={4}>
                   <Typography className={classes.newFeatureTitle}>
                     <span className={classes.icon}>🏷️</span>
-                    {t('AI.popup.selectLogo')}
+                    {t('AI.popup.addLogo')}
                   </Typography>
                   <Box className={classes.colorPaletteButton} onClick={(e: any) => {
                     e.preventDefault();
@@ -618,39 +649,8 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
                   )}
                 </Grid>
                 {/* Color Selector */}
-                <Grid item xs={3} className={model.useLatestElements && classes.disabled}>
-                  <Typography className={classes.newFeatureTitle}>
-                    <span className={classes.icon}>🎨</span>
-                    {t('colorPalette.multipleColorSelection')}
-                  </Typography>
-
-                  <Box className={classes.colorPaletteButton} onClick={handleColorDialogOpen}>
-                    <PaletteIcon className={classes.uploadIcon} />
-                    <Typography variant="body2"> {t('colorPalette.selectColors')}</Typography>
-                  </Box>
-                  <Box style={{ display: 'flex', flexDirection: 'row' }}>
-                    {colors.map((c: string, index: number) => {
-                      return <Box
-                        onMouseEnter={() => setHoveredIndex(index)}
-                        onMouseLeave={() => setHoveredIndex(null)}>
-                        <Box
-                          style={{ display: 'flex', flexDirection: 'column', marginInlineEnd: 5, alignItems: 'center' }}>
-                          <Box
-                            style={{ borderRadius: 2, backgroundColor: c, width: 25, height: 25 }}>
-                          </Box>
-                          <Box style={{ height: 20 }}>
-                            {hoveredIndex === index && <Box style={{ cursor: 'pointer' }} onClick={() => {
-                              const removeColor = colors.filter((col: any) => { return c !== col });
-                              setColors(removeColor);
-                            }}>x</Box>}
-                          </Box>
-                        </Box>
-                      </Box>
-                    })}
-                  </Box>
-                </Grid>
                 {/* Templates */}
-                <Grid item xs={3} className={model.useLatestElements && classes.disabled}>
+                <Grid item xs={4} className={model.useLatestElements && classes.disabled}>
                   <Typography className={classes.newFeatureTitle}>
                     <span className={classes.icon}>📋</span>
                     {t('AI.popup.selectFromTemplate')}
@@ -865,6 +865,7 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
             showDivider={false}
             classes={classes}
             open={showLogo}
+            icon={<FaIcons />}
             onClose={() => { setShowLogo(false); }}
             onCancel={() => { setShowLogo(false); }}
             onConfirm={(x: any) => { handleLogoConfirm(); }}
