@@ -33,10 +33,10 @@
     "resetChat": "התחילו מחדש",
     "resetChatConfirmation": "פעולה זו תמחק את כל ההנחיות הקודמות ותתחיל תהליך עיצוב חדש.<br/>לא ניתן לשחזר את ההנחיות שנמחקו.",
     "loadTemplateConfirmation": "טעינת תבנית זו תחליף את העיצוב הנוכחי.<br/>תהליך העיצוב ימשיך מהנקודה שנבחרה.",
-    "selectFromTemplate": "השתמש בתבנית כרפרנס",
+    "selectFromTemplate": "השתמשו בתבנית כרפרנס",
     "useFirstColorAsBackground": "השתמש בצבע הראשון ברשימה כרקע, ובשאר הצבעים בעדיפות לפי הסדר",
-    "useLatestDesignElements": "השתמש באלמנטים עיצוביים מקמפיינים קודמים",
-    "extractColorsFromImage": "חלץ צבעים מתמונה"
+    "useLatestDesignElements": "השתמשו באלמנטים עיצוביים מקמפיינים קודמים",
+    "extractColorsFromImage": "חלצו צבעים מתמונה"
   },
   "responses": {
     "201": "עיצוב נוצר בהצלחה!",

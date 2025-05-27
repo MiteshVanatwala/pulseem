@@ -26,6 +26,7 @@ import { MdHistory, MdOutlineSettingsSuggest, MdTipsAndUpdates } from 'react-ico
 import DynamicConfirmDialog from '../../../components/DialogTemplates/DynamicConfirmDialog';
 import { DynamicContentProps } from '../../../components/DialogTemplates/Types/Dialog';
 import Templates from './Templates';
+import { GrTemplate } from 'react-icons/gr';
 
 const useTooltipStyles = makeStyles((theme) => ({
   tooltip: {
@@ -621,7 +622,7 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
                 {/* Templates */}
                 <Grid item xs={4} className={model.useLatestElements && classes.disabled}>
                   <Typography className={classes.newFeatureTitle}>
-                    <span className={classes.icon}></span>
+                    <span className={classes.icon}>📋</span>
                     {t('AI.popup.selectFromTemplate')}
                   </Typography>
                   <Box className={classes.colorPaletteButton} onClick={() => {
@@ -629,7 +630,7 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
                       setShowTemplates(true)
                     }
                   }}>
-                    <PaletteIcon className={classes.uploadIcon} />
+                    <GrTemplate className={classes.uploadIcon} />
                     <Typography variant="body2"> {t('common.SelectTemplate')}</Typography>
                   </Box>
                   {model?.templateRef && <Box className={classes.filePreview}>
