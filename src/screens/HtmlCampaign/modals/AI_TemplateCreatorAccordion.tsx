@@ -28,6 +28,7 @@ import { DynamicContentProps } from '../../../components/DialogTemplates/Types/D
 import Templates from './Templates';
 import { GrTemplate } from 'react-icons/gr';
 import { FaIcons } from 'react-icons/fa';
+import AILoader from '../../../components/Loader/AILoader';
 
 const useTooltipStyles = makeStyles((theme) => ({
   tooltip: {
@@ -82,6 +83,7 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
   const [selectedLogo, setSelectedLogo] = useState<string>('');
   const [showLogo, setShowLogo] = useState<boolean>(false);
   const [selectedLogoName, setSelectedLogoName] = useState<string>('');
+  const [showAILoader, setShowAILoader] = useState<boolean>(false);
   const [confirmDialog, setConfirmDialog] = useState<DynamicContentProps | null | any>({
     confirmButtonText: '',
     cancelButtonText: 'common.cancel',
@@ -240,6 +242,7 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setShowAILoader(true);
     const requestModel: AnthropicUserRequest = {
       campaignId: model.campaignId,
       maxToken: model.maxToken,
@@ -259,9 +262,7 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
     if (isEditing && model.continuationId) {
       requestModel.continuationId = model.continuationId;
 
-      dispatch(setIsLoader(true));
       const response: any = await dispatch(continueConversation(requestModel));
-      dispatch(setIsLoader(false));
 
       if (response?.payload?.StatusCode === 201) {
         onUpdate('success', response?.payload?.Data);
@@ -269,9 +270,7 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
         setToastMessage(ToastMessages.RESPONSES[response?.payload?.StatusCode]);
       }
     } else {
-      dispatch(setIsLoader(true));
       const response: any = await dispatch(requestTemplate(requestModel));
-      dispatch(setIsLoader(false));
 
       if (response?.payload?.StatusCode === 201) {
         onUpdate('success', response?.payload?.Data);
@@ -279,6 +278,7 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
         setToastMessage(ToastMessages.RESPONSES[response?.payload?.StatusCode]);
       }
     }
+    setShowAILoader(false);
   };
 
   const handleGalleryConfirm = () => {
@@ -899,7 +899,8 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
         isOpen={showTemplates}
       />
       {renderToast()}
-    </Box >
+      <AILoader isVisible={showAILoader} key={'loaderAi'} text={t('AILoader.creatingNewsletter')} />
+    </Box>
   );
 };
 
