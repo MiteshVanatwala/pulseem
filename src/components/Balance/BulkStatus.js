@@ -26,7 +26,7 @@ import { BiCog } from 'react-icons/bi';
 
 const BulkStatus = ({ classes }) => {
   const { billingTypeId, windowSize, isRTL } = useSelector(state => state.core)
-  const { accountSettings, accountFeatures, isGlobal, IsPoland } = useSelector(state => state.common);
+  const { accountSettings, accountFeatures, isGlobal, IsPoland, accountCurrencySymbol, accountIsCurrencySymbolPrefix } = useSelector(state => state.common);
   const { packagesDetails, accountAvailablePackages } = useSelector(state => state.dashboard);
   const [ isOpenPackageDialog, setIsOpenPackageDialog ] = useState(false);
   const [ isOpenAddCardDialog, setIsOpenAddCardDialog ] = useState(false);
@@ -70,8 +70,7 @@ const BulkStatus = ({ classes }) => {
       await dispatch(getPackagesDetails());
     }
 
-    if (!isGlobal) initPackages();
-
+    initPackages();
   }, []);
 
   const handleDialogClose = () => {
@@ -233,7 +232,7 @@ const BulkStatus = ({ classes }) => {
   const showPackageDialogType = async (packageType) => {
     const settings = await dispatch(getCommonFeatures({ forceRequest: true }));
     if (!settings?.payload?.Data?.Account?.IsPaying) {
-      packageType = !IsPoland ? { type: -1, title: '' } : { type: 3, title: t('common.smsBulkTitle') };
+      packageType = !IsPoland ? { type: -1, title: '' } : { type: 3, title: t('common.newsletterBulkTitle') };
       setPackageType(packageType);
     }
     else {
@@ -458,7 +457,11 @@ const BulkStatus = ({ classes }) => {
 
               <Grid item md={3} xs={4} className={clsx(classes.paddingSides10, windowSize === 'xs' ? classes.textRight : '')}>
                 <Typography className={clsx(classes.bold, classes.elipsis, classes.noWrap)} style={{ whiteSpace: 'normal' }}>
-                  {billingTypeId === "1" ? t('dashboard.perUsage') : `${getBillingTypeText(Whatsapp)} ${t('common.NIS')}`}
+                  {
+                    billingTypeId === "1"
+                    ? t('dashboard.perUsage') 
+                    : `${accountIsCurrencySymbolPrefix ? accountCurrencySymbol : ''} ${getBillingTypeText(Whatsapp)} ${!accountIsCurrencySymbolPrefix ? accountCurrencySymbol : ''}`
+                  }
                 </Typography>
               </Grid>
 

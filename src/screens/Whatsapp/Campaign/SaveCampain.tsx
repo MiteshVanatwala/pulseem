@@ -821,11 +821,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 							...errorToastData,
 							message: translator('whatsappCampaign.metaPhoneNumberNotVerified')
 						});
-					} else if ([550, 551].indexOf(quickSendData?.StatusCode)) {
-            setDialogType({
-							type: 'PendingApproval'
-						})
-        	} else {
+					} else {
 						setRandomlyCount('');
 						if (quickSendData?.Message === 'Invalid phonenumber') {
 							setToastMessage(ToastMessages.INVALID_NUMBER);
