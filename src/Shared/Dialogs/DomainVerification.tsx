@@ -72,7 +72,7 @@ const DomainVerification = ({ classes, domain, forceShow, onClose }: DomainVerif
     const { t } = useTranslation();
     const localClasses = useStyles();
     const { isRTL } = useSelector((state: StateType) => state.core);
-    const { accountSettings, verifiedEmails, accountFeatures } = useSelector((state: StateType) => state.common)
+    const { accountSettings, verifiedEmails, accountFeatures, isGlobal, IsPoland } = useSelector((state: StateType) => state.common)
     const { domainVerificationPopUp } = useSelector((state: StateType) => state.newsletter);
     const [activeAccordion, setActiveAccordion] = useState<number>(0);
     const [sharedDomain, setSharedDomain] = useState<string>('');
@@ -150,6 +150,8 @@ const DomainVerification = ({ classes, domain, forceShow, onClose }: DomainVerif
         }
     }
 
+    const isPolandAccount = isGlobal && IsPoland;
+
     return (domain?.display === true || forceShow === true) ? (<BaseDialog
         disableBackdropClick={false}
         classes={classes}
@@ -224,7 +226,7 @@ const DomainVerification = ({ classes, domain, forceShow, onClose }: DomainVerif
                     </Grid>
                 </AccordionDetails>
             </Accordion>}
-            {accountFeatures?.indexOf(PulseemFeatures.HIDE_SHARED_DOMAIN) === -1 && domain?.verifySharedCallback !== null && domain?.verifySharedCallback !== undefined && <Accordion
+            {accountFeatures?.indexOf(PulseemFeatures.HIDE_SHARED_DOMAIN) === -1 && domain?.verifySharedCallback !== null && domain?.verifySharedCallback !== undefined && !isPolandAccount && <Accordion
                 expanded={activeAccordion === 3}
                 className={clsx(classes.noBoxShadow, localClasses.expandedBox)}
                 key={3}
