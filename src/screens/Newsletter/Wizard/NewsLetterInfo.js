@@ -163,7 +163,7 @@ const NewsLetterInfo = ({ classes }) => {
     const [toastMessage, setToastMessage] = useState(null);
     const [showLoader, setLoader] = useState(true);
     const [extraAccountDATA, setextraAccountDATA] = useState([]);
-    const { verifiedEmails, accountSettings, accountFeatures } = useSelector(state => state.common);
+    const { verifiedEmails, accountSettings, accountFeatures, isGlobal, IsPoland } = useSelector(state => state.common);
     const { ToastMessages } = useSelector(state => state.newsletter);
     const [showGallery, setShowGallery] = useState(false);
     const [isGalleryConfirmed, setIsFileSelected] = useState(false);
@@ -184,6 +184,7 @@ const NewsLetterInfo = ({ classes }) => {
         preText: '',
         showSkip: false
     });
+    const isPolishAccount = IsPoland && isGlobal;
 
     const navigate = useNavigate();
     const maxCharLimits = {
@@ -1105,7 +1106,7 @@ const NewsLetterInfo = ({ classes }) => {
     const renderButtons = () => {
         const wizardButtons = [];
         const showCautionOldEditor = getCookie('showCautionOldEditor') !== "false" && accountFeatures?.indexOf(PulseemFeatures.BEE_EDITOR) > -1
-        const showCautionNewEditor = getCookie('showCautionNewEditor') !== "false" && accountFeatures?.indexOf(PulseemFeatures.BEE_EDITOR) > -1
+        const showCautionNewEditor = getCookie('showCautionNewEditor') !== "false" && accountFeatures?.indexOf(PulseemFeatures.BEE_EDITOR) > -1 && !isPolishAccount;
         if (accountFeatures?.indexOf(PulseemFeatures.BEE_EDITOR) === -1) {
             wizardButtons.push(<>
                 <Button
@@ -1141,21 +1142,22 @@ const NewsLetterInfo = ({ classes }) => {
                     )}
                     style={{ margin: '8px', }}
                     endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-                >{t('master.continueToNewEditor')}</Button>)
+                >{t(!isPolishAccount ? 'master.continueToNewEditor' : 'common.saveAndContinue')}</Button>)
             }
             else {
                 wizardButtons.push(<>
-                    <Button
-                        onClick={() => showCautionOldEditor ? setDialogType({ type: "cautionNewEditor" }) : handleSubmit(true, false, false)}
-                        className={clsx(
-                            classes.btn,
-                            classes.btnRounded,
-                            classes.backButton,
-                            windowSize === 'sm' ? classes.dFlex : ''
-                        )}
-                        style={{ margin: '8px' }}
-                        endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-                    >{t('common.saveAndContinue')}</Button>
+                    { !isPolishAccount && <Button
+                            onClick={() => showCautionOldEditor ? setDialogType({ type: "cautionNewEditor" }) : handleSubmit(true, false, false)}
+                            className={clsx(
+                                classes.btn,
+                                classes.btnRounded,
+                                classes.backButton,
+                                windowSize === 'sm' ? classes.dFlex : ''
+                            )}
+                            style={{ margin: '8px' }}
+                            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+                        >{t('common.saveAndContinue')}</Button>
+                    }
                     {(id === null || id === undefined) && <Button
                         disabled={newEditorDisabled}
                         onClick={() => showCautionNewEditor ? setDialogType({ type: "cautionOldEditor" }) : handleSubmit(true, false, true)}
@@ -1166,7 +1168,7 @@ const NewsLetterInfo = ({ classes }) => {
                         )}
                         style={{ margin: '8px' }}
                         endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-                    >{t('master.continueToNewEditor')}</Button>}
+                    >{t(!isPolishAccount ? 'master.continueToNewEditor' : 'common.saveAndContinue')}</Button>}
                 </>)
             }
         }
