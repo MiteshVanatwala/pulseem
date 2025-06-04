@@ -345,9 +345,9 @@ const SmsCreator = ({ classes }) => {
       LogData: logData,
       SmsCampaignID: smsCampaignId
     }
-    await dispatch(smsQuick(FinalPayloadData));
-    setToastMessage(ToastMessages.QUICK_SEND_SUCCESSS);
+    let r = await dispatch(smsQuick(FinalPayloadData));
     setLoader(false);
+    handleSendResult(r.payload.Result)
   };
 
 
