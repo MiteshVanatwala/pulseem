@@ -223,10 +223,10 @@ const SignUpNew = ({ classes }: any) => {
   };
 
   useEffect(() => {
-    dispatch(setLanguage(qs?.culture || 'he-IL'));
-    if (qs?.culture === 'en' || qs?.culture === 'en-US') i18n.changeLanguage('en-US');
-    else if (qs?.culture === 'he' || qs?.culture === 'he-US') i18n.changeLanguage('he-IL');
-    else if (qs?.culture === 'pl' || qs?.culture === 'pl-PL') i18n.changeLanguage('pl-PL');
+    dispatch(setLanguage(qs?.Culture || 'he-IL'));
+    if (qs?.Culture === 'en' || qs?.Culture === 'en-US') i18n.changeLanguage('en-US');
+    else if (qs?.Culture === 'he' || qs?.Culture === 'he-US') i18n.changeLanguage('he-IL');
+    else if (qs?.Culture === 'pl' || qs?.Culture === 'pl-PL') i18n.changeLanguage('pl-PL');
 
     getUserInfo();
     if ((qs?.refId && qs?.refId !== '') && ((!qs?.emailid || qs?.emailid === '') || !qs?.id)) {
@@ -501,7 +501,7 @@ const SignUpNew = ({ classes }: any) => {
       case 201: {
         // for stage
         const newUrl = Data?.RedirectLink.replace('https://www.pulseem.co.il', actionURL?.replace('/Pulseem/', ''));
-        window.location.href = `${newUrl}&refId=${qs?.refId}&culture=${language}`;
+        window.location.href = `${newUrl}&refId=${qs?.refId}&Culture=${language}`;
         // for production
         // window.location.href = `${Data?.RedirectLink}&refId=${qs?.refId}`;
         break;
