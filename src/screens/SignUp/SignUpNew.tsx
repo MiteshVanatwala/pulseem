@@ -36,7 +36,8 @@ const SignUpNew = ({ classes }: any) => {
   const { t } = useTranslation();
   const [showLoader, setLoader] = useState(false);
   const qs = queryString.parse(window.location.search);
-  const isPolish = window.location.origin.includes('pulseem.pl');
+  // const isPolish = window.location.origin.includes('pulseem.pl');
+  const isPolish = qs?.culture === 'pl-PL';
   const [userDetails, setUserDetails] = useState({
     fullName: '',
     emailId: qs?.emailid || '',
@@ -222,10 +223,10 @@ const SignUpNew = ({ classes }: any) => {
   };
 
   useEffect(() => {
-    dispatch(setLanguage(qs?.culture || 'he'));
-    if (qs?.culture === 'en') i18n.changeLanguage('en-US');
-    else if (qs?.culture === 'he') i18n.changeLanguage('he-IL');
-    else if (qs?.culture === 'pl') i18n.changeLanguage('pl-PL');
+    dispatch(setLanguage(qs?.culture || 'he-IL'));
+    if (qs?.culture === 'en' || qs?.culture === 'en-US') i18n.changeLanguage('en-US');
+    else if (qs?.culture === 'he' || qs?.culture === 'he-US') i18n.changeLanguage('he-IL');
+    else if (qs?.culture === 'pl' || qs?.culture === 'pl-PL') i18n.changeLanguage('pl-PL');
 
     getUserInfo();
     if ((qs?.refId && qs?.refId !== '') && ((!qs?.emailid || qs?.emailid === '') || !qs?.id)) {
@@ -1032,7 +1033,7 @@ const SignUpNew = ({ classes }: any) => {
           }
 
           <MenuItem value={'en'} className={clsx(classes.SignUpLanguageDropdown, classes.cursorPointer)}>
-            <img width={25} src={EnImage} className={clsx(classes.paddingInline10)} alt={t('languages.langCodes.english')} />
+            <img width={35} src={EnImage} alt={t('languages.langCodes.english')} />
             <label>{t('languages.langCodes.english')}</label>
           </MenuItem>
           
