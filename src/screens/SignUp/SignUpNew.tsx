@@ -370,7 +370,8 @@ const SignUpNew = ({ classes }: any) => {
   const sendEmail = async () => {
     setLoader(true);
     const { data: { Message }, status } = await PulseemReactInstance.post(`User/ResendEmail`, {
-      UserID: qs?.id
+      UserID: qs?.id,
+      Culture: qs?.Culture || 'he-IL',
     });
     setLoader(false);
     if (status === 200) {
