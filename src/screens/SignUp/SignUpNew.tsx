@@ -37,7 +37,7 @@ const SignUpNew = ({ classes }: any) => {
   const [showLoader, setLoader] = useState(false);
   const qs = queryString.parse(window.location.search);
   // const isPolish = window.location.origin.includes('pulseem.pl');
-  const isPolish = qs?.culture === 'pl-PL';
+  const isPolish = qs?.Culture === 'pl-PL';
   const [userDetails, setUserDetails] = useState({
     fullName: '',
     emailId: qs?.emailid || '',
@@ -325,7 +325,8 @@ const SignUpNew = ({ classes }: any) => {
         UserID: qs?.id,
         chkMailingApproval: userDetails.chkUpdate,
         Email: userDetails.emailId,
-        ReferralID: qs?.refId
+        ReferralID: qs?.refId,
+        Culture: qs?.Culture || 'he-IL',
       });
       setLoader(false);
       if (status === 200) {
