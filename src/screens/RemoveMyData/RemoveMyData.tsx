@@ -48,7 +48,7 @@ const RemoveMyData = ({ classes }: any) => {
   }
 
   useEffect(() => {
-    const defaultLang = qs?.Culture || cookieData;
+    const defaultLang = qs?.culture || cookieData;
     let langCode = 'he';
     if (defaultLang === 'he-IL') langCode = 'he';
     else if (defaultLang === 'en-US') langCode = 'en';
@@ -212,7 +212,7 @@ const RemoveMyData = ({ classes }: any) => {
           className={clsx(classes.SignUpLanguageDropdown, classes.pbt5)}
         >
           {
-            qs?.Culture !== 'pl-PL' && (
+            qs?.culture !== 'pl-PL' && (
               <MenuItem value={'he'} className={clsx(classes.SignUpLanguageDropdown, classes.cursorPointer)}>
                 <img width={25} src={IsraelImage} className={clsx(classes.paddingInline10)} alt={t('languages.langCodes.hebrew')} />
                 <label>{t('languages.langCodes.hebrew')}</label>
