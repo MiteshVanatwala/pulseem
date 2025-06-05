@@ -37,7 +37,7 @@ const SignUpNew = ({ classes }: any) => {
   const [showLoader, setLoader] = useState(false);
   const qs = queryString.parse(window.location.search);
   // const isPolish = window.location.origin.includes('pulseem.pl');
-  const isPolish = qs?.Culture === 'pl-PL';
+  const isPolish = qs?.culture === 'pl-PL';
   const [userDetails, setUserDetails] = useState({
     fullName: '',
     emailId: qs?.emailid || '',
@@ -222,7 +222,7 @@ const SignUpNew = ({ classes }: any) => {
   };
 
   useEffect(() => {
-    const defaultLang = qs?.Culture || cookieData;
+    const defaultLang = qs?.culture || cookieData;
     let langCode = 'he';
     if (defaultLang === 'he-IL') langCode = 'he';
     else if (defaultLang === 'en-US') langCode = 'en';
@@ -324,7 +324,7 @@ const SignUpNew = ({ classes }: any) => {
         chkMailingApproval: userDetails.chkUpdate,
         Email: userDetails.emailId,
         ReferralID: qs?.refId,
-        Culture: qs?.Culture || 'he-IL',
+        Culture: qs?.culture || 'he-IL',
       });
       setLoader(false);
       if (status === 200) {
@@ -369,7 +369,7 @@ const SignUpNew = ({ classes }: any) => {
     setLoader(true);
     const { data: { Message }, status } = await PulseemReactInstance.post(`User/ResendEmail`, {
       UserID: qs?.id,
-      Culture: qs?.Culture || 'he-IL',
+      Culture: qs?.culture || 'he-IL',
     });
     setLoader(false);
     if (status === 200) {
@@ -500,7 +500,7 @@ const SignUpNew = ({ classes }: any) => {
       case 201: {
         // for stage
         const newUrl = Data?.RedirectLink.replace('https://www.pulseem.co.il', actionURL?.replace('/Pulseem/', ''));
-        window.location.href = `${newUrl}&refId=${qs?.refId}&Culture=${language}`;
+        window.location.href = `${newUrl}&refId=${qs?.refId}&culture=${language}`;
         // for production
         // window.location.href = `${Data?.RedirectLink}&refId=${qs?.refId}`;
         break;
