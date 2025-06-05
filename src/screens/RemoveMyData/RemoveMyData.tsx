@@ -35,7 +35,7 @@ const RemoveMyData = ({ classes }: any) => {
   const [ GUID, setGUID ] = useState<string>('');
   const qs = queryString.parse(window.location.search);
   const cookieData = getCookie('Culture');
-
+  
   const changeLanguage = (value: any) => {
     let langCode = '';
     if (value === 'he') langCode = 'IL';
@@ -48,8 +48,8 @@ const RemoveMyData = ({ classes }: any) => {
   }
 
   useEffect(() => {
-    const defaultLang = qs?.culture || cookieData;
-    let langCode = '';
+    const defaultLang = qs?.Culture || cookieData;
+    let langCode = 'he';
     if (defaultLang === 'he-IL') langCode = 'he';
     else if (defaultLang === 'en-US') langCode = 'en';
     else if (defaultLang === 'pl-PL') langCode = 'pl';
@@ -211,10 +211,14 @@ const RemoveMyData = ({ classes }: any) => {
           }}
           className={clsx(classes.SignUpLanguageDropdown, classes.pbt5)}
         >
-          <MenuItem value={'he'} className={clsx(classes.SignUpLanguageDropdown, classes.cursorPointer)}>
-            <img width={25} src={IsraelImage} className={clsx(classes.paddingInline10)} alt={t('languages.langCodes.hebrew')} />
-            <label>{t('languages.langCodes.hebrew')}</label>
-          </MenuItem>
+          {
+            qs?.Culture !== 'pl-PL' && (
+              <MenuItem value={'he'} className={clsx(classes.SignUpLanguageDropdown, classes.cursorPointer)}>
+                <img width={25} src={IsraelImage} className={clsx(classes.paddingInline10)} alt={t('languages.langCodes.hebrew')} />
+                <label>{t('languages.langCodes.hebrew')}</label>
+              </MenuItem>
+            )
+          }
 
           <MenuItem value={'en'} className={clsx(classes.SignUpLanguageDropdown, classes.cursorPointer)}>
             <img width={25} src={EnImage} className={clsx(classes.paddingInline10)} alt={t('languages.langCodes.english')} />
