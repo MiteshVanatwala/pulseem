@@ -22,7 +22,7 @@ import { BaseDialog } from "../../components/DialogTemplates/BaseDialog";
 import { CompanyWebsiteRequest } from "../../Models/CompanyWebsite/CompanyWebSite";
 import { actionURL } from "../../config";
 import Select, { SelectChangeEvent } from '@mui/material/Select';
-import { setCookie } from "../../helpers/Functions/cookies";
+import { getCookie, setCookie } from "../../helpers/Functions/cookies";
 import EnImage from '../../assets/images/british.svg';
 import IsraelImage from "../../assets/images/israel-flag-icon.svg";
 import PolandImage from "../../assets/images/poland-flag-icon.svg";
@@ -96,15 +96,14 @@ const SignUpNew = ({ classes }: any) => {
   const [invalidEmail, setInvalidEmail] = useState<boolean>(false);
   const [activeStep, setActiveStep] = useState(0);
   const passwordHintClasses = useStylesBootstrapPasswordHint();
+  const cookieData = getCookie('Culture');
 
   const changeLanguage = (value: any) => {
-    let culture = 'he-IL';
-    if (value === 'en') {
-      culture = 'en-US';
-    } else if (value === 'pl') {
-      culture = 'pl-PL';
-    }
-    setCookie('Culture', culture);
+    let langCode = '';
+    if (value === 'he') langCode = 'IL';
+    else if (value === 'en') langCode = 'US';
+    else if (value === 'pl') langCode = 'PL';
+    setCookie('Culture', `${value}-${langCode}`);
     i18n.changeLanguage(value);
     dispatch(setLanguage(value));
   }
@@ -223,10 +222,13 @@ const SignUpNew = ({ classes }: any) => {
   };
 
   useEffect(() => {
-    dispatch(setLanguage(qs?.Culture || 'he-IL'));
-    if (qs?.Culture === 'en' || qs?.Culture === 'en-US') i18n.changeLanguage('en-US');
-    else if (qs?.Culture === 'he' || qs?.Culture === 'he-US') i18n.changeLanguage('he-IL');
-    else if (qs?.Culture === 'pl' || qs?.Culture === 'pl-PL') i18n.changeLanguage('pl-PL');
+    const defaultLang = qs?.Culture || cookieData;
+    let langCode = 'he';
+    if (defaultLang === 'he-IL') langCode = 'he';
+    else if (defaultLang === 'en-US') langCode = 'en';
+    else if (defaultLang === 'pl-PL') langCode = 'pl';
+    dispatch(setLanguage(langCode));
+    i18n.changeLanguage(langCode);
 
     getUserInfo();
     if ((qs?.refId && qs?.refId !== '') && ((!qs?.emailid || qs?.emailid === '') || !qs?.id)) {
@@ -235,10 +237,6 @@ const SignUpNew = ({ classes }: any) => {
       });
     }
   }, []);
-
-  useEffect(() => {
-    i18n.changeLanguage(isRTL ? 'he-IL' : (isPolish ? 'pl-PL' : 'en-US'));
-  }, [isRTL]);
 
   const renderToast = () => {
     if (toastMessage) {
