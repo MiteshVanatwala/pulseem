@@ -174,9 +174,9 @@ const TemplateFields = ({
 										</MenuItem>
 									)
 								}
-								<MenuItem value={authenticationTypes.AUTHENTICATIONPOLSKI}>
+								{/* <MenuItem value={authenticationTypes.AUTHENTICATIONPOLSKI}>
 									{translator('whatsapp.authenticationPolski')}
-								</MenuItem>
+								</MenuItem> */}
 							</Select>
 						</FormControl>
 					</Grid>
