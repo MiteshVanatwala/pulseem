@@ -1,0 +1,63 @@
+{
+  "title": "Śledzenie strony",
+  "setUp": "Ustaw śledzenie strony",
+  "yourDomain": "Twoja domena",
+  "siteToTrack": "Którą stronę chcesz śledzić?",
+  "eventToTrack": "Jakie zdarzenia chcesz śledzić?",
+  "addDomain": "Dodaj swoją domenę tutaj",
+  "addPageUrl": "Dodaj URL strony",
+  "pageUrl": "URL strony",
+  "saved": "Zdarzenie zostało pomyślnie zapisane!",
+  "scriptImplementation": "Zobacz skrypt",
+  "viewSiteTrackingScript": "Zobacz skrypty śledzenia strony",
+  "scriptDescription": "Aby rozpocząć śledzenie interakcji klientów z Twoją stroną, musisz najpierw zaimplementować poniższe skrypty na swojej stronie. <br/>Jeśli korzystasz z naszej wtyczki WooCommerce, te skrypty są już zaimplementowane w ramach wtyczki.",
+  "scriptInstruction": "Skopiuj poniższe linie kodu i wklej je w ostatniej linii przed elementem \"head\" LUB do tagu niestandardowego HTML w swoim koncie Google Tag Manager.",
+  "scriptPurchaseInstruction": "Po zaimplementowaniu skryptu nagłówka, zgłoś następujące parametry za pomocą poniższej funkcji Javascript: ",
+  "scriptPurchaseIstructionForComplete": "Następująca funkcja Javascript powinna być zaimplementowana na stronie potwierdzenia zamówienia, zaraz po zakończeniu zakupu.",
+  "scriptPayAttention": "* Zwróć uwagę, śledzenie strony będzie działać tylko na stronach z certyfikatem SSL",
+  "scriptPageviewImplemented": "Możesz teraz ustawić śledzenie wyświetleń strony.",
+  "purchaseActivating": "Aktywacja śledzenia zakupów",
+  "purchaseInstructionTooltip": "* Ważne! Jeśli zbierasz i przechowujesz wrażliwe dane, zdecydowanie zalecamy poinformowanie o tym klientów",
+  "scriptInstructionEndText": "Po zaimplementowaniu tego skryptu, raporty kampanii będą pokazywać przychody z każdej kampanii.",
+  "addFeatureTooltip": "Chcesz ustawić śledzenie na swojej stronie? Porozmawiaj z naszym zespołem sprzedaży już dziś pod numerem +972-3-5240290!",
+  "conditions": {
+    "none": "Brak",
+    "contains": "Zawiera",
+    "exact": "Dokładny",
+    "notcontain": "Nie zawiera",
+    "tooltip": {
+      "exact": "Śledź klientów, którzy trafiają na konkretny URL"
+    }
+  },
+  "typeGroupName": "Kliknij tutaj, aby dodać grupy",
+  "placeHolderAddPageUrl": "Dodaj swój URL strony tutaj",
+  "selectGroups": "Wybierz grupy",
+  "addToGroups": "Dodaj do grup",
+  "events": {
+    "pageLoad": "Ładowanie strony",
+    "pageView": "Wyświetlenie strony",
+    "purchase": "Zakup"
+  },
+  "validation": {
+    "domainRequired": "Domena - Pole wymagane",
+    "domainNotValid": "Domena - Adres nieprawidłowy",
+    "groupsRequired": "Należy dodać grupę dla zdarzenia",
+    "pageUrlRequired": "URL strony - Pole wymagane"
+  },
+  "serverResponse": {
+    "notAuthorized": "Ostrzeżenie dotyczące uprawnień. Skontaktuj się z pomocą techniczną.",
+    "missingMandatoryAction": "Brakuje jednego z parametrów. Spróbuj ponownie",
+    "serverNotAble": "Błąd serwera. Skontaktuj się z pomocą techniczną.",
+    "domainAlreadyExist": "Ta domena już istnieje"
+  },
+  "deleteDialogTitle": "Usunąć śledzenie strony?",
+  "deleteDialogMessage": "Czy jesteś pewien?<br />Kliknięcie \"OK\" zatrzyma całe śledzenie na Twojej stronie.",
+  "NoticeLinkStatistics": "Twoje konto jest skonfigurowane do śledzenia strony<br/>Usunięcie śledzenia linków wyłączy śledzenie strony dla tej domeny",
+  "invalidDomainAddress": "Domena musi być prawidłową nazwą domeny",
+  "addEvent": "Dodaj zdarzenie",
+  "minimumRevenue": "Min. przychód",
+  "maximumRevenue": "Maks. przychód",
+  "enablePurchase": "Włącz śledzenie zakupów",
+  "revenueFeatureAdded": "Funkcja przychodów została dodana.",
+  "revenueFeatureRemoved": "Funkcja przychodów została usunięta."
+}

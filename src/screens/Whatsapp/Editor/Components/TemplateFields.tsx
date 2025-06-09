@@ -25,6 +25,7 @@ import {
 } from '../../Common';
 import { IoIosArrowDown } from 'react-icons/io';
 import { authenticationTypes } from '../../Constant';
+import { commonProps } from '../../../../model/Common/commonProps.types';
 
 const TemplateFields = ({
 	classes,
@@ -39,6 +40,9 @@ const TemplateFields = ({
 }: TemplateFieldsProps & ClassesType) => {
 	const { windowSize, isRTL } = useSelector(
 		(state: { core: coreProps }) => state.core
+	);
+	const { isPoland  } = useSelector(
+		(state: { common: commonProps }) => state.common
 	);
 	const { t: translator } = useTranslation();
 	const [autoCompleteOptions, setAutoCompleteOptions] = useState<string[]>([]);
@@ -163,9 +167,16 @@ const TemplateFields = ({
 								<MenuItem value={authenticationTypes.AUTHENTICATIONEN}>
 									{translator('whatsapp.authenticationEn')}
 								</MenuItem>
-								<MenuItem value={authenticationTypes.AUTHENTICATIONHEBREW}>
-									{translator('whatsapp.authenticationHebrew')}
-								</MenuItem>
+								{
+									!isPoland && (
+										<MenuItem value={authenticationTypes.AUTHENTICATIONHEBREW}>
+											{translator('whatsapp.authenticationHebrew')}
+										</MenuItem>
+									)
+								}
+								{/* <MenuItem value={authenticationTypes.AUTHENTICATIONPOLSKI}>
+									{translator('whatsapp.authenticationPolski')}
+								</MenuItem> */}
 							</Select>
 						</FormControl>
 					</Grid>

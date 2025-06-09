@@ -262,7 +262,10 @@ export const NoAuthenticationAPIs = [
     'User/CheckSubUserRef',
     'User/ConfirmSubUser',
     'User/SaveInfoAccounts',
-    'User/GetStepWiseAccountInfo'
+    'User/GetStepWiseAccountInfo',
+    'GDPR/ForgetMe',
+    'GDPR/ValidateOTP',
+    'GDPR/EraseClient'
 ]
 
 export const FieldOfActivities = [
@@ -486,6 +489,7 @@ export const DEFAULT_CLIENT_SEARCH = {
 }
 
 export const DefaultCountryCodeIsrael = { code: '+972', country: 'IL', name: 'Israel', flag: '🇮🇱' };
+export const DefaultCountryCodePoland = { code: '+48', country: 'PL', name: 'Poland', flag: '🇵🇱' };
 export const CountryCodes = [
     { code: '+93', country: 'AF', name: 'Afghanistan', flag: '🇦🇫' },
     { code: '+355', country: 'AL', name: 'Albania', flag: '🇦🇱' },
@@ -704,3 +708,5 @@ export const BASED_ON_LANG = {
     12: 'nl',
     13: 'pl'
 }
+
+export const reCAPTCHAKey = "6LeJkBorAAAAAC1q2G6fGQqIr-GuqSEF3L91AsT9";

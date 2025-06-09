@@ -69,7 +69,8 @@ export const getRoutes = (
   accountSettings: any = null,
   windowSize: string | number | null = null,
   isRTL: Boolean = false,
-  userRoles: any = null
+  userRoles: any = null,
+  isPolandAccount: Boolean = false
 ) => [
     // smsOldVersion
     {
@@ -163,7 +164,7 @@ export const getRoutes = (
         {
           title: 'A/B Test',
           href: `${rootDomain}/CampaignsAbTestings.aspx?fromreact=true`,
-          isShow: true,
+          isShow: !isPolandAccount,
         },
         // {
         //   title: t("master.RadMenuItemResource10.Text"),
@@ -173,7 +174,7 @@ export const getRoutes = (
         {
           title: t("master.newslatterBasicEditor"),
           href: `${rootDomain}/CampaignEdit.aspx?NewsLetterType=Basic&fromreact=true`,
-          isShow: true,
+          isShow: !isPolandAccount,
         },
         {
           key: "archiveManagement",

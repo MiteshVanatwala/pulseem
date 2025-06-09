@@ -482,6 +482,20 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 		)?.TemplateId;
 	};
 
+	const getAuthTemplate = (lang: string) => {
+		switch (lang) {
+			case 'he':
+				return authenticationTypes.AUTHENTICATIONHEBREW;
+
+			case 'pl':
+				return authenticationTypes.AUTHENTICATIONPOLSKI;
+		
+			case 'en':
+			default:
+				return authenticationTypes.AUTHENTICATIONEN;
+		}
+	}
+
 	const renderAuthenticationPreview = (templateData: any) => {
 		setButtonType('quickReply');
 		const buttonData: any = setButtonsData('quickReply', [
@@ -492,9 +506,9 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 				phone: '',
 			}
 		]);
-		let template = `${authenticationMockTemplate[templateData.Language === 'en' ? authenticationTypes.AUTHENTICATIONEN : authenticationTypes.AUTHENTICATIONHEBREW].body}`;
+		let template = `${authenticationMockTemplate[getAuthTemplate(templateData.Language)].body}`;
 		if (templateData.Data?.types?.authentication?.code_expiration_minutes) {
-			template += `\n\n ${authenticationMockTemplate[templateData.Language === 'en' ? authenticationTypes.AUTHENTICATIONEN : authenticationTypes.AUTHENTICATIONHEBREW].subtitle.replace('X', `${templateData.Data?.types?.authentication?.code_expiration_minutes || 0}`)}`;
+			template += `\n\n ${authenticationMockTemplate[getAuthTemplate(templateData.Language)].subtitle.replace('X', `${templateData.Data?.types?.authentication?.code_expiration_minutes || 0}`)}`;
 		}
 		setTemplateData({
 			templateText: template,

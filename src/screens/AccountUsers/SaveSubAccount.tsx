@@ -31,7 +31,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 	const { windowSize, isRTL } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
-	const { isGlobal, countryCodeList, accountCurrencySymbol, accountIsCurrencySymbolPrefix } = useSelector((state: { common: CommonRedux }) => state.common);
+	const { isGlobal, countryCodeList, accountCurrencySymbol, accountIsCurrencySymbolPrefix, IsPoland } = useSelector((state: { common: CommonRedux }) => state.common);
 	const { subAccountAllGroups } = useSelector((state: any) => state.group);
 	const { testGroups } = useSelector((state: any) => state.sms);
 	const [ selectedGroups, setSelectedGroups ] = useState<any>([]);
@@ -188,15 +188,15 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 			addBalance: !DecimalWithMinusRegEx.test(subAccountDetails.addBalance) ? t('mainReport.invalidNo') : '',
 		};
 
-		if (!isGlobal && subAccountDetails.addEmailBulk === true && errorsTemp.emailBulkAmount === '' && subAccountDetails.emailBulkAmount !== '') {
+		if ((!isGlobal || IsPoland) && subAccountDetails.addEmailBulk === true && errorsTemp.emailBulkAmount === '' && subAccountDetails.emailBulkAmount !== '') {
 			errorsTemp.emailBulkAmount = Number(subAccountDetails.emailBulkAmount) > Number(get(mainAccountBalance, 'EmailBalance', 0)) ? t('SubAccount.notEnoughEmailCreditInParentAccount') : '';
 		}
 
-		if (!isGlobal && subAccountDetails.addSMSBulk === true && errorsTemp.SMSBulkAmount === '' && subAccountDetails.SMSBulkAmount) {
+		if ((!isGlobal || IsPoland) && subAccountDetails.addSMSBulk === true && errorsTemp.SMSBulkAmount === '' && subAccountDetails.SMSBulkAmount) {
 			errorsTemp.SMSBulkAmount = Number(subAccountDetails.SMSBulkAmount) > Number(get(mainAccountBalance, 'SMSBalance', 0)) ? t('SubAccount.notEnoughSMSCreditInParentAccount') : '';
 		}
 
-		if (isGlobal && errorsTemp.addBalance === '' && subAccountDetails.addBalance) {
+		if (isGlobal && !IsPoland && errorsTemp.addBalance === '' && subAccountDetails.addBalance) {
 			errorsTemp.addBalance = Number(subAccountDetails.addBalance) > Number(get(mainAccountBalance, 'GlobalBalance', 0)) ? t('SubAccount.notEnoughGlobalBalance') : '';
 		}
 
@@ -234,10 +234,10 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 				// ExpiryDate: subAccountDetails.automaticUserLock,
 				CellPhone: subAccountDetails.cellPhone,
 				AccountManager: subAccountDetails.accountManager,
-				AddEmailBulkAmount: !isGlobal && subAccountDetails.addEmailBulk ? subAccountDetails.emailBulkAmount : 0,
-				AddSmsBulkAmount: !isGlobal && subAccountDetails.addSMSBulk ? subAccountDetails.SMSBulkAmount : 0,
+				AddEmailBulkAmount: (!isGlobal || IsPoland) && subAccountDetails.addEmailBulk ? subAccountDetails.emailBulkAmount : 0,
+				AddSmsBulkAmount: (!isGlobal || IsPoland) && subAccountDetails.addSMSBulk ? subAccountDetails.SMSBulkAmount : 0,
 				AddMmsBulkAmount: 0,
-				FinalGlobalBalance: isGlobal ? subAccountDetails.addBalance : 0,
+				FinalGlobalBalance: isGlobal && !IsPoland ? subAccountDetails.addBalance : 0,
 				Email: subAccountDetails.emailAddress,
 				LoginUserName: CustomGuidEnc ? get(subAccountRecord, 'LoginUserName', '') : subAccountDetails.loginUserName,
 				Password: subAccountDetails.password,
@@ -477,7 +477,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 			<>
 				<Grid container className={classes.pb15}>
 					{
-						!isGlobal ? (
+						(!isGlobal || IsPoland) ? (
 							<>
 								<Grid item md={4} xs={12} className={clsx(classes.pb10)}>
 									<b>{t("SubAccount.emailBulk")}:</b> {subAccountDetails.emailBulk || 0} {t("SubAccount.messages")}
@@ -568,7 +568,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 
 
 					{
-						!isGlobal && (
+						(!isGlobal || IsPoland) && (
 							<>		
 								<Grid item md={4} xs={12}>
 									<FormControlLabel
@@ -744,7 +744,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 					}
 
 					{
-						isGlobal && (
+						(isGlobal && !IsPoland) && (
 							<>
 								<Grid item md={4} xs={12}>
 									<Typography title={t("SubAccount.balance")} className={clsx(classes.alignDir, classes.pt10)}>

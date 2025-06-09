@@ -1,0 +1,40 @@
+{
+  "admin": "Admin",
+  "dashboard": "Pulpit",
+  "groups": {
+    "title": "Grupy",
+    "manageRecipients": "Zarządzaj Grupami",
+    "search": "Szukaj",
+    "advencedSearch": "Wyszukiwanie Zaawansowane",
+    "dynamicGroups": "Grupy Dynamiczne",
+    "fileUploads": "Przesyłanie Plików"
+  },
+  "newsletter": {
+    "title": "Newsletter"
+  },
+  "sms": {
+    "title": "SMS"
+  },
+  "mms": {
+    "title": "MMS"
+  },
+  "whatsapp": {
+    "title": "WhatsApp"
+  },
+  "landingPages": {
+    "title": "Strony Docelowe"
+  },
+  "reports": {
+    "title": "Raporty",
+    "newsletterReports": "Raporty Newslettera",
+    "smsReports": "Raporty SMS"
+  },
+  "automation": {
+    "title": "Automatyzacje"
+  },
+  "notifications": {
+    "title": "Powiadomienia"
+  },
+  "logout": "Wyloguj",
+  "returnToMainAccount": "Konto Główne"
+}

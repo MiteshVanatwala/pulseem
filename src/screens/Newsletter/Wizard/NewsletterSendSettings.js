@@ -426,6 +426,8 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         409: { type: 'SendResponse', data: { Title: t('campaigns.newsLetterEditor.errors.campaignWasNotSent'), Text: t('campaigns.newsLetterEditor.errors.MONTHLY_BULK_ENDED'), ShowContactSupport: true } },
         410: { type: 'SendResponse', data: { Title: t('campaigns.newsLetterEditor.errors.campaignWasNotSent'), Text: t('campaigns.newsLetterEditor.errors.FIRST_CAMPAIGN_RESTRICTIONS'), ShowContactSupport: false, redirect: `${sitePrefix}Campaigns/` } },
         411: { type: 'SendResponse', data: { Title: t('campaigns.newsLetterEditor.errors.campaignWasNotSent'), Text: t('campaigns.newsLetterEditor.errors.ACCOUNT_RESTRICTED'), ShowContactSupport: true } },
+        550: { type: 'SendResponse', data: { Title: t('campaigns.newsLetterEditor.errors.pendingApproval'), Text: t('campaigns.newsLetterEditor.errors.PendingApprovalDesc'), ShowContactSupport: false } },
+        551: { type: 'SendResponse', data: { Title: t('campaigns.newsLetterEditor.errors.pendingApproval'), Text: t('campaigns.newsLetterEditor.errors.PendingApprovalDesc'), ShowContactSupport: false } },
     };
 
     const handleSendResponse = (response) => {
@@ -447,6 +449,8 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 ...errorToastData,
                 message: t('whatsappCampaign.metaPhoneNumberNotVerified')
             });
+        } else if ([550, 551].indexOf(response.StatusCode)) {
+            setDialogType(SEND_PROC[response?.StatusCode]);
         }
         else {
             setDialogType(SEND_PROC[response?.StatusCode]);

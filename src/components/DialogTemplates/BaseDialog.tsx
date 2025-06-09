@@ -41,7 +41,8 @@ export const BaseDialog = ({
   maxHeight = "",
   reduceTitle = false,
   confirmDisabled = false,
-  className = ''
+  className = '',
+  hideHeader = false
 }: DialogOptions) => {
   const direction: { [key: string]: string } = {
     true: "rtl",
@@ -140,6 +141,8 @@ export const BaseDialog = ({
   };
 
   const RenderTopBar = () => {
+    if (hideHeader) return <></>;
+    
     return (
       <Stack
         className={clsx(classes.dialogTopBar)}

@@ -1,13 +1,16 @@
 import i18n from 'i18next'
-import {initReactI18next} from 'react-i18next'
-import {en,he} from './assets/translations/index'
+import { initReactI18next } from 'react-i18next'
+import { en, he, pl } from './assets/translations/index'
 
-const resources={
+const resources = {
   en: {
     translation: en
   },
   he: {
     translation: he
+  },
+  pl: {
+    translation: pl
   }
 }
 

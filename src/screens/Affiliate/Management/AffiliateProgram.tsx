@@ -22,7 +22,7 @@ const AffiliateProgram = ({ classes }: any) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { windowSize, rowsPerPage, isRTL } = useSelector((state: StateType) => state.core);
+  const { windowSize, rowsPerPage, isRTL, language } = useSelector((state: StateType) => state.core);
   const { affiliateDetails } = useSelector((state: StateType) => state.affiliates);
   const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot }
   const cellStyle = { head: classes.tableCellHead, body: classes.tableCellBody, root: classes.tableCellRoot }
@@ -232,9 +232,9 @@ const AffiliateProgram = ({ classes }: any) => {
     return <Box>
       <Box className={classes.dFlex} style={{ alignItems: 'center' }}>
         <b style={{ marginInlineEnd: 15 }}>{t('affiliate.referralLink')}: </b>
-        <a title={t('affiliate.referralLink')} rel="noreferrer" href={`${actionURL?.replace('/Pulseem/', '/react/')}sign-up?refId=${refId}&culture=${isRTL ? 'he' : 'en'}`} target="_blank">{`${actionURL?.replace('/Pulseem/', '/react/')}sign-up?refId=${refId}`}</a>
+        <a title={t('affiliate.referralLink')} rel="noreferrer" href={`${actionURL?.replace('/Pulseem/', '/react/')}sign-up?refId=${refId}&culture=${language}`} target="_blank">{`${actionURL?.replace('/Pulseem/', '/react/')}sign-up?refId=${refId}`}</a>
         <Box style={{ marginInlineStart: 15 }}>
-          <CopyToClipboard text={`${actionURL?.replace('/Pulseem/', '/react/')}sign-up?refId=${refId}&culture=${isRTL ? 'he' : 'en'}`} onCopy={handleCopyScript}>
+          <CopyToClipboard text={`${actionURL?.replace('/Pulseem/', '/react/')}sign-up?refId=${refId}&culture=${language}`} onCopy={handleCopyScript}>
             <Button
               variant="outlined"
               color="primary"

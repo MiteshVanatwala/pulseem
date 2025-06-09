@@ -1,0 +1,11 @@
+{
+  "updateCreditCard": "Dodaj kartę kredytową",
+  "done": "Gotowe",
+  "selectMethod": "Wybierz metodę płatności",
+  "purchaseSummary": "Podsumowanie zakupu",
+  "addCreditCard": "Dodaj nową",
+  "noCreditFound": "Nie znaleziono karty kredytowej dla tego konta. Możesz dodać nową.",
+  "useExistCard": "Użyj metody płatności kończącej się na ",
+  "paymentSuceess": "Twoja płatność została pomyślnie zrealizowana!",
+  "tryAgain": "Spróbuj ponownie"
+}

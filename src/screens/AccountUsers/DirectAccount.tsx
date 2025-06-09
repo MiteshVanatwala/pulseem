@@ -21,7 +21,7 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 	const { isRTL  } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
-	const { isGlobal } = useSelector((state: { common: CommonRedux }) => state.common);
+	const { isGlobal, IsPoland } = useSelector((state: { common: CommonRedux }) => state.common);
 	const [ isLoader, setIsLoader ] = useState<boolean>(false);
 	const [ toastMessage, setToastMessage ] = useState(null);
 	const [errors, setErrors] = useState({
@@ -332,7 +332,7 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 				</Grid>
 
 				{
-					!isGlobal && (
+					(!isGlobal || IsPoland) && (
 						<>
 							<div className={clsx(classes.f18, classes.bold, classes.pb10, classes.pt30)}>{t('SubAccount.creditDetails')}</div>
 							<Divider className={clsx(classes.mb10, classes.bgBlack)} />
@@ -341,7 +341,7 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 				}
 				<Grid container className={clsx(classes.pb15, classes.pt10)} spacing={3}>
 					{
-						!isGlobal && (
+						(!isGlobal || IsPoland) && (
 							<>
 								<Grid item md={4}>
 									{t("SubAccount.emailDirectBalance")}: {directAccountDetails.emailBulk || 0}
