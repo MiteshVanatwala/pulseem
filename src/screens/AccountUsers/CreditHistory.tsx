@@ -267,7 +267,7 @@ const CreditHistory = ({ classes, id = '' }: any) => {
 					align='center'
 					className={classes.flex1}
 				>
-					{isGlobal && !IsPoland && accountIsCurrencySymbolPrefix ? accountCurrencySymbol : ''} {row.Amount} {isGlobal && !IsPoland && !accountIsCurrencySymbolPrefix ? accountCurrencySymbol : ''}
+					{isGlobal && accountIsCurrencySymbolPrefix ? accountCurrencySymbol : ''} {row.Amount} {isGlobal && !accountIsCurrencySymbolPrefix ? accountCurrencySymbol : ''}
 				</TableCell>
 				{
 					(!isGlobal || IsPoland) && (
@@ -384,7 +384,7 @@ const CreditHistory = ({ classes, id = '' }: any) => {
 			history.map((record: BulkHistory) => {
 				listToExport.push({
 					Date: record.Date,
-					Amount: `${isGlobal && !IsPoland && accountIsCurrencySymbolPrefix ? accountCurrencySymbol : ''} ${record.Amount} ${isGlobal && !IsPoland && !accountIsCurrencySymbolPrefix ? accountCurrencySymbol : ''}`,
+					Amount: `${isGlobal && accountIsCurrencySymbolPrefix ? accountCurrencySymbol : ''} ${record.Amount} ${isGlobal && !accountIsCurrencySymbolPrefix ? accountCurrencySymbol : ''}`,
 					Type: t(`${get(CreditHistoryType, record.Type, '')}`),
 					AccountType: t(`${get(CreditHistoryAccountType, record.AccountType ? 1 : 0, '')}`),
 					TransferedFromSubAccountName: record.TransferedFromSubAccountName,

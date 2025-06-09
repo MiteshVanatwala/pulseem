@@ -162,7 +162,7 @@ const AccountUsers = ({ classes }: any) => {
         uIcon: EditIcon,
         disable: false,
         lable: t('campaigns.Image2Resource1.ToolTip'),
-        remove: windowSize !== 'xs' && !isGlobal || IsPoland,
+        remove: windowSize !== 'xs' && (!isGlobal || IsPoland),
         onClick: () => {
           setDialogType({
             type: 'SaveSubAccount',
