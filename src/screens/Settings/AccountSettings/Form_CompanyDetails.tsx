@@ -412,7 +412,7 @@ const FORM_COMPANY_DETAILS = ({
               />
             </Grid>
             {
-              isGlobal && IsPoland && (
+              isGlobal && (
                 <Grid item xs={12} sm={6} md={4} className={"textBoxWrapper"}>
                   <Typography>
                     {t("settings.displayRevenueIn")}

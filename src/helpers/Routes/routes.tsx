@@ -164,7 +164,7 @@ export const getRoutes = (
         {
           title: 'A/B Test',
           href: `${rootDomain}/CampaignsAbTestings.aspx?fromreact=true`,
-          isShow: true && !isPolandAccount,
+          isShow: !isPolandAccount,
         },
         // {
         //   title: t("master.RadMenuItemResource10.Text"),
@@ -174,7 +174,7 @@ export const getRoutes = (
         {
           title: t("master.newslatterBasicEditor"),
           href: `${rootDomain}/CampaignEdit.aspx?NewsLetterType=Basic&fromreact=true`,
-          isShow: true && !isPolandAccount,
+          isShow: !isPolandAccount,
         },
         {
           key: "archiveManagement",
