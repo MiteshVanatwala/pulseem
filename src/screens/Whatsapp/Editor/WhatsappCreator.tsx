@@ -83,7 +83,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const { t: translator } = useTranslation();
-	const { isRTL, windowSize } = useSelector(
+	const { isRTL, windowSize, language } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
 	const { gallery } = useSelector(
@@ -277,7 +277,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	// }, [isCallToActionOpen]);
 
 	useEffect(() => {
-		if (category === authenticationTypes.AUTHENTICATIONEN || category === authenticationTypes.AUTHENTICATIONHEBREW) {
+		if (category === authenticationTypes.AUTHENTICATIONEN || category === authenticationTypes.AUTHENTICATIONHEBREW || category === authenticationTypes.AUTHENTICATIONPOLSKI) {
 			updateTemplateForAuthentication();
 			setButtonType(ActionButtons.QuickReply);
 		} else {
@@ -291,7 +291,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	}, [ category ])
 
 	useEffect(() => {
-		if (category === authenticationTypes.AUTHENTICATIONEN || category === authenticationTypes.AUTHENTICATIONHEBREW) {
+		if (category === authenticationTypes.AUTHENTICATIONEN || category === authenticationTypes.AUTHENTICATIONHEBREW || category === authenticationTypes.AUTHENTICATIONPOLSKI) {
 			updateTemplateForAuthentication();
 			setButtonType(ActionButtons.QuickReply);
 		} else {
@@ -553,6 +553,20 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		}
 	};
 
+	const getCategory = (lang: string) => {
+		switch (lang) {
+			case 'he':
+				return authenticationTypes.AUTHENTICATIONHEBREW;
+
+			case 'pl':
+				return authenticationTypes.AUTHENTICATIONPOLSKI;
+		
+			case 'en':
+			default:
+				return authenticationTypes.AUTHENTICATIONEN;
+		}
+	}
+
 	const setTemplateById = async (templateId: string) => {
 		const templateData: getTemplateByIdAPIProps = await dispatch<any>(
 			getSavedTemplatesById(templateId)
@@ -563,7 +577,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			if (templateData?.payload?.Data?.Data && templates) {
 				const templateData = templates?.Data;
 				const templateName = templates?.FriendlyTemplateName || '';
-				setCategory(templates?.CategoryId === 3 ? (templates?.Language === 'en' ? authenticationTypes.AUTHENTICATIONEN : authenticationTypes.AUTHENTICATIONHEBREW) : categoryName[templates?.CategoryId || 1]);
+				setCategory(templates?.CategoryId === 3 ? (getCategory(templates?.Language || '')) : categoryName[templates?.CategoryId || 1]);
 				if (templateData) {
 					setUpdatedTemplateData(templateData);
 				}
@@ -655,6 +669,9 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		if (templateData.templateText?.toLowerCase().indexOf(translator('whatsapp.replyRemoveToUnsubscribe', { lng: 'he' }).toLowerCase()) > -1) {
 			return translator('whatsapp.replyRemoveToUnsubscribe', { lng: 'he' });
 		}
+		if (templateData.templateText?.toLowerCase().indexOf(translator('whatsapp.replyRemoveToUnsubscribe', { lng: 'pl' }).toLowerCase()) > -1) {
+			return translator('whatsapp.replyRemoveToUnsubscribe', { lng: 'pl' });
+		}
 		return '';
 	};
 
@@ -678,6 +695,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		}
 		var regexRemoveTextEn = new RegExp(translator('whatsapp.replyRemoveToUnsubscribe', { lng: 'en' }), "g");
 		var regexRemoveTextHe = new RegExp(translator('whatsapp.replyRemoveToUnsubscribe', { lng: 'he' }), "g");
+		var regexRemoveTextPl = new RegExp(translator('whatsapp.replyRemoveToUnsubscribe', { lng: 'pl' }), "g");
 		const variables = getJSONVariables();
 		const requestJSON: JSONProps = {
 			text: {
@@ -759,6 +777,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 						title: templateData.templateText
 							?.replace(regexRemoveTextEn, '')
 							.replace(regexRemoveTextHe, '')
+							.replace(regexRemoveTextPl, '')
 							?.replace(/\n+$/, ''),
 						subtitle: getSubtitle()?.length > 0 ? getSubtitle() : null,
 						media: [fileData?.fileLink],
@@ -950,7 +969,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			setTemplateData({
 				...templateData,
 				templateText: `${templateData.templateText}\n${
-					translator('whatsapp.replyRemoveToUnsubscribe', { lng: isRTL ? 'he' : 'en' })
+					translator('whatsapp.replyRemoveToUnsubscribe', { lng: language })
 				}`?.substring(0, templateTextLimit),
 			});
 		}
@@ -1289,7 +1308,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				}
 				updateTemplateData={(data: quickReplyButtonProps[]) => {
 					updateTemplateButton(data, buttonTypes.QUICK_REPLY);
-					if ((category === authenticationTypes.AUTHENTICATIONEN || category === authenticationTypes.AUTHENTICATIONHEBREW) && data.length > 0) {
+					if ((category === authenticationTypes.AUTHENTICATIONEN || category === authenticationTypes.AUTHENTICATIONHEBREW || category === authenticationTypes.AUTHENTICATIONPOLSKI) && data.length > 0) {
 						setAuthenticationButtonText(data[0].fields[0].value);
 					}
 				}}
@@ -1356,7 +1375,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 					fieldName: 'whatsapp.websiteButtonText',
 					type: 'text',
 					placeholder: 'whatsapp.websiteButtonTextPlaceholder',
-					value: authenticationButtonText || translator('whatsapp.copyCode', { lng: category === authenticationTypes.AUTHENTICATIONEN ? 'en' : 'he' }),
+					value: authenticationButtonText || translator('whatsapp.copyCode', { lng: category === authenticationTypes.AUTHENTICATIONEN ? 'en' : (category === authenticationTypes.AUTHENTICATIONPOLSKI ? 'pl' : 'he') }),
 				},
 			],
 		};
@@ -1431,7 +1450,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 											/>
 
 										{
-											(category === authenticationTypes.AUTHENTICATIONEN || category === authenticationTypes.AUTHENTICATIONHEBREW) && (
+											(category === authenticationTypes.AUTHENTICATIONEN || category === authenticationTypes.AUTHENTICATIONHEBREW || category === authenticationTypes.AUTHENTICATIONPOLSKI) && (
 												<Grid item className={clsx(classes.pt15, classes.pb10, classes.dFlex)}>
 													<Typography className={clsx(classes.pt5)}>
 														{translator('whatsapp.codeExpirationTime') + ' (' + translator('common.minutes') + ')'}

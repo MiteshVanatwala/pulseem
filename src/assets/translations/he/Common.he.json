@@ -43,6 +43,7 @@
   "Cancel": "ביטול",
   "RemoveClient": "הסרה מרשימת תפוצה",
   "RemoveClientInfo": "האם ברצונך להסיר עצמך מרשימת תפוצה זו?",
+  "SubscribeButton": "לִרְכּוֹשׁ",
   "UnsubscribeButton": "הסרה",
   "DefaultGroupName": "הנמענים שלי",
   "NotAllowedFeature": "פונקציונליות זו מבוטלת, למידע נוסף פנה לתמיכה.",
@@ -864,5 +865,6 @@
   "internalError": "שגיאה כללית",
   "selectEmail": "בחר אימייל",
   "selectCellphone": "בחר סלולרי",
-  "creditsPerMessage": "קרדיטים להודעה"
+  "creditsPerMessage": "קרדיטים להודעה",
+  "contactUs": "צור קשר"
 }

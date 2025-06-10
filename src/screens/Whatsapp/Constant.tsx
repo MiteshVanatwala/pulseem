@@ -410,7 +410,8 @@ export const categoryName: CategoryName = {
 
 export enum authenticationTypes {
 	AUTHENTICATIONEN = 'AUTHENTICATIONEN',
-	AUTHENTICATIONHEBREW = 'AUTHENTICATIONHEBREW'
+	AUTHENTICATIONHEBREW = 'AUTHENTICATIONHEBREW',
+	AUTHENTICATIONPOLSKI = 'AUTHENTICATIONPOLSKI'
 }
 
 export const campaignStatus: campaignStatusProps = {
@@ -486,6 +487,10 @@ export const authenticationMockTemplate: AuthenticationMockTemplateType = {
 	AUTHENTICATIONHEBREW: {
 		body: `{{1}} הוא קוד האימות שלך. מטעמי אבטחה, אין לשתף את הקוד הזה.`,
 		subtitle: 'תוקף הקוד הזה יפוג בעוד X דקות'
+	},
+	AUTHENTICATIONPOLSKI: {
+		body: '{{1}} to Twój kod weryfikacyjny. Ze względów bezpieczeństwa nie udostępniaj tego kodu.',
+		subtitle: 'Kod wygasa za X minut'
 	}
 }
 

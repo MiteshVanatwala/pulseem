@@ -4,6 +4,44 @@ import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
 import { BillingAccount } from '../../Models/Product/BillingAccount';
 import { CreditHistoryRequest } from '../../Models/Account/AccountBilling';
 
+export const GetEmailPackagePrices = createAsyncThunk(
+    'AccountBilling/GetEmailPackagePrices',
+    async (_, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.get(`AccountBilling/GetEmailPackagePrices`);
+            return response.data
+        } catch (error) {
+            return console.log(error);
+        }
+    }
+);
+
+export const EmailPricingSubscriptionPoland = createAsyncThunk(
+    'AccountBilling/EmailPricingSubscriptionPoland',
+    async (req: {
+        PricePackageId: number;
+    }, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.post(`AccountBilling/EmailPricingSubscriptionPoland`, req);
+            return response.data as PulseemResponse
+        } catch (error) {
+            return console.log(error);
+        }
+    }
+);
+
+export const EmailPricingUnsubscriptionPoland = createAsyncThunk(
+    'AccountBilling/EmailPricingSubscriptionPoland',
+    async (_, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.post(`AccountBilling/EmailPricingUnsubscriptionPoland`, {});
+            return response.data as PulseemResponse
+        } catch (error) {
+            return console.log(error);
+        }
+    }
+);
+
 export const getAccountBilling = createAsyncThunk(
     'AccountBilling/Get',
     async (_, thunkAPI) => {

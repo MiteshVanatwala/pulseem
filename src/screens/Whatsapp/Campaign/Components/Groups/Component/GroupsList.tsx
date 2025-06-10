@@ -1,5 +1,6 @@
 import {
 	Avatar,
+	Box,
 	ListItem,
 	ListItemAvatar,
 	ListItemSecondaryAction,
@@ -13,6 +14,7 @@ import clsx from 'clsx';
 import { FaCheck } from 'react-icons/fa';
 import { HiUserGroup } from 'react-icons/hi';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 
 const GroupsList = ({
 	classes,
@@ -23,6 +25,7 @@ const GroupsList = ({
 	from,
 }: groupsListProps) => {
 	const { t: translator } = useTranslation();
+	const { isRTL } = useSelector((state: any) => state.core)
 	return list
 		.filter((g: testGroupDataProps) => {
 			return g.GroupName.toLowerCase().includes(groupNameSearch.toLowerCase());
@@ -50,20 +53,24 @@ const GroupsList = ({
 							)}
 						</Avatar>
 					</ListItemAvatar>
-					<ListItemText
-						className={'groupText'}
-						title={group.GroupName}
-						primary={group.GroupName}
-					/>
+					<Box dir={ isRTL ? "rtl" : "ltr" } width="100%">
+						<ListItemText
+							className={clsx('groupText', !isRTL && classes.textLeft)}
+							title={group.GroupName}
+							primary={group.GroupName}
+						/>
+					</Box>
 					{from === 'group' && (
-						<ListItemSecondaryAction className={'groupText'}>
-							{group['Recipients']?.toLocaleString()}{' '}
-							<>
-								{group['Recipients'] !== 1
-									? translator('notifications.recipients')
-									: translator('notifications.recipient')}
-							</>
-						</ListItemSecondaryAction>
+						<Box dir={ isRTL ? "rtl" : "ltr" } width="100%">
+							<Box className={clsx('groupText', classes.itemAvatar, isRTL ? classes.textLeft : classes.textRight)}>
+								{group['Recipients']?.toLocaleString()}{' '}
+								<>
+									{group['Recipients'] !== 1
+										? translator('notifications.recipients')
+										: translator('notifications.recipient')}
+								</>
+							</Box>
+						</Box>
 					)}
 				</ListItem>
 			);

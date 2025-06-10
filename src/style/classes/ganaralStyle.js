@@ -1,3 +1,5 @@
+import { grey } from "@material-ui/core/colors";
+
 const dialogWidth = {
   xs: "200px",
   sm: "350px",
@@ -395,6 +397,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   w70VW: {
     width: "70vw",
   },
+  w80VW: {
+    width: "80vw",
+  },
   minWidth100: {
     minWidth: 100,
   },
@@ -404,8 +409,23 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   maxWidth400: {
     maxWidth: 400,
   },
+  maxWidth500: {
+    maxWidth: 500,
+  },
   maxWidth190: {
     maxWidth: 190,
+  },
+  minWidth70VW: {
+    minWidth: '70vw',
+  },
+  maxWidth70VW: {
+    maxWidth: '70vw',
+  },
+  maxWidth80VW: {
+    maxWidth: '80vw',
+  },
+  minHeight70VH: {
+    minHeight: '70vh',
   },
   width160: {
     width: 160,
@@ -599,13 +619,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     fontSize: '16px !important',
   },
   f18: {
-    fontSize: 18,
+    fontSize: '18px !important',
   },
   f20: {
     fontSize: 20,
   },
   f22: {
-    fontSize: 22,
+    fontSize: '22px !important',
   },
   f25: {
     fontSize: 25,
@@ -1144,6 +1164,27 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   buttonContent: {
     fontSize: 14,
+  },
+  closeModalButton: {
+    position: "absolute",
+    right: isRTL ? 'initial' : 0,
+    left: !isRTL ? 'initial' : 0,
+    top: 0,
+    background: "#fff",
+  },
+  lightGreenButton: {
+    background: '#beff00',
+    border: 'solid 2px #000',
+    boxShadow: '0px 0px 2px 0px #000',
+    padding: '0px 20px',
+    '&:hover': {
+      background: '#89b800',
+      color: '#000',
+      '& svg': {
+        color: '#000',
+        fill: '#000'
+      }
+    },
   },
   alertMsg: {
     color: "#ca332f",
@@ -4198,10 +4239,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     },
   },
   SignUpLanguageDropdown: {
-    width: 150,
+    width: 200,
     borderRadius: 5,
     '& .MuiSelect-select': {
-      padding: '5px 7px !important',
+      padding: '5px 10px !important',
       display: 'flex !important',
       justifyContent: 'flex-end'
     },
@@ -4297,6 +4338,69 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       backgroundColor: 'transparent'
     }
   },
+  rocketImage: {
+    width: '80%',
+  },
+  celebrationImage: {
+    height: '200px',
+  },
+  payPerRecipientPlanDetail: {
+    border: "solid 1px grey",
+    borderRadius: 10,
+    '& .MuiGrid-item': {
+      "&:first-child": {
+        borderRight: !isRTL ? "solid 1px grey" : '',
+        borderLeft: isRTL ? "solid 1px grey" : '',
+      }
+    }
+  },
+  payPerRecipientDialog: {
+    maxWidth: '100%',
+    iframe: {
+      border: 'none'
+    },
+    '& .MuiDialog-paper': {
+      minWidth: '80vw',
+      maxWidth: '80vw'
+    },
+    '& .payPerRecipientChild': {
+      minHeight: '70vh',
+      maxHeight: '70vh'
+    }
+  },
+  customSlider: {
+    height: 12,
+    padding: '20px 0',
+    '& .MuiSlider-rail': {
+      height: 12,
+      borderRadius: 6,
+      // backgroundColor: '#eee',
+    },
+    '& .MuiSlider-track': {
+      height: 12,
+      borderRadius: 6,
+      backgroundColor: '#f73378',
+    },
+    '& .MuiSlider-thumb': {
+      height: 32,
+      width: 32,
+      backgroundColor: '#fff',
+      border: '2px solid #f73378',
+      boxShadow: '0 0 10px #f73378',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      '&:before': {
+        // content: '"<<"',
+        display: 'block',
+        color: '#f73378',
+        fontWeight: 'bold',
+      },
+      '&:hover, &.Mui-focusVisible': {
+        boxShadow: '0 0 15px #f73378',
+      },
+    },
+  },
   maxWidthMinContent: {
     maxWidth: 'min-content !important',
     "@media screen and (max-width: 540px)": {
@@ -4384,6 +4488,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
         padding: '20px 50px',
         boxShadow: '0 10px 30px -6px black',
         fontSize: '2rem',
+        '&.remove-my-data': {
+          width: '35%',
+          padding: '20px',
+          paddingBottom: '2rem',
+          "& input::placeholder": {
+            fontSize: "20px",
+          },
+        },
         "@media screen and (max-width: 768px)": {
           width: '85%',
           padding: '15px',
@@ -4444,5 +4556,22 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   agentNameContainer: {
     backgroundColor: '#5EBD6A',
     paddingInline: 7
+  },
+  removeMyDataButton: {
+    fontSize: '1.2rem',
+    borderRadius: 5,
+    width: '70%',
+    '& *': {
+      fontSize: '1.2rem',
+    }
+  },
+  reCAPTCHA: {
+    "& div:first-child": {
+      margin: 'auto'
+    }
+  },
+  polishSubscribeGreyBox: {
+    background: grey[100],
+    borderRadius: 5,  
   }
 });

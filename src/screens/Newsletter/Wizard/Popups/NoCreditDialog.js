@@ -11,6 +11,8 @@ import PurchaseWizard from '../../../../components/Balance/PaymentWizard/Purchas
 import { GoPackage } from 'react-icons/go'
 import { getPackagesDetails } from '../../../../redux/reducers/dashboardSlice'
 import { WhiteLabelObject } from '../../../../components/WhiteLabel/WhiteLabelMigrate'
+import AddCardDialog from '../../../../components/AddCardDialog/AddCardDialog'
+import PayPerRecipient from '../../../../components/PayPerRecipient/PayPerRecipient'
 
 const NoCreditDialog = ({
     classes,
@@ -19,9 +21,11 @@ const NoCreditDialog = ({
     onCancel }) => {
     const { t } = useTranslation()
     const { isRTL } = useSelector(state => state.core)
-    const { accountSettings, subAccount } = useSelector(state => state.common)
-    const [isOpenPackageDialog, setIsOpenPackageDialog] = useState(false);
-    const [isAllowedToPurchase, setIsAllowedToPurchase] = useState(false);
+    const { accountSettings, subAccount, isGlobal, IsPoland } = useSelector(state => state.common)
+    const [ isOpenPackageDialog, setIsOpenPackageDialog ] = useState(false);
+    const [ isAllowedToPurchase, setIsAllowedToPurchase ] = useState(false);
+    const [ isOpenPayPerRecipient, setIsOpenPayPerRecipient ] = useState(false);
+    const [ isOpenAddCardDialog, setIsOpenAddCardDialog ] = useState(false);
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -123,7 +127,17 @@ const NoCreditDialog = ({
                         <Button
                             variant='contained'
                             size='small'
-                            onClick={() => { setIsOpenPackageDialog(true) }}
+                            onClick={() => { 
+                                if (isGlobal === true && IsPoland) {
+                                    // TODO: Uncomment when PayPerRecipient is ready
+                                    // setIsOpenPayPerRecipient(true);
+                                    // TODO: Comment when PayPerRecipient is ready
+                                    setIsOpenPackageDialog(true);
+                                }
+                                else {
+                                    setIsOpenPackageDialog(true);
+                                }
+                            }}
                             className={clsx(
                                 classes.btn,
                                 classes.btnRounded
@@ -156,10 +170,25 @@ const NoCreditDialog = ({
         <BaseDialog
             classes={classes}
             open={isOpenPackageDialog}
-            {...!isAllowedToPurchase ? renderBillingSupportDialog() : renderPackagesListDialog()}
+            {...!isAllowedToPurchase || IsPoland ? renderBillingSupportDialog() : renderPackagesListDialog()}
         >
-            {!isAllowedToPurchase ? renderBillingSupportDialog().content : renderPackagesListDialog().content}
+            {!isAllowedToPurchase || IsPoland ? renderBillingSupportDialog().content : renderPackagesListDialog().content}
         </BaseDialog>
+        <PayPerRecipient
+            classes={classes}
+            isOpen={isOpenPayPerRecipient}
+            onClose={(PricePackageId) => {
+            setIsOpenPayPerRecipient(false);
+            if (PricePackageId) {
+                setIsOpenAddCardDialog(true);
+            }
+            }}
+        />
+        <AddCardDialog
+            classes={classes}
+            isOpen={isOpenAddCardDialog}
+            onClose={() => setIsOpenAddCardDialog(false)}
+        />
     </BaseDialog >
 }
 

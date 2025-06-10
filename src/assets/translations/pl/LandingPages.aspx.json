@@ -1,0 +1,481 @@
+{
+  "GridBoundColumnResource1": {
+    "AndCurrentFilterValue": "",
+    "CurrentFilterValue": "",
+    "DataFormatString": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "EmptyDataText": "&nbsp;",
+    "FooterAggregateFormatString": "",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderAbbr": "",
+    "HeaderAxis": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "ID",
+    "HeaderTooltip": "",
+    "HtmlEncode": "False",
+    "SortExpression": ""
+  },
+  "GridBoundColumnResource2": {
+    "AndCurrentFilterValue": "",
+    "CurrentFilterValue": "",
+    "DataFormatString": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "EmptyDataText": "&nbsp;",
+    "FooterAggregateFormatString": "",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderAbbr": "",
+    "HeaderAxis": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "Nazwa Strony Docelowej",
+    "HeaderTooltip": "",
+    "HtmlEncode": "False",
+    "SortExpression": ""
+  },
+  "GridBoundColumnResource3": {
+    "AndCurrentFilterValue": "",
+    "CurrentFilterValue": "",
+    "DataFormatString": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "EmptyDataText": "&nbsp;",
+    "FooterAggregateFormatString": "",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderAbbr": "",
+    "HeaderAxis": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "Nazwa grupy",
+    "HeaderTooltip": "",
+    "HtmlEncode": "False",
+    "SortExpression": ""
+  },
+  "GridButtonColumnResource1": {
+    "AndCurrentFilterValue": "",
+    "ConfirmText": "Czy chcesz usunąć stronę docelową?",
+    "ConfirmTextFormatString": "",
+    "ConfirmTitle": "Usuń Stronę Docelową",
+    "CurrentFilterValue": "",
+    "DataTextFormatString": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderAbbr": "",
+    "HeaderAxis": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "Usuń",
+    "HeaderTooltip": "",
+    "ImageUrl": "~/Images/Document 1 delete.png",
+    "SortExpression": "",
+    "Text": "Usuń"
+  },
+  "GridTemplateColumnResource1": {
+    "AndCurrentFilterValue": "",
+    "CurrentFilterValue": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterAggregateFormatString": "",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderAbbr": "",
+    "HeaderAxis": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "Link",
+    "HeaderTooltip": "",
+    "SortExpression": ""
+  },
+  "GridTemplateColumnResource2": {
+    "AndCurrentFilterValue": "",
+    "CurrentFilterValue": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterAggregateFormatString": "",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderAbbr": "",
+    "HeaderAxis": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "Liczba rekordów",
+    "HeaderTooltip": "",
+    "SortExpression": ""
+  },
+  "GridTemplateColumnResource3": {
+    "AndCurrentFilterValue": "",
+    "CurrentFilterValue": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterAggregateFormatString": "",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderAbbr": "",
+    "HeaderAxis": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "Edytuj",
+    "HeaderTooltip": "",
+    "SortExpression": ""
+  },
+  "GridTemplateColumnResource4": {
+    "AndCurrentFilterValue": "",
+    "CurrentFilterValue": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterAggregateFormatString": "",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderAbbr": "",
+    "HeaderAxis": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "Wyświetl",
+    "HeaderTooltip": "",
+    "SortExpression": ""
+  },
+  "imgEditResource1": {
+    "AlternateText": "",
+    "ToolTip": ""
+  },
+  "imgPreviewResource1": {
+    "AlternateText": "",
+    "ToolTip": ""
+  },
+  "lnkEditResource1": {
+    "Text": "",
+    "ToolTip": ""
+  },
+  "lnkPreviewResource1": {
+    "Text": "",
+    "ToolTip": ""
+  },
+  "locPageExplanationResource1": {
+    "Text": "Użyj tej strony do zarządzania i edycji stron docelowych."
+  },
+  "logPageHeaderResource1": {
+    "Text": "Zarządzanie Stronami Docelowymi"
+  },
+  "NumOfEnteriesResource1": {
+    "Text": ""
+  },
+  "NumOfRegistrationsResource1": {
+    "Text": ""
+  },
+  "PageResource1": {
+    "Title": "Zarządzanie Stronami Docelowymi | System Pulseem"
+  },
+  "RadGridResource1": {
+    "BackImageUrl": "",
+    "FilterMenu": {
+      "ToolTip": ""
+    },
+    "GroupingSettings": {
+      "CollapseTooltip": "Zwiń grupę",
+      "ExpandTooltip": "Rozwiń grupę",
+      "GroupByFieldsSeparator": "; ",
+      "GroupContinuedFormatString": "... grupa kontynuowana z poprzedniej strony. ",
+      "GroupContinuesFormatString": " Grupa kontynuowana na następnej stronie.",
+      "GroupSplitDisplayFormat": "Pokazano {0} z {1} elementów.",
+      "GroupSplitFormat": " ({0})",
+      "UnGroupButtonTooltip": "Kliknij tutaj, aby rozgrupować",
+      "UnGroupTooltip": "Przeciągnij poza pasek, aby rozgrupować"
+    },
+    "GroupPanel": {
+      "Text": "Przeciągnij nagłówek kolumny i upuść go tutaj, aby pogrupować według tej kolumny",
+      "ToolTip": ""
+    },
+    "HeaderContextMenu": {
+      "ToolTip": ""
+    },
+    "HierarchySettings": {
+      "CollapseTooltip": "Zwiń",
+      "ExpandTooltip": "Rozwiń",
+      "SelfCollapseTooltip": "Zwiń odwołanie do siebie",
+      "SelfExpandTooltip": "Rozwiń odwołanie do siebie"
+    },
+    "MasterTableView": {
+      "Caption": "",
+      "CommandItemSettings": {
+        "AddNewRecordImageUrl": "",
+        "AddNewRecordText": "Dodaj nowy rekord",
+        "ExportToCsvImageUrl": "",
+        "ExportToCsvText": "Eksportuj do CSV",
+        "ExportToExcelImageUrl": "",
+        "ExportToExcelText": "Eksportuj do Excel",
+        "ExportToPdfImageUrl": "",
+        "ExportToPdfText": "Eksportuj do PDF",
+        "ExportToWordImageUrl": "",
+        "ExportToWordText": "Eksportuj do Word",
+        "RefreshImageUrl": "",
+        "RefreshText": "Odśwież"
+      },
+      "EditFormSettings": {
+        "CaptionFormatString": "",
+        "InsertCaption": ""
+      },
+      "ExpandCollapseColumn": {
+        "AndCurrentFilterValue": "",
+        "CollapseImageUrl": "",
+        "CurrentFilterValue": "",
+        "EditFormHeaderTextFormat": "{0}:",
+        "ExpandImageUrl": "",
+        "FooterText": "",
+        "GroupByExpression": "",
+        "HeaderAbbr": "",
+        "HeaderAxis": "",
+        "HeaderImageUrl": "",
+        "HeaderText": "",
+        "HeaderTooltip": "",
+        "SortExpression": ""
+      },
+      "FilterExpression": "",
+      "NoDetailRecordsText": "Brak rekordów podrzędnych do wyświetlenia.",
+      "NoMasterRecordsText": "Brak rekordów do wyświetlenia.",
+      "PagerStyle": {
+        "FirstPageText": "",
+        "FirstPageToolTip": "Pierwsza Strona",
+        "LastPageText": "",
+        "LastPageToolTip": "Ostatnia Strona",
+        "NextPagesToolTip": "Następne Strony",
+        "NextPageText": "",
+        "NextPageToolTip": "Następna Strona",
+        "PagerTextFormat": "Zmień stronę: {4} &nbsp;Strona <strong>{0}</strong> z <strong>{1}</strong>, elementy <strong>{2}</strong> do <strong>{3}</strong> z <strong>{5}</strong>.",
+        "PageSizeLabelText": "Rozmiar strony:",
+        "PrevPagesToolTip": "Poprzednie Strony",
+        "PrevPageText": "",
+        "PrevPageToolTip": "Poprzednia Strona"
+      },
+      "RowIndicatorColumn": {
+        "AndCurrentFilterValue": "",
+        "CurrentFilterValue": "",
+        "EditFormHeaderTextFormat": "{0}:",
+        "FooterText": "",
+        "GroupByExpression": "",
+        "HeaderAbbr": "",
+        "HeaderAxis": "",
+        "HeaderImageUrl": "",
+        "HeaderText": "",
+        "HeaderTooltip": "",
+        "SortExpression": ""
+      },
+      "Summary": "",
+      "ToolTip": ""
+    },
+    "PagerStyle": {
+      "FirstPageText": "",
+      "FirstPageToolTip": "Pierwsza Strona",
+      "LastPageText": "",
+      "LastPageToolTip": "Ostatnia Strona",
+      "NextPagesToolTip": "Następne Strony",
+      "NextPageText": "",
+      "NextPageToolTip": "Następna Strona",
+      "PagerTextFormat": "Zmień stronę: {4} &nbsp;Strona <strong>{0}</strong> z <strong>{1}</strong>, elementy <strong>{2}</strong> do <strong>{3}</strong> z <strong>{5}</strong>.",
+      "PageSizeLabelText": "Rozmiar strony:",
+      "PrevPagesToolTip": "Poprzednie Strony",
+      "PrevPageText": "",
+      "PrevPageToolTip": "Poprzednia Strona"
+    },
+    "SortingSettings": {
+      "SortedAscToolTip": "Posortowano rosnąco",
+      "SortedDescToolTip": "Posortowano malejąco",
+      "SortToolTip": "Kliknij tutaj, aby posortować"
+    },
+    "StatusBarSettings": {
+      "LoadingText": "Ładowanie...",
+      "ReadyText": "Gotowe"
+    },
+    "ToolTip": ""
+  },
+  "NewPage": {
+    "Text": "Nowa strona docelowa"
+  },
+  "Status": {
+    "HeaderText": "Aktywna"
+  },
+  "CreateNewResource": {
+    "Text": "Utwórz Stronę Docelową"
+  },
+  "CreateLandingPageNew": "Utwórz Stronę Docelową (Nowa)",
+  "DeleteBody": "Czy na pewno chcesz usunąć tę stronę?",
+  "DeleteResource1": {
+    "HeaderText": "Usuń"
+  },
+  "DeleteTitle": "Usuń Stronę Docelową",
+  "EditResource1": {
+    "HeaderText": "Edytuj"
+  },
+  "FacebookResource1": {
+    "HeaderText": "Dodaj Do Facebooka"
+  },
+  "FormNameResource1": {
+    "HeaderText": "Nazwa Strony"
+  },
+  "GroupNamesResource1": {
+    "HeaderText": "Grupy"
+  },
+  "PageLinkResource1": {
+    "HeaderText": "Adres Strony"
+  },
+  "CloneResource1": {
+    "HeaderText": "Kopiuj"
+  },
+  "SubmitsResource1": {
+    "HeaderText": "Subskrybenci"
+  },
+  "HtmlPage": "Formularz Zagnieżdżony HTML",
+  "StaticPage": "Strona Docelowa",
+  "ViewsResource1": {
+    "HeaderText": "Wyświetlenia"
+  },
+  "WebForm": "Strona Subskrypcji",
+  "TypeNameResource1": {
+    "HeaderText": "Typ Strony"
+  },
+  "Popup": "Formularz Pop-up",
+  "MaxPagesBody": "Twoje konto osiągnęło maksymalną liczbę stron docelowych. Musisz uaktualnić konto.",
+  "MaxPagesTitle": "Przekroczono Limit Stron Docelowych",
+  "EditRegistrationPage": "Wyniki Ankiety",
+  "SurveyExportTitle": "Wyniki Ankiety",
+  "PurchaseExportTitle": "Raport Zakupów",
+  "restoreResource": "Przywróć",
+  "landingPages": "Strony Docelowe",
+  "name": "Nazwa Strony Docelowej",
+  "template": "Szablon",
+  "copyLink": "Kopiuj Link",
+  "embedCode": "Kod Osadzania",
+  "restoreLandingPageTitle": "Wybierz strony docelowe, które chcesz przywrócić",
+  "dialogDuplicateTitle": "Duplikuj stronę docelową",
+  "dialogDuplicateContent": "Czy chcesz zduplikować stronę docelową?",
+  "duplicationSuccessful": "Duplikacja udana!",
+  "duplicationSuccessfulMessage": "Wszystkie dane z Twojej strony docelowej zostały zduplikowane. Jeśli chcesz edytować Właściwości Formularza dla nowej Strony Docelowej, kliknij Edytuj poniżej.",
+  "createLandingPage": "Utwórz Stronę Docelową",
+  "editLandingPage": "Edytuj Stronę Docelową",
+  "formProperties": "Właściwości Formularza",
+  "formName": "Nazwa Formularza",
+  "formNameRequired": "Nazwa Formularza jest wymagana",
+  "formLanguage": "Język Formularza",
+  "shortURL": "Krótki URL",
+  "shortURLTooltip": "Przyjazny dla użytkownika URL dla ludzkich oczu i dla SEO",
+  "shortURLRequired": "Krótki URL jest wymagany",
+  "shortURLExist": "Krótki URL już istnieje. Wybierz inną nazwę.",
+  "answerType": "Typ Odpowiedzi",
+  "answerMessage": "Wiadomość Odpowiedzi",
+  "answerMessageRequired": "Wiadomość Odpowiedzi jest wymagana",
+  "systemDefaultMessage": "Domyślna wiadomość systemowa",
+  "popupMessage": "Wiadomość pop-up",
+  "redirectToURL": "Przekieruj do URL",
+  "downloadFile": "Pobierz plik",
+  "transferToPaymentPage": "Przekieruj do strony płatności",
+  "URL": "URL",
+  "URLRequired": "URL Wymagany",
+  "APIUsername": "Nazwa Użytkownika API",
+  "APIUsernameRequired": "Nazwa Użytkownika API Wymagana",
+  "terminalNumber": "Numer Terminala",
+  "terminalNumberRequired": "Numer Terminala Wymagany",
+  "departmentNumber": "Nr Wydziału",
+  "withoutAnswer": "Bez Odpowiedzi",
+  "sendWebhook": "Wyślij webhook",
+  "formOfflineProperties": "Właściwości Formularza Offline",
+  "formOfflineDate": "Data Wyłączenia Formularza",
+  "formOfflineDateTooltip": "Jeśli użytkownik przejdzie do wygasłej strony lub liczba subskrypcji przekroczy próg, użytkownik zostanie przekierowany do strony offline lub zobaczy domyślny alert systemowy",
+  "redirectURLWhenOffline": "URL Przekierowania Gdy Offline",
+  "invalidRedirectURLWhenOffline": "Wprowadź prawidłowy URL Przekierowania",
+  "invalidDownloadURL": "URL Pobierania Pliku jest nieprawidłowy",
+  "subscriberSettings": "Ustawienia Subskrybenta",
+  "addSubscribersToGroups": "Dodaj Subskrybentów do Grup",
+  "selectAtleastOneGroup": "Wybierz co najmniej jedną grupę",
+  "reportLeadsToEmails": "Raportuj Leady na Emaile",
+  "updateExistingRecipients": "Aktualizuj Istniejących Odbiorców",
+  "limitNumberOfSubscribers": "Ogranicz Liczbę Subskrybentów",
+  "SEOSettings": "Ustawienia SEO",
+  "pageTitle": "Tytuł Strony",
+  "keywords": "Słowa Kluczowe",
+  "description": "Opis",
+  "developmentSettings": "Ustawienia Deweloperskie",
+  "CSSDesign": "Design CSS",
+  "linkPreviewSettings": "Ustawienia Podglądu Linku",
+  "previewTitle": "Tytuł Podglądu",
+  "previewIcon": "Ikona Podglądu",
+  "previewDescription": "Opis Podglądu",
+  "continue": "Kontynuuj",
+  "continueWithTheNewEditor": "Kontynuuj z nowym edytorem",
+  "googleAnalytics": "Google Analytics",
+  "googleConvertion": "Google Convertion",
+  "googleTagManager": "Google Tag Manager",
+  "facebookPixel": "Facebook Pixel",
+  "addEmailAddress": "Dodaj Adres Email",
+  "duplicateEmailConfirmation": "Wyślij Podwójną Zgodę (Double Opt-In)",
+  "linkPreviewTooltip": "Wybierz, jak będzie wyglądał podgląd linku do Twojej strony docelowej",
+  "confirmExit": "Czy chcesz zapisać stronę docelową przed wyjściem?",
+  "handleExitTitle": "Opuść Stronę Docelową",
+  "landingPageNotFound": "Nie znaleziono Strony Docelowej",
+  "landingPageSaved": "Strona Docelowa Zapisana",
+  "redirectUrl": "URL Przekierowania",
+  "downloadFileUrl": "URL Pobierania Pliku",
+  "sendRegistrationToExternalApi": "Przenieś subskrybentów do Systemu Zewnętrznego",
+  "registrationApi": {
+    "title": "Dodaj/Edytuj System Zewnętrzny do przenoszenia informacji",
+    "subTitle": "Na tej stronie możesz ustawić parametry do przenoszenia informacji ze Strony Docelowej do Systemu Zewnętrznego",
+    "systemName": "Nazwa Systemu",
+    "methodType": "Typ Metody",
+    "get": "Get",
+    "post": "Post",
+    "put": "Put",
+    "requestUrl": "URL Żądania (Adres API)",
+    "getExampleTitle": "Żądanie URL Get",
+    "getExample": "Przykład: https://www.example.com?email=##Email##&from=pulseem",
+    "postExampleTitle": "Żądanie URL Post",
+    "postExampleParamTitle": "Parametry dla żądania Post",
+    "postExample": "Przykład: https://www.example.com",
+    "postParamsExample": "email=##Email##&from=pulseem",
+    "availableParameters": "Dostępne parametry",
+    "isOptIn": "Wyślij informacje po OptIn",
+    "parameterInExtrnalSystem": "Parametr w Systemie Zewnętrznym",
+    "typeParamFor": "Wpisz parametr API dla ",
+    "showWizard": "Wklej / użyj kreatora"
+  },
+  "noRequiredGroupSelection": "Nie wymagane dla Stron bez formularza rejestracji",
+  "shortUrlExist": "Krótki URL jest już używany, wypróbuj inny ciąg dla Krótkiego URL",
+  "typeParameters": "Wpisz parametry",
+  "surveyQuestion": "Pytanie Ankietowe",
+  "surveyQuestion2": "Pytanie Ankietowe 2",
+  "surveyQuestion3": "Pytanie Ankietowe 3",
+  "surveyQuestion4": "Pytanie Ankietowe 4",
+  "surveyQuestion5": "Pytanie Ankietowe 5",
+  "surveyQuestion6": "Pytanie Ankietowe 6",
+  "surveyQuestion7": "Pytanie Ankietowe 7",
+  "surveyQuestion8": "Pytanie Ankietowe 8",
+  "surveyQuestion9": "Pytanie Ankietowe 9",
+  "surveyQuestion10": "Pytanie Ankietowe 10",
+  "placeholder": {
+    "first_name": "Wpisz swoje Imię",
+    "last_name": "Wpisz swoje Nazwisko",
+    "email": "Wpisz swój adres Email",
+    "cellphone": "Wpisz swój numer Telefonu komórkowego",
+    "zip": "Wpisz swój Kod pocztowy",
+    "city": "Wpisz swoje Miasto",
+    "state": "Wpisz swój Stan/Województwo",
+    "company": "Wpisz Nazwę Firmy",
+    "country": "Wpisz swój Kraj",
+    "address": "Wpisz swój Adres",
+    "telephone": "Wpisz swój Telefon",
+    "birth_date": "Wpisz swoją Datę urodzenia",
+    "reminder_date": "Wybierz Datę przypomnienia",
+    "surveyQuestion": "Wpisz Odpowiedź na Ankietę",
+    "typeHere": "Wpisz tutaj"
+  },
+  "survey": {
+    "text": "Pytanie Otwarte",
+    "SingleSelect": "Pojedynczy Wybór",
+    "MultipleSelect": "Wielokrotny Wybór",
+    "surveysPerLine": "Pytania na Linię",
+    "surveyAnswer": "Odpowiedź Ankietowa",
+    "userAnswered": "Jeden użytkownik odpowiedział",
+    "usersAnswered": "Użytkowników odpowiedziało"
+  },
+  "publish": "Publikuj",
+  "webformLanguage": "Język Formularza",
+  "groupsForSubscribers": "Grupa dla Subskrybentów",
+  "doubleOptIn": "Aktywuj Subskrybenta z Double Opt In",
+  "commentsToForm": "Komentarze do Formularza",
+  "facebookLikes": "Polubienie na Facebooku",
+  "multipleFormsBlocked": "Wielokrotne Formularze są obecnie niedozwolone.",
+  "isOptIn": "Zgoda na Mailing",
+  "approved": "Zatwierdzona",
+  "notApproved": "Niezatwierdzona",
+  "addClientAsActive": "Dodaj wszystkich nowych zarejestrowanych odbiorców z tej strony docelowej jako “Aktywnych“",
+  "addClientAsActiveWhenClientSelect": "Dodaj nowych odbiorców jako “Aktywnych“ tylko jeśli zatwierdzili mailing, zaznaczając pole opt-in",
+  "changeOptInDesclaimer": "Dla Twojej uwagi, <br/>aktywując ustawienie <b>Dodaj wszystkich nowych zarejestrowanych odbiorców z tej strony docelowej jako “Aktywnych“</b>, żądasz dodania odbiorców, którzy nie wyrazili zgody na otrzymywanie mailingów, co oznacza, że odbiorcy ci będą otrzymywać kampanie Email, SMS i WhatsApp, które wysyłasz.<br/>Zmiana wyżej wymienionych ustawień odbywa się na Twoją wyłączną odpowiedzialność i dokonując tego potwierdzasz, że Pulseem nie ponosi żadnej odpowiedzialności za jakiekolwiek szkody wyrządzone Tobie i/lub Pulseem w wyniku tego, a zatem szkody te będą dotyczyć wyłącznie Ciebie."
+}

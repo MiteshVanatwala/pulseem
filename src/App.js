@@ -78,7 +78,6 @@ import CreateLandingPage from './screens/LandingPages/Wizard/CreateLandingPage';
 import ExtraFields from './screens/Settings/ExtraFields/ExtraFields';
 import { isSignupPage, isSubUserConfirmationPage } from './helpers/Utils/common';
 import './helpers/global';
-import SignUp from './screens/SignUp/SignUp.tsx';
 import SurveyDetails from './screens/LandingPages/Survey/SurveyDetails';
 import WebformSummary from './screens/LandingPages/Wizard/WebformSummary';
 import HtmlPreview from './screens/Preview/HtmlPreview';
@@ -96,6 +95,7 @@ import CreateAutomationTemplate from './screens/Automations/CreateAutomation';
 import SignUpNew from './screens/SignUp/SignUpNew';
 import { UserRoles } from './Models/SubUser/SubUsers';
 import { PulseemFeatures } from './model/PulseemFields/Fields';
+import RemoveMyData from './screens/RemoveMyData/RemoveMyData';
 
 const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
   const transferUrl =
@@ -123,6 +123,11 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
         exact
         path={`${sitePrefix}UserConfirmation`}
         element={<SubUserConfirmationPage classes={classes} />}
+      />
+      <Route
+        exact
+        path={`${sitePrefix}remove-my-data`}
+        element={<RemoveMyData classes={classes} />}
       />
       <Route
         exact
@@ -605,11 +610,27 @@ const App = ({ screenSize }) => {
   const dispatch = useDispatch();
 
   const { language, isRTL, windowSize, isClal, isDebtAccount, isAdmin, isLoader, userRoles } = useSelector(state => state.core)
-  const { accountSettings, currencyList, accountFeatures } = useSelector(state => state.common)
+  const { accountSettings, currencyList, accountFeatures, IsPoland } = useSelector(state => state.common)
   const classes = useClasses(windowSize, isRTL)();
   setCookie('accountSettings', '');
   const isSignup = isSignupPage(location.pathname);
   const isConfirmationPage = isSubUserConfirmationPage(location.pathname)
+
+  useEffect(() => {
+    const direction = getDirection(i18n.language);
+    document.documentElement.setAttribute('dir', direction);
+  }, []);
+
+  useEffect(() => {
+    let culture = getCookie('Culture') || 'he-IL';
+    culture = culture.split('-')[0]
+    if (IsPoland && culture === 'he') {
+      culture = 'pl';
+      setCookie('Culture', 'pl-PL')
+    }
+    i18n.changeLanguage(culture.toLowerCase())
+    dispatch(setLanguage(culture.toLowerCase()))
+  }, [IsPoland]);
 
   React.useEffect(() => {
     !isSignup && !isConfirmationPage && dispatch(getNotificationUpdates());
@@ -706,6 +727,10 @@ const App = ({ screenSize }) => {
     !isSignup && !isConfirmationPage && dispatch(GetAfterLoginInitialData());
   }, [dispatch])
 
+  const getDirection = (lang) => {
+    const rtlLanguages = ['ar', 'he', 'fa', 'ur'];
+    return rtlLanguages.includes(lang) ? 'rtl' : 'ltr';
+  };
 
   const theme = getTheme(language)
   const redirect = useNavigate()

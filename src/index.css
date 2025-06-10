@@ -117,3 +117,15 @@ code {
 .MuiTooltip-popper{
   z-index: 100 !important;
 }
+
+/* Hide grecaptcha-badge on all pages */
+.grecaptcha-badge {
+  visibility: hidden !important;
+  display: none !important;
+}
+
+/* Show grecaptcha-badge only on URLs containing "gdpr" */
+html[data-url*="remove-my-data"] .grecaptcha-badge {
+  visibility: visible !important;
+  display: block !important;
+}

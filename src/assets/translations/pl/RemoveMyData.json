@@ -1,0 +1,21 @@
+{
+  "title": "Wniosek o Bezpieczne Usunięcie Danych",
+  "insertEmailPhone": "Wprowadź swój adres e-mail lub numer telefonu komórkowego",
+  "insertEmailPhonePlaceholder": "Wpisz e-mail lub numer telefonu",
+  "eraseDataConfirmation": "Czy na pewno chcesz usunąć swoje dane?",
+  "eraseDataDescription1": "Ta akcja jest trwała i nie może zostać cofnięta.",
+  "eraseDataDescription2": "Potwierdzając tę prośbę, wszystkie dane osobowe powiązane z Twoim adresem e-mail/numerem telefonu zostaną trwale usunięte z naszych systemów.",
+  "eraseDataDescription3": "Dotyczy to również wszelkich zapisów używanych do celów komunikacyjnych.",
+  "eraseDataDescription4": "W rezultacie możesz przestać otrzymywać ważne wiadomości, w tym aktualizacje, alerty serwisowe lub powiadomienia związane z usługami.",
+  "eraseDataDescription5": "Przeczytałem/am i zrozumiałem/am konsekwencje i chcę kontynuować usuwanie wszystkich moich danych.",
+  "YesEraseData": "Tak, Usuń Moje Dane",
+  "enterOTP": "Wprowadź Kod OTP",
+  "enterValidOTP": "Wprowadź Prawidłowy Kod OTP",
+  "enterOTPPlaceholder": "Wprowadź kod OTP wysłany na Twój e-mail/telefon",
+  "otpVerificationFailed": "Weryfikacja kodu OTP nie powiodła się. Spróbuj ponownie.",
+  "validateOTP": "Zweryfikuj Kod OTP",
+  "dataDeletionBegins": "Otrzymaliśmy Twoją prośbę o usunięcie danych. Powiadomimy Cię e-mailem o zakończeniu procesu.",
+  "invalidCaptcha": "Nieprawidłowa Captcha. Spróbuj ponownie.",
+  "errorMessage": "Ups! Coś poszło nie tak. Spróbuj ponownie.",
+  "invalidOTP": "Nieprawidłowy kod OTP. Spróbuj ponownie."
+}

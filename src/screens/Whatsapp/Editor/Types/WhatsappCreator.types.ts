@@ -123,6 +123,7 @@ export type coreProps = {
 	rowsPerPage: string | number;
 	accountFeatures: string;
 	userRoles: any;
+	language?: string;
 };
 
 export type CommonRedux = {
@@ -142,6 +143,8 @@ export type CommonRedux = {
 	subAccount?: any,
 	WhatsAppPlatformID?: number | null
 	TierData?: any;
+	currencyId?: number;
+	IsPoland?: boolean;
 };
 
 export type actionButtonProps = {

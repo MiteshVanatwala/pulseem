@@ -8,12 +8,12 @@ import { LandingPagesAnswerType } from "../../../../helpers/Constants";
 import { coreProps } from "../../../Whatsapp/Campaign/Types/WhatsappCampaign.types";
 import { isShortUrlExist } from "../../../../redux/reducers/landingPagesSlice";
 import { LangugeCode } from "../../../../model/PulseemFields/Fields";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 
 const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setErrors }: any) => {
     const { t: translator } = useTranslation();
-    const { isRTL } = useSelector(
+    const { isRTL, language } = useSelector(
         (state: { core: coreProps }) => state.core
     );
     const dispatch = useDispatch();
@@ -32,6 +32,28 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
     }
 
     const domain = ' https://l-p.site/clientpages/';
+
+    useEffect(() => {
+        const languageToId = {
+            'he': 0,
+            'en': 1,
+            'fr': 2, // French
+            'es': 3, // Spanish
+            'de': 4, // German
+            'ru': 5, // Russian
+            'ja': 6, // Japanese
+            'ro': 7, // Romanian
+            'ar': 8, // Arabic
+            'hu': 9, // Hungarian
+            'sk': 10, // Slovak
+            'pt': 11, // Portuguese
+            'nl': 12, // Dutch
+            'pl': 14  // Polish
+        } as any;
+
+
+        onUpdate({ ...data, BaseLanguage: languageToId[language] });
+    }, [language])
 
 
     const renderPaymentFields = () => {

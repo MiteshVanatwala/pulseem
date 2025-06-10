@@ -12,6 +12,7 @@ const Package = ({ classes,
     onSelect = () => null }) => {
 
     const { isRTL } = useSelector(state => state.core);
+    const { accountIsCurrencySymbolPrefix, accountCurrencySymbol } = useSelector(state => state.common);
     const { t } = useTranslation();
     return (
         <Grid item xs={12} sm={6} md={4} lg={packSize} style={{ padding: 15 }} >
@@ -22,7 +23,7 @@ const Package = ({ classes,
                         <NumberFormat value={pack.Quantity} displayType={'text'} thousandSeparator={true} />
                     </Typography>
                     <Typography className={clsx(classes.black, classes.bold, classes.mb2, classes.textCenter)}>
-                        <NumberFormat className={clsx(classes.f20, classes.textCenter, classes.packagePriceText)} style={{ direction: isRTL ? 'rtl' : 'ltr' }} value={pack.Price} displayType={'text'} thousandSeparator={true} prefix={'₪'} />
+                        <NumberFormat className={clsx(classes.f20, classes.textCenter, classes.packagePriceText)} style={{ direction: isRTL ? 'rtl' : 'ltr' }} value={pack.Price} displayType={'text'} thousandSeparator={true} prefix={accountIsCurrencySymbolPrefix ? accountCurrencySymbol : ''} suffix={!accountIsCurrencySymbolPrefix ? accountCurrencySymbol : ''} />
                     </Typography>
                     <Button
                         variant='contained'

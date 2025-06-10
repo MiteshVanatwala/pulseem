@@ -14,7 +14,8 @@ const TranzilaIframe = ({
     packageId,
     onStepBack,
     paymentUrl = null,
-    onComplete = () => { }
+    onComplete = () => { },
+    hideSummary = false,
 }) => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
@@ -50,18 +51,24 @@ const TranzilaIframe = ({
             </Box>
             <Divider />
         </Grid>}
-        <Grid item className={clsx(classes.mt25, classes.fullFlexItem)}>
-            <PurchaseSummary data={data}
-                classes={classes}
-                isRTL={isRTL}
-                packageId={packageId}
-                showTitle={false}
-                showButtons={false} />
+        {
+            !hideSummary && (
+                <>
+                    <Grid item className={clsx(classes.mt25, classes.fullFlexItem)}>
+                        <PurchaseSummary data={data}
+                            classes={classes}
+                            isRTL={isRTL}
+                            packageId={packageId}
+                            showTitle={false}
+                            showButtons={false} />
 
-        </Grid>
-        <Grid item xs={12} className={clsx(classes.mb25)}>
-            <Divider />
-        </Grid>
+                    </Grid>
+                    <Grid item xs={12} className={clsx(classes.mb25)}>
+                        <Divider />
+                    </Grid>
+                </>
+            )
+        }
         <Grid item xs={12} className={clsx(classes.fullFlexItem)}>
             <Loader isOpen={paymentUrl === null} showBackdrop={false} />
             <iframe title="Tranzila Url" src={`${paymentUrl}`} width={windowSize !== 'xs' ? 400 : 250} height="420" border="no" frameBorder="0" style={{ border: "none !important" }} />

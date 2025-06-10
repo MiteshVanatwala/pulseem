@@ -163,7 +163,7 @@ const WhatsappTemplateEditor = ({
 		<>
 			<div className={classes.WhatsappTextareaWrapper}>
 				<textarea
-					disabled={category === authenticationTypes.AUTHENTICATIONEN || category === authenticationTypes.AUTHENTICATIONHEBREW}
+					disabled={category === authenticationTypes.AUTHENTICATIONEN || category === authenticationTypes.AUTHENTICATIONHEBREW || category === authenticationTypes.AUTHENTICATIONPOLSKI}
 					required
 					ref={templateTextRef}
 					placeholder={translator('whatsapp.template.textareaPlaceholder')}
@@ -207,7 +207,7 @@ const WhatsappTemplateEditor = ({
 												{field.value}
 											</Button>
 											{
-												category !== authenticationTypes.AUTHENTICATIONEN && category !== authenticationTypes.AUTHENTICATIONHEBREW && (
+												category !== authenticationTypes.AUTHENTICATIONEN && category !== authenticationTypes.AUTHENTICATIONHEBREW && category !== authenticationTypes.AUTHENTICATIONPOLSKI && (
 													<DeleteOutlinedIcon
 														style={{ color: 'red', cursor: 'pointer' }}
 														onClick={() => {

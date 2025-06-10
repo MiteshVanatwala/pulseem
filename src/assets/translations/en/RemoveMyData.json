@@ -1,0 +1,21 @@
+{
+  "title": "Secure Data Deletion Request",
+  "insertEmailPhone": "Insert your Email or your cellphone number",
+  "insertEmailPhonePlaceholder": "Enter email or phone number",
+  "eraseDataConfirmation": "Are you absolutely sure you want to erase your data?",
+  "eraseDataDescription1": "This action is permanent and cannot be undone.",
+  "eraseDataDescription2": "By confirming this request, all personal data associated with your email/phone number will be permanently removed from our systems.",
+  "eraseDataDescription3": "This includes any records used for communication purposes.",
+  "eraseDataDescription4": "As a result, you may no longer receive important messages, including updates, service alerts, or utility-related notifications.",
+  "eraseDataDescription5": "I have read and understood the consequences and want to proceed with erasing all of my data.",
+  "YesEraseData": "Yes, Erase My Data",
+  "enterOTP": "Enter OTP",
+  "enterValidOTP": "Enter Valid OTP",
+  "enterOTPPlaceholder": "Enter the OTP sent to your email/phone",
+  "otpVerificationFailed": "OTP verification failed. Please try again.",
+  "validateOTP": "Validate OTP",
+  "dataDeletionBegins": "We have received your request to delete your data. We will notify you via an email on completion.",
+  "invalidCaptcha": "Invalid Captcha. Please try again.",
+  "errorMessage": "Oops! Something went wrong. Please try again.",
+  "invalidOTP": "Invalid OTP. Please try again."
+}

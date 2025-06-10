@@ -1,0 +1,453 @@
+{
+  "AjaxManagerResource1": {
+    "ToolTip": ""
+  },
+  "btnClearSearchResource1": {
+    "Text": "Wyczyść",
+    "ToolTip": ""
+  },
+  "btnSearchResource1": {
+    "Text": "Szukaj",
+    "ToolTip": ""
+  },
+  "datFromDateResource1": {
+    "Calendar": {
+      "CellDayFormat": "%d",
+      "ColumnHeaderImage": "",
+      "ColumnHeaderText": "",
+      "DateRangeSeparator": " - ",
+      "DayCellToolTipFormat": "dddd, MMMM dd, yyyy",
+      "FastNavigationNextImage": "fastNavRight.gif",
+      "FastNavigationNextText": ">>",
+      "FastNavigationPrevImage": "fastNavLeft.gif",
+      "FastNavigationPrevText": "<<",
+      "NavigationNextImage": "arrowRight.gif",
+      "NavigationNextText": ">",
+      "NavigationPrevImage": "arrowLeft.gif",
+      "NavigationPrevText": "<",
+      "RowHeaderImage": "",
+      "RowHeaderText": "",
+      "TitleFormat": "MMMM yyyy",
+      "ToolTip": "",
+      "ViewSelectorImage": "",
+      "ViewSelectorText": ""
+    },
+    "DateInput": {
+      "ToolTip": ""
+    },
+    "DatePopupButton": {
+      "ToolTip": "Otwórz kalendarz."
+    },
+    "ToolTip": ""
+  },
+  "datToDateResource1": {
+    "Calendar": {
+      "CellDayFormat": "%d",
+      "ColumnHeaderImage": "",
+      "ColumnHeaderText": "",
+      "DateRangeSeparator": " - ",
+      "DayCellToolTipFormat": "dddd, MMMM dd, yyyy",
+      "FastNavigationNextImage": "fastNavRight.gif",
+      "FastNavigationNextText": ">>",
+      "FastNavigationPrevImage": "fastNavLeft.gif",
+      "FastNavigationPrevText": "<<",
+      "NavigationNextImage": "arrowRight.gif",
+      "NavigationNextText": ">",
+      "NavigationPrevImage": "arrowLeft.gif",
+      "NavigationPrevText": "<",
+      "RowHeaderImage": "",
+      "RowHeaderText": "",
+      "TitleFormat": "MMMM yyyy",
+      "ToolTip": "",
+      "ViewSelectorImage": "",
+      "ViewSelectorText": ""
+    },
+    "DateInput": {
+      "ToolTip": ""
+    },
+    "DatePopupButton": {
+      "ToolTip": "Otwórz kalendarz."
+    },
+    "ToolTip": ""
+  },
+  "grdCampaingsResource1": {
+    "BackImageUrl": "",
+    "FilterMenu": {
+      "ToolTip": ""
+    },
+    "GroupingSettings": {
+      "CollapseTooltip": "Zwiń grupę",
+      "ExpandTooltip": "Rozwiń grupę",
+      "GroupByFieldsSeparator": "; ",
+      "GroupContinuedFormatString": "... grupa kontynuowana z poprzedniej strony. ",
+      "GroupContinuesFormatString": " Grupa kontynuowana na następnej stronie.",
+      "GroupSplitDisplayFormat": "Pokazano {0} z {1} elementów.",
+      "GroupSplitFormat": " ({0})",
+      "UnGroupTooltip": "Przeciągnij poza pasek, aby rozgrupować"
+    },
+    "GroupPanel": {
+      "Text": "Przeciągnij nagłówek kolumny i upuść go tutaj, aby pogrupować według tej kolumny",
+      "ToolTip": ""
+    },
+    "HierarchySettings": {
+      "CollapseTooltip": "Zwiń",
+      "ExpandTooltip": "Rozwiń",
+      "SelfCollapseTooltip": "Zwiń odniesienie do siebie",
+      "SelfExpandTooltip": "Rozwiń odniesienie do siebie"
+    },
+    "MasterTableView": {
+      "Caption": "",
+      "CommandItemSettings": {
+        "AddNewRecordImageUrl": "mvwres://Telerik.Web.UI, Version=2008.1.415.35, Culture=neutral, PublicKeyToken=121fae78165ba3d4/Telerik.Web.UI.Skins.Default.Grid.AddRecord.gif",
+        "AddNewRecordText": "Dodaj nowy rekord",
+        "RefreshImageUrl": "mvwres://Telerik.Web.UI, Version=2008.1.415.35, Culture=neutral, PublicKeyToken=121fae78165ba3d4/Telerik.Web.UI.Skins.Default.Grid.Refresh.gif",
+        "RefreshText": "Odśwież"
+      },
+      "EditFormSettings": {
+        "CaptionFormatString": "",
+        "EditColumn": {
+          "CancelText": "Anuluj",
+          "CurrentFilterValue": "",
+          "EditFormHeaderTextFormat": "{0}:",
+          "EditText": "Edytuj",
+          "FooterText": "",
+          "GroupByExpression": "",
+          "HeaderImageUrl": "",
+          "HeaderText": "",
+          "InsertText": "Wstaw",
+          "SortExpression": "",
+          "UpdateText": "Aktualizuj"
+        }
+      },
+      "ExpandCollapseColumn": {
+        "CollapseImageUrl": "mvwres://Telerik.Web.UI, Version=2008.1.415.35, Culture=neutral, PublicKeyToken=121fae78165ba3d4/Telerik.Web.UI.Skins.Default.Grid.SingleMinus.gif",
+        "CurrentFilterValue": "",
+        "EditFormHeaderTextFormat": "{0}:",
+        "ExpandImageUrl": "mvwres://Telerik.Web.UI, Version=2008.1.415.35, Culture=neutral, PublicKeyToken=121fae78165ba3d4/Telerik.Web.UI.Skins.Default.Grid.SinglePlus.gif",
+        "FooterText": "",
+        "GroupByExpression": "",
+        "HeaderImageUrl": "",
+        "HeaderText": "",
+        "SortExpression": ""
+      },
+      "FilterExpression": "",
+      "NoDetailRecordsText": "Brak rekordów podrzędnych do wyświetlenia.",
+      "NoMasterRecordsText": "Brak rekordów do wyświetlenia.",
+      "PagerStyle": {
+        "NextPagesToolTip": "Następne strony",
+        "NextPageText": "",
+        "NextPageToolTip": "Następna strona",
+        "PagerTextFormat": "Zmień stronę: {4} &nbsp;Wyświetlanie strony {0} z {1}, elementy od {2} do {3} z {5}.",
+        "PrevPagesToolTip": "Poprzednie strony",
+        "PrevPageText": "",
+        "PrevPageToolTip": "Poprzednia strona"
+      },
+      "RowIndicatorColumn": {
+        "CurrentFilterValue": "",
+        "EditFormHeaderTextFormat": "{0}:",
+        "FooterText": "",
+        "GroupByExpression": "",
+        "HeaderImageUrl": "",
+        "HeaderText": "",
+        "SortExpression": ""
+      },
+      "Summary": "",
+      "ToolTip": ""
+    },
+    "PagerStyle": {
+      "NextPagesToolTip": "Następne strony",
+      "NextPageText": "",
+      "NextPageToolTip": "Następna strona",
+      "PagerTextFormat": "Zmień stronę: {4} &nbsp;Wyświetlanie strony {0} z {1}, elementy od {2} do {3} z {5}.",
+      "PrevPagesToolTip": "Poprzednie strony",
+      "PrevPageText": "",
+      "PrevPageToolTip": "Poprzednia strona"
+    },
+    "SortingSettings": {
+      "SortedAscToolTip": "Posortowano rosnąco",
+      "SortedDescToolTip": "Posortowano malejąco",
+      "SortToolTip": "Kliknij tutaj, aby posortować"
+    },
+    "StatusBarSettings": {
+      "LoadingText": "Ładowanie...",
+      "ReadyText": "Gotowe"
+    },
+    "ToolTip": ""
+  },
+  "GridBoundColumnResource1": {
+    "CurrentFilterValue": "",
+    "DataFormatString": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterAggregateFormatString": "",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "",
+    "SortExpression": ""
+  },
+  "GridBoundColumnResource2": {
+    "CurrentFilterValue": "",
+    "DataFormatString": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterAggregateFormatString": "",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "Nazwa kampanii",
+    "SortExpression": ""
+  },
+  "GridBoundColumnResource3": {
+    "CurrentFilterValue": "",
+    "DataFormatString": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterAggregateFormatString": "",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "Data edycji",
+    "SortExpression": ""
+  },
+  "GridButtonColumnResource1": {
+    "ConfirmText": "",
+    "ConfirmTitle": "",
+    "CurrentFilterValue": "",
+    "DataTextFormatString": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "Klonuj",
+    "ImageUrl": "~/Images/Copy.png",
+    "SortExpression": "",
+    "Text": "Klonuj"
+  },
+  "GridButtonColumnResource2": {
+    "ConfirmText": "Czy chcesz usunąć kampanię?",
+    "ConfirmTitle": "Usuń kampanię",
+    "CurrentFilterValue": "",
+    "DataTextFormatString": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "Usuń",
+    "ImageUrl": "~/Images/Document 1 delete.png",
+    "SortExpression": "",
+    "Text": "Usuń"
+  },
+  "GridTemplateColumnResource1": {
+    "CurrentFilterValue": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "Metoda",
+    "SortExpression": ""
+  },
+  "GridTemplateColumnResource2": {
+    "CurrentFilterValue": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "Podgląd",
+    "SortExpression": ""
+  },
+  "GridTemplateColumnResource3": {
+    "CurrentFilterValue": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "Edytuj",
+    "SortExpression": ""
+  },
+  "GridTemplateColumnResource4": {
+    "CurrentFilterValue": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "Ustawienia",
+    "SortExpression": ""
+  },
+  "GridTemplateColumnResource5": {
+    "CurrentFilterValue": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "Wyślij",
+    "SortExpression": ""
+  },
+  "Image1Resource1": {
+    "AlternateText": "",
+    "ToolTip": "Podgląd"
+  },
+  "Image2Resource1": {
+    "AlternateText": "",
+    "ToolTip": "Edytuj"
+  },
+  "imgSendResource1": {
+    "AlternateText": "",
+    "ToolTip": "Wyślij"
+  },
+  "imgSettingsResource1": {
+    "AlternateText": "",
+    "ToolTip": "Ustawienia"
+  },
+  "lblCampaignStatusResource1": {
+    "Text": "Status",
+    "ToolTip": ""
+  },
+  "lnkEditResource1": {
+    "Text": "",
+    "ToolTip": ""
+  },
+  "lnkPreviewResource1": {
+    "Text": "",
+    "ToolTip": ""
+  },
+  "lnkSendResource1": {
+    "Text": "",
+    "ToolTip": ""
+  },
+  "lnkSettingsResource1": {
+    "Text": "",
+    "ToolTip": "Ustawienia"
+  },
+  "LoadingPanelResource1": {
+    "GroupingText": "",
+    "ToolTip": ""
+  },
+  "locFromDateResource1": {
+    "Text": "Od daty"
+  },
+  "locPageExplanationResource1": {
+    "Text": "Użyj tej strony do zarządzania swoimi kampaniami."
+  },
+  "locSearchCampaignResource1": {
+    "Text": "Szukaj"
+  },
+  "locToDateResource1": {
+    "Text": "Do daty"
+  },
+  "logPageHeaderResource1": {
+    "Text": "MMS"
+  },
+  "PageResource1": {
+    "Title": "Zarządzanie kampaniami MMS | System Pulseem"
+  },
+  "txtCampaignNameResource1": {
+    "Text": "",
+    "ToolTip": ""
+  },
+  "WindowManagerResource1": {
+    "ToolTip": ""
+  },
+  "winPreviewResource1": {
+    "ToolTip": ""
+  },
+  "winSendCampaignResource1": {
+    "ToolTip": ""
+  },
+  "winSettingsResource1": {
+    "ToolTip": ""
+  },
+  "GridBoundColumnResource4": {
+    "HeaderText": "Wysłane"
+  },
+  "all": "Wszystkie",
+  "AutomatedSend": "Automatyczna wysyłka",
+  "Canceled": "Anulowane",
+  "Finished": "Zakończone",
+  "FutureSend": "Przyszła wysyłka",
+  "GridTemplateColumnResource0": {
+    "HeaderText": "Status"
+  },
+  "locMethod": {
+    "Text": "Metoda:"
+  },
+  "MethodAutomatedSending": "Automatyczna wysyłka",
+  "MethodByDateField": "Według pola daty",
+  "MethodFutureDate": "Przyszła data",
+  "MethodImmediate": "Natychmiastowa",
+  "NewInEdit": "Nowa / W edycji",
+  "Optin": "Optin",
+  "Sending": "Wysyłanie",
+  "SendNow": "Wyślij teraz",
+  "Stopped": "Zatrzymane",
+  "UsingDateField": "Używając pola daty",
+  "locSearch": {
+    "Text": "Szukaj"
+  },
+  "restoreResource": {
+    "Text": "Przywróć usunięte"
+  },
+  "CampaignNameResource1": {
+    "HeaderText": "Nazwa kampanii"
+  },
+  "CloneLinkResource1": {
+    "ToolTip": "Klonuj kampanię"
+  },
+  "CloneResource1": {
+    "HeaderText": "Klonuj"
+  },
+  "DeleteLinkResource1": {
+    "ToolTip": "Usuń kampanię"
+  },
+  "DeleteResource1": {
+    "HeaderText": "Usuń"
+  },
+  "EditCampaign": "Edytuj kampanię",
+  "EditCampaignLinkResource1": {
+    "ToolTip": "Edytuj kampanię"
+  },
+  "EditCampaignResource1": {
+    "HeaderText": "Edytuj"
+  },
+  "EditSettings": "Ustawienia kampanii",
+  "EditSettingsLinkResource1": {
+    "ToolTip": "Ustawienia kampanii"
+  },
+  "EditSettingsResource1": {
+    "HeaderText": "Ustawienia"
+  },
+  "LastEditDateResource1": {
+    "HeaderText": "Data edycji"
+  },
+  "RestoreTitle": "Przywróć usunięte kampanie",
+  "SendCampaign": "Wyślij kampanię",
+  "SendCampaignLinkResource1": {
+    "ToolTip": "Wyślij kampanię"
+  },
+  "SendCampaignResource1": {
+    "HeaderText": "Wyślij"
+  },
+  "SendingMethodResource1": {
+    "HeaderText": "Metoda wysyłki"
+  },
+  "ShowCampaign": "Pokaż kampanię",
+  "ShowCampaignLinkResource1": {
+    "ToolTip": "Pokaż kampanię"
+  },
+  "ShowCampaignResource1": {
+    "HeaderText": "Pokaż"
+  },
+  "ShowGroups": "Pokaż grupy",
+  "StatusResource1": {
+    "HeaderText": "Status"
+  },
+  "TotalSendPlanResource1": {
+    "HeaderText": "Wysłane"
+  },
+  "ShowGroupsTitle": "Grupy kampanii",
+  "MethodSendPlan": "Automatyczna wysyłka",
+  "CreditsResource1": {
+    "HeaderText": "Wiadomości"
+  },
+  "CampsAmountLimit": "To konto osiągnęło maksymalny limit kampanii MMS, skontaktuj się z naszym wsparciem, aby rozszerzyć swoje konto.",
+  "create": "Utwórz MMS",
+  "campaigns": "Kampanie",
+  "restoreCampaignTitle": "Wybierz kampanie MMS, które chcesz przywrócić"
+}

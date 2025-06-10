@@ -37,6 +37,7 @@ import billing from './Billing.json';
 import TermsOfUse from './TermsOfUse.json'
 import SubUsers from './SubUsers.json'
 import WhatsappOnBoarding from './WhatsappOnBoarding.json'
+import RemoveMyData from './RemoveMyData.json'
 
 export const en = {
 	automations,
@@ -77,5 +78,6 @@ export const en = {
 	billing,
 	TermsOfUse,
 	SubUsers,
-	WhatsappOnBoarding
+	WhatsappOnBoarding,
+	RemoveMyData
 };

@@ -29,7 +29,7 @@ const CreditHistory = ({ classes, id = '' }: any) => {
 	const { isRTL, language, windowSize } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
-	const { isGlobal, accountIsCurrencySymbolPrefix, accountCurrencySymbol } = useSelector(
+	const { isGlobal, accountIsCurrencySymbolPrefix, accountCurrencySymbol, IsPoland } = useSelector(
 		(state: { common: any }) => state.common
 	);
 	const { userRoles } = useSelector((state: { core: any }) => state.core);
@@ -64,7 +64,7 @@ const CreditHistory = ({ classes, id = '' }: any) => {
 		return (
 			<Grid container spacing={2}>
 				{
-					!isGlobal && (
+					(!isGlobal || IsPoland) && (
 						<>
 							<Grid item md={3} xs={12}>
 								<Typography>{t("SubAccount.type")}</Typography>
@@ -190,7 +190,7 @@ const CreditHistory = ({ classes, id = '' }: any) => {
 				</Grid>
 				<Grid item md={12} xs={12} className={clsx(isRTL ? classes.textRight : classes.textLeft)}>
 					{
-						!isGlobal && (
+						(!isGlobal || IsPoland) && (
 							<FormControlLabel
 								control={
 									<Checkbox
@@ -239,7 +239,7 @@ const CreditHistory = ({ classes, id = '' }: any) => {
 					<TableCell classes={cellStyle} className={clsx(classes.flex2, classes.f16)} align='center'>{t('common.Dates')}</TableCell>
 					<TableCell classes={cellStyle} className={clsx(classes.flex1, classes.f16)} align='center'>{t('SubAccount.amount')}</TableCell>
 					{
-						!isGlobal && <TableCell classes={cellStyle} className={clsx(classes.flex1, classes.f16)} align='center'>{t('SubAccount.type')}</TableCell>
+						(!isGlobal || IsPoland) && <TableCell classes={cellStyle} className={clsx(classes.flex1, classes.f16)} align='center'>{t('SubAccount.type')}</TableCell>
 					}
 					<TableCell classes={cellStyle} className={clsx(classes.flex1, classes.f16)} align='center'>{t('SubAccount.accountType')}</TableCell>
 					<TableCell classes={cellStyle} className={clsx(classes.flex2, classes.f16)} align='center'>{t('SubAccount.transferringFromAccount')}</TableCell>
@@ -270,7 +270,7 @@ const CreditHistory = ({ classes, id = '' }: any) => {
 					{isGlobal && accountIsCurrencySymbolPrefix ? accountCurrencySymbol : ''} {row.Amount} {isGlobal && !accountIsCurrencySymbolPrefix ? accountCurrencySymbol : ''}
 				</TableCell>
 				{
-					!isGlobal && (
+					(!isGlobal || IsPoland) && (
 						<TableCell
 							classes={cellBodyStyle}
 							align='center'

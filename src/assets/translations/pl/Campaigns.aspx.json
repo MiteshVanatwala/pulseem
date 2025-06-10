@@ -1,0 +1,750 @@
+{
+  "AjaxManagerResource1": {
+    "ToolTip": ""
+  },
+  "btnClearSearchResource1": {
+    "Text": "Wyczyść",
+    "ToolTip": ""
+  },
+  "btnSearchResource1": {
+    "Text": "Szukaj",
+    "ToolTip": ""
+  },
+  "datFromDateResource1": {
+    "Calendar": {
+      "CellDayFormat": "%d",
+      "ColumnHeaderImage": "",
+      "ColumnHeaderText": "",
+      "DateRangeSeparator": " - ",
+      "DayCellToolTipFormat": "dddd, MMMM dd, yyyy",
+      "FastNavigationNextImage": "fastNavRight.gif",
+      "FastNavigationNextText": ">>",
+      "FastNavigationPrevImage": "fastNavLeft.gif",
+      "FastNavigationPrevText": "<<",
+      "NavigationNextImage": "arrowRight.gif",
+      "NavigationNextText": ">",
+      "NavigationPrevImage": "arrowLeft.gif",
+      "NavigationPrevText": "<",
+      "RowHeaderImage": "",
+      "RowHeaderText": "",
+      "TitleFormat": "MMMM yyyy",
+      "ToolTip": "",
+      "ViewSelectorImage": "",
+      "ViewSelectorText": ""
+    },
+    "DateInput": {
+      "ToolTip": ""
+    },
+    "DatePopupButton": {
+      "ToolTip": "Otwórz kalendarz."
+    },
+    "ToolTip": ""
+  },
+  "datToDateResource1": {
+    "Calendar": {
+      "CellDayFormat": "%d",
+      "ColumnHeaderImage": "",
+      "ColumnHeaderText": "",
+      "DateRangeSeparator": " - ",
+      "DayCellToolTipFormat": "dddd, MMMM dd, yyyy",
+      "FastNavigationNextImage": "fastNavRight.gif",
+      "FastNavigationNextText": ">>",
+      "FastNavigationPrevImage": "fastNavLeft.gif",
+      "FastNavigationPrevText": "<<",
+      "NavigationNextImage": "arrowRight.gif",
+      "NavigationNextText": ">",
+      "NavigationPrevImage": "arrowLeft.gif",
+      "NavigationPrevText": "<",
+      "RowHeaderImage": "",
+      "RowHeaderText": "",
+      "TitleFormat": "MMMM yyyy",
+      "ToolTip": "",
+      "ViewSelectorImage": "",
+      "ViewSelectorText": ""
+    },
+    "DateInput": {
+      "ToolTip": ""
+    },
+    "DatePopupButton": {
+      "ToolTip": "Otwórz kalendarz."
+    },
+    "ToolTip": ""
+  },
+  "grdCampaingsResource1": {
+    "BackImageUrl": "",
+    "FilterMenu": {
+      "ToolTip": ""
+    },
+    "GroupingSettings": {
+      "CollapseTooltip": "Zwiń grupę",
+      "ExpandTooltip": "Rozwiń grupę",
+      "GroupByFieldsSeparator": "; ",
+      "GroupContinuedFormatString": "... grupa kontynuowana z poprzedniej strony. ",
+      "GroupContinuesFormatString": " Grupa kontynuowana na następnej stronie.",
+      "GroupSplitDisplayFormat": "Pokazano {0} z {1} elementów.",
+      "GroupSplitFormat": " ({0})",
+      "UnGroupTooltip": "Przeciągnij poza pasek, aby rozgrupować"
+    },
+    "GroupPanel": {
+      "Text": "Przeciągnij nagłówek kolumny i upuść go tutaj, aby zgrupować według tej kolumny",
+      "ToolTip": ""
+    },
+    "HierarchySettings": {
+      "CollapseTooltip": "Zwiń",
+      "ExpandTooltip": "Rozwiń",
+      "SelfCollapseTooltip": "Zwiń odniesienie do siebie",
+      "SelfExpandTooltip": "Rozwiń odniesienie do siebie"
+    },
+    "MasterTableView": {
+      "Caption": "",
+      "CommandItemSettings": {
+        "AddNewRecordImageUrl": "mvwres://Telerik.Web.UI, Version=2008.1.415.35, Culture=neutral, PublicKeyToken=121fae78165ba3d4/Telerik.Web.UI.Skins.Default.Grid.AddRecord.gif",
+        "AddNewRecordText": "Dodaj nowy rekord",
+        "RefreshImageUrl": "mvwres://Telerik.Web.UI, Version=2008.1.415.35, Culture=neutral, PublicKeyToken=121fae78165ba3d4/Telerik.Web.UI.Skins.Default.Grid.Refresh.gif",
+        "RefreshText": "Odśwież"
+      },
+      "EditFormSettings": {
+        "CaptionFormatString": "",
+        "EditColumn": {
+          "CancelText": "Anuluj",
+          "CurrentFilterValue": "",
+          "EditFormHeaderTextFormat": "{0}:",
+          "EditText": "Edytuj",
+          "FooterText": "",
+          "GroupByExpression": "",
+          "HeaderImageUrl": "",
+          "HeaderText": "",
+          "InsertText": "Wstaw",
+          "SortExpression": "",
+          "UpdateText": "Aktualizuj"
+        }
+      },
+      "ExpandCollapseColumn": {
+        "CollapseImageUrl": "mvwres://Telerik.Web.UI, Version=2008.1.415.35, Culture=neutral, PublicKeyToken=121fae78165ba3d4/Telerik.Web.UI.Skins.Default.Grid.SingleMinus.gif",
+        "CurrentFilterValue": "",
+        "EditFormHeaderTextFormat": "{0}:",
+        "ExpandImageUrl": "mvwres://Telerik.Web.UI, Version=2008.1.415.35, Culture=neutral, PublicKeyToken=121fae78165ba3d4/Telerik.Web.UI.Skins.Default.Grid.SinglePlus.gif",
+        "FooterText": "",
+        "GroupByExpression": "",
+        "HeaderImageUrl": "",
+        "HeaderText": "",
+        "SortExpression": ""
+      },
+      "FilterExpression": "",
+      "NoDetailRecordsText": "Brak rekordów podrzędnych do wyświetlenia.",
+      "NoMasterRecordsText": "Brak rekordów do wyświetlenia.",
+      "PagerStyle": {
+        "NextPagesToolTip": "Następne strony",
+        "NextPageText": "",
+        "NextPageToolTip": "Następna strona",
+        "PagerTextFormat": "Zmień stronę: {4} &nbsp;Wyświetlanie strony {0} z {1}, elementy od {2} do {3} z {5}.",
+        "PrevPagesToolTip": "Poprzednie strony",
+        "PrevPageText": "",
+        "PrevPageToolTip": "Poprzednia strona"
+      },
+      "RowIndicatorColumn": {
+        "CurrentFilterValue": "",
+        "EditFormHeaderTextFormat": "{0}:",
+        "FooterText": "",
+        "GroupByExpression": "",
+        "HeaderImageUrl": "",
+        "HeaderText": "",
+        "SortExpression": ""
+      },
+      "Summary": "",
+      "ToolTip": ""
+    },
+    "PagerStyle": {
+      "NextPagesToolTip": "Następne strony",
+      "NextPageText": "",
+      "NextPageToolTip": "Następna strona",
+      "PagerTextFormat": "Zmień stronę: {4} &nbsp;Wyświetlanie strony {0} z {1}, elementy od {2} do {3} z {5}.",
+      "PrevPagesToolTip": "Poprzednie strony",
+      "PrevPageText": "",
+      "PrevPageToolTip": "Poprzednia strona"
+    },
+    "SortingSettings": {
+      "SortedAscToolTip": "Posortowano rosnąco",
+      "SortedDescToolTip": "Posortowano malejąco",
+      "SortToolTip": "Kliknij tutaj, aby sortować"
+    },
+    "StatusBarSettings": {
+      "LoadingText": "Ładowanie...",
+      "ReadyText": "Gotowe"
+    },
+    "ToolTip": ""
+  },
+  "GridBoundColumnResource1": {
+    "CurrentFilterValue": "",
+    "DataFormatString": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterAggregateFormatString": "",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "",
+    "SortExpression": ""
+  },
+  "GridBoundColumnResource2": {
+    "CurrentFilterValue": "",
+    "DataFormatString": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterAggregateFormatString": "",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "Nazwa kampanii",
+    "SortExpression": ""
+  },
+  "GridBoundColumnResource3": {
+    "CurrentFilterValue": "",
+    "DataFormatString": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterAggregateFormatString": "",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "Data edycji",
+    "SortExpression": ""
+  },
+  "GridButtonColumnResource1": {
+    "ConfirmText": "",
+    "ConfirmTitle": "",
+    "CurrentFilterValue": "",
+    "DataTextFormatString": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "Klonuj",
+    "ImageUrl": "~/Images/Copy.png",
+    "SortExpression": "",
+    "Text": "Klonuj"
+  },
+  "GridButtonColumnResource2": {
+    "confirmExit": "Zamierzasz wyjść z ustawień kampanii",
+    "confirmExitText": "Czy chcesz zapisać kampanię przed wyjściem?",
+    "ConfirmText": "Czy chcesz usunąć kampanię?",
+    "ConfirmTitle": "Usuń kampanię",
+    "CurrentFilterValue": "",
+    "DataTextFormatString": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "Usuń",
+    "ImageUrl": "~/Images/Document 1 delete.png",
+    "SortExpression": "",
+    "Text": "Usuń",
+    "existTemplateTitle": "Nazwa/Kategoria szablonu istnieje",
+    "existTemplateDescription": "Zamierzasz zastąpić istniejący szablon o nazwie <b>#name#</b> w kategorii <b>#category#</b>.<br/>Jeśli będziesz kontynuować, wszystkie zmiany wprowadzone do istniejącego szablonu zostaną utracone i nie będzie można ich odzyskać.<br/>Czy na pewno chcesz kontynuować?"
+  },
+  "GridTemplateColumnResource1": {
+    "CurrentFilterValue": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "Metoda",
+    "SortExpression": ""
+  },
+  "GridTemplateColumnResource2": {
+    "CurrentFilterValue": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "Podgląd",
+    "SortExpression": ""
+  },
+  "GridTemplateColumnResource3": {
+    "CurrentFilterValue": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "Edytuj",
+    "SortExpression": ""
+  },
+  "GridTemplateColumnResource4": {
+    "CurrentFilterValue": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "Ustawienia",
+    "SortExpression": ""
+  },
+  "GridTemplateColumnResource5": {
+    "CurrentFilterValue": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "Wyślij",
+    "SortExpression": ""
+  },
+  "Image1Resource1": {
+    "AlternateText": "",
+    "ToolTip": "Podgląd"
+  },
+  "Image2Resource1": {
+    "AlternateText": "",
+    "ToolTip": "Edytuj"
+  },
+  "imgSendResource1": {
+    "AlternateText": "",
+    "ToolTip": "Wyślij",
+    "nonVerifiedDomain": "Domena adresu e-mail nie jest zweryfikowana (Dodawanie nowego rekordu w systemie zarządzania domeną)"
+  },
+  "imgSettingsResource1": {
+    "AlternateText": "",
+    "ToolTip": "Ustawienia"
+  },
+  "lblCampaignStatusResource1": {
+    "Text": "Status",
+    "ToolTip": ""
+  },
+  "lnkEditResource1": {
+    "Text": "",
+    "ToolTip": "Duplikuj"
+  },
+  "lnkPreviewResource1": {
+    "Text": "",
+    "ToolTip": "Grupy"
+  },
+  "lnkSendResource1": {
+    "Text": "",
+    "ToolTip": ""
+  },
+  "lnkSettingsResource1": {
+    "Text": "",
+    "ToolTip": "Ustawienia"
+  },
+  "LoadingPanelResource1": {
+    "GroupingText": "",
+    "ToolTip": ""
+  },
+  "locFromDateResource1": {
+    "Text": "Od daty"
+  },
+  "locPageExplanationResource1": {
+    "Text": "Użyj tej strony do zarządzania swoimi kampaniami."
+  },
+  "locSearchCampaignResource1": {
+    "Text": "Szukaj:"
+  },
+  "locToDateResource1": {
+    "Text": "Do daty"
+  },
+  "logPageHeaderResource1": {
+    "Text": "Zarządzanie Newsletterami"
+  },
+  "logPageHeaderArchive": {
+    "Text": "Archiwum Newsletterów"
+  },
+  "PageResource1": {
+    "Title": "Zarządzanie Kampaniami | System Pulseem"
+  },
+  "Page": {
+    "Title": "Zarządzanie Kampaniami"
+  },
+  "txtCampaignNameResource1": {
+    "Text": "",
+    "ToolTip": ""
+  },
+  "WindowManagerResource1": {
+    "ToolTip": ""
+  },
+  "winPreviewResource1": {
+    "ToolTip": ""
+  },
+  "winSendCampaignResource1": {
+    "ToolTip": ""
+  },
+  "winSettingsResource1": {
+    "ToolTip": ""
+  },
+  "GridBoundColumnResource4": {
+    "HeaderText": "Wysłane"
+  },
+  "all": "Wszystkie",
+  "AutomatedSend": "Wysyłka automatyczna",
+  "Canceled": "Anulowane",
+  "Finished": "Zakończone",
+  "FutureSend": "Wysyłka przyszła",
+  "GridTemplateColumnResource0": {
+    "HeaderText": "Status"
+  },
+  "locMethod": {
+    "Text": "Metoda:"
+  },
+  "MethodAutomatedSending": "Wysyłka automatyczna",
+  "MethodByDateField": "Według pola daty",
+  "MethodFutureDate": "Data przyszła",
+  "MethodImmediate": "Natychmiastowa",
+  "NewInEdit": "Nowa / W edycji",
+  "Optin": "Opt-in",
+  "Sending": "Wysyłanie",
+  "SendNow": "Wyślij teraz",
+  "Stopped": "Zatrzymane",
+  "UsingDateField": "Wykorzystanie pola daty",
+  "locSearch": {
+    "Text": "Szukaj"
+  },
+  "restoreResource": {
+    "Text": "Przywróć"
+  },
+  "CampaignNameResource1": {
+    "HeaderText": "Nazwa kampanii"
+  },
+  "CloneResource1": {
+    "HeaderText": "Kopiuj link"
+  },
+  "DeleteResource1": {
+    "HeaderText": "Usuń"
+  },
+  "EditCampaignResource1": {
+    "HeaderText": "Edytuj"
+  },
+  "EditSettingsResource1": {
+    "HeaderText": "Ustawienia"
+  },
+  "LastEditDateResource1": {
+    "HeaderText": "Data ostatniej edycji"
+  },
+  "SendCampaignResource1": {
+    "HeaderText": "Wyślij"
+  },
+  "SendingMethodResource1": {
+    "HeaderText": "Metoda wysyłki"
+  },
+  "ShowCampaignResource1": {
+    "HeaderText": "Pokaż"
+  },
+  "StatusResource1": {
+    "HeaderText": "Status"
+  },
+  "TotalSendPlanResource1": {
+    "HeaderText": "Wysłane"
+  },
+  "CloneLinkResource1": {
+    "ToolTip": "Kopiuj kampanię"
+  },
+  "DeleteLinkResource1": {
+    "ToolTip": "Usuń kampanię"
+  },
+  "EditCampaignLinkResource1": {
+    "ToolTip": "Edytuj kampanię"
+  },
+  "EditSettingsLinkResource1": {
+    "ToolTip": "Ustawienia kampanii"
+  },
+  "SendCampaignLinkResource1": {
+    "ToolTip": "Wyślij kampanię"
+  },
+  "ShowCampaignLinkResource1": {
+    "ToolTip": "Pokaż kampanię"
+  },
+  "settingsTitleResource1": {
+    "Text": "Ustawienia kampanii"
+  },
+  "RestoreTitle": "Przywróć usunięte kampanie",
+  "ShowGroups": "Pokaż grupy",
+  "ShowGroupsTitle": "Grupy kampanii",
+  "EditShareLinkResource1": {
+    "Text": "Ustawienia udostępniania"
+  },
+  "EditShareSettingsResource1": {
+    "HeaderText": "Udostępnij"
+  },
+  "Approve": "Zatwierdź oczekujące",
+  "searchParams": {
+    "Text": "Szukaj według nazwy kampanii, tematu lub ID"
+  },
+  "SmartLinkResource1": {
+    "HeaderText": "Inteligentne linki"
+  },
+  "SmartLinksResource1": {
+    "ToolTip": "Edytuj linki"
+  },
+  "PreviewActiveAutomation": {
+    "Tooltip": "Kliknij, aby zobaczyć podgląd automatyzacji"
+  },
+  "PreviewInActiveAutomation": {
+    "Tooltip": "Proces automatyzacji jest nieaktywny. Kliknij, aby zobaczyć podgląd"
+  },
+  "Reports": "Raporty",
+  "camapignName": "Nazwa kampanii",
+  "recipients": "Odbiorcy",
+  "automation": "Automatyzacja",
+  "create": "Utwórz nowy newsletter",
+  "createNewsLetterHeader": "Utwórz nową kampanię newslettera",
+  "createNewsLetterSubTitle": "Skonfiguruj kampanię newslettera",
+  "restoreDeleted": "Przywróć usunięte",
+  "exportFile": "Eksportuj plik",
+  "lastUpdate": "Ostatnia aktualizacja",
+  "campaignName": "Nazwa kampanii",
+  "restoreCampaignTitle": "Wybierz newslettery, które chcesz przywrócić",
+  "dialogDuplicateTitle": "Duplikuj kampanię",
+  "dialogDuplicateContent": "Czy chcesz zduplikować kampanię?",
+  "newsletters": "Newslettery",
+  "newsLetterEditor": {
+    "fromName": "Nazwa nadawcy",
+    "fromEmail": "<b>Od</b> e-mail",
+    "replyTo": "<b>Odpowiedz do</b> e-mail",
+    "campaignSubject": "Temat kampanii",
+    "personalization": "Personalizacja",
+    "dontSee_clickHere_mail": "Jeśli nie widzisz tego e-maila, kliknij tutaj",
+    "printMail": "Wydrukuj e-mail",
+    "removeCustomerFromMail": "Usuń klienta z listy mailowej",
+    "updateCustomerInfo": "Aktualizuj informacje o kliencie",
+    "atBeginning": "Na początku",
+    "atBottom": "Na dole",
+    "mobileSupport": "Obsługa mobilna",
+    "language": "Język",
+    "pre_text": "Tekst podglądu",
+    "gAnalytics": "Google Analytics",
+    "textAdditions": "Dodatki tekstowe",
+    "duplicateAsBee": "Kopiuj do nowego formatu edytora",
+    "helpTexts": {
+      "Name": "Służy do identyfikacji kampanii w systemie. Odbiorcy nie zobaczą tej nazwy",
+      "FromName": "To pole jest obowiązkowe",
+      "FromEmail": "Dozwolone są tylko zweryfikowane e-maile",
+      "ReplyEmail": "Dozwolone są tylko zweryfikowane e-maile",
+      "clickToVerify": "Kliknij tutaj, aby zweryfikować",
+      "Subject": "Używając emoji, zaleca się stosowanie do 2. Używanie więcej niż 2 emoji może pogorszyć dostarczalność.",
+      "pre_helper_text": "Tekst pojawi się na pasku wyświetlania w e-mailu, zanim zostanie otwarty",
+      "upload": "Plik pojawi się jako załącznik w Twoim e-mailu",
+      "newAddress": "nowy e-mail",
+      "cellularSupportCaution": "<b>Uwaga:</b> Adaptacyjny nie jest obsługiwany przez wszystkie urządzenia i aplikacje",
+      "useFromEmailAsReply": "Użyj tego samego adresu co e-mail nadawcy"
+    },
+    "errors": {
+      "campaignWasNotSent": "Kampania nie została wysłana!",
+      "invaliApiKey": "Nieprawidłowy lub brakujący klucz API",
+      "fileExtNotAlwd": "Rozszerzenie pliku niedozwolone",
+      "fileCanNotNull": "Plik nie może być pusty",
+      "generalError": "Wystąpił błąd, skontaktuj się z naszą obsługą klienta:",
+      "campaignName": "Proszę wypełnić nazwę kampanii",
+      "fromName": "Proszę wypełnić imię",
+      "fromEmail": "Proszę podać adres e-mail",
+      "ReplyEmail": "Proszę podać adres e-mail do odpowiedzi",
+      "campaignSubject": "Proszę wypełnić temat kampanii",
+      "invalidCampaignId": "Nieprawidłowy ID kampanii / nie należy do konta",
+      "CampaignNotFound": "Kampania nie została znaleziona lub została usunięta",
+      "missingSendingDate": "Kampania nie została zapisana! Brak daty wysyłki",
+      "campaignAlreadySent": "Bieżąca kampania została już wysłana",
+      "LOCK_SENDING": "Ten użytkownik ma zablokowaną możliwość wysyłania kampanii e-mailowych<br/>W celu uzyskania dalszego wsparcia prosimy o kontakt ",
+      "UNAUTHORIZED_FROM_EMAIL": "Ten adres e-mail nie jest autoryzowany do wysyłania kampanii e-mailowych<br/>W celu uzyskania dalszego wsparcia prosimy o kontakt ",
+      "NO_RECIPIENTS": "Nie wybrano żadnych odbiorców<br/>Proszę wybrać odbiorców i spróbować ponownie",
+      "MONTHLY_RESTRICTIONS": "Przekroczono miesięczne ograniczenie wysyłania<br/>W celu uzyskania dalszego wsparcia prosimy o kontakt ",
+      "FIRST_CAMPAIGN_RESTRICTIONS": "Gratulacje z okazji wysłania pierwszej kampanii!<br/>Ponieważ to Twoja pierwsza kampania, nasz zespół musi ją najpierw zatwierdzić.<br/>Po zakończeniu procesu zatwierdzania kampania zostanie natychmiast wysłana.",
+      "BULK_ENDED": "Twój pakiet masowy się skończył!<br/>Aby zakupić nowy pakiet, wejdź na swój pulpit<br/>Lub skontaktuj się z naszą obsługą klienta:",
+      "MONTHLY_BULK_ENDED": "Twój miesięczny pakiet masowy się skończył!<br/>Aby zakupić nowy pakiet, wejdź na swój pulpit",
+      "contactUs": "Telefon <a href='tel:03-524-0290'>03-524-0290</a> lub E-mail <a href='mailto:support@pulseem.com'>support@pulseem.com</a>",
+      "FUTURE_DATE_PASSED": "Data wysyłki kampanii minęła. Wybierz przyszłą datę wysyłki.",
+      "INVALID_CAMPAIGN_ID": "Nieprawidłowy ID kampanii",
+      "ACCOUNT_RESTRICTED": "To konto jest ograniczone<br/>Skontaktuj się z naszym działem sprzedaży, aby uregulować płatności",
+      "SMS_BULK_ENDED_PURCHASE_OPTION": "Twój pakiet masowy się skończył!<br/>Możesz kupić nowy pakiet SMS lub odrzucić kampanię SMS Total Marketing.",
+      "NEWSLETTER_BULK_ENDED_PURCHASE_OPTION": "Twój pakiet masowy się skończył!<br/>Możesz kupić pakiet Newsletter, klikając przycisk Kup."
+    },
+    "success": "Kampania została pomyślnie zapisana",
+    "sendSettings": {
+      "optimalSending": "Optymalna wysyłka",
+      "optimalSendingFrom": "Optymalna wysyłka rozpocznie się w",
+      "optimalSendCBDesc": "Wyślij kampanię w optymalnym czasie dla każdego klienta",
+      "optimalSendCBTooltip": "ten proces może potrwać do 24 godzin",
+      "segmentation": "Segmentacja",
+      "segmCriteria": "Kryteria segmentacji",
+      "segmCritCb1": "Wyślij do odbiorców, którzy otworzyli e-mail",
+      "segmCritCb2": "Wyślij do odbiorców, którzy nie otworzyli e-maila",
+      "segmCritCb3": "Wyślij do odbiorców, którzy kliknęli w linki",
+      "segmCritCb4": "Wyślij do odbiorców, którzy nie kliknęli w linki",
+      "summarySegmCritCb1": "Odbiorcy, którzy otworzyli e-mail",
+      "summarySegmCritCb2": "Odbiorcy, którzy nie otworzyli e-maila",
+      "summarySegmCritCb3": "Odbiorcy, którzy kliknęli w linki",
+      "summarySegmCritCb4": "Odbiorcy, którzy nie kliknęli w linki",
+      "summarySegmCritCb5": "Odbiorcy, którzy nie otworzyli e-maila i nie kliknęli w linki",
+      "filterInputText": "Nie wysyłaj do odbiorców, którzy otrzymali Newsletter w ciągu ostatnich dni",
+      "insertCampaginName": "Które ustawienia wysyłki chcesz zduplikować z ##campaignName##?",
+      "emailFilterInput": "Nie wysyłaj do odbiorców, którzy otrzymali e-mail w ciągu ostatnich dni",
+      "pendingClients": "Klienci oczekujący na zatwierdzenie",
+      "restrictedClients": "Klienci ograniczeni",
+      "duplicatedClients": "Zduplikowani klienci",
+      "invalidRecipients": "Nieprawidłowe adresy e-mail",
+      "specialDateMissing": "Brak daty specjalnej",
+      "filters": "Filtry",
+      "segmentations": "Segmentacje",
+      "totalNotToSend": "Całkowicie przefiltrowane",
+      "DidNotClicked": "Nie otwarte ani kliknięte",
+      "smsMarketing": {
+        "title": "Marketing SMS",
+        "sendTo": "Wyślij do",
+        "everyone": "Wszyscy",
+        "opened": "Otwarte",
+        "unOpened": "Nieotwarte",
+        "clicked": "Kliknięte",
+        "invalid": "Nieprawidłowe",
+        "fromNumber": "Z numeru",
+        "sendingDate": "Data wysyłki",
+        "sendingTime": "Czas wysyłki",
+        "smsMarketingSubTitle": "Wyślij SMS do odbiorców spełniających wybrane kryteria, którzy otrzymali kampanię e-mail, aby uzupełnić całościowy marketing.",
+        "addLinkToCampaign": "Dodaj link do tej kampanii e-mail",
+        "addLinkToUpdate": "Dodaj link do aktualizacji kontaktu"
+      },
+      "errors": {
+        "reqFromNumber": "Numer nadawcy jest wymagany",
+        "reqText": "Tekst jest wymagany",
+        "reqDate": "Data jest wymagana",
+        "reqTime": "Czas jest wymagany",
+        "reqSendTo": "Pole \"Wyślij do\" jest wymagane",
+        "invalidDate": "Nieprawidłowa data",
+        "invalidTime": "Nieprawidłowy czas",
+        "enterVerifiedNumber": "Wprowadź zweryfikowany numer telefonu",
+        "selectFutureDate": "Dodatkowy marketing nie może być wysłany przed datą wysyłki kampanii. Wybierz przyszłą datę."
+      },
+      "deleted": "Kampania została pomyślnie usunięta",
+      "send": "Wyślij",
+      "doNotSend": "Nie wysyłaj",
+      "smsComplementary": "Uzupełniający marketing SMS",
+      "optimalPulseConflictMessage": "Wybór \"Optymalnej wysyłki\" anuluje wysyłkę Pulse, którą już ustawiłeś.<br/>Czy chcesz kontynuować?"
+    },
+    "domainVerificationTooltip": "Wysyłanie wiadomości będzie możliwe tylko z zweryfikowanej domeny.<br/>Po skonfigurowaniu zweryfikowanej domeny możesz wybrać adres e-mail do odpowiedzi w następnym polu."
+  },
+  "newsLetterMgmt": {
+    "emailVerification": {
+      "emailVerificationBtnText": "Weryfikacja e-mail",
+      "popupTitle": "Weryfikacja e-maila do wysyłki",
+      "popupDesc1": "Aby zapewnić bezpieczeństwo Twojego konta, musimy zweryfikować, czy ten adres e-mail należy do Ciebie.",
+      "popupDesc2": "Jest to jednorazowy proces dla każdego adresu e-mail, z którego wysyłasz.",
+      "firstSlide": {
+        "verifiedEmails": "Zweryfikowane e-maile",
+        "verifyEmailAddr": "Zweryfikuj adres e-mail",
+        "addNewToVerify": "Zweryfikuj inny e-mail"
+      },
+      "secondSlide": {
+        "title": "Krótka weryfikacja zanim przejdziemy dalej.",
+        "desc1": "Chcemy upewnić się, że przesłany e-mail należy do Ciebie.",
+        "desc2": "Jest to jednorazowy proces dla każdego adresu e-mail",
+        "btnText": "Wyślij mi e-mail weryfikacyjny",
+        "error1": "Nieprawidłowy e-mail",
+        "error2": "E-mail jest wymagany",
+        "anyProblem": "Napotkałeś problem?",
+        "contactUs": "Skontaktuj się z nami pod numerem <a href='tel:03-524-0290' style='color:#FF3343'>03-524-0290</a> lub przez <a href='mailto:support@pulseem.com' style='color:#FF3343'>support@pulseem.com</a>",
+        "placeholder": "Wprowadź e-mail"
+      },
+      "thirdSlide": {
+        "title": "Wysłano!",
+        "desc1": "Kod weryfikacyjny został pomyślnie wysłany na adres",
+        "desc2": "Ten kod będzie ważny tylko przez następne 10 minut",
+        "error1": "Nieprawidłowy kod. Spróbuj ponownie lub kliknij ponownie wyślij poniżej",
+        "error2": "Kod jest wymagany",
+        "error_not_match": "Wprowadzony kod nie jest zgodny",
+        "error_expired": "Ten kod wygasł",
+        "did_not_recieved": "Nie otrzymałeś?",
+        "resend": "Wyślij ponownie",
+        "resendSuccess": "Kod wysłany",
+        "placeholder": "Wprowadź kod",
+        "btnText": "Zweryfikuj",
+        "email_error_abused": "Ze względu na zbyt wiele prób weryfikacji ten e-mail został zablokowany do weryfikacji, skontaktuj się z obsługą klienta.",
+        "sms_error_abused": "Ze względu na zbyt wiele prób weryfikacji ten numer został zablokowany do weryfikacji, skontaktuj się z obsługą klienta.",
+        "error_tooMuchAttempts": "Zbyt wiele prób weryfikacji, kliknij wyślij ponownie i zweryfikuj za pomocą nowego kodu"
+      },
+      "errorSlide": {
+        "title": "Zbyt wiele prób",
+        "desc": "Zbyt wiele razy wprowadzono nieprawidłowy kod",
+        "contactSupport": "Skontaktuj się z obsługą",
+        "phone": "Telefon",
+        "email": "E-mail"
+      },
+      "successSlide": {
+        "title": "E-mail został pomyślnie zweryfikowany",
+        "desc": "Od teraz będziesz mógł wysyłać wiadomości z tego adresu e-mail bez potrzeby weryfikacji",
+        "btnTxt": "Przejdź do kampanii"
+      }
+    },
+    "payAttention": "Uwaga!",
+    "campMadewithOldEditor": "Ta kampania została stworzona w starym edytorze",
+    "chooseNewEditorToCreateCamp": "Aby użyć nowego edytora, przejdź do “Utwórz kampanię“ i wybierz nowy edytor",
+    "newsLetterWizard": {
+      "continueEditingInOldEditor": "Jeśli utworzyłeś kampanię w nowym edytorze i chcesz kontynuować edycję w starym edytorze",
+      "recreateInOldEditor": "Będziesz musiał odtworzyć kampanię w starym edytorze",
+      "continueEditingInNewEditor": "Jeśli utworzyłeś kampanię w starym edytorze i chcesz kontynuować edycję w nowym edytorze",
+      "recreateInNewEditor": "Będziesz musiał odtworzyć kampanię w nowym edytorze"
+    }
+  },
+  "newsLetterSendSettings": {
+    "title": "Wyślij Newsletter",
+    "quickMSend": "Szybka wysyłka ręczna",
+    "quickMsgCautionMsg": "Szybka wysyłka ręczna natychmiast wyśle kampanię tylko do ręcznie dodanych odbiorców.",
+    "doYouWantToContinue": "Czy chcesz kontynuować?"
+  },
+  "sendToContact": "Wyślij do jednego kontaktu",
+  "successSent": "Wysłano pomyślnie",
+  "missingApi": "Brakujący klucz API",
+  "campaignNotFound": "Kampania nie została znaleziona lub nie można jej zduplikować do wysyłki",
+  "cannotCreateGroup": "Nie można utworzyć domyślnej grupy do testowej wysyłki",
+  "errorOccured": "Wystąpił błąd",
+  "noneActiveRecipientsFound": "Nie znaleziono aktywnych odbiorców",
+  "recipientBlocked": "Odbiorca jest zablokowany dla Newsletterów",
+  "campaignSaved": "Kampania została pomyślnie zapisana!",
+  "sendTest": "Wyślij test",
+  "rightToLeft": "Od prawej do lewej",
+  "leftToRight": "Od lewej do prawej",
+  "center": "Wyśrodkowane",
+  "summaryTotal": "Całkowity koszt",
+  "totalSize": "Całkowity rozmiar",
+  "kb": "KB",
+  "saveBlock": "Zapisz blok",
+  "savedBlocks": "Zapisane bloki",
+  "weSent": "Wysłaliśmy!",
+  "campaignIsOnItsWay": "Twoja kampania jest w drodze",
+  "newsletterSetUp": "Konfiguracja Newslettera",
+  "lastSaveAt": "Ostatni zapis o: ",
+  "skipToEditor": "Przejdź do edytora e-mail",
+  "deleteTotalMarketing": "Usuń Total Marketing",
+  "deleteTotalMarketingDesc": "<b>Czy na pewno chcesz usunąć kampanię marketingową SMS?</b><br/>W przypadku, gdy będziesz chciał przywrócić kampanię SMS, będziesz musiał skonfigurować ją ponownie",
+  "singleProduct": "Pojedynczy produkt",
+  "multipleProduct": "Wiele produktów",
+  "setupDynamicProduct": "Skonfiguruj produkt dynamiczny",
+  "upto": "Do",
+  "products": "Produkty",
+  "filter": "Filtr",
+  "byEventType": "Według typu zdarzenia",
+  "allEvents": "Wszystkie zdarzenia",
+  "pageView": "Wyświetlenie strony",
+  "purchase": "Zakup",
+  "cartAbandonment": "Porzucenie koszyka",
+  "lastViewedProduct": "Ostatnio przeglądane produkty",
+  "byProductCategory": "Według kategorii produktu",
+  "allCategories": "Wszystkie kategorie",
+  "display": "Wyświetl",
+  "image": "Obraz",
+  "name": "Nazwa",
+  "description": "Opis",
+  "price": "Cena",
+  "button": "Przycisk",
+  "buyNow": "Kup teraz",
+  "buttonText": "Tekst przycisku",
+  "productStructure": "Struktura produktu",
+  "horizontal": "Pozioma",
+  "vertical": "Pionowa",
+  "productOrder": "Kolejność produktów",
+  "preview": "Podgląd",
+  "addProductBlock": "Dodaj blok produktu",
+  "selectUptoFiveEmails": "Wybierz do 5 e-maili do zatwierdzenia",
+  "sendAmpRequest": "Aplikuj do AMP",
+  "lastRequestTime": "Ostatnia próba: ",
+  "requestsCount": "Liczba prób: ",
+  "ampRegisterDesc": "Aby zakończyć proces rejestracji<br/>Powinieneś wypełnić formularz rejestracyjny AMP klikając <a href='' target='_blank'>tutaj</a> Dla każdego adresu e-mail, który zgłosiłeś, osobno<br/>Google dąży do odpowiedzi na większość żądań w ciągu 5 dni roboczych, a w przypadku gdy żądanie zostało <b>zaakceptowane</b> - możesz natychmiast wysyłać treść AMP<br/>W przypadku gdy żądanie zostało <b>odrzucone</b> - otrzymasz e-mail wyjaśniający dlaczego zostało odrzucone.",
+  "ampSelectEmail": "Wybierz co najmniej 1 e-mail do zatwierdzenia AMP",
+  "ampPageText": "<b>Czym jest AMP?</b><br/>Wysyłanie e-maila z AMP pozwala nam użyć dynamicznych elementów w treści e-maila<br/>Przykład: Karuzela obrazów <br/>Aby korzystać z tych elementów, adres \"Od e-mail\" musi zostać zatwierdzony przez Google i Yahoo <br/><br/><b>Jak zacząć?</b><br/>Wybierz adresy, z których chcesz wysyłać AMP i kliknij \"Aplikuj do AMP\"<br/>Następnie prześlij <a href='https://forms.gle/fDqLE1gh4wMB6BeQ6' target='_blank'>Formularz rejestracyjny AMP</a><br/><br/>Uwaga! Tylko adresy e-mail w zweryfikowanych domenach mogą być zatwierdzone do AMP",
+  "webpNotSupport": "webp nie jest obsługiwany w AMP",
+  "htmlDocTypeNotAllowed": "Znaleziono nieprawidłowe znaczniki w bloku HTML",
+  "setupStaticProduct": "Konfiguracja produktu",
+  "createProductBlock": "Spersonalizowany blok produktu",
+  "selectProduct": "Wybierz produkt z katalogu",
+  "selectAllStaticProducts": "Wybierz produkt z katalogu",
+  "fromEmailCaution": "<p style='line-height:1.2'><b>Uwaga!</b><br/><br/>Używanie adresu e-mail w polu 'Nazwa nadawcy' może spowodować filtrowanie jako spam.<br/>Zaleca się używanie nazwy wyświetlanej. <br/>Czy chcesz kontynuować?</p>"
+}

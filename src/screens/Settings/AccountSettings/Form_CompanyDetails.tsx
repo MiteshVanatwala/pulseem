@@ -50,7 +50,7 @@ const FORM_COMPANY_DETAILS = ({
 }: CompDtlPropTypes) => {
   const { t } = useTranslation();
   const { isRTL, windowSize } = useSelector((state: any) => state.core);
-  const { accountSettings, accountFeatures, currencyList, countryCodeList, isGlobal } = useSelector((state: any) => state.common);
+  const { accountSettings, accountFeatures, currencyList, countryCodeList, isGlobal, IsPoland } = useSelector((state: any) => state.common);
   const { twoFAUpdated } = useSelector((state: any) => state?.accountSettings);
   const dispatch = useDispatch();
 

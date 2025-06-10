@@ -1,5 +1,6 @@
 import {
 	Avatar,
+	Box,
 	ListItem,
 	ListItemAvatar,
 	ListItemText,
@@ -9,6 +10,7 @@ import { useTranslation } from 'react-i18next';
 import { FaCheck } from 'react-icons/fa';
 import { HiUserGroup } from 'react-icons/hi';
 import { GroupsSelectAllProps } from '../../../Types/WhatsappCampaign.types';
+import { useSelector } from 'react-redux';
 
 const GroupsSelectAll = ({
 	classes,
@@ -16,6 +18,7 @@ const GroupsSelectAll = ({
 	allSelected,
 }: GroupsSelectAllProps) => {
 	const { t: translator } = useTranslation();
+	const { isRTL } = useSelector((state: any) => state.core)
 	return (
 		<ListItem
 			className={clsx(classes.groupListRow, 'group-container')}
@@ -37,12 +40,14 @@ const GroupsSelectAll = ({
 					)}
 				</Avatar>
 			</ListItemAvatar>
-			<ListItemText
-				className={'groupText'}
-				title={translator('notifications.selectAll')}
-				//@ts-ignore
-				primary={translator('notifications.selectAll')}
-			/>
+			<Box dir={ isRTL ? "rtl" : "ltr" } width="100%">
+				<ListItemText
+					className={clsx('groupText', !isRTL && classes.textLeft)}
+					title={translator('notifications.selectAll')}
+					//@ts-ignore
+					primary={translator('notifications.selectAll')}
+				/>
+			</Box>
 		</ListItem>
 	);
 };

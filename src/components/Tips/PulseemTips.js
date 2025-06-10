@@ -11,6 +11,7 @@ import { URLS } from '../../config/enum';
 import { MdLibraryBooks } from 'react-icons/md';
 
 const PulseemTips = ({ classes, t, isRTL }) => {
+  const { language } = useSelector(state => state.core);
   const { tips } = useSelector(state => state.dashboard);
   const [activeTip, setActiveTip] = useState(0);
 
@@ -92,7 +93,7 @@ const PulseemTips = ({ classes, t, isRTL }) => {
         {/* <IllustrationTipulseem /> */}
         <img alt="Tips" src={IllustrationTipulseem} width="158" height="99" />
       </Box>
-      <Box dir={'ltr'} style={{marginTop: 30}}>
+      <Box dir={'ltr'} style={{ marginTop: 30 }}>
         <Carousel
           autoPlay={true}
           interval={8000}
@@ -102,9 +103,25 @@ const PulseemTips = ({ classes, t, isRTL }) => {
           showStatus={false}
           showArrows={false}>
           {tips.map(tip => {
+            let langTip = '';
+            switch (language) {
+              case 'pl': {
+                langTip = tip.PolishTipText;
+                break;
+              }
+              case 'en': {
+                langTip = tip.TipText;
+                break;
+              }
+              default:
+              case 'he': {
+                langTip = tip.HebrewTipText;
+                break;
+              }
+            }
             return (
               <Box component='div' className={classes.tipItem} key={`tip${Math.round(Math.random() * 999999999)}`}>
-                <Typography style={{ direction: isRTL ? 'rtl' : 'ltr' }} align='center' className={classes.tipulseemMsg}>{isRTL ? tip.HebrewTipText : tip.TipText}</Typography>
+                <Typography style={{ direction: isRTL ? 'rtl' : 'ltr' }} align='center' className={classes.tipulseemMsg}>{langTip}</Typography>
               </Box>
             );
           })}

@@ -651,6 +651,11 @@ const CampaignEditor = ({ classes, ...props }) => {
         setToastMessage(ToastMessages.RECIPIENT_BLOCKED);
         break;
       }
+      case 551:
+      case 550: {
+        setDialog(DialogType.PENDING_APPROVAL);
+        break;
+      }
       case 500:
       default: {
         setDialog(DialogType.ERROR_OCCURED);
@@ -991,6 +996,22 @@ const CampaignEditor = ({ classes, ...props }) => {
     };
   }
 
+  const getPendingApprovalModal = () => ({
+    title: t('campaigns.newsLetterEditor.errors.pendingApproval'),
+    showDivider: false,
+    content: (
+      <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+        {t('campaigns.newsLetterEditor.errors.PendingApprovalDesc')}
+      </Typography>
+    ),
+    onConfirm: async () => {
+      setDialogType({
+        type: '',
+        data: ''
+      });
+    }
+  })
+
   const renderDialog = () => {
     const { type, data } = dialogType || {}
     let currentDialog = {};
@@ -998,6 +1019,8 @@ const CampaignEditor = ({ classes, ...props }) => {
       currentDialog = productCatalogModal(data);
     } else if (type === 'moreThanOneDynamicBlock') {
       currentDialog = moreThanOneDynamicBlockModal(data);
+    } else if (type === DialogType.PENDING_APPROVAL) {
+      currentDialog = getPendingApprovalModal();
     }
 
     if (type) {

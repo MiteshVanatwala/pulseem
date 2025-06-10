@@ -106,6 +106,10 @@ export const LangugeCode = [
   {
     value: 12,
     label: "languages.langCodes.dutch"
+  },
+  {
+    value: 14,
+    label: "languages.langCodes.polish"
   }
 ]
 

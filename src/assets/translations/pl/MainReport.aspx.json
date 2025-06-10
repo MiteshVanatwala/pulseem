@@ -1,0 +1,552 @@
+{
+  "btnClearSearchResource1": {
+    "Text": "Wyczyść",
+    "ToolTip": ""
+  },
+  "btnSearchResource1": {
+    "Text": "Szukaj",
+    "ToolTip": ""
+  },
+  "chrtMonthlySendsResource1": {
+    "ChartTitle": {
+      "TextBlock": {
+        "Text": "E-maile wysłane w miesiącu"
+      }
+    },
+    "Legend": {
+      "TextBlock": {
+        "Text": ""
+      }
+    },
+    "ToolTip": ""
+  },
+  "datFromDateResource1": {
+    "Calendar": {
+      "CellDayFormat": "%d",
+      "ColumnHeaderImage": "",
+      "ColumnHeaderText": "",
+      "DateRangeSeparator": " - ",
+      "DayCellToolTipFormat": "dddd, MMMM dd, yyyy",
+      "FastNavigationNextImage": "fastNavRight.gif",
+      "FastNavigationNextText": ">>",
+      "FastNavigationPrevImage": "fastNavLeft.gif",
+      "FastNavigationPrevText": "<<",
+      "FastNavigationSettings": {
+        "CancelButtonCaption": "Anuluj",
+        "DateIsOutOfRangeMessage": "Data jest poza zakresem.",
+        "OkButtonCaption": "OK",
+        "TodayButtonCaption": "Dzisiaj"
+      },
+      "NavigationNextImage": "arrowRight.gif",
+      "NavigationNextText": ">",
+      "NavigationPrevImage": "arrowLeft.gif",
+      "NavigationPrevText": "<",
+      "RowHeaderImage": "",
+      "RowHeaderText": "",
+      "TitleFormat": "MMMM yyyy",
+      "ToolTip": "",
+      "ViewSelectorImage": "",
+      "ViewSelectorText": ""
+    },
+    "DateInput": {
+      "ToolTip": ""
+    },
+    "DatePopupButton": {
+      "ToolTip": "Otwórz kalendarz."
+    },
+    "ToolTip": ""
+  },
+  "datToDateResource1": {
+    "Calendar": {
+      "CellDayFormat": "%d",
+      "ColumnHeaderImage": "",
+      "ColumnHeaderText": "",
+      "DateRangeSeparator": " - ",
+      "DayCellToolTipFormat": "dddd, MMMM dd, yyyy",
+      "FastNavigationNextImage": "fastNavRight.gif",
+      "FastNavigationNextText": ">>",
+      "FastNavigationPrevImage": "fastNavLeft.gif",
+      "FastNavigationPrevText": "<<",
+      "FastNavigationSettings": {
+        "CancelButtonCaption": "Anuluj",
+        "DateIsOutOfRangeMessage": "Data jest poza zakresem.",
+        "OkButtonCaption": "OK",
+        "TodayButtonCaption": "Dzisiaj"
+      },
+      "NavigationNextImage": "arrowRight.gif",
+      "NavigationNextText": ">",
+      "NavigationPrevImage": "arrowLeft.gif",
+      "NavigationPrevText": "<",
+      "RowHeaderImage": "",
+      "RowHeaderText": "",
+      "TitleFormat": "MMMM yyyy",
+      "ToolTip": "",
+      "ViewSelectorImage": "",
+      "ViewSelectorText": ""
+    },
+    "DateInput": {
+      "ToolTip": ""
+    },
+    "DatePopupButton": {
+      "ToolTip": "Otwórz kalendarz."
+    },
+    "ToolTip": ""
+  },
+  "grdReportResource1": {
+    "BackImageUrl": "",
+    "FilterMenu": {
+      "ToolTip": ""
+    },
+    "GroupingSettings": {
+      "CollapseTooltip": "Zwiń grupę",
+      "ExpandTooltip": "Rozwiń grupę",
+      "GroupByFieldsSeparator": "; ",
+      "GroupContinuedFormatString": "... grupa kontynuowana z poprzedniej strony. ",
+      "GroupContinuesFormatString": " Grupa kontynuowana na następnej stronie.",
+      "GroupSplitDisplayFormat": "Pokazano {0} z {1} elementów.",
+      "GroupSplitFormat": " ({0})",
+      "UnGroupTooltip": "Przeciągnij poza pasek, aby rozgrupować"
+    },
+    "GroupPanel": {
+      "Text": "Przeciągnij nagłówek kolumny i upuść go tutaj, aby pogrupować według tej kolumny",
+      "ToolTip": ""
+    },
+    "HierarchySettings": {
+      "CollapseTooltip": "Zwiń",
+      "ExpandTooltip": "Rozwiń",
+      "SelfCollapseTooltip": "Zwiń odniesienie do siebie",
+      "SelfExpandTooltip": "Rozwiń odniesienie do siebie"
+    },
+    "MasterTableView": {
+      "Caption": "",
+      "CommandItemSettings": {
+        "AddNewRecordImageUrl": "mvwres://Telerik.Web.UI, Version=2008.2.723.35, Culture=neutral, PublicKeyToken=121fae78165ba3d4/Telerik.Web.UI.Skins.Default.Grid.AddRecord.gif",
+        "AddNewRecordText": "Dodaj nowy rekord",
+        "RefreshImageUrl": "mvwres://Telerik.Web.UI, Version=2008.2.723.35, Culture=neutral, PublicKeyToken=121fae78165ba3d4/Telerik.Web.UI.Skins.Default.Grid.Refresh.gif",
+        "RefreshText": "Odśwież"
+      },
+      "EditFormSettings": {
+        "CaptionFormatString": ""
+      },
+      "ExpandCollapseColumn": {
+        "CollapseImageUrl": "mvwres://Telerik.Web.UI, Version=2008.2.723.35, Culture=neutral, PublicKeyToken=121fae78165ba3d4/Telerik.Web.UI.Skins.Default.Grid.SingleMinus.gif",
+        "CurrentFilterValue": "",
+        "EditFormHeaderTextFormat": "{0}:",
+        "ExpandImageUrl": "mvwres://Telerik.Web.UI, Version=2008.2.723.35, Culture=neutral, PublicKeyToken=121fae78165ba3d4/Telerik.Web.UI.Skins.Default.Grid.SinglePlus.gif",
+        "FooterText": "",
+        "GroupByExpression": "",
+        "HeaderImageUrl": "",
+        "HeaderText": "",
+        "SortExpression": ""
+      },
+      "FilterExpression": "",
+      "NoDetailRecordsText": "Brak rekordów podrzędnych do wyświetlenia.",
+      "NoMasterRecordsText": "Brak rekordów do wyświetlenia.",
+      "PagerStyle": {
+        "NextPagesToolTip": "Następne strony",
+        "NextPageText": "",
+        "NextPageToolTip": "Następna strona",
+        "PagerTextFormat": "Zmień stronę: {4} &nbsp;Wyświetlanie strony {0} z {1}, elementy od {2} do {3} z {5}.",
+        "PrevPagesToolTip": "Poprzednie strony",
+        "PrevPageText": "",
+        "PrevPageToolTip": "Poprzednia strona"
+      },
+      "RowIndicatorColumn": {
+        "CurrentFilterValue": "",
+        "EditFormHeaderTextFormat": "{0}:",
+        "FooterText": "",
+        "GroupByExpression": "",
+        "HeaderImageUrl": "",
+        "HeaderText": "",
+        "SortExpression": ""
+      },
+      "Summary": "",
+      "ToolTip": ""
+    },
+    "PagerStyle": {
+      "NextPagesToolTip": "Następne strony",
+      "NextPageText": "",
+      "NextPageToolTip": "Następna strona",
+      "PagerTextFormat": "Zmień stronę: {4} &nbsp;Wyświetlanie strony {0} z {1}, elementy od {2} do {3} z {5}.",
+      "PrevPagesToolTip": "Poprzednie strony",
+      "PrevPageText": "",
+      "PrevPageToolTip": "Poprzednia strona"
+    },
+    "SortingSettings": {
+      "SortedAscToolTip": "Posortowano rosnąco",
+      "SortedDescToolTip": "Posortowano malejąco",
+      "SortToolTip": "Kliknij tutaj, aby posortować"
+    },
+    "StatusBarSettings": {
+      "LoadingText": "Ładowanie...",
+      "ReadyText": "Gotowe"
+    },
+    "ToolTip": ""
+  },
+  "GridBoundColumnResource1": {
+    "CurrentFilterValue": "",
+    "DataFormatString": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterAggregateFormatString": "",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "ID Kampanii",
+    "SortExpression": ""
+  },
+  "GridBoundColumnResource2": {
+    "CurrentFilterValue": "",
+    "DataFormatString": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterAggregateFormatString": "",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "Nazwa kampanii",
+    "SortExpression": ""
+  },
+  "GridBoundColumnResource3": {
+    "CurrentFilterValue": "",
+    "DataFormatString": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterAggregateFormatString": "",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "Data wysyłki",
+    "SortExpression": ""
+  },
+  "GridButtonColumnResource1": {
+    "ConfirmText": "",
+    "ConfirmTitle": "",
+    "CurrentFilterValue": "",
+    "DataTextFormatString": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "Otwarcia",
+    "UniquePercentage": "Unikalne procenty",
+    "ImageUrl": "",
+    "SortExpression": "",
+    "Text": ""
+  },
+  "GridButtonColumnResource2": {
+    "ConfirmText": "",
+    "ConfirmTitle": "",
+    "CurrentFilterValue": "",
+    "DataTextFormatString": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "Kliknięcia",
+    "ImageUrl": "",
+    "SortExpression": "",
+    "Text": ""
+  },
+  "GridButtonColumnResource3": {
+    "ConfirmText": "",
+    "ConfirmTitle": "",
+    "CurrentFilterValue": "",
+    "DataTextFormatString": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "Nieotwarte",
+    "ImageUrl": "",
+    "SortExpression": "",
+    "Text": ""
+  },
+  "GridButtonColumnResource4": {
+    "ConfirmText": "",
+    "ConfirmTitle": "",
+    "CurrentFilterValue": "",
+    "DataTextFormatString": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "Błędy",
+    "ImageUrl": "",
+    "SortExpression": "",
+    "Text": ""
+  },
+  "GridButtonColumnResource5": {
+    "ConfirmText": "",
+    "ConfirmTitle": "",
+    "CurrentFilterValue": "",
+    "DataTextFormatString": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "Wysłane",
+    "ImageUrl": "",
+    "SortExpression": "",
+    "Text": ""
+  },
+  "GridButtonColumnResource6": {
+    "ConfirmText": "",
+    "ConfirmTitle": "",
+    "CurrentFilterValue": "",
+    "DataTextFormatString": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "Graficzny",
+    "ImageUrl": "~/Images/Chart Column.png",
+    "SortExpression": "",
+    "Text": ""
+  },
+  "locFromDateResource1": {
+    "Text": "Od daty:"
+  },
+  "locPageExplanationResource1": {
+    "Text": "Raport wysyłki kampanii e-mail. Analiza kampanii jest dostępna po kliknięciu odpowiednich liczb."
+  },
+  "locSearchCampaignResource1": {
+    "Text": "Szukaj kampanii:"
+  },
+  "locToDateResource1": {
+    "Text": "Do daty:"
+  },
+  "logPageHeaderResource1": {
+    "Text": "Raport kampanii e-mail"
+  },
+  "PageResource1": {
+    "Title": "Panel | Raport kampanii e-mail"
+  },
+  "txtCampaignNameResource1": {
+    "Text": "",
+    "ToolTip": ""
+  },
+  "Apr": "Kwiecień",
+  "Aug": "Sierpień",
+  "Dec": "Grudzień",
+  "Feb": "Luty",
+  "Jan": "Styczeń",
+  "Jul": "Lipiec",
+  "Jun": "Czerwiec",
+  "Mar": "Marzec",
+  "May": "Maj",
+  "Nov": "Listopad",
+  "Oct": "Październik",
+  "Sep": "Wrzesień",
+  "chrtMonthlySendsSmlTitle": {
+    "Name": "Ilość"
+  },
+  "locCampName": {
+    "HeaderText": "Nazwa kampanii"
+  },
+  "locClickCount": {
+    "HeaderText": "Kliknięcia"
+  },
+  "locErrors": {
+    "HeaderText": "Odbicia"
+  },
+  "locGraph": {
+    "HeaderText": "Raport graficzny"
+  },
+  "locNotOpened": {
+    "HeaderText": "Niewyświetlone"
+  },
+  "locOpenCount": {
+    "HeaderText": "Otwarte"
+  },
+  "locRemovedClients": {
+    "HeaderText": "Usunięte"
+  },
+  "locSendDate": {
+    "HeaderText": "Data wysyłki"
+  },
+  "locTotalSendPlan": {
+    "HeaderText": "Do wysłania"
+  },
+  "btnExportResource1": {
+    "Text": "Eksport"
+  },
+  "locShowTestCampaigns": {
+    "Text": "Pokaż kampanie testowe"
+  },
+  "btnSectionResource1": {
+    "Text": "Segmentacja"
+  },
+  "locUniqueOpens": {
+    "HeaderText": "Unikalne otwarcia"
+  },
+  "locUniqueClicks": {
+    "HeaderText": "Unikalne kliknięcia"
+  },
+  "Attachments": "Załączniki plików",
+  "MessageCredits": "Całkowita liczba kredytów wiadomości:",
+  "MessageSize": "Całkowity rozmiar wiadomości:",
+  "SizeUnit": "KB",
+  "ChartDesc": "Miesięczna ilość wysyłek",
+  "locUniqueClicksPercents": {
+    "HeaderText": "Unikalny procent"
+  },
+  "locUniqueOpensPercents": {
+    "HeaderText": "Unikalny procent"
+  },
+  "locRemovedReason": {
+    "HeaderText": "Powody usunięcia"
+  },
+  "NoAttachments": "Brak załączników",
+  "GroupNames": "Nazwy grup",
+  "CampaignID": "Numer kampanii",
+  "ToalSent": "Wysłane",
+  "Cancelled": "Anulowane",
+  "locStatus": {
+    "HeaderText": "Status"
+  },
+  "Approve": "Oczekuje na zatwierdzenie",
+  "OpensUniqueTooltip": {
+    "Text": "Liczba odbiorców, którzy otworzyli wiadomość"
+  },
+  "ClicksTotalTooltip": {
+    "Text": "Liczba kliknięć w linki wewnątrz wiadomości, włącznie z wielokrotnymi kliknięciami"
+  },
+  "ClicksUniqueTooltip": {
+    "Text": "Liczba odbiorców, którzy kliknęli w link w wiadomości"
+  },
+  "OpensTotalTooltip": {
+    "Text": "Liczba otwarć wiadomości e-mail, włącznie z wielokrotnymi otwarciami"
+  },
+  "MainReportTitle": {
+    "Text": "Raporty wysyłkowe dla kampanii wysłanych w systemie. Możesz szczegółowo analizować dane wysyłki, klikając na dane kampanii"
+  },
+  "date": "Data",
+  "removed": "Usunięte",
+  "removals": "Usunięcia",
+  "removedPercents": "Procent",
+  "reasons": "Powody",
+  "compareCampaigns": "Porównaj kampanie",
+  "names": "Nazwy",
+  "fixedSendingDate": "Stała data wysyłki",
+  "totalSendCompleted": "Całkowita wysyłka zakończona",
+  "totalSendPlan": "Całkowity plan wysyłki",
+  "openCount": "Liczba otwarć",
+  "openCountUnique": "Unikalna liczba otwarć",
+  "clickCount": "Liczba kliknięć",
+  "clickCountUnique": "Unikalna liczba kliknięć",
+  "notOpened": "Nieotwarte",
+  "sendError": "Błąd wysyłki",
+  "removedClients": "Usunięci klienci",
+  "groupsNames": "Nazwy grup",
+  "files": "Pliki",
+  "fileNames": "Nazwy plików",
+  "percentageOpens": "Procent otwarć",
+  "percetangeClicks": "Procent kliknięć",
+  "percetangeRemovedClients": "Procent usuniętych klientów",
+  "attachments": "Załączniki",
+  "totalBytes": "Całkowita liczba bajtów",
+  "opensAndClicks": "Otwarcia i kliknięcia",
+  "geographicalReport": "Raport geograficzny",
+  "systemsReport": "Raport systemów",
+  "backToNewsletterReports": "Powrót do raportów newslettera",
+  "fromEmail": "Z e-maila",
+  "fromName": "Od nadawcy",
+  "attachedFiles": "Załączone pliki",
+  "campaignQuality": "Jakość kampanii",
+  "campaignQualitySummary": "Określona na podstawie danych o otwarciach i kliknięciach, Ram Ipsom Dolor Sit Emt, Editing Consumer Elit Goller Montferrer Sobert Lorem Shevetz Yahul",
+  "billingCredits": "Całkowita liczba wysłanych kredytów",
+  "postCredits": "Na SMS",
+  "smsCampaign": "Utwórz nową kampanię SMS",
+  "sendSetting": "Ustawienia wysyłki",
+  "whomTosend": "Do kogo wysłać?",
+  "groups": "Grupy",
+  "manual": "Ręczne przesyłanie",
+  "saveSms": "Zapisz",
+  "exitSms": "Wyjdź",
+  "summary": "Podsumowanie",
+  "specialDate": "Specjalna data",
+  "totalReci": "Całkowita liczba odbiorców do wysyłki",
+  "createNewGroup": "Utwórz nową grupę z wybranych odbiorców",
+  "before": "Przed",
+  "after": "Po",
+  "pulseSend": "Wysyłka pulsacyjna",
+  "days": "Dni",
+  "birthday": "Urodziny",
+  "creationDay": "Dzień utworzenia",
+  "dateOfJoining": "Data dołączenia",
+  "dateOfFirstCampaign": "Data pierwszej kampanii",
+  "dateOfSomething1": "Data czegoś 1",
+  "dateOfSomething2": "Data czegoś 2",
+  "recipientFilter": "Filtr",
+  "createContent": "Utwórz treść",
+  "campName": "Nazwa kampanii",
+  "campFrom": "Kampania od",
+  "restore": "Przywróć",
+  "removalReply": "Odpowiedź na usunięcie",
+  "campDesc": "Służy do identyfikacji kampanii w systemie. Twoi odbiorcy nie zobaczą tej nazwy",
+  "campRemovalDesc": "Jeśli zmienisz ten numer, Twoi klienci nie będą mogli odpowiedzieć na kampanię",
+  "yourMessage": "Twoja wiadomość",
+  "keepTrack": "Śledź swoje linki",
+  "keepDesc": "Włączenie tego przełącznika przekształci Twoje linki w specjalny 35-znakowy link, oszczędzając miejsce w wiadomości",
+  "testSend": "Wysyłka testowa",
+  "testDesc": "Zaraz po kliknięciu przycisku wyślij",
+  "sendToOne": "Wyślij do jednego kontaktu",
+  "sendToGroups": "Wyślij do grup testowych",
+  "typeText": "Wpisz tekst",
+  "char": "Znaki",
+  "message": "Wiadomość",
+  "link": "Link",
+  "links": "Linki",
+  "removalMsg": "Wiadomość o usunięciu",
+  "removalLink": "Link do usunięcia",
+  "add": "DODAJ",
+  "toolTip1": "Utwórz treść, którą chcesz wysłać do swoich odbiorców, a następnie wybierz jak, kiedy i do kogo ją wysłać",
+  "send": "WYŚLIJ",
+  "enterPhone": "Wprowadź numer telefonu",
+  "ChooseLinks": "Wybierz grupy testowe z listy",
+  "continue": "Kontynuuj",
+  "fieldInvalid": "Następujące pola są nieprawidłowe",
+  "campaignRequire": "Nazwa kampanii - Pole wymagane",
+  "msgRequire": "Tekst do wysyłki - Pole wymagane",
+  "confirmSms": "Potwierdź",
+  "waizeTitle": "Wpisz lokalizację do nawigacji",
+  "searchSms": "Szukaj",
+  "waize": "Nawigacja Waze",
+  "campLink": "Link kampanii",
+  "landingLink": "Link strony docelowej",
+  "selectCamp": "Wybierz kampanię",
+  "selectLanding": "Wybierz stronę docelową",
+  "invalidNo": "Nieprawidłowy numer!",
+  "campaignNamePlaceholder": "Nazwa kampanii",
+  "tooltipCreateGroup": "Wybierz 2 lub więcej grup i połącz je w nową",
+  "newFeature": "Nowość!",
+  "save": "Zapisz",
+  "deleteCamp": "Usuń kampanię",
+  "confirmSure": "Czy jesteś pewien?",
+  "pleaseNoteDsec": "Zmieniłeś numer przypisany przez platformę Pulseem dla tej kampanii. Odbiorcy nie będą mogli zrezygnować z Twojej listy dystrybucyjnej SMS poprzez wiadomość o usunięciu. Możesz zamiast tego dodać link do usunięcia lub wrócić do oryginalnego numeru.",
+  "pleaseNote": "Uwaga!",
+  "cancelPleaseNoteModal": "Anuluj",
+  "alignToLeft": "Wyrównaj tekst do lewej",
+  "aligntoRight": "Wyrównaj tekst do prawej",
+  "emoji": "Dodaj emotikony",
+  "removalMsgTooltip": "Dodaj wiadomość o usunięciu",
+  "removalLinkTooltip": "Dodaj link do usunięcia",
+  "selectTooltip": "Dodaj personalizację",
+  "personalisationSelect": "Personalizacja",
+  "typeAddress": "Wpisz adres",
+  "deleteSms": "Usuń kampanię",
+  "campaignFromRequire": "Kampania od - Pole wymagane",
+  "selectGroups": "Wybierz grupę do wysyłki testowej",
+  "handleExitTitle": "Opuść tworzenie kampanii",
+  "leaveCampaign": "Czy chcesz zapisać zmiany przed wyjściem?",
+  "Ok": "Tak",
+  "No": "Nie",
+  "summaryModalTitle": "Podsumowanie kampanii",
+  "feedback": "Opinie",
+  "isResponse": "Jest odpowiedzią",
+  "statusName": "Nazwa statusu",
+  "verifiedCount": "Zweryfikowane",
+  "verifiedTooltip": "Bez kliknięć w linki \"podglądu\"",
+  "SMSReportNote1": "Ulepszamy Twoje dane o kliknięciach!",
+  "SMSReportNote2": "Na wielu telefonach komórkowych podglądy linków dołączonych do SMS są liczone jako kliknięcia, <br />Dodaliśmy kolumnę \"Zweryfikowane kliknięcia\", abyś wiedział, kto rzeczywiście kliknął w Twoje linki!",
+  "clickCountTooltip": "Suma wszystkich kliknięć, włącznie z duplikatami",
+  "uniqueClickCountTooltip": "Suma wszystkich kliknięć, bez duplikatów"
+}

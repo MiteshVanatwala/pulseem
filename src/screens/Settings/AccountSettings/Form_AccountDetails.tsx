@@ -92,7 +92,6 @@ const FORM_ACCOUNT_DETAILS = ({
 
 	const handleChange = (e: any, name = '') => {
 		let actualValue = e?.target?.value;
-
 		if (e?.target?.name === 'DefaultFromMail') {
 			setFromEmailError(false);
 		}
