@@ -227,8 +227,7 @@ const SignUpNew = ({ classes }: any) => {
     if (defaultLang === 'he-IL') langCode = 'he';
     else if (defaultLang === 'en-US') langCode = 'en';
     else if (defaultLang === 'pl-PL') langCode = 'pl';
-    dispatch(setLanguage(langCode));
-    i18n.changeLanguage(langCode);
+    changeLanguage(langCode);
 
     getUserInfo();
     if ((qs?.refId && qs?.refId !== '') && ((!qs?.emailid || qs?.emailid === '') || !qs?.id)) {
@@ -1004,6 +1003,7 @@ const SignUpNew = ({ classes }: any) => {
   }
 
   const languageSelector = () => {
+    console.log('languageSelector', language);
     return (
       <FormControl variant='standard' className={clsx(classes.SignUpLanguageDropdown, classes.bgWhite, classes.mb10)} style={{ direction: isRTL ? 'ltr' : 'rtl' }}>
         <Select

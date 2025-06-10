@@ -55,6 +55,7 @@ const RemoveMyData = ({ classes }: any) => {
     else if (defaultLang === 'pl-PL') langCode = 'pl';
     dispatch(setLanguage(langCode));
     i18n.changeLanguage(langCode);
+    changeLanguage(langCode);
   }, []);
 
   const renderToast = () => {
