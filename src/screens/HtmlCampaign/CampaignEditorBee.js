@@ -894,7 +894,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       >
         {t('common.saveTemplate')}
       </Button>
-      <Button
+      {accountFeatures?.indexOf(PulseemFeatures.NewsletterAI) > -1 && <Button
         onClick={() => { setDialogType({ type: "AIDialog" }) }}
         className={clsx(
           classes.btn,
@@ -906,6 +906,7 @@ const CampaignEditor = ({ classes, ...props }) => {
         // color="primary"
         key={'aiButton'}
       >{t('campaigns.aiDeisgner')}</Button>
+      }
     </>
   }
 

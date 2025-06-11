@@ -84,6 +84,7 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
   const [showLogo, setShowLogo] = useState<boolean>(false);
   const [selectedLogoName, setSelectedLogoName] = useState<string>('');
   const [showAILoader, setShowAILoader] = useState<boolean>(false);
+  const [last24Requests, setLast24Reqesuts] = useState<number>(0);
   const [confirmDialog, setConfirmDialog] = useState<DynamicContentProps | null | any>({
     confirmButtonText: '',
     cancelButtonText: 'common.cancel',
@@ -171,6 +172,7 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
     const response = await dispatch(getHistoryRequests(campaignId)) as any;
     if (response && response.payload?.StatusCode === 201) {
       const historyData: AnthropicHistoryLog[] = response?.payload?.Data;
+      setLast24Reqesuts(parseInt(response?.payload?.Message));
 
       // Sort history by date (newest first)
       const sortedHistory = [...historyData].sort((a, b) => {
@@ -400,6 +402,9 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
 
   return (
     <Box className={classes.aiContainer} id="ai-container">
+      <Box>
+        {last24Requests} / 10
+      </Box>
       {history?.length > 0 && <Box>
         <Typography className={clsx(classes.newFeatureTitle, classes.font18)}>
           {t('AI.popup.lastPromopSubTitle')}
