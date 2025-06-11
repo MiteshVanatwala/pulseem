@@ -402,9 +402,6 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
 
   return (
     <Box className={classes.aiContainer} id="ai-container">
-      <Box>
-        {last24Requests} / 10
-      </Box>
       {history?.length > 0 && <Box>
         <Typography className={clsx(classes.newFeatureTitle, classes.font18)}>
           {t('AI.popup.lastPromopSubTitle')}
@@ -541,18 +538,22 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
             style: { textAlign: 'right' }
           }}
         />
-        <FormControlLabel
-          control={
-            <Checkbox
-              color="primary"
-              inputProps={{ "aria-label": "secondary checkbox" }}
-              onClick={() => setModel({ ...model, useLatestElements: !model.useLatestElements })}
-              checked={model.useLatestElements}
-            />
-          }
-          label={t("AI.popup.useLatestDesignElements")}
-        />
-
+        <Box className={classes.historyItemHeader}>
+          <FormControlLabel
+            control={
+              <Checkbox
+                color="primary"
+                inputProps={{ "aria-label": "secondary checkbox" }}
+                onClick={() => setModel({ ...model, useLatestElements: !model.useLatestElements })}
+                checked={model.useLatestElements}
+              />
+            }
+            label={t("AI.popup.useLatestDesignElements")}
+          />
+          <Box style={{ direction: 'ltr' }}>
+            Requests: {last24Requests} / 10
+          </Box>
+        </Box>
         {/* File Upload and Colors Options Section */}
         <Accordion defaultExpanded={false} expanded={optionsExpanded} className={classes.mb10} key={'acc_2'}>
           <AccordionSummary
