@@ -3,6 +3,7 @@
   "signUp": "הרשמה",
   "purchase": "רכישה",
   "cartAbandonment": "נטישת עגלה",
+  "orderStatusCompleted": "סטטוס הזמנה -הושלם",
   "authResponses": {
     "201": "החנות אומתה בהצלחה",
     "400": "שם החנות שייך לחשבון אחר",
