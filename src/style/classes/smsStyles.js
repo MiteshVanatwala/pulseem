@@ -1084,6 +1084,7 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
             paddingInline: '0 !important',
         },
         '& .MuiButton-text': {
+            height: 36,
             paddingInline: 10
         },
         "@media screen and (max-width: 480px)": {

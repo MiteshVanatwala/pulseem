@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState, useMemo } from 'react';
 import { FixedSizeList as List } from 'react-window';
 import {
-    Typography, ListItemAvatar, Avatar, Grid, ListItem, ListItemText,
+    Typography, ListItemAvatar, Avatar, Grid, ListItem, ListItemText, ListItemSecondaryAction,
     Box, MenuItem, Button, FormControl, Input, InputAdornment, TextField
 } from '@material-ui/core';
 import Select from '@mui/material/Select';
@@ -369,6 +369,7 @@ const Groups = ({
             {/* Virtual List */}
             <div className={clsx(classes.demo, classes.sidebar)} style={{ height: innerHeight }}>
                 <List
+                    style={{ direction: isRTL ? 'rtl' : 'ltr' }}
                     height={innerHeight}
                     itemCount={totalItems}
                     itemSize={ITEM_HEIGHT}
@@ -393,8 +394,10 @@ const GroupItemRenderer = React.memo(({
     return (
         <div style={style}>
             <ListItem
+                id={item[groupIdKey]}
+                key={item[groupIdKey]}
                 onClick={() => onSelectGroup(item)}
-                style={{ cursor: 'pointer', height: ITEM_HEIGHT }}
+                style={{ cursor: 'pointer' }}
                 onMouseEnter={() => setIsHover(item[groupIdKey])}
                 onMouseLeave={() => setIsHover(null)}
                 className={clsx(groupHover === item[groupIdKey] ? classes.hoverListItem : null, 'group-container')}
@@ -407,8 +410,8 @@ const GroupItemRenderer = React.memo(({
                         isExist ? classes.borderRed : classes.borderPrimary
                     )}>
                         {isExist ?
-                            <FaCheck className={classes.white} /> :
-                            <HiUserGroup className={classes.colrPrimary} />
+                            <FaCheck className={clsx(classes.white)} /> :
+                            <HiUserGroup className={clsx(classes.colrPrimary)} />
                         }
                     </Avatar>
                 </ListItemAvatar>
@@ -416,13 +419,13 @@ const GroupItemRenderer = React.memo(({
                     <ListItemText
                         className={clsx('groupText', !isRTL && classes.textLeft)}
                         title={item.GroupName}
+                        primaryTypographyProps={{ variant: 'body1', style: { lineHeight: 1.5 } }}
                         primary={item.GroupName}
                     />
                 </Box>
                 <Box dir={isRTL ? "rtl" : "ltr"} width="100%">
                     <Box className={clsx('groupText', classes.itemAvatar, isRTL ? classes.textLeft : classes.textRight)}>
-                        {item[groupRecipientsKey].toLocaleString()} {' '}
-                        {item[groupRecipientsKey] !== 1 ? t("notifications.recipients") : t("notifications.recipient")}
+                        {item[groupRecipientsKey].toLocaleString()} {item[groupRecipientsKey] !== 1 ? t("notifications.recipients") : t("notifications.recipient")}
                     </Box>
                 </Box>
             </ListItem>
