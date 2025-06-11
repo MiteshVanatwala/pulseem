@@ -634,6 +634,7 @@ const App = ({ screenSize }) => {
 
   React.useEffect(() => {
     !isSignup && !isConfirmationPage && dispatch(getNotificationUpdates());
+    document.documentElement.setAttribute('data-url', window.location.pathname);
   }, [location]);
 
   useEffect(() => {
