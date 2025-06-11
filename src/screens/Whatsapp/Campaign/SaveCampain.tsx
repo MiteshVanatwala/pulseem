@@ -196,7 +196,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	};
 	const [isAccountSetup, setIsAccountSetup] = useState<boolean | null>(null);
 	const [isLoader, setIsLoader] = useState<boolean>(true);
-	const { isRTL, windowSize, userRoles } = useSelector((state: { core: coreProps }) => state.core);
+	const { isRTL, windowSize, userRoles, language } = useSelector((state: { core: coreProps }) => state.core);
 	// const [isDynamcFieldModal, setIsDynamcFieldModal] = useState<boolean>(false);
 	const [campaignName, setCampaignName] = useState<string>('');
 	const [from, setFrom] = useState<string>('');
@@ -648,6 +648,20 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		}
 	};
 
+	const getAuthTemplate = (lang: string) => {
+		switch (lang) {
+			case 'he':
+				return authenticationTypes.AUTHENTICATIONHEBREW;
+
+			case 'pl':
+				return authenticationTypes.AUTHENTICATIONPOLSKI;
+		
+			case 'en':
+			default:
+				return authenticationTypes.AUTHENTICATIONEN;
+		}
+	}
+
 	const renderAuthenticationPreview = (templateData: any) => {
 		setButtonType('quickReply');
 		const buttons = [{
@@ -662,9 +676,9 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				},
 			],
 		}];
-		let template = `${authenticationMockTemplate[templateData.Language === 'en' ? authenticationTypes.AUTHENTICATIONEN : authenticationTypes.AUTHENTICATIONHEBREW].body}`;
+		let template = `${authenticationMockTemplate[getAuthTemplate(templateData.Language)].body}`;
 		if (templateData.Data?.types?.authentication?.code_expiration_minutes) {
-			template += `\n\n ${authenticationMockTemplate[templateData.Language === 'en' ? authenticationTypes.AUTHENTICATIONEN : authenticationTypes.AUTHENTICATIONHEBREW].subtitle.replace('X', `${templateData.Data?.types?.authentication?.code_expiration_minutes || 0}`)}`;
+			template += `\n\n ${authenticationMockTemplate[getAuthTemplate(templateData.Language)].subtitle.replace('X', `${templateData.Data?.types?.authentication?.code_expiration_minutes || 0}`)}`;
 		}
 		setTemplateData({
 			templateText: template,
@@ -953,7 +967,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			reqData.Variables = adjustTemplateVariablesForLink(
 				savedTemplateData?.Data?.types,
 				formatUpdatedDynamicVariable(updatedDynamicVariable),
-				templateCategory === 3 ? `${authenticationMockTemplate[savedTemplateData.Language === 'en' ? authenticationTypes.AUTHENTICATIONEN : authenticationTypes.AUTHENTICATIONHEBREW].body}` : ''
+				templateCategory === 3 ? `${authenticationMockTemplate[getAuthTemplate(savedTemplateData.Language || '')].body}` : ''
 			);
 		}
 
@@ -1201,6 +1215,22 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		}
 	})
 
+	const getPendingApprovalModal = () => ({
+		title: translator('campaigns.newsLetterEditor.errors.pendingApproval'),
+		showDivider: false,
+		content: (
+			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+				{translator('campaigns.newsLetterEditor.errors.PendingApprovalDesc')}
+			</Typography>
+		),
+		onConfirm: async () => {
+			setDialogType({
+				type: '',
+				data: ''
+			});
+		}
+	})
+
 	const getCallToAction = () => ({
 		title: translator('whatsapp.callToActionTitle'),
 		showDivider: false,
@@ -1298,6 +1328,8 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			currentDialog = getTestGroupDialog();
 		} else if (type === 'exceedDailyLimit') {
 			currentDialog = getExceedDailyLimit();
+		} else if (type === 'PendingApproval') {
+			currentDialog = getPendingApprovalModal();
 		} else if (type === 'summary') {
 			currentDialog = getSummary();
 		} else if (type === 'callToAction') {

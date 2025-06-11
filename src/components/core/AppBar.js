@@ -36,7 +36,6 @@ const AppBarItem = ({
   const { t } = useTranslation();
   const Redirect = useRedirect();
   const [open, setOpen] = useState(false)
-
   // const [buttonWidth, setButtonWidth] = useState(0)
   const buttonRef = useRef(null)
 
@@ -104,7 +103,7 @@ const AppBarItem = ({
                         key={index}
                         component='a'
                         href={option.href}
-                        className={classes.appBarItemMenuItem}>
+                        className={clsx(classes.appBarItemMenuItem, classes.textLeft)}>
                         {/* {index !== 0 && option.title !== t("appBar.logout") && <Box className={classes.appBarItemBorder} />} */}
                         <MenuItem
                           key={option.title}
@@ -147,7 +146,12 @@ const returnToMainAccount = () => {
 }
 const LanguageSelector = ({ windowSize, classes }) => {
   const cookieData = getCookie('Culture');
-  const language = !!cookieData ? cookieData : 'he-IL';
+  const { IsPoland } = useSelector(state => state.common);
+  let language = !!cookieData
+                      ? cookieData 
+                      : (IsPoland ? 'en-US' : 'he-IL');
+  if (language === 'he-IL' && IsPoland) language = 'pl-PL';
+  
   const dispatch = useDispatch();
   const languages = [
     {
@@ -161,8 +165,18 @@ const LanguageSelector = ({ windowSize, classes }) => {
       mobileTitle: 'EN',
       value: 'en-US',
       isShow: true
+    },
+    {
+      title: 'Polski',
+      mobileTitle: 'PL',
+      value: 'pl-PL',
+      isShow: true
     }
   ]
+
+  if (IsPoland) {
+    languages.shift();
+  }
 
   const item = {
     title: <Box className={clsx(classes.flex, classes.justifyEvenly)} ><BsGlobe2 style={{ marginInline: 6 }} /> <p>{(languages && languages.find(lang => lang.value.toLocaleLowerCase() === language.toLocaleLowerCase())?.title) ?? ''}</p></Box>,
@@ -210,8 +224,9 @@ export const TopAppBar = ({ classes, currentPage = '', showAppBar = true }) => {
     setOpen(!open)
   }
   const { t } = useTranslation();
-  const { username } = useSelector(state => state.user)
-  const routes = getRoutes(t, isClal, accountFeatures, accountSettings, windowSize, isRTL, userRoles) // smsOldVersion
+  const { username } = useSelector(state => state.user);
+  const { isGlobal, IsPoland } = useSelector(state => state.common);
+  const routes = getRoutes(t, isClal, accountFeatures, accountSettings, windowSize, isRTL, userRoles, isGlobal && IsPoland) // smsOldVersion
   const settings = getSettingsItem(t, classes.appBarSettingIcon,
     (isAllowSwitchAccount && (isAllowSwitchAccount.toLowerCase() === 'true' || isAdmin !== '')), username.length > 20 ? `${username.slice(0, 20)}...` : username, isRTL, accountSettings, accountFeatures, get(subAccount, 'CompanyAdmin', false), userRoles)
 

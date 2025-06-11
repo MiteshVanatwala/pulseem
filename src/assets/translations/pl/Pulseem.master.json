@@ -1,0 +1,400 @@
+{
+  "Localize1Resource1": {
+    "Text": "Witaj!"
+  },
+  "locHelloResource1": {
+    "Text": "Cześć"
+  },
+  "mnuMainResource1": {
+    "ToolTip": ""
+  },
+  "RadMenuItemResource1": {
+    "Text": "Panel główny"
+  },
+  "RadMenuItemResource10": {
+    "Text": "Szablony newslettera"
+  },
+  "RadMenuItemResource11": {
+    "Text": "Cele"
+  },
+  "RadMenuItemResource12": {
+    "Text": "Kampania e-mail"
+  },
+  "RadMenuItemResource13": {
+    "Text": "Raport e-mail"
+  },
+  "RadMenuItemResource14": {
+    "Text": "Raport graficzny"
+  },
+  "RadMenuItemResource15": {
+    "Text": "Menedżer konta"
+  },
+  "RadMenuItemResource16": {
+    "Text": "Testy A/B"
+  },
+  "RadMenuItemResource17": {
+    "Text": "Cele"
+  },
+  "RadMenuItemResource18": {
+    "Text": "Raport odbiorcy"
+  },
+  "RadMenuItemResource19": {
+    "Text": "Raporty"
+  },
+  "RadMenuItemResource2": {
+    "Text": "Ustawienia konta"
+  },
+  "RadMenuItemResource20": {
+    "Text": "Pomoc"
+  },
+  "RadMenuItemResource21": {
+    "Text": "Kontakt"
+  },
+  "RadMenuItemResource22": {
+    "Text": "Wsparcie"
+  },
+  "RadMenuItemResource3": {
+    "Text": "Subkonta"
+  },
+  "RadMenuItemResource4": {
+    "Text": "Raport subkont"
+  },
+  "RadMenuItemResource5": {
+    "Text": "Konto"
+  },
+  "RadMenuItemResource6": {
+    "Text": "Zarządzanie grupami"
+  },
+  "RadMenuItemResource7": {
+    "Text": "Szukaj"
+  },
+  "RadMenuItemResource8": {
+    "Text": "Grupy"
+  },
+  "RadMenuItemResource9": {
+    "Text": "Zarządzanie newsletterem"
+  },
+  "RadMenuItemResource23": {
+    "Text": "Dodatkowe pola"
+  },
+  "RadMenuItemResource37": {
+    "Text": "Wyszukiwanie zaawansowane"
+  },
+  "RadMenuItemResource9a": {
+    "Text": "Autoresponder"
+  },
+  "RadMenuItemResource9b": {
+    "Text": "Utwórz newsletter"
+  },
+  "RadMenuItemResource100": {
+    "Text": "Kampania SMS"
+  },
+  "RadMenuItemResource101": {
+    "Text": "Nowa kampania SMS"
+  },
+  "RadMenuItemResource102": {
+    "Text": "Zarządzanie kampaniami SMS"
+  },
+  "RadMenuItemResource103": {
+    "Text": "Szablony kampanii"
+  },
+  "RadMenuItemResource24": {
+    "Text": "Raport SMS"
+  },
+  "PackagesResource": {
+    "Text": "Pakiety"
+  },
+  "RadMenuItemResource200": {
+    "Text": "Ankiety"
+  },
+  "RadMenuItemResource201": {
+    "Text": "Wprowadź ankiety"
+  },
+  "RadMenuItemRegistration": {
+    "Text": "Utwórz stronę rejestracji"
+  },
+  "RadMenuItemResource25": {
+    "Text": "Raporty stron docelowych"
+  },
+  "RadItemLandingPagesMenu": {
+    "Text": "Strony docelowe"
+  },
+  "RadItemFacebookMenu": {
+    "Text": "Facebook"
+  },
+  "RadMenuItemLandingManagement": {
+    "Text": "Zarządzanie stronami docelowymi"
+  },
+  "RadMenuItemLandingPage": {
+    "Text": "Utwórz stronę docelową"
+  },
+  "lblAddPackageResource1": {
+    "Text": "Dodaj pakiet SMS",
+    "ToolTip": ""
+  },
+  "lblUpgradeResource1": {
+    "Text": "Ulepsz konto",
+    "ToolTip": ""
+  },
+  "btnUpgradeResource1": {
+    "Text": "Skontaktuj się w sprawie ulepszenia konta",
+    "ToolTip": ""
+  },
+  "lblCompanyNameResource1": {
+    "Text": "Nazwa firmy",
+    "ToolTip": ""
+  },
+  "lblContactNameResource1": {
+    "Text": "Imię",
+    "ToolTip": ""
+  },
+  "lblUserMailResource1": {
+    "Text": "E-mail",
+    "ToolTip": ""
+  },
+  "lblUserMobileResource1": {
+    "Text": "Telefon komórkowy",
+    "ToolTip": ""
+  },
+  "lblUserPhoneResource1": {
+    "Text": "Telefon",
+    "ToolTip": ""
+  },
+  "lblUpgradeDescriptionResource1": {
+    "Text": "Ulepsz swoje konto.<br/>Zostaw swoje dane, a nasz operator skontaktuje się z Tobą wkrótce.",
+    "ToolTip": ""
+  },
+  "RequiredFields": "Wypełnij wszystkie wymagane pola",
+  "btnUpgradeSendResource1": {
+    "Text": "Ulepsz",
+    "ToolTip": ""
+  },
+  "lblAddressResource1": {
+    "Text": "Adres",
+    "ToolTip": ""
+  },
+  "lblCityResource1": {
+    "Text": "Miasto",
+    "ToolTip": ""
+  },
+  "lblCountryResource1": {
+    "Text": "Kraj",
+    "ToolTip": ""
+  },
+  "lblZipResource1": {
+    "Text": "Kod pocztowy",
+    "ToolTip": ""
+  },
+  "LogoutResource1": {
+    "Text": "Wyloguj"
+  },
+  "linkAboutResource1": {
+    "Text": "O nas"
+  },
+  "linkContactResource1": {
+    "Text": "Kontakt"
+  },
+  "linkCopyrightsResource1": {
+    "Text": "© 2009 Pulseem LTD. Wszelkie prawa zastrzeżone."
+  },
+  "linkHomeResource1": {
+    "Text": "Strona główna"
+  },
+  "lblChatResource1": {
+    "Text": "Czat online"
+  },
+  "btnLaterSendResource1": {
+    "Text": "Ulepsz później..."
+  },
+  "lblFormSide1Resource1": {
+    "Text": "Pulseem EMAIL MARKETING<br/>i SMS jest jednym z<br/>"
+  },
+  "lblFormSide2Resource1": {
+    "Text": "liderów branży e-marketingu."
+  },
+  "lblFormSide3Resource1": {
+    "Text": "Ponad sto milionów"
+  },
+  "lblFormSide4Resource1": {
+    "Text": "wiadomości EMAIL i SMS<br/>wysyłanych każdego miesiąca"
+  },
+  "lblFormSide5Resource1": {
+    "Text": "Czy sprawdziłeś nową<br/>usługę, którą oferujemy?"
+  },
+  "lblFormSide6Resource1": {
+    "Text": "Co miesiąc dodajemy nowe usługi."
+  },
+  "lblFormSide7Resource1": {
+    "Text": "Nasz serwis czatu jest dostępny"
+  },
+  "lblFormSide8Resource1": {
+    "Text": "od niedzieli do czwartku w godz. 9:00 – 18:00"
+  },
+  "linkAccountBilling": {
+    "Text": "Ustawienia rozliczeń"
+  },
+  "linkSendCampaignByResultResource1": {
+    "Text": "Utwórz nową kampanię A/B"
+  },
+  "linkAbTestingsResource1": {
+    "Text": "Zarządzanie testami A/B"
+  },
+  "AbTestsReport": {
+    "Text": "Raport testów A/B"
+  },
+  "linkShareSettingsResource1": {
+    "Text": "Ustawienia udostępniania"
+  },
+  "lblAccountIsDemo": {
+    "Text": "Masz konto demonstracyjne"
+  },
+  "lblBelowLimitations": {
+    "Text": "Ograniczenia konta demonstracyjnego:"
+  },
+  "lblGetItNow": {
+    "Text": "I ciesz się wszystkimi funkcjami?"
+  },
+  "lblInPulseemSystem": {
+    "Text": "w systemie Pulseem"
+  },
+  "lblLimit1": {
+    "Text": "200 miesięcznych wiadomości e-mail"
+  },
+  "lblLimit2": {
+    "Text": "Do 50000 odbiorców na koncie"
+  },
+  "lblLimit3": {
+    "Text": "Do 5 grup na koncie"
+  },
+  "lblLimit4": {
+    "Text": "Do 20 miesięcznych kampanii"
+  },
+  "lblUpgradeEmail": {
+    "Text": "Ulepsz<br/>konto e-mail"
+  },
+  "lblUpgradeNow": {
+    "Text": "Powinieneś ulepszyć<br/>swoje konto"
+  },
+  "lblUpgradeSms": {
+    "Text": "Ulepsz<br/>konto SMS"
+  },
+  "lblWantMore": {
+    "Text": "Chcesz usunąć ograniczenia?"
+  },
+  "SmsPackages": {
+    "Text": "Pakiety SMS"
+  },
+  "SetToken": "Dodaj kartę kredytową",
+  "Checkout": "Zakończ zamówienie",
+  "linkApiSettingsResource1": {
+    "Text": "Ustawienia API"
+  },
+  "linkCampaignTopicsManagment": {
+    "Text": "Zarządzanie tematami kampanii"
+  },
+  "RadMenuItemResource30": {
+    "Text": "Automatyczne raporty"
+  },
+  "DirectReportsResource1": {
+    "Text": "Bezpośredni raport e-mail"
+  },
+  "locRemovedReason": {
+    "Text": "Raport wypisań"
+  },
+  "AdvancedReportsResource1": {
+    "Text": "Zaawansowane raporty kampanii"
+  },
+  "linkSupportResource1": {
+    "NavigateUrl": "tel:+97235240290"
+  },
+  "locPhoneNumberResource1": {
+    "Text": "+972 35240290"
+  },
+  "FormTemplatesResource1": {
+    "Text": "Szablony stron docelowych"
+  },
+  "linkUnsubscribeSettsResource1": {
+    "Text": "Strona wypisania"
+  },
+  "NewMMSCampaign": {
+    "Text": "Nowa kampania MMS"
+  },
+  "MmsCampaignMnage": {
+    "Text": "Zarządzanie kampaniami MMS"
+  },
+  "MmsCampaigns": {
+    "Text": "Kampania MMS"
+  },
+  "MmsMainReport": {
+    "Text": "Raport MMS"
+  },
+  "DirectSmsReport": {
+    "Text": "Bezpośredni raport SMS"
+  },
+  "RadMenuItemResourceDynamicGroups": {
+    "Text": "Grupy dynamiczne"
+  },
+  "linkSMSSmartResponses": {
+    "Text": "Inteligentne odpowiedzi SMS"
+  },
+  "linkSMSResponsesReport": {
+    "Text": "Raport odpowiedzi"
+  },
+  "RadMenuItemResourceFileUploads": {
+    "Text": "Przesyłanie plików"
+  },
+  "RadMenuItemCreateAutomationResource": {
+    "Text": "Utwórz automatyzację"
+  },
+  "RadMenuItemManageActionsResource": {
+    "Text": "Zarządzaj działaniami"
+  },
+  "RadMenuItemManageAutomationResource": {
+    "Text": "Zarządzanie automatyzacjami"
+  },
+  "RadMenuItemManageTriggersResource": {
+    "Text": "Zarządzaj wyzwalaczami"
+  },
+  "RadMenuItemResourceDeleteRecipient": {
+    "Text": "Usuń odbiorcę"
+  },
+  "LabelCreateCatalogue": {
+    "Text": "Utwórz katalog"
+  },
+  "Automations": "Automatyzacje",
+  "linkRedir": {
+    "MainAccount": "Konto główne"
+  },
+  "newsletter": "Newsletter",
+  "campaignsArchive": "Archiwum",
+  "redirectToArchive": "Przekieruj do archiwum",
+  "notifications": "Powiadomienia",
+  "newslatterBasicEditor": "Edytor podstawowy",
+  "chatbotSMS": "Chatbot SMS",
+  "clalCollage": "Raporty podpisów Clal",
+  "OpenedClickedReport": "Raport otwarć / kliknięć",
+  "createNotification": "Utwórz powiadomienie",
+  "manageNotifications": "Zarządzaj powiadomieniami",
+  "implementScript": "Zaimplementuj skrypt",
+  "guides": "Przewodniki",
+  "pulseemSystem": "System Pulseem",
+  "newEditor": "Nowy edytor",
+  "siteTracking": "Śledzenie strony",
+  "continueToNewEditor": "Zapisz i kontynuuj z nowym edytorem",
+  "whatsapp": "Whatsapp",
+  "responses": "Odpowiedzi",
+  "download": "Pobierz",
+  "fileDownload": "Pobieranie pliku",
+  "recipientManagement": "Zarządzanie odbiorcami",
+  "recipientManagementDesc": "Użyj tej strony do zarządzania grupami odbiorców.",
+  "manageTemplate": "Zarządzaj szablonem",
+  "createTemplate": "Utwórz szablon",
+  "affiliateManagement": "Zarządzanie partnerami",
+  "manageAutomationTemplate": "Zarządzaj szablonem automatyzacji",
+  "description": "Opis",
+  "deleteAutomationTemplate": "Usuń szablon",
+  "deleteAutomationTemplateDesc": "Czy chcesz usunąć szablon?",
+  "automationTemplateDeleted": "Szablon został usunięty.",
+  "automationTemplateDeleteFail": "Coś poszło nie tak podczas usuwania szablonu. Spróbuj ponownie później.",
+  "ampRegistration": "Rejestracja AMP"
+}

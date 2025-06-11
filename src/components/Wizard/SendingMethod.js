@@ -182,7 +182,7 @@ const SendingMethod = ({
                                         <span className={classes.radioText} style={{ marginTop: 20 }}>
                                             {t("notifications.immediateSend")}
                                         </span>
-                                        <FormHelperText className={classes.accordionHelpText}>
+                                        <FormHelperText className={clsx(classes.accordionHelpText, !isRTL && classes.textLeft)}>
                                             {t("notifications.immediateDescription")}
                                         </FormHelperText>
                                     </>

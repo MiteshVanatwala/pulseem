@@ -105,3 +105,11 @@ export const IsEnglishAndNumbers = (event: any) => {
 
   return englishAndNumbersRegex.test(value);
 }
+
+export const IsValidOTP = (value: string) => {
+  if (!value) return false;
+
+  // Regex for exactly 6 digits
+  const OTPRegex = /^\d{1,6}$/;
+  return OTPRegex.test(value);
+};

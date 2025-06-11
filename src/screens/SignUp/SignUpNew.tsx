@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { StateType } from "../../Models/StateTypes";
 import { IoIosArrowDown, IoIosEye, IoIosEyeOff } from "react-icons/io";
-import { CountryCodes, DefaultCountryCodeIsrael, FieldOfInterest, lowerCaseLetters, numbers, specialLetters, upperCaseLetters } from "../../helpers/Constants";
+import { CountryCodes, DefaultCountryCodeIsrael, DefaultCountryCodePoland, FieldOfInterest, lowerCaseLetters, numbers, specialLetters, upperCaseLetters } from "../../helpers/Constants";
 import { MdDvr, MdKeyboardArrowDown, MdKeyboardArrowLeft, MdKeyboardArrowRight, MdMobileFriendly, MdNotifications, MdOutlineAddShoppingCart, MdOutlineAutoMode, MdOutlineMarkEmailRead, MdOutlineWhatsapp } from "react-icons/md";
 import { RenderHtml, useStylesBootstrapPasswordHint } from "../../helpers/Utils/HtmlUtils";
 import { Loader } from "../../components/Loader/Loader";
@@ -22,24 +22,27 @@ import { BaseDialog } from "../../components/DialogTemplates/BaseDialog";
 import { CompanyWebsiteRequest } from "../../Models/CompanyWebsite/CompanyWebSite";
 import { actionURL } from "../../config";
 import Select, { SelectChangeEvent } from '@mui/material/Select';
-import { setCookie } from "../../helpers/Functions/cookies";
+import { getCookie, setCookie } from "../../helpers/Functions/cookies";
 import EnImage from '../../assets/images/british.svg';
 import IsraelImage from "../../assets/images/israel-flag-icon.svg";
+import PolandImage from "../../assets/images/poland-flag-icon.svg";
 import { Autocomplete } from "@mui/material";
 import { filter, first } from "lodash";
 import { isValidPhoneNumber } from "libphonenumber-js";
 
 const SignUpNew = ({ classes }: any) => {
   const dispatch = useDispatch();
-  const { windowSize, isRTL } = useSelector((state: StateType) => state.core);
+  const { windowSize, isRTL, language } = useSelector((state: StateType) => state.core);
   const { t } = useTranslation();
   const [showLoader, setLoader] = useState(false);
   const qs = queryString.parse(window.location.search);
+  // const isPolish = window.location.origin.includes('pulseem.pl');
+  const isPolish = qs?.culture === 'pl-PL';
   const [userDetails, setUserDetails] = useState({
     fullName: '',
     emailId: qs?.emailid || '',
     phone: '',
-    countryCode: DefaultCountryCodeIsrael,
+    countryCode: isPolish ? DefaultCountryCodePoland : DefaultCountryCodeIsrael,
     cellPhone: '',
     userName: '',
     password: '',
@@ -93,9 +96,14 @@ const SignUpNew = ({ classes }: any) => {
   const [invalidEmail, setInvalidEmail] = useState<boolean>(false);
   const [activeStep, setActiveStep] = useState(0);
   const passwordHintClasses = useStylesBootstrapPasswordHint();
+  const cookieData = getCookie('Culture');
 
   const changeLanguage = (value: any) => {
-    setCookie('Culture', `${value}-${value === 'he' ? 'IL' : 'US'}`);
+    let langCode = '';
+    if (value === 'he') langCode = 'IL';
+    else if (value === 'en') langCode = 'US';
+    else if (value === 'pl') langCode = 'PL';
+    setCookie('Culture', `${value}-${langCode}`);
     i18n.changeLanguage(value);
     dispatch(setLanguage(value));
   }
@@ -107,7 +115,7 @@ const SignUpNew = ({ classes }: any) => {
     if (status === 200) {
       if (Message === 'Success') {
         let cellPhone = Data?.Mobile || '';
-        let countryCode = DefaultCountryCodeIsrael;
+        let countryCode = isPolish ? DefaultCountryCodePoland : DefaultCountryCodeIsrael;
         if (cellPhone !== '') {
           const CellPhoneWithCode = cellPhone.split("-");
           countryCode = first(filter(CountryCodes, { code: `${CellPhoneWithCode[0]}` })) || countryCode;
@@ -158,7 +166,7 @@ const SignUpNew = ({ classes }: any) => {
       return false;
     }
     else {
-      const nameArr = userDetails.fullName.split(' ');
+      const nameArr = userDetails.fullName.trim().split(' ');
       payload.FirstName = nameArr[0];
       payload.LastName = nameArr.slice(1).join(" ");
       payload.Mobile = `${userDetails.countryCode.code}-${Number(userDetails.cellPhone).toString()}`;
@@ -214,8 +222,12 @@ const SignUpNew = ({ classes }: any) => {
   };
 
   useEffect(() => {
-    dispatch(setLanguage(qs?.culture || 'he'));
-    i18n.changeLanguage('he-IL');
+    const defaultLang = qs?.culture || cookieData;
+    let langCode = 'he';
+    if (defaultLang === 'he-IL') langCode = 'he';
+    else if (defaultLang === 'en-US') langCode = 'en';
+    else if (defaultLang === 'pl-PL') langCode = 'pl';
+    changeLanguage(langCode);
 
     getUserInfo();
     if ((qs?.refId && qs?.refId !== '') && ((!qs?.emailid || qs?.emailid === '') || !qs?.id)) {
@@ -224,10 +236,6 @@ const SignUpNew = ({ classes }: any) => {
       });
     }
   }, []);
-
-  useEffect(() => {
-    i18n.changeLanguage(isRTL ? 'he-IL' : 'en-US');
-  }, [isRTL]);
 
   const renderToast = () => {
     if (toastMessage) {
@@ -296,7 +304,7 @@ const SignUpNew = ({ classes }: any) => {
     });
 
     if (!errorsTemp.fullName && !errorsTemp.cellPhone && !errorsTemp.userName && !errorsTemp.password && !errorsTemp.companyName && !errorsTemp.fieldOfInterest && !errorsTemp.chkPolicy && !errorsTemp.confirmPassword && !errorsTemp.emailId) {
-      const nameArr = userDetails.fullName.split(' ');
+      const nameArr = userDetails.fullName.trim().split(' ');
       setLoader(true);
       const interests: any = [];
       userDetails.fieldOfInterest.map((item: any) => item !== '' && interests.push(item));
@@ -314,7 +322,8 @@ const SignUpNew = ({ classes }: any) => {
         UserID: qs?.id,
         chkMailingApproval: userDetails.chkUpdate,
         Email: userDetails.emailId,
-        ReferralID: qs?.refId
+        ReferralID: qs?.refId,
+        Culture: qs?.culture || 'he-IL',
       });
       setLoader(false);
       if (status === 200) {
@@ -358,7 +367,8 @@ const SignUpNew = ({ classes }: any) => {
   const sendEmail = async () => {
     setLoader(true);
     const { data: { Message }, status } = await PulseemReactInstance.post(`User/ResendEmail`, {
-      UserID: qs?.id
+      UserID: qs?.id,
+      Culture: qs?.culture || 'he-IL',
     });
     setLoader(false);
     if (status === 200) {
@@ -489,7 +499,7 @@ const SignUpNew = ({ classes }: any) => {
       case 201: {
         // for stage
         const newUrl = Data?.RedirectLink.replace('https://www.pulseem.co.il', actionURL?.replace('/Pulseem/', ''));
-        window.location.href = `${newUrl}&refId=${qs?.refId}&culture=${isRTL ? 'he' : 'en'}`;
+        window.location.href = `${newUrl}&refId=${qs?.refId}&culture=${language}`;
         // for production
         // window.location.href = `${Data?.RedirectLink}&refId=${qs?.refId}`;
         break;
@@ -993,14 +1003,15 @@ const SignUpNew = ({ classes }: any) => {
   }
 
   const languageSelector = () => {
+    console.log('languageSelector', language);
     return (
-      <FormControl variant='standard' className={clsx(classes.SignUpLanguageDropdown, classes.bgWhite, classes.mb10)}>
+      <FormControl variant='standard' className={clsx(classes.SignUpLanguageDropdown, classes.bgWhite, classes.mb10)} style={{ direction: isRTL ? 'ltr' : 'rtl' }}>
         <Select
           variant="standard"
-          value={isRTL ? 'he' : 'en'}
+          value={language}
           name='TwoFactorAuthOptionID'
           onChange={(e: SelectChangeEvent) => changeLanguage(e.target.value)}
-          IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} style={{ right: isRTL ? 15 : 'auto', left: isRTL ? 'auto' : 15 }} />}
+          IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} style={{ right: isRTL ? 'auto' : 10, left: isRTL ? 10 : 'auto' }} />}
           MenuProps={{
             PaperProps: {
               style: {
@@ -1010,16 +1021,25 @@ const SignUpNew = ({ classes }: any) => {
               },
             },
           }}
-          className={clsx(classes.SignUpLanguageDropdown)}
+          className={clsx(classes.SignUpLanguageDropdown, classes.pbt5)}
         >
-          <MenuItem value={'he'} className={clsx(classes.SignUpLanguageDropdown, classes.cursorPointer)}>
-            <img width={35} src={IsraelImage} alt={t('languages.langCodes.hebrew')} />
-            <label>{t('languages.langCodes.hebrew')}</label>
-          </MenuItem>
+          {
+            !isPolish && (
+              <MenuItem value={'he'} className={clsx(classes.SignUpLanguageDropdown, classes.cursorPointer)}>
+                <img width={35} src={IsraelImage} alt={t('languages.langCodes.hebrew')} />
+                <label>{t('languages.langCodes.hebrew')}</label>
+              </MenuItem>
+            )
+          }
 
           <MenuItem value={'en'} className={clsx(classes.SignUpLanguageDropdown, classes.cursorPointer)}>
             <img width={35} src={EnImage} alt={t('languages.langCodes.english')} />
             <label>{t('languages.langCodes.english')}</label>
+          </MenuItem>
+          
+          <MenuItem value={'pl'} className={clsx(classes.SignUpLanguageDropdown, classes.cursorPointer)}>
+            <img width={35} src={PolandImage} alt={t('languages.langCodes.polish')} />
+            <label>{t('languages.langCodes.polish')}</label>
           </MenuItem>
         </Select>
       </FormControl>

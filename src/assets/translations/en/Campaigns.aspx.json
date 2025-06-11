@@ -547,7 +547,9 @@
       "INVALID_CAMPAIGN_ID": "Invalid Campaign ID",
       "ACCOUNT_RESTRICTED": "This account is restricted<br/>Please contact our sales team to arrange your payments",
       "SMS_BULK_ENDED_PURCHASE_OPTION": "Your bulk has ended!<br/>You can buy a new SMS package or discard SMS Total Marketing campaign.",
-      "NEWSLETTER_BULK_ENDED_PURCHASE_OPTION": "Your bulk has ended!<br/>You can buy a Newsletter package by clicking on Purchase button."
+      "NEWSLETTER_BULK_ENDED_PURCHASE_OPTION": "Your bulk has ended!<br/>You can buy a Newsletter package by clicking on Purchase button.",
+      "pendingApproval": "Pending Approval",
+      "PendingApprovalDesc": "Our team is currently reviewing your content. Once approved, the email will be sent as usual. Thanks for your patience!"
     },
     "success": "Campaign successfully saved",
     "sendSettings": {

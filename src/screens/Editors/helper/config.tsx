@@ -333,9 +333,9 @@ export const DefaultContent = (IsRTL: Boolean, languageCode: number) => {
         defaultHeadingLevel: 'h1',
       },
       text: {
-        html: languageCode === 0
-          ? "<p style='font-size: 14px;text-align: right; direction: rtl;'>אני בלוק טקסט מוכן לתוכן שלך.</p>"
-          : "<p style='font-size: 14px;text-align:left; direction: ltr;'>I&apos;m a new Text block ready for your content.</p>",
+        html: languageCode === 0 ? "<p style='font-size: 14px;text-align: right; direction: rtl;'>אני בלוק טקסט מוכן לתוכן שלך.</p>" :
+          languageCode === 14 ? "<p style='font-size: 14px;text-align: left; direction: ltr;'>Jestem gotowym blokiem tekstu dla twojej treści.</p>" :
+            "<p style='font-size: 14px;text-align:left; direction: ltr;'>I&apos;m a new Text block ready for your content.</p>",
         styles: {
           textAlign: isRTLdirection ? "right" : "left",
           direction: isRTLdirection ? "rtl" : "ltr",

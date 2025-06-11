@@ -218,6 +218,10 @@ const SmsSend = ({ classes, ...props }) => {
         setDialogType({ type: "englishLetterDialog" });
         break;
       }
+      case 550:
+      case 551:
+        setDialogType({ type: "pendingApprovalDialog" });
+        break;
       default: {
         break;
       }
@@ -2375,6 +2379,25 @@ const SmsSend = ({ classes, ...props }) => {
     }
   }
 
+  const pendingApprovalDialog = () => {
+    return {
+      title: t('campaigns.newsLetterEditor.errors.pendingApproval'),
+      disableBackdropClick: true,
+      icon: (
+        <AiOutlineExclamationCircle />
+      ),
+      content: (
+        <Box>
+          <Typography className={classes.f18}>{t("campaigns.newsLetterEditor.errors.PendingApprovalDesc")}</Typography>
+        </Box>
+      ),
+      showDefaultButtons: true,
+      onClose: () => { setDialogType(null) },
+      onCancel: () => { setDialogType(null) },
+      onConfirm: () => { setDialogType(null) }
+    }
+  }
+
   const sendSuccessDialog = () => {
     return {
       showDivider: false,
@@ -2419,7 +2442,8 @@ const SmsSend = ({ classes, ...props }) => {
       exit: exitDialog(),
       sendSuccess: sendSuccessDialog(),
       noCredit: noCreditDialog(),
-      englishLetterDialog: englishLetterNotAllowed()
+      englishLetterDialog: englishLetterNotAllowed(),
+      pendingApprovalDialog: pendingApprovalDialog()
     }
 
     const currentDialog = dialogContent[type] || {}

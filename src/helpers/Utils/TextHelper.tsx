@@ -36,3 +36,8 @@ export const compareLastNineDigits = (number1: string, number2: string) => {
     // Compare
     return lastNineDigits1 === lastNineDigits2;
 }
+
+export const formatNumberWithCommas = (num: string | number) =>{
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+  

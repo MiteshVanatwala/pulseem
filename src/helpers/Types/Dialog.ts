@@ -27,6 +27,7 @@ export type DialogOptions = {
   confirmDisabled?: boolean;
   classes?: any;
   className?: string;
+  hideHeader?: boolean;
 };
 
 export type Slide_PropTypes = {

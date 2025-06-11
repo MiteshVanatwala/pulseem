@@ -40,6 +40,7 @@ import WhatsappOnBoarding from './WhatsappOnBoarding.json';
 import AI from './AI.he.json';
 import colorPalette from './colorPalette.he.json'
 import AILoader from './AI.he.json'
+import RemoveMyData from './RemoveMyData.json';
 
 export const he = {
 	automations,
@@ -83,5 +84,6 @@ export const he = {
 	WhatsappOnBoarding,
 	AI,
 	colorPalette,
-	AILoader
+	AILoader,
+	RemoveMyData
 };

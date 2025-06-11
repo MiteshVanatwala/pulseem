@@ -32,7 +32,7 @@ import { getPackagesDetails } from '../../redux/reducers/dashboardSlice';
 const AccountUsers = ({ classes }: any) => {
   const navigate = useNavigate();
   const { language, windowSize, isRTL, rowsPerPage, userRoles } = useSelector((state: any) => state.core);
-  const { isGlobal, accountCurrencySymbol, accountIsCurrencySymbolPrefix, subAccount } = useSelector((state: { common: CommonRedux }) => state.common);
+  const { isGlobal, accountCurrencySymbol, accountIsCurrencySymbolPrefix, subAccount, IsPoland } = useSelector((state: { common: CommonRedux }) => state.common);
   const { subAccountList } = useSelector((state: any) => state.subAccount);
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -105,7 +105,7 @@ const AccountUsers = ({ classes }: any) => {
     setIsDirectAccount(get(directData, 'payload.Data.Items[0]["IsDirectAccount"]', false))
     getData();
 
-    if (!isGlobal) {
+    if (!isGlobal || IsPoland) {
       const nonGlobalPackageDetails = await dispatch(getPackagesDetails());
       setPackageDetails({
         email: get(nonGlobalPackageDetails, 'payload.PackageDetails.Newsletters.Credits', 0),
@@ -152,7 +152,7 @@ const AccountUsers = ({ classes }: any) => {
         key: 'login',
         uIcon: AiOutlineLogin,
         lable: t('common.Login'),
-        remove: windowSize === 'xs' || !isGlobal,
+        remove: windowSize === 'xs' || !isGlobal || IsPoland,
         disable: false,
         rootClass: clsx(classes.paddingIcon, classes.f18),
         onClick: () => window.location.href = `/Pulseem/MiddleWareReactLogin.aspx?encSubAccountID=${row.CustomGuidEnc}`
@@ -162,7 +162,7 @@ const AccountUsers = ({ classes }: any) => {
         uIcon: EditIcon,
         disable: false,
         lable: t('campaigns.Image2Resource1.ToolTip'),
-        remove: windowSize !== 'xs' && !isGlobal,
+        remove: windowSize !== 'xs' && (!isGlobal || IsPoland),
         onClick: () => {
           setDialogType({
             type: 'SaveSubAccount',
@@ -177,7 +177,7 @@ const AccountUsers = ({ classes }: any) => {
         lable: t('SubAccount.directAccount'),
         rootClass: classes.paddingIcon,
         disable: false,
-        remove: windowSize === 'xs' || !isGlobal || !isDirectAccount,
+        remove: windowSize === 'xs' || !isGlobal || !isDirectAccount || IsPoland,
         onClick: () => {
           setDialogType({ type: 'DirectAccount', data: row });
         }
@@ -189,7 +189,7 @@ const AccountUsers = ({ classes }: any) => {
         rootClass: classes.paddingIcon,
         disable: false,
         showPhone: true,
-        remove: !userRoles?.AllowDelete || windowSize === 'xs' || !isGlobal,
+        remove: !userRoles?.AllowDelete || windowSize === 'xs' || !isGlobal || IsPoland,
         onClick: () => {
           setDialogType({ type: 'Delete', data: row.CustomGuidEnc });
         }
@@ -199,7 +199,7 @@ const AccountUsers = ({ classes }: any) => {
       <Grid
         container
         direction={windowSize === 'sm' ? 'column' : 'row'}
-        justifyContent={!isGlobal && windowSize !== 'xs' ? 'center' : (windowSize === 'xs' ? 'flex-start' : 'flex-end')}
+        justifyContent={!isGlobal || IsPoland && windowSize !== 'xs' ? 'center' : (windowSize === 'xs' ? 'flex-start' : 'flex-end')}
       >
         {iconsMap.map((map, index) => (
           <Grid
@@ -301,14 +301,14 @@ const AccountUsers = ({ classes }: any) => {
       <TableHead>
         <TableRow classes={rowStyle}>
           {/* @ts-ignore */}
-          <TableCell classes={cellStyle} className={isGlobal ? classes.flex1 : classes.flex2} align='center'>{t("SubAccount.userName")}</TableCell>
+          <TableCell classes={cellStyle} className={(isGlobal && !IsPoland) ? classes.flex1 : classes.flex2} align='center'>{t("SubAccount.userName")}</TableCell>
           {/* @ts-ignore */}
-          <TableCell classes={cellStyle} className={isGlobal ? classes.flex1 : classes.flex2} align='center'>{t("SubAccount.userManager")}</TableCell>
+          <TableCell classes={cellStyle} className={(isGlobal && !IsPoland) ? classes.flex1 : classes.flex2} align='center'>{t("SubAccount.userManager")}</TableCell>
           {
-            isGlobal && <TableCell classes={cellStyle} className={isGlobal ? classes.flex1 : classes.flex2} align='center'>{t("SubAccount.balance")}</TableCell>
+            (isGlobal && !IsPoland) && <TableCell classes={cellStyle} className={(isGlobal && !IsPoland) ? classes.flex1 : classes.flex2} align='center'>{t("SubAccount.balance")}</TableCell>
           }
           {
-            !isGlobal && (
+            (!isGlobal || IsPoland) && (
               <>
                 <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("SubAccount.emailBulk")}</TableCell>
                 <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("SubAccount.SMSBulk")}</TableCell>
@@ -322,7 +322,7 @@ const AccountUsers = ({ classes }: any) => {
             )
           }
           {/* @ts-ignore */}
-          <TableCell classes={cellStyle} className={clsx(isGlobal ? classes.flex3 : classes.flex1, classes.noBorderOnLastCell)} align='center'>
+          <TableCell classes={cellStyle} className={clsx((isGlobal && !IsPoland) ? classes.flex3 : classes.flex1, classes.noBorderOnLastCell)} align='center'>
           </TableCell>
         </TableRow>
       </TableHead>
@@ -360,7 +360,7 @@ const AccountUsers = ({ classes }: any) => {
     return (
       <Grid container spacing={2} className={clsx(classes.linePadding, classes.pb10)} >
         <Grid item md={8} xs={12} sm={12}>
-          {windowSize !== 'xs' && !isGlobal && selectedAccountId && <>
+          {windowSize !== 'xs' && (!isGlobal || IsPoland) && selectedAccountId && <>
             <Button
               component="a"
               onClick={() => {
@@ -392,7 +392,7 @@ const AccountUsers = ({ classes }: any) => {
             </Button>
           }
           {
-            !isGlobal && selectedAccountId && (
+            (!isGlobal || IsPoland) && selectedAccountId && (
               <Button
                 className={clsx(
                   classes.btn,
@@ -413,7 +413,7 @@ const AccountUsers = ({ classes }: any) => {
             )
           }
           {
-            !isGlobal && selectedAccountId && isDirectAccount && (
+            (!isGlobal || IsPoland) && selectedAccountId && isDirectAccount && (
               <Button
                 className={clsx(
                   classes.btn,
@@ -445,7 +445,7 @@ const AccountUsers = ({ classes }: any) => {
             {t('SubAccount.showHistory')}
           </Button>
           {
-            userRoles?.AllowDelete && !isGlobal && selectedAccountId && (
+            userRoles?.AllowDelete && (!isGlobal || IsPoland) && selectedAccountId && (
               <Button
                 className={clsx(
                   classes.btn,
@@ -475,13 +475,13 @@ const AccountUsers = ({ classes }: any) => {
         key={row.CustomGuidEnc}
         classes={rowStyle}
         onClick={() => setSelectedAccountId(row.CustomGuidEnc)}
-        hover={!isGlobal}
+        hover={!isGlobal || IsPoland}
         selected={!isGlobal && row.CustomGuidEnc === selectedAccountId}
       >
         <TableCell
           classes={cellBodyStyle}
           align='center'
-          className={isGlobal ? classes.flex1 : classes.flex2}>
+          className={isGlobal && !IsPoland ? classes.flex1 : classes.flex2}>
           <b>{row.SubAccountName}</b>
           <div>
             {t('common.CreationDate')}: <b>{moment(row.CreationDate).format(DateFormats.DATE_TIME_24)}</b>
@@ -490,15 +490,15 @@ const AccountUsers = ({ classes }: any) => {
         <TableCell
           classes={cellBodyStyle}
           align='center'
-          className={isGlobal ? classes.flex1 : classes.flex2}>
+          className={isGlobal && !IsPoland ? classes.flex1 : classes.flex2}>
           {row.SubAccountManager}
         </TableCell>
         {
-          isGlobal && (
+          isGlobal && !IsPoland && (
             <TableCell
               classes={cellBodyStyle}
               align='center'
-              className={isGlobal ? classes.flex1 : classes.flex2}>
+              className={isGlobal && !IsPoland ? classes.flex1 : classes.flex2}>
               <Typography className={clsx(classes.middleText, classes.bold)}>
                 {accountIsCurrencySymbolPrefix ? accountCurrencySymbol : ''} {row.FinalGlobalBalance} {!accountIsCurrencySymbolPrefix ? accountCurrencySymbol : ''}
               </Typography>
@@ -506,7 +506,7 @@ const AccountUsers = ({ classes }: any) => {
           )
         }
         {
-          !isGlobal && (
+          (!isGlobal || IsPoland) && (
             <>
               <TableCell
                 classes={cellBodyStyle}
@@ -562,7 +562,7 @@ const AccountUsers = ({ classes }: any) => {
         <TableCell
           classes={cellBodyStyle}
           align='center'
-          className={clsx(isGlobal ? classes.flex3 : classes.flex1, classes.noBorderOnLastCell)}>
+          className={clsx((isGlobal && !IsPoland) ? classes.flex3 : classes.flex1, classes.noBorderOnLastCell)}>
           {renderCellIcons(row)}
         </TableCell>
       </TableRow>
@@ -614,6 +614,7 @@ const AccountUsers = ({ classes }: any) => {
         rows={totalRecord}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={(val: any) => dispatch(setRowsPerPage(val))}
+        // @ts-ignore
         rowsPerPageOptions={rowsOptions}
         page={searchData.PageNo}
         onPageChange={(val: any) => setSearchData({
@@ -711,7 +712,7 @@ const AccountUsers = ({ classes }: any) => {
       {isGlobal !== null && renderTable()}
       {renderTablePagination()}
       {
-        !isGlobal && (
+        !isGlobal && IsPoland && (
           <Box className={clsx(classes.justifyCenterOfCenter, classes.w100, classes.semibold)}>
             {direct.emailDirect !== null && getDirectBox('SubAccount.emailDirect', direct.emailDirect)}
             {direct.SMSDirect !== null && getDirectBox('SubAccount.SMSDirect', direct.SMSDirect)}
@@ -730,9 +731,9 @@ const AccountUsers = ({ classes }: any) => {
         }}
         subAccountRecord={dialogType?.data}
         mainAccountBalance={{
-          EmailBalance: !isGlobal ? packageDetails.email : direct.emailDirect,
-          SMSBalance: !isGlobal ? packageDetails.SMS : direct.SMSDirect,
-          GlobalBalance: !isGlobal ? 0 : direct.GlobalBalance
+          EmailBalance: (!isGlobal || IsPoland) ? packageDetails.email : direct.emailDirect,
+          SMSBalance: (!isGlobal || IsPoland) ? packageDetails.SMS : direct.SMSDirect,
+          GlobalBalance: (!isGlobal || IsPoland) ? 0 : direct.GlobalBalance
         }}
       />
       <DirectAccount

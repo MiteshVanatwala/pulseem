@@ -45,7 +45,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 	const dispatch: any = useDispatch();
 	const navigate = useNavigate();
 	const { t } = useTranslation();
-	const { isRTL, windowSize, userRoles } = useSelector(
+	const { isRTL, windowSize, language, userRoles } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
 	const [isLoader, setIsLoader] = useState<boolean>(false);
@@ -245,7 +245,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 				GoogleConvertionCode: '',
 				GoogleTagManagerCode: '',
 				FacebookPixelCode: '',
-				BaseLanguage: isRTL ? 0 : 1
+				BaseLanguage: language === 'pl' ? 14 : language === 'he' ? 0 : 1
 			});
 		}
 

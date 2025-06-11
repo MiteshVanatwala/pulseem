@@ -1,0 +1,17 @@
+{
+	"report": "Raport WhatsApp",
+	"fromDate": "Data początkowa",
+	"toDate": "Data końcowa",
+	"export": "Eksportuj plik",
+	"campaigns": "Kampanie",
+	"read": "Przeczytane",
+	"failed": "Niepowodzenie",
+	"toSend": "Do wysłania",
+	"sent": "Wysłane",
+	"clicks": "Kliknięcia",
+	"unique": "Unikalne",
+	"feedback": "Opinie",
+	"revenue": "Przychód",
+	"WhatsAppCampaign": "Kampania WhatsApp",
+	"cost": "Koszt"
+}

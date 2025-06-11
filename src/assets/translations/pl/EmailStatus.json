@@ -1,0 +1,21 @@
+{
+  "draft": "Szkic",
+  "pending": "Oczekujący",
+  "sending": "Wysyłanie",
+  "sent": "Wysłano",
+  "succeeded": "Wysłano Pomyślnie",
+  "error": "Błąd",
+  "retry": "Ponów",
+  "paused": "Wstrzymano",
+  "cancelled": "Anulowano",
+  "badError": "Bezpośredni Poważny",
+  "mediumError": "Bezpośredni Średni",
+  "spam": "Spam",
+  "removed": "Zablokowany do Wysyłki",
+  "removedBySystem": "Usunięty Przez System",
+  "noStatus": "Brak Statusu",
+  "noAttachments": "Brak Załączników",
+  "optIn": "OptIn",
+  "approve": "Oczekuje na zatwierdzenie",
+  "other": "Inne"
+}

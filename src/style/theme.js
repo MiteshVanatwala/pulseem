@@ -1,4 +1,4 @@
-import { heIL, enUS } from "@material-ui/core/locale";
+import { heIL, enUS, plPL } from "@material-ui/core/locale";
 import { createTheme } from "@material-ui/core/styles";
 const themeLanguages = {
   en: {
@@ -8,6 +8,10 @@ const themeLanguages = {
   he: {
     direction: "rtl",
     translation: heIL,
+  },
+  pl: {
+    direction: "ltr",
+    translation: plPL,
   },
 };
 
