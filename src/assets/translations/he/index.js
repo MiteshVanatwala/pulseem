@@ -39,7 +39,7 @@ import SubUsers from './SubUsers.he.json'
 import WhatsappOnBoarding from './WhatsappOnBoarding.json';
 import AI from './AI.he.json';
 import colorPalette from './colorPalette.he.json'
-import AILoader from './AI.he.json'
+import AILoader from './AILoader.he.json'
 import RemoveMyData from './RemoveMyData.json';
 
 export const he = {
