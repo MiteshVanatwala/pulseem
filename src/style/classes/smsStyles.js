@@ -88,6 +88,7 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         '& .MuiAutocomplete-inputRoot': {
             paddingRight: !isRTL ? '56 !important' : '0 !important',
             paddingLeft: isRTL ? '56 !important' : '0 !important',
+            maxHeight: 80
         },
         '& .MuiAutocomplete-endAdornment': {
             right: !isRTL ? 0 : 'auto',
@@ -1083,6 +1084,7 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
             paddingInline: '0 !important',
         },
         '& .MuiButton-text': {
+            height: 36,
             paddingInline: 10
         },
         "@media screen and (max-width: 480px)": {
