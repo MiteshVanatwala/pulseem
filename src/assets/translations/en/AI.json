@@ -5,6 +5,8 @@
     "historyRequests": "Previous Prompt",
     "lastPromopSubTitle": "The design process will continue from this point",
     "designWithAI": "Design with AI",
+    "last24HoursRequests": "Daily design quota:",
+    "youCanTryAgainTomorrowAt": "You can try again after",
     "tips": {
       "title": "Details for better results",
       "toneTitle": "Define the tone",
@@ -48,6 +50,7 @@
     "403": "Permission error",
     "404": "Resource not found",
     "405": "Prompt is too long",
+    "410": "You’ve reached your daily design limit",
     "413": "Request exceeds the maximum allowed number of bytes",
     "429": "Your account has hit a rate limit",
     "500": "An unexpected error has occurred internal",

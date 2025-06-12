@@ -3,7 +3,7 @@ import { Box, TextField, Typography, Button, Paper, Grid, Dialog, DialogTitle, D
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import RestoreIcon from '@material-ui/icons/Restore';
 import { CloudUpload as CloudUploadIcon, Close as CloseIcon, Palette as PaletteIcon } from '@material-ui/icons';
-import { AITemplateCreatorProps, AnthropicDetailedLog, AnthropicFileItem, AnthropicHistoryLog, AnthropicUserRequest, ImageUrlLink } from '../../../Models/AI/Anthropic';
+import { AITemplateCreatorProps, AnthropicHistoryLog, AnthropicUserRequest, ImageUrlLink } from '../../../Models/AI/Anthropic';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { continueConversation, extractColorsFromImageUrl, getHistoryRequests, getRequestDetails, requestTemplate, resetSession, restoreConversationDesign } from '../../../redux/reducers/AISlice';
@@ -29,6 +29,7 @@ import Templates from './Templates';
 import { GrTemplate } from 'react-icons/gr';
 import { FaIcons } from 'react-icons/fa';
 import AILoader from '../../../components/Loader/AILoader';
+import { StateType } from '../../../Models/StateTypes';
 
 const useTooltipStyles = makeStyles((theme) => ({
   tooltip: {
@@ -55,6 +56,7 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
   const dispatch = useDispatch();
   const tooltipClasses = useTooltipStyles();
   const { ToastMessages } = useSelector((state: any) => state?.Ai);
+  const { isRTL } = useSelector((state: StateType) => state.core);
   const [submitDisabled, setSubmitDisabled] = useState<boolean>(true);
   const [showGallery, setShowGallery] = useState<boolean>(false);
   const [filesProperties, setFilesProperties] = useState<FileGallery[]>([]);
@@ -84,7 +86,9 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
   const [showLogo, setShowLogo] = useState<boolean>(false);
   const [selectedLogoName, setSelectedLogoName] = useState<string>('');
   const [showAILoader, setShowAILoader] = useState<boolean>(false);
-  const [last24Requests, setLast24Reqesuts] = useState<number>(0);
+  const [last24Requests, setLast24Requests] = useState<number>(0);
+  const [lastRequestTime, setLastRequestTime] = useState<Date | null>(null);
+  const [toastCustomData, setToastCustomData] = useState<any>(null);
   const [confirmDialog, setConfirmDialog] = useState<DynamicContentProps | null | any>({
     confirmButtonText: '',
     cancelButtonText: 'common.cancel',
@@ -156,12 +160,13 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
   };
 
   const renderToast = () => {
-    if (toastMessage) {
+    if (toastMessage || toastCustomData) {
       setTimeout(() => {
         setToastMessage(null);
+        setToastCustomData(null);
       }, 4000);
       return (
-        <Toast data={toastMessage} />
+        <Toast data={toastMessage} customData={toastCustomData} />
       );
     }
     return null;
@@ -172,7 +177,10 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
     const response = await dispatch(getHistoryRequests(campaignId)) as any;
     if (response && response.payload?.StatusCode === 201) {
       const historyData: AnthropicHistoryLog[] = response?.payload?.Data;
-      setLast24Reqesuts(parseInt(response?.payload?.Message));
+
+      const message = response?.payload?.Message?.split('##');
+      setLast24Requests(parseInt(message[0]));
+      setLastRequestTime(message[1]);
 
       // Sort history by date (newest first)
       const sortedHistory = [...historyData].sort((a, b) => {
@@ -269,7 +277,16 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
       if (response?.payload?.StatusCode === 201) {
         onUpdate('success', response?.payload?.Data);
       } else {
-        setToastMessage(ToastMessages.RESPONSES[response?.payload?.StatusCode]);
+        if (response?.payload?.StatusCode === 410) {
+          let cToast = { ...ToastMessages.RESPONSES[410] };
+          cToast.severity = 'error';
+          cToast.color = 'error';
+          cToast.message = `${t(cToast.message)} ${t('AI.popup.youCanTryAgainTomorrowAt')} ${moment(lastRequestTime).add(1, 'day').format('DD/MM/YYYY HH:mm')}`;
+          setToastCustomData(cToast);
+        }
+        else {
+          setToastMessage(ToastMessages.RESPONSES[response?.payload?.StatusCode]);
+        }
       }
     } else {
       const response: any = await dispatch(requestTemplate(requestModel));
@@ -538,7 +555,7 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
             style: { textAlign: 'right' }
           }}
         />
-        <Box className={classes.historyItemHeader}>
+        <Box className={classes.historyItemHeader} style={{ marginBottom: 15 }}>
           <FormControlLabel
             control={
               <Checkbox
@@ -550,8 +567,11 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
             }
             label={t("AI.popup.useLatestDesignElements")}
           />
-          <Box style={{ direction: 'ltr' }}>
-            Requests: {last24Requests} / 10
+          <Box style={{ textAlign: isRTL ? 'left' : 'right' }} className={classes.font14}>
+            {t('AI.popup.last24HoursRequests')} 10 / {last24Requests}
+            {last24Requests > 10 && <Box>
+              {t('AI.popup.youCanTryAgainTomorrowAt')} {moment(lastRequestTime).add(1, 'day').format('DD/MM/YYYY HH:mm')}
+            </Box>}
           </Box>
         </Box>
         {/* File Upload and Colors Options Section */}

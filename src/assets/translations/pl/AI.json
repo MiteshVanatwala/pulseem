@@ -1,0 +1,59 @@
+{
+  "popup": {
+    "title": "Tworzenie zaprojektowanego szablonu za pomocą sztucznej inteligencji",
+    "placeholder": "Opisz pożądany styl newslettera (na przykład: \"letnia promocja - kolorowa i żywotna, 3 bloki produktów, duży przycisk call-to-action\")",
+    "historyRequests": "Poprzedni prompt",
+    "lastPromopSubTitle": "Proces projektowania będzie kontynuowany od tego punktu",
+    "designWithAI": "Projektuj przy użyciu AI",
+    "last24HoursRequests": "Dzienny limit projektowy:",
+    "youCanTryAgainTomorrowAt": "Możesz spróbować ponownie później",
+    "tips": {
+      "title": "Wskazówki dla lepszych rezultatów",
+      "toneTitle": "Określ ton",
+      "toneDesc": "Określ pożądany ton (wyrazisty, minimalistyczny, elegancki, zabawny, profesjonalny)",
+      "elementsTitle": "Elementy marki",
+      "elementsDesc": "Określ kolory lub styl wizualny, które chcesz włączyć",
+      "specificTitle": "Bądź konkretny",
+      "specificDesc": "Określ temat (sprzedaż, wydarzenie, sezon i cel newslettera)",
+      "structureTitle": "Opisz strukturę",
+      "structureDesc": "Szczegółowo opisz strukturę (nagłówek, siatka produktów, przycisk, obraz, stopka)",
+      "fileTextPlaceholder": "Na przykład: próbkuj i używaj kolorów znajdujących się w pliku"
+    },
+    "createDesign": "Utwórz projekt",
+    "previewHistoryLog": "Podgląd:",
+    "editPlaceholder": "Opisz zmiany, które chcesz wprowadzić w edycji. Na przykład: \"zmień wszystkie kolory na odcienie zieleni\", \"powiększ wszystkie nagłówki\"",
+    "updateDesign": "Zaktualizuj projekt",
+    "continueConversation": "Kontynuuj od tego promptu",
+    "loadTemplate": "Załaduj szablon",
+    "noMessageAvailable": "Brak wiadomości do wyświetlenia / rozmowa nieudana",
+    "olderTemplates": "Pokaż historię",
+    "noOlderTemplates": "Brak dodatkowych promptów",
+    "tooltip": {
+      "continuePrompt": "Proces projektowania będzie kontynuowany od tego punktu",
+      "loadTemplate": "Edytor załaduje wynik, który otrzymałeś dla tego promptu"
+    },
+    "resetChat": "Zacznij od nowa",
+    "resetChatConfirmation": "Ta akcja usunie wszystkie poprzednie instrukcje i rozpocznie nowy proces projektowania.<br/>Nie można odzyskać usuniętych instrukcji.",
+    "loadTemplateConfirmation": "Załadowanie tego szablonu zastąpi obecny projekt.<br/>Proces projektowania będzie kontynuowany od wybranego punktu.",
+    "selectFromTemplate": "Użyj szablonu jako odniesienia",
+    "useFirstColorAsBackground": "Użyj pierwszego koloru z listy jako tła, a pozostałe kolory w kolejności priorytetowej",
+    "useLatestDesignElements": "Użyj elementów projektowych z poprzednich kampanii",
+    "extractColorsFromImage": "Wyodrębnij kolory z obrazu",
+    "useUrlImageAsLogo": "Użyj obrazu z następującego linku jako obrazu logo w nagłówku szablonu",
+    "selectLogo": "Wybierz logo",
+    "addLogo": "Dodaj logo"
+  },
+  "responses": {
+    "201": "Projekt utworzony pomyślnie!",
+    "400": "Wystąpił problem z formatem lub treścią Twojego żądania",
+    "401": "Nieprawidłowy klucz API",
+    "403": "Błąd autoryzacji",
+    "404": "Zasób nie został znaleziony",
+    "405": "Prompt zbyt długi/załączony duży plik",
+    "410": "Osiągnąłeś dzienny limit projektu",
+    "413": "Żądanie przekracza maksymalną dozwoloną liczbę bajtów",
+    "429": "Twoje konto osiągnęło limit szybkości",
+    "500": "Błąd ogólny",
+    "529": "Błąd obciążenia"
+  }
+}

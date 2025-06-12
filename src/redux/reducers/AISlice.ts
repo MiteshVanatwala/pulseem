@@ -105,6 +105,7 @@ const AiSlice = createSlice({
                 403: { severity: 'error', color: 'error', message: 'AI.responses.403', showAnimtionCheck: false },
                 404: { severity: 'error', color: 'error', message: 'AI.responses.404', showAnimtionCheck: false },
                 405: { severity: 'error', color: 'error', message: 'AI.responses.405', showAnimtionCheck: false },
+                410: { severity: 'error', color: 'error', message: 'AI.responses.410', showAnimtionCheck: false },
                 413: { severity: 'error', color: 'error', message: 'AI.responses.413', showAnimtionCheck: false },
                 429: { severity: 'error', color: 'error', message: 'AI.responses.429', showAnimtionCheck: false },
                 500: { severity: 'error', color: 'error', message: 'AI.responses.500', showAnimtionCheck: false },
