@@ -130,7 +130,7 @@ const AILoader = ({ isVisible = true, text = '' }) => {
 
         {/* Progress Percentage */}
         <div className="text-center text-sm text-gray-500 mb-2">
-          {progress === 100 ? <>Please wait...</> : <>{Math.round(progress)}% {t('AILoader.completed')}</>}
+          {progress === 100 ? <>{t("common.pleaseWait")}</> : <>{Math.round(progress)}% {t('AILoader.completed')}</>}
         </div>
 
         {/* Step Indicators */}
