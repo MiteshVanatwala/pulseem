@@ -562,7 +562,7 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
           }}
         />
         <Box className={classes.historyItemHeader} style={{ marginBottom: 15 }}>
-          <FormControlLabel
+          {/* <FormControlLabel
             control={
               <Checkbox
                 color="primary"
@@ -572,11 +572,12 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
               />
             }
             label={t("AI.popup.useLatestDesignElements")}
-          />
+          /> */}
+          <Box></Box>
           <Box style={{ textAlign: isRTL ? 'left' : 'right' }} className={classes.font14}>
-            {t('AI.popup.last24HoursRequests')} 10 / {last24Requests}
+            <b>{t('AI.popup.last24HoursRequests')}</b> 10 / {last24Requests}
             {last24Requests > 10 && <Box>
-              {t('AI.popup.youCanTryAgainTomorrowAt')} {moment(lastRequestTime).add(1, 'day').format('DD/MM/YYYY HH:mm')}
+              <b>{t('AI.popup.youCanTryAgainTomorrowAt')}</b> {moment(lastRequestTime).add(1, 'day').format('DD/MM/YYYY HH:mm')}
             </Box>}
           </Box>
         </Box>
@@ -662,6 +663,7 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
                   </Typography>
                   <Box className={classes.colorPaletteButton} onClick={(e: any) => {
                     e.preventDefault();
+                    removeLogo();
                     setShowLogo(true);
                   }}>
                     <CloudUploadIcon className={classes.uploadIcon} />
