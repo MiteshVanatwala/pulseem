@@ -149,6 +149,12 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
     setColors([]); // Also reset extracted colors since they came from the image
   };
 
+  const removeLogo = () => {
+    setIsLogoSelected(false);
+    setSelectedLogo('');
+    setSelectedLogoName('');
+  };
+
   const handleColorDialogOpen = () => {
     if (!model.useLatestElements) {
       setColorDialogOpen(true);
@@ -666,10 +672,7 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
                     <Box className={classes.dFlex} style={{ flexDirection: 'column' }}>
                       <Box className={classes.filePreview}>
                         <Typography variant="body2">{selectedLogoName}</Typography>
-                        <CloseIcon className={classes.removeIcon} onClick={() => {
-                          setSelectedLogo('');
-                          setSelectedLogoName('');
-                        }} />
+                        <CloseIcon className={classes.removeIcon} onClick={removeLogo} />
                       </Box>
                     </Box>
                   )}
