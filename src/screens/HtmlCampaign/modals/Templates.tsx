@@ -105,7 +105,11 @@ const Templates = ({
 
   const template = (templateDetails: any, selectedCategory: string) => {
     return (
-      <Grid style={{ paddingBottom: '15x' }} key={selectedCategory + '_' + templateDetails.ID} item xs={12} sm={6} md={3} className={clsx(classes.ps15, classes.pe15, classes.pb10, 'template-item', classes.posRelative)} onClick={(event: any) => event.target instanceof HTMLDivElement && setSelectedTemplateId(templateDetails.ID)}>
+      <Grid style={{ paddingBottom: '15x' }}
+        key={selectedCategory + '_' + templateDetails.ID}
+        item xs={12} sm={6} md={3}
+        className={clsx(classes.ps15, classes.pe15, classes.pb10, 'template-item', classes.posRelative)}
+        onClick={(event: any) => event.target instanceof HTMLDivElement && setSelectedTemplateId(templateDetails.ID)}>
         {
           tabValue === EmailTemplateType.MY_TEMPLATES && (
             <Box className={classes.removeTemplateItem}>

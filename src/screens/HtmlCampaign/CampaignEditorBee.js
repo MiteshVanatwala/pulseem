@@ -39,6 +39,8 @@ import { getFileGallery } from '../../redux/reducers/gallerySlice';
 import { BiSave } from 'react-icons/bi'
 // User input controls
 import { EditRow } from './components/ContentDialogs'
+import { GiMagicBroom } from "react-icons/gi";
+
 
 // Generic modal component with event hooks
 import useModals from './hooks/useModals'
@@ -61,6 +63,8 @@ import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 import { NO_IMAGE_URL } from '../../helpers/Constants';
 import { logout } from '../../helpers/Api/PulseemReactAPI';
 import { UserRoles } from '../../Models/SubUser/SubUsers';
+import AITemplateCreatorAccordion from './modals/AI_TemplateCreatorAccordion';
+import { BsMagic } from 'react-icons/bs';
 
 const CampaignEditor = ({ classes, ...props }) => {
   //#region State
@@ -885,11 +889,25 @@ const CampaignEditor = ({ classes, ...props }) => {
           classes.btn,
           classes.btnRounded
         )}
-        style={{ margin: '8px' }}
+        style={{ margin: '8px', boxShadow: '0px 3px 1px -2px rgba(0,0,0,0.2),0px 2px 2px 0px rgba(0,0,0,0.14),0px 1px 5px 0px rgba(0,0,0,0.12)' }}
         startIcon={<BiSave />}
       >
         {t('common.saveTemplate')}
-      </Button></>
+      </Button>
+      {accountFeatures?.indexOf(PulseemFeatures.NewsletterAI) > -1 && <Button
+        onClick={() => { setDialogType({ type: "AIDialog" }) }}
+        className={clsx(
+          classes.btn,
+          classes.btnRounded,
+          classes.redButton
+        )}
+        style={{ margin: 8 }}
+        startIcon={<GiMagicBroom />}
+        // color="primary"
+        key={'aiButton'}
+      >{t('campaigns.aiDeisgner')}</Button>
+      }
+    </>
   }
 
   //       setTimeout(() => {
@@ -958,6 +976,55 @@ const CampaignEditor = ({ classes, ...props }) => {
     };
   }
 
+  const AI_Dialog = () => {
+    return {
+      showDivider: false,
+      icon: <BsMagic />,
+      title: t("AI.popup.designWithAI"),
+      content: (
+        <AITemplateCreatorAccordion
+          classes={classes}
+          campaignId={campaignId}
+          onRestore={(templateData) => {
+            if (templateData) {
+              setDialogType(null);
+              loadNewTemplate(templateData);
+            }
+          }}
+          onUpdate={(status, templateData) => {
+            if (status === 'success' && templateData) {
+              setDialogType(null);
+              loadNewTemplate(templateData);
+            }
+          }} />
+      ),
+      showDefaultButtons: false
+    };
+  }
+
+  const loadNewTemplate = async (templateData) => {
+    setLoader(true);
+    try {
+      if (editorRef.current) {
+        // If template is a string, parse it to JSON
+        const templateJson = typeof templateData === 'string'
+          ? JSON.parse(templateData)
+          : templateData;
+
+        // Load the template into the existing editor
+        await editorRef.current.load(templateJson);
+
+        // Save the newly loaded template
+        saveDesign(false, null, false);
+      }
+    } catch (error) {
+      console.error('Error loading template:', error);
+      setToastMessage({ severity: 'error', color: 'error', message: 'Failed to load template', showAnimtionCheck: false });
+    } finally {
+      setLoader(false);
+    }
+  };
+
   const moreThanOneDynamicBlockModal = (data = '') => {
     const message = t(
       data === 'save' ? "common.noMoreThanOneDynamicBlockSave"
@@ -1022,6 +1089,9 @@ const CampaignEditor = ({ classes, ...props }) => {
     } else if (type === DialogType.PENDING_APPROVAL) {
       currentDialog = getPendingApprovalModal();
     }
+    else if (type === 'AIDialog') {
+      currentDialog = AI_Dialog();
+    }
 
     if (type) {
       return (
@@ -1053,6 +1123,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           style={{ margin: '8px' }}
           startIcon={silentSave ? <Loader isOpen={silentSave} size={20} showBackdrop={false} contained={true} /> : <BiSave />}
           color="primary"
+          key={'saveButton'}
         >{t("common.save")}
         </Button>
         {fromLink?.toLowerCase() !== 'autoresponder' && <Button onClick={() => {
@@ -1092,6 +1163,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
           style={{ marginInlineStart: '8px' }}
           color="primary"
+          key={'createButton'}
         >{t('common.continue')}</Button>
         }
       </>)
@@ -1110,6 +1182,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           style={{ margin: '8px' }}
           startIcon={<BiSave />}
           color="primary"
+          key={'saveAutomationButton'}
         >{t("common.save")}
         </Button>
         <Button onClick={() => {
@@ -1123,6 +1196,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
           style={{ marginInlineStart: '8px' }}
           color="primary"
+          key={'createAutomationButton'}
         >{t('common.backToAutomation')}</Button>
       </>)
     }
