@@ -506,8 +506,20 @@ export const googleFonts = {
         fontWeight: {
             400: 'normal'
         }
+    },
+    OpenSans: {
+        name: "Open Sans Hebrew",
+        fontFamily: "'Open Sans', arial",
+        url: "https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap",
+        fontWeight: {
+            300: '300 Light',
+            400: '400 Regular',
+            500: '500 Medium',
+            600: '600 Semi-bold',
+            700: '700 Bold',
+            800: '800 ExtraBold'
+        }
     }
-
 };
 
 export const HebrewFonts = [
@@ -558,5 +570,6 @@ export const HebrewFonts = [
     googleFonts.Rubik80sFade,
     googleFonts.RubikGemstones,
     googleFonts.RubikPixels,
-    googleFonts.RubikMarkerHatch
+    googleFonts.RubikMarkerHatch,
+    googleFonts.OpenSans
 ];
