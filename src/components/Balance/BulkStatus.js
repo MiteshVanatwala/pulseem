@@ -23,16 +23,20 @@ import UnsubscribePayPerRecipient from '../PayPerRecipient/UnsubscribePayPerReci
 import Toast from '../Toast/Toast.component';
 import PayPerRecipientNew from '../PayPerRecipient/PayPerRecipientNew';
 import { BiCog } from 'react-icons/bi';
+import { getAccountBilling } from '../../redux/reducers/BillingSlice';
+import BillingSettings from '../BillingSettings/BillingSettings';
 
 const BulkStatus = ({ classes }) => {
   const { billingTypeId, windowSize, isRTL } = useSelector(state => state.core)
   const { accountSettings, accountFeatures, isGlobal, IsPoland, accountCurrencySymbol, accountIsCurrencySymbolPrefix } = useSelector(state => state.common);
   const { packagesDetails, accountAvailablePackages } = useSelector(state => state.dashboard);
+  const { billing: { Data: billingDetail } } = useSelector(state => state.billing);
   const [ isOpenPackageDialog, setIsOpenPackageDialog ] = useState(false);
   const [ isOpenAddCardDialog, setIsOpenAddCardDialog ] = useState(false);
   const [ isOpenUnsubscribeDialog, setIsOpenUnsubscribeDialog ] = useState(false);
   const [ selectedPackageType, setPackageType ] = useState({ type: 1, title: '' });
   const [ isOpenPayPerRecipient, setIsOpenPayPerRecipient ] = useState(false);
+  const [ isOpenBillingSettings, setIsOpenBillingSettings ] = useState(false);
   const [ toastMessage, setToastMessage ] = useState(null);
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -72,6 +76,16 @@ const BulkStatus = ({ classes }) => {
 
     initPackages();
   }, []);
+
+  useEffect(() => {
+    const fetchAccountBilling = async () => {
+      if (IsPoland && isGlobal) {
+        await dispatch(getAccountBilling());
+      }
+    };
+    
+    fetchAccountBilling();
+  }, [ IsPoland, isGlobal ]);
 
   const handleDialogClose = () => {
     setIsOpenPackageDialog(false);
@@ -374,16 +388,17 @@ const BulkStatus = ({ classes }) => {
                     {
                       Newsletters.IsEmailPolandSubscribed ? (
                         <>
-                          {/* <IconButton className={clsx(classes.p5)} onClick={() => setIsOpenPayPerRecipient(true)}>
+                          <IconButton className={clsx(classes.p5)} onClick={() => setIsOpenPayPerRecipient(true)}>
                             <BiCog />
-                          </IconButton> */}
+                          </IconButton>
                         </>
                       ) : (
                         <Button
                           className={clsx(classes.btn, classes.btnRounded, classes.f12)}
                           onClick={() => {
-                            // setIsOpenPayPerRecipient(true)
-                            showPackageDialogType({ type: 2, title: t('common.newsletterBulkTitle') })
+                            if (billingDetail?.CompanyName === '' || billingDetail?.CompanyName === null || billingDetail?.CorporationNumber === '' || billingDetail?.CorporationNumber === null || billingDetail?.Email === '' || billingDetail?.Email === null) {
+                              setIsOpenBillingSettings(true);
+                            } else setIsOpenPayPerRecipient(true)
                           }}
                         >
                           {t(`common.${ !Newsletters.IsEmailPolandSubscribed ? 'SubscribeButton' : 'cancel'}`)}
@@ -530,6 +545,13 @@ const BulkStatus = ({ classes }) => {
             </Grid>
           </>)}
         </Grid>
+        <BillingSettings
+          classes={classes}
+          isOpen={isOpenBillingSettings}
+          onClose={() => {
+            setIsOpenBillingSettings(false);
+          }}
+        />
         <PayPerRecipientNew
           classes={classes}
           isOpen={isOpenPayPerRecipient}

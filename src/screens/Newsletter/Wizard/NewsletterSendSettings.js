@@ -427,7 +427,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         410: { type: 'SendResponse', data: { Title: t('campaigns.newsLetterEditor.errors.campaignWasNotSent'), Text: t('campaigns.newsLetterEditor.errors.FIRST_CAMPAIGN_RESTRICTIONS'), ShowContactSupport: false, redirect: `${sitePrefix}Campaigns/` } },
         411: { type: 'SendResponse', data: { Title: t('campaigns.newsLetterEditor.errors.campaignWasNotSent'), Text: t('campaigns.newsLetterEditor.errors.ACCOUNT_RESTRICTED'), ShowContactSupport: true } },
         550: { type: 'SendResponse', data: { Title: t('campaigns.newsLetterEditor.errors.pendingApproval'), Text: t('campaigns.newsLetterEditor.errors.PendingApprovalDesc'), ShowContactSupport: false } },
-        551: { type: 'SendResponse', data: { Title: t('campaigns.newsLetterEditor.errors.pendingApproval'), Text: t('campaigns.newsLetterEditor.errors.PendingApprovalDesc'), ShowContactSupport: false } },
+        551: { type: 'SendResponse', data: { Title: t('campaigns.newsLetterEditor.errors.pendingApproval'), Text: t('campaigns.newsLetterEditor.errors.PendingApproval551Desc'), ShowContactSupport: false } },
     };
 
     const handleSendResponse = (response) => {

@@ -19,6 +19,7 @@ import UnsubscribePayPerRecipient from './UnsubscribePayPerRecipient';
 import { getPackagesDetails } from '../../redux/reducers/dashboardSlice';
 import { URLS } from '../../config/enum';
 import TranzilaIframe from '../Balance/PaymentWizard/Dialogs/TranzilaIframe';
+import { StateType } from '../../Models/StateTypes';
 
 const steps = [
   '',
@@ -32,15 +33,50 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose }: any) => {
 		(state: { core: coreProps }) => state.core
 	);
   const { packagesDetails } = useSelector((state: any) => state.dashboard);
+  const { currencyList, currencyId, accountCurrencySymbol, accountIsCurrencySymbolPrefix, IsCurrencySymbolPrefix } = useSelector((state: StateType) => state.common);
   const [ isLoader, setIsLoader ] = useState(false);
   const [ toastMessage, setToastMessage ] = useState(null);
-  const [ marks, setMarks ] = useState([]);
+  type MarkType = {
+    id: any;
+    value: any;
+    label: string;
+    displayText: string;
+    currencyId: any;
+    low: any;
+    high: any;
+  };
+  const [ marks, setMarks ] = useState<MarkType[]>([]);
+  const [ allPacakages, setAllPacakages ] = useState([]);
   const [ selectedPricing, setSelectedPricing ] = useState(0);
+  const [ level, setLevel ] = useState({
+    low: 0,
+    high: 0
+  });
   const [ activeStep, setActiveStep ] = useState(1);
   const [ paymentIframe, setPaymentIframe ] = useState<string>('');
   const [ isOpenUnsubscribeDialog, setIsOpenUnsubscribeDialog ] = useState(false);
+  const [ packageCurrencyList, setPackageCurrencyList ] = useState([]);
+  const [ selectedCurrency, setSelectedCurrency ] = useState({
+    id: currencyId,
+    sign: accountCurrencySymbol,
+    symbolPrefix: accountIsCurrencySymbolPrefix
+  });
   const dispatch = useDispatch();
   const { Newsletters = {} } = packagesDetails || {};
+  useEffect(() => {
+    if (allPacakages.length) {
+      generagetMarks(allPacakages);
+      allPacakages.filter((mark: any) => mark?.Currency_Id === selectedCurrency.id).length > 0 && setSelectedPricing(get(first(allPacakages.filter((mark: any) => mark?.Currency_Id === selectedCurrency.id && mark.LevelLow === level.low && mark.LevelHigh === level.high)), 'Price', 0));
+    }
+  }, [selectedCurrency.id]);
+
+  useEffect(() => {
+    setSelectedCurrency({
+      id: currencyId,
+      sign: accountCurrencySymbol,
+      symbolPrefix: IsCurrencySymbolPrefix
+    });
+  }, [currencyId]);
 
 	useEffect(() => {
 		if (isOpen) {
@@ -51,6 +87,12 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose }: any) => {
       setPaymentIframe('');
       setIsLoader(false);
       setToastMessage(null);
+      setLevel({
+        low: 0,
+        high: 0
+      })
+      setPackageCurrencyList([]);
+      setAllPacakages([]);
 		}
 	}, [isOpen]);
 
@@ -58,26 +100,47 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose }: any) => {
     setIsLoader(true);
     const { payload: { Data, StatusCode } }: any = await dispatch(GetEmailPackagePrices());
     if (StatusCode === 201) {
-      const marks = Data.map((item: any) => ({
-        id: item.Id,
-        value: item.Price,
-        label: '',
-        displayText: `${formatNumberWithCommas(item.LevelLow)} - ${formatNumberWithCommas(item.LevelHigh)}`,
-      }));
-      const lastItem: any = last(Data);
-      marks.push({
-        id: lastItem?.Id + 1,
-        value: lastItem.Price + 100,
-        label: '',
-        displayText: `${formatNumberWithCommas(lastItem?.LevelHigh)} +`,
-      })
-      setMarks(marks);
+      const uniqueIds = Array.from(new Set(Data.map((item: any) => item.Currency_Id)));
+      
+      const uniqueObjects = currencyList.filter((item: any) => 
+        uniqueIds.includes(item?.ID)
+      );
+      setPackageCurrencyList(uniqueObjects);
+      setAllPacakages(Data);
+      generagetMarks(Data);
     }
     setIsLoader(false);
   }
 
+  const generagetMarks = (data: any[]) => {
+    const markList = data.filter((mark: any) => mark?.Currency_Id === selectedCurrency.id).map((item: any) => ({
+      id: item.Id,
+      value: item.Price,
+      label: '',
+      displayText: `${formatNumberWithCommas(item.LevelLow)} - ${formatNumberWithCommas(item.LevelHigh)}`,
+      currencyId: item.Currency_Id,
+      low: item.LevelLow,
+      high: item.LevelHigh
+    }));
+    const lastItem: any = last(data);
+    markList.push({
+      id: lastItem?.Id + 1,
+      value: lastItem.Price + 100,
+      label: '',
+      displayText: `${formatNumberWithCommas(lastItem?.LevelHigh)} +`,
+      currencyId: lastItem.Currency_Id,
+      low: lastItem.LevelLow,
+      high: '+'
+    });
+    setMarks(markList);
+  }
+
   const handleChange = (event: any, newValue: any) => {
-    // const found: any = marks.find((mark: any) => mark?.value === newValue);
+    const found: any = marks.find((mark: any) => mark?.value === newValue);
+    setLevel({
+      low: found?.low,
+      high: found?.high
+    });
     setSelectedPricing(newValue);
   };
 
@@ -160,7 +223,44 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose }: any) => {
               style={{ color: "#ff3343" }}
             />
 
-            <Grid container className={clsx(classes.mt15, classes.payPerRecipientPlanDetail)}>
+            <Grid container>
+              <Grid item xs={12} className={clsx(classes.textRight)}>
+                <Box className={clsx(classes.p10)}>
+                  {
+                    packageCurrencyList.map((currency: any) => {
+                      return <Button
+                        key={currency.ID}
+                        className={clsx(
+                          classes.btn,
+                          classes.btnRounded,
+                          classes.mr10,
+                          classes.fieldOfInterestButton,
+                          classes.mb10,
+                          classes.f14,
+                          {
+                            [classes.dFlex]: windowSize === 'xs',
+                            [classes.mt10]: windowSize === 'xs',
+                            [classes.f12]: windowSize === 'xs',
+                            [classes.gradientBackground]: selectedCurrency.id === currency.ID,
+                            [classes.colorWhite]: selectedCurrency.id === currency.ID
+                          }
+                        )}
+                        onClick={() => {
+                          setSelectedCurrency({
+                            id: currency.ID,
+                            sign: currency.CurrencySymbol,
+                            symbolPrefix: currency.IsCurrencySymbolPrefix
+                          });
+                        }}
+                      >
+                        {currency.Name}
+                      </Button>
+                    })
+                  }
+                </Box>
+              </Grid>
+            </Grid>
+            <Grid container className={clsx(classes.payPerRecipientPlanDetail)}>
               <Grid item xs={5} className={clsx(classes.textLeft)}>
                 <Box className={clsx(classes.p10, classes.textCenter)}>
                   {
@@ -171,7 +271,7 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose }: any) => {
                         </Typography>
 
                         <Typography className={clsx(classes.f30, classes.bold, classes.line1)}>
-                          {selectedPricing} zł
+                          {selectedCurrency.symbolPrefix ? selectedCurrency.sign : ''} {selectedPricing} {!selectedCurrency.symbolPrefix ? selectedCurrency.sign : ''}
                         </Typography>
 
                         <Typography className={clsx(classes.f14)}>
@@ -333,9 +433,9 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose }: any) => {
         <Grid item md={6} xs={12} className={clsx(classes.textCenter)}>
           <Button
             onClick={async () => {
-              const found: any = marks.find((mark: any) => mark?.value === selectedPricing);
+              const found: any = allPacakages.find((mark: any) => mark?.Price === selectedPricing && mark?.Currency_Id === selectedCurrency.id && mark?.LevelLow === level.low && mark?.LevelHigh === level.high);
               setIsLoader(true);
-              const { payload: { StatusCode } }: any = await dispatch(EmailPricingSubscriptionPoland({ PricePackageId:  found?.id }));
+              const { payload: { StatusCode } }: any = await dispatch(EmailPricingSubscriptionPoland({ PricePackageId:  found?.Id }));
               if (StatusCode === 201) {
                 // onClose(found?.id);
                 await fetchCCIFrame();

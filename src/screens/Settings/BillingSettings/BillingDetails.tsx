@@ -12,13 +12,15 @@ import { getAccountBilling, updateAccountBilling } from '../../../redux/reducers
 import { logout } from '../../../helpers/Api/PulseemReactAPI';
 import { Loader } from '../../../components/Loader/Loader';
 import Toast from '../../../components/Toast/Toast.component';
+import { CurrenciesToDisplayForPoland } from '../../../helpers/Constants';
 
 
 const BillingDetails = ({ classes }: any) => {
   const { t } = useTranslation();
   const dispacth = useDispatch();
-  const { isRTL, windowSize } = useSelector((state: any) => state.core);
+  const { isRTL } = useSelector((state: any) => state.core);
   const { billing } = useSelector((state: any) => state.billing);
+  const { isGlobal, IsPoland, currencyList } = useSelector((state: any) => state.common);
 
   const [toastMessage, setToastMessage] = useState<any | never>(null);
   const [showLoader, setShowLoader] = useState<boolean>(true);
@@ -42,8 +44,11 @@ const BillingDetails = ({ classes }: any) => {
     Country: "",
     CorporationNumber: "",
     BillingLanguage: '-1',
-    Email: ""
+    Email: "",
+    CurrencyID: null
   });
+
+  const [disableCurrency, setDisableCurrency] = useState<boolean>(false);
 
   const [errors, setErrors] = useState<BillingErrorTypes>({
     CompanyName: "",
@@ -63,6 +68,7 @@ const BillingDetails = ({ classes }: any) => {
   useEffect(() => {
     if (billing && billing !== null && billing?.StatusCode === 201) {
       setBillingInfoValues(billing?.Data);
+      setDisableCurrency(!!billing?.Data.CurrencyID);
     }
   }, [billing])
 
@@ -318,6 +324,47 @@ const BillingDetails = ({ classes }: any) => {
           </Select>
         </FormControl>
       </Grid>
+      {
+        isGlobal && IsPoland && (
+          <Grid item xs={12} sm={6} md={4} className={"textBoxWrapper"}>
+            <Typography>
+              {t("common.currency")}
+            </Typography>
+            <FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.w100)}>
+              <Select
+                variant="standard"
+                autoWidth
+                value={`${billingInfoValues?.CurrencyID || 0}`}
+                name="currency"
+                onChange={(event) => setBillingInfoValues({
+                  ...billingInfoValues,
+                  CurrencyID: Number(event.target.value)
+                } as BillingAccount)}
+                IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+                disabled={disableCurrency}
+                MenuProps={{
+                  PaperProps: {
+                    style: {
+                      direction: isRTL ? 'rtl' : 'ltr'
+                    },
+                  },
+                }}
+              >
+                {currencyList.filter((currency: any) => CurrenciesToDisplayForPoland.indexOf(currency?.ID) > -1).map((currency: any) => {
+                  return (
+                    <MenuItem
+                      key={currency?.ID}
+                      value={currency?.ID}
+                    >
+                      {currency?.Name}
+                    </MenuItem>
+                  );
+                })}
+              </Select>
+            </FormControl>
+          </Grid>
+        )
+      }
     </Grid>
     <Box className={clsx(classes.dFlex, classes.w100)}>
       <Button
