@@ -22,6 +22,7 @@ export const FONTS = (isLandingPage: boolean = false) => {
     else {
         if (accountFeatures?.indexOf(PulseemFeatures.BEE_ENABLE_GOOGLE_FONTS) > -1) { // EnableBeeGoogleFonts
             allowedFonts.customFonts.push(googleFonts.Rubik);
+            allowedFonts.customFonts.push(googleFonts.OpenSans);
         }
     }
 
