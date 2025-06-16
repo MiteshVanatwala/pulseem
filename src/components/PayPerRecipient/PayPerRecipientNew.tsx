@@ -224,6 +224,43 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose }: any) => {
               style={{ color: "#ff3343" }}
             />
 
+            <Grid container>
+              <Grid item xs={12} className={clsx(classes.textRight)}>
+                <Box className={clsx(classes.p10)}>
+                  {
+                    packageCurrencyList.map((currency: any) => {
+                      return <Button
+                        key={currency.ID}
+                        className={clsx(
+                          classes.btn,
+                          classes.btnRounded,
+                          classes.mr10,
+                          classes.fieldOfInterestButton,
+                          classes.mb10,
+                          classes.f14,
+                          {
+                            [classes.dFlex]: windowSize === 'xs',
+                            [classes.mt10]: windowSize === 'xs',
+                            [classes.f12]: windowSize === 'xs',
+                            [classes.gradientBackground]: selectedCurrency.id === currency.ID,
+                            [classes.colorWhite]: selectedCurrency.id === currency.ID
+                          }
+                        )}
+                        onClick={() => {
+                          setSelectedCurrency({
+                            id: currency.ID,
+                            sign: currency.CurrencySymbol,
+                            symbolPrefix: currency.IsCurrencySymbolPrefix
+                          });
+                        }}
+                      >
+                        {currency.Name}
+                      </Button>
+                    })
+                  }
+                </Box>
+              </Grid>
+            </Grid>
             <Grid container className={clsx(classes.payPerRecipientPlanDetail)}>
               <Grid item xs={5} className={clsx(classes.textLeft)}>
                 <Box className={clsx(classes.p10, classes.textCenter)}>
