@@ -20,6 +20,7 @@ import { getPackagesDetails } from '../../redux/reducers/dashboardSlice';
 import { URLS } from '../../config/enum';
 import TranzilaIframe from '../Balance/PaymentWizard/Dialogs/TranzilaIframe';
 import { StateType } from '../../Models/StateTypes';
+import { CurrenciesToDisplayForPoland } from '../../helpers/Constants';
 
 const steps = [
   '',
@@ -223,43 +224,6 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose }: any) => {
               style={{ color: "#ff3343" }}
             />
 
-            <Grid container>
-              <Grid item xs={12} className={clsx(classes.textRight)}>
-                <Box className={clsx(classes.p10)}>
-                  {
-                    packageCurrencyList.map((currency: any) => {
-                      return <Button
-                        key={currency.ID}
-                        className={clsx(
-                          classes.btn,
-                          classes.btnRounded,
-                          classes.mr10,
-                          classes.fieldOfInterestButton,
-                          classes.mb10,
-                          classes.f14,
-                          {
-                            [classes.dFlex]: windowSize === 'xs',
-                            [classes.mt10]: windowSize === 'xs',
-                            [classes.f12]: windowSize === 'xs',
-                            [classes.gradientBackground]: selectedCurrency.id === currency.ID,
-                            [classes.colorWhite]: selectedCurrency.id === currency.ID
-                          }
-                        )}
-                        onClick={() => {
-                          setSelectedCurrency({
-                            id: currency.ID,
-                            sign: currency.CurrencySymbol,
-                            symbolPrefix: currency.IsCurrencySymbolPrefix
-                          });
-                        }}
-                      >
-                        {currency.Name}
-                      </Button>
-                    })
-                  }
-                </Box>
-              </Grid>
-            </Grid>
             <Grid container className={clsx(classes.payPerRecipientPlanDetail)}>
               <Grid item xs={5} className={clsx(classes.textLeft)}>
                 <Box className={clsx(classes.p10, classes.textCenter)}>
@@ -304,6 +268,44 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose }: any) => {
                   <Typography className={clsx(classes.f16)}>
                     <AiOutlineCheck style={{ verticalAlign: 'middle', marginRight: 5 }} /> {t('dashboard.polishSubscribe.unlimitedEmailSending')}
                   </Typography>
+                </Box>
+              </Grid>
+            </Grid>
+
+            <Grid container>
+              <Grid item xs={12} className={clsx(classes.textCenter)}>
+                <Box className={clsx(classes.p10)}>
+                  {
+                    packageCurrencyList.filter((item: any) => CurrenciesToDisplayForPoland.indexOf(item?.ID) > -1).map((currency: any) => {
+                      return <Button
+                        key={currency.ID}
+                        className={clsx(
+                          classes.btn,
+                          classes.btnRounded,
+                          classes.mr10,
+                          classes.fieldOfInterestButton,
+                          classes.mb10,
+                          classes.f14,
+                          {
+                            [classes.dFlex]: windowSize === 'xs',
+                            [classes.mt10]: windowSize === 'xs',
+                            [classes.f12]: windowSize === 'xs',
+                            [classes.gradientBackground]: selectedCurrency.id === currency.ID,
+                            [classes.colorWhite]: selectedCurrency.id === currency.ID
+                          }
+                        )}
+                        onClick={() => {
+                          setSelectedCurrency({
+                            id: currency.ID,
+                            sign: currency.CurrencySymbol,
+                            symbolPrefix: currency.IsCurrencySymbolPrefix
+                          });
+                        }}
+                      >
+                        {currency.Name} ({currency.CurrencySymbol})
+                      </Button>
+                    })
+                  }
                 </Box>
               </Grid>
             </Grid>
@@ -433,7 +435,7 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose }: any) => {
         <Grid item md={6} xs={12} className={clsx(classes.textCenter)}>
           <Button
             onClick={async () => {
-              const found: any = allPacakages.find((mark: any) => mark?.Price === selectedPricing && mark?.Currency_Id === selectedCurrency.id && mark?.LevelLow === level.low && mark?.LevelHigh === level.high);
+              const found: any = allPacakages.find((mark: any) => mark?.Currency_Id === currencyId && mark?.LevelLow === level.low && mark?.LevelHigh === level.high);
               setIsLoader(true);
               const { payload: { StatusCode } }: any = await dispatch(EmailPricingSubscriptionPoland({ PricePackageId:  found?.Id }));
               if (StatusCode === 201) {
