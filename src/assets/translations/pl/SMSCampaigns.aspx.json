@@ -580,5 +580,7 @@
   "englishLetterNotApprovedTitle": "Ten użytkownik nie jest zatwierdzony do używania angielskich znaków dla 'Kampania od'.",
   "englishLetterNotApprovedDescription": "Aby otworzyć tę opcję, musisz przejść proces weryfikacji wideo z naszym wsparciem klienta<br/>skontaktuj się telefonicznie <a href='tel:03-524-0290'>03-524-0290</a><br/>Lub emailem <a href='mailto:support@pulseem.com'>support@pulseem.com</a>",
   "hour": "Godzina",
-  "hours": "Godziny"
+  "hours": "Godziny",
+  "PendingApprovalDesc": "Nasz zespół obecnie przegląda Twoje treści. Po zatwierdzeniu SMS zostanie wysłany jak zwykle. Dziękujemy za cierpliwość!",
+  "PendingApproval551Desc": "Użytkownik w trakcie procesu weryfikacji."
 }

@@ -220,7 +220,7 @@ const SmsSend = ({ classes, ...props }) => {
       }
       case 550:
       case 551:
-        setDialogType({ type: "pendingApprovalDialog" });
+        setDialogType({ type: "pendingApprovalDialog", data: smsSendResult });
         break;
       default: {
         break;
@@ -2379,7 +2379,7 @@ const SmsSend = ({ classes, ...props }) => {
     }
   }
 
-  const pendingApprovalDialog = () => {
+  const pendingApprovalDialog = (code = 550) => {
     return {
       title: t('campaigns.newsLetterEditor.errors.pendingApproval'),
       disableBackdropClick: true,
@@ -2388,7 +2388,9 @@ const SmsSend = ({ classes, ...props }) => {
       ),
       content: (
         <Box>
-          <Typography className={classes.f18}>{t("campaigns.newsLetterEditor.errors.PendingApprovalDesc")}</Typography>
+          <Typography className={classes.f18}>{
+            t(code === 550 ? "sms.PendingApprovalDesc" : "sms.PendingApproval551Desc")
+          }</Typography>
         </Box>
       ),
       showDefaultButtons: true,
@@ -2432,7 +2434,7 @@ const SmsSend = ({ classes, ...props }) => {
   }
   //#endregion
   const renderDialog = () => {
-    const { type } = dialogType || {}
+    const { type, data } = dialogType || {}
 
     const dialogContent = {
       manualUpload: manualUploadDialog(),
@@ -2443,7 +2445,7 @@ const SmsSend = ({ classes, ...props }) => {
       sendSuccess: sendSuccessDialog(),
       noCredit: noCreditDialog(),
       englishLetterDialog: englishLetterNotAllowed(),
-      pendingApprovalDialog: pendingApprovalDialog()
+      pendingApprovalDialog: pendingApprovalDialog(data)
     }
 
     const currentDialog = dialogContent[type] || {}
