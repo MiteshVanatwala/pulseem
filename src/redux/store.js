@@ -30,6 +30,7 @@ import AffiliateSlice from './reducers/AffiliateSlice';
 import SubAccountSlice from './reducers/SubAccountSlice';
 import BillingSlice from './reducers/BillingSlice';
 import SubUserSlice from './reducers/SubUserSlice';
+import AiSlice from './reducers/AISlice';
 
 export default configureStore({
   reducer: {
@@ -63,6 +64,7 @@ export default configureStore({
     affiliates: AffiliateSlice,
     subAccount: SubAccountSlice,
     billing: BillingSlice,
-    subUser: SubUserSlice
+    subUser: SubUserSlice,
+    Ai: AiSlice
   },
 });

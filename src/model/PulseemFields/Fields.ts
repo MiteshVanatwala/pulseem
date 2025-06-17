@@ -192,5 +192,7 @@ export const PulseemFeatures = {
   DuplicateOldCampaignToBee: '63',
   NewAPIEmailKosher: '64',
   WhatsNew: '65',
-  MMS: '66'
+  MMS: '66',
+  PolishLangMenu: '67',
+  NewsletterAI: '68'
 }

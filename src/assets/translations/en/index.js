@@ -37,6 +37,9 @@ import billing from './Billing.json';
 import TermsOfUse from './TermsOfUse.json'
 import SubUsers from './SubUsers.json'
 import WhatsappOnBoarding from './WhatsappOnBoarding.json'
+import AI from './AI.json'
+import colorPalette from './colorPalette.json'
+import AILoader from './AILoader.json'
 import RemoveMyData from './RemoveMyData.json'
 
 export const en = {
@@ -79,5 +82,8 @@ export const en = {
 	TermsOfUse,
 	SubUsers,
 	WhatsappOnBoarding,
+	AI,
+	colorPalette,
+	AILoader,
 	RemoveMyData
 };
