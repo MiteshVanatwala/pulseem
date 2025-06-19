@@ -38,6 +38,8 @@ import {
 } from "../../../../Models/Whatsapp/whatsappInbound";
 import { PulseemFeatures } from "../../../../model/PulseemFields/Fields";
 import { DateFormats } from "../../../../helpers/Constants";
+import { getCommonFeatures } from "../../../../redux/reducers/commonSlice";
+import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
 
 const WhatsappInbound = ({ classes }: any) => {
   const dispatch = useDispatch();
@@ -52,9 +54,11 @@ const WhatsappInbound = ({ classes }: any) => {
   const { inboundWhatsappReport } = useSelector(
     (state: StateType) => state.whatsapp
   );
-  const { accountFeatures, windowSize, userRoles } = useSelector(
+  const { isRTL, windowSize, userRoles } = useSelector(
     (state: StateType) => state.core
   );
+
+  const { accountFeatures } = useSelector((state: any) => state.common)
 
   const rowStyle = {
     head: classes.tableRowReportHead,
@@ -96,7 +100,14 @@ const WhatsappInbound = ({ classes }: any) => {
     setShowLoader(true);
     setShowLoader(false);
   };
+  const initAccountFeatures = async () => {
+    // @ts-ignore
+    await dispatch(getCommonFeatures({ forceRequest: true }));
+  }
   useEffect(() => {
+    if (!accountFeatures) {
+      initAccountFeatures();
+    }
     if (id && Number(id) > 0) {
       getInboundDataById(id);
     } else {
@@ -114,24 +125,20 @@ const WhatsappInbound = ({ classes }: any) => {
     return (
       <>
         {/* <Divider /> */}
-        <Grid container spacing={2}>
+        <Grid container spacing={2} className={clsx(classes.p20)}>
           {userRoles?.AllowExport && accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 && windowSize !== "xs" && (
             <Grid item>
               <Button
-                variant="contained"
-                size="medium"
                 className={clsx(
-                  classes.actionButton,
-                  classes.actionButtonGreen,
+                  classes.btn, classes.btnRounded,
                   inboundWhatsappReport &&
                     inboundWhatsappReport?.Data?.length > 0
                     ? null
                     : classes.disabled
                 )}
                 onClick={() => setDialog("exportFormat")}
-                startIcon={<ExportIcon />}
-              >
-                {`${t("campaigns.exportFile")}`}
+                endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
+                {t('campaigns.exportFile')}
               </Button>
             </Grid>
           )}
@@ -374,16 +381,22 @@ const WhatsappInbound = ({ classes }: any) => {
   };
   return (
     <Box className={classes.p20}>
-      {renderHeader()}
-      <SearchLine
-        key="sl"
-        currentPage={page}
-        showAutoCompleteForm={false}
-        classes={classes}
-        onSetPage={(val: number) => setPage(val)}
-        onFilterRequest={(val: wpInbdDefaultFilterType) => setRequest(val)}
-        onSetIsSearching={(val: boolean) => setIsSearching(val)}
-      />
+      <Grid container>
+        <Grid item>
+          <SearchLine
+            key="sl"
+            currentPage={page}
+            showAutoCompleteForm={false}
+            classes={classes}
+            onSetPage={(val: number) => setPage(val)}
+            onFilterRequest={(val: wpInbdDefaultFilterType) => setRequest(val)}
+            onSetIsSearching={(val: boolean) => setIsSearching(val)}
+          />
+        </Grid>
+        <Grid item>
+          {renderHeader()}
+        </Grid>
+      </Grid>
       {renderTable()}
       {renderTablePagination()}
       <ConfirmRadioDialog
