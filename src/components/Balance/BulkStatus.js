@@ -103,7 +103,7 @@ const BulkStatus = ({ classes }) => {
         // TODO - Remove below line to disable Poland specific dialogs
         dialog = renderBillingSupportDialog();
       } else {
-        if (!IsPoland && (accountSettings.Account.IsBillingAccount === false || selectedPackageType.type === -1 || !accountSettings.Account?.IsPaying)) {
+        if (!IsPoland && (selectedPackageType.type === -1 || !accountSettings.Account?.IsPaying)) {
           dialog = renderBillingSupportDialog();
         }
         else {
