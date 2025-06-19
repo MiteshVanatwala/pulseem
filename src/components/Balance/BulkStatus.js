@@ -97,12 +97,12 @@ const BulkStatus = ({ classes }) => {
       let dialog = {};
       let availablePack = null;
 
-      if (isGlobal === true && IsPoland) {
-        // TODO - Uncomment below line to enable Poland specific dialogs
-        // dialog = Newsletters.IsEmailPolandSubscribed ? renderUnsubscribePayPerRecipientPolandDialog() : renderSubscribePayPerRecipientPolandDialog();
-        // TODO - Remove below line to disable Poland specific dialogs
-        dialog = renderBillingSupportDialog();
-      } else {
+      // if (isGlobal === true && IsPoland) {
+      //   // TODO - Uncomment below line to enable Poland specific dialogs
+      //   // dialog = Newsletters.IsEmailPolandSubscribed ? renderUnsubscribePayPerRecipientPolandDialog() : renderSubscribePayPerRecipientPolandDialog();
+      //   // TODO - Remove below line to disable Poland specific dialogs
+      //   dialog = renderBillingSupportDialog();
+      // } else {
         if (!IsPoland && (selectedPackageType.type === -1 || !accountSettings.Account?.IsPaying)) {
           dialog = renderBillingSupportDialog();
         }
@@ -110,7 +110,7 @@ const BulkStatus = ({ classes }) => {
           dialog = renderPackagesListDialog();
           availablePack = accountAvailablePackages.filter((aa) => { return aa.CampaignType === selectedPackageType.type });
         }
-      }
+      // }
 
       const options = {
         classes: classes,
