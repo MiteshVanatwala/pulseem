@@ -96,6 +96,7 @@ const BillingDetails = ({ classes }: any) => {
       switch (response?.payload?.StatusCode) {
         case 201: {
           setToastMessage({ severity: 'success', color: 'success', message: t('settings.accountSettings.savedSuccessfuly'), showAnimtionCheck: false } as any);
+          await dispacth(getAccountBilling());
           break;
         }
         case 402: {
