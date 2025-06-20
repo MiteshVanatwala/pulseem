@@ -96,22 +96,9 @@ const BulkStatus = ({ classes }) => {
     if (isOpenPackageDialog && accountSettings !== null) {
       let dialog = {};
       let availablePack = null;
-
-      // if (isGlobal === true && IsPoland) {
-      //   // TODO - Uncomment below line to enable Poland specific dialogs
-      //   // dialog = Newsletters.IsEmailPolandSubscribed ? renderUnsubscribePayPerRecipientPolandDialog() : renderSubscribePayPerRecipientPolandDialog();
-      //   // TODO - Remove below line to disable Poland specific dialogs
-      //   dialog = renderBillingSupportDialog();
-      // } else {
-        if (!IsPoland && (selectedPackageType.type === -1 || !accountSettings.Account?.IsPaying)) {
-          dialog = renderBillingSupportDialog();
-        }
-        else {
-          dialog = renderPackagesListDialog();
-          availablePack = accountAvailablePackages.filter((aa) => { return aa.CampaignType === selectedPackageType.type });
-        }
-      // }
-
+      dialog = renderPackagesListDialog();
+      availablePack = accountAvailablePackages.filter((aa) => { return aa.CampaignType === selectedPackageType.type });
+      
       const options = {
         classes: classes,
         open: isOpenPackageDialog,
@@ -244,14 +231,7 @@ const BulkStatus = ({ classes }) => {
   }
 
   const showPackageDialogType = async (packageType) => {
-    const settings = await dispatch(getCommonFeatures({ forceRequest: true }));
-    if (!settings?.payload?.Data?.Account?.IsPaying) {
-      packageType = !IsPoland ? { type: -1, title: '' } : { type: 3, title: t('common.newsletterBulkTitle') };
-      setPackageType(packageType);
-    }
-    else {
-      setPackageType(packageType);
-    }
+    setPackageType(packageType);
     setIsOpenPackageDialog(true);
   }
   
