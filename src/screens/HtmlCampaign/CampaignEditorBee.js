@@ -655,9 +655,12 @@ const CampaignEditor = ({ classes, ...props }) => {
         setToastMessage(ToastMessages.RECIPIENT_BLOCKED);
         break;
       }
-      case 551:
       case 550: {
         setDialog(DialogType.PENDING_APPROVAL);
+        break;
+      }
+      case 551: {
+        setDialog(DialogType.UNDER_REVIEW);
         break;
       }
       case 500:
@@ -1063,12 +1066,12 @@ const CampaignEditor = ({ classes, ...props }) => {
     };
   }
 
-  const getPendingApprovalModal = () => ({
+  const getPendingApprovalModal = (code) => ({
     title: t('campaigns.newsLetterEditor.errors.pendingApproval'),
     showDivider: false,
     content: (
       <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
-        {t('campaigns.newsLetterEditor.errors.PendingApprovalDesc')}
+        {t(code === 550 ? "campaigns.newsLetterEditor.errors.PendingApprovalDesc" : "campaigns.newsLetterEditor.errors.PendingApproval551Desc")}
       </Typography>
     ),
     onConfirm: async () => {
@@ -1087,7 +1090,9 @@ const CampaignEditor = ({ classes, ...props }) => {
     } else if (type === 'moreThanOneDynamicBlock') {
       currentDialog = moreThanOneDynamicBlockModal(data);
     } else if (type === DialogType.PENDING_APPROVAL) {
-      currentDialog = getPendingApprovalModal();
+      currentDialog = getPendingApprovalModal(data);
+    } else if (type === DialogType.UNDER_REVIEW) {
+      currentDialog = getPendingApprovalModal(551);
     }
     else if (type === 'AIDialog') {
       currentDialog = AI_Dialog();
