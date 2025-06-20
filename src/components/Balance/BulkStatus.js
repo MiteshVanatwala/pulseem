@@ -96,8 +96,12 @@ const BulkStatus = ({ classes }) => {
     if (isOpenPackageDialog && accountSettings !== null) {
       let dialog = {};
       let availablePack = null;
-      dialog = renderPackagesListDialog();
-      availablePack = accountAvailablePackages.filter((aa) => { return aa.CampaignType === selectedPackageType.type });
+      if (!accountSettings.Account?.IsBillingAccount) {
+        dialog = renderBillingSupportDialog();
+      } else {
+        dialog = renderPackagesListDialog();
+        availablePack = accountAvailablePackages.filter((aa) => { return aa.CampaignType === selectedPackageType.type });
+      }
       
       const options = {
         classes: classes,
