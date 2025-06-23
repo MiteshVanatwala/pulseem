@@ -2,9 +2,17 @@ import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
 import { BaseDialog } from '../DialogTemplates/BaseDialog';
 import BillingDetails from '../../screens/Settings/BillingSettings/BillingDetails';
+import { useEffect, useState } from 'react';
 
 const BillingSettings = ({ classes, isOpen, onClose }: any) => {
 	const { t } = useTranslation();
+	const [ isSuccess, setIsSuccess ] = useState(false);	
+
+	useEffect(() => {
+		if (isOpen) {
+			setIsSuccess(false);
+		}
+	}, [isOpen]);
   
 	return (
 		<BaseDialog
@@ -17,13 +25,19 @@ const BillingSettings = ({ classes, isOpen, onClose }: any) => {
         </div>
 			}
 			showDivider={false}
-			onClose={() => onClose()}
-			onCancel={() => onClose()}
+			onClose={() => onClose(isSuccess)}
+			onCancel={() => onClose(isSuccess)}
 			reduceTitle
       childrenStyle={"payPerRecipientChild"}
       showDefaultButtons={false}
 		>
-      <BillingDetails classes={classes} />
+      <BillingDetails
+				classes={classes} 
+				onSuccess={() => {
+					setIsSuccess(true)
+					onClose(true);
+				}} 
+			/>
 		</BaseDialog>
 	);
 };

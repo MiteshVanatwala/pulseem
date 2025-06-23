@@ -6,7 +6,6 @@ import { Grid, Paper, Typography, Button, Box, Divider, Tooltip, IconButton } fr
 import { getPackagesDetails } from '../../redux/reducers/dashboardSlice';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
-import { getCommonFeatures } from '../../redux/reducers/commonSlice';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 import { MdArrowBackIos, MdArrowForwardIos, MdSupportAgent } from 'react-icons/md';
 import { BellIcon, WhatsappIcon, SmsIcon, CardIcon, NewsletterIcon } from '../../assets/images/dashboard/index'
@@ -38,6 +37,7 @@ const BulkStatus = ({ classes }) => {
   const [ isOpenPayPerRecipient, setIsOpenPayPerRecipient ] = useState(false);
   const [ isOpenBillingSettings, setIsOpenBillingSettings ] = useState(false);
   const [ toastMessage, setToastMessage ] = useState(null);
+  const [ billingPopupCallback, setBillingPopupCallback ] = useState(null);
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const Redirect = useRedirect();
@@ -323,6 +323,7 @@ const BulkStatus = ({ classes }) => {
                     onClick={() => {
                       if (isBillingDetailsRequired) {
                         setIsOpenBillingSettings(true);
+                        setBillingPopupCallback('SMS');
                       } else {
                         showPackageDialogType({ type: 3, title: t('common.smsBulkTitle') });
                       }
@@ -376,6 +377,7 @@ const BulkStatus = ({ classes }) => {
                     onClick={() => {
                       if (isBillingDetailsRequired) {
                         setIsOpenBillingSettings(true);
+                        setBillingPopupCallback('Newsletter');
                       } else {
                         showPackageDialogType({ type: 2, title: t('common.newsletterBulkTitle') });
                       }
@@ -402,6 +404,7 @@ const BulkStatus = ({ classes }) => {
                           onClick={() => {
                             if (isBillingDetailsRequired) {
                               setIsOpenBillingSettings(true);
+                              setBillingPopupCallback('PayPerRecipient');
                             } else setIsOpenPayPerRecipient(true)
                           }}
                         >
@@ -488,6 +491,7 @@ const BulkStatus = ({ classes }) => {
                 {Whatsapp?.FeatureAllowed && <Button className={clsx(classes.btn, classes.btnRounded, classes.f12)} onClick={() => {
                   if (isBillingDetailsRequired) {
                     setIsOpenBillingSettings(true);
+                    setBillingPopupCallback('Whatsapp');
                   } else {
                     showPackageDialogType({ type: 4, title: t('common.whatsappBulk') })
                   }
@@ -558,8 +562,20 @@ const BulkStatus = ({ classes }) => {
         <BillingSettings
           classes={classes}
           isOpen={isOpenBillingSettings}
-          onClose={() => {
+          onClose={(isSuccess) => {
             setIsOpenBillingSettings(false);
+            if (isSuccess) {
+              if (billingPopupCallback === 'SMS') {
+                showPackageDialogType({ type: 3, title: t('common.smsBulkTitle') });
+              } else if (billingPopupCallback === 'Newsletter') {
+                showPackageDialogType({ type: 2, title: t('common.newsletterBulkTitle') });
+              } else if (billingPopupCallback === 'Whatsapp') {
+                showPackageDialogType({ type: 4, title: t('common.whatsappBulk') });
+              } else if (billingPopupCallback === 'PayPerRecipient') {
+                setIsOpenPayPerRecipient(true);
+              }
+              setBillingPopupCallback(null);
+            }
           }}
         />
         <PayPerRecipientNew

@@ -15,7 +15,7 @@ import Toast from '../../../components/Toast/Toast.component';
 import { CurrenciesToDisplayForPoland } from '../../../helpers/Constants';
 
 
-const BillingDetails = ({ classes }: any) => {
+const BillingDetails = ({ classes, onSuccess = () => {} }: any) => {
   const { t } = useTranslation();
   const dispacth = useDispatch();
   const { isRTL } = useSelector((state: any) => state.core);
@@ -95,6 +95,7 @@ const BillingDetails = ({ classes }: any) => {
 
       switch (response?.payload?.StatusCode) {
         case 201: {
+          onSuccess();
           setToastMessage({ severity: 'success', color: 'success', message: t('settings.accountSettings.savedSuccessfuly'), showAnimtionCheck: false } as any);
           await dispacth(getAccountBilling());
           break;
