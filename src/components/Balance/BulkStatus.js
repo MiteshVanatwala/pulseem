@@ -96,12 +96,12 @@ const BulkStatus = ({ classes }) => {
     if (isOpenPackageDialog && accountSettings !== null) {
       let dialog = {};
       let availablePack = null;
-      if (!accountSettings.Account?.IsBillingAccount) {
-        dialog = renderBillingSupportDialog();
-      } else {
-        dialog = renderPackagesListDialog();
-        availablePack = accountAvailablePackages.filter((aa) => { return aa.CampaignType === selectedPackageType.type });
-      }
+      // if (!accountSettings.Account?.IsBillingAccount) {
+      //   dialog = renderBillingSupportDialog();
+      // } else {
+      dialog = renderPackagesListDialog();
+      availablePack = accountAvailablePackages.filter((aa) => { return aa.CampaignType === selectedPackageType.type });
+      // }
       
       const options = {
         classes: classes,
@@ -253,6 +253,8 @@ const BulkStatus = ({ classes }) => {
 
   if (isGlobal === true && !IsPoland) return <></>;
 
+  const isBillingDetailsRequired = billingDetail?.CompanyName === '' || billingDetail?.CompanyName === null || billingDetail?.CorporationNumber === '' || billingDetail?.CorporationNumber === null || billingDetail?.Email === '' || billingDetail?.Email === null;
+
   return (
     <>
       {renderPackagesDialog()}
@@ -316,7 +318,16 @@ const BulkStatus = ({ classes }) => {
             <Grid item md={4} xs={4} className={isRTL ? classes.textLeft : classes.textRight}>
               {
                 isAllowSms() && (
-                  <Button className={clsx(classes.btn, classes.btnRounded, classes.f12)} onClick={() => showPackageDialogType({ type: 3, title: t('common.smsBulkTitle') })}>
+                  <Button
+                    className={clsx(classes.btn, classes.btnRounded, classes.f12)}
+                    onClick={() => {
+                      if (isBillingDetailsRequired) {
+                        setIsOpenBillingSettings(true);
+                      } else {
+                        showPackageDialogType({ type: 3, title: t('common.smsBulkTitle') });
+                      }
+                    }}
+                  >
                     {t('dashboard.purchase')}
                     {isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                   </Button>
@@ -360,7 +371,16 @@ const BulkStatus = ({ classes }) => {
             <Grid item md={4} xs={4} className={isRTL ? classes.textLeft : classes.textRight}>
               {
                 isAllowNewsletter() && (
-                  <Button className={clsx(classes.btn, classes.btnRounded, classes.f12)} onClick={() => showPackageDialogType({ type: 2, title: t('common.newsletterBulkTitle') })}>
+                  <Button
+                    className={clsx(classes.btn, classes.btnRounded, classes.f12)}
+                    onClick={() => {
+                      if (isBillingDetailsRequired) {
+                        setIsOpenBillingSettings(true);
+                      } else {
+                        showPackageDialogType({ type: 2, title: t('common.newsletterBulkTitle') });
+                      }
+                    }}
+                  >
                     {t('dashboard.purchase')}
                     {isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                   </Button>
@@ -380,7 +400,7 @@ const BulkStatus = ({ classes }) => {
                         <Button
                           className={clsx(classes.btn, classes.btnRounded, classes.f12)}
                           onClick={() => {
-                            if (billingDetail?.CompanyName === '' || billingDetail?.CompanyName === null || billingDetail?.CorporationNumber === '' || billingDetail?.CorporationNumber === null || billingDetail?.Email === '' || billingDetail?.Email === null) {
+                            if (isBillingDetailsRequired) {
                               setIsOpenBillingSettings(true);
                             } else setIsOpenPayPerRecipient(true)
                           }}
@@ -465,7 +485,13 @@ const BulkStatus = ({ classes }) => {
               </Grid>
 
               <Grid item md={4} xs={4} className={isRTL ? classes.textLeft : classes.textRight}>
-                {Whatsapp?.FeatureAllowed && <Button className={clsx(classes.btn, classes.btnRounded, classes.f12)} onClick={() => showPackageDialogType({ type: 4, title: t('common.whatsappBulk') })}>
+                {Whatsapp?.FeatureAllowed && <Button className={clsx(classes.btn, classes.btnRounded, classes.f12)} onClick={() => {
+                  if (isBillingDetailsRequired) {
+                    setIsOpenBillingSettings(true);
+                  } else {
+                    showPackageDialogType({ type: 4, title: t('common.whatsappBulk') })
+                  }
+                }}>
                   {t('dashboard.purchase')}
                   {isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                 </Button>}
