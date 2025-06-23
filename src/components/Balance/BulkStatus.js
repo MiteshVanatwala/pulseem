@@ -375,12 +375,12 @@ const BulkStatus = ({ classes }) => {
                   <Button
                     className={clsx(classes.btn, classes.btnRounded, classes.f12)}
                     onClick={() => {
-                      if (isBillingDetailsRequired) {
-                        setIsOpenBillingSettings(true);
-                        setBillingPopupCallback('Newsletter');
-                      } else {
+                      // if (isBillingDetailsRequired) {
+                      //   setIsOpenBillingSettings(true);
+                      //   setBillingPopupCallback('Newsletter');
+                      // } else {
                         showPackageDialogType({ type: 2, title: t('common.newsletterBulkTitle') });
-                      }
+                      // }
                     }}
                   >
                     {t('dashboard.purchase')}
@@ -567,8 +567,6 @@ const BulkStatus = ({ classes }) => {
             if (isSuccess) {
               if (billingPopupCallback === 'SMS') {
                 showPackageDialogType({ type: 3, title: t('common.smsBulkTitle') });
-              } else if (billingPopupCallback === 'Newsletter') {
-                showPackageDialogType({ type: 2, title: t('common.newsletterBulkTitle') });
               } else if (billingPopupCallback === 'Whatsapp') {
                 showPackageDialogType({ type: 4, title: t('common.whatsappBulk') });
               } else if (billingPopupCallback === 'PayPerRecipient') {
