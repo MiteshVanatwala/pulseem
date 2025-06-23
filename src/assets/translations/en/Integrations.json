@@ -3,6 +3,7 @@
   "signUp": "Sign Up",
   "purchase": "Purchase",
   "cartAbandonment": "Cart Abandonment",
+  "orderStatusCompleted": "Order Status - Completed",
   "authResponses": {
     "201": "Authentication Success",
     "400": "The store is related to another account",

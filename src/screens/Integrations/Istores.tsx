@@ -38,6 +38,7 @@ const Istores = ({ classes }: any) => {
     StoreID: '',
     PurchaseEventActive: false,
     AbandonedEventActive: false,
+    StatusChangedEventActive: false,
     Groups: {} as IntegrationGroups
   } as IsracardModel);
 
@@ -476,6 +477,53 @@ const Istores = ({ classes }: any) => {
                         })
                       },
                       selectedGroups: settings.Groups?.AbandonedGroups || [],
+                      groups: []
+                    }}
+                  />
+                </Box>
+              </Grid>
+            </Grid>
+            <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.pb15)}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={settings.StatusChangedEventActive}
+                    onChange={(event) =>
+                      setSettings({
+                        ...settings,
+                        StatusChangedEventActive: event.target.checked,
+                        Groups: {
+                          ...settings.Groups,
+                          StatusChangedGroups: event.target.checked ? settings?.Groups?.StatusChangedGroups : []
+                        }
+                      })
+                    }
+                    name="signup"
+                    color="primary"
+                  />
+                }
+                // @ts-ignore
+                label={t('integrations.orderStatusCompleted')}
+              />
+              <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.shopifySettingMultiSelect)}>
+                <Box className={clsx('group-dropdown', !settings.StatusChangedEventActive ? classes.disabled : '')}>
+                  <GroupTags
+                    className='group-select'
+                    groupSelected={settings.Groups?.StatusChangedGroups || []}
+                    classes={classes}
+                    title={'siteTracking.typeGroupName'}
+                    dropdown
+                    dropDownProps={{
+                      onChange: (e: any, val: any) => {
+                        setSettings({
+                          ...settings,
+                          Groups: {
+                            ...settings.Groups,
+                            StatusChangedGroups: val.reduce((prevVal: any, newVal: any) => [...prevVal, newVal.GroupID], [])
+                          }
+                        })
+                      },
+                      selectedGroups: settings.Groups?.StatusChangedGroups || [],
                       groups: []
                     }}
                   />

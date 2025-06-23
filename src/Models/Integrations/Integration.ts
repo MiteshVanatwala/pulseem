@@ -25,6 +25,7 @@ export interface IsracardModel {
     RegisterEventActive?: boolean;
     PurchaseEventActive: boolean;
     AbandonedEventActive: boolean;
+    StatusChangedEventActive?: boolean;
     Groups?: IntegrationGroups;
     IntegrationSource?: LU_Plugin
 }
@@ -32,6 +33,7 @@ export interface IntegrationGroups {
     RegisterGroups?: number[];
     PurchaseGroups?: number[];
     AbandonedGroups?: number[];
+    StatusChangedGroups?: number[];
 }
 
 export interface EShopModel {
