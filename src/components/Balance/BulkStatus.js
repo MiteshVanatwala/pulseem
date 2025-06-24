@@ -6,7 +6,6 @@ import { Grid, Paper, Typography, Button, Box, Divider, Tooltip, IconButton } fr
 import { getPackagesDetails } from '../../redux/reducers/dashboardSlice';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
-import { getCommonFeatures } from '../../redux/reducers/commonSlice';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 import { MdArrowBackIos, MdArrowForwardIos, MdSupportAgent } from 'react-icons/md';
 import { BellIcon, WhatsappIcon, SmsIcon, CardIcon, NewsletterIcon } from '../../assets/images/dashboard/index'
@@ -23,17 +22,22 @@ import UnsubscribePayPerRecipient from '../PayPerRecipient/UnsubscribePayPerReci
 import Toast from '../Toast/Toast.component';
 import PayPerRecipientNew from '../PayPerRecipient/PayPerRecipientNew';
 import { BiCog } from 'react-icons/bi';
+import { getAccountBilling } from '../../redux/reducers/BillingSlice';
+import BillingSettings from '../BillingSettings/BillingSettings';
 
 const BulkStatus = ({ classes }) => {
   const { billingTypeId, windowSize, isRTL } = useSelector(state => state.core)
   const { accountSettings, accountFeatures, isGlobal, IsPoland, accountCurrencySymbol, accountIsCurrencySymbolPrefix } = useSelector(state => state.common);
   const { packagesDetails, accountAvailablePackages } = useSelector(state => state.dashboard);
+  const { billing: { Data: billingDetail } } = useSelector(state => state.billing);
   const [ isOpenPackageDialog, setIsOpenPackageDialog ] = useState(false);
   const [ isOpenAddCardDialog, setIsOpenAddCardDialog ] = useState(false);
   const [ isOpenUnsubscribeDialog, setIsOpenUnsubscribeDialog ] = useState(false);
   const [ selectedPackageType, setPackageType ] = useState({ type: 1, title: '' });
   const [ isOpenPayPerRecipient, setIsOpenPayPerRecipient ] = useState(false);
+  const [ isOpenBillingSettings, setIsOpenBillingSettings ] = useState(false);
   const [ toastMessage, setToastMessage ] = useState(null);
+  const [ billingPopupCallback, setBillingPopupCallback ] = useState(null);
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const Redirect = useRedirect();
@@ -68,6 +72,7 @@ const BulkStatus = ({ classes }) => {
   useEffect(() => {
     const initPackages = async () => {
       await dispatch(getPackagesDetails());
+      await dispatch(getAccountBilling());
     }
 
     initPackages();
@@ -82,22 +87,13 @@ const BulkStatus = ({ classes }) => {
     if (isOpenPackageDialog && accountSettings !== null) {
       let dialog = {};
       let availablePack = null;
-
-      if (isGlobal === true && IsPoland) {
-        // TODO - Uncomment below line to enable Poland specific dialogs
-        // dialog = Newsletters.IsEmailPolandSubscribed ? renderUnsubscribePayPerRecipientPolandDialog() : renderSubscribePayPerRecipientPolandDialog();
-        // TODO - Remove below line to disable Poland specific dialogs
-        dialog = renderBillingSupportDialog();
-      } else {
-        if (!IsPoland && (accountSettings.Account.IsBillingAccount === false || selectedPackageType.type === -1 || !accountSettings.Account?.IsPaying)) {
-          dialog = renderBillingSupportDialog();
-        }
-        else {
-          dialog = renderPackagesListDialog();
-          availablePack = accountAvailablePackages.filter((aa) => { return aa.CampaignType === selectedPackageType.type });
-        }
-      }
-
+      // if (!accountSettings.Account?.IsBillingAccount) {
+      //   dialog = renderBillingSupportDialog();
+      // } else {
+      dialog = renderPackagesListDialog();
+      availablePack = accountAvailablePackages.filter((aa) => { return aa.CampaignType === selectedPackageType.type });
+      // }
+      
       const options = {
         classes: classes,
         open: isOpenPackageDialog,
@@ -230,14 +226,7 @@ const BulkStatus = ({ classes }) => {
   }
 
   const showPackageDialogType = async (packageType) => {
-    const settings = await dispatch(getCommonFeatures({ forceRequest: true }));
-    if (!settings?.payload?.Data?.Account?.IsPaying) {
-      packageType = !IsPoland ? { type: -1, title: '' } : { type: 3, title: t('common.newsletterBulkTitle') };
-      setPackageType(packageType);
-    }
-    else {
-      setPackageType(packageType);
-    }
+    setPackageType(packageType);
     setIsOpenPackageDialog(true);
   }
   
@@ -254,6 +243,8 @@ const BulkStatus = ({ classes }) => {
   }
 
   if (isGlobal === true && !IsPoland) return <></>;
+
+  const isBillingDetailsRequired = billingDetail?.CompanyName === '' || billingDetail?.CompanyName === null || billingDetail?.CorporationNumber === '' || billingDetail?.CorporationNumber === null || billingDetail?.Email === '' || billingDetail?.Email === null;
 
   return (
     <>
@@ -318,7 +309,17 @@ const BulkStatus = ({ classes }) => {
             <Grid item md={4} xs={4} className={isRTL ? classes.textLeft : classes.textRight}>
               {
                 isAllowSms() && (
-                  <Button className={clsx(classes.btn, classes.btnRounded, classes.f12)} onClick={() => showPackageDialogType({ type: 3, title: t('common.smsBulkTitle') })}>
+                  <Button
+                    className={clsx(classes.btn, classes.btnRounded, classes.f12)}
+                    onClick={() => {
+                      if (isBillingDetailsRequired) {
+                        setIsOpenBillingSettings(true);
+                        setBillingPopupCallback('SMS');
+                      } else {
+                        showPackageDialogType({ type: 3, title: t('common.smsBulkTitle') });
+                      }
+                    }}
+                  >
                     {t('dashboard.purchase')}
                     {isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                   </Button>
@@ -362,7 +363,17 @@ const BulkStatus = ({ classes }) => {
             <Grid item md={4} xs={4} className={isRTL ? classes.textLeft : classes.textRight}>
               {
                 isAllowNewsletter() && (
-                  <Button className={clsx(classes.btn, classes.btnRounded, classes.f12)} onClick={() => showPackageDialogType({ type: 2, title: t('common.newsletterBulkTitle') })}>
+                  <Button
+                    className={clsx(classes.btn, classes.btnRounded, classes.f12)}
+                    onClick={() => {
+                      // if (isBillingDetailsRequired) {
+                      //   setIsOpenBillingSettings(true);
+                      //   setBillingPopupCallback('Newsletter');
+                      // } else {
+                        showPackageDialogType({ type: 2, title: t('common.newsletterBulkTitle') });
+                      // }
+                    }}
+                  >
                     {t('dashboard.purchase')}
                     {isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                   </Button>
@@ -374,16 +385,18 @@ const BulkStatus = ({ classes }) => {
                     {
                       Newsletters.IsEmailPolandSubscribed ? (
                         <>
-                          {/* <IconButton className={clsx(classes.p5)} onClick={() => setIsOpenPayPerRecipient(true)}>
+                          <IconButton className={clsx(classes.p5)} onClick={() => setIsOpenPayPerRecipient(true)}>
                             <BiCog />
-                          </IconButton> */}
+                          </IconButton>
                         </>
                       ) : (
                         <Button
                           className={clsx(classes.btn, classes.btnRounded, classes.f12)}
                           onClick={() => {
-                            // setIsOpenPayPerRecipient(true)
-                            showPackageDialogType({ type: 2, title: t('common.newsletterBulkTitle') })
+                            if (isBillingDetailsRequired) {
+                              setIsOpenBillingSettings(true);
+                              setBillingPopupCallback('PayPerRecipient');
+                            } else setIsOpenPayPerRecipient(true)
                           }}
                         >
                           {t(`common.${ !Newsletters.IsEmailPolandSubscribed ? 'SubscribeButton' : 'cancel'}`)}
@@ -466,7 +479,14 @@ const BulkStatus = ({ classes }) => {
               </Grid>
 
               <Grid item md={4} xs={4} className={isRTL ? classes.textLeft : classes.textRight}>
-                {Whatsapp?.FeatureAllowed && <Button className={clsx(classes.btn, classes.btnRounded, classes.f12)} onClick={() => showPackageDialogType({ type: 4, title: t('common.whatsappBulk') })}>
+                {Whatsapp?.FeatureAllowed && <Button className={clsx(classes.btn, classes.btnRounded, classes.f12)} onClick={() => {
+                  if (isBillingDetailsRequired) {
+                    setIsOpenBillingSettings(true);
+                    setBillingPopupCallback('Whatsapp');
+                  } else {
+                    showPackageDialogType({ type: 4, title: t('common.whatsappBulk') })
+                  }
+                }}>
                   {t('dashboard.purchase')}
                   {isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                 </Button>}
@@ -530,6 +550,23 @@ const BulkStatus = ({ classes }) => {
             </Grid>
           </>)}
         </Grid>
+        <BillingSettings
+          classes={classes}
+          isOpen={isOpenBillingSettings}
+          onClose={(isSuccess) => {
+            setIsOpenBillingSettings(false);
+            if (isSuccess) {
+              if (billingPopupCallback === 'SMS') {
+                showPackageDialogType({ type: 3, title: t('common.smsBulkTitle') });
+              } else if (billingPopupCallback === 'Whatsapp') {
+                showPackageDialogType({ type: 4, title: t('common.whatsappBulk') });
+              } else if (billingPopupCallback === 'PayPerRecipient') {
+                setIsOpenPayPerRecipient(true);
+              }
+              setBillingPopupCallback(null);
+            }
+          }}
+        />
         <PayPerRecipientNew
           classes={classes}
           isOpen={isOpenPayPerRecipient}

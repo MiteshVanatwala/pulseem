@@ -547,7 +547,10 @@
       "INVALID_CAMPAIGN_ID": "Nieprawidłowy ID kampanii",
       "ACCOUNT_RESTRICTED": "To konto jest ograniczone<br/>Skontaktuj się z naszym działem sprzedaży, aby uregulować płatności",
       "SMS_BULK_ENDED_PURCHASE_OPTION": "Twój pakiet masowy się skończył!<br/>Możesz kupić nowy pakiet SMS lub odrzucić kampanię SMS Total Marketing.",
-      "NEWSLETTER_BULK_ENDED_PURCHASE_OPTION": "Twój pakiet masowy się skończył!<br/>Możesz kupić pakiet Newsletter, klikając przycisk Kup."
+      "NEWSLETTER_BULK_ENDED_PURCHASE_OPTION": "Twój pakiet masowy się skończył!<br/>Możesz kupić pakiet Newsletter, klikając przycisk Kup.",
+      "pendingApproval": "Oczekuje na zatwierdzenie",
+      "PendingApprovalDesc": "Nasz zespół obecnie przegląda Twoje treści. Po zatwierdzeniu wiadomość e-mail zostanie wysłana jak zwykle. Dziękujemy za cierpliwość!",
+      "PendingApproval551Desc": "Użytkownik w trakcie procesu weryfikacji"
     },
     "success": "Kampania została pomyślnie zapisana",
     "sendSettings": {

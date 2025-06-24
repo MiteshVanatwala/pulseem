@@ -471,5 +471,6 @@ export const DialogType = {
     Templates: "templates",
     SET_USER_BLOCK: "campaigns.saveBlock",
     SAVE_TEMPLATE: "campaigns.saveTemplate",
-    PENDING_APPROVAL: "pending_approval"
+    PENDING_APPROVAL: "campaigns.newsLetterEditor.errors.PendingApprovalDesc",
+    UNDER_REVIEW: "campaigns.newsLetterEditor.errors.PendingApproval551Desc",
 };

@@ -21,4 +21,5 @@
     Refund?: number | null | never;
     BillingLanguage: string;
     CompanyNameForInvoice: string;
+    CurrencyID?: number | null | never;
 }

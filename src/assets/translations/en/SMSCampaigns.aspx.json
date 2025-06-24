@@ -580,5 +580,7 @@
   "englishLetterNotApprovedTitle": "This user is not approved for using English characters for 'Campaign from'.",
   "englishLetterNotApprovedDescription": "In order to open this option, you must go through a video verification process with our customer support<br/>please contact by phone <a href='tel:03-524-0290'>03-524-0290</a><br/>Or email <a href='mailto:support@pulseem.com'>support@pulseem.com</a>",
   "hour": "Hour",
-  "hours": "Hours"
+  "hours": "Hours",
+  "PendingApprovalDesc": "Our team is currently reviewing your content. Once approved, the SMS will be sent as usual. Thanks for your patience!",
+  "PendingApproval551Desc": "User under review process."
 }

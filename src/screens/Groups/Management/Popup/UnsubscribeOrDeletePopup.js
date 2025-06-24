@@ -757,7 +757,7 @@ const UnsubscribeOrDeletePopup = ({
             maxHeight={dialogType === "UNSUB_RECIPIENT" ? null : "45vh"}
             classes={classes}
             open={dialogType}
-            childrenStyle={showDropBox ? classes.h50v : classes.h10v}
+            childrenStyle={showDropBox ? classes.h50v : classes.hAuto}
             title={
                 <Box className={clsx(classes.flex, classes.justifyBetween, classes.alignItemsCenter)}>
                     <Box>

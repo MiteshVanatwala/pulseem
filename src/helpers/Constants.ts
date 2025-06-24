@@ -488,6 +488,7 @@ export const DEFAULT_CLIENT_SEARCH = {
     ShowNotClicked: false
 }
 
+export const CurrenciesToDisplayForPoland = [2, 3];
 export const DefaultCountryCodeIsrael = { code: '+972', country: 'IL', name: 'Israel', flag: '🇮🇱' };
 export const DefaultCountryCodePoland = { code: '+48', country: 'PL', name: 'Poland', flag: '🇵🇱' };
 export const CountryCodes = [

@@ -872,5 +872,6 @@
   "selectCellphone": "Select Cellphone",
   "creditsPerMessage": "Credits Per Message",
   "selectFile": "Select file",
-  "contactUs": "Contact Us"
+  "contactUs": "Contact Us",
+  "currency": "Currency"
 }

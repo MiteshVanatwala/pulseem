@@ -12,7 +12,7 @@ import { GoPackage } from 'react-icons/go'
 import { getPackagesDetails } from '../../../../redux/reducers/dashboardSlice'
 import { WhiteLabelObject } from '../../../../components/WhiteLabel/WhiteLabelMigrate'
 import AddCardDialog from '../../../../components/AddCardDialog/AddCardDialog'
-import PayPerRecipient from '../../../../components/PayPerRecipient/PayPerRecipient'
+import PayPerRecipientNew from '../../../../components/PayPerRecipient/PayPerRecipientNew'
 
 const NoCreditDialog = ({
     classes,
@@ -130,9 +130,9 @@ const NoCreditDialog = ({
                             onClick={() => { 
                                 if (isGlobal === true && IsPoland) {
                                     // TODO: Uncomment when PayPerRecipient is ready
-                                    // setIsOpenPayPerRecipient(true);
+                                    setIsOpenPayPerRecipient(true);
                                     // TODO: Comment when PayPerRecipient is ready
-                                    setIsOpenPackageDialog(true);
+                                    // setIsOpenPackageDialog(true);
                                 }
                                 else {
                                     setIsOpenPackageDialog(true);
@@ -174,14 +174,14 @@ const NoCreditDialog = ({
         >
             {!isAllowedToPurchase || IsPoland ? renderBillingSupportDialog().content : renderPackagesListDialog().content}
         </BaseDialog>
-        <PayPerRecipient
+        <PayPerRecipientNew
             classes={classes}
             isOpen={isOpenPayPerRecipient}
             onClose={(PricePackageId) => {
-            setIsOpenPayPerRecipient(false);
-            if (PricePackageId) {
-                setIsOpenAddCardDialog(true);
-            }
+                setIsOpenPayPerRecipient(false);
+                if (PricePackageId) {
+                    setIsOpenAddCardDialog(true);
+                }
             }}
         />
         <AddCardDialog

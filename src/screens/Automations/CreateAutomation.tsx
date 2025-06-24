@@ -151,7 +151,7 @@ const CreateAutomationTemplate = ({ classes }: any) => {
       title: t('automations.labelAutomationName'),
       showDivider: true,
       content: (
-        <Box style={{ maxWidth: 400 }} className={clsx(classes.mb20)}>
+        <Box style={{ maxWidth: 400, overflowX: 'hidden' }} className={clsx(classes.mb20)}>
 					<Typography title={t("automations.labelAutomationName")} className={classes.bold}>
 						{t("automations.labelAutomationName")}
 					</Typography>
@@ -165,7 +165,7 @@ const CreateAutomationTemplate = ({ classes }: any) => {
             autoComplete="off"
             onChange={(event: any) => setAutomationName(event.target.value)}
             error={!!errors.automationName}
-            style={{ width: windowSize !== 'xs' ? "400px": '100%' }}
+            style={{ width: '100%' }}
           />
           <Box className='textBoxWrapper'>
             <Typography className={clsx(errors.automationName ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
