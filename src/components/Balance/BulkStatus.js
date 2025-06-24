@@ -72,20 +72,11 @@ const BulkStatus = ({ classes }) => {
   useEffect(() => {
     const initPackages = async () => {
       await dispatch(getPackagesDetails());
+      await dispatch(getAccountBilling());
     }
 
     initPackages();
   }, []);
-
-  useEffect(() => {
-    const fetchAccountBilling = async () => {
-      if (IsPoland && isGlobal) {
-        await dispatch(getAccountBilling());
-      }
-    };
-    
-    fetchAccountBilling();
-  }, [ IsPoland, isGlobal ]);
 
   const handleDialogClose = () => {
     setIsOpenPackageDialog(false);
