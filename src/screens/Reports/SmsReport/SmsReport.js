@@ -69,6 +69,8 @@ const SmsReport = ({ classes }) => {
       onClick: () => !userRoles?.HideRecipients && navigate(CLIENT_CONSTANTS.BASEURL, {
         state: {
           ...CLIENT_CONSTANTS.QUERY_PARAMS, CampaignID: id, PageType: CLIENT_CONSTANTS.PAGE_TYPES.TotalCountSMSCampaignID,
+          FromDate: smsQuery.From,
+          ToDate: smsQuery.To,
           PageProperty: GetPageNyName('reports/SMSMainReport')
         }
       }),
@@ -114,6 +116,8 @@ const SmsReport = ({ classes }) => {
       onClick: () => !userRoles?.HideRecipients && navigate(CLIENT_CONSTANTS.BASEURL, {
         state: {
           ...CLIENT_CONSTANTS.QUERY_PARAMS, CampaignID: id, PageType: CLIENT_CONSTANTS.PAGE_TYPES.FailureCountSMSCampaignID,
+          FromDate: smsQuery.From,
+          ToDate: smsQuery.To,
           PageProperty: GetPageNyName('reports/SMSMainReport')
         }
       })
@@ -123,6 +127,8 @@ const SmsReport = ({ classes }) => {
       onClick: () => !userRoles?.HideRecipients && navigate(CLIENT_CONSTANTS.BASEURL, {
         state: {
           ...CLIENT_CONSTANTS.QUERY_PARAMS, CampaignID: id, PageType: CLIENT_CONSTANTS.PAGE_TYPES.RemovedCountSMSCampaignID,
+          FromDate: smsQuery.From,
+          ToDate: smsQuery.To,
           PageProperty: GetPageNyName('reports/SMSMainReport')
         }
       })
@@ -143,6 +149,8 @@ const SmsReport = ({ classes }) => {
       onClick: () => !userRoles?.HideRecipients && navigate(CLIENT_CONSTANTS.BASEURL, {
         state: {
           ...CLIENT_CONSTANTS.QUERY_PARAMS, CampaignID: id, PageType: CLIENT_CONSTANTS.PAGE_TYPES.SuccessCountSMSCampaignID,
+          FromDate: smsQuery.From,
+          ToDate: smsQuery.To,
           PageProperty: GetPageNyName('reports/SMSMainReport')
         }
       }),
@@ -159,6 +167,8 @@ const SmsReport = ({ classes }) => {
             CampaignID: id,
             PageType: CLIENT_CONSTANTS.PAGE_TYPES.Revenue,
             ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSms,
+            FromDate: smsQuery.From,
+            ToDate: smsQuery.To,
             PageProperty: GetPageNyName('reports/SMSMainReport')
           }
         })
