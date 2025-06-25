@@ -125,7 +125,7 @@ const SearchLine = ({
                         inputProps={{
                             style: {
                                 textAlign: isRTL ? 'right' : 'left',
-                                padding: '13px 0px'
+                                padding: '10px 0px'
                             }
                         }}
                         type="tel"
