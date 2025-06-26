@@ -68,13 +68,7 @@ const SmsReport = ({ classes }) => {
       href: `/Pulseem/ClientSearchResult.aspx?TotalCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`,
       onClick: () => !userRoles?.HideRecipients && navigate(CLIENT_CONSTANTS.BASEURL, {
         state: {
-          ...Object.fromEntries(
-            Object.entries(CLIENT_CONSTANTS.QUERY_PARAMS || {})
-              .filter(([key, value]) => typeof value !== 'function')
-          ),
-          CampaignID: id, PageType: CLIENT_CONSTANTS.PAGE_TYPES.TotalCountSMSCampaignID,
-          From: smsQuery.From,
-          To: smsQuery.To,
+          ...CLIENT_CONSTANTS.QUERY_PARAMS, CampaignID: id, PageType: CLIENT_CONSTANTS.PAGE_TYPES.TotalCountSMSCampaignID,
           FromDate: smsQuery.From,
           ToDate: smsQuery.To,
           PageProperty: GetPageNyName('reports/SMSMainReport')
@@ -121,13 +115,7 @@ const SmsReport = ({ classes }) => {
       href: `/Pulseem/ClientSearchResult.aspx?FailureCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`,
       onClick: () => !userRoles?.HideRecipients && navigate(CLIENT_CONSTANTS.BASEURL, {
         state: {
-          ...Object.fromEntries(
-            Object.entries(CLIENT_CONSTANTS.QUERY_PARAMS || {})
-              .filter(([key, value]) => typeof value !== 'function')
-          ),
-          CampaignID: id, PageType: CLIENT_CONSTANTS.PAGE_TYPES.FailureCountSMSCampaignID,
-          From: smsQuery.From,
-          To: smsQuery.To,
+          ...CLIENT_CONSTANTS.QUERY_PARAMS, CampaignID: id, PageType: CLIENT_CONSTANTS.PAGE_TYPES.FailureCountSMSCampaignID,
           FromDate: smsQuery.From,
           ToDate: smsQuery.To,
           PageProperty: GetPageNyName('reports/SMSMainReport')
@@ -138,13 +126,7 @@ const SmsReport = ({ classes }) => {
       title: SizeOptionsOfHandHeldDevices.indexOf(windowSize) > -1 ? '' : t('mainReport.removed'),
       onClick: () => !userRoles?.HideRecipients && navigate(CLIENT_CONSTANTS.BASEURL, {
         state: {
-          ...Object.fromEntries(
-            Object.entries(CLIENT_CONSTANTS.QUERY_PARAMS || {})
-              .filter(([key, value]) => typeof value !== 'function')
-          ),
-          CampaignID: id, PageType: CLIENT_CONSTANTS.PAGE_TYPES.RemovedCountSMSCampaignID,
-          From: smsQuery.From,
-          To: smsQuery.To,
+          ...CLIENT_CONSTANTS.QUERY_PARAMS, CampaignID: id, PageType: CLIENT_CONSTANTS.PAGE_TYPES.RemovedCountSMSCampaignID,
           FromDate: smsQuery.From,
           ToDate: smsQuery.To,
           PageProperty: GetPageNyName('reports/SMSMainReport')
@@ -166,13 +148,7 @@ const SmsReport = ({ classes }) => {
       href: `/Pulseem/ClientSearchResult.aspx?SuccessCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`,
       onClick: () => !userRoles?.HideRecipients && navigate(CLIENT_CONSTANTS.BASEURL, {
         state: {
-          ...Object.fromEntries(
-            Object.entries(CLIENT_CONSTANTS.QUERY_PARAMS || {})
-              .filter(([key, value]) => typeof value !== 'function')
-          ),
-          CampaignID: id, PageType: CLIENT_CONSTANTS.PAGE_TYPES.SuccessCountSMSCampaignID,
-          From: smsQuery.From,
-          To: smsQuery.To,
+          ...CLIENT_CONSTANTS.QUERY_PARAMS, CampaignID: id, PageType: CLIENT_CONSTANTS.PAGE_TYPES.SuccessCountSMSCampaignID,
           FromDate: smsQuery.From,
           ToDate: smsQuery.To,
           PageProperty: GetPageNyName('reports/SMSMainReport')
@@ -211,6 +187,8 @@ const SmsReport = ({ classes }) => {
           SerachTxt: pageStateProperty.SearchData?.SerachTxt ?? '',
           From: pageStateProperty.SearchData?.From ?? null,
           To: pageStateProperty.SearchData?.To ?? null,
+          FromDate: smsQuery.From,
+          ToDate: smsQuery.To,
           ShowTestCampaigns: pageStateProperty.SearchData?.ShowTestCampaigns ? pageStateProperty.SearchData?.ShowTestCampaigns : smsQuery.ShowTestCampaigns,
           CampaignID: pageStateProperty.SearchData?.CampaignID ?? null,
         }
