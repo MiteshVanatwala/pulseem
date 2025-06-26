@@ -63,6 +63,24 @@ const SmsReport = ({ classes }) => {
 
   moment.locale(language)
 
+  const sanitizePageProperty = (pageProperty) => {
+    if (!pageProperty) return null;
+
+    const sanitized = { ...pageProperty };
+
+    // Convert SearchData moment objects to strings
+    if (sanitized.SearchData) {
+      sanitized.SearchData = JSON.parse(JSON.stringify(sanitized.SearchData, (key, value) => {
+        if (moment.isMoment(value)) {
+          return value.locale('en').toISOString(); // Convert to English ISO string
+        }
+        return value;
+      }));
+    }
+
+    return sanitized;
+  };
+
   const getHrefs = (id) => ({
     TotalSendTo: {
       href: `/Pulseem/ClientSearchResult.aspx?TotalCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`,
@@ -71,7 +89,7 @@ const SmsReport = ({ classes }) => {
           ...CLIENT_CONSTANTS.QUERY_PARAMS, CampaignID: id, PageType: CLIENT_CONSTANTS.PAGE_TYPES.TotalCountSMSCampaignID,
           FromDate: smsQuery.From,
           ToDate: smsQuery.To,
-          PageProperty: GetPageNyName('reports/SMSMainReport')
+          PageProperty: sanitizePageProperty(GetPageNyName('reports/SMSMainReport'))
         }
       }),
     },
@@ -118,7 +136,7 @@ const SmsReport = ({ classes }) => {
           ...CLIENT_CONSTANTS.QUERY_PARAMS, CampaignID: id, PageType: CLIENT_CONSTANTS.PAGE_TYPES.FailureCountSMSCampaignID,
           FromDate: smsQuery.From,
           ToDate: smsQuery.To,
-          PageProperty: GetPageNyName('reports/SMSMainReport')
+          PageProperty: sanitizePageProperty(GetPageNyName('reports/SMSMainReport'))
         }
       })
     },
@@ -129,7 +147,7 @@ const SmsReport = ({ classes }) => {
           ...CLIENT_CONSTANTS.QUERY_PARAMS, CampaignID: id, PageType: CLIENT_CONSTANTS.PAGE_TYPES.RemovedCountSMSCampaignID,
           FromDate: smsQuery.From,
           ToDate: smsQuery.To,
-          PageProperty: GetPageNyName('reports/SMSMainReport')
+          PageProperty: sanitizePageProperty(GetPageNyName('reports/SMSMainReport'))
         }
       })
     },
@@ -151,7 +169,7 @@ const SmsReport = ({ classes }) => {
           ...CLIENT_CONSTANTS.QUERY_PARAMS, CampaignID: id, PageType: CLIENT_CONSTANTS.PAGE_TYPES.SuccessCountSMSCampaignID,
           FromDate: smsQuery.From,
           ToDate: smsQuery.To,
-          PageProperty: GetPageNyName('reports/SMSMainReport')
+          PageProperty: sanitizePageProperty(GetPageNyName('reports/SMSMainReport'))
         }
       }),
     },
@@ -169,7 +187,7 @@ const SmsReport = ({ classes }) => {
             ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSms,
             FromDate: smsQuery.From,
             ToDate: smsQuery.To,
-            PageProperty: GetPageNyName('reports/SMSMainReport')
+            PageProperty: sanitizePageProperty(GetPageNyName('reports/SMSMainReport'))
           }
         })
       },
@@ -179,7 +197,7 @@ const SmsReport = ({ classes }) => {
 
   useEffect(() => {
     const queryState = from?.toLowerCase().indexOf('clientsearchresult') > -1;
-    const pageStateProperty = GetPageNyName('reports/SMSMainReport');
+    const pageStateProperty = sanitizePageProperty(GetPageNyName('reports/SMSMainReport'))
     let searchData = { ...smsQuery, SerachTxt: qs !== null && qs?.name ? qs?.name : smsQuery.SerachTxt, From: qs !== null && qs?.name ? null : priorDate };
     if (queryState && pageStateProperty) {
       if (pageStateProperty.SearchData) {
