@@ -61,7 +61,7 @@
     "description": "Aby zintegrować swój sklep Shopify z kontem Pulseem, przeczytaj poniższy poradnik:",
     "connectStoreAction": "Połącz sklep Shopify",
     "oldConnectionOptionsButton": "Użyj starej integracji",
-    "tryNewIntegrationButton": "Wypróbuj naszą nową wtyczkę"
+    "tryNewIntegrationButton": "Integracja ze starszymi wersjami"
   },
   "wooCommerce": {
     "title": "WooCommerce",

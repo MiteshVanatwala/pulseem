@@ -511,6 +511,7 @@ const Shopify = ({ classes }: any) => {
           aria-controls="history-content"
           id="history-header"
           className={classes.accordionSummary}
+          style={{ backgroundColor: '#F0F5FF' }}
         >
           {t(`integrations.shopify.oldConnectionOptionsButton`)}
         </AccordionSummary>

@@ -61,7 +61,7 @@
     "description": "In order to integrate your Shopify store to your Pulseem account, please read the following guide:",
     "connectStoreAction": "Connect Shopify Store",
     "oldConnectionOptionsButton": "Use the old integration",
-    "tryNewIntegrationButton": "Try our new plugin"
+    "tryNewIntegrationButton": "Legacy Integration"
   },
   "wooCommerce": {
     "title": "WooCommerce",
