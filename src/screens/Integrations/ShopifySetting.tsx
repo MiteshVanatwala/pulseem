@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Box, Typography, Button, Grid, TextField, FormControlLabel, Checkbox } from "@material-ui/core";
+import { Box, Typography, Button, Grid, TextField, FormControlLabel, Checkbox, Accordion, AccordionSummary, AccordionDetails } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import clsx from "clsx";
 import { useDispatch, useSelector } from "react-redux";
@@ -19,6 +19,7 @@ import { URL_HELPER } from "../../helpers/Links/ExternalLink";
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { SHOPIFY_SITE_TRACKING } from "../../helpers/Constants";
 import { getScript } from "../../redux/reducers/siteTrackingSlice";
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 const Shopify = ({ classes }: any) => {
   const { t } = useTranslation();
@@ -32,6 +33,8 @@ const Shopify = ({ classes }: any) => {
   const [isAuthenticated, setAuthenticated] = useState(false);
   const [isShowCredentials, setIsShowCredentials] = useState(false);
   const [isPageLoading, setIsPageLoading] = useState(true);
+  const [hideOldIntegration, setHideOldIntegration] = useState(true);
+  const [hasShopifyIntegration, setHasShopifyIntegration] = useState(false);
   const [dialogType, setDialogType] = useState<{
     type: string;
   } | null>(null);
@@ -221,6 +224,12 @@ const Shopify = ({ classes }: any) => {
         if (shopifyResponse.api_access_token && shopifyResponse.api_key && shopifyResponse.store_name) {
           setSettings(response?.payload?.Data as ShopifyModel);
           setAuthenticated(true);
+          setHideOldIntegration(false);
+          setHasShopifyIntegration(true);
+        }
+        else {
+          setHideOldIntegration(true);
+          setHasShopifyIntegration(false);
         }
         break;
       }
@@ -472,8 +481,40 @@ const Shopify = ({ classes }: any) => {
   return (
     <>
       {toastMessage && renderToast()}
-      {
-        !isPageLoading && (
+      <Box className={clsx(classes.containerBody, classes.mt20)}>
+        <Box>
+          {t(`integrations.shopify.description`)}
+        </Box>
+        <Box className={clsx(classes.dFlex)} style={{ gap: 25 }}>
+          <Button
+            onClick={() => window.open('https://site.pulseem.co.il/pulseem-shopify-plugin/', '_blank')}
+            variant='contained'
+            size='medium'
+            className={clsx(
+              classes.btn,
+              classes.btnRounded,
+              classes.mb20,
+              classes.mt20
+            )}
+            color="primary"
+          >
+            {hasShopifyIntegration ? t(`integrations.shopify.tryNewIntegrationButton`) : t(`integrations.shopify.connectStoreAction`)}
+          </Button>
+        </Box>
+      </Box>
+      <Accordion defaultExpanded={false} expanded={!isPageLoading && !hideOldIntegration} key={'acc_1'}>
+        <AccordionSummary
+          onClick={() => {
+            setHideOldIntegration(!hideOldIntegration)
+          }}
+          expandIcon={<ExpandMoreIcon style={{ color: '#000' }} />}
+          aria-controls="history-content"
+          id="history-header"
+          className={classes.accordionSummary}
+        >
+          {t(`integrations.shopify.oldConnectionOptionsButton`)}
+        </AccordionSummary>
+        <AccordionDetails className={classes.accordionDetails}>
           <Box className={clsx(classes.containerBody)}>
             <Button
               onClick={() => window.open(URL_HELPER.Integrations.Shopify.guide, '_blank')}
@@ -659,194 +700,193 @@ const Shopify = ({ classes }: any) => {
                 </>
               )
             }
-            <Loader isOpen={showLoader} showBackdrop={true} />
+            {
+              isAuthenticated && !hideOldIntegration && (
+                <Box className={classes.pt30}>
+                  <Typography className={clsx(classes.managementTitle, classes.f22, classes.pb15, classes.bold)}>
+                    {t('integrations.shopify.insertClientToGroup')}
+                  </Typography>
+                  <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.pb15)}>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={settings.RegisterEventActive}
+                          onChange={(event) =>
+                            setSettings({
+                              ...settings,
+                              RegisterEventActive: event.target.checked,
+                              Groups: {
+                                ...settings.Groups,
+                                RegisterGroups: event.target.checked ? settings?.Groups?.RegisterGroups : []
+                              }
+                            })
+                          }
+                          name="signup"
+                          color="primary"
+                        />
+                      }
+                      label={t('integrations.shopify.siteSignUp')}
+                    />
+                    <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.shopifySettingMultiSelect)}>
+                      <Box className={clsx('group-dropdown', !settings.RegisterEventActive ? classes.disabled : '')}>
+                        <GroupTags
+                          className='group-select'
+                          groupSelected={settings.Groups?.RegisterGroups || []}
+                          classes={classes}
+                          title={'siteTracking.typeGroupName'}
+                          dropdown
+                          dropDownProps={{
+                            onChange: (e: any, val: any) => {
+                              setSettings({
+                                ...settings,
+                                Groups: {
+                                  ...settings.Groups,
+                                  RegisterGroups: val.reduce((prevVal: any, newVal: any) => [...prevVal, newVal.GroupID], [])
+                                }
+                              })
+                            },
+                            selectedGroups: settings.Groups?.RegisterGroups || [],
+                            groups: []
+                          }}
+                        />
+                      </Box>
+                    </Grid>
+                  </Grid>
+
+                  <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.pb15)}>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={settings.PurchaseEventActive}
+                          onChange={(event) =>
+                            setSettings({
+                              ...settings,
+                              PurchaseEventActive: event.target.checked,
+                              Groups: {
+                                ...settings.Groups,
+                                PurchaseGroups: event.target.checked ? settings?.Groups?.PurchaseGroups : []
+                              }
+                            })
+                          }
+                          name="signup"
+                          color="primary"
+                        />
+                      }
+                      label={t('integrations.purchase')}
+                    />
+                    <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.shopifySettingMultiSelect)}>
+                      <Box className={clsx('group-dropdown', !settings.PurchaseEventActive ? classes.disabled : '')}>
+                        <GroupTags
+                          className='group-select'
+                          groupSelected={settings.Groups?.PurchaseGroups || []}
+                          classes={classes}
+                          title={'siteTracking.typeGroupName'}
+                          dropdown
+                          dropDownProps={{
+                            onChange: (e: any, val: any) => {
+                              setSettings({
+                                ...settings,
+                                Groups: {
+                                  ...settings.Groups,
+                                  PurchaseGroups: val.reduce((prevVal: any, newVal: any) => [...prevVal, newVal.GroupID], [])
+                                }
+                              })
+                            },
+                            selectedGroups: settings.Groups?.PurchaseGroups || [],
+                            groups: []
+                          }}
+                        />
+                      </Box>
+                    </Grid>
+                  </Grid>
+
+                  <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.pb15)}>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={settings.AbandonedEventActive}
+                          onChange={(event) =>
+                            setSettings({
+                              ...settings,
+                              AbandonedEventActive: event.target.checked,
+                              Groups: {
+                                ...settings.Groups,
+                                AbandonedGroups: event.target.checked ? settings?.Groups?.AbandonedGroups : []
+                              }
+                            })
+                          }
+                          name="signup"
+                          color="primary"
+                        />
+                      }
+                      label={t('integrations.cartAbandonment')}
+                    />
+                    <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.shopifySettingMultiSelect)}>
+                      <Box className={clsx('group-dropdown', !settings.AbandonedEventActive ? classes.disabled : '')}>
+                        <GroupTags
+                          className='group-select'
+                          groupSelected={settings.Groups?.AbandonedGroups || []}
+                          classes={classes}
+                          title={'siteTracking.typeGroupName'}
+                          dropdown
+                          dropDownProps={{
+                            onChange: (e: any, val: any) => {
+                              setSettings({
+                                ...settings,
+                                Groups: {
+                                  ...settings.Groups,
+                                  AbandonedGroups: val.reduce((prevVal: any, newVal: any) => [...prevVal, newVal.GroupID], [])
+                                }
+                              })
+                            },
+                            selectedGroups: settings.Groups?.AbandonedGroups || [],
+                            groups: []
+                          }}
+                        />
+                      </Box>
+                    </Grid>
+                  </Grid>
+
+                  {!!errors.group_not_selected && (
+                    <Box className={clsx(classes.flex, classes.pbt15)}>
+                      <Typography className={clsx(classes.errorText, classes.f16)}>
+                        {errors.group_not_selected}
+                      </Typography>
+                    </Box>
+                  )}
+
+                  {!!messages.group_saved && (
+                    <Box className={clsx(classes.flex, classes.pbt15)}>
+                      <Typography className={clsx(classes.green, classes.f16)}>
+                        {messages.group_saved}
+                      </Typography>
+                    </Box>
+                  )}
+
+                  <Box className={clsx(classes.flex, classes.pbt15)}>
+                    <Button
+                      onClick={submitForm}
+                      variant='contained'
+                      size='medium'
+                      className={clsx(
+                        classes.btn,
+                        classes.btnRounded,
+                        classes.redButton
+                      )}
+                      color="primary"
+                      startIcon={<BiSave className={classes.colorWhite} />}
+                    >
+                      {t("common.save")}
+                    </Button>
+                    <Loader isOpen={showLoader} showBackdrop={true} />
+                  </Box>
+                </Box>
+              )
+            }
           </Box>
-        )
-      }
-
-      {
-        isAuthenticated && (
-          <Box className={classes.pt30}>
-            <Typography className={clsx(classes.managementTitle, classes.f22, classes.pb15, classes.bold)}>
-              {t('integrations.shopify.insertClientToGroup')}
-            </Typography>
-            <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.pb15)}>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={settings.RegisterEventActive}
-                    onChange={(event) =>
-                      setSettings({
-                        ...settings,
-                        RegisterEventActive: event.target.checked,
-                        Groups: {
-                          ...settings.Groups,
-                          RegisterGroups: event.target.checked ? settings?.Groups?.RegisterGroups : []
-                        }
-                      })
-                    }
-                    name="signup"
-                    color="primary"
-                  />
-                }
-                label={t('integrations.shopify.siteSignUp')}
-              />
-              <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.shopifySettingMultiSelect)}>
-                <Box className={clsx('group-dropdown', !settings.RegisterEventActive ? classes.disabled : '')}>
-                  <GroupTags
-                    className='group-select'
-                    groupSelected={settings.Groups?.RegisterGroups || []}
-                    classes={classes}
-                    title={'siteTracking.typeGroupName'}
-                    dropdown
-                    dropDownProps={{
-                      onChange: (e: any, val: any) => {
-                        setSettings({
-                          ...settings,
-                          Groups: {
-                            ...settings.Groups,
-                            RegisterGroups: val.reduce((prevVal: any, newVal: any) => [...prevVal, newVal.GroupID], [])
-                          }
-                        })
-                      },
-                      selectedGroups: settings.Groups?.RegisterGroups || [],
-                      groups: []
-                    }}
-                  />
-                </Box>
-              </Grid>
-            </Grid>
-
-            <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.pb15)}>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={settings.PurchaseEventActive}
-                    onChange={(event) =>
-                      setSettings({
-                        ...settings,
-                        PurchaseEventActive: event.target.checked,
-                        Groups: {
-                          ...settings.Groups,
-                          PurchaseGroups: event.target.checked ? settings?.Groups?.PurchaseGroups : []
-                        }
-                      })
-                    }
-                    name="signup"
-                    color="primary"
-                  />
-                }
-                label={t('integrations.purchase')}
-              />
-              <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.shopifySettingMultiSelect)}>
-                <Box className={clsx('group-dropdown', !settings.PurchaseEventActive ? classes.disabled : '')}>
-                  <GroupTags
-                    className='group-select'
-                    groupSelected={settings.Groups?.PurchaseGroups || []}
-                    classes={classes}
-                    title={'siteTracking.typeGroupName'}
-                    dropdown
-                    dropDownProps={{
-                      onChange: (e: any, val: any) => {
-                        setSettings({
-                          ...settings,
-                          Groups: {
-                            ...settings.Groups,
-                            PurchaseGroups: val.reduce((prevVal: any, newVal: any) => [...prevVal, newVal.GroupID], [])
-                          }
-                        })
-                      },
-                      selectedGroups: settings.Groups?.PurchaseGroups || [],
-                      groups: []
-                    }}
-                  />
-                </Box>
-              </Grid>
-            </Grid>
-
-            <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.pb15)}>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={settings.AbandonedEventActive}
-                    onChange={(event) =>
-                      setSettings({
-                        ...settings,
-                        AbandonedEventActive: event.target.checked,
-                        Groups: {
-                          ...settings.Groups,
-                          AbandonedGroups: event.target.checked ? settings?.Groups?.AbandonedGroups : []
-                        }
-                      })
-                    }
-                    name="signup"
-                    color="primary"
-                  />
-                }
-                label={t('integrations.cartAbandonment')}
-              />
-              <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.shopifySettingMultiSelect)}>
-                <Box className={clsx('group-dropdown', !settings.AbandonedEventActive ? classes.disabled : '')}>
-                  <GroupTags
-                    className='group-select'
-                    groupSelected={settings.Groups?.AbandonedGroups || []}
-                    classes={classes}
-                    title={'siteTracking.typeGroupName'}
-                    dropdown
-                    dropDownProps={{
-                      onChange: (e: any, val: any) => {
-                        setSettings({
-                          ...settings,
-                          Groups: {
-                            ...settings.Groups,
-                            AbandonedGroups: val.reduce((prevVal: any, newVal: any) => [...prevVal, newVal.GroupID], [])
-                          }
-                        })
-                      },
-                      selectedGroups: settings.Groups?.AbandonedGroups || [],
-                      groups: []
-                    }}
-                  />
-                </Box>
-              </Grid>
-            </Grid>
-
-            {!!errors.group_not_selected && (
-              <Box className={clsx(classes.flex, classes.pbt15)}>
-                <Typography className={clsx(classes.errorText, classes.f16)}>
-                  {errors.group_not_selected}
-                </Typography>
-              </Box>
-            )}
-
-            {!!messages.group_saved && (
-              <Box className={clsx(classes.flex, classes.pbt15)}>
-                <Typography className={clsx(classes.green, classes.f16)}>
-                  {messages.group_saved}
-                </Typography>
-              </Box>
-            )}
-
-            <Box className={clsx(classes.flex, classes.pbt15)}>
-              <Button
-                onClick={submitForm}
-                variant='contained'
-                size='medium'
-                className={clsx(
-                  classes.btn,
-                  classes.btnRounded,
-                  classes.redButton
-                )}
-                color="primary"
-                startIcon={<BiSave className={classes.colorWhite} />}
-              >
-                {t("common.save")}
-              </Button>
-              <Loader isOpen={showLoader} showBackdrop={true} />
-            </Box>
-          </Box>
-        )
-      }
+        </AccordionDetails>
+      </Accordion>
+      <Loader isOpen={showLoader} showBackdrop={true} />
       {renderResetDialog()}
       {renderDialog()}
     </>

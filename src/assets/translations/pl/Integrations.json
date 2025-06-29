@@ -57,7 +57,11 @@
     "scriptDescription4": "Wróć do menu i przejdź do menu \"Ustawienia\", a w nim do \"Kasy\"",
     "scriptDescription5": "Zejdź do \"Strona statusu zamówienia\", wklej załączony tutaj skrypt i kliknij Zapisz:",
     "shopifyReadyScript": "Gotowy skrypt Shopify:",
-    "scriptDescription6": "Po zaimplementowaniu tego skryptu, raporty kampanii będą pokazywać przychody z każdej kampanii."
+    "scriptDescription6": "Po zaimplementowaniu tego skryptu, raporty kampanii będą pokazywać przychody z każdej kampanii.",
+    "description": "Aby zintegrować swój sklep Shopify z kontem Pulseem, przeczytaj poniższy poradnik:",
+    "connectStoreAction": "Połącz sklep Shopify",
+    "oldConnectionOptionsButton": "Użyj starej integracji",
+    "tryNewIntegrationButton": "Wypróbuj naszą nową wtyczkę"
   },
   "wooCommerce": {
     "title": "WooCommerce",
