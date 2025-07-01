@@ -58,14 +58,14 @@
     "scriptDescription5": "רדו עד “Order Status Page” ,הדביקו בתוכו את הסקריפט המצורף כאן ולחצו Save:",
     "shopifyReadyScript": "סקריפט מוכן לשופיפיי:",
     "scriptDescription6": "לאחר הטמעת מתודה זו , דו\"חות הקמפיינים יציגו נתונים על ההכנסות שלך מכל קמפיין.",
-    "description": "על מנת לחבר את חנות הווקומרס שלכם לחשבון זה בפולסים, אנא קראו את המדריך הבא:",
+    "description": "על מנת לחבר את חנות השופיפיי שלכם לחשבון זה בפולסים, אנא קראו את המדריך הבא:",
     "connectStoreAction": "חברו חנות Shopify",
     "oldConnectionOptionsButton": "ניהול אינטגרציה בגרסאות קודמות",
     "tryNewIntegrationButton": "נסו את הפלאגין החדש"
   },
   "wooCommerce": {
     "title": "WooCommerce",
-    "description": "על מנת לחבר את חנות הווקומרס שלכם לחשבון זה בפולסים, אנא קראו את המדריך הבא:",
+    "description": "על מנת לחבר את חנות השופיפיי שלכם לחשבון זה בפולסים, אנא קראו את המדריך הבא:",
     "connectStore": "חברו חנות WooCommerce"
   },
   "cashCow": {
