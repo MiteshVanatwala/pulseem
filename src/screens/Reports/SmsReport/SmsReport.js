@@ -69,6 +69,8 @@ const SmsReport = ({ classes }) => {
       onClick: () => !userRoles?.HideRecipients && navigate(CLIENT_CONSTANTS.BASEURL, {
         state: {
           ...CLIENT_CONSTANTS.QUERY_PARAMS, CampaignID: id, PageType: CLIENT_CONSTANTS.PAGE_TYPES.TotalCountSMSCampaignID,
+          FromDate: smsQuery.From ? moment(smsQuery.From).format(DateFormats.FULL_DATE_START) : null,
+          ToDate: smsQuery.To ? moment(smsQuery.To).format(DateFormats.FULL_DATE_START) : null,
           PageProperty: GetPageNyName('reports/SMSMainReport')
         }
       }),
@@ -114,6 +116,8 @@ const SmsReport = ({ classes }) => {
       onClick: () => !userRoles?.HideRecipients && navigate(CLIENT_CONSTANTS.BASEURL, {
         state: {
           ...CLIENT_CONSTANTS.QUERY_PARAMS, CampaignID: id, PageType: CLIENT_CONSTANTS.PAGE_TYPES.FailureCountSMSCampaignID,
+          FromDate: smsQuery.From ? moment(smsQuery.From).format(DateFormats.FULL_DATE_START) : null,
+          ToDate: smsQuery.To ? moment(smsQuery.To).format(DateFormats.FULL_DATE_START) : null,
           PageProperty: GetPageNyName('reports/SMSMainReport')
         }
       })
@@ -123,6 +127,8 @@ const SmsReport = ({ classes }) => {
       onClick: () => !userRoles?.HideRecipients && navigate(CLIENT_CONSTANTS.BASEURL, {
         state: {
           ...CLIENT_CONSTANTS.QUERY_PARAMS, CampaignID: id, PageType: CLIENT_CONSTANTS.PAGE_TYPES.RemovedCountSMSCampaignID,
+          FromDate: smsQuery.From ? moment(smsQuery.From).format(DateFormats.FULL_DATE_START) : null,
+          ToDate: smsQuery.To ? moment(smsQuery.To).format(DateFormats.FULL_DATE_START) : null,
           PageProperty: GetPageNyName('reports/SMSMainReport')
         }
       })
@@ -143,6 +149,8 @@ const SmsReport = ({ classes }) => {
       onClick: () => !userRoles?.HideRecipients && navigate(CLIENT_CONSTANTS.BASEURL, {
         state: {
           ...CLIENT_CONSTANTS.QUERY_PARAMS, CampaignID: id, PageType: CLIENT_CONSTANTS.PAGE_TYPES.SuccessCountSMSCampaignID,
+          FromDate: smsQuery.From ? moment(smsQuery.From).format(DateFormats.FULL_DATE_START) : null,
+          ToDate: smsQuery.To ? moment(smsQuery.To).format(DateFormats.FULL_DATE_START) : null,
           PageProperty: GetPageNyName('reports/SMSMainReport')
         }
       }),
@@ -159,6 +167,8 @@ const SmsReport = ({ classes }) => {
             CampaignID: id,
             PageType: CLIENT_CONSTANTS.PAGE_TYPES.Revenue,
             ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSms,
+            FromDate: smsQuery.From ? moment(smsQuery.From).format(DateFormats.FULL_DATE_START) : null,
+            ToDate: smsQuery.To ? moment(smsQuery.To).format(DateFormats.FULL_DATE_START) : null,
             PageProperty: GetPageNyName('reports/SMSMainReport')
           }
         })
@@ -177,6 +187,8 @@ const SmsReport = ({ classes }) => {
           SerachTxt: pageStateProperty.SearchData?.SerachTxt ?? '',
           From: pageStateProperty.SearchData?.From ?? null,
           To: pageStateProperty.SearchData?.To ?? null,
+          FromDate: smsQuery.From ? moment(smsQuery.From).format(DateFormats.FULL_DATE_START) : null,
+          ToDate: smsQuery.To ? moment(smsQuery.To).format(DateFormats.FULL_DATE_START) : null,
           ShowTestCampaigns: pageStateProperty.SearchData?.ShowTestCampaigns ? pageStateProperty.SearchData?.ShowTestCampaigns : smsQuery.ShowTestCampaigns,
           CampaignID: pageStateProperty.SearchData?.CampaignID ?? null,
         }
