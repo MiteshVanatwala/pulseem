@@ -27,6 +27,7 @@ const OTP = ({ classes, campaignNumber, isOpen = false, onClose = () => null, on
 
     useEffect(() => {
         setDialogType({ type: "otpVerification" });
+        setLoader(false)
     }, [isOpen]);
 
     const onCloseDialog = () => {
