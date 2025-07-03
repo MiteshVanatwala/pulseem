@@ -6,11 +6,11 @@ import clsx from 'clsx';
 import { useSelector } from 'react-redux';
 import { useTranslation } from "react-i18next";
 import { FaBars } from 'react-icons/fa';
-import useRedirect from '../../helpers/Routes/Redirect';
-import { sitePrefix } from '../../config';
-import PulseemNewLogo from '../../assets/images/PulseemNewLogo';
-import NotificationBell from '../NotificationBell/NotificationBell';
-import { RedirectPropTypes } from '../../helpers/Types/Redirect';
+import useRedirect from '../../../helpers/Routes/Redirect';
+import { sitePrefix } from '../../../config';
+import PulseemNewLogo from '../../../assets/images/PulseemNewLogo';
+import NotificationBell from '../../NotificationBell/NotificationBell';
+import { RedirectPropTypes } from '../../../helpers/Types/Redirect';
 import { GiHamburgerMenu } from 'react-icons/gi';
 
 interface TopAppBarProps {

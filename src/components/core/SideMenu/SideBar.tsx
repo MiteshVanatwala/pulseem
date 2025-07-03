@@ -1,287 +1,22 @@
-import React, { useState, useRef, useEffect } from 'react';
-import {
-  Drawer, Box, IconButton, Typography, Button, MenuItem,
-  ClickAwayListener, Grow, Paper, Popper, MenuList, Divider,
-  Collapse, List, ListItem, ListItemIcon, ListItemText, Tooltip
-} from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
-import { useSelector, useDispatch } from 'react-redux';
-import { setLanguage } from '../../redux/reducers/coreSlice';
-import { useTranslation } from "react-i18next";
-import {
-  FaBars, FaTimes, FaChevronLeft, FaChevronRight,
-  FaChevronDown, FaChevronUp
-} from 'react-icons/fa';
-import { getRoutes, getSettingsItem } from '../../helpers/Routes/routes';
-import { setCookie, getCookie } from '../../helpers/Functions/cookies';
-import { ChartIcon } from '../../assets/images/drawer/index';
-import i18n from '../../i18n';
-import NotificationBell from '../NotificationBell/NotificationBell';
-import useRedirect from '../../helpers/Routes/Redirect';
-import { IoIosArrowDown } from 'react-icons/io';
-import { BsGlobe2 } from 'react-icons/bs';
-import { sitePrefix } from '../../config';
-import PulseemNewLogo from '../../assets/images/PulseemNewLogo';
 import { get } from 'lodash';
-import { RedirectPropTypes } from '../../helpers/Types/Redirect';
-
-const SIDEBAR_WIDTH = 280;
-const SIDEBAR_COLLAPSED_WIDTH = 70;
-
-// Types
-interface Language {
-  title: string;
-  mobileTitle: string;
-  value: string;
-  isShow: boolean;
-}
-
-interface SidebarProps {
-  classes: any;
-  currentPage?: string;
-  isOpen: boolean;
-  onToggle: () => void;
-  isCollapsed?: boolean;
-}
-
-interface SidebarItemProps {
-  item: any;
-  isCollapsed: boolean;
-  isActive?: boolean;
-  level?: number;
-  classes: any;
-  onItemClick?: () => void;
-  showSubmenu?: boolean;
-  toggleSubmenu?: () => void;
-}
-
-const useStyles = makeStyles((theme) => ({
-  sidebar: {
-    width: SIDEBAR_WIDTH,
-    flexShrink: 0,
-    whiteSpace: 'nowrap',
-    transition: theme.transitions.create('width', {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  },
-  sidebarCollapsed: {
-    width: SIDEBAR_COLLAPSED_WIDTH,
-    transition: theme.transitions.create('width', {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-  },
-  sidebarPaper: {
-    width: SIDEBAR_WIDTH,
-    background: 'linear-gradient(90deg, #FF0076 1.31%, #FF0054 33.07%, #FF4D2A 134.74%)',
-    color: '#ffffff',
-    transition: theme.transitions.create('width', {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-    overflowX: 'hidden',
-  },
-  sidebarPaperCollapsed: {
-    width: SIDEBAR_COLLAPSED_WIDTH,
-    transition: theme.transitions.create('width', {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-  },
-  sidebarHeader: {
-    display: 'flex',
-    alignItems: 'center',
-    padding: theme.spacing(1, 2),
-    minHeight: 64,
-    justifyContent: 'space-between',
-    borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
-  },
-  sidebarLogo: {
-    maxHeight: 40,
-    maxWidth: 150,
-  },
-  toggleButton: {
-    color: '#ffffff',
-    '&:hover': {
-      backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    },
-  },
-  sidebarContent: {
-    flex: 1,
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  sidebarNav: {
-    flex: 1,
-    padding: theme.spacing(1, 0),
-  },
-  sidebarItem: {
-    margin: theme.spacing(0.5, 1),
-    borderRadius: 8,
-    transition: 'all 0.2s ease-in-out',
-    '&:hover': {
-      backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    },
-    '&.active': {
-      backgroundColor: theme.palette.primary.main,
-      '& .MuiListItemText-primary': {
-        fontWeight: 600,
-      },
-    },
-  },
-  sidebarItemIcon: {
-    color: '#ffffff',
-    minWidth: 40,
-    justifyContent: 'center',
-  },
-  sidebarItemText: {
-    '& .MuiListItemText-primary': {
-      fontSize: '0.9rem',
-      fontWeight: 500,
-    },
-  },
-  sidebarSubmenu: {
-    backgroundColor: 'rgba(255, 255, 255, 0.05)',
-    '& .MuiListItem-root': {
-      paddingLeft: theme.spacing(4),
-    },
-  },
-  sidebarFooter: {
-    borderTop: '1px solid rgba(255, 255, 255, 0.1)',
-    padding: theme.spacing(1),
-  },
-  languageSelector: {
-    margin: theme.spacing(0.5),
-    color: '#ffffff',
-    borderColor: 'rgba(255, 255, 255, 0.3)',
-    '&:hover': {
-      borderColor: 'rgba(255, 255, 255, 0.5)',
-      backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    },
-  },
-  userSection: {
-    padding: theme.spacing(1),
-    borderRadius: 8,
-    backgroundColor: 'rgba(255, 255, 255, 0.05)',
-    margin: theme.spacing(1),
-  },
-  tooltip: {
-    backgroundColor: '#333',
-    color: '#fff',
-    fontSize: '0.8rem',
-  },
-  // Mobile styles
-  mobileOverlay: {
-    [theme.breakpoints.down('sm')]: {
-      '& .MuiDrawer-paper': {
-        width: '100%',
-        maxWidth: 320,
-      },
-    },
-  }
-}));
-
-const SidebarItem: React.FC<SidebarItemProps> = ({
-  item,
-  isCollapsed,
-  isActive = false,
-  level = 0,
-  classes,
-  onItemClick,
-  showSubmenu = false,
-  toggleSubmenu
-}) => {
-  const { t } = useTranslation();
-  const Redirect = useRedirect();
-
-  const handleClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    if (item.options && item.options.length > 0) {
-      toggleSubmenu && toggleSubmenu();
-    } else {
-      if (onItemClick) {
-        onItemClick();
-      }
-      else {
-        if (item.href) {
-          Redirect({ url: item.href } as RedirectPropTypes);
-        }
-        if (item.onClick) {
-          item.onClick();
-        }
-      }
-    }
-  };
-
-  const hasSubmenu = item.options && item.options.length > 0;
-
-  const itemContent = (
-    <ListItem
-      button
-      onClick={handleClick}
-      className={clsx(classes.sidebarItem, isActive && 'active')}
-      style={{ paddingLeft: level > 0 ? 32 + (level * 16) : 16 }}
-    >
-      <ListItemIcon className={classes.sidebarItemIcon}>
-        {item.iconUnicode || item.icon || '●'}
-      </ListItemIcon>
-      {!isCollapsed && (
-        <>
-          <ListItemText
-            primary={item.title}
-            className={classes.sidebarItemText}
-          />
-          {hasSubmenu && (
-            <IconButton size="small" style={{ color: '#ffffff' }}>
-              {showSubmenu ? <FaChevronUp /> : <FaChevronDown />}
-            </IconButton>
-          )}
-        </>
-      )}
-    </ListItem>
-  );
-
-  return (
-    <>
-      {isCollapsed && typeof item.title === 'string' ? (
-        <Tooltip
-          title={item.title}
-          placement="right"
-          classes={{ tooltip: classes.tooltip }}
-        >
-          {itemContent}
-        </Tooltip>
-      ) : (
-        itemContent
-      )}
-
-      {hasSubmenu && !isCollapsed && (
-        <Collapse in={showSubmenu} timeout="auto" unmountOnExit>
-          <List className={classes.sidebarSubmenu}>
-            {item.options && item.options.filter((option: any) => option.isShow !== false).map((option: any, index: number) => (
-              <SidebarItem
-                key={`${item.key || 'item'}-${index}`}
-                item={option}
-                isCollapsed={false}
-                level={level + 1}
-                classes={classes}
-                onItemClick={() => {
-                  if (option.href) {
-                    Redirect({ url: option.href, openNewTab: option.openInNewWindow } as RedirectPropTypes);
-                  } else if (option.onClick) {
-                    option.onClick();
-                  }
-                }}
-              />
-            ))}
-          </List>
-        </Collapse>
-      )}
-    </>
-  );
-};
+import i18n from '../../../i18n';
+import SidebarItem from './SideBarItem';
+import { BsGlobe2 } from 'react-icons/bs';
+import { useTranslation } from "react-i18next";
+import { IoIosArrowDown } from 'react-icons/io';
+import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import useRedirect from '../../../helpers/Routes/Redirect';
+import { setLanguage } from '../../../redux/reducers/coreSlice';
+import PulseemNewLogo from '../../../assets/images/PulseemNewLogo';
+import { RedirectPropTypes } from '../../../helpers/Types/Redirect';
+import NotificationBell from '../../NotificationBell/NotificationBell';
+import { setCookie, getCookie } from '../../../helpers/Functions/cookies';
+import { getRoutes, getSettingsItem } from '../../../helpers/Routes/routes';
+import { FaTimes, FaChevronLeft, FaChevronRight, } from 'react-icons/fa';
+import { Drawer, Box, IconButton, Button, MenuItem, ClickAwayListener, Paper, Popper, MenuList, Divider, List, Tooltip } from '@material-ui/core';
+import { Language, SidebarProps } from '../../../Models/SideMenuBar/SideMenuBarModel';
 
 const LanguageSelector: React.FC<{ isCollapsed: boolean; classes: any }> = ({ isCollapsed, classes }) => {
   const cookieData = getCookie('Culture');
@@ -376,9 +111,10 @@ const LanguageSelector: React.FC<{ isCollapsed: boolean; classes: any }> = ({ is
       >
         <ClickAwayListener onClickAway={handleClose}>
           <Paper className={classes.languageSelector}>
-            <MenuList>
+            <MenuList style={{ background: 'linear-gradient(180deg, #FF0076 1.31%, #FF0054 33.07%, #FF4D2A 134.74%)' }}>
               {languages.map((lang) => (
                 <MenuItem
+                  style={{ paddingInline: isCollapsed ? 15 : 15 }}
                   key={lang.value}
                   onClick={() => changeLanguage(lang)}
                   selected={lang.value.toLowerCase() === language.toLowerCase()}
@@ -407,9 +143,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
   currentPage = '',
   isOpen,
   onToggle,
+  classes,
   isCollapsed: externalIsCollapsed = false
 }) => {
-  const classes = useStyles();
   const Redirect = useRedirect();
   const { t } = useTranslation();
 
@@ -445,8 +181,20 @@ export const Sidebar: React.FC<SidebarProps> = ({
   }, [accountSettings]);
 
   useEffect(() => {
-    setIsCollapsed(externalIsCollapsed);
+    const collapsedFromCookie = getCookie('SidebarCollapsed');
+    if (collapsedFromCookie !== null) {
+      setIsCollapsed(collapsedFromCookie === 'true');
+    } else {
+      setIsCollapsed(externalIsCollapsed);
+    }
   }, [externalIsCollapsed]);
+
+  // // override ל-toggleSidebar
+  // const toggleSidebar = () => {
+  //   const newState = !isCollapsed;
+  //   setIsCollapsed(newState);
+  //   setCookie('SidebarCollapsed', String(newState), 365); // שמור לשנה
+  // };
 
   const routes = getRoutes(
     t,
@@ -471,20 +219,62 @@ export const Sidebar: React.FC<SidebarProps> = ({
     userRoles
   );
 
+  useEffect(() => {
+    if (settingsLoaded && currentPage && routes.length > 0) {
+      const parentKey = findParentKey(routes, currentPage);
+      if (parentKey && !openMenus[parentKey]) {
+        const updated = { ...openMenus, [parentKey]: true };
+        setOpenMenus(updated);
+        setCookie('sidebarOpenMenus', JSON.stringify(updated));
+      }
+    }
+  }, [settingsLoaded, currentPage, routes]);
+
   const toggleSidebar = () => {
     if (windowSize === 'xs' || windowSize === 'sm') {
       onToggle();
     } else {
-      setIsCollapsed(!isCollapsed);
+      const newState = !isCollapsed;
+      setIsCollapsed(newState);
+      setCookie('SidebarCollapsed', String(newState), 365); // שמור לשנה
     }
   };
 
   const toggleSubmenu = (key: string) => {
-    setOpenMenus(prev => ({
-      ...prev,
-      [key]: !prev[key]
-    }));
+    setOpenMenus((prev) => {
+      const updated = { ...prev, [key]: !prev[key] };
+      setCookie('sidebarOpenMenus', JSON.stringify(updated));
+      return updated;
+    });
   };
+
+  const findParentKey = (
+    routesList: any[],
+    currentPageKey: string
+  ): string | null => {
+    for (const route of routesList) {
+      if (
+        route.options &&
+        Array.isArray(route.options) &&
+        route.options.some((child: any) => child.key === currentPageKey)
+      ) {
+        return route.key;
+      }
+    }
+    return null;
+  };
+
+  useEffect(() => {
+    if (settingsLoaded && currentPage && routes.length > 0) {
+      const parentKey = findParentKey(routes, currentPage);
+      if (parentKey) {
+        setOpenMenus((prev) => ({
+          ...prev,
+          [parentKey]: true,
+        }));
+      }
+    }
+  }, [settingsLoaded, currentPage, routes]);
 
   const isMobile = windowSize === 'xs' || windowSize === 'sm';
   const drawerVariant = isMobile ? 'temporary' : 'permanent';
@@ -505,7 +295,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         }
       }}
       className={clsx(
-        classes.sidebar,
+        classes.menuSidebar,
         isCollapsed && !isMobile && classes.sidebarCollapsed,
         isMobile && classes.mobileOverlay
       )}
@@ -516,10 +306,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
         ),
       }}
     >
-      {/* Header */}
       <div className={classes.sidebarHeader}>
         {!isCollapsed && <Button
-          // href={routes[0]?.href}
           onClick={(e) => {
             e.preventDefault();
             Redirect({ url: routes[0]?.href } as RedirectPropTypes);
@@ -536,7 +324,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <PulseemNewLogo />
           )}
         </Button>}
-
         <IconButton
           onClick={toggleSidebar}
           className={classes.toggleButton}
@@ -571,7 +358,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
             )}
           </List>
         </nav>
-
         {/* Footer */}
         <div className={classes.sidebarFooter}>
           {/* User Settings */}
@@ -584,17 +370,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
               toggleSubmenu={() => toggleSubmenu('settings')}
             />
           )}
-
           <Divider style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', margin: '8px 0' }} />
-
           {/* Notifications */}
           <Box display="flex" justifyContent="center" mb={1}>
             <NotificationBell classes={externalClasses} />
           </Box>
-
           {/* Language Selector */}
           <LanguageSelector isCollapsed={isCollapsed && !isMobile} classes={classes} />
-
           {/* Admin/Return buttons */}
           {!cameFromSubAccount && isAdmin !== '' && (
             <Button
@@ -605,7 +387,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
               {(!isCollapsed || isMobile) ? t('appBar.admin') : 'A'}
             </Button>
           )}
-
           {cameFromSubAccount && (
             <Button
               onClick={returnToMainAccount}

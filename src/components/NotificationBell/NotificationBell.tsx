@@ -34,7 +34,7 @@ enum NotifyCenterType {
 const NotificationBell = ({ classes }: any) => {
   const [displayNotifications, toggleDisplayNotifications] = useState(false);
   const notificationIconRef = useRef(null)
-  const [ isLoader, setIsLoader ] = useState<boolean>(false);
+  const [isLoader, setIsLoader] = useState<boolean>(false);
   const { t } = useTranslation();
   const { isRTL } = useSelector((state: any) => state.core);
   const { notifyCenterList, unreadMessages } = useSelector((state: any) => state.notificationUpdate)
@@ -52,8 +52,8 @@ const NotificationBell = ({ classes }: any) => {
     setIsLoader(true);
     // @ts-ignore
     let savedTemplate: savedTemplateAPIProps = await dispatch<any>(
-			getSavedTemplates({ TemplateId: templateId })
-		);
+      getSavedTemplates({ TemplateId: templateId })
+    );
     setIsLoader(false);
     if (savedTemplate?.payload?.Data?.Count) {
       setDialogType({ type: 'templateError', data: savedTemplate?.payload?.Data?.Items[0]['RejectionReason'] })
@@ -115,8 +115,8 @@ const NotificationBell = ({ classes }: any) => {
               <Box className={classes.dFlex} style={{ alignItems: 'center' }}>
                 {
                   option.NotifyCenterTypeID === NotifyCenterType.TemplateStatusApproved
-                  ? <AiOutlineCheckCircle className={classes.notifyIcon} />
-                  : <AiOutlineCloseCircle className={classes.notifyIcon} />
+                    ? <AiOutlineCheckCircle className={classes.notifyIcon} />
+                    : <AiOutlineCloseCircle className={classes.notifyIcon} />
                 }
                 <Typography className={classes.font14}>{RenderHtml(t(option.NotifyCenterTypeID === NotifyCenterType.TemplateStatusApproved ? 'whatsapp.templateApproved' : 'whatsapp.templateDeclined').replace('##Name##', `${templateDetils[0] || ''}`))}</Typography>
               </Box>
@@ -173,7 +173,7 @@ const NotificationBell = ({ classes }: any) => {
     const { type, data } = dialogType || {}
 
     const dialogContent: { [key: string]: {} } = {
-      templateError: TemplateErrorDialog({classes, failedTemplateResponse: data, setDialogType, translator: t, isRTL}),
+      templateError: TemplateErrorDialog({ classes, failedTemplateResponse: data, setDialogType, translator: t, isRTL }),
     }
 
     const currentDialog: any = (type && dialogContent[type]) || {};
@@ -223,7 +223,7 @@ const NotificationBell = ({ classes }: any) => {
             }}
           />
         </Badge>
-        <Popper open={displayNotifications} anchorEl={notificationIconRef.current} role={undefined} transition placement={'bottom'} disablePortal className={classes.notificationUpdateContainerPopper}>
+        <Popper open={displayNotifications} anchorEl={notificationIconRef.current} role={undefined} placement={'bottom'} disablePortal className={classes.notificationUpdateContainerPopper}>
           <div className={clsx(classes.notificationUpdateContainer, classes.paddingSides15, classes.pt10)} style={{ direction: isRTL ? 'rtl' : 'ltr', textAlign: isRTL ? 'right' : 'left' }}>
             <div className={clsx(classes.bold)} style={{ textAlign: isRTL ? 'right' : 'left' }}>
               {t('notifications.notifyCenterTitle')}

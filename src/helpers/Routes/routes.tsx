@@ -247,10 +247,10 @@ export const getRoutes = (
       key: 'whatsapp',
       title: 'Whatsapp',
       pageTitle: t('whatsapp.Title'),
-      iconUnicode: <MdOutlineWhatsapp />,
+      iconUnicode: <MdOutlineWhatsapp style={{ width: 30, height: 30, justifyContent: 'center' }} />,
       href: whatsappRoutes.CAMPAIGN_MANAGEMENT,
       isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount,
-      icon: <WhatsappIcon className='header-whatsapp-icon' />,
+      // icon: <WhatsappIcon className='header-whatsapp-icon' />,
       options: [
         {
           key: 'create',

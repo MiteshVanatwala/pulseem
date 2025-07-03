@@ -142,7 +142,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
           isSidebarOpen={isSidebarOpen}
         />}
 
-        <div className={classes.contentContainer}>
+        <div className={classes.contentContainer} style={{ paddingTop: 0 }}>
           {children}
         </div>
       </main>

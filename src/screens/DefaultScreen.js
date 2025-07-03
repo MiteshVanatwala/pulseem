@@ -14,7 +14,7 @@ import { sitePrefix } from '../config';
 import useRedirect from '../helpers/Routes/Redirect';
 import { getCookie } from '../helpers/Functions/cookies';
 import { get } from 'lodash';
-import { MainLayout } from '../components/core/MainLayout';
+import { MainLayout } from '../components/core/SideMenu/MainLayout';
 
 const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', containerClass, customPadding = false, showAppBar = true, customStyle = '', hideSideImages = false }) => {
   const { t } = useTranslation();
