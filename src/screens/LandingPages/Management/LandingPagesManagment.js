@@ -67,10 +67,10 @@ const LandingPagesesManagment = ({ classes }) => {
     setLoader(false);
   }
 
-  useEffect(() => {
-    setLoader(true);
-    reSearch();
-  }, [dispatch])
+  // useEffect(() => {
+  //   setLoader(true);
+  //   reSearch();
+  // }, [dispatch])
 
   useEffect(() => {
     reSearch();

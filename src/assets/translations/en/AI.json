@@ -50,6 +50,7 @@
     "403": "Permission error",
     "404": "Resource not found",
     "405": "Prompt is too long",
+    "406": "Html, Scripts or other then a normal string does not allowed!",
     "410": "You’ve reached your daily design limit",
     "413": "Request exceeds the maximum allowed number of bytes",
     "429": "Your account has hit a rate limit",
