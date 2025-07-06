@@ -50,6 +50,7 @@
     "403": "Błąd autoryzacji",
     "404": "Zasób nie został znaleziony",
     "405": "Prompt zbyt długi/załączony duży plik",
+    "406": "HTML, skrypty lub inne niż zwykły tekst nie są dozwolone!",
     "410": "Osiągnąłeś dzienny limit projektu",
     "413": "Żądanie przekracza maksymalną dozwoloną liczbę bajtów",
     "429": "Twoje konto osiągnęło limit szybkości",
