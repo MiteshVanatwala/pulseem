@@ -68,6 +68,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
       }}
     >
       {(item?.iconUnicode || item?.icon) && <Typography
+        onClick={((e: React.MouseEvent) => { handleClick(e, false) })}
         className={clsx(classes.phoneAppBarItemIcon, classes.sidebarItemIcon)}>
         {item?.iconUnicode || item?.icon}
       </Typography>}
