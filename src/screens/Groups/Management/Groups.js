@@ -1008,7 +1008,7 @@ const Groups = ({ classes }) => {
                                                 },
                                                 onClick: (e) => {
                                                     e?.preventDefault();
-                                                    if (!userRoles?.HideRecipients((ActiveCell || 0) + (RemovedCell || 0) + (InvalidCell || 0) + (PendingSmsClients || 0)) > 0) {
+                                                    if (!userRoles?.HideRecipients && ((ActiveCell || 0) + (RemovedCell || 0) + (InvalidCell || 0) + (PendingSmsClients || 0)) > 0) {
                                                         navigate(CLIENT_CONSTANTS.BASEURL, {
                                                             state:
                                                             {
