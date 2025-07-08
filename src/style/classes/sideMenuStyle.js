@@ -120,7 +120,7 @@ export const sideMenuStyle = (windowSize, isRTL, theme) => ({
   },
   languageSelector: {
     margin: theme.spacing(0.5),
-    color: '#ffffff',
+    color: '#000',
     borderColor: 'rgba(255, 255, 255, 0.3)',
     '&:hover': {
       borderColor: 'rgba(255, 255, 255, 0.5)',

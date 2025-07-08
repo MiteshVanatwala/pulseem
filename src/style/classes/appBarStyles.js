@@ -196,7 +196,7 @@ export const appBarStyle = (windowSize, isRTL, theme) => ({
     }
   },
   appBarSettingIcon: {
-    width: 21
+    width: 25
   },
   appBarQuestionIcon: {
     fontWeight: 'bold',

@@ -15,6 +15,7 @@ import useRedirect from '../helpers/Routes/Redirect';
 import { getCookie } from '../helpers/Functions/cookies';
 import { get } from 'lodash';
 import { MainLayout } from '../components/core/SideMenu/MainLayout';
+import TopMenu from '../components/core/TopMenu/TopMenu';
 
 const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', containerClass, customPadding = false, showAppBar = true, customStyle = '', hideSideImages = false }) => {
   const { t } = useTranslation();
@@ -73,6 +74,7 @@ const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', cont
         currentPage={currentPage}
         showAppBar={showAppBar}
       >
+        <TopMenu classes={classes} />
         <Container
           maxWidth='xl'
           className={clsx(customPadding ? classes.sidePadding : null, containerClass ?? null, customStyle)}

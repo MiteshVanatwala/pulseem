@@ -4575,6 +4575,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   polishSubscribeGreyBox: {
     background: grey[100],
-    borderRadius: 5,  
+    borderRadius: 5,
+  },
+  topMenu: {
+    marginTop: 30,
+    marginInlineEnd: 30,
+    display: 'flex',
+    gap: 15
   }
 });

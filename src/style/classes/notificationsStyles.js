@@ -691,14 +691,14 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         cursor: 'pointer'
     },
     notificationUpdateContainerPopper: {
-        position: 'fixed !important',
+        //     position: 'fixed !important',
         bottom: 90,
-        right: isRTL ? '10px !important' : 'auto !important',
-        left: !isRTL ? '10px !important' : 'auto !important',
+        //     right: isRTL ? '10px !important' : 'auto !important',
+        //     left: !isRTL ? '10px !important' : 'auto !important',
         width: 600,
         zIndex: 999,
-        top: 'auto !important',
-        transform: 'unset !important'
+        //  top: 'auto !important',
+        // transform: 'unset !important'
     },
     notificationUpdateContainer: {
         direction: isRTL ? 'rtl' : 'ltr',

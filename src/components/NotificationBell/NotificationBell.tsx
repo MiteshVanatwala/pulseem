@@ -199,12 +199,8 @@ const NotificationBell = ({ classes }: any) => {
       <Box
         zIndex='tooltip'
         //onMouseLeave={handleClose}
-        className={clsx(classes.appBarItemContainer, classes.paddingSides15)}
-        style={{
-          paddingRight: isRTL ? 15 : 0,
-          paddingLeft: isRTL ? 0 : 15
-        }}
-      >
+        className={clsx(classes.appBarItemContainer)}
+       >
         <Badge
           badgeContent={unreadMessages}
           color="error"
