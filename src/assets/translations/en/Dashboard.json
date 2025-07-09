@@ -66,7 +66,7 @@
     "monthlyPayment": "Monthly Payment",
     "recipients": "Recipients",
     "unlimitedEmailSending": "Unlimited Email Sending",
-    "confirmation": "By clicking \"Subscribe\", I confirm that I agree to be charged based on the selected pricing tier above.",
+    "confirmation": "By clicking \"Purchase Now\", I confirm that I agree to be charged based on the selected pricing tier above.",
     "featureNotAllowed": "This feature is not allowed for your account. Please contact support to enable it.",
     "success": "Your have successfully subscribed.",
     "planNotSelected": "Oops, you haven't selected a mailing plan!",
@@ -77,6 +77,9 @@
     "perMonth": "Per month",
     "securePurchase": "Purchase Now",
     "customizePlan": "Customize your plan",
-    "yourCurrentTier": "Your current tier"
+    "yourCurrentTier": "Your current tier",
+    "frozenMessage": "<b>Since we couldn’t process your payment previously, some email campaigns were paused.</b><br /> Would you like to send the paused emails and resume scheduled automations and autoresponders?<br /><br />Clicking <b>Yes</b> will send all paused emails and restart any affected automations/autoresponders.<br />Clicking <b>No</b> will cancel all emails that were scheduled during the payment issue.",
+    "releaseMessage": "Your paused emails are now being sent, and all relevant automations have been resumed.",
+    "cancelMessage": "Understood. The paused emails have been canceled, and automations will remain inactive for now. You can restart them anytime from the <b>automation management pages.</b>"
   }
 }

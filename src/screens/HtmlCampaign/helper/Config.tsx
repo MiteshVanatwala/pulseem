@@ -473,4 +473,6 @@ export const DialogType = {
     SAVE_TEMPLATE: "campaigns.saveTemplate",
     PENDING_APPROVAL: "campaigns.newsLetterEditor.errors.PendingApprovalDesc",
     UNDER_REVIEW: "campaigns.newsLetterEditor.errors.PendingApproval551Desc",
+    PAYMENT_FAILED: "campaigns.newsLetterEditor.errors.paymentfailed553Desc",
+    PAYMENT_PROCESSING: "campaigns.newsLetterEditor.errors.paymentProcessing554Desc",
 };

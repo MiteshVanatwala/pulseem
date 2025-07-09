@@ -65,6 +65,8 @@ import { logout } from '../../helpers/Api/PulseemReactAPI';
 import { UserRoles } from '../../Models/SubUser/SubUsers';
 import AITemplateCreatorAccordion from './modals/AI_TemplateCreatorAccordion';
 import { BsMagic } from 'react-icons/bs';
+import PayPerRecipientNew from '../../components/PayPerRecipient/PayPerRecipientNew';
+import { getPackagesDetails } from '../../redux/reducers/dashboardSlice';
 
 const CampaignEditor = ({ classes, ...props }) => {
   //#region State
@@ -118,6 +120,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   const [showDomainVerification, setShowDomainVerification] = useState(false);
   const [emailProps, setEmailProps] = useState(null);
   const [dialogType, setDialogType] = useState(null)
+  const [ isOpenPayPerRecipient, setIsOpenPayPerRecipient ] = useState(false);
   //#endregion State
 
   //#region Get Extra fields & Landing pages, after Data Ready
@@ -661,6 +664,44 @@ const CampaignEditor = ({ classes, ...props }) => {
       }
       case 551: {
         setDialog(DialogType.UNDER_REVIEW);
+        break;
+      }
+      case 553: {
+        setIsResponseModal(false);
+        setGenericModalData({
+          title: t('campaigns.newsLetterEditor.errors.paymentfailed553Title'),
+          message: t("campaigns.newsLetterEditor.errors.paymentfailed553Desc"),
+          onConfirm: () => {},
+          onCancel: () => setDialog(null),
+          onClose: () => setDialog(null),
+          showDefaultButtons: false,
+          renderButtons: () => (
+            <Grid
+              container
+              spacing={2}
+              className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+            >
+              <Grid item>
+                <Button
+                  onClick={() => {
+                    dispatch(getPackagesDetails());
+                    setIsOpenPayPerRecipient(true)
+                  }}
+                  className={clsx(
+                    classes.btn,
+                    classes.btnRounded
+                  )}>
+                  {t('campaigns.newsLetterEditor.errors.paymentfailed553Button')}
+                </Button>
+              </Grid>
+            </Grid>
+          )
+        });
+        setDialog(DialogType.GENERIC);
+        break;
+      }
+      case 554: {
+        setDialog(DialogType.PAYMENT_PROCESSING);
         break;
       }
       case 500:
@@ -1309,6 +1350,14 @@ const CampaignEditor = ({ classes, ...props }) => {
         onClose={() => {
           setShowDomainVerification(false)
         }}
+      />
+      <PayPerRecipientNew
+        classes={classes}
+        isOpen={isOpenPayPerRecipient}
+        onClose={() => {
+          setIsOpenPayPerRecipient(false);
+        }}
+        jumpToStep={2}
       />
       {renderDialog()}
       <Loader isOpen={showLoader} showBackdrop={false} />

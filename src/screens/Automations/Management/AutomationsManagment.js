@@ -30,6 +30,9 @@ import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { DateFormats } from '../../../helpers/Constants';
 import { sitePrefix } from '../../../config';
 import useRedirect from '../../../helpers/Routes/Redirect';
+import PayPerRecipientNew from '../../../components/PayPerRecipient/PayPerRecipientNew';
+import GenericModal from '../../HtmlCampaign/modals/GenericModal';
+import { DialogType } from '../../HtmlCampaign/helper/Config';
 
 
 const AutomationsManagnentScreen = ({ classes }) => {
@@ -51,6 +54,11 @@ const AutomationsManagnentScreen = ({ classes }) => {
   const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF'
   const [showLoader, setLoader] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
+  const [genericModalData, setGenericModalData] = useState({
+    title: "",
+    message: ""
+  })
+  const [ isOpenPayPerRecipient, setIsOpenPayPerRecipient ] = useState(false);
   const dispatch = useDispatch()
   moment.locale(language)
 
@@ -575,22 +583,69 @@ const AutomationsManagnentScreen = ({ classes }) => {
     }
   }
 
+  const processSummaryResponse = (response) => {
+    if (response?.StatusCode === 553) {
+      setGenericModalData({
+        title: t('campaigns.newsLetterEditor.errors.paymentfailed553Title'),
+        message: t("campaigns.newsLetterEditor.errors.paymentfailed553Desc"),
+        onConfirm: () => {},
+        onCancel: () => setDialogType(null),
+        onClose: () => setDialogType(null),
+        showDefaultButtons: false,
+        renderButtons: () => (
+        <Grid
+          container
+          spacing={2}
+          className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+        >
+          <Grid item>
+            <Button
+              onClick={() => {
+                setDialogType(null)
+                setIsOpenPayPerRecipient(true);
+              }}
+              className={clsx(
+                classes.btn,
+                classes.btnRounded
+              )}>
+              {t('campaigns.newsLetterEditor.errors.paymentfailed553Button')}
+            </Button>
+          </Grid>
+        </Grid>
+        )
+      });
+      setDialogType({ type: DialogType.GENERIC });
+    } else if (response?.StatusCode === 554) {
+      setGenericModalData({
+        title: t('campaigns.newsLetterEditor.errors.paymentfailed554Title'),
+        message: t("campaigns.newsLetterEditor.errors.paymentProcessing554Desc"),
+        onConfirm: () => {},
+        onCancel: () => setDialogType(null),
+        onClose: () => setDialogType(null),
+        showDefaultButtons: false,
+      });
+      setDialogType({ type: DialogType.GENERIC });
+    }
+  }
+
   const handleActiveChange = (data, isEdit = false) => async () => {
     try {
       const response = await dispatch(activateAutomation({ ID: data.ID }))
       const resJ = JSON.parse(response.payload.d);
-      if (resJ.StatusCode !== 1) {
+      if ([553, 554].indexOf(resJ.StatusCode)) {
+        processSummaryResponse(resJ.StatusCode);
+      } else if (resJ.StatusCode !== 1) {
         setErrorMessage(`${resJ.StatusMessage} <br/>${t('automations.pressHereToEditAutomation').replace('##', data.ID)}`);
         setDialogType({
           type: 'activateError',
           data: data
         })
         return;
+      } else {
+        getData()
+        if (isEdit)
+          Redirect({ url: `/Pulseem/CreateAutomations.aspx?AutomationID=${data.ID}&fromreact=true`, openNewTab: true })
       }
-
-      getData()
-      if (isEdit)
-        Redirect({ url: `/Pulseem/CreateAutomations.aspx?AutomationID=${data.ID}&fromreact=true`, openNewTab: true })
     } catch (err) {
       setDialogType({
         type: "statusError",
@@ -815,6 +870,19 @@ const AutomationsManagnentScreen = ({ classes }) => {
       {renderTable()}
       {renderTablePadington()}
       {renderDialog()}
+      <GenericModal
+        classes={classes}
+        modalData={genericModalData}
+        isOpen={dialogType?.type === DialogType.GENERIC}
+      />
+      <PayPerRecipientNew
+        classes={classes}
+        isOpen={isOpenPayPerRecipient}
+        onClose={() => {
+          setIsOpenPayPerRecipient(false);
+        }}
+        jumpToStep={2}
+      />
       <Loader isOpen={showLoader} />
     </DefaultScreen>
   )

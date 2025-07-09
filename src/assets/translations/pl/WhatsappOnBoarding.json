@@ -100,5 +100,26 @@
 		"133015": "Numer telefonu, który próbujesz zarejestrować, został niedawno usunięty, a usunięcie jeszcze się nie zakończyło.",
 		"135000": "Wiadomość nie została wysłana z powodu nieznanego błędu z parametrami twojego żądania."
 	},
-	"NoMeta": "Meta nie jest włączone w Twoim koncie. Proszę skontaktować się z naszym wsparciem w celu uzyskania dalszych informacji."
+	"NoMeta": "Meta nie jest włączone w Twoim koncie. Proszę skontaktować się z naszym wsparciem w celu uzyskania dalszych informacji.",
+	"business_statuses": {
+		"notVerified": "Niezweryfikowany",
+		"pending": "Oczekuje na weryfikację",
+		"verified": "Zweryfikowany",
+		"rejected": "Odrzucony",
+		"inReview": "W trakcie weryfikacji",
+		"verificationExpired": "Weryfikacja wygasła",
+		"unavailable": "Niedostępny",
+		"needsReview": "Wymaga weryfikacji"
+	},
+	"virtualPhoneNumberStatus": {
+		"new": "Nowy",
+		"pending": "Oczekuje na zatwierdzenie",
+		"connected": "Połączony",
+		"disconnected": "Rozłączony",
+		"failed": "Niepowodzenie",
+		"deleted": "Usunięty",
+		"notVerified": "Niezweryfikowany",
+		"verified": "Zweryfikowany",
+		"expired": "Wygasły"
+	}
 }

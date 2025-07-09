@@ -54,6 +54,9 @@ import { IsSharedDomain } from "../../../helpers/Functions/DomainVerificationHel
 import { sitePrefix } from "../../../config";
 import { WhatsappCampaignStatus, WhatsAppPlatformIDEnum } from "../../../config/enum";
 import { errorToastData } from "../../Whatsapp/Constant";
+import { DialogType } from "../../Editors/helper/config";
+import GenericModal from "../../HtmlCampaign/modals/GenericModal";
+import PayPerRecipientNew from "../../../components/PayPerRecipient/PayPerRecipientNew";
 
 function Alert(props) {
     return <MuiAlert elevation={0} variant="filled" {...props} />;
@@ -187,6 +190,11 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const [noCreditLeft, setNoCreditLeft] = useState(false);
     const [showDeleteSmsMarketingDialog, setShowDeleteSmsMarketingDialog] = useState(false);
     const [domainIsAllowed, setDomainIsAllowed] = useState(true);
+    const [genericModalData, setGenericModalData] = useState({
+        title: "",
+        message: ""
+    })
+    const [ isOpenPayPerRecipient, setIsOpenPayPerRecipient ] = useState(false);
     const MAX_UPLOAD_LIMITATION = 5000;
 
     useEffect(() => {
@@ -428,9 +436,13 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         411: { type: 'SendResponse', data: { Title: t('campaigns.newsLetterEditor.errors.campaignWasNotSent'), Text: t('campaigns.newsLetterEditor.errors.ACCOUNT_RESTRICTED'), ShowContactSupport: true } },
         550: { type: 'SendResponse', data: { Title: t('campaigns.newsLetterEditor.errors.pendingApproval'), Text: t('campaigns.newsLetterEditor.errors.PendingApprovalDesc'), ShowContactSupport: false } },
         551: { type: 'SendResponse', data: { Title: t('campaigns.newsLetterEditor.errors.pendingApproval'), Text: t('campaigns.newsLetterEditor.errors.PendingApproval551Desc'), ShowContactSupport: false } },
+        553: { type: 'SendResponse', data: { Title: t('campaigns.newsLetterEditor.errors.paymentfailed553Title'), Text: t('campaigns.newsLetterEditor.errors.paymentfailed553Desc'), ShowContactSupport: false } },
+        554: { type: 'SendResponse', data: { Title: t('campaigns.newsLetterEditor.errors.paymentfailed554Title'), Text: t('campaigns.newsLetterEditor.errors.paymentProcessing554Desc'), ShowContactSupport: false } },
     };
 
     const handleSendResponse = (response) => {
+        // setDialogType(SEND_PROC[554]);
+        // return false;
         if (response?.StatusCode === 201) {
             setDialogType({ type: 'sendSuccess' });
         }
@@ -449,7 +461,9 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 ...errorToastData,
                 message: t('whatsappCampaign.metaPhoneNumberNotVerified')
             });
-        } else if ([550, 551].indexOf(response.StatusCode)) {
+        } else if ([550, 551, 554].indexOf(response.StatusCode)) {
+            setDialogType(SEND_PROC[response?.StatusCode]);
+        } else if ([553].indexOf(response.StatusCode)) {
             setDialogType(SEND_PROC[response?.StatusCode]);
         }
         else {
@@ -482,8 +496,8 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             onSaveSettings(true, groupId.toString()).then(async () => {
                 if (isEmailVerified || isVerified?.length > 0 || IsSharedDomain(newsletterInfo?.FromEmail)) {
                     setLoader(true);
-                    await dispatch(getSendSummary(params?.id));
-                    setDialogType({ type: 'SummaryDialog', IsQuickSend: true });
+                    const response = await dispatch(getSendSummary(params?.id));
+                    processSummaryResponse(response.payload);
                     setLoader(false);
                 }
                 else {
@@ -765,6 +779,54 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         }
     }
 
+    const processSummaryResponse = (response) => {
+        if (response?.StatusCode === 201) {
+            setDialogType({ type: 'SummaryDialog', IsQuickSend: false });
+        }
+        else if (response?.StatusCode === 553) {
+            setGenericModalData({
+                title: t('campaigns.newsLetterEditor.errors.paymentfailed553Title'),
+                message: t("campaigns.newsLetterEditor.errors.paymentfailed553Desc"),
+                onConfirm: () => {},
+                onCancel: () => setDialogType(null),
+                onClose: () => setDialogType(null),
+                showDefaultButtons: false,
+                renderButtons: () => (
+                <Grid
+                    container
+                    spacing={2}
+                    className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+                >
+                    <Grid item>
+                    <Button
+                        onClick={() => {
+                            setDialogType(null)
+                            setIsOpenPayPerRecipient(true);
+                        }}
+                        className={clsx(
+                            classes.btn,
+                            classes.btnRounded
+                        )}>
+                        {t('campaigns.newsLetterEditor.errors.paymentfailed553Button')}
+                    </Button>
+                    </Grid>
+                </Grid>
+                )
+            });
+            setDialogType({ type: DialogType.GENERIC });
+        } else if (response?.StatusCode === 554) {
+            setGenericModalData({
+                title: t('campaigns.newsLetterEditor.errors.paymentfailed554Title'),
+                message: t("campaigns.newsLetterEditor.errors.paymentProcessing554Desc"),
+                onConfirm: () => {},
+                onCancel: () => setDialogType(null),
+                onClose: () => setDialogType(null),
+                showDefaultButtons: false,
+            });
+            setDialogType({ type: DialogType.GENERIC });
+        }
+    }
+
     const renderButtons = () => {
         return (
             <>
@@ -805,8 +867,8 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                         onSaveSettings(true).then(async (results) => {
                             setLoader(true);
                             if (results?.StatusCode === 201) {
-                                await dispatch(getSendSummary(params?.id));
-                                setDialogType({ type: 'SummaryDialog' });
+                                const response = await dispatch(getSendSummary(params?.id));
+                                processSummaryResponse(response.payload);
                             }
                             setLoader(false);
                             // if (isEmailVerified) {
@@ -1557,6 +1619,19 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 onConfirm={() => { setDomainIsAllowed(true); navigate('/react/campaigns') }}
                 onClose={() => { setDomainIsAllowed(true); navigate('/react/campaigns') }}
                 confirmButtonText={t('common.domainVerification.sendSettings.backToCampaigns')}
+            />
+            <GenericModal
+                classes={classes}
+                modalData={genericModalData}
+                isOpen={dialogType?.type === DialogType.GENERIC}
+            />
+            <PayPerRecipientNew
+                classes={classes}
+                isOpen={isOpenPayPerRecipient}
+                onClose={() => {
+                    setIsOpenPayPerRecipient(false);
+                }}
+                jumpToStep={2}
             />
             <Loader isOpen={showLoader} />
         </DefaultScreen>

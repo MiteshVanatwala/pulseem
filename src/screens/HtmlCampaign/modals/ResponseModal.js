@@ -8,6 +8,8 @@ import {
 import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
 import { AiOutlineExclamationCircle } from "react-icons/ai";
 import { RiSendPlaneFill } from "react-icons/ri";
+import { RenderHtml } from "../../../helpers/Utils/HtmlUtils";
+import { DialogType } from "../helper/Config";
 
 const ResponseModal = ({
   classes,
@@ -18,13 +20,22 @@ const ResponseModal = ({
 }) => {
   const { t } = useTranslation();
 
+  const getTitle = () => {
+    switch (message) {
+      case DialogType.PAYMENT_PROCESSING:
+        return t('campaigns.newsLetterEditor.errors.paymentfailed554Title');
+      default:
+        return t('common.ErrorOccured');
+    }
+  };
+
   return !isOpen ? (<></>) :
     (
       <BaseDialog
         classes={classes}
         customContainerStyle={classes.dialogZindex}
         open={isOpen}
-        title={message !== 'campaigns.successSent' ? t('common.ErrorOccured') : null}
+        title={getTitle()}
         icon={<div className={classes.dialogIconContent}>
           {message !== 'campaigns.successSent' ? (
             <AiOutlineExclamationCircle
@@ -46,7 +57,7 @@ const ResponseModal = ({
       >
         {message !== 'campaigns.successSent' ? (
           <Box className={clsx(classes.contentBox, classes.mt10, classes.mb25)}>
-            {t(message)}
+            {RenderHtml(t(message))}
           </Box>) :
           (
             <Box className={classes.dialogBox} style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>

@@ -8,7 +8,7 @@ import { BaseDialog } from '../DialogTemplates/BaseDialog';
 import Slider from '@mui/material/Slider';
 import { AiOutlineCheck } from 'react-icons/ai';
 import { Loader } from '../Loader/Loader';
-import { EmailPricingSubscriptionPoland, getCreditCardIframe, GetEmailPackagePrices } from '../../redux/reducers/BillingSlice';
+import { EmailPricingSubscriptionPoland, getCreditCardIframe, GetEmailPackagePrices, cancelFrozenSends, releaseFrozenSends } from '../../redux/reducers/BillingSlice';
 import { first, get, last } from 'lodash';
 import Toast from '../Toast/Toast.component';
 import { formatNumberWithCommas } from '../../helpers/Utils/TextHelper';
@@ -21,6 +21,7 @@ import { URLS } from '../../config/enum';
 import TranzilaIframe from '../Balance/PaymentWizard/Dialogs/TranzilaIframe';
 import { StateType } from '../../Models/StateTypes';
 import { CurrenciesToDisplayForPoland } from '../../helpers/Constants';
+import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 
 const steps = [
   '',
@@ -28,14 +29,14 @@ const steps = [
   '',
 ];
 
-const PayPerRecipientNew = ({ classes, isOpen, onClose }: any) => {
+const PayPerRecipientNew = ({ classes, isOpen, onClose, jumpToStep = 1 }: any) => {
 	const { t } = useTranslation();
 	const { windowSize, isRTL } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
   const { packagesDetails } = useSelector((state: any) => state.dashboard);
   const { currencyList, currencyId, accountCurrencySymbol, accountIsCurrencySymbolPrefix, IsCurrencySymbolPrefix } = useSelector((state: StateType) => state.common);
-  const [ isLoader, setIsLoader ] = useState(false);
+  const [ isLoader, setIsLoader ] = useState(true);
   const [ toastMessage, setToastMessage ] = useState(null);
   type MarkType = {
     id: any;
@@ -53,7 +54,10 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose }: any) => {
     low: 0,
     high: 0
   });
-  const [ activeStep, setActiveStep ] = useState(1);
+  const [ activeStep, setActiveStep ] = useState(jumpToStep);
+  const [ hasFrozenEmail, setHasFrozenEmail ] = useState(true);
+  const [ showReleaseMessage, setShowReleaseMessage ] = useState(false);
+  const [ showCancelMessage, setShowCancelMessage ] = useState(false);
   const [ paymentIframe, setPaymentIframe ] = useState<string>('');
   const [ isOpenUnsubscribeDialog, setIsOpenUnsubscribeDialog ] = useState(false);
   const [ packageCurrencyList, setPackageCurrencyList ] = useState([]);
@@ -84,7 +88,10 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose }: any) => {
       setMarks([]);
       setSelectedPricing(0);
 			fetchPricing();
-      setActiveStep(1);
+      setActiveStep(jumpToStep);
+      setHasFrozenEmail(true);
+      setShowReleaseMessage(false);
+      setShowCancelMessage(false);
       setPaymentIframe('');
       setIsLoader(false);
       setToastMessage(null);
@@ -94,6 +101,10 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose }: any) => {
       })
       setPackageCurrencyList([]);
       setAllPacakages([]);
+
+      if (jumpToStep === 2) {
+        fetchCCIFrame();
+      }
 		}
 	}, [isOpen]);
 
@@ -356,7 +367,6 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose }: any) => {
           </Grid>
         </Grid>
 
-        <Loader isOpen={isLoader} showBackdrop={true} />
         {renderToast()}
         {
           !Newsletters.IsEmailPolandSubscribed && (
@@ -386,7 +396,9 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose }: any) => {
               classes={classes}
               isRTL={isRTL}
               packageId={null}
-              onComplete={() => setActiveStep(3)}
+              onComplete={(message: any) => {
+                setActiveStep(3);
+              }}
               // @ts-ignore
               paymentUrl={`${paymentIframe}`}
               hideSummary={true}
@@ -416,6 +428,7 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose }: any) => {
           <Typography className={clsx(classes.f28, classes.bold)}>
             {t('dashboard.polishSubscribe.success')}
           </Typography>
+          {FrozenCampaignsMessage()}
         </Box>
       </>
     )
@@ -542,6 +555,67 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose }: any) => {
     )
   };
 
+  const processFrozenCampaigns = async (action: string) => {
+    setIsLoader(true);
+    const { payload: { StatusCode } }: any = await dispatch(action === 'cancel' ? cancelFrozenSends() : releaseFrozenSends());
+    if (StatusCode === 200) {
+      if (action === 'process') {
+        setShowReleaseMessage(true);
+      } else {
+        setShowCancelMessage(true);
+      }
+    } else {
+    }
+    setIsLoader(false);
+  };
+
+  const FrozenCampaignsMessage = () => {
+    if (!hasFrozenEmail) return null;
+    
+    return (
+      <Box className={clsx(classes.frozenCampaignsContainer, classes.pt25)}>
+        <Grid container spacing={2} alignItems="center">
+          <Grid item xs={12}>
+            <Box>
+              <Typography className={clsx(classes.f20)}>
+                {!showReleaseMessage && !showCancelMessage && RenderHtml(t("dashboard.polishSubscribe.frozenMessage"))}
+                {showReleaseMessage && RenderHtml(t("dashboard.polishSubscribe.releaseMessage"))}
+                {showCancelMessage && RenderHtml(t("dashboard.polishSubscribe.cancelMessage"))}
+              </Typography>
+              {
+                !showReleaseMessage && !showCancelMessage && (
+                  <Grid container spacing={2} className={clsx(classes.mt10, classes.textCenter)}>
+                    <Grid item md={12} xs={12} className={clsx(classes.w100)}>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={() => processFrozenCampaigns('process')}
+                        disabled={isLoader}
+                        className={clsx(classes.btn, classes.btnRounded, classes.mInline5)}
+                      >
+                        {t('common.Yes')}
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        color="primary"
+                        onClick={() => processFrozenCampaigns('cancel')}
+                        disabled={isLoader}
+                        className={clsx(classes.btn, classes.btnRounded, classes.mInline5)}
+                      >
+                        {t('common.No')}
+                      </Button>
+                    </Grid>
+                  </Grid>
+                )
+              }
+            </Box>
+          </Grid>
+        </Grid>
+      </Box>
+    );
+  };
+
+
 	return (
 		<BaseDialog
 			classes={classes}
@@ -589,6 +663,7 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose }: any) => {
             }
           }}
         />
+        <Loader isOpen={isLoader} showBackdrop={true} />
       </>
 		</BaseDialog>
 	);

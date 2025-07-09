@@ -289,8 +289,10 @@ const SmsCreator = ({ classes }) => {
         break;
       }
       case 550:
-      case 551:
         setDialogType({ type: "pendingApprovalDialog" });
+        break;
+      case 551:
+        setDialogType({ type: "underReviewDialog" });
         break;
       default:
       case 5: {// ACCEPTED
@@ -2055,6 +2057,25 @@ const SmsCreator = ({ classes }) => {
     }
   }
 
+  const underReviewDialog = () => {
+    return {
+      title: t('campaigns.newsLetterEditor.errors.pendingApproval'),
+      disableBackdropClick: true,
+      icon: (
+        <AiOutlineExclamationCircle />
+      ),
+      content: (
+        <Box>
+          <Typography className={classes.f18}>{t("campaigns.newsLetterEditor.errors.PendingApproval551Desc")}</Typography>
+        </Box>
+      ),
+      showDefaultButtons: true,
+      onClose: () => { setDialogType(null) },
+      onCancel: () => { setDialogType(null) },
+      onConfirm: () => { setDialogType(null) }
+    }
+  }
+
   const renderDialog = () => {
     const { type, data, isOnlySave, returnToAutomation } = dialogType || {}
 
@@ -2071,7 +2092,8 @@ const SmsCreator = ({ classes }) => {
       linkStatisticAlert: siteTrackingLinkDialog(data),
       englishLetterDialog: englishLetterNotAllowed(),
       dynamicProduct: dynamicProductDialog(),
-      pendingApprovalDialog: pendingApprovalDialog()
+      pendingApprovalDialog: pendingApprovalDialog(),
+      underReviewDialog: underReviewDialog(),
     }
 
     const currentDialog = dialogContent[type] || {}

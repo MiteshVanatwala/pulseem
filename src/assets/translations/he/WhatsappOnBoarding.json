@@ -12,15 +12,15 @@
 	"instruction": "הנחיות",
 	"phoneNumberList": "מספרי וואטסאפ",
 	"businessStatus": "סטטוס אישור החשבון העסקי",
-	"virtualNumbers": "סטטוס אישור החשבון העסקי",
+	"virtualNumbers": "מספרים וירטואליים",
 	"incomingMessages": "הודעות נכנסות",
 	"businessName": "שם העסק",
 	"status": "סטטוס",
 	"message": "תוכן",
 	"ID": "מזהה",
 	"phoneNumber": "מספר",
-	"tier": "נִדבָּך",
-	"limit": "לְהַגבִּיל",
+	"tier": "מדרגת שליחה",
+	"limit": "מגבלת הודעות",
 	"enterPin": "הכניסו קוד אימות",
 	"pin": "קוד אימות",
 	"registerPIN": "אישור",
@@ -100,5 +100,26 @@
 		"133015": "מספר הטלפון איתו אתם מנסים להרשם נמחק לאחרונה והמחיקה טרם הושלמה",
 		"135000": "שליחת ההודעה נכשלה עקב תקלה לא ידועה באחד הפרמטרים"
 	},
-	"NoMeta": "מטא לא מאופשרת בחשבון. אנא פנו לתמיכה"
+	"NoMeta": "מטא לא מאופשרת בחשבון. אנא פנו לתמיכה",
+	"business_statuses": {
+		"notVerified": "לא מאומת",
+		"pending": "ממתין לאימות",
+		"verified": "מאומת",
+		"rejected": "נדחה",
+		"inReview": "בתהליך אימות",
+		"verificationExpired": "אימות פג תוקף",
+		"unavailable": "אינו זמין",
+		"needsReview": "דורש אימות"
+	},
+	"virtualPhoneNumberStatus": {
+		"new": "חדש",
+		"pending": "ממתין לאישור",
+		"connected": "מחובר",
+		"disconnected": "מנותק",
+		"failed": "נכשל",
+		"deleted": "נמחק",
+		"notVerified": "לא מאומת",
+		"verified": "מאומת",
+		"expired": "פג תוקף"
+	}
 }

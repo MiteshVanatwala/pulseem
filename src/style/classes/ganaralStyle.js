@@ -4301,6 +4301,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     alignItems: 'center',
     flexDirection: 'row'
   },
+  mInline5: {
+    marginInline: 5
+  },
   mInline15: {
     marginInline: 15
   },
@@ -4576,5 +4579,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   polishSubscribeGreyBox: {
     background: grey[100],
     borderRadius: 5,  
-  }
+  },
+  frozenCampaignsContainer: {
+    marginBottom: theme.spacing(3),
+  },
 });
