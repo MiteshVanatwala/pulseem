@@ -105,44 +105,45 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   sidebar: {
     paddingRight: '0 !important',
+    // Only apply direction to move scrollbar, not transform
+    direction: isRTL ? 'rtl' : 'ltr',
+
     "&::-webkit-scrollbar": {
       display: "block !important",
       width: 6,
       height: 6,
     },
-    /* Track */
     "&::-webkit-scrollbar-track": {
       boxShadow: "inset 0 0 0px",
       borderRadius: 10,
       backgroundColor: "#fff !important",
     },
-    /* Handle */
     "&::-webkit-scrollbar-thumb": {
       background: "#ccc",
       borderRadius: 10,
     },
-    /* Handle on hover */
     "&::-webkit-scrollbar-thumb:hover": {
       background: "#999",
     },
+
     '& *': {
+      // Reset direction for content to preserve text readability
+      direction: isRTL ? 'rtl' : 'ltr',
+
       "&::-webkit-scrollbar": {
         display: "block !important",
         width: 6,
         height: 6,
       },
-      /* Track */
       "&::-webkit-scrollbar-track": {
         boxShadow: "inset 0 0 0px",
         borderRadius: 10,
         backgroundColor: "#fff !important",
       },
-      /* Handle */
       "&::-webkit-scrollbar-thumb": {
         background: "#ccc",
         borderRadius: 10,
       },
-      /* Handle on hover */
       "&::-webkit-scrollbar-thumb:hover": {
         background: "#999",
       },
@@ -3675,8 +3676,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     maxWidth: 390
   },
   containerFullHeight: {
-    minHeight: 'calc(100vh - 80px)',
-    height: 'calc(100vh - 80px)'
+    minHeight: 'calc(100vh - 140px)',
+    height: 'calc(100vh - 140px)'
   },
   pb15: {
     paddingBottom: 15
@@ -4578,9 +4579,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     borderRadius: 5,
   },
   topMenu: {
-    marginTop: 30,
-    marginInlineEnd: 30,
+    paddingTop: 15,
+    marginBlock: 15,
+    marginInlineEnd: 50,
     display: 'flex',
-    gap: 15
+    gap: 25
   }
 });

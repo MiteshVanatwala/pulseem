@@ -11,4 +11,5 @@ export interface SidebarProps {
   isOpen: boolean;
   onToggle: () => void;
   isCollapsed?: boolean;
+  subPage?: string;
 }

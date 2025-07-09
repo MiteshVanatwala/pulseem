@@ -1,8 +1,7 @@
-import { useTranslation } from "react-i18next";
 import useRedirect from "../../../helpers/Routes/Redirect";
 import { useSelector } from "react-redux";
 import { RedirectPropTypes } from "../../../helpers/Types/Redirect";
-import { Box, Collapse, IconButton, List, ListItem, ListItemIcon, ListItemText, Tooltip, Typography } from "@material-ui/core";
+import { Collapse, IconButton, List, ListItem, ListItemText, Tooltip, Typography } from "@material-ui/core";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import clsx from 'clsx';
 interface SidebarItemProps {
@@ -14,6 +13,8 @@ interface SidebarItemProps {
   onItemClick?: () => void;
   showSubmenu?: boolean;
   toggleSubmenu?: () => void;
+  currentPage: any;
+  subPage: any;
 }
 
 const SidebarItem: React.FC<SidebarItemProps> = ({
@@ -24,9 +25,10 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
   classes,
   onItemClick,
   showSubmenu = false,
-  toggleSubmenu
+  toggleSubmenu,
+  currentPage,
+  subPage
 }) => {
-  const { t } = useTranslation();
   const Redirect = useRedirect();
   const { isRTL } = useSelector((state: any) => state.core);
 
@@ -108,10 +110,13 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
 
       {hasSubmenu && !isCollapsed && (
         <Collapse in={showSubmenu} timeout="auto" unmountOnExit>
-          <List className={classes.sidebarSubmenu}>
+          <List className={classes.sidebarSubmenu} style={{ paddingTop: 0, paddingBottom: 0, }}>
             {item.options && item.options.filter((option: any) => option.isShow !== false).map((option: any, index: number) => (
               <SidebarItem
-                key={`${item.key || 'item'}-${index}`}
+                isActive={option.key === subPage}
+                currentPage={currentPage}
+                subPage={subPage}
+                key={`${option.key || 'item'}-${index}`}
                 item={option}
                 isCollapsed={false}
                 level={level + 1}

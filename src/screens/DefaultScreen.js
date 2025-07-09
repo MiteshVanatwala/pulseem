@@ -73,6 +73,7 @@ const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', cont
         classes={classes}
         currentPage={currentPage}
         showAppBar={showAppBar}
+        subPage={subPage}
       >
         <TopMenu classes={classes} />
         <Container

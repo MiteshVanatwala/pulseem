@@ -695,7 +695,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         bottom: 90,
         //     right: isRTL ? '10px !important' : 'auto !important',
         //     left: !isRTL ? '10px !important' : 'auto !important',
-        width: 600,
+        width: 320,
         zIndex: 999,
         //  top: 'auto !important',
         // transform: 'unset !important'
@@ -704,7 +704,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         direction: isRTL ? 'rtl' : 'ltr',
         background: '#fff',
         marginTop: '12px',
-        minWidth: '400px',
+        minWidth: 320,
         maxHeight: '300px',
         overflow: 'auto',
         boxShadow: '0px 0px 6px #ababab',

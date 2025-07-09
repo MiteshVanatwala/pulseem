@@ -119,6 +119,7 @@ export const getRoutes = (
           isShow: false,
         },
         {
+          key: 'fileUploads',
           title: t("master.RadMenuItemResourceFileUploads.Text"),
           href: `${sitePrefix}Groups/FileUploads`,
           isShow: true,

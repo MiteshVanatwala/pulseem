@@ -2,28 +2,30 @@ import { useTranslation } from "react-i18next";
 import { getSettingsItem } from "../../../helpers/Routes/routes";
 import { get } from "lodash";
 import { useSelector } from "react-redux";
-import SidebarItem from "../SideMenu/SideBarItem";
 import { useRef, useState } from "react";
-import { Box, Button, ClickAwayListener, MenuItem, MenuList, Paper, Popper } from "@material-ui/core";
+import { Box, Button, ClickAwayListener, MenuItem, MenuList, Popper } from "@material-ui/core";
 import clsx from 'clsx';
 import useRedirect from "../../../helpers/Routes/Redirect";
 import { RedirectPropTypes } from "../../../helpers/Types/Redirect";
-import { IoIosArrowDown } from "react-icons/io";
+import { FaUserCircle } from "react-icons/fa";
 
-const SettingsMenu = (classes: any) => {
+const SettingsMenu = ({ classes }: any) => {
     const { t } = useTranslation();
     const [showSettings, setShowSettings] = useState<boolean>(false);
     const Redirect = useRedirect();
 
+    console.log(classes.userSettings);
+
     const { accountSettings, accountFeatures, subAccount } = useSelector((state: any) => state.common);
     const {
-        windowSize,
+        cameFromSubAccount,
         isRTL,
         isAdmin,
         isAllowSwitchAccount,
         userRoles
     } = useSelector((state: any) => state.core);
-    const { username } = useSelector((state: any) => state.user);
+    // const { username } = useSelector((state: any) => state.user);
+    const username = 'Ya Yuda122Ya Yuda122Ya Yuda122Ya Yuda122Ya Yuda122Ya Yuda122Ya Yuda122Ya Yuda122Ya Yuda122Ya Yuda122Ya Yuda122Ya Yuda122'
     const buttonRef = useRef(null);
 
     const settings = getSettingsItem(
@@ -38,22 +40,51 @@ const SettingsMenu = (classes: any) => {
         userRoles
     );
 
-    console.log(settings);
+    const returnToAdmin = () => {
+        window.location.href = '/Pulseem/ReactRedirect.aspx';
+    };
 
-    return <div className={classes.sidebarFooter}>
-        <Button onClick={() => { setShowSettings(!showSettings) }}
+    const returnToMainAccount = () => {
+        window.location.href = '/Pulseem/ReactRedirect.aspx?fromreact=true';
+    };
+
+    return <Box>
+        {/* Admin/Return buttons */}
+        {!cameFromSubAccount && isAdmin !== '' && (
+            <Button
+                onClick={returnToAdmin}
+                className={classes.languageSelector}
+            >
+                {t('appBar.admin')}
+            </Button>
+        )}
+        {cameFromSubAccount && (
+            <Button
+                onClick={returnToMainAccount}
+                className={classes.languageSelector}
+            >
+                {t('appBar.returnToMainAccount')}
+            </Button>
+        )}
+        <Button
+            ref={buttonRef}
             style={{ padding: 0 }}
-            endIcon={<IoIosArrowDown />}
-            ref={buttonRef}>
-            {username}
+            onClick={() => {
+                setShowSettings(!showSettings)
+            }}
+            startIcon={<FaUserCircle style={{ fontSize: 23 }} />}
+            className={classes.userSettings}
+        >
+            {username.length > 20 ? `${username.substring(0, 20)}...` : username}
         </Button>
         {showSettings && <Popper
             open={showSettings}
             anchorEl={buttonRef.current}
             role={undefined}
-            placement={'bottom'}
-            style={{ backgroundColor: '#fff', zIndex: 600 }}
-            disablePortal className={classes.notificationUpdateContainerPopper}>
+            placement={'bottom-start'}
+            style={{ backgroundColor: '#fff', zIndex: 600, marginTop: 15 }}
+            disablePortal className={classes.userSettingsContainerPopper}
+        >
             <ClickAwayListener onClickAway={() => setShowSettings(false)}>
                 <MenuList
                     style={{ padding: 0 }}>
@@ -71,7 +102,7 @@ const SettingsMenu = (classes: any) => {
                                         Redirect({ url: option.href, openNewTab: option.openInNewWindow } as RedirectPropTypes)
                                     }}
                                     classes={{ root: classes.appBarItemMenuRoot }}
-                                    className={clsx(classes.appBarItemMenuItem, index !== row.length - 1 ? classes.appBarItemBorder : '', option.title === t("appBar.logout") ? 'active' : '')}
+                                    className={clsx(option.title === t("appBar.logout") && classes.lastItemBorderRadius, classes.appBarItemMenuItem, index !== row.length - 1 ? classes.appBarItemBorder : '', option.title === t("appBar.logout") ? 'active' : '')}
                                 >
                                     {option?.title}
                                     {
@@ -84,7 +115,7 @@ const SettingsMenu = (classes: any) => {
                 </MenuList>
             </ClickAwayListener>
         </Popper>}
-    </div>
+    </Box>
 }
 
 export default SettingsMenu;

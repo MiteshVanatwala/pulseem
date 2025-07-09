@@ -1,5 +1,4 @@
 import clsx from 'clsx';
-import { get } from 'lodash';
 import SidebarItem from './SideBarItem';
 import { useTranslation } from "react-i18next";
 import React, { useState, useEffect } from 'react';
@@ -8,25 +7,17 @@ import useRedirect from '../../../helpers/Routes/Redirect';
 import PulseemNewLogo from '../../../assets/images/PulseemNewLogo';
 import { RedirectPropTypes } from '../../../helpers/Types/Redirect';
 import { setCookie, getCookie } from '../../../helpers/Functions/cookies';
-import { getRoutes, getSettingsItem } from '../../../helpers/Routes/routes';
+import { getRoutes } from '../../../helpers/Routes/routes';
 import { FaTimes, FaChevronLeft, FaChevronRight, } from 'react-icons/fa';
-import { Drawer, IconButton, Button, Divider, List } from '@material-ui/core';
+import { Drawer, IconButton, Button, List } from '@material-ui/core';
 import { SidebarProps } from '../../../Models/SideMenuBar/SideMenuBarModel';
 
-const returnToMainAccount = () => {
-  window.location.href = '/Pulseem/ReactRedirect.aspx?fromreact=true';
-};
-
-const returnToAdmin = () => {
-  window.location.href = '/Pulseem/ReactRedirect.aspx';
-};
-
 export const Sidebar: React.FC<SidebarProps> = ({
-  classes: externalClasses,
   currentPage = '',
   isOpen,
   onToggle,
   classes,
+  subPage,
   isCollapsed: externalIsCollapsed = false
 }) => {
   const Redirect = useRedirect();
@@ -36,9 +27,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
     windowSize,
     isRTL,
     imageURL,
-    cameFromSubAccount,
-    isAdmin,
-    isAllowSwitchAccount,
     isClal,
     userRoles
   } = useSelector((state: any) => state.core);
@@ -46,12 +34,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const {
     accountSettings,
     accountFeatures,
-    subAccount,
     isGlobal,
     IsPoland
   } = useSelector((state: any) => state.common);
-
-  const { username } = useSelector((state: any) => state.user);
 
   const [isCollapsed, setIsCollapsed] = useState(externalIsCollapsed);
   const [openMenus, setOpenMenus] = useState<{ [key: string]: boolean }>({});
@@ -64,11 +49,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
   }, [accountSettings]);
 
   useEffect(() => {
+    const collapseOpenMenus = getCookie('sidebarOpenMenus');
     const collapsedFromCookie = getCookie('SidebarCollapsed');
     if (collapsedFromCookie !== null) {
       setIsCollapsed(collapsedFromCookie === 'true');
     } else {
       setIsCollapsed(externalIsCollapsed);
+    }
+    if (collapseOpenMenus !== null) {
+      setOpenMenus(collapseOpenMenus);
     }
   }, [externalIsCollapsed]);
 
@@ -81,18 +70,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
     isRTL,
     userRoles,
     isGlobal && IsPoland
-  );
-
-  const settings = getSettingsItem(
-    t,
-    externalClasses.appBarSettingIcon,
-    (isAllowSwitchAccount && (isAllowSwitchAccount.toLowerCase() === 'true' || isAdmin !== '')),
-    username.length > 20 ? `${username.slice(0, 20)}...` : username,
-    isRTL,
-    accountSettings,
-    accountFeatures,
-    get(subAccount, 'CompanyAdmin', false),
-    userRoles
   );
 
   useEffect(() => {
@@ -140,23 +117,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
     return null;
   };
 
-  useEffect(() => {
-    if (settingsLoaded && currentPage && routes.length > 0) {
-      const parentKey = findParentKey(routes, currentPage);
-      if (parentKey) {
-        setOpenMenus((prev) => ({
-          ...prev,
-          [parentKey]: true,
-        }));
-      }
-    }
-  }, [settingsLoaded, currentPage, routes]);
-
   const isMobile = windowSize === 'xs' || windowSize === 'sm';
   const drawerVariant = isMobile ? 'temporary' : 'permanent';
   const drawerOpen = isMobile ? isOpen : true;
 
-  console.log(isRTL)
   return (
     <Drawer
       variant={drawerVariant}
@@ -227,6 +191,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   isCollapsed={isCollapsed && !isMobile}
                   isActive={route.key === currentPage}
                   classes={classes}
+                  currentPage={currentPage}
+                  subPage={subPage}
                   showSubmenu={openMenus[route.key || `route-${index}`]}
                   toggleSubmenu={() => toggleSubmenu(route.key || `route-${index}`)}
                 />
@@ -234,39 +200,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
             )}
           </List>
         </nav>
-        {/* Footer */}
-        <div className={classes.sidebarFooter}>
-          {/* User Settings */}
-          {settingsLoaded && (
-            <SidebarItem
-              item={settings}
-              isCollapsed={isCollapsed && !isMobile}
-              classes={classes}
-              showSubmenu={openMenus['settings']}
-              toggleSubmenu={() => toggleSubmenu('settings')}
-            />
-          )}
-          <Divider style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', margin: '8px 0' }} />
-          {/* Admin/Return buttons */}
-          {!cameFromSubAccount && isAdmin !== '' && (
-            <Button
-              onClick={returnToAdmin}
-              className={classes.languageSelector}
-              fullWidth={!isCollapsed || isMobile}
-            >
-              {(!isCollapsed || isMobile) ? t('appBar.admin') : 'A'}
-            </Button>
-          )}
-          {cameFromSubAccount && (
-            <Button
-              onClick={returnToMainAccount}
-              className={classes.languageSelector}
-              fullWidth={!isCollapsed || isMobile}
-            >
-              {(!isCollapsed || isMobile) ? t('appBar.returnToMainAccount') : 'R'}
-            </Button>
-          )}
-        </div>
       </div>
     </Drawer>
   );

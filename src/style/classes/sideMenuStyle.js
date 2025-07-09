@@ -32,6 +32,10 @@ export const sideMenuStyle = (windowSize, isRTL, theme) => ({
       duration: theme.transitions.duration.enteringScreen,
     }),
     overflowX: 'hidden',
+    borderBottomLeftRadius: isRTL ? 15 : 0,
+    borderTopLeftRadius: isRTL ? 15 : 0,
+    borderBottomRightRadius: isRTL ? 0 : 15,
+    borderTopRightRadius: isRTL ? 0 : 15
   },
   sidebarPaperCollapsed: {
     width: SIDEBAR_COLLAPSED_WIDTH,
@@ -43,7 +47,7 @@ export const sideMenuStyle = (windowSize, isRTL, theme) => ({
   sidebarHeader: {
     display: 'flex',
     alignItems: 'center',
-    padding: theme.spacing(1, 2),
+    padding: theme.spacing(1),
     minHeight: 64,
     justifyContent: 'space-between',
     borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
@@ -78,7 +82,7 @@ export const sideMenuStyle = (windowSize, isRTL, theme) => ({
       backgroundColor: 'rgba(255, 255, 255, 0.1)',
     },
     '&.active': {
-      backgroundColor: '#ff4d2a',
+      backgroundColor: 'rgba(255, 255, 255, 0.2)',
       color: '#fff',
       '$sidebarItemIcon, & svg': {
         color: '#fff',
@@ -106,7 +110,7 @@ export const sideMenuStyle = (windowSize, isRTL, theme) => ({
     color: '#fff',
     '& $sidebarItem': {
       '&:hover': {
-        background: 'linear-gradient(90deg, #FF0076 0%, #FF0054 23.8%, #FF4D2A 100%)',
+        backgroundColor: 'rgba(255, 255, 255, 0.2)', //'linear-gradient(90deg, #FF0076 0%, #FF0054 23.8%, #FF4D2A 100%)',
         color: "#fff"
       }
     },
@@ -123,8 +127,8 @@ export const sideMenuStyle = (windowSize, isRTL, theme) => ({
     color: '#000',
     borderColor: 'rgba(255, 255, 255, 0.3)',
     '&:hover': {
-      borderColor: 'rgba(255, 255, 255, 0.5)',
-      backgroundColor: 'rgba(255, 255, 255, 0.1)',
+      borderColor: '#FF0054',
+      color: '#FF0054',
     },
   },
   userSection: {
@@ -146,5 +150,23 @@ export const sideMenuStyle = (windowSize, isRTL, theme) => ({
         maxWidth: 320,
       },
     },
+  },
+  userSettings: {
+    background: 'none',
+    fontWeight: '800',
+    '&:hover': {
+      background: 'none',
+      borderColor: '#FF0054',
+      color: '#FF0054',
+    },
+  },
+  userSettingsContainerPopper: {
+    // bottom: 90,
+    width: 200,
+    zIndex: 600
+  },
+  lastItemBorderRadius: {
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10
   }
 });

@@ -51,10 +51,6 @@ const LanguageSelector: React.FC<{ classes: any }> = ({ classes }) => {
         languages.shift();
     }
 
-    const currentLanguage = languages.find(lang =>
-        lang.value.toLowerCase() === language.toLowerCase()
-    );
-
     const handleClick = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
         setIsCollapsed(true)
@@ -82,7 +78,7 @@ const LanguageSelector: React.FC<{ classes: any }> = ({ classes }) => {
             className={classes.languageSelector}
             fullWidth={!isCollapsed}
         >
-            <BsGlobe2 style={{fontSize: 21}} />
+            <BsGlobe2 style={{ fontSize: 21 }} />
         </Button>
     );
 
@@ -127,9 +123,8 @@ const TopMenu = ({ classes }: any) => {
             <LanguageSelector classes={classes} />
         </Box>
         <Box>
-            <SettingsMenu classes />
+            <SettingsMenu classes={classes} />
         </Box>
-
     </Box>
 }
 

@@ -13,6 +13,7 @@ interface MainLayoutProps {
   classes: any;
   currentPage?: string;
   showAppBar?: boolean;
+  subPage?: string;
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -62,13 +63,13 @@ const useStyles = makeStyles((theme) => ({
     width: `calc(100% - ${SIDEBAR_COLLAPSED_WIDTH}px)`,
   },
   contentContainer: {
-    padding: theme.spacing(3),
+    paddingInline: theme.spacing(3),
     flexGrow: 1,
     [theme.breakpoints.down('sm')]: {
-      padding: theme.spacing(2),
+      paddingInline: theme.spacing(2),
     },
     [theme.breakpoints.down('xs')]: {
-      padding: theme.spacing(1),
+      paddingInline: theme.spacing(1),
     },
   },
   topBarSpacer: {
@@ -83,6 +84,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
   children,
   classes: externalClasses,
   currentPage = '',
+  subPage = '',
   showAppBar = true
 }) => {
   const classes = useStyles();
@@ -132,6 +134,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
         isOpen={isSidebarOpen}
         onToggle={handleSidebarToggle}
         isCollapsed={isSidebarCollapsed}
+        subPage={subPage}
       />
       <main className={getContentClasses()}>
         {windowSize === 'xs' && <TopAppBar
