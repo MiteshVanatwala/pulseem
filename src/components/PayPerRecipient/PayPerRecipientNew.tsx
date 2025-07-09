@@ -55,7 +55,7 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose, jumpToStep = 1 }: any) =
     high: 0
   });
   const [ activeStep, setActiveStep ] = useState(jumpToStep);
-  const [ hasFrozenEmail, setHasFrozenEmail ] = useState(true);
+  const [ hasFrozenEmail, setHasFrozenEmail ] = useState(false);
   const [ showReleaseMessage, setShowReleaseMessage ] = useState(false);
   const [ showCancelMessage, setShowCancelMessage ] = useState(false);
   const [ paymentIframe, setPaymentIframe ] = useState<string>('');
@@ -89,7 +89,7 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose, jumpToStep = 1 }: any) =
       setSelectedPricing(0);
 			fetchPricing();
       setActiveStep(jumpToStep);
-      setHasFrozenEmail(true);
+      setHasFrozenEmail(false);
       setShowReleaseMessage(false);
       setShowCancelMessage(false);
       setPaymentIframe('');
@@ -398,6 +398,7 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose, jumpToStep = 1 }: any) =
               packageId={null}
               onComplete={(message: any) => {
                 setActiveStep(3);
+                setHasFrozenEmail(!!message?.hasFrozenEmail)
               }}
               // @ts-ignore
               paymentUrl={`${paymentIframe}`}
