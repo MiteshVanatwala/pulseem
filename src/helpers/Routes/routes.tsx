@@ -125,7 +125,7 @@ export const getRoutes = (
           isShow: true,
         },
         {
-          key: 'downloadReports',
+          key: 'downloadfiles',
           title: t('master.fileDownload'),
           href: `${sitePrefix}groups/Download`,
           isShow: true

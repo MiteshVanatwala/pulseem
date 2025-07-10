@@ -105,9 +105,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   sidebar: {
     paddingRight: '0 !important',
-    // Only apply direction to move scrollbar, not transform
-    direction: isRTL ? 'rtl' : 'ltr',
-
     "&::-webkit-scrollbar": {
       display: "block !important",
       width: 6,
@@ -127,9 +124,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     },
 
     '& *': {
-      // Reset direction for content to preserve text readability
-      direction: isRTL ? 'rtl' : 'ltr',
-
       "&::-webkit-scrollbar": {
         display: "block !important",
         width: 6,
