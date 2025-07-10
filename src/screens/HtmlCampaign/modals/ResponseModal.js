@@ -23,7 +23,7 @@ const ResponseModal = ({
   const getTitle = () => {
     switch (message) {
       case DialogType.PAYMENT_PROCESSING:
-        return t('campaigns.newsLetterEditor.errors.paymentfailed554Title');
+        return t('campaigns.newsLetterEditor.errors.paymentfailed552Title');
       default:
         return t('common.ErrorOccured');
     }

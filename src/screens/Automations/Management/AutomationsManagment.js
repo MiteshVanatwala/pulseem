@@ -615,10 +615,10 @@ const AutomationsManagnentScreen = ({ classes }) => {
         )
       });
       setDialogType({ type: DialogType.GENERIC });
-    } else if (response?.StatusCode === 554) {
+    } else if (response?.StatusCode === 552) {
       setGenericModalData({
-        title: t('campaigns.newsLetterEditor.errors.paymentfailed554Title'),
-        message: t("campaigns.newsLetterEditor.errors.paymentProcessing554Desc"),
+        title: t('campaigns.newsLetterEditor.errors.paymentfailed552Title'),
+        message: t("campaigns.newsLetterEditor.errors.paymentProcessing552Desc"),
         onConfirm: () => {},
         onCancel: () => setDialogType(null),
         onClose: () => setDialogType(null),
@@ -630,9 +630,11 @@ const AutomationsManagnentScreen = ({ classes }) => {
 
   const handleActiveChange = (data, isEdit = false) => async () => {
     try {
+      setLoader(true);
       const response = await dispatch(activateAutomation({ ID: data.ID }))
       const resJ = JSON.parse(response.payload.d);
-      if ([553, 554].indexOf(resJ.StatusCode)) {
+      setLoader(false);
+      if ([552, 553].indexOf(resJ.StatusCode)) {
         processSummaryResponse(resJ.StatusCode);
       } else if (resJ.StatusCode !== 1) {
         setErrorMessage(`${resJ.StatusMessage} <br/>${t('automations.pressHereToEditAutomation').replace('##', data.ID)}`);

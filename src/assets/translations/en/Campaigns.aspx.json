@@ -554,8 +554,8 @@
       "paymentfailed553Title": "Payment Failed",
       "paymentfailed553Desc": "Your payment could not be completed.<br />Sending and automations are frozen.<br />Please update your payment method to resume usage.",
       "paymentfailed553Button": "Resolve Payment",
-      "paymentfailed554Title": "Payment is still in process",
-      "paymentProcessing554Desc": "Your payment is being processed<br />Sending is temporarily blocked until the process is completed.<br />Please wait a moment and try again."
+      "paymentfailed552Title": "Payment is still in process",
+      "paymentProcessing552Desc": "Your payment is being processed<br />Sending is temporarily blocked until the process is completed.<br />Please wait a moment and try again."
     },
     "success": "Campaign successfully saved",
     "sendSettings": {

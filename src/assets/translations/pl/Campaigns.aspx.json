@@ -554,8 +554,8 @@
       "paymentfailed553Title": "Płatność nie powiodła się",
       "paymentfailed553Desc": "Nie udało się zrealizować płatności.<br />Wysyłka i automatyzacje zostały zamrożone.<br />Zaktualizuj metodę płatności, aby wznowić działanie.",
       "paymentfailed553Button": "Ureguluj płatność",
-      "paymentfailed554Title": "Płatność jest nadal przetwarzana",
-      "paymentProcessing554Desc": "Twoja płatność jest przetwarzana.<br />Wysyłka została tymczasowo zablokowana do czasu zakończenia procesu.<br />Prosimy poczekać chwilę i spróbować ponownie."
+      "paymentfailed552Title": "Płatność jest nadal przetwarzana",
+      "paymentProcessing552Desc": "Twoja płatność jest przetwarzana.<br />Wysyłka została tymczasowo zablokowana do czasu zakończenia procesu.<br />Prosimy poczekać chwilę i spróbować ponownie."
     },
     "success": "Kampania została pomyślnie zapisana",
     "sendSettings": {

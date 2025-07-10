@@ -700,7 +700,7 @@ const CampaignEditor = ({ classes, ...props }) => {
         setDialog(DialogType.GENERIC);
         break;
       }
-      case 554: {
+      case 552: {
         setDialog(DialogType.PAYMENT_PROCESSING);
         break;
       }

@@ -437,11 +437,11 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         550: { type: 'SendResponse', data: { Title: t('campaigns.newsLetterEditor.errors.pendingApproval'), Text: t('campaigns.newsLetterEditor.errors.PendingApprovalDesc'), ShowContactSupport: false } },
         551: { type: 'SendResponse', data: { Title: t('campaigns.newsLetterEditor.errors.pendingApproval'), Text: t('campaigns.newsLetterEditor.errors.PendingApproval551Desc'), ShowContactSupport: false } },
         553: { type: 'SendResponse', data: { Title: t('campaigns.newsLetterEditor.errors.paymentfailed553Title'), Text: t('campaigns.newsLetterEditor.errors.paymentfailed553Desc'), ShowContactSupport: false } },
-        554: { type: 'SendResponse', data: { Title: t('campaigns.newsLetterEditor.errors.paymentfailed554Title'), Text: t('campaigns.newsLetterEditor.errors.paymentProcessing554Desc'), ShowContactSupport: false } },
+        552: { type: 'SendResponse', data: { Title: t('campaigns.newsLetterEditor.errors.paymentfailed552Title'), Text: t('campaigns.newsLetterEditor.errors.paymentProcessing552Desc'), ShowContactSupport: false } },
     };
 
     const handleSendResponse = (response) => {
-        // setDialogType(SEND_PROC[554]);
+        // setDialogType(SEND_PROC[552]);
         // return false;
         if (response?.StatusCode === 201) {
             setDialogType({ type: 'sendSuccess' });
@@ -461,7 +461,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 ...errorToastData,
                 message: t('whatsappCampaign.metaPhoneNumberNotVerified')
             });
-        } else if ([550, 551, 554].indexOf(response.StatusCode)) {
+        } else if ([550, 551].indexOf(response.StatusCode)) {
             setDialogType(SEND_PROC[response?.StatusCode]);
         } else if ([553].indexOf(response.StatusCode)) {
             setDialogType(SEND_PROC[response?.StatusCode]);
@@ -814,10 +814,10 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 )
             });
             setDialogType({ type: DialogType.GENERIC });
-        } else if (response?.StatusCode === 554) {
+        } else if (response?.StatusCode === 552) {
             setGenericModalData({
-                title: t('campaigns.newsLetterEditor.errors.paymentfailed554Title'),
-                message: t("campaigns.newsLetterEditor.errors.paymentProcessing554Desc"),
+                title: t('campaigns.newsLetterEditor.errors.paymentfailed552Title'),
+                message: t("campaigns.newsLetterEditor.errors.paymentProcessing552Desc"),
                 onConfirm: () => {},
                 onCancel: () => setDialogType(null),
                 onClose: () => setDialogType(null),
