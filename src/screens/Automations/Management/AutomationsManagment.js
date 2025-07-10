@@ -649,6 +649,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
           Redirect({ url: `/Pulseem/CreateAutomations.aspx?AutomationID=${data.ID}&fromreact=true`, openNewTab: true })
       }
     } catch (err) {
+      setLoader(false);
       setDialogType({
         type: "statusError",
         data: data.ID
