@@ -583,8 +583,8 @@ const AutomationsManagnentScreen = ({ classes }) => {
     }
   }
 
-  const processSummaryResponse = (response) => {
-    if (response?.StatusCode === 553) {
+  const processSummaryResponse = (StatusCode) => {
+    if (StatusCode === 553) {
       setGenericModalData({
         title: t('campaigns.newsLetterEditor.errors.paymentfailed553Title'),
         message: t("campaigns.newsLetterEditor.errors.paymentfailed553Desc"),
@@ -615,7 +615,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
         )
       });
       setDialogType({ type: DialogType.GENERIC });
-    } else if (response?.StatusCode === 552) {
+    } else if (StatusCode === 552) {
       setGenericModalData({
         title: t('campaigns.newsLetterEditor.errors.paymentfailed552Title'),
         message: t("campaigns.newsLetterEditor.errors.paymentProcessing552Desc"),
@@ -833,6 +833,8 @@ const AutomationsManagnentScreen = ({ classes }) => {
   })
 
   const renderDialog = () => {
+
+    if (dialogType?.type === DialogType.GENERIC) return false;
 
     const { data, type } = dialogType || {}
 
