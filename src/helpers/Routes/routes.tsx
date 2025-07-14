@@ -262,7 +262,7 @@ export const getRoutes = (
           isShow: true,
         },
         {
-          key: 'send',
+          key: 'send2',
           title: t('whatsapp.SendWhatsappCampaign'),
           href: whatsappRoutes.CREATE_CAMPAIGN_PAGE1,
           isShow: true,
@@ -309,7 +309,7 @@ export const getRoutes = (
           isShow: true,
         },
         {
-          key: "landingPages",
+          key: "landingPagesManagement",
           title: t("master.RadMenuItemLandingManagement.Text"),
           href: `${sitePrefix}EditRegistrationPage`,
           isShow: true,
@@ -347,6 +347,7 @@ export const getRoutes = (
           isShow: true,
         },
         {
+          key: "automations",
           title: t("master.RadMenuItemManageAutomationResource.Text"),
           href: `${sitePrefix}Automations`,
           isShow: true,
@@ -374,6 +375,7 @@ export const getRoutes = (
           isShow: true,
         },
         {
+          key: "notifications",
           title: t("master.manageNotifications"),
           href: `${sitePrefix}Notifications`,
           isShow: true,
@@ -390,7 +392,7 @@ export const getRoutes = (
       icon: <img alt="Reports" src={ReportsIcon} />,
       options: [
         { title: t('master.clalCollage'), href: `${rootDomain}/ClalReport.aspx?fromreact=true`, isShow: (isClalAccount === 'true' || isClalAccount === true) },
-        { title: t('master.RadMenuItemResource13.Text'), href: `${sitePrefix}reports/NewsletterReports`, isShow: true },
+        { key: "newsletterReport", title: t('master.RadMenuItemResource13.Text'), href: `${sitePrefix}reports/NewsletterReports`, isShow: true },
         { key: 'SmsReport', title: t('master.RadMenuItemResource24.Text'), href: `${sitePrefix}reports/SMSMainReport`, isShow: true },
         // { key: 'MmsReport', title: t('mmsreport.mmsReport'), href: `${sitePrefix}Reports/MMSMainReport`, isShow: true },
         { key: 'whatsappReports', title: t('whatsapp.ReportsWhatsapp'), href: whatsappRoutes.REPORTS, isShow: true },

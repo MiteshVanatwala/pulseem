@@ -1200,6 +1200,8 @@ const NewslettersReport = ({ classes }) => {
 
   return (
     <DefaultScreen
+      key="newsletterReport"
+      subPage='newsletterReport'
       currentPage='reports'
       classes={classes}
       containerClass={clsx(classes.management, classes.mb50)}>

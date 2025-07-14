@@ -804,7 +804,9 @@ const AutomationsManagnentScreen = ({ classes }) => {
   }
   return (
     <DefaultScreen
+      key="automations"
       currentPage='automations'
+      subPage='automations'
       classes={classes}
       containerClass={clsx(classes.management, classes.mb50)}>
       <Box className={'topSection'}>
