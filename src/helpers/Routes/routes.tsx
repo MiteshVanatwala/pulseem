@@ -148,6 +148,7 @@ export const getRoutes = (
           isShow: true,
         },
         {
+          key: "newsletterManagment",
           title: t("master.RadMenuItemResource9.Text"),
           href: `${sitePrefix}Campaigns`,
           isShow: true,
@@ -218,6 +219,7 @@ export const getRoutes = (
           isShow: true,
         },
         {
+          key: "smsManagment",
           title: t("master.RadMenuItemResource102.Text"),
           href: `${sitePrefix}SMSCampaigns`,
           isShow: true,
@@ -301,11 +303,13 @@ export const getRoutes = (
       icon: <img alt="Landing Pages" src={LandingPageIcon} />,
       options: [
         {
+          key: "createLandingPage",
           title: t("master.RadMenuItemLandingPage.Text"),
           href: `${sitePrefix}LandingPages/Create`,
           isShow: true,
         },
         {
+          key: "landingPages",
           title: t("master.RadMenuItemLandingManagement.Text"),
           href: `${sitePrefix}EditRegistrationPage`,
           isShow: true,
@@ -314,30 +318,6 @@ export const getRoutes = (
           title: t("master.FormTemplatesResource1.Text"),
           href: `${rootDomain}/FormTemplates.aspx?fromreact=true`,
           isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount,
-        },
-        {
-          key: 'CreateLandingPage',
-          title: t("landingPages.createLandingPage"),
-          href: ``,
-          isShow: false,
-        },
-        {
-          key: 'EditLandingPage',
-          title: t("landingPages.editLandingPage"),
-          href: ``,
-          isShow: false,
-        },
-        {
-          key: 'campaignEditor',
-          title: t("landingPages.editLandingPage"),
-          href: ``,
-          isShow: false
-        },
-        {
-          key: 'previewer',
-          title: t("landingPages.editLandingPage"),
-          href: ``,
-          isShow: false
         }
       ],
     },

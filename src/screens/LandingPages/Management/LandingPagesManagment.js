@@ -835,7 +835,9 @@ const LandingPagesesManagment = ({ classes }) => {
   }
   return (
     <DefaultScreen
+      key="landingPages"
       currentPage='landingPages'
+      subPage='landingPages'
       classes={classes}
       containerClass={clsx(classes.management, classes.mb50)}>
       <Box className={'topSection'}>

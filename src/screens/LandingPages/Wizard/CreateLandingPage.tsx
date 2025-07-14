@@ -747,8 +747,9 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 
 	return (
 		<DefaultScreen
+			key="createLandingPage"
 			currentPage="landingPages"
-			subPage={id ? "EditLandingPage" : "CreateLandingPage"}
+			subPage="createLandingPage"
 			classes={classes}
 			customPadding={true}
 			containerClass={clsx(classes.mb50, classes.editorCont)}
