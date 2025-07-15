@@ -684,6 +684,7 @@ const CampaignEditor = ({ classes, ...props }) => {
               <Grid item>
                 <Button
                   onClick={() => {
+                    setDialog(null);
                     dispatch(getPackagesDetails());
                     setIsOpenPayPerRecipient(true)
                   }}
