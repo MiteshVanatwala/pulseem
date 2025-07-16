@@ -87,7 +87,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
           {hasSubmenu && (
             <IconButton
               onClick={((e: React.MouseEvent) => { handleClick(e, true) })}
-              size="small" style={{ color: '#ffffff' }}>
+              size="small" style={{ color: '#ffffff', width: 30, height: 30 }}>
               {showSubmenu ? <FaChevronUp /> : <FaChevronDown />}
             </IconButton>
           )}
