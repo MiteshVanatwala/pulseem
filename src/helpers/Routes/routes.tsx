@@ -262,7 +262,7 @@ export const getRoutes = (
           isShow: true,
         },
         {
-          key: 'send2',
+          key: 'createWhatsappCampaign',
           title: t('whatsapp.SendWhatsappCampaign'),
           href: whatsappRoutes.CREATE_CAMPAIGN_PAGE1,
           isShow: true,
