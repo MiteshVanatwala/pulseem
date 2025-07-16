@@ -165,6 +165,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           )}
         </Button>}
         <IconButton
+          style={{ width: 30, height: 30 }}
           onClick={toggleSidebar}
           className={classes.toggleButton}
         >
