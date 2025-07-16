@@ -369,7 +369,7 @@ export const getRoutes = (
       icon: <img alt="Notifications" src={NotificationsIcon} />,
       options: [
         {
-          key: "create",
+          key: "createNotification",
           title: t("master.createNotification"),
           href: `${sitePrefix}Notification/create`,
           isShow: true,

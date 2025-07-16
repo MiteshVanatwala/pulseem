@@ -907,8 +907,8 @@ const NotificationEdit = ({ classes }) => {
 
   return (
     <DefaultScreen
-      currentPage='notifications'
-      subPage='create'
+      subPage={"createNotification"}
+      currentPage="notifications"
       customPadding={true}
       classes={classes}
       containerClass={clsx(classes.editorCont)}>

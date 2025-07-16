@@ -34,6 +34,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
 
   const handleClick = (e: React.MouseEvent, isCollapseAction: boolean = false) => {
     e.preventDefault();
+    e.stopPropagation();
 
     if (item.href && !isCollapseAction) {
       Redirect({ url: item.href } as RedirectPropTypes);
@@ -68,6 +69,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
       style={{
         paddingLeft: level > 0 ? 32 + (level * 16) : !isRTL ? 8 : 16, paddingRight: level > 0 ? 32 + (level * 16) : isRTL ? 8 : 16
       }}
+      onClick={((e: React.MouseEvent) => { handleClick(e, false) })}
     >
       {(item?.iconUnicode || item?.icon) && <Typography
         onClick={((e: React.MouseEvent) => { handleClick(e, false) })}
@@ -113,8 +115,8 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
           <List className={classes.sidebarSubmenu} style={{ paddingTop: 0, paddingBottom: 0, }}>
             {item.options && item.options.filter((option: any) => option.isShow !== false).map((option: any, index: number) => (
               <SidebarItem
-                isActive={option.key === subPage || (option.key?.toLowerCase() === currentPage?.toLowerCase())}
-                currentPage={currentPage}
+                isActive={option.key === subPage}
+                currentPage={null}
                 subPage={subPage}
                 key={`${option.key || 'item'}-${index}`}
                 item={option}

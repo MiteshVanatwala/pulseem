@@ -56,7 +56,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     } else {
       setIsCollapsed(externalIsCollapsed);
     }
-    if (collapseOpenMenus !== null) {
+    if (collapseOpenMenus !== null && collapseOpenMenus !== undefined) {
       setOpenMenus(collapseOpenMenus);
     }
   }, [externalIsCollapsed]);
