@@ -73,9 +73,11 @@ const WhatsappTemplateEditor = ({
 		const direction = checkLanguage(templateText, isRTL);
 		if (direction !== 'Both') {
 			setTextDirection(direction === 'English' ? 'ltr' : 'rtl');
+		} else if (direction === 'Both') {
+			setTextDirection(isRTL ? 'rtl' : 'ltr');
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [templateText]);
+	}, [templateText, isRTL]);
 
 	const onEditorChange = (e: BaseSyntheticEvent) => {
 		if (e.target.value?.length <= templateTextLimit) {
@@ -179,8 +181,8 @@ const WhatsappTemplateEditor = ({
 								: isRTL
 								? 'rtl'
 								: 'ltr',
-						height: textAreaHeight,
-						minHeight: '81px',
+						height: '100%',
+						overflowY: 'hidden',
 					}}
 					onChange={onEditorChange}
 					value={templateText}></textarea>
