@@ -17,6 +17,7 @@ import { ArrowDropDownCircleOutlined } from "@material-ui/icons";
 import { useNavigate } from "react-router-dom";
 import { Loader } from "../../../components/Loader/Loader";
 import { rowsOptions } from "../../../helpers/Constants";
+import { getLanguageCulture } from "../../../helpers/Utils/TextHelper";
 
 const AffiliateProgram = ({ classes }: any) => {
   const { t } = useTranslation();
@@ -232,9 +233,9 @@ const AffiliateProgram = ({ classes }: any) => {
     return <Box>
       <Box className={classes.dFlex} style={{ alignItems: 'center' }}>
         <b style={{ marginInlineEnd: 15 }}>{t('affiliate.referralLink')}: </b>
-        <a title={t('affiliate.referralLink')} rel="noreferrer" href={`${actionURL?.replace('/Pulseem/', '/react/')}sign-up?refId=${refId}&culture=${language}`} target="_blank">{`${actionURL?.replace('/Pulseem/', '/react/')}sign-up?refId=${refId}`}</a>
+        <a title={t('affiliate.referralLink')} rel="noreferrer" href={`${actionURL?.replace('/Pulseem/', '/react/')}sign-up?refId=${refId}&Culture=${getLanguageCulture(language)}`} target="_blank">{`${actionURL?.replace('/Pulseem/', '/react/')}sign-up?refId=${refId}`}</a>
         <Box style={{ marginInlineStart: 15 }}>
-          <CopyToClipboard text={`${actionURL?.replace('/Pulseem/', '/react/')}sign-up?refId=${refId}&culture=${language}`} onCopy={handleCopyScript}>
+          <CopyToClipboard text={`${actionURL?.replace('/Pulseem/', '/react/')}sign-up?refId=${refId}&Culture=${getLanguageCulture(language)}`} onCopy={handleCopyScript}>
             <Button
               variant="outlined"
               color="primary"

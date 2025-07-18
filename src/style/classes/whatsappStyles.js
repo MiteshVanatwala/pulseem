@@ -85,6 +85,8 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	WhatsappTextareaWrapper: {
 		border: '1px solid #ced4da',
 		height: '240px',
+		maxHeight: '240px',
+		overflowY: 'auto',
 		borderBottom: '0px',
 		borderTopLeftRadius: '0.25rem',
 		borderTopRightRadius: '0.25rem',
@@ -94,10 +96,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		},
 	},
 	whatsappActionButtonsWrapper: {
-		top: '-4px',
-		position: 'relative',
-		maxHeight: '150px',
-    overflowY: 'scroll',
+		paddingTop: '10px',
 	},
 	whatsappActionButtonsBox: {
 		display: 'flex',

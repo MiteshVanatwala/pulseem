@@ -29,6 +29,7 @@ import PolandImage from "../../assets/images/poland-flag-icon.svg";
 import { Autocomplete } from "@mui/material";
 import { filter, first } from "lodash";
 import { isValidPhoneNumber } from "libphonenumber-js";
+import { getLanguageCulture } from "../../helpers/Utils/TextHelper";
 
 const SignUpNew = ({ classes }: any) => {
   const dispatch = useDispatch();
@@ -37,7 +38,7 @@ const SignUpNew = ({ classes }: any) => {
   const [showLoader, setLoader] = useState(false);
   const qs = queryString.parse(window.location.search);
   // const isPolish = window.location.origin.includes('pulseem.pl');
-  const isPolish = qs?.culture === 'pl-PL';
+  const isPolish = qs?.Culture === 'pl-PL';
   const [userDetails, setUserDetails] = useState({
     fullName: '',
     emailId: qs?.emailid || '',
@@ -222,7 +223,7 @@ const SignUpNew = ({ classes }: any) => {
   };
 
   useEffect(() => {
-    const defaultLang = qs?.culture || cookieData;
+    const defaultLang = qs?.Culture || cookieData;
     let langCode = 'he';
     if (defaultLang === 'he-IL') langCode = 'he';
     else if (defaultLang === 'en-US') langCode = 'en';
@@ -323,7 +324,7 @@ const SignUpNew = ({ classes }: any) => {
         chkMailingApproval: userDetails.chkUpdate,
         Email: userDetails.emailId,
         ReferralID: qs?.refId,
-        Culture: qs?.culture || 'he-IL',
+        Culture: qs?.Culture || 'he-IL',
       });
       setLoader(false);
       if (status === 200) {
@@ -368,7 +369,7 @@ const SignUpNew = ({ classes }: any) => {
     setLoader(true);
     const { data: { Message }, status } = await PulseemReactInstance.post(`User/ResendEmail`, {
       UserID: qs?.id,
-      Culture: qs?.culture || 'he-IL',
+      Culture: qs?.Culture || 'he-IL',
     });
     setLoader(false);
     if (status === 200) {
@@ -494,14 +495,18 @@ const SignUpNew = ({ classes }: any) => {
       "8": "Email Is Not Valid",
       "13": "Email Already Exist"
     };
+    
 
     switch (StatusCode) {
       case 201: {
-        // for stage
-        const newUrl = Data?.RedirectLink.replace('https://www.pulseem.co.il', actionURL?.replace('/Pulseem/', ''));
-        window.location.href = `${newUrl}&refId=${qs?.refId}&culture=${language}`;
-        // for production
-        // window.location.href = `${Data?.RedirectLink}&refId=${qs?.refId}`;
+        const urlObj = new URL(Data?.RedirectLink);
+        urlObj.searchParams.delete("culture");
+
+        const newUrl = urlObj.toString().replace(
+          'https://www.pulseem.co.il',
+          actionURL ? actionURL.replace('/Pulseem/', '') : ''
+        );
+        window.location.href = `${newUrl}&refId=${qs?.refId}&Culture=${getLanguageCulture(language)}`;
         break;
       }
       case 404: {

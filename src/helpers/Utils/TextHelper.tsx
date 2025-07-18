@@ -40,4 +40,20 @@ export const compareLastNineDigits = (number1: string, number2: string) => {
 export const formatNumberWithCommas = (num: string | number) =>{
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
-  
+
+export const getLanguageCulture = (culture: string) => {
+    switch (culture) {
+        case 'he':
+        case 'he-IL':
+            return 'he-IL';
+
+        case 'pl':
+        case 'pl-PL':
+            return 'pl-PL';
+    
+        case 'en':
+        case 'en-US':
+        default:
+            return 'en-US';
+    }
+}

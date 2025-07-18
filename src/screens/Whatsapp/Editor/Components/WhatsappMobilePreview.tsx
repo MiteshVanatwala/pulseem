@@ -57,9 +57,11 @@ const WhatsappMobilePreview = ({
 		const direction = checkLanguage(templateText, isRTL);
 		if (direction !== 'Both') {
 			setTextDirection(direction === 'English' ? 'ltr' : 'rtl');
+		} else if (direction === 'Both') {
+			setTextDirection(isRTL ? 'rtl' : 'ltr');
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [templateText]);
+	}, [templateText, isRTL]);
 
 	const setUpdateTime = () => {
 		let time = new Date()
