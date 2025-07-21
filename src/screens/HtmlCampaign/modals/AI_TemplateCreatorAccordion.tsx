@@ -18,7 +18,7 @@ import { RandomID } from '../../../helpers/Functions/functions';
 import PulseemColorPickerUI from '../../../components/Controlls/PulseemColorPickerUI';
 import Toast from '../../../components/Toast/Toast.component';
 import moment from 'moment'
-import { RiChatAiLine } from 'react-icons/ri';
+import { RiChat1Line } from 'react-icons/ri';
 import { PulseemResponse } from '../../../Models/APIResponse';
 import { logout } from '../../../helpers/Api/PulseemReactAPI';
 import { AiOutlineWechatWork } from 'react-icons/ai';
@@ -493,7 +493,7 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
                                 size="small"
                                 variant="contained"
                                 color="primary"
-                                startIcon={<RiChatAiLine />}
+                                startIcon={<RiChat1Line />}
                                 disabled={selectedHistoryId === log.AnthropicRequestId}
                                 onClick={() => {
                                   handleLogSelection(log.AnthropicRequestId || '');

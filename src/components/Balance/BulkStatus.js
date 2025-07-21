@@ -468,29 +468,33 @@ const BulkStatus = ({ classes }) => {
                 <Typography className={classes.bulkTitle}>{t('appBar.whatsapp.title')}</Typography>
               </Grid>
 
-              <Grid item md={3} xs={4} className={clsx(classes.paddingSides10, windowSize === 'xs' ? classes.textRight : '')}>
+              <Grid item md={Whatsapp.eBillingType === 8 ? 7 : 3} xs={4} className={clsx(classes.paddingSides10, windowSize === 'xs' ? classes.textRight : '')}>
                 <Typography className={clsx(classes.bold, classes.elipsis, classes.noWrap)} style={{ whiteSpace: 'normal' }}>
                   {
-                    billingTypeId === "1"
+                    billingTypeId === "1" || Whatsapp.eBillingType === 8
                     ? t('dashboard.perUsage') 
                     : `${accountIsCurrencySymbolPrefix ? accountCurrencySymbol : ''} ${getBillingTypeText(Whatsapp)} ${!accountIsCurrencySymbolPrefix ? accountCurrencySymbol : ''}`
                   }
                 </Typography>
               </Grid>
 
-              <Grid item md={4} xs={4} className={isRTL ? classes.textLeft : classes.textRight}>
-                {Whatsapp?.FeatureAllowed && <Button className={clsx(classes.btn, classes.btnRounded, classes.f12)} onClick={() => {
-                  if (isBillingDetailsRequired) {
-                    setIsOpenBillingSettings(true);
-                    setBillingPopupCallback('Whatsapp');
-                  } else {
-                    showPackageDialogType({ type: 4, title: t('common.whatsappBulk') })
-                  }
-                }}>
-                  {t('dashboard.purchase')}
-                  {isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-                </Button>}
-              </Grid>
+              {
+                Whatsapp.eBillingType !== 8 && (
+                  <Grid item md={4} xs={4} className={isRTL ? classes.textLeft : classes.textRight}>
+                    {Whatsapp?.FeatureAllowed && <Button className={clsx(classes.btn, classes.btnRounded, classes.f12)} onClick={() => {
+                      if (isBillingDetailsRequired) {
+                        setIsOpenBillingSettings(true);
+                        setBillingPopupCallback('Whatsapp');
+                      } else {
+                        showPackageDialogType({ type: 4, title: t('common.whatsappBulk') })
+                      }
+                    }}>
+                      {t('dashboard.purchase')}
+                      {isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+                    </Button>}
+                  </Grid>
+                )
+              }
             </Grid>
             <Divider />
           </>)}

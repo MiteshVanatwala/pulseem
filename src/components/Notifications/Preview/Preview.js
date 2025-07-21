@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { FaChrome, FaFirefox, FaMobile } from 'react-icons/fa';
 import desktopClock from '../../../assets/images/desktopClock.jpg';
+import { checkLanguage } from '../../../screens/Whatsapp/Common';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -170,6 +171,12 @@ export const Preview = (
     const sms = (model.Text && model.Text.split(/\r\n|\n\r|\n|\r/)) || [];
     const mms = (model.NavigateUrl && model.NavigateUrl.split(/\r\n|\n\r|\n|\r/)) || [];
 
+    let smsDirection = checkLanguage(sms.join(' '), isRTL);
+    let mmsDirection = checkLanguage(mms.join(' '), isRTL);
+
+    smsDirection = smsDirection === 'Both' ? (isRTL ? 'rtl' : 'ltr') : (smsDirection === 'English' ? 'ltr' : 'rtl');
+    mmsDirection = mmsDirection === 'Both' ? (isRTL ? 'rtl' : 'ltr') : (mmsDirection === 'English' ? 'ltr' : 'rtl');
+
     return (
       <Box className={clsx(mobileFullsize && classes.mobileFullBG, classes.mobileBG, 'mobileBg')}>
         <Box className={classes.bubbleContainer}>
@@ -178,10 +185,10 @@ export const Preview = (
               link && <img src={link} className={classes.mmsImage} key={`mms${model.MmsCampaignID}${index}`} alt="" />
             ))}
             {isSMS && sms.map((text, index) => (
-              <Typography className={classes.bubbleText} key={`smsTxt${index}`}>{text ? text : <br />}</Typography>
+              <Typography className={classes.bubbleText} key={`smsTxt${index}`} style={{ direction: smsDirection }}>{text ? text : <br />}</Typography>
             ))}
             {isMMS && mms.map((url, index) => (
-              <Typography className={classes.bubbleText} key={`mmsTxt${index}`}>{url ? url : <br />}</Typography>
+              <Typography className={classes.bubbleText} key={`mmsTxt${index}`} style={{ direction: mmsDirection }}>{url ? url : <br />}</Typography>
             ))}
           </Paper>
         </Box>
