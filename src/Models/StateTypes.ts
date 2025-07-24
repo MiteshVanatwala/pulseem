@@ -75,4 +75,5 @@ export type StateType = {
     linksClicksReportSlice: any;
     aiChat: AiChatState;
     Ai: any;
+    linksClicksReportSlice: any;
 };

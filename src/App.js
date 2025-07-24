@@ -99,6 +99,7 @@ import RemoveMyData from './screens/RemoveMyData/RemoveMyData';
 import LinksClicksReport from './screens/Reports/LinksClicksReport/LinksClicksReport';
 import AIFloatingButton from './components/AI/AIFloatingButton';
 import AIChatWidget from './components/AI/AIChatWidget';
+import LinksClicksReport from './screens/Reports/LinksClicksReport/LinksClicksReport';
 
 const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
   const transferUrl =
