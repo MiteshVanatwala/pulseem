@@ -132,5 +132,10 @@
   "WhatsappBalance": "Whatsapp Balance",
   "removalRequest": "Removal request",
   "exportSmsContent": "Export SMS content",
-  "smsContent": "SMS content"
+  "smsContent": "SMS content",
+  "linksClicksReport": {
+    "title": "Links Clicks Report",
+    "exportRecipient": "Export Recipient",
+    "verifiedClick": "Verified Clicks"
+  }
 }

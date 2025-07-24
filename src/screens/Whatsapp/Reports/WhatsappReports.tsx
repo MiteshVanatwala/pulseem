@@ -60,6 +60,8 @@ import { TablePagination } from '../../../components/managment';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { DateFormats, SizeOptions_XS_SM } from '../../../helpers/Constants';
 import PulseemSwitch from '../../../components/Controlls/PulseemSwitch';
+import { sitePrefix } from '../../../config';
+import { LinksClicksReport } from '../../../config/enum';
 
 const WhatsappReports = ({ classes }: ClassesType) => {
 	const { t: translator } = useTranslation();
@@ -280,9 +282,12 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 				});
 			}
 		} else {
-			const win: Window = window;
-			win.location = `/Pulseem/WhatsappLinksClicksReport.aspx?CampaignID=${campaignId}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'
-				}`;
+			navigate(`${sitePrefix}reports/LinksClicksReport`, {
+				state: {
+					type: LinksClicksReport.WhatsApp,
+					campaignId: campaignId,
+				}
+			})
 		}
 	};
 

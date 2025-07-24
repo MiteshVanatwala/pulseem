@@ -96,6 +96,7 @@ import SignUpNew from './screens/SignUp/SignUpNew';
 import { UserRoles } from './Models/SubUser/SubUsers';
 import { PulseemFeatures } from './model/PulseemFields/Fields';
 import RemoveMyData from './screens/RemoveMyData/RemoveMyData';
+import LinksClicksReport from './screens/Reports/LinksClicksReport/LinksClicksReport';
 
 const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
   const transferUrl =
@@ -419,6 +420,11 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
         path={`/EmailCampaignStatistics`}
         component={transferUrl('/Pulseem/EmailCampaignStatistics.aspx')}
       />
+      <Route
+        path={`${sitePrefix}reports/LinksClicksReport`}
+        element={<LinksClicksReport classes={classes} />}
+      />
+
       {/* Automations */}
       <Route
         path={`${sitePrefix}Automations`}

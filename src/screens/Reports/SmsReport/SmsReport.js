@@ -32,6 +32,7 @@ import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { sitePrefix } from '../../../config';
 import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 import queryString from 'query-string';
+import { LinksClicksReport } from '../../../config/enum';
 
 const SmsReport = ({ classes }) => {
   const priorDate = moment().subtract(30, 'days').utcOffset(0);
@@ -82,7 +83,13 @@ const SmsReport = ({ classes }) => {
         if (userRoles?.HideRecipients) {
           return;
         }
-        window.location = `/Pulseem/SMSLinksClicksReport.aspx?CampaignID=${id}&fromreact=true&type=unique&Culture=${isRTL ? 'he-IL' : 'en-US'}`
+        navigate(`${sitePrefix}reports/LinksClicksReport`, {
+          state: {
+            type: LinksClicksReport.SMS,
+            campaignId: id,
+            isVerified: false
+          }
+        })
       }
     },
     VerifiedCount: {
@@ -92,7 +99,13 @@ const SmsReport = ({ classes }) => {
         if (userRoles?.HideRecipients) {
           return;
         }
-        window.location = `/Pulseem/SMSLinksClicksReport.aspx?CampaignID=${id}&fromreact=true&type=verified&Culture=${isRTL ? 'he-IL' : 'en-US'}`
+        navigate(`${sitePrefix}reports/LinksClicksReport`, {
+          state: {
+            type: LinksClicksReport.SMS,
+            campaignId: id,
+            isVerified: true
+          }
+        })
       }
     },
     ClickCount: {

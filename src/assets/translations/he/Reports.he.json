@@ -132,5 +132,10 @@
   "WhatsappBalance": "יתרת וואטסאפ",
   "removalRequest": "בקשת הסרה",
   "exportSmsContent": "ייצא תוכן הודעת סמס",
-  "smsContent": "תוכן ההודעה"
+  "smsContent": "תוכן ההודעה",
+  "linksClicksReport": {
+    "title": "דו”ח הקלקות",
+    "exportRecipient": "Export Recipient",
+    "verifiedClick": "Verified Clicks"
+  }
 }

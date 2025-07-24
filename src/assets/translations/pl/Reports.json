@@ -132,5 +132,10 @@
   "WhatsappBalance": "Saldo WhatsApp",
   "removalRequest": "Prośba o usunięcie",
   "exportSmsContent": "Eksportuj zawartość SMS",
-  "smsContent": "Zawartość SMS"
+  "smsContent": "Zawartość SMS",
+  "linksClicksReport": {
+    "title": "Links Clicks Report",
+    "exportRecipient": "Export Recipient",
+    "verifiedClick": "Verified Clicks"
+  }
 }

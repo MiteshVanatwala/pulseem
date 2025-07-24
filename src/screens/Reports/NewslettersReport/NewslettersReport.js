@@ -31,6 +31,8 @@ import PulseemSwitch from '../../../components/Controlls/PulseemSwitch';
 import { MdArrowBackIos, MdArrowForwardIos, MdOutlineAddCircleOutline, MdOutlineRemoveCircleOutline } from 'react-icons/md';
 import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 import { Virtuoso } from 'react-virtuoso'
+import { sitePrefix } from '../../../config';
+import { LinksClicksReport } from '../../../config/enum';
 
 const NewslettersReport = ({ classes }) => {
   const navigate = useNavigate()
@@ -110,14 +112,18 @@ const NewslettersReport = ({ classes }) => {
     },
     ClickCountUnique: {
       title: t('common.Unique'),
-      href: !userRoles?.HideRecipients && `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true`,
       clickable: !userRoles?.HideRecipients,
       onClick: (isParent = false) => {
         if (userRoles?.HideRecipients)
           return false;
         else {
-          window.location = `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}${isParent ? '&IsParent=true' : ''}&fromreact=true`
-
+          navigate(`${sitePrefix}reports/LinksClicksReport`, {
+            state: {
+              type: LinksClicksReport.Newsletter,
+              campaignId: id,
+              isParent: isParent
+            }
+          })
         }
       }
       // onClick: () => navigate(`/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true`)
