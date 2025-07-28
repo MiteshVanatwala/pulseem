@@ -56,7 +56,7 @@ export enum URLS {
 }
 
 export enum LinksClicksReport {
-  Newsletter = "Newsletter",
-  SMS = "SMS",
-  WhatsApp = "WhatsApp"
+  Newsletter = "newsletter",
+  SMS = "sms",
+  WhatsApp = "whatsapp"
 }

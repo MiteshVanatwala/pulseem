@@ -136,6 +136,29 @@
   "linksClicksReport": {
     "title": "דו”ח הקלקות",
     "exportRecipient": "Export Recipient",
-    "verifiedClick": "Verified Clicks"
+    "verifiedClick": "Verified Clicks",
+    "CampaignID": "Campaign ID",
+    "LinkID": "Link ID",
+    "Url": "גיבוי",
+    "Status": "סטאטוס",
+    "FirstName": "שם פרטי",
+    "LastName": "שם משפחה",
+    "Email": "דואר אלקטרוני",
+    "Telephone": "טלפון",
+    "Cellphone": "סלולרי",
+    "Address": "כתובת",
+    "BirthDate": "תאריך לידה",
+    "City": "עיר",
+    "State": "מדינה",
+    "Country": "ארץ",
+    "Zip": "מיקוד",
+    "Company": "חברה",
+    "ReminderDate": "תאריך תזכורת",
+    "InfoCountry": "Info Country",
+    "InfoCity": "Info City",
+    "Clicks": "הקלקה",
+    "SmsStatus": "סטאטוס SMS",
+    "LastClickDate": "Last Click Date",
+    "NoRecipients": "Oops!! No recipient details to export."
   }
 }

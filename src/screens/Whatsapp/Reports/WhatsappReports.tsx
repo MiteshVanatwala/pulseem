@@ -282,10 +282,13 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 				});
 			}
 		} else {
+			const campaign = reportListData.find(item => item.WACampaignID === campaignId);
+  		const campaignName = campaign ? campaign.Name : '';
 			navigate(`${sitePrefix}reports/LinksClicksReport`, {
 				state: {
 					type: LinksClicksReport.WhatsApp,
 					campaignId: campaignId,
+					campaignName: campaignName
 				}
 			})
 		}

@@ -136,6 +136,29 @@
   "linksClicksReport": {
     "title": "Links Clicks Report",
     "exportRecipient": "Export Recipient",
-    "verifiedClick": "Verified Clicks"
+    "verifiedClick": "Verified Clicks",
+    "CampaignID": "Campaign ID",
+    "LinkID": "Link ID",
+    "Url": "URL",
+    "Status": "Status",
+    "FirstName": "First Name",
+    "LastName": "Last Name",
+    "Email": "Email",
+    "Telephone": "Telephone",
+    "Cellphone": "Cellphone",
+    "Address": "Address",
+    "BirthDate": "Birth Date",
+    "City": "City",
+    "State": "State",
+    "Country": "Country",
+    "Zip": "Zip",
+    "Company": "Company",
+    "ReminderDate": "Reminder Date",
+    "InfoCountry": "Click Country",
+    "InfoCity": "Click Country Location",
+    "Clicks": "Clicks",
+    "SmsStatus": "SMS Status",
+    "LastClickDate": "Last Click Date",
+    "NoRecipients": "Oops!! No recipient details to export."
   }
 }

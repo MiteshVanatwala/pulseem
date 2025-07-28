@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
 import uniqid from 'uniqid';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams, useSearchParams, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { 
   Box, 
   Button, 
@@ -23,15 +23,16 @@ import { FaFileExcel } from 'react-icons/fa';
 import { TablePagination } from '../../../components/managment';
 import { Title } from '../../../components/managment/Title';
 import { Loader } from '../../../components/Loader/Loader';
-import { getLinksClicksReport, exportLinksClicksReport, exportLinkClicksData } from '../../../redux/reducers/linksClicksReportSlice';
+import { getLinksClicksReport, exportLinksClicksReport, clearLinksClicksReport } from '../../../redux/reducers/linksClicksReportSlice';
 import { ExportFile } from '../../../helpers/Export/ExportFile';
 import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
 import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog';
 import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
-import { ExportIcon } from '../../../assets/images/managment';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import { getLanguageCulture } from '../../../helpers/Utils/TextHelper';
+import Toast from '../../../components/Toast/Toast.component';
+import { LinksClicksReport } from '../../../config/enum';
 
 // Define the interface for each link click item
 interface LinkClickItem {
@@ -47,7 +48,6 @@ const LinkClickReport = ({ classes }: any) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const [searchParams] = useSearchParams();
   const location = useLocation();
   
   // Redux state
@@ -59,8 +59,9 @@ const LinkClickReport = ({ classes }: any) => {
   const [showLoader, setShowLoader] = useState<boolean>(false);
   const [dialogType, setDialogType] = useState<any>(null);
   const [page, setPage] = useState<number>(1);
-  
-  const { type, campaignId, isVerified, isParent } = location.state || {};
+  const [ toastMessage, setToastMessage ] = useState(null);
+
+  const { type, campaignId, isVerified, isParent, campaignName } = location.state || {};
 
   // Table styles
   const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot) };
@@ -76,10 +77,9 @@ const LinkClickReport = ({ classes }: any) => {
       loadData();
     }
     
-    // Cleanup on unmount
-    // return () => {
-    //   dispatch(clearLinksClicksReport());
-    // };
+    return () => {
+      dispatch(clearLinksClicksReport());
+    };
   }, [campaignId]);
   
   const loadData = async () => {
@@ -102,87 +102,55 @@ const LinkClickReport = ({ classes }: any) => {
     setDialogType({ type: 'exportFormat' });
   };
   
-  const handleExportRow = async (linkId: number) => {
-    setShowLoader(true);
-    
-    try {
-      // Call the individual link export API
-      const response = await dispatch(exportLinkClicksData({
-        linkId: linkId,
-        campaignId: parseInt(campaignId || ''),
-        Culture: getLanguageCulture(language),
-        type: type
-      }) as any);
-      
-      if (response?.payload && !response.error) {
-        const exportData = response.payload;
-        
-        // Transform the data for export
-        const dataToExport = exportData.value.map((row: any) => {
-          const exportRow: any = {};
-          
-          // Map each field using the header keys
-          Object.keys(exportData.header).forEach(key => {
-            exportRow[exportData.header[key]] = row[key] || '';
-          });
-          
-          return exportRow;
-        });
-        
-        // Get the field names from the header values
-        const fields = Object.values(exportData.header);
-        
-        // Export the file
-        ExportFile({
-          data: dataToExport,
-          fileName: `LinkClickData_Link${linkId}_Campaign${campaignId}`,
-          exportType: 'xlsx',
-          fields: fields
-        });
-      }
-    } catch (error) {
-      console.error('Error exporting link data:', error);
-    } finally {
-      setShowLoader(false);
-    }
-  };
-  
-  const handleExportConfirm = async (format: string) => {
+  const handleExport = async (format: string, linkId: number = 0) => {
     setDialogType(null);
     setShowLoader(true);
     
     try {
-      // Call the export API
-      const response = await dispatch(exportLinksClicksReport({
-        campaignId: parseInt(campaignId || ''),
-        isParent: !!isParent,
-        Culture: getLanguageCulture(language)
-      }) as any);
+      var response: any = await dispatch(exportLinksClicksReport(
+        linkId ? {
+          campaignId: parseInt(campaignId || ''),
+          isParent: !!isParent,
+          Culture: getLanguageCulture(language),
+          type: type,
+          linkId: linkId,
+        } : {
+          campaignId: parseInt(campaignId || ''),
+          isParent: !!isParent,
+          Culture: getLanguageCulture(language),
+          type: type,
+          linkId: linkId,
+        }
+      ) as any);
       
       if (response?.payload && !response.error) {
         const exportData = response.payload;
-        
-        // Transform the data for export
+
+        if (exportData.value.length === 0) {
+          // @ts-ignore
+          setToastMessage({ severity: 'error', color: 'error', message: t('report.linksClicksReport.NoRecipients'), showAnimtionCheck: false });
+          return false;
+        }
+
+        const fields: any = [...Object.keys(exportData.header)];
         const dataToExport = exportData.value.map((row: any) => {
           const exportRow: any = {};
-          
-          // Map each field using the header keys
-          Object.keys(exportData.header).forEach(key => {
-            exportRow[exportData.header[key]] = row[key] || '';
+          Object.keys(fields).forEach(key => {
+            exportRow[fields[key]] = row[fields[key]] || '';
           });
-          
           return exportRow;
         });
-        
-        // Get the field names from the header values
-        const fields = Object.values(exportData.header);
-        
-        // Export the file
+
+        const excelHeader = (Object.values(exportData.header) as string[]).map((field: string) => {
+          const translated = t(`report.linksClicksReport.${field}`);
+          return translated === `report.linksClicksReport.${field}` ? field : translated;
+        });
+
         ExportFile({
           data: dataToExport,
           fileName: `LinkClickReportByCampaign_${campaignId}`,
           exportType: format,
-          fields: fields
+          fields: excelHeader
         });
       }
     } catch (error) {
@@ -191,15 +159,31 @@ const LinkClickReport = ({ classes }: any) => {
       setShowLoader(false);
     }
   };
+
+  const getPageType = () => {
+    switch (type) {
+      case LinksClicksReport.Newsletter:
+        return CLIENT_CONSTANTS.PAGE_TYPES.EmailUniqueClick;
+      case LinksClicksReport.SMS: {
+        return isVerified ? CLIENT_CONSTANTS.PAGE_TYPES.SMSVerifiedClick : CLIENT_CONSTANTS.PAGE_TYPES.SMSUniqueClick;
+      }
+      case LinksClicksReport.WhatsApp:
+        return CLIENT_CONSTANTS.PAGE_TYPES.WhatsappUniqueClick;
+      default:
+        return CLIENT_CONSTANTS.PAGE_TYPES.Undefined;
+    }
+  }
   
-  const handleClickNavigation = (linkId: number, clickType: 'unique' | 'total') => {
+  const handleClickNavigation = (linkId: number) => {
     navigate(CLIENT_CONSTANTS.BASEURL, {
       state: {
         ...CLIENT_CONSTANTS.QUERY_PARAMS,
         CampaignID: parseInt(campaignId || ''),
-        // PageType: CLIENT_CONSTANTS.PAGE_TYPES?.LinkClicked || '',
-        PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
-        ResultTitle: `${t('report.linksClicksReport.title')} - ${clickType === 'unique' ? t('common.Unique') : t('common.Total')}`
+        LinkID: linkId,
+        PageType: getPageType(),
+        IsParent: !!isParent,
+        IsSearchByFilter: false,
+        ResultTitle: `${t('report.linksClicksReport.title')} - ${t('common.campaignID')}: ${campaignId}`
       }
     });
   };
@@ -207,7 +191,7 @@ const LinkClickReport = ({ classes }: any) => {
   const renderHeader = () => {
     return (
       <Box className={'topSection'}>
-        <Title Text={t('report.linksClicksReport.title')} classes={classes} />
+        <Title Text={`${t('report.linksClicksReport.title')} (${campaignName || ''} - ${campaignId})`} classes={classes} />
       </Box>
     );
   };
@@ -285,9 +269,14 @@ const LinkClickReport = ({ classes }: any) => {
           <Typography 
             className={clsx(classes.bluetext, classes.bold, classes.fontSize18, classes.ellipsis)}
             title={item.Url}
+            style={{
+              wordBreak: 'break-all',
+              whiteSpace: 'pre-line', // allows line breaks
+              overflowWrap: 'break-word',
+            }}
           >
             <Box className={clsx(classes.paddingInline10)}>
-              {item.Url} (CampaignID = {item.CampaignID})
+              {item.Url}
             </Box>
           </Typography>
         </TableCell>
@@ -297,22 +286,20 @@ const LinkClickReport = ({ classes }: any) => {
           align="center"
         >
           <Button
-            className={clsx(classes.bluetext, classes.fontSize18, classes.blueLink)}
-            onClick={() => handleClickNavigation(item.LinkID, 'unique')}
-            disabled={userRoles?.HideRecipients || item.ClickUniq === 0}
+            className={clsx(classes.bluetext, classes.fontSize18, item.ClickUniq > 0 ? classes.blueLink : null)}
+            onClick={() => handleClickNavigation(item.LinkID)}
           >
             {item.ClickUniq.toLocaleString()}
           </Button>
         </TableCell>
         <TableCell 
           classes={cellBodyStyle}
-          className={clsx(classes.flex1, classes.alignItemsCenter, classes.blueLink)}
+          className={clsx(classes.flex1, classes.alignItemsCenter)}
           align="center"
         >
           <Button
-            className={clsx(classes.linkButton, classes.bluetext, classes.fontSize18)}
-            onClick={() => handleClickNavigation(item.LinkID, 'total')}
-            disabled={userRoles?.HideRecipients || item.ClickCount === 0}
+            className={clsx(classes.linkButton, classes.fontSize18, item.ClickCount > 0 ? classes.blueLink : null)}
+            onClick={() => handleClickNavigation(item.LinkID)}
           >
             {item.ClickCount.toLocaleString()}
           </Button>
@@ -326,7 +313,7 @@ const LinkClickReport = ({ classes }: any) => {
             <Button
               variant="text"
               className={clsx(classes.linkButton, classes.bluetext)}
-              onClick={() => handleExportRow(item.LinkID)}
+              onClick={() => handleExport('xlsx', item.LinkID)}
             >
               {t('report.linksClicksReport.exportRecipient')}
             </Button>
@@ -358,7 +345,7 @@ const LinkClickReport = ({ classes }: any) => {
               </Typography>
               <Button
                 className={clsx(classes.linkButton, classes.bluetext, classes.fontSize16)}
-                onClick={() => handleClickNavigation(item.LinkID, 'unique')}
+                onClick={() => handleClickNavigation(item.LinkID)}
                 disabled={userRoles?.HideRecipients || item.ClickUniq === 0}
               >
                 {item.ClickUniq.toLocaleString()}
@@ -370,7 +357,7 @@ const LinkClickReport = ({ classes }: any) => {
               </Typography>
               <Button
                 className={clsx(classes.linkButton, classes.bluetext, classes.fontSize16)}
-                onClick={() => handleClickNavigation(item.LinkID, 'total')}
+                onClick={() => handleClickNavigation(item.LinkID)}
                 disabled={userRoles?.HideRecipients || item.ClickCount === 0}
               >
                 {item.ClickCount.toLocaleString()}
@@ -383,7 +370,7 @@ const LinkClickReport = ({ classes }: any) => {
                   fullWidth
                   className={clsx(classes.btn, classes.btnRed)}
                   startIcon={<FaFileExcel />}
-                  onClick={() => handleExportRow(item.LinkID)}
+                  onClick={() => handleExport('xlsx', item.LinkID)}
                 >
                   {t('report.linksClicksReport.exportRecipient')}
                 </Button>
@@ -472,6 +459,18 @@ const LinkClickReport = ({ classes }: any) => {
       />
     );
   };
+
+  const renderToast = () => {
+    if (toastMessage) {
+      setTimeout(() => {
+        setToastMessage(null);
+      }, 4000);
+      return (
+        <Toast data={toastMessage} />
+      );
+    }
+    return null;
+  }
   
   return (
     <DefaultScreen
@@ -492,7 +491,7 @@ const LinkClickReport = ({ classes }: any) => {
         isOpen={dialogType?.type === 'exportFormat'}
         title={t('campaigns.exportFile')}
         radioTitle={t('common.SelectFormat')}
-        onConfirm={handleExportConfirm}
+        onConfirm={handleExport}
         onCancel={() => setDialogType(null)}
         cookieName={'exportFormat'}
         defaultValue="xlsx"
@@ -500,6 +499,7 @@ const LinkClickReport = ({ classes }: any) => {
       />
       
       <Loader isOpen={showLoader || loading} />
+      {renderToast()}
     </DefaultScreen>
   );
 };
