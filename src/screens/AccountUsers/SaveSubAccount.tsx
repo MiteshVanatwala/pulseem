@@ -932,7 +932,8 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 					</Grid>
 				</Grid>
 
-				<div className={clsx(classes.f18, classes.bold, classes.pb10, classes.pt30)}>{t('SubAccount.addGroupsToSubAccount')}</div>
+				{/* TODO - Commenting below as it is not working. Need to investigate */}
+				{/* <div className={clsx(classes.f18, classes.bold, classes.pb10, classes.pt30)}>{t('SubAccount.addGroupsToSubAccount')}</div>
 				<Divider className={clsx(classes.mb10, classes.bgBlack)} />
 				<Grid container>
 					<Grid item md={12} xs={12}>
@@ -961,7 +962,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 							groupCompareKey='GroupName'
 						/>
 					</Grid>
-				</Grid>
+				</Grid> */}
 				<Loader isOpen={isLoader} />
 				{toastMessage && renderToast()}
 				{renderDialog()}
