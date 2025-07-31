@@ -63,14 +63,29 @@ const CreateAutomationTemplate = ({ classes }: any) => {
 	};
 
   const automationTemplate = (template: AutomationTemplate) => {
-    const templateDescription = isRTL ? template.DescriptionHe : template.Description;
+    let templateName = '';
+    let templateDesc = '';
+    switch (language) {
+      case 'he':
+        templateName = template.NameHe || template.Name || '';
+        templateDesc = template.DescriptionHe || template.Description || '';
+        break;
+      case 'pl':
+        templateName = template.NamePl || template.Name || '';
+        templateDesc = template.DescriptionPl || template.Description || '';
+        break;
+      case 'en':
+      default:
+        templateName = template.Name || '';
+        templateDesc = template.Description || '';
+    }
     return <Grid item md={4} sm={12} xs={12}>
       <Box
         className={clsx(classes.p10, classes.automationTemplate, classes.cursorPointer)}
         onClick={() => setSelectedTemplate(template.AutomationId)}
       >
-        <Box className={clsx(classes.semibold600, classes.f18, classes.colrPrimary)}>{ isRTL ? template.NameHe : template.Name }</Box>
-        <Box className={clsx('description', classes.pt10, classes.black)}>{templateDescription.length > 80 ? `${templateDescription.substring(0, 80)}...` : templateDescription}</Box>
+        <Box className={clsx(classes.semibold600, classes.f18, classes.colrPrimary)}>{ templateName }</Box>
+        <Box className={clsx('description', classes.pt10, classes.black)}>{templateDesc.length > 80 ? `${templateDesc.substring(0, 80)}...` : templateDesc}</Box>
         <Box className={clsx(isRTL ? classes.textLeft : classes.textRight)}>
           {
             template.AutomationId > 0 && (

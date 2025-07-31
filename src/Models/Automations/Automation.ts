@@ -24,9 +24,11 @@ export interface AutomationTemplate {
     AutomationId: number;
     Name: string;
     NameHe: string;
+    NamePl: string;
     IsDeleted: boolean | null;
     IsActive: boolean | null;
     Description: string;
     DescriptionHe: string;
+    DescriptionPl: string;
     CreatedDate: Date | string | null;
 }
