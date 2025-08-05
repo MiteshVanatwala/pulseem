@@ -251,6 +251,13 @@ const LinkClickReport = ({ classes }: any) => {
             className={clsx(classes.flex1)}
             align="center"
           >
+            {t('report.linksClicksReport.totalClick')}
+          </TableCell>
+          <TableCell 
+            classes={cellStyle} 
+            className={clsx(classes.flex1)}
+            align="center"
+          >
             &nbsp;
           </TableCell>
         </TableRow>

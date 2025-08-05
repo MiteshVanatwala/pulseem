@@ -137,6 +137,7 @@
     "title": "Links Clicks Report",
     "exportRecipient": "Export Recipient",
     "verifiedClick": "Verified Clicks",
+    "totalClick": "Total Clicks",
     "CampaignID": "Campaign ID",
     "LinkID": "Link ID",
     "Url": "URL",
