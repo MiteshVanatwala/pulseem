@@ -15,9 +15,10 @@ import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { pulseemNewTab } from '../../helpers/Functions/functions';
 import { URLS } from '../../config/enum';
 import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
+import { getLanguageCulture } from '../../helpers/Utils/TextHelper';
 
 const CreateAutomationTemplate = ({ classes }: any) => {
-  const { windowSize, isRTL } = useSelector((state: any) => state.core);
+  const { windowSize, language, isRTL } = useSelector((state: any) => state.core);
   const { automationTemplates } = useSelector((state: any) => state.automations);
   const { ToastMessages } = useSelector((state: any) => state.client);
   const { t } = useTranslation();
@@ -75,7 +76,7 @@ const CreateAutomationTemplate = ({ classes }: any) => {
             template.AutomationId > 0 && (
               <Button
                 className={clsx(classes.btn, classes.btnRounded, classes.f12, classes.ml5)}
-                onClick={() => pulseemNewTab(`${URLS.AutomationTemplatePreview}${template.AutomationId}&Culture=${isRTL ? 'he-IL' : 'en-US'}`)}
+                onClick={() => pulseemNewTab(`${URLS.AutomationTemplatePreview}${template.AutomationId}&Culture=${getLanguageCulture(language)}`)}
               >
                 {t('common.Preview')}
               </Button>

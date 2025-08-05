@@ -30,6 +30,7 @@ import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { DateFormats } from '../../../helpers/Constants';
 import { sitePrefix } from '../../../config';
 import useRedirect from '../../../helpers/Routes/Redirect';
+import { getLanguageCulture } from '../../../helpers/Utils/TextHelper';
 
 
 const AutomationsManagnentScreen = ({ classes }) => {
@@ -265,7 +266,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
         remove: windowSize === 'xs',
         rootClass: classes.paddingIcon,
         onClick: () => {
-          pulseemNewTab(`CreateAutomations.aspx?Mode=show&AutomationID=${ID}&Culture=${isRTL ? 'he-IL' : 'en-US'}`)
+          pulseemNewTab(`CreateAutomations.aspx?Mode=show&AutomationID=${ID}&Culture=${getLanguageCulture(language)}`)
         }
       },
       {
@@ -273,7 +274,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
         uIcon: EditIcon,
         lable: t('campaigns.Image2Resource1.ToolTip'),
         remove: windowSize === 'xs',
-        href: !IsActive ? `/Pulseem/CreateAutomations.aspx?AutomationID=${ID}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}` : '',
+        href: !IsActive ? `/Pulseem/CreateAutomations.aspx?AutomationID=${ID}&fromreact=true&Culture=${getLanguageCulture(language)}` : '',
         rootClass: classes.paddingIcon,
         onClick: () => {
           if (IsActive) {
