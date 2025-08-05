@@ -299,7 +299,11 @@ const BillingDetails = ({ classes, onSuccess = () => {} }: any) => {
         <FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.w100)}>
           <Select
             autoWidth
-            value={billingInfoValues?.BillingLanguage}
+            value={
+              Number(billingInfoValues?.BillingLanguage) === 0 || Number(billingInfoValues?.BillingLanguage) === 1
+                ? 0
+                : Number(billingInfoValues?.BillingLanguage) || -1
+            }
             IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
             MenuProps={{
               PaperProps: {
@@ -312,17 +316,20 @@ const BillingDetails = ({ classes, onSuccess = () => {} }: any) => {
             onChange={(e: any) => onBeforeUpdate(e)}
           >
             <MenuItem value={-1} className={classes.dropDownItem} disabled={true}>{t("common.select")}</MenuItem>
-            {[t('languages.langCodes.hebrew'), t('languages.langCodes.english')].map((so, index) => {
-              return (
-                <MenuItem
-                  key={index}
-                  value={index}
-                  className={classes.dropDownItem}
-                >
-                  {so}
-                </MenuItem>
-              );
-            })}
+            <MenuItem
+              key={0}
+              value={0}
+              className={classes.dropDownItem}
+            >
+              {t('languages.langCodes.hebrew')}
+            </MenuItem>
+            <MenuItem
+              key={2}
+              value={2}
+              className={classes.dropDownItem}
+            >
+              {t('languages.langCodes.english')}
+            </MenuItem>
           </Select>
         </FormControl>
       </Grid>
