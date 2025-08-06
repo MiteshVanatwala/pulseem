@@ -135,11 +135,11 @@
   "smsContent": "תוכן ההודעה",
   "linksClicksReport": {
     "title": "דו”ח הקלקות",
-    "exportRecipient": "Export Recipient",
-    "verifiedClick": "Verified Clicks",
-    "totalClick": "Total Clicks",
-    "CampaignID": "Campaign ID",
-    "LinkID": "Link ID",
+    "exportRecipient": "ייצוא נמענים",
+    "verifiedClick": "הקלקות מאומתות",
+    "totalClick": "סך כל הקליקים",
+    "CampaignID": "מספר קמפיין",
+    "LinkID": "מזהה קישור",
     "Url": "גיבוי",
     "Status": "סטאטוס",
     "FirstName": "שם פרטי",
@@ -155,11 +155,11 @@
     "Zip": "מיקוד",
     "Company": "חברה",
     "ReminderDate": "תאריך תזכורת",
-    "InfoCountry": "Info Country",
-    "InfoCity": "Info City",
+    "InfoCountry": "מדינה",
+    "InfoCity": "עיר",
     "Clicks": "הקלקה",
     "SmsStatus": "סטאטוס SMS",
-    "LastClickDate": "Last Click Date",
-    "NoRecipients": "Oops!! No recipient details to export."
+    "LastClickDate": "תאריך הקלקה אחרון",
+    "NoRecipients": "אופס! אין מידע נמענים לייצא"
   }
 }

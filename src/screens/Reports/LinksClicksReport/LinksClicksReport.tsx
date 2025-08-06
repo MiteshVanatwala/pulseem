@@ -98,8 +98,8 @@ const LinkClickReport = ({ classes }: any) => {
     }
   };
   
-  const handleExportClick = () => {
-    setDialogType({ type: 'exportFormat' });
+  const handleExportClick = (linkId: number = 0) => {
+    setDialogType({ type: 'exportFormat', data: { linkId } });
   };
   
   const handleExport = async (format: string, linkId: number = 0) => {
@@ -204,7 +204,7 @@ const LinkClickReport = ({ classes }: any) => {
             <Button
               className={clsx(classes.btn, classes.btnRounded)}
               endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-              onClick={handleExportClick}
+              onClick={() => handleExportClick()}
             >
               {t('campaigns.exportFile')}
             </Button>
@@ -225,7 +225,7 @@ const LinkClickReport = ({ classes }: any) => {
         <TableRow classes={rowStyle}>
           <TableCell 
             classes={cellStyle} 
-            className={clsx(classes.flex6)}
+            className={clsx(classes.flex5)}
             align='left'
           >
             <Box className={clsx(classes.paddingInline10, classes.alignItemsStart)}>
@@ -239,13 +239,17 @@ const LinkClickReport = ({ classes }: any) => {
           >
             {t('common.ClicksUnique')}
           </TableCell>
-          <TableCell 
-            classes={cellStyle} 
-            className={clsx(classes.flex1)}
-            align="center"
-          >
-            {t('report.linksClicksReport.verifiedClick')}
-          </TableCell>
+          {
+            type === LinksClicksReport.SMS && (
+              <TableCell 
+                classes={cellStyle} 
+                className={clsx(classes.flex1)}
+                align="center"
+              >
+                {t('report.linksClicksReport.verifiedClick')}
+              </TableCell>
+            )
+          }
           <TableCell 
             classes={cellStyle} 
             className={clsx(classes.flex1)}
@@ -270,7 +274,7 @@ const LinkClickReport = ({ classes }: any) => {
       <TableRow key={uniqid()} classes={{ root: classes.tableRowRoot }}>
         <TableCell 
           classes={cellBodyStyle}
-          className={clsx(classes.flex6, classes.paddingInline10, classes.alignItemsStart)}
+          className={clsx(classes.flex5, classes.paddingInline10, classes.alignItemsStart)}
           align='left'
         >
           <Typography 
@@ -299,6 +303,22 @@ const LinkClickReport = ({ classes }: any) => {
             {item.ClickUniq.toLocaleString()}
           </Button>
         </TableCell>
+        {
+          type === LinksClicksReport.SMS && (
+            <TableCell 
+              classes={cellBodyStyle}
+              className={clsx(classes.flex1, classes.alignItemsCenter)}
+              align="center"
+            >
+              <Button
+                className={clsx(classes.linkButton, classes.fontSize18, item.ClickVerified > 0 ? classes.blueLink : null)}
+                onClick={() => handleClickNavigation(item.LinkID)}
+              >
+                {item.ClickVerified.toLocaleString()}
+              </Button>
+            </TableCell>
+          )
+        }
         <TableCell 
           classes={cellBodyStyle}
           className={clsx(classes.flex1, classes.alignItemsCenter)}
@@ -320,7 +340,7 @@ const LinkClickReport = ({ classes }: any) => {
             <Button
               variant="text"
               className={clsx(classes.linkButton, classes.bluetext)}
-              onClick={() => handleExport('xlsx', item.LinkID)}
+              onClick={() => handleExportClick(item.LinkID)}
             >
               {t('report.linksClicksReport.exportRecipient')}
             </Button>
@@ -358,9 +378,25 @@ const LinkClickReport = ({ classes }: any) => {
                 {item.ClickUniq.toLocaleString()}
               </Button>
             </Grid>
+            {
+              type === LinksClicksReport.SMS && (
+                <Grid item xs={6} className={clsx(classes.textCenter)}>
+                  <Typography className={clsx(classes.fontSize14, classes.grayText)}>
+                    {t('report.linksClicksReport.verifiedClick')}
+                  </Typography>
+                  <Button
+                    className={clsx(classes.linkButton, classes.bluetext, classes.fontSize16)}
+                    onClick={() => handleClickNavigation(item.LinkID)}
+                    disabled={userRoles?.HideRecipients || item.ClickVerified === 0}
+                  >
+                    {item.ClickVerified.toLocaleString()}
+                  </Button>
+                </Grid>
+              )
+            }
             <Grid item xs={6} className={clsx(classes.textCenter)}>
               <Typography className={clsx(classes.fontSize14, classes.grayText)}>
-                {t('report.linksClicksReport.verifiedClick')}
+                {t('report.linksClicksReport.totalClick')}
               </Typography>
               <Button
                 className={clsx(classes.linkButton, classes.bluetext, classes.fontSize16)}
@@ -377,7 +413,7 @@ const LinkClickReport = ({ classes }: any) => {
                   fullWidth
                   className={clsx(classes.btn, classes.btnRed)}
                   startIcon={<FaFileExcel />}
-                  onClick={() => handleExport('xlsx', item.LinkID)}
+                  onClick={() => handleExportClick(item.LinkID)}
                 >
                   {t('report.linksClicksReport.exportRecipient')}
                 </Button>
@@ -498,7 +534,7 @@ const LinkClickReport = ({ classes }: any) => {
         isOpen={dialogType?.type === 'exportFormat'}
         title={t('campaigns.exportFile')}
         radioTitle={t('common.SelectFormat')}
-        onConfirm={handleExport}
+        onConfirm={(type: string) => handleExport(type, dialogType.data.linkId)}
         onCancel={() => setDialogType(null)}
         cookieName={'exportFormat'}
         defaultValue="xlsx"
