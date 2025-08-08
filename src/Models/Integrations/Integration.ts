@@ -9,7 +9,8 @@ export enum LU_Plugin {
     Shopify = 2,
     Isracard = 3,
     EShop = 5,
-    Klaviyo = 10
+    Klaviyo = 10,
+    Verifone = 14
 }
 export enum LU_PluginGroupType {
     PURCHASED = 1,

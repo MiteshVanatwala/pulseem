@@ -63,6 +63,28 @@
     "oldConnectionOptionsButton": "Użyj starej integracji",
     "tryNewIntegrationButton": "Integracja ze starszymi wersjami"
   },
+  "verifone": {
+    "title": "Verifone",
+    "description": "Połącz swoje konto Verifone, aby automatycznie synchronizować dane klientów i śledzić zakupy, rejestracje i porzucone koszyki.",
+    "chainID": "ID Sieci",
+    "chainIDDescription": "Wprowadź swój identyfikator sieci Verifone",
+    "enterChainID": "ID sieci jest wymagane",
+    "username": "Nazwa użytkownika",
+    "usernameDescription": "Wprowadź nazwę użytkownika API Verifone",
+    "enterUsername": "Nazwa użytkownika jest wymagana",
+    "password": "Hasło",
+    "passwordDescription": "Wprowadź hasło API Verifone",
+    "enterPassword": "Hasło jest wymagane",
+    "mainServiceUrl": "URL Serwisu Klienta",
+    "mainServiceUrlDescription": "Wprowadź adres URL punktu końcowego API serwisu klienta",
+    "enterMainServiceUrl": "URL serwisu klienta jest wymagany",
+    "productsServiceURL": "URL Serwisu Produktów",
+    "productsServiceURLDescription": "Wprowadź adres URL punktu końcowego API serwisu produktów",
+    "enterProductsServiceURL": "URL serwisu produktów jest wymagany",
+    "connectedSuccessfully": "Verifone połączony pomyślnie",
+    "insertClientToGroup": "Wybierz grupy dla wydarzeń klientów",
+    "siteSignUp": "Nowy klient"
+  },
   "wooCommerce": {
     "title": "WooCommerce",
     "description": "Aby zintegrować swój sklep WooCommerce z kontem Pulseem, przeczytaj poniższy poradnik:",
