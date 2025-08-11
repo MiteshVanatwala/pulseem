@@ -23,11 +23,14 @@ import Ecwid from "./Ecwid";
 import EShop from "./EShop";
 import Wix from "./Wix";
 import Klaviyo from "./Klaviyo";
+import { useSelector } from "react-redux";
+import { StateType } from "../../Models/StateTypes";
 
 
 const Integrations = ({ classes }: any) => {
   const { t } = useTranslation();
   const [tabValue, setTabValue] = useState('0');
+  const { companyName } = useSelector((state: StateType) => state.core);
 
   useEffect(() => {
     const integrationTitles = {
@@ -136,13 +139,17 @@ const Integrations = ({ classes }: any) => {
             className={classes.iconTab}
             value='10'
           />
-          <Tab
-            label={t('integrations.verifone.title')}
-            icon={<img src={VerifoneIcon} alt={t('integrations.verifone.title')} />}
-            classes={{ root: classes.tabText, selected: classes.activeTab }}
-            className={classes.iconTab}
-            value='14'
-          />
+          {
+            companyName === 'LizaD' && (
+              <Tab
+                label={t('integrations.verifone.title')}
+                icon={<img src={VerifoneIcon} alt={t('integrations.verifone.title')} />}
+                classes={{ root: classes.tabText, selected: classes.activeTab }}
+                className={classes.iconTab}
+                value='14'
+              />
+            )
+          }
         </Tabs>
         <TabContext value={`${tabValue}`}>
           <TabPanel value='0' className={clsx(classes.pt0)}>
@@ -175,9 +182,14 @@ const Integrations = ({ classes }: any) => {
           <TabPanel value='10'>
             <Klaviyo classes={classes} />
           </TabPanel>
-          <TabPanel value='14' className={clsx(classes.pt0)}>
-            <VerifoneSetting classes={classes} />
-          </TabPanel>
+
+          {
+            companyName === 'LizaD' && (
+              <TabPanel value='14' className={clsx(classes.pt0)}>
+                <VerifoneSetting classes={classes} />
+              </TabPanel>
+            )
+          }
         </TabContext>
       </Box>
     </DefaultScreen>
