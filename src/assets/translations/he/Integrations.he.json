@@ -63,6 +63,28 @@
     "oldConnectionOptionsButton": "ניהול אינטגרציה בגרסאות קודמות",
     "tryNewIntegrationButton": "נסו את הפלאגין החדש"
   },
+  "verifone": {
+    "title": "Verifone",
+    "description": "Connect your Verifone account to automatically sync customer data and track purchases, registrations, and abandoned carts.",
+    "chainID": "Chain ID",
+    "chainIDDescription": "הכניסו את ה- Chain ID שלכם מוריפון",
+    "enterChainID": "יש להזין Chain ID",
+    "username": "שם משתמש",
+    "usernameDescription": "הכניסו שם המשתמש ל-API שקיבלתם מוריפון",
+    "enterUsername": "יש למלא שם משתמש",
+    "password": "סיסמא", 
+    "passwordDescription": "הכניסו את סיסמת ה-API שקיבלתם מוריפון",
+    "enterPassword": "יש למלא סיסמא",
+    "mainServiceUrl": "Services",
+    "mainServiceUrlDescription": "Enter the services URL",
+    "enterMainServiceUrl": "services URL is required",
+    "productsServiceURL": "WS URL",
+    "productsServiceURLDescription": "Enter the ws URL", 
+    "enterProductsServiceURL": "WS URL is required",
+    "connectedSuccessfully": "האינטגרציה לוריפון התחברה בהצלחה",
+    "insertClientToGroup": "בחרו קבוצות לאירועי לקוחות",
+    "siteSignUp": "לקוח חדש"
+  },
   "wooCommerce": {
     "title": "WooCommerce",
     "description": "על מנת לחבר את חנות השופיפיי שלכם לחשבון זה בפולסים, אנא קראו את המדריך הבא:",

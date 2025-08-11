@@ -5,6 +5,7 @@ import DefaultScreen from "../DefaultScreen";
 import clsx from "clsx";
 import { TabContext, TabPanel } from "@material-ui/lab";
 import Shopify from "./ShopifySetting";
+import VerifoneSetting from "./VerifoneSetting";
 import WooCommerce from "./WooCommerce";
 import CashCow from "./CashCow";
 import ShopifyIcon from '../../assets/images/shopify.png';
@@ -17,15 +18,19 @@ import IsraCardIcon from '../../assets/images/isracard.png';
 import WixIcon from '../../assets/images/wix.png';
 import Istores from "./Istores";
 import EcwidIcon from '../../assets/images/ecwid.png';
+import VerifoneIcon from '../../assets/images/verifone.png';
 import Ecwid from "./Ecwid";
 import EShop from "./EShop";
 import Wix from "./Wix";
 import Klaviyo from "./Klaviyo";
+import { useSelector } from "react-redux";
+import { StateType } from "../../Models/StateTypes";
 
 
 const Integrations = ({ classes }: any) => {
   const { t } = useTranslation();
   const [tabValue, setTabValue] = useState('0');
+  const { companyName } = useSelector((state: StateType) => state.core);
 
   useEffect(() => {
     const integrationTitles = {
@@ -37,6 +42,7 @@ const Integrations = ({ classes }: any) => {
       '5': { title: `${t('integrations.eShop.title')}` },
       '6': { title: `${t('integrations.wix.title')}` },
       '10': { title: `${t('integrations.Klaviyo.title')}` },
+      '14': { title: `${t('integrations.verifone.title')}` },
     } as any;
 
     document.title = `${integrationTitles[tabValue].title} | ${t('master.pulseemSystem')}`;
@@ -133,6 +139,17 @@ const Integrations = ({ classes }: any) => {
             className={classes.iconTab}
             value='10'
           />
+          {
+            companyName === 'LizaD' && (
+              <Tab
+                label={t('integrations.verifone.title')}
+                icon={<img src={VerifoneIcon} alt={t('integrations.verifone.title')} />}
+                classes={{ root: classes.tabText, selected: classes.activeTab }}
+                className={classes.iconTab}
+                value='14'
+              />
+            )
+          }
         </Tabs>
         <TabContext value={`${tabValue}`}>
           <TabPanel value='0' className={clsx(classes.pt0)}>
@@ -165,6 +182,14 @@ const Integrations = ({ classes }: any) => {
           <TabPanel value='10'>
             <Klaviyo classes={classes} />
           </TabPanel>
+
+          {
+            companyName === 'LizaD' && (
+              <TabPanel value='14' className={clsx(classes.pt0)}>
+                <VerifoneSetting classes={classes} />
+              </TabPanel>
+            )
+          }
         </TabContext>
       </Box>
     </DefaultScreen>
