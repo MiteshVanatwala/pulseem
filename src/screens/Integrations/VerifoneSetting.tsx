@@ -321,13 +321,6 @@ const Verifone = ({ classes }: any) => {
     <Box className={clsx(classes.managmentWrapper, classes.tabWrapper)}>
       {toastMessage && renderToast()}
       {showResetDialog && renderResetDialog()}
-      {/* <Title title={t("integrations.verifone.title")} classes={classes} showBack={false} /> */}
-      
-      {/* <Box className={clsx(classes.subCategoryTopWrapper, classes.pb20, classes.pt2rem)}>
-        <Typography>
-          {t("integrations.verifone.description")}
-        </Typography>
-      </Box> */}
 
       {
         (!isAuthenticated || isShowCredentials) && (
