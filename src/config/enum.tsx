@@ -54,3 +54,9 @@ export enum URLS {
   ContactUsEn = 'https://site.pulseem.co.il/en/contact-us/',
   UserGuide = 'https://site.pulseem.co.il/%D7%9E%D7%93%D7%A8%D7%99%D7%9B%D7%99%D7%9D/'
 }
+
+export enum LinksClicksReport {
+  Newsletter = "newsletter",
+  SMS = "sms",
+  WhatsApp = "whatsapp"
+}

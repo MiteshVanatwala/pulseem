@@ -31,6 +31,8 @@ import PulseemSwitch from '../../../components/Controlls/PulseemSwitch';
 import { MdArrowBackIos, MdArrowForwardIos, MdOutlineAddCircleOutline, MdOutlineRemoveCircleOutline } from 'react-icons/md';
 import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 import { Virtuoso } from 'react-virtuoso'
+import { sitePrefix } from '../../../config';
+import { LinksClicksReport } from '../../../config/enum';
 
 const NewslettersReport = ({ classes }) => {
   const navigate = useNavigate()
@@ -67,7 +69,7 @@ const NewslettersReport = ({ classes }) => {
 
   moment.locale(language)
 
-  const getHrefs = (id, revenue = 0, isParent = false) => ({
+  const getHrefs = (id, Name, revenue = 0, isParent = false) => ({
     TotalSendCompleted: {
       href: !userRoles?.HideRecipients && `/Pulseem/ClientSearchResult.aspx?SentToCampaignID=${id}&fromreact=true`,
       onClick: () => !userRoles?.HideRecipients && navigate(CLIENT_CONSTANTS.BASEURL, {
@@ -110,14 +112,19 @@ const NewslettersReport = ({ classes }) => {
     },
     ClickCountUnique: {
       title: t('common.Unique'),
-      href: !userRoles?.HideRecipients && `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true`,
       clickable: !userRoles?.HideRecipients,
       onClick: (isParent = false) => {
         if (userRoles?.HideRecipients)
           return false;
         else {
-          window.location = `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}${isParent ? '&IsParent=true' : ''}&fromreact=true`
-
+          navigate(`${sitePrefix}reports/LinksClicksReport`, {
+            state: {
+              type: LinksClicksReport.Newsletter,
+              campaignId: id,
+              isParent: isParent,
+              campaignName: Name
+            }
+          })
         }
       }
       // onClick: () => navigate(`/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true`)
@@ -854,7 +861,7 @@ const NewslettersReport = ({ classes }) => {
       SumTotalSendPlan, SumTotalSendCompleted, SumOpenCount, SumOpenCountUnique, SumClickCount, SumClickCountUnique, SumSendError, SumRemovedClients, SumNotOpened, SumPercentageOpens, SumPercetangeClicks, SumRevenue
     } = getParentChildSum(row);
 
-    const hrefs = getHrefs(CampaignID, Revenue, childItems?.length > 0)
+    const hrefs = getHrefs(CampaignID, Name, Revenue, childItems?.length > 0)
     return (
       <>
         <TableRow
@@ -1007,6 +1014,7 @@ const NewslettersReport = ({ classes }) => {
     const childItems = isParent ? [row, ...newslettersReportsChildCampaigns.filter(childCampaign => childCampaign?.ParentCampaignId === row?.CampaignID)] : [];
     const {
       CampaignID,
+      Name,
       TotalSendPlan,
       OpenCount,
       OpenCountUnique,
@@ -1017,7 +1025,7 @@ const NewslettersReport = ({ classes }) => {
       NotOpened,
       Revenue = 0
     } = row
-    const hrefs = getHrefs(CampaignID, 0, isParent);
+    const hrefs = getHrefs(CampaignID, Name, 0, isParent);
     const {
       SumTotalSendPlan, SumTotalSendCompleted, SumOpenCount, SumOpenCountUnique, SumClickCount, SumClickCountUnique, SumSendError, SumRemovedClients, SumNotOpened, SumPercentageOpens, SumPercetangeClicks
     } = getParentChildSum(row);

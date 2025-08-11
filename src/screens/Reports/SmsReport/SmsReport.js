@@ -32,6 +32,7 @@ import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { sitePrefix } from '../../../config';
 import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 import queryString from 'query-string';
+import { LinksClicksReport } from '../../../config/enum';
 
 const SmsReport = ({ classes }) => {
   const priorDate = moment().subtract(30, 'days').utcOffset(0);
@@ -63,7 +64,7 @@ const SmsReport = ({ classes }) => {
 
   moment.locale(language)
 
-  const getHrefs = (id) => ({
+  const getHrefs = (id, Name) => ({
     TotalSendTo: {
       href: `/Pulseem/ClientSearchResult.aspx?TotalCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`,
       onClick: () => !userRoles?.HideRecipients && navigate(CLIENT_CONSTANTS.BASEURL, {
@@ -77,22 +78,34 @@ const SmsReport = ({ classes }) => {
     },
     ClickCountUnique: {
       title: t('common.Unique'),
-      href: `/Pulseem/SMSLinksClicksReport.aspx?CampaignID=${id}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`,
       onClick: () => {
         if (userRoles?.HideRecipients) {
           return;
         }
-        window.location = `/Pulseem/SMSLinksClicksReport.aspx?CampaignID=${id}&fromreact=true&type=unique&Culture=${isRTL ? 'he-IL' : 'en-US'}`
+        navigate(`${sitePrefix}reports/LinksClicksReport`, {
+          state: {
+            type: LinksClicksReport.SMS,
+            campaignId: id,
+            campaignName: Name,
+            isVerified: false
+          }
+        })
       }
     },
     VerifiedCount: {
       title: t('mainReport.verifiedCount'),
-      href: `/Pulseem/SMSLinksClicksReport.aspx?CampaignID=${id}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`,
       onClick: () => {
         if (userRoles?.HideRecipients) {
           return;
         }
-        window.location = `/Pulseem/SMSLinksClicksReport.aspx?CampaignID=${id}&fromreact=true&type=verified&Culture=${isRTL ? 'he-IL' : 'en-US'}`
+        navigate(`${sitePrefix}reports/LinksClicksReport`, {
+          state: {
+            type: LinksClicksReport.SMS,
+            campaignId: id,
+            campaignName: Name,
+            isVerified: true
+          }
+        })
       }
     },
     ClickCount: {
@@ -620,9 +633,10 @@ const SmsReport = ({ classes }) => {
       failure,
       TotalSendPlan,
       totalSent,
-      Revenue = 0
+      Revenue = 0,
+      Name
     } = row
-    const hrefs = getHrefs(SMSCampaignID)
+    const hrefs = getHrefs(SMSCampaignID, Name)
     return (
       <TableRow
         key={SMSCampaignID}
@@ -744,7 +758,7 @@ const SmsReport = ({ classes }) => {
       success,
       Revenue = 0
     } = row
-    const hrefs = getHrefs(SMSCampaignID)
+    const hrefs = getHrefs(SMSCampaignID, Name)
     return (
       <TableRow
         key={row.ID}
