@@ -76,4 +76,5 @@ export type StateType = {
     aiChat: AiChatState;
     Ai: any;
     linksClicksReportSlice: any;
+    companyName?: string;
 };
