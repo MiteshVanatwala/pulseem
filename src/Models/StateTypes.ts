@@ -55,6 +55,6 @@ export type StateType = {
     extraFields: any;
     affiliates: any;
     amp: any;
-    billing: any;
     companyName?: string;
+    billing: any;
 };
