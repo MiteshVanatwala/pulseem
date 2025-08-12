@@ -346,6 +346,7 @@
   "formName": "שם הטופס",
   "formNameRequired": "שם הטופס - שדה חובה",
   "formLanguage": "שפת הטופס",
+  "autofillFields": "מילוי שדות אוטומטי",
   "shortURL": "קישור מקוצר",
   "shortURLTooltip": "כתובת ידידותית לדף אשר תגדיל את הקידום במנועי חיפוש ויהיה קריא על ידי בני האדם",
   "shortURLRequired": "קישור מקוצר - שדה חובה",

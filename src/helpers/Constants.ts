@@ -711,3 +711,41 @@ export const BASED_ON_LANG = {
 }
 
 export const reCAPTCHAKey = "6LeJkBorAAAAAC1q2G6fGQqIr-GuqSEF3L91AsT9";
+
+export const defaultAccountExtraData = [
+    { "FirstName": "common.first_name" },
+    { "LastName": "common.last_name" },
+    { "Email": "common.email" },
+    { "Telephone": "common.telephone" },
+    { "Cellphone": "common.cellphone" },
+    { "Address": "common.address" },
+    { "City": "common.city" },
+    { "Company": "common.company" },
+    { "BirthDate": "common.birth_date" },
+    { "ReminderDate": "common.reminder_date" },
+    { "Country": "common.country" },
+    { "State": "common.state" },
+    { "Zip": "common.zip" }
+];
+
+export const defaultAccountExtraDataLandingPage = [
+    ...defaultAccountExtraData,
+    { "Confirmation": "common.confirmation" },
+    { "ExtraDate1": 'common.ExtraDate1' },
+    { "ExtraDate2": 'common.ExtraDate2' },
+    { "ExtraDate3": 'common.ExtraDate3' },
+    { "ExtraDate4": 'common.ExtraDate4' },
+    { "ExtraField1": 'common.ExtraField1' },
+    { "ExtraField2": 'common.ExtraField2' },
+    { "ExtraField3": 'common.ExtraField3' },
+    { "ExtraField4": 'common.ExtraField4' },
+    { "ExtraField5": 'common.ExtraField5' },
+    { "ExtraField6": 'common.ExtraField6' },
+    { "ExtraField7": 'common.ExtraField7' },
+    { "ExtraField8": 'common.ExtraField8' },
+    { "ExtraField9": 'common.ExtraField9' },
+    { "ExtraField10": 'common.ExtraField10' },
+    { "ExtraField11": 'common.ExtraField11' },
+    { "ExtraField12": 'common.ExtraField12' },
+    { "ExtraField13": 'common.ExtraField13' },
+];

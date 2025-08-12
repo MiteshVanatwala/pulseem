@@ -346,6 +346,7 @@
   "formName": "Nazwa Formularza",
   "formNameRequired": "Nazwa Formularza jest wymagana",
   "formLanguage": "Język Formularza",
+  "autofillFields": "Automatyczne wypełnianie pól",
   "shortURL": "Krótki URL",
   "shortURLTooltip": "Przyjazny dla użytkownika URL dla ludzkich oczu i dla SEO",
   "shortURLRequired": "Krótki URL jest wymagany",

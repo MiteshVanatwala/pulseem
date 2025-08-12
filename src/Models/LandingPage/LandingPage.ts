@@ -48,6 +48,8 @@ export interface LandingPageModel {
     CategoryID: number | null;
     IsUpdate: boolean;
     IsAccessibility: boolean;
+    autofillEnabled?: boolean;
+    autofillFields?: string[];
     TerminalNumber: string;
     APIUserName: string;
     DepartmentId: number | null;

@@ -346,6 +346,7 @@
   "formName": "Form Name",
   "formNameRequired": "Form Name is required",
   "formLanguage": "Form Language",
+  "autofillFields": "Autofill Fields",
   "shortURL": "Short URL",
   "shortURLTooltip": "User friendly URL for human eyes and for SEO",
   "shortURLRequired": "Short URL is required",
