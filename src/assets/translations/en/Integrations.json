@@ -63,6 +63,28 @@
     "oldConnectionOptionsButton": "Use the old integration",
     "tryNewIntegrationButton": "Legacy Integration"
   },
+  "verifone": {
+    "title": "Verifone",
+    "description": "Connect your Verifone account to automatically sync customer data and track purchases, registrations, and abandoned carts.",
+    "chainID": "Chain ID",
+    "chainIDDescription": "Enter your Verifone Chain ID",
+    "enterChainID": "Chain ID is required",
+    "username": "Username",
+    "usernameDescription": "Enter your Verifone API username",
+    "enterUsername": "Username is required",
+    "password": "Password", 
+    "passwordDescription": "Enter your Verifone API password",
+    "enterPassword": "Password is required",
+    "mainServiceUrl": "Services URL",
+    "mainServiceUrlDescription": "Enter the services URL",
+    "enterMainServiceUrl": "services URL is required",
+    "productsServiceURL": "WS URL",
+    "productsServiceURLDescription": "Enter the ws URL", 
+    "enterProductsServiceURL": "ws URL is required",
+    "connectedSuccessfully": "Verifone Connected Successfully",
+    "insertClientToGroup": "Select Groups for Customer Events",
+    "siteSignUp": "New Customer"
+  },
   "wooCommerce": {
     "title": "WooCommerce",
     "description": "In order to integrate your WooCommerce store to your Pulseem account please read the following guide:",
