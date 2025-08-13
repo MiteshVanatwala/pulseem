@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Box, Typography, Button, Grid, TextField, FormControlLabel, Checkbox } from "@material-ui/core";
+import { Box, Typography, Button, Grid, TextField, FormControlLabel, Switch, Checkbox } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import clsx from "clsx";
 import { useDispatch, useSelector } from "react-redux";
@@ -48,6 +48,7 @@ const Verifone = ({ classes }: any) => {
     Password: '',
     MainServiceUrl: '',
     SecondServiceUrl: '',
+    IsSendSms: false,
     RegisterEventActive: false,
     PurchaseEventActive: false,
     AbandonedEventActive: false,
@@ -231,6 +232,7 @@ const Verifone = ({ classes }: any) => {
           Password: '',
           MainServiceUrl: '',
           SecondServiceUrl: '',
+          IsSendSms: false,
           RegisterEventActive: false,
           PurchaseEventActive: false,
           AbandonedEventActive: false,
@@ -441,6 +443,19 @@ const Verifone = ({ classes }: any) => {
                   {errors.SecondServiceUrl}
                 </Typography>
               )}
+            </Box>
+
+            <Box className={clsx(classes.dblock, classes.pb15, classes.pt10)}>
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={settings.IsSendSms}
+                    onChange={(e) => setSettings({ ...settings, IsSendSms: e.target.checked })}
+                    color="primary"
+                  />
+                }
+                label={t("integrations.verifone.activateCustomerRegistrationSMS")}
+              />
             </Box>
 
             {!!errors.authentication_message && (
