@@ -730,7 +730,6 @@ export const defaultAccountExtraData = [
 
 export const defaultAccountExtraDataLandingPage = [
     ...defaultAccountExtraData,
-    { "Confirmation": "common.confirmation" },
     { "ExtraDate1": 'common.ExtraDate1' },
     { "ExtraDate2": 'common.ExtraDate2' },
     { "ExtraDate3": 'common.ExtraDate3' },
