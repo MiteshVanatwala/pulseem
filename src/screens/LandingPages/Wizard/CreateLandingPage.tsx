@@ -197,31 +197,49 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 						/>
 					</Box>
 					{landingPageModel.autofillEnabled && (
-						<FormControl variant="outlined" className={clsx(classes.w100, classes.mb2)}>
-							<Select
-								multiple
-								value={landingPageModel.autofillFields || []}
-								onChange={(e: any) => {
-									const selected = e.target.value as string[];
-									setLandingPageModel({
-										...landingPageModel,
-										autofillFields: selected
-									});
-								}}
-								renderValue={(selected) => (selected as string[]).join(', ')}
-							>
-								{defaultAccountExtraDataLandingPage.map((item) => {
-									const key = Object.keys(item)[0];
-									const value = Object.values(item)[0];
-									return (
-										<MenuItem key={key} value={key}>
-											<Checkbox checked={(landingPageModel.autofillFields || []).indexOf(key) > -1} />
-											<Typography>{t(value)}</Typography>
-										</MenuItem>
-									);
-								})}
-							</Select>
-						</FormControl>
+						<>
+							<FormControl variant="outlined" className={clsx(classes.w100, classes.mb2)}>
+								<Select
+									multiple
+									value={landingPageModel.autofillFields || []}
+									onChange={(e: any) => {
+										const selected = e.target.value as string[];
+										setLandingPageModel({
+											...landingPageModel,
+											autofillFields: selected
+										});
+									}}
+									renderValue={(selected) => (selected as string[]).join(', ')}
+								>
+									{defaultAccountExtraDataLandingPage.map((item) => {
+										const key = Object.keys(item)[0];
+										const value = Object.values(item)[0];
+										return (
+											<MenuItem key={key} value={key}>
+												<Checkbox checked={(landingPageModel.autofillFields || []).indexOf(key) > -1} />
+												<Typography>{t(value)}</Typography>
+											</MenuItem>
+										);
+									})}
+								</Select>
+							</FormControl>
+
+							<FormControlLabel
+								control={
+									<Checkbox
+										checked={landingPageModel.autofillEditable}
+										onChange={(e) => {
+											setLandingPageModel({
+												...landingPageModel,
+												autofillEditable: e.target.checked
+											});
+										}}
+										color="primary"
+									/>
+								}
+								label={t("landingPages.autofillEditable")}
+							/>
+						</>
 					)}
 				</Grid>
 			</>
@@ -282,7 +300,8 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 				IsResponsive: (lpId && lpId > 0) ? response.Data?.WebForm?.IsResponsive : true,
 				IsTemplate: (lpId && lpId > 0) ? response.Data?.WebForm?.IsTemplate : false,
 				autofillEnabled: response.Data?.WebForm?.AutofillSettings?.IsAutofillEnabled,
-				autofillFields: response.Data?.WebForm?.AutofillSettings?.SelectedFields
+				autofillFields: response.Data?.WebForm?.AutofillSettings?.SelectedFields,
+				autofillEditable: response.Data?.WebForm?.AutofillSettings?.IsEditable
 			});
 			if (response.Data?.WebForm?.LinkPreviewIconName !== '') {
 				handleSelectedImage(response.Data?.WebForm?.LinkPreviewIconName, true);
@@ -305,7 +324,8 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 				FacebookPixelCode: '',
 				BaseLanguage: language === 'pl' ? 14 : language === 'he' ? 0 : 1,
 				autofillEnabled: false,
-				autofillFields: []
+				autofillFields: [],
+				autofillEditable: false
 			});
 		}
 
@@ -633,7 +653,8 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 				ClientBodyScript: bodyScript,
 				AutofillSettings: {
 					IsAutofillEnabled: landingPageModel.autofillEnabled,
-					SelectedFields: landingPageModel.autofillFields
+					SelectedFields: landingPageModel.autofillFields,
+					IsEditable: landingPageModel.autofillEditable
 				}
 			};
 			//@ts-ignore

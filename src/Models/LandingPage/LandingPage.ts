@@ -50,6 +50,7 @@ export interface LandingPageModel {
     IsAccessibility: boolean;
     autofillEnabled?: boolean;
     autofillFields?: string[];
+    autofillEditable?: boolean;
     TerminalNumber: string;
     APIUserName: string;
     DepartmentId: number | null;

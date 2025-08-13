@@ -347,6 +347,7 @@
   "formNameRequired": "Form Name is required",
   "formLanguage": "Form Language",
   "autofillFields": "Autofill Fields",
+  "autofillEditable": "Enable editing for auto-filled recipient fields",
   "shortURL": "Short URL",
   "shortURLTooltip": "User friendly URL for human eyes and for SEO",
   "shortURLRequired": "Short URL is required",
