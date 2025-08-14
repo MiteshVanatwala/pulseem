@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import DefaultScreen from '../../DefaultScreen';
 import { Title } from '../../../components/managment/Title';
 import { useTranslation } from 'react-i18next';
-import { Box, Button, Checkbox, FormControl, FormControlLabel, Grid, IconButton, MenuItem, Select, Tab, Tabs, TextField, Tooltip, Typography } from '@material-ui/core';
+import { Box, Button, Grid, IconButton, Tab, Tabs, TextField, Tooltip, Typography } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import { Loader } from '../../../components/Loader/Loader';
 import { ClassesType } from '../../Classes.types';
@@ -11,7 +11,7 @@ import { coreProps } from '../../Whatsapp/Campaign/Types/WhatsappCampaign.types'
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import WizardActions from '../../../components/Wizard/WizardActions';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
-import { BEE_EDITOR_TYPES, LandingPagesAnswerType, defaultAccountExtraDataLandingPage } from '../../../helpers/Constants';
+import { BEE_EDITOR_TYPES, LandingPagesAnswerType } from '../../../helpers/Constants';
 import { FileGallery } from '../../../Models/Files/FileGallery';
 import Gallery from '../../../components/Gallery/Gallery.component';
 import { PulseemFeatures, PulseemFolderType } from '../../../model/PulseemFields/Fields';
@@ -173,78 +173,6 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 		Google_Tag_Manager: '<!-- Google Tag Manager Start -->##code##<!-- Google Tag Manager End -->', // Head
 		Google_Conversion: '<!-- Google Convertion Start -->##code##<!-- Google Convertion End -->' // Body
 	} as any;
-
-	const renderAutofillFields = () => {
-		return (
-			<>
-				<Grid item xs={12} className={clsx(classes.marginInlineEnd15, classes.marginInlineStart, classes.p10)}>
-					<Box className={classes.mb2}>
-						<FormControlLabel
-							control={
-								<Checkbox
-									checked={landingPageModel.autofillEnabled}
-									onChange={(e) => {
-										setLandingPageModel({
-											...landingPageModel,
-											autofillEnabled: e.target.checked,
-											autofillFields: e.target.checked ? landingPageModel.autofillFields : []
-										});
-									}}
-									color="primary"
-								/>
-							}
-							label={t("landingPages.autofillFields")}
-						/>
-					</Box>
-					{landingPageModel.autofillEnabled && (
-						<>
-							<FormControl variant="outlined" className={clsx(classes.w100, classes.mb2)}>
-								<Select
-									multiple
-									value={landingPageModel.autofillFields || []}
-									onChange={(e: any) => {
-										const selected = e.target.value as string[];
-										setLandingPageModel({
-											...landingPageModel,
-											autofillFields: selected
-										});
-									}}
-									renderValue={(selected) => (selected as string[]).join(', ')}
-								>
-									{defaultAccountExtraDataLandingPage.map((item) => {
-										const key = Object.keys(item)[0];
-										const value = Object.values(item)[0];
-										return (
-											<MenuItem key={key} value={key}>
-												<Checkbox checked={(landingPageModel.autofillFields || []).indexOf(key) > -1} />
-												<Typography>{t(value)}</Typography>
-											</MenuItem>
-										);
-									})}
-								</Select>
-							</FormControl>
-
-							<FormControlLabel
-								control={
-									<Checkbox
-										checked={landingPageModel.autofillEditable}
-										onChange={(e) => {
-											setLandingPageModel({
-												...landingPageModel,
-												autofillEditable: e.target.checked
-											});
-										}}
-										color="primary"
-									/>
-								}
-								label={t("landingPages.autofillEditable")}
-							/>
-						</>
-					)}
-				</Grid>
-			</>
-		);
-	};
 
 	const getData = async () => {
 		setIsLoader(true);
@@ -925,7 +853,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 									errors={errors}
 									onDone={getData}
 								/>
-								{renderAutofillFields()}
+								{/* {renderAutofillFields()} */}
 							</Grid>}
 							{landingPageModel.PageType < 3 && <Grid item md={6}>
 								<Typography className={clsx(classes.bold, classes.font18)}>
