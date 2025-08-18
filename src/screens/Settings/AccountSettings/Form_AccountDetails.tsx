@@ -582,7 +582,7 @@ const FORM_ACCOUNT_DETAILS = ({
 				/>
 				<Box className={'formContainer'}>
 					{accountFeatures?.indexOf(PulseemFeatures.DISABLE_OPTIN_PLUGIN) > -1 && <Grid container>
-						<Grid item xs={12} sm={6} md={3} className={'textBoxWrapper'}>
+						<Grid item xs={12} sm={12} md={12} className={'textBoxWrapper'}>
 							<FormControlLabel
 								style={{ paddingInline: 10 }}
 								control={
@@ -702,14 +702,14 @@ const FORM_ACCOUNT_DETAILS = ({
 					setShowConfirmEmailConfirmationDialog(false)
 				}}
 				onConfirm={async () => {
-					setAccountDetails({
+					const resp = await dispatch(disableDoubleOptItSettings(null)) as any;
+					if (resp?.payload?.StatusCode === 201) {
+						setAccountDetails({
 						...accountDetails,
-						OptInActive:
-							false
-					} as AccountSettings);
-
-					await dispatch(disableDoubleOptItSettings(null));
-					setShowConfirmEmailConfirmationDialog(false)
+						OptInActive: false
+						} as AccountSettings);
+					}
+					setShowConfirmEmailConfirmationDialog(false);
 				}}
 				text={t('settings.accountSettings.optIn.confirmDisable')}
 				title={t('settings.accountSettings.optIn.confirmTitle')}
