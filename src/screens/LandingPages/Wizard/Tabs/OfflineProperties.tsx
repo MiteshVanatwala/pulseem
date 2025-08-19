@@ -119,7 +119,7 @@ const OfflineProperties = ({ classes, data, onUpdate, errors, setErrors }: any) 
                                             });
                                         }}
                                         color="primary"
-                                        style={{ paddingTop: 3 }}
+                                        style={{ paddingTop: 0 }}
                                     />
                                 }
                                 label={translator("landingPages.autofillEditable")}

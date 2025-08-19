@@ -258,7 +258,7 @@ const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialo
                                 });
                             }}
                             color="primary"
-                            style={{ paddingTop: 3 }}
+                            style={{ paddingTop: 0 }}
                         />
                     }
                     label={translator("landingPages.updateExistingRecipientToActive")}
