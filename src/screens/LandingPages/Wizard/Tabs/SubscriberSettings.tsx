@@ -114,7 +114,7 @@ const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialo
                                     )}
                                     MenuProps={{
                                         anchorOrigin: {
-                                            vertical: 'bottom',
+                                            vertical: 'top',
                                             horizontal: 'left',
                                         },
                                         transformOrigin: {
@@ -199,6 +199,25 @@ const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialo
             </Grid>
 
             <Grid item md={6} className={classes.w100}>
+                <Typography title={translator("landingPages.limitNumberOfSubscribers")} className={classes.alignDir}>
+                    {translator("landingPages.limitNumberOfSubscribers")}
+                </Typography>
+                <TextField
+                    style={{ marginTop: 3 }}
+                    id="limitNumberOfSubscribers"
+                    label=""
+                    variant="outlined"
+                    name="Name"
+                    value={data.SubscriptionsLimit}
+                    className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)}
+                    autoComplete="off"
+                    onChange={(e: any) => onUpdate({ ...data, SubscriptionsLimit: e.target.value < 0 ? 0 : e.target.value })}
+                    title={data.SubscriptionsLimit}
+                    type='number'
+                />
+            </Grid>
+
+            <Grid item md={6} className={classes.w100}>
                 <Typography title={translator("landingPages.updateExistingRecipients")} className={classes.alignDir}>
                     {translator("landingPages.updateExistingRecipients")}
                 </Typography>
@@ -228,6 +247,7 @@ const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialo
 
                 <FormControlLabel
                     className={clsx(classes.pt10)}
+                    style={{ alignItems: 'flex-start', margin: 0 }}
                     control={
                         <Checkbox
                             checked={data.SubscriptionOptin}
@@ -238,28 +258,11 @@ const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialo
                                 });
                             }}
                             color="primary"
+                            style={{ paddingTop: 5 }}
                         />
                     }
                     label={translator("landingPages.updateExistingRecipientToActive")}
-                />
-            </Grid>
-
-            <Grid item md={6} className={classes.w100}>
-                <Typography title={translator("landingPages.limitNumberOfSubscribers")} className={classes.alignDir}>
-                    {translator("landingPages.limitNumberOfSubscribers")}
-                </Typography>
-                <TextField
-                    style={{ marginTop: 3 }}
-                    id="limitNumberOfSubscribers"
-                    label=""
-                    variant="outlined"
-                    name="Name"
-                    value={data.SubscriptionsLimit}
-                    className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)}
-                    autoComplete="off"
-                    onChange={(e: any) => onUpdate({ ...data, SubscriptionsLimit: e.target.value < 0 ? 0 : e.target.value })}
-                    title={data.SubscriptionsLimit}
-                    type='number'
+                    labelPlacement="end"
                 />
             </Grid>
 
@@ -328,7 +331,7 @@ const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialo
                 </Box>
             </Grid>
 
-            {renderAutofillFields()}
+            {/* {renderAutofillFields()} */}
 
             <Grid item md={12} className={clsx(classes.dFlex)}>
                 <RadioGroup row aria-label="WebViewLocation" name="WebViewLocation" defaultValue="1" className={clsx(classes.mb10)}
