@@ -3,14 +3,14 @@ import clsx from 'clsx';
 import DefaultScreen from '../../DefaultScreen';
 import { Title } from '../../../components/managment/Title';
 import { useTranslation } from 'react-i18next';
-import { Box, Button, Divider, Grid, IconButton, Tab, Tabs, TextField, Tooltip, Typography } from '@material-ui/core';
+import { Box, Button, Grid, IconButton, Tab, Tabs, TextField, Tooltip, Typography } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import { Loader } from '../../../components/Loader/Loader';
 import { ClassesType } from '../../Classes.types';
 import { coreProps } from '../../Whatsapp/Campaign/Types/WhatsappCampaign.types';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import WizardActions from '../../../components/Wizard/WizardActions';
-import { MdArrowBackIos, MdArrowForwardIos, MdSave } from 'react-icons/md';
+import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { BEE_EDITOR_TYPES, LandingPagesAnswerType } from '../../../helpers/Constants';
 import { FileGallery } from '../../../Models/Files/FileGallery';
 import Gallery from '../../../components/Gallery/Gallery.component';
@@ -98,6 +98,8 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 		ButtonText: '',
 		PageName: '',
 		AnswerOption: '',
+		autofillEnabled: false,
+		autofillFields: [],
 		AnswerData: '',
 		SubmitCounter: 0,
 		ViewCounter: 0,
@@ -224,7 +226,10 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 				IsAccessibility: (lpId && lpId > 0) ? response.Data?.WebForm?.IsAccessibility : true,
 				AnswerType: (lpId && lpId > 0) ? response.Data?.WebForm?.AnswerType : 1,
 				IsResponsive: (lpId && lpId > 0) ? response.Data?.WebForm?.IsResponsive : true,
-				IsTemplate: (lpId && lpId > 0) ? response.Data?.WebForm?.IsTemplate : false
+				IsTemplate: (lpId && lpId > 0) ? response.Data?.WebForm?.IsTemplate : false,
+				autofillEnabled: response.Data?.WebForm?.AutofillSettings?.IsAutofillEnabled,
+				autofillFields: response.Data?.WebForm?.AutofillSettings?.SelectedFields,
+				autofillEditable: response.Data?.WebForm?.AutofillSettings?.IsEditable
 			});
 			if (response.Data?.WebForm?.LinkPreviewIconName !== '') {
 				handleSelectedImage(response.Data?.WebForm?.LinkPreviewIconName, true);
@@ -245,7 +250,10 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 				GoogleConvertionCode: '',
 				GoogleTagManagerCode: '',
 				FacebookPixelCode: '',
-				BaseLanguage: language === 'pl' ? 14 : language === 'he' ? 0 : 1
+				BaseLanguage: language === 'pl' ? 14 : language === 'he' ? 0 : 1,
+				autofillEnabled: false,
+				autofillFields: [],
+				autofillEditable: false
 			});
 		}
 
@@ -570,7 +578,12 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 				IsNewEditor: editorType === EditorType.BEE,
 				ID: landingPageModel.ID || id,
 				ClientJavaScript: headScript,
-				ClientBodyScript: bodyScript
+				ClientBodyScript: bodyScript,
+				AutofillSettings: {
+					IsAutofillEnabled: landingPageModel.autofillEnabled,
+					SelectedFields: landingPageModel.autofillFields,
+					IsEditable: landingPageModel.autofillEditable
+				}
 			};
 			//@ts-ignore
 			const response = await dispatch(saveLandingPage(req));
@@ -840,6 +853,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 									errors={errors}
 									onDone={getData}
 								/>
+								{/* {renderAutofillFields()} */}
 							</Grid>}
 							{landingPageModel.PageType < 3 && <Grid item md={6}>
 								<Typography className={clsx(classes.bold, classes.font18)}>

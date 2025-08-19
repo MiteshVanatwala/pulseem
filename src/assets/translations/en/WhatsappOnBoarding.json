@@ -98,7 +98,8 @@
 		"133009": "Two-step verification PIN was entered too quickly.",
 		"133010": "Phone number not registered on the WhatsApp Business Platform.",
 		"133015": "The phone number you are attempting to register was recently deleted, and deletion has not yet completed.",
-		"135000": "Message failed to send because of an unknown error with your request parameters."
+		"135000": "Message failed to send because of an unknown error with your request parameters.",
+		"131050": "Unable to deliver the message. This recipient has chosen to stop receiving marketing messages on WhatsApp from your business."
 	},
 	"NoMeta": "Meta is not enabled in your account. Please contact our support for more details."
 }
