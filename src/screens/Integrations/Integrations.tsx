@@ -182,14 +182,10 @@ const Integrations = ({ classes }: any) => {
           <TabPanel value='10'>
             <Klaviyo classes={classes} />
           </TabPanel>
-
-          {
-            companyName === 'LizaD' && (
-              <TabPanel value='14' className={clsx(classes.pt0)}>
-                <VerifoneSetting classes={classes} />
-              </TabPanel>
-            )
-          }
+          
+          <TabPanel value='14' className={clsx(classes.pt0)}>
+            <VerifoneSetting classes={classes} />
+          </TabPanel>
         </TabContext>
       </Box>
     </DefaultScreen>
