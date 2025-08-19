@@ -46,7 +46,11 @@ const OfflineProperties = ({ classes, data, onUpdate, errors, setErrors }: any) 
                             <FormControl variant="outlined" className={clsx(classes.w100, classes.pt10)}>
                                 <SelectPM
                                     multiple
+                                    displayEmpty
                                     value={data.autofillFields || []}
+                                    style={{
+                                        height: '56px'
+                                    }}
                                     onChange={(e: any) => {
                                         const selected = e.target.value as string[];
                                         onUpdate({
@@ -54,14 +58,22 @@ const OfflineProperties = ({ classes, data, onUpdate, errors, setErrors }: any) 
                                             autofillFields: selected
                                         });
                                     }}
-                                    renderValue={(selected) => (
-                                        (selected as string[])
+                                    renderValue={(selected) => {
+                                        if (!selected || (selected as string[]).length === 0) {
+                                            return <Typography style={{ 
+                                                color: 'rgba(0, 0, 0, 0.6)',
+                                                padding: '8px 0'
+                                            }}>
+                                                {translator("landingPages.selectAutofillFieldsPlaceHolder")}
+                                            </Typography>;
+                                        }
+                                        return (selected as string[])
                                             .map(key => {
                                                 const field = defaultAccountExtraDataLandingPage.find(item => Object.keys(item)[0] === key);
                                                 return field ? translator(Object.values(field)[0] as string) : key;
                                             })
-                                            .join(', ')
-                                    )}
+                                            .join(', ');
+                                    }}
                                     MenuProps={{
                                         anchorOrigin: {
                                             vertical: 'bottom',
@@ -107,7 +119,7 @@ const OfflineProperties = ({ classes, data, onUpdate, errors, setErrors }: any) 
                                             });
                                         }}
                                         color="primary"
-                                        style={{ paddingTop: 5 }}
+                                        style={{ paddingTop: 3 }}
                                     />
                                 }
                                 label={translator("landingPages.autofillEditable")}
