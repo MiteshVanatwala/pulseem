@@ -122,6 +122,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 		IsTemplate: false,
 		CategoryID: null,
 		IsUpdate: false,
+		SubscriptionOptin: false,
 		IsAccessibility: true,
 		TerminalNumber: '',
 		APIUserName: '',
@@ -229,7 +230,8 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 				IsTemplate: (lpId && lpId > 0) ? response.Data?.WebForm?.IsTemplate : false,
 				autofillEnabled: response.Data?.WebForm?.AutofillSettings?.IsAutofillEnabled,
 				autofillFields: response.Data?.WebForm?.AutofillSettings?.SelectedFields,
-				autofillEditable: response.Data?.WebForm?.AutofillSettings?.IsEditable
+				autofillEditable: response.Data?.WebForm?.AutofillSettings?.IsEditable,
+				SubscriptionOptin: response.Data?.WebForm?.AutofillSettings?.SubscriptionOptin
 			});
 			if (response.Data?.WebForm?.LinkPreviewIconName !== '') {
 				handleSelectedImage(response.Data?.WebForm?.LinkPreviewIconName, true);
@@ -582,7 +584,8 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 				AutofillSettings: {
 					IsAutofillEnabled: landingPageModel.autofillEnabled,
 					SelectedFields: landingPageModel.autofillFields,
-					IsEditable: landingPageModel.autofillEditable
+					IsEditable: landingPageModel.autofillEditable,
+					SubscriptionOptin: landingPageModel.SubscriptionOptin,
 				}
 			};
 			//@ts-ignore

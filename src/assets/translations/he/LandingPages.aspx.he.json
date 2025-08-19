@@ -348,6 +348,7 @@
   "formLanguage": "שפת הטופס",
   "autofillFields": "מילוי אוטומטי של שדות טופס",
   "autofillEditable": "אפשר עריכה של שדות שמולואו אוטומטית",
+  "updateExistingRecipientToActive": "עדכן סטטוס לקוח ל-\"פעיל\" במידה ולקוח אישר דיוור בטופס",
   "shortURL": "קישור מקוצר",
   "shortURLTooltip": "כתובת ידידותית לדף אשר תגדיל את הקידום במנועי חיפוש ויהיה קריא על ידי בני האדם",
   "shortURLRequired": "קישור מקוצר - שדה חובה",

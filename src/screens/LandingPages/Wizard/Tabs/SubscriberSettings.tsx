@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
-import { Box, Button, Checkbox, FormControl, FormControlLabel, Grid, Input, ListItemText, MenuItem, Radio, RadioGroup, TextField, Typography } from '@material-ui/core';
+import { Box, Button, Checkbox, FormControl, FormControlLabel, Grid, Input, ListItemText, MenuItem, Radio, RadioGroup, TextField, Typography, Select as SelectPM } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import { Select } from '@mui/material';
 import { IoIosArrowDown } from 'react-icons/io';
@@ -13,6 +13,7 @@ import { useEffect, useState } from 'react';
 import ConfirmRadioDialog from '../../../../components/DialogTemplates/ConfirmRadioDialog';
 import { RenderHtml } from '../../../../helpers/Utils/HtmlUtils';
 import { AiOutlineExclamationCircle } from 'react-icons/ai';
+import { defaultAccountExtraDataLandingPage } from '../../../../helpers/Constants';
 
 const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialog, errors, onDone }: any) => {
     const { t: translator } = useTranslation();
@@ -60,6 +61,111 @@ const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialo
         setSystemSelectOpen(false);
         onEditSystem(item.ID);
     }
+
+    const renderAutofillFields = () => {
+        return (
+            <>
+                <Grid item xs={12} md={5}>
+                    <Box className={clsx(classes.pt15)}>
+                        <FormControlLabel
+                            control={
+                                <Checkbox
+                                    checked={data?.autofillEnabled}
+                                    onChange={(e) => {
+                                        onUpdate({
+                                            ...data,
+                                            autofillEnabled: e.target.checked,
+                                            autofillFields: e.target.checked ? data?.autofillFields : []
+                                        });
+                                    }}
+                                    color="primary"
+                                />
+                            }
+                            classes={{
+                                root: classes.formControlLabelRoot,
+                                label: classes.formControlLabelAlign
+                            }}
+                            label={translator("landingPages.autofillFields")}
+                        />
+                    </Box>
+                </Grid>
+
+                {data.autofillEnabled && (
+                    <>
+                        <Grid item xs={12} md={7}>
+                            <FormControl variant="outlined" className={clsx(classes.w100, classes.pt10)}>
+                                <SelectPM
+                                    multiple
+                                    value={data.autofillFields || []}
+                                    onChange={(e: any) => {
+                                        const selected = e.target.value as string[];
+                                        onUpdate({
+                                            ...data,
+                                            autofillFields: selected
+                                        });
+                                    }}
+                                    renderValue={(selected) => (
+                                        (selected as string[])
+                                            .map(key => {
+                                                const field = defaultAccountExtraDataLandingPage.find(item => Object.keys(item)[0] === key);
+                                                return field ? translator(Object.values(field)[0] as string) : key;
+                                            })
+                                            .join(', ')
+                                    )}
+                                    MenuProps={{
+                                        anchorOrigin: {
+                                            vertical: 'bottom',
+                                            horizontal: 'left',
+                                        },
+                                        transformOrigin: {
+                                            vertical: 'top',
+                                            horizontal: 'left',
+                                        },
+                                        getContentAnchorEl: null,
+                                        PaperProps: {
+                                            style: {
+                                                maxHeight: '300px',
+                                                width: 'auto',
+                                                direction: isRTL ? 'rtl' : 'ltr'
+                                            },
+                                        },
+                                    }}
+                                >
+                                    {defaultAccountExtraDataLandingPage.map((item: any) => {
+                                        const key = Object.keys(item)[0];
+                                        const value = Object.values(item)[0];
+                                        return (
+                                            <MenuItem key={key} value={key}>
+                                                <Checkbox checked={(data.autofillFields || []).indexOf(key) > -1} />
+                                                <Typography>{translator(value)}</Typography>
+                                            </MenuItem>
+                                        );
+                                    })}
+                                </SelectPM>
+                            </FormControl>
+
+                            <FormControlLabel
+                                className={clsx(classes.pt10)}
+                                control={
+                                    <Checkbox
+                                        checked={data.autofillEditable}
+                                        onChange={(e) => {
+                                            onUpdate({
+                                                ...data,
+                                                autofillEditable: e.target.checked
+                                            });
+                                        }}
+                                        color="primary"
+                                    />
+                                }
+                                label={translator("landingPages.autofillEditable")}
+                            />
+                        </Grid>
+                    </>
+                )}
+            </>
+        );
+    };
 
     return (
         <Grid container spacing={3} className={clsx(classes.p15)}>
@@ -119,6 +225,23 @@ const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialo
                         <option value={1}>{translator("common.enabled")}</option>
                     </Select>
                 </FormControl>
+
+                <FormControlLabel
+                    className={clsx(classes.pt10)}
+                    control={
+                        <Checkbox
+                            checked={data.SubscriptionOptin}
+                            onChange={(e) => {
+                                onUpdate({
+                                    ...data,
+                                    SubscriptionOptin: e.target.checked
+                                });
+                            }}
+                            color="primary"
+                        />
+                    }
+                    label={translator("landingPages.updateExistingRecipientToActive")}
+                />
             </Grid>
 
             <Grid item md={6} className={classes.w100}>
@@ -204,6 +327,8 @@ const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialo
                     <Button onClick={() => setCreateApiIntegrations(!createApiIntegrations)}>{translator('common.addNew')}</Button>
                 </Box>
             </Grid>
+
+            {renderAutofillFields()}
 
             <Grid item md={12} className={clsx(classes.dFlex)}>
                 <RadioGroup row aria-label="WebViewLocation" name="WebViewLocation" defaultValue="1" className={clsx(classes.mb10)}

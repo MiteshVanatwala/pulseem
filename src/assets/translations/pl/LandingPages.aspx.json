@@ -348,6 +348,7 @@
   "formLanguage": "Język Formularza",
   "autofillFields": "Automatyczne wypełnianie pól",
   "autofillEditable": "Włącz edycję dla automatycznie wypełnianych pól odbiorcy",
+  "updateExistingRecipientToActive": "Aktualizuj status istniejącego odbiorcy na \"aktywny\", jeśli zaznaczy pole wyboru opt-in",
   "shortURL": "Krótki URL",
   "shortURLTooltip": "Przyjazny dla użytkownika URL dla ludzkich oczu i dla SEO",
   "shortURLRequired": "Krótki URL jest wymagany",

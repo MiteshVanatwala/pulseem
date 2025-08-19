@@ -97,6 +97,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       color: 'rgba(0,0,0,.65)',
     }
   },
+  formControlLabelRoot: {
+    alignItems: 'flex-start',
+    marginTop: 0
+  },
+  formControlLabelAlign: {
+    marginTop: 9  // This aligns the label text with the top of the checkbox
+  },
   greyBackground: {
     background: '#F0F5FF',
   },
