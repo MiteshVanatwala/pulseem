@@ -10,6 +10,7 @@ export interface CompanyWebsiteRequest {
   AdName: string | any | null;
   WebFormPosition: string | any | null;
   ReferralID: string | any | null;
+  TurnstileToken?: string | null;
 }
 
 export interface CompanyWebsiteApiResponse {

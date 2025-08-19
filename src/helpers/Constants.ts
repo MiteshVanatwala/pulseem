@@ -748,3 +748,4 @@ export const defaultAccountExtraDataLandingPage = [
     { "ExtraField12": 'common.ExtraField12' },
     { "ExtraField13": 'common.ExtraField13' },
 ];
+export const CloudFlareSiteKey = "0x4AAAAAABhTv-JeJLm06IFU";
