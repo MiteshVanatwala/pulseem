@@ -217,7 +217,7 @@ const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialo
                 />
             </Grid>
 
-            <Grid item md={6} className={classes.w100}>
+            <Grid item md={6} className={clsx(classes.w100)} style={{ paddingTop: 25 }}>
                 <Typography title={translator("landingPages.updateExistingRecipients")} className={classes.alignDir}>
                     {translator("landingPages.updateExistingRecipients")}
                 </Typography>
@@ -270,7 +270,7 @@ const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialo
                 }
             </Grid>
 
-            <Grid item md={6} className={classes.w100}>
+            <Grid item md={6} className={clsx(classes.w100)} style={{ paddingTop: 25 }}>
                 <Typography title={translator("landingPages.sendRegistrationToExternalApi")} className={clsx(classes.alignDir)}>
                     {translator("landingPages.sendRegistrationToExternalApi")}
                 </Typography>

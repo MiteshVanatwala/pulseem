@@ -15,7 +15,7 @@ const OfflineProperties = ({ classes, data, onUpdate, errors, setErrors }: any) 
     const renderAutofillFields = () => {
         return (
             <>
-                <Grid item xs={12} md={5}>
+                <Grid item xs={12} md={5} style={{ paddingTop: 0 }}>
                     <Box>
                         <FormControlLabel
                             control={
