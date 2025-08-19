@@ -245,25 +245,29 @@ const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialo
                     </Select>
                 </FormControl>
 
-                <FormControlLabel
-                    className={clsx(classes.pt10)}
-                    style={{ alignItems: 'flex-start', margin: 0 }}
-                    control={
-                        <Checkbox
-                            checked={data.SubscriptionOptin}
-                            onChange={(e) => {
-                                onUpdate({
-                                    ...data,
-                                    SubscriptionOptin: e.target.checked
-                                });
-                            }}
-                            color="primary"
-                            style={{ paddingTop: 0 }}
+                {
+                    data.IsUpdate === true && (
+                        <FormControlLabel
+                            className={clsx(classes.pt10)}
+                            style={{ alignItems: 'flex-start', margin: 0 }}
+                            control={
+                                <Checkbox
+                                    checked={data.SubscriptionOptin}
+                                    onChange={(e) => {
+                                        onUpdate({
+                                            ...data,
+                                            SubscriptionOptin: e.target.checked
+                                        });
+                                    }}
+                                    color="primary"
+                                    style={{ paddingTop: 0 }}
+                                />
+                            }
+                            label={translator("landingPages.updateExistingRecipientToActive")}
+                            labelPlacement="end"
                         />
-                    }
-                    label={translator("landingPages.updateExistingRecipientToActive")}
-                    labelPlacement="end"
-                />
+                    )
+                }
             </Grid>
 
             <Grid item md={6} className={classes.w100}>

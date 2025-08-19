@@ -43,7 +43,7 @@ const OfflineProperties = ({ classes, data, onUpdate, errors, setErrors }: any) 
                 {data.autofillEnabled && (
                     <>
                         <Grid item xs={12} md={7}>
-                            <FormControl variant="outlined" className={clsx(classes.w100, classes.pt10)}>
+                            <FormControl variant="outlined" className={clsx(classes.w100)}>
                                 <SelectPM
                                     multiple
                                     displayEmpty
