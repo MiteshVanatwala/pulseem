@@ -2,7 +2,8 @@ import clsx from "clsx";
 import { Box, Button, Checkbox, Container, FormControl, FormControlLabel, FormHelperText, Grid, IconButton, MenuItem, MobileStepper, TextField, Tooltip, Typography, Zoom } from "@material-ui/core";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
+import Turnstile from '../../components/Turnstile/Turnstile';
 import { StateType } from "../../Models/StateTypes";
 import { IoIosArrowDown, IoIosEye, IoIosEyeOff } from "react-icons/io";
 import { CountryCodes, DefaultCountryCodeIsrael, DefaultCountryCodePoland, FieldOfInterest, lowerCaseLetters, numbers, specialLetters, upperCaseLetters } from "../../helpers/Constants";
@@ -92,10 +93,11 @@ const SignUpNew = ({ classes }: any) => {
     UtmMedium: null,
     UtmSource: null,
     WebFormPosition: null,
-    ReferralID: qs?.refId
+    ReferralID: qs?.refId,
   });
   const [invalidEmail, setInvalidEmail] = useState<boolean>(false);
   const [activeStep, setActiveStep] = useState(0);
+  const [turnstileToken, setTurnstileToken] = useState<string>('');
   const passwordHintClasses = useStylesBootstrapPasswordHint();
   const cookieData = getCookie('Culture');
 
@@ -148,7 +150,7 @@ const SignUpNew = ({ classes }: any) => {
       Phone: '',
       Company: '',
       ProductType: '',
-      UserID: qs?.id,
+      UserID: qs?.id
     }
     errorsTemp.fullName = userDetails.fullName ? '' : t('SignUp.fullNameRequired');
     errorsTemp.cellPhone = userDetails.cellPhone.trim() !== '' ? '' : t('SignUp.CellPhoneRequired');
@@ -294,6 +296,11 @@ const SignUpNew = ({ classes }: any) => {
     errorsTemp.chkPolicy = userDetails.chkPolicy ? '' : t('common.requiredField');
     errorsTemp.emailId = userDetails.emailId ? (IsValidEmail(`${userDetails.emailId}`) ? '' : t('common.invalidEmail')) : t('common.Required');
 
+    if (!turnstileToken) {
+      showMessage('SignUp.pleaseVerifyCaptcha');
+      return;
+    }
+
     if (userDetails.password && (!passwordValidation.LowerChar || !passwordValidation.NumberChar || !passwordValidation.PasswordLength || !passwordValidation.SpecialChar || !passwordValidation.UpperChar)) {
       errorsTemp.password = t('SignUp.InvalidPassword');
     } else if (!userDetails.password) {
@@ -325,6 +332,7 @@ const SignUpNew = ({ classes }: any) => {
         Email: userDetails.emailId,
         ReferralID: qs?.refId,
         Culture: qs?.Culture || 'he-IL',
+        TurnstileToken: turnstileToken,
       });
       setLoader(false);
       if (status === 200) {
@@ -990,6 +998,19 @@ const SignUpNew = ({ classes }: any) => {
             }
           />
         </FormControl>
+
+        <Box className={clsx(classes.mt24, windowSize !== 'xs' ? classes.paddingInline30 : '')}>
+          <Turnstile
+            onVerify={(token) => {
+              setTurnstileToken(token);
+              setEmailRequest({
+                ...emailRequest,
+                TurnstileToken: token
+              });
+            }}
+            theme={isRTL ? 'light' : 'dark'}
+          />
+        </Box>
       </Box>
     </Box>
   }
