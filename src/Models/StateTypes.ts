@@ -28,14 +28,14 @@ export type CoreStateType = {
     userRoles: any;
 };
 
-interface Message {
+export interface Message {
     id: string;
     sender: 'user' | 'ai';
     text?: string;
     data?: any;
   }
 
-interface AiChatState {
+export interface AiChatState {
     isOpen: boolean;
     messages: Message[];
     isLoading: boolean;

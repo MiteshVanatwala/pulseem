@@ -60,7 +60,6 @@ const AIChatWidget: React.FC = () => {
   const classes = useStyles();
   const { isOpen, messages } = useSelector((state: StateType) => state.aiChat);
 
-  // Stop propagation to prevent clicks inside the widget from closing it if the backdrop handler is on the same element.
   const handleWidgetClick = (e: React.MouseEvent) => {
     e.stopPropagation();
   };

@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import uniqid from 'uniqid';
-import { Message } from '../../Models/StateTypes';
 
+import { Message } from '../../Models/StateTypes';
 
 interface AiChatState {
   isOpen: boolean;
@@ -39,7 +39,7 @@ export const fetchAiResponse = createAsyncThunk(
     dispatch(setLoading(true));
     // Simulate API call
     setTimeout(() => {
-      const response = {
+      const response: Message = {
         id: uniqid(),
         sender: 'ai',
         data: {
@@ -47,7 +47,7 @@ export const fetchAiResponse = createAsyncThunk(
           content: `This is a mock AI response to: "${message}"`,
         },
       };
-      dispatch(addMessage(response as any));
+      dispatch(addMessage(response));
       dispatch(setLoading(false));
     }, 1500);
   }
