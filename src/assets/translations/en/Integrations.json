@@ -76,6 +76,7 @@
     "passwordDescription": "Enter your Verifone API password",
     "enterPassword": "Password is required",
     "mainServiceUrl": "Services URL",
+    "activateCustomerRegistrationSMS": "Activate customer registration SMS",
     "mainServiceUrlDescription": "Enter the services URL",
     "enterMainServiceUrl": "services URL is required",
     "productsServiceURL": "WS URL",

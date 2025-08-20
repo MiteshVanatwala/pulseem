@@ -7,6 +7,7 @@ export interface VerifoneModel {
   Password: string;
   MainServiceUrl: string;
   SecondServiceUrl: string;
+  IsSendSms: boolean;
   RegisterEventActive: boolean;
   PurchaseEventActive: boolean;
   AbandonedEventActive: boolean;

@@ -47,6 +47,7 @@ export interface LandingPageModel {
     IsTemplate: boolean | null;
     CategoryID: number | null;
     IsUpdate: boolean;
+    SubscriptionOptin: boolean;
     IsAccessibility: boolean;
     autofillEnabled?: boolean;
     autofillFields?: string[];

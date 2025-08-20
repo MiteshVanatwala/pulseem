@@ -1,10 +1,10 @@
-import { Box, Checkbox, FormControl, FormControlLabel, Grid, IconButton, MenuItem, Select, TextField, Tooltip, Typography } from "@material-ui/core";
+import { Box, Checkbox, FormControl, FormControlLabel, Grid, IconButton, Select, TextField, Tooltip, Typography } from "@material-ui/core";
 import clsx from "clsx";
 import { useTranslation } from "react-i18next";
 import { BsInfoCircle } from "react-icons/bs";
 import { IoIosArrowDown } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
-import { defaultAccountExtraDataLandingPage, LandingPagesAnswerType } from "../../../../helpers/Constants";
+import { LandingPagesAnswerType } from "../../../../helpers/Constants";
 import { coreProps } from "../../../Whatsapp/Campaign/Types/WhatsappCampaign.types";
 import { isShortUrlExist } from "../../../../redux/reducers/landingPagesSlice";
 import { LangugeCode } from "../../../../model/PulseemFields/Fields";
@@ -54,103 +54,6 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
 
         onUpdate({ ...data, BaseLanguage: languageToId[language] });
     }, [language])
-
-    const renderAutofillFields = () => {
-        return (
-            <>
-                {/* <Grid item md={3} className={classes.w100}></Grid> */}
-                <Grid item xs={12} md={2} className={clsx(classes.marginInlineEnd15, classes.marginInlineStart)}>
-                    <Box className={clsx(classes.pt15)}>
-                        <FormControlLabel
-                            control={
-                                <Checkbox
-                                    checked={data?.autofillEnabled}
-                                    onChange={(e) => {
-                                        onUpdate({
-                                            ...data,
-                                            autofillEnabled: e.target.checked,
-                                            autofillFields: e.target.checked ? data?.autofillFields : []
-                                        });
-                                    }}
-                                    color="primary"
-                                />
-                            }
-                            label={translator("landingPages.autofillFields")}
-                        />
-                    </Box>
-                </Grid>
-
-                {data.autofillEnabled && (
-                    <>
-                        <Grid item xs={12} md={3}>
-                            <FormControl variant="outlined" className={clsx(classes.w100, classes.pt10)}>
-                                <Select
-                                    multiple
-                                    value={data.autofillFields || []}
-                                    onChange={(e: any) => {
-                                        const selected = e.target.value as string[];
-                                        onUpdate({
-                                            ...data,
-                                            autofillFields: selected
-                                        });
-                                    }}
-                                    renderValue={(selected) => (selected as string[]).join(', ')}
-                                    MenuProps={{
-                                        anchorOrigin: {
-                                            vertical: 'bottom',
-                                            horizontal: 'left',
-                                        },
-                                        transformOrigin: {
-                                            vertical: 'top',
-                                            horizontal: 'left',
-                                        },
-                                        getContentAnchorEl: null,
-                                        PaperProps: {
-                                            style: {
-                                                maxHeight: '300px',
-                                                width: 'auto',
-                                                direction: isRTL ? 'rtl' : 'ltr'
-                                            },
-                                        },
-                                    }}
-                                >
-                                    {defaultAccountExtraDataLandingPage.map((item: any) => {
-                                        const key = Object.keys(item)[0];
-                                        const value = Object.values(item)[0];
-                                        return (
-                                            <MenuItem key={key} value={key}>
-                                                <Checkbox checked={(data.autofillFields || []).indexOf(key) > -1} />
-                                                <Typography>{translator(value)}</Typography>
-                                            </MenuItem>
-                                        );
-                                    })}
-                                </Select>
-                            </FormControl>
-                        </Grid>
-
-                        <Grid item xs={12} md={3}>
-                            <FormControlLabel
-                                className={clsx(classes.pt10)}
-                                control={
-                                    <Checkbox
-                                        checked={data.autofillEditable}
-                                        onChange={(e) => {
-                                            onUpdate({
-                                                ...data,
-                                                autofillEditable: e.target.checked
-                                            });
-                                        }}
-                                        color="primary"
-                                    />
-                                }
-                                label={translator("landingPages.autofillEditable")}
-                            />
-                        </Grid>
-                    </>
-                )}
-            </>
-        );
-    };
 
     const renderPaymentFields = () => {
         return <>
@@ -430,8 +333,6 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
                 </>
             )
         }
-
-        {renderAutofillFields()}
 
         {/* {[LandingPagesAnswerType.DOWNLOAD_FILE].indexOf(data.AnswerType) > -1 && (
             <>
