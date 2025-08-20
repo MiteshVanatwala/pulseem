@@ -32,6 +32,7 @@ import BillingSlice from './reducers/BillingSlice';
 import SubUserSlice from './reducers/SubUserSlice';
 import AiSlice from './reducers/AISlice';
 import linksClicksReportSlice from './reducers/linksClicksReportSlice';
+import aiChatReducer from './reducers/aiChatSlice';
 
 export default configureStore({
   reducer: {
@@ -68,5 +69,6 @@ export default configureStore({
     subUser: SubUserSlice,
     Ai: AiSlice,
     linksClicksReportSlice: linksClicksReportSlice,
+    aiChat: aiChatReducer
   },
 });
