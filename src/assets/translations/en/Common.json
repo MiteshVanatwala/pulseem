@@ -873,5 +873,6 @@
   "creditsPerMessage": "Credits Per Message",
   "selectFile": "Select file",
   "contactUs": "Contact Us",
-  "currency": "Currency"
+  "currency": "Currency",
+  "polyAgentIconTitle": "Hi, I'm Polly, your smart AI agent"
 }

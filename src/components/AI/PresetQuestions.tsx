@@ -7,11 +7,17 @@ import uniqid from 'uniqid';
 
 const useStyles = makeStyles((theme) => ({
   presetQuestions: {
-    padding: theme.spacing(2, 2, 1),
+    padding: theme.spacing(2),
+    height: '100px',
     display: 'flex',
     flexDirection: 'column',
-    gap: theme.spacing(1),
     backgroundColor: '#ffffff',
+  },
+  questionsContainer: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    gap: theme.spacing(1),
+    marginTop: theme.spacing(1),
   },
   button: {
     borderRadius: '20px',
@@ -47,20 +53,22 @@ const PresetQuestions: React.FC = () => {
 
   return (
     <Box className={classes.presetQuestions}>
-        <Typography variant="caption" color="textSecondary" style={{ marginBottom: '4px' }}>
+        <Typography variant="caption" color="textSecondary">
             Or try one of these
         </Typography>
-      {PRESET_QUESTIONS.map((q) => (
-        <Button
-          key={q}
-          variant="outlined"
-          size="small"
-          className={classes.button}
-          onClick={() => handlePresetClick(q)}
-        >
-          {q}
-        </Button>
-      ))}
+        <Box className={classes.questionsContainer}>
+          {PRESET_QUESTIONS.map((q) => (
+            <Button
+              key={q}
+              variant="outlined"
+              size="small"
+              className={classes.button}
+              onClick={() => handlePresetClick(q)}
+            >
+              {q}
+            </Button>
+          ))}
+        </Box>
     </Box>
   );
 };

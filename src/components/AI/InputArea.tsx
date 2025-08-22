@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import { Box, TextField, IconButton } from '@material-ui/core';
 import { Send as SendIcon } from '@material-ui/icons';
 import { makeStyles } from '@material-ui/core/styles';
-import { addMessage, fetchAiResponse } from '../../redux/reducers/aiChatSlice';
+import { addMessage, fetchAiResponse, setAIIconStatus, toggleChat } from '../../redux/reducers/aiChatSlice';
 import uniqid from 'uniqid';
 
 const useStyles = makeStyles((theme) => ({
@@ -35,8 +35,12 @@ const InputArea: React.FC = () => {
   const handleSend = () => {
     const trimmedText = text.trim();
     if (trimmedText) {
-      dispatch(addMessage({ id: uniqid(), text: trimmedText, sender: 'user' }));
+      dispatch(addMessage({ id: uniqid(), data: {
+        type: 'text',
+        content: trimmedText
+      }, sender: 'user' }));
       dispatch(fetchAiResponse(trimmedText));
+      dispatch(setAIIconStatus(1));
       setText('');
     }
   };

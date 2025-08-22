@@ -32,11 +32,11 @@ const ChatHeader: React.FC = () => {
     <AppBar position="static" className={classes.appBar} elevation={0}>
       <Toolbar variant="dense" className={classes.toolbar}>
         <Typography variant="h6" className={classes.title}>
-          AI Assistant
+          Pulseem AI Assistant
         </Typography>
-        <IconButton color="inherit" size="small">
+        {/* <IconButton color="inherit" size="small">
           <MinimizeIcon />
-        </IconButton>
+        </IconButton> */}
         <IconButton color="inherit" onClick={handleClose} size="small">
           <CloseIcon />
         </IconButton>

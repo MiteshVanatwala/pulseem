@@ -7,10 +7,25 @@ import InsightRenderer from './InsightRenderer';
 
 const useStyles = makeStyles((theme) => ({
   messageList: {
-    flexGrow: 1,
+    height: '400px', // Fixed height
+    maxHeight: 'calc(80vh - 300px)', // Maximum height based on viewport height minus header and input area
     overflowY: 'auto',
     padding: theme.spacing(2),
     backgroundColor: '#ffffff',
+    '&::-webkit-scrollbar': {
+      width: '8px',
+    },
+    '&::-webkit-scrollbar-track': {
+      background: '#f1f1f1',
+      borderRadius: '4px',
+    },
+    '&::-webkit-scrollbar-thumb': {
+      background: '#888',
+      borderRadius: '4px',
+      '&:hover': {
+        background: '#555',
+      },
+    },
   },
   messageRow: {
     display: 'flex',
@@ -94,6 +109,7 @@ const MessageList: React.FC = () => {
   }, [messages]);
 
   return (
+    // @ts-ignore
     <Box className={classes.messageList} ref={scrollRef}>
       {messages.map((msg, index) => (
         <Box
@@ -110,7 +126,7 @@ const MessageList: React.FC = () => {
             elevation={1}
           >
             {msg.sender === 'user' ? (
-              <Typography variant="body1">{msg.text}</Typography>
+              <Typography variant="body1">{msg.data.content}</Typography>
             ) : (
               <InsightRenderer message={msg.data} />
             )}

@@ -868,5 +868,6 @@
   "payAttention": "Zwróć uwagę!",
   "allChannels": "Wszystkie kanały",
   "contactUs": "Skontaktuj się z nami",
-  "currency": "Waluta"
+  "currency": "Waluta",
+  "polyAgentIconTitle": "Cześć, jestem Polly, twoim inteligentnym agentem AI"
 }
