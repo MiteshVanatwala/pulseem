@@ -105,6 +105,7 @@ const GroupSelectorPopUp = ({
         return (
             <Autocomplete
                 multiple
+                // @ts-ignore
                 placeholder={t(title)}
                 className={classes.autoComplete}
                 id="groups-selection"
@@ -151,10 +152,6 @@ const GroupSelectorPopUp = ({
         onCancel,
         onClose,
         onConfirm: () => {
-            if (newSelection.length === 0) {
-                setIsRequired(true);
-                return false;
-            }
             onConfirm(newSelection);
         },
         renderButtons: false,
