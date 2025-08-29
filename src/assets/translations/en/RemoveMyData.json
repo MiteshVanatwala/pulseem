@@ -17,5 +17,10 @@
   "dataDeletionBegins": "We have received your request to delete your data. We will notify you via an email on completion.",
   "invalidCaptcha": "Invalid Captcha. Please try again.",
   "errorMessage": "Oops! Something went wrong. Please try again.",
-  "invalidOTP": "Invalid OTP. Please try again."
+  "invalidOTP": "Invalid OTP. Please try again.",
+  "invalidEmailAddress": "Invalid email address.",
+  "invalidCellphoneNumber": "Invalid cellphone number.",
+  "accountLocked": "Account locked due to too many failed attempts. Please try again after {{LockoutExpiryTime}}",
+  "invalidOTPMaxAttempts": "Invalid OTP. Maximum attempts exceeded. Please try again after 24 hours.",
+  "invalidOTPRemainingAttempts": "Invalid OTP. {{AttemptsRemaining}} attempt(s) remaining."
 }

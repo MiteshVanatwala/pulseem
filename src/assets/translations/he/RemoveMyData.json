@@ -17,5 +17,10 @@
   "dataDeletionBegins": "קיבלנו את הבקשה למחיקת המידע האישי שלכם. תישלח אליכם הודעת דוא\"ל עם סיום התהליך.",
   "invalidCaptcha": "קאפצ'ה לא תקין, אנא נסו שוב",
   "errorMessage": "אופס! משהו השתבש. אנא נסו שוב",
-  "invalidOTP": "קוד אימות אינו תקין. אנא נסו שוב."
+  "invalidOTP": "קוד אימות אינו תקין. אנא נסו שוב.",
+  "invalidEmailAddress": "כתובת אימייל לא תקינה.",
+  "invalidCellphoneNumber": "מספר טלפון נייד לא תקין.",
+  "accountLocked": "החשבון ננעל עקב ניסיונות כושלים רבים מדי. אנא נסו שוב לאחר {{LockoutExpiryTime}}",
+  "invalidOTPMaxAttempts": "קוד אימות לא תקין. מספר הניסיונות המרבי הושג. אנא נסו שוב לאחר 24 שעות.",
+  "invalidOTPRemainingAttempts": "קוד אימות לא תקין. נותרו {{AttemptsRemaining}} ניסיון(ים) "
 }

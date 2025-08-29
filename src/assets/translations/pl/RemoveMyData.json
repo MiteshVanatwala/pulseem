@@ -17,5 +17,10 @@
   "dataDeletionBegins": "Otrzymaliśmy Twoją prośbę o usunięcie danych. Powiadomimy Cię e-mailem o zakończeniu procesu.",
   "invalidCaptcha": "Nieprawidłowa Captcha. Spróbuj ponownie.",
   "errorMessage": "Ups! Coś poszło nie tak. Spróbuj ponownie.",
-  "invalidOTP": "Nieprawidłowy kod OTP. Spróbuj ponownie."
+  "invalidOTP": "Nieprawidłowy kod OTP. Spróbuj ponownie.",
+  "invalidEmailAddress": "Nieprawidłowy adres e-mail.",
+  "invalidCellphoneNumber": "Nieprawidłowy numer telefonu komórkowego.",
+  "accountLocked": "Konto zablokowane z powodu zbyt wielu nieudanych prób. Spróbuj ponownie po {{LockoutExpiryTime}}.",
+  "invalidOTPMaxAttempts": "Nieprawidłowy kod OTP. Przekroczono maksymalną liczbę prób. Spróbuj ponownie po 24 godzinach.",
+  "invalidOTPRemainingAttempts": "Nieprawidłowy kod OTP. Pozostało {{AttemptsRemaining}} próba(y)."
 }
