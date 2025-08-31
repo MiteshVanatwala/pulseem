@@ -1178,35 +1178,40 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
     }
   }
   const updateWebFormGroups = async (list: Array<number>) => {
-    setLoader(true);
-    const requestParams = { WebformID: params.id, GroupID: list };
-    // @ts-ignore
-    const response = await dispatch(setWebformGroups(requestParams)) as any;
-
-    if (response.payload.StatusCode === 201) {
-      setShowGroupSelection(false);
-      if (list?.length === 0) {
-        setSelectedGroups([]);
+    if (landingPage?.Data?.WebForm?.HtmlData?.indexOf('submithandler.axd') > -1 && list?.length === 0) {
+      // @ts-ignore
+      setToastMessage({ severity: 'error', color: 'error', message: t('group.typeGroupNameAutocomplete'), showAnimtionCheck: false });
+    } else {
+      setLoader(true);
+      const requestParams = { WebformID: params.id, GroupID: list };
+      // @ts-ignore
+      const response = await dispatch(setWebformGroups(requestParams)) as any;
+  
+      if (response.payload.StatusCode === 201) {
+        setShowGroupSelection(false);
+        if (list?.length === 0) {
+          setSelectedGroups([]);
+        }
+        else {
+          const tempArr = [...selectedGroups, ...list];
+          setSelectedGroups(tempArr);
+          saveRef.current = {
+            //@ts-ignore
+            ...saveRef.current,
+            showGroupPopup: false,
+            groups: tempArr
+          };
+          //@ts-ignore
+          await editorRef.current.save();
+        }
       }
       else {
-        const tempArr = [...selectedGroups, ...list];
-        setSelectedGroups(tempArr);
-        saveRef.current = {
-          //@ts-ignore
-          ...saveRef.current,
-          showGroupPopup: false,
-          groups: tempArr
-        };
-        //@ts-ignore
-        await editorRef.current.save();
+        // @ts-ignore
+        setToastMessage({ severity: 'error', color: 'error', message: t('common.ErrorOccured'), showAnimtionCheck: false });
       }
+      // getData();
+      setLoader(false);
     }
-    else {
-      // @ts-ignore
-      setToastMessage({ severity: 'error', color: 'error', message: t('common.ErrorOccured'), showAnimtionCheck: false });
-    }
-    // getData();
-    setLoader(false);
   }
   //#endregion Forms 
   const getConfig = () => {

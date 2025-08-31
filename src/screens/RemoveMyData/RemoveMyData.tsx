@@ -64,7 +64,7 @@ const RemoveMyData = ({ classes }: any) => {
         setToastMessage(null);
       }, 3000);
       return (
-        <Toast data={toastMessage} />
+        <Toast data={{}} customData={toastMessage} />
       );
     }
     return null;
@@ -253,6 +253,10 @@ const RemoveMyData = ({ classes }: any) => {
       setEmailOrPhoneNumber('');
       setGUID(data?.Data?.ClientRequest || '');
     } else if (data?.StatusCode === 2) {
+      setToastMessage({ severity: 'error', color: 'error', message: t('RemoveMyData.invalidEmailAddress') });
+    } else if (data?.StatusCode === 3) {
+      setToastMessage({ severity: 'error', color: 'error', message: t('RemoveMyData.invalidCellphoneNumber') });
+    } else if (data?.StatusCode === 4) {
       setToastMessage({ severity: 'error', color: 'error', message: t('RemoveMyData.invalidCaptcha') });
     } else {
       setToastMessage({ severity: 'error', color: 'error', message: data?.message || t('RemoveMyData.errorMessage') });
@@ -272,7 +276,7 @@ const RemoveMyData = ({ classes }: any) => {
       setToastMessage({ severity: 'error', color: 'error', message: error?.response?.data?.message || t('RemoveMyData.errorMessage') });
     });
     setLoader(false);
-    if (data?.StatusCode === 1) {
+    if (data?.StatusCode === 1 || data?.StatusCode === 5) {
       if (data?.Data?.isAuthenticate === true) {
         setActiveStep(2);
         setOTP('');
@@ -280,8 +284,44 @@ const RemoveMyData = ({ classes }: any) => {
       } else {
         setToastMessage({ severity: 'error', color: 'error', message: t('RemoveMyData.invalidOTP') });  
       }
-    } else if (data?.StatusCode === 2) {
+    } else if (data?.StatusCode === 2 || data?.StatusCode === 6) {
       setToastMessage({ severity: 'error', color: 'error', message: t('RemoveMyData.invalidOTP') });
+    } else if (data?.StatusCode === 7) {
+      const lockoutTime = data?.Data?.lockoutExpiryTime;
+      let formattedTime = '24 hours';
+      if (lockoutTime) {
+        try {
+          const date = new Date(lockoutTime);
+          formattedTime = new Intl.DateTimeFormat(language, { 
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+          }).format(date);
+        } catch (e) {
+          console.error('Error formatting date:', e);
+        }
+      }
+      setToastMessage({ 
+        severity: 'error', 
+        color: 'error', 
+        message: t('RemoveMyData.accountLocked', {
+          LockoutExpiryTime: formattedTime,
+          defaultValue: 'Account locked due to too many failed attempts. Please try again after {{LockoutExpiryTime}}'
+        })
+      });
+    } else if (data?.StatusCode === 8) {
+      setToastMessage({ severity: 'error', color: 'error', message: t('RemoveMyData.invalidOTPMaxAttempts') });
+    } else if (data?.StatusCode === 9) {
+      setToastMessage({ 
+        severity: 'error', 
+        color: 'error', 
+        message: t('RemoveMyData.invalidOTPRemainingAttempts', {
+          AttemptsRemaining: data?.Data?.attemptsRemaining || 0,
+          defaultValue: 'Invalid OTP. {{AttemptsRemaining}} attempt(s) remaining.'
+        })
+      });
     } else {
       setToastMessage({ severity: 'error', color: 'error', message: data?.Data?.message || t('RemoveMyData.errorMessage') });
     }
@@ -311,10 +351,16 @@ const RemoveMyData = ({ classes }: any) => {
 
   const actionButtonClick = async (e: any) => {
     if (activeStep === 0) {
-      if (!IsValidEmail(emailOrPhoneNumber) && !isValidPhoneNumber(emailOrPhoneNumber)) {
+      const isNumericOnly = /^\d+$/.test(emailOrPhoneNumber);
+      const phoneNumberToValidate = isNumericOnly ? `+${emailOrPhoneNumber}` : emailOrPhoneNumber;
+      
+      if (!IsValidEmail(emailOrPhoneNumber) && !isValidPhoneNumber(phoneNumberToValidate)) {
         setEmailOrPhoneNumberError(t('RemoveMyData.insertEmailPhone'));
         return;
       } else {
+        if (isNumericOnly) {
+          setEmailOrPhoneNumber(phoneNumberToValidate);
+        }
         setLoader(true);
         e.preventDefault();
         // @ts-ignore
