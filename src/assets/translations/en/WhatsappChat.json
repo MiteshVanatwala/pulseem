@@ -6,7 +6,7 @@
 	"cantSend": "You can only send templates in a closed conversation",
 	"send": "Send Template",
 	"open": "Open",
-	"pending": "Pending",
+	"pending": "In Progress",
 	"solved": "Solved",
 	"allStatus": "All",
 	"choose": "Choose",
