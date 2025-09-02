@@ -128,7 +128,7 @@ const SignUpNew = ({ classes }: any) => {
         setUserDetails({
           ...userDetails,
           fullName: `${Data?.FirstName || ''} ${Data?.LastName || ''}`,
-          emailId: qs?.emailid || '',
+          emailId: qs?.emailid || Data?.Email || '',
           cellPhone: cellPhone || '',
           countryCode,
           companyName: Data?.Company || '',
@@ -139,6 +139,63 @@ const SignUpNew = ({ classes }: any) => {
       setDialogType({ type: 'internalError' });
     }
   }
+
+  // Function to setup new email registration
+  const setupNewEmail = async (emailId: string): Promise<{ success: boolean; id?: string; redirectLink?: string; message?: string }> => {
+    try {
+      const updatedEmailRequest = {
+        ...emailRequest,
+        Email: emailId,
+        UtmSource: qs?.utm_source || null,
+        UtmMedium: qs?.utm_medium || null,
+        GCLID: qs?.GCLID || null,
+        UtmCampaign: qs?.UtmCampaign || null,
+        RequestUrl: qs?.RequestUrl || null,
+        CampaignName: qs?.CampaignName || null,
+        AdSetName: qs?.AdSetName || null,
+        AdName: qs?.AdName || null,
+        WebFormPosition: qs?.WebFormPosition || null
+      };
+
+      const response = await PulseemReactInstance.post(`User/SetupNewEmail`, updatedEmailRequest);
+      const { Data = null, StatusCode = 200, Message = '' } = response?.data;
+
+      const errorResponses: { [key: string]: string } = {
+        "0": "Internal Error",
+        "7": "Email Is Empty!",
+        "8": "Email Is Not Valid",
+        "13": "Email Already Exist"
+      };
+
+      switch (StatusCode) {
+        case 201:
+          return {
+            success: true,
+            redirectLink: Data?.RedirectLink || null
+          };
+        case 404:
+          return {
+            success: false,
+            message: errorResponses[Data[0]] || 'Unknown Error'
+          };
+        case 401:
+          return {
+            success: false,
+            message: 'invalid api'
+          };
+        default:
+          return {
+            success: false,
+            message: Message || 'Unknown Error'
+          };
+      }
+    } catch (error) {
+      return {
+        success: false,
+        message: 'Network Error'
+      };
+    }
+  };
 
   const saveUserInfo = async () => {
     let errorsTemp = errors;
@@ -205,6 +262,27 @@ const SignUpNew = ({ classes }: any) => {
     }
 
     setLoader(true);
+
+    // Only call setupNewEmail if we're on step 1 and don't have an ID in the URL parameters
+    if (activeStep === 0 && !qs?.id) {
+      const setupResult = await setupNewEmail(payload.Email);
+      
+      if (!setupResult.success) {
+        setLoader(false);
+        showMessage(setupResult.message || 'Error setting up email');
+        return;
+      }
+
+      // Update payload with new ID if we got one
+      if (setupResult.id) {
+        payload.UserID = setupResult.id;
+      }
+    } else if (activeStep === 0 && qs?.id) {
+      // If we have an ID in URL parameters, use that
+      payload.UserID = qs.id;
+    }
+
+    // Continue with saving info
     const { data: { Message }, status } = await PulseemReactInstance.post(`User/SaveInfoAccounts`, payload);
     setLoader(false);
     if (status === 200) {
