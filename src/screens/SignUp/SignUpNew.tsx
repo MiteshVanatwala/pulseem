@@ -420,6 +420,15 @@ const SignUpNew = ({ classes }: any) => {
         ReferralID: qs?.refId,
         Culture: qs?.Culture || 'he-IL',
         TurnstileToken: turnstileToken,
+        UtmSource: qs?.utm_source || null,
+        UtmMedium: qs?.utm_medium || null,
+        GCLID: qs?.GCLID || null,
+        UtmCampaign: qs?.UtmCampaign || null,
+        RequestUrl: qs?.RequestUrl || null,
+        CampaignName: qs?.CampaignName || null,
+        AdSetName: qs?.AdSetName || null,
+        AdName: qs?.AdName || null,
+        WebFormPosition: qs?.WebFormPosition || null
       });
       setLoader(false);
       if (status === 200) {
@@ -1088,6 +1097,7 @@ const SignUpNew = ({ classes }: any) => {
 
         <Box className={clsx(classes.mt24, windowSize !== 'xs' ? classes.paddingInline30 : '')}>
           <Turnstile
+            siteKey="0x4AAAAAABhTv-JeJLm06IFU"
             onVerify={(token) => {
               setTurnstileToken(token);
               setEmailRequest({
@@ -1116,7 +1126,6 @@ const SignUpNew = ({ classes }: any) => {
   }
 
   const languageSelector = () => {
-    console.log('languageSelector', language);
     return (
       <FormControl variant='standard' className={clsx(classes.SignUpLanguageDropdown, classes.bgWhite, classes.mb10)} style={{ direction: isRTL ? 'ltr' : 'rtl' }}>
         <Select

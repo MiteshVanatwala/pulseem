@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { CloudFlareSiteKey } from '../../helpers/Constants';
 
 interface TurnstileProps {
@@ -10,11 +10,28 @@ interface TurnstileProps {
 const Turnstile: React.FC<TurnstileProps> = ({ siteKey, onVerify, theme = 'light' }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const widgetId = useRef<number>();
+  const [isScriptLoaded, setIsScriptLoaded] = useState(false);
 
   useEffect(() => {
-    // @ts-ignore
-    if (!window.turnstile) {
-      console.error('Turnstile is not loaded');
+    // Load Turnstile script if not already loaded
+    if (!document.querySelector('script#cf-turnstile')) {
+      const script = document.createElement('script');
+      script.id = 'cf-turnstile';
+      script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
+      script.async = true;
+      script.defer = true;
+      script.onload = () => setIsScriptLoaded(true);
+      document.head.appendChild(script);
+    } else {
+      // @ts-ignore
+      if (window.turnstile) {
+        setIsScriptLoaded(true);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!isScriptLoaded) {
       return;
     }
 
