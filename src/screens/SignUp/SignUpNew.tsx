@@ -273,9 +273,18 @@ const SignUpNew = ({ classes }: any) => {
         return;
       }
 
-      // Update payload with new ID if we got one
-      if (setupResult.id) {
-        payload.UserID = setupResult.id;
+      // Extract ID from redirectLink if available
+      if (setupResult.redirectLink) {
+        const urlParams = new URLSearchParams(new URL(setupResult.redirectLink).search);
+        const newId = urlParams.get('id');
+        if (newId) {
+          payload.UserID = newId;
+          // Update URL with new ID and email
+          const currentUrl = new URL(window.location.href);
+          currentUrl.searchParams.set('id', newId);
+          currentUrl.searchParams.set('emailid', payload.Email);
+          window.history.replaceState({}, '', currentUrl.toString());
+        }
       }
     } else if (activeStep === 0 && qs?.id) {
       // If we have an ID in URL parameters, use that
