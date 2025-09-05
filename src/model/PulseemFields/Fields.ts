@@ -195,5 +195,5 @@ export const PulseemFeatures = {
   MMS: '66',
   PolishLangMenu: '67',
   NewsletterAI: '68',
-  PolyAIAgent: '70'
+  PolyAIAgent: '69'
 }

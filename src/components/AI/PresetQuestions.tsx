@@ -2,7 +2,7 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 import { Box, Button, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { addMessage, fetchAiResponse } from '../../redux/reducers/aiChatSlice';
+import { addMessage } from '../../redux/reducers/aiChatSlice';
 import uniqid from 'uniqid';
 
 const useStyles = makeStyles((theme) => ({
@@ -47,8 +47,8 @@ const PresetQuestions: React.FC = () => {
   const dispatch = useDispatch();
 
   const handlePresetClick = (question: string) => {
-    dispatch(addMessage({ id: uniqid(), text: question, sender: 'user' }));
-    dispatch(fetchAiResponse(question));
+    // dispatch(addMessage({ id: uniqid(), text: question, sender: 'user' }));
+    // dispatch(fetchAiResponse(question));
   };
 
   return (

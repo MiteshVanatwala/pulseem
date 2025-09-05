@@ -3,29 +3,35 @@ import { useSelector } from 'react-redux';
 import { Box, Typography, Paper } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { StateType } from '../../Models/StateTypes';
-import InsightRenderer from './InsightRenderer';
+import clsx from 'clsx';
+import moment from 'moment';
 
 const useStyles = makeStyles((theme) => ({
   messageList: {
-    height: '400px', // Fixed height
-    maxHeight: 'calc(80vh - 300px)', // Maximum height based on viewport height minus header and input area
+    height: '40vh', // Fixed height
+    // maxHeight: 'calc(80vh - 300px)', // Maximum height 
+    maxHeight: '80vh', // Maximum height based on viewport height minus header and input area
     overflowY: 'auto',
     padding: theme.spacing(2),
     backgroundColor: '#ffffff',
     '&::-webkit-scrollbar': {
       width: '8px',
+      background: 'transparent',
+      display: 'block',
     },
     '&::-webkit-scrollbar-track': {
-      background: '#f1f1f1',
+      background: 'transparent',
       borderRadius: '4px',
     },
     '&::-webkit-scrollbar-thumb': {
-      background: '#888',
+      background: '#666666',
       borderRadius: '4px',
       '&:hover': {
-        background: '#555',
+        background: '#4d4d4d',
       },
     },
+    scrollbarWidth: 'thin',
+    scrollbarColor: '#666666 transparent',
   },
   messageRow: {
     display: 'flex',
@@ -42,6 +48,9 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(1, 2),
     borderRadius: '20px',
     maxWidth: '70%',
+    '&.user-bubble': {
+      maxWidth: '100%',
+    },
   },
   userBubble: {
     backgroundColor: theme.palette.primary.main,
@@ -52,6 +61,15 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: '#f0f0f0',
     color: theme.palette.text.primary,
     borderBottomLeftRadius: '5px',
+  },
+  messageTime: {
+    fontSize: '0.7rem',
+    color: '#666',
+    marginTop: '4px',
+    textAlign: 'right',
+  },
+  userMessageTime: {
+    color: '#FFF',
   },
   '@keyframes fadeIn': {
     '0%': {
@@ -97,43 +115,82 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const formatTime = (timestamp: string) => {
+  try {
+    // Parse the ISO timestamp and convert to local time
+    const utcDate = new Date(timestamp);
+    const localDate = new Date(utcDate.getTime() - (utcDate.getTimezoneOffset() * 60000));
+    
+    return localDate.toLocaleTimeString(undefined, {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    }).replace(/\s*(AM|PM)/, (_, meridiem) => ` ${meridiem}`);
+  } catch (error) {
+    console.error('Error formatting time:', error);
+    return '';
+  }
+};
+
 const MessageList: React.FC = () => {
   const classes = useStyles();
-  const { messages, isLoading } = useSelector((state: StateType) => state.aiChat);
+  const { messages, aiIconStatus } = useSelector((state: StateType) => state.aiChat);
+  const { language } = useSelector((state: StateType) => state.core);
   const scrollRef = useRef<HTMLDivElement>(null);
+  moment.locale(language);
 
   useEffect(() => {
     if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+      const scrollToBottom = () => {
+        scrollRef.current?.scrollTo({
+          top: scrollRef.current.scrollHeight,
+          behavior: 'smooth'
+        });
+      };
+      
+      // Scroll immediately when new messages are added
+      scrollToBottom();
+      
+      // Also scroll after a short delay to handle dynamic content (like images) loading
+      setTimeout(scrollToBottom, 100);
     }
-  }, [messages]);
+  }, [messages, aiIconStatus]);
 
   return (
     // @ts-ignore
     <Box className={classes.messageList} ref={scrollRef}>
       {messages.map((msg, index) => (
         <Box
-          key={msg.id}
+          key={msg.MessageID}
           style={{ animationDelay: `${index * 100}ms` }}
           className={`${classes.messageRow} ${
-            msg.sender === 'user' ? classes.userMessage : classes.aiMessage
+            msg.MessageTypeID === 1 ? classes.userMessage : classes.aiMessage
           }`}
         >
-          <Paper
-            className={`${classes.messageBubble} ${
-              msg.sender === 'user' ? classes.userBubble : classes.aiBubble
-            }`}
-            elevation={1}
-          >
-            {msg.sender === 'user' ? (
-              <Typography variant="body1">{msg.data.content}</Typography>
-            ) : (
-              <InsightRenderer message={msg.data} />
-            )}
-          </Paper>
+          <Box>
+            <Paper
+              className={`${classes.messageBubble} ${
+                msg.MessageTypeID === 1 ? classes.userBubble : classes.aiBubble
+              } ${msg.MessageTypeID === 1 ? 'user-bubble' : 'ai-bubble'}`}
+              elevation={1}
+            >
+              <Typography 
+                variant="body1" 
+                style={{ whiteSpace: 'pre-wrap' }}
+              >
+                {msg.MessageText}
+              </Typography>
+              {msg.MessageTimestamp && (
+                <Typography className={clsx(classes.messageTime, msg.MessageTypeID === 1 ? classes.userMessageTime : null)}>
+                  {/* {formatTime(msg.MessageTimestamp)} */}
+                  {moment(msg.MessageTimestamp)?.format('HH:mm a')}
+                </Typography>
+              )}
+            </Paper>
+          </Box>
         </Box>
       ))}
-      {isLoading && (
+      {aiIconStatus === 1 && (
         <Box className={`${classes.messageRow} ${classes.aiMessage}`}>
           <Paper className={classes.typingBubble} elevation={1}>
             <span className={classes.typingDot} />

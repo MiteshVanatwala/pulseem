@@ -869,5 +869,7 @@
   "selectFile": "ביחרו קובץ",
   "contactUs": "צור קשר",
   "currency": "מטבע",
-  "polyAgentIconTitle": "Hi, I'm Polly, your smart AI agent"
+  "polyAgentIconTitle": "היי, אני פולסי, סוכן ה-AI החכם שלך",
+  "welcomeMessage": "היי, קוראים לי מיטש {USERNAME}",
+  "500chars": "500 תווים"
 }

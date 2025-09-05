@@ -869,5 +869,7 @@
   "allChannels": "Wszystkie kanały",
   "contactUs": "Skontaktuj się z nami",
   "currency": "Waluta",
-  "polyAgentIconTitle": "Cześć, jestem Polly, twoim inteligentnym agentem AI"
+  "polyAgentIconTitle": "Cześć, jestem Pulsy, twoim inteligentnym agentem AI",
+  "welcomeMessage": "Hi, my name is {USERNAME}",
+  "500chars": "500 znaków"
 }

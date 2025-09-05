@@ -1,26 +1,27 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Paper, Box } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { StateType } from '../../Models/StateTypes';
-import { toggleChat } from '../../redux/reducers/aiChatSlice';
+import { toggleChat, loadSessionMessages, addMessage } from '../../redux/reducers/aiChatSlice';
 import ChatHeader from './ChatHeader';
 import MessageList from './MessageList';
 import InputArea from './InputArea';
-import PresetQuestions from './PresetQuestions';
 import MascotImage from "../../assets/images/mascot_pointing.png";
 import { useTypewriter } from '../../hooks/useTypewriter';
 import { useTranslation } from 'react-i18next';
+import { setIsLoader } from '../../redux/reducers/coreSlice';
+import { PulseemFeatures } from '../../model/PulseemFields/Fields';
 
 const useStyles = makeStyles((theme) => ({
   PolyWidget: {
     position: 'fixed',
-    top: '50%',
+    top: '40%',
     left: '50%',
-    width: '50vw',
-    height: '80vh',
-    maxHeight: '800px',
-    minWidth: '300px',
+    width: '40vw',
+    height: '50vh',
+    maxHeight: '50vh',
+    // minWidth: '200px',
     maxWidth: '1000px',
     display: 'flex',
     flexDirection: 'column',
@@ -34,6 +35,17 @@ const useStyles = makeStyles((theme) => ({
     '& > *': {
       flexShrink: 0,
     },
+    '& .MuiToolbar-root': {
+      minHeight: '64px',
+      '& .MuiTypography-h6': {
+        fontSize: '1.25rem',
+        fontWeight: 500,
+      }
+    },
+    "@media screen and (max-width: 768px)": {
+      top: '30%',
+      width: '90%'
+    }
   },
   Polycontent: {
     flex: 1,
@@ -45,7 +57,7 @@ const useStyles = makeStyles((theme) => ({
     transform: 'translate(-50%, -50%) scale(1)',
     opacity: 1,
     pointerEvents: 'auto',
-    zIndex: 1299
+    zIndex: 1299,
   },
   Polybackdrop: {
     position: 'fixed',
@@ -77,11 +89,29 @@ const useStyles = makeStyles((theme) => ({
     position: 'absolute',
     left: ({ isRTL }: { isRTL: boolean }) => isRTL ? 'auto' : '-300px',
     right: ({ isRTL }: { isRTL: boolean }) => isRTL ? '-300px' : 'auto',
-    bottom: '-25px',
     zIndex: 9,
+    bottom: '-70px',
     '& img': {
       height: '300px',
       transform: ({ isRTL }: { isRTL: boolean }) => isRTL ? 'scaleX(-1)' : 'none',
+    },
+    "@media screen and (max-width: 768px)": {
+      position: 'relative',
+      left: 'auto !important',
+      right: 'auto !important',
+      bottom: 0,
+      order: 3,
+      margin: '10px auto',
+      '& img': {
+        height: '100px',
+        display: 'block',
+        margin: '0 auto',
+      },
+      '& div.message': {
+        maxWidth: '80%',
+        fontSize: '0.9rem',
+        minHeight: '25px',
+      }
     },
     '& div.message': {
       textAlign: 'center',
@@ -132,11 +162,14 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const AIChatWidget: React.FC = () => {
-  const isRTL = useSelector((state: StateType) => state.core.isRTL);
+  const { isRTL } = useSelector((state: any) => state.core);
+  const { username } = useSelector((state: any) => state.user);
   const classes = useStyles({ isRTL });
   const dispatch = useDispatch();
+  const inputAreaRef = useRef<{ focus: () => void }>(null);
   const { t } = useTranslation();
-  const { isOpen, messages } = useSelector((state: StateType) => state.aiChat);
+  const { isOpen, messages, totalMessagesForUserCount } = useSelector((state: StateType) => state.aiChat);
+  const { accountFeatures } = useSelector((state: StateType) => state.common);
   const { displayedText, isTyping } = useTypewriter({
     text: t("common.polyAgentIconTitle"),
     speed: 100,
@@ -150,8 +183,46 @@ const AIChatWidget: React.FC = () => {
   };
 
   const handleBackdropClick = () => {
-    dispatch(toggleChat());
+    // dispatch(toggleChat());
   };
+
+  useEffect(() => {
+    if (isOpen) {
+      // Focus the input when the widget opens
+      setTimeout(() => {
+        inputAreaRef.current?.focus();
+      }, 300); // Small delay to ensure the animation is complete
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    const initializeChat = async () => {
+      if (totalMessagesForUserCount === -1) await dispatch(loadSessionMessages());
+      if (totalMessagesForUserCount === 0 && username) {
+        try {
+          const hideAIChatDialog = localStorage.getItem('hideAIChatDialog');
+          if (hideAIChatDialog !== 'true') {
+            dispatch(toggleChat());
+            // await dispatch(addMessage({
+            //   MessageText: `${t("common.welcomeMessage").replace("{USERNAME}", username)}`,
+            //   MessageTypeID: 1
+            // }));
+            // dispatch(setIsLoader(true));
+          }
+        } catch (error) {
+          console.error('Error sending initial message:', error);
+        }
+      }
+    };
+
+    if (totalMessagesForUserCount < 1 && username && accountFeatures?.indexOf(PulseemFeatures.PolyAIAgent) !== -1) {
+      initializeChat();
+    }
+
+    // if (totalMessagesForUserCount > 0) {
+    //   dispatch(setIsLoader(false));
+    // }
+  }, [dispatch, messages, username, totalMessagesForUserCount])
 
   return (
     <div className={classes.PolywidgetContainer}>
@@ -164,6 +235,13 @@ const AIChatWidget: React.FC = () => {
             elevation={5}
             onClick={handleWidgetClick}
         >
+            <ChatHeader />
+            <Box className={classes.Polycontent}>
+              <MessageList />
+              {/* {messages.length === 0 && <PresetQuestions />} */}
+              {/* {<PresetQuestions />} */}
+            </Box>
+            <InputArea ref={inputAreaRef} />
             <div className={classes.PolymascotImage}>
               <div className="message">
                 {displayedText}
@@ -171,13 +249,6 @@ const AIChatWidget: React.FC = () => {
               </div>
               <img src={MascotImage} alt="Pulseem Mascot" />
             </div>
-            <ChatHeader />
-            <Box className={classes.Polycontent}>
-              <MessageList />
-              {/* {messages.length === 0 && <PresetQuestions />} */}
-              {<PresetQuestions />}
-            </Box>
-            <InputArea />
         </Paper>
     </div>
   );

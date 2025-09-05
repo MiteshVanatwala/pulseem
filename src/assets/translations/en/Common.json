@@ -874,5 +874,7 @@
   "selectFile": "Select file",
   "contactUs": "Contact Us",
   "currency": "Currency",
-  "polyAgentIconTitle": "Hi, I'm Polly, your smart AI agent"
+  "polyAgentIconTitle": "Hi, I'm Pulsy, your smart AI agent",
+  "welcomeMessage": "Hi, my name is {USERNAME}",
+  "500chars": "500 characters"
 }

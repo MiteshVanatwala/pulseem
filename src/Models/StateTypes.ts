@@ -29,16 +29,18 @@ export type CoreStateType = {
 };
 
 export interface Message {
-    id: string;
-    sender: 'user' | 'ai';
-    text?: string;
-    data?: any;
+    MessageID: string;
+    MessageText: string;
+    MessageTimestamp: string;
+    MessageTypeID: number;
   }
 
 export interface AiChatState {
     isOpen: boolean;
     messages: Message[];
     isLoading: boolean;
+    totalMessagesForUserCount: number;
+    aiIconStatus: number;
 }
 
 export type StateType = {
