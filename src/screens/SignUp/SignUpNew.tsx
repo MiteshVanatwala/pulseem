@@ -2,7 +2,7 @@ import clsx from "clsx";
 import { Box, Button, Checkbox, Container, FormControl, FormControlLabel, FormHelperText, Grid, IconButton, MenuItem, MobileStepper, TextField, Tooltip, Typography, Zoom } from "@material-ui/core";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Turnstile from '../../components/Turnstile/Turnstile';
 import { StateType } from "../../Models/StateTypes";
 import { IoIosArrowDown, IoIosEye, IoIosEyeOff } from "react-icons/io";
@@ -21,7 +21,7 @@ import i18n from "../../i18n";
 import { IsValidEmail, IsValidPhoneNumber } from "../../helpers/Utils/Validations";
 import { BaseDialog } from "../../components/DialogTemplates/BaseDialog";
 import { CompanyWebsiteRequest } from "../../Models/CompanyWebsite/CompanyWebSite";
-import { actionURL } from "../../config";
+import { actionURL, sitePrefix } from "../../config";
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { getCookie, setCookie } from "../../helpers/Functions/cookies";
 import EnImage from '../../assets/images/british.svg';
@@ -98,8 +98,19 @@ const SignUpNew = ({ classes }: any) => {
   const [invalidEmail, setInvalidEmail] = useState<boolean>(false);
   const [activeStep, setActiveStep] = useState(0);
   const [turnstileToken, setTurnstileToken] = useState<string>('');
+  const [turnstileKey, setTurnstileKey] = useState(0); // Add this to force re-render
   const passwordHintClasses = useStylesBootstrapPasswordHint();
   const cookieData = getCookie('Culture');
+
+  // Ensure Turnstile re-renders every time user comes to Step 3
+  const prevActiveStepRef = useRef<number>(activeStep);
+  useEffect(() => {
+    if (prevActiveStepRef.current !== 2 && activeStep === 2) {
+      setTurnstileKey(prev => prev + 1);
+      setTurnstileToken('');
+    }
+    prevActiveStepRef.current = activeStep;
+  }, [activeStep]);
 
   const changeLanguage = (value: any) => {
     let langCode = '';
@@ -371,6 +382,11 @@ const SignUpNew = ({ classes }: any) => {
     setToastMessage({ severity: type, color: type, message: t(message), showAnimtionCheck: false });
   }
 
+  const refreshTurnstile = () => {
+    setTurnstileToken(''); // Clear the token
+    setTurnstileKey(prev => prev + 1); // This will force re-render the Turnstile component
+  }
+
   const saveSignup = async () => {
     let errorsTemp = errors;
     errorsTemp.fullName = userDetails.fullName ? '' : t('SignUp.fullNameRequired');
@@ -385,6 +401,7 @@ const SignUpNew = ({ classes }: any) => {
 
     if (!turnstileToken) {
       showMessage('SignUp.pleaseVerifyCaptcha');
+      refreshTurnstile(); // Re-render the Turnstile component
       return;
     }
 
@@ -443,11 +460,14 @@ const SignUpNew = ({ classes }: any) => {
           });
         } else if (Message === 'internalerror') {
           setDialogType({ type: 'internalError' });
+          refreshTurnstile(); // Re-render Turnstile on error
         } else {
           showMessage(`SignUp.Message.${Message}`);
+          refreshTurnstile(); // Re-render Turnstile on error
         }
       } else {
         setDialogType({ type: 'internalError' });
+        refreshTurnstile(); // Re-render Turnstile on error
       }
     }
   }
@@ -964,7 +984,6 @@ const SignUpNew = ({ classes }: any) => {
               classes={passwordHintClasses}
             >
               <TextField
-                autoFocus
                 onFocus={() => setShowPasswordTip(true)}
                 onBlur={() => setShowPasswordTip(false)}
                 type={userDetails.isPasswordVisible ? "text" : "password"}
@@ -1095,19 +1114,23 @@ const SignUpNew = ({ classes }: any) => {
           />
         </FormControl>
 
-        <Box className={clsx(classes.mt24, windowSize !== 'xs' ? classes.paddingInline30 : '')}>
-          <Turnstile
-            siteKey="0x4AAAAAABhTv-JeJLm06IFU"
-            onVerify={(token) => {
-              setTurnstileToken(token);
-              setEmailRequest({
-                ...emailRequest,
-                TurnstileToken: token
-              });
-            }}
-            theme={isRTL ? 'light' : 'dark'}
-          />
-        </Box>
+        {activeStep === 2 && (
+          <Box className={clsx(classes.mt24, windowSize !== 'xs' ? classes.paddingInline30 : '')}>
+            <Turnstile
+              key={`turnstile_${turnstileKey}`} // Use a more descriptive key
+              // siteKey="1x00000000000000000000AA" // Local
+              siteKey="0x4AAAAAABhTv-JeJLm06IFU"
+              onVerify={(token) => {
+                setTurnstileToken(token);
+                setEmailRequest(prev => ({
+                  ...prev,
+                  TurnstileToken: token
+                }));
+              }}
+              theme={isRTL ? 'light' : 'dark'}
+            />
+          </Box>
+        )}
       </Box>
     </Box>
   }
@@ -1246,7 +1269,7 @@ const SignUpNew = ({ classes }: any) => {
                     activeStep !== 3 && (
                       <Button
                         onClick={() => activeStep === 2 ? saveSignup() : saveUserInfo()}
-                        disabled={activeStep === 3}
+                        disabled={activeStep === 3 || (activeStep === 2 && !turnstileToken)}
                         className={clsx(classes.f22, classes.bold)}
                       >
                         {t(`common.${activeStep === 2 ? 'finish' : 'next'}`)}
