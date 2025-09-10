@@ -122,7 +122,8 @@ export const BeeConfig = (Options: ConfigOptions) => {
         layout: layout,
         attributes: {
           "accept-charset": "UTF-8",
-          action: "https://stage.l-p.site/submithandler.axd",
+          // action: "https://stage.l-p.site/submithandler.axd",
+          action: isProdMode ? "https://l-p.site/submithandler.axd" : "https://stage.l-p.site/submithandler.axd",
           autocomplete: "on",
           enctype: "multipart/form-data",
           method: "post",
