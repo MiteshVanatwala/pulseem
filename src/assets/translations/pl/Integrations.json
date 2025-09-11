@@ -105,7 +105,7 @@
     "connectStore": "Dowiedz się, jak połączyć Istores",
     "syncRemovalFromPulseemToIstore": "Sync removals from Pulseem to Istores",
     "syncRemovalFromPulseemToIstoreDescription": "Recipients who unsubscribed from Pulseem will be unsubscribed from Istores as well",
-    "activeRecipientsFromIstore": "Update active recipients from ISTORES to \"Active\" status in pulseem even though they are marked as removed in pulseem"
+    "activeRecipientsFromIstore": "Update active recipients from Istores to \"Active\" status in pulseem even though they are marked as removed in pulseem"
   },
   "ecwid": {
     "title": "Ecwid",
