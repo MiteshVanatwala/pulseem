@@ -28,7 +28,9 @@ export interface IsracardModel {
     AbandonedEventActive: boolean;
     StatusChangedEventActive?: boolean;
     Groups?: IntegrationGroups;
-    IntegrationSource?: LU_Plugin
+    IntegrationSource?: LU_Plugin,
+    IsUnsubscribeFromPulseem?: boolean,
+    IsInsertAsActive?: boolean,
 }
 export interface IntegrationGroups {
     RegisterGroups?: number[];
