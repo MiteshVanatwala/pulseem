@@ -105,7 +105,7 @@
     "connectStore": "מדריך לחיבור החנות שלכם",
     "syncRemovalFromPulseemToIstore": "סנכרון מוסרים בין פולסים ל-Istores",
     "syncRemovalFromPulseemToIstoreDescription": "נמענים שהסירו את עצמם מפולסים יוסרו גם ב-Istores",
-    "activeRecipientsFromIstore": "עדכן נמענים פעילים מ-ISTORES לסטטוס \"פעילים\" בפולסים למרות שהם מוסרים בפולסים"
+    "activeRecipientsFromIstore": "עדכן נמענים פעילים מ-Istores לסטטוס \"פעילים\" בפולסים למרות שהם מוסרים בפולסים"
   },
   "ecwid": {
     "title": "Ecwid",
