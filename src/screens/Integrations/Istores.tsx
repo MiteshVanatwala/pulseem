@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Box, Typography, Button, Grid, TextField, FormControlLabel, Checkbox } from "@material-ui/core";
+import { Box, Typography, Button, Grid, TextField, FormControlLabel, Checkbox, Tooltip, IconButton } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import clsx from "clsx";
 import { useDispatch, useSelector } from "react-redux";
@@ -12,10 +12,14 @@ import { getGroupsBySubAccountId } from "../../redux/reducers/groupSlice";
 import { logout } from "../../helpers/Api/PulseemReactAPI";
 import { BaseDialog } from "../../components/DialogTemplates/BaseDialog";
 import GroupTags from "../../components/Groups/GroupTags";
+import PulseemSwitch from "../../components/Controlls/PulseemSwitch";
 import { URL_HELPER } from "../../helpers/Links/ExternalLink";
+import { StateType } from "../../Models/StateTypes";
+import { BsInfoCircle } from "react-icons/bs";
 const Istores = ({ classes }: any) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const { isRTL } = useSelector((state: StateType) => state.core);
   const { subAccountAllGroups } = useSelector((state: any) => state.group);
   const [showResetDialog, setShowResetDialog] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
@@ -39,7 +43,10 @@ const Istores = ({ classes }: any) => {
     PurchaseEventActive: false,
     AbandonedEventActive: false,
     StatusChangedEventActive: false,
-    Groups: {} as IntegrationGroups
+    RegisterEventActive: false,
+    Groups: {} as IntegrationGroups,
+    IsUnsubscribeFromPulseem: false,
+    IsInsertAsActive: false
   } as IsracardModel);
 
   const renderToast = () => {
@@ -132,10 +139,13 @@ const Istores = ({ classes }: any) => {
         setSettings({
           api_key: '',
           StoreID: '',
+          RegisterEventActive: false,
           PurchaseEventActive: false,
           AbandonedEventActive: false,
           Groups: {},
-          IntegrationSource: LU_Plugin.Isracard
+          IntegrationSource: LU_Plugin.Isracard,
+          IsUnsubscribeFromPulseem: false,
+          IsInsertAsActive: false
         });
 
         setAuthenticated(false);
@@ -393,6 +403,53 @@ const Istores = ({ classes }: any) => {
               <FormControlLabel
                 control={
                   <Checkbox
+                    checked={settings.RegisterEventActive}
+                    onChange={(event) =>
+                      setSettings({
+                        ...settings,
+                        RegisterEventActive: event.target.checked,
+                        Groups: {
+                          ...settings.Groups,
+                          RegisterGroups: event.target.checked ? settings?.Groups?.RegisterGroups : []
+                        }
+                      })
+                    }
+                    name="signup"
+                    color="primary"
+                  />
+                }
+                // @ts-ignore
+                label={t('integrations.register')}
+              />
+              <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.shopifySettingMultiSelect)}>
+                <Box className={clsx('group-dropdown', !settings.RegisterEventActive ? classes.disabled : '')}>
+                  <GroupTags
+                    className='group-select'
+                    groupSelected={settings.Groups?.PurchaseGroups || []}
+                    classes={classes}
+                    title={'siteTracking.typeGroupName'}
+                    dropdown
+                    dropDownProps={{
+                      onChange: (e: any, val: any) => {
+                        setSettings({
+                          ...settings,
+                          Groups: {
+                            ...settings.Groups,
+                            RegisterGroups: val.reduce((prevVal: any, newVal: any) => [...prevVal, newVal.GroupID], [])
+                          }
+                        })
+                      },
+                      selectedGroups: settings.Groups?.RegisterGroups || [],
+                      groups: []
+                    }}
+                  />
+                </Box>
+              </Grid>
+            </Grid>
+            <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.pb15)}>
+              <FormControlLabel
+                control={
+                  <Checkbox
                     checked={settings.PurchaseEventActive}
                     onChange={(event) =>
                       setSettings({
@@ -530,6 +587,71 @@ const Istores = ({ classes }: any) => {
                 </Box>
               </Grid>
             </Grid>
+            
+            <Grid item md={12} xs={12} className={clsx(isRTL ? classes.textRight : classes.textLeft, classes.pb10, classes.pt10)}>
+              <FormControlLabel
+                control={
+                  <PulseemSwitch
+                    id="1"
+                    switchType='ios'
+                    classes={classes}
+                    onColor="#0371ad"
+                    handleDiameter={20}
+                    boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+                    activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+                    height={15}
+                    className={clsx({ [classes.rtlSwitch]: isRTL })}
+                    checked={settings.IsUnsubscribeFromPulseem}
+                    onChange={(event: any) => {
+                      setSettings({
+                        ...settings,
+                        IsUnsubscribeFromPulseem: event.target.checked
+                      });
+                    }}
+                  />
+                }
+                label={t('integrations.Istores.syncRemovalFromPulseemToIstore')}
+              />
+
+              <Tooltip
+                disableFocusListener
+                title={t('integrations.Istores.syncRemovalFromPulseemToIstoreDescription')}
+                classes={{ tooltip: classes.customWidth }}
+                placement={ isRTL ? 'left' : 'right'}
+                arrow
+              >
+                <IconButton style={{ padding: 0 }} className={clsx(classes.icon_Info, classes.f20)}>
+                    <BsInfoCircle />
+                </IconButton>
+              </Tooltip>
+            </Grid>
+            
+            <Grid item md={12} xs={12} className={clsx(isRTL ? classes.textRight : classes.textLeft, classes.pb10, classes.pt10)}>
+              <FormControlLabel
+                control={
+                  <PulseemSwitch
+                    id="1"
+                    switchType='ios'
+                    classes={classes}
+                    onColor="#0371ad"
+                    handleDiameter={20}
+                    boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+                    activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+                    height={15}
+                    className={clsx({ [classes.rtlSwitch]: isRTL })}
+                    checked={settings.IsInsertAsActive}
+                    onChange={(event: any) => {
+                      setSettings({
+                        ...settings,
+                        IsInsertAsActive: event.target.checked
+                      });
+                    }}
+                  />
+                }
+                label={t('integrations.Istores.activeRecipientsFromIstore')}
+              />
+            </Grid>
+
             {!!errors.group_not_selected && (
               <Box className={clsx(classes.flex, classes.pbt15)}>
                 <Typography className={clsx(classes.errorText, classes.f16)}>

@@ -4,6 +4,7 @@
   "purchase": "Purchase",
   "cartAbandonment": "Cart Abandonment",
   "orderStatusCompleted": "Order Status - Completed",
+  "register": "Register",
   "authResponses": {
     "201": "Authentication Success",
     "400": "The store is related to another account",
@@ -101,7 +102,10 @@
     "subTitle": "Insert your Istores API key",
     "storeID": "Store ID",
     "storeIDDesc": "Insert store ID",
-    "connectStore": "Learn how to connect Istores"
+    "connectStore": "Learn how to connect Istores",
+    "syncRemovalFromPulseemToIstore": "Sync removals from Pulseem to Istores",
+    "syncRemovalFromPulseemToIstoreDescription": "Recipients who unsubscribed from Pulseem will be unsubscribed from Istores as well",
+    "activeRecipientsFromIstore": "Update active recipients from Istores to \"Active\" status in pulseem even though they are marked as removed in pulseem"
   },
   "ecwid": {
     "title": "Ecwid",

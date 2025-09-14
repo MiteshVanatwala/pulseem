@@ -4,6 +4,7 @@
   "purchase": "רכישה",
   "cartAbandonment": "נטישת עגלה",
   "orderStatusCompleted": "סטטוס הזמנה -הושלם",
+  "register": "הרשמה",
   "authResponses": {
     "201": "החנות אומתה בהצלחה",
     "400": "שם החנות שייך לחשבון אחר",
@@ -101,7 +102,10 @@
     "subTitle": "הכניסו את מפתח ה-API שקיבלתם מ-Istores",
     "storeID": "מספר מזהה חנות",
     "storeIDDesc": "הכנס מספר מזהה חנות",
-    "connectStore": "מדריך לחיבור החנות שלכם"
+    "connectStore": "מדריך לחיבור החנות שלכם",
+    "syncRemovalFromPulseemToIstore": "סנכרון מוסרים בין פולסים ל-Istores",
+    "syncRemovalFromPulseemToIstoreDescription": "נמענים שהסירו את עצמם מפולסים יוסרו גם ב-Istores",
+    "activeRecipientsFromIstore": "עדכן נמענים פעילים מ-Istores לסטטוס \"פעילים\" בפולסים למרות שהם מוסרים בפולסים"
   },
   "ecwid": {
     "title": "Ecwid",
