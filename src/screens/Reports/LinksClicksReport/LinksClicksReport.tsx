@@ -341,7 +341,7 @@ const LinkClickReport = ({ classes }: any) => {
             </Grid>
             <Grid item xs={6} className={clsx(classes.textCenter)}>
               <Typography className={clsx(classes.fontSize14, classes.grayText)}>
-                {t('common.ClicksUnique')}
+                {t(type === LinksClicksReport.SMS && isVerified ? 'report.linksClicksReport.verifiedClick' : 'common.ClicksUnique')}
               </Typography>
               <Button
                 className={clsx(classes.linkButton, classes.bluetext, classes.fontSize16)}
@@ -351,22 +351,6 @@ const LinkClickReport = ({ classes }: any) => {
                 {item.ClickUniq.toLocaleString()}
               </Button>
             </Grid>
-            {
-              type === LinksClicksReport.SMS && (
-                <Grid item xs={6} className={clsx(classes.textCenter)}>
-                  <Typography className={clsx(classes.fontSize14, classes.grayText)}>
-                    {t('report.linksClicksReport.verifiedClick')}
-                  </Typography>
-                  <Button
-                    className={clsx(classes.linkButton, classes.bluetext, classes.fontSize16)}
-                    onClick={() => handleClickNavigation(item.LinkID)}
-                    disabled={userRoles?.HideRecipients || item.ClickVerified === 0}
-                  >
-                    {item.ClickVerified.toLocaleString()}
-                  </Button>
-                </Grid>
-              )
-            }
             <Grid item xs={6} className={clsx(classes.textCenter)}>
               <Typography className={clsx(classes.fontSize14, classes.grayText)}>
                 {t('report.linksClicksReport.totalClick')}
