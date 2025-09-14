@@ -237,19 +237,8 @@ const LinkClickReport = ({ classes }: any) => {
             className={clsx(classes.flex1)}
             align="center"
           >
-            {t('common.ClicksUnique')}
+            {t(type === LinksClicksReport.SMS && isVerified ? 'report.linksClicksReport.verifiedClick' : 'common.ClicksUnique')}
           </TableCell>
-          {
-            type === LinksClicksReport.SMS && (
-              <TableCell 
-                classes={cellStyle} 
-                className={clsx(classes.flex1)}
-                align="center"
-              >
-                {t('report.linksClicksReport.verifiedClick')}
-              </TableCell>
-            )
-          }
           <TableCell 
             classes={cellStyle} 
             className={clsx(classes.flex1)}
@@ -303,22 +292,6 @@ const LinkClickReport = ({ classes }: any) => {
             {item.ClickUniq.toLocaleString()}
           </Button>
         </TableCell>
-        {
-          type === LinksClicksReport.SMS && (
-            <TableCell 
-              classes={cellBodyStyle}
-              className={clsx(classes.flex1, classes.alignItemsCenter)}
-              align="center"
-            >
-              <Button
-                className={clsx(classes.linkButton, classes.fontSize18, item.ClickVerified > 0 ? classes.blueLink : null)}
-                onClick={() => handleClickNavigation(item.LinkID)}
-              >
-                {item.ClickVerified.toLocaleString()}
-              </Button>
-            </TableCell>
-          )
-        }
         <TableCell 
           classes={cellBodyStyle}
           className={clsx(classes.flex1, classes.alignItemsCenter)}
