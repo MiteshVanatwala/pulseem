@@ -42,6 +42,7 @@ import { RedirectPropTypes } from "../../../helpers/Types/Redirect";
 import { sitePrefix } from "../../../config";
 import SummaryPopup from "./SummaryPopup";
 import CreditCardManagement from "../../../components/BillingSettings/CreditCardManagement";
+import TierPlans from "../../../components/TierPlans/TierPlans";
 
 
 const BillingSettingsPage = ({ classes }: any) => {
@@ -71,6 +72,7 @@ const BillingSettingsPage = ({ classes }: any) => {
   const [tranzilaError, setTranzilaError] = useState<any>(null);
   const [showEditCard, setShowEditCard] = useState<boolean>(false);
   const [showCreditCardManagement, setShowCreditCardManagement] = useState<boolean>(false);
+  const [showTierPlans, setShowTierPlans] = useState<boolean>(false);
 
   const renderToast = () => {
     setTimeout(() => {
@@ -553,7 +555,7 @@ const BillingSettingsPage = ({ classes }: any) => {
                             classes.btn,
                             classes.btnRounded
                           )}
-                          onClick={(e: any) => { e.preventDefault(); e.stopPropagation(); /* Handle upgrade tier */ }}
+                          onClick={(e: any) => { e.preventDefault(); e.stopPropagation(); setShowTierPlans(true) }}
                           style={{ marginInlineEnd: 10 }}
                         >
                           {t('common.tier.upgrade')}
@@ -758,6 +760,11 @@ const BillingSettingsPage = ({ classes }: any) => {
         title={t('billing.confirmDeleteCardTitle')}
         text={t('billing.confirmDeleteCardText')}
       />
+      {showTierPlans && <TierPlans
+        classes={classes}
+        isOpen={showTierPlans}
+        onClose={() => setShowTierPlans(false)}
+      />}
     </DefaultScreen>
   );
 };
