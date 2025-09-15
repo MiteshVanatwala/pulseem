@@ -2517,6 +2517,52 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 				},
 			},
 		},
+		'&.tab-wrapper': {
+			background: '#f6f6f6',
+			padding: '4px 8px 0px 8px',
+			justifyContent: 'center',
+		},
+		'&.tab-container': {
+			backgroundColor: '#fff',
+			marginTop: 4,
+			borderRadius: 16,
+			width: 'max-content',
+			'@media screen and (max-width: 1040px)': {
+				'&.tab-container .MuiTabs-fixed': {
+					overflowX: 'auto !important',
+				},
+			},
+		},
+		'&.custom-tab': {
+			textTransform: 'none',
+			minWidth: 80,
+			padding: theme.spacing(.75, 1),
+			borderRadius: theme.shape.borderRadius * 2.5,
+			fontWeight: 'bold',
+			'@media screen and (max-width: 759px)': {
+				minWidth: 60,
+			},
+			'& h2': {
+				color: '#000000',
+				lineHeight: '16px',
+				margin: '0px 0px 4px 0px',
+				fontWeight: 'bold',
+			},
+			'& h6': {
+				color: '#0000008a',
+				lineHeight: '14px',
+				margin: '0px 0px 2px 0px',
+			},
+			'&.Mui-selected': {
+				background: 'linear-gradient(90deg, #FF0076 1.31%, #FF0054 33.07%, #FF4D2A 134.74%)',
+				'& h2': {
+					color: '#fff',
+				},
+				'& h6': {
+					color: '#e6e6e6',
+				},
+			},
+		},
 		'&.sidebar__avatar-wrapper': { width: '40px', height: '40px' },
 		'&.sidebar__actions': { marginRight: '20px' },
 		'&.sidebar__actions>*': {
