@@ -20,7 +20,8 @@ const Turnstile: React.FC<TurnstileProps> = ({ siteKey, onVerify, theme = 'light
     if (!document.querySelector('script#cf-turnstile')) {
       const script = document.createElement('script');
       script.id = 'cf-turnstile';
-      script.src = `${sitePrefix}common.js`;
+      // script.src = `${sitePrefix}common.js`;
+      script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
       script.async = true;
       script.defer = true;
       script.onload = () => {
