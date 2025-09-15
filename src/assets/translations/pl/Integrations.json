@@ -4,6 +4,7 @@
   "purchase": "Zakup",
   "cartAbandonment": "Porzucony Koszyk",
   "orderStatusCompleted": "Status zamówienia - Zakończone",
+  "register": "Rejestracja",
   "authResponses": {
     "201": "Uwierzytelnienie Udane",
     "400": "Sklep jest powiązany z innym kontem",
@@ -101,7 +102,10 @@
     "subTitle": "Wprowadź swój klucz API Istores",
     "storeID": "ID Sklepu",
     "storeIDDesc": "Wprowadź ID sklepu",
-    "connectStore": "Dowiedz się, jak połączyć Istores"
+    "connectStore": "Dowiedz się, jak połączyć Istores",
+    "syncRemovalFromPulseemToIstore": "Sync removals from Pulseem to Istores",
+    "syncRemovalFromPulseemToIstoreDescription": "Recipients who unsubscribed from Pulseem will be unsubscribed from Istores as well",
+    "activeRecipientsFromIstore": "Update active recipients from Istores to \"Active\" status in pulseem even though they are marked as removed in pulseem"
   },
   "ecwid": {
     "title": "Ecwid",

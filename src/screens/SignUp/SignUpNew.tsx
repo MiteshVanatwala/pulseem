@@ -2,7 +2,8 @@ import clsx from "clsx";
 import { Box, Button, Checkbox, Container, FormControl, FormControlLabel, FormHelperText, Grid, IconButton, MenuItem, MobileStepper, TextField, Tooltip, Typography, Zoom } from "@material-ui/core";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from 'react';
+import Turnstile from '../../components/Turnstile/Turnstile';
 import { StateType } from "../../Models/StateTypes";
 import { IoIosArrowDown, IoIosEye, IoIosEyeOff } from "react-icons/io";
 import { CountryCodes, DefaultCountryCodeIsrael, DefaultCountryCodePoland, FieldOfInterest, lowerCaseLetters, numbers, specialLetters, upperCaseLetters } from "../../helpers/Constants";
@@ -20,7 +21,7 @@ import i18n from "../../i18n";
 import { IsValidEmail, IsValidPhoneNumber } from "../../helpers/Utils/Validations";
 import { BaseDialog } from "../../components/DialogTemplates/BaseDialog";
 import { CompanyWebsiteRequest } from "../../Models/CompanyWebsite/CompanyWebSite";
-import { actionURL } from "../../config";
+import { actionURL, sitePrefix } from "../../config";
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { getCookie, setCookie } from "../../helpers/Functions/cookies";
 import EnImage from '../../assets/images/british.svg';
@@ -92,12 +93,24 @@ const SignUpNew = ({ classes }: any) => {
     UtmMedium: null,
     UtmSource: null,
     WebFormPosition: null,
-    ReferralID: qs?.refId
+    ReferralID: qs?.refId,
   });
   const [invalidEmail, setInvalidEmail] = useState<boolean>(false);
   const [activeStep, setActiveStep] = useState(0);
+  const [turnstileToken, setTurnstileToken] = useState<string>('');
+  const [turnstileKey, setTurnstileKey] = useState(0); // Add this to force re-render
   const passwordHintClasses = useStylesBootstrapPasswordHint();
   const cookieData = getCookie('Culture');
+
+  // Ensure Turnstile re-renders every time user comes to Step 3
+  const prevActiveStepRef = useRef<number>(activeStep);
+  useEffect(() => {
+    if (prevActiveStepRef.current !== 2 && activeStep === 2) {
+      setTurnstileKey(prev => prev + 1);
+      setTurnstileToken('');
+    }
+    prevActiveStepRef.current = activeStep;
+  }, [activeStep]);
 
   const changeLanguage = (value: any) => {
     let langCode = '';
@@ -126,7 +139,7 @@ const SignUpNew = ({ classes }: any) => {
         setUserDetails({
           ...userDetails,
           fullName: `${Data?.FirstName || ''} ${Data?.LastName || ''}`,
-          emailId: qs?.emailid || '',
+          emailId: qs?.emailid || Data?.Email || '',
           cellPhone: cellPhone || '',
           countryCode,
           companyName: Data?.Company || '',
@@ -138,6 +151,63 @@ const SignUpNew = ({ classes }: any) => {
     }
   }
 
+  // Function to setup new email registration
+  const setupNewEmail = async (emailId: string): Promise<{ success: boolean; id?: string; redirectLink?: string; message?: string }> => {
+    try {
+      const updatedEmailRequest = {
+        ...emailRequest,
+        Email: emailId,
+        UtmSource: qs?.utm_source || null,
+        UtmMedium: qs?.utm_medium || null,
+        GCLID: qs?.GCLID || null,
+        UtmCampaign: qs?.UtmCampaign || null,
+        RequestUrl: qs?.RequestUrl || null,
+        CampaignName: qs?.CampaignName || null,
+        AdSetName: qs?.AdSetName || null,
+        AdName: qs?.AdName || null,
+        WebFormPosition: qs?.WebFormPosition || null
+      };
+
+      const response = await PulseemReactInstance.post(`User/SetupNewEmail`, updatedEmailRequest);
+      const { Data = null, StatusCode = 200, Message = '' } = response?.data;
+
+      const errorResponses: { [key: string]: string } = {
+        "0": "Internal Error",
+        "7": "Email Is Empty!",
+        "8": "Email Is Not Valid",
+        "13": "Email Already Exist"
+      };
+
+      switch (StatusCode) {
+        case 201:
+          return {
+            success: true,
+            redirectLink: Data?.RedirectLink || null
+          };
+        case 404:
+          return {
+            success: false,
+            message: errorResponses[Data[0]] || 'Unknown Error'
+          };
+        case 401:
+          return {
+            success: false,
+            message: 'invalid api'
+          };
+        default:
+          return {
+            success: false,
+            message: Message || 'Unknown Error'
+          };
+      }
+    } catch (error) {
+      return {
+        success: false,
+        message: 'Network Error'
+      };
+    }
+  };
+
   const saveUserInfo = async () => {
     let errorsTemp = errors;
     const payload: any = {
@@ -148,7 +218,7 @@ const SignUpNew = ({ classes }: any) => {
       Phone: '',
       Company: '',
       ProductType: '',
-      UserID: qs?.id,
+      UserID: qs?.id
     }
     errorsTemp.fullName = userDetails.fullName ? '' : t('SignUp.fullNameRequired');
     errorsTemp.cellPhone = userDetails.cellPhone.trim() !== '' ? '' : t('SignUp.CellPhoneRequired');
@@ -203,6 +273,36 @@ const SignUpNew = ({ classes }: any) => {
     }
 
     setLoader(true);
+
+    // Only call setupNewEmail if we're on step 1 and don't have an ID in the URL parameters
+    if (activeStep === 0 && !qs?.id) {
+      const setupResult = await setupNewEmail(payload.Email);
+      
+      if (!setupResult.success) {
+        setLoader(false);
+        showMessage(setupResult.message || 'Error setting up email');
+        return;
+      }
+
+      // Extract ID from redirectLink if available
+      if (setupResult.redirectLink) {
+        const urlParams = new URLSearchParams(new URL(setupResult.redirectLink).search);
+        const newId = urlParams.get('id');
+        if (newId) {
+          payload.UserID = newId;
+          // Update URL with new ID and email
+          const currentUrl = new URL(window.location.href);
+          currentUrl.searchParams.set('id', newId);
+          currentUrl.searchParams.set('emailid', payload.Email);
+          window.history.replaceState({}, '', currentUrl.toString());
+        }
+      }
+    } else if (activeStep === 0 && qs?.id) {
+      // If we have an ID in URL parameters, use that
+      payload.UserID = qs.id;
+    }
+
+    // Continue with saving info
     const { data: { Message }, status } = await PulseemReactInstance.post(`User/SaveInfoAccounts`, payload);
     setLoader(false);
     if (status === 200) {
@@ -282,6 +382,11 @@ const SignUpNew = ({ classes }: any) => {
     setToastMessage({ severity: type, color: type, message: t(message), showAnimtionCheck: false });
   }
 
+  const refreshTurnstile = () => {
+    setTurnstileToken(''); // Clear the token
+    setTurnstileKey(prev => prev + 1); // This will force re-render the Turnstile component
+  }
+
   const saveSignup = async () => {
     let errorsTemp = errors;
     errorsTemp.fullName = userDetails.fullName ? '' : t('SignUp.fullNameRequired');
@@ -293,6 +398,12 @@ const SignUpNew = ({ classes }: any) => {
     errorsTemp.fieldOfInterest = userDetails.fieldOfInterest.length ? '' : t('SignUp.FieldOfInterestRequired');
     errorsTemp.chkPolicy = userDetails.chkPolicy ? '' : t('common.requiredField');
     errorsTemp.emailId = userDetails.emailId ? (IsValidEmail(`${userDetails.emailId}`) ? '' : t('common.invalidEmail')) : t('common.Required');
+
+    if (!turnstileToken) {
+      showMessage('SignUp.pleaseVerifyCaptcha');
+      refreshTurnstile(); // Re-render the Turnstile component
+      return;
+    }
 
     if (userDetails.password && (!passwordValidation.LowerChar || !passwordValidation.NumberChar || !passwordValidation.PasswordLength || !passwordValidation.SpecialChar || !passwordValidation.UpperChar)) {
       errorsTemp.password = t('SignUp.InvalidPassword');
@@ -325,6 +436,16 @@ const SignUpNew = ({ classes }: any) => {
         Email: userDetails.emailId,
         ReferralID: qs?.refId,
         Culture: qs?.Culture || 'he-IL',
+        TurnstileToken: turnstileToken,
+        UtmSource: qs?.utm_source || null,
+        UtmMedium: qs?.utm_medium || null,
+        GCLID: qs?.GCLID || null,
+        UtmCampaign: qs?.UtmCampaign || null,
+        RequestUrl: qs?.RequestUrl || null,
+        CampaignName: qs?.CampaignName || null,
+        AdSetName: qs?.AdSetName || null,
+        AdName: qs?.AdName || null,
+        WebFormPosition: qs?.WebFormPosition || null
       });
       setLoader(false);
       if (status === 200) {
@@ -339,11 +460,14 @@ const SignUpNew = ({ classes }: any) => {
           });
         } else if (Message === 'internalerror') {
           setDialogType({ type: 'internalError' });
+          refreshTurnstile(); // Re-render Turnstile on error
         } else {
           showMessage(`SignUp.Message.${Message}`);
+          refreshTurnstile(); // Re-render Turnstile on error
         }
       } else {
         setDialogType({ type: 'internalError' });
+        refreshTurnstile(); // Re-render Turnstile on error
       }
     }
   }
@@ -860,7 +984,6 @@ const SignUpNew = ({ classes }: any) => {
               classes={passwordHintClasses}
             >
               <TextField
-                autoFocus
                 onFocus={() => setShowPasswordTip(true)}
                 onBlur={() => setShowPasswordTip(false)}
                 type={userDetails.isPasswordVisible ? "text" : "password"}
@@ -990,6 +1113,24 @@ const SignUpNew = ({ classes }: any) => {
             }
           />
         </FormControl>
+
+        {activeStep === 2 && (
+          <Box className={clsx(classes.mt24, windowSize !== 'xs' ? classes.paddingInline30 : '')}>
+            <Turnstile
+              key={`turnstile_${turnstileKey}`} // Use a more descriptive key
+              // siteKey="1x00000000000000000000AA" // Local
+              siteKey="0x4AAAAAABhTv-JeJLm06IFU"
+              onVerify={(token) => {
+                setTurnstileToken(token);
+                setEmailRequest(prev => ({
+                  ...prev,
+                  TurnstileToken: token
+                }));
+              }}
+              theme={isRTL ? 'light' : 'dark'}
+            />
+          </Box>
+        )}
       </Box>
     </Box>
   }
@@ -1008,7 +1149,6 @@ const SignUpNew = ({ classes }: any) => {
   }
 
   const languageSelector = () => {
-    console.log('languageSelector', language);
     return (
       <FormControl variant='standard' className={clsx(classes.SignUpLanguageDropdown, classes.bgWhite, classes.mb10)} style={{ direction: isRTL ? 'ltr' : 'rtl' }}>
         <Select
@@ -1129,7 +1269,7 @@ const SignUpNew = ({ classes }: any) => {
                     activeStep !== 3 && (
                       <Button
                         onClick={() => activeStep === 2 ? saveSignup() : saveUserInfo()}
-                        disabled={activeStep === 3}
+                        disabled={activeStep === 3 || (activeStep === 2 && !turnstileToken)}
                         className={clsx(classes.f22, classes.bold)}
                       >
                         {t(`common.${activeStep === 2 ? 'finish' : 'next'}`)}
