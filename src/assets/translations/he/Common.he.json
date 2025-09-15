@@ -868,5 +868,11 @@
   "creditsPerMessage": "קרדיטים להודעה",
   "selectFile": "ביחרו קובץ",
   "contactUs": "צור קשר",
-  "currency": "מטבע"
+  "currency": "מטבע",
+  "tier": {
+    "current": "Current Tier",
+    "upgrade": "Upgrade Tier",
+    "downgrade": "Downgrade Tier",
+    "manageCard": "Manage Card"
+  }
 }

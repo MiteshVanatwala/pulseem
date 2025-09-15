@@ -873,5 +873,11 @@
   "creditsPerMessage": "Credits Per Message",
   "selectFile": "Select file",
   "contactUs": "Contact Us",
-  "currency": "Currency"
+  "currency": "Currency",
+  "tier": {
+    "current": "Current Tier",
+    "upgrade": "Upgrade Tier",
+    "downgrade": "Downgrade Tier",
+    "manageCard": "Manage Card"
+  }
 }

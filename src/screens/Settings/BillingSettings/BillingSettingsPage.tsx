@@ -41,6 +41,7 @@ import useRedirect from "../../../helpers/Routes/Redirect";
 import { RedirectPropTypes } from "../../../helpers/Types/Redirect";
 import { sitePrefix } from "../../../config";
 import SummaryPopup from "./SummaryPopup";
+import CreditCardManagement from "../../../components/BillingSettings/CreditCardManagement";
 
 
 const BillingSettingsPage = ({ classes }: any) => {
@@ -69,6 +70,7 @@ const BillingSettingsPage = ({ classes }: any) => {
   const [confirmDialog, setConfirmDialog] = useState<boolean>(false);
   const [tranzilaError, setTranzilaError] = useState<any>(null);
   const [showEditCard, setShowEditCard] = useState<boolean>(false);
+  const [showCreditCardManagement, setShowCreditCardManagement] = useState<boolean>(false);
 
   const renderToast = () => {
     setTimeout(() => {
@@ -182,6 +184,29 @@ const BillingSettingsPage = ({ classes }: any) => {
         break;
       }
     }
+  }
+
+  const handleManageCreditCard = () => {
+    setShowCreditCardManagement(true);
+  }
+
+  const handleCreditCardManagementClose = () => {
+    setShowCreditCardManagement(false);
+  }
+
+  const handleAddCardFromManagement = () => {
+    setShowCreditCardManagement(false);
+    handleShowCreditCardIframe();
+  }
+
+  const handleEditCardFromManagement = (cardId: string) => {
+    setShowCreditCardManagement(false);
+    handleShowCreditCardIframe();
+  }
+
+  const handleDeleteCardFromManagement = (cardId: string) => {
+    setShowCreditCardManagement(false);
+    setConfirmDialog(true);
   }
 
   const handlePanels = (panelName: string) => {
@@ -389,7 +414,23 @@ const BillingSettingsPage = ({ classes }: any) => {
         RenderHtml(t('billing.multipleInvoiceTypeMessage'))}</Box>
     } as DialogOptions;
   }
+
+  const renderCreditCardDialog = () => {
+    return {
+      title: t('billing.creditCardManagement.title'),
+      open: showCreditCardManagement,
+      onClose: handleCreditCardManagementClose,
+      children: <CreditCardManagement
+        classes={classes}
+        onAddCard={handleAddCardFromManagement}
+        onEditCard={handleEditCardFromManagement}
+        onDeleteCard={handleDeleteCardFromManagement}
+      />
+    } as DialogOptions;
+  }
+
   const renderOptions = () => {
+    console.log("433 " + currentDialog + " - " + showPopup)
     switch (currentDialog) {
       default:
       case 'debt': {
@@ -406,6 +447,9 @@ const BillingSettingsPage = ({ classes }: any) => {
       }
       case 'multipleInvoiceTypeSelected': {
         return renderMultipleInvoiceTypeDialog();
+      }
+      case 'creditCardDialog': {
+        return renderCreditCardDialog();
       }
     }
   }
@@ -482,6 +526,47 @@ const BillingSettingsPage = ({ classes }: any) => {
                         >
                           {t("settings.billingSettings.title")}
                         </Typography>
+                      </Box>
+                      <Box className={classes.dFlex} style={{ alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                        <Typography style={{ marginInlineEnd: 15 }}>
+                          {t('common.tier.current')}: <strong>Starter</strong>
+                        </Typography>
+                        <Button
+                          className={clsx(
+                            classes.btn,
+                            classes.btnRounded
+                          )}
+                          onClick={(e: any) => {
+                            console.log("539")
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setCurrentDialog('creditCardDialog'); 
+                            setShowPopup(true);
+                            console.log("544")
+                          }}
+                          style={{ marginInlineEnd: 10 }}
+                        >
+                          {t('common.tier.manageCard')}
+                        </Button>
+                        <Button
+                          className={clsx(
+                            classes.btn,
+                            classes.btnRounded
+                          )}
+                          onClick={(e: any) => { e.preventDefault(); e.stopPropagation(); /* Handle upgrade tier */ }}
+                          style={{ marginInlineEnd: 10 }}
+                        >
+                          {t('common.tier.upgrade')}
+                        </Button>
+                        <Button
+                          className={clsx(
+                            classes.btn,
+                            classes.btnRounded
+                          )}
+                          onClick={(e: any) => { e.preventDefault(); e.stopPropagation(); /* Handle downgrade tier */ }}
+                        >
+                          {t('common.tier.downgrade')}
+                        </Button>
                       </Box>
                       {accountFeatures.indexOf(PulseemFeatures.NOT_TO_SHOW_CREDITS_HISTORY_FEATURE) === -1 && <>
                         {(!creditCards || creditCards?.length === 0) ? (<Button
@@ -626,6 +711,23 @@ const BillingSettingsPage = ({ classes }: any) => {
         classes={classes}
         {...renderOptions()}
       ></BaseDialog>}
+      {showCreditCardManagement && <BaseDialog
+        classes={classes}
+        title={t("billing.creditCardManagement.title")}
+        open={showCreditCardManagement}
+        onClose={handleCreditCardManagementClose}
+        onCancel={handleCreditCardManagementClose}
+        showDefaultButtons={false}
+        // maxWidth="md"
+        // fullWidth={true}
+      >
+        <CreditCardManagement
+          classes={classes}
+          onAddCard={handleAddCardFromManagement}
+          onEditCard={handleEditCardFromManagement}
+          onDeleteCard={handleDeleteCardFromManagement}
+        />
+      </BaseDialog>}
       {addCardDialog && paymentIframe && <BaseDialog
         classes={classes}
         title={t("settings.billingSettings.btnAddCard")}
