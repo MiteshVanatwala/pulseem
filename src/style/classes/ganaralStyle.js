@@ -4586,8 +4586,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   tierPlansDialog: {
     '& .MuiPaper-root': {
-        maxWidth: '80vw !important',
-        minWidth: '80vw !important',
+        maxWidth: '100% !important',
+        minWidth: '100% !important',
     }
   },
   tierPlansCard: {
@@ -4686,7 +4686,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   upgradeFlowContainer: {
     padding: '32px',
-    backgroundColor: '#f9f9f9',
+    backgroundColor: '#fff',
     minHeight: '100vh',
   },
   upgradeFlowTitle: {
@@ -4696,12 +4696,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   upgradeFlowFeatureCard: {
     borderRadius: '12px',
     height: '100%',
+    background: '#e4e4e4',
   },
   upgradeFlowIncludingBox: {
     marginTop: '32px',
     padding: '16px',
     border: '1px solid #eee',
     borderRadius: '12px',
+    background: '#e4e4e4',
   },
   upgradeFlowPaymentForm: {
     padding: '24px',
@@ -4732,6 +4734,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   tierPlansStepper: {
     padding: '24px 0',
+    height: '120px',
     '& .MuiStepIcon-root.MuiStepIcon-active': {
         color: '#e53935'
     },

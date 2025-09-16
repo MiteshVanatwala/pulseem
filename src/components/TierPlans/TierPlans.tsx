@@ -30,6 +30,7 @@ import { BaseDialog } from '../DialogTemplates/BaseDialog';
 import { useSelector } from 'react-redux';
 import { coreProps } from '../../model/Core/corePros.types';
 import clsx from 'clsx';
+import Celebration from '../../assets/images/transparent_celebration.png';
 
 const steps = ['Select Plan', 'Upgrade', 'Confirmation'];
 
@@ -336,7 +337,18 @@ const TierPlans = ({ classes, isOpen, onClose }: any) => {
           </Box>
         );
       case 2:
-        return <Typography>Step 3: Confirmation - Placeholder</Typography>;
+        return <>
+          <Box className={clsx(classes.textCenter)}>
+            <img 
+              src={Celebration}
+              alt="celebration"
+              className={clsx(classes.celebrationImage)}
+            />
+            <Typography className={clsx(classes.f28, classes.bold)}>
+              {t('dashboard.polishSubscribe.success')}
+            </Typography>
+          </Box>
+        </>;
       default:
         return 'Unknown step';
     }
@@ -355,35 +367,38 @@ const TierPlans = ({ classes, isOpen, onClose }: any) => {
       showDefaultButtons={false}
       renderButtons={() => (
         <Box style={{ padding: '8px 24px', textAlign: 'right' }}>
-          {activeStep !== 0 && (
-            <Button onClick={handleBack} className={classes.btn}>
+          {activeStep !== 0 && activeStep !== 2 && (
+            <Button onClick={handleBack} className={clsx(classes.btn, classes.btnRounded)}>
               {t('common.back')}
             </Button>
           )}
-          {activeStep < 1 &&
+          {activeStep < 2 &&
             <Button
                 variant="contained"
                 color="primary"
                 onClick={activeStep === steps.length - 1 ? onClose : handleNext}
-                className={clsx(classes.btn, classes.redButton)}
+                className={clsx(classes.btn, classes.redButton, classes.btnRounded)}
               >
                 {activeStep === steps.length - 1 ? t('common.finish') : t('common.next')}
             </Button>
           }
         </Box>
       )}
+      // @ts-ignore
       dialogContentStyle={{ padding: '0' }}
     >
-      <Stepper activeStep={activeStep} alternativeLabel className={classes.tierPlansStepper}>
-        {steps.map((label) => (
-          <Step key={label}>
-            <StepLabel>{label}</StepLabel>
-          </Step>
-        ))}
-      </Stepper>
-      <Box className={classes.tierPlansContent}>
-        {getStepContent(activeStep)}
-      </Box>
+      <>
+        {/* <Stepper activeStep={activeStep} alternativeLabel className={classes.tierPlansStepper}>
+          {steps.map((label) => (
+            <Step key={label}>
+              <StepLabel>{label}</StepLabel>
+            </Step>
+          ))}
+        </Stepper> */}
+        <Box className={classes.tierPlansContent}>
+          {getStepContent(activeStep)}
+        </Box>
+      </>
     </BaseDialog>
   );
 };
