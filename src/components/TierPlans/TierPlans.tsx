@@ -217,18 +217,21 @@ const TierPlans = ({ classes, isOpen, onClose }: any) => {
           </Button>
         </Box>
       )}
+      // @ts-ignore
       dialogContentStyle={{ padding: '0' }}
     >
-      <Stepper activeStep={activeStep} alternativeLabel className={classes.tierPlansStepper}>
-        {steps.map((label) => (
-          <Step key={label}>
-            <StepLabel>{label}</StepLabel>
-          </Step>
-        ))}
-      </Stepper>
-      <Box className={classes.tierPlansContent}>
-        {getStepContent(activeStep)}
-      </Box>
+      <>
+        <Stepper activeStep={activeStep} alternativeLabel className={classes.tierPlansStepper}>
+          {steps.map((label) => (
+            <Step key={label}>
+              <StepLabel>{label}</StepLabel>
+            </Step>
+          ))}
+        </Stepper>
+        <Box className={classes.tierPlansContent}>
+          {getStepContent(activeStep)}
+        </Box>
+      </>
     </BaseDialog>
   );
 };

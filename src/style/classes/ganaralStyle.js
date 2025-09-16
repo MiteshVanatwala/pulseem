@@ -4586,8 +4586,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   tierPlansDialog: {
     '& .MuiPaper-root': {
-        maxWidth: '80vw !important',
-        minWidth: '80vw !important',
+        maxWidth: '100% !important',
+        minWidth: '100% !important',
     }
   },
   tierPlansCard: {
@@ -4689,7 +4689,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     marginRight: '4px',
   },
   tierPlansStepper: {
-    padding: '24px 0',
+    padding: '0',
+    height: '120px',
     '& .MuiStepIcon-root.MuiStepIcon-active': {
         color: '#e53935'
     },
@@ -4698,8 +4699,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     }
   },
   tierPlansContent: {
-    padding: '0 24px 24px',
+    padding: '0 10px 10px',
     overflowY: 'auto',
-    maxHeight: '60vh'
+    maxHeight: '50vh'
   }
 });
