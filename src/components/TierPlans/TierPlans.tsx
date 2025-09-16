@@ -3,8 +3,6 @@ import { useTranslation } from 'react-i18next';
 import {
   Box,
   Button,
-  Card,
-  CardContent,
   Grid,
   Step,
   StepLabel,
@@ -14,106 +12,12 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
-  makeStyles,
 } from '@material-ui/core';
 import { Check } from '@material-ui/icons';
 import { BaseDialog } from '../DialogTemplates/BaseDialog';
 import { useSelector } from 'react-redux';
 import { coreProps } from '../../model/Core/corePros.types';
 import clsx from 'clsx';
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    width: '100%',
-  },
-  planCard: {
-    height: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-    border: '1px solid #e0e0e0',
-    borderRadius: '12px',
-    padding: theme.spacing(2),
-  },
-  popularCard: {
-    border: '2px solid #e53935',
-    position: 'relative',
-  },
-  popularBadge: {
-    position: 'absolute',
-    top: -1,
-    left: '50%',
-    transform: 'translateX(-50%)',
-    backgroundColor: '#e53935',
-    color: 'white',
-    padding: '4px 12px',
-    borderRadius: '12px 12px 0 0',
-    fontWeight: 'bold',
-    fontSize: '0.8rem',
-  },
-  cardContent: {
-    flexGrow: 1,
-    textAlign: 'center',
-  },
-  planTitle: {
-    fontWeight: 'bold',
-    fontSize: '1.5rem',
-    marginBottom: theme.spacing(1),
-  },
-  planDescription: {
-    color: theme.palette.text.secondary,
-    marginBottom: theme.spacing(2),
-  },
-  priceContainer: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'baseline',
-    marginBottom: theme.spacing(1),
-  },
-  price: {
-    fontSize: '2.5rem',
-    fontWeight: 'bold',
-  },
-  priceDescription: {
-    fontSize: '1rem',
-    marginLeft: theme.spacing(0.5),
-  },
-  subtext: {
-    color: theme.palette.text.secondary,
-    marginBottom: theme.spacing(2),
-  },
-  recipientLimit: {
-    marginBottom: theme.spacing(2),
-  },
-  button: {
-    marginTop: 'auto',
-    borderRadius: '20px',
-    padding: '10px 20px',
-    fontWeight: 'bold',
-  },
-  engageButton: {
-    backgroundColor: '#e53935',
-    color: 'white',
-    '&:hover': {
-      backgroundColor: '#c62828',
-    },
-  },
-  featureList: {
-    padding: 0,
-    textAlign: 'left',
-  },
-  featureItem: {
-    paddingTop: 0,
-    paddingBottom: 0,
-  },
-  seeAllFeatures: {
-    textAlign: 'center',
-    marginTop: theme.spacing(2),
-  },
-  currencySymbol: {
-    fontSize: '1.5rem',
-    marginRight: theme.spacing(0.5),
-  }
-}));
 
 const steps = ['Select Plan', 'Payment', 'Confirmation'];
 
@@ -126,6 +30,7 @@ const plansData = [
     subtext: 'Forever free',
     recipientLimit: 'Up to 100 recipients',
     buttonText: 'GET STARTED FREE',
+    buttonVariant: 'outlined',
     features: [
       'Email campaigns',
       'SMS marketing',
@@ -145,6 +50,7 @@ const plansData = [
     subtext: 'Billed monthly',
     recipientLimit: 'Up to 100 recipients',
     buttonText: 'START FLOW PLAN',
+    buttonVariant: 'outlined',
     features: [
       'Everything in Starter, plus:',
       'Automations (unlimited)',
@@ -165,6 +71,7 @@ const plansData = [
     subtext: 'Most popular choice',
     recipientLimit: 'Up to 100 recipients',
     buttonText: 'CHOOSE ENGAGE',
+    buttonVariant: 'contained',
     features: [
       'Everything in Flow, plus:',
       'eCommerce automation triggers',
@@ -185,6 +92,7 @@ const plansData = [
     subtext: 'Custom pricing',
     recipientLimit: 'Custom recipient limits',
     buttonText: 'CONTACT SALES',
+    buttonVariant: 'outlined',
     features: [
       'Everything in Engage, plus:',
       'High-volume sending performance',
@@ -198,11 +106,10 @@ const plansData = [
   },
 ];
 
-const TierPlans = ({ isOpen, onClose }: any) => {
+const TierPlans = ({ classes, isOpen, onClose }: any) => {
   const { t } = useTranslation();
   const [activeStep, setActiveStep] = useState(0);
   const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
-  const classes = useStyles();
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -216,59 +123,59 @@ const TierPlans = ({ isOpen, onClose }: any) => {
     switch (step) {
       case 0:
         return (
-          <Grid container spacing={4} style={{ marginTop: '20px' }}>
+          <Grid container spacing={2}>
             {plansData.map((plan, index) => (
               <Grid item xs={12} sm={6} md={3} key={index}>
-                <Card className={clsx(classes.planCard, { [classes.popularCard]: plan.isPopular })}>
+                <Box className={clsx(classes.tierPlansCard, { [classes.tierPlansPopularCard]: plan.isPopular })}>
                   {plan.isPopular && (
-                    <Box className={classes.popularBadge}>
+                    <Box className={classes.tierPlansPopularBadge}>
                       MOST POPULAR
                     </Box>
                   )}
-                  <CardContent className={classes.cardContent}>
-                    <Typography className={classes.planTitle}>
+                  <Box className={classes.tierPlansCardContent}>
+                    <Typography className={classes.tierPlansTitle}>
                       {plan.title}
                     </Typography>
-                    <Typography className={classes.planDescription}>
+                    <Typography className={classes.tierPlansDescription}>
                       {plan.description}
                     </Typography>
-                    <Box className={classes.priceContainer}>
-                      {plan.price !== 'Contact Us' && <span className={classes.currencySymbol}>₪</span>}
-                      <Typography className={classes.price}>
+                    <Box className={classes.tierPlansPriceContainer}>
+                      {plan.price !== 'Contact Us' && <span className={classes.tierPlansCurrencySymbol}>₪</span>}
+                      <Typography className={classes.tierPlansPrice}>
                         {plan.price}
                       </Typography>
-                      {plan.priceDescription && <Typography className={classes.priceDescription}>
+                      {plan.priceDescription && <Typography className={classes.tierPlansPriceDescription}>
                         {plan.priceDescription}
                       </Typography>}
                     </Box>
-                    <Typography className={classes.subtext}>
+                    <Typography className={classes.tierPlansSubtext}>
                       {plan.subtext}
                     </Typography>
-                    <Typography className={classes.recipientLimit}>
+                    <Typography className={classes.tierPlansRecipientLimit}>
                       {plan.recipientLimit}
                     </Typography>
                     <Button
-                      variant={plan.isPopular ? 'contained' : 'outlined'}
+                      variant={plan.buttonVariant as "outlined" | "contained"}
                       color="primary"
-                      className={clsx(classes.button, { [classes.engageButton]: plan.isPopular })}
+                      className={clsx(classes.tierPlansButton, { [classes.tierPlansEngageButton]: plan.isPopular })}
                     >
                       {plan.buttonText}
                     </Button>
-                  </CardContent>
-                  <List className={classes.featureList}>
+                  </Box>
+                  <List className={clsx(classes.tierPlansFeatureList, classes.mb10)}>
                     {plan.features.map((feature, fIndex) => (
-                      <ListItem key={fIndex} className={classes.featureItem}>
+                      <ListItem key={fIndex} className={classes.tierPlansFeatureItem}>
                         <ListItemIcon style={{ minWidth: '30px' }}>
-                          <Check style={{ color: 'green' }} />
+                          <Check style={{ color: '#5cb85c' }} />
                         </ListItemIcon>
                         <ListItemText primary={feature} />
                       </ListItem>
                     ))}
                   </List>
-                  <Typography className={classes.seeAllFeatures}>
+                  <Typography className={classes.tierPlansSeeAllFeatures}>
                     See all features
                   </Typography>
-                </Card>
+                </Box>
               </Grid>
             ))}
           </Grid>
@@ -284,6 +191,10 @@ const TierPlans = ({ isOpen, onClose }: any) => {
 
   return (
     <BaseDialog
+      classes={{
+        ...classes,
+        dialogContainer: clsx(classes.dialogContainer, classes.tierPlansDialog),
+      }}
       open={isOpen}
       title={t('Upgrade Your Plan')}
       onClose={onClose}
@@ -292,34 +203,32 @@ const TierPlans = ({ isOpen, onClose }: any) => {
       renderButtons={() => (
         <Box style={{ padding: '8px 24px', textAlign: 'right' }}>
           {activeStep !== 0 && (
-            <Button onClick={handleBack} style={{ marginRight: '10px' }}>
+            <Button onClick={handleBack} className={classes.btn}>
               {t('common.back')}
             </Button>
           )}
           <Button
             variant="contained"
             color="primary"
-            onClick={handleNext}
+            onClick={activeStep === steps.length - 1 ? onClose : handleNext}
+            className={clsx(classes.btn, classes.redButton)}
           >
             {activeStep === steps.length - 1 ? t('common.finish') : t('common.next')}
           </Button>
         </Box>
       )}
-      dialogContentStyle={{ padding: '0 24px' }}
-      // @ts-ignore
-      maxWidth="lg"
-      fullWidth={true}
+      dialogContentStyle={{ padding: '0' }}
     >
-      <Stepper activeStep={activeStep} alternativeLabel style={{ padding: '24px 0' }}>
+      <Stepper activeStep={activeStep} alternativeLabel className={classes.tierPlansStepper}>
         {steps.map((label) => (
           <Step key={label}>
             <StepLabel>{label}</StepLabel>
           </Step>
         ))}
       </Stepper>
-      <div>
+      <Box className={classes.tierPlansContent}>
         {getStepContent(activeStep)}
-      </div>
+      </Box>
     </BaseDialog>
   );
 };
