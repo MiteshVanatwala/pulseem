@@ -4586,8 +4586,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   tierPlansDialog: {
     '& .MuiPaper-root': {
-        maxWidth: '100% !important',
-        minWidth: '100% !important',
+        maxWidth: '80vw !important',
+        minWidth: '80vw !important',
     }
   },
   tierPlansCard: {
@@ -4684,13 +4684,54 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     textDecoration: 'underline',
     fontWeight: 'bold'
   },
+  upgradeFlowContainer: {
+    padding: '32px',
+    backgroundColor: '#f9f9f9',
+    minHeight: '100vh',
+  },
+  upgradeFlowTitle: {
+    fontWeight: 'bold',
+    color: '#e53935',
+  },
+  upgradeFlowFeatureCard: {
+    borderRadius: '12px',
+    height: '100%',
+  },
+  upgradeFlowIncludingBox: {
+    marginTop: '32px',
+    padding: '16px',
+    border: '1px solid #eee',
+    borderRadius: '12px',
+  },
+  upgradeFlowPaymentForm: {
+    padding: '24px',
+    borderRadius: '12px',
+  },
+  upgradeFlowPrice: {
+    color: '#e53935',
+    fontWeight: 'bold',
+  },
+  upgradeFlowUpgradeButton: {
+    marginTop: '24px',
+    padding: '12px 0',
+    borderRadius: '12px',
+    background: 'linear-gradient(90deg, rgba(255,99,132,1) 0%, rgba(255,140,0,1) 100%)',
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  upgradeFlowSupportCard: {
+    padding: '16px',
+    borderRadius: '12px',
+    backgroundColor: '#fafafa',
+    display: 'flex',
+    alignItems: 'center',
+  },
   tierPlansCurrencySymbol: {
     fontSize: '1.5rem',
     marginRight: '4px',
   },
   tierPlansStepper: {
-    padding: '0',
-    height: '120px',
+    padding: '24px 0',
     '& .MuiStepIcon-root.MuiStepIcon-active': {
         color: '#e53935'
     },
@@ -4699,8 +4740,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     }
   },
   tierPlansContent: {
-    padding: '0 10px 10px',
+    padding: '0 24px 24px',
     overflowY: 'auto',
-    maxHeight: '50vh'
+    maxHeight: '60vh'
   }
 });
