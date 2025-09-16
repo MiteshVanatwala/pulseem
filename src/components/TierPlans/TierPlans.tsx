@@ -18,7 +18,7 @@ import { BaseDialog } from '../DialogTemplates/BaseDialog';
 import { useSelector } from 'react-redux';
 import { coreProps } from '../../model/Core/corePros.types';
 import clsx from 'clsx';
-
+import Celebration from '../../assets/images/transparent_celebration.png';
 const steps = ['Select Plan', 'Payment', 'Confirmation'];
 
 const plansData = [
@@ -183,7 +183,18 @@ const TierPlans = ({ classes, isOpen, onClose }: any) => {
       case 1:
         return <Typography>Step 2: Payment - Placeholder</Typography>;
       case 2:
-        return <Typography>Step 3: Confirmation - Placeholder</Typography>;
+        return <>
+                <Box className={clsx(classes.textCenter)}>
+                  <img 
+                    src={Celebration}
+                    alt="celebration"
+                    className={clsx(classes.celebrationImage)}
+                  />
+                  <Typography className={clsx(classes.f28, classes.bold)}>
+                    {t('dashboard.polishSubscribe.success')}
+                  </Typography>
+                </Box>
+              </>;
       default:
         return 'Unknown step';
     }
