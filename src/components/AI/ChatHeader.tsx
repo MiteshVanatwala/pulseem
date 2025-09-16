@@ -38,7 +38,7 @@ const ChatHeader: React.FC = () => {
           <MinimizeIcon />
         </IconButton> */}
         <IconButton color="inherit" onClick={handleClose} size="small">
-          <CloseIcon />
+          <MinimizeIcon />
         </IconButton>
       </Toolbar>
     </AppBar>

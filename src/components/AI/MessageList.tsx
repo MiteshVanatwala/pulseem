@@ -176,7 +176,7 @@ const MessageList: React.FC = () => {
             >
               <Typography 
                 variant="body1" 
-                style={{ whiteSpace: 'pre-wrap' }}
+                style={{ whiteSpace: 'pre-wrap', fontSize: '1.1rem' }}
               >
                 {msg.MessageText}
               </Typography>

@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Paper, Box } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { StateType } from '../../Models/StateTypes';
-import { toggleChat, loadSessionMessages, addMessage } from '../../redux/reducers/aiChatSlice';
+import { toggleChat, loadSessionMessages } from '../../redux/reducers/aiChatSlice';
 import ChatHeader from './ChatHeader';
 import MessageList from './MessageList';
 import InputArea from './InputArea';
@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
     position: 'fixed',
     top: '40%',
     left: '50%',
-    width: '40vw',
+    width: '50vw',
     height: '50vh',
     maxHeight: '50vh',
     // minWidth: '200px',
@@ -174,7 +174,7 @@ const AIChatWidget: React.FC = () => {
     text: t("common.polyAgentIconTitle"),
     speed: 100,
     delay: 1000,
-    loop: true,
+    loop: false,
     startTyping: isOpen
   });
 
@@ -198,7 +198,8 @@ const AIChatWidget: React.FC = () => {
   useEffect(() => {
     const initializeChat = async () => {
       if (totalMessagesForUserCount === -1) await dispatch(loadSessionMessages());
-      if (totalMessagesForUserCount === 0 && username) {
+      // Only auto-close if there are no messages at all (neither in API nor in local state)
+      if (totalMessagesForUserCount === 0 && messages.length === 0 && username) {
         try {
           const hideAIChatDialog = localStorage.getItem('hideAIChatDialog');
           if (hideAIChatDialog !== 'true') {

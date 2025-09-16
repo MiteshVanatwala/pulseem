@@ -65,6 +65,7 @@ export interface InputAreaHandle {
 }
 
 const InputArea: React.ForwardRefRenderFunction<InputAreaHandle, {}> = (props, ref) => {
+  const { isRTL } = useSelector((state: any) => state.core);
   const classes = useStyles();
   const dispatch = useDispatch();
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -142,10 +143,10 @@ const InputArea: React.ForwardRefRenderFunction<InputAreaHandle, {}> = (props, r
         <IconButton
           color="primary"
           onClick={handleSend}
-          style={{ marginLeft: '8px' }}
+          style={{ marginRight: '8px' }}
           disabled={aiIconStatus === 1}
         >
-          <SendIcon />
+          <SendIcon style={{ transform: isRTL ? 'scaleX(-1)' : 'none' }} />
         </IconButton>
       </Box>
       <Box className={classes.characterCount}>
