@@ -4685,9 +4685,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     fontWeight: 'bold'
   },
   upgradeFlowContainer: {
-    padding: '32px',
     backgroundColor: '#fff',
-    minHeight: '100vh',
+    height: '100%',
   },
   upgradeFlowTitle: {
     fontWeight: 'bold',
@@ -4697,6 +4696,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     borderRadius: '12px',
     height: '100%',
     background: '#e4e4e4',
+    borderLeft: 'solid 3px red',
   },
   upgradeFlowIncludingBox: {
     marginTop: '32px',
@@ -4704,6 +4704,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     border: '1px solid #eee',
     borderRadius: '12px',
     background: '#e4e4e4',
+    borderTop: 'solid 3px red',
   },
   upgradeFlowPaymentForm: {
     padding: '24px',
@@ -4743,8 +4744,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     }
   },
   tierPlansContent: {
-    padding: '0 24px 24px',
-    overflowY: 'auto',
+    padding: '24px',
     maxHeight: '60vh'
   }
 });

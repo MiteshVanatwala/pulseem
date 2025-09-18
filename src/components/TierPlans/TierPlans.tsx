@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Box,
@@ -122,6 +122,50 @@ const plansData = [
 const TierPlans = ({ classes, isOpen, onClose }: any) => {
   const { t } = useTranslation();
   const [activeStep, setActiveStep] = useState(0);
+  const contentRef = useRef<HTMLDivElement>(null);
+
+    // Scroll to top when step changes
+  useEffect(() => {
+    // Add a small delay to ensure DOM is updated
+    const scrollToTop = () => {
+      setTimeout(() => {
+        // 1. Try the content ref first
+        if (contentRef.current) {
+          contentRef.current.scrollTop = 0;
+        }
+
+        // 2. Try to find Material-UI dialog paper
+        const dialogPaper = document.querySelector('.MuiDialog-paper');
+        if (dialogPaper) {
+          dialogPaper.scrollTop = 0;
+        }
+
+        // 3. Try to find any scrollable parent
+        const scrollableSelectors = [
+          '[class*="tierPlansContent"]',
+          '[class*="dialogContent"]',
+          '[class*="dialogChildren"]',
+          '.MuiDialog-container',
+          '[role="dialog"]'
+        ];
+
+        scrollableSelectors.forEach(selector => {
+          const element = document.querySelector(selector) as HTMLElement;
+          if (element) {
+            element.scrollTop = 0;
+          }
+        });
+
+        // 4. Force scroll on common scroll containers
+        const containers = document.querySelectorAll('div[style*="overflow"], div[style*="scroll"]');
+        containers.forEach(container => {
+          (container as HTMLElement).scrollTop = 0;
+        });
+      }, 100);
+    };
+
+    scrollToTop();
+  }, [activeStep]);
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -366,26 +410,31 @@ const TierPlans = ({ classes, isOpen, onClose }: any) => {
       onCancel={onClose}
       showDefaultButtons={false}
       renderButtons={() => (
-        <Box style={{ padding: '8px 24px', textAlign: 'right' }}>
-          {activeStep !== 0 && activeStep !== 2 && (
-            <Button onClick={handleBack} className={clsx(classes.btn, classes.btnRounded)}>
-              {t('common.back')}
-            </Button>
-          )}
-          {activeStep < 2 &&
-            <Button
-                variant="contained"
-                color="primary"
-                onClick={activeStep === steps.length - 1 ? onClose : handleNext}
-                className={clsx(classes.btn, classes.redButton, classes.btnRounded)}
-              >
-                {activeStep === steps.length - 1 ? t('common.finish') : t('common.next')}
-            </Button>
-          }
+        <Box style={{ padding: '8px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Box>
+            {activeStep !== 0 && activeStep !== 2 && (
+              <Button onClick={handleBack} className={clsx(classes.btn, classes.btnRounded, classes.mlr10)}>
+                {t('common.back')}
+              </Button>
+            )}
+          </Box>
+          <Box>
+            {activeStep === 0 &&
+              <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={activeStep === steps.length - 1 ? onClose : handleNext}
+                  className={clsx(classes.btn, classes.redButton, classes.btnRounded)}
+                >
+                  {activeStep === steps.length - 1 ? t('common.finish') : t('common.next')}
+              </Button>
+            }
+          </Box>
         </Box>
       )}
       // @ts-ignore
-      dialogContentStyle={{ padding: '0' }}
+      dialogContentStyle={{ padding: '0', margin: '0px !important' }}
+      contentStyle={clsx(classes.noMargin)}
     >
       <>
         {/* <Stepper activeStep={activeStep} alternativeLabel className={classes.tierPlansStepper}>
@@ -395,9 +444,9 @@ const TierPlans = ({ classes, isOpen, onClose }: any) => {
             </Step>
           ))}
         </Stepper> */}
-        <Box className={classes.tierPlansContent}>
+        <div ref={contentRef} className={classes.tierPlansContent}>
           {getStepContent(activeStep)}
-        </Box>
+        </div>
       </>
     </BaseDialog>
   );
