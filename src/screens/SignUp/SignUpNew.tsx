@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from 'react';
 import Turnstile from '../../components/Turnstile/Turnstile';
 import { StateType } from "../../Models/StateTypes";
 import { IoIosArrowDown, IoIosEye, IoIosEyeOff } from "react-icons/io";
-import { CountryCodes, DefaultCountryCodeIsrael, DefaultCountryCodePoland, FieldOfInterest, lowerCaseLetters, numbers, specialLetters, upperCaseLetters } from "../../helpers/Constants";
+import { CloudFlareSiteKey, CountryCodes, DefaultCountryCodeIsrael, DefaultCountryCodePoland, FieldOfInterest, lowerCaseLetters, numbers, specialLetters, upperCaseLetters } from "../../helpers/Constants";
 import { MdDvr, MdKeyboardArrowDown, MdKeyboardArrowLeft, MdKeyboardArrowRight, MdMobileFriendly, MdNotifications, MdOutlineAddShoppingCart, MdOutlineAutoMode, MdOutlineMarkEmailRead, MdOutlineWhatsapp } from "react-icons/md";
 import { RenderHtml, useStylesBootstrapPasswordHint } from "../../helpers/Utils/HtmlUtils";
 import { Loader } from "../../components/Loader/Loader";
@@ -159,13 +159,20 @@ const SignUpNew = ({ classes }: any) => {
         Email: emailId,
         UtmSource: qs?.utm_source || null,
         UtmMedium: qs?.utm_medium || null,
-        GCLID: qs?.GCLID || null,
-        UtmCampaign: qs?.UtmCampaign || null,
+        GCLID: qs?.gclid || null,
+        UtmCampaign: qs?.utm_campaign || null,
         RequestUrl: qs?.RequestUrl || null,
         CampaignName: qs?.CampaignName || null,
         AdSetName: qs?.AdSetName || null,
         AdName: qs?.AdName || null,
-        WebFormPosition: qs?.WebFormPosition || null
+        WebFormPosition: qs?.WebFormPosition || null,
+        utm_content: qs?.utm_content || null,
+        utm_term: qs?.utm_term || null,
+        ga_session_id: qs?.ga_session_id || null,
+        ga_cid: qs?.ga_cid || null,
+        ga_fpid: qs?.ga_fpid || null,
+        fbp: qs?.fbp || null,
+        fbc: qs?.fbc || null
       };
 
       const response = await PulseemReactInstance.post(`User/SetupNewEmail`, updatedEmailRequest);
@@ -439,13 +446,20 @@ const SignUpNew = ({ classes }: any) => {
         TurnstileToken: turnstileToken,
         UtmSource: qs?.utm_source || null,
         UtmMedium: qs?.utm_medium || null,
-        GCLID: qs?.GCLID || null,
-        UtmCampaign: qs?.UtmCampaign || null,
+        GCLID: qs?.gclid || null,
+        UtmCampaign: qs?.utm_campaign || null,
         RequestUrl: qs?.RequestUrl || null,
         CampaignName: qs?.CampaignName || null,
         AdSetName: qs?.AdSetName || null,
         AdName: qs?.AdName || null,
-        WebFormPosition: qs?.WebFormPosition || null
+        WebFormPosition: qs?.WebFormPosition || null,
+        utm_content: qs?.utm_content || null,
+        utm_term: qs?.utm_term || null,
+        ga_session_id: qs?.ga_session_id || null,
+        ga_cid: qs?.ga_cid || null,
+        ga_fpid: qs?.ga_fpid || null,
+        fbp: qs?.fbp || null,
+        fbc: qs?.fbc || null
       });
       setLoader(false);
       if (status === 200) {
@@ -1119,7 +1133,7 @@ const SignUpNew = ({ classes }: any) => {
             <Turnstile
               key={`turnstile_${turnstileKey}`} // Use a more descriptive key
               // siteKey="1x00000000000000000000AA" // Local
-              siteKey="0x4AAAAAABhTv-JeJLm06IFU"
+              siteKey={CloudFlareSiteKey}
               onVerify={(token) => {
                 setTurnstileToken(token);
                 setEmailRequest(prev => ({
