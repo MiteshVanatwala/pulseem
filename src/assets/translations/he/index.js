@@ -41,8 +41,10 @@ import AI from './AI.he.json';
 import colorPalette from './colorPalette.he.json'
 import AILoader from './AILoader.he.json'
 import RemoveMyData from './RemoveMyData.json';
+import PopupTriggers from './PopupTriggers.json';
 
 export const he = {
+	PopupTriggers,
 	automations,
 	campaigns,
 	common,

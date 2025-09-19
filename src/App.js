@@ -97,6 +97,7 @@ import { UserRoles } from './Models/SubUser/SubUsers';
 import { PulseemFeatures } from './model/PulseemFields/Fields';
 import RemoveMyData from './screens/RemoveMyData/RemoveMyData';
 import LinksClicksReport from './screens/Reports/LinksClicksReport/LinksClicksReport';
+import PopupTriggers from './screens/Popups/DisplayRules/PopupTriggers';
 
 const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
   const transferUrl =
@@ -533,6 +534,11 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
       <Route exact
         path={`${sitePrefix}whatsapp-onboarding`}
         element={<WhatsappOnBoarding classes={classes} />}
+      />
+       <Route
+        exact
+        path={`${sitePrefix}Popups/DisplayRules/:id`}
+        element={<PopupTriggers classes={classes} />}
       />
       {!userRoles?.HideRecipients && <Route
         exact

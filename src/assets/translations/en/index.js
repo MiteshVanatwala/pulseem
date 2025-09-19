@@ -41,8 +41,10 @@ import AI from './AI.json'
 import colorPalette from './colorPalette.json'
 import AILoader from './AILoader.json'
 import RemoveMyData from './RemoveMyData.json'
+import PopupTriggers from './PopupTriggers.json';
 
 export const en = {
+	PopupTriggers,
 	automations,
 	campaigns,
 	notifications,
