@@ -38,11 +38,13 @@ const SignUpNew = ({ classes }: any) => {
   const { t } = useTranslation();
   const [showLoader, setLoader] = useState(false);
   const qs = queryString.parse(window.location.search);
+  // Fix email parsing: convert spaces back to + in email addresses (URL parsing converts + to space)
+  const fixedEmailId = qs?.emailid ? (qs.emailid as string).replace(/ /g, '+') : '';
   // const isPolish = window.location.origin.includes('pulseem.pl');
   const isPolish = qs?.Culture === 'pl-PL';
   const [userDetails, setUserDetails] = useState({
     fullName: '',
-    emailId: qs?.emailid || '',
+    emailId: fixedEmailId,
     phone: '',
     countryCode: isPolish ? DefaultCountryCodePoland : DefaultCountryCodeIsrael,
     cellPhone: '',
@@ -139,7 +141,7 @@ const SignUpNew = ({ classes }: any) => {
         setUserDetails({
           ...userDetails,
           fullName: `${Data?.FirstName || ''} ${Data?.LastName || ''}`,
-          emailId: qs?.emailid || Data?.Email || '',
+          emailId: fixedEmailId || Data?.Email || '',
           cellPhone: cellPhone || '',
           countryCode,
           companyName: Data?.Company || '',
@@ -338,7 +340,7 @@ const SignUpNew = ({ classes }: any) => {
     changeLanguage(langCode);
 
     getUserInfo();
-    if ((qs?.refId && qs?.refId !== '') && ((!qs?.emailid || qs?.emailid === '') || !qs?.id)) {
+    if ((qs?.refId && qs?.refId !== '') && ((!fixedEmailId || fixedEmailId === '') || !qs?.id)) {
       onInitRef().then(() => {
         setDialogType({ type: 'emailDialog' });
       });
@@ -834,7 +836,7 @@ const SignUpNew = ({ classes }: any) => {
             <span className={clsx(classes.pl5, classes.colrPrimary, classes.f18)}>*</span>
           </Typography>
           <TextField
-            type="email"
+            type="text"
             variant="outlined"
             size="small"
             name="Email"
