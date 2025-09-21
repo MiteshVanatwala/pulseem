@@ -32,6 +32,7 @@ import BillingSlice from './reducers/BillingSlice';
 import SubUserSlice from './reducers/SubUserSlice';
 import AiSlice from './reducers/AISlice';
 import linksClicksReportSlice from './reducers/linksClicksReportSlice';
+import TiersSlice from './reducers/TiersSlice';
 
 export default configureStore({
   reducer: {
@@ -68,5 +69,6 @@ export default configureStore({
     subUser: SubUserSlice,
     Ai: AiSlice,
     linksClicksReportSlice: linksClicksReportSlice,
+    tiers: TiersSlice,
   },
 });

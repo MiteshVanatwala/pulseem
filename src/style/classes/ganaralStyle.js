@@ -4606,8 +4606,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   tierPlansPopularBadge: {
     position: 'absolute',
     top: 0,
-    left: '50%',
-    transform: 'translateX(-50%)',
+    left: '40%',
+    transform: 'translateX(-30%)',
     backgroundColor: '#e53935',
     color: 'white',
     padding: '4px 12px',

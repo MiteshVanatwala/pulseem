@@ -7,6 +7,7 @@ import {
   AccordionSummary,
   Box,
   Button,
+  Card,
   Grid,
   Link,
   Typography,
@@ -18,6 +19,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
 import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
 import { ERROR_TYPE } from "../../../helpers/Types/common";
+import { getCurrentPlan, getAvailablePlans, downgradePlan } from "../../../redux/reducers/TiersSlice";
 import BillingDetails from "./BillingDetails";
 import { getCreditCardIframe, getAccountOperations, payDebtInvoices, inactiveCreditCard } from "../../../redux/reducers/BillingSlice";
 import { Loader } from "../../../components/Loader/Loader";
@@ -43,6 +45,7 @@ import { sitePrefix } from "../../../config";
 import SummaryPopup from "./SummaryPopup";
 import CreditCardManagement from "../../../components/BillingSettings/CreditCardManagement";
 import TierPlans from "../../../components/TierPlans/TierPlans";
+import { CreditCard } from "@material-ui/icons";
 
 
 const BillingSettingsPage = ({ classes }: any) => {
@@ -53,7 +56,8 @@ const BillingSettingsPage = ({ classes }: any) => {
   const { isRTL, windowSize, isAdmin, isDebtAccount, userRoles } = useSelector((state: any) => state.core);
   const { accountFeatures } = useSelector((state: any) => state.common);
   const { creditCards } = useSelector((state: any) => state.payment);
-  const { subAccount } = useSelector((state: any) => state.common)
+  const { subAccount } = useSelector((state: any) => state.common);
+  const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
   const qs = (window.location.search && queryString.parse(window.location.search)) as any;
   const [addCardDialog, setAddCardDialog] = useState<boolean>(false);
   const [toastMessage, setToastMessage] = useState<ERROR_TYPE>(null);
@@ -69,10 +73,31 @@ const BillingSettingsPage = ({ classes }: any) => {
   const [currentDialog, setCurrentDialog] = useState<any>('debt');
   const [hasDebt, setHasDebt] = useState<boolean>(false);
   const [confirmDialog, setConfirmDialog] = useState<boolean>(false);
+  const [confirmCancelPlan, setConfirmCancelPlan] = useState<boolean>(false);
   const [tranzilaError, setTranzilaError] = useState<any>(null);
   const [showEditCard, setShowEditCard] = useState<boolean>(false);
   const [showCreditCardManagement, setShowCreditCardManagement] = useState<boolean>(false);
   const [showTierPlans, setShowTierPlans] = useState<boolean>(false);
+
+  const formatPlanDescription = () => {
+    if (currentPlan?.Data) {
+      const plan = currentPlan.Data;
+      if (plan.Description) {
+        return plan.Description;
+      }
+      
+      // If no description, create one based on available data
+      let description = '';
+      if (plan.Price > 0) {
+        description = `₪${plan.Price}/${t('billing.month')}`;
+      } else if (plan.Name === 'GRAND_FATHER') {
+        description = t('billing.legacyPlan');
+      }
+      
+      return description || `${t('billing.upTo')} 2,500 ${t('billing.recipients')} • ₪99/${t('billing.month')}`;
+    }
+    return `${t('billing.upTo')} 2,500 ${t('billing.recipients')} • ₪99/${t('billing.month')}`;
+  };
 
   const renderToast = () => {
     setTimeout(() => {
@@ -83,6 +108,8 @@ const BillingSettingsPage = ({ classes }: any) => {
 
   const initPurchaseHistory = async () => {
     dispatch(getAccountCards()) as any;
+    dispatch(getCurrentPlan()) as any;
+    dispatch(getAvailablePlans()) as any;
     const paidResponse = await dispatch(getAccountOperations(true)) as any;
     const unpaidResponse = await dispatch(getAccountOperations(false)) as any;
 
@@ -183,6 +210,61 @@ const BillingSettingsPage = ({ classes }: any) => {
       }
       case 401: {
         logout();
+        break;
+      }
+    }
+  }
+
+  const handleCancelPlan = async () => {
+    setConfirmCancelPlan(false);
+    setShowLoader(true);
+    
+    // For cancel plan, we typically downgrade to the free/basic tier (ID: 1)
+    const response = await dispatch(downgradePlan({ newTierId: 1 })) as any;
+    setShowLoader(false);
+    
+    switch (response?.payload?.StatusCode) {
+      case 201:
+      case 200: {
+        setToastMessage({ 
+          severity: 'success', 
+          color: 'success', 
+          message: t('billing.planCancelledSuccess'), 
+          showAnimtionCheck: false 
+        });
+        // Refresh current plan data
+        dispatch(getCurrentPlan());
+        break;
+      }
+      case 404: {
+        setToastMessage({
+          color: 'error',
+          severity: 'error',
+          message: t('billing.planNotFound'),
+          showAnimtionCheck: false
+        } as ERROR_TYPE);
+        break;
+      }
+      case 406: {
+        setToastMessage({
+          color: 'error',
+          severity: 'error',
+          message: t('common.ErrorOccured'),
+          showAnimtionCheck: false
+        } as ERROR_TYPE);
+        break;
+      }
+      case 401: {
+        logout();
+        break;
+      }
+      default: {
+        setToastMessage({
+          color: 'error',
+          severity: 'error',
+          message: response?.payload?.Message || t('billing.planCancelFailed'),
+          showAnimtionCheck: false
+        } as ERROR_TYPE);
         break;
       }
     }
@@ -420,8 +502,11 @@ const BillingSettingsPage = ({ classes }: any) => {
   const renderCreditCardDialog = () => {
     return {
       title: t('billing.creditCardManagement.title'),
-      open: showCreditCardManagement,
-      onClose: handleCreditCardManagementClose,
+      open: showPopup,
+      onClose: () => { setShowPopup(false); setCurrentDialog(null); },
+      onCancel: () => { setShowPopup(false); setCurrentDialog(null); },
+      showDefaultButtons: false,
+      icon: <CreditCard className={clsx(classes.verticalAlignMiddle, classes.ml5)} />,
       children: <CreditCardManagement
         classes={classes}
         onAddCard={handleAddCardFromManagement}
@@ -508,12 +593,79 @@ const BillingSettingsPage = ({ classes }: any) => {
         {hasDebt && !isAdmin && <SharedAppBar classes={classes} />}
         <Box className={'topSection'} style={{ marginTop: hasDebt && !isAdmin ? 100 : 37.870 }}>
           <Title Text={t('settings.billingSettings.pageTitle')} classes={classes} ContainerStyle={{ width: 'auto' }} />
+          
+          {/* Your Plan Section */}
+          <Box className={classes.accordion}>
+            <Card className={clsx(classes.borderBox, classes.m10)} style={{ marginBottom: 0 }}>
+              <Box className={clsx(classes.dFlex, classes.spaceBetween, classes.alignItemsCenter)} style={{ marginBottom: '20px' }}>
+                <Typography variant="h6" style={{ fontSize: '18px', fontWeight: 600, color: '#333' }}>
+                  {t('billing.yourPlan')} / התוכנית שלך
+                </Typography>
+                <Box className={classes.dFlex} style={{ gap: '12px' }}>
+                  <Button
+                    className={clsx(
+                      classes.btn,
+                      classes.btnRounded
+                    )}
+                    onClick={(e: any) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setCurrentDialog('creditCardDialog'); 
+                      setShowPopup(true);
+                    }}
+                  >
+                    {t('common.tier.manageCard')}
+                  </Button>
+                  <Button
+                    className={clsx(classes.btn, classes.btnRounded)}
+                    onClick={(e: any) => { 
+                      e.preventDefault(); 
+                      e.stopPropagation(); 
+                      setShowTierPlans(true);
+                    }}
+                  >
+                    {t('billing.upgradePlan')}
+                  </Button>
+                  <Button
+                    className={clsx(classes.btn, classes.btnRounded, classes.redButton)}
+                    onClick={(e: any) => { 
+                      e.preventDefault(); 
+                      e.stopPropagation(); 
+                      setConfirmCancelPlan(true);
+                    }}
+                  >
+                    {t('billing.cancelPlan')} / ביטול חבילה
+                  </Button>
+                </Box>
+              </Box>
+              
+              <Box className={classes.dFlex} style={{ alignItems: 'center', gap: '16px' }}>
+                <Box
+                  style={{
+                    backgroundColor: '#ff6b6b',
+                    color: 'white',
+                    padding: '6px 16px',
+                    borderRadius: '20px',
+                    fontSize: '14px',
+                    fontWeight: 600,
+                    textTransform: 'uppercase'
+                  }}
+                >
+                  {currentPlan?.Data?.Name || 'ENGAGE'}
+                </Box>
+                <Typography style={{ fontSize: '16px', color: '#666' }}>
+                  {formatPlanDescription()}
+                </Typography>
+              </Box>
+            </Card>
+          </Box>
+
           <Box className={classes.accordion} style={{ padding: 15 }}>
             <Accordion expanded={openPanels.indexOf('1') > -1} onChange={() => handlePanels('1')} elevation={0}
               classes={{
                 root: classes.MuiAccordionroot
               }}>
-              <AccordionSummary aria-controls="1-content" id="1-header">
+              <AccordionSummary aria-controls="1-content" id="1-header" style={{ marginTop: 0 }}>
                 <Title
                   autoWidth={false}
                   isIcon={false}
@@ -528,47 +680,6 @@ const BillingSettingsPage = ({ classes }: any) => {
                         >
                           {t("settings.billingSettings.title")}
                         </Typography>
-                      </Box>
-                      <Box className={classes.dFlex} style={{ alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-                        <Typography style={{ marginInlineEnd: 15 }}>
-                          {t('common.tier.current')}: <strong>Starter</strong>
-                        </Typography>
-                        <Button
-                          className={clsx(
-                            classes.btn,
-                            classes.btnRounded
-                          )}
-                          onClick={(e: any) => {
-                            console.log("539")
-                            e.preventDefault();
-                            e.stopPropagation();
-                            setCurrentDialog('creditCardDialog'); 
-                            setShowPopup(true);
-                            console.log("544")
-                          }}
-                          style={{ marginInlineEnd: 10 }}
-                        >
-                          {t('common.tier.manageCard')}
-                        </Button>
-                        <Button
-                          className={clsx(
-                            classes.btn,
-                            classes.btnRounded
-                          )}
-                          onClick={(e: any) => { e.preventDefault(); e.stopPropagation(); setShowTierPlans(true) }}
-                          style={{ marginInlineEnd: 10 }}
-                        >
-                          {t('common.tier.upgrade')}
-                        </Button>
-                        <Button
-                          className={clsx(
-                            classes.btn,
-                            classes.btnRounded
-                          )}
-                          onClick={(e: any) => { e.preventDefault(); e.stopPropagation(); /* Handle downgrade tier */ }}
-                        >
-                          {t('common.tier.downgrade')}
-                        </Button>
                       </Box>
                       {accountFeatures.indexOf(PulseemFeatures.NOT_TO_SHOW_CREDITS_HISTORY_FEATURE) === -1 && <>
                         {(!creditCards || creditCards?.length === 0) ? (<Button
@@ -759,6 +870,17 @@ const BillingSettingsPage = ({ classes }: any) => {
         windowSize={windowSize}
         title={t('billing.confirmDeleteCardTitle')}
         text={t('billing.confirmDeleteCardText')}
+      />
+      <ConfirmDeletePopUp
+        handleDeleteGroup={() => handleCancelPlan()}
+        onCancel={() => setConfirmCancelPlan(false)}
+        onClose={() => setConfirmCancelPlan(false)}
+        classes={classes}
+        isOpen={confirmCancelPlan}
+        key={2}
+        windowSize={windowSize}
+        title={t('billing.confirmCancelPlanTitle')}
+        text={t('billing.confirmCancelPlanText')}
       />
       {showTierPlans && <TierPlans
         classes={classes}

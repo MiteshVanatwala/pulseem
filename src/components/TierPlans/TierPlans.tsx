@@ -31,99 +31,16 @@ import { useSelector } from 'react-redux';
 import { coreProps } from '../../model/Core/corePros.types';
 import clsx from 'clsx';
 import Celebration from '../../assets/images/transparent_celebration.png';
+import { TIER_PLANS } from '../../helpers/Constants';
 
-const steps = ['Select Plan', 'Upgrade', 'Confirmation'];
-
-const plansData = [
-    {
-      title: 'STARTER',
-      description: 'Just the essentials',
-      price: '0',
-      priceDescription: '/month',
-      subtext: 'Forever free',
-      recipientLimit: 'Up to 100 recipients',
-      buttonText: 'GET STARTED FREE',
-      buttonVariant: 'outlined',
-      features: [
-        'Email campaigns',
-        'SMS marketing',
-        'WhatsApp marketing',
-        'Push notifications',
-        'Basic Reports',
-        'Multiple integrations',
-        'Chat & email support',
-      ],
-      isPopular: false,
-    },
-    {
-      title: 'FLOW',
-      description: 'Automate your marketing',
-      price: '49',
-      priceDescription: '/month',
-      subtext: 'Billed monthly',
-      recipientLimit: 'Up to 100 recipients',
-      buttonText: 'START FLOW PLAN',
-      buttonVariant: 'outlined',
-      features: [
-        'Everything in Starter, plus:',
-        'Automations (unlimited)',
-        'Landing pages (unlimited)',
-        'Smart segmentations',
-        'Page view tracking',
-        'A/B testing',
-        'Survey system',
-        'API access',
-      ],
-      isPopular: false,
-    },
-    {
-      title: 'ENGAGE',
-      description: 'Perfect for eCommerce',
-      price: '99',
-      priceDescription: '/month',
-      subtext: 'Most popular choice',
-      recipientLimit: 'Up to 100 recipients',
-      buttonText: 'CHOOSE ENGAGE',
-      buttonVariant: 'contained',
-      features: [
-        'Everything in Flow, plus:',
-        'eCommerce automation triggers',
-        'eCommerce segmentations',
-        'Product catalog integration',
-        'Measure ROI - Email, SMS, WhatsApp',
-        'SMS/WhatsApp chatbot',
-        'Subaccounts creation',
-        'Manage users & permissions',
-        'Phone support',
-      ],
-      isPopular: true,
-    },
-    {
-      title: 'SCALE',
-      description: 'Tailor-made solutions',
-      price: 'Contact Us',
-      subtext: 'Custom pricing',
-      recipientLimit: 'Custom recipient limits',
-      buttonText: 'CONTACT SALES',
-      buttonVariant: 'outlined',
-      features: [
-        'Everything in Engage, plus:',
-        'High-volume sending performance',
-        'Custom developments and integrations',
-        'Custom reports',
-        'Dedicated account manager',
-        'Priority support',
-        'Scheduled training sessions',
-      ],
-      isPopular: false,
-    },
-  ];
+const steps = ['billing.tier.steps.selectPlan', 'billing.tier.steps.upgrade', 'billing.tier.steps.confirmation'];
 
 const TierPlans = ({ classes, isOpen, onClose }: any) => {
   const { t } = useTranslation();
   const [activeStep, setActiveStep] = useState(0);
   const contentRef = useRef<HTMLDivElement>(null);
-
+  const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
+  console.log(availablePlans)
     // Scroll to top when step changes
   useEffect(() => {
     // Add a small delay to ensure DOM is updated
@@ -180,35 +97,104 @@ const TierPlans = ({ classes, isOpen, onClose }: any) => {
       case 0:
         return (
             <Grid container spacing={2}>
-            {plansData.map((plan, index) => (
+            {availablePlans && availablePlans.length > 0 ? availablePlans.map((plan: any, index: any) => {
+              // Find corresponding TIER_PLANS entry for UI config
+              const uiConfig = TIER_PLANS.find(tierPlan => 
+                tierPlan.id === plan.Id
+              ) || TIER_PLANS[index] || TIER_PLANS[0];
+              
+              return (
+                <Grid item xs={12} sm={6} md={3} key={plan.id}>
+                  <Box className={clsx(classes.tierPlansCard, { [classes.tierPlansPopularCard]: plan.isRecommended || uiConfig.isPopular })}>
+                    {(plan.isRecommended || uiConfig.isPopular) && (
+                      <Box className={classes.tierPlansPopularBadge}>
+                        {t('billing.tier.ui.mostPopularChoice')}
+                      </Box>
+                    )}
+                    <Box className={classes.tierPlansCardContent}>
+                      <Typography className={classes.tierPlansTitle}>
+                        {t(uiConfig.title)}
+                      </Typography>
+                      <Typography className={classes.tierPlansDescription}>
+                        {t(uiConfig.description)}
+                      </Typography>
+                      <Box className={classes.tierPlansPriceContainer}>
+                        {plan.Price > 0 && <span className={classes.tierPlansCurrencySymbol}>₪</span>}
+                        <Typography className={classes.tierPlansPrice}>
+                          {plan.Price > 0 ? plan.Price : t('billing.tier.plans.scale.price')}
+                        </Typography>
+                        {uiConfig.priceDescription && <Typography className={classes.tierPlansPriceDescription}>
+                          {t(uiConfig.priceDescription)}
+                        </Typography>}
+                      </Box>
+                      <Typography className={classes.tierPlansSubtext}>
+                        {t(uiConfig.subtext)}
+                      </Typography>
+                      <Typography className={classes.tierPlansRecipientLimit}>
+                        {t(uiConfig.recipientLimit)}
+                      </Typography>
+                      <Button
+                        variant={uiConfig.buttonVariant as "outlined" | "contained"}
+                        color="primary"
+                        className={clsx(classes.tierPlansButton, { [classes.tierPlansEngageButton]: plan.isRecommended || uiConfig.isPopular, [classes.tierPlansDefaultButton]: !plan.isRecommended && !uiConfig.isPopular })}
+                        onClick={handleNext}
+                        disabled={plan.isCurrentPlan}
+                      >
+                        {plan.isCurrentPlan ? t('billing.tier.ui.currentPlan') : t(uiConfig.buttonText)}
+                      </Button>
+                    </Box>
+                    <List className={clsx(classes.tierPlansFeatureList, classes.mb10)}>
+                      {plan.features && plan.features.length > 0 ? plan.features.map((feature: any, fIndex: any) => (
+                        <ListItem key={fIndex} className={classes.tierPlansFeatureItem}>
+                          <ListItemIcon style={{ minWidth: '30px' }}>
+                            <CheckIcon style={{ color: '#5cb85c' }} />
+                          </ListItemIcon>
+                          <ListItemText primary={feature} />
+                        </ListItem>
+                      )) : uiConfig.features.map((feature, fIndex) => (
+                        <ListItem key={fIndex} className={classes.tierPlansFeatureItem}>
+                          <ListItemIcon style={{ minWidth: '30px' }}>
+                            <CheckIcon style={{ color: '#5cb85c' }} />
+                          </ListItemIcon>
+                          <ListItemText primary={t(feature)} />
+                        </ListItem>
+                      ))}
+                    </List>
+                    <Typography className={classes.tierPlansSeeAllFeatures}>
+                      {t('billing.tier.ui.seeAllFeatures')}
+                    </Typography>
+                  </Box>
+                </Grid>
+              );
+            }) : TIER_PLANS.map((plan, index) => (
               <Grid item xs={12} sm={6} md={3} key={index}>
                 <Box className={clsx(classes.tierPlansCard, { [classes.tierPlansPopularCard]: plan.isPopular })}>
                   {plan.isPopular && (
                     <Box className={classes.tierPlansPopularBadge}>
-                      MOST POPULAR
+                      {t('billing.tier.ui.mostPopularChoice')}
                     </Box>
                   )}
                   <Box className={classes.tierPlansCardContent}>
                     <Typography className={classes.tierPlansTitle}>
-                      {plan.title}
+                      {t(plan.title)}
                     </Typography>
                     <Typography className={classes.tierPlansDescription}>
-                      {plan.description}
+                      {t(plan.description)}
                     </Typography>
                     <Box className={classes.tierPlansPriceContainer}>
-                      {plan.price !== 'Contact Us' && <span className={classes.tierPlansCurrencySymbol}>₪</span>}
+                      {t(plan.price) !== t('billing.tier.plans.scale.price') && <span className={classes.tierPlansCurrencySymbol}>₪</span>}
                       <Typography className={classes.tierPlansPrice}>
-                        {plan.price}
+                        {t(plan.price)}
                       </Typography>
                       {plan.priceDescription && <Typography className={classes.tierPlansPriceDescription}>
-                        {plan.priceDescription}
+                        {t(plan.priceDescription)}
                       </Typography>}
                     </Box>
                     <Typography className={classes.tierPlansSubtext}>
-                      {plan.subtext}
+                      {t(plan.subtext)}
                     </Typography>
                     <Typography className={classes.tierPlansRecipientLimit}>
-                      {plan.recipientLimit}
+                      {t(plan.recipientLimit)}
                     </Typography>
                     <Button
                       variant={plan.buttonVariant as "outlined" | "contained"}
@@ -216,7 +202,7 @@ const TierPlans = ({ classes, isOpen, onClose }: any) => {
                       className={clsx(classes.tierPlansButton, { [classes.tierPlansEngageButton]: plan.isPopular, [classes.tierPlansDefaultButton]: !plan.isPopular })}
                       onClick={handleNext}
                     >
-                      {plan.buttonText}
+                      {t(plan.buttonText)}
                     </Button>
                   </Box>
                   <List className={clsx(classes.tierPlansFeatureList, classes.mb10)}>
@@ -225,12 +211,12 @@ const TierPlans = ({ classes, isOpen, onClose }: any) => {
                         <ListItemIcon style={{ minWidth: '30px' }}>
                           <CheckIcon style={{ color: '#5cb85c' }} />
                         </ListItemIcon>
-                        <ListItemText primary={feature} />
+                        <ListItemText primary={t(feature)} />
                       </ListItem>
                     ))}
                   </List>
                   <Typography className={classes.tierPlansSeeAllFeatures}>
-                    See all features
+                    {t('billing.tier.ui.seeAllFeatures')}
                   </Typography>
                 </Box>
               </Grid>
@@ -405,7 +391,7 @@ const TierPlans = ({ classes, isOpen, onClose }: any) => {
         dialogContainer: clsx(classes.dialogContainer, classes.tierPlansDialog),
       }}
       open={isOpen}
-      title={t('Upgrade Your Plan')}
+      title={t('billing.tier.ui.upgradeYourPlan')}
       onClose={onClose}
       onCancel={onClose}
       showDefaultButtons={false}

@@ -3,10 +3,15 @@ import {
   Box,
   Button,
   Typography,
-  Grid,
-  Card,
-  CardContent,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
   IconButton,
+  Chip,
 } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -34,143 +39,107 @@ const CreditCardManagement: React.FC<CreditCardManagementProps> = ({
     onAddCard?.();
   };
 
-  const handleEditCard = (cardId: string) => {
-    onEditCard?.(cardId);
-  };
-
-  const handleDeleteCard = (cardId: string) => {
-    onDeleteCard?.(cardId);
-  };
-
   return (
     <Box>
-      <Typography variant="h6" className={classes.managementTitle} style={{ marginBottom: 20 }}>
-        {t('billing.creditCardManagement.title')}
-      </Typography>
-
-      {/* Add New Card Button */}
-      <Box style={{ marginBottom: 20 }}>
-        <Button
-          className={clsx(classes.btn, classes.btnRounded)}
-          onClick={handleAddCard}
-          startIcon={<MdAdd />}
-          variant="contained"
-          color="primary"
+      {/* Credit Cards Table */}
+      {creditCards && creditCards.length > 0 ? (
+        <TableContainer>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>{t('billing.creditCardManagement.cardNumber')}</TableCell>
+                <TableCell>{t('billing.creditCardManagement.cardType')}</TableCell>
+                <TableCell>{t('billing.creditCardManagement.expires')}</TableCell>
+                <TableCell>{t('billing.creditCardManagement.status')}</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {creditCards.map((card: any, index: number) => (
+                <TableRow key={card.CardId || index} hover>
+                  <TableCell>
+                    <Typography 
+                      variant="body1" 
+                      style={{ 
+                        direction: 'ltr', 
+                        fontWeight: 'bold'
+                      }}
+                    >
+                      **** **** **** {card.LastDigits}
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="body2">
+                      {card.CardType || 'N/A'}
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="body2">
+                      {card.ExpiryDate || 'N/A'}
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    {card.IsDefault ? (
+                      <Chip 
+                        label={t('billing.creditCardManagement.defaultCard')} 
+                        color="primary" 
+                        size="small"
+                        variant="outlined"
+                      />
+                    ) : (
+                      <Typography variant="body2" color="textSecondary">
+                        {t('billing.creditCardManagement.secondaryCard')}
+                      </Typography>
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))}
+              {/* Add New Card Button Row */}
+              {/* <TableRow>
+                <TableCell colSpan={5} style={{ textAlign: 'center', padding: 20 }}>
+                  <Button
+                    className={clsx(classes.btn, classes.btnRounded)}
+                    onClick={handleAddCard}
+                    startIcon={<MdAdd />}
+                    variant="outlined"
+                    color="primary"
+                  >
+                    {t('billing.creditCardManagement.addNewCard')}
+                  </Button>
+                </TableCell>
+              </TableRow> */}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      ) : (
+        /* No Cards State */
+        <Box 
+          className={classes.dFlex} 
+          style={{ 
+            flexDirection: 'column', 
+            alignItems: 'center', 
+            padding: 40,
+            textAlign: 'center',
+            border: '2px dashed #ccc',
+            borderRadius: 8
+          }}
         >
-          {t('billing.creditCardManagement.addNewCard')}
-        </Button>
-      </Box>
-
-      {/* Credit Cards List */}
-      <Grid container spacing={2}>
-        {creditCards && creditCards.length > 0 ? (
-          creditCards.map((card: any, index: number) => (
-            <Grid item xs={12} sm={6} md={4} key={card.CardId || index}>
-              <Card className={classes.creditCardItem} elevation={2}>
-                <CardContent>
-                  <Box className={classes.dFlex} style={{ justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                    <Box>
-                      <Typography variant="h6" style={{ marginBottom: 8 }}>
-                        {t('billing.creditCardManagement.cardNumber')}
-                      </Typography>
-                      <Typography 
-                        variant="body1" 
-                        style={{ 
-                          direction: 'ltr', 
-                          fontWeight: 'bold',
-                          fontSize: '1.2rem',
-                          marginBottom: 12
-                        }}
-                      >
-                        **** **** **** {card.LastDigits}
-                      </Typography>
-                      
-                      {card.CardType && (
-                        <Typography variant="body2" color="textSecondary">
-                          {card.CardType}
-                        </Typography>
-                      )}
-                      
-                      {card.ExpiryDate && (
-                        <Typography variant="body2" color="textSecondary">
-                          {t('billing.creditCardManagement.expires')}: {card.ExpiryDate}
-                        </Typography>
-                      )}
-                      
-                      {card.IsDefault && (
-                        <Typography 
-                          variant="body2" 
-                          style={{ 
-                            color: '#4caf50', 
-                            fontWeight: 'bold',
-                            marginTop: 8
-                          }}
-                        >
-                          {t('billing.creditCardManagement.defaultCard')}
-                        </Typography>
-                      )}
-                    </Box>
-                    
-                    <Box className={classes.dFlex} style={{ flexDirection: 'column', gap: 8 }}>
-                      <IconButton
-                        size="small"
-                        onClick={() => handleEditCard(card.CardId)}
-                        title={t('common.edit')}
-                      >
-                        <MdEdit />
-                      </IconButton>
-                      <IconButton
-                        size="small"
-                        onClick={() => handleDeleteCard(card.CardId)}
-                        title={t('common.delete')}
-                        style={{ color: '#f44336' }}
-                      >
-                        <MdDelete />
-                      </IconButton>
-                    </Box>
-                  </Box>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))
-        ) : (
-          <Grid item xs={12}>
-            <Box 
-              className={classes.dFlex} 
-              style={{ 
-                flexDirection: 'column', 
-                alignItems: 'center', 
-                padding: 40,
-                textAlign: 'center'
-              }}
-            >
-              <Typography variant="h6" color="textSecondary" style={{ marginBottom: 16 }}>
-                {t('billing.creditCardManagement.noCards')}
-              </Typography>
-              <Typography variant="body2" color="textSecondary" style={{ marginBottom: 24 }}>
-                {t('billing.creditCardManagement.noCardsDescription')}
-              </Typography>
-              <Button
-                className={clsx(classes.btn, classes.btnRounded)}
-                onClick={handleAddCard}
-                startIcon={<MdAdd />}
-                variant="contained"
-                color="primary"
-              >
-                {t('billing.creditCardManagement.addFirstCard')}
-              </Button>
-            </Box>
-          </Grid>
-        )}
-      </Grid>
-
-      {/* Additional Information */}
-      <Box style={{ marginTop: 30, padding: 16, backgroundColor: '#f5f5f5', borderRadius: 8 }}>
-        <Typography variant="body2" color="textSecondary">
-          <strong>{t('billing.creditCardManagement.note')}:</strong>{' '}
-          {t('billing.creditCardManagement.securityNote')}
-        </Typography>
-      </Box>
+          <Typography variant="h6" color="textSecondary" style={{ marginBottom: 16 }}>
+            {t('billing.creditCardManagement.noCards')}
+          </Typography>
+          <Typography variant="body2" color="textSecondary" style={{ marginBottom: 24 }}>
+            {t('billing.creditCardManagement.noCardsDescription')}
+          </Typography>
+          {/* <Button
+            className={clsx(classes.btn, classes.btnRounded)}
+            onClick={handleAddCard}
+            startIcon={<MdAdd />}
+            variant="contained"
+            color="primary"
+          >
+            {t('billing.creditCardManagement.addFirstCard')}
+          </Button> */}
+        </Box>
+      )}
     </Box>
   );
 };

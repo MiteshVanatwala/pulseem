@@ -44,5 +44,112 @@
   "confirmDeleteCardText": "Czy na pewno chcesz usunąć kartę kredytową?",
   "priceWithoutVAT": "Cena bez VAT",
   "multipleInvoiceTypeMessage": "Nie można opłacić faktury transakcyjnej i faktury VAT w tej samej płatności<br/><br/>Możesz opłacić <b>faktury transakcyjne lub faktury VAT oddzielnie.</b><br/><br/>Aby uzyskać więcej informacji, skontaktuj się z obsługą w sprawie płatności<br/><a href=\"tel:+972-3-5240290\">+972-3-5240290</a><br/><a href=\"mailto:support@pulseem.com\">support@pulseem.com </a>",
-  "creditCardPurchase": "Zakup kartą kredytową"
+  "creditCardPurchase": "Zakup kartą kredytową",
+  "tier": {
+    "plans": {
+      "starter": {
+        "title": "STARTER",
+        "description": "Tylko podstawy",
+        "price": "0",
+        "priceDescription": "/miesiąc",
+        "subtext": "Na zawsze darmowy",
+        "recipientLimit": "Do 100 odbiorców",
+        "buttonText": "ROZPOCZNIJ ZA DARMO"
+      },
+      "flow": {
+        "title": "FLOW",
+        "description": "Zautomatyzuj swój marketing",
+        "price": "49",
+        "priceDescription": "/miesiąc",
+        "subtext": "Rozliczane miesięcznie",
+        "recipientLimit": "Do 100 odbiorców",
+        "buttonText": "ROZPOCZNIJ PLAN FLOW"
+      },
+      "engage": {
+        "title": "ENGAGE",
+        "description": "Idealny dla eCommerce",
+        "price": "99",
+        "priceDescription": "/miesiąc",
+        "subtext": "Najpopularniejszy wybór",
+        "recipientLimit": "Do 100 odbiorców",
+        "buttonText": "WYBIERZ ENGAGE"
+      },
+      "scale": {
+        "title": "SCALE",
+        "description": "Rozwiązania szyte na miarę",
+        "price": "Skontaktuj się z nami",
+        "subtext": "Indywidualne ceny",
+        "recipientLimit": "Niestandardowe limity odbiorców",
+        "buttonText": "SKONTAKTUJ SIĘ ZE SPRZEDAŻĄ"
+      }
+    },
+    "features": {
+      "emailCampaigns": "Kampanie email",
+      "smsMarketing": "Marketing SMS",
+      "whatsappMarketing": "Marketing WhatsApp",
+      "pushNotifications": "Powiadomienia push",
+      "basicReports": "Podstawowe raporty",
+      "multipleIntegrations": "Liczne integracje",
+      "chatEmailSupport": "Wsparcie czat i email",
+      "everythingInStarter": "Wszystko ze Starter, plus:",
+      "automationsUnlimited": "Automatyzacje (bez ograniczeń)",
+      "landingPagesUnlimited": "Strony docelowe (bez ograniczeń)",
+      "smartSegmentations": "Inteligentne segmentacje",
+      "pageViewTracking": "Śledzenie wyświetleń stron",
+      "abTesting": "Testy A/B",
+      "surveySystem": "System ankiet",
+      "apiAccess": "Dostęp do API",
+      "everythingInFlow": "Wszystko z Flow, plus:",
+      "ecommerceAutomationTriggers": "Wyzwalacze automatyzacji eCommerce",
+      "ecommerceSegmentations": "Segmentacje eCommerce",
+      "productCatalogIntegration": "Integracja katalogu produktów",
+      "measureRoi": "Mierzenie ROI - Email, SMS, WhatsApp",
+      "smsWhatsappChatbot": "Chatbot SMS/WhatsApp",
+      "subaccountsCreation": "Tworzenie subkont",
+      "manageUsersPermissions": "Zarządzanie użytkownikami i uprawnieniami",
+      "phoneSupport": "Wsparcie telefoniczne",
+      "everythingInEngage": "Wszystko z Engage, plus:",
+      "highVolumeSending": "Wysyłanie dużych wolumenów",
+      "customDevelopments": "Niestandardowe rozwoje i integracje",
+      "customReports": "Niestandardowe raporty",
+      "dedicatedAccountManager": "Dedykowany menedżer konta",
+      "prioritySupport": "Wsparcie priorytetowe",
+      "scheduledTrainingSessions": "Zaplanowane sesje szkoleniowe"
+    },
+    "steps": {
+      "selectPlan": "Wybierz Plan",
+      "upgrade": "Ulepszenie",
+      "confirmation": "Potwierdzenie"
+    },
+    "ui": {
+      "upgradeYourPlan": "Ulepsz swój plan",
+      "mostPopularChoice": "Najpopularniejszy wybór",
+      "foreverFree": "Na zawsze darmowy",
+      "billedMonthly": "Rozliczane miesięcznie",
+      "customPricing": "Indywidualne ceny",
+      "contactUs": "Skontaktuj się z nami",
+      "upTo": "Do",
+      "recipients": "odbiorców",
+      "month": "miesiąc",
+      "popular": "Popularne",
+      "recommended": "Polecane",
+      "seeAllFeatures": "Zobacz wszystkie funkcje",
+      "currentPlan": "Aktualny Plan"
+    }
+  },
+  "creditCardManagement": {
+    "title": "Zarządzanie kartami kredytowymi",
+    "cardNumber": "Numer karty",
+    "cardType": "Typ karty",
+    "expires": "Wygasa",
+    "status": "Status",
+    "defaultCard": "Karta domyślna",
+    "secondaryCard": "Karta dodatkowa",
+    "addNewCard": "Dodaj nową kartę",
+    "noCards": "Nie znaleziono kart kredytowych",
+    "noCardsDescription": "Nie dodałeś jeszcze żadnych kart kredytowych. Dodaj swoją pierwszą kartę, aby rozpocząć.",
+    "addFirstCard": "Dodaj swoją pierwszą kartę",
+    "note": "Uwaga",
+    "securityNote": "Informacje o Twojej karcie kredytowej są bezpiecznie zaszyfrowane i przechowywane. Nigdy nie przechowujemy pełnego numeru karty ani kodu CVV."
+  }
 }
