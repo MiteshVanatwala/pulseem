@@ -91,10 +91,9 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
     >
       <Box className={clsx(classes.mainTitlePopupTrigger, 'topSection')} mb={4}>
         <Title Text={t('PopupTriggers.popupTriggers.mainTitle')} classes={classes} />
-      </Box>
         <Paper variant="outlined" className={clsx(classes.paperPopupTrigger, classes.noPadding)}>
           <Box className={clsx(classes.topHeaderPopupTrigger, classes.p10)}>
-            <Typography variant="h5" className={classes.bold} gutterBottom>
+            <Typography variant="body1" className={clsx(classes.managementTitle, classes.sectionTitlePopupTrigger)} gutterBottom>
               {t("PopupTriggers.popupTriggers.title")}
             </Typography>
             <Typography variant="body1" className={classes.subtitlePopupTrigger}>
@@ -152,23 +151,36 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
                 onToggle={handleToggle("viewingTime")}
                 classes={classes}
               >
-                <Box className={classes.inputContainerPopupTrigger}>
-                  <Typography>{t("PopupTriggers.popupTriggers.pageViews.after")}</Typography>
+                <Box
+                  className={classes.inputContainerPopupTrigger}
+                  display="flex"
+                  flexWrap="wrap"
+                  alignItems="center"
+                  style={{ gap: 8 }}
+                >
+                  <Typography variant="body2" noWrap>
+                    {t("PopupTriggers.popupTriggers.pageViews.after")}
+                  </Typography>
+
                   <TextField
                     variant="outlined"
-                    size="small"
                     className={classes.textFieldPopupTrigger}
                     value={triggers.viewingTime.time}
                     onChange={handleChange("viewingTime", "time")}
                     disabled={!triggers.viewingTime.enabled}
                   />
-                  <Typography>{t("PopupTriggers.popupTriggers.viewingTime.seconds")}</Typography>
+
+                  <Typography variant="body2" noWrap>
+                    {t("PopupTriggers.popupTriggers.viewingTime.seconds")}
+                  </Typography>
+
                   <Select
                     value={triggers.viewingTime.scope}
                     onChange={handleChange("viewingTime", "scope")}
                     variant="outlined"
                     className={classes.selectPopupTrigger}
                     disabled={!triggers.viewingTime.enabled}
+                    style={{ minWidth: 120 }}
                   >
                     <MenuItem value="currentPage">
                       {t("PopupTriggers.popupTriggers.viewingTime.onCurrentPage")}
@@ -193,8 +205,8 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
                 classes={classes}
               >
                 <Box className={classes.sliderContainerPopupTrigger}>
-                  <Box className={clsx(classes.sliderLabelPopupTrigger, classes.font24, classes.mLeft5)}>
-                    <Typography className={classes.font24}>{t("PopupTriggers.popupTriggers.scrollDepth.pageDepth")}</Typography>
+                  <Box className={clsx(classes.sliderLabelPopupTrigger, classes.mLeft5)}>
+                    <Typography className={classes.font20}>{t("PopupTriggers.popupTriggers.scrollDepth.pageDepth")}</Typography>
                     <Slider
                       value={triggers.scrollDepth.depth}
                       onChange={handleSliderChange("scrollDepth", "depth")}
@@ -210,7 +222,7 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
                       }}
                       disabled={!triggers.scrollDepth.enabled}
                     />
-                    <Typography className={classes.font24}>
+                    <Typography className={classes.font20}>
                       {triggers.scrollDepth.depth}%
                     </Typography>
                   </Box>
@@ -233,7 +245,6 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
                   <Typography>{t("PopupTriggers.popupTriggers.pageViews.after")}</Typography>
                   <TextField
                     variant="outlined"
-                    size="small"
                     className={classes.textFieldPopupTrigger}
                     value={triggers.pageClicks.clicks}
                     onChange={handleChange("pageClicks", "clicks")}
@@ -248,6 +259,7 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
         <DisplayFrequency classes={classes} />
         <PageTargeting classes={classes} />
         <AdvancedSettings classes={classes} />
+      </Box>
     </DefaultScreen>
   );
 };

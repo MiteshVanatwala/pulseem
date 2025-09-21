@@ -4,13 +4,13 @@ export const getPopupTriggersStyle = (windowSize, isRTL = false, theme) => ({
     paddingBottom: '0px !important',
   },
   subtitlePopupTrigger: {
-    marginBottom: theme.spacing(3),
+    marginBottom: theme.spacing(2),
     fontWeight: 500,
     fontSize: '1.125rem',
-    color: '#000000de',
+    color: '#555',
   },
   cardContainerPopupTrigger: {
-    padding: 36,
+    padding: windowSize === 'xs' || windowSize === 'sm' ? 18 : 36,
   },
   cardPopupTrigger: {
     border: `1px solid ${theme.palette.grey[300]}`,
@@ -20,7 +20,7 @@ export const getPopupTriggersStyle = (windowSize, isRTL = false, theme) => ({
     flexDirection: 'column',
   },
   activeCardPopupTrigger: {
-    border: `2px solid ${theme.palette.error.main}`,
+    border: `2px solid #FF0076`,
     background: '#fff8f8',
   },
   cardHeaderPopupTrigger: {
@@ -36,7 +36,7 @@ export const getPopupTriggersStyle = (windowSize, isRTL = false, theme) => ({
   avatarPopupTrigger: {
     backgroundColor: '#fee2e2',
     color: theme.palette.error.main,
-    marginRight: theme.spacing(2),
+    margin: isRTL ? '0px 0px 0px 16px' : '0px 16px 0px 0px',
   },
   cardContentPopupTrigger: {
     flexGrow: 1,
@@ -44,13 +44,13 @@ export const getPopupTriggersStyle = (windowSize, isRTL = false, theme) => ({
   },
   cardDescriptionPopupTrigger: {
     fontSize: '1rem',
-    color: theme.palette.grey[900],
+    color: '#333',
     fontWeight: 500,
   },
   cardFooterPopupTrigger: {
     padding: '16px 16px 16px 0px',
-    fontSize: '0.875rem',
-    color: theme.palette.grey[600],
+    fontSize: '1rem',
+    color: '#7F7F7F',
     fontWeight: 500,
   },
   inputContainerPopupTrigger: {
@@ -58,12 +58,12 @@ export const getPopupTriggersStyle = (windowSize, isRTL = false, theme) => ({
     alignItems: 'center',
     gap: theme.spacing(1),
     '& p, input': {
-      fontWeight: 600,
-      fontSize: '1.25rem',
+      fontWeight: 500,
+      fontSize: '1.125rem',
     },
     '&.MuiSelect-outlined .MuiSelect-outlined': {
-      fontWeight: 600,
-      fontSize: '1.25rem',
+      fontWeight: 500,
+      fontSize: '1.125rem',
     },
   },
   textFieldPopupTrigger: {
@@ -112,19 +112,24 @@ export const getPopupTriggersStyle = (windowSize, isRTL = false, theme) => ({
     borderTop: 'none',
     borderLeft: 'none',
     borderRight: 'none',
+    margin: 20,
   },
   sectionTitlePopupTrigger: {
-    fontWeight: 'bold',
     marginBottom: theme.spacing(2),
   },
   toggleButtonGroupPopupTrigger: {
-    backgroundColor: '#f0f0f0',
+    backgroundColor: '#e4e4e4',
     borderRadius: theme.shape.borderRadius * 2,
     width: '100%',
     padding: 5,
     '& span': {
-      color: '#757575',
+      color: '#000',
+      fontSize: '20px',
+      fontWeight: '500',
     },
+  },
+  sectionTitlePageTargetting: {
+    fontSize: '20px !important',
   },
   toggleButtonPopupTrigger: {
     flex: 1,
@@ -133,9 +138,12 @@ export const getPopupTriggersStyle = (windowSize, isRTL = false, theme) => ({
     fontWeight: '700',
     padding: 13,
     '&.Mui-selected': {
-      backgroundColor: theme.palette.common.white,
-      color: theme.palette.text.primary,
+      background: 'linear-gradient(90deg, #FF0076 1.31%, #FF0054 33.07%, #FF4D2A 134.74%)',
+      borderBottom: '4px solid #ff2c44',
       borderRadius: theme.shape.borderRadius * 2,
+      '& svg, span': {
+        color: '#fff',
+      },
       '&:hover': {
         backgroundColor: theme.palette.common.white,
       },
@@ -169,16 +177,144 @@ export const getPopupTriggersStyle = (windowSize, isRTL = false, theme) => ({
     color: theme.palette.grey[400],
   },
 
+  // page targeting
+  pageTargetingResponsiveContainer: {
+    margin: 24,
+    [theme.breakpoints.down("sm")]: {
+      margin: 16,
+    },
+  },
+  pageTargetingResponsiveHeader: {
+    [theme.breakpoints.down("sm")]: {
+      padding: 16,
+    },
+  },
+  pageTargetingResponsiveDashedBox: {
+    border: "2px dashed #e0e0e0",
+    borderRadius: 8,
+    padding: 24,
+    margin: "0 32px",
+    [theme.breakpoints.down("sm")]: {
+      padding: 16,
+      margin: "0 16px",
+    },
+  },
+  pageTargetingResponsiveRuleItem: {
+    display: "flex",
+    gap: 16,
+    padding: 12,
+    backgroundColor: "#fafafa",
+    borderRadius: 4,
+    alignItems: "center",
+    [theme.breakpoints.down("sm")]: {
+      flexDirection: "column",
+      alignItems: "stretch",
+      padding: 8,
+    },
+  },
+  pageTargetingResponsiveFormControls: {
+    display: "flex",
+    gap: 16,
+    width: "100%",
+    [theme.breakpoints.down("sm")]: {
+      flexDirection: "column",
+    },
+  },
+  pageTargetingSelectField: {
+    flex: 1,
+    minWidth: 200,
+    backgroundColor: "#fff",
+    borderRadius: 4,
+    border: '1px solid #0000003b',
+    "& .MuiSelect-select": {
+      fontSize: "1rem",
+      fontWeight: 400,
+      fontFamily: "Assistant, sans-serif",
+      padding: '10px 12px',
+    },
+    [theme.breakpoints.down("sm")]: {
+      width: "100%",
+      minWidth: "auto",
+    },
+  },
+  pageTargetingTextField: {
+    flex: 2,
+    backgroundColor: "#fff",
+    "& .MuiInputBase-input": {
+      fontSize: "1rem",
+      fontWeight: 400,
+      fontFamily: "Assistant, sans-serif",
+    },
+    [theme.breakpoints.down("sm")]: {
+      width: "100%",
+    },
+  },
+  pageTargetingMenuItem: {
+    fontSize: "1rem",
+    fontWeight: 400,
+    fontFamily: "Assistant, sans-serif",
+  },
+  pageTargetingDeleteButton: {
+    borderRadius: 5,
+    padding: 8,
+    "& svg": {
+      height: 22,
+      width: 24,
+      padding: 6,
+    },
+    [theme.breakpoints.down("sm")]: {
+      alignSelf: "center",
+    },
+  },
+  pageTargetingResponsiveExamples: {
+    marginTop: 16,
+    marginLeft: 32,
+    marginRight: 32,
+    [theme.breakpoints.down("sm")]: {
+      margin: "12px 16px 8px 16px",
+    },
+  },
+  pageTargetingResponsiveGap: {
+    display: "flex",
+    flexDirection: "column",
+    gap: 16,
+    [theme.breakpoints.down("sm")]: {
+      gap: 12,
+    },
+  },
+  pageTargetingCard: {
+    borderRadius: 8,
+    boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+  },
+  addRuleButton: {
+    margin: isRTL ? '12px 8px 0px 0px' : '12px 0px 0px 8px',
+    alignItems: 'center',
+    [theme.breakpoints.down("sm")]: {
+      margin: "12px auto",
+    },
+    '& span': {
+      margin: '0px 0px 0px 0px',
+    },
+  },
+  pageTargetingCardContent: {
+    padding: 0,
+  },
+  mobileFullWidth: {
+    [theme.breakpoints.down("sm")]: {
+      width: "100%",
+    },
+  },
+
   // advance settings
   topHeaderPopupTrigger: {
-    backgroundColor: theme.palette.grey[100],
-    padding: isRTL ? '16px 32px 0px 0px' : '16px 0px 0px 32px',
+    backgroundColor: '#F0F5FF',
+    padding: isRTL ? '16px 32px 0px 0px' : '16px 16px 0px 32px',
     borderBottom: `1px solid ${theme.palette.grey[300]}`,
     borderTopLeftRadius: '12px',
     borderTopRightRadius: '12px',
   },
   accordionSummaryPopupTrigger: {
-    backgroundColor: theme.palette.grey[100],
+    backgroundColor: '#F0F5FF',
     borderRadius: theme.shape.borderRadius * 2.5,
     margin: '0px 36px',
     padding: '18px 18px 18px 32px',
@@ -200,8 +336,8 @@ export const getPopupTriggersStyle = (windowSize, isRTL = false, theme) => ({
     width: '100%',
     margin: 0,
     '& span': {
-      fontWeight: '500',
-      fontSize: '20px',
+      fontWeight: '700',
+      fontSize: '17px',
     },
   }
 });

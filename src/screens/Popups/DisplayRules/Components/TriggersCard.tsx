@@ -36,10 +36,10 @@ const TriggerCard: FC<TriggerCardProps> = ({
         <Box className={classes.cardTitleContainerPopupTrigger}>
           <Avatar className={classes.avatarPopupTrigger}>{icon}</Avatar>
           <Box display="flex" flexDirection="column">
-            <Typography variant="h6" className={classes.bold}>
+            <Typography variant="body1" className={classes.managementTitle}>
               {title}
             </Typography>
-            <Typography className={classes.cardDescriptionPopupTrigger}>{description}</Typography>
+            <Typography variant="body1" className={classes.cardDescriptionPopupTrigger}>{description}</Typography>
           </Box>
         </Box>
         <Switch checked={enabled} onChange={onToggle} color="primary" />
@@ -47,7 +47,8 @@ const TriggerCard: FC<TriggerCardProps> = ({
       <Divider variant="middle" />
       <CardContent className={classes.cardContentPopupTrigger}>
         {children}
-        <Box className={classes.cardFooterPopupTrigger}>{footer}</Box>
+        <Box>
+          <Typography variant="body1" className={classes.cardFooterPopupTrigger}>{footer}</Typography></Box>
       </CardContent>
     </Card>
   );

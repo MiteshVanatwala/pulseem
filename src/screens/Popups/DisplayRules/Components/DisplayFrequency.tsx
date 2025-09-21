@@ -7,6 +7,8 @@ import {
     FormControlLabel,
     TextField,
     Box,
+    useTheme,
+    useMediaQuery,
 } from '@material-ui/core';
 import {
     ToggleButton,
@@ -28,6 +30,8 @@ interface Props {
 
 const DisplayFrequency: React.FC<Props> = ({ classes }) => {
     const { t } = useTranslation();
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
     const [targetAudience, setTargetAudience] = useState('all');
     const [displaySchedule, setDisplaySchedule] = useState('daily');
     const [everyXDays, setEveryXDays] = useState(3);
@@ -43,19 +47,37 @@ const DisplayFrequency: React.FC<Props> = ({ classes }) => {
     };
 
     return (
-        <Box mt={4}>
+        <Box mt={isMobile ? 2 : 4}>
             <Paper className={classes.paperPopupTrigger}>
-                <Box mb={4} pb={10} className={clsx(classes.topHeaderPopupTrigger, classes.p10)} >
-                    <Typography variant="h5" className={classes.bold} gutterBottom>
+                <Box
+                    mb={isMobile ? 2 : 4}
+                    pb={isMobile ? 5 : 10}
+                    className={clsx(classes.topHeaderPopupTrigger, classes.p10)}
+                    px={isMobile ? 2 : undefined}
+                >
+                    <Typography
+                        variant="body1"
+                        className={clsx(classes.managementTitle, classes.font20)}
+                        gutterBottom
+                    >
                         {t('PopupTriggers.displayFrequency.title')}
                     </Typography>
-                    <Typography variant="body1" className={classes.subtitlePopupTrigger}>
+                    <Typography
+                        variant={isMobile ? "body2" : "body1"}
+                        className={classes.subtitlePopupTrigger}
+                    >
                         {t('PopupTriggers.displayFrequency.description')}
                     </Typography>
                 </Box>
 
-                <Box mb={4} mx={4}>
-                    <Typography variant="h6" className={classes.sectionTitlePopupTrigger}>
+                <Box
+                    mb={isMobile ? 2 : 4}
+                    mx={isMobile ? 2 : 4}
+                >
+                    <Typography
+                        variant="body1"
+                        className={clsx(classes.managementTitle, classes.pb10)}
+                    >
                         {t('PopupTriggers.displayFrequency.targetAudience.title')}
                     </Typography>
                     <ToggleButtonGroup
@@ -63,57 +85,157 @@ const DisplayFrequency: React.FC<Props> = ({ classes }) => {
                         exclusive
                         onChange={handleTargetAudienceChange}
                         className={clsx(classes.toggleButtonGroupPopupTrigger, classes.p5)}
+                        orientation={isMobile ? "vertical" : "horizontal"}
+                        style={{
+                            width: '100%',
+                            display: 'flex',
+                            flexDirection: isMobile ? 'column' : 'row',
+                        }}
                     >
-                        <ToggleButton value="all" className={classes.toggleButtonPopupTrigger}>
-                            <PeopleIcon />
+                        <ToggleButton
+                            value="all"
+                            className={classes.toggleButtonPopupTrigger}
+                            style={{
+                                width: isMobile ? '100%' : 'auto',
+                                minHeight: isMobile ? '48px' : 'auto',
+                                marginBottom: isMobile ? '8px' : '0',
+                                fontSize: isMobile ? '0.875rem' : 'inherit',
+                                padding: isMobile ? '12px 16px' : undefined,
+                                justifyContent: isMobile ? 'flex-start' : 'center',
+                            }}
+                        >
+                            <PeopleIcon style={{ marginRight: isMobile ? '12px' : '8px' }} />
                             {t('PopupTriggers.displayFrequency.targetAudience.allVisitors')}
                         </ToggleButton>
-                        <ToggleButton value="new" className={classes.toggleButtonPopupTrigger}>
-                            <PersonAddIcon />
+                        <ToggleButton
+                            value="new"
+                            className={classes.toggleButtonPopupTrigger}
+                            style={{
+                                width: isMobile ? '100%' : 'auto',
+                                minHeight: isMobile ? '48px' : 'auto',
+                                marginBottom: isMobile ? '8px' : '0',
+                                fontSize: isMobile ? '0.875rem' : 'inherit',
+                                padding: isMobile ? '12px 16px' : undefined,
+                                justifyContent: isMobile ? 'flex-start' : 'center',
+                            }}
+                        >
+                            <PersonAddIcon style={{ marginRight: isMobile ? '12px' : '8px' }} />
                             {t('PopupTriggers.displayFrequency.targetAudience.newVisitors')}
                         </ToggleButton>
-                        <ToggleButton value="returning" className={classes.toggleButtonPopupTrigger}>
-                            <PersonPinIcon />
+                        <ToggleButton
+                            value="returning"
+                            className={classes.toggleButtonPopupTrigger}
+                            style={{
+                                width: isMobile ? '100%' : 'auto',
+                                minHeight: isMobile ? '48px' : 'auto',
+                                fontSize: isMobile ? '0.875rem' : 'inherit',
+                                padding: isMobile ? '12px 16px' : undefined,
+                                justifyContent: isMobile ? 'flex-start' : 'center',
+                            }}
+                        >
+                            <PersonPinIcon style={{ marginRight: isMobile ? '12px' : '8px' }} />
                             {t('PopupTriggers.displayFrequency.targetAudience.returningVisitors')}
                         </ToggleButton>
                     </ToggleButtonGroup>
-                    <Typography variant="body1" color="textSecondary" display="block">
+                    <Typography
+                        variant={isMobile ? "body2" : "body1"}
+                        className={classes.grayTextCell}
+                        display="block"
+                        style={{ marginTop: isMobile ? '12px' : '8px' }}
+                    >
                         {t('PopupTriggers.displayFrequency.targetAudience.caption')}
                     </Typography>
                 </Box>
 
-                <Box pb={4} mx={4} mb={4}>
-                    <Typography variant="h6" className={classes.sectionTitlePopupTrigger}>
+                <Box
+                    pb={isMobile ? 2 : 4}
+                    mx={isMobile ? 2 : 4}
+                    mb={isMobile ? 2 : 4}
+                >
+                    <Typography
+                        variant="body1"
+                        className={clsx(classes.pb10, classes.managementTitle)}
+                    >
                         {t('PopupTriggers.displayFrequency.displaySchedule.title')}
                     </Typography>
                     <RadioGroup value={displaySchedule} onChange={handleDisplayScheduleChange}>
-                        <Box mb={2}>
+                        <Box mb={isMobile ? 1.5 : 2}>
                             <FormControlLabel
                                 value="daily"
                                 control={<Radio color="secondary" />}
                                 label={
-                                    <Box display="flex" flexGrow={1} alignItems="center" justifyContent="space-between">
-                                        <div>
-                                            <Typography variant='h6' className={classes.bold}>{t('PopupTriggers.displayFrequency.displaySchedule.oncePerDay.title')}</Typography>
-                                            <Typography variant="body1">{t('PopupTriggers.displayFrequency.displaySchedule.oncePerDay.description')}</Typography>
+                                    <Box
+                                        display="flex"
+                                        flexGrow={1}
+                                        alignItems="center"
+                                        justifyContent="space-between"
+                                        flexDirection={isMobile ? "column" : "row"}
+                                    >
+                                        <div style={{ width: isMobile ? '100%' : 'auto' }}>
+                                            <Typography
+                                                variant="body1"
+                                                className={classes.managementTitle}
+                                            >
+                                                {t('PopupTriggers.displayFrequency.displaySchedule.oncePerDay.title')}
+                                            </Typography>
+                                            <Typography
+                                                variant="body1"
+                                            >
+                                                {t('PopupTriggers.displayFrequency.displaySchedule.oncePerDay.description')}
+                                            </Typography>
                                         </div>
-                                        <TodayIcon className={classes.radioIconPopupTrigger} />
+                                        <TodayIcon
+                                            className={classes.radioIconPopupTrigger}
+                                            style={{
+                                                marginTop: isMobile ? '8px' : '0',
+                                                alignSelf: isMobile ? 'flex-start' : 'center'
+                                            }}
+                                        />
                                     </Box>
                                 }
                                 classes={{ label: classes.radioLabelContainerPopupTrigger }}
                                 className={`${classes.radioLabelPopupTrigger} ${displaySchedule === 'daily' ? 'selected' : ''}`}
+                                style={{ alignItems: isMobile ? 'flex-start' : 'center' }}
                             />
                         </Box>
-                        <Box mb={2}>
+                        <Box mb={isMobile ? 1.5 : 2}>
                             <FormControlLabel
                                 value="everyXDays"
                                 control={<Radio color="secondary" />}
                                 label={
-                                    <Box display="flex" flexGrow={1} alignItems="center" justifyContent="space-between">
-                                        <Box display="flex" flexDirection="column">
-                                            <Typography variant='h6' className={clsx(classes.bold, classes.pb5)}>{t('PopupTriggers.displayFrequency.displaySchedule.everyXDays.main')}</Typography>
-                                            <div className={classes.inputContainerPopupTrigger}>
-                                                <Typography>{t('PopupTriggers.displayFrequency.displaySchedule.everyXDays.prefix')}</Typography>
+                                    <Box
+                                        display="flex"
+                                        flexGrow={1}
+                                        justifyContent="space-between"
+                                        flexDirection={isMobile ? "column" : "row"}
+                                        alignItems={isMobile ? "flex-start" : "center"}
+                                    >
+                                        <Box
+                                            display="flex"
+                                            flexDirection="column"
+                                            width={isMobile ? '100%' : 'auto'}
+                                        >
+                                            <Typography
+                                                variant="body1"
+                                                className={clsx(classes.managementTitle, classes.mb1)}
+                                            >
+                                                {t('PopupTriggers.displayFrequency.displaySchedule.everyXDays.main')}
+                                            </Typography>
+                                            <div
+                                                className={classes.inputContainerPopupTrigger}
+                                                style={{
+                                                    flexWrap: isMobile ? 'wrap' : 'nowrap',
+                                                    alignItems: isMobile ? 'flex-start' : 'center',
+                                                }}
+                                            >
+                                                <Typography
+                                                    style={{
+                                                        fontSize: isMobile ? '0.875rem' : 'inherit',
+                                                        marginBottom: isMobile ? '4px' : '0'
+                                                    }}
+                                                >
+                                                    {t('PopupTriggers.displayFrequency.displaySchedule.everyXDays.prefix')}
+                                                </Typography>
                                                 <TextField
                                                     variant="outlined"
                                                     size="small"
@@ -122,15 +244,33 @@ const DisplayFrequency: React.FC<Props> = ({ classes }) => {
                                                     onChange={(e) => setEveryXDays(Number(e.target.value))}
                                                     disabled={displaySchedule !== 'everyXDays'}
                                                     type="number"
+                                                    style={{
+                                                        margin: isMobile ? '4px 8px 4px 0' : undefined,
+                                                        minWidth: '60px',
+                                                        maxWidth: '80px',
+                                                    }}
                                                 />
-                                                <Typography>{t('PopupTriggers.displayFrequency.displaySchedule.everyXDays.suffix')}</Typography>
+                                                <Typography
+                                                    style={{
+                                                        fontSize: isMobile ? '0.875rem' : 'inherit',
+                                                    }}
+                                                >
+                                                    {t('PopupTriggers.displayFrequency.displaySchedule.everyXDays.suffix')}
+                                                </Typography>
                                             </div>
                                         </Box>
-                                        <EventNoteIcon className={classes.radioIconPopupTrigger} />
+                                        <EventNoteIcon
+                                            className={classes.radioIconPopupTrigger}
+                                            style={{
+                                                marginTop: isMobile ? '8px' : '0',
+                                                alignSelf: isMobile ? 'flex-start' : 'center'
+                                            }}
+                                        />
                                     </Box>
                                 }
                                 classes={{ label: classes.radioLabelContainerPopupTrigger }}
                                 className={`${classes.radioLabelPopupTrigger} ${displaySchedule === 'everyXDays' ? 'selected' : ''}`}
+                                style={{ alignItems: isMobile ? 'flex-start' : 'center' }}
                             />
                         </Box>
                         <Box>
@@ -138,20 +278,49 @@ const DisplayFrequency: React.FC<Props> = ({ classes }) => {
                                 value="everyVisit"
                                 control={<Radio color="secondary" />}
                                 label={
-                                    <Box display="flex" flexGrow={1} alignItems="center" justifyContent="space-between">
-                                        <div>
-                                            <Typography variant='h6' className={classes.bold}>{t('PopupTriggers.displayFrequency.displaySchedule.everyVisit.title')}</Typography>
-                                            <Typography variant="body1">{t('PopupTriggers.displayFrequency.displaySchedule.everyVisit.description')}</Typography>
+                                    <Box
+                                        display="flex"
+                                        flexGrow={1}
+                                        justifyContent="space-between"
+                                        flexDirection={isMobile ? "column" : "row"}
+                                        alignItems={isMobile ? "flex-start" : "center"}
+                                    >
+                                        <div style={{ width: isMobile ? '100%' : 'auto' }}>
+                                            <Typography
+                                                variant="body1"
+                                                className={classes.managementTitle}
+                                            >
+                                                {t('PopupTriggers.displayFrequency.displaySchedule.everyVisit.title')}
+                                            </Typography>
+                                            <Typography
+                                                variant={isMobile ? "body2" : "body1"}
+                                            >
+                                                {t('PopupTriggers.displayFrequency.displaySchedule.everyVisit.description')}
+                                            </Typography>
                                         </div>
-                                        <span className={classes.infinityIcon}>∞</span>
+                                        <span
+                                            className={classes.infinityIcon}
+                                            style={{
+                                                marginTop: isMobile ? '8px' : '0',
+                                                alignSelf: isMobile ? 'flex-start' : 'center'
+                                            }}
+                                        >
+                                            ∞
+                                        </span>
                                     </Box>
                                 }
                                 classes={{ label: classes.radioLabelContainerPopupTrigger }}
                                 className={`${classes.radioLabelPopupTrigger} ${displaySchedule === 'everyVisit' ? 'selected' : ''}`}
+                                style={{ alignItems: isMobile ? 'flex-start' : 'center' }}
                             />
                         </Box>
                     </RadioGroup>
-                    <Typography variant="body1"  color="textSecondary" display="block" className={classes.mt2}>
+                    <Typography
+                        variant={isMobile ? "body2" : "body1"}
+                        className={clsx(classes.grayTextCell, classes.mt2)}
+                        display="block"
+                        style={{ marginTop: isMobile ? '12px' : undefined }}
+                    >
                         {t('PopupTriggers.displayFrequency.displaySchedule.caption')}
                     </Typography>
                 </Box>

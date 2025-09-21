@@ -23,7 +23,7 @@ const AdvancedSettings = ({ classes }: any) => {
       <Paper variant="outlined" className={clsx(classes.paperPopupTrigger, classes.noPadding)}>
         <Box>
           <Box className={clsx(classes.topHeaderPopupTrigger, classes.p10)} mb={4}>
-            <Typography variant="h5" gutterBottom className={classes.bold}>
+            <Typography variant="body1" className={classes.managementTitle} gutterBottom>
               {t('PopupTriggers.advanceSettings.headerSection.title')}
             </Typography>
             <Typography variant="body1" className={classes.subtitlePopupTrigger}>
@@ -36,7 +36,7 @@ const AdvancedSettings = ({ classes }: any) => {
             alignItems="center"
             className={classes.accordionSummaryPopupTrigger}
           >
-            <Typography variant="h6">{t('PopupTriggers.advanceSettings.postConversion.title')}</Typography>
+            <Typography variant="body1" className={classes.managementTitle}>{t('PopupTriggers.advanceSettings.postConversion.title')}</Typography>
             <ArrowDropDownIcon />
           </Box>
           <Box className={classes.formContainerPopupTrigger}>
@@ -53,17 +53,17 @@ const AdvancedSettings = ({ classes }: any) => {
                   }
                   label={
                     <>
-                      <Typography variant='h6' className={classes.bold}>{t('PopupTriggers.advanceSettings.postConversion.continueShowing.label')}</Typography>
+                      <Typography variant='body1' className={classes.managementTitle}>{t('PopupTriggers.advanceSettings.postConversion.continueShowing.label')}</Typography>
                     </>
                   }
                 />
               </FormGroup>
-              <Typography variant="body1" color="textSecondary">
+              <Typography variant="body1" className={classes.grayTextCell}>
                 {t('PopupTriggers.advanceSettings.postConversion.continueShowing.helper')}
               </Typography>
             </Box>
             <Box my={3} px={4}>
-              <Typography variant="h6" className={classes.bold} gutterBottom>
+              <Typography variant='body1' className={classes.managementTitle} gutterBottom>
                 {t('PopupTriggers.advanceSettings.postConversion.defineConversion.label')}
               </Typography>
               <RadioGroup
