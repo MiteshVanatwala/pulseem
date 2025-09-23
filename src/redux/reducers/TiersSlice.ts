@@ -74,7 +74,7 @@ export const getAddSubscriptionCardIframeURL = createAsyncThunk(
     async (request: SubscriptionCardIframeRequest, thunkAPI) => {
         try {
             const response = await PulseemReactInstance.get(
-                `AccountBilling/GetAddSubscriptionCardIframeURL/${request.language}/${request.subscriptionType}/${request.isNewSubscription}/${request.tierId}`
+                `AccountBilling/GetAddSubscriptionCardIframeURL/${request.language}/TierSubscription/true/${request.tierId}`
             );
             return response.data as PulseemResponse;
         } catch (error) {
@@ -97,7 +97,15 @@ export const getUserCreditCards = createAsyncThunk(
 );
 
 interface TiersState {
-    currentPlan: PulseemResponse;
+    currentPlan: {
+        Id?: number;
+        Name?: string;
+        Description?: string;
+        TierSubscriptionStartDate?: string | null;
+        TierSubscriptionEndDate?: string | null;
+        AutomationAvailable?: boolean;
+        Price?: string | null;
+    };
     availablePlans: PulseemResponse;
     userCreditCards: PulseemResponse;
     subscriptionCardIframeURL: PulseemResponse;
@@ -120,7 +128,7 @@ interface TiersState {
 }
 
 const initialState: TiersState = {
-    currentPlan: { Data: null, Message: '', StatusCode: 100 },
+    currentPlan: {},
     availablePlans: { Data: null, Message: '', StatusCode: 100 },
     userCreditCards: { Data: null, Message: '', StatusCode: 100 },
     subscriptionCardIframeURL: { Data: null, Message: '', StatusCode: 100 },
@@ -161,17 +169,9 @@ const TiersSlice = createSlice({
     extraReducers: (builder) => {
         // Get Current Plan
         builder
-            .addCase(getCurrentPlan.pending, (state) => {
-                state.loading.currentPlan = true;
-                state.error.currentPlan = null;
-            })
             .addCase(getCurrentPlan.fulfilled, (state, action) => {
                 state.loading.currentPlan = false;
-                state.currentPlan = action.payload;
-            })
-            .addCase(getCurrentPlan.rejected, (state, action) => {
-                state.loading.currentPlan = false;
-                state.error.currentPlan = action.payload as string;
+                state.currentPlan = action.payload.Data;
             })
 
         // Downgrade Plan

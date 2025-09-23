@@ -95,6 +95,49 @@
         "buttonText": "CONTACT SALES"
       }
     },
+    "upgrade": {
+      "title": "Upgrade to {planTitle}",
+      "features": {
+        "unlimitedAutomations": {
+          "title": "Unlimited Automations",
+          "description": "Create unlimited automated marketing workflows"
+        },
+        "landingPages": {
+          "title": "Landing Pages",
+          "description": "Build unlimited high-converting landing pages"
+        },
+        "smartSegmentation": {
+          "title": "Smart Segmentation",
+          "description": "Target your audience with precision"
+        },
+        "surveySystem": {
+          "title": "Survey System",
+          "description": "Collect feedback and insights from customers"
+        }
+      },
+      "including": "Including:",
+      "includedFeatures": [
+        "Everything from \"Starter\" plan",
+        "Landing pages (unlimited)",
+        "Page view tracking",
+        "Survey system",
+        "Automations (unlimited)",
+        "Smart segmentations",
+        "A/B testing",
+        "API access"
+      ],
+      "paymentForm": {
+        "creditCardNumber": "Credit Card Number",
+        "creditCardPlaceholder": "1234 5678 9012 3456",
+        "monthPlaceholder": "MM",
+        "yearPlaceholder": "YYYY",
+        "cvvPlaceholder": "123",
+        "perMonth": "/month"
+      },
+      "upgradeButton": "Upgrade to {planTitle}",
+      "supportLevel": "Support Level: Chat + Email Support",
+      "loadingPaymentForm": "Loading payment form..."
+    },
     "features": {
       "emailCampaigns": "Email campaigns",
       "smsMarketing": "SMS marketing",
@@ -147,7 +190,12 @@
       "recommended": "Recommended",
       "seeAllFeatures": "See all features",
       "currentPlan": "Current Plan"
-    }
+    },
+    "frozenMessage": "<b>Since we couldn’t process your payment previously, some email campaigns were paused.</b><br /> Would you like to send the paused emails and resume scheduled automations and autoresponders?<br /><br />Clicking <b>Yes</b> will send all paused emails and restart any affected automations/autoresponders.<br />Clicking <b>No</b> will cancel all emails that were scheduled during the payment issue.",
+    "releaseMessage": "Your paused emails are now being sent, and all relevant automations have been resumed.",
+    "cancelMessage": "Understood. The paused emails have been canceled, and automations will remain inactive for now. You can restart them anytime from the <b>automation management pages.</b>",
+    "free": "Free",
+    "contactSales": "Contact Sales"
   },
   "creditCardManagement": {
     "title": "Credit Card Management",

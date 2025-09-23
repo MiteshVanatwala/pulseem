@@ -46,6 +46,7 @@ import SummaryPopup from "./SummaryPopup";
 import CreditCardManagement from "../../../components/BillingSettings/CreditCardManagement";
 import TierPlans from "../../../components/TierPlans/TierPlans";
 import { CreditCard } from "@material-ui/icons";
+import { DateFormats } from "../../../helpers/Constants";
 
 
 const BillingSettingsPage = ({ classes }: any) => {
@@ -57,7 +58,7 @@ const BillingSettingsPage = ({ classes }: any) => {
   const { accountFeatures } = useSelector((state: any) => state.common);
   const { creditCards } = useSelector((state: any) => state.payment);
   const { subAccount } = useSelector((state: any) => state.common);
-  const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
+  const { currentPlan } = useSelector((state: any) => state.tiers);
   const qs = (window.location.search && queryString.parse(window.location.search)) as any;
   const [addCardDialog, setAddCardDialog] = useState<boolean>(false);
   const [toastMessage, setToastMessage] = useState<ERROR_TYPE>(null);
@@ -80,23 +81,9 @@ const BillingSettingsPage = ({ classes }: any) => {
   const [showTierPlans, setShowTierPlans] = useState<boolean>(false);
 
   const formatPlanDescription = () => {
-    if (currentPlan?.Data) {
-      const plan = currentPlan.Data;
-      if (plan.Description) {
-        return plan.Description;
-      }
-      
-      // If no description, create one based on available data
-      let description = '';
-      if (plan.Price > 0) {
-        description = `₪${plan.Price}/${t('billing.month')}`;
-      } else if (plan.Name === 'GRAND_FATHER') {
-        description = t('billing.legacyPlan');
-      }
-      
-      return description || `${t('billing.upTo')} 2,500 ${t('billing.recipients')} • ₪99/${t('billing.month')}`;
-    }
-    return `${t('billing.upTo')} 2,500 ${t('billing.recipients')} • ₪99/${t('billing.month')}`;
+    const price = currentPlan?.Name !== 'GRAND_FATHER' && currentPlan?.Name !== 'STARTER' ? `₪${currentPlan?.Price}/${t('billing.month')}` : '';
+    const date = currentPlan?.TierSubscriptionStartDate && currentPlan?.TierSubscriptionEndDate ? ` • ${t("common.startDate")} - ${moment(currentPlan?.TierSubscriptionStartDate).format(DateFormats.DATE_ONLY)} - ${t("common.endDate")} - ${moment(currentPlan?.TierSubscriptionEndDate).format(DateFormats.DATE_ONLY)}` : '';
+    return `${price} ${date}`;
   };
 
   const renderToast = () => {
@@ -599,44 +586,56 @@ const BillingSettingsPage = ({ classes }: any) => {
             <Card className={clsx(classes.borderBox, classes.m10)} style={{ marginBottom: 0 }}>
               <Box className={clsx(classes.dFlex, classes.spaceBetween, classes.alignItemsCenter)} style={{ marginBottom: '20px' }}>
                 <Typography variant="h6" style={{ fontSize: '18px', fontWeight: 600, color: '#333' }}>
-                  {t('billing.yourPlan')} / התוכנית שלך
+                  {t('billing.yourPlan')}
                 </Typography>
-                <Box className={classes.dFlex} style={{ gap: '12px' }}>
-                  <Button
-                    className={clsx(
-                      classes.btn,
-                      classes.btnRounded
-                    )}
-                    onClick={(e: any) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      setCurrentDialog('creditCardDialog'); 
-                      setShowPopup(true);
-                    }}
-                  >
-                    {t('common.tier.manageCard')}
-                  </Button>
-                  <Button
-                    className={clsx(classes.btn, classes.btnRounded)}
-                    onClick={(e: any) => { 
-                      e.preventDefault(); 
-                      e.stopPropagation(); 
-                      setShowTierPlans(true);
-                    }}
-                  >
-                    {t('billing.upgradePlan')}
-                  </Button>
-                  <Button
-                    className={clsx(classes.btn, classes.btnRounded, classes.redButton)}
-                    onClick={(e: any) => { 
-                      e.preventDefault(); 
-                      e.stopPropagation(); 
-                      setConfirmCancelPlan(true);
-                    }}
-                  >
-                    {t('billing.cancelPlan')} / ביטול חבילה
-                  </Button>
-                </Box>
+                {
+                  currentPlan?.Name !== 'GRAND_FATHER' && (  
+                    <Box className={classes.dFlex} style={{ gap: '12px' }}>
+                      <Button
+                        className={clsx(
+                          classes.btn,
+                          classes.btnRounded
+                        )}
+                        onClick={(e: any) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setCurrentDialog('creditCardDialog'); 
+                          setShowPopup(true);
+                        }}
+                      >
+                        {t('common.tier.manageCard')}
+                      </Button>
+                      {
+                        currentPlan?.Name !== 'SCALE' && (
+                          <Button
+                            className={clsx(classes.btn, classes.btnRounded)}
+                            onClick={(e: any) => { 
+                              e.preventDefault(); 
+                              e.stopPropagation(); 
+                              setShowTierPlans(true);
+                            }}
+                          >
+                            {t('billing.upgradePlan')}
+                          </Button>
+                        )
+                      }
+                      {
+                        currentPlan?.Name !== 'STARTER' && (
+                          <Button
+                            className={clsx(classes.btn, classes.btnRounded, classes.redButton)}
+                            onClick={(e: any) => { 
+                              e.preventDefault(); 
+                              e.stopPropagation(); 
+                              setConfirmCancelPlan(true);
+                            }}
+                          >
+                            {t('billing.cancelPlan')}
+                          </Button>
+                        )
+                      }
+                    </Box>
+                  )
+                }
               </Box>
               
               <Box className={classes.dFlex} style={{ alignItems: 'center', gap: '16px' }}>
@@ -651,7 +650,7 @@ const BillingSettingsPage = ({ classes }: any) => {
                     textTransform: 'uppercase'
                   }}
                 >
-                  {currentPlan?.Data?.Name || 'ENGAGE'}
+                  {currentPlan?.Name || ''}
                 </Box>
                 <Typography style={{ fontSize: '16px', color: '#666' }}>
                   {formatPlanDescription()}
@@ -880,7 +879,7 @@ const BillingSettingsPage = ({ classes }: any) => {
         key={2}
         windowSize={windowSize}
         title={t('billing.confirmCancelPlanTitle')}
-        text={t('billing.confirmCancelPlanText')}
+        text={t('billing.confirmCancelPlanText').replace("{Date}", moment(currentPlan?.TierSubscriptionEndDate).format(DateFormats.DATE_ONLY) || '')}
       />
       {showTierPlans && <TierPlans
         classes={classes}

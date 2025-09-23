@@ -874,5 +874,7 @@
     "upgrade": "Upgrade Tier",
     "downgrade": "Downgrade Tier",
     "manageCard": "Manage Card"
-  }
+  },
+  "startDate": "Start Date",
+  "endDate": "End Date"
 }

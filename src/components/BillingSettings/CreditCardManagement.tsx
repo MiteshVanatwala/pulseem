@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Button,
@@ -14,9 +14,10 @@ import {
   Chip,
 } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import clsx from 'clsx';
 import { MdEdit, MdDelete, MdAdd } from 'react-icons/md';
+import { getUserCreditCards } from '../../redux/reducers/TiersSlice';
 
 interface CreditCardManagementProps {
   classes: any;
@@ -32,8 +33,16 @@ const CreditCardManagement: React.FC<CreditCardManagementProps> = ({
   onDeleteCard,
 }) => {
   const { t } = useTranslation();
-  const { creditCards } = useSelector((state: any) => state.payment);
+  const dispatch = useDispatch();
+  const { userCreditCards } = useSelector((state: any) => state.tiers);
   const { isRTL } = useSelector((state: any) => state.core);
+
+  // Extract credit cards data from the API response
+  const creditCards = userCreditCards?.Data || [];
+
+  useEffect(() => {
+    dispatch(getUserCreditCards() as any);
+  }, [dispatch]);
 
   const handleAddCard = () => {
     onAddCard?.();
@@ -64,7 +73,7 @@ const CreditCardManagement: React.FC<CreditCardManagementProps> = ({
                         fontWeight: 'bold'
                       }}
                     >
-                      **** **** **** {card.LastDigits}
+                      {card.MaskedNumber}
                     </Typography>
                   </TableCell>
                   <TableCell>
@@ -74,7 +83,7 @@ const CreditCardManagement: React.FC<CreditCardManagementProps> = ({
                   </TableCell>
                   <TableCell>
                     <Typography variant="body2">
-                      {card.ExpiryDate || 'N/A'}
+                      {card.ExpDate || 'N/A'}
                     </Typography>
                   </TableCell>
                   <TableCell>

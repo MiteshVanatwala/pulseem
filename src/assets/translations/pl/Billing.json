@@ -83,6 +83,49 @@
         "buttonText": "SKONTAKTUJ SIĘ ZE SPRZEDAŻĄ"
       }
     },
+    "upgrade": {
+      "title": "Ulepsz do {planTitle}",
+      "features": {
+        "unlimitedAutomations": {
+          "title": "Automatyzacje bez ograniczeń",
+          "description": "Twórz nieograniczone automatyczne przepływy marketingowe"
+        },
+        "landingPages": {
+          "title": "Strony docelowe",
+          "description": "Buduj nieograniczone, wysoko konwertujące strony docelowe"
+        },
+        "smartSegmentation": {
+          "title": "Inteligentna segmentacja",
+          "description": "Precyzyjnie targetuj swoją publiczność"
+        },
+        "surveySystem": {
+          "title": "System ankiet",
+          "description": "Zbieraj opinie i spostrzeżenia od klientów"
+        }
+      },
+      "including": "W tym:",
+      "includedFeatures": [
+        "Wszystko z planu \"Starter\"",
+        "Strony docelowe (bez ograniczeń)",
+        "Śledzenie wyświetleń stron",
+        "System ankiet",
+        "Automatyzacje (bez ograniczeń)",
+        "Inteligentne segmentacje",
+        "Testy A/B",
+        "Dostęp do API"
+      ],
+      "paymentForm": {
+        "creditCardNumber": "Numer karty kredytowej",
+        "creditCardPlaceholder": "1234 5678 9012 3456",
+        "monthPlaceholder": "MM",
+        "yearPlaceholder": "RRRR",
+        "cvvPlaceholder": "123",
+        "perMonth": "/miesiąc"
+      },
+      "upgradeButton": "Ulepsz do {planTitle}",
+      "supportLevel": "Poziom wsparcia: Czat i wsparcie email",
+      "loadingPaymentForm": "Ładowanie formularza płatności..."
+    },
     "features": {
       "emailCampaigns": "Kampanie email",
       "smsMarketing": "Marketing SMS",
@@ -135,7 +178,12 @@
       "recommended": "Polecane",
       "seeAllFeatures": "Zobacz wszystkie funkcje",
       "currentPlan": "Aktualny Plan"
-    }
+    },
+    "frozenMessage": "<b>Since we couldn’t process your payment previously, some email campaigns were paused.</b><br /> Would you like to send the paused emails and resume scheduled automations and autoresponders?<br /><br />Clicking <b>Yes</b> will send all paused emails and restart any affected automations/autoresponders.<br />Clicking <b>No</b> will cancel all emails that were scheduled during the payment issue.",
+    "releaseMessage": "Your paused emails are now being sent, and all relevant automations have been resumed.",
+    "cancelMessage": "Understood. The paused emails have been canceled, and automations will remain inactive for now. You can restart them anytime from the <b>automation management pages.</b>",
+    "free": "Free",
+    "contactSales": "Contact Sales"
   },
   "creditCardManagement": {
     "title": "Zarządzanie kartami kredytowymi",
