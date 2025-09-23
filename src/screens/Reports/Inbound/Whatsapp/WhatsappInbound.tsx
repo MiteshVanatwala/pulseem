@@ -10,6 +10,7 @@ import { ExportFile } from "../../../../helpers/Export/ExportFile";
 import { ExportFileTypes } from "../../../../model/Export/ExportFileTypes";
 import { getInboundReport } from "../../../../redux/reducers/whatsappSlice";
 import ConfirmRadioDialog from "../../../../components/DialogTemplates/ConfirmRadioDialog";
+import { BaseDialog } from "../../../../components/DialogTemplates/BaseDialog";
 import { ExportIcon } from "../../../../assets/images/managment/index";
 import { TablePagination } from "../../../../components/managment/index";
 import {
@@ -88,12 +89,24 @@ const WhatsappInbound = ({ classes }: any) => {
   // const [searchRequest, setSearchRequest] =
   //   useState<wpInbdDefaultFilterType>(defaultRequest);
 
+  const getTierValidationDialog = () => {
+    return 'tier';
+  };
+
   const getInboundData = async () => {
     setShowLoader(true);
-    await dispatch(
+    const response: any = await dispatch(
       //@ts-ignore
       getInboundReport({ ...request, PageSize: rowsPerPage, PageIndex: page })
     );
+    
+    // Check for tier validation
+    if (response?.payload?.StatusCode === 927) {
+      setDialog(getTierValidationDialog());
+      setShowLoader(false);
+      return;
+    }
+    
     setShowLoader(false);
   };
   const getInboundDataById = async (id: string) => {
@@ -160,6 +173,13 @@ const WhatsappInbound = ({ classes }: any) => {
     request.IsExport = true;
     //@ts-ignore
     const response: any = await dispatch(getInboundReport(request));
+
+    // Check for tier validation
+    if (response?.payload?.StatusCode === 927) {
+      setDialog(getTierValidationDialog());
+      setShowLoader(false);
+      return;
+    }
 
     const exportOptions: any = {
       OrderItems: true,
@@ -373,6 +393,7 @@ const WhatsappInbound = ({ classes }: any) => {
         rows={inboundWhatsappReport?.Message}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={handlePageChange}
+        //@ts-ignore
         rowsPerPageOptions={rowsOptions}
         page={page}
         onPageChange={setPage}
@@ -410,6 +431,19 @@ const WhatsappInbound = ({ classes }: any) => {
         defaultValue="xlsx"
         options={ExportFileTypes}
       />
+      {dialog === 'tier' && (
+        <BaseDialog
+          classes={classes}
+          open={dialog === 'tier'}
+          onClose={() => setDialog(null)}
+          onCancel={() => setDialog(null)}
+          onConfirm={() => setDialog(null)}
+          showDefaultButtons={false}
+          title={t('common.Notice')}
+        >
+          {RenderHtml(t('common.TierValidationMessage'))}
+        </BaseDialog>
+      )}
       <Loader isOpen={showLoader} showBackdrop={true} />
     </Box>
   );

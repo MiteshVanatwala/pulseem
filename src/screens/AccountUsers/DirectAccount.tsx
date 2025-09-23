@@ -46,6 +46,11 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 		addBalance: 0
 	})
 	const CustomGuidEnc = get(subAccountRecord, 'CustomGuidEnc', '');
+	const [ dialogType, setDialogType ] = useState<{
+		type: string;
+	} | null>({
+		type: ''
+	});
 
 	useEffect(() => {
 		if (isOpen && CustomGuidEnc !== '') {
@@ -132,6 +137,10 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 				showErrorToast(t('common.Error'));
 				break;
 			}
+			case 927: {
+				setDialogType({ type: 'tier' });
+				break;
+			}
 			case 1002: {
 				showErrorToast(t('SubAccount.notEnoughEmailCreditInParentAccount'));
 				break;
@@ -178,6 +187,39 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 		}, 2000);
 		return <Toast customData={null} data={toastMessage} />;
 	};
+
+	const getTierValidationDialog = () => ({
+		title: t('whatsapp.alertModal.DeleteText'),
+		showDivider: false,
+		content: (
+			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+				Tier Validation
+			</Typography>
+		)
+	})
+
+	const renderDialog = () => {
+		const { type } = dialogType || {}
+		let currentDialog: any = {};
+		if (type === 'tier') {
+			currentDialog = getTierValidationDialog();
+		}
+
+		if (type) {
+			return (
+				dialogType && <BaseDialog
+          contentStyle={classes.maxWidth540}
+					classes={classes}
+					open={dialogType}
+					onCancel={() => setDialogType(null)}
+					onClose={() => setDialogType(null)}
+					renderButtons={currentDialog?.renderButtons || null}
+					{...currentDialog}>
+					{currentDialog?.content}
+				</BaseDialog>
+			)
+		}
+	}
 
 	return (
 		<BaseDialog
@@ -448,6 +490,7 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 
 				<Loader isOpen={isLoader} />
 				{toastMessage && renderToast()}
+				{renderDialog()}
 			</>
 		</BaseDialog>
 	);

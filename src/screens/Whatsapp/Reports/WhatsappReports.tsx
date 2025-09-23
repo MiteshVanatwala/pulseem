@@ -62,6 +62,7 @@ import { DateFormats, SizeOptions_XS_SM } from '../../../helpers/Constants';
 import PulseemSwitch from '../../../components/Controlls/PulseemSwitch';
 import { sitePrefix } from '../../../config';
 import { LinksClicksReport } from '../../../config/enum';
+import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 
 const WhatsappReports = ({ classes }: ClassesType) => {
 	const { t: translator } = useTranslation();
@@ -95,6 +96,11 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 	const [paginationSetting, setPaginationSetting] = useState<AllReportReq>(
 		allReportInitialPagination
 	);
+	const [dialogType, setDialogType] = useState<{type: string} | null>(null);
+
+	const getTierValidationDialog = () => ({
+		type: 'tier'
+	});
 
 	const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot };
 	const cellStyle = {
@@ -371,6 +377,13 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 			})
 		);
 		setIsLoader(false);
+		
+		// Check for tier validation
+		if (campaignData?.StatusCode === 927) {
+			setDialogType(getTierValidationDialog());
+			return;
+		}
+		
 		if (campaignData.Status === apiStatus.SUCCESS) {
 			let exportData: exportDataProps[] = campaignData?.Data?.Items?.map(
 				(row: reportDataProps) => {
@@ -422,6 +435,13 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 			getAllReports(pagination)
 		);
 		setIsLoader(false);
+		
+		// Check for tier validation
+		if (campaignData?.payload?.StatusCode === 927) {
+			setDialogType(getTierValidationDialog());
+			return;
+		}
+		
 		if (campaignData.payload.Status === apiStatus.SUCCESS) {
 			setReportListData(campaignData.payload.Data.Items);
 			setTotalRecord(campaignData?.payload?.Data?.TotalRecord);
@@ -951,7 +971,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 				rows={totalRecord}
 				rowsPerPage={paginationSetting?.pageSize}
 				onRowsPerPageChange={onRowsPerPageChange}
-				rowsPerPageOptions={[6, 10, 20, 50]}
+				rowsPerPageOptions={[6, 10, 20, 50] as any}
 				page={paginationSetting?.pageNo}
 				onPageChange={(pageNumber: number) =>
 					updatePaginationSetting({
@@ -994,6 +1014,22 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 				!isLoader && <NoSetup classes={classes} />
 			)}
 			<Loader isOpen={isLoader} showBackdrop={true} />
+			
+			{/* Tier Validation Dialog */}
+			{dialogType?.type === 'tier' && (
+				<BaseDialog
+					classes={classes}
+					open={true}
+					onCancel={() => setDialogType(null)}
+					onClose={() => setDialogType(null)}
+					title={translator('whatsapp.alertModal.DeleteText')}
+					showDivider={false}
+				>
+					<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+						Tier Validation
+					</Typography>
+				</BaseDialog>
+			)}
 		</DefaultScreen>
 	);
 };

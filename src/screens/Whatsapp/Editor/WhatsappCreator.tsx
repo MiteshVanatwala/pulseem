@@ -1060,7 +1060,12 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 					submitTemplates(requestJSON)
 				);
 				setIsLoader(false);
-				if (submitTemplate?.payload?.Status === apiStatus.SUCCESS) {
+				if (submitTemplate?.payload?.StatusCode === 927) {
+					if (['WHATSAPP_MEDIA_ATTACHMENT', 'WHATSAPP_TEMPLATES', 'WHATSAPP_BUTTON_ATTACHMENT','WHATSAPP_CARD_MESSAGE'].indexOf(submitTemplate?.payload?.Message) !== -1) {
+						setDialogType({ type: 'tier' })
+					}
+				}
+				else if (submitTemplate?.payload?.Status === apiStatus.SUCCESS) {
 					setToastMessage(ToastMessages.SAVE_SUCCESS);
 					// resetFields();
 					if (!templateID) {
@@ -1069,6 +1074,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 						);
 					}
 				} else if (submitTemplate?.payload?.Status === 'Error') {
+					
 					if (submitTemplate?.payload?.Message?.length > 0) {
 						if (
 							submitTemplate?.payload?.Message?.includes(
@@ -1148,7 +1154,12 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				submitTemplates(requestJSON)
 			);
 			setIsLoader(false);
-			if (submitTemplate?.payload?.Status === apiStatus.SUCCESS) {
+			if (submitTemplate?.payload?.StatusCode === 927) {
+				if (['WHATSAPP_MEDIA_ATTACHMENT', 'WHATSAPP_TEMPLATES', 'WHATSAPP_BUTTON_ATTACHMENT','WHATSAPP_CARD_MESSAGE'].indexOf(submitTemplate?.payload?.Message) !== -1) {
+					setDialogType({ type: 'tier' })
+				}
+			}
+			else if (submitTemplate?.payload?.Status === apiStatus.SUCCESS) {
 				setToastMessage(ToastMessages.SUCCESS);
 				resetFields();
 				setTimeout(() => {
@@ -1156,10 +1167,17 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				}, 2500);
 			} else if (submitTemplate?.payload?.Status === 'Error') {
 				if (submitTemplate?.payload?.Message?.length > 0) {
-					setToastMessage({
-						...ToastMessages.ERROR,
-						message: submitTemplate?.payload?.Message,
-					});
+					if (submitTemplate?.payload?.Message === 'EMAIL_BASIC') {
+						setToastMessage({
+							...ToastMessages.ERROR,
+							message: "API ma Tier feature validations",
+						});
+					} else {
+						setToastMessage({
+							...ToastMessages.ERROR,
+							message: submitTemplate?.payload?.Message,
+						});
+					}
 				} else {
 					setToastMessage(ToastMessages.ERROR);
 				}
@@ -1224,6 +1242,16 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			onConfirm={() => onDeleteTemplate()}
 			onCancel={() => setDialogType(null)}
 		/>
+	})
+
+	const getTierValidationDialog = () => ({
+		title: translator('whatsapp.alertModal.DeleteText'),
+		showDivider: false,
+		content: (
+			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+				Tier Validation
+			</Typography>
+		)
 	})
 
 	const getValidationDialog = () => ({
@@ -1343,6 +1371,8 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		}
 		else if(type==='gallery'){
 			currentDialog = renderGalleryDialog();
+		} else if (type === 'tier') {
+			currentDialog = getTierValidationDialog();
 		}
 
 		if (type) {

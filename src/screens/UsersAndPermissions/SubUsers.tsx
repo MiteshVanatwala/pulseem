@@ -101,6 +101,10 @@ const SubUsers = ({ classes }: any) => {
     setShowLoader(true);
     const response = await dispatch(save(subUserItem)) as any;
     switch (response?.payload?.StatusCode) {
+      case 927: {
+        setDialogType({ type: 'tier', data: null });
+        break;
+      }
       case 1: {
         setToastMessage(ToastMessages.NO_DATA_PROVIDED);
         break;
@@ -524,12 +528,24 @@ const SubUsers = ({ classes }: any) => {
     onCancel: () => setDialogType(null)
   })
 
+  const getTierValidationDialog = () => ({
+    title: t('common.Delete'),
+    showDivider: false,
+    content: (
+      <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+        Tier Validation
+      </Typography>
+    )
+  })
+
   const renderDialog = () => {
     const { type, data } = dialogType || {}
 
     let currentDialog: any = {};
     if (type === 'Delete') {
       currentDialog = getDeleteDialog(data);
+    } else if (type === 'tier') {
+      currentDialog = getTierValidationDialog();
     }
 
     if (type) {

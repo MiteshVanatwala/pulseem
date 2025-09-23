@@ -41,6 +41,13 @@ const SiteTrackingEditor = ({ classes }) => {
     const [showActions, setShowActions] = useState(true);
     const [purchaseToggleDisabled, setPurchaseToggleDisabled] = useState(false);
 
+    const getTierValidationDialog = () => {
+        return {
+            type: 'tier',
+            data: null
+        };
+    };
+
     useEffect(() => {
         const getData = async () => {
             await dispatch(getScript());
@@ -176,6 +183,12 @@ const SiteTrackingEditor = ({ classes }) => {
         setShowLoader(false);
     }
     const onPulseemSaveReponse = (response) => {
+        // Check for StatusCode 927 (tier validation)
+        if (response.StatusCode === 927) {
+            setDialogType(getTierValidationDialog());
+            return;
+        }
+        
         switch (response.Result) {
             default:
             case -1: {
@@ -244,6 +257,7 @@ const SiteTrackingEditor = ({ classes }) => {
             dynamicMessage: renderDynamicDataDialog(t('common.ErrorTitle'), message),
             deleteEvent: renderDynamicDataDialog(t('siteTracking.deleteDialogTitle'), RenderHtml(t("siteTracking.deleteDialogMessage")), false, true, true),
             invalidDomain: renderDynamicDataDialog(t('common.ErrorTitle'), t('siteTracking.invalidDomainAddress')),
+            tier: renderDynamicDataDialog(t('common.Notice'), RenderHtml(t('common.TierValidationMessage')), false, false, false),
         }
 
         const currentDialog = dialogContent[type] || {}

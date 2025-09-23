@@ -724,6 +724,7 @@ export type ApiGetCampaignSummary = {
 export type ApiSendCampaignPayload = {
 	Message: string;
 	Status: string;
+	StatusCode?: number | string;
 };
 
 export type ApiSendCampaign = {

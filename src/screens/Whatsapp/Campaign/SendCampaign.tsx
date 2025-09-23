@@ -790,7 +790,10 @@ const SendCampaign = ({
 			const { payload: sendCampaignData }: ApiSendCampaign =
 				await dispatch<any>(sendCampaign(sendCampaignPayload));
 			setIsLoader(false);
-			if (sendCampaignData?.Status === apiStatus.SUCCESS) {
+			if (sendCampaignData?.StatusCode === 927) {
+				setDialogType({ type: 'tier' })
+			}
+			else if (sendCampaignData?.Status === apiStatus.SUCCESS) {
 				setDialogType({
 					type: 'sendCampaignSuccess'
 				});
@@ -946,6 +949,16 @@ const SendCampaign = ({
 		}
 	})
 
+	const getTierValidationDialog = () => ({
+		title: translator('whatsapp.alertModal.DeleteText'),
+		showDivider: false,
+		content: (
+			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+				Tier Validation
+			</Typography>
+		)
+	})
+
 	const renderDialog = () => {
 		const { type } = dialogType || {}
 		let currentDialog: any = {};
@@ -961,6 +974,8 @@ const SendCampaign = ({
 			currentDialog = getSummary();
 		} else if (type === 'sendCampaignSuccess') {
 			currentDialog = getSendCampaignSuccess();
+		} else if (type === 'tier') {
+			currentDialog = getTierValidationDialog();
 		}
 
 		if (type) {

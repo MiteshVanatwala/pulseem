@@ -292,6 +292,10 @@ const SmsCreator = ({ classes }) => {
       case 551:
         setDialogType({ type: "pendingApprovalDialog" });
         break;
+      case 927: {
+        setDialogType({ type: 'tier' });
+        break;
+      }
       default:
       case 5: {// ACCEPTED
         break;
@@ -1338,12 +1342,26 @@ const SmsCreator = ({ classes }) => {
           setToastMessage(CoreToastMessages.XSS_ERROR);
           break;
         }
+        case 927: {
+          setDialogType({ type: 'tier' });
+          break;
+        }
         default: {
           break;
         }
       }
     }
   };
+
+  const getTierValidationDialog = () => ({
+    title: t('whatsapp.alertModal.DeleteText'),
+    showDivider: false,
+    content: (
+      <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+        Tier Validation
+      </Typography>
+    )
+  })
 
   const handleClose = () => {
     setDialogType(null);
@@ -2071,7 +2089,8 @@ const SmsCreator = ({ classes }) => {
       linkStatisticAlert: siteTrackingLinkDialog(data),
       englishLetterDialog: englishLetterNotAllowed(),
       dynamicProduct: dynamicProductDialog(),
-      pendingApprovalDialog: pendingApprovalDialog()
+      pendingApprovalDialog: pendingApprovalDialog(),
+      tier: getTierValidationDialog()
     }
 
     const currentDialog = dialogContent[type] || {}

@@ -38,6 +38,9 @@ const GroupSelectorPopUp = ({
     const [inputGroup, setInputGroup] = useState<string>('');
     const [groupNameExist, setGroupNameExist] = useState<boolean>(false);
     const [isRequired, setIsRequired] = useState<boolean>(false);
+    const [dialogType, setDialogType] = useState<{
+        type: string;
+    } | null>(null);
 
     const getGroups = async () => {
         setShowLoader(true);
@@ -76,6 +79,12 @@ const GroupSelectorPopUp = ({
             }
             case 422: {
                 setGroupNameExist(true);
+                break;
+            }
+            case 927: {
+                setDialogType({
+                    type: 'tier'
+                });
                 break;
             }
         }
@@ -146,6 +155,40 @@ const GroupSelectorPopUp = ({
         );
     }
 
+    const getTierValidationDialog = () => ({
+        title: t('whatsapp.alertModal.DeleteText'),
+        showDivider: false,
+        content: (
+            <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+                Tier Validation
+            </Typography>
+        ),
+        onCancel: () => setDialogType(null),
+        onClose: () => setDialogType(null)
+    })
+
+    const renderDialog = () => {
+        const { type } = dialogType || {}
+        let currentDialog: any = {};
+        
+        if (type === 'tier') {
+            currentDialog = getTierValidationDialog();
+        }
+
+        if (type) {
+            return (
+                dialogType && <BaseDialog
+                    classes={classes}
+                    open={dialogType}
+                    onCancel={() => setDialogType(null)}
+                    onClose={() => setDialogType(null)}
+                    {...currentDialog}>
+                    {currentDialog?.content}
+                </BaseDialog>
+            )
+        }
+    }
+
     const options = {
         open: isOpen,
         title: t(title),
@@ -187,6 +230,7 @@ const GroupSelectorPopUp = ({
     return (<>
         {subAccountAllGroups && <BaseDialog classes={classes} {...options} disableBackdropClick={true} />}
         <Loader isOpen={showLoader} showBackdrop={true} zIndex={999999999} />
+        {renderDialog()}
     </>
     );
 }

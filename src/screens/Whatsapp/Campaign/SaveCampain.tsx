@@ -794,7 +794,10 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 					quickSend(payload)
 				);
 				setIsLoader(false);
-				if (quickSendData?.Status === apiStatus.SUCCESS) {
+				if (quickSendData?.StatusCode === 927) {
+					setDialogType({ type: 'tier' })
+				}
+				else if (quickSendData?.Status === apiStatus.SUCCESS) {
 					setToastMessage(ToastMessages.CAMPAIGN_SEND_SUCCESS);
 					setSelectedTestGroup([]);
 					setRandomlyCount('');
@@ -990,7 +993,11 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				from
 			);
 			setIsLoader(false);
-			if (data.Status === apiStatus.SUCCESS) {
+			if (data.ErrorCode === 927) {
+				setDialogType({ type: 'tier' })
+				return null;
+			}
+			else if (data.Status === apiStatus.SUCCESS) {
 				if (showSuccess) {
 					setToastMessage(ToastMessages.SAVE_CAMPAIGN_SUCCESS);
 				}
@@ -1027,7 +1034,10 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				'send'
 			);
 			setIsLoader(false);
-			if (data.Status === apiStatus.SUCCESS) {
+			if (data.ErrorCode === 927) {
+				setDialogType({ type: 'tier' })
+			}
+			else if (data.Status === apiStatus.SUCCESS) {
 				navigate(
 					`${sitePrefix}whatsapp/campaign/edit/page2/${data?.Data?.WACampaignId}?FromAutomation=${FromAutomation}&NodeToEdit=${NodeToEdit}&new=${isSendCampaign}`,
 					{ state: { from: `edit/page1/${data?.Data?.WACampaignId}&new=${isSendCampaign}` } }
@@ -1315,6 +1325,16 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		}
 	})
 
+	const getTierValidationDialog = () => ({
+		title: translator('whatsapp.alertModal.DeleteText'),
+		showDivider: false,
+		content: (
+			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+				Tier Validation
+			</Typography>
+		)
+	})
+
 	const renderDialog = () => {
 		const { type } = dialogType || {}
 		let currentDialog: any = {};
@@ -1341,6 +1361,8 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			currentDialog = getQuickReplyDialog();
 		} else if (type === 'dynamicModal') {
 			currentDialog = getDynamicModalDialog();
+		} else if (type === 'tier') {
+			currentDialog = getTierValidationDialog();
 		}
 
 		if (type) {

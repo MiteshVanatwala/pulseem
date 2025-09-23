@@ -646,7 +646,13 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		const submitData: commonAPIResponseProps = await dispatch<any>(
 			submitTemplateDirect({ id: activeRowId })
 		);
-		if (submitData?.payload?.Status === apiStatus.SUCCESS) {
+
+		if (submitData?.payload?.StatusCode === 927) {
+			if (['WHATSAPP_MEDIA_ATTACHMENT', 'WHATSAPP_TEMPLATES', 'WHATSAPP_BUTTON_ATTACHMENT','WHATSAPP_CARD_MESSAGE'].indexOf(submitData?.payload?.Message) !== -1) {
+				setDialogType({ type: 'tier' })
+			}
+		}
+		else if (submitData?.payload?.Status === apiStatus.SUCCESS) {
 			setToastMessage(ToastMessages.SUBMIT_CAMPAIGN_SUCCESS);
 			setApiTemplateData();
 		} else {
@@ -842,6 +848,16 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		/>
 	})
 
+	const getTierValidationDialog = () => ({
+		title: translator('whatsapp.alertModal.DeleteText'),
+		showDivider: false,
+		content: (
+			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+				Tier Validation
+			</Typography>
+		)
+	})
+
 	const renderDialog = () => {
 		const { type, data } = dialogType || {}
 		let currentDialog: any = {};
@@ -855,6 +871,8 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 			currentDialog = getPreviewDialog(data);
 		} else if (type === 'submitTemplate') {
 			currentDialog = getSubmitTemplateDialog();
+		} else if (type === 'tier') {
+			currentDialog = getTierValidationDialog();
 		}
 
 		if (type) {

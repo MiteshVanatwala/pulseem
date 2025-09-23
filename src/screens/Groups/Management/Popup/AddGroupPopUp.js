@@ -68,6 +68,7 @@ const AddGroupPopUp = ({
     const [newGroupData, setNewGroupData] = useState(DEFAULT_NEW_GROUP);
     const [saveDisabled, setSaveDisabled] = useState(false);
     const [showLoader, setLoader] = useState(false);
+    const [dialogType, setDialogType] = useState(null);
     const { isRTL } = useSelector((state) => state.core);
     const { CoreToastMessages, windowSize } = useSelector(state => state.core);
 
@@ -139,6 +140,13 @@ const AddGroupPopUp = ({
                     message: ToastMessages.GROUP_ALREADY_EXIST,
                     Func: () => null
                 },
+                S_927: {
+                    code: 927,
+                    message: null,
+                    Func: () => {
+                        setDialogType({ type: 'tier' });
+                    }
+                },
                 default: {
                     message: ToastMessages.GROUP_ERROR,
                     Func: () => null
@@ -154,6 +162,40 @@ const AddGroupPopUp = ({
             return false;
         }
         setSaveDisabled(false);
+    };
+
+    const getTierValidationDialog = () => ({
+        title: t('whatsapp.alertModal.DeleteText'),
+        showDivider: false,
+        content: (
+            <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+                Tier Validation
+            </Typography>
+        ),
+        onCancel: () => setDialogType(null),
+        onClose: () => setDialogType(null)
+    });
+
+    const renderDialog = () => {
+        const { type } = dialogType || {}
+        let currentDialog = {};
+        
+        if (type === 'tier') {
+            currentDialog = getTierValidationDialog();
+        }
+
+        if (type) {
+            return (
+                dialogType && <BaseDialog
+                    classes={classes}
+                    open={dialogType}
+                    onCancel={() => setDialogType(null)}
+                    onClose={() => setDialogType(null)}
+                    {...currentDialog}>
+                    {currentDialog?.content}
+                </BaseDialog>
+            )
+        }
     };
 
     return (
@@ -330,6 +372,7 @@ const AddGroupPopUp = ({
                 </Box>
                 <Loader isOpen={showLoader} showBackdrop={true} />
             </BaseDialog>
+            {renderDialog()}
         </>
     );
 };

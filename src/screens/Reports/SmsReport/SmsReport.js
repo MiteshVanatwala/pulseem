@@ -60,6 +60,13 @@ const SmsReport = ({ classes }) => {
   const [hasRevenue, setHasRevenue] = useState(false);
   const [showNoticeDialog, setShowNoticeDialog] = useState(false);
   const [dialogType, setDialogType] = useState(null);
+
+  const getTierValidationDialog = () => {
+    return {
+      type: 'tier',
+      data: null
+    };
+  };
   const qs = (window.location.search && queryString.parse(window.location.search)) || state;
 
   moment.locale(language)
@@ -221,7 +228,15 @@ const SmsReport = ({ classes }) => {
 
   const getData = async (query) => {
     setLoader(true);
-    await dispatch(getSmsReport(query));
+    const response = await dispatch(getSmsReport(query));
+    
+    // Check for tier validation
+    if (response?.payload?.StatusCode === 927) {
+      setDialogType(getTierValidationDialog());
+      setLoader(false);
+      return;
+    }
+    
     setLoader(false);
     setPage(query.PageNumber ?? page);
   }
@@ -940,6 +955,15 @@ const SmsReport = ({ classes }) => {
     const { type } = dialogType || {}
     const dialogContent = {
       featureNotice: getFeatureNoticeDialog(),
+      tier: {
+        title: t('common.Notice'),
+        showDivider: false,
+        exitButton: false,
+        content: RenderHtml(t('common.TierValidationMessage')),
+        onClose: () => setDialogType(null),
+        onConfirm: () => setDialogType(null),
+        showDefaultButtons: false
+      }
     }
     if (dialogContent[type]) {
       const currentDialog = dialogContent[type] || {}

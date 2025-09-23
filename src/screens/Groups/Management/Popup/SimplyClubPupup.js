@@ -105,6 +105,7 @@ const SimplyClubPupup = ({
     const [selectArray, setselectArray] = useState([]);
     const [showBackgroundUpload, setShowBackgroundUpload] = useState(false);
     const [showUserNamePass, setShowUserNamePass] = useState(true);
+    const [dialogType, setDialogType] = useState(null);
 
 
     useEffect(() => {
@@ -395,6 +396,10 @@ const SimplyClubPupup = ({
 
                     break;
                 }
+                case 927: {
+                    setDialogType({ type: 'tier' });
+                    break;
+                }
                 case 405:
                 default: {
                     break;
@@ -569,6 +574,40 @@ const SimplyClubPupup = ({
         </BaseDialog>
     }
 
+    const getTierValidationDialog = () => ({
+        title: t('whatsapp.alertModal.DeleteText'),
+        showDivider: false,
+        content: (
+            <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+                Tier Validation
+            </Typography>
+        ),
+        onCancel: () => setDialogType(null),
+        onClose: () => setDialogType(null)
+    });
+
+    const renderDialog = () => {
+        const { type } = dialogType || {}
+        let currentDialog = {};
+        
+        if (type === 'tier') {
+            currentDialog = getTierValidationDialog();
+        }
+
+        if (type) {
+            return (
+                dialogType && <BaseDialog
+                    classes={classes}
+                    open={dialogType}
+                    onCancel={() => setDialogType(null)}
+                    onClose={() => setDialogType(null)}
+                    {...currentDialog}>
+                    {currentDialog?.content}
+                </BaseDialog>
+            )
+        }
+    };
+
     return (
         <>
             <BaseDialog
@@ -660,6 +699,7 @@ const SimplyClubPupup = ({
                 />}
             </BaseDialog>
             <Loader isOpen={showLoader} zIndex={1500} />
+            {renderDialog()}
         </>
     )
 }

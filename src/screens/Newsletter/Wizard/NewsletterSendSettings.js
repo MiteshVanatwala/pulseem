@@ -734,6 +734,10 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 setToastMessage(ToastMessages.GROUP_ALREADY_EXIST);
                 break;
             }
+            case 927: {
+                setDialogType({ type: 'tier' });
+                break;
+            }
             default:
                 setToastMessage(ToastMessages.GENERAL_ERROR);
                 break;
@@ -960,11 +964,22 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         return dialogObj
     }
 
+    const getTierValidationDialog = () => ({
+        title: t('whatsapp.alertModal.DeleteText'),
+        showDivider: false,
+        content: (
+            <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+                Tier Validation
+            </Typography>
+        )
+    })
+
     const renderDialog = () => {
         const { type, data } = dialogType || {}
 
         const dialogContent = {
             filterRecipients: MergedSegmentationDialog(),
+            tier: getTierValidationDialog(),
             pulses: PulseDialog({
                 classes: classes,
                 campaign: campaignValues,
@@ -1440,7 +1455,9 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 onClose={() => setDialogType(null)}
                 onConfirm={() => onSaveSettings(true)}
                 isOpen={dialogType?.type === 'SummaryDialog'}
-                setDialogType={() => setDialogType(null)}
+                setDialogType={(code = null) => {
+                    setDialogType({ type: code === 927 ? 'tier' : code });
+                }}
                 groups={selectedGroups}
                 PreviewURL={newsletterSettings?.PreviewURL}
                 handleSendResponse={handleSendResponse}

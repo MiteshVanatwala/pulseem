@@ -301,6 +301,10 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 				showErrorToast(t('landingPages.shortUrlExist'));
 				break;
 			}
+			case 927: {
+				setDialogType({ type: 'tier' });
+				break;
+			}
 			case 1000: {
 				showErrorToast(t('SubAccount.notAllowed'));
 				break;
@@ -342,11 +346,23 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
     onClose: () => setDialogType(null)
 	})
 
+	const getTierValidationDialog = () => ({
+		title: t('whatsapp.alertModal.DeleteText'),
+		showDivider: false,
+		content: (
+			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+				Tier Validation
+			</Typography>
+		)
+	})
+
 	const renderDialog = () => {
 		const { type } = dialogType || {}
 		let currentDialog: any = {};
 		if (type === 'internalError') {
 			currentDialog = displayInternalErrorPopup();
+		} else if (type === 'tier') {
+			currentDialog = getTierValidationDialog();
 		}
 
 		if (type) {

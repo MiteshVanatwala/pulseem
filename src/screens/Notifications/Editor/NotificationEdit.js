@@ -113,6 +113,7 @@ const NotificationEdit = ({ classes }) => {
   const [toastMessage, setToastMessage] = useState(null);
   const [isGalleryConfirmed, setIsFileSelected] = useState(false);
   const [showConfirmCancel, setShowConfirmCancel] = useState(false);
+  const [dialogType, setDialogType] = useState(null);
 
   const toastMessages = {
     SUCCESS: { severity: 'success', color: 'success', message: t('notifications.saved'), showAnimtionCheck: true },
@@ -708,6 +709,20 @@ const NotificationEdit = ({ classes }) => {
     };
   }
   const renderDialog = () => {
+    if (dialogType?.type === 'tier') {
+      const dialog = getTierValidationDialog();
+      return (
+        <BaseDialog
+          classes={classes}
+          open={dialogType}
+          onCancel={() => setDialogType(null)}
+          onClose={() => setDialogType(null)}
+          {...dialog}>
+          {dialog.content}
+        </BaseDialog>
+      );
+    }
+    
     if (validationErrorList != null) {
       let dialog = {};
       dialog = renderValidationError();
@@ -718,7 +733,6 @@ const NotificationEdit = ({ classes }) => {
           open={validationErrorList}
           onCancel={handleDialogClose}
           onClose={handleDialogClose}
-          onCancel={handleDialogClose}
           onConfirm={handleDialogClose}
           {...dialog}>
           {dialog.content}
@@ -856,6 +870,16 @@ const NotificationEdit = ({ classes }) => {
     return null;
   }
 
+  const getTierValidationDialog = () => ({
+    title: t('whatsapp.alertModal.DeleteText'),
+    showDivider: false,
+    content: (
+      <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+        Tier Validation
+      </Typography>
+    )
+  })
+
   const saveNotification = async (isExit, isContinue) => {
     setSourceModel(model);
 
@@ -871,6 +895,11 @@ const NotificationEdit = ({ classes }) => {
       }
       else {
         dispatch(save(modelToSave)).then((response) => {
+          if (response?.payload?.StatusCode === 927) {
+            setDialogType({ type: 'tier' });
+            return;
+          }
+          
           if (location.pathname.toLowerCase().indexOf('create') > -1) {
             if (isExit) {
               Redirect({ url: `${sitePrefix}Notifications` })

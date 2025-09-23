@@ -418,14 +418,18 @@ const NewsLetterInfo = ({ classes }) => {
                             else {
                                 if (obj && obj.ReplyTo && obj.FromEmail) {
                                     setCampaingnValues({ ...campaingnValues, CampaignID: saveInfo.CampaignID, FromEmail: obj.FromEmail, ReplyTo: obj.ReplyTo });
-                                    await dispatch(saveCampaignInfo({ ...campaingnValues, CampaignID: saveInfo.CampaignID, FromEmail: obj.FromEmail, ReplyTo: obj.ReplyTo, IsNewEditor: isNewEditor }));
+                                    const response = await dispatch(saveCampaignInfo({ ...campaingnValues, CampaignID: saveInfo.CampaignID, FromEmail: obj.FromEmail, ReplyTo: obj.ReplyTo, IsNewEditor: isNewEditor }));
+                                    if (response.payload?.StatusCode === 927) {
+                                        setDialogType({ type: "tier" })
+                                    } else {
+                                        if (isFromAutomation) {
+                                            navigate(`${sitePrefix}Campaigns/Create/${saveInfo.CampaignID}?new=${isNew}&FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`)
+                                        }
+                                        else {
+                                            navigate(`${sitePrefix}Campaigns/Create/${saveInfo.CampaignID}`)
+                                        }
+                                    }
 
-                                    if (isFromAutomation) {
-                                        navigate(`${sitePrefix}Campaigns/Create/${saveInfo.CampaignID}?new=${isNew}&FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`)
-                                    }
-                                    else {
-                                        navigate(`${sitePrefix}Campaigns/Create/${saveInfo.CampaignID}`)
-                                    }
                                 }
                             }
                             setShowDomainVerification(false);
@@ -451,6 +455,10 @@ const NewsLetterInfo = ({ classes }) => {
             }
             case 500: {
                 setToastMessage(ToastMessages.GENERAL_ERROR)
+                break;
+            }
+            case 927: {
+                setDialogType({ type: "tier" });
                 break;
             }
             default: {
@@ -655,22 +663,28 @@ const NewsLetterInfo = ({ classes }) => {
                 setLoader(false);
 
                 const savedCampaign = response.payload;
+                handleSubmitNewsletterResponse(savedCampaign, isExit, isNewEditor);
+                if (savedCampaign?.StatusCode === 403 || savedCampaign?.StatusCode === 451 || savedCampaign?.StatusCode === 927) {
+                    return false;
+                }
+                
                 const saveInfo = JSON.parse(savedCampaign.Message);
                 setCampaingnValues({ ...campaingnValues, CampaignID: saveInfo?.CampaignID });
 
-                handleSubmitNewsletterResponse(savedCampaign, isExit, isNewEditor);
 
-                if (savedCampaign?.StatusCode === 403 || savedCampaign?.StatusCode === 451) {
-                    return false;
-                }
 
                 if (template?.Html && template?.JsonData) {
-                    await dispatch(saveCampaign({
+                    const saveCampaignResponse = await dispatch(saveCampaign({
                         Name: campaingnValues.Name,
                         campaignId: saveInfo.CampaignID,
                         JsonData: template?.JsonData,
                         HTML: template?.Html
                     }));
+                    
+                    if (saveCampaignResponse?.payload?.StatusCode === 927) {
+                        setDialogType({ type: "tier" });
+                        return false;
+                    }
                 }
 
 
@@ -1287,6 +1301,16 @@ const NewsLetterInfo = ({ classes }) => {
         }
     }
 
+    const getTierValidationDialog = () => ({
+        title: t('whatsapp.alertModal.DeleteText'),
+        showDivider: false,
+        content: (
+            <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+                Tier Validation
+            </Typography>
+        )
+    })
+
 
     const renderDialog = () => {
         const { data, type } = dialogType || {}
@@ -1294,6 +1318,7 @@ const NewsLetterInfo = ({ classes }) => {
         const dialogContent = {
             cautionNewEditor: getCautionNewEditorDialog(data),
             cautionOldEditor: getCautionOldEditorDialog(data),
+            tier: getTierValidationDialog(data),
         }
 
         const currentDialog = dialogContent[type] || {}

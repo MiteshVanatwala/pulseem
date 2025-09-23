@@ -331,6 +331,8 @@ const CampaignEditor = ({ classes, ...props }) => {
           const responseData = templateResponse?.payload?.Data;
           setNewTemplate(responseData)
           forceTemplate = responseData?.JsonData ? JSON.parse(responseData?.JsonData) : defaultContent.defaultTemplate;
+        } else if (templateResponse?.payload?.StatusCode === 927) {
+          setDialogType({ type: 'tier' });
         } else {
           setToastMessage({ severity: 'error', color: 'error', message: templateResponse?.payload.Message, showAnimtionCheck: false });
         }
@@ -497,6 +499,10 @@ const CampaignEditor = ({ classes, ...props }) => {
           if (response?.payload?.Message === 'webp_not_allowd') {
             setToastMessage(ToastMessages.WEBP_NOT_SUPPORTED);
           }
+          return false;
+        }
+        case 927: {
+          setDialogType({ type: 'tier' });
           return false;
         }
       }
@@ -1066,6 +1072,18 @@ const CampaignEditor = ({ classes, ...props }) => {
     };
   }
 
+  const getTierValidationDialog = () => ({
+    title: t('whatsapp.alertModal.DeleteText'),
+    showDivider: false,
+    content: (
+      <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+        Tier Validation
+      </Typography>
+    ),
+    onCancel: () => setDialogType(null),
+    onClose: () => setDialogType(null)
+  });
+
   const getPendingApprovalModal = (code) => ({
     title: t('campaigns.newsLetterEditor.errors.pendingApproval'),
     showDivider: false,
@@ -1093,6 +1111,8 @@ const CampaignEditor = ({ classes, ...props }) => {
       currentDialog = getPendingApprovalModal(data);
     } else if (type === DialogType.UNDER_REVIEW) {
       currentDialog = getPendingApprovalModal(551);
+    } else if (type === 'tier') {
+      currentDialog = getTierValidationDialog();
     }
     else if (type === 'AIDialog') {
       currentDialog = AI_Dialog();

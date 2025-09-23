@@ -484,6 +484,16 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 		confirmText: t('common.Yes')
 	})
 
+	const getTierValidationDialog = () => ({
+		title: t('whatsapp.alertModal.DeleteText'),
+		showDivider: false,
+		content: (
+			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+				Tier Validation
+			</Typography>
+		)
+	})
+
 	const renderDialog = () => {
 		const { type } = dialogType || {}
 		let currentDialog: any = {};
@@ -497,6 +507,8 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 			currentDialog = getValidationDialog();
 		} else if (type === 'delete') {
 			currentDialog = getDeleteDialog();
+		} else if (type === 'tier') {
+			currentDialog = getTierValidationDialog();
 		}
 
 		if (type) {
@@ -628,6 +640,10 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 					...errors,
 					shortURL: t('landingPages.shortURLExist')
 				})
+				break;
+			}
+			case 927: {
+				setDialogType({ type: 'tier' });
 				break;
 			}
 			case 500:

@@ -33,6 +33,11 @@ const AmpRegistration = ({ classes }: any) => {
 
     const [toastMessage, setToastMessage] = useState<any>(null);
     const [showAmpRegisterDesc, setShowAmpRegisterDesc] = useState<boolean>(false);
+    const [ dialogType, setDialogType ] = useState<{
+        type: string;
+    } | null>({
+        type: ''
+    });
 
     const init = async () => {
         await dispatch(getAuthorizedEmails());
@@ -52,7 +57,9 @@ const AmpRegistration = ({ classes }: any) => {
     const sendApprovalRequest = async () => {
         if (selectedEmail?.length > 0) {
             const response: any = await dispatch(ampApproval(selectedEmail));
-            if (response?.payload?.StatusCode === 201) {
+            if (response?.payload?.StatusCode === 927) {
+
+            } else if (response?.payload?.StatusCode === 201) {
                 setShowAmpRegisterDesc(true);
                 setSelectedEmail([]);
             }
@@ -61,6 +68,39 @@ const AmpRegistration = ({ classes }: any) => {
         }
         else {
             setToastMessage(ToastMessages[100])
+        }
+    }
+
+    const getTierValidationDialog = () => ({
+        title: t('whatsapp.alertModal.DeleteText'),
+        showDivider: false,
+        content: (
+            <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+                Tier Validation
+            </Typography>
+        )
+    })
+
+    const renderDialog = () => {
+        const { type } = dialogType || {}
+        let currentDialog: any = {};
+        if (type === 'tier') {
+            currentDialog = getTierValidationDialog();
+        }
+
+        if (type) {
+            return (
+                dialogType && <BaseDialog
+            contentStyle={classes.maxWidth540}
+                    classes={classes}
+                    open={dialogType}
+                    onCancel={() => setDialogType(null)}
+                    onClose={() => setDialogType(null)}
+                    renderButtons={currentDialog?.renderButtons || null}
+                    {...currentDialog}>
+                    {currentDialog?.content}
+                </BaseDialog>
+            )
         }
     }
 
@@ -162,6 +202,7 @@ const AmpRegistration = ({ classes }: any) => {
             </Box>
             <Loader isOpen={showLoader} />
             {toastMessage && renderToast()}
+            {renderDialog()}
         </DefaultScreen>
     )
 }

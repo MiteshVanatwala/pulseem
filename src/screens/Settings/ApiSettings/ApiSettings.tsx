@@ -80,9 +80,17 @@ const ApiSettings = ({ classes }: any) => {
     const [APIKeyRestrictionDialog, setAPIKeyRestrictionDialog] = useState<boolean>(false);
     const [exportFileTypeDialog, setExportFileTypeDialog] = useState<boolean>(false);
     const [exportData, setExportData] = useState<any>(null);
+    const [dialogType, setDialogType] = useState<any>(null);
 
 
     const localClasses = useStyles();
+
+    const getTierValidationDialog = () => {
+        return {
+            type: 'tier',
+            data: null
+        };
+    };
 
     const renderToast = () => {
         setTimeout(() => {
@@ -110,6 +118,9 @@ const ApiSettings = ({ classes }: any) => {
         else if (payload?.StatusCode === 500) {
             setToastMessage(ToastMessages?.GENERAL_ERROR);
         }
+        else if (payload?.StatusCode === 927) {
+            setDialogType(getTierValidationDialog());
+        }
         else {
             if (isCopy) navigator.clipboard.writeText(payload?.Data)
             else setApiKey(payload?.Data);
@@ -127,6 +138,9 @@ const ApiSettings = ({ classes }: any) => {
         }
         else if (payload?.StatusCode === 500) {
             setToastMessage(ToastMessages?.GENERAL_ERROR);
+        }
+        else if (payload?.StatusCode === 927) {
+            setDialogType(getTierValidationDialog());
         }
         else {
             setApiKey(payload?.Data);
@@ -480,6 +494,20 @@ const ApiSettings = ({ classes }: any) => {
                     title={t('integrations.apiKey')}
                 >
                     {RenderHtml(t('settings.apiSettings.reGenerateConfirm'))}
+                </BaseDialog>
+            }
+            {
+                dialogType?.type === 'tier' && 
+                <BaseDialog
+                    classes={classes}
+                    open={dialogType?.type === 'tier'}
+                    onClose={() => setDialogType(null)}
+                    onCancel={() => setDialogType(null)}
+                    onConfirm={() => setDialogType(null)}
+                    showDefaultButtons={false}
+                    title={t('common.Notice')}
+                >
+                    {RenderHtml(t('common.TierValidationMessage'))}
                 </BaseDialog>
             }
             {

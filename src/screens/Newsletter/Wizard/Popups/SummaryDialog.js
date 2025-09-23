@@ -86,8 +86,10 @@ const SummaryDialog = ({ classes,
         const sendResponse = await dispatch(sendCampaign(newsletterSendSummary.CampaignID));
 
         const response = sendResponse?.payload;
-
-        if (response.StatusCode === 451) {
+        console.log(response)
+        if (response.StatusCode === 927) {
+            setDialogType(927)
+        } else if (response.StatusCode === 451) {
             const req = {
                 target: {
                     value: fromEmail

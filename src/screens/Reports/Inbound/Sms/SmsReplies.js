@@ -22,6 +22,8 @@ import SearchLine from '../SearchLine';
 import { setRowsPerPage } from '../../../../redux/reducers/coreSlice';
 import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
 import { PulseemFeatures } from '../../../../model/PulseemFields/Fields';
+import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
+import { RenderHtml } from '../../../../helpers/Utils/HtmlUtils';
 
 
 const SmsReplies = ({ classes }) => {
@@ -68,10 +70,22 @@ const SmsReplies = ({ classes }) => {
 
     const DialogType = { EDIT_RECIPIENT: "EDIT_RECIPIENT" };
 
+    const getTierValidationDialog = () => {
+        return 'tier';
+    };
+
 
     const getReplies = async () => {
         setShowLoader(true);
-        await dispatch(getSmsReplies({ ...request, PageSize: rowsPerPage, PageIndex: page }));
+        const response = await dispatch(getSmsReplies({ ...request, PageSize: rowsPerPage, PageIndex: page }));
+        
+        // Check for tier validation
+        if (response?.payload?.StatusCode === 927) {
+            setDialog(getTierValidationDialog());
+            setShowLoader(false);
+            return;
+        }
+        
         setShowLoader(false);
     }
 
@@ -136,6 +150,14 @@ const SmsReplies = ({ classes }) => {
         setDialog(null);
         setShowLoader(true);
         let response = await dispatch(getSmsReplies({ ...request, IsExport: true }));
+        
+        // Check for tier validation
+        if (response?.payload?.StatusCode === 927) {
+            setDialog(getTierValidationDialog());
+            setShowLoader(false);
+            return;
+        }
+        
         let finalData = response?.payload?.Data;
         finalData = await DeletePropertyFromArrayObject(finalData, ['Status']);
 
@@ -357,6 +379,19 @@ const SmsReplies = ({ classes }) => {
                         }}
                         recipientData={clientToEdit}
                     />
+                }
+                case 'tier': {
+                    return <BaseDialog
+                        classes={classes}
+                        open={dialog === 'tier'}
+                        onClose={() => setDialog(null)}
+                        onCancel={() => setDialog(null)}
+                        onConfirm={() => setDialog(null)}
+                        showDefaultButtons={false}
+                        title={t('common.Notice')}
+                    >
+                        {RenderHtml(t('common.TierValidationMessage'))}
+                    </BaseDialog>
                 }
                 default: {
                     return <></>
