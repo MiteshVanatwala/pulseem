@@ -113,6 +113,7 @@ import ConfirmationButtons from '../../../components/ConfirmationButtons/Confirm
 import { DateFormats, FBBusiness } from '../../../helpers/Constants';
 import { WhatsappCampaignStatus, WhatsAppPlatformIDEnum } from '../../../config/enum';
 import { filter, first, get } from 'lodash';
+import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
 
 const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const { t: translator } = useTranslation();
@@ -135,6 +136,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const { WhatsAppPlatformID, TierData } = useSelector(
 		(state: { common: CommonRedux }) => state.common
 	);
+	const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
 	const websiteField = [
 		{
 			fieldName: 'whatsapp.websiteButtonText',
@@ -217,6 +219,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		fileType: '',
 	});
 	const [dialogType, setDialogType] = useState<any>({ type: '' });
+	const [TierMessageCode, setTierMessageCode] = useState<string>('');
 	const [savedTemplate, setSavedTemplate] = useState<string>('');
 	const [buttonType, setButtonType] = useState<string>('');
 	const [templateCategory, setTemplateCategory] = useState<number>(0);
@@ -796,6 +799,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				setIsLoader(false);
 				if (quickSendData?.StatusCode === 927) {
 					// WHATSAPP_BASIC, DYNAMIC_PRODUCTS, WHATSAPP_CAMPAIGN_SEND
+					setTierMessageCode(quickSendData?.Message || 'WHATSAPP_CAMPAIGN_SEND');
 					setDialogType({ type: 'tier' })
 				}
 				else if (quickSendData?.Status === apiStatus.SUCCESS) {
@@ -996,6 +1000,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			setIsLoader(false);
 			if (data?.StatusCode === 927) {
 				// WHATSAPP_BASIC, DYNAMIC_PRODUCTS
+				setTierMessageCode(data?.Message || 'WHATSAPP_BASIC');
 				setDialogType({ type: 'tier' })
 				return null;
 			}
@@ -1038,6 +1043,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			setIsLoader(false);
 			if (data.StatusCode === 927) {
 				// WHATSAPP_BASIC, DYNAMIC_PRODUCTS
+				setTierMessageCode(data?.Message || 'WHATSAPP_BASIC');
 				setDialogType({ type: 'tier' })
 			}
 			else if (data.Status === apiStatus.SUCCESS) {
@@ -1328,12 +1334,26 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		}
 	})
 
+	const handleGetPlanForFeature = (tierMessageCode: string) => {
+		const planName = findPlanByFeatureCode(
+			tierMessageCode,
+			availablePlans,
+			currentPlan.Id
+		);
+		
+		if (planName) {
+			return translator('billing.tier.featureNotAvailable').replace('{feature}', tierMessageCode).replace('{planName}', planName);
+		} else {
+			return translator('billing.tier.noFeatureAvailable');
+		}
+	};
+
 	const getTierValidationDialog = () => ({
 		title: translator('billing.tier.permission'),
 		showDivider: false,
 		content: (
 			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
-				Tier Validation
+				{handleGetPlanForFeature(TierMessageCode)}
 			</Typography>
 		),
 		onConfirm: async () => {

@@ -19,6 +19,7 @@ import Select from '@mui/material/Select';
 import { useTranslation } from "react-i18next";
 import DefaultScreen from "../../DefaultScreen";
 import { useDispatch, useSelector } from "react-redux";
+import { findPlanByFeatureCode } from "../../../redux/reducers/TiersSlice";
 import moment from "moment";
 import { FaRegCalendarAlt, FaFilter } from "react-icons/fa";
 import Snackbar from "@material-ui/core/Snackbar";
@@ -70,7 +71,7 @@ const SmsSend = ({ classes, ...props }) => {
   const { OTPPassed, ToastMessages, extraData, getCampaignSum, testGroups, finishedCampaigns } = useSelector((state) => state.sms);
   const { subAccountAllGroups } = useSelector((state) => state.group);
   const { accountSettings } = useSelector((state) => state.common);
-
+  const { currentPlan, availablePlans } = useSelector((state) => state.tiers);
 
   const dispatch = useDispatch();
   const { windowSize, isRTL, userRoles } = useSelector(
@@ -141,6 +142,8 @@ const SmsSend = ({ classes, ...props }) => {
   const [GroupNameValidationMessage, setGroupNameValidationMessage] = useState("");
   const [sourcePulses, setSourcePulses] = useState({});
   const [campaignSettings, setCampaignSettings] = useState(null);
+  const [TierMessageCode, setTierMessageCode] = useState('');
+
   const [filterValues, setFilterValues] = useState({
     dontSend: false,
     days: ''
@@ -1529,6 +1532,7 @@ const SmsSend = ({ classes, ...props }) => {
     
     // Check for tier validation
     if (r.payload.StatusCode === 927) {
+      setTierMessageCode('SMS_MARKETING');
       setDialogType(getTierValidationDialog());
       setLoader(false);
       return;
@@ -2446,12 +2450,26 @@ const SmsSend = ({ classes, ...props }) => {
     }
   }
 
+  const handleGetPlanForFeature = (tierMessageCode) => {
+    const planName = findPlanByFeatureCode(
+        tierMessageCode,
+        availablePlans,
+        currentPlan.Id
+    );
+    
+    if (planName) {
+      return t('billing.tier.featureNotAvailable').replace('{feature}', tierMessageCode).replace('{planName}', planName);
+    } else {
+      return t('billing.tier.noFeatureAvailable');
+    }
+  };
+
   const getTierValidationDialog = () => ({
     title: t('billing.tier.permission'),
     showDivider: false,
     content: (
       <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
-        Tier Validation
+        {handleGetPlanForFeature(TierMessageCode)}
       </Typography>
     ),
     onCancel: () => setDialogType(null),

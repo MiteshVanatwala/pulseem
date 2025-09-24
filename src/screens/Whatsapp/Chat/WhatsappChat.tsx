@@ -88,6 +88,7 @@ import { StateType } from '../../../Models/StateTypes';
 import { compareLastNineDigits } from '../../../helpers/Utils/TextHelper';
 import { BsTrash } from 'react-icons/bs';
 import ConfirmDeletePopUp from '../../Groups/Management/Popup/ConfirmDeletePopUp';
+import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
 
 const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const navigate = useNavigate();
@@ -102,6 +103,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	);
 	const { isRTL, windowSize, isLoader = false } = useSelector((state: { core: coreProps }) => state.core);
 	const { agentList } = useSelector((state: StateType) => state.whatsapp);
+	const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
 	const [isAccountSetup, setIsAccountSetup] = useState<boolean | null>(null);
 	const [isTrackLink, setIsTrackLink] = useState<boolean>(false);
 	const [nextMessageAvailable, setNextMessageAvailable] = useState<string>('');
@@ -173,6 +175,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		templateText: '',
 		templateButtons: [],
 	});
+	const [TierMessageCode, setTierMessageCode] = useState<string>("");
 	const [dynamicVariable, setDynamicVariable] = useState<string[]>([]);
 	const [updatedDynamicVariable, setUpdatedDynamicVariable] = useState<
 		updatedVariable[]
@@ -455,6 +458,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		} else {
 			if (whatsAppChatContactsData?.StatusCode === 927) {
 				// WHATSAPP_CHAT_INTERFACE
+				setTierMessageCode(whatsAppChatContactsData?.Message);
 				setDialogType({
 					type: 'tier'
 				});
@@ -693,6 +697,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 
 				changeContactReadStatus(activeChatContacts, updatedContacts);
 			} else if (whatsAppChatContactsData?.StatusCode === 927) {
+				setTierMessageCode(whatsAppChatContactsData?.Message);
 				setDialogType({
 					type: 'tier'
 				});
@@ -761,6 +766,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 					}
 				} else if (sendWhatsappChat.StatusCode === 927) {
 					// WHATSAPP_CAMPAIGN_SEND
+					setTierMessageCode(sendWhatsappChat?.Message);
 					setDialogType({
 						type: 'tier'
 					});
@@ -843,6 +849,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				}
 			} else {
 				if (whatsAppChatContactsData?.StatusCode === 927) {
+					setTierMessageCode(whatsAppChatContactsData?.Message);
 					setDialogType({
 						type: 'tier'
 					});
@@ -917,12 +924,26 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		}
 	})
 
+	const handleGetPlanForFeature = (tierMessageCode: string) => {
+		const planName = findPlanByFeatureCode(
+			tierMessageCode,
+			availablePlans,
+			currentPlan.Id
+		);
+		
+		if (planName) {
+			return translator('billing.tier.featureNotAvailable').replace('{feature}', tierMessageCode).replace('{planName}', planName);
+		} else {
+			return translator('billing.tier.noFeatureAvailable');
+		}
+	};
+
 	const getTierValidationDialog = () => ({
 		title: translator('billing.tier.permission'),
 		showDivider: false,
 		content: (
 			<Typography style={{ textAlign: 'center' }}>
-				{translator('common.tierValidationMessage')}
+				{handleGetPlanForFeature(TierMessageCode)}
 			</Typography>
 		),
 		onConfirm: async () => {

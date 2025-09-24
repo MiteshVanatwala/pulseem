@@ -15,6 +15,7 @@ import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
 import { sendToTeamChannel } from "../../../../redux/reducers/ConnectorsSlice";
 import { RenderHtml } from '../../../../helpers/Utils/HtmlUtils';
 import { logout } from '../../../../helpers/Api/PulseemReactAPI';
+import { findPlanByFeatureCode } from '../../../../redux/reducers/TiersSlice';
 
 const useStyles = makeStyles({
     dialogContainer: {
@@ -74,6 +75,7 @@ const SimplyClubPupup = ({
     setSelectedGroupIds
 }) => {
     const { isRTL } = useSelector((state) => state.core);
+    const { currentPlan, availablePlans } = useSelector((state) => state.tiers);
     const { t } = useTranslation();
     const dispatch = useDispatch()
     const localClasses = useStyles()
@@ -106,6 +108,7 @@ const SimplyClubPupup = ({
     const [showBackgroundUpload, setShowBackgroundUpload] = useState(false);
     const [showUserNamePass, setShowUserNamePass] = useState(true);
     const [dialogType, setDialogType] = useState(null);
+    const [TierMessageCode, setTierMessageCode] = useState("");
 
 
     useEffect(() => {
@@ -397,6 +400,7 @@ const SimplyClubPupup = ({
                     break;
                 }
                 case 927: {
+                    setTierMessageCode(response?.payload?.Message);
                     setDialogType({ type: 'tier' });
                     break;
                 }
@@ -574,12 +578,26 @@ const SimplyClubPupup = ({
         </BaseDialog>
     }
 
+    const handleGetPlanForFeature = (tierMessageCode) => {
+        const planName = findPlanByFeatureCode(
+            tierMessageCode,
+            availablePlans,
+            currentPlan.Id
+        );
+        
+        if (planName) {
+            return t('billing.tier.featureNotAvailable').replace('{feature}', tierMessageCode).replace('{planName}', planName);
+        } else {
+            return t('billing.tier.noFeatureAvailable');
+        }
+    };
+
     const getTierValidationDialog = () => ({
         title: t('billing.tier.permission'),
         showDivider: false,
         content: (
             <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
-                Tier Validation
+                {handleGetPlanForFeature(TierMessageCode)}
             </Typography>
         ),
         onCancel: () => setDialogType(null),

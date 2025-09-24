@@ -68,6 +68,7 @@ import {
 	toastProps,
 } from '../Editor/Types/WhatsappCreator.types';
 import { useNavigate, useParams } from 'react-router-dom';
+import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
 import SendCampaignSuccess from './Popups/SendCampaignSuccess';
 import NoSetup from '../NoSetup/NoSetup';
 import { specialDateDropDownPayload } from './Types/WhatsappCampaign.types';
@@ -101,6 +102,7 @@ const SendCampaign = ({
 		(state: { whatsapp: { ToastMessages: toastProps } }) =>
 			state.whatsapp.ToastMessages
 	);
+	const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
 
 	const [showTestGroups, setShowTestGroups] = useState<boolean>(false);
 	const [selectedGroups, setSelectedGroups] = useState<testGroupDataProps[]>(
@@ -133,6 +135,7 @@ const SendCampaign = ({
 	const [isAccountSetup, setIsAccountSetup] = useState<boolean | null>(null);
 	const [isLoader, setIsLoader] = useState<boolean>(true);
 	const [isCreateNewGroup, setIsCreateNewGroup] = useState<boolean>(false);
+	const [TierMessageCode, setTierMessageCode] = useState<string>("");
 
 	const [allGroupList, setAllGroupList] = useState<testGroupDataProps[]>([]);
 	const [exceptionalDaysToggle, setExceptionalDaysToggle] =
@@ -792,6 +795,7 @@ const SendCampaign = ({
 			setIsLoader(false);
 			if (sendCampaignData?.StatusCode === 927) {
 				// WHATSAPP_CAMPAIGN_SEND
+				setTierMessageCode(sendCampaignData?.Message);
 				setDialogType({ type: 'tier' })
 			}
 			else if (sendCampaignData?.Status === apiStatus.SUCCESS) {
@@ -950,12 +954,26 @@ const SendCampaign = ({
 		}
 	})
 
+	const handleGetPlanForFeature = (tierMessageCode: string) => {
+		const planName = findPlanByFeatureCode(
+			tierMessageCode,
+			availablePlans,
+			currentPlan.Id
+		);
+		
+		if (planName) {
+			return translator('billing.tier.featureNotAvailable').replace('{feature}', tierMessageCode).replace('{planName}', planName);
+		} else {
+			return translator('billing.tier.noFeatureAvailable');
+		}
+	};
+
 	const getTierValidationDialog = () => ({
 		title: translator('billing.tier.permission'),
 		showDivider: false,
 		content: (
 			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
-				Tier Validation
+				{handleGetPlanForFeature(TierMessageCode)}
 			</Typography>
 		)
 	})

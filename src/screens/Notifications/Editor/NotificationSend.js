@@ -20,6 +20,7 @@ import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 import { sitePrefix } from '../../../config';
 import { Title } from '../../../components/managment/Title';
+import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
 
 const NotificationSend = ({ classes }) => {
     const { id } = useParams();
@@ -28,7 +29,8 @@ const NotificationSend = ({ classes }) => {
     const { notificationGroups } = useSelector(state => state.notification)
     /* #region  Component settings constatns */
     const dispatch = useDispatch();
-    const { language, isRTL, windowSize, userRoles } = useSelector(state => state.core)
+    const { language, isRTL, windowSize, userRoles } = useSelector(state => state.core);
+    const { currentPlan, availablePlans } = useSelector(state => state.tiers);
     const [ShowRedirectButton, setRedirectButtonVisibillity] = useState(false);
     const [groupList, setGroupList] = useState(null);
     moment.locale(language);
@@ -71,6 +73,7 @@ const NotificationSend = ({ classes }) => {
     const [showGroupsList, setShowGroupsList] = useState(false);
     const [isSending, setIsSending] = useState(false);
     const [dialogType, setDialogType] = useState(null);
+    const [TierMessageCode, setTierMessageCode] = useState('');
 
     const toastMessages = {
         SUCCESS: { severity: 'success', color: 'success', message: t('notifications.saved'), showAnimtionCheck: true },
@@ -576,6 +579,7 @@ const NotificationSend = ({ classes }) => {
 
         // Check for tier validation
         if (result?.payload?.StatusCode === 927) {
+            setTierMessageCode(result?.payload?.Message || 'WEB_PUSH');
             setDialogType(getTierValidationDialog());
             return;
         }
@@ -586,9 +590,30 @@ const NotificationSend = ({ classes }) => {
         }
     }
 
+    const handleGetPlanForFeature = (tierMessageCode) => {
+        const planName = findPlanByFeatureCode(
+            tierMessageCode,
+            availablePlans,
+            currentPlan.Id
+        );
+        
+        if (planName) {
+            return t('billing.tier.featureNotAvailable').replace('{feature}', tierMessageCode).replace('{planName}', planName);
+        } else {
+            return t('billing.tier.noFeatureAvailable');
+        }
+    };
+
     const getTierValidationDialog = () => ({
         type: 'tier',
-        data: null
+        data: null,
+        title: t('billing.tier.permission'),
+        showDivider: false,
+        content: (
+            <Box className={classes.dialogBox}>
+                {handleGetPlanForFeature(TierMessageCode)}
+            </Box>
+        )
     });
     const callbackSelectedGroups = (group, key, reference) => {
         const found = selectedGroups.map((group) => { return group.Id }).includes(group.Id)

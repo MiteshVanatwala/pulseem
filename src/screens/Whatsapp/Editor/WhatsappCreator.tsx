@@ -77,6 +77,7 @@ import { PulseemFolderType } from '../../../model/PulseemFields/Fields';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { Switch } from '../../../components/managment';
 import ConfirmationButtons from '../../../components/ConfirmationButtons/ConfirmationButtons';
+import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
 
 const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	const { templateID } = useParams();
@@ -94,6 +95,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		(state: { whatsapp: { ToastMessages: toastProps } }) =>
 			state.whatsapp.ToastMessages
 	);
+	const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
 	const [isAccountSetup, setIsAccountSetup] = useState<boolean | null>(null);
 	const [codeExpirationTime, setCodeExpirationTime] = useState<number | undefined>(0);
 	const [isLoader, setIsLoader] = useState<boolean>(true);
@@ -183,6 +185,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	const [quickReplyButtons, setQuickReplyButtons] = useState<quickReplyButtonProps[]>(initialQuickReplyButtons);
 	const [isDeleteTemplateOpen, setIsDeleteTemplateOpen] = useState<boolean>(false);
 	const [linkCount, setlinkCount] = useState<number>(0);
+	const [TierMessageCode, setTierMessageCode] = useState<string>("");
 	const [dynamicFieldCount, setDynamicFieldCount] = useState<number>(0);
 	const [authenticationButtonText, setAuthenticationButtonText] = useState<string>('');
 
@@ -1062,6 +1065,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				setIsLoader(false);
 				if (submitTemplate?.payload?.StatusCode === 927) {
 					if (['WHATSAPP_MEDIA_ATTACHMENT', 'WHATSAPP_TEMPLATES', 'WHATSAPP_BUTTON_ATTACHMENT','WHATSAPP_CARD_MESSAGE'].indexOf(submitTemplate?.payload?.Message) !== -1) {
+						setTierMessageCode(submitTemplate?.payload?.Message);
 						setDialogType({ type: 'tier' })
 					}
 				}
@@ -1156,6 +1160,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			setIsLoader(false);
 			if (submitTemplate?.payload?.StatusCode === 927) {
 				if (['WHATSAPP_MEDIA_ATTACHMENT', 'WHATSAPP_TEMPLATES', 'WHATSAPP_BUTTON_ATTACHMENT','WHATSAPP_CARD_MESSAGE'].indexOf(submitTemplate?.payload?.Message) !== -1) {
+					setTierMessageCode(submitTemplate?.payload?.Message);
 					setDialogType({ type: 'tier' })
 				}
 			}
@@ -1244,12 +1249,29 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		/>
 	})
 
+	const handleGetPlanForFeature = (tierMessageCode: string) => {
+		const planName = findPlanByFeatureCode(
+			tierMessageCode,
+			availablePlans,
+			currentPlan.Id
+		);
+		
+		if (planName) {
+			return translator('billing.tier.featureNotAvailable', { 
+				feature: tierMessageCode, 
+				planName: planName 
+			});
+		} else {
+			return translator('billing.tier.noFeatureAvailable');
+		}
+	};
+
 	const getTierValidationDialog = () => ({
 		title: translator('billing.tier.permission'),
 		showDivider: false,
 		content: (
 			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
-				Tier Validation
+				{handleGetPlanForFeature(TierMessageCode)}
 			</Typography>
 		)
 	})

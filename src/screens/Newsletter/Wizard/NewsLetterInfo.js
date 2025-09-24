@@ -9,6 +9,7 @@ import SimpleGrid from "../../../components/Grids/SimpleGrid";
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from "react-i18next";
 import { deleteCampaign, setVerificationDomain } from '../../../redux/reducers/newsletterSlice';
+import { findPlanByFeatureCode } from "../../../redux/reducers/TiersSlice";
 import { getCampaignInfo, saveCampaignInfo, getCreditsByFileTotalBytes } from '../../../redux/reducers/newsletterSlice';
 import Toast from '../../../components/Toast/Toast.component';
 import WizardActions from '../../../components/Wizard/WizardActions';
@@ -165,6 +166,7 @@ const NewsLetterInfo = ({ classes }) => {
     const [extraAccountDATA, setextraAccountDATA] = useState([]);
     const { verifiedEmails, accountSettings, accountFeatures, isGlobal, IsPoland } = useSelector(state => state.common);
     const { ToastMessages } = useSelector(state => state.newsletter);
+    const { currentPlan, availablePlans } = useSelector((state) => state.tiers);
     const [showGallery, setShowGallery] = useState(false);
     const [isGalleryConfirmed, setIsFileSelected] = useState(false);
     const [isSilenceUpdated, setIsSilenceUpdated] = useState(false);
@@ -249,6 +251,7 @@ const NewsLetterInfo = ({ classes }) => {
     })
 
     const [selectedCheck, setSelectedCheck] = useState({ WebViewLocation: false, PrintLocation: false, UnsubscribeLocation: false, UpdateClient: false })
+    const [TierMessageCode, setTierMessageCode] = useState('');
     const [confirmDelete, setConfirmDelete] = useState(false)
     const [confirmExit, setConfirmExit] = useState(false)
     const [verPopupOpen, setVerPopupOpen] = useState(false)
@@ -420,6 +423,7 @@ const NewsLetterInfo = ({ classes }) => {
                                     setCampaingnValues({ ...campaingnValues, CampaignID: saveInfo.CampaignID, FromEmail: obj.FromEmail, ReplyTo: obj.ReplyTo });
                                     const response = await dispatch(saveCampaignInfo({ ...campaingnValues, CampaignID: saveInfo.CampaignID, FromEmail: obj.FromEmail, ReplyTo: obj.ReplyTo, IsNewEditor: isNewEditor }));
                                     if (response.payload?.StatusCode === 927) {
+                                        setTierMessageCode('NEWSLETTER_AUTOMATION');
                                         setDialogType({ type: "tier" })
                                     } else {
                                         if (isFromAutomation) {
@@ -458,6 +462,7 @@ const NewsLetterInfo = ({ classes }) => {
                 break;
             }
             case 927: {
+                setTierMessageCode('NEWSLETTER_AUTOMATION');
                 setDialogType({ type: "tier" });
                 break;
             }
@@ -665,6 +670,9 @@ const NewsLetterInfo = ({ classes }) => {
                 const savedCampaign = response.payload;
                 handleSubmitNewsletterResponse(savedCampaign, isExit, isNewEditor);
                 if (savedCampaign?.StatusCode === 403 || savedCampaign?.StatusCode === 451 || savedCampaign?.StatusCode === 927) {
+                    if (savedCampaign?.StatusCode === 927) {
+                        setTierMessageCode('NEWSLETTER_AUTOMATION');
+                    }
                     return false;
                 }
                 
@@ -682,6 +690,7 @@ const NewsLetterInfo = ({ classes }) => {
                     }));
                     
                     if (saveCampaignResponse?.payload?.StatusCode === 927) {
+                        setTierMessageCode('NEWSLETTER_AUTOMATION');
                         setDialogType({ type: "tier" });
                         return false;
                     }
@@ -1301,12 +1310,26 @@ const NewsLetterInfo = ({ classes }) => {
         }
     }
 
+    const handleGetPlanForFeature = (tierMessageCode) => {
+        const planName = findPlanByFeatureCode(
+                tierMessageCode,
+                availablePlans,
+                currentPlan.Id
+        );
+        
+        if (planName) {
+                return t('billing.tier.featureNotAvailable').replace('{feature}', tierMessageCode).replace('{planName}', planName);
+        } else {
+                return t('billing.tier.noFeatureAvailable');
+        }
+    };
+
     const getTierValidationDialog = () => ({
         title: t('billing.tier.permission'),
         showDivider: false,
         content: (
             <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
-                Tier Validation
+                {handleGetPlanForFeature(TierMessageCode)}
             </Typography>
         )
     })

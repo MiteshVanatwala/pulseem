@@ -14,6 +14,7 @@ import { logout } from '../../helpers/Api/PulseemReactAPI';
 import { CommonRedux } from '../Whatsapp/Editor/Types/WhatsappCreator.types';
 import { NumberWithMinusRegEx } from '../../helpers/Constants';
 import { Stack } from '@mui/material';
+import { findPlanByFeatureCode } from '../../redux/reducers/TiersSlice';
 
 const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}, mainAccountBalance = {} }: any) => {
 	const dispatch: any = useDispatch();
@@ -22,6 +23,7 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 		(state: { core: coreProps }) => state.core
 	);
 	const { isGlobal, IsPoland } = useSelector((state: { common: CommonRedux }) => state.common);
+	const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
 	const [ isLoader, setIsLoader ] = useState<boolean>(false);
 	const [ toastMessage, setToastMessage ] = useState(null);
 	const [errors, setErrors] = useState({
@@ -51,6 +53,7 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 	} | null>({
 		type: ''
 	});
+	const [TierMessageCode, setTierMessageCode] = useState<string>('');
 
 	useEffect(() => {
 		if (isOpen && CustomGuidEnc !== '') {
@@ -138,6 +141,7 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 				break;
 			}
 			case 927: {
+				setTierMessageCode('SUBACCOUNTS');
 				setDialogType({ type: 'tier' });
 				break;
 			}
@@ -188,12 +192,29 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 		return <Toast customData={null} data={toastMessage} />;
 	};
 
+	const handleGetPlanForFeature = (tierMessageCode: string) => {
+		const planName = findPlanByFeatureCode(
+			tierMessageCode,
+			availablePlans,
+			currentPlan.Id
+		);
+		
+		if (planName) {
+			return t('billing.tier.featureNotAvailable', { 
+				feature: tierMessageCode, 
+				planName: planName 
+			});
+		} else {
+			return t('billing.tier.noFeatureAvailable');
+		}
+	};
+
 	const getTierValidationDialog = () => ({
 		title: t('billing.tier.permission'),
 		showDivider: false,
 		content: (
 			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
-				Tier Validation
+				{handleGetPlanForFeature(TierMessageCode)}
 			</Typography>
 		)
 	})

@@ -24,14 +24,17 @@ import { Title } from '../../components/managment/Title';
 import { InputAdornment } from '@mui/material';
 import { getCommonFeatures } from '../../redux/reducers/commonSlice';
 import { SetRevenueFeature } from '../../redux/reducers/AccountSettingsSlice';
+import { findPlanByFeatureCode } from '../../redux/reducers/TiersSlice';
 
 const SiteTrackingEditor = ({ classes }) => {
     const { isRTL, windowSize } = useSelector(state => state.core);
     const { ToastMessages, siteScript, event, purchaseEvent } = useSelector((state) => state.siteTracking);
+    const { currentPlan, availablePlans } = useSelector((state) => state.tiers);
     const [showLoader, setShowLoader] = useState(true);
     const [toastMessage, setToastMessage] = useState(null);
     const [validationError, setValidationError] = useState([]);
     const [dialogType, setDialogType] = useState({ type: null });
+    const [TierMessageCode, setTierMessageCode] = useState("");
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const [copyStatus, setCopyStatus] = useState(false);
@@ -40,6 +43,20 @@ const SiteTrackingEditor = ({ classes }) => {
     const [isValidDomain, setIsValidDomain] = useState(null);
     const [showActions, setShowActions] = useState(true);
     const [purchaseToggleDisabled, setPurchaseToggleDisabled] = useState(false);
+
+    const handleGetPlanForFeature = (tierMessageCode) => {
+        const planName = findPlanByFeatureCode(
+            tierMessageCode,
+            availablePlans,
+            currentPlan.Id
+        );
+
+        if (planName) {
+            return t('billing.tier.featureNotAvailable').replace('{feature}', tierMessageCode).replace('{planName}', planName);
+        } else {
+            return t('billing.tier.noFeatureAvailable');
+        }
+    };
 
     const getTierValidationDialog = () => {
         return {
@@ -191,6 +208,7 @@ const SiteTrackingEditor = ({ classes }) => {
         // Check for StatusCode 927 (tier validation)
         if (response.StatusCode === 927) {
             // SITE_TRACKING
+            setTierMessageCode(response.Message);
             setDialogType(getTierValidationDialog());
             return;
         }
@@ -263,7 +281,7 @@ const SiteTrackingEditor = ({ classes }) => {
             dynamicMessage: renderDynamicDataDialog(t('common.ErrorTitle'), message),
             deleteEvent: renderDynamicDataDialog(t('siteTracking.deleteDialogTitle'), RenderHtml(t("siteTracking.deleteDialogMessage")), false, true, true),
             invalidDomain: renderDynamicDataDialog(t('common.ErrorTitle'), t('siteTracking.invalidDomainAddress')),
-            tier: renderDynamicDataDialog(t('billing.tier.permission'), RenderHtml(t('common.TierValidationMessage')), false, false, false),
+            tier: renderDynamicDataDialog(t('billing.tier.permission'), RenderHtml(handleGetPlanForFeature(tierMessageCode)), false, false, false),
         }
 
         const currentDialog = dialogContent[type] || {}

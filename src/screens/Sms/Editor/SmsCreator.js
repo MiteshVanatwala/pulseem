@@ -1344,7 +1344,9 @@ const SmsCreator = ({ classes }) => {
           break;
         }
         case 927: {
-          // SMS_BASIC, SMS_BASIC_PERSONALIZATION, SMS_DYNAMIC_PRODUCTS, SMS_CLICK_TRACKING
+          // Determine feature code from payload or context, fallback to 'SMS_BASIC' if not present
+          const featureCode = r.payload.FeatureCode || 'SMS_BASIC';
+          handleGetPlanForFeature(featureCode);
           setDialogType({ type: 'tier' });
           break;
         }
@@ -1355,16 +1357,32 @@ const SmsCreator = ({ classes }) => {
     }
   };
 
-  const getTierValidationDialog = () => ({
-    title: t('billing.tier.permission'),
-    showDivider: false,
-    content: (
-      <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
-        Tier Validation
-      </Typography>
-    ),
-    onConfirm: async () => { setDialogType(null) }
-  })
+  const handleGetPlanForFeature = (tierMessageCode) => {
+    const planName = findPlanByFeatureCode(
+        tierMessageCode,
+        availablePlans,
+        currentPlan.Id
+    );
+    
+    if (planName) {
+      return t('billing.tier.featureNotAvailable').replace('{feature}', tierMessageCode).replace('{planName}', planName);
+    } else {
+      return t('billing.tier.noFeatureAvailable');
+    }
+  };
+
+  const getTierValidationDialog = () => {
+    return {
+      title: t('billing.tier.permission'),
+      showDivider: false,
+      content: (
+        <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+          {handleGetPlanForFeature(tierMessageCode)}
+        </Typography>
+      ),
+      onConfirm: async () => { setDialogType(null); }
+    };
+  };
 
   const handleClose = () => {
     setDialogType(null);

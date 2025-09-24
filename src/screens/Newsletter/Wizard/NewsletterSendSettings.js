@@ -3,6 +3,7 @@ import { IconButton, Tooltip, Typography } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import DefaultScreen from "../../DefaultScreen";
 import { useDispatch, useSelector } from "react-redux";
+import { findPlanByFeatureCode } from "../../../redux/reducers/TiersSlice";
 import { makeStyles } from "@material-ui/core/styles";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
@@ -129,6 +130,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const { subAccountAllGroups } = useSelector((state) => state.group);
     const { previousCampaignData, testGroups } = useSelector((state) => state.sms);
     const { ToastMessages, newsletterSettings, newsletterSendSummary, newsletterInfo } = useSelector(state => state.newsletter);
+    const { currentPlan, availablePlans } = useSelector((state) => state.tiers);
     const [showLoader, setLoader] = useState(true);
     const [isEmailVerified, setIsEmailVerified] = useState(false);
     const [newEMailVerification, setNewEmailVerification] = useState(false);
@@ -171,7 +173,14 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const [mergedSegmentationDialog, setMergedSegmentationDialog] = useState(0);
     const [showTestGroups, setShowTestGroups] = useState(false);
     const [allGroupsSelected, setAllGroupsSelected] = useState(false);
+    const [TierMessageCode, setTierMessageCode] = useState('');
     const [dataReady, setDataReady] = useState(false);
+
+    const handleGetPlanForFeature = (feature) => {
+        const foundPlan = findPlanByFeatureCode(feature, availablePlans);
+        setTierMessageCode(feature);
+        return foundPlan;
+    };
     const [smsMarketingModel, setSmsMarketingModel] = useState({
         Type: 0,
         SendSmsTo: -1,
@@ -735,6 +744,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 break;
             }
             case 927: {
+                handleGetPlanForFeature('NEWSLETTER_AUTOMATION');
                 setDialogType({ type: 'tier' });
                 break;
             }
@@ -969,7 +979,9 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         showDivider: false,
         content: (
             <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
-                Tier Validation
+                {TierMessageCode && findPlanByFeatureCode(TierMessageCode, availablePlans)
+                    ? t('billing.tier.featureNotAvailable')
+                    : t('billing.tier.noFeatureAvailable')}
             </Typography>
         )
     })
@@ -1456,6 +1468,9 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 onConfirm={() => onSaveSettings(true)}
                 isOpen={dialogType?.type === 'SummaryDialog'}
                 setDialogType={(code = null) => {
+                    if (code === 927) {
+                        handleGetPlanForFeature('NEWSLETTER_AUTOMATION');
+                    }
                     setDialogType({ type: code === 927 ? 'tier' : code });
                 }}
                 groups={selectedGroups}

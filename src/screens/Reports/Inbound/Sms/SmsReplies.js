@@ -24,6 +24,7 @@ import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
 import { PulseemFeatures } from '../../../../model/PulseemFields/Fields';
 import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
 import { RenderHtml } from '../../../../helpers/Utils/HtmlUtils';
+import { findPlanByFeatureCode } from '../../../../redux/reducers/TiersSlice';
 
 
 const SmsReplies = ({ classes }) => {
@@ -44,6 +45,7 @@ const SmsReplies = ({ classes }) => {
     const { subAccountAllGroups } = useSelector((state) => state.group);
     const { windowSize, isRTL, rowsPerPage, userRoles } = useSelector(state => state.core);
     const { accountFeatures } = useSelector(state => state.common);
+    const { currentPlan, availablePlans } = useSelector(state => state.tiers);
     const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot) }
     const cellBodyStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot) }
     const cellStyle = { head: classes.tableCellHead, root: clsx(classes.tableCellRoot, classes.paddingHead) }
@@ -66,12 +68,26 @@ const SmsReplies = ({ classes }) => {
         IsExport: false
     };
     const [request, setRequest] = useState(defaultRequest);
-    const [searchRequest, setSearchRequest] = useState(defaultRequest)
+    const [searchRequest, setSearchRequest] = useState(defaultRequest);
+    const [TierMessageCode, setTierMessageCode] = useState('');
 
     const DialogType = { EDIT_RECIPIENT: "EDIT_RECIPIENT" };
 
-    const getTierValidationDialog = () => {
-        return 'tier';
+    const handleGetPlanForFeature = (tierMessageCode) => {
+        const planName = findPlanByFeatureCode(
+            tierMessageCode,
+            availablePlans,
+            currentPlan.Id
+        );
+        
+        if (planName) {
+            return t('billing.tier.featureNotAvailable', { 
+                feature: tierMessageCode, 
+                planName: planName 
+            });
+        } else {
+            return t('billing.tier.noFeatureAvailable');
+        }
     };
 
 
@@ -82,7 +98,8 @@ const SmsReplies = ({ classes }) => {
         // Check for tier validation
         if (response?.payload?.StatusCode === 927) {
             // SMS_RESPONSE_REPORT
-            setDialog(getTierValidationDialog());
+            setTierMessageCode(response?.payload?.Message || 'SMS_RESPONSE_REPORT');
+            setDialog('tier');
             setShowLoader(false);
             return;
         }
@@ -154,7 +171,8 @@ const SmsReplies = ({ classes }) => {
         
         // Check for tier validation
         if (response?.payload?.StatusCode === 927) {
-            setDialog(getTierValidationDialog());
+            setTierMessageCode(response?.payload?.Message || 'SMS_RESPONSE_REPORT');
+            setDialog('tier');
             setShowLoader(false);
             return;
         }
@@ -391,7 +409,9 @@ const SmsReplies = ({ classes }) => {
                         showDefaultButtons={false}
                         title={t('billing.tier.permission')}
                     >
-                        {RenderHtml(t('common.TierValidationMessage'))}
+                        <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+                            {handleGetPlanForFeature(TierMessageCode)}
+                        </Typography>
                     </BaseDialog>
                 }
                 default: {

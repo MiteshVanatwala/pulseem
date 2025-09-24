@@ -28,6 +28,7 @@ import FormProperties from './Tabs/FormProperties';
 import OfflineProperties from './Tabs/OfflineProperties';
 import SubscriberSettings from './Tabs/SubscriberSettings';
 import SeoSettings from './Tabs/SeoSettings';
+import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
 import DevelopmentSettings from './Tabs/DevelopmentSettings';
 import LinkPreviewSettings from './Tabs/LinkPreviewSettings';
 import { BeeEditorStoreModel, LandingPageModel } from '../../../Models/LandingPage/LandingPage';
@@ -54,7 +55,8 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 	} | null>(null);
 	const { subAccountAllGroups } = useSelector((state: any) => state.group);
 	const { accountFeatures } = useSelector((state: any) => state.common);
-	const { ToastMessages } = useSelector((state: { landingPages: BeeEditorStoreModel }) => state.landingPages)
+	const { ToastMessages } = useSelector((state: { landingPages: BeeEditorStoreModel }) => state.landingPages);
+	const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
 	const [toastMessage, setToastMessage] = useState(null);
 	const [errors, setErrors] = useState({
 		PageName: '',
@@ -159,6 +161,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 
 	const [tabValue, setTabValue] = useState<string>('1');
 	// const [template, setTemplate] = useState('');
+	const [TierMessageCode, setTierMessageCode] = useState<string>('');
 	const { publicTemplates, templatesBySubAccount } = useSelector(
 		(state: { landingPages: any }) => state.landingPages
 	);
@@ -484,12 +487,26 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 		confirmText: t('common.Yes')
 	})
 
+	const handleGetPlanForFeature = (tierMessageCode: string) => {
+			const planName = findPlanByFeatureCode(
+					tierMessageCode,
+					availablePlans,
+					currentPlan.Id
+			);
+			
+			if (planName) {
+					return t('billing.tier.featureNotAvailable').replace('{feature}', tierMessageCode).replace('{planName}', planName);
+			} else {
+					return t('billing.tier.noFeatureAvailable');
+			}
+	};
+
 	const getTierValidationDialog = () => ({
 		title: t('billing.tier.permission'),
 		showDivider: false,
 		content: (
 			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
-				Tier Validation
+				{handleGetPlanForFeature(TierMessageCode)}
 			</Typography>
 		),
 		onConfirm: async () => setDialogType(null),
@@ -645,6 +662,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 			}
 			case 927: {
 				// LANDING_PAGE_EDITOR
+				setTierMessageCode('LANDING_PAGE_EDITOR');
 				setDialogType({ type: 'tier' });
 				break;
 			}

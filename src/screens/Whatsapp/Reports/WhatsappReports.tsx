@@ -63,6 +63,7 @@ import PulseemSwitch from '../../../components/Controlls/PulseemSwitch';
 import { sitePrefix } from '../../../config';
 import { LinksClicksReport } from '../../../config/enum';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
+import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
 
 const WhatsappReports = ({ classes }: ClassesType) => {
 	const { t: translator } = useTranslation();
@@ -74,6 +75,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 	const { accountFeatures, currencySymbol, isCurrencySymbolPrefix } = useSelector(
 		(state: { common: CommonRedux }) => state.common
 	);
+	const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
 	const [fromDate, handleFromDate] = useState<MaterialUiPickersDate | null>(
 		null
 	);
@@ -97,9 +99,34 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 		allReportInitialPagination
 	);
 	const [dialogType, setDialogType] = useState<{type: string} | null>(null);
+	const [TierMessageCode, setTierMessageCode] = useState<string>('');
+
+	const handleGetPlanForFeature = (tierMessageCode: string) => {
+		const planName = findPlanByFeatureCode(
+			tierMessageCode,
+			availablePlans,
+			currentPlan.Id
+		);
+		
+		if (planName) {
+			return translator('billing.tier.featureNotAvailable', { 
+				feature: tierMessageCode, 
+				planName: planName 
+			});
+		} else {
+			return translator('billing.tier.noFeatureAvailable');
+		}
+	};
 
 	const getTierValidationDialog = () => ({
-		type: 'tier'
+		type: 'tier',
+		title: translator('billing.tier.permission'),
+		showDivider: false,
+		content: (
+			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+				{handleGetPlanForFeature(TierMessageCode)}
+			</Typography>
+		)
 	});
 
 	const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot };
@@ -381,6 +408,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 		// Check for tier validation
 		if (campaignData?.StatusCode === 927) {
 			// WHATSAPP_REPORT
+			setTierMessageCode('WHATSAPP_REPORTS');
 			setDialogType(getTierValidationDialog());
 			return;
 		}
@@ -439,6 +467,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 		
 		// Check for tier validation
 		if (campaignData?.payload?.StatusCode === 927) {
+			setTierMessageCode(campaignData?.payload?.Message || 'WHATSAPP_REPORT');
 			setDialogType(getTierValidationDialog());
 			return;
 		}
@@ -1028,7 +1057,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 					showDivider={false}
 				>
 					<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
-						Tier Validation
+						{handleGetPlanForFeature(TierMessageCode)}
 					</Typography>
 				</BaseDialog>
 			)}

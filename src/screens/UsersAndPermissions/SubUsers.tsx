@@ -26,10 +26,12 @@ import PermissionList from './PermissionList';
 import { logout } from '../../helpers/Api/PulseemReactAPI';
 import SubUserChangePassword from './SubUserChangePassword';
 import { BiMailSend } from 'react-icons/bi';
+import { findPlanByFeatureCode } from '../../redux/reducers/TiersSlice';
 
 const SubUsers = ({ classes }: any) => {
   const { language, windowSize, isRTL, rowsPerPage, userRoles, subUserName } = useSelector((state: any) => state.core);
   const { ToastMessages } = useSelector((state: any) => state?.subUser);
+  const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const [isSearching, setIsSearching] = useState<boolean>(false);
@@ -50,7 +52,8 @@ const SubUsers = ({ classes }: any) => {
     type: string;
     data: any
   } | null>(null);
-  const [userList, setUserList] = useState<SubUserModel[]>()
+  const [userList, setUserList] = useState<SubUserModel[]>();
+  const [TierMessageCode, setTierMessageCode] = useState<string>('');
   const rowStyle = { head: clsx(classes.tableRowHead, classes.pt10, classes.pb10), root: classes.tableRowRoot }
   const cellStyle = { head: clsx(classes.tableCellHead, classes.noPadding, classes.f16), body: classes.tableCellBody, root: clsx(classes.tableCellRoot, classes.p0) }
   const cellBodyStyle = { body: clsx(classes.tableCellBody, classes.f16), root: clsx(classes.tableCellRoot, classes.noPadding) }
@@ -529,12 +532,26 @@ const SubUsers = ({ classes }: any) => {
     onCancel: () => setDialogType(null)
   })
 
+  const handleGetPlanForFeature = (tierMessageCode: string) => {
+    const planName = findPlanByFeatureCode(
+        tierMessageCode,
+        availablePlans,
+        currentPlan.Id
+    );
+    
+    if (planName) {
+      return t('billing.tier.featureNotAvailable').replace('{feature}', tierMessageCode).replace('{planName}', planName);
+    } else {
+      return t('billing.tier.noFeatureAvailable');
+    }
+  };
+
   const getTierValidationDialog = () => ({
     title: t('billing.tier.permission'),
     showDivider: false,
     content: (
       <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
-        Tier Validation
+        {handleGetPlanForFeature(TierMessageCode)}
       </Typography>
     ),
     onConfirm: async () => { setDialogType(null) }

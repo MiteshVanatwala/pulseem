@@ -16,6 +16,7 @@ import Toast from '../../../components/Toast/Toast.component';
 import moment from 'moment';
 import 'moment/locale/he';
 import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
+import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
 
 const AmpRegistration = ({ classes }: any) => {
     const [showLoader, setShowLoader] = useState<boolean>(true);
@@ -24,6 +25,7 @@ const AmpRegistration = ({ classes }: any) => {
     const dispatch = useDispatch();
     const { verifiedEmails } = useSelector((state: StateType) => state.common);
     const { isRTL } = useSelector((state: StateType) => state.core);
+    const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
     const ToastMessages = {
         100: { severity: 'error', color: 'error', message: 'campaigns.ampSelectEmail', showAnimtionCheck: false },
         201: { severity: 'success', color: 'success', message: 'campaigns.requestSent', showAnimtionCheck: false },
@@ -38,6 +40,7 @@ const AmpRegistration = ({ classes }: any) => {
     } | null>({
         type: ''
     });
+    const [TierMessageCode, setTierMessageCode] = useState<string>("");
 
     const init = async () => {
         await dispatch(getAuthorizedEmails());
@@ -58,7 +61,8 @@ const AmpRegistration = ({ classes }: any) => {
         if (selectedEmail?.length > 0) {
             const response: any = await dispatch(ampApproval(selectedEmail));
             if (response?.payload?.StatusCode === 927) {
-
+                setTierMessageCode(response?.payload?.Message);
+                setDialogType({ type: 'tier' });
             } else if (response?.payload?.StatusCode === 201) {
                 setShowAmpRegisterDesc(true);
                 setSelectedEmail([]);
@@ -71,12 +75,26 @@ const AmpRegistration = ({ classes }: any) => {
         }
     }
 
+    const handleGetPlanForFeature = (tierMessageCode: string) => {
+        const planName = findPlanByFeatureCode(
+                tierMessageCode,
+                availablePlans,
+                currentPlan.Id
+        );
+        
+        if (planName) {
+                return t('billing.tier.featureNotAvailable').replace('{feature}', tierMessageCode).replace('{planName}', planName);
+        } else {
+                return t('billing.tier.noFeatureAvailable');
+        }
+    };
+
     const getTierValidationDialog = () => ({
         title: t('billing.tier.permission'),
         showDivider: false,
         content: (
             <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
-                Tier Validation
+                {handleGetPlanForFeature(TierMessageCode)}
             </Typography>
         )
     })

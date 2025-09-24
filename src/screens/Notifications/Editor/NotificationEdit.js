@@ -33,6 +33,7 @@ import { sitePrefix } from '../../../config';
 import { Title } from '../../../components/managment/Title';
 import { Stack } from '@mui/material';
 import EmojiPicker from '../../../components/Emojis/EmojiPicker';
+import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
 
 const useStylesBootstrap = makeStyles((theme) => ({
   arrow: {
@@ -57,7 +58,8 @@ const NotificationEdit = ({ classes }) => {
 
   /* #region  Component settings constatns */
   const dispatch = useDispatch();
-  const { language, isRTL, CoreToastMessages } = useSelector(state => state.core)
+  const { language, isRTL, CoreToastMessages } = useSelector(state => state.core);
+  const { currentPlan, availablePlans } = useSelector(state => state.tiers);
   const { t } = useTranslation();
   moment.locale(language);
   /* #endregion */
@@ -114,6 +116,7 @@ const NotificationEdit = ({ classes }) => {
   const [isGalleryConfirmed, setIsFileSelected] = useState(false);
   const [showConfirmCancel, setShowConfirmCancel] = useState(false);
   const [dialogType, setDialogType] = useState(null);
+  const [TierMessageCode, setTierMessageCode] = useState('');
 
   const toastMessages = {
     SUCCESS: { severity: 'success', color: 'success', message: t('notifications.saved'), showAnimtionCheck: true },
@@ -870,12 +873,26 @@ const NotificationEdit = ({ classes }) => {
     return null;
   }
 
+  const handleGetPlanForFeature = (tierMessageCode) => {
+    const planName = findPlanByFeatureCode(
+        tierMessageCode,
+        availablePlans,
+        currentPlan.Id
+    );
+    
+    if (planName) {
+        return t('billing.tier.featureNotAvailable').replace('{feature}', tierMessageCode).replace('{planName}', planName);
+    } else {
+        return t('billing.tier.noFeatureAvailable');
+    }
+  };
+
   const getTierValidationDialog = () => ({
     title: t('billing.tier.permission'),
     showDivider: false,
     content: (
       <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
-        Tier Validation
+        {handleGetPlanForFeature(TierMessageCode)}
       </Typography>
     )
   })
@@ -897,6 +914,7 @@ const NotificationEdit = ({ classes }) => {
         dispatch(save(modelToSave)).then((response) => {
           if (response?.payload?.StatusCode === 927) {
             // WEB_PUSH
+            setTierMessageCode(response?.payload?.Message || 'WEB_PUSH');
             setDialogType({ type: 'tier' });
             return;
           }

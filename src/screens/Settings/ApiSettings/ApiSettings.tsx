@@ -33,6 +33,7 @@ import { ExportData, ExportOption, HandleExportData } from '../../../helpers/Exp
 import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog';
 import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
 import { ExportFile } from '../../../helpers/Export/ExportFile';
+import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
 
 const useStyles = makeStyles({
     pwdEveButton: {
@@ -65,6 +66,7 @@ const ApiSettings = ({ classes }: any) => {
     const { isRTL, windowSize } = useSelector((state: any) => state.core);
     const { ToastMessages } = useSelector((state: any) => state?.accountSettings);
     const { accountFeatures } = useSelector((state: any) => state.common);
+    const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
     const [toastMessage, setToastMessage] = useState(null);
     const [showLoader, setShowLoader] = useState(false);
     const [smsVerificationPopup, setSmsVerificationPopup] = useState(false);
@@ -81,14 +83,36 @@ const ApiSettings = ({ classes }: any) => {
     const [exportFileTypeDialog, setExportFileTypeDialog] = useState<boolean>(false);
     const [exportData, setExportData] = useState<any>(null);
     const [dialogType, setDialogType] = useState<any>(null);
+    const [TierMessageCode, setTierMessageCode] = useState<string>('');
 
 
     const localClasses = useStyles();
 
+    const handleGetPlanForFeature = (tierMessageCode: string) => {
+        const planName = findPlanByFeatureCode(
+            tierMessageCode,
+            availablePlans,
+            currentPlan.Id
+        );
+        
+        if (planName) {
+            return t('billing.tier.featureNotAvailable').replace('{feature}', tierMessageCode).replace('{planName}', planName);
+        } else {
+            return t('billing.tier.noFeatureAvailable');
+        }
+    };
+
     const getTierValidationDialog = () => {
         return {
             type: 'tier',
-            data: null
+            data: null,
+            title: t('billing.tier.permission'),
+            showDivider: false,
+            content: (
+                <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+                    {handleGetPlanForFeature(TierMessageCode)}
+                </Typography>
+            )
         };
     };
 
@@ -120,6 +144,7 @@ const ApiSettings = ({ classes }: any) => {
         }
         else if (payload?.StatusCode === 927) {
             // API_ACCESS
+            setTierMessageCode(payload?.Message || 'API_ACCESS');
             setDialogType(getTierValidationDialog());
         }
         else {
@@ -142,6 +167,7 @@ const ApiSettings = ({ classes }: any) => {
         }
         else if (payload?.StatusCode === 927) {
             // API_ACCESS
+            setTierMessageCode(payload?.Message || 'API_ACCESS');
             setDialogType(getTierValidationDialog());
         }
         else {
@@ -509,7 +535,7 @@ const ApiSettings = ({ classes }: any) => {
                     showDefaultButtons={false}
                     title={t('billing.tier.permission')}
                 >
-                    {RenderHtml(t('common.TierValidationMessage'))}
+                    {handleGetPlanForFeature(TierMessageCode)}
                 </BaseDialog>
             }
             {

@@ -24,6 +24,7 @@ import { IsValidNonGlobalPhoneNumber, IsValidPhoneNumberKeyPress, IsValidPhoneNu
 import { getTestGroups } from '../../redux/reducers/smsSlice';
 import { GetGlobalAccountPackagesDetails } from '../../redux/reducers/commonSlice';
 import { Stack } from '@mui/material';
+import { findPlanByFeatureCode } from '../../redux/reducers/TiersSlice';
 
 const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}, mainAccountBalance = {} }: any) => {
 	const dispatch: any = useDispatch();
@@ -34,6 +35,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 	const { isGlobal, countryCodeList, accountCurrencySymbol, accountIsCurrencySymbolPrefix, IsPoland } = useSelector((state: { common: CommonRedux }) => state.common);
 	const { subAccountAllGroups } = useSelector((state: any) => state.group);
 	const { testGroups } = useSelector((state: any) => state.sms);
+	const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
 	const [ selectedGroups, setSelectedGroups ] = useState<any>([]);
 	const [ showTestGroups, setShowTestGroups ] = useState(false);
 	const [ allGroupsSelected, setAllGroupsSelected ] = useState(false);
@@ -44,6 +46,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 	} | null>({
 		type: ''
 	});
+	const [TierMessageCode, setTierMessageCode] = useState<string>('');
 	const [ errors, setErrors ] = useState({
 		subAccountName: '',
 		cellPhone: '',
@@ -302,6 +305,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 				break;
 			}
 			case 927: {
+				setTierMessageCode('SUBACCOUNTS');
 				setDialogType({ type: 'tier' });
 				break;
 			}
@@ -346,12 +350,26 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
     onClose: () => setDialogType(null)
 	})
 
+	const handleGetPlanForFeature = (tierMessageCode: string) => {
+		const planName = findPlanByFeatureCode(
+			tierMessageCode,
+			availablePlans,
+			currentPlan.Id
+		);
+		
+		if (planName) {
+			return t('billing.tier.featureNotAvailable').replace('{feature}', tierMessageCode).replace('{planName}', planName);
+		} else {
+			return t('billing.tier.noFeatureAvailable');
+		}
+	};
+
 	const getTierValidationDialog = () => ({
 		title: t('billing.tier.permission'),
 		showDivider: false,
 		content: (
 			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
-				Tier Validation
+				{handleGetPlanForFeature(TierMessageCode)}
 			</Typography>
 		)
 	})

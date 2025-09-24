@@ -85,6 +85,7 @@ import { sitePrefix } from '../../../config';
 import { TablePagination } from '../../../components/managment';
 import { TemplateErrorDialog } from '../../../components/TemplateErrorDialog/TemplateErrorDialog';
 import { DateFormats } from '../../../helpers/Constants';
+import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
 
 const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 	const dispatch = useDispatch();
@@ -97,6 +98,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		(state: { whatsapp: { ToastMessages: toastProps } }) =>
 			state.whatsapp.ToastMessages
 	);
+	const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
 	const [templateNameSearch, setTemplateNameSearch] = useState<string>('');
 	const [templateStatusSearch, setTemplateStatusSearch] = useState<string>('');
 	const [isSearching, setSearching] = useState<boolean>(false);
@@ -125,6 +127,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 	const [dialogType, setDialogType] = useState<any>({});
 	const [toastMessage, setToastMessage] =
 		useState<toastProps['SUCCESS']>(resetToastData);
+	const [TierMessageCode, setTierMessageCode] = useState<string>("");
 	const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot };
 	const cellStyle = {
 		head: classes.tableCellHead,
@@ -649,6 +652,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 
 		if (submitData?.payload?.StatusCode === 927) {
 			if (['WHATSAPP_MEDIA_ATTACHMENT', 'WHATSAPP_TEMPLATES', 'WHATSAPP_BUTTON_ATTACHMENT','WHATSAPP_CARD_MESSAGE'].indexOf(submitData?.payload?.Message) !== -1) {
+				setTierMessageCode(submitData?.payload?.Message);
 				setDialogType({ type: 'tier' })
 			}
 		}
@@ -848,12 +852,26 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		/>
 	})
 
+	const handleGetPlanForFeature = (tierMessageCode: string) => {
+		const planName = findPlanByFeatureCode(
+			tierMessageCode,
+			availablePlans,
+			currentPlan.Id
+		);
+		
+		if (planName) {
+			return translator('billing.tier.featureNotAvailable').replace('{feature}', tierMessageCode).replace('{planName}', planName);
+		} else {
+			return translator('billing.tier.noFeatureAvailable');
+		}
+	};
+
 	const getTierValidationDialog = () => ({
 		title: translator('billing.tier.permission'),
 		showDivider: false,
 		content: (
 			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
-				Tier Validation
+				{handleGetPlanForFeature(TierMessageCode)}
 			</Typography>
 		)
 	})

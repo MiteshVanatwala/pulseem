@@ -33,6 +33,7 @@ import { sitePrefix } from '../../../config';
 import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 import queryString from 'query-string';
 import { LinksClicksReport } from '../../../config/enum';
+import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
 
 const SmsReport = ({ classes }) => {
   const priorDate = moment().subtract(30, 'days').utcOffset(0);
@@ -43,6 +44,7 @@ const SmsReport = ({ classes }) => {
   const { accountFeatures, currencySymbol, isCurrencySymbolPrefix } = useSelector(state => state.common);
   const { language, windowSize, isRTL, userRoles } = useSelector(state => state.core)
   const { smsReport, smsGraph } = useSelector(state => state.sms)
+  const { currentPlan, availablePlans } = useSelector(state => state.tiers)
   const { t } = useTranslation()
   const rowsOptions = [6, 10, 20, 50]
   const [rowsPerPage, setRowsPerPage] = useState(rowsOptions[0])
@@ -60,11 +62,33 @@ const SmsReport = ({ classes }) => {
   const [hasRevenue, setHasRevenue] = useState(false);
   const [showNoticeDialog, setShowNoticeDialog] = useState(false);
   const [dialogType, setDialogType] = useState(null);
+  const [TierMessageCode, setTierMessageCode] = useState('');
+
+  const handleGetPlanForFeature = (tierMessageCode) => {
+    const planName = findPlanByFeatureCode(
+        tierMessageCode,
+        availablePlans,
+        currentPlan.Id
+    );
+    
+    if (planName) {
+        return t('billing.tier.featureNotAvailable').replace('{feature}', tierMessageCode).replace('{planName}', planName);
+    } else {
+        return t('billing.tier.noFeatureAvailable');
+    }
+  };
 
   const getTierValidationDialog = () => {
     return {
       type: 'tier',
-      data: null
+      data: null,
+      title: t('billing.tier.permission'),
+      showDivider: false,
+      content: (
+        <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+          {handleGetPlanForFeature(TierMessageCode)}
+        </Typography>
+      )
     };
   };
   const qs = (window.location.search && queryString.parse(window.location.search)) || state;
@@ -233,6 +257,7 @@ const SmsReport = ({ classes }) => {
     // Check for tier validation
     if (response?.payload === 927) {
       // SMS_REPORT
+      setTierMessageCode(response?.payload?.Message || 'SMS_REPORT');
       setDialogType(getTierValidationDialog());
       setLoader(false);
       return;
@@ -275,6 +300,7 @@ const SmsReport = ({ classes }) => {
       
       // Check for tier validation
       if (response === '927') {
+        setTierMessageCode('SMS_REPORT');
         setDialogType(getTierValidationDialog());
         return;
       }
@@ -966,7 +992,7 @@ const SmsReport = ({ classes }) => {
         title: t('billing.tier.permission'),
         showDivider: false,
         exitButton: false,
-        content: RenderHtml(t('common.TierValidationMessage')),
+        content: RenderHtml(handleGetPlanForFeature(TierMessageCode)),
         onClose: () => setDialogType(null),
         onConfirm: () => setDialogType(null),
         showDefaultButtons: false

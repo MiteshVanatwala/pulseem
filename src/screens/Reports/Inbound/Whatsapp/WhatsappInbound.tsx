@@ -41,6 +41,7 @@ import { PulseemFeatures } from "../../../../model/PulseemFields/Fields";
 import { DateFormats } from "../../../../helpers/Constants";
 import { getCommonFeatures } from "../../../../redux/reducers/commonSlice";
 import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
+import { findPlanByFeatureCode } from "../../../../redux/reducers/TiersSlice";
 
 const WhatsappInbound = ({ classes }: any) => {
   const dispatch = useDispatch();
@@ -59,7 +60,8 @@ const WhatsappInbound = ({ classes }: any) => {
     (state: StateType) => state.core
   );
 
-  const { accountFeatures } = useSelector((state: any) => state.common)
+  const { accountFeatures } = useSelector((state: any) => state.common);
+  const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
 
   const rowStyle = {
     head: classes.tableRowReportHead,
@@ -88,10 +90,31 @@ const WhatsappInbound = ({ classes }: any) => {
     useState<wpInbdDefaultFilterType>(defaultRequest);
   // const [searchRequest, setSearchRequest] =
   //   useState<wpInbdDefaultFilterType>(defaultRequest);
+  const [TierMessageCode, setTierMessageCode] = useState<string>('');
 
-  const getTierValidationDialog = () => {
-    return 'tier';
+  const handleGetPlanForFeature = (tierMessageCode: string) => {
+    const planName = findPlanByFeatureCode(
+        tierMessageCode,
+        availablePlans,
+        currentPlan.Id
+    );
+    
+    if (planName) {
+        return t('billing.tier.featureNotAvailable').replace('{feature}', tierMessageCode).replace('{planName}', planName);
+    } else {
+        return t('billing.tier.noFeatureAvailable');
+    }
   };
+
+  const getTierValidationDialog = () => ({
+    title: t('billing.tier.permission'),
+    showDivider: false,
+    content: (
+      <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+        {handleGetPlanForFeature(TierMessageCode)}
+      </Typography>
+    )
+  });
 
   const getInboundData = async () => {
     setShowLoader(true);
@@ -103,7 +126,8 @@ const WhatsappInbound = ({ classes }: any) => {
     // Check for tier validation
     if (response?.payload?.StatusCode === 927) {
       // WHATSAPP_RESPONSE_REPORT
-      setDialog(getTierValidationDialog());
+      setTierMessageCode(response?.payload?.Message || 'WHATSAPP_RESPONSE_REPORT');
+      setDialog('tier');
       setShowLoader(false);
       return;
     }
@@ -177,7 +201,8 @@ const WhatsappInbound = ({ classes }: any) => {
 
     // Check for tier validation
     if (response?.payload?.StatusCode === 927) {
-      setDialog(getTierValidationDialog());
+      setTierMessageCode(response?.payload?.Message || 'WHATSAPP_RESPONSE_REPORT');
+      setDialog('tier');
       setShowLoader(false);
       return;
     }
@@ -442,7 +467,7 @@ const WhatsappInbound = ({ classes }: any) => {
           showDefaultButtons={false}
           title={t('billing.tier.permission')}
         >
-          {RenderHtml(t('common.TierValidationMessage'))}
+          {handleGetPlanForFeature(TierMessageCode)}
         </BaseDialog>
       )}
       <Loader isOpen={showLoader} showBackdrop={true} />

@@ -28,6 +28,7 @@ import Toast from '../../components/Toast/Toast.component';
 import GenericModal from './modals/GenericModal';
 import { deleteCampaign } from '../../redux/reducers/newsletterSlice';
 import { getCommonFeatures, isAlive } from '../../redux/reducers/commonSlice';
+import { findPlanByFeatureCode } from '../../redux/reducers/TiersSlice';
 import WizardActions from '../../components/Wizard/WizardActions';
 import { getBeeToken } from '../../redux/reducers/campaignEditorSlice';
 import { initExtraDataField, initLandingPages } from './helper/MigratePulseemData';
@@ -84,6 +85,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   const { language, isRTL, userRoles } = useSelector(state => state.core)
   const { tokenAlive, accountSettings, accountFeatures, verifiedEmails } = useSelector(state => state.common)
   const { productCategories } = useSelector(state => state.product);
+  const { currentPlan, availablePlans } = useSelector((state) => state.tiers);
   const [dialog, setDialog] = useState(null);
   const [summaryData, setSummaryData] = useState(null);
   const [toastMessage, setToastMessage] = useState(null);
@@ -117,7 +119,8 @@ const CampaignEditor = ({ classes, ...props }) => {
   });
   const [showDomainVerification, setShowDomainVerification] = useState(false);
   const [emailProps, setEmailProps] = useState(null);
-  const [dialogType, setDialogType] = useState(null)
+  const [dialogType, setDialogType] = useState(null);
+  const [TierMessageCode, setTierMessageCode] = useState("");
   //#endregion State
 
   //#region Get Extra fields & Landing pages, after Data Ready
@@ -333,6 +336,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           forceTemplate = responseData?.JsonData ? JSON.parse(responseData?.JsonData) : defaultContent.defaultTemplate;
         } else if (templateResponse?.payload?.StatusCode === 927) {
           // NEWSLETTER_TEMPLATES
+          setTierMessageCode(templateResponse?.payload?.Message);
           setDialogType({ type: 'tier' });
         } else {
           setToastMessage({ severity: 'error', color: 'error', message: templateResponse?.payload.Message, showAnimtionCheck: false });
@@ -504,6 +508,7 @@ const CampaignEditor = ({ classes, ...props }) => {
         }
         case 927: {
           // EMAIL_BASIC, BASIC_PERSONALIZATION
+          setTierMessageCode(response?.payload?.Message);
           setDialogType({ type: 'tier' });
           return false;
         }
@@ -591,6 +596,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     // Check for tier validation
     if (templateResponse?.payload?.StatusCode === 927) {
       // NEWSLETTER_TEMPLATES
+      setTierMessageCode(templateResponse?.payload?.Message);
       setDialogType({ type: 'tier' });
       return;
     }
@@ -1082,12 +1088,26 @@ const CampaignEditor = ({ classes, ...props }) => {
     };
   }
 
+  const handleGetPlanForFeature = (tierMessageCode) => {
+      const planName = findPlanByFeatureCode(
+          tierMessageCode,
+          availablePlans,
+          currentPlan.Id
+      );
+      
+      if (planName) {
+          return t('billing.tier.featureNotAvailable').replace('{feature}', tierMessageCode).replace('{planName}', planName);
+      } else {
+          return t('billing.tier.noFeatureAvailable');
+      }
+  };
+
   const getTierValidationDialog = () => ({
     title: t('billing.tier.permission'),
     showDivider: false,
     content: (
       <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
-        Tier Validation
+        {handleGetPlanForFeature(TierMessageCode)}
       </Typography>
     ),
     onCancel: () => setDialogType(null),

@@ -9,6 +9,7 @@ import clsx from 'clsx';
 import { createGroup } from "../../redux/reducers/groupSlice";
 import { DEFAULT_NEW_GROUP } from "../../helpers/Constants";
 import { Autocomplete } from "@mui/material";
+import { findPlanByFeatureCode } from "../../redux/reducers/TiersSlice";
 
 interface GroupSelection {
     classes: any;
@@ -32,6 +33,7 @@ const GroupSelectorPopUp = ({
     const { t } = useTranslation();
     const { subAccountAllGroups } = useSelector((state: any) => state.group);
     const { isRTL } = useSelector((state: any) => state.core);
+    const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
     const dispatch = useDispatch();
     const [showLoader, setShowLoader] = useState<boolean>(true);
     const [newSelection, setNewSelection] = useState<any[]>(selectedGroups)
@@ -41,6 +43,7 @@ const GroupSelectorPopUp = ({
     const [dialogType, setDialogType] = useState<{
         type: string;
     } | null>(null);
+    const [TierMessageCode, setTierMessageCode] = useState<string>("");
 
     const getGroups = async () => {
         setShowLoader(true);
@@ -83,6 +86,7 @@ const GroupSelectorPopUp = ({
             }
             case 927: {
                 // DYNAMIC_GROUPS
+                setTierMessageCode(response?.payload?.Message);
                 setDialogType({
                     type: 'tier'
                 });
@@ -156,12 +160,26 @@ const GroupSelectorPopUp = ({
         );
     }
 
+    const handleGetPlanForFeature = (tierMessageCode: string) => {
+        const planName = findPlanByFeatureCode(
+            tierMessageCode,
+            availablePlans,
+            currentPlan.Id
+        );
+        
+        if (planName) {
+            return t('billing.tier.featureNotAvailable').replace('{feature}', tierMessageCode).replace('{planName}', planName);
+        } else {
+            return t('billing.tier.noFeatureAvailable');
+        }
+    };
+
     const getTierValidationDialog = () => ({
         title: t('billing.tier.permission'),
         showDivider: false,
         content: (
             <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
-                Tier Validation
+                {handleGetPlanForFeature(TierMessageCode)}
             </Typography>
         ),
         onCancel: () => setDialogType(null),
