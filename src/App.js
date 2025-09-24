@@ -6,6 +6,7 @@ import ArchiveManagement from './screens/Newsletter/Management/ArchiveManagement
 import AutomationManagment from './screens/Automations/Management/AutomationsManagment';
 import LandingPagesesManagment from './screens/LandingPages/Management/LandingPagesManagment';
 import MmsManagment from './screens/Mms/Management/MmsManagment';
+import PopUpManagement from './screens/LandingPages/PopUpManagement/PopUpManagement';
 import SmsManagment from './screens/Sms/Management/SmsManagment';
 import {
   getCookie,
@@ -339,6 +340,10 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
       <Route
         path={`${sitePrefix}EditRegistrationPage`}
         element={<LandingPagesesManagment classes={classes} />}
+      />
+      <Route
+        path={`${sitePrefix}LandingPages/PopUpManagement`}
+        element={<PopUpManagement classes={classes} />}
       />
       <Route
         path={`${sitePrefix}LandingPages/Create`}

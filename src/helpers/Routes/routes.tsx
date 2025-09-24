@@ -305,6 +305,17 @@ export const getRoutes = (
           isShow: true,
         },
         {
+          title: t("landingPages.createPopup"),
+          href: `${sitePrefix}LandingPages/Create?type=popup`,
+          isShow: true,
+        },
+        {
+          key: "popupManagement",
+          title: t("master.RadMenuItemPopupManagement.Text"),
+          href: `${sitePrefix}LandingPages/PopUpManagement`,
+          isShow: true,
+        },
+        {
           title: t("master.RadMenuItemLandingManagement.Text"),
           href: `${sitePrefix}EditRegistrationPage`,
           isShow: true,

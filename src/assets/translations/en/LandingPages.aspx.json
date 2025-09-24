@@ -341,6 +341,7 @@
   "duplicationSuccessful": "Duplication successful!",
   "duplicationSuccessfulMessage": "All of the data from your landing page has been duplicated. If you would like to edit the Form Properties for your new Landing Page, click Edit below.",
   "createLandingPage": "Create Landing Page",
+  "createPopup": "Create a Pop-up",
   "editLandingPage": "Edit Landing Page",
   "formProperties": "Form Properties",
   "formName": "Form Name",
@@ -481,5 +482,42 @@
   "notApproved": "Not Approved",
   "addClientAsActive": "Add all new registered recipients coming from this landing page as “Active”",
   "addClientAsActiveWhenClientSelect": "Add new recipients as “Active” only if they approved mailing by checking the opt-in checkbox ",
-  "changeOptInDesclaimer": "For your attention, <br/>by activating <b>Add all new registered recipients coming from this landing page as “Active”</b> setting, you are requesting to add recipient which have not opt in to receive mailing, which means these recipients will receive Emails, SMS and WhatsApp campaigns that you send.<br/>Changing the aforementioned settings is carried out at your sole responsibility, and in doing so you confirm that Pulseem will not bear any responsibility for any damage caused to you and/or to Pulseem as a result, and therefore these damages will apply only to you."
+  "changeOptInDesclaimer": "For your attention, <br/>by activating <b>Add all new registered recipients coming from this landing page as “Active”</b> setting, you are requesting to add recipient which have not opt in to receive mailing, which means these recipients will receive Emails, SMS and WhatsApp campaigns that you send.<br/>Changing the aforementioned settings is carried out at your sole responsibility, and in doing so you confirm that Pulseem will not bear any responsibility for any damage caused to you and/or to Pulseem as a result, and therefore these damages will apply only to you.",
+  "popupManagement": {
+    "title": "Pop-up Management",
+    "searchPlaceholder": "Search pop-ups by name or domain...",
+    "createNew": "Create New Pop-up",
+    "cardView": "Card View",
+    "tableView": "Table View",
+    "tableHeaders": {
+      "title": "Title",
+      "url": "URL",
+      "status": "Status",
+      "allViewers": "All Viewers",
+      "identifiedViewers": "Identified Viewers",
+      "conversions": "Conversions",
+      "conversionRate": "Conversion Rate",
+      "actions": "Actions"
+    },
+    "statCards": {
+      "totalPopups": "Total Popups",
+      "viewsThisMonth": "Views This Month",
+      "avgConversionRate": "Average Conversion Rate",
+      "topPerforming": "Top Performing Popup"
+    },
+    "filters": {
+      "all": "All",
+      "active": "Active",
+      "inactive": "Inactive",
+      "draft": "Draft"
+    },
+    "actions": {
+      "settings": "Settings",
+      "preview": "Preview",
+      "editDesign": "Edit Design",
+      "duplicate": "Duplicate",
+      "copySnippet": "Copy Snippet",
+      "delete": "Delete"
+    }
+  }
 }
