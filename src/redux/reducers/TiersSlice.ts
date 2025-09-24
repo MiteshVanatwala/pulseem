@@ -250,5 +250,40 @@ const TiersSlice = createSlice({
     },
 });
 
+// Utility function to find plan by feature code
+export const findPlanByFeatureCode = (
+    tierMessageCode: string,
+    availablePlans: any,
+    currentPlanId?: number
+): string | null => {
+    // Check if availablePlans data exists
+    if (!availablePlans?.Data) {
+        return null;
+    }
+
+    const plans = availablePlans.Data;
+    
+    // If currentPlanId is provided, start searching from plans with Id > currentPlanId
+    // Otherwise, search through all plans
+    const sortedPlans = currentPlanId 
+        ? plans.filter((plan: any) => plan.Id > currentPlanId).sort((a: any, b: any) => a.Id - b.Id)
+        : plans.sort((a: any, b: any) => a.Id - b.Id);
+
+    // Search through each plan's features
+    for (const plan of sortedPlans) {
+        if (plan.Features && Array.isArray(plan.Features)) {
+            const hasFeature = plan.Features.some((feature: any) => 
+                feature.FeatureCode === tierMessageCode
+            );
+            
+            if (hasFeature) {
+                return plan.Name;
+            }
+        }
+    }
+
+    return null;
+};
+
 export const { clearErrors, resetTiersState } = TiersSlice.actions;
 export default TiersSlice.reducer;

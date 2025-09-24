@@ -965,7 +965,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     }
 
     const getTierValidationDialog = () => ({
-        title: t('whatsapp.alertModal.DeleteText'),
+        title: t('billing.tier.permission'),
         showDivider: false,
         content: (
             <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>

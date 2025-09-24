@@ -142,7 +142,7 @@ const AddGroupPopUp = ({
                 },
                 S_927: {
                     code: 927,
-                    message: null,
+                    message: response.Message,
                     Func: () => {
                         setDialogType({ type: 'tier' });
                     }
@@ -165,7 +165,7 @@ const AddGroupPopUp = ({
     };
 
     const getTierValidationDialog = () => ({
-        title: t('whatsapp.alertModal.DeleteText'),
+        title: t('billing.tier.permission'),
         showDivider: false,
         content: (
             <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
@@ -173,7 +173,8 @@ const AddGroupPopUp = ({
             </Typography>
         ),
         onCancel: () => setDialogType(null),
-        onClose: () => setDialogType(null)
+        onClose: () => setDialogType(null),
+        onConfirm: () => setDialogType(null),
     });
 
     const renderDialog = () => {

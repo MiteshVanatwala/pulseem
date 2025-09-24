@@ -54,7 +54,6 @@ const TierPlans = ({ classes, isOpen, onClose }: any) => {
   const contentRef = useRef<HTMLDivElement>(null);
   const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
   const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
-  console.log(availablePlans)
     // Scroll to top when step changes
   useEffect(() => {
     // Add a small delay to ensure DOM is updated
@@ -97,6 +96,10 @@ const TierPlans = ({ classes, isOpen, onClose }: any) => {
 
     scrollToTop();
   }, [activeStep]);
+
+  useEffect(() => {
+    setHasFrozenEmail(currentPlan.AutomationAvailable);
+  }, [ currentPlan ]);
 
   const handleNext = (plan?: any) => {
     if (plan) {
@@ -442,7 +445,7 @@ const TierPlans = ({ classes, isOpen, onClose }: any) => {
   };
 
   const FrozenAutomationMessage = () => {
-    // if (!hasFrozenEmail) return null;
+    if (!hasFrozenEmail) return null;
     
     return (
       <Box className={clsx(classes.frozenCampaignsContainer, classes.pt25)}>

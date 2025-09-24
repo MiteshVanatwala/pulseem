@@ -152,7 +152,10 @@
     "releaseMessage": "האימיילים שהושהו נשלחים כעת, והאוטומציות הרלוונטיות חודשו.",
     "cancelMessage": "עודכנו. האימיילים שהושהו בוטלו, והאוטומציות יישארו לא פעילות בשלב זה. ניתן להפעיל אותן מחדש <b>בעמודי ניהול האוטומציות</b> בכל עת.",
     "free": "Free",
-    "contactSales": "Contact Sales"
+    "contactSales": "Contact Sales",
+    "permission": "Permission",
+    "featureNotAvailable": "Oops! {feature} is not available in current plan. Upgrade to {planName} to use this feature.",
+    "noFeatureAvailable": "Oops! no plan has this feature."
   },
   "creditCardManagement": {
     "title": "Credit Card Management",

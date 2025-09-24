@@ -791,6 +791,7 @@ const SendCampaign = ({
 				await dispatch<any>(sendCampaign(sendCampaignPayload));
 			setIsLoader(false);
 			if (sendCampaignData?.StatusCode === 927) {
+				// WHATSAPP_CAMPAIGN_SEND
 				setDialogType({ type: 'tier' })
 			}
 			else if (sendCampaignData?.Status === apiStatus.SUCCESS) {
@@ -950,7 +951,7 @@ const SendCampaign = ({
 	})
 
 	const getTierValidationDialog = () => ({
-		title: translator('whatsapp.alertModal.DeleteText'),
+		title: translator('billing.tier.permission'),
 		showDivider: false,
 		content: (
 			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>

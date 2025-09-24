@@ -88,6 +88,7 @@ const SummaryDialog = ({ classes,
         const response = sendResponse?.payload;
         console.log(response)
         if (response.StatusCode === 927) {
+            // EMAIL_BASIC
             setDialogType(927)
         } else if (response.StatusCode === 451) {
             const req = {

@@ -485,13 +485,14 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 	})
 
 	const getTierValidationDialog = () => ({
-		title: t('whatsapp.alertModal.DeleteText'),
+		title: t('billing.tier.permission'),
 		showDivider: false,
 		content: (
 			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
 				Tier Validation
 			</Typography>
-		)
+		),
+		onConfirm: async () => setDialogType(null),
 	})
 
 	const renderDialog = () => {
@@ -643,6 +644,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 				break;
 			}
 			case 927: {
+				// LANDING_PAGE_EDITOR
 				setDialogType({ type: 'tier' });
 				break;
 			}

@@ -231,7 +231,8 @@ const SmsReport = ({ classes }) => {
     const response = await dispatch(getSmsReport(query));
     
     // Check for tier validation
-    if (response?.payload?.StatusCode === 927) {
+    if (response?.payload === 927) {
+      // SMS_REPORT
       setDialogType(getTierValidationDialog());
       setLoader(false);
       return;
@@ -270,7 +271,13 @@ const SmsReport = ({ classes }) => {
 
   useEffect(() => {
     const getGraph = async () => {
-      await dispatch(getSmsGraph());
+      const response = await dispatch(getSmsGraph());
+      
+      // Check for tier validation
+      if (response === '927') {
+        setDialogType(getTierValidationDialog());
+        return;
+      }
     }
     if (!smsGraph)
       getGraph();
@@ -956,7 +963,7 @@ const SmsReport = ({ classes }) => {
     const dialogContent = {
       featureNotice: getFeatureNoticeDialog(),
       tier: {
-        title: t('common.Notice'),
+        title: t('billing.tier.permission'),
         showDivider: false,
         exitButton: false,
         content: RenderHtml(t('common.TierValidationMessage')),
@@ -1008,7 +1015,6 @@ const SmsReport = ({ classes }) => {
       <GraphReport classes={classes} showLoader={!smsGraph} reportData={smsGraph} />
       {renderDialog()}
       <Loader isOpen={showLoader} showBackdrop={true} />
-      {renderDialog()}
     </DefaultScreen>
   )
 }

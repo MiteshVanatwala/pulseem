@@ -1245,7 +1245,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	})
 
 	const getTierValidationDialog = () => ({
-		title: translator('whatsapp.alertModal.DeleteText'),
+		title: translator('billing.tier.permission'),
 		showDivider: false,
 		content: (
 			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>

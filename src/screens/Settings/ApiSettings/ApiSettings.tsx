@@ -119,6 +119,7 @@ const ApiSettings = ({ classes }: any) => {
             setToastMessage(ToastMessages?.GENERAL_ERROR);
         }
         else if (payload?.StatusCode === 927) {
+            // API_ACCESS
             setDialogType(getTierValidationDialog());
         }
         else {
@@ -140,6 +141,7 @@ const ApiSettings = ({ classes }: any) => {
             setToastMessage(ToastMessages?.GENERAL_ERROR);
         }
         else if (payload?.StatusCode === 927) {
+            // API_ACCESS
             setDialogType(getTierValidationDialog());
         }
         else {
@@ -505,7 +507,7 @@ const ApiSettings = ({ classes }: any) => {
                     onCancel={() => setDialogType(null)}
                     onConfirm={() => setDialogType(null)}
                     showDefaultButtons={false}
-                    title={t('common.Notice')}
+                    title={t('billing.tier.permission')}
                 >
                     {RenderHtml(t('common.TierValidationMessage'))}
                 </BaseDialog>

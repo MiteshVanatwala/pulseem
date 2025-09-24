@@ -293,6 +293,7 @@ const SmsCreator = ({ classes }) => {
         setDialogType({ type: "pendingApprovalDialog" });
         break;
       case 927: {
+        // SMS_BASIC, SMS_CLICK_TRACKING
         setDialogType({ type: 'tier' });
         break;
       }
@@ -1343,6 +1344,7 @@ const SmsCreator = ({ classes }) => {
           break;
         }
         case 927: {
+          // SMS_BASIC, SMS_BASIC_PERSONALIZATION, SMS_DYNAMIC_PRODUCTS, SMS_CLICK_TRACKING
           setDialogType({ type: 'tier' });
           break;
         }
@@ -1354,13 +1356,14 @@ const SmsCreator = ({ classes }) => {
   };
 
   const getTierValidationDialog = () => ({
-    title: t('whatsapp.alertModal.DeleteText'),
+    title: t('billing.tier.permission'),
     showDivider: false,
     content: (
       <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
         Tier Validation
       </Typography>
-    )
+    ),
+    onConfirm: async () => { setDialogType(null) }
   })
 
   const handleClose = () => {

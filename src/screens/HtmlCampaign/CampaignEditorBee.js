@@ -332,6 +332,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           setNewTemplate(responseData)
           forceTemplate = responseData?.JsonData ? JSON.parse(responseData?.JsonData) : defaultContent.defaultTemplate;
         } else if (templateResponse?.payload?.StatusCode === 927) {
+          // NEWSLETTER_TEMPLATES
           setDialogType({ type: 'tier' });
         } else {
           setToastMessage({ severity: 'error', color: 'error', message: templateResponse?.payload.Message, showAnimtionCheck: false });
@@ -502,6 +503,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           return false;
         }
         case 927: {
+          // EMAIL_BASIC, BASIC_PERSONALIZATION
           setDialogType({ type: 'tier' });
           return false;
         }
@@ -585,6 +587,14 @@ const CampaignEditor = ({ classes, ...props }) => {
       HTML: finalHtml,
       Category: saveRef.current?.templateCategory
     }));
+
+    // Check for tier validation
+    if (templateResponse?.payload?.StatusCode === 927) {
+      // NEWSLETTER_TEMPLATES
+      setDialogType({ type: 'tier' });
+      return;
+    }
+
     if (!templateResponse.payload.Data) {
       setToastMessage({ severity: 'error', color: 'error', message: templateResponse.payload.Message, showAnimtionCheck: false });
     }
@@ -1073,7 +1083,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   }
 
   const getTierValidationDialog = () => ({
-    title: t('whatsapp.alertModal.DeleteText'),
+    title: t('billing.tier.permission'),
     showDivider: false,
     content: (
       <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
@@ -1081,7 +1091,8 @@ const CampaignEditor = ({ classes, ...props }) => {
       </Typography>
     ),
     onCancel: () => setDialogType(null),
-    onClose: () => setDialogType(null)
+    onClose: () => setDialogType(null),
+    onConfirm: () => setDialogType(null)
   });
 
   const getPendingApprovalModal = (code) => ({

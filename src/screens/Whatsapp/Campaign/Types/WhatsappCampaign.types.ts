@@ -360,6 +360,7 @@ export type saveCampaignResponsePayloadProps = {
 	ErrorCode: number;
 	Message: string | null;
 	Status: string;
+	StatusCode?: number | string;
 };
 
 export type saveCampaignResponseProps = {

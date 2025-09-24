@@ -222,6 +222,11 @@ const SmsSend = ({ classes, ...props }) => {
       case 551:
         setDialogType({ type: "pendingApprovalDialog", data: smsSendResult });
         break;
+      case 927: {
+        // SMS_BASIC, SMS_CLICK_TRACKING
+        setDialogType({ type: "tier" });
+        break;
+      }
       default: {
         break;
       }
@@ -1521,6 +1526,14 @@ const SmsSend = ({ classes, ...props }) => {
     }
 
     let r = await dispatch(sendSms(payload))
+    
+    // Check for tier validation
+    if (r.payload.StatusCode === 927) {
+      setDialogType(getTierValidationDialog());
+      setLoader(false);
+      return;
+    }
+    
     handleSendResult(r.payload);
     setLoader(false);
   };
@@ -2432,6 +2445,20 @@ const SmsSend = ({ classes, ...props }) => {
       exit: true
     }
   }
+
+  const getTierValidationDialog = () => ({
+    title: t('billing.tier.permission'),
+    showDivider: false,
+    content: (
+      <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+        Tier Validation
+      </Typography>
+    ),
+    onCancel: () => setDialogType(null),
+    onClose: () => setDialogType(null),
+    onConfirm: () => setDialogType(null)
+  });
+
   //#endregion
   const renderDialog = () => {
     const { type, data } = dialogType || {}
@@ -2445,7 +2472,8 @@ const SmsSend = ({ classes, ...props }) => {
       sendSuccess: sendSuccessDialog(),
       noCredit: noCreditDialog(),
       englishLetterDialog: englishLetterNotAllowed(),
-      pendingApprovalDialog: pendingApprovalDialog(data)
+      pendingApprovalDialog: pendingApprovalDialog(data),
+      tier: getTierValidationDialog()
     }
 
     const currentDialog = dialogContent[type] || {}

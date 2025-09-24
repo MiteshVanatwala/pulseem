@@ -102,6 +102,7 @@ const SubUsers = ({ classes }: any) => {
     const response = await dispatch(save(subUserItem)) as any;
     switch (response?.payload?.StatusCode) {
       case 927: {
+        // USER_PERMISSIONS
         setDialogType({ type: 'tier', data: null });
         break;
       }
@@ -529,13 +530,14 @@ const SubUsers = ({ classes }: any) => {
   })
 
   const getTierValidationDialog = () => ({
-    title: t('common.Delete'),
+    title: t('billing.tier.permission'),
     showDivider: false,
     content: (
       <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
         Tier Validation
       </Typography>
-    )
+    ),
+    onConfirm: async () => { setDialogType(null) }
   })
 
   const renderDialog = () => {

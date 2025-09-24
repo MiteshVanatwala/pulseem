@@ -871,7 +871,7 @@ const NotificationEdit = ({ classes }) => {
   }
 
   const getTierValidationDialog = () => ({
-    title: t('whatsapp.alertModal.DeleteText'),
+    title: t('billing.tier.permission'),
     showDivider: false,
     content: (
       <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
@@ -896,6 +896,7 @@ const NotificationEdit = ({ classes }) => {
       else {
         dispatch(save(modelToSave)).then((response) => {
           if (response?.payload?.StatusCode === 927) {
+            // WEB_PUSH
             setDialogType({ type: 'tier' });
             return;
           }

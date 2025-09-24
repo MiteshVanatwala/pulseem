@@ -40,6 +40,7 @@ import Toast from '../../../components/Toast/Toast.component';
 import { useNavigate, useLocation } from 'react-router';
 import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
 import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog'
+import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { ExportFileTypes } from '../../../model/Export/ExportFileTypes'
 import { SetPageState, GetPageNyName, PageProperty, ClearPageState } from '../../../helpers/UI/SessionStorageManager';
 import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
@@ -60,12 +61,14 @@ import { sitePrefix } from '../../../config';
 import AddRecipientResponse from '../Management/Popup/AddRecipientResponse';
 import { SortColumns, SortDirection } from '../../../Models/PushNotifications/Enums';
 import Sort from '../../../components/Sort/Sort';
+import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
 
 const DynamicGroups = ({ classes }: any) => {
     const dispatch: any = useDispatch();
     const { t } = useTranslation();
     const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF';
     const { extraData } = useSelector((state: any) => state.sms);
+    const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
     const { accountFeatures } = useSelector((state: any) => state.common);
     const { groupData, ToastMessages, subAccountAllGroups } = useSelector((state: any) => state.group);
     const { language, windowSize, isRTL, rowsPerPage, CoreToastMessages, userRoles } = useSelector((state: any) => state.core)
@@ -97,6 +100,7 @@ const DynamicGroups = ({ classes }: any) => {
     const [sortDirection, setSortDirection] = useState(SortDirection.DESC);
     const [sortBySelected, setSortBy] = useState(SortColumns.UPDATE_DATE);
     const [exportGroupNames, setExportGroupNames] = useState(false);
+    const [ TierMessageCode, setTierMessageCode ] = useState('');
 
     useEffect(() => {
         if (extraData && Object.entries(extraData).length > 0) {
@@ -158,7 +162,8 @@ const DynamicGroups = ({ classes }: any) => {
         EXPORT_ALL: "EXPORT_ALL",
         EXPORT_SELECTED: "EXPORT_SELECTED",
         SIMPLY_CLUB: "SIMPLY_CLUB",
-        EXPORT_IN_PROGRESS: "EXPORT_IN_PROGRESS"
+        EXPORT_IN_PROGRESS: "EXPORT_IN_PROGRESS",
+        TIER: "TIER"
     };
     const TABLE_HEAD = [
         {
@@ -194,6 +199,31 @@ const DynamicGroups = ({ classes }: any) => {
             <Toast data={toastMessage} />
         );
     }
+
+    const handleGetPlanForFeature = (tierMessageCode: string) => {
+        const planName = findPlanByFeatureCode(
+            tierMessageCode,
+            availablePlans,
+            currentPlan.Id
+        );
+        
+        if (planName) {
+            return t('billing.tier.featureNotAvailable').replace('{feature}', tierMessageCode).replace('{planName}', planName);
+        } else {
+            return t('billing.tier.noFeatureAvailable');
+        }
+    };
+
+    const getTierValidationDialog = () => ({
+        title: t('billing.tier.permission'),
+        showDivider: false,
+        content: (
+            <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+                {handleGetPlanForFeature(TierMessageCode)}
+            </Typography>
+        )
+    });
+
     const getSubAccountGroups = async () => {
         dispatch(getGroupsBySubAccountId());
     }
@@ -208,7 +238,16 @@ const DynamicGroups = ({ classes }: any) => {
         };
         setLoader(true);
         // @ts-ignore
-        await dispatch(getGroups(search));
+        const response = await dispatch(getGroups(search));
+        
+        // Check for tier validation
+        if (response?.payload?.StatusCode === 927) {
+            setLoader(false);
+            setDialog(DialogType.TIER);
+            setTierMessageCode(response?.payload?.Message);
+            return;
+        }
+        
         if (!extraData || extraData.length === 0) {
             await dispatch(getAccountExtraData());
         }
@@ -1507,7 +1546,17 @@ const DynamicGroups = ({ classes }: any) => {
     const handleDeleteGroup = async () => {
         setLoader(true);
         setDialog(null);
-        await dispatch(deleteGroups(selectedGroups));
+        
+        const response = await dispatch(deleteGroups(selectedGroups));
+        
+        // Check for tier validation
+        if (response?.payload?.StatusCode === 927) {
+            setLoader(false);
+            setDialog(DialogType.TIER);
+            setTierMessageCode(response?.payload?.Message);
+            return;
+        }
+        
         await dispatch(getGroupsBySubAccountId())
         setSelectedGroups([]);
         getData(null);
@@ -1565,11 +1614,17 @@ const DynamicGroups = ({ classes }: any) => {
             message: '',
             Func: () => null
         },
+        'S_927': {
+            code: 927,
+            message: '',
+            Func: () => null
+        },
         'default': {
             message: '',
             Func: () => null
         },
     }) => {
+        console.log(response?.payload)
         switch (response?.payload?.StatusCode || response?.payload?.Message?.StatusCode) {
             case 200: {
                 actions?.S_200?.Func?.();
@@ -1624,6 +1679,11 @@ const DynamicGroups = ({ classes }: any) => {
             case 500: {
                 actions?.S_500?.Func?.();
                 actions?.S_500?.message && setToastMessage(actions?.S_500?.message);
+                break;
+            }
+            case 927: {
+                setDialog(DialogType.TIER);
+                setTierMessageCode(response?.payload?.Message);
                 break;
             }
             default: {
@@ -1715,6 +1775,20 @@ const DynamicGroups = ({ classes }: any) => {
                         message={responseMessage.message}
                         summary={responseMessage?.summary}
                     />
+                }
+                case DialogType.TIER: {
+                    const dialog = getTierValidationDialog();
+                    return (
+                        <BaseDialog
+                            classes={classes}
+                            open={true}
+                            onCancel={() => setDialog(null)}
+                            onClose={() => setDialog(null)}
+                            onConfirm={() => setDialog(null)}
+                            {...dialog}>
+                            {dialog.content}
+                        </BaseDialog>
+                    );
                 }
             }
         }

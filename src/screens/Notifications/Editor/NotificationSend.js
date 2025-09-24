@@ -17,6 +17,7 @@ import { DateField } from '../../../components/managment/index';
 import { MdArrowBackIos, MdArrowForwardIos, MdErrorOutline, MdNotificationsActive } from 'react-icons/md';
 import useRedirect from '../../../helpers/Routes/Redirect';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
+import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 import { sitePrefix } from '../../../config';
 import { Title } from '../../../components/managment/Title';
 
@@ -69,6 +70,7 @@ const NotificationSend = ({ classes }) => {
     const [duplicatedRecipients, setDuplicatedRecipients] = useState(0);
     const [showGroupsList, setShowGroupsList] = useState(false);
     const [isSending, setIsSending] = useState(false);
+    const [dialogType, setDialogType] = useState(null);
 
     const toastMessages = {
         SUCCESS: { severity: 'success', color: 'success', message: t('notifications.saved'), showAnimtionCheck: true },
@@ -175,6 +177,26 @@ const NotificationSend = ({ classes }) => {
                 </BaseDialog>
             );
         }
+
+        if (dialogType) {
+            const { type } = dialogType;
+            const dialogContent = {
+                tier: renderTierValidationDialog()
+            };
+
+            const currentDialog = dialogContent[type] || {};
+
+            return (
+                <BaseDialog
+                    classes={classes}
+                    open={dialogType}
+                    onClose={() => setDialogType(null)}
+                    onCancel={() => setDialogType(null)}
+                    {...currentDialog}>
+                    {currentDialog.content}
+                </BaseDialog>
+            );
+        }
     }
     const renderValidationError = () => {
         return {
@@ -208,6 +230,31 @@ const NotificationSend = ({ classes }) => {
     const handleDialogClose = () => {
         setValidationError(null);
         setSummary(null);
+    }
+
+    const renderTierValidationDialog = () => {
+        return {
+            showDivider: false,
+            title: t('common.Notice'),
+            content: (
+                <Box className={classes.dialogBox}>
+                    {RenderHtml(t('common.TierValidationMessage'))}
+                </Box>
+            ),
+            renderButtons: () => (
+                <Button
+                    variant='contained'
+                    size='small'
+                    onClick={() => setDialogType(null)}
+                    className={clsx(
+                        classes.btn,
+                        classes.btnRounded,
+                        classes.middle
+                    )}>
+                    {t('common.Ok')}
+                </Button>
+            )
+        };
     }
     const handleCancel = () => {
         onCancelConfirm(false);
@@ -527,11 +574,22 @@ const NotificationSend = ({ classes }) => {
         const data = { NotificationId: parseInt(id), NotificationGroups: selectedGroups.map((g) => { return g.Id }), ScheduleTime: model.SendDate };
         const result = await dispatch(SendNotification(data));
 
+        // Check for tier validation
+        if (result?.payload?.StatusCode === 927) {
+            setDialogType(getTierValidationDialog());
+            return;
+        }
+
         if (result && result.payload === true) {
             setSummary(null);
             setCampaignSent(true);
         }
     }
+
+    const getTierValidationDialog = () => ({
+        type: 'tier',
+        data: null
+    });
     const callbackSelectedGroups = (group, key, reference) => {
         const found = selectedGroups.map((group) => { return group.Id }).includes(group.Id)
         if (found) {

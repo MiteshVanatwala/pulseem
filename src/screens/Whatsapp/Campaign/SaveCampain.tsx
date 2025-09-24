@@ -795,6 +795,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				);
 				setIsLoader(false);
 				if (quickSendData?.StatusCode === 927) {
+					// WHATSAPP_BASIC, DYNAMIC_PRODUCTS, WHATSAPP_CAMPAIGN_SEND
 					setDialogType({ type: 'tier' })
 				}
 				else if (quickSendData?.Status === apiStatus.SUCCESS) {
@@ -993,7 +994,8 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				from
 			);
 			setIsLoader(false);
-			if (data.ErrorCode === 927) {
+			if (data?.StatusCode === 927) {
+				// WHATSAPP_BASIC, DYNAMIC_PRODUCTS
 				setDialogType({ type: 'tier' })
 				return null;
 			}
@@ -1034,7 +1036,8 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				'send'
 			);
 			setIsLoader(false);
-			if (data.ErrorCode === 927) {
+			if (data.StatusCode === 927) {
+				// WHATSAPP_BASIC, DYNAMIC_PRODUCTS
 				setDialogType({ type: 'tier' })
 			}
 			else if (data.Status === apiStatus.SUCCESS) {
@@ -1326,13 +1329,19 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	})
 
 	const getTierValidationDialog = () => ({
-		title: translator('whatsapp.alertModal.DeleteText'),
+		title: translator('billing.tier.permission'),
 		showDivider: false,
 		content: (
 			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
 				Tier Validation
 			</Typography>
-		)
+		),
+		onConfirm: async () => {
+			setDialogType({
+				type: '',
+				data: ''
+			});
+		}
 	})
 
 	const renderDialog = () => {

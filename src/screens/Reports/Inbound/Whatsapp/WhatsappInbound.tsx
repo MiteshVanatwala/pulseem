@@ -102,6 +102,7 @@ const WhatsappInbound = ({ classes }: any) => {
     
     // Check for tier validation
     if (response?.payload?.StatusCode === 927) {
+      // WHATSAPP_RESPONSE_REPORT
       setDialog(getTierValidationDialog());
       setShowLoader(false);
       return;
@@ -439,7 +440,7 @@ const WhatsappInbound = ({ classes }: any) => {
           onCancel={() => setDialog(null)}
           onConfirm={() => setDialog(null)}
           showDefaultButtons={false}
-          title={t('common.Notice')}
+          title={t('billing.tier.permission')}
         >
           {RenderHtml(t('common.TierValidationMessage'))}
         </BaseDialog>

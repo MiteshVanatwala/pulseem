@@ -453,6 +453,12 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				});
 			}
 		} else {
+			if (whatsAppChatContactsData?.StatusCode === 927) {
+				// WHATSAPP_CHAT_INTERFACE
+				setDialogType({
+					type: 'tier'
+				});
+			}
 			setContactsPaginationSetting({
 				...contactsPaginationSetting,
 				hasMore: false,
@@ -686,6 +692,10 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				});
 
 				changeContactReadStatus(activeChatContacts, updatedContacts);
+			} else if (whatsAppChatContactsData?.StatusCode === 927) {
+				setDialogType({
+					type: 'tier'
+				});
 			}
 		}
 	};
@@ -749,6 +759,11 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 					) {
 						setNextMessageAvailable(sendWhatsappChat?.Data?.NextAvailableTime);
 					}
+				} else if (sendWhatsappChat.StatusCode === 927) {
+					// WHATSAPP_CAMPAIGN_SEND
+					setDialogType({
+						type: 'tier'
+					});
 				} else {
 					sendWhatsappChat?.Message
 						? setToastMessage({
@@ -827,7 +842,11 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 					]);
 				}
 			} else {
-				if (whatsAppChatContactsData?.Message === 'No Data Found') {
+				if (whatsAppChatContactsData?.StatusCode === 927) {
+					setDialogType({
+						type: 'tier'
+					});
+				} else if (whatsAppChatContactsData?.Message === 'No Data Found') {
 					setSideChatContacts([]);
 					setContactsPaginationSetting({
 						...contactsPaginationSetting,
@@ -897,6 +916,22 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			});
 		}
 	})
+
+	const getTierValidationDialog = () => ({
+		title: translator('billing.tier.permission'),
+		showDivider: false,
+		content: (
+			<Typography style={{ textAlign: 'center' }}>
+				{translator('common.tierValidationMessage')}
+			</Typography>
+		),
+		onConfirm: async () => {
+			setDialogType({
+				type: '',
+				data: ''
+			});
+		}
+	});
 
 	const getDynamicModalDialog = () => ({
 		title: translator('whatsappCampaign.dfieldTitle'),
@@ -1126,6 +1161,8 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			currentDialog = getValidationDialog();
 		} else if (type === 'exceedDailyLimit') {
 			currentDialog = getExceedDailyLimit();
+		} else if (type === 'tier') {
+			currentDialog = getTierValidationDialog();
 		} else if (type === 'dynamicModal') {
 			currentDialog = getDynamicModalDialog();
 		} else if (type === 'addAgent') {

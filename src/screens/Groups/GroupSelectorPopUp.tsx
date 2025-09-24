@@ -82,6 +82,7 @@ const GroupSelectorPopUp = ({
                 break;
             }
             case 927: {
+                // DYNAMIC_GROUPS
                 setDialogType({
                     type: 'tier'
                 });
@@ -156,7 +157,7 @@ const GroupSelectorPopUp = ({
     }
 
     const getTierValidationDialog = () => ({
-        title: t('whatsapp.alertModal.DeleteText'),
+        title: t('billing.tier.permission'),
         showDivider: false,
         content: (
             <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
@@ -164,7 +165,8 @@ const GroupSelectorPopUp = ({
             </Typography>
         ),
         onCancel: () => setDialogType(null),
-        onClose: () => setDialogType(null)
+        onClose: () => setDialogType(null),
+        onConfirm: () => setDialogType(null),
     })
 
     const renderDialog = () => {

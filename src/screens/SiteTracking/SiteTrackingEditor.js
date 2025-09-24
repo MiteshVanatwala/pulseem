@@ -123,7 +123,12 @@ const SiteTrackingEditor = ({ classes }) => {
                 request.id = response?.payload?.data?.id;
                 dispatch(setPurchase(request));
                 updateRevenueFeature(isEnable);                
-                await dispatch(setDomain({ DomainAddress: event?.domain }));
+                const setDomainResponse = await dispatch(setDomain({ DomainAddress: event?.domain }));
+                if (setDomainResponse.payload.Result !== 1) {
+                    onPulseemSaveReponse(setDomainResponse.payload);
+                    setPurchaseToggleDisabled(false);
+                    return;
+                }
             }
         }
         else {
@@ -185,6 +190,7 @@ const SiteTrackingEditor = ({ classes }) => {
     const onPulseemSaveReponse = (response) => {
         // Check for StatusCode 927 (tier validation)
         if (response.StatusCode === 927) {
+            // SITE_TRACKING
             setDialogType(getTierValidationDialog());
             return;
         }
@@ -257,7 +263,7 @@ const SiteTrackingEditor = ({ classes }) => {
             dynamicMessage: renderDynamicDataDialog(t('common.ErrorTitle'), message),
             deleteEvent: renderDynamicDataDialog(t('siteTracking.deleteDialogTitle'), RenderHtml(t("siteTracking.deleteDialogMessage")), false, true, true),
             invalidDomain: renderDynamicDataDialog(t('common.ErrorTitle'), t('siteTracking.invalidDomainAddress')),
-            tier: renderDynamicDataDialog(t('common.Notice'), RenderHtml(t('common.TierValidationMessage')), false, false, false),
+            tier: renderDynamicDataDialog(t('billing.tier.permission'), RenderHtml(t('common.TierValidationMessage')), false, false, false),
         }
 
         const currentDialog = dialogContent[type] || {}

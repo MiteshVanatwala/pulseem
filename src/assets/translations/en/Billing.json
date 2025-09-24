@@ -195,7 +195,10 @@
     "releaseMessage": "Your paused emails are now being sent, and all relevant automations have been resumed.",
     "cancelMessage": "Understood. The paused emails have been canceled, and automations will remain inactive for now. You can restart them anytime from the <b>automation management pages.</b>",
     "free": "Free",
-    "contactSales": "Contact Sales"
+    "contactSales": "Contact Sales",
+    "permission": "Permission",
+    "featureNotAvailable": "Oops! {feature} is not available in current plan. Upgrade to {planName} to use this feature.",
+    "noFeatureAvailable": "Oops! no plan has this feature."
   },
   "creditCardManagement": {
     "title": "Credit Card Management",

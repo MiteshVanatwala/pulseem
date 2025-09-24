@@ -380,6 +380,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 		
 		// Check for tier validation
 		if (campaignData?.StatusCode === 927) {
+			// WHATSAPP_REPORT
 			setDialogType(getTierValidationDialog());
 			return;
 		}
@@ -1022,7 +1023,8 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 					open={true}
 					onCancel={() => setDialogType(null)}
 					onClose={() => setDialogType(null)}
-					title={translator('whatsapp.alertModal.DeleteText')}
+					onConfirm={() => setDialogType(null)}
+					title={translator('billing.tier.permission')}
 					showDivider={false}
 				>
 					<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
