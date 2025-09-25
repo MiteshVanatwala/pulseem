@@ -55,6 +55,7 @@ import { IsSharedDomain } from "../../../helpers/Functions/DomainVerificationHel
 import { sitePrefix } from "../../../config";
 import { WhatsappCampaignStatus, WhatsAppPlatformIDEnum } from "../../../config/enum";
 import { errorToastData } from "../../Whatsapp/Constant";
+import TierPlans from "../../../components/TierPlans/TierPlans";
 
 function Alert(props) {
     return <MuiAlert elevation={0} variant="filled" {...props} />;
@@ -133,6 +134,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const { currentPlan, availablePlans } = useSelector((state) => state.tiers);
     const [showLoader, setLoader] = useState(true);
     const [isEmailVerified, setIsEmailVerified] = useState(false);
+    const [showTierPlans, setShowTierPlans] = useState(false);
     const [newEMailVerification, setNewEmailVerification] = useState(false);
     const [toastMessage, setToastMessage] = useState(null);
     const [campaignValues, setCampaignValues] = useState({
@@ -176,11 +178,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const [TierMessageCode, setTierMessageCode] = useState('');
     const [dataReady, setDataReady] = useState(false);
 
-    const handleGetPlanForFeature = (feature) => {
-        const foundPlan = findPlanByFeatureCode(feature, availablePlans);
-        setTierMessageCode(feature);
-        return foundPlan;
-    };
     const [smsMarketingModel, setSmsMarketingModel] = useState({
         Type: 0,
         SendSmsTo: -1,
@@ -744,7 +741,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 break;
             }
             case 927: {
-                handleGetPlanForFeature('NEWSLETTER_AUTOMATION');
+                setTierMessageCode('NEWSLETTER_AUTOMATION');
                 setDialogType({ type: 'tier' });
                 break;
             }
@@ -974,15 +971,58 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         return dialogObj
     }
 
+    const handleGetPlanForFeature = (tierMessageCode) => {
+        const planName = findPlanByFeatureCode(
+                tierMessageCode,
+                availablePlans,
+                currentPlan.Id
+        );
+        
+        if (planName) {
+                return t('billing.tier.featureNotAvailable').replace('{feature}', tierMessageCode).replace('{planName}', planName);
+        } else {
+                return t('billing.tier.noFeatureAvailable');
+        }
+    };
+
     const getTierValidationDialog = () => ({
         title: t('billing.tier.permission'),
         showDivider: false,
         content: (
             <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
-                {TierMessageCode && findPlanByFeatureCode(TierMessageCode, availablePlans)
-                    ? t('billing.tier.featureNotAvailable')
-                    : t('billing.tier.noFeatureAvailable')}
+                {handleGetPlanForFeature(TierMessageCode)}
             </Typography>
+        ),
+        renderButtons: () => (
+            <Grid
+                container
+                spacing={2}
+                className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+            >
+                <Grid item>
+                    <Button
+                        onClick={() => { 
+                            setDialogType(null);
+                            setShowTierPlans(true);
+                        }}
+                        className={clsx(
+                            classes.btn,
+                            classes.btnRounded
+                        )}>
+                        {t('billing.upgradePlan')}
+                    </Button>
+                </Grid>
+                <Grid item>
+                    <Button
+                        onClick={() => { setDialogType(null) }}
+                        className={clsx(
+                            classes.btn,
+                            classes.btnRounded
+                        )}>
+                        {t('common.cancel')}
+                    </Button>
+                </Grid>
+            </Grid>
         )
     })
 
@@ -1469,7 +1509,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 isOpen={dialogType?.type === 'SummaryDialog'}
                 setDialogType={(code = null) => {
                     if (code === 927) {
-                        handleGetPlanForFeature('NEWSLETTER_AUTOMATION');
+                        setTierMessageCode('NEWSLETTER_AUTOMATION');
                     }
                     setDialogType({ type: code === 927 ? 'tier' : code });
                 }}
@@ -1590,6 +1630,11 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 onClose={() => { setDomainIsAllowed(true); navigate('/react/campaigns') }}
                 confirmButtonText={t('common.domainVerification.sendSettings.backToCampaigns')}
             />
+            {showTierPlans && <TierPlans
+                classes={classes}
+                isOpen={showTierPlans}
+                onClose={() => setShowTierPlans(false)}
+            />}
             <Loader isOpen={showLoader} />
         </DefaultScreen>
     )

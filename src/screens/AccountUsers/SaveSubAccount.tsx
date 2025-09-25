@@ -25,6 +25,7 @@ import { getTestGroups } from '../../redux/reducers/smsSlice';
 import { GetGlobalAccountPackagesDetails } from '../../redux/reducers/commonSlice';
 import { Stack } from '@mui/material';
 import { findPlanByFeatureCode } from '../../redux/reducers/TiersSlice';
+import TierPlans from '../../components/TierPlans/TierPlans';
 
 const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}, mainAccountBalance = {} }: any) => {
 	const dispatch: any = useDispatch();
@@ -41,6 +42,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 	const [ allGroupsSelected, setAllGroupsSelected ] = useState(false);
 	const [ isLoader, setIsLoader ] = useState<boolean>(false);
 	const [ toastMessage, setToastMessage ] = useState(null);
+	const [showTierPlans, setShowTierPlans] = useState(false);
 	const [ dialogType, setDialogType ] = useState<{
 		type: string;
 	} | null>({
@@ -371,6 +373,33 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
 				{handleGetPlanForFeature(TierMessageCode)}
 			</Typography>
+		),
+		renderButtons: () => (
+			<Grid
+				container
+				spacing={2}
+				className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+			>
+				<Grid item>
+					<Button
+						onClick={() => {
+						setDialogType(null);
+						setShowTierPlans(true);
+					}}
+					className={clsx(classes.btn, classes.btnRounded)}
+					>
+						{t('billing.upgradePlan')}
+					</Button>
+				</Grid>
+				<Grid item>
+					<Button
+						onClick={() => setDialogType(null)}
+						className={clsx(classes.btn, classes.btnRounded)}
+					>
+						{t('common.cancel')}
+					</Button>
+				</Grid>
+			</Grid>
 		)
 	})
 
@@ -1000,6 +1029,11 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 				<Loader isOpen={isLoader} />
 				{toastMessage && renderToast()}
 				{renderDialog()}
+				{showTierPlans && <TierPlans
+					classes={classes}
+					isOpen={showTierPlans}
+					onClose={() => setShowTierPlans(false)}
+				/>}
 			</>
 		</BaseDialog>
 	);

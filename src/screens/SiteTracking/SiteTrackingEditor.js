@@ -25,6 +25,7 @@ import { InputAdornment } from '@mui/material';
 import { getCommonFeatures } from '../../redux/reducers/commonSlice';
 import { SetRevenueFeature } from '../../redux/reducers/AccountSettingsSlice';
 import { findPlanByFeatureCode } from '../../redux/reducers/TiersSlice';
+import TierPlans from '../../components/TierPlans/TierPlans';
 
 const SiteTrackingEditor = ({ classes }) => {
     const { isRTL, windowSize } = useSelector(state => state.core);
@@ -43,6 +44,7 @@ const SiteTrackingEditor = ({ classes }) => {
     const [isValidDomain, setIsValidDomain] = useState(null);
     const [showActions, setShowActions] = useState(true);
     const [purchaseToggleDisabled, setPurchaseToggleDisabled] = useState(false);
+    const [showTierPlans, setShowTierPlans] = useState(false);
 
     const handleGetPlanForFeature = (tierMessageCode) => {
         const planName = findPlanByFeatureCode(
@@ -61,7 +63,37 @@ const SiteTrackingEditor = ({ classes }) => {
     const getTierValidationDialog = () => {
         return {
             type: 'tier',
-            data: null
+            data: null,
+            title: t('billing.tier.permission'),
+            showDivider: false,
+            content: (
+                <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+                    {handleGetPlanForFeature(TierMessageCode)}
+                </Typography>
+            ),
+            renderButtons: () => (
+                <Grid container spacing={2} className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}>
+                    <Grid item>
+                        <Button
+                            onClick={() => {
+                                setDialogType(null);
+                                setShowTierPlans(true);
+                            }}
+                            className={clsx(classes.btn, classes.btnRounded)}
+                        >
+                            {t('billing.upgradePlan')}
+                        </Button>
+                    </Grid>
+                    <Grid item>
+                        <Button
+                            onClick={() => { setDialogType(null); }}
+                            className={clsx(classes.btn, classes.btnRounded)}
+                        >
+                            {t('common.cancel')}
+                        </Button>
+                    </Grid>
+                </Grid>
+            )
         };
     };
 
@@ -281,7 +313,7 @@ const SiteTrackingEditor = ({ classes }) => {
             dynamicMessage: renderDynamicDataDialog(t('common.ErrorTitle'), message),
             deleteEvent: renderDynamicDataDialog(t('siteTracking.deleteDialogTitle'), RenderHtml(t("siteTracking.deleteDialogMessage")), false, true, true),
             invalidDomain: renderDynamicDataDialog(t('common.ErrorTitle'), t('siteTracking.invalidDomainAddress')),
-            tier: renderDynamicDataDialog(t('billing.tier.permission'), RenderHtml(handleGetPlanForFeature(tierMessageCode)), false, false, false),
+            tier: renderDynamicDataDialog(t('billing.tier.permission'), RenderHtml(handleGetPlanForFeature(TierMessageCode)), false, false, false),
         }
 
         const currentDialog = dialogContent[type] || {}
@@ -707,6 +739,11 @@ const SiteTrackingEditor = ({ classes }) => {
 
         </Box>
         <Loader isOpen={showLoader} />
+        {showTierPlans && <TierPlans
+            classes={classes}
+            isOpen={showTierPlans}
+            onClose={() => setShowTierPlans(false)}
+        />}
     </DefaultScreen>
 }
 

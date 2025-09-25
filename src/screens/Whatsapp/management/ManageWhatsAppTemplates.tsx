@@ -86,6 +86,7 @@ import { TablePagination } from '../../../components/managment';
 import { TemplateErrorDialog } from '../../../components/TemplateErrorDialog/TemplateErrorDialog';
 import { DateFormats } from '../../../helpers/Constants';
 import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
+import TierPlans from '../../../components/TierPlans/TierPlans';
 
 const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 	const dispatch = useDispatch();
@@ -128,6 +129,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 	const [toastMessage, setToastMessage] =
 		useState<toastProps['SUCCESS']>(resetToastData);
 	const [TierMessageCode, setTierMessageCode] = useState<string>("");
+	const [showTierPlans, setShowTierPlans] = useState(false);
 	const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot };
 	const cellStyle = {
 		head: classes.tableCellHead,
@@ -873,6 +875,33 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
 				{handleGetPlanForFeature(TierMessageCode)}
 			</Typography>
+		),
+		renderButtons: () => (
+			<Grid
+				container
+				spacing={2}
+				className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+			>
+				<Grid item>
+					<Button
+						onClick={() => {
+						setDialogType(null);
+						setShowTierPlans(true);
+					}}
+					className={clsx(classes.btn, classes.btnRounded)}
+					>
+						{translator('billing.upgradePlan')}
+					</Button>
+				</Grid>
+				<Grid item>
+					<Button
+						onClick={() => setDialogType(null)}
+						className={clsx(classes.btn, classes.btnRounded)}
+					>
+						{translator('common.cancel')}
+					</Button>
+				</Grid>
+			</Grid>
 		)
 	})
 
@@ -1164,6 +1193,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 							rows={totalRecord}
 							rowsPerPage={paginationSetting?.pageSize}
 							onRowsPerPageChange={onRowsPerPageChange}
+							// @ts-ignore
 							rowsPerPageOptions={[6, 10, 20, 50]}
 							page={paginationSetting?.pageNo}
 							onPageChange={(pageNumber: number) =>
@@ -1182,6 +1212,11 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 
 			{renderDialog()}
 			<Loader isOpen={isLoader} showBackdrop={true} />
+			{showTierPlans && <TierPlans
+				classes={classes}
+				isOpen={showTierPlans}
+				onClose={() => setShowTierPlans(false)}
+			/>}
 		</DefaultScreen>
 	);
 };

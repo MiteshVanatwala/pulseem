@@ -15,6 +15,7 @@ import { CommonRedux } from '../Whatsapp/Editor/Types/WhatsappCreator.types';
 import { NumberWithMinusRegEx } from '../../helpers/Constants';
 import { Stack } from '@mui/material';
 import { findPlanByFeatureCode } from '../../redux/reducers/TiersSlice';
+import TierPlans from '../../components/TierPlans/TierPlans';
 
 const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}, mainAccountBalance = {} }: any) => {
 	const dispatch: any = useDispatch();
@@ -54,6 +55,7 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 		type: ''
 	});
 	const [TierMessageCode, setTierMessageCode] = useState<string>('');
+	const [showTierPlans, setShowTierPlans] = useState(false);
 
 	useEffect(() => {
 		if (isOpen && CustomGuidEnc !== '') {
@@ -216,6 +218,33 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
 				{handleGetPlanForFeature(TierMessageCode)}
 			</Typography>
+		),
+		renderButtons: () => (
+			<Grid
+				container
+				spacing={2}
+				className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+			>
+				<Grid item>
+					<Button
+						onClick={() => {
+						setDialogType(null);
+						setShowTierPlans(true);
+					}}
+					className={clsx(classes.btn, classes.btnRounded)}
+					>
+						{t('billing.upgradePlan')}
+					</Button>
+				</Grid>
+				<Grid item>
+					<Button
+						onClick={() => setDialogType(null)}
+						className={clsx(classes.btn, classes.btnRounded)}
+					>
+						{t('common.cancel')}
+					</Button>
+				</Grid>
+			</Grid>
 		)
 	})
 
@@ -512,6 +541,11 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 				<Loader isOpen={isLoader} />
 				{toastMessage && renderToast()}
 				{renderDialog()}
+				{showTierPlans && <TierPlans
+						classes={classes}
+						isOpen={showTierPlans}
+						onClose={() => setShowTierPlans(false)}
+				/>}
 			</>
 		</BaseDialog>
 	);

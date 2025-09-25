@@ -36,6 +36,7 @@ import DomainVerification from '../../../Shared/Dialogs/DomainVerification';
 import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 import { IsSharedDomain } from '../../../helpers/Functions/DomainVerificationHelper';
 import { IsValidEmail } from '../../../helpers/Utils/Validations';
+import TierPlans from '../../../components/TierPlans/TierPlans';
 
 const useStyles = makeStyles({
     iconbox: {
@@ -187,6 +188,7 @@ const NewsLetterInfo = ({ classes }) => {
         showSkip: false
     });
     const isPolishAccount = IsPoland && isGlobal;
+    const [showTierPlans, setShowTierPlans] = useState(false);
 
     const navigate = useNavigate();
     const maxCharLimits = {
@@ -1331,6 +1333,37 @@ const NewsLetterInfo = ({ classes }) => {
             <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
                 {handleGetPlanForFeature(TierMessageCode)}
             </Typography>
+        ),
+        renderButtons: () => (
+            <Grid
+                container
+                spacing={2}
+                className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+            >
+                <Grid item>
+                    <Button
+                        onClick={() => { 
+                            setDialogType(null);
+                            setShowTierPlans(true);
+                        }}
+                        className={clsx(
+                            classes.btn,
+                            classes.btnRounded
+                        )}>
+                        {t('billing.upgradePlan')}
+                    </Button>
+                </Grid>
+                <Grid item>
+                    <Button
+                        onClick={() => { setDialogType(null) }}
+                        className={clsx(
+                            classes.btn,
+                            classes.btnRounded
+                        )}>
+                        {t('common.cancel')}
+                    </Button>
+                </Grid>
+            </Grid>
         )
     })
 
@@ -1495,6 +1528,11 @@ const NewsLetterInfo = ({ classes }) => {
             {renderDialog()}
             {showGalleryModal()}
             {renderToast()}
+            {showTierPlans && <TierPlans
+                classes={classes}
+                isOpen={showTierPlans}
+                onClose={() => setShowTierPlans(false)}
+            />}
         </DefaultScreen>
     )
 }

@@ -17,6 +17,7 @@ import moment from 'moment';
 import 'moment/locale/he';
 import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
+import TierPlans from '../../../components/TierPlans/TierPlans';
 
 const AmpRegistration = ({ classes }: any) => {
     const [showLoader, setShowLoader] = useState<boolean>(true);
@@ -25,6 +26,7 @@ const AmpRegistration = ({ classes }: any) => {
     const dispatch = useDispatch();
     const { verifiedEmails } = useSelector((state: StateType) => state.common);
     const { isRTL } = useSelector((state: StateType) => state.core);
+    const [showTierPlans, setShowTierPlans] = useState(false);
     const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
     const ToastMessages = {
         100: { severity: 'error', color: 'error', message: 'campaigns.ampSelectEmail', showAnimtionCheck: false },
@@ -96,6 +98,32 @@ const AmpRegistration = ({ classes }: any) => {
             <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
                 {handleGetPlanForFeature(TierMessageCode)}
             </Typography>
+        ),
+        renderButtons: () => (
+            <Grid
+                container
+                spacing={2}
+                className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+            >
+                <Grid item>
+                    <Button
+                        onClick={() => {
+                            setShowTierPlans(true);
+                        }}
+                        className={clsx(classes.btn, classes.btnRounded)}
+                    >
+                        {t('billing.upgradePlan')}
+                    </Button>
+                </Grid>
+                <Grid item>
+                    <Button
+                        onClick={() => setDialogType(null)}
+                        className={clsx(classes.btn, classes.btnRounded)}
+                    >
+                        {t('common.cancel')}
+                    </Button>
+                </Grid>
+            </Grid>
         )
     })
 
@@ -221,6 +249,11 @@ const AmpRegistration = ({ classes }: any) => {
             <Loader isOpen={showLoader} />
             {toastMessage && renderToast()}
             {renderDialog()}
+            {showTierPlans && <TierPlans
+				classes={classes}
+				isOpen={showTierPlans}
+				onClose={() => setShowTierPlans(false)}
+			/>}
         </DefaultScreen>
     )
 }

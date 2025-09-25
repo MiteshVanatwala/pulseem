@@ -114,6 +114,7 @@ import { DateFormats, FBBusiness } from '../../../helpers/Constants';
 import { WhatsappCampaignStatus, WhatsAppPlatformIDEnum } from '../../../config/enum';
 import { filter, first, get } from 'lodash';
 import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
+import TierPlans from '../../../components/TierPlans/TierPlans';
 
 const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const { t: translator } = useTranslation();
@@ -126,7 +127,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const NodeToEdit = queryParams.get("NodeToEdit") || false
 	let isSendCampaign = queryParams.get("new") || false;
 	if (isSendCampaign === 'false') isSendCampaign = false;
-
+	const [showTierPlans, setShowTierPlans] = useState(false);
 	const { testGroups } = useSelector(
 		(state: { sms: smsReducerProps }) => state.sms
 	);
@@ -380,6 +381,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				default:
 					break;
 			}
+			// @ts-ignore
 			textCount -= (dynamicVariable?.VariableIndex <= 10 ? 5 : 6) || 0;
 		});
 		setTemplateTextCount(textCount);
@@ -1356,12 +1358,33 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				{handleGetPlanForFeature(TierMessageCode)}
 			</Typography>
 		),
-		onConfirm: async () => {
-			setDialogType({
-				type: '',
-				data: ''
-			});
-		}
+		renderButtons: () => (
+			<Grid
+				container
+				spacing={2}
+				className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+			>
+				<Grid item>
+					<Button
+						onClick={() => {
+						setDialogType({ type: '', data: '' });
+						setShowTierPlans(true);
+					}}
+					className={clsx(classes.btn, classes.btnRounded)}
+					>
+						{translator('billing.upgradePlan')}
+					</Button>
+				</Grid>
+				<Grid item>
+					<Button
+						onClick={() => setDialogType({ type: '', data: '' })}
+						className={clsx(classes.btn, classes.btnRounded)}
+					>
+						{translator('common.cancel')}
+					</Button>
+				</Grid>
+			</Grid>
+		)
 	})
 
 	const renderDialog = () => {
@@ -1805,6 +1828,11 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				!isLoader && <NoSetup classes={classes} />
 			)}
 			{renderDialog()}
+			{showTierPlans && <TierPlans
+				classes={classes}
+				isOpen={showTierPlans}
+				onClose={() => setShowTierPlans(false)}
+			/>}
 			<Loader isOpen={isLoader} showBackdrop={true} />
 		</DefaultScreen >
 	);

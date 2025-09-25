@@ -58,6 +58,7 @@ import QuickManualUploadDialog from "../../Newsletter/Wizard/Popups/QuickManualU
 import { IsValidPhone } from "../../../helpers/Utils/Validations";
 import { WhiteLabelObject } from "../../../components/WhiteLabel/WhiteLabelMigrate";
 import Pulse from "../../../components/Pulse/Pulse";
+import TierPlans from "../../../components/TierPlans/TierPlans";
 
 function Alert(props) {
   return <MuiAlert elevation={0} variant='filled' {...props} />;
@@ -143,7 +144,7 @@ const SmsSend = ({ classes, ...props }) => {
   const [sourcePulses, setSourcePulses] = useState({});
   const [campaignSettings, setCampaignSettings] = useState(null);
   const [TierMessageCode, setTierMessageCode] = useState('');
-
+  const [showTierPlans, setShowTierPlans] = useState(false);
   const [filterValues, setFilterValues] = useState({
     dontSend: false,
     days: ''
@@ -2472,9 +2473,29 @@ const SmsSend = ({ classes, ...props }) => {
         {handleGetPlanForFeature(TierMessageCode)}
       </Typography>
     ),
-    onCancel: () => setDialogType(null),
-    onClose: () => setDialogType(null),
-    onConfirm: () => setDialogType(null)
+    renderButtons: () => (
+      <Grid container spacing={2} className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}>
+          <Grid item>
+              <Button
+                  onClick={() => {
+                      setDialogType(null);
+                      setShowTierPlans(true);
+                  }}
+                  className={clsx(classes.btn, classes.btnRounded)}
+              >
+                  {t('billing.upgradePlan')}
+              </Button>
+          </Grid>
+          <Grid item>
+              <Button
+                  onClick={() => { setDialogType(null); }}
+                  className={clsx(classes.btn, classes.btnRounded)}
+              >
+                  {t('common.cancel')}
+              </Button>
+          </Grid>
+      </Grid>
+    )
   });
 
   //#endregion
@@ -2661,6 +2682,11 @@ const SmsSend = ({ classes, ...props }) => {
         />
       }
       <Loader isOpen={showLoader} />
+      {showTierPlans && <TierPlans
+        classes={classes}
+        isOpen={showTierPlans}
+        onClose={() => setShowTierPlans(false)}
+      />}
     </DefaultScreen>
   );
 };

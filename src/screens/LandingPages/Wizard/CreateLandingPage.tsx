@@ -36,6 +36,7 @@ import { PulseemResponse } from '../../../Models/APIResponse';
 import { logout } from '../../../helpers/Api/PulseemReactAPI';
 import Toast from '../../../components/Toast/Toast.component';
 import SubscriberGroup from './Tabs/SubscriberGroup';
+import TierPlans from '../../../components/TierPlans/TierPlans';
 
 const CreateLandingPage = ({ classes }: ClassesType) => {
 	const { id } = useParams();
@@ -57,6 +58,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 	const { accountFeatures } = useSelector((state: any) => state.common);
 	const { ToastMessages } = useSelector((state: { landingPages: BeeEditorStoreModel }) => state.landingPages);
 	const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
+	const [showTierPlans, setShowTierPlans] = useState(false);
 	const [toastMessage, setToastMessage] = useState(null);
 	const [errors, setErrors] = useState({
 		PageName: '',
@@ -509,7 +511,32 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 				{handleGetPlanForFeature(TierMessageCode)}
 			</Typography>
 		),
-		onConfirm: async () => setDialogType(null),
+		renderButtons: () => (
+			<Grid
+					container
+					spacing={2}
+					className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+			>
+					<Grid item>
+							<Button
+									onClick={() => {
+											setShowTierPlans(true);
+									}}
+									className={clsx(classes.btn, classes.btnRounded)}
+							>
+									{t('billing.upgradePlan')}
+							</Button>
+					</Grid>
+					<Grid item>
+							<Button
+									onClick={() => setDialogType(null)}
+									className={clsx(classes.btn, classes.btnRounded)}
+							>
+									{t('common.cancel')}
+							</Button>
+					</Grid>
+			</Grid>
+		)
 	})
 
 	const renderDialog = () => {
@@ -974,6 +1001,11 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 			</Box >
 			{renderDialog()}
 			{toastMessage && renderToast()}
+			{showTierPlans && <TierPlans
+				classes={classes}
+				isOpen={showTierPlans}
+				onClose={() => setShowTierPlans(false)}
+			/>}
 		</DefaultScreen >
 	)
 }

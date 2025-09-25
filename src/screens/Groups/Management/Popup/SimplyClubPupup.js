@@ -16,6 +16,7 @@ import { sendToTeamChannel } from "../../../../redux/reducers/ConnectorsSlice";
 import { RenderHtml } from '../../../../helpers/Utils/HtmlUtils';
 import { logout } from '../../../../helpers/Api/PulseemReactAPI';
 import { findPlanByFeatureCode } from '../../../../redux/reducers/TiersSlice';
+import TierPlans from '../../../../components/TierPlans/TierPlans';
 
 const useStyles = makeStyles({
     dialogContainer: {
@@ -109,7 +110,7 @@ const SimplyClubPupup = ({
     const [showUserNamePass, setShowUserNamePass] = useState(true);
     const [dialogType, setDialogType] = useState(null);
     const [TierMessageCode, setTierMessageCode] = useState("");
-
+    const [showTierPlans, setShowTierPlans] = useState(false);
 
     useEffect(() => {
         const preload = () => {
@@ -400,7 +401,7 @@ const SimplyClubPupup = ({
                     break;
                 }
                 case 927: {
-                    setTierMessageCode(response?.payload?.Message);
+                    setTierMessageCode(creationResponse?.payload?.Message);
                     setDialogType({ type: 'tier' });
                     break;
                 }
@@ -600,9 +601,32 @@ const SimplyClubPupup = ({
                 {handleGetPlanForFeature(TierMessageCode)}
             </Typography>
         ),
-        onCancel: () => setDialogType(null),
-        onClose: () => setDialogType(null),
-        onConfirm: () => setDialogType(null),
+        renderButtons: () => (
+            <Grid
+                container
+                spacing={2}
+                className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+            >
+                <Grid item>
+                    <Button
+                        onClick={() => {
+                            setShowTierPlans(true);
+                        }}
+                        className={clsx(classes.btn, classes.btnRounded)}
+                    >
+                        {t('billing.upgradePlan')}
+                    </Button>
+                </Grid>
+                <Grid item>
+                    <Button
+                        onClick={() => setDialogType(null)}
+                        className={clsx(classes.btn, classes.btnRounded)}
+                    >
+                        {t('common.cancel')}
+                    </Button>
+                </Grid>
+            </Grid>
+        )
     });
 
     const renderDialog = () => {
@@ -719,6 +743,11 @@ const SimplyClubPupup = ({
             </BaseDialog>
             <Loader isOpen={showLoader} zIndex={1500} />
             {renderDialog()}
+            {showTierPlans && <TierPlans
+                classes={classes}
+                isOpen={showTierPlans}
+                onClose={() => setShowTierPlans(false)}
+            />}
         </>
     )
 }

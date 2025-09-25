@@ -34,6 +34,7 @@ import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 import queryString from 'query-string';
 import { LinksClicksReport } from '../../../config/enum';
 import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
+import TierPlans from '../../../components/TierPlans/TierPlans';
 
 const SmsReport = ({ classes }) => {
   const priorDate = moment().subtract(30, 'days').utcOffset(0);
@@ -63,6 +64,7 @@ const SmsReport = ({ classes }) => {
   const [showNoticeDialog, setShowNoticeDialog] = useState(false);
   const [dialogType, setDialogType] = useState(null);
   const [TierMessageCode, setTierMessageCode] = useState('');
+  const [showTierPlans, setShowTierPlans] = useState(false);
 
   const handleGetPlanForFeature = (tierMessageCode) => {
     const planName = findPlanByFeatureCode(
@@ -78,6 +80,7 @@ const SmsReport = ({ classes }) => {
     }
   };
 
+  
   const getTierValidationDialog = () => {
     return {
       type: 'tier',
@@ -88,6 +91,29 @@ const SmsReport = ({ classes }) => {
         <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
           {handleGetPlanForFeature(TierMessageCode)}
         </Typography>
+      ),
+      renderButtons: () => (
+        <Grid container spacing={2} className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}>
+          <Grid item>
+            <Button
+              onClick={() => {
+                setDialogType(null);
+                setShowTierPlans(true);
+              }}
+              className={clsx(classes.btn, classes.btnRounded)}
+            >
+              {t('billing.upgradePlan')}
+            </Button>
+          </Grid>
+          <Grid item>
+            <Button
+              onClick={() => { setDialogType(null); }}
+              className={clsx(classes.btn, classes.btnRounded)}
+            >
+              {t('common.cancel')}
+            </Button>
+          </Grid>
+        </Grid>
       )
     };
   };
@@ -1041,6 +1067,11 @@ const SmsReport = ({ classes }) => {
       <GraphReport classes={classes} showLoader={!smsGraph} reportData={smsGraph} />
       {renderDialog()}
       <Loader isOpen={showLoader} showBackdrop={true} />
+      {showTierPlans && <TierPlans
+        classes={classes}
+        isOpen={showTierPlans}
+        onClose={() => setShowTierPlans(false)}
+      />}
     </DefaultScreen>
   )
 }

@@ -21,6 +21,7 @@ import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 import { sitePrefix } from '../../../config';
 import { Title } from '../../../components/managment/Title';
 import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
+import TierPlans from '../../../components/TierPlans/TierPlans';
 
 const NotificationSend = ({ classes }) => {
     const { id } = useParams();
@@ -604,6 +605,7 @@ const NotificationSend = ({ classes }) => {
         }
     };
 
+    const [showTierPlans, setShowTierPlans] = useState(false);
     const getTierValidationDialog = () => ({
         type: 'tier',
         data: null,
@@ -613,6 +615,29 @@ const NotificationSend = ({ classes }) => {
             <Box className={classes.dialogBox}>
                 {handleGetPlanForFeature(TierMessageCode)}
             </Box>
+        ),
+        renderButtons: () => (
+            <Grid container spacing={2} className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}>
+                <Grid item>
+                    <Button
+                        onClick={() => {
+                            setDialogType(null);
+                            setShowTierPlans(true);
+                        }}
+                        className={clsx(classes.btn, classes.btnRounded)}
+                    >
+                        {t('billing.upgradePlan')}
+                    </Button>
+                </Grid>
+                <Grid item>
+                    <Button
+                        onClick={() => { setDialogType(null); }}
+                        className={clsx(classes.btn, classes.btnRounded)}
+                    >
+                        {t('common.cancel')}
+                    </Button>
+                </Grid>
+            </Grid>
         )
     });
     const callbackSelectedGroups = (group, key, reference) => {
@@ -793,6 +818,11 @@ const NotificationSend = ({ classes }) => {
                     <WizardButtons />
                 </div>
             </div>
+            {showTierPlans && <TierPlans
+                classes={classes}
+                isOpen={showTierPlans}
+                onClose={() => setShowTierPlans(false)}
+            />}
         </DefaultScreen>
     );
 };

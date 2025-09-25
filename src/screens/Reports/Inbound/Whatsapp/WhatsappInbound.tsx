@@ -42,6 +42,7 @@ import { DateFormats } from "../../../../helpers/Constants";
 import { getCommonFeatures } from "../../../../redux/reducers/commonSlice";
 import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
 import { findPlanByFeatureCode } from "../../../../redux/reducers/TiersSlice";
+import TierPlans from "../../../../components/TierPlans/TierPlans";
 
 const WhatsappInbound = ({ classes }: any) => {
   const dispatch = useDispatch();
@@ -59,7 +60,7 @@ const WhatsappInbound = ({ classes }: any) => {
   const { isRTL, windowSize, userRoles } = useSelector(
     (state: StateType) => state.core
   );
-
+  const [showTierPlans, setShowTierPlans] = useState(false);
   const { accountFeatures } = useSelector((state: any) => state.common);
   const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
 
@@ -113,6 +114,33 @@ const WhatsappInbound = ({ classes }: any) => {
       <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
         {handleGetPlanForFeature(TierMessageCode)}
       </Typography>
+    ),
+    renderButtons: () => (
+      <Grid
+        container
+        spacing={2}
+        className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+      >
+        <Grid item>
+          <Button
+            onClick={() => {
+              setDialog(null);
+              setShowTierPlans(true);
+            }}
+            className={clsx(classes.btn, classes.btnRounded)}
+          >
+            {t('billing.upgradePlan')}
+          </Button>
+        </Grid>
+        <Grid item>
+          <Button
+            onClick={() => setDialog(null)}
+            className={clsx(classes.btn, classes.btnRounded)}
+          >
+            {t('common.cancel')}
+          </Button>
+        </Grid>
+      </Grid>
     )
   });
 
@@ -471,6 +499,11 @@ const WhatsappInbound = ({ classes }: any) => {
         </BaseDialog>
       )}
       <Loader isOpen={showLoader} showBackdrop={true} />
+      {showTierPlans && <TierPlans
+        classes={classes}
+        isOpen={showTierPlans}
+        onClose={() => setShowTierPlans(false)}
+      />}
     </Box>
   );
 };

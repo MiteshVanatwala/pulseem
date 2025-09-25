@@ -62,6 +62,7 @@ import AddRecipientResponse from '../Management/Popup/AddRecipientResponse';
 import { SortColumns, SortDirection } from '../../../Models/PushNotifications/Enums';
 import Sort from '../../../components/Sort/Sort';
 import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
+import TierPlans from '../../../components/TierPlans/TierPlans';
 
 const DynamicGroups = ({ classes }: any) => {
     const dispatch: any = useDispatch();
@@ -101,6 +102,7 @@ const DynamicGroups = ({ classes }: any) => {
     const [sortBySelected, setSortBy] = useState(SortColumns.UPDATE_DATE);
     const [exportGroupNames, setExportGroupNames] = useState(false);
     const [ TierMessageCode, setTierMessageCode ] = useState('');
+    const [showTierPlans, setShowTierPlans] = useState(false);
 
     useEffect(() => {
         if (extraData && Object.entries(extraData).length > 0) {
@@ -221,6 +223,33 @@ const DynamicGroups = ({ classes }: any) => {
             <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
                 {handleGetPlanForFeature(TierMessageCode)}
             </Typography>
+        ),
+        renderButtons: () => (
+            <Grid
+                container
+                spacing={2}
+                className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+            >
+                <Grid item>
+                    <Button
+                        onClick={() => {
+                            setDialog(null);
+                            setShowTierPlans(true);
+                        }}
+                        className={clsx(classes.btn, classes.btnRounded)}
+                    >
+                        {t('billing.upgradePlan')}
+                    </Button>
+                </Grid>
+                <Grid item>
+                    <Button
+                        onClick={() => setDialog(null)}
+                        className={clsx(classes.btn, classes.btnRounded)}
+                    >
+                        {t('common.cancel')}
+                    </Button>
+                </Grid>
+            </Grid>
         )
     });
 
@@ -1842,6 +1871,11 @@ const DynamicGroups = ({ classes }: any) => {
                 {renderTablePagination()}
                 {showConfirmDialog && renderConfirmDialog()}
                 {dialog !== null && showDialog()}
+                {showTierPlans && <TierPlans
+                    classes={classes}
+                    isOpen={showTierPlans}
+                    onClose={() => setShowTierPlans(false)}
+                />}
                 <Loader isOpen={showLoader} showBackdrop={true} />
             </Box>
         </DefaultScreen>

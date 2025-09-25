@@ -64,6 +64,7 @@ import { sitePrefix } from '../../../config';
 import { LinksClicksReport } from '../../../config/enum';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
+import TierPlans from '../../../components/TierPlans/TierPlans';
 
 const WhatsappReports = ({ classes }: ClassesType) => {
 	const { t: translator } = useTranslation();
@@ -85,7 +86,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 	const [hasRevenue, setHasRevenue] = useState<boolean>(false);
 	const [totalRecord, setTotalRecord] = useState<number>(0);
 	const [includeTestCampaigns, setIncludeTestCampaigns] = useState(false)
-
+	const [showTierPlans, setShowTierPlans] = useState(false);
 	const [isFromDatePickerOpen, setIsFromDatePickerOpen] =
 		useState<boolean>(false);
 	const [isToDatePickerOpen, setIsToDatePickerOpen] = useState<boolean>(false);
@@ -126,6 +127,33 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
 				{handleGetPlanForFeature(TierMessageCode)}
 			</Typography>
+		),
+		renderButtons: () => (
+			<Grid
+				container
+				spacing={2}
+				className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+			>
+				<Grid item>
+					<Button
+						onClick={() => {
+						setDialogType(null);
+						setShowTierPlans(true);
+					}}
+					className={clsx(classes.btn, classes.btnRounded)}
+					>
+						{translator('billing.upgradePlan')}
+					</Button>
+				</Grid>
+				<Grid item>
+					<Button
+						onClick={() => setDialogType(null)}
+						className={clsx(classes.btn, classes.btnRounded)}
+					>
+						{translator('common.cancel')}
+					</Button>
+				</Grid>
+			</Grid>
 		)
 	});
 
@@ -1061,6 +1089,11 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 					</Typography>
 				</BaseDialog>
 			)}
+			{showTierPlans && <TierPlans
+				classes={classes}
+				isOpen={showTierPlans}
+				onClose={() => setShowTierPlans(false)}
+			/>}
 		</DefaultScreen>
 	);
 };

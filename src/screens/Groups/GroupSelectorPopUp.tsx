@@ -1,4 +1,4 @@
-import { Box, Button, Checkbox, Divider, TextField, Typography } from "@material-ui/core";
+import { Box, Button, Checkbox, Divider, Grid, TextField, Typography } from "@material-ui/core";
 import { BaseDialog } from "../../components/DialogTemplates/BaseDialog";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
@@ -10,6 +10,7 @@ import { createGroup } from "../../redux/reducers/groupSlice";
 import { DEFAULT_NEW_GROUP } from "../../helpers/Constants";
 import { Autocomplete } from "@mui/material";
 import { findPlanByFeatureCode } from "../../redux/reducers/TiersSlice";
+import TierPlans from "../../components/TierPlans/TierPlans";
 
 interface GroupSelection {
     classes: any;
@@ -44,6 +45,7 @@ const GroupSelectorPopUp = ({
         type: string;
     } | null>(null);
     const [TierMessageCode, setTierMessageCode] = useState<string>("");
+    const [showTierPlans, setShowTierPlans] = useState(false);
 
     const getGroups = async () => {
         setShowLoader(true);
@@ -182,9 +184,37 @@ const GroupSelectorPopUp = ({
                 {handleGetPlanForFeature(TierMessageCode)}
             </Typography>
         ),
-        onCancel: () => setDialogType(null),
-        onClose: () => setDialogType(null),
-        onConfirm: () => setDialogType(null),
+        renderButtons: () => (
+            <Grid
+                container
+                spacing={2}
+                className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+            >
+                <Grid item>
+                    <Button
+                        onClick={() => { 
+                            setDialogType(null);
+                            setShowTierPlans(true);
+                        }}
+                        className={clsx(
+                            classes.btn,
+                            classes.btnRounded
+                        )}>
+                        {t('billing.upgradePlan')}
+                    </Button>
+                </Grid>
+                <Grid item>
+                    <Button
+                        onClick={() => { setDialogType(null) }}
+                        className={clsx(
+                            classes.btn,
+                            classes.btnRounded
+                        )}>
+                        {t('common.cancel')}
+                    </Button>
+                </Grid>
+            </Grid>
+        )
     })
 
     const renderDialog = () => {
@@ -251,6 +281,11 @@ const GroupSelectorPopUp = ({
         {subAccountAllGroups && <BaseDialog classes={classes} {...options} disableBackdropClick={true} />}
         <Loader isOpen={showLoader} showBackdrop={true} zIndex={999999999} />
         {renderDialog()}
+        {showTierPlans && <TierPlans
+            classes={classes}
+            isOpen={showTierPlans}
+            onClose={() => setShowTierPlans(false)}
+        />}
     </>
     );
 }

@@ -78,6 +78,7 @@ import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { Switch } from '../../../components/managment';
 import ConfirmationButtons from '../../../components/ConfirmationButtons/ConfirmationButtons';
 import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
+import TierPlans from '../../../components/TierPlans/TierPlans';
 
 const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	const { templateID } = useParams();
@@ -112,6 +113,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		type: string;
 	} | null>(null);
 	const [isGalleryConfirmed, setIsFileSelected] = useState(false);
+	const [showTierPlans, setShowTierPlans] = useState(false);
 
 	const getSavedTemplateFields = async () => {
 		let savedTemplate: savedTemplateAPIProps = await dispatch<any>(
@@ -1273,6 +1275,33 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
 				{handleGetPlanForFeature(TierMessageCode)}
 			</Typography>
+		),
+		renderButtons: () => (
+			<Grid
+				container
+				spacing={2}
+				className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+			>
+				<Grid item>
+					<Button
+						onClick={() => {
+						setDialogType(null);
+						setShowTierPlans(true);
+					}}
+					className={clsx(classes.btn, classes.btnRounded)}
+					>
+						{translator('billing.upgradePlan')}
+					</Button>
+				</Grid>
+				<Grid item>
+					<Button
+						onClick={() => setDialogType(null)}
+						className={clsx(classes.btn, classes.btnRounded)}
+					>
+						{translator('common.cancel')}
+					</Button>
+				</Grid>
+			</Grid>
 		)
 	})
 
@@ -1612,6 +1641,11 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			)}
 			{renderDialog()}
 			<Loader isOpen={isLoader} showBackdrop={true} />
+			{showTierPlans && <TierPlans
+				classes={classes}
+				isOpen={showTierPlans}
+				onClose={() => setShowTierPlans(false)}
+			/>}
 		</DefaultScreen>
 	);
 };

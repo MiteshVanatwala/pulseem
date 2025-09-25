@@ -1,6 +1,6 @@
 import { ClassesType } from '../../Classes.types';
 import DefaultScreen from '../../DefaultScreen';
-import { Grid, Box, Typography } from '@material-ui/core';
+import { Grid, Box, Typography, Button } from '@material-ui/core';
 import {
 	APICreateGroupData,
 	ApiCreateGroupPayload,
@@ -79,6 +79,7 @@ import { SelectChangeEvent, Stack } from '@mui/material';
 import ConfirmationButtons from '../../../components/ConfirmationButtons/ConfirmationButtons';
 import { DateFormats } from '../../../helpers/Constants';
 import Pulse from '../../../components/Pulse/Pulse';
+import TierPlans from '../../../components/TierPlans/TierPlans';
 
 const SendCampaign = ({
 	classes,
@@ -154,6 +155,7 @@ const SendCampaign = ({
 		type: '',
 		data: ''
 	});
+	const [showTierPlans, setShowTierPlans] = useState(false);
 	
 	const [ pulseData, setPulseData ] = useState({
 		pulseSettingsId: 0,
@@ -975,6 +977,33 @@ const SendCampaign = ({
 			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
 				{handleGetPlanForFeature(TierMessageCode)}
 			</Typography>
+		),
+		renderButtons: () => (
+			<Grid
+				container
+				spacing={2}
+				className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+			>
+				<Grid item>
+					<Button
+						onClick={() => {
+						setDialogType({});
+						setShowTierPlans(true);
+					}}
+					className={clsx(classes.btn, classes.btnRounded)}
+					>
+						{translator('billing.upgradePlan')}
+					</Button>
+				</Grid>
+				<Grid item>
+					<Button
+						onClick={() => setDialogType({})}
+						className={clsx(classes.btn, classes.btnRounded)}
+					>
+						{translator('common.cancel')}
+					</Button>
+				</Grid>
+			</Grid>
 		)
 	})
 
@@ -1182,6 +1211,11 @@ const SendCampaign = ({
           }}
         />
       }
+			{showTierPlans && <TierPlans
+					classes={classes}
+					isOpen={showTierPlans}
+					onClose={() => setShowTierPlans(false)}
+			/>}
 		</DefaultScreen>
 	);
 };

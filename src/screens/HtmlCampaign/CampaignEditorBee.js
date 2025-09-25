@@ -66,6 +66,7 @@ import { logout } from '../../helpers/Api/PulseemReactAPI';
 import { UserRoles } from '../../Models/SubUser/SubUsers';
 import AITemplateCreatorAccordion from './modals/AI_TemplateCreatorAccordion';
 import { BsMagic } from 'react-icons/bs';
+import TierPlans from '../../components/TierPlans/TierPlans';
 
 const CampaignEditor = ({ classes, ...props }) => {
   //#region State
@@ -108,6 +109,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   const [buttonDisabled, setButtonDisabled] = useState(true);
   const [overwriteTemplateDialog, setOverwriteTemplateDialog] = useState(false);
   const [newTemplate, setNewTemplate] = useState('');
+  const [showTierPlans, setShowTierPlans] = useState(false);
   const [domainAddressError, setDomainAddressError] = useState({
     display: false,
     address: '',
@@ -1110,9 +1112,32 @@ const CampaignEditor = ({ classes, ...props }) => {
         {handleGetPlanForFeature(TierMessageCode)}
       </Typography>
     ),
-    onCancel: () => setDialogType(null),
-    onClose: () => setDialogType(null),
-    onConfirm: () => setDialogType(null)
+    renderButtons: () => (
+      <Grid
+          container
+          spacing={2}
+          className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+      >
+          <Grid item>
+              <Button
+                  onClick={() => {
+                      setShowTierPlans(true);
+                  }}
+                  className={clsx(classes.btn, classes.btnRounded)}
+              >
+                  {t('billing.upgradePlan')}
+              </Button>
+          </Grid>
+          <Grid item>
+              <Button
+                  onClick={() => setDialogType(null)}
+                  className={clsx(classes.btn, classes.btnRounded)}
+              >
+                  {t('common.cancel')}
+              </Button>
+          </Grid>
+      </Grid>
+    )
   });
 
   const getPendingApprovalModal = (code) => ({
@@ -1363,6 +1388,11 @@ const CampaignEditor = ({ classes, ...props }) => {
       />
       {renderDialog()}
       <Loader isOpen={showLoader} showBackdrop={false} />
+      {showTierPlans && <TierPlans
+        classes={classes}
+        isOpen={showTierPlans}
+        onClose={() => setShowTierPlans(false)}
+      />}
     </DefaultScreen>
   )
 }

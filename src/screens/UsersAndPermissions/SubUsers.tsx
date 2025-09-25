@@ -27,6 +27,7 @@ import { logout } from '../../helpers/Api/PulseemReactAPI';
 import SubUserChangePassword from './SubUserChangePassword';
 import { BiMailSend } from 'react-icons/bi';
 import { findPlanByFeatureCode } from '../../redux/reducers/TiersSlice';
+import TierPlans from '../../components/TierPlans/TierPlans';
 
 const SubUsers = ({ classes }: any) => {
   const { language, windowSize, isRTL, rowsPerPage, userRoles, subUserName } = useSelector((state: any) => state.core);
@@ -52,6 +53,7 @@ const SubUsers = ({ classes }: any) => {
     type: string;
     data: any
   } | null>(null);
+  const [showTierPlans, setShowTierPlans] = useState(false);
   const [userList, setUserList] = useState<SubUserModel[]>();
   const [TierMessageCode, setTierMessageCode] = useState<string>('');
   const rowStyle = { head: clsx(classes.tableRowHead, classes.pt10, classes.pb10), root: classes.tableRowRoot }
@@ -554,7 +556,29 @@ const SubUsers = ({ classes }: any) => {
         {handleGetPlanForFeature(TierMessageCode)}
       </Typography>
     ),
-    onConfirm: async () => { setDialogType(null) }
+    renderButtons: () => (
+      <Grid container spacing={2} className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}>
+          <Grid item>
+              <Button
+                  onClick={() => {
+                      setDialogType(null);
+                      setShowTierPlans(true);
+                  }}
+                  className={clsx(classes.btn, classes.btnRounded)}
+              >
+                  {t('billing.upgradePlan')}
+              </Button>
+          </Grid>
+          <Grid item>
+              <Button
+                  onClick={() => { setDialogType(null); }}
+                  className={clsx(classes.btn, classes.btnRounded)}
+              >
+                  {t('common.cancel')}
+              </Button>
+          </Grid>
+      </Grid>
+  )
   })
 
   const renderDialog = () => {
@@ -635,6 +659,11 @@ const SubUsers = ({ classes }: any) => {
       />
       }
       <Loader isOpen={showLoader} zIndex={9999} />
+      {showTierPlans && <TierPlans
+        classes={classes}
+        isOpen={showTierPlans}
+        onClose={() => setShowTierPlans(false)}
+      />}
     </DefaultScreen>
   )
 }

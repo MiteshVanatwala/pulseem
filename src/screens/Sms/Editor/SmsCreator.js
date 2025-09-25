@@ -62,6 +62,8 @@ import { DynamicProductLink } from "../../../Models/PushNotifications/Enums";
 import { IsValidNonGlobalPhoneNumber, IsValidPhoneNumberWithCountryCode, IsValidURL } from "../../../helpers/Utils/Validations";
 import { WhiteLabelObject } from "../../../components/WhiteLabel/WhiteLabelMigrate";
 import { URL_REGEX } from "../../../helpers/Constants";
+import { findPlanByFeatureCode } from "../../../redux/reducers/TiersSlice";
+import TierPlans from "../../../components/TierPlans/TierPlans";
 
 const useStyles = makeStyles((theme) => ({
   customWidth: {
@@ -127,6 +129,7 @@ const SmsCreator = ({ classes }) => {
   const { windowSize, isRTL, CoreToastMessages, userRoles } = useSelector(
     (state) => state.core
   );
+  const { currentPlan, availablePlans } = useSelector((state) => state.tiers);
   const {
     previousLandingData,
     previousCampaignData,
@@ -181,7 +184,8 @@ const SmsCreator = ({ classes }) => {
   const [dynamicProductButtonDisabled, setDynamicProductButtonDisabled] = useState(false);
   const [buttonsDisabled, setButtonsDisabled] = useState(false);
   const [controller, setController] = useState(null);
-
+  const [ TierMessageCode, setTierMessageCode ] = useState('');
+  const [showTierPlans, setShowTierPlans] = useState(false);
   const [smsModel, setSmsModel] = useState({
     CreditsPerSms: "1",
     FromNumber: campaignNumber,
@@ -1377,8 +1381,31 @@ const SmsCreator = ({ classes }) => {
       showDivider: false,
       content: (
         <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
-          {handleGetPlanForFeature(tierMessageCode)}
+          {handleGetPlanForFeature(TierMessageCode)}
         </Typography>
+      ),
+      renderButtons: () => (
+        <Grid container spacing={2} className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}>
+          <Grid item>
+            <Button
+              onClick={() => {
+                setDialogType(null);
+                setShowTierPlans(true);
+              }}
+              className={clsx(classes.btn, classes.btnRounded)}
+            >
+              {t('billing.upgradePlan')}
+            </Button>
+          </Grid>
+          <Grid item>
+            <Button
+              onClick={() => { setDialogType(null); }}
+              className={clsx(classes.btn, classes.btnRounded)}
+            >
+              {t('common.cancel')}
+            </Button>
+          </Grid>
+        </Grid>
       ),
       onConfirm: async () => { setDialogType(null); }
     };
@@ -2203,7 +2230,11 @@ const SmsCreator = ({ classes }) => {
         </Box>
       </Box>
 
-
+      {showTierPlans && <TierPlans
+        classes={classes}
+        isOpen={showTierPlans}
+        onClose={() => setShowTierPlans(false)}
+      />}
     </DefaultScreen >
   );
 };

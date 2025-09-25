@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Box, Divider, Button, Typography, TextField, makeStyles, Link } from '@material-ui/core';
+import { Box, Divider, Button, Typography, TextField, makeStyles, Link, Grid } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
@@ -34,6 +34,7 @@ import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadio
 import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
 import { ExportFile } from '../../../helpers/Export/ExportFile';
 import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
+import TierPlans from '../../../components/TierPlans/TierPlans';
 
 const useStyles = makeStyles({
     pwdEveButton: {
@@ -84,7 +85,7 @@ const ApiSettings = ({ classes }: any) => {
     const [exportData, setExportData] = useState<any>(null);
     const [dialogType, setDialogType] = useState<any>(null);
     const [TierMessageCode, setTierMessageCode] = useState<string>('');
-
+    const [showTierPlans, setShowTierPlans] = useState(false);
 
     const localClasses = useStyles();
 
@@ -112,6 +113,29 @@ const ApiSettings = ({ classes }: any) => {
                 <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
                     {handleGetPlanForFeature(TierMessageCode)}
                 </Typography>
+            ),
+            renderButtons: () => (
+                <Grid container spacing={2} className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}>
+                    <Grid item>
+                    <Button
+                        onClick={() => {
+                        setDialogType(null);
+                        setShowTierPlans(true);
+                        }}
+                        className={clsx(classes.btn, classes.btnRounded)}
+                    >
+                        {t('billing.upgradePlan')}
+                    </Button>
+                    </Grid>
+                    <Grid item>
+                    <Button
+                        onClick={() => { setDialogType(null); }}
+                        className={clsx(classes.btn, classes.btnRounded)}
+                    >
+                        {t('common.cancel')}
+                    </Button>
+                    </Grid>
+                </Grid>
             )
         };
     };
@@ -617,6 +641,11 @@ const ApiSettings = ({ classes }: any) => {
                 options={ExportFileTypes}
             />
             <Loader isOpen={showLoader} showBackdrop={true} />
+            {showTierPlans && <TierPlans
+                classes={classes}
+                isOpen={showTierPlans}
+                onClose={() => setShowTierPlans(false)}
+            />}
         </DefaultScreen >
     );
 };

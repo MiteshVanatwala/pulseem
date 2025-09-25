@@ -26,6 +26,7 @@ import { sendToTeamChannel } from "../../../../redux/reducers/ConnectorsSlice";
 import { Loader } from "../../../../components/Loader/Loader";
 import { RenderHtml } from "../../../../helpers/Utils/HtmlUtils";
 import { findPlanByFeatureCode } from "../../../../redux/reducers/TiersSlice";
+import TierPlans from "../../../../components/TierPlans/TierPlans";
 
 const AddGroupPopUp = ({
     classes,
@@ -66,6 +67,7 @@ const AddGroupPopUp = ({
         UpdatedDate: new Date(),
         CreatedDate: new Date(),
     };
+    const [showTierPlans, setShowTierPlans] = useState(false);
     const [newGroupData, setNewGroupData] = useState(DEFAULT_NEW_GROUP);
     const [saveDisabled, setSaveDisabled] = useState(false);
     const [showLoader, setLoader] = useState(false);
@@ -190,9 +192,32 @@ const AddGroupPopUp = ({
                 {handleGetPlanForFeature(TierMessageCode)}
             </Typography>
         ),
-        onCancel: () => setDialogType(null),
-        onClose: () => setDialogType(null),
-        onConfirm: () => setDialogType(null),
+        renderButtons: () => (
+            <Grid
+                container
+                spacing={2}
+                className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+            >
+                <Grid item>
+                    <Button
+                        onClick={() => {
+                            setShowTierPlans(true);
+                        }}
+                        className={clsx(classes.btn, classes.btnRounded)}
+                    >
+                        {t('billing.upgradePlan')}
+                    </Button>
+                </Grid>
+                <Grid item>
+                    <Button
+                        onClick={() => setDialogType(null)}
+                        className={clsx(classes.btn, classes.btnRounded)}
+                    >
+                        {t('common.cancel')}
+                    </Button>
+                </Grid>
+            </Grid>
+        )
     });
 
     const renderDialog = () => {
@@ -391,6 +416,14 @@ const AddGroupPopUp = ({
                 </Box>
                 <Loader isOpen={showLoader} showBackdrop={true} />
             </BaseDialog>
+            {showTierPlans && <TierPlans
+                classes={classes}
+                isOpen={showTierPlans}
+                onClose={() => {
+                    setShowTierPlans(false);
+                    setDialogType(null);
+                }}
+            />}
             {renderDialog()}
         </>
     );

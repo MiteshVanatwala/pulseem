@@ -89,6 +89,7 @@ import { compareLastNineDigits } from '../../../helpers/Utils/TextHelper';
 import { BsTrash } from 'react-icons/bs';
 import ConfirmDeletePopUp from '../../Groups/Management/Popup/ConfirmDeletePopUp';
 import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
+import TierPlans from '../../../components/TierPlans/TierPlans';
 
 const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const navigate = useNavigate();
@@ -108,6 +109,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const [isTrackLink, setIsTrackLink] = useState<boolean>(false);
 	const [nextMessageAvailable, setNextMessageAvailable] = useState<string>('');
 	const [dialogType, setDialogType] = useState<any>({});
+	const [showTierPlans, setShowTierPlans] = useState(false);
 	const [activeChatContacts, setActiveChatContacts] =
 		useState<APIWhatsappChatSidebarContactsItemsData>({
 			ConversationStatusId: 0,
@@ -946,12 +948,33 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				{handleGetPlanForFeature(TierMessageCode)}
 			</Typography>
 		),
-		onConfirm: async () => {
-			setDialogType({
-				type: '',
-				data: ''
-			});
-		}
+		renderButtons: () => (
+			<Grid
+				container
+				spacing={2}
+				className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+			>
+				<Grid item>
+					<Button
+						onClick={() => {
+						setDialogType({ type: '', data: '' });
+						setShowTierPlans(true);
+					}}
+					className={clsx(classes.btn, classes.btnRounded)}
+					>
+						{translator('billing.upgradePlan')}
+					</Button>
+				</Grid>
+				<Grid item>
+					<Button
+						onClick={() => setDialogType({ type: '', data: '' })}
+						className={clsx(classes.btn, classes.btnRounded)}
+					>
+						{translator('common.cancel')}
+					</Button>
+				</Grid>
+			</Grid>
+		)
 	});
 
 	const getDynamicModalDialog = () => ({
@@ -1346,6 +1369,11 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 						}
 					}}
 				/>
+				{showTierPlans && <TierPlans
+					classes={classes}
+					isOpen={showTierPlans}
+					onClose={() => setShowTierPlans(false)}
+				/>}
 			</DefaultScreen >
 		</>
 	);

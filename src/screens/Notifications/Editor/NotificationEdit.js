@@ -34,6 +34,7 @@ import { Title } from '../../../components/managment/Title';
 import { Stack } from '@mui/material';
 import EmojiPicker from '../../../components/Emojis/EmojiPicker';
 import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
+import TierPlans from '../../../components/TierPlans/TierPlans';
 
 const useStylesBootstrap = makeStyles((theme) => ({
   arrow: {
@@ -106,6 +107,7 @@ const NotificationEdit = ({ classes }) => {
   const [notificationPublicKey, setPublicKey] = useState(0);
   const [inputFocus, setFocusOnInput] = useState(null);
   const [cursorPosition, setCursorPosition] = useState(0);
+  const [showTierPlans, setShowTierPlans] = useState(false);
   const [validationErrorList, setValidationError] = useState(null);
   // Send Type settings
   const [notificationHover, setHovered] = useState(false);
@@ -894,7 +896,38 @@ const NotificationEdit = ({ classes }) => {
       <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
         {handleGetPlanForFeature(TierMessageCode)}
       </Typography>
-    )
+    ),
+    renderButtons: () => (
+      <Grid
+          container
+          spacing={2}
+          className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+      >
+          <Grid item>
+              <Button
+                  onClick={() => { 
+                      setDialogType(null);
+                      setShowTierPlans(true);
+                  }}
+                  className={clsx(
+                      classes.btn,
+                      classes.btnRounded
+                  )}>
+                  {t('billing.upgradePlan')}
+              </Button>
+          </Grid>
+          <Grid item>
+              <Button
+                  onClick={() => { setDialogType(null) }}
+                  className={clsx(
+                      classes.btn,
+                      classes.btnRounded
+                  )}>
+                  {t('common.cancel')}
+              </Button>
+          </Grid>
+      </Grid>
+  )
   })
 
   const saveNotification = async (isExit, isContinue) => {
@@ -974,6 +1007,11 @@ const NotificationEdit = ({ classes }) => {
           <WizardButtons />
         </div>
       </div>
+      {showTierPlans && <TierPlans
+        classes={classes}
+        isOpen={showTierPlans}
+        onClose={() => setShowTierPlans(false)}
+      />}
     </DefaultScreen>
   );
 
