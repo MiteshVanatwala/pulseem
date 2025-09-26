@@ -22,6 +22,7 @@ import { sitePrefix } from '../../../config';
 import { Title } from '../../../components/managment/Title';
 import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
 import TierPlans from '../../../components/TierPlans/TierPlans';
+import { TierFeatures } from '../../../helpers/Constants';
 
 const NotificationSend = ({ classes }) => {
     const { id } = useParams();
@@ -599,7 +600,7 @@ const NotificationSend = ({ classes }) => {
         );
         
         if (planName) {
-            return t('billing.tier.featureNotAvailable').replace('{feature}', tierMessageCode).replace('{planName}', planName);
+            return t('billing.tier.featureNotAvailable').replace('{feature}', t(TierFeatures[tierMessageCode] || tierMessageCode)).replace('{planName}', planName);
         } else {
             return t('billing.tier.noFeatureAvailable');
         }

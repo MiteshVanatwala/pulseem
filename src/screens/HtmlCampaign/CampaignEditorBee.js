@@ -61,7 +61,7 @@ import DomainVerification from '../../Shared/Dialogs/DomainVerification';
 import { SharedEmailDomain } from '../../config';
 import { getCategories, GetProductsList } from '../../redux/reducers/productSlice';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
-import { NO_IMAGE_URL } from '../../helpers/Constants';
+import { NO_IMAGE_URL, TierFeatures } from '../../helpers/Constants';
 import { logout } from '../../helpers/Api/PulseemReactAPI';
 import { UserRoles } from '../../Models/SubUser/SubUsers';
 import AITemplateCreatorAccordion from './modals/AI_TemplateCreatorAccordion';
@@ -1098,7 +1098,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       );
       
       if (planName) {
-          return t('billing.tier.featureNotAvailable').replace('{feature}', tierMessageCode).replace('{planName}', planName);
+          return t('billing.tier.featureNotAvailable').replace('{feature}', t(TierFeatures[tierMessageCode] || tierMessageCode)).replace('{planName}', planName);
       } else {
           return t('billing.tier.noFeatureAvailable');
       }

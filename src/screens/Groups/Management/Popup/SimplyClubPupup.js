@@ -6,7 +6,7 @@ import clsx from 'clsx';
 import { addRecipient, getExternalClientsByGroups, getGroups, getGroupsForSimplyClub, createGroup } from '../../../../redux/reducers/groupSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import DataTable from '../../../../components/Table/DataTable';
-import { UploadSettings } from '../../../../helpers/Constants';
+import { TierFeatures, UploadSettings } from '../../../../helpers/Constants';
 import ColumnAdjustmentDialog from '../../../../components/Files/ColumnAdjustmentDialog';
 import { Loader } from '../../../../components/Loader/Loader';
 import AddRecipientResponse from './AddRecipientResponse';
@@ -587,7 +587,7 @@ const SimplyClubPupup = ({
         );
         
         if (planName) {
-            return t('billing.tier.featureNotAvailable').replace('{feature}', tierMessageCode).replace('{planName}', planName);
+            return t('billing.tier.featureNotAvailable').replace('{feature}', t(TierFeatures[tierMessageCode] || tierMessageCode)).replace('{planName}', planName);
         } else {
             return t('billing.tier.noFeatureAvailable');
         }

@@ -14,7 +14,7 @@ import 'moment/locale/he';
 import { getSmsReport, getSmsGraph } from '../../../redux/reducers/smsSlice';
 import { Loader } from '../../../components/Loader/Loader';
 import { ExportFile } from '../../../helpers/Export/ExportFile';
-import { DateFormats, SizeOptionsOfHandHeldDevices, smsReportStatus } from '../../../helpers/Constants';
+import { DateFormats, SizeOptionsOfHandHeldDevices, smsReportStatus, TierFeatures } from '../../../helpers/Constants';
 import { HandleExportData } from '../../../helpers/Export/ExportHelper';
 import GraphReport from '../../../components/Reports/GraphReport';
 import { useNavigate, useLocation } from 'react-router';
@@ -74,7 +74,7 @@ const SmsReport = ({ classes }) => {
     );
     
     if (planName) {
-        return t('billing.tier.featureNotAvailable').replace('{feature}', tierMessageCode).replace('{planName}', planName);
+        return t('billing.tier.featureNotAvailable').replace('{feature}', t(TierFeatures[tierMessageCode] || tierMessageCode)).replace('{planName}', planName);
     } else {
         return t('billing.tier.noFeatureAvailable');
     }

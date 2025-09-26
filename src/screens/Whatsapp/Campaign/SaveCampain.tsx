@@ -110,7 +110,7 @@ import moment from 'moment';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { sitePrefix } from '../../../config';
 import ConfirmationButtons from '../../../components/ConfirmationButtons/ConfirmationButtons';
-import { DateFormats, FBBusiness } from '../../../helpers/Constants';
+import { DateFormats, FBBusiness, TierFeatures } from '../../../helpers/Constants';
 import { WhatsappCampaignStatus, WhatsAppPlatformIDEnum } from '../../../config/enum';
 import { filter, first, get } from 'lodash';
 import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
@@ -1344,7 +1344,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		);
 		
 		if (planName) {
-			return translator('billing.tier.featureNotAvailable').replace('{feature}', tierMessageCode).replace('{planName}', planName);
+			return translator('billing.tier.featureNotAvailable').replace('{feature}', translator(TierFeatures[tierMessageCode as keyof typeof TierFeatures] || tierMessageCode)).replace('{planName}', planName);
 		} else {
 			return translator('billing.tier.noFeatureAvailable');
 		}

@@ -38,7 +38,7 @@ import {
   wpInbdRowType,
 } from "../../../../Models/Whatsapp/whatsappInbound";
 import { PulseemFeatures } from "../../../../model/PulseemFields/Fields";
-import { DateFormats } from "../../../../helpers/Constants";
+import { DateFormats, TierFeatures } from "../../../../helpers/Constants";
 import { getCommonFeatures } from "../../../../redux/reducers/commonSlice";
 import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
 import { findPlanByFeatureCode } from "../../../../redux/reducers/TiersSlice";
@@ -101,7 +101,7 @@ const WhatsappInbound = ({ classes }: any) => {
     );
     
     if (planName) {
-        return t('billing.tier.featureNotAvailable').replace('{feature}', tierMessageCode).replace('{planName}', planName);
+        return t('billing.tier.featureNotAvailable').replace('{feature}', t(TierFeatures[tierMessageCode as keyof typeof TierFeatures] || tierMessageCode)).replace('{planName}', planName);
     } else {
         return t('billing.tier.noFeatureAvailable');
     }

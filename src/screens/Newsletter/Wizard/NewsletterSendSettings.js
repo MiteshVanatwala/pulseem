@@ -37,7 +37,7 @@ import SegmentationDialog from "./Popups/SegmentationDialog";
 import SmsMarketingDialog from "./Popups/SmsMarketingDialog";
 // import { sendToTeamChannel } from "../../../redux/reducers/ConnectorsSlice";
 import UploadXL from '../../../components/Files/UploadXL'
-import { UploadSettings } from "../../../helpers/Constants";
+import { TierFeatures, UploadSettings } from "../../../helpers/Constants";
 import { FaRegCalendarAlt } from "react-icons/fa";
 import Badge from '@material-ui/core/Badge';
 import moment from 'moment';
@@ -979,7 +979,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         );
         
         if (planName) {
-                return t('billing.tier.featureNotAvailable').replace('{feature}', tierMessageCode).replace('{planName}', planName);
+            return t('billing.tier.featureNotAvailable').replace('{feature}', t(TierFeatures[tierMessageCode] || tierMessageCode)).replace('{planName}', planName);
         } else {
                 return t('billing.tier.noFeatureAvailable');
         }

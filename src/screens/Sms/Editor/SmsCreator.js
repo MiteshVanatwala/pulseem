@@ -61,7 +61,7 @@ import { CgWebsite } from "react-icons/cg";
 import { DynamicProductLink } from "../../../Models/PushNotifications/Enums";
 import { IsValidNonGlobalPhoneNumber, IsValidPhoneNumberWithCountryCode, IsValidURL } from "../../../helpers/Utils/Validations";
 import { WhiteLabelObject } from "../../../components/WhiteLabel/WhiteLabelMigrate";
-import { URL_REGEX } from "../../../helpers/Constants";
+import { TierFeatures, URL_REGEX } from "../../../helpers/Constants";
 import { findPlanByFeatureCode } from "../../../redux/reducers/TiersSlice";
 import TierPlans from "../../../components/TierPlans/TierPlans";
 
@@ -1369,7 +1369,7 @@ const SmsCreator = ({ classes }) => {
     );
     
     if (planName) {
-      return t('billing.tier.featureNotAvailable').replace('{feature}', tierMessageCode).replace('{planName}', planName);
+      return t('billing.tier.featureNotAvailable').replace('{feature}', t(TierFeatures[tierMessageCode] || tierMessageCode)).replace('{planName}', planName);
     } else {
       return t('billing.tier.noFeatureAvailable');
     }

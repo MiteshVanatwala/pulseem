@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { Loader } from "../../components/Loader/Loader";
 import clsx from 'clsx';
 import { createGroup } from "../../redux/reducers/groupSlice";
-import { DEFAULT_NEW_GROUP } from "../../helpers/Constants";
+import { DEFAULT_NEW_GROUP, TierFeatures } from "../../helpers/Constants";
 import { Autocomplete } from "@mui/material";
 import { findPlanByFeatureCode } from "../../redux/reducers/TiersSlice";
 import TierPlans from "../../components/TierPlans/TierPlans";
@@ -170,7 +170,7 @@ const GroupSelectorPopUp = ({
         );
         
         if (planName) {
-            return t('billing.tier.featureNotAvailable').replace('{feature}', tierMessageCode).replace('{planName}', planName);
+            return t('billing.tier.featureNotAvailable').replace('{feature}', t(TierFeatures[tierMessageCode as keyof typeof TierFeatures] || tierMessageCode)).replace('{planName}', planName);
         } else {
             return t('billing.tier.noFeatureAvailable');
         }

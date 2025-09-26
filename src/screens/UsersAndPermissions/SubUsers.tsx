@@ -11,7 +11,7 @@ import { toastProps } from '../Whatsapp/Editor/Types/WhatsappCreator.types';
 import { errorToastData, resetToastData } from '../Whatsapp/Constant';
 import Toast from '../../components/Toast/Toast.component';
 import { ManagmentIcon, TablePagination } from '../../components/managment';
-import { DateFormats, rowsOptions } from '../../helpers/Constants';
+import { DateFormats, rowsOptions, TierFeatures } from '../../helpers/Constants';
 import { setRowsPerPage } from '../../redux/reducers/coreSlice';
 import { DeleteIcon, EditIcon, PreviewIcon } from '../../assets/images/managment';
 import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
@@ -542,7 +542,7 @@ const SubUsers = ({ classes }: any) => {
     );
     
     if (planName) {
-      return t('billing.tier.featureNotAvailable').replace('{feature}', tierMessageCode).replace('{planName}', planName);
+      return t('billing.tier.featureNotAvailable').replace('{feature}', t(TierFeatures[tierMessageCode as keyof typeof TierFeatures] || tierMessageCode)).replace('{planName}', planName);
     } else {
       return t('billing.tier.noFeatureAvailable');
     }

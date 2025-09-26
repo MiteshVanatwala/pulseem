@@ -47,7 +47,7 @@ import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 import { Title } from '../../../components/managment/Title';
 import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 import { HandleExportData } from '../../../helpers/Export/ExportHelper';
-import { ClientStatus, DateFormats, rowsOptions } from '../../../helpers/Constants';
+import { ClientStatus, DateFormats, rowsOptions, TierFeatures } from '../../../helpers/Constants';
 import { ReplaceExtraFieldHeader } from '../../../helpers/UI/AccountExtraField';
 import { ExportFile } from '../../../helpers/Export/ExportFile';
 import { Client } from '../../../Models/Clients/Client';
@@ -210,7 +210,7 @@ const DynamicGroups = ({ classes }: any) => {
         );
         
         if (planName) {
-            return t('billing.tier.featureNotAvailable').replace('{feature}', tierMessageCode).replace('{planName}', planName);
+            return t('billing.tier.featureNotAvailable').replace('{feature}', t(TierFeatures[tierMessageCode as keyof typeof TierFeatures] || tierMessageCode)).replace('{planName}', planName);
         } else {
             return t('billing.tier.noFeatureAvailable');
         }

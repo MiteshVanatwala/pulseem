@@ -12,7 +12,7 @@ import { get, isNull } from 'lodash';
 import { AddEditDirectAccounts } from '../../redux/reducers/SubAccountSlice';
 import { logout } from '../../helpers/Api/PulseemReactAPI';
 import { CommonRedux } from '../Whatsapp/Editor/Types/WhatsappCreator.types';
-import { NumberWithMinusRegEx } from '../../helpers/Constants';
+import { NumberWithMinusRegEx, TierFeatures } from '../../helpers/Constants';
 import { Stack } from '@mui/material';
 import { findPlanByFeatureCode } from '../../redux/reducers/TiersSlice';
 import TierPlans from '../../components/TierPlans/TierPlans';
@@ -202,10 +202,7 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 		);
 		
 		if (planName) {
-			return t('billing.tier.featureNotAvailable', { 
-				feature: tierMessageCode, 
-				planName: planName 
-			});
+			return t('billing.tier.featureNotAvailable').replace('{feature}', t(TierFeatures[tierMessageCode as keyof typeof TierFeatures] || tierMessageCode)).replace('{planName}', planName);
 		} else {
 			return t('billing.tier.noFeatureAvailable');
 		}

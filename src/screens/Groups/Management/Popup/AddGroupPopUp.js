@@ -27,6 +27,7 @@ import { Loader } from "../../../../components/Loader/Loader";
 import { RenderHtml } from "../../../../helpers/Utils/HtmlUtils";
 import { findPlanByFeatureCode } from "../../../../redux/reducers/TiersSlice";
 import TierPlans from "../../../../components/TierPlans/TierPlans";
+import { TierFeatures } from "../../../../helpers/Constants";
 
 const AddGroupPopUp = ({
     classes,
@@ -178,7 +179,7 @@ const AddGroupPopUp = ({
         );
         
         if (planName) {
-            return t('billing.tier.featureNotAvailable').replace('{feature}', tierMessageCode).replace('{planName}', planName);
+            return t('billing.tier.featureNotAvailable').replace('{feature}', t(TierFeatures[tierMessageCode] || tierMessageCode)).replace('{planName}', planName);
         } else {
             return t('billing.tier.noFeatureAvailable');
         }

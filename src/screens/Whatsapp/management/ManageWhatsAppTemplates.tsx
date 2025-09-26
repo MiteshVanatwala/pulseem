@@ -84,7 +84,7 @@ import ConfirmationButtons from '../../../components/ConfirmationButtons/Confirm
 import { sitePrefix } from '../../../config';
 import { TablePagination } from '../../../components/managment';
 import { TemplateErrorDialog } from '../../../components/TemplateErrorDialog/TemplateErrorDialog';
-import { DateFormats } from '../../../helpers/Constants';
+import { DateFormats, TierFeatures } from '../../../helpers/Constants';
 import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
 import TierPlans from '../../../components/TierPlans/TierPlans';
 
@@ -862,7 +862,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		);
 		
 		if (planName) {
-			return translator('billing.tier.featureNotAvailable').replace('{feature}', tierMessageCode).replace('{planName}', planName);
+			return translator('billing.tier.featureNotAvailable').replace('{feature}', translator(TierFeatures[tierMessageCode as keyof typeof TierFeatures] || tierMessageCode)).replace('{planName}', planName);
 		} else {
 			return translator('billing.tier.noFeatureAvailable');
 		}

@@ -11,7 +11,7 @@ import { coreProps } from '../../Whatsapp/Campaign/Types/WhatsappCampaign.types'
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import WizardActions from '../../../components/Wizard/WizardActions';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
-import { BEE_EDITOR_TYPES, LandingPagesAnswerType } from '../../../helpers/Constants';
+import { BEE_EDITOR_TYPES, LandingPagesAnswerType, TierFeatures } from '../../../helpers/Constants';
 import { FileGallery } from '../../../Models/Files/FileGallery';
 import Gallery from '../../../components/Gallery/Gallery.component';
 import { PulseemFeatures, PulseemFolderType } from '../../../model/PulseemFields/Fields';
@@ -497,7 +497,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 			);
 			
 			if (planName) {
-					return t('billing.tier.featureNotAvailable').replace('{feature}', tierMessageCode).replace('{planName}', planName);
+					return t('billing.tier.featureNotAvailable').replace('{feature}', t(TierFeatures[tierMessageCode as keyof typeof TierFeatures] || tierMessageCode)).replace('{planName}', planName);
 			} else {
 					return t('billing.tier.noFeatureAvailable');
 			}

@@ -79,6 +79,7 @@ import { Switch } from '../../../components/managment';
 import ConfirmationButtons from '../../../components/ConfirmationButtons/ConfirmationButtons';
 import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
 import TierPlans from '../../../components/TierPlans/TierPlans';
+import { TierFeatures } from '../../../helpers/Constants';
 
 const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	const { templateID } = useParams();
@@ -1259,10 +1260,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		);
 		
 		if (planName) {
-			return translator('billing.tier.featureNotAvailable', { 
-				feature: tierMessageCode, 
-				planName: planName 
-			});
+			return translator('billing.tier.featureNotAvailable').replace('{feature}', translator(TierFeatures[tierMessageCode as keyof typeof TierFeatures] || tierMessageCode)).replace('{planName}', planName);
 		} else {
 			return translator('billing.tier.noFeatureAvailable');
 		}

@@ -58,7 +58,7 @@ import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import NoSetup from '../NoSetup/NoSetup';
 import { TablePagination } from '../../../components/managment';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
-import { DateFormats, SizeOptions_XS_SM } from '../../../helpers/Constants';
+import { DateFormats, SizeOptions_XS_SM, TierFeatures } from '../../../helpers/Constants';
 import PulseemSwitch from '../../../components/Controlls/PulseemSwitch';
 import { sitePrefix } from '../../../config';
 import { LinksClicksReport } from '../../../config/enum';
@@ -110,10 +110,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 		);
 		
 		if (planName) {
-			return translator('billing.tier.featureNotAvailable', { 
-				feature: tierMessageCode, 
-				planName: planName 
-			});
+			return translator('billing.tier.featureNotAvailable').replace('{feature}', translator(TierFeatures[tierMessageCode as keyof typeof TierFeatures] || tierMessageCode)).replace('{planName}', planName);
 		} else {
 			return translator('billing.tier.noFeatureAvailable');
 		}

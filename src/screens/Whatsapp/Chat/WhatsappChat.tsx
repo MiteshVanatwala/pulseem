@@ -79,7 +79,7 @@ import moment from 'moment';
 import { Box, Button, FormControl, Grid, Link, TextField, Typography } from '@material-ui/core';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { SelectChangeEvent } from '@mui/material';
-import { DateFormats } from '../../../helpers/Constants';
+import { DateFormats, TierFeatures } from '../../../helpers/Constants';
 import { setIsLoader } from '../../../redux/reducers/coreSlice';
 import { getCookie, setCookie } from '../../../helpers/Functions/cookies';
 import { MdSupportAgent } from 'react-icons/md';
@@ -934,7 +934,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		);
 		
 		if (planName) {
-			return translator('billing.tier.featureNotAvailable').replace('{feature}', tierMessageCode).replace('{planName}', planName);
+			return translator('billing.tier.featureNotAvailable').replace('{feature}', translator(TierFeatures[tierMessageCode as keyof typeof TierFeatures] || tierMessageCode)).replace('{planName}', planName);
 		} else {
 			return translator('billing.tier.noFeatureAvailable');
 		}

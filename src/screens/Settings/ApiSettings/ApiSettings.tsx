@@ -35,6 +35,7 @@ import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
 import { ExportFile } from '../../../helpers/Export/ExportFile';
 import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
 import TierPlans from '../../../components/TierPlans/TierPlans';
+import { TierFeatures } from '../../../helpers/Constants';
 
 const useStyles = makeStyles({
     pwdEveButton: {
@@ -97,7 +98,7 @@ const ApiSettings = ({ classes }: any) => {
         );
         
         if (planName) {
-            return t('billing.tier.featureNotAvailable').replace('{feature}', tierMessageCode).replace('{planName}', planName);
+            return t('billing.tier.featureNotAvailable').replace('{feature}', t(TierFeatures[tierMessageCode as keyof typeof TierFeatures] || tierMessageCode)).replace('{planName}', planName);
         } else {
             return t('billing.tier.noFeatureAvailable');
         }

@@ -37,6 +37,7 @@ import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 import { IsSharedDomain } from '../../../helpers/Functions/DomainVerificationHelper';
 import { IsValidEmail } from '../../../helpers/Utils/Validations';
 import TierPlans from '../../../components/TierPlans/TierPlans';
+import { TierFeatures } from '../../../helpers/Constants';
 
 const useStyles = makeStyles({
     iconbox: {
@@ -1320,7 +1321,7 @@ const NewsLetterInfo = ({ classes }) => {
         );
         
         if (planName) {
-                return t('billing.tier.featureNotAvailable').replace('{feature}', tierMessageCode).replace('{planName}', planName);
+            return t('billing.tier.featureNotAvailable').replace('{feature}', t(TierFeatures[tierMessageCode] || tierMessageCode)).replace('{planName}', planName);
         } else {
                 return t('billing.tier.noFeatureAvailable');
         }

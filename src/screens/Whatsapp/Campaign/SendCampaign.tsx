@@ -77,7 +77,7 @@ import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { sitePrefix } from '../../../config';
 import { SelectChangeEvent, Stack } from '@mui/material';
 import ConfirmationButtons from '../../../components/ConfirmationButtons/ConfirmationButtons';
-import { DateFormats } from '../../../helpers/Constants';
+import { DateFormats, TierFeatures } from '../../../helpers/Constants';
 import Pulse from '../../../components/Pulse/Pulse';
 import TierPlans from '../../../components/TierPlans/TierPlans';
 
@@ -964,7 +964,7 @@ const SendCampaign = ({
 		);
 		
 		if (planName) {
-			return translator('billing.tier.featureNotAvailable').replace('{feature}', tierMessageCode).replace('{planName}', planName);
+			return translator('billing.tier.featureNotAvailable').replace('{feature}', translator(TierFeatures[tierMessageCode as keyof typeof TierFeatures] || tierMessageCode)).replace('{planName}', planName);
 		} else {
 			return translator('billing.tier.noFeatureAvailable');
 		}

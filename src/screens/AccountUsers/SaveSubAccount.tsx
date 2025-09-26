@@ -11,7 +11,7 @@ import PulseemSwitch from '../../components/Controlls/PulseemSwitch';
 import { RenderHtml, useStylesBootstrapPasswordHint } from '../../helpers/Utils/HtmlUtils';
 import PasswordHint from '../Settings/AccountSettings/Password/PasswordHint';
 import { ValidPassword } from '../Settings/AccountSettings/Password/Types';
-import { lowerCaseLetters, numbers, DecimalWithMinusRegEx, specialLetters, upperCaseLetters, NumberWithMinusRegEx } from '../../helpers/Constants';
+import { lowerCaseLetters, numbers, DecimalWithMinusRegEx, specialLetters, upperCaseLetters, NumberWithMinusRegEx, TierFeatures } from '../../helpers/Constants';
 import Groups from '../../components/Groups/GroupsHandler/Groups';
 import { getGroupsBySubAccountId } from '../../redux/reducers/groupSlice';
 import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
@@ -360,7 +360,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 		);
 		
 		if (planName) {
-			return t('billing.tier.featureNotAvailable').replace('{feature}', tierMessageCode).replace('{planName}', planName);
+			return t('billing.tier.featureNotAvailable').replace('{feature}', t(TierFeatures[tierMessageCode as keyof typeof TierFeatures] || tierMessageCode)).replace('{planName}', planName);
 		} else {
 			return t('billing.tier.noFeatureAvailable');
 		}

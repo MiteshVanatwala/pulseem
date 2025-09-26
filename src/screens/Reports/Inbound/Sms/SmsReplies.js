@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { useSelector, useDispatch } from 'react-redux';
 import { Loader } from '../../../../components/Loader/Loader';
 import { ExportFile } from '../../../../helpers/Export/ExportFile';
-import { ClientStatus, DateFormats } from '../../../../helpers/Constants';
+import { ClientStatus, DateFormats, TierFeatures } from '../../../../helpers/Constants';
 import { EditIcon } from '../../../../assets/images/managment/index';
 import { ExportFileTypes } from '../../../../model/Export/ExportFileTypes';
 import AddRecipientPopup from "../../../Groups/Management/Popup/AddRecipientPopup";
@@ -81,10 +81,7 @@ const SmsReplies = ({ classes }) => {
         );
         
         if (planName) {
-            return t('billing.tier.featureNotAvailable', { 
-                feature: tierMessageCode, 
-                planName: planName 
-            });
+            return t('billing.tier.featureNotAvailable').replace('{feature}', t(TierFeatures[tierMessageCode] || tierMessageCode)).replace('{planName}', planName);
         } else {
             return t('billing.tier.noFeatureAvailable');
         }

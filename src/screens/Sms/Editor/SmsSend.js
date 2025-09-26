@@ -59,6 +59,7 @@ import { IsValidPhone } from "../../../helpers/Utils/Validations";
 import { WhiteLabelObject } from "../../../components/WhiteLabel/WhiteLabelMigrate";
 import Pulse from "../../../components/Pulse/Pulse";
 import TierPlans from "../../../components/TierPlans/TierPlans";
+import { TierFeatures } from "../../../helpers/Constants";
 
 function Alert(props) {
   return <MuiAlert elevation={0} variant='filled' {...props} />;
@@ -2459,7 +2460,7 @@ const SmsSend = ({ classes, ...props }) => {
     );
     
     if (planName) {
-      return t('billing.tier.featureNotAvailable').replace('{feature}', tierMessageCode).replace('{planName}', planName);
+      return t('billing.tier.featureNotAvailable').replace('{feature}', t(TierFeatures[tierMessageCode] || tierMessageCode)).replace('{planName}', planName);
     } else {
       return t('billing.tier.noFeatureAvailable');
     }
