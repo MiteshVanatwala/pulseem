@@ -1,30 +1,21 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Box,
   Button,
   Grid,
-  Step,
-  StepLabel,
-  Stepper,
   Typography,
   List,
   ListItem,
   ListItemIcon,
   ListItemText,
   Card,
-  CardContent,
-  TextField,
   Divider,
   CircularProgress,
 } from '@material-ui/core';
 import {
   Check as CheckIcon,
   CheckCircle as CheckCircleIcon,
-  FlashOn as FlashOnIcon,
-  InsertDriveFile as InsertDriveFileIcon,
-  TrackChanges as TargetIcon,
-  Assignment as AssignmentIcon,
   Chat as ChatIcon,
 } from '@material-ui/icons';
 import { BaseDialog } from '../DialogTemplates/BaseDialog';
@@ -37,8 +28,6 @@ import { getAddSubscriptionCardIframeURL, restoreAutomation } from '../../redux/
 import TranzilaIframe from '../Balance/PaymentWizard/Dialogs/TranzilaIframe';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 import { Loader } from '../Loader/Loader';
-
-const steps = ['billing.tier.steps.selectPlan', 'billing.tier.steps.upgrade', 'billing.tier.steps.confirmation'];
 
 const TierPlans = ({ classes, isOpen, onClose }: any) => {
   const { t, i18n } = useTranslation();
@@ -54,6 +43,7 @@ const TierPlans = ({ classes, isOpen, onClose }: any) => {
   const contentRef = useRef<HTMLDivElement>(null);
   const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
   const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
+  const { accountCurrencySymbol, accountIsCurrencySymbolPrefix } = useSelector((state: any) => state.common);
     // Scroll to top when step changes
   useEffect(() => {
     // Add a small delay to ensure DOM is updated
@@ -109,6 +99,7 @@ const TierPlans = ({ classes, isOpen, onClose }: any) => {
   };
 
   const handlePlanSelect = async (plan: any, uiConfig: any) => {
+    if (plan.Id === 1 && plan.Id === 4) return false;
     const planWithConfig = {
       ...plan,
       uiConfig
@@ -183,12 +174,25 @@ const TierPlans = ({ classes, isOpen, onClose }: any) => {
                     {t(uiConfig.description)}
                   </Typography>
                   <Box className={classes.tierPlansPriceContainer}>
-                    {plan.Name !== 'STARTER' && plan.Name !== 'SCALE' && plan.Price > 0 && <span className={classes.tierPlansCurrencySymbol}>₪</span>}
+                    {
+                      plan.Name !== 'STARTER' && plan.Name !== 'SCALE' && plan.Price > 0 && accountIsCurrencySymbolPrefix && (
+                        <span className={classes.tierPlansCurrencySymbol}>
+                          {accountCurrencySymbol}
+                        </span>
+                      )
+                    }
                     <Typography className={classes.tierPlansPrice}>
                       {plan.Name === 'STARTER' ? t('billing.tier.free') : ''}
                       {plan.Name === 'SCALE' ? t('billing.tier.contactSales') : ''}
                       {plan.Name !== 'STARTER' && plan.Name !== 'SCALE' && plan.Price > 0 ? plan.Price : ''}
                     </Typography>
+                    {
+                      plan.Name !== 'STARTER' && plan.Name !== 'SCALE' && plan.Price > 0 && !accountIsCurrencySymbolPrefix && (
+                        <span className={classes.tierPlansCurrencySymbol}>
+                          {accountCurrencySymbol}
+                        </span>
+                      )
+                    }
                     {plan.Name !== 'STARTER' && plan.Name !== 'SCALE' && uiConfig.priceDescription && <Typography className={classes.tierPlansPriceDescription}>
                       {t(uiConfig.priceDescription)}
                     </Typography>}
@@ -226,9 +230,6 @@ const TierPlans = ({ classes, isOpen, onClose }: any) => {
                     </ListItem>
                   ))}
                 </List>
-                <Typography className={classes.tierPlansSeeAllFeatures}>
-                  {t('billing.tier.ui.seeAllFeatures')}
-                </Typography>
               </Box>
             </Grid>
           );
@@ -248,10 +249,19 @@ const TierPlans = ({ classes, isOpen, onClose }: any) => {
                   {t(plan.description)}
                 </Typography>
                 <Box className={classes.tierPlansPriceContainer}>
-                  {t(plan.price) !== t('billing.tier.plans.scale.price') && <span className={classes.tierPlansCurrencySymbol}>₪</span>}
+                  {
+                    <span className={classes.tierPlansCurrencySymbol}>
+                      { accountIsCurrencySymbolPrefix ? accountCurrencySymbol : '' }
+                    </span>
+                  }
                   <Typography className={classes.tierPlansPrice}>
                     {t(plan.price)}
                   </Typography>
+                  {
+                    <span className={classes.tierPlansCurrencySymbol}>
+                      { !accountIsCurrencySymbolPrefix ? accountCurrencySymbol : '' }
+                    </span>
+                  }
                   {plan.priceDescription && <Typography className={classes.tierPlansPriceDescription}>
                     {t(plan.priceDescription)}
                   </Typography>}
@@ -293,7 +303,7 @@ const TierPlans = ({ classes, isOpen, onClose }: any) => {
 
   const renderUpgradeFlow = () => {
     const planTitle = selectedPlan?.uiConfig?.title ? t(selectedPlan.uiConfig.title) : 'Flow Plan';
-    const planPrice = selectedPlan?.Price || selectedPlan?.price || '₪49';
+    const planPrice = selectedPlan?.Price || selectedPlan?.price;
     
     return (
       <Box className={classes.upgradeFlowContainer}>
@@ -382,7 +392,21 @@ const TierPlans = ({ classes, isOpen, onClose }: any) => {
                 align="center"
                 className={classes.upgradeFlowPrice}
               >
-                {typeof planPrice === 'string' && planPrice.includes('₪') ? planPrice : `₪${planPrice}`}
+                {
+                  accountIsCurrencySymbolPrefix && (
+                    <span className={classes.tierPlansCurrencySymbol}>
+                      {accountCurrencySymbol}
+                    </span>
+                  )
+                }
+                {typeof planPrice === 'string' && planPrice.includes('₪') ? planPrice : `${planPrice}`}
+                {
+                  !accountIsCurrencySymbolPrefix && (
+                    <span className={classes.tierPlansCurrencySymbol}>
+                      {accountCurrencySymbol}
+                    </span>
+                  )
+                }
               </Typography>
               <Typography align="center" color="textSecondary">
                 {t('billing.tier.upgrade.paymentForm.perMonth')}
@@ -553,7 +577,7 @@ const TierPlans = ({ classes, isOpen, onClose }: any) => {
             )}
           </Box>
           <Box>
-            {activeStep === 0 &&
+            {/* {activeStep === 0 &&
               <Button
                   variant="contained"
                   color="primary"
@@ -562,7 +586,7 @@ const TierPlans = ({ classes, isOpen, onClose }: any) => {
                 >
                   {activeStep === steps.length - 1 ? t('common.finish') : t('common.next')}
               </Button>
-            }
+            } */}
           </Box>
         </Box>
       )}

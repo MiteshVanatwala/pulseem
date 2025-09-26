@@ -257,11 +257,11 @@ export const findPlanByFeatureCode = (
     currentPlanId?: number
 ): string | null => {
     // Check if availablePlans data exists
-    if (!availablePlans?.Data) {
+    if (!availablePlans) {
         return null;
     }
 
-    const plans = availablePlans.Data;
+    const plans = availablePlans;
     
     // If currentPlanId is provided, start searching from plans with Id > currentPlanId
     // Otherwise, search through all plans
