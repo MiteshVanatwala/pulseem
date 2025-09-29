@@ -174,7 +174,9 @@ const SignUpNew = ({ classes }: any) => {
         ga_cid: qs?.ga_cid || null,
         ga_fpid: qs?.ga_fpid || null,
         fbp: qs?.fbp || null,
-        fbc: qs?.fbc || null
+        fbc: qs?.fbc || null,
+        gbraid: qs?.gbraid || null,
+        wbraid: qs?.wbraid || null,
       };
 
       const response = await PulseemReactInstance.post(`User/SetupNewEmail`, updatedEmailRequest);
@@ -461,7 +463,9 @@ const SignUpNew = ({ classes }: any) => {
         ga_cid: qs?.ga_cid || null,
         ga_fpid: qs?.ga_fpid || null,
         fbp: qs?.fbp || null,
-        fbc: qs?.fbc || null
+        fbc: qs?.fbc || null,
+        gbraid: qs?.gbraid || null,
+        wbraid: qs?.wbraid || null,
       });
       setLoader(false);
       if (status === 200) {
