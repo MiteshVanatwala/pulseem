@@ -24,7 +24,7 @@ import { coreProps } from '../../model/Core/corePros.types';
 import clsx from 'clsx';
 import Celebration from '../../assets/images/transparent_celebration.png';
 import { TIER_PLANS } from '../../helpers/Constants';
-import { getAddSubscriptionCardIframeURL, restoreAutomation } from '../../redux/reducers/TiersSlice';
+import { getAddSubscriptionCardIframeURL, getCurrentPlan, restoreAutomation } from '../../redux/reducers/TiersSlice';
 import TranzilaIframe from '../Balance/PaymentWizard/Dialogs/TranzilaIframe';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 import { Loader } from '../Loader/Loader';
@@ -95,11 +95,12 @@ const TierPlans = ({ classes, isOpen, onClose }: any) => {
     if (plan) {
       setSelectedPlan(plan);
     }
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    setActiveStep(1);
   };
 
   const handlePlanSelect = async (plan: any, uiConfig: any) => {
-    if (plan.Id === 1 && plan.Id === 4) return false;
+    if (plan.Id === 1 || plan.Id === 4) return false;
+
     const planWithConfig = {
       ...plan,
       uiConfig
@@ -137,7 +138,7 @@ const TierPlans = ({ classes, isOpen, onClose }: any) => {
   };
 
   const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    setActiveStep(0);
   };
 
   const handleClose = () => {
@@ -427,7 +428,10 @@ const TierPlans = ({ classes, isOpen, onClose }: any) => {
                     classes={classes}
                     isRTL={isRTL}
                     packageId={null}
-                    onComplete={() => setActiveStep((prevActiveStep) => prevActiveStep + 1)}
+                    onComplete={() => {
+                      dispatch(getCurrentPlan());
+                      setActiveStep(2);
+                    }}
                     // @ts-ignore
                     paymentUrl={`${iframeURL}`}
                     hideSummary={true}
