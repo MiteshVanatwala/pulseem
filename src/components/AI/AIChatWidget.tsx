@@ -171,7 +171,7 @@ const AIChatWidget: React.FC = () => {
   const { isOpen, messages, totalMessagesForUserCount } = useSelector((state: StateType) => state.aiChat);
   const { accountFeatures } = useSelector((state: StateType) => state.common);
   const { displayedText, isTyping } = useTypewriter({
-    text: t("common.polyAgentIconTitle"),
+    text: t("common.polyAgentIconTitleMarquee"),
     speed: 100,
     delay: 1000,
     loop: false,

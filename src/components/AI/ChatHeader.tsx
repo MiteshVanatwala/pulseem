@@ -10,6 +10,9 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: '#FF1744', // Primary color
     borderTopLeftRadius: '12px',
     borderTopRightRadius: '12px',
+    '.miniIcon': {
+      fontSize: '2rem'
+    }
   },
   toolbar: {
     minHeight: '48px',
@@ -37,8 +40,8 @@ const ChatHeader: React.FC = () => {
         {/* <IconButton color="inherit" size="small">
           <MinimizeIcon />
         </IconButton> */}
-        <IconButton color="inherit" onClick={handleClose} size="small">
-          <MinimizeIcon />
+        <IconButton color="inherit" onClick={handleClose} size="medium" className='miniIcon'>
+          <MinimizeIcon style={{ fontSize: '2.5rem', marginTop: '-10px' }} />
         </IconButton>
       </Toolbar>
     </AppBar>

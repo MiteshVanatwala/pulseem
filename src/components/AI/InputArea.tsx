@@ -125,7 +125,7 @@ const InputArea: React.ForwardRefRenderFunction<InputAreaHandle, {}> = (props, r
           size="small"
           fullWidth
           inputRef={inputRef}
-          placeholder="Type a message..."
+          placeholder={t("common.agentPlaceholder")}
           value={text}
           onChange={(e) => {
             if (e.target.value.length <= 500) {
@@ -163,7 +163,7 @@ const InputArea: React.ForwardRefRenderFunction<InputAreaHandle, {}> = (props, r
                 size="small"
               />
             }
-            label="Do not show this dialog"
+            label={t("common.doNotShowThisDialog")}
             className={classes.checkboxLabel}
           />
         )
