@@ -354,6 +354,14 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
         element={<CreateLandingPage classes={classes} />}
       />
       <Route
+        path={`${sitePrefix}Popups/Create`}
+        element={<CreateLandingPage classes={classes} isPopup={true} />}
+      />
+      <Route
+        path={`${sitePrefix}Popups/Create/:id`}
+        element={<CreateLandingPage classes={classes} isPopup={true} />}
+      />
+      <Route
         path={`${sitePrefix}LandingPages/SurveyDetails/:id`}
         element={<SurveyDetails classes={classes} />}
       />
@@ -778,6 +786,14 @@ const App = ({ screenSize }) => {
         <Route
           path={`${sitePrefix}LandingPages/Create/:id`}
           element={<CreateLandingPage classes={classes} />}
+        />
+        <Route
+          path={`${sitePrefix}Popups/Create`}
+          element={<CreateLandingPage classes={classes} isPopup={true} />}
+        />
+        <Route
+          path={`${sitePrefix}Popups/Create/:id`}
+          element={<CreateLandingPage classes={classes} isPopup={true} />}
         />
         <Route
           path={`${sitePrefix}LandingPages/SurveyDetails/:id`}

@@ -36,11 +36,10 @@ import { logout } from '../../../helpers/Api/PulseemReactAPI';
 import Toast from '../../../components/Toast/Toast.component';
 import SubscriberGroup from './Tabs/SubscriberGroup';
 
-const CreateLandingPage = ({ classes }: ClassesType) => {
+const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup?: boolean }) => {
 	const { id } = useParams();
 	const queryParams = new URLSearchParams(window.location.search)
 	const isNew = queryParams.get("new")
-	const pageType = queryParams.get("type");
 	const isFromAutomation = queryParams.get("FromAutomation")
 	const NodeToEdit = queryParams.get("NodeToEdit")
 	const dispatch: any = useDispatch();
@@ -771,9 +770,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 			containerClass={clsx(classes.mb50, classes.editorCont)}
 		>
 			<Box className="head">
-				{/* <Title Text={t("landingPages.createLandingPage")} classes={classes} /> */}
-				{/* <Title Text={pageType === 'popup' ? "Create a Popup" : t("landingPages.createLandingPage")} classes={classes} /> */}
-				<Title Text={pageType === 'popup' ? t("landingPages.createPopup") : t("landingPages.createLandingPage")} classes={classes} />
+				<Title Text={isPopup ? t("landingPages.createPopup") : t("landingPages.createLandingPage")} classes={classes} />
 			</Box>
 			<Box className={"containerBody"}>
 				<Tabs
