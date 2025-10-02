@@ -73,6 +73,7 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
     SortDirection: 'DESC',
     PageNumber: 1,
     PageSize: 6,
+    PageType: 5
   });
 
   const isMobile = windowSize === 'xs' || windowSize === 'sm';

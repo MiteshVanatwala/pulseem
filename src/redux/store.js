@@ -33,6 +33,7 @@ import SubUserSlice from './reducers/SubUserSlice';
 import AiSlice from './reducers/AISlice';
 import linksClicksReportSlice from './reducers/linksClicksReportSlice';
 import popUpManagementReducer from './reducers/popUpManagementSlice';
+import PopupSlice from './reducers/PopupSlice';
 
 export default configureStore({
   reducer: {
@@ -70,5 +71,6 @@ export default configureStore({
     subUser: SubUserSlice,
     Ai: AiSlice,
     linksClicksReportSlice: linksClicksReportSlice,
+    popup: PopupSlice
   },
 });

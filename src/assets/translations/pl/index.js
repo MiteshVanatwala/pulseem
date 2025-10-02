@@ -37,6 +37,7 @@ import billing from './Billing.json';
 import TermsOfUse from './TermsOfUse.json'
 import WhatsappOnBoarding from './WhatsappOnBoarding.json'
 import RemoveMyData from './RemoveMyData.json'
+import Popup from './Popup.json';
 
 export const pl = {
 	automations,
@@ -77,5 +78,6 @@ export const pl = {
 	billing,
 	TermsOfUse,
 	WhatsappOnBoarding,
-	RemoveMyData
+	RemoveMyData,
+	Popup
 };
