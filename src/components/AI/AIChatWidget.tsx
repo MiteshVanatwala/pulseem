@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Paper, Box } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { StateType } from '../../Models/StateTypes';
-import { toggleChat, loadSessionMessages } from '../../redux/reducers/aiChatSlice';
+import { toggleChat, loadSessionMessages, setAIIconStatus } from '../../redux/reducers/aiChatSlice';
 import ChatHeader from './ChatHeader';
 import MessageList from './MessageList';
 import InputArea from './InputArea';
@@ -192,6 +192,8 @@ const AIChatWidget: React.FC = () => {
       setTimeout(() => {
         inputAreaRef.current?.focus();
       }, 300); // Small delay to ensure the animation is complete
+
+      if (messages.length === 0) dispatch(setAIIconStatus(1));
     }
   }, [isOpen]);
 

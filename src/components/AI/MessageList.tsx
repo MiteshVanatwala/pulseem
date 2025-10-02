@@ -5,6 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { StateType } from '../../Models/StateTypes';
 import clsx from 'clsx';
 import moment from 'moment';
+import { useTranslation } from 'react-i18next';
 
 const useStyles = makeStyles((theme) => ({
   messageList: {
@@ -87,6 +88,9 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: '#f0f0f0',
     display: 'inline-block',
   },
+  messageDot: {
+    paddingInline: '5px',
+  },
   typingDot: {
     width: '8px',
     height: '8px',
@@ -137,6 +141,7 @@ const MessageList: React.FC = () => {
   const { messages, aiIconStatus } = useSelector((state: StateType) => state.aiChat);
   const { language } = useSelector((state: StateType) => state.core);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const { t } = useTranslation();
   moment.locale(language);
 
   useEffect(() => {
@@ -193,6 +198,9 @@ const MessageList: React.FC = () => {
       {aiIconStatus === 1 && (
         <Box className={`${classes.messageRow} ${classes.aiMessage}`}>
           <Paper className={classes.typingBubble} elevation={1}>
+            <span className={classes.messageDot}>
+              {t("common.messageDot")}
+            </span>
             <span className={classes.typingDot} />
             <span className={classes.typingDot} />
             <span className={classes.typingDot} />

@@ -70,6 +70,7 @@ const aiChatSlice = createSlice({
         if (action.payload) {
           state.messages.push(...(action.payload?.Data || []));
           state.totalMessagesForUserCount = action.payload?.DataCount?.TotalMessagesForUserCount || 0;
+          state.aiIconStatus = 2;
         }
       })
       .addCase(loadSessionMessages.rejected, (state) => {
