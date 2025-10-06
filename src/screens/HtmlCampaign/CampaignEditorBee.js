@@ -647,11 +647,11 @@ const CampaignEditor = ({ classes, ...props }) => {
   const onTestSendSubmit = async (sendRequest) => {
     setLoader(true);
     const reponse = await dispatch(testSend({ ...sendRequest }));
-    onTestSendResponse(reponse.payload.StatusCode);
+    onTestSendResponse(reponse.payload.StatusCode, reponse.payload.Message);
     setSummaryData(reponse.payload.Summary);
     setLoader(false);
   }
-  const onTestSendResponse = (statusCode) => {
+  const onTestSendResponse = (statusCode, message = '') => {
     setIsResponseModal(statusCode !== 402);
     switch (statusCode) {
       case 201: {
@@ -685,6 +685,12 @@ const CampaignEditor = ({ classes, ...props }) => {
       }
       case 551: {
         setDialog(DialogType.UNDER_REVIEW);
+        break;
+      }
+      case 927: {
+        // FILE_ATTACHMENT, EMAIL_BASIC
+        setTierMessageCode(message);
+        setDialogType({ type: 'tier' });
         break;
       }
       case 500:

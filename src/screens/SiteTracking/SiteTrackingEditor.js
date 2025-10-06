@@ -314,7 +314,7 @@ const SiteTrackingEditor = ({ classes }) => {
             dynamicMessage: renderDynamicDataDialog(t('common.ErrorTitle'), message),
             deleteEvent: renderDynamicDataDialog(t('siteTracking.deleteDialogTitle'), RenderHtml(t("siteTracking.deleteDialogMessage")), false, true, true),
             invalidDomain: renderDynamicDataDialog(t('common.ErrorTitle'), t('siteTracking.invalidDomainAddress')),
-            tier: renderDynamicDataDialog(t('billing.tier.permission'), RenderHtml(handleGetPlanForFeature(TierMessageCode)), false, false, false),
+            tier: getTierValidationDialog(),
         }
 
         const currentDialog = dialogContent[type] || {}

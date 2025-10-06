@@ -4587,7 +4587,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   tierPlansDialog: {
     '& .MuiPaper-root': {
         maxWidth: '100% !important',
-        minWidth: '100% !important',
+        minWidth: '80% !important',
     }
   },
   tierPlansCard: {

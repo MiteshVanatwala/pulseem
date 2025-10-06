@@ -116,16 +116,6 @@
         }
       },
       "including": "Including:",
-      "includedFeatures": [
-        "Everything from \"Starter\" plan",
-        "Landing pages (unlimited)",
-        "Page view tracking",
-        "Survey system",
-        "Automations (unlimited)",
-        "Smart segmentations",
-        "A/B testing",
-        "API access"
-      ],
       "paymentForm": {
         "creditCardNumber": "Credit Card Number",
         "creditCardPlaceholder": "1234 5678 9012 3456",
@@ -227,6 +217,7 @@
     "SMS_CLICK_TRACKING": "SMS Click Tracking",
     "WHATSAPP_TEMPLATES": "WhatsApp Template Management",
     "LANDING_PAGE_EDITOR": "Landing Page Editor",
+    "LANDING_PAGE_MANAGEMENT": "Landing Page Management",
     "AUTOMATION_TEMPLATES": "Automation Templates",
     "BASIC_TRIGGERS": "Basic Automation Triggers",
     "GROUP_MANAGEMENT": "Group Management",

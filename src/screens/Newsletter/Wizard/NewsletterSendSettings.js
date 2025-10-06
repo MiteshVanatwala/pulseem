@@ -1508,11 +1508,9 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 onConfirm={() => onSaveSettings(true)}
                 isOpen={dialogType?.type === 'SummaryDialog'}
                 setDialogType={(code = null) => {
-                    if (code === 927) {
-                        setTierMessageCode('NEWSLETTER_AUTOMATION');
-                    }
                     setDialogType({ type: code === 927 ? 'tier' : code });
                 }}
+                setTierMessageCode={(code) => setTierMessageCode(code)}
                 groups={selectedGroups}
                 PreviewURL={newsletterSettings?.PreviewURL}
                 handleSendResponse={handleSendResponse}

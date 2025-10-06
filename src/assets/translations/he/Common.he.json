@@ -870,11 +870,11 @@
   "contactUs": "צור קשר",
   "currency": "מטבע",
   "tier": {
-    "current": "Current Tier",
-    "upgrade": "Upgrade Tier",
-    "downgrade": "Downgrade Tier",
-    "manageCard": "Manage Card"
+    "current": "רמה נוכחית",
+    "upgrade": "שדרוג רמה",
+    "downgrade": "הורדת רמה",
+    "manageCard": "ניהול כרטיס"
   },
-  "startDate": "Start Date",
-  "endDate": "End Date"
+  "startDate": "תאריך התחלה",
+  "endDate": "תאריך סיום"
 }

@@ -796,7 +796,7 @@ const SendCampaign = ({
 				await dispatch<any>(sendCampaign(sendCampaignPayload));
 			setIsLoader(false);
 			if (sendCampaignData?.StatusCode === 927) {
-				// WHATSAPP_CAMPAIGN_SEND
+				// WHATSAPP_CAMPAIGN_SEND, FILE_ATTACHMENT
 				setTierMessageCode(sendCampaignData?.Message);
 				setDialogType({ type: 'tier' })
 			}

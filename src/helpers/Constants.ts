@@ -762,6 +762,7 @@ export const TIER_PLANS = [
         buttonText: 'billing.tier.plans.starter.buttonText',
         buttonVariant: 'outlined',
         features: [
+            '',
             'billing.tier.features.emailCampaigns',
             'billing.tier.features.smsMarketing',
             'billing.tier.features.whatsappMarketing',
@@ -852,6 +853,7 @@ export const TierFeatures = {
   "SMS_CLICK_TRACKING": "billing.featureNames.SMS_CLICK_TRACKING",
   "WHATSAPP_TEMPLATES": "billing.featureNames.WHATSAPP_TEMPLATES",
   "LANDING_PAGE_EDITOR": "billing.featureNames.LANDING_PAGE_EDITOR",
+  "LANDING_PAGE_MANAGEMENT": "billing.featureNames.LANDING_PAGE_MANAGEMENT",
   "AUTOMATION_TEMPLATES": "billing.featureNames.AUTOMATION_TEMPLATES",
   "BASIC_TRIGGERS": "billing.featureNames.BASIC_TRIGGERS",
   "GROUP_MANAGEMENT": "billing.featureNames.GROUP_MANAGEMENT",

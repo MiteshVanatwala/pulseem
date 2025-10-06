@@ -688,8 +688,8 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 				break;
 			}
 			case 927: {
-				// LANDING_PAGE_EDITOR
-				setTierMessageCode('LANDING_PAGE_EDITOR');
+				// LANDING_PAGE_MANAGEMENT
+				setTierMessageCode('LANDING_PAGE_MANAGEMENT');
 				setDialogType({ type: 'tier' });
 				break;
 			}

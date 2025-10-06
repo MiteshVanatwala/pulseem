@@ -215,6 +215,15 @@ const TierPlans = ({ classes, isOpen, onClose }: any) => {
                   </Button>
                 </Box>
                 <List className={clsx(classes.tierPlansFeatureList, classes.mb10)}>
+                  {
+                    uiConfig.features[0] !== '' && (
+                      <ListItem key={0} className={classes.tierPlansFeatureItem}>
+                        <div style={{ fontWeight: 700 }}>
+                          {t(uiConfig.features[0])}
+                        </div>
+                      </ListItem>
+                    )
+                  }
                   {plan.features && plan.features.length > 0 ? plan.features.map((feature: any, fIndex: any) => (
                     <ListItem key={fIndex} className={classes.tierPlansFeatureItem}>
                       <ListItemIcon style={{ minWidth: '30px' }}>
@@ -222,7 +231,7 @@ const TierPlans = ({ classes, isOpen, onClose }: any) => {
                       </ListItemIcon>
                       <ListItemText primary={feature} />
                     </ListItem>
-                  )) : uiConfig.features.map((feature, fIndex) => (
+                  )) : uiConfig.features.slice(1).map((feature, fIndex) => (
                     <ListItem key={fIndex} className={classes.tierPlansFeatureItem}>
                       <ListItemIcon style={{ minWidth: '30px' }}>
                         <CheckIcon style={{ color: '#5cb85c' }} />
@@ -372,7 +381,16 @@ const TierPlans = ({ classes, isOpen, onClose }: any) => {
               </Typography>
               <List dense>
                 {
-                  selectedPlan.uiConfig.features.map((feature: string) => (
+                  selectedPlan.uiConfig.features[0] !== '' && (
+                    <ListItem key={0} className={clsx(classes.tierPlansFeatureItem, classes.mb5)}>
+                      <div style={{ fontWeight: 700 }}>
+                        {t(selectedPlan.uiConfig.features[0])}
+                      </div>
+                    </ListItem>
+                  )
+                }
+                {
+                  selectedPlan.uiConfig.features.slice(1).map((feature: string) => (
                   <ListItem key={feature}>
                       <ListItemIcon>
                         <CheckCircleIcon color="primary" />
