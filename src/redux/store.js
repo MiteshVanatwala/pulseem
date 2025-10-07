@@ -38,6 +38,7 @@ import popUpManagementReducer from './reducers/popUpManagementSlice';
 
 
 export default configureStore({
+  reducer: {
     popupTriggers: popupTriggersReducer,
     popUpManagement: popUpManagementReducer,
     core: coreReducer,
@@ -75,4 +76,4 @@ export default configureStore({
     linksClicksReportSlice: linksClicksReportSlice,
     popup: PopupSlice
   },
-);
+});
