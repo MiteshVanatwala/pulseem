@@ -92,8 +92,10 @@ export const getPopupTriggersStyle = (windowSize, isRTL = false, theme) => ({
   thumbPopupTrigger: {
     border: '2px solid #FF0076',
     backgroundColor: '#f0f8ff',
-    height: 18,
-    width: 18,
+    height: '18px !important',
+    width: '18px !important',
+    marginTop: '-5px !important',
+    marginLeft: '-5px !important',
   },
   sliderLabelPopupTrigger: {
     display: 'flex',
@@ -267,9 +269,7 @@ export const getPopupTriggersStyle = (windowSize, isRTL = false, theme) => ({
     },
   },
   pageTargetingResponsiveExamples: {
-    marginTop: 16,
-    marginLeft: 32,
-    marginRight: 32,
+    margin: '16px 32px 24px 32px',
     [theme.breakpoints.down("sm")]: {
       margin: "12px 16px 8px 16px",
     },
@@ -298,6 +298,7 @@ export const getPopupTriggersStyle = (windowSize, isRTL = false, theme) => ({
   },
   pageTargetingCardContent: {
     padding: 0,
+    paddingBottom: '0px !important',
   },
   mobileFullWidth: {
     [theme.breakpoints.down("sm")]: {
@@ -339,5 +340,18 @@ export const getPopupTriggersStyle = (windowSize, isRTL = false, theme) => ({
       fontWeight: '700',
       fontSize: '17px',
     },
+  },
+  stickyFooter: {
+    position: 'fixed',
+    bottom: 0,
+    left: 0,
+    width: '100%',
+    zIndex: 1200,
+    backgroundColor: '#fff',
+    borderTop: '1px solid #ddd',
+    display: 'flex',
+    justifyContent: 'center',
+    gap: 10,
+    padding: 8,
   }
 });

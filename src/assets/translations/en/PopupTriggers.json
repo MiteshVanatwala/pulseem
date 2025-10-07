@@ -39,12 +39,21 @@
   "displayFrequency": {
     "title": "Display Frequency",
     "description": "Control how often the popup appears to visitors",
+    "defineNewVisitor": "Define New Visitor",
+    "defineReturningVisitor": "Define Returning Visitor",
+    "newVisitorDescription": "A New visitor has not been to your site in the last:",
+    "returningVisitorDescription": "A Returning visitor has already been to your site in the last:",
     "targetAudience": {
       "title": "Target Audience",
       "allVisitors": "All Visitors",
       "newVisitors": "New Visitors",
       "returningVisitors": "Returning Visitors",
       "caption": "Based on browser cookies and session data"
+    },
+    "subHeading": {
+      "all": "Every Visitor",
+      "new": "A New visitor has not been to your site in the last X days",
+      "return": "A Returning visitor has already been to your site in the last X days"
     },
     "displaySchedule": {
       "title": "Display Schedule",
@@ -53,9 +62,16 @@
         "description": "Show popup maximum once every 24 hours"
       },
       "everyXDays": {
-        "main": "Every X Days",
+        "main": "Once every few days",
         "prefix": "Every",
-        "suffix": "days"
+        "suffix": "days",
+        "description": "Once every few days - show your popup to for every number of days you decide."
+      },
+      "everyXVisit": {
+        "main": "Once every few visits",
+        "prefix": "Every",
+        "suffix": "days",
+        "description": "Once every few visits - show your popup to for every number of visits you decide."
       },
       "everyVisit": {
         "title": "Every Visit",
@@ -98,5 +114,28 @@
       "title": "Advanced Settings",
       "subtitle": "Configure post-conversion behavior and advanced options"
     }
+  },
+  "summary": {
+    "title": "Popup Summary",
+    "triggers": "Triggers",
+    "pageTargeting": "Page Targeting",
+    "frequency": "Display Frequency",
+    "frequencyType": "Frequency Type",
+    "frequencyValue": "Frequency Value",
+    "audienceTarget": "Audience Target",
+    "visitorDays": "Visitor Days",
+    "continueAfterConversion": "Continue After Conversion",
+   "conversionType": "Conversion Type",
+    "exitIntent": "Exit Intent",
+    "pageCount": "Page Count",
+    "displayAfterVisiting": "Display after visiting",
+    "pages": "pages",
+    "timeDelay": "Time delay",
+    "displayAfter": "Display after",
+    "secsOnPage": "secs on the page",
+    "displayAfterScrolling": "Display after scrolling",
+    "onThePage": "on the page",
+    "clicksCount": "Clicks Count",
+    "clicksInPage": "Clicks in page"
   }
 }

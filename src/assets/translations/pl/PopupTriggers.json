@@ -39,12 +39,21 @@
   "displayFrequency": {
     "title": "Częstotliwość wyświetlania",
     "description": "Kontroluj, jak często popup pojawia się odwiedzającym",
+    "defineNewVisitor": "Zdefiniuj nowego użytkownika",
+    "defineReturningVisitor": "Zdefiniuj powracającego użytkownika",
+    "newVisitorDescription": "Nowy użytkownik nie odwiedzał Twojej strony przez ostatnie:",
+    "returningVisitorDescription": "Powracający użytkownik odwiedził już Twoją stronę w ciągu ostatnich:",
     "targetAudience": {
       "title": "Grupa docelowa",
       "allVisitors": "Wszyscy odwiedzający",
       "newVisitors": "Nowi odwiedzający",
       "returningVisitors": "Powracający odwiedzający",
       "caption": "Na podstawie plików cookie i danych sesji przeglądarki"
+    },
+    "subHeading": {
+      "all": "Każdy odwiedzający",
+      "new": "Nowy odwiedzający nie był na Twojej stronie w ciągu ostatnich X dni",
+      "return": "Powracający odwiedzający był już na Twojej stronie w ciągu ostatnich X dni"
     },
     "displaySchedule": {
       "title": "Harmonogram wyświetlania",
@@ -53,9 +62,16 @@
         "description": "Pokaż popup maksymalnie raz na 24 godziny"
       },
       "everyXDays": {
-        "main": "Co X dni",
+        "main": "Raz na kilka dni",
         "prefix": "Co",
-        "suffix": "dni"
+        "suffix": "dni",
+        "description": "Raz na kilka dni – pokaż swoje okienko dla dowolnej liczby dni, którą wybierzesz."
+      },
+      "everyXVisit": {
+        "main": "Raz na kilka wizyt",
+        "prefix": "Co",
+        "suffix": "wizyt",
+        "description": "Raz na kilka wizyt – pokaż swoje okienko dla dowolnej liczby wizyt, którą wybierzesz."
       },
       "everyVisit": {
         "title": "Każda wizyta",
@@ -98,5 +114,28 @@
       "title": "Ustawienia zaawansowane",
       "subtitle": "Skonfiguruj zachowanie po konwersji i opcje zaawansowane"
     }
+  },
+  "summary": {
+    "title": "Podsumowanie Popupu",
+    "triggers": "Wyzwalacze",
+    "pageTargeting": "Targetowanie Stron",
+    "frequency": "Częstotliwość Wyświetlania",
+    "frequencyType": "Typ Częstotliwości",
+    "frequencyValue": "Wartość Częstotliwości",
+    "audienceTarget": "Grupa Docelowa",
+    "visitorDays": "Dni Odwiedzającego",
+    "continueAfterConversion": "Kontynuuj po Konwersji",
+     "conversionType": "Typ Konwersji",
+    "exitIntent": "Zamiar wyjścia",
+    "pageCount": "Liczba stron",
+    "displayAfterVisiting": "Wyświetl po odwiedzeniu",
+    "pages": "stron",
+    "timeDelay": "Opóźnienie czasowe",
+    "displayAfter": "Wyświetl po",
+    "secsOnPage": "sekundach na stronie",
+    "displayAfterScrolling": "Wyświetl po przewinięciu",
+    "onThePage": "na stronie",
+    "clicksCount": "Liczba kliknięć",
+    "clicksInPage": "kliknięć na stronie"
   }
 }

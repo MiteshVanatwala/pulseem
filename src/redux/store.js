@@ -32,9 +32,11 @@ import BillingSlice from './reducers/BillingSlice';
 import SubUserSlice from './reducers/SubUserSlice';
 import AiSlice from './reducers/AISlice';
 import linksClicksReportSlice from './reducers/linksClicksReportSlice';
+import popupTriggersReducer from './reducers/popupTriggersSlice';
 
 export default configureStore({
   reducer: {
+    popupTriggers: popupTriggersReducer,
     core: coreReducer,
     user: userReducer,
     newsletter: newsletterReducer,

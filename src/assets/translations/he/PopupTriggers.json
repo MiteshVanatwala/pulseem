@@ -39,12 +39,21 @@
   "displayFrequency": {
     "title": "תדירות הצגה",
     "description": "שלוט באיזו תדירות הפופאפ מופיע למבקרים",
+    "defineNewVisitor": "הגדרת מבקר חדש",
+    "defineReturningVisitor": "הגדרת מבקר חוזר",
+    "newVisitorDescription": "מבקר חדש לא ביקר באתר שלך במשך:",
+    "returningVisitorDescription": "מבקר חוזר כבר ביקר באתר שלך במהלך:",
     "targetAudience": {
       "title": "קהל יעד",
       "allVisitors": "כל המבקרים",
       "newVisitors": "מבקרים חדשים",
       "returningVisitors": "מבקרים חוזרים",
       "caption": "מבוסס על קוקיז ודאטת סשן של הדפדפן"
+    },
+    "subHeading": {
+      "all": "כל מבקר",
+      "new": "מבקר חדש לא ביקר באתר שלך במהלך X הימים האחרונים",
+      "return": "מבקר חוזר כבר ביקר באתר שלך במהלך X הימים האחרונים"
     },
     "displaySchedule": {
       "title": "לוח הצגה",
@@ -53,9 +62,16 @@
         "description": "הצג את הפופאפ מקסימום פעם כל 24 שעות"
       },
       "everyXDays": {
-        "main": "כל X ימים",
+        "main": "פעם כל כמה ימים",
         "prefix": "כל",
-        "suffix": "ימים"
+        "suffix": "ימים",
+        "description": "פעם כל כמה ימים - הצג את החלונית שלך עבור כל מספר ימים שתבחר."
+      },
+      "everyXVisit": {
+        "main": "פעם כל כמה ביקורים",
+        "prefix": "כל",
+        "suffix": "ביקורים",
+        "description": "פעם כל כמה ביקורים - הצג את החלונית שלך עבור כל מספר ביקורים שתבחר."
       },
       "everyVisit": {
         "title": "כל ביקור",
@@ -98,5 +114,28 @@
       "title": "הגדרות מתקדמות",
       "subtitle": "הגדר התנהגות לאחר המרה ואפשרויות מתקדמות"
     }
+  },
+  "summary": {
+    "title": "סיכום פופאפ",
+    "triggers": "טריגרים",
+    "pageTargeting": "מיקוד דפים",
+    "frequency": "תדירות הצגה",
+    "frequencyType": "סוג תדירות",
+    "frequencyValue": "ערך תדירות",
+    "audienceTarget": "קהל יעד",
+    "visitorDays": "ימי מבקר",
+    "continueAfterConversion": "המשך לאחר המרה",
+    "conversionType": "סוג המרה",
+    "exitIntent": "כוונת יציאה",
+    "pageCount": "מספר עמודים",
+    "displayAfterVisiting": "הצג לאחר ביקור ב",
+    "pages": "עמודים",
+    "timeDelay": "השהיית זמן",
+    "displayAfter": "הצג לאחר",
+    "secsOnPage": "שניות בעמוד",
+    "displayAfterScrolling": "הצג לאחר גלילה של",
+    "onThePage": "בעמוד",
+    "clicksCount": "ספירת קליקים",
+    "clicksInPage": "קליקים בעמוד"
   }
 }

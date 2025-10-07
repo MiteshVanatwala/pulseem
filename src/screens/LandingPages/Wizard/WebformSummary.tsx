@@ -21,8 +21,9 @@ import useRedirect from "../../../helpers/Routes/Redirect";
 import { sitePrefix } from "../../../config";
 import { RedirectPropTypes } from "../../../helpers/Types/Redirect";
 import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
+import PopupSummary from "../../Popups/PopupSummary";
 
-const WebformSummary = ({ classes }: any) => {
+const WebformSummary = ({ classes, isPopup }: any) => {
     const { id } = useParams();
     const { t } = useTranslation();
     const dispatch = useDispatch();
@@ -78,7 +79,7 @@ const WebformSummary = ({ classes }: any) => {
         <Box className={'topSection'}>
             <Title
                 classes={classes}
-                Text={t('landingPages.publish')}
+                Text={isPopup ? t('PopupTriggers.summary.title') : t('landingPages.publish')}
             />
             <Box style={{ padding: 25, maxWidth: 900, margin: '0 auto' }}>
                 {/* <Box style={{ padding: 25 }}> */}
@@ -156,9 +157,10 @@ const WebformSummary = ({ classes }: any) => {
                     </Grid>
                 </Grid>
             </Box>
+                {isPopup ? <PopupSummary classes={classes} /> : <></>}
         </Box>
         <Loader isOpen={showLoader} showBackdrop={true} />
-        <Box>
+        {!isPopup && <Box>
             <WizardActions
                 classes={classes}
                 // @ts-ignore
@@ -176,7 +178,7 @@ const WebformSummary = ({ classes }: any) => {
                     style={{ margin: '8px' }}
                 >{t("master.RadMenuItemLandingManagement.Text")}</Button>}
             />
-        </Box>
+        </Box>}
     </DefaultScreen>
 }
 

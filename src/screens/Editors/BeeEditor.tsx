@@ -777,6 +777,18 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       >
         {t('common.Groups')}
       </Button>
+      {moduleType === BEE_EDITOR_TYPES.LANDING_PAGE && <Button
+        onClick={() => navigate(`${sitePrefix}Popups/DisplayRules/${moduleId}`)}
+        variant='contained'
+        size='medium'
+        className={clsx(
+          classes.btn,
+          classes.btnRounded
+        )}
+        style={{ margin: '8px' }}
+      >
+        {t('common.next')}
+      </Button>}
     </>
   }
   const renderButtons = () => {
@@ -1186,7 +1198,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       const requestParams = { WebformID: params.id, GroupID: list };
       // @ts-ignore
       const response = await dispatch(setWebformGroups(requestParams)) as any;
-  
+
       if (response.payload.StatusCode === 201) {
         setShowGroupSelection(false);
         if (list?.length === 0) {

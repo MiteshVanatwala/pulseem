@@ -1,64 +1,59 @@
-import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { MdAdd } from 'react-icons/md';
-import { v4 as uuidv4 } from 'uuid';
-import clsx from 'clsx';
-import { DeleteIcon } from '../../../../assets/images/managment';
+import React from "react";
+import { useTranslation } from "react-i18next";
+import { MdAdd } from "react-icons/md";
+import { v4 as uuidv4 } from "uuid";
+import clsx from "clsx";
+import { DeleteIcon } from "../../../../assets/images/managment";
 import {
-  Button, IconButton, Card,
+  Button,
+  IconButton,
+  Card,
   CardContent,
   Typography,
   Box,
   Select,
   MenuItem,
   TextField,
-} from '@material-ui/core';
+} from "@material-ui/core";
+import PulseemSwitch from "../../../../components/Controlls/PulseemSwitch";
 
-export enum RuleType {
-  CONTAINS = "CONTAINS",
-  NOT_CONTAINS = "NOT_CONTAINS",
-}
-
-type TargetingRule = {
+export type TargetingRule = {
   id: string;
-  type: RuleType;
+  type: string;
   value: string;
 };
 
-const PageTargeting = ({ classes }: any) => {
+const PageTargeting = ({ classes, lookupData, show, onToggle, rules, onRulesChange }: any) => {
   const { t } = useTranslation();
 
-  const ruleTypes: Record<RuleType, string> = {
-    [RuleType.CONTAINS]: t("PopupTriggers.pageTargeting.ruleTypes.contains"),
-    [RuleType.NOT_CONTAINS]: t("PopupTriggers.pageTargeting.ruleTypes.notContains"),
-  };
-
-  const [rules, setRules] = useState<TargetingRule[]>([
-    { id: "1", type: RuleType.CONTAINS, value: "product" },
-    { id: "2", type: RuleType.NOT_CONTAINS, value: "checkout" },
-  ]);
-
   const handleAddRule = () => {
+    const defaultCondition = lookupData?.ConditionTypes?.find(
+      (c: any) => c.Name === "Contains"
+    );
+    const defaultTypeName = defaultCondition ? defaultCondition.Name : "Contains";
+
     const newRule: TargetingRule = {
       id: uuidv4(),
-      type: RuleType.CONTAINS,
+      type: defaultTypeName,
       value: "",
     };
-    setRules([...rules, newRule]);
+    onRulesChange([...rules, newRule]);
   };
 
-  const handleUpdateRule = (id: string, field: keyof TargetingRule, value: string) => {
-    setRules(
-      rules.map((rule) =>
-        rule.id === id
-          ? { ...rule, [field]: field === "type" ? (value as RuleType) : value }
-          : rule
+  const handleUpdateRule = (
+    id: string,
+    field: keyof TargetingRule,
+    value: string
+  ) => {
+    onRulesChange(
+      rules.map((rule: any) =>
+        rule.id === id ? { ...rule, [field]: value } : rule
       )
     );
   };
 
   const handleDeleteRule = (id: string) => {
-    setRules(rules.filter((rule) => rule.id !== id));
+    onRulesChange(rules.filter((rule: TargetingRule) => rule.id !== id));
   };
 
   return (
@@ -69,94 +64,114 @@ const PageTargeting = ({ classes }: any) => {
             className={clsx(
               classes?.topHeaderPopupTrigger,
               classes?.p10,
-              classes.pageTargetingResponsiveHeader
+              classes.pageTargetingResponsiveHeader,
+              classes.spaceBetween,
             )}
-            mb={4}
+            alignItems="center"
+            mb={show && 4}
           >
-            <Typography
-              variant="body1"
-              className={clsx(
-                classes?.managementTitle,
-                classes?.sectionTitlePageTargetting
-              )}
-              gutterBottom
-            >
-              {t("PopupTriggers.pageTargeting.title")}
-            </Typography>
-            <Typography
-              variant="body1"
-              className={classes?.subtitlePopupTrigger}
-            >
-              {t("PopupTriggers.pageTargeting.subtitle")}
-            </Typography>
+            <div>
+              <Typography
+                variant="body1"
+                className={clsx(
+                  classes?.managementTitle,
+                  classes?.sectionTitlePageTargetting
+                )}
+                gutterBottom
+              >
+                {t("PopupTriggers.pageTargeting.title")}
+              </Typography>
+              <Typography
+                variant="body1"
+                className={classes?.subtitlePopupTrigger}
+              >
+                {t("PopupTriggers.pageTargeting.subtitle")}
+              </Typography>
+            </div>
+            <PulseemSwitch
+              switchType="ios"
+              id="popupTriggers-toggle"
+              checked={show}
+              onChange={onToggle}
+              classes={classes}
+            />
           </Box>
-          <Box className={classes.pageTargetingResponsiveDashedBox}>
-            <Box className={classes.pageTargetingResponsiveGap}>
-              {rules.map((rule) => (
-                <Box key={rule.id} className={classes.pageTargetingResponsiveRuleItem}>
-                  <Box className={classes.pageTargetingResponsiveFormControls}>
-                    <Select
-                      value={rule.type}
-                      onChange={(e: React.ChangeEvent<{ name?: string; value: unknown }>) =>
-                        handleUpdateRule(rule.id, "type", e.target.value as RuleType)
-                      }
-                      className={classes.pageTargetingSelectField}
-                    >
-                      {Object.entries(ruleTypes).map(([key, value]) => (
-                        <MenuItem
-                          key={key}
-                          value={key}
-                          className={classes.pageTargetingMenuItem}
+          {show && (
+            <>
+              <Box className={classes.pageTargetingResponsiveDashedBox}>
+                <Box className={classes.pageTargetingResponsiveGap}>
+                  {rules.map((rule: any) => (
+                    <Box key={rule.id} className={classes.pageTargetingResponsiveRuleItem}>
+                      <Box className={classes.pageTargetingResponsiveFormControls}>
+                        <Select
+                          value={rule.type}
+                          onChange={(
+                            e: React.ChangeEvent<{ name?: string; value: unknown }>
+                          ) =>
+                            handleUpdateRule(
+                              rule.id,
+                              "type",
+                              e.target.value as string
+                            )
+                          }
+                          className={classes.pageTargetingSelectField}
                         >
-                          {value}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                    <TextField
-                      value={rule.value}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                        handleUpdateRule(rule.id, "value", e.target.value)
-                      }
-                      variant="outlined"
-                      className={classes.pageTargetingTextField}
-                    />
-                  </Box>
-                  <IconButton
-                    aria-label={t("delete")}
-                    onClick={() => handleDeleteRule(rule.id)}
-                    className={clsx(classes.pageTargetingDeleteButton, classes.sendIcon)}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
+                          {lookupData?.ConditionTypes?.map((conditionType: any) => (
+                            <MenuItem
+                              key={conditionType.Id}
+                              value={conditionType.Name}
+                              className={classes.pageTargetingMenuItem}
+                            >
+                              {conditionType.Name === 'Contains' ? t("common.contains") : conditionType.Name === 'Not contains' ? t("common.notContains") : t("common.equal") }
+                            </MenuItem>
+                          ))}
+                        </Select>
+                        <TextField
+                          value={rule.value}
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                            handleUpdateRule(rule.id, "value", e.target.value)
+                          }
+                          variant="outlined"
+                          className={classes.pageTargetingTextField}
+                        />
+                      </Box>
+                      <IconButton
+                        aria-label={t("delete")}
+                        onClick={() => handleDeleteRule(rule.id)}
+                        className={clsx(classes.pageTargetingDeleteButton, classes.sendIcon)}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </Box>
+                  ))}
                 </Box>
-              ))}
-            </Box>
-            <Button
-              variant="contained"
-              startIcon={<MdAdd />}
-              onClick={handleAddRule}
-              className={clsx(classes.btn, classes.btnRounded, classes.addRuleButton, classes.mobileFullWidth)}
-            >
-              {t("PopupTriggers.pageTargeting.addRule")}
-            </Button>
-          </Box>
-
-          <Box className={classes.pageTargetingResponsiveExamples}>
-            <Typography
-              variant="body1"
-              className={classes?.grayTextCell}
-              display="block"
-            >
-              {t("PopupTriggers.pageTargeting.examples.line1")}
-            </Typography>
-            <Typography
-              variant="body1"
-              className={classes?.grayTextCell}
-              display="block"
-            >
-              {t("PopupTriggers.pageTargeting.examples.line2")}
-            </Typography>
-          </Box>
+                <Button
+                  variant="contained"
+                  startIcon={<MdAdd />}
+                  onClick={handleAddRule}
+                  className={clsx(classes.btn, classes.btnRounded, classes.addRuleButton, classes.mobileFullWidth)}
+                >
+                  {t("PopupTriggers.pageTargeting.addRule")}
+                </Button>
+              </Box>
+              <Box className={classes.pageTargetingResponsiveExamples}>
+                <Typography
+                  variant="body1"
+                  className={classes?.grayTextCell}
+                  display="block"
+                >
+                  {t("PopupTriggers.pageTargeting.examples.line1")}
+                </Typography>
+                <Typography
+                  variant="body1"
+                  className={classes?.grayTextCell}
+                  display="block"
+                >
+                  {t("PopupTriggers.pageTargeting.examples.line2")}
+                </Typography>
+              </Box>
+            </>
+          )}
         </CardContent>
       </Card>
     </Box>
