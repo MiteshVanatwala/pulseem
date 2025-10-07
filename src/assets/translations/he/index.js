@@ -41,6 +41,7 @@ import AI from './AI.he.json';
 import colorPalette from './colorPalette.he.json'
 import AILoader from './AILoader.he.json'
 import RemoveMyData from './RemoveMyData.json';
+import Popup from './Popup.he.json';
 
 export const he = {
 	automations,
@@ -85,5 +86,6 @@ export const he = {
 	AI,
 	colorPalette,
 	AILoader,
-	RemoveMyData
+	RemoveMyData,
+	Popup
 };

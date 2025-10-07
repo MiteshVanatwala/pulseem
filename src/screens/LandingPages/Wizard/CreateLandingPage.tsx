@@ -714,7 +714,7 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 			);
 		}
 		else {
-			if (!landingPageModel.IsNewEditor) {
+			if (!landingPageModel.IsNewEditor && !isPopup) {
 				wizardButtons.push(
 					<Button
 						onClick={() => { saveAndContinue(EditorType.OLD) }}
