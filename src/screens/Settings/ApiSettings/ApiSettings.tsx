@@ -559,6 +559,29 @@ const ApiSettings = ({ classes }: any) => {
                     onConfirm={() => setDialogType(null)}
                     showDefaultButtons={false}
                     title={t('billing.tier.permission')}
+                    renderButtons={() => (
+                        <Grid container spacing={2} className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}>
+                            <Grid item>
+                            <Button
+                                onClick={() => {
+                                setDialogType(null);
+                                setShowTierPlans(true);
+                                }}
+                                className={clsx(classes.btn, classes.btnRounded)}
+                            >
+                                {t('billing.upgradePlan')}
+                            </Button>
+                            </Grid>
+                            <Grid item>
+                            <Button
+                                onClick={() => { setDialogType(null); }}
+                                className={clsx(classes.btn, classes.btnRounded)}
+                            >
+                                {t('common.cancel')}
+                            </Button>
+                            </Grid>
+                        </Grid>
+                    )}
                 >
                     {handleGetPlanForFeature(TierMessageCode)}
                 </BaseDialog>

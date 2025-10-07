@@ -433,7 +433,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 		// Check for tier validation
 		if (campaignData?.StatusCode === 927) {
 			// WHATSAPP_REPORT
-			setTierMessageCode('WHATSAPP_REPORTS');
+			setTierMessageCode(campaignData?.Message);
 			setDialogType(getTierValidationDialog());
 			return;
 		}
@@ -1080,6 +1080,29 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 					onConfirm={() => setDialogType(null)}
 					title={translator('billing.tier.permission')}
 					showDivider={false}
+					renderButtons={() => (
+            <Grid container spacing={2} className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}>
+                <Grid item>
+                <Button
+                    onClick={() => {
+										setDialogType(null);
+                    setShowTierPlans(true);
+                  }}
+                  className={clsx(classes.btn, classes.btnRounded)}
+                >
+                  {translator('billing.upgradePlan')}
+                </Button>
+                </Grid>
+                <Grid item>
+                <Button
+                  onClick={() => { setDialogType(null); }}
+                  className={clsx(classes.btn, classes.btnRounded)}
+                >
+                  {translator('common.cancel')}
+                </Button>
+                </Grid>
+            </Grid>
+          )}
 				>
 					<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
 						{handleGetPlanForFeature(TierMessageCode)}

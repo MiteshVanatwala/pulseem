@@ -263,6 +263,11 @@ export const findPlanByFeatureCode = (
 
     const plans = availablePlans;
     
+    // Check if plans is an array and has length
+    if (!Array.isArray(plans) || plans.length === 0) {
+        return null;
+    }
+
     // If currentPlanId is provided, start searching from plans with Id > currentPlanId
     // Otherwise, search through all plans
     const sortedPlans = currentPlanId 

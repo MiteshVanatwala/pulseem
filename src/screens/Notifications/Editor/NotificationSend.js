@@ -580,8 +580,8 @@ const NotificationSend = ({ classes }) => {
         const result = await dispatch(SendNotification(data));
 
         // Check for tier validation
-        if (result?.payload?.StatusCode === 927) {
-            setTierMessageCode(result?.payload?.Message || 'WEB_PUSH');
+        if (result?.payload === 927 || result?.payload === '927') {
+            setTierMessageCode('WEB_PUSH');
             setDialogType(getTierValidationDialog());
             return;
         }

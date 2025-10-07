@@ -25,6 +25,7 @@ import { PulseemFeatures } from '../../../../model/PulseemFields/Fields';
 import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
 import { RenderHtml } from '../../../../helpers/Utils/HtmlUtils';
 import { findPlanByFeatureCode } from '../../../../redux/reducers/TiersSlice';
+import TierPlans from '../../../../components/TierPlans/TierPlans';
 
 
 const SmsReplies = ({ classes }) => {
@@ -46,6 +47,7 @@ const SmsReplies = ({ classes }) => {
     const { windowSize, isRTL, rowsPerPage, userRoles } = useSelector(state => state.core);
     const { accountFeatures } = useSelector(state => state.common);
     const { currentPlan, availablePlans } = useSelector(state => state.tiers);
+    const [showTierPlans, setShowTierPlans] = useState(false);
     const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot) }
     const cellBodyStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot) }
     const cellStyle = { head: classes.tableCellHead, root: clsx(classes.tableCellRoot, classes.paddingHead) }
@@ -405,6 +407,29 @@ const SmsReplies = ({ classes }) => {
                         onConfirm={() => setDialog(null)}
                         showDefaultButtons={false}
                         title={t('billing.tier.permission')}
+                        renderButtons={() => (
+                            <Grid container spacing={2} className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}>
+                                <Grid item>
+                                <Button
+                                    onClick={() => {
+                                    setDialog(null);
+                                    setShowTierPlans(true);
+                                  }}
+                                  className={clsx(classes.btn, classes.btnRounded)}
+                                >
+                                  {t('billing.upgradePlan')}
+                                </Button>
+                                </Grid>
+                                <Grid item>
+                                <Button
+                                  onClick={() => { setDialog(null); }}
+                                  className={clsx(classes.btn, classes.btnRounded)}
+                                >
+                                  {t('common.cancel')}
+                                </Button>
+                                </Grid>
+                            </Grid>
+                        )}
                     >
                         <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
                             {handleGetPlanForFeature(TierMessageCode)}
@@ -562,6 +587,11 @@ const SmsReplies = ({ classes }) => {
                 options={ExportFileTypes}
             />
             <Loader isOpen={showLoader} showBackdrop={true} />
+            {showTierPlans && <TierPlans
+				classes={classes}
+				isOpen={showTierPlans}
+				onClose={() => setShowTierPlans(false)}
+			/>}
         </Box >
     )
 }

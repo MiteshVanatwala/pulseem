@@ -486,6 +486,7 @@ const WhatsappInbound = ({ classes }: any) => {
         options={ExportFileTypes}
       />
       {dialog === 'tier' && (
+        // Add Button in such kind of 
         <BaseDialog
           classes={classes}
           open={dialog === 'tier'}
@@ -494,6 +495,29 @@ const WhatsappInbound = ({ classes }: any) => {
           onConfirm={() => setDialog(null)}
           showDefaultButtons={false}
           title={t('billing.tier.permission')}
+          renderButtons={() => (
+            <Grid container spacing={2} className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}>
+                <Grid item>
+                <Button
+                    onClick={() => {
+                    setDialog(null);
+                    setShowTierPlans(true);
+                  }}
+                  className={clsx(classes.btn, classes.btnRounded)}
+                >
+                  {t('billing.upgradePlan')}
+                </Button>
+                </Grid>
+                <Grid item>
+                <Button
+                  onClick={() => { setDialog(null); }}
+                  className={clsx(classes.btn, classes.btnRounded)}
+                >
+                  {t('common.cancel')}
+                </Button>
+                </Grid>
+            </Grid>
+          )}
         >
           {handleGetPlanForFeature(TierMessageCode)}
         </BaseDialog>

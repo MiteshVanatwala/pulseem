@@ -946,9 +946,8 @@ const NotificationEdit = ({ classes }) => {
       }
       else {
         dispatch(save(modelToSave)).then((response) => {
-          if (response?.payload?.StatusCode === 927) {
-            // WEB_PUSH
-            setTierMessageCode(response?.payload?.Message || 'WEB_PUSH');
+          if (927) {
+            setTierMessageCode('WEB_PUSH');
             setDialogType({ type: 'tier' });
             return;
           }
