@@ -14,6 +14,7 @@ import { dynamicProductCatalog } from './dynamicProductCatalog';
 import { surveyStyle } from './surveyStyles';
 import { BeeAiStyles } from './BeeAiStyles';
 import { getPopupTriggersStyle } from './popupTriggers';
+import { getPopUpManagementStyle } from './popUpManagementStyle';
 
 export const useClasses = (windowSize, isRTL = false) => makeStyles(theme => ({
   ...getDrawerStyle(windowSize, isRTL, theme),
@@ -30,5 +31,6 @@ export const useClasses = (windowSize, isRTL = false) => makeStyles(theme => ({
   ...dynamicProductCatalog(isRTL),
   ...surveyStyle(windowSize, isRTL, theme),
   ...BeeAiStyles(windowSize, isRTL, theme),
-  ...getPopupTriggersStyle(windowSize, isRTL, theme)
+  ...getPopupTriggersStyle(windowSize, isRTL, theme),
+  ...getPopUpManagementStyle(windowSize, isRTL, theme)
 }))
