@@ -27,10 +27,12 @@ import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { sendToTeamChannel } from "../../../redux/reducers/ConnectorsSlice";
 import { Title } from '../../../components/managment/Title';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
-import { DateFormats } from '../../../helpers/Constants';
+import { DateFormats, TierFeatures } from '../../../helpers/Constants';
 import { sitePrefix } from '../../../config';
 import useRedirect from '../../../helpers/Routes/Redirect';
 import { getLanguageCulture } from '../../../helpers/Utils/TextHelper';
+import TierPlans from '../../../components/TierPlans/TierPlans';
+import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
 
 
 const AutomationsManagnentScreen = ({ classes }) => {
@@ -52,6 +54,9 @@ const AutomationsManagnentScreen = ({ classes }) => {
   const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF'
   const [showLoader, setLoader] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
+  const [showTierPlans, setShowTierPlans] = useState(false);
+  const [TierMessageCode, setTierMessageCode] = useState('');
+  const { currentPlan, availablePlans } = useSelector((state) => state.tiers);
   const dispatch = useDispatch()
   moment.locale(language)
 
@@ -580,7 +585,13 @@ const AutomationsManagnentScreen = ({ classes }) => {
     try {
       const response = await dispatch(activateAutomation({ ID: data.ID }))
       const resJ = JSON.parse(response.payload.d);
-      if (resJ.StatusCode !== 1) {
+      
+      // Handle response status codes
+      if (resJ.StatusCode === 927) {
+        setTierMessageCode(resJ.Message);
+        setDialogType({ type: 'tier' });
+        return;
+      } else if (resJ.StatusCode !== 1) {
         setErrorMessage(`${resJ.StatusMessage} <br/>${t('automations.pressHereToEditAutomation').replace('##', data.ID)}`);
         setDialogType({
           type: 'activateError',
@@ -776,6 +787,56 @@ const AutomationsManagnentScreen = ({ classes }) => {
     }
   })
 
+  const handleGetPlanForFeature = (tierMessageCode) => {
+    const planName = findPlanByFeatureCode(
+        tierMessageCode,
+        availablePlans,
+        currentPlan.Id
+    );
+    
+    if (planName) {
+        return t('billing.tier.featureNotAvailable').replace('{feature}', t(TierFeatures[tierMessageCode] || tierMessageCode)).replace('{planName}', planName);
+    } else {
+        return t('billing.tier.noFeatureAvailable');
+    }
+};
+
+const getTierValidationDialog = () => ({
+    title: t('billing.tier.permission'),
+    showDivider: false,
+    content: (
+        <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+            {handleGetPlanForFeature(TierMessageCode)}
+        </Typography>
+    ),
+    renderButtons: () => (
+        <Grid
+            container
+            spacing={2}
+            className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+        >
+            <Grid item>
+                <Button
+                    onClick={() => {
+                        setShowTierPlans(true);
+                    }}
+                    className={clsx(classes.btn, classes.btnRounded)}
+                >
+                    {t('billing.upgradePlan')}
+                </Button>
+            </Grid>
+            <Grid item>
+                <Button
+                    onClick={() => setDialogType(null)}
+                    className={clsx(classes.btn, classes.btnRounded)}
+                >
+                    {t('common.cancel')}
+                </Button>
+            </Grid>
+        </Grid>
+    )
+  });
+
   const renderDialog = () => {
 
     const { data, type } = dialogType || {}
@@ -788,7 +849,8 @@ const AutomationsManagnentScreen = ({ classes }) => {
       delete: getDeleteDialog(data),
       duplicate: getDuplicateDialog(data),
       noNodes: showErrorDialog(data),
-      activateError: showErrorDialog(data)
+      activateError: showErrorDialog(data),
+      tier: getTierValidationDialog(),
     }
 
     const currentDialog = dialogContent[type] || {}
@@ -817,6 +879,14 @@ const AutomationsManagnentScreen = ({ classes }) => {
       {renderTablePadington()}
       {renderDialog()}
       <Loader isOpen={showLoader} />
+      {showTierPlans && <TierPlans
+        classes={classes}
+        isOpen={showTierPlans}
+        onClose={() => {
+          setShowTierPlans(false);
+          setDialogType(null);
+        }}
+      />}
     </DefaultScreen>
   )
 }
