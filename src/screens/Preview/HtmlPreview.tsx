@@ -115,7 +115,8 @@ const HtmlPreview = ({ classes }: any) => {
         getNewsletterHtml();
         break;
       }
-      case 'landingpage': {
+      case 'landingpage':
+      case 'popup': {
         getLandingPageHtml();
         break;
       }

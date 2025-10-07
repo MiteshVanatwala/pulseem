@@ -33,10 +33,13 @@ import SubUserSlice from './reducers/SubUserSlice';
 import AiSlice from './reducers/AISlice';
 import linksClicksReportSlice from './reducers/linksClicksReportSlice';
 import popupTriggersReducer from './reducers/popupTriggersSlice';
+import PopupSlice from './reducers/PopupSlice';
+import popUpManagementReducer from './reducers/popUpManagementSlice';
+
 
 export default configureStore({
-  reducer: {
     popupTriggers: popupTriggersReducer,
+    popUpManagement: popUpManagementReducer,
     core: coreReducer,
     user: userReducer,
     newsletter: newsletterReducer,
@@ -70,5 +73,6 @@ export default configureStore({
     subUser: SubUserSlice,
     Ai: AiSlice,
     linksClicksReportSlice: linksClicksReportSlice,
+    popup: PopupSlice
   },
-});
+);

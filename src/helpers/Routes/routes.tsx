@@ -306,7 +306,7 @@ export const getRoutes = (
         },
         {
           title: t("landingPages.createPopup"),
-          href: `${sitePrefix}LandingPages/Create?type=popup`,
+          href: `${sitePrefix}Popups/Create`,
           isShow: true,
         },
         {

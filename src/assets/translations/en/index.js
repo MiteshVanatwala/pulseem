@@ -42,6 +42,7 @@ import colorPalette from './colorPalette.json'
 import AILoader from './AILoader.json'
 import RemoveMyData from './RemoveMyData.json'
 import PopupTriggers from './PopupTriggers.json';
+import Popup from './Popup.json'
 
 export const en = {
 	PopupTriggers,
@@ -87,5 +88,6 @@ export const en = {
 	AI,
 	colorPalette,
 	AILoader,
-	RemoveMyData
+	RemoveMyData,
+	Popup
 };
