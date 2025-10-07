@@ -76,6 +76,7 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
   useEffect(() => {
     if (id) {
       dispatch(getPopupLookupData({ id: parseInt(id, 10) }));
+      // need to be set dynamic
       dispatch(getPopupRulesById({ webFormId: 37185 }));
     }
   }, [dispatch, id]);
@@ -120,7 +121,7 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
         const freq = popupRules.PopupFrequency[0];
         const audienceTarget = lookupData.AudienceTargets.find((at: any) => at.Id === freq.AudienceTargetTypeId)?.Name;
         const displaySchedule = lookupData.DisplayFrequencies.find((df: any) => df.Id === freq.FrequencyTypeId)?.Name;
-        
+
         const newDisplayFrequencyData = {
           targetAudience: audienceTarget || 'All Visitors',
           displaySchedule: displaySchedule || 'Once a day',
@@ -128,7 +129,7 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
           everyXVisits: freq.FrequencyValue || 0,
           days: freq.VisitorDays || 0,
         };
-        
+
         setDisplayFrequencyData(newDisplayFrequencyData);
       }
 
@@ -146,9 +147,9 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
       }
     }
   }, [popupRules, lookupData]);
-  
+
   useEffect(() => {
-    if(upsertSuccess && payloadForSummary) {
+    if (upsertSuccess && payloadForSummary) {
       navigate(`${sitePrefix}landingPages/Popups/Summary/${id}`, { state: { payload: payloadForSummary, lookupData } });
     }
   }, [upsertSuccess, navigate, id, payloadForSummary, lookupData]);
@@ -156,7 +157,7 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
   const handleDisplayFrequencyChange = (fieldName: string, value: any) => {
     setDisplayFrequencyData(prev => ({ ...prev, [fieldName]: value }));
   };
-  
+
   const handleAdvancedSettingsChange = (fieldName: string, value: any) => {
     setAdvancedSettingsData(prev => ({ ...prev, [fieldName]: value }));
   };
@@ -181,7 +182,7 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
       [triggerKey]: { ...triggersState[triggerKey], [field]: newValue as number },
     });
   };
-      console.log(payloadForSummary);
+  console.log(payloadForSummary);
 
   const handleSummaryClick = () => {
     const popupTriggers = Object.keys(triggersState)
@@ -197,7 +198,7 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
           TriggerId: triggerLookup.Id,
           TriggerValue: triggerValue,
         };
-      });      
+      });
 
     const popupPageTargeting = pageTargetingRules.map(rule => {
       const conditionType = lookupData.ConditionTypes.find((c: any) => c.Name === rule.type);
@@ -218,7 +219,9 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
     }
 
     const payload = {
+      // need to be set dynamic
       PopupId: 9,
+      // need to be set dynamic
       WebformId: 37185,
       PopupTriggers: popupTriggers,
       PopupPageTargeting: popupPageTargeting,
@@ -231,7 +234,7 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
       ContinueAfterConversion: advancedSettingsData.shouldContinueShowing,
       ConversionTypeId: advancedSettingsData.conversionType === 'formSubmission' ? 1 : 2,
     };
-    
+
     setPayloadForSummary(payload);
     dispatch(upsertPopupRules(payload));
   };

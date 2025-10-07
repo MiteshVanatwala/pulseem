@@ -366,6 +366,7 @@
   "URLRequired": "URL Required",
   "APIUsername": "API Username",
   "APIUsernameRequired": "API Username Required",
+  "Domain": "Domain",
   "terminalNumber": "Terminal Number",
   "terminalNumberRequired": "Terminal Number Required",
   "departmentNumber": "Department No.",

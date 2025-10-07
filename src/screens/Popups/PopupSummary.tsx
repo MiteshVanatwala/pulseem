@@ -1,17 +1,40 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useLocation, useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Box, Typography, Grid, Divider, Button } from '@material-ui/core';
+import { Box, Typography, Grid, Button } from '@material-ui/core';
+import { useDispatch } from 'react-redux';
 import clsx from 'clsx';
 import { sitePrefix } from '../../config';
+import { publish } from '../../redux/reducers/landingPagesSlice';
+import { Loader } from '../../components/Loader/Loader';
 
 const PopupSummary = ({ classes }: any) => {
   const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const { id } = useParams();
   const { payload, lookupData } = location.state || {};
- 
+  const [loading, setLoader] = useState(false);
+
+  const handlePublish = async () => {
+    if (!id) return;
+
+    try {
+      setLoader(true);
+      //@ts-ignore
+      const response = await dispatch(publish(id));
+      // @ts-ignore
+      if (response?.payload?.StatusCode === 201) {
+        navigate(`${sitePrefix}LandingPages/PopUpManagement`);
+      }
+    } catch (error) {
+      console.error('Error publishing:', error);
+    } finally {
+      setLoader(false);
+    }
+  };
+
   const getNameById = (list: any[], id: number) => {
     const item = list?.find(item => item.Id === id);
     return item ? item.Name : t('common.notSet');
@@ -82,7 +105,7 @@ const PopupSummary = ({ classes }: any) => {
       return (
         <div key={index}>
           <Typography variant='body1'>
-            {conditionType === 'Contains' ? t("common.contains") : conditionType === 'Not contains' ? t("common.notContains") : t("common.equal") }:
+            {conditionType === 'Contains' ? t("common.contains") : conditionType === 'Not contains' ? t("common.notContains") : t("common.equal")}:
           </Typography>
           {' '}
           <Typography variant='body2'>
@@ -181,13 +204,14 @@ const PopupSummary = ({ classes }: any) => {
           {t("common.back")}
         </Button>
         <Button
-          // onClick={() => navigate(`${sitePrefix}/Popups/DisplayRules/${id}`)}
+          onClick={handlePublish}
           className={clsx(classes.btn, classes.btnRounded, classes.backButton)}
           style={{ margin: "8px" }}
         >
           {t("common.publish")}
         </Button>
       </Box>
+      <Loader isOpen={loading} />
     </React.Fragment>
   );
 };

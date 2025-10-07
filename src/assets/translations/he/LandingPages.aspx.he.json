@@ -366,6 +366,7 @@
   "URLRequired": "קישור - שדה חובה",
   "APIUsername": "שם משתמש API",
   "APIUsernameRequired": "שם משתמש API - שדה חובה",
+  "Domain": "דומיין",
   "terminalNumber": "מספר מסוף",
   "terminalNumberRequired": "מספר מסוף - שדה חובה",
   "departmentNumber": "מספר מחלקה",

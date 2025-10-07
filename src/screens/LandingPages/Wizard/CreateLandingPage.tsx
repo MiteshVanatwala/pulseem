@@ -126,6 +126,7 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 		IsAccessibility: true,
 		TerminalNumber: '',
 		APIUserName: '',
+		Domain: '',
 		DepartmentId: null,
 		LinkPreviewTitle: '',
 		LinkPreviewIcon: '',
@@ -203,6 +204,7 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 				HtmlFile: response.Data?.WebForm?.HtmlFile || '',
 				TerminalNumber: response.Data?.WebForm?.TerminalNumber || '',
 				APIUserName: response.Data?.WebForm?.APIUserName || '',
+				Domain: response.Data?.WebForm?.Domain || '',
 				LinkPreviewTitle: response.Data?.WebForm?.LinkPreviewTitle || '',
 				LinkPreviewIconName: response.Data?.WebForm?.LinkPreviewIconName || '',
 				LinkPreviewDescription: response.Data?.WebForm?.LinkPreviewDescription || '',
@@ -840,6 +842,7 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 							onSetDialog={setDialogType}
 							errors={errors}
 							setErrors={setErrors}
+							isPopup={isPopup}
 						/>
 
 						<Grid container spacing={3}>

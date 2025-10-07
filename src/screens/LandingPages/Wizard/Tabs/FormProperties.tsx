@@ -11,7 +11,7 @@ import { LangugeCode } from "../../../../model/PulseemFields/Fields";
 import { useEffect, useState } from "react";
 
 
-const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setErrors }: any) => {
+const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setErrors, isPopup }: any) => {
     const { t: translator } = useTranslation();
     const { isRTL, language } = useSelector(
         (state: { core: coreProps }) => state.core
@@ -299,6 +299,29 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
                     </FormControl>
                 </Grid>
             )
+        }
+
+        {
+            isPopup ? <Grid item md={3} className={classes.w100}>
+                <Typography title={translator("landingPages.Domain")} className={classes.alignDir}>
+                    {translator("landingPages.Domain")}
+                </Typography>
+                <TextField
+                    label=""
+                    variant="outlined"
+                    value={data.Domain}
+                    className={clsx(classes.NoPaddingtextField, classes.textField, classes.w100, { [classes.textFieldError]: !!errors.Domain })}
+                    autoComplete="off"
+                    onChange={(e: any) => onUpdate({ ...data, Domain: e.target.value })}
+                    error={!!errors.Domain}
+                    title={data.Domain}
+                />
+                <Box className='textBoxWrapper'>
+                    <Typography className={clsx(errors.Domain ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
+                        {errors.Domain ?? errors.Domain}
+                    </Typography>
+                </Box>
+            </Grid> : null
         }
 
         {

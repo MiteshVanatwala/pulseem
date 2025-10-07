@@ -33,6 +33,7 @@ import { CopyIcon, DeleteIcon, DuplicateIcon, EditIcon, PreviewIcon, SettingIcon
 import { FaChartPie } from 'react-icons/fa';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { sitePrefix } from '../../../config';
+import { useNavigate } from 'react-router-dom';
 
 interface PopUpManagementProps {
   classes: Record<string, string>;
@@ -50,6 +51,7 @@ interface DialogType {
 
 const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const dispatch = useDispatch<any>();
   const { windowSize } = useSelector((state: any) => state.core);
   const {
@@ -75,6 +77,11 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
     PageSize: 6,
     PageType: 5
   });
+
+
+  const handleCreatePopup = () => {
+    navigate(`${sitePrefix}Popups/Create`);
+  };
 
   const isMobile = windowSize === 'xs' || windowSize === 'sm';
 
@@ -106,6 +113,7 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
           color="primary"
           className={clsx(classes.btn, classes.btnRounded, classes.mr10)}
           startIcon={<Add />}
+          onClick={handleCreatePopup}
         >
           {t('landingPages.popupManagement.createNew')}
         </Button>

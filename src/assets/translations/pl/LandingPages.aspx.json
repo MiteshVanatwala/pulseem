@@ -366,6 +366,7 @@
   "URLRequired": "URL Wymagany",
   "APIUsername": "Nazwa Użytkownika API",
   "APIUsernameRequired": "Nazwa Użytkownika API Wymagana",
+  "Domain": "Domena",
   "terminalNumber": "Numer Terminala",
   "terminalNumberRequired": "Numer Terminala Wymagany",
   "departmentNumber": "Nr Wydziału",
