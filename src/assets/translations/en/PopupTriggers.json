@@ -1,0 +1,141 @@
+{
+  "popupTriggers": {
+    "mainTitle": "Popup Triggers Management",
+    "title": "Popup Triggers",
+    "subtitle": "Choose when the popup should appear",
+    "exitIntent": {
+      "title": "Exit Intent",
+      "description": "Display when visitor attempts to leave the page",
+      "footer": "Desktop browsers only - requires mouse movement detection"
+    },
+    "pageViews": {
+      "title": "Page Views",
+      "description": "Show after visiting a specific number of pages",
+      "after": "After",
+      "pages": "pages",
+      "footer": "Counts all page views in current session"
+    },
+    "viewingTime": {
+      "title": "Viewing Time",
+      "description": "Display after visitor spends time on the site",
+      "seconds": "seconds",
+      "onCurrentPage": "On current page",
+      "onAnyPage": "On any page",
+      "footer": "Timer resets on page navigation when set to 'current page'"
+    },
+    "scrollDepth": {
+      "title": "Scroll Depth",
+      "description": "Show when visitor scrolls to specific page percentage",
+      "pageDepth": "At",
+      "footer": "Measured from top of page content"
+    },
+    "pageClicks": {
+      "title": "Page Clicks",
+      "description": "Display after visitor clicks elements on page",
+      "clicks": "clicks",
+      "footer": "Any clickable element counts toward total"
+    }
+  },
+  "displayFrequency": {
+    "title": "Display Frequency",
+    "description": "Control how often the popup appears to visitors",
+    "defineNewVisitor": "Define New Visitor",
+    "defineReturningVisitor": "Define Returning Visitor",
+    "newVisitorDescription": "A New visitor has not been to your site in the last:",
+    "returningVisitorDescription": "A Returning visitor has already been to your site in the last:",
+    "targetAudience": {
+      "title": "Target Audience",
+      "allVisitors": "All Visitors",
+      "newVisitors": "New Visitors",
+      "returningVisitors": "Returning Visitors",
+      "caption": "Based on browser cookies and session data"
+    },
+    "subHeading": {
+      "all": "Every Visitor",
+      "new": "A New visitor has not been to your site in the last X days",
+      "return": "A Returning visitor has already been to your site in the last X days"
+    },
+    "displaySchedule": {
+      "title": "Display Schedule",
+      "oncePerDay": {
+        "title": "Once per Day",
+        "description": "Show popup maximum once every 24 hours"
+      },
+      "everyXDays": {
+        "main": "Once every few days",
+        "prefix": "Every",
+        "suffix": "days",
+        "description": "Once every few days - show your popup to for every number of days you decide."
+      },
+      "everyXVisit": {
+        "main": "Once every few visits",
+        "prefix": "Every",
+        "suffix": "days",
+        "description": "Once every few visits - show your popup to for every number of visits you decide."
+      },
+      "everyVisit": {
+        "title": "Every Visit",
+        "description": "Show popup on every website visit"
+      },
+      "caption": "Frequency tracked per browser/device"
+    }
+  },
+  "pageTargeting": {
+    "title": "Page Targeting",
+    "subtitle": "Specify which pages should display the popup",
+    "addRule": "Add targeting rule",
+    "examples": {
+      "line1": "Examples: \"product\" matches /products/shoes, /category/products",
+      "line2": "\"checkout\" excludes all checkout pages"
+    },
+    "ruleTypes": {
+      "contains": "URL Contains",
+      "notContains": "URL Does Not Contain",
+      "equals": "URL Equals",
+      "startsWith": "URL Starts With",
+      "endsWith": "URL Ends With"
+    },
+    "delete": "Delete"
+  },
+  "advanceSettings": {
+    "postConversion": {
+      "title": "Post-Conversion Behavior",
+      "continueShowing": {
+        "label": "Continue showing popup after conversion",
+        "helper": "Keep displaying to visitors who already converted"
+      },
+      "defineConversion": {
+        "label": "Define conversion as",
+        "formSubmission": "Form Submission",
+        "buttonClick": "Button Click"
+      }
+    },
+    "headerSection": {
+      "title": "Advanced Settings",
+      "subtitle": "Configure post-conversion behavior and advanced options"
+    }
+  },
+  "summary": {
+    "title": "Popup Summary",
+    "triggers": "Triggers",
+    "pageTargeting": "Page Targeting",
+    "frequency": "Display Frequency",
+    "frequencyType": "Frequency Type",
+    "frequencyValue": "Frequency Value",
+    "audienceTarget": "Audience Target",
+    "visitorDays": "Visitor Days",
+    "continueAfterConversion": "Continue After Conversion",
+   "conversionType": "Conversion Type",
+    "exitIntent": "Exit Intent",
+    "pageCount": "Page Count",
+    "displayAfterVisiting": "Display after visiting",
+    "pages": "pages",
+    "timeDelay": "Time delay",
+    "displayAfter": "Display after",
+    "secsOnPage": "secs on the page",
+    "displayAfterScrolling": "Display after scrolling",
+    "onThePage": "on the page",
+    "clicksCount": "Clicks Count",
+    "clicksInPage": "Clicks in page"
+  }
+}

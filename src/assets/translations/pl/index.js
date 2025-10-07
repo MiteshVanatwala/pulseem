@@ -37,9 +37,11 @@ import billing from './Billing.json';
 import TermsOfUse from './TermsOfUse.json'
 import WhatsappOnBoarding from './WhatsappOnBoarding.json'
 import RemoveMyData from './RemoveMyData.json'
+import PopupTriggers from './PopupTriggers.json'
 import Popup from './Popup.json';
 
 export const pl = {
+	PopupTriggers,
 	automations,
 	campaigns,
 	notifications,

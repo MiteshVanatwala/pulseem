@@ -98,6 +98,9 @@ import { UserRoles } from './Models/SubUser/SubUsers';
 import { PulseemFeatures } from './model/PulseemFields/Fields';
 import RemoveMyData from './screens/RemoveMyData/RemoveMyData';
 import LinksClicksReport from './screens/Reports/LinksClicksReport/LinksClicksReport';
+import PopupTriggers from './screens/Popups/DisplayRules/PopupTriggers';
+import PopupSummary from './screens/Popups/PopupSummary';
+
 import BeeEditorPopup from './screens/Editors/BeeEditorPopup';
 
 const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
@@ -202,6 +205,10 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
       <Route
         path={`${sitePrefix}editor/:type/:id`}
         element={<BeeEditor classes={classes} />}
+      />
+      <Route
+        path={`${sitePrefix}Popups/DisplayRules/:id`}
+        element={<PopupTriggers classes={classes} />}
       />
       <Route
         path={`${sitePrefix}Campaigns/SendSettings/:id`}
@@ -373,6 +380,10 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
       <Route
         path={`${sitePrefix}LandingPages/summary/:id`}
         element={<WebformSummary classes={classes} />}
+      />
+      <Route
+        path={`${sitePrefix}landingPages/Popups/Summary/:id`}
+         element={<WebformSummary classes={classes} isPopup={true} />}
       />
       <Route
         path={`/Survey`}
@@ -551,6 +562,11 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
       <Route exact
         path={`${sitePrefix}whatsapp-onboarding`}
         element={<WhatsappOnBoarding classes={classes} />}
+      />
+      <Route
+        exact
+        path={`${sitePrefix}Popups/DisplayRules/:id`}
+        element={<PopupTriggers classes={classes} />}
       />
       {!userRoles?.HideRecipients && <Route
         exact
