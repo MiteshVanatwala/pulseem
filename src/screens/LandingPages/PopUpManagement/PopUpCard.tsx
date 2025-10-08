@@ -25,11 +25,7 @@ import { Page, togglePopupStatus } from '../../../../src/redux/reducers/popUpMan
 import clsx from 'clsx';
 import { Switch } from '../../../components/managment';
 import { sitePrefix } from '../../../config';
-
-interface DialogType {
-  type: 'delete';
-  data: string | number;
-}
+import { DialogType } from './PopUpManagement';
 
 interface PopUpCardProps {
   popup: Page;

@@ -490,6 +490,7 @@
     "createNew": "Utwórz nowe wyskakujące okienko",
     "cardView": "Widok karty",
     "tableView": "Widok tabeli",
+    "restorePopupTitle": "Wybierz wyskakujące okna, które chcesz przywrócić",
     "tableHeaders": {
       "title": "Tytuł",
       "url": "URL",

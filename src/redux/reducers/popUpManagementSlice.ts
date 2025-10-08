@@ -50,6 +50,7 @@ interface PopUpManagementState {
   currentPage: number;
   pagesLoading: boolean;
   pagesError: string | null;
+  deletedPopups: Page[];
 }
 
 // --- Initial State --- //
@@ -62,6 +63,7 @@ const initialState: PopUpManagementState = {
   currentPage: 1,
   pagesLoading: false,
   pagesError: null,
+  deletedPopups: [],
 };
 
 // --- Async Thunks --- //
@@ -128,6 +130,18 @@ export const deletePopup = createAsyncThunk<number, number>(
   }
 );
 
+export const getDeletedPopups = createAsyncThunk(
+  'popUpManagement/getDeletedPopups',
+  async (_, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.get('popup/GetDeletedPopups');
+      return response.data.Data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: (error as Error).message });
+    }
+  }
+);
+
 // --- Slice --- //
 const popUpManagementSlice = createSlice({
   name: 'popUpManagement',
@@ -172,10 +186,10 @@ const popUpManagementSlice = createSlice({
         const { ID, Status } = action.meta.arg;
         const index = state.pages.findIndex(p => p.ID === ID);
         if (index !== -1) {
-          if (Status === 2) { // 2 corresponds to 'Active'
+          if (Status === 2) {
             state.pages[index].StatusName = 'Active';
             state.pages[index].Status = 1;
-          } else { // 1 corresponds to 'Inactive'
+          } else {
             state.pages[index].StatusName = 'Inactive';
             state.pages[index].Status = 0;
           }
@@ -194,6 +208,18 @@ const popUpManagementSlice = createSlice({
         state.pages = state.pages.filter(p => p.ID !== action.payload);
       })
       .addCase(deletePopup.rejected, (state, action) => {
+        state.pagesLoading = false;
+        state.pagesError = (action.payload as { error: string }).error;
+      })
+      // Deleted Popups Reducers
+      .addCase(getDeletedPopups.pending, (state) => {
+        state.pagesLoading = true;
+      })
+      .addCase(getDeletedPopups.fulfilled, (state, action) => {
+        state.pagesLoading = false;
+        state.deletedPopups = action.payload;
+      })
+      .addCase(getDeletedPopups.rejected, (state, action) => {
         state.pagesLoading = false;
         state.pagesError = (action.payload as { error: string }).error;
       });

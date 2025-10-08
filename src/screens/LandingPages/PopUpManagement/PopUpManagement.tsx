@@ -22,15 +22,15 @@ import {
 import { ViewModule, ViewList, Add, Restore } from '@material-ui/icons';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
-import { getPerformanceStats, getPopupPages, Page, deletePopup } from '../../../../src/redux/reducers/popUpManagementSlice';
+import { getPerformanceStats, getPopupPages, Page, deletePopup, getDeletedPopups } from '../../../../src/redux/reducers/popUpManagementSlice';
+import { restoreLandingPages } from '../../../../src/redux/reducers/landingPagesSlice';
 import { Title } from '../../../components/managment/Title';
 import { Loader } from '../../../components/Loader/Loader';
 import Toast from '../../../components/Toast/Toast.component';
-import { ManagmentIcon, TablePagination } from '../../../components/managment/index';
+import { ManagmentIcon, TablePagination, RestorDialogContent } from '../../../components/managment/index';
 import PopUpCard from './PopUpCard';
 import StatCard from './StatCard';
 import { CopyIcon, DeleteIcon, DuplicateIcon, EditIcon, PreviewIcon, SettingIcon, ReportsIcon } from '../../../assets/images/managment';
-import { FaChartPie } from 'react-icons/fa';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { sitePrefix } from '../../../config';
 import { useNavigate } from 'react-router-dom';
@@ -44,9 +44,9 @@ interface ToastMessage {
   message: string;
 }
 
-interface DialogType {
-  type: 'delete';
-  data: string | number;
+export interface DialogType {
+  type: 'delete' | 'restore';
+  data: any;
 }
 
 const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
@@ -63,11 +63,13 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
     currentPage,
     pagesLoading,
     pagesError,
+    deletedPopups,
   } = useSelector((state: any) => state.popUpManagement);
 
   const [view, setView] = useState<'card' | 'table'>('card');
   const [toastMessage, setToastMessage] = useState<ToastMessage | null>(null);
   const [dialogType, setDialogType] = useState<DialogType | null>(null);
+  const [restoreArray, setRestoreArray] = useState<number[]>([]);
   const [filters, setFilters] = useState({
     SearchTerm: '',
     FilterStatus: 'All',
@@ -88,6 +90,7 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
   useEffect(() => {
     dispatch(getPerformanceStats());
     dispatch(getPopupPages(filters));
+    dispatch(getDeletedPopups());
   }, [dispatch, filters]);
 
   useEffect(() => {
@@ -121,6 +124,8 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
           variant="outlined"
           className={clsx(classes.btn, classes.btnRounded)}
           startIcon={<Restore />}
+          disabled={!deletedPopups || deletedPopups.length === 0}
+          onClick={() => setDialogType({ type: 'restore', data: deletedPopups })}
         >
           {t('campaigns.restoreDeleted')}
         </Button>
@@ -469,6 +474,44 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
     setDialogType(null);
   }
 
+  const handleChange = (id: number) => () => {
+    const found = restoreArray.includes(id);
+    if (found) {
+      setRestoreArray(restoreArray.filter(restore => restore !== id));
+    } else {
+      setRestoreArray([...restoreArray, id]);
+    }
+  }
+
+  const getRestorDialog = (data: Page[] = []) => {
+    if (!data || !Array.isArray(data)) return null;
+
+    return {
+      title: t('landingPages.popupManagement.restorePopupTitle'),
+      showDivider: false,
+      icon: (
+        <div className={clsx(classes.dialogIconContent, 'unicode')}>
+          {'\uE185'}
+        </div>
+      ),
+      content: (
+        <RestorDialogContent
+          classes={classes}
+          data={data as any}
+          currentChecked={restoreArray as any}
+          onChange={handleChange}
+          dataIdVar='ID'
+        />
+      ),
+      onConfirm: async () => {
+        handleClose();
+        await dispatch((restoreLandingPages as any)(restoreArray));
+        dispatch(getPopupPages(filters));
+        setRestoreArray([]);
+      }
+    }
+  }
+
   const getDeleteDialog = (data?: string | number) => ({
     title: t('landingPages.GridButtonColumnResource1.ConfirmTitle'),
     showDivider: false,
@@ -492,10 +535,12 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
 
     const { data, type } = dialogType;
     const dialogContent = {
-      delete: getDeleteDialog(data)
+      delete: getDeleteDialog(data),
+      restore: getRestorDialog(data)
     }
 
     const currentDialog = dialogContent[type];
+    if (!currentDialog) return null;
     return (
       <BaseDialog
         classes={classes}

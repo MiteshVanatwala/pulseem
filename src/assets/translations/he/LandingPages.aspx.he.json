@@ -490,6 +490,7 @@
     "createNew": "צור פופאפ חדש",
     "cardView": "תצוגת כרטיסים",
     "tableView": "תצוגת טבלה",
+    "restorePopupTitle": "בחר את החלונות הקופצים שברצונך לשחזר",
     "tableHeaders": {
       "title": "כותרת",
       "url": "כתובת",
