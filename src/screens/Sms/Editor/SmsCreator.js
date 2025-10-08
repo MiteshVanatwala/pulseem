@@ -296,8 +296,18 @@ const SmsCreator = ({ classes }) => {
       case 551:
         setDialogType({ type: "pendingApprovalDialog" });
         break;
-      case 927: {
-        // SMS_BASIC, SMS_CLICK_TRACKING
+      case 9271: {
+        setTierMessageCode('SMS_BASIC');
+        setDialogType({ type: 'tier' });
+        break;
+      }
+      case 9272: {
+        setTierMessageCode('SMS_CLICK_TRACKING');
+        setDialogType({ type: 'tier' });
+        break;
+      }
+      case 9272: {
+        setTierMessageCode('SITE_TRACKING');
         setDialogType({ type: 'tier' });
         break;
       }
@@ -1349,8 +1359,8 @@ const SmsCreator = ({ classes }) => {
         }
         case 927: {
           // Determine feature code from payload or context, fallback to 'SMS_BASIC' if not present
-          const featureCode = r.payload.FeatureCode || 'SMS_BASIC';
-          handleGetPlanForFeature(featureCode);
+          const featureCode = r.payload.Message || 'SMS_BASIC';
+          setTierMessageCode(featureCode);
           setDialogType({ type: 'tier' });
           break;
         }
@@ -1369,7 +1379,7 @@ const SmsCreator = ({ classes }) => {
     );
     
     if (planName) {
-      return t('billing.tier.featureNotAvailable').replace('{feature}', t(TierFeatures[tierMessageCode] || tierMessageCode)).replace('{planName}', planName);
+      return t('billing.tier.featureNotAvailable').replace('{feature}', tierMessageCode).replace('{planName}', planName);
     } else {
       return t('billing.tier.noFeatureAvailable');
     }
@@ -1487,6 +1497,9 @@ const SmsCreator = ({ classes }) => {
       }
       else if (r.payload.Status === 3) {
         setOTPOpen(true);
+      } else if (r.payload.Status === 927) {
+        setTierMessageCode(r.payload.Message);
+        setDialogType({ type: 'tier' });
       }
       else {
         setDialogType(null);
@@ -1521,6 +1534,11 @@ const SmsCreator = ({ classes }) => {
         else if (saveResponse.payload.Status === 2) {
           setDialogType(null);
           Redirect({ url: !!isFromAutomation ? getAutomationReturnUrl(id) : `${sitePrefix}SMSCampaigns` });
+        }
+        else if (saveResponse.payload.Status === 927) {
+          setTierMessageCode(saveResponse.payload.Message);
+          setDialogType({ type: 'tier' });
+          return;
         }
         else {
           setDialogType(null);

@@ -283,7 +283,7 @@ const SmsReport = ({ classes }) => {
     // Check for tier validation
     if (response?.payload === 927) {
       // SMS_REPORT
-      setTierMessageCode(response?.payload?.Message || 'SMS_REPORT');
+      setTierMessageCode('SMS_REPORT');
       setDialogType(getTierValidationDialog());
       setLoader(false);
       return;
@@ -1021,7 +1021,30 @@ const SmsReport = ({ classes }) => {
         content: RenderHtml(handleGetPlanForFeature(TierMessageCode)),
         onClose: () => setDialogType(null),
         onConfirm: () => setDialogType(null),
-        showDefaultButtons: false
+        showDefaultButtons: false,
+        renderButtons: () => (
+          <Grid container spacing={2} className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}>
+            <Grid item>
+              <Button
+                onClick={() => {
+                  setDialogType(null);
+                  setShowTierPlans(true);
+                }}
+                className={clsx(classes.btn, classes.btnRounded)}
+              >
+                {t('billing.upgradePlan')}
+              </Button>
+            </Grid>
+            <Grid item>
+              <Button
+                onClick={() => { setDialogType(null); }}
+                className={clsx(classes.btn, classes.btnRounded)}
+              >
+                {t('common.cancel')}
+              </Button>
+            </Grid>
+          </Grid>
+        )
       }
     }
     if (dialogContent[type]) {

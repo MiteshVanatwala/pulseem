@@ -1533,11 +1533,12 @@ const SmsSend = ({ classes, ...props }) => {
     let r = await dispatch(sendSms(payload))
     
     // Check for tier validation
-    if (r.payload.StatusCode === 927) {
-      setTierMessageCode('SMS_MARKETING');
-      setDialogType(getTierValidationDialog());
-      setLoader(false);
-      return;
+    if (r.payload.Result === 9271) {
+      setTierMessageCode('SMS_BASIC');
+    } else if (r.payload.Result === 9272) {
+      setTierMessageCode('SMS_CLICK_TRACKING');
+    } else if (r.payload.Result === 9273) {
+      setTierMessageCode('SITE_TRACKING');
     }
     
     handleSendResult(r.payload);
