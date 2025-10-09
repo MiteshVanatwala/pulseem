@@ -2,11 +2,19 @@ import React, { useState } from 'react';
 import { useLocation, useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Box, Typography, Grid, Button } from '@material-ui/core';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import clsx from 'clsx';
 import { sitePrefix } from '../../config';
 import { publish } from '../../redux/reducers/landingPagesSlice';
 import { Loader } from '../../components/Loader/Loader';
+import Toast from '../../components/Toast/Toast.component';
+
+interface ToastMessage {
+  severity?: 'error' | 'success' | 'info';
+  color?: 'error' | 'success' | 'info';
+  message: string;
+  showAnimtionCheck?: boolean;
+}
 
 const PopupSummary = ({ classes }: any) => {
   const { t } = useTranslation();
@@ -16,6 +24,25 @@ const PopupSummary = ({ classes }: any) => {
   const { id } = useParams();
   const { payload, lookupData } = location.state || {};
   const [loading, setLoader] = useState(false);
+  const [toastMessage, setToastMessage] = useState<ToastMessage | null>(null);
+
+  const showErrorToast = (message: string) => {
+    setToastMessage({
+      severity: 'error',
+      color: 'error',
+      message,
+      showAnimtionCheck: false
+    });
+  };
+
+  const showSuccessToast = (message: string) => {
+    setToastMessage({
+      severity: 'success',
+      color: 'success',
+      message,
+      showAnimtionCheck: true
+    });
+  };
 
   const handlePublish = async () => {
     if (!id) return;
@@ -26,10 +53,16 @@ const PopupSummary = ({ classes }: any) => {
       const response = await dispatch(publish(id));
       // @ts-ignore
       if (response?.payload?.StatusCode === 201) {
-        navigate(`${sitePrefix}LandingPages/PopUpManagement`);
+        showSuccessToast(t('common.publishSuccess') || 'Published successfully!');
+        setTimeout(() => {
+          navigate(`${sitePrefix}LandingPages/PopUpManagement`);
+        }, 1500);
+      } else {
+        showErrorToast(t('common.Error') || 'An error occurred');
       }
     } catch (error) {
       console.error('Error publishing:', error);
+      showErrorToast(t('common.Error') || 'An error occurred');
     } finally {
       setLoader(false);
     }
@@ -171,6 +204,16 @@ const PopupSummary = ({ classes }: any) => {
     );
   };
 
+  const renderToast = () => {
+    if (!toastMessage) return null;
+
+    setTimeout(() => {
+      setToastMessage(null);
+    }, 3000);
+
+    return <Toast customData={null} data={toastMessage} />;
+  };
+
   return (
     <React.Fragment>
       <Box style={{ padding: 25, maxWidth: 900, margin: '0 auto', borderTop: '1px solid #0000001f' }}>
@@ -207,11 +250,13 @@ const PopupSummary = ({ classes }: any) => {
           onClick={handlePublish}
           className={clsx(classes.btn, classes.btnRounded, classes.backButton)}
           style={{ margin: "8px" }}
+          disabled={loading}
         >
           {t("common.publish")}
         </Button>
       </Box>
       <Loader isOpen={loading} />
+      {toastMessage && renderToast()}
     </React.Fragment>
   );
 };

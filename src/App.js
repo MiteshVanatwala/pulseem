@@ -563,11 +563,6 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
         path={`${sitePrefix}whatsapp-onboarding`}
         element={<WhatsappOnBoarding classes={classes} />}
       />
-      <Route
-        exact
-        path={`${sitePrefix}Popups/DisplayRules/:id`}
-        element={<PopupTriggers classes={classes} />}
-      />
       {!userRoles?.HideRecipients && <Route
         exact
         path={`${sitePrefix}reports/Inbound`}
