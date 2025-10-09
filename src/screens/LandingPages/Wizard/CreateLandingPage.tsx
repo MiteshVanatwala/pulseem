@@ -111,7 +111,7 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 		PrefunImage: '',
 		HasComments: false,
 		PageUrl: '',
-		PageType: 1,
+		PageType: isPopup ? 5 : 1,
 		AnswerType: 1,
 		IsResponsive: true,
 		DownloadUrl: '',
