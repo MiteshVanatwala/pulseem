@@ -346,6 +346,8 @@
   "formProperties": "הגדרות טופס",
   "formName": "שם הטופס",
   "formNameRequired": "שם הטופס - שדה חובה",
+  "domainRequired": "נדרש דומיין",
+  "invalidDomain": "דומיין לא תקין",
   "formLanguage": "שפת הטופס",
   "autofillFields": "מילוי אוטומטי של שדות טופס",
   "autofillEditable": "אפשר עריכה של שדות שמולואו אוטומטית",

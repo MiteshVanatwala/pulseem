@@ -54,7 +54,7 @@ export interface LandingPageModel {
     autofillEditable?: boolean;
     TerminalNumber: string;
     APIUserName: string;
-    Domain?: string;
+    PopupDomains?: string[];
     DepartmentId: number | null;
     LinkPreviewTitle: string;
     LinkPreviewIcon: any;

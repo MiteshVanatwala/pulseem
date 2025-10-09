@@ -83,7 +83,8 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 		limitSubscribers: '',
 		emailId: '',
 		DepartmentId: '',
-		DownloadUrl: ''
+		DownloadUrl: '',
+		PopupDomains: '',
 	});
 	const [filesProperties, setFilesProperties] = useState<FileGallery[]>([]);
 	const [isGalleryConfirmed, setIsFileSelected] = useState(false);
@@ -126,7 +127,7 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 		IsAccessibility: true,
 		TerminalNumber: '',
 		APIUserName: '',
-		Domain: '',
+		PopupDomains: [],
 		DepartmentId: null,
 		LinkPreviewTitle: '',
 		LinkPreviewIcon: '',
@@ -204,7 +205,7 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 				HtmlFile: response.Data?.WebForm?.HtmlFile || '',
 				TerminalNumber: response.Data?.WebForm?.TerminalNumber || '',
 				APIUserName: response.Data?.WebForm?.APIUserName || '',
-				Domain: response.Data?.WebForm?.Domain || '',
+				PopupDomains: response.Data?.WebForm?.PopupDomains || [],
 				LinkPreviewTitle: response.Data?.WebForm?.LinkPreviewTitle || '',
 				LinkPreviewIconName: response.Data?.WebForm?.LinkPreviewIconName || '',
 				LinkPreviewDescription: response.Data?.WebForm?.LinkPreviewDescription || '',
@@ -545,11 +546,31 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 		return result as string;
 	}
 
+	const validateDomain = () => {
+		if (!isPopup) return '';
+
+		if (!landingPageModel.PopupDomains || !Array.isArray(landingPageModel.PopupDomains) || landingPageModel.PopupDomains.length === 0) {
+			return t('landingPages.domainRequired');
+		}
+
+		const domain = landingPageModel.PopupDomains[0]?.trim();
+		if (!domain) {
+			return t('landingPages.domainRequired');
+		}
+
+		if (!isValidHttpUrl(domain)) {
+			return t('landingPages.invalidDomain');
+		}
+
+		return '';
+	};
+
 	const save = async (editorType: EditorType) => {
 		const errorDump = {
 			...errors,
 			PageName: !landingPageModel.PageName?.trim() ? t('landingPages.formNameRequired') : '',
 			shortURL: !landingPageModel.PageUrl?.trim() ? t('landingPages.shortURLRequired') : '',
+			PopupDomains: validateDomain(),
 			answerMessage: [
 				LandingPagesAnswerType.POPUP_MESSAGE,
 				LandingPagesAnswerType.REDIRECT_URL
@@ -588,7 +609,9 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 					SelectedFields: landingPageModel.autofillFields,
 					IsEditable: landingPageModel.autofillEditable,
 					SubscriptionOptin: landingPageModel.SubscriptionOptin,
-				}
+				},
+				PageType: isPopup ? 5 : landingPageModel.PageType,
+				PopupDomains: isPopup && landingPageModel.PopupDomains && Array.isArray(landingPageModel.PopupDomains) && landingPageModel.PopupDomains.length > 0 ? landingPageModel.PopupDomains : null
 			};
 			//@ts-ignore
 			const response = await dispatch(saveLandingPage(req));

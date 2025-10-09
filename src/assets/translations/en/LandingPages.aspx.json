@@ -346,6 +346,8 @@
   "formProperties": "Form Properties",
   "formName": "Form Name",
   "formNameRequired": "Form Name is required",
+  "domainRequired": "Domain required",
+  "invalidDomain": "Invalid Domain",
   "formLanguage": "Form Language",
   "autofillFields": "Autofill form fields",
   "autofillEditable": "Enable editing for auto-filled recipient fields",

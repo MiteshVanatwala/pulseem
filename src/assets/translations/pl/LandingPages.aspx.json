@@ -346,6 +346,8 @@
   "formProperties": "Właściwości Formularza",
   "formName": "Nazwa Formularza",
   "formNameRequired": "Nazwa Formularza jest wymagana",
+  "domainRequired": "Wymagany jest domena",
+  "invalidDomain": "Nieprawidłowa domena",
   "formLanguage": "Język Formularza",
   "autofillFields": "Automatyczne wypełnianie pól",
   "autofillEditable": "Włącz edycję dla automatycznie wypełnianych pól odbiorcy",

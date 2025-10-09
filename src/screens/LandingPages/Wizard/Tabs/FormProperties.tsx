@@ -302,26 +302,34 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
         }
 
         {
-            isPopup ? <Grid item md={3} className={classes.w100}>
-                <Typography title={translator("landingPages.Domain")} className={classes.alignDir}>
-                    {translator("landingPages.Domain")}
-                </Typography>
-                <TextField
-                    label=""
-                    variant="outlined"
-                    value={data.Domain}
-                    className={clsx(classes.NoPaddingtextField, classes.textField, classes.w100, { [classes.textFieldError]: !!errors.Domain })}
-                    autoComplete="off"
-                    onChange={(e: any) => onUpdate({ ...data, Domain: e.target.value })}
-                    error={!!errors.Domain}
-                    title={data.Domain}
-                />
-                <Box className='textBoxWrapper'>
-                    <Typography className={clsx(errors.Domain ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
-                        {errors.Domain ?? errors.Domain}
+            isPopup ? (
+                <Grid item md={3} className={classes.w100}>
+                    <Typography title={translator("landingPages.Domain")} className={classes.alignDir}>
+                        {translator("landingPages.Domain")}
                     </Typography>
-                </Box>
-            </Grid> : null
+                    <TextField
+                        label=""
+                        variant="outlined"
+                        value={Array.isArray(data.PopupDomains) && data.PopupDomains.length > 0 ? data.PopupDomains[0] : ''}
+                        className={clsx(classes.NoPaddingtextField, classes.textField, classes.w100, { [classes.textFieldError]: !!errors.PopupDomains })}
+                        autoComplete="off"
+                        onChange={(e: any) => {
+                            onUpdate({ ...data, PopupDomains: e.target.value ? [e.target.value] : [] });
+                            if (errors.PopupDomains && e.target.value) {
+                                setErrors({ ...errors, PopupDomains: '' });
+                            }
+                        }}
+                        error={!!errors.PopupDomains}
+                        title={Array.isArray(data.PopupDomains) && data.PopupDomains.length > 0 ? data.PopupDomains[0] : ''}
+                        placeholder="https://example.com"
+                    />
+                    <Box className='textBoxWrapper'>
+                        <Typography className={clsx(errors.PopupDomains ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
+                            {errors.PopupDomains || ''}
+                        </Typography>
+                    </Box>
+                </Grid>
+            ) : null
         }
 
         {
