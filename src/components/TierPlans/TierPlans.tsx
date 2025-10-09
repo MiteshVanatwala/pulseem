@@ -182,7 +182,7 @@ const TierPlans = ({ classes, isOpen, onClose }: any) => {
                         </span>
                       )
                     }
-                    <Typography className={classes.tierPlansPrice}>
+                    <Typography className={classes.tierPlansPrice} style={{ fontSize: plan.Name === 'SCALE' || plan.Name === 'STARTER' ? '1.3rem': '', paddingTop: plan.Name === 'SCALE' || plan.Name === 'STARTER' ? '15px' : '' }}>
                       {plan.Name === 'STARTER' ? t('billing.tier.free') : ''}
                       {plan.Name === 'SCALE' ? t('billing.tier.contactSales') : ''}
                       {plan.Name !== 'STARTER' && plan.Name !== 'SCALE' && plan.Price > 0 ? plan.Price : ''}
@@ -201,9 +201,9 @@ const TierPlans = ({ classes, isOpen, onClose }: any) => {
                   <Typography className={classes.tierPlansSubtext}>
                     {t(uiConfig.subtext)}
                   </Typography>
-                  <Typography className={classes.tierPlansRecipientLimit}>
+                  {/* <Typography className={classes.tierPlansRecipientLimit}>
                     {t(uiConfig.recipientLimit)}
-                  </Typography>
+                  </Typography> */}
                   <Button
                     variant={uiConfig.buttonVariant as "outlined" | "contained"}
                     color="primary"

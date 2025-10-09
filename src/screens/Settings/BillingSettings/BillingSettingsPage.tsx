@@ -581,83 +581,89 @@ const BillingSettingsPage = ({ classes }: any) => {
         <Box className={'topSection'} style={{ marginTop: hasDebt && !isAdmin ? 100 : 37.870 }}>
           <Title Text={t('settings.billingSettings.pageTitle')} classes={classes} ContainerStyle={{ width: 'auto' }} />
           
-          {/* Your Plan Section */}
-          <Box className={classes.accordion}>
-            <Card className={clsx(classes.borderBox, classes.m10)} style={{ marginBottom: 0 }}>
-              <Box className={clsx(classes.dFlex, classes.spaceBetween, classes.alignItemsCenter)} style={{ marginBottom: '20px' }}>
-                <Typography variant="h6" style={{ fontSize: '18px', fontWeight: 600, color: '#333' }}>
-                  {t('billing.yourPlan')}
-                </Typography>
-                {
-                  currentPlan?.Name !== 'GRAND_FATHER' && (  
-                    <Box className={classes.dFlex} style={{ gap: '12px' }}>
-                      <Button
-                        className={clsx(
-                          classes.btn,
-                          classes.btnRounded
-                        )}
-                        onClick={(e: any) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          setCurrentDialog('creditCardDialog'); 
-                          setShowPopup(true);
-                        }}
-                      >
-                        {t('common.tier.manageCard')}
-                      </Button>
+          {
+            currentPlan?.Name !== 'GRAND_FATHER' && (  
+              <>
+                {/* Your Plan Section */}
+                <Box className={classes.accordion}>
+                  <Card className={clsx(classes.borderBox, classes.m10)} style={{ marginBottom: 0 }}>
+                    <Box className={clsx(classes.dFlex, classes.spaceBetween, classes.alignItemsCenter)} style={{ marginBottom: '20px' }}>
+                      <Typography variant="h6" style={{ fontSize: '18px', fontWeight: 600, color: '#333' }}>
+                        {t('billing.yourPlan')}
+                      </Typography>
                       {
-                        currentPlan?.Name !== 'SCALE' && (
-                          <Button
-                            className={clsx(classes.btn, classes.btnRounded)}
-                            onClick={(e: any) => { 
-                              e.preventDefault(); 
-                              e.stopPropagation(); 
-                              setShowTierPlans(true);
-                            }}
-                          >
-                            {t('billing.upgradePlan')}
-                          </Button>
-                        )
-                      }
-                      {
-                        currentPlan?.Name !== 'STARTER' && (
-                          <Button
-                            className={clsx(classes.btn, classes.btnRounded, classes.redButton)}
-                            onClick={(e: any) => { 
-                              e.preventDefault(); 
-                              e.stopPropagation(); 
-                              setConfirmCancelPlan(true);
-                            }}
-                          >
-                            {t('billing.cancelPlan')}
-                          </Button>
+                        currentPlan?.Name !== 'GRAND_FATHER' && (  
+                          <Box className={classes.dFlex} style={{ gap: '12px' }}>
+                            <Button
+                              className={clsx(
+                                classes.btn,
+                                classes.btnRounded
+                              )}
+                              onClick={(e: any) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                setCurrentDialog('creditCardDialog'); 
+                                setShowPopup(true);
+                              }}
+                            >
+                              {t('common.tier.manageCard')}
+                            </Button>
+                            {
+                              currentPlan?.Name !== 'SCALE' && (
+                                <Button
+                                  className={clsx(classes.btn, classes.btnRounded)}
+                                  onClick={(e: any) => { 
+                                    e.preventDefault(); 
+                                    e.stopPropagation(); 
+                                    setShowTierPlans(true);
+                                  }}
+                                >
+                                  {t('billing.upgradePlan')}
+                                </Button>
+                              )
+                            }
+                            {
+                              currentPlan?.Name !== 'STARTER' && (
+                                <Button
+                                  className={clsx(classes.btn, classes.btnRounded, classes.redButton)}
+                                  onClick={(e: any) => { 
+                                    e.preventDefault(); 
+                                    e.stopPropagation(); 
+                                    setConfirmCancelPlan(true);
+                                  }}
+                                >
+                                  {t('billing.cancelPlan')}
+                                </Button>
+                              )
+                            }
+                          </Box>
                         )
                       }
                     </Box>
-                  )
-                }
-              </Box>
-              
-              <Box className={classes.dFlex} style={{ alignItems: 'center', gap: '16px' }}>
-                <Box
-                  style={{
-                    backgroundColor: '#ff6b6b',
-                    color: 'white',
-                    padding: '6px 16px',
-                    borderRadius: '20px',
-                    fontSize: '14px',
-                    fontWeight: 600,
-                    textTransform: 'uppercase'
-                  }}
-                >
-                  {currentPlan?.Name || ''}
+                    
+                    <Box className={classes.dFlex} style={{ alignItems: 'center', gap: '16px' }}>
+                      <Box
+                        style={{
+                          backgroundColor: '#ff6b6b',
+                          color: 'white',
+                          padding: '6px 16px',
+                          borderRadius: '20px',
+                          fontSize: '14px',
+                          fontWeight: 600,
+                          textTransform: 'uppercase'
+                        }}
+                      >
+                        {currentPlan?.Name || ''}
+                      </Box>
+                      <Typography style={{ fontSize: '16px', color: '#666' }}>
+                        {formatPlanDescription()}
+                      </Typography>
+                    </Box>
+                  </Card>
                 </Box>
-                <Typography style={{ fontSize: '16px', color: '#666' }}>
-                  {formatPlanDescription()}
-                </Typography>
-              </Box>
-            </Card>
-          </Box>
+              </>
+            )
+          }
 
           <Box className={classes.accordion} style={{ padding: 15 }}>
             <Accordion expanded={openPanels.indexOf('1') > -1} onChange={() => handlePanels('1')} elevation={0}

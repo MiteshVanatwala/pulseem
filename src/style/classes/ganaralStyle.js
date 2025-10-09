@@ -4606,8 +4606,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   tierPlansPopularBadge: {
     position: 'absolute',
     top: 0,
-    left: '40%',
-    transform: 'translateX(-30%)',
+    left: '30%',
+    transform: 'translateX(-15%)',
     backgroundColor: '#e53935',
     color: 'white',
     padding: '4px 12px',
@@ -4618,9 +4618,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     lineHeight: '1.2'
   },
   tierPlansCardContent: {
-    flexGrow: 1,
     textAlign: 'center',
-    padding: '16px 0 !important'
+    padding: '16px 0 !important',
+    paddingBottom: '30px !important'
   },
   tierPlansTitle: {
     fontWeight: 'bold',
@@ -4636,6 +4636,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     justifyContent: 'center',
     alignItems: 'baseline',
     marginBottom: '8px',
+    minHeight: '70px',
   },
   tierPlansPrice: {
     fontSize: '2.5rem',
