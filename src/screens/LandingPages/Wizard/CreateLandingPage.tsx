@@ -248,7 +248,7 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 				AnswerType: 1,
 				IsResponsive: true,
 				IsTemplate: false,
-				PageType: 1,
+				PageType: isPopup ? 5 : 1,
 				DownloadUrl: '',
 				Status: 1,
 				GoogleAnalyticsCode: '',
