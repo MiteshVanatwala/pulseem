@@ -284,7 +284,9 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
           window.open(previewLink, '_blank');
         }
       },
-      { key: "edit", uIcon: EditIcon, lable: "Edit" },
+      { key: "edit", uIcon: EditIcon, lable: "Edit", onClick: () => {
+        navigate(`${sitePrefix}popupeditor/${id}`);
+      } },
       { key: "duplicate", uIcon: DuplicateIcon, lable: "Duplicate" },
       { key: "copy", uIcon: CopyIcon, lable: "Copy" },
       { key: "embed", uIcon: CopyIcon, lable: "Embed" },
