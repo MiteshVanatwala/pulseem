@@ -274,7 +274,14 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
     const iconsMap = [
       // { key: "survey", uIcon: FaChartPie, lable: "Survey" },
       // { key: "purchase", uIcon: ReportsIcon, lable: "Purchase" },
-      { key: "settings", uIcon: SettingIcon, lable: "Settings" },
+      {
+        key: "settings",
+        uIcon: SettingIcon,
+        lable: "Settings",
+        onClick: () => {
+          navigate(`${sitePrefix}Popups/Create/${id}`);
+        }
+      },
       {
         key: "preview",
         uIcon: PreviewIcon,
@@ -284,9 +291,11 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
           window.open(previewLink, '_blank');
         }
       },
-      { key: "edit", uIcon: EditIcon, lable: "Edit", onClick: () => {
-        navigate(`${sitePrefix}popupeditor/${id}`);
-      } },
+      {
+        key: "edit", uIcon: EditIcon, lable: "Edit", onClick: () => {
+          navigate(`${sitePrefix}popupeditor/${id}`);
+        }
+      },
       { key: "duplicate", uIcon: DuplicateIcon, lable: "Duplicate" },
       { key: "copy", uIcon: CopyIcon, lable: "Copy" },
       { key: "embed", uIcon: CopyIcon, lable: "Embed" },
