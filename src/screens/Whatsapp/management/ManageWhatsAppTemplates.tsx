@@ -87,6 +87,7 @@ import { TemplateErrorDialog } from '../../../components/TemplateErrorDialog/Tem
 import { DateFormats, TierFeatures } from '../../../helpers/Constants';
 import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
 import TierPlans from '../../../components/TierPlans/TierPlans';
+import { get } from 'lodash';
 
 const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 	const dispatch = useDispatch();
@@ -99,6 +100,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		(state: { whatsapp: { ToastMessages: toastProps } }) =>
 			state.whatsapp.ToastMessages
 	);
+	const { subAccount } = useSelector((state: any) => state.common);
 	const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
 	const [templateNameSearch, setTemplateNameSearch] = useState<string>('');
 	const [templateStatusSearch, setTemplateStatusSearch] = useState<string>('');
@@ -880,7 +882,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 			<Grid
 				container
 				spacing={2}
-				className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+				className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}
 			>
 				<Grid item>
 					<Button

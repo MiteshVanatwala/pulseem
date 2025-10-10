@@ -56,6 +56,7 @@ import { sitePrefix } from "../../../config";
 import { WhatsappCampaignStatus, WhatsAppPlatformIDEnum } from "../../../config/enum";
 import { errorToastData } from "../../Whatsapp/Constant";
 import TierPlans from "../../../components/TierPlans/TierPlans";
+import { get } from "lodash";
 
 function Alert(props) {
     return <MuiAlert elevation={0} variant="filled" {...props} />;
@@ -127,7 +128,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const severe = useSnackSevere();
     const recipientSuccess = useSnackRecipients();
     const { isRTL, userRoles } = useSelector((state) => state.core);
-    const { verifiedEmails, WhatsAppPlatformID } = useSelector(state => state.common);
+    const { verifiedEmails, WhatsAppPlatformID, subAccount } = useSelector(state => state.common);
     const { subAccountAllGroups } = useSelector((state) => state.group);
     const { previousCampaignData, testGroups } = useSelector((state) => state.sms);
     const { ToastMessages, newsletterSettings, newsletterSendSummary, newsletterInfo } = useSelector(state => state.newsletter);
@@ -997,7 +998,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             <Grid
                 container
                 spacing={2}
-                className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+                className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}
             >
                 <Grid item>
                     <Button

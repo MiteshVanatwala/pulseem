@@ -35,6 +35,7 @@ import queryString from 'query-string';
 import { LinksClicksReport } from '../../../config/enum';
 import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
 import TierPlans from '../../../components/TierPlans/TierPlans';
+import { get } from 'lodash';
 
 const SmsReport = ({ classes }) => {
   const priorDate = moment().subtract(30, 'days').utcOffset(0);
@@ -42,7 +43,7 @@ const SmsReport = ({ classes }) => {
   const navigate = useNavigate();
   const { state } = useLocation();
   const from = state?.from || "/";
-  const { accountFeatures, currencySymbol, isCurrencySymbolPrefix } = useSelector(state => state.common);
+  const { accountFeatures, currencySymbol, isCurrencySymbolPrefix, subAccount } = useSelector(state => state.common);
   const { language, windowSize, isRTL, userRoles } = useSelector(state => state.core)
   const { smsReport, smsGraph } = useSelector(state => state.sms)
   const { currentPlan, availablePlans } = useSelector(state => state.tiers)
@@ -93,7 +94,7 @@ const SmsReport = ({ classes }) => {
         </Typography>
       ),
       renderButtons: () => (
-        <Grid container spacing={2} className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}>
+        <Grid container spacing={2} className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}>
           <Grid item>
             <Button
               onClick={() => {
@@ -1023,7 +1024,7 @@ const SmsReport = ({ classes }) => {
         onConfirm: () => setDialogType(null),
         showDefaultButtons: false,
         renderButtons: () => (
-          <Grid container spacing={2} className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}>
+          <Grid container spacing={2} className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}>
             <Grid item>
               <Button
                 onClick={() => {

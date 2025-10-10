@@ -36,6 +36,7 @@ import EmojiPicker from '../../../components/Emojis/EmojiPicker';
 import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
 import TierPlans from '../../../components/TierPlans/TierPlans';
 import { TierFeatures } from '../../../helpers/Constants';
+import { get } from 'lodash';
 
 const useStylesBootstrap = makeStyles((theme) => ({
   arrow: {
@@ -62,6 +63,7 @@ const NotificationEdit = ({ classes }) => {
   const dispatch = useDispatch();
   const { language, isRTL, CoreToastMessages } = useSelector(state => state.core);
   const { currentPlan, availablePlans } = useSelector(state => state.tiers);
+  const { subAccount } = useSelector(state => state.common);
   const { t } = useTranslation();
   moment.locale(language);
   /* #endregion */
@@ -902,7 +904,7 @@ const NotificationEdit = ({ classes }) => {
       <Grid
           container
           spacing={2}
-          className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+          className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}
       >
           <Grid item>
               <Button

@@ -253,6 +253,7 @@
     "COUPON_MANAGEMENT": "ניהול קופונים",
     "WEBHOOKS": "Webhooks",
     "DYNAMIC_PRODUCTS": "מוצרים דינמיים",
+    "WHATSAPP_DYNAMIC_PRODUCTS": "מוצרים דינמיים",
     "CATALOG_INTEGRATION": "אינטגרציה לקטלוג מוצרים",
     "AMP_EMAIL": "AMP עבור אימייל",
     "CHATBOT": "צ'אטבוט SMS/וואטסאפ",
@@ -277,6 +278,7 @@
     "FLASH_SMS": "פלאש SMS",
     "MAIL2SMS": "מייל ל-SMS",
     "AI_LANDING_PAGE_DESIGNER": "מעצב דפי נחיתה מבוסס AI",
-    "RCS_MESSAGING": "הודעות RCS"
+    "RCS_MESSAGING": "הודעות RCS",
+    "KOSHER_SEND": "שליחת מוחזר"
   }
 }

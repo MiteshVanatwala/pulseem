@@ -65,6 +65,7 @@ import { LinksClicksReport } from '../../../config/enum';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
 import TierPlans from '../../../components/TierPlans/TierPlans';
+import { get } from 'lodash';
 
 const WhatsappReports = ({ classes }: ClassesType) => {
 	const { t: translator } = useTranslation();
@@ -73,7 +74,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 	const { isRTL, windowSize, rowsPerPage, userRoles } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
-	const { accountFeatures, currencySymbol, isCurrencySymbolPrefix } = useSelector(
+	const { accountFeatures, currencySymbol, isCurrencySymbolPrefix, subAccount } = useSelector(
 		(state: { common: CommonRedux }) => state.common
 	);
 	const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
@@ -129,7 +130,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 			<Grid
 				container
 				spacing={2}
-				className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+				className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}
 			>
 				<Grid item>
 					<Button
@@ -1081,7 +1082,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 					title={translator('billing.tier.permission')}
 					showDivider={false}
 					renderButtons={() => (
-            <Grid container spacing={2} className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}>
+            <Grid container spacing={2} className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}>
                 <Grid item>
                 <Button
                     onClick={() => {

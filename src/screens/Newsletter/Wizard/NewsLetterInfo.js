@@ -426,7 +426,7 @@ const NewsLetterInfo = ({ classes }) => {
                                     setCampaingnValues({ ...campaingnValues, CampaignID: saveInfo.CampaignID, FromEmail: obj.FromEmail, ReplyTo: obj.ReplyTo });
                                     const response = await dispatch(saveCampaignInfo({ ...campaingnValues, CampaignID: saveInfo.CampaignID, FromEmail: obj.FromEmail, ReplyTo: obj.ReplyTo, IsNewEditor: isNewEditor }));
                                     if (response.payload?.StatusCode === 927) {
-                                        setTierMessageCode('NEWSLETTER_AUTOMATION');
+                                        setTierMessageCode(response.payload?.Message);
                                         setDialogType({ type: "tier" })
                                     } else {
                                         if (isFromAutomation) {
@@ -674,7 +674,7 @@ const NewsLetterInfo = ({ classes }) => {
                 handleSubmitNewsletterResponse(savedCampaign, isExit, isNewEditor);
                 if (savedCampaign?.StatusCode === 403 || savedCampaign?.StatusCode === 451 || savedCampaign?.StatusCode === 927) {
                     if (savedCampaign?.StatusCode === 927) {
-                        setTierMessageCode('NEWSLETTER_AUTOMATION');
+                        setTierMessageCode(saveCampaign?.Message);
                     }
                     return false;
                 }
@@ -693,7 +693,7 @@ const NewsLetterInfo = ({ classes }) => {
                     }));
                     
                     if (saveCampaignResponse?.payload?.StatusCode === 927) {
-                        setTierMessageCode('NEWSLETTER_AUTOMATION');
+                        setTierMessageCode(saveCampaignResponse?.payload?.Message);
                         setDialogType({ type: "tier" });
                         return false;
                     }

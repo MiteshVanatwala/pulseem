@@ -23,12 +23,14 @@ import { Title } from '../../../components/managment/Title';
 import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
 import TierPlans from '../../../components/TierPlans/TierPlans';
 import { TierFeatures } from '../../../helpers/Constants';
+import { get } from 'lodash';
 
 const NotificationSend = ({ classes }) => {
     const { id } = useParams();
     const { t } = useTranslation();
     const Redirect = useRedirect();
     const { notificationGroups } = useSelector(state => state.notification)
+    const { subAccount } = useSelector(state => state.common);
     /* #region  Component settings constatns */
     const dispatch = useDispatch();
     const { language, isRTL, windowSize, userRoles } = useSelector(state => state.core);
@@ -618,7 +620,7 @@ const NotificationSend = ({ classes }) => {
             </Box>
         ),
         renderButtons: () => (
-            <Grid container spacing={2} className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}>
+            <Grid container spacing={2} className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}>
                 <Grid item>
                     <Button
                         onClick={() => {

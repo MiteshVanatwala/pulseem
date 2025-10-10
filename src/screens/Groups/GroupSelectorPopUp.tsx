@@ -11,6 +11,7 @@ import { DEFAULT_NEW_GROUP, TierFeatures } from "../../helpers/Constants";
 import { Autocomplete } from "@mui/material";
 import { findPlanByFeatureCode } from "../../redux/reducers/TiersSlice";
 import TierPlans from "../../components/TierPlans/TierPlans";
+import { get } from "lodash";
 
 interface GroupSelection {
     classes: any;
@@ -35,6 +36,7 @@ const GroupSelectorPopUp = ({
     const { subAccountAllGroups } = useSelector((state: any) => state.group);
     const { isRTL } = useSelector((state: any) => state.core);
     const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
+    const { subAccount } = useSelector((state: any) => state.common);
     const dispatch = useDispatch();
     const [showLoader, setShowLoader] = useState<boolean>(true);
     const [newSelection, setNewSelection] = useState<any[]>(selectedGroups)
@@ -188,7 +190,7 @@ const GroupSelectorPopUp = ({
             <Grid
                 container
                 spacing={2}
-                className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+                className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}
             >
                 <Grid item>
                     <Button

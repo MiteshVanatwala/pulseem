@@ -80,6 +80,7 @@ import ConfirmationButtons from '../../../components/ConfirmationButtons/Confirm
 import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
 import TierPlans from '../../../components/TierPlans/TierPlans';
 import { TierFeatures } from '../../../helpers/Constants';
+import { get } from 'lodash';
 
 const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	const { templateID } = useParams();
@@ -98,6 +99,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			state.whatsapp.ToastMessages
 	);
 	const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
+	const { subAccount } = useSelector((state: any) => state.common);
 	const [isAccountSetup, setIsAccountSetup] = useState<boolean | null>(null);
 	const [codeExpirationTime, setCodeExpirationTime] = useState<number | undefined>(0);
 	const [isLoader, setIsLoader] = useState<boolean>(true);
@@ -1278,7 +1280,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			<Grid
 				container
 				spacing={2}
-				className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+				className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}
 			>
 				<Grid item>
 					<Button

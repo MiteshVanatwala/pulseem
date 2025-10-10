@@ -36,6 +36,7 @@ import { ExportFile } from '../../../helpers/Export/ExportFile';
 import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
 import TierPlans from '../../../components/TierPlans/TierPlans';
 import { TierFeatures } from '../../../helpers/Constants';
+import { get } from 'lodash';
 
 const useStyles = makeStyles({
     pwdEveButton: {
@@ -67,7 +68,7 @@ const ApiSettings = ({ classes }: any) => {
     const dispatch = useDispatch();
     const { isRTL, windowSize } = useSelector((state: any) => state.core);
     const { ToastMessages } = useSelector((state: any) => state?.accountSettings);
-    const { accountFeatures } = useSelector((state: any) => state.common);
+    const { accountFeatures, subAccount } = useSelector((state: any) => state.common);
     const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
     const [toastMessage, setToastMessage] = useState(null);
     const [showLoader, setShowLoader] = useState(false);
@@ -116,7 +117,7 @@ const ApiSettings = ({ classes }: any) => {
                 </Typography>
             ),
             renderButtons: () => (
-                <Grid container spacing={2} className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}>
+                <Grid container spacing={2} className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}>
                     <Grid item>
                     <Button
                         onClick={() => {
@@ -560,7 +561,7 @@ const ApiSettings = ({ classes }: any) => {
                     showDefaultButtons={false}
                     title={t('billing.tier.permission')}
                     renderButtons={() => (
-                        <Grid container spacing={2} className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}>
+                        <Grid container spacing={2} className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}>
                             <Grid item>
                             <Button
                                 onClick={() => {

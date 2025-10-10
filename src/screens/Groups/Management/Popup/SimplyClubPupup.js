@@ -17,6 +17,7 @@ import { RenderHtml } from '../../../../helpers/Utils/HtmlUtils';
 import { logout } from '../../../../helpers/Api/PulseemReactAPI';
 import { findPlanByFeatureCode } from '../../../../redux/reducers/TiersSlice';
 import TierPlans from '../../../../components/TierPlans/TierPlans';
+import { get } from 'lodash';
 
 const useStyles = makeStyles({
     dialogContainer: {
@@ -77,6 +78,7 @@ const SimplyClubPupup = ({
 }) => {
     const { isRTL } = useSelector((state) => state.core);
     const { currentPlan, availablePlans } = useSelector((state) => state.tiers);
+    const { subAccount } = useSelector(state => state.common);
     const { t } = useTranslation();
     const dispatch = useDispatch()
     const localClasses = useStyles()
@@ -605,7 +607,7 @@ const SimplyClubPupup = ({
             <Grid
                 container
                 spacing={2}
-                className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+                className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}
             >
                 <Grid item>
                     <Button

@@ -19,13 +19,14 @@ import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
 import TierPlans from '../../../components/TierPlans/TierPlans';
 import { TierFeatures } from '../../../helpers/Constants';
+import { get } from 'lodash';
 
 const AmpRegistration = ({ classes }: any) => {
     const [showLoader, setShowLoader] = useState<boolean>(true);
     const [selectedEmail, setSelectedEmail] = useState<string[]>([]);
     const { t } = useTranslation();
     const dispatch = useDispatch();
-    const { verifiedEmails } = useSelector((state: StateType) => state.common);
+    const { verifiedEmails, subAccount } = useSelector((state: StateType) => state.common);
     const { isRTL } = useSelector((state: StateType) => state.core);
     const [showTierPlans, setShowTierPlans] = useState(false);
     const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
@@ -104,7 +105,7 @@ const AmpRegistration = ({ classes }: any) => {
             <Grid
                 container
                 spacing={2}
-                className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+                className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}
             >
                 <Grid item>
                     <Button

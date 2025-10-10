@@ -33,12 +33,14 @@ import useRedirect from '../../../helpers/Routes/Redirect';
 import { getLanguageCulture } from '../../../helpers/Utils/TextHelper';
 import TierPlans from '../../../components/TierPlans/TierPlans';
 import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
+import { get } from 'lodash';
 
 
 const AutomationsManagnentScreen = ({ classes }) => {
   const Redirect = useRedirect();
   const { language, windowSize, rowsPerPage, isRTL, userRoles } = useSelector(state => state.core)
   const { automationsData, automationsDeletedData } = useSelector(state => state.automations)
+  const { subAccount } = useSelector(state => state.common);
   const { t } = useTranslation()
   const [fromDate, handleFromDate] = useState(null);
   const [toDate, handleToDate] = useState(null)
@@ -813,7 +815,7 @@ const getTierValidationDialog = () => ({
         <Grid
             container
             spacing={2}
-            className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+            className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}
         >
             <Grid item>
                 <Button

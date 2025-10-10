@@ -80,6 +80,7 @@ import ConfirmationButtons from '../../../components/ConfirmationButtons/Confirm
 import { DateFormats, TierFeatures } from '../../../helpers/Constants';
 import Pulse from '../../../components/Pulse/Pulse';
 import TierPlans from '../../../components/TierPlans/TierPlans';
+import { get } from 'lodash';
 
 const SendCampaign = ({
 	classes,
@@ -104,7 +105,7 @@ const SendCampaign = ({
 			state.whatsapp.ToastMessages
 	);
 	const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
-
+	const { subAccount } = useSelector((state: any) => state.common);
 	const [showTestGroups, setShowTestGroups] = useState<boolean>(false);
 	const [selectedGroups, setSelectedGroups] = useState<testGroupDataProps[]>(
 		[]
@@ -982,7 +983,7 @@ const SendCampaign = ({
 			<Grid
 				container
 				spacing={2}
-				className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+				className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}
 			>
 				<Grid item>
 					<Button

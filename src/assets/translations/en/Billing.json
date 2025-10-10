@@ -253,6 +253,7 @@
     "COUPON_MANAGEMENT": "Coupon Management",
     "WEBHOOKS": "Webhooks",
     "DYNAMIC_PRODUCTS": "Dynamic Product Content",
+    "WHATSAPP_DYNAMIC_PRODUCTS": "Dynamic Product Content",
     "CATALOG_INTEGRATION": "Product Catalog Integration",
     "AMP_EMAIL": "AMP for Email",
     "CHATBOT": "SMS/WhatsApp Chatbot",
@@ -277,6 +278,7 @@
     "FLASH_SMS": "Flash SMS",
     "MAIL2SMS": "Mail to SMS",
     "AI_LANDING_PAGE_DESIGNER": "AI Landing Page Designer",
-    "RCS_MESSAGING": "RCS Messaging"
+    "RCS_MESSAGING": "RCS Messaging",
+    "KOSHER_SEND": "Kosher Send"
   }
 }

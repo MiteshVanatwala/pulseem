@@ -34,6 +34,7 @@ import { DateFormats, TierFeatures } from '../../../helpers/Constants';
 import TierPlans from '../../../components/TierPlans/TierPlans';
 import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
+import { get } from 'lodash';
 
 const EditDynamicGroup = ({ classes }: any) => {
     const dispatch: any = useDispatch();
@@ -42,6 +43,7 @@ const EditDynamicGroup = ({ classes }: any) => {
     const Redirect = useRedirect();
     const { subAccountAllGroups } = useSelector((state: any) => state.group);
     const { testGroups } = useSelector((state: any) => state.sms);
+    const { subAccount } = useSelector((state: any) => state.common);
     const [toastMessage, setToastMessage] = useState(null);
     const [showLoader, setLoader] = useState(true);
     const [showTierPlans, setShowTierPlans] = useState(false);
@@ -893,7 +895,7 @@ const EditDynamicGroup = ({ classes }: any) => {
 					title={t('billing.tier.permission')}
 					showDivider={false}
 					renderButtons={() => (
-                    <Grid container spacing={2} className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}>
+                    <Grid container spacing={2} className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}>
                         <Grid item>
                             <Button
                                 onClick={() => {

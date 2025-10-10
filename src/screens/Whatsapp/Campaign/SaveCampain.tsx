@@ -134,7 +134,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const { SubAccountSettings } = useSelector(
 		(state: { common: CommonRedux }) => state.common?.accountSettings
 	);
-	const { WhatsAppPlatformID, TierData } = useSelector(
+	const { WhatsAppPlatformID, TierData, subAccount } = useSelector(
 		(state: { common: CommonRedux }) => state.common
 	);
 	const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
@@ -1362,7 +1362,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			<Grid
 				container
 				spacing={2}
-				className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+				className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}
 			>
 				<Grid item>
 					<Button

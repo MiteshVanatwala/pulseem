@@ -90,6 +90,7 @@ import { BsTrash } from 'react-icons/bs';
 import ConfirmDeletePopUp from '../../Groups/Management/Popup/ConfirmDeletePopUp';
 import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
 import TierPlans from '../../../components/TierPlans/TierPlans';
+import { get } from 'lodash';
 
 const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const navigate = useNavigate();
@@ -102,6 +103,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			common: { accountSettings: { SubAccountSettings: SubAccountSettings } };
 		}) => state.common?.accountSettings?.SubAccountSettings
 	);
+	const { subAccount } = useSelector((state: any) => state.common);
 	const { isRTL, windowSize, isLoader = false } = useSelector((state: { core: coreProps }) => state.core);
 	const { agentList } = useSelector((state: StateType) => state.whatsapp);
 	const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
@@ -952,7 +954,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			<Grid
 				container
 				spacing={2}
-				className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+				className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}
 			>
 				<Grid item>
 					<Button

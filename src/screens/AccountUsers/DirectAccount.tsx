@@ -23,7 +23,7 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 	const { isRTL  } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
-	const { isGlobal, IsPoland } = useSelector((state: { common: CommonRedux }) => state.common);
+	const { isGlobal, IsPoland, subAccount } = useSelector((state: { common: CommonRedux }) => state.common);
 	const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
 	const [ isLoader, setIsLoader ] = useState<boolean>(false);
 	const [ toastMessage, setToastMessage ] = useState(null);
@@ -220,7 +220,7 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 			<Grid
 				container
 				spacing={2}
-				className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+				className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}
 			>
 				<Grid item>
 					<Button

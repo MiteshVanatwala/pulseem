@@ -37,6 +37,8 @@ import { logout } from '../../../helpers/Api/PulseemReactAPI';
 import Toast from '../../../components/Toast/Toast.component';
 import SubscriberGroup from './Tabs/SubscriberGroup';
 import TierPlans from '../../../components/TierPlans/TierPlans';
+import { UserRoles } from '../../../Models/SubUser/SubUsers';
+import { get } from 'lodash';
 
 const CreateLandingPage = ({ classes }: ClassesType) => {
 	const { id } = useParams();
@@ -55,7 +57,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 		type: string;
 	} | null>(null);
 	const { subAccountAllGroups } = useSelector((state: any) => state.group);
-	const { accountFeatures } = useSelector((state: any) => state.common);
+	const { accountFeatures, subAccount } = useSelector((state: any) => state.common);
 	const { ToastMessages } = useSelector((state: { landingPages: BeeEditorStoreModel }) => state.landingPages);
 	const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
 	const [showTierPlans, setShowTierPlans] = useState(false);
@@ -515,7 +517,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 			<Grid
 					container
 					spacing={2}
-					className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+					className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}
 			>
 					<Grid item>
 							<Button
@@ -689,7 +691,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 			}
 			case 927: {
 				// LANDING_PAGE_MANAGEMENT
-				setTierMessageCode('LANDING_PAGE_MANAGEMENT');
+				setTierMessageCode(response?.Message || 'LANDING_PAGE_MANAGEMENT');
 				setDialogType({ type: 'tier' });
 				break;
 			}

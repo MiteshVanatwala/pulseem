@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { debounce, includes } from 'lodash';
+import { debounce, get, includes } from 'lodash';
 import BeePlugin from '@mailupinc/bee-plugin'
 import { Box, Button, Grid, TextField, Typography } from '@material-ui/core'
 import { useRef, useState, useEffect } from 'react'
@@ -60,7 +60,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
 
   const { extraData, previousLandingData } = useSelector((state: { sms: SMSStoreProps }) => state.sms);
   const { language, isRTL, userRoles } = useSelector((state: StateType) => state.core);
-  const { tokenAlive, accountSettings, accountFeatures } = useSelector((state: { common: commonProps }) => state.common);
+  const { tokenAlive, accountSettings, accountFeatures, subAccount } = useSelector((state: { common: commonProps }) => state.common);
   const { landingPage, landingPageUserBlocks, ToastMessages, LPBeeToken, publicTemplates, templatesBySubAccount } = useSelector((state: { landingPages: BeeEditorStoreModel }) => state.landingPages)
   const [showLoader, setLoader] = useState(true);
   const [dataReady, setDataReady] = useState(false);
@@ -1169,7 +1169,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       <Grid
           container
           spacing={2}
-          className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+          className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}
       >
           <Grid item>
               <Button

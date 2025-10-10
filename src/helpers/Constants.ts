@@ -889,6 +889,7 @@ export const TierFeatures = {
   "COUPON_MANAGEMENT": "billing.featureNames.COUPON_MANAGEMENT",
   "WEBHOOKS": "billing.featureNames.WEBHOOKS",
   "DYNAMIC_PRODUCTS": "billing.featureNames.DYNAMIC_PRODUCTS",
+  "WHATSAPP_DYNAMIC_PRODUCTS": "billing.featureNames.WHATSAPP_DYNAMIC_PRODUCTS",
   "CATALOG_INTEGRATION": "billing.featureNames.CATALOG_INTEGRATION",
   "AMP_EMAIL": "billing.featureNames.AMP_EMAIL",
   "CHATBOT": "billing.featureNames.CHATBOT",
@@ -913,5 +914,6 @@ export const TierFeatures = {
   "FLASH_SMS": "billing.featureNames.FLASH_SMS",
   "MAIL2SMS": "billing.featureNames.MAIL2SMS",
   "AI_LANDING_PAGE_DESIGNER": "billing.featureNames.AI_LANDING_PAGE_DESIGNER",
-  "RCS_MESSAGING": "billing.featureNames.RCS_MESSAGING"
+  "RCS_MESSAGING": "billing.featureNames.RCS_MESSAGING",
+  "KOSHER_SEND": "billing.featureNames.KOSHER_SEND"
 }

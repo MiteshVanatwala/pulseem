@@ -28,6 +28,7 @@ import { RenderHtml } from "../../../../helpers/Utils/HtmlUtils";
 import { findPlanByFeatureCode } from "../../../../redux/reducers/TiersSlice";
 import TierPlans from "../../../../components/TierPlans/TierPlans";
 import { TierFeatures } from "../../../../helpers/Constants";
+import { get } from "lodash";
 
 const AddGroupPopUp = ({
     classes,
@@ -74,9 +75,10 @@ const AddGroupPopUp = ({
     const [showLoader, setLoader] = useState(false);
     const [dialogType, setDialogType] = useState(null);
     const [TierMessageCode, setTierMessageCode] = useState("");
-    const { isRTL } = useSelector((state) => state.core);
+    const { isRTL, userRoles } = useSelector((state) => state.core);
     const { CoreToastMessages, windowSize } = useSelector(state => state.core);
     const { currentPlan, availablePlans } = useSelector((state) => state.tiers);
+    const { subAccount } = useSelector(state => state.common);
 
     const handleAddGroup = async (data, callback) => {
         setSaveDisabled(true);
@@ -197,7 +199,7 @@ const AddGroupPopUp = ({
             <Grid
                 container
                 spacing={2}
-                className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+                className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}
             >
                 <Grid item>
                     <Button

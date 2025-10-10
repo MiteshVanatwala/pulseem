@@ -28,11 +28,13 @@ import SubUserChangePassword from './SubUserChangePassword';
 import { BiMailSend } from 'react-icons/bi';
 import { findPlanByFeatureCode } from '../../redux/reducers/TiersSlice';
 import TierPlans from '../../components/TierPlans/TierPlans';
+import { get } from 'lodash';
 
 const SubUsers = ({ classes }: any) => {
   const { language, windowSize, isRTL, rowsPerPage, userRoles, subUserName } = useSelector((state: any) => state.core);
   const { ToastMessages } = useSelector((state: any) => state?.subUser);
   const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
+  const { subAccount } = useSelector((state: any) => state.common);
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const [isSearching, setIsSearching] = useState<boolean>(false);
@@ -557,7 +559,7 @@ const SubUsers = ({ classes }: any) => {
       </Typography>
     ),
     renderButtons: () => (
-      <Grid container spacing={2} className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}>
+      <Grid container spacing={2} className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}>
           <Grid item>
               <Button
                   onClick={() => {

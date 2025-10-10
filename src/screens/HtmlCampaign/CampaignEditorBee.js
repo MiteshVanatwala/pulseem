@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { debounce } from 'lodash';
+import { debounce, get } from 'lodash';
 import BeePlugin from '@mailupinc/bee-plugin'
 import { Box, Button, Grid, Typography } from '@material-ui/core'
 import { useRef, useState, useEffect } from 'react'
@@ -84,7 +84,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   const { campaign, userBlocks, ToastMessages, beeToken, publicTemplates, templatesBySubAccount } = useSelector(state => state.campaignEditor);
   const { extraData, previousLandingData } = useSelector(state => state.sms);
   const { language, isRTL, userRoles } = useSelector(state => state.core)
-  const { tokenAlive, accountSettings, accountFeatures, verifiedEmails } = useSelector(state => state.common)
+  const { tokenAlive, accountSettings, accountFeatures, verifiedEmails, subAccount } = useSelector(state => state.common)
   const { productCategories } = useSelector(state => state.product);
   const { currentPlan, availablePlans } = useSelector((state) => state.tiers);
   const [dialog, setDialog] = useState(null);
@@ -1122,7 +1122,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       <Grid
           container
           spacing={2}
-          className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+          className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}
       >
           <Grid item>
               <Button

@@ -43,6 +43,7 @@ import { getCommonFeatures } from "../../../../redux/reducers/commonSlice";
 import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
 import { findPlanByFeatureCode } from "../../../../redux/reducers/TiersSlice";
 import TierPlans from "../../../../components/TierPlans/TierPlans";
+import { get } from "lodash";
 
 const WhatsappInbound = ({ classes }: any) => {
   const dispatch = useDispatch();
@@ -61,7 +62,7 @@ const WhatsappInbound = ({ classes }: any) => {
     (state: StateType) => state.core
   );
   const [showTierPlans, setShowTierPlans] = useState(false);
-  const { accountFeatures } = useSelector((state: any) => state.common);
+  const { accountFeatures, subAccount } = useSelector((state: any) => state.common);
   const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
 
   const rowStyle = {
@@ -106,43 +107,6 @@ const WhatsappInbound = ({ classes }: any) => {
         return t('billing.tier.noFeatureAvailable');
     }
   };
-
-  const getTierValidationDialog = () => ({
-    title: t('billing.tier.permission'),
-    showDivider: false,
-    content: (
-      <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
-        {handleGetPlanForFeature(TierMessageCode)}
-      </Typography>
-    ),
-    renderButtons: () => (
-      <Grid
-        container
-        spacing={2}
-        className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
-      >
-        <Grid item>
-          <Button
-            onClick={() => {
-              setDialog(null);
-              setShowTierPlans(true);
-            }}
-            className={clsx(classes.btn, classes.btnRounded)}
-          >
-            {t('billing.upgradePlan')}
-          </Button>
-        </Grid>
-        <Grid item>
-          <Button
-            onClick={() => setDialog(null)}
-            className={clsx(classes.btn, classes.btnRounded)}
-          >
-            {t('common.cancel')}
-          </Button>
-        </Grid>
-      </Grid>
-    )
-  });
 
   const getInboundData = async () => {
     setShowLoader(true);
@@ -496,7 +460,7 @@ const WhatsappInbound = ({ classes }: any) => {
           showDefaultButtons={false}
           title={t('billing.tier.permission')}
           renderButtons={() => (
-            <Grid container spacing={2} className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}>
+            <Grid container spacing={2} className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}>
                 <Grid item>
                 <Button
                     onClick={() => {

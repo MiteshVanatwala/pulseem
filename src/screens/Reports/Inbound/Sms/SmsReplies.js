@@ -26,6 +26,7 @@ import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
 import { RenderHtml } from '../../../../helpers/Utils/HtmlUtils';
 import { findPlanByFeatureCode } from '../../../../redux/reducers/TiersSlice';
 import TierPlans from '../../../../components/TierPlans/TierPlans';
+import { get } from 'lodash';
 
 
 const SmsReplies = ({ classes }) => {
@@ -45,7 +46,7 @@ const SmsReplies = ({ classes }) => {
     const { smsReplies, extraData, finishedCampaigns } = useSelector(state => state.sms);
     const { subAccountAllGroups } = useSelector((state) => state.group);
     const { windowSize, isRTL, rowsPerPage, userRoles } = useSelector(state => state.core);
-    const { accountFeatures } = useSelector(state => state.common);
+    const { accountFeatures, subAccount } = useSelector(state => state.common);
     const { currentPlan, availablePlans } = useSelector(state => state.tiers);
     const [showTierPlans, setShowTierPlans] = useState(false);
     const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot) }
@@ -408,7 +409,7 @@ const SmsReplies = ({ classes }) => {
                         showDefaultButtons={false}
                         title={t('billing.tier.permission')}
                         renderButtons={() => (
-                            <Grid container spacing={2} className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}>
+                            <Grid container spacing={2} className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}>
                                 <Grid item>
                                 <Button
                                     onClick={() => {

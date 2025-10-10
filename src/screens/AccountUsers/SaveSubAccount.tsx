@@ -33,7 +33,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 	const { windowSize, isRTL } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
-	const { isGlobal, countryCodeList, accountCurrencySymbol, accountIsCurrencySymbolPrefix, IsPoland } = useSelector((state: { common: CommonRedux }) => state.common);
+	const { isGlobal, countryCodeList, accountCurrencySymbol, accountIsCurrencySymbolPrefix, IsPoland, subAccount } = useSelector((state: { common: CommonRedux }) => state.common);
 	const { subAccountAllGroups } = useSelector((state: any) => state.group);
 	const { testGroups } = useSelector((state: any) => state.sms);
 	const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
@@ -378,7 +378,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 			<Grid
 				container
 				spacing={2}
-				className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+				className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}
 			>
 				<Grid item>
 					<Button

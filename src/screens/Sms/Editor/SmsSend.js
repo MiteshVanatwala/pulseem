@@ -60,6 +60,7 @@ import { WhiteLabelObject } from "../../../components/WhiteLabel/WhiteLabelMigra
 import Pulse from "../../../components/Pulse/Pulse";
 import TierPlans from "../../../components/TierPlans/TierPlans";
 import { TierFeatures } from "../../../helpers/Constants";
+import { get } from "lodash";
 
 function Alert(props) {
   return <MuiAlert elevation={0} variant='filled' {...props} />;
@@ -72,7 +73,7 @@ const SmsSend = ({ classes, ...props }) => {
   const Redirect = useRedirect();
   const { OTPPassed, ToastMessages, extraData, getCampaignSum, testGroups, finishedCampaigns } = useSelector((state) => state.sms);
   const { subAccountAllGroups } = useSelector((state) => state.group);
-  const { accountSettings } = useSelector((state) => state.common);
+  const { accountSettings, subAccount } = useSelector((state) => state.common);
   const { currentPlan, availablePlans } = useSelector((state) => state.tiers);
 
   const dispatch = useDispatch();
@@ -2476,7 +2477,7 @@ const SmsSend = ({ classes, ...props }) => {
       </Typography>
     ),
     renderButtons: () => (
-      <Grid container spacing={2} className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}>
+      <Grid container spacing={2} className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}>
           <Grid item>
               <Button
                   onClick={() => {

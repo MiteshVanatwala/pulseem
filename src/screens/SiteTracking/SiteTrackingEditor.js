@@ -27,11 +27,13 @@ import { SetRevenueFeature } from '../../redux/reducers/AccountSettingsSlice';
 import { findPlanByFeatureCode } from '../../redux/reducers/TiersSlice';
 import TierPlans from '../../components/TierPlans/TierPlans';
 import { TierFeatures } from '../../helpers/Constants';
+import { get as getLodash } from 'lodash';
 
 const SiteTrackingEditor = ({ classes }) => {
     const { isRTL, windowSize } = useSelector(state => state.core);
     const { ToastMessages, siteScript, event, purchaseEvent } = useSelector((state) => state.siteTracking);
     const { currentPlan, availablePlans } = useSelector((state) => state.tiers);
+    const { subAccount } = useSelector(state => state.common);
     const [showLoader, setShowLoader] = useState(true);
     const [toastMessage, setToastMessage] = useState(null);
     const [validationError, setValidationError] = useState([]);
@@ -73,7 +75,7 @@ const SiteTrackingEditor = ({ classes }) => {
                 </Typography>
             ),
             renderButtons: () => (
-                <Grid container spacing={2} className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}>
+                <Grid container spacing={2} className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !getLodash(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}>
                     <Grid item>
                         <Button
                             onClick={() => {
