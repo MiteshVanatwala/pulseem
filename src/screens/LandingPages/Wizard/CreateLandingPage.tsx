@@ -22,7 +22,7 @@ import { getGroupsBySubAccountId } from '../../../redux/reducers/groupSlice';
 import { BsInfoCircle } from 'react-icons/bs';
 import { getById, getAllLPTemplatesBySubaccountId, getLPPublicTemplates, saveLandingPage } from '../../../redux/reducers/landingPagesSlice';
 import { sitePrefix } from '../../../config';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { TabContext, TabPanel } from '@material-ui/lab';
 import FormProperties from './Tabs/FormProperties';
 import OfflineProperties from './Tabs/OfflineProperties';
@@ -38,6 +38,7 @@ import SubscriberGroup from './Tabs/SubscriberGroup';
 
 const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup?: boolean }) => {
 	const { id } = useParams();
+	const location = useLocation();
 	const queryParams = new URLSearchParams(window.location.search)
 	const isNew = queryParams.get("new")
 	const isFromAutomation = queryParams.get("FromAutomation")
@@ -164,6 +165,54 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 	const { publicTemplates, templatesBySubAccount } = useSelector(
 		(state: { landingPages: any }) => state.landingPages
 	);
+
+	useEffect(() => {
+		setIsLoader(false);
+		setDialogType(null);
+		setToastMessage(null);
+		setFilesProperties([]);
+		setIsFileSelected(false);
+		setEmailId('');
+		setTabValue('1');
+		setErrors({
+			PageName: '', formLanguage: '', shortURL: '', pageTitle: '',
+			answerMessage: '', paymentURL: '', paymentAPIUsername: '',
+			paymentTerminalNumber: '', offlineURL: '', pageDescription: '',
+			googleAnalytics: '', googleConvertion: '', googleTagManager: '',
+			facebookPixel: '', cssStyle: '', previewTitle: '', previewIcon: '',
+			previewDescription: '', seoPageTitle: '', seoKeywords: '',
+			seoDescription: '', reportLeadsToEmails: '', updateExistingRecipients: '',
+			limitSubscribers: '', emailId: '', DepartmentId: '', DownloadUrl: '',
+			PopupDomains: '',
+		});
+		setLandingPageModel({
+			ID: 0, GroupID: 0, GroupIDs: [], IsClientScript: false,
+			CmbSelection: '', HtmlFileName: '', ButtonText: '', PageName: '',
+			AnswerOption: '', autofillEnabled: false, autofillFields: [],
+			AnswerData: '', SubmitCounter: 0, ViewCounter: 0,
+			ConfirmationText: '', Status: 1, PageHtml: '',
+			HasPrefunpage: false, PrefunImage: '', HasComments: false,
+			PageUrl: '', PageType: isPopup ? 5 : 1, AnswerType: 1,
+			IsResponsive: true, DownloadUrl: '', OfflineDate: '',
+			OfflineUrl: '', HtmlToEdit: '', HtmlFile: '',
+			BaseLanguage: language === 'pl' ? 14 : language === 'he' ? 0 : 1,
+			IsTemplate: false, CategoryID: null, IsUpdate: false,
+			SubscriptionOptin: false, IsAccessibility: true,
+			TerminalNumber: '', APIUserName: '', PopupDomains: [],
+			DepartmentId: null, LinkPreviewTitle: '', LinkPreviewIcon: '',
+			LinkPreviewIconName: '', LinkPreviewDescription: '',
+			LinkPreviewIconExtrnalURL: '', IsPreviewIconFromExtrnalURL: false,
+			EmailsToReport: [], SplitRegistrations: false, DoubleOptin: false,
+			SubscriptionsLimit: null, Systems: [], FacebookPageID: '',
+			FacebookPrefunPage: false, FacebookPrefunImage: '',
+			FacebookComments: false, ClientJavaScript: '', ClientBodyScript: '',
+			ClientHtmlCode: '', ClientCssStyle: '', PageTitle: '',
+			MetaDescription: '', MetaKeywords: '', GoogleAnalyticsCode: '',
+			GoogleConvertionCode: '', GoogleTagManagerCode: '',
+			FacebookPixelCode: '', IsNewEditor: null,
+			WebformsToReportLeadByApi: null
+		});
+	}, [location.pathname, isPopup, language]);
 
 	enum EditorType {
 		SAVE_ONLY = 0,
