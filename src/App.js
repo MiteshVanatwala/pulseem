@@ -99,7 +99,6 @@ import { PulseemFeatures } from './model/PulseemFields/Fields';
 import RemoveMyData from './screens/RemoveMyData/RemoveMyData';
 import LinksClicksReport from './screens/Reports/LinksClicksReport/LinksClicksReport';
 import PopupTriggers from './screens/Popups/DisplayRules/PopupTriggers';
-import PopupSummary from './screens/Popups/PopupSummary';
 
 import BeeEditorPopup from './screens/Editors/BeeEditorPopup';
 

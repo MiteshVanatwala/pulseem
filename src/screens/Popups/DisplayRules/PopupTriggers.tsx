@@ -76,8 +76,7 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
   useEffect(() => {
     if (id) {
       dispatch(getPopupLookupData({ id: parseInt(id, 10) }));
-      // need to be set dynamic
-      dispatch(getPopupRulesById({ webFormId: 37185 }));
+      dispatch(getPopupRulesById({ webFormId: parseInt(id, 10) }));
     }
   }, [dispatch, id]);
 
@@ -219,10 +218,8 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
     }
 
     const payload = {
-      // need to be set dynamic
-      PopupId: 9,
-      // need to be set dynamic
-      WebformId: 37185,
+      PopupId: popupRules?.PopupId || parseInt(id!, 10),
+      WebformId: parseInt(id!, 10),
       PopupTriggers: popupTriggers,
       PopupPageTargeting: popupPageTargeting,
       PopupFrequency: {
@@ -287,7 +284,7 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
 
   const renderButtons = () => (
     <>
-      <Button onClick={() => navigate(`${sitePrefix}BeeEditor/landingpage/${id}`)} className={clsx(classes.btn, classes.btnRounded, classes.backButton)} style={{ margin: "8px" }}>{t("common.back")}</Button>
+      <Button onClick={() => navigate(`${sitePrefix}popupeditor/${id}`)} className={clsx(classes.btn, classes.btnRounded, classes.backButton)} style={{ margin: "8px" }}>{t("common.back")}</Button>
       <Button onClick={handleSummaryClick} variant="contained" size="medium" className={clsx(classes.btn, classes.btnRounded)} style={{ margin: "8px" }} disabled={upserting}>{t("common.summary")}</Button>
     </>
   );
