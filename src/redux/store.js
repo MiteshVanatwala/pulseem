@@ -33,7 +33,6 @@ import SubUserSlice from './reducers/SubUserSlice';
 import AiSlice from './reducers/AISlice';
 import linksClicksReportSlice from './reducers/linksClicksReportSlice';
 import aiChatReducer from './reducers/aiChatSlice';
-import linksClicksReportSlice from './reducers/linksClicksReportSlice';
 
 export default configureStore({
   reducer: {
