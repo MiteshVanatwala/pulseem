@@ -518,10 +518,9 @@
     "actions": {
       "settings": "Ustawienia",
       "preview": "Podgląd",
-      "editDesign": "Edytuj projekt",
       "duplicate": "Duplikuj",
-      "copySnippet": "Kopiuj fragment",
-      "delete": "Usuń"
+      "copyLink": "Skopiuj link",
+      "embed": "Osadź"
     }
   }
 }

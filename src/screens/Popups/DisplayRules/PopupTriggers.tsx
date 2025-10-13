@@ -218,7 +218,6 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
     }
 
     const payload = {
-      PopupId: popupRules?.PopupId || parseInt(id!, 10),
       WebformId: parseInt(id!, 10),
       PopupTriggers: popupTriggers,
       PopupPageTargeting: popupPageTargeting,

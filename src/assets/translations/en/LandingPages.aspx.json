@@ -518,10 +518,9 @@
     "actions": {
       "settings": "Settings",
       "preview": "Preview",
-      "editDesign": "Edit Design",
       "duplicate": "Duplicate",
-      "copySnippet": "Copy Snippet",
-      "delete": "Delete"
+      "copyLink": "Copy Link",
+      "embed": "Embed"
     }
   }
 }

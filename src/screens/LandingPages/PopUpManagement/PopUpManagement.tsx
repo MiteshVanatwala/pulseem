@@ -23,11 +23,11 @@ import { ViewModule, ViewList, Add, Restore } from '@material-ui/icons';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { getPerformanceStats, getPopupPages, Page, deletePopup, getDeletedPopups } from '../../../../src/redux/reducers/popUpManagementSlice';
-import { restoreLandingPages } from '../../../../src/redux/reducers/landingPagesSlice';
+import { restoreLandingPages, duplicteLandingPage, getPageHeight } from '../../../../src/redux/reducers/landingPagesSlice';
 import { Title } from '../../../components/managment/Title';
 import { Loader } from '../../../components/Loader/Loader';
 import Toast from '../../../components/Toast/Toast.component';
-import { ManagmentIcon, TablePagination, RestorDialogContent } from '../../../components/managment/index';
+import { ManagmentIcon, TablePagination, RestorDialogContent, PopMassage } from '../../../components/managment/index';
 import PopUpCard from './PopUpCard';
 import StatCard from './StatCard';
 import { CopyIcon, DeleteIcon, DuplicateIcon, EditIcon, PreviewIcon, SettingIcon, ReportsIcon } from '../../../assets/images/managment';
@@ -45,7 +45,7 @@ interface ToastMessage {
 }
 
 export interface DialogType {
-  type: 'delete' | 'restore';
+  type: 'delete' | 'restore' | 'duplicate';
   data: any;
 }
 
@@ -70,6 +70,9 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
   const [toastMessage, setToastMessage] = useState<ToastMessage | null>(null);
   const [dialogType, setDialogType] = useState<DialogType | null>(null);
   const [restoreArray, setRestoreArray] = useState<number[]>([]);
+  const [showCopied, setShowCopied] = useState<number | null>(null);
+  const [copyRef, setCopyRef] = useState<any>(null);
+  const [showLoader, setShowLoader] = useState(false);
   const [filters, setFilters] = useState({
     SearchTerm: '',
     FilterStatus: 'All',
@@ -268,16 +271,35 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
     );
   };
 
+  const getPopupUrl = (page: Page) => {
+    const domain = page.Domains && page.Domains.length > 0 ? page.Domains[0] : '';
+    return `${domain}?pulseem_popup=${page.PopupGuid}`;
+  };
+
+  const renderCopyToClipboard = (id: number) => {
+    return showCopied === id ? (
+      <PopMassage
+        classes={classes}
+        show={showCopied === id}
+        timeout={2000}
+        label={t('common.copyClip')}
+        innerRef={copyRef}
+      />
+    ) : null;
+  };
+
   const renderActionIcons = (page: Page) => {
     const id = page.ID;
-    const { PageUrl } = page as any;
+    const isActive = page.StatusName === 'Active';
+    const pageUrl = getPopupUrl(page);
+    const embedCode = `<script src="${pageUrl}" type="text/javascript"></script>`;
+    
     const iconsMap = [
-      // { key: "survey", uIcon: FaChartPie, lable: "Survey" },
-      // { key: "purchase", uIcon: ReportsIcon, lable: "Purchase" },
       {
-        key: "settings",
+        key: "Settings",
         uIcon: SettingIcon,
-        lable: "Settings",
+        lable: t('landingPages.popupManagement.actions.settings'),
+        rootClass: classes.paddingIcon,
         onClick: () => {
           navigate(`${sitePrefix}Popups/Create/${id}`);
         }
@@ -285,51 +307,121 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
       {
         key: "preview",
         uIcon: PreviewIcon,
-        lable: "Preview",
+        lable: t('landingPages.popupManagement.actions.preview'),
+        rootClass: classes.paddingIcon,
         onClick: () => {
           const previewLink = `${sitePrefix}previewer/popup/${id}`;
           window.open(previewLink, '_blank');
         }
       },
       {
-        key: "edit", uIcon: EditIcon, lable: "Edit", onClick: () => {
+        key: "edit", 
+        uIcon: EditIcon, 
+        lable: t('landingPages.EditResource1.HeaderText'),
+        rootClass: classes.paddingIcon,
+        onClick: () => {
           navigate(`${sitePrefix}popupeditor/${id}`);
         }
       },
-      { key: "duplicate", uIcon: DuplicateIcon, lable: "Duplicate" },
-      { key: "copy", uIcon: CopyIcon, lable: "Copy" },
-      { key: "embed", uIcon: CopyIcon, lable: "Embed" },
+      { 
+        key: "duplicate", 
+        uIcon: DuplicateIcon, 
+        lable: t('campaigns.lnkEditResource1.ToolTip'),
+        rootClass: classes.paddingIcon,
+        onClick: () => {
+          setDialogType({
+            type: 'duplicate',
+            data: id
+          });
+        }
+      },
+      { 
+        key: "copy", 
+        uIcon: CopyIcon, 
+        lable: t('landingPages.popupManagement.actions.copyLink'),
+        rootClass: classes.paddingIcon,
+        disable: !isActive,
+        type: 'copy',
+        text: pageUrl
+      },
+      { 
+        key: "embed", 
+        uIcon: CopyIcon, 
+        lable: t('landingPages.popupManagement.actions.embed'),
+        rootClass: classes.paddingIcon,
+        disable: !isActive,
+        type: 'embed',
+        text: embedCode
+      },
       {
         key: "delete",
         uIcon: DeleteIcon,
-        lable: "Delete",
+        lable: t('landingPages.GridButtonColumnResource1.HeaderText'),
+        rootClass: classes.paddingIcon,
         onClick: () => {
           setDialogType({
             type: 'delete',
             data: id
-          })
+          });
         }
       },
     ];
 
     return (
-      <Grid container justifyContent="center">
-        {iconsMap.map(icon => (
-          <Grid
-            className={clsx('rowIconContainer', classes.actionIconsContainer)}
-            key={icon.key}
-            item >
-            <ManagmentIcon
-              classes={classes}
-              {...icon}
-              icon={null}
-              uIcon={<icon.uIcon width={18} height={20} className={'rowIcon'} />}
-            />
-          </Grid>
-        ))}
+      <Grid container justifyContent="center" alignItems='center'>
+        {iconsMap.map(icon => {
+          const { onClick, type, text, uIcon: IconComponent, ...restProps } = icon;
+          const iconProps: any = {
+            ...restProps,
+            classes,
+            icon: null,
+            uIcon: <IconComponent width={18} height={20} className={'rowIcon'} />
+          };
+          if (type === 'copy') {
+            iconProps.onClick = (e: any) => {
+              if (isActive) {
+                navigator.clipboard.writeText(pageUrl);
+                setCopyRef(e.current);
+                setShowCopied(id);
+                setTimeout(() => {
+                  setShowCopied(null);
+                }, 1000);
+              }
+            };
+          } else if (type === 'embed') {
+            iconProps.onClick = async (e: any) => {
+              if (isActive) {
+                let iframe = embedCode;
+                // @ts-ignore
+                const res = await dispatch(getPageHeight(id));
+                if (res.payload?.StatusCode === 201) {
+                  const height = res.payload?.Data;
+                  iframe = iframe.replace('##pageHeight##', height);
+                }
+                navigator.clipboard.writeText(iframe);
+                setCopyRef(e.current);
+                setShowCopied(id);
+                setTimeout(() => {
+                  setShowCopied(null);
+                }, 1000);
+              }
+            };
+          } else if (onClick) {
+            iconProps.onClick = onClick;
+          }
+
+          return (
+            <Grid
+              className={clsx('rowIconContainer', classes.actionIconsContainer)}
+              key={icon.key}
+              item >
+              <ManagmentIcon {...iconProps} />
+              {(icon.key === 'copy' || icon.key === 'embed') && renderCopyToClipboard(id)}
+            </Grid>
+          );
+        })}
       </Grid>
     );
-
   }
 
   const renderDesktopTableRow = (page: Page) => {
@@ -337,7 +429,7 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
     const cellStyle = { head: classes.tableCellHead, body: classes.tableCellBody, root: classes.tableCellRoot };
 
     return (
-      <TableRow key={page.ID} classes={rowStyle} className={classes.tableBodyRow}>
+      <TableRow key={page.ID} classes={rowStyle} className={classes.p5}>
         <TableCell classes={cellStyle} className={clsx(classes.flex2)}>
           <Typography variant="h5" className={classes.f22}>
             {page.Name}
@@ -533,11 +625,33 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
     ),
     onConfirm: async () => {
       if (data) {
-        handleClose()
-        await dispatch(deletePopup(data as number))
+        handleClose();
+        await dispatch(deletePopup(data as number));
+        dispatch(getPopupPages(filters));
       }
     }
-  })
+  });
+
+  const getDuplicateDialog = (data?: string | number) => ({
+    title: t('landingPages.dialogDuplicateTitle'),
+    showDivider: false,
+    content: (
+      <Typography style={{ fontSize: 18 }}>
+        {t('landingPages.dialogDuplicateContent')}
+      </Typography>
+    ),
+    onConfirm: async () => {
+      if (data) {
+        handleClose();
+        setShowLoader(true);
+        // @ts-ignore
+        await dispatch(duplicteLandingPage(data));
+        await dispatch(getPopupPages(filters));
+        setShowLoader(false);
+        setToastMessage({ type: 'success', message: t('landingPages.duplicationSuccessful') });
+      }
+    }
+  });
 
   const renderDialog = () => {
     if (!dialogType) {
@@ -547,7 +661,8 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
     const { data, type } = dialogType;
     const dialogContent = {
       delete: getDeleteDialog(data),
-      restore: getRestorDialog(data)
+      restore: getRestorDialog(data),
+      duplicate: getDuplicateDialog(data)
     }
 
     const currentDialog = dialogContent[type];
@@ -586,7 +701,7 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
         page={filters.PageNumber}
         onPageChange={(p) => setFilters(prev => ({ ...prev, PageNumber: p }))}
       />
-      <Loader isOpen={statsLoading || pagesLoading} />
+      <Loader isOpen={statsLoading || pagesLoading || showLoader} />
       {renderToast()}
       {renderDialog()}
     </DefaultScreen>

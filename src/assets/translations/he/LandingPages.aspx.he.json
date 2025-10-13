@@ -518,10 +518,9 @@
     "actions": {
       "settings": "הגדרות",
       "preview": "תצוגה מקדימה",
-      "editDesign": "ערוך עיצוב",
       "duplicate": "שכפל",
-      "copySnippet": "העתק קטע קוד",
-      "delete": "מחק"
+      "copyLink": "העתק קישור",
+      "embed": "הטמע"
     }
   }
 }
