@@ -465,7 +465,7 @@ const NewsLetterInfo = ({ classes }) => {
                 break;
             }
             case 927: {
-                setTierMessageCode('NEWSLETTER_AUTOMATION');
+                setTierMessageCode(res.Message || 'NEWSLETTER_AUTOMATION');
                 setDialogType({ type: "tier" });
                 break;
             }

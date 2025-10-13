@@ -109,7 +109,7 @@ const SubUsers = ({ classes }: any) => {
     const response = await dispatch(save(subUserItem)) as any;
     switch (response?.payload?.StatusCode) {
       case 927: {
-        // USER_PERMISSIONS
+        setTierMessageCode(response?.payload?.Message || 'USER_PERMISSIONS');
         setDialogType({ type: 'tier', data: null });
         break;
       }
