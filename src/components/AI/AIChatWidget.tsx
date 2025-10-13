@@ -201,7 +201,7 @@ const AIChatWidget: React.FC = () => {
     const initializeChat = async () => {
       if (totalMessagesForUserCount === -1) await dispatch(loadSessionMessages());
       // Only auto-close if there are no messages at all (neither in API nor in local state)
-      if (totalMessagesForUserCount === 0 && messages.length === 0 && username) {
+      if (totalMessagesForUserCount === 0 && messages.length === 1 && username) {
         try {
           const hideAIChatDialog = localStorage.getItem('hideAIChatDialog');
           if (hideAIChatDialog !== 'true') {
