@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Paper, Box } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { StateType } from '../../Models/StateTypes';
-import { toggleChat, loadSessionMessages, setAIIconStatus } from '../../redux/reducers/aiChatSlice';
+import { toggleChat, loadSessionMessages, setAIIconStatus, openAIChat } from '../../redux/reducers/aiChatSlice';
 import ChatHeader from './ChatHeader';
 import MessageList from './MessageList';
 import InputArea from './InputArea';
@@ -204,8 +204,8 @@ const AIChatWidget: React.FC = () => {
       if (totalMessagesForUserCount === 0 && messages.length === 1 && username) {
         try {
           const hideAIChatDialog = localStorage.getItem('hideAIChatDialog');
-          if (hideAIChatDialog !== 'true') {
-            dispatch(toggleChat());
+          if (hideAIChatDialog !== 'true' && !isOpen) {
+            dispatch(openAIChat());
             // await dispatch(addMessage({
             //   MessageText: `${t("common.welcomeMessage").replace("{USERNAME}", username)}`,
             //   MessageTypeID: 1

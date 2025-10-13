@@ -42,6 +42,9 @@ const aiChatSlice = createSlice({
     toggleChat: (state) => {
       state.isOpen = !state.isOpen;
     },
+    openAIChat: (state) => {
+      state.isOpen = true;
+    },
     addUserMessage: (state, action: PayloadAction<any>) => {
       state.messages.push(action.payload);
     },
@@ -79,6 +82,6 @@ const aiChatSlice = createSlice({
   },
 });
 
-export const { toggleChat, setLoading, setAIIconStatus, addUserMessage } = aiChatSlice.actions;
+export const { openAIChat,toggleChat, setLoading, setAIIconStatus, addUserMessage } = aiChatSlice.actions;
 
 export default aiChatSlice.reducer;
