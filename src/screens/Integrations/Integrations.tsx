@@ -139,13 +139,17 @@ const Integrations = ({ classes }: any) => {
             className={classes.iconTab}
             value='10'
           />
-          <Tab
-            label={t('integrations.verifone.title')}
-            icon={<img src={VerifoneIcon} alt={t('integrations.verifone.title')} />}
-            classes={{ root: classes.tabText, selected: classes.activeTab }}
-            className={classes.iconTab}
-            value='14'
-          />
+          {
+            companyName === 'LizaD' && (
+              <Tab
+                label={t('integrations.verifone.title')}
+                icon={<img src={VerifoneIcon} alt={t('integrations.verifone.title')} />}
+                classes={{ root: classes.tabText, selected: classes.activeTab }}
+                className={classes.iconTab}
+                value='14'
+              />
+            )
+          }
         </Tabs>
         <TabContext value={`${tabValue}`}>
           <TabPanel value='0' className={clsx(classes.pt0)}>

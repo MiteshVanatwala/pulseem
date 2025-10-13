@@ -97,6 +97,8 @@ import { UserRoles } from './Models/SubUser/SubUsers';
 import { PulseemFeatures } from './model/PulseemFields/Fields';
 import RemoveMyData from './screens/RemoveMyData/RemoveMyData';
 import LinksClicksReport from './screens/Reports/LinksClicksReport/LinksClicksReport';
+import AIFloatingButton from './components/AI/AIFloatingButton';
+import AIChatWidget from './components/AI/AIChatWidget';
 
 const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
   const transferUrl =
@@ -836,6 +838,8 @@ const App = ({ screenSize }) => {
       <MuiThemeProvider theme={theme}>
         <div dir={isRTL ? 'rtl' : 'ltr'} className={classes.appBody}>
           {renderRoutesByCondition(classes, redirect)}
+          <AIFloatingButton />
+          <AIChatWidget />
         </div>
         <Loader isOpen={isLoader} showBackdrop={true} />
       </MuiThemeProvider>
