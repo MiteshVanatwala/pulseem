@@ -40,7 +40,7 @@ import { Loader } from '../Loader/Loader';
 const TierPlans = ({ classes, isOpen, onClose }: any) => {
   const { t, i18n } = useTranslation();
   const dispatch = useDispatch();
-  const [activeStep, setActiveStep] = useState(2);
+  const [activeStep, setActiveStep] = useState(0);
   const [selectedPlan, setSelectedPlan] = useState<any>(null);
   const [iframeURL, setIframeURL] = useState<string | null>(null);
   const [loadingIframe, setLoadingIframe] = useState(false);
