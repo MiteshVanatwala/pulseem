@@ -24,14 +24,21 @@ import { Title } from '../../components/managment/Title';
 import { InputAdornment } from '@mui/material';
 import { getCommonFeatures } from '../../redux/reducers/commonSlice';
 import { SetRevenueFeature } from '../../redux/reducers/AccountSettingsSlice';
+import { findPlanByFeatureCode } from '../../redux/reducers/TiersSlice';
+import TierPlans from '../../components/TierPlans/TierPlans';
+import { TierFeatures } from '../../helpers/Constants';
+import { get as getLodash } from 'lodash';
 
 const SiteTrackingEditor = ({ classes }) => {
     const { isRTL, windowSize } = useSelector(state => state.core);
     const { ToastMessages, siteScript, event, purchaseEvent } = useSelector((state) => state.siteTracking);
+    const { currentPlan, availablePlans } = useSelector((state) => state.tiers);
+    const { subAccount } = useSelector(state => state.common);
     const [showLoader, setShowLoader] = useState(true);
     const [toastMessage, setToastMessage] = useState(null);
     const [validationError, setValidationError] = useState([]);
     const [dialogType, setDialogType] = useState({ type: null });
+    const [TierMessageCode, setTierMessageCode] = useState("");
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const [copyStatus, setCopyStatus] = useState(false);
@@ -40,6 +47,58 @@ const SiteTrackingEditor = ({ classes }) => {
     const [isValidDomain, setIsValidDomain] = useState(null);
     const [showActions, setShowActions] = useState(true);
     const [purchaseToggleDisabled, setPurchaseToggleDisabled] = useState(false);
+    const [showTierPlans, setShowTierPlans] = useState(false);
+
+    const handleGetPlanForFeature = (tierMessageCode) => {
+        const planName = findPlanByFeatureCode(
+            tierMessageCode,
+            availablePlans,
+            currentPlan.Id
+        );
+
+        if (planName) {
+            return t('billing.tier.featureNotAvailable').replace('{feature}', t(TierFeatures[tierMessageCode] || tierMessageCode)).replace('{planName}', planName);
+        } else {
+            return t('billing.tier.noFeatureAvailable');
+        }
+    };
+
+    const getTierValidationDialog = () => {
+        return {
+            type: 'tier',
+            data: null,
+            title: t('billing.tier.permission'),
+            showDivider: false,
+            content: (
+                <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+                    {handleGetPlanForFeature(TierMessageCode)}
+                </Typography>
+            ),
+            renderButtons: () => (
+                <Grid container spacing={2} className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !getLodash(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}>
+                    <Grid item>
+                        <Button
+                            onClick={() => {
+                                setDialogType(null);
+                                setShowTierPlans(true);
+                            }}
+                            className={clsx(classes.btn, classes.btnRounded)}
+                        >
+                            {t('billing.upgradePlan')}
+                        </Button>
+                    </Grid>
+                    <Grid item>
+                        <Button
+                            onClick={() => { setDialogType(null); }}
+                            className={clsx(classes.btn, classes.btnRounded)}
+                        >
+                            {t('common.cancel')}
+                        </Button>
+                    </Grid>
+                </Grid>
+            )
+        };
+    };
 
     useEffect(() => {
         const getData = async () => {
@@ -116,7 +175,12 @@ const SiteTrackingEditor = ({ classes }) => {
                 request.id = response?.payload?.data?.id;
                 dispatch(setPurchase(request));
                 updateRevenueFeature(isEnable);                
-                await dispatch(setDomain({ DomainAddress: event?.domain }));
+                const setDomainResponse = await dispatch(setDomain({ DomainAddress: event?.domain }));
+                if (setDomainResponse.payload.Result !== 1) {
+                    onPulseemSaveReponse(setDomainResponse.payload);
+                    setPurchaseToggleDisabled(false);
+                    return;
+                }
             }
         }
         else {
@@ -176,6 +240,14 @@ const SiteTrackingEditor = ({ classes }) => {
         setShowLoader(false);
     }
     const onPulseemSaveReponse = (response) => {
+        // Check for StatusCode 927 (tier validation)
+        if (response.StatusCode === 927) {
+            // SITE_TRACKING
+            setTierMessageCode(response.Message);
+            setDialogType(getTierValidationDialog());
+            return;
+        }
+        
         switch (response.Result) {
             default:
             case -1: {
@@ -244,6 +316,7 @@ const SiteTrackingEditor = ({ classes }) => {
             dynamicMessage: renderDynamicDataDialog(t('common.ErrorTitle'), message),
             deleteEvent: renderDynamicDataDialog(t('siteTracking.deleteDialogTitle'), RenderHtml(t("siteTracking.deleteDialogMessage")), false, true, true),
             invalidDomain: renderDynamicDataDialog(t('common.ErrorTitle'), t('siteTracking.invalidDomainAddress')),
+            tier: getTierValidationDialog(),
         }
 
         const currentDialog = dialogContent[type] || {}
@@ -669,6 +742,11 @@ const SiteTrackingEditor = ({ classes }) => {
 
         </Box>
         <Loader isOpen={showLoader} />
+        {showTierPlans && <TierPlans
+            classes={classes}
+            isOpen={showTierPlans}
+            onClose={() => setShowTierPlans(false)}
+        />}
     </DefaultScreen>
 }
 

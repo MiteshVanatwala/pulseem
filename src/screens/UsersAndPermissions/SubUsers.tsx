@@ -11,7 +11,7 @@ import { toastProps } from '../Whatsapp/Editor/Types/WhatsappCreator.types';
 import { errorToastData, resetToastData } from '../Whatsapp/Constant';
 import Toast from '../../components/Toast/Toast.component';
 import { ManagmentIcon, TablePagination } from '../../components/managment';
-import { DateFormats, rowsOptions } from '../../helpers/Constants';
+import { DateFormats, rowsOptions, TierFeatures } from '../../helpers/Constants';
 import { setRowsPerPage } from '../../redux/reducers/coreSlice';
 import { DeleteIcon, EditIcon, PreviewIcon } from '../../assets/images/managment';
 import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
@@ -26,10 +26,15 @@ import PermissionList from './PermissionList';
 import { logout } from '../../helpers/Api/PulseemReactAPI';
 import SubUserChangePassword from './SubUserChangePassword';
 import { BiMailSend } from 'react-icons/bi';
+import { findPlanByFeatureCode } from '../../redux/reducers/TiersSlice';
+import TierPlans from '../../components/TierPlans/TierPlans';
+import { get } from 'lodash';
 
 const SubUsers = ({ classes }: any) => {
   const { language, windowSize, isRTL, rowsPerPage, userRoles, subUserName } = useSelector((state: any) => state.core);
   const { ToastMessages } = useSelector((state: any) => state?.subUser);
+  const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
+  const { subAccount } = useSelector((state: any) => state.common);
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const [isSearching, setIsSearching] = useState<boolean>(false);
@@ -50,7 +55,9 @@ const SubUsers = ({ classes }: any) => {
     type: string;
     data: any
   } | null>(null);
-  const [userList, setUserList] = useState<SubUserModel[]>()
+  const [showTierPlans, setShowTierPlans] = useState(false);
+  const [userList, setUserList] = useState<SubUserModel[]>();
+  const [TierMessageCode, setTierMessageCode] = useState<string>('');
   const rowStyle = { head: clsx(classes.tableRowHead, classes.pt10, classes.pb10), root: classes.tableRowRoot }
   const cellStyle = { head: clsx(classes.tableCellHead, classes.noPadding, classes.f16), body: classes.tableCellBody, root: clsx(classes.tableCellRoot, classes.p0) }
   const cellBodyStyle = { body: clsx(classes.tableCellBody, classes.f16), root: clsx(classes.tableCellRoot, classes.noPadding) }
@@ -101,6 +108,11 @@ const SubUsers = ({ classes }: any) => {
     setShowLoader(true);
     const response = await dispatch(save(subUserItem)) as any;
     switch (response?.payload?.StatusCode) {
+      case 927: {
+        setTierMessageCode(response?.payload?.Message || 'USER_PERMISSIONS');
+        setDialogType({ type: 'tier', data: null });
+        break;
+      }
       case 1: {
         setToastMessage(ToastMessages.NO_DATA_PROVIDED);
         break;
@@ -524,12 +536,61 @@ const SubUsers = ({ classes }: any) => {
     onCancel: () => setDialogType(null)
   })
 
+  const handleGetPlanForFeature = (tierMessageCode: string) => {
+    const planName = findPlanByFeatureCode(
+        tierMessageCode,
+        availablePlans,
+        currentPlan.Id
+    );
+    
+    if (planName) {
+      return t('billing.tier.featureNotAvailable').replace('{feature}', t(TierFeatures[tierMessageCode as keyof typeof TierFeatures] || tierMessageCode)).replace('{planName}', planName);
+    } else {
+      return t('billing.tier.noFeatureAvailable');
+    }
+  };
+
+  const getTierValidationDialog = () => ({
+    title: t('billing.tier.permission'),
+    showDivider: false,
+    content: (
+      <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+        {handleGetPlanForFeature(TierMessageCode)}
+      </Typography>
+    ),
+    renderButtons: () => (
+      <Grid container spacing={2} className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}>
+          <Grid item>
+              <Button
+                  onClick={() => {
+                      setDialogType(null);
+                      setShowTierPlans(true);
+                  }}
+                  className={clsx(classes.btn, classes.btnRounded)}
+              >
+                  {t('billing.upgradePlan')}
+              </Button>
+          </Grid>
+          <Grid item>
+              <Button
+                  onClick={() => { setDialogType(null); }}
+                  className={clsx(classes.btn, classes.btnRounded)}
+              >
+                  {t('common.cancel')}
+              </Button>
+          </Grid>
+      </Grid>
+  )
+  })
+
   const renderDialog = () => {
     const { type, data } = dialogType || {}
 
     let currentDialog: any = {};
     if (type === 'Delete') {
       currentDialog = getDeleteDialog(data);
+    } else if (type === 'tier') {
+      currentDialog = getTierValidationDialog();
     }
 
     if (type) {
@@ -600,6 +661,11 @@ const SubUsers = ({ classes }: any) => {
       />
       }
       <Loader isOpen={showLoader} zIndex={9999} />
+      {showTierPlans && <TierPlans
+        classes={classes}
+        isOpen={showTierPlans}
+        onClose={() => setShowTierPlans(false)}
+      />}
     </DefaultScreen>
   )
 }

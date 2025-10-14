@@ -9,6 +9,7 @@ import SimpleGrid from "../../../components/Grids/SimpleGrid";
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from "react-i18next";
 import { deleteCampaign, setVerificationDomain } from '../../../redux/reducers/newsletterSlice';
+import { findPlanByFeatureCode } from "../../../redux/reducers/TiersSlice";
 import { getCampaignInfo, saveCampaignInfo, getCreditsByFileTotalBytes } from '../../../redux/reducers/newsletterSlice';
 import Toast from '../../../components/Toast/Toast.component';
 import WizardActions from '../../../components/Wizard/WizardActions';
@@ -35,6 +36,8 @@ import DomainVerification from '../../../Shared/Dialogs/DomainVerification';
 import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 import { IsSharedDomain } from '../../../helpers/Functions/DomainVerificationHelper';
 import { IsValidEmail } from '../../../helpers/Utils/Validations';
+import TierPlans from '../../../components/TierPlans/TierPlans';
+import { TierFeatures } from '../../../helpers/Constants';
 
 const useStyles = makeStyles({
     iconbox: {
@@ -165,6 +168,7 @@ const NewsLetterInfo = ({ classes }) => {
     const [extraAccountDATA, setextraAccountDATA] = useState([]);
     const { verifiedEmails, accountSettings, accountFeatures, isGlobal, IsPoland } = useSelector(state => state.common);
     const { ToastMessages } = useSelector(state => state.newsletter);
+    const { currentPlan, availablePlans } = useSelector((state) => state.tiers);
     const [showGallery, setShowGallery] = useState(false);
     const [isGalleryConfirmed, setIsFileSelected] = useState(false);
     const [isSilenceUpdated, setIsSilenceUpdated] = useState(false);
@@ -185,6 +189,7 @@ const NewsLetterInfo = ({ classes }) => {
         showSkip: false
     });
     const isPolishAccount = IsPoland && isGlobal;
+    const [showTierPlans, setShowTierPlans] = useState(false);
 
     const navigate = useNavigate();
     const maxCharLimits = {
@@ -249,6 +254,7 @@ const NewsLetterInfo = ({ classes }) => {
     })
 
     const [selectedCheck, setSelectedCheck] = useState({ WebViewLocation: false, PrintLocation: false, UnsubscribeLocation: false, UpdateClient: false })
+    const [TierMessageCode, setTierMessageCode] = useState('');
     const [confirmDelete, setConfirmDelete] = useState(false)
     const [confirmExit, setConfirmExit] = useState(false)
     const [verPopupOpen, setVerPopupOpen] = useState(false)
@@ -418,14 +424,19 @@ const NewsLetterInfo = ({ classes }) => {
                             else {
                                 if (obj && obj.ReplyTo && obj.FromEmail) {
                                     setCampaingnValues({ ...campaingnValues, CampaignID: saveInfo.CampaignID, FromEmail: obj.FromEmail, ReplyTo: obj.ReplyTo });
-                                    await dispatch(saveCampaignInfo({ ...campaingnValues, CampaignID: saveInfo.CampaignID, FromEmail: obj.FromEmail, ReplyTo: obj.ReplyTo, IsNewEditor: isNewEditor }));
+                                    const response = await dispatch(saveCampaignInfo({ ...campaingnValues, CampaignID: saveInfo.CampaignID, FromEmail: obj.FromEmail, ReplyTo: obj.ReplyTo, IsNewEditor: isNewEditor }));
+                                    if (response.payload?.StatusCode === 927) {
+                                        setTierMessageCode(response.payload?.Message);
+                                        setDialogType({ type: "tier" })
+                                    } else {
+                                        if (isFromAutomation) {
+                                            navigate(`${sitePrefix}Campaigns/Create/${saveInfo.CampaignID}?new=${isNew}&FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`)
+                                        }
+                                        else {
+                                            navigate(`${sitePrefix}Campaigns/Create/${saveInfo.CampaignID}`)
+                                        }
+                                    }
 
-                                    if (isFromAutomation) {
-                                        navigate(`${sitePrefix}Campaigns/Create/${saveInfo.CampaignID}?new=${isNew}&FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`)
-                                    }
-                                    else {
-                                        navigate(`${sitePrefix}Campaigns/Create/${saveInfo.CampaignID}`)
-                                    }
                                 }
                             }
                             setShowDomainVerification(false);
@@ -451,6 +462,11 @@ const NewsLetterInfo = ({ classes }) => {
             }
             case 500: {
                 setToastMessage(ToastMessages.GENERAL_ERROR)
+                break;
+            }
+            case 927: {
+                setTierMessageCode(res.Message || 'NEWSLETTER_AUTOMATION');
+                setDialogType({ type: "tier" });
                 break;
             }
             default: {
@@ -655,22 +671,32 @@ const NewsLetterInfo = ({ classes }) => {
                 setLoader(false);
 
                 const savedCampaign = response.payload;
+                handleSubmitNewsletterResponse(savedCampaign, isExit, isNewEditor);
+                if (savedCampaign?.StatusCode === 403 || savedCampaign?.StatusCode === 451 || savedCampaign?.StatusCode === 927) {
+                    if (savedCampaign?.StatusCode === 927) {
+                        setTierMessageCode(saveCampaign?.Message);
+                    }
+                    return false;
+                }
+                
                 const saveInfo = JSON.parse(savedCampaign.Message);
                 setCampaingnValues({ ...campaingnValues, CampaignID: saveInfo?.CampaignID });
 
-                handleSubmitNewsletterResponse(savedCampaign, isExit, isNewEditor);
 
-                if (savedCampaign?.StatusCode === 403 || savedCampaign?.StatusCode === 451) {
-                    return false;
-                }
 
                 if (template?.Html && template?.JsonData) {
-                    await dispatch(saveCampaign({
+                    const saveCampaignResponse = await dispatch(saveCampaign({
                         Name: campaingnValues.Name,
                         campaignId: saveInfo.CampaignID,
                         JsonData: template?.JsonData,
                         HTML: template?.Html
                     }));
+                    
+                    if (saveCampaignResponse?.payload?.StatusCode === 927) {
+                        setTierMessageCode(saveCampaignResponse?.payload?.Message);
+                        setDialogType({ type: "tier" });
+                        return false;
+                    }
                 }
 
 
@@ -1287,6 +1313,61 @@ const NewsLetterInfo = ({ classes }) => {
         }
     }
 
+    const handleGetPlanForFeature = (tierMessageCode) => {
+        const planName = findPlanByFeatureCode(
+                tierMessageCode,
+                availablePlans,
+                currentPlan.Id
+        );
+        
+        if (planName) {
+            return t('billing.tier.featureNotAvailable').replace('{feature}', t(TierFeatures[tierMessageCode] || tierMessageCode)).replace('{planName}', planName);
+        } else {
+                return t('billing.tier.noFeatureAvailable');
+        }
+    };
+
+    const getTierValidationDialog = () => ({
+        title: t('billing.tier.permission'),
+        showDivider: false,
+        content: (
+            <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+                {handleGetPlanForFeature(TierMessageCode)}
+            </Typography>
+        ),
+        renderButtons: () => (
+            <Grid
+                container
+                spacing={2}
+                className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+            >
+                <Grid item>
+                    <Button
+                        onClick={() => { 
+                            setDialogType(null);
+                            setShowTierPlans(true);
+                        }}
+                        className={clsx(
+                            classes.btn,
+                            classes.btnRounded
+                        )}>
+                        {t('billing.upgradePlan')}
+                    </Button>
+                </Grid>
+                <Grid item>
+                    <Button
+                        onClick={() => { setDialogType(null) }}
+                        className={clsx(
+                            classes.btn,
+                            classes.btnRounded
+                        )}>
+                        {t('common.cancel')}
+                    </Button>
+                </Grid>
+            </Grid>
+        )
+    })
+
 
     const renderDialog = () => {
         const { data, type } = dialogType || {}
@@ -1294,6 +1375,7 @@ const NewsLetterInfo = ({ classes }) => {
         const dialogContent = {
             cautionNewEditor: getCautionNewEditorDialog(data),
             cautionOldEditor: getCautionOldEditorDialog(data),
+            tier: getTierValidationDialog(data),
         }
 
         const currentDialog = dialogContent[type] || {}
@@ -1447,6 +1529,11 @@ const NewsLetterInfo = ({ classes }) => {
             {renderDialog()}
             {showGalleryModal()}
             {renderToast()}
+            {showTierPlans && <TierPlans
+                classes={classes}
+                isOpen={showTierPlans}
+                onClose={() => setShowTierPlans(false)}
+            />}
         </DefaultScreen>
     )
 }

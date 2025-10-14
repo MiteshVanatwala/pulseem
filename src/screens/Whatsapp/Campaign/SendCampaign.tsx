@@ -1,6 +1,6 @@
 import { ClassesType } from '../../Classes.types';
 import DefaultScreen from '../../DefaultScreen';
-import { Grid, Box, Typography } from '@material-ui/core';
+import { Grid, Box, Typography, Button } from '@material-ui/core';
 import {
 	APICreateGroupData,
 	ApiCreateGroupPayload,
@@ -68,6 +68,7 @@ import {
 	toastProps,
 } from '../Editor/Types/WhatsappCreator.types';
 import { useNavigate, useParams } from 'react-router-dom';
+import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
 import SendCampaignSuccess from './Popups/SendCampaignSuccess';
 import NoSetup from '../NoSetup/NoSetup';
 import { specialDateDropDownPayload } from './Types/WhatsappCampaign.types';
@@ -76,8 +77,10 @@ import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { sitePrefix } from '../../../config';
 import { SelectChangeEvent, Stack } from '@mui/material';
 import ConfirmationButtons from '../../../components/ConfirmationButtons/ConfirmationButtons';
-import { DateFormats } from '../../../helpers/Constants';
+import { DateFormats, TierFeatures } from '../../../helpers/Constants';
 import Pulse from '../../../components/Pulse/Pulse';
+import TierPlans from '../../../components/TierPlans/TierPlans';
+import { get } from 'lodash';
 
 const SendCampaign = ({
 	classes,
@@ -101,7 +104,8 @@ const SendCampaign = ({
 		(state: { whatsapp: { ToastMessages: toastProps } }) =>
 			state.whatsapp.ToastMessages
 	);
-
+	const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
+	const { subAccount } = useSelector((state: any) => state.common);
 	const [showTestGroups, setShowTestGroups] = useState<boolean>(false);
 	const [selectedGroups, setSelectedGroups] = useState<testGroupDataProps[]>(
 		[]
@@ -133,6 +137,7 @@ const SendCampaign = ({
 	const [isAccountSetup, setIsAccountSetup] = useState<boolean | null>(null);
 	const [isLoader, setIsLoader] = useState<boolean>(true);
 	const [isCreateNewGroup, setIsCreateNewGroup] = useState<boolean>(false);
+	const [TierMessageCode, setTierMessageCode] = useState<string>("");
 
 	const [allGroupList, setAllGroupList] = useState<testGroupDataProps[]>([]);
 	const [exceptionalDaysToggle, setExceptionalDaysToggle] =
@@ -151,6 +156,7 @@ const SendCampaign = ({
 		type: '',
 		data: ''
 	});
+	const [showTierPlans, setShowTierPlans] = useState(false);
 	
 	const [ pulseData, setPulseData ] = useState({
 		pulseSettingsId: 0,
@@ -790,7 +796,12 @@ const SendCampaign = ({
 			const { payload: sendCampaignData }: ApiSendCampaign =
 				await dispatch<any>(sendCampaign(sendCampaignPayload));
 			setIsLoader(false);
-			if (sendCampaignData?.Status === apiStatus.SUCCESS) {
+			if (sendCampaignData?.StatusCode === 927) {
+				// WHATSAPP_CAMPAIGN_SEND, FILE_ATTACHMENT
+				setTierMessageCode(sendCampaignData?.Message);
+				setDialogType({ type: 'tier' })
+			}
+			else if (sendCampaignData?.Status === apiStatus.SUCCESS) {
 				setDialogType({
 					type: 'sendCampaignSuccess'
 				});
@@ -946,6 +957,57 @@ const SendCampaign = ({
 		}
 	})
 
+	const handleGetPlanForFeature = (tierMessageCode: string) => {
+		const planName = findPlanByFeatureCode(
+			tierMessageCode,
+			availablePlans,
+			currentPlan.Id
+		);
+		
+		if (planName) {
+			return translator('billing.tier.featureNotAvailable').replace('{feature}', translator(TierFeatures[tierMessageCode as keyof typeof TierFeatures] || tierMessageCode)).replace('{planName}', planName);
+		} else {
+			return translator('billing.tier.noFeatureAvailable');
+		}
+	};
+
+	const getTierValidationDialog = () => ({
+		title: translator('billing.tier.permission'),
+		showDivider: false,
+		content: (
+			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+				{handleGetPlanForFeature(TierMessageCode)}
+			</Typography>
+		),
+		renderButtons: () => (
+			<Grid
+				container
+				spacing={2}
+				className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}
+			>
+				<Grid item>
+					<Button
+						onClick={() => {
+						setDialogType({});
+						setShowTierPlans(true);
+					}}
+					className={clsx(classes.btn, classes.btnRounded)}
+					>
+						{translator('billing.upgradePlan')}
+					</Button>
+				</Grid>
+				<Grid item>
+					<Button
+						onClick={() => setDialogType({})}
+						className={clsx(classes.btn, classes.btnRounded)}
+					>
+						{translator('common.cancel')}
+					</Button>
+				</Grid>
+			</Grid>
+		)
+	})
+
 	const renderDialog = () => {
 		const { type } = dialogType || {}
 		let currentDialog: any = {};
@@ -961,6 +1023,8 @@ const SendCampaign = ({
 			currentDialog = getSummary();
 		} else if (type === 'sendCampaignSuccess') {
 			currentDialog = getSendCampaignSuccess();
+		} else if (type === 'tier') {
+			currentDialog = getTierValidationDialog();
 		}
 
 		if (type) {
@@ -1148,6 +1212,11 @@ const SendCampaign = ({
           }}
         />
       }
+			{showTierPlans && <TierPlans
+					classes={classes}
+					isOpen={showTierPlans}
+					onClose={() => setShowTierPlans(false)}
+			/>}
 		</DefaultScreen>
 	);
 };

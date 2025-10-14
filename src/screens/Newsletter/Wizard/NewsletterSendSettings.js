@@ -3,6 +3,7 @@ import { IconButton, Tooltip, Typography } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import DefaultScreen from "../../DefaultScreen";
 import { useDispatch, useSelector } from "react-redux";
+import { findPlanByFeatureCode } from "../../../redux/reducers/TiersSlice";
 import { makeStyles } from "@material-ui/core/styles";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
@@ -36,7 +37,7 @@ import SegmentationDialog from "./Popups/SegmentationDialog";
 import SmsMarketingDialog from "./Popups/SmsMarketingDialog";
 // import { sendToTeamChannel } from "../../../redux/reducers/ConnectorsSlice";
 import UploadXL from '../../../components/Files/UploadXL'
-import { UploadSettings } from "../../../helpers/Constants";
+import { TierFeatures, UploadSettings } from "../../../helpers/Constants";
 import { FaRegCalendarAlt } from "react-icons/fa";
 import Badge from '@material-ui/core/Badge';
 import moment from 'moment';
@@ -54,6 +55,8 @@ import { IsSharedDomain } from "../../../helpers/Functions/DomainVerificationHel
 import { sitePrefix } from "../../../config";
 import { WhatsappCampaignStatus, WhatsAppPlatformIDEnum } from "../../../config/enum";
 import { errorToastData } from "../../Whatsapp/Constant";
+import TierPlans from "../../../components/TierPlans/TierPlans";
+import { get } from "lodash";
 
 function Alert(props) {
     return <MuiAlert elevation={0} variant="filled" {...props} />;
@@ -125,12 +128,14 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const severe = useSnackSevere();
     const recipientSuccess = useSnackRecipients();
     const { isRTL, userRoles } = useSelector((state) => state.core);
-    const { verifiedEmails, WhatsAppPlatformID } = useSelector(state => state.common);
+    const { verifiedEmails, WhatsAppPlatformID, subAccount } = useSelector(state => state.common);
     const { subAccountAllGroups } = useSelector((state) => state.group);
     const { previousCampaignData, testGroups } = useSelector((state) => state.sms);
     const { ToastMessages, newsletterSettings, newsletterSendSummary, newsletterInfo } = useSelector(state => state.newsletter);
+    const { currentPlan, availablePlans } = useSelector((state) => state.tiers);
     const [showLoader, setLoader] = useState(true);
     const [isEmailVerified, setIsEmailVerified] = useState(false);
+    const [showTierPlans, setShowTierPlans] = useState(false);
     const [newEMailVerification, setNewEmailVerification] = useState(false);
     const [toastMessage, setToastMessage] = useState(null);
     const [campaignValues, setCampaignValues] = useState({
@@ -171,7 +176,9 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const [mergedSegmentationDialog, setMergedSegmentationDialog] = useState(0);
     const [showTestGroups, setShowTestGroups] = useState(false);
     const [allGroupsSelected, setAllGroupsSelected] = useState(false);
+    const [TierMessageCode, setTierMessageCode] = useState('');
     const [dataReady, setDataReady] = useState(false);
+
     const [smsMarketingModel, setSmsMarketingModel] = useState({
         Type: 0,
         SendSmsTo: -1,
@@ -734,6 +741,11 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 setToastMessage(ToastMessages.GROUP_ALREADY_EXIST);
                 break;
             }
+            case 927: {
+                setTierMessageCode(res?.payload?.Message || 'NEWSLETTER_AUTOMATION');
+                setDialogType({ type: 'tier' });
+                break;
+            }
             default:
                 setToastMessage(ToastMessages.GENERAL_ERROR);
                 break;
@@ -960,11 +972,67 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         return dialogObj
     }
 
+    const handleGetPlanForFeature = (tierMessageCode) => {
+        const planName = findPlanByFeatureCode(
+                tierMessageCode,
+                availablePlans,
+                currentPlan.Id
+        );
+        
+        if (planName) {
+            return t('billing.tier.featureNotAvailable').replace('{feature}', t(TierFeatures[tierMessageCode] || tierMessageCode)).replace('{planName}', planName);
+        } else {
+                return t('billing.tier.noFeatureAvailable');
+        }
+    };
+
+    const getTierValidationDialog = () => ({
+        title: t('billing.tier.permission'),
+        showDivider: false,
+        content: (
+            <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+                {handleGetPlanForFeature(TierMessageCode)}
+            </Typography>
+        ),
+        renderButtons: () => (
+            <Grid
+                container
+                spacing={2}
+                className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}
+            >
+                <Grid item>
+                    <Button
+                        onClick={() => { 
+                            setDialogType(null);
+                            setShowTierPlans(true);
+                        }}
+                        className={clsx(
+                            classes.btn,
+                            classes.btnRounded
+                        )}>
+                        {t('billing.upgradePlan')}
+                    </Button>
+                </Grid>
+                <Grid item>
+                    <Button
+                        onClick={() => { setDialogType(null) }}
+                        className={clsx(
+                            classes.btn,
+                            classes.btnRounded
+                        )}>
+                        {t('common.cancel')}
+                    </Button>
+                </Grid>
+            </Grid>
+        )
+    })
+
     const renderDialog = () => {
         const { type, data } = dialogType || {}
 
         const dialogContent = {
             filterRecipients: MergedSegmentationDialog(),
+            tier: getTierValidationDialog(),
             pulses: PulseDialog({
                 classes: classes,
                 campaign: campaignValues,
@@ -1440,7 +1508,10 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 onClose={() => setDialogType(null)}
                 onConfirm={() => onSaveSettings(true)}
                 isOpen={dialogType?.type === 'SummaryDialog'}
-                setDialogType={() => setDialogType(null)}
+                setDialogType={(code = null) => {
+                    setDialogType({ type: code === 927 ? 'tier' : code });
+                }}
+                setTierMessageCode={(code) => setTierMessageCode(code)}
                 groups={selectedGroups}
                 PreviewURL={newsletterSettings?.PreviewURL}
                 handleSendResponse={handleSendResponse}
@@ -1558,6 +1629,11 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 onClose={() => { setDomainIsAllowed(true); navigate('/react/campaigns') }}
                 confirmButtonText={t('common.domainVerification.sendSettings.backToCampaigns')}
             />
+            {showTierPlans && <TierPlans
+                classes={classes}
+                isOpen={showTierPlans}
+                onClose={() => setShowTierPlans(false)}
+            />}
             <Loader isOpen={showLoader} />
         </DefaultScreen>
     )

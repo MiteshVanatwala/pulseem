@@ -6,7 +6,7 @@ import clsx from 'clsx';
 import { addRecipient, getExternalClientsByGroups, getGroups, getGroupsForSimplyClub, createGroup } from '../../../../redux/reducers/groupSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import DataTable from '../../../../components/Table/DataTable';
-import { UploadSettings } from '../../../../helpers/Constants';
+import { TierFeatures, UploadSettings } from '../../../../helpers/Constants';
 import ColumnAdjustmentDialog from '../../../../components/Files/ColumnAdjustmentDialog';
 import { Loader } from '../../../../components/Loader/Loader';
 import AddRecipientResponse from './AddRecipientResponse';
@@ -15,6 +15,9 @@ import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
 import { sendToTeamChannel } from "../../../../redux/reducers/ConnectorsSlice";
 import { RenderHtml } from '../../../../helpers/Utils/HtmlUtils';
 import { logout } from '../../../../helpers/Api/PulseemReactAPI';
+import { findPlanByFeatureCode } from '../../../../redux/reducers/TiersSlice';
+import TierPlans from '../../../../components/TierPlans/TierPlans';
+import { get } from 'lodash';
 
 const useStyles = makeStyles({
     dialogContainer: {
@@ -74,6 +77,8 @@ const SimplyClubPupup = ({
     setSelectedGroupIds
 }) => {
     const { isRTL } = useSelector((state) => state.core);
+    const { currentPlan, availablePlans } = useSelector((state) => state.tiers);
+    const { subAccount } = useSelector(state => state.common);
     const { t } = useTranslation();
     const dispatch = useDispatch()
     const localClasses = useStyles()
@@ -105,7 +110,9 @@ const SimplyClubPupup = ({
     const [selectArray, setselectArray] = useState([]);
     const [showBackgroundUpload, setShowBackgroundUpload] = useState(false);
     const [showUserNamePass, setShowUserNamePass] = useState(true);
-
+    const [dialogType, setDialogType] = useState(null);
+    const [TierMessageCode, setTierMessageCode] = useState("");
+    const [showTierPlans, setShowTierPlans] = useState(false);
 
     useEffect(() => {
         const preload = () => {
@@ -395,6 +402,11 @@ const SimplyClubPupup = ({
 
                     break;
                 }
+                case 927: {
+                    setTierMessageCode(creationResponse?.payload?.Message);
+                    setDialogType({ type: 'tier' });
+                    break;
+                }
                 case 405:
                 default: {
                     break;
@@ -569,6 +581,78 @@ const SimplyClubPupup = ({
         </BaseDialog>
     }
 
+    const handleGetPlanForFeature = (tierMessageCode) => {
+        const planName = findPlanByFeatureCode(
+            tierMessageCode,
+            availablePlans,
+            currentPlan.Id
+        );
+        
+        if (planName) {
+            return t('billing.tier.featureNotAvailable').replace('{feature}', t(TierFeatures[tierMessageCode] || tierMessageCode)).replace('{planName}', planName);
+        } else {
+            return t('billing.tier.noFeatureAvailable');
+        }
+    };
+
+    const getTierValidationDialog = () => ({
+        title: t('billing.tier.permission'),
+        showDivider: false,
+        content: (
+            <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+                {handleGetPlanForFeature(TierMessageCode)}
+            </Typography>
+        ),
+        renderButtons: () => (
+            <Grid
+                container
+                spacing={2}
+                className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}
+            >
+                <Grid item>
+                    <Button
+                        onClick={() => {
+                            setShowTierPlans(true);
+                        }}
+                        className={clsx(classes.btn, classes.btnRounded)}
+                    >
+                        {t('billing.upgradePlan')}
+                    </Button>
+                </Grid>
+                <Grid item>
+                    <Button
+                        onClick={() => setDialogType(null)}
+                        className={clsx(classes.btn, classes.btnRounded)}
+                    >
+                        {t('common.cancel')}
+                    </Button>
+                </Grid>
+            </Grid>
+        )
+    });
+
+    const renderDialog = () => {
+        const { type } = dialogType || {}
+        let currentDialog = {};
+        
+        if (type === 'tier') {
+            currentDialog = getTierValidationDialog();
+        }
+
+        if (type) {
+            return (
+                dialogType && <BaseDialog
+                    classes={classes}
+                    open={dialogType}
+                    onCancel={() => setDialogType(null)}
+                    onClose={() => setDialogType(null)}
+                    {...currentDialog}>
+                    {currentDialog?.content}
+                </BaseDialog>
+            )
+        }
+    };
+
     return (
         <>
             <BaseDialog
@@ -660,6 +744,12 @@ const SimplyClubPupup = ({
                 />}
             </BaseDialog>
             <Loader isOpen={showLoader} zIndex={1500} />
+            {renderDialog()}
+            {showTierPlans && <TierPlans
+                classes={classes}
+                isOpen={showTierPlans}
+                onClose={() => setShowTierPlans(false)}
+            />}
         </>
     )
 }

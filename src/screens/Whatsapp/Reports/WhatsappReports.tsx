@@ -58,10 +58,14 @@ import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import NoSetup from '../NoSetup/NoSetup';
 import { TablePagination } from '../../../components/managment';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
-import { DateFormats, SizeOptions_XS_SM } from '../../../helpers/Constants';
+import { DateFormats, SizeOptions_XS_SM, TierFeatures } from '../../../helpers/Constants';
 import PulseemSwitch from '../../../components/Controlls/PulseemSwitch';
 import { sitePrefix } from '../../../config';
 import { LinksClicksReport } from '../../../config/enum';
+import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
+import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
+import TierPlans from '../../../components/TierPlans/TierPlans';
+import { get } from 'lodash';
 
 const WhatsappReports = ({ classes }: ClassesType) => {
 	const { t: translator } = useTranslation();
@@ -70,9 +74,10 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 	const { isRTL, windowSize, rowsPerPage, userRoles } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
-	const { accountFeatures, currencySymbol, isCurrencySymbolPrefix } = useSelector(
+	const { accountFeatures, currencySymbol, isCurrencySymbolPrefix, subAccount } = useSelector(
 		(state: { common: CommonRedux }) => state.common
 	);
+	const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
 	const [fromDate, handleFromDate] = useState<MaterialUiPickersDate | null>(
 		null
 	);
@@ -82,7 +87,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 	const [hasRevenue, setHasRevenue] = useState<boolean>(false);
 	const [totalRecord, setTotalRecord] = useState<number>(0);
 	const [includeTestCampaigns, setIncludeTestCampaigns] = useState(false)
-
+	const [showTierPlans, setShowTierPlans] = useState(false);
 	const [isFromDatePickerOpen, setIsFromDatePickerOpen] =
 		useState<boolean>(false);
 	const [isToDatePickerOpen, setIsToDatePickerOpen] = useState<boolean>(false);
@@ -95,6 +100,60 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 	const [paginationSetting, setPaginationSetting] = useState<AllReportReq>(
 		allReportInitialPagination
 	);
+	const [dialogType, setDialogType] = useState<{type: string} | null>(null);
+	const [TierMessageCode, setTierMessageCode] = useState<string>('');
+
+	const handleGetPlanForFeature = (tierMessageCode: string) => {
+		const planName = findPlanByFeatureCode(
+			tierMessageCode,
+			availablePlans,
+			currentPlan.Id
+		);
+		
+		if (planName) {
+			return translator('billing.tier.featureNotAvailable').replace('{feature}', translator(TierFeatures[tierMessageCode as keyof typeof TierFeatures] || tierMessageCode)).replace('{planName}', planName);
+		} else {
+			return translator('billing.tier.noFeatureAvailable');
+		}
+	};
+
+	const getTierValidationDialog = () => ({
+		type: 'tier',
+		title: translator('billing.tier.permission'),
+		showDivider: false,
+		content: (
+			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+				{handleGetPlanForFeature(TierMessageCode)}
+			</Typography>
+		),
+		renderButtons: () => (
+			<Grid
+				container
+				spacing={2}
+				className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}
+			>
+				<Grid item>
+					<Button
+						onClick={() => {
+						setDialogType(null);
+						setShowTierPlans(true);
+					}}
+					className={clsx(classes.btn, classes.btnRounded)}
+					>
+						{translator('billing.upgradePlan')}
+					</Button>
+				</Grid>
+				<Grid item>
+					<Button
+						onClick={() => setDialogType(null)}
+						className={clsx(classes.btn, classes.btnRounded)}
+					>
+						{translator('common.cancel')}
+					</Button>
+				</Grid>
+			</Grid>
+		)
+	});
 
 	const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot };
 	const cellStyle = {
@@ -371,6 +430,15 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 			})
 		);
 		setIsLoader(false);
+		
+		// Check for tier validation
+		if (campaignData?.StatusCode === 927) {
+			// WHATSAPP_REPORT
+			setTierMessageCode(campaignData?.Message);
+			setDialogType(getTierValidationDialog());
+			return;
+		}
+		
 		if (campaignData.Status === apiStatus.SUCCESS) {
 			let exportData: exportDataProps[] = campaignData?.Data?.Items?.map(
 				(row: reportDataProps) => {
@@ -422,6 +490,14 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 			getAllReports(pagination)
 		);
 		setIsLoader(false);
+		
+		// Check for tier validation
+		if (campaignData?.payload?.StatusCode === 927) {
+			setTierMessageCode(campaignData?.payload?.Message || 'WHATSAPP_REPORT');
+			setDialogType(getTierValidationDialog());
+			return;
+		}
+		
 		if (campaignData.payload.Status === apiStatus.SUCCESS) {
 			setReportListData(campaignData.payload.Data.Items);
 			setTotalRecord(campaignData?.payload?.Data?.TotalRecord);
@@ -951,7 +1027,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 				rows={totalRecord}
 				rowsPerPage={paginationSetting?.pageSize}
 				onRowsPerPageChange={onRowsPerPageChange}
-				rowsPerPageOptions={[6, 10, 20, 50]}
+				rowsPerPageOptions={[6, 10, 20, 50] as any}
 				page={paginationSetting?.pageNo}
 				onPageChange={(pageNumber: number) =>
 					updatePaginationSetting({
@@ -994,6 +1070,51 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 				!isLoader && <NoSetup classes={classes} />
 			)}
 			<Loader isOpen={isLoader} showBackdrop={true} />
+			
+			{/* Tier Validation Dialog */}
+			{dialogType?.type === 'tier' && (
+				<BaseDialog
+					classes={classes}
+					open={true}
+					onCancel={() => setDialogType(null)}
+					onClose={() => setDialogType(null)}
+					onConfirm={() => setDialogType(null)}
+					title={translator('billing.tier.permission')}
+					showDivider={false}
+					renderButtons={() => (
+            <Grid container spacing={2} className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}>
+                <Grid item>
+                <Button
+                    onClick={() => {
+										setDialogType(null);
+                    setShowTierPlans(true);
+                  }}
+                  className={clsx(classes.btn, classes.btnRounded)}
+                >
+                  {translator('billing.upgradePlan')}
+                </Button>
+                </Grid>
+                <Grid item>
+                <Button
+                  onClick={() => { setDialogType(null); }}
+                  className={clsx(classes.btn, classes.btnRounded)}
+                >
+                  {translator('common.cancel')}
+                </Button>
+                </Grid>
+            </Grid>
+          )}
+				>
+					<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+						{handleGetPlanForFeature(TierMessageCode)}
+					</Typography>
+				</BaseDialog>
+			)}
+			{showTierPlans && <TierPlans
+				classes={classes}
+				isOpen={showTierPlans}
+				onClose={() => setShowTierPlans(false)}
+			/>}
 		</DefaultScreen>
 	);
 };

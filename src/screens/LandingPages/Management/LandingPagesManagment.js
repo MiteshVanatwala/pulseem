@@ -33,9 +33,11 @@ import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 import { ExportFile } from '../../../helpers/Export/ExportFile';
 
 import { sitePrefix } from '../../../config';
-import { BEE_EDITOR_TYPES } from '../../../helpers/Constants';
+import { BEE_EDITOR_TYPES, TierFeatures } from '../../../helpers/Constants';
 import { FaChartPie } from "react-icons/fa";
 import { ClearPageState, GetPageNyName, SetPageState } from '../../../helpers/UI/SessionStorageManager';
+import TierPlans from '../../../components/TierPlans/TierPlans';
+import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
 
 
 const LandingPagesesManagment = ({ classes }) => {
@@ -43,6 +45,7 @@ const LandingPagesesManagment = ({ classes }) => {
   const { windowSize, rowsPerPage, isRTL, userRoles } = useSelector(state => state.core)
   const { accountFeatures } = useSelector(state => state.common);
   const { landingPagesData, landingPagesDeletedData } = useSelector(state => state.landingPages)
+  const { currentPlan, availablePlans } = useSelector((state) => state.tiers);
   const { t } = useTranslation()
   const [landingPageNameSearch, setLandingPageNameSearch] = useState('')
   const rowsOptions = [6, 10, 20, 50]
@@ -57,7 +60,8 @@ const LandingPagesesManagment = ({ classes }) => {
   const [restoreArray, setRestoreArray] = useState([])
   const dispatch = useDispatch()
   const [showLoader, setLoader] = useState(true);
-
+  const [showTierPlans, setShowTierPlans] = useState(false);
+  const [TierMessageCode, setTierMessageCode] = useState('');
   const { state } = useLocation();
   const from = state?.from || "/";
   const pageProperty = useRef();
@@ -731,7 +735,16 @@ const LandingPagesesManagment = ({ classes }) => {
       ),
       onConfirm: async () => {
         handleClose()
-        await dispatch(restoreLandingPages(restoreArray))
+        const response = await dispatch(restoreLandingPages(restoreArray));
+        
+        // Handle response status codes
+        if (response.payload?.StatusCode === 927) {
+          setTierMessageCode('LANDING_PAGE_MANAGEMENT');
+          setShowTierPlans(true);
+          setRestoreArray([]);
+          return;
+        }
+        
         setRestoreArray([]);
         getData()
       }
@@ -750,7 +763,16 @@ const LandingPagesesManagment = ({ classes }) => {
       setLoader(true);
       handleClose()
       clearSearch()
-      await dispatch(deleteLandingPage(data))
+      const response = await dispatch(deleteLandingPage(data));
+      
+      // Handle response status codes
+      if (response.payload?.StatusCode === 927) {
+        setTierMessageCode('LANDING_PAGE_MANAGEMENT');
+        setShowTierPlans(true);
+        setLoader(false);
+        return;
+      }
+      
       getData()
       setLoader(false);
     }
@@ -769,7 +791,16 @@ const LandingPagesesManagment = ({ classes }) => {
       handleClose()
       setPage(1)
       setLoader(true);
-      await dispatch(duplicteLandingPage(data))
+      const response = await dispatch(duplicteLandingPage(data));
+      
+      // Handle response status codes
+      if (response.payload?.StatusCode === 927) {
+        setTierMessageCode('LANDING_PAGE_MANAGEMENT');
+        setShowTierPlans(true);
+        setLoader(false);
+        return;
+      }
+      
       await getData()
       setLoader(false);
     }
@@ -812,12 +843,63 @@ const LandingPagesesManagment = ({ classes }) => {
   //   )
   // })
 
+  const handleGetPlanForFeature = (tierMessageCode) => {
+    const planName = findPlanByFeatureCode(
+      tierMessageCode,
+      availablePlans,
+      currentPlan.Id
+    );
+    
+    if (planName) {
+      return t('billing.tier.featureNotAvailable').replace('{feature}', t(TierFeatures[tierMessageCode] || tierMessageCode)).replace('{planName}', planName);
+    } else {
+      return t('billing.tier.noFeatureAvailable');
+    }
+  };
+
+  const getTierValidationDialog = () => ({
+		title: t('billing.tier.permission'),
+		showDivider: false,
+		content: (
+			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+				{handleGetPlanForFeature(TierMessageCode)}
+			</Typography>
+		),
+		renderButtons: () => (
+			<Grid
+					container
+					spacing={2}
+					className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+			>
+					<Grid item>
+							<Button
+									onClick={() => {
+											setShowTierPlans(true);
+									}}
+									className={clsx(classes.btn, classes.btnRounded)}
+							>
+									{t('billing.upgradePlan')}
+							</Button>
+					</Grid>
+					<Grid item>
+							<Button
+									onClick={() => setDialogType(null)}
+									className={clsx(classes.btn, classes.btnRounded)}
+							>
+									{t('common.cancel')}
+							</Button>
+					</Grid>
+			</Grid>
+		)
+	})
+
   const renderDialog = () => {
     const { data, type } = dialogType || {}
     const dialogContent = {
       restore: getRestorDialog(data),
       delete: getDeleteDialog(data),
-      duplicate: getDuplicateDialog(data) //,
+      duplicate: getDuplicateDialog(data),
+      tier: getTierValidationDialog()
       // duplicateSuccessful: getDuplicateSuccessfulDialog(data)
     }
 
@@ -847,6 +929,11 @@ const LandingPagesesManagment = ({ classes }) => {
       {renderTablePagination()}
       {renderDialog()}
       <Loader isOpen={showLoader} />
+      {showTierPlans && <TierPlans
+				classes={classes}
+				isOpen={showTierPlans}
+				onClose={() => setShowTierPlans(false)}
+			/>}
     </DefaultScreen>
   )
 }

@@ -25,6 +25,10 @@ import { getTestGroups } from "../../../../redux/reducers/smsSlice";
 import { sendToTeamChannel } from "../../../../redux/reducers/ConnectorsSlice";
 import { Loader } from "../../../../components/Loader/Loader";
 import { RenderHtml } from "../../../../helpers/Utils/HtmlUtils";
+import { findPlanByFeatureCode } from "../../../../redux/reducers/TiersSlice";
+import TierPlans from "../../../../components/TierPlans/TierPlans";
+import { TierFeatures } from "../../../../helpers/Constants";
+import { get } from "lodash";
 
 const AddGroupPopUp = ({
     classes,
@@ -65,11 +69,16 @@ const AddGroupPopUp = ({
         UpdatedDate: new Date(),
         CreatedDate: new Date(),
     };
+    const [showTierPlans, setShowTierPlans] = useState(false);
     const [newGroupData, setNewGroupData] = useState(DEFAULT_NEW_GROUP);
     const [saveDisabled, setSaveDisabled] = useState(false);
     const [showLoader, setLoader] = useState(false);
-    const { isRTL } = useSelector((state) => state.core);
+    const [dialogType, setDialogType] = useState(null);
+    const [TierMessageCode, setTierMessageCode] = useState("");
+    const { isRTL, userRoles } = useSelector((state) => state.core);
     const { CoreToastMessages, windowSize } = useSelector(state => state.core);
+    const { currentPlan, availablePlans } = useSelector((state) => state.tiers);
+    const { subAccount } = useSelector(state => state.common);
 
     const handleAddGroup = async (data, callback) => {
         setSaveDisabled(true);
@@ -139,6 +148,14 @@ const AddGroupPopUp = ({
                     message: ToastMessages.GROUP_ALREADY_EXIST,
                     Func: () => null
                 },
+                S_927: {
+                    code: 927,
+                    message: response.Message,
+                    Func: () => {
+                        setTierMessageCode(response.Message);
+                        setDialogType({ type: 'tier' });
+                    }
+                },
                 default: {
                     message: ToastMessages.GROUP_ERROR,
                     Func: () => null
@@ -154,6 +171,78 @@ const AddGroupPopUp = ({
             return false;
         }
         setSaveDisabled(false);
+    };
+
+    const handleGetPlanForFeature = (tierMessageCode) => {
+        const planName = findPlanByFeatureCode(
+            tierMessageCode,
+            availablePlans,
+            currentPlan.Id
+        );
+        
+        if (planName) {
+            return t('billing.tier.featureNotAvailable').replace('{feature}', t(TierFeatures[tierMessageCode] || tierMessageCode)).replace('{planName}', planName);
+        } else {
+            return t('billing.tier.noFeatureAvailable');
+        }
+    };
+
+    const getTierValidationDialog = () => ({
+        title: t('billing.tier.permission'),
+        showDivider: false,
+        content: (
+            <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+                {handleGetPlanForFeature(TierMessageCode)}
+            </Typography>
+        ),
+        renderButtons: () => (
+            <Grid
+                container
+                spacing={2}
+                className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}
+            >
+                <Grid item>
+                    <Button
+                        onClick={() => {
+                            setShowTierPlans(true);
+                        }}
+                        className={clsx(classes.btn, classes.btnRounded)}
+                    >
+                        {t('billing.upgradePlan')}
+                    </Button>
+                </Grid>
+                <Grid item>
+                    <Button
+                        onClick={() => setDialogType(null)}
+                        className={clsx(classes.btn, classes.btnRounded)}
+                    >
+                        {t('common.cancel')}
+                    </Button>
+                </Grid>
+            </Grid>
+        )
+    });
+
+    const renderDialog = () => {
+        const { type } = dialogType || {}
+        let currentDialog = {};
+        
+        if (type === 'tier') {
+            currentDialog = getTierValidationDialog();
+        }
+
+        if (type) {
+            return (
+                dialogType && <BaseDialog
+                    classes={classes}
+                    open={dialogType}
+                    onCancel={() => setDialogType(null)}
+                    onClose={() => setDialogType(null)}
+                    {...currentDialog}>
+                    {currentDialog?.content}
+                </BaseDialog>
+            )
+        }
     };
 
     return (
@@ -330,6 +419,15 @@ const AddGroupPopUp = ({
                 </Box>
                 <Loader isOpen={showLoader} showBackdrop={true} />
             </BaseDialog>
+            {showTierPlans && <TierPlans
+                classes={classes}
+                isOpen={showTierPlans}
+                onClose={() => {
+                    setShowTierPlans(false);
+                    setDialogType(null);
+                }}
+            />}
+            {renderDialog()}
         </>
     );
 };
