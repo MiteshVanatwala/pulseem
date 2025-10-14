@@ -101,6 +101,8 @@ import LinksClicksReport from './screens/Reports/LinksClicksReport/LinksClicksRe
 import PopupTriggers from './screens/Popups/DisplayRules/PopupTriggers';
 
 import BeeEditorPopup from './screens/Editors/BeeEditorPopup';
+import AIFloatingButton from './components/AI/AIFloatingButton';
+import AIChatWidget from './components/AI/AIChatWidget';
 
 const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
   const transferUrl =
@@ -876,6 +878,8 @@ const App = ({ screenSize }) => {
       <MuiThemeProvider theme={theme}>
         <div dir={isRTL ? 'rtl' : 'ltr'} className={classes.appBody}>
           {renderRoutesByCondition(classes, redirect)}
+          <AIFloatingButton />
+          <AIChatWidget />
         </div>
         <Loader isOpen={isLoader} showBackdrop={true} />
       </MuiThemeProvider>

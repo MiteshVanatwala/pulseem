@@ -36,6 +36,7 @@ import popupTriggersReducer from './reducers/popupTriggersSlice';
 import PopupSlice from './reducers/PopupSlice';
 import popUpManagementReducer from './reducers/popUpManagementSlice';
 
+import aiChatReducer from './reducers/aiChatSlice';
 
 export default configureStore({
   reducer: {
@@ -74,6 +75,7 @@ export default configureStore({
     subUser: SubUserSlice,
     Ai: AiSlice,
     linksClicksReportSlice: linksClicksReportSlice,
-    popup: PopupSlice
+    popup: PopupSlice,
+    aiChat: aiChatReducer
   },
 });

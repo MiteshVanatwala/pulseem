@@ -136,7 +136,6 @@
   "linksClicksReport": {
     "title": "Links Clicks Report",
     "exportRecipient": "Export Recipient",
-    "verifiedClick": "Verified Clicks",
     "totalClick": "Total Clicks",
     "CampaignID": "Campaign ID",
     "LinkID": "Link ID",
@@ -160,6 +159,7 @@
     "Clicks": "Clicks",
     "SmsStatus": "SMS Status",
     "LastClickDate": "Last Click Date",
-    "NoRecipients": "Oops!! No recipient details to export."
+    "NoRecipients": "Oops!! No recipient details to export.",
+    "verifiedClick": "Verified Clicks"
   }
 }

@@ -876,5 +876,12 @@
   "creditsPerMessage": "Credits Per Message",
   "selectFile": "Select file",
   "contactUs": "Contact Us",
-  "currency": "Currency"
+  "currency": "Currency",
+  "polyAgentIconTitle": "Hi, I'm Pulsy, your smart AI agent",
+  "polyAgentIconTitleMarquee": "Hi! I'm Pulsy, What would you like to improve today?",
+  "agentPlaceholder": "Ask me something... (like: \"What are my campaign performance?\") Write freely...",
+  "welcomeMessage": "Hi, my name is {USERNAME}",
+  "500chars": "500 characters",
+  "doNotShowThisDialog": "Do not show this dialog",
+  "messageDot": "Analyzing your data, it may take a few minutes"
 }
