@@ -60,7 +60,7 @@
   "tier": {
     "plans": {
       "starter": {
-        "title": "STARTER",
+        "title": "Starter",
         "description": "Just the essentials",
         "price": "0",
         "priceDescription": "/month",
@@ -69,25 +69,25 @@
         "buttonText": "GET STARTED FREE"
       },
       "flow": {
-        "title": "FLOW",
+        "title": "Standard",
         "description": "Automate your marketing",
         "price": "49",
         "priceDescription": "/month",
         "subtext": "Billed monthly",
         "recipientLimit": "Up to 100 recipients",
-        "buttonText": "START FLOW PLAN"
+        "buttonText": "START Standard PLAN"
       },
       "engage": {
-        "title": "ENGAGE",
+        "title": "Pro",
         "description": "Perfect for eCommerce",
         "price": "99",
         "priceDescription": "/month",
         "subtext": "Most popular choice",
         "recipientLimit": "Up to 100 recipients",
-        "buttonText": "CHOOSE ENGAGE"
+        "buttonText": "CHOOSE pro"
       },
       "scale": {
-        "title": "SCALE",
+        "title": "Scale",
         "description": "Tailor-made solutions",
         "price": "Contact Us",
         "subtext": "Custom pricing",
@@ -97,6 +97,8 @@
     },
     "upgrade": {
       "title": "Upgrade to {planTitle}",
+      "success": "Welcome to {planName}!",
+      "message": "Your subscription is now active",
       "features": {
         "unlimitedAutomations": {
           "title": "Unlimited Automations",
@@ -204,7 +206,8 @@
     "contactSales": "Contact Sales",
     "permission": "Permission",
     "featureNotAvailable": "This feature is only available in the {planName} plan.",
-    "noFeatureAvailable": "Oops! no plan has this feature."
+    "noFeatureAvailable": "Oops! no plan has this feature.",
+    "salesContactConfirmation": "We got it! One of our sales team members will contact you shortly"
   },
   "creditCardManagement": {
     "title": "Credit Card Management",

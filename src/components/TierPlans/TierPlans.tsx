@@ -41,13 +41,14 @@ const TierPlans = ({ classes, isOpen, onClose }: any) => {
   const { t, i18n } = useTranslation();
   const dispatch = useDispatch();
   const [activeStep, setActiveStep] = useState(0);
-  const [selectedPlan, setSelectedPlan] = useState<any>(null);
+  const [selectedPlan, setSelectedPlan] = useState<any>(3);
   const [iframeURL, setIframeURL] = useState<string | null>(null);
   const [loadingIframe, setLoadingIframe] = useState(false);
   const [ hasFrozenEmail, setHasFrozenEmail ] = useState(false);
   const [ showReleaseMessage, setShowReleaseMessage ] = useState(false);
   const [ showCancelMessage, setShowCancelMessage ] = useState(false);
   const [ isLoader, setIsLoader ] = useState(false);
+  const [ showSalesContactPopup, setShowSalesContactPopup ] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
   const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
   const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
@@ -107,7 +108,11 @@ const TierPlans = ({ classes, isOpen, onClose }: any) => {
   };
 
   const handlePlanSelect = async (plan: any, uiConfig: any) => {
-    if (plan.Id === 1 || plan.Id === 4) return false;
+    if (plan.Id === 1) return false;
+    if (plan.Id === 4) {
+      setShowSalesContactPopup(true);
+      return;
+    }
 
     const planWithConfig = {
       ...plan,
@@ -155,7 +160,12 @@ const TierPlans = ({ classes, isOpen, onClose }: any) => {
     setSelectedPlan(null);
     setIframeURL(null);
     setLoadingIframe(false);
+    setShowSalesContactPopup(false);
     onClose();
+  };
+
+  const handleSalesContactPopupClose = () => {
+    setShowSalesContactPopup(false);
   };
 
   const renderPlanSelection = () => {
@@ -168,7 +178,7 @@ const TierPlans = ({ classes, isOpen, onClose }: any) => {
           ) || TIER_PLANS[index] || TIER_PLANS[0];
           
           return (
-            <Grid item xs={12} sm={6} md={3} key={plan.id}>
+            <Grid item xs={12} sm={6} md={3} key={plan.Id}>
               <Box className={clsx(classes.tierPlansCard, { [classes.tierPlansPopularCard]: plan.isRecommended || uiConfig.isPopular })}>
                 {(plan.isRecommended || uiConfig.isPopular) && (
                   <Box className={classes.tierPlansPopularBadge}>
@@ -184,25 +194,25 @@ const TierPlans = ({ classes, isOpen, onClose }: any) => {
                   </Typography>
                   <Box className={classes.tierPlansPriceContainer}>
                     {
-                      plan.Name !== 'STARTER' && plan.Name !== 'SCALE' && plan.Price > 0 && accountIsCurrencySymbolPrefix && (
+                      plan.Id !== 1 && plan.Id !== 4 && plan.Price > 0 && accountIsCurrencySymbolPrefix && (
                         <span className={classes.tierPlansCurrencySymbol}>
                           {accountCurrencySymbol}
                         </span>
                       )
                     }
-                    <Typography className={classes.tierPlansPrice} style={{ fontSize: plan.Name === 'SCALE' || plan.Name === 'STARTER' ? '1.3rem': '', paddingTop: plan.Name === 'SCALE' || plan.Name === 'STARTER' ? '15px' : '' }}>
-                      {plan.Name === 'STARTER' ? t('billing.tier.free') : ''}
-                      {plan.Name === 'SCALE' ? t('billing.tier.contactSales') : ''}
-                      {plan.Name !== 'STARTER' && plan.Name !== 'SCALE' && plan.Price > 0 ? plan.Price : ''}
+                    <Typography className={classes.tierPlansPrice} style={{ fontSize: plan.Id === 4 || plan.Id === 1 ? '1.3rem': '', paddingTop: plan.Id === 4 || plan.Id === 1 ? '15px' : '' }}>
+                      {plan.Id === 1 ? t('billing.tier.free') : ''}
+                      {plan.Id === 4 ? t('billing.tier.contactSales') : ''}
+                      {plan.Id !== 1 && plan.Id !== 4 && plan.Price > 0 ? plan.Price : ''}
                     </Typography>
                     {
-                      plan.Name !== 'STARTER' && plan.Name !== 'SCALE' && plan.Price > 0 && !accountIsCurrencySymbolPrefix && (
+                      plan.Id !== 1 && plan.Id !== 4 && plan.Price > 0 && !accountIsCurrencySymbolPrefix && (
                         <span className={classes.tierPlansCurrencySymbol}>
                           {accountCurrencySymbol}
                         </span>
                       )
                     }
-                    {plan.Name !== 'STARTER' && plan.Name !== 'SCALE' && uiConfig.priceDescription && <Typography className={classes.tierPlansPriceDescription}>
+                    {plan.Id !== 1 && plan.Id !== 4 && uiConfig.priceDescription && <Typography className={classes.tierPlansPriceDescription}>
                       {t(uiConfig.priceDescription)}
                     </Typography>}
                   </Box>
@@ -578,8 +588,7 @@ const TierPlans = ({ classes, isOpen, onClose }: any) => {
   };
 
   const renderConfirmation = () => {
-    const planTitle = selectedPlan?.uiConfig?.title ? t(selectedPlan.uiConfig.title) : 'Selected Plan';
-    const planPrice = selectedPlan?.Price || selectedPlan?.price || '49';
+    const planTitle = selectedPlan?.uiConfig?.title ? t(selectedPlan.uiConfig.title) : 'standard';
     
     return (
       <Box className={clsx(classes.textCenter)}>
@@ -589,15 +598,12 @@ const TierPlans = ({ classes, isOpen, onClose }: any) => {
           className={clsx(classes.celebrationImage)}
         />
         <Typography className={clsx(classes.f28, classes.bold)}>
-          {t('dashboard.polishSubscribe.success')}
+          {t('billing.tier.upgrade.success').replace('{planName}', planTitle)}
         </Typography>
         {selectedPlan && (
-          <Box mt={3}>
+          <Box>
             <Typography variant="h6" gutterBottom>
-              Welcome to {planTitle}!
-            </Typography>
-            <Typography variant="body1" color="textSecondary">
-              Your subscription for {typeof planPrice === 'string' && planPrice.includes('₪') ? planPrice : `₪${planPrice}`}/month is now active.
+              {t('billing.tier.upgrade.message')}
             </Typography>
           </Box>
         )}
@@ -669,6 +675,14 @@ const TierPlans = ({ classes, isOpen, onClose }: any) => {
           {getStepContent(activeStep)}
         </div>
         <Loader isOpen={isLoader} showBackdrop={true} />
+        <BaseDialog
+          classes={classes}
+          open={showSalesContactPopup}
+          onClose={() => setShowSalesContactPopup(false)}
+          onCancel={() => setShowSalesContactPopup(false)}
+        >
+          {t('billing.tier.salesContactConfirmation')}
+      </BaseDialog>
       </>
     </BaseDialog>
   );

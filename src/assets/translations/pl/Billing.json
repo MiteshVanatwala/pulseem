@@ -48,7 +48,7 @@
   "tier": {
     "plans": {
       "starter": {
-        "title": "STARTER",
+        "title": "Starter",
         "description": "Tylko podstawy",
         "price": "0",
         "priceDescription": "/miesiąc",
@@ -57,25 +57,25 @@
         "buttonText": "ROZPOCZNIJ ZA DARMO"
       },
       "flow": {
-        "title": "FLOW",
+        "title": "Standard",
         "description": "Zautomatyzuj swój marketing",
         "price": "49",
         "priceDescription": "/miesiąc",
         "subtext": "Rozliczane miesięcznie",
         "recipientLimit": "Do 100 odbiorców",
-        "buttonText": "ROZPOCZNIJ PLAN FLOW"
+        "buttonText": "ROZPOCZNIJ PLAN Standard"
       },
       "engage": {
-        "title": "ENGAGE",
+        "title": "Pro",
         "description": "Idealny dla eCommerce",
         "price": "99",
         "priceDescription": "/miesiąc",
         "subtext": "Najpopularniejszy wybór",
         "recipientLimit": "Do 100 odbiorców",
-        "buttonText": "WYBIERZ ENGAGE"
+        "buttonText": "WYBIERZ pro"
       },
       "scale": {
-        "title": "SCALE",
+        "title": "Scale",
         "description": "Rozwiązania szyte na miarę",
         "price": "Skontaktuj się z nami",
         "subtext": "Indywidualne ceny",
@@ -85,6 +85,8 @@
     },
     "upgrade": {
       "title": "Ulepsz do {planTitle}",
+      "success": "Witaj w {planName}!",
+      "message": "Twój subskrypcja jest teraz aktywna",
       "features": {
         "unlimitedAutomations": {
           "title": "Automatyzacje bez ograniczeń",
@@ -176,7 +178,8 @@
     "contactSales": "Contact Sales",
     "permission": "Permission",
     "featureNotAvailable": "Ta funkcja jest dostępna tylko w pakiecie {planName}",
-    "noFeatureAvailable": "Oops! no plan has this feature."
+    "noFeatureAvailable": "Oops! no plan has this feature.",
+    "salesContactConfirmation": "Otrzymaliśmy! Jeden z naszych przedstawicieli handlowych skontaktuje się z Tobą wkrótce"
   },
   "creditCardManagement": {
     "title": "Zarządzanie kartami kredytowymi",

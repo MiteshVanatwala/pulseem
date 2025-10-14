@@ -60,7 +60,7 @@
   "tier": {
     "plans": {
       "starter": {
-        "title": "STARTER",
+        "title": "Starter",
         "description": "רק העיקר",
         "price": "0",
         "priceDescription": "/חודש",
@@ -69,25 +69,25 @@
         "buttonText": "התחל בחינם"
       },
       "flow": {
-        "title": "FLOW",
+        "title": "Standard",
         "description": "הפוך את השיווק שלך לאוטומטי",
         "price": "49",
         "priceDescription": "/חודש",
         "subtext": "חיוב חודשי",
         "recipientLimit": "עד 100 נמענים",
-        "buttonText": "התחל תוכנית FLOW"
+        "buttonText": "התחל תוכנית Standard"
       },
       "engage": {
-        "title": "ENGAGE",
+        "title": "Pro",
         "description": "מושלם לאתרי מסחר",
         "price": "99",
         "priceDescription": "/חודש",
         "subtext": "הבחירה הפופולרית ביותר",
         "recipientLimit": "עד 100 נמענים",
-        "buttonText": "בחר ENGAGE"
+        "buttonText": "בחר Pro"
       },
       "scale": {
-        "title": "SCALE",
+        "title": "Scale",
         "description": "פתרונות מותאמים אישית",
         "price": "צור קשר",
         "subtext": "תמחור מותאם אישית",
@@ -97,6 +97,8 @@
     },
     "upgrade": {
       "title": "שדרוג ל-{planTitle}",
+      "success": "ברוך הבא ל {panName}!",
+      "message": "השימוש במנוי פתוח כעת",
       "features": {
         "unlimitedAutomations": {
           "title": "אוטומציות ללא הגבלה",
@@ -132,7 +134,7 @@
       "emailCampaigns": "קמפיינים באימייל",
       "smsMarketing": "שיווק SMS",
       "whatsappMarketing": "שיווק WhatsApp",
-      "pushNotifications": "התראות דחיפה",
+      "pushNotifications": "שליחת נוטיפיקציות",
       "basicReports": "דוחות בסיסיים",
       "multipleIntegrations": "אינטגרציות מרובות",
       "chatEmailSupport": "תמיכה בצ'אט ואימייל",
@@ -150,7 +152,7 @@
       "productCatalogIntegration": "אינטגרציה עם קטלוג מוצרים",
       "measureRoi": "מדידת ROI - אימייל, SMS, WhatsApp",
       "smsWhatsappChatbot": "צ'אטבוט SMS/WhatsApp",
-      "subaccountsCreation": "יצירת תת-חשבונות",
+      "subaccountsCreation": "תתי חשבון",
       "manageUsersPermissions": "ניהול משתמשים והרשאות",
       "phoneSupport": "תמיכה טלפונית",
       "everythingInEngage": "הכל מ-Engage, בתוספת:",
@@ -188,7 +190,8 @@
     "contactSales": "צור קשר עם המכירות",
     "permission": "הרשאות",
     "featureNotAvailable": "פיצ'ר זה זמין רק בחבילת {planName}",
-    "noFeatureAvailable": "אופס! אין תוכנית שכוללת את התכונה הזו."
+    "noFeatureAvailable": "אופס! אין תוכנית שכוללת את התכונה הזו.",
+    "salesContactConfirmation": "פנייתך נקלטה בהצלחה. נציג מכירות יחזור אליך בהקדם"
   },
   "creditCardManagement": {
     "title": "ניהול כרטיסי אשראי",
