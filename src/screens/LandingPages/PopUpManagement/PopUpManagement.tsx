@@ -281,7 +281,7 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
       <PopMassage
         classes={classes}
         show={showCopied === id}
-        timeout={2000}
+        timeout={1000}
         label={t('common.copyClip')}
         innerRef={copyRef}
       />

@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction } from 'react';
+import React, { Dispatch, SetStateAction, useState } from 'react';
 import {
   Box,
   Typography,
@@ -22,10 +22,13 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { Page, togglePopupStatus } from '../../../../src/redux/reducers/popUpManagementSlice';
+import { getPageHeight } from '../../../../src/redux/reducers/landingPagesSlice';
 import clsx from 'clsx';
 import { Switch } from '../../../components/managment';
 import { sitePrefix } from '../../../config';
 import { DialogType } from './PopUpManagement';
+import { useNavigate } from 'react-router-dom';
+import { PopMassage } from '../../../components/managment/index';
 
 interface PopUpCardProps {
   popup: Page;
@@ -45,11 +48,83 @@ interface StatItemProps {
 
 const PopUpCard: React.FC<PopUpCardProps> = ({ popup, classes, setDialogType }) => {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<any>();
+  const navigate = useNavigate();
+  const [showCopied, setShowCopied] = useState<string | null>(null);
+  const [copyLinkRef, setCopyLinkRef] = useState<any>(null);
+  const [copyEmbedRef, setCopyEmbedRef] = useState<any>(null);
 
   const handleStatusChange = () => {
     const newStatus = popup.StatusName === 'Active' ? 5 : 2;
-    dispatch(togglePopupStatus({ ID: popup.ID, Status: newStatus }));
+    (dispatch as any)(togglePopupStatus({ ID: popup.ID, Status: newStatus }));
+  };
+
+  const getPopupUrl = () => {
+    const domain = popup.Domains && popup.Domains.length > 0 ? popup.Domains[0] : '';
+    return `${domain}?pulseem_popup=${popup.PopupGuid}`;
+  };
+
+  const handleSettings = () => {
+    navigate(`${sitePrefix}Popups/Create/${popup.ID}`);
+  };
+
+  const handlePreview = () => {
+    const previewLink = `${sitePrefix}previewer/popup/${popup.ID}`;
+    window.open(previewLink, '_blank');
+  };
+
+  const handleEdit = () => {
+    navigate(`${sitePrefix}popupeditor/${popup.ID}`);
+  };
+
+  const handleDuplicate = () => {
+    setDialogType({
+      type: 'duplicate',
+      data: popup.ID
+    });
+  };
+
+  const handleCopyLink = async () => {
+    if (popup.StatusName !== 'Active') {
+      return;
+    }
+    
+    const pageUrl = getPopupUrl();
+    await navigator.clipboard.writeText(pageUrl);
+    setShowCopied('link');
+    setTimeout(() => {
+      setShowCopied(null);
+    }, 1000);
+  };
+
+  const handleCopyEmbed = async () => {
+    if (popup.StatusName !== 'Active') {
+      return;
+    }
+
+    const pageUrl = getPopupUrl();
+    let embedCode = `<script src="${pageUrl}" type="text/javascript"></script>`;
+    
+    try {
+      // @ts-ignore
+      const res = await dispatch(getPageHeight(popup.ID));
+      if (res.payload?.StatusCode === 201) {
+        const height = res.payload?.Data;
+        embedCode = embedCode.replace('##pageHeight##', height);
+      }
+    } catch (error) {
+      console.error('Error getting page height:', error);
+    }
+    
+    await navigator.clipboard.writeText(embedCode);
+    setShowCopied('embed');
+    setTimeout(() => {
+      setShowCopied(null);
+    }, 1000);
+  };
+
+  const handleDelete = () => {
+    setDialogType({ type: 'delete', data: popup.ID });
   };
 
   const renderStatusControl = () => {
@@ -129,6 +204,8 @@ const PopUpCard: React.FC<PopUpCardProps> = ({ popup, classes, setDialogType }) 
     </Grid>
   );
 
+  const isActive = popup.StatusName === 'Active';
+
   return (
     <Box p={3} className={classes.popupCard}>
       <Grid container spacing={2} alignItems="center">
@@ -177,36 +254,88 @@ const PopUpCard: React.FC<PopUpCardProps> = ({ popup, classes, setDialogType }) 
         </Grid>
       </Box>
       <Box className={classes.actionsContainer}>
-        <Button size="small" className={classes.actionButtonPopupManagement} startIcon={<SettingsIcon />}>
+        <Button 
+          size="small" 
+          className={classes.actionButtonPopupManagement} 
+          startIcon={<SettingsIcon />}
+          onClick={handleSettings}
+        >
           {t('landingPages.popupManagement.actions.settings')}
         </Button>
-        <Button size="small"
+        <Button 
+          size="small"
           className={classes.actionButtonPopupManagement}
-          startIcon={<VisibilityIcon
-            onClick={() => {
-              const previewLink = `${sitePrefix}previewer/popup/${popup.ID}`;
-              window.open(previewLink, '_blank');
-            }}
-          />}>
+          startIcon={<VisibilityIcon />}
+          onClick={handlePreview}
+        >
           {t('landingPages.popupManagement.actions.preview')}
         </Button>
-        <Button size="small" className={classes.actionButtonPopupManagement} startIcon={<EditIcon />}>
-          {t('landingPages.popupManagement.actions.editDesign')}
+        <Button 
+          size="small" 
+          className={classes.actionButtonPopupManagement} 
+          startIcon={<EditIcon />}
+          onClick={handleEdit}
+        >
+          {t('landingPages.EditResource1.HeaderText')}
         </Button>
-        <Button size="small" className={classes.actionButtonPopupManagement} startIcon={<FileCopyIcon />}>
+        <Button 
+          size="small" 
+          className={classes.actionButtonPopupManagement} 
+          startIcon={<FileCopyIcon />}
+          onClick={handleDuplicate}
+        >
           {t('landingPages.popupManagement.actions.duplicate')}
         </Button>
-        <Button size="small" className={classes.actionButtonPopupManagement} startIcon={<CodeIcon />}>
-          {t('landingPages.popupManagement.actions.copySnippet')}
-        </Button>
+        <Box display="inline-block" position="relative">
+          <Button 
+            ref={(el) => setCopyLinkRef(el)}
+            size="small" 
+            className={classes.actionButtonPopupManagement} 
+            startIcon={<CodeIcon />}
+            onClick={handleCopyLink}
+            disabled={!isActive}
+          >
+            {t('landingPages.popupManagement.actions.copyLink')}
+          </Button>
+          {showCopied === 'link' && (
+            <PopMassage
+              classes={classes}
+              show={true}
+              timeout={1000}
+              label={t('common.copyClip')}
+              innerRef={copyLinkRef}
+            />
+          )}
+        </Box>
+        <Box display="inline-block" position="relative">
+          <Button 
+            ref={(el) => setCopyEmbedRef(el)}
+            size="small" 
+            className={classes.actionButtonPopupManagement} 
+            startIcon={<CodeIcon />}
+            onClick={handleCopyEmbed}
+            disabled={!isActive}
+          >
+            {t('landingPages.popupManagement.actions.embed')}
+          </Button>
+          {showCopied === 'embed' && (
+            <PopMassage
+              classes={classes}
+              show={true}
+              timeout={1000}
+              label={t('common.copyClip')}
+              innerRef={copyEmbedRef}
+            />
+          )}
+        </Box>
         <Button
           size="small"
           color="secondary"
           className={classes.actionButtonPopupManagement}
           startIcon={<DeleteIcon />}
-          onClick={() => setDialogType({ type: 'delete', data: popup.ID })}
+          onClick={handleDelete}
         >
-          {t('landingPages.popupManagement.actions.delete')}
+          {t('landingPages.GridButtonColumnResource1.HeaderText')}
         </Button>
       </Box>
     </Box>

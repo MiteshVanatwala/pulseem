@@ -360,19 +360,19 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
       />
       <Route
         path={`${sitePrefix}LandingPages/Create`}
-        element={<CreateLandingPage classes={classes} />}
+        element={<CreateLandingPage classes={classes} key="landing-create" />}
       />
       <Route
         path={`${sitePrefix}LandingPages/Create/:id`}
-        element={<CreateLandingPage classes={classes} />}
+        element={<CreateLandingPage classes={classes} key="landing-edit" />}
       />
       <Route
         path={`${sitePrefix}Popups/Create`}
-        element={<CreateLandingPage classes={classes} isPopup={true} />}
+        element={<CreateLandingPage classes={classes} isPopup={true}  key="popup-create"/>}
       />
       <Route
         path={`${sitePrefix}Popups/Create/:id`}
-        element={<CreateLandingPage classes={classes} isPopup={true} />}
+        element={<CreateLandingPage classes={classes} isPopup={true} key="popup-edit" />}
       />
       <Route
         path={`${sitePrefix}LandingPages/SurveyDetails/:id`}
