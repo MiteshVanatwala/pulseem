@@ -594,7 +594,7 @@ const BillingSettingsPage = ({ classes }: any) => {
                       {
                         currentPlan?.Name !== 'GRAND_FATHER' && (  
                           <Box className={classes.dFlex} style={{ gap: '12px' }}>
-                            <Button
+                            {/* <Button
                               className={clsx(
                                 classes.btn,
                                 classes.btnRounded
@@ -607,7 +607,7 @@ const BillingSettingsPage = ({ classes }: any) => {
                               }}
                             >
                               {t('common.tier.manageCard')}
-                            </Button>
+                            </Button> */}
                             {
                               currentPlan?.Name !== 'SCALE' && (
                                 <Button

@@ -175,7 +175,7 @@
     "free": "Free",
     "contactSales": "Contact Sales",
     "permission": "Permission",
-    "featureNotAvailable": "Oops! {feature} is not available in current plan. Upgrade to {planName} to use this feature.",
+    "featureNotAvailable": "Ta funkcja jest dostępna tylko w pakiecie {planName}",
     "noFeatureAvailable": "Oops! no plan has this feature."
   },
   "creditCardManagement": {

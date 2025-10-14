@@ -11,12 +11,20 @@ import {
   ListItemText,
   Card,
   Divider,
-  CircularProgress,
+  CircularProgress
 } from '@material-ui/core';
 import {
   Check as CheckIcon,
   CheckCircle as CheckCircleIcon,
   Chat as ChatIcon,
+  FlashOn as FlashOnIcon,
+  InsertDriveFile as InsertDriveFileIcon,
+  GpsFixed as TargetIcon,
+  Assignment as AssignmentIcon,
+  ShoppingCart,
+  MonetizationOn,
+  People,
+  LocalPhone,
 } from '@material-ui/icons';
 import { BaseDialog } from '../DialogTemplates/BaseDialog';
 import { useSelector, useDispatch } from 'react-redux';
@@ -32,7 +40,7 @@ import { Loader } from '../Loader/Loader';
 const TierPlans = ({ classes, isOpen, onClose }: any) => {
   const { t, i18n } = useTranslation();
   const dispatch = useDispatch();
-  const [activeStep, setActiveStep] = useState(0);
+  const [activeStep, setActiveStep] = useState(2);
   const [selectedPlan, setSelectedPlan] = useState<any>(null);
   const [iframeURL, setIframeURL] = useState<string | null>(null);
   const [loadingIframe, setLoadingIframe] = useState(false);
@@ -312,7 +320,7 @@ const TierPlans = ({ classes, isOpen, onClose }: any) => {
   };
 
   const renderUpgradeFlow = () => {
-    const planTitle = selectedPlan?.uiConfig?.title ? t(selectedPlan.uiConfig.title) : 'Flow Plan';
+    const planTitle = selectedPlan?.uiConfig?.title ? t(selectedPlan.uiConfig.title) : selectedPlan?.Name;
     const planPrice = selectedPlan?.Price || selectedPlan?.price;
     
     return (
@@ -328,10 +336,18 @@ const TierPlans = ({ classes, isOpen, onClose }: any) => {
               <Grid item xs={12} sm={6}>
                 <Card className={classes.upgradeFlowFeatureCard}>
                   <CardContent>
-                    <FlashOnIcon color="error" />
-                    <Typography variant="h6">{t('billing.tier.upgrade.features.unlimitedAutomations.title')}</Typography>
+                    { selectedPlan?.Name === 'FLOW'
+                      ? <FlashOnIcon color="error" />
+                      : <ShoppingCart color="error" /> }
+                    <Typography variant="h6">
+                      {t( selectedPlan?.Name === 'FLOW'
+                          ? 'billing.tier.upgrade.features.unlimitedAutomations.title'
+                          : 'billing.tier.upgrade.features.ecommerseFeature.title')}
+                    </Typography>
                     <Typography variant="body2" color="textSecondary">
-                      {t('billing.tier.upgrade.features.unlimitedAutomations.description')}
+                      {t( selectedPlan?.Name === 'FLOW' 
+                          ?  'billing.tier.upgrade.features.unlimitedAutomations.description'
+                         : 'billing.tier.upgrade.features.ecommerceFeature.description')}
                     </Typography>
                   </CardContent>
                 </Card>
@@ -340,10 +356,18 @@ const TierPlans = ({ classes, isOpen, onClose }: any) => {
               <Grid item xs={12} sm={6}>
                 <Card className={classes.upgradeFlowFeatureCard}>
                   <CardContent>
-                    <InsertDriveFileIcon color="error" />
-                    <Typography variant="h6">{t('billing.tier.upgrade.features.landingPages.title')}</Typography>
+                    { selectedPlan?.Name === 'FLOW'
+                      ? <InsertDriveFileIcon color="error" />
+                      : <MonetizationOn color="error" /> }
+                    <Typography variant="h6">
+                      {t( selectedPlan?.Name === 'FLOW'
+                          ? 'billing.tier.upgrade.features.landingPages.title'
+                          : 'billing.tier.upgrade.features.ROIMeasurement.title')}
+                    </Typography>
                     <Typography variant="body2" color="textSecondary">
-                      {t('billing.tier.upgrade.features.landingPages.description')}
+                      {t( selectedPlan?.Name === 'FLOW'
+                          ? 'billing.tier.upgrade.features.landingPages.description'
+                          : 'billing.tier.upgrade.features.ROIMeasurement.description')}
                     </Typography>
                   </CardContent>
                 </Card>
@@ -352,10 +376,18 @@ const TierPlans = ({ classes, isOpen, onClose }: any) => {
               <Grid item xs={12} sm={6}>
                 <Card className={classes.upgradeFlowFeatureCard}>
                   <CardContent>
-                    <TargetIcon color="error" />
-                    <Typography variant="h6">{t('billing.tier.upgrade.features.smartSegmentation.title')}</Typography>
+                    { selectedPlan?.Name === 'FLOW'
+                      ? <TargetIcon color="error" />
+                      : <People color="error" /> }
+                    <Typography variant="h6">
+                      {t( selectedPlan?.Name === 'FLOW'
+                          ? 'billing.tier.upgrade.features.smartSegmentation.title'
+                          : 'billing.tier.upgrade.features.userManagement.title')}
+                    </Typography>
                     <Typography variant="body2" color="textSecondary">
-                      {t('billing.tier.upgrade.features.smartSegmentation.description')}
+                      {t( selectedPlan?.Name === 'FLOW'
+                          ? 'billing.tier.upgrade.features.smartSegmentation.description'
+                          : 'billing.tier.upgrade.features.userManagement.description')}
                     </Typography>
                   </CardContent>
                 </Card>
@@ -364,10 +396,19 @@ const TierPlans = ({ classes, isOpen, onClose }: any) => {
               <Grid item xs={12} sm={6}>
                 <Card className={classes.upgradeFlowFeatureCard}>
                   <CardContent>
-                    <AssignmentIcon color="error" />
-                    <Typography variant="h6">{t('billing.tier.upgrade.features.surveySystem.title')}</Typography>
+                    { selectedPlan?.Name === 'FLOW'
+                      ? <AssignmentIcon color="error" />
+                      : <LocalPhone color="error" /> }
+                    <Typography variant="h6">
+                      {t( selectedPlan?.Name === 'FLOW'
+                          ? 'billing.tier.upgrade.features.surveySystem.title'
+                          : 'billing.tier.upgrade.features.phoneSupport.title')}
+                    </Typography>
                     <Typography variant="body2" color="textSecondary">
-                      {t('billing.tier.upgrade.features.surveySystem.description')}
+                      {t( selectedPlan?.Name === 'FLOW'
+                          ? 'billing.tier.upgrade.features.surveySystem.description'
+                          : 'billing.tier.upgrade.features.phoneSupport.description'
+                      )}
                     </Typography>
                   </CardContent>
                 </Card>

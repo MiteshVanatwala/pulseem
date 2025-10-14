@@ -113,6 +113,22 @@
         "surveySystem": {
           "title": "Survey System",
           "description": "Collect feedback and insights from customers"
+        },
+        "ecommerseFeature": {
+          "title": "eCommerce Features",
+          "description": "Advanced automation triggers and segmentation for online stores"
+        },
+        "ROIMeasurement": {
+          "title": "ROI Measurement",
+          "description": "Track revenue across Email, SMS, and WhatsApp campaigns"
+        },
+        "userManagement": {
+          "title": "User Management",
+          "description": "Create subaccounts and manage team permissions"
+        },
+        "phoneSupport": {
+          "title": "Phone Support",
+          "description": "Direct phone assistance from our expert team"
         }
       },
       "including": "Including:",
@@ -187,7 +203,7 @@
     "free": "Free",
     "contactSales": "Contact Sales",
     "permission": "Permission",
-    "featureNotAvailable": "Oops! {feature} is not available in current plan. Upgrade to {planName} to use this feature.",
+    "featureNotAvailable": "This feature is only available in the {planName} plan.",
     "noFeatureAvailable": "Oops! no plan has this feature."
   },
   "creditCardManagement": {
