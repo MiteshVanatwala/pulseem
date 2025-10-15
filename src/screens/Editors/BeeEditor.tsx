@@ -479,8 +479,20 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
           }
           //@ts-ignore
           else if (saveRef.current?.showAnimation && !saveRef.current?.saveTemplate) {
-            //@ts-ignore
-            setToastMessage(ToastMessages.LANDING_PAGE_SAVED);
+            const isPopup = moduleType?.toLowerCase() === 'popupeditor';
+
+            if (isPopup) {
+              // @ts-ignore
+              setToastMessage({
+                severity: 'success',
+                color: 'success',
+                message: t('landingPages.popupSaved'),
+                showAnimtionCheck: true
+              } as any);
+            } else {
+              //@ts-ignore
+              setToastMessage(ToastMessages.LANDING_PAGE_SAVED);
+            }
           }
           //@ts-ignore
           if (reInit && !saveRef.current?.saveTemplate) {

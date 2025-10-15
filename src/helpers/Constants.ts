@@ -250,7 +250,8 @@ export const PlaceHolders = {
 
 export const BEE_EDITOR_TYPES = {
     CAMPAIGN: 'Campaign',
-    LANDING_PAGE: 'LandingPages'
+    LANDING_PAGE: 'LandingPages',
+    POPUP: 'popupeditor'
 }
 
 export const NO_IMAGE_URL = 'https://www.pulseem.co.il/Pulseem/images/productimage.png';

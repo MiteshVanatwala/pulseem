@@ -32,6 +32,7 @@ import { getPopupLookupData, upsertPopupRules, getPopupRulesById } from "../../.
 import { Loader } from "../../../components/Loader/Loader";
 import PulseemSwitch from "../../../components/Controlls/PulseemSwitch";
 import { sitePrefix } from "../../../config";
+import Toast from "../../../components/Toast/Toast.component";
 
 const iconMap: { [key: string]: React.ReactElement } = {
   "Exit Intent": <ExitToAppIcon />,
@@ -72,6 +73,7 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
     conversionType: 'formSubmission',
   });
   const [payloadForSummary, setPayloadForSummary] = useState<any | null>(null);
+  const [toastMessage, setToastMessage] = useState<any>(null);
 
   useEffect(() => {
     if (id) {
@@ -100,20 +102,22 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
 
   useEffect(() => {
     if (popupRules && lookupData && Object.keys(triggersState).length > 0) {
-      // Bind PopupTriggers
-      const newTriggersState = { ...triggersState };
-      popupRules.PopupTriggers?.forEach((rule: any) => {
-        const triggerDef = lookupData.PopupTriggers.find((t: any) => t.Id === rule.TriggerId);
-        if (triggerDef) {
-          const key = triggerDef.Name.replace(/\s+/g, '');
-          newTriggersState[key] = { ...newTriggersState[key], enabled: true };
-          if (key === 'PageViews') newTriggersState[key].pages = parseFloat(rule.TriggerValue);
-          if (key === 'ViewingTime') newTriggersState[key].time = parseFloat(rule.TriggerValue);
-          if (key === 'ScrollDepth') newTriggersState[key].depth = parseFloat(rule.TriggerValue);
-          if (key === 'PageClicks') newTriggersState[key].clicks = parseFloat(rule.TriggerValue);
-        }
+      setTriggersState((prevState: any) => {
+        const newTriggersState = { ...prevState };
+        popupRules.PopupTriggers?.forEach((rule: any) => {
+          const triggerDef = lookupData.PopupTriggers.find((t: any) => t.Id === rule.TriggerId);
+          if (triggerDef) {
+            const key = triggerDef.Name.replace(/\s+/g, '');
+            newTriggersState[key] = { ...newTriggersState[key], enabled: true };
+            if (key === 'PageViews') newTriggersState[key].pages = parseFloat(rule.TriggerValue);
+            if (key === 'ViewingTime') newTriggersState[key].time = parseFloat(rule.TriggerValue);
+            if (key === 'ScrollDepth') newTriggersState[key].depth = parseFloat(rule.TriggerValue);
+            if (key === 'PageClicks') newTriggersState[key].clicks = parseFloat(rule.TriggerValue);
+          }
+        });
+        
+        return newTriggersState;
       });
-      setTriggersState(newTriggersState);
 
       // Bind PopupFrequency
       if (popupRules.PopupFrequency?.length > 0) {
@@ -144,14 +148,21 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
         });
         setPageTargetingRules(newRules);
       }
-    }
-  }, [popupRules, lookupData]);
 
-  useEffect(() => {
-    if (upsertSuccess && payloadForSummary) {
-      navigate(`${sitePrefix}landingPages/Popups/Summary/${id}`, { state: { payload: payloadForSummary, lookupData } });
+      // Load advanced settings
+      const conversionId = popupRules.PopupConversionId || popupRules.PopupConvesrionId;
+      
+      if (popupRules.ContinueAfterConversion !== undefined && conversionId !== undefined) {
+        const conversionType = conversionId === 1 ? 'formSubmission' : 'buttonClick';
+        
+        setAdvancedSettingsData({
+          shouldContinueShowing: popupRules.ContinueAfterConversion,
+          conversionType: conversionType,
+        });
+      }
     }
-  }, [upsertSuccess, navigate, id, payloadForSummary, lookupData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [popupRules, lookupData]);
 
   const handleDisplayFrequencyChange = (fieldName: string, value: any) => {
     setDisplayFrequencyData(prev => ({ ...prev, [fieldName]: value }));
@@ -181,9 +192,17 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
       [triggerKey]: { ...triggersState[triggerKey], [field]: newValue as number },
     });
   };
-  console.log(payloadForSummary);
 
-  const handleSummaryClick = () => {
+  const showErrorToast = (message: string) => {
+    setToastMessage({ 
+      severity: 'error', 
+      color: 'error', 
+      message, 
+      showAnimtionCheck: false 
+    });
+  };
+
+  const handleSummaryClick = async () => {
     const popupTriggers = Object.keys(triggersState)
       .filter(key => triggersState[key].enabled)
       .map(key => {
@@ -232,7 +251,21 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
     };
 
     setPayloadForSummary(payload);
-    dispatch(upsertPopupRules(payload));
+    
+    const response = await dispatch(upsertPopupRules(payload));
+    
+    if (response.payload?.Data?.IsSuccess) {
+      navigate(`${sitePrefix}landingPages/Popups/Summary/${id}`, { 
+        state: { payload, lookupData } 
+      });
+    } else {
+      console.log(response);
+      
+      const errorMessage = response.payload?.Data?.ErrorDetails || 
+                          response.payload?.Message || 
+                          t('common.Error');
+      showErrorToast(errorMessage);
+    }
   };
 
   const renderTriggerSpecificFields = (trigger: any, triggerKey: string) => {
@@ -284,9 +317,16 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
   const renderButtons = () => (
     <>
       <Button onClick={() => navigate(`${sitePrefix}popupeditor/${id}`)} className={clsx(classes.btn, classes.btnRounded, classes.backButton)} style={{ margin: "8px" }}>{t("common.back")}</Button>
-      <Button onClick={handleSummaryClick} variant="contained" size="medium" className={clsx(classes.btn, classes.btnRounded)} style={{ margin: "8px" }} disabled={upserting}>{t("common.summary")}</Button>
+      <Button onClick={handleSummaryClick} variant="contained" size="medium" className={clsx(classes.btn, classes.btnRounded)} style={{ margin: "8px" }} disabled={upserting}>{t("common.saveAndContinue")}</Button>
     </>
   );
+
+  const renderToast = () => {
+    setTimeout(() => {
+      setToastMessage(null);
+    }, 3000);
+    return <Toast customData={null} data={toastMessage} />;
+  };
 
   return (
     <DefaultScreen currentPage='PopupTriggers' classes={classes} containerClass={clsx(classes.management, classes.mb50)}>
@@ -352,6 +392,7 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
       <Box className={classes.stickyFooter}>
         {renderButtons()}
       </Box>
+      {toastMessage && renderToast()}
     </DefaultScreen>
   );
 };

@@ -737,7 +737,12 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 	const handleContinueToEditor = (editorType: EditorType, savedPageID: number) => {
 		const isBeeEditor = (accountFeatures?.indexOf(PulseemFeatures.BEE_EDITOR) > -1 && editorType === EditorType.BEE);
 		const pageId = id || savedPageID;
-		let redirectUrl = isBeeEditor ? `${sitePrefix}editor/${BEE_EDITOR_TYPES.LANDING_PAGE}/${pageId}` : `/Pulseem/NewWebForm/NewFormEdit/${pageId}?fromreact=true`;
+
+		const beeEditorType = isPopup ? BEE_EDITOR_TYPES.POPUP : BEE_EDITOR_TYPES.LANDING_PAGE;
+
+		let redirectUrl = isBeeEditor
+			? `${sitePrefix}editor/${beeEditorType}/${pageId}`
+			: `/Pulseem/NewWebForm/NewFormEdit/${pageId}?fromreact=true`;
 
 		if (isFromAutomation) {
 			redirectUrl += `?new=${isNew}&FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`;

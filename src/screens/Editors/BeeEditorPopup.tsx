@@ -577,8 +577,13 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
           }
           //@ts-ignore
           else if (saveRef.current?.showAnimation && !saveRef.current?.saveTemplate) {
-            //@ts-ignore
-            setToastMessage(ToastMessages.LANDING_PAGE_SAVED);
+            // @ts-ignore
+            setToastMessage({
+              severity: 'success',
+              color: 'success',
+              message: t('popup.popupSaved'),
+              showAnimtionCheck: true
+            } as any);
           }
           //@ts-ignore
           if (reInit && !saveRef.current?.saveTemplate) {

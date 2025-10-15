@@ -39,6 +39,15 @@ interface PopupLookupData {
   DisplayFrequencies: DisplayFrequency[];
 }
 
+interface PopupRulesData {
+  PopupTriggers?: any[];
+  PopupFrequency?: any[];
+  PopupPageTargeting?: any[];
+  ContinueAfterConversion: boolean;
+  PopupConversionId?: number; // Correct spelling
+  PopupConvesrionId?: number; // API typo - keeping both for compatibility
+}
+
 interface PopupTriggersState {
   lookupData: PopupLookupData | null;
   loading: boolean;
@@ -46,7 +55,7 @@ interface PopupTriggersState {
   upserting: boolean;
   upsertSuccess: boolean;
   upsertError: string | null;
-  popupRules: any | null;
+  popupRules: PopupRulesData | null;
   rulesLoading: boolean;
   rulesError: string | null;
 }
