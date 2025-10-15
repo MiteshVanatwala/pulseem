@@ -177,7 +177,8 @@
       "customReports": "Custom reports",
       "dedicatedAccountManager": "Dedicated account manager",
       "prioritySupport": "Priority support",
-      "scheduledTrainingSessions": "Scheduled training sessions"
+      "scheduledTrainingSessions": "Scheduled training sessions",
+      "dynamicProducts": "Dynamic products"
     },
     "steps": {
       "selectPlan": "Select Plan",

@@ -815,6 +815,7 @@ export const TIER_PLANS = [
             'billing.tier.features.subaccountsCreation',
             'billing.tier.features.manageUsersPermissions',
             'billing.tier.features.phoneSupport',
+            'billing.tier.features.dynamicProducts'
         ],
         isPopular: true,
     },

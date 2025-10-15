@@ -509,9 +509,11 @@ const CampaignEditor = ({ classes, ...props }) => {
           return false;
         }
         case 927: {
-          // EMAIL_BASIC, BASIC_PERSONALIZATION
-          setTierMessageCode(response?.payload?.Message);
-          setDialogType({ type: 'tier' });
+          if (saveRef.current?.operation !== 'exit') {
+            // EMAIL_BASIC, BASIC_PERSONALIZATION
+            setTierMessageCode(response?.payload?.Message);
+            setDialogType({ type: 'tier' });
+          }
           return false;
         }
       }
