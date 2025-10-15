@@ -81,7 +81,7 @@ const BillingSettingsPage = ({ classes }: any) => {
   const [showTierPlans, setShowTierPlans] = useState<boolean>(false);
 
   const formatPlanDescription = () => {
-    const price = currentPlan?.Name !== 'GRAND_FATHER' && currentPlan?.Name !== 'STARTER' ? `₪${currentPlan?.Price}/${t('billing.month')}` : '';
+    const price = currentPlan?.Name !== 'GRAND_FATHER' && currentPlan?.Name !== 'Starter' ? `₪${currentPlan?.Price}/${t('billing.month')}` : '';
     const date = currentPlan?.TierSubscriptionStartDate && currentPlan?.TierSubscriptionEndDate ? ` • ${t("common.startDate")} - ${moment(currentPlan?.TierSubscriptionStartDate).format(DateFormats.DATE_ONLY)} - ${t("common.endDate")} - ${moment(currentPlan?.TierSubscriptionEndDate).format(DateFormats.DATE_ONLY)}` : '';
     return `${price} ${date}`;
   };
@@ -609,7 +609,7 @@ const BillingSettingsPage = ({ classes }: any) => {
                               {t('common.tier.manageCard')}
                             </Button> */}
                             {
-                              currentPlan?.Name !== 'SCALE' && (
+                              currentPlan?.Name !== 'Scale' && (
                                 <Button
                                   className={clsx(classes.btn, classes.btnRounded)}
                                   onClick={(e: any) => { 
@@ -623,7 +623,7 @@ const BillingSettingsPage = ({ classes }: any) => {
                               )
                             }
                             {
-                              currentPlan?.Name !== 'STARTER' && (
+                              currentPlan?.Name !== 'Starter' && (
                                 <Button
                                   className={clsx(classes.btn, classes.btnRounded, classes.redButton)}
                                   onClick={(e: any) => { 

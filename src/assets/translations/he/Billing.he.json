@@ -97,7 +97,7 @@
     },
     "upgrade": {
       "title": "שדרוג ל-{planTitle}",
-      "success": "ברוך הבא ל {panName}!",
+      "success": "ברוך הבא ל {planName}!",
       "message": "השימוש במנוי פתוח כעת",
       "features": {
         "unlimitedAutomations": {
@@ -146,7 +146,7 @@
       "abTesting": "בדיקות A/B",
       "surveySystem": "מערכת סקרים",
       "apiAccess": "גישה ל-API",
-      "everythingInFlow": "הכל מ-Flow, בתוספת:",
+      "everythingInFlow": "הכל מ-Standard, בתוספת:",
       "ecommerceAutomationTriggers": "טריגרים לאוטומציה של מסחר אלקטרוני",
       "ecommerceSegmentations": "סגמנטציות מסחר אלקטרוני",
       "productCatalogIntegration": "אינטגרציה עם קטלוג מוצרים",
@@ -155,7 +155,7 @@
       "subaccountsCreation": "תתי חשבון",
       "manageUsersPermissions": "ניהול משתמשים והרשאות",
       "phoneSupport": "תמיכה טלפונית",
-      "everythingInEngage": "הכל מ-Engage, בתוספת:",
+      "everythingInEngage": "הכל מ-Pro, בתוספת:",
       "highVolumeSending": "ביצועי שליחה בנפח גבוה",
       "customDevelopments": "פיתוחים ואינטגרציות מותאמות אישית",
       "customReports": "דוחות מותאמים אישית",
