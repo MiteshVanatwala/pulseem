@@ -70,7 +70,7 @@ const AIFloatingButton: React.FC = () => {
     dispatch(toggleChat());
   };
 
-  if (accountFeatures?.indexOf(PulseemFeatures.PolyAIAgent) === -1) return <></>;
+  if (accountFeatures === null || accountFeatures?.indexOf(PulseemFeatures.PolyAIAgent) === -1) return <></>;
 
   return (
     <Tooltip

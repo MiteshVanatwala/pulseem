@@ -218,7 +218,7 @@ const AIChatWidget: React.FC = () => {
       }
     };
 
-    if (totalMessagesForUserCount < 1 && username && accountFeatures?.indexOf(PulseemFeatures.PolyAIAgent) !== -1) {
+    if (totalMessagesForUserCount < 1 && username && accountFeatures !== null && accountFeatures?.indexOf(PulseemFeatures.PolyAIAgent) !== -1) {
       initializeChat();
     }
 
@@ -227,6 +227,8 @@ const AIChatWidget: React.FC = () => {
     // }
   }, [dispatch, messages, username, totalMessagesForUserCount])
 
+  if (accountFeatures === null || accountFeatures?.indexOf(PulseemFeatures.PolyAIAgent) === -1) return <></>;
+  
   return (
     <div className={classes.PolywidgetContainer}>
         <div 
