@@ -883,5 +883,13 @@
   "welcomeMessage": "Hi, my name is {USERNAME}",
   "500chars": "500 characters",
   "doNotShowThisDialog": "Do not show this dialog",
-  "messageDot": "Analyzing your data, it may take a few minutes"
+  "messageDot": "Analyzing your data, it may take a few minutes",
+  "tier": {
+    "current": "Current Tier",
+    "upgrade": "Upgrade Tier",
+    "downgrade": "Downgrade Tier",
+    "manageCard": "Manage Card"
+  },
+  "startDate": "Start Date",
+  "endDate": "End Date"
 }

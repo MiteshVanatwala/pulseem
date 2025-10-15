@@ -11,7 +11,7 @@ import { coreProps } from '../../Whatsapp/Campaign/Types/WhatsappCampaign.types'
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import WizardActions from '../../../components/Wizard/WizardActions';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
-import { BEE_EDITOR_TYPES, LandingPagesAnswerType } from '../../../helpers/Constants';
+import { BEE_EDITOR_TYPES, LandingPagesAnswerType, TierFeatures } from '../../../helpers/Constants';
 import { FileGallery } from '../../../Models/Files/FileGallery';
 import Gallery from '../../../components/Gallery/Gallery.component';
 import { PulseemFeatures, PulseemFolderType } from '../../../model/PulseemFields/Fields';
@@ -28,6 +28,7 @@ import FormProperties from './Tabs/FormProperties';
 import OfflineProperties from './Tabs/OfflineProperties';
 import SubscriberSettings from './Tabs/SubscriberSettings';
 import SeoSettings from './Tabs/SeoSettings';
+import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
 import DevelopmentSettings from './Tabs/DevelopmentSettings';
 import LinkPreviewSettings from './Tabs/LinkPreviewSettings';
 import { BeeEditorStoreModel, LandingPageModel } from '../../../Models/LandingPage/LandingPage';
@@ -35,6 +36,9 @@ import { PulseemResponse } from '../../../Models/APIResponse';
 import { logout } from '../../../helpers/Api/PulseemReactAPI';
 import Toast from '../../../components/Toast/Toast.component';
 import SubscriberGroup from './Tabs/SubscriberGroup';
+import TierPlans from '../../../components/TierPlans/TierPlans';
+import { UserRoles } from '../../../Models/SubUser/SubUsers';
+import { get } from 'lodash';
 
 const generateGuid = () => {
 	return Date.now().toString(36) + Math.random().toString(36).substring(2);
@@ -58,8 +62,10 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 		type: string;
 	} | null>(null);
 	const { subAccountAllGroups } = useSelector((state: any) => state.group);
-	const { accountFeatures } = useSelector((state: any) => state.common);
-	const { ToastMessages } = useSelector((state: { landingPages: BeeEditorStoreModel }) => state.landingPages)
+	const { accountFeatures, subAccount } = useSelector((state: any) => state.common);
+	const { ToastMessages } = useSelector((state: { landingPages: BeeEditorStoreModel }) => state.landingPages);
+	const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
+	const [showTierPlans, setShowTierPlans] = useState(false);
 	const [toastMessage, setToastMessage] = useState(null);
 	const [errors, setErrors] = useState({
 		PageName: '',
@@ -166,6 +172,7 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 
 	const [tabValue, setTabValue] = useState<string>('1');
 	// const [template, setTemplate] = useState('');
+	const [TierMessageCode, setTierMessageCode] = useState<string>('');
 	const { publicTemplates, templatesBySubAccount } = useSelector(
 		(state: { landingPages: any }) => state.landingPages
 	);
@@ -544,6 +551,56 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 		confirmText: t('common.Yes')
 	})
 
+	const handleGetPlanForFeature = (tierMessageCode: string) => {
+			const planName = findPlanByFeatureCode(
+					tierMessageCode,
+					availablePlans,
+					currentPlan.Id
+			);
+			
+			if (planName) {
+					return t('billing.tier.featureNotAvailable').replace('{feature}', t(TierFeatures[tierMessageCode as keyof typeof TierFeatures] || tierMessageCode)).replace('{planName}', planName);
+			} else {
+					return t('billing.tier.noFeatureAvailable');
+			}
+	};
+
+	const getTierValidationDialog = () => ({
+		title: t('billing.tier.permission'),
+		showDivider: false,
+		content: (
+			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+				{handleGetPlanForFeature(TierMessageCode)}
+			</Typography>
+		),
+		renderButtons: () => (
+			<Grid
+					container
+					spacing={2}
+					className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}
+			>
+					<Grid item>
+							<Button
+									onClick={() => {
+											setShowTierPlans(true);
+									}}
+									className={clsx(classes.btn, classes.btnRounded)}
+							>
+									{t('billing.upgradePlan')}
+							</Button>
+					</Grid>
+					<Grid item>
+							<Button
+									onClick={() => setDialogType(null)}
+									className={clsx(classes.btn, classes.btnRounded)}
+							>
+									{t('common.cancel')}
+							</Button>
+					</Grid>
+			</Grid>
+		)
+	})
+
 	const renderDialog = () => {
 		const { type } = dialogType || {}
 		let currentDialog: any = {};
@@ -557,6 +614,8 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 			currentDialog = getValidationDialog();
 		} else if (type === 'delete') {
 			currentDialog = getDeleteDialog();
+		} else if (type === 'tier') {
+			currentDialog = getTierValidationDialog();
 		}
 
 		if (type) {
@@ -710,6 +769,12 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 					...errors,
 					shortURL: t('landingPages.shortURLExist')
 				})
+				break;
+			}
+			case 927: {
+				// LANDING_PAGE_MANAGEMENT
+				setTierMessageCode(response?.Message || 'LANDING_PAGE_MANAGEMENT');
+				setDialogType({ type: 'tier' });
 				break;
 			}
 			case 500:
@@ -1026,6 +1091,11 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 			</Box >
 			{renderDialog()}
 			{toastMessage && renderToast()}
+			{showTierPlans && <TierPlans
+				classes={classes}
+				isOpen={showTierPlans}
+				onClose={() => setShowTierPlans(false)}
+			/>}
 		</DefaultScreen >
 	)
 }

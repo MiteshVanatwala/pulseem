@@ -45,7 +45,7 @@ interface ToastMessage {
 }
 
 export interface DialogType {
-  type: 'delete' | 'restore' | 'duplicate';
+  type: 'delete' | 'restore' | 'duplicate' | 'embed';
   data: any;
 }
 
@@ -271,11 +271,6 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
     );
   };
 
-  const getPopupUrl = (page: Page) => {
-    const domain = page.Domains && page.Domains.length > 0 ? page.Domains[0] : '';
-    return `${domain}?pulseem_popup=${page.PopupGuid}`;
-  };
-
   const renderCopyToClipboard = (id: number) => {
     return showCopied === id ? (
       <PopMassage
@@ -291,9 +286,7 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
   const renderActionIcons = (page: Page) => {
     const id = page.ID;
     const isActive = page.StatusName === 'Active';
-    const pageUrl = getPopupUrl(page);
-    const embedCode = `<script src="${pageUrl}" type="text/javascript"></script>`;
-    
+
     const iconsMap = [
       {
         key: "Settings",
@@ -315,17 +308,17 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
         }
       },
       {
-        key: "edit", 
-        uIcon: EditIcon, 
+        key: "edit",
+        uIcon: EditIcon,
         lable: t('landingPages.EditResource1.HeaderText'),
         rootClass: classes.paddingIcon,
         onClick: () => {
           navigate(`${sitePrefix}popupeditor/${id}`);
         }
       },
-      { 
-        key: "duplicate", 
-        uIcon: DuplicateIcon, 
+      {
+        key: "duplicate",
+        uIcon: DuplicateIcon,
         lable: t('campaigns.lnkEditResource1.ToolTip'),
         rootClass: classes.paddingIcon,
         onClick: () => {
@@ -335,23 +328,21 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
           });
         }
       },
-      { 
-        key: "copy", 
-        uIcon: CopyIcon, 
-        lable: t('landingPages.popupManagement.actions.copyLink'),
-        rootClass: classes.paddingIcon,
-        disable: !isActive,
-        type: 'copy',
-        text: pageUrl
-      },
-      { 
-        key: "embed", 
-        uIcon: CopyIcon, 
+      {
+        key: "embed",
+        uIcon: CopyIcon,
         lable: t('landingPages.popupManagement.actions.embed'),
         rootClass: classes.paddingIcon,
         disable: !isActive,
         type: 'embed',
-        text: embedCode
+        onClick: () => {
+          if (isActive) {
+            setDialogType({
+              type: 'embed',
+              data: page
+            });
+          }
+        }
       },
       {
         key: "delete",
@@ -370,43 +361,14 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
     return (
       <Grid container justifyContent="center" alignItems='center'>
         {iconsMap.map(icon => {
-          const { onClick, type, text, uIcon: IconComponent, ...restProps } = icon;
+          const { onClick, type, uIcon: IconComponent, ...restProps } = icon;
           const iconProps: any = {
             ...restProps,
             classes,
             icon: null,
             uIcon: <IconComponent width={18} height={20} className={'rowIcon'} />
           };
-          if (type === 'copy') {
-            iconProps.onClick = (e: any) => {
-              if (isActive) {
-                navigator.clipboard.writeText(pageUrl);
-                setCopyRef(e.current);
-                setShowCopied(id);
-                setTimeout(() => {
-                  setShowCopied(null);
-                }, 1000);
-              }
-            };
-          } else if (type === 'embed') {
-            iconProps.onClick = async (e: any) => {
-              if (isActive) {
-                let iframe = embedCode;
-                // @ts-ignore
-                const res = await dispatch(getPageHeight(id));
-                if (res.payload?.StatusCode === 201) {
-                  const height = res.payload?.Data;
-                  iframe = iframe.replace('##pageHeight##', height);
-                }
-                navigator.clipboard.writeText(iframe);
-                setCopyRef(e.current);
-                setShowCopied(id);
-                setTimeout(() => {
-                  setShowCopied(null);
-                }, 1000);
-              }
-            };
-          } else if (onClick) {
+          if (onClick) {
             iconProps.onClick = onClick;
           }
 
@@ -653,6 +615,40 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
     }
   });
 
+  const getEmbedDialog = (data: Page) => {
+    const PopupBaseUrl = 'https://stage.l-p.site';
+    const embedCode = `<script type="text/javascript" src="${PopupBaseUrl}/pulseempopup.js?id=${data.ID}"></script>`;
+
+    return {
+      title: t('landingPages.popupManagement.actions.embed'),
+      showDivider: false,
+      content: (
+        <Box>
+          <Typography style={{ fontSize: 16, marginBottom: 16 }}>
+            {t('landingPages.popupManagement.actions.embedMessage')}
+          </Typography>
+          <TextField
+            fullWidth
+            multiline
+            rows={3}
+            variant="outlined"
+            value={embedCode}
+            InputProps={{
+              readOnly: true,
+            }}
+            onClick={(e: any) => e.target.select()}
+          />
+        </Box>
+      ),
+      onConfirm: () => {
+        navigator.clipboard.writeText(embedCode);
+        handleClose();
+        setToastMessage({ type: 'success', message: 'Embed code copied to clipboard!' });
+      },
+      confirmText: 'Copy Code'
+    };
+  };
+
   const renderDialog = () => {
     if (!dialogType) {
       return null;
@@ -662,7 +658,8 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
     const dialogContent = {
       delete: getDeleteDialog(data),
       restore: getRestorDialog(data),
-      duplicate: getDuplicateDialog(data)
+      duplicate: getDuplicateDialog(data),
+      embed: getEmbedDialog(data)
     }
 
     const currentDialog = dialogContent[type];

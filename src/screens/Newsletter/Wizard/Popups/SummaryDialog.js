@@ -27,6 +27,7 @@ const SummaryDialog = ({ classes,
     onClose = () => null,
     onConfirm = () => null,
     setDialogType = () => null,
+    setTierMessageCode = () => null,
     filteredGroups = null,
     filteredCampaigns = null,
     PreviewURL = null,
@@ -86,8 +87,12 @@ const SummaryDialog = ({ classes,
         const sendResponse = await dispatch(sendCampaign(newsletterSendSummary.CampaignID));
 
         const response = sendResponse?.payload;
-
-        if (response.StatusCode === 451) {
+        console.log(response)
+        if (response.StatusCode === 927) {
+            // EMAIL_BASIC
+            setTierMessageCode(response.Message);
+            setDialogType(927)
+        } else if (response.StatusCode === 451) {
             const req = {
                 target: {
                     value: fromEmail

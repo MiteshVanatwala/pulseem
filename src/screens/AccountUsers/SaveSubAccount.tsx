@@ -11,7 +11,7 @@ import PulseemSwitch from '../../components/Controlls/PulseemSwitch';
 import { RenderHtml, useStylesBootstrapPasswordHint } from '../../helpers/Utils/HtmlUtils';
 import PasswordHint from '../Settings/AccountSettings/Password/PasswordHint';
 import { ValidPassword } from '../Settings/AccountSettings/Password/Types';
-import { lowerCaseLetters, numbers, DecimalWithMinusRegEx, specialLetters, upperCaseLetters, NumberWithMinusRegEx } from '../../helpers/Constants';
+import { lowerCaseLetters, numbers, DecimalWithMinusRegEx, specialLetters, upperCaseLetters, NumberWithMinusRegEx, TierFeatures } from '../../helpers/Constants';
 import Groups from '../../components/Groups/GroupsHandler/Groups';
 import { getGroupsBySubAccountId } from '../../redux/reducers/groupSlice';
 import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
@@ -24,6 +24,8 @@ import { IsValidNonGlobalPhoneNumber, IsValidPhoneNumberKeyPress, IsValidPhoneNu
 import { getTestGroups } from '../../redux/reducers/smsSlice';
 import { GetGlobalAccountPackagesDetails } from '../../redux/reducers/commonSlice';
 import { Stack } from '@mui/material';
+import { findPlanByFeatureCode } from '../../redux/reducers/TiersSlice';
+import TierPlans from '../../components/TierPlans/TierPlans';
 
 const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}, mainAccountBalance = {} }: any) => {
 	const dispatch: any = useDispatch();
@@ -31,19 +33,22 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 	const { windowSize, isRTL } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
-	const { isGlobal, countryCodeList, accountCurrencySymbol, accountIsCurrencySymbolPrefix, IsPoland } = useSelector((state: { common: CommonRedux }) => state.common);
+	const { isGlobal, countryCodeList, accountCurrencySymbol, accountIsCurrencySymbolPrefix, IsPoland, subAccount } = useSelector((state: { common: CommonRedux }) => state.common);
 	const { subAccountAllGroups } = useSelector((state: any) => state.group);
 	const { testGroups } = useSelector((state: any) => state.sms);
+	const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
 	const [ selectedGroups, setSelectedGroups ] = useState<any>([]);
 	const [ showTestGroups, setShowTestGroups ] = useState(false);
 	const [ allGroupsSelected, setAllGroupsSelected ] = useState(false);
 	const [ isLoader, setIsLoader ] = useState<boolean>(false);
 	const [ toastMessage, setToastMessage ] = useState(null);
+	const [showTierPlans, setShowTierPlans] = useState(false);
 	const [ dialogType, setDialogType ] = useState<{
 		type: string;
 	} | null>({
 		type: ''
 	});
+	const [TierMessageCode, setTierMessageCode] = useState<string>('');
 	const [ errors, setErrors ] = useState({
 		subAccountName: '',
 		cellPhone: '',
@@ -301,6 +306,11 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 				showErrorToast(t('landingPages.shortUrlExist'));
 				break;
 			}
+			case 927: {
+				setTierMessageCode('SUBACCOUNTS');
+				setDialogType({ type: 'tier' });
+				break;
+			}
 			case 1000: {
 				showErrorToast(t('SubAccount.notAllowed'));
 				break;
@@ -342,11 +352,64 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
     onClose: () => setDialogType(null)
 	})
 
+	const handleGetPlanForFeature = (tierMessageCode: string) => {
+		const planName = findPlanByFeatureCode(
+			tierMessageCode,
+			availablePlans,
+			currentPlan.Id
+		);
+		
+		if (planName) {
+			return t('billing.tier.featureNotAvailable').replace('{feature}', t(TierFeatures[tierMessageCode as keyof typeof TierFeatures] || tierMessageCode)).replace('{planName}', planName);
+		} else {
+			return t('billing.tier.noFeatureAvailable');
+		}
+	};
+
+	const getTierValidationDialog = () => ({
+		title: t('billing.tier.permission'),
+		showDivider: false,
+		content: (
+			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+				{handleGetPlanForFeature(TierMessageCode)}
+			</Typography>
+		),
+		renderButtons: () => (
+			<Grid
+				container
+				spacing={2}
+				className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}
+			>
+				<Grid item>
+					<Button
+						onClick={() => {
+						setDialogType(null);
+						setShowTierPlans(true);
+					}}
+					className={clsx(classes.btn, classes.btnRounded)}
+					>
+						{t('billing.upgradePlan')}
+					</Button>
+				</Grid>
+				<Grid item>
+					<Button
+						onClick={() => setDialogType(null)}
+						className={clsx(classes.btn, classes.btnRounded)}
+					>
+						{t('common.cancel')}
+					</Button>
+				</Grid>
+			</Grid>
+		)
+	})
+
 	const renderDialog = () => {
 		const { type } = dialogType || {}
 		let currentDialog: any = {};
 		if (type === 'internalError') {
 			currentDialog = displayInternalErrorPopup();
+		} else if (type === 'tier') {
+			currentDialog = getTierValidationDialog();
 		}
 
 		if (type) {
@@ -966,6 +1029,11 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 				<Loader isOpen={isLoader} />
 				{toastMessage && renderToast()}
 				{renderDialog()}
+				{showTierPlans && <TierPlans
+					classes={classes}
+					isOpen={showTierPlans}
+					onClose={() => setShowTierPlans(false)}
+				/>}
 			</>
 		</BaseDialog>
 	);

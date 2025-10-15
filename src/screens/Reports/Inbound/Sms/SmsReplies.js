@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { useSelector, useDispatch } from 'react-redux';
 import { Loader } from '../../../../components/Loader/Loader';
 import { ExportFile } from '../../../../helpers/Export/ExportFile';
-import { ClientStatus, DateFormats } from '../../../../helpers/Constants';
+import { ClientStatus, DateFormats, TierFeatures } from '../../../../helpers/Constants';
 import { EditIcon } from '../../../../assets/images/managment/index';
 import { ExportFileTypes } from '../../../../model/Export/ExportFileTypes';
 import AddRecipientPopup from "../../../Groups/Management/Popup/AddRecipientPopup";
@@ -22,6 +22,11 @@ import SearchLine from '../SearchLine';
 import { setRowsPerPage } from '../../../../redux/reducers/coreSlice';
 import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
 import { PulseemFeatures } from '../../../../model/PulseemFields/Fields';
+import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
+import { RenderHtml } from '../../../../helpers/Utils/HtmlUtils';
+import { findPlanByFeatureCode } from '../../../../redux/reducers/TiersSlice';
+import TierPlans from '../../../../components/TierPlans/TierPlans';
+import { get } from 'lodash';
 
 
 const SmsReplies = ({ classes }) => {
@@ -41,7 +46,9 @@ const SmsReplies = ({ classes }) => {
     const { smsReplies, extraData, finishedCampaigns } = useSelector(state => state.sms);
     const { subAccountAllGroups } = useSelector((state) => state.group);
     const { windowSize, isRTL, rowsPerPage, userRoles } = useSelector(state => state.core);
-    const { accountFeatures } = useSelector(state => state.common);
+    const { accountFeatures, subAccount } = useSelector(state => state.common);
+    const { currentPlan, availablePlans } = useSelector(state => state.tiers);
+    const [showTierPlans, setShowTierPlans] = useState(false);
     const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot) }
     const cellBodyStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot) }
     const cellStyle = { head: classes.tableCellHead, root: clsx(classes.tableCellRoot, classes.paddingHead) }
@@ -64,14 +71,39 @@ const SmsReplies = ({ classes }) => {
         IsExport: false
     };
     const [request, setRequest] = useState(defaultRequest);
-    const [searchRequest, setSearchRequest] = useState(defaultRequest)
+    const [searchRequest, setSearchRequest] = useState(defaultRequest);
+    const [TierMessageCode, setTierMessageCode] = useState('');
 
     const DialogType = { EDIT_RECIPIENT: "EDIT_RECIPIENT" };
+
+    const handleGetPlanForFeature = (tierMessageCode) => {
+        const planName = findPlanByFeatureCode(
+            tierMessageCode,
+            availablePlans,
+            currentPlan.Id
+        );
+        
+        if (planName) {
+            return t('billing.tier.featureNotAvailable').replace('{feature}', t(TierFeatures[tierMessageCode] || tierMessageCode)).replace('{planName}', planName);
+        } else {
+            return t('billing.tier.noFeatureAvailable');
+        }
+    };
 
 
     const getReplies = async () => {
         setShowLoader(true);
-        await dispatch(getSmsReplies({ ...request, PageSize: rowsPerPage, PageIndex: page }));
+        const response = await dispatch(getSmsReplies({ ...request, PageSize: rowsPerPage, PageIndex: page }));
+        
+        // Check for tier validation
+        if (response?.payload?.StatusCode === 927) {
+            // SMS_RESPONSE_REPORT
+            setTierMessageCode(response?.payload?.Message || 'SMS_RESPONSE_REPORT');
+            setDialog('tier');
+            setShowLoader(false);
+            return;
+        }
+        
         setShowLoader(false);
     }
 
@@ -136,6 +168,15 @@ const SmsReplies = ({ classes }) => {
         setDialog(null);
         setShowLoader(true);
         let response = await dispatch(getSmsReplies({ ...request, IsExport: true }));
+        
+        // Check for tier validation
+        if (response?.payload?.StatusCode === 927) {
+            setTierMessageCode(response?.payload?.Message || 'SMS_RESPONSE_REPORT');
+            setDialog('tier');
+            setShowLoader(false);
+            return;
+        }
+        
         let finalData = response?.payload?.Data;
         finalData = await DeletePropertyFromArrayObject(finalData, ['Status']);
 
@@ -358,6 +399,44 @@ const SmsReplies = ({ classes }) => {
                         recipientData={clientToEdit}
                     />
                 }
+                case 'tier': {
+                    return <BaseDialog
+                        classes={classes}
+                        open={dialog === 'tier'}
+                        onClose={() => setDialog(null)}
+                        onCancel={() => setDialog(null)}
+                        onConfirm={() => setDialog(null)}
+                        showDefaultButtons={false}
+                        title={t('billing.tier.permission')}
+                        renderButtons={() => (
+                            <Grid container spacing={2} className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}>
+                                <Grid item>
+                                <Button
+                                    onClick={() => {
+                                    setDialog(null);
+                                    setShowTierPlans(true);
+                                  }}
+                                  className={clsx(classes.btn, classes.btnRounded)}
+                                >
+                                  {t('billing.upgradePlan')}
+                                </Button>
+                                </Grid>
+                                <Grid item>
+                                <Button
+                                  onClick={() => { setDialog(null); }}
+                                  className={clsx(classes.btn, classes.btnRounded)}
+                                >
+                                  {t('common.cancel')}
+                                </Button>
+                                </Grid>
+                            </Grid>
+                        )}
+                    >
+                        <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+                            {handleGetPlanForFeature(TierMessageCode)}
+                        </Typography>
+                    </BaseDialog>
+                }
                 default: {
                     return <></>
                 }
@@ -509,6 +588,11 @@ const SmsReplies = ({ classes }) => {
                 options={ExportFileTypes}
             />
             <Loader isOpen={showLoader} showBackdrop={true} />
+            {showTierPlans && <TierPlans
+				classes={classes}
+				isOpen={showTierPlans}
+				onClose={() => setShowTierPlans(false)}
+			/>}
         </Box >
     )
 }

@@ -84,7 +84,10 @@ import ConfirmationButtons from '../../../components/ConfirmationButtons/Confirm
 import { sitePrefix } from '../../../config';
 import { TablePagination } from '../../../components/managment';
 import { TemplateErrorDialog } from '../../../components/TemplateErrorDialog/TemplateErrorDialog';
-import { DateFormats } from '../../../helpers/Constants';
+import { DateFormats, TierFeatures } from '../../../helpers/Constants';
+import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
+import TierPlans from '../../../components/TierPlans/TierPlans';
+import { get } from 'lodash';
 
 const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 	const dispatch = useDispatch();
@@ -97,6 +100,8 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		(state: { whatsapp: { ToastMessages: toastProps } }) =>
 			state.whatsapp.ToastMessages
 	);
+	const { subAccount } = useSelector((state: any) => state.common);
+	const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
 	const [templateNameSearch, setTemplateNameSearch] = useState<string>('');
 	const [templateStatusSearch, setTemplateStatusSearch] = useState<string>('');
 	const [isSearching, setSearching] = useState<boolean>(false);
@@ -125,6 +130,8 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 	const [dialogType, setDialogType] = useState<any>({});
 	const [toastMessage, setToastMessage] =
 		useState<toastProps['SUCCESS']>(resetToastData);
+	const [TierMessageCode, setTierMessageCode] = useState<string>("");
+	const [showTierPlans, setShowTierPlans] = useState(false);
 	const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot };
 	const cellStyle = {
 		head: classes.tableCellHead,
@@ -646,7 +653,14 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		const submitData: commonAPIResponseProps = await dispatch<any>(
 			submitTemplateDirect({ id: activeRowId })
 		);
-		if (submitData?.payload?.Status === apiStatus.SUCCESS) {
+
+		if (submitData?.payload?.StatusCode === 927) {
+			if (['WHATSAPP_MEDIA_ATTACHMENT', 'WHATSAPP_TEMPLATES', 'WHATSAPP_BUTTON_ATTACHMENT','WHATSAPP_CARD_MESSAGE'].indexOf(submitData?.payload?.Message) !== -1) {
+				setTierMessageCode(submitData?.payload?.Message);
+				setDialogType({ type: 'tier' })
+			}
+		}
+		else if (submitData?.payload?.Status === apiStatus.SUCCESS) {
 			setToastMessage(ToastMessages.SUBMIT_CAMPAIGN_SUCCESS);
 			setApiTemplateData();
 		} else {
@@ -842,6 +856,57 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		/>
 	})
 
+	const handleGetPlanForFeature = (tierMessageCode: string) => {
+		const planName = findPlanByFeatureCode(
+			tierMessageCode,
+			availablePlans,
+			currentPlan.Id
+		);
+		
+		if (planName) {
+			return translator('billing.tier.featureNotAvailable').replace('{feature}', translator(TierFeatures[tierMessageCode as keyof typeof TierFeatures] || tierMessageCode)).replace('{planName}', planName);
+		} else {
+			return translator('billing.tier.noFeatureAvailable');
+		}
+	};
+
+	const getTierValidationDialog = () => ({
+		title: translator('billing.tier.permission'),
+		showDivider: false,
+		content: (
+			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+				{handleGetPlanForFeature(TierMessageCode)}
+			</Typography>
+		),
+		renderButtons: () => (
+			<Grid
+				container
+				spacing={2}
+				className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}
+			>
+				<Grid item>
+					<Button
+						onClick={() => {
+						setDialogType(null);
+						setShowTierPlans(true);
+					}}
+					className={clsx(classes.btn, classes.btnRounded)}
+					>
+						{translator('billing.upgradePlan')}
+					</Button>
+				</Grid>
+				<Grid item>
+					<Button
+						onClick={() => setDialogType(null)}
+						className={clsx(classes.btn, classes.btnRounded)}
+					>
+						{translator('common.cancel')}
+					</Button>
+				</Grid>
+			</Grid>
+		)
+	})
+
 	const renderDialog = () => {
 		const { type, data } = dialogType || {}
 		let currentDialog: any = {};
@@ -855,6 +920,8 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 			currentDialog = getPreviewDialog(data);
 		} else if (type === 'submitTemplate') {
 			currentDialog = getSubmitTemplateDialog();
+		} else if (type === 'tier') {
+			currentDialog = getTierValidationDialog();
 		}
 
 		if (type) {
@@ -1128,6 +1195,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 							rows={totalRecord}
 							rowsPerPage={paginationSetting?.pageSize}
 							onRowsPerPageChange={onRowsPerPageChange}
+							// @ts-ignore
 							rowsPerPageOptions={[6, 10, 20, 50]}
 							page={paginationSetting?.pageNo}
 							onPageChange={(pageNumber: number) =>
@@ -1146,6 +1214,11 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 
 			{renderDialog()}
 			<Loader isOpen={isLoader} showBackdrop={true} />
+			{showTierPlans && <TierPlans
+				classes={classes}
+				isOpen={showTierPlans}
+				onClose={() => setShowTierPlans(false)}
+			/>}
 		</DefaultScreen>
 	);
 };

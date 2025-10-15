@@ -520,7 +520,8 @@
       "preview": "Preview",
       "duplicate": "Duplicate",
       "copyLink": "Copy Link",
-      "embed": "Embed"
+      "embed": "Embed",
+      "embedMessage": "Copy and paste this code into your website:"
     }
   }
 }

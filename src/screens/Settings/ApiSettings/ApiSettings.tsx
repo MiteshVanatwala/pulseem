@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Box, Divider, Button, Typography, TextField, makeStyles, Link } from '@material-ui/core';
+import { Box, Divider, Button, Typography, TextField, makeStyles, Link, Grid } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
@@ -33,6 +33,10 @@ import { ExportData, ExportOption, HandleExportData } from '../../../helpers/Exp
 import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog';
 import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
 import { ExportFile } from '../../../helpers/Export/ExportFile';
+import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
+import TierPlans from '../../../components/TierPlans/TierPlans';
+import { TierFeatures } from '../../../helpers/Constants';
+import { get } from 'lodash';
 
 const useStyles = makeStyles({
     pwdEveButton: {
@@ -64,7 +68,8 @@ const ApiSettings = ({ classes }: any) => {
     const dispatch = useDispatch();
     const { isRTL, windowSize } = useSelector((state: any) => state.core);
     const { ToastMessages } = useSelector((state: any) => state?.accountSettings);
-    const { accountFeatures } = useSelector((state: any) => state.common);
+    const { accountFeatures, subAccount } = useSelector((state: any) => state.common);
+    const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
     const [toastMessage, setToastMessage] = useState(null);
     const [showLoader, setShowLoader] = useState(false);
     const [smsVerificationPopup, setSmsVerificationPopup] = useState(false);
@@ -80,9 +85,62 @@ const ApiSettings = ({ classes }: any) => {
     const [APIKeyRestrictionDialog, setAPIKeyRestrictionDialog] = useState<boolean>(false);
     const [exportFileTypeDialog, setExportFileTypeDialog] = useState<boolean>(false);
     const [exportData, setExportData] = useState<any>(null);
-
+    const [dialogType, setDialogType] = useState<any>(null);
+    const [TierMessageCode, setTierMessageCode] = useState<string>('');
+    const [showTierPlans, setShowTierPlans] = useState(false);
 
     const localClasses = useStyles();
+
+    const handleGetPlanForFeature = (tierMessageCode: string) => {
+        const planName = findPlanByFeatureCode(
+            tierMessageCode,
+            availablePlans,
+            currentPlan.Id
+        );
+        
+        if (planName) {
+            return t('billing.tier.featureNotAvailable').replace('{feature}', t(TierFeatures[tierMessageCode as keyof typeof TierFeatures] || tierMessageCode)).replace('{planName}', planName);
+        } else {
+            return t('billing.tier.noFeatureAvailable');
+        }
+    };
+
+    const getTierValidationDialog = () => {
+        return {
+            type: 'tier',
+            data: null,
+            title: t('billing.tier.permission'),
+            showDivider: false,
+            content: (
+                <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+                    {handleGetPlanForFeature(TierMessageCode)}
+                </Typography>
+            ),
+            renderButtons: () => (
+                <Grid container spacing={2} className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}>
+                    <Grid item>
+                    <Button
+                        onClick={() => {
+                        setDialogType(null);
+                        setShowTierPlans(true);
+                        }}
+                        className={clsx(classes.btn, classes.btnRounded)}
+                    >
+                        {t('billing.upgradePlan')}
+                    </Button>
+                    </Grid>
+                    <Grid item>
+                    <Button
+                        onClick={() => { setDialogType(null); }}
+                        className={clsx(classes.btn, classes.btnRounded)}
+                    >
+                        {t('common.cancel')}
+                    </Button>
+                    </Grid>
+                </Grid>
+            )
+        };
+    };
 
     const renderToast = () => {
         setTimeout(() => {
@@ -110,6 +168,11 @@ const ApiSettings = ({ classes }: any) => {
         else if (payload?.StatusCode === 500) {
             setToastMessage(ToastMessages?.GENERAL_ERROR);
         }
+        else if (payload?.StatusCode === 927) {
+            // API_ACCESS
+            setTierMessageCode(payload?.Message || 'API_ACCESS');
+            setDialogType(getTierValidationDialog());
+        }
         else {
             if (isCopy) navigator.clipboard.writeText(payload?.Data)
             else setApiKey(payload?.Data);
@@ -127,6 +190,11 @@ const ApiSettings = ({ classes }: any) => {
         }
         else if (payload?.StatusCode === 500) {
             setToastMessage(ToastMessages?.GENERAL_ERROR);
+        }
+        else if (payload?.StatusCode === 927) {
+            // API_ACCESS
+            setTierMessageCode(payload?.Message || 'API_ACCESS');
+            setDialogType(getTierValidationDialog());
         }
         else {
             setApiKey(payload?.Data);
@@ -483,6 +551,43 @@ const ApiSettings = ({ classes }: any) => {
                 </BaseDialog>
             }
             {
+                dialogType?.type === 'tier' && 
+                <BaseDialog
+                    classes={classes}
+                    open={dialogType?.type === 'tier'}
+                    onClose={() => setDialogType(null)}
+                    onCancel={() => setDialogType(null)}
+                    onConfirm={() => setDialogType(null)}
+                    showDefaultButtons={false}
+                    title={t('billing.tier.permission')}
+                    renderButtons={() => (
+                        <Grid container spacing={2} className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}>
+                            <Grid item>
+                            <Button
+                                onClick={() => {
+                                setDialogType(null);
+                                setShowTierPlans(true);
+                                }}
+                                className={clsx(classes.btn, classes.btnRounded)}
+                            >
+                                {t('billing.upgradePlan')}
+                            </Button>
+                            </Grid>
+                            <Grid item>
+                            <Button
+                                onClick={() => { setDialogType(null); }}
+                                className={clsx(classes.btn, classes.btnRounded)}
+                            >
+                                {t('common.cancel')}
+                            </Button>
+                            </Grid>
+                        </Grid>
+                    )}
+                >
+                    {handleGetPlanForFeature(TierMessageCode)}
+                </BaseDialog>
+            }
+            {
                 APIKeyRestrictionDialog && <BaseDialog
                     classes={classes}
                     open={APIKeyRestrictionDialog}
@@ -561,6 +666,11 @@ const ApiSettings = ({ classes }: any) => {
                 options={ExportFileTypes}
             />
             <Loader isOpen={showLoader} showBackdrop={true} />
+            {showTierPlans && <TierPlans
+                classes={classes}
+                isOpen={showTierPlans}
+                onClose={() => setShowTierPlans(false)}
+            />}
         </DefaultScreen >
     );
 };

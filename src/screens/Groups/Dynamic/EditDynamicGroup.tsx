@@ -2,7 +2,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useState, memo, useEffect } from 'react';
 import clsx from 'clsx';
 import {
-    Tabs, Tab, Box, Button
+    Tabs, Tab, Box, Button, Typography,
+    Grid
 } from '@material-ui/core'
 import { useTranslation } from 'react-i18next';
 import 'moment/locale/he'
@@ -29,6 +30,11 @@ import { Title } from '../../../components/managment/Title';
 import DefaultScreen from '../../DefaultScreen';
 import { GiExitDoor } from 'react-icons/gi';
 import { M_AllCampaignChannelds } from '../../../Models/Common/CampaignTypes';
+import { DateFormats, TierFeatures } from '../../../helpers/Constants';
+import TierPlans from '../../../components/TierPlans/TierPlans';
+import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
+import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
+import { get } from 'lodash';
 
 const EditDynamicGroup = ({ classes }: any) => {
     const dispatch: any = useDispatch();
@@ -37,8 +43,13 @@ const EditDynamicGroup = ({ classes }: any) => {
     const Redirect = useRedirect();
     const { subAccountAllGroups } = useSelector((state: any) => state.group);
     const { testGroups } = useSelector((state: any) => state.sms);
+    const { subAccount } = useSelector((state: any) => state.common);
     const [toastMessage, setToastMessage] = useState(null);
     const [showLoader, setLoader] = useState(true);
+    const [showTierPlans, setShowTierPlans] = useState(false);
+    const [TierMessageCode, setTierMessageCode] = useState('');
+    const [dialogType, setDialogType] = useState<string | null>(null);
+    const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
     const [dynamicGroupModel, setDynamicGroupModel] = useState<any>({
         Group: {
             CreationDate: null,
@@ -324,6 +335,25 @@ const EditDynamicGroup = ({ classes }: any) => {
 
     const showErrorToast = (message: string) => setToastMessage({ severity: 'error', color: 'error', message, showAnimtionCheck: false } as any)
 
+    const handleGetPlanForFeature = (tierMessageCode: string) => {
+        const planName = findPlanByFeatureCode(
+            tierMessageCode,
+            availablePlans,
+            currentPlan.Id
+        );
+        if (planName) {
+            // Fix: Add type assertion to allow string index on TierFeatures
+            return t('billing.tier.featureNotAvailable')
+                .replace(
+                    '{feature}',
+                    t((TierFeatures as Record<string, string>)[tierMessageCode] || tierMessageCode)
+                )
+                .replace('{planName}', planName);
+        } else {
+            return t('billing.tier.noFeatureAvailable');
+        }
+    };
+
     const handleResponse = async (response: any, isExit: boolean = false) => {
         switch (response.StatusCode) {
             case 201: {
@@ -350,6 +380,11 @@ const EditDynamicGroup = ({ classes }: any) => {
             }
             case 404: { // Not found
                 showErrorToast(t('group.saveDynamicGroupResponse.404'));
+                break;
+            }
+            case 927: { // Tier limit reached
+                setTierMessageCode(response.Message);
+                setDialogType('tier');
                 break;
             }
             case 500:
@@ -849,6 +884,50 @@ const EditDynamicGroup = ({ classes }: any) => {
                     </Box>
                 </Box>
             </Box>
+            {/* Tier Validation Dialog */}
+			{dialogType === 'tier' && (
+				<BaseDialog
+					classes={classes}
+					open={true}
+					onCancel={() => setDialogType(null)}
+					onClose={() => setDialogType(null)}
+					onConfirm={() => setDialogType(null)}
+					title={t('billing.tier.permission')}
+					showDivider={false}
+					renderButtons={() => (
+                    <Grid container spacing={2} className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}>
+                        <Grid item>
+                            <Button
+                                onClick={() => {
+                                    setDialogType(null);
+                                    setShowTierPlans(true);
+                                }}
+                                className={clsx(classes.btn, classes.btnRounded)}
+                            >
+                                {t('billing.upgradePlan')}
+                            </Button>
+                        </Grid>
+                        <Grid item>
+                            <Button
+                                onClick={() => { setDialogType(null); }}
+                                className={clsx(classes.btn, classes.btnRounded)}
+                            >
+                                {t('common.cancel')}
+                            </Button>
+                        </Grid>
+                    </Grid>
+                )}
+                >
+					<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+						{handleGetPlanForFeature(TierMessageCode)}
+					</Typography>
+				</BaseDialog>
+			)}
+            {showTierPlans && <TierPlans
+				classes={classes}
+				isOpen={showTierPlans}
+				onClose={() => setShowTierPlans(false)}
+			/>}
         </DefaultScreen>
     )
 }

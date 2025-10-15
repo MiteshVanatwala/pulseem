@@ -19,6 +19,7 @@ import Select from '@mui/material/Select';
 import { useTranslation } from "react-i18next";
 import DefaultScreen from "../../DefaultScreen";
 import { useDispatch, useSelector } from "react-redux";
+import { findPlanByFeatureCode } from "../../../redux/reducers/TiersSlice";
 import moment from "moment";
 import { FaRegCalendarAlt, FaFilter } from "react-icons/fa";
 import Snackbar from "@material-ui/core/Snackbar";
@@ -57,6 +58,9 @@ import QuickManualUploadDialog from "../../Newsletter/Wizard/Popups/QuickManualU
 import { IsValidPhone } from "../../../helpers/Utils/Validations";
 import { WhiteLabelObject } from "../../../components/WhiteLabel/WhiteLabelMigrate";
 import Pulse from "../../../components/Pulse/Pulse";
+import TierPlans from "../../../components/TierPlans/TierPlans";
+import { TierFeatures } from "../../../helpers/Constants";
+import { get } from "lodash";
 
 function Alert(props) {
   return <MuiAlert elevation={0} variant='filled' {...props} />;
@@ -69,8 +73,8 @@ const SmsSend = ({ classes, ...props }) => {
   const Redirect = useRedirect();
   const { OTPPassed, ToastMessages, extraData, getCampaignSum, testGroups, finishedCampaigns } = useSelector((state) => state.sms);
   const { subAccountAllGroups } = useSelector((state) => state.group);
-  const { accountSettings } = useSelector((state) => state.common);
-
+  const { accountSettings, subAccount } = useSelector((state) => state.common);
+  const { currentPlan, availablePlans } = useSelector((state) => state.tiers);
 
   const dispatch = useDispatch();
   const { windowSize, isRTL, userRoles } = useSelector(
@@ -141,6 +145,8 @@ const SmsSend = ({ classes, ...props }) => {
   const [GroupNameValidationMessage, setGroupNameValidationMessage] = useState("");
   const [sourcePulses, setSourcePulses] = useState({});
   const [campaignSettings, setCampaignSettings] = useState(null);
+  const [TierMessageCode, setTierMessageCode] = useState('');
+  const [showTierPlans, setShowTierPlans] = useState(false);
   const [filterValues, setFilterValues] = useState({
     dontSend: false,
     days: ''
@@ -222,6 +228,11 @@ const SmsSend = ({ classes, ...props }) => {
       case 551:
         setDialogType({ type: "pendingApprovalDialog", data: smsSendResult });
         break;
+      case 927: {
+        // SMS_BASIC, SMS_CLICK_TRACKING
+        setDialogType({ type: "tier" });
+        break;
+      }
       default: {
         break;
       }
@@ -1521,6 +1532,16 @@ const SmsSend = ({ classes, ...props }) => {
     }
 
     let r = await dispatch(sendSms(payload))
+    
+    // Check for tier validation
+    if (r.payload.Result === 9271) {
+      setTierMessageCode('SMS_BASIC');
+    } else if (r.payload.Result === 9272) {
+      setTierMessageCode('SMS_CLICK_TRACKING');
+    } else if (r.payload.Result === 9273) {
+      setTierMessageCode('SITE_TRACKING');
+    }
+    
     handleSendResult(r.payload);
     setLoader(false);
   };
@@ -2432,6 +2453,54 @@ const SmsSend = ({ classes, ...props }) => {
       exit: true
     }
   }
+
+  const handleGetPlanForFeature = (tierMessageCode) => {
+    const planName = findPlanByFeatureCode(
+        tierMessageCode,
+        availablePlans,
+        currentPlan.Id
+    );
+    
+    if (planName) {
+      return t('billing.tier.featureNotAvailable').replace('{feature}', t(TierFeatures[tierMessageCode] || tierMessageCode)).replace('{planName}', planName);
+    } else {
+      return t('billing.tier.noFeatureAvailable');
+    }
+  };
+
+  const getTierValidationDialog = () => ({
+    title: t('billing.tier.permission'),
+    showDivider: false,
+    content: (
+      <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+        {handleGetPlanForFeature(TierMessageCode)}
+      </Typography>
+    ),
+    renderButtons: () => (
+      <Grid container spacing={2} className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}>
+          <Grid item>
+              <Button
+                  onClick={() => {
+                      setDialogType(null);
+                      setShowTierPlans(true);
+                  }}
+                  className={clsx(classes.btn, classes.btnRounded)}
+              >
+                  {t('billing.upgradePlan')}
+              </Button>
+          </Grid>
+          <Grid item>
+              <Button
+                  onClick={() => { setDialogType(null); }}
+                  className={clsx(classes.btn, classes.btnRounded)}
+              >
+                  {t('common.cancel')}
+              </Button>
+          </Grid>
+      </Grid>
+    )
+  });
+
   //#endregion
   const renderDialog = () => {
     const { type, data } = dialogType || {}
@@ -2445,7 +2514,8 @@ const SmsSend = ({ classes, ...props }) => {
       sendSuccess: sendSuccessDialog(),
       noCredit: noCreditDialog(),
       englishLetterDialog: englishLetterNotAllowed(),
-      pendingApprovalDialog: pendingApprovalDialog(data)
+      pendingApprovalDialog: pendingApprovalDialog(data),
+      tier: getTierValidationDialog()
     }
 
     const currentDialog = dialogContent[type] || {}
@@ -2615,6 +2685,11 @@ const SmsSend = ({ classes, ...props }) => {
         />
       }
       <Loader isOpen={showLoader} />
+      {showTierPlans && <TierPlans
+        classes={classes}
+        isOpen={showTierPlans}
+        onClose={() => setShowTierPlans(false)}
+      />}
     </DefaultScreen>
   );
 };

@@ -520,7 +520,8 @@
       "preview": "Podgląd",
       "duplicate": "Duplikuj",
       "copyLink": "Skopiuj link",
-      "embed": "Osadź"
+      "embed": "Osadź",
+      "embedMessage": "Skopiuj i wklej ten kod na swoją stronę:"
     }
   }
 }

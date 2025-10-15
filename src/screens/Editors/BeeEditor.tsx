@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { debounce, includes } from 'lodash';
+import { debounce, get, includes } from 'lodash';
 import BeePlugin from '@mailupinc/bee-plugin'
 import { Box, Button, Grid, TextField, Typography } from '@material-ui/core'
 import { useRef, useState, useEffect } from 'react'
@@ -30,7 +30,7 @@ import moment from 'moment';
 import { loginURL, sitePrefix } from '../../config';
 import { MdArrowBackIos, MdArrowForwardIos, MdCheck, MdGroups, MdOutlinePublic } from 'react-icons/md';
 import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
-import { BEE_EDITOR_TYPES } from '../../helpers/Constants';
+import { BEE_EDITOR_TYPES, TierFeatures } from '../../helpers/Constants';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 import { StateType } from '../../Models/StateTypes';
 import { commonProps } from '../../model/Common/commonProps.types';
@@ -44,6 +44,8 @@ import GroupSelectorPopUp from '../Groups/GroupSelectorPopUp';
 import LPTemplates from './modals/Templates';
 import { GenericModal } from '../HtmlCampaign/components/GenericModal';
 import SaveTemplate from '../HtmlCampaign/modals/SaveTemplate';
+import { findPlanByFeatureCode } from '../../redux/reducers/TiersSlice';
+import TierPlans from '../../components/TierPlans/TierPlans';
 
 const BeeEditor = ({ classes }: BeeEditorModel) => {
   //#region State
@@ -58,7 +60,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
 
   const { extraData, previousLandingData } = useSelector((state: { sms: SMSStoreProps }) => state.sms);
   const { language, isRTL, userRoles } = useSelector((state: StateType) => state.core);
-  const { tokenAlive, accountSettings, accountFeatures } = useSelector((state: { common: commonProps }) => state.common);
+  const { tokenAlive, accountSettings, accountFeatures, subAccount } = useSelector((state: { common: commonProps }) => state.common);
   const { landingPage, landingPageUserBlocks, ToastMessages, LPBeeToken, publicTemplates, templatesBySubAccount } = useSelector((state: { landingPages: BeeEditorStoreModel }) => state.landingPages)
   const [showLoader, setLoader] = useState(true);
   const [dataReady, setDataReady] = useState(false);
@@ -101,6 +103,9 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
   const [reInit, setReinit] = useState<boolean>(false);
   const [showGroupSelection, setShowGroupSelection] = useState<boolean>(false);
   const [selectedGroups, setSelectedGroups] = useState<any>([]);
+  const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
+  const [showTierPlans, setShowTierPlans] = useState(false);
+  const [TierMessageCode, setTierMessageCode] = useState('');
   //#endregion State
   //#region Get Extra fields & Landing pages, after Data Ready
   const loadAccountExtraData = () => {
@@ -460,6 +465,10 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
               } else {
                 navigate(`${sitePrefix}landingpages/LandingPages/Summary/${args?.campaignId}`)
               }
+              //@ts-ignore
+            } else if (saveRef.current?.showAnimation && response.payload?.StatusCode === 927) {
+              setTierMessageCode(response?.payload?.Message);
+              setDialogType({ type: 'tier' });
             }
             else {
               // TODO: Handle publish response
@@ -515,6 +524,12 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
           // @ts-ignore
           setToastMessage(ToastMessages.HTML_DOCTYPE_ERROR);
           break;
+        }
+        case 927: {
+          // SURVEY_SYSTEM, LANDING_PAGE_MANAGEMENT
+          setTierMessageCode(response?.payload?.Message);
+          setDialogType({ type: 'tier' });
+          return false;
         }
       }
       //@ts-ignore
@@ -1152,6 +1167,57 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       content: <Typography>{RenderHtml(message)}</Typography>
     };
   }
+
+  const handleGetPlanForFeature = (tierMessageCode: string) => {
+    const planName = findPlanByFeatureCode(
+        tierMessageCode,
+        availablePlans,
+        currentPlan.Id
+    );
+    
+    if (planName) {
+        return t('billing.tier.featureNotAvailable').replace('{feature}', t(TierFeatures[tierMessageCode as keyof typeof TierFeatures] || tierMessageCode)).replace('{planName}', planName);
+    } else {
+        return t('billing.tier.noFeatureAvailable');
+    }
+  };
+
+  const getTierValidationDialog = () => ({
+    title: t('billing.tier.permission'),
+    showDivider: false,
+    content: (
+      <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+        {handleGetPlanForFeature(TierMessageCode)}
+      </Typography>
+    ),
+    renderButtons: () => (
+      <Grid
+          container
+          spacing={2}
+          className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}
+      >
+          <Grid item>
+              <Button
+                  onClick={() => {
+                      setShowTierPlans(true);
+                  }}
+                  className={clsx(classes.btn, classes.btnRounded)}
+              >
+                  {t('billing.upgradePlan')}
+              </Button>
+          </Grid>
+          <Grid item>
+              <Button
+                  onClick={() => setDialogType(null)}
+                  className={clsx(classes.btn, classes.btnRounded)}
+              >
+                  {t('common.cancel')}
+              </Button>
+          </Grid>
+      </Grid>
+    )
+  })
+
   const renderDialog = () => {
     const { type, data } = dialogType || {}
     let currentDialog = {};
@@ -1172,7 +1238,9 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       currentDialog = renderGenericDialog(data);
     } else if (type === DialogType.TEMPLAGE_EXISTS) {
       currentDialog = renderTemplateExistsDialog(data);
-    }
+    } else if (type === 'tier') {
+			currentDialog = getTierValidationDialog();
+		}
     if (type) {
       return (
         dialogType && <BaseDialog
@@ -1348,6 +1416,12 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
         }}
         isOpen={dialog === DialogType.SAVE_TEMPLATE}
       />
+
+      {showTierPlans && <TierPlans
+				classes={classes}
+				isOpen={showTierPlans}
+				onClose={() => setShowTierPlans(false)}
+			/>}
     </DefaultScreen>
   )
 }

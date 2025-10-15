@@ -878,5 +878,13 @@
   "welcomeMessage": "היי, קוראים לי מיטש {USERNAME}",
   "500chars": "500 תווים",
   "doNotShowThisDialog": "אל תציג בכניסה הבאה",
-  "messageDot": "מנתח את הנתונים שלך, זה יכול לקחת מספר דקות"
+  "messageDot": "מנתח את הנתונים שלך, זה יכול לקחת מספר דקות",
+  "tier": {
+    "current": "רמה נוכחית",
+    "upgrade": "שדרוג רמה",
+    "downgrade": "הורדת רמה",
+    "manageCard": "ניהול כרטיס"
+  },
+  "startDate": "תאריך התחלה",
+  "endDate": "תאריך סיום"
 }
