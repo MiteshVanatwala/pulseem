@@ -36,6 +36,10 @@ import { logout } from '../../../helpers/Api/PulseemReactAPI';
 import Toast from '../../../components/Toast/Toast.component';
 import SubscriberGroup from './Tabs/SubscriberGroup';
 
+const generateGuid = () => {
+	return Date.now().toString(36) + Math.random().toString(36).substring(2);
+};
+
 const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup?: boolean }) => {
 	const { id } = useParams();
 	const location = useLocation();
@@ -192,7 +196,8 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 			AnswerData: '', SubmitCounter: 0, ViewCounter: 0,
 			ConfirmationText: '', Status: 1, PageHtml: '',
 			HasPrefunpage: false, PrefunImage: '', HasComments: false,
-			PageUrl: '', PageType: isPopup ? 5 : 1, AnswerType: 1,
+			PageUrl: isPopup && !id ? generateGuid() : '',
+			PageType: isPopup ? 5 : 1, AnswerType: 1,
 			IsResponsive: true, DownloadUrl: '', OfflineDate: '',
 			OfflineUrl: '', HtmlToEdit: '', HtmlFile: '',
 			BaseLanguage: language === 'pl' ? 14 : language === 'he' ? 0 : 1,
@@ -212,7 +217,7 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 			FacebookPixelCode: '', IsNewEditor: null,
 			WebformsToReportLeadByApi: null
 		});
-	}, [location.pathname, isPopup, language]);
+	}, [location.pathname, isPopup, language, id]);
 
 	enum EditorType {
 		SAVE_ONLY = 0,
@@ -290,6 +295,7 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 			}
 		}
 		else if (response.StatusCode === 403) {
+			// Leave this block unchanged - it's for creating new landing pages
 			setLandingPageModel({
 				...response.Data?.WebForm,
 				WebformsToReportLeadByApi: response.Data?.WebformsToReportLeadByApi || [],
@@ -307,7 +313,9 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 				BaseLanguage: language === 'pl' ? 14 : language === 'he' ? 0 : 1,
 				autofillEnabled: false,
 				autofillFields: [],
-				autofillEditable: false
+				autofillEditable: false,
+				PageUrl: isPopup && !id ? generateGuid() : '',
+				PopupDomains: []
 			});
 		}
 
@@ -596,7 +604,7 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 	}
 
 	const validateDomain = () => {
-		if (!isPopup) return '';
+		if (!isPopup && landingPageModel.PageType !== 5) return '';
 
 		if (!landingPageModel.PopupDomains || !Array.isArray(landingPageModel.PopupDomains) || landingPageModel.PopupDomains.length === 0) {
 			return t('landingPages.domainRequired');
@@ -618,8 +626,8 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 		const errorDump = {
 			...errors,
 			PageName: !landingPageModel.PageName?.trim() ? t('landingPages.formNameRequired') : '',
-			shortURL: !landingPageModel.PageUrl?.trim() ? t('landingPages.shortURLRequired') : '',
-			PopupDomains: validateDomain(),
+			shortURL: !isPopup && landingPageModel.PageType !== 5 && !landingPageModel.PageUrl?.trim() ? t('landingPages.shortURLRequired') : '',
+			PopupDomains: (isPopup || landingPageModel.PageType === 5) ? validateDomain() : '',
 			answerMessage: [
 				LandingPagesAnswerType.POPUP_MESSAGE,
 				LandingPagesAnswerType.REDIRECT_URL
@@ -660,7 +668,7 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 					SubscriptionOptin: landingPageModel.SubscriptionOptin,
 				},
 				PageType: isPopup ? 5 : landingPageModel.PageType,
-				PopupDomains: isPopup && landingPageModel.PopupDomains && Array.isArray(landingPageModel.PopupDomains) && landingPageModel.PopupDomains.length > 0 ? landingPageModel.PopupDomains : null
+				PopupDomains: (isPopup || landingPageModel.PageType === 5) && landingPageModel.PopupDomains && Array.isArray(landingPageModel.PopupDomains) && landingPageModel.PopupDomains.length > 0 ? landingPageModel.PopupDomains : null
 			};
 			//@ts-ignore
 			const response = await dispatch(saveLandingPage(req));

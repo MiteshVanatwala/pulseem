@@ -122,8 +122,11 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
     }
 
     const handlePageName = (e: any) => {
-        if (urlLocked || data.ID > 0) {
-            onUpdate({ ...data, PageName: e.target.value })
+        if (isPopup) {
+            onUpdate({ ...data, PageName: e.target.value });
+        }
+        else if (urlLocked || data.ID > 0) {
+            onUpdate({ ...data, PageName: e.target.value });
         }
         else {
             onUpdate({ ...data, PageName: e.target.value, PageUrl: "".toValidLPName(e.target.value) });
@@ -222,6 +225,7 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
                 error={!!errors.shortURL}
                 title={"".toValidLPName(data.PageUrl)}
                 onBlur={checkShortURLExist}
+                disabled={isPopup}
             />
             <Box className='textBoxWrapper'>
                 <Typography className={clsx(classes.f13)} style={{ direction: 'ltr' }}>
