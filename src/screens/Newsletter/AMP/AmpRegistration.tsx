@@ -16,14 +16,20 @@ import Toast from '../../../components/Toast/Toast.component';
 import moment from 'moment';
 import 'moment/locale/he';
 import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
+import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
+import TierPlans from '../../../components/TierPlans/TierPlans';
+import { TierFeatures } from '../../../helpers/Constants';
+import { get } from 'lodash';
 
 const AmpRegistration = ({ classes }: any) => {
     const [showLoader, setShowLoader] = useState<boolean>(true);
     const [selectedEmail, setSelectedEmail] = useState<string[]>([]);
     const { t } = useTranslation();
     const dispatch = useDispatch();
-    const { verifiedEmails } = useSelector((state: StateType) => state.common);
+    const { verifiedEmails, subAccount } = useSelector((state: StateType) => state.common);
     const { isRTL } = useSelector((state: StateType) => state.core);
+    const [showTierPlans, setShowTierPlans] = useState(false);
+    const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
     const ToastMessages = {
         100: { severity: 'error', color: 'error', message: 'campaigns.ampSelectEmail', showAnimtionCheck: false },
         201: { severity: 'success', color: 'success', message: 'campaigns.requestSent', showAnimtionCheck: false },
@@ -33,6 +39,12 @@ const AmpRegistration = ({ classes }: any) => {
 
     const [toastMessage, setToastMessage] = useState<any>(null);
     const [showAmpRegisterDesc, setShowAmpRegisterDesc] = useState<boolean>(false);
+    const [ dialogType, setDialogType ] = useState<{
+        type: string;
+    } | null>({
+        type: ''
+    });
+    const [TierMessageCode, setTierMessageCode] = useState<string>("");
 
     const init = async () => {
         await dispatch(getAuthorizedEmails());
@@ -52,7 +64,10 @@ const AmpRegistration = ({ classes }: any) => {
     const sendApprovalRequest = async () => {
         if (selectedEmail?.length > 0) {
             const response: any = await dispatch(ampApproval(selectedEmail));
-            if (response?.payload?.StatusCode === 201) {
+            if (response?.payload?.StatusCode === 927) {
+                setTierMessageCode(response?.payload?.Message);
+                setDialogType({ type: 'tier' });
+            } else if (response?.payload?.StatusCode === 201) {
                 setShowAmpRegisterDesc(true);
                 setSelectedEmail([]);
             }
@@ -61,6 +76,79 @@ const AmpRegistration = ({ classes }: any) => {
         }
         else {
             setToastMessage(ToastMessages[100])
+        }
+    }
+
+    const handleGetPlanForFeature = (tierMessageCode: string) => {
+        const planName = findPlanByFeatureCode(
+                tierMessageCode,
+                availablePlans,
+                currentPlan.Id
+        );
+        
+        if (planName) {
+            return t('billing.tier.featureNotAvailable').replace('{feature}', t(TierFeatures[tierMessageCode as keyof typeof TierFeatures] || tierMessageCode)).replace('{planName}', planName);
+        } else {
+                return t('billing.tier.noFeatureAvailable');
+        }
+    };
+
+    const getTierValidationDialog = () => ({
+        title: t('billing.tier.permission'),
+        showDivider: false,
+        content: (
+            <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+                {handleGetPlanForFeature(TierMessageCode)}
+            </Typography>
+        ),
+        renderButtons: () => (
+            <Grid
+                container
+                spacing={2}
+                className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}
+            >
+                <Grid item>
+                    <Button
+                        onClick={() => {
+                            setShowTierPlans(true);
+                        }}
+                        className={clsx(classes.btn, classes.btnRounded)}
+                    >
+                        {t('billing.upgradePlan')}
+                    </Button>
+                </Grid>
+                <Grid item>
+                    <Button
+                        onClick={() => setDialogType(null)}
+                        className={clsx(classes.btn, classes.btnRounded)}
+                    >
+                        {t('common.cancel')}
+                    </Button>
+                </Grid>
+            </Grid>
+        )
+    })
+
+    const renderDialog = () => {
+        const { type } = dialogType || {}
+        let currentDialog: any = {};
+        if (type === 'tier') {
+            currentDialog = getTierValidationDialog();
+        }
+
+        if (type) {
+            return (
+                dialogType && <BaseDialog
+            contentStyle={classes.maxWidth540}
+                    classes={classes}
+                    open={dialogType}
+                    onCancel={() => setDialogType(null)}
+                    onClose={() => setDialogType(null)}
+                    renderButtons={currentDialog?.renderButtons || null}
+                    {...currentDialog}>
+                    {currentDialog?.content}
+                </BaseDialog>
+            )
         }
     }
 
@@ -162,6 +250,12 @@ const AmpRegistration = ({ classes }: any) => {
             </Box>
             <Loader isOpen={showLoader} />
             {toastMessage && renderToast()}
+            {renderDialog()}
+            {showTierPlans && <TierPlans
+				classes={classes}
+				isOpen={showTierPlans}
+				onClose={() => setShowTierPlans(false)}
+			/>}
         </DefaultScreen>
     )
 }

@@ -79,7 +79,7 @@ import moment from 'moment';
 import { Box, Button, FormControl, Grid, Link, TextField, Typography } from '@material-ui/core';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { SelectChangeEvent } from '@mui/material';
-import { DateFormats } from '../../../helpers/Constants';
+import { DateFormats, TierFeatures } from '../../../helpers/Constants';
 import { setIsLoader } from '../../../redux/reducers/coreSlice';
 import { getCookie, setCookie } from '../../../helpers/Functions/cookies';
 import { MdSupportAgent } from 'react-icons/md';
@@ -88,6 +88,9 @@ import { StateType } from '../../../Models/StateTypes';
 import { compareLastNineDigits } from '../../../helpers/Utils/TextHelper';
 import { BsTrash } from 'react-icons/bs';
 import ConfirmDeletePopUp from '../../Groups/Management/Popup/ConfirmDeletePopUp';
+import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
+import TierPlans from '../../../components/TierPlans/TierPlans';
+import { get } from 'lodash';
 
 const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const navigate = useNavigate();
@@ -100,12 +103,15 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			common: { accountSettings: { SubAccountSettings: SubAccountSettings } };
 		}) => state.common?.accountSettings?.SubAccountSettings
 	);
+	const { subAccount } = useSelector((state: any) => state.common);
 	const { isRTL, windowSize, isLoader = false } = useSelector((state: { core: coreProps }) => state.core);
 	const { agentList } = useSelector((state: StateType) => state.whatsapp);
+	const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
 	const [isAccountSetup, setIsAccountSetup] = useState<boolean | null>(null);
 	const [isTrackLink, setIsTrackLink] = useState<boolean>(false);
 	const [nextMessageAvailable, setNextMessageAvailable] = useState<string>('');
 	const [dialogType, setDialogType] = useState<any>({});
+	const [showTierPlans, setShowTierPlans] = useState(false);
 	const [activeChatContacts, setActiveChatContacts] =
 		useState<APIWhatsappChatSidebarContactsItemsData>({
 			ConversationStatusId: 0,
@@ -173,6 +179,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		templateText: '',
 		templateButtons: [],
 	});
+	const [TierMessageCode, setTierMessageCode] = useState<string>("");
 	const [dynamicVariable, setDynamicVariable] = useState<string[]>([]);
 	const [updatedDynamicVariable, setUpdatedDynamicVariable] = useState<
 		updatedVariable[]
@@ -453,6 +460,13 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				});
 			}
 		} else {
+			if (whatsAppChatContactsData?.StatusCode === 927) {
+				// WHATSAPP_CHAT_INTERFACE
+				setTierMessageCode(whatsAppChatContactsData?.Message);
+				setDialogType({
+					type: 'tier'
+				});
+			}
 			setContactsPaginationSetting({
 				...contactsPaginationSetting,
 				hasMore: false,
@@ -686,6 +700,11 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				});
 
 				changeContactReadStatus(activeChatContacts, updatedContacts);
+			} else if (whatsAppChatContactsData?.StatusCode === 927) {
+				setTierMessageCode(whatsAppChatContactsData?.Message);
+				setDialogType({
+					type: 'tier'
+				});
 			}
 		}
 	};
@@ -749,6 +768,12 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 					) {
 						setNextMessageAvailable(sendWhatsappChat?.Data?.NextAvailableTime);
 					}
+				} else if (sendWhatsappChat.StatusCode === 927) {
+					// WHATSAPP_CAMPAIGN_SEND
+					setTierMessageCode(sendWhatsappChat?.Message);
+					setDialogType({
+						type: 'tier'
+					});
 				} else {
 					sendWhatsappChat?.Message
 						? setToastMessage({
@@ -827,7 +852,12 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 					]);
 				}
 			} else {
-				if (whatsAppChatContactsData?.Message === 'No Data Found') {
+				if (whatsAppChatContactsData?.StatusCode === 927) {
+					setTierMessageCode(whatsAppChatContactsData?.Message);
+					setDialogType({
+						type: 'tier'
+					});
+				} else if (whatsAppChatContactsData?.Message === 'No Data Found') {
 					setSideChatContacts([]);
 					setContactsPaginationSetting({
 						...contactsPaginationSetting,
@@ -897,6 +927,57 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			});
 		}
 	})
+
+	const handleGetPlanForFeature = (tierMessageCode: string) => {
+		const planName = findPlanByFeatureCode(
+			tierMessageCode,
+			availablePlans,
+			currentPlan.Id
+		);
+		
+		if (planName) {
+			return translator('billing.tier.featureNotAvailable').replace('{feature}', translator(TierFeatures[tierMessageCode as keyof typeof TierFeatures] || tierMessageCode)).replace('{planName}', planName);
+		} else {
+			return translator('billing.tier.noFeatureAvailable');
+		}
+	};
+
+	const getTierValidationDialog = () => ({
+		title: translator('billing.tier.permission'),
+		showDivider: false,
+		content: (
+			<Typography style={{ textAlign: 'center' }}>
+				{handleGetPlanForFeature(TierMessageCode)}
+			</Typography>
+		),
+		renderButtons: () => (
+			<Grid
+				container
+				spacing={2}
+				className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}
+			>
+				<Grid item>
+					<Button
+						onClick={() => {
+						setDialogType({ type: '', data: '' });
+						setShowTierPlans(true);
+					}}
+					className={clsx(classes.btn, classes.btnRounded)}
+					>
+						{translator('billing.upgradePlan')}
+					</Button>
+				</Grid>
+				<Grid item>
+					<Button
+						onClick={() => setDialogType({ type: '', data: '' })}
+						className={clsx(classes.btn, classes.btnRounded)}
+					>
+						{translator('common.cancel')}
+					</Button>
+				</Grid>
+			</Grid>
+		)
+	});
 
 	const getDynamicModalDialog = () => ({
 		title: translator('whatsappCampaign.dfieldTitle'),
@@ -1126,6 +1207,8 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			currentDialog = getValidationDialog();
 		} else if (type === 'exceedDailyLimit') {
 			currentDialog = getExceedDailyLimit();
+		} else if (type === 'tier') {
+			currentDialog = getTierValidationDialog();
 		} else if (type === 'dynamicModal') {
 			currentDialog = getDynamicModalDialog();
 		} else if (type === 'addAgent') {
@@ -1288,6 +1371,11 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 						}
 					}}
 				/>
+				{showTierPlans && <TierPlans
+					classes={classes}
+					isOpen={showTierPlans}
+					onClose={() => setShowTierPlans(false)}
+				/>}
 			</DefaultScreen >
 		</>
 	);

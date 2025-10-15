@@ -4583,5 +4583,168 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   polishSubscribeGreyBox: {
     background: grey[100],
     borderRadius: 5,  
+  },
+  tierPlansDialog: {
+    '& .MuiPaper-root': {
+      maxWidth: '100% !important',
+    }
+  },
+  tierPlansCard: {
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    border: '1px solid #e0e0e0',
+    borderRadius: '12px',
+    padding: '16px',
+    textAlign: 'center',
+  },
+  tierPlansPopularCard: {
+    border: '2px solid #e53935',
+    position: 'relative',
+  },
+  tierPlansPopularBadge: {
+    position: 'absolute',
+    top: 0,
+    left: '30%',
+    transform: 'translateX(-15%)',
+    backgroundColor: '#e53935',
+    color: 'white',
+    padding: '4px 12px',
+    borderBottomLeftRadius: '12px',
+    borderBottomRightRadius: '12px',
+    fontWeight: 'bold',
+    fontSize: '0.8rem',
+    lineHeight: '1.2'
+  },
+  tierPlansCardContent: {
+    textAlign: 'center',
+    padding: '16px 0 !important',
+    paddingBottom: '30px !important'
+  },
+  tierPlansTitle: {
+    fontWeight: 'bold',
+    fontSize: '1.5rem',
+    marginBottom: '8px',
+  },
+  tierPlansDescription: {
+    color: '#6c757d',
+    marginBottom: '16px',
+  },
+  tierPlansPriceContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'baseline',
+    marginBottom: '8px',
+    minHeight: '70px',
+  },
+  tierPlansPrice: {
+    fontSize: '2.5rem',
+    fontWeight: 'bold',
+  },
+  tierPlansPriceDescription: {
+    fontSize: '1rem',
+    marginLeft: '4px',
+  },
+  tierPlansSubtext: {
+    color: '#6c757d',
+    marginBottom: '16px',
+  },
+  tierPlansRecipientLimit: {
+    marginBottom: '16px',
+  },
+  tierPlansButton: {
+    marginTop: 'auto',
+    borderRadius: '20px',
+    padding: '10px 20px',
+    fontWeight: 'bold',
+  },
+  tierPlansEngageButton: {
+    backgroundColor: '#e53935',
+    color: 'white',
+    '&:hover': {
+      backgroundColor: '#c62828',
+    },
+  },
+  tierPlansDefaultButton: {
+    borderColor: '#e53935',
+    color: '#e53935',
+  },
+  tierPlansFeatureList: {
+    padding: 0,
+    textAlign: 'left',
+  },
+  tierPlansFeatureItem: {
+    padding: '4px 0',
+  },
+  tierPlansSeeAllFeatures: {
+    textAlign: 'center',
+    marginTop: '16px',
+    color: '#e53935',
+    cursor: 'pointer',
+    textDecoration: 'underline',
+    fontWeight: 'bold'
+  },
+  upgradeFlowContainer: {
+    backgroundColor: '#fff',
+    height: '100%',
+  },
+  upgradeFlowTitle: {
+    fontWeight: 'bold',
+    color: '#e53935',
+  },
+  upgradeFlowFeatureCard: {
+    borderRadius: '12px',
+    height: '100%',
+    background: '#e4e4e4',
+    borderLeft: 'solid 3px red',
+  },
+  upgradeFlowIncludingBox: {
+    marginTop: '32px',
+    padding: '16px',
+    border: '1px solid #eee',
+    borderRadius: '12px',
+    background: '#e4e4e4',
+    borderTop: 'solid 3px red',
+  },
+  upgradeFlowPaymentForm: {
+    padding: '24px',
+    borderRadius: '12px',
+  },
+  upgradeFlowPrice: {
+    color: '#e53935',
+    fontWeight: 'bold',
+  },
+  upgradeFlowUpgradeButton: {
+    marginTop: '24px',
+    padding: '12px 0',
+    borderRadius: '12px',
+    background: 'linear-gradient(90deg, rgba(255,99,132,1) 0%, rgba(255,140,0,1) 100%)',
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  upgradeFlowSupportCard: {
+    padding: '16px',
+    borderRadius: '12px',
+    backgroundColor: '#fafafa',
+    display: 'flex',
+    alignItems: 'center',
+  },
+  tierPlansCurrencySymbol: {
+    fontSize: '1.5rem',
+    marginRight: '4px',
+  },
+  tierPlansStepper: {
+    padding: '24px 0',
+    height: '120px',
+    '& .MuiStepIcon-root.MuiStepIcon-active': {
+        color: '#e53935'
+    },
+    '& .MuiStepIcon-root.MuiStepIcon-completed': {
+        color: '#e53935'
+    }
+  },
+  tierPlansContent: {
+    padding: '24px',
+    maxHeight: '60vh'
   }
 });

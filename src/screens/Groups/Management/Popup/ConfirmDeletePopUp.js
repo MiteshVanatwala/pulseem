@@ -13,6 +13,7 @@ const ConfirmDeletePopUp = ({ classes, isOpen = false, onClose, onCancel, window
 
     return (
         <BaseDialog
+            contentStyle={classes.maxWidth400}
             classes={classes}
             open={isOpen}
             title={title || t("group.delete")}

@@ -1,4 +1,4 @@
-import { Box, Button, Checkbox, Divider, TextField, Typography } from "@material-ui/core";
+import { Box, Button, Checkbox, Divider, Grid, TextField, Typography } from "@material-ui/core";
 import { BaseDialog } from "../../components/DialogTemplates/BaseDialog";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
@@ -7,8 +7,11 @@ import { useEffect, useState } from "react";
 import { Loader } from "../../components/Loader/Loader";
 import clsx from 'clsx';
 import { createGroup } from "../../redux/reducers/groupSlice";
-import { DEFAULT_NEW_GROUP } from "../../helpers/Constants";
+import { DEFAULT_NEW_GROUP, TierFeatures } from "../../helpers/Constants";
 import { Autocomplete } from "@mui/material";
+import { findPlanByFeatureCode } from "../../redux/reducers/TiersSlice";
+import TierPlans from "../../components/TierPlans/TierPlans";
+import { get } from "lodash";
 
 interface GroupSelection {
     classes: any;
@@ -32,12 +35,19 @@ const GroupSelectorPopUp = ({
     const { t } = useTranslation();
     const { subAccountAllGroups } = useSelector((state: any) => state.group);
     const { isRTL } = useSelector((state: any) => state.core);
+    const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
+    const { subAccount } = useSelector((state: any) => state.common);
     const dispatch = useDispatch();
     const [showLoader, setShowLoader] = useState<boolean>(true);
     const [newSelection, setNewSelection] = useState<any[]>(selectedGroups)
     const [inputGroup, setInputGroup] = useState<string>('');
     const [groupNameExist, setGroupNameExist] = useState<boolean>(false);
     const [isRequired, setIsRequired] = useState<boolean>(false);
+    const [dialogType, setDialogType] = useState<{
+        type: string;
+    } | null>(null);
+    const [TierMessageCode, setTierMessageCode] = useState<string>("");
+    const [showTierPlans, setShowTierPlans] = useState(false);
 
     const getGroups = async () => {
         setShowLoader(true);
@@ -76,6 +86,14 @@ const GroupSelectorPopUp = ({
             }
             case 422: {
                 setGroupNameExist(true);
+                break;
+            }
+            case 927: {
+                // DYNAMIC_GROUPS
+                setTierMessageCode(response?.payload?.Message);
+                setDialogType({
+                    type: 'tier'
+                });
                 break;
             }
         }
@@ -146,6 +164,83 @@ const GroupSelectorPopUp = ({
         );
     }
 
+    const handleGetPlanForFeature = (tierMessageCode: string) => {
+        const planName = findPlanByFeatureCode(
+            tierMessageCode,
+            availablePlans,
+            currentPlan.Id
+        );
+        
+        if (planName) {
+            return t('billing.tier.featureNotAvailable').replace('{feature}', t(TierFeatures[tierMessageCode as keyof typeof TierFeatures] || tierMessageCode)).replace('{planName}', planName);
+        } else {
+            return t('billing.tier.noFeatureAvailable');
+        }
+    };
+
+    const getTierValidationDialog = () => ({
+        title: t('billing.tier.permission'),
+        showDivider: false,
+        content: (
+            <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+                {handleGetPlanForFeature(TierMessageCode)}
+            </Typography>
+        ),
+        renderButtons: () => (
+            <Grid
+                container
+                spacing={2}
+                className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}
+            >
+                <Grid item>
+                    <Button
+                        onClick={() => { 
+                            setDialogType(null);
+                            setShowTierPlans(true);
+                        }}
+                        className={clsx(
+                            classes.btn,
+                            classes.btnRounded
+                        )}>
+                        {t('billing.upgradePlan')}
+                    </Button>
+                </Grid>
+                <Grid item>
+                    <Button
+                        onClick={() => { setDialogType(null) }}
+                        className={clsx(
+                            classes.btn,
+                            classes.btnRounded
+                        )}>
+                        {t('common.cancel')}
+                    </Button>
+                </Grid>
+            </Grid>
+        )
+    })
+
+    const renderDialog = () => {
+        const { type } = dialogType || {}
+        let currentDialog: any = {};
+        
+        if (type === 'tier') {
+            currentDialog = getTierValidationDialog();
+        }
+
+        if (type) {
+            return (
+                dialogType && <BaseDialog
+                    classes={classes}
+                    open={dialogType}
+                    onCancel={() => setDialogType(null)}
+                    onClose={() => setDialogType(null)}
+                    {...currentDialog}>
+                    {currentDialog?.content}
+                </BaseDialog>
+            )
+        }
+    }
+
     const options = {
         open: isOpen,
         title: t(title),
@@ -187,6 +282,12 @@ const GroupSelectorPopUp = ({
     return (<>
         {subAccountAllGroups && <BaseDialog classes={classes} {...options} disableBackdropClick={true} />}
         <Loader isOpen={showLoader} showBackdrop={true} zIndex={999999999} />
+        {renderDialog()}
+        {showTierPlans && <TierPlans
+            classes={classes}
+            isOpen={showTierPlans}
+            onClose={() => setShowTierPlans(false)}
+        />}
     </>
     );
 }

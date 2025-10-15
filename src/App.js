@@ -99,6 +99,7 @@ import RemoveMyData from './screens/RemoveMyData/RemoveMyData';
 import LinksClicksReport from './screens/Reports/LinksClicksReport/LinksClicksReport';
 import AIFloatingButton from './components/AI/AIFloatingButton';
 import AIChatWidget from './components/AI/AIChatWidget';
+import { getAvailablePlans, getCurrentPlan } from './redux/reducers/TiersSlice';
 
 const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
   const transferUrl =
@@ -734,6 +735,8 @@ const App = ({ screenSize }) => {
     !isSignup && !isConfirmationPage && dispatch(GetCurrencyList());
     !isSignup && !isConfirmationPage && dispatch(GetSmsCountries());
     !isSignup && !isConfirmationPage && dispatch(GetAfterLoginInitialData());
+    !isSignup && !isConfirmationPage && dispatch(getCurrentPlan());
+    !isSignup && !isConfirmationPage && dispatch(getAvailablePlans());
   }, [dispatch])
 
   const getDirection = (lang) => {

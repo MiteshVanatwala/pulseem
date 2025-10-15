@@ -30,6 +30,10 @@ import { GrTemplate } from 'react-icons/gr';
 import { FaIcons } from 'react-icons/fa';
 import AILoader from '../../../components/Loader/AILoader';
 import { StateType } from '../../../Models/StateTypes';
+import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
+import { TierFeatures } from '../../../helpers/Constants';
+import { get } from 'lodash';
+import TierPlans from '../../../components/TierPlans/TierPlans';
 
 const useTooltipStyles = makeStyles((theme) => ({
   tooltip: {
@@ -57,6 +61,8 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
   const tooltipClasses = useTooltipStyles();
   const { ToastMessages } = useSelector((state: any) => state?.Ai);
   const { isRTL } = useSelector((state: StateType) => state.core);
+  const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
+  const { subAccount } = useSelector((state: any) => state.common);
   const [submitDisabled, setSubmitDisabled] = useState<boolean>(true);
   const [showGallery, setShowGallery] = useState<boolean>(false);
   const [filesProperties, setFilesProperties] = useState<FileGallery[]>([]);
@@ -65,6 +71,7 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
   const [colors, setColors] = useState<string[]>([]);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [toastMessage, setToastMessage] = useState<any>();
+  const [TierMessageCode, setTierMessageCode] = useState<string>("");
   const [history, setHistory] = useState<AnthropicHistoryLog[]>([{
     AnthropicRequestId: '',
     InputTokens: 0,
@@ -89,6 +96,11 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
   const [last24Requests, setLast24Requests] = useState<number>(0);
   const [lastRequestTime, setLastRequestTime] = useState<Date | null>(null);
   const [toastCustomData, setToastCustomData] = useState<any>(null);
+  const [showTierPlans, setShowTierPlans] = useState(false);
+  const [dialogType, setDialogType] = useState<any>({
+		type: '',
+		data: ''
+	});
   const [confirmDialog, setConfirmDialog] = useState<DynamicContentProps | null | any>({
     confirmButtonText: '',
     cancelButtonText: 'common.cancel',
@@ -282,6 +294,9 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
 
       if (response?.payload?.StatusCode === 201) {
         onUpdate('success', response?.payload?.Data);
+      } else if (response?.payload?.StatusCode === 927) {
+        setTierMessageCode(response?.payload?.Message);
+        setDialogType({ type: 'tier' });
       } else {
         if (response?.payload?.StatusCode === 410) {
           let cToast = { ...ToastMessages.RESPONSES[410] };
@@ -299,6 +314,9 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
 
       if (response?.payload?.StatusCode === 201) {
         onUpdate('success', response?.payload?.Data);
+      } else if (response?.payload?.StatusCode === 927) {
+        setTierMessageCode(response?.payload?.Message);
+        setDialogType({ type: 'tier' });
       } else {
         setToastMessage(ToastMessages.RESPONSES[response?.payload?.StatusCode]);
       }
@@ -422,6 +440,79 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
     setConfirmDialog(dialog);
     setShowConfirmPopup(true);
   }
+
+  const handleGetPlanForFeature = (tierMessageCode: string) => {
+		const planName = findPlanByFeatureCode(
+			tierMessageCode,
+			availablePlans,
+			currentPlan.Id
+		);
+		
+		if (planName) {
+			return t('billing.tier.featureNotAvailable').replace('{feature}', t(TierFeatures[tierMessageCode as keyof typeof TierFeatures] || tierMessageCode)).replace('{planName}', planName);
+		} else {
+			return t('billing.tier.noFeatureAvailable');
+		}
+	};
+
+	const getTierValidationDialog = () => ({
+		title: t('billing.tier.permission'),
+		showDivider: false,
+		content: (
+			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+				{handleGetPlanForFeature(TierMessageCode)}
+			</Typography>
+		),
+		renderButtons: () => (
+			<Grid
+				container
+				spacing={2}
+				className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}
+			>
+				<Grid item>
+					<Button
+						onClick={() => {
+						setDialogType({});
+						setShowTierPlans(true);
+					}}
+					className={clsx(classes.btn, classes.btnRounded)}
+					>
+						{t('billing.upgradePlan')}
+					</Button>
+				</Grid>
+				<Grid item>
+					<Button
+						onClick={() => setDialogType({})}
+						className={clsx(classes.btn, classes.btnRounded)}
+					>
+						{t('common.cancel')}
+					</Button>
+				</Grid>
+			</Grid>
+		)
+	})
+
+	const renderDialog = () => {
+		const { type } = dialogType || {}
+		let currentDialog: any = {};
+		if (type === 'tier') {
+			currentDialog = getTierValidationDialog();
+		}
+
+		if (type) {
+			return (
+				dialogType && <BaseDialog
+					classes={classes}
+					open={dialogType}
+					onCancel={() => setDialogType({})}
+					onClose={() => setDialogType({})}
+					renderButtons={currentDialog?.renderButtons || null}
+					{...currentDialog}>
+					{currentDialog?.content}
+				</BaseDialog>
+			)
+		}
+	}
 
   return (
     <Box className={classes.aiContainer} id="ai-container">
@@ -930,7 +1021,13 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
         isOpen={showTemplates}
       />
       {renderToast()}
+      {renderDialog()}
       <AILoader isVisible={showAILoader} key={'loaderAi'} text={t('AILoader.creatingNewsletter')} />
+      {showTierPlans && <TierPlans
+					classes={classes}
+					isOpen={showTierPlans}
+					onClose={() => setShowTierPlans(false)}
+			/>}
     </Box>
   );
 };
