@@ -62,7 +62,15 @@ const DisplayFrequency: React.FC<Props> = ({ classes, lookupData, show, onToggle
     };
 
     const handleDisplayScheduleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        onChange('displaySchedule', event.target.value);
+        const newSchedule = event.target.value;
+        onChange('displaySchedule', newSchedule);
+
+        if (newSchedule !== 'Once every few days') {
+            onChange('everyXDays', 0);
+        }
+        if (newSchedule !== 'Once every few visits') {
+            onChange('everyXVisits', 0);
+        }
     };
 
     const scheduleMap: { [key: string]: { titleKey: string; descriptionKey: string; icon: React.ReactElement | string } } = {
@@ -263,7 +271,10 @@ const DisplayFrequency: React.FC<Props> = ({ classes, lookupData, show, onToggle
                                                                     size="small"
                                                                     className={classes.textFieldPopupTrigger}
                                                                     value={everyXDays}
-                                                                    onChange={(e) => onChange('everyXDays', e.target.value)}
+                                                                    onChange={(e) => {
+                                                                        onChange('everyXDays', Number(e.target.value));
+                                                                        onChange('everyXVisits', 0);
+                                                                    }}
                                                                     disabled={displaySchedule !== 'Once every few days'}
                                                                     style={{
                                                                         margin: isMobile ? '4px 8px 4px 0' : undefined,
@@ -301,7 +312,10 @@ const DisplayFrequency: React.FC<Props> = ({ classes, lookupData, show, onToggle
                                                                     size="small"
                                                                     className={classes.textFieldPopupTrigger}
                                                                     value={everyXVisits}
-                                                                    onChange={(e) => onChange('everyXVisits', e.target.value)}
+                                                                    onChange={(e) => {
+                                                                        onChange('everyXVisits', Number(e.target.value));
+                                                                        onChange('everyXDays', 0);
+                                                                    }}
                                                                     disabled={displaySchedule !== 'Once every few visits'}
                                                                     style={{
                                                                         margin: isMobile ? '4px 8px 4px 0' : undefined,

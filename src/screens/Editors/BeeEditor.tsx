@@ -463,10 +463,8 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
               if (isFromAutomation) {
                 window.location.href = `/pulseem/CreateAutomations.aspx?AutomationID=${isFromAutomation}&NodeToEdit=${NodeToEdit}&id=${args.campaignId}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`;
               } else {
-                  const isPopup = moduleType?.toLowerCase() === 'popupeditor';
-                  const summaryUrl = `${sitePrefix}LandingPages/summary/${args?.campaignId}${isPopup ? '?type=popup' : ''}`;
-                  navigate(summaryUrl);
-                  }
+                navigate(`${sitePrefix}LandingPages/summary/${args?.campaignId}`);
+              }
               //@ts-ignore
             } else if (saveRef.current?.showAnimation && response.payload?.StatusCode === 927) {
               setTierMessageCode(response?.payload?.Message);
@@ -483,28 +481,15 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
               window.location.href = `/pulseem/CreateAutomations.aspx?AutomationID=${isFromAutomation}&NodeToEdit=${NodeToEdit}&id=${args.campaignId}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`;
             } else {
               localStorage.setItem('reloadLPBeeEditor', '1');
-              const isPopup = moduleType?.toLowerCase() === 'popupeditor';
               //@ts-ignore
-              navigate(saveRef.current?.redirectUrl ?? `${sitePrefix}LandingPages/summary/${args.campaignId}${isPopup ? '?type=popup' : ''}`);
+              navigate(saveRef.current?.redirectUrl ?? `${sitePrefix}LandingPages/summary/${args.campaignId}`);
               return false;
             }
           }
           //@ts-ignore
           else if (saveRef.current?.showAnimation && !saveRef.current?.saveTemplate) {
-            const isPopup = moduleType?.toLowerCase() === 'popupeditor';
-
-            if (isPopup) {
-              // @ts-ignore
-              setToastMessage({
-                severity: 'success',
-                color: 'success',
-                message: t('PopupTriggers.popupSaved'),
-                showAnimtionCheck: true
-              } as any);
-            } else {
-              //@ts-ignore
-              setToastMessage(ToastMessages.LANDING_PAGE_SAVED);
-            }
+             //@ts-ignore
+            setToastMessage(ToastMessages.LANDING_PAGE_SAVED);
           }
           //@ts-ignore
           if (reInit && !saveRef.current?.saveTemplate) {

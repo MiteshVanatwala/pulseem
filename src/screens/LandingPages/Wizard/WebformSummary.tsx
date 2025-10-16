@@ -35,9 +35,6 @@ const WebformSummary = ({ classes, isPopup }: any) => {
     const [webForm, setWebForm] = useState<LandingPageModel>({ PageName: '' });
     const [wfIntegrations, setWFIntegrations] = useState<WebformsToReportLeadByApi[]>([]);
 
-    const queryParams = new URLSearchParams(window.location.search);
-    const isPopupType = queryParams.get("type") === "popup";
-
     const getData = async () => {
         if (!subAccountAllGroups || subAccountAllGroups?.length === 0) {
             //@ts-ignore
@@ -89,7 +86,7 @@ const WebformSummary = ({ classes, isPopup }: any) => {
                 <Grid container spacing={1}>
                     <Grid item xs={4}>
                         <Typography className={classes.bold}>
-                            {isPopup || isPopupType ? t('PopupTriggers.summary.popupName') : t("landingPages.formName")}
+                            {isPopup ? t('PopupTriggers.summary.popupName') : t("landingPages.formName")}
                         </Typography>
                         <Typography title={webForm.PageName} className={classes.ellipsisText}>{webForm.PageName}</Typography>
                     </Grid>
@@ -99,7 +96,7 @@ const WebformSummary = ({ classes, isPopup }: any) => {
                     </Grid>
                     <Grid item xs={4}>
                         <Typography className={classes.bold}>
-                            {isPopup || isPopupType ? t('PopupTriggers.summary.popupLanguage') : t('landingPages.webformLanguage')}
+                            {isPopup ? t('PopupTriggers.summary.popupLanguage') : t('landingPages.webformLanguage')}
                         </Typography>
                         <Typography>{renderLanguage(webForm.BaseLanguage)}</Typography>
                     </Grid>
@@ -128,7 +125,7 @@ const WebformSummary = ({ classes, isPopup }: any) => {
                     </Grid>
                     <Grid item xs={4}>
                         <Typography className={classes.bold}>
-                            {isPopup || isPopupType ? t('PopupTriggers.summary.popupOfflineDate') : t('landingPages.formOfflineDate')}
+                            {isPopup ? t('PopupTriggers.summary.popupOfflineDate') : t('landingPages.formOfflineDate')}
                         </Typography>
                         <Typography title={webForm.OfflineDate ? moment(webForm.OfflineDate).format(DateFormats.DATE_ONLY) : t('common.notSet')}>{webForm.OfflineDate ? moment(webForm.OfflineDate).format(DateFormats.DATE_ONLY) : t('common.notSet')}</Typography>
                     </Grid>
@@ -158,7 +155,7 @@ const WebformSummary = ({ classes, isPopup }: any) => {
                     </Grid>
                     <Grid item xs={4}>
                         <Typography className={classes.bold}>
-                            {isPopup || isPopupType ? t('PopupTriggers.summary.commentsToPopup') : t('landingPages.commentsToForm')}
+                            {isPopup ? t('PopupTriggers.summary.commentsToPopup') : t('landingPages.commentsToForm')}
                         </Typography>
                         <Typography>{webForm.HasComments ? t('common.enabled') : t('common.disabled')}</Typography>
                     </Grid>
@@ -171,7 +168,7 @@ const WebformSummary = ({ classes, isPopup }: any) => {
             {isPopup ? <PopupSummary classes={classes} /> : <></>}
         </Box>
         <Loader isOpen={showLoader} showBackdrop={true} />
-        {(!isPopup && !isPopupType) && <Box>
+        {!isPopup && <Box>
             <WizardActions
                 classes={classes}
                 // @ts-ignore
@@ -192,30 +189,6 @@ const WebformSummary = ({ classes, isPopup }: any) => {
                     style={{ margin: '8px' }}
                 >
                     {t("master.RadMenuItemLandingManagement.Text")}
-                </Button>}
-            />
-        </Box>}
-        {isPopupType && <Box>
-            <WizardActions
-                classes={classes}
-                // @ts-ignore
-                onBack={{
-                    callback: () => Redirect({ url: `${sitePrefix}editor/popupeditor/${id}` } as RedirectPropTypes)
-                }}
-                // @ts-ignore
-                additionalButtons={<Button
-                    onClick={() => {
-                        Redirect({ url: `${sitePrefix}Popups/DisplayRules/${id}` } as RedirectPropTypes)
-                    }}
-                    className={clsx(
-                        classes.btn,
-                        classes.btnRounded,
-                        classes.backButton
-                    )}
-                    endIcon={!isRTL ? <MdArrowForwardIos /> : <MdArrowBackIos />}
-                    style={{ margin: '8px' }}
-                >
-                    {t("PopupTriggers.popupManagement")}
                 </Button>}
             />
         </Box>}

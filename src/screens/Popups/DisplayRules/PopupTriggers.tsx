@@ -128,8 +128,8 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
         const newDisplayFrequencyData = {
           targetAudience: audienceTarget || 'All Visitors',
           displaySchedule: displaySchedule || 'Once a day',
-          everyXDays: freq.FrequencyValue || 0,
-          everyXVisits: freq.FrequencyValue || 0,
+          everyXDays: freq.FrequencyTypeId === 2 ? (freq.FrequencyValue || 0) : 0,
+          everyXVisits: freq.FrequencyTypeId === 3 ? (freq.FrequencyValue || 0) : 0,
           days: freq.VisitorDays || 0,
         };
 
@@ -165,7 +165,22 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
   }, [popupRules, lookupData]);
 
   const handleDisplayFrequencyChange = (fieldName: string, value: any) => {
-    setDisplayFrequencyData(prev => ({ ...prev, [fieldName]: value }));
+    setDisplayFrequencyData(prev => {
+      const updated = { ...prev, [fieldName]: value };
+
+      if (fieldName === 'displaySchedule') {
+        updated.everyXDays = 0;
+        updated.everyXVisits = 0;
+      }
+
+      if (fieldName === 'targetAudience') {
+        updated.days = 0;
+        updated.everyXDays = 0;
+        updated.everyXVisits = 0;
+      }
+
+      return updated;
+    });
   };
 
   const handleAdvancedSettingsChange = (fieldName: string, value: any) => {
@@ -194,11 +209,11 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
   };
 
   const showErrorToast = (message: string) => {
-    setToastMessage({ 
-      severity: 'error', 
-      color: 'error', 
-      message, 
-      showAnimtionCheck: false 
+    setToastMessage({
+      severity: 'error',
+      color: 'error',
+      message,
+      showAnimtionCheck: false
     });
   };
 
@@ -255,15 +270,15 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
     const response = await dispatch(upsertPopupRules(payload));
     
     if (response.payload?.Data?.IsSuccess) {
-      navigate(`${sitePrefix}landingPages/Popups/Summary/${id}`, { 
-        state: { payload, lookupData } 
+      navigate(`${sitePrefix}landingPages/Popups/Summary/${id}`, {
+        state: { payload, lookupData }
       });
     } else {
       console.log(response);
       
-      const errorMessage = response.payload?.Data?.ErrorDetails || 
-                          response.payload?.Message || 
-                          t('common.Error');
+      const errorMessage = response.payload?.Data?.ErrorDetails ||
+        response.payload?.Message ||
+        t('common.Error');
       showErrorToast(errorMessage);
     }
   };
