@@ -803,7 +803,7 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 		const isBeeEditor = (accountFeatures?.indexOf(PulseemFeatures.BEE_EDITOR) > -1 && editorType === EditorType.BEE);
 		const pageId = id || savedPageID;
 
-		const beeEditorType = isPopup ? BEE_EDITOR_TYPES.POPUP : BEE_EDITOR_TYPES.LANDING_PAGE;
+		const beeEditorType = BEE_EDITOR_TYPES.LANDING_PAGE;
 
 		let redirectUrl = isBeeEditor
 			? `${sitePrefix}editor/${beeEditorType}/${pageId}`
@@ -811,6 +811,11 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 
 		if (isFromAutomation) {
 			redirectUrl += `?new=${isNew}&FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`;
+		}
+
+		if (isPopup) {
+			navigate(`${sitePrefix}popupeditor/${pageId}`);
+			return false;
 		}
 
 		switch (editorType) {
@@ -939,19 +944,19 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 						className={clsx(classes.iconTab, classes.f18)}
 						value='1'
 					/>
-					{landingPageModel.PageType !== 3 && <Tab
+					{!isPopup && landingPageModel.PageType !== 3 && <Tab
 						label={t('landingPages.SEOSettings')}
 						classes={{ root: classes.tabText, selected: classes.activeTab }}
 						className={clsx(classes.iconTab, classes.f18)}
 						value='2'
 					/>}
-					<Tab
+					{!isPopup && <Tab
 						label={t('landingPages.developmentSettings')}
 						classes={{ root: classes.tabText, selected: classes.activeTab }}
 						className={clsx(classes.iconTab, classes.f18)}
 						value='3'
-					/>
-					<Tab
+					/>}
+					{!isPopup && <Tab
 						style={{ overflow: 'unset' }}
 						label={<>
 							<Typography style={{ whiteSpace: 'nowrap', textAlign: 'center', fontSize: 18, fontWeight: 500 }}>
@@ -975,7 +980,7 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 						classes={{ root: classes.tabText, selected: classes.activeTab }}
 						className={clsx(classes.iconTab, classes.f18)}
 						value='4'
-					/>
+					/>}
 					<Tab
 						label={t('common.Groups')}
 						classes={{ root: classes.tabText, selected: classes.activeTab }}
