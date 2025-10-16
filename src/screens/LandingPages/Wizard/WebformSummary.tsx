@@ -35,6 +35,9 @@ const WebformSummary = ({ classes, isPopup }: any) => {
     const [webForm, setWebForm] = useState<LandingPageModel>({ PageName: '' });
     const [wfIntegrations, setWFIntegrations] = useState<WebformsToReportLeadByApi[]>([]);
 
+    const queryParams = new URLSearchParams(window.location.search);
+    const isPopupType = queryParams.get("type") === "popup";
+
     const getData = async () => {
         if (!subAccountAllGroups || subAccountAllGroups?.length === 0) {
             //@ts-ignore
@@ -157,10 +160,10 @@ const WebformSummary = ({ classes, isPopup }: any) => {
                     </Grid>
                 </Grid>
             </Box>
-                {isPopup ? <PopupSummary classes={classes} /> : <></>}
+            {isPopup ? <PopupSummary classes={classes} /> : <></>}
         </Box>
         <Loader isOpen={showLoader} showBackdrop={true} />
-        {!isPopup && <Box>
+        {(!isPopup && !isPopupType) && <Box>
             <WizardActions
                 classes={classes}
                 // @ts-ignore
@@ -168,7 +171,10 @@ const WebformSummary = ({ classes, isPopup }: any) => {
                     callback: () => Redirect({ url: `${sitePrefix}editor/LandingPages/${id}` } as RedirectPropTypes)
                 }}
                 // @ts-ignore
-                additionalButtons={<Button onClick={() => { Redirect({ url: `${sitePrefix}EditRegistrationPage` } as RedirectPropTypes) }}
+                additionalButtons={<Button
+                    onClick={() => {
+                        Redirect({ url: `${sitePrefix}EditRegistrationPage` } as RedirectPropTypes)
+                    }}
                     className={clsx(
                         classes.btn,
                         classes.btnRounded,
@@ -176,7 +182,33 @@ const WebformSummary = ({ classes, isPopup }: any) => {
                     )}
                     endIcon={!isRTL ? <MdArrowForwardIos /> : <MdArrowBackIos />}
                     style={{ margin: '8px' }}
-                >{t("master.RadMenuItemLandingManagement.Text")}</Button>}
+                >
+                    {t("master.RadMenuItemLandingManagement.Text")}
+                </Button>}
+            />
+        </Box>}
+        {isPopupType && <Box>
+            <WizardActions
+                classes={classes}
+                // @ts-ignore
+                onBack={{
+                    callback: () => Redirect({ url: `${sitePrefix}editor/popupeditor/${id}` } as RedirectPropTypes)
+                }}
+                // @ts-ignore
+                additionalButtons={<Button
+                    onClick={() => {
+                        Redirect({ url: `${sitePrefix}Popups/DisplayRules/${id}` } as RedirectPropTypes)
+                    }}
+                    className={clsx(
+                        classes.btn,
+                        classes.btnRounded,
+                        classes.backButton
+                    )}
+                    endIcon={!isRTL ? <MdArrowForwardIos /> : <MdArrowBackIos />}
+                    style={{ margin: '8px' }}
+                >
+                    {t("PopupTriggers.popupManagement")}
+                </Button>}
             />
         </Box>}
     </DefaultScreen>

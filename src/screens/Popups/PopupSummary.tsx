@@ -53,7 +53,7 @@ const PopupSummary = ({ classes }: any) => {
       const response = await dispatch(publish(id));
       // @ts-ignore
       if (response?.payload?.StatusCode === 201) {
-        showSuccessToast(t('PopupTriggers.Pulished'));
+        showSuccessToast(t('common.Pulished'));
         setTimeout(() => {
           navigate(`${sitePrefix}LandingPages/PopUpManagement`);
         }, 1500);

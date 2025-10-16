@@ -463,8 +463,10 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
               if (isFromAutomation) {
                 window.location.href = `/pulseem/CreateAutomations.aspx?AutomationID=${isFromAutomation}&NodeToEdit=${NodeToEdit}&id=${args.campaignId}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`;
               } else {
-                navigate(`${sitePrefix}landingpages/LandingPages/Summary/${args?.campaignId}`)
-              }
+                  const isPopup = moduleType?.toLowerCase() === 'popupeditor';
+                  const summaryUrl = `${sitePrefix}LandingPages/summary/${args?.campaignId}${isPopup ? '?type=popup' : ''}`;
+                  navigate(summaryUrl);
+                  }
               //@ts-ignore
             } else if (saveRef.current?.showAnimation && response.payload?.StatusCode === 927) {
               setTierMessageCode(response?.payload?.Message);
@@ -481,8 +483,9 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
               window.location.href = `/pulseem/CreateAutomations.aspx?AutomationID=${isFromAutomation}&NodeToEdit=${NodeToEdit}&id=${args.campaignId}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`;
             } else {
               localStorage.setItem('reloadLPBeeEditor', '1');
+              const isPopup = moduleType?.toLowerCase() === 'popupeditor';
               //@ts-ignore
-              navigate(saveRef.current?.redirectUrl ?? `${sitePrefix}LandingPages/Summary/${args.campaignId}`);
+              navigate(saveRef.current?.redirectUrl ?? `${sitePrefix}LandingPages/summary/${args.campaignId}${isPopup ? '?type=popup' : ''}`);
               return false;
             }
           }
@@ -495,7 +498,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
               setToastMessage({
                 severity: 'success',
                 color: 'success',
-                message: t('landingPages.popupSaved'),
+                message: t('PopupTriggers.popupSaved'),
                 showAnimtionCheck: true
               } as any);
             } else {

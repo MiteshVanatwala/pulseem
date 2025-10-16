@@ -581,7 +581,7 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
             setToastMessage({
               severity: 'success',
               color: 'success',
-              message: t('popup.popupSaved'),
+              message: t('PopupTriggers.popupSaved'),
               showAnimtionCheck: true
             } as any);
           }
