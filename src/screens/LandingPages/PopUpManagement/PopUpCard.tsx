@@ -51,17 +51,11 @@ const PopUpCard: React.FC<PopUpCardProps> = ({ popup, classes, setDialogType }) 
   const dispatch = useDispatch<any>();
   const navigate = useNavigate();
   const [showCopied, setShowCopied] = useState<string | null>(null);
-  const [copyLinkRef, setCopyLinkRef] = useState<any>(null);
   const [copyEmbedRef, setCopyEmbedRef] = useState<any>(null);
 
   const handleStatusChange = () => {
     const newStatus = popup.StatusName === 'Active' ? 5 : 2;
     (dispatch as any)(togglePopupStatus({ ID: popup.ID, Status: newStatus }));
-  };
-
-  const getPopupUrl = () => {
-    const domain = popup.Domains && popup.Domains.length > 0 ? popup.Domains[0] : '';
-    return `${domain}?pulseem_popup=${popup.PopupGuid}`;
   };
 
   const handleSettings = () => {
@@ -84,43 +78,15 @@ const PopUpCard: React.FC<PopUpCardProps> = ({ popup, classes, setDialogType }) 
     });
   };
 
-  const handleCopyLink = async () => {
+  const handleEmbed = () => {
     if (popup.StatusName !== 'Active') {
       return;
     }
     
-    const pageUrl = getPopupUrl();
-    await navigator.clipboard.writeText(pageUrl);
-    setShowCopied('link');
-    setTimeout(() => {
-      setShowCopied(null);
-    }, 1000);
-  };
-
-  const handleCopyEmbed = async () => {
-    if (popup.StatusName !== 'Active') {
-      return;
-    }
-
-    const pageUrl = getPopupUrl();
-    let embedCode = `<script src="${pageUrl}" type="text/javascript"></script>`;
-    
-    try {
-      // @ts-ignore
-      const res = await dispatch(getPageHeight(popup.ID));
-      if (res.payload?.StatusCode === 201) {
-        const height = res.payload?.Data;
-        embedCode = embedCode.replace('##pageHeight##', height);
-      }
-    } catch (error) {
-      console.error('Error getting page height:', error);
-    }
-    
-    await navigator.clipboard.writeText(embedCode);
-    setShowCopied('embed');
-    setTimeout(() => {
-      setShowCopied(null);
-    }, 1000);
+    setDialogType({
+      type: 'embed',
+      data: popup
+    });
   };
 
   const handleDelete = () => {
@@ -286,6 +252,7 @@ const PopUpCard: React.FC<PopUpCardProps> = ({ popup, classes, setDialogType }) 
         >
           {t('landingPages.popupManagement.actions.duplicate')}
         </Button>
+        {/* Copy Link button commented out as per requirement
         <Box display="inline-block" position="relative">
           <Button 
             ref={(el) => setCopyLinkRef(el)}
@@ -307,26 +274,18 @@ const PopUpCard: React.FC<PopUpCardProps> = ({ popup, classes, setDialogType }) 
             />
           )}
         </Box>
+        */}
         <Box display="inline-block" position="relative">
           <Button 
             ref={(el) => setCopyEmbedRef(el)}
             size="small" 
             className={classes.actionButtonPopupManagement} 
             startIcon={<CodeIcon />}
-            onClick={handleCopyEmbed}
+            onClick={handleEmbed}
             disabled={!isActive}
           >
             {t('landingPages.popupManagement.actions.embed')}
           </Button>
-          {showCopied === 'embed' && (
-            <PopMassage
-              classes={classes}
-              show={true}
-              timeout={1000}
-              label={t('common.copyClip')}
-              innerRef={copyEmbedRef}
-            />
-          )}
         </Box>
         <Button
           size="small"

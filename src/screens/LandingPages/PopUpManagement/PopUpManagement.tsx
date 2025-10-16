@@ -617,7 +617,7 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
 
   const getEmbedDialog = (data: Page) => {
     const PopupBaseUrl = 'https://stage.l-p.site';
-    const embedCode = `<script type="text/javascript" src="${PopupBaseUrl}/pulseempopup.js?id=${data.ID}"></script>`;
+    const embedCode = `<script type="text/javascript" src="${PopupBaseUrl}/pulseempopup.js?id=${data.PopupGuid}"></script>`;
 
     return {
       title: t('landingPages.popupManagement.actions.embed'),
