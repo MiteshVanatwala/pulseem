@@ -939,7 +939,7 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 					classes={{ indicator: classes.hideIndicator }}
 				>
 					<Tab
-						label={t('landingPages.formProperties')}
+						label={isPopup ? t('PopupTriggers.popupProperties') : t('landingPages.formProperties')}
 						classes={{ root: classes.tabText, selected: classes.activeTab }}
 						className={clsx(classes.iconTab, classes.f18)}
 						value='1'

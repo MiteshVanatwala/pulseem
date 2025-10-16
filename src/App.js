@@ -356,7 +356,7 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
         element={<LandingPagesesManagment classes={classes} />}
       />
       <Route
-        path={`${sitePrefix}LandingPages/PopUpManagement`}
+        path={`${sitePrefix}PopUpManagement`}
         element={<PopUpManagement classes={classes} />}
       />
       <Route

@@ -136,8 +136,15 @@
     "displayAfterScrolling": "הצג לאחר גלילה של",
     "onThePage": "בעמוד",
     "clicksCount": "ספירת קליקים",
-    "clicksInPage": "קליקים בעמוד"
+    "clicksInPage": "קליקים בעמוד",
+    "popupName": "שם החלונית",
+    "popupLanguage": "שפת החלונית",
+    "popupOfflineDate": "תאריך הורדת החלונית מהרשת",
+    "commentsToPopup": "הערות לחלונית",
+    "onceEvery": "פעם בכל",
+    "visits": "ביקורים"
   },
   "popupSaved": "הקופאפ נשמר",
-  "popupManagement": "ניהול חלוניות קופצות"
+  "popupManagement": "ניהול חלוניות קופצות",
+  "popupProperties": "מאפייני החלונית"
 }

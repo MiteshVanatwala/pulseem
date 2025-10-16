@@ -88,7 +88,9 @@ const WebformSummary = ({ classes, isPopup }: any) => {
                 {/* <Box style={{ padding: 25 }}> */}
                 <Grid container spacing={1}>
                     <Grid item xs={4}>
-                        <Typography className={classes.bold}>{t("landingPages.formName")}</Typography>
+                        <Typography className={classes.bold}>
+                            {isPopup || isPopupType ? t('PopupTriggers.summary.popupName') : t("landingPages.formName")}
+                        </Typography>
                         <Typography title={webForm.PageName} className={classes.ellipsisText}>{webForm.PageName}</Typography>
                     </Grid>
                     <Grid item xs={4}>
@@ -96,7 +98,9 @@ const WebformSummary = ({ classes, isPopup }: any) => {
                         <Typography>{t('landingPages.WebForm')}</Typography>
                     </Grid>
                     <Grid item xs={4}>
-                        <Typography className={classes.bold}>{t('landingPages.webformLanguage')}</Typography>
+                        <Typography className={classes.bold}>
+                            {isPopup || isPopupType ? t('PopupTriggers.summary.popupLanguage') : t('landingPages.webformLanguage')}
+                        </Typography>
                         <Typography>{renderLanguage(webForm.BaseLanguage)}</Typography>
                     </Grid>
                     <Grid item xs={12}>
@@ -123,7 +127,9 @@ const WebformSummary = ({ classes, isPopup }: any) => {
                         <Divider style={{ margin: '10px 0px' }} />
                     </Grid>
                     <Grid item xs={4}>
-                        <Typography className={classes.bold}>{t('landingPages.formOfflineDate')}</Typography>
+                        <Typography className={classes.bold}>
+                            {isPopup || isPopupType ? t('PopupTriggers.summary.popupOfflineDate') : t('landingPages.formOfflineDate')}
+                        </Typography>
                         <Typography title={webForm.OfflineDate ? moment(webForm.OfflineDate).format(DateFormats.DATE_ONLY) : t('common.notSet')}>{webForm.OfflineDate ? moment(webForm.OfflineDate).format(DateFormats.DATE_ONLY) : t('common.notSet')}</Typography>
                     </Grid>
                     <Grid item xs={4}>
@@ -151,7 +157,9 @@ const WebformSummary = ({ classes, isPopup }: any) => {
                         <Typography>{webForm.DoubleOptin ? t('common.enabled') : t('common.disabled')}</Typography>
                     </Grid>
                     <Grid item xs={4}>
-                        <Typography className={classes.bold}>{t('landingPages.commentsToForm')}</Typography>
+                        <Typography className={classes.bold}>
+                            {isPopup || isPopupType ? t('PopupTriggers.summary.commentsToPopup') : t('landingPages.commentsToForm')}
+                        </Typography>
                         <Typography>{webForm.HasComments ? t('common.enabled') : t('common.disabled')}</Typography>
                     </Grid>
                     <Grid item xs={4}>

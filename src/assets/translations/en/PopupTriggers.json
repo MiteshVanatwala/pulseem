@@ -125,7 +125,7 @@
     "audienceTarget": "Audience Target",
     "visitorDays": "Visitor Days",
     "continueAfterConversion": "Continue After Conversion",
-   "conversionType": "Conversion Type",
+    "conversionType": "Conversion Type",
     "exitIntent": "Exit Intent",
     "pageCount": "Page Count",
     "displayAfterVisiting": "Display after visiting",
@@ -136,8 +136,15 @@
     "displayAfterScrolling": "Display after scrolling",
     "onThePage": "on the page",
     "clicksCount": "Clicks Count",
-    "clicksInPage": "Clicks in page"
+    "clicksInPage": "Clicks in page",
+    "popupName": "Popup Name",
+    "popupLanguage": "Popup Language",
+    "popupOfflineDate": "Popup Offline Date",
+    "commentsToPopup": "Comments to Popup",
+    "visits": "visits",
+    "onceEvery": "Once every"
   },
   "popupSaved": "Popup Saved",
-  "popupManagement": "Popup Management"
+  "popupManagement": "Popup Management",
+  "popupProperties": "Popup Properties"
 }

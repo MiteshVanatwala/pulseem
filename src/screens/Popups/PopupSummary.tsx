@@ -55,7 +55,7 @@ const PopupSummary = ({ classes }: any) => {
       if (response?.payload?.StatusCode === 201) {
         showSuccessToast(t('common.Pulished'));
         setTimeout(() => {
-          navigate(`${sitePrefix}LandingPages/PopUpManagement`);
+          navigate(`${sitePrefix}PopUpManagement`);
         }, 1500);
       } else {
         showErrorToast(t('common.Error') || 'An error occurred');
@@ -82,7 +82,7 @@ const PopupSummary = ({ classes }: any) => {
       const configs: Record<string, { label: string; value: string }> = {
         'Exit Intent': {
           label: t('PopupTriggers.summary.exitIntent'),
-          value: trigger.isActive ? t('common.on') : t('common.off'),
+          value: t('common.on'),
         },
         'Page Views': {
           label: t('PopupTriggers.summary.pageCount'),
@@ -111,15 +111,11 @@ const PopupSummary = ({ classes }: any) => {
 
       return (
         <div key={trigger.TriggerId}>
-          <Typography
-            variant='body1'
-          >
+          <Typography variant='body1'>
             {label}:
           </Typography>
           {' '}
-          <Typography
-            variant='body2'
-          >
+          <Typography variant='body2'>
             {value}
           </Typography>
         </div>
@@ -155,6 +151,47 @@ const PopupSummary = ({ classes }: any) => {
     }
     const { FrequencyTypeId, FrequencyValue, AudienceTargetTypeId, VisitorDays } = payload.PopupFrequency;
 
+    const frequencyTypeName = getNameById(lookupData?.DisplayFrequencies, FrequencyTypeId);
+    const audienceTargetName = getNameById(lookupData?.AudienceTargets, AudienceTargetTypeId);
+
+    const getFrequencyTypeTranslation = (typeName: string) => {
+      const typeMap: { [key: string]: string } = {
+        'Once a day': t('PopupTriggers.displayFrequency.displaySchedule.oncePerDay.title'),
+        'Once every few days': t('PopupTriggers.displayFrequency.displaySchedule.everyXDays.main'),
+        'Once every few visits': t('PopupTriggers.displayFrequency.displaySchedule.everyXVisit.main'),
+        'Every visit': t('PopupTriggers.displayFrequency.displaySchedule.everyVisit.title'),
+      };
+      return typeMap[typeName] || typeName;
+    };
+
+    const getAudienceTargetTranslation = (audienceName: string) => {
+      const audienceMap: { [key: string]: string } = {
+        'All Visitors': t('PopupTriggers.displayFrequency.targetAudience.allVisitors'),
+        'New Visitors': t('PopupTriggers.displayFrequency.targetAudience.newVisitors'),
+        'Returning Visitors': t('PopupTriggers.displayFrequency.targetAudience.returningVisitors'),
+      };
+      return audienceMap[audienceName] || audienceName;
+    };
+
+    const getFrequencyValueText = () => {
+      if (FrequencyValue <= 0) return null;
+
+      if (frequencyTypeName === 'Once every few days') {
+        return `${t('PopupTriggers.summary.onceEvery')} ${FrequencyValue} ${t('PopupTriggers.displayFrequency.displaySchedule.everyXDays.suffix')}`;
+      } else if (frequencyTypeName === 'Once every few visits') {
+        return `${t('PopupTriggers.summary.onceEvery')} ${FrequencyValue} ${t('PopupTriggers.summary.visits')}`;
+      }
+      return FrequencyValue;
+    };
+
+    const getVisitorDaysText = () => {
+      if (VisitorDays <= 0) return null;
+      return `${t('PopupTriggers.summary.onceEvery')} ${VisitorDays} ${t('PopupTriggers.displayFrequency.displaySchedule.everyXDays.suffix')}`;
+    };
+
+    const frequencyValueText = getFrequencyValueText();
+    const visitorDaysText = getVisitorDaysText();
+
     return (
       <>
         <div>
@@ -163,18 +200,18 @@ const PopupSummary = ({ classes }: any) => {
           </Typography>
           {' '}
           <Typography variant='body2'>
-            {getNameById(lookupData?.DisplayFrequencies, FrequencyTypeId)}
+            {getFrequencyTypeTranslation(frequencyTypeName)}
           </Typography>
         </div>
 
-        {FrequencyValue > 0 && (
+        {frequencyValueText && (
           <div>
             <Typography variant='body1'>
               {t('PopupTriggers.summary.frequencyValue')}:
             </Typography>
             {' '}
             <Typography variant='body2'>
-              {FrequencyValue}
+              {frequencyValueText}
             </Typography>
           </div>
         )}
@@ -185,18 +222,18 @@ const PopupSummary = ({ classes }: any) => {
           </Typography>
           {' '}
           <Typography variant='body2'>
-            {getNameById(lookupData?.AudienceTargets, AudienceTargetTypeId)}
+            {getAudienceTargetTranslation(audienceTargetName)}
           </Typography>
         </div>
 
-        {VisitorDays > 0 && (
+        {visitorDaysText && (
           <div>
             <Typography variant='body1'>
               {t('PopupTriggers.summary.visitorDays')}:
             </Typography>
             {' '}
             <Typography variant='body2'>
-              {VisitorDays}
+              {visitorDaysText}
             </Typography>
           </div>
         )}

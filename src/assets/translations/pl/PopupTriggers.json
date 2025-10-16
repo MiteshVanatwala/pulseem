@@ -125,7 +125,7 @@
     "audienceTarget": "Grupa Docelowa",
     "visitorDays": "Dni Odwiedzającego",
     "continueAfterConversion": "Kontynuuj po Konwersji",
-     "conversionType": "Typ Konwersji",
+    "conversionType": "Typ Konwersji",
     "exitIntent": "Zamiar wyjścia",
     "pageCount": "Liczba stron",
     "displayAfterVisiting": "Wyświetl po odwiedzeniu",
@@ -136,8 +136,15 @@
     "displayAfterScrolling": "Wyświetl po przewinięciu",
     "onThePage": "na stronie",
     "clicksCount": "Liczba kliknięć",
-    "clicksInPage": "kliknięć na stronie"
+    "clicksInPage": "kliknięć na stronie",
+    "popupName": "Nazwa popupu",
+    "popupLanguage": "Język popupu",
+    "popupOfflineDate": "Data wyłączenia popupu",
+    "commentsToPopup": "Komentarze do popupu",
+    "onceEvery": "Raz na",
+    "visits": "wizyty"
   },
   "popupSaved": "Wyskakujące okno zostało zapisane",
-  "popupManagement": "Zarządzanie popupami"
+  "popupManagement": "Zarządzanie popupami",
+  "popupProperties": "Właściwości popupu"
 }

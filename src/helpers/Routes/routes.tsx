@@ -312,7 +312,7 @@ export const getRoutes = (
         {
           key: "popupManagement",
           title: t("master.RadMenuItemPopupManagement.Text"),
-          href: `${sitePrefix}LandingPages/PopUpManagement`,
+          href: `${sitePrefix}PopUpManagement`,
           isShow: true,
         },
         {
