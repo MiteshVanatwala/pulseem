@@ -11,7 +11,14 @@ import {
   ListItemText,
   Card,
   Divider,
-  CircularProgress
+  CircularProgress,
+  TableContainer,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  Chip
 } from '@material-ui/core';
 import {
   Check as CheckIcon,
@@ -32,10 +39,11 @@ import { coreProps } from '../../model/Core/corePros.types';
 import clsx from 'clsx';
 import Celebration from '../../assets/images/transparent_celebration.png';
 import { TIER_PLANS } from '../../helpers/Constants';
-import { getAddSubscriptionCardIframeURL, getCurrentPlan, restoreAutomation } from '../../redux/reducers/TiersSlice';
+import { getAddSubscriptionCardIframeURL, getCurrentPlan, getUserCreditCards, restoreAutomation, upgradePlan } from '../../redux/reducers/TiersSlice';
 import TranzilaIframe from '../Balance/PaymentWizard/Dialogs/TranzilaIframe';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 import { Loader } from '../Loader/Loader';
+import { MdAdd } from 'react-icons/md';
 
 const TierPlans = ({ classes, isOpen, onClose }: any) => {
   const { t, i18n } = useTranslation();
@@ -47,12 +55,17 @@ const TierPlans = ({ classes, isOpen, onClose }: any) => {
   const [ hasFrozenEmail, setHasFrozenEmail ] = useState(false);
   const [ showReleaseMessage, setShowReleaseMessage ] = useState(false);
   const [ showCancelMessage, setShowCancelMessage ] = useState(false);
+  const [ paymentViaExistingCC, setPaymentViaExistingCC ] = useState(true);
   const [ isLoader, setIsLoader ] = useState(false);
   const [ showSalesContactPopup, setShowSalesContactPopup ] = useState(false);
+  const [ showCardConfirmationDialog, setShowCardConfirmationDialog ] = useState(false);
+  const [ selectedCreditCard, setSelectedCreditCard ] = useState<any>(null);
   const contentRef = useRef<HTMLDivElement>(null);
-  const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
+  const { currentPlan, availablePlans, userCreditCards } = useSelector((state: any) => state.tiers);
   const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
   const { accountCurrencySymbol, accountIsCurrencySymbolPrefix } = useSelector((state: any) => state.common);
+  // Extract credit cards data from the API response
+  const creditCards = userCreditCards?.Data || [];
     // Scroll to top when step changes
   useEffect(() => {
     // Add a small delay to ensure DOM is updated
@@ -97,7 +110,12 @@ const TierPlans = ({ classes, isOpen, onClose }: any) => {
   }, [activeStep]);
 
   useEffect(() => {
-    setHasFrozenEmail(currentPlan.AutomationAvailable);
+    const loadUserData = async () => {
+      setHasFrozenEmail(currentPlan.AutomationAvailable);
+      await dispatch(getUserCreditCards() as any);
+    };
+
+    loadUserData();
   }, [ currentPlan ]);
 
   const handleNext = (plan?: any) => {
@@ -106,6 +124,44 @@ const TierPlans = ({ classes, isOpen, onClose }: any) => {
     }
     setActiveStep(1);
   };
+
+  const loadIframe = async (plan: any) => {
+    // Prepare request parameters
+    const requestParams = {
+      language: i18n.language || 'en',
+      subscriptionType: 'upgrade', // Adjust based on your needs
+      isNewSubscription: true,
+      tierId: plan.Id || plan.id
+    };
+    
+    // Call the API to get iframe URL
+    const response: any = await dispatch(getAddSubscriptionCardIframeURL(requestParams));
+    // Extract iframe URL from response
+    if (response.payload?.Data?.IframeUrl) {
+      setIframeURL(response.payload?.Data?.IframeUrl);
+    } else {
+      console.error('API call failed:', response.payload || response.error);
+    }
+  };
+
+  const fetchCCLinkForiFrame = async (plan: any) => {
+    // Prepare request parameters
+    const requestParams = {
+      language: i18n.language || 'en',
+      subscriptionType: 'upgrade', // Adjust based on your needs
+      isNewSubscription: true,
+      tierId: plan.Id || plan.id
+    };
+    
+    // Call the API to get iframe URL
+    const response: any = await dispatch(getAddSubscriptionCardIframeURL(requestParams));
+    // Extract iframe URL from response
+    if (response.payload?.Data?.IframeUrl) {
+      setIframeURL(response.payload?.Data?.IframeUrl);
+    } else {
+      console.error('API call failed:', response.payload || response.error);
+    }
+  }
 
   const handlePlanSelect = async (plan: any, uiConfig: any) => {
     if (plan.Id === 1) return false;
@@ -123,23 +179,12 @@ const TierPlans = ({ classes, isOpen, onClose }: any) => {
     setLoadingIframe(true);
     
     try {
-      // Prepare request parameters
-      const requestParams = {
-        language: i18n.language || 'en',
-        subscriptionType: 'upgrade', // Adjust based on your needs
-        isNewSubscription: true,
-        tierId: plan.Id || plan.id
-      };
-      
-      // Call the API to get iframe URL
-      const response: any = await dispatch(getAddSubscriptionCardIframeURL(requestParams));
-      // Extract iframe URL from response
-      if (response.payload?.Data?.IframeUrl) {
-        setIframeURL(response.payload?.Data?.IframeUrl);
-      } else {
-        console.error('API call failed:', response.payload || response.error);
+      console.log(creditCards);
+      setPaymentViaExistingCC(creditCards.length > 0);
+
+      if (!creditCards.length) {
+        fetchCCLinkForiFrame(plan);
       }
-      
     } catch (error) {
       console.error('Error fetching iframe URL:', error);
       // You might want to show an error message to the user
@@ -335,9 +380,9 @@ const TierPlans = ({ classes, isOpen, onClose }: any) => {
     
     return (
       <Box className={classes.upgradeFlowContainer}>
-        <Grid container spacing={4}>
+        <Grid container spacing={4} style={{ minWidth: '70vw' }}>
           {/* Left Side Features */}
-          <Grid item xs={12} md={7}>
+          <Grid item xs={12} md={6}>
             <Typography variant="h5" className={classes.upgradeFlowTitle} gutterBottom>
               {t('billing.tier.upgrade.title').replace('{planTitle}', planTitle)}
             </Typography>
@@ -455,7 +500,7 @@ const TierPlans = ({ classes, isOpen, onClose }: any) => {
           </Grid>
 
           {/* Right Side Payment Form */}
-          <Grid item xs={12} md={5}>
+          <Grid item xs={12} md={6}>
             <Card className={classes.upgradeFlowPaymentForm}>
               <Typography
                 variant="h4"
@@ -483,33 +528,18 @@ const TierPlans = ({ classes, isOpen, onClose }: any) => {
               </Typography>
 
               {/* Payment Iframe */}
-              <Box mt={3} style={{ minHeight: '400px' }}>
-                {loadingIframe ? (
-                  <Box display="flex" justifyContent="center" alignItems="center" style={{ height: '400px' }}>
-                    <CircularProgress />
-                    <Typography variant="body2" style={{ marginLeft: '16px' }}>
-                      {t('billing.tier.upgrade.loadingPaymentForm')}
-                    </Typography>
-                  </Box>
-                ) : iframeURL ? (
-                  <TranzilaIframe
-                    data={{}}
-                    classes={classes}
-                    isRTL={isRTL}
-                    packageId={null}
-                    onComplete={() => {
-                      dispatch(getCurrentPlan());
-                      setActiveStep(2);
-                    }}
-                    // @ts-ignore
-                    paymentUrl={`${iframeURL}`}
-                    hideSummary={true}
-                  />
-                ) : (
-                  <Typography variant="body2" style={{ marginLeft: '16px' }}>
-                    {t('billing.tier.upgrade.paymentForm.error')}
-                  </Typography>
-                )}
+              <Box mt={3}>
+                {
+                  paymentViaExistingCC === null && (
+                    <>
+                      <Typography variant="body2" style={{ marginLeft: '16px' }}>
+                        {t('billing.tier.upgrade.paymentForm.noCard')}
+                      </Typography>
+                    </>
+                  )
+                }
+              
+                {renderCreditCards()}
               </Box>
 
               <Divider style={{ margin: '24px 0' }} />
@@ -540,6 +570,193 @@ const TierPlans = ({ classes, isOpen, onClose }: any) => {
     }
     setIsLoader(false);
   };
+
+  const renderCreditCards = () => {
+    if (paymentViaExistingCC === true) {
+      return (
+        <TableContainer>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>{t('billing.creditCardManagement.cardNumber')}</TableCell>
+                <TableCell>{t('billing.creditCardManagement.cardType')}</TableCell>
+                <TableCell>
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {creditCards.map((card: any, index: number) => (
+                <TableRow key={card.CardId || index} hover>
+                  <TableCell>
+                    <Typography 
+                      variant="body1" 
+                      style={{ 
+                        direction: 'ltr', 
+                        fontWeight: 'bold'
+                      }}
+                    >
+                      {card.MaskedNumber}
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    {card.IsDefault ? (
+                      <Chip 
+                        label={t('billing.creditCardManagement.defaultCard')} 
+                        color="primary" 
+                        size="small"
+                        variant="outlined"
+                      />
+                    ) : (
+                      <Typography variant="body2" color="textSecondary">
+                        {t('billing.creditCardManagement.secondaryCard')}
+                      </Typography>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    <Button
+                      className={clsx(classes.btn, classes.btnRounded)}
+                      onClick={async () => {
+                        setShowCardConfirmationDialog(true);
+                        setSelectedCreditCard(card);
+                      }}
+                      variant="outlined"
+                      color="primary"
+                      size='small'
+                    >
+                      {t('common.select')}
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+              {/* Add New Card Button Row */}
+              <TableRow>
+                <TableCell colSpan={5} style={{ textAlign: 'center', padding: 20 }}>
+                  <Button
+                    className={clsx(classes.btn, classes.btnRounded)}
+                    onClick={() => {
+                      setPaymentViaExistingCC(false);
+                      fetchCCLinkForiFrame(selectedPlan);
+                    }}
+                    startIcon={<MdAdd />}
+                    variant="outlined"
+                    color="primary"
+                  >
+                    {t('billing.creditCardManagement.addNewCard')}
+                  </Button>
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )
+    } else if (paymentViaExistingCC === false) {
+      return (
+        <>
+          {loadingIframe ? (
+            <Box display="flex" justifyContent="center" alignItems="center" style={{ height: '400px' }}>
+              <CircularProgress />
+              <Typography variant="body2" style={{ marginLeft: '16px' }}>
+                {t('billing.tier.upgrade.loadingPaymentForm')}
+              </Typography>
+            </Box>
+          ) : (
+            iframeURL ? (
+              <TranzilaIframe
+                data={{}}
+                classes={classes}
+                isRTL={isRTL}
+                packageId={null}
+                onComplete={() => {
+                  dispatch(getCurrentPlan());
+                  setActiveStep(2);
+                }}
+                // @ts-ignore
+                paymentUrl={`${iframeURL}`}
+                hideSummary={true}
+              />
+            ) : (
+              <Typography variant="body2" style={{ marginLeft: '16px' }}>
+                {t('billing.tier.upgrade.paymentForm.error')}
+              </Typography>
+            )
+          )
+        }
+        </>
+      )
+    }
+                
+    return (
+      <>
+        {creditCards && creditCards.length > 0 && (
+          <TableContainer>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>{t('billing.creditCardManagement.cardNumber')}</TableCell>
+                  <TableCell>{t('billing.creditCardManagement.cardType')}</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {creditCards.map((card: any, index: number) => (
+                  <TableRow key={card.CardId || index} hover>
+                    <TableCell>
+                      <Typography 
+                        variant="body1" 
+                        style={{ 
+                          direction: 'ltr', 
+                          fontWeight: 'bold'
+                        }}
+                      >
+                        {card.MaskedNumber}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="body2">
+                        {card.CardType || 'N/A'}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="body2">
+                        {card.ExpDate || 'N/A'}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      {card.IsDefault ? (
+                        <Chip 
+                          label={t('billing.creditCardManagement.defaultCard')} 
+                          color="primary" 
+                          size="small"
+                          variant="outlined"
+                        />
+                      ) : (
+                        <Typography variant="body2" color="textSecondary">
+                          {t('billing.creditCardManagement.secondaryCard')}
+                        </Typography>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))}
+                {/* Add New Card Button Row */}
+                {/* <TableRow>
+                  <TableCell colSpan={5} style={{ textAlign: 'center', padding: 20 }}>
+                    <Button
+                      className={clsx(classes.btn, classes.btnRounded)}
+                      onClick={handleAddCard}
+                      startIcon={<MdAdd />}
+                      variant="outlined"
+                      color="primary"
+                    >
+                      {t('billing.creditCardManagement.addNewCard')}
+                    </Button>
+                  </TableCell>
+                </TableRow> */}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        )}
+      </>
+    )
+  }
 
   const FrozenAutomationMessage = () => {
     if (!hasFrozenEmail) return null;
@@ -682,7 +899,28 @@ const TierPlans = ({ classes, isOpen, onClose }: any) => {
           onCancel={() => setShowSalesContactPopup(false)}
         >
           {t('billing.tier.salesContactConfirmation')}
-      </BaseDialog>
+        </BaseDialog>
+        <BaseDialog
+          classes={classes}
+          open={showCardConfirmationDialog}
+          onClose={() => setShowCardConfirmationDialog(false)}
+          onCancel={() => setShowCardConfirmationDialog(false)}
+          onConfirm={async () => {
+            const response: any = await dispatch(upgradePlan({
+              Id: selectedCreditCard.ID,
+              Type: selectedCreditCard.Type,
+              TierID: selectedPlan.Id
+            }))
+            if (response?.payload?.StatusCode === 200) {
+              setActiveStep(2);
+              setShowCardConfirmationDialog(false);
+              dispatch(getCurrentPlan());
+              setSelectedCreditCard(null);
+            }
+          }}
+        >
+          {t('billing.tier.upgrade.payUsingCC')}
+        </BaseDialog>
       </>
     </BaseDialog>
   );

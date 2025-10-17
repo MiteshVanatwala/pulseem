@@ -45,6 +45,12 @@ export interface DowngradePlanRequest {
     newTierId: number;
 }
 
+export interface UpgradePlanRequest {
+    Id: number;
+    Type: string;
+    TierID: number;
+}
+
 export interface RestoreAutomationRequest {
     isNeedRestore: boolean;
 }

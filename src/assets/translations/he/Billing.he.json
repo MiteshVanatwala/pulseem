@@ -99,6 +99,7 @@
       "title": "שדרוג ל-{planTitle}",
       "success": "ברוך הבא ל {planName}!",
       "message": "השימוש במנוי פתוח כעת",
+      "payUsingCC": "האם אתה בטוח שברצונך לשלם באמצעות כרטיס האשראי הזה?",
       "features": {
         "unlimitedAutomations": {
           "title": "אוטומציות ללא הגבלה",
