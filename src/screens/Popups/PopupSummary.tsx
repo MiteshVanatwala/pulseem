@@ -267,12 +267,14 @@ const PopupSummary = ({ classes }: any) => {
             <Typography className={classes.bold}>{t('PopupTriggers.summary.frequency')}</Typography>
             {renderFrequency()}
           </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <Typography className={classes.bold}>{t('PopupTriggers.summary.continueAfterConversion')}</Typography>
-            <Typography>{payload?.ContinueAfterConversion ? t('common.Yes') : t('common.No')}</Typography>
-            <Typography className={classes.bold} style={{ marginTop: 10 }}>{t('PopupTriggers.summary.conversionType')}</Typography>
-            <Typography>{payload?.ConversionTypeId === 1 ? t('PopupTriggers.advanceSettings.postConversion.defineConversion.formSubmission') : t('PopupTriggers.advanceSettings.postConversion.defineConversion.buttonClick')}</Typography>
-          </Grid>
+          {payload?.ConversionTypeId !== 0 && payload?.ConversionTypeId !== null && (
+            <Grid item xs={12} sm={6} md={3}>
+              <Typography className={classes.bold}>{t('PopupTriggers.summary.continueAfterConversion')}</Typography>
+              <Typography>{payload?.ContinueAfterConversion ? t('common.Yes') : t('common.No')}</Typography>
+              <Typography className={classes.bold} style={{ marginTop: 10 }}>{t('PopupTriggers.summary.conversionType')}</Typography>
+              <Typography>{payload?.ConversionTypeId === 1 ? t('PopupTriggers.advanceSettings.postConversion.defineConversion.formSubmission') : t('PopupTriggers.advanceSettings.postConversion.defineConversion.buttonClick')}</Typography>
+            </Grid>
+          )}
         </Grid>
       </Box>
       <Box className={classes.stickyFooter}>

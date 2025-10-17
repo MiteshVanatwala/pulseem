@@ -109,13 +109,23 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
           if (triggerDef) {
             const key = triggerDef.Name.replace(/\s+/g, '');
             newTriggersState[key] = { ...newTriggersState[key], enabled: true };
-            if (key === 'PageViews') newTriggersState[key].pages = parseFloat(rule.TriggerValue);
-            if (key === 'ViewingTime') newTriggersState[key].time = parseFloat(rule.TriggerValue);
-            if (key === 'ScrollDepth') newTriggersState[key].depth = parseFloat(rule.TriggerValue);
-            if (key === 'PageClicks') newTriggersState[key].clicks = parseFloat(rule.TriggerValue);
+            if (key === 'PageViews') {
+              newTriggersState[key].pages = parseFloat(rule.TriggerValue);
+            }
+            if (key === 'ViewingTime') {
+              newTriggersState[key].time = parseFloat(rule.TriggerValue);
+              if (rule.TriggerViewTimeScopeId) {
+                newTriggersState[key].scope = rule.TriggerViewTimeScopeId === 1 ? 'currentPage' : 'anyPage';
+              }
+            }
+            if (key === 'ScrollDepth') {
+              newTriggersState[key].depth = parseFloat(rule.TriggerValue);
+            }
+            if (key === 'PageClicks') {
+              newTriggersState[key].clicks = parseFloat(rule.TriggerValue);
+            }
           }
         });
-        
         return newTriggersState;
       });
 
@@ -151,8 +161,15 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
 
       // Load advanced settings
       const conversionId = popupRules.PopupConversionId || popupRules.PopupConvesrionId;
-      
-      if (popupRules.ContinueAfterConversion !== undefined && conversionId !== undefined) {
+
+      const shouldShowAdvancedSettings = conversionId !== undefined && conversionId !== 0;
+
+      setShowSections(prev => ({
+        ...prev,
+        advancedSettings: shouldShowAdvancedSettings
+      }));
+
+      if (popupRules.ContinueAfterConversion !== undefined && conversionId !== undefined && conversionId !== 0) {
         const conversionType = conversionId === 1 ? 'formSubmission' : 'buttonClick';
         
         setAdvancedSettingsData({
@@ -223,14 +240,26 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
       .map(key => {
         const triggerLookup = lookupData.PopupTriggers.find((t: any) => t.Name.replace(/\s+/g, '') === key);
         let triggerValue = 0;
+        let triggerViewTimeScopeId = undefined;
+
         if (key === 'PageViews') triggerValue = triggersState[key].pages;
-        else if (key === 'ViewingTime') triggerValue = triggersState[key].time;
+        else if (key === 'ViewingTime') {
+          triggerValue = triggersState[key].time;
+          triggerViewTimeScopeId = triggersState[key].scope === 'currentPage' ? 1 : 2;
+        }
         else if (key === 'ScrollDepth') triggerValue = triggersState[key].depth;
         else if (key === 'PageClicks') triggerValue = triggersState[key].clicks;
-        return {
+
+        const trigger: any = {
           TriggerId: triggerLookup.Id,
           TriggerValue: triggerValue,
         };
+
+        if (triggerViewTimeScopeId !== undefined) {
+          trigger.TriggerViewTimeScopeId = triggerViewTimeScopeId;
+        }
+
+        return trigger;
       });
 
     const popupPageTargeting = pageTargetingRules.map(rule => {
@@ -261,8 +290,8 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
         AudienceTargetTypeId: audienceTarget.Id,
         VisitorDays: displayFrequencyData.days,
       },
-      ContinueAfterConversion: advancedSettingsData.shouldContinueShowing,
-      ConversionTypeId: advancedSettingsData.conversionType === 'formSubmission' ? 1 : 2,
+      ContinueAfterConversion: showSections.advancedSettings ? advancedSettingsData.shouldContinueShowing : false,
+      ConversionTypeId: showSections.advancedSettings ? (advancedSettingsData.conversionType === 'formSubmission' ? 1 : 2) : 0,
     };
 
     setPayloadForSummary(payload);
@@ -274,8 +303,6 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
         state: { payload, lookupData }
       });
     } else {
-      console.log(response);
-      
       const errorMessage = response.payload?.Data?.ErrorDetails ||
         response.payload?.Message ||
         t('common.Error');
