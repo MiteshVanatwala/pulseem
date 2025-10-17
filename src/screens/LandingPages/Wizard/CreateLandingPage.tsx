@@ -503,9 +503,12 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 			title: t("common.SaveExit"),
 			content: (
 				<Box>
-					<Typography variant="subtitle1">
-						{t("landingPages.confirmExit")}
-					</Typography>
+						<Typography variant="subtitle1">
+					{isPopup 
+						? t("PopupTriggers.confirmExitPopup") 
+						: t("landingPages.confirmExit")
+					}
+				</Typography>
 				</Box>
 			),
 			confirmText: "common.Yes",

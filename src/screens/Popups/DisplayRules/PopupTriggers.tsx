@@ -61,7 +61,7 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
 
   const [displayFrequencyData, setDisplayFrequencyData] = useState({
     targetAudience: 'All Visitors',
-    displaySchedule: 'Once a day',
+    displaySchedule: 'Every visit',
     everyXDays: 0,
     everyXVisits: 0,
     days: 0,

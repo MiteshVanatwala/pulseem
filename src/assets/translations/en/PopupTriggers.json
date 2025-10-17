@@ -147,5 +147,6 @@
   "popupSaved": "Popup Saved",
   "popupPublished": "Popup Published",
   "popupManagement": "Popup Management",
-  "popupProperties": "Popup Properties"
+  "popupProperties": "Popup Properties",
+  "confirmExitPopup": "Would you like to save the  popup before exit?"
 }

@@ -147,5 +147,6 @@
   "popupSaved": "Wyskakujące okno zostało zapisane",
   "popupPublished": "Popup opublikowany",
   "popupManagement": "Zarządzanie popupami",
-  "popupProperties": "Właściwości popupu"
+  "popupProperties": "Właściwości popupu",
+  "confirmExitPopup": "Czy chcesz zapisać okienko przed wyjściem?"
 }

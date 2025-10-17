@@ -492,7 +492,14 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
         <TableCell classes={cellStyle} className={classes.flex1}>
           {page.IdentifiedViewers?.toLocaleString() ?? 'N/A'}
         </TableCell>
-        <TableCell classes={cellStyle} className={classes.flex1}>{page.Conversions?.toLocaleString() ?? 'N/A'}{'/'}{page.ConversionRate ? `${page.ConversionRate}%` : 'N/A'}</TableCell>
+        <TableCell classes={cellStyle} className={classes.flex1}>
+          <Typography variant="body1">
+            {page.Conversions?.toLocaleString() ?? 'N/A'}
+          </Typography>
+          <Typography variant="body1">
+            ({page.ConversionRate ? `${page.ConversionRate}%` : 'N/A'})
+          </Typography>
+        </TableCell>
         <TableCell classes={cellStyle} className={clsx(classes.flex3, classes.tableActionContainerCell)}>{renderActionIcons(page)}</TableCell>
       </TableRow>
     );
@@ -566,7 +573,8 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
                   {t('landingPages.popupManagement.tableHeaders.identifiedViewers')}
                 </TableCell>
                 <TableCell align="center" classes={cellStyle} className={classes.flex1}>
-                  {`${t('landingPages.popupManagement.tableHeaders.conversions')} / ${t('landingPages.popupManagement.tableHeaders.conversionRate')}`}
+                  <div>{t('landingPages.popupManagement.tableHeaders.conversions')}</div>
+                  <div>({t('landingPages.popupManagement.tableHeaders.conversionRate')})</div>
                 </TableCell>
                 <TableCell align='center' classes={cellStyle} className={clsx(classes.flex3, classes.tableActionContainerCell)}>
                   {t('landingPages.popupManagement.tableHeaders.actions')}

@@ -147,5 +147,6 @@
   "popupSaved": "הקופאפ נשמר",
   "popupPublished": "חלונית שפורסמה",
   "popupManagement": "ניהול חלוניות קופצות",
-  "popupProperties": "מאפייני החלונית"
+  "popupProperties": "מאפייני החלונית",
+  "confirmExitPopup": "האם ברצונך לשמור את החלון הקופץ לפני היציאה?"
 }
