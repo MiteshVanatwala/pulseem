@@ -511,15 +511,23 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 			confirmText: "common.Yes",
 			cancelText: "common.No",
 			onConfirm: async () => {
-				await save(0);
-				navigate(`${sitePrefix}EditRegistrationPage`);
+				await save(EditorType.SAVE_ONLY);
+				if (isPopup) {
+					navigate(`${sitePrefix}PopUpManagement`);
+				} else {
+					navigate(`${sitePrefix}EditRegistrationPage`);
+				}
 			},
 			onClose: () => {
 				setDialogType(null);
-				navigate(`${sitePrefix}EditRegistrationPage`);
+				if (isPopup) {
+					navigate(`${sitePrefix}PopUpManagement`);
+				} else {
+					navigate(`${sitePrefix}EditRegistrationPage`);
+				}
 			},
 		};
-	}
+	};
 
 	const getValidationDialog = () => ({
 		title: t('whatsappCampaign.sendValidation'),

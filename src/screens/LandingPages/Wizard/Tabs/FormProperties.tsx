@@ -136,8 +136,8 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
 
     return <Grid container spacing={2} className={clsx(classes.p15, classes.mb4)}>
         <Grid item md={3} xs={12} sm={12}>
-            <Typography title={translator("campaigns.camapignName")} className={classes.alignDir}>
-                {translator("landingPages.formName")}
+            <Typography title={translator(isPopup ? "PopupTriggers.summary.popupName" : "landingPages.formName")} className={classes.alignDir}>
+                {translator(isPopup ? "PopupTriggers.summary.popupName" : "landingPages.formName")}
             </Typography>
             <TextField
                 id="campaignName"
@@ -151,7 +151,6 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
                 onChange={(e: any) => { handlePageName(e) }}
                 error={!!errors.PageName}
                 title={data.PageName}
-            // onBlur={handleFromName}
             />
             <Box className='textBoxWrapper'>
                 <Typography className={clsx(errors.PageName ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
@@ -161,8 +160,8 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
         </Grid>
 
         <Grid item md={3} className={classes.w100}>
-            <Typography title={translator("landingPages.formLanguage")} className={classes.alignDir}>
-                {translator("landingPages.formLanguage")}
+            <Typography title={translator(isPopup ? "PopupTriggers.summary.popupLanguage" : "landingPages.formLanguage")} className={classes.alignDir}>
+                {translator(isPopup ? "PopupTriggers.summary.popupLanguage" : "landingPages.formLanguage")}
             </Typography>
             <FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.w100)}>
                 <Select

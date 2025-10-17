@@ -19,7 +19,7 @@ import {
   TableCell,
   TableBody,
 } from '@material-ui/core';
-import { ViewModule, ViewList, Add, Restore } from '@material-ui/icons';
+import { ViewModule, ViewList, Add, Restore, Language, Code } from '@material-ui/icons';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { getPerformanceStats, getPopupPages, Page, deletePopup, getDeletedPopups } from '../../../../src/redux/reducers/popUpManagementSlice';
@@ -70,8 +70,6 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
   const [toastMessage, setToastMessage] = useState<ToastMessage | null>(null);
   const [dialogType, setDialogType] = useState<DialogType | null>(null);
   const [restoreArray, setRestoreArray] = useState<number[]>([]);
-  const [showCopied, setShowCopied] = useState<number | null>(null);
-  const [copyRef, setCopyRef] = useState<any>(null);
   const [showLoader, setShowLoader] = useState(false);
   const [filters, setFilters] = useState({
     SearchTerm: '',
@@ -157,7 +155,7 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
                 classes={classes}
                 title={t('landingPages.popupManagement.statCards.avgConversionRate')}
                 value={`${stats.AverageConversionRate.toFixed(2)}%`}
-                change={`${stats.AverageConversionChange > 0 ? '+' : ''}${stats.AverageConversionChange.toFixed(2)}% this week`}
+                // change={`${stats.AverageConversionChange > 0 ? '+' : ''}${stats.AverageConversionChange.toFixed(2)}% this week`}
               />
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
@@ -260,27 +258,111 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
   };
 
   const renderCardView = () => {
-    return (
-      <Grid container spacing={3}>
-        {pages.map((page: Page) => (
-          <Grid item xs={12} key={page.ID}>
-            <PopUpCard popup={page} classes={classes} setDialogType={setDialogType} />
-          </Grid>
-        ))}
-      </Grid>
-    );
-  };
+    const groupedByDomain = pages.reduce((acc: Record<string, Page[]>, page: Page) => {
+      page.Domains.forEach(domain => {
+        if (!acc[domain]) {
+          acc[domain] = [];
+        }
+        if (!acc[domain].some(p => p.ID === page.ID)) {
+          acc[domain].push(page);
+        }
+      });
+      return acc;
+    }, {} as Record<string, Page[]>);
 
-  const renderCopyToClipboard = (id: number) => {
-    return showCopied === id ? (
-      <PopMassage
-        classes={classes}
-        show={showCopied === id}
-        timeout={1000}
-        label={t('common.copyClip')}
-        innerRef={copyRef}
-      />
-    ) : null;
+    const handleDomainEmbed = (domain: string, domainPages: Page[]) => {
+      const activePopups = domainPages.filter(p => p.StatusName === 'Active');
+
+      if (activePopups.length === 0) {
+        setToastMessage({
+          type: 'info',
+          message: t('landingPages.popupManagement.noActivePopupsForDomain')
+        });
+        return;
+      }
+
+      if (activePopups.length === 1) {
+        setDialogType({
+          type: 'embed',
+          data: activePopups[0]
+        });
+        return;
+      }
+
+      setDialogType({
+        type: 'embed',
+        data: activePopups[0]
+      });
+    };
+
+    return (
+      <Box>
+        {(Object.entries(groupedByDomain) as [string, Page[]][]).map(([domain, domainPages]) => {
+          const hasActivePopup = domainPages.some(p => p.StatusName === 'Active');
+
+          return (
+            <Box key={domain} mb={4}>
+              {/* Domain Header */}
+              <Box
+                display="flex"
+                alignItems="center"
+                mb={2}
+                p={2}
+                className={clsx(classes.popupCard, classes.domainHeader)}
+                style={{
+                  borderRadius: '8px',
+                  backgroundColor: '#f8f9fa'
+                }}
+              >
+                <Box
+                  width={40}
+                  height={40}
+                  borderRadius="50%"
+                  bgcolor="primary.main"
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  mr={2}
+                >
+                  <Language style={{ color: '#fff', fontSize: 22 }} />
+                </Box>
+                <Typography variant="h6" style={{ fontWeight: 600, marginRight: 16 }}>
+                  {domain}
+                </Typography>
+
+                <Button
+                  variant="outlined"
+                  size="small"
+                  className={clsx(
+                    classes.btn,
+                    classes.btnRounded,
+                    classes.ml5
+                  )}
+                  startIcon={<Code />}
+                  onClick={() => handleDomainEmbed(domain, domainPages)}
+                  disabled={!hasActivePopup}
+                >
+                  {t('landingPages.popupManagement.actions.embed')}
+                </Button>
+              </Box>
+
+              {/* Cards for this domain */}
+              <Grid container spacing={3}>
+                {domainPages.map((page: Page) => (
+                  <Grid item xs={12} key={page.ID}>
+                    <PopUpCard
+                      popup={page}
+                      classes={classes}
+                      setDialogType={setDialogType}
+                    />
+                  </Grid>
+                ))}
+              </Grid>
+            </Box>
+          );
+        })}
+      </Box>
+    );
   };
 
   const renderActionIcons = (page: Page) => {
@@ -378,7 +460,6 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
               key={icon.key}
               item >
               <ManagmentIcon {...iconProps} />
-              {(icon.key === 'copy' || icon.key === 'embed') && renderCopyToClipboard(id)}
             </Grid>
           );
         })}

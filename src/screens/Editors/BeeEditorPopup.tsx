@@ -764,8 +764,8 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
   }
   const onExit = () => setDialogType({ type: DialogType.EXIT })
 
-  const onBack = () => saveDesign(true, `${sitePrefix}LandingPages/Create/${moduleId}`);
-  
+  // const onBack = () => saveDesign(true, `${sitePrefix}LandingPages/Create/${moduleId}`);
+  const onBack = () => { saveDesign(true, `${sitePrefix}Popups/Create/${moduleId}`); };
   const renderToast = () => {
     if (toastMessage) {
       setTimeout(() => {

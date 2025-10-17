@@ -83,87 +83,137 @@ const WebformSummary = ({ classes, isPopup }: any) => {
             />
             <Box style={{ padding: 25, maxWidth: 900, margin: '0 auto' }}>
                 {/* <Box style={{ padding: 25 }}> */}
-                <Grid container spacing={1}>
-                    <Grid item xs={4}>
-                        <Typography className={classes.bold}>
-                            {isPopup ? t('PopupTriggers.summary.popupName') : t("landingPages.formName")}
-                        </Typography>
-                        <Typography title={webForm.PageName} className={classes.ellipsisText}>{webForm.PageName}</Typography>
+                {isPopup ? (
+                    <Grid container spacing={1}>
+                        <Grid item xs={4}>
+                            <Typography className={classes.bold}>
+                                {t('PopupTriggers.summary.popupName')}
+                            </Typography>
+                            <Typography title={webForm.PageName} className={classes.ellipsisText}>{webForm.PageName}</Typography>
+                        </Grid>
+                        <Grid item xs={4}>
+                            <Typography className={classes.bold}>
+                                {t('PopupTriggers.summary.popupLanguage')}
+                            </Typography>
+                            <Typography>{renderLanguage(webForm.BaseLanguage)}</Typography>
+                        </Grid>
+                        <Grid item xs={4}>
+                            <Typography className={classes.bold}>{t('landingPages.answerType')}</Typography>
+                            <Typography>{t('landingPages.systemDefaultMessage')}</Typography>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Divider style={{ margin: '10px 0px' }} />
+                        </Grid>
+                        {subAccountAllGroups?.length > 0 && <Grid item xs={4}>
+                            <Typography className={classes.bold}>{t('landingPages.groupsForSubscribers')}</Typography>
+                            {webForm.SelectedGroupList?.map((groupId: any) => {
+                                const groupFound = subAccountAllGroups?.find((g: any) => {
+                                    return g?.GroupID === parseInt(groupId)
+                                });
+                                return <Typography key={groupId} title={groupFound?.GroupName} className={classes.ellipsisText}>{groupFound?.GroupName}</Typography>
+                            })}
+                        </Grid>}
+                        <Grid item xs={4}>
+                            <Typography className={classes.bold}>{t('landingPages.limitNumberOfSubscribers')}</Typography>
+                            <Typography title={webForm.SubscriptionsLimit > 0 ? webForm.SubscriptionsLimit : t('common.disabled')} className={classes.ellipsisText}>{webForm.SubscriptionsLimit > 0 ? webForm.SubscriptionsLimit : t('common.disabled')}</Typography>
+                        </Grid>
+                        <Grid item xs={4}>
+                            <Typography className={classes.bold}>{t('landingPages.reportLeadsToEmails')}</Typography>
+                            {webForm?.EmailsToReport?.split(',')?.length > 0 ? webForm?.EmailsToReport.split(',')?.map((email: string, index: number) => {
+                                return <Typography key={index} className={classes.ellipsisText}>{email}</Typography>
+                            }) : <>{t('common.notSet')}</>}
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Divider style={{ margin: '10px 0px' }} />
+                        </Grid>
+                        <Grid item xs={4}>
+                            <Typography className={classes.bold}>{t('landingPages.doubleOptIn')}</Typography>
+                            <Typography>{webForm.DoubleOptin ? t('common.enabled') : t('common.disabled')}</Typography>
+                        </Grid>
                     </Grid>
-                    <Grid item xs={4}>
-                        <Typography className={classes.bold}>{t('common.campaignType')}</Typography>
-                        <Typography>{t('landingPages.WebForm')}</Typography>
+                ) : (
+                    <Grid container spacing={1}>
+                        <Grid item xs={4}>
+                            <Typography className={classes.bold}>
+                                {t("landingPages.formName")}
+                            </Typography>
+                            <Typography title={webForm.PageName} className={classes.ellipsisText}>{webForm.PageName}</Typography>
+                        </Grid>
+                        <Grid item xs={4}>
+                            <Typography className={classes.bold}>{t('common.campaignType')}</Typography>
+                            <Typography>{t('landingPages.WebForm')}</Typography>
+                        </Grid>
+                        <Grid item xs={4}>
+                            <Typography className={classes.bold}>
+                                {t('landingPages.webformLanguage')}
+                            </Typography>
+                            <Typography>{renderLanguage(webForm.BaseLanguage)}</Typography>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Divider style={{ margin: '10px 0px' }} />
+                        </Grid>
+                        <Grid item xs={4}>
+                            <Typography className={classes.bold}>{t('landingPages.answerType')}</Typography>
+                            <Typography>{t('landingPages.systemDefaultMessage')}</Typography>
+                        </Grid>
+                        {subAccountAllGroups?.length > 0 && <Grid item xs={4}>
+                            <Typography className={classes.bold}>{t('landingPages.groupsForSubscribers')}</Typography>
+                            {webForm.SelectedGroupList?.map((groupId: any) => {
+                                const groupFound = subAccountAllGroups?.find((g: any) => {
+                                    return g?.GroupID === parseInt(groupId)
+                                });
+                                return <Typography key={groupId} title={groupFound?.GroupName} className={classes.ellipsisText}>{groupFound?.GroupName}</Typography>
+                            })}
+                        </Grid>}
+                        <Grid item xs={4}>
+                            <Typography className={classes.bold}>{t('landingPages.limitNumberOfSubscribers')}</Typography>
+                            <Typography title={webForm.SubscriptionsLimit > 0 ? webForm.SubscriptionsLimit : t('common.disabled')} className={classes.ellipsisText}>{webForm.SubscriptionsLimit > 0 ? webForm.SubscriptionsLimit : t('common.disabled')}</Typography>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Divider style={{ margin: '10px 0px' }} />
+                        </Grid>
+                        <Grid item xs={4}>
+                            <Typography className={classes.bold}>
+                                {t('landingPages.formOfflineDate')}
+                            </Typography>
+                            <Typography title={webForm.OfflineDate ? moment(webForm.OfflineDate).format(DateFormats.DATE_ONLY) : t('common.notSet')}>{webForm.OfflineDate ? moment(webForm.OfflineDate).format(DateFormats.DATE_ONLY) : t('common.notSet')}</Typography>
+                        </Grid>
+                        <Grid item xs={4}>
+                            <Typography className={classes.bold}>{t('landingPages.redirectURLWhenOffline')}</Typography>
+                            <Typography title={webForm.OfflineUrl} className={classes.ellipsisText}>{webForm.OfflineUrl || t('common.notSet')}</Typography>
+                        </Grid>
+                        <Grid item xs={4}>
+                            <Typography className={classes.bold}>{t('landingPages.reportLeadsToEmails')}</Typography>
+                            {webForm?.EmailsToReport?.split(',')?.length > 0 ? webForm?.EmailsToReport.split(',')?.map((email: string, index: number) => {
+                                return <Typography key={index} className={classes.ellipsisText}>{email}</Typography>
+                            }) : <>{t('common.notSet')}</>}
+                        </Grid>
+                        {/* <Grid item xs={4}>
+                            <Typography className={classes.bold}>{t('landingPages.reportLeadsToEmails')}</Typography>
+                            {wfIntegrations?.length > 0 ? webForm.Systems?.map((sysId: any) => {
+                                const sysFound = wfIntegrations.find((s) => { return s.ID === parseInt(sysId) }) as WebformsToReportLeadByApi;
+                                return <Typography>{sysFound.Name}</Typography>
+                            }) : <>Not set</>}
+                        </Grid> */}
+                        <Grid item xs={12}>
+                            <Divider style={{ margin: '10px 0px' }} />
+                        </Grid>
+                        <Grid item xs={4}>
+                            <Typography className={classes.bold}>{t('landingPages.doubleOptIn')}</Typography>
+                            <Typography>{webForm.DoubleOptin ? t('common.enabled') : t('common.disabled')}</Typography>
+                        </Grid>
+                        <Grid item xs={4}>
+                            <Typography className={classes.bold}>
+                                {t('landingPages.commentsToForm')}
+                            </Typography>
+                            <Typography>{webForm.HasComments ? t('common.enabled') : t('common.disabled')}</Typography>
+                        </Grid>
+                        <Grid item xs={4}>
+                            <Typography className={classes.bold}>{t('landingPages.facebookLikes')}</Typography>
+                            <Typography>{webForm.FacebookPrefunPage ? t('common.enabled') : t('common.disabled')}</Typography>
+                        </Grid>
                     </Grid>
-                    <Grid item xs={4}>
-                        <Typography className={classes.bold}>
-                            {isPopup ? t('PopupTriggers.summary.popupLanguage') : t('landingPages.webformLanguage')}
-                        </Typography>
-                        <Typography>{renderLanguage(webForm.BaseLanguage)}</Typography>
-                    </Grid>
-                    <Grid item xs={12}>
-                        <Divider style={{ margin: '10px 0px' }} />
-                    </Grid>
-                    <Grid item xs={4}>
-                        <Typography className={classes.bold}>{t('landingPages.answerType')}</Typography>
-                        <Typography>{t('landingPages.systemDefaultMessage')}</Typography>
-                    </Grid>
-                    {subAccountAllGroups?.length > 0 && <Grid item xs={4}>
-                        <Typography className={classes.bold}>{t('landingPages.groupsForSubscribers')}</Typography>
-                        {webForm.SelectedGroupList?.map((groupId: any) => {
-                            const groupFound = subAccountAllGroups?.find((g: any) => {
-                                return g?.GroupID === parseInt(groupId)
-                            });
-                            return <Typography title={groupFound?.GroupName} className={classes.ellipsisText}>{groupFound?.GroupName}</Typography>
-                        })}
-                    </Grid>}
-                    <Grid item xs={4}>
-                        <Typography className={classes.bold}>{t('landingPages.limitNumberOfSubscribers')}</Typography>
-                        <Typography title={webForm.SubscriptionsLimit > 0 ? webForm.SubscriptionsLimit : t('common.disabled')} className={classes.ellipsisText}>{webForm.SubscriptionsLimit > 0 ? webForm.SubscriptionsLimit : t('common.disabled')}</Typography>
-                    </Grid>
-                    <Grid item xs={12}>
-                        <Divider style={{ margin: '10px 0px' }} />
-                    </Grid>
-                    <Grid item xs={4}>
-                        <Typography className={classes.bold}>
-                            {isPopup ? t('PopupTriggers.summary.popupOfflineDate') : t('landingPages.formOfflineDate')}
-                        </Typography>
-                        <Typography title={webForm.OfflineDate ? moment(webForm.OfflineDate).format(DateFormats.DATE_ONLY) : t('common.notSet')}>{webForm.OfflineDate ? moment(webForm.OfflineDate).format(DateFormats.DATE_ONLY) : t('common.notSet')}</Typography>
-                    </Grid>
-                    <Grid item xs={4}>
-                        <Typography className={classes.bold}>{t('landingPages.redirectURLWhenOffline')}</Typography>
-                        <Typography title={webForm.OfflineUrl} className={classes.ellipsisText}>{webForm.OfflineUrl || t('common.notSet')}</Typography>
-                    </Grid>
-                    <Grid item xs={4}>
-                        <Typography className={classes.bold}>{t('landingPages.reportLeadsToEmails')}</Typography>
-                        {webForm?.EmailsToReport?.split(',')?.length > 0 ? webForm?.EmailsToReport.split(',')?.map((email: string) => {
-                            return <Typography className={classes.ellipsisText}>{email}</Typography>
-                        }) : <>{t('common.notSet')}</>}
-                    </Grid>
-                    {/* <Grid item xs={4}>
-                        <Typography className={classes.bold}>{t('landingPages.reportLeadsToEmails')}</Typography>
-                        {wfIntegrations?.length > 0 ? webForm.Systems?.map((sysId: any) => {
-                            const sysFound = wfIntegrations.find((s) => { return s.ID === parseInt(sysId) }) as WebformsToReportLeadByApi;
-                            return <Typography>{sysFound.Name}</Typography>
-                        }) : <>Not set</>}
-                    </Grid> */}
-                    <Grid item xs={12}>
-                        <Divider style={{ margin: '10px 0px' }} />
-                    </Grid>
-                    <Grid item xs={4}>
-                        <Typography className={classes.bold}>{t('landingPages.doubleOptIn')}</Typography>
-                        <Typography>{webForm.DoubleOptin ? t('common.enabled') : t('common.disabled')}</Typography>
-                    </Grid>
-                    <Grid item xs={4}>
-                        <Typography className={classes.bold}>
-                            {isPopup ? t('PopupTriggers.summary.commentsToPopup') : t('landingPages.commentsToForm')}
-                        </Typography>
-                        <Typography>{webForm.HasComments ? t('common.enabled') : t('common.disabled')}</Typography>
-                    </Grid>
-                    <Grid item xs={4}>
-                        <Typography className={classes.bold}>{t('landingPages.facebookLikes')}</Typography>
-                        <Typography>{webForm.FacebookPrefunPage ? t('common.enabled') : t('common.disabled')}</Typography>
-                    </Grid>
-                </Grid>
+                )}
             </Box>
             {isPopup ? <PopupSummary classes={classes} /> : <></>}
         </Box>

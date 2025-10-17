@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useState } from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
 import {
   Box,
   Typography,
@@ -11,7 +11,6 @@ import {
   Visibility as VisibilityIcon,
   Edit as EditIcon,
   FileCopy as FileCopyIcon,
-  Code as CodeIcon,
   Delete as DeleteIcon,
   PersonPin as PersonPinIcon,
   CheckCircleOutline as CheckCircleOutlineIcon,
@@ -22,13 +21,11 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { Page, togglePopupStatus } from '../../../../src/redux/reducers/popUpManagementSlice';
-import { getPageHeight } from '../../../../src/redux/reducers/landingPagesSlice';
 import clsx from 'clsx';
 import { Switch } from '../../../components/managment';
 import { sitePrefix } from '../../../config';
 import { DialogType } from './PopUpManagement';
 import { useNavigate } from 'react-router-dom';
-import { PopMassage } from '../../../components/managment/index';
 
 interface PopUpCardProps {
   popup: Page;
@@ -44,14 +41,14 @@ interface StatItemProps {
   trend?: number;
   mobilePercent?: number;
   desktopPercent?: number;
+  onValueClick?: () => void;
+  onSubtitleClick?: (index: number) => void;
 }
 
 const PopUpCard: React.FC<PopUpCardProps> = ({ popup, classes, setDialogType }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch<any>();
   const navigate = useNavigate();
-  const [showCopied, setShowCopied] = useState<string | null>(null);
-  const [copyEmbedRef, setCopyEmbedRef] = useState<any>(null);
 
   const handleStatusChange = () => {
     const newStatus = popup.StatusName === 'Active' ? 5 : 2;
@@ -78,19 +75,18 @@ const PopUpCard: React.FC<PopUpCardProps> = ({ popup, classes, setDialogType }) 
     });
   };
 
-  const handleEmbed = () => {
-    if (popup.StatusName !== 'Active') {
-      return;
-    }
-    
-    setDialogType({
-      type: 'embed',
-      data: popup
-    });
-  };
-
   const handleDelete = () => {
     setDialogType({ type: 'delete', data: popup.ID });
+  };
+
+  const handleIdentifiedViewersClick = () => {
+    // TODO: Implement navigation or action for identified viewers
+    console.log('Identified Viewers clicked for popup:', popup.ID);
+  };
+
+  const handleIdentifiedConversionsClick = () => {
+    // TODO: Implement navigation or action for identified conversions
+    console.log('Identified Conversions clicked for popup:', popup.ID);
   };
 
   const renderStatusControl = () => {
@@ -130,7 +126,17 @@ const PopUpCard: React.FC<PopUpCardProps> = ({ popup, classes, setDialogType }) 
     );
   };
 
-  const StatItem: React.FC<StatItemProps> = ({ icon, title, value, subtitles, trend, mobilePercent, desktopPercent }) => (
+  const StatItem: React.FC<StatItemProps> = ({ 
+    icon, 
+    title, 
+    value, 
+    subtitles, 
+    trend, 
+    mobilePercent, 
+    desktopPercent,
+    onValueClick,
+    onSubtitleClick
+  }) => (
     <Grid item xs={6} sm={3} className={classes.statItem}>
       <Box ml={1} textAlign="center" alignItems="center" display="flex">
         {icon}
@@ -138,12 +144,31 @@ const PopUpCard: React.FC<PopUpCardProps> = ({ popup, classes, setDialogType }) 
           {title}
         </Typography>
       </Box>
-      <Typography variant="h4" style={{ lineHeight: 1.2, fontWeight: 600 }}>
+      <Typography 
+        variant="h4" 
+        style={{ 
+          lineHeight: 1.2, 
+          fontWeight: 600,
+          cursor: onValueClick ? 'pointer' : 'default',
+          color: onValueClick ? '#0371AD' : 'inherit',
+        }}
+        onClick={onValueClick}
+      >
         {value}
       </Typography>
       {subtitles?.map((subtitle, index) =>
         subtitle ? (
-          <Typography key={index} variant="body2" color="textSecondary">
+          <Typography 
+            key={index} 
+            variant="body2" 
+            color="textSecondary"
+            style={{
+              cursor: onSubtitleClick ? 'pointer' : 'default',
+              color: onSubtitleClick ? '#0371AD' : undefined,
+              textDecoration: onSubtitleClick ? 'underline' : 'none'
+            }}
+            onClick={() => onSubtitleClick?.(index)}
+          >
             {subtitle}
           </Typography>
         ) : null
@@ -170,8 +195,6 @@ const PopUpCard: React.FC<PopUpCardProps> = ({ popup, classes, setDialogType }) 
     </Grid>
   );
 
-  const isActive = popup.StatusName === 'Active';
-
   return (
     <Box p={3} className={classes.popupCard}>
       <Grid container spacing={2} alignItems="center">
@@ -179,9 +202,9 @@ const PopUpCard: React.FC<PopUpCardProps> = ({ popup, classes, setDialogType }) 
           <Typography variant="h6" className={classes.popupTitle}>
             {popup.Name}
           </Typography>
-          <Typography variant="body2" className={classes.blueLink} color="textSecondary">
+          {/* <Typography variant="body2" className={classes.blueLink} color="textSecondary">
             {popup.Domains.join(', ')}
-          </Typography>
+          </Typography> */}
         </Grid>
         <Grid item xs={12} md={4} style={{ textAlign: 'right' }}>
           {renderStatusControl()}
@@ -201,6 +224,7 @@ const PopUpCard: React.FC<PopUpCardProps> = ({ popup, classes, setDialogType }) 
             title={t('landingPages.popupManagement.tableHeaders.identifiedViewers')}
             value={popup.IdentifiedViewers?.toLocaleString() ?? '—'}
             subtitles={[`${popup.IdentifiedViewersPercent}% of viewers`]}
+            onValueClick={handleIdentifiedViewersClick}
           />
           <StatItem
             icon={<CheckCircleOutlineIcon color="disabled" />}
@@ -210,6 +234,11 @@ const PopUpCard: React.FC<PopUpCardProps> = ({ popup, classes, setDialogType }) 
               `Identified Conversions: ${popup.IdentifiedConversions?.toLocaleString() ?? '—'}`,
               popup.ConversionType === 2 ? 'Form Submitted' : 'Button Clicks'
             ]}
+            onSubtitleClick={(index) => {
+              if (index === 0) {
+                handleIdentifiedConversionsClick();
+              }
+            }}
           />
           <StatItem
             icon={<TrendingUpIcon color="disabled" />}
@@ -252,41 +281,6 @@ const PopUpCard: React.FC<PopUpCardProps> = ({ popup, classes, setDialogType }) 
         >
           {t('landingPages.popupManagement.actions.duplicate')}
         </Button>
-        {/* Copy Link button commented out as per requirement
-        <Box display="inline-block" position="relative">
-          <Button 
-            ref={(el) => setCopyLinkRef(el)}
-            size="small" 
-            className={classes.actionButtonPopupManagement} 
-            startIcon={<CodeIcon />}
-            onClick={handleCopyLink}
-            disabled={!isActive}
-          >
-            {t('landingPages.popupManagement.actions.copyLink')}
-          </Button>
-          {showCopied === 'link' && (
-            <PopMassage
-              classes={classes}
-              show={true}
-              timeout={1000}
-              label={t('common.copyClip')}
-              innerRef={copyLinkRef}
-            />
-          )}
-        </Box>
-        */}
-        <Box display="inline-block" position="relative">
-          <Button 
-            ref={(el) => setCopyEmbedRef(el)}
-            size="small" 
-            className={classes.actionButtonPopupManagement} 
-            startIcon={<CodeIcon />}
-            onClick={handleEmbed}
-            disabled={!isActive}
-          >
-            {t('landingPages.popupManagement.actions.embed')}
-          </Button>
-        </Box>
         <Button
           size="small"
           color="secondary"
