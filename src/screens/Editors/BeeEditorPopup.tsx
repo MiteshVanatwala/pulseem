@@ -13,7 +13,7 @@ import { getAuthorizedEmails, getCommonFeatures, isAlive } from '../../redux/red
 import WizardActions from '../../components/Wizard/WizardActions';
 import { getById, deleteLPUserBlock, deleteLandingPage, getAllLPTemplatesBySubaccountId, getLPPublicTemplates, getLPTemplateById, getLPUserblocks, saveLPTemplateToAccount, saveLPUserBlock, saveWebform, publish, setWebformGroups } from '../../redux/reducers/PopupSlice';
 import { initClientForm, initExtraDataField, initLandingPages } from './helper/MigratePulseemData';
-import { DialogType, DefaultContent, PopupBeeConfig, DefaultPopupContent } from './helper/configPopup';
+import { DialogType, DefaultContent, BeeConfig } from './helper/configPopup';
 import { IoMdImages } from 'react-icons/io';
 import Gallery from '../../components/Gallery/Gallery.component';
 import { PulseemFeatures, PulseemFolderType } from "../../model/PulseemFields/Fields";
@@ -321,7 +321,9 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
       const webform = landingPage?.Data?.WebForm;
       const isRtlLang = webform?.BaseLanguage === 0 || webform?.BaseLanguage === 8 ? true : false;
       let forceTemplate = null;
-      let defaultContent = DefaultPopupContent(isRtlLang, webform?.BaseLanguage);
+      let defaultContent = {
+        defaultTemplate: ''
+      };
       
       if (templateId !== null) {
         //@ts-ignore
@@ -330,7 +332,7 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
         if (templateResponse?.payload?.StatusCode === 201) {
           const responseData = templateResponse?.payload?.Data;
           setNewTemplate(responseData)
-          forceTemplate = responseData?.JsonData ? JSON.parse(responseData?.JsonData) : defaultContent.defaultTemplate;
+          forceTemplate = responseData?.JsonData ? JSON.parse(responseData?.JsonData) : defaultContent?.defaultTemplate;
           shouldReSave = true;
         } else {
           // @ts-ignore
@@ -1320,7 +1322,7 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
   }
   //#endregion Forms 
   const getConfig = () => {
-    return PopupBeeConfig({
+    return BeeConfig({
       //@ts-ignore
       moduleType,
       classes,
@@ -1348,34 +1350,6 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
     }) as any;
   }
 
-  const getPopupConfig = () => {
-    return PopupBeeConfig({
-      //@ts-ignore
-      moduleType,
-      classes,
-      onSaveUserBlock,
-      IsRTL: isRTL,
-      BasedOnRTL: (landingPage?.Data?.WebForm?.BaseLanguage === 0 || landingPage?.Data?.WebForm?.BaseLanguage === 8),
-      EditRow: EditRow,
-      openModal: openModal,
-      Save: onSave,
-      AutoSave: onAutoSavePage,
-      DesignChange: onAutoSavePage,
-      SetDialog: setDialogType,
-      //@ts-ignore
-      Id: moduleId,
-      PulseemEditBlock: onEditBlock,
-      DeleteBlock: handleDeleteBlock,
-      // HandleAutoSave: handleAutoSave,
-      getRows,
-      handleEditRow,
-      handleDeleteRow,
-      t: t,
-      form: clientForm,
-      onFormAdded: onFormAdded,
-      languageCode: language
-    }) as any;
-  }
   const config = getConfig();
 
   return (
