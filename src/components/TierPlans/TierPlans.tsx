@@ -676,7 +676,6 @@ const TierPlans = ({ classes, isOpen, onClose }: any) => {
               />
             ) : (
               <Typography variant="body2" style={{ marginLeft: '16px' }}>
-                {t('billing.tier.upgrade.paymentForm.error')}
               </Typography>
             )
           )
