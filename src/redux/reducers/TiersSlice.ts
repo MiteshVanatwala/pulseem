@@ -1,13 +1,11 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { PulseemResponse } from '../../Models/APIResponse';
 import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
-import { 
-    CurrentPlan, 
-    AvailablePlan, 
-    CreditCard, 
+import {
     DowngradePlanRequest, 
     RestoreAutomationRequest,
-    SubscriptionCardIframeRequest
+    SubscriptionCardIframeRequest,
+    UpgradePlanRequest
 } from '../../Models/Tiers/TierModels';
 
 // Get Current Plan
@@ -31,6 +29,23 @@ export const downgradePlan = createAsyncThunk(
             const response = await PulseemReactInstance.post(
                 `FeatureTier/DowngradePlan?newTierId=${request.newTierId}`,
                 {}
+            );
+            return response.data as PulseemResponse;
+        } catch (error) {
+            return thunkAPI.rejectWithValue(error);
+        }
+    }
+);
+
+// Upgrade Tier Plan
+export const upgradePlan = createAsyncThunk(
+    'FeatureTier/UpgradeTier',
+    async (request: UpgradePlanRequest, thunkAPI) => {
+        try {
+            console.log(request);
+            const response = await PulseemReactInstance.post(
+                `FeatureTier/UpgradeTier`,
+                request
             );
             return response.data as PulseemResponse;
         } catch (error) {
