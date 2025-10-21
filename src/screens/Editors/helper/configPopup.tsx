@@ -427,7 +427,7 @@ export const DefaultContent = (IsRTL: Boolean, languageCode: number) => {
           type: "mailup-bee-page-proprerties",
           container: {
             style: {
-              "background-color": "#FFFFFF",
+              "background-color": "transparent",
             },
           },
           content: {
@@ -437,7 +437,7 @@ export const DefaultContent = (IsRTL: Boolean, languageCode: number) => {
             },
             computedStyle: {
               linkColor: "#0068A5",
-              messageBackgroundColor: "transparent",
+              messageBackgroundColor: "#FFFFFF",
               messageWidth: "600px",
             },
           },
@@ -456,7 +456,7 @@ export const DefaultContent = (IsRTL: Boolean, languageCode: number) => {
             },
             content: {
               style: {
-                "background-color": "transparent",
+                "background-color": "#FFFFFF",
                 color: "#000000",
                 width: "600px",
                 "background-image": "none",

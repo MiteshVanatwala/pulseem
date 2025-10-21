@@ -26,6 +26,7 @@ import { Switch } from '../../../components/managment';
 import { sitePrefix } from '../../../config';
 import { DialogType } from './PopUpManagement';
 import { useNavigate } from 'react-router-dom';
+import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
 
 interface PopUpCardProps {
   popup: Page;
@@ -80,13 +81,29 @@ const PopUpCard: React.FC<PopUpCardProps> = ({ popup, classes, setDialogType }) 
   };
 
   const handleIdentifiedViewersClick = () => {
-    // TODO: Implement navigation or action for identified viewers
-    console.log('Identified Viewers clicked for popup:', popup.ID);
+    if (popup.IdentifiedViewers > 0) {
+      navigate(CLIENT_CONSTANTS.BASEURL, {
+        state: {
+          ...CLIENT_CONSTANTS.QUERY_PARAMS,
+          CampaignID: popup.ID,
+          PageType: CLIENT_CONSTANTS.PAGE_TYPES.PopUpIdentifiedViewers,
+          ResultTitle: `${t("common.clientSubscriptionResultTitle")} ${popup.Name}`
+        }
+      })
+    }
   };
 
   const handleIdentifiedConversionsClick = () => {
-    // TODO: Implement navigation or action for identified conversions
-    console.log('Identified Conversions clicked for popup:', popup.ID);
+    if (popup.ConversionRate > 0) {
+      navigate(CLIENT_CONSTANTS.BASEURL, {
+        state: {
+          ...CLIENT_CONSTANTS.QUERY_PARAMS,
+          CampaignID: popup.ID,
+          PageType: CLIENT_CONSTANTS.PAGE_TYPES.PopUPConversions,
+          ResultTitle: `${t("common.clientSubscriptionResultTitle")} ${popup.Name}`
+        }
+      })
+    }
   };
 
   const renderStatusControl = () => {

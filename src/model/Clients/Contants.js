@@ -27,7 +27,9 @@ const CLIENT_CONSTANTS = {
 		WhatsappRevenue: 23,
 		SMSUniqueClick: 24,
 		SMSVerifiedClick: 25,
-		EmailUniqueClick: 26
+		EmailUniqueClick: 26,
+		PopUpIdentifiedViewers: 27,
+		PopUPConversions: 28
 	},
 	SMS_STATUS: {
 		NoSms: -1,
