@@ -99,6 +99,7 @@
       "title": "Upgrade to {planTitle}",
       "success": "Welcome to {planName}!",
       "message": "Your subscription is now active",
+      "payUsingCC": "Are you sure you want to pay using this credit card?",
       "features": {
         "unlimitedAutomations": {
           "title": "Unlimited Automations",
