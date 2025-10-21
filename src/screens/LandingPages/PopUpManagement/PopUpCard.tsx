@@ -56,7 +56,7 @@ const PopUpCard: React.FC<PopUpCardProps> = ({ popup, classes, setDialogType }) 
   };
 
   const handleSettings = () => {
-    navigate(`${sitePrefix}Popups/Create/${popup.ID}`);
+    navigate(`${sitePrefix}Popups/DisplayRules/${popup.ID}`);
   };
 
   const handlePreview = () => {

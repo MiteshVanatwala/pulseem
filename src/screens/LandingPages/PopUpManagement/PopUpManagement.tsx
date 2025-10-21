@@ -376,7 +376,7 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
         lable: t('landingPages.popupManagement.actions.settings'),
         rootClass: classes.paddingIcon,
         onClick: () => {
-          navigate(`${sitePrefix}Popups/Create/${id}`);
+          navigate(`${sitePrefix}Popups/DisplayRules/${id}`);
         }
       },
       {
@@ -706,7 +706,8 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
 
   const getEmbedDialog = (data: Page) => {
     const PopupBaseUrl = 'https://stage.l-p.site';
-    const embedCode = `<script type="text/javascript" src="${PopupBaseUrl}/pulseempopup.js?id=${data.PopupGuid}"></script>`;
+    const popupId = data.PopupGuid || data.ID;
+    const embedCode = `<script type="text/javascript" src="${PopupBaseUrl}/pulseempopup.js?id=${popupId}"></script>`;
 
     return {
       title: t('landingPages.popupManagement.actions.embed'),

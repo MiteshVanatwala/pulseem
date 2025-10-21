@@ -137,7 +137,7 @@ const PopupSummary = ({ classes }: any) => {
             {conditionType === 'Contains' ? t("common.contains") : conditionType === 'Not contains' ? t("common.notContains") : t("common.equal")}:
           </Typography>
           {' '}
-          <Typography variant='body2'>
+          <Typography variant='body2' style={{ wordWrap: 'break-word' }}>
             {rule.ConditionValue}
           </Typography>
         </div>

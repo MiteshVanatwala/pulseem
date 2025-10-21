@@ -754,7 +754,7 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
   const handleExitLandingPage = (saveBeforeExit = true) => {
     setDialogType(null);
     const isAutoResponder = fromLink?.toLowerCase() === 'autoresponder';
-    const redirectLink = isAutoResponder ? `/Pulseem/AutoSendPlans.aspx?Culture=${isRTL ? 'he-IL' : 'en-US'}` : `${sitePrefix}EditRegistrationPage`;
+    const redirectLink = isAutoResponder ? `/Pulseem/AutoSendPlans.aspx?Culture=${isRTL ? 'he-IL' : 'en-US'}` : `${sitePrefix}PopUpManagement`;
     if (saveBeforeExit) {
       saveDesign(true, redirectLink, false, false);
     }
