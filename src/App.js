@@ -202,7 +202,13 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
       />
       <Route
         path={`${sitePrefix}popupeditor/:id`}
-        element={<BeeEditorPopup classes={classes} clientId="ae1d76a4-107b-4f63-9849-360bfcad507c" clientSecret="Y1dZCdbtjfeVVCsCWB4EQNlQNerm3iCtQKocywnY1d213XeUt08F" isPopupBuilder={true} />}
+        element={
+          <BeeEditorPopup
+            classes={classes}
+            // clientId="ae1d76a4-107b-4f63-9849-360bfcad507c"
+            // clientSecret="Y1dZCdbtjfeVVCsCWB4EQNlQNerm3iCtQKocywnY1d213XeUt08F"
+            isPopupBuilder={true}
+          />}
       />
       <Route
         path={`${sitePrefix}editor/:type/:id`}
@@ -821,7 +827,10 @@ const App = ({ screenSize }) => {
         />
         <Route
           path={`${sitePrefix}popupeditor/:id`}
-          element={<BeeEditorPopup classes={classes} clientId="ae1d76a4-107b-4f63-9849-360bfcad507c" clientSecret="Y1dZCdbtjfeVVCsCWB4EQNlQNerm3iCtQKocywnY1d213XeUt08F" isPopupBuilder={true} />}
+          element={<BeeEditorPopup classes={classes} 
+          // clientId="ae1d76a4-107b-4f63-9849-360bfcad507c" 
+          // clientSecret="Y1dZCdbtjfeVVCsCWB4EQNlQNerm3iCtQKocywnY1d213XeUt08F"
+          isPopupBuilder={true} />}
         />
         <Route
           path={`${sitePrefix}editor/:type/:id`}

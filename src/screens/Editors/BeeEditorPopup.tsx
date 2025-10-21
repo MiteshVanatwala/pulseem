@@ -44,7 +44,7 @@ import GroupSelectorPopUp from '../Groups/GroupSelectorPopUp';
 import LPTemplates from './modals/Templates';
 import { GenericModal } from '../HtmlCampaign/components/GenericModal';
 import SaveTemplate from '../HtmlCampaign/modals/SaveTemplate';
-import { getBeeToken } from '../../redux/reducers/PopupSlice';
+import { getLPBeeToken } from '../../redux/reducers/landingPagesSlice';
 
 interface BeeEditorPopupProps extends BeeEditorModel {
   clientId?: string;
@@ -67,7 +67,7 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
   const { language, isRTL, userRoles } = useSelector((state: StateType) => state.core);
   const { tokenAlive, accountSettings, accountFeatures } = useSelector((state: { common: commonProps }) => state.common);
   const { landingPage, landingPageUserBlocks, ToastMessages, LPBeeToken, publicTemplates, templatesBySubAccount } = useSelector((state: { landingPages: BeeEditorStoreModel }) => state.landingPages)
-  const { BeeToken } = useSelector((state: { popup: any }) => state.popup)
+  // const { BeeToken } = useSelector((state: { popup: any }) => state.popup)
   const [showLoader, setLoader] = useState(false);
   const [dataReady, setDataReady] = useState(false);
   const [dialogType, setDialogType] = useState<{
@@ -119,7 +119,7 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
   const [popupDraftClientSecret, setPopupDraftClientSecret] = useState<string>(propClientSecret || '');
   //#endregion State
 
-  console.log('BeeToken', BeeToken)
+  console.log('BeeToken', LPBeeToken)
   //#region Get Extra fields & Landing pages, after Data Ready
   const loadAccountExtraData = () => {
     return new Promise(async (resolve: any) => {
@@ -277,7 +277,7 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
     await dispatch(getAuthorizedEmails());
     setDataReady(true);
     const initBeeToken = async () => {
-      await dispatch(getBeeToken());
+      await dispatch(getLPBeeToken());
     }
     initBeeToken();
   }
@@ -433,16 +433,16 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
       }
 
       initTags();
-      switch (BeeToken?.StatusCode) {
+      switch (LPBeeToken?.StatusCode) {
         case 201: {
-          if (BeeToken.Message === "null" || BeeToken.Message === null) {
+          if (LPBeeToken.Message === "null" || LPBeeToken.Message === null) {
             setDialogType({
               type: DialogType.GENERIC,
               data: t(DialogType.MISSING_API_KEY)
             });
           }
           else {
-            const beeTest = new BeePlugin(JSON.parse(BeeToken.Message));
+            const beeTest = new BeePlugin(JSON.parse(LPBeeToken.Message));
             const template = forceTemplate !== null ? forceTemplate : webform?.JsonData ? JSON.parse(webform?.JsonData) : defaultContent.defaultTemplate;
 
             //@ts-ignore
@@ -493,11 +493,11 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
     })
   }
   useEffect(() => {
-    if (BeeToken) {
+    if (LPBeeToken) {
       // Check if this is a popup builder instance
       initLPBeeEditor();
     }
-  }, [BeeToken, isPopupBuilder, clientId, clientSecret]);
+  }, [LPBeeToken, isPopupBuilder]);
   const initOptions = async () => {
     initTags();
     //@ts-ignore
