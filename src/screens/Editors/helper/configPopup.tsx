@@ -80,7 +80,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
 
 
   return {
-    uid: 'e6055525-eef0-468a-811d-34c23ea02348', //needed for identify resources of the that user and billing stuff
+    uid: 'e945eb6b-249c-4dea-bee1-e4b98b8719cc', //needed for identify resources of the that user and billing stuff
     container: 'page-bee-plugin-container', //Identifies the id of div element that contains BEE Plugin
     language: editorLanguage[languageCode], //IsRTL ? 'he-IL' : 'en-US',
     customCss: 'https://www.pulseem.co.il/Pulseem/Css/beefreeRtlFixes.css',
