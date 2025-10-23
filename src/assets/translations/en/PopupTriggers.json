@@ -152,8 +152,11 @@
   "closeButtonConfiguration": "Close Button Configuration",
   "closeButtonSize": "Size (px)",
   "closeButtonPosition": "Position",
+  "closeButtonTextColor": "Text Color",
+  "closeButtonBgColor": "Background Color",
   "generatedHTML": "Generated HTML",
   "samplePopup": "Sample Popup",
   "closeButtonPreviewDescription": "This is a preview of how the close button will appear on your popup.",
-  "closePopupButton": "Close Properties"
+  "closePopupButton": "Close Properties",
+  "popupDisplaySettings": "Popup Display Settings"
 }

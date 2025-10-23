@@ -57,6 +57,10 @@ const PopUpCard: React.FC<PopUpCardProps> = ({ popup, classes, setDialogType }) 
   };
 
   const handleSettings = () => {
+    navigate(`${sitePrefix}Popups/Create/${popup.ID}`);
+  };
+  
+  const handleDisplayRules = () => {
     navigate(`${sitePrefix}Popups/DisplayRules/${popup.ID}`);
   };
 
@@ -306,6 +310,14 @@ const PopUpCard: React.FC<PopUpCardProps> = ({ popup, classes, setDialogType }) 
           onClick={handleDelete}
         >
           {t('landingPages.GridButtonColumnResource1.HeaderText')}
+        </Button>
+        <Button
+          size="small"
+          color="secondary"
+          className={classes.actionButtonPopupManagement}
+          onClick={handleDisplayRules}
+        >
+          {t('PopupTriggers.popupDisplaySettings')}
         </Button>
       </Box>
     </Box>

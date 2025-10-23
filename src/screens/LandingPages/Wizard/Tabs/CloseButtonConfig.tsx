@@ -3,6 +3,7 @@ import { Box, Typography, TextField, Select, MenuItem, FormControl, InputLabel, 
 import { ChromePicker } from 'react-color';
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 
 interface CloseButtonConfigProps {
 	classes: any;
@@ -12,6 +13,7 @@ interface CloseButtonConfigProps {
 
 interface CloseButtonSettings {
 	color: string;
+	bgcolor: string;
 	size: number;
 	position: 'Left' | 'Center' | 'Right';
 }
@@ -20,11 +22,13 @@ const CloseButtonConfig: React.FC<CloseButtonConfigProps> = ({ classes, data, on
 	const { t: translator } = useTranslation();
 	const [closeButtonSettings, setCloseButtonSettings] = useState<CloseButtonSettings>({
 		color: '#ff0000',
+		bgcolor: '#ffffff',
 		size: 50,
 		position: 'Right'
 	});
-
+  const { isRTL } = useSelector((state: any) => state.core)
 	const [showColorPicker, setShowColorPicker] = useState(false);
+	const [showBgColorPicker, setShowBgColorPicker] = useState(false);
 
 	// Parse CloseButtonHtml to extract settings
 	const parseCloseButtonHtml = (html: string): CloseButtonSettings | null => {
@@ -36,11 +40,13 @@ const CloseButtonConfig: React.FC<CloseButtonConfigProps> = ({ classes, data, on
 			
 			if (closeButton) {
 				const color = closeButton.getAttribute('data-color') || '#ff0000';
+				const bgcolor = closeButton.getAttribute('data-bgcolor') || '#ffffff';
 				const size = parseInt(closeButton.getAttribute('data-Size') || '50');
 				const position = (closeButton.getAttribute('data-Position') as 'Left' | 'Center' | 'Right') || 'Right';
 				
 				return {
 					color,
+					bgcolor,
 					size,
 					position
 				};
@@ -74,6 +80,16 @@ const CloseButtonConfig: React.FC<CloseButtonConfigProps> = ({ classes, data, on
 		});
 	};
 
+	const handleBgColorChange = (color: any) => {
+		const newSettings = { ...closeButtonSettings, bgcolor: color.hex };
+		setCloseButtonSettings(newSettings);
+		onUpdate({
+			...data,
+			closeButtonSettings: newSettings,
+			CloseButtonHtml: generateCloseButtonHTML(newSettings)
+		});
+	};
+
 	const handleSizeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const size = parseInt(event.target.value) || 50;
 		const newSettings = { ...closeButtonSettings, size };
@@ -98,7 +114,7 @@ const CloseButtonConfig: React.FC<CloseButtonConfigProps> = ({ classes, data, on
 
 	const generateCloseButtonHTML = (settings?: CloseButtonSettings) => {
 		const currentSettings = settings || closeButtonSettings;
-		return `<div ID='PulseemCloseButton' data-color='${currentSettings.color}' data-Size='${currentSettings.size}' data-Position='${currentSettings.position}'>X</div>`;
+		return `<div ID='PulseemCloseButton' data-color='${currentSettings.color}' data-bgcolor='${currentSettings.bgcolor}' data-Size='${currentSettings.size}' data-Position='${currentSettings.position}'>X</div>`;
 	};
 
 	const getPositionStyle = () => {
@@ -106,14 +122,14 @@ const CloseButtonConfig: React.FC<CloseButtonConfigProps> = ({ classes, data, on
 			case 'Left':
 				return { 
 					justifyContent: 'flex-start',
-					left: '-20px'
+					left: isRTL ? '-3px' : '3px'
 				};
 			case 'Center':
 				return { justifyContent: 'center' };
 			case 'Right':
 				return { 
 					justifyContent: 'flex-end',
-					right: '-20px'
+					right: isRTL ? '-3px' : '3px'
 				};
 			default:
 				return { justifyContent: 'flex-end' };
@@ -134,7 +150,7 @@ const CloseButtonConfig: React.FC<CloseButtonConfigProps> = ({ classes, data, on
 						{/* Color Picker */}
 						<Box className={classes.mb20}>
 							<Typography className={clsx(classes.bold, classes.mb10)}>
-								{translator('colorPalette.colorPalette')}
+								{translator('PopupTriggers.closeButtonTextColor')}
 							</Typography>
 							<Box 
 								onClick={() => setShowColorPicker(!showColorPicker)}
@@ -153,6 +169,33 @@ const CloseButtonConfig: React.FC<CloseButtonConfigProps> = ({ classes, data, on
 									<ChromePicker
 										color={closeButtonSettings.color}
 										onChange={handleColorChange}
+									/>
+								</Box>
+							)}
+						</Box>
+
+						{/* Background Color Picker */}
+						<Box className={classes.mb20}>
+							<Typography className={clsx(classes.bold, classes.mb10)}>
+								{translator('PopupTriggers.closeButtonBgColor')}
+							</Typography>
+							<Box 
+								onClick={() => setShowBgColorPicker(!showBgColorPicker)}
+								style={{ 
+									backgroundColor: closeButtonSettings.bgcolor,
+									width: '40px',
+									height: '40px',
+									border: '2px solid #ccc',
+									borderRadius: '4px',
+									cursor: 'pointer',
+									marginBottom: '10px'
+								}}
+							/>
+							{showBgColorPicker && (
+								<Box style={{ position: 'relative', zIndex: 1000 }}>
+									<ChromePicker
+										color={closeButtonSettings.bgcolor}
+										onChange={handleBgColorChange}
 									/>
 								</Box>
 							)}
@@ -256,31 +299,31 @@ const CloseButtonConfig: React.FC<CloseButtonConfigProps> = ({ classes, data, on
 							<Box
 								style={{
 									position: 'absolute',
-									top: '-15px',
+									top: '3px',
 									width: '100%',
 									display: 'flex',
 									...getPositionStyle()
 								}}
 							>
-								<Box
-									style={{
-										width: `${closeButtonSettings.size}px`,
-										height: `${closeButtonSettings.size}px`,
-										backgroundColor: closeButtonSettings.color,
-										color: 'white',
-										display: 'flex',
-										alignItems: 'center',
-										justifyContent: 'center',
-										borderRadius: '50%',
-										cursor: 'pointer',
-										fontWeight: 'bold',
-										fontSize: `${Math.max(closeButtonSettings.size * 0.6, 12)}px`,
-										boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
-										border: '2px solid #ffffff'
-									}}
-								>
-									X
-								</Box>
+							<Box
+								style={{
+									width: `${closeButtonSettings.size}px`,
+									height: `${closeButtonSettings.size}px`,
+									backgroundColor: closeButtonSettings.bgcolor,
+									color: closeButtonSettings.color,
+									display: 'flex',
+									alignItems: 'center',
+									justifyContent: 'center',
+									borderRadius: '50%',
+									cursor: 'pointer',
+									fontWeight: 'bold',
+									fontSize: `${Math.max(closeButtonSettings.size * 0.6, 12)}px`,
+									boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+									border: '2px solid #ffffff'
+								}}
+							>
+								X
+							</Box>
 							</Box>
 						</Box>
 					</Paper>

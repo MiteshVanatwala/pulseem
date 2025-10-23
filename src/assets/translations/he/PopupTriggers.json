@@ -152,8 +152,11 @@
   "closeButtonConfiguration": "הגדרות כפתור סגירה",
   "closeButtonSize": "גודל (פיקסלים)",
   "closeButtonPosition": "מיקום",
+  "closeButtonTextColor": "צבע טקסט",
+  "closeButtonBgColor": "צבע רקע",
   "generatedHTML": "HTML שנוצר",
   "samplePopup": "פופאפ לדוגמה",
   "closeButtonPreviewDescription": "זוהי תצוגה מקדימה של איך כפתור הסגירה יופיע בפופאפ שלך.",
-  "closePopupButton": "מאפייני סגירה"
+  "closePopupButton": "מאפייני סגירה",
+  "popupDisplaySettings": "הגדרות הצגת פופאפ"
 }

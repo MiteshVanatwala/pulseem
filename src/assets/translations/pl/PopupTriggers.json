@@ -152,8 +152,11 @@
   "closeButtonConfiguration": "Konfiguracja przycisku zamknięcia",
   "closeButtonSize": "Rozmiar (px)",
   "closeButtonPosition": "Pozycja",
+  "closeButtonTextColor": "Kolor tekstu",
+  "closeButtonBgColor": "Kolor tła",
   "generatedHTML": "Wygenerowany HTML",
   "samplePopup": "Przykładowy popup",
   "closeButtonPreviewDescription": "To jest podgląd tego, jak przycisk zamknięcia pojawi się w twoim popupie.",
-  "closePopupButton": "Właściwości zamknięcia"
+  "closePopupButton": "Właściwości zamknięcia",
+  "popupDisplaySettings": "Właściwości wyświetlania popupu"
 }
