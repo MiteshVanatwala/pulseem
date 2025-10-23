@@ -148,5 +148,12 @@
   "popupPublished": "Popup Published",
   "popupManagement": "Popup Management",
   "popupProperties": "Popup Properties",
-  "confirmExitPopup": "Would you like to save the  popup before exit?"
+  "confirmExitPopup": "Would you like to save the  popup before exit?",
+  "closeButtonConfiguration": "Close Button Configuration",
+  "closeButtonSize": "Size (px)",
+  "closeButtonPosition": "Position",
+  "generatedHTML": "Generated HTML",
+  "samplePopup": "Sample Popup",
+  "closeButtonPreviewDescription": "This is a preview of how the close button will appear on your popup.",
+  "closePopupButton": "Close Properties"
 }

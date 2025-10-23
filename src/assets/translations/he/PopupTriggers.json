@@ -148,5 +148,12 @@
   "popupPublished": "חלונית שפורסמה",
   "popupManagement": "ניהול חלוניות קופצות",
   "popupProperties": "מאפייני החלונית",
-  "confirmExitPopup": "האם ברצונך לשמור את החלון הקופץ לפני היציאה?"
+  "confirmExitPopup": "האם ברצונך לשמור את החלון הקופץ לפני היציאה?",
+  "closeButtonConfiguration": "הגדרות כפתור סגירה",
+  "closeButtonSize": "גודל (פיקסלים)",
+  "closeButtonPosition": "מיקום",
+  "generatedHTML": "HTML שנוצר",
+  "samplePopup": "פופאפ לדוגמה",
+  "closeButtonPreviewDescription": "זוהי תצוגה מקדימה של איך כפתור הסגירה יופיע בפופאפ שלך.",
+  "closePopupButton": "מאפייני סגירה"
 }

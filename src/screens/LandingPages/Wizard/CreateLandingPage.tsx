@@ -11,7 +11,7 @@ import { coreProps } from '../../Whatsapp/Campaign/Types/WhatsappCampaign.types'
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import WizardActions from '../../../components/Wizard/WizardActions';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
-import { BEE_EDITOR_TYPES, LandingPagesAnswerType, TierFeatures } from '../../../helpers/Constants';
+import { BEE_EDITOR_TYPES, CLOSE_BUTTON_HTML, LandingPagesAnswerType, TierFeatures } from '../../../helpers/Constants';
 import { FileGallery } from '../../../Models/Files/FileGallery';
 import Gallery from '../../../components/Gallery/Gallery.component';
 import { PulseemFeatures, PulseemFolderType } from '../../../model/PulseemFields/Fields';
@@ -36,6 +36,7 @@ import { PulseemResponse } from '../../../Models/APIResponse';
 import { logout } from '../../../helpers/Api/PulseemReactAPI';
 import Toast from '../../../components/Toast/Toast.component';
 import SubscriberGroup from './Tabs/SubscriberGroup';
+import CloseButtonConfig from './Tabs/CloseButtonConfig';
 import TierPlans from '../../../components/TierPlans/TierPlans';
 import { UserRoles } from '../../../Models/SubUser/SubUsers';
 import { get } from 'lodash';
@@ -167,7 +168,8 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 		GoogleTagManagerCode: '',
 		FacebookPixelCode: '',
 		IsNewEditor: null,
-		WebformsToReportLeadByApi: null
+		WebformsToReportLeadByApi: null,
+		CloseButtonHtml: CLOSE_BUTTON_HTML
 	});
 
 	const [tabValue, setTabValue] = useState<string>('1');
@@ -222,7 +224,8 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 			MetaDescription: '', MetaKeywords: '', GoogleAnalyticsCode: '',
 			GoogleConvertionCode: '', GoogleTagManagerCode: '',
 			FacebookPixelCode: '', IsNewEditor: null,
-			WebformsToReportLeadByApi: null
+			WebformsToReportLeadByApi: null,
+			CloseButtonHtml: CLOSE_BUTTON_HTML
 		});
 	}, [location.pathname, isPopup, language, id]);
 
@@ -295,7 +298,8 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 				autofillEnabled: response.Data?.WebForm?.AutofillSettings?.IsAutofillEnabled,
 				autofillFields: response.Data?.WebForm?.AutofillSettings?.SelectedFields,
 				autofillEditable: response.Data?.WebForm?.AutofillSettings?.IsEditable,
-				SubscriptionOptin: response.Data?.WebForm?.AutofillSettings?.SubscriptionOptin
+				SubscriptionOptin: response.Data?.WebForm?.AutofillSettings?.SubscriptionOptin,
+				CloseButtonHtml: response.Data?.WebForm?.CloseButtonHtml || CLOSE_BUTTON_HTML
 			});
 			if (response.Data?.WebForm?.LinkPreviewIconName !== '') {
 				handleSelectedImage(response.Data?.WebForm?.LinkPreviewIconName, true);
@@ -322,7 +326,8 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 				autofillFields: [],
 				autofillEditable: false,
 				PageUrl: isPopup && !id ? generateGuid() : '',
-				PopupDomains: []
+				PopupDomains: [],
+				CloseButtonHtml: CLOSE_BUTTON_HTML
 			});
 		}
 
@@ -731,6 +736,7 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 				ID: landingPageModel.ID || id,
 				ClientJavaScript: headScript,
 				ClientBodyScript: bodyScript,
+				CloseButtonHtml: landingPageModel.CloseButtonHtml || '',
 				AutofillSettings: {
 					IsAutofillEnabled: landingPageModel.autofillEnabled,
 					SelectedFields: landingPageModel.autofillFields,
@@ -998,6 +1004,12 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 						className={clsx(classes.iconTab, classes.f18)}
 						value='5'
 					/>
+					{isPopup && <Tab
+						label={t('PopupTriggers.closePopupButton')}
+						classes={{ root: classes.tabText, selected: classes.activeTab }}
+						className={clsx(classes.iconTab, classes.f18)}
+						value='6'
+					/>}
 				</Tabs>
 				<TabContext value={`${tabValue}`}>
 					<TabPanel value='1' className={clsx(windowSize === 'xs' ? classes.noPadding : '')}>
@@ -1086,6 +1098,13 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 							errors={errors}
 						/>
 					</TabPanel>
+					{isPopup && <TabPanel value='6' className={clsx(windowSize === 'xs' ? classes.noPadding : '')}>
+						<CloseButtonConfig
+							classes={classes}
+							data={landingPageModel}
+							onUpdate={setLandingPageModel}
+						/>
+					</TabPanel>}
 				</TabContext>
 
 				<Box>

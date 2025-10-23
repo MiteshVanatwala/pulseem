@@ -84,6 +84,7 @@ export interface LandingPageModel {
     FacebookPixelCode: string;
     IsNewEditor: boolean | any | never;
     WebformsToReportLeadByApi: WebformsToReportLeadByApi[] | any | never;
+    CloseButtonHtml?: string;
 }
 
 export interface BeeEditorModel {

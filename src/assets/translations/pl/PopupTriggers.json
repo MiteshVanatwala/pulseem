@@ -148,5 +148,12 @@
   "popupPublished": "Popup opublikowany",
   "popupManagement": "Zarządzanie popupami",
   "popupProperties": "Właściwości popupu",
-  "confirmExitPopup": "Czy chcesz zapisać okienko przed wyjściem?"
+  "confirmExitPopup": "Czy chcesz zapisać okienko przed wyjściem?",
+  "closeButtonConfiguration": "Konfiguracja przycisku zamknięcia",
+  "closeButtonSize": "Rozmiar (px)",
+  "closeButtonPosition": "Pozycja",
+  "generatedHTML": "Wygenerowany HTML",
+  "samplePopup": "Przykładowy popup",
+  "closeButtonPreviewDescription": "To jest podgląd tego, jak przycisk zamknięcia pojawi się w twoim popupie.",
+  "closePopupButton": "Właściwości zamknięcia"
 }
