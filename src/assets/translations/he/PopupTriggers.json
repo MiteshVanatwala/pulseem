@@ -144,7 +144,7 @@
     "onceEvery": "פעם בכל",
     "visits": "ביקורים"
   },
-  "popupSaved": "הקופאפ נשמר",
+  "popupSaved": "הפופאפ נשמר",
   "popupPublished": "חלונית שפורסמה",
   "popupManagement": "ניהול חלוניות קופצות",
   "popupProperties": "מאפייני החלונית",
@@ -158,5 +158,6 @@
   "samplePopup": "פופאפ לדוגמה",
   "closeButtonPreviewDescription": "זוהי תצוגה מקדימה של איך כפתור הסגירה יופיע בפופאפ שלך.",
   "closePopupButton": "מאפייני סגירה",
-  "popupDisplaySettings": "הגדרות הצגת פופאפ"
+  "popupDisplaySettings": "הגדרות הצגת פופאפ",
+  "atLeastOneTrigger": "אנא הפעל לפחות טריגר אחד כדי להמשיך."
 }

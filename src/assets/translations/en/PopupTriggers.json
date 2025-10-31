@@ -158,5 +158,6 @@
   "samplePopup": "Sample Popup",
   "closeButtonPreviewDescription": "This is a preview of how the close button will appear on your popup.",
   "closePopupButton": "Close Properties",
-  "popupDisplaySettings": "Popup Display Settings"
+  "popupDisplaySettings": "Popup Display Settings",
+  "atLeastOneTrigger": "Please enable at least one trigger to proceed."
 }

@@ -81,4 +81,48 @@ export const getPopUpManagementStyle = (windowSize, isRTL, theme) => ({
   tableActionContainerCell: {
     maxWidth: '500px !important',
   },
+  // Popup Preview Modal Styles
+  popupPreviewDialogPaper: {
+    backgroundColor: 'transparent',
+    boxShadow: 'none',
+    overflow: 'visible',
+    maxHeight: '90vh',
+    width: 'auto',
+    margin: '32px',
+  },
+  popupPreviewContainer: {
+    position: 'relative',
+    backgroundColor: '#fff',
+    borderRadius: '8px',
+    overflow: 'auto',
+    maxHeight: '90vh',
+    minWidth: '400px',
+    maxWidth: '90vw',
+    transition: 'width 0.3s ease',
+  },
+  popupPreviewCloseButton: {
+    position: 'absolute',
+    right: 8,
+    top: 8,
+    zIndex: 9999,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    color: '#fff',
+    boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
+    '&:hover': {
+      backgroundColor: 'rgba(0, 0, 0, 0.85)',
+    },
+  },
+  popupPreviewLoaderContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    minHeight: '400px',
+  },
+  popupPreviewContent: {
+    maxWidth: '100%',
+    margin: '0 auto',
+    position: 'relative',
+    direction: 'ltr',
+    minHeight: '400px',
+  },
 });

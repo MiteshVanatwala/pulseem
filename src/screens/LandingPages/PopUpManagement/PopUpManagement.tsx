@@ -20,6 +20,10 @@ import {
   TableBody,
 } from '@material-ui/core';
 import { ViewModule, ViewList, Add, Restore, Language, Code } from '@material-ui/icons';
+import { FaChartPie } from "react-icons/fa";
+import { SurveryResultsIcon } from '../../../assets/images/managment';
+import { exportSurvey } from '../../../redux/reducers/landingPagesSlice';
+import { ExportFile } from '../../../helpers/Export/ExportFile';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { getPerformanceStats, getPopupPages, Page, deletePopup, getDeletedPopups } from '../../../../src/redux/reducers/popUpManagementSlice';
@@ -27,9 +31,11 @@ import { restoreLandingPages, duplicteLandingPage, getPageHeight } from '../../.
 import { Title } from '../../../components/managment/Title';
 import { Loader } from '../../../components/Loader/Loader';
 import Toast from '../../../components/Toast/Toast.component';
+import { actionURL } from '../../../config';
 import { ManagmentIcon, TablePagination, RestorDialogContent, PopMassage } from '../../../components/managment/index';
 import PopUpCard from './PopUpCard';
 import StatCard from './StatCard';
+import PopupPreviewModal from './PopupPreviewModal';
 import { CopyIcon, DeleteIcon, DuplicateIcon, EditIcon, PreviewIcon, SettingIcon, ReportsIcon } from '../../../assets/images/managment';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { sitePrefix } from '../../../config';
@@ -54,6 +60,8 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch<any>();
   const { windowSize } = useSelector((state: any) => state.core);
+  const { userRoles } = useSelector((state: any) => state.core);
+
   const {
     stats,
     statsLoading,
@@ -70,6 +78,7 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
   const [toastMessage, setToastMessage] = useState<ToastMessage | null>(null);
   const [dialogType, setDialogType] = useState<DialogType | null>(null);
   const [restoreArray, setRestoreArray] = useState<number[]>([]);
+  const [previewPopupId, setPreviewPopupId] = useState<number | null>(null);
   const [showLoader, setShowLoader] = useState(false);
   const [filters, setFilters] = useState({
     SearchTerm: '',
@@ -84,6 +93,19 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
 
   const handleCreatePopup = () => {
     navigate(`${sitePrefix}Popups/Create`);
+  };
+
+  const onExportSurvey = async (id: number) => {
+    // @ts-ignore
+    const surveysResponse = await dispatch(exportSurvey(id));
+    const surveys = surveysResponse?.payload;
+    const fields = surveys?.length > 0 && Object.keys(surveys[0]);
+    ExportFile({
+      data: surveys,
+      fileName: 'surveyReport',
+      exportType: 'xls',
+      fields: fields
+    });
   };
 
   const isMobile = windowSize === 'xs' || windowSize === 'sm';
@@ -155,7 +177,7 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
                 classes={classes}
                 title={t('landingPages.popupManagement.statCards.avgConversionRate')}
                 value={`${stats.AverageConversionRate.toFixed(2)}%`}
-                // change={`${stats.AverageConversionChange > 0 ? '+' : ''}${stats.AverageConversionChange.toFixed(2)}% this week`}
+              // change={`${stats.AverageConversionChange > 0 ? '+' : ''}${stats.AverageConversionChange.toFixed(2)}% this week`}
               />
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
@@ -271,20 +293,14 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
     }, {} as Record<string, Page[]>);
 
     const handleDomainEmbed = (domain: string, domainPages: Page[]) => {
-      const activePopups = domainPages.filter(p => p.StatusName === 'Active');
+      const activePopups = domainPages.filter(
+        p => p.StatusName === 'Active' && p.PopupGuid && p.PopupGuid.trim() !== ''
+      );
 
       if (activePopups.length === 0) {
         setToastMessage({
           type: 'info',
           message: t('landingPages.popupManagement.noActivePopupsForDomain')
-        });
-        return;
-      }
-
-      if (activePopups.length === 1) {
-        setDialogType({
-          type: 'embed',
-          data: activePopups[0]
         });
         return;
       }
@@ -299,6 +315,9 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
       <Box>
         {(Object.entries(groupedByDomain) as [string, Page[]][]).map(([domain, domainPages]) => {
           const hasActivePopup = domainPages.some(p => p.StatusName === 'Active');
+          // const hasActivePopup = domainPages.some(p => p.StatusName === 'Active');
+          const hasPopupGuid = domainPages.some(p => p.PopupGuid && p.PopupGuid.trim() !== '');
+          console.log(domain, domainPages);
 
           return (
             <Box key={domain} mb={4}>
@@ -340,7 +359,8 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
                   )}
                   startIcon={<Code />}
                   onClick={() => handleDomainEmbed(domain, domainPages)}
-                  disabled={!hasActivePopup}
+                  // disabled={!hasActivePopup}
+                  disabled={!hasActivePopup || !hasPopupGuid}
                 >
                   {t('landingPages.popupManagement.actions.embed')}
                 </Button>
@@ -368,8 +388,39 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
   const renderActionIcons = (page: Page) => {
     const id = page.ID;
     const isActive = page.StatusName === 'Active';
+    const isSurvey = page.IsSurvey;
+    const surveyCount = page.SurveyCount || 0;
+    const isNewEditor = page.IsNewEditor;
 
     const iconsMap = [
+      {
+        key: isNewEditor ? `${id}_surveyGraph` : `${id}_surveyExport`,
+        uIcon: isNewEditor ? FaChartPie : SurveryResultsIcon,
+        lable: isNewEditor
+          ? t('landingPages.SurveyExportTitle')
+          : `${t('landingPages.SurveyExportTitle')} (${surveyCount})`,
+        rootClass: clsx(
+          classes.paddingIcon,
+          !isNewEditor && !userRoles?.AllowExport && classes.disabled
+        ),
+        disable: !isSurvey || (!isNewEditor && surveyCount === 0) || (!isNewEditor && !userRoles?.AllowExport),
+        onClick: () => {
+          if (isNewEditor) {
+            navigate(`${sitePrefix}Popups/SurveyDetails/${id}`, {
+              state: {
+                PageProperty: {
+                  PageNumber: filters.PageNumber,
+                  SearchTerm: filters.SearchTerm
+                }
+              }
+            });
+          } else {
+            if (userRoles?.AllowExport) {
+              onExportSurvey(id);
+            }
+          }
+        }
+      },
       {
         key: "Settings",
         uIcon: SettingIcon,
@@ -385,8 +436,7 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
         lable: t('landingPages.popupManagement.actions.preview'),
         rootClass: classes.paddingIcon,
         onClick: () => {
-          const previewLink = `${sitePrefix}previewer/popup/${id}`;
-          window.open(previewLink, '_blank');
+          setPreviewPopupId(page.ID);
         }
       },
       {
@@ -442,30 +492,47 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
 
     return (
       <Grid container justifyContent="center" alignItems='center'>
-        {iconsMap.map(icon => {
-          const { onClick, type, uIcon: IconComponent, ...restProps } = icon;
-          const iconProps: any = {
-            ...restProps,
-            classes,
-            icon: null,
-            uIcon: <IconComponent width={18} height={20} className={'rowIcon'} />
-          };
-          if (onClick) {
-            iconProps.onClick = onClick;
-          }
+        {iconsMap
+          .filter(icon => !icon.disable || isSurvey)
+          .map(icon => {
+            const { onClick, type, uIcon: IconComponent, ...restProps } = icon;
 
-          return (
-            <Grid
-              className={clsx('rowIconContainer', classes.actionIconsContainer)}
-              key={icon.key}
-              item >
-              <ManagmentIcon {...iconProps} />
-            </Grid>
-          );
-        })}
+            let iconElement;
+            if (icon.key.includes('survey')) {
+              iconElement = React.isValidElement(IconComponent)
+                ? IconComponent
+                : React.createElement(IconComponent as any, {
+                  className: 'rowIcon',
+                  style: { fontSize: 20 }
+                });
+            } else {
+              iconElement = <IconComponent width={18} height={20} className={'rowIcon'} />;
+            }
+
+            const iconProps: any = {
+              ...restProps,
+              classes,
+              icon: null,
+              uIcon: iconElement
+            };
+
+            if (onClick) {
+              iconProps.onClick = onClick;
+            }
+
+            return (
+              <Grid
+                className={clsx('rowIconContainer', classes.actionIconsContainer)}
+                key={icon.key}
+                item
+              >
+                <ManagmentIcon {...iconProps} />
+              </Grid>
+            );
+          })}
       </Grid>
     );
-  }
+  };
 
   const renderDesktopTableRow = (page: Page) => {
     const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot };
@@ -706,7 +773,9 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
 
   const getEmbedDialog = (data: Page) => {
     const PopupBaseUrl = 'https://stage.l-p.site';
-    const popupId = data.PopupGuid || data.ID;
+    const popupId = data.PopupGuid;
+    console.log(data.ID, data);
+
     const embedCode = `<script type="text/javascript" src="${PopupBaseUrl}/pulseempopup.js?id=${popupId}"></script>`;
 
     return {
@@ -749,7 +818,7 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
       delete: getDeleteDialog(data),
       restore: getRestorDialog(data),
       duplicate: getDuplicateDialog(data),
-      embed: getEmbedDialog(data)
+      embed: getEmbedDialog(data),
     }
 
     const currentDialog = dialogContent[type];
@@ -791,6 +860,12 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
       <Loader isOpen={statsLoading || pagesLoading || showLoader} />
       {renderToast()}
       {renderDialog()}
+      <PopupPreviewModal
+        open={previewPopupId !== null}
+        onClose={() => setPreviewPopupId(null)}
+        popupId={previewPopupId || 0}
+        classes={classes}
+      />
     </DefaultScreen>
   );
 };

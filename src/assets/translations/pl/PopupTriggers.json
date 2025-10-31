@@ -158,5 +158,6 @@
   "samplePopup": "Przykładowy popup",
   "closeButtonPreviewDescription": "To jest podgląd tego, jak przycisk zamknięcia pojawi się w twoim popupie.",
   "closePopupButton": "Właściwości zamknięcia",
-  "popupDisplaySettings": "Właściwości wyświetlania popupu"
+  "popupDisplaySettings": "Właściwości wyświetlania popupu",
+  "atLeastOneTrigger": "Proszę włączyć co najmniej jeden wyzwalacz, aby kontynuować."
 }

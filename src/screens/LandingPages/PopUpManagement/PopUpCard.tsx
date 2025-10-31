@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction } from 'react';
+import React, { Dispatch, SetStateAction, useState } from 'react';
 import {
   Box,
   Typography,
@@ -17,12 +17,18 @@ import {
   TrendingUp as TrendingUpIcon,
   StayCurrentPortrait as StayCurrentPortraitIcon,
   Computer as ComputerIcon,
+  Tune as TuneIcon
 } from '@material-ui/icons';
+import { Assessment as AssessmentIcon } from '@material-ui/icons';
+import { exportSurvey } from '../../../../src/redux/reducers/landingPagesSlice';
+import { ExportFile } from '../../../helpers/Export/ExportFile';
+import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { Page, togglePopupStatus } from '../../../../src/redux/reducers/popUpManagementSlice';
 import clsx from 'clsx';
 import { Switch } from '../../../components/managment';
+import PopupPreviewModal from './PopupPreviewModal';
 import { sitePrefix } from '../../../config';
 import { DialogType } from './PopUpManagement';
 import { useNavigate } from 'react-router-dom';
@@ -38,7 +44,7 @@ interface StatItemProps {
   icon: React.ReactNode;
   title: string;
   value: string | number;
-  subtitles?: (string | number | null)[];
+  subtitles?: (string | number | React.ReactNode | null)[];
   trend?: number;
   mobilePercent?: number;
   desktopPercent?: number;
@@ -50,6 +56,8 @@ const PopUpCard: React.FC<PopUpCardProps> = ({ popup, classes, setDialogType }) 
   const { t } = useTranslation();
   const dispatch = useDispatch<any>();
   const navigate = useNavigate();
+  const { userRoles } = useSelector((state: any) => state.core);
+  const [showPreview, setShowPreview] = useState(false);
 
   const handleStatusChange = () => {
     const newStatus = popup.StatusName === 'Active' ? 5 : 2;
@@ -59,14 +67,13 @@ const PopUpCard: React.FC<PopUpCardProps> = ({ popup, classes, setDialogType }) 
   const handleSettings = () => {
     navigate(`${sitePrefix}Popups/Create/${popup.ID}`);
   };
-  
+
   const handleDisplayRules = () => {
     navigate(`${sitePrefix}Popups/DisplayRules/${popup.ID}`);
   };
 
   const handlePreview = () => {
-    const previewLink = `${sitePrefix}previewer/popup/${popup.ID}`;
-    window.open(previewLink, '_blank');
+    setShowPreview(true);
   };
 
   const handleEdit = () => {
@@ -110,6 +117,31 @@ const PopUpCard: React.FC<PopUpCardProps> = ({ popup, classes, setDialogType }) 
     }
   };
 
+  const handleSurveyResults = async () => {
+    if (popup.IsNewEditor) {
+      // Navigate to survey details page for new editor
+      navigate(`${sitePrefix}Popups/SurveyDetails/${popup.ID}`, {
+        state: {
+          from: 'popupManagement'
+        }
+      });
+    } else {
+      // Export survey for old editor
+      if (userRoles?.AllowExport) {
+        // @ts-ignore
+        const surveysResponse = await dispatch(exportSurvey(popup.ID));
+        const surveys = surveysResponse?.payload;
+        const fields = surveys?.length > 0 && Object.keys(surveys[0]);
+        ExportFile({
+          data: surveys,
+          fileName: 'surveyReport',
+          exportType: 'xls',
+          fields: fields
+        });
+      }
+    }
+  };
+
   const renderStatusControl = () => {
     if (popup.StatusName === 'Draft') {
       return <Chip label={t('landingPages.popupManagement.filters.draft')} className={classes.draftChip} size="small" />;
@@ -147,13 +179,13 @@ const PopUpCard: React.FC<PopUpCardProps> = ({ popup, classes, setDialogType }) 
     );
   };
 
-  const StatItem: React.FC<StatItemProps> = ({ 
-    icon, 
-    title, 
-    value, 
-    subtitles, 
-    trend, 
-    mobilePercent, 
+  const StatItem: React.FC<StatItemProps> = ({
+    icon,
+    title,
+    value,
+    subtitles,
+    trend,
+    mobilePercent,
     desktopPercent,
     onValueClick,
     onSubtitleClick
@@ -165,10 +197,10 @@ const PopUpCard: React.FC<PopUpCardProps> = ({ popup, classes, setDialogType }) 
           {title}
         </Typography>
       </Box>
-      <Typography 
-        variant="h4" 
-        style={{ 
-          lineHeight: 1.2, 
+      <Typography
+        variant="h4"
+        style={{
+          lineHeight: 1.2,
           fontWeight: 600,
           cursor: onValueClick ? 'pointer' : 'default',
           color: onValueClick ? '#0371AD' : 'inherit',
@@ -179,16 +211,10 @@ const PopUpCard: React.FC<PopUpCardProps> = ({ popup, classes, setDialogType }) 
       </Typography>
       {subtitles?.map((subtitle, index) =>
         subtitle ? (
-          <Typography 
-            key={index} 
-            variant="body2" 
+          <Typography
+            key={index}
+            variant="body2"
             color="textSecondary"
-            style={{
-              cursor: onSubtitleClick ? 'pointer' : 'default',
-              color: onSubtitleClick ? '#0371AD' : undefined,
-              textDecoration: onSubtitleClick ? 'underline' : 'none'
-            }}
-            onClick={() => onSubtitleClick?.(index)}
           >
             {subtitle}
           </Typography>
@@ -252,14 +278,22 @@ const PopUpCard: React.FC<PopUpCardProps> = ({ popup, classes, setDialogType }) 
             title={t('landingPages.popupManagement.tableHeaders.conversions')}
             value={popup.Conversions?.toLocaleString() ?? '—'}
             subtitles={[
-              `Identified Conversions: ${popup.IdentifiedConversions?.toLocaleString() ?? '—'}`,
-              popup.ConversionType === 2 ? 'Form Submitted' : 'Button Clicks'
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                Identified Conversions: <span
+                  style={{
+                    cursor: 'pointer',
+                    color: '#0371AD',
+                    fontSize: 18,
+                    fontWeight: 'bold',
+                    marginLeft: 3
+                  }}
+                  onClick={handleIdentifiedConversionsClick}
+                >
+                  {popup.IdentifiedConversions?.toLocaleString() ?? '—'}
+                </span>
+              </div>,
+              popup.ConversionType === 1 ? 'Form Submitted' : 'Button Clicks'
             ]}
-            onSubtitleClick={(index) => {
-              if (index === 0) {
-                handleIdentifiedConversionsClick();
-              }
-            }}
           />
           <StatItem
             icon={<TrendingUpIcon color="disabled" />}
@@ -270,15 +304,29 @@ const PopUpCard: React.FC<PopUpCardProps> = ({ popup, classes, setDialogType }) 
         </Grid>
       </Box>
       <Box className={classes.actionsContainer}>
-        <Button 
-          size="small" 
-          className={classes.actionButtonPopupManagement} 
+        {popup.IsSurvey && (popup.SurveyCount ?? 0) > 0 && (
+          <Button
+            size="small"
+            className={classes.actionButtonPopupManagement}
+            startIcon={<AssessmentIcon />}
+            onClick={handleSurveyResults}
+            disabled={!popup.IsNewEditor && !userRoles?.AllowExport}
+          >
+            {popup.IsNewEditor
+              ? t('landingPages.SurveyExportTitle')
+              : `${t('landingPages.SurveyExportTitle')} (${popup.SurveyCount})`
+            }
+          </Button>
+        )}
+        <Button
+          size="small"
+          className={classes.actionButtonPopupManagement}
           startIcon={<SettingsIcon />}
           onClick={handleSettings}
         >
           {t('landingPages.popupManagement.actions.settings')}
         </Button>
-        <Button 
+        <Button
           size="small"
           className={classes.actionButtonPopupManagement}
           startIcon={<VisibilityIcon />}
@@ -286,17 +334,17 @@ const PopUpCard: React.FC<PopUpCardProps> = ({ popup, classes, setDialogType }) 
         >
           {t('landingPages.popupManagement.actions.preview')}
         </Button>
-        <Button 
-          size="small" 
-          className={classes.actionButtonPopupManagement} 
+        <Button
+          size="small"
+          className={classes.actionButtonPopupManagement}
           startIcon={<EditIcon />}
           onClick={handleEdit}
         >
           {t('landingPages.EditResource1.HeaderText')}
         </Button>
-        <Button 
-          size="small" 
-          className={classes.actionButtonPopupManagement} 
+        <Button
+          size="small"
+          className={classes.actionButtonPopupManagement}
           startIcon={<FileCopyIcon />}
           onClick={handleDuplicate}
         >
@@ -316,10 +364,17 @@ const PopUpCard: React.FC<PopUpCardProps> = ({ popup, classes, setDialogType }) 
           color="secondary"
           className={classes.actionButtonPopupManagement}
           onClick={handleDisplayRules}
+          startIcon={<TuneIcon />}
         >
           {t('PopupTriggers.popupDisplaySettings')}
         </Button>
       </Box>
+      <PopupPreviewModal
+        open={showPreview}
+        onClose={() => setShowPreview(false)}
+        popupId={popup.ID}
+        classes={classes}
+      />
     </Box>
   );
 };

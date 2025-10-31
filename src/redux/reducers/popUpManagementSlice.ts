@@ -39,6 +39,9 @@ export interface Page {
   LastModifiedDate: string;
   Domains: string[];
   PopupGuid: string;
+  IsSurvey?: boolean;
+  SurveyCount?: number;
+  IsNewEditor?: boolean;
 }
 
 interface PopUpManagementState {

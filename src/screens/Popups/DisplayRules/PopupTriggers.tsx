@@ -171,7 +171,7 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
 
       if (popupRules.ContinueAfterConversion !== undefined && conversionId !== undefined && conversionId !== 0) {
         const conversionType = conversionId === 1 ? 'formSubmission' : 'buttonClick';
-        
+
         setAdvancedSettingsData({
           shouldContinueShowing: popupRules.ContinueAfterConversion,
           conversionType: conversionType,
@@ -235,6 +235,14 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
   };
 
   const handleSummaryClick = async () => {
+
+    const anyTriggerEnabled = Object.values(triggersState).some((trigger: any) => trigger.enabled);
+
+    if (!anyTriggerEnabled) {
+      showErrorToast(t('PopupTriggers.atLeastOneTrigger'));
+      return;
+    }
+
     const popupTriggers = Object.keys(triggersState)
       .filter(key => triggersState[key].enabled)
       .map(key => {
@@ -358,7 +366,7 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
 
   const renderButtons = () => (
     <>
-      <Button onClick={() => navigate(`${sitePrefix}popupeditor/${id}`)} className={clsx(classes.btn, classes.btnRounded, classes.backButton)} style={{ margin: "8px" }}>{t("common.back")}</Button>
+      <Button onClick={() => navigate(`${sitePrefix}PopUpManagement`)} className={clsx(classes.btn, classes.btnRounded, classes.backButton)} style={{ margin: "8px" }}>{t("common.back")}</Button>
       <Button onClick={handleSummaryClick} variant="contained" size="medium" className={clsx(classes.btn, classes.btnRounded)} style={{ margin: "8px" }} disabled={upserting}>{t("common.saveAndContinue")}</Button>
     </>
   );

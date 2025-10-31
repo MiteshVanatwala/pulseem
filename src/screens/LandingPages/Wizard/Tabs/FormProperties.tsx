@@ -55,6 +55,12 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
         onUpdate({ ...data, BaseLanguage: languageToId[language] });
     }, [language])
 
+    useEffect(() => {
+        if (isPopup && data.IsAccessibility !== false) {
+            onUpdate({ ...data, IsAccessibility: false });
+        }
+    }, [isPopup]);
+
     const renderPaymentFields = () => {
         return <>
             <Grid item md={2} className={classes.w100}>
@@ -123,7 +129,7 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
 
     const handlePageName = (e: any) => {
         if (isPopup) {
-            onUpdate({ ...data, PageName: e.target.value });
+            onUpdate({ ...data, PageName: e.target.value, IsAccessibility: false });
         }
         else if (urlLocked || data.ID > 0) {
             onUpdate({ ...data, PageName: e.target.value });
@@ -235,7 +241,7 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
                 </Typography>
             </Box>
         </Grid>}
-        <Grid item md={data.PageType < 3 ? 3 : 6} xs={12} sm={12} className={classes.mt25}>
+        <Grid item md={data.PageType < 3 ? 3 : 6} xs={12} sm={12} className={classes.mt25} style={{ visibility: isPopup ? 'hidden' : 'visible' }}>
             <FormControlLabel
                 control={
                     <Checkbox
@@ -305,6 +311,39 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
         }
 
         {
+            isPopup && [LandingPagesAnswerType.POPUP_MESSAGE,
+            LandingPagesAnswerType.REDIRECT_URL
+            ].indexOf(data.AnswerType) > -1 && (
+                <>
+                    <Grid item md={3} className={classes.w100}>
+                        <Typography title={translator("landingPages.answerMessage")} className={classes.alignDir}>
+                            {translator(data.AnswerType === LandingPagesAnswerType.REDIRECT_URL
+                                ? "landingPages.redirectUrl"
+                                : "landingPages.answerMessage"
+                            )}
+                        </Typography>
+                        <TextField
+                            label=""
+                            variant="outlined"
+                            value={data.AnswerData}
+                            className={clsx(classes.NoPaddingtextField, classes.textField, classes.w100, { [classes.textFieldError]: !!errors.AnswerData })}
+                            autoComplete="off"
+                            onChange={(e: any) => onUpdate({ ...data, AnswerData: e.target.value })}
+                            error={!!errors.AnswerData}
+                            title={data.AnswerData}
+                        />
+                        <Box className='textBoxWrapper'>
+                            <Typography className={clsx(errors.AnswerData ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
+                                {errors.AnswerData ?? errors.AnswerData}
+                            </Typography>
+                        </Box>
+                    </Grid>
+                    {data.AnswerData.toLowerCase().indexOf('home/paymentpage') > -1 && renderPaymentFields()}
+                </>
+            )
+        }
+
+        {
             isPopup ? (
                 <Grid item md={3} className={classes.w100}>
                     <Typography title={translator("landingPages.Domain")} className={classes.alignDir}>
@@ -336,7 +375,7 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
         }
 
         {
-            [LandingPagesAnswerType.POPUP_MESSAGE,
+            !isPopup && [LandingPagesAnswerType.POPUP_MESSAGE,
             LandingPagesAnswerType.REDIRECT_URL
             ].indexOf(data.AnswerType) > -1 && (
                 <>
