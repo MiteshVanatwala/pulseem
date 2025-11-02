@@ -117,6 +117,8 @@
   },
   "summary": {
     "title": "Popup Summary",
+    "generalSettings": "General Settings",
+    "displayRules": "Display Rules",
     "triggers": "Triggers",
     "pageTargeting": "Page Targeting",
     "frequency": "Display Frequency",

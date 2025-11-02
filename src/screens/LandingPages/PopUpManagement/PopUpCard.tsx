@@ -241,6 +241,7 @@ const PopUpCard: React.FC<PopUpCardProps> = ({ popup, classes, setDialogType }) 
       )}
     </Grid>
   );
+  console.log(popup.ConversionType);
 
   return (
     <Box p={3} className={classes.popupCard}>
@@ -279,7 +280,7 @@ const PopUpCard: React.FC<PopUpCardProps> = ({ popup, classes, setDialogType }) 
             value={popup.Conversions?.toLocaleString() ?? '—'}
             subtitles={[
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                Identified Conversions: <span
+                 {t('landingPages.popupManagement.tableHeaders.identifiedConversions')}: <span
                   style={{
                     cursor: 'pointer',
                     color: '#0371AD',
@@ -292,7 +293,7 @@ const PopUpCard: React.FC<PopUpCardProps> = ({ popup, classes, setDialogType }) 
                   {popup.IdentifiedConversions?.toLocaleString() ?? '—'}
                 </span>
               </div>,
-              popup.ConversionType === 1 ? 'Form Submitted' : 'Button Clicks'
+              popup.ConversionType === 1 ? t('PopupTriggers.advanceSettings.postConversion.defineConversion.formSubmission') : t('PopupTriggers.advanceSettings.postConversion.defineConversion.buttonClick')
             ]}
           />
           <StatItem

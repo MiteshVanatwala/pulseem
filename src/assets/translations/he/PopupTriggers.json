@@ -117,6 +117,8 @@
   },
   "summary": {
     "title": "סיכום פופאפ",
+    "generalSettings": "הגדרות כלליות",
+    "displayRules": "כללי תצוגה",
     "triggers": "טריגרים",
     "pageTargeting": "מיקוד דפים",
     "frequency": "תדירות הצגה",

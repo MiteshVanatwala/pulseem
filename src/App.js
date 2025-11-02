@@ -104,6 +104,7 @@ import BeeEditorPopup from './screens/Editors/BeeEditorPopup';
 import AIFloatingButton from './components/AI/AIFloatingButton';
 import AIChatWidget from './components/AI/AIChatWidget';
 import { getAvailablePlans, getCurrentPlan } from './redux/reducers/TiersSlice';
+import PopupSummary from './screens/Popups/PopupSummary';
 
 const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
   const transferUrl =
@@ -391,7 +392,7 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
       />
       <Route
         path={`${sitePrefix}landingPages/Popups/Summary/:id`}
-         element={<WebformSummary classes={classes} isPopup={true} />}
+         element={<PopupSummary classes={classes} />}
       />
       <Route
         path={`/Survey`}

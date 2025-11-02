@@ -178,7 +178,12 @@ export const getPopupTriggersStyle = (windowSize, isRTL = false, theme) => ({
     fontWeight: 'bold',
     color: theme.palette.grey[400],
   },
-
+  breakText: {
+        whiteSpace: 'normal',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        wordBreak: 'break-word',
+  },
   // page targeting
   pageTargetingResponsiveContainer: {
     margin: 24,

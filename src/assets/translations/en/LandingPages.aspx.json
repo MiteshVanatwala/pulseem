@@ -499,6 +499,7 @@
       "status": "Status",
       "allViewers": "All Viewers",
       "identifiedViewers": "Identified Viewers",
+      "identifiedConversions": "Identified Conversions",
       "conversions": "Conversions",
       "conversionRate": "Conversion Rate",
       "actions": "Actions"

@@ -117,6 +117,8 @@
   },
   "summary": {
     "title": "Podsumowanie Popupu",
+    "generalSettings": "Ustawienia ogólne",
+    "displayRules": "Zasady wyświetlania",
     "triggers": "Wyzwalacze",
     "pageTargeting": "Targetowanie Stron",
     "frequency": "Częstotliwość Wyświetlania",

@@ -499,6 +499,7 @@
       "status": "Status",
       "allViewers": "Wszyscy widzowie",
       "identifiedViewers": "Zidentyfikowani widzowie",
+      "identifiedConversions": "Zidentyfikowane konwersje",
       "conversions": "Konwersje",
       "conversionRate": "Współczynnik konwersji",
       "actions": "Akcje"
