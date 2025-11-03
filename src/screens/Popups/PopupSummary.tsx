@@ -279,7 +279,7 @@ const PopupSummary = ({ classes }: any) => {
           key={i}
           classes={classes}
           icon={Tune}
-          label={`${t('PopupTriggers.summary.url') || 'URL'} ${conditionText}`}
+          label={conditionText}
           value={rule.ConditionValue}
         />
       );

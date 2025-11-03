@@ -15,20 +15,41 @@ const TawkToContainer = ({ itemId }: any) => {
   }
 
   useEffect(() => {
-    const node: any = document.querySelector('[title="chat widget"]');
-    const affectedPages = ['campaigns/editor', 'editor/landingpages'];
+    const affectedPages = ['campaigns/editor', 'editor/landingpages', 'popupeditor'];
+    const pathname = location.pathname.toLowerCase();
+    const isAffectedPage = affectedPages.some(page => pathname.includes(page));
 
-    if (node && node?.style) {
-      if (affectedPages.indexOf(location.pathname.toLowerCase()) > -1) {
-        node.style.bottom = '75px';
+    const positionWidgets = (attempts = 0) => {
+      const maxAttempts = 3;
+      
+      const node: any = document.querySelector('[title="chat widget"]');
+      if (node && node?.style) {
+        if (isAffectedPage) {
+          node.style.setProperty('bottom', '75px', 'important');
+        } else {
+          node.style.setProperty('bottom', '15px', 'important');
+        }
       }
-      else {
-        node.style.bottom = '15px';
+
+      // INDmenu-btn positioning
+      const indMenuBtn: any = document.getElementById('INDmenu-btn');
+      if (indMenuBtn && indMenuBtn?.style) {
+        if (isAffectedPage) {
+          indMenuBtn.style.setProperty('bottom', '42px', 'important');
+        }
       }
-    }
+
+      if ((!node || !indMenuBtn) && attempts < maxAttempts) {
+        setTimeout(() => positionWidgets(attempts + 1), 500);
+      }
+    };
+
+    positionWidgets();
+
+    const timer = setTimeout(() => positionWidgets(), 300);
+
+    return () => clearTimeout(timer);
   }, [location]);
-
-
 
   return (accountSettings?.Account?.ReferrerID === 0) ?
     <>
