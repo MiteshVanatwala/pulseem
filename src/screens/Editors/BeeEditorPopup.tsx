@@ -943,7 +943,7 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
                     ...saveRef.current,
                     showGroupPopup: showGroupSelection && selectedGroups?.length <= 0
                   };
-                  saveDesign(true, `${sitePrefix}Popups/DisplayRules/${moduleId}`, false, landingPage.Status === 2);
+                  saveDesign(true, `${sitePrefix}Popups/DisplayRules/${moduleId}?from=editor`, false, landingPage.Status === 2);
                 }}
                   variant='contained'
                   size='medium'

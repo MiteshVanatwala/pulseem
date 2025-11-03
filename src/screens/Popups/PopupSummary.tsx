@@ -77,9 +77,6 @@ const PopupSummary = ({ classes }: any) => {
   const [toastMessage, setToastMessage] = useState<ToastMessage | null>(null);
   const [webForm, setWebForm] = useState<any>(null);
 
-  console.log(webForm);
-
-
   const showErrorToast = (message: string) => {
     setToastMessage({
       severity: 'error',

@@ -36,6 +36,8 @@ const TawkToContainer = ({ itemId }: any) => {
       if (indMenuBtn && indMenuBtn?.style) {
         if (isAffectedPage) {
           indMenuBtn.style.setProperty('bottom', '42px', 'important');
+        } else {
+          indMenuBtn.style.setProperty('bottom', '-10px', 'important');
         }
       }
 

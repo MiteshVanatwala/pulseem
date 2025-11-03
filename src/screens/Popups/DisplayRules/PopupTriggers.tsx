@@ -47,6 +47,8 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
   const dispatch = useDispatch<any>();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const queryParams = new URLSearchParams(window.location.search);
+  const fromEditor = queryParams.get('from') === 'editor';
 
   const { language } = useSelector((state: any) => state.core);
   const { lookupData, loading, error, upserting, upsertSuccess, popupRules, rulesLoading } = useSelector((state: any) => state.popupTriggers);
@@ -366,8 +368,27 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
 
   const renderButtons = () => (
     <>
-      <Button onClick={() => navigate(`${sitePrefix}PopUpManagement`)} className={clsx(classes.btn, classes.btnRounded, classes.backButton)} style={{ margin: "8px" }}>{t("common.back")}</Button>
-      <Button onClick={handleSummaryClick} variant="contained" size="medium" className={clsx(classes.btn, classes.btnRounded)} style={{ margin: "8px" }} disabled={upserting}>{t("common.saveAndContinue")}</Button>
+      <Button
+        onClick={() => navigate(
+          fromEditor
+            ? `${sitePrefix}popupeditor/${id}`
+            : `${sitePrefix}PopUpManagement`
+        )}
+        className={clsx(classes.btn, classes.btnRounded, classes.backButton)}
+        style={{ margin: "8px" }}
+      >
+        {t("common.back")}
+      </Button>
+      <Button
+        onClick={handleSummaryClick}
+        variant="contained"
+        size="medium"
+        className={clsx(classes.btn, classes.btnRounded)}
+        style={{ margin: "8px" }}
+        disabled={upserting}
+      >
+        {t("common.saveAndContinue")}
+      </Button>
     </>
   );
 
