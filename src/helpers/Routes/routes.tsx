@@ -307,13 +307,13 @@ export const getRoutes = (
         {
           title: t("landingPages.createPopup"),
           href: `${sitePrefix}Popups/Create`,
-          isShow: true,
+          isShow: features && features?.indexOf(PulseemFeatures.Popup) > -1,
         },
         {
           key: "popupManagement",
           title: t("master.RadMenuItemPopupManagement.Text"),
           href: `${sitePrefix}PopUpManagement`,
-          isShow: true,
+          isShow: features && features?.indexOf(PulseemFeatures.Popup) > -1,
         },
         {
           title: t("master.RadMenuItemLandingManagement.Text"),

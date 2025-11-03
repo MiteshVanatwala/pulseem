@@ -201,24 +201,27 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
         path={`${sitePrefix}Campaigns/editor/:id`}
         element={<CampaignEditorBee classes={classes} />}
       />
-      <Route
-        path={`${sitePrefix}popupeditor/:id`}
-        element={
-          <BeeEditorPopup
-            classes={classes}
-            // clientId="ae1d76a4-107b-4f63-9849-360bfcad507c"
-            // clientSecret="Y1dZCdbtjfeVVCsCWB4EQNlQNerm3iCtQKocywnY1d213XeUt08F"
-            isPopupBuilder={true}
-          />}
-      />
+      {accountFeatures && accountFeatures?.indexOf(PulseemFeatures.Popup) > -1 && <Route
+          path={`${sitePrefix}popupeditor/:id`}
+          element={
+            <BeeEditorPopup
+              classes={classes}
+              // clientId="ae1d76a4-107b-4f63-9849-360bfcad507c"
+              // clientSecret="Y1dZCdbtjfeVVCsCWB4EQNlQNerm3iCtQKocywnY1d213XeUt08F"
+              isPopupBuilder={true}
+            />}
+        />
+      }
       <Route
         path={`${sitePrefix}editor/:type/:id`}
         element={<BeeEditor classes={classes} />}
       />
-      <Route
-        path={`${sitePrefix}Popups/DisplayRules/:id`}
-        element={<PopupTriggers classes={classes} />}
-      />
+      {accountFeatures && accountFeatures?.indexOf(PulseemFeatures.Popup) > -1 && (
+        <Route
+          path={`${sitePrefix}Popups/DisplayRules/:id`}
+          element={<PopupTriggers classes={classes} />}
+        />
+      )}
       <Route
         path={`${sitePrefix}Campaigns/SendSettings/:id`}
         element={<NewsletterSendSettings classes={classes} />}
@@ -362,10 +365,11 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
         path={`${sitePrefix}EditRegistrationPage`}
         element={<LandingPagesesManagment classes={classes} />}
       />
-      <Route
-        path={`${sitePrefix}PopUpManagement`}
-        element={<PopUpManagement classes={classes} />}
-      />
+      {accountFeatures && accountFeatures?.indexOf(PulseemFeatures.Popup) > -1 && <Route
+          path={`${sitePrefix}PopUpManagement`}
+          element={<PopUpManagement classes={classes} />}
+        />
+      }
       <Route
         path={`${sitePrefix}LandingPages/Create`}
         element={<CreateLandingPage classes={classes} key="landing-create" />}
