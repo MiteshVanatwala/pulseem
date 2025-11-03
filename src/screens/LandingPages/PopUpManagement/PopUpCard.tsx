@@ -293,7 +293,7 @@ const PopUpCard: React.FC<PopUpCardProps> = ({ popup, classes, setDialogType }) 
                   {popup.IdentifiedConversions?.toLocaleString() ?? '—'}
                 </span>
               </div>,
-              popup.ConversionType === 1 ? t('PopupTriggers.advanceSettings.postConversion.defineConversion.formSubmission') : t('PopupTriggers.advanceSettings.postConversion.defineConversion.buttonClick')
+              popup.ConversionType === 1 ? t('PopupTriggers.advanceSettings.postConversion.defineConversion.formSubmission') : popup.ConversionType === 2 ? t('PopupTriggers.advanceSettings.postConversion.defineConversion.buttonClick') : null
             ]}
           />
           <StatItem
