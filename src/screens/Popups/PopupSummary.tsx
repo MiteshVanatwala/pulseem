@@ -5,7 +5,6 @@ import { Box, Typography, Grid, Button, Divider, Paper, useTheme } from '@materi
 import { CheckCircle, Language, Group, Lock, Mail, AccessTime, Public, Tune, Visibility, Mouse, ArrowDownward, BarChart, Settings, Description } from '@material-ui/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import clsx from 'clsx';
-
 import { sitePrefix } from '../../config';
 import { publish, getById } from '../../redux/reducers/landingPagesSlice';
 import { getGroupsBySubAccountId } from '../../redux/reducers/groupSlice';
@@ -25,13 +24,13 @@ interface ToastMessage {
 }
 
 const SummaryItem = ({ icon: Icon, label, value, classes }: any) => (
-  <Box display="flex" alignItems="flex-start" mb={1.5}>
-    {Icon && <Icon style={{ marginRight: 8, color: '#3f51b5', fontSize: 20, marginTop: 2 }} />}
+  <Box display="flex" alignItems="flex-start" mb={1}>
+    {Icon && <Icon className={classes.popupSummaryIcons} />}
     <Box>
-      <Typography variant="subtitle2" className={classes.bold} style={{ lineHeight: 1.2 }}>
+      <Typography variant="body1" className={classes.bold}>
         {label}
       </Typography>
-      <Typography variant="body2" color="textSecondary" style={{ wordBreak: 'break-word' }}>
+      <Typography variant="body1" style={{ wordBreak: 'break-word' }}>
         {value}
       </Typography>
     </Box>
@@ -39,21 +38,21 @@ const SummaryItem = ({ icon: Icon, label, value, classes }: any) => (
 );
 
 const SummaryList = ({ icon: Icon, label, items, classes, t }: any) => (
-  <Box mb={2}>
-    <Box display="flex" alignItems="center" mb={1}>
-      {Icon && <Icon style={{ marginRight: 8, color: '#3f51b5', fontSize: 20 }} />}
-      <Typography variant="subtitle2" className={classes.bold}>
+  <Box mb={1}>
+    <Box display="flex" alignItems="center">
+      {Icon && <Icon className={classes.popupSummaryIcons} />}
+      <Typography variant="body1" className={classes.bold}>
         {label}
       </Typography>
     </Box>
     {items?.length > 0 ? (
       items.map((item: string | number, index: number) => (
-        <Typography key={index} variant="body2" color="textSecondary" style={{ marginLeft: 28, wordBreak: 'break-word' }}>
+        <Typography key={index} variant="body1" style={{ marginLeft: 28, wordBreak: 'break-word' }}>
           {item}
         </Typography>
       ))
     ) : (
-      <Typography variant="body2" color="textSecondary" style={{ marginLeft: 28 }}>
+      <Typography variant="body1" style={{ marginLeft: 28 }}>
         {t('common.notSet')}
       </Typography>
     )}
@@ -208,7 +207,7 @@ const PopupSummary = ({ classes }: any) => {
 
   const renderTriggers = () => {
     if (!payload?.PopupTriggers || payload.PopupTriggers.length === 0) {
-      return <Typography color="textSecondary" style={{ marginLeft: 28 }}>{t('common.notSet')}</Typography>;
+      return <Typography style={{ marginLeft: 28 }}>{t('common.notSet')}</Typography>;
     }
 
     const getTriggerContent = (trigger: any, triggerName: string) => {
@@ -259,7 +258,7 @@ const PopupSummary = ({ classes }: any) => {
 
   const renderPageTargeting = () => {
     if (!payload?.PopupPageTargeting || payload.PopupPageTargeting.length === 0) {
-      return <Typography color="textSecondary" style={{ marginLeft: 28 }}>{t('common.notSet')}</Typography>;
+      return <Typography style={{ marginLeft: 28 }}>{t('common.notSet')}</Typography>;
     }
 
     return payload.PopupPageTargeting.map((rule: any, i: number) => {
@@ -285,7 +284,7 @@ const PopupSummary = ({ classes }: any) => {
 
   const renderFrequency = () => {
     if (!payload?.PopupFrequency) {
-      return <Typography color="textSecondary" style={{ marginLeft: 28 }}>{t('common.notSet')}</Typography>;
+      return <Typography style={{ marginLeft: 28 }}>{t('common.notSet')}</Typography>;
     }
 
     const { FrequencyTypeId, FrequencyValue, AudienceTargetTypeId, VisitorDays } = payload.PopupFrequency;
@@ -462,13 +461,13 @@ const PopupSummary = ({ classes }: any) => {
 
     return (
       <Paper elevation={3} style={{ padding: 24, marginBottom: 24, borderRadius: 8 }}>
-        <Typography variant="h6" gutterBottom className={classes.bold} style={{ color: theme.palette.primary.main }}>
-          {t('PopupTriggers.summary.generalSettings') || 'General Settings'}
+        <Typography variant="body1" className={clsx(classes.managementTitle, classes.sectionTitlePopupTrigger)} gutterBottom style={{ color: theme.palette.primary.main }}>
+          {t('PopupTriggers.summary.generalSettings')}
         </Typography>
         <Divider style={{ margin: '8px 0 16px 0' }} />
 
         {rows.map((row, rowIndex) => (
-          <Grid container spacing={4} key={rowIndex} style={{ marginBottom: rowIndex < rows.length - 1 ? 16 : 0 }}>
+          <Grid container spacing={1} key={rowIndex}>
             {row.map((item, index) => (
               <Grid item xs={12} sm={6} md={4} key={index}>
                 {item.type === 'item' ? (
@@ -486,19 +485,19 @@ const PopupSummary = ({ classes }: any) => {
 
   const renderDisplayRules = () => (
     <Paper elevation={3} style={{ padding: 24, marginBottom: 24, borderRadius: 8 }}>
-      <Typography variant="h6" gutterBottom className={classes.bold} style={{ color: theme.palette.primary.main }}>
+      <Typography variant="body1" className={clsx(classes.managementTitle, classes.sectionTitlePopupTrigger)} gutterBottom style={{ color: theme.palette.primary.main }}>
         {t('PopupTriggers.summary.displayRules') || 'Display Rules'}
       </Typography>
       <Divider style={{ margin: '8px 0 16px 0' }} />
       <Grid container spacing={4}>
         <Grid item xs={12} md={6}>
-          <Typography variant="h6" gutterBottom style={{ color: theme.palette.text.primary, fontSize: 16 }}>
+          <Typography variant="h6" gutterBottom style={{ color: theme.palette.text.primary}}>
             {t('PopupTriggers.summary.triggers')}
           </Typography>
           {renderTriggers()}
         </Grid>
         <Grid item xs={12} md={6}>
-          <Typography variant="h6" gutterBottom style={{ color: theme.palette.text.primary, fontSize: 16 }}>
+          <Typography variant="h6" gutterBottom style={{ color: theme.palette.text.primary}}>
             {t('PopupTriggers.summary.pageTargeting')}
           </Typography>
           {renderPageTargeting()}
@@ -509,13 +508,13 @@ const PopupSummary = ({ classes }: any) => {
 
       <Grid container spacing={4}>
         <Grid item xs={12} md={6}>
-          <Typography variant="h6" gutterBottom style={{ color: theme.palette.text.primary, fontSize: 16 }}>
+          <Typography variant="h6" gutterBottom style={{ color: theme.palette.text.primary}}>
             {t('PopupTriggers.summary.frequency')}
           </Typography>
           {renderFrequency()}
         </Grid>
         <Grid item xs={12} md={6}>
-          <Typography variant="h6" gutterBottom style={{ color: theme.palette.text.primary, fontSize: 16 }}>
+          <Typography variant="h6" gutterBottom style={{ color: theme.palette.text.primary}}>
             {t('PopupTriggers.advanceSettings.postConversion.title') || 'Post-Conversion Behavior'}
           </Typography>
           {renderConversionSettings()}
@@ -532,9 +531,7 @@ const PopupSummary = ({ classes }: any) => {
     >
       <Box style={{ padding: 25, maxWidth: 1200, margin: '0 auto' }}>
         <Title classes={classes} Text={t('PopupTriggers.summary.title')} />
-
         {renderPopupInfo()}
-
         {renderDisplayRules()}
       </Box>
 
