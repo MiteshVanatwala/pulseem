@@ -122,6 +122,9 @@
   "RadMenuItemLandingManagement": {
     "Text": "ניהול דפי נחיתה"
   },
+  "RadMenuItemPopupManagement": {
+    "Text": "ניהול פופאפים"
+  },
   "RadMenuItemLandingPage": {
     "Text": "יצירת דף נחיתה"
   },

@@ -1,0 +1,165 @@
+{
+  "popupTriggers": {
+    "mainTitle": "ניהול טריגרים של פופאפ",
+    "title": "טריגרים לפופאפ",
+    "subtitle": "בחר מתי הפופאפ יופיע",
+    "exitIntent": {
+      "title": "כוונת יציאה",
+      "description": "הצג כאשר מבקר מנסה לעזוב את הדף",
+      "footer": "דפדפני מחשב בלבד - דורש זיהוי תנועת עכבר"
+    },
+    "pageViews": {
+      "title": "צפיות בדפים",
+      "description": "הצג לאחר ביקור במספר מסוים של דפים",
+      "after": "לאחר",
+      "pages": "דפים",
+      "footer": "סופר את כל הצפיות בדפים בסשן הנוכחי"
+    },
+    "viewingTime": {
+      "title": "זמן צפייה",
+      "description": "הצג לאחר שהמבקר מבלה זמן באתר",
+      "seconds": "שניות",
+      "onCurrentPage": "בעמוד הנוכחי",
+      "onAnyPage": "בכל עמוד",
+      "footer": "הטיימר מתאפס בעת ניווט לדף חדש כאשר מוגדר ל'עמוד נוכחי'"
+    },
+    "scrollDepth": {
+      "title": "עומק גלילה",
+      "description": "הצג כאשר המבקר גולל לאחוז מסוים מהדף",
+      "pageDepth": "ב־",
+      "footer": "נמדד מתחילת תוכן הדף"
+    },
+    "pageClicks": {
+      "title": "קליקים בדף",
+      "description": "הצג לאחר שהמבקר לוחץ על אלמנטים בדף",
+      "clicks": "קליקים",
+      "footer": "כל אלמנט לחיץ נחשב לסך הכל"
+    }
+  },
+  "displayFrequency": {
+    "title": "תדירות הצגה",
+    "description": "שלוט באיזו תדירות הפופאפ מופיע למבקרים",
+    "defineNewVisitor": "הגדרת מבקר חדש",
+    "defineReturningVisitor": "הגדרת מבקר חוזר",
+    "newVisitorDescription": "מבקר חדש לא ביקר באתר שלך במשך:",
+    "returningVisitorDescription": "מבקר חוזר כבר ביקר באתר שלך במהלך:",
+    "targetAudience": {
+      "title": "קהל יעד",
+      "allVisitors": "כל המבקרים",
+      "newVisitors": "מבקרים חדשים",
+      "returningVisitors": "מבקרים חוזרים",
+      "caption": "מבוסס על קוקיז ודאטת סשן של הדפדפן"
+    },
+    "subHeading": {
+      "all": "כל מבקר",
+      "new": "מבקר חדש לא ביקר באתר שלך במהלך X הימים האחרונים",
+      "return": "מבקר חוזר כבר ביקר באתר שלך במהלך X הימים האחרונים"
+    },
+    "displaySchedule": {
+      "title": "לוח הצגה",
+      "oncePerDay": {
+        "title": "פעם ביום",
+        "description": "הצג את הפופאפ מקסימום פעם כל 24 שעות"
+      },
+      "everyXDays": {
+        "main": "פעם כל כמה ימים",
+        "prefix": "כל",
+        "suffix": "ימים",
+        "description": "פעם כל כמה ימים - הצג את החלונית שלך עבור כל מספר ימים שתבחר."
+      },
+      "everyXVisit": {
+        "main": "פעם כל כמה ביקורים",
+        "prefix": "כל",
+        "suffix": "ביקורים",
+        "description": "פעם כל כמה ביקורים - הצג את החלונית שלך עבור כל מספר ביקורים שתבחר."
+      },
+      "everyVisit": {
+        "title": "כל ביקור",
+        "description": "הצג את הפופאפ בכל ביקור באתר"
+      },
+      "caption": "תדירות נמדדת לכל דפדפן/מכשיר"
+    }
+  },
+  "pageTargeting": {
+    "title": "מיקוד לפי עמודים",
+    "subtitle": "ציין באילו עמודים הפופאפ יוצג",
+    "addRule": "הוסף חוק מיקוד",
+    "examples": {
+      "line1": "דוגמאות: \"product\" תואם /products/shoes, /category/products",
+      "line2": "\"checkout\" מחריג את כל דפי התשלום"
+    },
+    "ruleTypes": {
+      "contains": "כתובת כוללת",
+      "notContains": "כתובת לא כוללת",
+      "equals": "כתובת שווה ל־",
+      "startsWith": "כתובת מתחילה ב־",
+      "endsWith": "כתובת מסתיימת ב־"
+    },
+    "delete": "מחק"
+  },
+  "advanceSettings": {
+    "postConversion": {
+      "title": "התנהגות לאחר המרה",
+      "continueShowing": {
+        "label": "המשך להציג את הפופאפ לאחר המרה",
+        "helper": "המשך להציג למבקרים שכבר המירו"
+      },
+      "defineConversion": {
+        "label": "הגדר המרה כ־",
+        "formSubmission": "שליחת טופס",
+        "buttonClick": "לחיצת כפתור"
+      }
+    },
+    "headerSection": {
+      "title": "הגדרות מתקדמות",
+      "subtitle": "הגדר התנהגות לאחר המרה ואפשרויות מתקדמות"
+    }
+  },
+  "summary": {
+    "title": "סיכום פופאפ",
+    "generalSettings": "הגדרות כלליות",
+    "displayRules": "כללי תצוגה",
+    "triggers": "טריגרים",
+    "pageTargeting": "מיקוד דפים",
+    "frequency": "תדירות הצגה",
+    "frequencyType": "סוג תדירות",
+    "frequencyValue": "ערך תדירות",
+    "audienceTarget": "קהל יעד",
+    "visitorDays": "ימי מבקר",
+    "continueAfterConversion": "המשך לאחר המרה",
+    "conversionType": "סוג המרה",
+    "exitIntent": "כוונת יציאה",
+    "pageCount": "מספר עמודים",
+    "displayAfterVisiting": "הצג לאחר ביקור ב",
+    "pages": "עמודים",
+    "timeDelay": "השהיית זמן",
+    "displayAfter": "הצג לאחר",
+    "secsOnPage": "שניות בעמוד",
+    "displayAfterScrolling": "הצג לאחר גלילה של",
+    "onThePage": "בעמוד",
+    "clicksCount": "ספירת קליקים",
+    "clicksInPage": "קליקים בעמוד",
+    "popupName": "שם החלונית",
+    "popupLanguage": "שפת החלונית",
+    "popupOfflineDate": "תאריך הורדת החלונית מהרשת",
+    "commentsToPopup": "הערות לחלונית",
+    "onceEvery": "פעם בכל",
+    "visits": "ביקורים"
+  },
+  "popupSaved": "הפופאפ נשמר",
+  "popupPublished": "חלונית שפורסמה",
+  "popupManagement": "ניהול חלוניות קופצות",
+  "popupProperties": "מאפייני החלונית",
+  "confirmExitPopup": "האם ברצונך לשמור את החלון הקופץ לפני היציאה?",
+  "closeButtonConfiguration": "הגדרות כפתור סגירה",
+  "closeButtonSize": "גודל (פיקסלים)",
+  "closeButtonPosition": "מיקום",
+  "closeButtonTextColor": "צבע טקסט",
+  "closeButtonBgColor": "צבע רקע",
+  "generatedHTML": "HTML שנוצר",
+  "samplePopup": "פופאפ לדוגמה",
+  "closeButtonPreviewDescription": "זוהי תצוגה מקדימה של איך כפתור הסגירה יופיע בפופאפ שלך.",
+  "closePopupButton": "מאפייני סגירה",
+  "popupDisplaySettings": "הגדרות הצגת פופאפ",
+  "atLeastOneTrigger": "אנא הפעל לפחות טריגר אחד כדי להמשיך."
+}

@@ -1,0 +1,165 @@
+{
+  "popupTriggers": {
+    "mainTitle": "Zarządzanie wyzwalaczami popupów",
+    "title": "Wyzwalacze popupów",
+    "subtitle": "Wybierz, kiedy popup ma się pojawić",
+    "exitIntent": {
+      "title": "Zamiar wyjścia",
+      "description": "Wyświetl, gdy odwiedzający próbuje opuścić stronę",
+      "footer": "Tylko przeglądarki desktopowe – wymaga wykrywania ruchu myszy"
+    },
+    "pageViews": {
+      "title": "Odsłony stron",
+      "description": "Pokaż po odwiedzeniu określonej liczby stron",
+      "after": "Po",
+      "pages": "stronach",
+      "footer": "Liczy wszystkie odsłony stron w bieżącej sesji"
+    },
+    "viewingTime": {
+      "title": "Czas oglądania",
+      "description": "Wyświetl po tym, jak odwiedzający spędzi czas w witrynie",
+      "seconds": "sekundy",
+      "onCurrentPage": "Na bieżącej stronie",
+      "onAnyPage": "Na dowolnej stronie",
+      "footer": "Licznik resetuje się przy nawigacji, gdy ustawione na 'bieżącą stronę'"
+    },
+    "scrollDepth": {
+      "title": "Głębokość przewijania",
+      "description": "Pokaż, gdy odwiedzający przewinie do określonego procentu strony",
+      "pageDepth": "Przy",
+      "footer": "Mierzone od góry treści strony"
+    },
+    "pageClicks": {
+      "title": "Kliknięcia na stronie",
+      "description": "Wyświetl po kliknięciu elementów na stronie",
+      "clicks": "kliknięcia",
+      "footer": "Każdy element klikalny wlicza się do całości"
+    }
+  },
+  "displayFrequency": {
+    "title": "Częstotliwość wyświetlania",
+    "description": "Kontroluj, jak często popup pojawia się odwiedzającym",
+    "defineNewVisitor": "Zdefiniuj nowego użytkownika",
+    "defineReturningVisitor": "Zdefiniuj powracającego użytkownika",
+    "newVisitorDescription": "Nowy użytkownik nie odwiedzał Twojej strony przez ostatnie:",
+    "returningVisitorDescription": "Powracający użytkownik odwiedził już Twoją stronę w ciągu ostatnich:",
+    "targetAudience": {
+      "title": "Grupa docelowa",
+      "allVisitors": "Wszyscy odwiedzający",
+      "newVisitors": "Nowi odwiedzający",
+      "returningVisitors": "Powracający odwiedzający",
+      "caption": "Na podstawie plików cookie i danych sesji przeglądarki"
+    },
+    "subHeading": {
+      "all": "Każdy odwiedzający",
+      "new": "Nowy odwiedzający nie był na Twojej stronie w ciągu ostatnich X dni",
+      "return": "Powracający odwiedzający był już na Twojej stronie w ciągu ostatnich X dni"
+    },
+    "displaySchedule": {
+      "title": "Harmonogram wyświetlania",
+      "oncePerDay": {
+        "title": "Raz dziennie",
+        "description": "Pokaż popup maksymalnie raz na 24 godziny"
+      },
+      "everyXDays": {
+        "main": "Raz na kilka dni",
+        "prefix": "Co",
+        "suffix": "dni",
+        "description": "Raz na kilka dni – pokaż swoje okienko dla dowolnej liczby dni, którą wybierzesz."
+      },
+      "everyXVisit": {
+        "main": "Raz na kilka wizyt",
+        "prefix": "Co",
+        "suffix": "wizyt",
+        "description": "Raz na kilka wizyt – pokaż swoje okienko dla dowolnej liczby wizyt, którą wybierzesz."
+      },
+      "everyVisit": {
+        "title": "Każda wizyta",
+        "description": "Pokaż popup przy każdej wizycie w witrynie"
+      },
+      "caption": "Częstotliwość śledzona dla każdej przeglądarki/urządzenia"
+    }
+  },
+  "pageTargeting": {
+    "title": "Targetowanie stron",
+    "subtitle": "Określ, na których stronach popup ma się wyświetlać",
+    "addRule": "Dodaj regułę targetowania",
+    "examples": {
+      "line1": "Przykłady: \"product\" pasuje do /products/shoes, /category/products",
+      "line2": "\"checkout\" wyklucza wszystkie strony kasy"
+    },
+    "ruleTypes": {
+      "contains": "Adres URL zawiera",
+      "notContains": "Adres URL nie zawiera",
+      "equals": "Adres URL równa się",
+      "startsWith": "Adres URL zaczyna się od",
+      "endsWith": "Adres URL kończy się na"
+    },
+    "delete": "Usuń"
+  },
+  "advanceSettings": {
+    "postConversion": {
+      "title": "Zachowanie po konwersji",
+      "continueShowing": {
+        "label": "Kontynuuj wyświetlanie popupu po konwersji",
+        "helper": "Dalej wyświetlaj odwiedzającym, którzy już dokonali konwersji"
+      },
+      "defineConversion": {
+        "label": "Zdefiniuj konwersję jako",
+        "formSubmission": "Wysłanie formularza",
+        "buttonClick": "Kliknięcie przycisku"
+      }
+    },
+    "headerSection": {
+      "title": "Ustawienia zaawansowane",
+      "subtitle": "Skonfiguruj zachowanie po konwersji i opcje zaawansowane"
+    }
+  },
+  "summary": {
+    "title": "Podsumowanie Popupu",
+    "generalSettings": "Ustawienia ogólne",
+    "displayRules": "Zasady wyświetlania",
+    "triggers": "Wyzwalacze",
+    "pageTargeting": "Targetowanie Stron",
+    "frequency": "Częstotliwość Wyświetlania",
+    "frequencyType": "Typ Częstotliwości",
+    "frequencyValue": "Wartość Częstotliwości",
+    "audienceTarget": "Grupa Docelowa",
+    "visitorDays": "Dni Odwiedzającego",
+    "continueAfterConversion": "Kontynuuj po Konwersji",
+    "conversionType": "Typ Konwersji",
+    "exitIntent": "Zamiar wyjścia",
+    "pageCount": "Liczba stron",
+    "displayAfterVisiting": "Wyświetl po odwiedzeniu",
+    "pages": "stron",
+    "timeDelay": "Opóźnienie czasowe",
+    "displayAfter": "Wyświetl po",
+    "secsOnPage": "sekundach na stronie",
+    "displayAfterScrolling": "Wyświetl po przewinięciu",
+    "onThePage": "na stronie",
+    "clicksCount": "Liczba kliknięć",
+    "clicksInPage": "kliknięć na stronie",
+    "popupName": "Nazwa popupu",
+    "popupLanguage": "Język popupu",
+    "popupOfflineDate": "Data wyłączenia popupu",
+    "commentsToPopup": "Komentarze do popupu",
+    "onceEvery": "Raz na",
+    "visits": "wizyty"
+  },
+  "popupSaved": "Wyskakujące okno zostało zapisane",
+  "popupPublished": "Popup opublikowany",
+  "popupManagement": "Zarządzanie popupami",
+  "popupProperties": "Właściwości popupu",
+  "confirmExitPopup": "Czy chcesz zapisać okienko przed wyjściem?",
+  "closeButtonConfiguration": "Konfiguracja przycisku zamknięcia",
+  "closeButtonSize": "Rozmiar (px)",
+  "closeButtonPosition": "Pozycja",
+  "closeButtonTextColor": "Kolor tekstu",
+  "closeButtonBgColor": "Kolor tła",
+  "generatedHTML": "Wygenerowany HTML",
+  "samplePopup": "Przykładowy popup",
+  "closeButtonPreviewDescription": "To jest podgląd tego, jak przycisk zamknięcia pojawi się w twoim popupie.",
+  "closePopupButton": "Właściwości zamknięcia",
+  "popupDisplaySettings": "Właściwości wyświetlania popupu",
+  "atLeastOneTrigger": "Proszę włączyć co najmniej jeden wyzwalacz, aby kontynuować."
+}
