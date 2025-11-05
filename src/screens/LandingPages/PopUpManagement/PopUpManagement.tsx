@@ -31,7 +31,7 @@ import { restoreLandingPages, duplicteLandingPage, getPageHeight } from '../../.
 import { Title } from '../../../components/managment/Title';
 import { Loader } from '../../../components/Loader/Loader';
 import Toast from '../../../components/Toast/Toast.component';
-import { actionURL } from '../../../config';
+import { actionURL, isProdMode } from '../../../config';
 import { ManagmentIcon, TablePagination, RestorDialogContent, PopMassage } from '../../../components/managment/index';
 import PopUpCard from './PopUpCard';
 import StatCard from './StatCard';
@@ -317,7 +317,6 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
           const hasActivePopup = domainPages.some(p => p.StatusName === 'Active');
           // const hasActivePopup = domainPages.some(p => p.StatusName === 'Active');
           const hasPopupGuid = domainPages.some(p => p.PopupGuid && p.PopupGuid.trim() !== '');
-          console.log(domain, domainPages);
 
           return (
             <Box key={domain} mb={4}>
@@ -772,10 +771,8 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
   });
 
   const getEmbedDialog = (data: Page) => {
-    const PopupBaseUrl = 'https://stage.l-p.site';
+    const PopupBaseUrl = isProdMode ? "https://l-p.site" : "https://stage.l-p.site";
     const popupId = data.PopupGuid;
-    console.log(data.ID, data);
-
     const embedCode = `<script type="text/javascript" src="${PopupBaseUrl}/pulseempopup.js?id=${popupId}"></script>`;
 
     return {
