@@ -305,6 +305,17 @@ export const getRoutes = (
           isShow: true,
         },
         {
+          title: t("landingPages.createPopup"),
+          href: `${sitePrefix}Popups/Create`,
+          isShow: features && features?.indexOf(PulseemFeatures.Popup) > -1,
+        },
+        {
+          key: "popupManagement",
+          title: t("master.RadMenuItemPopupManagement.Text"),
+          href: `${sitePrefix}PopUpManagement`,
+          isShow: features && features?.indexOf(PulseemFeatures.Popup) > -1,
+        },
+        {
           title: t("master.RadMenuItemLandingManagement.Text"),
           href: `${sitePrefix}EditRegistrationPage`,
           isShow: true,

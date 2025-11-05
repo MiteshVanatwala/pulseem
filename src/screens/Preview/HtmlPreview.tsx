@@ -115,7 +115,8 @@ const HtmlPreview = ({ classes }: any) => {
         getNewsletterHtml();
         break;
       }
-      case 'landingpage': {
+      case 'landingpage':
+      case 'popup': {
         getLandingPageHtml();
         break;
       }
@@ -146,9 +147,13 @@ const HtmlPreview = ({ classes }: any) => {
         <Box className={classes.dFlex} style={{ width: '100%', flexDirection: 'row' }}>
           <Typography style={{ fontWeight: 600 }}>{t('master.lblContactNameResource1.Text')}:</Typography> <Typography style={{ fontSize: 15 }}>&nbsp;{details?.PageName}</Typography>
         </Box>
-        <Box className={classes.dFlex} style={{ width: '100%', flexDirection: 'row' }}>
-          <Typography style={{ fontWeight: 600 }}>{type?.toLowerCase() === 'newsletter' ? t('common.campaignID') : t('common.landingPageId')}: </Typography> <Typography style={{ fontSize: 15 }}>&nbsp;{details?.ID}</Typography>
-        </Box>
+        {
+          type?.toLowerCase() !== 'popup' && (
+            <Box className={classes.dFlex} style={{ width: '100%', flexDirection: 'row' }}>
+              <Typography style={{ fontWeight: 600 }}>{type?.toLowerCase() === 'newsletter' ? t('common.campaignID') : t('common.landingPageId')}: </Typography> <Typography style={{ fontSize: 15 }}>&nbsp;{details?.ID}</Typography>
+            </Box>
+          )
+        }
       </Box>
 
       {type?.toLowerCase() === 'newsletter' && <Box className={classes.dFlex} style={{ flexDirection: 'column' }}>

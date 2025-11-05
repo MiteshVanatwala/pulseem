@@ -125,6 +125,9 @@
   "RadMenuItemLandingManagement": {
     "Text": "Zarządzanie stronami docelowymi"
   },
+  "RadMenuItemPopupManagement": {
+    "Text": "Zarządzanie wyskakującymi okienkami"
+  },
   "RadMenuItemLandingPage": {
     "Text": "Utwórz stronę docelową"
   },

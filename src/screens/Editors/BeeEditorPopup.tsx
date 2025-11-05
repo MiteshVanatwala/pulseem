@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { debounce, get, includes } from 'lodash';
+import { debounce, includes } from 'lodash';
 import BeePlugin from '@mailupinc/bee-plugin'
 import { Box, Button, Grid, TextField, Typography } from '@material-ui/core'
 import { useRef, useState, useEffect } from 'react'
@@ -11,9 +11,9 @@ import ResponseModal from './modals/ResponseModal'
 import Toast from '../../components/Toast/Toast.component';
 import { getAuthorizedEmails, getCommonFeatures, isAlive } from '../../redux/reducers/commonSlice';
 import WizardActions from '../../components/Wizard/WizardActions';
-import { getById, deleteLPUserBlock, deleteLandingPage, getAllLPTemplatesBySubaccountId, getLPBeeToken, getLPPublicTemplates, getLPTemplateById, getLPUserblocks, saveLPTemplateToAccount, saveLPUserBlock, saveWebform, publish, setWebformGroups } from '../../redux/reducers/landingPagesSlice';
+import { getById, deleteLPUserBlock, deleteLandingPage, getAllLPTemplatesBySubaccountId, getLPPublicTemplates, getLPTemplateById, getLPUserblocks, saveLPTemplateToAccount, saveLPUserBlock, saveWebform, publish, setWebformGroups } from '../../redux/reducers/PopupSlice';
 import { initClientForm, initExtraDataField, initLandingPages } from './helper/MigratePulseemData';
-import { BeeConfig, DialogType, DefaultContent } from './helper/config';
+import { DialogType, DefaultContent, BeeConfig } from './helper/configPopup';
 import { IoMdImages } from 'react-icons/io';
 import Gallery from '../../components/Gallery/Gallery.component';
 import { PulseemFeatures, PulseemFolderType } from "../../model/PulseemFields/Fields";
@@ -30,7 +30,7 @@ import moment from 'moment';
 import { loginURL, sitePrefix } from '../../config';
 import { MdArrowBackIos, MdArrowForwardIos, MdCheck, MdGroups, MdOutlinePublic } from 'react-icons/md';
 import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
-import { BEE_EDITOR_TYPES, TierFeatures } from '../../helpers/Constants';
+import { BEE_EDITOR_TYPES } from '../../helpers/Constants';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 import { StateType } from '../../Models/StateTypes';
 import { commonProps } from '../../model/Common/commonProps.types';
@@ -44,10 +44,15 @@ import GroupSelectorPopUp from '../Groups/GroupSelectorPopUp';
 import LPTemplates from './modals/Templates';
 import { GenericModal } from '../HtmlCampaign/components/GenericModal';
 import SaveTemplate from '../HtmlCampaign/modals/SaveTemplate';
-import { findPlanByFeatureCode } from '../../redux/reducers/TiersSlice';
-import TierPlans from '../../components/TierPlans/TierPlans';
+import { getLPBeeToken } from '../../redux/reducers/landingPagesSlice';
 
-const BeeEditor = ({ classes }: BeeEditorModel) => {
+interface BeeEditorPopupProps extends BeeEditorModel {
+  clientId?: string;
+  clientSecret?: string;
+  isPopupBuilder?: boolean;
+}
+
+const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propClientSecret, isPopupBuilder: propIsPopupBuilder }: BeeEditorPopupProps) => {
   //#region State
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -60,9 +65,10 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
 
   const { extraData, previousLandingData } = useSelector((state: { sms: SMSStoreProps }) => state.sms);
   const { language, isRTL, userRoles } = useSelector((state: StateType) => state.core);
-  const { tokenAlive, accountSettings, accountFeatures, subAccount } = useSelector((state: { common: commonProps }) => state.common);
+  const { tokenAlive, accountSettings, accountFeatures } = useSelector((state: { common: commonProps }) => state.common);
   const { landingPage, landingPageUserBlocks, ToastMessages, LPBeeToken, publicTemplates, templatesBySubAccount } = useSelector((state: { landingPages: BeeEditorStoreModel }) => state.landingPages)
-  const [showLoader, setLoader] = useState(true);
+  // const { BeeToken } = useSelector((state: { popup: any }) => state.popup)
+  const [showLoader, setLoader] = useState(false);
   const [dataReady, setDataReady] = useState(false);
   const [dialogType, setDialogType] = useState<{
     type: string;
@@ -103,10 +109,17 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
   const [reInit, setReinit] = useState<boolean>(false);
   const [showGroupSelection, setShowGroupSelection] = useState<boolean>(false);
   const [selectedGroups, setSelectedGroups] = useState<any>([]);
-  const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
-  const [showTierPlans, setShowTierPlans] = useState(false);
-  const [TierMessageCode, setTierMessageCode] = useState('');
+  
+  // Popup Builder specific state
+  const [clientId, setClientId] = useState<string>(propClientId || ''); // Use props or environment
+  const [clientSecret, setClientSecret] = useState<string>(propClientSecret || ''); // Use props or environment
+  const [isPopupBuilder, setIsPopupBuilder] = useState<boolean>(propIsPopupBuilder || false);
+  // Draft credentials for dialog (avoid hooks inside non-component functions)
+  const [popupDraftClientId, setPopupDraftClientId] = useState<string>(propClientId || '');
+  const [popupDraftClientSecret, setPopupDraftClientSecret] = useState<string>(propClientSecret || '');
   //#endregion State
+
+  console.log('BeeToken', LPBeeToken)
   //#region Get Extra fields & Landing pages, after Data Ready
   const loadAccountExtraData = () => {
     return new Promise(async (resolve: any) => {
@@ -192,19 +205,12 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
   }, [reInit]);
 
   useEffect(() => {
-    if (!includes(BEE_EDITOR_TYPES, moduleType)) {
-      navigateToLandingPageManagement();
-    }
-    if (Number(moduleId) > 0) {
-      if (localStorage.getItem('reloadLPBeeEditor') === '1') {
-        localStorage.removeItem('reloadLPBeeEditor');
-        window.location.reload();
-      } else getData();
-    }
+    getData();
     //@ts-ignore
     if (!publicTemplates.length) dispatch(getLPPublicTemplates(isRTL));
     if (!templatesBySubAccount.length) dispatch(getAllLPTemplatesBySubaccountId());
   }, []);
+
   //@ts-ignore
   useEffect(() => {
     if (landingPageUserBlocks) {
@@ -251,7 +257,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
     setAlertLogout(true);
   });
   const navigateToLandingPageManagement = () => {
-    navigate(`${sitePrefix}EditRegistrationPage`);
+    // navigate(`${sitePrefix}EditRegistrationPage`);
     return false;
   }
   const onLogoutAlert = () => {
@@ -264,8 +270,8 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
     setLoader(defaultShowLoader);
     //@ts-ignore
     await dispatch(getById(params.id))
-    await dispatch(getAccountExtraData());
-    await dispatch(getPreviousLandingData());
+    // await dispatch(getAccountExtraData());
+    // await dispatch(getPreviousLandingData());
     await dispatch(getTestGroups());
     await dispatch(getLPUserblocks());
     await dispatch(getAuthorizedEmails());
@@ -309,6 +315,94 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       config.rowsConfiguration.externalContentURLs = tempRows;
     }
   }
+  const initPopupBuilder = async (templateId: number | null = null) => {
+    let shouldReSave: boolean = false;
+    initSpecialLinks().then(async (specialLinksFiles) => {
+      const webform = landingPage?.Data?.WebForm;
+      const isRtlLang = webform?.BaseLanguage === 0 || webform?.BaseLanguage === 8 ? true : false;
+      let forceTemplate = null;
+      let defaultContent = {
+        defaultTemplate: ''
+      };
+      
+      if (templateId !== null) {
+        //@ts-ignore
+        const templateResponse = await dispatch(getLPTemplateById(templateId)) as any;
+
+        if (templateResponse?.payload?.StatusCode === 201) {
+          const responseData = templateResponse?.payload?.Data;
+          setNewTemplate(responseData)
+          forceTemplate = responseData?.JsonData ? JSON.parse(responseData?.JsonData) : defaultContent?.defaultTemplate;
+          shouldReSave = true;
+        } else {
+          // @ts-ignore
+          setToastMessage({ severity: 'error', color: 'error', message: templateResponse?.payload.Message, showAnimtionCheck: false });
+        }
+      }
+
+      // // Get popup configuration
+      // const popupConfig = getPopupConfig();
+      // popupConfig.uid = accountSettings?.SubAccountSettings?.BeeUniqueID;
+      // popupConfig.mergeTags = mergeData;
+      // popupConfig.specialLinks = specialLinksFiles;
+      // popupConfig.titleDefaultStyles = defaultContent.titleDefaultStyles;
+      // popupConfig.contentDefaults = defaultContent.contentDefaults;
+
+      // initTags();
+      
+      // // Initialize popup builder with Client ID and Client Secret
+      // if (clientId && clientSecret) {
+      //   try {
+      //     const beeTest = new BeePlugin();
+          
+      //     // Get token using Client ID and Client Secret
+      //     const tokenResponse = await beeTest.getToken(clientId, clientSecret);
+          
+      //     if (tokenResponse) {
+      //       const template = forceTemplate !== null ? forceTemplate : webform?.JsonData ? JSON.parse(webform?.JsonData) : defaultContent.defaultTemplate;
+
+      //       //@ts-ignore
+      //       beeTest.start(popupConfig, template).then((instance) => {
+      //         //@ts-ignore
+      //         editorRef.current = instance;
+      //         //@ts-ignore
+      //         if ((!landingPage || !landingPage.HtmlData) && (!params?.id || params?.id === 0)) {
+      //           saveDesign(false, null, false);
+      //         }
+      //         setTimeout(() => {
+      //           setButtonDisabled(false);
+      //         }, 2000);
+      //       });
+      //     } else {
+      //       setDialogType({
+      //         type: DialogType.GENERIC,
+      //         data: t('popupBuilder.authenticationFailed')
+      //       });
+      //     }
+      //   } catch (error) {
+      //     console.error('Popup builder initialization error:', error);
+      //     setDialogType({
+      //       type: DialogType.GENERIC,
+      //       data: t('popupBuilder.initializationError')
+      //     });
+      //   }
+      // } else {
+      //   setDialogType({
+      //     type: DialogType.GENERIC,
+      //     data: t('popupBuilder.missingCredentials')
+      //   });
+      // }
+      
+      setLoader(false);
+
+      if (shouldReSave === true) {
+        setTimeout(() => {
+          onAutoSavePage(false);
+        }, 3000);
+      }
+    })
+  }
+
   const initLPBeeEditor = (templateId: number | null = null) => {
     let shouldReSave: boolean = false;
     initSpecialLinks().then(async (specialLinksFiles) => {
@@ -402,9 +496,10 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
   }
   useEffect(() => {
     if (LPBeeToken) {
+      // Check if this is a popup builder instance
       initLPBeeEditor();
     }
-  }, [LPBeeToken]);
+  }, [LPBeeToken, isPopupBuilder]);
   const initOptions = async () => {
     initTags();
     //@ts-ignore
@@ -463,12 +558,8 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
               if (isFromAutomation) {
                 window.location.href = `/pulseem/CreateAutomations.aspx?AutomationID=${isFromAutomation}&NodeToEdit=${NodeToEdit}&id=${args.campaignId}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`;
               } else {
-                navigate(`${sitePrefix}LandingPages/summary/${args?.campaignId}`);
+                navigate(`${sitePrefix}landingpages/LandingPages/Summary/${args?.campaignId}`)
               }
-              //@ts-ignore
-            } else if (saveRef.current?.showAnimation && response.payload?.StatusCode === 927) {
-              setTierMessageCode(response?.payload?.Message);
-              setDialogType({ type: 'tier' });
             }
             else {
               // TODO: Handle publish response
@@ -482,14 +573,19 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
             } else {
               localStorage.setItem('reloadLPBeeEditor', '1');
               //@ts-ignore
-              navigate(saveRef.current?.redirectUrl ?? `${sitePrefix}LandingPages/summary/${args.campaignId}`);
+              navigate(saveRef.current?.redirectUrl ?? `${sitePrefix}LandingPages/Summary/${args.campaignId}`);
               return false;
             }
           }
           //@ts-ignore
           else if (saveRef.current?.showAnimation && !saveRef.current?.saveTemplate) {
-             //@ts-ignore
-            setToastMessage(ToastMessages.LANDING_PAGE_SAVED);
+            // @ts-ignore
+            setToastMessage({
+              severity: 'success',
+              color: 'success',
+              message: t('PopupTriggers.popupSaved'),
+              showAnimtionCheck: true
+            } as any);
           }
           //@ts-ignore
           if (reInit && !saveRef.current?.saveTemplate) {
@@ -512,12 +608,6 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
           // @ts-ignore
           setToastMessage(ToastMessages.HTML_DOCTYPE_ERROR);
           break;
-        }
-        case 927: {
-          // SURVEY_SYSTEM, LANDING_PAGE_MANAGEMENT
-          setTierMessageCode(response?.payload?.Message);
-          setDialogType({ type: 'tier' });
-          return false;
         }
       }
       //@ts-ignore
@@ -666,7 +756,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
   const handleExitLandingPage = (saveBeforeExit = true) => {
     setDialogType(null);
     const isAutoResponder = fromLink?.toLowerCase() === 'autoresponder';
-    const redirectLink = isAutoResponder ? `/Pulseem/AutoSendPlans.aspx?Culture=${isRTL ? 'he-IL' : 'en-US'}` : `${sitePrefix}EditRegistrationPage`;
+    const redirectLink = isAutoResponder ? `/Pulseem/AutoSendPlans.aspx?Culture=${isRTL ? 'he-IL' : 'en-US'}` : `${sitePrefix}PopUpManagement`;
     if (saveBeforeExit) {
       saveDesign(true, redirectLink, false, false);
     }
@@ -676,7 +766,8 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
   }
   const onExit = () => setDialogType({ type: DialogType.EXIT })
 
-  const onBack = () => saveDesign(true, `${sitePrefix}LandingPages/Create/${moduleId}`);
+  // const onBack = () => saveDesign(true, `${sitePrefix}LandingPages/Create/${moduleId}`);
+  const onBack = () => { saveDesign(true, `${sitePrefix}Popups/Create/${moduleId}`); };
   const renderToast = () => {
     if (toastMessage) {
       setTimeout(() => {
@@ -792,18 +883,6 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       >
         {t('common.Groups')}
       </Button>
-      {moduleType === BEE_EDITOR_TYPES.LANDING_PAGE && <Button
-        onClick={() => navigate(`${sitePrefix}Popups/DisplayRules/${moduleId}`)}
-        variant='contained'
-        size='medium'
-        className={clsx(
-          classes.btn,
-          classes.btnRounded
-        )}
-        style={{ margin: '8px' }}
-      >
-        {t('common.next')}
-      </Button>}
     </>
   }
   const renderButtons = () => {
@@ -835,7 +914,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
             fromLink?.toLowerCase() !== 'autoresponder' && (
               <>
                 {/* @ts-ignore */}
-                <Button onClick={() => {
+                {/* <Button onClick={() => {
                   setLoader(true);
                   saveRef.current = {
                     //@ts-ignore
@@ -856,7 +935,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
                   color="primary"
                 >
                   {t('common.publish')}
-                </Button>
+                </Button> */}
                 {/* @ts-ignore */}
                 <Button onClick={() => {
                   saveRef.current = {
@@ -864,7 +943,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
                     ...saveRef.current,
                     showGroupPopup: showGroupSelection && selectedGroups?.length <= 0
                   };
-                  saveDesign(true, `${sitePrefix}EditRegistrationPage`, false, landingPage.Status === 2);
+                  saveDesign(true, `${sitePrefix}Popups/DisplayRules/${moduleId}?from=editor`, false, landingPage.Status === 2);
                 }}
                   variant='contained'
                   size='medium'
@@ -873,11 +952,11 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
                     classes.btnRounded,
                     classes.backButton
                   )}
-                  startIcon={<MdCheck />}
+                  endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                   style={{ marginInlineStart: '8px' }}
                   color="primary"
                 >
-                  {t('common.finish')}
+                  {t('common.continue')}
                 </Button>
               </>
             )
@@ -1076,12 +1155,12 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
   const exitDialog = () => {
     return {
       showDivider: false,
-      title: t('landingPages.handleExitTitle'),
+      title: t('Popup.handleExitTitle'),
       cancelText: 'common.No',
       confirmText: 'common.Yes',
       content: (
         <Typography>
-          {RenderHtml(t("landingPages.confirmExit"))}
+          {RenderHtml(t("Popup.confirmExit"))}
         </Typography>
       ),
       onConfirm: () => handleExitLandingPage(true),
@@ -1091,12 +1170,12 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
   const deleteDialog = () => {
     return {
       showDivider: false,
-      title: t('landingPages.DeleteTitle'),
+      title: t('Popup.DeleteConfirmTitle'),
       confirmText: t('common.Yes'),
       cancelText: t('common.No'),
       content: (
         <Typography>
-          {RenderHtml(t("landingPages.DeleteBody"))}
+          {RenderHtml(t("Popup.DeleteConfirmText"))}
         </Typography>
       ),
       onConfirm: () => deleteCurrentLandingPage(),
@@ -1155,57 +1234,6 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       content: <Typography>{RenderHtml(message)}</Typography>
     };
   }
-
-  const handleGetPlanForFeature = (tierMessageCode: string) => {
-    const planName = findPlanByFeatureCode(
-        tierMessageCode,
-        availablePlans,
-        currentPlan.Id
-    );
-    
-    if (planName) {
-        return t('billing.tier.featureNotAvailable').replace('{feature}', t(TierFeatures[tierMessageCode as keyof typeof TierFeatures] || tierMessageCode)).replace('{planName}', planName);
-    } else {
-        return t('billing.tier.noFeatureAvailable');
-    }
-  };
-
-  const getTierValidationDialog = () => ({
-    title: t('billing.tier.permission'),
-    showDivider: false,
-    content: (
-      <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
-        {handleGetPlanForFeature(TierMessageCode)}
-      </Typography>
-    ),
-    renderButtons: () => (
-      <Grid
-          container
-          spacing={2}
-          className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}
-      >
-          <Grid item>
-              <Button
-                  onClick={() => {
-                      setShowTierPlans(true);
-                  }}
-                  className={clsx(classes.btn, classes.btnRounded)}
-              >
-                  {t('billing.upgradePlan')}
-              </Button>
-          </Grid>
-          <Grid item>
-              <Button
-                  onClick={() => setDialogType(null)}
-                  className={clsx(classes.btn, classes.btnRounded)}
-              >
-                  {t('common.cancel')}
-              </Button>
-          </Grid>
-      </Grid>
-    )
-  })
-
   const renderDialog = () => {
     const { type, data } = dialogType || {}
     let currentDialog = {};
@@ -1226,9 +1254,8 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       currentDialog = renderGenericDialog(data);
     } else if (type === DialogType.TEMPLAGE_EXISTS) {
       currentDialog = renderTemplateExistsDialog(data);
-    } else if (type === 'tier') {
-			currentDialog = getTierValidationDialog();
-		}
+    }
+
     if (type) {
       return (
         dialogType && <BaseDialog
@@ -1266,7 +1293,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       const requestParams = { WebformID: params.id, GroupID: list };
       // @ts-ignore
       const response = await dispatch(setWebformGroups(requestParams)) as any;
-
+  
       if (response.payload.StatusCode === 201) {
         setShowGroupSelection(false);
         if (list?.length === 0) {
@@ -1322,6 +1349,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       languageCode: language
     }) as any;
   }
+
   const config = getConfig();
 
   return (
@@ -1378,6 +1406,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
         additionalButtons={renderButtons()}
         //@ts-ignore
         additionalButtonsOnStart={renderTemplateButtons()}
+        // additionalButtonsOnStart={<></>}
         //@ts-ignore
         helperText={<label style={{ fontSize: 14 }}>{lastSaveText}</label>}
       />
@@ -1404,13 +1433,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
         }}
         isOpen={dialog === DialogType.SAVE_TEMPLATE}
       />
-
-      {showTierPlans && <TierPlans
-				classes={classes}
-				isOpen={showTierPlans}
-				onClose={() => setShowTierPlans(false)}
-			/>}
     </DefaultScreen>
   )
 }
-export default BeeEditor;
+export default BeeEditorPopup;
