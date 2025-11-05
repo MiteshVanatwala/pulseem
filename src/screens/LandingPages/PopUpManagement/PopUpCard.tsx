@@ -241,7 +241,6 @@ const PopUpCard: React.FC<PopUpCardProps> = ({ popup, classes, setDialogType }) 
       )}
     </Grid>
   );
-  console.log(popup.ConversionType);
 
   return (
     <Box p={3} className={classes.popupCard}>
