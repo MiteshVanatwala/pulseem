@@ -104,6 +104,19 @@ const PopUpCard: React.FC<PopUpCardProps> = ({ popup, classes, setDialogType }) 
     }
   };
 
+  const handleSubmitsClick = () => {
+    if (popup.Submits && popup.Submits > 0 && !userRoles?.HideRecipients) {
+      navigate(CLIENT_CONSTANTS.BASEURL, {
+        state: {
+          ...CLIENT_CONSTANTS.QUERY_PARAMS,
+          CampaignID: popup.ID,
+          PageType: CLIENT_CONSTANTS.PAGE_TYPES.FormID,
+          ResultTitle: `${t("common.clientSubscriptionResultTitle")} "${popup.Name}"`
+        }
+      });
+    }
+  };
+
   const handleIdentifiedConversionsClick = () => {
     if (popup.ConversionRate > 0) {
       navigate(CLIENT_CONSTANTS.BASEURL, {
@@ -190,7 +203,7 @@ const PopUpCard: React.FC<PopUpCardProps> = ({ popup, classes, setDialogType }) 
     onValueClick,
     onSubtitleClick
   }) => (
-    <Grid item xs={6} sm={3} className={classes.statItem}>
+    <Grid item xs={6} sm={3} lg={2} className={classes.statItem}>
       <Box ml={1} textAlign="center" alignItems="center" display="flex">
         {icon}
         <Typography variant="caption" className={classes.mleft5} color="textSecondary">
@@ -249,16 +262,13 @@ const PopUpCard: React.FC<PopUpCardProps> = ({ popup, classes, setDialogType }) 
           <Typography variant="h6" className={classes.popupTitle}>
             {popup.Name}
           </Typography>
-          {/* <Typography variant="body2" className={classes.blueLink} color="textSecondary">
-            {popup.Domains.join(', ')}
-          </Typography> */}
         </Grid>
         <Grid item xs={12} md={4} style={{ textAlign: 'right' }}>
           {renderStatusControl()}
         </Grid>
       </Grid>
       <Box my={2} className={classes.statsContainer}>
-        <Grid container spacing={1}>
+        <Grid container spacing={1} justifyContent='space-between'>
           <StatItem
             icon={<VisibilityIcon color="disabled" />}
             title={t('landingPages.popupManagement.tableHeaders.allViewers')}
@@ -275,11 +285,17 @@ const PopUpCard: React.FC<PopUpCardProps> = ({ popup, classes, setDialogType }) 
           />
           <StatItem
             icon={<CheckCircleOutlineIcon color="disabled" />}
+            title={t('landingPages.SubmitsResource1.HeaderText')}
+            value={popup.Submits?.toLocaleString() ?? '0'}
+            onValueClick={!userRoles?.HideRecipients && popup.Submits && popup.Submits > 0 ? handleSubmitsClick : undefined}
+          />
+          <StatItem
+            icon={<CheckCircleOutlineIcon color="disabled" />}
             title={t('landingPages.popupManagement.tableHeaders.conversions')}
             value={popup.Conversions?.toLocaleString() ?? '—'}
             subtitles={[
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                 {t('landingPages.popupManagement.tableHeaders.identifiedConversions')}: <span
+                {t('landingPages.popupManagement.tableHeaders.identifiedConversions')}: <span
                   style={{
                     cursor: 'pointer',
                     color: '#0371AD',

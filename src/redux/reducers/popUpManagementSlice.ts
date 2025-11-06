@@ -42,6 +42,7 @@ export interface Page {
   IsSurvey?: boolean;
   SurveyCount?: number;
   IsNewEditor?: boolean;
+  Submits?: number;
 }
 
 interface PopUpManagementState {

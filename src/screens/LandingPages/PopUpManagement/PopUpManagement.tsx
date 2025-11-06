@@ -18,6 +18,7 @@ import {
   TableRow,
   TableCell,
   TableBody,
+  Link
 } from '@material-ui/core';
 import { ViewModule, ViewList, Add, Restore, Language, Code } from '@material-ui/icons';
 import { FaChartPie } from "react-icons/fa";
@@ -39,6 +40,8 @@ import PopupPreviewModal from './PopupPreviewModal';
 import { CopyIcon, DeleteIcon, DuplicateIcon, EditIcon, PreviewIcon, SettingIcon, ReportsIcon } from '../../../assets/images/managment';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { sitePrefix } from '../../../config';
+import { ConvertObjectToQueryString } from '../../../helpers/Utils/HtmlUtils';
+import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
 import { useNavigate } from 'react-router-dom';
 
 interface PopUpManagementProps {
@@ -533,6 +536,57 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
     );
   };
 
+  const renderSubscribersCell = (page: Page) => {
+    const { ID, Submits, Name } = page;
+    const subscribtions = Submits && Submits > 0;
+    const hasRecipientAccess = !userRoles?.HideRecipients;
+
+    const linkUrl = hasRecipientAccess
+      ? `${CLIENT_CONSTANTS.BASEURL}${ConvertObjectToQueryString({
+        ...CLIENT_CONSTANTS.QUERY_PARAMS,
+        CampaignID: ID,
+        PageType: CLIENT_CONSTANTS.PAGE_TYPES.FormID,
+        ResultTitle: `${t("common.clientSubscriptionResultTitle")} "${Name}"`
+      })}`
+      : undefined;
+
+    return (
+      <>
+        <Link
+          component='a'
+          href={linkUrl}
+          style={{
+            cursor: subscribtions && hasRecipientAccess ? 'pointer' : 'default',
+            textDecoration: subscribtions && hasRecipientAccess ? 'underline' : 'none',
+          }}
+          onClick={(e) => {
+            e.preventDefault();
+            if (Submits && Submits > 0 && hasRecipientAccess) {
+              navigate(CLIENT_CONSTANTS.BASEURL, {
+                state: {
+                  ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                  CampaignID: ID,
+                  PageType: CLIENT_CONSTANTS.PAGE_TYPES.FormID,
+                  ResultTitle: `${t("common.clientSubscriptionResultTitle")} "${Name}"`
+                }
+              });
+            } else {
+              return false;
+            }
+          }}
+          className={clsx(classes.middleText, classes.flexColumnCenter, classes.pt2, userRoles?.HideRecipients && classes.disabled)}
+        >
+          <Typography className={classes.middleText}>
+            {(Submits && Submits.toLocaleString()) || '0'}
+          </Typography>
+          <Typography className={classes.middleText}>
+            {t('landingPages.SubmitsResource1.HeaderText')}
+          </Typography>
+        </Link>
+      </>
+    );
+  };
+
   const renderDesktopTableRow = (page: Page) => {
     const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot };
     const cellStyle = { head: classes.tableCellHead, body: classes.tableCellBody, root: classes.tableCellRoot };
@@ -540,10 +594,10 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
     return (
       <TableRow key={page.ID} classes={rowStyle} className={classes.p5}>
         <TableCell classes={cellStyle} className={clsx(classes.flex2)}>
-          <Typography variant="h5" className={classes.f22}>
+          <Typography variant="h5" className={clsx(classes.f22, classes.breakText)}>
             {page.Name}
           </Typography>
-          <Typography variant="body1">
+          <Typography variant="body1" className={classes.breakText}>
             {page.Domains.join(', ')}
           </Typography>
         </TableCell>
@@ -557,6 +611,9 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
         </TableCell>
         <TableCell classes={cellStyle} className={classes.flex1}>
           {page.IdentifiedViewers?.toLocaleString() ?? 'N/A'}
+        </TableCell>
+        <TableCell classes={cellStyle} className={classes.flex1}>
+          {renderSubscribersCell(page)}
         </TableCell>
         <TableCell classes={cellStyle} className={classes.flex1}>
           <Typography variant="body1">
@@ -594,6 +651,12 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
                 <Typography variant="caption">{t('landingPages.popupManagement.tableHeaders.identifiedViewers')}</Typography>
                 <Typography>
                   {page.IdentifiedViewers?.toLocaleString() ?? 'N/A'}
+                </Typography>
+              </Grid>
+              <Grid item xs={6}>
+                <Typography variant="caption">{t('landingPages.SubmitsResource1.HeaderText')}</Typography>
+                <Typography>
+                  {page.Submits?.toLocaleString() ?? '0'}
                 </Typography>
               </Grid>
               <Grid item xs={6}>
@@ -637,6 +700,9 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
                 </TableCell>
                 <TableCell align='center' classes={cellStyle} className={classes.flex1}>
                   {t('landingPages.popupManagement.tableHeaders.identifiedViewers')}
+                </TableCell>
+                <TableCell align='center' classes={cellStyle} className={classes.flex1}>
+                  {t('landingPages.SubmitsResource1.HeaderText')}
                 </TableCell>
                 <TableCell align="center" classes={cellStyle} className={classes.flex1}>
                   <div>{t('landingPages.popupManagement.tableHeaders.conversions')}</div>

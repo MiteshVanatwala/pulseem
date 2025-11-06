@@ -498,7 +498,7 @@
       "url": "URL",
       "status": "Status",
       "allViewers": "All Viewers",
-      "identifiedViewers": "Identified Viewers",
+      "identifiedViewers": "Unique visitors",
       "identifiedConversions": "Identified Conversions",
       "conversions": "Conversions",
       "conversionRate": "Conversion Rate",

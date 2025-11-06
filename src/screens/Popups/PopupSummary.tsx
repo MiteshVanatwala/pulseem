@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Box, Typography, Grid, Button, Divider, Paper, useTheme } from '@material-ui/core';
+import { Box, Typography, Grid, Button, Divider, Paper, useTheme, TextField } from '@material-ui/core';
 import { CheckCircle, Language, Group, Lock, Mail, AccessTime, Public, Tune, Visibility, Mouse, ArrowDownward, BarChart, Settings, Description } from '@material-ui/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import clsx from 'clsx';
-import { sitePrefix } from '../../config';
+import { sitePrefix, isProdMode } from '../../config';
 import { publish, getById } from '../../redux/reducers/landingPagesSlice';
 import { getGroupsBySubAccountId } from '../../redux/reducers/groupSlice';
 import { Loader } from '../../components/Loader/Loader';
@@ -15,6 +15,7 @@ import { StateType } from '../../Models/StateTypes';
 import { logout } from '../../helpers/Api/PulseemReactAPI';
 import { LangugeCode } from '../../model/PulseemFields/Fields';
 import { Title } from '../../components/managment/Title';
+import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
 
 interface ToastMessage {
   severity?: 'error' | 'success' | 'info';
@@ -75,6 +76,8 @@ const PopupSummary = ({ classes }: any) => {
   const [showLoader, setShowLoader] = useState<boolean>(true);
   const [toastMessage, setToastMessage] = useState<ToastMessage | null>(null);
   const [webForm, setWebForm] = useState<any>(null);
+  const [showEmbedDialog, setShowEmbedDialog] = useState(false);
+  const [embedData, setEmbedData] = useState<any>(null);
 
   const showErrorToast = (message: string) => {
     setToastMessage({
@@ -161,7 +164,18 @@ const PopupSummary = ({ classes }: any) => {
       //@ts-ignore
       if (response?.payload?.StatusCode === 201) {
         showSuccessToast(t('PopupTriggers.popupPublished'));
-        setTimeout(() => navigate(`${sitePrefix}PopUpManagement`), 1500);
+        //@ts-ignore
+        const updatedResponse = await dispatch(getById(id)) as any;
+        const updatedWebForm = updatedResponse?.payload?.Data?.WebForm;
+        
+        if (updatedWebForm) {
+          setWebForm(updatedWebForm);
+          setEmbedData({
+            PopupGuid: updatedWebForm.PopupGuid || payload?.PopupGuid,
+            Name: updatedWebForm.PageName
+          });
+          setShowEmbedDialog(true);
+        }
       } else {
         showErrorToast(t('common.Error') || 'An error occurred');
       }
@@ -182,6 +196,53 @@ const PopupSummary = ({ classes }: any) => {
   const renderLanguage = (lang: number) => {
     const currentLang = LangugeCode.filter((l: any) => l.value === lang);
     return currentLang[0] ? t(currentLang[0]?.label) : t('common.notSet');
+  };
+
+  const handleCloseEmbedDialog = () => {
+    setShowEmbedDialog(false);
+    setEmbedData(null);
+  };
+
+  const getEmbedDialog = () => {
+    if (!embedData) return null;
+
+    const PopupBaseUrl = isProdMode ? "https://l-p.site" : "https://stage.l-p.site";
+    const popupId = embedData.PopupGuid;
+    const embedCode = `<script type="text/javascript" src="${PopupBaseUrl}/pulseempopup.js?id=${popupId}"></script>`;
+
+    return {
+      title: t('landingPages.popupManagement.actions.embed'),
+      showDivider: false,
+      content: (
+        <Box>
+          <Typography style={{ fontSize: 16, marginBottom: 16 }}>
+            {t('landingPages.popupManagement.actions.embedMessage')}
+          </Typography>
+          <TextField
+            fullWidth
+            multiline
+            rows={3}
+            variant="outlined"
+            value={embedCode}
+            InputProps={{
+              readOnly: true,
+            }}
+            onClick={(e: any) => e.target.select()}
+          />
+        </Box>
+      ),
+      onConfirm: () => {
+        navigator.clipboard.writeText(embedCode);
+        handleCloseEmbedDialog();
+        setToastMessage({ 
+          severity: 'success',
+          color: 'success',
+          message: 'Embed code copied to clipboard!',
+          showAnimtionCheck: true
+        });
+      },
+      confirmText: 'Copy Code'
+    };
   };
 
   if (showLoader) {
@@ -407,7 +468,6 @@ const PopupSummary = ({ classes }: any) => {
 
     const emailList = webForm?.EmailsToReport?.split(',')?.filter((email: string) => email.trim() !== '') || [];
 
-    // All items in the layout
     const generalSettingsItems = [
       {
         type: 'item',
@@ -453,7 +513,6 @@ const PopupSummary = ({ classes }: any) => {
       },
     ];
 
-    // Group into rows of 3
     const rows = [];
     for (let i = 0; i < generalSettingsItems.length; i += 3) {
       rows.push(generalSettingsItems.slice(i, i + 3));
@@ -523,6 +582,8 @@ const PopupSummary = ({ classes }: any) => {
     </Paper>
   );
 
+  const embedDialogConfig = getEmbedDialog();
+
   return (
     <DefaultScreen
       currentPage="SurveyDetails"
@@ -554,7 +615,27 @@ const PopupSummary = ({ classes }: any) => {
         >
           {t('common.publish')}
         </Button>
+         <Button
+          onClick={() => navigate(`${sitePrefix}PopUpManagement`)}
+          className={clsx(classes.btn, classes.btnRounded)}
+          variant="contained"
+          color="primary"
+        >
+          {t('landingPages.popupManagement.title')}
+        </Button>
       </Box>
+
+      {embedDialogConfig && (
+        <BaseDialog
+          classes={classes}
+          open={showEmbedDialog}
+          onClose={handleCloseEmbedDialog}
+          onCancel={handleCloseEmbedDialog}
+          {...embedDialogConfig}
+        >
+          {embedDialogConfig.content}
+        </BaseDialog>
+      )}
 
       <Loader isOpen={showLoader || loading} showBackdrop={true} />
       {toastMessage && <Toast customData={null} data={toastMessage} />}
