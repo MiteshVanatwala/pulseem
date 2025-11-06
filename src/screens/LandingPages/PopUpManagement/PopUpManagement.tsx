@@ -867,7 +867,7 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
         handleClose();
         setToastMessage({ type: 'success', message: 'Embed code copied to clipboard!' });
       },
-      confirmText: 'Copy Code'
+      confirmText: t('notifications.copy')
     };
   };
 
