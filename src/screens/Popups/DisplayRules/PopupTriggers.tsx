@@ -343,12 +343,12 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
 
   const handleSummaryClick = async () => {
 
-    const anyTriggerEnabled = Object.values(triggersState).some((trigger: any) => trigger.enabled);
+    // const anyTriggerEnabled = Object.values(triggersState).some((trigger: any) => trigger.enabled);
 
-    if (!anyTriggerEnabled) {
-      showErrorToast(t('PopupTriggers.atLeastOneTrigger'));
-      return;
-    }
+    // if (!anyTriggerEnabled) {
+    //   showErrorToast(t('PopupTriggers.atLeastOneTrigger'));
+    //   return;
+    // }
 
     const popupTriggers = Object.keys(triggersState)
       .filter(key => triggersState[key].enabled)
