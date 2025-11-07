@@ -736,7 +736,8 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
       JsonData: finalJson,
       HTML: finalHtml,
       //@ts-ignore
-      Category: saveRef.current?.templateCategory
+      Category: saveRef.current?.templateCategory,
+      IsPopUP: true
     }));
     //@ts-ignore
     if (!templateResponse.payload.Data) {
