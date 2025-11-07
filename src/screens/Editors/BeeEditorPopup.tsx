@@ -90,6 +90,7 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
   const [showDocs, setShowDocuments] = useState(false);
   const queryParams = new URLSearchParams(window.location.search)
   const isFromAutomation = queryParams.get("FromAutomation");
+  const baseLanguageParam = queryParams.get("baseLanguage");
   const NodeToEdit = queryParams.get("NodeToEdit");
   const fromLink = queryParams.get("fromLink");
   const [lastSaveText, setLastSaveText] = useState<string | null>(null);
@@ -118,6 +119,23 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
   const [popupDraftClientId, setPopupDraftClientId] = useState<string>(propClientId || '');
   const [popupDraftClientSecret, setPopupDraftClientSecret] = useState<string>(propClientSecret || '');
   //#endregion State
+
+  const getLanguageCodeFromBaseLanguage = (baseLanguage: number): string => {
+    const languageMap: { [key: number]: string } = {
+      0: 'he-IL',  // Hebrew
+      1: 'en-US',  // English
+      2: 'fr-FR',  // French
+      3: 'es-ES',  // Spanish
+      4: 'de-DE',  // German
+      5: 'ru-RU',  // Russian
+      14: 'pl-PL', // Polish
+    };
+    return languageMap[baseLanguage] || 'en-US';
+  };
+  const editorLanguage = baseLanguageParam
+    ? getLanguageCodeFromBaseLanguage(parseInt(baseLanguageParam))
+    : getLanguageCodeFromBaseLanguage(landingPage?.Data?.WebForm?.BaseLanguage || 1);
+
 
   //#region Get Extra fields & Landing pages, after Data Ready
   const loadAccountExtraData = () => {
@@ -432,6 +450,7 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
       config.specialLinks = specialLinksFiles;
       config.titleDefaultStyles = defaultContent.titleDefaultStyles;
       config.contentDefaults = defaultContent.contentDefaults;
+      config.language = editorLanguage;
 
       if (accountFeatures?.indexOf(PulseemFeatures.BEE_AMP) > -1) {
         config.workspace.type = 'mixed';
@@ -1350,7 +1369,8 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
       t: t,
       form: clientForm,
       onFormAdded: onFormAdded,
-      languageCode: language
+      // languageCode: language
+      languageCode: editorLanguage
     }) as any;
   }
 

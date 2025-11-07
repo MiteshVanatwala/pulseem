@@ -844,7 +844,7 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 		}
 
 		if (isPopup) {
-			navigate(`${sitePrefix}popupeditor/${pageId}`);
+			navigate(`${sitePrefix}popupeditor/${pageId}?baseLanguage=${landingPageModel.BaseLanguage}`);
 			return false;
 		}
 
