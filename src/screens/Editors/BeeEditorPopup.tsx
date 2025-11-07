@@ -119,7 +119,6 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
   const [popupDraftClientSecret, setPopupDraftClientSecret] = useState<string>(propClientSecret || '');
   //#endregion State
 
-  console.log('BeeToken', LPBeeToken)
   //#region Get Extra fields & Landing pages, after Data Ready
   const loadAccountExtraData = () => {
     return new Promise(async (resolve: any) => {
@@ -207,8 +206,12 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
   useEffect(() => {
     getData();
     //@ts-ignore
-    if (!publicTemplates.length) dispatch(getLPPublicTemplates(isRTL));
-    if (!templatesBySubAccount.length) dispatch(getAllLPTemplatesBySubaccountId());
+    if (!publicTemplates.length) dispatch(getLPPublicTemplates({
+      isRTL,
+      isPopup: true
+    }, true));
+    //@ts-ignore
+    if (!templatesBySubAccount.length) dispatch(getAllLPTemplatesBySubaccountId(true));
   }, []);
 
   //@ts-ignore

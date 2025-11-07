@@ -356,6 +356,7 @@
   "shortURLTooltip": "User friendly URL for human eyes and for SEO",
   "shortURLRequired": "Short URL is required",
   "shortURLExist": "Short URL already exist. Please choose different name.",
+  "pageExist": "Page name already exists. Please choose a different name.",
   "answerType": "Answer Type",
   "answerMessage": "Answer Message",
   "answerMessageRequired": "Answer Message is required",

@@ -356,6 +356,7 @@
   "shortURLTooltip": "Przyjazny dla użytkownika URL dla ludzkich oczu i dla SEO",
   "shortURLRequired": "Krótki URL jest wymagany",
   "shortURLExist": "Krótki URL już istnieje. Wybierz inną nazwę.",
+  "pageExist": "Nazwa strony już istnieje. Wybierz inną nazwę.",
   "answerType": "Typ Odpowiedzi",
   "answerMessage": "Wiadomość Odpowiedzi",
   "answerMessageRequired": "Wiadomość Odpowiedzi jest wymagana",

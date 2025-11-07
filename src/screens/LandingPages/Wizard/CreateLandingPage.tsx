@@ -788,6 +788,14 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 				})
 				break;
 			}
+			case 409: {
+				showErrorToast(t('landingPages.pageExist'));
+				setErrors({
+					...errors,
+					PageName: t('landingPages.pageExist')
+				})
+				break;
+			}
 			case 927: {
 				// LANDING_PAGE_MANAGEMENT
 				setTierMessageCode(response?.Message || 'LANDING_PAGE_MANAGEMENT');

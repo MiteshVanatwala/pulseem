@@ -100,7 +100,7 @@ export const getLPBeeToken = createAsyncThunk(
 export const getLPPublicTemplates = createAsyncThunk(
   '/landingpages/GetPublicTemplates', async (isRTL, thunkAPI) => {
     try {
-      const response = await PulseemReactInstance.get(`LandingPages/GetPublicTemplates/${isRTL ? 'he' : 'en'}`);
+      const response = await PulseemReactInstance.get(`LandingPages/GetPublicTemplates/${isRTL ? 'he' : 'en'}/false`);
       return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -110,7 +110,7 @@ export const getLPPublicTemplates = createAsyncThunk(
 export const getAllLPTemplatesBySubaccountId = createAsyncThunk(
   '/landingpages/GetAllTemplatesBySubaccountId', async (_, thunkAPI) => {
     try {
-      const response = await PulseemReactInstance.get(`LandingPages/GetAllTemplatesBySubaccountId`);
+      const response = await PulseemReactInstance.get(`LandingPages/GetAllTemplatesBySubaccountId/false`);
       return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
