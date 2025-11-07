@@ -198,6 +198,11 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 			limitSubscribers: '', emailId: '', DepartmentId: '', DownloadUrl: '',
 			PopupDomains: '',
 		});
+
+		const getDefaultLanguage = () => {
+			return language === 'pl' ? 14 : language === 'he' ? 0 : 1;
+		};
+
 		setLandingPageModel({
 			ID: 0, GroupID: 0, GroupIDs: [], IsClientScript: false,
 			CmbSelection: '', HtmlFileName: '', ButtonText: '', PageName: '',
@@ -209,7 +214,7 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 			PageType: isPopup ? 5 : 1, AnswerType: 1,
 			IsResponsive: true, DownloadUrl: '', OfflineDate: '',
 			OfflineUrl: '', HtmlToEdit: '', HtmlFile: '',
-			BaseLanguage: language === 'pl' ? 14 : language === 'he' ? 0 : 1,
+			BaseLanguage: getDefaultLanguage(),
 			IsTemplate: false, CategoryID: null, IsUpdate: false,
 			SubscriptionOptin: false, IsAccessibility: true,
 			TerminalNumber: '', APIUserName: '', PopupDomains: [],
@@ -508,12 +513,12 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 			title: t("common.SaveExit"),
 			content: (
 				<Box>
-						<Typography variant="subtitle1">
-					{isPopup 
-						? t("PopupTriggers.confirmExitPopup") 
-						: t("landingPages.confirmExit")
-					}
-				</Typography>
+					<Typography variant="subtitle1">
+						{isPopup
+							? t("PopupTriggers.confirmExitPopup")
+							: t("landingPages.confirmExit")
+						}
+					</Typography>
 				</Box>
 			),
 			confirmText: "common.Yes",
@@ -568,17 +573,17 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 	})
 
 	const handleGetPlanForFeature = (tierMessageCode: string) => {
-			const planName = findPlanByFeatureCode(
-					tierMessageCode,
-					availablePlans,
-					currentPlan.Id
-			);
-			
-			if (planName) {
-					return t('billing.tier.featureNotAvailable').replace('{feature}', t(TierFeatures[tierMessageCode as keyof typeof TierFeatures] || tierMessageCode)).replace('{planName}', planName);
-			} else {
-					return t('billing.tier.noFeatureAvailable');
-			}
+		const planName = findPlanByFeatureCode(
+			tierMessageCode,
+			availablePlans,
+			currentPlan.Id
+		);
+		
+		if (planName) {
+			return t('billing.tier.featureNotAvailable').replace('{feature}', t(TierFeatures[tierMessageCode as keyof typeof TierFeatures] || tierMessageCode)).replace('{planName}', planName);
+		} else {
+			return t('billing.tier.noFeatureAvailable');
+		}
 	};
 
 	const getTierValidationDialog = () => ({
@@ -591,28 +596,28 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 		),
 		renderButtons: () => (
 			<Grid
-					container
-					spacing={2}
-					className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}
+				container
+				spacing={2}
+				className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}
 			>
-					<Grid item>
-							<Button
-									onClick={() => {
-											setShowTierPlans(true);
-									}}
-									className={clsx(classes.btn, classes.btnRounded)}
-							>
-									{t('billing.upgradePlan')}
-							</Button>
-					</Grid>
-					<Grid item>
-							<Button
-									onClick={() => setDialogType(null)}
-									className={clsx(classes.btn, classes.btnRounded)}
-							>
-									{t('common.cancel')}
-							</Button>
-					</Grid>
+				<Grid item>
+					<Button
+						onClick={() => {
+							setShowTierPlans(true);
+						}}
+						className={clsx(classes.btn, classes.btnRounded)}
+					>
+						{t('billing.upgradePlan')}
+					</Button>
+				</Grid>
+				<Grid item>
+					<Button
+						onClick={() => setDialogType(null)}
+						className={clsx(classes.btn, classes.btnRounded)}
+					>
+						{t('common.cancel')}
+					</Button>
+				</Grid>
 			</Grid>
 		)
 	})

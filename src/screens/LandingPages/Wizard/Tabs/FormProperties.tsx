@@ -10,6 +10,7 @@ import { isShortUrlExist } from "../../../../redux/reducers/landingPagesSlice";
 import { LangugeCode } from "../../../../model/PulseemFields/Fields";
 import { useEffect, useState } from "react";
 
+const POPUP_LANGUAGES = [0, 1, 14];
 
 const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setErrors, isPopup }: any) => {
     const { t: translator } = useTranslation();
@@ -190,7 +191,10 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
                         },
                     }}
                 >
-                    {LangugeCode.map((item) => <option key={item.value} value={item.value}>{translator(item.label)}</option>)}
+                    {LangugeCode
+                        .filter(item => !isPopup || POPUP_LANGUAGES.includes(item.value))
+                        .map((item) => <option key={item.value} value={item.value}>{translator(item.label)}</option>)
+                    }
                 </Select>
             </FormControl>
             <Box className='textBoxWrapper'>
