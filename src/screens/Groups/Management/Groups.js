@@ -725,7 +725,7 @@ const Groups = ({ classes }) => {
             PendingSmsClients,
             AutomationID,
         } = row;
-        let iconsCells = [row.IsAutoResponder, row.IsConnectedToWebForm].filter((e) => {
+        let iconsCells = [row.IsAutoResponder, (row.IsConnectedToWebForm || row.IsConnectedToPopUP)].filter((e) => {
             return e === true
         }).length;
 
@@ -759,13 +759,13 @@ const Groups = ({ classes }) => {
                                         icon={<MdOutlineLockClock style={{ fontSize: 24 }} />}
                                         text={
                                             <Typography noWrap={false} className={classes.tooltipText}
-                                                style={{ direction: isRTL ? 'rtl' : 'ltr', color: '#fff' }}>{t("group.autoResponderConnected")}</Typography>}
+                                                style={{ direction: isRTL ? 'rtl' : 'ltr', color: '#fff', textAlign: 'center' }}>{t("group.autoResponderConnected")}</Typography>}
                                     ></CustomTooltip>
                                 </Grid>
                             ) : null
                         }
                         {
-                            row.IsConnectedToWebForm === true ? (
+                            (row.IsConnectedToWebForm === true || row.IsConnectedToPopUP === true) ? (
                                 <Grid item sm={1} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                     <CustomTooltip
                                         isSimpleTooltip={true}
@@ -780,7 +780,13 @@ const Groups = ({ classes }) => {
                                         placement={"top"}
                                         icon={<RiPagesLine style={{ fontSize: 24 }} />}
                                         text={
-                                            <Typography noWrap={false} className={classes.tooltipText}>{t("group.webformConnected")}</Typography>}
+                                            <Typography noWrap={false} className={classes.tooltipText} style={{ textAlign: 'center' }}>
+                                                {row.IsConnectedToWebForm && row.IsConnectedToPopUP
+                                                    ? t("group.webfromAndPopupConnected")
+                                                    : row.IsConnectedToPopUP
+                                                        ? t("group.popupConnected")
+                                                        : t("group.webformConnected")}
+                                            </Typography>}
                                     ></CustomTooltip>
                                 </Grid>
                             ) : null

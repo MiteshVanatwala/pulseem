@@ -22,6 +22,8 @@
   "testGroup": "Test Group",
   "autoResponderConnected": "Autoresponder attached to this group",
   "webformConnected": "Landing page atteched to this group",
+  "popupConnected": "Popup atteched to this group",
+  "webfromAndPopupConnected": "Landing page and Popup atteched to this group",
   "invalidGroupId": "Invalid Group ID",
   "noGroupFound": "No groups found",
   "simplyClubLoginTitle": "Third Party Login",

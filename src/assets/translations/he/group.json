@@ -22,6 +22,8 @@
   "testGroup": "קבוצת ניסיון",
   "autoResponderConnected": "לקבוצה זו משוייך Autoresponder",
   "webformConnected": "לקבוצה זו משוייך דף נחיתה",
+  "popupConnected": "החלון הקופץ מחובר לקבוצה זו",
+  "webfromAndPopupConnected": "דף נחיתה ופופאפ מחוברים לקבוצה זו",
   "invalidGroupId": "מספר המזהה של הקבוצה אינו תקין",
   "noGroupFound": "לא נמצאו קבוצות",
   "simplyClubLoginTitle": "הכנס את פרטי ההזדהות שלך",
