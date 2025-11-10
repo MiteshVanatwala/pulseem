@@ -18,6 +18,7 @@ import {
   TableRow,
   TableCell,
   TableBody,
+  Link
 } from '@material-ui/core';
 import { ViewModule, ViewList, Add, Restore, Language, Code } from '@material-ui/icons';
 import { FaChartPie } from "react-icons/fa";
@@ -39,7 +40,9 @@ import PopupPreviewModal from './PopupPreviewModal';
 import { CopyIcon, DeleteIcon, DuplicateIcon, EditIcon, PreviewIcon, SettingIcon, ReportsIcon } from '../../../assets/images/managment';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { sitePrefix } from '../../../config';
-import { useNavigate } from 'react-router-dom';
+import { ConvertObjectToQueryString } from '../../../helpers/Utils/HtmlUtils';
+import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 interface PopUpManagementProps {
   classes: Record<string, string>;
@@ -58,6 +61,7 @@ export interface DialogType {
 const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useDispatch<any>();
   const { windowSize } = useSelector((state: any) => state.core);
   const { userRoles } = useSelector((state: any) => state.core);
@@ -80,6 +84,7 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
   const [restoreArray, setRestoreArray] = useState<number[]>([]);
   const [previewPopupId, setPreviewPopupId] = useState<number | null>(null);
   const [showLoader, setShowLoader] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState({
     SearchTerm: '',
     FilterStatus: 'All',
@@ -109,6 +114,26 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
   };
 
   const isMobile = windowSize === 'xs' || windowSize === 'sm';
+
+  useEffect(() => {
+    const navState = location.state as { view?: 'card' | 'table' } | undefined;
+    if (navState?.view) {
+      setView(navState.view);
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
+
+  useEffect(() => {
+    if (searchTerm === filters.SearchTerm) {
+      return;
+    }
+
+    const debounceTimer = setTimeout(() => {
+      setFilters(prev => ({ ...prev, SearchTerm: searchTerm, PageNumber: 1 }));
+    }, 1000);
+
+    return () => clearTimeout(debounceTimer);
+  }, [searchTerm]);
 
   useEffect(() => {
     dispatch(getPerformanceStats());
@@ -194,8 +219,6 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
     </Box>
   );
 
-  const [searchTerm, setSearchTerm] = useState('');
-
   const handleSearch = () => {
     setFilters(prev => ({ ...prev, SearchTerm: searchTerm, PageNumber: 1 }));
   };
@@ -214,9 +237,6 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
               value={searchTerm}
               onChange={(e) => {
                 setSearchTerm(e.target.value);
-                if (e.target.value === '') {
-                  setFilters(prev => ({ ...prev, SearchTerm: '', PageNumber: 1 }));
-                }
               }}
               onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
               placeholder={t('landingPages.popupManagement.searchPlaceholder')}
@@ -426,7 +446,11 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
         lable: t('landingPages.popupManagement.actions.settings'),
         rootClass: classes.paddingIcon,
         onClick: () => {
-          navigate(`${sitePrefix}Popups/DisplayRules/${id}`);
+          navigate(`${sitePrefix}Popups/DisplayRules/${id}`, {
+            state: {
+              returnView: view,
+            }
+          });
         }
       },
       {
@@ -533,6 +557,57 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
     );
   };
 
+  const renderSubscribersCell = (page: Page) => {
+    const { ID, Submits, Name } = page;
+    const subscribtions = Submits && Submits > 0;
+    const hasRecipientAccess = !userRoles?.HideRecipients;
+
+    const linkUrl = hasRecipientAccess
+      ? `${CLIENT_CONSTANTS.BASEURL}${ConvertObjectToQueryString({
+        ...CLIENT_CONSTANTS.QUERY_PARAMS,
+        CampaignID: ID,
+        PageType: CLIENT_CONSTANTS.PAGE_TYPES.FormID,
+        ResultTitle: `${t("common.clientSubscriptionResultTitle")} "${Name}"`
+      })}`
+      : undefined;
+
+    return (
+      <>
+        <Link
+          component='a'
+          href={linkUrl}
+          style={{
+            cursor: subscribtions && hasRecipientAccess ? 'pointer' : 'default',
+            textDecoration: subscribtions && hasRecipientAccess ? 'underline' : 'none',
+          }}
+          onClick={(e) => {
+            e.preventDefault();
+            if (Submits && Submits > 0 && hasRecipientAccess) {
+              navigate(CLIENT_CONSTANTS.BASEURL, {
+                state: {
+                  ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                  CampaignID: ID,
+                  PageType: CLIENT_CONSTANTS.PAGE_TYPES.FormID,
+                  ResultTitle: `${t("common.clientSubscriptionResultTitle")} "${Name}"`
+                }
+              });
+            } else {
+              return false;
+            }
+          }}
+          className={clsx(classes.middleText, classes.flexColumnCenter, classes.pt2, userRoles?.HideRecipients && classes.disabled)}
+        >
+          <Typography className={classes.middleText}>
+            {(Submits && Submits.toLocaleString()) || '0'}
+          </Typography>
+          <Typography className={classes.middleText}>
+            {t('landingPages.SubmitsResource1.HeaderText')}
+          </Typography>
+        </Link>
+      </>
+    );
+  };
+
   const renderDesktopTableRow = (page: Page) => {
     const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot };
     const cellStyle = { head: classes.tableCellHead, body: classes.tableCellBody, root: classes.tableCellRoot };
@@ -540,10 +615,10 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
     return (
       <TableRow key={page.ID} classes={rowStyle} className={classes.p5}>
         <TableCell classes={cellStyle} className={clsx(classes.flex2)}>
-          <Typography variant="h5" className={classes.f22}>
+          <Typography variant="h5" className={clsx(classes.f22, classes.breakText)}>
             {page.Name}
           </Typography>
-          <Typography variant="body1">
+          <Typography variant="body1" className={classes.breakText}>
             {page.Domains.join(', ')}
           </Typography>
         </TableCell>
@@ -557,6 +632,9 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
         </TableCell>
         <TableCell classes={cellStyle} className={classes.flex1}>
           {page.IdentifiedViewers?.toLocaleString() ?? 'N/A'}
+        </TableCell>
+        <TableCell classes={cellStyle} className={classes.flex1}>
+          {renderSubscribersCell(page)}
         </TableCell>
         <TableCell classes={cellStyle} className={classes.flex1}>
           <Typography variant="body1">
@@ -594,6 +672,12 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
                 <Typography variant="caption">{t('landingPages.popupManagement.tableHeaders.identifiedViewers')}</Typography>
                 <Typography>
                   {page.IdentifiedViewers?.toLocaleString() ?? 'N/A'}
+                </Typography>
+              </Grid>
+              <Grid item xs={6}>
+                <Typography variant="caption">{t('landingPages.SubmitsResource1.HeaderText')}</Typography>
+                <Typography>
+                  {page.Submits?.toLocaleString() ?? '0'}
                 </Typography>
               </Grid>
               <Grid item xs={6}>
@@ -637,6 +721,9 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
                 </TableCell>
                 <TableCell align='center' classes={cellStyle} className={classes.flex1}>
                   {t('landingPages.popupManagement.tableHeaders.identifiedViewers')}
+                </TableCell>
+                <TableCell align='center' classes={cellStyle} className={classes.flex1}>
+                  {t('landingPages.SubmitsResource1.HeaderText')}
                 </TableCell>
                 <TableCell align="center" classes={cellStyle} className={classes.flex1}>
                   <div>{t('landingPages.popupManagement.tableHeaders.conversions')}</div>
@@ -733,11 +820,11 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
   }
 
   const getDeleteDialog = (data?: string | number) => ({
-    title: t('landingPages.GridButtonColumnResource1.ConfirmTitle'),
+    title: t('Popup.DeletePopupTitle'),
     showDivider: false,
     content: (
       <Typography style={{ fontSize: 18 }}>
-        {t('landingPages.GridButtonColumnResource1.ConfirmText')}
+        {t('Popup.DeletePopupDesc')}
       </Typography>
     ),
     onConfirm: async () => {
@@ -750,11 +837,11 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
   });
 
   const getDuplicateDialog = (data?: string | number) => ({
-    title: t('landingPages.dialogDuplicateTitle'),
+    title: t('Popup.DuplicatePopupTitle'),
     showDivider: false,
     content: (
       <Typography style={{ fontSize: 18 }}>
-        {t('landingPages.dialogDuplicateContent')}
+        {t('Popup.DuplicatePopupDesc')}
       </Typography>
     ),
     onConfirm: async () => {
@@ -801,7 +888,7 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
         handleClose();
         setToastMessage({ type: 'success', message: 'Embed code copied to clipboard!' });
       },
-      confirmText: 'Copy Code'
+      confirmText: t('notifications.copy')
     };
   };
 

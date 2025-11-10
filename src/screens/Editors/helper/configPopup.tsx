@@ -82,7 +82,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
   return {
     uid: 'e945eb6b-249c-4dea-bee1-e4b98b8719cc', //needed for identify resources of the that user and billing stuff
     container: 'page-bee-plugin-container', //Identifies the id of div element that contains BEE Plugin
-    language: editorLanguage[languageCode], //IsRTL ? 'he-IL' : 'en-US',
+    // language: editorLanguage[languageCode], //IsRTL ? 'he-IL' : 'en-US',
     customCss: 'https://www.pulseem.co.il/Pulseem/Css/beefreeRtlFixes.css',
     trackChanges: true,
     //autosave: AUTO_SAVE_SECONDS,
@@ -90,6 +90,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
     sidebarPosition: IsRTL ? 'right' : 'left',
     loadingSpinnerTheme: 'light',
     saveRows: true,
+    language: languageCode || 'en-US',
     rowsConfiguration: {
       emptyRows: true,
       defaultRows: false,

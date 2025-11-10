@@ -70,7 +70,7 @@
       "everyXVisit": {
         "main": "Once every few visits",
         "prefix": "Every",
-        "suffix": "days",
+        "suffix": "visit",
         "description": "Once every few visits - show your popup to for every number of visits you decide."
       },
       "everyVisit": {

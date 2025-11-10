@@ -16,9 +16,10 @@ import {
   Timer as TimerIcon,
   Height as HeightIcon,
   TouchApp as TouchAppIcon,
+  Refresh as RefreshIcon,
 } from "@material-ui/icons";
 import { useTranslation } from "react-i18next";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { v4 as uuidv4 } from "uuid";
 import TriggerCard from "./Components/TriggersCard";
@@ -49,13 +50,14 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
   const navigate = useNavigate();
   const queryParams = new URLSearchParams(window.location.search);
   const fromEditor = queryParams.get('from') === 'editor';
+  const location = useLocation();
+  const returnState = location.state as { returnView?: 'card' | 'table'} | undefined;
 
   const { language } = useSelector((state: any) => state.core);
   const { lookupData, loading, error, upserting, upsertSuccess, popupRules, rulesLoading } = useSelector((state: any) => state.popupTriggers);
 
   const [triggersState, setTriggersState] = useState<any>({});
   const [showSections, setShowSections] = useState({
-    popupTriggers: true,
     displayFrequency: true,
     pageTargeting: true,
     advancedSettings: true,
@@ -77,15 +79,76 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
   const [payloadForSummary, setPayloadForSummary] = useState<any | null>(null);
   const [toastMessage, setToastMessage] = useState<any>(null);
 
-  useEffect(() => {
+  // Force refresh data when component mounts or when returning from another page
+  const refreshData = () => {
     if (id) {
       dispatch(getPopupLookupData({ id: parseInt(id, 10) }));
       dispatch(getPopupRulesById({ webFormId: parseInt(id, 10) }));
     }
-  }, [dispatch, id]);
+  };
+
+  // Manual refresh with user feedback
+  const handleManualRefresh = () => {
+    refreshData();
+    setToastMessage({
+      severity: 'info',
+      color: 'info',
+      message: t('common.dataRefreshed') || 'Data refreshed successfully',
+      showAnimtionCheck: true
+    });
+  };
 
   useEffect(() => {
-    if (lookupData?.PopupTriggers) {
+    refreshData();
+  }, [dispatch, id]);
+
+  // Also refresh when coming back from navigation (browser back/forward)
+  useEffect(() => {
+    const handlePopState = () => {
+      // Small delay to ensure the component is properly mounted
+      setTimeout(() => {
+        refreshData();
+      }, 100);
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [id]);
+
+  // Refresh data when the page becomes visible (user returns to tab/page)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        refreshData();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, [id]);
+
+  // Clear state when component unmounts to ensure fresh data on next visit
+  useEffect(() => {
+    return () => {
+      setTriggersState({});
+      setDisplayFrequencyData({
+        targetAudience: 'All Visitors',
+        displaySchedule: 'Every visit',
+        everyXDays: 0,
+        everyXVisits: 0,
+        days: 0,
+      });
+      setPageTargetingRules([]);
+      setAdvancedSettingsData({
+        shouldContinueShowing: false,
+        conversionType: 'formSubmission',
+      });
+    };
+  }, []);
+
+  // Initialize triggers state when only lookupData is available (for new popups without saved rules)
+  useEffect(() => {
+    if (lookupData?.PopupTriggers && !popupRules && !loading && !rulesLoading) {
       const initialState = lookupData.PopupTriggers.reduce((acc: any, trigger: any) => {
         const key = trigger.Name.replace(/\s+/g, '');
         switch (trigger.Name) {
@@ -100,35 +163,57 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
       }, {});
       setTriggersState(initialState);
     }
-  }, [lookupData]);
+  }, [lookupData, popupRules, loading, rulesLoading]);
 
   useEffect(() => {
-    if (popupRules && lookupData && Object.keys(triggersState).length > 0) {
-      setTriggersState((prevState: any) => {
-        const newTriggersState = { ...prevState };
-        popupRules.PopupTriggers?.forEach((rule: any) => {
-          const triggerDef = lookupData.PopupTriggers.find((t: any) => t.Id === rule.TriggerId);
-          if (triggerDef) {
-            const key = triggerDef.Name.replace(/\s+/g, '');
-            newTriggersState[key] = { ...newTriggersState[key], enabled: true };
-            if (key === 'PageViews') {
-              newTriggersState[key].pages = parseFloat(rule.TriggerValue);
-            }
-            if (key === 'ViewingTime') {
-              newTriggersState[key].time = parseFloat(rule.TriggerValue);
-              if (rule.TriggerViewTimeScopeId) {
-                newTriggersState[key].scope = rule.TriggerViewTimeScopeId === 1 ? 'currentPage' : 'anyPage';
+    if (popupRules && lookupData && lookupData.PopupTriggers) {
+      // Always create a fresh state with all triggers disabled first
+      setTriggersState(() => {
+        // Create initial state with all triggers disabled
+        const freshState = lookupData.PopupTriggers.reduce((acc: any, trigger: any) => {
+          const key = trigger.Name.replace(/\s+/g, '');
+          switch (trigger.Name) {
+            case "Exit Intent": acc[key] = { enabled: false }; break;
+            case "Page Views": acc[key] = { enabled: false, pages: 3 }; break;
+            case "Viewing Time": acc[key] = { enabled: false, time: 30, scope: "currentPage" }; break;
+            case "Scroll Depth": acc[key] = { enabled: false, depth: 50 }; break;
+            case "Page Clicks": acc[key] = { enabled: false, clicks: 5 }; break;
+            default: acc[key] = { enabled: false }; break;
+          }
+          return acc;
+        }, {});
+        
+        // Now apply the API data - only enable triggers that exist in the API response
+        if (popupRules.PopupTriggers && Array.isArray(popupRules.PopupTriggers)) {
+          popupRules.PopupTriggers.forEach((rule: any) => {
+            const triggerDef = lookupData.PopupTriggers.find((t: any) => t.Id === rule.TriggerId);
+            
+            if (triggerDef) {
+              const key = triggerDef.Name.replace(/\s+/g, '');
+              // Ensure the key exists in the state before updating
+              if (freshState[key]) {
+                freshState[key] = { ...freshState[key], enabled: true };
+                
+                if (key === 'PageViews') {
+                  freshState[key].pages = Number(rule.TriggerValue) || 3;
+                }
+                if (key === 'ViewingTime') {
+                  freshState[key].time = Number(rule.TriggerValue) || 30;
+                  if (rule.TriggerViewTimeScopeId) {
+                    freshState[key].scope = rule.TriggerViewTimeScopeId === 1 ? 'currentPage' : 'anyPage';
+                  }
+                }
+                if (key === 'ScrollDepth') {
+                  freshState[key].depth = Number(rule.TriggerValue) || 50;
+                }
+                if (key === 'PageClicks') {
+                  freshState[key].clicks = Number(rule.TriggerValue) || 5;
+                }
               }
             }
-            if (key === 'ScrollDepth') {
-              newTriggersState[key].depth = parseFloat(rule.TriggerValue);
-            }
-            if (key === 'PageClicks') {
-              newTriggersState[key].clicks = parseFloat(rule.TriggerValue);
-            }
-          }
-        });
-        return newTriggersState;
+          });
+        }
+        return freshState;
       });
 
       // Bind PopupFrequency
@@ -138,14 +223,27 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
         const displaySchedule = lookupData.DisplayFrequencies.find((df: any) => df.Id === freq.FrequencyTypeId)?.Name;
 
         const newDisplayFrequencyData = {
-          targetAudience: audienceTarget || 'All Visitors',
-          displaySchedule: displaySchedule || 'Once a day',
+          targetAudience: audienceTarget || '',
+          displaySchedule: displaySchedule || '',
           everyXDays: freq.FrequencyTypeId === 2 ? (freq.FrequencyValue || 0) : 0,
           everyXVisits: freq.FrequencyTypeId === 3 ? (freq.FrequencyValue || 0) : 0,
           days: freq.VisitorDays || 0,
         };
 
         setDisplayFrequencyData(newDisplayFrequencyData);
+
+        // Switch off Display Frequency if audienceTarget is undefined
+        if (!audienceTarget) {
+          setShowSections(prev => ({
+            ...prev,
+            displayFrequency: false
+          }));
+        } else {
+          setShowSections(prev => ({
+            ...prev,
+            displayFrequency: true
+          }));
+        }
       }
 
       // Bind PopupPageTargeting
@@ -159,6 +257,15 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
           };
         });
         setPageTargetingRules(newRules);
+        setShowSections(prev => ({
+          ...prev,
+          pageTargeting: true
+        }));
+      } else {
+        setShowSections(prev => ({
+          ...prev,
+          pageTargeting: false
+        }));
       }
 
       // Load advanced settings
@@ -238,12 +345,12 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
 
   const handleSummaryClick = async () => {
 
-    const anyTriggerEnabled = Object.values(triggersState).some((trigger: any) => trigger.enabled);
+    // const anyTriggerEnabled = Object.values(triggersState).some((trigger: any) => trigger.enabled);
 
-    if (!anyTriggerEnabled) {
-      showErrorToast(t('PopupTriggers.atLeastOneTrigger'));
-      return;
-    }
+    // if (!anyTriggerEnabled) {
+    //   showErrorToast(t('PopupTriggers.atLeastOneTrigger'));
+    //   return;
+    // }
 
     const popupTriggers = Object.keys(triggersState)
       .filter(key => triggersState[key].enabled)
@@ -272,13 +379,16 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
         return trigger;
       });
 
-    const popupPageTargeting = pageTargetingRules.map(rule => {
-      const conditionType = lookupData.ConditionTypes.find((c: any) => c.Name === rule.type);
-      return {
-        ConditionTypeId: conditionType.Id,
-        ConditionValue: rule.value,
-      };
-    });
+    // Only include page targeting if there are rules with valid condition values
+    const popupPageTargeting = pageTargetingRules.length > 0 ? pageTargetingRules
+      .filter(rule => rule.value && rule.value.trim() !== '') // Filter out empty or whitespace-only values
+      .map(rule => {
+        const conditionType = lookupData.ConditionTypes.find((c: any) => c.Name === rule.type);
+        return {
+          ConditionTypeId: conditionType.Id,
+          ConditionValue: rule.value,
+        };
+      }) : [];
 
     const displayFrequency = lookupData.DisplayFrequencies.find((df: any) => df.Name === displayFrequencyData.displaySchedule);
     const audienceTarget = lookupData.AudienceTargets.find((at: any) => at.Name === displayFrequencyData.targetAudience);
@@ -290,19 +400,24 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
       frequencyValue = displayFrequencyData.everyXVisits;
     }
 
-    const payload = {
+    // Build payload object conditionally
+    const payload: any = {
       WebformId: parseInt(id!, 10),
       PopupTriggers: popupTriggers,
-      PopupPageTargeting: popupPageTargeting,
       PopupFrequency: {
-        FrequencyTypeId: displayFrequency.Id,
+        FrequencyTypeId: displayFrequency?.Id || 0,
         FrequencyValue: frequencyValue,
-        AudienceTargetTypeId: audienceTarget.Id,
-        VisitorDays: displayFrequencyData.days,
+        AudienceTargetTypeId: audienceTarget?.Id || 0,
+        VisitorDays: displayFrequencyData?.days || 0,
       },
       ContinueAfterConversion: showSections.advancedSettings ? advancedSettingsData.shouldContinueShowing : false,
       ConversionTypeId: showSections.advancedSettings ? (advancedSettingsData.conversionType === 'formSubmission' ? 1 : 2) : 0,
     };
+
+    // Only add PopupPageTargeting if there are rules
+    if (popupPageTargeting.length > 0) {
+      payload.PopupPageTargeting = popupPageTargeting;
+    }
 
     setPayloadForSummary(payload);
     
@@ -372,7 +487,12 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
         onClick={() => navigate(
           fromEditor
             ? `${sitePrefix}popupeditor/${id}`
-            : `${sitePrefix}PopUpManagement`
+            : `${sitePrefix}PopUpManagement`,
+            {
+              state: returnState ? {
+                view: returnState.returnView
+              } : undefined
+            }
         )}
         className={clsx(classes.btn, classes.btnRounded, classes.backButton)}
         style={{ margin: "8px" }}
@@ -402,43 +522,69 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
   return (
     <DefaultScreen currentPage='PopupTriggers' classes={classes} containerClass={clsx(classes.management, classes.mb50)}>
       <Box className={clsx(classes.mainTitlePopupTrigger, 'topSection')} mb={4}>
-        <Title Text={t('PopupTriggers.popupTriggers.mainTitle')} classes={classes} />
+        <Box justifyContent="space-between" alignItems="center" mb={2}>
+          <Title Text={t('PopupTriggers.popupTriggers.mainTitle')} classes={classes} />
+        </Box>
         <Paper variant="outlined" className={clsx(classes.paperPopupTrigger, classes.noPadding)}>
-          <Box className={clsx(classes.topHeaderPopupTrigger, classes.p10)} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Box className={clsx(classes.topHeaderPopupTrigger, classes.p10)}>
             <div>
               <Typography variant="body1" className={clsx(classes.managementTitle, classes.sectionTitlePopupTrigger)} gutterBottom>{t("PopupTriggers.popupTriggers.title")}</Typography>
               <Typography variant="body1" className={classes.subtitlePopupTrigger}>{t("PopupTriggers.popupTriggers.subtitle")}</Typography>
             </div>
-            <PulseemSwitch switchType="ios" id="popupTriggers-toggle" checked={showSections.popupTriggers} onChange={() => setShowSections(prev => ({ ...prev, popupTriggers: !prev.popupTriggers }))} classes={classes} />
           </Box>
-          {showSections.popupTriggers && (
-            <Grid container spacing={3} className={classes.cardContainerPopupTrigger}>
-              {lookupData?.PopupTriggers && Object.keys(triggersState).length > 0 && lookupData.PopupTriggers.map((trigger: any) => {
-                const triggerKey = trigger.Name.replace(/\s+/g, '');
-                return (
-                  <Grid item xs={12} sm={6} md={4} key={trigger.Id}>
-                    <TriggerCard
-                      title={t(`PopupTriggers.popupTriggers.${triggerKey.charAt(0).toLowerCase() + triggerKey.slice(1)}.title`)}
-                      description={t(`PopupTriggers.popupTriggers.${triggerKey.charAt(0).toLowerCase() + triggerKey.slice(1)}.description`)}
-                      footer={t(`PopupTriggers.popupTriggers.${triggerKey.charAt(0).toLowerCase() + triggerKey.slice(1)}.footer`)}
-                      icon={iconMap[trigger.Name]}
-                      enabled={triggersState[triggerKey]?.enabled}
-                      onToggle={handleToggle(triggerKey)}
-                      classes={classes}
-                    >
-                      {renderTriggerSpecificFields(trigger, triggerKey)}
-                    </TriggerCard>
-                  </Grid>
-                )
-              })}
-            </Grid>
-          )}
+          <Grid container spacing={3} className={classes.cardContainerPopupTrigger}>
+            {lookupData?.PopupTriggers && Object.keys(triggersState).length > 0 && lookupData.PopupTriggers.map((trigger: any) => {
+              const triggerKey = trigger.Name.replace(/\s+/g, '');
+              return (
+                <Grid item xs={12} sm={6} md={4} key={trigger.Id}>
+                  <TriggerCard
+                    title={t(`PopupTriggers.popupTriggers.${triggerKey.charAt(0).toLowerCase() + triggerKey.slice(1)}.title`)}
+                    description={t(`PopupTriggers.popupTriggers.${triggerKey.charAt(0).toLowerCase() + triggerKey.slice(1)}.description`)}
+                    footer={t(`PopupTriggers.popupTriggers.${triggerKey.charAt(0).toLowerCase() + triggerKey.slice(1)}.footer`)}
+                    icon={iconMap[trigger.Name]}
+                    enabled={triggersState[triggerKey]?.enabled}
+                    onToggle={handleToggle(triggerKey)}
+                    classes={classes}
+                  >
+                    {renderTriggerSpecificFields(trigger, triggerKey)}
+                  </TriggerCard>
+                </Grid>
+              )
+            })}
+          </Grid>
         </Paper>
         <DisplayFrequency
           classes={classes}
           lookupData={lookupData}
           show={showSections.displayFrequency}
-          onToggle={() => setShowSections(prev => ({ ...prev, displayFrequency: !prev.displayFrequency }))}
+          onToggle={() => {
+            setShowSections(prev => {
+              const newDisplayFrequencyState = !prev.displayFrequency;
+              
+              // If disabling Display Frequency, reset the display schedule to default
+              if (!newDisplayFrequencyState) {
+                setDisplayFrequencyData(prevData => ({
+                  ...prevData,
+                  displaySchedule: '',
+                  everyXDays: 0,
+                  everyXVisits: 0,
+                  targetAudience: '',
+                  days: 0,
+                }));
+              } else {
+                setDisplayFrequencyData(prevData => ({
+                  ...prevData,
+                  displaySchedule: 'Every visit',
+                  everyXDays: 0,
+                  everyXVisits: 0,
+                  targetAudience: 'All Visitors',
+                  days: 0,
+                }));
+              }
+              
+              return { ...prev, displayFrequency: newDisplayFrequencyState };
+            });
+          }}
           data={displayFrequencyData}
           onChange={handleDisplayFrequencyChange}
         />
