@@ -42,7 +42,7 @@ import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { sitePrefix } from '../../../config';
 import { ConvertObjectToQueryString } from '../../../helpers/Utils/HtmlUtils';
 import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 interface PopUpManagementProps {
   classes: Record<string, string>;
@@ -61,6 +61,7 @@ export interface DialogType {
 const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useDispatch<any>();
   const { windowSize } = useSelector((state: any) => state.core);
   const { userRoles } = useSelector((state: any) => state.core);
@@ -113,6 +114,14 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
   };
 
   const isMobile = windowSize === 'xs' || windowSize === 'sm';
+
+  useEffect(() => {
+    const navState = location.state as { view?: 'card' | 'table' } | undefined;
+    if (navState?.view) {
+      setView(navState.view);
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
 
   useEffect(() => {
     if (searchTerm === filters.SearchTerm) {
@@ -437,7 +446,11 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
         lable: t('landingPages.popupManagement.actions.settings'),
         rootClass: classes.paddingIcon,
         onClick: () => {
-          navigate(`${sitePrefix}Popups/DisplayRules/${id}`);
+          navigate(`${sitePrefix}Popups/DisplayRules/${id}`, {
+            state: {
+              returnView: view,
+            }
+          });
         }
       },
       {

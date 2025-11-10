@@ -19,7 +19,7 @@ import {
   Refresh as RefreshIcon,
 } from "@material-ui/icons";
 import { useTranslation } from "react-i18next";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { v4 as uuidv4 } from "uuid";
 import TriggerCard from "./Components/TriggersCard";
@@ -50,6 +50,8 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
   const navigate = useNavigate();
   const queryParams = new URLSearchParams(window.location.search);
   const fromEditor = queryParams.get('from') === 'editor';
+  const location = useLocation();
+  const returnState = location.state as { returnView?: 'card' | 'table'} | undefined;
 
   const { language } = useSelector((state: any) => state.core);
   const { lookupData, loading, error, upserting, upsertSuccess, popupRules, rulesLoading } = useSelector((state: any) => state.popupTriggers);
@@ -485,7 +487,12 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
         onClick={() => navigate(
           fromEditor
             ? `${sitePrefix}popupeditor/${id}`
-            : `${sitePrefix}PopUpManagement`
+            : `${sitePrefix}PopUpManagement`,
+            {
+              state: returnState ? {
+                view: returnState.returnView
+              } : undefined
+            }
         )}
         className={clsx(classes.btn, classes.btnRounded, classes.backButton)}
         style={{ margin: "8px" }}
