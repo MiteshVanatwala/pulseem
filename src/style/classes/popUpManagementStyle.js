@@ -94,7 +94,7 @@ export const getPopUpManagementStyle = (windowSize, isRTL, theme) => ({
     position: 'relative',
     backgroundColor: '#fff',
     borderRadius: '8px',
-    overflow: 'auto',
+    overflow: 'visible',
     maxHeight: '90vh',
     minWidth: '400px',
     maxWidth: '90vw',
