@@ -807,11 +807,11 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
   }
 
   const getDeleteDialog = (data?: string | number) => ({
-    title: t('landingPages.GridButtonColumnResource1.ConfirmTitle'),
+    title: t('Popup.DeletePopupTitle'),
     showDivider: false,
     content: (
       <Typography style={{ fontSize: 18 }}>
-        {t('landingPages.GridButtonColumnResource1.ConfirmText')}
+        {t('Popup.DeletePopupDesc')}
       </Typography>
     ),
     onConfirm: async () => {
@@ -824,11 +824,11 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
   });
 
   const getDuplicateDialog = (data?: string | number) => ({
-    title: t('landingPages.dialogDuplicateTitle'),
+    title: t('Popup.DuplicatePopupTitle'),
     showDivider: false,
     content: (
       <Typography style={{ fontSize: 18 }}>
-        {t('landingPages.dialogDuplicateContent')}
+        {t('Popup.DuplicatePopupDesc')}
       </Typography>
     ),
     onConfirm: async () => {

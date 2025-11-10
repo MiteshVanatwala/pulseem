@@ -2,5 +2,9 @@
 "handleExitTitle": "צא מהחלונית",
 "confirmExit": "האם ברצונך לשמור את החלונית לפני היציאה?",
 "DeleteConfirmText": "האם אתה רוצה למחוק את החלונית?",
-"DeleteConfirmTitle": "מחק חלונית"
+"DeleteConfirmTitle": "מחק חלונית",
+"DeletePopupTitle": "מחק חלונית",
+"DeletePopup": "האם אתה רוצה למחוק את החלונית?",
+"DuplicatePopupTitle": "שכפל חלונית",
+"DuplicatePopup": "האם אתה רוצה לשכפל את החלונית?"
 }
