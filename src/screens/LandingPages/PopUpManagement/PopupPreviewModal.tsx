@@ -139,6 +139,7 @@ const PopupPreviewModal: React.FC<PopupPreviewModalProps> = ({
             position: 'absolute',
             top: '-15px',
             zIndex: 1000,
+            display: loading ? 'none' : 'flex', // Hide close button while loading
             ...(closeButtonData?.color && { color: closeButtonData.color }),
             ...(closeButtonData?.bgcolor && { backgroundColor: closeButtonData.bgcolor }),
             ...(closeButtonData?.size && {
