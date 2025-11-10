@@ -24,6 +24,12 @@ const PopupPreviewModal: React.FC<PopupPreviewModalProps> = ({
   const [html, setHtml] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [contentWidth, setContentWidth] = useState<number>(400);
+  const [closeButtonData, setCloseButtonData] = useState<{
+    color?: string;
+    bgcolor?: string;
+    size?: string;
+    position?: string;
+  } | null>(null);
   const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -85,6 +91,22 @@ const PopupPreviewModal: React.FC<PopupPreviewModalProps> = ({
       const response = await dispatch(getLandingPagePreview(popupId)) as any;
       const htmlData = response?.payload?.Data?.HtmlData || '';
       setHtml(htmlData);
+
+      const closeButtonHtml = response?.payload?.Data?.CloseButtonHtml;
+      if (closeButtonHtml) {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(closeButtonHtml, 'text/html');
+        const closeBtn = doc.getElementById('PulseemCloseButton');
+
+        if (closeBtn) {
+          setCloseButtonData({
+            color: closeBtn.getAttribute('data-color') || undefined,
+            bgcolor: closeBtn.getAttribute('data-bgcolor') || undefined,
+            size: closeBtn.getAttribute('data-Size') || undefined,
+            position: closeBtn.getAttribute('data-Position') || undefined,
+          });
+        }
+      }
     } catch (error) {
       console.error('Error loading preview:', error);
     } finally {
@@ -98,23 +120,47 @@ const PopupPreviewModal: React.FC<PopupPreviewModalProps> = ({
       onClose={onClose}
       maxWidth={false}
       PaperProps={{
-        className: classes.popupPreviewDialogPaper
+        className: classes.popupPreviewDialogPaper,
+        style: { overflow: 'visible' }
       }}
     >
       <Box
         className={classes.popupPreviewContainer}
         style={{
           width: loading ? '400px' : `${contentWidth}px`,
+          position: 'relative',
         }}
       >
         <IconButton
           onClick={onClose}
           className={classes.popupPreviewCloseButton}
           size="small"
+          style={{
+            position: 'absolute',
+            top: '-15px',
+            zIndex: 1000,
+            ...(closeButtonData?.color && { color: closeButtonData.color }),
+            ...(closeButtonData?.bgcolor && { backgroundColor: closeButtonData.bgcolor }),
+            ...(closeButtonData?.size && {
+              fontSize: `${closeButtonData.size}px`,
+              width: `${parseInt(closeButtonData.size) * 2}px`,
+              height: `${parseInt(closeButtonData.size) * 2}px`,
+            }),
+            ...(closeButtonData?.position?.toLowerCase() === 'left'
+              ? { left: '-15px', right: 'auto' }
+              : closeButtonData?.position?.toLowerCase() === 'center'
+                ? { left: '50%', top: '-15px', transform: 'translateX(-50%)' }
+                : { right: '-15px', left: 'auto' }
+            ),
+            padding: '8px',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+            borderRadius: '50%',
+          }}
         >
-          <CloseIcon />
+          <CloseIcon style={{
+            fontSize: closeButtonData?.size ? `${closeButtonData.size}px` : undefined
+          }} />
         </IconButton>
-
         {loading ? (
           <Box className={classes.popupPreviewLoaderContainer}>
             <Loader isOpen={true} showBackdrop={false} />
