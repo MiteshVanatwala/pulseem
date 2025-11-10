@@ -83,6 +83,7 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
   const [restoreArray, setRestoreArray] = useState<number[]>([]);
   const [previewPopupId, setPreviewPopupId] = useState<number | null>(null);
   const [showLoader, setShowLoader] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState({
     SearchTerm: '',
     FilterStatus: 'All',
@@ -112,6 +113,18 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
   };
 
   const isMobile = windowSize === 'xs' || windowSize === 'sm';
+
+  useEffect(() => {
+    if (searchTerm === filters.SearchTerm) {
+      return;
+    }
+
+    const debounceTimer = setTimeout(() => {
+      setFilters(prev => ({ ...prev, SearchTerm: searchTerm, PageNumber: 1 }));
+    }, 1000);
+
+    return () => clearTimeout(debounceTimer);
+  }, [searchTerm]);
 
   useEffect(() => {
     dispatch(getPerformanceStats());
@@ -197,8 +210,6 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
     </Box>
   );
 
-  const [searchTerm, setSearchTerm] = useState('');
-
   const handleSearch = () => {
     setFilters(prev => ({ ...prev, SearchTerm: searchTerm, PageNumber: 1 }));
   };
@@ -217,9 +228,6 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
               value={searchTerm}
               onChange={(e) => {
                 setSearchTerm(e.target.value);
-                if (e.target.value === '') {
-                  setFilters(prev => ({ ...prev, SearchTerm: '', PageNumber: 1 }));
-                }
               }}
               onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
               placeholder={t('landingPages.popupManagement.searchPlaceholder')}
