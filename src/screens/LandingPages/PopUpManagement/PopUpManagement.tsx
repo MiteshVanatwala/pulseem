@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
+import { debounce } from 'lodash';
 import {
   Typography,
   Grid,
@@ -115,6 +116,19 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
 
   const isMobile = windowSize === 'xs' || windowSize === 'sm';
 
+  // Create debounced search function
+  const debouncedSearch = useMemo(
+    () => debounce((term: string) => {
+      setFilters(prev => ({ ...prev, SearchTerm: term, PageNumber: 1 }));
+    }, 500),
+    []
+  );
+
+  // Immediate search function for first search or clearing
+  const immediateSearch = useCallback((term: string) => {
+    setFilters(prev => ({ ...prev, SearchTerm: term, PageNumber: 1 }));
+  }, []);
+
   useEffect(() => {
     const navState = location.state as { view?: 'card' | 'table' } | undefined;
     if (navState?.view) {
@@ -128,12 +142,27 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
       return;
     }
 
-    const debounceTimer = setTimeout(() => {
-      setFilters(prev => ({ ...prev, SearchTerm: searchTerm, PageNumber: 1 }));
-    }, 1000);
+    // Execute immediately if search term is empty (clearing search)
+    if (searchTerm === '') {
+      immediateSearch(searchTerm);
+      return;
+    }
 
-    return () => clearTimeout(debounceTimer);
-  }, [searchTerm]);
+    // Use debounced search for non-empty terms
+    debouncedSearch(searchTerm);
+
+    // Cleanup function to cancel pending debounced calls
+    return () => {
+      debouncedSearch.cancel();
+    };
+  }, [searchTerm, filters.SearchTerm, debouncedSearch, immediateSearch]);
+
+  // Cleanup debounced function on unmount
+  useEffect(() => {
+    return () => {
+      debouncedSearch.cancel();
+    };
+  }, [debouncedSearch]);
 
   useEffect(() => {
     dispatch(getPerformanceStats());
