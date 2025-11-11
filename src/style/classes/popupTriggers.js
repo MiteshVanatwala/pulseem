@@ -362,7 +362,7 @@ export const getPopupTriggersStyle = (windowSize, isRTL = false, theme) => ({
   },
   popupSummaryIcons: {
     margin: isRTL ? '0px 0px 0px 8px' : '0px 8px 0px 0px',
-    color: '#3f51b5',
+    color: '#ff3343',
     fontSize: 20,
     marginTop: 2,
   },
