@@ -56,7 +56,7 @@ const PopUpCard: React.FC<PopUpCardProps> = ({ popup, classes, setDialogType }) 
   const { t } = useTranslation();
   const dispatch = useDispatch<any>();
   const navigate = useNavigate();
-  const { userRoles } = useSelector((state: any) => state.core);
+  const { userRoles, isRTL } = useSelector((state: any) => state.core);
   const [showPreview, setShowPreview] = useState(false);
 
   const handleStatusChange = () => {
@@ -263,7 +263,7 @@ const PopUpCard: React.FC<PopUpCardProps> = ({ popup, classes, setDialogType }) 
             {popup.Name}
           </Typography>
         </Grid>
-        <Grid item xs={12} md={4} style={{ textAlign: 'right' }}>
+        <Grid item xs={12} md={4} style={{ textAlign: isRTL ? 'left' : 'right' }}>
           {renderStatusControl()}
         </Grid>
       </Grid>
