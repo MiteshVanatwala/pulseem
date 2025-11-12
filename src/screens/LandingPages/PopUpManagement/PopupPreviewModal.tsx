@@ -3,7 +3,6 @@ import { Dialog, IconButton, Box } from '@material-ui/core';
 import { Close as CloseIcon } from '@material-ui/icons';
 import { useDispatch } from 'react-redux';
 import { getLandingPagePreview } from '../../../redux/reducers/landingPagesSlice';
-import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 import { Loader } from '../../../components/Loader/Loader';
 import { actionURL } from '../../../config';
 
@@ -24,6 +23,7 @@ const PopupPreviewModal: React.FC<PopupPreviewModalProps> = ({
   const [html, setHtml] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [contentWidth, setContentWidth] = useState<number>(400);
+  const [contentHeight, setContentHeight] = useState<number>(600);
   const [closeButtonData, setCloseButtonData] = useState<{
     color?: string;
     bgcolor?: string;
@@ -31,6 +31,7 @@ const PopupPreviewModal: React.FC<PopupPreviewModalProps> = ({
     position?: string;
   } | null>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
 
   useEffect(() => {
     if (open && popupId) {
@@ -56,6 +57,33 @@ const PopupPreviewModal: React.FC<PopupPreviewModalProps> = ({
           setContentWidth(Math.min(Math.max(width, minWidth), maxWidth));
         }
       }, 100);
+    }
+  }, [loading, html]);
+
+  useEffect(() => {
+    if (!loading && html && iframeRef.current) {
+      const iframe = iframeRef.current;
+      
+      const adjustIframeHeight = () => {
+        try {
+          const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+          if (iframeDoc && iframeDoc.body) {
+            const height = iframeDoc.body.scrollHeight;
+            const maxHeight = window.innerHeight * 0.8;
+            setContentHeight(Math.min(height, maxHeight));
+          }
+        } catch (error) {
+          console.error('Error adjusting iframe height:', error);
+        }
+      };
+
+      iframe.addEventListener('load', adjustIframeHeight);
+      
+      setTimeout(adjustIframeHeight, 100);
+
+      return () => {
+        iframe.removeEventListener('load', adjustIframeHeight);
+      };
     }
   }, [loading, html]);
 
@@ -171,7 +199,19 @@ const PopupPreviewModal: React.FC<PopupPreviewModalProps> = ({
             ref={contentRef}
             className={classes.popupPreviewContent}
           >
-            {RenderHtml(html)}
+            <iframe
+              ref={iframeRef}
+              style={{
+                width: '100%',
+                height: `${contentHeight}px`,
+                border: 'none',
+                display: 'block',
+                overflow: 'auto',
+                borderRadius: '8px'
+              }}
+              title="Popup Preview"
+              srcDoc={html}
+            />
           </div>
         )}
       </Box>
