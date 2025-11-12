@@ -708,7 +708,8 @@ export const BASED_ON_LANG = {
     10: 'sk',
     11: 'pt',
     12: 'nl',
-    13: 'pl'
+    13: 'it',
+    14: 'pl'
 }
 
 export const reCAPTCHAKey = "6LeJkBorAAAAAC1q2G6fGQqIr-GuqSEF3L91AsT9";
