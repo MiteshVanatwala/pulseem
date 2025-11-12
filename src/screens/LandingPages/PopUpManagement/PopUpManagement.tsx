@@ -66,7 +66,7 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
   const dispatch = useDispatch<any>();
   const { windowSize } = useSelector((state: any) => state.core);
   const { userRoles } = useSelector((state: any) => state.core);
-
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
   const {
     stats,
     statsLoading,
@@ -165,10 +165,24 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
   }, [debouncedSearch]);
 
   useEffect(() => {
-    dispatch(getPerformanceStats());
-    dispatch(getPopupPages(filters));
-    dispatch(getDeletedPopups());
-  }, [dispatch, filters]);
+    const fetchInitialData = async () => {
+      await Promise.all([
+        dispatch(getPerformanceStats()),
+        dispatch(getPopupPages(filters)),
+        dispatch(getDeletedPopups())
+      ]);
+      setIsInitialLoad(false);
+    };
+
+    fetchInitialData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (!isInitialLoad) {
+      dispatch(getPopupPages(filters));
+    }
+  }, [dispatch, filters, isInitialLoad]);
 
   useEffect(() => {
     if (statsError) {
@@ -775,7 +789,7 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
   };
 
   const renderContent = () => {
-    if (pagesLoading) {
+    if (pagesLoading || isInitialLoad) {
       return <Loader isOpen={true} />;
     }
 
