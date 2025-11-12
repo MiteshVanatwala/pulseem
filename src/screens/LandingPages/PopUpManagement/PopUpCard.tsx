@@ -206,7 +206,7 @@ const PopUpCard: React.FC<PopUpCardProps> = ({ popup, classes, setDialogType }) 
     <Grid item xs={6} sm={3} lg={2} className={classes.statItem}>
       <Box ml={1} textAlign="center" alignItems="center" display="flex">
         {icon}
-        <Typography variant="caption" className={classes.mleft5} color="textSecondary">
+        <Typography variant="caption" className={classes.ml5} color="textSecondary">
           {title}
         </Typography>
       </Box>
