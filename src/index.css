@@ -138,3 +138,7 @@ html[data-url*="remove-my-data"] .grecaptcha-badge {
 .template-container .bee-page-container {
   background-image: none !important;
 }
+
+.popup-editor-bee .background-video-container {
+  display: none !important;
+}
