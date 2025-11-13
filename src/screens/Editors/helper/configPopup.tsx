@@ -82,7 +82,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
   return {
     uid: 'e945eb6b-249c-4dea-bee1-e4b98b8719cc', //needed for identify resources of the that user and billing stuff
     container: 'page-bee-plugin-container', //Identifies the id of div element that contains BEE Plugin
-    language: editorLanguage[languageCode], //IsRTL ? 'he-IL' : 'en-US',
+    // language: editorLanguage[languageCode], //IsRTL ? 'he-IL' : 'en-US',
     customCss: 'https://www.pulseem.co.il/Pulseem/Css/beefreeRtlFixes.css',
     trackChanges: true,
     //autosave: AUTO_SAVE_SECONDS,
@@ -90,6 +90,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
     sidebarPosition: IsRTL ? 'right' : 'left',
     loadingSpinnerTheme: 'light',
     saveRows: true,
+    language: languageCode || 'en-US',
     rowsConfiguration: {
       emptyRows: true,
       defaultRows: false,
@@ -243,7 +244,196 @@ export const BeeConfig = (Options: ConfigOptions) => {
       // console.log('onError ', errorMessage)
     },
     onLoad: (jsonFile: any) => {
-      // console.log(jsonFile);
+      console.log('BeeEditor onLoad called');
+      
+      // Apply popup-editor class to containers and iframes
+      const applyPopupEditorClass = () => {
+        console.log('Applying popup-editor class...');
+        
+        // Apply to main container
+        const container = document.getElementById('page-bee-plugin-container');
+        if (container) {
+          container.classList.add('popup-editor-bee');
+        }
+        
+        // Apply to BeeEditor containers
+        const beeContainers = document.querySelectorAll('.bee-editor, .bee-plugin-container, [class*="bee"]');
+        beeContainers.forEach(container => {
+          container.classList.add('popup-editor-bee');
+        });
+        
+        // Apply to iframe bodies (where BeeEditor actually runs)
+        const iframes = document.querySelectorAll('iframe');
+        iframes.forEach((iframe, index) => {
+          try {
+            const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+            if (iframeDoc && iframeDoc.body) {
+              iframeDoc.body.classList.add('popup-editor');
+              // Also add to html element
+              if (iframeDoc.documentElement) {
+                iframeDoc.documentElement.classList.add('popup-editor-bee');
+              }
+            }
+          } catch (error) {
+            console.log(`Cannot access iframe ${index}:`, error);
+          }
+        });
+      };
+      
+      setTimeout(applyPopupEditorClass, 100);
+      setTimeout(applyPopupEditorClass, 500);
+      setTimeout(applyPopupEditorClass, 1000);
+      
+      // Function to inject CSS into iframe and hide specific background containers
+      const hideBackgroundContainers = () => {
+        let hiddenCount = 0;
+
+        // Function to inject CSS into a document (main or iframe)
+        const injectHideCSS = (doc: Document, context: string) => {
+          // Remove existing style if present
+          const existingStyle = doc.getElementById('hide-background-containers');
+          if (existingStyle) {
+            existingStyle.remove();
+          }
+
+          const style = doc.createElement('style');
+          style.id = 'hide-background-containers';
+          style.innerHTML = `
+            /* Hide background containers in popup editor */
+            .popup-editor-bee .background-video-container,
+            .background-video-container {
+              display: none !important;
+              visibility: hidden !important;
+              opacity: 0 !important;
+              height: 0 !important;
+              max-height: 0 !important;
+              overflow: hidden !important;
+              margin: 0 !important;
+              padding: 0 !important;
+            }
+            
+            /* Additional selectors for popup editor context */
+            .popup-editor-bee [class*="background-video-container"],
+            .popup-editor-bee div.background-video-container,
+            [class*="background-video-container"],
+            div.background-video-container {
+              display: none !important;
+            }
+            
+            /* Target row properties panel in popup editor */
+            .popup-editor-bee .bee-row-properties .background-video-container  {
+              display: none !important;
+            }
+          `;
+          
+          doc.head.appendChild(style);
+          console.log(`CSS injected into ${context}`);
+        };
+
+        // Inject CSS into main document
+        injectHideCSS(document, 'main document');
+
+        // Find and inject CSS into all iframes (BeeEditor runs in iframe)
+        const iframes = document.querySelectorAll('iframe');
+        
+        iframes.forEach((iframe, index) => {
+          try {
+            // Check if iframe is accessible (same origin)
+            const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+            if (iframeDoc) {
+              injectHideCSS(iframeDoc, `iframe ${index}`);
+              
+              // Also directly hide elements if they exist
+              const bgVideoContainers = iframeDoc.querySelectorAll('.background-video-container');
+              const bgImageContainers = iframeDoc.querySelectorAll('.background-image-container');
+              
+              bgVideoContainers.forEach(el => {
+                (el as HTMLElement).style.display = 'none';
+                hiddenCount++;
+              });
+              
+              bgImageContainers.forEach(el => {
+                (el as HTMLElement).style.display = 'none';
+                hiddenCount++;
+              });
+            }
+          } catch (error) {
+            console.log(`Cannot access iframe ${index}:`, error);
+          }
+        });
+
+        // Also hide in main document if they exist
+        const mainBgVideoContainers = document.querySelectorAll('.background-video-container');
+        
+        mainBgVideoContainers.forEach(el => {
+          (el as HTMLElement).style.display = 'none';
+          hiddenCount++;
+        });
+        return hiddenCount;
+      };
+
+      // Run immediately after a short delay
+      setTimeout(() => {
+        hideBackgroundContainers();
+      }, 100);
+
+      // Run multiple times to catch dynamically loaded content
+      setTimeout(() => {
+        hideBackgroundContainers();
+      }, 500);
+
+      setTimeout(() => {
+        hideBackgroundContainers();
+      }, 1000);
+
+      setTimeout(() => {
+        hideBackgroundContainers();
+      }, 2000);
+
+      setTimeout(() => {
+        hideBackgroundContainers();
+      }, 3000);
+
+      // Set up mutation observer to detect new iframes or content
+      const observer = new MutationObserver((mutations) => {
+        let shouldRun = false;
+        
+        mutations.forEach(mutation => {
+          if (mutation.addedNodes.length > 0) {
+            mutation.addedNodes.forEach(node => {
+              if (node.nodeType === Node.ELEMENT_NODE) {
+                const element = node as Element;
+                // Check if new iframe was added or if background containers were added
+                if (element.tagName === 'IFRAME' || 
+                    element.querySelector('iframe') || 
+                    element.classList.contains('background-video-container')) {
+                  shouldRun = true;
+                }
+              }
+            });
+          }
+        });
+        
+        if (shouldRun) {
+          setTimeout(hideBackgroundContainers, 100);
+        }
+      });
+
+      // Observe the entire document
+      observer.observe(document.body, {
+        childList: true,
+        subtree: true
+      });
+
+      // Run periodically as fallback
+      const intervalId = setInterval(() => {
+        hideBackgroundContainers();
+      }, 2000);
+
+      // Clean up after 60 seconds
+      setTimeout(() => {
+        clearInterval(intervalId);
+      }, 60000);
     },
     onAutoSave: () => moduleType === BEE_EDITOR_TYPES.CAMPAIGN ? AutoSave() : {},
     onChange: (jsonFile: any, response: any) => {

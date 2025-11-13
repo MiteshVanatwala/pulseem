@@ -328,7 +328,7 @@ const DisplayFrequency: React.FC<Props> = ({ classes, lookupData, show, onToggle
                                                                         fontSize: isMobile ? '0.875rem' : 'inherit',
                                                                     }}
                                                                 >
-                                                                    {t('PopupTriggers.displayFrequency.displaySchedule.everyXDays.suffix')}
+                                                                    {t('PopupTriggers.summary.visits')}
                                                                 </Typography>
                                                             </div>
                                                         )}

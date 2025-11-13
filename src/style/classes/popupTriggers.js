@@ -179,10 +179,11 @@ export const getPopupTriggersStyle = (windowSize, isRTL = false, theme) => ({
     color: theme.palette.grey[400],
   },
   breakText: {
-        whiteSpace: 'normal',
-        overflow: 'hidden',
-        textOverflow: 'ellipsis',
-        wordBreak: 'break-word',
+    whiteSpace: 'normal',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    wordBreak: 'break-word',
+    textAlign: 'center'
   },
   // page targeting
   pageTargetingResponsiveContainer: {
@@ -360,8 +361,8 @@ export const getPopupTriggersStyle = (windowSize, isRTL = false, theme) => ({
     padding: 8,
   },
   popupSummaryIcons: {
-    margin: isRTL ? '0px 0px 0px 8px': '0px 8px 0px 0px',
-    color: '#3f51b5',
+    margin: isRTL ? '0px 0px 0px 8px' : '0px 8px 0px 0px',
+    color: '#ff3343',
     fontSize: 20,
     marginTop: 2,
   },

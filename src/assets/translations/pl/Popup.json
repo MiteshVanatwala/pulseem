@@ -2,5 +2,9 @@
 	"handleExitTitle": "Opuść okienko",
 	"confirmExit": "Czy chcesz zapisać okienko przed wyjściem?",
 	"DeleteConfirmText": "Czy chcesz usunąć okienko?",
-	"DeleteConfirmTitle": "Usuń okienko"
+	"DeleteConfirmTitle": "Usuń okienko",
+	"DeletePopupTitle": "Usuń okienko",
+	"DeletePopup": "Czy chcesz usunąć okienko?",
+	"DuplicatePopupTitle": "Duplikuj okienko",
+	"DuplicatePopup": "Czy chcesz skopiować okienko?"
 }

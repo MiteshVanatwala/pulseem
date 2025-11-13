@@ -43,3 +43,7 @@
 .MuiSwitch-track {
   height: 94% !important;
 }
+
+.background-video-container {
+  display: none !important;
+}

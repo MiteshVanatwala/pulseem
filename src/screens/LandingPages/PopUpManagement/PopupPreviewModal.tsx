@@ -3,7 +3,6 @@ import { Dialog, IconButton, Box } from '@material-ui/core';
 import { Close as CloseIcon } from '@material-ui/icons';
 import { useDispatch } from 'react-redux';
 import { getLandingPagePreview } from '../../../redux/reducers/landingPagesSlice';
-import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 import { Loader } from '../../../components/Loader/Loader';
 import { actionURL } from '../../../config';
 
@@ -24,7 +23,15 @@ const PopupPreviewModal: React.FC<PopupPreviewModalProps> = ({
   const [html, setHtml] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [contentWidth, setContentWidth] = useState<number>(400);
+  const [contentHeight, setContentHeight] = useState<number>(600);
+  const [closeButtonData, setCloseButtonData] = useState<{
+    color?: string;
+    bgcolor?: string;
+    size?: string;
+    position?: string;
+  } | null>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
 
   useEffect(() => {
     if (open && popupId) {
@@ -50,6 +57,33 @@ const PopupPreviewModal: React.FC<PopupPreviewModalProps> = ({
           setContentWidth(Math.min(Math.max(width, minWidth), maxWidth));
         }
       }, 100);
+    }
+  }, [loading, html]);
+
+  useEffect(() => {
+    if (!loading && html && iframeRef.current) {
+      const iframe = iframeRef.current;
+      
+      const adjustIframeHeight = () => {
+        try {
+          const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+          if (iframeDoc && iframeDoc.body) {
+            const height = iframeDoc.body.scrollHeight;
+            const maxHeight = window.innerHeight * 0.8;
+            setContentHeight(Math.min(height, maxHeight));
+          }
+        } catch (error) {
+          console.error('Error adjusting iframe height:', error);
+        }
+      };
+
+      iframe.addEventListener('load', adjustIframeHeight);
+      
+      setTimeout(adjustIframeHeight, 100);
+
+      return () => {
+        iframe.removeEventListener('load', adjustIframeHeight);
+      };
     }
   }, [loading, html]);
 
@@ -85,6 +119,22 @@ const PopupPreviewModal: React.FC<PopupPreviewModalProps> = ({
       const response = await dispatch(getLandingPagePreview(popupId)) as any;
       const htmlData = response?.payload?.Data?.HtmlData || '';
       setHtml(htmlData);
+
+      const closeButtonHtml = response?.payload?.Data?.CloseButtonHtml;
+      if (closeButtonHtml) {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(closeButtonHtml, 'text/html');
+        const closeBtn = doc.getElementById('PulseemCloseButton');
+
+        if (closeBtn) {
+          setCloseButtonData({
+            color: closeBtn.getAttribute('data-color') || undefined,
+            bgcolor: closeBtn.getAttribute('data-bgcolor') || undefined,
+            size: closeBtn.getAttribute('data-Size') || undefined,
+            position: closeBtn.getAttribute('data-Position') || undefined,
+          });
+        }
+      }
     } catch (error) {
       console.error('Error loading preview:', error);
     } finally {
@@ -98,23 +148,48 @@ const PopupPreviewModal: React.FC<PopupPreviewModalProps> = ({
       onClose={onClose}
       maxWidth={false}
       PaperProps={{
-        className: classes.popupPreviewDialogPaper
+        className: classes.popupPreviewDialogPaper,
+        style: { overflow: 'visible' }
       }}
     >
       <Box
         className={classes.popupPreviewContainer}
         style={{
           width: loading ? '400px' : `${contentWidth}px`,
+          position: 'relative',
         }}
       >
         <IconButton
           onClick={onClose}
           className={classes.popupPreviewCloseButton}
           size="small"
+          style={{
+            position: 'absolute',
+            top: '-15px',
+            zIndex: 1000,
+            display: loading ? 'none' : 'flex', // Hide close button while loading
+            ...(closeButtonData?.color && { color: closeButtonData.color }),
+            ...(closeButtonData?.bgcolor && { backgroundColor: closeButtonData.bgcolor }),
+            ...(closeButtonData?.size && {
+              fontSize: `${closeButtonData.size}px`,
+              width: `${parseInt(closeButtonData.size) * 2}px`,
+              height: `${parseInt(closeButtonData.size) * 2}px`,
+            }),
+            ...(closeButtonData?.position?.toLowerCase() === 'left'
+              ? { left: '-15px', right: 'auto' }
+              : closeButtonData?.position?.toLowerCase() === 'center'
+                ? { left: '50%', top: '-15px', transform: 'translateX(-50%)' }
+                : { right: '-15px', left: 'auto' }
+            ),
+            padding: '8px',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+            borderRadius: '50%',
+          }}
         >
-          <CloseIcon />
+          <CloseIcon style={{
+            fontSize: closeButtonData?.size ? `${closeButtonData.size}px` : undefined
+          }} />
         </IconButton>
-
         {loading ? (
           <Box className={classes.popupPreviewLoaderContainer}>
             <Loader isOpen={true} showBackdrop={false} />
@@ -124,7 +199,19 @@ const PopupPreviewModal: React.FC<PopupPreviewModalProps> = ({
             ref={contentRef}
             className={classes.popupPreviewContent}
           >
-            {RenderHtml(html)}
+            <iframe
+              ref={iframeRef}
+              style={{
+                width: '100%',
+                height: `${contentHeight}px`,
+                border: 'none',
+                display: 'block',
+                overflow: 'auto',
+                borderRadius: '8px'
+              }}
+              title="Popup Preview"
+              srcDoc={html}
+            />
           </div>
         )}
       </Box>
