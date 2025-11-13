@@ -4746,5 +4746,86 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   tierPlansContent: {
     padding: '24px',
     maxHeight: '60vh'
-  }
+  },
+  // Email Marketing Slider Styles
+  emailMarketingSliderContainer: {
+    padding: 24,
+    maxWidth: 1200
+  },
+  sliderContainer: {
+    position: 'relative',
+    marginBottom: '48px',
+  },
+  sliderLabelsWrapper: {
+    position: 'relative',
+  },
+  sliderLabelsContainer: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    position: 'relative',
+  },
+  sliderLabel: {
+    cursor: 'pointer',
+    position: 'absolute',
+    transform: 'translateX(-50%)',
+    transition: 'all 0.2s ease',
+  },
+  sliderLabelText: {
+    fontSize: '14px',
+    color: '#999',
+    whiteSpace: 'nowrap',
+    transform: 'scale(1)',
+    transition: 'all 0.3s ease',
+  },
+  sliderLabelActive: {
+    fontSize: '16px !important',
+    color: '#333 !important',
+    transform: 'scale(1.1) !important',
+  },
+  sliderTrackWrapper: {
+    position: 'relative',
+    paddingTop: '40px',
+  },
+  sliderTrack: {
+    position: 'relative',
+    height: '6px',
+    backgroundColor: '#e0e0e0',
+    borderRadius: '3px',
+  },
+  sliderTrackFilled: {
+    position: 'absolute',
+    height: '6px',
+    background: 'linear-gradient(-45deg, #ff0076, #ff4d2a)',
+    borderRadius: '3px',
+    transition: 'width 0.3s ease-out',
+    left: 0,
+  },
+  sliderTrackFilledRTL: {
+    left: 'auto',
+    right: 0,
+  },
+  sliderThumb: {
+    position: 'absolute',
+    top: '50%',
+    width: '24px',
+    height: '24px',
+    backgroundColor: '#ff4d2a',
+    borderRadius: '50%',
+    transform: 'translate(-50%, -50%)',
+    boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+    transition: 'all 0.3s ease-out',
+    pointerEvents: 'none',
+  },
+  sliderInput: {
+    position: 'absolute',
+    top: 0,
+    width: '100%',
+    height: '100%',
+    opacity: 0,
+    cursor: 'pointer',
+    zIndex: 10,
+    WebkitAppearance: 'none',
+    appearance: 'none',
+  },
 });

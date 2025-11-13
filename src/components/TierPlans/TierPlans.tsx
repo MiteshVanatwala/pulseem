@@ -44,8 +44,9 @@ import TranzilaIframe from '../Balance/PaymentWizard/Dialogs/TranzilaIframe';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 import { Loader } from '../Loader/Loader';
 import { MdAdd } from 'react-icons/md';
+import EmailMarketingSlider from '../EmailPlans/EmailMarketingSlider';
 
-const TierPlans = ({ classes, isOpen, onClose }: any) => {
+const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false  }: any) => {
   const { t, i18n } = useTranslation();
   const dispatch = useDispatch();
   const [activeStep, setActiveStep] = useState(0);
@@ -829,6 +830,16 @@ const TierPlans = ({ classes, isOpen, onClose }: any) => {
   };
 
   const getStepContent = (step: number) => {
+    if (isEmailMarketing && step === 0) {
+      return (
+        <Box>
+          <EmailMarketingSlider classes={classes} />
+          <Box className={classes.mt20}>
+            {renderPlanSelection()}
+          </Box>
+        </Box>
+      );
+    }
     switch (step) {
       case 0:
         return renderPlanSelection();

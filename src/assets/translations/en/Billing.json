@@ -301,5 +301,7 @@
     "AI_LANDING_PAGE_DESIGNER": "AI Landing Page Designer",
     "RCS_MESSAGING": "RCS Messaging",
     "KOSHER_SEND": "Kosher Send"
-  }
+  },
+  "EmailMarketing": "Email Marketing",
+  "EmailMarketingDescription": "Pay a monthly fee based on your recipient list size. Ideal for frequent senders"
 }
