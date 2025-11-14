@@ -1403,7 +1403,7 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
         message={dialog}
       />
       <Box className={classes.containerFullHeight}>
-        <div id="page-bee-plugin-container" className={classes.containerFullHeight}></div>
+        <div id="page-bee-plugin-container-popup" className={classes.containerFullHeight}></div>
       </Box>
       <DemoModal modals={modals} />
       <WizardActions
