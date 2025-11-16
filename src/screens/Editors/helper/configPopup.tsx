@@ -81,9 +81,9 @@ export const BeeConfig = (Options: ConfigOptions) => {
 
   return {
     uid: 'e945eb6b-249c-4dea-bee1-e4b98b8719cc', //needed for identify resources of the that user and billing stuff
-    container: 'page-bee-plugin-container', //Identifies the id of div element that contains BEE Plugin
+    container: 'page-bee-plugin-container-popup', //Identifies the id of div element that contains BEE Plugin
     // language: editorLanguage[languageCode], //IsRTL ? 'he-IL' : 'en-US',
-    customCss: 'https://www.pulseem.co.il/Pulseem/Css/beefreeRtlFixes.css',
+    customCss: 'https://www.pulseem.co.il/Pulseem/Css/beefreeRtlFixesPopup.css',
     trackChanges: true,
     //autosave: AUTO_SAVE_SECONDS,
     loadingSpinnerDisableOnSave: true,
@@ -244,12 +244,8 @@ export const BeeConfig = (Options: ConfigOptions) => {
       // console.log('onError ', errorMessage)
     },
     onLoad: (jsonFile: any) => {
-      console.log('BeeEditor onLoad called');
-      
       // Apply popup-editor class to containers and iframes
       const applyPopupEditorClass = () => {
-        console.log('Applying popup-editor class...');
-        
         // Apply to main container
         const container = document.getElementById('page-bee-plugin-container');
         if (container) {
@@ -275,7 +271,6 @@ export const BeeConfig = (Options: ConfigOptions) => {
               }
             }
           } catch (error) {
-            console.log(`Cannot access iframe ${index}:`, error);
           }
         });
       };
@@ -327,7 +322,6 @@ export const BeeConfig = (Options: ConfigOptions) => {
           `;
           
           doc.head.appendChild(style);
-          console.log(`CSS injected into ${context}`);
         };
 
         // Inject CSS into main document
@@ -358,7 +352,6 @@ export const BeeConfig = (Options: ConfigOptions) => {
               });
             }
           } catch (error) {
-            console.log(`Cannot access iframe ${index}:`, error);
           }
         });
 
