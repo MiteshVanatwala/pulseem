@@ -4582,7 +4582,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   polishSubscribeGreyBox: {
     background: grey[100],
-    borderRadius: 5,  
+    borderRadius: 5,
   },
   tierPlansDialog: {
     '& .MuiPaper-root': {
@@ -4593,48 +4593,58 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     height: '100%',
     display: 'flex',
     flexDirection: 'column',
-    border: '1px solid #e0e0e0',
+    border: '1px solid #e2e8f0',
     borderRadius: '12px',
-    padding: '16px',
+    padding: '16px 22px',
     textAlign: 'center',
   },
   tierPlansPopularCard: {
-    border: '2px solid #e53935',
+    border: '2px solid #ff4d2a',
     position: 'relative',
   },
   tierPlansPopularBadge: {
     position: 'absolute',
-    top: 0,
-    left: '30%',
+    top: '-12px',
+    left: '35%',
     transform: 'translateX(-15%)',
-    backgroundColor: '#e53935',
+    background: 'linear-gradient(-45deg, #ff0076, #ff4d2a)',
     color: 'white',
-    padding: '4px 12px',
-    borderBottomLeftRadius: '12px',
-    borderBottomRightRadius: '12px',
+    padding: '8px 48px 12px 8px',
+    width: '20%',
+    borderRadius: '12px',
     fontWeight: 'bold',
     fontSize: '0.8rem',
-    lineHeight: '1.2'
+    lineHeight: '1.2',
+    textAlign: 'left'
   },
   tierPlansCardContent: {
     textAlign: 'center',
     padding: '16px 0 !important',
-    paddingBottom: '30px !important'
+    paddingBottom: '16px !important'
+  },
+  tierPlansConstSmallText: {
+    fontSize: '0.9rem',
+    color: '#71809C',
+    textAlign: 'center',
+    lineHeight: '1.4',
+    marginTop: '75%'
   },
   tierPlansTitle: {
     fontWeight: 'bold',
     fontSize: '1.5rem',
     marginBottom: '8px',
+    textTransform: 'uppercase'
   },
   tierPlansDescription: {
     color: '#6c757d',
-    marginBottom: '16px',
+    // marginBottom: '16px',
+    padding: '0px 18px'
   },
   tierPlansPriceContainer: {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'baseline',
-    marginBottom: '8px',
+    // marginBottom: '8px',
     minHeight: '70px',
   },
   tierPlansPrice: {
@@ -4654,20 +4664,15 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   tierPlansButton: {
     marginTop: 'auto',
-    borderRadius: '20px',
-    padding: '10px 20px',
+    borderRadius: '12px',
+    padding: '5px 12px',
     fontWeight: 'bold',
   },
-  tierPlansEngageButton: {
-    backgroundColor: '#e53935',
-    color: 'white',
-    '&:hover': {
-      backgroundColor: '#c62828',
-    },
-  },
   tierPlansDefaultButton: {
-    borderColor: '#e53935',
-    color: '#e53935',
+    color: '#fff',
+    background: "linear-gradient(-45deg, #ff0076, #ff4d2a)",
+    fontSize: '1.2rem',
+    borderRadius: '12px'
   },
   tierPlansFeatureList: {
     padding: 0,
@@ -4737,24 +4742,37 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     padding: '24px 0',
     height: '120px',
     '& .MuiStepIcon-root.MuiStepIcon-active': {
-        color: '#e53935'
+      color: '#e53935'
     },
     '& .MuiStepIcon-root.MuiStepIcon-completed': {
-        color: '#e53935'
+      color: '#e53935'
     }
   },
   tierPlansContent: {
     padding: '24px',
-    maxHeight: '60vh'
+    maxHeight: '60vh',
+    maxWidth: '1068px'
+  },
+  tierPlanFooter: {
+    background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
+    textAlign: 'center',
+    padding: '20px',
+    borderRadius: 12,
+    marginTop: 64
   },
   // Email Marketing Slider Styles
   emailMarketingSliderContainer: {
     padding: 24,
-    maxWidth: 1200
+    maxWidth: 1200,
+    background: '#fff',
+    border: '1px solid #e2e8f0',
+    borderRadius: 12,
+    boxShadow: '0 2px 12px rgba(0, 0, 0, .06)'
   },
   sliderContainer: {
     position: 'relative',
     marginBottom: '48px',
+    padding: '0px 8px'
   },
   sliderLabelsWrapper: {
     position: 'relative',
@@ -4778,11 +4796,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     transform: 'scale(1)',
     transition: 'all 0.3s ease',
   },
-  sliderLabelActive: {
-    fontSize: '16px !important',
-    color: '#333 !important',
-    transform: 'scale(1.1) !important',
-  },
+  // sliderLabelActive: {
+  //   fontSize: '16px !important',
+  //   color: '#333 !important',
+  //   transform: 'scale(1.1) !important',
+  // },
   sliderTrackWrapper: {
     position: 'relative',
     paddingTop: '40px',
@@ -4808,8 +4826,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   sliderThumb: {
     position: 'absolute',
     top: '50%',
-    width: '24px',
-    height: '24px',
+    width: '20px',
+    height: '20px',
     backgroundColor: '#ff4d2a',
     borderRadius: '50%',
     transform: 'translate(-50%, -50%)',
@@ -4828,4 +4846,63 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     WebkitAppearance: 'none',
     appearance: 'none',
   },
+  sliderArrowLeft: {
+    position: 'absolute',
+    // top: '50%',
+    transform: 'translateY(-40%)',
+    left: '-24px', // Half of the button width to align at edge
+    width: '24px',
+    height: '24px',
+    borderRadius: '50%',
+    backgroundColor: '#ff4757',
+    color: 'white !important',
+    zIndex: 10,
+    padding: 0,
+    minWidth: 'unset',
+    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+    '&:hover': {
+      backgroundColor: '#e63946',
+      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.15)',
+    },
+    '& svg': {
+      fontSize: '18px',
+      color: 'white',
+    },
+  },
+  sliderArrowRight: {
+    position: 'absolute',
+    // top: '55%',
+    transform: 'translateY(-65%)',
+    right: '-24px',
+    width: '24px',
+    height: '24px',
+    borderRadius: '50%',
+    backgroundColor: '#ff4757',
+    color: 'white !important',
+    zIndex: 10,
+    padding: 0,
+    minWidth: 'unset',
+    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+    '&:hover': {
+      backgroundColor: '#e63946',
+      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.15)',
+    },
+    '& svg': {
+      fontSize: '18px',
+      color: 'white',
+    },
+  },
+  tierPlanIconCont: {
+    width: '18px',
+    height: '18px',
+    borderRadius: '50%',
+    background: '#ff8995',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    '& svg': {
+      color: '#fff',
+      fontSize: '14px'
+    }
+  }
 });

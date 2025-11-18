@@ -1,28 +1,57 @@
-import React, { useState } from 'react';
-import { Box, Typography } from '@material-ui/core';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Box, Typography, IconButton } from '@material-ui/core';
+import { ChevronLeft, ChevronRight } from '@material-ui/icons';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import clsx from 'clsx';
+import _ from 'lodash';
+import { getEmailPerRecipientsTierScaling } from '../../redux/reducers/emailTierScalingSlice';
 
 const EmailMarketingSlider = ({ classes }: any) => {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
   const { isRTL } = useSelector((state: any) => state.core);
-  
-  const tiers = [
-    { label: '100', value: 0 },
-    { label: '500', value: 1 },
-    { label: '1K', value: 2 },
-    { label: '2.5K', value: 3 },
-    { label: '5K', value: 4 },
-    { label: '10K', value: 5 },
-    { label: '20K', value: 6 },
-    { label: '50K', value: 7 },
-    { label: '100K', value: 8 },
-    { label: '200K', value: 9 },
-    { label: '200K+', value: 10 }
-  ];
+  const { currencyId } = useSelector((state: any) => state.common);
+  const { tiers: apiTiers, loading } = useSelector((state: any) => state.emailTierScaling);
 
   const [sliderValue, setSliderValue] = useState(0);
+
+  useEffect(() => {
+    if (currencyId) {
+      dispatch(getEmailPerRecipientsTierScaling(currencyId) as any);
+    }
+  }, [dispatch, currencyId]);
+
+  const uniqueTierRanges = useMemo(() => {
+    if (!apiTiers || apiTiers.length === 0) return [];
+    return _.uniqBy(apiTiers, 'LevelHigh');
+  }, [apiTiers]);
+
+  const tiers = useMemo(() => {
+    if (uniqueTierRanges.length === 0) return [];
+    
+    return uniqueTierRanges.map((tier: any, index: number) => {
+      const levelHigh = tier.LevelHigh;
+      let label = '';
+      
+      if (levelHigh >= 1000) {
+        label = `${levelHigh / 1000}K`;
+      } else {
+        label = `${levelHigh}`;
+      }
+      
+      // Add '+' for the last tier
+      if (index === uniqueTierRanges.length - 1) {
+        label = `${label}+`;
+      }
+      
+      return {
+        label,
+        value: index,
+        tierData: tier
+      };
+    });
+  }, [uniqueTierRanges]);
 
   const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSliderValue(parseInt(e.target.value));
@@ -32,60 +61,53 @@ const EmailMarketingSlider = ({ classes }: any) => {
     setSliderValue(value);
   };
 
-  // Calculate position based on RTL
+  const handlePrevious = () => {
+    if (sliderValue > 0) {
+      setSliderValue(sliderValue - 1);
+    }
+  };
+
+  const handleNext = () => {
+    if (sliderValue < tiers.length - 1) {
+      setSliderValue(sliderValue + 1);
+    }
+  };
+
   const getPosition = (index: number) => {
+    if (tiers.length === 0) return 0;
     const position = (index / (tiers.length - 1)) * 100;
     return isRTL ? 100 - position : position;
   };
 
+  if (loading || tiers.length === 0) {
+    return null;
+  }
+
   return (
     <Box className={clsx(classes.emailMarketingSliderContainer)}>
       {/* Header */}
-      <Box className={clsx(classes.textCenter, classes.mb10)}>
-        <Typography variant="h4" className={clsx(classes.bold, classes.mb5)}>
-          {t('billing.EmailMarketing')}
+      <Box sx={{alignItems: 'center', display: 'flex'}}>
+        <Typography variant="h6" className={clsx(classes.bold)}>
+            {t('billing.EmailMarketingList')}
         </Typography>
-        <Typography variant="body1" color="textSecondary" className={clsx(classes.mb50)}>
-          {t('billing.EmailMarketingDescription')}
+        <Typography variant="body1" className={clsx(classes.marginSides5)}>
+          {t('billing.EmailMarketingListSending')}
         </Typography>
       </Box>
 
-      {/* Slider Container */}
       <Box className={classes.sliderContainer}>
-        {/* Tier Labels */}
-        <Box className={classes.sliderLabelsWrapper}>
-          <Box className={classes.sliderLabelsContainer}>
-            {tiers.map((tier, index) => {
-              const position = getPosition(index);
-              const isActive = sliderValue === tier.value;
-              return (
-                <Box
-                  key={tier.label}
-                  onClick={() => handleTierClick(tier.value)}
-                  className={classes.sliderLabel}
-                  style={{ left: `${position}%` }}
-                >
-                  <Typography
-                    variant="body2"
-                    className={clsx(
-                      classes.bold,
-                      classes.sliderLabelText,
-                      { [classes.sliderLabelActive]: isActive }
-                    )}
-                  >
-                    {tier.label}
-                  </Typography>
-                </Box>
-              );
-            })}
-          </Box>
-        </Box>
+       
 
-        {/* Slider Track Container */}
         <Box className={classes.sliderTrackWrapper}>
-          {/* Slider Track */}
+          <IconButton
+            onClick={handlePrevious}
+            className={classes.sliderArrowLeft}
+            aria-label="decrease tier"
+          >
+            <ChevronLeft />
+          </IconButton>
+
           <Box className={classes.sliderTrack}>
-            {/* Filled Track */}
             <Box
               className={clsx(
                 classes.sliderTrackFilled,
@@ -119,6 +141,43 @@ const EmailMarketingSlider = ({ classes }: any) => {
             className={classes.sliderInput}
             style={{ direction: isRTL ? 'rtl' : 'ltr' }}
           />
+
+          {/* Right Arrow - Increase */}
+          <IconButton
+            onClick={handleNext}
+            className={classes.sliderArrowRight}
+            aria-label="increase tier"
+          >
+            <ChevronRight />
+          </IconButton>
+        </Box>
+         {/* Tier Labels */}
+        <Box className={classes.sliderLabelsWrapper}>
+          <Box className={clsx(classes.sliderLabelsContainer, classes.mt20)}>
+            {tiers.map((tier, index) => {
+              const position = getPosition(index);
+              const isActive = sliderValue === tier.value;
+              return (
+                <Box
+                  key={tier.label}
+                  onClick={() => handleTierClick(tier.value)}
+                  className={classes.sliderLabel}
+                  style={{ left: `${position}%` }}
+                >
+                  <Typography
+                    variant="body2"
+                    className={clsx(
+                      classes.bold,
+                      classes.sliderLabelText,
+                      // { [classes.sliderLabelActive]: isActive }
+                    )}
+                  >
+                    {tier.label}
+                  </Typography>
+                </Box>
+              );
+            })}
+          </Box>
         </Box>
       </Box>
     </Box>

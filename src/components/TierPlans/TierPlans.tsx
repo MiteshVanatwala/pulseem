@@ -248,7 +248,7 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false  }: any)
                     }
                     <Typography className={classes.tierPlansPrice} style={{ fontSize: plan.Id === 4 || plan.Id === 1 ? '1.3rem': '', paddingTop: plan.Id === 4 || plan.Id === 1 ? '15px' : '' }}>
                       {plan.Id === 1 ? t('billing.tier.free') : ''}
-                      {plan.Id === 4 ? t('billing.tier.contactSales') : ''}
+                      {plan.Id === 4 ? <span style={{fontSize: '2rem'}}>{t('billing.tier.contactSales')}</span> : ''}
                       {plan.Id !== 1 && plan.Id !== 4 && plan.Price > 0 ? plan.Price : ''}
                     </Typography>
                     {
@@ -271,7 +271,7 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false  }: any)
                   <Button
                     variant={uiConfig.buttonVariant as "outlined" | "contained"}
                     color="primary"
-                    className={clsx(classes.tierPlansButton, { [classes.tierPlansEngageButton]: plan.isRecommended || uiConfig.isPopular, [classes.tierPlansDefaultButton]: !plan.isRecommended && !uiConfig.isPopular })}
+                    className={clsx(classes.tierPlansButton, classes.tierPlansDefaultButton)}
                     onClick={() => handlePlanSelect(plan, uiConfig)}
                     disabled={plan.isCurrentPlan}
                   >
@@ -282,7 +282,7 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false  }: any)
                   {
                     uiConfig.features[0] !== '' && (
                       <ListItem key={0} className={classes.tierPlansFeatureItem}>
-                        <div style={{ fontWeight: 700 }}>
+                        <div style={{ fontWeight: 700,  color: '#059669' }}>
                           {t(uiConfig.features[0])}
                         </div>
                       </ListItem>
@@ -291,20 +291,30 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false  }: any)
                   {plan.features && plan.features.length > 0 ? plan.features.map((feature: any, fIndex: any) => (
                     <ListItem key={fIndex} className={classes.tierPlansFeatureItem}>
                       <ListItemIcon style={{ minWidth: '30px' }}>
-                        <CheckIcon style={{ color: '#5cb85c' }} />
+                        <Box className={classes.tierPlanIconCont}>
+                          <CheckIcon />
+                        </Box>
                       </ListItemIcon>
                       <ListItemText primary={feature} />
                     </ListItem>
                   )) : uiConfig.features.slice(1).map((feature, fIndex) => (
                     <ListItem key={fIndex} className={classes.tierPlansFeatureItem}>
                       <ListItemIcon style={{ minWidth: '30px' }}>
-                        <CheckIcon style={{ color: '#5cb85c' }} />
+                        <Box className={classes.tierPlanIconCont}>
+                          <CheckIcon />
+                        </Box>
                       </ListItemIcon>
                       <ListItemText primary={t(feature)} />
                     </ListItem>
                   ))}
                 </List>
+                {plan.Id === 1 && 
+                  <Typography className={classes.tierPlansConstSmallText}>
+                   { t('billing.tier.ui.costBasedOnUse')}
+                  </Typography>
+                }
               </Box>
+              
             </Grid>
           );
         }) : TIER_PLANS.map((plan, index) => (
@@ -349,7 +359,7 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false  }: any)
                 <Button
                   variant={plan.buttonVariant as "outlined" | "contained"}
                   color="primary"
-                  className={clsx(classes.tierPlansButton, { [classes.tierPlansEngageButton]: plan.isPopular, [classes.tierPlansDefaultButton]: !plan.isPopular })}
+                  className={clsx(classes.tierPlansButton, classes.tierPlansDefaultButton)}
                   onClick={() => handlePlanSelect(plan, plan)}
                 >
                   {t(plan.buttonText)}
@@ -834,9 +844,22 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false  }: any)
       return (
         <Box>
           <EmailMarketingSlider classes={classes} />
+          <Box sx={{alignItems: 'center', display: 'flex', justifyContent: 'center', textAlign: 'center', margin: '4px 0px 28px 0px'}}>
+            <Typography variant="h5" className={clsx(classes.bold, classes.marginSides5)}>
+              {t('billing.ChoosePackageFit')}
+            </Typography>
+            💳
+            <Typography variant="body1" className={clsx(classes.marginSides5, classes.bold)}>
+              {t('billing.AllPackageMonthly')}
+            </Typography>
+          </Box>
           <Box className={classes.mt20}>
             {renderPlanSelection()}
           </Box>
+          <Box className={classes.tierPlanFooter}>
+            <Typography variant='body1'>{t('billing.QuestionPricing')}</Typography>
+            <Typography variant='body1' className={classes.bold}>{t('billing.SalesContant')}</Typography>
+        </Box>
         </Box>
       );
     }
