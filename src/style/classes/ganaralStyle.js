@@ -4597,6 +4597,20 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     borderRadius: '12px',
     padding: '16px 22px',
     textAlign: 'center',
+    boxShadow: '0 4px 30px rgba(0,0,0,.08)',
+    transition: 'transform .3s ease, box-shadow .3s ease, border-color .3s ease',
+    '&:hover': {
+      transform: 'scale(1.02)',
+      boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+    }
+  },
+  tierPlansFeatureText: {
+    color: '#1a202c',
+    marginTop: 2,
+    marginBottom: 2,
+    '& span': {
+      fontWeight: '600'
+    }
   },
   tierPlansPopularCard: {
     border: '2px solid #ff4d2a',
@@ -4605,17 +4619,17 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   tierPlansPopularBadge: {
     position: 'absolute',
     top: '-12px',
-    left: '35%',
+    left: '30%',
     transform: 'translateX(-15%)',
     background: 'linear-gradient(-45deg, #ff0076, #ff4d2a)',
     color: 'white',
-    padding: '8px 48px 12px 8px',
-    width: '20%',
+    padding: '8px 8px 12px 8px',
+    width: '50%',
     borderRadius: '12px',
     fontWeight: 'bold',
     fontSize: '0.8rem',
     lineHeight: '1.2',
-    textAlign: 'left'
+    textAlign: 'center'
   },
   tierPlansCardContent: {
     textAlign: 'center',
@@ -4624,10 +4638,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   tierPlansConstSmallText: {
     fontSize: '0.9rem',
-    color: '#71809C',
+    color: '#718096',
     textAlign: 'center',
     lineHeight: '1.4',
-    marginTop: '75%'
+    marginTop: '75%',
+    fontWeight: '500'
   },
   tierPlansTitle: {
     fontWeight: 'bold',
@@ -4636,9 +4651,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     textTransform: 'uppercase'
   },
   tierPlansDescription: {
-    color: '#6c757d',
+    color: '#718096',
     // marginBottom: '16px',
-    padding: '0px 18px'
+    padding: '0px 18px',
+    fontWeight: 600
   },
   tierPlansPriceContainer: {
     display: 'flex',
@@ -4672,7 +4688,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     color: '#fff',
     background: "linear-gradient(-45deg, #ff0076, #ff4d2a)",
     fontSize: '1.2rem',
-    borderRadius: '12px'
+    borderRadius: '12px',
+    width: '100%'
   },
   tierPlansFeatureList: {
     padding: 0,

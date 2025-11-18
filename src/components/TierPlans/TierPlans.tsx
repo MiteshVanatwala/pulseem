@@ -225,7 +225,10 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false  }: any)
           
           return (
             <Grid item xs={12} sm={6} md={3} key={plan.Id}>
-              <Box className={clsx(classes.tierPlansCard, { [classes.tierPlansPopularCard]: plan.isRecommended || uiConfig.isPopular })}>
+              <Box 
+                className={clsx(classes.tierPlansCard, { [classes.tierPlansPopularCard]: plan.isRecommended || uiConfig.isPopular })}
+                style={{ display: 'flex', flexDirection: 'column', height: '100%' }}
+              >
                 {(plan.isRecommended || uiConfig.isPopular) && (
                   <Box className={classes.tierPlansPopularBadge}>
                     {t('billing.tier.ui.mostPopularChoice')}
@@ -262,9 +265,9 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false  }: any)
                       {t(uiConfig.priceDescription)}
                     </Typography>}
                   </Box>
-                  <Typography className={classes.tierPlansSubtext}>
+                  {/* <Typography className={classes.tierPlansSubtext}>
                     {t(uiConfig.subtext)}
-                  </Typography>
+                  </Typography> */}
                   {/* <Typography className={classes.tierPlansRecipientLimit}>
                     {t(uiConfig.recipientLimit)}
                   </Typography> */}
@@ -278,7 +281,7 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false  }: any)
                     {plan.isCurrentPlan ? t('billing.tier.ui.currentPlan') : t(uiConfig.buttonText)}
                   </Button>
                 </Box>
-                <List className={clsx(classes.tierPlansFeatureList, classes.mb10)}>
+                <List className={clsx(classes.tierPlansFeatureList, classes.mb10)} style={{ flexGrow: 1 }}>
                   {
                     uiConfig.features[0] !== '' && (
                       <ListItem key={0} className={classes.tierPlansFeatureItem}>
@@ -295,7 +298,7 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false  }: any)
                           <CheckIcon />
                         </Box>
                       </ListItemIcon>
-                      <ListItemText primary={feature} />
+                      <ListItemText primary={feature} className={classes.tierPlansFeatureText} />
                     </ListItem>
                   )) : uiConfig.features.slice(1).map((feature, fIndex) => (
                     <ListItem key={fIndex} className={classes.tierPlansFeatureItem}>
@@ -304,12 +307,15 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false  }: any)
                           <CheckIcon />
                         </Box>
                       </ListItemIcon>
-                      <ListItemText primary={t(feature)} />
+                      <ListItemText primary={t(feature)} className={classes.tierPlansFeatureText} />
                     </ListItem>
                   ))}
                 </List>
                 {plan.Id === 1 && 
-                  <Typography className={classes.tierPlansConstSmallText}>
+                  <Typography 
+                    className={clsx(classes.tierPlansConstSmallText)}
+                    style={{ marginTop: 'auto', padding: '16px' }}
+                  >
                    { t('billing.tier.ui.costBasedOnUse')}
                   </Typography>
                 }
@@ -840,18 +846,31 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false  }: any)
   };
 
   const getStepContent = (step: number) => {
-    if (isEmailMarketing && step === 0) {
-      return (
-        <Box>
-          <EmailMarketingSlider classes={classes} />
-          <Box sx={{alignItems: 'center', display: 'flex', justifyContent: 'center', textAlign: 'center', margin: '4px 0px 28px 0px'}}>
-            <Typography variant="h5" className={clsx(classes.bold, classes.marginSides5)}>
-              {t('billing.ChoosePackageFit')}
-            </Typography>
-            💳
-            <Typography variant="body1" className={clsx(classes.marginSides5, classes.bold)}>
-              {t('billing.AllPackageMonthly')}
-            </Typography>
+    switch (step) {
+      case 0:
+        return (
+          <Box>
+            {
+              isEmailMarketing && (
+                <>
+                  <EmailMarketingSlider classes={classes} />
+                </>
+              )
+            }
+            <Box sx={{alignItems: 'center', display: 'flex', justifyContent: 'center', textAlign: 'center', margin: '4px 0px 28px 0px'}}>
+              {
+                isEmailMarketing && (
+                  <>
+                    <Typography variant="h5" className={clsx(classes.bold, classes.marginSides5)}>
+                      {t('billing.ChoosePackageFit')}
+                    </Typography>
+                    💳
+                    <Typography variant="body1" className={clsx(classes.marginSides5, classes.bold)}>
+                      {t('billing.AllPackageMonthly')}
+                    </Typography>
+                  </>
+                )
+              }
           </Box>
           <Box className={classes.mt20}>
             {renderPlanSelection()}
@@ -859,13 +878,9 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false  }: any)
           <Box className={classes.tierPlanFooter}>
             <Typography variant='body1'>{t('billing.QuestionPricing')}</Typography>
             <Typography variant='body1' className={classes.bold}>{t('billing.SalesContant')}</Typography>
+          </Box>
         </Box>
-        </Box>
-      );
-    }
-    switch (step) {
-      case 0:
-        return renderPlanSelection();
+      )
       case 1:
         return renderUpgradeFlow();
       case 2:
