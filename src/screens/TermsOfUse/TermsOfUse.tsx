@@ -1,51 +1,125 @@
-import { Button, Checkbox, FormControlLabel, Grid, Typography } from "@material-ui/core";
+import { Button, Checkbox, FormControl, FormControlLabel, Grid, Typography } from "@material-ui/core";
 import { RenderHtml } from "../../helpers/Utils/HtmlUtils";
 import { useTranslation } from "react-i18next";
 import clsx from 'clsx';
-import { TermsOfUseModel } from "../../Models/TermsOfUse/TermsOfUse";
+// import { TermsOfUseModel } from "../../Models/TermsOfUse/TermsOfUse";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { updateTermsOfUse } from "../../redux/reducers/TermsOfUseSlice";
 import { getCommonFeatures } from "../../redux/reducers/commonSlice";
-import useRedirect from "../../helpers/Routes/Redirect";
-import { sitePrefix } from "../../config";
-import { RedirectPropTypes } from "../../helpers/Types/Redirect";
+// import useRedirect from "../../helpers/Routes/Redirect";
+// import { sitePrefix } from "../../config";
+// import { RedirectPropTypes } from "../../helpers/Types/Redirect";
 
 
-const TermsOfUse = ({ classes }: any) => {
+const TermsOfUse = ({ classes, onClose }: any) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const Redirect = useRedirect();
-  const [termOfUse, setTermOfUse] = useState<TermsOfUseModel>({
-    IsTermsApproved: false
+  // const Redirect = useRedirect();
+  // const [termOfUse, setTermOfUse] = useState<TermsOfUseModel>({
+  //   IsTermsApproved: false
+  // });
+  // const [requiredField, setRequiredField] = useState<boolean>(false);
+  const [userDetails, setUserDetails] = useState({
+    chkUpdate: false,
+    chkPolicy: false
   });
-  const [requiredField, setRequiredField] = useState<boolean>(false);
+  const [errors, setErrors] = useState({
+    chkPolicy: '',
+    chkUpdate: '',
+  });
 
   const { isRTL } = useSelector((state: any) => state.common);
 
   const onConfirm = async () => {
-    const response: any = await dispatch(updateTermsOfUse(termOfUse));
-    if (response?.payload?.StatusCode === 201 && termOfUse.IsTermsApproved) {
-      await dispatch(getCommonFeatures());
-      Redirect({
-        url: `${sitePrefix}`,
-        openNewTab: false
-      } as RedirectPropTypes)
+    let errorsTemp = errors;
+    errorsTemp.chkPolicy = userDetails.chkPolicy ? '' : t('common.requiredField');
+
+    setErrors({
+      ...errors,
+      ...errorsTemp
+    });
+    if (!errorsTemp.chkPolicy) {
+      const response: any = await dispatch(updateTermsOfUse({
+        IsTermsApproved: userDetails.chkPolicy,
+        IgnoranceCount: 0,
+        AcceptedTermsFromReact: true
+      }));
+      if (response?.payload?.StatusCode === 201 && userDetails.chkPolicy) {
+        await dispatch(getCommonFeatures());
+        // Redirect({
+        //   url: `${sitePrefix}`,
+        //   openNewTab: false
+        // } as RedirectPropTypes)
+        onClose();
+      }
+      else {
+        // setRequiredField(true);
+      }
     }
-    else {
-      setRequiredField(true);
-    }
+    
   }
 
   return <Grid
     container
-    className={clsx(classes.flex)}
+    className={clsx(classes.h100, classes.w100, classes.flex, classes.pt15)}
+    style={{ alignItems: 'flex-start',  }}
   >
-    <Grid item xs={12}>
+    {/* <Grid item xs={12}>
       <Typography>{RenderHtml(t('TermsOfUse.description'))}</Typography>
-    </Grid>
+    </Grid> */}
     <Grid item xs={12}>
-      <FormControlLabel
+      <FormControl>
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={userDetails.chkUpdate}
+              onChange={() => setUserDetails({ ...userDetails, chkUpdate: !userDetails.chkUpdate })}
+              color="primary"
+            />
+          }
+          className={clsx({
+            [classes.textRight]: isRTL,
+            [classes.textLeft]: !isRTL,
+          })}
+          label={<>
+            <span className={classes.f18}>{RenderHtml(t('SignUp.UpdateTrainingContentCheckbox'))}</span>
+            {!!errors.chkUpdate && (
+              <Typography className={clsx(classes.errorText, classes.f14, classes.textCapitalize)}>
+                {errors.chkUpdate}
+              </Typography>
+            )}
+          </>
+          }
+        />
+      </FormControl>
+
+      <FormControl className={classes.dBlock}>
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={userDetails.chkPolicy}
+              onChange={() => setUserDetails({ ...userDetails, chkPolicy: !userDetails.chkPolicy })}
+              color="primary"
+            />
+          }
+          className={clsx({
+            [classes.textRight]: isRTL,
+            [classes.textLeft]: !isRTL,
+          })}
+          label={<>
+            <span className={clsx(classes.paddingInline5, classes.colrPrimary, classes.f18)}>*</span>
+            <span className={classes.f18}>{RenderHtml(t('SignUp.PrivacyPolicyCheckbox'))}</span>
+            {!!errors.chkPolicy && (
+              <Typography className={clsx(classes.errorText, classes.f14, classes.textCapitalize)}>
+                {errors.chkPolicy}
+              </Typography>
+            )}
+          </>
+          }
+        />
+      </FormControl>
+      {/* <FormControlLabel
         control={
           <Checkbox
             color="primary"
@@ -62,7 +136,7 @@ const TermsOfUse = ({ classes }: any) => {
       <Grid item xs={12}>
         {requiredField && <Typography className={clsx(classes.errorText, classes.f14, classes.textCapitalize)}>{t('common.requiredField')}</Typography>
         }
-      </Grid>
+      </Grid> */}
       <Grid item xs={12} className={classes.mt6}>
         <Grid
           container

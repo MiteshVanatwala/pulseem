@@ -62,8 +62,8 @@ const DashboardScreen = ({ classes }) => {
           setShowBusinessSectorActivity((dontShowAgainBusinessSector === 'true' || !accountSettings?.SubAccountSettings?.RequestBusinessActivity) ? false : true);
         }
       }
-      if (!hasCookie && !isAdmin) {
-        setShowTermsOfUse(!accountSettings?.SubAccountSettings?.IsTermsApproved && accountSettings?.SubAccountSettings?.IgnoranceCount < 3)
+      if (!isAdmin) {
+        setShowTermsOfUse(!accountSettings?.SubAccountSettings?.IsTermsApproved)
       }
 
     }
@@ -158,18 +158,19 @@ const DashboardScreen = ({ classes }) => {
         paperStyle={classes.maxWidthMinContent}
         disableBackdropClick
         classes={classes}
+        hideHeader={false}
         open={showTermsOfUse}
         showDefaultButtons={false}
         title={t('TermsOfUse.title')}
-        onCancel={() => {
-          onIgnoreTerms();
-        }}
-        onClose={() => {
-          onIgnoreTerms();
-        }}
+        // onCancel={() => {
+        //   onIgnoreTerms();
+        // }}
+        // onClose={() => {
+        //   onIgnoreTerms();
+        // }}
       >
         <Box style={{ height: 230 }}>
-          <TermsOfUse classes={classes} />
+          <TermsOfUse classes={classes} onClose={() => setShowTermsOfUse(false)} />
         </Box>
       </BaseDialog>
       <BaseDialog
