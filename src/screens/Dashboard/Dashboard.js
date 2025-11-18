@@ -26,7 +26,7 @@ import BusinessSectorActivity from './Popup/BusinessSectorActivity';
 
 const DashboardScreen = ({ classes }) => {
   const { windowSize, isRTL, isAdmin } = useSelector(state => state.core);
-  const { accountSettings, isGlobal } = useSelector(state => state.common);
+  const { accountSettings, isGlobal, companyAdmin } = useSelector(state => state.common);
   const { t } = useTranslation();
   const [toastMessage, setToastMessage] = useState(null);
   const [showChangePassword, setShowChangePassword] = useState(false);
@@ -62,7 +62,7 @@ const DashboardScreen = ({ classes }) => {
           setShowBusinessSectorActivity((dontShowAgainBusinessSector === 'true' || !accountSettings?.SubAccountSettings?.RequestBusinessActivity) ? false : true);
         }
       }
-      if (!isAdmin) {
+      if (!isAdmin && companyAdmin) {
         setShowTermsOfUse(!accountSettings?.SubAccountSettings?.IsTermsApproved)
       }
 
