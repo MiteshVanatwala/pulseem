@@ -886,5 +886,10 @@
     "manageCard": "Manage Card"
   },
   "startDate": "Start Date",
-  "endDate": "End Date"
+  "endDate": "End Date",
+  "orTryOneOfThese": "Lub wypróbuj jedną z tych opcji",
+  "presetQuestion1": "Najskuteczniejsze newslettery w tym miesiącu?",
+  "presetQuestion2": "Jaki jest nasz współczynnik dostarczalności SMS?",
+  "presetQuestion3": "Porównaj skuteczność kanałów.",
+  "presetQuestion4": "Kto są moimi najbardziej zaangażowanymi klientami?"
 }

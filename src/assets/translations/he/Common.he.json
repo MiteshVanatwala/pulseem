@@ -886,5 +886,10 @@
     "manageCard": "ניהול כרטיס"
   },
   "startDate": "תאריך התחלה",
-  "endDate": "תאריך סיום"
+  "endDate": "תאריך סיום",
+  "orTryOneOfThese": "או נסה אחד מאלה",
+  "presetQuestion1": "איך יוצרים SMS קמפיין?",
+  "presetQuestion2": "איך מגדירים לשדות נוספים?",
+  "presetQuestion3": "איך אני מחברת את החנות שלי?",
+  "presetQuestion4": "איך יוצרים אוטומציה לניטשת עגלה?"
 }

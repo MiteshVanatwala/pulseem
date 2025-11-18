@@ -891,5 +891,10 @@
     "manageCard": "Manage Card"
   },
   "startDate": "Start Date",
-  "endDate": "End Date"
+  "endDate": "End Date",
+  "orTryOneOfThese": "Or try one of these",
+  "presetQuestion1": "Top performing newsletters this month?",
+  "presetQuestion2": "What's our SMS delivery rate?",
+  "presetQuestion3": "Compare channel performance.",
+  "presetQuestion4": "Who are my most engaged customers?"
 }

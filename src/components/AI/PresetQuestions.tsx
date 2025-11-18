@@ -1,14 +1,15 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Box, Button, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { addMessage } from '../../redux/reducers/aiChatSlice';
-import uniqid from 'uniqid';
+import { addMessage, addUserMessage, setAIIconStatus } from '../../redux/reducers/aiChatSlice';
+import { v4 as uuidv4 } from 'uuid';
+import { useTranslation } from 'react-i18next';
+import { StateType } from '../../Models/StateTypes';
 
 const useStyles = makeStyles((theme) => ({
   presetQuestions: {
     padding: theme.spacing(2),
-    height: '100px',
     display: 'flex',
     flexDirection: 'column',
     backgroundColor: '#ffffff',
@@ -35,40 +36,55 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const PRESET_QUESTIONS = [
-  "Top performing newsletters this month?",
-  "What's our SMS delivery rate?",
-  "Compare channel performance.",
-  "Who are my most engaged customers?",
-];
-
 const PresetQuestions: React.FC = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const { t } = useTranslation();
+  const { messages } = useSelector((state: StateType) => state.aiChat);
+
+  const PRESET_QUESTIONS = [
+    t("common.presetQuestion1"),
+    t("common.presetQuestion2"),
+    t("common.presetQuestion3"),
+    t("common.presetQuestion4"),
+  ];
 
   const handlePresetClick = (question: string) => {
-    // dispatch(addMessage({ id: uniqid(), text: question, sender: 'user' }));
-    // dispatch(fetchAiResponse(question));
+    dispatch(addUserMessage({
+      MessageID: uuidv4(),
+      MessageTimestamp: new Date().toISOString(),
+      MessageTypeID: 1,
+      ResponseTimeMs: null,
+      MessageText: question,
+    }));
+    dispatch(addMessage({ MessageText: question, MessageTypeID: 1 }));
+    dispatch(setAIIconStatus(1));
   };
+
+  const userMessages = messages.filter(msg => msg.MessageTypeID === 1);
+  
+  if (userMessages.length > 0) {
+    return null;
+  }
 
   return (
     <Box className={classes.presetQuestions}>
-        <Typography variant="caption" color="textSecondary">
-            Or try one of these
-        </Typography>
-        <Box className={classes.questionsContainer}>
-          {PRESET_QUESTIONS.map((q) => (
-            <Button
-              key={q}
-              variant="outlined"
-              size="small"
-              className={classes.button}
-              onClick={() => handlePresetClick(q)}
-            >
-              {q}
-            </Button>
-          ))}
-        </Box>
+      <Typography variant="caption" color="textSecondary">
+        {t("common.orTryOneOfThese") || "Or try one of these"}
+      </Typography>
+      <Box className={classes.questionsContainer}>
+        {PRESET_QUESTIONS.map((q: string, index: number) => (
+          <Button
+            key={index}
+            variant="outlined"
+            size="small"
+            className={classes.button}
+            onClick={() => handlePresetClick(q)}
+          >
+            {q}
+          </Button>
+        ))}
+      </Box>
     </Box>
   );
 };
