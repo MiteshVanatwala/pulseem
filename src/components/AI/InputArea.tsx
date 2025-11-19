@@ -10,7 +10,7 @@ import { useTranslation } from 'react-i18next';
 
 const useStyles = makeStyles((theme) => ({
   inputArea: {
-    padding: theme.spacing(1, 2),
+    padding: '8px 16px',
     backgroundColor: '#ffffff',
     borderTop: `1px solid ${theme.palette.divider}`,
     flexDirection: 'column',
@@ -50,11 +50,10 @@ const useStyles = makeStyles((theme) => ({
   characterCount: {
     fontSize: '0.75rem',
     color: theme.palette.text.secondary,
-    marginTop: '4px',
+    marginTop: '2px',
     textAlign: 'right',
   },
   checkboxLabel: {
-    marginTop: theme.spacing(1),
     fontSize: '0.875rem',
     color: theme.palette.text.secondary,
   },

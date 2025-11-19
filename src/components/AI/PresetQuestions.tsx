@@ -9,7 +9,7 @@ import { StateType } from '../../Models/StateTypes';
 
 const useStyles = makeStyles((theme) => ({
   presetQuestions: {
-    padding: theme.spacing(2),
+    padding: '9px 16px',
     display: 'flex',
     flexDirection: 'column',
     backgroundColor: '#ffffff',
@@ -23,9 +23,8 @@ const useStyles = makeStyles((theme) => ({
   button: {
     borderRadius: '20px',
     textTransform: 'none',
-    fontSize: '0.8rem',
+    fontSize: '0.95rem',
     justifyContent: 'flex-start',
-    borderColor: theme.palette.divider,
     color: theme.palette.text.secondary,
     transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out',
     '&:hover': {
@@ -69,8 +68,8 @@ const PresetQuestions: React.FC = () => {
 
   return (
     <Box className={classes.presetQuestions}>
-      <Typography variant="caption" color="textSecondary">
-        {t("common.orTryOneOfThese") || "Or try one of these"}
+      <Typography variant="body1" color="textSecondary">
+        {t("common.orTryOneOfThese")}
       </Typography>
       <Box className={classes.questionsContainer}>
         {PRESET_QUESTIONS.map((q: string, index: number) => (

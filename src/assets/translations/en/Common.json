@@ -893,8 +893,8 @@
   "startDate": "Start Date",
   "endDate": "End Date",
   "orTryOneOfThese": "Or try one of these",
-  "presetQuestion1": "Top performing newsletters this month?",
-  "presetQuestion2": "What's our SMS delivery rate?",
-  "presetQuestion3": "Compare channel performance.",
-  "presetQuestion4": "Who are my most engaged customers?"
+  "presetQuestion1": "Analyze my latest campaign",
+  "presetQuestion2": "How to increase opens and clicks?",
+  "presetQuestion3": "Create a VIP customer segment for me",
+  "presetQuestion4": "Create a segment of customers who open but don’t click"
 }
