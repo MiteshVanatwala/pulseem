@@ -4645,16 +4645,23 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     fontWeight: '500'
   },
   tierPlansTitle: {
-    fontWeight: 'bold',
+    fontWeight: '800',
     fontSize: '1.5rem',
     marginBottom: '8px',
-    textTransform: 'uppercase'
+    textTransform: 'uppercase',
+    color: '#1a202c',
   },
   tierPlansDescription: {
     color: '#718096',
     // marginBottom: '16px',
     padding: '0px 18px',
-    fontWeight: 600
+    fontWeight: 600,
+    fontSize: '0.95rem',
+    lineHeight: 1.5,
+    minHeight: '3em',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   tierPlansPriceContainer: {
     display: 'flex',
@@ -4662,10 +4669,21 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     alignItems: 'baseline',
     // marginBottom: '8px',
     minHeight: '70px',
+    fontWeight: 800,
+    fontSize: '1.6rem',
+    color: '#1a202c',
   },
   tierPlansPrice: {
     fontSize: '2.5rem',
-    fontWeight: 'bold',
+    fontWeight: 800,
+    fontSize: '1.6rem',
+    color: '#1a202c',
+    '& span': {
+      fontSize: '2.5rem',
+      fontWeight: 800,
+      fontSize: '1.6rem',
+      color: '#1a202c',
+    }
   },
   tierPlansPriceDescription: {
     fontSize: '1rem',
@@ -4689,7 +4707,15 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     background: "linear-gradient(-45deg, #ff0076, #ff4d2a)",
     fontSize: '1.2rem',
     borderRadius: '12px',
-    width: '100%'
+    width: '100%',
+    textTransform: 'capitalize',
+    fontWeight: '800',
+    transition: 'transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease',
+    '&:hover': {
+      transform: 'scale(1.02)',
+      boxShadow: '0 8px 16px #ff3343',
+      borderColor: '#ff3343'
+    }
   },
   tierPlansFeatureList: {
     padding: 0,
@@ -4768,7 +4794,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   tierPlansContent: {
     padding: '24px',
     maxHeight: '60vh',
-    maxWidth: '1068px'
+    maxWidth: '1068px',
+    paddingTop: '0px',
+    color: '#4a5568'
   },
   tierPlanFooter: {
     background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',

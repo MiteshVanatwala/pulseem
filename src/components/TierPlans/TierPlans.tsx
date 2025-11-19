@@ -249,9 +249,9 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false  }: any)
                         </span>
                       )
                     }
-                    <Typography className={classes.tierPlansPrice} style={{ fontSize: plan.Id === 4 || plan.Id === 1 ? '1.3rem': '', paddingTop: plan.Id === 4 || plan.Id === 1 ? '15px' : '' }}>
+                    <Typography className={classes.tierPlansPrice} style={{ fontSize: '1.3rem', paddingTop: '15px' }}>
                       {plan.Id === 1 ? t('billing.tier.free') : ''}
-                      {plan.Id === 4 ? <span style={{fontSize: '2rem'}}>{t('billing.tier.contactSales')}</span> : ''}
+                      {plan.Id === 4 ? <span>{t('billing.tier.contactSales')}</span> : ''}
                       {plan.Id !== 1 && plan.Id !== 4 && plan.Price > 0 ? plan.Price : ''}
                     </Typography>
                     {
@@ -261,9 +261,9 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false  }: any)
                         </span>
                       )
                     }
-                    {plan.Id !== 1 && plan.Id !== 4 && uiConfig.priceDescription && <Typography className={classes.tierPlansPriceDescription}>
+                    {/* {plan.Id !== 1 && plan.Id !== 4 && uiConfig.priceDescription && <Typography className={classes.tierPlansPriceDescription}>
                       {t(uiConfig.priceDescription)}
-                    </Typography>}
+                    </Typography>} */}
                   </Box>
                   {/* <Typography className={classes.tierPlansSubtext}>
                     {t(uiConfig.subtext)}
@@ -858,19 +858,13 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false  }: any)
               )
             }
             <Box sx={{alignItems: 'center', display: 'flex', justifyContent: 'center', textAlign: 'center', margin: '4px 0px 28px 0px'}}>
-              {
-                isEmailMarketing && (
-                  <>
-                    <Typography variant="h5" className={clsx(classes.bold, classes.marginSides5)}>
-                      {t('billing.ChoosePackageFit')}
-                    </Typography>
-                    💳
-                    <Typography variant="body1" className={clsx(classes.marginSides5, classes.bold)}>
-                      {t('billing.AllPackageMonthly')}
-                    </Typography>
-                  </>
-                )
-              }
+              <Typography variant="h5" className={clsx(classes.bold, classes.marginSides5)}>
+                {t('billing.ChoosePackageFit')}
+              </Typography>
+              💳
+              <Typography variant="body1" className={clsx(classes.marginSides5, classes.bold)}>
+                {t('billing.AllPackageMonthly')}
+              </Typography>
           </Box>
           <Box className={classes.mt20}>
             {renderPlanSelection()}
