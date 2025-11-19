@@ -66,7 +66,7 @@
         "priceDescription": "/חודש",
         "subtext": "חינם לנצח",
         "recipientLimit": "עד 100 נמענים",
-        "buttonText": "התחל בחינם"
+        "buttonText": "התחילו חינם"
       },
       "flow": {
         "title": "Standard",
@@ -75,7 +75,7 @@
         "priceDescription": "/חודש",
         "subtext": "חיוב חודשי",
         "recipientLimit": "עד 100 נמענים",
-        "buttonText": "התחל תוכנית Standard"
+        "buttonText": "בחרו Standard"
       },
       "engage": {
         "title": "Pro",
@@ -84,7 +84,7 @@
         "priceDescription": "/חודש",
         "subtext": "הבחירה הפופולרית ביותר",
         "recipientLimit": "עד 100 נמענים",
-        "buttonText": "בחר Pro"
+        "buttonText": "בחרו Pro"
       },
       "scale": {
         "title": "Scale",
@@ -92,7 +92,7 @@
         "price": "צור קשר",
         "subtext": "תמחור מותאם אישית",
         "recipientLimit": "מגבלות נמענים מותאמות אישית",
-        "buttonText": "צור קשר עם המכירות"
+        "buttonText": "צרו קשר עם המכירות"
       }
     },
     "upgrade": {
@@ -160,7 +160,7 @@
       "highVolumeSending": "ביצועי שליחה בנפחים גבוהים",
       "customDevelopments": "פיתוחים ואינטגרציות מותאמים",
       "customReports": "דוחות מותאמים אישית",
-      "dedicatedAccountManager": "מנהל חשבון ייעודי",
+      "dedicatedAccountManager": "מנהל/ת לקוח אישי",
       "prioritySupport": "תמיכה עדיפה",
       "scheduledTrainingSessions": "סשנים מתוזמנים של הדרכה",
       "dynamicProducts": "מוצרים דינמיים",

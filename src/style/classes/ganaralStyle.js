@@ -4599,6 +4599,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     textAlign: 'center',
     boxShadow: '0 4px 30px rgba(0,0,0,.08)',
     transition: 'transform .3s ease, box-shadow .3s ease, border-color .3s ease',
+    fontFamily: isRTL ? 'Heebo' : 'inherit',
     '&:hover': {
       transform: 'scale(1.02)',
       boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
@@ -4609,32 +4610,37 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     marginTop: 2,
     marginBottom: 2,
     '& span': {
-      fontWeight: '600'
-    }
+      fontWeight: '600',
+      fontFamily: isRTL ? 'Heebo' : 'inherit',
+    },
+    fontFamily: isRTL ? 'Heebo' : 'inherit',
   },
   tierPlansPopularCard: {
     border: '2px solid #ff4d2a',
     position: 'relative',
+    fontFamily: isRTL ? 'Heebo' : 'inherit',
   },
   tierPlansPopularBadge: {
     position: 'absolute',
     top: '-12px',
-    left: '30%',
+    left: '35%',
     transform: 'translateX(-15%)',
     background: 'linear-gradient(-45deg, #ff0076, #ff4d2a)',
     color: 'white',
-    padding: '8px 8px 12px 8px',
-    width: '50%',
-    borderRadius: '12px',
+    padding: '6px',
+    width: '45%',
+    borderRadius: '10px',
     fontWeight: 'bold',
     fontSize: '0.8rem',
     lineHeight: '1.2',
-    textAlign: 'center'
+    textAlign: 'center',
+    fontFamily: isRTL ? 'Heebo' : 'inherit',
   },
   tierPlansCardContent: {
     textAlign: 'center',
     padding: '16px 0 !important',
-    paddingBottom: '16px !important'
+    paddingBottom: '16px !important',
+    fontFamily: isRTL ? 'Heebo' : 'inherit',
   },
   tierPlansConstSmallText: {
     fontSize: '0.9rem',
@@ -4642,14 +4648,16 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     textAlign: 'center',
     lineHeight: '1.4',
     marginTop: '75%',
-    fontWeight: '500'
+    fontWeight: '500',
+    fontFamily: isRTL ? 'Heebo' : 'inherit',
   },
   tierPlansTitle: {
     fontWeight: '800',
-    fontSize: '1.5rem',
-    marginBottom: '8px',
+    fontSize: '1.2rem',
+    letterSpacing: '.5px',
     textTransform: 'uppercase',
     color: '#1a202c',
+    fontFamily: isRTL ? 'Heebo' : 'inherit',
   },
   tierPlansDescription: {
     color: '#718096',
@@ -4661,7 +4669,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     minHeight: '3em',
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    fontFamily: isRTL ? 'Heebo' : 'inherit',
   },
   tierPlansPriceContainer: {
     display: 'flex',
@@ -4672,35 +4681,42 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     fontWeight: 800,
     fontSize: '1.6rem',
     color: '#1a202c',
+    fontFamily: isRTL ? 'Heebo' : 'inherit',
   },
   tierPlansPrice: {
     fontSize: '2.5rem',
     fontWeight: 800,
     fontSize: '1.6rem',
     color: '#1a202c',
+    fontFamily: isRTL ? 'Heebo' : 'inherit',
     '& span': {
       fontSize: '2.5rem',
       fontWeight: 800,
       fontSize: '1.6rem',
       color: '#1a202c',
+      fontFamily: isRTL ? 'Heebo' : 'inherit',
     }
   },
   tierPlansPriceDescription: {
     fontSize: '1rem',
     marginLeft: '4px',
+    fontFamily: isRTL ? 'Heebo' : 'inherit',
   },
   tierPlansSubtext: {
     color: '#6c757d',
     marginBottom: '16px',
+    fontFamily: isRTL ? 'Heebo' : 'inherit',
   },
   tierPlansRecipientLimit: {
     marginBottom: '16px',
+    fontFamily: isRTL ? 'Heebo' : 'inherit',
   },
   tierPlansButton: {
     marginTop: 'auto',
     borderRadius: '12px',
     padding: '5px 12px',
     fontWeight: 'bold',
+    fontFamily: isRTL ? 'Heebo' : 'inherit',
   },
   tierPlansDefaultButton: {
     color: '#fff',
@@ -4711,6 +4727,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     textTransform: 'capitalize',
     fontWeight: '800',
     transition: 'transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease',
+    fontFamily: isRTL ? 'Heebo' : 'inherit',
     '&:hover': {
       transform: 'scale(1.02)',
       boxShadow: '0 8px 16px #ff3343',
@@ -4720,9 +4737,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   tierPlansFeatureList: {
     padding: 0,
     textAlign: 'left',
+    fontFamily: isRTL ? 'Heebo' : 'inherit',
   },
   tierPlansFeatureItem: {
     padding: '4px 0',
+    fontFamily: isRTL ? 'Heebo' : 'inherit',
   },
   tierPlansSeeAllFeatures: {
     textAlign: 'center',
@@ -4730,7 +4749,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     color: '#e53935',
     cursor: 'pointer',
     textDecoration: 'underline',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    fontFamily: isRTL ? 'Heebo' : 'inherit',
+  },
+  tierInstruction: {
+    fontFamily: isRTL ? 'Heebo' : 'inherit',
+    fontSize: '1.3rem !important'
   },
   upgradeFlowContainer: {
     backgroundColor: '#fff',
@@ -4796,7 +4820,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     maxHeight: '60vh',
     maxWidth: '1068px',
     paddingTop: '0px',
-    color: '#4a5568'
+    color: '#4a5568',
+    fontFamily: '"Heebo", sans-serif',
   },
   tierPlanFooter: {
     background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',

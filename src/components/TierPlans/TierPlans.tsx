@@ -243,19 +243,19 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false  }: any)
                   </Typography>
                   <Box className={classes.tierPlansPriceContainer}>
                     {
-                      plan.Id !== 1 && plan.Id !== 4 && plan.Price > 0 && accountIsCurrencySymbolPrefix && (
+                      plan.Id !== 4 && plan.Price >= 0 && accountIsCurrencySymbolPrefix && (
                         <span className={classes.tierPlansCurrencySymbol}>
                           {accountCurrencySymbol}
                         </span>
                       )
                     }
-                    <Typography className={classes.tierPlansPrice} style={{ fontSize: '1.3rem', paddingTop: '15px' }}>
-                      {plan.Id === 1 ? t('billing.tier.free') : ''}
+                    <Typography className={classes.tierPlansPrice} style={{ paddingTop: '15px' }}>
+                      {/* {plan.Id === 1 ? t('billing.tier.free') : ''} */}
                       {plan.Id === 4 ? <span>{t('billing.tier.contactSales')}</span> : ''}
-                      {plan.Id !== 1 && plan.Id !== 4 && plan.Price > 0 ? plan.Price : ''}
+                      {plan.Id !== 4 && plan.Price >= 0 ? plan.Price : ''}
                     </Typography>
                     {
-                      plan.Id !== 1 && plan.Id !== 4 && plan.Price > 0 && !accountIsCurrencySymbolPrefix && (
+                      plan.Id !== 4 && plan.Price >= 0 && !accountIsCurrencySymbolPrefix && (
                         <span className={classes.tierPlansCurrencySymbol}>
                           {accountCurrencySymbol}
                         </span>
@@ -400,7 +400,7 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false  }: any)
         <Grid container spacing={4} style={{ minWidth: '70vw' }}>
           {/* Left Side Features */}
           <Grid item xs={12} md={6}>
-            <Typography variant="h5" className={classes.upgradeFlowTitle} gutterBottom>
+            <Typography variant="h3" className={clsx(classes.upgradeFlowTitle, classes.tierInstruction)} gutterBottom>
               {t('billing.tier.upgrade.title').replace('{planTitle}', planTitle)}
             </Typography>
 
@@ -858,7 +858,7 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false  }: any)
               )
             }
             <Box sx={{alignItems: 'center', display: 'flex', justifyContent: 'center', textAlign: 'center', margin: '4px 0px 28px 0px'}}>
-              <Typography variant="h5" className={clsx(classes.bold, classes.marginSides5)}>
+              <Typography variant="h3" className={clsx(classes.bold, classes.marginSides5, classes.tierInstruction)}>
                 {t('billing.ChoosePackageFit')}
               </Typography>
               💳
