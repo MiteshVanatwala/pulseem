@@ -415,33 +415,33 @@ const BulkStatus = ({ classes }) => {
           <Divider />
           
           {
-            Newsletters?.IsEmailTierSubscribed && (
-              <>
-                <Grid
-                  container
-                  item sm={12} md={12} lg={12} xl={12}
-                  className={clsx(classes.flex, classes.mt2, classes.mb2, classes.paddingSides15)}
-                  justifyContent='space-between'
-                >
-                  <Grid item md={5} xs={4}>
-                    <SmsIcon className={classes.shoppingCartIcon} />
-                    <Typography className={clsx(classes.bulkTitle)}>{t('common.email')}</Typography>
-                  </Grid>
-                  <Grid item md={4} xs={4} className={isRTL ? classes.textLeft : classes.textRight}>
-                    <Button
-                      className={clsx(classes.btn, classes.btnRounded, classes.f12)}
-                      onClick={() => {
-                        setIsOpenEmailTierPlans(true); // This should open the dialog
-                      }}
-                    >
-                      {t('dashboard.purchase')}
-                      {isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-                    </Button>
-                  </Grid>
-                </Grid>
-                <Divider />
-              </>
-            )
+            // Newsletters?.IsEmailTierSubscribed && (
+            //   <>
+            //     <Grid
+            //       container
+            //       item sm={12} md={12} lg={12} xl={12}
+            //       className={clsx(classes.flex, classes.mt2, classes.mb2, classes.paddingSides15)}
+            //       justifyContent='space-between'
+            //     >
+            //       <Grid item md={5} xs={4}>
+            //         <SmsIcon className={classes.shoppingCartIcon} />
+            //         <Typography className={clsx(classes.bulkTitle)}>{t('common.email')}</Typography>
+            //       </Grid>
+            //       <Grid item md={4} xs={4} className={isRTL ? classes.textLeft : classes.textRight}>
+            //         <Button
+            //           className={clsx(classes.btn, classes.btnRounded, classes.f12)}
+            //           onClick={() => {
+            //             setIsOpenEmailTierPlans(true); // This should open the dialog
+            //           }}
+            //         >
+            //           {t('dashboard.purchase')}
+            //           {isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+            //         </Button>
+            //       </Grid>
+            //     </Grid>
+            //     <Divider />
+            //   </>
+            // )
           }
           {/* {
             isAllowNewsletterForPoland() && Newsletters.eBillingType === 2 && (
@@ -608,7 +608,7 @@ const BulkStatus = ({ classes }) => {
             }
           }}
         />
-        <TierPlans
+        {/* <TierPlans
         classes={classes}
         isOpen={isOpenEmailTierPlans}
         onClose={() => {
@@ -616,7 +616,7 @@ const BulkStatus = ({ classes }) => {
           dispatch(getPackagesDetails());
         }}
         isEmailMarketing={true}
-      />
+      /> */}
         <PayPerRecipientNew
           classes={classes}
           isOpen={isOpenPayPerRecipient}
