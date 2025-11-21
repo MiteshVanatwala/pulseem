@@ -7,7 +7,7 @@ import clsx from 'clsx';
 import _ from 'lodash';
 import { getEmailPerRecipientsTierScaling } from '../../redux/reducers/emailTierScalingSlice';
 
-const EmailMarketingSlider = ({ classes }: any) => {
+const EmailMarketingSlider = ({ classes, onTierChange }: any) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { isRTL } = useSelector((state: any) => state.core);
@@ -52,6 +52,12 @@ const EmailMarketingSlider = ({ classes }: any) => {
       };
     });
   }, [uniqueTierRanges]);
+
+   useEffect(() => {
+    if (onTierChange && tiers.length > 0 && tiers[sliderValue]) {
+      onTierChange(tiers[sliderValue].tierData);
+    }
+  }, [sliderValue, tiers, onTierChange]);
 
   const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSliderValue(parseInt(e.target.value));

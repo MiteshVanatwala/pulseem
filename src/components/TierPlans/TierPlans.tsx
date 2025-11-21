@@ -45,6 +45,7 @@ import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 import { Loader } from '../Loader/Loader';
 import { MdAdd } from 'react-icons/md';
 import EmailMarketingSlider from '../EmailPlans/EmailMarketingSlider';
+import { UpgradePlanRequest } from '../../Models/Tiers/TierModels';
 
 const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false  }: any) => {
   const { t, i18n } = useTranslation();
@@ -61,10 +62,13 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false  }: any)
   const [ showSalesContactPopup, setShowSalesContactPopup ] = useState(false);
   const [ showCardConfirmationDialog, setShowCardConfirmationDialog ] = useState(false);
   const [ selectedCreditCard, setSelectedCreditCard ] = useState<any>(null);
+  const [selectedEmailTier, setSelectedEmailTier] = useState<any>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const { currentPlan, availablePlans, userCreditCards } = useSelector((state: any) => state.tiers);
   const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
   const { accountCurrencySymbol, accountIsCurrencySymbolPrefix } = useSelector((state: any) => state.common);
+  const { tiers: emailTiers } = useSelector((state: any) => state.emailTierScaling);
+
   // Extract credit cards data from the API response
   const creditCards = userCreditCards?.Data || [];
     // Scroll to top when step changes
@@ -126,13 +130,27 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false  }: any)
     setActiveStep(1);
   };
 
+  const handleEmailTierChange = (tierData: any) => {
+    setSelectedEmailTier(tierData);
+  };
+
   const loadIframe = async (plan: any) => {
+    let emailTierScaleId = 0;
+    if (isEmailMarketing && selectedEmailTier && emailTiers) {
+      const matchingTier = emailTiers.find((tier: any) =>
+        tier.AccountCategoryFeatureTier_Id === plan.Id &&
+        tier.LevelHigh === selectedEmailTier.LevelHigh
+      );
+      emailTierScaleId = matchingTier ? matchingTier.Id : 0;
+    }
+
     // Prepare request parameters
-    const requestParams = {
-      language: i18n.language || 'en',
-      subscriptionType: 'upgrade', // Adjust based on your needs
-      isNewSubscription: true,
-      tierId: plan.Id || plan.id
+    const requestParams: any = {
+        language: i18n.language || 'en',
+        subscriptionType: isEmailMarketing ? 'EmailTierSubscription' : 'TierSubscription',
+        isNewSubscription: true,
+        tierId: plan.Id || plan.id,
+        emailTierScaleId: emailTierScaleId
     };
     
     // Call the API to get iframe URL
@@ -146,12 +164,21 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false  }: any)
   };
 
   const fetchCCLinkForiFrame = async (plan: any) => {
+    let emailTierScaleId = 0;
+    if (isEmailMarketing && selectedEmailTier && emailTiers) {
+      const matchingTier = emailTiers.find((tier: any) =>
+        tier.AccountCategoryFeatureTier_Id === plan.Id &&
+        tier.LevelHigh === selectedEmailTier.LevelHigh
+      );
+      emailTierScaleId = matchingTier ? matchingTier.Id : 0;
+    }
     // Prepare request parameters
-    const requestParams = {
-      language: i18n.language || 'en',
-      subscriptionType: 'upgrade', // Adjust based on your needs
-      isNewSubscription: true,
-      tierId: plan.Id || plan.id
+    const requestParams: any = {
+        language: i18n.language || 'en',
+        subscriptionType: isEmailMarketing ? 'EmailTierSubscription' : 'TierSubscription',
+        isNewSubscription: true,
+        tierId: plan.Id || plan.id,
+        emailTierScaleId: emailTierScaleId
     };
     
     // Call the API to get iframe URL
@@ -222,7 +249,17 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false  }: any)
           const uiConfig = TIER_PLANS.find(tierPlan => 
             tierPlan.id === plan.Id
           ) || TIER_PLANS[index] || TIER_PLANS[0];
-          
+
+          let displayPrice = plan.Price;
+          if (isEmailMarketing && selectedEmailTier && plan.Id !== 4) {
+            const emailPriceTier = emailTiers?.find((tier: any) =>
+              tier.AccountCategoryFeatureTier_Id === plan.Id &&
+              tier.LevelHigh === selectedEmailTier.LevelHigh
+            );
+            if (emailPriceTier) {
+              displayPrice = emailPriceTier.Price;
+            }
+          }
           return (
             <Grid item xs={12} sm={6} md={3} key={plan.Id}>
               <Box 
@@ -243,7 +280,7 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false  }: any)
                   </Typography>
                   <Box className={classes.tierPlansPriceContainer}>
                     {
-                      plan.Id !== 4 && plan.Price >= 0 && accountIsCurrencySymbolPrefix && (
+                      plan.Id !== 4 && displayPrice >= 0 && accountIsCurrencySymbolPrefix && (
                         <span className={classes.tierPlansCurrencySymbol}>
                           {accountCurrencySymbol}
                         </span>
@@ -252,10 +289,10 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false  }: any)
                     <Typography className={classes.tierPlansPrice} style={{ paddingTop: '15px' }}>
                       {/* {plan.Id === 1 ? t('billing.tier.free') : ''} */}
                       {plan.Id === 4 ? <span>{t('billing.tier.contactSales')}</span> : ''}
-                      {plan.Id !== 4 && plan.Price >= 0 ? plan.Price : ''}
+                      {plan.Id !== 4 && displayPrice >= 0 ? displayPrice : ''}
                     </Typography>
                     {
-                      plan.Id !== 4 && plan.Price >= 0 && !accountIsCurrencySymbolPrefix && (
+                      plan.Id !== 4 && displayPrice >= 0 && !accountIsCurrencySymbolPrefix && (
                         <span className={classes.tierPlansCurrencySymbol}>
                           {accountCurrencySymbol}
                         </span>
@@ -853,7 +890,10 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false  }: any)
             {
               isEmailMarketing && (
                 <>
-                  <EmailMarketingSlider classes={classes} />
+                  <EmailMarketingSlider
+                    classes={classes}
+                    onTierChange={handleEmailTierChange}
+                  />
                 </>
               )
             }
@@ -948,11 +988,23 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false  }: any)
           onClose={() => setShowCardConfirmationDialog(false)}
           onCancel={() => setShowCardConfirmationDialog(false)}
           onConfirm={async () => {
-            const response: any = await dispatch(upgradePlan({
+            let emailTierScaleId = 0;
+            if (isEmailMarketing && selectedEmailTier && emailTiers) {
+              const matchingTier = emailTiers.find((tier: any) =>
+                tier.AccountCategoryFeatureTier_Id === selectedPlan.Id &&
+                tier.LevelHigh === selectedEmailTier.LevelHigh
+              );
+              emailTierScaleId = matchingTier ? matchingTier.Id : 0;
+            }
+            const upgradeRequest: UpgradePlanRequest = {
               Id: selectedCreditCard.ID,
               Type: selectedCreditCard.Type,
-              TierID: selectedPlan.Id
-            }))
+              TierID: selectedPlan.Id,
+              EmailTierScaleID: emailTierScaleId
+            };
+
+            const response: any = await dispatch(upgradePlan(upgradeRequest));
+
             if (response?.payload?.StatusCode === 200) {
               setActiveStep(2);
               setShowCardConfirmationDialog(false);

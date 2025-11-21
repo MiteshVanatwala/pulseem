@@ -89,7 +89,7 @@ export const getAddSubscriptionCardIframeURL = createAsyncThunk(
     async (request: SubscriptionCardIframeRequest, thunkAPI) => {
         try {
             const response = await PulseemReactInstance.get(
-                `AccountBilling/GetAddSubscriptionCardIframeURL/${request.language}/TierSubscription/true/${request.tierId}`
+                `AccountBilling/GetAddSubscriptionCardIframeURL/${request.language}/${request.subscriptionType}/${request.isNewSubscription}/${request.tierId}/${request.emailTierScaleId}`
             );
             return response.data as PulseemResponse;
         } catch (error) {

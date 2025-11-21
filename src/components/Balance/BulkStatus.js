@@ -415,7 +415,7 @@ const BulkStatus = ({ classes }) => {
           <Divider />
           
           {
-            Newsletters?.IsEmailTierSubscribed && (
+            isAllowNewsletter && (
               <>
                 <Grid
                   container
