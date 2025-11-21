@@ -49,7 +49,7 @@
     "plans": {
       "starter": {
         "title": "Starter",
-        "description": "Tylko podstawy",
+        "description": "Wszystko, czego potrzebujesz, aby zacząć",
         "price": "0",
         "priceDescription": "/miesiąc",
         "subtext": "Na zawsze darmowy",
@@ -58,7 +58,7 @@
       },
       "flow": {
         "title": "Standard",
-        "description": "Zautomatyzuj swój marketing",
+        "description": "Nielimitowane automatyzacje i strony lądowania",
         "price": "49",
         "priceDescription": "/miesiąc",
         "subtext": "Rozliczane miesięcznie",
@@ -67,7 +67,7 @@
       },
       "engage": {
         "title": "Pro",
-        "description": "Idealny dla eCommerce",
+        "description": "Idealne dla sklepów internetowych",
         "price": "99",
         "priceDescription": "/miesiąc",
         "subtext": "Najpopularniejszy wybór",
@@ -76,7 +76,7 @@
       },
       "scale": {
         "title": "Scale",
-        "description": "Rozwiązania szyte na miarę",
+        "description": "Indywidualne rozwiązania dla dużych organizacji",
         "price": "Skontaktuj się z nami",
         "subtext": "Indywidualne ceny",
         "recipientLimit": "Niestandardowe limity odbiorców",
@@ -120,14 +120,14 @@
       "loadingPaymentForm": "Ładowanie formularza płatności..."
     },
     "features": {
-      "emailCampaigns": "Kampanie email",
+      "emailCampaigns": "Marketing e-mailowy",
       "smsMarketing": "Marketing SMS",
       "whatsappMarketing": "Marketing WhatsApp",
-      "pushNotifications": "Powiadomienia push",
+      "pushNotifications": "Powiadomienia push w sieci",
       "basicReports": "Podstawowe raporty",
-      "multipleIntegrations": "Liczne integracje",
+      "multipleIntegrations": "Różne integracje",
       "chatEmailSupport": "Wsparcie czat i email",
-      "everythingInStarter": "Wszystko ze Starter, plus:",
+      "everythingInStarter": "✓ Wszystko ze Starter, plus:",
       "automationsUnlimited": "Automatyzacje (bez ograniczeń)",
       "landingPagesUnlimited": "Strony docelowe (bez ograniczeń)",
       "smartSegmentations": "Inteligentne segmentacje",
@@ -135,8 +135,8 @@
       "abTesting": "Testy A/B",
       "surveySystem": "System ankiet",
       "apiAccess": "Dostęp do API",
-      "everythingInFlow": "Wszystko z Flow, plus:",
-      "ecommerceAutomationTriggers": "Wyzwalacze automatyzacji eCommerce",
+      "everythingInFlow": "✓ Wszystko z Flow, plus:",
+      "ecommerceAutomationTriggers": "Wyzwalacze handlu elektronicznego",
       "ecommerceSegmentations": "Segmentacje eCommerce",
       "productCatalogIntegration": "Integracja katalogu produktów",
       "measureRoi": "Mierzenie ROI - Email, SMS, WhatsApp",
@@ -144,13 +144,22 @@
       "subaccountsCreation": "Tworzenie subkont",
       "manageUsersPermissions": "Zarządzanie użytkownikami i uprawnieniami",
       "phoneSupport": "Wsparcie telefoniczne",
-      "everythingInEngage": "Wszystko z Engage, plus:",
+      "everythingInEngage": "✓ Wszystko z Engage, plus:",
       "highVolumeSending": "Wysyłanie dużych wolumenów",
       "customDevelopments": "Niestandardowe rozwoje i integracje",
       "customReports": "Niestandardowe raporty",
       "dedicatedAccountManager": "Dedykowany menedżer konta",
       "prioritySupport": "Wsparcie priorytetowe",
-      "scheduledTrainingSessions": "Zaplanowane sesje szkoleniowe"
+      "scheduledTrainingSessions": "Zaplanowane sesje szkoleniowe",
+      "dynamicProducts": "Produkty dynamiczne",
+      "SubAccounts": "Subkonta",
+      "UserManagementPermissions": "Zarządzanie użytkownikami i uprawnieniami",
+      "PopUpsUnlimited": "Okienka pop-up (nieograniczone)",
+      "AMPEmail": "AMP dla e-maili (w tym karuzela obrazów – wymaga zatwierdzenia przez Google i Yahoo)",
+      "VIPSupport": "Wsparcie VIP",
+      "PersonalTraining": "Indywidualne szkolenie",
+      "DedicatedAITeam": "Dedykowany zespół AI: analityk + ekspert marketingowy 24/7",
+      "BuildNewslettersAI": "Twórz newslettery z pomocą AI w 3 minuty!"
     },
     "steps": {
       "selectPlan": "Wybierz Plan",
@@ -159,7 +168,7 @@
     },
     "ui": {
       "upgradeYourPlan": "Ulepsz swój plan",
-      "mostPopularChoice": "Najpopularniejszy wybór",
+      "mostPopularChoice": "Najpopularniejsze",
       "foreverFree": "Na zawsze darmowy",
       "billedMonthly": "Rozliczane miesięcznie",
       "customPricing": "Indywidualne ceny",
@@ -170,13 +179,14 @@
       "popular": "Popularne",
       "recommended": "Polecane",
       "seeAllFeatures": "Zobacz wszystkie funkcje",
-      "currentPlan": "Aktualny Plan"
+      "currentPlan": "Aktualny Plan",
+      "costBasedOnUse": "* Koszt wysyłki SMS, WhatsApp i Push jest opłacany osobno w zależności od wykorzystania"
     },
     "frozenMessage": "<b>Since we couldn’t process your payment previously, some email campaigns were paused.</b><br /> Would you like to send the paused emails and resume scheduled automations and autoresponders?<br /><br />Clicking <b>Yes</b> will send all paused emails and restart any affected automations/autoresponders.<br />Clicking <b>No</b> will cancel all emails that were scheduled during the payment issue.",
     "releaseMessage": "Your paused emails are now being sent, and all relevant automations have been resumed.",
     "cancelMessage": "Understood. The paused emails have been canceled, and automations will remain inactive for now. You can restart them anytime from the <b>automation management pages.</b>",
     "free": "Free",
-    "contactSales": "Contact Sales",
+    "contactSales": "Skontaktuj się z nami",
     "permission": "Permission",
     "featureNotAvailable": "Ta funkcja jest dostępna tylko w pakiecie {planName}",
     "noFeatureAvailable": "Oops! no plan has this feature.",
@@ -272,5 +282,11 @@
     "AI_LANDING_PAGE_DESIGNER": "AI Landing Page Designer",
     "RCS_MESSAGING": "RCS Messaging",
     "KOSHER_SEND": "Kosher Send"
-  }
+  },
+  "EmailMarketingList": "Jaki jest rozmiar Twojej listy mailingowej?",
+  "EmailMarketingListSending": "(Nielimitowane wysyłanie w zależności od wielkości listy)",
+  "ChoosePackageFit": "Wybierz pakiet odpowiedni dla Twojej firmy",
+  "AllPackageMonthly": "Wszystkie pakiety w rozliczeniu miesięcznym",
+  "QuestionPricing": "Pytania dotyczące cen?",
+  "SalesContant": "sales@pulseem.com • +972-3-5240290"
 }
