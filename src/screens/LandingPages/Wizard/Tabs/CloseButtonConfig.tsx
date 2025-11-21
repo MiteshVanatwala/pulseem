@@ -23,7 +23,7 @@ const CloseButtonConfig: React.FC<CloseButtonConfigProps> = ({ classes, data, on
 	const { t: translator } = useTranslation();
 	const [closeButtonSettings, setCloseButtonSettings] = useState<CloseButtonSettings>({
 		color: '#000000',
-		bgcolor: '#ffffff',
+		bgcolor: '#fee6e6',
 		size: 50,
 		position: 'Right'
 	});
@@ -41,7 +41,7 @@ const CloseButtonConfig: React.FC<CloseButtonConfigProps> = ({ classes, data, on
 			
 			if (closeButton) {
 				const color = closeButton.getAttribute('data-color') || '#000000';
-				const bgcolor = closeButton.getAttribute('data-bgcolor') || '#ffffff';
+				const bgcolor = closeButton.getAttribute('data-bgcolor') || '#fee6e6';
 				const size = parseInt(closeButton.getAttribute('data-Size') || '50');
 				const position = (closeButton.getAttribute('data-Position') as 'Left' | 'Center' | 'Right') || 'Right';
 				
@@ -319,8 +319,7 @@ const CloseButtonConfig: React.FC<CloseButtonConfigProps> = ({ classes, data, on
 									cursor: 'pointer',
 									fontWeight: 'bold',
 									fontSize: `${Math.max(closeButtonSettings.size * 0.6, 12)}px`,
-									boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
-									border: '2px solid #ffffff'
+									boxShadow: '0 4px 8px rgba(0, 0, 0, 0.3)',
 								}}
 							>
 								<Close style={{ fontSize: '1.25em' }} />
