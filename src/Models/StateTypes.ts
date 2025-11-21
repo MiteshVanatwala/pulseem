@@ -31,6 +31,7 @@ export type CoreStateType = {
 export interface Message {
     MessageID: string;
     MessageText: string;
+    MessageHTML?: string;
     MessageTimestamp: string;
     MessageTypeID: number;
   }
