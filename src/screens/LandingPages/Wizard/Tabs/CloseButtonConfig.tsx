@@ -4,6 +4,7 @@ import { ChromePicker } from 'react-color';
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import { Close } from '@material-ui/icons';
 
 interface CloseButtonConfigProps {
 	classes: any;
@@ -21,7 +22,7 @@ interface CloseButtonSettings {
 const CloseButtonConfig: React.FC<CloseButtonConfigProps> = ({ classes, data, onUpdate }) => {
 	const { t: translator } = useTranslation();
 	const [closeButtonSettings, setCloseButtonSettings] = useState<CloseButtonSettings>({
-		color: '#ff0000',
+		color: '#000000',
 		bgcolor: '#ffffff',
 		size: 50,
 		position: 'Right'
@@ -39,7 +40,7 @@ const CloseButtonConfig: React.FC<CloseButtonConfigProps> = ({ classes, data, on
 			const closeButton = tempDiv.querySelector('[ID="PulseemCloseButton"]');
 			
 			if (closeButton) {
-				const color = closeButton.getAttribute('data-color') || '#ff0000';
+				const color = closeButton.getAttribute('data-color') || '#000000';
 				const bgcolor = closeButton.getAttribute('data-bgcolor') || '#ffffff';
 				const size = parseInt(closeButton.getAttribute('data-Size') || '50');
 				const position = (closeButton.getAttribute('data-Position') as 'Left' | 'Center' | 'Right') || 'Right';
@@ -114,7 +115,7 @@ const CloseButtonConfig: React.FC<CloseButtonConfigProps> = ({ classes, data, on
 
 	const generateCloseButtonHTML = (settings?: CloseButtonSettings) => {
 		const currentSettings = settings || closeButtonSettings;
-		return `<div ID='PulseemCloseButton' data-color='${currentSettings.color}' data-bgcolor='${currentSettings.bgcolor}' data-Size='${currentSettings.size}' data-Position='${currentSettings.position}'>X</div>`;
+		return `<div ID='PulseemCloseButton' data-color='${currentSettings.color}' data-bgcolor='${currentSettings.bgcolor}' data-Size='${currentSettings.size}' data-Position='${currentSettings.position}'>&times;</div>`;
 	};
 
 	const getPositionStyle = () => {
@@ -322,7 +323,7 @@ const CloseButtonConfig: React.FC<CloseButtonConfigProps> = ({ classes, data, on
 									border: '2px solid #ffffff'
 								}}
 							>
-								X
+								<Close style={{ fontSize: '1.25em' }} />
 							</Box>
 							</Box>
 						</Box>
