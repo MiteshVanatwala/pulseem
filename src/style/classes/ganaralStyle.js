@@ -4818,7 +4818,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   tierPlansContent: {
     padding: '24px',
     maxHeight: '60vh',
-    maxWidth: '1068px',
+    // maxWidth: '1068px',
     paddingTop: '0px',
     color: '#4a5568',
     fontFamily: '"Heebo", sans-serif',

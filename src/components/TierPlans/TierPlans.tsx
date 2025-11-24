@@ -539,9 +539,11 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false  }: any)
                     </span>
                   )
                 }
-              </Typography>
-              <Typography align="center" color="textSecondary">
-                {t('billing.tier.upgrade.paymentForm.perMonth')}
+                <span>
+                  <>
+                  {t('billing.tier.upgrade.paymentForm.perMonth')}
+                  </>
+                </span>
               </Typography>
 
               {/* Payment Iframe */}
