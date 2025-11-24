@@ -886,5 +886,6 @@
     "manageCard": "ניהול כרטיס"
   },
   "startDate": "תאריך התחלה",
-  "endDate": "תאריך סיום"
+  "endDate": "תאריך סיום",
+  "activeTierSubscription": "לחשבון כבר יש מנוי רמה פעיל לדוא\"ל."
 }

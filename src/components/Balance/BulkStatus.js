@@ -331,91 +331,99 @@ const BulkStatus = ({ classes }) => {
             </Grid>
           </Grid>
           <Divider />
-          <Grid
-            container
-            item sm={12} md={12} lg={12} xl={12}
-            className={clsx(classes.flex, classes.mt2, classes.mb2, classes.paddingSides15)}
-            justifyContent='space-between'
-          >
-            <Grid item md={5} xs={4}>
-              <NewsletterIcon className={classes.shoppingCartIcon} />
-              <Typography className={classes.bulkTitle}>{t('appBar.newsletter.title')}</Typography>
-            </Grid>
-
-            <Grid item md={3} xs={4} className={clsx(classes.paddingSides10, windowSize === 'xs' ? classes.textRight : '')}>
-              {  
-                <Tooltip
-                  title={getBillingTypeText(Newsletters)}
-                  placement='top-start'
-                  interactive={true}
-                  classes={{
-                    tooltip: clsx(classes.tooltipPrimary, classes.f12),
-                    arrow: classes.colrPrimary
-                  }}
+          {
+            isAllowNewsletter() && Newsletters.IsPrepaid && (
+              <>
+              
+                <Grid
+                  container
+                  item sm={12} md={12} lg={12} xl={12}
+                  className={clsx(classes.flex, classes.mt2, classes.mb2, classes.paddingSides15)}
+                  justifyContent='space-between'
                 >
-                  <Typography
-                    className={clsx(classes.bold, classes.elipsis)}
-                    title={`${getBillingTypeText(Newsletters)} ${t('report.Credits')}`}
-                    aria-label={`${getBillingTypeText(Newsletters)} ${t('report.Credits')}`}>
-                    {getBillingTypeText(Newsletters)}
-                  </Typography>
-                </Tooltip>
-              }
-            </Grid>
+                  <Grid item md={5} xs={4}>
+                    <NewsletterIcon className={classes.shoppingCartIcon} />
+                    <Typography className={classes.bulkTitle}>{t('appBar.newsletter.title')}</Typography>
+                  </Grid>
 
-            <Grid item md={4} xs={4} className={isRTL ? classes.textLeft : classes.textRight}>
-              {
-                isAllowNewsletter() && (
-                  <Button
-                    className={clsx(classes.btn, classes.btnRounded, classes.f12)}
-                    onClick={() => {
-                      if (isBillingDetailsRequired) {
-                        setIsOpenBillingSettings(true);
-                        setBillingPopupCallback('Newsletter');
-                      } else {
-                        showPackageDialogType({ type: 2, title: t('common.newsletterBulkTitle') });
-                      }
-                    }}
-                  >
-                    {t('dashboard.purchase')}
-                    {isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-                  </Button>
-                )
-              }
-              {
-                isAllowNewsletterForPoland() && (
-                  <>
+                  <Grid item md={3} xs={4} className={clsx(classes.paddingSides10, windowSize === 'xs' ? classes.textRight : '')}>
+                    {  
+                      <Tooltip
+                        title={getBillingTypeText(Newsletters)}
+                        placement='top-start'
+                        interactive={true}
+                        classes={{
+                          tooltip: clsx(classes.tooltipPrimary, classes.f12),
+                          arrow: classes.colrPrimary
+                        }}
+                      >
+                        <Typography
+                          className={clsx(classes.bold, classes.elipsis)}
+                          title={`${getBillingTypeText(Newsletters)} ${t('report.Credits')}`}
+                          aria-label={`${getBillingTypeText(Newsletters)} ${t('report.Credits')}`}>
+                          {getBillingTypeText(Newsletters)}
+                        </Typography>
+                      </Tooltip>
+                    }
+                  </Grid>
+
+                  <Grid item md={4} xs={4} className={isRTL ? classes.textLeft : classes.textRight}>
                     {
-                      Newsletters.IsEmailPolandSubscribed ? (
-                        <>
-                          <IconButton className={clsx(classes.p5)} onClick={() => setIsOpenPayPerRecipient(true)}>
-                            <BiCog />
-                          </IconButton>
-                        </>
-                      ) : (
+                      isAllowNewsletter() && Newsletters.Credits > 0 && (
                         <Button
                           className={clsx(classes.btn, classes.btnRounded, classes.f12)}
                           onClick={() => {
                             if (isBillingDetailsRequired) {
                               setIsOpenBillingSettings(true);
-                              setBillingPopupCallback('PayPerRecipient');
-                            } else setIsOpenPayPerRecipient(true)
+                              setBillingPopupCallback('Newsletter');
+                            } else {
+                              showPackageDialogType({ type: 2, title: t('common.newsletterBulkTitle') });
+                            }
                           }}
                         >
-                          {t(`common.${ !Newsletters.IsEmailPolandSubscribed ? 'SubscribeButton' : 'cancel'}`)}
+                          {t('dashboard.purchase')}
                           {isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                         </Button>
                       )
                     }
-                  </>
-                )
-              }
-            </Grid>
-          </Grid>
-          <Divider />
+                    {
+                      isAllowNewsletterForPoland() && (
+                        <>
+                          {
+                            Newsletters.IsEmailPolandSubscribed ? (
+                              <>
+                                <IconButton className={clsx(classes.p5)} onClick={() => setIsOpenPayPerRecipient(true)}>
+                                  <BiCog />
+                                </IconButton>
+                              </>
+                            ) : (
+                              <Button
+                                className={clsx(classes.btn, classes.btnRounded, classes.f12)}
+                                onClick={() => {
+                                  if (isBillingDetailsRequired) {
+                                    setIsOpenBillingSettings(true);
+                                    setBillingPopupCallback('PayPerRecipient');
+                                  } else setIsOpenPayPerRecipient(true)
+                                }}
+                              >
+                                {t(`common.${ !Newsletters.IsEmailPolandSubscribed ? 'SubscribeButton' : 'cancel'}`)}
+                                {isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+                              </Button>
+                            )
+                          }
+                        </>
+                      )
+                    }
+                  </Grid>
+                </Grid>
+                <Divider />
+              </>
+            )
+          }
           
+          {/* Email Subscription */}
           {
-            isAllowNewsletter && (
+            isAllowNewsletter && !Newsletters.IsPrepaid && (
               <>
                 <Grid
                   container
@@ -424,8 +432,8 @@ const BulkStatus = ({ classes }) => {
                   justifyContent='space-between'
                 >
                   <Grid item md={5} xs={4}>
-                    <SmsIcon className={classes.shoppingCartIcon} />
-                    <Typography className={clsx(classes.bulkTitle)}>{t('common.email')}</Typography>
+                    <NewsletterIcon className={classes.shoppingCartIcon} />
+                    <Typography className={clsx(classes.bulkTitle)}>{t('Newsletter')}</Typography>
                   </Grid>
                   <Grid item md={4} xs={4} className={isRTL ? classes.textLeft : classes.textRight}>
                     <Button

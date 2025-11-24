@@ -46,6 +46,7 @@ import { Loader } from '../Loader/Loader';
 import { MdAdd } from 'react-icons/md';
 import EmailMarketingSlider from '../EmailPlans/EmailMarketingSlider';
 import { UpgradePlanRequest } from '../../Models/Tiers/TierModels';
+import Toast from '../Toast/Toast.component';
 
 const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false  }: any) => {
   const { t, i18n } = useTranslation();
@@ -68,6 +69,7 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false  }: any)
   const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
   const { accountCurrencySymbol, accountIsCurrencySymbolPrefix } = useSelector((state: any) => state.common);
   const { tiers: emailTiers } = useSelector((state: any) => state.emailTierScaling);
+  const [ toastMessage, setToastMessage ] = useState(null);
 
   // Extract credit cards data from the API response
   const creditCards = userCreditCards?.Data || [];
@@ -113,6 +115,18 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false  }: any)
 
     scrollToTop();
   }, [activeStep]);
+  
+  const renderToast = () => {
+    if (toastMessage) {
+      setTimeout(() => {
+        setToastMessage(null);
+      }, 4000);
+      return (
+        <Toast data={toastMessage} />
+      );
+    }
+    return null;
+  }
 
   useEffect(() => {
     const loadUserData = async () => {
@@ -132,35 +146,6 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false  }: any)
 
   const handleEmailTierChange = (tierData: any) => {
     setSelectedEmailTier(tierData);
-  };
-
-  const loadIframe = async (plan: any) => {
-    let emailTierScaleId = 0;
-    if (isEmailMarketing && selectedEmailTier && emailTiers) {
-      const matchingTier = emailTiers.find((tier: any) =>
-        tier.AccountCategoryFeatureTier_Id === plan.Id &&
-        tier.LevelHigh === selectedEmailTier.LevelHigh
-      );
-      emailTierScaleId = matchingTier ? matchingTier.Id : 0;
-    }
-
-    // Prepare request parameters
-    const requestParams: any = {
-        language: i18n.language || 'en',
-        subscriptionType: isEmailMarketing ? 'EmailTierSubscription' : 'TierSubscription',
-        isNewSubscription: true,
-        tierId: plan.Id || plan.id,
-        emailTierScaleId: emailTierScaleId
-    };
-    
-    // Call the API to get iframe URL
-    const response: any = await dispatch(getAddSubscriptionCardIframeURL(requestParams));
-    // Extract iframe URL from response
-    if (response.payload?.Data?.IframeUrl) {
-      setIframeURL(response.payload?.Data?.IframeUrl);
-    } else {
-      console.error('API call failed:', response.payload || response.error);
-    }
   };
 
   const fetchCCLinkForiFrame = async (plan: any) => {
@@ -183,11 +168,16 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false  }: any)
     
     // Call the API to get iframe URL
     const response: any = await dispatch(getAddSubscriptionCardIframeURL(requestParams));
-    // Extract iframe URL from response
-    if (response.payload?.Data?.IframeUrl) {
-      setIframeURL(response.payload?.Data?.IframeUrl);
+    if (response.payload?.StatusCode === 409) {
+      // @ts-ignore
+      setToastMessage({ severity: 'error', color: 'error', message: t('common.activeTierSubscription'), showAnimtionCheck: false });
     } else {
-      console.error('API call failed:', response.payload || response.error);
+      // Extract iframe URL from response
+      if (response.payload?.Data?.IframeUrl) {
+        setIframeURL(response.payload?.Data?.IframeUrl);
+      } else {
+        console.error('API call failed:', response.payload || response.error);
+      }
     }
   }
 
@@ -1010,11 +1000,15 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false  }: any)
               setShowCardConfirmationDialog(false);
               dispatch(getCurrentPlan());
               setSelectedCreditCard(null);
+            } else if (response?.payload.StatusCode === 409) {
+              // @ts-ignore
+              setToastMessage({ severity: 'error', color: 'error', message: t('common.activeTierSubscription'), showAnimtionCheck: false });
             }
           }}
         >
           {t('billing.tier.upgrade.payUsingCC')}
         </BaseDialog>
+        {renderToast()}
       </>
     </BaseDialog>
   );
