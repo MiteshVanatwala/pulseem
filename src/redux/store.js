@@ -38,6 +38,8 @@ import popUpManagementReducer from './reducers/popUpManagementSlice';
 
 import aiChatReducer from './reducers/aiChatSlice';
 import TiersSlice from './reducers/TiersSlice';
+import emailTierScalingReducer from './reducers/emailTierScalingSlice';
+
 
 export default configureStore({
   reducer: {
@@ -78,6 +80,7 @@ export default configureStore({
     linksClicksReportSlice: linksClicksReportSlice,
     popup: PopupSlice,
     aiChat: aiChatReducer,
-    tiers: TiersSlice
+    tiers: TiersSlice,
+    emailTierScaling: emailTierScalingReducer
   },
 });

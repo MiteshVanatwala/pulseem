@@ -891,5 +891,10 @@
     "manageCard": "Manage Card"
   },
   "startDate": "Start Date",
-  "endDate": "End Date"
+  "endDate": "End Date",
+  "orTryOneOfThese": "Or try one of these",
+  "presetQuestion1": "Analyze my latest campaign",
+  "presetQuestion2": "How to increase opens and clicks?",
+  "presetQuestion3": "Create a VIP customer segment for me",
+  "presetQuestion4": "Create a segment of customers who open but don’t click"
 }

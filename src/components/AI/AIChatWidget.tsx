@@ -12,13 +12,14 @@ import { useTypewriter } from '../../hooks/useTypewriter';
 import { useTranslation } from 'react-i18next';
 import { setIsLoader } from '../../redux/reducers/coreSlice';
 import { PulseemFeatures } from '../../model/PulseemFields/Fields';
+import PresetQuestions from './PresetQuestions';
 
 const useStyles = makeStyles((theme) => ({
   PolyWidget: {
     position: 'fixed',
-    top: '40%',
+    top: '35%',
     left: '50%',
-    width: '50vw',
+    width: '58vw',
     height: '50vh',
     maxHeight: '50vh',
     // minWidth: '200px',
@@ -243,8 +244,7 @@ const AIChatWidget: React.FC = () => {
             <ChatHeader />
             <Box className={classes.Polycontent}>
               <MessageList />
-              {/* {messages.length === 0 && <PresetQuestions />} */}
-              {/* {<PresetQuestions />} */}
+              <PresetQuestions />
             </Box>
             <InputArea ref={inputAreaRef} />
             <div className={classes.PolymascotImage}>

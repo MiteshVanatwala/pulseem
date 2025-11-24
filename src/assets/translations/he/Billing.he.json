@@ -61,38 +61,38 @@
     "plans": {
       "starter": {
         "title": "Starter",
-        "description": "רק העיקר",
+        "description": "כל מה שצריך כדי להתחיל",
         "price": "0",
         "priceDescription": "/חודש",
         "subtext": "חינם לנצח",
         "recipientLimit": "עד 100 נמענים",
-        "buttonText": "התחל בחינם"
+        "buttonText": "התחילו חינם"
       },
       "flow": {
         "title": "Standard",
-        "description": "הפוך את השיווק שלך לאוטומטי",
+        "description": "אוטומציות ודפי נחיתה ללא הגבלה",
         "price": "49",
         "priceDescription": "/חודש",
         "subtext": "חיוב חודשי",
         "recipientLimit": "עד 100 נמענים",
-        "buttonText": "התחל תוכנית Standard"
+        "buttonText": "בחרו Standard"
       },
       "engage": {
         "title": "Pro",
-        "description": "מושלם לאתרי מסחר",
+        "description": "מושלם לאתרי Ecommerce",
         "price": "99",
         "priceDescription": "/חודש",
         "subtext": "הבחירה הפופולרית ביותר",
         "recipientLimit": "עד 100 נמענים",
-        "buttonText": "בחר Pro"
+        "buttonText": "בחרו Pro"
       },
       "scale": {
         "title": "Scale",
-        "description": "פתרונות מותאמים אישית",
+        "description": "פתרונות מותאמים לארגונים גדולים",
         "price": "צור קשר",
         "subtext": "תמחור מותאם אישית",
         "recipientLimit": "מגבלות נמענים מותאמות אישית",
-        "buttonText": "צור קשר עם המכירות"
+        "buttonText": "צרו קשר עם המכירות"
       }
     },
     "upgrade": {
@@ -132,37 +132,46 @@
       "loadingPaymentForm": "טוען טופס תשלום..."
     },
     "features": {
-      "emailCampaigns": "קמפיינים באימייל",
+      "emailCampaigns": "שיווק באימייל",
       "smsMarketing": "שיווק SMS",
       "whatsappMarketing": "שיווק WhatsApp",
-      "pushNotifications": "שליחת נוטיפיקציות",
+      "pushNotifications": "התראות Web Push",
       "basicReports": "דוחות בסיסיים",
-      "multipleIntegrations": "אינטגרציות מרובות",
+      "multipleIntegrations": "אינטגרציות שונות",
       "chatEmailSupport": "תמיכה בצ'אט ואימייל",
-      "everythingInStarter": "הכל מ-Starter, בתוספת:",
+      "everythingInStarter": "✓ הכל מ-Starter, בתוספת:",
       "automationsUnlimited": "אוטומציות (ללא הגבלה)",
       "landingPagesUnlimited": "דפי נחיתה (ללא הגבלה)",
-      "smartSegmentations": "סגמנטציות חכמות",
-      "pageViewTracking": "מעקב אחר צפיות בעמודים",
-      "abTesting": "בדיקות A/B",
+      "smartSegmentations": "פילוחים חכמים",
+      "pageViewTracking": "מעקב צפיות בדפים",
+      "abTesting": "A/B טסטינג",
       "surveySystem": "מערכת סקרים",
       "apiAccess": "גישה ל-API",
-      "everythingInFlow": "הכל מ-Standard, בתוספת:",
-      "ecommerceAutomationTriggers": "טריגרים לאוטומציה של מסחר אלקטרוני",
-      "ecommerceSegmentations": "סגמנטציות מסחר אלקטרוני",
-      "productCatalogIntegration": "אינטגרציה עם קטלוג מוצרים",
-      "measureRoi": "מדידת ROI - אימייל, SMS, WhatsApp",
-      "smsWhatsappChatbot": "צ'אטבוט SMS/WhatsApp",
+      "everythingInFlow": "✓ הכל מ-Standard, בתוספת:",
+      "ecommerceAutomationTriggers": "טריגרים לEcommerce",
+      "ecommerceSegmentations": "סגמנטציות לEcommerce",
+      "productCatalogIntegration": "אינטגרציה לקטלוג מוצרים",
+      "measureRoi": "ROI לקמפיינים - אימייל, SMS, WhatsApp",
+      "smsWhatsappChatbot": "צ'אטבוט ל-SMS/WhatsApp",
       "subaccountsCreation": "תתי חשבון",
       "manageUsersPermissions": "ניהול משתמשים והרשאות",
       "phoneSupport": "תמיכה טלפונית",
-      "everythingInEngage": "הכל מ-Pro, בתוספת:",
-      "highVolumeSending": "ביצועי שליחה בנפח גבוה",
-      "customDevelopments": "פיתוחים ואינטגרציות מותאמות אישית",
+      "everythingInEngage": "✓ הכל מ-Pro, בתוספת:",
+      "highVolumeSending": "ביצועי שליחה בנפחים גבוהים",
+      "customDevelopments": "פיתוחים ואינטגרציות מותאמים",
       "customReports": "דוחות מותאמים אישית",
-      "dedicatedAccountManager": "מנהל חשבון ייעודי",
+      "dedicatedAccountManager": "מנהל/ת לקוח אישי",
       "prioritySupport": "תמיכה עדיפה",
-      "scheduledTrainingSessions": "סשנים מתוזמנים של הדרכה"
+      "scheduledTrainingSessions": "סשנים מתוזמנים של הדרכה",
+      "dynamicProducts": "מוצרים דינמיים",
+      "SubAccounts": "חשבונות משנה",
+      "UserManagementPermissions": "ניהול משתמשים והרשאות",
+      "PopUpsUnlimited": "פופ-אפים (ללא הגבלה)",
+      "AMPEmail": "AMP לאימייל (כולל קרוסלת תמונות – דורש אישור Google & Yahoo)",
+      "VIPSupport": "תמיכת VIP",
+      "PersonalTraining": "הדרכות אישיות",
+      "DedicatedAITeam": "צוות AI ייעודי: אנליסט + מומחה שיווק 24/7",
+      "BuildNewslettersAI": "AI לבניית ניזולטרים ב-3 דקות!"
     },
     "steps": {
       "selectPlan": "בחר תוכנית",
@@ -171,7 +180,7 @@
     },
     "ui": {
       "upgradeYourPlan": "שדרג את התוכנית שלך",
-      "mostPopularChoice": "הבחירה הפופולרית ביותר",
+      "mostPopularChoice": "הכי פופולרי",
       "foreverFree": "חינם לנצח",
       "billedMonthly": "חיוב חודשי",
       "customPricing": "תמחור מותאם אישית",
@@ -182,13 +191,14 @@
       "popular": "פופולרי",
       "recommended": "מומלץ",
       "seeAllFeatures": "ראה את כל התכונות",
-      "currentPlan": "התוכנית הנוכחית"
+      "currentPlan": "התוכנית הנוכחית",
+      "costBasedOnUse": "* עלות שליחת SMS, WhatsApp ו-Push בתשלום נפרד לפי שימוש"
     },
     "frozenMessage": "מאחר שהתשלום שלכם לא עבר בניסיון החיוב הקודם, חלק מהקמפיינים שלכם הושהו.<br />האם תרצו לשלוח את האימיילים שהושהו ולחדש את האוטומציות והאוטורספונדרים שתוזמנו?<br /><br />לחיצה על \"כן\" תשלח את כל האימיילים שהושהו ותחדש את האוטומציות והאוטורספונדרים שנפגעו.<br />לחיצה על \"לא\" תבטל את כל האימיילים שתוזמנו במהלך תקופת בעיית התשלום.",
     "releaseMessage": "האימיילים שהושהו נשלחים כעת, והאוטומציות הרלוונטיות חודשו.",
     "cancelMessage": "עודכנו. האימיילים שהושהו בוטלו, והאוטומציות יישארו לא פעילות בשלב זה. ניתן להפעיל אותן מחדש <b>בעמודי ניהול האוטומציות</b> בכל עת.",
     "free": "חינם",
-    "contactSales": "צור קשר עם המכירות",
+    "contactSales": "צור קשר",
     "permission": "הרשאות",
     "featureNotAvailable": "פיצ'ר זה זמין רק בחבילת {planName}",
     "noFeatureAvailable": "אופס! אין תוכנית שכוללת את התכונה הזו.",
@@ -284,5 +294,11 @@
     "AI_LANDING_PAGE_DESIGNER": "מעצב דפי נחיתה מבוסס AI",
     "RCS_MESSAGING": "הודעות RCS",
     "KOSHER_SEND": "שליחת מוחזר"
-  }
+  },
+  "EmailMarketingList": "מה גודל רשימת התפוצה שלכם ?",
+  "EmailMarketingListSending": "(שליחה ללא הגבלה לפי גודל רשימת התפוצה)",
+  "ChoosePackageFit": "בחרו את החבילה המתאימה לעסק שלכם",
+  "AllPackageMonthly": "כל החבילות בתשלום חודשי",
+  "QuestionPricing": "שאלות על תמחור?",
+  "SalesContant": "sales@pulseem.com • +972-3-5240290"
 }

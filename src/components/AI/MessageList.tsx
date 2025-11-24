@@ -6,10 +6,11 @@ import { StateType } from '../../Models/StateTypes';
 import clsx from 'clsx';
 import moment from 'moment';
 import { useTranslation } from 'react-i18next';
+import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 
 const useStyles = makeStyles((theme) => ({
   messageList: {
-    height: '40vh', // Fixed height
+    // height: '50vh', // Fixed height
     // maxHeight: 'calc(80vh - 300px)', // Maximum height 
     maxHeight: '80vh', // Maximum height based on viewport height minus header and input area
     overflowY: 'auto',
@@ -45,10 +46,11 @@ const useStyles = makeStyles((theme) => ({
   aiMessage: {
     justifyContent: 'flex-start',
   },
-  messageBubble: {
+    messageBubble: {
     padding: theme.spacing(1, 2),
     borderRadius: '20px',
-    maxWidth: '70%',
+    maxWidth: '100%',
+    display: 'inline-block',
     '&.user-bubble': {
       maxWidth: '100%',
     },
@@ -56,18 +58,40 @@ const useStyles = makeStyles((theme) => ({
   userBubble: {
     backgroundColor: theme.palette.primary.main,
     color: theme.palette.primary.contrastText,
-    borderBottomRightRadius: '5px',
+  },
+  userBubbleWrapper: {
+   maxWidth: '95%',
+   marginLeft: '5%',
+   display: 'flex',
+   justifyContent: 'flex-end'
+  },
+  aiBubbleWrapper: {
+    maxWidth: '95%',
+    display: 'flex',
+    justifyContent: 'flex-start'
   },
   aiBubble: {
     backgroundColor: '#f0f0f0',
     color: theme.palette.text.primary,
-    borderBottomLeftRadius: '5px',
   },
   messageTime: {
     fontSize: '0.7rem',
     color: '#666',
     marginTop: '4px',
     textAlign: 'right',
+  },
+  messageContent: {
+    fontSize: '1.1rem',
+    whiteSpace: 'pre-wrap',
+    '& br': {
+      display: 'block',
+      content: '""',
+      marginTop: '0.5em',
+    },
+    '& label': {
+      display: 'block',
+      margin: 0,
+    },
   },
   userMessageTime: {
     color: '#FFF',
@@ -163,7 +187,7 @@ const MessageList: React.FC = () => {
 
   return (
     // @ts-ignore
-    <Box className={classes.messageList} ref={scrollRef}>
+    <Box className={classes.messageList} style={{height: messages.length > 1 ? '50vh' : '40vh'}} ref={scrollRef}>
       {messages.map((msg, index) => (
         <Box
           key={msg.MessageID}
@@ -172,19 +196,25 @@ const MessageList: React.FC = () => {
             msg.MessageTypeID === 1 ? classes.userMessage : classes.aiMessage
           }`}
         >
-          <Box>
+          <Box className={msg.MessageTypeID === 1 ?  classes.userBubbleWrapper: classes.aiBubbleWrapper}>
             <Paper
               className={`${classes.messageBubble} ${
                 msg.MessageTypeID === 1 ? classes.userBubble : classes.aiBubble
               } ${msg.MessageTypeID === 1 ? 'user-bubble' : 'ai-bubble'}`}
               elevation={1}
             >
-              <Typography 
-                variant="body1" 
-                style={{ whiteSpace: 'pre-wrap', fontSize: '1.1rem' }}
-              >
-                {msg.MessageText}
-              </Typography>
+              {msg.MessageHTML ? (
+                <Box className={classes.messageContent}>
+                  {RenderHtml(msg.MessageHTML)}
+                </Box>
+              ) : (
+                <Typography
+                  variant="body1"
+                  className={classes.messageContent}
+                >
+                  {msg.MessageText}
+                </Typography>
+              )}
               {msg.MessageTimestamp && (
                 <Typography className={clsx(classes.messageTime, msg.MessageTypeID === 1 ? classes.userMessageTime : null)}>
                   {/* {formatTime(msg.MessageTimestamp)} */}
