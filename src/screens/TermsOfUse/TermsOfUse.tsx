@@ -7,6 +7,7 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { updateTermsOfUse } from "../../redux/reducers/TermsOfUseSlice";
 import { getCommonFeatures } from "../../redux/reducers/commonSlice";
+import { Loader } from "../../components/Loader/Loader";
 // import useRedirect from "../../helpers/Routes/Redirect";
 // import { sitePrefix } from "../../config";
 // import { RedirectPropTypes } from "../../helpers/Types/Redirect";
@@ -15,6 +16,7 @@ import { getCommonFeatures } from "../../redux/reducers/commonSlice";
 const TermsOfUse = ({ classes, onClose }: any) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const [isLoader, setIsLoader] = useState<boolean>(false);
   // const Redirect = useRedirect();
   // const [termOfUse, setTermOfUse] = useState<TermsOfUseModel>({
   //   IsTermsApproved: false
@@ -40,11 +42,13 @@ const TermsOfUse = ({ classes, onClose }: any) => {
       ...errorsTemp
     });
     if (!errorsTemp.chkPolicy) {
+      setIsLoader(true);
       const response: any = await dispatch(updateTermsOfUse({
         IsTermsApproved: userDetails.chkPolicy,
         IgnoranceCount: 0,
         AcceptedTermsFromReact: true
       }));
+      setIsLoader(false);
       if (response?.payload?.StatusCode === 201 && userDetails.chkPolicy) {
         await dispatch(getCommonFeatures());
         // Redirect({
@@ -62,8 +66,14 @@ const TermsOfUse = ({ classes, onClose }: any) => {
 
   return <Grid
     container
-    className={clsx(classes.h100, classes.w100, classes.flex, classes.pt15)}
-    style={{ alignItems: 'flex-start',  }}
+    className={clsx(classes.h100, classes.w100, classes.flex)}
+    style={{
+      whiteSpace: 'normal',
+      overflowWrap: 'break-word',
+      wordBreak: 'break-word',
+      wordWrap: 'break-word',
+      hyphens: 'auto'
+    }}
   >
     {/* <Grid item xs={12}>
       <Typography>{RenderHtml(t('TermsOfUse.description'))}</Typography>
@@ -103,10 +113,6 @@ const TermsOfUse = ({ classes, onClose }: any) => {
               color="primary"
             />
           }
-          className={clsx({
-            [classes.textRight]: isRTL,
-            [classes.textLeft]: !isRTL,
-          })}
           label={<>
             <span className={clsx(classes.paddingInline5, classes.colrPrimary, classes.f18)}>*</span>
             <span className={classes.f18}>{RenderHtml(t('SignUp.PrivacyPolicyCheckbox'))}</span>
@@ -159,6 +165,7 @@ const TermsOfUse = ({ classes, onClose }: any) => {
         </Grid>
       </Grid>
     </Grid>
+    <Loader isOpen={isLoader} showBackdrop={true} />
   </Grid>
 }
 

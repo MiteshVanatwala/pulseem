@@ -169,7 +169,7 @@ const DashboardScreen = ({ classes }) => {
         //   onIgnoreTerms();
         // }}
       >
-        <Box style={{ height: 230 }}>
+        <Box style={{ height: 230, width: 700 }}>
           <TermsOfUse classes={classes} onClose={() => setShowTermsOfUse(false)} />
         </Box>
       </BaseDialog>
