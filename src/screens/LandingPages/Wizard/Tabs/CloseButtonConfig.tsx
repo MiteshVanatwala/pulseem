@@ -4,6 +4,7 @@ import { ChromePicker } from 'react-color';
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import { Close } from '@material-ui/icons';
 
 interface CloseButtonConfigProps {
 	classes: any;
@@ -21,8 +22,8 @@ interface CloseButtonSettings {
 const CloseButtonConfig: React.FC<CloseButtonConfigProps> = ({ classes, data, onUpdate }) => {
 	const { t: translator } = useTranslation();
 	const [closeButtonSettings, setCloseButtonSettings] = useState<CloseButtonSettings>({
-		color: '#ff0000',
-		bgcolor: '#ffffff',
+		color: '#000000',
+		bgcolor: '#fee6e6',
 		size: 50,
 		position: 'Right'
 	});
@@ -39,8 +40,8 @@ const CloseButtonConfig: React.FC<CloseButtonConfigProps> = ({ classes, data, on
 			const closeButton = tempDiv.querySelector('[ID="PulseemCloseButton"]');
 			
 			if (closeButton) {
-				const color = closeButton.getAttribute('data-color') || '#ff0000';
-				const bgcolor = closeButton.getAttribute('data-bgcolor') || '#ffffff';
+				const color = closeButton.getAttribute('data-color') || '#000000';
+				const bgcolor = closeButton.getAttribute('data-bgcolor') || '#fee6e6';
 				const size = parseInt(closeButton.getAttribute('data-Size') || '50');
 				const position = (closeButton.getAttribute('data-Position') as 'Left' | 'Center' | 'Right') || 'Right';
 				
@@ -114,7 +115,7 @@ const CloseButtonConfig: React.FC<CloseButtonConfigProps> = ({ classes, data, on
 
 	const generateCloseButtonHTML = (settings?: CloseButtonSettings) => {
 		const currentSettings = settings || closeButtonSettings;
-		return `<div ID='PulseemCloseButton' data-color='${currentSettings.color}' data-bgcolor='${currentSettings.bgcolor}' data-Size='${currentSettings.size}' data-Position='${currentSettings.position}'>X</div>`;
+		return `<div ID='PulseemCloseButton' data-color='${currentSettings.color}' data-bgcolor='${currentSettings.bgcolor}' data-Size='${currentSettings.size}' data-Position='${currentSettings.position}'>&times;</div>`;
 	};
 
 	const getPositionStyle = () => {
@@ -318,11 +319,10 @@ const CloseButtonConfig: React.FC<CloseButtonConfigProps> = ({ classes, data, on
 									cursor: 'pointer',
 									fontWeight: 'bold',
 									fontSize: `${Math.max(closeButtonSettings.size * 0.6, 12)}px`,
-									boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
-									border: '2px solid #ffffff'
+									boxShadow: '0 4px 8px rgba(0, 0, 0, 0.3)',
 								}}
 							>
-								X
+								<Close style={{ fontSize: '1.25em' }} />
 							</Box>
 							</Box>
 						</Box>
