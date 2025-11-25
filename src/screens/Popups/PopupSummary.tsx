@@ -16,6 +16,11 @@ import { logout } from '../../helpers/Api/PulseemReactAPI';
 import { LangugeCode } from '../../model/PulseemFields/Fields';
 import { Title } from '../../components/managment/Title';
 import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
+import { findPlanByFeatureCode } from '../../redux/reducers/TiersSlice';
+import { TierFeatures } from '../../helpers/Constants';
+import { coreProps } from '../../model/Core/corePros.types';
+import { get } from 'lodash';
+import TierPlans from '../../components/TierPlans/TierPlans';
 
 interface ToastMessage {
   severity?: 'error' | 'success' | 'info';
@@ -69,15 +74,23 @@ const PopupSummary = ({ classes }: any) => {
   const { id } = useParams();
 
   const { payload, lookupData } = location.state || {};
-
+  const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
   const { subAccountAllGroups } = useSelector((state: StateType) => state.group);
-
+  const { subAccount } = useSelector((state: any) => state.common);
+  const { isRTL } = useSelector(
+    (state: { core: coreProps }) => state.core
+  );
   const [loading, setLoader] = useState(false);
   const [showLoader, setShowLoader] = useState<boolean>(true);
   const [toastMessage, setToastMessage] = useState<ToastMessage | null>(null);
   const [webForm, setWebForm] = useState<any>(null);
   const [showEmbedDialog, setShowEmbedDialog] = useState(false);
   const [embedData, setEmbedData] = useState<any>(null);
+  const [TierMessageCode, setTierMessageCode] = useState<string>('');
+  const [dialogType, setDialogType] = useState<{
+		type: string;
+	} | null>(null);
+  const [showTierPlans, setShowTierPlans] = useState(false);
 
   const showErrorToast = (message: string) => {
     setToastMessage({
@@ -154,13 +167,85 @@ const PopupSummary = ({ classes }: any) => {
     getData();
   }, [id]);
 
+  const handleGetPlanForFeature = (tierMessageCode: string) => {
+    const planName = findPlanByFeatureCode(
+      tierMessageCode,
+      availablePlans,
+      currentPlan.Id
+    );
+    
+    if (planName) {
+      return t('billing.tier.featureNotAvailable').replace('{feature}', t(TierFeatures[tierMessageCode as keyof typeof TierFeatures] || tierMessageCode)).replace('{planName}', planName);
+    } else {
+      return t('billing.tier.noFeatureAvailable');
+    }
+  };
+
+  const getTierValidationDialog = () => ({
+    title: t('billing.tier.permission'),
+    showDivider: false,
+    content: (
+      <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+        {handleGetPlanForFeature(TierMessageCode)}
+      </Typography>
+    ),
+    renderButtons: () => (
+      <Grid
+        container
+        spacing={2}
+        className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}
+      >
+        <Grid item>
+          <Button
+            onClick={() => {
+              setShowTierPlans(true);
+            }}
+            className={clsx(classes.btn, classes.btnRounded)}
+          >
+            {t('billing.upgradePlan')}
+          </Button>
+        </Grid>
+        <Grid item>
+          <Button
+            onClick={() => setDialogType(null)}
+            className={clsx(classes.btn, classes.btnRounded)}
+          >
+            {t('common.cancel')}
+          </Button>
+        </Grid>
+      </Grid>
+    )
+  })
+
+  const renderDialog = () => {
+    const { type } = dialogType || {}
+    let currentDialog: any = {};
+    if (type === 'tier') {
+      currentDialog = getTierValidationDialog();
+    }
+
+    if (type) {
+      return (
+        dialogType && <BaseDialog
+          classes={classes}
+          open={dialogType}
+          onCancel={() => setDialogType(null)}
+          onClose={() => setDialogType(null)}
+          renderButtons={currentDialog?.renderButtons || null}
+          {...currentDialog}>
+          {currentDialog?.content}
+        </BaseDialog>
+      )
+    }
+  }
+
   const handlePublish = async () => {
     if (!id) return;
 
     try {
       setLoader(true);
       //@ts-ignore
-      const response = await dispatch(publish(id));
+      const response = await dispatch(publish(id)) as any;
       //@ts-ignore
       if (response?.payload?.StatusCode === 201) {
         showSuccessToast(t('PopupTriggers.popupPublished'));
@@ -176,6 +261,9 @@ const PopupSummary = ({ classes }: any) => {
           });
           setShowEmbedDialog(true);
         }
+      } else if (response?.payload?.StatusCode === 927) {
+        setTierMessageCode(response?.payload?.Message); // SURVEY_SYSTEM
+        setDialogType({ type: 'tier' });
       } else {
         showErrorToast(t('common.Error') || 'An error occurred');
       }
@@ -639,6 +727,12 @@ const PopupSummary = ({ classes }: any) => {
 
       <Loader isOpen={showLoader || loading} showBackdrop={true} />
       {toastMessage && <Toast customData={null} data={toastMessage} />}
+      {renderDialog()}
+      {showTierPlans && <TierPlans
+        classes={classes}
+        isOpen={showTierPlans}
+        onClose={() => setShowTierPlans(false)}
+      />}
     </DefaultScreen>
   );
 };
