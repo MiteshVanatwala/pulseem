@@ -63,3 +63,10 @@ export interface SubscriptionCardIframeRequest {
     tierId: number;
     emailTierScaleId?: number;
 }
+
+export interface ContactSalesRequest {
+    Name: string;
+    Email: string;
+    Cellphone: string;
+    Message: string;
+}

@@ -892,5 +892,9 @@
   },
   "startDate": "Start Date",
   "endDate": "End Date",
-  "activeTierSubscription": "Account already has an active email tier subscription."
+  "activeTierSubscription": "Account already has an active email tier subscription.",
+  "Submit": "Submit",
+  "customPackageQuote": "Don't send every month? For a custom package quote",
+  "getStarted": "Let's Get Started!",
+  "fillDetails": "Fill in your details and we'll get back to you soon"
 }

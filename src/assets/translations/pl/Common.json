@@ -887,5 +887,9 @@
   },
   "startDate": "Start Date",
   "endDate": "End Date",
-  "activeTierSubscription": "Account already has an active email tier subscription."
+  "activeTierSubscription": "Account already has an active email tier subscription.",
+  "Submit": "Wyślij",
+  "customPackageQuote": "Nie wysyłasz co miesiąc? Poproś o wycenę niestandardowego pakietu",
+  "getStarted": "Zaczynajmy!",
+  "fillDetails": "Wypełnij swoje dane, a wkrótce się z Tobą skontaktujemy"
 }

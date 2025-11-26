@@ -47,6 +47,7 @@ import { MdAdd } from 'react-icons/md';
 import EmailMarketingSlider from '../EmailPlans/EmailMarketingSlider';
 import { UpgradePlanRequest } from '../../Models/Tiers/TierModels';
 import Toast from '../Toast/Toast.component';
+import ContactUsDialog from '../EmailPlans/ContactUsDialog';
 
 const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false  }: any) => {
   const { t, i18n } = useTranslation();
@@ -70,6 +71,7 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false  }: any)
   const { accountCurrencySymbol, accountIsCurrencySymbolPrefix } = useSelector((state: any) => state.common);
   const { tiers: emailTiers } = useSelector((state: any) => state.emailTierScaling);
   const [ toastMessage, setToastMessage ] = useState(null);
+  const [showContactDialog, setShowContactDialog] = useState(false);
 
   // Extract credit cards data from the API response
   const creditCards = userCreditCards?.Data || [];
@@ -887,6 +889,12 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false  }: any)
                 </>
               )
             }
+            <Typography variant="body1" className={clsx(classes.marginSides5)}>
+              {t('common.customPackageQuote')}
+              <span onClick={() => setShowContactDialog(true)} className={clsx(classes.textUnderlineDialogButton)}>
+                {t('common.contactUs')}
+              </span>
+            </Typography>
             <Box sx={{alignItems: 'center', display: 'flex', justifyContent: 'center', textAlign: 'center', margin: '4px 0px 28px 0px'}}>
               <Typography variant="h3" className={clsx(classes.bold, classes.marginSides5, classes.tierInstruction)}>
                 {t('billing.ChoosePackageFit')}
@@ -1008,6 +1016,11 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false  }: any)
         >
           {t('billing.tier.upgrade.payUsingCC')}
         </BaseDialog>
+        <ContactUsDialog
+          classes={classes}
+          isOpen={showContactDialog}
+          onClose={() => setShowContactDialog(false)}
+        />
         {renderToast()}
       </>
     </BaseDialog>

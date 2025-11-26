@@ -887,5 +887,9 @@
   },
   "startDate": "תאריך התחלה",
   "endDate": "תאריך סיום",
-  "activeTierSubscription": "לחשבון כבר יש מנוי רמה פעיל לדוא\"ל."
+  "activeTierSubscription": "לחשבון כבר יש מנוי רמה פעיל לדוא\"ל.",
+  "Submit": "שלח",
+  "customPackageQuote": "לא שולח כל חודש? בקש הצעת מחיר מותאמת אישית",
+  "getStarted": "בוא נתחיל!",
+  "fillDetails": "מלא את הפרטים שלך ונחזור אליך בהקדם"
 }

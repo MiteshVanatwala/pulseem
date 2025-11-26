@@ -4974,5 +4974,119 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       color: '#fff',
       fontSize: '14px'
     }
+  },
+  contactUsDialog: {
+    width: 'auto !important',
+    minWidth: '500px !important',
+    maxWidth: '600px !important',
+    '@media (max-width: 768px)': {
+      minWidth: '400px !important',
+      maxWidth: '500px !important',
+    },
+    '@media (max-width: 600px)': {
+      minWidth: '350px !important',
+      maxWidth: '450px !important',
+    },
+    '@media (max-width: 500px)': {
+      minWidth: '350px !important',
+      maxWidth: '400px !important',
+    },
+  },
+  contactUsContent: {
+    padding: '0px 8px',
+    margin: '0px',
+  },
+  contactUsDialogContainer: {
+    "& .MuiPaper-root": {
+      overflowX: "hidden",
+      width: 'auto',
+      minWidth: '500px !important',
+      maxWidth: '600px !important',
+    },
+    "& .MuiDialog-scrollPaper": {
+      "@media screen and (max-width: 450px)": {
+        zoom: '85%'
+      },
+      "@media screen and (max-width: 330px)": {
+        zoom: '70%'
+      }
+    },
+    "& .MuiDialog-paperWidthSm": {
+      minWidth: '500px !important',
+      maxWidth: '600px !important',
+    },
+    "& .MuiDialog-paperScrollPaper": {
+      maxHeight: "100%",
+      borderRadius: 15
+    },
+  },
+  textUnderlineDialogButton: {
+    textDecoration: 'underline',
+    cursor: 'pointer',
+    fontWeight: 700,
+    margin: isRTL ? '0px 5px 0px 0px' : '0px 0px 0px 5px',
+    color: '#ff0076'
+  },
+  textColorHeading: {
+    color: '#ff0076',
+    fontWeight: 900,
+  },
+  contactUsCloseCont: {
+    marginBottom: 8,
+    borderRadius: '50%',
+    width: 36,
+    height: 36,
+    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
+    '& svg': {
+      width: 16,
+      height: 16,
+      padding: 10
+    },
+  },
+  contactUsInputField: {
+    maxWidth: 'auto',
+    margin: '0 auto',
+    '& .MuiOutlinedInput-root': {
+      borderRadius: '12px',
+      backgroundColor: '#f5f5f5',
+      '& fieldset': {
+        borderColor: '#e0e0e0',
+      },
+      '&:hover fieldset': {
+        borderColor: '#bdbdbd',
+      },
+      '&.Mui-focused fieldset': {
+        borderColor: '#1976d2',
+      },
+    },
+    '& .MuiOutlinedInput-input': {
+      padding: '8px 16px',
+    },
+  },
+  contactUsTextField: {
+    maxWidth: 'auto',
+    margin: '0 auto',
+    '& .MuiOutlinedInput-root': {
+      borderRadius: '12px',
+      backgroundColor: '#f5f5f5',
+      '& fieldset': {
+        borderColor: '#e0e0e0',
+      },
+      '&:hover fieldset': {
+        borderColor: '#bdbdbd',
+      },
+      '&.Mui-focused fieldset': {
+        borderColor: '#1976d2',
+      },
+    },
+    '& .MuiOutlinedInput-multiline': {
+      padding: '12px',
+    },
+  },
+  errorPlaceholder: {
+    boxShadow: '0 1px 8px rgba(0, 0, 0, 0.15)',
+    borderRadius: '12px',
+    padding: 12,
+    textAlign: 'center'
   }
 });
