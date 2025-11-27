@@ -891,5 +891,7 @@
   "Submit": "Wyślij",
   "customPackageQuote": "Nie wysyłasz co miesiąc? Poproś o wycenę niestandardowego pakietu",
   "getStarted": "Zaczynajmy!",
-  "fillDetails": "Wypełnij swoje dane, a wkrótce się z Tobą skontaktujemy"
+  "fillDetails": "Wypełnij swoje dane, a wkrótce się z Tobą skontaktujemy",
+  "enterMessage": "Wprowadź wiadomość",
+  "contactUsSuccess": "Twoja wiadomość została pomyślnie wysłana"
 }

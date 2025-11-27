@@ -228,7 +228,7 @@ const BulkStatus = ({ classes }) => {
     return Newsletters?.FeatureAllowed && accountFeatures && accountFeatures?.indexOf(PulseemFeatures.PURCHASE_NEWSLETTER_PACKAGES) > -1 && billingTypeId !== "1" && isGlobal === true && IsPoland;
   }
 
-  const isAllowNewsletterSubscription = !Newsletters.IsPrepaid && accountAvailablePackages.filter((aa) => { return aa.CampaignType === 2 }).length === 0 && (Newsletters.Credits === 0 || Newsletters.Credits === null);
+  const isAllowNewsletterSubscription = !Newsletters.IsPrepaid && accountAvailablePackages.filter((aa) => { return aa.CampaignType === 2 }).length === 0 && (Newsletters.Credits === 0 || Newsletters.Credits === null) || true;
 
   const showPackageDialogType = async (packageType) => {
     setPackageType(packageType);

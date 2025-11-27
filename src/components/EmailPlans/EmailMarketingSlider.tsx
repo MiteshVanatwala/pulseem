@@ -7,12 +7,18 @@ import clsx from 'clsx';
 import _ from 'lodash';
 import { getEmailPerRecipientsTierScaling } from '../../redux/reducers/emailTierScalingSlice';
 
-const EmailMarketingSlider = ({ classes, onTierChange }: any) => {
+const EmailMarketingSlider = ({ classes, onTierChange, setShowContactDialog, initialSliderValue }: any) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { isRTL } = useSelector((state: any) => state.core);
   const { currencyId } = useSelector((state: any) => state.common);
   const { tiers: apiTiers, loading } = useSelector((state: any) => state.emailTierScaling);
+  
+  const selectedApiTier = apiTiers && apiTiers.find((t: any) => {
+    const id = t && (t.Id ?? t.id);
+    const target = typeof initialSliderValue === 'string' ? parseInt(initialSliderValue, 10) : initialSliderValue;
+    return id === target;
+  });
 
   const [sliderValue, setSliderValue] = useState(0);
 
@@ -26,6 +32,38 @@ const EmailMarketingSlider = ({ classes, onTierChange }: any) => {
     if (!apiTiers || apiTiers.length === 0) return [];
     return _.uniqBy(apiTiers, 'LevelHigh');
   }, [apiTiers]);
+
+  // If an initialSliderValue (Id) is provided, find the matching object
+  // in `apiTiers`, get its LevelHigh and then find the corresponding
+  // index in `uniqueTierRanges` so we can set the slider value to that
+  // deduplicated tier index.
+  useEffect(() => {
+    if (initialSliderValue == null) return;
+    if (!apiTiers || apiTiers.length === 0) return;
+    if (!uniqueTierRanges || uniqueTierRanges.length === 0) return;
+
+    const target = typeof initialSliderValue === 'string'
+      ? parseInt(initialSliderValue, 10)
+      : initialSliderValue;
+
+    const matchedApiTier = apiTiers.find((t: any) => {
+      const id = t && (t.Id ?? t.id);
+      return id === target;
+    });
+
+    if (!matchedApiTier) return;
+
+    const levelHigh = matchedApiTier.LevelHigh ?? matchedApiTier.levelHigh;
+
+    const foundIndex = uniqueTierRanges.findIndex((t: any) => {
+      const lh = t && (t.LevelHigh ?? t.levelHigh);
+      return lh === levelHigh;
+    });
+
+    if (foundIndex !== -1) {
+      setSliderValue(foundIndex);
+    }
+  }, [initialSliderValue, apiTiers, uniqueTierRanges]);
 
   const tiers = useMemo(() => {
     if (uniqueTierRanges.length === 0) return [];
@@ -102,8 +140,6 @@ const EmailMarketingSlider = ({ classes, onTierChange }: any) => {
       </Box>
 
       <Box className={classes.sliderContainer}>
-       
-
         <Box className={classes.sliderTrackWrapper}>
           <IconButton
             onClick={handlePrevious}
@@ -186,6 +222,12 @@ const EmailMarketingSlider = ({ classes, onTierChange }: any) => {
           </Box>
         </Box>
       </Box>
+      <Typography variant="body1" className={clsx(classes.marginSides5)}>
+        {t('common.customPackageQuote')}
+        <span onClick={() => setShowContactDialog(true)} className={clsx(classes.textUnderlineDialogButton)}>
+          {t('common.contactUs')}
+        </span>
+      </Typography>
     </Box>
   );
 };

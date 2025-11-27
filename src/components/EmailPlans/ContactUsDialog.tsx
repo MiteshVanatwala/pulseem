@@ -56,7 +56,7 @@ const ContactUsDialog = ({ classes, isOpen, onClose }: ContactUsDialogProps) => 
 
     const handleSubmit = async () => {
          if (!formData.message.trim()) {
-            setApiError(t('whatsappCampaign.textPlaceholder'));
+            setApiError(t('common.enterMessage'));
             return;
         }
 
@@ -79,7 +79,7 @@ const ContactUsDialog = ({ classes, isOpen, onClose }: ContactUsDialogProps) => 
             const result: any = await dispatch(contactSalesForScale(request));
             
             if (result.payload?.StatusCode === 200) {
-                setSuccessMessage(t('WhatsappApiResponse.sendWhatsAppMessage.1'));
+                setSuccessMessage(t('common.contactUsSuccess'));
                 setFormData({ message: '' });
                 
                 setTimeout(() => {
@@ -133,7 +133,7 @@ const ContactUsDialog = ({ classes, isOpen, onClose }: ContactUsDialogProps) => 
                     {t('common.fillDetails')}
                 </Typography>
 
-                <Grid container spacing={2} className={classes.mt50}>
+                <Grid container spacing={2} className={classes.mt5}>
                     <Grid item xs={12} sm={4}>
                         <TextField
                             fullWidth
@@ -184,8 +184,8 @@ const ContactUsDialog = ({ classes, isOpen, onClose }: ContactUsDialogProps) => 
                     </Grid>
 
                     {(displayError || successMessage) && (
-                        <Grid item xs={12} className={clsx(classes.mt1, classes.mb5)}>
-                            <Box className={classes.errorPlaceholder}>
+                        <Grid item xs={12} className={clsx(classes.mb5)}>
+                            <Box>
                                 <Typography style={{ color: displayError ? '#ff3343' : '#4caf50' }}>
                                     {displayError || successMessage}
                                 </Typography>
@@ -198,7 +198,7 @@ const ContactUsDialog = ({ classes, isOpen, onClose }: ContactUsDialogProps) => 
                             variant="contained"
                             color="primary"
                             onClick={handleSubmit}
-                            className={clsx(classes.tierPlansButton, classes.tierPlansDefaultButton)}
+                            className={clsx(classes.tierPlansButton)}
                         >
                             {loading.contactSales ? (
                                 <CircularProgress size={24} color="inherit" />

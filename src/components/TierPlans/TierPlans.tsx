@@ -72,6 +72,7 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false  }: any)
   const { tiers: emailTiers } = useSelector((state: any) => state.emailTierScaling);
   const [ toastMessage, setToastMessage ] = useState(null);
   const [showContactDialog, setShowContactDialog] = useState(false);
+  const [ existingPlan, setExistingPlan ] = useState<any>(null);
 
   // Extract credit cards data from the API response
   const creditCards = userCreditCards?.Data || [];
@@ -138,6 +139,17 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false  }: any)
 
     loadUserData();
   }, [ currentPlan ]);
+
+  useEffect(() => {
+    if (!currentPlan?.EmailTierScaleID) return;
+
+    const matchedApiTier = emailTiers.find((t: any) => {
+      const id = t && (t.Id ?? t.id);
+      return id === currentPlan?.EmailTierScaleID;
+    });
+
+    if (matchedApiTier) setExistingPlan(matchedApiTier)
+  }, [emailTiers]);
 
   const handleNext = (plan?: any) => {
     if (plan) {
@@ -882,19 +894,33 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false  }: any)
             {
               isEmailMarketing && (
                 <>
+                  {existingPlan && (
+                    <Box sx={{ display: 'flex', alignItems: 'left', marginBottom: '8px' }}>
+                      <Typography variant="subtitle1" className={clsx(classes.bold)}>
+                        {t('common.tier.current')}: &nbsp;
+                        {existingPlan?.AccountCategoryFeatureTier || existingPlan?.Name || ''}
+                      </Typography>
+                      <Typography variant="body1" className={clsx(classes.marginSides5, classes.bold, classes.paddingInline30)}>
+                        {t('common.price')}: &nbsp;
+                        {existingPlan?.Price != null ? (accountIsCurrencySymbolPrefix ? `${accountCurrencySymbol}${existingPlan.Price}` : `${existingPlan.Price}${accountCurrencySymbol}`) : ''}
+                      </Typography>
+                    </Box>
+                  )}
                   <EmailMarketingSlider
                     classes={classes}
                     onTierChange={handleEmailTierChange}
+                    setShowContactDialog={setShowContactDialog}
+                    initialSliderValue={currentPlan?.EmailTierScaleID || 0}
                   />
+                  {/* <Typography variant="body1" className={clsx(classes.marginSides5)}>
+                    {t('common.customPackageQuote')}
+                    <span onClick={() => setShowContactDialog(true)} className={clsx(classes.textUnderlineDialogButton)}>
+                      {t('common.contactUs')}
+                    </span>
+                  </Typography> */}
                 </>
               )
             }
-            <Typography variant="body1" className={clsx(classes.marginSides5)}>
-              {t('common.customPackageQuote')}
-              <span onClick={() => setShowContactDialog(true)} className={clsx(classes.textUnderlineDialogButton)}>
-                {t('common.contactUs')}
-              </span>
-            </Typography>
             <Box sx={{alignItems: 'center', display: 'flex', justifyContent: 'center', textAlign: 'center', margin: '4px 0px 28px 0px'}}>
               <Typography variant="h3" className={clsx(classes.bold, classes.marginSides5, classes.tierInstruction)}>
                 {t('billing.ChoosePackageFit')}

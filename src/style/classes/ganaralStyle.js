@@ -4628,7 +4628,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     background: 'linear-gradient(-45deg, #ff0076, #ff4d2a)',
     color: 'white',
     padding: '6px',
-    width: '45%',
+    width: '50%',
     borderRadius: '10px',
     fontWeight: 'bold',
     fontSize: '0.8rem',

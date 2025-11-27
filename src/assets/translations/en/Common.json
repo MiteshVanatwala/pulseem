@@ -896,5 +896,7 @@
   "Submit": "Submit",
   "customPackageQuote": "Don't send every month? For a custom package quote",
   "getStarted": "Let's Get Started!",
-  "fillDetails": "Fill in your details and we'll get back to you soon"
+  "fillDetails": "Fill in your details and we'll get back to you soon",
+  "enterMessage": "Enter Message",
+  "contactUsSuccess": "Your message has been sent successfully"
 }
