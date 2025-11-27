@@ -39,7 +39,7 @@ const PresetQuestions: React.FC = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const { t } = useTranslation();
-  const { messages } = useSelector((state: StateType) => state.aiChat);
+  const { messages, aiIconStatus } = useSelector((state: StateType) => state.aiChat);
 
   const PRESET_QUESTIONS = [
     t("common.presetQuestion1"),
@@ -79,6 +79,7 @@ const PresetQuestions: React.FC = () => {
             size="small"
             className={classes.button}
             onClick={() => handlePresetClick(q)}
+            disabled={aiIconStatus === 1}
           >
             {q}
           </Button>
