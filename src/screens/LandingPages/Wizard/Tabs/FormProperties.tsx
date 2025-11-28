@@ -10,8 +10,9 @@ import { isShortUrlExist } from "../../../../redux/reducers/landingPagesSlice";
 import { LangugeCode } from "../../../../model/PulseemFields/Fields";
 import { useEffect, useState } from "react";
 
+const POPUP_LANGUAGES = [0, 1, 14];
 
-const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setErrors }: any) => {
+const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setErrors, isPopup }: any) => {
     const { t: translator } = useTranslation();
     const { isRTL, language } = useSelector(
         (state: { core: coreProps }) => state.core
@@ -54,6 +55,12 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
 
         onUpdate({ ...data, BaseLanguage: languageToId[language] });
     }, [language])
+
+    useEffect(() => {
+        if (isPopup && data.IsAccessibility !== false) {
+            onUpdate({ ...data, IsAccessibility: false });
+        }
+    }, [isPopup]);
 
     const renderPaymentFields = () => {
         return <>
@@ -122,8 +129,11 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
     }
 
     const handlePageName = (e: any) => {
-        if (urlLocked || data.ID > 0) {
-            onUpdate({ ...data, PageName: e.target.value })
+        if (isPopup) {
+            onUpdate({ ...data, PageName: e.target.value, IsAccessibility: false });
+        }
+        else if (urlLocked || data.ID > 0) {
+            onUpdate({ ...data, PageName: e.target.value });
         }
         else {
             onUpdate({ ...data, PageName: e.target.value, PageUrl: "".toValidLPName(e.target.value) });
@@ -133,8 +143,8 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
 
     return <Grid container spacing={2} className={clsx(classes.p15, classes.mb4)}>
         <Grid item md={3} xs={12} sm={12}>
-            <Typography title={translator("campaigns.camapignName")} className={classes.alignDir}>
-                {translator("landingPages.formName")}
+            <Typography title={translator(isPopup ? "PopupTriggers.summary.popupName" : "landingPages.formName")} className={classes.alignDir}>
+                {translator(isPopup ? "PopupTriggers.summary.popupName" : "landingPages.formName")}
             </Typography>
             <TextField
                 id="campaignName"
@@ -148,7 +158,6 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
                 onChange={(e: any) => { handlePageName(e) }}
                 error={!!errors.PageName}
                 title={data.PageName}
-            // onBlur={handleFromName}
             />
             <Box className='textBoxWrapper'>
                 <Typography className={clsx(errors.PageName ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
@@ -158,8 +167,8 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
         </Grid>
 
         <Grid item md={3} className={classes.w100}>
-            <Typography title={translator("landingPages.formLanguage")} className={classes.alignDir}>
-                {translator("landingPages.formLanguage")}
+            <Typography title={translator(isPopup ? "PopupTriggers.summary.popupLanguage" : "landingPages.formLanguage")} className={classes.alignDir}>
+                {translator(isPopup ? "PopupTriggers.summary.popupLanguage" : "landingPages.formLanguage")}
             </Typography>
             <FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.w100)}>
                 <Select
@@ -182,7 +191,10 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
                         },
                     }}
                 >
-                    {LangugeCode.map((item) => <option key={item.value} value={item.value}>{translator(item.label)}</option>)}
+                    {LangugeCode
+                        .filter(item => !isPopup || POPUP_LANGUAGES.includes(item.value))
+                        .map((item) => <option key={item.value} value={item.value}>{translator(item.label)}</option>)
+                    }
                 </Select>
             </FormControl>
             <Box className='textBoxWrapper'>
@@ -222,6 +234,7 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
                 error={!!errors.shortURL}
                 title={"".toValidLPName(data.PageUrl)}
                 onBlur={checkShortURLExist}
+                disabled={isPopup}
             />
             <Box className='textBoxWrapper'>
                 <Typography className={clsx(classes.f13)} style={{ direction: 'ltr' }}>
@@ -232,7 +245,7 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
                 </Typography>
             </Box>
         </Grid>}
-        <Grid item md={data.PageType < 3 ? 3 : 6} xs={12} sm={12} className={classes.mt25}>
+        <Grid item md={data.PageType < 3 ? 3 : 6} xs={12} sm={12} className={classes.mt25} style={{ visibility: isPopup ? 'hidden' : 'visible' }}>
             <FormControlLabel
                 control={
                     <Checkbox
@@ -302,7 +315,71 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
         }
 
         {
-            [LandingPagesAnswerType.POPUP_MESSAGE,
+            isPopup && [LandingPagesAnswerType.POPUP_MESSAGE,
+            LandingPagesAnswerType.REDIRECT_URL
+            ].indexOf(data.AnswerType) > -1 && (
+                <>
+                    <Grid item md={3} className={classes.w100}>
+                        <Typography title={translator("landingPages.answerMessage")} className={classes.alignDir}>
+                            {translator(data.AnswerType === LandingPagesAnswerType.REDIRECT_URL
+                                ? "landingPages.redirectUrl"
+                                : "landingPages.answerMessage"
+                            )}
+                        </Typography>
+                        <TextField
+                            label=""
+                            variant="outlined"
+                            value={data.AnswerData}
+                            className={clsx(classes.NoPaddingtextField, classes.textField, classes.w100, { [classes.textFieldError]: !!errors.AnswerData })}
+                            autoComplete="off"
+                            onChange={(e: any) => onUpdate({ ...data, AnswerData: e.target.value })}
+                            error={!!errors.AnswerData}
+                            title={data.AnswerData}
+                        />
+                        <Box className='textBoxWrapper'>
+                            <Typography className={clsx(errors.AnswerData ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
+                                {errors.AnswerData ?? errors.AnswerData}
+                            </Typography>
+                        </Box>
+                    </Grid>
+                    {data.AnswerData.toLowerCase().indexOf('home/paymentpage') > -1 && renderPaymentFields()}
+                </>
+            )
+        }
+
+        {
+            isPopup ? (
+                <Grid item md={3} className={classes.w100}>
+                    <Typography title={translator("landingPages.Domain")} className={classes.alignDir}>
+                        {translator("landingPages.Domain")}
+                    </Typography>
+                    <TextField
+                        label=""
+                        variant="outlined"
+                        value={Array.isArray(data.PopupDomains) && data.PopupDomains.length > 0 ? data.PopupDomains[0] : ''}
+                        className={clsx(classes.NoPaddingtextField, classes.textField, classes.w100, { [classes.textFieldError]: !!errors.PopupDomains })}
+                        autoComplete="off"
+                        onChange={(e: any) => {
+                            onUpdate({ ...data, PopupDomains: e.target.value ? [e.target.value] : [] });
+                            if (errors.PopupDomains && e.target.value) {
+                                setErrors({ ...errors, PopupDomains: '' });
+                            }
+                        }}
+                        error={!!errors.PopupDomains}
+                        title={Array.isArray(data.PopupDomains) && data.PopupDomains.length > 0 ? data.PopupDomains[0] : ''}
+                        placeholder="https://example.com"
+                    />
+                    <Box className='textBoxWrapper'>
+                        <Typography className={clsx(errors.PopupDomains ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
+                            {errors.PopupDomains || ''}
+                        </Typography>
+                    </Box>
+                </Grid>
+            ) : null
+        }
+
+        {
+            !isPopup && [LandingPagesAnswerType.POPUP_MESSAGE,
             LandingPagesAnswerType.REDIRECT_URL
             ].indexOf(data.AnswerType) > -1 && (
                 <>

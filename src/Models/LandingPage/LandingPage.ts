@@ -54,6 +54,7 @@ export interface LandingPageModel {
     autofillEditable?: boolean;
     TerminalNumber: string;
     APIUserName: string;
+    PopupDomains?: string[];
     DepartmentId: number | null;
     LinkPreviewTitle: string;
     LinkPreviewIcon: any;
@@ -83,6 +84,7 @@ export interface LandingPageModel {
     FacebookPixelCode: string;
     IsNewEditor: boolean | any | never;
     WebformsToReportLeadByApi: WebformsToReportLeadByApi[] | any | never;
+    CloseButtonHtml?: string;
 }
 
 export interface BeeEditorModel {

@@ -11,7 +11,7 @@ import { coreProps } from '../../Whatsapp/Campaign/Types/WhatsappCampaign.types'
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import WizardActions from '../../../components/Wizard/WizardActions';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
-import { BEE_EDITOR_TYPES, LandingPagesAnswerType } from '../../../helpers/Constants';
+import { BEE_EDITOR_TYPES, CLOSE_BUTTON_HTML, LandingPagesAnswerType, TierFeatures } from '../../../helpers/Constants';
 import { FileGallery } from '../../../Models/Files/FileGallery';
 import Gallery from '../../../components/Gallery/Gallery.component';
 import { PulseemFeatures, PulseemFolderType } from '../../../model/PulseemFields/Fields';
@@ -22,12 +22,13 @@ import { getGroupsBySubAccountId } from '../../../redux/reducers/groupSlice';
 import { BsInfoCircle } from 'react-icons/bs';
 import { getById, getAllLPTemplatesBySubaccountId, getLPPublicTemplates, saveLandingPage } from '../../../redux/reducers/landingPagesSlice';
 import { sitePrefix } from '../../../config';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { TabContext, TabPanel } from '@material-ui/lab';
 import FormProperties from './Tabs/FormProperties';
 import OfflineProperties from './Tabs/OfflineProperties';
 import SubscriberSettings from './Tabs/SubscriberSettings';
 import SeoSettings from './Tabs/SeoSettings';
+import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
 import DevelopmentSettings from './Tabs/DevelopmentSettings';
 import LinkPreviewSettings from './Tabs/LinkPreviewSettings';
 import { BeeEditorStoreModel, LandingPageModel } from '../../../Models/LandingPage/LandingPage';
@@ -35,9 +36,18 @@ import { PulseemResponse } from '../../../Models/APIResponse';
 import { logout } from '../../../helpers/Api/PulseemReactAPI';
 import Toast from '../../../components/Toast/Toast.component';
 import SubscriberGroup from './Tabs/SubscriberGroup';
+import CloseButtonConfig from './Tabs/CloseButtonConfig';
+import TierPlans from '../../../components/TierPlans/TierPlans';
+import { UserRoles } from '../../../Models/SubUser/SubUsers';
+import { get } from 'lodash';
 
-const CreateLandingPage = ({ classes }: ClassesType) => {
+const generateGuid = () => {
+	return Date.now().toString(36) + Math.random().toString(36).substring(2);
+};
+
+const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup?: boolean }) => {
 	const { id } = useParams();
+	const location = useLocation();
 	const queryParams = new URLSearchParams(window.location.search)
 	const isNew = queryParams.get("new")
 	const isFromAutomation = queryParams.get("FromAutomation")
@@ -53,8 +63,10 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 		type: string;
 	} | null>(null);
 	const { subAccountAllGroups } = useSelector((state: any) => state.group);
-	const { accountFeatures } = useSelector((state: any) => state.common);
-	const { ToastMessages } = useSelector((state: { landingPages: BeeEditorStoreModel }) => state.landingPages)
+	const { accountFeatures, subAccount } = useSelector((state: any) => state.common);
+	const { ToastMessages } = useSelector((state: { landingPages: BeeEditorStoreModel }) => state.landingPages);
+	const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
+	const [showTierPlans, setShowTierPlans] = useState(false);
 	const [toastMessage, setToastMessage] = useState(null);
 	const [errors, setErrors] = useState({
 		PageName: '',
@@ -83,7 +95,8 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 		limitSubscribers: '',
 		emailId: '',
 		DepartmentId: '',
-		DownloadUrl: ''
+		DownloadUrl: '',
+		PopupDomains: '',
 	});
 	const [filesProperties, setFilesProperties] = useState<FileGallery[]>([]);
 	const [isGalleryConfirmed, setIsFileSelected] = useState(false);
@@ -110,7 +123,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 		PrefunImage: '',
 		HasComments: false,
 		PageUrl: '',
-		PageType: 1,
+		PageType: isPopup ? 5 : 1,
 		AnswerType: 1,
 		IsResponsive: true,
 		DownloadUrl: '',
@@ -126,6 +139,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 		IsAccessibility: true,
 		TerminalNumber: '',
 		APIUserName: '',
+		PopupDomains: [],
 		DepartmentId: null,
 		LinkPreviewTitle: '',
 		LinkPreviewIcon: '',
@@ -154,14 +168,71 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 		GoogleTagManagerCode: '',
 		FacebookPixelCode: '',
 		IsNewEditor: null,
-		WebformsToReportLeadByApi: null
+		WebformsToReportLeadByApi: null,
+		CloseButtonHtml: CLOSE_BUTTON_HTML
 	});
 
 	const [tabValue, setTabValue] = useState<string>('1');
 	// const [template, setTemplate] = useState('');
+	const [TierMessageCode, setTierMessageCode] = useState<string>('');
 	const { publicTemplates, templatesBySubAccount } = useSelector(
 		(state: { landingPages: any }) => state.landingPages
 	);
+
+	useEffect(() => {
+		setIsLoader(false);
+		setDialogType(null);
+		setToastMessage(null);
+		setFilesProperties([]);
+		setIsFileSelected(false);
+		setEmailId('');
+		setTabValue('1');
+		setErrors({
+			PageName: '', formLanguage: '', shortURL: '', pageTitle: '',
+			answerMessage: '', paymentURL: '', paymentAPIUsername: '',
+			paymentTerminalNumber: '', offlineURL: '', pageDescription: '',
+			googleAnalytics: '', googleConvertion: '', googleTagManager: '',
+			facebookPixel: '', cssStyle: '', previewTitle: '', previewIcon: '',
+			previewDescription: '', seoPageTitle: '', seoKeywords: '',
+			seoDescription: '', reportLeadsToEmails: '', updateExistingRecipients: '',
+			limitSubscribers: '', emailId: '', DepartmentId: '', DownloadUrl: '',
+			PopupDomains: '',
+		});
+
+		const getDefaultLanguage = () => {
+			return language === 'pl' ? 14 : language === 'he' ? 0 : 1;
+		};
+
+		setLandingPageModel({
+			ID: 0, GroupID: 0, GroupIDs: [], IsClientScript: false,
+			CmbSelection: '', HtmlFileName: '', ButtonText: '', PageName: '',
+			AnswerOption: '', autofillEnabled: false, autofillFields: [],
+			AnswerData: '', SubmitCounter: 0, ViewCounter: 0,
+			ConfirmationText: '', Status: 1, PageHtml: '',
+			HasPrefunpage: false, PrefunImage: '', HasComments: false,
+			PageUrl: isPopup && !id ? generateGuid() : '',
+			PageType: isPopup ? 5 : 1, AnswerType: 1,
+			IsResponsive: true, DownloadUrl: '', OfflineDate: '',
+			OfflineUrl: '', HtmlToEdit: '', HtmlFile: '',
+			BaseLanguage: getDefaultLanguage(),
+			IsTemplate: false, CategoryID: null, IsUpdate: false,
+			SubscriptionOptin: false, IsAccessibility: true,
+			TerminalNumber: '', APIUserName: '', PopupDomains: [],
+			DepartmentId: null, LinkPreviewTitle: '', LinkPreviewIcon: '',
+			LinkPreviewIconName: '', LinkPreviewDescription: '',
+			LinkPreviewIconExtrnalURL: '', IsPreviewIconFromExtrnalURL: false,
+			EmailsToReport: [], SplitRegistrations: false, DoubleOptin: false,
+			SubscriptionsLimit: null, Systems: [], FacebookPageID: '',
+			FacebookPrefunPage: false, FacebookPrefunImage: '',
+			FacebookComments: false, ClientJavaScript: '', ClientBodyScript: '',
+			ClientHtmlCode: '', ClientCssStyle: '', PageTitle: '',
+			MetaDescription: '', MetaKeywords: '', GoogleAnalyticsCode: '',
+			GoogleConvertionCode: '', GoogleTagManagerCode: '',
+			FacebookPixelCode: '', IsNewEditor: null,
+			WebformsToReportLeadByApi: null,
+			CloseButtonHtml: CLOSE_BUTTON_HTML
+		});
+	}, [location.pathname, isPopup, language, id]);
 
 	enum EditorType {
 		SAVE_ONLY = 0,
@@ -203,6 +274,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 				HtmlFile: response.Data?.WebForm?.HtmlFile || '',
 				TerminalNumber: response.Data?.WebForm?.TerminalNumber || '',
 				APIUserName: response.Data?.WebForm?.APIUserName || '',
+				PopupDomains: response.Data?.WebForm?.PopupDomains || [],
 				LinkPreviewTitle: response.Data?.WebForm?.LinkPreviewTitle || '',
 				LinkPreviewIconName: response.Data?.WebForm?.LinkPreviewIconName || '',
 				LinkPreviewDescription: response.Data?.WebForm?.LinkPreviewDescription || '',
@@ -231,13 +303,15 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 				autofillEnabled: response.Data?.WebForm?.AutofillSettings?.IsAutofillEnabled,
 				autofillFields: response.Data?.WebForm?.AutofillSettings?.SelectedFields,
 				autofillEditable: response.Data?.WebForm?.AutofillSettings?.IsEditable,
-				SubscriptionOptin: response.Data?.WebForm?.AutofillSettings?.SubscriptionOptin
+				SubscriptionOptin: response.Data?.WebForm?.AutofillSettings?.SubscriptionOptin,
+				CloseButtonHtml: response.Data?.WebForm?.CloseButtonHtml || CLOSE_BUTTON_HTML
 			});
 			if (response.Data?.WebForm?.LinkPreviewIconName !== '') {
 				handleSelectedImage(response.Data?.WebForm?.LinkPreviewIconName, true);
 			}
 		}
 		else if (response.StatusCode === 403) {
+			// Leave this block unchanged - it's for creating new landing pages
 			setLandingPageModel({
 				...response.Data?.WebForm,
 				WebformsToReportLeadByApi: response.Data?.WebformsToReportLeadByApi || [],
@@ -245,7 +319,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 				AnswerType: 1,
 				IsResponsive: true,
 				IsTemplate: false,
-				PageType: 1,
+				PageType: isPopup ? 5 : 1,
 				DownloadUrl: '',
 				Status: 1,
 				GoogleAnalyticsCode: '',
@@ -255,7 +329,10 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 				BaseLanguage: language === 'pl' ? 14 : language === 'he' ? 0 : 1,
 				autofillEnabled: false,
 				autofillFields: [],
-				autofillEditable: false
+				autofillEditable: false,
+				PageUrl: isPopup && !id ? generateGuid() : '',
+				PopupDomains: [],
+				CloseButtonHtml: CLOSE_BUTTON_HTML
 			});
 		}
 
@@ -437,22 +514,33 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 			content: (
 				<Box>
 					<Typography variant="subtitle1">
-						{t("landingPages.confirmExit")}
+						{isPopup
+							? t("PopupTriggers.confirmExitPopup")
+							: t("landingPages.confirmExit")
+						}
 					</Typography>
 				</Box>
 			),
 			confirmText: "common.Yes",
 			cancelText: "common.No",
 			onConfirm: async () => {
-				await save(0);
-				navigate(`${sitePrefix}EditRegistrationPage`);
+				await save(EditorType.SAVE_ONLY);
+				if (isPopup) {
+					navigate(`${sitePrefix}PopUpManagement`);
+				} else {
+					navigate(`${sitePrefix}EditRegistrationPage`);
+				}
 			},
 			onClose: () => {
 				setDialogType(null);
-				navigate(`${sitePrefix}EditRegistrationPage`);
+				if (isPopup) {
+					navigate(`${sitePrefix}PopUpManagement`);
+				} else {
+					navigate(`${sitePrefix}EditRegistrationPage`);
+				}
 			},
 		};
-	}
+	};
 
 	const getValidationDialog = () => ({
 		title: t('whatsappCampaign.sendValidation'),
@@ -484,6 +572,56 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 		confirmText: t('common.Yes')
 	})
 
+	const handleGetPlanForFeature = (tierMessageCode: string) => {
+		const planName = findPlanByFeatureCode(
+			tierMessageCode,
+			availablePlans,
+			currentPlan.Id
+		);
+		
+		if (planName) {
+			return t('billing.tier.featureNotAvailable').replace('{feature}', t(TierFeatures[tierMessageCode as keyof typeof TierFeatures] || tierMessageCode)).replace('{planName}', planName);
+		} else {
+			return t('billing.tier.noFeatureAvailable');
+		}
+	};
+
+	const getTierValidationDialog = () => ({
+		title: t('billing.tier.permission'),
+		showDivider: false,
+		content: (
+			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+				{handleGetPlanForFeature(TierMessageCode)}
+			</Typography>
+		),
+		renderButtons: () => (
+			<Grid
+				container
+				spacing={2}
+				className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}
+			>
+				<Grid item>
+					<Button
+						onClick={() => {
+							setShowTierPlans(true);
+						}}
+						className={clsx(classes.btn, classes.btnRounded)}
+					>
+						{t('billing.upgradePlan')}
+					</Button>
+				</Grid>
+				<Grid item>
+					<Button
+						onClick={() => setDialogType(null)}
+						className={clsx(classes.btn, classes.btnRounded)}
+					>
+						{t('common.cancel')}
+					</Button>
+				</Grid>
+			</Grid>
+		)
+	})
+
 	const renderDialog = () => {
 		const { type } = dialogType || {}
 		let currentDialog: any = {};
@@ -497,6 +635,8 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 			currentDialog = getValidationDialog();
 		} else if (type === 'delete') {
 			currentDialog = getDeleteDialog();
+		} else if (type === 'tier') {
+			currentDialog = getTierValidationDialog();
 		}
 
 		if (type) {
@@ -543,11 +683,31 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 		return result as string;
 	}
 
+	const validateDomain = () => {
+		if (!isPopup && landingPageModel.PageType !== 5) return '';
+
+		if (!landingPageModel.PopupDomains || !Array.isArray(landingPageModel.PopupDomains) || landingPageModel.PopupDomains.length === 0) {
+			return t('landingPages.domainRequired');
+		}
+
+		const domain = landingPageModel.PopupDomains[0]?.trim();
+		if (!domain) {
+			return t('landingPages.domainRequired');
+		}
+
+		if (!isValidHttpUrl(domain)) {
+			return t('landingPages.invalidDomain');
+		}
+
+		return '';
+	};
+
 	const save = async (editorType: EditorType) => {
 		const errorDump = {
 			...errors,
 			PageName: !landingPageModel.PageName?.trim() ? t('landingPages.formNameRequired') : '',
-			shortURL: !landingPageModel.PageUrl?.trim() ? t('landingPages.shortURLRequired') : '',
+			shortURL: !isPopup && landingPageModel.PageType !== 5 && !landingPageModel.PageUrl?.trim() ? t('landingPages.shortURLRequired') : '',
+			PopupDomains: (isPopup || landingPageModel.PageType === 5) ? validateDomain() : '',
 			answerMessage: [
 				LandingPagesAnswerType.POPUP_MESSAGE,
 				LandingPagesAnswerType.REDIRECT_URL
@@ -581,12 +741,15 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 				ID: landingPageModel.ID || id,
 				ClientJavaScript: headScript,
 				ClientBodyScript: bodyScript,
+				CloseButtonHtml: landingPageModel.CloseButtonHtml || '',
 				AutofillSettings: {
 					IsAutofillEnabled: landingPageModel.autofillEnabled,
 					SelectedFields: landingPageModel.autofillFields,
 					IsEditable: landingPageModel.autofillEditable,
 					SubscriptionOptin: landingPageModel.SubscriptionOptin,
-				}
+				},
+				PageType: isPopup ? 5 : landingPageModel.PageType,
+				PopupDomains: (isPopup || landingPageModel.PageType === 5) && landingPageModel.PopupDomains && Array.isArray(landingPageModel.PopupDomains) && landingPageModel.PopupDomains.length > 0 ? landingPageModel.PopupDomains : null
 			};
 			//@ts-ignore
 			const response = await dispatch(saveLandingPage(req));
@@ -630,6 +793,20 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 				})
 				break;
 			}
+			case 409: {
+				showErrorToast(t('landingPages.pageExist'));
+				setErrors({
+					...errors,
+					PageName: t('landingPages.pageExist')
+				})
+				break;
+			}
+			case 927: {
+				// LANDING_PAGE_MANAGEMENT
+				setTierMessageCode(response?.Message || 'LANDING_PAGE_MANAGEMENT');
+				setDialogType({ type: 'tier' });
+				break;
+			}
 			case 500:
 			default: {
 				showErrorToast(t('common.Error'));
@@ -655,10 +832,20 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 	const handleContinueToEditor = (editorType: EditorType, savedPageID: number) => {
 		const isBeeEditor = (accountFeatures?.indexOf(PulseemFeatures.BEE_EDITOR) > -1 && editorType === EditorType.BEE);
 		const pageId = id || savedPageID;
-		let redirectUrl = isBeeEditor ? `${sitePrefix}editor/${BEE_EDITOR_TYPES.LANDING_PAGE}/${pageId}` : `/Pulseem/NewWebForm/NewFormEdit/${pageId}?fromreact=true`;
+
+		const beeEditorType = BEE_EDITOR_TYPES.LANDING_PAGE;
+
+		let redirectUrl = isBeeEditor
+			? `${sitePrefix}editor/${beeEditorType}/${pageId}`
+			: `/Pulseem/NewWebForm/NewFormEdit/${pageId}?fromreact=true`;
 
 		if (isFromAutomation) {
 			redirectUrl += `?new=${isNew}&FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`;
+		}
+
+		if (isPopup) {
+			navigate(`${sitePrefix}popupeditor/${pageId}?baseLanguage=${landingPageModel.BaseLanguage}`);
+			return false;
 		}
 
 		switch (editorType) {
@@ -714,7 +901,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 			);
 		}
 		else {
-			if (!landingPageModel.IsNewEditor) {
+			if (!landingPageModel.IsNewEditor && !isPopup) {
 				wizardButtons.push(
 					<Button
 						onClick={() => { saveAndContinue(EditorType.OLD) }}
@@ -770,7 +957,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 			containerClass={clsx(classes.mb50, classes.editorCont)}
 		>
 			<Box className="head">
-				<Title Text={t("landingPages.createLandingPage")} classes={classes} />
+				<Title Text={isPopup ? t("landingPages.createPopup") : t("landingPages.createLandingPage")} classes={classes} />
 			</Box>
 			<Box className={"containerBody"}>
 				<Tabs
@@ -782,24 +969,24 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 					classes={{ indicator: classes.hideIndicator }}
 				>
 					<Tab
-						label={t('landingPages.formProperties')}
+						label={isPopup ? t('PopupTriggers.popupProperties') : t('landingPages.formProperties')}
 						classes={{ root: classes.tabText, selected: classes.activeTab }}
 						className={clsx(classes.iconTab, classes.f18)}
 						value='1'
 					/>
-					{landingPageModel.PageType !== 3 && <Tab
+					{!isPopup && landingPageModel.PageType !== 3 && <Tab
 						label={t('landingPages.SEOSettings')}
 						classes={{ root: classes.tabText, selected: classes.activeTab }}
 						className={clsx(classes.iconTab, classes.f18)}
 						value='2'
 					/>}
-					<Tab
+					{!isPopup && <Tab
 						label={t('landingPages.developmentSettings')}
 						classes={{ root: classes.tabText, selected: classes.activeTab }}
 						className={clsx(classes.iconTab, classes.f18)}
 						value='3'
-					/>
-					<Tab
+					/>}
+					{!isPopup && <Tab
 						style={{ overflow: 'unset' }}
 						label={<>
 							<Typography style={{ whiteSpace: 'nowrap', textAlign: 'center', fontSize: 18, fontWeight: 500 }}>
@@ -823,13 +1010,19 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 						classes={{ root: classes.tabText, selected: classes.activeTab }}
 						className={clsx(classes.iconTab, classes.f18)}
 						value='4'
-					/>
+					/>}
 					<Tab
 						label={t('common.Groups')}
 						classes={{ root: classes.tabText, selected: classes.activeTab }}
 						className={clsx(classes.iconTab, classes.f18)}
 						value='5'
 					/>
+					{isPopup && <Tab
+						label={t('PopupTriggers.closePopupButton')}
+						classes={{ root: classes.tabText, selected: classes.activeTab }}
+						className={clsx(classes.iconTab, classes.f18)}
+						value='6'
+					/>}
 				</Tabs>
 				<TabContext value={`${tabValue}`}>
 					<TabPanel value='1' className={clsx(windowSize === 'xs' ? classes.noPadding : '')}>
@@ -840,6 +1033,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 							onSetDialog={setDialogType}
 							errors={errors}
 							setErrors={setErrors}
+							isPopup={isPopup}
 						/>
 
 						<Grid container spacing={3}>
@@ -917,6 +1111,13 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 							errors={errors}
 						/>
 					</TabPanel>
+					{isPopup && <TabPanel value='6' className={clsx(windowSize === 'xs' ? classes.noPadding : '')}>
+						<CloseButtonConfig
+							classes={classes}
+							data={landingPageModel}
+							onUpdate={setLandingPageModel}
+						/>
+					</TabPanel>}
 				</TabContext>
 
 				<Box>
@@ -938,6 +1139,11 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 			</Box >
 			{renderDialog()}
 			{toastMessage && renderToast()}
+			{showTierPlans && <TierPlans
+				classes={classes}
+				isOpen={showTierPlans}
+				onClose={() => setShowTierPlans(false)}
+			/>}
 		</DefaultScreen >
 	)
 }

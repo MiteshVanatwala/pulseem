@@ -3,7 +3,8 @@ export type commonProps = {
     tokenAlive?:  any | never,
     accountSettings?: any | never,
     accountFeatures?:  any | never,
-    isPoland?: boolean
+    isPoland?: boolean,
+    subAccount?: any
 };
 
 export interface VerifiedEmail {

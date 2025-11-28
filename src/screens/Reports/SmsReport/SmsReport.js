@@ -14,7 +14,7 @@ import 'moment/locale/he';
 import { getSmsReport, getSmsGraph } from '../../../redux/reducers/smsSlice';
 import { Loader } from '../../../components/Loader/Loader';
 import { ExportFile } from '../../../helpers/Export/ExportFile';
-import { DateFormats, SizeOptionsOfHandHeldDevices, smsReportStatus } from '../../../helpers/Constants';
+import { DateFormats, SizeOptionsOfHandHeldDevices, smsReportStatus, TierFeatures } from '../../../helpers/Constants';
 import { HandleExportData } from '../../../helpers/Export/ExportHelper';
 import GraphReport from '../../../components/Reports/GraphReport';
 import { useNavigate, useLocation } from 'react-router';
@@ -33,6 +33,9 @@ import { sitePrefix } from '../../../config';
 import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 import queryString from 'query-string';
 import { LinksClicksReport } from '../../../config/enum';
+import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
+import TierPlans from '../../../components/TierPlans/TierPlans';
+import { get } from 'lodash';
 
 const SmsReport = ({ classes }) => {
   const priorDate = moment().subtract(30, 'days').utcOffset(0);
@@ -40,9 +43,10 @@ const SmsReport = ({ classes }) => {
   const navigate = useNavigate();
   const { state } = useLocation();
   const from = state?.from || "/";
-  const { accountFeatures, currencySymbol, isCurrencySymbolPrefix } = useSelector(state => state.common);
+  const { accountFeatures, currencySymbol, isCurrencySymbolPrefix, subAccount } = useSelector(state => state.common);
   const { language, windowSize, isRTL, userRoles } = useSelector(state => state.core)
   const { smsReport, smsGraph } = useSelector(state => state.sms)
+  const { currentPlan, availablePlans } = useSelector(state => state.tiers)
   const { t } = useTranslation()
   const rowsOptions = [6, 10, 20, 50]
   const [rowsPerPage, setRowsPerPage] = useState(rowsOptions[0])
@@ -60,6 +64,60 @@ const SmsReport = ({ classes }) => {
   const [hasRevenue, setHasRevenue] = useState(false);
   const [showNoticeDialog, setShowNoticeDialog] = useState(false);
   const [dialogType, setDialogType] = useState(null);
+  const [TierMessageCode, setTierMessageCode] = useState('');
+  const [showTierPlans, setShowTierPlans] = useState(false);
+
+  const handleGetPlanForFeature = (tierMessageCode) => {
+    const planName = findPlanByFeatureCode(
+        tierMessageCode,
+        availablePlans,
+        currentPlan.Id
+    );
+    
+    if (planName) {
+        return t('billing.tier.featureNotAvailable').replace('{feature}', t(TierFeatures[tierMessageCode] || tierMessageCode)).replace('{planName}', planName);
+    } else {
+        return t('billing.tier.noFeatureAvailable');
+    }
+  };
+
+  
+  const getTierValidationDialog = () => {
+    return {
+      type: 'tier',
+      data: null,
+      title: t('billing.tier.permission'),
+      showDivider: false,
+      content: (
+        <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+          {handleGetPlanForFeature(TierMessageCode)}
+        </Typography>
+      ),
+      renderButtons: () => (
+        <Grid container spacing={2} className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}>
+          <Grid item>
+            <Button
+              onClick={() => {
+                setDialogType(null);
+                setShowTierPlans(true);
+              }}
+              className={clsx(classes.btn, classes.btnRounded)}
+            >
+              {t('billing.upgradePlan')}
+            </Button>
+          </Grid>
+          <Grid item>
+            <Button
+              onClick={() => { setDialogType(null); }}
+              className={clsx(classes.btn, classes.btnRounded)}
+            >
+              {t('common.cancel')}
+            </Button>
+          </Grid>
+        </Grid>
+      )
+    };
+  };
   const qs = (window.location.search && queryString.parse(window.location.search)) || state;
 
   moment.locale(language)
@@ -221,7 +279,17 @@ const SmsReport = ({ classes }) => {
 
   const getData = async (query) => {
     setLoader(true);
-    await dispatch(getSmsReport(query));
+    const response = await dispatch(getSmsReport(query));
+    
+    // Check for tier validation
+    if (response?.payload === 927) {
+      // SMS_REPORT
+      setTierMessageCode('SMS_REPORT');
+      setDialogType(getTierValidationDialog());
+      setLoader(false);
+      return;
+    }
+    
     setLoader(false);
     setPage(query.PageNumber ?? page);
   }
@@ -255,7 +323,14 @@ const SmsReport = ({ classes }) => {
 
   useEffect(() => {
     const getGraph = async () => {
-      await dispatch(getSmsGraph());
+      const response = await dispatch(getSmsGraph());
+      
+      // Check for tier validation
+      if (response === '927') {
+        setTierMessageCode('SMS_REPORT');
+        setDialogType(getTierValidationDialog());
+        return;
+      }
     }
     if (!smsGraph)
       getGraph();
@@ -940,6 +1015,38 @@ const SmsReport = ({ classes }) => {
     const { type } = dialogType || {}
     const dialogContent = {
       featureNotice: getFeatureNoticeDialog(),
+      tier: {
+        title: t('billing.tier.permission'),
+        showDivider: false,
+        exitButton: false,
+        content: RenderHtml(handleGetPlanForFeature(TierMessageCode)),
+        onClose: () => setDialogType(null),
+        onConfirm: () => setDialogType(null),
+        showDefaultButtons: false,
+        renderButtons: () => (
+          <Grid container spacing={2} className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}>
+            <Grid item>
+              <Button
+                onClick={() => {
+                  setDialogType(null);
+                  setShowTierPlans(true);
+                }}
+                className={clsx(classes.btn, classes.btnRounded)}
+              >
+                {t('billing.upgradePlan')}
+              </Button>
+            </Grid>
+            <Grid item>
+              <Button
+                onClick={() => { setDialogType(null); }}
+                className={clsx(classes.btn, classes.btnRounded)}
+              >
+                {t('common.cancel')}
+              </Button>
+            </Grid>
+          </Grid>
+        )
+      }
     }
     if (dialogContent[type]) {
       const currentDialog = dialogContent[type] || {}
@@ -984,7 +1091,11 @@ const SmsReport = ({ classes }) => {
       <GraphReport classes={classes} showLoader={!smsGraph} reportData={smsGraph} />
       {renderDialog()}
       <Loader isOpen={showLoader} showBackdrop={true} />
-      {renderDialog()}
+      {showTierPlans && <TierPlans
+        classes={classes}
+        isOpen={showTierPlans}
+        onClose={() => setShowTierPlans(false)}
+      />}
     </DefaultScreen>
   )
 }

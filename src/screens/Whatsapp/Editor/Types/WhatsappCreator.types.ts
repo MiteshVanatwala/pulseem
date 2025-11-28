@@ -431,6 +431,7 @@ export type submitTemplatePayloadProps = {
 	Data: submitTemplateDataProps;
 	Message: string;
 	Status: string;
+	StatusCode?: number | string;
 };
 
 export type submitTemplateAPIProps = {
@@ -514,6 +515,7 @@ export type reportListPayloadProps = {
 	Data: reportListPayloadDataProps;
 	Message: string;
 	Status: string;
+	StatusCode?: number | string;
 };
 
 export type reportListAPIProps = {
@@ -524,6 +526,7 @@ export type commonAPIResponsePayloadProps = {
 	Data: any;
 	Message: string;
 	Status: string;
+	StatusCode?: number | string;
 };
 
 export type commonAPIResponseProps = {

@@ -17,17 +17,24 @@ import { DateField } from '../../../components/managment/index';
 import { MdArrowBackIos, MdArrowForwardIos, MdErrorOutline, MdNotificationsActive } from 'react-icons/md';
 import useRedirect from '../../../helpers/Routes/Redirect';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
+import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 import { sitePrefix } from '../../../config';
 import { Title } from '../../../components/managment/Title';
+import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
+import TierPlans from '../../../components/TierPlans/TierPlans';
+import { TierFeatures } from '../../../helpers/Constants';
+import { get } from 'lodash';
 
 const NotificationSend = ({ classes }) => {
     const { id } = useParams();
     const { t } = useTranslation();
     const Redirect = useRedirect();
     const { notificationGroups } = useSelector(state => state.notification)
+    const { subAccount } = useSelector(state => state.common);
     /* #region  Component settings constatns */
     const dispatch = useDispatch();
-    const { language, isRTL, windowSize, userRoles } = useSelector(state => state.core)
+    const { language, isRTL, windowSize, userRoles } = useSelector(state => state.core);
+    const { currentPlan, availablePlans } = useSelector(state => state.tiers);
     const [ShowRedirectButton, setRedirectButtonVisibillity] = useState(false);
     const [groupList, setGroupList] = useState(null);
     moment.locale(language);
@@ -69,6 +76,8 @@ const NotificationSend = ({ classes }) => {
     const [duplicatedRecipients, setDuplicatedRecipients] = useState(0);
     const [showGroupsList, setShowGroupsList] = useState(false);
     const [isSending, setIsSending] = useState(false);
+    const [dialogType, setDialogType] = useState(null);
+    const [TierMessageCode, setTierMessageCode] = useState('');
 
     const toastMessages = {
         SUCCESS: { severity: 'success', color: 'success', message: t('notifications.saved'), showAnimtionCheck: true },
@@ -175,6 +184,26 @@ const NotificationSend = ({ classes }) => {
                 </BaseDialog>
             );
         }
+
+        if (dialogType) {
+            const { type } = dialogType;
+            const dialogContent = {
+                tier: renderTierValidationDialog()
+            };
+
+            const currentDialog = dialogContent[type] || {};
+
+            return (
+                <BaseDialog
+                    classes={classes}
+                    open={dialogType}
+                    onClose={() => setDialogType(null)}
+                    onCancel={() => setDialogType(null)}
+                    {...currentDialog}>
+                    {currentDialog.content}
+                </BaseDialog>
+            );
+        }
     }
     const renderValidationError = () => {
         return {
@@ -208,6 +237,31 @@ const NotificationSend = ({ classes }) => {
     const handleDialogClose = () => {
         setValidationError(null);
         setSummary(null);
+    }
+
+    const renderTierValidationDialog = () => {
+        return {
+            showDivider: false,
+            title: t('common.Notice'),
+            content: (
+                <Box className={classes.dialogBox}>
+                    {RenderHtml(t('common.TierValidationMessage'))}
+                </Box>
+            ),
+            renderButtons: () => (
+                <Button
+                    variant='contained'
+                    size='small'
+                    onClick={() => setDialogType(null)}
+                    className={clsx(
+                        classes.btn,
+                        classes.btnRounded,
+                        classes.middle
+                    )}>
+                    {t('common.Ok')}
+                </Button>
+            )
+        };
     }
     const handleCancel = () => {
         onCancelConfirm(false);
@@ -527,11 +581,68 @@ const NotificationSend = ({ classes }) => {
         const data = { NotificationId: parseInt(id), NotificationGroups: selectedGroups.map((g) => { return g.Id }), ScheduleTime: model.SendDate };
         const result = await dispatch(SendNotification(data));
 
+        // Check for tier validation
+        if (result?.payload === 927 || result?.payload === '927') {
+            setTierMessageCode('WEB_PUSH');
+            setDialogType(getTierValidationDialog());
+            return;
+        }
+
         if (result && result.payload === true) {
             setSummary(null);
             setCampaignSent(true);
         }
     }
+
+    const handleGetPlanForFeature = (tierMessageCode) => {
+        const planName = findPlanByFeatureCode(
+            tierMessageCode,
+            availablePlans,
+            currentPlan.Id
+        );
+        
+        if (planName) {
+            return t('billing.tier.featureNotAvailable').replace('{feature}', t(TierFeatures[tierMessageCode] || tierMessageCode)).replace('{planName}', planName);
+        } else {
+            return t('billing.tier.noFeatureAvailable');
+        }
+    };
+
+    const [showTierPlans, setShowTierPlans] = useState(false);
+    const getTierValidationDialog = () => ({
+        type: 'tier',
+        data: null,
+        title: t('billing.tier.permission'),
+        showDivider: false,
+        content: (
+            <Box className={classes.dialogBox}>
+                {handleGetPlanForFeature(TierMessageCode)}
+            </Box>
+        ),
+        renderButtons: () => (
+            <Grid container spacing={2} className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}>
+                <Grid item>
+                    <Button
+                        onClick={() => {
+                            setDialogType(null);
+                            setShowTierPlans(true);
+                        }}
+                        className={clsx(classes.btn, classes.btnRounded)}
+                    >
+                        {t('billing.upgradePlan')}
+                    </Button>
+                </Grid>
+                <Grid item>
+                    <Button
+                        onClick={() => { setDialogType(null); }}
+                        className={clsx(classes.btn, classes.btnRounded)}
+                    >
+                        {t('common.cancel')}
+                    </Button>
+                </Grid>
+            </Grid>
+        )
+    });
     const callbackSelectedGroups = (group, key, reference) => {
         const found = selectedGroups.map((group) => { return group.Id }).includes(group.Id)
         if (found) {
@@ -710,6 +821,11 @@ const NotificationSend = ({ classes }) => {
                     <WizardButtons />
                 </div>
             </div>
+            {showTierPlans && <TierPlans
+                classes={classes}
+                isOpen={showTierPlans}
+                onClose={() => setShowTierPlans(false)}
+            />}
         </DefaultScreen>
     );
 };

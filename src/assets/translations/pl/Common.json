@@ -191,6 +191,8 @@
   "Success": "Akcja zakończona pomyślnie",
   "No": "Nie",
   "Yes": "Tak",
+  "on": "Włączony",
+  "off": "Wyłączony",
   "DeleteTooltip": "Usuń pytanie",
   "MoveTooltip": "Zmień kolejność",
   "StoreDataInfo": "Zapisz wynik w polu danych",
@@ -668,6 +670,7 @@
   "specificDates": "Określone daty",
   "equal": "Równe",
   "contains": "Zawiera",
+  "notContains": "Nie zawiera",
   "like": "Podobne",
   "notEqual": "Nierówne",
   "startsWith": "Zaczyna się od",
@@ -868,5 +871,25 @@
   "payAttention": "Zwróć uwagę!",
   "allChannels": "Wszystkie kanały",
   "contactUs": "Skontaktuj się z nami",
-  "currency": "Waluta"
+  "currency": "Waluta",
+  "polyAgentIconTitle": "Cześć, jestem Pulsy, twoim inteligentnym agentem AI",
+  "polyAgentIconTitleMarquee": "Cześć! Jestem Pulsy, Co chcesz poprawić dziś?",
+  "agentPlaceholder": "Zapytaj mnie o coś... (na przykład: \"Jakie są moje wyniki kampanii?\") Napisz swobodnie...",
+  "welcomeMessage": "Hi, my name is {USERNAME}",
+  "500chars": "500 znaków",
+  "doNotShowThisDialog": "Nie pokazuj tego dialogu",
+  "messageDot": "Analizujemy Twoje dane, może to zająć kilka minut",
+  "tier": {
+    "current": "Current Tier",
+    "upgrade": "Upgrade Tier",
+    "downgrade": "Downgrade Tier",
+    "manageCard": "Manage Card"
+  },
+  "startDate": "Start Date",
+  "endDate": "End Date",
+  "orTryOneOfThese": "Lub wypróbuj jedną z tych opcji",
+  "presetQuestion1": "Przeanalizuj moją ostatnią kampanię",
+  "presetQuestion2": "Jak zwiększyć otwarcia i kliknięcia?",
+  "presetQuestion3": "Utwórz dla mnie grupę klientów VIP",
+  "presetQuestion4": "Utwórz grupę klientów, którzy otwierają, ale nie klikają"
 }

@@ -195,6 +195,7 @@ export type APIWhatsappChatSidebarContactsPayloadData = {
 	Data: APIWhatsappChatSidebarContactsMainData;
 	Message: string;
 	Status: string;
+	StatusCode: number;
 };
 
 export type APIWhatsappChatSidebarContactsData = {

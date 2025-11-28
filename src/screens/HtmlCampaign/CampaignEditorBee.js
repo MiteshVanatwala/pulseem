@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { debounce } from 'lodash';
+import { debounce, get } from 'lodash';
 import BeePlugin from '@mailupinc/bee-plugin'
 import { Box, Button, Grid, Typography } from '@material-ui/core'
 import { useRef, useState, useEffect } from 'react'
@@ -28,6 +28,7 @@ import Toast from '../../components/Toast/Toast.component';
 import GenericModal from './modals/GenericModal';
 import { deleteCampaign } from '../../redux/reducers/newsletterSlice';
 import { getCommonFeatures, isAlive } from '../../redux/reducers/commonSlice';
+import { findPlanByFeatureCode } from '../../redux/reducers/TiersSlice';
 import WizardActions from '../../components/Wizard/WizardActions';
 import { getBeeToken } from '../../redux/reducers/campaignEditorSlice';
 import { initExtraDataField, initLandingPages } from './helper/MigratePulseemData';
@@ -60,11 +61,12 @@ import DomainVerification from '../../Shared/Dialogs/DomainVerification';
 import { SharedEmailDomain } from '../../config';
 import { getCategories, GetProductsList } from '../../redux/reducers/productSlice';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
-import { NO_IMAGE_URL } from '../../helpers/Constants';
+import { NO_IMAGE_URL, TierFeatures } from '../../helpers/Constants';
 import { logout } from '../../helpers/Api/PulseemReactAPI';
 import { UserRoles } from '../../Models/SubUser/SubUsers';
 import AITemplateCreatorAccordion from './modals/AI_TemplateCreatorAccordion';
 import { BsMagic } from 'react-icons/bs';
+import TierPlans from '../../components/TierPlans/TierPlans';
 
 const CampaignEditor = ({ classes, ...props }) => {
   //#region State
@@ -82,8 +84,9 @@ const CampaignEditor = ({ classes, ...props }) => {
   const { campaign, userBlocks, ToastMessages, beeToken, publicTemplates, templatesBySubAccount } = useSelector(state => state.campaignEditor);
   const { extraData, previousLandingData } = useSelector(state => state.sms);
   const { language, isRTL, userRoles } = useSelector(state => state.core)
-  const { tokenAlive, accountSettings, accountFeatures, verifiedEmails } = useSelector(state => state.common)
+  const { tokenAlive, accountSettings, accountFeatures, verifiedEmails, subAccount } = useSelector(state => state.common)
   const { productCategories } = useSelector(state => state.product);
+  const { currentPlan, availablePlans } = useSelector((state) => state.tiers);
   const [dialog, setDialog] = useState(null);
   const [summaryData, setSummaryData] = useState(null);
   const [toastMessage, setToastMessage] = useState(null);
@@ -106,6 +109,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   const [buttonDisabled, setButtonDisabled] = useState(true);
   const [overwriteTemplateDialog, setOverwriteTemplateDialog] = useState(false);
   const [newTemplate, setNewTemplate] = useState('');
+  const [showTierPlans, setShowTierPlans] = useState(false);
   const [domainAddressError, setDomainAddressError] = useState({
     display: false,
     address: '',
@@ -117,7 +121,8 @@ const CampaignEditor = ({ classes, ...props }) => {
   });
   const [showDomainVerification, setShowDomainVerification] = useState(false);
   const [emailProps, setEmailProps] = useState(null);
-  const [dialogType, setDialogType] = useState(null)
+  const [dialogType, setDialogType] = useState(null);
+  const [TierMessageCode, setTierMessageCode] = useState("");
   //#endregion State
 
   //#region Get Extra fields & Landing pages, after Data Ready
@@ -331,6 +336,10 @@ const CampaignEditor = ({ classes, ...props }) => {
           const responseData = templateResponse?.payload?.Data;
           setNewTemplate(responseData)
           forceTemplate = responseData?.JsonData ? JSON.parse(responseData?.JsonData) : defaultContent.defaultTemplate;
+        } else if (templateResponse?.payload?.StatusCode === 927) {
+          // NEWSLETTER_TEMPLATES
+          setTierMessageCode(templateResponse?.payload?.Message);
+          setDialogType({ type: 'tier' });
         } else {
           setToastMessage({ severity: 'error', color: 'error', message: templateResponse?.payload.Message, showAnimtionCheck: false });
         }
@@ -499,6 +508,14 @@ const CampaignEditor = ({ classes, ...props }) => {
           }
           return false;
         }
+        case 927: {
+          if (saveRef.current?.operation !== 'exit') {
+            // EMAIL_BASIC, BASIC_PERSONALIZATION
+            setTierMessageCode(response?.payload?.Message);
+            setDialogType({ type: 'tier' });
+          }
+          return false;
+        }
       }
 
       if (saveRef.current?.saveTemplate) {
@@ -579,6 +596,15 @@ const CampaignEditor = ({ classes, ...props }) => {
       HTML: finalHtml,
       Category: saveRef.current?.templateCategory
     }));
+
+    // Check for tier validation
+    if (templateResponse?.payload?.StatusCode === 927) {
+      // NEWSLETTER_TEMPLATES
+      setTierMessageCode(templateResponse?.payload?.Message);
+      setDialogType({ type: 'tier' });
+      return;
+    }
+
     if (!templateResponse.payload.Data) {
       setToastMessage({ severity: 'error', color: 'error', message: templateResponse.payload.Message, showAnimtionCheck: false });
     }
@@ -623,11 +649,11 @@ const CampaignEditor = ({ classes, ...props }) => {
   const onTestSendSubmit = async (sendRequest) => {
     setLoader(true);
     const reponse = await dispatch(testSend({ ...sendRequest }));
-    onTestSendResponse(reponse.payload.StatusCode);
+    onTestSendResponse(reponse.payload.StatusCode, reponse.payload.Message);
     setSummaryData(reponse.payload.Summary);
     setLoader(false);
   }
-  const onTestSendResponse = (statusCode) => {
+  const onTestSendResponse = (statusCode, message = '') => {
     setIsResponseModal(statusCode !== 402);
     switch (statusCode) {
       case 201: {
@@ -661,6 +687,12 @@ const CampaignEditor = ({ classes, ...props }) => {
       }
       case 551: {
         setDialog(DialogType.UNDER_REVIEW);
+        break;
+      }
+      case 927: {
+        // FILE_ATTACHMENT, EMAIL_BASIC
+        setTierMessageCode(message);
+        setDialogType({ type: 'tier' });
         break;
       }
       case 500:
@@ -1066,6 +1098,56 @@ const CampaignEditor = ({ classes, ...props }) => {
     };
   }
 
+  const handleGetPlanForFeature = (tierMessageCode) => {
+      const planName = findPlanByFeatureCode(
+          tierMessageCode,
+          availablePlans,
+          currentPlan.Id
+      );
+      
+      if (planName) {
+          return t('billing.tier.featureNotAvailable').replace('{feature}', t(TierFeatures[tierMessageCode] || tierMessageCode)).replace('{planName}', planName);
+      } else {
+          return t('billing.tier.noFeatureAvailable');
+      }
+  };
+
+  const getTierValidationDialog = () => ({
+    title: t('billing.tier.permission'),
+    showDivider: false,
+    content: (
+      <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+        {handleGetPlanForFeature(TierMessageCode)}
+      </Typography>
+    ),
+    renderButtons: () => (
+      <Grid
+          container
+          spacing={2}
+          className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}
+      >
+          <Grid item>
+              <Button
+                  onClick={() => {
+                      setShowTierPlans(true);
+                  }}
+                  className={clsx(classes.btn, classes.btnRounded)}
+              >
+                  {t('billing.upgradePlan')}
+              </Button>
+          </Grid>
+          <Grid item>
+              <Button
+                  onClick={() => setDialogType(null)}
+                  className={clsx(classes.btn, classes.btnRounded)}
+              >
+                  {t('common.cancel')}
+              </Button>
+          </Grid>
+      </Grid>
+    )
+  });
+
   const getPendingApprovalModal = (code) => ({
     title: t('campaigns.newsLetterEditor.errors.pendingApproval'),
     showDivider: false,
@@ -1093,6 +1175,8 @@ const CampaignEditor = ({ classes, ...props }) => {
       currentDialog = getPendingApprovalModal(data);
     } else if (type === DialogType.UNDER_REVIEW) {
       currentDialog = getPendingApprovalModal(551);
+    } else if (type === 'tier') {
+      currentDialog = getTierValidationDialog();
     }
     else if (type === 'AIDialog') {
       currentDialog = AI_Dialog();
@@ -1312,6 +1396,11 @@ const CampaignEditor = ({ classes, ...props }) => {
       />
       {renderDialog()}
       <Loader isOpen={showLoader} showBackdrop={false} />
+      {showTierPlans && <TierPlans
+        classes={classes}
+        isOpen={showTierPlans}
+        onClose={() => setShowTierPlans(false)}
+      />}
     </DefaultScreen>
   )
 }

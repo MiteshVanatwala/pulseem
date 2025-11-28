@@ -61,7 +61,10 @@ import { CgWebsite } from "react-icons/cg";
 import { DynamicProductLink } from "../../../Models/PushNotifications/Enums";
 import { IsValidNonGlobalPhoneNumber, IsValidPhoneNumberWithCountryCode, IsValidURL } from "../../../helpers/Utils/Validations";
 import { WhiteLabelObject } from "../../../components/WhiteLabel/WhiteLabelMigrate";
-import { URL_REGEX } from "../../../helpers/Constants";
+import { TierFeatures, URL_REGEX } from "../../../helpers/Constants";
+import { findPlanByFeatureCode } from "../../../redux/reducers/TiersSlice";
+import TierPlans from "../../../components/TierPlans/TierPlans";
+import { get } from "lodash";
 
 const useStyles = makeStyles((theme) => ({
   customWidth: {
@@ -127,6 +130,7 @@ const SmsCreator = ({ classes }) => {
   const { windowSize, isRTL, CoreToastMessages, userRoles } = useSelector(
     (state) => state.core
   );
+  const { currentPlan, availablePlans } = useSelector((state) => state.tiers);
   const {
     previousLandingData,
     previousCampaignData,
@@ -135,7 +139,7 @@ const SmsCreator = ({ classes }) => {
     ToastMessages,
     extraData
   } = useSelector((state) => state.sms);
-  const { accountSettings, accountFeatures, countryCodeList, isGlobal } = useSelector((state) => state.common)
+  const { accountSettings, accountFeatures, countryCodeList, isGlobal, subAccount } = useSelector((state) => state.common)
   const [dialogType, setDialogType] = useState(null)
   const [alignment, setAlignment] = useState('right');
   const [checked, setChecked] = React.useState(false);
@@ -181,7 +185,8 @@ const SmsCreator = ({ classes }) => {
   const [dynamicProductButtonDisabled, setDynamicProductButtonDisabled] = useState(false);
   const [buttonsDisabled, setButtonsDisabled] = useState(false);
   const [controller, setController] = useState(null);
-
+  const [ TierMessageCode, setTierMessageCode ] = useState('');
+  const [showTierPlans, setShowTierPlans] = useState(false);
   const [smsModel, setSmsModel] = useState({
     CreditsPerSms: "1",
     FromNumber: campaignNumber,
@@ -292,6 +297,21 @@ const SmsCreator = ({ classes }) => {
       case 551:
         setDialogType({ type: "pendingApprovalDialog" });
         break;
+      case 9271: {
+        setTierMessageCode('SMS_BASIC');
+        setDialogType({ type: 'tier' });
+        break;
+      }
+      case 9272: {
+        setTierMessageCode('SMS_CLICK_TRACKING');
+        setDialogType({ type: 'tier' });
+        break;
+      }
+      case 9272: {
+        setTierMessageCode('SITE_TRACKING');
+        setDialogType({ type: 'tier' });
+        break;
+      }
       default:
       case 5: {// ACCEPTED
         break;
@@ -1338,11 +1358,68 @@ const SmsCreator = ({ classes }) => {
           setToastMessage(CoreToastMessages.XSS_ERROR);
           break;
         }
+        case 927: {
+          // Determine feature code from payload or context, fallback to 'SMS_BASIC' if not present
+          const featureCode = r.payload.Message || 'SMS_BASIC';
+          setTierMessageCode(featureCode);
+          setDialogType({ type: 'tier' });
+          break;
+        }
         default: {
           break;
         }
       }
     }
+  };
+
+  const handleGetPlanForFeature = (tierMessageCode) => {
+    const planName = findPlanByFeatureCode(
+        tierMessageCode,
+        availablePlans,
+        currentPlan.Id
+    );
+    
+    if (planName) {
+      return t('billing.tier.featureNotAvailable').replace('{feature}', tierMessageCode).replace('{planName}', planName);
+    } else {
+      return t('billing.tier.noFeatureAvailable');
+    }
+  };
+
+  const getTierValidationDialog = () => {
+    return {
+      title: t('billing.tier.permission'),
+      showDivider: false,
+      content: (
+        <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+          {handleGetPlanForFeature(TierMessageCode)}
+        </Typography>
+      ),
+      renderButtons: () => (
+        <Grid container spacing={2} className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}>
+          <Grid item>
+            <Button
+              onClick={() => {
+                setDialogType(null);
+                setShowTierPlans(true);
+              }}
+              className={clsx(classes.btn, classes.btnRounded)}
+            >
+              {t('billing.upgradePlan')}
+            </Button>
+          </Grid>
+          <Grid item>
+            <Button
+              onClick={() => { setDialogType(null); }}
+              className={clsx(classes.btn, classes.btnRounded)}
+            >
+              {t('common.cancel')}
+            </Button>
+          </Grid>
+        </Grid>
+      ),
+      onConfirm: async () => { setDialogType(null); }
+    };
   };
 
   const handleClose = () => {
@@ -1421,6 +1498,9 @@ const SmsCreator = ({ classes }) => {
       }
       else if (r.payload.Status === 3) {
         setOTPOpen(true);
+      } else if (r.payload.Status === 927) {
+        setTierMessageCode(r.payload.Message);
+        setDialogType({ type: 'tier' });
       }
       else {
         setDialogType(null);
@@ -1455,6 +1535,11 @@ const SmsCreator = ({ classes }) => {
         else if (saveResponse.payload.Status === 2) {
           setDialogType(null);
           Redirect({ url: !!isFromAutomation ? getAutomationReturnUrl(id) : `${sitePrefix}SMSCampaigns` });
+        }
+        else if (saveResponse.payload.Status === 927) {
+          setTierMessageCode(saveResponse.payload.Message);
+          setDialogType({ type: 'tier' });
+          return;
         }
         else {
           setDialogType(null);
@@ -2071,7 +2156,8 @@ const SmsCreator = ({ classes }) => {
       linkStatisticAlert: siteTrackingLinkDialog(data),
       englishLetterDialog: englishLetterNotAllowed(),
       dynamicProduct: dynamicProductDialog(),
-      pendingApprovalDialog: pendingApprovalDialog()
+      pendingApprovalDialog: pendingApprovalDialog(),
+      tier: getTierValidationDialog()
     }
 
     const currentDialog = dialogContent[type] || {}
@@ -2163,7 +2249,11 @@ const SmsCreator = ({ classes }) => {
         </Box>
       </Box>
 
-
+      {showTierPlans && <TierPlans
+        classes={classes}
+        isOpen={showTierPlans}
+        onClose={() => setShowTierPlans(false)}
+      />}
     </DefaultScreen >
   );
 };

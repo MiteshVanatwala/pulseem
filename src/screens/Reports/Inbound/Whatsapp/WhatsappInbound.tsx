@@ -10,6 +10,7 @@ import { ExportFile } from "../../../../helpers/Export/ExportFile";
 import { ExportFileTypes } from "../../../../model/Export/ExportFileTypes";
 import { getInboundReport } from "../../../../redux/reducers/whatsappSlice";
 import ConfirmRadioDialog from "../../../../components/DialogTemplates/ConfirmRadioDialog";
+import { BaseDialog } from "../../../../components/DialogTemplates/BaseDialog";
 import { ExportIcon } from "../../../../assets/images/managment/index";
 import { TablePagination } from "../../../../components/managment/index";
 import {
@@ -37,9 +38,12 @@ import {
   wpInbdRowType,
 } from "../../../../Models/Whatsapp/whatsappInbound";
 import { PulseemFeatures } from "../../../../model/PulseemFields/Fields";
-import { DateFormats } from "../../../../helpers/Constants";
+import { DateFormats, TierFeatures } from "../../../../helpers/Constants";
 import { getCommonFeatures } from "../../../../redux/reducers/commonSlice";
 import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
+import { findPlanByFeatureCode } from "../../../../redux/reducers/TiersSlice";
+import TierPlans from "../../../../components/TierPlans/TierPlans";
+import { get } from "lodash";
 
 const WhatsappInbound = ({ classes }: any) => {
   const dispatch = useDispatch();
@@ -57,8 +61,9 @@ const WhatsappInbound = ({ classes }: any) => {
   const { isRTL, windowSize, userRoles } = useSelector(
     (state: StateType) => state.core
   );
-
-  const { accountFeatures } = useSelector((state: any) => state.common)
+  const [showTierPlans, setShowTierPlans] = useState(false);
+  const { accountFeatures, subAccount } = useSelector((state: any) => state.common);
+  const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
 
   const rowStyle = {
     head: classes.tableRowReportHead,
@@ -87,13 +92,38 @@ const WhatsappInbound = ({ classes }: any) => {
     useState<wpInbdDefaultFilterType>(defaultRequest);
   // const [searchRequest, setSearchRequest] =
   //   useState<wpInbdDefaultFilterType>(defaultRequest);
+  const [TierMessageCode, setTierMessageCode] = useState<string>('');
+
+  const handleGetPlanForFeature = (tierMessageCode: string) => {
+    const planName = findPlanByFeatureCode(
+        tierMessageCode,
+        availablePlans,
+        currentPlan.Id
+    );
+    
+    if (planName) {
+        return t('billing.tier.featureNotAvailable').replace('{feature}', t(TierFeatures[tierMessageCode as keyof typeof TierFeatures] || tierMessageCode)).replace('{planName}', planName);
+    } else {
+        return t('billing.tier.noFeatureAvailable');
+    }
+  };
 
   const getInboundData = async () => {
     setShowLoader(true);
-    await dispatch(
+    const response: any = await dispatch(
       //@ts-ignore
       getInboundReport({ ...request, PageSize: rowsPerPage, PageIndex: page })
     );
+    
+    // Check for tier validation
+    if (response?.payload?.StatusCode === 927) {
+      // WHATSAPP_RESPONSE_REPORT
+      setTierMessageCode(response?.payload?.Message || 'WHATSAPP_RESPONSE_REPORT');
+      setDialog('tier');
+      setShowLoader(false);
+      return;
+    }
+    
     setShowLoader(false);
   };
   const getInboundDataById = async (id: string) => {
@@ -160,6 +190,14 @@ const WhatsappInbound = ({ classes }: any) => {
     request.IsExport = true;
     //@ts-ignore
     const response: any = await dispatch(getInboundReport(request));
+
+    // Check for tier validation
+    if (response?.payload?.StatusCode === 927) {
+      setTierMessageCode(response?.payload?.Message || 'WHATSAPP_RESPONSE_REPORT');
+      setDialog('tier');
+      setShowLoader(false);
+      return;
+    }
 
     const exportOptions: any = {
       OrderItems: true,
@@ -373,6 +411,7 @@ const WhatsappInbound = ({ classes }: any) => {
         rows={inboundWhatsappReport?.Message}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={handlePageChange}
+        //@ts-ignore
         rowsPerPageOptions={rowsOptions}
         page={page}
         onPageChange={setPage}
@@ -410,7 +449,49 @@ const WhatsappInbound = ({ classes }: any) => {
         defaultValue="xlsx"
         options={ExportFileTypes}
       />
+      {dialog === 'tier' && (
+        // Add Button in such kind of 
+        <BaseDialog
+          classes={classes}
+          open={dialog === 'tier'}
+          onClose={() => setDialog(null)}
+          onCancel={() => setDialog(null)}
+          onConfirm={() => setDialog(null)}
+          showDefaultButtons={false}
+          title={t('billing.tier.permission')}
+          renderButtons={() => (
+            <Grid container spacing={2} className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}>
+                <Grid item>
+                <Button
+                    onClick={() => {
+                    setDialog(null);
+                    setShowTierPlans(true);
+                  }}
+                  className={clsx(classes.btn, classes.btnRounded)}
+                >
+                  {t('billing.upgradePlan')}
+                </Button>
+                </Grid>
+                <Grid item>
+                <Button
+                  onClick={() => { setDialog(null); }}
+                  className={clsx(classes.btn, classes.btnRounded)}
+                >
+                  {t('common.cancel')}
+                </Button>
+                </Grid>
+            </Grid>
+          )}
+        >
+          {handleGetPlanForFeature(TierMessageCode)}
+        </BaseDialog>
+      )}
       <Loader isOpen={showLoader} showBackdrop={true} />
+      {showTierPlans && <TierPlans
+        classes={classes}
+        isOpen={showTierPlans}
+        onClose={() => setShowTierPlans(false)}
+      />}
     </Box>
   );
 };

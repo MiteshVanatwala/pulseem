@@ -190,6 +190,8 @@
   "Question": "שאלה",
   "Success": "פעולה בוצע בהצלחה",
   "No": "לא",
+   "on": "פעיל",
+  "off": "לא פעיל",
   "SelectFile": "בחר קובץ",
   "DeleteTooltip": "מחק שאלה",
   "MoveTooltip": "שנה סדר",
@@ -663,6 +665,7 @@
   "specificDates": "תאריכים ספציפיים",
   "equal": "שווה",
   "contains": "מכיל",
+  "notContains": "לא מכיל",
   "like": "דומה",
   "notEqual": "שונה",
   "startsWith": "מתחיל ב",
@@ -868,5 +871,25 @@
   "creditsPerMessage": "קרדיטים להודעה",
   "selectFile": "ביחרו קובץ",
   "contactUs": "צור קשר",
-  "currency": "מטבע"
+  "currency": "מטבע",
+  "polyAgentIconTitle": "היי, אני פולסי. בואו נדבר",
+  "polyAgentIconTitleMarquee": "היי! אני פולסי, מה תרצו לשפר היום?",
+  "agentPlaceholder": "תשאלו אותי משהו... (למשל: \"מה ביצועי הקמפיינים שלי?\") תכתבו חופשי...",
+  "welcomeMessage": "היי, קוראים לי מיטש {USERNAME}",
+  "500chars": "500 תווים",
+  "doNotShowThisDialog": "אל תציג בכניסה הבאה",
+  "messageDot": "מנתח את הנתונים שלך, זה יכול לקחת מספר דקות",
+  "tier": {
+    "current": "רמה נוכחית",
+    "upgrade": "שדרוג רמה",
+    "downgrade": "הורדת רמה",
+    "manageCard": "ניהול כרטיס"
+  },
+  "startDate": "תאריך התחלה",
+  "endDate": "תאריך סיום",
+  "orTryOneOfThese": "או נסו אחד מאלה",
+  "presetQuestion1": "נתח את הקמפיין האחרון שלי",
+  "presetQuestion2": "איך להגדיל פתיחות והקלקות?",
+  "presetQuestion3": "צור לי קבוצת לקוחות VIP",
+  "presetQuestion4": "צור לי קבוצת לקוחות שפותחים ולא לוחצים"
 }

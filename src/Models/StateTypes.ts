@@ -28,6 +28,22 @@ export type CoreStateType = {
     userRoles: any;
 };
 
+export interface Message {
+    MessageID: string;
+    MessageText: string;
+    MessageHTML?: string;
+    MessageTimestamp: string;
+    MessageTypeID: number;
+  }
+
+export interface AiChatState {
+    isOpen: boolean;
+    messages: Message[];
+    isLoading: boolean;
+    totalMessagesForUserCount: number;
+    aiIconStatus: number;
+}
+
 export type StateType = {
     core: CoreStateType;
     user: any;
@@ -58,4 +74,6 @@ export type StateType = {
     companyName?: string;
     billing: any;
     linksClicksReportSlice: any;
+    aiChat: AiChatState;
+    Ai: any;
 };

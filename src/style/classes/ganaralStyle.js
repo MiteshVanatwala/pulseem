@@ -4582,6 +4582,397 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   polishSubscribeGreyBox: {
     background: grey[100],
-    borderRadius: 5,  
+    borderRadius: 5,
+  },
+  tierPlansDialog: {
+    '& .MuiPaper-root': {
+      maxWidth: '100% !important',
+    }
+  },
+  tierPlansCard: {
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    border: '1px solid #e2e8f0',
+    borderRadius: '12px',
+    padding: '16px 22px',
+    textAlign: 'center',
+    boxShadow: '0 4px 30px rgba(0,0,0,.08)',
+    transition: 'transform .3s ease, box-shadow .3s ease, border-color .3s ease',
+    fontFamily: isRTL ? 'Heebo' : 'inherit',
+    '&:hover': {
+      transform: 'scale(1.02)',
+      boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+    }
+  },
+  tierPlansFeatureText: {
+    color: '#1a202c',
+    marginTop: 2,
+    marginBottom: 2,
+    '& span': {
+      fontWeight: '600',
+      fontFamily: isRTL ? 'Heebo' : 'inherit',
+    },
+    fontFamily: isRTL ? 'Heebo' : 'inherit',
+  },
+  tierPlansPopularCard: {
+    border: '2px solid #ff4d2a',
+    position: 'relative',
+    fontFamily: isRTL ? 'Heebo' : 'inherit',
+  },
+  tierPlansPopularBadge: {
+    position: 'absolute',
+    top: '-12px',
+    left: '35%',
+    transform: 'translateX(-15%)',
+    background: 'linear-gradient(-45deg, #ff0076, #ff4d2a)',
+    color: 'white',
+    padding: '6px',
+    width: '45%',
+    borderRadius: '10px',
+    fontWeight: 'bold',
+    fontSize: '0.8rem',
+    lineHeight: '1.2',
+    textAlign: 'center',
+    fontFamily: isRTL ? 'Heebo' : 'inherit',
+  },
+  tierPlansCardContent: {
+    textAlign: 'center',
+    padding: '16px 0 !important',
+    paddingBottom: '16px !important',
+    fontFamily: isRTL ? 'Heebo' : 'inherit',
+  },
+  tierPlansConstSmallText: {
+    fontSize: '0.9rem',
+    color: '#718096',
+    textAlign: 'center',
+    lineHeight: '1.4',
+    marginTop: '75%',
+    fontWeight: '500',
+    fontFamily: isRTL ? 'Heebo' : 'inherit',
+  },
+  tierPlansTitle: {
+    fontWeight: '800',
+    fontSize: '1.2rem',
+    letterSpacing: '.5px',
+    textTransform: 'uppercase',
+    color: '#1a202c',
+    fontFamily: isRTL ? 'Heebo' : 'inherit',
+  },
+  tierPlansDescription: {
+    color: '#718096',
+    // marginBottom: '16px',
+    padding: '0px 18px',
+    fontWeight: 600,
+    fontSize: '0.95rem',
+    lineHeight: 1.5,
+    minHeight: '3em',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontFamily: isRTL ? 'Heebo' : 'inherit',
+  },
+  tierPlansPriceContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'baseline',
+    // marginBottom: '8px',
+    minHeight: '70px',
+    fontWeight: 800,
+    fontSize: '1.6rem',
+    color: '#1a202c',
+    fontFamily: isRTL ? 'Heebo' : 'inherit',
+  },
+  tierPlansPrice: {
+    fontSize: '2.5rem',
+    fontWeight: 800,
+    fontSize: '1.6rem',
+    color: '#1a202c',
+    fontFamily: isRTL ? 'Heebo' : 'inherit',
+    '& span': {
+      fontSize: '2.5rem',
+      fontWeight: 800,
+      fontSize: '1.6rem',
+      color: '#1a202c',
+      fontFamily: isRTL ? 'Heebo' : 'inherit',
+    }
+  },
+  tierPlansPriceDescription: {
+    fontSize: '1rem',
+    marginLeft: '4px',
+    fontFamily: isRTL ? 'Heebo' : 'inherit',
+  },
+  tierPlansSubtext: {
+    color: '#6c757d',
+    marginBottom: '16px',
+    fontFamily: isRTL ? 'Heebo' : 'inherit',
+  },
+  tierPlansRecipientLimit: {
+    marginBottom: '16px',
+    fontFamily: isRTL ? 'Heebo' : 'inherit',
+  },
+  tierPlansButton: {
+    marginTop: 'auto',
+    borderRadius: '12px',
+    padding: '5px 12px',
+    fontWeight: 'bold',
+    fontFamily: isRTL ? 'Heebo' : 'inherit',
+  },
+  tierPlansDefaultButton: {
+    color: '#fff',
+    background: "linear-gradient(-45deg, #ff0076, #ff4d2a)",
+    fontSize: '1.2rem',
+    borderRadius: '12px',
+    width: '100%',
+    textTransform: 'capitalize',
+    fontWeight: '800',
+    transition: 'transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease',
+    fontFamily: isRTL ? 'Heebo' : 'inherit',
+    '&:hover': {
+      transform: 'scale(1.02)',
+      boxShadow: '0 8px 16px #ff3343',
+      borderColor: '#ff3343'
+    }
+  },
+  tierPlansFeatureList: {
+    padding: 0,
+    textAlign: 'left',
+    fontFamily: isRTL ? 'Heebo' : 'inherit',
+  },
+  tierPlansFeatureItem: {
+    padding: '4px 0',
+    fontFamily: isRTL ? 'Heebo' : 'inherit',
+  },
+  tierPlansSeeAllFeatures: {
+    textAlign: 'center',
+    marginTop: '16px',
+    color: '#e53935',
+    cursor: 'pointer',
+    textDecoration: 'underline',
+    fontWeight: 'bold',
+    fontFamily: isRTL ? 'Heebo' : 'inherit',
+  },
+  tierInstruction: {
+    fontFamily: isRTL ? 'Heebo' : 'inherit',
+    fontSize: '1.3rem !important'
+  },
+  upgradeFlowContainer: {
+    backgroundColor: '#fff',
+    height: '100%',
+  },
+  upgradeFlowTitle: {
+    fontWeight: 'bold',
+    color: '#e53935',
+  },
+  upgradeFlowFeatureCard: {
+    borderRadius: '12px',
+    height: '100%',
+    background: '#e4e4e4',
+    borderLeft: 'solid 3px red',
+  },
+  upgradeFlowIncludingBox: {
+    marginTop: '32px',
+    padding: '16px',
+    border: '1px solid #eee',
+    borderRadius: '12px',
+    background: '#e4e4e4',
+    borderTop: 'solid 3px red',
+  },
+  upgradeFlowPaymentForm: {
+    padding: '24px',
+    borderRadius: '12px',
+  },
+  upgradeFlowPrice: {
+    color: '#e53935',
+    fontWeight: 'bold',
+  },
+  upgradeFlowUpgradeButton: {
+    marginTop: '24px',
+    padding: '12px 0',
+    borderRadius: '12px',
+    background: 'linear-gradient(90deg, rgba(255,99,132,1) 0%, rgba(255,140,0,1) 100%)',
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  upgradeFlowSupportCard: {
+    padding: '16px',
+    borderRadius: '12px',
+    backgroundColor: '#fafafa',
+    display: 'flex',
+    alignItems: 'center',
+  },
+  tierPlansCurrencySymbol: {
+    fontSize: '1.5rem',
+    marginRight: '4px',
+  },
+  tierPlansStepper: {
+    padding: '24px 0',
+    height: '120px',
+    '& .MuiStepIcon-root.MuiStepIcon-active': {
+      color: '#e53935'
+    },
+    '& .MuiStepIcon-root.MuiStepIcon-completed': {
+      color: '#e53935'
+    }
+  },
+  tierPlansContent: {
+    padding: '24px',
+    maxHeight: '60vh',
+    // maxWidth: '1068px',
+    paddingTop: '0px',
+    color: '#4a5568',
+    fontFamily: '"Heebo", sans-serif',
+  },
+  tierPlanFooter: {
+    background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
+    textAlign: 'center',
+    padding: '20px',
+    borderRadius: 12,
+    marginTop: 64
+  },
+  // Email Marketing Slider Styles
+  emailMarketingSliderContainer: {
+    padding: 24,
+    maxWidth: 1200,
+    background: '#fff',
+    border: '1px solid #e2e8f0',
+    borderRadius: 12,
+    boxShadow: '0 2px 12px rgba(0, 0, 0, .06)'
+  },
+  sliderContainer: {
+    position: 'relative',
+    marginBottom: '48px',
+    padding: '0px 8px'
+  },
+  sliderLabelsWrapper: {
+    position: 'relative',
+  },
+  sliderLabelsContainer: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    position: 'relative',
+  },
+  sliderLabel: {
+    cursor: 'pointer',
+    position: 'absolute',
+    transform: 'translateX(-50%)',
+    transition: 'all 0.2s ease',
+  },
+  sliderLabelText: {
+    fontSize: '14px',
+    color: '#999',
+    whiteSpace: 'nowrap',
+    transform: 'scale(1)',
+    transition: 'all 0.3s ease',
+  },
+  // sliderLabelActive: {
+  //   fontSize: '16px !important',
+  //   color: '#333 !important',
+  //   transform: 'scale(1.1) !important',
+  // },
+  sliderTrackWrapper: {
+    position: 'relative',
+    paddingTop: '40px',
+  },
+  sliderTrack: {
+    position: 'relative',
+    height: '6px',
+    backgroundColor: '#e0e0e0',
+    borderRadius: '3px',
+  },
+  sliderTrackFilled: {
+    position: 'absolute',
+    height: '6px',
+    background: 'linear-gradient(-45deg, #ff0076, #ff4d2a)',
+    borderRadius: '3px',
+    transition: 'width 0.3s ease-out',
+    left: 0,
+  },
+  sliderTrackFilledRTL: {
+    left: 'auto',
+    right: 0,
+  },
+  sliderThumb: {
+    position: 'absolute',
+    top: '50%',
+    width: '20px',
+    height: '20px',
+    backgroundColor: '#ff4d2a',
+    borderRadius: '50%',
+    transform: 'translate(-50%, -50%)',
+    boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+    transition: 'all 0.3s ease-out',
+    pointerEvents: 'none',
+  },
+  sliderInput: {
+    position: 'absolute',
+    top: 0,
+    width: '100%',
+    height: '100%',
+    opacity: 0,
+    cursor: 'pointer',
+    zIndex: 10,
+    WebkitAppearance: 'none',
+    appearance: 'none',
+  },
+  sliderArrowLeft: {
+    position: 'absolute',
+    // top: '50%',
+    transform: 'translateY(-40%)',
+    left: '-24px', // Half of the button width to align at edge
+    width: '24px',
+    height: '24px',
+    borderRadius: '50%',
+    backgroundColor: '#ff4757',
+    color: 'white !important',
+    zIndex: 10,
+    padding: 0,
+    minWidth: 'unset',
+    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+    '&:hover': {
+      backgroundColor: '#e63946',
+      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.15)',
+    },
+    '& svg': {
+      fontSize: '18px',
+      color: 'white',
+    },
+  },
+  sliderArrowRight: {
+    position: 'absolute',
+    // top: '55%',
+    transform: 'translateY(-65%)',
+    right: '-24px',
+    width: '24px',
+    height: '24px',
+    borderRadius: '50%',
+    backgroundColor: '#ff4757',
+    color: 'white !important',
+    zIndex: 10,
+    padding: 0,
+    minWidth: 'unset',
+    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+    '&:hover': {
+      backgroundColor: '#e63946',
+      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.15)',
+    },
+    '& svg': {
+      fontSize: '18px',
+      color: 'white',
+    },
+  },
+  tierPlanIconCont: {
+    width: '18px',
+    height: '18px',
+    borderRadius: '50%',
+    background: '#ff8995',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    '& svg': {
+      color: '#fff',
+      fontSize: '14px'
+    }
   }
 });

@@ -12,8 +12,10 @@ import { get, isNull } from 'lodash';
 import { AddEditDirectAccounts } from '../../redux/reducers/SubAccountSlice';
 import { logout } from '../../helpers/Api/PulseemReactAPI';
 import { CommonRedux } from '../Whatsapp/Editor/Types/WhatsappCreator.types';
-import { NumberWithMinusRegEx } from '../../helpers/Constants';
+import { NumberWithMinusRegEx, TierFeatures } from '../../helpers/Constants';
 import { Stack } from '@mui/material';
+import { findPlanByFeatureCode } from '../../redux/reducers/TiersSlice';
+import TierPlans from '../../components/TierPlans/TierPlans';
 
 const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}, mainAccountBalance = {} }: any) => {
 	const dispatch: any = useDispatch();
@@ -21,7 +23,8 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 	const { isRTL  } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
-	const { isGlobal, IsPoland } = useSelector((state: { common: CommonRedux }) => state.common);
+	const { isGlobal, IsPoland, subAccount } = useSelector((state: { common: CommonRedux }) => state.common);
+	const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
 	const [ isLoader, setIsLoader ] = useState<boolean>(false);
 	const [ toastMessage, setToastMessage ] = useState(null);
 	const [errors, setErrors] = useState({
@@ -46,6 +49,13 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 		addBalance: 0
 	})
 	const CustomGuidEnc = get(subAccountRecord, 'CustomGuidEnc', '');
+	const [ dialogType, setDialogType ] = useState<{
+		type: string;
+	} | null>({
+		type: ''
+	});
+	const [TierMessageCode, setTierMessageCode] = useState<string>('');
+	const [showTierPlans, setShowTierPlans] = useState(false);
 
 	useEffect(() => {
 		if (isOpen && CustomGuidEnc !== '') {
@@ -132,6 +142,11 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 				showErrorToast(t('common.Error'));
 				break;
 			}
+			case 927: {
+				setTierMessageCode('SUBACCOUNTS');
+				setDialogType({ type: 'tier' });
+				break;
+			}
 			case 1002: {
 				showErrorToast(t('SubAccount.notEnoughEmailCreditInParentAccount'));
 				break;
@@ -178,6 +193,80 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 		}, 2000);
 		return <Toast customData={null} data={toastMessage} />;
 	};
+
+	const handleGetPlanForFeature = (tierMessageCode: string) => {
+		const planName = findPlanByFeatureCode(
+			tierMessageCode,
+			availablePlans,
+			currentPlan.Id
+		);
+		
+		if (planName) {
+			return t('billing.tier.featureNotAvailable').replace('{feature}', t(TierFeatures[tierMessageCode as keyof typeof TierFeatures] || tierMessageCode)).replace('{planName}', planName);
+		} else {
+			return t('billing.tier.noFeatureAvailable');
+		}
+	};
+
+	const getTierValidationDialog = () => ({
+		title: t('billing.tier.permission'),
+		showDivider: false,
+		content: (
+			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+				{handleGetPlanForFeature(TierMessageCode)}
+			</Typography>
+		),
+		renderButtons: () => (
+			<Grid
+				container
+				spacing={2}
+				className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}
+			>
+				<Grid item>
+					<Button
+						onClick={() => {
+						setDialogType(null);
+						setShowTierPlans(true);
+					}}
+					className={clsx(classes.btn, classes.btnRounded)}
+					>
+						{t('billing.upgradePlan')}
+					</Button>
+				</Grid>
+				<Grid item>
+					<Button
+						onClick={() => setDialogType(null)}
+						className={clsx(classes.btn, classes.btnRounded)}
+					>
+						{t('common.cancel')}
+					</Button>
+				</Grid>
+			</Grid>
+		)
+	})
+
+	const renderDialog = () => {
+		const { type } = dialogType || {}
+		let currentDialog: any = {};
+		if (type === 'tier') {
+			currentDialog = getTierValidationDialog();
+		}
+
+		if (type) {
+			return (
+				dialogType && <BaseDialog
+          contentStyle={classes.maxWidth540}
+					classes={classes}
+					open={dialogType}
+					onCancel={() => setDialogType(null)}
+					onClose={() => setDialogType(null)}
+					renderButtons={currentDialog?.renderButtons || null}
+					{...currentDialog}>
+					{currentDialog?.content}
+				</BaseDialog>
+			)
+		}
+	}
 
 	return (
 		<BaseDialog
@@ -448,6 +537,12 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 
 				<Loader isOpen={isLoader} />
 				{toastMessage && renderToast()}
+				{renderDialog()}
+				{showTierPlans && <TierPlans
+						classes={classes}
+						isOpen={showTierPlans}
+						onClose={() => setShowTierPlans(false)}
+				/>}
 			</>
 		</BaseDialog>
 	);

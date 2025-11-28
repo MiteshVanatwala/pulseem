@@ -34,7 +34,7 @@
   "FieldOfActivityRequired": "יש למלא תחום פעילות",
   "pleaseVerifyCaptcha": "נא להשלים את האימות",
   "UpdateTrainingContentCheckbox": "אני מאשר.ת קבלת עדכונים, תכנים מקצועיים ומידע פרסומי מחברת Pulseem",
-  "PrivacyPolicyCheckbox": "*על ידי לחיצה על כפתור 'פתח חשבון', אני מסכים/ה לקבלת התנאים המפורטים במסמך <a href='https://site.pulseem.co.il/terms-of-use/' target='_blank'>תנאי השימוש</a>, <a href='https://site.pulseem.co.il/terms-of-engagement/' target='_blank'>תנאי ההתקשרות</a> <a href='https://site.pulseem.co.il/%d7%aa%d7%a7%d7%a0%d7%95%d7%9f/' target='_blank'>אנטיספאם</a> <a href='https://site.pulseem.co.il/privacy-policy/' target='_blank'>ותנאי שמירת הפרטיות</a> של חברת Pulseem",
+  "PrivacyPolicyCheckbox": "על ידי לחיצה על כפתור 'פתח חשבון', אני מסכים/ה לקבלת התנאים המפורטים במסמך <a href='https://site.pulseem.co.il/terms-of-use-and-engagement/' target='_blank'>תנאי השימוש</a> <a href='https://site.pulseem.co.il/privacy-policy/' target='_blank'>ותנאי שמירת הפרטיות</a> של חברת Pulseem",
   "Art": "אומנות",
   "EntertainmentAndEvents": "בידור ואירועים",
   "Insurance": "ביטוח",

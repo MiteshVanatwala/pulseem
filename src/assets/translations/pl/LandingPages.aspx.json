@@ -341,10 +341,13 @@
   "duplicationSuccessful": "Duplikacja udana!",
   "duplicationSuccessfulMessage": "Wszystkie dane z Twojej strony docelowej zostały zduplikowane. Jeśli chcesz edytować Właściwości Formularza dla nowej Strony Docelowej, kliknij Edytuj poniżej.",
   "createLandingPage": "Utwórz Stronę Docelową",
+  "createPopup": "Utwórz Pop-up",
   "editLandingPage": "Edytuj Stronę Docelową",
   "formProperties": "Właściwości Formularza",
   "formName": "Nazwa Formularza",
   "formNameRequired": "Nazwa Formularza jest wymagana",
+  "domainRequired": "Wymagany jest domena",
+  "invalidDomain": "Nieprawidłowa domena",
   "formLanguage": "Język Formularza",
   "autofillFields": "Automatyczne wypełnianie pól",
   "autofillEditable": "Włącz edycję dla automatycznie wypełnianych pól odbiorcy",
@@ -353,6 +356,7 @@
   "shortURLTooltip": "Przyjazny dla użytkownika URL dla ludzkich oczu i dla SEO",
   "shortURLRequired": "Krótki URL jest wymagany",
   "shortURLExist": "Krótki URL już istnieje. Wybierz inną nazwę.",
+  "pageExist": "Nazwa strony już istnieje. Wybierz inną nazwę.",
   "answerType": "Typ Odpowiedzi",
   "answerMessage": "Wiadomość Odpowiedzi",
   "answerMessageRequired": "Wiadomość Odpowiedzi jest wymagana",
@@ -365,6 +369,7 @@
   "URLRequired": "URL Wymagany",
   "APIUsername": "Nazwa Użytkownika API",
   "APIUsernameRequired": "Nazwa Użytkownika API Wymagana",
+  "Domain": "Domena",
   "terminalNumber": "Numer Terminala",
   "terminalNumberRequired": "Numer Terminala Wymagany",
   "departmentNumber": "Nr Wydziału",
@@ -481,5 +486,44 @@
   "notApproved": "Niezatwierdzona",
   "addClientAsActive": "Dodaj wszystkich nowych zarejestrowanych odbiorców z tej strony docelowej jako “Aktywnych“",
   "addClientAsActiveWhenClientSelect": "Dodaj nowych odbiorców jako “Aktywnych“ tylko jeśli zatwierdzili mailing, zaznaczając pole opt-in",
-  "changeOptInDesclaimer": "Dla Twojej uwagi, <br/>aktywując ustawienie <b>Dodaj wszystkich nowych zarejestrowanych odbiorców z tej strony docelowej jako “Aktywnych“</b>, żądasz dodania odbiorców, którzy nie wyrazili zgody na otrzymywanie mailingów, co oznacza, że odbiorcy ci będą otrzymywać kampanie Email, SMS i WhatsApp, które wysyłasz.<br/>Zmiana wyżej wymienionych ustawień odbywa się na Twoją wyłączną odpowiedzialność i dokonując tego potwierdzasz, że Pulseem nie ponosi żadnej odpowiedzialności za jakiekolwiek szkody wyrządzone Tobie i/lub Pulseem w wyniku tego, a zatem szkody te będą dotyczyć wyłącznie Ciebie."
+  "changeOptInDesclaimer": "Dla Twojej uwagi, <br/>aktywując ustawienie <b>Dodaj wszystkich nowych zarejestrowanych odbiorców z tej strony docelowej jako “Aktywnych“</b>, żądasz dodania odbiorców, którzy nie wyrazili zgody na otrzymywanie mailingów, co oznacza, że odbiorcy ci będą otrzymywać kampanie Email, SMS i WhatsApp, które wysyłasz.<br/>Zmiana wyżej wymienionych ustawień odbywa się na Twoją wyłączną odpowiedzialność i dokonując tego potwierdzasz, że Pulseem nie ponosi żadnej odpowiedzialności za jakiekolwiek szkody wyrządzone Tobie i/lub Pulseem w wyniku tego, a zatem szkody te będą dotyczyć wyłącznie Ciebie.",
+  "popupManagement": {
+    "title": "Zarządzanie wyskakującymi okienkami",
+    "searchPlaceholder": "Wyszukaj wyskakujące okienka według nazwy lub domeny...",
+    "createNew": "Utwórz nowe wyskakujące okienko",
+    "cardView": "Widok karty",
+    "tableView": "Widok tabeli",
+    "restorePopupTitle": "Wybierz wyskakujące okna, które chcesz przywrócić",
+    "tableHeaders": {
+      "title": "Tytuł",
+      "url": "URL",
+      "status": "Status",
+      "allViewers": "Wszyscy widzowie",
+      "identifiedViewers": "Unikalni użytkownicy",
+      "identifiedConversions": "Zidentyfikowane konwersje",
+      "conversions": "Konwersje",
+      "conversionRate": "Współczynnik konwersji",
+      "actions": "Akcje"
+    },
+    "statCards": {
+      "totalPopups": "Suma wyskakujących okienek",
+      "viewsThisMonth": "Wyświetlenia w tym miesiącu",
+      "avgConversionRate": "Średni współczynnik konwersji",
+      "topPerforming": "Najskuteczniejsze wyskakujące okienko"
+    },
+    "filters": {
+      "all": "Wszystko",
+      "active": "Aktywny",
+      "inactive": "Nieaktywny",
+      "draft": "Szkic"
+    },
+    "actions": {
+      "settings": "Ustawienia",
+      "preview": "Podgląd",
+      "duplicate": "Duplikuj",
+      "copyLink": "Skopiuj link",
+      "embed": "Osadź",
+      "embedMessage": "Skopiuj i wklej ten kod na swoją stronę:"
+    }
+  }
 }

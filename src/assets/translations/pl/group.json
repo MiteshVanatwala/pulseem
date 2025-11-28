@@ -22,6 +22,8 @@
   "testGroup": "Grupa Testowa",
   "autoResponderConnected": "Autoresponder powiązany z tą grupą",
   "webformConnected": "Strona docelowa powiązana z tą grupą",
+  "popupConnected": "Popup jest połączony z tą grupą",
+  "webfromAndPopupConnected": "Strona docelowa i popup dołączone do tej grupy",
   "invalidGroupId": "Nieprawidłowy identyfikator grupy",
   "noGroupFound": "Nie znaleziono grup",
   "simplyClubLoginTitle": "Logowanie do usługi zewnętrznej",

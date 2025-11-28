@@ -336,15 +336,18 @@
   "copyLink": "העתק קישור",
   "embedCode": "קוד הטמעה",
   "restoreLandingPageTitle": "בחר את דפי הנחיתה שברצונך לשחזר",
-  "dialogDuplicateTitle": "שיכפול דף נחיתה",
-  "dialogDuplicateContent": "האם ברצונך לשכפל את דף הנחיתה?",
+  "dialogDuplicateTitle": "שכפול פופ אפ",
+  "dialogDuplicateContent": "האם ברצונך לשכפל את הפופ אפ?",
   "duplicationSuccessful": "דף הנחיתה שלך שוכפל בהצלחה!",
   "duplicationSuccessfulMessage": "כל הנתונים של דף הנחיתה שוכפל. על מנת לערוך את הגדרות הטופס נא לחץ על ערוך למטה.",
   "createLandingPage": "צור דף נחיתה",
+  "createPopup": "צור פופ-אפ",
   "editLandingPage": "ערוך דף נחיתה",
   "formProperties": "הגדרות טופס",
   "formName": "שם הטופס",
   "formNameRequired": "שם הטופס - שדה חובה",
+  "domainRequired": "נדרש דומיין",
+  "invalidDomain": "דומיין לא תקין",
   "formLanguage": "שפת הטופס",
   "autofillFields": "מילוי אוטומטי של שדות טופס",
   "autofillEditable": "אפשר עריכה של שדות שמולואו אוטומטית",
@@ -353,6 +356,7 @@
   "shortURLTooltip": "כתובת ידידותית לדף אשר תגדיל את הקידום במנועי חיפוש ויהיה קריא על ידי בני האדם",
   "shortURLRequired": "קישור מקוצר - שדה חובה",
   "shortURLExist": "קישור מקוצר קיים. יש לנסות מחרוזת שונה",
+  "pageExist": "שם הדף קיים כבר. יש לבחור שם שונה.",
   "answerType": "סוג תשובה",
   "answerMessage": "טקסט הודעה",
   "answerMessageRequired": "טקסט הודעה - שדה חובה",
@@ -365,6 +369,7 @@
   "URLRequired": "קישור - שדה חובה",
   "APIUsername": "שם משתמש API",
   "APIUsernameRequired": "שם משתמש API - שדה חובה",
+  "Domain": "דומיין",
   "terminalNumber": "מספר מסוף",
   "terminalNumberRequired": "מספר מסוף - שדה חובה",
   "departmentNumber": "מספר מחלקה",
@@ -481,5 +486,44 @@
   "notApproved": "לא אושר דיוור",
   "addClientAsActive": "הוסף את כל הנמענים החדשים שנרשמו דרך טופס בדף נחיתה זה בסטטוס “פעיל”",
   "addClientAsActiveWhenClientSelect": "הוסף נמענים חדשים בסטטוס “פעיל” רק אם הם אישרו דיוור באמצעות צקבוקס אישור דיוור",
-  "changeOptInDesclaimer": "לתשומת ליבכם,<br/> ע”י הפעלת הגדרת <b>הוסף את כל הנמענים החדשים שנרשמו דרך טופס בדף נחיתה זה בסטטוס “פעיל”</b> הינכם מבקשים להוסיף נמענים שלא בהכרח אישרו דיוור לחשבונכם בפולסים בסטטוס פעיל, מה שאומר שנמענים אלה יקבלו מכם דיוור. שינוי הגדרות כאמור מתבצע על אחריותכם בלבד, ובביצועו הינכם מאשרים כי פולסים לא תישא בכל אחריות לכל נזק שיגרם לך ו/או לחברת פולסים כתוצאה מכך והם יחולו עליכם בלבד. "
+  "changeOptInDesclaimer": "לתשומת ליבכם,<br/> ע”י הפעלת הגדרת <b>הוסף את כל הנמענים החדשים שנרשמו דרך טופס בדף נחיתה זה בסטטוס “פעיל”</b> הינכם מבקשים להוסיף נמענים שלא בהכרח אישרו דיוור לחשבונכם בפולסים בסטטוס פעיל, מה שאומר שנמענים אלה יקבלו מכם דיוור. שינוי הגדרות כאמור מתבצע על אחריותכם בלבד, ובביצועו הינכם מאשרים כי פולסים לא תישא בכל אחריות לכל נזק שיגרם לך ו/או לחברת פולסים כתוצאה מכך והם יחולו עליכם בלבד. ",
+  "popupManagement": {
+    "title": "ניהול פופאפים",
+    "searchPlaceholder": "חפש פופאפים לפי שם או דומיין...",
+    "createNew": "צור פופאפ חדש",
+    "cardView": "תצוגת כרטיסים",
+    "tableView": "תצוגת טבלה",
+    "restorePopupTitle": "בחר את החלונות הקופצים שברצונך לשחזר",
+    "tableHeaders": {
+      "title": "כותרת",
+      "url": "כתובת",
+      "status": "סטטוס",
+      "allViewers": "כל הצופים",
+      "identifiedViewers": "מבקרים ייחודיים",
+      "identifiedConversions": "המרות מזוהות",
+      "conversions": "המרות",
+      "conversionRate": "יחס המרה",
+      "actions": "פעולות"
+    },
+    "statCards": {
+      "totalPopups": "סך הכל פופאפים",
+      "viewsThisMonth": "צפיות החודש",
+      "avgConversionRate": "יחס המרה ממוצע",
+      "topPerforming": "פופאפ מוביל"
+    },
+    "filters": {
+      "all": "הכל",
+      "active": "פעיל",
+      "inactive": "לא פעיל",
+      "draft": "טיוטה"
+    },
+    "actions": {
+      "settings": "הגדרות",
+      "preview": "תצוגה מקדימה",
+      "duplicate": "שכפל",
+      "copyLink": "העתק קישור",
+      "embed": "הטמע",
+      "embedMessage": "העתק והדבק קוד זה לאתר שלך:"
+    }
+  }
 }

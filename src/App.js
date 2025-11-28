@@ -6,6 +6,7 @@ import ArchiveManagement from './screens/Newsletter/Management/ArchiveManagement
 import AutomationManagment from './screens/Automations/Management/AutomationsManagment';
 import LandingPagesesManagment from './screens/LandingPages/Management/LandingPagesManagment';
 import MmsManagment from './screens/Mms/Management/MmsManagment';
+import PopUpManagement from './screens/LandingPages/PopUpManagement/PopUpManagement';
 import SmsManagment from './screens/Sms/Management/SmsManagment';
 import {
   getCookie,
@@ -97,6 +98,13 @@ import { UserRoles } from './Models/SubUser/SubUsers';
 import { PulseemFeatures } from './model/PulseemFields/Fields';
 import RemoveMyData from './screens/RemoveMyData/RemoveMyData';
 import LinksClicksReport from './screens/Reports/LinksClicksReport/LinksClicksReport';
+import PopupTriggers from './screens/Popups/DisplayRules/PopupTriggers';
+
+import BeeEditorPopup from './screens/Editors/BeeEditorPopup';
+import AIFloatingButton from './components/AI/AIFloatingButton';
+import AIChatWidget from './components/AI/AIChatWidget';
+import { getAvailablePlans, getCurrentPlan } from './redux/reducers/TiersSlice';
+import PopupSummary from './screens/Popups/PopupSummary';
 
 const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
   const transferUrl =
@@ -193,10 +201,27 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
         path={`${sitePrefix}Campaigns/editor/:id`}
         element={<CampaignEditorBee classes={classes} />}
       />
+      {accountFeatures && accountFeatures?.indexOf(PulseemFeatures.Popup) > -1 && <Route
+          path={`${sitePrefix}popupeditor/:id`}
+          element={
+            <BeeEditorPopup
+              classes={classes}
+              // clientId="ae1d76a4-107b-4f63-9849-360bfcad507c"
+              // clientSecret="Y1dZCdbtjfeVVCsCWB4EQNlQNerm3iCtQKocywnY1d213XeUt08F"
+              isPopupBuilder={true}
+            />}
+        />
+      }
       <Route
         path={`${sitePrefix}editor/:type/:id`}
         element={<BeeEditor classes={classes} />}
       />
+      {accountFeatures && accountFeatures?.indexOf(PulseemFeatures.Popup) > -1 && (
+        <Route
+          path={`${sitePrefix}Popups/DisplayRules/:id`}
+          element={<PopupTriggers classes={classes} />}
+        />
+      )}
       <Route
         path={`${sitePrefix}Campaigns/SendSettings/:id`}
         element={<NewsletterSendSettings classes={classes} />}
@@ -340,13 +365,26 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
         path={`${sitePrefix}EditRegistrationPage`}
         element={<LandingPagesesManagment classes={classes} />}
       />
+      {accountFeatures && accountFeatures?.indexOf(PulseemFeatures.Popup) > -1 && <Route
+          path={`${sitePrefix}PopUpManagement`}
+          element={<PopUpManagement classes={classes} />}
+        />
+      }
       <Route
         path={`${sitePrefix}LandingPages/Create`}
-        element={<CreateLandingPage classes={classes} />}
+        element={<CreateLandingPage classes={classes} key="landing-create" />}
       />
       <Route
         path={`${sitePrefix}LandingPages/Create/:id`}
-        element={<CreateLandingPage classes={classes} />}
+        element={<CreateLandingPage classes={classes} key="landing-edit" />}
+      />
+      <Route
+        path={`${sitePrefix}Popups/Create`}
+        element={<CreateLandingPage classes={classes} isPopup={true}  key="popup-create"/>}
+      />
+      <Route
+        path={`${sitePrefix}Popups/Create/:id`}
+        element={<CreateLandingPage classes={classes} isPopup={true} key="popup-edit" />}
       />
       <Route
         path={`${sitePrefix}LandingPages/SurveyDetails/:id`}
@@ -355,6 +393,10 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
       <Route
         path={`${sitePrefix}LandingPages/summary/:id`}
         element={<WebformSummary classes={classes} />}
+      />
+      <Route
+        path={`${sitePrefix}landingPages/Popups/Summary/:id`}
+         element={<PopupSummary classes={classes} />}
       />
       <Route
         path={`/Survey`}
@@ -732,6 +774,8 @@ const App = ({ screenSize }) => {
     !isSignup && !isConfirmationPage && dispatch(GetCurrencyList());
     !isSignup && !isConfirmationPage && dispatch(GetSmsCountries());
     !isSignup && !isConfirmationPage && dispatch(GetAfterLoginInitialData());
+    !isSignup && !isConfirmationPage && dispatch(getCurrentPlan());
+    !isSignup && !isConfirmationPage && dispatch(getAvailablePlans());
   }, [dispatch])
 
   const getDirection = (lang) => {
@@ -759,10 +803,6 @@ const App = ({ screenSize }) => {
           element={<ClientSearchResult classes={classes} />}
         />
         <Route
-          path={`${sitePrefix}`}
-          element={<LandingPagesesManagment classes={classes} />}
-        />
-        <Route
           path={`${sitePrefix}EditRegistrationPage`}
           element={<LandingPagesesManagment classes={classes} />}
         />
@@ -775,12 +815,27 @@ const App = ({ screenSize }) => {
           element={<CreateLandingPage classes={classes} />}
         />
         <Route
+          path={`${sitePrefix}Popups/Create`}
+          element={<CreateLandingPage classes={classes} isPopup={true} />}
+        />
+        <Route
+          path={`${sitePrefix}Popups/Create/:id`}
+          element={<CreateLandingPage classes={classes} isPopup={true} />}
+        />
+        <Route
           path={`${sitePrefix}LandingPages/SurveyDetails/:id`}
           element={<SurveyDetails classes={classes} />}
         />
         <Route
           path={`${sitePrefix}LandingPages/summary/:id`}
           element={<WebformSummary classes={classes} />}
+        />
+        <Route
+          path={`${sitePrefix}popupeditor/:id`}
+          element={<BeeEditorPopup classes={classes} 
+          // clientId="ae1d76a4-107b-4f63-9849-360bfcad507c" 
+          // clientSecret="Y1dZCdbtjfeVVCsCWB4EQNlQNerm3iCtQKocywnY1d213XeUt08F"
+          isPopupBuilder={true} />}
         />
         <Route
           path={`${sitePrefix}editor/:type/:id`}
@@ -801,6 +856,10 @@ const App = ({ screenSize }) => {
         <Route
           path={`${sitePrefix}Groups/FileUploads`}
           element={<FileUploads classes={classes} />}
+        />
+        <Route
+          path={`${sitePrefix}`}
+          element={<LandingPagesesManagment classes={classes} />}
         />
         <Route
           path="*" element={<PageNotFound classes={classes} />}
@@ -836,6 +895,8 @@ const App = ({ screenSize }) => {
       <MuiThemeProvider theme={theme}>
         <div dir={isRTL ? 'rtl' : 'ltr'} className={classes.appBody}>
           {renderRoutesByCondition(classes, redirect)}
+          <AIFloatingButton />
+          <AIChatWidget />
         </div>
         <Loader isOpen={isLoader} showBackdrop={true} />
       </MuiThemeProvider>

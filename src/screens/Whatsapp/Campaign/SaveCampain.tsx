@@ -110,9 +110,11 @@ import moment from 'moment';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { sitePrefix } from '../../../config';
 import ConfirmationButtons from '../../../components/ConfirmationButtons/ConfirmationButtons';
-import { DateFormats, FBBusiness } from '../../../helpers/Constants';
+import { DateFormats, FBBusiness, TierFeatures } from '../../../helpers/Constants';
 import { WhatsappCampaignStatus, WhatsAppPlatformIDEnum } from '../../../config/enum';
 import { filter, first, get } from 'lodash';
+import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
+import TierPlans from '../../../components/TierPlans/TierPlans';
 
 const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const { t: translator } = useTranslation();
@@ -125,16 +127,17 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const NodeToEdit = queryParams.get("NodeToEdit") || false
 	let isSendCampaign = queryParams.get("new") || false;
 	if (isSendCampaign === 'false') isSendCampaign = false;
-
+	const [showTierPlans, setShowTierPlans] = useState(false);
 	const { testGroups } = useSelector(
 		(state: { sms: smsReducerProps }) => state.sms
 	);
 	const { SubAccountSettings } = useSelector(
 		(state: { common: CommonRedux }) => state.common?.accountSettings
 	);
-	const { WhatsAppPlatformID, TierData } = useSelector(
+	const { WhatsAppPlatformID, TierData, subAccount } = useSelector(
 		(state: { common: CommonRedux }) => state.common
 	);
+	const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
 	const websiteField = [
 		{
 			fieldName: 'whatsapp.websiteButtonText',
@@ -217,6 +220,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		fileType: '',
 	});
 	const [dialogType, setDialogType] = useState<any>({ type: '' });
+	const [TierMessageCode, setTierMessageCode] = useState<string>('');
 	const [savedTemplate, setSavedTemplate] = useState<string>('');
 	const [buttonType, setButtonType] = useState<string>('');
 	const [templateCategory, setTemplateCategory] = useState<number>(0);
@@ -377,6 +381,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				default:
 					break;
 			}
+			// @ts-ignore
 			textCount -= (dynamicVariable?.VariableIndex <= 10 ? 5 : 6) || 0;
 		});
 		setTemplateTextCount(textCount);
@@ -794,7 +799,12 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 					quickSend(payload)
 				);
 				setIsLoader(false);
-				if (quickSendData?.Status === apiStatus.SUCCESS) {
+				if (quickSendData?.StatusCode === 927) {
+					// WHATSAPP_BASIC, DYNAMIC_PRODUCTS, WHATSAPP_CAMPAIGN_SEND
+					setTierMessageCode(quickSendData?.Message || 'WHATSAPP_CAMPAIGN_SEND');
+					setDialogType({ type: 'tier' })
+				}
+				else if (quickSendData?.Status === apiStatus.SUCCESS) {
 					setToastMessage(ToastMessages.CAMPAIGN_SEND_SUCCESS);
 					setSelectedTestGroup([]);
 					setRandomlyCount('');
@@ -990,7 +1000,13 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				from
 			);
 			setIsLoader(false);
-			if (data.Status === apiStatus.SUCCESS) {
+			if (data?.StatusCode === 927) {
+				// WHATSAPP_BASIC, DYNAMIC_PRODUCTS
+				setTierMessageCode(data?.Message || 'WHATSAPP_BASIC');
+				setDialogType({ type: 'tier' })
+				return null;
+			}
+			else if (data.Status === apiStatus.SUCCESS) {
 				if (showSuccess) {
 					setToastMessage(ToastMessages.SAVE_CAMPAIGN_SUCCESS);
 				}
@@ -1027,7 +1043,12 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				'send'
 			);
 			setIsLoader(false);
-			if (data.Status === apiStatus.SUCCESS) {
+			if (data.StatusCode === 927) {
+				// WHATSAPP_BASIC, DYNAMIC_PRODUCTS
+				setTierMessageCode(data?.Message || 'WHATSAPP_BASIC');
+				setDialogType({ type: 'tier' })
+			}
+			else if (data.Status === apiStatus.SUCCESS) {
 				navigate(
 					`${sitePrefix}whatsapp/campaign/edit/page2/${data?.Data?.WACampaignId}?FromAutomation=${FromAutomation}&NodeToEdit=${NodeToEdit}&new=${isSendCampaign}`,
 					{ state: { from: `edit/page1/${data?.Data?.WACampaignId}&new=${isSendCampaign}` } }
@@ -1315,6 +1336,57 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		}
 	})
 
+	const handleGetPlanForFeature = (tierMessageCode: string) => {
+		const planName = findPlanByFeatureCode(
+			tierMessageCode,
+			availablePlans,
+			currentPlan.Id
+		);
+		
+		if (planName) {
+			return translator('billing.tier.featureNotAvailable').replace('{feature}', translator(TierFeatures[tierMessageCode as keyof typeof TierFeatures] || tierMessageCode)).replace('{planName}', planName);
+		} else {
+			return translator('billing.tier.noFeatureAvailable');
+		}
+	};
+
+	const getTierValidationDialog = () => ({
+		title: translator('billing.tier.permission'),
+		showDivider: false,
+		content: (
+			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+				{handleGetPlanForFeature(TierMessageCode)}
+			</Typography>
+		),
+		renderButtons: () => (
+			<Grid
+				container
+				spacing={2}
+				className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}
+			>
+				<Grid item>
+					<Button
+						onClick={() => {
+						setDialogType({ type: '', data: '' });
+						setShowTierPlans(true);
+					}}
+					className={clsx(classes.btn, classes.btnRounded)}
+					>
+						{translator('billing.upgradePlan')}
+					</Button>
+				</Grid>
+				<Grid item>
+					<Button
+						onClick={() => setDialogType({ type: '', data: '' })}
+						className={clsx(classes.btn, classes.btnRounded)}
+					>
+						{translator('common.cancel')}
+					</Button>
+				</Grid>
+			</Grid>
+		)
+	})
+
 	const renderDialog = () => {
 		const { type } = dialogType || {}
 		let currentDialog: any = {};
@@ -1341,6 +1413,8 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			currentDialog = getQuickReplyDialog();
 		} else if (type === 'dynamicModal') {
 			currentDialog = getDynamicModalDialog();
+		} else if (type === 'tier') {
+			currentDialog = getTierValidationDialog();
 		}
 
 		if (type) {
@@ -1754,6 +1828,11 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				!isLoader && <NoSetup classes={classes} />
 			)}
 			{renderDialog()}
+			{showTierPlans && <TierPlans
+				classes={classes}
+				isOpen={showTierPlans}
+				onClose={() => setShowTierPlans(false)}
+			/>}
 			<Loader isOpen={isLoader} showBackdrop={true} />
 		</DefaultScreen >
 	);

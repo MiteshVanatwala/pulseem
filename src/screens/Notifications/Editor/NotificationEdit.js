@@ -33,6 +33,10 @@ import { sitePrefix } from '../../../config';
 import { Title } from '../../../components/managment/Title';
 import { Stack } from '@mui/material';
 import EmojiPicker from '../../../components/Emojis/EmojiPicker';
+import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
+import TierPlans from '../../../components/TierPlans/TierPlans';
+import { TierFeatures } from '../../../helpers/Constants';
+import { get } from 'lodash';
 
 const useStylesBootstrap = makeStyles((theme) => ({
   arrow: {
@@ -57,7 +61,9 @@ const NotificationEdit = ({ classes }) => {
 
   /* #region  Component settings constatns */
   const dispatch = useDispatch();
-  const { language, isRTL, CoreToastMessages } = useSelector(state => state.core)
+  const { language, isRTL, CoreToastMessages } = useSelector(state => state.core);
+  const { currentPlan, availablePlans } = useSelector(state => state.tiers);
+  const { subAccount } = useSelector(state => state.common);
   const { t } = useTranslation();
   moment.locale(language);
   /* #endregion */
@@ -104,6 +110,7 @@ const NotificationEdit = ({ classes }) => {
   const [notificationPublicKey, setPublicKey] = useState(0);
   const [inputFocus, setFocusOnInput] = useState(null);
   const [cursorPosition, setCursorPosition] = useState(0);
+  const [showTierPlans, setShowTierPlans] = useState(false);
   const [validationErrorList, setValidationError] = useState(null);
   // Send Type settings
   const [notificationHover, setHovered] = useState(false);
@@ -113,6 +120,8 @@ const NotificationEdit = ({ classes }) => {
   const [toastMessage, setToastMessage] = useState(null);
   const [isGalleryConfirmed, setIsFileSelected] = useState(false);
   const [showConfirmCancel, setShowConfirmCancel] = useState(false);
+  const [dialogType, setDialogType] = useState(null);
+  const [TierMessageCode, setTierMessageCode] = useState('');
 
   const toastMessages = {
     SUCCESS: { severity: 'success', color: 'success', message: t('notifications.saved'), showAnimtionCheck: true },
@@ -708,6 +717,20 @@ const NotificationEdit = ({ classes }) => {
     };
   }
   const renderDialog = () => {
+    if (dialogType?.type === 'tier') {
+      const dialog = getTierValidationDialog();
+      return (
+        <BaseDialog
+          classes={classes}
+          open={dialogType}
+          onCancel={() => setDialogType(null)}
+          onClose={() => setDialogType(null)}
+          {...dialog}>
+          {dialog.content}
+        </BaseDialog>
+      );
+    }
+    
     if (validationErrorList != null) {
       let dialog = {};
       dialog = renderValidationError();
@@ -718,7 +741,6 @@ const NotificationEdit = ({ classes }) => {
           open={validationErrorList}
           onCancel={handleDialogClose}
           onClose={handleDialogClose}
-          onCancel={handleDialogClose}
           onConfirm={handleDialogClose}
           {...dialog}>
           {dialog.content}
@@ -856,6 +878,61 @@ const NotificationEdit = ({ classes }) => {
     return null;
   }
 
+  const handleGetPlanForFeature = (tierMessageCode) => {
+    const planName = findPlanByFeatureCode(
+        tierMessageCode,
+        availablePlans,
+        currentPlan.Id
+    );
+    
+    if (planName) {
+      return t('billing.tier.featureNotAvailable').replace('{feature}', t(TierFeatures[tierMessageCode] || tierMessageCode)).replace('{planName}', planName);
+    } else {
+        return t('billing.tier.noFeatureAvailable');
+    }
+  };
+
+  const getTierValidationDialog = () => ({
+    title: t('billing.tier.permission'),
+    showDivider: false,
+    content: (
+      <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+        {handleGetPlanForFeature(TierMessageCode)}
+      </Typography>
+    ),
+    renderButtons: () => (
+      <Grid
+          container
+          spacing={2}
+          className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}
+      >
+          <Grid item>
+              <Button
+                  onClick={() => { 
+                      setDialogType(null);
+                      setShowTierPlans(true);
+                  }}
+                  className={clsx(
+                      classes.btn,
+                      classes.btnRounded
+                  )}>
+                  {t('billing.upgradePlan')}
+              </Button>
+          </Grid>
+          <Grid item>
+              <Button
+                  onClick={() => { setDialogType(null) }}
+                  className={clsx(
+                      classes.btn,
+                      classes.btnRounded
+                  )}>
+                  {t('common.cancel')}
+              </Button>
+          </Grid>
+      </Grid>
+  )
+  })
+
   const saveNotification = async (isExit, isContinue) => {
     setSourceModel(model);
 
@@ -871,6 +948,12 @@ const NotificationEdit = ({ classes }) => {
       }
       else {
         dispatch(save(modelToSave)).then((response) => {
+          if (927) {
+            setTierMessageCode('WEB_PUSH');
+            setDialogType({ type: 'tier' });
+            return;
+          }
+          
           if (location.pathname.toLowerCase().indexOf('create') > -1) {
             if (isExit) {
               Redirect({ url: `${sitePrefix}Notifications` })
@@ -926,6 +1009,11 @@ const NotificationEdit = ({ classes }) => {
           <WizardButtons />
         </div>
       </div>
+      {showTierPlans && <TierPlans
+        classes={classes}
+        isOpen={showTierPlans}
+        onClose={() => setShowTierPlans(false)}
+      />}
     </DefaultScreen>
   );
 

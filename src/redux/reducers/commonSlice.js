@@ -255,7 +255,8 @@ export const commonSlice = createSlice({
     countryCodeList: [],
     WhatsAppPlatformID: null,
     TierData: [],
-    IsPoland: false
+    IsPoland: false,
+    companyAdmin: '',
   },
   extraReducers: builder => {
     builder
@@ -287,6 +288,7 @@ export const commonSlice = createSlice({
           AllowEnglishInFromNumber: data?.AllowEnglishInFromNumber
         };
 
+        state.companyAdmin = data?.CompanyAdmin;
         state.accountFeatures = data?.Account?.AccountFeatures?.map(String);
         state.subAccount = data;
       })
