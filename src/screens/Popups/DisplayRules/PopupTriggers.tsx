@@ -68,7 +68,7 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
     displayFrequency: true,
     pageTargeting: true,
     advancedSettings: true,
-      deviceTargeting: true,
+    deviceTargeting: true,
   });
 
   const [displayFrequencyData, setDisplayFrequencyData] = useState({
@@ -99,7 +99,7 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
 
   // Manual refresh with user feedback
   const handleManualRefresh = () => {
-   refreshData(false); 
+    refreshData(false);
     setToastMessage({
       severity: 'info',
       color: 'info',
@@ -109,7 +109,7 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
   };
 
   useEffect(() => {
-  refreshData(false);
+    refreshData(false);
 
   }, [dispatch, id]);
 
@@ -450,8 +450,8 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
     }
 
     const deviceTargets: number[] = [];
-  if (deviceTargetingData.desktop) deviceTargets.push(1);
-  if (deviceTargetingData.mobile) deviceTargets.push(2);
+    if (deviceTargetingData.desktop) deviceTargets.push(1);
+    if (deviceTargetingData.mobile) deviceTargets.push(2);
 
     // Build payload object conditionally
     const payload: any = {
@@ -644,13 +644,11 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
         />
         <Targeting
           classes={classes}
-          lookupData={lookupData} // Add this prop
+          lookupData={lookupData}
           show={showSections.deviceTargeting}
           onToggle={() => {
             setShowSections(prev => {
               const newDeviceTargetingState = !prev.deviceTargeting;
-
-              // If disabling device targeting, reset to default (both enabled)
               if (!newDeviceTargetingState) {
                 setDeviceTargetingData({
                   desktop: true,

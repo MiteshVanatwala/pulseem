@@ -16,6 +16,7 @@ import { logout } from '../../helpers/Api/PulseemReactAPI';
 import { LangugeCode } from '../../model/PulseemFields/Fields';
 import { Title } from '../../components/managment/Title';
 import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
+import { MdComputer, MdPhoneIphone } from "react-icons/md";
 
 interface ToastMessage {
   severity?: 'error' | 'success' | 'info';
@@ -317,6 +318,26 @@ const PopupSummary = ({ classes }: any) => {
     });
   };
 
+  const renderDeviceTargeting = () => {
+    if (!payload?.DeviceTargets || payload.DeviceTargets.length === 0) {
+      return <Typography style={{ marginLeft: 28 }}>{t('common.notSet')}</Typography>;
+    }
+
+    return payload.DeviceTargets.map((device: any) => {
+      console.log(device);
+      
+      const deviceIcon = device === 1 ? MdComputer : MdPhoneIphone;
+      return (
+        <SummaryItem
+          key={device.Id}
+          classes={classes}
+          icon={deviceIcon}
+          label={device === 1 ? t("PopupTriggers.deviceTargeting.desktop") : t("PopupTriggers.deviceTargeting.mobile")}
+        />
+      );
+    });
+  };
+
   const renderPageTargeting = () => {
     if (!payload?.PopupPageTargeting || payload.PopupPageTargeting.length === 0) {
       return <Typography style={{ marginLeft: 28 }}>{t('common.notSet')}</Typography>;
@@ -549,13 +570,19 @@ const PopupSummary = ({ classes }: any) => {
       </Typography>
       <Divider style={{ margin: '8px 0 16px 0' }} />
       <Grid container spacing={4}>
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} sm={6} md={4}>
           <Typography variant="h6" gutterBottom style={{ color: theme.palette.text.primary}}>
             {t('PopupTriggers.summary.triggers')}
           </Typography>
           {renderTriggers()}
         </Grid>
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} sm={6} md={4}>
+          <Typography variant="h6" gutterBottom style={{ color: theme.palette.text.primary}}>
+            {t("PopupTriggers.deviceTargeting.title")}
+          </Typography>
+          {renderDeviceTargeting()}
+        </Grid>
+         <Grid item xs={12} sm={6} md={4}>
           <Typography variant="h6" gutterBottom style={{ color: theme.palette.text.primary}}>
             {t('PopupTriggers.summary.pageTargeting')}
           </Typography>
@@ -566,14 +593,14 @@ const PopupSummary = ({ classes }: any) => {
       <Divider style={{ margin: '24px 0 16px 0' }} />
 
       <Grid container spacing={4}>
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} sm={6} md={4}>
           <Typography variant="h6" gutterBottom style={{ color: theme.palette.text.primary}}>
             {t('PopupTriggers.summary.frequency')}
           </Typography>
           {renderFrequency()}
         </Grid>
-        <Grid item xs={12} md={6}>
-          <Typography variant="h6" gutterBottom style={{ color: theme.palette.text.primary}}>
+        <Grid item xs={12} sm={6} md={4}>
+          <Typography variant="h6" gutterBottom style={{ color: theme.palette.text.primary }}>
             {t('PopupTriggers.advanceSettings.postConversion.title') || 'Post-Conversion Behavior'}
           </Typography>
           {renderConversionSettings()}
