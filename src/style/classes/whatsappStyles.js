@@ -2527,20 +2527,18 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			marginTop: 4,
 			borderRadius: 16,
 			width: 'max-content',
-			'@media screen and (max-width: 1040px)': {
-				'&.tab-container .MuiTabs-fixed': {
-					overflowX: 'auto !important',
-				},
-			},
 		},
 		'&.custom-tab': {
 			textTransform: 'none',
-			minWidth: 80,
+			minWidth: 100,
 			padding: theme.spacing(.75, 1),
 			borderRadius: theme.shape.borderRadius * 2.5,
 			fontWeight: 'bold',
-			'@media screen and (max-width: 759px)': {
-				minWidth: 60,
+			'@media screen and (max-width: 1240px)': {
+				minWidth: 80,
+			},
+			'@media screen and (max-width: 1023px)': {
+				minWidth: 56,
 			},
 			'& h2': {
 				color: '#000000',
