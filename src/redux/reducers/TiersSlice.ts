@@ -209,8 +209,6 @@ const TiersSlice = createSlice({
             .addCase(getCurrentPlan.fulfilled, (state, action) => {
                 state.loading.currentPlan = false;
                 state.currentPlan = action.payload.Data;
-                // @ts-ignore
-                state.currentPlan.EmailTierScaleID = 48;
             })
 
         // Downgrade Plan
