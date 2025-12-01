@@ -1,4 +1,4 @@
-import React, { useState, FC, useEffect } from "react";
+import React, { useState, FC, useEffect, useRef } from "react";
 import {
   Grid,
   Typography,
@@ -34,6 +34,7 @@ import { Loader } from "../../../components/Loader/Loader";
 import PulseemSwitch from "../../../components/Controlls/PulseemSwitch";
 import { sitePrefix } from "../../../config";
 import Toast from "../../../components/Toast/Toast.component";
+import Targeting, { DeviceTargetingData } from "./Components/Targeting";
 
 const iconMap: { [key: string]: React.ReactElement } = {
   "Exit Intent": <ExitToAppIcon />,
@@ -56,11 +57,18 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
   const { language } = useSelector((state: any) => state.core);
   const { lookupData, loading, error, upserting, upsertSuccess, popupRules, rulesLoading } = useSelector((state: any) => state.popupTriggers);
 
+  const [deviceTargetingData, setDeviceTargetingData] = useState<DeviceTargetingData>({
+    desktop: true,
+    mobile: true,
+  });
+
+  console.log(deviceTargetingData)
   const [triggersState, setTriggersState] = useState<any>({});
   const [showSections, setShowSections] = useState({
     displayFrequency: true,
     pageTargeting: true,
     advancedSettings: true,
+    deviceTargeting: true,
   });
 
   const [displayFrequencyData, setDisplayFrequencyData] = useState({
@@ -78,10 +86,12 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
   });
   const [payloadForSummary, setPayloadForSummary] = useState<any | null>(null);
   const [toastMessage, setToastMessage] = useState<any>(null);
+  const [shouldShowLoader, setShouldShowLoader] = useState(false);
 
   // Force refresh data when component mounts or when returning from another page
-  const refreshData = () => {
+  const refreshData = (silent = false) => {
     if (id) {
+      setShouldShowLoader(!silent);
       dispatch(getPopupLookupData({ id: parseInt(id, 10) }));
       dispatch(getPopupRulesById({ webFormId: parseInt(id, 10) }));
     }
@@ -89,7 +99,7 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
 
   // Manual refresh with user feedback
   const handleManualRefresh = () => {
-    refreshData();
+    refreshData(false);
     setToastMessage({
       severity: 'info',
       color: 'info',
@@ -99,7 +109,8 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
   };
 
   useEffect(() => {
-    refreshData();
+    refreshData(false);
+
   }, [dispatch, id]);
 
   // Also refresh when coming back from navigation (browser back/forward)
@@ -107,7 +118,7 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
     const handlePopState = () => {
       // Small delay to ensure the component is properly mounted
       setTimeout(() => {
-        refreshData();
+        refreshData(true);
       }, 100);
     };
 
@@ -119,13 +130,20 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (!document.hidden) {
-        refreshData();
+        refreshData(true);
       }
     };
 
     document.addEventListener('visibilitychange', handleVisibilityChange);
     return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
+
+  useEffect(() => {
+    if (!loading && !rulesLoading) {
+      setShouldShowLoader(false);
+    }
+  }, [loading, rulesLoading]);
 
   // Clear state when component unmounts to ensure fresh data on next visit
   useEffect(() => {
@@ -246,6 +264,33 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
         }
       }
 
+      // Bind PopupDeviceTargets
+      if (popupRules.PopupDeviceTargets && Array.isArray(popupRules.PopupDeviceTargets)) {
+        const hasDesktop = popupRules.PopupDeviceTargets.includes(1);
+        const hasMobile = popupRules.PopupDeviceTargets.includes(2);
+
+        setDeviceTargetingData({
+          desktop: hasDesktop,
+          mobile: hasMobile,
+        });
+
+        // Show device targeting section if there are device targets
+        setShowSections(prev => ({
+          ...prev,
+          deviceTargeting: true
+        }));
+      } else {
+        // Default to both devices if no data
+        setDeviceTargetingData({
+          desktop: true,
+          mobile: true,
+        });
+        setShowSections(prev => ({
+          ...prev,
+          deviceTargeting: false
+        }));
+      }
+
       // Bind PopupPageTargeting
       if (popupRules.PopupPageTargeting?.length > 0) {
         const newRules = popupRules.PopupPageTargeting.map((rule: any) => {
@@ -307,6 +352,10 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
 
       return updated;
     });
+  };
+
+  const handleDeviceTargetingChange = (devices: DeviceTargetingData) => {
+    setDeviceTargetingData(devices);
   };
 
   const handleAdvancedSettingsChange = (fieldName: string, value: any) => {
@@ -400,6 +449,10 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
       frequencyValue = displayFrequencyData.everyXVisits;
     }
 
+    const deviceTargets: number[] = [];
+    if (deviceTargetingData.desktop) deviceTargets.push(1);
+    if (deviceTargetingData.mobile) deviceTargets.push(2);
+
     // Build payload object conditionally
     const payload: any = {
       WebformId: parseInt(id!, 10),
@@ -412,6 +465,7 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
       },
       ContinueAfterConversion: showSections.advancedSettings ? advancedSettingsData.shouldContinueShowing : false,
       ConversionTypeId: showSections.advancedSettings ? (advancedSettingsData.conversionType === 'formSubmission' ? 1 : 2) : 0,
+      DeviceTargets: deviceTargets,
     };
 
     // Only add PopupPageTargeting if there are rules
@@ -588,6 +642,26 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
           data={displayFrequencyData}
           onChange={handleDisplayFrequencyChange}
         />
+        <Targeting
+          classes={classes}
+          lookupData={lookupData}
+          show={showSections.deviceTargeting}
+          onToggle={() => {
+            setShowSections(prev => {
+              const newDeviceTargetingState = !prev.deviceTargeting;
+              if (!newDeviceTargetingState) {
+                setDeviceTargetingData({
+                  desktop: true,
+                  mobile: true,
+                });
+              }
+
+              return { ...prev, deviceTargeting: newDeviceTargetingState };
+            });
+          }}
+          data={deviceTargetingData}
+          onChange={handleDeviceTargetingChange}
+        />
         <PageTargeting
           classes={classes}
           lookupData={lookupData}
@@ -605,7 +679,7 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
           onChange={handleAdvancedSettingsChange}
         />
       </Box>
-      <Loader isOpen={loading || upserting || rulesLoading} />
+      <Loader isOpen={shouldShowLoader && (loading || upserting || rulesLoading)} />
       <Box className={classes.stickyFooter}>
         {renderButtons()}
       </Box>

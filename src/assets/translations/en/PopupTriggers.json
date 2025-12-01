@@ -146,6 +146,13 @@
     "visits": "visits",
     "onceEvery": "Once every"
   },
+    "deviceTargeting": {
+      "title": "Device Targeting",
+      "subtitle": "Choose the type of device you want to show the popup.",
+      "info": "Choose the devices from below - you can pick more than one",
+      "desktop": "Desktop",
+      "mobile": "Mobile"
+    },
   "popupSaved": "Popup Saved",
   "popupPublished": "Popup Published",
   "popupManagement": "Popup Management",
