@@ -1,12 +1,14 @@
 import Icon from './Icon';
+import clsx from 'clsx';
 import {
+	APIWhatsappChatSidebarContactsItemsData,
 	WhatsappChatSideBarProps,
 } from '../Types/WhatsappChat.type';
 import AccountUser from '../../../../assets/images/acc-user.jpg';
-import { Button, IconButton, MenuItem } from '@material-ui/core';
+import { Box, Button, IconButton, MenuItem, styled, Tab, Tabs } from '@material-ui/core';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { FaBars } from 'react-icons/fa';
-import { BaseSyntheticEvent, useEffect, useState } from 'react';
+import { BaseSyntheticEvent, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import SideHeaderContactDropDown from './SideHeaderContactDropDown';
 import SideBarContactList from './SideBarContactList';
@@ -43,20 +45,42 @@ const SideBar = ({
 	const { agentList } = useSelector((state: StateType) => state.whatsapp);
 	const [searchText, setSearchText] = useState<string>('');
 	const debouncedValue = useDebounce<string>(searchText, 500);
+	const sideChatContactsAllRef = useRef<APIWhatsappChatSidebarContactsItemsData[] | null>(null);
+	const [activeTab, setActiveTab] = useState(0);
+	const sideChatContactsAll = sideChatContactsAllRef.current || []
+
+	if (!sideChatContactsAllRef.current && Array.isArray(sideChatContacts)) {
+		sideChatContactsAllRef.current = sideChatContacts
+	}
 
 	const handleSearch = (e: BaseSyntheticEvent) => {
 		setSearchText(e.target.value.toLowerCase());
 	};
 
-	const handleFilter = (e: SelectChangeEvent) => {
-		setFilterBySelected(Number(e.target.value));
-		fetchMoreContacts(searchText, Number(e.target.value), true);
+	const handleFilterByStatus = (e: React.ChangeEvent<{}>, newValue: any) => {
+		setActiveTab(newValue);
+		setFilterBySelected(Number(newValue));
+		fetchMoreContacts(searchText, Number(newValue), true);
 	};
 
 	const handleAgentSelected = (e: SelectChangeEvent) => {
 		setAgentSelected(Number(e.target.value));
 		setCookie('whatsappSelectedAgentId', e.target.value);
 	};
+
+	const statusCount = sideChatContactsAll?.reduce((acc: any, curr: any) => {
+		acc[curr?.ConversationStatusId] = (acc[curr?.ConversationStatusId] || 0) + 1;
+		return acc;
+	}, {});
+
+	const totalStatusCount = sideChatContactsAll?.length ?? 0;
+
+	const statusTabs = [
+		{ status: 'whatsappChat.allStatus', count: totalStatusCount },
+		{ status: 'whatsappChat.open', count: statusCount?.[1] || 0 },
+		{ status: 'whatsappChat.pending', count: statusCount?.[2] || 0 },
+		{ status: 'whatsappChat.solved', count: statusCount?.[3] || 0 },
+	];
 
 	useEffect(() => {
 		if (selectedAgent && selectedAgent > 0) {
@@ -87,29 +111,6 @@ const SideBar = ({
 						onActiveUserChange={onActiveUserChange}
 						activePhoneNumber={activePhoneNumber}
 					/>
-					<span>
-						<Select
-							className={classes.whatsappMainChatStatusSelect}
-							autoWidth
-							defaultValue='0'
-							value={`${filterBySelected}`}
-							variant='standard'
-							style={{ fontSize: '12px' }}
-							MenuProps={{
-								PaperProps: {
-									style: {
-										direction: isRTL ? 'rtl' : 'ltr',
-									},
-								},
-							}}
-							onChange={(e: SelectChangeEvent) => handleFilter(e)}
-						>
-							<MenuItem value={0}>{translator('whatsappChat.allStatus')}</MenuItem>
-							<MenuItem value={1}>{translator('whatsappChat.open')}</MenuItem>
-							<MenuItem value={2}>{translator('whatsappChat.pending')}</MenuItem>
-							<MenuItem value={3}>{translator('whatsappChat.solved')}</MenuItem>
-						</Select>
-					</span>
 					<span style={{ marginInlineStart: 10 }}>
 						<div className={classes.agentSelectorContainer}>
 							<Select
@@ -151,6 +152,29 @@ const SideBar = ({
 						</IconButton>
 					</div>
 				</header>
+				<div className={clsx(`${classes.whatsappChat} tab-wrapper`, classes.dFlex)}>
+					<Box className={clsx(`${classes.whatsappChat} tab-container`, classes.p5)}>
+						<Tabs
+							className={`${classes.whatsappChat} tabs-main`}
+							classes={{ indicator: classes.hideIndicator }}
+							value={activeTab}
+							onChange={handleFilterByStatus}
+							aria-label="status tabs">
+							{statusTabs?.map((tab, index) => (
+								<Tab
+									className={`${classes.whatsappChat} custom-tab`}
+									key={`${tab}_${index}`}
+									label={
+										<Box>
+											<h2 className={classes.font16}>{translator(tab?.status)}</h2>
+											<h6 className={classes.font14}>{tab?.count}</h6>
+										</Box>
+									} 
+								/>
+							))}
+						</Tabs>
+					</Box>
+				</div>
 				<div className={`${classes.whatsappChat} search-wrapper`}>
 					<div className={`${classes.whatsappChat} search-icons`}>
 						<Icon

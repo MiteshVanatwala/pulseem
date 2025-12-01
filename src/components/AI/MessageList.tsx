@@ -46,7 +46,7 @@ const useStyles = makeStyles((theme) => ({
   aiMessage: {
     justifyContent: 'flex-start',
   },
-    messageBubble: {
+  messageBubble: {
     padding: theme.spacing(1, 2),
     borderRadius: '20px',
     maxWidth: '100%',
@@ -91,6 +91,10 @@ const useStyles = makeStyles((theme) => ({
     '& label': {
       display: 'block',
       margin: 0,
+    },
+    '& .htmlwrapperai': {
+      fontFamily: '"Heebo", sans-serif',
+      whiteSpace: 'collapse',
     },
   },
   userMessageTime: {
