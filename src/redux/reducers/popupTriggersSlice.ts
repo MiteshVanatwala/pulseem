@@ -43,9 +43,10 @@ interface PopupRulesData {
   PopupTriggers?: any[];
   PopupFrequency?: any[];
   PopupPageTargeting?: any[];
+  PopupDeviceTargets?: number[];
   ContinueAfterConversion: boolean;
-  PopupConversionId?: number; // Correct spelling
-  PopupConvesrionId?: number; // API typo - keeping both for compatibility
+  PopupConversionId?: number;
+  PopupConvesrionId?: number;
 }
 
 interface PopupTriggersState {

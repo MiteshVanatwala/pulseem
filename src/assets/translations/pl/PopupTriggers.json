@@ -146,6 +146,13 @@
     "onceEvery": "Raz na",
     "visits": "wizyty"
   },
+  "deviceTargeting": {
+  "title": "Targetowanie urządzeń",
+  "subtitle": "Wybierz typ urządzenia, na którym chcesz wyświetlić popup.",
+  "info": "Wybierz urządzenia poniżej — możesz zaznaczyć więcej niż jedno",
+  "desktop": "Komputer stacjonarny",
+  "mobile": "Telefon"
+},
   "popupSaved": "Wyskakujące okno zostało zapisane",
   "popupPublished": "Popup opublikowany",
   "popupManagement": "Zarządzanie popupami",
