@@ -6,11 +6,9 @@ import {
   CardContent,
   Typography,
   Box,
-  makeStyles,
   Checkbox,
 } from "@material-ui/core";
 import { MdComputer, MdPhoneIphone } from "react-icons/md";
-import PulseemSwitch from "../../../../components/Controlls/PulseemSwitch";
 
 export type DeviceType = "desktop" | "mobile";
 
@@ -22,8 +20,6 @@ export type DeviceTargetingData = {
 interface TargetingProps {
   classes: any;
   lookupData: any;
-  show: boolean;
-  onToggle: () => void;
   data: DeviceTargetingData;
   onChange: (devices: DeviceTargetingData) => void;
 }
@@ -31,8 +27,6 @@ interface TargetingProps {
 const Targeting: React.FC<TargetingProps> = ({
   classes,
   lookupData,
-  show,
-  onToggle,
   data,
   onChange,
 }) => {
@@ -81,10 +75,9 @@ const Targeting: React.FC<TargetingProps> = ({
               classes?.topHeaderPopupTrigger,
               classes?.p10,
               classes.pageTargetingResponsiveHeader,
-              classes.spaceBetween,
             )}
             alignItems="center"
-            mb={show && 4}
+            mb={4}
           >
             <div>
               <Typography
@@ -104,78 +97,69 @@ const Targeting: React.FC<TargetingProps> = ({
                 {t("PopupTriggers.deviceTargeting.subtitle")}
               </Typography>
             </div>
-            <PulseemSwitch
-              switchType="ios"
-              id="device-targeting-toggle"
-              checked={show}
-              onChange={onToggle}
-              classes={classes}
-            />
           </Box>
-          {show && (
-            <Box className={classes.contentWrapper}>
-              <Box className={classes.infoBox}>
-                <Typography
-                  variant="body2"
-                  className={clsx(classes?.grayTextCell, classes.infoText)}
-                >
-                  <span className={classes.infoIcon}>ⓘ</span>
-                  {t("PopupTriggers.deviceTargeting.info")}
-                </Typography>
-              </Box>
-              <Box className={classes.devicesContainer}>
-                {lookupData?.DeviceTargets?.map((device: any) => {
-                  const isActive = isDeviceActive(device.Id);
-                  const IconComponent = getDeviceIcon(device.Name);
-                  
-                  return (
+          <Box className={classes.contentWrapper}>
+            <Box className={classes.infoBox}>
+              <Typography
+                variant="body2"
+                className={clsx(classes?.grayTextCell, classes.infoText)}
+              >
+                <span className={classes.infoIcon}>ⓘ</span>
+                {t("PopupTriggers.deviceTargeting.info")}
+              </Typography>
+            </Box>
+            <Box className={classes.devicesContainer}>
+              {lookupData?.DeviceTargets?.map((device: any) => {
+                const isActive = isDeviceActive(device.Id);
+                const IconComponent = getDeviceIcon(device.Name);
+                
+                return (
+                  <Box
+                    key={device.Id}
+                    onClick={() => handleDeviceToggle(device.Id)}
+                    className={clsx(
+                      classes.deviceCard,
+                      isActive
+                        ? classes.deviceCardActive
+                        : classes.deviceCardInactive
+                    )}
+                  >
+                    <Checkbox
+                      checked={isActive}
+                      className={classes.checkboxTargeting}
+                      disableRipple
+                      onClick={(e) => e.stopPropagation()}
+                      onChange={() => handleDeviceToggle(device.Id)}
+                      classes={{
+                        root: classes.checkboxWrapper,
+                      }}
+                    />
                     <Box
-                      key={device.Id}
-                      onClick={() => handleDeviceToggle(device.Id)}
                       className={clsx(
-                        classes.deviceCard,
+                        classes.iconWrapperTargeting,
                         isActive
-                          ? classes.deviceCardActive
-                          : classes.deviceCardInactive
+                          ? classes.iconWrapperActive
+                          : classes.iconWrapperInactive
                       )}
                     >
-                      <Checkbox
-                        checked={isActive}
-                        className={classes.checkboxTargeting}
-                        disableRipple
-                        onClick={(e) => e.stopPropagation()}
-                        onChange={() => handleDeviceToggle(device.Id)}
-                        classes={{
-                          root: classes.checkboxWrapper,
-                        }}
+                      <IconComponent
+                        size={getIconSize()}
+                        color={isActive ? "#ff3343" : "#9e9e9e"}
                       />
-                      <Box
-                        className={clsx(
-                          classes.iconWrapperTargeting,
-                          isActive
-                            ? classes.iconWrapperActive
-                            : classes.iconWrapperInactive
-                        )}
-                      >
-                        <IconComponent
-                          size={getIconSize()}
-                          color={isActive ? "#ff3343" : "#9e9e9e"}
-                        />
-                      </Box>
-                      <Typography
-                        variant="body1"
-                        className={clsx(
-                          classes.deviceLabel,
-                        )}
-                      >
-                        {device.Name}
-                      </Typography>
                     </Box>
-                  );
-                })}
-              </Box>
+                    <Typography
+                      variant="body1"
+                      className={clsx(
+                        classes.deviceLabel,
+                      )}
+                    >
+                      {device.Name}
+                    </Typography>
+                  </Box>
+                );
+              })}
             </Box>
-          )}
+          </Box>
         </CardContent>
       </Card>
     </Box>

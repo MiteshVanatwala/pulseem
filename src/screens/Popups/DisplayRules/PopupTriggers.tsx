@@ -62,13 +62,11 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
     mobile: true,
   });
 
-  console.log(deviceTargetingData)
   const [triggersState, setTriggersState] = useState<any>({});
   const [showSections, setShowSections] = useState({
     displayFrequency: true,
     pageTargeting: true,
     advancedSettings: true,
-    deviceTargeting: true,
   });
 
   const [displayFrequencyData, setDisplayFrequencyData] = useState({
@@ -607,6 +605,12 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
             })}
           </Grid>
         </Paper>
+         <Targeting
+          classes={classes}
+          lookupData={lookupData}
+          data={deviceTargetingData}
+          onChange={handleDeviceTargetingChange}
+        />
         <DisplayFrequency
           classes={classes}
           lookupData={lookupData}
@@ -641,26 +645,6 @@ const PopupTriggers: FC<{ classes: any }> = ({ classes }) => {
           }}
           data={displayFrequencyData}
           onChange={handleDisplayFrequencyChange}
-        />
-        <Targeting
-          classes={classes}
-          lookupData={lookupData}
-          show={showSections.deviceTargeting}
-          onToggle={() => {
-            setShowSections(prev => {
-              const newDeviceTargetingState = !prev.deviceTargeting;
-              if (!newDeviceTargetingState) {
-                setDeviceTargetingData({
-                  desktop: true,
-                  mobile: true,
-                });
-              }
-
-              return { ...prev, deviceTargeting: newDeviceTargetingState };
-            });
-          }}
-          data={deviceTargetingData}
-          onChange={handleDeviceTargetingChange}
         />
         <PageTargeting
           classes={classes}
