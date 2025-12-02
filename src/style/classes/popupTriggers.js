@@ -398,6 +398,7 @@ export const getPopupTriggersStyle = (windowSize, isRTL = false, theme) => ({
     position: "relative",
     borderRadius: "12px",
     padding: "20px",
+    userSelect: 'none',
     cursor: "pointer",
     minWidth: "120px",
     textAlign: "center",
