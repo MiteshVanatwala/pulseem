@@ -59,7 +59,7 @@ import { IsValidPhone } from "../../../helpers/Utils/Validations";
 import { WhiteLabelObject } from "../../../components/WhiteLabel/WhiteLabelMigrate";
 import Pulse from "../../../components/Pulse/Pulse";
 import TierPlans from "../../../components/TierPlans/TierPlans";
-import { TierFeatures } from "../../../helpers/Constants";
+import { DateFormats, TierFeatures } from "../../../helpers/Constants";
 import { get } from "lodash";
 
 function Alert(props) {
@@ -2422,6 +2422,11 @@ const SmsSend = ({ classes, ...props }) => {
   }
 
   const sendSuccessDialog = () => {
+    const sentDate = sendType == 3
+      ? `${daysBeforeAfter} ${t("mainReport.days")} ${afterClick ? t("mainReport.after") : t("mainReport.before")} ${SelectedSpecialValue}` 
+      : moment(sendDate).format(DateFormats.DATE_ONLY);
+
+    const time = sendType == 3 ? sendTime.format(DateFormats.TIME_ONLY_AMPM) : (sendDate || moment()).format(DateFormats.TIME_ONLY_AMPM) || moment().format(DateFormats.TIME_ONLY);
     return {
       showDivider: false,
       disableBackdropClick: true,
@@ -2429,9 +2434,13 @@ const SmsSend = ({ classes, ...props }) => {
         <Box>
           <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
             <img src={Gif} style={{ width: "150px", height: "150px" }} alt="Success" />
-            <span style={{ marginTop: "10px", fontSize: "22px", fontWeight: "700" }}>{t("sms.sent")}</span>
+            <span style={{ marginTop: "10px", fontSize: "22px", fontWeight: "700" }}>
+              {t( sendType == 1 ? 'campaigns.weSent' : 'campaigns.smsScheduled' )}
+            </span>
             <p style={{ marginTop: "10px", fontSize: "18px", fontWeight: "600" }}>
-              {t("sms.campaignIsOnItsWay")}
+              { sendType == 1 
+                ? t("sms.campaignIsOnItsWay") 
+                : t('campaigns.smsScheduledDesc', { DATE_OF_SCHEDULE: sentDate, TIME_OF_SCHEDULE: time })}
             </p>
             <Button
               variant='contained'
