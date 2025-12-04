@@ -3302,7 +3302,8 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		display: 'flex',
 		alignItems: 'center',
 		height: 35,
-		paddingLeft: 16,
+		paddingLeft: isRTL ? '' : 16,
+		paddingRight: isRTL ? 16 : '',
 		'& .MuiSelect-select': {
 			color: '#fff',
 		},
