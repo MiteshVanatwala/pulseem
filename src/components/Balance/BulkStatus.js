@@ -384,7 +384,7 @@ const BulkStatus = ({ classes }) => {
                         }
                       }}
                     >
-                      {t('dashboard.purchase')}
+                      {t(isAllowNewsletterSubscription && Newsletters?.IsEmailTierSubscribed ? 'common.upgrade' : 'dashboard.purchase')}
                       {isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                     </Button>
                   )

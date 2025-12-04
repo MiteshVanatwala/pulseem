@@ -898,5 +898,6 @@
   "getStarted": "Let's Get Started!",
   "fillDetails": "Fill in your details and we'll get back to you soon",
   "enterMessage": "Enter Message",
-  "contactUsSuccess": "Your message has been sent successfully"
+  "contactUsSuccess": "Your message has been sent successfully",
+  "upgrade": "Upgrade"
 }
