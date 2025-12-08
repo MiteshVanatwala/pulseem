@@ -27,6 +27,9 @@ import { getCookie, setCookie } from "../../helpers/Functions/cookies";
 import EnImage from '../../assets/images/british.svg';
 import IsraelImage from "../../assets/images/israel-flag-icon.svg";
 import PolandImage from "../../assets/images/poland-flag-icon.svg";
+import DownArrowCustom from "../../assets/images/down-arrow-custom.png";
+import CustomArrow from "../../assets/images/custom-arrow.png";
+import MascotResting from "../../assets/images/mascot_resting.png";
 import { Autocomplete } from "@mui/material";
 import { filter, first } from "lodash";
 import { isValidPhoneNumber } from "libphonenumber-js";
@@ -1253,76 +1256,84 @@ const SignUpNew = ({ classes }: any) => {
     )
   }
 
-  return (
-    <Container
-      maxWidth='xl'
-      className={clsx(classes.signupContainer)}
-      style={{ direction: isRTL ? 'rtl' : 'ltr', maxWidth: 'none' }}
-    >
-      <Box className={clsx(classes.posRelative)}>
-        <Box className={clsx(classes.textCenter, 'signUpContainer')}>
-          {languageSelector()}
-          <Box className={clsx('widgetContainer', classes.whiteBox, classes.textCenter)}>
-            { activeStep === 0 && Step1() }
-            { activeStep === 1 && Step2() }
-            { activeStep === 2 && Step3() }
-            { activeStep === 3 && Step4() }
-            <Box>
-              <Grid container>
-                <Grid item md={6} xs={6} className={clsx(windowSize === 'xs' ? classes.textCenter : (isRTL ? classes.textRight : classes.textLeft))}>
-                  {isRTL ? buttonNextIcon() : buttonPreviousIcon()}
-                  {
-                    activeStep !== 0 && activeStep !== 3 && (
-                      <Button
-                        onClick={handleBack}
-                        disabled={activeStep === 0 || activeStep === 3}
-                        className={clsx(classes.f22, classes.bold)}
-                      >
-                        {t('common.back')}
-                      </Button>
-                    )
-                  }
-                </Grid>
-                <Grid item md={6} xs={6} className={clsx(windowSize === 'xs' ? classes.textCenter : (isRTL ? classes.textLeft : classes.textRight))}>
-                  {isRTL ? buttonPreviousIcon() : buttonNextIcon()}
-                  {
-                    activeStep !== 3 && (
-                      <Button
-                        onClick={() => activeStep === 2 ? saveSignup() : saveUserInfo()}
-                        disabled={activeStep === 3 || (activeStep === 2 && !turnstileToken)}
-                        className={clsx(classes.f22, classes.bold)}
-                      >
-                        {t(`common.${activeStep === 2 ? 'finish' : 'next'}`)}
-                      </Button>
-                    )
-                  }
-                </Grid>
+ return (
+  <Container
+    maxWidth='xl'
+    className={clsx(classes.signupContainer)}
+    style={{ direction: isRTL ? 'rtl' : 'ltr', maxWidth: 'none' }}
+  >
+    <Box className="down-arrow-container">
+      <img src={DownArrowCustom} alt="Arrow" className="down-arrow-image" />
+    </Box>
+    <Box className="mascot-container">
+        <Typography className="time-text">
+        {t('SignUp.ItTakes3Minutes')}
+      </Typography>
+      <img src={CustomArrow} alt="Arrow" className="arrow-image" />
+      <img src={MascotResting} alt="Mascot" className="mascot-image" />
+    </Box>
+
+    <Box className={clsx(classes.posRelative)}>
+      <Box className={clsx(classes.textCenter, 'signUpContainer')}>
+        <h1>{t('SignUp.CREATEANACCOUNT')}</h1>
+        {languageSelector()}
+        <Box className={clsx('widgetContainer', classes.whiteBox, classes.textCenter)}>
+          { activeStep === 0 && Step1() }
+          { activeStep === 1 && Step2() }
+          { activeStep === 2 && Step3() }
+          { activeStep === 3 && Step4() }
+          <Box>
+            <Grid container>
+              <Grid item md={6} xs={6} className={clsx(windowSize === 'xs' ? classes.textCenter : (isRTL ? classes.textRight : classes.textLeft))}>
+                {isRTL ? buttonNextIcon() : buttonPreviousIcon()}
+                {
+                  activeStep !== 0 && activeStep !== 3 && (
+                    <Button
+                      onClick={handleBack}
+                      disabled={activeStep === 0 || activeStep === 3}
+                      className={clsx(classes.f22, classes.bold)}
+                    >
+                      {t('common.back')}
+                    </Button>
+                  )
+                }
               </Grid>
-            </Box>
+              <Grid item md={6} xs={6} className={clsx(windowSize === 'xs' ? classes.textCenter : (isRTL ? classes.textLeft : classes.textRight))}>
+                {isRTL ? buttonPreviousIcon() : buttonNextIcon()}
+                {
+                  activeStep !== 3 && (
+                    <Button
+                      onClick={() => activeStep === 2 ? saveSignup() : saveUserInfo()}
+                      disabled={activeStep === 3 || (activeStep === 2 && !turnstileToken)}
+                      className={clsx(classes.f22, classes.bold)}
+                    >
+                      {t(`common.${activeStep === 2 ? 'finish' : 'next'}`)}
+                    </Button>
+                  )
+                }
+              </Grid>
+            </Grid>
           </Box>
         </Box>
-        {
-          activeStep < 3 && (
-            <MobileStepper
-              variant="dots"
-              steps={4}
-              position="static"
-              activeStep={activeStep}
-              className={clsx("stepper", classes.mt20, classes.borderRadius30)}
-              nextButton={
-                <div />
-              }
-              backButton={
-                <div />
-              }
-            />
-          )
-        }
       </Box>
-      <Loader isOpen={showLoader} showBackdrop={true} zIndex={9999} />
-      {renderToast()}
-      {renderDialog()}
-    </Container>
-  );
+      {
+        activeStep < 3 && (
+          <MobileStepper
+            variant="dots"
+            steps={4}
+            position="static"
+            activeStep={activeStep}
+            className={clsx("stepper", classes.mt20, classes.borderRadius30)}
+            nextButton={<div />}
+            backButton={<div />}
+          />
+        )
+      }
+    </Box>
+    <Loader isOpen={showLoader} showBackdrop={true} zIndex={9999} />
+    {renderToast()}
+    {renderDialog()}
+  </Container>
+);
 };
 export default SignUpNew;

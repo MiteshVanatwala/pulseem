@@ -91,5 +91,7 @@
   "fullName": "Imię i nazwisko",
   "fullNameRequired": "Imię i nazwisko jest wymagane",
   "countryCode": "Kod kraju",
-  "Ecommerce":"Handel elektroniczny"
+  "Ecommerce":"Handel elektroniczny",
+  "CREATEANACCOUNT": "UTWÓRZ KONTO",
+  "ItTakes3Minutes": "To zajmuje tylko 3 minuty"
 }

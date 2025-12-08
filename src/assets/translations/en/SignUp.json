@@ -92,5 +92,7 @@
   "fullName": "Full Name",
   "fullNameRequired": "Full Name is required",
   "countryCode": "Country Code",
-  "Ecommerce":"E-commerce"
+  "Ecommerce":"E-commerce",
+  "CREATEANACCOUNT": "CREATE AN ACCOUNT",
+  "ItTakes3Minutes ": "It only takes 3 minutes "
 }

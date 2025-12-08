@@ -4472,7 +4472,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   overflowHidden: {
     overflow: 'hidden'
   },
-  signupContainer: {
+signupContainer: {
     minHeight: '100vh',
     height: 'auto',
     width: '100%',
@@ -4480,6 +4480,28 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     background: 'linear-gradient(0deg, #FF0076 0%, #FF0054 23.8%, #FF4D2A 100%)',
     overflowX: 'hidden',
     fontFamily: isRTL ? 'Heebo' : 'inherit',
+    position: 'relative',
+    '& h1': {
+      color: '#beff00',
+      fontSize: '4.5rem',
+      fontWeight: 900,
+      marginBottom: '8px',
+      "@media screen and (min-width: 1920px)": {
+        fontSize: '5.5rem',
+      },
+      "@media screen and (min-width: 2560px)": {
+        fontSize: '6.5rem',
+      },
+      "@media screen and (max-width: 1024px)": {
+        fontSize: '3rem',
+      },
+      "@media screen and (max-width: 768px)": {
+        fontSize: '2.5rem',
+      },
+      "@media screen and (max-width: 480px)": {
+        fontSize: '2rem',
+      },
+    },
     '& *': {
       fontSize: 'x-large',
       "@media screen and (max-width: 768px)": {
@@ -4488,6 +4510,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     },
     '& .signUpContainer': {
       marginTop: '5%',
+      position: 'relative',
       '& .widgetContainer': {
         position: 'relative',
         background: '#fff',
@@ -4498,12 +4521,27 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
         padding: '20px 50px',
         boxShadow: '0 10px 30px -6px black',
         fontSize: '2rem',
+        zIndex: 10,
+        "@media screen and (min-width: 1920px)": {
+          width: '35%',
+          padding: '30px 60px',
+        },
+        "@media screen and (min-width: 2560px)": {
+          width: '30%',
+          padding: '40px 80px',
+        },
         '&.remove-my-data': {
           width: '35%',
           padding: '20px',
           paddingBottom: '2rem',
           "& input::placeholder": {
             fontSize: "20px",
+          },
+          "@media screen and (min-width: 1920px)": {
+            width: '30%',
+          },
+          "@media screen and (min-width: 2560px)": {
+            width: '25%',
           },
         },
         "@media screen and (max-width: 768px)": {
@@ -4520,30 +4558,161 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
           position: 'absolute',
           padding: '0px',
           fontSize: '5rem',
-          color: 'black'
+          color: 'black',
+          "@media screen and (min-width: 1920px)": {
+            height: '90px',
+            width: '90px',
+            bottom: '40px',
+          },
+          "@media screen and (min-width: 2560px)": {
+            height: '100px',
+            width: '100px',
+            bottom: '50px',
+            fontSize: '6rem',
+          },
         },
         '& .previous': {
           left: '-40px',
+          "@media screen and (min-width: 1920px)": {
+            left: '-45px',
+          },
+          "@media screen and (min-width: 2560px)": {
+            left: '-50px',
+          },
         },
         '& .next': {
           right: '-40px',
+          "@media screen and (min-width: 1920px)": {
+            right: '-45px',
+          },
+          "@media screen and (min-width: 2560px)": {
+            right: '-50px',
+          },
         },
       },
     },
+    '& .mascot-container': {
+      position: 'absolute',
+      right: '5%',
+      top: '27%',
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+      zIndex: 0,
+      "@media screen and (min-width: 1620px)": {
+        right: '9.5%',
+        top: '23%',
+      },
+      "@media screen and (min-width: 1920px)": {
+        right: '11%',
+        top: '20%',
+      },
+      "@media screen and (min-width: 2560px)": {
+        right: '12%',
+        top: '23%',
+      },
+      "@media screen and (max-width: 1024px)": {
+        display: 'none',
+      },
+      '& .time-text': {
+        color: '#fff',
+        fontSize: '2rem',
+        fontWeight: 700,
+        textAlign: 'center',
+        lineHeight: 1.2,
+        marginLeft: '-6.5rem',
+        marginTop: '2rem',
+        width: 100,
+        whiteSpace: 'break-spaces',
+        "@media screen and (min-width: 1920px)": {
+          fontSize: '2.5rem',
+          marginLeft: '-7.5rem',
+          marginTop: '2.5rem',
+        },
+        "@media screen and (min-width: 2560px)": {
+          fontSize: '3rem',
+          marginLeft: '-9rem',
+          marginTop: '3rem',
+        },
+      },
+      '& .arrow-image': {
+        width: '130px',
+        height: 'auto',
+        marginTop: '7rem',
+        marginLeft: '-3rem',
+        "@media screen and (min-width: 1920px)": {
+          width: '160px',
+          marginTop: '8.5rem',
+          marginLeft: '-3.5rem',
+        },
+        "@media screen and (min-width: 2560px)": {
+          width: '200px',
+          marginTop: '10rem',
+          marginLeft: '-4rem',
+        },
+      },
+      '& .mascot-image': {
+        width: '350px',
+        height: 'auto',
+        "@media screen and (min-width: 1920px)": {
+          width: '400px',
+        },
+        "@media screen and (min-width: 2560px)": {
+          width: '550px',
+        },
+      }
+    },
+    '& .down-arrow-container': {
+      position: 'absolute',
+      left: '19%',
+      top: '14%',
+      zIndex: 0,
+      "@media screen and (max-width: 1240px)": {
+        left: '12%',
+      },
+      "@media screen and (max-width: 1439px)": {
+        left: '18%',
+      },
+      "@media screen and (min-width: 1920px)": {
+        left: '24%',
+        top: '18%',
+      },
+      "@media screen and (max-width: 1024px)": {
+        display: 'none',
+      },
+      '& .down-arrow-image': {
+        width: '100px',
+        height: 'auto',
+        "@media screen and (min-width: 1920px)": {
+          width: '120px',
+        },
+        "@media screen and (min-width: 2560px)": {
+          width: '150px',
+        },
+      }
+    },
     '& .stepper': {
       width: 'fit-content',
-      margin: 'auto',
+      margin: '16px auto',
       background: 'transparent',
-      border: 'solid 2px #fff',
-      marginTop: '20px',
-      '& .MuiMobileStepper-dot': {
-        backgroundColor: '#fff',
-        '&.MuiMobileStepper-dotActive': {
-          backgroundColor: '#beff00',
-        }
-      }
+      border: '1.25px solid #beff00',
+      "@media screen and (min-width: 1920px)": {
+        margin: '20px auto',
+      },
+      "@media screen and (min-width: 2560px)": {
+        margin: '24px auto',
+      },
+      "@media screen and (max-width: 768px)": {
+        margin: '12px auto',
+      },
+    },
+    '& .MuiMobileStepper-dotActive': {
+      backgroundColor: '#beff00 !important',
+    },
+    '& .MuiMobileStepper-dot': {
+      backgroundColor: '#fff',
     }
-  },
+},
   signUpFieldOfInterestButton: {
     borderRadius: 50,
     borderColor: '#000',
