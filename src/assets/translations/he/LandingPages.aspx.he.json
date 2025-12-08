@@ -494,6 +494,7 @@
     "cardView": "תצוגת כרטיסים",
     "tableView": "תצוגת טבלה",
     "restorePopupTitle": "בחר את החלונות הקופצים שברצונך לשחזר",
+    "noActivePopupsForDomain": "אין פופ־אפים פעילים לדומיין",
     "tableHeaders": {
       "title": "כותרת",
       "url": "כתובת",
@@ -509,13 +510,25 @@
       "totalPopups": "סך הכל פופאפים",
       "viewsThisMonth": "צפיות החודש",
       "avgConversionRate": "יחס המרה ממוצע",
-      "topPerforming": "פופאפ מוביל"
+      "topPerforming": "פופאפ מוביל",
+      "thisMonth": "החודש",
+      "conversion": "המרה",
+      "NA": "לא זמין / לא ניתן"
     },
     "filters": {
       "all": "הכל",
       "active": "פעיל",
       "inactive": "לא פעיל",
-      "draft": "טיוטה"
+      "draft": "טיוטה",
+      "sortBy": "מיין לפי",
+      "direction": "כיוון",
+      "createdDate": "תאריך יצירה",
+      "name": "שם",
+      "views": "צפיות",
+      "conversionRate": "שיעור המרה",
+      "lastModified": "שונה לאחרונה",
+      "ascending": "עולה",
+      "descending": "יורד"
     },
     "actions": {
       "settings": "הגדרות",

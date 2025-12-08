@@ -494,6 +494,7 @@
     "cardView": "Widok karty",
     "tableView": "Widok tabeli",
     "restorePopupTitle": "Wybierz wyskakujące okna, które chcesz przywrócić",
+    "noActivePopupsForDomain": "Brak aktywnych popupów dla domeny",
     "tableHeaders": {
       "title": "Tytuł",
       "url": "URL",
@@ -509,13 +510,25 @@
       "totalPopups": "Suma wyskakujących okienek",
       "viewsThisMonth": "Wyświetlenia w tym miesiącu",
       "avgConversionRate": "Średni współczynnik konwersji",
-      "topPerforming": "Najskuteczniejsze wyskakujące okienko"
+      "topPerforming": "Najskuteczniejsze wyskakujące okienko",
+      "thisMonth": "Ten miesiąc",
+      "conversion": "Konwersja",
+      "NA": "Niedostępne / Nie dotyczy"
     },
     "filters": {
       "all": "Wszystko",
       "active": "Aktywny",
       "inactive": "Nieaktywny",
-      "draft": "Szkic"
+      "draft": "Szkic",
+      "sortBy": "Sortuj według",
+      "direction": "Kierunek",
+      "createdDate": "Data utworzenia",
+      "name": "Nazwa",
+      "views": "Wyświetlenia",
+      "conversionRate": "Wskaźnik konwersji",
+      "lastModified": "Ostatnio zmodyfikowane",
+      "ascending": "Rosnąco",
+      "descending": "Malejąco"
     },
     "actions": {
       "settings": "Ustawienia",

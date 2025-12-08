@@ -229,7 +229,7 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
                 classes={classes}
                 title={t('landingPages.popupManagement.statCards.totalPopups')}
                 value={stats.TotalPopups.toString()}
-                change={`${stats.ActiveCount} active • ${stats.InactiveCount} inactive • ${stats.DraftCount} drafts`}
+               change={`${stats.ActiveCount} ${t('landingPages.popupManagement.filters.active')} • ${stats.InactiveCount} ${t('landingPages.popupManagement.filters.inactive')} • ${stats.DraftCount} ${t('landingPages.popupManagement.filters.draft')}`}
               />
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
@@ -237,7 +237,7 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
                 classes={classes}
                 title={t('landingPages.popupManagement.statCards.viewsThisMonth')}
                 value={stats.MonthlyViews.toLocaleString()}
-                change={`${stats.MonthlyViewsChange > 0 ? '+' : ''}${stats.MonthlyViewsChange.toFixed(2)}% this month`}
+                change={`${stats.MonthlyViewsChange > 0 ? '+' : ''}${stats.MonthlyViewsChange.toFixed(2)}% ${t('landingPages.popupManagement.statCards.thisMonth')}`}
               />
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
@@ -252,8 +252,8 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
               <StatCard
                 classes={classes}
                 title={t('landingPages.popupManagement.statCards.topPerforming')}
-                value={stats.TopPerformer ? stats.TopPerformer.Name : 'N/A'}
-                change={stats.TopPerformer ? `${stats.TopPerformer.ConversionRate.toFixed(2)}% conversion` : ''}
+                value={stats.TopPerformer ? stats.TopPerformer.Name : t('landingPages.popupManagement.statCards.thisMonth')}
+                change={stats.TopPerformer ? `${stats.TopPerformer.ConversionRate.toFixed(2)}% ${t('landingPages.popupManagement.statCards.conversion')}` : ''}
               />
             </Grid>
           </Grid>
@@ -267,7 +267,12 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
   };
 
   const renderSearchAndFilterSection = () => {
-    const filterButtons = ['All', 'Active', 'Inactive', 'Draft'];
+    const filterButtons = [
+      { value: 'All', labelKey: 'all' },
+      { value: 'Active', labelKey: 'active' },
+      { value: 'Inactive', labelKey: 'inactive' },
+      { value: 'Draft', labelKey: 'draft' }
+    ];
 
     return (
       <Box className={classes.topSection} mt={3} p={1}>
@@ -288,14 +293,14 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
           <Grid item>
             {filterButtons.map(filter => (
               <Button
-                key={filter}
-                variant={filters.FilterStatus === filter ? "contained" : "text"}
-                color={filters.FilterStatus === filter ? "primary" : "default"}
+                key={filter.value}
+                variant={filters.FilterStatus === filter.value ? "contained" : "text"}
+                color={filters.FilterStatus === filter.value ? "primary" : "default"}
                 className={classes.btnRounded}
-                onClick={() => setFilters(prev => ({ ...prev, FilterStatus: filter, PageNumber: 1 }))}
+                onClick={() => setFilters(prev => ({ ...prev, FilterStatus: filter.value, PageNumber: 1 }))}
                 style={{ marginRight: '5px' }}
               >
-                {t(`landingPages.popupManagement.filters.${filter.toLowerCase()}`)}
+                {t(`landingPages.popupManagement.filters.${filter.labelKey}`)}
               </Button>
             ))}
           </Grid>
@@ -304,28 +309,28 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
           </Grid>
           <Grid item>
             <FormControl variant="outlined" size="small" style={{ minWidth: 120, marginRight: '10px' }}>
-              <InputLabel>Sort By</InputLabel>
+              <InputLabel>{t('landingPages.popupManagement.filters.sortBy')}</InputLabel>
               <Select
                 value={filters.SortBy}
                 onChange={(e) => setFilters(prev => ({ ...prev, SortBy: e.target.value as string }))}
-                label="Sort By"
+                label={t('landingPages.popupManagement.filters.sortBy')}
               >
-                <MenuItem value="CreatedDate">Created Date</MenuItem>
-                <MenuItem value="Name">Name</MenuItem>
-                <MenuItem value="Views">Views</MenuItem>
-                <MenuItem value="ConversionRate">Conversion Rate</MenuItem>
-                <MenuItem value="LastModified">Last Modified</MenuItem>
+                <MenuItem value="CreatedDate">{t('landingPages.popupManagement.filters.createdDate')}</MenuItem>
+                <MenuItem value="Name">{t('landingPages.popupManagement.filters.name')}</MenuItem>
+                <MenuItem value="Views">{t('landingPages.popupManagement.filters.views')}</MenuItem>
+                <MenuItem value="ConversionRate">{t('landingPages.popupManagement.filters.conversionRate')}</MenuItem>
+                <MenuItem value="LastModified">{t('landingPages.popupManagement.filters.lastModified')}</MenuItem>
               </Select>
             </FormControl>
             <FormControl variant="outlined" size="small" style={{ minWidth: 100 }}>
-              <InputLabel>Direction</InputLabel>
+              <InputLabel>{t('landingPages.popupManagement.filters.direction')}</InputLabel>
               <Select
                 value={filters.SortDirection}
                 onChange={(e) => setFilters(prev => ({ ...prev, SortDirection: e.target.value as string }))}
-                label="Direction"
+                label={t('landingPages.popupManagement.filters.direction')}
               >
-                <MenuItem value="ASC">ASC</MenuItem>
-                <MenuItem value="DESC">DESC</MenuItem>
+                <MenuItem value="ASC">{t('landingPages.popupManagement.filters.ascending')}</MenuItem>
+                <MenuItem value="DESC">{t('landingPages.popupManagement.filters.descending')}</MenuItem>
               </Select>
             </FormControl>
           </Grid>
