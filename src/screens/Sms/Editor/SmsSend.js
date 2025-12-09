@@ -2426,7 +2426,7 @@ const SmsSend = ({ classes, ...props }) => {
       ? `${daysBeforeAfter} ${t("mainReport.days")} ${afterClick ? t("mainReport.after") : t("mainReport.before")} ${SelectedSpecialValue}` 
       : moment(sendDate).format(DateFormats.DATE_ONLY);
 
-    const time = sendType == 3 ? sendTime.format(DateFormats.TIME_ONLY_AMPM) : (sendDate || moment()).format(DateFormats.TIME_ONLY_AMPM) || moment().format(DateFormats.TIME_ONLY);
+    const time = sendType == 3 ? (sendTime && sendTime.format(DateFormats.TIME_ONLY_AMPM)) : (sendDate || moment()).format(DateFormats.TIME_ONLY_AMPM) || moment().format(DateFormats.TIME_ONLY);
     return {
       showDivider: false,
       disableBackdropClick: true,
