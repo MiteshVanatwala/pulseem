@@ -517,8 +517,10 @@
     },
     "filters": {
       "all": "הכל",
-      "active": "פעילים",
-      "inactive": "לא פעילים",
+      "active": "פעיל",
+      "activePlural": "פעילים",
+      "inactive": "לא פעיל",
+      "inactivePlural": "לא פעילים",
       "draft": "טיוטה",
       "sortBy": "מיין לפי",
       "direction": "כיוון",

@@ -517,8 +517,10 @@
     },
     "filters": {
       "all": "Wszystko",
-      "active": "Aktywny",
-      "inactive": "Nieaktywny",
+      "active": "Jest aktywny",
+      "inactive": "Jest nieaktywny",
+      "activePlural": "Są aktywni",
+      "inactivePlural": "Są nieaktywni",
       "draft": "Szkic",
       "sortBy": "Sortuj według",
       "direction": "Kierunek",

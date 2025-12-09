@@ -229,7 +229,7 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
                 classes={classes}
                 title={t('landingPages.popupManagement.statCards.totalPopups')}
                 value={stats.TotalPopups.toString()}
-               change={`${stats.ActiveCount} ${t('landingPages.popupManagement.filters.active')} • ${stats.InactiveCount} ${t('landingPages.popupManagement.filters.inactive')} • ${stats.DraftCount} ${t('landingPages.popupManagement.filters.draft')}`}
+                change={`${stats.ActiveCount} ${stats.ActiveCount === 1 ? t('landingPages.popupManagement.filters.active') : t('landingPages.popupManagement.filters.activePlural')} • ${stats.InactiveCount} ${stats.InactiveCount === 1 ? t('landingPages.popupManagement.filters.inactive') : t('landingPages.popupManagement.filters.inactivePlural')} • ${stats.DraftCount} ${t('landingPages.popupManagement.filters.draft')}`}
               />
             </Grid>
             <Grid item xs={12} sm={6} md={3}>

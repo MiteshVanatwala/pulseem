@@ -517,8 +517,10 @@
     },
     "filters": {
       "all": "All",
-      "active": "Active",
-      "inactive": "Inactive",
+      "active": "Is Active",
+      "inactive": "Is Inactive",
+      "activePlural": "Are Active",
+      "inactivePlural": "Are Inactive",
       "draft": "Draft",
       "sortBy": "Sort By",
       "direction": "Direction",
