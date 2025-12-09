@@ -4472,7 +4472,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   overflowHidden: {
     overflow: 'hidden'
   },
-signupContainer: {
+  signupContainer: {
     minHeight: '100vh',
     height: 'auto',
     width: '100%',
@@ -4483,16 +4483,43 @@ signupContainer: {
     position: 'relative',
     '& h1': {
       color: '#beff00',
-      fontSize: '4.5rem',
+      fontSize: '3rem',
       fontWeight: 900,
       marginBottom: '8px',
+      "@media screen and (min-width: 1024px)": {
+        fontSize: '3rem',
+      },
+      "@media screen and (min-width: 1152px)": {
+        fontSize: '3.25rem',
+      },
+      "@media screen and (min-width: 1280px)": {
+        fontSize: '3.75rem',
+      },
+      "@media screen and (min-width: 1360px)": {
+        fontSize: '4rem',
+      },
+      "@media screen and (min-width: 1440px)": {
+        fontSize: '4.25rem',
+      },
+      "@media screen and (min-width: 1536px)": {
+        fontSize: '4.5rem',
+      },
+      "@media screen and (min-width: 1620px)": {
+        fontSize: '4.75rem',
+      },
+      "@media screen and (min-width: 1770px)": {
+        fontSize: '5rem',
+      },
       "@media screen and (min-width: 1920px)": {
         fontSize: '5.5rem',
+      },
+      "@media screen and (min-width: 2240px)": {
+        fontSize: '5.75rem',
       },
       "@media screen and (min-width: 2560px)": {
         fontSize: '6.5rem',
       },
-      "@media screen and (max-width: 1024px)": {
+      "@media screen and (max-width: 1023px)": {
         fontSize: '3rem',
       },
       "@media screen and (max-width: 768px)": {
@@ -4593,98 +4620,273 @@ signupContainer: {
     },
     '& .mascot-container': {
       position: 'absolute',
-      right: '5%',
-      top: '27%',
-      display: 'flex',
+      display: 'none',
       flexDirection: 'row',
       alignItems: 'flex-start',
       zIndex: 0,
+      "@media screen and (min-width: 1024px)": {
+        display: 'flex',
+        right: '-2.5%',
+        top: '24%',
+      },
+      "@media screen and (min-width: 1152px)": {
+        right: '1%',
+        top: '24.5%',
+      },
+      "@media screen and (min-width: 1280px)": {
+        right: '4.5%',
+        top: '25%',
+      },
+      "@media screen and (min-width: 1360px)": {
+        right: '4.85%',
+        top: '26.25%',
+      },
+      "@media screen and (min-width: 1460px)": {
+        right: '5.75%',
+        top: '27.5%',
+      },
+      "@media screen and (min-width: 1536px)": {
+        right: '6%',
+        top: '26.75%',
+      },
       "@media screen and (min-width: 1620px)": {
-        right: '9.5%',
-        top: '23%',
+        right: '6.75%',
+        top: '26%',
+      },
+      "@media screen and (min-width: 1770px)": {
+        right: '7.5%',
+        top: '25.5%',
       },
       "@media screen and (min-width: 1920px)": {
-        right: '11%',
-        top: '20%',
+        right: '10.5%',
+        top: '25%',
+      },
+      "@media screen and (min-width: 2240px)": {
+        right: '13%',
+        top: '27%',
       },
       "@media screen and (min-width: 2560px)": {
-        right: '12%',
-        top: '23%',
-      },
-      "@media screen and (max-width: 1024px)": {
-        display: 'none',
+        right: '16.25%',
+        top: '29%',
       },
       '& .time-text': {
         color: '#fff',
-        fontSize: '2rem',
+        fontSize: '1.3rem',
         fontWeight: 700,
-        textAlign: 'center',
+        textAlign: 'left',
         lineHeight: 1.2,
-        marginLeft: '-6.5rem',
-        marginTop: '2rem',
+        marginLeft: '-4.5rem',
+        marginTop: '3rem',
         width: 100,
         whiteSpace: 'break-spaces',
+        "@media screen and (min-width: 1152px)": {
+          fontSize: '1.4rem',
+          marginLeft: '-5.25rem',
+          marginTop: '2.5rem',
+        },
+        "@media screen and (min-width: 1280px)": {
+          fontSize: '1.5rem',
+          marginLeft: '-6rem',
+          marginTop: '2rem',
+          textAlign: 'center',
+        },
+        "@media screen and (min-width: 1360px)": {
+          fontSize: '1.65rem',
+          marginLeft: '-6rem',
+          marginTop: '1.9rem',
+        },
+        "@media screen and (min-width: 1440px)": {
+          fontSize: '1.8rem',
+          marginLeft: '-6rem',
+          marginTop: '1.8rem',
+        },
+        "@media screen and (min-width: 1536px)": {
+          fontSize: '2rem',
+          marginLeft: '-6.75rem',
+          marginTop: '0.5rem',
+        },
+        "@media screen and (min-width: 1770px)": {
+          fontSize: '2.25rem',
+          marginLeft: '-7.25rem',
+          marginTop: '-0.5rem',
+        },
         "@media screen and (min-width: 1920px)": {
           fontSize: '2.5rem',
           marginLeft: '-7.5rem',
-          marginTop: '2.5rem',
+          marginTop: '-1rem',
+        },
+        "@media screen and (min-width: 2240px)": {
+          fontSize: '2.75rem',
+          marginLeft: '-8.25rem',
+          marginTop: '-1rem',
         },
         "@media screen and (min-width: 2560px)": {
           fontSize: '3rem',
           marginLeft: '-9rem',
-          marginTop: '3rem',
+          marginTop: '-1rem',
         },
       },
       '& .arrow-image': {
-        width: '130px',
+        width: '90px',
         height: 'auto',
-        marginTop: '7rem',
-        marginLeft: '-3rem',
+        marginTop: '6.5rem',
+        marginLeft: '-3.5rem',
+        "@media screen and (min-width: 1152px)": {
+          width: '95px',
+          marginTop: '6.25rem',
+          marginLeft: '-3.25rem',
+        },
+        "@media screen and (min-width: 1280px)": {
+          width: '100px',
+          marginTop: '6rem',
+          marginLeft: '-3rem',
+        },
+        "@media screen and (min-width: 1360px)": {
+          width: '110px',
+          marginTop: '6.25rem',
+          marginLeft: '-2.75rem',
+        },
+        "@media screen and (min-width: 1440px)": {
+          width: '120px',
+          marginTop: '6.5rem',
+          marginLeft: '-2.5rem',
+        },
+        "@media screen and (min-width: 1536px)": {
+          width: '135px',
+          marginTop: '7.5rem',
+          marginLeft: '-2.75rem',
+        },
+        "@media screen and (min-width: 1770px)": {
+          width: '150px',
+          marginTop: '8rem',
+          marginLeft: '-3rem',
+        },
         "@media screen and (min-width: 1920px)": {
           width: '160px',
           marginTop: '8.5rem',
           marginLeft: '-3.5rem',
         },
+        "@media screen and (min-width: 2240px)": {
+          width: '180px',
+          marginTop: '9.25rem',
+          marginLeft: '-3rem',
+        },
         "@media screen and (min-width: 2560px)": {
           width: '200px',
           marginTop: '10rem',
-          marginLeft: '-4rem',
+          marginLeft: '-2.5rem',
         },
       },
       '& .mascot-image': {
-        width: '350px',
+        width: '320px',
         height: 'auto',
+        "@media screen and (min-width: 1152px)": {
+          width: '320px',
+        },
+        "@media screen and (min-width: 1280px)": {
+          width: '320px',
+        },
+        "@media screen and (min-width: 1360px)": {
+          width: '320px',
+        },
+        "@media screen and (min-width: 1440px)": {
+          width: '320px',
+        },
+        "@media screen and (min-width: 1536px)": {
+          width: '335px',
+        },
+        "@media screen and (min-width: 1620px)": {
+          width: '350px',
+        },
+        "@media screen and (min-width: 1770px)": {
+          width: '375px',
+        },
         "@media screen and (min-width: 1920px)": {
           width: '400px',
         },
+        "@media screen and (min-width: 2240px)": {
+          width: '400px',
+        },
         "@media screen and (min-width: 2560px)": {
-          width: '550px',
+          width: '400px',
         },
       }
     },
     '& .down-arrow-container': {
       position: 'absolute',
-      left: '19%',
-      top: '14%',
+      display: 'none',
       zIndex: 0,
-      "@media screen and (max-width: 1240px)": {
-        left: '12%',
-      },
-      "@media screen and (max-width: 1439px)": {
+      "@media screen and (min-width: 1024px)": {
+        display: 'block',
         left: '18%',
+        top: '10%',
+      },
+      "@media screen and (min-width: 1152px)": {
+        left: '17.5%',
+        top: '11.5%',
+      },
+      "@media screen and (min-width: 1280px)": {
+        left: '19.5%',
+        top: '13%',
+      },
+      "@media screen and (min-width: 1360px)": {
+        left: '18.5%',
+        top: '13.5%',
+      },
+      "@media screen and (min-width: 1440px)": {
+        left: '19.5%',
+        top: '14%',
+      },
+      "@media screen and (min-width: 1536px)": {
+        left: '19.5%',
+        top: '14.5%',
+      },
+      "@media screen and (min-width: 1620px)": {
+        left: '19.5%',
+        top: '15%',
+      },
+      "@media screen and (min-width: 1770px)": {
+        left: '20%',
+        top: '16%',
       },
       "@media screen and (min-width: 1920px)": {
-        left: '24%',
-        top: '18%',
+        left: '21%',
+        top: '17%',
       },
-      "@media screen and (max-width: 1024px)": {
-        display: 'none',
+      "@media screen and (min-width: 2240px)": {
+        left: '22.5%',
+        top: '18.5%',
+      },
+      "@media screen and (min-width: 2560px)": {
+        left: '24%',
+        top: '20%',
       },
       '& .down-arrow-image': {
-        width: '100px',
+        width: '70px',
         height: 'auto',
+        "@media screen and (min-width: 1152px)": {
+          width: '75px',
+        },
+        "@media screen and (min-width: 1280px)": {
+          width: '80px',
+        },
+        "@media screen and (min-width: 1360px)": {
+          width: '85px',
+        },
+        "@media screen and (min-width: 1440px)": {
+          width: '90px',
+        },
+        "@media screen and (min-width: 1536px)": {
+          width: '100px',
+        },
+        "@media screen and (min-width: 1770px)": {
+          width: '110px',
+        },
         "@media screen and (min-width: 1920px)": {
           width: '120px',
+        },
+        "@media screen and (min-width: 2240px)": {
+          width: '135px',
         },
         "@media screen and (min-width: 2560px)": {
           width: '150px',
@@ -4712,7 +4914,7 @@ signupContainer: {
     '& .MuiMobileStepper-dot': {
       backgroundColor: '#fff',
     }
-},
+  },
   signUpFieldOfInterestButton: {
     borderRadius: 50,
     borderColor: '#000',
