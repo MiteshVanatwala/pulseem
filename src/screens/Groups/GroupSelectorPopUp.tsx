@@ -105,6 +105,7 @@ const GroupSelectorPopUp = ({
         return (
             <Autocomplete
                 multiple
+                // @ts-ignore
                 placeholder={t(title)}
                 className={classes.autoComplete}
                 id="groups-selection"
