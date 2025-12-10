@@ -894,5 +894,8 @@
   "fillDetails": "Wypełnij swoje dane, a wkrótce się z Tobą skontaktujemy",
   "enterMessage": "Wprowadź wiadomość",
   "contactUsSuccess": "Twoja wiadomość została pomyślnie wysłana",
-  "upgrade": "Ulepsz"
+  "upgrade": "Ulepsz",
+  "cancelPlan": "Anuluj plan",
+  "cancelPlanConfirmation": "Czy na pewno chcesz anulować swój obecny plan?",
+  "planCancellationRequestSubmitted": "Twoje żądanie anulowania planu zostało pomyślnie przesłane."
 }

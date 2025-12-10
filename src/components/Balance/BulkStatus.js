@@ -7,7 +7,7 @@ import { getPackagesDetails } from '../../redux/reducers/dashboardSlice';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
-import { MdArrowBackIos, MdArrowForwardIos, MdSupportAgent } from 'react-icons/md';
+import { MdArrowBackIos, MdArrowForwardIos, MdOutlineCancel, MdOutlineModeEdit, MdSupportAgent } from 'react-icons/md';
 import { BellIcon, WhatsappIcon, SmsIcon, CardIcon, NewsletterIcon } from '../../assets/images/dashboard/index'
 import { TooltipBubble } from '../../assets/images/dashboard/index';
 import { BaseDialog } from '../DialogTemplates/BaseDialog';
@@ -25,6 +25,9 @@ import { BiCog } from 'react-icons/bi';
 import { getAccountBilling } from '../../redux/reducers/BillingSlice';
 import BillingSettings from '../BillingSettings/BillingSettings';
 import TierPlans from '../TierPlans/TierPlans';
+import { contactSalesForScale } from '../../redux/reducers/TiersSlice';
+import { getAccountSettings } from '../../redux/reducers/AccountSettingsSlice';
+import { Loader } from '../Loader/Loader';
 
 const BulkStatus = ({ classes }) => {
   const { billingTypeId, windowSize, isRTL } = useSelector(state => state.core)
@@ -40,6 +43,8 @@ const BulkStatus = ({ classes }) => {
   const [ toastMessage, setToastMessage ] = useState(null);
   const [ billingPopupCallback, setBillingPopupCallback ] = useState(null);
   const [ isOpenEmailTierPlans, setIsOpenEmailTierPlans ] = useState(false);
+  const [ isOpenCancelConfirmDialog, setIsOpenCancelConfirmDialog ] = useState(false);
+  const [ isLoader, setIsLoader ] = useState(false);
 
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -235,6 +240,40 @@ const BulkStatus = ({ classes }) => {
     setIsOpenPackageDialog(true);
   }
   
+  const handleCancelPlan = async () => {
+    try {
+      setIsLoader(true);
+      const accountData = await dispatch(getAccountSettings()).unwrap();
+      const account = accountData?.Data;
+
+      if (!account?.CompanyName || !account?.Email || !account?.CellPhone) {
+        setToastMessage({ severity: 'error', color: 'error', message: t('SubAccount.subAccountNotFound'), showAnimtionCheck: false });
+        setIsOpenCancelConfirmDialog(false);
+        return;
+      }
+
+      const request = {
+        Name: account?.CompanyName || '',
+        Email: account?.Email || '',
+        Cellphone: account?.CellPhone || '',
+        Message: 'Cancel plan request'
+      };
+
+      const result = await dispatch(contactSalesForScale(request)).unwrap();
+      setIsLoader(false);
+      if (result?.StatusCode === 200) {
+        setToastMessage({ severity: 'success', color: 'success', message: t('common.planCancellationRequestSubmitted'), showAnimtionCheck: false });
+        await dispatch(getPackagesDetails());
+      } else {
+        setToastMessage({ severity: 'error', color: 'error', message: result?.Message || t('common.Error'), showAnimtionCheck: false });
+      }
+    } catch (error) {
+      setToastMessage({ severity: 'error', color: 'error', message: t('WhatsappApiResponse.twilio.45350.description'), showAnimtionCheck: false });
+    } finally {
+      setIsOpenCancelConfirmDialog(false);
+    }
+  };
+
   const renderToast = () => {
     if (toastMessage) {
       setTimeout(() => {
@@ -368,25 +407,52 @@ const BulkStatus = ({ classes }) => {
               <Grid item md={4} xs={4} className={isRTL ? classes.textLeft : classes.textRight}>
                 {
                   !IsPoland && Newsletters.eBillingType === 0 && (
-                    <Button
-                      className={clsx(classes.btn, classes.btnRounded, classes.f12)}
-                      onClick={() => {
-                        if (isAllowNewsletter()) {
-                          if (isBillingDetailsRequired) {
-                            setIsOpenBillingSettings(true);
-                            setBillingPopupCallback('Newsletter');
-                          } else {
-                            showPackageDialogType({ type: 2, title: t('common.newsletterBulkTitle') });
-                          }
-                        }
-                        else if (isAllowNewsletterSubscription) {
-                          setIsOpenEmailTierPlans(true);
-                        }
-                      }}
-                    >
-                      {t(isAllowNewsletterSubscription && Newsletters?.IsEmailTierSubscribed ? 'common.upgrade' : 'dashboard.purchase')}
-                      {isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-                    </Button>
+                    <>
+                      {
+                        isAllowNewsletterSubscription && Newsletters?.IsEmailTierSubscribed || true ? (
+                          <>
+                            <IconButton
+                              className={clsx(classes.redButtonLink)}
+                              onClick={() => {
+                                setIsOpenEmailTierPlans(true);
+                              }}
+                              size="medium"
+                              disableRipple
+                            >
+                              <MdOutlineModeEdit />
+                            </IconButton>
+                            <IconButton
+                              className={clsx(classes.redButtonLink)}
+                              onClick={() => {
+                                setIsOpenCancelConfirmDialog(true);
+                              }}
+                              size="medium"
+                              disableRipple
+                            >
+                              <MdOutlineCancel />
+                            </IconButton>
+                          </>
+                        )
+                        : (
+                          <Button
+                            className={clsx(classes.btn, classes.btnRounded, classes.f12)}
+                            onClick={() => {
+                              if (isAllowNewsletter()) {
+                                if (isBillingDetailsRequired) {
+                                  setIsOpenBillingSettings(true);
+                                  setBillingPopupCallback('Newsletter');
+                                } else {
+                                  showPackageDialogType({ type: 2, title: t('common.newsletterBulkTitle') });
+                                }
+                              }
+                            }}
+                          >
+                            {t('dashboard.purchase')}
+                            {isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+                          </Button>
+                        )
+                      }
+                    </>
                   )
                 }
                 {
@@ -621,8 +687,24 @@ const BulkStatus = ({ classes }) => {
             }
           }}
         />
+        <BaseDialog
+          classes={classes}
+          open={isOpenCancelConfirmDialog}
+          title={t('common.cancelPlan')}
+          onClose={() => setIsOpenCancelConfirmDialog(false)}
+          onCancel={() => setIsOpenCancelConfirmDialog(false)}
+          onConfirm={handleCancelPlan}
+          showDefaultButtons={true}
+          confirmText={t('common.Yes')}
+          cancelText={t('common.No')}
+        >
+          <Typography className={classes.f18}>
+            {t('common.cancelPlanConfirmation')}
+          </Typography>
+        </BaseDialog>
       </Paper>
       {renderToast()}
+      <Loader isOpen={isLoader} showBackdrop={true} />
     </>
   )
 }

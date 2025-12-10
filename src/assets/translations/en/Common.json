@@ -899,5 +899,8 @@
   "fillDetails": "Fill in your details and we'll get back to you soon",
   "enterMessage": "Enter Message",
   "contactUsSuccess": "Your message has been sent successfully",
-  "upgrade": "Upgrade"
+  "upgrade": "Upgrade",
+  "cancelPlan": "Cancel Plan",
+  "cancelPlanConfirmation": "Are you sure you want to cancel your current plan?",
+  "planCancellationRequestSubmitted": "Your plan cancellation request has been submitted successfully."
 }
