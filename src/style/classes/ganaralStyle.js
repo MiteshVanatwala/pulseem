@@ -4625,6 +4625,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
         width: '115px',
         whiteSpace: 'normal',
         wordBreak: 'break-word',
+        direction: isRTL ? 'rtl' : 'ltr',
         marginLeft: 'clamp(-105px, -7.5vw, -85px)',
         "@media screen and (min-width: 1024px) and (max-width: 1280px)": {
           wordBreak: 'normal',
