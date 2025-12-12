@@ -1042,7 +1042,8 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 
 	return (
 		<DefaultScreen
-			subPage={'WhatsappReports'}
+			key="whatsappReports"
+			subPage="whatsappReports"
 			currentPage='reports'
 			classes={classes}
 			customPadding={false}

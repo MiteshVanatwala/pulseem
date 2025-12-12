@@ -119,12 +119,13 @@ export const getRoutes = (
           isShow: false,
         },
         {
+          key: 'fileUploads',
           title: t("master.RadMenuItemResourceFileUploads.Text"),
           href: `${sitePrefix}Groups/FileUploads`,
           isShow: true,
         },
         {
-          key: 'downloadReports',
+          key: 'downloadfiles',
           title: t('master.fileDownload'),
           href: `${sitePrefix}groups/Download`,
           isShow: true
@@ -147,6 +148,7 @@ export const getRoutes = (
           isShow: true,
         },
         {
+          key: "newsletterManagment",
           title: t("master.RadMenuItemResource9.Text"),
           href: `${sitePrefix}Campaigns`,
           isShow: true,
@@ -217,6 +219,7 @@ export const getRoutes = (
           isShow: true,
         },
         {
+          key: "smsManagment",
           title: t("master.RadMenuItemResource102.Text"),
           href: `${sitePrefix}SMSCampaigns`,
           isShow: true,
@@ -247,10 +250,10 @@ export const getRoutes = (
       key: 'whatsapp',
       title: 'Whatsapp',
       pageTitle: t('whatsapp.Title'),
-      iconUnicode: <MdOutlineWhatsapp />,
+      iconUnicode: <MdOutlineWhatsapp style={{ width: 30, height: 30, justifyContent: 'center' }} />,
       href: whatsappRoutes.CAMPAIGN_MANAGEMENT,
       isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount,
-      icon: <WhatsappIcon className='header-whatsapp-icon' />,
+      // icon: <WhatsappIcon className='header-whatsapp-icon' />,
       options: [
         {
           key: 'create',
@@ -259,7 +262,7 @@ export const getRoutes = (
           isShow: true,
         },
         {
-          key: 'send',
+          key: 'createWhatsappCampaign',
           title: t('whatsapp.SendWhatsappCampaign'),
           href: whatsappRoutes.CREATE_CAMPAIGN_PAGE1,
           isShow: true,
@@ -300,6 +303,7 @@ export const getRoutes = (
       icon: <img alt="Landing Pages" src={LandingPageIcon} />,
       options: [
         {
+          key: "createLandingPage",
           title: t("master.RadMenuItemLandingPage.Text"),
           href: `${sitePrefix}LandingPages/Create`,
           isShow: true,
@@ -324,30 +328,6 @@ export const getRoutes = (
           title: t("master.FormTemplatesResource1.Text"),
           href: `${rootDomain}/FormTemplates.aspx?fromreact=true`,
           isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount,
-        },
-        {
-          key: 'CreateLandingPage',
-          title: t("landingPages.createLandingPage"),
-          href: ``,
-          isShow: false,
-        },
-        {
-          key: 'EditLandingPage',
-          title: t("landingPages.editLandingPage"),
-          href: ``,
-          isShow: false,
-        },
-        {
-          key: 'campaignEditor',
-          title: t("landingPages.editLandingPage"),
-          href: ``,
-          isShow: false
-        },
-        {
-          key: 'previewer',
-          title: t("landingPages.editLandingPage"),
-          href: ``,
-          isShow: false
         }
       ],
     },
@@ -377,6 +357,7 @@ export const getRoutes = (
           isShow: true,
         },
         {
+          key: "automations",
           title: t("master.RadMenuItemManageAutomationResource.Text"),
           href: `${sitePrefix}Automations`,
           isShow: true,
@@ -398,12 +379,13 @@ export const getRoutes = (
       icon: <img alt="Notifications" src={NotificationsIcon} />,
       options: [
         {
-          key: "create",
+          key: "createNotification",
           title: t("master.createNotification"),
           href: `${sitePrefix}Notification/create`,
           isShow: true,
         },
         {
+          key: "notifications",
           title: t("master.manageNotifications"),
           href: `${sitePrefix}Notifications`,
           isShow: true,
@@ -420,7 +402,7 @@ export const getRoutes = (
       icon: <img alt="Reports" src={ReportsIcon} />,
       options: [
         { title: t('master.clalCollage'), href: `${rootDomain}/ClalReport.aspx?fromreact=true`, isShow: (isClalAccount === 'true' || isClalAccount === true) },
-        { title: t('master.RadMenuItemResource13.Text'), href: `${sitePrefix}reports/NewsletterReports`, isShow: true },
+        { key: "newsletterReport", title: t('master.RadMenuItemResource13.Text'), href: `${sitePrefix}reports/NewsletterReports`, isShow: true },
         { key: 'SmsReport', title: t('master.RadMenuItemResource24.Text'), href: `${sitePrefix}reports/SMSMainReport`, isShow: true },
         // { key: 'MmsReport', title: t('mmsreport.mmsReport'), href: `${sitePrefix}Reports/MMSMainReport`, isShow: true },
         { key: 'whatsappReports', title: t('whatsapp.ReportsWhatsapp'), href: whatsappRoutes.REPORTS, isShow: true },

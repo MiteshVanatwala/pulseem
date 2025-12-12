@@ -15,6 +15,7 @@ import { surveyStyle } from './surveyStyles';
 import { BeeAiStyles } from './BeeAiStyles';
 import { getPopupTriggersStyle } from './popupTriggers';
 import { getPopUpManagementStyle } from './popUpManagementStyle';
+import { sideMenuStyle } from './sideMenuStyle'
 
 export const useClasses = (windowSize, isRTL = false) => makeStyles(theme => ({
   ...getDrawerStyle(windowSize, isRTL, theme),
@@ -32,5 +33,6 @@ export const useClasses = (windowSize, isRTL = false) => makeStyles(theme => ({
   ...surveyStyle(windowSize, isRTL, theme),
   ...BeeAiStyles(windowSize, isRTL, theme),
   ...getPopupTriggersStyle(windowSize, isRTL, theme),
-  ...getPopUpManagementStyle(windowSize, isRTL, theme)
+  ...getPopUpManagementStyle(windowSize, isRTL, theme),
+  ...sideMenuStyle(windowSize, isRTL, theme)
 }))

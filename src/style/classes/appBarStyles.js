@@ -59,7 +59,7 @@ export const appBarStyle = (windowSize, isRTL, theme) => ({
     '& .header-whatsapp-icon': {
       width: '24px',
       height: '24px',
-      marginBottom: '4px',
+      // marginBottom: '4px',
     },
   },
   appBarItemBorder: {
@@ -196,7 +196,7 @@ export const appBarStyle = (windowSize, isRTL, theme) => ({
     }
   },
   appBarSettingIcon: {
-    width: 21
+    width: 25
   },
   appBarQuestionIcon: {
     fontWeight: 'bold',
