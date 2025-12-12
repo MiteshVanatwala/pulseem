@@ -501,6 +501,7 @@
       "status": "Status",
       "allViewers": "Wszyscy widzowie",
       "identifiedViewers": "Unikalni użytkownicy",
+      "ofViewers": "widzów",
       "identifiedConversions": "Zidentyfikowane konwersje",
       "conversions": "Konwersje",
       "conversionRate": "Współczynnik konwersji",

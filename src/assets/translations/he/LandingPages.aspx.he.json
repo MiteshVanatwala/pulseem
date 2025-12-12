@@ -63,7 +63,7 @@
     "HeaderAbbr": "",
     "HeaderAxis": "",
     "HeaderImageUrl": "",
-    "HeaderText": "מחק",
+    "HeaderText": "מחיקה",
     "HeaderTooltip": "",
     "ImageUrl": "~/Images/Document 1 delete.png",
     "SortExpression": "",
@@ -294,7 +294,7 @@
   },
   "DeleteTitle": "מחיקת דף נחיתה",
   "EditResource1": {
-    "HeaderText": "ערוך"
+    "HeaderText": "עריכה"
   },
   "FacebookResource1": {
     "HeaderText": "הוסף לפייסבוק"
@@ -341,7 +341,7 @@
   "duplicationSuccessful": "דף הנחיתה שלך שוכפל בהצלחה!",
   "duplicationSuccessfulMessage": "כל הנתונים של דף הנחיתה שוכפל. על מנת לערוך את הגדרות הטופס נא לחץ על ערוך למטה.",
   "createLandingPage": "צור דף נחיתה",
-  "createPopup": "צור פופ-אפ",
+  "createPopup": "יצירת פופ-אפ",
   "editLandingPage": "ערוך דף נחיתה",
   "formProperties": "הגדרות טופס",
   "formName": "שם הטופס",
@@ -489,8 +489,8 @@
   "changeOptInDesclaimer": "לתשומת ליבכם,<br/> ע”י הפעלת הגדרת <b>הוסף את כל הנמענים החדשים שנרשמו דרך טופס בדף נחיתה זה בסטטוס “פעיל”</b> הינכם מבקשים להוסיף נמענים שלא בהכרח אישרו דיוור לחשבונכם בפולסים בסטטוס פעיל, מה שאומר שנמענים אלה יקבלו מכם דיוור. שינוי הגדרות כאמור מתבצע על אחריותכם בלבד, ובביצועו הינכם מאשרים כי פולסים לא תישא בכל אחריות לכל נזק שיגרם לך ו/או לחברת פולסים כתוצאה מכך והם יחולו עליכם בלבד. ",
   "popupManagement": {
     "title": "ניהול פופאפים",
-    "searchPlaceholder": "חפש פופאפים לפי שם או דומיין...",
-    "createNew": "צור פופאפ חדש",
+    "searchPlaceholder": "חיפוש פופאפים לפי שם או דומיין...",
+    "createNew": "יצירת פופ-אפ",
     "cardView": "תצוגת כרטיסים",
     "tableView": "תצוגת טבלה",
     "restorePopupTitle": "בחר את החלונות הקופצים שברצונך לשחזר",
@@ -501,6 +501,7 @@
       "status": "סטטוס",
       "allViewers": "כל הצופים",
       "identifiedViewers": "מבקרים ייחודיים",
+      "ofViewers": "מהצופים",
       "identifiedConversions": "המרות מזוהות",
       "conversions": "המרות",
       "conversionRate": "יחס המרה",
@@ -535,9 +536,9 @@
     "actions": {
       "settings": "הגדרות",
       "preview": "תצוגה מקדימה",
-      "duplicate": "שכפל",
+      "duplicate": "שכפול",
       "copyLink": "העתק קישור",
-      "embed": "הטמע",
+      "embed": "הטמעה",
       "embedMessage": "העתק והדבק קוד זה לאתר שלך:"
     }
   }

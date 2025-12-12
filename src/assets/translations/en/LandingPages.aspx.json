@@ -501,6 +501,7 @@
       "status": "Status",
       "allViewers": "All Viewers",
       "identifiedViewers": "Unique visitors",
+      "ofViewers": "of viewers",
       "identifiedConversions": "Identified Conversions",
       "conversions": "Conversions",
       "conversionRate": "Conversion Rate",

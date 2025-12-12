@@ -43,6 +43,7 @@
     "defineReturningVisitor": "Zdefiniuj powracającego użytkownika",
     "newVisitorDescription": "Nowy użytkownik nie odwiedzał Twojej strony przez ostatnie:",
     "returningVisitorDescription": "Powracający użytkownik odwiedził już Twoją stronę w ciągu ostatnich:",
+    "Days": "Dni",
     "targetAudience": {
       "title": "Grupa docelowa",
       "allVisitors": "Wszyscy odwiedzający",
@@ -85,8 +86,8 @@
     "subtitle": "Określ, na których stronach popup ma się wyświetlać",
     "addRule": "Dodaj regułę targetowania",
     "examples": {
-      "line1": "Przykłady: \"product\" pasuje do /products/shoes, /category/products",
-      "line2": "\"checkout\" wyklucza wszystkie strony kasy"
+      "line1": "Przykład: Użycie opcji „Zawiera” z wartością „/Shoes”",
+      "line2": "Oznacza, że pop-up pojawi się tylko na stronach, które zawierają wartość „/Shoes”"
     },
     "ruleTypes": {
       "contains": "Adres URL zawiera",

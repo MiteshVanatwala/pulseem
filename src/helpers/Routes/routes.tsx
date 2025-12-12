@@ -305,6 +305,16 @@ export const getRoutes = (
           isShow: true,
         },
         {
+        title: t("master.RadMenuItemLandingManagement.Text"),
+          href: `${sitePrefix}EditRegistrationPage`,
+          isShow: true,
+        },
+        {
+          title: t("master.FormTemplatesResource1.Text"),
+          href: `${rootDomain}/FormTemplates.aspx?fromreact=true`,
+          isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount,
+        },
+        {
           title: t("landingPages.createPopup"),
           href: `${sitePrefix}Popups/Create`,
           isShow: features && features?.indexOf(PulseemFeatures.Popup) > -1,
@@ -314,16 +324,6 @@ export const getRoutes = (
           title: t("master.RadMenuItemPopupManagement.Text"),
           href: `${sitePrefix}PopUpManagement`,
           isShow: features && features?.indexOf(PulseemFeatures.Popup) > -1,
-        },
-        {
-          title: t("master.RadMenuItemLandingManagement.Text"),
-          href: `${sitePrefix}EditRegistrationPage`,
-          isShow: true,
-        },
-        {
-          title: t("master.FormTemplatesResource1.Text"),
-          href: `${rootDomain}/FormTemplates.aspx?fromreact=true`,
-          isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount,
         },
         {
           key: 'CreateLandingPage',

@@ -1,23 +1,23 @@
 {
   "popupTriggers": {
-    "mainTitle": "ניהול טריגרים של פופאפ",
+    "mainTitle": "טריגרים והגדרות תצוגה",
     "title": "טריגרים לפופאפ",
-    "subtitle": "בחר מתי הפופאפ יופיע",
+    "subtitle": "בחרו מתי הפופ-אפ יופיע",
     "exitIntent": {
       "title": "כוונת יציאה",
-      "description": "הצג כאשר מבקר מנסה לעזוב את הדף",
+      "description": "הציגו כאשר מבקר מנסה לעזוב את הדף",
       "footer": "דפדפני מחשב בלבד - דורש זיהוי תנועת עכבר"
     },
     "pageViews": {
       "title": "צפיות בדפים",
-      "description": "הצג לאחר ביקור במספר מסוים של דפים",
+      "description": "הציגו לאחר ביקור במספר מסוים של דפים",
       "after": "לאחר",
       "pages": "דפים",
       "footer": "סופר את כל הצפיות בדפים בסשן הנוכחי"
     },
     "viewingTime": {
       "title": "זמן צפייה",
-      "description": "הצג לאחר שהמבקר מבלה זמן באתר",
+      "description": "הציגו לאחר שהמבקר מבלה זמן באתר",
       "seconds": "שניות",
       "onCurrentPage": "בעמוד הנוכחי",
       "onAnyPage": "בכל עמוד",
@@ -25,24 +25,25 @@
     },
     "scrollDepth": {
       "title": "עומק גלילה",
-      "description": "הצג כאשר המבקר גולל לאחוז מסוים מהדף",
+      "description": "הציגו כאשר המבקר גולל לאחוז מסוים מהדף",
       "pageDepth": "ב־",
       "footer": "נמדד מתחילת תוכן הדף"
     },
     "pageClicks": {
       "title": "קליקים בדף",
-      "description": "הצג לאחר שהמבקר לוחץ על אלמנטים בדף",
+      "description": "הציגו לאחר שהמבקר לוחץ על אלמנטים בדף",
       "clicks": "קליקים",
-      "footer": "כל אלמנט לחיץ נחשב לסך הכל"
+      "footer": "כל אלמנט לחיץ נספר בסך הכולל"
     }
   },
   "displayFrequency": {
-    "title": "תדירות הצגה",
-    "description": "שלוט באיזו תדירות הפופאפ מופיע למבקרים",
+    "title": "תדירות תצוגה",
+    "description": "שלטו בתדירות הופעת הפופאפ למבקרים",
     "defineNewVisitor": "הגדרת מבקר חדש",
     "defineReturningVisitor": "הגדרת מבקר חוזר",
-    "newVisitorDescription": "מבקר חדש לא ביקר באתר שלך במשך:",
-    "returningVisitorDescription": "מבקר חוזר כבר ביקר באתר שלך במהלך:",
+    "newVisitorDescription": "מבקר חדש לא ביקר באתר שלכם במשך:",
+    "returningVisitorDescription": "מבקר חוזר כבר ביקר באתר שלכם במהלך:",
+    "Days": "ימים",
     "targetAudience": {
       "title": "קהל יעד",
       "allVisitors": "כל המבקרים",
@@ -52,41 +53,41 @@
     },
     "subHeading": {
       "all": "כל מבקר",
-      "new": "מבקר חדש לא ביקר באתר שלך במהלך X הימים האחרונים",
-      "return": "מבקר חוזר כבר ביקר באתר שלך במהלך X הימים האחרונים"
+      "new": "מבקר חדש לא ביקר באתר שלכם במהלך X הימים האחרונים",
+      "return": "מבקר חוזר כבר ביקר באתר שלכם במהלך X הימים האחרונים"
     },
     "displaySchedule": {
-      "title": "לוח הצגה",
+      "title": "לוח זמנים לתצוגה",
       "oncePerDay": {
         "title": "פעם ביום",
-        "description": "הצג את הפופאפ מקסימום פעם כל 24 שעות"
+        "description": "הציגו את הפופ-אפ כל 24 שעות"
       },
       "everyXDays": {
-        "main": "פעם כל כמה ימים",
+        "main": "פעם בכל כמה ימים",
         "prefix": "כל",
         "suffix": "ימים",
-        "description": "פעם כל כמה ימים - הצג את החלונית שלך עבור כל מספר ימים שתבחר."
+        "description": "הציגו את הפופ-אפ אחת לכמה ימים לבחירתכם"
       },
       "everyXVisit": {
-        "main": "פעם כל כמה ביקורים",
+        "main": "פעם בכל כמה ביקורים",
         "prefix": "כל",
         "suffix": "ביקורים",
-        "description": "פעם כל כמה ביקורים - הצג את החלונית שלך עבור כל מספר ביקורים שתבחר."
+        "description": "הציגו את הפופ-אפ אחת לכמה ביקורים לבחירתכם"
       },
       "everyVisit": {
         "title": "כל ביקור",
-        "description": "הצג את הפופאפ בכל ביקור באתר"
+        "description": "הציגו את הפופ-אפ בכל ביקור באתר"
       },
       "caption": "תדירות נמדדת לכל דפדפן/מכשיר"
     }
   },
   "pageTargeting": {
-    "title": "מיקוד לפי עמודים",
-    "subtitle": "ציין באילו עמודים הפופאפ יוצג",
-    "addRule": "הוסף חוק מיקוד",
+    "title": "הצגת הפופ-אפ בדפים ספציפיים",
+    "subtitle": "בחרו עמודים ספציפיים בהם יוצג הפופ-אפ",
+    "addRule": "הוספת חוק מיקוד",
     "examples": {
-      "line1": "דוגמאות: \"product\" תואם /products/shoes, /category/products",
-      "line2": "\"checkout\" מחריג את כל דפי התשלום"
+      "line1": "דוגמה: שימוש באפשרות \"מכיל\" עם הערך /Shoes",
+      "line2": "הגדרת הערך /shoes תחת אופציית \"מכיל\" אומר שהפופ-אפ יוצג בכל העמודים המכילים את הערך /shoes"
     },
     "ruleTypes": {
       "contains": "כתובת כוללת",
@@ -101,27 +102,27 @@
     "postConversion": {
       "title": "התנהגות לאחר המרה",
       "continueShowing": {
-        "label": "המשך להציג את הפופאפ לאחר המרה",
-        "helper": "המשך להציג למבקרים שכבר המירו"
+        "label": "המשיכו להציג את הפופ-אפ לאחר המרה",
+        "helper": "המשיכו להציג גם למבקרים שכבר המירה"
       },
       "defineConversion": {
-        "label": "הגדר המרה כ־",
-        "formSubmission": "שליחת טופס",
-        "buttonClick": "לחיצת כפתור"
+        "label": "הגדירו המרה כ-",
+        "formSubmission": "מילוי טופס",
+        "buttonClick": "לחיצה על כפתור"
       }
     },
     "headerSection": {
       "title": "הגדרות מתקדמות",
-      "subtitle": "הגדר התנהגות לאחר המרה ואפשרויות מתקדמות"
+      "subtitle": "הגדירו התנהגות לאחר המרה ואפשרויות מתקדמות אחרות"
     }
   },
   "summary": {
-    "title": "סיכום פופאפ",
+    "title": "סיכום הפופ-אפ",
     "generalSettings": "הגדרות כלליות",
     "displayRules": "כללי תצוגה",
     "triggers": "טריגרים",
-    "pageTargeting": "מיקוד דפים",
-    "frequency": "תדירות הצגה",
+    "pageTargeting": "הצגת הפופ-אפ בדפים ספציפיים",
+    "frequency": "תדירות תצוגה",
     "frequencyType": "סוג תדירות",
     "frequencyValue": "ערך תדירות",
     "audienceTarget": "קהל יעד",
@@ -130,33 +131,33 @@
     "conversionType": "סוג המרה",
     "exitIntent": "כוונת יציאה",
     "pageCount": "מספר עמודים",
-    "displayAfterVisiting": "הצג לאחר ביקור ב",
+    "displayAfterVisiting": "הציגולאחר ביקור ב",
     "pages": "עמודים",
     "timeDelay": "השהיית זמן",
-    "displayAfter": "הצג לאחר",
+    "displayAfter": "הציגולאחר",
     "secsOnPage": "שניות בעמוד",
-    "displayAfterScrolling": "הצג לאחר גלילה של",
+    "displayAfterScrolling": "הציגולאחר גלילה של",
     "onThePage": "בעמוד",
     "clicksCount": "ספירת קליקים",
     "clicksInPage": "קליקים בעמוד",
-    "popupName": "שם החלונית",
-    "popupLanguage": "שפת החלונית",
+    "popupName": "שם הפופ-אפ",
+    "popupLanguage": "שפת הפופ-אפ",
     "popupOfflineDate": "תאריך הורדת החלונית מהרשת",
     "commentsToPopup": "הערות לחלונית",
     "onceEvery": "פעם בכל",
     "visits": "ביקורים"
   },
   "deviceTargeting": {
-  "title": "מיקוד לפי מכשיר",
-  "subtitle": "בחר את סוג המכשיר שבו תרצה להציג את הפופאפ.",
-  "info": "בחר את המכשירים למטה – ניתן לבחור יותר מאחד",
+  "title": "פילוח לפי סוג מכשיר",
+  "subtitle": "בחרו את סוג המכשיר בו תרצו להציג את הפופ-אפ",
+  "info": "באיזה סוג מכשיר תרצו להציג את הפופ-אפ? - ניתן לבחור יותר מאחד",
   "desktop": "מחשב שולחני",
   "mobile": "נייד"
 },
   "popupSaved": "הפופאפ נשמר",
   "popupPublished": "חלונית שפורסמה",
   "popupManagement": "ניהול חלוניות קופצות",
-  "popupProperties": "מאפייני החלונית",
+  "popupProperties": "מאפייני הפופ-אפ",
   "confirmExitPopup": "האם ברצונך לשמור את החלון הקופץ לפני היציאה?",
   "closeButtonConfiguration": "הגדרות כפתור סגירה",
   "closeButtonSize": "גודל (פיקסלים)",
@@ -166,7 +167,7 @@
   "generatedHTML": "HTML שנוצר",
   "samplePopup": "פופאפ לדוגמה",
   "closeButtonPreviewDescription": "זוהי תצוגה מקדימה של איך כפתור הסגירה יופיע בפופאפ שלך.",
-  "closePopupButton": "מאפייני סגירה",
-  "popupDisplaySettings": "הגדרות הצגת פופאפ",
+  "closePopupButton": "מאפייני כפתור סגירה",
+  "popupDisplaySettings": "טריגרים והגדרות תצוגה",
   "atLeastOneTrigger": "אנא הפעל לפחות טריגר אחד כדי להמשיך."
 }

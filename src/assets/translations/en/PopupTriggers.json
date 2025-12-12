@@ -1,6 +1,6 @@
 {
   "popupTriggers": {
-    "mainTitle": "Popup Triggers Management",
+    "mainTitle": "Popup Triggers & Display Settings",
     "title": "Popup Triggers",
     "subtitle": "Choose when the popup should appear",
     "exitIntent": {
@@ -43,6 +43,7 @@
     "defineReturningVisitor": "Define Returning Visitor",
     "newVisitorDescription": "A New visitor has not been to your site in the last:",
     "returningVisitorDescription": "A Returning visitor has already been to your site in the last:",
+    "Days": "Days",
     "targetAudience": {
       "title": "Target Audience",
       "allVisitors": "All Visitors",
@@ -85,8 +86,8 @@
     "subtitle": "Specify which pages should display the popup",
     "addRule": "Add targeting rule",
     "examples": {
-      "line1": "Examples: \"product\" matches /products/shoes, /category/products",
-      "line2": "\"checkout\" excludes all checkout pages"
+      "line1": "Example: Using \"Contains\" option with the value \"/Shoes\"",
+      "line2": "Means that the pop-up will only show up in pages which are containing the value \"/Shoes\""
     },
     "ruleTypes": {
       "contains": "URL Contains",
