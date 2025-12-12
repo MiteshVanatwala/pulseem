@@ -720,7 +720,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
 
   const renderRow = (row, isParent = true, isEven = false) => {
     const childItems = (isParent ? newslettersChildCampaigns.filter(childCampaign => childCampaign?.ParentCampaignId === row?.CampaignID) : []).sort((a, b) => a.CampaignID - b.CampaignID);
-    const rowPlusChildItems = [ row, ...childItems ];
+    const rowPlusChildItems = [row, ...childItems];
     const isExpanded = expandedIds.indexOf(row.CampaignID) > -1;
     return (
       <>
@@ -1075,7 +1075,9 @@ const NewsletterManagnentScreen = ({ classes }) => {
 
   return (
     <DefaultScreen
+      key="newsletter"
       currentPage='newsletter'
+      subPage='newsletterManagment'
       classes={classes}
       containerClass={clsx(classes.management, classes.mb50)}>
       <Box className={'topSection'}>

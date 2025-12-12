@@ -62,7 +62,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
       marginLeft: 207
     },
     '& .topSection': {
-      marginTop: 37.870,
+      // marginTop: 37.870,
       border: '2px solid #F0F5FF',
       borderRadius: 10,
       paddingBottom: 31,
@@ -1691,7 +1691,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   tipulseemMsg: {
     fontSize: tipsFontSize[windowSize],
     padding: "0px 20px 20px 20px",
-    maxWidth: 204,
+    maxWidth: 260,
     textAlign: 'center',
     margin: 'auto',
     ['@media (max-width:1280px)']: {

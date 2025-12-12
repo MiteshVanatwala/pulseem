@@ -93,7 +93,7 @@ const PulseemTips = ({ classes, t, isRTL }) => {
         {/* <IllustrationTipulseem /> */}
         <img alt="Tips" src={IllustrationTipulseem} width="158" height="99" />
       </Box>
-      <Box dir={'ltr'} style={{ marginTop: 30 }}>
+      <Box dir={'ltr'} style={{ marginTop: 15, marginBottom: 20 }}>
         <Carousel
           autoPlay={true}
           interval={8000}

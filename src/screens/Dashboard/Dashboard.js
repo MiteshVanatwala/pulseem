@@ -106,9 +106,9 @@ const DashboardScreen = ({ classes }) => {
     <DefaultScreen
       currentPage='dashboard'
       classes={classes}
-      customStyle={clsx(classes.dashboard, classes.mb75)}>
+      customStyle={clsx(classes.dashboard)}>
       <Grid container>
-        <Grid item xs={12} sm={8} md={9} lg={9} xl={10} className={clsx(classes.pt20, classes.dashboardTop)}>
+        <Grid item xs={12} sm={8} md={9} lg={9} xl={10} className={clsx(classes.dashboardTop)}>
           <Grid container direction='row'>
             <Grid item xs={12} sm={12} md={12} lg={4}>
               {<BulkStatus classes={classes} />}

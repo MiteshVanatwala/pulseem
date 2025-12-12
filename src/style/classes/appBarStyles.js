@@ -3,7 +3,7 @@ const appBarTitleTextSize = { xs: 13, sm: 14, md: 10, lg: 16, xl: 14 }
 export const appBarStyle = (windowSize, isRTL, theme) => ({
   appBarItemContainer: {
     display: 'flex',
-    flexDirection: 'column',
+    // flexDirection: 'column',
     textDecoration: 'none',
     zIndex: 1300,
     height: '100%',
@@ -59,7 +59,7 @@ export const appBarStyle = (windowSize, isRTL, theme) => ({
     '& .header-whatsapp-icon': {
       width: '24px',
       height: '24px',
-      marginBottom: '4px',
+      // marginBottom: '4px',
     },
   },
   appBarItemBorder: {
@@ -196,7 +196,7 @@ export const appBarStyle = (windowSize, isRTL, theme) => ({
     }
   },
   appBarSettingIcon: {
-    width: 21
+    width: 25
   },
   appBarQuestionIcon: {
     fontWeight: 'bold',
