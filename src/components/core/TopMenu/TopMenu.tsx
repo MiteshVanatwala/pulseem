@@ -73,7 +73,7 @@ const LanguageSelector: React.FC<{ classes: any }> = ({ classes }) => {
 
     const buttonContent = (
         <Button
-            style={{ padding: 0, margin: 0, minWidth: 21 }}
+            style={{ padding: 0, margin: 0, minWidth: 21, display: 'flex' }}
             onClick={handleClick}
             className={classes.languageSelector}
             fullWidth={!isCollapsed}
@@ -119,7 +119,7 @@ const TopMenu = ({ classes }: any) => {
         <Box>
             <NotificationBell classes={classes} />
         </Box>
-        <Box>
+        <Box className={classes.dFlex}>
             <LanguageSelector classes={classes} />
         </Box>
         <Box>

@@ -2948,7 +2948,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     height: '100%',
     marginBottom: 68,
     background: '#fff',
-    marginTop: 30,
+    // marginTop: 30,
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
     '& .head': {
@@ -4971,9 +4971,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     }
   },
   topMenu: {
-    paddingTop: 15,
     marginBlock: 15,
-    marginInlineEnd: 50,
     display: 'flex',
     gap: 25
   }

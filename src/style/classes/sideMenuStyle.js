@@ -106,7 +106,7 @@ export const sideMenuStyle = (windowSize, isRTL, theme) => ({
     },
   },
   sidebarSubmenu: {
-    backgroundColor: 'rgba(255, 0, 84, 0.1)',
+    backgroundColor: 'rgb(255 120 120 / 45%)',
     color: '#fff',
     '& $sidebarItem': {
       '&:hover': {

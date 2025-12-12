@@ -3,7 +3,7 @@ const appBarTitleTextSize = { xs: 13, sm: 14, md: 10, lg: 16, xl: 14 }
 export const appBarStyle = (windowSize, isRTL, theme) => ({
   appBarItemContainer: {
     display: 'flex',
-    flexDirection: 'column',
+    // flexDirection: 'column',
     textDecoration: 'none',
     zIndex: 1300,
     height: '100%',
