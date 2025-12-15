@@ -494,12 +494,14 @@
     "cardView": "Card View",
     "tableView": "Table View",
     "restorePopupTitle": "Select the Popups you want to restore",
+    "noActivePopupsForDomain": "No Active Popups For Domain",
     "tableHeaders": {
       "title": "Title",
       "url": "URL",
       "status": "Status",
       "allViewers": "All Viewers",
       "identifiedViewers": "Unique visitors",
+      "ofViewers": "of viewers",
       "identifiedConversions": "Identified Conversions",
       "conversions": "Conversions",
       "conversionRate": "Conversion Rate",
@@ -509,13 +511,27 @@
       "totalPopups": "Total Popups",
       "viewsThisMonth": "Views This Month",
       "avgConversionRate": "Average Conversion Rate",
-      "topPerforming": "Top Performing Popup"
+      "topPerforming": "Top Performing Popup",
+      "thisMonth": "This Month",
+      "conversion": "Conversion",
+      "NA": "N/A"
     },
     "filters": {
       "all": "All",
-      "active": "Active",
-      "inactive": "Inactive",
-      "draft": "Draft"
+      "active": "Is Active",
+      "inactive": "Is Inactive",
+      "activePlural": "Are Active",
+      "inactivePlural": "Are Inactive",
+      "draft": "Draft",
+      "sortBy": "Sort By",
+      "direction": "Direction",
+      "createdDate": "Created Date",
+      "name": "Name",
+      "views": "Views",
+      "conversionRate": "Conversion Rate",
+      "lastModified": "Last Modified",
+      "ascending": "Ascending",
+      "descending": "Descending"
     },
     "actions": {
       "settings": "Settings",
