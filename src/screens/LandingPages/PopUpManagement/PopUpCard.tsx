@@ -280,7 +280,7 @@ const PopUpCard: React.FC<PopUpCardProps> = ({ popup, classes, setDialogType }) 
             icon={<PersonPinIcon color="disabled" />}
             title={t('landingPages.popupManagement.tableHeaders.identifiedViewers')}
             value={popup.IdentifiedViewers?.toLocaleString() ?? '—'}
-            subtitles={[`${popup.IdentifiedViewersPercent}% of viewers`]}
+            subtitles={[`${popup.IdentifiedViewersPercent}% ${t('landingPages.popupManagement.tableHeaders.ofViewers')}`]}
             onValueClick={handleIdentifiedViewersClick}
           />
           <StatItem
