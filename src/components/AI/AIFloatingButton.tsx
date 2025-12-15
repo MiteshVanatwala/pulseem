@@ -9,11 +9,12 @@ import AIImage from "../../assets/images/AI-icon.png";
 import { useTranslation } from 'react-i18next';
 import { PulseemFeatures } from '../../model/PulseemFields/Fields';
 import { StateType } from '../../Models/StateTypes';
+import { useLocation } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
   fab: {
     position: 'fixed',
-    bottom: '100px',
+    bottom: ({ isAffectedPage }: { isRTL: boolean; isAffectedPage: boolean }) => isAffectedPage ? '170px' : '105px',
     right: '20px',
     width: '60px',
     height: '60px',
@@ -29,6 +30,7 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: 'transparent',
     },
     animation: '$pulse 2s infinite',
+    transition: 'bottom 0.3s ease',
   },
   smallIcon: {
     position: 'absolute',
@@ -43,7 +45,7 @@ const useStyles = makeStyles((theme) => ({
     }
   },
   polyIcon: {
-    transform: ({ isRTL }: { isRTL: boolean }) => isRTL ? 'scaleX(-1)' : 'none',
+    transform: ({ isRTL }: { isRTL: boolean; isAffectedPage: boolean }) => isRTL ? 'scaleX(-1)' : 'none',
   },
   '@keyframes pulse': {
     '0%': {
@@ -59,12 +61,16 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const AIFloatingButton: React.FC = () => {
+  const location = useLocation();
   const isRTL = useSelector((state: StateType) => state.core.isRTL);
-  const classes = useStyles({ isRTL });
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const { accountFeatures } = useSelector((state: StateType) => state.common);
   const { aiIconStatus } = useSelector((state: any) => state.aiChat);
+  const affectedPages = ['campaigns/editor', 'editor/landingpages', 'popupeditor', 'whatsapp/chat'];
+  const pathname = location.pathname.toLowerCase();
+  const isAffectedPage = affectedPages.some(page => pathname.includes(page));
+  const classes = useStyles({ isRTL, isAffectedPage });
 
   const handleToggleChat = () => {
     dispatch(toggleChat());
@@ -82,14 +88,14 @@ const AIFloatingButton: React.FC = () => {
       <Fab className={classes.fab} onClick={handleToggleChat}>
         <div className={classes.smallIcon}>
           {aiIconStatus === 0 ? (
-            <img src={AIImage} />
+            <img src={AIImage} alt="AI status" />
           ) : aiIconStatus === 1 ? (
             <CircularProgress size={15} />
           ) : (
             <Check fontSize="small" color="primary" style={{ color: 'green' }} />
           )}
         </div>
-        <img width={60} src={PulseemMascotImage} className={classes.polyIcon} />
+        <img width={60} src={PulseemMascotImage} className={classes.polyIcon} alt="Pulseem mascot" />
       </Fab>
     </Tooltip>
   );
