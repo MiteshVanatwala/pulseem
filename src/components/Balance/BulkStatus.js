@@ -409,7 +409,7 @@ const BulkStatus = ({ classes }) => {
                   !IsPoland && Newsletters.eBillingType === 0 && (
                     <>
                       {
-                        isAllowNewsletterSubscription && Newsletters?.IsEmailTierSubscribed || true ? (
+                        isAllowNewsletterSubscription && Newsletters?.IsEmailTierSubscribed ? (
                           <>
                             <IconButton
                               className={clsx(classes.redButtonLink)}
@@ -444,6 +444,8 @@ const BulkStatus = ({ classes }) => {
                                 } else {
                                   showPackageDialogType({ type: 2, title: t('common.newsletterBulkTitle') });
                                 }
+                              } else if (isAllowNewsletterSubscription) {
+                                setIsOpenEmailTierPlans(true);
                               }
                             }}
                           >
