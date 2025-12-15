@@ -86,8 +86,8 @@
     "subtitle": "Specify which pages should display the popup",
     "addRule": "Add targeting rule",
     "examples": {
-      "line1": "Example: Using \"Contains\" option with the value \"/Shoes\"",
-      "line2": "Means that the pop-up will only show up in pages which are containing the value \"/Shoes\""
+      "line1": "Example: Using \"Contains\" option with the value \"/shoes\"",
+      "line2": "Means that the pop-up will only show up in pages which are containing the value \"/shoes\""
     },
     "ruleTypes": {
       "contains": "URL Contains",

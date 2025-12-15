@@ -86,8 +86,8 @@
     "subtitle": "Określ, na których stronach popup ma się wyświetlać",
     "addRule": "Dodaj regułę targetowania",
     "examples": {
-      "line1": "Przykład: Użycie opcji „Zawiera” z wartością „/Shoes”",
-      "line2": "Oznacza, że pop-up pojawi się tylko na stronach, które zawierają wartość „/Shoes”"
+      "line1": "Przykład: Użycie opcji „Zawiera” z wartością „/shoes”",
+      "line2": "Oznacza, że pop-up pojawi się tylko na stronach, które zawierają wartość „/shoes”"
     },
     "ruleTypes": {
       "contains": "Adres URL zawiera",
