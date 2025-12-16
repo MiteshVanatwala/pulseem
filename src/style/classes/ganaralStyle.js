@@ -4833,7 +4833,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   // Email Marketing Slider Styles
   emailMarketingSliderContainer: {
     padding: 24,
-    maxWidth: 1200,
     background: '#fff',
     border: '1px solid #e2e8f0',
     borderRadius: 12,

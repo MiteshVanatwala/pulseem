@@ -445,7 +445,12 @@ const BulkStatus = ({ classes }) => {
                                   showPackageDialogType({ type: 2, title: t('common.newsletterBulkTitle') });
                                 }
                               } else if (isAllowNewsletterSubscription) {
-                                setIsOpenEmailTierPlans(true);
+                                if (isBillingDetailsRequired) {
+                                  setIsOpenBillingSettings(true);
+                                  setBillingPopupCallback('EmailTier');
+                                } else {
+                                  setIsOpenEmailTierPlans(true);
+                                }
                               }
                             }}
                           >
@@ -648,6 +653,8 @@ const BulkStatus = ({ classes }) => {
               } else if (billingPopupCallback === 'Newsletter') {
                 showPackageDialogType({ type: 2, title: t('common.newsletterBulkTitle') });
               } else if (billingPopupCallback === 'Email') {
+                setIsOpenEmailTierPlans(true);
+              } else if (billingPopupCallback === 'EmailTier') {
                 setIsOpenEmailTierPlans(true);
               }
               setBillingPopupCallback(null);
