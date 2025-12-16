@@ -4974,5 +4974,15 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       color: '#fff',
       fontSize: '14px'
     }
+  },
+  tooltipContent: {
+    backgroundColor: '#000',
+    color: '#fff',
+    maxWidth: 440,
+    padding: '6px 8px',
+    boxSizing: 'border-box'
+  },
+  tooltipArrow: {
+    color: '#000'
   }
 });
