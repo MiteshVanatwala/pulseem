@@ -49,7 +49,7 @@ import { UpgradePlanRequest } from '../../Models/Tiers/TierModels';
 import Toast from '../Toast/Toast.component';
 import ContactUsDialog from '../EmailPlans/ContactUsDialog';
 
-const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false  }: any) => {
+const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false, isBankTransferForTiers = false  }: any) => {
   const { t, i18n } = useTranslation();
   const dispatch = useDispatch();
   const [activeStep, setActiveStep] = useState(0);
@@ -63,6 +63,7 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false  }: any)
   const [ isLoader, setIsLoader ] = useState(false);
   const [ showSalesContactPopup, setShowSalesContactPopup ] = useState(false);
   const [ showCardConfirmationDialog, setShowCardConfirmationDialog ] = useState(false);
+  const [ showBankTransferDialog, setShowBankTransferDialog ] = useState(false);
   const [ selectedCreditCard, setSelectedCreditCard ] = useState<any>(null);
   const [selectedEmailTier, setSelectedEmailTier] = useState<any>(null);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -196,22 +197,26 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false  }: any)
   }
 
   const handlePlanSelect = async (plan: any, uiConfig: any) => {
-    if (plan.Id === 1) return false;
-    if (plan.Id === 4) {
-      setShowSalesContactPopup(true);
-      return;
-    }
-
     const planWithConfig = {
       ...plan,
       uiConfig
     };
+
+    // if (plan.Id === 1) return false;
+    if (plan.Id === 4) {
+      setShowSalesContactPopup(true);
+      return;
+    } else if (isBankTransferForTiers) {
+      setSelectedPlan(planWithConfig);
+      setShowBankTransferDialog(true);
+      return false;
+    }
+
     
     // Set loading state
     setLoadingIframe(true);
     
     try {
-      console.log(creditCards);
       setPaymentViaExistingCC(creditCards.length > 0);
 
       if (!creditCards.length) {
@@ -317,7 +322,7 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false  }: any)
                     color="primary"
                     className={clsx(classes.tierPlansButton, classes.tierPlansDefaultButton)}
                     onClick={() => handlePlanSelect(plan, uiConfig)}
-                    disabled={plan.isCurrentPlan}
+                    disabled={plan.isCurrentPlan || existingPlan?.AccountCategoryFeatureTier_Id === plan.Id}
                   >
                     {plan.isCurrentPlan ? t('billing.tier.ui.currentPlan') : t(uiConfig.buttonText)}
                   </Button>
@@ -572,7 +577,7 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false  }: any)
                     </span>
                   )
                 }
-                {typeof planPrice === 'string' && planPrice.includes('₪') ? planPrice : `${planPrice}`}
+                {typeof planPrice === 'string' && planPrice.includes('₪') ? planPrice : `${planPrice || 0}`}
                 {
                   !accountIsCurrencySymbolPrefix && (
                     <span className={classes.tierPlansCurrencySymbol}>
@@ -1008,9 +1013,15 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false  }: any)
         </BaseDialog>
         <BaseDialog
           classes={classes}
-          open={showCardConfirmationDialog}
-          onClose={() => setShowCardConfirmationDialog(false)}
-          onCancel={() => setShowCardConfirmationDialog(false)}
+          open={showCardConfirmationDialog || showBankTransferDialog}
+          onClose={() => {
+            setShowCardConfirmationDialog(false);
+            setShowBankTransferDialog(false);
+          }}
+          onCancel={() => {
+            setShowCardConfirmationDialog(false);
+            setShowBankTransferDialog(false);
+          }}
           onConfirm={async () => {
             let emailTierScaleId = 0;
             if (isEmailMarketing && selectedEmailTier && emailTiers) {
@@ -1021,26 +1032,37 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false  }: any)
               emailTierScaleId = matchingTier ? matchingTier.Id : 0;
             }
             const upgradeRequest: UpgradePlanRequest = {
-              Id: selectedCreditCard.ID,
-              Type: selectedCreditCard.Type,
+              Id: showBankTransferDialog ? 0 : selectedCreditCard.ID,
+              Type:  showBankTransferDialog ? '' : selectedCreditCard.Type,
               TierID: selectedPlan.Id,
               EmailTierScaleID: emailTierScaleId
             };
-
+            
+            setShowCardConfirmationDialog(false);
+            setShowBankTransferDialog(false);
+            setIsLoader(true);
             const response: any = await dispatch(upgradePlan(upgradeRequest));
 
+            setIsLoader(false);
             if (response?.payload?.StatusCode === 200) {
               setActiveStep(2);
-              setShowCardConfirmationDialog(false);
               dispatch(getCurrentPlan());
               setSelectedCreditCard(null);
             } else if (response?.payload.StatusCode === 409) {
               // @ts-ignore
               setToastMessage({ severity: 'error', color: 'error', message: t('common.activeTierSubscription'), showAnimtionCheck: false });
+            } else {
+              // @ts-ignore
+              setToastMessage({ severity: 'error', color: 'error', message: response?.payload?.Message, showAnimtionCheck: false });
             }
           }}
         >
-          {t('billing.tier.upgrade.payUsingCC')}
+          {(() => {
+            const planTitle = selectedPlan?.uiConfig?.title ? t(selectedPlan.uiConfig.title) : (selectedPlan?.Name || 'Standard');
+            return showCardConfirmationDialog 
+              ? t('billing.tier.upgrade.payUsingCC')
+              : t('billing.tier.upgrade.upgradePlan').replace('{planName}', planTitle);
+          })()}
         </BaseDialog>
         <ContactUsDialog
           classes={classes}

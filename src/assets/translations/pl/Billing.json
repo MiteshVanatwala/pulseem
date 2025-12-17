@@ -88,6 +88,7 @@
       "success": "Witaj w {planName}!",
       "message": "Twój subskrypcja jest teraz aktywna",
       "payUsingCC": "Czy na pewno chcesz zapłacić tą kartą kredytową?",
+      "upgradePlan": "Are you sure you want to upgrade to plan {planName}?",
       "features": {
         "unlimitedAutomations": {
           "title": "Automatyzacje bez ograniczeń",

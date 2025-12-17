@@ -50,6 +50,7 @@ export interface UpgradePlanRequest {
     Type: string;
     TierID: number;
     EmailTierScaleID?: number;
+    IsBankTransferForTiers?: boolean;
 }
 
 export interface RestoreAutomationRequest {

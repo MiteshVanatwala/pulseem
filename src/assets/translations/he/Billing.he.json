@@ -100,6 +100,7 @@
       "success": "ברוך הבא ל {planName}!",
       "message": "השימוש במנוי פתוח כעת",
       "payUsingCC": "האם אתה בטוח שברצונך לשלם באמצעות כרטיס האשראי הזה?",
+      "upgradePlan": "Are you sure you want to upgrade to plan {planName}?",
       "features": {
         "unlimitedAutomations": {
           "title": "אוטומציות ללא הגבלה",

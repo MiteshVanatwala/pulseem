@@ -233,8 +233,7 @@ const BulkStatus = ({ classes }) => {
     return Newsletters?.FeatureAllowed && accountFeatures && accountFeatures?.indexOf(PulseemFeatures.PURCHASE_NEWSLETTER_PACKAGES) > -1 && billingTypeId !== "1" && isGlobal === true && IsPoland;
   }
 
-  const isAllowNewsletterSubscription = !Newsletters.IsPrepaid && accountAvailablePackages.filter((aa) => { return aa.CampaignType === 2 }).length === 0 && (Newsletters.Credits === 0 || Newsletters.Credits === null) || true;
-
+  const isAllowNewsletterSubscription = !Newsletters.IsPrepaid && accountAvailablePackages.filter((aa) => { return aa.CampaignType === 2 }).length === 0;
   const showPackageDialogType = async (packageType) => {
     setPackageType(packageType);
     setIsOpenPackageDialog(true);
@@ -406,7 +405,7 @@ const BulkStatus = ({ classes }) => {
 
               <Grid item md={4} xs={4} className={isRTL ? classes.textLeft : classes.textRight}>
                 {
-                  !IsPoland && Newsletters.eBillingType === 0 && (
+                  !IsPoland && (Newsletters.eBillingType === 0 || Newsletters.eBillingType === 2) && (
                     <>
                       {
                         isAllowNewsletterSubscription && Newsletters?.IsEmailTierSubscribed ? (
@@ -669,6 +668,7 @@ const BulkStatus = ({ classes }) => {
           dispatch(getPackagesDetails());
         }}
         isEmailMarketing={true}
+        isBankTransferForTiers={Newsletters?.IsBankTransferForTiers}
       />
         <PayPerRecipientNew
           classes={classes}
