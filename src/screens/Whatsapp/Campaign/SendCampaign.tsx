@@ -950,6 +950,13 @@ const SendCampaign = ({
 					navigate(whatsappRoutes.CAMPAIGN_MANAGEMENT)
 				}
 				onBackToAutomation={() => window.location.href = `/Pulseem/CreateAutomations.aspx?AutomationID=${FromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true`}
+				sendType={sendType}
+				sendDate={sendDate}
+				sendTime={sendTime}
+				spectialDateFieldID={spectialDateFieldID}
+				isSpecialDateBefore={isSpecialDateBefore}
+				daysBeforeAfter={daysBeforeAfter}
+				specialDatedropDown={specialDatedropDown}
 			/>
 		),
 		onConfirm: async () => {
