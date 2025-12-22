@@ -177,7 +177,7 @@ const ChatUi = ({
 									? {
 										padding: '8px 0px 8px 8px',
 										// position: 'absolute',
-										borderRadius: '10px',
+										borderRadius: '24px',
 										textAlign: 'center',
 										// marginTop: '-6px',
 									}
