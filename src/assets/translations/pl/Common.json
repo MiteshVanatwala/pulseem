@@ -891,5 +891,6 @@
   "presetQuestion1": "Przeanalizuj moją ostatnią kampanię",
   "presetQuestion2": "Jak zwiększyć otwarcia i kliknięcia?",
   "presetQuestion3": "Utwórz dla mnie grupę klientów VIP",
-  "presetQuestion4": "Utwórz grupę klientów, którzy otwierają, ale nie klikają"
+  "presetQuestion4": "Utwórz grupę klientów, którzy otwierają, ale nie klikają",
+  "numbersAllowedOnly": "Dozwolone są tylko cyfry"
 }
