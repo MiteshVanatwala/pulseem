@@ -210,6 +210,7 @@ export const DateFormats = {
     DATE_TIME_24: 'DD/MM/YYYY HH:mm',
     DATE_ONLY: 'DD/MM/YYYY',
     TIME_ONLY: 'HH:mm',
+    TIME_ONLY_AMPM: 'hh:mm A',
     FULL_DATE_AM_PM: 'DD/MM/YYYY HH:mm:ss A',
     DATEPICKER_DATE_FORMAT: 'MM/DD/YYYY',
     FULL_DATE_START: 'DD/MM/YYYY 00:00:00',

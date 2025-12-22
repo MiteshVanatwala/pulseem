@@ -71,7 +71,7 @@ const SummaryModal = ({
 		(state: { whatsapp: { ToastMessages: toastProps } }) =>
 			state.whatsapp.ToastMessages
 	);
-	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
+	const { isRTL, language } = useSelector((state: { core: coreProps }) => state.core);
 	const [toastMessage, setToastMessage] =
 		useState<toastProps['SUCCESS']>(resetToastData);
 
@@ -413,7 +413,7 @@ const SummaryModal = ({
 									<span className={classes.campaignSummaryTextDesc}>
 										{sendType === '1' && <>{translator('sms.SendNow')}</>}
 										{sendType === '2' &&
-											moment(sendDate)?.format('dddd , MMMM Do YYYY, h:mm a')}
+											moment(sendDate).locale(language)?.format('dddd , MMMM Do YYYY, h:mm a')}
 										{sendType === '3' &&
 											`${daysBeforeAfter} ${translator('mainReport.days')} ${isSpecialDateBefore
 												? translator('mainReport.before')
