@@ -4378,7 +4378,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     },
     '& .payPerRecipientChild': {
       minHeight: '70vh',
-      maxHeight: '70vh'
+      maxHeight: '70vh',
+      overflowX: 'hidden'
     }
   },
   customSlider: {

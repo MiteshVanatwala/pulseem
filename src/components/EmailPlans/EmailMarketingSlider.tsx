@@ -7,20 +7,46 @@ import clsx from 'clsx';
 import _ from 'lodash';
 import { getEmailPerRecipientsTierScaling } from '../../redux/reducers/emailTierScalingSlice';
 
-const EmailMarketingSlider = ({ classes }: any) => {
+interface EmailMarketingSliderProps {
+  classes: any;
+  // Controlled mode props
+  value?: number;
+  onChange?: (event: any, newValue: number) => void;
+  marks?: Array<{ value: number; label?: string; displayText?: string; [key: string]: any }>;
+  disabled?: boolean;
+  min?: number;
+  max?: number;
+  // Optional: hide header in controlled mode
+  hideHeader?: boolean;
+}
+
+const EmailMarketingSlider = ({ 
+  classes, 
+  value: controlledValue,
+  onChange: controlledOnChange,
+  marks: controlledMarks,
+  disabled = false,
+  min: controlledMin,
+  max: controlledMax,
+  hideHeader = false
+}: EmailMarketingSliderProps) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { isRTL } = useSelector((state: any) => state.core);
   const { currencyId } = useSelector((state: any) => state.common);
   const { tiers: apiTiers, loading } = useSelector((state: any) => state.emailTierScaling);
 
-  const [sliderValue, setSliderValue] = useState(0);
+  // Use controlled value if provided, otherwise use internal state
+  const [internalValue, setInternalValue] = useState(0);
+  const isControlled = controlledValue !== undefined;
+  const sliderValue = isControlled ? controlledValue : internalValue;
 
   useEffect(() => {
-    if (currencyId) {
+    // Only fetch from API if not in controlled mode
+    if (!isControlled && currencyId) {
       dispatch(getEmailPerRecipientsTierScaling(currencyId) as any);
     }
-  }, [dispatch, currencyId]);
+  }, [dispatch, currencyId, isControlled]);
 
   const uniqueTierRanges = useMemo(() => {
     if (!apiTiers || apiTiers.length === 0) return [];
@@ -28,6 +54,16 @@ const EmailMarketingSlider = ({ classes }: any) => {
   }, [apiTiers]);
 
   const tiers = useMemo(() => {
+    // Use controlled marks if provided
+    if (controlledMarks && controlledMarks.length > 0) {
+      return controlledMarks.map((mark, index) => ({
+        label: mark.displayText || mark.label || '',
+        value: mark.value,
+        tierData: mark
+      }));
+    }
+
+    // Otherwise use API data
     if (uniqueTierRanges.length === 0) return [];
     
     return uniqueTierRanges.map((tier: any, index: number) => {
@@ -51,25 +87,52 @@ const EmailMarketingSlider = ({ classes }: any) => {
         tierData: tier
       };
     });
-  }, [uniqueTierRanges]);
+  }, [uniqueTierRanges, controlledMarks]);
 
   const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSliderValue(parseInt(e.target.value));
+    const newValue = parseInt(e.target.value);
+    if (isControlled && controlledOnChange) {
+      controlledOnChange(e, newValue);
+    } else {
+      setInternalValue(newValue);
+    }
   };
 
   const handleTierClick = (value: number) => {
-    setSliderValue(value);
+    if (disabled) return;
+    const mockEvent = { target: { value: value.toString() } } as any;
+    if (isControlled && controlledOnChange) {
+      controlledOnChange(mockEvent, value);
+    } else {
+      setInternalValue(value);
+    }
   };
 
   const handlePrevious = () => {
-    if (sliderValue > 0) {
-      setSliderValue(sliderValue - 1);
+    if (disabled) return;
+    const minValue = controlledMin !== undefined ? controlledMin : 0;
+    if (sliderValue > minValue) {
+      const newValue = sliderValue - 1;
+      const mockEvent = { target: { value: newValue.toString() } } as any;
+      if (isControlled && controlledOnChange) {
+        controlledOnChange(mockEvent, newValue);
+      } else {
+        setInternalValue(newValue);
+      }
     }
   };
 
   const handleNext = () => {
-    if (sliderValue < tiers.length - 1) {
-      setSliderValue(sliderValue + 1);
+    if (disabled) return;
+    const maxValue = controlledMax !== undefined ? controlledMax : tiers.length - 1;
+    if (sliderValue < maxValue) {
+      const newValue = sliderValue + 1;
+      const mockEvent = { target: { value: newValue.toString() } } as any;
+      if (isControlled && controlledOnChange) {
+        controlledOnChange(mockEvent, newValue);
+      } else {
+        setInternalValue(newValue);
+      }
     }
   };
 
@@ -79,25 +142,39 @@ const EmailMarketingSlider = ({ classes }: any) => {
     return isRTL ? 100 - position : position;
   };
 
-  if (loading || tiers.length === 0) {
+  // Find the current tier index based on value
+  const getCurrentTierIndex = () => {
+    const tierIndex = tiers.findIndex(tier => tier.value === sliderValue);
+    return tierIndex !== -1 ? tierIndex : 0;
+  };
+
+  const currentIndex = getCurrentTierIndex();
+  const minValue = controlledMin !== undefined ? controlledMin : 0;
+  const maxValue = controlledMax !== undefined ? controlledMax : (tiers.length - 1);
+
+  if (!isControlled && (loading || tiers.length === 0)) {
+    return null;
+  }
+
+  if (tiers.length === 0) {
     return null;
   }
 
   return (
     <Box className={clsx(classes.emailMarketingSliderContainer)}>
-      {/* Header */}
-      <Box sx={{alignItems: 'center', display: 'flex'}}>
-        <Typography variant="h6" className={clsx(classes.bold)}>
-            {t('billing.EmailMarketingList')}
-        </Typography>
-        <Typography variant="body1" className={clsx(classes.marginSides5)}>
-          {t('billing.EmailMarketingListSending')}
-        </Typography>
-      </Box>
+      {/* Header - Only show in uncontrolled mode */}
+      {!hideHeader && !isControlled && (
+        <Box sx={{alignItems: 'center', display: 'flex'}}>
+          <Typography variant="h6" className={clsx(classes.bold)}>
+              {t('billing.EmailMarketingList')}
+          </Typography>
+          <Typography variant="body1" className={clsx(classes.marginSides5)}>
+            {t('billing.EmailMarketingListSending')}
+          </Typography>
+        </Box>
+      )}
 
       <Box className={classes.sliderContainer}>
-       
-
         <Box className={classes.sliderTrackWrapper}>
           <IconButton
             onClick={handlePrevious}
@@ -113,7 +190,7 @@ const EmailMarketingSlider = ({ classes }: any) => {
                 classes.sliderTrackFilled,
                 { [classes.sliderTrackFilledRTL]: isRTL }
               )}
-              style={{ width: `${(sliderValue / (tiers.length - 1)) * 100}%` }}
+              style={{ width: `${maxValue > 0 ? (currentIndex / maxValue) * 100 : 0}%` }}
             />
 
             {/* Slider Thumb */}
@@ -124,7 +201,11 @@ const EmailMarketingSlider = ({ classes }: any) => {
                 <Box
                   key={`thumb-${tier.value}`}
                   className={classes.sliderThumb}
-                  style={{ left: `${position}%` }}
+                  style={{ 
+                    left: `${position}%`,
+                    opacity: disabled ? 0.5 : 1,
+                    cursor: disabled ? 'not-allowed' : 'pointer'
+                  }}
                 />
               );
             })}
@@ -133,13 +214,24 @@ const EmailMarketingSlider = ({ classes }: any) => {
           {/* HTML Range Input */}
           <input
             type="range"
-            min={0}
-            max={tiers.length - 1}
-            value={sliderValue}
-            onChange={handleSliderChange}
+            min={minValue}
+            max={maxValue}
+            value={currentIndex}
+            onChange={(e) => {
+              const newIndex = parseInt(e.target.value);
+              if (newIndex >= 0 && newIndex < tiers.length) {
+                const newValue = tiers[newIndex].value;
+                const mockEvent = { target: { value: newValue.toString() } } as any;
+                handleSliderChange(mockEvent);
+              }
+            }}
             step={1}
+            disabled={disabled}
             className={classes.sliderInput}
-            style={{ direction: isRTL ? 'rtl' : 'ltr' }}
+            style={{ 
+              direction: isRTL ? 'rtl' : 'ltr',
+              cursor: disabled ? 'not-allowed' : 'pointer'
+            }}
           />
 
           {/* Right Arrow - Increase */}
@@ -147,6 +239,7 @@ const EmailMarketingSlider = ({ classes }: any) => {
             onClick={handleNext}
             className={classes.sliderArrowRight}
             aria-label="increase tier"
+            disabled={disabled}
           >
             <ChevronRight />
           </IconButton>
@@ -162,7 +255,11 @@ const EmailMarketingSlider = ({ classes }: any) => {
                   key={tier.label}
                   onClick={() => handleTierClick(tier.value)}
                   className={classes.sliderLabel}
-                  style={{ left: `${position}%` }}
+                  style={{ 
+                    left: `${position}%`,
+                    cursor: disabled ? 'not-allowed' : 'pointer',
+                    opacity: disabled ? 0.6 : 1
+                  }}
                 >
                   <Typography
                     variant="body2"

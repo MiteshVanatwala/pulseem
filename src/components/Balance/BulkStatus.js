@@ -608,15 +608,15 @@ const BulkStatus = ({ classes }) => {
             }
           }}
         />
-        {/* <TierPlans
-        classes={classes}
-        isOpen={isOpenEmailTierPlans}
-        onClose={() => {
-          setIsOpenEmailTierPlans(false);
-          dispatch(getPackagesDetails());
-        }}
-        isEmailMarketing={true}
-      /> */}
+        <TierPlans
+          classes={classes}
+          isOpen={isOpenEmailTierPlans}
+          onClose={() => {
+            setIsOpenEmailTierPlans(false);
+            dispatch(getPackagesDetails());
+          }}
+          isEmailMarketing={true}
+        />
         <PayPerRecipientNew
           classes={classes}
           isOpen={isOpenPayPerRecipient}

@@ -5,7 +5,6 @@ import { Box, Button, Grid, IconButton, Step, StepLabel, Stepper, Typography } f
 import { useDispatch, useSelector } from 'react-redux';
 import { coreProps } from '../../model/Core/corePros.types';
 import { BaseDialog } from '../DialogTemplates/BaseDialog';
-import Slider from '@mui/material/Slider';
 import { AiOutlineCheck } from 'react-icons/ai';
 import { Loader } from '../Loader/Loader';
 import { EmailPricingSubscriptionPoland, getCreditCardIframe, GetEmailPackagePrices, cancelFrozenSends, releaseFrozenSends } from '../../redux/reducers/BillingSlice';
@@ -22,6 +21,7 @@ import TranzilaIframe from '../Balance/PaymentWizard/Dialogs/TranzilaIframe';
 import { StateType } from '../../Models/StateTypes';
 import { CurrenciesToDisplayForPoland } from '../../helpers/Constants';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
+import EmailMarketingSlider from '../EmailPlans/EmailMarketingSlider';
 
 const steps = [
   '',
@@ -125,21 +125,41 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose, jumpToStep = 1 }: any) =
   }
 
   const generagetMarks = (data: any[]) => {
-    const markList = data.filter((mark: any) => mark?.Currency_Id === selectedCurrency.id).map((item: any) => ({
-      id: item.Id,
-      value: item.Price,
-      label: '',
-      displayText: `${formatNumberWithCommas(item.LevelLow)} - ${formatNumberWithCommas(item.LevelHigh)}`,
-      currencyId: item.Currency_Id,
-      low: item.LevelLow,
-      high: item.LevelHigh
-    }));
+    const markList = data.filter((mark: any) => mark?.Currency_Id === selectedCurrency.id).map((item: any) => {
+      const levelHigh = item.LevelHigh;
+      let displayLabel = '';
+      
+      if (levelHigh >= 1000) {
+        displayLabel = `${levelHigh / 1000}K`;
+      } else {
+        displayLabel = `${levelHigh}`;
+      }
+      
+      return {
+        id: item.Id,
+        value: item.Price,
+        label: '',
+        displayText: displayLabel,
+        currencyId: item.Currency_Id,
+        low: item.LevelLow,
+        high: item.LevelHigh
+      };
+    });
     const lastItem: any = last(data);
+    const lastLevelHigh = lastItem?.LevelHigh;
+    let lastDisplayLabel = '';
+    
+    if (lastLevelHigh >= 1000) {
+      lastDisplayLabel = `${lastLevelHigh / 1000}K+`;
+    } else {
+      lastDisplayLabel = `${lastLevelHigh}+`;
+    }
+    
     markList.push({
       id: lastItem?.Id + 1,
       value: lastItem.Price + 100,
       label: '',
-      displayText: `${formatNumberWithCommas(lastItem?.LevelHigh)} +`,
+      displayText: lastDisplayLabel,
       currencyId: lastItem.Currency_Id,
       low: lastItem.LevelLow,
       high: '+'
@@ -204,11 +224,11 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose, jumpToStep = 1 }: any) =
           container
           spacing={1}
         >
-          <Grid item md={3}></Grid>
-          <Grid item md={6}>
+          {/* <Grid item md={3}></Grid> */}
+          <Grid item md={9}>
             <Grid container spacing={1} className={clsx(classes.pt15, classes.pb10)}>
               <Grid item xs={6} className={clsx(classes.textCenter)}>
-                <Typography className={clsx(classes.f18)}>
+                <Typography className={clsx(classes.f18, classes.mb10, classes.mt15)}>
                   {t('dashboard.polishSubscribe.targetPlan')}
                 </Typography>
               </Grid>
@@ -220,22 +240,19 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose, jumpToStep = 1 }: any) =
               </Grid>
             </Grid>
 
-            <Slider
-              disabled={Newsletters.IsEmailPolandSubscribed}
-              aria-label="pricing"
-              defaultValue={0}
-              step={null}
-              // valueLabelDisplay="auto"
+            <EmailMarketingSlider
+              classes={classes}
+              value={selectedPricing}
+              onChange={handleChange}
               marks={marks}
+              disabled={Newsletters.IsEmailPolandSubscribed}
               min={get(first(marks), 'value', 0)}
               max={get(last(marks), 'value', 100)}
-              onChange={handleChange}
-              color="primary"
-              className={clsx(classes.colrPrimary, classes.customSlider, classes.mb10)}
-              style={{ color: "#ff3343" }}
+              hideHeader={true}
             />
 
-            <Grid container>
+            {/* Currency Selection - Commented Out */}
+            {/* <Grid container>
               <Grid item xs={12} className={clsx(classes.textRight)}>
                 <Box className={clsx(classes.p10)}>
                   {
@@ -271,8 +288,8 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose, jumpToStep = 1 }: any) =
                   }
                 </Box>
               </Grid>
-            </Grid>
-            <Grid container className={clsx(classes.payPerRecipientPlanDetail)}>
+            </Grid> */}
+            <Grid container className={clsx(classes.payPerRecipientPlanDetail, classes.mt15)}>
               <Grid item xs={5} className={clsx(classes.textLeft)}>
                 <Box className={clsx(classes.p10, classes.textCenter)}>
                   {
@@ -320,7 +337,7 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose, jumpToStep = 1 }: any) =
               </Grid>
             </Grid>
 
-            <Grid container>
+            {/* <Grid container>
               <Grid item xs={12} className={clsx(classes.textCenter)}>
                 <Box className={clsx(classes.p10)}>
                   {
@@ -356,7 +373,7 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose, jumpToStep = 1 }: any) =
                   }
                 </Box>
               </Grid>
-            </Grid>
+            </Grid> */}
           </Grid>
           <Grid item md={3}>
             <img
