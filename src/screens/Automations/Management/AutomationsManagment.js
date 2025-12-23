@@ -34,6 +34,9 @@ import { getLanguageCulture } from '../../../helpers/Utils/TextHelper';
 import TierPlans from '../../../components/TierPlans/TierPlans';
 import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
 import { get } from 'lodash';
+import PayPerRecipientNew from '../../../components/PayPerRecipient/PayPerRecipientNew';
+import GenericModal from '../../HtmlCampaign/modals/GenericModal';
+import { DialogType } from '../../HtmlCampaign/helper/Config';
 
 
 const AutomationsManagnentScreen = ({ classes }) => {
@@ -59,6 +62,11 @@ const AutomationsManagnentScreen = ({ classes }) => {
   const [showTierPlans, setShowTierPlans] = useState(false);
   const [TierMessageCode, setTierMessageCode] = useState('');
   const { currentPlan, availablePlans } = useSelector((state) => state.tiers);
+  const [genericModalData, setGenericModalData] = useState({
+    title: "",
+    message: ""
+  })
+  const [ isOpenPayPerRecipient, setIsOpenPayPerRecipient ] = useState(false);
   const dispatch = useDispatch()
   moment.locale(language)
 
@@ -583,16 +591,65 @@ const AutomationsManagnentScreen = ({ classes }) => {
     }
   }
 
+  const processSummaryResponse = (StatusCode) => {
+    if (StatusCode === 553) {
+      setGenericModalData({
+        title: t('campaigns.newsLetterEditor.errors.paymentfailed553Title'),
+        message: t("campaigns.newsLetterEditor.errors.paymentfailed553Desc"),
+        onConfirm: () => {},
+        onCancel: () => setDialogType(null),
+        onClose: () => setDialogType(null),
+        showDefaultButtons: false,
+        renderButtons: () => (
+        <Grid
+          container
+          spacing={2}
+          className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+        >
+          <Grid item>
+            <Button
+              onClick={() => {
+                setDialogType(null)
+                setIsOpenPayPerRecipient(true);
+              }}
+              className={clsx(
+                classes.btn,
+                classes.btnRounded
+              )}>
+              {t('campaigns.newsLetterEditor.errors.paymentfailed553Button')}
+            </Button>
+          </Grid>
+        </Grid>
+        )
+      });
+      setDialogType({ type: DialogType.GENERIC });
+    } else if (StatusCode === 552) {
+      setGenericModalData({
+        title: t('campaigns.newsLetterEditor.errors.paymentfailed552Title'),
+        message: t("campaigns.newsLetterEditor.errors.paymentProcessing552Desc"),
+        onConfirm: () => {},
+        onCancel: () => setDialogType(null),
+        onClose: () => setDialogType(null),
+        showDefaultButtons: false,
+      });
+      setDialogType({ type: DialogType.GENERIC });
+    }
+  }
+
   const handleActiveChange = (data, isEdit = false) => async () => {
     try {
+      setLoader(true);
       const response = await dispatch(activateAutomation({ ID: data.ID }))
       const resJ = JSON.parse(response.payload.d);
       
+      setLoader(false);
       // Handle response status codes
       if (resJ.StatusCode === 927) {
         setTierMessageCode(resJ.Message);
         setDialogType({ type: 'tier' });
         return;
+      } else if ([552, 553].indexOf(resJ.StatusCode)) {
+        processSummaryResponse(resJ.StatusCode);
       } else if (resJ.StatusCode !== 1) {
         setErrorMessage(`${resJ.StatusMessage} <br/>${t('automations.pressHereToEditAutomation').replace('##', data.ID)}`);
         setDialogType({
@@ -600,12 +657,13 @@ const AutomationsManagnentScreen = ({ classes }) => {
           data: data
         })
         return;
+      } else {
+        getData()
+        if (isEdit)
+          Redirect({ url: `/Pulseem/CreateAutomations.aspx?AutomationID=${data.ID}&fromreact=true`, openNewTab: true })
       }
-
-      getData()
-      if (isEdit)
-        Redirect({ url: `/Pulseem/CreateAutomations.aspx?AutomationID=${data.ID}&fromreact=true`, openNewTab: true })
     } catch (err) {
+      setLoader(false);
       setDialogType({
         type: "statusError",
         data: data.ID
@@ -841,6 +899,8 @@ const getTierValidationDialog = () => ({
 
   const renderDialog = () => {
 
+    if (dialogType?.type === DialogType.GENERIC) return false;
+
     const { data, type } = dialogType || {}
 
     const dialogContent = {
@@ -880,6 +940,19 @@ const getTierValidationDialog = () => ({
       {renderTable()}
       {renderTablePadington()}
       {renderDialog()}
+      <GenericModal
+        classes={classes}
+        modalData={genericModalData}
+        isOpen={dialogType?.type === DialogType.GENERIC}
+      />
+      <PayPerRecipientNew
+        classes={classes}
+        isOpen={isOpenPayPerRecipient}
+        onClose={() => {
+          setIsOpenPayPerRecipient(false);
+        }}
+        jumpToStep={2}
+      />
       <Loader isOpen={showLoader} />
       {showTierPlans && <TierPlans
         classes={classes}

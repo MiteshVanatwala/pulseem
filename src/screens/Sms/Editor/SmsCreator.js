@@ -293,10 +293,10 @@ const SmsCreator = ({ classes }) => {
         setDialogType({ type: "englishLetterDialog" });
         break;
       }
-      case 550:
-      case 551:
+      case 550: {
         setDialogType({ type: "pendingApprovalDialog" });
         break;
+      }
       case 9271: {
         setTierMessageCode('SMS_BASIC');
         setDialogType({ type: 'tier' });
@@ -312,6 +312,9 @@ const SmsCreator = ({ classes }) => {
         setDialogType({ type: 'tier' });
         break;
       }
+      case 551:
+        setDialogType({ type: "underReviewDialog" });
+        break;
       default:
       case 5: {// ACCEPTED
         break;
@@ -2140,6 +2143,25 @@ const SmsCreator = ({ classes }) => {
     }
   }
 
+  const underReviewDialog = () => {
+    return {
+      title: t('campaigns.newsLetterEditor.errors.pendingApproval'),
+      disableBackdropClick: true,
+      icon: (
+        <AiOutlineExclamationCircle />
+      ),
+      content: (
+        <Box>
+          <Typography className={classes.f18}>{t("campaigns.newsLetterEditor.errors.PendingApproval551Desc")}</Typography>
+        </Box>
+      ),
+      showDefaultButtons: true,
+      onClose: () => { setDialogType(null) },
+      onCancel: () => { setDialogType(null) },
+      onConfirm: () => { setDialogType(null) }
+    }
+  }
+
   const renderDialog = () => {
     const { type, data, isOnlySave, returnToAutomation } = dialogType || {}
 
@@ -2157,7 +2179,8 @@ const SmsCreator = ({ classes }) => {
       englishLetterDialog: englishLetterNotAllowed(),
       dynamicProduct: dynamicProductDialog(),
       pendingApprovalDialog: pendingApprovalDialog(),
-      tier: getTierValidationDialog()
+      tier: getTierValidationDialog(),
+      underReviewDialog: underReviewDialog(),
     }
 
     const currentDialog = dialogContent[type] || {}

@@ -4308,6 +4308,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     alignItems: 'center',
     flexDirection: 'row'
   },
+  mInline5: {
+    marginInline: 5
+  },
   mInline15: {
     marginInline: 15
   },
@@ -4974,5 +4977,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       color: '#fff',
       fontSize: '14px'
     }
-  }
+  },
+  frozenCampaignsContainer: {
+    marginBottom: theme.spacing(3),
+  },
 });
