@@ -4974,5 +4974,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       color: '#fff',
       fontSize: '14px'
     }
+  },
+   pulseCheckbox: {
+    padding: isRTL ? '4px 0px 4px 8px' : '4px 8px 4px 0px'
   }
 });
