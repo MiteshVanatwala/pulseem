@@ -61,6 +61,7 @@ import Pulse from "../../../components/Pulse/Pulse";
 import TierPlans from "../../../components/TierPlans/TierPlans";
 import { DateFormats, TierFeatures } from "../../../helpers/Constants";
 import { get } from "lodash";
+import { Close } from "@material-ui/icons";
 
 function Alert(props) {
   return <MuiAlert elevation={0} variant='filled' {...props} />;
@@ -454,6 +455,21 @@ const SmsSend = ({ classes, ...props }) => {
       setSelected([]);
     }
     setAllGroupsSelected(!allGroupsSelected);
+  };
+
+  const handleCancelPulse = () => {
+    setPulseAmount("");
+    setTimeInterval("");
+    setPulseType(2);
+    setrandom("");
+    setpulsePer("recipients");
+    setpulseReci("Recipients");
+    setminName("mins");
+    sethourName("Hours");
+    settogglePulse(false);
+    settoggleRandom(false);
+    setTimeType(1);
+    setDialogType(null);
   };
 
   const handleSendType = (event) => {
@@ -1338,6 +1354,22 @@ const SmsSend = ({ classes, ...props }) => {
           >
             <IconButton style={{ padding: 0, marginInlineStart: 10 }} className={clsx(classes.icon_Info, classes.f20)} aria-label={t("mainReport.toolTip1")}>
               <BsInfoCircle />
+            </IconButton>
+          </Tooltip>
+          <Tooltip
+            disableFocusListener
+            style={{ marginInlineEnd: isRTL ? 5 : 0, marginInlineStart: 5 }}
+            title={t("smsReport.pulseCancel")}
+            classes={{ tooltip: classes.customWidth }}
+            className={clsx(classes.ml5, classes.mt1)}
+          >
+            <IconButton
+              style={{ padding: 0, marginInlineStart: 10 }}
+              className={clsx(classes.icon_Info, classes.f20)}
+              aria-label={t("smsReport.pulseCancel")}
+              onClick={() => setDialogType({ type: "cancelPulse" })}
+            >
+              <Close />
             </IconButton>
           </Tooltip>
         </div>
@@ -2400,6 +2432,29 @@ const SmsSend = ({ classes, ...props }) => {
     }
   }
 
+  const cancelPulseDialog = () => {
+    return {
+      title: t('smsReport.pulseCancel'),
+      confirmText: t("common.Yes"),
+      cancelText: t("common.cancel"),
+      disableBackdropClick: true,
+      icon: (
+        <AiOutlineExclamationCircle />
+      ),
+      content: (
+        <Box className={classes.bodyTextDialog}>
+          <Typography>
+            {t("smsReport.confirmCancelPulse")}
+          </Typography>
+        </Box>
+      ),
+      showDefaultButtons: true,
+      onClose: () => { setDialogType(null); },
+      onCancel: () => { setDialogType(null); },
+      onConfirm: () => { handleCancelPulse() }
+    }
+  }
+
   const pendingApprovalDialog = (code = 550) => {
     return {
       title: t('campaigns.newsLetterEditor.errors.pendingApproval'),
@@ -2524,7 +2579,8 @@ const SmsSend = ({ classes, ...props }) => {
       noCredit: noCreditDialog(),
       englishLetterDialog: englishLetterNotAllowed(),
       pendingApprovalDialog: pendingApprovalDialog(data),
-      tier: getTierValidationDialog()
+      tier: getTierValidationDialog(),
+      cancelPulse: cancelPulseDialog()
     }
 
     const currentDialog = dialogContent[type] || {}
