@@ -53,7 +53,7 @@ const BillingDetails = ({ classes, onSuccess = () => {} }: any) => {
   const [errors, setErrors] = useState<BillingErrorTypes>({
     CompanyName: "",
     EmailForInvoices: "",
-    CompRegNumber: ""
+    CompRegNumber: "",
   });
 
   const getData = async () => {
@@ -77,7 +77,13 @@ const BillingDetails = ({ classes, onSuccess = () => {} }: any) => {
       setErrors({ ...errors, CompanyName: '' });
     }
     if (e.target.name === 'CorporationNumber') {
-      setErrors({ ...errors, CompRegNumber: '' });
+      const value = e.target.value;
+      // Check if the value contains any non-numeric characters
+      if (value && !/^\d*$/.test(value)) {
+        setErrors({ ...errors, CompRegNumber: t('common.numbersAllowedOnly') });
+      } else {
+        setErrors({ ...errors, CompRegNumber: '' });
+      }
     }
     if (e.target.name === 'Email') {
       setErrors({ ...errors, EmailForInvoices: '' });
@@ -127,6 +133,10 @@ const BillingDetails = ({ classes, onSuccess = () => {} }: any) => {
     }
     if (!billingInfoValues?.CorporationNumber || billingInfoValues?.CorporationNumber === '') {
       tempErrors.CompRegNumber = t('common.requiredField');
+      isValid = false;
+    } else if (!/^\d+$/.test(billingInfoValues.CorporationNumber)) {
+      // Check if CorporationNumber contains any non-numeric characters
+      tempErrors.CompRegNumber = t('common.numbersAllowedOnly');
       isValid = false;
     }
     if (!billingInfoValues?.Email || billingInfoValues?.Email === '') {
@@ -264,7 +274,7 @@ const BillingDetails = ({ classes, onSuccess = () => {} }: any) => {
         <TextField
           name="CorporationNumber"
           value={billingInfoValues?.CorporationNumber}
-          onKeyPress={IsNumberField}
+          // onKeyPress={IsNumberField}
           onChange={onBeforeUpdate}
           className={clsx(classes.textField, classes.minWidth252, errors.CompRegNumber !== '' && classes.error)}
           error={!!errors.CompRegNumber}
