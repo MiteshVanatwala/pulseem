@@ -242,8 +242,8 @@ const BillingDetails = ({ classes, onSuccess = () => {} }: any) => {
           <>{t("common.telephone")}</>
         </Typography>
         <TextField
-          name="CellPhone"
-          value={billingInfoValues?.CellPhone}
+          name="OfficePhoneNumber"
+          value={billingInfoValues?.OfficePhoneNumber}
           onKeyPress={IsNumberField}
           onChange={onBeforeUpdate}
           className={clsx(classes.textField, classes.minWidth252)}
@@ -254,8 +254,8 @@ const BillingDetails = ({ classes, onSuccess = () => {} }: any) => {
           <>{t("settings.accountSettings.fixedComDetails.fields.mobile")}</>
         </Typography>
         <TextField
-          name="OfficePhoneNumber"
-          value={billingInfoValues?.OfficePhoneNumber}
+          name="CellPhone"
+          value={billingInfoValues?.CellPhone}
           onKeyPress={IsNumberField}
           onChange={onBeforeUpdate}
           className={clsx(classes.textField, classes.minWidth252)}
