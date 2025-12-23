@@ -1,6 +1,6 @@
 import { BaseSyntheticEvent, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, TextField } from '@material-ui/core';
+import { Link, TextField, Tooltip } from '@material-ui/core';
 import { Box, Grid, Button } from '@material-ui/core';
 import {
 	CampaignDetailByIdData,
@@ -481,28 +481,40 @@ const SummaryModal = ({
 															]?.name
 														)}`}
 													</span>
-													<CustomTooltip
-														isSimpleTooltip={false}
-														arrow={true}
-														style={{
-															fontSize: 14,
+													<Tooltip
+														arrow
+														interactive
+														placement={'top'}
+														PopperProps={{
+															disablePortal: true,
+														}}
+														classes={{
+															tooltip: classes.tooltipContent,
+															arrow: classes.tooltipArrow
+														}}
+														title={
+															<>
+																<span style={{
+																	direction: isRTL ? 'rtl' : 'ltr',
+																	width: '100%',
+																	display: 'inline-block',
+																}}>
+																	{getTierInfoTooltip()}
+																</span>
+															</>
+														}
+													>
+														<span style={{
+															fontSize: 16,
 															width: 'auto',
 															paddingLeft: isRTL ? '0px' : '5px',
 															paddingRight: isRTL ? '5px' : '0px',
-															display: 'inline-flex'
-														}}
-														classes={classes}
-														interactive={true}
-														placement={'top'}
-														title={getTierInfoTooltip()}
-														// @ts-ignore
-														titleStyle={{
-															width: '100%',
-															display: 'inline-block',
-														}}
-														text={<span className={classes.bodyInfo}>i</span>}
-														icon={undefined}>
-													</CustomTooltip>
+															display: 'inline-flex',
+															cursor: 'pointer'
+														}}>
+															<span className={classes.bodyInfo}>i</span>
+														</span>
+													</Tooltip>
 												</div>
 											</div>
 										</Box>
