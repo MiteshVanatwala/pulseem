@@ -233,7 +233,8 @@
     "noCardsDescription": "You haven't added any credit cards yet. Add your first card to get started.",
     "addFirstCard": "Add Your First Card",
     "note": "Note",
-    "securityNote": "Your credit card information is securely encrypted and stored. We never store your full card number or CVV."
+    "securityNote": "Your credit card information is securely encrypted and stored. We never store your full card number or CVV.",
+    "selectCreditCard": "Select Credit Card"
   },
   "featureNames": {
     "EMAIL_BASIC": "Basic Email Campaigns",

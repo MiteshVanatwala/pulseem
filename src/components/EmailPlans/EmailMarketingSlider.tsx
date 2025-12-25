@@ -151,6 +151,13 @@ const EmailMarketingSlider = ({
   const currentIndex = getCurrentTierIndex();
   const minValue = controlledMin !== undefined ? controlledMin : 0;
   const maxValue = controlledMax !== undefined ? controlledMax : (tiers.length - 1);
+  
+  // Calculate percentage for filled track
+  const getFilledPercentage = () => {
+    if (tiers.length === 0) return 0;
+    if (maxValue <= minValue) return 0;
+    return (currentIndex / (tiers.length - 1)) * 100;
+  };
 
   if (!isControlled && (loading || tiers.length === 0)) {
     return null;
@@ -190,7 +197,7 @@ const EmailMarketingSlider = ({
                 classes.sliderTrackFilled,
                 { [classes.sliderTrackFilledRTL]: isRTL }
               )}
-              style={{ width: `${maxValue > 0 ? (currentIndex / maxValue) * 100 : 0}%` }}
+              style={{ width: `${getFilledPercentage()}%` }}
             />
 
             {/* Slider Thumb */}

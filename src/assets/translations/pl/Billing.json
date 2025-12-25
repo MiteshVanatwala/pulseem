@@ -205,7 +205,8 @@
     "noCardsDescription": "Nie dodałeś jeszcze żadnych kart kredytowych. Dodaj swoją pierwszą kartę, aby rozpocząć.",
     "addFirstCard": "Dodaj swoją pierwszą kartę",
     "note": "Uwaga",
-    "securityNote": "Informacje o Twojej karcie kredytowej są bezpiecznie zaszyfrowane i przechowywane. Nigdy nie przechowujemy pełnego numeru karty ani kodu CVV."
+    "securityNote": "Informacje o Twojej karcie kredytowej są bezpiecznie zaszyfrowane i przechowywane. Nigdy nie przechowujemy pełnego numeru karty ani kodu CVV.",
+    "selectCreditCard": "Wybierz kartę kredytową"
   },
   "featureNames": {
     "EMAIL_BASIC": "Basic Email Campaigns",
