@@ -34,6 +34,7 @@ const BulkStatus = ({ classes }) => {
   const { accountSettings, accountFeatures, isGlobal, IsPoland, accountCurrencySymbol, accountIsCurrencySymbolPrefix } = useSelector(state => state.common);
   const { packagesDetails, accountAvailablePackages } = useSelector(state => state.dashboard);
   const { billing: { Data: billingDetail } } = useSelector(state => state.billing);
+  const { currentPlan } = useSelector((state) => state.tiers);
   const [ isOpenPackageDialog, setIsOpenPackageDialog ] = useState(false);
   const [ isOpenAddCardDialog, setIsOpenAddCardDialog ] = useState(false);
   const [ isOpenUnsubscribeDialog, setIsOpenUnsubscribeDialog ] = useState(false);
@@ -374,7 +375,7 @@ const BulkStatus = ({ classes }) => {
             <Grid
               container
               item sm={12} md={12} lg={12} xl={12}
-              className={clsx(classes.flex, classes.mt2, classes.mb2, classes.paddingSides15)}
+              className={clsx(classes.flex, classes.mt2, isAllowNewsletterSubscription && Newsletters?.IsEmailTierSubscribed ? classes.mb1 : classes.mb2, classes.paddingSides15)}
               justifyContent='space-between'
             >
               <Grid item md={5} xs={4}>
@@ -408,31 +409,7 @@ const BulkStatus = ({ classes }) => {
                   !IsPoland && (Newsletters.eBillingType === 0 || Newsletters.eBillingType === 2) && (
                     <>
                       {
-                        isAllowNewsletterSubscription && Newsletters?.IsEmailTierSubscribed ? (
-                          <>
-                            <IconButton
-                              className={clsx(classes.redButtonLink)}
-                              onClick={() => {
-                                setIsOpenEmailTierPlans(true);
-                              }}
-                              size="medium"
-                              disableRipple
-                            >
-                              <MdOutlineModeEdit />
-                            </IconButton>
-                            <IconButton
-                              className={clsx(classes.redButtonLink)}
-                              onClick={() => {
-                                setIsOpenCancelConfirmDialog(true);
-                              }}
-                              size="medium"
-                              disableRipple
-                            >
-                              <MdOutlineCancel />
-                            </IconButton>
-                          </>
-                        )
-                        : (
+                        !isAllowNewsletterSubscription && !Newsletters?.IsEmailTierSubscribed && (
                           <Button
                             className={clsx(classes.btn, classes.btnRounded, classes.f12)}
                             onClick={() => {
@@ -490,6 +467,52 @@ const BulkStatus = ({ classes }) => {
                   )
                 }
               </Grid>
+                {
+                  !IsPoland && (Newsletters.eBillingType === 0 || Newsletters.eBillingType === 2) && (
+                    <>
+                      {
+                        isAllowNewsletterSubscription && Newsletters?.IsEmailTierSubscribed ?
+                          (
+                            <>
+                              <Divider className={clsx(classes.rocketImage, classes.mt1)} />
+                              <Grid container className={clsx(classes.mt1)} alignItems='center'>
+                                <Grid item xs={5}>
+                                  <Typography className={clsx(classes.sliderLabelText, classes.f18, classes.mlr30, classes.pl5)}>{currentPlan?.Name}</Typography>
+                                </Grid>
+                                 <Grid item xs={7} className={clsx(classes.justifyContentEnd)}>
+                                  <Button
+                                    className={clsx(
+                                      classes.btn,
+                                      classes.btnRounded,
+                                      classes.marginSides5,
+                                      classes.smallButton
+                                    )}
+                                    onClick={() => {
+                                      setIsOpenEmailTierPlans(true);
+                                    }}
+                                  >
+                                    {t('billing.tier.steps.upgrade')}
+                                  </Button>
+                                  <Button
+                                    className={clsx(
+                                      classes.btn,
+                                      classes.btnRounded,
+                                      classes.smallButton
+                                    )}
+                                    onClick={() => {
+                                      setIsOpenCancelConfirmDialog(true);
+                                    }}
+                                  >
+                                    {t('common.cancel')}
+                                  </Button>
+                                </Grid>
+                              </Grid>
+                            </>
+                          ) : null
+                      }
+                    </>
+                  )
+                }
             </Grid>
           <Divider />
 

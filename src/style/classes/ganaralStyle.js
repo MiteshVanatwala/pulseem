@@ -5087,5 +5087,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     borderRadius: '12px',
     padding: 12,
     textAlign: 'center'
+  },
+  smallButton: {
+    minHeight: 'auto',
+    fontSize: '10px !important'
   }
 });
