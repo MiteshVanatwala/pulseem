@@ -896,5 +896,53 @@
   "presetQuestion1": "Analyze my latest campaign",
   "presetQuestion2": "How to increase opens and clicks?",
   "presetQuestion3": "Create a VIP customer segment for me",
-  "presetQuestion4": "Create a segment of customers who open but don’t click"
+  "presetQuestion4": "Create a segment of customers who open but don't click",
+  "numbersAllowedOnly": "Only numbers are allowed",
+  "helpDrawer": {
+    "title": "Need help?",
+    "subtitle": "We've got everything you need right here.",
+    "searchPlaceholder": "Search for help",
+    "tabs": {
+      "support": "Support",
+      "whatsNew": "What's New"
+    },
+    "helpCenter": {
+      "title": "Help Center",
+      "description": "Find answers, tips, and troubleshooting in our articles."
+    },
+    "supportTickets": {
+      "title": "Support and Tickets",
+      "description": "Make a request to our support team to get help, and find all your tickets."
+    },
+    "hireAgency": {
+      "title": "Hire an agency",
+      "description": "Looking for help with a project? We can match you with the right certified Agency partner."
+    },
+    "apiDocs": {
+      "title": "API documentation",
+      "description": "Use our APIs to unlock the power of Pulseem."
+    },
+    "community": {
+      "title": "Community",
+      "description": "Discuss with other users to know how to get the best out of Pulseem."
+    },
+    "news": {
+      "item1": {
+        "title": "New Feature: AI-Powered Campaigns",
+        "description": "We've launched a new AI feature to help you create better campaigns with personalized content suggestions."
+      },
+      "item2": {
+        "title": "System Maintenance Scheduled",
+        "description": "Scheduled maintenance on December 25th from 2 AM to 4 AM EST. Services may be temporarily unavailable."
+      },
+      "item3": {
+        "title": "Enhanced Analytics Dashboard",
+        "description": "Check out our newly redesigned analytics dashboard with more insights and better visualization."
+      }
+    },
+    "bottomNav": {
+      "resourceCenter": "Resource Center",
+      "news": "News"
+    }
+  }
 }
