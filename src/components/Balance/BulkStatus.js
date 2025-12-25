@@ -476,10 +476,27 @@ const BulkStatus = ({ classes }) => {
                             <>
                               <Divider className={clsx(classes.rocketImage, classes.mt1)} />
                               <Grid container className={clsx(classes.mt1)} alignItems='center'>
-                                <Grid item xs={5}>
-                                  <Typography className={clsx(classes.sliderLabelText, classes.f18, classes.mlr30, classes.pl5)}>{currentPlan?.Name}</Typography>
+                                <Grid item md={5} xs={4}>
+                                  <Typography className={clsx(classes.bulkTitle, classes.mlr30, classes.pl5)}>{t('billing.plan')}</Typography>
                                 </Grid>
-                                 <Grid item xs={7} className={clsx(classes.justifyContentEnd)}>
+                                <Grid item md={3} xs={4} className={clsx(classes.paddingSides10, windowSize === 'xs' ? classes.textRight : '')}>
+                                  {
+                                    <Tooltip
+                                      title={currentPlan?.Name}
+                                      placement='top-start'
+                                      interactive={true}
+                                      classes={{
+                                        tooltip: clsx(classes.tooltipPrimary, classes.f12),
+                                        arrow: classes.colrPrimary
+                                      }}
+                                    >
+                                      <Typography className={clsx(classes.bold, classes.elipsis)}>
+                                        {currentPlan?.Name}
+                                      </Typography>
+                                    </Tooltip>
+                                  }
+                                </Grid>
+                                 <Grid item md={4} xs={4} className={clsx(classes.justifyContentEnd)}>
                                   <Button
                                     className={clsx(
                                       classes.btn,

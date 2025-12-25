@@ -46,6 +46,7 @@
   "multipleInvoiceTypeMessage": "It is not possible to pay a transaction invoice and a tax invoice in the same payment<br/><br/>You can pay <b>transaction invoices or tax invoices separately.</b><br/><br/>For more information, please contact support with Reg the payment<br/><a href=\"tel:035240290\">03-5240290</a><br/><a href=\"mailto:support@pulseem.com\">support@pulseem.com </a>",
   "creditCardPurchase": "Credit Card Purchase",
   "yourPlan": "Your Plan",
+  "plan": "Plan",
   "upgradePlan": "UPGRADE PLAN",
   "cancelPlan": "CANCEL PLAN",
   "upTo": "Up to",

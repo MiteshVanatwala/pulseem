@@ -5090,6 +5090,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   smallButton: {
     minHeight: 'auto',
-    fontSize: '10px !important'
+    fontSize: '9px !important',
+    padding: '0px 6px',
+    minWidth: 'auto',
   }
 });

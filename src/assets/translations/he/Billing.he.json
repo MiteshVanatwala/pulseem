@@ -46,6 +46,7 @@
   "multipleInvoiceTypeMessage": "לא ניתן לשלם חשבונית עסקה וחשבונית מס באותו התשלום<br/><br/>באפשרותכם לשלם <b>חשבוניות עסקה או חשבוניות מס בנפרד.</b><br/><br/>למידע נוסף אנא פנו לתמיכה ע”מ להסדיר את התשלום<br/><a href=\"tel:035240290\">03-5240290</a><br/><a href=\"mailto:support@pulseem.com\">support@pulseem.com</a>",
   "creditCardPurchase": "רכישת קרדיטים באשראי",
   "yourPlan": "התוכנית שלך",
+  "plan": "תוכנית",
   "upgradePlan": "שדרוג חבילה",
   "cancelPlan": "ביטול חבילה",
   "upTo": "עד",

@@ -45,6 +45,8 @@
   "priceWithoutVAT": "Cena bez VAT",
   "multipleInvoiceTypeMessage": "Nie można opłacić faktury transakcyjnej i faktury VAT w tej samej płatności<br/><br/>Możesz opłacić <b>faktury transakcyjne lub faktury VAT oddzielnie.</b><br/><br/>Aby uzyskać więcej informacji, skontaktuj się z obsługą w sprawie płatności<br/><a href=\"tel:+972-3-5240290\">+972-3-5240290</a><br/><a href=\"mailto:support@pulseem.com\">support@pulseem.com </a>",
   "creditCardPurchase": "Zakup kartą kredytową",
+  "yourPlan": "Twój plan",
+  "plan": "Plan",
   "tier": {
     "plans": {
       "starter": {
