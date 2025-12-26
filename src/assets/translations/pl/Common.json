@@ -892,5 +892,16 @@
   "presetQuestion2": "Jak zwiększyć otwarcia i kliknięcia?",
   "presetQuestion3": "Utwórz dla mnie grupę klientów VIP",
   "presetQuestion4": "Utwórz grupę klientów, którzy otwierają, ale nie klikają",
-  "numbersAllowedOnly": "Dozwolone są tylko cyfry"
+  "numbersAllowedOnly": "Dozwolone są tylko cyfry",
+  "activeTierSubscription": "Account already has an active email tier subscription.",
+  "Submit": "Wyślij",
+  "customPackageQuote": "Nie wysyłasz co miesiąc? Poproś o wycenę niestandardowego pakietu",
+  "getStarted": "Zaczynajmy!",
+  "fillDetails": "Wypełnij swoje dane, a wkrótce się z Tobą skontaktujemy",
+  "enterMessage": "Wprowadź wiadomość",
+  "contactUsSuccess": "Twoja wiadomość została pomyślnie wysłana",
+  "upgrade": "Ulepsz",
+  "cancelPlan": "Anuluj plan",
+  "cancelPlanConfirmation": "Czy na pewno chcesz anulować swój obecny plan?",
+  "planCancellationRequestSubmitted": "Twoje żądanie anulowania planu zostało pomyślnie przesłane."
 }

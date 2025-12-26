@@ -50,6 +50,8 @@ export interface UpgradePlanRequest {
     Type: string;
     TierID?: number;
     PackageID?: number;
+    EmailTierScaleID?: number;
+    IsBankTransferForTiers?: boolean;
 }
 
 export interface RestoreAutomationRequest {
@@ -62,4 +64,11 @@ export interface SubscriptionCardIframeRequest {
     isNewSubscription: boolean;
     tierId: number;
     emailTierScaleId?: number;
+}
+
+export interface ContactSalesRequest {
+    Name: string;
+    Email: string;
+    Cellphone: string;
+    Message: string;
 }

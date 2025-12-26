@@ -18,6 +18,10 @@ interface EmailMarketingSliderProps {
   max?: number;
   // Optional: hide header in controlled mode
   hideHeader?: boolean;
+  // Uncontrolled mode props
+  onTierChange?: (tierData: any) => void;
+  setShowContactDialog?: (show: boolean) => void;
+  initialSliderValue?: number | string;
 }
 
 const EmailMarketingSlider = ({ 
@@ -28,13 +32,22 @@ const EmailMarketingSlider = ({
   disabled = false,
   min: controlledMin,
   max: controlledMax,
-  hideHeader = false
+  hideHeader = false,
+  onTierChange,
+  setShowContactDialog,
+  initialSliderValue
 }: EmailMarketingSliderProps) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { isRTL } = useSelector((state: any) => state.core);
   const { currencyId } = useSelector((state: any) => state.common);
   const { tiers: apiTiers, loading } = useSelector((state: any) => state.emailTierScaling);
+  
+  const selectedApiTier = apiTiers && apiTiers.find((t: any) => {
+    const id = t && (t.Id ?? t.id);
+    const target = typeof initialSliderValue === 'string' ? parseInt(initialSliderValue, 10) : initialSliderValue;
+    return id === target;
+  });
 
   // Use controlled value if provided, otherwise use internal state
   const [internalValue, setInternalValue] = useState(0);
@@ -52,6 +65,38 @@ const EmailMarketingSlider = ({
     if (!apiTiers || apiTiers.length === 0) return [];
     return _.uniqBy(apiTiers, 'LevelHigh');
   }, [apiTiers]);
+
+  // If an initialSliderValue (Id) is provided, find the matching object
+  // in `apiTiers`, get its LevelHigh and then find the corresponding
+  // index in `uniqueTierRanges` so we can set the slider value to that
+  // deduplicated tier index.
+  useEffect(() => {
+    if (initialSliderValue == null) return;
+    if (!apiTiers || apiTiers.length === 0) return;
+    if (!uniqueTierRanges || uniqueTierRanges.length === 0) return;
+
+    const target = typeof initialSliderValue === 'string'
+      ? parseInt(initialSliderValue, 10)
+      : initialSliderValue;
+
+    const matchedApiTier = apiTiers.find((t: any) => {
+      const id = t && (t.Id ?? t.id);
+      return id === target;
+    });
+
+    if (!matchedApiTier) return;
+
+    const levelHigh = matchedApiTier.LevelHigh ?? matchedApiTier.levelHigh;
+
+    const foundIndex = uniqueTierRanges.findIndex((t: any) => {
+      const lh = t && (t.LevelHigh ?? t.levelHigh);
+      return lh === levelHigh;
+    });
+
+    if (foundIndex !== -1) {
+      setInternalValue(foundIndex);
+    }
+  }, [initialSliderValue, apiTiers, uniqueTierRanges]);
 
   const tiers = useMemo(() => {
     // Use controlled marks if provided
@@ -88,6 +133,12 @@ const EmailMarketingSlider = ({
       };
     });
   }, [uniqueTierRanges, controlledMarks]);
+
+   useEffect(() => {
+    if (onTierChange && tiers.length > 0 && tiers[sliderValue]) {
+      onTierChange(tiers[sliderValue].tierData);
+    }
+  }, [sliderValue, tiers, onTierChange]);
 
   const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = parseInt(e.target.value);
@@ -284,6 +335,14 @@ const EmailMarketingSlider = ({
           </Box>
         </Box>
       </Box>
+      {setShowContactDialog && (
+        <Typography variant="body1" className={clsx(classes.marginSides5)}>
+          {t('common.customPackageQuote')}
+          <span onClick={() => setShowContactDialog(true)} className={clsx(classes.textUnderlineDialogButton)}>
+            {t('common.contactUs')}
+          </span>
+        </Typography>
+      )}
     </Box>
   );
 };

@@ -7,7 +7,7 @@ import { getPackagesDetails } from '../../redux/reducers/dashboardSlice';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
-import { MdArrowBackIos, MdArrowForwardIos, MdSupportAgent } from 'react-icons/md';
+import { MdArrowBackIos, MdArrowForwardIos, MdOutlineCancel, MdOutlineModeEdit, MdSupportAgent } from 'react-icons/md';
 import { BellIcon, WhatsappIcon, SmsIcon, CardIcon, NewsletterIcon } from '../../assets/images/dashboard/index'
 import { TooltipBubble } from '../../assets/images/dashboard/index';
 import { BaseDialog } from '../DialogTemplates/BaseDialog';
@@ -25,12 +25,16 @@ import { BiCog } from 'react-icons/bi';
 import { getAccountBilling } from '../../redux/reducers/BillingSlice';
 import BillingSettings from '../BillingSettings/BillingSettings';
 import TierPlans from '../TierPlans/TierPlans';
+import { contactSalesForScale } from '../../redux/reducers/TiersSlice';
+import { getAccountSettings } from '../../redux/reducers/AccountSettingsSlice';
+import { Loader } from '../Loader/Loader';
 
 const BulkStatus = ({ classes }) => {
   const { billingTypeId, windowSize, isRTL } = useSelector(state => state.core)
   const { accountSettings, accountFeatures, isGlobal, IsPoland, accountCurrencySymbol, accountIsCurrencySymbolPrefix } = useSelector(state => state.common);
   const { packagesDetails, accountAvailablePackages } = useSelector(state => state.dashboard);
   const { billing: { Data: billingDetail } } = useSelector(state => state.billing);
+  const { currentPlan } = useSelector((state) => state.tiers);
   const [ isOpenPackageDialog, setIsOpenPackageDialog ] = useState(false);
   const [ isOpenAddCardDialog, setIsOpenAddCardDialog ] = useState(false);
   const [ isOpenUnsubscribeDialog, setIsOpenUnsubscribeDialog ] = useState(false);
@@ -40,6 +44,8 @@ const BulkStatus = ({ classes }) => {
   const [ toastMessage, setToastMessage ] = useState(null);
   const [ billingPopupCallback, setBillingPopupCallback ] = useState(null);
   const [ isOpenEmailTierPlans, setIsOpenEmailTierPlans ] = useState(false);
+  const [ isOpenCancelConfirmDialog, setIsOpenCancelConfirmDialog ] = useState(false);
+  const [ isLoader, setIsLoader ] = useState(false);
 
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -228,11 +234,46 @@ const BulkStatus = ({ classes }) => {
     return Newsletters?.FeatureAllowed && accountFeatures && accountFeatures?.indexOf(PulseemFeatures.PURCHASE_NEWSLETTER_PACKAGES) > -1 && billingTypeId !== "1" && isGlobal === true && IsPoland;
   }
 
+  const isAllowNewsletterSubscription = !Newsletters.IsPrepaid && accountAvailablePackages.filter((aa) => { return aa.CampaignType === 2 }).length === 0;
   const showPackageDialogType = async (packageType) => {
     setPackageType(packageType);
     setIsOpenPackageDialog(true);
   }
   
+  const handleCancelPlan = async () => {
+    try {
+      setIsLoader(true);
+      const accountData = await dispatch(getAccountSettings()).unwrap();
+      const account = accountData?.Data;
+
+      if (!account?.CompanyName || !account?.Email || !account?.CellPhone) {
+        setToastMessage({ severity: 'error', color: 'error', message: t('SubAccount.subAccountNotFound'), showAnimtionCheck: false });
+        setIsOpenCancelConfirmDialog(false);
+        return;
+      }
+
+      const request = {
+        Name: account?.CompanyName || '',
+        Email: account?.Email || '',
+        Cellphone: account?.CellPhone || '',
+        Message: 'Cancel plan request'
+      };
+
+      const result = await dispatch(contactSalesForScale(request)).unwrap();
+      setIsLoader(false);
+      if (result?.StatusCode === 200) {
+        setToastMessage({ severity: 'success', color: 'success', message: t('common.planCancellationRequestSubmitted'), showAnimtionCheck: false });
+        await dispatch(getPackagesDetails());
+      } else {
+        setToastMessage({ severity: 'error', color: 'error', message: result?.Message || t('common.Error'), showAnimtionCheck: false });
+      }
+    } catch (error) {
+      setToastMessage({ severity: 'error', color: 'error', message: t('WhatsappApiResponse.twilio.45350.description'), showAnimtionCheck: false });
+    } finally {
+      setIsOpenCancelConfirmDialog(false);
+    }
+  };
+
   const renderToast = () => {
     if (toastMessage) {
       setTimeout(() => {
@@ -331,118 +372,166 @@ const BulkStatus = ({ classes }) => {
             </Grid>
           </Grid>
           <Divider />
-          <Grid
-            container
-            item sm={12} md={12} lg={12} xl={12}
-            className={clsx(classes.flex, classes.mt2, classes.mb2, classes.paddingSides15)}
-            justifyContent='space-between'
-          >
-            <Grid item md={5} xs={4}>
-              <NewsletterIcon className={classes.shoppingCartIcon} />
-              <Typography className={classes.bulkTitle}>{t('appBar.newsletter.title')}</Typography>
-            </Grid>
+            <Grid
+              container
+              item sm={12} md={12} lg={12} xl={12}
+              className={clsx(classes.flex, classes.mt2, isAllowNewsletterSubscription && Newsletters?.IsEmailTierSubscribed ? classes.mb1 : classes.mb2, classes.paddingSides15)}
+              justifyContent='space-between'
+            >
+              <Grid item md={5} xs={4}>
+                <NewsletterIcon className={classes.shoppingCartIcon} />
+                <Typography className={classes.bulkTitle}>{t('appBar.newsletter.title')}</Typography>
+              </Grid>
 
-            <Grid item md={3} xs={4} className={clsx(classes.paddingSides10, windowSize === 'xs' ? classes.textRight : '')}>
-              {  
-                <Tooltip
-                  title={getBillingTypeText(Newsletters)}
-                  placement='top-start'
-                  interactive={true}
-                  classes={{
-                    tooltip: clsx(classes.tooltipPrimary, classes.f12),
-                    arrow: classes.colrPrimary
-                  }}
-                >
-                  <Typography
-                    className={clsx(classes.bold, classes.elipsis)}
-                    title={`${getBillingTypeText(Newsletters)} ${t('report.Credits')}`}
-                    aria-label={`${getBillingTypeText(Newsletters)} ${t('report.Credits')}`}>
-                    {getBillingTypeText(Newsletters)}
-                  </Typography>
-                </Tooltip>
-              }
-            </Grid>
-
-            <Grid item md={4} xs={4} className={isRTL ? classes.textLeft : classes.textRight}>
-              {
-                isAllowNewsletter() && (
-                  <Button
-                    className={clsx(classes.btn, classes.btnRounded, classes.f12)}
-                    onClick={() => {
-                      if (isBillingDetailsRequired) {
-                        setIsOpenBillingSettings(true);
-                        setBillingPopupCallback('Newsletter');
-                      } else {
-                        showPackageDialogType({ type: 2, title: t('common.newsletterBulkTitle') });
-                      }
+              <Grid item md={3} xs={4} className={clsx(classes.paddingSides10, windowSize === 'xs' ? classes.textRight : '')}>
+                {  
+                  <Tooltip
+                    title={getBillingTypeText(Newsletters)}
+                    placement='top-start'
+                    interactive={true}
+                    classes={{
+                      tooltip: clsx(classes.tooltipPrimary, classes.f12),
+                      arrow: classes.colrPrimary
                     }}
                   >
-                    {t('dashboard.purchase')}
-                    {isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-                  </Button>
-                )
-              }
-              {
-                isAllowNewsletterForPoland() && (
-                  <>
-                    {
-                      Newsletters.IsEmailPolandSubscribed ? (
-                        <>
-                          <IconButton className={clsx(classes.p5)} onClick={() => setIsOpenPayPerRecipient(true)}>
-                            <BiCog />
-                          </IconButton>
-                        </>
-                      ) : (
-                        <Button
-                          className={clsx(classes.btn, classes.btnRounded, classes.f12)}
-                          onClick={() => {
-                            if (isBillingDetailsRequired) {
-                              setIsOpenBillingSettings(true);
-                              setBillingPopupCallback('PayPerRecipient');
-                            } else setIsOpenPayPerRecipient(true)
-                          }}
-                        >
-                          {t(`common.${ !Newsletters.IsEmailPolandSubscribed ? 'SubscribeButton' : 'cancel'}`)}
-                          {isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-                        </Button>
-                      )
-                    }
-                  </>
-                )
-              }
+                    <Typography
+                      className={clsx(classes.bold, classes.elipsis)}
+                      title={`${getBillingTypeText(Newsletters)} ${t('report.Credits')}`}
+                      aria-label={`${getBillingTypeText(Newsletters)} ${t('report.Credits')}`}>
+                      {getBillingTypeText(Newsletters)}
+                    </Typography>
+                  </Tooltip>
+                }
+              </Grid>
+
+              <Grid item md={4} xs={4} className={isRTL ? classes.textLeft : classes.textRight}>
+                {
+                  !IsPoland && (Newsletters.eBillingType === 0 || Newsletters.eBillingType === 2) && (
+                    <>
+                      {
+                        !isAllowNewsletterSubscription && !Newsletters?.IsEmailTierSubscribed && (
+                          <Button
+                            className={clsx(classes.btn, classes.btnRounded, classes.f12)}
+                            onClick={() => {
+                              if (isAllowNewsletter()) {
+                                if (isBillingDetailsRequired) {
+                                  setIsOpenBillingSettings(true);
+                                  setBillingPopupCallback('Newsletter');
+                                } else {
+                                  showPackageDialogType({ type: 2, title: t('common.newsletterBulkTitle') });
+                                }
+                              } else if (isAllowNewsletterSubscription) {
+                                if (isBillingDetailsRequired) {
+                                  setIsOpenBillingSettings(true);
+                                  setBillingPopupCallback('EmailTier');
+                                } else {
+                                  setIsOpenEmailTierPlans(true);
+                                }
+                              }
+                            }}
+                          >
+                            {t('dashboard.purchase')}
+                            {isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+                          </Button>
+                        )
+                      }
+                    </>
+                  )
+                }
+                {
+                  isAllowNewsletterForPoland() && (
+                    <>
+                      {
+                        Newsletters.IsEmailPolandSubscribed ? (
+                          <>
+                            <IconButton className={clsx(classes.p5)} onClick={() => setIsOpenPayPerRecipient(true)}>
+                              <BiCog />
+                            </IconButton>
+                          </>
+                        ) : (
+                          <Button
+                            className={clsx(classes.btn, classes.btnRounded, classes.f12)}
+                            onClick={() => {
+                              if (isBillingDetailsRequired) {
+                                setIsOpenBillingSettings(true);
+                                setBillingPopupCallback('PayPerRecipient');
+                              } else setIsOpenPayPerRecipient(true)
+                            }}
+                          >
+                            {t(`common.${ !Newsletters.IsEmailPolandSubscribed ? 'SubscribeButton' : 'cancel'}`)}
+                            {isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+                          </Button>
+                        )
+                      }
+                    </>
+                  )
+                }
+              </Grid>
+                {
+                  !IsPoland && (Newsletters.eBillingType === 0 || Newsletters.eBillingType === 2) && (
+                    <>
+                      {
+                        isAllowNewsletterSubscription && Newsletters?.IsEmailTierSubscribed ?
+                          (
+                            <>
+                              <Divider className={clsx(classes.rocketImage, classes.mt1)} />
+                              <Grid container className={clsx(classes.mt1)} alignItems='center'>
+                                <Grid item md={5} xs={4}>
+                                  <Typography className={clsx(classes.bulkTitle, classes.mlr30, classes.pl5)}>{t('billing.plan')}</Typography>
+                                </Grid>
+                                <Grid item md={3} xs={4} className={clsx(classes.paddingSides10, windowSize === 'xs' ? classes.textRight : '')}>
+                                  {
+                                    <Tooltip
+                                      title={currentPlan?.Name}
+                                      placement='top-start'
+                                      interactive={true}
+                                      classes={{
+                                        tooltip: clsx(classes.tooltipPrimary, classes.f12),
+                                        arrow: classes.colrPrimary
+                                      }}
+                                    >
+                                      <Typography className={clsx(classes.bold, classes.elipsis)}>
+                                        {currentPlan?.Name}
+                                      </Typography>
+                                    </Tooltip>
+                                  }
+                                </Grid>
+                                 <Grid item md={4} xs={4} className={clsx(classes.justifyContentEnd)}>
+                                  <Button
+                                    className={clsx(
+                                      classes.btn,
+                                      classes.btnRounded,
+                                      classes.marginSides5,
+                                      classes.smallButton
+                                    )}
+                                    onClick={() => {
+                                      setIsOpenEmailTierPlans(true);
+                                    }}
+                                  >
+                                    {t('billing.tier.steps.upgrade')}
+                                  </Button>
+                                  <Button
+                                    className={clsx(
+                                      classes.btn,
+                                      classes.btnRounded,
+                                      classes.smallButton
+                                    )}
+                                    onClick={() => {
+                                      setIsOpenCancelConfirmDialog(true);
+                                    }}
+                                  >
+                                    {t('common.cancel')}
+                                  </Button>
+                                </Grid>
+                              </Grid>
+                            </>
+                          ) : null
+                      }
+                    </>
+                  )
+                }
             </Grid>
-          </Grid>
           <Divider />
-          
-          {
-            // Newsletters?.IsEmailTierSubscribed && (
-            //   <>
-            //     <Grid
-            //       container
-            //       item sm={12} md={12} lg={12} xl={12}
-            //       className={clsx(classes.flex, classes.mt2, classes.mb2, classes.paddingSides15)}
-            //       justifyContent='space-between'
-            //     >
-            //       <Grid item md={5} xs={4}>
-            //         <SmsIcon className={classes.shoppingCartIcon} />
-            //         <Typography className={clsx(classes.bulkTitle)}>{t('common.email')}</Typography>
-            //       </Grid>
-            //       <Grid item md={4} xs={4} className={isRTL ? classes.textLeft : classes.textRight}>
-            //         <Button
-            //           className={clsx(classes.btn, classes.btnRounded, classes.f12)}
-            //           onClick={() => {
-            //             setIsOpenEmailTierPlans(true); // This should open the dialog
-            //           }}
-            //         >
-            //           {t('dashboard.purchase')}
-            //           {isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-            //         </Button>
-            //       </Grid>
-            //     </Grid>
-            //     <Divider />
-            //   </>
-            // )
-          }
           {/* {
             isAllowNewsletterForPoland() && Newsletters.eBillingType === 2 && (
               <>
@@ -603,20 +692,23 @@ const BulkStatus = ({ classes }) => {
                 showPackageDialogType({ type: 2, title: t('common.newsletterBulkTitle') });
               } else if (billingPopupCallback === 'Email') {
                 setIsOpenEmailTierPlans(true);
+              } else if (billingPopupCallback === 'EmailTier') {
+                setIsOpenEmailTierPlans(true);
               }
               setBillingPopupCallback(null);
             }
           }}
         />
         <TierPlans
-          classes={classes}
-          isOpen={isOpenEmailTierPlans}
-          onClose={() => {
-            setIsOpenEmailTierPlans(false);
-            dispatch(getPackagesDetails());
-          }}
-          isEmailMarketing={true}
-        />
+        classes={classes}
+        isOpen={isOpenEmailTierPlans}
+        onClose={() => {
+          setIsOpenEmailTierPlans(false);
+          dispatch(getPackagesDetails());
+        }}
+        isEmailMarketing={true}
+        isBankTransferForTiers={Newsletters?.IsBankTransferForTiers}
+      />
         <PayPerRecipientNew
           classes={classes}
           isOpen={isOpenPayPerRecipient}
@@ -643,8 +735,24 @@ const BulkStatus = ({ classes }) => {
             }
           }}
         />
+        <BaseDialog
+          classes={classes}
+          open={isOpenCancelConfirmDialog}
+          title={t('common.cancelPlan')}
+          onClose={() => setIsOpenCancelConfirmDialog(false)}
+          onCancel={() => setIsOpenCancelConfirmDialog(false)}
+          onConfirm={handleCancelPlan}
+          showDefaultButtons={true}
+          confirmText={t('common.Yes')}
+          cancelText={t('common.No')}
+        >
+          <Typography className={classes.f18}>
+            {t('common.cancelPlanConfirmation')}
+          </Typography>
+        </BaseDialog>
       </Paper>
       {renderToast()}
+      <Loader isOpen={isLoader} showBackdrop={true} />
     </>
   )
 }

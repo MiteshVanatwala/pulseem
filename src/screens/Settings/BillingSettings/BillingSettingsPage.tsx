@@ -59,6 +59,7 @@ const BillingSettingsPage = ({ classes }: any) => {
   const { creditCards } = useSelector((state: any) => state.payment);
   const { subAccount } = useSelector((state: any) => state.common);
   const { currentPlan } = useSelector((state: any) => state.tiers);
+  const { packagesDetails } = useSelector((state: any) => state.dashboard);
   const qs = (window.location.search && queryString.parse(window.location.search)) as any;
   const [addCardDialog, setAddCardDialog] = useState<boolean>(false);
   const [toastMessage, setToastMessage] = useState<ERROR_TYPE>(null);
@@ -609,7 +610,7 @@ const BillingSettingsPage = ({ classes }: any) => {
                               {t('common.tier.manageCard')}
                             </Button> */}
                             {
-                              currentPlan?.Name !== 'Scale' && (
+                              currentPlan?.Name !== 'Scale' && !packagesDetails?.Newsletters?.IsBankTransferForTiers && (
                                 <Button
                                   className={clsx(classes.btn, classes.btnRounded)}
                                   onClick={(e: any) => { 

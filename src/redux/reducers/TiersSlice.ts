@@ -5,8 +5,25 @@ import {
     DowngradePlanRequest, 
     RestoreAutomationRequest,
     SubscriptionCardIframeRequest,
-    UpgradePlanRequest
+    UpgradePlanRequest,
+    ContactSalesRequest
 } from '../../Models/Tiers/TierModels';
+
+// Contact Sales for Scale
+export const contactSalesForScale = createAsyncThunk(
+    'FeatureTier/contactSalesForScale',
+    async (request: ContactSalesRequest, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.post(
+                'FeatureTier/contactSalesForScale',
+                request
+            );
+            return response.data as PulseemResponse;
+        } catch (error) {
+            return thunkAPI.rejectWithValue(error);
+        }
+    }
+);
 
 // Get Current Plan
 export const getCurrentPlan = createAsyncThunk(
@@ -119,7 +136,7 @@ export const getAddSubscriptionCardIframeURL = createAsyncThunk(
     async (request: SubscriptionCardIframeRequest, thunkAPI) => {
         try {
             const response = await PulseemReactInstance.get(
-                `AccountBilling/GetAddSubscriptionCardIframeURL/${request.language}/TierSubscription/true/${request.tierId}`
+                `AccountBilling/GetAddSubscriptionCardIframeURL/${request.language}/${request.subscriptionType}/${request.isNewSubscription}/${request.tierId}/${request.emailTierScaleId}`
             );
             return response.data as PulseemResponse;
         } catch (error) {
@@ -161,6 +178,7 @@ interface TiersState {
         restoreAutomation: boolean;
         userCreditCards: boolean;
         subscriptionCardIframe: boolean;
+        contactSales: boolean; 
     };
     error: {
         currentPlan: string | null;
@@ -169,6 +187,7 @@ interface TiersState {
         restoreAutomation: string | null;
         userCreditCards: string | null;
         subscriptionCardIframe: string | null;
+        contactSales: string | null;
     };
 }
 
@@ -184,6 +203,7 @@ const initialState: TiersState = {
         restoreAutomation: false,
         userCreditCards: false,
         subscriptionCardIframe: false,
+        contactSales: false,
     },
     error: {
         currentPlan: null,
@@ -192,6 +212,7 @@ const initialState: TiersState = {
         restoreAutomation: null,
         userCreditCards: null,
         subscriptionCardIframe: null,
+        contactSales: null,
     },
 };
 
@@ -207,6 +228,7 @@ const TiersSlice = createSlice({
                 restoreAutomation: null,
                 userCreditCards: null,
                 subscriptionCardIframe: null,
+                contactSales: null,
             };
         },
         resetTiersState: () => initialState,
@@ -295,6 +317,20 @@ const TiersSlice = createSlice({
             .addCase(getUserCreditCards.rejected, (state, action) => {
                 state.loading.userCreditCards = false;
                 state.error.userCreditCards = action.payload as string;
+            });
+
+        // Contact Sales for Scale
+        builder
+            .addCase(contactSalesForScale.pending, (state) => {
+                state.loading.contactSales = true;
+                state.error.contactSales = null;
+            })
+            .addCase(contactSalesForScale.fulfilled, (state, action) => {
+                state.loading.contactSales = false;
+            })
+            .addCase(contactSalesForScale.rejected, (state, action) => {
+                state.loading.contactSales = false;
+                state.error.contactSales = action.payload as string;
             });
     },
 });
