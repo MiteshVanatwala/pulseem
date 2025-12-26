@@ -40,6 +40,7 @@ import clsx from 'clsx';
 import Celebration from '../../assets/images/transparent_celebration.png';
 import { TIER_PLANS } from '../../helpers/Constants';
 import { getAddSubscriptionCardIframeURL, getCurrentPlan, getUserCreditCards, restoreAutomation, upgradePlan } from '../../redux/reducers/TiersSlice';
+import { cancelFrozenSends, releaseFrozenSends } from '../../redux/reducers/BillingSlice';
 import TranzilaIframe from '../Balance/PaymentWizard/Dialogs/TranzilaIframe';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 import { Loader } from '../Loader/Loader';
@@ -622,9 +623,7 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false, isBankT
 
   const processFrozenCampaigns = async (action: string) => {
     setIsLoader(true);
-    const { payload: { StatusCode } }: any = await dispatch(restoreAutomation({
-      isNeedRestore: action === 'cancel' ? false : true
-    }));
+    const { payload: { StatusCode } }: any = await dispatch(action === 'cancel' ? cancelFrozenSends() : releaseFrozenSends());
     if (StatusCode === 200) {
       if (action === 'process') {
         setShowReleaseMessage(true);

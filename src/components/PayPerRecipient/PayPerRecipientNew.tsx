@@ -841,7 +841,7 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose, jumpToStep = 1 }: any) =
               setSelectedCreditCard(null);
               await dispatch(getPackagesDetails());
 
-              if (response?.payload?.Data?.hasfrozenemails) {
+              if (response?.payload?.Data?.HasFrozenEmail) {
                 setHasFrozenEmail(true);
               }
             } else {
