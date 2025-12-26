@@ -25,9 +25,13 @@ import { BiCog } from 'react-icons/bi';
 import { getAccountBilling } from '../../redux/reducers/BillingSlice';
 import BillingSettings from '../BillingSettings/BillingSettings';
 import TierPlans from '../TierPlans/TierPlans';
-import { contactSalesForScale } from '../../redux/reducers/TiersSlice';
+import { contactSalesForScale, downgradePlan, getCurrentPlan } from '../../redux/reducers/TiersSlice';
 import { getAccountSettings } from '../../redux/reducers/AccountSettingsSlice';
 import { Loader } from '../Loader/Loader';
+import ConfirmDeletePopUp from '../../screens/Groups/Management/Popup/ConfirmDeletePopUp';
+import moment from 'moment';
+import { DateFormats } from '../../helpers/Constants';
+import { logout } from '../../helpers/Api/PulseemReactAPI';
 
 const BulkStatus = ({ classes }) => {
   const { billingTypeId, windowSize, isRTL } = useSelector(state => state.core)
@@ -238,6 +242,61 @@ const BulkStatus = ({ classes }) => {
   const showPackageDialogType = async (packageType) => {
     setPackageType(packageType);
     setIsOpenPackageDialog(true);
+  }
+
+  const handleEmailTierCancelPlan = async () => {
+    setIsOpenCancelConfirmDialog(false);    
+    setIsLoader(true);
+    
+    // For cancel plan, we typically downgrade to the free/basic tier (ID: 1)
+    const response = await dispatch(downgradePlan({ newTierId: 1 }));
+    setIsLoader(false);
+    
+    switch (response?.payload?.StatusCode) {
+      case 201:
+      case 200: {
+        setToastMessage({ 
+          severity: 'success', 
+          color: 'success', 
+          message: t('billing.planCancelledSuccess'), 
+          showAnimtionCheck: false 
+        });
+        // Refresh current plan data
+        dispatch(getCurrentPlan());
+        break;
+      }
+      case 404: {
+        setToastMessage({
+          color: 'error',
+          severity: 'error',
+          message: t('billing.planNotFound'),
+          showAnimtionCheck: false
+        });
+        break;
+      }
+      case 406: {
+        setToastMessage({
+          color: 'error',
+          severity: 'error',
+          message: t('common.ErrorOccured'),
+          showAnimtionCheck: false
+        });
+        break;
+      }
+      case 401: {
+        logout();
+        break;
+      }
+      default: {
+        setToastMessage({
+          color: 'error',
+          severity: 'error',
+          message: response?.payload?.Message || t('billing.planCancelFailed'),
+          showAnimtionCheck: false
+        });
+        break;
+      }
+    }
   }
   
   const handleCancelPlan = async () => {
@@ -735,21 +794,16 @@ const BulkStatus = ({ classes }) => {
             }
           }}
         />
-        <BaseDialog
+        <ConfirmDeletePopUp
           classes={classes}
-          open={isOpenCancelConfirmDialog}
-          title={t('common.cancelPlan')}
+          isOpen={isOpenCancelConfirmDialog}
+          title={t('billing.confirmCancelPlanTitle')}
+          text={t('billing.confirmCancelPlanText').replace("{Date}", moment(currentPlan?.TierSubscriptionEndDate).format(DateFormats.DATE_ONLY) || '')}
           onClose={() => setIsOpenCancelConfirmDialog(false)}
           onCancel={() => setIsOpenCancelConfirmDialog(false)}
-          onConfirm={handleCancelPlan}
-          showDefaultButtons={true}
-          confirmText={t('common.Yes')}
-          cancelText={t('common.No')}
-        >
-          <Typography className={classes.f18}>
-            {t('common.cancelPlanConfirmation')}
-          </Typography>
-        </BaseDialog>
+          handleDeleteGroup={handleEmailTierCancelPlan}
+          windowSize={windowSize}
+        />
       </Paper>
       {renderToast()}
       <Loader isOpen={isLoader} showBackdrop={true} />

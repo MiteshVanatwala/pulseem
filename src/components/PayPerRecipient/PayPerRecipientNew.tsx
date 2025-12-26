@@ -419,7 +419,7 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose, jumpToStep = 1 }: any) =
     setLoadingIframe(true);
     const requestParams = {
       language: i18n.language || 'en',
-      subscriptionType: 'upgrade',
+      subscriptionType: 'EmailPolandSubscription',
       isNewSubscription: true,
       tierId: 0,
       emailTierScaleId: found?.Id
