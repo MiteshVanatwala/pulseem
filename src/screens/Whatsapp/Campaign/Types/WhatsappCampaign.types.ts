@@ -137,6 +137,7 @@ export type RightPaneProps = {
 	pulseSendingOpen: () => void;
 	packetSending: ReactElement;
 	randomSending: ReactElement;
+	onCancelPulse: () => void;
 };
 
 export type LeftPaneProps = {

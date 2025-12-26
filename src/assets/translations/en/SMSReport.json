@@ -26,6 +26,8 @@
   "timeAmount": "Please Fill Time Interval",
   "whomtoSendTip": "First choose who receives your campaign, then choose when.",
   "pulseSendTip": "Choose a group and when to send to organize your Pulse Sending.",
+  "pulseCancel": "Cancel pulse send",
+  "confirmCancelPulse": "Are you sure you want to cancel the pulse sending?",
   "manualTip": "Add recipient information. New! You can now add up to 600,000 recipients",
   "finalReciTip": "This value is not final. Select your sending preferences, and you will see the correct value in the Summary page.",
   "groupName": "Group Name",

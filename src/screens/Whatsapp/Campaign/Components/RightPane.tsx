@@ -23,6 +23,7 @@ import { DateField } from '../../../../components/managment';
 import { IoIosArrowDown } from 'react-icons/io';
 import { FaRegCalendarAlt } from 'react-icons/fa';
 import { BsInfoCircle } from 'react-icons/bs';
+import { Close } from '@material-ui/icons';
 
 const RightPane = ({
 	classes,
@@ -44,7 +45,8 @@ const RightPane = ({
 	selectedGroups,
 	pulseSendingOpen,
 	packetSending,
-	randomSending
+	randomSending,
+	onCancelPulse
 }: ClassesType & RightPaneProps) => {
 	const { t: translator } = useTranslation();
 
@@ -350,6 +352,22 @@ const RightPane = ({
 				>
 					<IconButton style={{ padding: 0, marginInlineStart: 10 }} className={clsx(classes.icon_Info, classes.f20)} aria-label={translator("mainReport.toolTip1")}>
 						<BsInfoCircle />
+					</IconButton>
+				</Tooltip>
+				<Tooltip
+					disableFocusListener
+					style={{ marginInlineEnd: isRTL ? 5 : 0, marginInlineStart: 5 }}
+					title={translator("smsReport.pulseCancel")}
+					classes={{ tooltip: classes.customWidth }}
+					className={clsx(classes.ml5, classes.mt1)}
+				>
+					<IconButton
+						style={{ padding: 0, marginInlineStart: 10 }}
+						className={clsx(classes.icon_Info, classes.f20)}
+						aria-label={translator("smsReport.pulseCancel")}
+						onClick={onCancelPulse}
+					>
+						<Close />
 					</IconButton>
 				</Tooltip>
 			</div>

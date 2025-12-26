@@ -26,6 +26,8 @@
   "timeAmount": "Proszę uzupełnić interwał czasowy",
   "whomtoSendTip": "Najpierw wybierz, kto otrzyma Twoją kampanię, a następnie wybierz, kiedy.",
   "pulseSendTip": "Wybierz grupę i termin wysyłki, aby zorganizować wysyłkę pulsacyjną.",
+  "pulseCancel": "Anuluj wysyłanie pulsu",
+  "confirmCancelPulse": "Czy na pewno chcesz anulować wysyłanie pulsu?",
   "manualTip": "Dodaj informacje o odbiorcy. Nowość! Możesz teraz dodać do 600 000 odbiorców",
   "finalReciTip": "Ta wartość nie jest ostateczna. Wybierz swoje preferencje wysyłki, a zobaczysz poprawną wartość na stronie Podsumowanie.",
   "groupName": "Nazwa grupy",

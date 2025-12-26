@@ -7,7 +7,6 @@ import Toast from '../Toast/Toast.component';
 import { coreProps } from '../../model/Core/corePros.types';
 import { BaseDialog } from '../DialogTemplates/BaseDialog';
 import { Alert } from '@mui/material';
-import PulseemRadio from '../Controlls/PulseemRadio';
 
 const Pulse = ({ classes, isOpen, onClose, selectedGroups = [], initialValues}: any) => {
 	const { t } = useTranslation();
@@ -80,6 +79,7 @@ const Pulse = ({ classes, isOpen, onClose, selectedGroups = [], initialValues}: 
       if (pulseAmount === "") {
         setpulseBool(true);
         setsnackBarPulseBoolean(true);
+        isValid = false;
       }
       if (timeInterval === "") {
         setsnackbarTimeBoolean(true);
@@ -172,11 +172,12 @@ const Pulse = ({ classes, isOpen, onClose, selectedGroups = [], initialValues}: 
     }
   }
 
-  const renderPulseRadios = () => {
-    const radios = [
+  const renderPulseCheckboxes = () => {
+    const checkboxOptions = [
       {
         value: "1",
-        className: classes.radioButtonActive,
+        checked: togglePulse,
+        disabled: toggleRandom,
         label: t("smsReport.packetSend"),
         child: <>
           <Box className={clsx(classes.topPulseDiv, classes.pt5)}>
@@ -208,8 +209,10 @@ const Pulse = ({ classes, isOpen, onClose, selectedGroups = [], initialValues}: 
                         : clsx(classes.toggleEnd)
                     }
                     onClick={() => {
-                      setPulseType(1);
-                      setpulsePer("percent");
+                      if (togglePulse) {
+                        setPulseType(1);
+                        setpulsePer("percent");
+                      }
                     }}
                   >
                     {t("smsReport.percent")}
@@ -223,9 +226,11 @@ const Pulse = ({ classes, isOpen, onClose, selectedGroups = [], initialValues}: 
                         : clsx(classes.toggleStart)
                     }
                     onClick={() => {
-                      setPulseType(2);
-                      setpulsePer("recipients");
-                      setpulseReci("Recipients");
+                      if (togglePulse) {
+                        setPulseType(2);
+                        setpulsePer("recipients");
+                        setpulseReci("Recipients");
+                      }
                     }}
                   >
                     {t("smsReport.Reci")}
@@ -267,9 +272,11 @@ const Pulse = ({ classes, isOpen, onClose, selectedGroups = [], initialValues}: 
                         : clsx(classes.toggleEnd)
                     }
                     onClick={() => {
-                      setTimeType(2);
-                      setminName("");
-                      sethourName("hours");
+                      if (togglePulse) {
+                        setTimeType(2);
+                        setminName("");
+                        sethourName("hours");
+                      }
                     }}
                   >
                     {t("smsReport.Hours")}
@@ -283,9 +290,11 @@ const Pulse = ({ classes, isOpen, onClose, selectedGroups = [], initialValues}: 
                         : clsx(classes.toggleStart)
                     }
                     onClick={() => {
-                      setTimeType(1);
-                      setminName("mins");
-                      sethourName("");
+                      if (togglePulse) {
+                        setTimeType(1);
+                        setminName("mins");
+                        sethourName("");
+                      }
                     }}
                   >
                     {t("smsReport.min")}
@@ -295,9 +304,11 @@ const Pulse = ({ classes, isOpen, onClose, selectedGroups = [], initialValues}: 
             </Box>
           </Box>
         </>
-      }, {
+      },
+      {
         value: "2",
-        className: classes.radioButtonActive,
+        checked: toggleRandom,
+        disabled: togglePulse,
         label: t("smsReport.randomSend"),
         child: <>
           <Box className={clsx(classes.randomRows, classes.pt5)}>
@@ -320,35 +331,69 @@ const Pulse = ({ classes, isOpen, onClose, selectedGroups = [], initialValues}: 
             />
           </Box>
         </>
-    }];
+      }
+    ];
 
     return (
-      // @ts-ignore
-      <PulseemRadio
-        classes={classes}
-        name={"sendMethod"}
-        onChange={(e: any) => {
-          const activeTab = e.target.value.toString();
-          if (activeTab === "1") {
-            settogglePulse(true);
-            settoggleRandom(false);
-            setrandom("");
-          } else if (activeTab === "2") {
-            settogglePulse(false);
-            settoggleRandom(true);
-            setPulseAmount("");
-            setTimeInterval("");
-          }
-        }}
-        value={
-          togglePulse
-          ? "1" 
-          : (toggleRandom ? "2" : "")
-        }
-        radioOptions={radios}
-      />
-    )
-  }
+      <Box>
+        {checkboxOptions.map((option, index) => (
+          <Box key={option.value} className={index > 0 ? classes.mt10 : ''}>
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                marginBottom: '4px'
+              }}
+            >
+              <Checkbox
+                checked={option.checked}
+                onChange={(e) => {
+                  const isChecked = e.target.checked;
+                  if (option.value === "1") {
+                    if (isChecked) {
+                      settogglePulse(true);
+                      settoggleRandom(false);
+                      setrandom("");
+                    } else {
+                      settogglePulse(false);
+                      setPulseAmount("");
+                      setTimeInterval("");
+                    }
+                  } else if (option.value === "2") {
+                    if (isChecked) {
+                      settoggleRandom(true);
+                      settogglePulse(false);
+                      setPulseAmount("");
+                      setTimeInterval("");
+                    } else {
+                      settoggleRandom(false);
+                      setrandom("");
+                    }
+                  }
+                }}
+                disabled={option.disabled}
+                color="primary"
+                className={classes.pulseCheckbox}
+              />
+              <span
+                className={clsx(
+                  classes.radioText,
+                  option.disabled && 'Mui-disabled'
+                )}
+                style={{
+                  cursor: option.disabled ? 'not-allowed' : 'default',
+                  opacity: option.disabled ? 0.38 : 1
+                }}
+              >
+                {option.label}
+              </span>
+            </Box>
+            {option.child}
+          </Box>
+        ))}
+      </Box>
+    );
+  };
 
 	return (
 		<BaseDialog
@@ -401,7 +446,7 @@ const Pulse = ({ classes, isOpen, onClose, selectedGroups = [], initialValues}: 
 			)}
 		>
 			<>
-        {renderPulseRadios()}
+        {renderPulseCheckboxes()}
 				{toastMessage && renderToast()}
 				<Snackbar
 					open={snackbarTimeBoolean || snackBarPulseBoolean || snackbarMainPulse}
