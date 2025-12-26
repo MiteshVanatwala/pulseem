@@ -8,7 +8,7 @@
   "perValidRecipients": "Za Ważnych Odbiorców",
   "yourRecipients": "Twoi Odbiorcy",
   "tip": "WSKAZÓWKA",
-  "ulseem": "ulseem",
+  "ulseem": "Pulseem",
   "tipulseemMessage": "Możesz otworzyć subkonta, aby zapewnić ograniczony dostęp innym osobom w Twojej firmie.",
   "lastReports": "Ostatnie Raporty",
   "winterSpecial": "Kampania zimowych promocji",
@@ -66,7 +66,7 @@
     "monthlyPayment": "Miesięczna Płatność",
     "recipients": "Odbiorcy",
     "unlimitedEmailSending": "Nieograniczone Wysyłanie E-maili",
-    "confirmation": "Klikając \"Subskrybuj\", potwierdzam, że zgadzam się na obciążenie mnie opłatą zgodnie z wybranym powyżej planem cenowym.",
+    "confirmation": "Klikając \"Kup teraz\", potwierdzam, że zgadzam się na obciążenie na podstawie wybranego powyżej poziomu cenowego.",
     "featureNotAllowed": "Ta funkcja nie jest dostępna dla Twojego konta. Skontaktuj się z działem wsparcia, aby ją aktywować.",
     "success": "Pomyślnie zasubskrybowałeś.",
     "planNotSelected": "Ups, nie wybrałeś planu wysyłkowego!",
@@ -77,6 +77,9 @@
     "perMonth": "Miesięcznie",
     "securePurchase": "Bezpieczny zakup na stronie",
     "customizePlan": "Dostosuj swój plan",
-    "yourCurrentTier": "Twój obecny poziom"
+    "yourCurrentTier": "Twój obecny poziom",
+    "frozenMessage": "<b>Ponieważ wcześniej nie udało się przetworzyć płatności, część kampanii e-mail została wstrzymana.</b><br />Czy chcecie wysłać wstrzymane wiadomości i wznowić zaplanowane automatyzacje oraz autorespondery?<br /><br />Kliknięcie <b>Tak</b> spowoduje wysłanie wszystkich wstrzymanych wiadomości i wznowienie automatyzacji oraz autoresponderów.<br />Kliknięcie <b>Nie</b> anuluje wszystkie wiadomości zaplanowane w czasie problemu z płatnością.",
+    "releaseMessage": "Wstrzymane wiadomości są teraz wysyłane, a odpowiednie automatyzacje zostały wznowione.",
+    "cancelMessage": "Zrozumiano. Wstrzymane wiadomości zostały anulowane, a automatyzacje pozostaną nieaktywne. Możecie je wznowić w dowolnym momencie na <b>stronach zarządzania automatyzacjami.</b>"
   }
 }

@@ -48,7 +48,8 @@ export interface DowngradePlanRequest {
 export interface UpgradePlanRequest {
     Id: number;
     Type: string;
-    TierID: number;
+    TierID?: number;
+    PackageID?: number;
 }
 
 export interface RestoreAutomationRequest {
@@ -60,4 +61,5 @@ export interface SubscriptionCardIframeRequest {
     subscriptionType: string;
     isNewSubscription: boolean;
     tierId: number;
+    emailTierScaleId?: number;
 }

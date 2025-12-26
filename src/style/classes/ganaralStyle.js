@@ -4308,6 +4308,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     alignItems: 'center',
     flexDirection: 'row'
   },
+  mInline5: {
+    marginInline: 5
+  },
   mInline15: {
     marginInline: 15
   },
@@ -4375,7 +4378,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     },
     '& .payPerRecipientChild': {
       minHeight: '70vh',
-      maxHeight: '70vh'
+      maxHeight: '70vh',
+      overflowX: 'hidden'
     }
   },
   customSlider: {
@@ -4987,5 +4991,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
    pulseCheckbox: {
     padding: isRTL ? '4px 0px 4px 8px' : '4px 8px 4px 0px'
-  }
+  },
+  frozenCampaignsContainer: {
+    marginBottom: theme.spacing(3),
+  },
 });

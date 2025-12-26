@@ -54,6 +54,21 @@ export const upgradePlan = createAsyncThunk(
     }
 );
 
+export const polandEmailSubscriptionByCreditCard = createAsyncThunk(
+    'Poland/PolandEmailSubscriptionByCreditCard',
+    async (request: UpgradePlanRequest, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.post(
+                `Poland/PolandEmailSubscriptionByCreditCard`,
+                request
+            );
+            return response.data as PulseemResponse;
+        } catch (error) {
+            return thunkAPI.rejectWithValue(error);
+        }
+    }
+);
+
 // Get Available Plans
 export const getAvailablePlans = createAsyncThunk(
     'FeatureTier/GetAvailablePlans',
@@ -75,6 +90,21 @@ export const restoreAutomation = createAsyncThunk(
             const response = await PulseemReactInstance.post(
                 `FeatureTier/RestoreAutomation?isNeedRestore=${request.isNeedRestore}`,
                 {}
+            );
+            return response.data as PulseemResponse;
+        } catch (error) {
+            return thunkAPI.rejectWithValue(error);
+        }
+    }
+);
+
+// TODO - Merge this with getAddSubscriptionCardIframeURL when we deploy Email tier and poland changes together
+export const getAddSubscriptionCardIframeURLPoland = createAsyncThunk(
+    'AccountBilling/GetAddSubscriptionCardIframeURLPoland',
+    async (request: SubscriptionCardIframeRequest, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.get(
+                `AccountBilling/GetAddSubscriptionCardIframeURL/${request.language}/${request.subscriptionType}/${request.isNewSubscription}/${request.tierId}/${request.emailTierScaleId}`
             );
             return response.data as PulseemResponse;
         } catch (error) {
@@ -246,6 +276,10 @@ const TiersSlice = createSlice({
             .addCase(getAddSubscriptionCardIframeURL.rejected, (state, action) => {
                 state.loading.subscriptionCardIframe = false;
                 state.error.subscriptionCardIframe = action.payload as string;
+            })
+            .addCase(getAddSubscriptionCardIframeURLPoland.fulfilled, (state, action) => {
+                state.loading.subscriptionCardIframe = false;
+                state.subscriptionCardIframeURL = action.payload;
             })
 
         // Get User Credit Cards

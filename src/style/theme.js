@@ -1,5 +1,6 @@
 import { heIL, enUS, plPL } from "@material-ui/core/locale";
 import { createTheme } from "@material-ui/core/styles";
+
 const themeLanguages = {
   en: {
     direction: "ltr",

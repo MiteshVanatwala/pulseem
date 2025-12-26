@@ -1,14 +1,13 @@
 import { useEffect, useState } from 'react';
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
-import { Box, Button, Grid, IconButton, Step, StepLabel, Stepper, Typography } from '@material-ui/core';
+import { Box, Button, Grid, IconButton, Step, StepLabel, Stepper, Typography, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Chip, CircularProgress } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import { coreProps } from '../../model/Core/corePros.types';
 import { BaseDialog } from '../DialogTemplates/BaseDialog';
-import Slider from '@mui/material/Slider';
 import { AiOutlineCheck } from 'react-icons/ai';
 import { Loader } from '../Loader/Loader';
-import { EmailPricingSubscriptionPoland, getCreditCardIframe, GetEmailPackagePrices } from '../../redux/reducers/BillingSlice';
+import { EmailPricingSubscriptionPoland, getCreditCardIframe, GetEmailPackagePrices, cancelFrozenSends, releaseFrozenSends } from '../../redux/reducers/BillingSlice';
 import { first, get, last } from 'lodash';
 import Toast from '../Toast/Toast.component';
 import { formatNumberWithCommas } from '../../helpers/Utils/TextHelper';
@@ -21,6 +20,10 @@ import { URLS } from '../../config/enum';
 import TranzilaIframe from '../Balance/PaymentWizard/Dialogs/TranzilaIframe';
 import { StateType } from '../../Models/StateTypes';
 import { CurrenciesToDisplayForPoland } from '../../helpers/Constants';
+import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
+import EmailMarketingSlider from '../EmailPlans/EmailMarketingSlider';
+import { getAddSubscriptionCardIframeURLPoland, getUserCreditCards, polandEmailSubscriptionByCreditCard } from '../../redux/reducers/TiersSlice';
+import { MdAdd } from 'react-icons/md';
 
 const steps = [
   '',
@@ -28,14 +31,15 @@ const steps = [
   '',
 ];
 
-const PayPerRecipientNew = ({ classes, isOpen, onClose }: any) => {
-	const { t } = useTranslation();
+const PayPerRecipientNew = ({ classes, isOpen, onClose, jumpToStep = 1 }: any) => {
+	const { t, i18n } = useTranslation();
 	const { windowSize, isRTL } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
   const { packagesDetails } = useSelector((state: any) => state.dashboard);
   const { currencyList, currencyId, accountCurrencySymbol, accountIsCurrencySymbolPrefix, IsCurrencySymbolPrefix } = useSelector((state: StateType) => state.common);
-  const [ isLoader, setIsLoader ] = useState(false);
+  const { userCreditCards } = useSelector((state: any) => state.tiers);
+  const [ isLoader, setIsLoader ] = useState(true);
   const [ toastMessage, setToastMessage ] = useState(null);
   type MarkType = {
     id: any;
@@ -53,7 +57,10 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose }: any) => {
     low: 0,
     high: 0
   });
-  const [ activeStep, setActiveStep ] = useState(1);
+  const [ activeStep, setActiveStep ] = useState(jumpToStep);
+  const [ hasFrozenEmail, setHasFrozenEmail ] = useState(false);
+  const [ showReleaseMessage, setShowReleaseMessage ] = useState(false);
+  const [ showCancelMessage, setShowCancelMessage ] = useState(false);
   const [ paymentIframe, setPaymentIframe ] = useState<string>('');
   const [ isOpenUnsubscribeDialog, setIsOpenUnsubscribeDialog ] = useState(false);
   const [ packageCurrencyList, setPackageCurrencyList ] = useState([]);
@@ -62,8 +69,13 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose }: any) => {
     sign: accountCurrencySymbol,
     symbolPrefix: accountIsCurrencySymbolPrefix
   });
+  const [ paymentViaExistingCC, setPaymentViaExistingCC ] = useState<boolean | null>(null);
+  const [ loadingIframe, setLoadingIframe ] = useState(false);
+  const [ selectedCreditCard, setSelectedCreditCard ] = useState<any>(null);
+  const [ showCardConfirmationDialog, setShowCardConfirmationDialog ] = useState(false);
   const dispatch = useDispatch();
   const { Newsletters = {} } = packagesDetails || {};
+  const creditCards = userCreditCards?.Data || [];
   useEffect(() => {
     if (allPacakages.length) {
       generagetMarks(allPacakages);
@@ -84,7 +96,11 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose }: any) => {
       setMarks([]);
       setSelectedPricing(0);
 			fetchPricing();
-      setActiveStep(1);
+      fetchCreditCards();
+      setActiveStep(jumpToStep);
+      setHasFrozenEmail(false);
+      setShowReleaseMessage(false);
+      setShowCancelMessage(false);
       setPaymentIframe('');
       setIsLoader(false);
       setToastMessage(null);
@@ -94,6 +110,14 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose }: any) => {
       })
       setPackageCurrencyList([]);
       setAllPacakages([]);
+      setPaymentViaExistingCC(null);
+      setLoadingIframe(false);
+      setSelectedCreditCard(null);
+      setShowCardConfirmationDialog(false);
+
+      if (jumpToStep === 2) {
+        fetchCCIFrame();
+      }
 		}
 	}, [isOpen]);
 
@@ -113,22 +137,46 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose }: any) => {
     setIsLoader(false);
   }
 
+  const fetchCreditCards = async () => {
+    await dispatch(getUserCreditCards() as any);
+  }
+
   const generagetMarks = (data: any[]) => {
-    const markList = data.filter((mark: any) => mark?.Currency_Id === selectedCurrency.id).map((item: any) => ({
-      id: item.Id,
-      value: item.Price,
-      label: '',
-      displayText: `${formatNumberWithCommas(item.LevelLow)} - ${formatNumberWithCommas(item.LevelHigh)}`,
-      currencyId: item.Currency_Id,
-      low: item.LevelLow,
-      high: item.LevelHigh
-    }));
+    const markList = data.filter((mark: any) => mark?.Currency_Id === selectedCurrency.id).map((item: any) => {
+      const levelHigh = item.LevelHigh;
+      let displayLabel = '';
+      
+      if (levelHigh >= 1000) {
+        displayLabel = `${levelHigh / 1000}K`;
+      } else {
+        displayLabel = `${levelHigh}`;
+      }
+      
+      return {
+        id: item.Id,
+        value: item.Price,
+        label: '',
+        displayText: displayLabel,
+        currencyId: item.Currency_Id,
+        low: item.LevelLow,
+        high: item.LevelHigh
+      };
+    });
     const lastItem: any = last(data);
+    const lastLevelHigh = lastItem?.LevelHigh;
+    let lastDisplayLabel = '';
+    
+    if (lastLevelHigh >= 1000) {
+      lastDisplayLabel = `${lastLevelHigh / 1000}K+`;
+    } else {
+      lastDisplayLabel = `${lastLevelHigh}+`;
+    }
+    
     markList.push({
       id: lastItem?.Id + 1,
       value: lastItem.Price + 100,
       label: '',
-      displayText: `${formatNumberWithCommas(lastItem?.LevelHigh)} +`,
+      displayText: lastDisplayLabel,
       currencyId: lastItem.Currency_Id,
       low: lastItem.LevelLow,
       high: '+'
@@ -193,11 +241,11 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose }: any) => {
           container
           spacing={1}
         >
-          <Grid item md={3}></Grid>
-          <Grid item md={6}>
+          {/* <Grid item md={3}></Grid> */}
+          <Grid item md={9}>
             <Grid container spacing={1} className={clsx(classes.pt15, classes.pb10)}>
               <Grid item xs={6} className={clsx(classes.textCenter)}>
-                <Typography className={clsx(classes.f18)}>
+                <Typography className={clsx(classes.f18, classes.mb10, classes.mt15)}>
                   {t('dashboard.polishSubscribe.targetPlan')}
                 </Typography>
               </Grid>
@@ -209,22 +257,19 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose }: any) => {
               </Grid>
             </Grid>
 
-            <Slider
-              disabled={Newsletters.IsEmailPolandSubscribed}
-              aria-label="pricing"
-              defaultValue={0}
-              step={null}
-              // valueLabelDisplay="auto"
+            <EmailMarketingSlider
+              classes={classes}
+              value={selectedPricing}
+              onChange={handleChange}
               marks={marks}
+              disabled={Newsletters.IsEmailPolandSubscribed}
               min={get(first(marks), 'value', 0)}
               max={get(last(marks), 'value', 100)}
-              onChange={handleChange}
-              color="primary"
-              className={clsx(classes.colrPrimary, classes.customSlider, classes.mb10)}
-              style={{ color: "#ff3343" }}
+              hideHeader={true}
             />
 
-            <Grid container>
+            {/* Currency Selection - Commented Out */}
+            {/* <Grid container>
               <Grid item xs={12} className={clsx(classes.textRight)}>
                 <Box className={clsx(classes.p10)}>
                   {
@@ -260,8 +305,8 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose }: any) => {
                   }
                 </Box>
               </Grid>
-            </Grid>
-            <Grid container className={clsx(classes.payPerRecipientPlanDetail)}>
+            </Grid> */}
+            <Grid container className={clsx(classes.payPerRecipientPlanDetail, classes.mt15)}>
               <Grid item xs={5} className={clsx(classes.textLeft)}>
                 <Box className={clsx(classes.p10, classes.textCenter)}>
                   {
@@ -309,7 +354,7 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose }: any) => {
               </Grid>
             </Grid>
 
-            <Grid container>
+            {/* <Grid container>
               <Grid item xs={12} className={clsx(classes.textCenter)}>
                 <Box className={clsx(classes.p10)}>
                   {
@@ -345,7 +390,7 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose }: any) => {
                   }
                 </Box>
               </Grid>
-            </Grid>
+            </Grid> */}
           </Grid>
           <Grid item md={3}>
             <img
@@ -356,7 +401,6 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose }: any) => {
           </Grid>
         </Grid>
 
-        <Loader isOpen={isLoader} showBackdrop={true} />
         {renderToast()}
         {
           !Newsletters.IsEmailPolandSubscribed && (
@@ -369,11 +413,146 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose }: any) => {
     )
   }
 
+  const fetchCCLinkForiFrame = async () => {
+    const found: any = allPacakages.find((mark: any) => mark?.Currency_Id === currencyId && mark?.LevelLow === level.low && mark?.LevelHigh === level.high);
+    
+    setLoadingIframe(true);
+    const requestParams = {
+      language: i18n.language || 'en',
+      subscriptionType: 'upgrade',
+      isNewSubscription: true,
+      tierId: 0,
+      emailTierScaleId: found?.Id
+    };
+    
+    const response: any = await dispatch(getAddSubscriptionCardIframeURLPoland(requestParams));
+    if (response.payload?.Data?.IframeUrl) {
+      setPaymentIframe(response.payload?.Data?.IframeUrl);
+    }
+    setLoadingIframe(false);
+  };
+
+  const renderCreditCards = () => {
+    if (paymentViaExistingCC === true) {
+      return (
+        <TableContainer>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>{t('billing.creditCardManagement.cardNumber')}</TableCell>
+                <TableCell>{t('billing.creditCardManagement.cardType')}</TableCell>
+                <TableCell>
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {creditCards.map((card: any, index: number) => (
+                <TableRow key={card.CardId || index} hover>
+                  <TableCell>
+                    <Typography 
+                      variant="body1" 
+                      style={{ 
+                        direction: 'ltr', 
+                        fontWeight: 'bold'
+                      }}
+                    >
+                      {card.MaskedNumber}
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    {card.IsDefault ? (
+                      <Chip 
+                        label={t('billing.creditCardManagement.defaultCard')} 
+                        color="primary" 
+                        size="small"
+                        variant="outlined"
+                      />
+                    ) : (
+                      <Typography variant="body2" color="textSecondary">
+                        {t('billing.creditCardManagement.secondaryCard')}
+                      </Typography>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    <Button
+                      className={clsx(classes.btn, classes.btnRounded)}
+                      onClick={async () => {
+                        setShowCardConfirmationDialog(true);
+                        setSelectedCreditCard(card);
+                      }}
+                      variant="outlined"
+                      color="primary"
+                      size='small'
+                    >
+                      {t('common.select')}
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+              {/* Add New Card Button Row */}
+              <TableRow>
+                <TableCell colSpan={3} style={{ textAlign: 'center', padding: 20 }}>
+                  <Button
+                    className={clsx(classes.btn, classes.btnRounded)}
+                    onClick={() => {
+                      setPaymentViaExistingCC(false);
+                      fetchCCLinkForiFrame();
+                    }}
+                    startIcon={<MdAdd />}
+                    variant="outlined"
+                    color="primary"
+                  >
+                    {t('billing.creditCardManagement.addNewCard')}
+                  </Button>
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )
+    } else if (paymentViaExistingCC === false) {
+      return (
+        <>
+          {loadingIframe ? (
+            <Box display="flex" justifyContent="center" alignItems="center" style={{ height: '400px' }}>
+              <CircularProgress />
+              <Typography variant="body2" style={{ marginLeft: '16px' }}>
+                {t('billing.tier.upgrade.loadingPaymentForm')}
+              </Typography>
+            </Box>
+          ) : (
+            paymentIframe ? (
+              <TranzilaIframe
+                data={{}}
+                classes={classes}
+                isRTL={isRTL}
+                packageId={null}
+                onComplete={(message: any) => {
+                  setActiveStep(3);
+                  setHasFrozenEmail(!!message?.hasFrozenEmail)
+                }}
+                // @ts-ignore
+                paymentUrl={`${paymentIframe}`}
+                hideSummary={true}
+              />
+            ) : (
+              <Typography variant="body2" style={{ marginLeft: '16px' }}>
+              </Typography>
+            )
+          )
+        }
+        </>
+      )
+    }
+                
+    return null;
+  };
+
   const step2 = () => {
     return (
       <>
         <Typography className={clsx(classes.f28, classes.bold, classes.textCenter, classes.mb10)}>
-          {t('settings.billingSettings.btnAddCard')}
+          {paymentViaExistingCC ? t('billing.creditCardManagement.selectCreditCard') : t('settings.billingSettings.btnAddCard')}
         </Typography>
         <Grid
           container
@@ -381,16 +560,7 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose }: any) => {
         >
           <Grid item md={3}></Grid>
           <Grid item md={6}>
-            <TranzilaIframe
-              data={{}}
-              classes={classes}
-              isRTL={isRTL}
-              packageId={null}
-              onComplete={() => setActiveStep(3)}
-              // @ts-ignore
-              paymentUrl={`${paymentIframe}`}
-              hideSummary={true}
-          />
+            {renderCreditCards()}
           </Grid>
           <Grid item md={3}>
             <img
@@ -416,6 +586,7 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose }: any) => {
           <Typography className={clsx(classes.f28, classes.bold)}>
             {t('dashboard.polishSubscribe.success')}
           </Typography>
+          {FrozenCampaignsMessage()}
         </Box>
       </>
     )
@@ -474,15 +645,16 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose }: any) => {
             onClick={async () => {
               const found: any = allPacakages.find((mark: any) => mark?.Currency_Id === currencyId && mark?.LevelLow === level.low && mark?.LevelHigh === level.high);
               setIsLoader(true);
-              const { payload: { StatusCode } }: any = await dispatch(EmailPricingSubscriptionPoland({ PricePackageId:  found?.Id }));
-              if (StatusCode === 201) {
-                // onClose(found?.id);
-                await fetchCCIFrame();
-                setActiveStep(2);
-              } else if (StatusCode === 403) {
-                // @ts-ignore
-                setToastMessage({ severity: 'error', color: 'error', message: t('dashboard.polishSubscribe.featureNotAllowed'), showAnimtionCheck: false });
+              
+              // Check if user has credit cards
+              setPaymentViaExistingCC(creditCards.length > 0);
+              
+              // If no credit cards, fetch iframe immediately
+              if (creditCards.length === 0) {
+                await fetchCCLinkForiFrame();
               }
+              
+              setActiveStep(2);
               setIsLoader(false);
             }}
             className={clsx(
@@ -542,6 +714,67 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose }: any) => {
     )
   };
 
+  const processFrozenCampaigns = async (action: string) => {
+    setIsLoader(true);
+    const { payload: { StatusCode } }: any = await dispatch(action === 'cancel' ? cancelFrozenSends() : releaseFrozenSends());
+    if (StatusCode === 200) {
+      if (action === 'process') {
+        setShowReleaseMessage(true);
+      } else {
+        setShowCancelMessage(true);
+      }
+    } else {
+    }
+    setIsLoader(false);
+  };
+
+  const FrozenCampaignsMessage = () => {
+    if (!hasFrozenEmail) return null;
+    
+    return (
+      <Box className={clsx(classes.frozenCampaignsContainer, classes.pt25)}>
+        <Grid container spacing={2} alignItems="center">
+          <Grid item xs={12}>
+            <Box>
+              <Typography className={clsx(classes.f20)}>
+                {!showReleaseMessage && !showCancelMessage && RenderHtml(t("dashboard.polishSubscribe.frozenMessage"))}
+                {showReleaseMessage && RenderHtml(t("dashboard.polishSubscribe.releaseMessage"))}
+                {showCancelMessage && RenderHtml(t("dashboard.polishSubscribe.cancelMessage"))}
+              </Typography>
+              {
+                !showReleaseMessage && !showCancelMessage && (
+                  <Grid container spacing={2} className={clsx(classes.mt10, classes.textCenter)}>
+                    <Grid item md={12} xs={12} className={clsx(classes.w100)}>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={() => processFrozenCampaigns('process')}
+                        disabled={isLoader}
+                        className={clsx(classes.btn, classes.btnRounded, classes.mInline5)}
+                      >
+                        {t('common.Yes')}
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        color="primary"
+                        onClick={() => processFrozenCampaigns('cancel')}
+                        disabled={isLoader}
+                        className={clsx(classes.btn, classes.btnRounded, classes.mInline5)}
+                      >
+                        {t('common.No')}
+                      </Button>
+                    </Grid>
+                  </Grid>
+                )
+              }
+            </Box>
+          </Grid>
+        </Grid>
+      </Box>
+    );
+  };
+
+
 	return (
 		<BaseDialog
 			classes={classes}
@@ -589,6 +822,38 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose }: any) => {
             }
           }}
         />
+        <BaseDialog
+          classes={classes}
+          open={showCardConfirmationDialog}
+          onClose={() => setShowCardConfirmationDialog(false)}
+          onCancel={() => setShowCardConfirmationDialog(false)}
+          onConfirm={async () => {
+            const found: any = allPacakages.find((mark: any) => mark?.Currency_Id === currencyId && mark?.LevelLow === level.low && mark?.LevelHigh === level.high);
+            setIsLoader(true);
+            const response: any = await dispatch(polandEmailSubscriptionByCreditCard({
+              Id: selectedCreditCard.ID,
+              Type: selectedCreditCard.Type,
+              PackageID: found?.Id
+            }))
+            if (response?.payload?.StatusCode === 200) {
+              setActiveStep(3);
+              setShowCardConfirmationDialog(false);
+              setSelectedCreditCard(null);
+              await dispatch(getPackagesDetails());
+
+              if (response?.payload?.Data?.hasfrozenemails) {
+                setHasFrozenEmail(true);
+              }
+            } else {
+              // @ts-ignore
+              setToastMessage({ severity: 'error', color: 'error', message: t('common.errorOccurred'), showAnimtionCheck: false });
+            }
+            setIsLoader(false);
+          }}
+        >
+          {t('billing.tier.upgrade.payUsingCC')}
+        </BaseDialog>
+        <Loader isOpen={isLoader} showBackdrop={true} />
       </>
 		</BaseDialog>
 	);

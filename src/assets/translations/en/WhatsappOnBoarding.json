@@ -101,5 +101,26 @@
 		"135000": "Message failed to send because of an unknown error with your request parameters.",
 		"131050": "Unable to deliver the message. This recipient has chosen to stop receiving marketing messages on WhatsApp from your business."
 	},
-	"NoMeta": "Meta is not enabled in your account. Please contact our support for more details."
+	"NoMeta": "Meta is not enabled in your account. Please contact our support for more details.",
+	"business_statuses": {
+		"notVerified": "Not verified",
+		"pending": "Pending",
+		"verified": "Verified",
+		"rejected": "Rejected",
+		"inReview": "In review",
+		"verificationExpired": "Verification expired",
+		"unavailable": "Unavailable",
+		"needsReview": "Needs review"
+	},
+	"virtualPhoneNumberStatus": {
+		"new": "New",
+		"pending": "Pending",
+		"connected": "Connected",
+		"disconnected": "Disconnected",
+		"failed": "Failed",
+		"deleted": "Deleted",
+		"notVerified": "Not verified",
+		"verified": "Verified",
+		"expired": "Expired"
+	}
 }
