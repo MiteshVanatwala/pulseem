@@ -1033,8 +1033,8 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false, isBankT
               emailTierScaleId = matchingTier ? matchingTier.Id : 0;
             }
             const upgradeRequest: UpgradePlanRequest = {
-              Id: showBankTransferDialog ? 0 : selectedCreditCard.ID,
-              Type:  showBankTransferDialog ? '' : selectedCreditCard.Type,
+              Id: isBankTransferForTiers ? 0 : selectedCreditCard.ID,
+              Type:  isBankTransferForTiers ? '' : selectedCreditCard.Type,
               TierID: selectedPlan.Id,
               EmailTierScaleID: emailTierScaleId
             };

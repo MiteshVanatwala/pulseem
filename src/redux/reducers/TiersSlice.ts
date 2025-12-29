@@ -54,6 +54,21 @@ export const downgradePlan = createAsyncThunk(
     }
 );
 
+export const deletePolandSubscription = createAsyncThunk(
+    'Poland/DeletePolandSubscription',
+    async (_, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.post(
+                `Poland/DeletePolandSubscription`,
+                {}
+            );
+            return response.data as PulseemResponse;
+        } catch (error) {
+            return thunkAPI.rejectWithValue(error);
+        }
+    }
+);
+
 // Upgrade Tier Plan
 export const upgradePlan = createAsyncThunk(
     'FeatureTier/UpgradeTier',

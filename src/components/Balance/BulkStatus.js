@@ -7,7 +7,7 @@ import { getPackagesDetails } from '../../redux/reducers/dashboardSlice';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
-import { MdArrowBackIos, MdArrowForwardIos, MdOutlineCancel, MdOutlineModeEdit, MdSupportAgent } from 'react-icons/md';
+import { MdArrowBackIos, MdArrowForwardIos, MdSupportAgent } from 'react-icons/md';
 import { BellIcon, WhatsappIcon, SmsIcon, CardIcon, NewsletterIcon } from '../../assets/images/dashboard/index'
 import { TooltipBubble } from '../../assets/images/dashboard/index';
 import { BaseDialog } from '../DialogTemplates/BaseDialog';
@@ -25,7 +25,7 @@ import { BiCog } from 'react-icons/bi';
 import { getAccountBilling } from '../../redux/reducers/BillingSlice';
 import BillingSettings from '../BillingSettings/BillingSettings';
 import TierPlans from '../TierPlans/TierPlans';
-import { contactSalesForScale, downgradePlan, getCurrentPlan } from '../../redux/reducers/TiersSlice';
+import { contactSalesForScale, deletePolandSubscription, getCurrentPlan } from '../../redux/reducers/TiersSlice';
 import { getAccountSettings } from '../../redux/reducers/AccountSettingsSlice';
 import { Loader } from '../Loader/Loader';
 import ConfirmDeletePopUp from '../../screens/Groups/Management/Popup/ConfirmDeletePopUp';
@@ -249,7 +249,7 @@ const BulkStatus = ({ classes }) => {
     setIsLoader(true);
     
     // For cancel plan, we typically downgrade to the free/basic tier (ID: 1)
-    const response = await dispatch(downgradePlan({ newTierId: 1 }));
+    const response = await dispatch(deletePolandSubscription());
     setIsLoader(false);
     
     switch (response?.payload?.StatusCode) {

@@ -19,7 +19,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
 import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
 import { ERROR_TYPE } from "../../../helpers/Types/common";
-import { getCurrentPlan, getAvailablePlans, downgradePlan } from "../../../redux/reducers/TiersSlice";
+import { getCurrentPlan, getAvailablePlans, downgradePlan, deletePolandSubscription } from "../../../redux/reducers/TiersSlice";
 import BillingDetails from "./BillingDetails";
 import { getCreditCardIframe, getAccountOperations, payDebtInvoices, inactiveCreditCard } from "../../../redux/reducers/BillingSlice";
 import { Loader } from "../../../components/Loader/Loader";
@@ -47,6 +47,7 @@ import CreditCardManagement from "../../../components/BillingSettings/CreditCard
 import TierPlans from "../../../components/TierPlans/TierPlans";
 import { CreditCard } from "@material-ui/icons";
 import { DateFormats } from "../../../helpers/Constants";
+import { getPackagesDetails } from "../../../redux/reducers/dashboardSlice";
 
 
 const BillingSettingsPage = ({ classes }: any) => {
@@ -95,6 +96,7 @@ const BillingSettingsPage = ({ classes }: any) => {
   };
 
   const initPurchaseHistory = async () => {
+    dispatch(getPackagesDetails());
     dispatch(getAccountCards()) as any;
     dispatch(getCurrentPlan()) as any;
     dispatch(getAvailablePlans()) as any;
@@ -505,7 +507,6 @@ const BillingSettingsPage = ({ classes }: any) => {
   }
 
   const renderOptions = () => {
-    console.log("433 " + currentDialog + " - " + showPopup)
     switch (currentDialog) {
       default:
       case 'debt': {
@@ -878,7 +879,61 @@ const BillingSettingsPage = ({ classes }: any) => {
         text={t('billing.confirmDeleteCardText')}
       />
       <ConfirmDeletePopUp
-        handleDeleteGroup={() => handleCancelPlan()}
+        handleDeleteGroup={() => {
+          if (packagesDetails?.Newsletters?.IsEmailTierSubscribed) {
+            setConfirmCancelPlan(false);
+            setShowLoader(true);
+            dispatch(deletePolandSubscription() as any).then((response: any) => {
+              switch (response?.payload?.StatusCode) {
+                case 201:
+                case 200: {
+                  setToastMessage({ 
+                    severity: 'success', 
+                    color: 'success', 
+                    message: t('billing.planCancelledSuccess'), 
+                    showAnimtionCheck: false 
+                  });
+                  // Refresh current plan data
+                  dispatch(getCurrentPlan());
+                  break;
+                }
+                case 404: {
+                  setToastMessage({
+                    color: 'error',
+                    severity: 'error',
+                    message: t('billing.planNotFound'),
+                    showAnimtionCheck: false
+                  } as ERROR_TYPE);
+                  break;
+                }
+                case 406: {
+                  setToastMessage({
+                    color: 'error',
+                    severity: 'error',
+                    message: t('common.ErrorOccured'),
+                    showAnimtionCheck: false
+                  } as ERROR_TYPE);
+                  break;
+                }
+                case 401: {
+                  logout();
+                  break;
+                }
+                default: {
+                  setToastMessage({
+                    color: 'error',
+                    severity: 'error',
+                    message: response?.payload?.Message || t('billing.planCancelFailed'),
+                    showAnimtionCheck: false
+                  } as ERROR_TYPE);
+                  break;
+                }
+              }
+            });
+          } else {
+            handleCancelPlan()
+          }
+        }}
         onCancel={() => setConfirmCancelPlan(false)}
         onClose={() => setConfirmCancelPlan(false)}
         classes={classes}
