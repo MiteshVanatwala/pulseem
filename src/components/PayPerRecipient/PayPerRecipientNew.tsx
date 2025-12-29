@@ -116,6 +116,7 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose, jumpToStep = 1 }: any) =
       setShowCardConfirmationDialog(false);
 
       if (jumpToStep === 2) {
+        setPaymentViaExistingCC(false);
         fetchCCIFrame();
       }
 		}
