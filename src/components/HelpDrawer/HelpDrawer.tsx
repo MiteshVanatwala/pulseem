@@ -1,29 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   Drawer,
   Box,
   Typography,
-  TextField,
-  InputAdornment,
   IconButton,
-  Tabs,
-  Tab,
   List,
   ListItem,
   ListItemIcon,
   ListItemText,
-  Divider,
   Paper,
+  Button,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { Close as CloseIcon, Search as SearchIcon } from '@material-ui/icons';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import { 
-  HelpOutline, 
-  ContactSupport, 
-  Description, 
-  Code, 
+import {
+  HelpOutline,
+  ContactSupport,
+  Code,
   Group,
   Home as HomeIcon,
   FiberNew as NewsIcon
@@ -48,13 +43,14 @@ const useStyles = makeStyles((theme) => ({
   },
   header: {
     padding: theme.spacing(3),
-    backgroundColor: '#e8f5e9',
     position: 'relative',
+    background: 'linear-gradient(90deg, #FF0076 1.31%, #FF0054 33.07%, #FF4D2A 134.74%)'
   },
   closeButton: {
     position: 'absolute',
     top: theme.spacing(2),
     right: theme.spacing(2),
+    color: '#fff',
   },
   closeButtonRTL: {
     right: 'auto',
@@ -64,10 +60,10 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 600,
     fontSize: '1.5rem',
     marginBottom: theme.spacing(0.5),
-    color: '#2e7d32',
+    color: '#fff',
   },
   subtitle: {
-    color: '#4a5568',
+    color: '#fff',
     fontSize: '0.9rem',
   },
   searchBox: {
@@ -105,8 +101,8 @@ const useStyles = makeStyles((theme) => ({
   content: {
     padding: theme.spacing(2),
     overflowY: 'auto',
-    height: 'calc(100vh - 280px)',
-    paddingBottom: theme.spacing(10),
+    height: 'calc(100vh - 240px)',
+    paddingBottom: theme.spacing(4),
   },
   menuItem: {
     backgroundColor: '#fff',
@@ -127,7 +123,7 @@ const useStyles = makeStyles((theme) => ({
   },
   menuIcon: {
     minWidth: 40,
-    color: '#2e7d32',
+    color: ' #ff3343',
   },
   menuTitle: {
     fontWeight: 600,
@@ -192,13 +188,44 @@ const useStyles = makeStyles((theme) => ({
     fontSize: '0.9rem',
     color: '#4a5568',
   },
+  actionButtons: {
+    display: 'flex',
+    gap: theme.spacing(1),
+    marginTop: theme.spacing(2),
+    flexDirection: 'row',
+  },
+  actionButton: {
+    padding: '2px 10px',
+    fontWeight: 'bold',
+    background: '#fff',
+    minHeight: 34,
+    color: '#000',
+    borderRadius: 28,
+    border: '2px solid #F65026',
+    '& path': {
+      stroke: 'inherit',
+    },
+    "@media screen and (max-width: 400px)": {
+      '& .MuiButton-startIcon': {
+        width: 'initial'
+      }
+    },
+    '&:hover': {
+      background: 'linear-gradient(90deg, #FF0076 0%, #FF0054 23.8%, #FF4D2A 100%)',
+      color: '#fff',
+      '& svg': {
+        color: '#fff',
+        fill: '#fff'
+      }
+    },
+  },
 }));
 
 export const HelpDrawer: React.FC = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const { t } = useTranslation();
-  const { isRTL } = useSelector((state: any) => state.core);
+  const { isRTL, language } = useSelector((state: any) => state.core);
   const { isOpen } = useSelector((state: any) => state.helpDrawer);
   const [activeTab, setActiveTab] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
@@ -207,36 +234,42 @@ export const HelpDrawer: React.FC = () => {
     dispatch(closeHelpDrawer());
   };
 
+  const getHelpCenterUrl = useMemo(() => {
+    switch (language) {
+      case 'he':
+        return 'https://site.pulseem.co.il/%D7%9E%D7%93%D7%A8%D7%99%D7%9B%D7%99%D7%9D/';
+      case 'pl':
+        return 'https://pulseem.pl/?_gl=1%2A10nqxrj%2A_gcl_au%25';
+      case 'en':
+      default:
+        return 'https://site.pulseem.com/?_gl=1%2Aaum0k9%2A_gcl_au%25';
+    }
+  }, [language]);
+
   const supportItems = [
     {
       icon: <HelpOutline />,
-      title: t('helpDrawer.helpCenter.title', 'Help Center'),
-      description: t('helpDrawer.helpCenter.description', 'Find answers, tips, and troubleshooting in our articles.'),
-      action: () => window.open('https://help.pulseem.com', '_blank'),
+      title: t('dashboard.helpDrawer.support.helpCenter.title'),
+      description: t('dashboard.helpDrawer.support.helpCenter.description'),
+      action: () => window.open(getHelpCenterUrl, '_blank'),
     },
     {
       icon: <ContactSupport />,
-      title: t('helpDrawer.supportTickets.title', 'Support and Tickets'),
-      description: t('helpDrawer.supportTickets.description', 'Make a request to our support team to get help, and find all your tickets.'),
-      action: () => console.log('Support tickets'),
+      title: t('dashboard.helpDrawer.support.supportChat.title'),
+      description: t('dashboard.helpDrawer.support.supportChat.description'),
+      action: () => window.open('http://tawk.to/', '_blank'),
     },
     {
       icon: <Group />,
-      title: t('helpDrawer.hireAgency.title', 'Hire an agency'),
-      description: t('helpDrawer.hireAgency.description', 'Looking for help with a project? We can match you with the right certified Agency partner.'),
-      action: () => console.log('Hire agency'),
+      title: t('dashboard.helpDrawer.support.pulseemGPT.title', 'Hire an agency'),
+      description: t('dashboard.helpDrawer.support.pulseemGPT.description', 'Looking for help with a project? We can match you with the right certified Agency partner.'),
+      action: () => window.open('https://chatgpt.com/g/g-683fe7903e188191b223275d68aa42ed-pulseem-support', '_blank'),
     },
     {
       icon: <Code />,
-      title: t('helpDrawer.apiDocs.title', 'API documentation'),
-      description: t('helpDrawer.apiDocs.description', 'Use our APIs to unlock the power of Pulseem.'),
+      title: t('dashboard.helpDrawer.support.APIIcon.title'),
       action: () => window.open('https://api.pulseem.com', '_blank'),
-    },
-    {
-      icon: <Description />,
-      title: t('helpDrawer.community.title', 'Community'),
-      description: t('helpDrawer.community.description', 'Discuss with other users to know how to get the best out of Pulseem.'),
-      action: () => console.log('Community'),
+      hasButtons: true,
     },
   ];
 
@@ -258,14 +291,10 @@ export const HelpDrawer: React.FC = () => {
     },
   ];
 
-  const handleTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
-    setActiveTab(newValue);
-  };
-
   const filteredSupportItems = supportItems.filter(
     (item) =>
       item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.description.toLowerCase().includes(searchQuery.toLowerCase())
+      (item.description && item.description.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
   const filteredNewsItems = newsItems.filter(
@@ -290,40 +319,34 @@ export const HelpDrawer: React.FC = () => {
         },
       }}
       elevation={16}
+      SlideProps={{
+        direction: isRTL ? 'right' : 'left'
+      }}
+      PaperProps={{
+        style: {
+          position: 'fixed',
+          left: isRTL ? 0 : 'auto',
+          right: isRTL ? 'auto' : 0,
+          direction: isRTL ? 'rtl' : 'ltr',
+        }
+      }}
     >
-      <Box>
+      <Box style={{ direction: isRTL ? 'rtl' : 'ltr' }}>
         {/* Header */}
         <Box className={classes.header}>
           <IconButton
-            className={clsx(classes.closeButton, isRTL && classes.closeButtonRTL)}
+            className={clsx(classes.closeButton)}
             onClick={handleClose}
             size="small"
           >
             <CloseIcon />
           </IconButton>
           <Typography className={classes.title}>
-            {t('helpDrawer.title', 'Need help?')}
+            {t('dashboard.helpDrawer.title')}
           </Typography>
           <Typography className={classes.subtitle}>
-            {t('helpDrawer.subtitle', 'We\'ve got everything you need right here.')}
+            {t('dashboard.helpDrawer.subtitle')}
           </Typography>
-        </Box>
-
-        {/* Tabs */}
-        <Box className={classes.tabsContainer}>
-          <Tabs
-            value={activeTab}
-            onChange={handleTabChange}
-            indicatorColor="primary"
-            textColor="primary"
-            variant="fullWidth"
-            classes={{
-              indicator: classes.tabsIndicator,
-            }}
-          >
-            <Tab label={t('helpDrawer.tabs.support', 'Support')} className={classes.tab} />
-            <Tab label={t('helpDrawer.tabs.whatsNew', 'What\'s New')} className={classes.tab} />
-          </Tabs>
         </Box>
 
         {/* Content */}
@@ -349,9 +372,39 @@ export const HelpDrawer: React.FC = () => {
                         </Typography>
                       }
                       secondary={
-                        <Typography className={classes.menuDescription}>
-                          {item.description}
-                        </Typography>
+                        <>
+                          <Typography className={classes.menuDescription}>
+                            {item.description}
+                          </Typography>
+                          {item.hasButtons && (
+                            <Box className={classes.actionButtons}>
+                              <Button
+                                variant="outlined"
+                                color="primary"
+                                size="small"
+                                className={classes.actionButton}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  window.open('https://ui-api.pulseem.com/swagger/index.html', '_blank');
+                                }}
+                              >
+                                {t('dashboard.helpDrawer.support.APIIcon.UPIAPI')}
+                              </Button>
+                              <Button
+                                variant="contained"
+                                color="primary"
+                                size="small"
+                                className={classes.actionButton}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  window.open('https://api.pulseem.com/swagger/index.html', '_blank');
+                                }}
+                              >
+                                {t('dashboard.helpDrawer.support.APIIcon.DirectSendAPI')}
+                              </Button>
+                            </Box>
+                          )}
+                        </>
                       }
                     />
                   </ListItem>
@@ -381,17 +434,17 @@ export const HelpDrawer: React.FC = () => {
         {/* Bottom Navigation */}
         <Box className={classes.bottomNav}>
           <Box className={classes.bottomNavItem} onClick={() => setActiveTab(0)}>
-            <HomeIcon />
+            <HomeIcon className={classes.menuIcon} />
             <Typography variant="caption" style={{ marginTop: 4 }}>
               {t('helpDrawer.bottomNav.resourceCenter', 'Resource Center')}
             </Typography>
           </Box>
           <Box className={classes.bottomNavItem} onClick={() => setActiveTab(1)}>
-            <NewsIcon />
+            {/* <NewsIcon />
             <Typography variant="caption" style={{ marginTop: 4 }}>
               {t('helpDrawer.bottomNav.news', 'News')}
             </Typography>
-            <Box className={classes.badge}>1</Box>
+            <Box className={classes.badge}>1</Box> */}
           </Box>
         </Box>
       </Box>

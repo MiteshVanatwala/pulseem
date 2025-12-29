@@ -78,5 +78,32 @@
     "securePurchase": "Bezpieczny zakup na stronie",
     "customizePlan": "Dostosuj swój plan",
     "yourCurrentTier": "Twój obecny poziom"
+  },
+  "helpDrawer": {
+    "title": "Potrzebujesz pomocy?",
+    "subtitle": "Wszystko, czego potrzebujesz, znajdziesz tutaj.",
+    "tabs": {
+      "support": "Wsparcie",
+      "whatsNew": "Co nowego?"
+    },
+    "support": {
+      "helpCenter": {
+        "title": "Centrum pomocy",
+        "description": "Wszystko, czego potrzebujesz – poradniki, wskazówki i rozwiązywanie problemów w jednym miejscu."
+      },
+      "supportChat": {
+        "title": "Czat wsparcia",
+        "description": "Masz pytanie? Nasz zespół wsparcia jest tutaj, aby pomóc."
+      },
+      "pulseemGPT": {
+        "title": "PulseemGPT",
+        "description": "Skorzystaj z inteligentnego GPT Pulseem, aby rozwiązywać problemy i w pełni wykorzystać możliwości platformy."
+      },
+      "APIIcon": {
+        "title": "API – ikona API",
+        "UPIAPI": "API interfejsu użytkownika",
+        "DirectSendAPI": "API bezpośredniego wysyłania"
+      }
+    }
   }
 }

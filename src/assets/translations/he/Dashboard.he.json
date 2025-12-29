@@ -75,5 +75,32 @@
     "securePurchase": "רכשו עכשיו",
     "customizePlan": "התאם את התוכנית שלך",
     "yourCurrentTier": "מדרגת השליחה שלך"
+  },
+  "helpDrawer": {
+    "title": "צריך עזרה?",
+    "subtitle": "כל מה שאתה צריך נמצא כאן.",
+    "tabs": {
+      "support": "תמיכה ",
+      "whatsNew": "חדש בפולסים!"
+    },
+    "support": {
+      "helpCenter": {
+        "title": "מרכז התמיכה",
+        "description": "כל המידע שאתם צריכים – מדריכים, טיפים ופתרון תקלות במקום אחד."
+      },
+      "supportChat": {
+        "title": "צ'אט תמיכה",
+        "description": "יש לכם שאלה? צוות התמיכה שלנו כאן בשבילכם"
+      },
+      "pulseemGPT": {
+        "title": "PulseemGPT",
+        "description": "ה-GPT החכם של Pulseem שיעזור לכם לפתור בעיות ולהפיק יותר מהמערכת."
+      },
+      "APIIcon": {
+        "title": "API – אייקון API",
+        "UPIAPI": "API של ממשק המשתמש",
+        "DirectSendAPI": "API לשליחה ישירה"
+      }
+    }
   }
 }
