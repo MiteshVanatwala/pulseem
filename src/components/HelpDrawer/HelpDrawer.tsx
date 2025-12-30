@@ -280,7 +280,6 @@ export const HelpDrawer: React.FC = () => {
     {
       icon: <Code />,
       title: t('dashboard.helpDrawer.support.APIIcon.title'),
-      action: () => window.open('https://api.pulseem.com', '_blank'),
       hasButtons: true,
     },
   ];
