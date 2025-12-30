@@ -124,6 +124,8 @@ const useStyles = makeStyles((theme) => ({
   menuIcon: {
     minWidth: 40,
     color: ' #ff3343',
+    alignSelf: 'flex-start',
+    paddingTop: theme.spacing(1),
   },
   menuTitle: {
     fontWeight: 600,
