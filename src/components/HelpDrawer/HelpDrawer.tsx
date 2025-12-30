@@ -248,6 +248,16 @@ export const HelpDrawer: React.FC = () => {
     }
   }, [language]);
 
+  const handleOpenSupportChat = () => {
+    // handleClose();
+
+    setTimeout(() => {
+      if (typeof window !== 'undefined' && (window as any).Tawk_API) {
+        (window as any).Tawk_API.maximize();
+      }
+    }, 300);
+  };
+
   const supportItems = [
     {
       icon: <HelpOutline />,
@@ -259,7 +269,7 @@ export const HelpDrawer: React.FC = () => {
       icon: <Message />,
       title: t('dashboard.helpDrawer.support.supportChat.title'),
       description: t('dashboard.helpDrawer.support.supportChat.description'),
-      action: () => window.open('http://tawk.to/', '_blank'),
+      action: handleOpenSupportChat,
     },
     {
       icon: <MdAutoAwesome />,
