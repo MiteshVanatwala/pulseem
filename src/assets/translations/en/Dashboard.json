@@ -100,7 +100,7 @@
         "description": "Use Pulseem’s smart GPT to help you solve problems and get more out of the platform."
       },
       "APIIcon": {
-        "title": "API - API Icon",
+        "title": "API",
         "UPIAPI": "UI API",
         "DirectSendAPI": "Direct Send API"
       }

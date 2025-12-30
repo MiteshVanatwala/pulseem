@@ -100,7 +100,7 @@
         "description": "Skorzystaj z inteligentnego GPT Pulseem, aby rozwiązywać problemy i w pełni wykorzystać możliwości platformy."
       },
       "APIIcon": {
-        "title": "API – ikona API",
+        "title": "API",
         "UPIAPI": "API interfejsu użytkownika",
         "DirectSendAPI": "API bezpośredniego wysyłania"
       }

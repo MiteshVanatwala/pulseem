@@ -12,19 +12,19 @@ import {
   Button,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { Close as CloseIcon, Search as SearchIcon } from '@material-ui/icons';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import {
   HelpOutline,
-  ContactSupport,
   Code,
-  Group,
   Home as HomeIcon,
-  FiberNew as NewsIcon
+  FiberNew as NewsIcon,
+  Close as CloseIcon,
+  Message,
 } from '@material-ui/icons';
 import clsx from 'clsx';
 import { closeHelpDrawer } from '../../redux/reducers/helpDrawerSlice';
+import { MdAutoAwesome } from 'react-icons/md';
 
 const useStyles = makeStyles((theme) => ({
   drawer: {
@@ -254,13 +254,13 @@ export const HelpDrawer: React.FC = () => {
       action: () => window.open(getHelpCenterUrl, '_blank'),
     },
     {
-      icon: <ContactSupport />,
+      icon: <Message />,
       title: t('dashboard.helpDrawer.support.supportChat.title'),
       description: t('dashboard.helpDrawer.support.supportChat.description'),
       action: () => window.open('http://tawk.to/', '_blank'),
     },
     {
-      icon: <Group />,
+      icon: <MdAutoAwesome />,
       title: t('dashboard.helpDrawer.support.pulseemGPT.title', 'Hire an agency'),
       description: t('dashboard.helpDrawer.support.pulseemGPT.description', 'Looking for help with a project? We can match you with the right certified Agency partner.'),
       action: () => window.open('https://chatgpt.com/g/g-683fe7903e188191b223275d68aa42ed-pulseem-support', '_blank'),
@@ -432,7 +432,7 @@ export const HelpDrawer: React.FC = () => {
         </Box>
 
         {/* Bottom Navigation */}
-        <Box className={classes.bottomNav}>
+        {/* <Box className={classes.bottomNav}>
           <Box className={classes.bottomNavItem} onClick={() => setActiveTab(0)}>
             <HomeIcon className={classes.menuIcon} />
             <Typography variant="caption" style={{ marginTop: 4 }}>
@@ -440,13 +440,13 @@ export const HelpDrawer: React.FC = () => {
             </Typography>
           </Box>
           <Box className={classes.bottomNavItem} onClick={() => setActiveTab(1)}>
-            {/* <NewsIcon />
+            <NewsIcon className={classes.menuIcon} />
             <Typography variant="caption" style={{ marginTop: 4 }}>
               {t('helpDrawer.bottomNav.news', 'News')}
             </Typography>
-            <Box className={classes.badge}>1</Box> */}
+            <Box className={classes.badge}>1</Box>
           </Box>
-        </Box>
+        </Box> */}
       </Box>
     </Drawer>
   );

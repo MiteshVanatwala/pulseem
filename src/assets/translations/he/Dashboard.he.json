@@ -97,7 +97,7 @@
         "description": "ה-GPT החכם של Pulseem שיעזור לכם לפתור בעיות ולהפיק יותר מהמערכת."
       },
       "APIIcon": {
-        "title": "API – אייקון API",
+        "title": "API",
         "UPIAPI": "API של ממשק המשתמש",
         "DirectSendAPI": "API לשליחה ישירה"
       }
