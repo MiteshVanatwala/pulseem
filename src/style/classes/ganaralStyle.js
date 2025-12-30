@@ -4633,6 +4633,29 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
         },
       },
     },
+    '& .mobile-header-container': {
+      '& h1': {
+        margin: 0,
+        fontSize: '2rem',
+      },
+      '& .MuiMobileStepper-root': {
+         margin: '8px auto',
+      },
+      '& .mobile-down-arrow': {
+        position: 'absolute',
+        zIndex: 999,
+        marginLeft: '20%',
+        marginTop: '-2.75rem',
+        height: 70,
+      },
+      '& .mobile-mascot': {
+        position: 'absolute',
+        zIndex: 998,
+        right: '1rem',
+        bottom: 0,
+        height: 150,
+      },
+    },
     '& .stepper': {
       width: 'fit-content',
       margin: '16px auto',

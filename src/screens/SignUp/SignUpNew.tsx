@@ -28,6 +28,8 @@ import EnImage from '../../assets/images/british.svg';
 import IsraelImage from "../../assets/images/israel-flag-icon.svg";
 import PolandImage from "../../assets/images/poland-flag-icon.svg";
 import DownArrowCustom from "../../assets/images/down-arrow-custom.png";
+import DownArrowMobile from "../../assets/images/down-arrow-mobile.png";
+import MascotRelaxing from "../../assets/images/mascot_relaxing.png";
 import CustomArrow from "../../assets/images/custom-arrow.png";
 import MascotResting from "../../assets/images/mascot_resting.png";
 import { Autocomplete } from "@mui/material";
@@ -1273,8 +1275,32 @@ const SignUpNew = ({ classes }: any) => {
         <Grid item xs={12} md={6} style={{ direction: isRTL ? 'rtl' : 'ltr' }}>
           <Box className={clsx(classes.posRelative)}>
             <Box className={clsx(classes.textCenter, 'signUpContainer')}>
-              <h1>{t('SignUp.CREATEANACCOUNT')}</h1>
+              {windowSize !== 'xs' && windowSize !== 'sm' ? 
+              <h1>{t('SignUp.CREATEANACCOUNT')}</h1> : null}
               {languageSelector()}
+                {windowSize === 'xs' || windowSize === 'sm' ? (
+    <Box className="mobile-header-container" style={{direction: 'ltr'}}>
+       <h1>{t('SignUp.CREATEANACCOUNT')}</h1>
+           {
+              activeStep < 3 && (
+                <MobileStepper
+                  variant="dots"
+                  steps={4}
+                  position="static"
+                  activeStep={activeStep}
+                  className={clsx("stepper", classes.mt20, classes.borderRadius30)}
+                  nextButton={<div />}
+                  backButton={<div />}
+                />
+              )
+            }
+           <img
+                    src={DownArrowMobile}
+                    alt="Arrow"
+                    className="mobile-down-arrow"
+                  />
+    </Box>
+  ) : null}
               <Box className={clsx('widgetContainer', classes.whiteBox, classes.textCenter)}>
                 {activeStep === 0 && Step1()}
                 {activeStep === 1 && Step2()}
@@ -1314,7 +1340,7 @@ const SignUpNew = ({ classes }: any) => {
                 </Box>
               </Box>
             </Box>
-            {
+            {windowSize !== 'xs' && windowSize !== 'sm' ? 
               activeStep < 3 && (
                 <MobileStepper
                   variant="dots"
@@ -1326,7 +1352,7 @@ const SignUpNew = ({ classes }: any) => {
                   backButton={<div />}
                 />
               )
-            }
+             : null}
           </Box>
         </Grid>
         <Grid item xs={12} md={3} className="mascot-container">
@@ -1345,6 +1371,15 @@ const SignUpNew = ({ classes }: any) => {
           </Typography>
         </Grid>
       </Grid>
+        {windowSize === 'xs' || windowSize === 'sm' ? (
+    <Box className="mobile-header-container">
+      <img
+        src={MascotRelaxing}
+        alt="Mascot"
+        className="mobile-mascot"
+      />
+    </Box>
+  ) : null}
 
       <div style={{ direction: isRTL ? 'rtl' : 'ltr' }}>
         <Loader isOpen={showLoader} showBackdrop={true} zIndex={9999} />
