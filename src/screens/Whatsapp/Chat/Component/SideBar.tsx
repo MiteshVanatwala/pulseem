@@ -135,11 +135,11 @@ const SideBar = ({
 								})}
 							</Select>
 							|
-							<Button onClick={(e: BaseSyntheticEvent) => {
+							<Button style={{ textTransform: 'none' }}  onClick={(e: BaseSyntheticEvent) => {
 								onAddAgent();
 							}}>{translator('common.addNew')}</Button>
 							|
-							<Button onClick={(e: BaseSyntheticEvent) => {
+							<Button style={{ textTransform: 'none' }}  onClick={(e: BaseSyntheticEvent) => {
 								onEditAgents();
 							}}>{translator('common.Edit')}</Button>
 						</div>
