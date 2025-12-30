@@ -220,7 +220,7 @@
     "addFirstCard": "הוסף את כרטיס האשראי הראשון שלך",
     "note": "הערה",
     "securityNote": "פרטי כרטיס האשראי שלך מוצפנים ומאוחסנים בצורה מאובטחת. אנחנו לעולם לא שומרים את מספר הכרטיס המלא או קוד האימות.",
-    "selectCreditCard": "Select Credit Card"
+    "selectCreditCard": "אנא בחרו כרטיס אשראי"
   },
   "featureNames": {
     "EMAIL_BASIC": "קמפייני אימייל בסיסיים",

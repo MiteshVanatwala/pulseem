@@ -51,6 +51,8 @@ const EmailMarketingSlider = ({
 
   // Use controlled value if provided, otherwise use internal state
   const [internalValue, setInternalValue] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const trackRef = React.useRef<HTMLDivElement>(null);
   const isControlled = controlledValue !== undefined;
   const sliderValue = isControlled ? controlledValue : internalValue;
 
@@ -161,9 +163,9 @@ const EmailMarketingSlider = ({
 
   const handlePrevious = () => {
     if (disabled) return;
-    const minValue = controlledMin !== undefined ? controlledMin : 0;
-    if (sliderValue > minValue) {
-      const newValue = sliderValue - 1;
+    const currentTierIndex = getCurrentTierIndex();
+    if (currentTierIndex > 0) {
+      const newValue = tiers[currentTierIndex - 1].value;
       const mockEvent = { target: { value: newValue.toString() } } as any;
       if (isControlled && controlledOnChange) {
         controlledOnChange(mockEvent, newValue);
@@ -175,9 +177,9 @@ const EmailMarketingSlider = ({
 
   const handleNext = () => {
     if (disabled) return;
-    const maxValue = controlledMax !== undefined ? controlledMax : tiers.length - 1;
-    if (sliderValue < maxValue) {
-      const newValue = sliderValue + 1;
+    const currentTierIndex = getCurrentTierIndex();
+    if (currentTierIndex < tiers.length - 1) {
+      const newValue = tiers[currentTierIndex + 1].value;
       const mockEvent = { target: { value: newValue.toString() } } as any;
       if (isControlled && controlledOnChange) {
         controlledOnChange(mockEvent, newValue);
@@ -209,6 +211,78 @@ const EmailMarketingSlider = ({
     if (maxValue <= minValue) return 0;
     return (currentIndex / (tiers.length - 1)) * 100;
   };
+
+  // Custom drag handlers
+  const handleTrackInteraction = (clientX: number) => {
+    if (disabled || !trackRef.current || tiers.length === 0) return;
+    
+    const rect = trackRef.current.getBoundingClientRect();
+    const trackWidth = rect.width;
+    let clickPosition = clientX - rect.left;
+    
+    // Handle RTL
+    if (isRTL) {
+      clickPosition = trackWidth - clickPosition;
+    }
+    
+    // Calculate percentage and snap to nearest tier
+    const percentage = Math.max(0, Math.min(100, (clickPosition / trackWidth) * 100));
+    const tierIndex = Math.round((percentage / 100) * (tiers.length - 1));
+    const newValue = tiers[tierIndex]?.value;
+    
+    if (newValue !== undefined) {
+      const mockEvent = { target: { value: newValue.toString() } } as any;
+      if (isControlled && controlledOnChange) {
+        controlledOnChange(mockEvent, newValue);
+      } else {
+        setInternalValue(newValue);
+      }
+    }
+  };
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (disabled) return;
+    setIsDragging(true);
+    handleTrackInteraction(e.clientX);
+  };
+
+  const handleMouseMove = (e: MouseEvent) => {
+    if (isDragging) {
+      handleTrackInteraction(e.clientX);
+    }
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (disabled) return;
+    setIsDragging(true);
+    handleTrackInteraction(e.touches[0].clientX);
+  };
+
+  const handleTouchMove = (e: TouchEvent) => {
+    if (isDragging) {
+      handleTrackInteraction(e.touches[0].clientX);
+    }
+  };
+
+  useEffect(() => {
+    if (isDragging) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+      document.addEventListener('touchmove', handleTouchMove);
+      document.addEventListener('touchend', handleMouseUp);
+      
+      return () => {
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
+        document.removeEventListener('touchmove', handleTouchMove);
+        document.removeEventListener('touchend', handleMouseUp);
+      };
+    }
+  }, [isDragging, tiers, isRTL, disabled]);
 
   if (!isControlled && (loading || tiers.length === 0)) {
     return null;
@@ -242,7 +316,16 @@ const EmailMarketingSlider = ({
             <ChevronLeft />
           </IconButton>
 
-          <Box className={classes.sliderTrack}>
+          <div 
+            className={classes.sliderTrack}
+            ref={trackRef}
+            onMouseDown={handleMouseDown}
+            onTouchStart={handleTouchStart}
+            style={{
+              cursor: disabled ? 'not-allowed' : 'pointer',
+              userSelect: 'none'
+            }}
+          >
             <Box
               className={clsx(
                 classes.sliderTrackFilled,
@@ -262,35 +345,13 @@ const EmailMarketingSlider = ({
                   style={{ 
                     left: `${position}%`,
                     opacity: disabled ? 0.5 : 1,
-                    cursor: disabled ? 'not-allowed' : 'pointer'
+                    cursor: disabled ? 'not-allowed' : 'grab',
+                    transform: isDragging ? 'translate(-50%, -50%) scale(1.1)' : 'translate(-50%, -50%)'
                   }}
                 />
               );
             })}
-          </Box>
-
-          {/* HTML Range Input */}
-          <input
-            type="range"
-            min={minValue}
-            max={maxValue}
-            value={currentIndex}
-            onChange={(e) => {
-              const newIndex = parseInt(e.target.value);
-              if (newIndex >= 0 && newIndex < tiers.length) {
-                const newValue = tiers[newIndex].value;
-                const mockEvent = { target: { value: newValue.toString() } } as any;
-                handleSliderChange(mockEvent);
-              }
-            }}
-            step={1}
-            disabled={disabled}
-            className={classes.sliderInput}
-            style={{ 
-              direction: isRTL ? 'rtl' : 'ltr',
-              cursor: disabled ? 'not-allowed' : 'pointer'
-            }}
-          />
+          </div>
 
           {/* Right Arrow - Increase */}
           <IconButton

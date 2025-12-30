@@ -83,6 +83,20 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose, jumpToStep = 1 }: any) =
     }
   }, [selectedCurrency.id]);
 
+  // Set initial pricing to first mark when marks are loaded
+  useEffect(() => {
+    if (marks.length > 0 && (selectedPricing === 0 || selectedPricing === null) && !Newsletters.IsEmailPolandSubscribed) {
+      const firstMark = first(marks);
+      if (firstMark) {
+        setSelectedPricing(firstMark.value);
+        setLevel({
+          low: firstMark.low,
+          high: firstMark.high
+        });
+      }
+    }
+  }, [marks]);
+
   useEffect(() => {
     setSelectedCurrency({
       id: currencyId,
@@ -620,8 +634,8 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose, jumpToStep = 1 }: any) =
     return (
       <Box sx={{ width: '100%' }}>
         <Stepper activeStep={activeStep} alternativeLabel style={{ padding: 0 }}>
-          {steps.map((label) => (
-            <Step key={label}>
+          {steps.map((label, index) => (
+            <Step key={`${label}_${index}`}>
               <StepLabel>{label}</StepLabel>
             </Step>
           ))}
