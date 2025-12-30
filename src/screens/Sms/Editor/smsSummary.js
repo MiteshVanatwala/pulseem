@@ -74,7 +74,7 @@ const SmsSummary = ({ classes,
                   <Box className={classes.sumChild}>
                     <span className={classes.spanSum}>{t("sms.nonPolishNumber")}:</span>
                     <span className={classes.bodySum}>
-                      {summaryPayload.NonPolishNumbers?.toLocaleString()}
+                      {summaryPayload.NonPolishCount?.toLocaleString()}
                     </span>
                   </Box>
                 )

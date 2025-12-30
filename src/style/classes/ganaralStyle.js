@@ -4377,7 +4377,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       maxWidth: '80vw'
     },
     '& .payPerRecipientChild': {
-      minHeight: '70vh',
+      // minHeight: '70vh',
       maxHeight: '70vh',
       overflowX: 'hidden'
     }

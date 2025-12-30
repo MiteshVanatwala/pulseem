@@ -21,7 +21,7 @@ import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
 import { ERROR_TYPE } from "../../../helpers/Types/common";
 import { getCurrentPlan, getAvailablePlans, downgradePlan, deletePolandSubscription } from "../../../redux/reducers/TiersSlice";
 import BillingDetails from "./BillingDetails";
-import { getCreditCardIframe, getAccountOperations, payDebtInvoices, inactiveCreditCard } from "../../../redux/reducers/BillingSlice";
+import { getCreditCardIframe, getAccountOperations, payDebtInvoices, inactiveCreditCard, cancelFrozenSends, releaseFrozenSends } from "../../../redux/reducers/BillingSlice";
 import { Loader } from "../../../components/Loader/Loader";
 import PurchaseTableTemplate from "./PurchaseTableTemplate";
 import { PurchaseHistoryModel } from "../../../Models/Account/AccountBilling";
@@ -81,6 +81,10 @@ const BillingSettingsPage = ({ classes }: any) => {
   const [showEditCard, setShowEditCard] = useState<boolean>(false);
   const [showCreditCardManagement, setShowCreditCardManagement] = useState<boolean>(false);
   const [showTierPlans, setShowTierPlans] = useState<boolean>(false);
+  const [ hasFrozenEmail, setHasFrozenEmail ] = useState(false);
+  const [ showReleaseMessage, setShowReleaseMessage ] = useState(false);
+  const [ showCancelMessage, setShowCancelMessage ] = useState(false);
+  const [ showFrozenDialog, setShowFrozenDialog ] = useState(false);
 
   const formatPlanDescription = () => {
     const price = currentPlan?.Name !== 'GRAND_FATHER' && currentPlan?.Name !== 'Starter' ? `₪${currentPlan?.Price}/${t('billing.month')}` : '';
@@ -149,6 +153,89 @@ const BillingSettingsPage = ({ classes }: any) => {
   useEffect(() => {
     i18n.changeLanguage(isRTL ? 'he-IL' : 'en-US');
   }, [isRTL]);
+
+  useEffect(() => {
+    window.addEventListener('message', (e) => {
+        if (e.data) {
+            try {
+                const message = JSON.parse(e.data);
+                if (message["result"] !== null && message["result"] !== undefined) {
+                    if (!!message?.hasFrozenEmail) {
+                        setHasFrozenEmail(true);
+                        setShowFrozenDialog(true);
+                    }
+                }
+            }
+            catch (e) {
+                // dispatch(sendToTeamChannel({
+                //     MethodName: 'UseEffect',
+                //     ComponentName: 'TranzilaIframe',
+                //     Message: e
+                // }));
+                return false;
+            }
+        }
+    })
+  }, []);
+
+  const processFrozenCampaigns = async (action: string) => {
+    setShowLoader(true);
+    const { payload: { StatusCode } }: any = await dispatch(action === 'cancel' ? cancelFrozenSends() : releaseFrozenSends());
+    if (StatusCode === 200) {
+      if (action === 'process') {
+        setShowReleaseMessage(true);
+      } else {
+        setShowCancelMessage(true);
+      }
+    }
+    setShowLoader(false);
+  };
+
+  const FrozenCampaignsMessage = () => {
+    if (!hasFrozenEmail) return null;
+    
+    return (
+      <Box className={clsx(classes.frozenCampaignsContainer, classes.pt25)}>
+        <Grid container spacing={2} alignItems="center">
+          <Grid item xs={12}>
+            <Box>
+              <Typography className={clsx(classes.f20)}>
+                {!showReleaseMessage && !showCancelMessage && RenderHtml(t("dashboard.polishSubscribe.frozenMessage"))}
+                {showReleaseMessage && RenderHtml(t("dashboard.polishSubscribe.releaseMessage"))}
+                {showCancelMessage && RenderHtml(t("dashboard.polishSubscribe.cancelMessage"))}
+              </Typography>
+              {
+                !showReleaseMessage && !showCancelMessage && (
+                  <Grid container spacing={2} className={clsx(classes.mt10, classes.textCenter)}>
+                    <Grid item md={12} xs={12} className={clsx(classes.w100)}>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={() => processFrozenCampaigns('process')}
+                        disabled={showLoader}
+                        className={clsx(classes.btn, classes.btnRounded, classes.mInline5)}
+                      >
+                        {t('common.Yes')}
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        color="primary"
+                        onClick={() => processFrozenCampaigns('cancel')}
+                        disabled={showLoader}
+                        className={clsx(classes.btn, classes.btnRounded, classes.mInline5)}
+                      >
+                        {t('common.No')}
+                      </Button>
+                    </Grid>
+                  </Grid>
+                )
+              }
+            </Box>
+          </Grid>
+        </Grid>
+      </Box>
+    );
+  };
 
   const handleOnCardSaved = () => {
     setAddCardDialog(false);
@@ -866,6 +953,26 @@ const BillingSettingsPage = ({ classes }: any) => {
             <iframe title="Tranzila Url" src={`${paymentIframe}`} width={windowSize !== 'xs' ? 400 : 250} height="420" border="no" frameBorder="0" style={{ border: "none !important" }} />
           </Grid>
         </Grid>
+      </BaseDialog>}
+      {showFrozenDialog && <BaseDialog
+        classes={classes}
+        title={t('dashboard.polishSubscribe.frozenTitle')}
+        open={showFrozenDialog}
+        onClose={() => {
+          setShowFrozenDialog(false);
+          setHasFrozenEmail(false);
+          setShowReleaseMessage(false);
+          setShowCancelMessage(false);
+        }}
+        onCancel={() => {
+          setShowFrozenDialog(false);
+          setHasFrozenEmail(false);
+          setShowReleaseMessage(false);
+          setShowCancelMessage(false);
+        }}
+        showDefaultButtons={false}
+      >
+        <FrozenCampaignsMessage />
       </BaseDialog>}
       <ConfirmDeletePopUp
         handleDeleteGroup={() => handleRemoveCreditCard()}

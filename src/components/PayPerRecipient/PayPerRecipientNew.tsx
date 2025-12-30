@@ -834,6 +834,7 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose, jumpToStep = 1 }: any) =
               // @ts-ignore
               setToastMessage({ severity: 'success', color: 'success', message: t('dashboard.polishUnsubscribe.success'), showAnimtionCheck: false });
               await dispatch(getPackagesDetails());
+              onClose();
             }
           }}
         />
