@@ -4640,6 +4640,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       },
       '& .MuiMobileStepper-root': {
          margin: '8px auto',
+         padding: 5,
       },
       '& .mobile-down-arrow': {
         position: 'absolute',

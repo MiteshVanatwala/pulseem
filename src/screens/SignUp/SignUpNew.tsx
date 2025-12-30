@@ -1278,29 +1278,29 @@ const SignUpNew = ({ classes }: any) => {
               {windowSize !== 'xs' && windowSize !== 'sm' ? 
               <h1>{t('SignUp.CREATEANACCOUNT')}</h1> : null}
               {languageSelector()}
-                {windowSize === 'xs' || windowSize === 'sm' ? (
-    <Box className="mobile-header-container" style={{direction: 'ltr'}}>
-       <h1>{t('SignUp.CREATEANACCOUNT')}</h1>
-           {
-              activeStep < 3 && (
-                <MobileStepper
-                  variant="dots"
-                  steps={4}
-                  position="static"
-                  activeStep={activeStep}
-                  className={clsx("stepper", classes.mt20, classes.borderRadius30)}
-                  nextButton={<div />}
-                  backButton={<div />}
-                />
-              )
-            }
-           <img
+              {windowSize === 'xs' || windowSize === 'sm' ? (
+                <Box className="mobile-header-container" style={{ direction: 'ltr' }}>
+                  <h1>{t('SignUp.CREATEANACCOUNT')}</h1>
+                  {
+                    activeStep < 3 && (
+                      <MobileStepper
+                        variant="dots"
+                        steps={4}
+                        position="static"
+                        activeStep={activeStep}
+                        className={clsx("stepper", classes.mt20, classes.borderRadius30)}
+                        nextButton={<div />}
+                        backButton={<div />}
+                      />
+                    )
+                  }
+                  <img
                     src={DownArrowMobile}
                     alt="Arrow"
                     className="mobile-down-arrow"
                   />
-    </Box>
-  ) : null}
+                </Box>
+              ) : null}
               <Box className={clsx('widgetContainer', classes.whiteBox, classes.textCenter)}>
                 {activeStep === 0 && Step1()}
                 {activeStep === 1 && Step2()}
@@ -1371,15 +1371,15 @@ const SignUpNew = ({ classes }: any) => {
           </Typography>
         </Grid>
       </Grid>
-        {windowSize === 'xs' || windowSize === 'sm' ? (
-    <Box className="mobile-header-container">
-      <img
-        src={MascotRelaxing}
-        alt="Mascot"
-        className="mobile-mascot"
-      />
-    </Box>
-  ) : null}
+      {windowSize === 'xs' || windowSize === 'sm' ? (
+        <Box className="mobile-header-container">
+          <img
+            src={MascotRelaxing}
+            alt="Mascot"
+            className="mobile-mascot"
+          />
+        </Box>
+      ) : null}
 
       <div style={{ direction: isRTL ? 'rtl' : 'ltr' }}>
         <Loader isOpen={showLoader} showBackdrop={true} zIndex={9999} />
