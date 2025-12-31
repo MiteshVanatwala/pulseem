@@ -21,10 +21,12 @@ import {
   FiberNew as NewsIcon,
   Close as CloseIcon,
   Message,
+  ContactMail,
 } from '@material-ui/icons';
 import clsx from 'clsx';
 import { closeHelpDrawer } from '../../redux/reducers/helpDrawerSlice';
 import { MdAutoAwesome } from 'react-icons/md';
+import { ContactSupportDialog } from './ContactSupportDialog'; // Adjust path as needed
 
 const useStyles = makeStyles((theme) => ({
   drawer: {
@@ -231,6 +233,7 @@ export const HelpDrawer: React.FC = () => {
   const { isOpen } = useSelector((state: any) => state.helpDrawer);
   const [activeTab, setActiveTab] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
+  const [contactDialogOpen, setContactDialogOpen] = useState(false);
 
   const handleClose = () => {
     dispatch(closeHelpDrawer());
@@ -258,6 +261,10 @@ export const HelpDrawer: React.FC = () => {
     }, 300);
   };
 
+  const handleOpenContactForm = () => {
+  setContactDialogOpen(true);
+};
+
   const supportItems = [
     {
       icon: <HelpOutline />,
@@ -266,16 +273,22 @@ export const HelpDrawer: React.FC = () => {
       action: () => window.open(getHelpCenterUrl, '_blank'),
     },
     {
+      icon: <MdAutoAwesome />,
+      title: t('dashboard.helpDrawer.support.pulseemGPT.title'),
+      description: t('dashboard.helpDrawer.support.pulseemGPT.description'),
+      action: () => window.open('https://chatgpt.com/g/g-683fe7903e188191b223275d68aa42ed-pulseem-support', '_blank'),
+    },
+      {
       icon: <Message />,
       title: t('dashboard.helpDrawer.support.supportChat.title'),
       description: t('dashboard.helpDrawer.support.supportChat.description'),
       action: handleOpenSupportChat,
     },
     {
-      icon: <MdAutoAwesome />,
-      title: t('dashboard.helpDrawer.support.pulseemGPT.title', 'Hire an agency'),
-      description: t('dashboard.helpDrawer.support.pulseemGPT.description', 'Looking for help with a project? We can match you with the right certified Agency partner.'),
-      action: () => window.open('https://chatgpt.com/g/g-683fe7903e188191b223275d68aa42ed-pulseem-support', '_blank'),
+      icon: <ContactMail />,
+      title: t('dashboard.helpDrawer.support.contactUs.title'),
+      description: t('dashboard.helpDrawer.support.contactUs.description'),
+      action: handleOpenContactForm,
     },
     {
       icon: <Code />,
@@ -459,6 +472,10 @@ export const HelpDrawer: React.FC = () => {
           </Box>
         </Box> */}
       </Box>
+      <ContactSupportDialog
+        open={contactDialogOpen}
+        onClose={() => setContactDialogOpen(false)}
+      />
     </Drawer>
   );
 };

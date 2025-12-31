@@ -99,10 +99,21 @@
         "title": "PulseemGPT",
         "description": "Use Pulseem’s smart GPT to help you solve problems and get more out of the platform."
       },
+      "contactUs": {
+        "title": "Contact us",
+        "description": "Make a request to our support team to get help."
+      },
       "APIIcon": {
         "title": "API",
         "UPIAPI": "UI API",
         "DirectSendAPI": "Direct Send API"
+      },
+      "contactSupport": {
+        "title": "Contact Support",
+        "serviceAndSupport": "Service and Support",
+        "sales": "Sales",
+        "phoneNumber": "Phone Number",
+        "website": "Website"
       }
     }
   }

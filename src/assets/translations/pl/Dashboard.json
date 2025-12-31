@@ -99,10 +99,21 @@
         "title": "PulseemGPT",
         "description": "Skorzystaj z inteligentnego GPT Pulseem, aby rozwiązywać problemy i w pełni wykorzystać możliwości platformy."
       },
+      "contactUs": {
+        "title": "Skontaktuj się z nami",
+        "description": "Wyślij zgłoszenie do naszego zespołu wsparcia, aby uzyskać pomoc."
+      },
       "APIIcon": {
         "title": "API",
         "UPIAPI": "API interfejsu użytkownika",
         "DirectSendAPI": "API bezpośredniego wysyłania"
+      },
+      "contactSupport": {
+        "title": "Skontaktuj się z pomocą techniczną",
+        "serviceAndSupport": "Serwis i wsparcie",
+        "sales": "Sprzedaż",
+        "phoneNumber": "Numer telefonu",
+        "website": "Strona internetowa"
       }
     }
   }
