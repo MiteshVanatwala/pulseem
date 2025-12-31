@@ -501,7 +501,7 @@ const BulkStatus = ({ classes }) => {
                   isAllowNewsletterForPoland() && (
                     <>
                       {
-                        Newsletters.eBillingType === 2 ? (
+                        Newsletters.IsEmailPolandSubscribed ? (
                           <>
                             <IconButton className={clsx(classes.p5)} onClick={() => setIsOpenPayPerRecipient(true)}>
                               <BiCog />
@@ -517,7 +517,7 @@ const BulkStatus = ({ classes }) => {
                               } else setIsOpenPayPerRecipient(true)
                             }}
                           >
-                            {t(`common.${ !Newsletters.eBillingType === 2 ? 'SubscribeButton' : 'cancel'}`)}
+                            {t(`common.${ !Newsletters.IsEmailPolandSubscribed ? 'SubscribeButton' : 'cancel'}`)}
                             {isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                           </Button>
                         )
@@ -530,7 +530,7 @@ const BulkStatus = ({ classes }) => {
                   !IsPoland && (Newsletters.eBillingType === 0 || Newsletters.eBillingType === 2) && (
                     <>
                       {
-                        isAllowNewsletterSubscription && Newsletters.eBillingType === 2 ?
+                        isAllowNewsletterSubscription && Newsletters?.IsEmailTierSubscribed ?
                           (
                             <>
                               <Divider className={clsx(classes.rocketImage, classes.mt1)} />
@@ -569,7 +569,7 @@ const BulkStatus = ({ classes }) => {
                                   >
                                     {t('billing.tier.steps.upgrade')}
                                   </Button>
-                                  {/* <Button
+                                  <Button
                                     className={clsx(
                                       classes.btn,
                                       classes.btnRounded,
@@ -580,7 +580,7 @@ const BulkStatus = ({ classes }) => {
                                     }}
                                   >
                                     {t('common.cancel')}
-                                  </Button> */}
+                                  </Button>
                                 </Grid>
                               </Grid>
                             </>

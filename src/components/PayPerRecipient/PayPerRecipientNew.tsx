@@ -85,17 +85,31 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose, jumpToStep = 1 }: any) =
 
   // Set initial pricing to first mark when marks are loaded
   useEffect(() => {
-    if (marks.length > 0 && (selectedPricing === 0 || selectedPricing === null) && !Newsletters.IsEmailPolandSubscribed) {
-      const firstMark = first(marks);
-      if (firstMark) {
-        setSelectedPricing(firstMark.value);
+    if (marks.length > 0 && (selectedPricing === 0 || selectedPricing === null)) {
+      // If user is subscribed and has PriceScaleId, set the current subscription tier
+      if (Newsletters.IsEmailPolandSubscribed && Newsletters.PriceScaleId && Newsletters.PriceScaleId !== 0) {
+        const price = Newsletters.Price || 0;
+        const levelHigh = Newsletters.LevelHigh || 0;
+        const levelLow = Newsletters.LevelLow || 0;
+        
+        setSelectedPricing(price);
         setLevel({
-          low: firstMark.low,
-          high: firstMark.high
+          low: levelLow,
+          high: levelHigh
         });
+      } else if (!Newsletters.IsEmailPolandSubscribed) {
+        // For new subscribers, set to first mark
+        const firstMark = first(marks);
+        if (firstMark) {
+          setSelectedPricing(firstMark.value);
+          setLevel({
+            low: firstMark.low,
+            high: firstMark.high
+          });
+        }
       }
     }
-  }, [marks]);
+  }, [marks, Newsletters.IsEmailPolandSubscribed, Newsletters.PriceScaleId, Newsletters.Price, Newsletters.LevelHigh, Newsletters.LevelLow]);
 
   useEffect(() => {
     setSelectedCurrency({
