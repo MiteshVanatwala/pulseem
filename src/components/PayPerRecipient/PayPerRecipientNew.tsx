@@ -543,6 +543,8 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose, jumpToStep = 1 }: any) =
                 isRTL={isRTL}
                 packageId={null}
                 onComplete={(message: any) => {
+                  console.log(JSON.stringify(message))
+                  console.log(!!message?.hasFrozenEmail)
                   setActiveStep(3);
                   setHasFrozenEmail(!!message?.hasFrozenEmail)
                 }}
