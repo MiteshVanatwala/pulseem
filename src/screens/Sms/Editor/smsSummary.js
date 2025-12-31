@@ -70,7 +70,7 @@ const SmsSummary = ({ classes,
               </Box>
               
               {
-                isPolishAccount && (
+                isPolishAccount && summaryPayload.NonPolishCount?.toLocaleString() && (
                   <Box className={classes.sumChild}>
                     <span className={classes.spanSum}>{t("sms.nonPolishNumber")}:</span>
                     <span className={classes.bodySum}>

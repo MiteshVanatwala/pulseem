@@ -546,7 +546,8 @@ const PayPerRecipientNew = ({ classes, isOpen, onClose, jumpToStep = 1 }: any) =
                   console.log(JSON.stringify(message))
                   console.log(!!message?.hasFrozenEmail)
                   setActiveStep(3);
-                  setHasFrozenEmail(!!message?.hasFrozenEmail)
+                  dispatch(getPackagesDetails());
+                  setHasFrozenEmail(message?.hasFrozenEmail === true || String(message?.hasFrozenEmail).toLowerCase() === "true")
                 }}
                 // @ts-ignore
                 paymentUrl={`${paymentIframe}`}
