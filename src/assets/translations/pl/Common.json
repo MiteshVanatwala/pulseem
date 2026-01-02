@@ -903,5 +903,6 @@
   "upgrade": "Ulepsz",
   "cancelPlan": "Anuluj plan",
   "cancelPlanConfirmation": "Czy na pewno chcesz anulować swój obecny plan?",
-  "planCancellationRequestSubmitted": "Twoje żądanie anulowania planu zostało pomyślnie przesłane."
+  "planCancellationRequestSubmitted": "Twoje żądanie anulowania planu zostało pomyślnie przesłane.",
+  "nonPolishNumber": "This is non-polish number."
 }

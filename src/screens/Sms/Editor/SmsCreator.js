@@ -139,7 +139,7 @@ const SmsCreator = ({ classes }) => {
     ToastMessages,
     extraData
   } = useSelector((state) => state.sms);
-  const { accountSettings, accountFeatures, countryCodeList, isGlobal, subAccount } = useSelector((state) => state.common)
+  const { accountSettings, accountFeatures, countryCodeList, isGlobal, subAccount, IsPoland } = useSelector((state) => state.common)
   const [dialogType, setDialogType] = useState(null)
   const [alignment, setAlignment] = useState('right');
   const [checked, setChecked] = React.useState(false);
@@ -291,6 +291,12 @@ const SmsCreator = ({ classes }) => {
       }
       case 8: {// English letters not allowed
         setDialogType({ type: "englishLetterDialog" });
+        break;
+      }
+      case 9: { // Non polish number
+        if (IsPoland && isGlobal) {
+          setToastMessage(ToastMessages.NON_POLISH_NUMBER)
+        }
         break;
       }
       case 550: {
@@ -1361,6 +1367,10 @@ const SmsCreator = ({ classes }) => {
           setToastMessage(CoreToastMessages.XSS_ERROR);
           break;
         }
+        case 10: {
+          setToastMessage(ToastMessages.NON_POLISH_NUMBER);
+          break;
+        }
         case 927: {
           // Determine feature code from payload or context, fallback to 'SMS_BASIC' if not present
           const featureCode = r.payload.Message || 'SMS_BASIC';
@@ -1501,7 +1511,10 @@ const SmsCreator = ({ classes }) => {
       }
       else if (r.payload.Status === 3) {
         setOTPOpen(true);
-      } else if (r.payload.Status === 927) {
+      } else if (r.payload.Status === 10) {
+        setToastMessage(ToastMessages.NON_POLISH_NUMBER);
+      } 
+      else if (r.payload.Status === 927) {
         setTierMessageCode(r.payload.Message);
         setDialogType({ type: 'tier' });
       }
@@ -1538,6 +1551,9 @@ const SmsCreator = ({ classes }) => {
         else if (saveResponse.payload.Status === 2) {
           setDialogType(null);
           Redirect({ url: !!isFromAutomation ? getAutomationReturnUrl(id) : `${sitePrefix}SMSCampaigns` });
+        } else if (saveResponse.payload.Status === 10) {
+          setToastMessage(ToastMessages.NON_POLISH_NUMBER);
+          return;
         }
         else if (saveResponse.payload.Status === 927) {
           setTierMessageCode(saveResponse.payload.Message);
