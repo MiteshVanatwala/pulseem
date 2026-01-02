@@ -4651,7 +4651,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       '& .mobile-down-arrow': {
         position: 'absolute',
         zIndex: 999,
-        marginLeft: '20%',
+        marginLeft: '15vw',
         marginTop: '-2.75rem',
         height: 70,
       },
