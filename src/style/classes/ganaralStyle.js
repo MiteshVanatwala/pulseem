@@ -4481,6 +4481,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     overflowX: 'hidden',
     fontFamily: isRTL ? 'Heebo' : 'inherit',
     position: 'relative',
+    "@media (max-width: 768px)": {
+      background: 'linear-gradient(0deg, #FF4D2A 0%, #FF0054 76.2%, #FF0076 100%)'
+    },
     '& h1': {
       color: '#beff00',
       fontWeight: 900,
@@ -4580,7 +4583,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       zIndex: 1,
       pointerEvents: 'none',
       position: 'relative',
-      "@media screen and (min-width: 1024px)": {
+      "@media screen and (min-width: 960px)": {
         display: 'flex',
         justifyContent: 'end',
         alignItems: 'flex-start',
@@ -4602,7 +4605,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       pointerEvents: 'none',
       position: 'relative',
       marginTop: '8rem',
-      "@media screen and (min-width: 1024px)": {
+      "@media screen and (min-width: 960px)": {
         display: 'flex',
       },
       '& .mascot-image': {
@@ -4627,7 +4630,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
         wordBreak: 'break-word',
         direction: isRTL ? 'rtl' : 'ltr',
         marginLeft: 'clamp(-105px, -7.5vw, -85px)',
-        "@media screen and (min-width: 1024px) and (max-width: 1280px)": {
+         "@media screen and (min-width: 960px) and (max-width: 1023px)": {
+          marginLeft: 'clamp(-105px, -7.5vw, -95px)',
+         },
+        "@media screen and (min-width: 960px) and (max-width: 1280px)": {
           wordBreak: 'normal',
           width: '110px',
         },
@@ -4652,9 +4658,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       '& .mobile-mascot': {
         position: 'absolute',
         zIndex: 998,
-        right: '1rem',
+        right: isRTL ? '1rem' : 'auto',
         bottom: 0,
-        height: 150,
+        height: 155,
+        transform: isRTL ? 'none' : 'scaleX(-1)',
       },
     },
     '& .stepper': {
