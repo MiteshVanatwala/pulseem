@@ -1,6 +1,6 @@
 import { BaseSyntheticEvent, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, TextField } from '@material-ui/core';
+import { Link, TextField, Tooltip } from '@material-ui/core';
 import { Box, Grid, Button } from '@material-ui/core';
 import {
 	CampaignDetailByIdData,
@@ -71,7 +71,7 @@ const SummaryModal = ({
 		(state: { whatsapp: { ToastMessages: toastProps } }) =>
 			state.whatsapp.ToastMessages
 	);
-	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
+	const { isRTL, language } = useSelector((state: { core: coreProps }) => state.core);
 	const [toastMessage, setToastMessage] =
 		useState<toastProps['SUCCESS']>(resetToastData);
 
@@ -413,7 +413,7 @@ const SummaryModal = ({
 									<span className={classes.campaignSummaryTextDesc}>
 										{sendType === '1' && <>{translator('sms.SendNow')}</>}
 										{sendType === '2' &&
-											moment(sendDate)?.format('dddd , MMMM Do YYYY, h:mm a')}
+											moment(sendDate).locale(language)?.format('dddd , MMMM Do YYYY, h:mm a')}
 										{sendType === '3' &&
 											`${daysBeforeAfter} ${translator('mainReport.days')} ${isSpecialDateBefore
 												? translator('mainReport.before')
@@ -481,28 +481,40 @@ const SummaryModal = ({
 															]?.name
 														)}`}
 													</span>
-													<CustomTooltip
-														isSimpleTooltip={false}
-														arrow={true}
-														style={{
-															fontSize: 14,
+													<Tooltip
+														arrow
+														interactive
+														placement={'top'}
+														PopperProps={{
+															disablePortal: true,
+														}}
+														classes={{
+															tooltip: classes.tooltipContent,
+															arrow: classes.tooltipArrow
+														}}
+														title={
+															<>
+																<span style={{
+																	direction: isRTL ? 'rtl' : 'ltr',
+																	width: '100%',
+																	display: 'inline-block',
+																}}>
+																	{getTierInfoTooltip()}
+																</span>
+															</>
+														}
+													>
+														<span style={{
+															fontSize: 16,
 															width: 'auto',
 															paddingLeft: isRTL ? '0px' : '5px',
 															paddingRight: isRTL ? '5px' : '0px',
-															display: 'inline-flex'
-														}}
-														classes={classes}
-														interactive={true}
-														placement={'top'}
-														title={getTierInfoTooltip()}
-														// @ts-ignore
-														titleStyle={{
-															width: '100%',
-															display: 'inline-block',
-														}}
-														text={<span className={classes.bodyInfo}>i</span>}
-														icon={undefined}>
-													</CustomTooltip>
+															display: 'inline-flex',
+															cursor: 'pointer'
+														}}>
+															<span className={classes.bodyInfo}>i</span>
+														</span>
+													</Tooltip>
 												</div>
 											</div>
 										</Box>

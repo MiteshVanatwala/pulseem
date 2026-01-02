@@ -9,6 +9,7 @@ import { FaChevronUp } from 'react-icons/fa';
 import { useSelector } from 'react-redux'
 import clsx from "clsx";
 import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
+import moment from "moment";
 
 
 const SmsSummary = ({ classes,
@@ -25,8 +26,7 @@ const SmsSummary = ({ classes,
   const [detailsHide, setdetailsHide] = useState(true);
   const [subDetailsActive, setsubDetailsActive] = useState(false);
   const [subRecipientsDetails, setsubRecipients] = useState(false);
-  const { isRTL } = useSelector(state => state.core)
-
+  const { isRTL, language } = useSelector(state => state.core)
   const { t } = useTranslation();
   let totalFiletered = groups?.length > 0 && groups.reduce(function (a, b) {
     return parseInt(a) + parseInt(b['Recipients']);
@@ -63,7 +63,7 @@ const SmsSummary = ({ classes,
 
               <Box className={classes.sumChild}>
                 <span className={classes.spanSum}>{t("sms.smsDialogWhen")}:</span>
-                <span className={classes.bodySum}>{props.sendType === "3" ? `${props.days} ${t("mainReport.days")} ${props.after ? t("mainReport.after") : t("mainReport.before")} ${props.specialVal} at ${props.time.format('h:mm a')}  ` : props.sendType === "2" ? `${props.sendDateTime.format('dddd , MMMM Do YYYY, h:mm a')}` : t("sms.SendNow")}</span>
+                <span className={classes.bodySum}>{props.sendType === "3" ? `${props.days} ${t("mainReport.days")} ${props.after ? t("mainReport.after") : t("mainReport.before")} ${props.specialVal} at ${moment(props.time).locale(language).format('h:mm a')}  ` : props.sendType === "2" ? `${moment(props.sendDateTime).locale(language).format('dddd, MMMM Do YYYY, h:mm a')}` : t("sms.SendNow")}</span>
               </Box>
 
               {props.pulseTrue || props.toggleRandom ? <Box className={classes.sumChild}>

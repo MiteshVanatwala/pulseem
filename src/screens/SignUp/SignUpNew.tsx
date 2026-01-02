@@ -324,6 +324,8 @@ const SignUpNew = ({ classes }: any) => {
     if (status === 200) {
       if (Message === 'ok') {
         setActiveStep(activeStep + 1);
+        // @ts-ignore
+        window?.dataLayer.push({event: 'formSubmission',formType: 'Registration'});
       } else if (Message === 'internalerror') {
         setDialogType({ type: 'internalError' });
       } else {
