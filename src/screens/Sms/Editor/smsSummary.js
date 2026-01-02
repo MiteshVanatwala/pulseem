@@ -68,17 +68,6 @@ const SmsSummary = ({ classes,
                 <span className={classes.spanSum}>{t("sms.smsDialogWhen")}:</span>
                 <span className={classes.bodySum}>{props.sendType === "3" ? `${props.days} ${t("mainReport.days")} ${props.after ? t("mainReport.after") : t("mainReport.before")} ${props.specialVal} at ${moment(props.time).locale(language).format('h:mm a')}  ` : props.sendType === "2" ? `${moment(props.sendDateTime).locale(language).format('dddd, MMMM Do YYYY, h:mm a')}` : t("sms.SendNow")}</span>
               </Box>
-              
-              {
-                isPolishAccount && summaryPayload.NonPolishCount?.toLocaleString() && (
-                  <Box className={classes.sumChild}>
-                    <span className={classes.spanSum}>{t("sms.nonPolishNumber")}:</span>
-                    <span className={classes.bodySum}>
-                      {summaryPayload.NonPolishCount?.toLocaleString()}
-                    </span>
-                  </Box>
-                )
-              }
 
               {props.pulseTrue || props.toggleRandom ? <Box className={classes.sumChild}>
                 <span className={classes.spanSum}>{t("mainReport.pulseSend")}</span>
@@ -184,6 +173,16 @@ const SmsSummary = ({ classes,
                 {summaryPayload.DuplicateCellphoneSharedWithClienCount}
               </span>
             </span>}
+            {
+              isPolishAccount && summaryPayload.NonPolishCount?.toLocaleString() && (
+                <span className={classes.summaryDetailsSpan}>
+                  {t("sms.nonPolishNumber")}:
+                  <span className={classes.summaryDetailsSpanBold}>
+                    {summaryPayload.NonPolishCount?.toLocaleString()}
+                  </span>
+                </span>
+              )
+            }
 
             {summaryPayload.Removed === 0 ? null : <span
               className={classes.summaryDetailsSpan}

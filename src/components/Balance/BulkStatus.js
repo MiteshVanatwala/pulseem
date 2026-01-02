@@ -465,25 +465,31 @@ const BulkStatus = ({ classes }) => {
 
               <Grid item md={4} xs={4} className={isRTL ? classes.textLeft : classes.textRight}>
                 {
-                  !IsPoland && (Newsletters.eBillingType === 0 || Newsletters.eBillingType === 2) && (
+                  !IsPoland && Newsletters.eBillingType === 2 && (
                     <>
                       {
                         !isAllowNewsletterSubscription && !Newsletters?.IsEmailTierSubscribed && (
                           <Button
                             className={clsx(classes.btn, classes.btnRounded, classes.f12)}
                             onClick={() => {
+                              console.log("475")
                               if (isAllowNewsletter()) {
                                 if (isBillingDetailsRequired) {
+                                  console.log("478")
                                   setIsOpenBillingSettings(true);
                                   setBillingPopupCallback('Newsletter');
                                 } else {
+                                  console.log("482")
                                   showPackageDialogType({ type: 2, title: t('common.newsletterBulkTitle') });
                                 }
                               } else if (isAllowNewsletterSubscription) {
+                                console.log("486")
                                 if (isBillingDetailsRequired) {
+                                  console.log("488")
                                   setIsOpenBillingSettings(true);
                                   setBillingPopupCallback('EmailTier');
                                 } else {
+                                  console.log("492")
                                   setIsOpenEmailTierPlans(true);
                                 }
                               }
