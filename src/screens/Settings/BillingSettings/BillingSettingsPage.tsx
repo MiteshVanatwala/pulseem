@@ -21,7 +21,7 @@ import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
 import { ERROR_TYPE } from "../../../helpers/Types/common";
 import { getCurrentPlan, getAvailablePlans, downgradePlan, deletePolandSubscription } from "../../../redux/reducers/TiersSlice";
 import BillingDetails from "./BillingDetails";
-import { getCreditCardIframe, getAccountOperations, payDebtInvoices, inactiveCreditCard, cancelFrozenSends, releaseFrozenSends } from "../../../redux/reducers/BillingSlice";
+import { getCreditCardIframe, getAccountOperations, payDebtInvoices, inactiveCreditCard, cancelFrozenSends, releaseFrozenSends, getAccountBilling } from "../../../redux/reducers/BillingSlice";
 import { Loader } from "../../../components/Loader/Loader";
 import PurchaseTableTemplate from "./PurchaseTableTemplate";
 import { PurchaseHistoryModel } from "../../../Models/Account/AccountBilling";
@@ -48,6 +48,7 @@ import TierPlans from "../../../components/TierPlans/TierPlans";
 import { CreditCard } from "@material-ui/icons";
 import { DateFormats } from "../../../helpers/Constants";
 import { getPackagesDetails } from "../../../redux/reducers/dashboardSlice";
+import BillingSettings from "../../../components/BillingSettings/BillingSettings";
 
 
 const BillingSettingsPage = ({ classes }: any) => {
@@ -61,6 +62,7 @@ const BillingSettingsPage = ({ classes }: any) => {
   const { subAccount } = useSelector((state: any) => state.common);
   const { currentPlan } = useSelector((state: any) => state.tiers);
   const { packagesDetails } = useSelector((state: any) => state.dashboard);
+  const { billing: { Data: billingDetail } } = useSelector((state: any) => state.billing);
   const qs = (window.location.search && queryString.parse(window.location.search)) as any;
   const [addCardDialog, setAddCardDialog] = useState<boolean>(false);
   const [toastMessage, setToastMessage] = useState<ERROR_TYPE>(null);
@@ -85,6 +87,9 @@ const BillingSettingsPage = ({ classes }: any) => {
   const [ showReleaseMessage, setShowReleaseMessage ] = useState(false);
   const [ showCancelMessage, setShowCancelMessage ] = useState(false);
   const [ showFrozenDialog, setShowFrozenDialog ] = useState(false);
+  const [ isOpenBillingSettings, setIsOpenBillingSettings ] = useState(false);
+
+  const isBillingDetailsRequired = billingDetail?.CompanyName === '' || billingDetail?.CompanyName === null || billingDetail?.CorporationNumber === '' || billingDetail?.CorporationNumber === null || billingDetail?.Email === '' || billingDetail?.Email === null;
 
   const formatPlanDescription = () => {
     const price = currentPlan?.Name !== 'GRAND_FATHER' && currentPlan?.Name !== 'Starter' ? `₪${currentPlan?.Price}/${t('billing.month')}` : '';
@@ -139,6 +144,7 @@ const BillingSettingsPage = ({ classes }: any) => {
 
   useEffect(() => {
     accountFeatures.indexOf(PulseemFeatures.NOT_TO_SHOW_CREDITS_HISTORY_FEATURE) === -1 && initPurchaseHistory();
+    dispatch(getAccountBilling());
   }, []);
 
   useEffect(() => {
@@ -704,7 +710,11 @@ const BillingSettingsPage = ({ classes }: any) => {
                                   onClick={(e: any) => { 
                                     e.preventDefault(); 
                                     e.stopPropagation(); 
-                                    setShowTierPlans(true);
+                                    if (isBillingDetailsRequired) {
+                                      setIsOpenBillingSettings(true);
+                                    } else {
+                                      setShowTierPlans(true);
+                                    }
                                   }}
                                 >
                                   {t('billing.upgradePlan')}
@@ -1055,6 +1065,15 @@ const BillingSettingsPage = ({ classes }: any) => {
         isOpen={showTierPlans}
         onClose={() => setShowTierPlans(false)}
       />}
+      <BillingSettings
+        classes={classes}
+        isOpen={isOpenBillingSettings}
+        onClose={() => {
+          setIsOpenBillingSettings(false);
+          dispatch(getAccountBilling());
+          setShowTierPlans(true);
+        }}
+      />
     </DefaultScreen>
   );
 };
