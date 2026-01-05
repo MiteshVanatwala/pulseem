@@ -4611,6 +4611,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       pointerEvents: 'none',
       position: 'relative',
       marginTop: '8rem',
+      "@media screen and (min-width: 2149px)": {
+        marginTop: '14rem',
+      },
       "@media screen and (min-width: 960px)": {
         display: 'flex',
       },
