@@ -909,5 +909,5 @@
   "cancelPlan": "Cancel Plan",
   "cancelPlanConfirmation": "Are you sure you want to cancel your current plan?",
   "planCancellationRequestSubmitted": "Your plan cancellation request has been submitted successfully.",
-  "nonPolishNumber": "This is non-polish number."
+  "nonPolishNumber": "You can not send SMS from non-polish number. Please set a polish number."
 }

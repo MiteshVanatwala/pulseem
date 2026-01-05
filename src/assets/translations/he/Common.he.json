@@ -904,5 +904,5 @@
   "cancelPlan": "ביטול תוכנית",
   "cancelPlanConfirmation": "האם אתה בטוח שברצונך לבטל את התוכנית הנוכחית שלך?",
   "planCancellationRequestSubmitted": "בקשת ביטול התוכנית שלך הוגשה בהצלחה.",
-  "nonPolishNumber": "This is non-polish number."
+  "nonPolishNumber": "You can not send SMS from non-polish number. Please set a polish number."
 }
