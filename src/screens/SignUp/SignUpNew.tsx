@@ -763,8 +763,8 @@ const SignUpNew = ({ classes }: any) => {
             <Grid item md={4} xs={12}>
               <FormControl
                 variant='standard'
-                className={clsx(classes.selectInputFormControl, classes.SignUpCountryDropdown, classes.bgWhite, classes.mb10, classes.w100)} 
-                style={{ borderRadius: 0, paddingTop: '0px', direction: 'ltr' }}
+                className={clsx(classes.SignUpCountryDropdown, classes.bgWhite, classes.mb10, classes.w100)} 
+                style={{ borderRadius: 0, paddingTop: '1px', direction: isRTL ? 'rtl' : 'ltr' }}
               >
                 <Typography className={clsx(classes.f18, classes.mt24)}>
                   {t("SignUp.countryCode")}
@@ -809,7 +809,7 @@ const SignUpNew = ({ classes }: any) => {
                 />
               </FormControl>
             </Grid>
-            <Grid item md={8} xs={12}>
+            <Grid item md={8} xs={12} style={{ direction: isRTL ? 'rtl' : 'ltr'}}>
               <Typography className={clsx(classes.f18, classes.mt24)}>
                 {t("SignUp.CellPhone")}
                 <span className={clsx(classes.pl5, classes.colrPrimary, classes.f18)}>*</span>
@@ -1198,19 +1198,19 @@ const SignUpNew = ({ classes }: any) => {
           {
             !isPolish && (
               <MenuItem value={'he'} className={clsx(classes.SignUpLanguageDropdown, classes.cursorPointer)}>
-                <img width={35} src={IsraelImage} alt={t('languages.langCodes.hebrew')} />
+                <img width={35} className={clsx(classes.paddingInline10)} src={IsraelImage} alt={t('languages.langCodes.hebrew')} />
                 <label>{t('languages.langCodes.hebrew')}</label>
               </MenuItem>
             )
           }
 
           <MenuItem value={'en'} className={clsx(classes.SignUpLanguageDropdown, classes.cursorPointer)}>
-            <img width={35} src={EnImage} alt={t('languages.langCodes.english')} />
+            <img width={35} className={clsx(classes.paddingInline10)} src={EnImage} alt={t('languages.langCodes.english')} />
             <label>{t('languages.langCodes.english')}</label>
           </MenuItem>
           
           <MenuItem value={'pl'} className={clsx(classes.SignUpLanguageDropdown, classes.cursorPointer)}>
-            <img width={35} src={PolandImage} alt={t('languages.langCodes.polish')} />
+            <img width={35} className={clsx(classes.paddingInline10)} src={PolandImage} alt={t('languages.langCodes.polish')} />
             <label>{t('languages.langCodes.polish')}</label>
           </MenuItem>
         </Select>

@@ -4247,9 +4247,15 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     '& .MuiInput-root': {
       direction: 'ltr !important',
     },
+    '@media screen and (max-width: 960px)': {
+      '& .MuiAutocomplete-input': {
+        textAlign: 'center',
+        marginLeft: '2rem',
+      },
+    },
   },
   SignUpLanguageDropdown: {
-    width: 200,
+    width: 180,
     borderRadius: 5,
     '& .MuiSelect-select': {
       padding: '5px 10px !important',
