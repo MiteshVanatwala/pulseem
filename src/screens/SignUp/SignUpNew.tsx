@@ -1266,15 +1266,15 @@ const SignUpNew = ({ classes }: any) => {
       className={clsx(classes.signupContainer)}
       style={{ direction: 'ltr', maxWidth: 'none' }}
     >
-      <Grid container className={clsx(classes.posRelative)} alignItems="center">
-        <Grid item xs={12} md={3} className="down-arrow-container">
+      <Grid container className={clsx(classes.posRelative)} alignItems="center" justifyContent="center">
+        <Grid item xs={12} md={3} xl={3} className="down-arrow-container">
           <img
             src={DownArrowCustom}
             alt="Arrow"
             className="down-arrow-image"
           />
         </Grid>
-        <Grid item xs={12} md={6} style={{ direction: isRTL ? 'rtl' : 'ltr' }}>
+        <Grid item xs={12} md={6} xl={5} style={{ direction: isRTL ? 'rtl' : 'ltr' }}>
           <Box className={clsx(classes.posRelative)}>
             <Box className={clsx(classes.textCenter, 'signUpContainer')}>
               {windowSize !== 'xs' && windowSize !== 'sm' ? 
@@ -1357,7 +1357,7 @@ const SignUpNew = ({ classes }: any) => {
              : null}
           </Box>
         </Grid>
-        <Grid item xs={12} md={3} className="mascot-container">
+        <Grid item xs={12} md={3} xl={3} className="mascot-container">
           <img
             src={MascotResting}
             alt="Mascot"

@@ -4495,14 +4495,15 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       fontWeight: 900,
       marginBottom: '.75rem',
       fontSize: '2.75rem',
-      "@media screen and (min-width: 1280px) and (max-width: 16200px)": {
-        fontSize: '4rem',
+      "@media screen and (min-width: 1280px)": {
+        fontSize: '3.5rem',
+        lineHeight: '6rem',
       },
-      "@media screen and (min-width: 1621px) and (max-width: 1920px)": {
-        fontSize: '5rem',
+      "@media screen and (min-width: 1621px)": {
+        fontSize: '4.5rem',
       },
-      "@media screen and (min-width: 2100px)": {
-        fontSize: '6.5rem',
+      "@media screen and (min-width: 2480px)": {
+        fontSize: '6rem',
       },
     },
     '& *': {
@@ -4610,8 +4611,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       zIndex: 1,
       pointerEvents: 'none',
       position: 'relative',
-      marginTop: '8rem',
-      "@media screen and (min-width: 2149px)": {
+      marginTop: '10rem',
+      "@media screen and (min-width: 2100px)": {
         marginTop: '14rem',
       },
       "@media screen and (min-width: 960px)": {
@@ -4620,12 +4621,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       '& .mascot-image': {
         width: 'clamp(240px, 20vw, 320px)',
         height: 'auto',
-        marginLeft: 'clamp(-3rem, -3.5vw, -4.5rem)',
+        marginLeft: 'clamp(-4.5rem, -5vw, -6rem)',
       },
       '& .arrow-image': {
         width: 'clamp(90px, 7.5vw, 120px)',
         height: 'auto',
-        marginTop: 'clamp(5rem, 5vw, 7rem)',
+        marginTop: 'clamp(5rem, 5vw, 6rem)',
       },
       '& .time-text': {
         color: '#fff',
@@ -4639,10 +4640,17 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
         wordBreak: 'break-word',
         direction: isRTL ? 'rtl' : 'ltr',
         marginLeft: 'clamp(-105px, -7.5vw, -85px)',
-         "@media screen and (min-width: 960px) and (max-width: 1023px)": {
+        "@media screen and (min-width: 960px) and (max-width: 1023px)": {
           marginLeft: 'clamp(-105px, -7.5vw, -95px)',
-         },
-        "@media screen and (min-width: 960px) and (max-width: 1280px)": {
+        },
+        "@media screen and (min-width: 960px) and (max-width: 1075px)": {
+          marginTop: '0rem',
+        },
+        "@media screen and (min-width: 1157px) and (max-width: 1490px)": {
+          width: '100px',
+          wordBreak: 'break-word',
+        },
+        "@media screen and (min-width: 960px) and (max-width: 1157px)": {
           wordBreak: 'normal',
           width: '110px',
         },
