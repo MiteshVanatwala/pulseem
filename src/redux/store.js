@@ -40,6 +40,7 @@ import aiChatReducer from './reducers/aiChatSlice';
 import TiersSlice from './reducers/TiersSlice';
 import emailTierScalingReducer from './reducers/emailTierScalingSlice';
 import helpDrawerReducer from './reducers/helpDrawerSlice';
+import contactSupportReducer from './reducers/contactSupportSlice';
 
 
 export default configureStore({
@@ -83,6 +84,7 @@ export default configureStore({
     aiChat: aiChatReducer,
     tiers: TiersSlice,
     emailTierScaling: emailTierScalingReducer,
-    helpDrawer: helpDrawerReducer
+    helpDrawer: helpDrawerReducer,
+    contactSupport: contactSupportReducer,
   },
 });

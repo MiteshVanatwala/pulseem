@@ -110,7 +110,12 @@
         "serviceAndSupport": "שירות ותמיכה",
         "sales": "מכירות",
         "phoneNumber": "מספר טלפון",
-        "website": "אתר אינטרנט"
+        "website": "אתר אינטרנט",
+        "successMessage": "ההודעה שלך נשלחה בהצלחה! נחזור אליך בקרוב.",
+        "errorMessage": "שליחת ההודעה נכשלה. אנא נסה שוב.",
+        "captchaVerificationFailed": "אימות הקפצ׳ה נכשל. אנא נסה שוב.",
+        "internalServerError": "אירעה שגיאת שרת פנימית. אנא נסה שוב מאוחר יותר.",
+        "networkError": "שגיאת רשת. אנא בדוק את החיבור שלך ונסה שוב."
       }
     }
   }

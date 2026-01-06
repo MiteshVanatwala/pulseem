@@ -113,7 +113,12 @@
         "serviceAndSupport": "Serwis i wsparcie",
         "sales": "Sprzedaż",
         "phoneNumber": "Numer telefonu",
-        "website": "Strona internetowa"
+        "website": "Strona internetowa",
+        "successMessage": "Twoja wiadomość została wysłana pomyślnie! Skontaktujemy się z Tobą wkrótce.",
+        "errorMessage": "Nie udało się wysłać wiadomości. Spróbuj ponownie.",
+        "captchaVerificationFailed": "Weryfikacja captcha nie powiodła się. Spróbuj ponownie.",
+        "internalServerError": "Wystąpił wewnętrzny błąd serwera. Spróbuj ponownie później.",
+        "networkError": "Błąd sieci. Sprawdź swoje połączenie i spróbuj ponownie."
       }
     }
   }

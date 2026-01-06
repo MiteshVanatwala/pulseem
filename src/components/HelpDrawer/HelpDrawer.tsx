@@ -26,7 +26,7 @@ import {
 import clsx from 'clsx';
 import { closeHelpDrawer } from '../../redux/reducers/helpDrawerSlice';
 import { MdAutoAwesome } from 'react-icons/md';
-import { ContactSupportDialog } from './ContactSupportDialog'; // Adjust path as needed
+import { ContactSupportDialog } from './ContactSupportDialog';
 
 const useStyles = makeStyles((theme) => ({
   drawer: {
