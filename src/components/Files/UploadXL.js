@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Typography, Grid, Box, TextField, Button, Tooltip, IconButton } from "@material-ui/core";
+import { Typography, Grid, Box, TextField, Button, Tooltip, IconButton, Switch, FormControlLabel } from "@material-ui/core";
 import * as XLSX from 'xlsx';
 import clsx from "clsx";
 import Papa from 'papaparse';
@@ -70,9 +70,55 @@ const UploadXL = ({
     const [GroupNameValidationMessage, setGroupNameValidationMessage] = useState("");
     const [columnValidate, setcolumnValidate] = useState(false);
     const [dropIndex, setdropIndex] = useState(-1);
+    const [saveAsDefault, setSaveAsDefault] = useState(false);
     const fileRef = useRef(null);
     moment.locale(language);
     const dateFormat = 'DD-MM-YYYY HH:mm:ss';
+
+    // Helper function to save column mapping to localStorage
+    const saveColumnMapping = (headers, selectArray) => {
+        try {
+            const mapping = headers.map((header, idx) => ({
+                index: idx,
+                header: header,
+                field: selectArray.find(sa => sa.label === header)
+            }));
+            console.log(JSON.stringify(mapping))
+            localStorage.setItem('uploadXL_columnMapping', JSON.stringify(mapping));
+        } catch (error) {
+            console.error('Error saving column mapping:', error);
+        }
+    };
+
+    // Helper function to load and apply saved column mapping
+    const loadAndApplyColumnMapping = (currentHeaders, currentSelectArray) => {
+        try {
+            const savedMapping = localStorage.getItem('uploadXL_columnMapping');
+            if (!savedMapping) return { headers: currentHeaders, selectArray: currentSelectArray };
+
+            const mapping = JSON.parse(savedMapping);
+            const newHeaders = [...currentHeaders];
+            const newSelectArray = currentSelectArray.map(sa => ({ ...sa, isdisabled: false, idx: -1 }));
+
+            // Apply saved mapping
+            mapping.forEach(({ index, header, field }) => {
+                if (index < newHeaders.length && field) {
+                    const matchingField = newSelectArray.find(sa => sa.value === field.value);
+                    if (matchingField && header !== t("sms.adjustTitle")) {
+                        newHeaders[index] = matchingField.label;
+                        matchingField.isdisabled = true;
+                        matchingField.idx = index;
+                    }
+                }
+            });
+            setSaveAsDefault(true);
+
+            return { headers: newHeaders, selectArray: newSelectArray };
+        } catch (error) {
+            console.error('Error loading column mapping:', error);
+            return { headers: currentHeaders, selectArray: currentSelectArray };
+        }
+    };
 
     useEffect(() => {
         Object.keys(extraData).forEach((ed) => {
@@ -102,9 +148,23 @@ const UploadXL = ({
         });
         fields = fields.filter((i) => i !== null && typeof i !== 'undefined');
 
+        // Mark fields as disabled if they're already used in headers
+        if (headers.length > 0) {
+            fields.forEach((field) => {
+                const isUsedInHeader = headers.some((header, idx) => {
+                    return header === field.label && header !== t("sms.adjustTitle");
+                });
+                if (isUsedInHeader) {
+                    field.isdisabled = true;
+                    const headerIndex = headers.findIndex(h => h === field.label);
+                    field.idx = headerIndex;
+                }
+            });
+        }
+
         setselectArray(fields);
 
-    }, [dialogType]);
+    }, [dialogType, headers]);
 
 
     const handleCautionCancel = () => {
@@ -218,7 +278,15 @@ const UploadXL = ({
         for (let i = 0; i < cols; i++) {
             dummyArr.push(t("sms.adjustTitle"));
         }
-        setheaders(dummyArr);
+        
+        // Try to load saved mapping
+        const savedMapping = loadAndApplyColumnMapping(dummyArr, selectArray);
+        if (savedMapping) {
+            setheaders(savedMapping.headers);
+            setselectArray(savedMapping.selectArray);
+        } else {
+            setheaders(dummyArr);
+        }
         if (b.length > 1000) {
             JsonToCSV({ array: b }).then((csvOutput) => {
                 CreateFile(csvOutput, 'csv').then((file) => {
@@ -238,7 +306,10 @@ const UploadXL = ({
                 return td;
             })
             settypedData(d)
-            setDialogType({ type: "manualUpload" });
+            // Use setTimeout to ensure state updates before dialog opens
+            setTimeout(() => {
+                setDialogType({ type: "manualUpload" });
+            }, 0);
         }
 
         setLoader(false);
@@ -281,9 +352,20 @@ const UploadXL = ({
                             for (let i = 0; i < finalData[0].length; i++) {
                                 dummyArr.push(t("sms.adjustTitle"));
                             }
-                            setheaders(dummyArr)
+                            
+                            // Try to load saved mapping
+                            const savedMapping = loadAndApplyColumnMapping(dummyArr, selectArray);
+                            if (savedMapping) {
+                                setheaders(savedMapping.headers);
+                                setselectArray(savedMapping.selectArray);
+                            } else {
+                                setheaders(dummyArr);
+                            }
                             if (dummyArr !== 0) {
-                                setDialogType({ type: "manualUpload" });
+                                // Use setTimeout to ensure state updates before dialog opens
+                                setTimeout(() => {
+                                    setDialogType({ type: "manualUpload" });
+                                }, 0);
                             }
                             setLoader(false);
                             fileRef.current.value = "";
@@ -374,8 +456,18 @@ const UploadXL = ({
                                         ddc.push(t("sms.adjustTitle"))
                                     }
                                     if (ddc !== 0) {
-                                        setheaders(ddc);
-                                        setDialogType({ type: "manualUpload" });
+                                        // Try to load saved mapping
+                                        const savedMapping = loadAndApplyColumnMapping(ddc, selectArray);
+                                        if (savedMapping) {
+                                            setheaders(savedMapping.headers);
+                                            setselectArray(savedMapping.selectArray);
+                                        } else {
+                                            setheaders(ddc);
+                                        }
+                                        // Use setTimeout to ensure state updates before dialog opens
+                                        setTimeout(() => {
+                                            setDialogType({ type: "manualUpload" });
+                                        }, 0);
                                         setLoader(false);
                                     }
                                     fileRef.current.value = "";
@@ -428,15 +520,30 @@ const UploadXL = ({
         for (let i = 0; i < b[0].length; i++) {
             dummyArr.push(t("sms.adjustTitle"));
         }
-        setheaders(dummyArr)
+        
+        // Try to load saved mapping
+        const savedMapping = loadAndApplyColumnMapping(dummyArr, selectArray);
+        if (savedMapping) {
+            setheaders(savedMapping.headers);
+            setselectArray(savedMapping.selectArray);
+        } else {
+            setheaders(dummyArr);
+        }
         if (dummyArr !== 0) {
-            setDialogType({ type: "manualUpload" });
+            // Use setTimeout to ensure state updates before dialog opens
+            setTimeout(() => {
+                setDialogType({ type: "manualUpload" });
+            }, 0);
         }
         setLoader(false);
     };
 
 
     const handleDataManual = async () => {
+        if (saveAsDefault) {
+            saveColumnMapping(headers, selectArray);
+        }
+        return false;
         if (manualUploadValidationscheck()) {
             let uploadAsFile = false;
             setLoader(true);
@@ -488,6 +595,11 @@ const UploadXL = ({
             }).filter(function (x) {
                 return x !== undefined;
             });
+
+            // Save column mapping if switch is enabled
+            if (saveAsDefault) {
+                saveColumnMapping(headers, selectArray);
+            }
 
             uploadAsFile = fileToUpload !== null && dataToUpload.length >= 5000;
             if (uploadAsFile) {
@@ -596,28 +708,47 @@ const UploadXL = ({
                     </div>}
                     <Box
                         className={clsx(classes.commonFieldPulse, classes.mb3)}>
-                        <Typography style={{ fontSize: "20px", marginInlineEnd: "10px" }}>
-                            {t("sms.totalRecipients")}:
-                        </Typography>
-                        <Typography
-                            style={{
-                                fontSize: "20px",
-                                marginInlineEnd: "10px",
-                                fontWeight: "600",
-                            }}
-                        >
-                            {contacts.length !== 0 ? contacts.length : typedData.length}
-                        </Typography>
-                        <Tooltip
-                            disableFocusListener
-                            title={t(tooltipText)}
-                            classes={{ tooltip: styles.customWidth }}
-                            sx={{ justifyContent: 'center', zIndex: 9999999999999 }}
-                        >
-                            <IconButton style={{ padding: 0 }} className={clsx(classes.icon_Info, classes.f20)}>
-                                <BsInfoCircle />
-                            </IconButton>
-                        </Tooltip>
+                        <Grid container>
+                            <Grid item md={6} xs={12} className={classes.flex} style={{ alignItems: 'center' }}>
+                                <Typography style={{ fontSize: "20px", marginInlineEnd: "10px" }}>
+                                    {t("sms.totalRecipients")}:
+                                </Typography>
+                                <Typography
+                                    style={{
+                                        fontSize: "20px",
+                                        marginInlineEnd: "10px",
+                                        fontWeight: "600",
+                                    }}
+                                >
+                                    {contacts.length !== 0 ? contacts.length : typedData.length}
+                                </Typography>
+                                <Tooltip
+                                    disableFocusListener
+                                    title={t(tooltipText)}
+                                    classes={{ tooltip: styles.customWidth }}
+                                    sx={{ justifyContent: 'center', zIndex: 9999999999999 }}
+                                >
+                                    <IconButton style={{ padding: 0 }} className={clsx(classes.icon_Info, classes.f20)}>
+                                        <BsInfoCircle />
+                                    </IconButton>
+                                </Tooltip>
+                            </Grid>
+                            <Grid item md={6} xs={12}>
+                                <Box className={clsx(classes.commonFieldPulse, classes.mb3)} style={{ justifyContent: 'flex-end' }}>
+                                    <FormControlLabel
+                                        className={classes.noMargin}
+                                        control={
+                                            <Switch
+                                                checked={saveAsDefault}
+                                                onChange={(e) => setSaveAsDefault(e.target.checked)}
+                                                color="primary"
+                                            />
+                                        }
+                                        label={t("common.saveColumnStructureAsDefault")}
+                                    />
+                                </Box>
+                            </Grid>
+                        </Grid>
                     </Box>
                     <Box style={{ minHeight: "200px", maxWidth: "700px", overflowX: "scroll" }} key="columnAdjustment">
                         <table
@@ -654,8 +785,14 @@ const UploadXL = ({
                                                                 <span
                                                                     key={id}
                                                                     className={clsx(item.isdisabled ? classes.grayGroup : classes.grouping, classes.textEllipses)}
+                                                                    style={{ 
+                                                                        cursor: item.isdisabled ? 'not-allowed' : 'pointer',
+                                                                        opacity: item.isdisabled ? 0.5 : 1
+                                                                    }}
                                                                     onClick={() => {
-                                                                        handleSelectFirst(item, id, idx);
+                                                                        if (!item.isdisabled) {
+                                                                            handleSelectFirst(item, id, idx);
+                                                                        }
                                                                     }}
                                                                 >
                                                                     {item.label}

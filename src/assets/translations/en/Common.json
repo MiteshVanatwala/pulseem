@@ -897,5 +897,6 @@
   "presetQuestion2": "How to increase opens and clicks?",
   "presetQuestion3": "Create a VIP customer segment for me",
   "presetQuestion4": "Create a segment of customers who open but don’t click",
-  "numbersAllowedOnly": "Only numbers are allowed"
+  "numbersAllowedOnly": "Only numbers are allowed",
+  "saveColumnStructureAsDefault": "Save this column structure as a default"
 }

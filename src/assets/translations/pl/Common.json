@@ -892,5 +892,6 @@
   "presetQuestion2": "Jak zwiększyć otwarcia i kliknięcia?",
   "presetQuestion3": "Utwórz dla mnie grupę klientów VIP",
   "presetQuestion4": "Utwórz grupę klientów, którzy otwierają, ale nie klikają",
-  "numbersAllowedOnly": "Dozwolone są tylko cyfry"
+  "numbersAllowedOnly": "Dozwolone są tylko cyfry",
+  "saveColumnStructureAsDefault": "Zapisz tę strukturę kolumn jako domyślną"
 }

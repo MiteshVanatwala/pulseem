@@ -892,5 +892,6 @@
   "presetQuestion2": "איך להגדיל פתיחות והקלקות?",
   "presetQuestion3": "צור לי קבוצת לקוחות VIP",
   "presetQuestion4": "צור לי קבוצת לקוחות שפותחים ולא לוחצים",
-  "numbersAllowedOnly": "אנא הקלידו מספרים בלבד"
+  "numbersAllowedOnly": "אנא הקלידו מספרים בלבד",
+  "saveColumnStructureAsDefault": "שמור את מבנה העמודות הזה כברירת מחדל"
 }
