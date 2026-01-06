@@ -2526,17 +2526,14 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			backgroundColor: '#fff',
 			marginTop: 4,
 			borderRadius: 16,
-			width: 'max-content',
+			width: '100%',
 		},
 		'&.custom-tab': {
 			textTransform: 'none',
-			minWidth: 100,
+			minWidth: '25%',
 			padding: theme.spacing(.75, 1),
 			borderRadius: theme.shape.borderRadius * 2.5,
 			fontWeight: 'bold',
-			'@media screen and (max-width: 1240px)': {
-				minWidth: 80,
-			},
 			'@media screen and (max-width: 1023px)': {
 				minWidth: 56,
 			},
@@ -3296,7 +3293,8 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	},
 	agentSelectorContainer: {
 		borderRadius: 25,
-		backgroundColor: '#5da15d',
+		// backgroundColor: '#5da15d',
+		background: 'linear-gradient(90deg, #FF0076 1.31%, #FF0054 33.07%, #FF4D2A 134.74%)',
 		marginInlineEnd: 'auto',
 		color: '#fff !important',
 		display: 'flex',
