@@ -387,7 +387,7 @@ export const ContactSupportDialog: React.FC<ContactSupportDialogProps> = ({
         maxWidth="md"
         fullWidth
       >
-        <DialogTitle className={classes.dialogTitle} disableTypography>
+        <DialogTitle className={classes.dialogTitle} disableTypography dir={isRTL ? 'rtl' : 'ltr'}>
           <Typography className={classes.titleText}>
             {t('dashboard.helpDrawer.support.contactSupport.title')}
           </Typography>
