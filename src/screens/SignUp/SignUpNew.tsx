@@ -1282,7 +1282,7 @@ const SignUpNew = ({ classes }: any) => {
               {languageSelector()}
               {windowSize === 'xs' || windowSize === 'sm' ? (
                 <Box className="mobile-header-container" style={{ direction: 'ltr' }}>
-                  <h1>{t('SignUp.CREATEANACCOUNT')}</h1>
+                  <h1>{t('SignUp.JOINPULSEEM')}</h1>
                   {
                     activeStep < 3 && (
                       <MobileStepper
