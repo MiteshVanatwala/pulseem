@@ -515,10 +515,27 @@ export const googleFonts = {
             300: 'Regular',
             700: 'Bold',
         }
-    }
+    },
+     Outfit: {
+        name: "Outfit",
+        fontFamily: "'Outfit', sans-serif",
+        url: 'https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap',
+        fontWeight: {
+            100: 'Thin',
+            200: 'Extra Light',
+            300: 'Light',
+            400: 'Regular',
+            500: 'Medium',
+            600: 'Semi-bold',
+            700: 'Bold',
+            800: 'Extra-bold',
+            900: 'Black'
+        }
+    },
 };
 
 export const HebrewFonts = [
+    googleFonts.Outfit, 
     googleFonts.Rubik,
     googleFonts.Heebo,
     googleFonts.Arimo,
