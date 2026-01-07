@@ -658,8 +658,9 @@ const App = ({ screenSize }) => {
   const dispatch = useDispatch();
 
   const { language, isRTL, windowSize, isClal, isDebtAccount, isAdmin, isLoader, userRoles } = useSelector(state => state.core)
-  const { accountSettings, currencyList, accountFeatures, IsPoland } = useSelector(state => state.common)
-  const classes = useClasses(windowSize, isRTL)();
+  const { accountSettings, currencyList, accountFeatures } = useSelector(state => state.common)
+  const IsPoland = language === 'pl';
+  const classes = useClasses(windowSize, isRTL, IsPoland)();
   setCookie('accountSettings', '');
   const isSignup = isSignupPage(location.pathname);
   const isConfirmationPage = isSubUserConfirmationPage(location.pathname)
@@ -668,17 +669,6 @@ const App = ({ screenSize }) => {
     const direction = getDirection(i18n.language);
     document.documentElement.setAttribute('dir', direction);
   }, []);
-
-  useEffect(() => {
-    let culture = getCookie('Culture') || 'he-IL';
-    culture = culture.split('-')[0]
-    if (IsPoland && culture === 'he') {
-      culture = 'pl';
-      setCookie('Culture', 'pl-PL')
-    }
-    i18n.changeLanguage(culture.toLowerCase())
-    dispatch(setLanguage(culture.toLowerCase()))
-  }, [IsPoland]);
 
   React.useEffect(() => {
     !isSignup && !isConfirmationPage && dispatch(getNotificationUpdates());
@@ -789,6 +779,10 @@ const App = ({ screenSize }) => {
 
   if (isRTL) document.body.classList.add('rtl');
   else document.body.classList.remove('rtl');
+
+  // Add polish-account class for Polish accounts
+  if (IsPoland) document.body.classList.add('polish-account');
+  else document.body.classList.remove('polish-account');
 
   const renderRoutesByCondition = (classes, redirect) => {
     const ignoreCookie = getCookie('ignoreTerm')

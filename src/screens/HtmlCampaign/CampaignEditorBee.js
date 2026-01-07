@@ -950,7 +950,7 @@ const CampaignEditor = ({ classes, ...props }) => {
         }, 2000);
       }}
         variant='contained'
-        size='medium'
+        size='small'
         className={clsx(
           classes.btn,
           classes.btnRounded
@@ -961,7 +961,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       </Button>
       <Button onClick={() => setDialog(DialogType.SAVE_TEMPLATE)}
         variant='contained'
-        size='medium'
+        size='small'
         className={clsx(
           classes.btn,
           classes.btnRounded
@@ -979,6 +979,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           classes.redButton
         )}
         style={{ margin: 8 }}
+        size='small'
         startIcon={<GiMagicBroom />}
         // color="primary"
         key={'aiButton'}
@@ -1244,6 +1245,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     if (!isFromAutomation) {
       wizardButtons.push(<>
         <Button
+          size='small'
           onClick={() =>
             saveDesign(false, null, true, true, 'save')}
           className={clsx(
@@ -1285,7 +1287,7 @@ const CampaignEditor = ({ classes, ...props }) => {
 
         }}
           variant='contained'
-          size='medium'
+          size='small'
           className={clsx(
             classes.btn,
             classes.btnRounded,
@@ -1302,6 +1304,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     else {
       wizardButtons.push(<>
         <Button
+          size="small"
           onClick={() =>
             saveDesign(false, null, true)}
           className={clsx(
@@ -1328,6 +1331,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           style={{ marginInlineStart: '8px' }}
           color="primary"
           key={'createAutomationButton'}
+          size="small"
         >{t('common.backToAutomation')}</Button>
       </>)
     }

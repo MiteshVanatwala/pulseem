@@ -16,10 +16,10 @@ import { BeeAiStyles } from './BeeAiStyles';
 import { getPopupTriggersStyle } from './popupTriggers';
 import { getPopUpManagementStyle } from './popUpManagementStyle';
 
-export const useClasses = (windowSize, isRTL = false) => makeStyles(theme => ({
+export const useClasses = (windowSize, isRTL = false, IsPoland = false) => makeStyles(theme => ({
   ...getDrawerStyle(windowSize, isRTL, theme),
   ...appBarStyle(windowSize, isRTL, theme),
-  ...getManagmentStyle(windowSize, isRTL, theme),
+  ...getManagmentStyle(windowSize, isRTL, theme, IsPoland),
   ...getGeneralStyle(windowSize, isRTL, theme),
   ...getNotificationStyle(windowSize, isRTL, theme),
   ...getDashboardStyle(windowSize, isRTL, theme),

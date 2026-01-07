@@ -515,6 +515,16 @@ export const googleFonts = {
             300: 'Regular',
             700: 'Bold',
         }
+    },
+    Helvetica: {
+        name: "Helvetica",
+        fontFamily: "'Helvetica', 'Helvetica Neue', Arial, sans-serif",
+        url: "",
+        fontWeight: {
+            300: 'Light',
+            400: 'Regular',
+            700: 'Bold',
+        }
     }
 };
 

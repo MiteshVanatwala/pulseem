@@ -647,7 +647,7 @@ const DynamicGroups = ({ classes }: any) => {
             >
                 {iconsMap.map(icon => (
                     <Grid
-                        className={clsx(icon.disable && classes.disabledCursor, classes.smallActionIcons, 'rowIconContainer', classes.justifyCenter, classes.alignSelfCenter)}
+                        className={clsx(icon.disable && classes.disabledCursor, 'rowIconContainer', classes.justifyCenter, classes.alignSelfCenter)}
                         key={icon.key}
                         item >
                         {/* @ts-ignore */}
