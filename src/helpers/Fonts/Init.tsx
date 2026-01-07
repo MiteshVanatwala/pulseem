@@ -20,6 +20,7 @@ export const FONTS = (isLandingPage: boolean = false) => {
         allowedFonts.customFonts = HebrewFonts;
     }
     else {
+        allowedFonts.customFonts.push(googleFonts.Outfit);
         if (accountFeatures?.indexOf(PulseemFeatures.BEE_ENABLE_GOOGLE_FONTS) > -1) { // EnableBeeGoogleFonts
             allowedFonts.customFonts.push(googleFonts.Rubik);
             allowedFonts.customFonts.push(googleFonts.OpenSans);
