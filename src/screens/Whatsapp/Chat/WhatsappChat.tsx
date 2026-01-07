@@ -15,7 +15,7 @@ import {
 	APIWhatsappChatItemsData,
 	ContactsPaginationSetting,
 } from './Types/WhatsappChat.type';
-import { BaseSyntheticEvent, useEffect, useState } from 'react';
+import { BaseSyntheticEvent, useEffect, useState, useCallback } from 'react';
 import {
 	callToActionProps,
 	quickReplyButtonProps,
@@ -139,17 +139,6 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			IsNewMessage: false,
 		});
 
-	const handleUserStatus = (e: SelectChangeEvent, ClientNumber: string) => {
-		e.preventDefault();
-		e.stopPropagation();
-
-		setWhatsappChatCoversationStatus(
-			Number(e.target.value),
-			activePhoneNumber,
-			ClientNumber
-		);
-	};
-
 	const { t: translator } = useTranslation();
 	const dispatch = useDispatch();
 	const { contactID } = useParams();
@@ -251,70 +240,18 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			hasMore: true,
 		});
 
-	useEffect(() => {
-		dispatch(setIsLoader(true));
-		(async () => {
-			const { payload: phoneNumberData }: phoneNumberAPIProps =
-				await dispatch<any>(userPhoneNumbers());
-			if (
-				phoneNumberData?.Status === apiStatus.SUCCESS &&
-				phoneNumberData?.Data &&
-				phoneNumberData?.Data?.length > 0
-			) {
-				if (!personalFields || landingPages?.length <= 0) {
-					getDynamicModalValues();
-				}
-				getSavedTemplateFields();
-				await getAgents();
-				await getPhoneNumber();
-				setIsAccountSetup(true);
-			} else {
-				setIsAccountSetup(false);
-				dispatch(setIsLoader(false));
-			}
-		})();
-		/**
-		 * we disable it because we want to run this code only when component loads
-		 */
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	const handleUserStatus = useCallback((e: SelectChangeEvent, ClientNumber: string) => {
+		e.preventDefault();
+		e.stopPropagation();
 
-	useEffect(() => {
-		/**
-		 * This will check that is current user is allowed to send freeform message
-		 * or not every 3 second.
-		 */
-		let ChatStatusTimer = setInterval(
-			async () => await setAPIInboundChatStatus(),
-			3000
+		setWhatsappChatCoversationStatus(
+			Number(e.target.value),
+			activePhoneNumber,
+			ClientNumber
 		);
-		return () => clearInterval(ChatStatusTimer);
-	});
+	}, [activePhoneNumber]);
 
-	useEffect(() => {
-		const updatedPersonalField = {
-			FirstName: translator('smsReport.firstName'),
-			LastName: translator('smsReport.lastName'),
-			Email: translator('common.Mail'),
-			Telephone: translator('common.telephone'),
-			Cellphone: translator('common.Cellphone'),
-			Address: translator('common.address'),
-			BirthDate: translator('common.birthDate'),
-			City: translator('common.city'),
-			State: translator('common.state'),
-			Country: translator('common.country'),
-			Zip: translator('common.zip'),
-			Company: translator('common.company'),
-			Status: translator('common.Status'),
-			SmsStatus: translator('common.smsStatus'),
-			CreationDate: translator('client.subscribedOn'),
-			ReminderDate: translator('recipient.reminderDate'),
-		};
-		setpersonalFields({ ...personalFields, ...updatedPersonalField });
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [isRTL]);
-
-	const setWhatsappChatCoversationStatus = async (
+	const setWhatsappChatCoversationStatus = useCallback(async (
 		StatusId: number,
 		Sendernumber: string,
 		ClientNumber: string
@@ -353,9 +290,9 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				})
 				: setToastMessage(ToastMessages.ERROR);
 		}
-	};
+	}, [dispatch, activeChatContacts, sideChatContacts, ToastMessages]);
 
-	const setAPIInboundChatStatus = async () => {
+	const setAPIInboundChatStatus = useCallback(async () => {
 		if (activeChatContacts && activeChatContacts?.PhoneNumber?.length > 0) {
 			const { payload: whatsAppChatSessionStatus }: APIWhatsappChatSession =
 				await dispatch<any>(
@@ -383,9 +320,9 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 					: setToastMessage(ToastMessages.ERROR);
 			}
 		}
-	};
+	}, [activeChatContacts, activePhoneNumber, dispatch, ToastMessages]);
 
-	const setAPIWhatsAppChatContacts = async (
+	const setAPIWhatsAppChatContacts = useCallback(async (
 		activeUser: string,
 		isInitial: boolean = false
 	) => {
@@ -474,9 +411,10 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			});
 			setSideChatContacts([]);
 		}
-	};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [contactsPaginationSetting.PageNo, contactsPaginationSetting.PageSize, activeChatContacts.PhoneNumber, contactID, agentSelected, filterBySelected, dispatch, navigate]);
 
-	const getPhoneNumber = async () => {
+	const getPhoneNumber = useCallback(async () => {
 		const { payload: phoneNumberData }: phoneNumberAPIProps =
 			await dispatch<any>(userPhoneNumbers());
 		if (phoneNumberData?.Data?.length > 0) {
@@ -494,20 +432,20 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		}
 		setPhoneNumbersList([]);
 		return [];
-	};
+	}, [dispatch, ToastMessages, contactsPaginationSetting, setAPIWhatsAppChatContacts]);
 
-	const getAgents = async () => {
+	const getAgents = useCallback(async () => {
 		const response: any = await dispatch<any>(getChatAgents());
 		const agents: WhatsappAgent[] = response?.payload?.Data as any;
 		setAllAgents(agents)
-	}
+	}, [dispatch]);
 
-	const onActiveUserChange = (e: SelectChangeEvent) => {
+	const onActiveUserChange = useCallback((e: SelectChangeEvent) => {
 		setActivePhoneNumber(e.target.value?.replace(/\D/g, ''));
 		setAPIWhatsAppChatContacts(e.target.value?.replace(/\D/g, ''));
-	};
+	}, [setAPIWhatsAppChatContacts]);
 
-	const getStatusClass = (status: number) => {
+	const getStatusClass = useCallback((status: number) => {
 		switch (status) {
 			case 1:
 				return whatsappChatStatuses.OPEN;
@@ -519,9 +457,9 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			default:
 				break;
 		}
-	};
+	}, []);
 
-	const getDynamicModalValues = async () => {
+	const getDynamicModalValues = useCallback(async () => {
 		const staticPersonalField: personalFieldDataProps = {
 			FirstName: translator('smsReport.firstName'),
 			LastName: translator('smsReport.lastName'),
@@ -540,20 +478,99 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			CreationDate: translator('client.subscribedOn'),
 			ReminderDate: translator('recipient.reminderDate'),
 		};
-		const { payload: personalFieldData }: personalFieldAPIProps =
-			await dispatch<any>(getAccountExtraData());
-		const { payload: landingPageData }: landingPageAPIProps =
-			await dispatch<any>(getPreviousLandingData());
+		const [
+			{ payload: personalFieldData },
+			{ payload: landingPageData }
+		]: [personalFieldAPIProps, landingPageAPIProps] = await Promise.all([
+			dispatch<any>(getAccountExtraData()),
+			dispatch<any>(getPreviousLandingData()),
+		]);
+
 		setLandingPages(landingPageData);
 		setpersonalFields({ ...staticPersonalField, ...personalFieldData });
-	};
-	const getSavedTemplateFields = async () => {
+	}, [dispatch, translator]);
+	const getSavedTemplateFields = useCallback(async () => {
 		let savedTemplate: savedTemplateAPIProps = await dispatch<any>(
 			getSavedTemplates({ templateStatus: 3 })
 		);
 		setSavedTemplateList(savedTemplate?.payload?.Data?.Items);
-	};
-	const onChoose = (
+	}, [dispatch]);
+
+	useEffect(() => {
+		dispatch(setIsLoader(true));
+		(async () => {
+			const { payload: phoneNumberData }: phoneNumberAPIProps =
+				await dispatch<any>(userPhoneNumbers());
+			if (
+				phoneNumberData?.Status === apiStatus.SUCCESS &&
+				phoneNumberData?.Data &&
+				phoneNumberData?.Data?.length > 0
+			) {
+				/**
+				 * Load all initial data in parallel for better performance
+				 */
+				if (!personalFields || landingPages?.length <= 0) {
+					await Promise.all([
+						getDynamicModalValues(),
+						getSavedTemplateFields(),
+						getAgents(),
+						getPhoneNumber()
+					]);
+				} else {
+					await Promise.all([
+						getSavedTemplateFields(),
+						getAgents(),
+						getPhoneNumber()
+					]);
+				}
+				setIsAccountSetup(true);
+			} else {
+				setIsAccountSetup(false);
+				dispatch(setIsLoader(false));
+			}
+		})();
+		/**
+		 * we disable it because we want to run this code only when component loads
+		 */
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	useEffect(() => {
+		/**
+		 * This will check that is current user is allowed to send freeform message
+		 * or not every 3 second.
+		 */
+		let ChatStatusTimer = setInterval(
+			async () => await setAPIInboundChatStatus(),
+			3000
+		);
+		return () => clearInterval(ChatStatusTimer);
+	}, [setAPIInboundChatStatus]);
+
+	useEffect(() => {
+		const updatedPersonalField = {
+			FirstName: translator('smsReport.firstName'),
+			LastName: translator('smsReport.lastName'),
+			Email: translator('common.Mail'),
+			Telephone: translator('common.telephone'),
+			Cellphone: translator('common.Cellphone'),
+			Address: translator('common.address'),
+			BirthDate: translator('common.birthDate'),
+			City: translator('common.city'),
+			State: translator('common.state'),
+			Country: translator('common.country'),
+			Zip: translator('common.zip'),
+			Company: translator('common.company'),
+			Status: translator('common.Status'),
+			SmsStatus: translator('common.smsStatus'),
+			CreationDate: translator('client.subscribedOn'),
+			ReminderDate: translator('recipient.reminderDate'),
+		};
+		setpersonalFields({ ...personalFields, ...updatedPersonalField });
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [isRTL]);
+
+	const onChoose = useCallback((
 		template: savedTemplateListProps,
 		templateText: string | null
 	) => {
@@ -592,9 +609,9 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		if (templateData?.variables) {
 			setDynamicFieldCount(Object.keys(templateData?.variables)?.length);
 		}
-	};
+	}, []);
 
-	const setUpdatedDynamicVariableWithLinks = (variable: updatedVariable[]) => {
+	const setUpdatedDynamicVariableWithLinks = useCallback((variable: updatedVariable[]) => {
 		const updatedVariableWithSiteLink = variable?.map((variable) => {
 			if (
 				variable?.FieldTypeId === fieldNameIds?.LINK &&
@@ -615,16 +632,16 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			return variable;
 		});
 		setUpdatedDynamicVariable(updatedVariableWithSiteLink);
-	};
+	}, [SubAccountSettings]);
 
-	const onDynamcFieldModalSave = (
+	const onDynamcFieldModalSave = useCallback((
 		updatedDynamicVariable: updatedVariable[]
 	) => {
 		setUpdatedDynamicVariableWithLinks(updatedDynamicVariable);
 		setDialogType({});
-	};
+	}, [setUpdatedDynamicVariableWithLinks]);
 
-	const changeContactReadStatus = (
+	const changeContactReadStatus = useCallback((
 		contacts: APIWhatsappChatSidebarContactsItemsData,
 		sideChatContactList: APIWhatsappChatSidebarContactsItemsData[] = sideChatContacts
 	) => {
@@ -637,17 +654,17 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			}
 		);
 		setSideChatContacts(updatedSideChatContacts);
-	};
+	}, [sideChatContacts]);
 
-	const handleChatId = (
+	const handleChatId = useCallback((
 		e: BaseSyntheticEvent,
 		contacts: APIWhatsappChatSidebarContactsItemsData
 	) => {
 		setActiveChatContacts(contacts);
 		changeContactReadStatus(contacts);
-	};
+	}, [changeContactReadStatus]);
 
-	const validateDynamicVaraiable = () => {
+	const validateDynamicVaraiable = useCallback(() => {
 		let validationErrors = [];
 		let isValidated = true;
 		if (
@@ -669,9 +686,9 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			});
 		}
 		return isValidated;
-	};
+	}, [savedTemplate, newMessage, updatedDynamicVariable, translator]);
 
-	const updateContactList = async () => {
+	const updateContactList = useCallback(async () => {
 		if (sideChatContacts?.length > 0) {
 			const {
 				payload: whatsAppChatContactsData,
@@ -707,9 +724,9 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				});
 			}
 		}
-	};
+	}, [sideChatContacts, dispatch, activePhoneNumber, activeChatContacts, filterBySelected, changeContactReadStatus]);
 
-	const onChatSend = async () => {
+	const onChatSend = useCallback(async () => {
 		if (validateDynamicVaraiable()) {
 			let chatReqPayload: APISendWhatsAppChatReqPayload = {
 				FromNumber: activePhoneNumber,
@@ -784,13 +801,13 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				}
 			}
 		}
-	};
+	}, [validateDynamicVaraiable, activePhoneNumber, activeChatContacts, savedTemplate, updatedDynamicVariable, newMessage, dispatch, allWhatsappChat, updateContactList, ToastMessages]);
 
-	const resetToast = () => {
+	const resetToast = useCallback(() => {
 		setToastMessage(resetToastData);
-	};
+	}, []);
 
-	const renderToast = () => {
+	const renderToast = useCallback(() => {
 		if (toastMessage) {
 			setTimeout(() => {
 				resetToast();
@@ -798,9 +815,9 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			return <Toast data={toastMessage} />;
 		}
 		return null;
-	};
+	}, [toastMessage, resetToast]);
 
-	const fetchMoreContacts = async (
+	const fetchMoreContacts = useCallback(async (
 		searchText: string,
 		ChatStatus: number = filterBySelected,
 		isPaginationReset: boolean = false
@@ -867,9 +884,9 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				}
 			}
 		}
-	};
+	}, [activePhoneNumber, filterBySelected, agentSelected, contactsPaginationSetting, sideChatContacts, dispatch]);
 
-	const updateFreeFormMessage = (message: string) => {
+	const updateFreeFormMessage = useCallback((message: string) => {
 		if (message !== newMessage) {
 			setNewMessage(message);
 
@@ -878,16 +895,16 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				freeFormDivElement.innerHTML = message;
 			}
 		}
-	};
+	}, [newMessage]);
 
-	const onChatTemplateDelete = () => {
+	const onChatTemplateDelete = useCallback(() => {
 		setButtonType('');
 		setUpdatedDynamicVariable([]);
 		setNewMessage('');
 		setSavedTemplate('');
-	};
+	}, []);
 
-	const getExceedDailyLimit = () => ({
+	const getExceedDailyLimit = useCallback(() => ({
 		title: translator('settings.accountSettings.actDetails.fields.exceedLimitMpdalMessage'),
 		showDivider: false,
 		content: (
@@ -906,9 +923,9 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				data: ''
 			});
 		}
-	})
+	}), [translator, classes, nextMessageAvailable]);
 
-	const getValidationDialog = () => ({
+	const getValidationDialog = useCallback(() => ({
 		title: translator('whatsappCampaign.sendValidation'),
 		showDivider: false,
 		content: (
@@ -926,23 +943,23 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				data: ''
 			});
 		}
-	})
+	}), [translator, classes, groupSendValidationErrors]);
 
-	const handleGetPlanForFeature = (tierMessageCode: string) => {
+	const handleGetPlanForFeature = useCallback((tierMessageCode: string) => {
 		const planName = findPlanByFeatureCode(
 			tierMessageCode,
 			availablePlans,
 			currentPlan.Id
 		);
-		
+
 		if (planName) {
 			return translator('billing.tier.featureNotAvailable').replace('{feature}', translator(TierFeatures[tierMessageCode as keyof typeof TierFeatures] || tierMessageCode)).replace('{planName}', planName);
 		} else {
 			return translator('billing.tier.noFeatureAvailable');
 		}
-	};
+	}, [availablePlans, currentPlan, translator]);
 
-	const getTierValidationDialog = () => ({
+	const getTierValidationDialog = useCallback(() => ({
 		title: translator('billing.tier.permission'),
 		showDivider: false,
 		content: (
@@ -958,7 +975,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			>
 				<Grid item>
 					<Button
-						onClick={() => {
+                        onClick={() => {
 						setDialogType({ type: '', data: '' });
 						setShowTierPlans(true);
 					}}
@@ -977,9 +994,9 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				</Grid>
 			</Grid>
 		)
-	});
+	}), [translator, classes, TierMessageCode, handleGetPlanForFeature, isRTL, subAccount]);
 
-	const getDynamicModalDialog = () => ({
+	const getDynamicModalDialog = useCallback(() => ({
 		title: translator('whatsappCampaign.dfieldTitle'),
 		showDivider: false,
 		showDefaultButtons: false,
@@ -1006,9 +1023,9 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				data: ''
 			});
 		}
-	})
+	}), [translator, classes, personalFields, landingPages, dynamicModalVariable, onDynamcFieldModalSave, updatedDynamicVariable, isTrackLink, savedTemplate]);
 
-	const onAddAgent = async () => {
+	const onAddAgent = useCallback(async () => {
 		dispatch(setIsLoader(true));
 		const response = await dispatch(addChatAgent(agentModel.Name)) as any;
 		switch (response?.payload?.StatusCode) {
@@ -1040,9 +1057,9 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			Name: '',
 			IsDeleted: false
 		});
-	}
+	}, [dispatch, agentModel, getAgents, ToastMessages]);
 
-	const onEditAgent = async (agent: WhatsappAgent) => {
+	const onEditAgent = useCallback(async (agent: WhatsappAgent) => {
 		dispatch(setIsLoader(true));
 		const response = await dispatch(editChatAgent(agent)) as any;
 		switch (response?.payload?.StatusCode) {
@@ -1078,9 +1095,9 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			}
 		}
 		dispatch(setIsLoader(false));
-	}
+	}, [dispatch, getAgents, ToastMessages]);
 
-	const updateAgent = (agentId: number, updatedData: Partial<WhatsappAgent>) => {
+	const updateAgent = useCallback((agentId: number, updatedData: Partial<WhatsappAgent>) => {
 		setAllAgents(prevAgents =>
 			prevAgents.map(agent =>
 				agent.AgentId === agentId
@@ -1088,9 +1105,9 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 					: agent
 			)
 		);
-	};
+	}, []);
 
-	const editAgentsModalDialog = () => {
+	const editAgentsModalDialog = useCallback(() => {
 		return {
 			title: translator('whatsappChat.editAgent'),
 			showDivider: false,
@@ -1100,7 +1117,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			content: (
 				<Grid container alignItems='center' alignContent='center' style={{ marginBlockEnd: 60 }}>
 					{allAgents?.map((agent: WhatsappAgent) => {
-						return <Grid container alignItems='center' alignContent='center' style={{ marginBottom: 25 }}>
+						return <Grid container alignItems='center' alignContent='center' style={{ marginBottom: 25 }} key={agent.AgentId}>
 							<Grid item xs={8}>
 								<TextField
 									label={translator('whatsappChat.agentName')}
@@ -1154,9 +1171,9 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				</Grid>
 			)
 		}
-	}
+	}, [translator, classes, allAgents, updateAgent, onEditAgent]);
 
-	const addAgentModalDialog = () => {
+	const addAgentModalDialog = useCallback(() => {
 		return {
 			title: translator('whatsappChat.addAgent'),
 			showDivider: false,
@@ -1197,10 +1214,10 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				});
 			}
 		};
-	};
+	}, [translator, classes, agentModel, onAddAgent]);
 
 
-	const renderDialog = () => {
+	const renderDialog = useCallback(() => {
 		const { type } = dialogType || {}
 		let currentDialog: any = {};
 		if (type === 'validation') {
@@ -1230,14 +1247,14 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				</BaseDialog>
 			)
 		}
-	}
+	}, [dialogType, classes, getValidationDialog, getExceedDailyLimit, getTierValidationDialog, getDynamicModalDialog, addAgentModalDialog, editAgentsModalDialog]);
 
-	const handleAgentSelection = (value: number) => {
+	const handleAgentSelection = useCallback((value: number) => {
 		setAgentSelected(value);
 		setCookie('whatsappSelectedAgentId', value.toString());
-	}
+	}, []);
 
-	const getAgentByCellphone = (targetCellphone: any) => {
+	const getAgentByCellphone = useCallback((targetCellphone: any) => {
 		// First, iterate through all agents
 		for (const agent of agentList) {
 			// Check if this agent has any sessions with matching cellphone
@@ -1253,7 +1270,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 
 		// If no matching agent is found, return null or undefined
 		return {} as WhatsappAgent;
-	};
+	}, [agentList]);
 
 	return (
 		<>
