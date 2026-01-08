@@ -27,6 +27,7 @@ import clsx from 'clsx';
 import { closeHelpDrawer } from '../../redux/reducers/helpDrawerSlice';
 import { MdAutoAwesome } from 'react-icons/md';
 import { ContactSupportDialog } from './ContactSupportDialog';
+import { URLS } from '../../config/enum';
 
 const useStyles = makeStyles((theme) => ({
   drawer: {
@@ -103,8 +104,8 @@ const useStyles = makeStyles((theme) => ({
   content: {
     padding: theme.spacing(2),
     overflowY: 'auto',
-    height: 'calc(100vh - 240px)',
-    paddingBottom: theme.spacing(4),
+    // height: 'calc(100vh - 240px)',
+    // paddingBottom: theme.spacing(4),
   },
   menuItem: {
     backgroundColor: '#fff',
@@ -242,12 +243,12 @@ export const HelpDrawer: React.FC = () => {
   const getHelpCenterUrl = useMemo(() => {
     switch (language) {
       case 'he':
-        return 'https://site.pulseem.co.il/%D7%9E%D7%93%D7%A8%D7%99%D7%9B%D7%99%D7%9D/';
+        return URLS.ContactUs;
       case 'pl':
-        return 'https://pulseem.pl/?_gl=1%2A10nqxrj%2A_gcl_au%25';
+        return URLS.ContactUsPl;
       case 'en':
       default:
-        return 'https://site.pulseem.com/?_gl=1%2Aaum0k9%2A_gcl_au%25';
+        return URLS.ContactUsEn;
     }
   }, [language]);
 
