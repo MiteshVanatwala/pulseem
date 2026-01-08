@@ -6,8 +6,10 @@ import { AiOutlineCloudUpload } from 'react-icons/ai';
 import clsx from 'clsx';
 import { Tooltip } from "@material-ui/core";
 import { BaseDialog } from "../../../../components/DialogTemplates/BaseDialog";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { BsInfoCircle } from "react-icons/bs";
+import { useEffect } from "react";
+import { getImportConfiguration } from "../../../../redux/reducers/AccountSettingsSlice";
 
 const useStyles = makeStyles((theme) => ({
     contentBox: {
@@ -43,6 +45,13 @@ const AddBulkRecipientPopup = ({ classes,
     const { t } = useTranslation();
     const localClasses = useStyles();
     const { isRTL } = useSelector(state => state.core);
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        if (isOpen) {
+            dispatch(getImportConfiguration());
+        }
+    }, [isOpen, dispatch]);
 
     return (
         <BaseDialog

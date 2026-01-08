@@ -20,6 +20,7 @@ import { JsonToCSV, CreateFile } from "../../helpers/Export/ExportHelper";
 import { BaseDialog } from "../DialogTemplates/BaseDialog";
 import { sendToTeamChannel } from "../../redux/reducers/ConnectorsSlice";
 import { GetTextAreaSelection } from "../../helpers/Utils/TextHelper";
+import { saveImportConfiguration, getImportConfiguration } from "../../redux/reducers/AccountSettingsSlice";
 
 const useStyles = makeStyles((theme) => ({
     customWidth: {
@@ -50,6 +51,7 @@ const UploadXL = ({
     const { extraData } = useSelector((state) => state.sms);
     const { language, isRTL, windowSize } = useSelector(state => state.core)
     const { uploadProgress } = useSelector((state) => state.group);
+    const { importRecipientMapping } = useSelector((state) => state.accountSettings || {});
     const dispatch = useDispatch();
     const styles = useStyles();
     const [fileToUpload, setFileToUpload] = useState(null);
@@ -75,16 +77,18 @@ const UploadXL = ({
     moment.locale(language);
     const dateFormat = 'DD-MM-YYYY HH:mm:ss';
 
-    // Helper function to save column mapping to localStorage
-    const saveColumnMapping = (headers, selectArray) => {
+    // Helper function to save column mapping to localStorage and API
+    const saveColumnMapping = async (headers, selectArray) => {
         try {
             const mapping = headers.map((header, idx) => ({
                 index: idx,
                 header: header,
                 field: selectArray.find(sa => sa.label === header)
             }));
-            console.log(JSON.stringify(mapping))
-            localStorage.setItem('uploadXL_columnMapping', JSON.stringify(mapping));
+            const jsonMapping = JSON.stringify(mapping);
+            
+            await dispatch(saveImportConfiguration(saveAsDefault ? jsonMapping : []));
+            await dispatch(getImportConfiguration());
         } catch (error) {
             console.error('Error saving column mapping:', error);
         }
@@ -93,10 +97,9 @@ const UploadXL = ({
     // Helper function to load and apply saved column mapping
     const loadAndApplyColumnMapping = (currentHeaders, currentSelectArray) => {
         try {
-            const savedMapping = localStorage.getItem('uploadXL_columnMapping');
-            if (!savedMapping) return { headers: currentHeaders, selectArray: currentSelectArray };
+            if (importRecipientMapping === "") return { headers: currentHeaders, selectArray: currentSelectArray };
 
-            const mapping = JSON.parse(savedMapping);
+            const mapping = JSON.parse(importRecipientMapping);
             const newHeaders = [...currentHeaders];
             const newSelectArray = currentSelectArray.map(sa => ({ ...sa, isdisabled: false, idx: -1 }));
 
@@ -119,6 +122,25 @@ const UploadXL = ({
             return { headers: currentHeaders, selectArray: currentSelectArray };
         }
     };
+
+    // Load saved configuration from API on mount
+    useEffect(() => {
+        // Dispatch to load configuration if not already loaded
+        if (!importRecipientMapping) {
+            dispatch(getImportConfiguration());
+        }
+    }, []);
+
+    // Apply configuration when importRecipientMapping changes
+    useEffect(() => {
+        if (importRecipientMapping) {
+            try {
+                localStorage.setItem('uploadXL_columnMapping', importRecipientMapping);
+            } catch (error) {
+                console.error('Error saving import configuration to localStorage:', error);
+            }
+        }
+    }, [importRecipientMapping]);
 
     useEffect(() => {
         Object.keys(extraData).forEach((ed) => {
@@ -540,10 +562,6 @@ const UploadXL = ({
 
 
     const handleDataManual = async () => {
-        if (saveAsDefault) {
-            saveColumnMapping(headers, selectArray);
-        }
-        return false;
         if (manualUploadValidationscheck()) {
             let uploadAsFile = false;
             setLoader(true);
@@ -596,10 +614,7 @@ const UploadXL = ({
                 return x !== undefined;
             });
 
-            // Save column mapping if switch is enabled
-            if (saveAsDefault) {
-                saveColumnMapping(headers, selectArray);
-            }
+            saveColumnMapping(headers, selectArray);
 
             uploadAsFile = fileToUpload !== null && dataToUpload.length >= 5000;
             if (uploadAsFile) {
