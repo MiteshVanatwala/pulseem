@@ -45,6 +45,8 @@
 	"oneContact": "Send to one contact",
 	"testGroups": "Send to test groups",
 	"sendTitle": "Select group for test sending",
+	"noPermission": "No permission",
+	"noPermissionToSend": "Don't have permission to send",
 	"sendValidation": "The following fields are invalid",
 	"sendButton": "SEND",
 	"checkLimit": "Check your limit",

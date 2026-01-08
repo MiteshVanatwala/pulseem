@@ -45,6 +45,8 @@
 	"oneContact": "שלח לנמען בודד",
 	"testGroups": "שלח לקבוצת ניסיון",
 	"sendTitle": "בחר קבוצה לשליחת מבחן",
+	"noPermission": "אין הרשאה",
+	"noPermissionToSend": "אין לך הרשאה לשלוח",
 	"sendValidation": "שדות חובה חסרים",
 	"sendButton": "שלח",
 	"checkLimit": "בידקו את המגבלה שלכם",
