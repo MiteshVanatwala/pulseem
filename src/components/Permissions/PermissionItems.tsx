@@ -331,6 +331,37 @@ const PermissionItems = ({ classes, userDetails, updateSubUserDetails, permissio
         {t('SubUsers.readOnly')}
       </Grid>
     </Grid>
+
+    <Grid container>
+      <Grid item md={1} xs={1} className={clsx(classes.textRight, classes.pt10)}>
+        <FormControlLabel
+          control={
+            <PulseemSwitch
+              id="whatsapp-agent"
+              switchType='ios'
+              classes={classes}
+              onColor="#0371ad"
+              handleDiameter={20}
+              boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+              activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+              height={15}
+              className={clsx({ [classes.rtlSwitch]: isRTL })}
+              checked={userDetails.IsWhatsAppAgent === true}
+              onChange={(e: any) => {
+                updateSubUserDetails({
+                  ...userDetails,
+                  IsWhatsAppAgent: e.target.checked
+                })
+              }}
+            />
+          }
+          label=''
+        />
+      </Grid>
+      <Grid item md={11} xs={11} className={clsx(classes.pt10, classes.dFlex, classes.alignItemsCenter)}>
+        {t('SubUsers.whatsappAgent')}
+      </Grid>
+    </Grid>
   </>
 }
 

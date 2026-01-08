@@ -45,7 +45,8 @@ const initSubUser = {
 	SubUserPermissions: [],
 	UserName: '',
 	UserPermissionsList: '',
-	ConfirmPassword: ''
+	ConfirmPassword: '',
+	IsWhatsAppAgent: false
 } as SubUserModel;
 
 const useStyles = makeStyles({

@@ -21,6 +21,7 @@ export interface SubUserModel extends LoginPassword {
     SubUserPermissions?: string | null | any;
     UserPermissionsList?: eSubUserPermissions[] | null | any;
     ActionType?: eSubUserAction | null | any;
+    IsWhatsAppAgent?: boolean;
     ConfirmationExpirationDate?: Date | null | any;
 }
 
