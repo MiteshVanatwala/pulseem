@@ -648,7 +648,8 @@ const AutomationsManagnentScreen = ({ classes }) => {
         setTierMessageCode(resJ.Message);
         setDialogType({ type: 'tier' });
         return;
-      } else if ([552, 553].indexOf(resJ.StatusCode)) {
+      } else if ([552, 553].indexOf(resJ.StatusCode) !== -1) {
+        getData()
         processSummaryResponse(resJ.StatusCode);
       } else if (resJ.StatusCode !== 1) {
         setErrorMessage(`${resJ.StatusMessage} <br/>${t('automations.pressHereToEditAutomation').replace('##', data.ID)}`);
