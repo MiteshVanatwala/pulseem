@@ -583,7 +583,6 @@ const Permissions = ({ classes, isOpen, subUser, onClose, onConfirm, showButtons
 					</Grid>
 				</Grid>
 
-				{/* WhatsApp Agent Permission - NEW */}
 				<Grid container>
 					<Grid item md={1} xs={1} className={clsx(isRTL && classes.textRight, classes.pt10)}>
 						<FormControlLabel
