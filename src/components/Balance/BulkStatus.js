@@ -275,7 +275,7 @@ const BulkStatus = ({ classes }) => {
                 <Box className={clsx(classes.dFlex, classes.flexWrap)} justifyContent='center' alignItems='center'>
                   <Tooltip
                     arrow
-                    title={t('master.RadMenuItemResource21.Text')}
+                    title={t('dashboard.helpDrawer.support.helpCenter.title')}
                     placement={"top"}
                     open
                     classes={{
