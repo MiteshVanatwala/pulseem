@@ -930,11 +930,11 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	}), [translator, classes, nextMessageAvailable]);
 
 	const getNoPermissionDialog = useCallback(() => ({
-		title: translator('whatsappChat.noPermission'),
+		title: translator('whatsappCampaign.noPermission'),
 		showDivider: false,
 		content: (
 			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
-				{translator('whatsappChat.noPermissionToSend')}
+				{translator('whatsappCampaign.noPermissionToSend')}
 			</Typography>
 		),
 		onConfirm: async () => {
