@@ -59,6 +59,8 @@ const BulkStatus = ({ classes }) => {
 
   const { Mms = {}, Newsletters = {}, Notifications = {}, Sms = {}, Whatsapp = {}, SMSVC } = packagesDetails || {};
 
+  const hideEmailWithTier = Newsletters?.IsEmailTierSubscribed && Newsletters?.eBillingType === 2 ? true : false;
+
   const getBillingTypeText = (product) => {
     switch (product?.eBillingType) {
       case 2: {
@@ -472,24 +474,18 @@ const BulkStatus = ({ classes }) => {
                           <Button
                             className={clsx(classes.btn, classes.btnRounded, classes.f12)}
                             onClick={() => {
-                              console.log("475")
                               if (isAllowNewsletter()) {
                                 if (isBillingDetailsRequired) {
-                                  console.log("478")
                                   setIsOpenBillingSettings(true);
                                   setBillingPopupCallback('Newsletter');
                                 } else {
-                                  console.log("482")
                                   showPackageDialogType({ type: 2, title: t('common.newsletterBulkTitle') });
                                 }
-                              } else if (isAllowNewsletterSubscription) {
-                                console.log("486")
+                              } else if (isAllowNewsletterSubscription && !hideEmailWithTier) {
                                 if (isBillingDetailsRequired) {
-                                  console.log("488")
                                   setIsOpenBillingSettings(true);
                                   setBillingPopupCallback('EmailTier');
                                 } else {
-                                  console.log("492")
                                   setIsOpenEmailTierPlans(true);
                                 }
                               }
@@ -533,7 +529,7 @@ const BulkStatus = ({ classes }) => {
                 }
               </Grid>
                 {
-                  !IsPoland && (Newsletters.eBillingType === 0 || Newsletters.eBillingType === 2) && (
+                  !IsPoland && (Newsletters.eBillingType === 0 || Newsletters.eBillingType === 2) && !hideEmailWithTier && (
                     <>
                       {
                         isAllowNewsletterSubscription && Newsletters?.IsEmailTierSubscribed ?

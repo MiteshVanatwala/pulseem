@@ -88,6 +88,7 @@ const BillingSettingsPage = ({ classes }: any) => {
   const [ showCancelMessage, setShowCancelMessage ] = useState(false);
   const [ showFrozenDialog, setShowFrozenDialog ] = useState(false);
   const [ isOpenBillingSettings, setIsOpenBillingSettings ] = useState(false);
+  const hideEmailWithTier = packagesDetails?.Newsletters?.IsEmailTierSubscribed && packagesDetails?.Newsletters?.eBillingType === 2 ? true : false;
 
   const isBillingDetailsRequired = billingDetail?.CompanyName === '' || billingDetail?.CompanyName === null || billingDetail?.CorporationNumber === '' || billingDetail?.CorporationNumber === null || billingDetail?.Email === '' || billingDetail?.Email === null;
 
@@ -997,7 +998,7 @@ const BillingSettingsPage = ({ classes }: any) => {
       />
       <ConfirmDeletePopUp
         handleDeleteGroup={() => {
-          if (packagesDetails?.Newsletters?.IsEmailTierSubscribed) {
+          if (packagesDetails?.Newsletters?.IsEmailTierSubscribed && !hideEmailWithTier) {
             setConfirmCancelPlan(false);
             setShowLoader(true);
             dispatch(deletePolandSubscription() as any).then((response: any) => {
