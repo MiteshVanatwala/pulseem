@@ -4697,20 +4697,46 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   signUpFieldOfInterestButton: {
     borderRadius: 50,
     borderColor: '#000',
+    transition: 'background 0.2s ease',
     "@media screen and (max-width: 768px)": {
       width: '100%',
       display: 'flex'
     },
     '&.selected': {
-      background: '#beff00'
-    },
-    '&:hover': {
-      background: '#beff00',
+      background: '#beff00 !important',
       color: '#000',
       '& svg': {
         color: '#000',
         fill: '#000'
       }
+    },
+    '@media (hover: hover)': {
+      '&:hover:not(.selected)': {
+        background: '#beff00',
+        color: '#000',
+        '& svg': {
+          color: '#000',
+          fill: '#000'
+        },
+      },
+    },
+    '@media (hover: none)': {
+      '&:active:not(.selected)': {
+        background: '#beff00',
+        color: '#000',
+        '& svg': {
+          color: '#000',
+          fill: '#000'
+        },
+      },
+      '&:hover:not(.selected)': {
+        background: 'transparent',
+        color: '#000',
+        '& svg': {
+          color: '#000',
+          fill: '#000'
+        },
+      },
     },
   },
   agentNameContainer: {
