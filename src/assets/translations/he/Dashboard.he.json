@@ -75,5 +75,48 @@
     "securePurchase": "רכשו עכשיו",
     "customizePlan": "התאם את התוכנית שלך",
     "yourCurrentTier": "מדרגת השליחה שלך"
+  },
+  "helpDrawer": {
+    "title": "צריכים עזרה?",
+    "subtitle": "מרכז השירות והתמיכה של פולסים תמיד כאן בשבילכם.",
+    "tabs": {
+      "support": "תמיכה ",
+      "whatsNew": "חדש בפולסים!"
+    },
+    "support": {
+      "helpCenter": {
+        "title": "מרכז התמיכה",
+        "description": "כל המידע שאתם צריכים – מדריכים, טיפים ופתרון תקלות במקום אחד."
+      },
+      "supportChat": {
+        "title": "צ'אט תמיכה",
+        "description": "יש לכם שאלה? צוות התמיכה שלנו כאן בשבילכם"
+      },
+      "pulseemGPT": {
+        "title": "PulseemGPT",
+        "description": "ה-GPT החכם של Pulseem שיעזור לכם לפתור בעיות ולהפיק יותר מהמערכת."
+      },
+      "contactUs": {
+        "title": "צרו קשר ",
+        "description": "צרו קשר עם צוות התמיכה שלנו על מנת לקבל עזרה"
+      },
+      "APIIcon": {
+        "title": "API",
+        "UPIAPI": "API של ממשק המשתמש",
+        "DirectSendAPI": "API לשליחה ישירה"
+      },
+      "contactSupport": {
+        "title": "צור קשר עם התמיכה",
+        "serviceAndSupport": "שירות ותמיכה",
+        "sales": "מכירות",
+        "phoneNumber": "מספר טלפון",
+        "website": "אתר אינטרנט",
+        "successMessage": "ההודעה שלך נשלחה בהצלחה! נחזור אליך בקרוב.",
+        "errorMessage": "שליחת ההודעה נכשלה. אנא נסה שוב.",
+        "captchaVerificationFailed": "אימות הקפצ׳ה נכשל. אנא נסה שוב.",
+        "internalServerError": "אירעה שגיאת שרת פנימית. אנא נסה שוב מאוחר יותר.",
+        "networkError": "שגיאת רשת. אנא בדוק את החיבור שלך ונסה שוב."
+      }
+    }
   }
 }

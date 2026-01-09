@@ -25,6 +25,7 @@ import { BiCog } from 'react-icons/bi';
 import { getAccountBilling } from '../../redux/reducers/BillingSlice';
 import BillingSettings from '../BillingSettings/BillingSettings';
 import TierPlans from '../TierPlans/TierPlans';
+import { toggleHelpDrawer } from '../../redux/reducers/helpDrawerSlice';
 
 const BulkStatus = ({ classes }) => {
   const { billingTypeId, windowSize, isRTL } = useSelector(state => state.core)
@@ -274,7 +275,7 @@ const BulkStatus = ({ classes }) => {
                 <Box className={clsx(classes.dFlex, classes.flexWrap)} justifyContent='center' alignItems='center'>
                   <Tooltip
                     arrow
-                    title={t('master.RadMenuItemResource21.Text')}
+                    title={t('dashboard.helpDrawer.support.helpCenter.title')}
                     placement={"top"}
                     open
                     classes={{
@@ -282,7 +283,14 @@ const BulkStatus = ({ classes }) => {
                       arrow: classes.colrPrimary
                     }}
                   >
-                    <IconButton size="small" className={clsx(classes.noPadding)} onClick={() => window.open(URLS.ContactUs, '_blank')}>
+                    <IconButton
+                      size="small"
+                      className={clsx(classes.noPadding)}
+                      onClick={() => {
+                        // window.open(URLS.ContactUs, '_blank')
+                        dispatch(toggleHelpDrawer())
+                      }}
+                    >
                       <MdSupportAgent className={classes.linkNoDesign} style={{ fontSize: 30, color: '#ff3343' }} title={t('master.RadMenuItemResource21.Text')} />
                     </IconButton>
                   </Tooltip>

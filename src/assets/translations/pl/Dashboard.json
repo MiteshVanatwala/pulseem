@@ -78,5 +78,48 @@
     "securePurchase": "Bezpieczny zakup na stronie",
     "customizePlan": "Dostosuj swój plan",
     "yourCurrentTier": "Twój obecny poziom"
+  },
+  "helpDrawer": {
+    "title": "Potrzebujesz pomocy?",
+    "subtitle": "Wszystko, czego potrzebujesz, znajdziesz tutaj.",
+    "tabs": {
+      "support": "Wsparcie",
+      "whatsNew": "Co nowego?"
+    },
+    "support": {
+      "helpCenter": {
+        "title": "Centrum pomocy",
+        "description": "Wszystko, czego potrzebujesz – poradniki, wskazówki i rozwiązywanie problemów w jednym miejscu."
+      },
+      "supportChat": {
+        "title": "Czat wsparcia",
+        "description": "Masz pytanie? Nasz zespół wsparcia jest tutaj, aby pomóc."
+      },
+      "pulseemGPT": {
+        "title": "PulseemGPT",
+        "description": "Skorzystaj z inteligentnego GPT Pulseem, aby rozwiązywać problemy i w pełni wykorzystać możliwości platformy."
+      },
+      "contactUs": {
+        "title": "Skontaktuj się z nami",
+        "description": "Wyślij zgłoszenie do naszego zespołu wsparcia, aby uzyskać pomoc."
+      },
+      "APIIcon": {
+        "title": "API",
+        "UPIAPI": "API interfejsu użytkownika",
+        "DirectSendAPI": "API bezpośredniego wysyłania"
+      },
+      "contactSupport": {
+        "title": "Skontaktuj się z pomocą techniczną",
+        "serviceAndSupport": "Serwis i wsparcie",
+        "sales": "Sprzedaż",
+        "phoneNumber": "Numer telefonu",
+        "website": "Strona internetowa",
+        "successMessage": "Twoja wiadomość została wysłana pomyślnie! Skontaktujemy się z Tobą wkrótce.",
+        "errorMessage": "Nie udało się wysłać wiadomości. Spróbuj ponownie.",
+        "captchaVerificationFailed": "Weryfikacja captcha nie powiodła się. Spróbuj ponownie.",
+        "internalServerError": "Wystąpił wewnętrzny błąd serwera. Spróbuj ponownie później.",
+        "networkError": "Błąd sieci. Sprawdź swoje połączenie i spróbuj ponownie."
+      }
+    }
   }
 }

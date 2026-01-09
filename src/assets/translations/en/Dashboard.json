@@ -78,5 +78,48 @@
     "securePurchase": "Purchase Now",
     "customizePlan": "Customize your plan",
     "yourCurrentTier": "Your current tier"
+  },
+  "helpDrawer": {
+    "title": "Need help?",
+    "subtitle": "We've got everything you need right here.",
+    "tabs": {
+      "support": "Support",
+      "whatsNew": "What’s New?"
+    },
+    "support": {
+      "helpCenter": {
+        "title": "Help Center",
+        "description": "Everything you need – guides, tips, and troubleshooting in one place."
+      },
+      "supportChat": {
+        "title": "Support Chat",
+        "description": "Got a question? Our support team is here to help"
+      },
+      "pulseemGPT": {
+        "title": "PulseemGPT",
+        "description": "Use Pulseem’s smart GPT to help you solve problems and get more out of the platform."
+      },
+      "contactUs": {
+        "title": "Contact us",
+        "description": "Make a request to our support team to get help."
+      },
+      "APIIcon": {
+        "title": "API",
+        "UPIAPI": "UI API",
+        "DirectSendAPI": "Direct Send API"
+      },
+      "contactSupport": {
+        "title": "Contact Support",
+        "serviceAndSupport": "Service and Support",
+        "sales": "Sales",
+        "phoneNumber": "Phone Number",
+        "website": "Website",
+        "successMessage": "Your message has been sent successfully! We will get back to you soon.",
+        "errorMessage": "Failed to send message. Please try again.",
+        "captchaVerificationFailed": "Captcha verification failed. Please try again.",
+        "internalServerError": "An internal server error occurred. Please try again later.",
+        "networkError": "Network error. Please check your connection and try again."
+      }
+    }
   }
 }

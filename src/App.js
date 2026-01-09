@@ -105,6 +105,8 @@ import AIFloatingButton from './components/AI/AIFloatingButton';
 import AIChatWidget from './components/AI/AIChatWidget';
 import { getAvailablePlans, getCurrentPlan } from './redux/reducers/TiersSlice';
 import PopupSummary from './screens/Popups/PopupSummary';
+import HelpDrawer from './components/HelpDrawer';
+import { openHelpDrawer, closeHelpDrawer, toggleHelpDrawer } from './redux/reducers/helpDrawerSlice';
 
 const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
   const transferUrl =
@@ -659,6 +661,7 @@ const App = ({ screenSize }) => {
 
   const { language, isRTL, windowSize, isClal, isDebtAccount, isAdmin, isLoader, userRoles } = useSelector(state => state.core)
   const { accountSettings, currencyList, accountFeatures, IsPoland } = useSelector(state => state.common)
+  const { isOpen } = useSelector((state) => state.helpDrawer);
   const classes = useClasses(windowSize, isRTL)();
   setCookie('accountSettings', '');
   const isSignup = isSignupPage(location.pathname);
@@ -897,6 +900,7 @@ const App = ({ screenSize }) => {
           {renderRoutesByCondition(classes, redirect)}
           <AIFloatingButton />
           <AIChatWidget />
+          <HelpDrawer open={isOpen} onClose={() => dispatch(closeHelpDrawer())} />
         </div>
         <Loader isOpen={isLoader} showBackdrop={true} />
       </MuiThemeProvider>
