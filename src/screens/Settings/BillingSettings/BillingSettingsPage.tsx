@@ -88,7 +88,7 @@ const BillingSettingsPage = ({ classes }: any) => {
   const [ showCancelMessage, setShowCancelMessage ] = useState(false);
   const [ showFrozenDialog, setShowFrozenDialog ] = useState(false);
   const [ isOpenBillingSettings, setIsOpenBillingSettings ] = useState(false);
-  const hideEmailWithTier = packagesDetails?.Newsletters?.IsEmailTierSubscribed && packagesDetails?.Newsletters?.eBillingType === 2 ? true : false;
+  const hideEmailWithTier = true;
 
   const isBillingDetailsRequired = billingDetail?.CompanyName === '' || billingDetail?.CompanyName === null || billingDetail?.CorporationNumber === '' || billingDetail?.CorporationNumber === null || billingDetail?.Email === '' || billingDetail?.Email === null;
 
