@@ -59,7 +59,7 @@ const BulkStatus = ({ classes }) => {
 
   const { Mms = {}, Newsletters = {}, Notifications = {}, Sms = {}, Whatsapp = {}, SMSVC } = packagesDetails || {};
 
-  const hideEmailWithTier = Newsletters?.IsEmailTierSubscribed && Newsletters?.eBillingType === 2 ? true : false;
+  const hideEmailWithTier = true;
 
   const getBillingTypeText = (product) => {
     switch (product?.eBillingType) {
@@ -241,6 +241,11 @@ const BulkStatus = ({ classes }) => {
   }
 
   const isAllowNewsletterSubscription = !Newsletters.IsPrepaid && accountAvailablePackages.filter((aa) => { return aa.CampaignType === 2 }).length === 0;
+  
+  console.log('isAllowNewsletterSubscription', isAllowNewsletterSubscription);
+  console.log('Newsletters', Newsletters);
+  console.log('hideEmailWithTier', hideEmailWithTier);
+
   const showPackageDialogType = async (packageType) => {
     setPackageType(packageType);
     setIsOpenPackageDialog(true);
@@ -467,7 +472,7 @@ const BulkStatus = ({ classes }) => {
 
               <Grid item md={4} xs={4} className={isRTL ? classes.textLeft : classes.textRight}>
                 {
-                  !IsPoland && Newsletters.eBillingType === 2 && (
+                  !IsPoland && ((Newsletters.eBillingType === 2 && !hideEmailWithTier) || hideEmailWithTier) && (
                     <>
                       {
                         !isAllowNewsletterSubscription && !Newsletters?.IsEmailTierSubscribed && (

@@ -167,7 +167,7 @@ const BillingSettingsPage = ({ classes }: any) => {
             try {
                 const message = JSON.parse(e.data);
                 if (message["result"] !== null && message["result"] !== undefined) {
-                    if (!!message?.hasFrozenEmail) {
+                    if (message?.hasFrozenEmail === true || String(message?.hasFrozenEmail).toLowerCase() === "true") {
                         setHasFrozenEmail(true);
                         setShowFrozenDialog(true);
                     }
@@ -967,7 +967,7 @@ const BillingSettingsPage = ({ classes }: any) => {
       </BaseDialog>}
       {showFrozenDialog && <BaseDialog
         classes={classes}
-        title={t('dashboard.polishSubscribe.frozenTitle')}
+        title=""
         open={showFrozenDialog}
         onClose={() => {
           setShowFrozenDialog(false);

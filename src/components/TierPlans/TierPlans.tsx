@@ -70,11 +70,14 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false, isBankT
   const contentRef = useRef<HTMLDivElement>(null);
   const { currentPlan, availablePlans, userCreditCards } = useSelector((state: any) => state.tiers);
   const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
-  const { accountCurrencySymbol, accountIsCurrencySymbolPrefix } = useSelector((state: any) => state.common);
+  const { accountCurrencySymbol, accountIsCurrencySymbolPrefix, IsPoland } = useSelector((state: any) => state.common);
   const { tiers: emailTiers } = useSelector((state: any) => state.emailTierScaling);
+  const { packagesDetails, accountAvailablePackages } = useSelector((state: any) => state.dashboard);
   const [ toastMessage, setToastMessage ] = useState(null);
   const [showContactDialog, setShowContactDialog] = useState(false);
   const [ existingPlan, setExistingPlan ] = useState<any>(null);
+  const { Newsletters = {} } = packagesDetails || {};
+  const isAllowNewsletterSubscription = !Newsletters.IsPrepaid && accountAvailablePackages.filter((aa: any) => { return aa.CampaignType === 2 }).length === 0;
 
   // Extract credit cards data from the API response
   const creditCards = userCreditCards?.Data || [];
@@ -203,8 +206,8 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false, isBankT
       uiConfig
     };
 
-    // if (plan.Id === 1) return false;
-    if (plan.Id === 4) {
+    if (plan.Id === 1 && !isAllowNewsletterSubscription) return false;
+    else if (plan.Id === 4) {
       setShowSalesContactPopup(true);
       return;
     } else if (isBankTransferForTiers) {
