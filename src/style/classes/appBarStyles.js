@@ -95,6 +95,7 @@ export const appBarStyle = (windowSize, isRTL, theme) => ({
     alignSelf: 'center',
     textDecoration: 'none',
     color: '#000',
+    whiteSpace: 'break-spaces',
     '& svg': {
       fontSize: 17,
       color: '#555555',

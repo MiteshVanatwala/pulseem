@@ -45,6 +45,8 @@
   "priceWithoutVAT": "Cena bez VAT",
   "multipleInvoiceTypeMessage": "Nie można opłacić faktury transakcyjnej i faktury VAT w tej samej płatności<br/><br/>Możesz opłacić <b>faktury transakcyjne lub faktury VAT oddzielnie.</b><br/><br/>Aby uzyskać więcej informacji, skontaktuj się z obsługą w sprawie płatności<br/><a href=\"tel:+972-3-5240290\">+972-3-5240290</a><br/><a href=\"mailto:support@pulseem.com\">support@pulseem.com </a>",
   "creditCardPurchase": "Zakup kartą kredytową",
+  "yourPlan": "Twój plan",
+  "plan": "Plan",
   "tier": {
     "plans": {
       "starter": {
@@ -88,6 +90,7 @@
       "success": "Witaj w {planName}!",
       "message": "Twój subskrypcja jest teraz aktywna",
       "payUsingCC": "Czy na pewno chcesz zapłacić tą kartą kredytową?",
+      "upgradePlan": "Czy na pewno chcesz dokonać uaktualnienia do planu {planName}?",
       "features": {
         "unlimitedAutomations": {
           "title": "Automatyzacje bez ograniczeń",
@@ -205,7 +208,8 @@
     "noCardsDescription": "Nie dodałeś jeszcze żadnych kart kredytowych. Dodaj swoją pierwszą kartę, aby rozpocząć.",
     "addFirstCard": "Dodaj swoją pierwszą kartę",
     "note": "Uwaga",
-    "securityNote": "Informacje o Twojej karcie kredytowej są bezpiecznie zaszyfrowane i przechowywane. Nigdy nie przechowujemy pełnego numeru karty ani kodu CVV."
+    "securityNote": "Informacje o Twojej karcie kredytowej są bezpiecznie zaszyfrowane i przechowywane. Nigdy nie przechowujemy pełnego numeru karty ani kodu CVV.",
+    "selectCreditCard": "Wybierz kartę kredytową"
   },
   "featureNames": {
     "EMAIL_BASIC": "Basic Email Campaigns",

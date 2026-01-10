@@ -550,7 +550,12 @@
       "NEWSLETTER_BULK_ENDED_PURCHASE_OPTION": "Your bulk has ended!<br/>You can buy a Newsletter package by clicking on Purchase button.",
       "pendingApproval": "Pending Approval",
       "PendingApprovalDesc": "Our team is currently reviewing your content. Once approved, the email will be sent as usual. Thanks for your patience!",
-      "PendingApproval551Desc": "User under review process"
+      "PendingApproval551Desc": "User under review process",
+      "paymentfailed553Title": "Payment Failed",
+      "paymentfailed553Desc": "Your payment could not be completed.<br />Sending and automations are frozen.<br />Please update your payment method to resume usage.",
+      "paymentfailed553Button": "Resolve Payment",
+      "paymentfailed552Title": "Payment is still in process",
+      "paymentProcessing552Desc": "Your payment is being processed<br />Sending is temporarily blocked until the process is completed.<br />Please wait a moment and try again."
     },
     "success": "Campaign successfully saved",
     "sendSettings": {

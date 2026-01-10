@@ -7,27 +7,110 @@ import clsx from 'clsx';
 import _ from 'lodash';
 import { getEmailPerRecipientsTierScaling } from '../../redux/reducers/emailTierScalingSlice';
 
-const EmailMarketingSlider = ({ classes }: any) => {
+interface EmailMarketingSliderProps {
+  classes: any;
+  // Controlled mode props
+  value?: number;
+  onChange?: (event: any, newValue: number) => void;
+  marks?: Array<{ value: number; label?: string; displayText?: string; [key: string]: any }>;
+  disabled?: boolean;
+  min?: number;
+  max?: number;
+  // Optional: hide header in controlled mode
+  hideHeader?: boolean;
+  // Uncontrolled mode props
+  onTierChange?: (tierData: any) => void;
+  setShowContactDialog?: (show: boolean) => void;
+  initialSliderValue?: number | string;
+}
+
+const EmailMarketingSlider = ({ 
+  classes, 
+  value: controlledValue,
+  onChange: controlledOnChange,
+  marks: controlledMarks,
+  disabled = false,
+  min: controlledMin,
+  max: controlledMax,
+  hideHeader = false,
+  onTierChange,
+  setShowContactDialog,
+  initialSliderValue
+}: EmailMarketingSliderProps) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { isRTL } = useSelector((state: any) => state.core);
   const { currencyId } = useSelector((state: any) => state.common);
   const { tiers: apiTiers, loading } = useSelector((state: any) => state.emailTierScaling);
+  
+  const selectedApiTier = apiTiers && apiTiers.find((t: any) => {
+    const id = t && (t.Id ?? t.id);
+    const target = typeof initialSliderValue === 'string' ? parseInt(initialSliderValue, 10) : initialSliderValue;
+    return id === target;
+  });
 
-  const [sliderValue, setSliderValue] = useState(0);
+  // Use controlled value if provided, otherwise use internal state
+  const [internalValue, setInternalValue] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const trackRef = React.useRef<HTMLDivElement>(null);
+  const isControlled = controlledValue !== undefined;
+  const sliderValue = isControlled ? controlledValue : internalValue;
 
   useEffect(() => {
-    if (currencyId) {
+    // Only fetch from API if not in controlled mode
+    if (!isControlled && currencyId) {
       dispatch(getEmailPerRecipientsTierScaling(currencyId) as any);
     }
-  }, [dispatch, currencyId]);
+  }, [dispatch, currencyId, isControlled]);
 
   const uniqueTierRanges = useMemo(() => {
     if (!apiTiers || apiTiers.length === 0) return [];
     return _.uniqBy(apiTiers, 'LevelHigh');
   }, [apiTiers]);
 
+  // If an initialSliderValue (Id) is provided, find the matching object
+  // in `apiTiers`, get its LevelHigh and then find the corresponding
+  // index in `uniqueTierRanges` so we can set the slider value to that
+  // deduplicated tier index.
+  useEffect(() => {
+    if (initialSliderValue == null) return;
+    if (!apiTiers || apiTiers.length === 0) return;
+    if (!uniqueTierRanges || uniqueTierRanges.length === 0) return;
+
+    const target = typeof initialSliderValue === 'string'
+      ? parseInt(initialSliderValue, 10)
+      : initialSliderValue;
+
+    const matchedApiTier = apiTiers.find((t: any) => {
+      const id = t && (t.Id ?? t.id);
+      return id === target;
+    });
+
+    if (!matchedApiTier) return;
+
+    const levelHigh = matchedApiTier.LevelHigh ?? matchedApiTier.levelHigh;
+
+    const foundIndex = uniqueTierRanges.findIndex((t: any) => {
+      const lh = t && (t.LevelHigh ?? t.levelHigh);
+      return lh === levelHigh;
+    });
+
+    if (foundIndex !== -1) {
+      setInternalValue(foundIndex);
+    }
+  }, [initialSliderValue, apiTiers, uniqueTierRanges]);
+
   const tiers = useMemo(() => {
+    // Use controlled marks if provided
+    if (controlledMarks && controlledMarks.length > 0) {
+      return controlledMarks.map((mark, index) => ({
+        label: mark.displayText || mark.label || '',
+        value: mark.value,
+        tierData: mark
+      }));
+    }
+
+    // Otherwise use API data
     if (uniqueTierRanges.length === 0) return [];
     
     return uniqueTierRanges.map((tier: any, index: number) => {
@@ -51,25 +134,58 @@ const EmailMarketingSlider = ({ classes }: any) => {
         tierData: tier
       };
     });
-  }, [uniqueTierRanges]);
+  }, [uniqueTierRanges, controlledMarks]);
+
+   useEffect(() => {
+    if (onTierChange && tiers.length > 0 && tiers[sliderValue]) {
+      onTierChange(tiers[sliderValue].tierData);
+    }
+  }, [sliderValue, tiers, onTierChange]);
 
   const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSliderValue(parseInt(e.target.value));
+    const newValue = parseInt(e.target.value);
+    if (isControlled && controlledOnChange) {
+      controlledOnChange(e, newValue);
+    } else {
+      setInternalValue(newValue);
+    }
   };
 
   const handleTierClick = (value: number) => {
-    setSliderValue(value);
+    if (disabled) return;
+    const mockEvent = { target: { value: value.toString() } } as any;
+    if (isControlled && controlledOnChange) {
+      controlledOnChange(mockEvent, value);
+    } else {
+      setInternalValue(value);
+    }
   };
 
   const handlePrevious = () => {
-    if (sliderValue > 0) {
-      setSliderValue(sliderValue - 1);
+    if (disabled) return;
+    const currentTierIndex = getCurrentTierIndex();
+    if (currentTierIndex > 0) {
+      const newValue = tiers[currentTierIndex - 1].value;
+      const mockEvent = { target: { value: newValue.toString() } } as any;
+      if (isControlled && controlledOnChange) {
+        controlledOnChange(mockEvent, newValue);
+      } else {
+        setInternalValue(newValue);
+      }
     }
   };
 
   const handleNext = () => {
-    if (sliderValue < tiers.length - 1) {
-      setSliderValue(sliderValue + 1);
+    if (disabled) return;
+    const currentTierIndex = getCurrentTierIndex();
+    if (currentTierIndex < tiers.length - 1) {
+      const newValue = tiers[currentTierIndex + 1].value;
+      const mockEvent = { target: { value: newValue.toString() } } as any;
+      if (isControlled && controlledOnChange) {
+        controlledOnChange(mockEvent, newValue);
+      } else {
+        setInternalValue(newValue);
+      }
     }
   };
 
@@ -79,25 +195,118 @@ const EmailMarketingSlider = ({ classes }: any) => {
     return isRTL ? 100 - position : position;
   };
 
-  if (loading || tiers.length === 0) {
+  // Find the current tier index based on value
+  const getCurrentTierIndex = () => {
+    const tierIndex = tiers.findIndex(tier => tier.value === sliderValue);
+    return tierIndex !== -1 ? tierIndex : 0;
+  };
+
+  const currentIndex = getCurrentTierIndex();
+  const minValue = controlledMin !== undefined ? controlledMin : 0;
+  const maxValue = controlledMax !== undefined ? controlledMax : (tiers.length - 1);
+  
+  // Calculate percentage for filled track
+  const getFilledPercentage = () => {
+    if (tiers.length === 0) return 0;
+    if (maxValue <= minValue) return 0;
+    return (currentIndex / (tiers.length - 1)) * 100;
+  };
+
+  // Custom drag handlers
+  const handleTrackInteraction = (clientX: number) => {
+    if (disabled || !trackRef.current || tiers.length === 0) return;
+    
+    const rect = trackRef.current.getBoundingClientRect();
+    const trackWidth = rect.width;
+    let clickPosition = clientX - rect.left;
+    
+    // Handle RTL
+    if (isRTL) {
+      clickPosition = trackWidth - clickPosition;
+    }
+    
+    // Calculate percentage and snap to nearest tier
+    const percentage = Math.max(0, Math.min(100, (clickPosition / trackWidth) * 100));
+    const tierIndex = Math.round((percentage / 100) * (tiers.length - 1));
+    const newValue = tiers[tierIndex]?.value;
+    
+    if (newValue !== undefined) {
+      const mockEvent = { target: { value: newValue.toString() } } as any;
+      if (isControlled && controlledOnChange) {
+        controlledOnChange(mockEvent, newValue);
+      } else {
+        setInternalValue(newValue);
+      }
+    }
+  };
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (disabled) return;
+    setIsDragging(true);
+    handleTrackInteraction(e.clientX);
+  };
+
+  const handleMouseMove = (e: MouseEvent) => {
+    if (isDragging) {
+      handleTrackInteraction(e.clientX);
+    }
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (disabled) return;
+    setIsDragging(true);
+    handleTrackInteraction(e.touches[0].clientX);
+  };
+
+  const handleTouchMove = (e: TouchEvent) => {
+    if (isDragging) {
+      handleTrackInteraction(e.touches[0].clientX);
+    }
+  };
+
+  useEffect(() => {
+    if (isDragging) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+      document.addEventListener('touchmove', handleTouchMove);
+      document.addEventListener('touchend', handleMouseUp);
+      
+      return () => {
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
+        document.removeEventListener('touchmove', handleTouchMove);
+        document.removeEventListener('touchend', handleMouseUp);
+      };
+    }
+  }, [isDragging, tiers, isRTL, disabled]);
+
+  if (!isControlled && (loading || tiers.length === 0)) {
+    return null;
+  }
+
+  if (tiers.length === 0) {
     return null;
   }
 
   return (
     <Box className={clsx(classes.emailMarketingSliderContainer)}>
-      {/* Header */}
-      <Box sx={{alignItems: 'center', display: 'flex'}}>
-        <Typography variant="h6" className={clsx(classes.bold)}>
-            {t('billing.EmailMarketingList')}
-        </Typography>
-        <Typography variant="body1" className={clsx(classes.marginSides5)}>
-          {t('billing.EmailMarketingListSending')}
-        </Typography>
-      </Box>
+      {/* Header - Only show in uncontrolled mode */}
+      {!hideHeader && !isControlled && (
+        <Box sx={{alignItems: 'center', display: 'flex'}}>
+          <Typography variant="h6" className={clsx(classes.bold)}>
+              {t('billing.EmailMarketingList')}
+          </Typography>
+          <Typography variant="body1" className={clsx(classes.marginSides5)}>
+            {t('billing.EmailMarketingListSending')}
+          </Typography>
+        </Box>
+      )}
 
       <Box className={classes.sliderContainer}>
-       
-
         <Box className={classes.sliderTrackWrapper}>
           <IconButton
             onClick={handlePrevious}
@@ -107,13 +316,22 @@ const EmailMarketingSlider = ({ classes }: any) => {
             <ChevronLeft />
           </IconButton>
 
-          <Box className={classes.sliderTrack}>
+          <div 
+            className={classes.sliderTrack}
+            ref={trackRef}
+            onMouseDown={handleMouseDown}
+            onTouchStart={handleTouchStart}
+            style={{
+              cursor: disabled ? 'not-allowed' : 'pointer',
+              userSelect: 'none'
+            }}
+          >
             <Box
               className={clsx(
                 classes.sliderTrackFilled,
                 { [classes.sliderTrackFilledRTL]: isRTL }
               )}
-              style={{ width: `${(sliderValue / (tiers.length - 1)) * 100}%` }}
+              style={{ width: `${getFilledPercentage()}%` }}
             />
 
             {/* Slider Thumb */}
@@ -124,29 +342,23 @@ const EmailMarketingSlider = ({ classes }: any) => {
                 <Box
                   key={`thumb-${tier.value}`}
                   className={classes.sliderThumb}
-                  style={{ left: `${position}%` }}
+                  style={{ 
+                    left: `${position}%`,
+                    opacity: disabled ? 0.5 : 1,
+                    cursor: disabled ? 'not-allowed' : 'grab',
+                    transform: isDragging ? 'translate(-50%, -50%) scale(1.1)' : 'translate(-50%, -50%)'
+                  }}
                 />
               );
             })}
-          </Box>
-
-          {/* HTML Range Input */}
-          <input
-            type="range"
-            min={0}
-            max={tiers.length - 1}
-            value={sliderValue}
-            onChange={handleSliderChange}
-            step={1}
-            className={classes.sliderInput}
-            style={{ direction: isRTL ? 'rtl' : 'ltr' }}
-          />
+          </div>
 
           {/* Right Arrow - Increase */}
           <IconButton
             onClick={handleNext}
             className={classes.sliderArrowRight}
             aria-label="increase tier"
+            disabled={disabled}
           >
             <ChevronRight />
           </IconButton>
@@ -162,7 +374,11 @@ const EmailMarketingSlider = ({ classes }: any) => {
                   key={tier.label}
                   onClick={() => handleTierClick(tier.value)}
                   className={classes.sliderLabel}
-                  style={{ left: `${position}%` }}
+                  style={{ 
+                    left: `${position}%`,
+                    cursor: disabled ? 'not-allowed' : 'pointer',
+                    opacity: disabled ? 0.6 : 1
+                  }}
                 >
                   <Typography
                     variant="body2"
@@ -180,6 +396,14 @@ const EmailMarketingSlider = ({ classes }: any) => {
           </Box>
         </Box>
       </Box>
+      {setShowContactDialog && (
+        <Typography variant="body1" className={clsx(classes.marginSides5)}>
+          {t('common.customPackageQuote')}
+          <span onClick={() => setShowContactDialog(true)} className={clsx(classes.textUnderlineDialogButton)}>
+            {t('common.contactUs')}
+          </span>
+        </Typography>
+      )}
     </Box>
   );
 };

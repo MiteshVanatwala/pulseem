@@ -124,7 +124,29 @@ export const inactiveCreditCard = createAsyncThunk(
     }
 );
 
+export const cancelFrozenSends = createAsyncThunk(
+    'email/cancelFrozenSends',
+    async (_, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.post(`email/cancelFrozenSends`, {});
+            return response.data as PulseemResponse
+        } catch (error) {
+            return console.log(error);
+        }
+    }
+);
 
+export const releaseFrozenSends = createAsyncThunk(
+    'email/releaseFrozenSends',
+    async (_, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.post(`email/releaseFrozenSends`, {});
+            return response.data as PulseemResponse
+        } catch (error) {
+            return console.log(error);
+        }
+    }
+);
 
 
 const BillingSlice = createSlice({

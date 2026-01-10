@@ -944,5 +944,17 @@
       "resourceCenter": "Resource Center",
       "news": "News"
     }
-  }
+  },
+  "activeTierSubscription": "Account already has an active email tier subscription.",
+  "Submit": "Submit",
+  "customPackageQuote": "Don't send every month? For a custom package quote",
+  "getStarted": "Let's Get Started!",
+  "fillDetails": "Fill in your details and we'll get back to you soon",
+  "enterMessage": "Enter Message",
+  "contactUsSuccess": "Your message has been sent successfully",
+  "upgrade": "Upgrade",
+  "cancelPlan": "Cancel Plan",
+  "cancelPlanConfirmation": "Are you sure you want to cancel your current plan?",
+  "planCancellationRequestSubmitted": "Your plan cancellation request has been submitted successfully.",
+  "nonPolishNumber": "You can not send SMS from non-polish number. Please set a polish number."
 }

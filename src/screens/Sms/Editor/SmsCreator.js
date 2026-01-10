@@ -139,7 +139,7 @@ const SmsCreator = ({ classes }) => {
     ToastMessages,
     extraData
   } = useSelector((state) => state.sms);
-  const { accountSettings, accountFeatures, countryCodeList, isGlobal, subAccount } = useSelector((state) => state.common)
+  const { accountSettings, accountFeatures, countryCodeList, isGlobal, subAccount, IsPoland } = useSelector((state) => state.common)
   const [dialogType, setDialogType] = useState(null)
   const [alignment, setAlignment] = useState('right');
   const [checked, setChecked] = React.useState(false);
@@ -293,10 +293,16 @@ const SmsCreator = ({ classes }) => {
         setDialogType({ type: "englishLetterDialog" });
         break;
       }
-      case 550:
-      case 551:
+      case 9: { // Non polish number
+        if (IsPoland && isGlobal) {
+          setToastMessage(ToastMessages.NON_POLISH_NUMBER)
+        }
+        break;
+      }
+      case 550: {
         setDialogType({ type: "pendingApprovalDialog" });
         break;
+      }
       case 9271: {
         setTierMessageCode('SMS_BASIC');
         setDialogType({ type: 'tier' });
@@ -312,6 +318,9 @@ const SmsCreator = ({ classes }) => {
         setDialogType({ type: 'tier' });
         break;
       }
+      case 551:
+        setDialogType({ type: "underReviewDialog" });
+        break;
       default:
       case 5: {// ACCEPTED
         break;
@@ -1358,6 +1367,10 @@ const SmsCreator = ({ classes }) => {
           setToastMessage(CoreToastMessages.XSS_ERROR);
           break;
         }
+        case 10: {
+          setToastMessage(ToastMessages.NON_POLISH_NUMBER);
+          break;
+        }
         case 927: {
           // Determine feature code from payload or context, fallback to 'SMS_BASIC' if not present
           const featureCode = r.payload.Message || 'SMS_BASIC';
@@ -1498,7 +1511,10 @@ const SmsCreator = ({ classes }) => {
       }
       else if (r.payload.Status === 3) {
         setOTPOpen(true);
-      } else if (r.payload.Status === 927) {
+      } else if (r.payload.Status === 10) {
+        setToastMessage(ToastMessages.NON_POLISH_NUMBER);
+      } 
+      else if (r.payload.Status === 927) {
         setTierMessageCode(r.payload.Message);
         setDialogType({ type: 'tier' });
       }
@@ -1535,6 +1551,9 @@ const SmsCreator = ({ classes }) => {
         else if (saveResponse.payload.Status === 2) {
           setDialogType(null);
           Redirect({ url: !!isFromAutomation ? getAutomationReturnUrl(id) : `${sitePrefix}SMSCampaigns` });
+        } else if (saveResponse.payload.Status === 10) {
+          setToastMessage(ToastMessages.NON_POLISH_NUMBER);
+          return;
         }
         else if (saveResponse.payload.Status === 927) {
           setTierMessageCode(saveResponse.payload.Message);
@@ -2140,6 +2159,25 @@ const SmsCreator = ({ classes }) => {
     }
   }
 
+  const underReviewDialog = () => {
+    return {
+      title: t('campaigns.newsLetterEditor.errors.pendingApproval'),
+      disableBackdropClick: true,
+      icon: (
+        <AiOutlineExclamationCircle />
+      ),
+      content: (
+        <Box>
+          <Typography className={classes.f18}>{t("campaigns.newsLetterEditor.errors.PendingApproval551Desc")}</Typography>
+        </Box>
+      ),
+      showDefaultButtons: true,
+      onClose: () => { setDialogType(null) },
+      onCancel: () => { setDialogType(null) },
+      onConfirm: () => { setDialogType(null) }
+    }
+  }
+
   const renderDialog = () => {
     const { type, data, isOnlySave, returnToAutomation } = dialogType || {}
 
@@ -2157,7 +2195,8 @@ const SmsCreator = ({ classes }) => {
       englishLetterDialog: englishLetterNotAllowed(),
       dynamicProduct: dynamicProductDialog(),
       pendingApprovalDialog: pendingApprovalDialog(),
-      tier: getTierValidationDialog()
+      tier: getTierValidationDialog(),
+      underReviewDialog: underReviewDialog(),
     }
 
     const currentDialog = dialogContent[type] || {}

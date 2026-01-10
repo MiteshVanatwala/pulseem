@@ -532,6 +532,16 @@ export const googleFonts = {
             900: 'Black'
         }
     },
+    Helvetica: {
+        name: "Helvetica",
+        fontFamily: "'Helvetica', 'Helvetica Neue', Arial, sans-serif",
+        url: "",
+        fontWeight: {
+            300: 'Light',
+            400: 'Regular',
+            700: 'Bold',
+        }
+    }
 };
 
 export const HebrewFonts = [

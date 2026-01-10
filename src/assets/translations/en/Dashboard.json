@@ -59,16 +59,16 @@
     "desc2": "You will still be able to send emails until the end of your current subscription period.",
     "desc3": "After that, your account will no longer be able to send emails.",
     "desc4": "You will not be charged again.",
-    "success": "Your have successfully unsubscribed."
+    "success": "Your per recipient subscription is cancelled"
   },
   "polishSubscribe": {
     "question": "How many recipients do you need?",
     "monthlyPayment": "Monthly Payment",
     "recipients": "Recipients",
     "unlimitedEmailSending": "Unlimited Email Sending",
-    "confirmation": "By clicking \"Subscribe\", I confirm that I agree to be charged based on the selected pricing tier above.",
+    "confirmation": "By clicking \"Purchase Now\", I confirm that I agree to be charged based on the selected pricing tier above.",
     "featureNotAllowed": "This feature is not allowed for your account. Please contact support to enable it.",
-    "success": "Your have successfully subscribed.",
+    "success": "You have successfully purchased your \"per recipient\" subscription",
     "planNotSelected": "Oops, you haven't selected a mailing plan!",
     "joinPlan1": "In order to send newsletter campaigns,",
     "joinPlan2": "please join one of our plans",
@@ -120,6 +120,10 @@
         "internalServerError": "An internal server error occurred. Please try again later.",
         "networkError": "Network error. Please check your connection and try again."
       }
-    }
+    },
+    "yourCurrentTier": "Your current tier",
+    "frozenMessage": "<b>Since we couldn’t process your payment previously, some email campaigns were paused.</b><br /> Would you like to send the paused emails and resume scheduled automations and autoresponders?<br /><br />Clicking <b>Yes</b> will send all paused emails and restart any affected automations/autoresponders.<br />Clicking <b>No</b> will cancel all emails that were scheduled during the payment issue.",
+    "releaseMessage": "Your paused emails are now being sent, and all relevant automations have been resumed.",
+    "cancelMessage": "Understood. The paused emails have been canceled, and automations will remain inactive for now. You can restart them anytime from the <b>automation management pages.</b>"
   }
 }

@@ -939,5 +939,17 @@
       "resourceCenter": "Centrum zasobów",
       "news": "Wiadomości"
     }
-  }
+  },
+  "activeTierSubscription": "Account already has an active email tier subscription.",
+  "Submit": "Wyślij",
+  "customPackageQuote": "Nie wysyłasz co miesiąc? Poproś o wycenę niestandardowego pakietu",
+  "getStarted": "Zaczynajmy!",
+  "fillDetails": "Wypełnij swoje dane, a wkrótce się z Tobą skontaktujemy",
+  "enterMessage": "Wprowadź wiadomość",
+  "contactUsSuccess": "Twoja wiadomość została pomyślnie wysłana",
+  "upgrade": "Ulepsz",
+  "cancelPlan": "Anuluj plan",
+  "cancelPlanConfirmation": "Czy na pewno chcesz anulować swój obecny plan?",
+  "planCancellationRequestSubmitted": "Twoje żądanie anulowania planu zostało pomyślnie przesłane.",
+  "nonPolishNumber": "Nie możesz wysłać SMS-a z numeru spoza Polski. Proszę ustawić polski numer."
 }

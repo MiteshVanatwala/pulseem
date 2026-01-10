@@ -19,9 +19,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
 import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
 import { ERROR_TYPE } from "../../../helpers/Types/common";
-import { getCurrentPlan, getAvailablePlans, downgradePlan } from "../../../redux/reducers/TiersSlice";
+import { getCurrentPlan, getAvailablePlans, downgradePlan, deletePolandSubscription } from "../../../redux/reducers/TiersSlice";
 import BillingDetails from "./BillingDetails";
-import { getCreditCardIframe, getAccountOperations, payDebtInvoices, inactiveCreditCard } from "../../../redux/reducers/BillingSlice";
+import { getCreditCardIframe, getAccountOperations, payDebtInvoices, inactiveCreditCard, cancelFrozenSends, releaseFrozenSends, getAccountBilling } from "../../../redux/reducers/BillingSlice";
 import { Loader } from "../../../components/Loader/Loader";
 import PurchaseTableTemplate from "./PurchaseTableTemplate";
 import { PurchaseHistoryModel } from "../../../Models/Account/AccountBilling";
@@ -47,6 +47,8 @@ import CreditCardManagement from "../../../components/BillingSettings/CreditCard
 import TierPlans from "../../../components/TierPlans/TierPlans";
 import { CreditCard } from "@material-ui/icons";
 import { DateFormats } from "../../../helpers/Constants";
+import { getPackagesDetails } from "../../../redux/reducers/dashboardSlice";
+import BillingSettings from "../../../components/BillingSettings/BillingSettings";
 
 
 const BillingSettingsPage = ({ classes }: any) => {
@@ -59,6 +61,8 @@ const BillingSettingsPage = ({ classes }: any) => {
   const { creditCards } = useSelector((state: any) => state.payment);
   const { subAccount } = useSelector((state: any) => state.common);
   const { currentPlan } = useSelector((state: any) => state.tiers);
+  const { packagesDetails } = useSelector((state: any) => state.dashboard);
+  const { billing: { Data: billingDetail } } = useSelector((state: any) => state.billing);
   const qs = (window.location.search && queryString.parse(window.location.search)) as any;
   const [addCardDialog, setAddCardDialog] = useState<boolean>(false);
   const [toastMessage, setToastMessage] = useState<ERROR_TYPE>(null);
@@ -79,6 +83,14 @@ const BillingSettingsPage = ({ classes }: any) => {
   const [showEditCard, setShowEditCard] = useState<boolean>(false);
   const [showCreditCardManagement, setShowCreditCardManagement] = useState<boolean>(false);
   const [showTierPlans, setShowTierPlans] = useState<boolean>(false);
+  const [ hasFrozenEmail, setHasFrozenEmail ] = useState(false);
+  const [ showReleaseMessage, setShowReleaseMessage ] = useState(false);
+  const [ showCancelMessage, setShowCancelMessage ] = useState(false);
+  const [ showFrozenDialog, setShowFrozenDialog ] = useState(false);
+  const [ isOpenBillingSettings, setIsOpenBillingSettings ] = useState(false);
+  const hideEmailWithTier = true;
+
+  const isBillingDetailsRequired = billingDetail?.CompanyName === '' || billingDetail?.CompanyName === null || billingDetail?.CorporationNumber === '' || billingDetail?.CorporationNumber === null || billingDetail?.Email === '' || billingDetail?.Email === null;
 
   const formatPlanDescription = () => {
     const price = currentPlan?.Name !== 'GRAND_FATHER' && currentPlan?.Name !== 'Starter' ? `₪${currentPlan?.Price}/${t('billing.month')}` : '';
@@ -94,6 +106,7 @@ const BillingSettingsPage = ({ classes }: any) => {
   };
 
   const initPurchaseHistory = async () => {
+    dispatch(getPackagesDetails());
     dispatch(getAccountCards()) as any;
     dispatch(getCurrentPlan()) as any;
     dispatch(getAvailablePlans()) as any;
@@ -132,6 +145,7 @@ const BillingSettingsPage = ({ classes }: any) => {
 
   useEffect(() => {
     accountFeatures.indexOf(PulseemFeatures.NOT_TO_SHOW_CREDITS_HISTORY_FEATURE) === -1 && initPurchaseHistory();
+    dispatch(getAccountBilling());
   }, []);
 
   useEffect(() => {
@@ -146,6 +160,89 @@ const BillingSettingsPage = ({ classes }: any) => {
   useEffect(() => {
     i18n.changeLanguage(isRTL ? 'he-IL' : 'en-US');
   }, [isRTL]);
+
+  useEffect(() => {
+    window.addEventListener('message', (e) => {
+        if (e.data) {
+            try {
+                const message = JSON.parse(e.data);
+                if (message["result"] !== null && message["result"] !== undefined) {
+                    if (message?.hasFrozenEmail === true || String(message?.hasFrozenEmail).toLowerCase() === "true") {
+                        setHasFrozenEmail(true);
+                        setShowFrozenDialog(true);
+                    }
+                }
+            }
+            catch (e) {
+                // dispatch(sendToTeamChannel({
+                //     MethodName: 'UseEffect',
+                //     ComponentName: 'TranzilaIframe',
+                //     Message: e
+                // }));
+                return false;
+            }
+        }
+    })
+  }, []);
+
+  const processFrozenCampaigns = async (action: string) => {
+    setShowLoader(true);
+    const { payload: { StatusCode } }: any = await dispatch(action === 'cancel' ? cancelFrozenSends() : releaseFrozenSends());
+    if (StatusCode === 200) {
+      if (action === 'process') {
+        setShowReleaseMessage(true);
+      } else {
+        setShowCancelMessage(true);
+      }
+    }
+    setShowLoader(false);
+  };
+
+  const FrozenCampaignsMessage = () => {
+    if (!hasFrozenEmail) return null;
+    
+    return (
+      <Box className={clsx(classes.frozenCampaignsContainer, classes.pt25)}>
+        <Grid container spacing={2} alignItems="center">
+          <Grid item xs={12}>
+            <Box>
+              <Typography className={clsx(classes.f20)}>
+                {!showReleaseMessage && !showCancelMessage && RenderHtml(t("dashboard.polishSubscribe.frozenMessage"))}
+                {showReleaseMessage && RenderHtml(t("dashboard.polishSubscribe.releaseMessage"))}
+                {showCancelMessage && RenderHtml(t("dashboard.polishSubscribe.cancelMessage"))}
+              </Typography>
+              {
+                !showReleaseMessage && !showCancelMessage && (
+                  <Grid container spacing={2} className={clsx(classes.mt10, classes.textCenter)}>
+                    <Grid item md={12} xs={12} className={clsx(classes.w100)}>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={() => processFrozenCampaigns('process')}
+                        disabled={showLoader}
+                        className={clsx(classes.btn, classes.btnRounded, classes.mInline5)}
+                      >
+                        {t('common.Yes')}
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        color="primary"
+                        onClick={() => processFrozenCampaigns('cancel')}
+                        disabled={showLoader}
+                        className={clsx(classes.btn, classes.btnRounded, classes.mInline5)}
+                      >
+                        {t('common.No')}
+                      </Button>
+                    </Grid>
+                  </Grid>
+                )
+              }
+            </Box>
+          </Grid>
+        </Grid>
+      </Box>
+    );
+  };
 
   const handleOnCardSaved = () => {
     setAddCardDialog(false);
@@ -504,7 +601,6 @@ const BillingSettingsPage = ({ classes }: any) => {
   }
 
   const renderOptions = () => {
-    console.log("433 " + currentDialog + " - " + showPopup)
     switch (currentDialog) {
       default:
       case 'debt': {
@@ -609,13 +705,17 @@ const BillingSettingsPage = ({ classes }: any) => {
                               {t('common.tier.manageCard')}
                             </Button> */}
                             {
-                              currentPlan?.Name !== 'Scale' && (
+                              currentPlan?.Name !== 'Scale' && !packagesDetails?.Newsletters?.IsBankTransferForTiers && (
                                 <Button
                                   className={clsx(classes.btn, classes.btnRounded)}
                                   onClick={(e: any) => { 
                                     e.preventDefault(); 
                                     e.stopPropagation(); 
-                                    setShowTierPlans(true);
+                                    if (isBillingDetailsRequired) {
+                                      setIsOpenBillingSettings(true);
+                                    } else {
+                                      setShowTierPlans(true);
+                                    }
                                   }}
                                 >
                                   {t('billing.upgradePlan')}
@@ -865,6 +965,26 @@ const BillingSettingsPage = ({ classes }: any) => {
           </Grid>
         </Grid>
       </BaseDialog>}
+      {showFrozenDialog && <BaseDialog
+        classes={classes}
+        title=""
+        open={showFrozenDialog}
+        onClose={() => {
+          setShowFrozenDialog(false);
+          setHasFrozenEmail(false);
+          setShowReleaseMessage(false);
+          setShowCancelMessage(false);
+        }}
+        onCancel={() => {
+          setShowFrozenDialog(false);
+          setHasFrozenEmail(false);
+          setShowReleaseMessage(false);
+          setShowCancelMessage(false);
+        }}
+        showDefaultButtons={false}
+      >
+        <FrozenCampaignsMessage />
+      </BaseDialog>}
       <ConfirmDeletePopUp
         handleDeleteGroup={() => handleRemoveCreditCard()}
         onCancel={() => setConfirmDialog(false)}
@@ -877,7 +997,61 @@ const BillingSettingsPage = ({ classes }: any) => {
         text={t('billing.confirmDeleteCardText')}
       />
       <ConfirmDeletePopUp
-        handleDeleteGroup={() => handleCancelPlan()}
+        handleDeleteGroup={() => {
+          if (packagesDetails?.Newsletters?.IsEmailTierSubscribed && !hideEmailWithTier) {
+            setConfirmCancelPlan(false);
+            setShowLoader(true);
+            dispatch(deletePolandSubscription() as any).then((response: any) => {
+              switch (response?.payload?.StatusCode) {
+                case 201:
+                case 200: {
+                  setToastMessage({ 
+                    severity: 'success', 
+                    color: 'success', 
+                    message: t('billing.planCancelledSuccess'), 
+                    showAnimtionCheck: false 
+                  });
+                  // Refresh current plan data
+                  dispatch(getCurrentPlan());
+                  break;
+                }
+                case 404: {
+                  setToastMessage({
+                    color: 'error',
+                    severity: 'error',
+                    message: t('billing.planNotFound'),
+                    showAnimtionCheck: false
+                  } as ERROR_TYPE);
+                  break;
+                }
+                case 406: {
+                  setToastMessage({
+                    color: 'error',
+                    severity: 'error',
+                    message: t('common.ErrorOccured'),
+                    showAnimtionCheck: false
+                  } as ERROR_TYPE);
+                  break;
+                }
+                case 401: {
+                  logout();
+                  break;
+                }
+                default: {
+                  setToastMessage({
+                    color: 'error',
+                    severity: 'error',
+                    message: response?.payload?.Message || t('billing.planCancelFailed'),
+                    showAnimtionCheck: false
+                  } as ERROR_TYPE);
+                  break;
+                }
+              }
+            });
+          } else {
+            handleCancelPlan()
+          }
+        }}
         onCancel={() => setConfirmCancelPlan(false)}
         onClose={() => setConfirmCancelPlan(false)}
         classes={classes}
@@ -892,6 +1066,15 @@ const BillingSettingsPage = ({ classes }: any) => {
         isOpen={showTierPlans}
         onClose={() => setShowTierPlans(false)}
       />}
+      <BillingSettings
+        classes={classes}
+        isOpen={isOpenBillingSettings}
+        onClose={() => {
+          setIsOpenBillingSettings(false);
+          dispatch(getAccountBilling());
+          setShowTierPlans(true);
+        }}
+      />
     </DefaultScreen>
   );
 };
