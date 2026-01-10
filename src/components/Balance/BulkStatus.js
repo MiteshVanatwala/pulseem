@@ -242,10 +242,6 @@ const BulkStatus = ({ classes }) => {
 
   const isAllowNewsletterSubscription = !Newsletters.IsPrepaid && accountAvailablePackages.filter((aa) => { return aa.CampaignType === 2 }).length === 0;
   
-  console.log('isAllowNewsletterSubscription', isAllowNewsletterSubscription);
-  console.log('Newsletters', Newsletters);
-  console.log('hideEmailWithTier', hideEmailWithTier);
-
   const showPackageDialogType = async (packageType) => {
     setPackageType(packageType);
     setIsOpenPackageDialog(true);
