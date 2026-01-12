@@ -1069,10 +1069,12 @@ const BillingSettingsPage = ({ classes }: any) => {
       <BillingSettings
         classes={classes}
         isOpen={isOpenBillingSettings}
-        onClose={() => {
+        onClose={(isSuccess: boolean) => {
           setIsOpenBillingSettings(false);
-          dispatch(getAccountBilling());
-          setShowTierPlans(true);
+          if (isSuccess) {
+            dispatch(getAccountBilling());
+            setShowTierPlans(true);
+          }
         }}
       />
     </DefaultScreen>
