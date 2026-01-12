@@ -59,16 +59,16 @@
     "desc2": "You will still be able to send emails until the end of your current subscription period.",
     "desc3": "After that, your account will no longer be able to send emails.",
     "desc4": "You will not be charged again.",
-    "success": "Your have successfully unsubscribed."
+    "success": "Your per recipient subscription is cancelled"
   },
   "polishSubscribe": {
     "question": "How many recipients do you need?",
     "monthlyPayment": "Monthly Payment",
     "recipients": "Recipients",
     "unlimitedEmailSending": "Unlimited Email Sending",
-    "confirmation": "By clicking \"Subscribe\", I confirm that I agree to be charged based on the selected pricing tier above.",
+    "confirmation": "By clicking \"Purchase Now\", I confirm that I agree to be charged based on the selected pricing tier above.",
     "featureNotAllowed": "This feature is not allowed for your account. Please contact support to enable it.",
-    "success": "Your have successfully subscribed.",
+    "success": "You have successfully purchased your \"per recipient\" subscription",
     "planNotSelected": "Oops, you haven't selected a mailing plan!",
     "joinPlan1": "In order to send newsletter campaigns,",
     "joinPlan2": "please join one of our plans",
@@ -78,5 +78,52 @@
     "securePurchase": "Purchase Now",
     "customizePlan": "Customize your plan",
     "yourCurrentTier": "Your current tier"
+  },
+  "helpDrawer": {
+    "title": "Need help?",
+    "subtitle": "We've got everything you need right here.",
+    "tabs": {
+      "support": "Support",
+      "whatsNew": "What’s New?"
+    },
+    "support": {
+      "helpCenter": {
+        "title": "Help Center",
+        "description": "Everything you need – guides, tips, and troubleshooting in one place."
+      },
+      "supportChat": {
+        "title": "Support Chat",
+        "description": "Got a question? Our support team is here to help"
+      },
+      "pulseemGPT": {
+        "title": "PulseemGPT",
+        "description": "Use Pulseem’s smart GPT to help you solve problems and get more out of the platform."
+      },
+      "contactUs": {
+        "title": "Contact us",
+        "description": "Make a request to our support team to get help."
+      },
+      "APIIcon": {
+        "title": "API",
+        "UPIAPI": "UI API",
+        "DirectSendAPI": "Direct Send API"
+      },
+      "contactSupport": {
+        "title": "Contact Support",
+        "serviceAndSupport": "Service and Support",
+        "sales": "Sales",
+        "phoneNumber": "Phone Number",
+        "website": "Website",
+        "successMessage": "Your message has been sent successfully! We will get back to you soon.",
+        "errorMessage": "Failed to send message. Please try again.",
+        "captchaVerificationFailed": "Captcha verification failed. Please try again.",
+        "internalServerError": "An internal server error occurred. Please try again later.",
+        "networkError": "Network error. Please check your connection and try again."
+      }
+    },
+    "yourCurrentTier": "Your current tier",
+    "frozenMessage": "<b>Since we couldn’t process your payment previously, some email campaigns were paused.</b><br /> Would you like to send the paused emails and resume scheduled automations and autoresponders?<br /><br />Clicking <b>Yes</b> will send all paused emails and restart any affected automations/autoresponders.<br />Clicking <b>No</b> will cancel all emails that were scheduled during the payment issue.",
+    "releaseMessage": "Your paused emails are now being sent, and all relevant automations have been resumed.",
+    "cancelMessage": "Understood. The paused emails have been canceled, and automations will remain inactive for now. You can restart them anytime from the <b>automation management pages.</b>"
   }
 }

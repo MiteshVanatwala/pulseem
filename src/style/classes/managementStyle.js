@@ -55,7 +55,12 @@ const shortcutFontSize = {
   },
 };
 
-export const getManagmentStyle = (windowSize, isRTL, theme) => ({
+export const getManagmentStyle = (windowSize, isRTL, theme, IsPoland = false) => {
+  const polishFont = 'Helvetica, "Helvetica Neue", Arial, sans-serif';
+  const defaultFont = 'Assistant';
+  const activeFont = IsPoland ? polishFont : defaultFont;
+  
+  return ({
   management: {
     maxWidth: 1500,
     '&.MuiContainer-root': {
@@ -93,7 +98,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   managementTitle: {
     fontSize: 20,
-    fontFamily: "Assistant",
+    fontFamily: activeFont,
     whiteSpace: windowSize === "xs" ? "break-spaces" : null,
     fontWeight: 600,
     // color: '#4D4D4D',
@@ -107,7 +112,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     marginBox: 20,
   },
   tableCellHead: {
-    fontFamily: 'Assistant',
+    fontFamily: activeFont,
     fontWeight: 'bold',
     fontSize: 18,
     marginBlock: 0,
@@ -1179,7 +1184,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     fontSize: 18,
     fontWeight: 700,
     color: "#333333",
-    fontFamily: "Assistant",
+    fontFamily: activeFont,
     whiteSpace: "nowrap",
     overflow: "hidden",
     textOverflow: "ellipsis",
@@ -2295,3 +2300,4 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     }
   }
 });
+};

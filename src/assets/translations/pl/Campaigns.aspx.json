@@ -550,7 +550,12 @@
       "NEWSLETTER_BULK_ENDED_PURCHASE_OPTION": "Twój pakiet masowy się skończył!<br/>Możesz kupić pakiet Newsletter, klikając przycisk Kup.",
       "pendingApproval": "Oczekuje na zatwierdzenie",
       "PendingApprovalDesc": "Nasz zespół obecnie przegląda Twoje treści. Po zatwierdzeniu wiadomość e-mail zostanie wysłana jak zwykle. Dziękujemy za cierpliwość!",
-      "PendingApproval551Desc": "Użytkownik w trakcie procesu weryfikacji"
+      "PendingApproval551Desc": "Użytkownik w trakcie procesu weryfikacji",
+      "paymentfailed553Title": "Płatność nie powiodła się",
+      "paymentfailed553Desc": "Nie udało się zrealizować płatności.<br />Wysyłka i automatyzacje zostały zamrożone.<br />Zaktualizuj metodę płatności, aby wznowić działanie.",
+      "paymentfailed553Button": "Ureguluj płatność",
+      "paymentfailed552Title": "Płatność jest nadal przetwarzana",
+      "paymentProcessing552Desc": "Twoja płatność jest przetwarzana.<br />Wysyłka została tymczasowo zablokowana do czasu zakończenia procesu.<br />Prosimy poczekać chwilę i spróbować ponownie."
     },
     "success": "Kampania została pomyślnie zapisana",
     "sendSettings": {
@@ -755,5 +760,6 @@
   "createProductBlock": "Spersonalizowany blok produktu",
   "selectProduct": "Wybierz produkt z katalogu",
   "selectAllStaticProducts": "Wybierz produkt z katalogu",
-  "fromEmailCaution": "<p style='line-height:1.2'><b>Uwaga!</b><br/><br/>Używanie adresu e-mail w polu 'Nazwa nadawcy' może spowodować filtrowanie jako spam.<br/>Zaleca się używanie nazwy wyświetlanej. <br/>Czy chcesz kontynuować?</p>"
+  "fromEmailCaution": "<p style='line-height:1.2'><b>Uwaga!</b><br/><br/>Używanie adresu e-mail w polu 'Nazwa nadawcy' może spowodować filtrowanie jako spam.<br/>Zaleca się używanie nazwy wyświetlanej. <br/>Czy chcesz kontynuować?</p>",
+  "aiDeisgner": "Projektuj z AI"
 }

@@ -40,13 +40,17 @@ import clsx from 'clsx';
 import Celebration from '../../assets/images/transparent_celebration.png';
 import { TIER_PLANS } from '../../helpers/Constants';
 import { getAddSubscriptionCardIframeURL, getCurrentPlan, getUserCreditCards, restoreAutomation, upgradePlan } from '../../redux/reducers/TiersSlice';
+import { cancelFrozenSends, releaseFrozenSends } from '../../redux/reducers/BillingSlice';
 import TranzilaIframe from '../Balance/PaymentWizard/Dialogs/TranzilaIframe';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 import { Loader } from '../Loader/Loader';
 import { MdAdd } from 'react-icons/md';
 import EmailMarketingSlider from '../EmailPlans/EmailMarketingSlider';
+import { UpgradePlanRequest } from '../../Models/Tiers/TierModels';
+import Toast from '../Toast/Toast.component';
+import ContactUsDialog from '../EmailPlans/ContactUsDialog';
 
-const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false  }: any) => {
+const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false, isBankTransferForTiers = false  }: any) => {
   const { t, i18n } = useTranslation();
   const dispatch = useDispatch();
   const [activeStep, setActiveStep] = useState(0);
@@ -60,11 +64,21 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false  }: any)
   const [ isLoader, setIsLoader ] = useState(false);
   const [ showSalesContactPopup, setShowSalesContactPopup ] = useState(false);
   const [ showCardConfirmationDialog, setShowCardConfirmationDialog ] = useState(false);
+  const [ showBankTransferDialog, setShowBankTransferDialog ] = useState(false);
   const [ selectedCreditCard, setSelectedCreditCard ] = useState<any>(null);
+  const [selectedEmailTier, setSelectedEmailTier] = useState<any>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const { currentPlan, availablePlans, userCreditCards } = useSelector((state: any) => state.tiers);
   const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
-  const { accountCurrencySymbol, accountIsCurrencySymbolPrefix } = useSelector((state: any) => state.common);
+  const { accountCurrencySymbol, accountIsCurrencySymbolPrefix, IsPoland } = useSelector((state: any) => state.common);
+  const { tiers: emailTiers } = useSelector((state: any) => state.emailTierScaling);
+  const { packagesDetails, accountAvailablePackages } = useSelector((state: any) => state.dashboard);
+  const [ toastMessage, setToastMessage ] = useState(null);
+  const [showContactDialog, setShowContactDialog] = useState(false);
+  const [ existingPlan, setExistingPlan ] = useState<any>(null);
+  const { Newsletters = {} } = packagesDetails || {};
+  const isAllowNewsletterSubscription = !Newsletters.IsPrepaid && accountAvailablePackages.filter((aa: any) => { return aa.CampaignType === 2 }).length === 0;
+
   // Extract credit cards data from the API response
   const creditCards = userCreditCards?.Data || [];
     // Scroll to top when step changes
@@ -109,6 +123,18 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false  }: any)
 
     scrollToTop();
   }, [activeStep]);
+  
+  const renderToast = () => {
+    if (toastMessage) {
+      setTimeout(() => {
+        setToastMessage(null);
+      }, 4000);
+      return (
+        <Toast data={toastMessage} />
+      );
+    }
+    return null;
+  }
 
   useEffect(() => {
     const loadUserData = async () => {
@@ -119,6 +145,17 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false  }: any)
     loadUserData();
   }, [ currentPlan ]);
 
+  useEffect(() => {
+    if (!currentPlan?.EmailTierScaleID) return;
+
+    const matchedApiTier = emailTiers.find((t: any) => {
+      const id = t && (t.Id ?? t.id);
+      return id === currentPlan?.EmailTierScaleID;
+    });
+
+    if (matchedApiTier) setExistingPlan(matchedApiTier)
+  }, [emailTiers]);
+
   const handleNext = (plan?: any) => {
     if (plan) {
       setSelectedPlan(plan);
@@ -126,61 +163,64 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false  }: any)
     setActiveStep(1);
   };
 
-  const loadIframe = async (plan: any) => {
-    // Prepare request parameters
-    const requestParams = {
-      language: i18n.language || 'en',
-      subscriptionType: 'upgrade', // Adjust based on your needs
-      isNewSubscription: true,
-      tierId: plan.Id || plan.id
-    };
-    
-    // Call the API to get iframe URL
-    const response: any = await dispatch(getAddSubscriptionCardIframeURL(requestParams));
-    // Extract iframe URL from response
-    if (response.payload?.Data?.IframeUrl) {
-      setIframeURL(response.payload?.Data?.IframeUrl);
-    } else {
-      console.error('API call failed:', response.payload || response.error);
-    }
+  const handleEmailTierChange = (tierData: any) => {
+    setSelectedEmailTier(tierData);
   };
 
   const fetchCCLinkForiFrame = async (plan: any) => {
+    let emailTierScaleId = 0;
+    if (isEmailMarketing && selectedEmailTier && emailTiers) {
+      const matchingTier = emailTiers.find((tier: any) =>
+        tier.AccountCategoryFeatureTier_Id === plan.Id &&
+        tier.LevelHigh === selectedEmailTier.LevelHigh
+      );
+      emailTierScaleId = matchingTier ? matchingTier.Id : 0;
+    }
     // Prepare request parameters
-    const requestParams = {
-      language: i18n.language || 'en',
-      subscriptionType: 'upgrade', // Adjust based on your needs
-      isNewSubscription: true,
-      tierId: plan.Id || plan.id
+    const requestParams: any = {
+        language: i18n.language || 'en',
+        subscriptionType: isEmailMarketing ? 'EmailTierSubscription' : 'TierSubscription',
+        isNewSubscription: true,
+        tierId: plan.Id || plan.id,
+        emailTierScaleId: emailTierScaleId
     };
     
     // Call the API to get iframe URL
     const response: any = await dispatch(getAddSubscriptionCardIframeURL(requestParams));
-    // Extract iframe URL from response
-    if (response.payload?.Data?.IframeUrl) {
-      setIframeURL(response.payload?.Data?.IframeUrl);
+    if (response.payload?.StatusCode === 409) {
+      // @ts-ignore
+      setToastMessage({ severity: 'error', color: 'error', message: t('common.activeTierSubscription'), showAnimtionCheck: false });
     } else {
-      console.error('API call failed:', response.payload || response.error);
+      // Extract iframe URL from response
+      if (response.payload?.Data?.IframeUrl) {
+        setIframeURL(response.payload?.Data?.IframeUrl);
+      } else {
+        console.error('API call failed:', response.payload || response.error);
+      }
     }
   }
 
   const handlePlanSelect = async (plan: any, uiConfig: any) => {
-    if (plan.Id === 1) return false;
-    if (plan.Id === 4) {
-      setShowSalesContactPopup(true);
-      return;
-    }
-
     const planWithConfig = {
       ...plan,
       uiConfig
     };
+
+    if (plan.Id === 1 && !isAllowNewsletterSubscription) return false;
+    else if (plan.Id === 4) {
+      setShowSalesContactPopup(true);
+      return;
+    } else if (isBankTransferForTiers) {
+      setSelectedPlan(planWithConfig);
+      setShowBankTransferDialog(true);
+      return false;
+    }
+
     
     // Set loading state
     setLoadingIframe(true);
     
     try {
-      console.log(creditCards);
       setPaymentViaExistingCC(creditCards.length > 0);
 
       if (!creditCards.length) {
@@ -222,7 +262,17 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false  }: any)
           const uiConfig = TIER_PLANS.find(tierPlan => 
             tierPlan.id === plan.Id
           ) || TIER_PLANS[index] || TIER_PLANS[0];
-          
+
+          let displayPrice = plan.Price;
+          if (isEmailMarketing && selectedEmailTier && plan.Id !== 4) {
+            const emailPriceTier = emailTiers?.find((tier: any) =>
+              tier.AccountCategoryFeatureTier_Id === plan.Id &&
+              tier.LevelHigh === selectedEmailTier.LevelHigh
+            );
+            if (emailPriceTier) {
+              displayPrice = emailPriceTier.Price;
+            }
+          }
           return (
             <Grid item xs={12} sm={6} md={3} key={plan.Id}>
               <Box 
@@ -243,7 +293,7 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false  }: any)
                   </Typography>
                   <Box className={classes.tierPlansPriceContainer}>
                     {
-                      plan.Id !== 4 && plan.Price >= 0 && accountIsCurrencySymbolPrefix && (
+                      plan.Id !== 4 && displayPrice >= 0 && accountIsCurrencySymbolPrefix && (
                         <span className={classes.tierPlansCurrencySymbol}>
                           {accountCurrencySymbol}
                         </span>
@@ -252,10 +302,10 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false  }: any)
                     <Typography className={classes.tierPlansPrice} style={{ paddingTop: '15px' }}>
                       {/* {plan.Id === 1 ? t('billing.tier.free') : ''} */}
                       {plan.Id === 4 ? <span>{t('billing.tier.contactSales')}</span> : ''}
-                      {plan.Id !== 4 && plan.Price >= 0 ? plan.Price : ''}
+                      {plan.Id !== 4 && displayPrice >= 0 ? displayPrice : ''}
                     </Typography>
                     {
-                      plan.Id !== 4 && plan.Price >= 0 && !accountIsCurrencySymbolPrefix && (
+                      plan.Id !== 4 && displayPrice >= 0 && !accountIsCurrencySymbolPrefix && (
                         <span className={classes.tierPlansCurrencySymbol}>
                           {accountCurrencySymbol}
                         </span>
@@ -276,7 +326,7 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false  }: any)
                     color="primary"
                     className={clsx(classes.tierPlansButton, classes.tierPlansDefaultButton)}
                     onClick={() => handlePlanSelect(plan, uiConfig)}
-                    disabled={plan.isCurrentPlan}
+                    disabled={plan.isCurrentPlan || existingPlan?.AccountCategoryFeatureTier_Id === plan.Id}
                   >
                     {plan.isCurrentPlan ? t('billing.tier.ui.currentPlan') : t(uiConfig.buttonText)}
                   </Button>
@@ -531,7 +581,7 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false  }: any)
                     </span>
                   )
                 }
-                {typeof planPrice === 'string' && planPrice.includes('₪') ? planPrice : `${planPrice}`}
+                {typeof planPrice === 'string' && planPrice.includes('₪') ? planPrice : `${planPrice || 0}`}
                 {
                   !accountIsCurrencySymbolPrefix && (
                     <span className={classes.tierPlansCurrencySymbol}>
@@ -576,9 +626,7 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false  }: any)
 
   const processFrozenCampaigns = async (action: string) => {
     setIsLoader(true);
-    const { payload: { StatusCode } }: any = await dispatch(restoreAutomation({
-      isNeedRestore: action === 'cancel' ? false : true
-    }));
+    const { payload: { StatusCode } }: any = await dispatch(action === 'cancel' ? cancelFrozenSends() : releaseFrozenSends());
     if (StatusCode === 200) {
       if (action === 'process') {
         setShowReleaseMessage(true);
@@ -855,7 +903,30 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false  }: any)
             {
               isEmailMarketing && (
                 <>
-                  <EmailMarketingSlider classes={classes} />
+                  {existingPlan && (
+                    <Box sx={{ display: 'flex', alignItems: 'left', marginBottom: '8px' }}>
+                      <Typography variant="subtitle1" className={clsx(classes.bold)}>
+                        {t('common.tier.current')}: &nbsp;
+                        {existingPlan?.AccountCategoryFeatureTier || existingPlan?.Name || ''}
+                      </Typography>
+                      <Typography variant="body1" className={clsx(classes.marginSides5, classes.bold, classes.paddingInline30)}>
+                        {t('common.price')}: &nbsp;
+                        {existingPlan?.Price != null ? (accountIsCurrencySymbolPrefix ? `${accountCurrencySymbol}${existingPlan.Price}` : `${existingPlan.Price}${accountCurrencySymbol}`) : ''}
+                      </Typography>
+                    </Box>
+                  )}
+                  <EmailMarketingSlider
+                    classes={classes}
+                    onTierChange={handleEmailTierChange}
+                    setShowContactDialog={setShowContactDialog}
+                    initialSliderValue={currentPlan?.EmailTierScaleID || 0}
+                  />
+                  {/* <Typography variant="body1" className={clsx(classes.marginSides5)}>
+                    {t('common.customPackageQuote')}
+                    <span onClick={() => setShowContactDialog(true)} className={clsx(classes.textUnderlineDialogButton)}>
+                      {t('common.contactUs')}
+                    </span>
+                  </Typography> */}
                 </>
               )
             }
@@ -946,25 +1017,63 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false  }: any)
         </BaseDialog>
         <BaseDialog
           classes={classes}
-          open={showCardConfirmationDialog}
-          onClose={() => setShowCardConfirmationDialog(false)}
-          onCancel={() => setShowCardConfirmationDialog(false)}
+          open={showCardConfirmationDialog || showBankTransferDialog}
+          onClose={() => {
+            setShowCardConfirmationDialog(false);
+            setShowBankTransferDialog(false);
+          }}
+          onCancel={() => {
+            setShowCardConfirmationDialog(false);
+            setShowBankTransferDialog(false);
+          }}
           onConfirm={async () => {
-            const response: any = await dispatch(upgradePlan({
-              Id: selectedCreditCard.ID,
-              Type: selectedCreditCard.Type,
-              TierID: selectedPlan.Id
-            }))
+            let emailTierScaleId = 0;
+            if (isEmailMarketing && selectedEmailTier && emailTiers) {
+              const matchingTier = emailTiers.find((tier: any) =>
+                tier.AccountCategoryFeatureTier_Id === selectedPlan.Id &&
+                tier.LevelHigh === selectedEmailTier.LevelHigh
+              );
+              emailTierScaleId = matchingTier ? matchingTier.Id : 0;
+            }
+            const upgradeRequest: UpgradePlanRequest = {
+              Id: isBankTransferForTiers ? 0 : selectedCreditCard.ID,
+              Type:  isBankTransferForTiers ? '' : selectedCreditCard.Type,
+              TierID: selectedPlan.Id,
+              EmailTierScaleID: emailTierScaleId
+            };
+            
+            setShowCardConfirmationDialog(false);
+            setShowBankTransferDialog(false);
+            setIsLoader(true);
+            const response: any = await dispatch(upgradePlan(upgradeRequest));
+
+            setIsLoader(false);
             if (response?.payload?.StatusCode === 200) {
               setActiveStep(2);
-              setShowCardConfirmationDialog(false);
               dispatch(getCurrentPlan());
               setSelectedCreditCard(null);
+            } else if (response?.payload.StatusCode === 409) {
+              // @ts-ignore
+              setToastMessage({ severity: 'error', color: 'error', message: t('common.activeTierSubscription'), showAnimtionCheck: false });
+            } else {
+              // @ts-ignore
+              setToastMessage({ severity: 'error', color: 'error', message: response?.payload?.Message, showAnimtionCheck: false });
             }
           }}
         >
-          {t('billing.tier.upgrade.payUsingCC')}
+          {(() => {
+            const planTitle = selectedPlan?.uiConfig?.title ? t(selectedPlan.uiConfig.title) : (selectedPlan?.Name || 'Standard');
+            return showCardConfirmationDialog 
+              ? t('billing.tier.upgrade.payUsingCC')
+              : t('billing.tier.upgrade.upgradePlan').replace('{planName}', planTitle);
+          })()}
         </BaseDialog>
+        <ContactUsDialog
+          classes={classes}
+          isOpen={showContactDialog}
+          onClose={() => setShowContactDialog(false)}
+        />
+        {renderToast()}
       </>
     </BaseDialog>
   );

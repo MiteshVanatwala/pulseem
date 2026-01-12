@@ -892,5 +892,64 @@
   "presetQuestion2": "Jak zwiększyć otwarcia i kliknięcia?",
   "presetQuestion3": "Utwórz dla mnie grupę klientów VIP",
   "presetQuestion4": "Utwórz grupę klientów, którzy otwierają, ale nie klikają",
-  "numbersAllowedOnly": "Dozwolone są tylko cyfry"
+  "numbersAllowedOnly": "Dozwolone są tylko cyfry",
+  "helpDrawer": {
+    "title": "Potrzebujesz pomocy?",
+    "subtitle": "Mamy wszystko, czego potrzebujesz.",
+    "searchPlaceholder": "Szukaj pomocy",
+    "tabs": {
+      "support": "Wsparcie",
+      "whatsNew": "Co nowego"
+    },
+    "helpCenter": {
+      "title": "Centrum pomocy",
+      "description": "Znajdź odpowiedzi, wskazówki i rozwiązywanie problemów w naszych artykułach."
+    },
+    "supportTickets": {
+      "title": "Wsparcie i zgłoszenia",
+      "description": "Złóż prośbę do naszego zespołu wsparcia, aby uzyskać pomoc i znajdź wszystkie swoje zgłoszenia."
+    },
+    "hireAgency": {
+      "title": "Zatrudnij agencję",
+      "description": "Szukasz pomocy przy projekcie? Możemy dopasować Cię do odpowiedniego certyfikowanego partnera agencyjnego."
+    },
+    "apiDocs": {
+      "title": "Dokumentacja API",
+      "description": "Użyj naszych interfejsów API, aby odblokować moc Pulseem."
+    },
+    "community": {
+      "title": "Społeczność",
+      "description": "Dyskutuj z innymi użytkownikami, aby dowiedzieć się, jak najlepiej wykorzystać Pulseem."
+    },
+    "news": {
+      "item1": {
+        "title": "Nowa funkcja: Kampanie oparte na AI",
+        "description": "Uruchomiliśmy nową funkcję AI, która pomoże Ci tworzyć lepsze kampanie z spersonalizowanymi sugestiami treści."
+      },
+      "item2": {
+        "title": "Zaplanowana konserwacja systemu",
+        "description": "Zaplanowana konserwacja 25 grudnia od 2:00 do 4:00 EST. Usługi mogą być tymczasowo niedostępne."
+      },
+      "item3": {
+        "title": "Ulepszony pulpit analityczny",
+        "description": "Sprawdź nasz nowo zaprojektowany pulpit analityczny z większą ilością spostrzeżeń i lepszą wizualizacją."
+      }
+    },
+    "bottomNav": {
+      "resourceCenter": "Centrum zasobów",
+      "news": "Wiadomości"
+    }
+  },
+  "activeTierSubscription": "Account already has an active email tier subscription.",
+  "Submit": "Wyślij",
+  "customPackageQuote": "Nie wysyłasz co miesiąc? Poproś o wycenę niestandardowego pakietu",
+  "getStarted": "Zaczynajmy!",
+  "fillDetails": "Wypełnij swoje dane, a wkrótce się z Tobą skontaktujemy",
+  "enterMessage": "Wprowadź wiadomość",
+  "contactUsSuccess": "Twoja wiadomość została pomyślnie wysłana",
+  "upgrade": "Ulepsz",
+  "cancelPlan": "Anuluj plan",
+  "cancelPlanConfirmation": "Czy na pewno chcesz anulować swój obecny plan?",
+  "planCancellationRequestSubmitted": "Twoje żądanie anulowania planu zostało pomyślnie przesłane.",
+  "nonPolishNumber": "Nie możesz wysłać SMS-a z numeru spoza Polski. Proszę ustawić polski numer."
 }

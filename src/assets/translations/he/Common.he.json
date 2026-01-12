@@ -892,5 +892,17 @@
   "presetQuestion2": "איך להגדיל פתיחות והקלקות?",
   "presetQuestion3": "צור לי קבוצת לקוחות VIP",
   "presetQuestion4": "צור לי קבוצת לקוחות שפותחים ולא לוחצים",
-  "numbersAllowedOnly": "אנא הקלידו מספרים בלבד"
+  "numbersAllowedOnly": "אנא הקלידו מספרים בלבד",
+  "activeTierSubscription": "לחשבון כבר יש מנוי רמה פעיל לדוא\"ל.",
+  "Submit": "שלח",
+  "customPackageQuote": "לא שולח כל חודש? בקש הצעת מחיר מותאמת אישית",
+  "getStarted": "בוא נתחיל!",
+  "fillDetails": "מלא את הפרטים שלך ונחזור אליך בהקדם",
+  "enterMessage": "הכנס הודעה",
+  "contactUsSuccess": "ההודעה שלך נשלחה בהצלחה",
+  "upgrade": "שדרוג",
+  "cancelPlan": "ביטול תוכנית",
+  "cancelPlanConfirmation": "האם אתה בטוח שברצונך לבטל את התוכנית הנוכחית שלך?",
+  "planCancellationRequestSubmitted": "בקשת ביטול התוכנית שלך הוגשה בהצלחה.",
+  "nonPolishNumber": "You can not send SMS from non-polish number. Please set a polish number."
 }
