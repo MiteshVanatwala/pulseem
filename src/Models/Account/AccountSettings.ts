@@ -1,4 +1,4 @@
-export interface AccountSettings {
+export interface AccountSettings extends DoubleOptInSettings {
     LoginUserName: string;
     CompanyAdmin: boolean;
     CompanyName: string;
@@ -23,4 +23,11 @@ export interface AccountSettings {
     ExpiryDate: Date | string | null;
     DisablePluginOTP: boolean;
     RevenueCurrencyId?: number | null;
+}
+export interface DoubleOptInSettings {
+    OptInActive?: boolean | never | any | null;
+    OptInFromEmail?: string | any | null;
+    OptInFromName?: string | any | null;
+    OptInSubject?: string | any | null;
+    CreationDate?: Date | any | null;
 }

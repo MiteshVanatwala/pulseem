@@ -26,7 +26,8 @@ const VerificationDialog = ({
     isOpen = false,
     onClose,
     variant = 'email',
-    step = 0, value,
+    step = 0,
+    value,
     ...props }) => {
     const dispatch = useDispatch();
     const { isRTL } = useSelector(state => state.core);

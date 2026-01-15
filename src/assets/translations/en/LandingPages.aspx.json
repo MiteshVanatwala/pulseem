@@ -541,5 +541,6 @@
       "embed": "Embed",
       "embedMessage": "Copy and paste this code into your website:"
     }
-  }
+  },
+  "emailConfirmationCheckbox": "Send double opt-in email to recipients added in ”Pending” status"
 }

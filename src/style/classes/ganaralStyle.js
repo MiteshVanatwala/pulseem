@@ -3008,7 +3008,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
           },
           '& .svg_app_settings': {
             position: 'absolute',
-            top: 121.3,
+            top: 40,
             right: isRTL ? 'auto' : 90,
             left: isRTL ? 90 : 'auto',
             transform: isRTL ? 'scaleX(1)' : 'scaleX(-1)'
@@ -3632,9 +3632,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
         minHeight: 25,
         display: 'block',
         alignItems: 'center',
-        '&:focus': {
-          backgroundColor: '#fff !important'
-        }
+        // '&:focus': {
+        //   backgroundColor: '#fff !important'
+        // }
       },
       '& svg': {
         color: '#ff3343',

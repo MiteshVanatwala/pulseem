@@ -190,6 +190,27 @@ export const SetRevenueFeature = createAsyncThunk(
         }
     })
 
+export const setDoubleOptItSettings = createAsyncThunk(
+    'AccountSettings/SetDoubleOptItSettings',
+    async (request: any, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.post(`AccountSettings/SetDoubleOptItSettings`, request);
+            return response.data;
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    })
+export const disableDoubleOptItSettings = createAsyncThunk(
+    'AccountSettings/DisableDoubleOptItSettings',
+    async (_: any, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.put(`AccountSettings/DisableDoubleOptItSettings`);
+            return response.data;
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    })
+
 
 
 interface AuthorizationValues {

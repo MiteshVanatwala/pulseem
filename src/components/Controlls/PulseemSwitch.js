@@ -3,9 +3,10 @@ import { styled } from '@mui/material/styles';
 import Switch from '@mui/material/Switch';
 import clsx from 'clsx';
 
-const IOSSwitch = styled((props) => (
-    <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
-))(({ theme }) => ({
+const IOSSwitch = styled((props) => {
+    const { handleDiameter, onColor, boxShadow, activeBoxShadow, height, width, ...switchProps } = props;
+    return <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...switchProps} />;
+})(({ theme }) => ({
     width: 34,
     height: 30,
     padding: 0,
@@ -67,11 +68,12 @@ const PulseemSwitch = ({ classes, id, switchType = '', margin = 1, onChange = (e
             return (<IOSSwitch sx={{ m: margin }} checked={checked} onChange={onChange} {...props} />)
         }
         default: {
+            const { handleDiameter, onColor, boxShadow, activeBoxShadow, ...validProps } = props;
             return (<Switch
                 className={
                     isRTL
-                        ? clsx(classes.reactSwitchHe, "react-switch")
-                        : clsx(classes.reactSwitch, "react-switch")
+                        ? clsx(classes.reactSwitchHe, "react-switch", props.className)
+                        : clsx(classes.reactSwitch, "react-switch", props.className)
                 }
                 checked={checked}
                 onChange={onChange}
@@ -80,6 +82,7 @@ const PulseemSwitch = ({ classes, id, switchType = '', margin = 1, onChange = (e
                 height={40}
                 width={70}
                 id={id}
+                {...validProps}
             />)
         }
     }

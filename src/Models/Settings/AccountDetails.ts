@@ -11,4 +11,6 @@ export type AccDtlPropTypes = {
 	OnUpdate: Function;
 	selectedTier: string;
 	onTierChange: (tier: string) => void;
+	onVerificationEmail: (tier: string) => void;
+	onRefresh: () => void;
 };
