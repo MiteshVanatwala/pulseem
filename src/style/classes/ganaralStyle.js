@@ -4247,9 +4247,15 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     '& .MuiInput-root': {
       direction: 'ltr !important',
     },
+    '@media screen and (max-width: 960px)': {
+      '& .MuiAutocomplete-input': {
+        textAlign: 'center',
+        marginLeft: '2rem',
+      },
+    },
   },
   SignUpLanguageDropdown: {
-    width: 200,
+    width: 180,
     borderRadius: 5,
     '& .MuiSelect-select': {
       padding: '5px 10px !important',
@@ -4484,6 +4490,26 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     background: 'linear-gradient(0deg, #FF0076 0%, #FF0054 23.8%, #FF4D2A 100%)',
     overflowX: 'hidden',
     fontFamily: isRTL ? 'Heebo' : 'inherit',
+    position: 'relative',
+    "@media (max-width: 768px)": {
+      background: 'linear-gradient(0deg, #FF4D2A 0%, #FF0054 76.2%, #FF0076 100%)'
+    },
+    '& h1': {
+      color: '#beff00',
+      fontWeight: 900,
+      marginBottom: '.75rem',
+      fontSize: '2.75rem',
+      "@media screen and (min-width: 1280px)": {
+        fontSize: '3.5rem',
+        lineHeight: '6rem',
+      },
+      "@media screen and (min-width: 1621px)": {
+        fontSize: '4.5rem',
+      },
+      "@media screen and (min-width: 2480px)": {
+        fontSize: '6rem',
+      },
+    },
     '& *': {
       fontSize: 'x-large',
       "@media screen and (max-width: 768px)": {
@@ -4492,17 +4518,24 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     },
     '& .signUpContainer': {
       marginTop: '5%',
+      position: 'relative',
       '& .widgetContainer': {
         position: 'relative',
         background: '#fff',
-        width: '40%',
         margin: 'auto',
         height: '50%',
         borderRadius: '50px',
         padding: '20px 50px',
         boxShadow: '0 10px 30px -6px black',
         fontSize: '2rem',
-        '&.remove-my-data': {
+        zIndex: 10,
+        "@media screen and (max-width: 1440px)": {
+          padding: '20px 40px',
+        },
+        "@media screen and (max-width: 1200px)": {
+          padding: '20px 35px',
+        },
+        "&.remove-my-data": {
           width: '35%',
           padding: '20px',
           paddingBottom: '2rem',
@@ -4524,47 +4557,190 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
           position: 'absolute',
           padding: '0px',
           fontSize: '5rem',
-          color: 'black'
+          color: 'black',
+          "@media screen and (max-width: 1440px)": {
+            height: '70px',
+            width: '70px',
+            fontSize: '4.5rem',
+          },
+          "@media screen and (max-width: 1200px)": {
+            height: '65px',
+            width: '65px',
+            fontSize: '4rem',
+          },
         },
         '& .previous': {
           left: '-40px',
+          "@media screen and (max-width: 1440px)": {
+            left: '-35px',
+          },
+          "@media screen and (max-width: 1200px)": {
+            left: '-32px',
+          },
         },
         '& .next': {
           right: '-40px',
+          "@media screen and (max-width: 1440px)": {
+            right: '-35px',
+          },
+          "@media screen and (max-width: 1200px)": {
+            right: '-32px',
+          },
         },
+      },
+    },
+    '& .down-arrow-container': {
+      display: 'none',
+      zIndex: 1,
+      pointerEvents: 'none',
+      position: 'relative',
+      "@media screen and (min-width: 960px)": {
+        display: 'flex',
+        justifyContent: 'end',
+        alignItems: 'flex-start',
+      },
+      '& .down-arrow-image': {
+        width: 'clamp(90px, 8vw, 120px)',
+        height: 'auto',
+        position: 'absolute',
+        right: 'clamp(0.5rem, 1vw, 1.5rem)',
+        top: 'clamp(-18rem, -19vw, -22rem)',
+      },
+    },
+    '& .mascot-container': {
+      display: 'none',
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+      justifyContent: 'flex-start',
+      zIndex: 1,
+      pointerEvents: 'none',
+      position: 'relative',
+      marginTop: '10rem',
+      "@media screen and (min-width: 2100px)": {
+        marginTop: '14rem',
+      },
+      "@media screen and (min-width: 960px)": {
+        display: 'flex',
+      },
+      '& .mascot-image': {
+        width: 'clamp(240px, 20vw, 320px)',
+        height: 'auto',
+        marginLeft: 'clamp(-4.5rem, -5vw, -6rem)',
+      },
+      '& .arrow-image': {
+        width: 'clamp(90px, 7.5vw, 120px)',
+        height: 'auto',
+        marginTop: 'clamp(5rem, 5vw, 6rem)',
+      },
+      '& .time-text': {
+        color: '#fff',
+        fontSize: 'clamp(1.1rem, 1.3vw, 1.5rem)',
+        fontWeight: 700,
+        textAlign: 'center',
+        lineHeight: 1.2,
+        marginTop: '1rem',
+        width: '115px',
+        whiteSpace: 'normal',
+        wordBreak: 'break-word',
+        direction: isRTL ? 'rtl' : 'ltr',
+        marginLeft: 'clamp(-105px, -7.5vw, -85px)',
+        "@media screen and (min-width: 960px) and (max-width: 1023px)": {
+          marginLeft: 'clamp(-105px, -7.5vw, -95px)',
+        },
+        "@media screen and (min-width: 960px) and (max-width: 1075px)": {
+          marginTop: '0rem',
+        },
+        "@media screen and (min-width: 1157px) and (max-width: 1490px)": {
+          width: '100px',
+          wordBreak: 'break-word',
+        },
+        "@media screen and (min-width: 960px) and (max-width: 1157px)": {
+          wordBreak: 'normal',
+          width: '110px',
+        },
+      },
+    },
+    '& .mobile-header-container': {
+      '& h1': {
+        margin: 0,
+        fontSize: '2rem',
+      },
+      '& .MuiMobileStepper-root': {
+         margin: '8px auto',
+         padding: 5,
+      },
+      '& .mobile-down-arrow': {
+        position: 'absolute',
+        zIndex: 999,
+        marginLeft: '15vw',
+        marginTop: '-2.75rem',
+        height: 70,
+      },
+      '& .mobile-mascot': {
+        position: 'absolute',
+        zIndex: 998,
+        right: isRTL ? '1rem' : 'auto',
+        bottom: 0,
+        height: 155,
+        transform: isRTL ? 'none' : 'scaleX(-1)',
       },
     },
     '& .stepper': {
       width: 'fit-content',
-      margin: 'auto',
+      margin: '16px auto',
       background: 'transparent',
-      border: 'solid 2px #fff',
-      marginTop: '20px',
-      '& .MuiMobileStepper-dot': {
-        backgroundColor: '#fff',
-        '&.MuiMobileStepper-dotActive': {
-          backgroundColor: '#beff00',
-        }
-      }
+      border: '1.25px solid #beff00',
+    },
+    '& .MuiMobileStepper-dotActive': {
+      backgroundColor: '#beff00 !important',
+    },
+    '& .MuiMobileStepper-dot': {
+      backgroundColor: '#fff',
     }
   },
   signUpFieldOfInterestButton: {
     borderRadius: 50,
     borderColor: '#000',
+    transition: 'background 0.2s ease',
     "@media screen and (max-width: 768px)": {
       width: '100%',
       display: 'flex'
     },
     '&.selected': {
-      background: '#beff00'
-    },
-    '&:hover': {
-      background: '#beff00',
+      background: '#beff00 !important',
       color: '#000',
       '& svg': {
         color: '#000',
         fill: '#000'
       }
+    },
+    '@media (hover: hover)': {
+      '&:hover:not(.selected)': {
+        background: '#beff00',
+        color: '#000',
+        '& svg': {
+          color: '#000',
+          fill: '#000'
+        },
+      },
+    },
+    '@media (hover: none)': {
+      '&:active:not(.selected)': {
+        background: '#beff00',
+        color: '#000',
+        '& svg': {
+          color: '#000',
+          fill: '#000'
+        },
+      },
+      '&:hover:not(.selected)': {
+        background: 'transparent',
+        color: '#000',
+        '& svg': {
+          color: '#000',
+          fill: '#000'
+        },
+      },
     },
   },
   agentNameContainer: {
