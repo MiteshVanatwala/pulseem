@@ -8,9 +8,10 @@
 	"open": "פתוח",
 	"pending": "בטיפול",
 	"solved": "טופל",
+	"select": "בחירה",
 	"allStatus": "הכל",
 	"choose": "בחר",
-	"chooseTemplate": "בחר תבנית",
+	"chooseTemplate": "בחירת תגובה מהירה או תבנית",
 	"visitUs": "בקר אותנו",
 	"callUs": "צור קשר",
 	"endEncrypt": "ההודעות מוצפנות מקצה לקצה. אף אחד מחוץ לצ'אט הזה, אפילו לא WhatsApp, לא יכול לקרוא או להאזין להם. לחץ כדי ללמוד עוד.",
@@ -29,5 +30,10 @@
 	"agentDeleted": "סוכן נמחק מרשימת הסוכנים בהצלחה!",
 	"setAgent": "הגדר סוכן",
 	"deleteAgent": "מחיקת סוכן",
-	"confirmDeleteAgent": "האם אתה בטוח שברצונך למחוק סוכן זה?"
+	"confirmDeleteAgent": "האם אתה בטוח שברצונך למחוק סוכן זה?",
+	"quickResponse": "תגובה מהירה",
+	"templates": "תבניות",
+	"addQuickResponse": "הוספת תגובה מהירה",
+	"enterQuickResponse": "הזן תגובה מהירה",
+	"noQuickResponses": "אין תגובות מהירות זמינות"
 }

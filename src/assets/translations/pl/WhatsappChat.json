@@ -8,9 +8,10 @@
 	"open": "Otwórz",
 	"pending": "Oczekujące",
 	"solved": "Rozwiązane",
+	"select": "Wybierz",
 	"allStatus": "Wszystkie",
 	"choose": "Wybierz",
-	"chooseTemplate": "Wybierz szablon",
+	"chooseTemplate": "Wybierz szybką odpowiedź lub szablon",
 	"visitUs": "Odwiedź nas",
 	"callUs": "Zadzwoń do nas",
 	"endEncrypt": "Wiadomości są szyfrowane end-to-end. Nikt poza tą rozmową, nawet WhatsApp, nie może ich przeczytać ani wysłuchać. Kliknij, aby dowiedzieć się więcej.",
@@ -29,5 +30,10 @@
 	"agentDeleted": "Agent usunięty z listy agentów pomyślnie!",
 	"setAgent": "Ustaw agenta",
 	"deleteAgent": "Usuń agenta",
-	"confirmDeleteAgent": "Czy na pewno chcesz usunąć tego agenta?"
+	"confirmDeleteAgent": "Czy na pewno chcesz usunąć tego agenta?",
+	"quickResponse": "Szybka odpowiedź",
+	"templates": "Szablony",
+	"addQuickResponse": "Dodaj szybką odpowiedź",
+	"enterQuickResponse": "Wprowadź szybką odpowiedź",
+	"noQuickResponses": "Brak dostępnych szybkich odpowiedzi"
 }
