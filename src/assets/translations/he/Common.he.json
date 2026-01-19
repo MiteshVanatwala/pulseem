@@ -229,6 +229,7 @@
   "EmptySystemNameValidator": "הזן שם המערכת (לשימושך בלבד)",
   "PasteOrWizard": "<a class=\"smart-builder\" onclick=\"request.SimpleBuilderClick();\">הדבק </a>נתונים או השתמש <a class=\"smart-builder\" onclick=\"request.SmartBuilderClick();\">באשף</a>",
   "Save": "שמור",
+  "Saving": "שומר...",
   "SaveNewSystem": "שמירת מערכת חדשה",
   "SystemIsConnectedToCount": "מערכת זו מקושרת ל ##count##",
   "SystemName": "שם המערכת",

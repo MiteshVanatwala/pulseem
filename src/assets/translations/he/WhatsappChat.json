@@ -27,6 +27,8 @@
 	"editAgent": "ערוך סוכנים",
 	"agentAdded": "סוכן נוסף לרשימת הסוכנים בהצלחה!",
 	"agentUpdated": "סוכן עודכן בהצלחה!",
+	"quickResponseSaved": "תגובה מהירה נשמרה בהצלחה!",
+	"quickResponseDeleted": "תגובה מהירה נמחקה בהצלחה!",
 	"agentDeleted": "סוכן נמחק מרשימת הסוכנים בהצלחה!",
 	"setAgent": "הגדר סוכן",
 	"deleteAgent": "מחיקת סוכן",

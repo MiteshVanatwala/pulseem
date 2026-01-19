@@ -1,4 +1,5 @@
-import { Button, Grid, Tabs, Tab, TextField, Box, IconButton } from '@material-ui/core';
+import { Button, Grid, Tabs, Tab, TextField, Box, IconButton, CircularProgress, Snackbar } from '@material-ui/core';
+import { Alert } from '@material-ui/lab';
 import { useTranslation } from 'react-i18next';
 import '../css/ChatTemplate.css';
 import { FaChevronDown, FaChevronRight } from 'react-icons/fa';
@@ -26,12 +27,14 @@ import { makeStyles } from '@material-ui/core/styles';
 import EmojiPicker from '../../../../components/Emojis/EmojiPicker';
 import { Delete } from '@material-ui/icons';
 import clsx from 'clsx';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { getQuickResponses, saveQuickResponse, deleteQuickResponse } from '../../../../redux/reducers/whatsappSlice';
+import { StateType } from '../../../../Models/StateTypes';
 
 interface QuickResponseProps {
-	id: string;
-	text: string;
-	createdAt: number;
+	ID: number;
+	Text: string;
+	CreatedAt?: number;
 }
 
 interface ChatTemplateModalExtendedProps extends chatModalProps {
@@ -47,7 +50,7 @@ const useTabStyles = makeStyles({
 		top: 0,
 		backgroundColor: '#fff',
 		zIndex: 10,
-		padding: '4px 0px',
+		padding: '4px 2px',
 		borderRadius: '10px',
 	},
 	tabsIndicator: {
@@ -68,6 +71,11 @@ const useTabStyles = makeStyles({
 		'&:hover': {
 			backgroundColor: '#e8e8e8',
 		},
+		'@media (max-width: 768px)': {
+			fontSize: '0.875rem',
+			padding: '6px 12px',
+			margin: '0 2px',
+		},
 	},
 	tabSelected: {
 		color: '#fff !important',
@@ -77,19 +85,27 @@ const useTabStyles = makeStyles({
 		flex: 1,
 		overflowY: 'auto',
 		overflowX: 'hidden',
-		position: 'relative'
+		position: 'relative',
+		width: '100%',
 	},
 	modalContainer: {
 		minWidth: '600px',
 		maxWidth: '800px',
-		width: '100%',
+		width: '600px',
 		display: 'flex',
 		flexDirection: 'column',
 		maxHeight: '70vh',
 		overflow: 'visible',
 		'@media (max-width: 768px)': {
-			minWidth: '90vw',
-			maxWidth: '90vw',
+			minWidth: '68vw',
+			maxWidth: '68vw',
+			width: '68vw',
+			maxHeight: '65vh',
+		},
+		'@media (max-width: 568px)': {
+			width: '85vw',
+			minWidth: '85vw',
+			maxWidth: '85vw',
 		},
 	},
 	quickResponseWrapper: {
@@ -107,17 +123,25 @@ const useTabStyles = makeStyles({
 		position: 'absolute',
 		bottom: '8px',
 		right: '8px',
-		zIndex: 1400,
+		zIndex: 1500,
 		'& .emoji-picker-react': {
 			position: 'absolute !important',
 			bottom: '100% !important',
 			right: '0 !important',
 			top: 'auto !important',
 			left: 'auto !important',
-			marginBottom: '8px !important',
+			marginBottom: '2px !important',
 			maxWidth: '350px !important',
 			width: '350px !important',
 			boxShadow: '0 4px 16px rgba(0,0,0,0.2) !important',
+			zIndex: '1500 !important',
+			height: 185,
+		},
+		'@media (max-width: 768px)': {
+			'& .emoji-picker-react': {
+				maxWidth: '280px !important',
+				width: '280px !important',
+			},
 		},
 	},
 	noQuickResponsesText: {
@@ -130,8 +154,85 @@ const useTabStyles = makeStyles({
 		borderBottom: '1px solid #e0e0e0',
 		'& p': {
 			margin: 0,
-			whiteSpace: 'pre-wrap'
+			whiteSpace: 'pre-wrap',
+			wordBreak: 'break-word',
+			overflowWrap: 'break-word',
 		},
+	},
+	quickResponseButtonContainer: {
+		display: 'flex',
+		justifyContent: 'flex-end',
+		flexWrap: 'wrap',
+		'& > *': {
+			marginLeft: '8px',
+		},
+		'@media (max-width: 768px)': {
+			'& > *': {
+				marginLeft: '4px',
+			},
+		},
+	},
+	quickResponseButton: {
+		'@media (max-width: 768px)': {
+			fontSize: '0.75rem',
+			padding: '4px 8px',
+			minWidth: 'auto',
+		},
+	},
+	addResponseContainer: {
+		padding: '16px',
+		textAlign: 'right',
+		borderTop: '1px solid #e0e0e0',
+		'@media (max-width: 768px)': {
+			padding: '12px',
+		},
+	},
+	addResponseContainerRTL: {
+		textAlign: 'left',
+	},
+	formContainer: {
+		padding: '16px',
+		borderTop: '1px solid #e0e0e0',
+		'@media (max-width: 768px)': {
+			padding: '12px',
+		},
+	},
+	buttonGroup: {
+		display: 'flex',
+		justifyContent: 'flex-end',
+		flexWrap: 'wrap',
+		'& > *': {
+			marginLeft: '8px',
+			marginTop: '4px',
+		},
+		'@media (max-width: 768px)': {
+			'& > *': {
+				marginLeft: '4px',
+			},
+		},
+	},
+	loadingOverlay: {
+		position: 'absolute',
+		top: 0,
+		left: 0,
+		right: 0,
+		bottom: 0,
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'center',
+		backgroundColor: 'rgba(255, 255, 255, 0.8)',
+		zIndex: 1000,
+		borderRadius: '4px',
+	},
+	deletingRow: {
+		opacity: 0.5,
+		pointerEvents: 'none',
+		transition: 'opacity 0.3s ease',
+	},
+	loaderWrapper: {
+		display: 'flex',
+		alignItems: 'center',
+		gap: '8px',
 	},
 });
 
@@ -142,27 +243,38 @@ const ChatTemplateModal = ({
 	isIn24Window = true,
 }: ChatTemplateModalExtendedProps) => {
 	const { t: translator } = useTranslation();
+	const dispatch = useDispatch();
 	const tabClasses = useTabStyles();
 	const { isRTL } = useSelector((state: any) => state.core);
+	const { quickResponses } = useSelector((state: StateType) => state.whatsapp);
 	const [expandedTemplate, setExpandedTemplate] = useState<any>([]);
 	const [activeTab, setActiveTab] = useState(isIn24Window ? 0 : 1);
-	const [quickResponses, setQuickResponses] = useState<QuickResponseProps[]>([]);
 	const [isAddingResponse, setIsAddingResponse] = useState(false);
 	const [newResponseText, setNewResponseText] = useState('');
+	const [isSaving, setIsSaving] = useState(false);
+	const [deletingId, setDeletingId] = useState<number | null>(null);
+	const [snackbar, setSnackbar] = useState<{
+		open: boolean;
+		message: string;
+		severity: 'success' | 'error' | 'info' | 'warning';
+	}>({
+		open: false,
+		message: '',
+		severity: 'success',
+	});
 	const textFieldRef = useRef<HTMLTextAreaElement>(null);
 
 	useEffect(() => {
-		const savedResponses = localStorage.getItem('quickResponses');
-		if (savedResponses) {
-			setQuickResponses(JSON.parse(savedResponses));
-		}
+		fetchQuickResponses();
 	}, []);
 
-	useEffect(() => {
-		if (quickResponses.length > 0) {
-			localStorage.setItem('quickResponses', JSON.stringify(quickResponses));
+	const fetchQuickResponses = async () => {
+		try {
+			await dispatch<any>(getQuickResponses());
+		} catch (error) {
+			console.error('Error fetching quick responses:', error);
 		}
-	}, [quickResponses]);
+	};
 
 	const handleTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
 		setActiveTab(newValue);
@@ -170,16 +282,44 @@ const ChatTemplateModal = ({
 		setNewResponseText('');
 	};
 
-	const handleAddQuickResponse = () => {
-		if (newResponseText.trim()) {
-			const newResponse: QuickResponseProps = {
-				id: uniqid(),
-				text: newResponseText.trim(),
-				createdAt: Date.now(),
-			};
-			setQuickResponses([...quickResponses, newResponse]);
-			setNewResponseText('');
-			setIsAddingResponse(false);
+	const handleAddQuickResponse = async () => {
+		if (newResponseText.trim() && !isSaving) {
+			setIsSaving(true);
+			try {
+				const response: any = await dispatch<any>(saveQuickResponse({
+					ID: 0,
+					Text: newResponseText.trim()
+				}));
+
+				if (response.payload?.Status === 'Success' ||
+					response.payload?.StatusCode === 200 ||
+					response.payload?.StatusCode === 201 ||
+					response.type.endsWith('/fulfilled')) {
+					await fetchQuickResponses();
+					setNewResponseText('');
+					setIsAddingResponse(false);
+					setSnackbar({
+						open: true,
+						message: translator('whatsappChat.quickResponseSaved') || 'Quick response saved successfully!',
+						severity: 'success',
+					});
+				} else {
+					setSnackbar({
+						open: true,
+						message: translator('whatsapp.error') || 'Failed to save quick response',
+						severity: 'error',
+					});
+				}
+			} catch (error) {
+				console.error('Error saving quick response:', error);
+				setSnackbar({
+					open: true,
+					message: translator('whatsapp.error') || 'An error occurred while saving',
+					severity: 'error',
+				});
+			} finally {
+				setIsSaving(false);
+			}
 		}
 	};
 
@@ -204,10 +344,36 @@ const ChatTemplateModal = ({
 		}
 	};
 
-	const handleDeleteQuickResponse = (id: string) => {
-		const updatedResponses = quickResponses.filter(response => response.id !== id);
-		setQuickResponses(updatedResponses);
-		localStorage.setItem('quickResponses', JSON.stringify(updatedResponses));
+	const handleDeleteQuickResponse = async (id: number) => {
+		setDeletingId(id);
+		try {
+			const response: any = await dispatch<any>(deleteQuickResponse(id));
+			if (response.payload?.Status === 'Success' ||
+				response.payload?.StatusCode === 200 ||
+				response.type.endsWith('/fulfilled')) {
+				await fetchQuickResponses();
+				setSnackbar({
+					open: true,
+					message: translator('whatsappChat.quickResponseDeleted') || 'Quick response deleted successfully!',
+					severity: 'success',
+				});
+			} else {
+				setSnackbar({
+					open: true,
+					message: translator('whatsapp.error') || 'Failed to delete quick response',
+					severity: 'error',
+				});
+			}
+		} catch (error) {
+			console.error('Error deleting quick response:', error);
+			setSnackbar({
+				open: true,
+				message: translator('whatsapp.error') || 'An error occurred while deleting',
+				severity: 'error',
+			});
+		} finally {
+			setDeletingId(null);
+		}
 	};
 
 	const handleSelectQuickResponse = (text: string) => {
@@ -222,6 +388,10 @@ const ChatTemplateModal = ({
 			}
 		};
 		onChoose(quickResponseTemplate, text);
+	};
+
+	const handleCloseSnackbar = () => {
+		setSnackbar({ ...snackbar, open: false });
 	};
 
 	const setButtonsData = (buttonType: string, data: buttonsDataProps[]) => {
@@ -451,35 +621,59 @@ const ChatTemplateModal = ({
 
 	const renderQuickResponseTab = () => {
 		return (
-			<div className={classes.templateListModalContent}>
+			<div className={classes.templateListModalContent} style={{ position: 'relative' }}>
+				{isSaving && (
+					<Box className={tabClasses.loadingOverlay}>
+						<Box className={tabClasses.loaderWrapper}>
+							<CircularProgress size={40} />
+							<span>{translator('common.Saving') || 'Saving...'}</span>
+						</Box>
+					</Box>
+				)}
+
 				<Box className={tabClasses.quickResponseWrapper}>
 					<ul className={clsx(classes.chooseTemplateModalUl, classes.noMargin)}>
-						{quickResponses.map((response) => (
-							<li key={response.id} className={tabClasses.quickResponseList}>
-								<Grid container alignItems='center' spacing={2}>
-									<Grid item xs={9}>
-										<p>{response.text}</p>
+						{quickResponses?.map((response: QuickResponseProps) => (
+							<li
+								key={response.ID}
+								className={clsx(
+									tabClasses.quickResponseList,
+									deletingId === response.ID && tabClasses.deletingRow
+								)}
+							>
+								<Grid container alignItems='center' spacing={1}>
+									<Grid item xs={12} sm={8}>
+										<p>{response.Text}</p>
 									</Grid>
-									<Grid item xs={3} className={isRTL ? classes.textLeft : classes.textRight}>
-										<Button
-											variant="contained"
-											color="primary"
-											className={clsx(classes.btn, classes.btnRounded, classes.mr10)}
-											onClick={() => handleSelectQuickResponse(response.text)}
-										>
-											{translator('whatsappChat.select')}
-										</Button>
-										<IconButton
-											onClick={() => handleDeleteQuickResponse(response.id)}
-											className={clsx(classes.sendIcon, classes.p5)}
-										>
-											<Delete />
-										</IconButton>
+									<Grid item xs={12} sm={4} className={isRTL ? classes.textLeft : classes.textRight}>
+										<Box className={tabClasses.quickResponseButtonContainer}>
+											<Button
+												variant="contained"
+												color="primary"
+												className={clsx(classes.btn, classes.btnRounded, tabClasses.quickResponseButton)}
+												onClick={() => handleSelectQuickResponse(response.Text)}
+												disabled={deletingId === response.ID}
+											>
+												{translator('whatsappChat.select')}
+											</Button>
+											<IconButton
+												onClick={() => handleDeleteQuickResponse(response.ID)}
+												className={clsx(classes.sendIcon, classes.p5)}
+												size="small"
+												disabled={deletingId === response.ID}
+											>
+												{deletingId === response.ID ? (
+													<CircularProgress size={20} />
+												) : (
+													<Delete />
+												)}
+											</IconButton>
+										</Box>
 									</Grid>
 								</Grid>
 							</li>
 						))}
-						{quickResponses.length === 0 && (
+						{(!quickResponses || quickResponses.length === 0) && !isSaving && (
 							<li className={tabClasses.noQuickResponsesText}>
 								{translator('whatsappChat.noQuickResponses')}
 							</li>
@@ -488,12 +682,13 @@ const ChatTemplateModal = ({
 				</Box>
 
 				{!isAddingResponse && (
-					<Box sx={{ padding: '16px', textAlign: isRTL ? 'left' : 'right', borderTop: '1px solid #e0e0e0' }}>
+					<Box className={clsx(tabClasses.addResponseContainer, isRTL && tabClasses.addResponseContainerRTL)}>
 						<Button
 							variant="contained"
 							color="primary"
-							className={clsx(classes.btn, classes.btnRounded)}
+							className={clsx(classes.btn, classes.btnRounded, tabClasses.quickResponseButton)}
 							onClick={() => setIsAddingResponse(true)}
+							disabled={isSaving}
 						>
 							{translator('whatsappChat.addQuickResponse')}
 						</Button>
@@ -501,17 +696,18 @@ const ChatTemplateModal = ({
 				)}
 
 				{isAddingResponse && (
-					<Box sx={{ padding: '16px', borderTop: '1px solid #e0e0e0' }}>
+					<Box className={tabClasses.formContainer}>
 						<Box sx={{ position: 'relative', marginBottom: '16px' }}>
 							<TextField
 								fullWidth
 								multiline
-								rows={3}
+								rows={4}
 								variant='outlined'
 								placeholder={translator('whatsappChat.enterQuickResponse')}
 								value={newResponseText}
 								onChange={(e) => setNewResponseText(e.target.value)}
 								inputRef={textFieldRef}
+								disabled={isSaving}
 							/>
 							<Box className={tabClasses.emojiPickerWrapper}>
 								<EmojiPicker
@@ -525,26 +721,34 @@ const ChatTemplateModal = ({
 								/>
 							</Box>
 						</Box>
-						<Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+						<Box className={tabClasses.buttonGroup}>
 							<Button
 								variant="contained"
 								color="primary"
-								className={clsx(classes.btn, classes.btnRounded, classes.mlr10)}
+								className={clsx(classes.btn, classes.btnRounded, tabClasses.quickResponseButton)}
 								onClick={() => {
 									setIsAddingResponse(false);
 									setNewResponseText('');
 								}}
+								disabled={isSaving}
 							>
 								{translator('common.cancel')}
 							</Button>
 							<Button
 								variant="contained"
 								color="primary"
-								className={clsx(classes.btn, classes.btnRounded)}
+								className={clsx(classes.btn, classes.btnRounded, tabClasses.quickResponseButton)}
 								onClick={handleAddQuickResponse}
-								disabled={!newResponseText.trim()}
+								disabled={!newResponseText.trim() || isSaving}
 							>
-								{translator('common.Save')}
+								{isSaving ? (
+									<Box className={tabClasses.loaderWrapper}>
+										<CircularProgress size={16} color="inherit" />
+										<span>{translator('common.Saving')}</span>
+									</Box>
+								) : (
+									translator('common.Save')
+								)}
 							</Button>
 						</Box>
 					</Box>
@@ -623,40 +827,53 @@ const ChatTemplateModal = ({
 	};
 
 	return (
-		<div className={tabClasses.modalContainer}>
-			{isIn24Window && (
-				<Box sx={{ position: 'sticky', top: 0, zIndex: 10, border: '2px solid #F65026', borderRadius: '10px' }}>
-					<Tabs
-						value={activeTab}
-						onChange={handleTabChange}
-						variant='fullWidth'
-						classes={{
-							root: tabClasses.tabsRoot,
-							indicator: tabClasses.tabsIndicator,
-						}}
-					>
-						<Tab
-							label={translator('whatsappChat.quickResponse')}
+		<>
+			<div className={tabClasses.modalContainer}>
+				{isIn24Window && (
+					<Box sx={{ position: 'sticky', top: 0, zIndex: 10, border: '2px solid #F65026', borderRadius: '10px' }}>
+						<Tabs
+							value={activeTab}
+							onChange={handleTabChange}
+							variant='fullWidth'
 							classes={{
-								root: tabClasses.tabRoot,
-								selected: tabClasses.tabSelected,
+								root: tabClasses.tabsRoot,
+								indicator: tabClasses.tabsIndicator,
 							}}
-						/>
-						<Tab
-							label={translator('whatsappChat.templates')}
-							classes={{
-								root: tabClasses.tabRoot,
-								selected: tabClasses.tabSelected,
-							}}
-						/>
-					</Tabs>
+						>
+							<Tab
+								label={translator('whatsappChat.quickResponse')}
+								classes={{
+									root: tabClasses.tabRoot,
+									selected: tabClasses.tabSelected,
+								}}
+							/>
+							<Tab
+								label={translator('whatsappChat.templates')}
+								classes={{
+									root: tabClasses.tabRoot,
+									selected: tabClasses.tabSelected,
+								}}
+							/>
+						</Tabs>
+					</Box>
+				)}
+				<Box className={tabClasses.tabContainer}>
+					{activeTab === 0 && isIn24Window && renderQuickResponseTab()}
+					{(activeTab === 1 || !isIn24Window) && renderTemplatesTab()}
 				</Box>
-			)}
-			<Box className={tabClasses.tabContainer}>
-				{activeTab === 0 && isIn24Window && renderQuickResponseTab()}
-				{(activeTab === 1 || !isIn24Window) && renderTemplatesTab()}
-			</Box>
-		</div>
+			</div>
+
+			<Snackbar
+				open={snackbar.open}
+				autoHideDuration={4000}
+				onClose={handleCloseSnackbar}
+				anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+			>
+				<Alert onClose={handleCloseSnackbar} severity={snackbar.severity} variant="filled">
+					{snackbar.message}
+				</Alert>
+			</Snackbar>
+		</>
 	);
 };
 

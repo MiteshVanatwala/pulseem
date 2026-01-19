@@ -27,6 +27,8 @@
 	"editAgent": "Edytuj agentów",
 	"agentAdded": "Agent dodany do listy agentów pomyślnie!",
 	"agentUpdated": "Agent zaktualizowany pomyślnie!",
+	"quickResponseSaved": "Szybka odpowiedź została zapisana pomyślnie!",
+	"quickResponseDeleted": "Szybka odpowiedź została usunięta pomyślnie!",
 	"agentDeleted": "Agent usunięty z listy agentów pomyślnie!",
 	"setAgent": "Ustaw agenta",
 	"deleteAgent": "Usuń agenta",
