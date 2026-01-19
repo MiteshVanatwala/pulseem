@@ -951,5 +951,6 @@
   "cancelPlan": "Anuluj plan",
   "cancelPlanConfirmation": "Czy na pewno chcesz anulować swój obecny plan?",
   "planCancellationRequestSubmitted": "Twoje żądanie anulowania planu zostało pomyślnie przesłane.",
-  "nonPolishNumber": "Nie możesz wysłać SMS-a z numeru spoza Polski. Proszę ustawić polski numer."
+  "nonPolishNumber": "Nie możesz wysłać SMS-a z numeru spoza Polski. Proszę ustawić polski numer.",
+  "saveColumnStructureAsDefault": "Zapisz tę strukturę kolumn jako domyślną"
 }

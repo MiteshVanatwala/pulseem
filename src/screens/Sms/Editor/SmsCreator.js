@@ -742,14 +742,18 @@ const SmsCreator = ({ classes }) => {
             <Typography className={classes.buttonHead}>
               {t("mainReport.campFrom")}
             </Typography>
-            <Typography
-              className={classes.restoreBtn}
-              onClick={() => {
-                handleRestore()
-              }}
-            >
-              {t("mainReport.restore")}
-            </Typography>
+            {
+              !IsPoland && (
+                <Typography
+                  className={classes.restoreBtn}
+                  onClick={() => {
+                    handleRestore()
+                  }}
+                >
+                  {t("mainReport.restore")}
+                </Typography>
+              )
+            }
 
           </Box>
 
@@ -769,7 +773,7 @@ const SmsCreator = ({ classes }) => {
           </Typography>
         </Grid>
         <Grid item xs={12} md={4} sm={12} >
-          {restoreBool && removalNumber !== null ? (
+          {!IsPoland && restoreBool && removalNumber !== null ? (
             <Box className={clsx(classes.buttonForm, 'textBoxWrapper')}>
               <Typography className={clsx(classes.buttonHead)}>
                 {t("mainReport.removalReply")}
