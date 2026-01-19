@@ -970,6 +970,7 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
   return (
     <DefaultScreen
       currentPage="landingPages"
+      subPage='popupManagement'
       classes={classes}
       containerClass={clsx(classes.management, classes.mb50)}
     >

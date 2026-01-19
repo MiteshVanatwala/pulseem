@@ -142,8 +142,8 @@
     "clicksInPage": "קליקים בעמוד",
     "popupName": "שם הפופ-אפ",
     "popupLanguage": "שפת הפופ-אפ",
-    "popupOfflineDate": "תאריך הורדת החלונית מהרשת",
-    "commentsToPopup": "הערות לחלונית",
+    "popupOfflineDate": "תאריך סיום פרסום הפופאפ",
+    "commentsToPopup": "הערות לפופאפ",
     "onceEvery": "פעם בכל",
     "visits": "ביקורים"
   },
