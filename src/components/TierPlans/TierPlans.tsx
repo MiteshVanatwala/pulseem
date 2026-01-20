@@ -273,6 +273,10 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false, isBankT
               displayPrice = emailPriceTier.Price;
             }
           }
+          // Determine if the plan is lower than the current plan
+          const currentLevel = currentPlan?.Level ?? currentPlan?.level ?? currentPlan?.Id ?? 0;
+          const planLevel = plan.Level ?? plan.level ?? plan.Id ?? 0;
+          const isLowerPlan = planLevel <= currentLevel;
           return (
             <Grid item xs={12} sm={6} md={3} key={plan.Id}>
               <Box 
@@ -322,11 +326,12 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false, isBankT
                     {t(uiConfig.recipientLimit)}
                   </Typography> */}
                   <Button
+                    name="plan-select-button"
                     variant={uiConfig.buttonVariant as "outlined" | "contained"}
                     color="primary"
                     className={clsx(classes.tierPlansButton, classes.tierPlansDefaultButton)}
                     onClick={() => handlePlanSelect(plan, uiConfig)}
-                    disabled={plan.isCurrentPlan || existingPlan?.AccountCategoryFeatureTier_Id === plan.Id}
+                    disabled={plan.isCurrentPlan || existingPlan?.AccountCategoryFeatureTier_Id === plan.Id || isLowerPlan}
                   >
                     {plan.isCurrentPlan ? t('billing.tier.ui.currentPlan') : t(uiConfig.buttonText)}
                   </Button>
