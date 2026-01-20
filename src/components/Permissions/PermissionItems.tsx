@@ -346,12 +346,22 @@ const PermissionItems = ({ classes, userDetails, updateSubUserDetails, permissio
               activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
               height={15}
               className={clsx({ [classes.rtlSwitch]: isRTL })}
-              checked={userDetails.IsWhatsAppAgent === true}
+              checked={userDetails.UserPermissionsList?.indexOf(eSubUserPermissions.AllowWhatsAppToAgent) > -1}
               onChange={(e: any) => {
-                updateSubUserDetails({
-                  ...userDetails,
-                  IsWhatsAppAgent: e.target.checked
-                })
+                if (e.target.checked) {
+                  updateSubUserDetails({
+                    ...userDetails,
+                    SubUserPermissions: [...userDetails.UserPermissionsList, eSubUserPermissions.AllowWhatsAppToAgent].join(','),
+                    UserPermissionsList: [...userDetails.UserPermissionsList, eSubUserPermissions.AllowWhatsAppToAgent]
+                  })
+                } else {
+                  const filteredPermissions = userDetails.UserPermissionsList.filter((x: any) => x !== eSubUserPermissions.AllowWhatsAppToAgent);
+                  updateSubUserDetails({
+                    ...userDetails,
+                    SubUserPermissions: filteredPermissions.join(','),
+                    UserPermissionsList: filteredPermissions
+                  })
+                }
               }}
             />
           }

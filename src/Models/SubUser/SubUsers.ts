@@ -21,7 +21,6 @@ export interface SubUserModel extends LoginPassword {
     SubUserPermissions?: string | null | any;
     UserPermissionsList?: eSubUserPermissions[] | null | any;
     ActionType?: eSubUserAction | null | any;
-    IsWhatsAppAgent?: boolean;
     ConfirmationExpirationDate?: Date | null | any;
 }
 
@@ -34,7 +33,8 @@ export enum eSubUserPermissions {
     AllowSend = 1,
     AllowExport = 2,
     AllowDelete = 3,
-    HideRecipients = 4
+    HideRecipients = 4,
+    AllowWhatsAppToAgent = 6,
 }
 
 export interface SubUserChangeLog {
