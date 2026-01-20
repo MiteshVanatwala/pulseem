@@ -240,17 +240,6 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			hasMore: true,
 		});
 
-	const handleUserStatus = useCallback((e: SelectChangeEvent, ClientNumber: string) => {
-		e.preventDefault();
-		e.stopPropagation();
-
-		setWhatsappChatCoversationStatus(
-			Number(e.target.value),
-			activePhoneNumber,
-			ClientNumber
-		);
-	}, [activePhoneNumber]);
-
 	const setWhatsappChatCoversationStatus = useCallback(async (
 		StatusId: number,
 		Sendernumber: string,
@@ -291,6 +280,17 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				: setToastMessage(ToastMessages.ERROR);
 		}
 	}, [dispatch, activeChatContacts, sideChatContacts, ToastMessages]);
+
+	const handleUserStatus = useCallback((e: SelectChangeEvent, ClientNumber: string) => {
+		e.preventDefault();
+		e.stopPropagation();
+
+		setWhatsappChatCoversationStatus(
+			Number(e.target.value),
+			activePhoneNumber,
+			ClientNumber
+		);
+	}, [activePhoneNumber, setWhatsappChatCoversationStatus]);
 
 	const setAPIInboundChatStatus = useCallback(async () => {
 		if (activeChatContacts && activeChatContacts?.PhoneNumber?.length > 0) {

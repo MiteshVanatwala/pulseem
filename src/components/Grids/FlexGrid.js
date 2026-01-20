@@ -6,7 +6,7 @@ const useStyles = makeStyles({
         flexDirection: (props) => props.direction || 'row',
         justifyContent: 'space-around',
         width: '100%',
-        "@media screen and (max-width: 1320px)": {
+        "@media screen and (max-width: 1400px)": {
             flexWrap: 'wrap',
             justifyContent: (props) => props.justifyContent || 'right',
             marginInline: 5

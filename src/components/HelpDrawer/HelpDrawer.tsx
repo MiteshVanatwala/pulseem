@@ -243,12 +243,12 @@ export const HelpDrawer: React.FC = () => {
   const getHelpCenterUrl = useMemo(() => {
     switch (language) {
       case 'he':
-        return URLS.ContactUs;
+        return URLS.HelpCenter;
       case 'pl':
-        return URLS.ContactUsPl;
+        return URLS.HelpCenterPl;
       case 'en':
       default:
-        return URLS.ContactUsEn;
+        return URLS.HelpCenter;
     }
   }, [language]);
 

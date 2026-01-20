@@ -45,13 +45,7 @@ const SideBar = ({
 	const { agentList } = useSelector((state: StateType) => state.whatsapp);
 	const [searchText, setSearchText] = useState<string>('');
 	const debouncedValue = useDebounce<string>(searchText, 500);
-	const sideChatContactsAllRef = useRef<APIWhatsappChatSidebarContactsItemsData[] | null>(null);
 	const [activeTab, setActiveTab] = useState(0);
-	const sideChatContactsAll = sideChatContactsAllRef.current || []
-
-	if (!sideChatContactsAllRef.current && Array.isArray(sideChatContacts)) {
-		sideChatContactsAllRef.current = sideChatContacts
-	}
 
 	const handleSearch = (e: BaseSyntheticEvent) => {
 		setSearchText(e.target.value.toLowerCase());
@@ -68,19 +62,29 @@ const SideBar = ({
 		setCookie('whatsappSelectedAgentId', e.target.value);
 	};
 
-	const statusCount = sideChatContactsAll?.reduce((acc: any, curr: any) => {
-		acc[curr?.ConversationStatusId] = (acc[curr?.ConversationStatusId] || 0) + 1;
-		return acc;
-	}, {});
 
-	const totalStatusCount = sideChatContactsAll?.length ?? 0;
+	const [statusTabs, setStatusTabs] = useState([
+		{ status: 'whatsappChat.allStatus', count: 0 },
+		{ status: 'whatsappChat.open', count: 0 },
+		{ status: 'whatsappChat.pending', count: 0 },
+		{ status: 'whatsappChat.solved', count: 0 },
+	]);
 
-	const statusTabs = [
-		{ status: 'whatsappChat.allStatus', count: totalStatusCount },
-		{ status: 'whatsappChat.open', count: statusCount?.[1] || 0 },
-		{ status: 'whatsappChat.pending', count: statusCount?.[2] || 0 },
-		{ status: 'whatsappChat.solved', count: statusCount?.[3] || 0 },
-	];
+	useEffect(() => {
+		const statusCount = Array.isArray(sideChatContacts)
+			? sideChatContacts.reduce((acc: any, curr: any) => {
+				acc[curr?.ConversationStatusId] = (acc[curr?.ConversationStatusId] || 0) + 1;
+				return acc;
+			}, {})
+			: {};
+		const totalStatusCount = Array.isArray(sideChatContacts) ? sideChatContacts.length : 0;
+		setStatusTabs([
+			{ status: 'whatsappChat.allStatus', count: totalStatusCount },
+			{ status: 'whatsappChat.open', count: statusCount?.[1] || 0 },
+			{ status: 'whatsappChat.pending', count: statusCount?.[2] || 0 },
+			{ status: 'whatsappChat.solved', count: statusCount?.[3] || 0 },
+		]);
+	}, [sideChatContacts]);
 
 	useEffect(() => {
 		if (selectedAgent && selectedAgent > 0) {
