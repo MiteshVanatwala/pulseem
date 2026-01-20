@@ -1,10 +1,10 @@
 {
-"handleExitTitle": "צא מהחלונית",
-"confirmExit": "האם ברצונך לשמור את החלונית לפני היציאה?",
-"DeleteConfirmText": "האם אתה רוצה למחוק את החלונית?",
-"DeleteConfirmTitle": "מחק חלונית",
-"DeletePopupTitle": "מחק חלונית",
-"DeletePopup": "האם אתה רוצה למחוק את החלונית?",
-"DuplicatePopupTitle": "שכפל חלונית",
-"DuplicatePopup": "האם אתה רוצה לשכפל את החלונית?"
+  "handleExitTitle": "צא מהפופאפ",
+  "confirmExit": "האם ברצונכם לשמור את הפופאפ לפני היציאה?",
+  "DeleteConfirmText": "האם אתה רוצה למחוק את הפופאפ?",
+  "DeleteConfirmTitle": "מחק פופאפ",
+  "DeletePopupTitle": "מחק פופאפ",
+  "DeletePopupDesc": "האם ברצונכם למחוק את פופאפ?",
+  "DuplicatePopupTitle": "שכפל פופאפ",
+  "DuplicatePopupDesc": "האם ברצונכם לשכפל את הפופאפ?"
 }

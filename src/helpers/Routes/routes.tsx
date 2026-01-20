@@ -315,6 +315,7 @@ export const getRoutes = (
           isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount,
         },
         {
+          key: "createPopup",
           title: t("landingPages.createPopup"),
           href: `${sitePrefix}Popups/Create`,
           isShow: features && features?.indexOf(PulseemFeatures.Popup) > -1,
