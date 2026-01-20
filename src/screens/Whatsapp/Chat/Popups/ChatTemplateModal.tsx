@@ -85,13 +85,12 @@ const useTabStyles = makeStyles({
 		flex: 1,
 		overflowY: 'auto',
 		overflowX: 'hidden',
-		position: 'relative',
 		width: '100%',
 	},
 	modalContainer: {
 		minWidth: '600px',
 		maxWidth: '800px',
-		width: '600px',
+		width: '800px',
 		display: 'flex',
 		flexDirection: 'column',
 		maxHeight: '70vh',
@@ -621,7 +620,7 @@ const ChatTemplateModal = ({
 
 	const renderQuickResponseTab = () => {
 		return (
-			<div className={classes.templateListModalContent} style={{ position: 'relative' }}>
+			<div className={classes.templateListModalContent}>
 				{isSaving && (
 					<Box className={tabClasses.loadingOverlay}>
 						<Box className={tabClasses.loaderWrapper}>

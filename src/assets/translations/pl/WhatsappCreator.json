@@ -101,6 +101,7 @@
 		"alert": "Alert",
 		"templateTextRequired": "Tekst szablonu jest wymagany",
 		"templateNameRequired": "Nazwa szablonu jest wymagana",
+		"templateNameLengthError": "Nazwa szablonu powinna być mniejsza lub równa",
 		"templateLengthError": "Długość szablonu powinna być mniejsza lub równa",
 		"languageError": "Nie możesz przesłać szablonu zawierającego więcej niż jeden język",
 		"buttonTextError": "Tekst przycisku - pole wymagane",
