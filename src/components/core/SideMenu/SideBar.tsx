@@ -2,7 +2,7 @@ import clsx from 'clsx';
 import SidebarItem from './SideBarItem';
 import { useTranslation } from "react-i18next";
 import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import useRedirect from '../../../helpers/Routes/Redirect';
 import PulseemNewLogo from '../../../assets/images/PulseemNewLogo';
 import { RedirectPropTypes } from '../../../helpers/Types/Redirect';
@@ -11,6 +11,7 @@ import { getRoutes } from '../../../helpers/Routes/routes';
 import { FaTimes, FaChevronLeft, FaChevronRight, } from 'react-icons/fa';
 import { Drawer, IconButton, Button, List } from '@material-ui/core';
 import { SidebarProps } from '../../../Models/SideMenuBar/SideMenuBarModel';
+import { setIsDrawerOpen } from '../../../redux/reducers/coreSlice';
 
 export const Sidebar: React.FC<SidebarProps> = ({
   currentPage = '',
@@ -22,7 +23,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   const Redirect = useRedirect();
   const { t } = useTranslation();
-
+  const dispatch = useDispatch();
   const {
     windowSize,
     isRTL,
@@ -91,6 +92,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       setIsCollapsed(newState);
       setCookie('SidebarCollapsed', String(newState), 365); // שמור לשנה
     }
+    dispatch(setIsDrawerOpen(isCollapsed));
   };
 
   const toggleSubmenu = (key: string) => {

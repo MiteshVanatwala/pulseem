@@ -63,7 +63,7 @@ const useStyles = makeStyles((theme) => ({
     width: `calc(100% - ${SIDEBAR_COLLAPSED_WIDTH}px)`,
   },
   contentContainer: {
-    paddingInline: theme.spacing(3),
+    // paddingInline: theme.spacing(3),
     flexGrow: 1,
     [theme.breakpoints.down('sm')]: {
       paddingInline: theme.spacing(2),
