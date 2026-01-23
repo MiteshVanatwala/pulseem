@@ -8,9 +8,10 @@
 	"open": "Open",
 	"pending": "In Progress",
 	"solved": "Solved",
+	"select": "Select",
 	"allStatus": "All",
 	"choose": "Choose",
-	"chooseTemplate": "Choose Template",
+	"chooseTemplate": "Select Quick Response or a Template",
 	"visitUs": "Visit Us",
 	"callUs": "Call Us",
 	"endEncrypt": "Messages are end-to-end encrypted. No one outside of this chat, not even WhatsApp, can read or listen to them. Click to learn more.",
@@ -26,8 +27,15 @@
 	"editAgent": "Edit Agents",
 	"agentAdded": "Agent added to the Agents List successfuly!",
 	"agentUpdated": "Agent updated successfuly!",
+	"quickResponseSaved": "Quick Response saved successfuly!",
+	"quickResponseDeleted": "Quick Response deleted successfuly!",
 	"agentDeleted": "Agent Deleted from the Agents list successfuly!",
 	"setAgent": "Set Agent",
 	"deleteAgent": "Delete Agent",
-	"confirmDeleteAgent": "Are you sure you want to delete this agent?"
+	"confirmDeleteAgent": "Are you sure you want to delete this agent?",
+	"quickResponse": "Quick Response",
+	"templates": "Templates",
+	"addQuickResponse": "Add Quick Response",
+	"enterQuickResponse": "Enter Quick Response",
+	"noQuickResponses": "No Quick Responses Available"
 }

@@ -39,6 +39,12 @@ type ApiGetSavedTemplatesData = {
 	TemplateId?: string;
 };
 
+type ApiQuickResponsePayload = {
+	ID: number;
+	Text?: string;
+	IsDelete?: boolean;
+};
+
 type ApiSubmitTemplatesData =
 	| TextMediaAndButton
 	| QuickReply
@@ -888,6 +894,56 @@ export const assignAgentToChat = createAsyncThunk(
 	}
 );
 
+export const getQuickResponses = createAsyncThunk(
+	'WhatsappPreDefinedFixText/Get',
+	async (_, thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.get(
+				`WhatsappPreDefinedFixText/Get`
+			);
+			return response.data;
+		} catch (error) {
+			const err = error as ApiError;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
+export const saveQuickResponse = createAsyncThunk(
+	'WhatsappPreDefinedFixText/Save',
+	async (data: ApiQuickResponsePayload, thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.post(
+				`WhatsappPreDefinedFixText/Save`,
+				data
+			);
+			return response.data;
+		} catch (error) {
+			const err = error as ApiError;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
+export const deleteQuickResponse = createAsyncThunk(
+	'WhatsappPreDefinedFixText/Delete',
+	async (id: number, thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.post(
+				`WhatsappPreDefinedFixText/Save`,
+				{
+					ID: id,
+					IsDelete: true
+				}
+			);
+			return response.data;
+		} catch (error) {
+			const err = error as ApiError;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
 
 //#endregion
 
@@ -899,6 +955,7 @@ export const whatsappSlice = createSlice({
 		saveTemplate: [],
 		userPhoneNumbers: [],
 		agentList: [],
+		quickResponses: [],
 		ToastMessages: {
 			SUCCESS: {
 				severity: 'success',
@@ -1050,6 +1107,18 @@ export const whatsappSlice = createSlice({
 				message: 'whatsappChat.agentUpdated',
 				showAnimtionCheck: false,
 			},
+			QUICK_RESPONSE_SAVED: {
+				severity: 'success',
+				color: 'success',
+				message: 'whatsappChat.quickResponseSaved',
+				showAnimtionCheck: true,
+			},
+			QUICK_RESPONSE_DELETED: {
+				severity: 'success',
+				color: 'success',
+				message: 'whatsappChat.quickResponseDeleted',
+				showAnimtionCheck: true,
+			},
 		},
 		directWhatsappReport: null,
 		inboundWhatsappReport: null,
@@ -1080,6 +1149,9 @@ export const whatsappSlice = createSlice({
 		});
 		builder.addCase(getChatAgents.fulfilled, (state, { payload }) => {
 			state.agentList = payload?.Data;
+		});
+		builder.addCase(getQuickResponses.fulfilled, (state, { payload }) => {
+			state.quickResponses = payload?.Data || [];
 		});
 	},
 });

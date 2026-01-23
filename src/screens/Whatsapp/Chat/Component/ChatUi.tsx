@@ -344,6 +344,7 @@ const ChatUi = ({
 						onChoose(template, templateText);
 						setDialogType(null);
 					}}
+					isIn24Window={whatsappChatSession?.IsIn24Window}
 				/>
 			)
 		}

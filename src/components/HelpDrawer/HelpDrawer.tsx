@@ -40,6 +40,7 @@ const useStyles = makeStyles((theme) => ({
     height: '100vh',
     border: 'none',
     boxShadow: '-2px 0 8px rgba(0,0,0,0.1)',
+    overflow: 'hidden',
     [theme.breakpoints.down('sm')]: {
       width: '100%',
     },
@@ -104,8 +105,7 @@ const useStyles = makeStyles((theme) => ({
   content: {
     padding: theme.spacing(2),
     overflowY: 'auto',
-    // height: 'calc(100vh - 240px)',
-    // paddingBottom: theme.spacing(4),
+    height: 'calc(100vh - 132px)',
   },
   menuItem: {
     backgroundColor: '#fff',
