@@ -837,6 +837,11 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				translator('whatsapp.alertModal.templateTextRequired')
 			);
 			isValidated = false;
+		} else if (templateName?.length > 50) {
+			validationErrors.push(
+				`${translator('whatsapp.alertModal.templateNameLengthError')} 50 ${translator('mainReport.char')}`
+			);
+			isValidated = false;
 		} else {
 			if (
 				!templateData?.templateText?.replace(/\s/g, '').length ||

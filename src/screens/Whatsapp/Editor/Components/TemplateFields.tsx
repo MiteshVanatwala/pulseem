@@ -102,7 +102,13 @@ const TemplateFields = ({
 							}
 							onChange={onTemplateNameChange}
 							value={templateName}
+							inputProps={{ maxLength: 50 }}
 						/>
+						{templateName?.length >= 50 && (
+							<Typography className={clsx(classes.buttonContent, classes.textRed)}>
+								{`${translator('whatsapp.alertModal.templateNameLengthError')} 50 ${translator('mainReport.char')}`}
+							</Typography>
+						)}
 
 						<Typography className={classes.buttonContent}>
 							<>{translator('whatsapp.templateDesc')}</>
