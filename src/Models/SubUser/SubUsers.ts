@@ -71,18 +71,21 @@ export const UserRoles = {
         AllowSend: true,
         AllowExport: true,
         AllowDelete: true,
-        HideRecipients: false
+        HideRecipients: false,
+        AllowWhatsAppToAgent: true
     },
     Restricted: {
         AllowSend: false,
         AllowExport: true,
         AllowDelete: false,
-        HideRecipients: false
+        HideRecipients: false,
+        AllowWhatsAppToAgent: false
     },
     ReadOnly: {
         AllowSend: false,
         AllowExport: false,
         AllowDelete: false,
-        HideRecipients: true
+        HideRecipients: true,
+        AllowWhatsAppToAgent: false
     },
 };

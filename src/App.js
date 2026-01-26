@@ -298,57 +298,80 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
       {/* Landing Pages */}
       {/* Whatsapp */}
 
-      <Route
-        path={whatsappRoutes.CREATE_TEMPLATE}
-        element={<WhatsappCreator classes={classes} key="wa-create" />}
-      />
+      {
+        userRoles?.AllowWhatsAppToAgent &&
+        <Route
+          path={whatsappRoutes.CREATE_TEMPLATE}
+          element={<WhatsappCreator classes={classes} key="wa-create" />}
+        />
+      }
+      {
+        userRoles?.AllowWhatsAppToAgent && 
+        <Route
+          path={whatsappRoutes.CREATE_CAMPAIGN_PAGE1}
+          element={<SaveCampain classes={classes} />}
+        />
+      }
+      {
+        userRoles?.AllowWhatsAppToAgent &&
+        <Route
+          path={whatsappRoutes.CREATE_CAMPAIGN_PAGE2}
+          element={<SendCampaign classes={classes} key="wa-send" />}
+        />
+      }
+      {
+        userRoles?.AllowWhatsAppToAgent &&
+        <Route
+          path={whatsappRoutes.TEMPLATE_MANAGEMENT}
+          element={<ManageWhatsAppTemplates classes={classes} key="wa-template-management" />}
+        />
+      }
+      {
+        userRoles?.AllowWhatsAppToAgent &&
+        <Route
+          path={whatsappRoutes.REPORTS}
+          element={<WhatsappReports classes={classes} key="wa-reports" />}
+        />
+      }
+      {
+        userRoles?.AllowWhatsAppToAgent &&
+        <Route
+          path={whatsappRoutes.CAMPAIGN_MANAGEMENT}
+          element={<ManageWhatsAppCampaigns classes={classes} key="wa-CAMPAIGN_MANAGEMENT" />}
+        />
+      }
 
-      <Route
-        path={whatsappRoutes.CREATE_CAMPAIGN_PAGE1}
-        element={<SaveCampain classes={classes} />}
-      />
+      {
+        userRoles?.AllowWhatsAppToAgent &&
+        <Route
+          path={whatsappRoutes.EDIT_TEMPLATE}
+          element={<WhatsappCreator classes={classes} key="wa-edit" />}
+        />
+      }
+      {
+        userRoles?.AllowWhatsAppToAgent &&
+        <Route
+          path={whatsappRoutes.EDIT_CAMPAIGN_PAGE1}
+          element={<SaveCampain classes={classes} />}
+        />
+      }
+      {
+        userRoles?.AllowWhatsAppToAgent &&
+        <Route
+          path={whatsappRoutes.EDIT_CAMPAIGN_PAGE2}
+          element={<SendCampaign classes={classes} key="wa-send-campaign-page2" />}
+        />
+      }
 
-      <Route
-        path={whatsappRoutes.CREATE_CAMPAIGN_PAGE2}
-        element={<SendCampaign classes={classes} key="wa-send" />}
-      />
-
-      <Route
-        path={whatsappRoutes.TEMPLATE_MANAGEMENT}
-        element={<ManageWhatsAppTemplates classes={classes} key="wa-template-management" />}
-      />
-
-      <Route
-        path={whatsappRoutes.REPORTS}
-        element={<WhatsappReports classes={classes} key="wa-reports" />}
-      />
-
-      <Route
-        path={whatsappRoutes.CAMPAIGN_MANAGEMENT}
-        element={<ManageWhatsAppCampaigns classes={classes} key="wa-CAMPAIGN_MANAGEMENT" />}
-      />
-
-      <Route
-        path={whatsappRoutes.EDIT_TEMPLATE}
-        element={<WhatsappCreator classes={classes} key="wa-edit" />}
-      />
-
-      <Route
-        path={whatsappRoutes.EDIT_CAMPAIGN_PAGE1}
-        element={<SaveCampain classes={classes} />}
-      />
-
-      <Route
-        path={whatsappRoutes.EDIT_CAMPAIGN_PAGE2}
-        element={<SendCampaign classes={classes} key="wa-send-campaign-page2" />}
-      />
-
-      <Route
-        path={whatsappRoutes.CHAT}
-      >
-        <Route index element={<WhatsappChat classes={classes} key="wa-chate" />} />
-        <Route path=":contactID" element={<WhatsappChat classes={classes} key="wa-chat-conversation" />} />
-      </Route>
+      {
+        userRoles?.AllowWhatsAppToAgent &&
+        <Route
+          path={whatsappRoutes.CHAT}
+        >
+          <Route index element={<WhatsappChat classes={classes} key="wa-chate" />} />
+          <Route path=":contactID" element={<WhatsappChat classes={classes} key="wa-chat-conversation" />} />
+        </Route>
+      }
       <Route
         path='/NewWebForm/NewFormEdit/:id'
         component={transferUrl('/Pulseem/NewWebForm/NewFormEdit/', 'id')}
@@ -380,7 +403,7 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
       />
       <Route
         path={`${sitePrefix}Popups/Create`}
-        element={<CreateLandingPage classes={classes} isPopup={true}  key="popup-create"/>}
+        element={<CreateLandingPage classes={classes} isPopup={true} key="popup-create" />}
       />
       <Route
         path={`${sitePrefix}Popups/Create/:id`}
@@ -572,10 +595,13 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
         path={`${sitePrefix}Integrations`}
         element={<Integrations classes={classes} />}
       />}
-      <Route exact
-        path={`${sitePrefix}whatsapp-onboarding`}
-        element={<WhatsappOnBoarding classes={classes} />}
-      />
+      {
+        userRoles?.AllowWhatsAppToAgent && 
+        <Route exact
+          path={`${sitePrefix}whatsapp-onboarding`}
+          element={<WhatsappOnBoarding classes={classes} />}
+        />
+      }
       {!userRoles?.HideRecipients && <Route
         exact
         path={`${sitePrefix}reports/Inbound`}

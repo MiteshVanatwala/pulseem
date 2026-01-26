@@ -11,6 +11,7 @@
   "allowSending": "Sending",
   "allowExport": "Export",
   "allowDeleting": "Deleting",
+  "allowWhatsAppToAgent": "WhatsApp Service Agent",
   "userCreation": "Sub User Creation",
   "readOnly": "Read Only",
   "whatsappAgent": "WhatsApp Service Agent",
