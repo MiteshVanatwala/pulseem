@@ -41,7 +41,7 @@ const PermissionList: React.FC<PermissionListProps> = ({ list }) => {
       case eSubUserPermissions.HideRecipients:
         return t('SubUsers.readOnly');
       case eSubUserPermissions.AllowWhatsAppToAgent:
-        return t('SubUsers.allowWhatsAppToAgent');
+        return t('SubUsers.whatsappAgent');
       default:
         return '';
     }
