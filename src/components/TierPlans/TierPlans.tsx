@@ -208,7 +208,8 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false, isBankT
 
     if (plan.Id === 1 && !isAllowNewsletterSubscription) return false;
     else if (plan.Id === 4) {
-      setShowSalesContactPopup(true);
+      // setShowSalesContactPopup(true);
+      setShowContactDialog(true);
       return;
     } else if (isBankTransferForTiers) {
       setSelectedPlan(planWithConfig);
@@ -1017,6 +1018,7 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false, isBankT
           open={showSalesContactPopup}
           onClose={() => setShowSalesContactPopup(false)}
           onCancel={() => setShowSalesContactPopup(false)}
+          onConfirm={() => setShowSalesContactPopup(false)}
         >
           {t('billing.tier.salesContactConfirmation')}
         </BaseDialog>
