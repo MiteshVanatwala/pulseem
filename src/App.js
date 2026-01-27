@@ -741,7 +741,7 @@ const App = ({ screenSize }) => {
           isAllowSwitchAccount,
           billingTypeId,
           unique_name,
-          onlyWhatsAppChat: OperationType === "WhatsAppChat",
+          isOnlyWhatsAppChat: OperationType === "WhatsappChat",
         })
       );
       let lang = culture || locality; //||'he'
