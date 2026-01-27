@@ -104,7 +104,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		}) => state.common?.accountSettings?.SubAccountSettings
 	);
 	const { subAccount } = useSelector((state: any) => state.common);
-	const { isRTL, windowSize, isLoader = false } = useSelector((state: { core: coreProps }) => state.core);
+	const { isRTL, windowSize, isLoader = false, isOnlyWhatsAppChat } = useSelector((state: { core: coreProps }) => state.core);
 	const { agentList } = useSelector((state: StateType) => state.whatsapp);
 	const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
 	const [isAccountSetup, setIsAccountSetup] = useState<boolean | null>(null);
@@ -1280,6 +1280,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				classes={classes}
 				customPadding={false}
 				containerClass={clsx(classes.mb75)}
+				showAppBar={!isOnlyWhatsAppChat}
 			>
 				{isAccountSetup === true && (
 					<>
