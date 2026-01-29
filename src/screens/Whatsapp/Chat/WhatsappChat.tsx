@@ -1279,14 +1279,14 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				currentPage='whatsapp'
 				classes={classes}
 				customPadding={false}
-				containerClass={clsx(classes.mb75)}
+				containerClass={!isOnlyWhatsAppChat ? clsx(classes.mb75) : {}}
 				showAppBar={!isOnlyWhatsAppChat}
 			>
 				{isAccountSetup === true && (
 					<>
 						{toastMessage?.message?.length > 0 && <>{renderToast()}</>}
-						<div className={`${classes.whatsappChat} app`}>
-							<div className={`${classes.whatsappChat} app-content`}>
+						<div className={`${classes.whatsappChat} app ${isOnlyWhatsAppChat ? 'only-whatsapp' : ''}`}>
+							<div className={`${classes.whatsappChat} app-content ${isOnlyWhatsAppChat ? 'only-whatsapp' : ''}`}>
 								<SideBar
 									isMobileSideBar={isMobileSideBar}
 									classes={classes}
