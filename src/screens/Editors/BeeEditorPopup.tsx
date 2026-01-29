@@ -555,11 +555,6 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
             display: flex !important;
             flex-wrap: wrap !important;
           }
-          @media (max-width: 480px) {
-            .bee-form .bee-form-row.bee-form-row-multicolumn {
-              display: block !important;
-            }
-          }
         </style>
       `;
 
