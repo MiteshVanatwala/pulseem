@@ -548,6 +548,25 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
       let finalHtml = args.HtmlData;
       let finalJson = args.JsonData;
 
+      if (!finalHtml.includes('id="popup-form-fix"')) {
+        const cssInjection = `
+        <style id="popup-form-fix">
+          .bee-form .bee-form-row.bee-form-row-multicolumn {
+            display: flex !important;
+            flex-wrap: wrap !important;
+          }
+        </style>
+      `;
+
+        if (finalHtml.includes('</head>')) {
+          finalHtml = finalHtml.replace('</head>', `${cssInjection}</head>`);
+        } else if (finalHtml.includes('<body')) {
+          finalHtml = finalHtml.replace(/<body([^>]*)>/, `<body$1>${cssInjection}`);
+        } else {
+          finalHtml = finalHtml.replace(/(<html[^>]*>)/i, `$1${cssInjection}`);
+        }
+      }
+
       //@ts-ignore
       let response: any = await dispatch(saveWebform({
         Name: '',
