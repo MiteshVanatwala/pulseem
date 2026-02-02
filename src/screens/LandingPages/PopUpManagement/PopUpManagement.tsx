@@ -44,6 +44,10 @@ import { sitePrefix } from '../../../config';
 import { ConvertObjectToQueryString } from '../../../helpers/Utils/HtmlUtils';
 import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { findPlanByFeatureCode } from '../../../../src/redux/reducers/TiersSlice';
+import TierPlans from '../../../components/TierPlans/TierPlans';
+import { TierFeatures } from '../../../helpers/Constants';
+import { get } from 'lodash';
 
 interface PopUpManagementProps {
   classes: Record<string, string>;
@@ -55,7 +59,7 @@ interface ToastMessage {
 }
 
 export interface DialogType {
-  type: 'delete' | 'restore' | 'duplicate' | 'embed';
+  type: 'delete' | 'restore' | 'duplicate' | 'embed' | 'tier';
   data: any;
 }
 
@@ -66,6 +70,8 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
   const dispatch = useDispatch<any>();
   const { windowSize } = useSelector((state: any) => state.core);
   const { userRoles } = useSelector((state: any) => state.core);
+  const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
+  const { subAccount, isRTL } = useSelector((state: any) => state.common);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const {
     stats,
@@ -86,6 +92,7 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
   const [previewPopupId, setPreviewPopupId] = useState<number | null>(null);
   const [showLoader, setShowLoader] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [showTierPlans, setShowTierPlans] = useState(false);
   const [filters, setFilters] = useState({
     SearchTerm: '',
     FilterStatus: 'All',
@@ -266,6 +273,68 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
     setFilters(prev => ({ ...prev, SearchTerm: searchTerm, PageNumber: 1 }));
   };
 
+  const handleTierRestriction = (message: string) => {
+    setDialogType({ type: 'tier', data: message });
+  };
+
+  const handleGetPlanForFeature = (tierMessageCode: string) => {
+    const planName = findPlanByFeatureCode(
+      tierMessageCode,
+      availablePlans,
+      currentPlan.Id
+    );
+
+    if (planName) {
+      return t('billing.tier.featureNotAvailable')
+        .replace('{feature}', t(TierFeatures[tierMessageCode as keyof typeof TierFeatures] || tierMessageCode))
+        .replace('{planName}', planName);
+    } else {
+      return t('billing.tier.noFeatureAvailable');
+    }
+  };
+
+  const getTierValidationDialog = (data: string) => ({
+    title: t('billing.tier.permission'),
+    showDivider: false,
+    content: (
+      <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+        {handleGetPlanForFeature(data || '')}
+      </Typography>
+    ),
+    renderButtons: () => (
+      <Grid
+        container
+        spacing={2}
+        className={clsx(
+          classes.dialogButtonsContainer,
+          isRTL ? classes.rowReverse : null,
+          !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : ''
+        )}
+      >
+        <Grid item>
+          <Button
+            onClick={() => {
+              setDialogType(null);
+              setShowTierPlans(true);
+            }}
+            className={clsx(classes.btn, classes.btnRounded)}
+          >
+            {t('billing.upgradePlan')}
+          </Button>
+        </Grid>
+        <Grid item>
+          <Button
+            onClick={() => setDialogType(null)}
+            className={clsx(classes.btn, classes.btnRounded)}
+          >
+            {t('common.cancel')}
+          </Button>
+        </Grid>
+      </Grid>
+    )
+  });
+
+
   const renderSearchAndFilterSection = () => {
     const filterButtons = [
       { value: 'All', labelKey: 'all' },
@@ -441,6 +510,7 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
                       popup={page}
                       classes={classes}
                       setDialogType={setDialogType}
+                      onTierRestriction={handleTierRestriction}
                     />
                   </Grid>
                 ))}
@@ -946,14 +1016,28 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
     }
 
     const { data, type } = dialogType;
-    const dialogContent = {
-      delete: getDeleteDialog(data),
-      restore: getRestorDialog(data),
-      duplicate: getDuplicateDialog(data),
-      embed: getEmbedDialog(data),
+
+    let currentDialog: any = null;
+    switch (type) {
+      case 'delete':
+        currentDialog = getDeleteDialog(data);
+        break;
+      case 'restore':
+        currentDialog = getRestorDialog(data);
+        break;
+      case 'duplicate':
+        currentDialog = getDuplicateDialog(data);
+        break;
+      case 'embed':
+        currentDialog = getEmbedDialog(data);
+        break;
+      case 'tier':
+        currentDialog = getTierValidationDialog(data as string);
+        break;
+      default:
+        return null;
     }
 
-    const currentDialog = dialogContent[type];
     if (!currentDialog) return null;
     return (
       <BaseDialog
@@ -993,6 +1077,13 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
       <Loader isOpen={statsLoading || pagesLoading || showLoader} />
       {renderToast()}
       {renderDialog()}
+      {showTierPlans && (
+        <TierPlans
+          classes={classes}
+          isOpen={showTierPlans}
+          onClose={() => setShowTierPlans(false)}
+        />
+      )}
       <PopupPreviewModal
         open={previewPopupId !== null}
         onClose={() => setPreviewPopupId(null)}
