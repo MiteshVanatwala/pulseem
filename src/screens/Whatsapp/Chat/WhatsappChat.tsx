@@ -126,6 +126,10 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const [sideChatContacts, setSideChatContacts] = useState<
 		APIWhatsappChatSidebarContactsItemsData[]
 	>([]);
+	const [ totalContacts, setTotalContacts ] = useState<number>(0);
+	const [ totalOpenContacts, setTotalOpenContacts ] = useState<number>(0);
+	const [ totalPendingContacts, setTotalPendingContacts ] = useState<number>(0);
+	const [ totalSolvedContacts, setTotalSolvedContacts ] = useState<number>(0);
 	const [activePhoneNumber, setActivePhoneNumber] = useState<string>('');
 	const [filterBySelected, setFilterBySelected] = useState(0);
 	const [agentSelected, setAgentSelected] = useState(Number(getCookie('whatsappSelectedAgentId') || 0));
@@ -236,7 +240,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const [contactsPaginationSetting, setContactsPaginationSetting] =
 		useState<ContactsPaginationSetting>({
 			PageNo: 1,
-			PageSize: 20,
+			PageSize: 10,
 			hasMore: true,
 		});
 
@@ -367,6 +371,12 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		if (whatsAppChatContactsData?.Status === apiStatus.SUCCESS) {
 			const contactData = whatsAppChatContactsData.Data.Items;
 			const updatedActiveChat = contactData[0];
+			console.log(whatsAppChatContactsData?.Data?.TotalRecord)
+			// Update total contacts data
+			setTotalContacts(whatsAppChatContactsData?.Data?.TotalRecord || 0);
+			setTotalOpenContacts(whatsAppChatContactsData?.Data?.TotalOpen || 0);
+			setTotalPendingContacts(whatsAppChatContactsData?.Data?.TotalPending || 0);
+			setTotalSolvedContacts(whatsAppChatContactsData?.Data?.TotalSolved || 0);
 			if (contactID) {
 				const activeContact = contactData?.find(
 					(contact) => contact?.PhoneNumber === contactID
@@ -412,7 +422,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			setSideChatContacts([]);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [contactsPaginationSetting.PageNo, contactsPaginationSetting.PageSize, activeChatContacts.PhoneNumber, contactID, agentSelected, filterBySelected, dispatch, navigate]);
+	}, [activeChatContacts.PhoneNumber, contactID, agentSelected, filterBySelected, dispatch, navigate]);
 
 	const getPhoneNumber = useCallback(async () => {
 		const { payload: phoneNumberData }: phoneNumberAPIProps =
@@ -689,41 +699,48 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	}, [savedTemplate, newMessage, updatedDynamicVariable, translator]);
 
 	const updateContactList = useCallback(async () => {
-		if (sideChatContacts?.length > 0) {
-			const {
-				payload: whatsAppChatContactsData,
-			}: APIWhatsappChatSidebarContactsData = await dispatch<any>(
-				getWhatsappChatContactsByUserNumber({
-					PhoneNumber: activePhoneNumber,
-					IsPagination: false,
-					pageNo: 1,
-					pageSize: 6,
-					UserNumber: activeChatContacts?.PhoneNumber,
-					ChatStatus: filterBySelected,
-				})
-			);
-			if (
-				whatsAppChatContactsData?.Status === apiStatus?.SUCCESS &&
-				whatsAppChatContactsData?.Data?.Items?.length > 0
-			) {
-				const updatedContacts = sideChatContacts?.map((contact) => {
-					if (
-						contact?.PhoneNumber ===
-						whatsAppChatContactsData?.Data?.Items[0]?.PhoneNumber
-					) {
-						return whatsAppChatContactsData?.Data?.Items[0];
-					}
-					return contact;
-				});
-
-				changeContactReadStatus(activeChatContacts, updatedContacts);
-			} else if (whatsAppChatContactsData?.StatusCode === 927) {
-				setTierMessageCode(whatsAppChatContactsData?.Message);
-				setDialogType({
-					type: 'tier'
-				});
-			}
+		if (!sideChatContacts?.length || sideChatContacts.length === 0) {
+			return false;
 		}
+		const {
+			payload: whatsAppChatContactsData,
+		}: APIWhatsappChatSidebarContactsData = await dispatch<any>(
+			getWhatsappChatContactsByUserNumber({
+				PhoneNumber: activePhoneNumber,
+				IsPagination: false,
+				pageNo: 1,
+				pageSize: 6,
+				UserNumber: activeChatContacts?.PhoneNumber,
+				ChatStatus: filterBySelected,
+			})
+		);
+		if (
+			whatsAppChatContactsData?.Status === apiStatus?.SUCCESS &&
+			whatsAppChatContactsData?.Data?.Items?.length > 0
+		) {
+			// Update total contacts data
+			setTotalContacts(whatsAppChatContactsData?.Data?.TotalRecord || 0);
+			setTotalOpenContacts(whatsAppChatContactsData?.Data?.TotalOpen || 0);
+			setTotalPendingContacts(whatsAppChatContactsData?.Data?.TotalPending || 0);
+			setTotalSolvedContacts(whatsAppChatContactsData?.Data?.TotalSolved || 0);
+			const updatedContacts = sideChatContacts?.map((contact) => {
+				if (
+					contact?.PhoneNumber ===
+					whatsAppChatContactsData?.Data?.Items[0]?.PhoneNumber
+				) {
+					return whatsAppChatContactsData?.Data?.Items[0];
+				}
+				return contact;
+			});
+
+			changeContactReadStatus(activeChatContacts, updatedContacts);
+		} else if (whatsAppChatContactsData?.StatusCode === 927) {
+			setTierMessageCode(whatsAppChatContactsData?.Message);
+			setDialogType({
+				type: 'tier'
+			});
+		}
+		return false;
 	}, [sideChatContacts, dispatch, activePhoneNumber, activeChatContacts, filterBySelected, changeContactReadStatus]);
 
 	const onChatSend = useCallback(async () => {
@@ -771,7 +788,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				}
 
 				// To update contact list
-				updateContactList();
+				// updateContactList();
 			} else {
 				if (sendWhatsappChat.StatusCode === 112) {
 					setDialogType({
@@ -820,53 +837,83 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const fetchMoreContacts = useCallback(async (
 		searchText: string,
 		ChatStatus: number = filterBySelected,
-		isPaginationReset: boolean = false
+		isPaginationReset: boolean = false,
+		pageSize: number = contactsPaginationSetting.PageSize,
+		pageNumber?: number,
+		isInfiniteScroll: boolean = false,
+		startDate?: string,
+		endDate?: string
 	) => {
 		if (activePhoneNumber && activePhoneNumber?.length > 0) {
-			if (isPaginationReset) {
+			if (isPaginationReset && !isInfiniteScroll) {
 				dispatch(setIsLoader(true));
 			}
+			
+			// Use normal pagination - backend handles all filtering (dates, agent, search)
+			const effectivePageNo = pageNumber || (isPaginationReset ? 1 : contactsPaginationSetting?.PageNo + 1);
+			
+			// Update pagination settings with new values
+			const newPaginationSettings = {
+				...contactsPaginationSetting,
+				PageSize: pageSize,
+				PageNo: effectivePageNo
+			};
+			
 			const {
 				payload: whatsAppChatContactsData,
 			}: APIWhatsappChatSidebarContactsData = await dispatch<any>(
 				agentSelected > 0 ? getWhatsappChatContactsByAgent({
 					AgentId: agentSelected,
 					IsPagination: true,
-					pageNo: isPaginationReset ? 1 : contactsPaginationSetting?.PageNo + 1,
-					pageSize: contactsPaginationSetting?.PageSize,
+					pageNo: newPaginationSettings.PageNo,
+					pageSize: newPaginationSettings.PageSize,
 					Searchtext: searchText,
 					ChatStatus: ChatStatus,
+					StartDate: startDate,
+					EndDate: endDate,
 				}) : getWhatsappChatContactsByPhoneNumber({
 					PhoneNumber: activePhoneNumber,
 					IsPagination: true,
-					pageNo: isPaginationReset ? 1 : contactsPaginationSetting?.PageNo + 1,
-					pageSize: contactsPaginationSetting?.PageSize,
+					pageNo: newPaginationSettings.PageNo,
+					pageSize: newPaginationSettings.PageSize,
 					Searchtext: searchText,
 					ChatStatus: ChatStatus,
+					StartDate: startDate,
+					EndDate: endDate,
 				})
 			);
 			dispatch(setIsLoader(false));
 			if (whatsAppChatContactsData?.Status === apiStatus.SUCCESS) {
+				console.log(whatsAppChatContactsData?.Data?.TotalRecord)
+				
+				// Backend handles all filtering - use response data directly
+				const items = whatsAppChatContactsData?.Data?.Items || [];
+				
+				// Update total contacts data from backend response
+				setTotalContacts(whatsAppChatContactsData?.Data?.TotalRecord || 0);
+				setTotalOpenContacts(whatsAppChatContactsData?.Data?.TotalOpen || 0);
+				setTotalPendingContacts(whatsAppChatContactsData?.Data?.TotalPending || 0);
+				setTotalSolvedContacts(whatsAppChatContactsData?.Data?.TotalSolved || 0);
+				
+				// Handle pagination based on backend response
 				setContactsPaginationSetting({
-					...contactsPaginationSetting,
-					hasMore:
-						whatsAppChatContactsData?.Data?.Items?.length <
-							contactsPaginationSetting?.PageSize
-							? false
-							: true,
-					PageNo: isPaginationReset ? 1 : contactsPaginationSetting?.PageNo + 1,
+					...newPaginationSettings,
+					hasMore: isInfiniteScroll ? items.length >= pageSize : false,
 				});
-				if (isPaginationReset) {
+				
+				if (isPaginationReset || pageNumber) {
 					const listDivElement = document.getElementById('contact-list-div');
 					if (listDivElement) {
 						listDivElement.scrollTop = 0;
 					}
-					setSideChatContacts(whatsAppChatContactsData?.Data?.Items);
-				} else {
-					setSideChatContacts([
-						...sideChatContacts,
-						...whatsAppChatContactsData?.Data?.Items,
+					setSideChatContacts(items);
+				} else if (isInfiniteScroll) {
+					setSideChatContacts((prevContacts) => [
+						...prevContacts,
+						...items,
 					]);
+				} else {
+					setSideChatContacts(items);
 				}
 			} else {
 				if (whatsAppChatContactsData?.StatusCode === 927) {
@@ -884,7 +931,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				}
 			}
 		}
-	}, [activePhoneNumber, filterBySelected, agentSelected, contactsPaginationSetting, sideChatContacts, dispatch]);
+	}, [activePhoneNumber, filterBySelected, agentSelected, dispatch, contactsPaginationSetting]);
 
 	const updateFreeFormMessage = useCallback((message: string) => {
 		if (message !== newMessage) {
@@ -1303,7 +1350,9 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 									chatContacts={activeChatContacts}
 									fetchMoreContacts={fetchMoreContacts}
 									contactsPaginationSetting={contactsPaginationSetting}
-									fetchSearchedContacts={fetchMoreContacts}
+									fetchSearchedContacts={(searchText: string, ChatStatus: number, isPaginationReset: boolean, startDate?: string, endDate?: string) => {
+										void fetchMoreContacts(searchText, ChatStatus, isPaginationReset, contactsPaginationSetting?.PageSize || 10, 1, false, startDate, endDate);
+									}}
 									isLoader={isLoader}
 									filterBySelected={filterBySelected}
 									setFilterBySelected={setFilterBySelected}
@@ -1316,6 +1365,10 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 										getAgents();
 										setDialogType({ type: 'editAgents' })
 									}}
+									TotalRecord={totalContacts}
+									TotalOpen={totalOpenContacts}
+									TotalPending={totalPendingContacts}
+									TotalSolved={totalSolvedContacts}
 								/>
 								<ChatUi
 									isMobileSideBar={isMobileSideBar}

@@ -491,6 +491,8 @@ export const getWhatsappChatContactsByPhoneNumber = createAsyncThunk(
 			pageSize,
 			Searchtext,
 			ChatStatus,
+			StartDate,
+			EndDate,
 		}: APIGetWhatsappChatContactsReq,
 		thunkAPI
 	) => {
@@ -504,6 +506,8 @@ export const getWhatsappChatContactsByPhoneNumber = createAsyncThunk(
 					pageSize,
 					Searchtext,
 					ChatStatus,
+					StartDate,
+					EndDate,
 				}
 			);
 
@@ -817,7 +821,9 @@ export const getWhatsappChatContactsByAgent = createAsyncThunk(
 			pageNo,
 			pageSize,
 			Searchtext,
-			ChatStatus
+			ChatStatus,
+			StartDate,
+			EndDate
 		}: APIGetWhatsappChatContactsReq,
 		thunkAPI
 	) => {
@@ -830,7 +836,9 @@ export const getWhatsappChatContactsByAgent = createAsyncThunk(
 					pageNo,
 					pageSize,
 					Searchtext,
-					ChatStatus
+					ChatStatus,
+					StartDate,
+					EndDate
 				}
 			);
 

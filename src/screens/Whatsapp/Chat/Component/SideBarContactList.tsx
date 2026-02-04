@@ -43,7 +43,7 @@ const SideBarContactList = ({
 				<InfiniteScroll
 					dataLength={ChatContacts?.length}
 					next={fetchMoreContacts}
-					hasMore={contactsPaginationSetting?.hasMore}
+					hasMore={false}
 					loader={<LinearProgress />}
 					scrollableTarget='contact-list-div'>
 					{ChatContacts?.length === 0 && !isLoader ? (

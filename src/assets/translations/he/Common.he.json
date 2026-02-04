@@ -906,5 +906,7 @@
   "cancelPlanConfirmation": "האם אתה בטוח שברצונך לבטל את התוכנית הנוכחית שלך?",
   "planCancellationRequestSubmitted": "בקשת ביטול התוכנית שלך הוגשה בהצלחה.",
   "nonPolishNumber": "You can not send SMS from non-polish number. Please set a polish number.",
-  "saveColumnStructureAsDefault": "שמור את מבנה העמודות הזה כברירת מחדל"
+  "saveColumnStructureAsDefault": "שמור את מבנה העמודות הזה כברירת מחדל",
+  "manageAgent": "נהל סוכן",
+  "clearAllFilters": "נקה את כל המסננים"
 }

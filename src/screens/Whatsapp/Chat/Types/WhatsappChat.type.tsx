@@ -135,13 +135,20 @@ export type WhatsappChatSideBarProps = {
 	fetchMoreContacts: (
 		searchText: string,
 		ChatStatus: number,
-		isPaginationReset?: boolean
+		isPaginationReset?: boolean,
+		pageSize?: number,
+		pageNumber?: number,
+		isInfiniteScroll?: boolean,
+		startDate?: string,
+		endDate?: string
 	) => void;
 	contactsPaginationSetting: ContactsPaginationSetting;
 	fetchSearchedContacts: (
 		searchText: string,
 		ChatStatus: number,
-		isPaginationReset: boolean
+		isPaginationReset: boolean,
+		startDate?: string,
+		endDate?: string
 	) => void;
 	isLoader: boolean;
 	filterBySelected: number;
@@ -150,6 +157,10 @@ export type WhatsappChatSideBarProps = {
 	setAgentSelected: (agentId: number) => void;
 	onAddAgent: () => void;
 	onEditAgents: () => void;
+	TotalRecord: number;
+	TotalOpen: number;
+	TotalPending: number;
+	TotalSolved: number;
 };
 
 export type chatModalProps = {
@@ -189,6 +200,9 @@ export type APIWhatsappChatSidebarContactsMainData = {
 	Items: APIWhatsappChatSidebarContactsItemsData[];
 	PageSize: number;
 	TotalRecord: number;
+	TotalOpen: number;
+	TotalPending: number;
+	TotalSolved: number;
 };
 
 export type APIWhatsappChatSidebarContactsPayloadData = {
@@ -340,6 +354,8 @@ export type APIGetWhatsappChatContactsReq = {
 	UserNumber?: string;
 	ChatStatus: number;
 	AgentId?: number;
+	StartDate?: string;
+	EndDate?: string;
 };
 
 export type Timer = {

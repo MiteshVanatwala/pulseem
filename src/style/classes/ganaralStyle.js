@@ -5289,5 +5289,23 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     fontSize: '9px !important',
     padding: '0px 6px',
     minWidth: 'auto',
+  },
+  filterChip: {
+    fontSize: '12px',
+    background: 'linear-gradient(90deg, #ffffff 1.31%, #ffffff 33.07%, #ffffff 134.74%)',
+    color: '#070707',
+    border: '1px solid #FF3343',
+    '& .MuiChip-deleteIcon': {
+      color: '#FF3343'
+    }
+  },
+  agentChip: {
+    fontSize: '12px',
+    background: 'linear-gradient(90deg, #ffffff 1.31%, #ffffff 33.07%, #ffffff 134.74%)',
+    color: '#070707',
+    border: '1px solid #FF3343',
+    '& .MuiChip-deleteIcon': {
+      color: '#FF3343'
+    }
   }
 });
