@@ -739,7 +739,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       try {
         const content = await editorRef.current.save();
         const html = content?.data?.html || '';
-        const ampHtml = content?.data?.ampHtml || '';
+        const ampHtml = content?.data?.htmlAmp || '';
 
         const sizeInfo = calculateEmailSize(html, ampHtml);
         setEmailSize(sizeInfo);
