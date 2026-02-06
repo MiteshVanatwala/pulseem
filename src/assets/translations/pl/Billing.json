@@ -191,7 +191,7 @@
     "free": "Free",
     "contactSales": "Skontaktuj się z nami",
     "permission": "Permission",
-    "featureNotAvailable": "Ta funkcja jest dostępna tylko w pakiecie {planName}",
+    "featureNotAvailable": "Ta {feature} jest dostępna tylko w pakiecie {planName}",
     "noFeatureAvailable": "Oops! no plan has this feature.",
     "salesContactConfirmation": "Otrzymaliśmy! Jeden z naszych przedstawicieli handlowych skontaktuje się z Tobą wkrótce"
   },
