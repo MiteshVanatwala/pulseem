@@ -466,9 +466,11 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
                 navigate(`${sitePrefix}LandingPages/summary/${args?.campaignId}`);
               }
               //@ts-ignore
-            } else if (saveRef.current?.showAnimation && response.payload?.StatusCode === 927) {
+            } else if (response.payload?.StatusCode === 927) {
               setTierMessageCode(response?.payload?.Message);
               setDialogType({ type: 'tier' });
+              setLoader(false);
+              return false;
             }
             else {
               // TODO: Handle publish response
