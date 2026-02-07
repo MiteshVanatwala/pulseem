@@ -218,7 +218,7 @@
     "free": "Free",
     "contactSales": "Contact Us",
     "permission": "Permission",
-    "featureNotAvailable": "This feature is only available in the {planName} plan.",
+    "featureNotAvailable": "This {feature} is only available in the {planName} plan.",
     "noFeatureAvailable": "Oops! no plan has this feature.",
     "salesContactConfirmation": "We got it! One of our sales team members will contact you shortly"
   },
