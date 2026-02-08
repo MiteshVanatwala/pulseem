@@ -933,3 +933,5 @@ export const TierFeatures = {
 
 
 export const CLOSE_BUTTON_HTML = "<div ID='PulseemCloseButton' data-color='#000000' data-bgcolor='#fee6e6' data-Size='20' data-Position='Right'>X</div>"
+
+export const COLORS = ['#E74C3C', '#F39C12', '#27AE60', '#3498DB', '#9B59B6'];

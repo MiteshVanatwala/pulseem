@@ -74,6 +74,8 @@ export type SideBarContactListProps = {
 	contactsPaginationSetting: ContactsPaginationSetting;
 	isLoader: boolean;
 	searchText: string;
+	tagsList?: Array<{ id: string; TagName: string; TagColor: string }>;
+	onTagsUpdated?: (phoneNumber: string, tagIds: number[]) => void;
 };
 
 export type SideHeaderContactDropDownProps = {
@@ -140,7 +142,9 @@ export type WhatsappChatSideBarProps = {
 		pageNumber?: number,
 		isInfiniteScroll?: boolean,
 		startDate?: string,
-		endDate?: string
+		endDate?: string,
+		agentIds?: number[],
+		tagIds?: number[]
 	) => void;
 	contactsPaginationSetting: ContactsPaginationSetting;
 	fetchSearchedContacts: (
@@ -191,6 +195,7 @@ export type APIWhatsappChatSidebarContactsItemsData = {
 	PhoneNumber: string;
 	Unread: number;
 	UserName: string;
+	Tags?: Array<{ id: string; TagName: string; TagColor: string }>;
 };
 
 //SidebarContacts Main inbound data types
@@ -356,6 +361,8 @@ export type APIGetWhatsappChatContactsReq = {
 	AgentId?: number;
 	StartDate?: string;
 	EndDate?: string;
+	AgentIds?: number[];
+	TagIds?: number[];
 };
 
 export type Timer = {

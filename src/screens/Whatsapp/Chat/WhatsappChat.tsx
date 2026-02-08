@@ -842,7 +842,9 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		pageNumber?: number,
 		isInfiniteScroll: boolean = false,
 		startDate?: string,
-		endDate?: string
+		endDate?: string,
+		agentIds?: number[],
+		tagIds?: number[]
 	) => {
 		if (activePhoneNumber && activePhoneNumber?.length > 0) {
 			if (isPaginationReset && !isInfiniteScroll) {
@@ -859,28 +861,42 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				PageNo: effectivePageNo
 			};
 			
+			const apiPayloadByAgent: any = {
+				AgentId: agentSelected,
+				IsPagination: true,
+				pageNo: newPaginationSettings.PageNo,
+				pageSize: newPaginationSettings.PageSize,
+				Searchtext: searchText,
+				ChatStatus: ChatStatus,
+				StartDate: startDate,
+				EndDate: endDate,
+			};
+			
+			const apiPayloadByPhone: any = {
+				PhoneNumber: activePhoneNumber,
+				IsPagination: true,
+				pageNo: newPaginationSettings.PageNo,
+				pageSize: newPaginationSettings.PageSize,
+				Searchtext: searchText,
+				ChatStatus: ChatStatus,
+				StartDate: startDate,
+				EndDate: endDate,
+			};
+
+			// Only add AgentIds and TagIds if they have values
+			if (agentIds && agentIds.length > 0) {
+				apiPayloadByAgent.AgentIds = agentIds;
+				apiPayloadByPhone.AgentIds = agentIds;
+			}
+			if (tagIds && tagIds.length > 0) {
+				apiPayloadByAgent.TagIds = tagIds;
+				apiPayloadByPhone.TagIds = tagIds;
+			}
+
 			const {
 				payload: whatsAppChatContactsData,
 			}: APIWhatsappChatSidebarContactsData = await dispatch<any>(
-				agentSelected > 0 ? getWhatsappChatContactsByAgent({
-					AgentId: agentSelected,
-					IsPagination: true,
-					pageNo: newPaginationSettings.PageNo,
-					pageSize: newPaginationSettings.PageSize,
-					Searchtext: searchText,
-					ChatStatus: ChatStatus,
-					StartDate: startDate,
-					EndDate: endDate,
-				}) : getWhatsappChatContactsByPhoneNumber({
-					PhoneNumber: activePhoneNumber,
-					IsPagination: true,
-					pageNo: newPaginationSettings.PageNo,
-					pageSize: newPaginationSettings.PageSize,
-					Searchtext: searchText,
-					ChatStatus: ChatStatus,
-					StartDate: startDate,
-					EndDate: endDate,
-				})
+				agentSelected > 0 ? getWhatsappChatContactsByAgent(apiPayloadByAgent) : getWhatsappChatContactsByPhoneNumber(apiPayloadByPhone)
 			);
 			dispatch(setIsLoader(false));
 			if (whatsAppChatContactsData?.Status === apiStatus.SUCCESS) {

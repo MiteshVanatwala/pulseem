@@ -5295,6 +5295,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     background: 'linear-gradient(90deg, #ffffff 1.31%, #ffffff 33.07%, #ffffff 134.74%)',
     color: '#070707',
     border: '1px solid #FF3343',
+    '& .MuiChip-label': {
+      color: '#070707',
+      justifyContent: 'flex-start',
+      textAlign: 'left'
+    },
     '& .MuiChip-deleteIcon': {
       color: '#FF3343'
     }
@@ -5307,5 +5312,125 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     '& .MuiChip-deleteIcon': {
       color: '#FF3343'
     }
+  },
+  // Edit Tags Modal Styles
+  editTagsDialogTitle: {
+    backgroundColor: '#FF3343',
+    color: '#fff',
+    padding: '16px 20px',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '20px',
+    justifyContent: 'space-between',
+    flexWrap: 'nowrap',
+    fontSize: '18px',
+  },
+  editTagsHeaderContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '20px',
+    minWidth: 0
+  },
+  editTagsIcon: {
+    flexShrink: 0
+  },
+  editTagsHeaderText: {
+    // fontSize: '16px',
+    fontWeight: '600',
+    whiteSpace: 'nowrap'
+  },
+  editTagsCloseIcon: {
+    fontSize: '30px'
+  },
+  editTagsDialogContent: {
+    padding: '20px',
+    maxHeight: '500px',
+    overflow: 'auto',
+    backgroundColor: '#f9f9f9'
+  },
+  editTagsItem: {
+    marginBottom: '16px',
+    paddingBottom: '16px',
+    borderBottom: '1px solid #e0e0e0'
+  },
+  editTagsLabel: {
+    fontSize: '14px',
+    color: '#bbb',
+    fontWeight: '600',
+    marginBottom: '8px',
+    display: 'block'
+  },
+  editTagsInputRow: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    marginBottom: '8px',
+    justifyContent: 'space-between'
+  },
+  editTagsTextField: {
+    flex: 0.72,
+    marginBottom: '0',
+    '& .MuiOutlinedInput-root': {
+      // fontSize: '13px',
+      // padding: '5px 12px',
+      borderRadius: '4px',
+      backgroundColor: '#fff'
+    },
+    '& .MuiOutlinedInput-input': {
+      // fontSize: '13px',
+      // padding: '5px 12px',
+      borderRadius: '4px',
+      backgroundColor: '#fff'
+    }
+  },
+  editTagsButtonsContainer: {
+    display: 'flex',
+    gap: '8px',
+    alignItems: 'center'
+  },
+  editTagsUpdateButton: {
+    borderColor: '#FF3343',
+    color: '#FF3343',
+    fontSize: '12px',
+    padding: '6px 12px',
+    textTransform: 'none',
+    flexShrink: 0
+  },
+  editTagsDeleteButton: {
+    color: '#FF3343',
+    padding: '6px',
+    flexShrink: 0
+  },
+  editTagsColorContainer: {
+    display: 'flex',
+    gap: '8px',
+    alignItems: 'center'
+  },
+  editTagsColorCircle: {
+    width: '20px',
+    height: '20px',
+    borderRadius: '50%',
+    cursor: 'pointer',
+    border: '2px solid transparent',
+    transition: 'border 0.2s',
+    boxShadow: 'none',
+    flexShrink: 0
+  },
+  editTagsColorCircleSelected: {
+    border: '3px solid #333',
+    boxShadow: '0 0 0 2px #fff'
+  },
+  editTagsAddNewTagBox: {
+    marginTop: '10px',
+    paddingTop: '10px',
+    // borderTop: '1px solid #e0e0e0'
+  },
+  editTagsAddNewTagButton: {
+    borderColor: '#FF3343',
+    color: '#FF3343',
+    padding: '10px',
+    fontSize: '13px',
+    textTransform: 'none',
+    fontWeight: '600'
   }
 });

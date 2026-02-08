@@ -4,20 +4,24 @@ import {
 	WhatsappChatSideBarProps,
 } from '../Types/WhatsappChat.type';
 import AccountUser from '../../../../assets/images/acc-user.jpg';
-import { Box, Button, IconButton, MenuItem, Tab, Tabs, TextField, Chip } from '@material-ui/core';
+import { Box, Button, IconButton, MenuItem, Tab, Tabs, TextField, Chip, Dialog, DialogTitle, DialogContent, DialogActions, Checkbox, FormControlLabel } from '@material-ui/core';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { FaBars, FaCalendar, FaFilter, FaTrash } from 'react-icons/fa';
-import { BsPersonWorkspace } from 'react-icons/bs';
+import { BsFillTagsFill, BsPeopleFill, BsPersonWorkspace, BsX } from 'react-icons/bs';
 import { BaseSyntheticEvent, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import SideHeaderContactDropDown from './SideHeaderContactDropDown';
 import SideBarContactList from './SideBarContactList';
 import useDebounce from '../Hook/useDebounce';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { coreProps, WhatsappAgent } from '../../Campaign/Types/WhatsappCampaign.types';
 import { StateType } from '../../../../Models/StateTypes';
 import { setCookie } from '../../../../helpers/Functions/cookies';
 import { TablePagination } from '../../../../components/managment/index';
+import { COLORS } from '../../../../helpers/Constants';
+import { getWhatsappChatTag } from '../../../../redux/reducers/whatsappSlice';
+import { PulseemReactInstance } from '../../../../helpers/Api/PulseemReactAPI';
+import Toast from '../../../../components/Toast/Toast.component';
 
 const SideBar = ({
 	classes,
@@ -48,21 +52,63 @@ const SideBar = ({
 	const { t: translator } = useTranslation();
 	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
 	const { agentList } = useSelector((state: StateType) => state.whatsapp);
+	const dispatch = useDispatch();
 	const [searchText, setSearchText] = useState<string>('');
 	const debouncedValue = useDebounce<string>(searchText, 500);
 	const [activeTab, setActiveTab] = useState(0);
 	const isInitialMount = useRef(true);
 	const isChangingRowsPerPage = useRef(false);
+	const dateRangeRef = useRef<HTMLDivElement>(null);
 	const [startDate, setStartDate] = useState<string>('');
 	const [endDate, setEndDate] = useState<string>('');
+	const [startTime, setStartTime] = useState<string>('');
+	const [endTime, setEndTime] = useState<string>('');
 	const [timePeriod, setTimePeriod] = useState<string>('lastMonth');
 	const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
 	const [showFilterDropdown, setShowFilterDropdown] = useState<boolean>(false);
+	const [showFilterDialog, setShowFilterDialog] = useState<boolean>(false);
+	const [selectedAgents, setSelectedAgents] = useState<number[]>([]);
+	const [selectedTags, setSelectedTags] = useState<string[]>([]);
+	const [dialogTimePeriod, setDialogTimePeriod] = useState<string>('lastMonth');
+	const [dialogStartDate, setDialogStartDate] = useState<string>('');
+	const [dialogEndDate, setDialogEndDate] = useState<string>('');
+	const [dialogStartTime, setDialogStartTime] = useState<string>('');
+	const [dialogEndTime, setDialogEndTime] = useState<string>('');
+	const [showEditTagsDialog, setShowEditTagsDialog] = useState<boolean>(false);
+	const [tagsList, setTagsList] = useState<Array<{ id: string; TagName: string; TagColor: string }>>([]);
+	const [editingTags, setEditingTags] = useState<Array<{ id: string; TagName: string; TagColor: string }>>([]);
+	const [savingTagId, setSavingTagId] = useState<string | null>(null);
+	const [toastMessage, setToastMessage] = useState<any>(null);
 
+	// Get available tags from tagsList
+	console.log('tagsList', tagsList);
 	// Initialize default date range on mount
 	useEffect(() => {
 		getDateRange('lastMonth');
 	}, []);
+
+	// Fetch tags on component mount
+	useEffect(() => {
+		const fetchTags = async () => {
+			try {
+				const result = await dispatch(getWhatsappChatTag()) as any;
+				console.log('getWhatsappChatTag response:', result)
+				if (result.payload && result.payload?.Data && Array.isArray(result.payload?.Data)) {
+					// Transform tags: convert Id -> id and keep only needed fields
+					const normalizedTags = result.payload.Data.map((tag: any) => ({
+						id: String(tag.Id),
+						TagName: tag.TagName,
+						TagColor: tag.TagColor
+					}));
+					console.log('Tags from API (normalized):', normalizedTags);
+					setTagsList(normalizedTags);
+				}
+			} catch (error) {
+				console.error('Failed to fetch tags:', error);
+			}
+		};
+		fetchTags();
+	}, [dispatch]);
 
 	const getDateRange = (period: string) => {
 		const today = new Date();
@@ -119,16 +165,34 @@ const SideBar = ({
 		setCookie('whatsappSelectedAgentId', e.target.value);
 	};
 
-	// Helper function to get date chip label
+	// Helper function to get date chip label with time
 	const getDateChipLabel = () => {
-		if (timePeriod === 'lastMonth' && startDate && endDate) {
+		if (timePeriod === 'lastMonth') {
 			// Don't show chip for default last month
 			return null;
 		}
-		if (startDate && endDate) {
-			const start = new Date(startDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: startDate.substring(0, 4) !== new Date().getFullYear().toString() ? '2-digit' : undefined });
-			const end = new Date(endDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: '2-digit' });
-			return `${start} - ${end}`;
+		if (startDate && endDate && startTime && endTime) {
+			// Format time to 12-hour AM/PM
+			const formatTime = (timeStr: string) => {
+				if (!timeStr) return '';
+				const [hours, minutes] = timeStr.split(':').map(Number);
+				const ampm = hours >= 12 ? 'PM' : 'AM';
+				const displayHours = hours % 12 || 12;
+				return `${displayHours}:${String(minutes).padStart(2, '0')} ${ampm}`;
+			};
+
+			// Format date to "03 Feb"
+			const formatDatePart = (dateStr: string) => {
+				const date = new Date(dateStr);
+				return date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
+			};
+
+			const startTimeFormatted = formatTime(startTime);
+			const endTimeFormatted = formatTime(endTime);
+			const startDateFormatted = formatDatePart(startDate);
+			const endDateFormatted = formatDatePart(endDate);
+
+			return `${startTimeFormatted} ${startDateFormatted} - ${endTimeFormatted} ${endDateFormatted}`;
 		}
 		return null;
 	};
@@ -158,8 +222,244 @@ const SideBar = ({
 		getDateRange('lastMonth');
 		setAgentSelected(0);
 		setCookie('whatsappSelectedAgentId', '0');
+		setSelectedAgents([]);
+		setSelectedTags([]);
 	};
 
+	const handleAgentToggle = (agentId: number) => {
+		setSelectedAgents(prev =>
+			prev.includes(agentId)
+				? prev.filter(id => id !== agentId)
+				: [...prev, agentId]
+		);
+	};
+
+	const handleTagToggle = (tag: string) => {
+		setSelectedTags(prev =>
+			prev.includes(tag)
+				? prev.filter(t => t !== tag)
+				: [...prev, tag]
+		);
+	};
+
+	const handleApplyFilters = () => {
+		// Apply filters - will fetch contacts with selected agents and tags
+		setShowFilterDialog(false);
+		
+		// Apply the dates and times from dialog to actual state
+		setStartDate(dialogStartDate);
+		setEndDate(dialogEndDate);
+		setStartTime(dialogStartTime);
+		setEndTime(dialogEndTime);
+		setTimePeriod(dialogTimePeriod);
+		
+		// If agents selected, apply the first one as selectedAgent
+		if (selectedAgents.length > 0) {
+			setAgentSelected(selectedAgents[0]);
+			setCookie('whatsappSelectedAgentId', String(selectedAgents[0]));
+		} else {
+			setAgentSelected(0);
+			setCookie('whatsappSelectedAgentId', '0');
+		}
+		
+		// Trigger fetch with current filters including agent and tag IDs
+		fetchMoreContacts(searchText, filterBySelected, true, contactsPaginationSetting?.PageSize || 10, 1, false, dialogStartDate, dialogEndDate, selectedAgents, []);
+	};
+
+	const handleSetDateRange = (period: string) => {
+		setDialogTimePeriod(period);
+		const today = new Date();
+		let start = new Date();
+		let end = new Date(today);
+
+		switch (period) {
+			case 'last24hours':
+				// Last 24 Hours: 12:01 AM 24 hours ago to 11:59 PM today
+				start = new Date(today.getTime() - 24 * 60 * 60 * 1000);
+				setDialogStartTime('00:01'); // 12:01 AM
+				setDialogEndTime('23:59');   // 11:59 PM
+				break;
+			case 'lastWeek':
+				// Last Week: 12:01 AM 7 days ago to 11:59 PM today
+				start = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+				setDialogStartTime('00:01'); // 12:01 AM
+				setDialogEndTime('23:59');   // 11:59 PM
+				break;
+			case 'lastMonth':
+				// Last Month: 12:01 AM 30 days ago to 11:59 PM today
+				start = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
+				setDialogStartTime('00:01'); // 12:01 AM
+				setDialogEndTime('23:59');   // 11:59 PM
+				break;
+			case 'custom':
+				// Custom Range: User picks dates, times auto-assigned
+				setDialogStartDate('');
+				setDialogEndDate('');
+				setDialogStartTime('00:01'); // 12:01 AM (default start)
+				setDialogEndTime('23:59');   // 11:59 PM (default end)
+				return;
+			default:
+				return null;
+		}
+
+		const formatDate = (date: Date) => date.toISOString().split('T')[0];
+		setDialogStartDate(formatDate(start));
+		setDialogEndDate(formatDate(end));
+	};
+
+	// Tag editing handlers
+	const handleOpenEditTags = () => {
+		setEditingTags([...tagsList]);
+		setShowEditTagsDialog(true);
+	};
+
+	const handleCloseEditTags = () => {
+		setShowEditTagsDialog(false);
+	};
+
+	const handleUpdateTag = (index: number, field: 'TagName' | 'TagColor', value: string) => {
+		const updatedTags = [...editingTags];
+		updatedTags[index][field] = value;
+		setEditingTags(updatedTags);
+	};
+
+	const handleDeleteTag = async (index: number) => {
+		const tag = editingTags[index];
+
+		// Only delete if it's not a new tag (id !== '0')
+		if (tag.id === '0') {
+			// New unsaved tag - just remove from editingTags
+			setEditingTags(editingTags.filter((_, i) => i !== index));
+			return;
+		}
+
+		try {
+			setSavingTagId(tag.id);
+
+			const tagId = parseInt(tag.id);
+			console.log('Deleting tag with ID:', tagId);
+
+			const response = await PulseemReactInstance.delete(
+				`WhatsAppChat/DeleteWhatsAppChatTag?tagId=${tagId}`
+			);
+
+			console.log('Delete API Response:', response.data);
+
+			// Remove from editingTags
+			const updatedEditingTags = editingTags.filter((_, i) => i !== index);
+			setEditingTags(updatedEditingTags);
+
+			// Remove from tagsList
+			const updatedTagsList = tagsList.filter(t => t.id !== tag.id);
+			setTagsList(updatedTagsList);
+
+			setToastMessage({ message: 'Tag deleted successfully', severity: 'success' });
+			setTimeout(() => setToastMessage(null), 3000);
+
+		} catch (error: any) {
+			console.error('Error deleting tag:', error);
+			setToastMessage({
+				message: error.response?.data?.message || 'Failed to delete tag',
+				severity: 'error'
+			});
+			setTimeout(() => setToastMessage(null), 3000);
+		} finally {
+			setSavingTagId(null);
+		}
+	};
+
+	const handleAddNewTag = () => {
+		setEditingTags([...editingTags, { id: '0', TagName: '', TagColor: COLORS[0] }]);
+	};
+
+	// Save tag to backend
+	const handleSaveTag = async (index: number) => {
+		const tag = editingTags[index];
+
+		// Validation
+		if (!tag.TagName || tag.TagName.trim() === '') {
+			setToastMessage({ message: 'Tag name cannot be empty', severity: 'error' });
+			setTimeout(() => setToastMessage(null), 3000);
+			return;
+		}
+
+		try {
+			setSavingTagId(tag.id);
+
+			const payloadId = tag.id === '0' ? 0 : parseInt(tag.id);
+			
+			console.log('Sending to API:', {
+				Id: payloadId,
+				TagName: tag.TagName,
+				TagColor: tag.TagColor,
+				originalTagId: tag.id
+			});
+
+			const response = await PulseemReactInstance.post(
+				'WhatsAppChat/ManageWhatsAppChatTag',
+				{
+					Id: payloadId,
+					TagName: tag.TagName,
+					TagColor: tag.TagColor
+				}
+			);
+
+			console.log('API Response:', response.data);
+
+			if (response.data) {
+				// The API returns the ID in the Data field (e.g., {StatusCode: 201, Message: 'Success', Data: 16})
+				const returnedId = response.data.Data || response.data.Id;
+				const finalId = returnedId !== null && returnedId !== undefined ? String(returnedId) : tag.id;
+				// Use returned TagColor, or fallback to local tag.TagColor if not provided
+				const returnedColor = response.data.TagColor || tag.TagColor;
+				
+				console.log('Final ID to save:', finalId);
+				
+				// Update the editingTags with the response
+				const updatedEditingTags = [...editingTags];
+				updatedEditingTags[index] = {
+					id: finalId,
+					TagName: response.data.TagName || tag.TagName,
+					TagColor: returnedColor
+				};
+				setEditingTags(updatedEditingTags);
+
+				// Also update the main tagsList
+				const existingIndex = tagsList.findIndex(t => t.id === tag.id);
+				if (existingIndex !== -1) {
+					// Update existing tag
+					const updatedTagsList = [...tagsList];
+					updatedTagsList[existingIndex] = {
+						id: finalId,
+						TagName: response.data.TagName || tag.TagName,
+						TagColor: returnedColor
+					};
+					setTagsList(updatedTagsList);
+				} else {
+					// Add new tag
+					setTagsList([...tagsList, {
+						id: finalId,
+						TagName: response.data.TagName || tag.TagName,
+						TagColor: returnedColor
+					}]);
+				}
+
+				setToastMessage({ message: 'Tag saved successfully', severity: 'success' });
+
+				// Clear toast after 3 seconds
+				setTimeout(() => setToastMessage(null), 3000);
+			}
+		} catch (error: any) {
+			console.error('Error saving tag:', error);
+			setToastMessage({
+				message: error.response?.data?.message || 'Failed to save tag',
+				severity: 'error'
+			});
+			setTimeout(() => setToastMessage(null), 3000);
+		} finally {
+			setSavingTagId(null);
+		}
+	};
 
 	const [statusTabs, setStatusTabs] = useState([
 		{ status: 'whatsappChat.allStatus', count: 0 },
@@ -234,7 +534,13 @@ const SideBar = ({
 								onClick={() => onEditAgents()}
 								title={translator("common.manageAgent")}
 							>
-							<BsPersonWorkspace />
+								<BsPeopleFill />
+							</IconButton>
+							<IconButton
+								onClick={() => handleOpenEditTags()}
+								title='Edit Tags'
+							>
+								<BsFillTagsFill />
 							</IconButton>
 						</div>
 					</span>
@@ -269,85 +575,110 @@ const SideBar = ({
 						</Tabs>
 					</Box>
 				</div>
-				<div className={`${classes.whatsappChat} search-wrapper`} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-					<div className={`${classes.whatsappChat} search-icons`}>
-						<Icon
-							id='search'
-							className={`${classes.whatsappChat} search-icon`}
-						/>
-					<button 
-						className={`${classes.whatsappChat} search__back-btn`}
-						onClick={(e) => {
-							e.preventDefault();
-							e.stopPropagation();
-						}}
-					>
-							<Icon id='back' />
-						</button>
-					</div>
-					<input
-						className={`${classes.whatsappChat} search`}
-						placeholder={translator('whatsappChat.searchPlaceholder')}
-						onChange={(e) => handleSearch(e)}
-						value={searchText}
-						style={{ flex: 1 }}
-					/>
-					<div className={`${classes.whatsappChat} search-icons-right`} style={{ display: 'flex', gap: '4px', pointerEvents: 'none' }}>
-						<div 
-							style={{ pointerEvents: 'auto' }} 
-							onClick={(e) => {
-								e.preventDefault();
-								e.stopPropagation();
-							}}
-							onMouseDown={(e) => {
-								e.preventDefault();
-								e.stopPropagation();
-							}}
-						>
-							<IconButton
-								size='small'
+				<div style={{ padding: '10px', background: '#f6f6f6' }}>
+					<div className={`${classes.whatsappChat} search-wrapper`} style={{ 
+						display: 'flex', 
+						alignItems: 'center', 
+						gap: '8px',
+						padding: '8px 12px',
+						backgroundColor: '#FFF',
+						borderRadius: '10px',
+						border: '1px solid #e0e0e0',
+						boxShadow: '0 2px 4px rgba(0, 0, 0, 0.08)',
+						transition: 'all 0.3s ease'
+					}}>
+						<div className={`${classes.whatsappChat} search-icons`} style={{ display: 'flex', alignItems: 'center', color: '#999' }}>
+							<Icon
+								id='search'
+								className={`${classes.whatsappChat} search-icon`}
+							/>
+							<button 
+								className={`${classes.whatsappChat} search__back-btn`}
 								onClick={(e) => {
 									e.preventDefault();
 									e.stopPropagation();
-									setShowDatePicker(!showDatePicker);
 								}}
-								onMouseDown={(e) => {
-									e.preventDefault();
-									e.stopPropagation();
-								}}
-								disableRipple
-								title='Calendar'
+								style={{ display: 'none' }}
 							>
-								<FaCalendar style={{ fontSize: '16px' }} />
-							</IconButton>
+									<Icon id='back' />
+								</button>
 						</div>
-						<div 
-							style={{ pointerEvents: 'auto' }} 
-							onClick={(e) => {
-								e.preventDefault();
-								e.stopPropagation();
+						<input
+							className={`${classes.whatsappChat} search`}
+							placeholder={translator('whatsappChat.searchPlaceholder')}
+							onChange={(e) => handleSearch(e)}
+							value={searchText}
+							style={{ 
+								flex: 2,
+								border: 'none',
+								backgroundColor: 'transparent',
+								outline: 'none',
+								fontSize: '14px',
+								color: '#333',
+								padding: '0 8px 0 40px'
 							}}
-							onMouseDown={(e) => {
-								e.preventDefault();
-								e.stopPropagation();
-							}}
-						>
-							<IconButton
-								size='small'
-								title='Filter'
-								disableRipple
+						/>
+						<div className={`${classes.whatsappChat} search-icons-right`} style={{ display: 'flex', gap: '8px', pointerEvents: 'none', alignItems: 'center' }}>
+							<div 
+								style={{ pointerEvents: 'auto' }} 
 								onClick={(e) => {
 									e.preventDefault();
 									e.stopPropagation();
-									setShowFilterDropdown(!showFilterDropdown);
 								}}
 								onMouseDown={(e) => {
 									e.preventDefault();
 									e.stopPropagation();
 								}}
+							>
+								<IconButton
+									size='small'
+									onClick={(e) => {
+										e.preventDefault();
+										e.stopPropagation();
+									setShowFilterDialog(true);									// Scroll to date range section after dialog opens
+									setTimeout(() => {
+										dateRangeRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+									}, 100);									}}
+									onMouseDown={(e) => {
+										e.preventDefault();
+										e.stopPropagation();
+									}}
+									disableRipple
+									title='Calendar'
+									style={{ padding: '4px' }}
 								>
-								<FaFilter style={{ fontSize: '16px' }} />
-							</IconButton>
+									<FaCalendar style={{ fontSize: '16px', color: '#FF3343' }} />
+								</IconButton>
+							</div>
+							<div 
+								style={{ pointerEvents: 'auto' }} 
+								onClick={(e) => {
+									e.preventDefault();
+									e.stopPropagation();
+								}}
+								onMouseDown={(e) => {
+									e.preventDefault();
+									e.stopPropagation();
+								}}
+							>
+								<IconButton
+									size='small'
+									title='Filter'
+									disableRipple
+									onClick={(e) => {
+										e.preventDefault();
+										e.stopPropagation();
+										setShowFilterDialog(true);
+									}}
+									onMouseDown={(e) => {
+										e.preventDefault();
+										e.stopPropagation();
+									}}
+									style={{ padding: '4px' }}
+									>
+									<FaFilter style={{ fontSize: '16px', color: '#FF3343' }} />
+								</IconButton>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -414,84 +745,6 @@ const SideBar = ({
 					</Box>
 			</Box>
 			)}
-			{showDatePicker && (
-			<Box style={{ padding: '10px', backgroundColor: '#f5f5f5', paddingTop: 3 }}>
-					<Box style={{ display: 'flex', gap: '12px', flexDirection: isRTL ? 'row-reverse' : 'row', alignItems: 'flex-end' }}>
-						<Box style={{ flex: 1 }}>
-							<Select
-								value={timePeriod}
-								onChange={handleTimePeriodChange}
-								variant='standard'
-								fullWidth
-								displayEmpty
-								style={{ fontSize: '13px', backgroundColor: '#fff', padding: '8px 10px', borderRadius: '4px', height: '32px', display: 'flex', alignItems: 'center' }}
-							>
-								<MenuItem value='lastWeek'>{translator("common.lastWeek")}</MenuItem>
-								<MenuItem value='lastMonth'>{translator("common.lastMonth")}</MenuItem>
-								<MenuItem value='lastYear'>{translator("common.lastYear")}</MenuItem>
-								<MenuItem value='custom'>{translator("common.specificDates")}</MenuItem>
-							</Select>
-						</Box>
-						<Box style={{ flex: 1 }}>
-							<TextField
-								type='date'
-								value={startDate}
-								onChange={(e) => setStartDate(e.target.value)}
-								InputLabelProps={{
-									shrink: true,
-									style: { fontSize: '12px', color: '#666' }
-								}}
-								inputProps={{
-									style: { fontSize: '13px', padding: '8px 10px' }
-								}}
-								variant='standard'
-								size='small'
-								fullWidth
-								placeholder='dd/mm/yyyy'
-								style={{
-									backgroundColor: '#fff',
-									borderRadius: '4px'
-								}}
-							/>
-						</Box>
-						<Box style={{ flex: 1 }}>
-							<TextField
-								type='date'
-								value={endDate}
-								onChange={(e) => setEndDate(e.target.value)}
-								InputLabelProps={{
-									shrink: true,
-									style: { fontSize: '12px', color: '#666' }
-								}}
-								inputProps={{
-									style: { fontSize: '13px', padding: '8px 10px' }
-								}}
-								variant='standard'
-								size='small'
-								fullWidth
-								placeholder='dd/mm/yyyy'
-								style={{
-									backgroundColor: '#fff',
-									borderRadius: '4px'
-								}}
-							/>
-						</Box>
-						{timePeriod === 'custom' && (
-							<Box>
-								<Button
-									size='small'
-									variant='contained'
-									color='primary'
-									onClick={() => setShowDatePicker(false)}
-									style={{ fontSize: '12px', padding: '6px 12px', height: '32px' }}
-								>
-									{translator('common.apply')}
-								</Button>
-							</Box>
-						)}
-					</Box>
-				</Box>
-			)}
 			<SideBarContactList
 					classes={classes}
 					ChatContacts={sideChatContacts}
@@ -504,6 +757,7 @@ const SideBar = ({
 					contactsPaginationSetting={contactsPaginationSetting}
 					isLoader={isLoader}
 					searchText={searchText}
+					tagsList={tagsList}
 				/>
 				<TablePagination
 					classes={classes}
@@ -545,7 +799,322 @@ const SideBar = ({
 					}}
 					style={{ borderTop: '1px solid #e0e0e0', backgroundColor: '#f9f9f9', paddingInline: 10, paddingTop: 0, paddingBottom: 0 }}
 				/>
-			</aside>
+		</aside>
+		{/* Filter Dialog */}
+			<Dialog 
+				open={showFilterDialog} 
+				onClose={() => setShowFilterDialog(false)}
+				maxWidth="sm"
+				fullWidth
+				PaperProps={{
+					style: {
+						borderRadius: '12px'
+					}
+				}}
+			>
+				<DialogTitle 
+					style={{ 
+						backgroundColor: '#FF3343', 
+						color: '#fff', 
+						display: 'flex',
+						justifyContent: 'space-between',
+						alignItems: 'center',
+						padding: '16px 20px',
+						fontSize: '18px',
+						fontWeight: 'bold'
+					}}
+				>
+					<span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+						<FaFilter /> Filter Chats
+					</span>
+					<IconButton
+						onClick={() => setShowFilterDialog(false)}
+						style={{ color: '#fff', padding: '0', position: 'absolute', right: '25px', top: '12px' }}
+					>
+						<BsX fontSize={40} />
+					</IconButton>
+				</DialogTitle>
+				<DialogContent style={{ padding: '20px' }}>
+					{/* Agents Section */}
+					<Box style={{ marginBottom: '24px' }}>
+						<h3 style={{ margin: '0 0 12px 0', fontSize: '14px', fontWeight: '600', color: '#333' }}>
+							Agents
+						</h3>
+					<Box style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+						{agentList?.map((agent: WhatsappAgent) => (
+							<Chip
+								key={agent.AgentId}
+								label={agent.Name}
+								onClick={() => handleAgentToggle(agent.AgentId)}
+								style={{
+									backgroundColor: selectedAgents.includes(agent.AgentId) ? '#FF3343' : '#fff',
+									color: selectedAgents.includes(agent.AgentId) ? '#fff' : '#333',
+									border: selectedAgents.includes(agent.AgentId) ? 'none' : '1px solid #ddd',
+									cursor: 'pointer'
+								}}
+							/>
+						))}
+					</Box>
+			</Box>
+				{/* Tags Section */}
+				<Box style={{ marginBottom: '24px' }}>
+				<Box style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+					<h3 style={{ margin: '0', fontSize: '14px', fontWeight: '600', color: '#333' }}>
+						Tags
+					</h3>
+					<Button
+						size='small'
+						onClick={handleOpenEditTags}
+						style={{
+							fontSize: '12px',
+							padding: '4px 8px',
+							color: '#FF3343',
+							textTransform: 'none',
+							fontWeight: '600'
+						}}
+					>
+						Edit
+					</Button>
+				</Box>
+				<Box style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+					{tagsList.map((tag: any) => (
+						<Chip
+							key={tag?.id}
+							label={tag?.TagName}
+							onClick={() => handleTagToggle(tag)}
+							style={{
+								backgroundColor: selectedTags.includes(tag?.TagName) ? '#FF3343' : '#fff',
+								color: selectedTags.includes(tag?.TagName) ? '#fff' : '#333',
+								border: selectedTags.includes(tag?.TagName) ? 'none' : '1px solid #ddd',
+								cursor: 'pointer'
+							}}
+						/>
+					))}
+				</Box>
+			</Box>
+					<div ref={dateRangeRef}>
+						<Box style={{ marginBottom: '24px' }}>
+							<h3 style={{ margin: '0 0 12px 0', fontSize: '14px', fontWeight: '600', color: '#333' }}>
+								Date & Time Range
+							</h3>
+						<Box style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+							<Chip
+								label='Last 24 hours'
+								onClick={() => handleSetDateRange('last24hours')}
+								style={{
+									width: '100%',
+									height: '40px',
+									backgroundColor: dialogTimePeriod === 'last24hours' ? '#FF3343' : '#fff',
+									color: dialogTimePeriod === 'last24hours' ? '#fff' : '#999',
+									border: '1px solid #ddd',
+									cursor: 'pointer',
+									fontSize: '14px',
+									fontWeight: '500'
+								}}
+							/>
+							<Chip
+								label='Last week'
+								onClick={() => handleSetDateRange('lastWeek')}
+								style={{
+									width: '100%',
+									height: '40px',
+									backgroundColor: dialogTimePeriod === 'lastWeek' ? '#FF3343' : '#fff',
+									color: dialogTimePeriod === 'lastWeek' ? '#fff' : '#999',
+									border: '1px solid #ddd',
+									cursor: 'pointer',
+									fontSize: '14px',
+									fontWeight: '500'
+								}}
+							/>
+							<Chip
+								label='Last month'
+								onClick={() => handleSetDateRange('lastMonth')}
+								style={{
+									width: '100%',
+									height: '40px',
+									backgroundColor: dialogTimePeriod === 'lastMonth' ? '#FF3343' : '#fff',
+									color: dialogTimePeriod === 'lastMonth' ? '#fff' : '#999',
+									border: '1px solid #ddd',
+									cursor: 'pointer',
+									fontSize: '14px',
+									fontWeight: '500'
+								}}
+							/>
+							<Chip
+								label='Custom range'
+								onClick={() => handleSetDateRange('custom')}
+								style={{
+									width: '100%',
+									height: '40px',
+									backgroundColor: dialogTimePeriod === 'custom' ? '#FF3343' : '#fff',
+									color: dialogTimePeriod === 'custom' ? '#fff' : '#999',
+									border: '1px solid #ddd',
+									cursor: 'pointer',
+									fontSize: '14px',
+									fontWeight: '500'
+								}}
+							/>
+						</Box>
+					</Box>
+				</div>
+				{/* Custom Date Input Fields (Times auto-assigned: 12:01 AM start, 11:59 PM end) */}
+				{dialogTimePeriod === 'custom' && (
+					<Box style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '12px' }}>
+						<Box style={{ display: 'flex', gap: '8px' }}>
+							<TextField
+								label='Start Date'
+								type='date'
+								value={dialogStartDate}
+								onChange={(e) => {
+									setDialogStartDate(e.target.value);
+									// Auto-assign start time: 12:01 AM
+									setDialogStartTime('00:01');
+								}}
+								InputLabelProps={{ shrink: true }}
+								size='small'
+								style={{ flex: 1 }}
+							/>
+						</Box>
+						<Box style={{ display: 'flex', gap: '8px' }}>
+							<TextField
+								label='End Date'
+								type='date'
+								value={dialogEndDate}
+								onChange={(e) => {
+									setDialogEndDate(e.target.value);
+									// Auto-assign end time: 11:59 PM
+									setDialogEndTime('23:59');
+								}}
+								InputLabelProps={{ shrink: true }}
+								size='small'
+								style={{ flex: 1 }}
+							/>
+						</Box>
+					</Box>
+				)}
+			</DialogContent>
+				<DialogActions style={{ padding: '16px 20px', borderTop: '1px solid #eee' }}>
+					<Button
+						onClick={() => setShowFilterDialog(false)}
+						className={clsx(classes.btn, classes.btnRounded)}
+					>
+						Cancel
+					</Button>
+					<Button
+						onClick={handleApplyFilters}
+						className={clsx(classes.btn, classes.btnRounded)}
+						style={{ backgroundColor: '#FF3343', color: '#fff' }}
+					>
+						Apply Filters
+					</Button>
+				</DialogActions>
+			</Dialog>
+
+			{/* Edit Tags Dialog */}
+		<Dialog 
+			open={showEditTagsDialog} 
+			onClose={handleCloseEditTags} 
+			maxWidth='sm' 
+			fullWidth
+			PaperProps={{
+				style: {
+					borderRadius: '16px',
+					overflow: 'hidden'
+				}
+			}}
+		>
+			<DialogTitle className={classes.editTagsDialogTitle}>
+				<Box className={classes.editTagsHeaderContainer}>
+					<BsFillTagsFill size={20} className={classes.editTagsIcon} />
+					<span className={classes.editTagsHeaderText}>Edit Tags</span>
+				</Box>
+				<IconButton onClick={handleCloseEditTags} className={classes.editTagsCloseButton} style={{ color: '#fff', padding: '0', position: 'absolute', right: '25px', top: '12px' }}>
+					<BsX fontSize={40} />
+				</IconButton>
+			</DialogTitle>
+
+			<DialogContent className={classes.editTagsDialogContent}>
+				{editingTags.map((tag, index) => (
+					<Box
+						key={index}
+						className={classes.editTagsItem}
+					>
+						<label className={classes.editTagsLabel}>
+							Tag Name
+						</label>
+						<Box className={classes.editTagsInputRow}>
+							<TextField
+								// @ts-ignore
+								value={tag.TagName}
+								// @ts-ignore
+								onChange={(e) => handleUpdateTag(index, 'TagName', e.target.value)}
+								placeholder='Enter tag name'
+								size='small'
+								variant='outlined'
+								className={classes.editTagsTextField}
+								/>
+
+							<Box className={classes.editTagsButtonsContainer}>
+								<Button
+									variant='outlined'
+									size='small'
+									className={clsx(classes.btn, classes.btnRounded)}
+									disabled={savingTagId === tag.id}
+									// @ts-ignore
+									onClick={() => handleSaveTag(index)}
+								>
+									{savingTagId === tag.id ? 'SAVING...' : tag.id === '0' ? 'SAVE' : 'UPDATE'}
+								</Button>
+
+								<IconButton
+									onClick={() => handleDeleteTag(index)}
+									className={classes.editTagsDeleteButton}
+									disabled={savingTagId === tag.id}
+								>
+									<FaTrash />
+								</IconButton>
+							</Box>
+						</Box>
+
+						<Box className={classes.editTagsColorContainer}>
+							{COLORS.map((color) => (
+								<Box
+									key={color}
+									onClick={() => handleUpdateTag(index, 'TagColor', color)}
+									className={clsx(
+										classes.editTagsColorCircle,
+										tag?.TagColor === color && classes.editTagsColorCircleSelected
+									)}
+									style={{
+										backgroundColor: color
+									}}
+								/>
+							))}
+						</Box>
+					</Box>
+				))}
+
+				<Box className={classes.editTagsAddNewTagBox}>
+					<Button
+						fullWidth
+						variant='outlined'
+						className={clsx(classes.btn, classes.btnRounded)}
+						onClick={handleAddNewTag}
+					>
+						+ Add New Tag
+					</Button>
+				</Box>
+			</DialogContent>
+
+			</Dialog>
+
+			{/* Toast Notification */}
+			{toastMessage && (
+				<Toast
+					customData={toastMessage as any}
+					data={null}
+				/>
+			)}
 		</>
 	);
 };

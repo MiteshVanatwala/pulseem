@@ -2607,7 +2607,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		'&.sidebar-contact': {
 			fontFamily: 'Assistant',
 			textDecoration: 'none',
-			height: '72px',
+			height: '100px',
 			padding: '0px 20px',
 			display: 'flex',
 			alignItems: 'center',
