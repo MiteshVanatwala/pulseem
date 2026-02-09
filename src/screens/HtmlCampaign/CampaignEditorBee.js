@@ -244,7 +244,6 @@ const CampaignEditor = ({ classes, ...props }) => {
     ampKB: 0,
     totalBytes: 0
   });
-  const [hasShown80KBWarning, setHasShown80KBWarning] = useState(false);
   const [pendingAction, setPendingAction] = useState(null);
   //#endregion State
 
@@ -825,7 +824,7 @@ const CampaignEditor = ({ classes, ...props }) => {
 
   const onAutoSaveCampaign = debounce(() => {
     setSilentSave(true)
-    saveDesign(false, null, false);
+    saveDesign(false, null, false, false, '', true);
   }, 5000);
 
   const onDesignChange = async () => {
@@ -838,18 +837,6 @@ const CampaignEditor = ({ classes, ...props }) => {
 
         const sizeInfo = calculateEmailSize(html, ampHtml);
         setEmailSize(sizeInfo);
-
-        const status = getSizeStatus(sizeInfo.totalKB);
-                
-        if (status === 'warning' && !hasShown80KBWarning) {
-          setHasShown80KBWarning(true);
-          setToastMessage({
-            severity: 'warning',
-            color: 'warning',
-            message: t('campaigns.emailSize.warning80KB'),
-            showAnimtionCheck: false
-          });
-        }
       } catch (error) {
         console.error('Error calculating email size on change:', error);
       }
