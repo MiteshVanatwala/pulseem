@@ -245,6 +245,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     totalBytes: 0
   });
   const [hasShown80KBWarning, setHasShown80KBWarning] = useState(false);
+  const [pendingAction, setPendingAction] = useState(null);
   //#endregion State
 
   //#region Get Extra fields & Landing pages, after Data Ready
@@ -529,10 +530,103 @@ const CampaignEditor = ({ classes, ...props }) => {
     await dispatch(getCategories());
   }
 
+  const checkEmailSizeBeforeAction = async (actionType) => {
+    try {
+      if (editorRef.current) {
+        const content = await editorRef.current.save();
+        const html = content?.data?.html || '';
+        const ampHtml = content?.data?.htmlAmp || '';
+        const sizeInfo = calculateEmailSize(html, ampHtml);
+
+        if (sizeInfo.totalKB > 102) {
+          setPendingAction(actionType);
+          setDialogType({
+            type: 'emailSizeExceeded',
+            data: {
+              currentSize: sizeInfo.totalKB,
+              reductionNeeded: (sizeInfo.totalKB - 102).toFixed(1)
+            }
+          });
+          return false;
+        }
+        return true;
+      }
+      return true;
+    } catch (error) {
+      console.error('Error checking email size:', error);
+      return true;
+    }
+  };
+
+  const executePendingAction = () => {
+    const action = pendingAction;
+    setPendingAction(null);
+    setDialogType(null);
+
+    if (action === 'testSend') {
+      const isSharedDomain = campaign.FromEmail.split("@").pop() === SharedEmailDomain;
+      if (!isSharedDomain && (!emailProps?.IsVerified || emailProps?.IsRestricted)) {
+        const domainErrorObj = {
+          display: false,
+          address: campaign.FromEmail,
+          verifySharedCallback: null,
+          isSummary: false,
+          isFullDescription: false,
+          preText: t(`common.domainVerification.campaignEditor.${emailProps?.IsRestricted ? 'restricted' : 'nonVerified'}.preText`).replace('##campaignId##', campaign.CampaignID),
+          showSkip: false,
+          options: [{
+            text: t('common.CampaignSettings'),
+            onCallback: () => {
+              window.location = `/react/Campaigns/Create/${campaign.CampaignID}`
+            }
+          }]
+        };
+        setDomainAddressError(domainErrorObj);
+        setShowDomainVerification(true);
+      } else {
+        saveDesign(false, null, false, true, '', true).then(async () => {
+          setIsResponseModal(false);
+          editorRef.current.send();
+        });
+      }
+    } else if (action === 'continue') {
+      handleContinueFlow(true);
+    } else if (action === 'save') {
+      // Just close dialog, allow editing
+    }
+  };
+
+  const handleContinueFlow = (skipSizeCheck = false) => {
+    saveDesign(false, null, false, false, '', skipSizeCheck);
+
+    const isSharedDomain = campaign.FromEmail.split("@").pop() === SharedEmailDomain;
+    if (!isSharedDomain && (!emailProps?.IsVerified || emailProps?.IsRestricted)) {
+      const domainErrorObj = {
+        display: false,
+        address: campaign.FromEmail,
+        verifySharedCallback: null,
+        isSummary: false,
+        isFullDescription: false,
+        preText: t(`common.domainVerification.campaignEditor.${emailProps?.IsRestricted ? 'restricted' : 'nonVerified'}.preText`).replace('##campaignId##', campaign.CampaignID),
+        showSkip: false,
+        options: [{
+          text: t('common.CampaignSettings'),
+          onCallback: () => {
+            window.location = `/react/Campaigns/Create/${campaign.CampaignID}`
+          }
+        }]
+      };
+      setDomainAddressError(domainErrorObj);
+      setShowDomainVerification(true);
+    } else {
+      saveDesign(true, null, true, true, '', skipSizeCheck);
+    }
+  };
+
   /**
- * Calculate email size - includes HTML + AMP (all embedded images, videos, components)
- * JSON data is NOT included as it's only for editor state
- */
+   * Calculate email size - includes HTML + AMP (all embedded images, videos, components)
+   * JSON data is NOT included as it's only for editor state
+   */
   const calculateEmailSize = (html = '', ampData = '') => {
     try {
       const htmlSize = new Blob([html || '']).size;
@@ -601,7 +695,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     const sizeInfo = calculateEmailSize(args.HtmlData, args.AmpData);
     setEmailSize(sizeInfo);
 
-    if (sizeInfo.totalKB > 102) {
+    if (sizeInfo.totalKB > 102 && !saveRef.current?.skipSizeCheck) {
       setDialogType({
         type: 'emailSizeExceeded',
         data: {
@@ -609,6 +703,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           reductionNeeded: (sizeInfo.totalKB - 102).toFixed(1)
         }
       });
+      return false;
     }
 
     const dynamicBlocks = (args.HtmlData?.match(/product-block-container/g) || []).length;
@@ -718,8 +813,8 @@ const CampaignEditor = ({ classes, ...props }) => {
       setLoader(false);
     }
   }
-  const saveDesign = async (redirectAfterSave = false, redirectUrl = null, showAnimation = true, checkDynamicBlock = false, operation = '') => {
-    saveRef.current = { redirectAfterSave: redirectAfterSave, redirectUrl: redirectUrl, showAnimation: showAnimation, checkDynamicBlock, operation };
+ const saveDesign = async (redirectAfterSave = false, redirectUrl = null, showAnimation = true, checkDynamicBlock = false, operation = '', skipSizeCheck = false) => {
+   saveRef.current = { redirectAfterSave: redirectAfterSave, redirectUrl: redirectUrl, showAnimation: showAnimation, checkDynamicBlock: checkDynamicBlock, operation: operation, skipSizeCheck: skipSizeCheck };
     await editorRef.current.save();
     setTimeout(() => {
       // const now = moment();
@@ -993,7 +1088,9 @@ const CampaignEditor = ({ classes, ...props }) => {
       getData();
     })
   }
-  const handleOpenTestSend = () => {
+  const handleOpenTestSend = async () => {
+    const canProceed = await checkEmailSizeBeforeAction('testSend');
+    if (!canProceed) return;
     const isSharedDomain = campaign.FromEmail.split("@").pop() === SharedEmailDomain;
     if (!isSharedDomain && (!emailProps?.IsVerified || emailProps?.IsRestricted)) {
       const domainErrorObj = {
@@ -1532,7 +1629,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       >
         <Grid item>
           <Button
-            onClick={() => setDialogType(null)}
+            onClick={() => executePendingAction()}
             className={clsx(classes.btn, classes.btnRounded)}
           >
             {t('campaigns.emailSize.exceeded.continueEditing')}
@@ -1542,7 +1639,6 @@ const CampaignEditor = ({ classes, ...props }) => {
           <Button
             onClick={() => {
               window.open('https://support.google.com/mail/answer/6590', '_blank');
-              setDialogType(null);
             }}
             className={clsx(classes.btn, classes.btnRounded)}
           >
@@ -1594,8 +1690,11 @@ const CampaignEditor = ({ classes, ...props }) => {
       wizardButtons.push(<>
         <Button
           size='small'
-          onClick={() =>
-            saveDesign(false, null, true, true, 'save')}
+          onClick={async () => {
+            const canProceed = await checkEmailSizeBeforeAction('save');
+            if (!canProceed) return;
+            saveDesign(false, null, true, true, 'save');
+          }}
           className={clsx(
             classes.btn,
             classes.btnRounded,
@@ -1607,32 +1706,11 @@ const CampaignEditor = ({ classes, ...props }) => {
           key={'saveButton'}
         >{t("common.save")}
         </Button>
-        {fromLink?.toLowerCase() !== 'autoresponder' && <Button onClick={() => {
-          saveDesign(false, null, false);
-          const isSharedDomain = campaign.FromEmail.split("@").pop() === SharedEmailDomain;
-          if (!isSharedDomain && (!emailProps?.IsVerified || emailProps?.IsRestricted)) {
-            const domainErrorObj = {
-              display: false,
-              address: campaign.FromEmail,
-              verifySharedCallback: null,
-              isSummary: false,
-              isFullDescription: false,
-              preText: t(`common.domainVerification.campaignEditor.${emailProps?.IsRestricted ? 'restricted' : 'nonVerified'}.preText`).replace('##campaignId##', campaign.CampaignID),
-              showSkip: false,
-              options: [{
-                text: t('common.CampaignSettings'),
-                onCallback: () => {
-                  window.location = `/react/Campaigns/Create/${campaign.CampaignID}`
-                }
-              }]
-            }
-            setDomainAddressError(domainErrorObj);
-            setShowDomainVerification(true)
-          }
-          else {
-            saveDesign(true, null, true, true);
-          }
+        {fromLink?.toLowerCase() !== 'autoresponder' && <Button onClick={async () => {
+          const canProceed = await checkEmailSizeBeforeAction('continue');
+          if (!canProceed) return;
 
+          handleContinueFlow(false);
         }}
           variant='contained'
           size='small'
