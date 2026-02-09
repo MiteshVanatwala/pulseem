@@ -688,6 +688,21 @@
     "quickMsgCautionMsg": "Szybka wysyłka ręczna natychmiast wyśle kampanię tylko do ręcznie dodanych odbiorców.",
     "doYouWantToContinue": "Czy chcesz kontynuować?"
   },
+  "emailSize": {
+    "label": "Rozmiar wiadomości e-mail",
+    "htmlSize": "Rozmiar HTML",
+    "ampSize": "Rozmiar AMP",
+    "tooltipInfo": "Gmail może przycinać wiadomości większe niż 102 KB",
+    "warning80KB": "Zbliżasz się do limitu rozmiaru Gmaila. Spróbuj pozostać poniżej 80 KB.",
+    "overLimitWarning": "Ta wiadomość e-mail może zostać przycięta w Gmailu. Zmniejsz rozmiar o {{reduction}} KB.",
+    "exceeded": {
+      "title": "Ta wiadomość e-mail może zostać przycięta w Gmailu",
+      "subtitle": "Ta wiadomość e-mail może zostać przycięta w Gmailu",
+      "description": "Ta wiadomość e-mail przekracza limit rozmiaru Gmaila i może zostać przycięta.",
+      "continueEditing": "Kontynuuj edycję",
+      "learnMore": "Dowiedz się, jak zmniejszyć rozmiar"
+    }
+  },
   "sendToContact": "Wyślij do jednego kontaktu",
   "successSent": "Wysłano pomyślnie",
   "missingApi": "Brakujący klucz API",

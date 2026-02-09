@@ -688,6 +688,21 @@
     "quickMsgCautionMsg": "Quick manual send will immediately send the campaign to the recipients that were added manually only.",
     "doYouWantToContinue": "Do you want to proceed?"
   },
+  "emailSize": {
+    "label": "Email size",
+    "htmlSize": "HTML Size",
+    "ampSize": "AMP Size",
+    "tooltipInfo": "Gmail may clip emails larger than 102KB",
+    "warning80KB": "You're approaching Gmail's size limit. Try to stay under 80KB.",
+    "overLimitWarning": "This email may be clipped in Gmail. Reduce by {{reduction}} KB.",
+    "exceeded": {
+      "title": "This email may be clipped in Gmail",
+      "subtitle": "This email may be clipped in Gmail",
+      "description": "This email exceeds Gmail's size limit and may be clipped.",
+      "continueEditing": "Continue editing",
+      "learnMore": "Learn how to reduce size"
+    }
+  },
   "sendToContact": "Send to one contact",
   "successSent": "Sent Successfully",
   "missingApi": "Missing api key",
