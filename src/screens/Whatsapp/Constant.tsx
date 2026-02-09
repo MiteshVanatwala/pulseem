@@ -459,32 +459,32 @@ export const allReportInitialPagination: AllReportReq = {
 export const tierSetting: TierSetting[] = [
 	{
 		name: 'settings.accountSettings.actDetails.fields.tier1',
-		value: '1',
+		value: '5',
 		messageLimit: 50,
 	},
 	{
 		name: 'settings.accountSettings.actDetails.fields.tier2',
-		value: '2',
+		value: '6',
 		messageLimit: 250,
 	},
 	{
 		name: 'settings.accountSettings.actDetails.fields.tier3',
-		value: '3',
+		value: '1',
 		messageLimit: 2000,
 	},
 	{
 		name: 'settings.accountSettings.actDetails.fields.tier4',
-		value: '4',
+		value: '2',
 		messageLimit: 10000,
 	},
 	{
 		name: 'settings.accountSettings.actDetails.fields.tier5',
-		value: '5',
+		value: '3',
 		messageLimit: 100000,
 	},
 	{
 		name: 'settings.accountSettings.actDetails.fields.tier6',
-		value: '6',
+		value: '4',
 		messageLimit: 'unlimited',
 	},
 ];
