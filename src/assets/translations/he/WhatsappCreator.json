@@ -106,7 +106,7 @@
 		"alert": "עֵרָנִי",
 		"templateTextRequired": "טקסט תבנית - חובה",
 		"templateNameRequired": "שם תבנית - חובה",
-		"templateNameLengthError": "שם התבנית צריך להיות קטן או שווה ל",
+		"templateNameLengthError": "Maximum 50 characters",
 		"templateLengthError": "מגבלת תווים - ",
 		"languageError": "לא ניתן להגיש תבנית המכילה יותר משפה אחת",
 		"buttonTextError": "טקסט כפתור - שדה חובה",
