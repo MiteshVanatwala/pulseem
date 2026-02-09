@@ -813,8 +813,8 @@ const CampaignEditor = ({ classes, ...props }) => {
       setLoader(false);
     }
   }
- const saveDesign = async (redirectAfterSave = false, redirectUrl = null, showAnimation = true, checkDynamicBlock = false, operation = '', skipSizeCheck = false) => {
-   saveRef.current = { redirectAfterSave: redirectAfterSave, redirectUrl: redirectUrl, showAnimation: showAnimation, checkDynamicBlock: checkDynamicBlock, operation: operation, skipSizeCheck: skipSizeCheck };
+  const saveDesign = async (redirectAfterSave = false, redirectUrl = null, showAnimation = true, checkDynamicBlock = false, operation = '', skipSizeCheck = false) => {
+    saveRef.current = { redirectAfterSave: redirectAfterSave, redirectUrl: redirectUrl, showAnimation: showAnimation, checkDynamicBlock: checkDynamicBlock, operation: operation, skipSizeCheck: skipSizeCheck };
     await editorRef.current.save();
     setTimeout(() => {
       // const now = moment();
