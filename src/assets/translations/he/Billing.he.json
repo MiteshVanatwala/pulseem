@@ -202,7 +202,7 @@
     "free": "חינם",
     "contactSales": "צור קשר",
     "permission": "הרשאות",
-    "featureNotAvailable": "פיצ'ר זה זמין רק בחבילת {planName}",
+    "featureNotAvailable": "{feature} זמין רק בחבילת {planName}",
     "noFeatureAvailable": "אופס! אין תוכנית שכוללת את התכונה הזו.",
     "salesContactConfirmation": "פנייתך נקלטה בהצלחה. נציג מכירות יחזור אליך בהקדם"
   },
