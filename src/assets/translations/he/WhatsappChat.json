@@ -37,5 +37,16 @@
 	"templates": "תבניות",
 	"addQuickResponse": "הוספת תגובה מהירה",
 	"enterQuickResponse": "הזן תגובה מהירה",
-	"noQuickResponses": "אין תגובות מהירות זמינות"
+	"noQuickResponses": "אין תגובות מהירות זמינות",
+	"last24hours": "24 השעות האחרונות",
+	"lastWeek": "השבוע האחרון",
+	"lastMonth": "החודש האחרון",
+	"customRange": "טווח מותאם אישית",
+	"startDate": "תאריך התחלה",
+	"endDate": "תאריך סיום",
+	"tagName": "שם התג",
+	"enterTagName": "הזן שם תג",
+	"assignedTags": "תגים מוקצים",
+	"addTags": "הוסף תגים",
+	"applyFilters": "החל מסננים"
 }

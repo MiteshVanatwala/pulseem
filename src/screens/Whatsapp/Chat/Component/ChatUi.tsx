@@ -6,13 +6,13 @@ import {
 	WhatsappChatUiProps,
 	APIWhatsappChatDetailData,
 } from '../Types/WhatsappChat.type';
-import { Box, IconButton, MenuItem } from '@material-ui/core';
+import { Box, IconButton, MenuItem, Chip } from '@material-ui/core';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { FaBars } from 'react-icons/fa';
 import ChatTemplateModal from '../Popups/ChatTemplateModal';
 import { apiStatus } from '../../Constant';
 import { useDispatch, useSelector } from 'react-redux';
-import { assignAgentToChat, getChatAgents, getWhatsappChat } from '../../../../redux/reducers/whatsappSlice';
+import { assignAgentToChat, getChatAgents, getWhatsappChat, getWhatsappChatTag } from '../../../../redux/reducers/whatsappSlice';
 import ChatTemplate from './ChatTemplate';
 import ChatFooterContent from './ChatFooterContent';
 import clsx from 'clsx';
@@ -64,6 +64,7 @@ const ChatUi = ({
 	const [dialogType, setDialogType] = useState<{
 		type: string;
 	} | null>(null);
+	const [contactTags, setContactTags] = useState<any[]>([]);
 	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
 	const { agentList } = useSelector((state: StateType) => state.whatsapp);
 
@@ -74,8 +75,21 @@ const ChatUi = ({
 		}, 1500)
 	}, [allWhatsappChat]);
 
+	// Update contact tags whenever chatContacts.Tags changes
+	useEffect(() => {
+		if (chatContacts?.Tags && Array.isArray(chatContacts.Tags)) {
+			setContactTags([...chatContacts.Tags]);
+		} else {
+			setContactTags([]);
+		}
+	}, [chatContacts?.Tags]);
+
 	useEffect(() => {
 		getAPIAllWhatsappChat();
+		// Fetch tags for the current contact immediately
+		if (chatContacts?.PhoneNumber) {
+			dispatch(getWhatsappChatTag());
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [chatContacts?.PhoneNumber]);
 
@@ -154,7 +168,7 @@ const ChatUi = ({
 				<div className={`${classes.whatsappChat} chat__contact-wrapper`}>
 					<h2 className={`${classes.whatsappChat} chat__contact-name`}>
 						{' '}
-						{chatContacts.UserName || chatContacts.PhoneNumber || 'Pulseem'}
+						{chatContacts.UserName || chatContacts.PhoneNumber || translator('common.pulseem')}
 					</h2>
 
 					<p className={`${classes.whatsappChat} chat__contact-desc`}></p>
@@ -193,12 +207,11 @@ const ChatUi = ({
 						</Select>
 						<div className={classes.agentSelectorContainer}>
 							<Select
-								className={clsx(classes.whatsappChatStatusSelect, classes.f12)}
+								className={clsx(classes.whatsappChatStatusSelect, classes.f12, classes.selectFieldStyle)}
 								autoWidth
 								defaultValue='0'
 								value={`${selectedAgent?.AgentId || 0}`}
 								variant='standard'
-								style={{ marginInline: 15 }}
 								MenuProps={{
 									PaperProps: {
 										style: {
@@ -229,6 +242,24 @@ const ChatUi = ({
 								})}
 							</Select>
 						</div>
+						{/* Tag Chips Display */}
+						<Box className={classes.tagChipsContainer}>
+							{contactTags && contactTags.length > 0 && (
+								contactTags.map((tag: any) => (
+									<Chip
+										key={tag.id}
+										label={tag.TagName}
+										size='small'
+										style={{
+											backgroundColor: tag.TagColor || '#e8e8e8',
+											color: '#fff',
+											fontWeight: 500,
+										}}
+										className={classes.tagChipStyle}
+									/>
+								))
+							)}
+						</Box>
 					</Box>
 					<Box className='clock-font-size'>
 						{whatsappChatSession?.IsIn24Window &&

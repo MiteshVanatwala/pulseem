@@ -37,5 +37,16 @@
 	"templates": "Szablony",
 	"addQuickResponse": "Dodaj szybką odpowiedź",
 	"enterQuickResponse": "Wprowadź szybką odpowiedź",
-	"noQuickResponses": "Brak dostępnych szybkich odpowiedzi"
+	"noQuickResponses": "Brak dostępnych szybkich odpowiedzi",
+	"last24hours": "Ostatnie 24 godziny",
+	"lastWeek": "Ostatni tydzień",
+	"lastMonth": "Ostatni miesiąc",
+	"customRange": "Zakres niestandardowy",
+	"startDate": "Data rozpoczęcia",
+	"endDate": "Data zakończenia",
+	"tagName": "Nazwa tagu",
+	"enterTagName": "Wpisz nazwę tagu",
+	"assignedTags": "Przypisane tagi",
+	"addTags": "Dodaj tagi",
+	"applyFilters": "Zastosuj filtry"
 }

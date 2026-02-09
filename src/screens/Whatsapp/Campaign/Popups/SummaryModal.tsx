@@ -312,13 +312,6 @@ const SummaryModal = ({
 		}
 	};
 
-	const getIndexFromTierId = (tierId: number | undefined) => {
-		if (tierId) {
-			return Number(tierId) - 1;
-		}
-		return 0;
-	};
-
 	const getValidationDialog = () => ({
 		title: translator('whatsappCampaign.sendValidation'),
 		showDivider: false,
@@ -476,9 +469,7 @@ const SummaryModal = ({
 												<div>
 													<span className={clsx(classes.f15)}>
 														{`${translator(
-															tierSetting[
-																getIndexFromTierId(campaignSummary?.WhatsappTierID)
-															]?.name
+															tierSetting.find(tier => tier.value === String(campaignSummary?.WhatsappTierID))?.name
 														)}`}
 													</span>
 													<Tooltip

@@ -674,6 +674,24 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		changeContactReadStatus(contacts);
 	}, [changeContactReadStatus]);
 
+	const handleTagsUpdated = useCallback((phoneNumber: string, tagIds: number[], tags?: any[]) => {
+		// Update the activeChatContacts with new tags if it's the current contact
+		if (activeChatContacts?.PhoneNumber === phoneNumber && tags) {
+			setActiveChatContacts(prev => ({
+				...prev,
+				Tags: tags
+			}));
+		}
+		// Also update sideChatContacts to reflect the new tags
+		setSideChatContacts(prev => 
+			prev.map(contact => 
+				contact.PhoneNumber === phoneNumber 
+					? { ...contact, Tags: tags || contact.Tags }
+					: contact
+			)
+		);
+	}, [activeChatContacts?.PhoneNumber]);
+
 	const validateDynamicVaraiable = useCallback(() => {
 		let validationErrors = [];
 		let isValidated = true;
@@ -1381,6 +1399,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 										getAgents();
 										setDialogType({ type: 'editAgents' })
 									}}
+									onTagsUpdated={handleTagsUpdated}
 									TotalRecord={totalContacts}
 									TotalOpen={totalOpenContacts}
 									TotalPending={totalPendingContacts}

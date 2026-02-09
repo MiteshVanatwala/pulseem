@@ -44,6 +44,7 @@ const SideBar = ({
 	setAgentSelected,
 	onAddAgent,
 	onEditAgents,
+	onTagsUpdated,
 	TotalRecord,
 	TotalOpen,
 	TotalPending,
@@ -514,7 +515,7 @@ const SideBar = ({
 			<aside
 				className={`${classes.whatsappChat} sidebar ${isMobileSideBar && 'mobile-side-bar'
 					}`}>
-				<header className={`${classes.whatsappChat} header left`}>
+				<header className={clsx(`${classes.whatsappChat} header left`, classes.sidebarHeader)}>
 					<div className={`${classes.whatsappChat} sidebar__avatar-wrapper`}>
 						<img
 							src={AccountUser}
@@ -528,8 +529,7 @@ const SideBar = ({
 						onActiveUserChange={onActiveUserChange}
 						activePhoneNumber={activePhoneNumber}
 					/>
-					<span style={{ marginInlineStart: 10 }}>
-						<div>
+					<div className={classes.agentManagementButtonsWrapper}>
 							<IconButton
 								onClick={() => onEditAgents()}
 								title={translator("common.manageAgent")}
@@ -542,8 +542,7 @@ const SideBar = ({
 							>
 								<BsFillTagsFill />
 							</IconButton>
-						</div>
-					</span>
+					</div>
 					<div className={`${classes.whatsappChat} sidebar__actions`}>
 						<IconButton
 							className={classes.whatsappChatBarButton}
@@ -575,30 +574,19 @@ const SideBar = ({
 						</Tabs>
 					</Box>
 				</div>
-				<div style={{ padding: '10px', background: '#f6f6f6' }}>
-					<div className={`${classes.whatsappChat} search-wrapper`} style={{ 
-						display: 'flex', 
-						alignItems: 'center', 
-						gap: '8px',
-						padding: '8px 12px',
-						backgroundColor: '#FFF',
-						borderRadius: '10px',
-						border: '1px solid #e0e0e0',
-						boxShadow: '0 2px 4px rgba(0, 0, 0, 0.08)',
-						transition: 'all 0.3s ease'
-					}}>
-						<div className={`${classes.whatsappChat} search-icons`} style={{ display: 'flex', alignItems: 'center', color: '#999' }}>
+				<div className={classes.searchAreaWrapper}>
+					<div className={clsx(`${classes.whatsappChat} search-wrapper`, classes.searchWrapperComplex)}>
+						<div className={clsx(`${classes.whatsappChat} search-icons`, classes.searchIconsStyle)}>
 							<Icon
 								id='search'
 								className={`${classes.whatsappChat} search-icon`}
 							/>
 							<button 
-								className={`${classes.whatsappChat} search__back-btn`}
+								className={clsx(`${classes.whatsappChat} search__back-btn`, classes.searchInputHidden)}
 								onClick={(e) => {
 									e.preventDefault();
 									e.stopPropagation();
 								}}
-								style={{ display: 'none' }}
 							>
 									<Icon id='back' />
 								</button>
@@ -618,7 +606,7 @@ const SideBar = ({
 								padding: '0 8px 0 40px'
 							}}
 						/>
-						<div className={`${classes.whatsappChat} search-icons-right`} style={{ display: 'flex', gap: '8px', pointerEvents: 'none', alignItems: 'center' }}>
+						<div className={clsx(`${classes.whatsappChat} search-icons-right`, classes.searchIconsRight)}>
 							<div 
 								style={{ pointerEvents: 'auto' }} 
 								onClick={(e) => {
@@ -683,8 +671,8 @@ const SideBar = ({
 					</div>
 				</div>
 			{(getDateChipLabel() || getSelectedAgentName()) && (
-			<Box style={{ display: 'flex', gap: '8px', padding: '8px 10px', flexWrap: 'wrap', alignItems: 'center', backgroundColor: '#fff', justifyContent: 'space-between' }}>
-					<Box style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center' }}>
+			<Box className={classes.chipsContainer}>
+					<Box className={classes.chipsWrapper}>
 						{getDateChipLabel() && (
 							<Chip
 								label={getDateChipLabel()}
@@ -758,6 +746,7 @@ const SideBar = ({
 					isLoader={isLoader}
 					searchText={searchText}
 					tagsList={tagsList}
+					onTagsUpdated={onTagsUpdated}
 				/>
 				<TablePagination
 					classes={classes}
@@ -899,7 +888,7 @@ const SideBar = ({
 							</h3>
 						<Box style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
 							<Chip
-								label='Last 24 hours'
+								label={translator('whatsappChat.last24hours')}
 								onClick={() => handleSetDateRange('last24hours')}
 								style={{
 									width: '100%',
@@ -913,7 +902,7 @@ const SideBar = ({
 								}}
 							/>
 							<Chip
-								label='Last week'
+								label={translator('whatsappChat.lastWeek')}
 								onClick={() => handleSetDateRange('lastWeek')}
 								style={{
 									width: '100%',
@@ -927,7 +916,7 @@ const SideBar = ({
 								}}
 							/>
 							<Chip
-								label='Last month'
+								label={translator('whatsappChat.lastMonth')}
 								onClick={() => handleSetDateRange('lastMonth')}
 								style={{
 									width: '100%',
@@ -941,7 +930,7 @@ const SideBar = ({
 								}}
 							/>
 							<Chip
-								label='Custom range'
+								label={translator('whatsappChat.customRange')}
 								onClick={() => handleSetDateRange('custom')}
 								style={{
 									width: '100%',
@@ -959,37 +948,33 @@ const SideBar = ({
 				</div>
 				{/* Custom Date Input Fields (Times auto-assigned: 12:01 AM start, 11:59 PM end) */}
 				{dialogTimePeriod === 'custom' && (
-					<Box style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '12px' }}>
-						<Box style={{ display: 'flex', gap: '8px' }}>
-							<TextField
-								label='Start Date'
-								type='date'
-								value={dialogStartDate}
-								onChange={(e) => {
-									setDialogStartDate(e.target.value);
-									// Auto-assign start time: 12:01 AM
-									setDialogStartTime('00:01');
-								}}
-								InputLabelProps={{ shrink: true }}
-								size='small'
-								style={{ flex: 1 }}
-							/>
-						</Box>
-						<Box style={{ display: 'flex', gap: '8px' }}>
-							<TextField
-								label='End Date'
-								type='date'
-								value={dialogEndDate}
-								onChange={(e) => {
-									setDialogEndDate(e.target.value);
-									// Auto-assign end time: 11:59 PM
-									setDialogEndTime('23:59');
-								}}
-								InputLabelProps={{ shrink: true }}
-								size='small'
-								style={{ flex: 1 }}
-							/>
-						</Box>
+					<Box style={{ display: 'flex', flexDirection: 'row', gap: '12px', marginTop: '12px' }}>
+						<TextField
+							label={translator('whatsappChat.startDate')}
+							type='date'
+							value={dialogStartDate}
+							onChange={(e) => {
+								setDialogStartDate(e.target.value);
+								// Auto-assign start time: 12:01 AM
+								setDialogStartTime('00:01');
+							}}
+							InputLabelProps={{ shrink: true }}
+							size='small'
+							style={{ flex: 1 }}
+						/>
+						<TextField
+							label={translator('whatsappChat.endDate')}
+							type='date'
+							value={dialogEndDate}
+							onChange={(e) => {
+								setDialogEndDate(e.target.value);
+								// Auto-assign end time: 11:59 PM
+								setDialogEndTime('23:59');
+							}}
+							InputLabelProps={{ shrink: true }}
+							size='small'
+							style={{ flex: 1 }}
+						/>
 					</Box>
 				)}
 			</DialogContent>
@@ -998,14 +983,14 @@ const SideBar = ({
 						onClick={() => setShowFilterDialog(false)}
 						className={clsx(classes.btn, classes.btnRounded)}
 					>
-						Cancel
+						{translator('common.cancel')}
 					</Button>
 					<Button
 						onClick={handleApplyFilters}
 						className={clsx(classes.btn, classes.btnRounded)}
 						style={{ backgroundColor: '#FF3343', color: '#fff' }}
 					>
-						Apply Filters
+						{translator('whatsappChat.applyFilters')}
 					</Button>
 				</DialogActions>
 			</Dialog>
@@ -1026,7 +1011,7 @@ const SideBar = ({
 			<DialogTitle className={classes.editTagsDialogTitle}>
 				<Box className={classes.editTagsHeaderContainer}>
 					<BsFillTagsFill size={20} className={classes.editTagsIcon} />
-					<span className={classes.editTagsHeaderText}>Edit Tags</span>
+					<span className={classes.editTagsHeaderText}>{translator('whatsappChat.editTags')}</span>
 				</Box>
 				<IconButton onClick={handleCloseEditTags} className={classes.editTagsCloseButton} style={{ color: '#fff', padding: '0', position: 'absolute', right: '25px', top: '12px' }}>
 					<BsX fontSize={40} />
@@ -1040,7 +1025,7 @@ const SideBar = ({
 						className={classes.editTagsItem}
 					>
 						<label className={classes.editTagsLabel}>
-							Tag Name
+							{translator('whatsappChat.tagName')}
 						</label>
 						<Box className={classes.editTagsInputRow}>
 							<TextField
@@ -1048,7 +1033,7 @@ const SideBar = ({
 								value={tag.TagName}
 								// @ts-ignore
 								onChange={(e) => handleUpdateTag(index, 'TagName', e.target.value)}
-								placeholder='Enter tag name'
+								placeholder={translator('whatsappChat.enterTagName')}
 								size='small'
 								variant='outlined'
 								className={classes.editTagsTextField}
@@ -1063,7 +1048,7 @@ const SideBar = ({
 									// @ts-ignore
 									onClick={() => handleSaveTag(index)}
 								>
-									{savingTagId === tag.id ? 'SAVING...' : tag.id === '0' ? 'SAVE' : 'UPDATE'}
+									{savingTagId === tag.id ? translator('common.saving') : tag.id === '0' ? translator('common.save') : translator('common.update')}
 								</Button>
 
 								<IconButton
@@ -1101,7 +1086,7 @@ const SideBar = ({
 						className={clsx(classes.btn, classes.btnRounded)}
 						onClick={handleAddNewTag}
 					>
-						+ Add New Tag
+						{translator('whatsappChat.addNewTag')}
 					</Button>
 				</Box>
 			</DialogContent>

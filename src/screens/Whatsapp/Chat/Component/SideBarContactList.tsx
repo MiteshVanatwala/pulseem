@@ -69,7 +69,10 @@ const SideBarContactList = ({
 		try {
 			// Get current tags from state or contact
 			const currentTags = updatedTags[selectedPhoneNumber] || contact.Tags || [];
-			const currentTagIds = currentTags.map(t => parseInt(t.id));
+			const currentTagIds = currentTags.map(t => {
+				const id = parseInt(t.id);
+				return isNaN(id) ? parseInt(String(t.id).split('_')[0]) : id;
+			}).filter(id => !isNaN(id));
 			const allTags = tagsList || [];
 			
 			// Add or remove tag
@@ -78,14 +81,22 @@ const SideBarContactList = ({
 			
 			if (isAssigned) {
 				// Remove tag
-				newTagIds = currentTagIds.filter(id => id !== parseInt(tagId));
-				newTags = currentTags.filter(t => t.id !== tagId);
+				const tagIdNum = parseInt(tagId);
+				newTagIds = currentTagIds.filter(id => id !== tagIdNum);
+				newTags = currentTags.filter(t => parseInt(t.id) !== tagIdNum);
 			} else {
 				// Add tag
-				newTagIds = [...currentTagIds, parseInt(tagId)];
-				const tagToAdd = allTags.find(t => t.id === tagId);
-				if (tagToAdd) {
-					newTags = [...currentTags, tagToAdd];
+				const tagIdNum = parseInt(tagId);
+				if (!isNaN(tagIdNum) && !currentTagIds.includes(tagIdNum)) {
+					newTagIds = [...currentTagIds, tagIdNum];
+					const tagToAdd = allTags.find(t => t.id === tagId);
+					if (tagToAdd) {
+						newTags = [...currentTags, tagToAdd];
+					}
+				} else {
+					// Tag already exists or invalid ID
+					console.warn('Tag already assigned or invalid ID:', tagId);
+					return;
 				}
 			}
 
@@ -111,9 +122,14 @@ const SideBarContactList = ({
 			// Update contact object as well
 			contact.Tags = newTags;
 
-			// Call callback
+			// Call callback with both tag IDs and tag objects for immediate UI update
 			if (onTagsUpdated) {
-				onTagsUpdated(selectedPhoneNumber, newTagIds);
+				onTagsUpdated(selectedPhoneNumber, newTagIds, newTags);
+			}
+
+			// Close menu after adding a tag (not when removing)
+			if (!isAssigned) {
+				handleCloseTagMenu();
 			}
 
 		} catch (error: any) {
@@ -204,16 +220,13 @@ const SideBarContactList = ({
 														<div>{moment(contact.LastMessageDate).format('DD/MM/YYYY')}</div>
 													</div>
 													<div className={clsx(classes.justifyContentEnd, classes.bold)}>
-														{agentList
-															?.filter((agent: WhatsappAgent) => agent?.Sessions?.some(session => compareLastNineDigits(session.Cellphone, contact?.PhoneNumber)))
-															?.map((agent: WhatsappAgent) => <div className={classes.agentNameContainer} style={{color: '#000'}}>{agent.Name}</div>)
-														}
 													</div>
 												</span>
 											</div>
 											
 											{/* Tags Section - Between top and bottom */}
-											<Box style={{ display: 'flex', gap: '4px', alignItems: 'center', flexWrap: 'wrap', padding: '2px 0' }}>
+											<Box className={classes.tagAgentWrapper}>
+												<Box className={classes.tagsFlexWrapper}>
 												{(updatedTags[contact.PhoneNumber] || contact.Tags || []).length > 0 && (
 													<>
 														{(updatedTags[contact.PhoneNumber] || contact.Tags || []).map((tag) => (
@@ -229,8 +242,7 @@ const SideBarContactList = ({
 																	height: '18px',
 																	padding: '0 5px',
 																	margin: '0'
-																}}
-															/>
+																}}															className={classes.tagChipSmall}															/>
 														))}
 													</>
 												)}
@@ -239,13 +251,23 @@ const SideBarContactList = ({
 												<IconButton
 													size='small'
 													onClick={(e) => handleOpenTagMenu(e, contact.PhoneNumber)}
-													style={{ width: '22px', height: '22px', backgroundColor: '#f0f0f0', borderRadius: '50%', minWidth: '22px', padding: '2px', margin: '0' }}
+													className={classes.plusButtonStyle}
 												>
 													<AiOutlinePlus size={11} />
 												</IconButton>
+												</Box>
 
-												{/* Tag Menu */}
-												<Menu
+												{/* Agent Name - Pinned to Top-Right, Won't Move */}
+												<Box className={classes.agentBoxContainer}>
+													{agentList
+														?.filter((agent: WhatsappAgent) => agent?.Sessions?.some(session => compareLastNineDigits(session.Cellphone, contact?.PhoneNumber)))
+														?.map((agent: WhatsappAgent) => <div key={agent.AgentId} className={clsx(classes.agentNameContainer, classes.agentNameBlack)}>{agent.Name}</div>)
+													}
+												</Box>
+											</Box>
+
+											{/* Tag Menu */}
+											<Menu
 													id={`tag-menu-${contact.PhoneNumber}`}
 													anchorEl={anchorEl}
 													open={Boolean(anchorEl) && selectedPhoneNumber === contact.PhoneNumber}
@@ -261,27 +283,27 @@ const SideBarContactList = ({
 													{(updatedTags[contact.PhoneNumber] || contact.Tags || []).length > 0 && (
 														<>
 															<MenuItem disabled style={{ opacity: 0.7, fontWeight: 600 }}>
-																Assigned Tags
+																{translator('whatsappChat.assignedTags')}
 															</MenuItem>
 															{(updatedTags[contact.PhoneNumber] || contact.Tags || []).map((tag) => (
-																<MenuItem key={tag.id} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 16px' }}>
-																	<span style={{ flex: 1 }}>{tag.TagName}</span>
+																<MenuItem key={tag.id} className={classes.assignedTagMenuItem}>
+																	<span className={classes.tagNameFlex}>{tag.TagName}</span>
 																	<IconButton
 																		size='small'
 																		onClick={() => handleTagChange(tag.id, true)}
-																		style={{ padding: 0, marginLeft: '8px' }}
+																		className={classes.deleteIconButton}
 																	>
 																		<MdClose size={16} />
 																	</IconButton>
 																</MenuItem>
 															))}
-															<div style={{ borderTop: '1px solid #eee', margin: '8px 0' }} />
+															<div className={classes.tagMenuDivider} />
 														</>
 													)}
 
 													{/* Available Tags Section */}
 													<MenuItem disabled style={{ opacity: 0.7, fontWeight: 600 }}>
-														Add Tags
+													{translator('whatsappChat.addTags')}
 													</MenuItem>
 													{tagsList
 														.filter((tag: any) => !(updatedTags[contact.PhoneNumber] || contact.Tags || []).some(ct => ct.id === tag.id))
@@ -289,14 +311,13 @@ const SideBarContactList = ({
 															<MenuItem
 																key={tag.id}
 																onClick={() => handleTagChange(tag.id, false)}
-																style={{ padding: '8px 16px' }}
+																className={classes.availableTagMenuItem}
 															>
-																<span style={{ color: tag.TagColor, fontWeight: 600 }}>●</span>
-																<span style={{ marginLeft: '8px' }}>{tag.TagName}</span>
+																<span className={classes.tagColorDot} style={{ color: tag.TagColor }}>●</span>
+																<span className={classes.tagNameMargin}>{tag.TagName}</span>
 															</MenuItem>
 														))}
-												</Menu>
-											</Box>
+											</Menu>
 											
 											<div
 												className={`${classes.whatsappChat} sidebar-contact__bottom-content`}>

@@ -75,7 +75,7 @@ export type SideBarContactListProps = {
 	isLoader: boolean;
 	searchText: string;
 	tagsList?: Array<{ id: string; TagName: string; TagColor: string }>;
-	onTagsUpdated?: (phoneNumber: string, tagIds: number[]) => void;
+	onTagsUpdated?: (phoneNumber: string, tagIds: number[], tags?: any[]) => void;
 };
 
 export type SideHeaderContactDropDownProps = {
@@ -161,6 +161,7 @@ export type WhatsappChatSideBarProps = {
 	setAgentSelected: (agentId: number) => void;
 	onAddAgent: () => void;
 	onEditAgents: () => void;
+	onTagsUpdated?: (phoneNumber: string, tagIds: number[], tags?: any[]) => void;
 	TotalRecord: number;
 	TotalOpen: number;
 	TotalPending: number;

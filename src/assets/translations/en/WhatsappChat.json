@@ -37,5 +37,16 @@
 	"templates": "Templates",
 	"addQuickResponse": "Add Quick Response",
 	"enterQuickResponse": "Enter Quick Response",
-	"noQuickResponses": "No Quick Responses Available"
+	"noQuickResponses": "No Quick Responses Available",
+	"last24hours": "Last 24 hours",
+	"lastWeek": "Last week",
+	"lastMonth": "Last month",
+	"customRange": "Custom range",
+	"startDate": "Start Date",
+	"endDate": "End Date",
+	"tagName": "Tag Name",
+	"enterTagName": "Enter tag name",
+	"assignedTags": "Assigned Tags",
+	"addTags": "Add Tags",
+	"applyFilters": "Apply Filters"
 }
