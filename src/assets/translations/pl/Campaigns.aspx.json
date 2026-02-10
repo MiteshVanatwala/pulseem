@@ -696,11 +696,16 @@
     "warning80KB": "Zbliżasz się do limitu rozmiaru Gmaila. Spróbuj pozostać poniżej 80 KB.",
     "overLimitWarning": "Ta wiadomość e-mail może zostać przycięta w Gmailu. Zmniejsz rozmiar o {{reduction}} KB.",
     "exceeded": {
-      "title": "Ta wiadomość e-mail może zostać przycięta w Gmailu",
       "subtitle": "Ta wiadomość e-mail może zostać przycięta w Gmailu",
       "description": "Ta wiadomość e-mail przekracza limit rozmiaru Gmaila i może zostać przycięta.",
       "continueEditing": "Kontynuuj edycję",
-      "learnMore": "Dowiedz się, jak zmniejszyć rozmiar"
+      "learnMore": "Dowiedz się, jak zmniejszyć rozmiar",
+      "title": "",
+      "mainText": "This email is over 102kb and might get cut in Gmail",
+      "recommendation": "We recommend you to reduce email size by deleting some of the objects to ensure smooth sending",
+      "backToEditor": "Back to the editor",
+      "continueToSendSettings": "Continue to send settings",
+      "continueToTestSending": "Continue to test sending"
     }
   },
   "sendToContact": "Wyślij do jednego kontaktu",

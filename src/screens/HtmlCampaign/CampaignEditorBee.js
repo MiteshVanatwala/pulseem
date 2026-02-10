@@ -533,10 +533,9 @@ const CampaignEditor = ({ classes, ...props }) => {
     try {
       if (editorRef.current) {
         const content = await editorRef.current.save();
-        const html = content?.data?.html || '';
-        const ampHtml = content?.data?.htmlAmp || '';
+        const html = content?.data?.html || content?.html || '';
+        const ampHtml = content?.data?.htmlAmp || content?.htmlAmp || '';
         const sizeInfo = calculateEmailSize(html, ampHtml);
-
         if (sizeInfo.totalKB > 102) {
           setPendingAction(actionType);
           setDialogType({
@@ -557,12 +556,19 @@ const CampaignEditor = ({ classes, ...props }) => {
     }
   };
 
-  const executePendingAction = () => {
+  const executePendingAction = (buttonAction) => {
     const action = pendingAction;
     setPendingAction(null);
     setDialogType(null);
 
-    if (action === 'testSend') {
+    if (action === 'save' && buttonAction === 'back') {
+      // User clicked "Back to the Editor" - just close dialog, stay in editor
+      // Dialog already closed above
+    } else if (action === 'testSend' && buttonAction === 'back') {
+      // User clicked "Back to the Editor" - just close dialog, stay in editor
+      // Dialog already closed above
+    } else if (action === 'testSend' && buttonAction === 'continue') {
+      // User clicked "Continue to test sending" - open test send modal
       const isSharedDomain = campaign.FromEmail.split("@").pop() === SharedEmailDomain;
       if (!isSharedDomain && (!emailProps?.IsVerified || emailProps?.IsRestricted)) {
         const domainErrorObj = {
@@ -695,6 +701,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     setEmailSize(sizeInfo);
 
     if (sizeInfo.totalKB > 102 && !saveRef.current?.skipSizeCheck) {
+      setPendingAction(saveRef.current?.operation || 'save');
       setDialogType({
         type: 'emailSizeExceeded',
         data: {
@@ -1076,8 +1083,6 @@ const CampaignEditor = ({ classes, ...props }) => {
     })
   }
   const handleOpenTestSend = async () => {
-    const canProceed = await checkEmailSizeBeforeAction('testSend');
-    if (!canProceed) return;
     const isSharedDomain = campaign.FromEmail.split("@").pop() === SharedEmailDomain;
     if (!isSharedDomain && (!emailProps?.IsVerified || emailProps?.IsRestricted)) {
       const domainErrorObj = {
@@ -1099,7 +1104,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       setShowDomainVerification(true)
     }
     else {
-      saveDesign(false, null, false, true).then(async (r) => {
+      saveDesign(false, null, false, true, 'testSend').then(async (r) => {
         setIsResponseModal(false);
         editorRef.current.send();
       });
@@ -1584,10 +1589,11 @@ const CampaignEditor = ({ classes, ...props }) => {
   const getEmailSizeExceededDialog = (data = {}) => ({
     title: t('campaigns.emailSize.exceeded.title'),
     showDivider: false,
+    contentStyle: classes.maxWidth400,
     content: (
       <Box>
         <Typography className={clsx(classes.textCenter, classes.font18, componentClasses.exceededDialogSubtitle)}>
-          {t('campaigns.emailSize.exceeded.subtitle')}
+          {t('campaigns.emailSize.exceeded.mainText')}
         </Typography>
 
         <Box className={componentClasses.exceededDialogSizeBox}>
@@ -1600,40 +1606,40 @@ const CampaignEditor = ({ classes, ...props }) => {
         </Box>
 
         <Typography className={clsx(classes.textCenter, classes.font16, componentClasses.exceededDialogWarning)}>
-          {t('campaigns.emailSize.overLimitWarning', { reduction: data.reductionNeeded })}
-        </Typography>
-
-        <Typography className={clsx(classes.textCenter, componentClasses.exceededDialogDescription)}>
-          {t('campaigns.emailSize.exceeded.description')}
+          {t('campaigns.emailSize.exceeded.recommendation')}
         </Typography>
       </Box>
     ),
-    renderButtons: () => (
-      <Grid
-        container
-        spacing={2}
-        className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
-      >
-        <Grid item>
-          <Button
-            onClick={() => executePendingAction()}
-            className={clsx(classes.btn, classes.btnRounded)}
-          >
-            {t('campaigns.emailSize.exceeded.continueEditing')}
-          </Button>
+    renderButtons: () => {
+      // Default for save action - just one button
+      return (
+        <Grid
+          container
+          spacing={2}
+          className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+        >
+          <Grid item>
+            <Button
+              onClick={() => executePendingAction('back')}
+              className={clsx(classes.btn, classes.btnRounded)}
+            >
+              {t('campaigns.emailSize.exceeded.backToEditor')}
+            </Button>
+          </Grid>
+          <Grid item>
+            <Button
+              onClick={() => executePendingAction('continue')}
+              variant='contained'
+              className={clsx(classes.btn, classes.btnRounded)}
+            >
+              {
+                pendingAction === 'testSend' ? t('campaigns.emailSize.exceeded.continueToTestSending') : t('campaigns.emailSize.exceeded.continueToSendSettings')
+              }
+            </Button>
+          </Grid>
         </Grid>
-        <Grid item>
-          <Button
-            onClick={() => {
-              window.open('https://support.google.com/mail/answer/6590', '_blank');
-            }}
-            className={clsx(classes.btn, classes.btnRounded)}
-          >
-            {t('campaigns.emailSize.exceeded.learnMore')}
-          </Button>
-        </Grid>
-      </Grid>
-    )
+      );
+    }
   });
 
   const renderDialog = () => {

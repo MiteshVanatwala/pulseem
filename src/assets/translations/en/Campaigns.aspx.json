@@ -696,11 +696,12 @@
     "warning80KB": "You're approaching Gmail's size limit. Try to stay under 80KB.",
     "overLimitWarning": "This email may be clipped in Gmail. Reduce by {{reduction}} KB.",
     "exceeded": {
-      "title": "This email may be clipped in Gmail",
-      "subtitle": "This email may be clipped in Gmail",
-      "description": "This email exceeds Gmail's size limit and may be clipped.",
-      "continueEditing": "Continue editing",
-      "learnMore": "Learn how to reduce size"
+      "title": "",
+      "mainText": "This email is over 102kb and might get cut in Gmail",
+      "recommendation": "We recommend you to reduce email size by deleting some of the objects to ensure smooth sending",
+      "backToEditor": "Back to the editor",
+      "continueToSendSettings": "Continue to send settings",
+      "continueToTestSending": "Continue to test sending"
     }
   },
   "sendToContact": "Send to one contact",
