@@ -680,6 +680,21 @@
     "quickMsgCautionMsg": "שליחה ידנית מהירה תשלח את הקמפיין אך ורק את לנמענים שהוזנו ידנית ובאופן מידי.",
     "doYouWantToContinue": "האם תרצה להמשיך?"
   },
+  "emailSize": {
+    "label": "גודל המייל",
+    "htmlSize": "גודל HTML",
+    "ampSize": "גודל AMP",
+    "tooltipInfo": "Gmail עלול לקצץ מיילים הגדולים מ-102KB",
+    "warning80KB": "האימייל שלכם מתקרב למגבלת הגודל של Gmail. מומלץ להישאר מתחת ל-80KB.",
+    "overLimitWarning": "המייל הזה עלול להיחתך ב-Gmail. הקטן ב-{{reduction}} KB.",
+    "exceeded": {
+      "title": "המייל הזה עלול להיחתך ב-Gmail",
+      "subtitle": "המייל הזה עלול להיחתך ב-Gmail",
+      "description": "המייל חורג ממגבלת הגודל של Gmail ועלול להיחתך.",
+      "continueEditing": "המשך עריכה",
+      "learnMore": "איך מקטינים את הגודל?"
+    }
+  },
   "sendToContact": "שלח לאיש קשר אחד",
   "successSent": "נשלח בהצלחה",
   "missingApi": "מפתח API לא נכון או לא תקין",

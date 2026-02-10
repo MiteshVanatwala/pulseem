@@ -106,7 +106,7 @@
 		"alert": "Alert",
 		"templateTextRequired": "Template text is required",
 		"templateNameRequired": "Template name is required",
-		"templateNameLengthError": "Template Name should be less then or equals to",
+		"templateNameLengthError": "Maximum 50 characters",
 		"templateLengthError": "Template length should be less then or equals to",
 		"languageError": "You can not submit a template containing more than one language",
 		"buttonTextError": "Button Text - Required field",
