@@ -689,11 +689,12 @@
     "overLimitWarning": "המייל הזה עלול להיחתך ב-Gmail. הקטן ב-{{reduction}} KB.",
     "exceeded": {
       "title": "",
-      "mainText": "מייל זה חורג מגודל של 102kb עלול להיחתך ב-Gmail",
+      "mainText": "מייל זה חורג מגודל של 102kb ועלול להיחתך ב-Gmail",
       "recommendation": "אנו ממליצים לצמצם ולמחוק אובייקטים כדי להבטיח שליחה חלקה",
       "backToEditor": "חזרה לעורך",
       "continueToSendSettings": "המשיכו להגדרות שליחה",
-      "continueToTestSending": "המשיכו לשליחת ניסיון"
+      "continueToTestSending": "המשיכו לשליחת ניסיון",
+      "continueToSave": "המשיכו לשמירה"
     }
   },
   "sendToContact": "שלח לאיש קשר אחד",

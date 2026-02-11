@@ -701,7 +701,8 @@
       "recommendation": "We recommend you to reduce email size by deleting some of the objects to ensure smooth sending",
       "backToEditor": "Back to the editor",
       "continueToSendSettings": "Continue to send settings",
-      "continueToTestSending": "Continue to test sending"
+      "continueToTestSending": "Continue to test sending",
+      "continueToSave": "Continue to save"
     }
   },
   "sendToContact": "Send to one contact",
