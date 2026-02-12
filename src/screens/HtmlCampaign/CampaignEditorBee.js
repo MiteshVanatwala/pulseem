@@ -597,7 +597,9 @@ const CampaignEditor = ({ classes, ...props }) => {
     } else if (action === 'continue') {
       handleContinueFlow(true);
     } else if (action === 'save') {
-      // Just close dialog, allow editing
+      saveDesign(false, null, true, true, '', true).then(async () => {
+        setIsResponseModal(false);
+      });
     }
   };
 
@@ -701,7 +703,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     setEmailSize(sizeInfo);
 
     if (sizeInfo.totalKB > 102 && !saveRef.current?.skipSizeCheck) {
-      setPendingAction(saveRef.current?.operation || 'save');
+      // setPendingAction(saveRef.current?.operation || 'save');
       setDialogType({
         type: 'emailSizeExceeded',
         data: {
@@ -915,7 +917,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     const redirectLink = isAutoResponder ? `/Pulseem/AutoSendPlans.aspx?Culture=${isRTL ? 'he-IL' : 'en-US'}` : `${sitePrefix}Campaigns`;
 
     if (saveBeforeExit) {
-      saveDesign(true, redirectLink, false, true, 'exit');
+      saveDesign(true, redirectLink, false, true, 'exit', true);
     }
     else {
       if (isAutoResponder) window.location.href = redirectLink;
@@ -1083,6 +1085,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     })
   }
   const handleOpenTestSend = async () => {
+    setPendingAction('testSend');
     const isSharedDomain = campaign.FromEmail.split("@").pop() === SharedEmailDomain;
     if (!isSharedDomain && (!emailProps?.IsVerified || emailProps?.IsRestricted)) {
       const domainErrorObj = {
@@ -1626,17 +1629,25 @@ const CampaignEditor = ({ classes, ...props }) => {
               {t('campaigns.emailSize.exceeded.backToEditor')}
             </Button>
           </Grid>
-          <Grid item>
-            <Button
-              onClick={() => executePendingAction('continue')}
-              variant='contained'
-              className={clsx(classes.btn, classes.btnRounded)}
-            >
-              {
-                pendingAction === 'testSend' ? t('campaigns.emailSize.exceeded.continueToTestSending') : t('campaigns.emailSize.exceeded.continueToSendSettings')
-              }
-            </Button>
-          </Grid>
+          {
+            (pendingAction === 'testSend' || pendingAction === 'save' || pendingAction === 'continue') && (
+              <Grid item>
+                <Button
+                  onClick={() => {
+                    executePendingAction(pendingAction);
+                  }}
+                  variant='contained'
+                  className={clsx(classes.btn, classes.btnRounded)}
+                >
+                  {
+                    pendingAction === 'testSend' 
+                      ? t('campaigns.emailSize.exceeded.continueToTestSending')
+                      : (pendingAction === 'save' ? t('campaigns.emailSize.exceeded.continueToSave') : t('campaigns.emailSize.exceeded.continueToSendSettings'))
+                  }
+                </Button>
+              </Grid>
+            )
+          }
         </Grid>
       );
     }
@@ -1684,6 +1695,7 @@ const CampaignEditor = ({ classes, ...props }) => {
         <Button
           size='small'
           onClick={async () => {
+            setPendingAction('save');
             const canProceed = await checkEmailSizeBeforeAction('save');
             if (!canProceed) return;
             saveDesign(false, null, true, true, 'save');
@@ -1700,6 +1712,7 @@ const CampaignEditor = ({ classes, ...props }) => {
         >{t("common.save")}
         </Button>
         {fromLink?.toLowerCase() !== 'autoresponder' && <Button onClick={async () => {
+          setPendingAction('continue');
           const canProceed = await checkEmailSizeBeforeAction('continue');
           if (!canProceed) return;
 
