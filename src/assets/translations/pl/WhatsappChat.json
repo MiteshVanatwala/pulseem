@@ -50,5 +50,7 @@
 	"addTags": "Dodaj tagi",
 	"applyFilters": "Zastosuj filtry",
 	"agent": "Agent",
-	"dateTimeRange": "Zakres dat i godzin"
+	"dateTimeRange": "Zakres dat i godzin",
+	"editTags": "Edytuj tagi",
+	"addNewTag": "Dodaj nowy tag"
 }

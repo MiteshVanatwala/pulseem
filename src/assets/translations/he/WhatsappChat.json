@@ -50,5 +50,7 @@
 	"addTags": "הוסף תגים",
 	"applyFilters": "החל מסננים",
 	"agent": "סוכן",
-	"dateTimeRange": "טווח תאריך ושעה"
+	"dateTimeRange": "טווח תאריך ושעה",
+	"editTags": "ערוך תגים",
+	"addNewTag": "הוסף תג חדש"
 }

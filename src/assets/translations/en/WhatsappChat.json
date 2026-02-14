@@ -50,5 +50,7 @@
 	"addTags": "Add Tags",
 	"applyFilters": "Apply Filters",
 	"agent": "Agents",
-	"dateTimeRange": "Date & Time Range"
+	"dateTimeRange": "Date & Time Range",
+	"editTags": "Edit Tags",
+	"addNewTag": "Add New Tag"
 }
