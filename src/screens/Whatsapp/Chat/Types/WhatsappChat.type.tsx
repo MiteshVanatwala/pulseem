@@ -144,7 +144,9 @@ export type WhatsappChatSideBarProps = {
 		startDate?: string,
 		endDate?: string,
 		agentIds?: number[],
-		tagIds?: number[]
+		tagIds?: number[],
+		startTime?: string,
+		endTime?: string
 	) => void;
 	contactsPaginationSetting: ContactsPaginationSetting;
 	fetchSearchedContacts: (

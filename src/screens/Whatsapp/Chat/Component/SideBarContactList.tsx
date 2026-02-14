@@ -80,10 +80,10 @@ const SideBarContactList = ({
 			let newTags: Array<{ id: string; TagName: string; TagColor: string }> = [];
 			
 			if (isAssigned) {
-				// Remove tag
-				const tagIdNum = parseInt(tagId);
-				newTagIds = currentTagIds.filter(id => id !== tagIdNum);
-				newTags = currentTags.filter(t => parseInt(t.id) !== tagIdNum);
+				// Remove tag - normalize both IDs to strings for comparison
+				const tagIdToRemove = String(tagId);
+				newTags = currentTags.filter(t => String(t.id) !== tagIdToRemove);
+				newTagIds = newTags.map(t => parseInt(t.id)).filter(id => !isNaN(id));
 			} else {
 				// Add tag
 				const tagIdNum = parseInt(tagId);
@@ -108,8 +108,6 @@ const SideBarContactList = ({
 					TagIds: newTagIds
 				}
 			);
-
-			console.log('Tags updated:', response.data);
 
 			// Update local state
 			if (selectedPhoneNumber) {

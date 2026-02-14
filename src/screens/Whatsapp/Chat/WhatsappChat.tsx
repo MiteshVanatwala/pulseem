@@ -371,7 +371,6 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		if (whatsAppChatContactsData?.Status === apiStatus.SUCCESS) {
 			const contactData = whatsAppChatContactsData.Data.Items;
 			const updatedActiveChat = contactData[0];
-			console.log(whatsAppChatContactsData?.Data?.TotalRecord)
 			// Update total contacts data
 			setTotalContacts(whatsAppChatContactsData?.Data?.TotalRecord || 0);
 			setTotalOpenContacts(whatsAppChatContactsData?.Data?.TotalOpen || 0);
@@ -737,10 +736,10 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			whatsAppChatContactsData?.Data?.Items?.length > 0
 		) {
 			// Update total contacts data
-			setTotalContacts(whatsAppChatContactsData?.Data?.TotalRecord || 0);
-			setTotalOpenContacts(whatsAppChatContactsData?.Data?.TotalOpen || 0);
-			setTotalPendingContacts(whatsAppChatContactsData?.Data?.TotalPending || 0);
-			setTotalSolvedContacts(whatsAppChatContactsData?.Data?.TotalSolved || 0);
+			// setTotalContacts(whatsAppChatContactsData?.Data?.TotalRecord || 0);
+			// setTotalOpenContacts(whatsAppChatContactsData?.Data?.TotalOpen || 0);
+			// setTotalPendingContacts(whatsAppChatContactsData?.Data?.TotalPending || 0);
+			// setTotalSolvedContacts(whatsAppChatContactsData?.Data?.TotalSolved || 0);
 			const updatedContacts = sideChatContacts?.map((contact) => {
 				if (
 					contact?.PhoneNumber ===
@@ -862,7 +861,9 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		startDate?: string,
 		endDate?: string,
 		agentIds?: number[],
-		tagIds?: number[]
+		tagIds?: number[],
+		startTime?: string,
+		endTime?: string
 	) => {
 		if (activePhoneNumber && activePhoneNumber?.length > 0) {
 			if (isPaginationReset && !isInfiniteScroll) {
@@ -879,47 +880,43 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				PageNo: effectivePageNo
 			};
 			
-			const apiPayloadByAgent: any = {
-				AgentId: agentSelected,
-				IsPagination: true,
-				pageNo: newPaginationSettings.PageNo,
-				pageSize: newPaginationSettings.PageSize,
-				Searchtext: searchText,
-				ChatStatus: ChatStatus,
-				StartDate: startDate,
-				EndDate: endDate,
-			};
+			// Combine date and time for API payload
+			let finalStartDate = startDate;
+			let finalEndDate = endDate;
+			if (startDate && startTime) {
+				finalStartDate = `${startDate}T${startTime}:00`;
+			}
+			if (endDate && endTime) {
+				finalEndDate = `${endDate}T${endTime}:00`;
+			}
 			
-			const apiPayloadByPhone: any = {
+			// Use single API for all filtering - GetWhatsAppChatContacts
+			const apiPayload: any = {
 				PhoneNumber: activePhoneNumber,
 				IsPagination: true,
 				pageNo: newPaginationSettings.PageNo,
 				pageSize: newPaginationSettings.PageSize,
 				Searchtext: searchText,
 				ChatStatus: ChatStatus,
-				StartDate: startDate,
-				EndDate: endDate,
+				StartDate: finalStartDate,
+				EndDate: finalEndDate,
 			};
 
 			// Only add AgentIds and TagIds if they have values
 			if (agentIds && agentIds.length > 0) {
-				apiPayloadByAgent.AgentIds = agentIds;
-				apiPayloadByPhone.AgentIds = agentIds;
+				apiPayload.AgentIds = agentIds;
 			}
 			if (tagIds && tagIds.length > 0) {
-				apiPayloadByAgent.TagIds = tagIds;
-				apiPayloadByPhone.TagIds = tagIds;
+				apiPayload.TagIds = tagIds;
 			}
 
 			const {
 				payload: whatsAppChatContactsData,
 			}: APIWhatsappChatSidebarContactsData = await dispatch<any>(
-				agentSelected > 0 ? getWhatsappChatContactsByAgent(apiPayloadByAgent) : getWhatsappChatContactsByPhoneNumber(apiPayloadByPhone)
+				getWhatsappChatContactsByPhoneNumber(apiPayload)
 			);
 			dispatch(setIsLoader(false));
 			if (whatsAppChatContactsData?.Status === apiStatus.SUCCESS) {
-				console.log(whatsAppChatContactsData?.Data?.TotalRecord)
-				
 				// Backend handles all filtering - use response data directly
 				const items = whatsAppChatContactsData?.Data?.Items || [];
 				

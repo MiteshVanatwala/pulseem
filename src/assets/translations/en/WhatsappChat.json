@@ -48,5 +48,7 @@
 	"enterTagName": "Enter tag name",
 	"assignedTags": "Assigned Tags",
 	"addTags": "Add Tags",
-	"applyFilters": "Apply Filters"
+	"applyFilters": "Apply Filters",
+	"agent": "Agents",
+	"dateTimeRange": "Date & Time Range"
 }

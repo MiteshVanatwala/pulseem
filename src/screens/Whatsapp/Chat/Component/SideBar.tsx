@@ -4,7 +4,7 @@ import {
 	WhatsappChatSideBarProps,
 } from '../Types/WhatsappChat.type';
 import AccountUser from '../../../../assets/images/acc-user.jpg';
-import { Box, Button, IconButton, MenuItem, Tab, Tabs, TextField, Chip, Dialog, DialogTitle, DialogContent, DialogActions, Checkbox, FormControlLabel } from '@material-ui/core';
+import { Box, Button, IconButton, MenuItem, Tab, Tabs, TextField, Chip, Dialog, DialogTitle, DialogContent, DialogActions } from '@material-ui/core';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { FaBars, FaCalendar, FaFilter, FaTrash } from 'react-icons/fa';
 import { BsFillTagsFill, BsPeopleFill, BsPersonWorkspace, BsX } from 'react-icons/bs';
@@ -69,7 +69,8 @@ const SideBar = ({
 	const [showFilterDropdown, setShowFilterDropdown] = useState<boolean>(false);
 	const [showFilterDialog, setShowFilterDialog] = useState<boolean>(false);
 	const [selectedAgents, setSelectedAgents] = useState<number[]>([]);
-	const [selectedTags, setSelectedTags] = useState<string[]>([]);
+	const [selectedTags, setSelectedTags] = useState<number[]>([]);
+	const [dialogSelectedTags, setDialogSelectedTags] = useState<number[]>([]);
 	const [dialogTimePeriod, setDialogTimePeriod] = useState<string>('lastMonth');
 	const [dialogStartDate, setDialogStartDate] = useState<string>('');
 	const [dialogEndDate, setDialogEndDate] = useState<string>('');
@@ -81,8 +82,6 @@ const SideBar = ({
 	const [savingTagId, setSavingTagId] = useState<string | null>(null);
 	const [toastMessage, setToastMessage] = useState<any>(null);
 
-	// Get available tags from tagsList
-	console.log('tagsList', tagsList);
 	// Initialize default date range on mount
 	useEffect(() => {
 		getDateRange('lastMonth');
@@ -93,7 +92,6 @@ const SideBar = ({
 		const fetchTags = async () => {
 			try {
 				const result = await dispatch(getWhatsappChatTag()) as any;
-				console.log('getWhatsappChatTag response:', result)
 				if (result.payload && result.payload?.Data && Array.isArray(result.payload?.Data)) {
 					// Transform tags: convert Id -> id and keep only needed fields
 					const normalizedTags = result.payload.Data.map((tag: any) => ({
@@ -101,7 +99,6 @@ const SideBar = ({
 						TagName: tag.TagName,
 						TagColor: tag.TagColor
 					}));
-					console.log('Tags from API (normalized):', normalizedTags);
 					setTagsList(normalizedTags);
 				}
 			} catch (error) {
@@ -117,16 +114,35 @@ const SideBar = ({
 		let end = new Date(today);
 
 		switch (period) {
+			case 'last24hours':
+				// Last 24 Hours: 12:01 AM 24 hours ago to 11:59 PM today
+				start = new Date(today.getTime() - 24 * 60 * 60 * 1000);
+				setStartTime('00:01');
+				setEndTime('23:59');
+				break;
 			case 'lastWeek':
-				start = new Date(today.setDate(today.getDate() - 7));
+				// Last Week: 12:01 AM 7 days ago to 11:59 PM today
+				start = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+				setStartTime('00:01');
+				setEndTime('23:59');
 				break;
 			case 'lastMonth':
-				start = new Date(today.setMonth(today.getMonth() - 1));
+				// Last Month: 12:01 AM 30 days ago to 11:59 PM today
+				start = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
+				setStartTime('00:01');
+				setEndTime('23:59');
 				break;
 			case 'lastYear':
-				start = new Date(today.setFullYear(today.getFullYear() - 1));
+				// Last Year: 12:01 AM 1 year ago to 11:59 PM today
+				start = new Date(today.getTime() - 365 * 24 * 60 * 60 * 1000);
+				setStartTime('00:01');
+				setEndTime('23:59');
 				break;
 			case 'custom':
+				setStartDate('');
+				setEndDate('');
+				setStartTime('00:01');
+				setEndTime('23:59');
 				return null;
 			default:
 				return null;
@@ -158,7 +174,7 @@ const SideBar = ({
 		setActiveTab(newValue);
 		setFilterBySelected(Number(newValue));
 		// Reset to page 1 and maintain current page size when filtering
-		fetchMoreContacts(searchText, Number(newValue), true, contactsPaginationSetting?.PageSize || 10, 1, false, startDate, endDate);
+		fetchMoreContacts(searchText, Number(newValue), true, contactsPaginationSetting?.PageSize || 10, 1, false, startDate, endDate, selectedAgents, selectedTags, startTime, endTime);
 	};
 
 	const handleAgentSelected = (e: SelectChangeEvent) => {
@@ -199,22 +215,51 @@ const SideBar = ({
 	};
 
 	// Get selected agent name for chip
-	const getSelectedAgentName = () => {
-		if (selectedAgent && selectedAgent > 0 && agentList) {
-			const agent = (agentList as WhatsappAgent[]).find((a) => a.AgentId === selectedAgent);
-			return agent?.Name || null;
-		}
-		return null;
+	const getSelectedAgentsDetails = () => {
+		return selectedAgents.map(agentId => {
+			const agent = (agentList as WhatsappAgent[])?.find((a) => a.AgentId === agentId);
+			return agent ? { id: agentId, name: agent.Name } : null;
+		}).filter(Boolean);
 	};
 
 	const handleRemoveDateFilter = () => {
 		setTimePeriod('lastMonth');
 		getDateRange('lastMonth');
+		// Fetch will be triggered by useEffect watching startDate/endDate
+		// Times are set by getDateRange, so no need to set them here
 	};
 
-	const handleRemoveAgentFilter = () => {
-		setAgentSelected(0);
-		setCookie('whatsappSelectedAgentId', '0');
+	const handleRemoveAgentFilter = (agentId: number) => {
+		const newSelectedAgents = selectedAgents.filter(id => id !== agentId);
+		setSelectedAgents(newSelectedAgents);
+		
+		// Update single agent selector if needed
+		if (newSelectedAgents.length === 0) {
+			setAgentSelected(0);
+			setCookie('whatsappSelectedAgentId', '0');
+		} else if (selectedAgent === agentId) {
+			// If we removed the currently selected single agent, update to first remaining
+			setAgentSelected(newSelectedAgents[0]);
+			setCookie('whatsappSelectedAgentId', String(newSelectedAgents[0]));
+		}
+		
+		// Trigger fetch immediately with remaining filters
+		fetchMoreContacts(searchText, filterBySelected, true, contactsPaginationSetting?.PageSize || 10, 1, false, startDate, endDate, newSelectedAgents, selectedTags, startTime, endTime);
+	};
+
+	const handleRemoveTagFilter = (tagId: number) => {
+		const newSelectedTags = selectedTags.filter(id => id !== tagId);
+		setSelectedTags(newSelectedTags);
+		// Trigger fetch immediately with remaining filters
+		fetchMoreContacts(searchText, filterBySelected, true, contactsPaginationSetting?.PageSize || 10, 1, false, startDate, endDate, selectedAgents, newSelectedTags, startTime, endTime);
+	};
+
+	// Get selected tags details (name and color)
+	const getSelectedTagsDetails = () => {
+		return selectedTags.map(tagId => {
+			const tag = tagsList.find(t => parseInt(t.id) === tagId);
+			return tag ? { id: tagId, name: tag.TagName, color: tag.TagColor } : null;
+		}).filter(Boolean);
 	};
 
 	// Clear all filters at once
@@ -225,6 +270,8 @@ const SideBar = ({
 		setCookie('whatsappSelectedAgentId', '0');
 		setSelectedAgents([]);
 		setSelectedTags([]);
+		// Note: useEffects will handle the fetch after state updates
+		// Times are set by getDateRange, so no need to set them here
 	};
 
 	const handleAgentToggle = (agentId: number) => {
@@ -235,11 +282,11 @@ const SideBar = ({
 		);
 	};
 
-	const handleTagToggle = (tag: string) => {
-		setSelectedTags(prev =>
-			prev.includes(tag)
-				? prev.filter(t => t !== tag)
-				: [...prev, tag]
+	const handleTagToggle = (tagId: number) => {
+		setDialogSelectedTags(prev =>
+			prev.includes(tagId)
+				? prev.filter(t => t !== tagId)
+				: [...prev, tagId]
 		);
 	};
 
@@ -254,6 +301,9 @@ const SideBar = ({
 		setEndTime(dialogEndTime);
 		setTimePeriod(dialogTimePeriod);
 		
+		// Apply tags from dialog to actual state
+		setSelectedTags(dialogSelectedTags);
+		
 		// If agents selected, apply the first one as selectedAgent
 		if (selectedAgents.length > 0) {
 			setAgentSelected(selectedAgents[0]);
@@ -264,7 +314,7 @@ const SideBar = ({
 		}
 		
 		// Trigger fetch with current filters including agent and tag IDs
-		fetchMoreContacts(searchText, filterBySelected, true, contactsPaginationSetting?.PageSize || 10, 1, false, dialogStartDate, dialogEndDate, selectedAgents, []);
+		fetchMoreContacts(searchText, filterBySelected, true, contactsPaginationSetting?.PageSize || 10, 1, false, dialogStartDate, dialogEndDate, selectedAgents, dialogSelectedTags, dialogStartTime, dialogEndTime);
 	};
 
 	const handleSetDateRange = (period: string) => {
@@ -338,13 +388,9 @@ const SideBar = ({
 			setSavingTagId(tag.id);
 
 			const tagId = parseInt(tag.id);
-			console.log('Deleting tag with ID:', tagId);
-
 			const response = await PulseemReactInstance.delete(
 				`WhatsAppChat/DeleteWhatsAppChatTag?tagId=${tagId}`
 			);
-
-			console.log('Delete API Response:', response.data);
 
 			// Remove from editingTags
 			const updatedEditingTags = editingTags.filter((_, i) => i !== index);
@@ -389,13 +435,6 @@ const SideBar = ({
 
 			const payloadId = tag.id === '0' ? 0 : parseInt(tag.id);
 			
-			console.log('Sending to API:', {
-				Id: payloadId,
-				TagName: tag.TagName,
-				TagColor: tag.TagColor,
-				originalTagId: tag.id
-			});
-
 			const response = await PulseemReactInstance.post(
 				'WhatsAppChat/ManageWhatsAppChatTag',
 				{
@@ -405,16 +444,12 @@ const SideBar = ({
 				}
 			);
 
-			console.log('API Response:', response.data);
-
 			if (response.data) {
 				// The API returns the ID in the Data field (e.g., {StatusCode: 201, Message: 'Success', Data: 16})
 				const returnedId = response.data.Data || response.data.Id;
 				const finalId = returnedId !== null && returnedId !== undefined ? String(returnedId) : tag.id;
 				// Use returned TagColor, or fallback to local tag.TagColor if not provided
 				const returnedColor = response.data.TagColor || tag.TagColor;
-				
-				console.log('Final ID to save:', finalId);
 				
 				// Update the editingTags with the response
 				const updatedEditingTags = [...editingTags];
@@ -488,27 +523,26 @@ const SideBar = ({
 			isInitialMount.current = false;
 			return;
 		}
-		if (selectedAgent && selectedAgent > 0) {
-			fetchMoreContacts(searchText, filterBySelected, true, contactsPaginationSetting?.PageSize || 10, 1, false, startDate, endDate);
-		}
-		else {
-			fetchSearchedContacts(searchText, filterBySelected, true, startDate, endDate);
-		}
+		// Always fetch with all filters (tags, agents, dates)
+		fetchMoreContacts(searchText, filterBySelected, true, contactsPaginationSetting?.PageSize || 10, 1, false, startDate, endDate, selectedAgents, selectedTags, startTime, endTime);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [selectedAgent, debouncedValue]);
 
 	// Fetch chats when date range changes
 	useEffect(() => {
 		if (isInitialMount.current) return;
-		
-		if (selectedAgent && selectedAgent > 0) {
-			fetchMoreContacts(searchText, filterBySelected, true, contactsPaginationSetting?.PageSize || 10, 1, false, startDate, endDate);
-		}
-		else {
-			fetchSearchedContacts(searchText, filterBySelected, true, startDate, endDate);
-		}
+		// Always fetch with all filters (tags, agents, dates)
+		fetchMoreContacts(searchText, filterBySelected, true, contactsPaginationSetting?.PageSize || 10, 1, false, startDate, endDate, selectedAgents, selectedTags, startTime, endTime);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [startDate, endDate]);
+
+	// Fetch chats when selectedTags changes (but not on initial mount)
+	useEffect(() => {
+		if (isInitialMount.current) return;
+		// Always fetch with all filters (tags, agents, dates)
+		fetchMoreContacts(searchText, filterBySelected, true, contactsPaginationSetting?.PageSize || 10, 1, false, startDate, endDate, selectedAgents, selectedTags, startTime, endTime);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [selectedTags]);
 
 	return (
 		<>
@@ -623,6 +657,8 @@ const SideBar = ({
 									onClick={(e) => {
 										e.preventDefault();
 										e.stopPropagation();
+										// Initialize dialog states from current values
+										setDialogSelectedTags([...selectedTags]);
 									setShowFilterDialog(true);									// Scroll to date range section after dialog opens
 									setTimeout(() => {
 										dateRangeRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -656,6 +692,8 @@ const SideBar = ({
 									onClick={(e) => {
 										e.preventDefault();
 										e.stopPropagation();
+										// Initialize dialog states from current values
+										setDialogSelectedTags([...selectedTags]);
 										setShowFilterDialog(true);
 									}}
 									onMouseDown={(e) => {
@@ -670,7 +708,7 @@ const SideBar = ({
 						</div>
 					</div>
 				</div>
-			{(getDateChipLabel() || getSelectedAgentName()) && (
+			{(getDateChipLabel() || selectedAgents.length > 0 || selectedTags.length > 0) && (
 			<Box className={classes.chipsContainer}>
 					<Box className={classes.chipsWrapper}>
 						{getDateChipLabel() && (
@@ -681,14 +719,29 @@ const SideBar = ({
 								className={classes.filterChip}
 							/>
 						)}
-						{getSelectedAgentName() && (
+						{getSelectedAgentsDetails().map((agent: any) => (
 							<Chip
-								label={getSelectedAgentName()}
-								onDelete={handleRemoveAgentFilter}
+								key={agent.id}
+								label={agent.name}
+								onDelete={() => handleRemoveAgentFilter(agent.id)}
 								size='small'
 								className={classes.agentChip}
 							/>
-						)}
+						))}
+						{getSelectedTagsDetails().map((tag: any) => (
+							<Chip
+								key={tag.id}
+								label={tag.name}
+								onDelete={() => handleRemoveTagFilter(tag.id)}
+								size='small'
+								style={{
+									backgroundColor: tag.color || '#e8e8e8',
+									color: '#fff',
+									fontWeight: '500',
+									margin: '2px'
+								}}
+							/>
+						))}
 					</Box>
 					<IconButton
 						size='small'
@@ -740,7 +793,7 @@ const SideBar = ({
 					handleUserStatus={handleUserStatus}
 					getStatusClass={getStatusClass}
 					fetchMoreContacts={() =>
-						fetchMoreContacts(searchText, filterBySelected)
+						fetchMoreContacts(searchText, filterBySelected, false, contactsPaginationSetting?.PageSize || 10, undefined, false, startDate, endDate, selectedAgents, selectedTags, startTime, endTime)
 					}
 					contactsPaginationSetting={contactsPaginationSetting}
 					isLoader={isLoader}
@@ -767,7 +820,11 @@ const SideBar = ({
 							newPage,
 							false,
 							startDate,
-							endDate
+							endDate,
+							selectedAgents,
+							selectedTags,
+							startTime,
+							endTime
 						);
 					}}
 					rowsPerPageOptions={[10, 20, 50, 100] as any}
@@ -783,7 +840,11 @@ const SideBar = ({
 							1,
 							false,
 							startDate,
-							endDate
+							endDate,
+							selectedAgents,
+							selectedTags,
+							startTime,
+							endTime
 						);
 					}}
 					style={{ borderTop: '1px solid #e0e0e0', backgroundColor: '#f9f9f9', paddingInline: 10, paddingTop: 0, paddingBottom: 0 }}
@@ -827,7 +888,7 @@ const SideBar = ({
 					{/* Agents Section */}
 					<Box style={{ marginBottom: '24px' }}>
 						<h3 style={{ margin: '0 0 12px 0', fontSize: '14px', fontWeight: '600', color: '#333' }}>
-							Agents
+							{translator("whatsappChat.agents")}
 						</h3>
 					<Box style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
 						{agentList?.map((agent: WhatsappAgent) => (
@@ -849,9 +910,9 @@ const SideBar = ({
 				<Box style={{ marginBottom: '24px' }}>
 				<Box style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
 					<h3 style={{ margin: '0', fontSize: '14px', fontWeight: '600', color: '#333' }}>
-						Tags
+						{translator("common.tags")}
 					</h3>
-					<Button
+					{/* <Button
 						size='small'
 						onClick={handleOpenEditTags}
 						style={{
@@ -863,19 +924,21 @@ const SideBar = ({
 						}}
 					>
 						Edit
-					</Button>
+					</Button> */}
 				</Box>
 				<Box style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
 					{tagsList.map((tag: any) => (
 						<Chip
 							key={tag?.id}
 							label={tag?.TagName}
-							onClick={() => handleTagToggle(tag)}
+							onClick={() => handleTagToggle(parseInt(tag.id))}
 							style={{
-								backgroundColor: selectedTags.includes(tag?.TagName) ? '#FF3343' : '#fff',
-								color: selectedTags.includes(tag?.TagName) ? '#fff' : '#333',
-								border: selectedTags.includes(tag?.TagName) ? 'none' : '1px solid #ddd',
-								cursor: 'pointer'
+								backgroundColor: tag?.TagColor || '#e8e8e8',
+								color: '#fff',
+								border: dialogSelectedTags.includes(parseInt(tag.id)) ? '3px solid #000' : '3px solid transparent',
+								cursor: 'pointer',
+								fontWeight: dialogSelectedTags.includes(parseInt(tag.id)) ? '600' : '500',
+								boxShadow: dialogSelectedTags.includes(parseInt(tag.id)) ? '0 2px 8px rgba(0,0,0,0.3)' : 'none'
 							}}
 						/>
 					))}
@@ -884,7 +947,7 @@ const SideBar = ({
 					<div ref={dateRangeRef}>
 						<Box style={{ marginBottom: '24px' }}>
 							<h3 style={{ margin: '0 0 12px 0', fontSize: '14px', fontWeight: '600', color: '#333' }}>
-								Date & Time Range
+								{translator('whatsappChat.dateTimeRange')}
 							</h3>
 						<Box style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
 							<Chip
