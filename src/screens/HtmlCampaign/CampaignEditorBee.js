@@ -530,30 +530,31 @@ const CampaignEditor = ({ classes, ...props }) => {
   }
 
   const checkEmailSizeBeforeAction = async (actionType) => {
-    try {
-      if (editorRef.current) {
-        const content = await editorRef.current.save();
-        const html = content?.data?.html || content?.html || '';
-        const ampHtml = content?.data?.htmlAmp || content?.htmlAmp || '';
-        const sizeInfo = calculateEmailSize(html, ampHtml);
-        if (sizeInfo.totalKB > 102) {
-          setPendingAction(actionType);
-          setDialogType({
-            type: 'emailSizeExceeded',
-            data: {
-              currentSize: sizeInfo.totalKB,
-              reductionNeeded: (sizeInfo.totalKB - 102).toFixed(1)
-            }
-          });
-          return false;
-        }
-        return true;
-      }
-      return true;
-    } catch (error) {
-      console.error('Error checking email size:', error);
-      return true;
-    }
+    return true;
+    // try {
+    //   if (editorRef.current) {
+    //     const content = await editorRef.current.save();
+    //     const html = content?.data?.html || content?.html || '';
+    //     const ampHtml = content?.data?.htmlAmp || content?.htmlAmp || '';
+    //     const sizeInfo = calculateEmailSize(html, ampHtml);
+    //     if (sizeInfo.totalKB > 102) {
+    //       setPendingAction(actionType);
+    //       setDialogType({
+    //         type: 'emailSizeExceeded',
+    //         data: {
+    //           currentSize: sizeInfo.totalKB,
+    //           reductionNeeded: (sizeInfo.totalKB - 102).toFixed(1)
+    //         }
+    //       });
+    //       return false;
+    //     }
+    //     return true;
+    //   }
+    //   return true;
+    // } catch (error) {
+    //   console.error('Error checking email size:', error);
+    //   return true;
+    // }
   };
 
   const executePendingAction = (buttonAction) => {
@@ -699,20 +700,20 @@ const CampaignEditor = ({ classes, ...props }) => {
   //#region Pulseem Methods (Save, Delete, Exit, Back, Test Send)
   const onSave = async (args) => {
     // Calculate email size BEFORE any other validations
-    const sizeInfo = calculateEmailSize(args.HtmlData, args.AmpData);
-    setEmailSize(sizeInfo);
+    // const sizeInfo = calculateEmailSize(args.HtmlData, args.AmpData);
+    // setEmailSize(sizeInfo);
 
-    if (sizeInfo.totalKB > 102 && !saveRef.current?.skipSizeCheck) {
-      // setPendingAction(saveRef.current?.operation || 'save');
-      setDialogType({
-        type: 'emailSizeExceeded',
-        data: {
-          currentSize: sizeInfo.totalKB,
-          reductionNeeded: (sizeInfo.totalKB - 102).toFixed(1)
-        }
-      });
-      return false;
-    }
+    // if (sizeInfo.totalKB > 102 && !saveRef.current?.skipSizeCheck) {
+    //   // setPendingAction(saveRef.current?.operation || 'save');
+    //   setDialogType({
+    //     type: 'emailSizeExceeded',
+    //     data: {
+    //       currentSize: sizeInfo.totalKB,
+    //       reductionNeeded: (sizeInfo.totalKB - 102).toFixed(1)
+    //     }
+    //   });
+    //   return false;
+    // }
 
     const dynamicBlocks = (args.HtmlData?.match(/product-block-container/g) || []).length;
     if (saveRef.current?.checkDynamicBlock && dynamicBlocks > 0) {
@@ -844,8 +845,8 @@ const CampaignEditor = ({ classes, ...props }) => {
         const html = content?.data?.html || '';
         const ampHtml = content?.data?.htmlAmp || '';
 
-        const sizeInfo = calculateEmailSize(html, ampHtml);
-        setEmailSize(sizeInfo);
+        // const sizeInfo = calculateEmailSize(html, ampHtml);
+        // setEmailSize(sizeInfo);
       } catch (error) {
         console.error('Error calculating email size on change:', error);
       }
@@ -1203,7 +1204,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           </Tooltip>
         </Box>
 
-        <Typography 
+        {/* <Typography 
           className={clsx(
             componentClasses.emailSizeValue,
             isRTL ? componentClasses.emailSizeValueRTL : componentClasses.emailSizeValueLTR
@@ -1211,7 +1212,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           style={{ direction: 'ltr', color }}
         >
           {emailSize.totalKB} KB / 102 KB
-        </Typography>
+        </Typography> */}
 
         <Box className={componentClasses.emailSizeProgressContainer}>
           <LinearProgress

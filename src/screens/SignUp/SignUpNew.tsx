@@ -483,7 +483,8 @@ const SignUpNew = ({ classes }: any) => {
           window?.dataLayer?.push({
             'event': 'formSubmission',
             'formType': 'Registraion Complete',
-            'formPosition': 'Footer'
+            'formPosition': 'Footer',
+            "description": qs?.Culture == 'pl-PL' ? 'Polish' : (qs?.Culture == 'en-US' ? 'English' : 'Hebrew')
           });
         } else if (Message === 'internalerror') {
           setDialogType({ type: 'internalError' });
