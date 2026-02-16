@@ -230,6 +230,7 @@
   "PasteOrWizard": "<a class=\"smart-builder\" onclick=\"request.SimpleBuilderClick();\">Paste</a> data or use the <a class=\"smart-builder\" onclick=\"request.SmartBuilderClick();\">wizard</a>",
   "Save": "Save",
   "Saving": "Saving...",
+  "update": "Update",
   "SaveNewSystem": "Save new system",
   "SystemIsConnectedToCount": "This system is connected to ##count##",
   "SystemName": "System name",

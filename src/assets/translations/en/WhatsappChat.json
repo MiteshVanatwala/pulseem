@@ -49,8 +49,10 @@
 	"assignedTags": "Assigned Tags",
 	"addTags": "Add Tags",
 	"applyFilters": "Apply Filters",
-	"agent": "Agents",
+	"agent": "Agent",
+	"agents": "Agents",
 	"dateTimeRange": "Date & Time Range",
 	"editTags": "Edit Tags",
 	"addNewTag": "Add New Tag"
+
 }

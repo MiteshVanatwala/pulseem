@@ -230,6 +230,7 @@
   "PasteOrWizard": "<a class=\"smart-builder\" onclick=\"request.SimpleBuilderClick();\">Wklej</a> dane lub użyj <a class=\"smart-builder\" onclick=\"request.SmartBuilderClick();\">kreatora</a>",
   "Save": "Zapisz",
   "Saving": "Zapisywanie...",
+  "update": "Aktualizuj",
   "SaveNewSystem": "Zapisz nowy system",
   "SystemIsConnectedToCount": "Ten system jest połączony z ##count##",
   "SystemName": "Nazwa systemu",

@@ -230,6 +230,7 @@
   "PasteOrWizard": "<a class=\"smart-builder\" onclick=\"request.SimpleBuilderClick();\">הדבק </a>נתונים או השתמש <a class=\"smart-builder\" onclick=\"request.SmartBuilderClick();\">באשף</a>",
   "Save": "שמור",
   "Saving": "שומר...",
+  "update": "עדכן",
   "SaveNewSystem": "שמירת מערכת חדשה",
   "SystemIsConnectedToCount": "מערכת זו מקושרת ל ##count##",
   "SystemName": "שם המערכת",

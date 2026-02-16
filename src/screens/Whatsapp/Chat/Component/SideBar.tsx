@@ -4,7 +4,7 @@ import {
 	WhatsappChatSideBarProps,
 } from '../Types/WhatsappChat.type';
 import AccountUser from '../../../../assets/images/acc-user.jpg';
-import { Box, Button, IconButton, MenuItem, Tab, Tabs, TextField, Chip, Dialog, DialogTitle, DialogContent, DialogActions } from '@material-ui/core';
+import { Box, Button, IconButton, MenuItem, Tab, Tabs, TextField, Chip, Dialog, DialogTitle, DialogContent, DialogActions, ThemeProviderProps, Paper, ClickAwayListener, MenuList, Popper} from '@material-ui/core';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { FaBars, FaCalendar, FaFilter, FaTrash } from 'react-icons/fa';
 import { BsFillTagsFill, BsPeopleFill, BsPersonWorkspace, BsX } from 'react-icons/bs';
@@ -81,6 +81,8 @@ const SideBar = ({
 	const [editingTags, setEditingTags] = useState<Array<{ id: string; TagName: string; TagColor: string }>>([]);
 	const [savingTagId, setSavingTagId] = useState<string | null>(null);
 	const [toastMessage, setToastMessage] = useState<any>(null);
+	const [showDateRangePopup, setShowDateRangePopup] = useState<boolean>(false);
+	const dateRangeAnchorRef = useRef<HTMLButtonElement>(null);
 
 	// Initialize default date range on mount
 	useEffect(() => {
@@ -357,7 +359,69 @@ const SideBar = ({
 		setDialogStartDate(formatDate(start));
 		setDialogEndDate(formatDate(end));
 	};
+	const handleQuickDateRangeSelection = (period: string) => {
+		setShowDateRangePopup(false);
+		if(period === 'custom') {
+			setDialogSelectedTags([...selectedTags]);
+			setShowFilterDialog(true);
+			setDialogTimePeriod('custom');
+			setDialogStartDate(startDate);
+			setDialogEndDate(endDate);
+			setDialogStartTime(startTime);
+			setDialogEndTime(endTime);
+			setTimeout(() => {
+				dateRangeRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+			}, 100);
+		}
+		else {
+			const today = new Date();
+			let start = new Date();
+			let end = new Date(today);
 
+			switch (period) {
+				case 'last24hours':
+					start = new Date(today.getTime() - 24 * 60 * 60 * 1000);
+					break;
+				case 'lastWeek':
+					start = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+					break;
+				case 'lastMonth':
+					start = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
+					break;
+
+			}
+			const formatDate = (date: Date) => date.toISOString().split('T')[0];
+			const newStartDate = formatDate(start);
+			const newEndDate = formatDate(end);
+
+			setStartDate(newStartDate);
+			setEndDate(newEndDate);
+			setStartTime('00:01');
+			setEndTime('23:59');
+			setTimePeriod(period);
+
+			fetchMoreContacts(
+				searchText,	
+				filterBySelected,
+				true,
+				contactsPaginationSetting?.PageSize || 10,
+				1,
+				false,
+				newStartDate,
+				newEndDate,
+				selectedAgents,
+				selectedTags,
+				'00:01',
+				'23:59'
+			);
+		}
+	};
+	const handleClickAwayDatePopup = (event: any) => {
+		if (dateRangeAnchorRef.current && dateRangeAnchorRef.current.contains(event.target)) {
+			return;
+		}
+		setShowDateRangePopup(false);
+	};
 	// Tag editing handlers
 	const handleOpenEditTags = () => {
 		setEditingTags([...tagsList]);
@@ -652,7 +716,7 @@ const SideBar = ({
 									e.stopPropagation();
 								}}
 							>
-								<IconButton
+								{/* <IconButton
 									size='small'
 									onClick={(e) => {
 										e.preventDefault();
@@ -670,6 +734,24 @@ const SideBar = ({
 									disableRipple
 									title='Calendar'
 									style={{ padding: '4px' }}
+								>
+									<FaCalendar style={{ fontSize: '16px', color: '#FF3343' }} />
+								</IconButton> */}
+								<IconButton
+								ref={dateRangeAnchorRef}
+								size='small'
+								onClick={(e) => {
+									e.preventDefault();
+									e.stopPropagation();
+									setShowDateRangePopup(!showDateRangePopup);
+								}}
+								onMouseDown={(e) => {
+									e.preventDefault();
+									e.stopPropagation();
+								}}
+								disableRipple
+								title='Calendar'
+								style={{ padding: '4px' }}
 								>
 									<FaCalendar style={{ fontSize: '16px', color: '#FF3343' }} />
 								</IconButton>
@@ -851,6 +933,82 @@ const SideBar = ({
 				/>
 		</aside>
 		{/* Filter Dialog */}
+			{/* Small Date Range Popup */}
+<Popper
+    open={showDateRangePopup}
+    anchorEl={dateRangeAnchorRef.current}
+    placement="bottom-end"
+    transition
+    style={{ zIndex: 1300 }}
+>
+    {({ TransitionProps }) => (
+        <ClickAwayListener onClickAway={handleClickAwayDatePopup}>
+            <Paper
+                elevation={8}
+                style={{
+                    marginTop: '8px',
+                    borderRadius: '8px',
+                    overflow: 'hidden',
+                    minWidth: '200px',
+                    boxShadow: '0 4px 20px rgba(0,0,0,0.15)'
+                }}
+            >
+                <MenuList style={{ padding: '8px 0' }}>
+                    <MenuItem
+                        onClick={() => handleQuickDateRangeSelection('last24hours')}
+                        style={{
+                            padding: '12px 20px',
+                            fontSize: '14px',
+                            color: timePeriod === 'last24hours' ? '#FF3343' : '#333',
+                            fontWeight: timePeriod === 'last24hours' ? '600' : '400',
+                            backgroundColor: timePeriod === 'last24hours' ? '#fff5f7' : 'transparent'
+                        }}
+                    >
+                        {translator('whatsappChat.last24hours')}
+                    </MenuItem>
+                    <MenuItem
+                        onClick={() => handleQuickDateRangeSelection('lastWeek')}
+                        style={{
+                            padding: '12px 20px',
+                            fontSize: '14px',
+                            color: timePeriod === 'lastWeek' ? '#FF3343' : '#333',
+                            fontWeight: timePeriod === 'lastWeek' ? '600' : '400',
+                            backgroundColor: timePeriod === 'lastWeek' ? '#fff5f7' : 'transparent'
+                        }}
+                    >
+                        {translator('whatsappChat.lastWeek')}
+                    </MenuItem>
+                    <MenuItem
+                        onClick={() => handleQuickDateRangeSelection('lastMonth')}
+                        style={{
+                            padding: '12px 20px',
+                            fontSize: '14px',
+                            color: timePeriod === 'lastMonth' ? '#FF3343' : '#333',
+                            fontWeight: timePeriod === 'lastMonth' ? '600' : '400',
+                            backgroundColor: timePeriod === 'lastMonth' ? '#fff5f7' : 'transparent'
+                        }}
+                    >
+                        {translator('whatsappChat.lastMonth')}
+                    </MenuItem>
+                    <MenuItem
+                        onClick={() => handleQuickDateRangeSelection('custom')}
+                        style={{
+                            padding: '12px 20px',
+                            fontSize: '14px',
+                            color: timePeriod === 'custom' ? '#FF3343' : '#333',
+                            fontWeight: timePeriod === 'custom' ? '600' : '400',
+                            backgroundColor: timePeriod === 'custom' ? '#fff5f7' : 'transparent',
+                            borderTop: '1px solid #f0f0f0',
+                            marginTop: '4px'
+                        }}
+                    >
+                        {translator('whatsappChat.customRange')}
+                    </MenuItem>
+                </MenuList>
+            </Paper>
+        </ClickAwayListener>
+    )}
+</Popper>
 			<Dialog 
 				open={showFilterDialog} 
 				onClose={() => setShowFilterDialog(false)}
@@ -886,7 +1044,8 @@ const SideBar = ({
 				</DialogTitle>
 				<DialogContent style={{ padding: '20px' }}>
 					{/* Agents Section */}
-					<Box style={{ marginBottom: '24px' }}>
+					{agentList && agentList.length > 0 && (
+											<Box style={{ marginBottom: '24px' }}>
 						<h3 style={{ margin: '0 0 12px 0', fontSize: '14px', fontWeight: '600', color: '#333' }}>
 							{translator("whatsappChat.agents")}
 						</h3>
@@ -906,8 +1065,10 @@ const SideBar = ({
 						))}
 					</Box>
 			</Box>
+					)}
 				{/* Tags Section */}
-				<Box style={{ marginBottom: '24px' }}>
+				{tagsList && tagsList.length > 0 && (
+					<Box style={{ marginBottom: '24px' }}>
 				<Box style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
 					<h3 style={{ margin: '0', fontSize: '14px', fontWeight: '600', color: '#333' }}>
 						{translator("common.tags")}
@@ -944,71 +1105,56 @@ const SideBar = ({
 					))}
 				</Box>
 			</Box>
+				)}
 					<div ref={dateRangeRef}>
-						<Box style={{ marginBottom: '24px' }}>
-							<h3 style={{ margin: '0 0 12px 0', fontSize: '14px', fontWeight: '600', color: '#333' }}>
-								{translator('whatsappChat.dateTimeRange')}
-							</h3>
-						<Box style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-							<Chip
-								label={translator('whatsappChat.last24hours')}
-								onClick={() => handleSetDateRange('last24hours')}
-								style={{
-									width: '100%',
-									height: '40px',
-									backgroundColor: dialogTimePeriod === 'last24hours' ? '#FF3343' : '#fff',
-									color: dialogTimePeriod === 'last24hours' ? '#fff' : '#999',
-									border: '1px solid #ddd',
-									cursor: 'pointer',
-									fontSize: '14px',
-									fontWeight: '500'
-								}}
-							/>
-							<Chip
-								label={translator('whatsappChat.lastWeek')}
-								onClick={() => handleSetDateRange('lastWeek')}
-								style={{
-									width: '100%',
-									height: '40px',
-									backgroundColor: dialogTimePeriod === 'lastWeek' ? '#FF3343' : '#fff',
-									color: dialogTimePeriod === 'lastWeek' ? '#fff' : '#999',
-									border: '1px solid #ddd',
-									cursor: 'pointer',
-									fontSize: '14px',
-									fontWeight: '500'
-								}}
-							/>
-							<Chip
-								label={translator('whatsappChat.lastMonth')}
-								onClick={() => handleSetDateRange('lastMonth')}
-								style={{
-									width: '100%',
-									height: '40px',
-									backgroundColor: dialogTimePeriod === 'lastMonth' ? '#FF3343' : '#fff',
-									color: dialogTimePeriod === 'lastMonth' ? '#fff' : '#999',
-									border: '1px solid #ddd',
-									cursor: 'pointer',
-									fontSize: '14px',
-									fontWeight: '500'
-								}}
-							/>
-							<Chip
-								label={translator('whatsappChat.customRange')}
-								onClick={() => handleSetDateRange('custom')}
-								style={{
-									width: '100%',
-									height: '40px',
-									backgroundColor: dialogTimePeriod === 'custom' ? '#FF3343' : '#fff',
-									color: dialogTimePeriod === 'custom' ? '#fff' : '#999',
-									border: '1px solid #ddd',
-									cursor: 'pointer',
-									fontSize: '14px',
-									fontWeight: '500'
-								}}
-							/>
-						</Box>
-					</Box>
-				</div>
+    <Box style={{ marginBottom: '24px' }}>
+        <h3 style={{ margin: '0 0 12px 0', fontSize: '14px', fontWeight: '600', color: '#333' }}>
+            {translator('whatsappChat.dateTimeRange')}
+        </h3>
+        <Box style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+            <Chip
+                label={translator('whatsappChat.last24hours')}
+                onClick={() => handleSetDateRange('last24hours')}
+                style={{
+                    backgroundColor: dialogTimePeriod === 'last24hours' ? '#FF3343' : '#fff',
+                    color: dialogTimePeriod === 'last24hours' ? '#fff' : '#333',
+                    border: dialogTimePeriod === 'last24hours' ? 'none' : '1px solid #ddd',
+                    cursor: 'pointer'
+                }}
+            />
+            <Chip
+                label={translator('whatsappChat.lastWeek')}
+                onClick={() => handleSetDateRange('lastWeek')}
+                style={{
+                    backgroundColor: dialogTimePeriod === 'lastWeek' ? '#FF3343' : '#fff',
+                    color: dialogTimePeriod === 'lastWeek' ? '#fff' : '#333',
+                    border: dialogTimePeriod === 'lastWeek' ? 'none' : '1px solid #ddd',
+                    cursor: 'pointer'
+                }}
+            />
+            <Chip
+                label={translator('whatsappChat.lastMonth')}
+                onClick={() => handleSetDateRange('lastMonth')}
+                style={{
+                    backgroundColor: dialogTimePeriod === 'lastMonth' ? '#FF3343' : '#fff',
+                    color: dialogTimePeriod === 'lastMonth' ? '#fff' : '#333',
+                    border: dialogTimePeriod === 'lastMonth' ? 'none' : '1px solid #ddd',
+                    cursor: 'pointer'
+                }}
+            />
+            <Chip
+                label={translator('whatsappChat.customRange')}
+                onClick={() => handleSetDateRange('custom')}
+                style={{
+                    backgroundColor: dialogTimePeriod === 'custom' ? '#FF3343' : '#fff',
+                    color: dialogTimePeriod === 'custom' ? '#fff' : '#333',
+                    border: dialogTimePeriod === 'custom' ? 'none' : '1px solid #ddd',
+                    cursor: 'pointer'
+                }}
+            />
+        </Box>
+    </Box>
+</div>
 				{/* Custom Date Input Fields (Times auto-assigned: 12:01 AM start, 11:59 PM end) */}
 				{dialogTimePeriod === 'custom' && (
 					<Box style={{ display: 'flex', flexDirection: 'row', gap: '12px', marginTop: '12px' }}>
