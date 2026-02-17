@@ -85,7 +85,7 @@ import { getCookie, setCookie } from '../../../helpers/Functions/cookies';
 import { MdSupportAgent } from 'react-icons/md';
 import { logout } from '../../../helpers/Api/PulseemReactAPI';
 import { StateType } from '../../../Models/StateTypes';
-import { compareLastNineDigits } from '../../../helpers/Utils/TextHelper';
+import { compareLastNineDigits, normalizePhoneForSearch } from '../../../helpers/Utils/TextHelper';
 import { BsTrash } from 'react-icons/bs';
 import ConfirmDeletePopUp from '../../Groups/Management/Popup/ConfirmDeletePopUp';
 import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
@@ -249,7 +249,54 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		Sendernumber: string,
 		ClientNumber: string
 	) => {
-		dispatch(setIsLoader(true));
+		// Find the contact's current status for optimistic update
+		const contact = sideChatContacts?.find((c) => c?.PhoneNumber === ClientNumber);
+		const oldStatusId = contact?.ConversationStatusId || 0;
+		
+		// Store original values for rollback if needed
+		const originalTotalOpen = totalOpenContacts;
+		const originalTotalPending = totalPendingContacts;
+		const originalTotalSolved = totalSolvedContacts;
+		const originalActiveChatContacts = activeChatContacts;
+		const originalSideChatContacts = sideChatContacts;
+		
+		// Optimistically update counts before API call
+		if (oldStatusId !== StatusId) {
+			// Decrement old status count
+			if (oldStatusId === 1) {
+				setTotalOpenContacts(prev => prev - 1);
+			} else if (oldStatusId === 2) {
+				setTotalPendingContacts(prev => prev - 1);
+			} else if (oldStatusId === 3) {
+				setTotalSolvedContacts(prev => prev - 1);
+			}
+			
+			// Increment new status count
+			if (StatusId === 1) {
+				setTotalOpenContacts(prev => prev + 1);
+			} else if (StatusId === 2) {
+				setTotalPendingContacts(prev => prev + 1);
+			} else if (StatusId === 3) {
+				setTotalSolvedContacts(prev => prev + 1);
+			}
+		}
+		
+		// Optimistically update UI
+		if (activeChatContacts?.PhoneNumber === ClientNumber) {
+			setActiveChatContacts({
+				...activeChatContacts,
+				ConversationStatusId: StatusId,
+			});
+		}
+		const updatedSideChatContacts = sideChatContacts?.map((contact) => {
+			if (contact?.PhoneNumber === ClientNumber) {
+				return { ...contact, ConversationStatusId: StatusId };
+			}
+			return contact;
+		});
+		setSideChatContacts(updatedSideChatContacts);
+		
+		// Make API call without loader
 		const whatsAppChatConversationStatusData: APIWhatsappChatConversationStatusData =
 			await dispatch<any>(
 				manageWhatsappChatCoversationStatus({
@@ -258,24 +305,17 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 					StatusId,
 				})
 			);
-		dispatch(setIsLoader(false));
+		
 		if (
-			whatsAppChatConversationStatusData?.payload?.Status === apiStatus.SUCCESS
+			whatsAppChatConversationStatusData?.payload?.Status !== apiStatus.SUCCESS
 		) {
-			if (activeChatContacts?.PhoneNumber === ClientNumber) {
-				setActiveChatContacts({
-					...activeChatContacts,
-					ConversationStatusId: StatusId,
-				});
-			}
-			const updatedSideChatContacts = sideChatContacts?.map((contact) => {
-				if (contact?.PhoneNumber === ClientNumber) {
-					return { ...contact, ConversationStatusId: StatusId };
-				}
-				return contact;
-			});
-			setSideChatContacts(updatedSideChatContacts);
-		} else {
+			// Rollback on failure
+			setTotalOpenContacts(originalTotalOpen);
+			setTotalPendingContacts(originalTotalPending);
+			setTotalSolvedContacts(originalTotalSolved);
+			setActiveChatContacts(originalActiveChatContacts);
+			setSideChatContacts(originalSideChatContacts);
+			
 			whatsAppChatConversationStatusData?.payload?.Message
 				? setToastMessage({
 					...ToastMessages.ERROR,
@@ -283,7 +323,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				})
 				: setToastMessage(ToastMessages.ERROR);
 		}
-	}, [dispatch, activeChatContacts, sideChatContacts, ToastMessages]);
+	}, [dispatch, activeChatContacts, sideChatContacts, totalOpenContacts, totalPendingContacts, totalSolvedContacts, ToastMessages]);
 
 	const handleUserStatus = useCallback((e: SelectChangeEvent, ClientNumber: string) => {
 		e.preventDefault();
@@ -896,7 +936,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				IsPagination: true,
 				pageNo: newPaginationSettings.PageNo,
 				pageSize: newPaginationSettings.PageSize,
-				Searchtext: searchText,
+				Searchtext: normalizePhoneForSearch(searchText),
 				ChatStatus: ChatStatus,
 				StartDate: finalStartDate,
 				EndDate: finalEndDate,

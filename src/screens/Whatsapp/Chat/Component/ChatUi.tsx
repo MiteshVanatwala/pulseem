@@ -9,6 +9,7 @@ import {
 import { Box, IconButton, MenuItem, Chip } from '@material-ui/core';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { FaBars } from 'react-icons/fa';
+import { MdEdit, MdSupportAgent } from 'react-icons/md';
 import ChatTemplateModal from '../Popups/ChatTemplateModal';
 import { apiStatus } from '../../Constant';
 import { useDispatch, useSelector } from 'react-redux';
@@ -236,12 +237,40 @@ const ChatUi = ({
 									handleSetAgentToSession(agentToSession);
 								}}
 							>
-								<MenuItem value={0}>{translator('whatsappChat.setAgent')}</MenuItem>
+								<MenuItem value={0}>
+									<Box style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+										<MdSupportAgent size={16} style={{ opacity: 0.6 }} />
+										{translator('whatsappChat.setAgent')}
+									</Box>
+								</MenuItem>
 								{agentList?.map((agent: WhatsappAgent) => {
-									return <MenuItem value={agent.AgentId}>{agent.Name}</MenuItem>
+									return (
+									<MenuItem key={agent.AgentId} value={agent.AgentId}>
+										<Box style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+											<MdSupportAgent size={16} style={{ color: '#FF3343' }} />
+											{agent.Name}
+										</Box>
+									</MenuItem>
+								)
 								})}
 							</Select>
 						</div>
+						{/* Edit Recipient Button */}
+						<IconButton
+							style={{
+								padding: '8px',
+								marginLeft: '4px',
+								backgroundColor: 'rgba(255, 51, 67, 0.1)',
+								borderRadius: '50%'
+							}}
+							aria-label='edit recipient'
+							onClick={() => {
+								// TODO: Add edit recipient functionality
+								console.log('Edit recipient:', chatContacts);
+							}}
+						>
+							<MdEdit size={20} style={{ color: '#FF3343' }} />
+						</IconButton>
 						{/* Tag Chips Display */}
 						<Box className={classes.tagChipsContainer}>
 							{contactTags && contactTags.length > 0 && (
@@ -274,7 +303,6 @@ const ChatUi = ({
 							)}
 					</Box>
 				</Box>
-
 			</header>
 		);
 	};

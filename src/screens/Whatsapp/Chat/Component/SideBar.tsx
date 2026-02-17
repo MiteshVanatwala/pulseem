@@ -320,6 +320,16 @@ const SideBar = ({
 	};
 
 	const handleSetDateRange = (period: string) => {
+		// Toggle: if clicking same period again, clear the date filter
+		if (dialogTimePeriod === period) {
+			setDialogTimePeriod('');
+			setDialogStartDate('');
+			setDialogEndDate('');
+			setDialogStartTime('');
+			setDialogEndTime('');
+			return;
+		}
+		
 		setDialogTimePeriod(period);
 		const today = new Date();
 		let start = new Date();
@@ -575,7 +585,7 @@ const SideBar = ({
 
 	useEffect(() => {
 		setStatusTabs([
-			{ status: 'whatsappChat.allStatus', count: TotalRecord },
+			{ status: 'whatsappChat.allStatus', count: TotalOpen + TotalPending + TotalSolved },
 			{ status: 'whatsappChat.open', count: TotalOpen },
 			{ status: 'whatsappChat.pending', count: TotalPending },
 			{ status: 'whatsappChat.solved', count: TotalSolved },
@@ -614,7 +624,7 @@ const SideBar = ({
 				className={`${classes.whatsappChat} sidebar ${isMobileSideBar && 'mobile-side-bar'
 					}`}>
 				<header className={clsx(`${classes.whatsappChat} header left`, classes.sidebarHeader)}>
-					<div className={`${classes.whatsappChat} sidebar__avatar-wrapper`}>
+					<div className={`${classes.whatsappChat} sidebar__avatar-wrapper`} style={{ flexShrink: 0 }}>
 						<img
 							src={AccountUser}
 							alt='Avatar'
@@ -641,7 +651,7 @@ const SideBar = ({
 								<BsFillTagsFill />
 							</IconButton>
 					</div>
-					<div className={`${classes.whatsappChat} sidebar__actions`}>
+					<div className={`${classes.whatsappChat} sidebar__actions`} style={{ flexShrink: 0 }}>
 						<IconButton
 							className={classes.whatsappChatBarButton}
 							onClick={setIsMobileSideBar}>
@@ -701,7 +711,7 @@ const SideBar = ({
 								outline: 'none',
 								fontSize: '14px',
 								color: '#333',
-								padding: '0 8px 0 40px'
+								padding: isRTL ? '0 40px 0 8px' : '0 8px 0 40px'
 							}}
 						/>
 						<div className={clsx(`${classes.whatsappChat} search-icons-right`, classes.searchIconsRight)}>
@@ -1016,7 +1026,8 @@ const SideBar = ({
 				fullWidth
 				PaperProps={{
 					style: {
-						borderRadius: '12px'
+						borderRadius: '12px',
+						direction: isRTL ? 'rtl' : 'ltr'
 					}
 				}}
 			>
@@ -1037,7 +1048,7 @@ const SideBar = ({
 					</span>
 					<IconButton
 						onClick={() => setShowFilterDialog(false)}
-						style={{ color: '#fff', padding: '0', position: 'absolute', right: '25px', top: '12px' }}
+						style={{ color: '#fff', padding: '0', position: 'absolute', [isRTL ? 'left' : 'right']: '25px', top: '12px' }}
 					>
 						<BsX fontSize={40} />
 					</IconButton>
@@ -1157,7 +1168,12 @@ const SideBar = ({
 </div>
 				{/* Custom Date Input Fields (Times auto-assigned: 12:01 AM start, 11:59 PM end) */}
 				{dialogTimePeriod === 'custom' && (
-					<Box style={{ display: 'flex', flexDirection: 'row', gap: '12px', marginTop: '12px' }}>
+					<Box style={{ 
+						display: 'flex', 
+						flexDirection: isRTL ? 'row-reverse' : 'row', 
+						gap: '12px', 
+						marginTop: '12px' 
+					}}>
 						<TextField
 							label={translator('whatsappChat.startDate')}
 							type='date'
@@ -1187,7 +1203,11 @@ const SideBar = ({
 					</Box>
 				)}
 			</DialogContent>
-				<DialogActions style={{ padding: '16px 20px', borderTop: '1px solid #eee' }}>
+				<DialogActions style={{ 
+					padding: '16px 20px', 
+					borderTop: '1px solid #eee',
+					flexDirection: isRTL ? 'row-reverse' : 'row'
+				}}>
 					<Button
 						onClick={() => setShowFilterDialog(false)}
 						className={clsx(classes.btn, classes.btnRounded)}
@@ -1213,7 +1233,8 @@ const SideBar = ({
 			PaperProps={{
 				style: {
 					borderRadius: '16px',
-					overflow: 'hidden'
+					overflow: 'hidden',
+					direction: isRTL ? 'rtl' : 'ltr'
 				}
 			}}
 		>
@@ -1222,7 +1243,17 @@ const SideBar = ({
 					<BsFillTagsFill size={20} className={classes.editTagsIcon} />
 					<span className={classes.editTagsHeaderText}>{translator('whatsappChat.editTags')}</span>
 				</Box>
-				<IconButton onClick={handleCloseEditTags} className={classes.editTagsCloseButton} style={{ color: '#fff', padding: '0', position: 'absolute', right: '25px', top: '12px' }}>
+				<IconButton 
+					onClick={handleCloseEditTags} 
+					className={classes.editTagsCloseButton} 
+					style={{ 
+						color: '#fff', 
+						padding: '0', 
+						position: 'absolute', 
+						[isRTL ? 'left' : 'right']: '25px', 
+						top: '12px' 
+					}}
+				>
 					<BsX fontSize={40} />
 				</IconButton>
 			</DialogTitle>

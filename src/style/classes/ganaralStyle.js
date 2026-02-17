@@ -5456,18 +5456,30 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     display: 'flex',
     gap: '4px',
     alignItems: 'center',
-    flexDirection: isRTL ? 'row-reverse' : 'row'
+    flexDirection: isRTL ? 'row-reverse' : 'row',
+    flexShrink: 0
   },
   // Sidebar Header styling
   sidebarHeader: {
     display: 'flex',
-    gap: '8px',
+    gap: '4px',
     alignItems: 'center',
-    padding: '10px',
-    flexWrap: 'wrap',
+    padding: '8px',
+    flexWrap: 'nowrap',
     flexDirection: isRTL ? 'row-reverse' : 'row',
     justifyContent: 'space-between',
-    width: '100%'
+    width: '100%',
+    overflow: 'hidden',
+    boxSizing: 'border-box',
+    '& > *': {
+      flexShrink: 1,
+      minWidth: 0
+    },
+    '& .chat__contact-wrapper': {
+      flex: 1,
+      minWidth: 0,
+      overflow: 'hidden'
+    }
   },
   // Chips Container - Keep tags and agent chip on same line
   chipsContainer: {
