@@ -190,6 +190,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   const componentClasses = useComponentStyles();
   const editorRef = useRef(null);
   const saveRef = useRef(null);
+  const emailSizeRef = useRef({ totalKB: 0, htmlKB: 0, ampKB: 0, totalBytes: 0 });
   const [showLoader, setLoader] = useState(true);
   const campaignId = params?.id;
   const [dataReady, setDataReady] = useState(false);
@@ -529,32 +530,20 @@ const CampaignEditor = ({ classes, ...props }) => {
     await dispatch(getCategories());
   }
 
-  const checkEmailSizeBeforeAction = async (actionType) => {
+  const checkEmailSizeBeforeAction = (actionType) => {
+    const sizeInfo = emailSizeRef.current;
+    if (sizeInfo.totalKB > 102) {
+      setPendingAction(actionType);
+      setDialogType({
+        type: 'emailSizeExceeded',
+        data: {
+          currentSize: sizeInfo.totalKB,
+          reductionNeeded: (sizeInfo.totalKB - 102).toFixed(1)
+        }
+      });
+      return false;
+    }
     return true;
-    // try {
-    //   if (editorRef.current) {
-    //     const content = await editorRef.current.save();
-    //     const html = content?.data?.html || content?.html || '';
-    //     const ampHtml = content?.data?.htmlAmp || content?.htmlAmp || '';
-    //     const sizeInfo = calculateEmailSize(html, ampHtml);
-    //     if (sizeInfo.totalKB > 102) {
-    //       setPendingAction(actionType);
-    //       setDialogType({
-    //         type: 'emailSizeExceeded',
-    //         data: {
-    //           currentSize: sizeInfo.totalKB,
-    //           reductionNeeded: (sizeInfo.totalKB - 102).toFixed(1)
-    //         }
-    //       });
-    //       return false;
-    //     }
-    //     return true;
-    //   }
-    //   return true;
-    // } catch (error) {
-    //   console.error('Error checking email size:', error);
-    //   return true;
-    // }
   };
 
   const executePendingAction = (buttonAction) => {
@@ -562,13 +551,8 @@ const CampaignEditor = ({ classes, ...props }) => {
     setPendingAction(null);
     setDialogType(null);
 
-    if (action === 'save' && buttonAction === 'back') {
-      // User clicked "Back to the Editor" - just close dialog, stay in editor
-      // Dialog already closed above
-    } else if (action === 'testSend' && buttonAction === 'back') {
-      // User clicked "Back to the Editor" - just close dialog, stay in editor
-      // Dialog already closed above
-    } else if (action === 'testSend' && buttonAction === 'continue') {
+    if (buttonAction === 'back') return;
+    if (action === 'testSend' && buttonAction === 'testSend') {
       // User clicked "Continue to test sending" - open test send modal
       const isSharedDomain = campaign.FromEmail.split("@").pop() === SharedEmailDomain;
       if (!isSharedDomain && (!emailProps?.IsVerified || emailProps?.IsRestricted)) {
@@ -700,20 +684,19 @@ const CampaignEditor = ({ classes, ...props }) => {
   //#region Pulseem Methods (Save, Delete, Exit, Back, Test Send)
   const onSave = async (args) => {
     // Calculate email size BEFORE any other validations
-    // const sizeInfo = calculateEmailSize(args.HtmlData, args.AmpData);
-    // setEmailSize(sizeInfo);
+    const sizeInfo = calculateEmailSize(args.HtmlData, args.AmpData);
+    updateEmailSize(sizeInfo);
 
-    // if (sizeInfo.totalKB > 102 && !saveRef.current?.skipSizeCheck) {
-    //   // setPendingAction(saveRef.current?.operation || 'save');
-    //   setDialogType({
-    //     type: 'emailSizeExceeded',
-    //     data: {
-    //       currentSize: sizeInfo.totalKB,
-    //       reductionNeeded: (sizeInfo.totalKB - 102).toFixed(1)
-    //     }
-    //   });
-    //   return false;
-    // }
+    if (sizeInfo.totalKB > 102 && !saveRef.current?.skipSizeCheck) {
+      setDialogType({
+        type: 'emailSizeExceeded',
+        data: {
+          currentSize: sizeInfo.totalKB,
+          reductionNeeded: (sizeInfo.totalKB - 102).toFixed(1)
+        }
+      });
+      return false;
+    }
 
     const dynamicBlocks = (args.HtmlData?.match(/product-block-container/g) || []).length;
     if (saveRef.current?.checkDynamicBlock && dynamicBlocks > 0) {
@@ -831,6 +814,11 @@ const CampaignEditor = ({ classes, ...props }) => {
       setSilentSave(false)
     }, 2000);
   }
+  
+  const updateEmailSize = (sizeInfo) => {
+    emailSizeRef.current = sizeInfo;
+    setEmailSize(sizeInfo);
+  };
 
   const onAutoSaveCampaign = debounce(() => {
     setSilentSave(true)
@@ -845,8 +833,8 @@ const CampaignEditor = ({ classes, ...props }) => {
         const html = content?.data?.html || '';
         const ampHtml = content?.data?.htmlAmp || '';
 
-        // const sizeInfo = calculateEmailSize(html, ampHtml);
-        // setEmailSize(sizeInfo);
+        const sizeInfo = calculateEmailSize(html, ampHtml);
+        updateEmailSize(sizeInfo);
       } catch (error) {
         console.error('Error calculating email size on change:', error);
       }
@@ -1087,6 +1075,8 @@ const CampaignEditor = ({ classes, ...props }) => {
   }
   const handleOpenTestSend = async () => {
     setPendingAction('testSend');
+    const canProceed = checkEmailSizeBeforeAction('testSend');
+    if (!canProceed) return;   
     const isSharedDomain = campaign.FromEmail.split("@").pop() === SharedEmailDomain;
     if (!isSharedDomain && (!emailProps?.IsVerified || emailProps?.IsRestricted)) {
       const domainErrorObj = {
@@ -1204,7 +1194,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           </Tooltip>
         </Box>
 
-        {/* <Typography 
+        <Typography
           className={clsx(
             componentClasses.emailSizeValue,
             isRTL ? componentClasses.emailSizeValueRTL : componentClasses.emailSizeValueLTR
@@ -1212,7 +1202,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           style={{ direction: 'ltr', color }}
         >
           {emailSize.totalKB} KB / 102 KB
-        </Typography> */}
+        </Typography>
 
         <Box className={componentClasses.emailSizeProgressContainer}>
           <LinearProgress
@@ -1695,9 +1685,9 @@ const CampaignEditor = ({ classes, ...props }) => {
       wizardButtons.push(<>
         <Button
           size='small'
-          onClick={async () => {
+          onClick={() => {
             setPendingAction('save');
-            const canProceed = await checkEmailSizeBeforeAction('save');
+            const canProceed = checkEmailSizeBeforeAction('save');
             if (!canProceed) return;
             saveDesign(false, null, true, true, 'save');
           }}
@@ -1712,9 +1702,9 @@ const CampaignEditor = ({ classes, ...props }) => {
           key={'saveButton'}
         >{t("common.save")}
         </Button>
-        {fromLink?.toLowerCase() !== 'autoresponder' && <Button onClick={async () => {
+        {fromLink?.toLowerCase() !== 'autoresponder' && <Button onClick={() => {
           setPendingAction('continue');
-          const canProceed = await checkEmailSizeBeforeAction('continue');
+          const canProceed = checkEmailSizeBeforeAction('continue');
           if (!canProceed) return;
 
           handleContinueFlow(false);
