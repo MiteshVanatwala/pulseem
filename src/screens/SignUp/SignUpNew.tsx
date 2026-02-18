@@ -325,7 +325,11 @@ const SignUpNew = ({ classes }: any) => {
       if (Message === 'ok') {
         setActiveStep(activeStep + 1);
         // @ts-ignore
-        window?.dataLayer.push({event: 'formSubmission',formType: 'Registration'});
+        window?.dataLayer.push({
+          event: 'formSubmission',
+          formType: 'Registration',
+          description: qs?.Culture == 'pl-PL' ? 'Polish' : (qs?.Culture == 'en-US' ? 'English' : 'Hebrew')
+        });
       } else if (Message === 'internalerror') {
         setDialogType({ type: 'internalError' });
       } else {
