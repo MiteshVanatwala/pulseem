@@ -22,6 +22,7 @@ import { COLORS } from '../../../../helpers/Constants';
 import { getWhatsappChatTag } from '../../../../redux/reducers/whatsappSlice';
 import { PulseemReactInstance } from '../../../../helpers/Api/PulseemReactAPI';
 import Toast from '../../../../components/Toast/Toast.component';
+import DynamicConfirmDialog from '../../../../components/DialogTemplates/DynamicConfirmDialog';
 
 const SideBar = ({
 	classes,
@@ -70,6 +71,7 @@ const SideBar = ({
 	const [showFilterDialog, setShowFilterDialog] = useState<boolean>(false);
 	const [selectedAgents, setSelectedAgents] = useState<number[]>([]);
 	const [selectedTags, setSelectedTags] = useState<number[]>([]);
+	const [dialogSelectedAgents, setDialogSelectedAgents] = useState<number[]>([]);
 	const [dialogSelectedTags, setDialogSelectedTags] = useState<number[]>([]);
 	const [dialogTimePeriod, setDialogTimePeriod] = useState<string>('lastMonth');
 	const [dialogStartDate, setDialogStartDate] = useState<string>('');
@@ -83,6 +85,8 @@ const SideBar = ({
 	const [toastMessage, setToastMessage] = useState<any>(null);
 	const [showDateRangePopup, setShowDateRangePopup] = useState<boolean>(false);
 	const dateRangeAnchorRef = useRef<HTMLButtonElement>(null);
+	const [showDeleteTagConfirm, setShowDeleteTagConfirm] = useState<boolean>(false);
+	const [tagToDelete, setTagToDelete] = useState<{ index: number; tag: any } | null>(null);
 
 	// Initialize default date range on mount
 	useEffect(() => {
@@ -277,7 +281,7 @@ const SideBar = ({
 	};
 
 	const handleAgentToggle = (agentId: number) => {
-		setSelectedAgents(prev =>
+		setDialogSelectedAgents(prev =>
 			prev.includes(agentId)
 				? prev.filter(id => id !== agentId)
 				: [...prev, agentId]
@@ -306,17 +310,20 @@ const SideBar = ({
 		// Apply tags from dialog to actual state
 		setSelectedTags(dialogSelectedTags);
 		
+		// Apply agents from dialog to actual state
+		setSelectedAgents(dialogSelectedAgents);
+		
 		// If agents selected, apply the first one as selectedAgent
-		if (selectedAgents.length > 0) {
-			setAgentSelected(selectedAgents[0]);
-			setCookie('whatsappSelectedAgentId', String(selectedAgents[0]));
+		if (dialogSelectedAgents.length > 0) {
+			setAgentSelected(dialogSelectedAgents[0]);
+			setCookie('whatsappSelectedAgentId', String(dialogSelectedAgents[0]));
 		} else {
 			setAgentSelected(0);
 			setCookie('whatsappSelectedAgentId', '0');
 		}
 		
 		// Trigger fetch with current filters including agent and tag IDs
-		fetchMoreContacts(searchText, filterBySelected, true, contactsPaginationSetting?.PageSize || 10, 1, false, dialogStartDate, dialogEndDate, selectedAgents, dialogSelectedTags, dialogStartTime, dialogEndTime);
+		fetchMoreContacts(searchText, filterBySelected, true, contactsPaginationSetting?.PageSize || 10, 1, false, dialogStartDate, dialogEndDate, dialogSelectedAgents, dialogSelectedTags, dialogStartTime, dialogEndTime);
 	};
 
 	const handleSetDateRange = (period: string) => {
@@ -372,6 +379,7 @@ const SideBar = ({
 	const handleQuickDateRangeSelection = (period: string) => {
 		setShowDateRangePopup(false);
 		if(period === 'custom') {
+			setDialogSelectedAgents([...selectedAgents]);
 			setDialogSelectedTags([...selectedTags]);
 			setShowFilterDialog(true);
 			setDialogTimePeriod('custom');
@@ -448,7 +456,7 @@ const SideBar = ({
 		setEditingTags(updatedTags);
 	};
 
-	const handleDeleteTag = async (index: number) => {
+	const handleDeleteTag = (index: number) => {
 		const tag = editingTags[index];
 
 		// Only delete if it's not a new tag (id !== '0')
@@ -458,8 +466,19 @@ const SideBar = ({
 			return;
 		}
 
+		// Show confirmation dialog
+		setTagToDelete({ index, tag });
+		setShowDeleteTagConfirm(true);
+	};
+
+	const confirmDeleteTag = async () => {
+		if (!tagToDelete) return;
+
+		const { index, tag } = tagToDelete;
+
 		try {
 			setSavingTagId(tag.id);
+			setShowDeleteTagConfirm(false);
 
 			const tagId = parseInt(tag.id);
 			const response = await PulseemReactInstance.delete(
@@ -486,7 +505,13 @@ const SideBar = ({
 			setTimeout(() => setToastMessage(null), 3000);
 		} finally {
 			setSavingTagId(null);
+			setTagToDelete(null);
 		}
+	};
+
+	const cancelDeleteTag = () => {
+		setShowDeleteTagConfirm(false);
+		setTagToDelete(null);
 	};
 
 	const handleAddNewTag = () => {
@@ -785,6 +810,7 @@ const SideBar = ({
 										e.preventDefault();
 										e.stopPropagation();
 										// Initialize dialog states from current values
+										setDialogSelectedAgents([...selectedAgents]);
 										setDialogSelectedTags([...selectedTags]);
 										setShowFilterDialog(true);
 									}}
@@ -1067,9 +1093,9 @@ const SideBar = ({
 								label={agent.Name}
 								onClick={() => handleAgentToggle(agent.AgentId)}
 								style={{
-									backgroundColor: selectedAgents.includes(agent.AgentId) ? '#FF3343' : '#fff',
-									color: selectedAgents.includes(agent.AgentId) ? '#fff' : '#333',
-									border: selectedAgents.includes(agent.AgentId) ? 'none' : '1px solid #ddd',
+									backgroundColor: dialogSelectedAgents.includes(agent.AgentId) ? '#FF3343' : '#fff',
+									color: dialogSelectedAgents.includes(agent.AgentId) ? '#fff' : '#333',
+									border: dialogSelectedAgents.includes(agent.AgentId) ? 'none' : '1px solid #ddd',
 									cursor: 'pointer'
 								}}
 							/>
@@ -1288,7 +1314,7 @@ const SideBar = ({
 									// @ts-ignore
 									onClick={() => handleSaveTag(index)}
 								>
-									{savingTagId === tag.id ? translator('common.saving') : tag.id === '0' ? translator('common.save') : translator('common.update')}
+									{tag.id === '0' ? translator('common.save') : translator('common.update')}
 								</Button>
 
 								<IconButton
@@ -1332,6 +1358,18 @@ const SideBar = ({
 			</DialogContent>
 
 			</Dialog>
+
+			{/* Delete Tag Confirmation Dialog */}
+			<DynamicConfirmDialog
+				classes={classes}
+				isOpen={showDeleteTagConfirm}
+				onClose={cancelDeleteTag}
+				onCancel={cancelDeleteTag}
+				onConfirm={confirmDeleteTag}
+				title={translator('whatsappChat.deleteTag')}
+				text={translator('whatsappChat.confirmDeleteTag')}
+				confirmButtonText=""
+			/>
 
 			{/* Toast Notification */}
 			{toastMessage && (

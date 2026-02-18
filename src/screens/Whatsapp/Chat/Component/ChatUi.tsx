@@ -22,6 +22,7 @@ import { useTranslation } from 'react-i18next';
 import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
 import { StateType } from '../../../../Models/StateTypes';
 import { coreProps, WhatsappAgent, WhatsappPhoneSession } from '../../Campaign/Types/WhatsappCampaign.types';
+import AddRecipientPopup from '../../../Groups/Management/Popup/AddRecipientPopup';
 
 const ChatUi = ({
 	classes,
@@ -58,7 +59,8 @@ const ChatUi = ({
 	personalFields,
 	onChatTemplateDelete,
 	setIsLoader,
-	selectedAgent
+	selectedAgent,
+	ToastMessages
 }: WhatsappChatUiProps) => {
 	const { t: translator } = useTranslation();
 	const dispatch = useDispatch();
@@ -66,8 +68,11 @@ const ChatUi = ({
 		type: string;
 	} | null>(null);
 	const [contactTags, setContactTags] = useState<any[]>([]);
+	const [showEditRecipient, setShowEditRecipient] = useState(false);
+	const [clientToEdit, setClientToEdit] = useState<any>(null);
 	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
 	const { agentList } = useSelector((state: StateType) => state.whatsapp);
+	const { windowSize } = useSelector((state: { core: coreProps }) => state.core);
 
 	useEffect(() => {
 		setTimeout(() => {
@@ -255,22 +260,6 @@ const ChatUi = ({
 								})}
 							</Select>
 						</div>
-						{/* Edit Recipient Button */}
-						<IconButton
-							style={{
-								padding: '8px',
-								marginLeft: '4px',
-								backgroundColor: 'rgba(255, 51, 67, 0.1)',
-								borderRadius: '50%'
-							}}
-							aria-label='edit recipient'
-							onClick={() => {
-								// TODO: Add edit recipient functionality
-								console.log('Edit recipient:', chatContacts);
-							}}
-						>
-							<MdEdit size={20} style={{ color: '#FF3343' }} />
-						</IconButton>
 						{/* Tag Chips Display */}
 						<Box className={classes.tagChipsContainer}>
 							{contactTags && contactTags.length > 0 && (
@@ -448,6 +437,32 @@ const ChatUi = ({
 				</div>
 				{renderDialog()}
 			</div>
+			
+			{/* Edit Recipient Popup */}
+			{showEditRecipient && clientToEdit && (
+				<AddRecipientPopup
+					classes={classes}
+					isOpen={showEditRecipient}
+					onClose={() => {
+						setShowEditRecipient(false);
+						setClientToEdit(null);
+					}}
+					windowSize={windowSize}
+					recipientData={clientToEdit}
+					ToastMessages={ToastMessages}
+					onAddRecipient={(closeDialog = true) => {
+						if (closeDialog) {
+							setShowEditRecipient(false);
+							setClientToEdit(null);
+						}
+						// Refresh contact list if needed
+						if (updateContactList) {
+							updateContactList();
+						}
+						return null;
+					}}
+				/>
+			)}
 		</>
 	);
 };

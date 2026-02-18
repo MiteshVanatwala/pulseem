@@ -59,6 +59,7 @@ export type WhatsappChatUiProps = {
 	onChatTemplateDelete: () => void;
 	setIsLoader: (showing: boolean) => void;
 	selectedAgent?: WhatsappAgent;
+	ToastMessages?: any;
 };
 
 export type SideBarContactListProps = {

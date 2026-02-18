@@ -33,6 +33,8 @@
 	"setAgent": "Set Agent",
 	"deleteAgent": "Delete Agent",
 	"confirmDeleteAgent": "Are you sure you want to delete this agent?",
+	"deleteTag": "Delete Tag",
+	"confirmDeleteTag": "Are you sure you want to delete this tag?",
 	"quickResponse": "Quick Response",
 	"templates": "Templates",
 	"addQuickResponse": "Add Quick Response",

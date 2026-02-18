@@ -1482,6 +1482,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 									onChatTemplateDelete={onChatTemplateDelete}
 									setIsLoader={(value: boolean) => dispatch(setIsLoader(value))}
 									selectedAgent={getAgentByCellphone(activeChatContacts.PhoneNumber)}
+									ToastMessages={ToastMessages}
 								/>
 							</div>
 						</div>

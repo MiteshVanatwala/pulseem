@@ -33,6 +33,8 @@
 	"setAgent": "הגדר סוכן",
 	"deleteAgent": "מחיקת סוכן",
 	"confirmDeleteAgent": "האם אתה בטוח שברצונך למחוק סוכן זה?",
+	"deleteTag": "מחיקת תג",
+	"confirmDeleteTag": "האם אתה בטוח שברצונך למחוק תג זה?",
 	"quickResponse": "תגובה מהירה",
 	"templates": "תבניות",
 	"addQuickResponse": "הוספת תגובה מהירה",
