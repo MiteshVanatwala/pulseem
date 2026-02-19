@@ -777,6 +777,7 @@
   "ampPageText": "<b>Czym jest AMP?</b><br/>Wysyłanie e-maila z AMP pozwala nam użyć dynamicznych elementów w treści e-maila<br/>Przykład: Karuzela obrazów <br/>Aby korzystać z tych elementów, adres \"Od e-mail\" musi zostać zatwierdzony przez Google i Yahoo <br/><br/><b>Jak zacząć?</b><br/>Wybierz adresy, z których chcesz wysyłać AMP i kliknij \"Aplikuj do AMP\"<br/>Następnie prześlij <a href='https://forms.gle/fDqLE1gh4wMB6BeQ6' target='_blank'>Formularz rejestracyjny AMP</a><br/><br/>Uwaga! Tylko adresy e-mail w zweryfikowanych domenach mogą być zatwierdzone do AMP",
   "webpNotSupport": "webp nie jest obsługiwany w AMP",
   "htmlDocTypeNotAllowed": "Nieprawidłowe znaczniki znalezione w bloku HTML. Nie obsługujemy następujących znaczników: <br />&lt;!DOCTYPE&gt;, &lt;body&gt;, &lt;html&gt; i &lt;script&gt;",
+  "htmlDocTypeNotAllowedWarning": "Używanie własnego kodu może wpłynąć na sposób wyświetlania wiadomości. Upewnij się, że używasz poprawnego i responsywnego HTML. Nie obsługujemy następujących tagów: <!DOCTYPE>, <body>, <html> oraz <script>.",
   "setupStaticProduct": "Konfiguracja produktu",
   "createProductBlock": "Spersonalizowany blok produktu",
   "selectProduct": "Wybierz produkt z katalogu",

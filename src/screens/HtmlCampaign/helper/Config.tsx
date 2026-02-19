@@ -81,6 +81,11 @@ export const BeeConfig = (Options: ConfigOptions) => {
         sidebarPosition: IsRTL ? 'right' : 'left',
         loadingSpinnerTheme: 'light',
         saveRows: true,
+        translations: {
+            "bee-newsletter-modules-html": {
+                "widget-warning-desc": t('campaigns.htmlDocTypeNotAllowedWarning'),
+            }
+        },
         rowsConfiguration: {
             emptyRows: true,
             defaultRows: false,
