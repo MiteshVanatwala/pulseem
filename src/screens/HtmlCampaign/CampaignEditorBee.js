@@ -574,10 +574,9 @@ const CampaignEditor = ({ classes, ...props }) => {
         setDomainAddressError(domainErrorObj);
         setShowDomainVerification(true);
       } else {
-        saveDesign(false, null, false, true, '', true).then(async () => {
-          setIsResponseModal(false);
-          editorRef.current.send();
-        });
+        setLoader(true);
+        setIsResponseModal(false);
+        editorRef.current.send();
       }
     } else if (action === 'continue') {
       handleContinueFlow(true);
@@ -667,6 +666,12 @@ const CampaignEditor = ({ classes, ...props }) => {
 
   }, [beeToken]);
 
+  useEffect(() => {
+    if (dialog === DialogType.TEST_SEND) {
+      setLoader(false);
+    }
+  }, [dialog]);
+
   const initOptions = async () => {
     initTags();
     if (!accountSettings || accountSettings.SubAccountSettings) {
@@ -696,6 +701,10 @@ const CampaignEditor = ({ classes, ...props }) => {
         }
       });
       return false;
+    }
+
+    if (saveRef.current?.operation === 'testSend') {
+      setLoader(true);
     }
 
     const dynamicBlocks = (args.HtmlData?.match(/product-block-container/g) || []).length;
@@ -941,6 +950,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   const onTestSendResponse = (statusCode, message = '') => {
     setIsResponseModal(statusCode !== 402);
     switch (statusCode) {
+      case 200: 
       case 201: {
         setDialog(DialogType.SUCCESS_SENT);
         break;
