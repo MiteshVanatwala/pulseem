@@ -67,6 +67,17 @@ const graphTextWidth = {
 };
 
 export const getGeneralStyle = (windowSize, isRTL, theme) => ({
+  editAgentIconButton: {
+    background: '#f5f6fa',
+    borderRadius: '50%',
+    marginLeft: 8,
+    boxShadow: '0 1px 4px rgba(0,0,0,0.08)',
+    border: '1px solid #e0e0e0',
+    width: 32,
+    height: 32,
+    padding: 4,
+    minWidth: 0,
+  },
   background: {
     position: 'fixed',
     bottom: 0,
@@ -5517,10 +5528,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   tagChipStyle: {
     backgroundColor: '#f0f0f0',
     fontWeight: 600,
-    fontSize: '9px',
-    height: '18px',
-    padding: '0 5px',
-    margin: '0'
+    fontSize: '11px',
+    height: '22px',
+    paddingTop: '9px', 
+    paddingBottom: '9px',
+    margin: '0 4px 0 0',
+    borderRadius: '12px',
   },
   
   // ============ SideBarContactList Inline Styles ============
@@ -5547,7 +5560,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     fontWeight: 600,
     fontSize: '9px',
     height: '18px',
-    padding: '0 5px',
+    //padding: '0 5px',
+    paddingTop: '8px',
+    paddingBottom: '8px',
     margin: '0'
   },
   plusButtonStyle: {
@@ -5766,5 +5781,29 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     cursor: 'pointer',
     fontSize: '14px',
     fontWeight: '500'
+  },
+  chatHeader: {
+    display: 'flex',
+    alignItems: 'center',
+    padding: '10px 16px',
+    backgroundColor: '#f0f2f5',
+    borderBottom: '1px solid #d1d7db'
+  },
+  chatAvatarWrapper: {
+    marginRight: '12px'
+  },
+  chatContactWrapper: {
+    flex: '0 0 auto',
+    marginRight: '16px'
+  },
+  chatContactName: {
+    fontSize: '16px',
+    fontWeight: 500,
+    margin: 0
+  },
+  chatContactDesc: {
+    fontSize: '13px',
+    color: '#667781',
+    margin: 0
   }
 });

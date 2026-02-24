@@ -1392,7 +1392,9 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		color: '#ffffff',
 		height: '22px',
 		borderRadius: '4px',
-		padding: '2px 4px',
+		//padding: '2px 4px',
+    paddingTop: '9px',
+    paddingBottom: '9px',
 	},
 	testSendRadio: {
 		padding: '8px 12px 0px 12px',

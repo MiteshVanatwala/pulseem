@@ -60,6 +60,8 @@ export type WhatsappChatUiProps = {
 	setIsLoader: (showing: boolean) => void;
 	selectedAgent?: WhatsappAgent;
 	ToastMessages?: any;
+	tagsList?: Array<{ id: string; TagName: string; TagColor: string }>;
+	onTagsUpdated?: (phoneNumber: string, tagIds: number[], tags?: any[]) => void;
 };
 
 export type SideBarContactListProps = {
@@ -165,6 +167,8 @@ export type WhatsappChatSideBarProps = {
 	onAddAgent: () => void;
 	onEditAgents: () => void;
 	onTagsUpdated?: (phoneNumber: string, tagIds: number[], tags?: any[]) => void;
+	onTagColorUpdated?: (tagId: string, newColor: string) => void;
+	tagsList?: Array<{ id: string; TagName: string; TagColor: string }>;
 	TotalRecord: number;
 	TotalOpen: number;
 	TotalPending: number;

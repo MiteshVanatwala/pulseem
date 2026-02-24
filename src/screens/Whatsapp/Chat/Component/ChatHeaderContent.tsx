@@ -81,7 +81,7 @@ const ChatHeaderContent = ({
 	return (
 		<>
 			{whatsappChatSession.IsIn24Window && (
-				<div className={`${classes.whatsappChat} chat__actions`}>
+				<div className={`${classes.whatsappChat} chat__actions`} style={{ display: 'flex', alignItems: 'center', padding: '4px 12px', backgroundColor: '#fff3cd', borderRadius: '16px', fontSize: '14px', fontWeight: '600', color: '#856404' }}>
 					<div
 						className={`${classes.whatsappChat} chat__action chat__action-icon`}>
 						{countDown()}
