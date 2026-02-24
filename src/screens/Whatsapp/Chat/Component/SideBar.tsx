@@ -1651,11 +1651,6 @@ const SideBar = ({
 				</DialogTitle>
 
 				<DialogContent className={classes.editTagsDialogContent}>
-					{toastMessage && (
-						<Box style={{ marginBottom: '16px' }}>
-							<Toast customData={toastMessage as any} data={null} />
-						</Box>
-					)}
 					{isAdmin ? (
 						<>
 							{editingTags.map((tag, index) => (
@@ -1758,6 +1753,9 @@ const SideBar = ({
 				text={translator('whatsappChat.confirmDeleteTag')}
 				confirmButtonText=""
 			/>
+
+			{/* Toast Notification */}
+			{toastMessage && <Toast customData={toastMessage as any} data={null} />}
 		</>
 	);
 };
