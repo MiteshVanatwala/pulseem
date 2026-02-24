@@ -40,7 +40,7 @@ import clsx from 'clsx';
 import Celebration from '../../assets/images/transparent_celebration.png';
 import { TIER_PLANS } from '../../helpers/Constants';
 import { getAddSubscriptionCardIframeURL, getCurrentPlan, getUserCreditCards, restoreAutomation, upgradePlan } from '../../redux/reducers/TiersSlice';
-import { cancelFrozenSends, releaseFrozenSends } from '../../redux/reducers/BillingSlice';
+import { cancelFrozenSends, getAccountBilling, releaseFrozenSends } from '../../redux/reducers/BillingSlice';
 import TranzilaIframe from '../Balance/PaymentWizard/Dialogs/TranzilaIframe';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 import { Loader } from '../Loader/Loader';
@@ -49,6 +49,7 @@ import EmailMarketingSlider from '../EmailPlans/EmailMarketingSlider';
 import { UpgradePlanRequest } from '../../Models/Tiers/TierModels';
 import Toast from '../Toast/Toast.component';
 import ContactUsDialog from '../EmailPlans/ContactUsDialog';
+import BillingSettings from '../BillingSettings/BillingSettings';
 
 const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false, isBankTransferForTiers = false  }: any) => {
   const { t, i18n } = useTranslation();
@@ -73,6 +74,9 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false, isBankT
   const { accountCurrencySymbol, accountIsCurrencySymbolPrefix, IsPoland } = useSelector((state: any) => state.common);
   const { tiers: emailTiers } = useSelector((state: any) => state.emailTierScaling);
   const { packagesDetails, accountAvailablePackages } = useSelector((state: any) => state.dashboard);
+  const billingDetail = useSelector((state: any) => state.billing?.billing?.Data);
+  const [showBillingSettings, setShowBillingSettings] = useState(false);
+  const [showPlans, setShowPlans] = useState(false);
   const [ toastMessage, setToastMessage ] = useState(null);
   const [showContactDialog, setShowContactDialog] = useState(false);
   const [ existingPlan, setExistingPlan ] = useState<any>(null);
@@ -123,6 +127,33 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false, isBankT
 
     scrollToTop();
   }, [activeStep]);
+
+  
+  useEffect(() => {
+    dispatch(getAccountBilling() as any);
+  }, []);
+
+  useEffect(() => {
+    if (!isOpen) {
+      setShowPlans(false);
+      setShowBillingSettings(false);
+      return;
+    }
+
+    const billingRequired =
+      billingDetail?.CompanyName === '' || billingDetail?.CompanyName === null ||
+      billingDetail?.CorporationNumber === '' || billingDetail?.CorporationNumber === null ||
+      billingDetail?.Email === '' || billingDetail?.Email === null;
+
+    if (billingRequired) {
+      setShowBillingSettings(true);
+      setShowPlans(false);
+    } else {
+      setShowPlans(true);
+      setShowBillingSettings(false);
+    }
+
+  }, [isOpen, billingDetail]);
   
   const renderToast = () => {
     if (toastMessage) {
@@ -248,6 +279,8 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false, isBankT
     setIframeURL(null);
     setLoadingIframe(false);
     setShowSalesContactPopup(false);
+    setShowPlans(false);
+    setShowBillingSettings(false);
     onClose();
   };
 
@@ -964,27 +997,43 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false, isBankT
   };
 
   return (
-    <BaseDialog
-      classes={{
-        ...classes,
-        dialogContainer: clsx(classes.dialogContainer, classes.tierPlansDialog),
-      }}
-      open={isOpen}
-      title={t('billing.tier.ui.upgradeYourPlan')}
-      onClose={handleClose}
-      onCancel={handleClose}
-      showDefaultButtons={false}
-      renderButtons={() => (
-        <Box style={{ padding: '8px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Box>
-            {activeStep !== 0 && activeStep !== 2 && (
-              <Button onClick={handleBack} className={clsx(classes.btn, classes.btnRounded, classes.mlr10)}>
-                {t('common.back')}
-              </Button>
-            )}
-          </Box>
-          <Box>
-            {/* {activeStep === 0 &&
+    <>
+      {showBillingSettings && (
+        <BillingSettings
+          classes={classes}
+          isOpen={showBillingSettings}
+          onClose={async (isSuccess: boolean) => {
+            setShowBillingSettings(false);
+            if (isSuccess) {
+              await dispatch(getAccountBilling() as any);
+              setShowPlans(true);
+            } else {
+              onClose();
+            }
+          }}
+        />
+      )}
+      <BaseDialog
+        classes={{
+          ...classes,
+          dialogContainer: clsx(classes.dialogContainer, classes.tierPlansDialog),
+        }}
+        open={showPlans}
+        title={t('billing.tier.ui.upgradeYourPlan')}
+        onClose={handleClose}
+        onCancel={handleClose}
+        showDefaultButtons={false}
+        renderButtons={() => (
+          <Box style={{ padding: '8px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Box>
+              {activeStep !== 0 && activeStep !== 2 && (
+                <Button onClick={handleBack} className={clsx(classes.btn, classes.btnRounded, classes.mlr10)}>
+                  {t('common.back')}
+                </Button>
+              )}
+            </Box>
+            <Box>
+              {/* {activeStep === 0 &&
               <Button
                   variant="contained"
                   color="primary"
@@ -994,95 +1043,96 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false, isBankT
                   {activeStep === steps.length - 1 ? t('common.finish') : t('common.next')}
               </Button>
             } */}
+            </Box>
           </Box>
-        </Box>
-      )}
-      // @ts-ignore
-      dialogContentStyle={{ padding: '0', margin: '0px !important' }}
-      contentStyle={clsx(classes.noMargin)}
-    >
-      <>
-        {/* <Stepper activeStep={activeStep} alternativeLabel className={classes.tierPlansStepper}>
+        )}
+        // @ts-ignore
+        dialogContentStyle={{ padding: '0', margin: '0px !important' }}
+        contentStyle={clsx(classes.noMargin)}
+      >
+        <>
+          {/* <Stepper activeStep={activeStep} alternativeLabel className={classes.tierPlansStepper}>
           {steps.map((label) => (
             <Step key={label}>
               <StepLabel>{label}</StepLabel>
             </Step>
           ))}
         </Stepper> */}
-        <div ref={contentRef} className={classes.tierPlansContent}>
-          {getStepContent(activeStep)}
-        </div>
-        <Loader isOpen={isLoader} showBackdrop={true} />
-        <BaseDialog
-          classes={classes}
-          open={showSalesContactPopup}
-          onClose={() => setShowSalesContactPopup(false)}
-          onCancel={() => setShowSalesContactPopup(false)}
-          onConfirm={() => setShowSalesContactPopup(false)}
-        >
-          {t('billing.tier.salesContactConfirmation')}
-        </BaseDialog>
-        <BaseDialog
-          classes={classes}
-          open={showCardConfirmationDialog || showBankTransferDialog}
-          onClose={() => {
-            setShowCardConfirmationDialog(false);
-            setShowBankTransferDialog(false);
-          }}
-          onCancel={() => {
-            setShowCardConfirmationDialog(false);
-            setShowBankTransferDialog(false);
-          }}
-          onConfirm={async () => {
-            let emailTierScaleId = 0;
-            if (isEmailMarketing && selectedEmailTier && emailTiers) {
-              const matchingTier = emailTiers.find((tier: any) =>
-                tier.AccountCategoryFeatureTier_Id === selectedPlan.Id &&
-                tier.LevelHigh === selectedEmailTier.LevelHigh
-              );
-              emailTierScaleId = matchingTier ? matchingTier.Id : 0;
-            }
-            const upgradeRequest: UpgradePlanRequest = {
-              Id: isBankTransferForTiers ? 0 : selectedCreditCard.ID,
-              Type:  isBankTransferForTiers ? '' : selectedCreditCard.Type,
-              TierID: selectedPlan.Id,
-              EmailTierScaleID: emailTierScaleId
-            };
-            
-            setShowCardConfirmationDialog(false);
-            setShowBankTransferDialog(false);
-            setIsLoader(true);
-            const response: any = await dispatch(upgradePlan(upgradeRequest));
+          <div ref={contentRef} className={classes.tierPlansContent}>
+            {getStepContent(activeStep)}
+          </div>
+          <Loader isOpen={isLoader} showBackdrop={true} />
+          <BaseDialog
+            classes={classes}
+            open={showSalesContactPopup}
+            onClose={() => setShowSalesContactPopup(false)}
+            onCancel={() => setShowSalesContactPopup(false)}
+            onConfirm={() => setShowSalesContactPopup(false)}
+          >
+            {t('billing.tier.salesContactConfirmation')}
+          </BaseDialog>
+          <BaseDialog
+            classes={classes}
+            open={showCardConfirmationDialog || showBankTransferDialog}
+            onClose={() => {
+              setShowCardConfirmationDialog(false);
+              setShowBankTransferDialog(false);
+            }}
+            onCancel={() => {
+              setShowCardConfirmationDialog(false);
+              setShowBankTransferDialog(false);
+            }}
+            onConfirm={async () => {
+              let emailTierScaleId = 0;
+              if (isEmailMarketing && selectedEmailTier && emailTiers) {
+                const matchingTier = emailTiers.find((tier: any) =>
+                  tier.AccountCategoryFeatureTier_Id === selectedPlan.Id &&
+                  tier.LevelHigh === selectedEmailTier.LevelHigh
+                );
+                emailTierScaleId = matchingTier ? matchingTier.Id : 0;
+              }
+              const upgradeRequest: UpgradePlanRequest = {
+                Id: isBankTransferForTiers ? 0 : selectedCreditCard.ID,
+                Type: isBankTransferForTiers ? '' : selectedCreditCard.Type,
+                TierID: selectedPlan.Id,
+                EmailTierScaleID: emailTierScaleId
+              };
+              
+              setShowCardConfirmationDialog(false);
+              setShowBankTransferDialog(false);
+              setIsLoader(true);
+              const response: any = await dispatch(upgradePlan(upgradeRequest));
 
-            setIsLoader(false);
-            if (response?.payload?.StatusCode === 200) {
-              setActiveStep(2);
-              dispatch(getCurrentPlan());
-              setSelectedCreditCard(null);
-            } else if (response?.payload.StatusCode === 409) {
-              // @ts-ignore
-              setToastMessage({ severity: 'error', color: 'error', message: t('common.activeTierSubscription'), showAnimtionCheck: false });
-            } else {
-              // @ts-ignore
-              setToastMessage({ severity: 'error', color: 'error', message: response?.payload?.Message, showAnimtionCheck: false });
-            }
-          }}
-        >
-          {(() => {
-            const planTitle = selectedPlan?.uiConfig?.title ? t(selectedPlan.uiConfig.title) : (selectedPlan?.Name || 'Standard');
-            return showCardConfirmationDialog 
-              ? t('billing.tier.upgrade.payUsingCC')
-              : t('billing.tier.upgrade.upgradePlan').replace('{planName}', planTitle);
-          })()}
-        </BaseDialog>
-        <ContactUsDialog
-          classes={classes}
-          isOpen={showContactDialog}
-          onClose={() => setShowContactDialog(false)}
-        />
-        {renderToast()}
-      </>
-    </BaseDialog>
+              setIsLoader(false);
+              if (response?.payload?.StatusCode === 200) {
+                setActiveStep(2);
+                dispatch(getCurrentPlan());
+                setSelectedCreditCard(null);
+              } else if (response?.payload.StatusCode === 409) {
+                // @ts-ignore
+                setToastMessage({ severity: 'error', color: 'error', message: t('common.activeTierSubscription'), showAnimtionCheck: false });
+              } else {
+                // @ts-ignore
+                setToastMessage({ severity: 'error', color: 'error', message: response?.payload?.Message, showAnimtionCheck: false });
+              }
+            }}
+          >
+            {(() => {
+              const planTitle = selectedPlan?.uiConfig?.title ? t(selectedPlan.uiConfig.title) : (selectedPlan?.Name || 'Standard');
+              return showCardConfirmationDialog
+                ? t('billing.tier.upgrade.payUsingCC')
+                : t('billing.tier.upgrade.upgradePlan').replace('{planName}', planTitle);
+            })()}
+          </BaseDialog>
+          <ContactUsDialog
+            classes={classes}
+            isOpen={showContactDialog}
+            onClose={() => setShowContactDialog(false)}
+          />
+          {renderToast()}
+        </>
+      </BaseDialog>
+    </>
   );
 };
 
