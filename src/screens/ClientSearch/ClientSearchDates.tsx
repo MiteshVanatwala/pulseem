@@ -200,9 +200,7 @@ export const ClientSearchDates = ({ classes, data, onUpdate }: any) => {
               hideInvalidDateMessage={true}
               minDate={undefined}
             />
-            {
-              data?.MyConditions[0]['ExtraDate1From'] && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate(data?.MyConditions[0]['ExtraDate1From'], null)}>{t("recipient.reset")}</Button>
-            }
+            {data?.MyConditions[0]['ExtraDate1From'] && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate('ExtraDate1From', null)}>{t("recipient.reset")}</Button>}
           </Grid>
 
           <Grid item xs={6} sm={6} md={6}>
@@ -222,9 +220,7 @@ export const ClientSearchDates = ({ classes, data, onUpdate }: any) => {
               hideInvalidDateMessage={true}
               minDate={undefined}
             />
-            {
-              data?.MyConditions[0]['ExtraDate1To'] && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate(data?.MyConditions[0]['ExtraDate1To'], null)}>{t("recipient.reset")}</Button>
-            }
+            {data?.MyConditions[0]['ExtraDate1To'] && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate('ExtraDate1To', null)}>{t("recipient.reset")}</Button>}
           </Grid>
         </Grid>
       </Grid>}
@@ -248,9 +244,7 @@ export const ClientSearchDates = ({ classes, data, onUpdate }: any) => {
               hideInvalidDateMessage={true}
               minDate={undefined}
             />
-            {
-              data?.MyConditions[0]['ExtraDate2From'] && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate(data?.MyConditions[0]['ExtraDate2From'], null)}>{t("recipient.reset")}</Button>
-            }
+            {data?.MyConditions[0]['ExtraDate2From'] && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate('ExtraDate2From', null)}>{t("recipient.reset")}</Button>}
           </Grid>
 
           <Grid item xs={6} sm={6} md={6}>
@@ -270,9 +264,7 @@ export const ClientSearchDates = ({ classes, data, onUpdate }: any) => {
               hideInvalidDateMessage={true}
               minDate={undefined}
             />
-            {
-              data?.MyConditions[0]['ExtraDate2To'] && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate(data?.MyConditions[0]['ExtraDate2To'], null)}>{t("recipient.reset")}</Button>
-            }
+            {data?.MyConditions[0]['ExtraDate2To'] && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate('ExtraDate2To', null)}>{t("recipient.reset")}</Button>}
           </Grid>
         </Grid>
       </Grid>}
@@ -296,9 +288,7 @@ export const ClientSearchDates = ({ classes, data, onUpdate }: any) => {
               hideInvalidDateMessage={true}
               minDate={undefined}
             />
-            {
-              data?.MyConditions[0]['ExtraDate3From'] && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate(data?.MyConditions[0]['ExtraDate3From'], null)}>{t("recipient.reset")}</Button>
-            }
+            {data?.MyConditions[0]['ExtraDate3From'] && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate('ExtraDate3From', null)}>{t("recipient.reset")}</Button>}
           </Grid>
 
           <Grid item xs={6} sm={6} md={6}>
@@ -318,9 +308,7 @@ export const ClientSearchDates = ({ classes, data, onUpdate }: any) => {
               hideInvalidDateMessage={true}
               minDate={undefined}
             />
-            {
-              data?.MyConditions[0]['ExtraDate3To'] && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate(data?.MyConditions[0]['ExtraDate3To'], null)}>{t("recipient.reset")}</Button>
-            }
+            {data?.MyConditions[0]['ExtraDate3To'] && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate('ExtraDate3To', null)}>{t("recipient.reset")}</Button>}
           </Grid>
         </Grid>
       </Grid>}
@@ -344,9 +332,7 @@ export const ClientSearchDates = ({ classes, data, onUpdate }: any) => {
               hideInvalidDateMessage={true}
               minDate={undefined}
             />
-            {
-              data?.MyConditions[0]['ExtraDate4From'] && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate(data?.MyConditions[0]['ExtraDate4From'], null)}>{t("recipient.reset")}</Button>
-            }
+            {data?.MyConditions[0]['ExtraDate4From'] && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate('ExtraDate4From', null)}>{t("recipient.reset")}</Button>}
           </Grid>
 
           <Grid item xs={6} sm={6} md={6}>
@@ -366,9 +352,7 @@ export const ClientSearchDates = ({ classes, data, onUpdate }: any) => {
               hideInvalidDateMessage={true}
               minDate={undefined}
             />
-            {
-              data?.MyConditions[0]['ExtraDate4To'] && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate(data?.MyConditions[0]['ExtraDate4To'], null)}>{t("recipient.reset")}</Button>
-            }
+            {data?.MyConditions[0]['ExtraDate4To'] && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate('ExtraDate4To', null)}>{t("recipient.reset")}</Button>}
           </Grid>
         </Grid>
       </Grid>}
