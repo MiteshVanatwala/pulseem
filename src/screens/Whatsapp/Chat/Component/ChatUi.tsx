@@ -303,7 +303,7 @@ const ChatUi = ({
 											gap: '8px',
 										}}
 									>
-										<MdSupportAgent size={16} style={{ opacity: 0.6 }} />
+										<MdSupportAgent size={16} style={{ opacity: 1 }} />
 										{translator('whatsappChat.setAgent')}
 									</Box>
 								</MenuItem>
@@ -319,7 +319,6 @@ const ChatUi = ({
 											>
 												<MdSupportAgent
 													size={16}
-													style={{ color: '#FF3343' }}
 												/>
 												{agent.Name}
 											</Box>

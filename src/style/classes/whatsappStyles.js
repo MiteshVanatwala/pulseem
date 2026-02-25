@@ -2853,7 +2853,6 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	},
 	whatsappChatStatusSelect: {
 		borderRadius: '22px',
-		paddingLeft: '12px',
 		textAlign: 'center',
 		fontWeight: 'bold',
 		minWidth: '77px',
@@ -2906,7 +2905,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		paddingRight: isRTL ? 12 : 'unset',
 		display: 'flex',
 		alignItems: 'center',
-		gap: 15
+		gap: 5
 	},
 	pdfFileName: {
 		wordWrap: 'break-word',

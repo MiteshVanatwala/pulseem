@@ -70,7 +70,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   editAgentIconButton: {
     background: '#f5f6fa',
     borderRadius: '50%',
-    marginLeft: 8,
     boxShadow: '0 1px 4px rgba(0,0,0,0.08)',
     border: '1px solid #e0e0e0',
     width: 32,
@@ -5516,9 +5515,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   // ChatUi.tsx styles
   tagChipsContainer: {
     display: 'flex',
-    gap: '8px',
     alignItems: 'center',
-    marginInlineStart: '15px',
     flexWrap: 'wrap',
     marginInlineEnd: 'auto'
   },
@@ -5534,6 +5531,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     paddingBottom: '9px',
     margin: '0 4px 0 0',
     borderRadius: '12px',
+    '& svg': {
+      color: '#fff',
+    }
   },
   
   // ============ SideBarContactList Inline Styles ============
@@ -5563,7 +5563,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     //padding: '0 5px',
     paddingTop: '8px',
     paddingBottom: '8px',
-    margin: '0'
+    margin: '0',
+    '& svg': {
+      color: '#fff',
+    }
   },
   plusButtonStyle: {
     width: '22px',
