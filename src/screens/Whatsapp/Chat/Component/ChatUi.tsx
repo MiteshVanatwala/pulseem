@@ -34,6 +34,7 @@ import {
 import AddRecipientPopup from '../../../Groups/Management/Popup/AddRecipientPopup';
 import { PulseemReactInstance } from '../../../../helpers/Api/PulseemReactAPI';
 import Toast from '../../../../components/Toast/Toast.component';
+import { useNavigate } from 'react-router-dom';
 
 const ChatUi = ({
 	classes,
@@ -72,7 +73,9 @@ const ChatUi = ({
 	setIsLoader,
 	selectedAgent,
 	ToastMessages,
+	refetchActiveChatContact,
 }: WhatsappChatUiProps) => {
+	const navigate = useNavigate();
 	const { t: translator } = useTranslation();
 	const dispatch = useDispatch();
 	const [dialogType, setDialogType] = useState<{
@@ -613,6 +616,11 @@ const ChatUi = ({
 				setShowEditRecipient(false);
 				setClientToEdit(null);
 
+				// Refetch and update active chat contact from parent
+				if (typeof refetchActiveChatContact === 'function') {
+					refetchActiveChatContact(chatContacts?.PhoneNumber);
+				}
+				navigate(`/react/whatsapp/chat/${chatContacts?.PhoneNumber}`);
 				updateContactList();
 				break;
 			}

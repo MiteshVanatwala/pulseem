@@ -14,6 +14,7 @@ import { SelectChangeEvent } from '@mui/material';
 export type WhatsappChatProps = {
 	classes: ClassesType['classes'];
 	isMobileSideBar: boolean;
+	refetchActiveChatContact?: (phoneNumber: string) => void;
 };
 
 export type WhatsappChatUiProps = {
@@ -62,6 +63,7 @@ export type WhatsappChatUiProps = {
 	ToastMessages?: any;
 	tagsList?: Array<{ id: string; TagName: string; TagColor: string }>;
 	onTagsUpdated?: (phoneNumber: string, tagIds: number[], tags?: any[]) => void;
+	refetchActiveChatContact?: (phoneNumber: string) => void;
 };
 
 export type SideBarContactListProps = {

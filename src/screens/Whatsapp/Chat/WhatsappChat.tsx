@@ -1771,6 +1771,26 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 									TotalSolved={totalSolvedContacts}
 								/>
 								<ChatUi
+										refetchActiveChatContact={async (phoneNumber: string) => {
+											// Fetch the latest contact info and update activeChatContacts
+											const result = await dispatch(
+												getWhatsappChatContactsByPhoneNumber({
+													PhoneNumber: activePhoneNumber,
+													IsPagination: true,
+													pageNo: 1,
+													pageSize: 10,
+													ChatStatus: filterBySelected,
+												})
+											);
+											// @ts-ignore
+											const contactsData = (result as { payload: any }).payload;
+											if (contactsData?.Status === apiStatus.SUCCESS && Array.isArray(contactsData?.Data?.Items)) {
+												const updatedContact = contactsData.Data.Items.find(
+													(c: { PhoneNumber: string }) => c.PhoneNumber === phoneNumber
+												);
+												if (updatedContact) setActiveChatContacts(updatedContact);
+											}
+										}}
 									isMobileSideBar={isMobileSideBar}
 									classes={classes}
 									setIsMobileSideBar={() =>
