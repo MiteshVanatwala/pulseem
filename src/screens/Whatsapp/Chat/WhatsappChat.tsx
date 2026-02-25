@@ -104,7 +104,33 @@ import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
 import TierPlans from '../../../components/TierPlans/TierPlans';
 import { get } from 'lodash';
 
+import { useRef } from 'react';
+import { searchAllClients } from '../../../redux/reducers/clientSlice';
+
 const WhatsappChat = ({ classes }: WhatsappChatProps) => {
+	const dispatch = useDispatch();
+
+	// Ref to store PhoneNumber → ClientId mapping
+	const phoneToClientIdMap = useRef<{ [phone: string]: number }>({});
+
+	// Helper to build the mapping from all clients (Cellphone → ClientId)
+	const buildPhoneToClientIdMap = useCallback(async () => {
+		// Fetch all clients (up to 10,000 for mapping)
+		const { payload } = await dispatch<any>(
+			(searchAllClients as any)({ PageSize: 10000, PageIndex: 1 }),
+		);
+		if (payload && Array.isArray(payload.Clients)) {
+			const map: { [phone: string]: number } = {};
+			payload.Clients.forEach((client: any) => {
+				if (client.Cellphone && (client.ClientId || client.ClientID)) {
+					// Normalize phone for search (strip leading 0 for Israeli numbers)
+					let norm = normalizePhoneForSearch(client.Cellphone);
+					map[norm] = client.ClientId || client.ClientID;
+				}
+			});
+			phoneToClientIdMap.current = map;
+		}
+	}, [dispatch]);
 	const navigate = useNavigate();
 	const ToastMessages = useSelector(
 		(state: { whatsapp: { ToastMessages: toastProps } }) =>
@@ -164,7 +190,6 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		});
 
 	const { t: translator } = useTranslation();
-	const dispatch = useDispatch();
 	const { contactID } = useParams();
 	const [isMobileSideBar, setIsMobileSideBar] = useState<boolean>(false);
 	const [isTemplateModal, setIsTemplateModal] = useState<boolean>(false);
@@ -403,6 +428,10 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 
 	const setAPIWhatsAppChatContacts = useCallback(
 		async (activeUser: string, isInitial: boolean = false) => {
+			// Ensure mapping is built before loading contacts
+			if (Object.keys(phoneToClientIdMap.current).length === 0) {
+				await buildPhoneToClientIdMap();
+			}
 			if (!isInitial) {
 				setSideChatContacts([]);
 				setActiveChatContacts({
@@ -443,7 +472,8 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 
 			dispatch(setIsLoader(false));
 			if (whatsAppChatContactsData?.Status === apiStatus.SUCCESS) {
-				const contactData = whatsAppChatContactsData.Data.Items;
+				// Use contacts as returned from the API (they already have ClientId)
+				const contactData = whatsAppChatContactsData.Data.Items || [];
 				const updatedActiveChat = contactData[0];
 				// Update total contacts data
 				setTotalContacts(whatsAppChatContactsData?.Data?.TotalRecord || 0);
@@ -810,13 +840,11 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 
 	const handleTagColorUpdated = useCallback(
 		(tagId: string, newColor: string) => {
-			console.log('📥 handleTagColorUpdated received:', { tagId, newColor });
 			// Update all contacts that have this tag with the new color
 			setSideChatContacts((prev) => {
-				console.log('📋 Updating sideChatContacts, count:', prev.length);
 				return prev.map((contact) => {
 					if (contact.Tags && contact.Tags.length > 0) {
-						const hasTag = contact.Tags.some(tag => tag.id === tagId);
+						const hasTag = contact.Tags.some((tag) => tag.id === tagId);
 						if (hasTag) {
 							const updatedTags = contact.Tags.map((tag) =>
 								tag.id === tagId ? { ...tag, TagColor: newColor } : tag,
@@ -831,9 +859,8 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			// Update activeChatContacts if it has this tag
 			setActiveChatContacts((prev) => {
 				if (prev?.Tags && prev.Tags.length > 0) {
-					const hasTag = prev.Tags.some(tag => tag.id === tagId);
+					const hasTag = prev.Tags.some((tag) => tag.id === tagId);
 					if (hasTag) {
-						console.log('📌 Updating activeChatContacts');
 						const updatedTags = prev.Tags.map((tag) =>
 							tag.id === tagId ? { ...tag, TagColor: newColor } : tag,
 						);
@@ -1066,17 +1093,6 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 					finalEndDate = `${endDate}T${endTime}:00`;
 				}
 
-				console.log('📅 API Date Filter Debug:', {
-					startDate,
-					endDate,
-					startTime,
-					endTime,
-					finalStartDate,
-					finalEndDate,
-					hasStartDate: !!finalStartDate,
-					hasEndDate: !!finalEndDate,
-				});
-
 				// Use single API for all filtering - GetWhatsAppChatContacts
 				const apiPayload: any = {
 					PhoneNumber: activePhoneNumber,
@@ -1094,8 +1110,6 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				if (finalEndDate) {
 					apiPayload.EndDate = finalEndDate;
 				}
-
-				console.log('🚀 API Payload:', apiPayload);
 
 				// Only add AgentIds and TagIds if they have values
 				if (agentIds && agentIds.length > 0) {
@@ -1751,7 +1765,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 									onTagsUpdated={handleTagsUpdated}
 									onTagColorUpdated={handleTagColorUpdated}
 									tagsList={tagsList}
-								TotalRecord={totalContacts}
+									TotalRecord={totalContacts}
 									TotalOpen={totalOpenContacts}
 									TotalPending={totalPendingContacts}
 									TotalSolved={totalSolvedContacts}

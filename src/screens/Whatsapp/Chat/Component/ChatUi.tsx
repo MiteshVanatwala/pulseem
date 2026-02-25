@@ -33,6 +33,7 @@ import {
 } from '../../Campaign/Types/WhatsappCampaign.types';
 import AddRecipientPopup from '../../../Groups/Management/Popup/AddRecipientPopup';
 import { PulseemReactInstance } from '../../../../helpers/Api/PulseemReactAPI';
+import Toast from '../../../../components/Toast/Toast.component';
 
 const ChatUi = ({
 	classes,
@@ -78,6 +79,7 @@ const ChatUi = ({
 		type: string;
 	} | null>(null);
 	const [contactTags, setContactTags] = useState<any[]>([]);
+	const [toastMessage, setToastMessage] = useState(null);
 
 	// Handler to remove a tag from the current chat contact
 	const onChatTagRemove = async (tagId: string) => {
@@ -103,6 +105,33 @@ const ChatUi = ({
 	};
 	const [showEditRecipient, setShowEditRecipient] = useState(false);
 	const [clientToEdit, setClientToEdit] = useState<any>(null);
+
+	// Handler for Edit icon click (fetches full user details by ClientId)
+	const handleEditRecipient = async () => {
+		// Debug log to check if ClientId is present
+		const contact = chatContacts || activeChatContacts;
+		const clientId = contact?.ClientId;
+		if (!clientId) return;
+		setIsLoader && setIsLoader(true);
+		try {
+			// getClientsById is imported from clientSlice (redux async thunk)
+			const recipientRequest = await dispatch(
+				// @ts-ignore
+				require('../../../../redux/reducers/clientSlice').getClientsById([
+					clientId,
+				]),
+			);
+			const cte =
+				recipientRequest?.payload?.Data?.length > 0 &&
+				recipientRequest?.payload?.Data[0];
+			if (cte) {
+				setClientToEdit(cte);
+				setShowEditRecipient(true);
+			}
+		} finally {
+			setIsLoader && setIsLoader(false);
+		}
+	};
 	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
 	const { agentList } = useSelector((state: StateType) => state.whatsapp);
 	const { windowSize } = useSelector(
@@ -140,6 +169,16 @@ const ChatUi = ({
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [whatsappChatSession]);
+
+	const renderToast = () => {
+		if (toastMessage) {
+			setTimeout(() => {
+				setToastMessage(null);
+			}, 4000);
+			return <Toast data={toastMessage} />;
+		}
+		return null;
+	};
 
 	const getAPIAllWhatsappChat = async (isNewMessage: boolean = false) => {
 		if (activePhoneNumber && chatContacts?.PhoneNumber) {
@@ -317,9 +356,7 @@ const ChatUi = ({
 													gap: '8px',
 												}}
 											>
-												<MdSupportAgent
-													size={16}
-												/>
+												<MdSupportAgent size={16} />
 												{agent.Name}
 											</Box>
 										</MenuItem>
@@ -330,6 +367,7 @@ const ChatUi = ({
 						<IconButton
 							className={classes.editAgentIconButton}
 							aria-label="Edit"
+							onClick={handleEditRecipient}
 						>
 							<MdEdit size={18} color="#333" />
 						</IconButton>
@@ -504,6 +542,138 @@ const ChatUi = ({
 		}
 	};
 
+	const handleResponses = (
+		response: any,
+		actions = {
+			S_200: {
+				code: 200,
+				message: '',
+				Func: () => null,
+			},
+			S_201: {
+				code: 201,
+				message: '',
+				Func: () => {},
+			},
+			S_202: {
+				code: 202,
+				message: '',
+				Func: () => {},
+			},
+			S_400: {
+				code: 400,
+				message: '',
+				Func: () => null,
+			},
+			S_401: {
+				code: 401,
+				message: '',
+				Func: () => null,
+			},
+			S_404: {
+				code: 404,
+				message: '',
+				Func: () => null,
+			},
+			S_405: {
+				code: 405,
+				message: '',
+				Func: () => null,
+			},
+			S_406: {
+				code: 406,
+				message: '',
+				Func: () => null,
+			},
+			S_422: {
+				code: 422,
+				message: '',
+				Func: () => null,
+			},
+			S_500: {
+				code: 500,
+				message: '',
+				Func: () => null,
+			},
+			default: {
+				message: '',
+				Func: () => null,
+			},
+		},
+	) => {
+		switch (
+			response.payload?.StatusCode ||
+			response.payload?.Message.StatusCode
+		) {
+			case 200: {
+				actions?.S_200?.Func?.();
+				break;
+			}
+			case 201: {
+				setShowEditRecipient(false);
+				setClientToEdit(null);
+
+				updateContactList();
+				break;
+			}
+			case 202: {
+				actions?.S_202?.Func?.();
+				// actions?.S_201?.message && setToastMessage(actions?.S_201?.message);
+				break;
+			}
+			case 400: {
+				actions?.S_400?.Func?.();
+				//@ts-ignore
+				actions?.S_400?.message && setToastMessage(actions?.S_400?.message);
+				break;
+			}
+			case 401: {
+				actions?.S_401?.Func?.();
+				//@ts-ignore
+				actions?.S_401?.message && setToastMessage(actions?.S_401?.message);
+				break;
+			}
+			case 404: {
+				actions?.S_404?.Func?.();
+				//@ts-ignore
+				actions?.S_404?.message && setToastMessage(actions?.S_404?.message);
+				break;
+			}
+			case 405: {
+				actions?.S_405?.Func?.();
+				//@ts-ignore
+				actions?.S_405?.message && setToastMessage(actions?.S_405?.message);
+				break;
+			}
+			case 406: {
+				actions?.S_406?.Func?.();
+				//@ts-ignore
+				actions?.S_406?.message && setToastMessage(actions?.S_406?.message);
+				break;
+			}
+			case 422: {
+				actions?.S_422?.Func?.();
+				//@ts-ignore
+				actions?.S_422?.message && setToastMessage(actions?.S_422?.message);
+				break;
+			}
+			case 500: {
+				actions?.S_500?.Func?.();
+				//@ts-ignore
+				actions?.S_500?.message && setToastMessage(actions?.S_500?.message);
+				break;
+			}
+			default: {
+				actions?.default?.Func?.();
+				//@ts-ignore
+				actions?.default?.message && setToastMessage(actions?.default?.message);
+				setShowEditRecipient(false);
+				setClientToEdit(null);
+			}
+		}
+		setIsLoader(false);
+	};
+
 	return (
 		<>
 			<div className={`${classes.whatsappChat} chat`}>
@@ -520,6 +690,7 @@ const ChatUi = ({
 					{chatFooter()}
 				</div>
 				{renderDialog()}
+				{renderToast()}
 			</div>
 
 			{/* Edit Recipient Popup */}
@@ -545,6 +716,10 @@ const ChatUi = ({
 						}
 						return null;
 					}}
+					// @ts-ignore
+					handleResponses={(response, actions) =>
+						handleResponses(response, actions)
+					}
 				/>
 			)}
 		</>
