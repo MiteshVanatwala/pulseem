@@ -16,7 +16,7 @@ const SideHeaderContactDropDown = ({
 	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
 
 	return (
-		<div className={clsx(classes.whatsappChat, 'chat__contact-wrapper-header', classes.paddingSides10)} style={{ flex: 1, minWidth: 0, overflow: 'hidden', direction:'ltr'}}>
+		<div className={clsx(classes.whatsappChat, 'chat__contact-wrapper-header', classes.paddingSides10)} style={{ flex: 1, minWidth: 0, overflow: 'hidden', direction:'ltr', justifyContent: isRTL ? 'flex-end' : 'flex-start' }}>
 			{phoneNumbersList?.length === 1 ? (
 				<span>{activePhoneNumber}</span>
 			) : (

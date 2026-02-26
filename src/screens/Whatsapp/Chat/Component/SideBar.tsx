@@ -1666,6 +1666,9 @@ const SideBar = ({
 											onChange={(e) =>
 												handleUpdateTag(index, 'TagName', e.target.value)
 											}
+											inputProps={{
+												maxLength: 15,
+											}}
 											placeholder={translator('whatsappChat.enterTagName')}
 											size="small"
 											variant="outlined"

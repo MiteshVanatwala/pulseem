@@ -1960,7 +1960,6 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		'&.chat__contact-wrapper-header': {
 			flex: '1',
 			cursor: 'pointer',
-			marginLeft: '52%',
 			display: 'flex',
 			alignItems: 'center',
 		},
@@ -3330,7 +3329,6 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		alignItems: 'center',
 		height: 35,
 		//paddingLeft: isRTL ? '' : 16,
-		paddingRight: isRTL ? 16 : '',
 		'& .MuiSelect-select': {
 			color: '#fff',
 		},
