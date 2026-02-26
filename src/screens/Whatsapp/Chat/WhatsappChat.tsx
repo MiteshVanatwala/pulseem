@@ -240,53 +240,17 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const totalPendingContactsRef = useRef<number>(0);
 	const totalSolvedContactsRef = useRef<number>(0);
 
-	// Keep refs updated with current state
-	// NOTE: We DON'T update refs here because flushSync already does it
-	// Updating here causes race conditions where refs get stale values
-	useEffect(() => {
-		console.log('🔶 activeChatContacts RENDER (state changed):', {
-			PhoneNumber: activeChatContacts?.PhoneNumber,
-			ConversationStatusId: activeChatContacts?.ConversationStatusId,
-			refCurrentStatus: activeChatContactsRef.current?.ConversationStatusId,
-			statesMatch: activeChatContactsRef.current?.ConversationStatusId === activeChatContacts?.ConversationStatusId,
-		});
-	}, [activeChatContacts]);
-
-	useEffect(() => {
-		console.log('🔶 sideChatContacts RENDER (state changed), length:', sideChatContacts?.length);
-		if (sideChatContacts && sideChatContacts.length > 0) {
-			console.log('🔶 First side contact status:', {
-				PhoneNumber: sideChatContacts[0]?.PhoneNumber,
-				ConversationStatusId: sideChatContacts[0]?.ConversationStatusId,
-				refFirstStatus: sideChatContactsRef.current?.[0]?.ConversationStatusId,
-			});
-		}
-	}, [sideChatContacts]);
-
 	useEffect(() => {
 		totalOpenContactsRef.current = totalOpenContacts;
-		console.log('🔶 totalOpenContacts ref updated:', totalOpenContacts);
 	}, [totalOpenContacts]);
 
 	useEffect(() => {
 		totalPendingContactsRef.current = totalPendingContacts;
-		console.log('🔶 totalPendingContacts ref updated:', totalPendingContacts);
 	}, [totalPendingContacts]);
 
 	useEffect(() => {
 		totalSolvedContactsRef.current = totalSolvedContacts;
-		console.log('🔶 totalSolvedContacts ref updated:', totalSolvedContacts);
 	}, [totalSolvedContacts]);
-
-	// Monitor activeChatContacts changes and verify status persistence
-	useEffect(() => {
-		console.log('✅ FINAL STATUS VERIFICATION - activeChatContacts rendered:', {
-			PhoneNumber: activeChatContacts?.PhoneNumber,
-			ConversationStatusId: activeChatContacts?.ConversationStatusId,
-			statusClass: getStatusClass(activeChatContacts?.ConversationStatusId),
-			time: new Date().toISOString(),
-		});
-	}, [activeChatContacts?.ConversationStatusId, activeChatContacts?.PhoneNumber]);
 
 	const initialQuickReplyButtons = [
 		{
@@ -486,21 +450,8 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			e.stopPropagation();
 
 			const newStatusValue = Number(e.target.value);
-			
-			console.log('👆 handleUserStatus called with:', {
-				rawValue: e.target.value,
-				parsedValue: newStatusValue,
-				ClientNumber,
-				activePhoneNumber,
-				isUpdatingActiveContact: ClientNumber === activeChatContacts?.PhoneNumber,
-			});
-			
 			// Validate status value
 			if (isNaN(newStatusValue) || newStatusValue < 1 || newStatusValue > 3) {
-				console.error('❌ CRITICAL: Invalid status value from dropdown!', { 
-					rawValue: e.target.value, 
-					parsedValue: newStatusValue 
-				});
 				return;
 			}
 
@@ -946,6 +897,14 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 
 	const handleTagsUpdated = useCallback(
 		(phoneNumber: string, tagIds: number[], tags?: any[]) => {
+			getWhatsappChatContactsByUserNumber({
+				PhoneNumber: activePhoneNumber,
+				IsPagination: false,
+				pageNo: 1,
+				pageSize: 6,
+				UserNumber: activeChatContacts?.PhoneNumber,
+				ChatStatus: filterBySelected,
+			});
 			// Update the activeChatContacts with new tags if it's the current contact
 			if (activeChatContacts?.PhoneNumber === phoneNumber && tags) {
 				setActiveChatContacts((prev) => ({
@@ -967,6 +926,14 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 
 	const handleTagColorUpdated = useCallback(
 		(tagId: string, newColor: string) => {
+			getWhatsappChatContactsByUserNumber({
+				PhoneNumber: activePhoneNumber,
+				IsPagination: false,
+				pageNo: 1,
+				pageSize: 6,
+				UserNumber: activeChatContacts?.PhoneNumber,
+				ChatStatus: filterBySelected,
+			});
 			// Update all contacts that have this tag with the new color
 			setSideChatContacts((prev) => {
 				return prev.map((contact) => {
@@ -1025,7 +992,6 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	}, [savedTemplate, newMessage, updatedDynamicVariable, translator]);
 
 	const updateContactList = useCallback(async () => {
-		console.log('🔄 updateContactList called');
 		if (!sideChatContacts?.length || sideChatContacts.length === 0) {
 			return false;
 		}
@@ -1045,10 +1011,6 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			whatsAppChatContactsData?.Status === apiStatus?.SUCCESS &&
 			whatsAppChatContactsData?.Data?.Items?.length > 0
 		) {
-			console.log('🔄 updateContactList: Got fresh data:', {
-				PhoneNumber: whatsAppChatContactsData?.Data?.Items[0]?.PhoneNumber,
-				ConversationStatusId: whatsAppChatContactsData?.Data?.Items[0]?.ConversationStatusId,
-			});
 			// Update total contacts data
 			// setTotalContacts(whatsAppChatContactsData?.Data?.TotalRecord || 0);
 			// setTotalOpenContacts(whatsAppChatContactsData?.Data?.TotalOpen || 0);
@@ -1225,14 +1187,6 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 					finalEndDate = `${endDate}T${endTime}:00`;
 				}
 
-				// Debug: Log date filter values
-				console.log('🔍 Date Filter Debug:', {
-					finalStartDate,
-					finalEndDate,
-					raw: { startDate, endDate, startTime, endTime },
-					hasDateFilter: !!(finalStartDate && finalEndDate)
-				});
-
 				// Use single API for all filtering - GetWhatsAppChatContacts
 				const apiPayload: any = {
 					PhoneNumber: activePhoneNumber,
@@ -1251,9 +1205,6 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 					apiPayload.EndDate = finalEndDate;
 				}
 
-				// Debug: Log final API payload
-				console.log('🚀 API Payload:', apiPayload);
-
 				// Only add AgentIds and TagIds if they have values
 				if (agentIds && agentIds.length > 0) {
 					apiPayload.AgentIds = agentIds;
@@ -1268,13 +1219,6 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 					getWhatsappChatContactsByPhoneNumber(apiPayload),
 				);
 
-				// Debug: Log API response
-				console.log('📤 API Response:', {
-					status: whatsAppChatContactsData?.Status,
-					totalRecords: whatsAppChatContactsData?.Data?.TotalRecord,
-					itemsCount: whatsAppChatContactsData?.Data?.Items?.length,
-					firstItemDate: whatsAppChatContactsData?.Data?.Items?.[0]?.LastMessageDate
-				});
 				dispatch(setIsLoader(false));
 				if (whatsAppChatContactsData?.Status === apiStatus.SUCCESS) {
 					// Backend handles all filtering - use response data directly
@@ -1867,6 +1811,28 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 						<div className={`${classes.whatsappChat} app`}>
 							<div className={`${classes.whatsappChat} app-content`}>
 								<SideBar
+									refetchActiveChatContact={async (phoneNumber: string) => {
+										// Fetch the latest contact info and update activeChatContacts
+										const result = await dispatch(
+											getWhatsappChatContactsByPhoneNumber({
+												PhoneNumber: phoneNumber,
+												IsPagination: true,
+												pageNo: 1,
+												pageSize: 10,
+												ChatStatus: filterBySelected,
+											})
+										);
+										// @ts-ignore
+										const contactsData = (result as { payload: any }).payload;
+										if (contactsData?.Status === apiStatus.SUCCESS && Array.isArray(contactsData?.Data?.Items)) {
+											const updatedContact = contactsData.Data.Items.find(
+												(c: { PhoneNumber: string }) => c.PhoneNumber == activeChatContacts?.PhoneNumber
+											);
+											if (updatedContact) {
+												setActiveChatContacts(updatedContact);
+											}
+										}
+									}}
 									isMobileSideBar={isMobileSideBar}
 									classes={classes}
 									setIsMobileSideBar={() =>
@@ -1913,8 +1879,8 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 										getAgents();
 										setDialogType({ type: 'editAgents' });
 									}}
-									onTagsUpdated={handleTagsUpdated}
-									onTagColorUpdated={handleTagColorUpdated}
+									onTagsUpdated={updateContactList}
+									onTagColorUpdated={updateContactList}
 									tagsList={tagsList}
 									TotalRecord={totalContacts}
 									TotalOpen={totalOpenContacts}
@@ -1923,7 +1889,6 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 								/>
 								<ChatUi
 										refetchActiveChatContact={async (phoneNumber: string) => {
-											console.log('🔄 refetchActiveChatContact called for:', phoneNumber);
 											// Fetch the latest contact info and update activeChatContacts
 											const result = await dispatch(
 												getWhatsappChatContactsByPhoneNumber({
@@ -1941,14 +1906,12 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 													(c: { PhoneNumber: string }) => c.PhoneNumber === phoneNumber
 												);
 												if (updatedContact) {
-													console.log('✳️ refetchActiveChatContact: Updating both activeChatContacts and sideChatContacts');
 													setActiveChatContacts(updatedContact);
 													
 													// Also update the contact in sideChatContacts to keep them in sync
 													setSideChatContacts((prevContacts) => {
 														return prevContacts.map((contact) => {
 															if (contact.PhoneNumber === phoneNumber) {
-																console.log('✳️ Syncing contact in sideChatContacts');
 																return updatedContact;
 															}
 															return contact;

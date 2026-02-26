@@ -76,6 +76,7 @@ const SideBar = ({
 	TotalOpen,
 	TotalPending,
 	TotalSolved,
+	refetchActiveChatContact,
 }: WhatsappChatSideBarProps) => {
 	const { t: translator } = useTranslation();
 	const { isRTL, userRoles } = useSelector(
@@ -686,6 +687,12 @@ const SideBar = ({
 			);
 
 			if (response.data) {
+				if (onTagColorUpdated) {
+					onTagColorUpdated('', '');
+				}
+				if (typeof refetchActiveChatContact === 'function') {
+					refetchActiveChatContact(activePhoneNumber);
+				}
 				// The API returns the ID in the Data field (e.g., {StatusCode: 201, Message: 'Success', Data: 16})
 				const returnedId = response.data.Data || response.data.Id;
 				const finalId =
@@ -709,13 +716,6 @@ const SideBar = ({
 				const oldColor =
 					existingIndex !== -1 ? tagsList[existingIndex].TagColor : null;
 
-				console.log('🔍 Tag update:', {
-					tagId: finalId,
-					oldColor,
-					newColor: returnedColor,
-					willUpdate: oldColor !== returnedColor,
-				});
-
 				if (existingIndex !== -1) {
 					// Update existing tag
 					const updatedTagsList = [...tagsList];
@@ -728,7 +728,6 @@ const SideBar = ({
 
 					// If color changed, notify parent to update all contacts
 					if (oldColor !== returnedColor && onTagColorUpdated) {
-						console.log('🔥 Calling onTagColorUpdated');
 						onTagColorUpdated(finalId, returnedColor);
 					}
 				} else {
@@ -752,7 +751,6 @@ const SideBar = ({
 				setTimeout(() => setToastMessage(null), 3000);
 			}
 		} catch (error: any) {
-			console.error('Error saving tag:', error);
 			setToastMessage({
 				message: error.response?.data?.message || 'Failed to save tag',
 				severity: 'error',

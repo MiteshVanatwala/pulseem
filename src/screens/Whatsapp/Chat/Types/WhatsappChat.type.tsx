@@ -175,6 +175,7 @@ export type WhatsappChatSideBarProps = {
 	TotalOpen: number;
 	TotalPending: number;
 	TotalSolved: number;
+	refetchActiveChatContact?: (phoneNumber: string) => void,
 };
 
 export type chatModalProps = {

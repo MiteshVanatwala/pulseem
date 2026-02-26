@@ -508,8 +508,8 @@ export const getWhatsappChatContactsByPhoneNumber = createAsyncThunk(
 					pageSize,
 					Searchtext,
 					ChatStatus,
-					StartDate,
-					EndDate,
+					FromDate: StartDate,
+					ToDate: EndDate,
 					AgentIds,
 					TagIds
 				}
