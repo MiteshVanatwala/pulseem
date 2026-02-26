@@ -188,8 +188,8 @@ export const ClientSearchDates = ({ classes, data, onUpdate }: any) => {
             <DateField
               toolbarDisabled={false}
               classes={classes}
-              value={data?.MyConditions[0]['ExtraDate1From'] && moment(data?.MyConditions[0]['ExtraDate1From'], DateFormats.FULL_DATE_START).diff('0001-01-01') > 0 ? moment(data?.MyConditions[0]['ExtraDate1From'], DateFormats.FULL_DATE_START).format('YYYY-MM-DD') : null}
-              onChange={(value: any) => onUpdate('ExtraDate1From', moment(value).format(DateFormats.FULL_DATE_START))}
+              value={moment(data?.MyConditions[0]['ExtraDate1From']).diff('0001-01-01') > 0 ? data?.MyConditions[0]['ExtraDate1From'] : null}
+              onChange={(value: any) => onUpdate('ExtraDate1From', moment(value).format(DateFormats.DATEPICKER_DATE_FORMAT))}
               placeholder={t('common.FromDate')}
               timePickerOpen={true}
               dateActive={true}
@@ -208,8 +208,8 @@ export const ClientSearchDates = ({ classes, data, onUpdate }: any) => {
             <DateField
               toolbarDisabled={false}
               classes={classes}
-              value={data?.MyConditions[0]['ExtraDate1To'] && moment(data?.MyConditions[0]['ExtraDate1To'], DateFormats.FULL_DATE_END).diff('0001-01-01') > 0 ? moment(data?.MyConditions[0]['ExtraDate1To'], DateFormats.FULL_DATE_END).format('YYYY-MM-DD') : null}
-              onChange={(value: any) => onUpdate('ExtraDate1To', moment(value).format(DateFormats.FULL_DATE_END))}
+              value={moment(data?.MyConditions[0]['ExtraDate1To']).diff('0001-01-01') > 0 ? data?.MyConditions[0]['ExtraDate1To'] : null}
+              onChange={(value: any) => onUpdate('ExtraDate1To', moment(value).format(DateFormats.DATEPICKER_DATE_FORMAT))}
               placeholder={t('common.ToDate')}
               timePickerOpen={true}
               dateActive={true}
@@ -232,8 +232,8 @@ export const ClientSearchDates = ({ classes, data, onUpdate }: any) => {
             <DateField
               toolbarDisabled={false}
               classes={classes}
-              value={data?.MyConditions[0]['ExtraDate2From'] && moment(data?.MyConditions[0]['ExtraDate2From'], DateFormats.FULL_DATE_START).diff('0001-01-01') > 0 ? moment(data?.MyConditions[0]['ExtraDate2From'], DateFormats.FULL_DATE_START).format('YYYY-MM-DD') : null}
-              onChange={(value: any) => onUpdate('ExtraDate2From', moment(value).format(DateFormats.FULL_DATE_START))}
+              value={moment(data?.MyConditions[0]['ExtraDate2From']).diff('0001-01-01') > 0 ? data?.MyConditions[0]['ExtraDate2From'] : null}
+              onChange={(value: any) => onUpdate('ExtraDate2From', moment(value).format(DateFormats.DATEPICKER_DATE_FORMAT))}
               placeholder={t('common.FromDate')}
               timePickerOpen={true}
               dateActive={true}
@@ -252,8 +252,8 @@ export const ClientSearchDates = ({ classes, data, onUpdate }: any) => {
             <DateField
               toolbarDisabled={false}
               classes={classes}
-              value={data?.MyConditions[0]['ExtraDate2To'] && moment(data?.MyConditions[0]['ExtraDate2To'], DateFormats.FULL_DATE_END).diff('0001-01-01') > 0 ? moment(data?.MyConditions[0]['ExtraDate2To'], DateFormats.FULL_DATE_END).format('YYYY-MM-DD') : null}
-              onChange={(value: any) => onUpdate('ExtraDate2To', moment(value).format(DateFormats.FULL_DATE_END))}
+              value={moment(data?.MyConditions[0]['ExtraDate2To']).diff('0001-01-01') > 0 ? data?.MyConditions[0]['ExtraDate2To'] : null}
+              onChange={(value: any) => onUpdate('ExtraDate2To', moment(value).format(DateFormats.DATEPICKER_DATE_FORMAT))}
               placeholder={t('common.ToDate')}
               timePickerOpen={true}
               dateActive={true}
@@ -276,8 +276,8 @@ export const ClientSearchDates = ({ classes, data, onUpdate }: any) => {
             <DateField
               toolbarDisabled={false}
               classes={classes}
-              value={data?.MyConditions[0]['ExtraDate3From'] && moment(data?.MyConditions[0]['ExtraDate3From'], DateFormats.FULL_DATE_START).diff('0001-01-01') > 0 ? moment(data?.MyConditions[0]['ExtraDate3From'], DateFormats.FULL_DATE_START).format('YYYY-MM-DD') : null}
-              onChange={(value: any) => onUpdate('ExtraDate3From', moment(value).format(DateFormats.FULL_DATE_START))}
+              value={moment(data?.MyConditions[0]['ExtraDate3From']).diff('0001-01-01') > 0 ? data?.MyConditions[0]['ExtraDate3From'] : null}
+              onChange={(value: any) => onUpdate('ExtraDate3From', moment(value).format(DateFormats.DATEPICKER_DATE_FORMAT))}
               placeholder={t('common.FromDate')}
               timePickerOpen={true}
               dateActive={true}
@@ -296,8 +296,8 @@ export const ClientSearchDates = ({ classes, data, onUpdate }: any) => {
             <DateField
               toolbarDisabled={false}
               classes={classes}
-              value={data?.MyConditions[0]['ExtraDate3To'] && moment(data?.MyConditions[0]['ExtraDate3To'], DateFormats.FULL_DATE_END).diff('0001-01-01') > 0 ? moment(data?.MyConditions[0]['ExtraDate3To'], DateFormats.FULL_DATE_END).format('YYYY-MM-DD') : null}
-              onChange={(value: any) => onUpdate('ExtraDate3To', moment(value).format(DateFormats.FULL_DATE_END))}
+              value={moment(data?.MyConditions[0]['ExtraDate3To']).diff('0001-01-01') > 0 ? data?.MyConditions[0]['ExtraDate3To'] : null}
+              onChange={(value: any) => onUpdate('ExtraDate3To', moment(value).format(DateFormats.DATEPICKER_DATE_FORMAT))}
               placeholder={t('common.ToDate')}
               timePickerOpen={true}
               dateActive={true}
@@ -320,8 +320,8 @@ export const ClientSearchDates = ({ classes, data, onUpdate }: any) => {
             <DateField
               toolbarDisabled={false}
               classes={classes}
-              value={data?.MyConditions[0]['ExtraDate4From'] && moment(data?.MyConditions[0]['ExtraDate4From'], DateFormats.FULL_DATE_START).diff('0001-01-01') > 0 ? moment(data?.MyConditions[0]['ExtraDate4From'], DateFormats.FULL_DATE_START).format('YYYY-MM-DD') : null}
-              onChange={(value: any) => onUpdate('ExtraDate4From', moment(value).format(DateFormats.FULL_DATE_START))}
+              value={moment(data?.MyConditions[0]['ExtraDate4From']).diff('0001-01-01') > 0 ? data?.MyConditions[0]['ExtraDate4From'] : null}
+              onChange={(value: any) => onUpdate('ExtraDate4From', moment(value).format(DateFormats.DATEPICKER_DATE_FORMAT))}
               placeholder={t('common.FromDate')}
               timePickerOpen={true}
               dateActive={true}
@@ -340,8 +340,8 @@ export const ClientSearchDates = ({ classes, data, onUpdate }: any) => {
             <DateField
               toolbarDisabled={false}
               classes={classes}
-              value={data?.MyConditions[0]['ExtraDate4To'] && moment(data?.MyConditions[0]['ExtraDate4To'], DateFormats.FULL_DATE_END).diff('0001-01-01') > 0 ? moment(data?.MyConditions[0]['ExtraDate4To'], DateFormats.FULL_DATE_END).format('YYYY-MM-DD') : null}
-              onChange={(value: any) => onUpdate('ExtraDate4To', moment(value).format(DateFormats.FULL_DATE_END))}
+              value={moment(data?.MyConditions[0]['ExtraDate4To']).diff('0001-01-01') > 0 ? data?.MyConditions[0]['ExtraDate4To'] : null}
+              onChange={(value: any) => onUpdate('ExtraDate4To', moment(value).format(DateFormats.DATEPICKER_DATE_FORMAT))}
               placeholder={t('common.ToDate')}
               timePickerOpen={true}
               dateActive={true}
