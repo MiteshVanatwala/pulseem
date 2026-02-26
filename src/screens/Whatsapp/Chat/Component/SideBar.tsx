@@ -861,7 +861,7 @@ const SideBar = ({
 			>
 				<header
 					className={clsx(
-						`${classes.whatsappChat} header left`,
+						`${classes.whatsappChat} sidebar-header`,
 						classes.sidebarHeader,
 					)}
 				>

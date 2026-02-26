@@ -8,6 +8,7 @@ import {
 } from '@material-ui/core';
 import { AiOutlinePlus } from 'react-icons/ai';
 import { MdClose } from 'react-icons/md';
+import { FaPhone, FaTag, FaUser } from 'react-icons/fa';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import {
 	APIWhatsappChatSidebarContactsItemsData,
@@ -206,6 +207,7 @@ const SideBarContactList = ({
 														className={classes.whatsappSidebarStatusPadding}
 													>
 														<Select
+															key={contact.PhoneNumber}
 															className={clsx(
 																classes.whatsappChatStatusSelect,
 																getStatusClass(contact.ConversationStatusId),
@@ -221,9 +223,20 @@ const SideBarContactList = ({
 															autoWidth
 															value={`${contact.ConversationStatusId}`}
 															variant="standard"
-															onChange={(e: SelectChangeEvent) =>
-																handleUserStatus(e, contact.PhoneNumber)
+															onChange={(e: SelectChangeEvent) => {
+															const changeValue = Number(e.target.value);
+															console.log('🔵 SideBar Status Change - DROPDOWN VALUE:', {
+																dropdownValue: e.target.value,
+																parsedValue: changeValue,
+																phoneNumber: contact.PhoneNumber,
+																currentStatus: contact.ConversationStatusId,
+															});
+															if (isNaN(changeValue) || changeValue < 1 || changeValue > 3) {
+																console.error('❌ INVALID STATUS VALUE FROM DROPDOWN:', e.target.value);
+																return;
 															}
+																handleUserStatus(e, contact.PhoneNumber);
+															}}
 														>
 															<MenuItem value={1}>
 																{translator('whatsappChat.open')}

@@ -39,7 +39,7 @@ export type WhatsappChatUiProps = {
 	chatContacts: APIWhatsappChatSidebarContactsItemsData;
 	ChatContacts: APIWhatsappChatSidebarContactsItemsData[];
 	whatsappChatSession: APIWhatsappChatSessionData;
-	handleUserStatus: (e: SelectChangeEvent, contactPhoneNumber: string) => void;
+	handleUserStatus: (e: SelectChangeEvent, contactPhoneNumber: string, setIsStatusUpdating?: (value: boolean) => void) => void;
 	getStatusClass: (status: number) => string | undefined;
 	onChatSend: () => void;
 	allWhatsappChat: APIWhatsappChatItemsData | undefined;

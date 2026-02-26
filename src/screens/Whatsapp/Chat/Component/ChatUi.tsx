@@ -108,6 +108,7 @@ const ChatUi = ({
 	};
 	const [showEditRecipient, setShowEditRecipient] = useState(false);
 	const [clientToEdit, setClientToEdit] = useState<any>(null);
+	const [isStatusUpdating, setIsStatusUpdating] = useState(false);
 
 	// Handler for Edit icon click (fetches full user details by ClientId)
 	const handleEditRecipient = async () => {
@@ -167,11 +168,11 @@ const ChatUi = ({
 	}, [chatContacts?.PhoneNumber]);
 
 	useEffect(() => {
-		if (whatsappChatSession?.IsNewMessage) {
+		if (whatsappChatSession?.IsNewMessage && !isStatusUpdating) {
 			getAPIAllWhatsappChat(true);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [whatsappChatSession]);
+	}, [whatsappChatSession, isStatusUpdating]);
 
 	const renderToast = () => {
 		if (toastMessage) {
@@ -201,7 +202,8 @@ const ChatUi = ({
 
 			if (allWhatsAppChatData.payload.Status === apiStatus.SUCCESS) {
 				setAllWhatsappChat(allWhatsAppChatData.payload?.Data?.Items);
-				updateContactList();
+				// Don't call updateContactList here - it fetches stale data that overwrites optimistic status updates
+				// updateContactList();
 				const element = document.getElementById('chat-messages');
 				if (element !== null) {
 					setTimeout(() => {
@@ -234,7 +236,7 @@ const ChatUi = ({
 	const chatHeader = () => {
 		return (
 			<header
-				className={`${classes.whatsappChat} header chat__header ${
+				className={`${classes.whatsappChat} chat-header chat__header ${
 					isMobileSideBar && 'mobile-side-bar-open'
 				}`}
 			>
@@ -289,7 +291,7 @@ const ChatUi = ({
 										}
 							}
 							onChange={(e: SelectChangeEvent) =>
-								handleUserStatus(e, chatContacts.PhoneNumber)
+								handleUserStatus(e, chatContacts.PhoneNumber, setIsStatusUpdating)
 							}
 						>
 							<MenuItem value={1}>{translator('whatsappChat.open')}</MenuItem>

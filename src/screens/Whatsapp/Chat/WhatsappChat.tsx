@@ -16,6 +16,7 @@ import {
 	ContactsPaginationSetting,
 } from './Types/WhatsappChat.type';
 import { BaseSyntheticEvent, useEffect, useState, useCallback } from 'react';
+import { flushSync } from 'react-dom';
 import {
 	callToActionProps,
 	quickReplyButtonProps,
@@ -232,6 +233,61 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		useState<number>(0);
 	const [tagsList, setTagsList] = useState<any[]>([]);
 
+	// Refs to capture current state values for status change logic
+	const activeChatContactsRef = useRef<APIWhatsappChatSidebarContactsItemsData | null>(null);
+	const sideChatContactsRef = useRef<APIWhatsappChatSidebarContactsItemsData[]>([]);
+	const totalOpenContactsRef = useRef<number>(0);
+	const totalPendingContactsRef = useRef<number>(0);
+	const totalSolvedContactsRef = useRef<number>(0);
+
+	// Keep refs updated with current state
+	// NOTE: We DON'T update refs here because flushSync already does it
+	// Updating here causes race conditions where refs get stale values
+	useEffect(() => {
+		console.log('🔶 activeChatContacts RENDER (state changed):', {
+			PhoneNumber: activeChatContacts?.PhoneNumber,
+			ConversationStatusId: activeChatContacts?.ConversationStatusId,
+			refCurrentStatus: activeChatContactsRef.current?.ConversationStatusId,
+			statesMatch: activeChatContactsRef.current?.ConversationStatusId === activeChatContacts?.ConversationStatusId,
+		});
+	}, [activeChatContacts]);
+
+	useEffect(() => {
+		console.log('🔶 sideChatContacts RENDER (state changed), length:', sideChatContacts?.length);
+		if (sideChatContacts && sideChatContacts.length > 0) {
+			console.log('🔶 First side contact status:', {
+				PhoneNumber: sideChatContacts[0]?.PhoneNumber,
+				ConversationStatusId: sideChatContacts[0]?.ConversationStatusId,
+				refFirstStatus: sideChatContactsRef.current?.[0]?.ConversationStatusId,
+			});
+		}
+	}, [sideChatContacts]);
+
+	useEffect(() => {
+		totalOpenContactsRef.current = totalOpenContacts;
+		console.log('🔶 totalOpenContacts ref updated:', totalOpenContacts);
+	}, [totalOpenContacts]);
+
+	useEffect(() => {
+		totalPendingContactsRef.current = totalPendingContacts;
+		console.log('🔶 totalPendingContacts ref updated:', totalPendingContacts);
+	}, [totalPendingContacts]);
+
+	useEffect(() => {
+		totalSolvedContactsRef.current = totalSolvedContacts;
+		console.log('🔶 totalSolvedContacts ref updated:', totalSolvedContacts);
+	}, [totalSolvedContacts]);
+
+	// Monitor activeChatContacts changes and verify status persistence
+	useEffect(() => {
+		console.log('✅ FINAL STATUS VERIFICATION - activeChatContacts rendered:', {
+			PhoneNumber: activeChatContacts?.PhoneNumber,
+			ConversationStatusId: activeChatContacts?.ConversationStatusId,
+			statusClass: getStatusClass(activeChatContacts?.ConversationStatusId),
+			time: new Date().toISOString(),
+		});
+	}, [activeChatContacts?.ConversationStatusId, activeChatContacts?.PhoneNumber]);
+
 	const initialQuickReplyButtons = [
 		{
 			id: uniqid(),
@@ -287,37 +343,87 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const [contactsPaginationSetting, setContactsPaginationSetting] =
 		useState<ContactsPaginationSetting>({
 			PageNo: 1,
-			PageSize: 10,
+			PageSize: 20,
 			hasMore: true,
 		});
 
 	const setWhatsappChatCoversationStatus = useCallback(
 		async (StatusId: number, Sendernumber: string, ClientNumber: string) => {
-			// Find the contact's current status for optimistic update
-			const contact = sideChatContacts?.find(
-				(c) => c?.PhoneNumber === ClientNumber,
-			);
-			const oldStatusId = contact?.ConversationStatusId || 0;
+			const parsedStatusId = Number(StatusId);
+			if (isNaN(parsedStatusId) || parsedStatusId < 1 || parsedStatusId > 3) {
+				return;
+			}
 
-			// Store original values for rollback if needed
+			const originalActiveChat = activeChatContacts;
+			const originalSideContacts = sideChatContacts;
 			const originalTotalOpen = totalOpenContacts;
 			const originalTotalPending = totalPendingContacts;
 			const originalTotalSolved = totalSolvedContacts;
-			const originalActiveChatContacts = activeChatContacts;
-			const originalSideChatContacts = sideChatContacts;
 
-			// Optimistically update counts before API call
-			if (oldStatusId !== StatusId) {
-				// Decrement old status count
-				if (oldStatusId === 1) {
-					setTotalOpenContacts((prev) => prev - 1);
-				} else if (oldStatusId === 2) {
-					setTotalPendingContacts((prev) => prev - 1);
-				} else if (oldStatusId === 3) {
-					setTotalSolvedContacts((prev) => prev - 1);
+			let oldStatusId = 0;
+			let contactToUpdate: APIWhatsappChatSidebarContactsItemsData | null = null;
+			
+			if (originalActiveChat?.PhoneNumber === ClientNumber) {
+				oldStatusId = originalActiveChat?.ConversationStatusId || 0;
+				contactToUpdate = originalActiveChat;
+			} else {
+				const contact = originalSideContacts?.find(
+					(c) => c?.PhoneNumber === ClientNumber,
+				);
+				oldStatusId = contact?.ConversationStatusId || 0;
+				contactToUpdate = contact || null;
+			}
+
+			const updatedContact = contactToUpdate ? {
+				...contactToUpdate,
+				ConversationStatusId: StatusId,
+			} : null;
+
+			if (updatedContact) {
+				const shouldUpdateActive = originalActiveChat?.PhoneNumber === ClientNumber;
+				
+				if (shouldUpdateActive) {
+					const newActiveContact = {
+						...updatedContact,
+					};
+					flushSync(() => {
+						setActiveChatContacts(newActiveContact);
+					});
+				} else {
+					// Auto-select contact after sidebar update
 				}
 
-				// Increment new status count
+				if (originalSideContacts && originalSideContacts.length > 0) {
+					const updatedSideChatContacts = originalSideContacts.map((contact) => {
+						if (contact?.PhoneNumber === ClientNumber) {
+							return {
+								...updatedContact,
+							};
+						}
+						return contact;
+					});
+					
+					flushSync(() => {
+						setSideChatContacts(updatedSideChatContacts);
+					});
+					
+					if (!shouldUpdateActive) {
+						flushSync(() => {
+							setActiveChatContacts(updatedContact);
+						});
+					}
+				}
+			}
+
+			if (oldStatusId !== StatusId && oldStatusId > 0 && StatusId > 0) {
+				if (oldStatusId === 1) {
+					setTotalOpenContacts((prev) => Math.max(0, prev - 1));
+				} else if (oldStatusId === 2) {
+					setTotalPendingContacts((prev) => Math.max(0, prev - 1));
+				} else if (oldStatusId === 3) {
+					setTotalSolvedContacts((prev) => Math.max(0, prev - 1));
+				}
+
 				if (StatusId === 1) {
 					setTotalOpenContacts((prev) => prev + 1);
 				} else if (StatusId === 2) {
@@ -327,22 +433,6 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				}
 			}
 
-			// Optimistically update UI
-			if (activeChatContacts?.PhoneNumber === ClientNumber) {
-				setActiveChatContacts({
-					...activeChatContacts,
-					ConversationStatusId: StatusId,
-				});
-			}
-			const updatedSideChatContacts = sideChatContacts?.map((contact) => {
-				if (contact?.PhoneNumber === ClientNumber) {
-					return { ...contact, ConversationStatusId: StatusId };
-				}
-				return contact;
-			});
-			setSideChatContacts(updatedSideChatContacts);
-
-			// Make API call without loader
 			const whatsAppChatConversationStatusData: APIWhatsappChatConversationStatusData =
 				await dispatch<any>(
 					manageWhatsappChatCoversationStatus({
@@ -356,12 +446,16 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				whatsAppChatConversationStatusData?.payload?.Status !==
 				apiStatus.SUCCESS
 			) {
-				// Rollback on failure
 				setTotalOpenContacts(originalTotalOpen);
 				setTotalPendingContacts(originalTotalPending);
 				setTotalSolvedContacts(originalTotalSolved);
-				setActiveChatContacts(originalActiveChatContacts);
-				setSideChatContacts(originalSideChatContacts);
+				
+				if (originalActiveChat) {
+					setActiveChatContacts(originalActiveChat);
+				}
+				if (originalSideContacts) {
+					setSideChatContacts(originalSideContacts);
+				}
 
 				whatsAppChatConversationStatusData?.payload?.Message
 					? setToastMessage({
@@ -369,31 +463,64 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 							message: whatsAppChatConversationStatusData?.payload?.Message,
 						})
 					: setToastMessage(ToastMessages.ERROR);
+			} else {
+				if (updatedContact) {
+					const shouldUpdateActive = originalActiveChat?.PhoneNumber === ClientNumber;
+					if (shouldUpdateActive) {
+						setActiveChatContacts({...updatedContact});
+					}
+					setSideChatContacts(prev => prev.map(contact => 
+						contact?.PhoneNumber === ClientNumber 
+							? {...updatedContact}
+							: contact
+					));
+				}
 			}
 		},
-		[
-			dispatch,
-			activeChatContacts,
-			sideChatContacts,
-			totalOpenContacts,
-			totalPendingContacts,
-			totalSolvedContacts,
-			ToastMessages,
-		],
+		[dispatch, ToastMessages, activeChatContacts, sideChatContacts, totalOpenContacts, totalPendingContacts, totalSolvedContacts],
 	);
 
 	const handleUserStatus = useCallback(
-		(e: SelectChangeEvent, ClientNumber: string) => {
+		(e: SelectChangeEvent, ClientNumber: string, setIsStatusUpdating?: (value: boolean) => void) => {
 			e.preventDefault();
 			e.stopPropagation();
 
+			const newStatusValue = Number(e.target.value);
+			
+			console.log('👆 handleUserStatus called with:', {
+				rawValue: e.target.value,
+				parsedValue: newStatusValue,
+				ClientNumber,
+				activePhoneNumber,
+				isUpdatingActiveContact: ClientNumber === activeChatContacts?.PhoneNumber,
+			});
+			
+			// Validate status value
+			if (isNaN(newStatusValue) || newStatusValue < 1 || newStatusValue > 3) {
+				console.error('❌ CRITICAL: Invalid status value from dropdown!', { 
+					rawValue: e.target.value, 
+					parsedValue: newStatusValue 
+				});
+				return;
+			}
+
+			// Set status updating flag if provided
+			if (setIsStatusUpdating) {
+				setIsStatusUpdating(true);
+			}
+
 			setWhatsappChatCoversationStatus(
-				Number(e.target.value),
+				newStatusValue,
 				activePhoneNumber,
 				ClientNumber,
-			);
+			).finally(() => {
+				// Clear status updating flag after completion
+				if (setIsStatusUpdating) {
+					setIsStatusUpdating(false);
+				}
+			});
 		},
-		[activePhoneNumber, setWhatsappChatCoversationStatus],
+		[activePhoneNumber, activeChatContacts?.PhoneNumber, setWhatsappChatCoversationStatus],
 	);
 
 	const setAPIInboundChatStatus = useCallback(async () => {
@@ -898,6 +1025,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	}, [savedTemplate, newMessage, updatedDynamicVariable, translator]);
 
 	const updateContactList = useCallback(async () => {
+		console.log('🔄 updateContactList called');
 		if (!sideChatContacts?.length || sideChatContacts.length === 0) {
 			return false;
 		}
@@ -917,6 +1045,10 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			whatsAppChatContactsData?.Status === apiStatus?.SUCCESS &&
 			whatsAppChatContactsData?.Data?.Items?.length > 0
 		) {
+			console.log('🔄 updateContactList: Got fresh data:', {
+				PhoneNumber: whatsAppChatContactsData?.Data?.Items[0]?.PhoneNumber,
+				ConversationStatusId: whatsAppChatContactsData?.Data?.Items[0]?.ConversationStatusId,
+			});
 			// Update total contacts data
 			// setTotalContacts(whatsAppChatContactsData?.Data?.TotalRecord || 0);
 			// setTotalOpenContacts(whatsAppChatContactsData?.Data?.TotalOpen || 0);
@@ -1093,6 +1225,14 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 					finalEndDate = `${endDate}T${endTime}:00`;
 				}
 
+				// Debug: Log date filter values
+				console.log('🔍 Date Filter Debug:', {
+					finalStartDate,
+					finalEndDate,
+					raw: { startDate, endDate, startTime, endTime },
+					hasDateFilter: !!(finalStartDate && finalEndDate)
+				});
+
 				// Use single API for all filtering - GetWhatsAppChatContacts
 				const apiPayload: any = {
 					PhoneNumber: activePhoneNumber,
@@ -1111,6 +1251,9 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 					apiPayload.EndDate = finalEndDate;
 				}
 
+				// Debug: Log final API payload
+				console.log('🚀 API Payload:', apiPayload);
+
 				// Only add AgentIds and TagIds if they have values
 				if (agentIds && agentIds.length > 0) {
 					apiPayload.AgentIds = agentIds;
@@ -1124,6 +1267,14 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				}: APIWhatsappChatSidebarContactsData = await dispatch<any>(
 					getWhatsappChatContactsByPhoneNumber(apiPayload),
 				);
+
+				// Debug: Log API response
+				console.log('📤 API Response:', {
+					status: whatsAppChatContactsData?.Status,
+					totalRecords: whatsAppChatContactsData?.Data?.TotalRecord,
+					itemsCount: whatsAppChatContactsData?.Data?.Items?.length,
+					firstItemDate: whatsAppChatContactsData?.Data?.Items?.[0]?.LastMessageDate
+				});
 				dispatch(setIsLoader(false));
 				if (whatsAppChatContactsData?.Status === apiStatus.SUCCESS) {
 					// Backend handles all filtering - use response data directly
@@ -1772,6 +1923,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 								/>
 								<ChatUi
 										refetchActiveChatContact={async (phoneNumber: string) => {
+											console.log('🔄 refetchActiveChatContact called for:', phoneNumber);
 											// Fetch the latest contact info and update activeChatContacts
 											const result = await dispatch(
 												getWhatsappChatContactsByPhoneNumber({
@@ -1788,7 +1940,21 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 												const updatedContact = contactsData.Data.Items.find(
 													(c: { PhoneNumber: string }) => c.PhoneNumber === phoneNumber
 												);
-												if (updatedContact) setActiveChatContacts(updatedContact);
+												if (updatedContact) {
+													console.log('✳️ refetchActiveChatContact: Updating both activeChatContacts and sideChatContacts');
+													setActiveChatContacts(updatedContact);
+													
+													// Also update the contact in sideChatContacts to keep them in sync
+													setSideChatContacts((prevContacts) => {
+														return prevContacts.map((contact) => {
+															if (contact.PhoneNumber === phoneNumber) {
+																console.log('✳️ Syncing contact in sideChatContacts');
+																return updatedContact;
+															}
+															return contact;
+														});
+													});
+												}
 											}
 										}}
 									isMobileSideBar={isMobileSideBar}

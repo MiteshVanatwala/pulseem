@@ -1776,21 +1776,42 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			outlineColor: 'rgba(129, 202, 231, 0.3)',
 		},
 
-		'&.header': {
+		// '&.header': {
+		// 	background: 'rgb(237, 237, 237)',
+		// 	display: 'flex',
+		// 	justifyContent: 'space-between',
+		// 	alignItems: 'center',
+		// 	// direction: 'ltr',
+		// 	height: '60px',
+		// 	// padding: '0px 10px',
+		// 	/* Fix for height bug with chat sidebar */
+		// 	minHeight: '60px',
+		// 	'&.left': {
+		// 		// '@media screen and (max-width: 759px)': {
+		// 		// 	display: 'none',
+		// 		// },
+		// 	},
+		// },
+		'&.sidebar-header': {
 			background: 'rgb(237, 237, 237)',
 			display: 'flex',
 			justifyContent: 'space-between',
+			direction: 'ltr',
 			alignItems: 'center',
 			height: '60px',
-			// padding: '0px 10px',
-			/* Fix for height bug with chat sidebar */
 			minHeight: '60px',
-			'&.left': {
-				// '@media screen and (max-width: 759px)': {
-				// 	display: 'none',
-				// },
 			},
-		},
+
+		'&.chat-header': {
+			background: 'rgb(237, 237, 237)',
+			display: 'flex',
+			// direction:'ltr',
+			justifyContent: 'space-between',
+			alignItems: 'center',
+			height: '60px',
+			minHeight: '60px',
+			},
+
 
 		'&.avatar': {
 			borderRadius: '50%',
@@ -1933,6 +1954,13 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		'&.chat__contact-wrapper': {
 			flex: '1',
 			cursor: 'pointer',
+			display: 'flex',
+			alignItems: 'center',
+		},
+		'&.chat__contact-wrapper-header': {
+			flex: '1',
+			cursor: 'pointer',
+			marginLeft: '52%',
 			display: 'flex',
 			alignItems: 'center',
 		},
