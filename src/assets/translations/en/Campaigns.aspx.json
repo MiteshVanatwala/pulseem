@@ -695,6 +695,7 @@
     "tooltipInfo": "Gmail may clip emails larger than 102KB",
     "warning80KB": "You're approaching Gmail's size limit. Try to stay under 80KB.",
     "overLimitWarning": "This email may be clipped in Gmail. Reduce by {{reduction}} KB.",
+    "calculating": "Processing, please wait...",
     "exceeded": {
       "title": "",
       "mainText": "This email is over 102kb and might get cut in Gmail",

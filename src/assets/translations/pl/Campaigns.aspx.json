@@ -695,6 +695,7 @@
     "tooltipInfo": "Gmail może przycinać wiadomości większe niż 102 KB",
     "warning80KB": "Zbliżasz się do limitu rozmiaru Gmaila. Spróbuj pozostać poniżej 80 KB.",
     "overLimitWarning": "Ta wiadomość e-mail może zostać przycięta w Gmailu. Zmniejsz rozmiar o {{reduction}} KB.",
+    "calculating": "Przetwarzanie, proszę czekać...",
     "exceeded": {
       "subtitle": "Ta wiadomość e-mail może zostać przycięta w Gmailu",
       "description": "Ta wiadomość e-mail przekracza limit rozmiaru Gmaila i może zostać przycięta.",
