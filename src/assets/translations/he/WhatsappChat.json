@@ -55,5 +55,6 @@
 	"agents": "סוכנים",
 	"dateTimeRange": "טווח תאריך ושעה",
 	"editTags": "ערוך תגים",
-	"addNewTag": "הוסף תג חדש"
+	"addNewTag": "הוסף תג חדש",
+	"noPermissionManageTags": "אין לך הרשאה לנהל תגים. אנא פנה למנהל המערכת שלך."
 }

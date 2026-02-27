@@ -55,5 +55,6 @@
 	"agents": "Agenci",
 	"dateTimeRange": "Zakres dat i godzin",
 	"editTags": "Edytuj tagi",
-	"addNewTag": "Dodaj nowy tag"
+	"addNewTag": "Dodaj nowy tag",
+	"noPermissionManageTags": "Nie masz uprawnień do zarządzania tagami. Skontaktuj się z administratorem."
 }

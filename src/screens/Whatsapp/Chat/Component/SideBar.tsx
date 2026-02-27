@@ -1735,9 +1735,7 @@ const SideBar = ({
 							align="center"
 							style={{ margin: '32px 0' }}
 						>
-							{translator(
-								'You do not have permission to manage tags. Please contact your administrator.',
-							)}
+							{translator('whatsappChat.noPermissionManageTags')}
 						</Typography>
 					)}
 				</DialogContent>

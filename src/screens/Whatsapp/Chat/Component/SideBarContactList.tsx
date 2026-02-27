@@ -225,14 +225,7 @@ const SideBarContactList = ({
 															variant="standard"
 															onChange={(e: SelectChangeEvent) => {
 															const changeValue = Number(e.target.value);
-															console.log('🔵 SideBar Status Change - DROPDOWN VALUE:', {
-																dropdownValue: e.target.value,
-																parsedValue: changeValue,
-																phoneNumber: contact.PhoneNumber,
-																currentStatus: contact.ConversationStatusId,
-															});
 															if (isNaN(changeValue) || changeValue < 1 || changeValue > 3) {
-																console.error('❌ INVALID STATUS VALUE FROM DROPDOWN:', e.target.value);
 																return;
 															}
 																handleUserStatus(e, contact.PhoneNumber);
