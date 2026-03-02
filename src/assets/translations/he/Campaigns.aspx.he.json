@@ -697,6 +697,24 @@
       "continueToSave": "המשיכו לשמירה"
     }
   },
+  "displayConditions": {
+    "title": "תנאי תצוגה",
+    "name": "שם התנאי",
+    "description": "תיאור",
+    "field": "שדה",
+    "operator": {
+      "label": "אופרטור",
+      "equals": "שווה ל",
+      "notEquals": "שונה מ",
+      "contains": "מכיל",
+      "empty": "ריק",
+      "notEmpty": "אינו ריק"
+    },
+    "value": "ערך",
+    "preview": "תצוגה מקדימה",
+    "previewEmpty": "הגדר לפחות כלל אחד כדי לראות את התצוגה המקדימה.",
+    "openBuilder": "פתח בונה תנאי"
+  },
   "sendToContact": "שלח לאיש קשר אחד",
   "successSent": "נשלח בהצלחה",
   "missingApi": "מפתח API לא נכון או לא תקין",

@@ -3,6 +3,7 @@ import { TRANSLATE_HEBREW, TRANSLATE_ENGLISH } from '../../../assets/translation
 import { FONTS } from '../../../helpers/Fonts/Init';
 import ProductCatalog from '../../../model/ProductCatalog/ProductCatalog';
 import { AddProductCatalogType } from '../../../config/enum';
+import { DisplayConditionsDialog } from '../components/ContentDialogs';
 
 type dialog = (a: any) => void;
 type save = (a: any) => void;
@@ -150,6 +151,26 @@ export const BeeConfig = (Options: ConfigOptions) => {
                         newRow['metadata']['tags'] = newRow?.metadata?.StaticOrDynamic === AddProductCatalogType.Dynamic ? 'Dynamic-Products' : 'Products';
                         await onSaveUserBlock(JSON.stringify(newRow), newRow)
                         resolve();
+                    }
+                }
+            },
+            rowDisplayConditions: {
+                label: t('campaigns.displayConditions.openBuilder') || 'Open builder',
+                handler: async (resolve: Function, reject: Function, currentCondition?: any) => {
+                    try {
+                        const result: any = await openModal(
+                            DisplayConditionsDialog,
+                            { currentCondition },
+                            classes
+                        );
+
+                        if (result && result.before && result.after) {
+                            resolve(result);
+                        } else {
+                            reject();
+                        }
+                    } catch (e) {
+                        reject();
                     }
                 }
             },

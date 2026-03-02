@@ -705,6 +705,24 @@
       "continueToSave": "Continue to save"
     }
   },
+  "displayConditions": {
+    "title": "Display condition",
+    "name": "Condition name",
+    "description": "Description",
+    "field": "Field",
+    "operator": {
+      "label": "Operator",
+      "equals": "Equals",
+      "notEquals": "Does not equal",
+      "contains": "Contains",
+      "empty": "Is empty",
+      "notEmpty": "Is not empty"
+    },
+    "value": "Value",
+    "preview": "Preview",
+    "previewEmpty": "Define at least one rule to see the preview.",
+    "openBuilder": "Open builder"
+  },
   "sendToContact": "Send to one contact",
   "successSent": "Sent Successfully",
   "missingApi": "Missing api key",
