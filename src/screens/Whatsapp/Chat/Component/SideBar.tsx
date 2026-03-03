@@ -633,14 +633,14 @@ const SideBar = ({
 			setTagsList(updatedTagsList);
 
 			setToastMessage({
-				message: 'Tag deleted successfully',
+				message: translator('whatsappChat.tagDeletedSuccessfully'),
 				severity: 'success',
 			});
 			setTimeout(() => setToastMessage(null), 3000);
 		} catch (error: any) {
 			console.error('Error deleting tag:', error);
 			setToastMessage({
-				message: error.response?.data?.message || 'Failed to delete tag',
+				message: error.response?.data?.message || translator('whatsappChat.failedToDeleteTag'),
 				severity: 'error',
 			});
 			setTimeout(() => setToastMessage(null), 3000);
@@ -669,7 +669,7 @@ const SideBar = ({
 		// Validation
 		if (!tag.TagName || tag.TagName.trim() === '') {
 			setToastMessage({
-				message: 'Tag name cannot be empty',
+				message: translator('whatsappChat.tagNameCannotBeEmpty'),
 				severity: 'error',
 			});
 			setTimeout(() => setToastMessage(null), 3000);
@@ -685,8 +685,7 @@ const SideBar = ({
 
 		if (isDuplicate) {
 			setToastMessage({
-				message:
-					'A tag with this name already exists. Please use a different name.',
+				message: translator('whatsappChat.tagAlreadyExists'),
 				severity: 'error',
 			});
 			setTimeout(() => setToastMessage(null), 3000);
@@ -761,13 +760,9 @@ const SideBar = ({
 					// Sync to localStorage
 					localStorage.setItem('whatsappTags', JSON.stringify(newTagsList));
 				}
-
-				if (typeof refetchActiveChatContact === 'function') {
-					refetchActiveChatContact(activePhoneNumber);
-				}
-
+				
 				// Refetch all contacts to update tag colors in sidebar
-				if (oldColor !== returnedColor) {
+				// if (oldColor !== returnedColor) {
 					fetchMoreContacts(
 						searchText,
 						filterBySelected,
@@ -782,6 +777,10 @@ const SideBar = ({
 						startTime,
 						endTime,
 					);
+				//}
+
+				if (typeof refetchActiveChatContact === 'function') {
+					refetchActiveChatContact(activePhoneNumber);
 				}
 
 				setToastMessage({

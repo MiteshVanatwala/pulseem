@@ -30,5 +30,9 @@
 	"finished": "Wysłane",
 	"sending": "Wysyłanie",
 	"canceled": "Anulowane",
-	"CreatedOnlyforPulseem": "Utworzono tylko dla Pulseem"
+	"CreatedOnlyforPulseem": "Utworzono tylko dla Pulseem",
+	"tagDeletedSuccessfully": "Tag usunięty pomyślnie",
+	"failedToDeleteTag": "Nie udało się usunąć tagu",
+	"tagNameCannotBeEmpty": "Nazwa tagu nie może być pusta",
+	"tagAlreadyExists": "Tag o tej nazwie już istnieje. Proszę użyć innej nazwy."
 }
