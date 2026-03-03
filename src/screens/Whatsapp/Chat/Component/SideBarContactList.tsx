@@ -29,7 +29,7 @@ import { useSelector } from 'react-redux';
 import moment from 'moment';
 import { StateType } from '../../../../Models/StateTypes';
 import { compareLastNineDigits } from '../../../../helpers/Utils/TextHelper';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { PulseemReactInstance } from '../../../../helpers/Api/PulseemReactAPI';
 
 const SideBarContactList = ({
@@ -50,11 +50,17 @@ const SideBarContactList = ({
 	const [selectedPhoneNumber, setSelectedPhoneNumber] = useState<string | null>(
 		null,
 	);
+	const [menuPosition, setMenuPosition] = useState<{ top: number; left: number } | null>(null);
 	const [updatedTags, setUpdatedTags] = useState<{
 		[key: string]: Array<{ id: string; TagName: string; TagColor: string }>;
 	}>({});
 	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
 	const { agentList } = useSelector((state: StateType) => state.whatsapp);
+
+	useEffect(() => {
+		// Clear updatedTags when ChatContacts change (tags updated from ChatUI)
+		setUpdatedTags({});
+	}, [ChatContacts]);
 
 	const handleOpenTagMenu = (
 		e: React.MouseEvent<HTMLElement>,
@@ -62,6 +68,20 @@ const SideBarContactList = ({
 	) => {
 		e.preventDefault();
 		e.stopPropagation();
+		const rect = e.currentTarget.getBoundingClientRect();
+		const menuWidth = 250; // Menu width from PaperProps
+		const viewportWidth = window.innerWidth;
+		
+		// Calculate left position, ensuring menu doesn't go off-screen
+		let leftPosition = rect.left + window.scrollX;
+		if (leftPosition + menuWidth > viewportWidth) {
+			leftPosition = rect.right + window.scrollX - menuWidth; // Align to right edge of button
+		}
+		
+		setMenuPosition({
+			top: rect.bottom + window.scrollY,
+			left: leftPosition
+		});
 		setAnchorEl(e.currentTarget);
 		setSelectedPhoneNumber(phoneNumber);
 	};
@@ -69,6 +89,7 @@ const SideBarContactList = ({
 	const handleCloseTagMenu = () => {
 		setAnchorEl(null);
 		setSelectedPhoneNumber(null);
+		setMenuPosition(null);
 	};
 
 	const handleTagChange = async (
@@ -83,6 +104,7 @@ const SideBarContactList = ({
 		if (!contact) return;
 
 		try {
+			// Get current tags - prioritize updatedTags over contact.Tags
 			const currentTags = updatedTags[targetPhone] || contact.Tags || [];
 			const currentTagIds = currentTags
 				.map((t) => {
@@ -93,22 +115,30 @@ const SideBarContactList = ({
 			const allTags = tagsList || [];
 
 			let newTagIds: number[] = [];
-			let newTags: Array<{ id: string; TagName: string; TagColor: string }> =
-				[];
+			let newTags: Array<{ id: string; TagName: string; TagColor: string }> = [];
 
 			if (isAssigned) {
-				const tagIdToRemove = String(tagId);
-				newTags = currentTags.filter((t) => String(t.id) !== tagIdToRemove);
+				// Remove tag
+				const tagIdToRemove = parseInt(tagId);
+				newTags = currentTags.filter((t) => {
+					const currentId = parseInt(t.id);
+					return currentId !== tagIdToRemove;
+				});
 				newTagIds = newTags
 					.map((t) => parseInt(t.id))
 					.filter((id) => !isNaN(id));
 			} else {
+				// Add tag - ensure we keep existing tags
 				const tagIdNum = parseInt(tagId);
 				if (!isNaN(tagIdNum) && !currentTagIds.includes(tagIdNum)) {
-					newTagIds = [...currentTagIds, tagIdNum];
 					const tagToAdd = allTags.find((t) => t.id === tagId);
 					if (tagToAdd) {
+						// Keep all existing tags and add the new one
 						newTags = [...currentTags, tagToAdd];
+						newTagIds = [...currentTagIds, tagIdNum];
+					} else {
+						console.warn('Tag not found in tagsList:', tagId);
+						return;
 					}
 				} else {
 					console.warn('Tag already assigned or invalid ID:', tagId);
@@ -116,21 +146,23 @@ const SideBarContactList = ({
 				}
 			}
 
+			// Update backend
 			await PulseemReactInstance.put('WhatsAppChat/AssignTagsToChat', {
 				Cellphone: targetPhone,
 				TagIds: newTagIds,
 			});
 
-			if (targetPhone) {
-				setUpdatedTags((prev) => ({
-					...prev,
-					[targetPhone]: newTags,
-				}));
-			}
+			// Update local state
+			setUpdatedTags((prev) => ({
+				...prev,
+				[targetPhone]: newTags,
+			}));
 
+			// Update contact object
 			contact.Tags = newTags;
 
-			if (onTagsUpdated) {
+			// Notify parent component
+			if (typeof onTagsUpdated === 'function') {
 				onTagsUpdated(targetPhone, newTagIds, newTags);
 			}
 
@@ -224,10 +256,10 @@ const SideBarContactList = ({
 															value={`${contact.ConversationStatusId}`}
 															variant="standard"
 															onChange={(e: SelectChangeEvent) => {
-															const changeValue = Number(e.target.value);
-															if (isNaN(changeValue) || changeValue < 1 || changeValue > 3) {
-																return;
-															}
+																const changeValue = Number(e.target.value);
+																if (isNaN(changeValue) || changeValue < 1 || changeValue > 3) {
+																	return;
+																}
 																handleUserStatus(e, contact.PhoneNumber);
 															}}
 														>
@@ -344,16 +376,26 @@ const SideBarContactList = ({
 											{/* Tag Menu */}
 											<Menu
 												id={`tag-menu-${contact.PhoneNumber}`}
-												anchorEl={anchorEl}
+												anchorEl={null}
 												open={
 													Boolean(anchorEl) &&
 													selectedPhoneNumber === contact.PhoneNumber
 												}
 												onClose={handleCloseTagMenu}
+												anchorReference="none"
+												disableAutoFocusItem
+												disableRestoreFocus
+												disableScrollLock
+												container={() => document.body}
 												PaperProps={{
 													style: {
 														maxHeight: '300px',
 														width: '250px',
+														position: 'fixed',
+														zIndex: 9999,
+														top: menuPosition?.top || 0,
+														left: menuPosition?.left || 0,
+														direction: isRTL ? 'rtl' : 'ltr',
 													},
 												}}
 											>
@@ -362,72 +404,83 @@ const SideBarContactList = ({
 													updatedTags[contact.PhoneNumber] ||
 													contact.Tags ||
 													[]
-												).length > 0 && (
-													<>
-														<MenuItem
-															disabled
-															style={{ opacity: 0.7, fontWeight: 600 }}
-														>
-															{translator('whatsappChat.assignedTags')}
-														</MenuItem>
-														{(
-															updatedTags[contact.PhoneNumber] ||
-															contact.Tags ||
-															[]
-														).map((tag) => (
-															<MenuItem
-																key={tag.id}
-																className={classes.assignedTagMenuItem}
-															>
-																<span className={classes.tagNameFlex}>
-																	{tag.TagName}
-																</span>
-																<IconButton
-																	size="small"
-																	onClick={() => handleTagChange(tag.id, true)}
-																	className={classes.deleteIconButton}
-																>
-																	<MdClose size={16} />
-																</IconButton>
-															</MenuItem>
-														))}
-														<div className={classes.tagMenuDivider} />
-													</>
-												)}
-
-												{/* Available Tags Section */}
-												<MenuItem
-													disabled
-													style={{ opacity: 0.7, fontWeight: 600 }}
-												>
-													{translator('whatsappChat.addTags')}
-												</MenuItem>
-												{tagsList
-													.filter(
-														(tag: any) =>
-															!(
-																updatedTags[contact.PhoneNumber] ||
-																contact.Tags ||
-																[]
-															).some((ct) => ct.id === tag.id),
-													)
-													.map((tag: any) => (
+												).length > 0 ? [
+													<MenuItem
+														key="assigned-header"
+														disabled
+														style={{ 
+															opacity: 0.7, 
+															fontWeight: 600,
+															textAlign: isRTL ? 'left' : 'left'
+														}}
+													>
+														{translator('whatsappChat.assignedTags')}
+													</MenuItem>,
+													...(
+														updatedTags[contact.PhoneNumber] ||
+														contact.Tags ||
+														[]
+													).map((tag) => (
 														<MenuItem
 															key={tag.id}
-															onClick={() => handleTagChange(tag.id, false)}
-															className={classes.availableTagMenuItem}
+															className={classes.assignedTagMenuItem}
+															style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexDirection: isRTL ? 'row-reverse' : 'row' }}
 														>
-															<span
-																className={classes.tagColorDot}
-																style={{ color: tag.TagColor }}
-															>
-																●
-															</span>
-															<span className={classes.tagNameMargin}>
+															<span className={classes.tagNameFlex}>
 																{tag.TagName}
 															</span>
+															<IconButton
+																size="small"
+																onClick={() => handleTagChange(tag.id, true)}
+																className={classes.deleteIconButton}
+															>
+																<MdClose size={16} />
+															</IconButton>
 														</MenuItem>
-													))}
+													)),
+													<div key="divider" className={classes.tagMenuDivider} />
+												] : []}
+
+												{/* Available Tags Section */}
+												{[
+													<MenuItem
+														key="available-header"
+														disabled
+														style={{ 
+															opacity: 0.7, 
+															fontWeight: 600,
+															textAlign: isRTL ? 'left' : 'left'
+														}}
+													>
+														{translator('whatsappChat.addTags')}
+													</MenuItem>,
+													...tagsList
+														.filter(
+															(tag: any) =>
+																!(
+																	updatedTags[contact.PhoneNumber] ||
+																	contact.Tags ||
+																	[]
+																).some((ct) => ct.id === tag.id),
+														)
+														.map((tag: any) => (
+															<MenuItem
+																key={tag.id}
+																onClick={() => handleTagChange(tag.id, false)}
+																className={classes.availableTagMenuItem}
+															>
+																<span
+																	className={classes.tagColorDot}
+																	style={{ color: tag.TagColor }}
+																>
+																	●
+																</span>
+																<span className={classes.tagNameMargin}>
+																	{tag.TagName}
+																</span>
+															</MenuItem>
+														))
+												]}
 											</Menu>
 
 											<div

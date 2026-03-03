@@ -74,6 +74,7 @@ const ChatUi = ({
 	selectedAgent,
 	ToastMessages,
 	refetchActiveChatContact,
+	onTagsUpdated,
 }: WhatsappChatUiProps) => {
 	const navigate = useNavigate();
 	const { t: translator } = useTranslation();
@@ -88,22 +89,32 @@ const ChatUi = ({
 	const onChatTagRemove = async (tagId: string) => {
 		if (!chatContacts?.PhoneNumber) return;
 		const currentTags = contactTags || [];
-		const tagIdToRemove = String(tagId);
-		const newTags = currentTags.filter(
-			(t: any) => String(t.id) !== tagIdToRemove,
-		);
+		const tagIdToRemove = parseInt(tagId);
+		const newTags = currentTags.filter((t: any) => {
+			const currentId = parseInt(t.id);
+			return currentId !== tagIdToRemove;
+		});
 		const newTagIds = newTags
 			.map((t: any) => parseInt(t.id, 10))
 			.filter((id: any) => !isNaN(id));
 		try {
+			// Optimistically update local state
 			setContactTags(newTags);
-			await PulseemReactInstance.put('WhatsAppChat/AssignTagsToChat', {
+			
+			// Wait for API to complete
+			const response = await PulseemReactInstance.put('WhatsAppChat/AssignTagsToChat', {
 				Cellphone: chatContacts.PhoneNumber,
 				TagIds: newTagIds,
 			});
-			updateContactList();
+			
+			// Call onTagsUpdated callback to update sidebar immediately
+			if (response && typeof onTagsUpdated === 'function') {
+				onTagsUpdated(chatContacts.PhoneNumber, newTagIds, newTags);
+			}
 		} catch (err) {
 			console.error('Failed to remove tag:', err);
+			// Revert optimistic update on error
+			setContactTags(currentTags);
 		}
 	};
 	const [showEditRecipient, setShowEditRecipient] = useState(false);
@@ -618,12 +629,11 @@ const ChatUi = ({
 				setShowEditRecipient(false);
 				setClientToEdit(null);
 
-				// Refetch and update active chat contact from parent
+				// Single optimized refetch - only call once
 				if (typeof refetchActiveChatContact === 'function') {
 					refetchActiveChatContact(chatContacts?.PhoneNumber);
 				}
-				navigate(`/react/whatsapp/chat/${chatContacts?.PhoneNumber}`);
-				updateContactList();
+				// No need to navigate to same page or call updateContactList - refetchActiveChatContact handles it
 				break;
 			}
 			case 202: {

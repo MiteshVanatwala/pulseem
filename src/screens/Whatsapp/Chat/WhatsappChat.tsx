@@ -897,14 +897,6 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 
 	const handleTagsUpdated = useCallback(
 		(phoneNumber: string, tagIds: number[], tags?: any[]) => {
-			getWhatsappChatContactsByUserNumber({
-				PhoneNumber: activePhoneNumber,
-				IsPagination: false,
-				pageNo: 1,
-				pageSize: 6,
-				UserNumber: activeChatContacts?.PhoneNumber,
-				ChatStatus: filterBySelected,
-			});
 			// Update the activeChatContacts with new tags if it's the current contact
 			if (activeChatContacts?.PhoneNumber === phoneNumber && tags) {
 				setActiveChatContacts((prev) => ({
@@ -1879,8 +1871,8 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 										getAgents();
 										setDialogType({ type: 'editAgents' });
 									}}
-									onTagsUpdated={updateContactList}
-									onTagColorUpdated={updateContactList}
+									onTagsUpdated={handleTagsUpdated}
+									onTagColorUpdated={handleTagColorUpdated}
 									tagsList={tagsList}
 									TotalRecord={totalContacts}
 									TotalOpen={totalOpenContacts}
