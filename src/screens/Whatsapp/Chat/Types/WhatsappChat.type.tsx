@@ -206,7 +206,7 @@ export type APIWhatsappChatSidebarContactsItemsData = {
 	PhoneNumber: string;
 	Unread: number;
 	UserName: string;
-	Tags?: Array<{ id: string; TagName: string; TagColor: string }>;
+	Tags?: Array<{ id?: string; Id?: string; TagName: string; TagColor: string }>;
 	ClientId?: number; // Standardized for WhatsApp chat edit mapping
 };
 

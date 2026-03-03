@@ -926,21 +926,27 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				UserNumber: activeChatContacts?.PhoneNumber,
 				ChatStatus: filterBySelected,
 			});
+			console.log('sideChatContacts', sideChatContacts);
+			console.log('tagId', tagId);
+			console.log('newColor', newColor);
 			// Update all contacts that have this tag with the new color
 			setSideChatContacts((prev) => {
 				return prev.map((contact) => {
 					if (contact.Tags && contact.Tags.length > 0) {
-						const hasTag = contact.Tags.some((tag) => tag.id === tagId);
+						console.log('contact.Tags', contact.Tags);
+						const hasTag = contact.Tags.some((tag) => tag.Id == tagId);
+						console.log('hasTag', hasTag);
 						if (hasTag) {
 							const updatedTags = contact.Tags.map((tag) =>
-								tag.id === tagId ? { ...tag, TagColor: newColor } : tag,
+								tag.id == tagId ? { ...tag, TagColor: newColor } : tag,
 							);
+							console.log('updatedTags', updatedTags);
 							return { ...contact, Tags: updatedTags };
 						}
 					}
 					return contact;
 				});
-			});
+			}); 
 
 			// Update activeChatContacts if it has this tag
 			setActiveChatContacts((prev) => {

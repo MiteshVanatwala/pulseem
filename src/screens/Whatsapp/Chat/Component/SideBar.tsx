@@ -688,7 +688,7 @@ const SideBar = ({
 
 			if (response.data) {
 				if (onTagColorUpdated) {
-					onTagColorUpdated('', '');
+					onTagColorUpdated(String(payloadId), tag.TagColor);
 				}
 				if (typeof refetchActiveChatContact === 'function') {
 					refetchActiveChatContact(activePhoneNumber);
