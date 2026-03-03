@@ -100,7 +100,7 @@ const SideBar = ({
 	const [endDate, setEndDate] = useState<string>('');
 	const [startTime, setStartTime] = useState<string>('');
 	const [endTime, setEndTime] = useState<string>('');
-	const [timePeriod, setTimePeriod] = useState<string>('lastMonth');
+	const [timePeriod, setTimePeriod] = useState<string>('');
 	const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
 	const [showFilterDropdown, setShowFilterDropdown] = useState<boolean>(false);
 	const [showFilterDialog, setShowFilterDialog] = useState<boolean>(false);
@@ -110,7 +110,7 @@ const SideBar = ({
 		[],
 	);
 	const [dialogSelectedTags, setDialogSelectedTags] = useState<number[]>([]);
-	const [dialogTimePeriod, setDialogTimePeriod] = useState<string>('lastMonth');
+	const [dialogTimePeriod, setDialogTimePeriod] = useState<string>('');
 	const [dialogStartDate, setDialogStartDate] = useState<string>('');
 	const [dialogEndDate, setDialogEndDate] = useState<string>('');
 	const [dialogStartTime, setDialogStartTime] = useState<string>('');
@@ -135,7 +135,7 @@ const SideBar = ({
 
 	// Initialize default date range on mount
 	useEffect(() => {
-		getDateRange('lastMonth');
+		// No default date range - user can select one if needed
 	}, []);
 
 	// Fetch tags on component mount
@@ -155,12 +155,29 @@ const SideBar = ({
 						TagColor: tag.TagColor,
 					}));
 					setTagsList(normalizedTags);
+					// Store in localStorage for cross-tab sync
+					localStorage.setItem('whatsappTags', JSON.stringify(normalizedTags));
 				}
 			} catch (error) {
 				console.error('Failed to fetch tags:', error);
 			}
 		};
 		fetchTags();
+		
+		// Listen for storage changes from other tabs
+		const handleStorageChange = (e: StorageEvent) => {
+			if (e.key === 'whatsappTags' && e.newValue) {
+				try {
+					const updatedTags = JSON.parse(e.newValue);
+					setTagsList(updatedTags);
+				} catch (error) {
+					console.error('Failed to parse tags from storage:', error);
+				}
+			}
+		};
+		
+		window.addEventListener('storage', handleStorageChange);
+		return () => window.removeEventListener('storage', handleStorageChange);
 	}, [dispatch]);
 
 	const getDateRange = (period: string) => {
@@ -252,8 +269,8 @@ const SideBar = ({
 
 	// Helper function to get date chip label with time
 	const getDateChipLabel = () => {
-		if (timePeriod === 'lastMonth') {
-			// Don't show chip for default last month
+		if (!timePeriod || timePeriod === '') {
+			// Don't show chip when no date filter is applied
 			return null;
 		}
 		if (startDate && endDate && startTime && endTime) {
@@ -298,10 +315,12 @@ const SideBar = ({
 	};
 
 	const handleRemoveDateFilter = () => {
-		setTimePeriod('lastMonth');
-		getDateRange('lastMonth');
+		setTimePeriod('');
+		setStartDate('');
+		setEndDate('');
+		setStartTime('');
+		setEndTime('');
 		// Fetch will be triggered by useEffect watching startDate/endDate
-		// Times are set by getDateRange, so no need to set them here
 	};
 
 	const handleRemoveAgentFilter = (agentId: number) => {
@@ -369,14 +388,16 @@ const SideBar = ({
 
 	// Clear all filters at once
 	const handleClearAllFilters = () => {
-		setTimePeriod('lastMonth');
-		getDateRange('lastMonth');
+		setTimePeriod('');
+		setStartDate('');
+		setEndDate('');
+		setStartTime('');
+		setEndTime('');
 		setAgentSelected(0);
 		setCookie('whatsappSelectedAgentId', '0');
 		setSelectedAgents([]);
 		setSelectedTags([]);
 		// Note: useEffects will handle the fetch after state updates
-		// Times are set by getDateRange, so no need to set them here
 	};
 
 	const handleAgentToggle = (agentId: number) => {
@@ -687,12 +708,6 @@ const SideBar = ({
 			);
 
 			if (response.data) {
-				if (onTagColorUpdated) {
-					onTagColorUpdated(String(payloadId), tag.TagColor);
-				}
-				if (typeof refetchActiveChatContact === 'function') {
-					refetchActiveChatContact(activePhoneNumber);
-				}
 				// The API returns the ID in the Data field (e.g., {StatusCode: 201, Message: 'Success', Data: 16})
 				const returnedId = response.data.Data || response.data.Id;
 				const finalId =
@@ -725,21 +740,48 @@ const SideBar = ({
 						TagColor: returnedColor,
 					};
 					setTagsList([...updatedTagsList]);
+					// Sync to localStorage
+					localStorage.setItem('whatsappTags', JSON.stringify(updatedTagsList));
 
-					// If color changed, notify parent to update all contacts
+					// If color changed, notify parent to update all contacts AFTER backend confirms
 					if (oldColor !== returnedColor && onTagColorUpdated) {
 						onTagColorUpdated(finalId, returnedColor);
 					}
 				} else {
 					// Add new tag
-					setTagsList([
+					const newTagsList = [
 						...tagsList,
 						{
 							id: finalId,
 							TagName: response.data.TagName || tag.TagName,
 							TagColor: returnedColor,
 						},
-					]);
+					];
+					setTagsList(newTagsList);
+					// Sync to localStorage
+					localStorage.setItem('whatsappTags', JSON.stringify(newTagsList));
+				}
+
+				if (typeof refetchActiveChatContact === 'function') {
+					refetchActiveChatContact(activePhoneNumber);
+				}
+
+				// Refetch all contacts to update tag colors in sidebar
+				if (oldColor !== returnedColor) {
+					fetchMoreContacts(
+						searchText,
+						filterBySelected,
+						true,
+						contactsPaginationSetting?.PageSize || 10,
+						1,
+						false,
+						startDate,
+						endDate,
+						selectedAgents,
+						selectedTags,
+						startTime,
+						endTime,
+					);
 				}
 
 				setToastMessage({
@@ -770,7 +812,7 @@ const SideBar = ({
 
 	// Initialize default date range on component mount
 	useEffect(() => {
-		getDateRange('lastMonth');
+		// No default date range - user can select one if needed
 	}, []);
 
 	useEffect(() => {
@@ -886,7 +928,7 @@ const SideBar = ({
 						>
 							<BsPeopleFill />
 						</IconButton>
-						<IconButton onClick={() => handleOpenEditTags()} title="Edit Tags">
+						<IconButton onClick={() => handleOpenEditTags()} title={translator('whatsappChat.editTags')}>
 							<BsFillTagsFill />
 						</IconButton>
 					</div>
@@ -1031,7 +1073,7 @@ const SideBar = ({
 										e.stopPropagation();
 									}}
 									disableRipple
-									title="Calendar"
+									title={translator('whatsappChat.calendar')}
 									style={{ padding: '4px' }}
 								>
 									<FaCalendar style={{ fontSize: '16px', color: '#FF3343' }} />
@@ -1050,7 +1092,7 @@ const SideBar = ({
 							>
 								<IconButton
 									size="small"
-									title="Filter"
+									title={translator('whatsappChat.filter')}
 									disableRipple
 									onClick={(e) => {
 										e.preventDefault();
@@ -1366,7 +1408,7 @@ const SideBar = ({
 					}}
 				>
 					<span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-						<FaFilter /> Filter Chats
+						<FaFilter /> {translator('whatsappChat.filterChats')}
 					</span>
 					<IconButton
 						onClick={() => setShowFilterDialog(false)}

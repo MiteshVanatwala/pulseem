@@ -58,8 +58,18 @@ const SideBarContactList = ({
 	const { agentList } = useSelector((state: StateType) => state.whatsapp);
 
 	useEffect(() => {
-		// Clear updatedTags when ChatContacts change (tags updated from ChatUI)
-		setUpdatedTags({});
+		// Sync updatedTags with ChatContacts to preserve tags across searches
+		const syncedTags: { [key: string]: Array<{ id: string; TagName: string; TagColor: string }> } = {};
+		ChatContacts.forEach((contact) => {
+			if (contact.Tags && contact.Tags.length > 0) {
+				syncedTags[contact.PhoneNumber] = contact.Tags.map((tag: any) => ({
+					id: String(tag.id || tag.Id || ''),
+					TagName: tag.TagName,
+					TagColor: tag.TagColor,
+				}));
+			}
+		});
+		setUpdatedTags(syncedTags);
 	}, [ChatContacts]);
 
 	const handleOpenTagMenu = (
@@ -69,13 +79,12 @@ const SideBarContactList = ({
 		e.preventDefault();
 		e.stopPropagation();
 		const rect = e.currentTarget.getBoundingClientRect();
-		const menuWidth = 250; // Menu width from PaperProps
+		const menuWidth = 250;
 		const viewportWidth = window.innerWidth;
 		
-		// Calculate left position, ensuring menu doesn't go off-screen
 		let leftPosition = rect.left + window.scrollX;
 		if (leftPosition + menuWidth > viewportWidth) {
-			leftPosition = rect.right + window.scrollX - menuWidth; // Align to right edge of button
+			leftPosition = rect.right + window.scrollX - menuWidth;
 		}
 		
 		setMenuPosition({
@@ -294,7 +303,7 @@ const SideBarContactList = ({
 												</span>
 											</div>
 
-											{/* Tags Section - Between top and bottom */}
+											{/* Tags Section */}
 											<Box className={classes.tagAgentWrapper}>
 												<Box className={classes.tagsFlexWrapper}>
 													{(

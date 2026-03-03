@@ -56,5 +56,8 @@
 	"dateTimeRange": "Zakres dat i godzin",
 	"editTags": "Edytuj tagi",
 	"addNewTag": "Dodaj nowy tag",
-	"noPermissionManageTags": "Nie masz uprawnień do zarządzania tagami. Skontaktuj się z administratorem."
+	"noPermissionManageTags": "Nie masz uprawnień do zarządzania tagami. Skontaktuj się z administratorem.",
+	"filterChats": "Filtruj rozmowy",
+	"calendar": "Kalendarz",
+	"filter": "Filtr"
 }

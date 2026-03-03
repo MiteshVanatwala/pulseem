@@ -618,6 +618,39 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		],
 	);
 
+	const getAgents = useCallback(async () => {
+		const response: any = await dispatch<any>(getChatAgents());
+		const agents: WhatsappAgent[] = response?.payload?.Data as any;
+		setAllAgents(agents);
+	}, [dispatch]);
+
+	const getTags = useCallback(async () => {
+		const response: any = await dispatch<any>(getWhatsappChatTag());
+		if (response?.payload?.Status === apiStatus.SUCCESS) {
+			setTagsList(response?.payload?.Data || []);
+		}
+	}, [dispatch]);
+
+	const fetchTotalsUnfiltered = useCallback(async () => {
+		if (activePhoneNumber && activePhoneNumber?.length > 0) {
+			const { payload: totalsData }: APIWhatsappChatSidebarContactsData = await dispatch<any>(
+				getWhatsappChatContactsByPhoneNumber({
+					PhoneNumber: activePhoneNumber,
+					IsPagination: false,
+					pageNo: 1,
+					pageSize: 1,
+					ChatStatus: 0,
+				}),
+			);
+			if (totalsData?.Status === apiStatus.SUCCESS) {
+				setTotalContacts(totalsData?.Data?.TotalRecord || 0);
+				setTotalOpenContacts(totalsData?.Data?.TotalOpen || 0);
+				setTotalPendingContacts(totalsData?.Data?.TotalPending || 0);
+				setTotalSolvedContacts(totalsData?.Data?.TotalSolved || 0);
+			}
+		}
+	}, [activePhoneNumber, dispatch]);
+
 	const getPhoneNumber = useCallback(async () => {
 		const { payload: phoneNumberData }: phoneNumberAPIProps =
 			await dispatch<any>(userPhoneNumbers());
@@ -625,6 +658,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			setActivePhoneNumber(phoneNumberData?.Data[0]);
 			await setAPIWhatsAppChatContacts(phoneNumberData?.Data[0], true);
 			setPhoneNumbersList(phoneNumberData?.Data);
+			await fetchTotalsUnfiltered();
 			return phoneNumberData?.Data;
 		} else {
 			dispatch(setIsLoader(false));
@@ -641,20 +675,8 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		ToastMessages,
 		contactsPaginationSetting,
 		setAPIWhatsAppChatContacts,
+		fetchTotalsUnfiltered,
 	]);
-
-	const getAgents = useCallback(async () => {
-		const response: any = await dispatch<any>(getChatAgents());
-		const agents: WhatsappAgent[] = response?.payload?.Data as any;
-		setAllAgents(agents);
-	}, [dispatch]);
-
-	const getTags = useCallback(async () => {
-		const response: any = await dispatch<any>(getWhatsappChatTag());
-		if (response?.payload?.Status === apiStatus.SUCCESS) {
-			setTagsList(response?.payload?.Data || []);
-		}
-	}, [dispatch]);
 
 	const onActiveUserChange = useCallback(
 		(e: SelectChangeEvent) => {
@@ -926,27 +948,21 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				UserNumber: activeChatContacts?.PhoneNumber,
 				ChatStatus: filterBySelected,
 			});
-			console.log('sideChatContacts', sideChatContacts);
-			console.log('tagId', tagId);
-			console.log('newColor', newColor);
 			// Update all contacts that have this tag with the new color
-			setSideChatContacts((prev) => {
-				return prev.map((contact) => {
-					if (contact.Tags && contact.Tags.length > 0) {
-						console.log('contact.Tags', contact.Tags);
-						const hasTag = contact.Tags.some((tag) => tag.Id == tagId);
-						console.log('hasTag', hasTag);
-						if (hasTag) {
-							const updatedTags = contact.Tags.map((tag) =>
-								tag.id == tagId ? { ...tag, TagColor: newColor } : tag,
-							);
-							console.log('updatedTags', updatedTags);
-							return { ...contact, Tags: updatedTags };
-						}
-					}
-					return contact;
-				});
-			}); 
+			// setSideChatContacts((prev) => {
+			// 	return prev.map((contact) => {
+			// 		if (contact.Tags && contact.Tags.length > 0) {
+			// 			const hasTag = contact.Tags.some((tag) => tag.id == tagId);
+			// 			if (hasTag) {
+			// 				const updatedTags = contact.Tags.map((tag) =>
+			// 					tag.id == tagId ? { ...tag, TagColor: newColor } : tag,
+			// 				);
+			// 				return { ...contact, Tags: updatedTags };
+			// 			}
+			// 		}
+			// 		return contact;
+			// 	});
+			// }); 
 
 			// Update activeChatContacts if it has this tag
 			setActiveChatContacts((prev) => {
@@ -1222,15 +1238,13 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 					// Backend handles all filtering - use response data directly
 					const items = whatsAppChatContactsData?.Data?.Items || [];
 
-					// Update total contacts data from backend response
-					setTotalContacts(whatsAppChatContactsData?.Data?.TotalRecord || 0);
-					setTotalOpenContacts(whatsAppChatContactsData?.Data?.TotalOpen || 0);
-					setTotalPendingContacts(
-						whatsAppChatContactsData?.Data?.TotalPending || 0,
-					);
-					setTotalSolvedContacts(
-						whatsAppChatContactsData?.Data?.TotalSolved || 0,
-					);
+					// ONLY update totals when viewing All (ChatStatus === 0)
+					if (ChatStatus === 0 && isPaginationReset) {
+						setTotalContacts(whatsAppChatContactsData?.Data?.TotalRecord || 0);
+						setTotalOpenContacts(whatsAppChatContactsData?.Data?.TotalOpen || 0);
+						setTotalPendingContacts(whatsAppChatContactsData?.Data?.TotalPending || 0);
+						setTotalSolvedContacts(whatsAppChatContactsData?.Data?.TotalSolved || 0);
+					}
 
 					// Handle pagination based on backend response
 					setContactsPaginationSetting({

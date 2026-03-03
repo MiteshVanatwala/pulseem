@@ -56,5 +56,8 @@
 	"dateTimeRange": "טווח תאריך ושעה",
 	"editTags": "ערוך תגים",
 	"addNewTag": "הוסף תג חדש",
-	"noPermissionManageTags": "אין לך הרשאה לנהל תגים. אנא פנה למנהל המערכת שלך."
+	"noPermissionManageTags": "אין לך הרשאה לנהל תגים. אנא פנה למנהל המערכת שלך.",
+	"filterChats": "סנן צ'אטים",
+	"calendar": "לוח שנה",
+	"filter": "סנן"
 }

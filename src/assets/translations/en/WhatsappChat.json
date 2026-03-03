@@ -56,6 +56,9 @@
 	"dateTimeRange": "Date & Time Range",
 	"editTags": "Edit Tags",
 	"addNewTag": "Add New Tag",
-	"noPermissionManageTags": "You do not have permission to manage tags. Please contact your administrator."
+	"noPermissionManageTags": "You do not have permission to manage tags. Please contact your administrator.",
+	"filterChats": "Filter Chats",
+	"calendar": "Calendar",
+	"filter": "Filter"
 
 }
