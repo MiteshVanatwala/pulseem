@@ -142,12 +142,56 @@ export const updateTemplateMeta = createAsyncThunk(
         }
     })
 
+export const getDisplayConditions = createAsyncThunk(
+    '/api/email/displayconditions', async (_, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.get('email/displayconditions');
+            const items = response.data?.Data?.items || [];
+            
+            // Transform backend format to Beefree format
+            const transformedItems = items.map(item => ({
+                type: item.type || 'Custom Conditions',
+                label: item.name,
+                description: item.description || '',
+                before: item.syntaxBefore,
+                after: item.syntaxAfter,
+                id: item.id
+            }));
+            
+            return transformedItems;
+        } catch (error) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    })
+
+export const saveDisplayCondition = createAsyncThunk(
+    '/api/email/displayconditions/save', async (data, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.post('email/displayconditions', data);
+            return response.data;
+        } catch (error) {
+            return thunkAPI.rejectWithValue({ error: error.response?.data || error.message });
+        }
+    })
+
+export const deleteDisplayCondition = createAsyncThunk(
+    '/api/email/displayconditions/delete', async (id, thunkAPI) => {
+        try {
+            await PulseemReactInstance.delete(`email/displayconditions/${id}`);
+            return id;
+        } catch (error) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    })
+
 export const campaignEditorSlice = createSlice({
     name: 'campaignEditor',
     initialState: {
         beeToken: null,
         campaign: null,
         userBlocks: null,
+        displayConditions: [],
+        displayConditionsLoading: false,
         ToastMessages: {
             CAMPAIGN_SAVED: { severity: 'success', color: 'success', message: 'campaigns.campaignSaved', showAnimtionCheck: true },
             TEMPLATE_SAVED: { severity: 'success', color: 'success', message: 'common.templateSaved', showAnimtionCheck: true },
@@ -190,6 +234,22 @@ export const campaignEditorSlice = createSlice({
             .addCase(getAllTemplatesBySubaccountId.fulfilled, (state, action) => {
                 state.templatesBySubAccount = action.payload.Data || [];
                 state.templatesBySubAccountCategories = getUniqueValuesOfKey(action.payload.Data || [], 'CategoryList');
+            })
+            .addCase(getDisplayConditions.pending, (state) => {
+                state.displayConditionsLoading = true;
+            })
+            .addCase(getDisplayConditions.fulfilled, (state, action) => {
+                state.displayConditions = action.payload;
+                state.displayConditionsLoading = false;
+            })
+            .addCase(getDisplayConditions.rejected, (state) => {
+                state.displayConditionsLoading = false;
+            })
+            .addCase(saveDisplayCondition.fulfilled, (state) => {
+                state.displayConditionsLoading = false;
+            })
+            .addCase(deleteDisplayCondition.fulfilled, (state, action) => {
+                state.displayConditions = state.displayConditions.filter(c => c.id !== action.payload);
             })
 
     }

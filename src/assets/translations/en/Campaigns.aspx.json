@@ -709,6 +709,11 @@
     "title": "Display condition",
     "name": "Condition name",
     "description": "Description",
+    "matchType": "Match",
+    "matchAll": "All conditions (AND)",
+    "matchAny": "Any condition (OR)",
+    "addRule": "Add Rule",
+    "saveForFuture": "Save this condition for future use",
     "field": "Field",
     "operator": {
       "label": "Operator",

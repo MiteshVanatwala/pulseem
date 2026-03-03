@@ -16,7 +16,8 @@ import {
   saveTemplateToAccount,
   getTemplateById,
   getPublicTemplates,
-  getAllTemplatesBySubaccountId
+  getAllTemplatesBySubaccountId,
+  getDisplayConditions
 } from '../../redux/reducers/campaignEditorSlice';
 import { Loader } from '../../components/Loader/Loader';
 import { getAccountExtraData, getPreviousLandingData } from "../../redux/reducers/smsSlice";
@@ -195,7 +196,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   const [dataReady, setDataReady] = useState(false);
   const [mergeData, setPulseemMergeData] = useState({});
   const { productList } = useSelector(state => state.product)
-  const { campaign, userBlocks, ToastMessages, beeToken, publicTemplates, templatesBySubAccount } = useSelector(state => state.campaignEditor);
+  const { campaign, userBlocks, ToastMessages, beeToken, publicTemplates, templatesBySubAccount, displayConditions } = useSelector(state => state.campaignEditor);
   const { extraData, previousLandingData } = useSelector(state => state.sms);
   const { language, isRTL, userRoles } = useSelector(state => state.core)
   const { tokenAlive, accountSettings, accountFeatures, verifiedEmails, subAccount } = useSelector(state => state.common)
@@ -246,6 +247,28 @@ const CampaignEditor = ({ classes, ...props }) => {
   });
   const [pendingAction, setPendingAction] = useState(null);
   //#endregion State
+
+  useEffect(() => {
+    // Hide Add condition button using MutationObserver
+    const hideAddConditionButton = () => {
+      const buttons = document.querySelectorAll('.row-display-condition-add-button--cs');
+      buttons.forEach(btn => {
+        btn.style.display = 'none';
+      });
+    };
+
+    // Initial hide
+    hideAddConditionButton();
+
+    // Watch for new buttons being added
+    const observer = new MutationObserver(hideAddConditionButton);
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+
+    return () => observer.disconnect();
+  }, []);
 
   //#region Get Extra fields & Landing pages, after Data Ready
   const initFields = () => {
@@ -313,6 +336,21 @@ const CampaignEditor = ({ classes, ...props }) => {
     if (!publicTemplates.length) dispatch(getPublicTemplates(isRTL));
     if (!productList?.length) dispatch(GetProductsList());
     dispatch(getAllTemplatesBySubaccountId());
+    // Fetch display conditions FIRST, before anything else
+    dispatch(getDisplayConditions()).then(() => {
+      console.log('Display conditions fetched');
+    });
+
+    // Add event listener for refreshing display conditions
+    const handleRefreshDisplayConditions = () => {
+      dispatch(getDisplayConditions());
+    };
+    
+    window.addEventListener('refreshDisplayConditions', handleRefreshDisplayConditions);
+    
+    return () => {
+      window.removeEventListener('refreshDisplayConditions', handleRefreshDisplayConditions);
+    };
   }, []);
 
   useEffect(() => {
@@ -680,8 +718,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     if (beeToken) {
       initBeeEditor();
     }
-
-  }, [beeToken]);
+  }, [beeToken, displayConditions]);
 
   const initOptions = async () => {
     initTags();
@@ -1129,8 +1166,15 @@ const CampaignEditor = ({ classes, ...props }) => {
   // }
 
   const getConfig = () => {
+    console.log('=== Display Conditions Debug ===');
+    console.log('displayConditions:', displayConditions);
+    console.log('displayConditions length:', displayConditions?.length);
+    console.log('displayConditions array:', JSON.stringify(displayConditions, null, 2));
+    console.log('================================');
+    
     return BeeConfig({
       classes,
+      displayConditions,
       onSaveUserBlock,
       IsRTL: isRTL,
       EditRow: EditRow,

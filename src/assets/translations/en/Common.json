@@ -958,5 +958,8 @@
   "cancelPlanConfirmation": "Are you sure you want to cancel your current plan?",
   "planCancellationRequestSubmitted": "Your plan cancellation request has been submitted successfully.",
   "nonPolishNumber": "You can not send SMS from non-polish number. Please set a polish number.",
-  "saveColumnStructureAsDefault": "Save this column structure as a default"
+  "saveColumnStructureAsDefault": "Save this column structure as a default",
+  "field": "Field",
+  "operator": "Operator",
+  "value": "Value"
 }

@@ -11,6 +11,7 @@ const AUTO_SAVE_SECONDS = 180; // 3 minutes
 
 export interface ConfigOptions {
     classes: any;
+    displayConditions?: any[];
     onSaveUserBlock: Function;
     IsRTL: Boolean;
     openModal: any;
@@ -34,6 +35,7 @@ export interface ConfigOptions {
 export const BeeConfig = (Options: ConfigOptions) => {
     const {
         classes,
+        displayConditions,
         onSaveUserBlock,
         IsRTL,
         EditRow,
@@ -76,12 +78,29 @@ export const BeeConfig = (Options: ConfigOptions) => {
         container: 'bee-plugin-container', //Identifies the id of div element that contains BEE Plugin
         language: editorLanguage[languageCode], //Options.IsRTL ? 'he-IL' : 'en-US',
         customCss: 'https://pulseem.co.il/pulseem/css/beefreeRtlFixes.css',
+        inlineCSS: `
+          /* Hide Add condition button in left sidebar */
+          .row-display-condition-add-button--cs {
+            display: none !important;
+            visibility: hidden !important;
+          }
+          /* Make display condition buttons same width and padding */
+          .row-display-condition-select-button--cs,
+          .row-display-condition-open-builder-button--cs {
+            min-width: 140px !important;
+            width: 140px !important;
+            max-width: 140px !important;
+            flex: 0 0 140px !important;
+            padding: 8px 16px !important;
+          }
+        `,
         trackChanges: true,
         //autosave: AUTO_SAVE_SECONDS,
         loadingSpinnerDisableOnSave: true,
         sidebarPosition: IsRTL ? 'right' : 'left',
         loadingSpinnerTheme: 'light',
         saveRows: true,
+        rowDisplayConditions: displayConditions || [],
         rowsConfiguration: {
             emptyRows: true,
             defaultRows: false,
@@ -165,6 +184,11 @@ export const BeeConfig = (Options: ConfigOptions) => {
                         );
 
                         if (result && result.before && result.after) {
+                            // Refresh display conditions list after creating new condition
+                            if (result.isNewCondition) {
+                                // Trigger a refresh of the conditions dropdown
+                                window.dispatchEvent(new CustomEvent('refreshDisplayConditions'));
+                            }
                             resolve(result);
                         } else {
                             reject();
