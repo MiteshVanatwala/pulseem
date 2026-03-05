@@ -1065,6 +1065,7 @@ const BillingSettingsPage = ({ classes }: any) => {
         classes={classes}
         isOpen={showTierPlans}
         onClose={() => setShowTierPlans(false)}
+        isBankTransferForTiers={!!packagesDetails?.Newsletters?.IsBankTransferForTiers}
       />}
       <BillingSettings
         classes={classes}
