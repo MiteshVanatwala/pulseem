@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState, useCallback } from 'react';
+import React, { useEffect, useMemo, useState, useCallback, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import {
@@ -18,8 +18,8 @@ import {
 import clsx from 'clsx';
 import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
 import { getAccountExtraData } from '../../../../redux/reducers/smsSlice';
-import { saveDisplayCondition, getDisplayConditions } from '../../../../redux/reducers/campaignEditorSlice';
-import { AddCircleOutline, DeleteOutline } from '@material-ui/icons';
+import { saveDisplayCondition, getDisplayConditions, deleteDisplayCondition } from '../../../../redux/reducers/campaignEditorSlice';
+import { AddCircleOutline, DeleteOutline, Delete } from '@material-ui/icons';
 import { getGeneralStyle } from '../../../../style/classes/ganaralStyle';
 
 const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
@@ -29,18 +29,20 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
   const { extraData = {} } = useSelector((state) => state.sms || {});
 
   const currentCondition = args?.currentCondition || null;
+  const isEditing = !!currentCondition?.id;
 
-  const [name, setName] = useState(currentCondition?.label || '');
-  const [description, setDescription] = useState(currentCondition?.description || '');
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
   const [matchType, setMatchType] = useState('all');
   const [rules, setRules] = useState([]);
   const [saveForFuture, setSaveForFuture] = useState(false);
+  const initializedRef = useRef(false);
 
   useEffect(() => {
     if (!extraData || Object.keys(extraData).length === 0) {
       dispatch(getAccountExtraData());
     }
-  }, [dispatch, extraData]);
+  }, []);
 
   const baseFields = useMemo(
     () => [
@@ -89,18 +91,47 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
 
   const allFields = useMemo(() => [...baseFields, ...extraFieldsList], [baseFields, extraFieldsList]);
 
-  useEffect(() => {
-    if (!rules.length && allFields.length > 0) {
-      setRules([
-        {
-          id: 'rule-0',
-          field: allFields[0].key,
-          operator: 'eq',
-          value: '',
-        },
-      ]);
+  const parseRulesFromSyntax = (syntaxBefore) => {
+    if (!syntaxBefore) return [];
+    const rules = [];
+    const regex = /recipient\.(\w+)\s*(==|!=|contains)\s*'([^']*)'/g;
+    let match;
+    let index = 0;
+    while ((match = regex.exec(syntaxBefore)) !== null) {
+      const field = match[1];
+      const operator = match[2] === '==' ? 'eq' : match[2] === '!=' ? 'neq' : 'contains';
+      const value = match[3];
+      rules.push({
+        id: `rule-${index}`,
+        field,
+        operator,
+        value
+      });
+      index++;
     }
-  }, [allFields, rules.length]);
+    return rules;
+  };
+
+  useEffect(() => {
+    if (!initializedRef.current && allFields.length > 0) {
+      if (isEditing && currentCondition) {
+        setName(currentCondition.label || currentCondition.name || '');
+        setDescription(currentCondition.description || '');
+        const parsedRules = parseRulesFromSyntax(currentCondition.before);
+        setRules(parsedRules.length > 0 ? parsedRules : []);
+      } else {
+        setRules([
+          {
+            id: 'rule-0',
+            field: allFields[0].key,
+            operator: 'eq',
+            value: '',
+          },
+        ]);
+      }
+      initializedRef.current = true;
+    }
+  }, [allFields.length]);
 
   const operatorOptions = useMemo(
     () => [
@@ -185,6 +216,18 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
     setRules((prev) => prev.filter((r) => r.id !== id));
   };
 
+  const handleDelete = async () => {
+    if (!isEditing || !currentCondition?.id) return;
+    
+    try {
+      await dispatch(deleteDisplayCondition(currentCondition.id));
+      await dispatch(getDisplayConditions());
+      onClose();
+    } catch (error) {
+      console.error('Error deleting condition:', error);
+    }
+  };
+
   const handleSave = async (event) => {
     event?.preventDefault();
     
@@ -220,7 +263,7 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
       after: '{% endif %}',
     };
 
-    if (saveForFuture) {
+    if (saveForFuture || isEditing) {
       try {
         const saveData = {
           Name: conditionLabel,
@@ -230,12 +273,13 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
           SyntaxAfter: condition.after
         };
         
-        await dispatch(saveDisplayCondition(saveData));
-        await dispatch(getDisplayConditions());
+        if (isEditing) {
+          saveData.id = currentCondition.id;
+        }
         
-        // Mark that a new condition was created and trigger refresh
-        condition.isNewCondition = true;
-        window.dispatchEvent(new CustomEvent('refreshDisplayConditions'));
+        const result = await dispatch(saveDisplayCondition(saveData));
+        condition.isNewCondition = !isEditing;
+        condition.id = result?.payload?.id || currentCondition?.id;
       } catch (error) {
         console.error('Error saving condition:', error);
       }
@@ -254,21 +298,40 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
       onClose={onClose}
       onCancel={onClose}
       onConfirm={handleSave}
-      title={t('campaigns.displayConditions.title') || 'Display Condition'}
+      title={isEditing ? 'Edit Display Condition' : (t('campaigns.displayConditions.title') || 'Display Condition')}
       maxWidth={false}
       fullWidth={false}
+      showDefaultButtons={!isEditing}
+      renderButtons={isEditing ? () => (
+        <Box style={{ display: 'flex', gap: '8px' }}>
+          <Button
+            onClick={handleDelete}
+            variant="outlined"
+            color="secondary"
+            startIcon={<Delete />}
+          >
+            Delete
+          </Button>
+          <Button onClick={onClose} variant="outlined">
+            Cancel
+          </Button>
+          <Button onClick={handleSave} variant="contained" color="primary">
+            Save
+          </Button>
+        </Box>
+      ) : undefined}
       PaperProps={{ 
         style: {
           ...styles.displayConditionDialogPaperProps,
-          minWidth: '900px !important',
-          width: '900px !important'
+          minWidth: '1000px !important',
+          width: '1000px !important'
         }
       }}
     >
-      <Box style={styles.displayConditionMainContainer}>
-        <Grid container spacing={4}>
-          <Grid item xs={6}>
-            <Box style={styles.displayConditionConditionNameBox}>
+      <Box style={{...styles.displayConditionMainContainer, padding: '0px'}}>
+        <Grid container spacing={0}>
+          <Grid item xs={8}>
+            <Box style={{...styles.displayConditionConditionNameBox, padding: '10px'}}>
               <Box>
                 <Typography variant="body2" style={styles.displayConditionLabelTypography}>
                   Condition name
@@ -322,20 +385,20 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
                 </Button>
               </Box>
 
-              <Box style={styles.displayConditionRulesContainer}>
+              <Box style={{display: 'flex', flexDirection: 'column', gap: '8px', maxWidth: '100%'}}>
                 {rules.map((rule) => (
-                  <Box key={rule.id} style={styles.displayConditionRuleRow}>
-                    <FormControl variant="outlined" size="small" style={styles.displayConditionFieldFormControl}>
+                  <Box key={rule.id} style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 40px', gap: '8px', alignItems: 'center'}}>
+                    <FormControl variant="outlined" size="small">
                       <Select value={rule.field} onChange={(e) => handleRuleChange(rule.id, 'field', e.target.value)}>
                         {allFields.map((field) => (
-                          <MenuItem key={field.key} value={field.key} style={styles.displayConditionMenuItem}>
+                          <MenuItem key={field.key} value={field.key}>
                             {field.label}
                           </MenuItem>
                         ))}
                       </Select>
                     </FormControl>
 
-                    <FormControl variant="outlined" size="small" style={styles.displayConditionOperatorFormControl}>
+                    <FormControl variant="outlined" size="small">
                       <Select value={rule.operator} onChange={(e) => handleRuleChange(rule.id, 'operator', e.target.value)}>
                         {operatorOptions.map((op) => (
                           <MenuItem key={op.value} value={op.value}>
@@ -349,7 +412,6 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
                       <TextField
                         variant="outlined"
                         size="small"
-                        style={styles.displayConditionValueTextField}
                         value={rule.value}
                         onChange={(e) => handleRuleChange(rule.id, 'value', e.target.value)}
                       />
@@ -379,8 +441,8 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
             </Box>
           </Grid>
 
-          <Grid item xs={6}>
-            <Box style={styles.displayConditionPreviewBox}>
+          <Grid item xs={4}>
+            <Box style={{...styles.displayConditionPreviewBox, padding: '10px', maxHeight: '450px', overflowY: 'auto'}}>
               <Typography variant="body2" style={styles.displayConditionPreviewTitle}>
                 PREVIEW
               </Typography>

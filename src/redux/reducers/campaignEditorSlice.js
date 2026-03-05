@@ -150,7 +150,7 @@ export const getDisplayConditions = createAsyncThunk(
             
             // Transform backend format to Beefree format
             const transformedItems = items.map(item => ({
-                type: item.type || 'Custom Conditions',
+                type: 'Conditions',
                 label: item.name,
                 description: item.description || '',
                 before: item.syntaxBefore,
@@ -184,6 +184,16 @@ export const deleteDisplayCondition = createAsyncThunk(
         }
     })
 
+export const getDisplayConditionById = createAsyncThunk(
+    '/api/email/displayconditions/getById', async (id, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.get(`email/displayconditions/${id}`);
+            return response.data?.Data;
+        } catch (error) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    }
+)
 export const campaignEditorSlice = createSlice({
     name: 'campaignEditor',
     initialState: {
@@ -191,6 +201,7 @@ export const campaignEditorSlice = createSlice({
         campaign: null,
         userBlocks: null,
         displayConditions: [],
+        currentDisplayCondition: null,
         displayConditionsLoading: false,
         ToastMessages: {
             CAMPAIGN_SAVED: { severity: 'success', color: 'success', message: 'campaigns.campaignSaved', showAnimtionCheck: true },
@@ -250,6 +261,9 @@ export const campaignEditorSlice = createSlice({
             })
             .addCase(deleteDisplayCondition.fulfilled, (state, action) => {
                 state.displayConditions = state.displayConditions.filter(c => c.id !== action.payload);
+            })
+            .addCase(getDisplayConditionById.fulfilled, (state, action) => {
+                state.currentDisplayCondition = action.payload;
             })
 
     }

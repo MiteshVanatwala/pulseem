@@ -3,7 +3,7 @@ import { debounce, get } from 'lodash';
 import BeePlugin from '@mailupinc/bee-plugin'
 import { Box, Button, Grid, Typography, Tooltip, LinearProgress, makeStyles } from '@material-ui/core'
 import { IoMdInformationCircleOutline } from 'react-icons/io';
-import { useRef, useState, useEffect } from 'react'
+import { useRef, useState, useEffect, useMemo } from 'react'
 import DefaultScreen from '../DefaultScreen'
 import { useSelector, useDispatch } from 'react-redux';
 import {
@@ -35,6 +35,7 @@ import WizardActions from '../../components/Wizard/WizardActions';
 import { getBeeToken } from '../../redux/reducers/campaignEditorSlice';
 import { initExtraDataField, initLandingPages } from './helper/MigratePulseemData';
 import { BeeConfig, DialogType, DefaultContent } from './helper/Config';
+import { FONTS } from '../../helpers/Fonts/Init';
 import { IoMdImages } from 'react-icons/io';
 import Gallery from '../../components/Gallery/Gallery.component';
 import { PulseemFeatures, PulseemFolderType } from "../../model/PulseemFields/Fields";
@@ -248,27 +249,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   const [pendingAction, setPendingAction] = useState(null);
   //#endregion State
 
-  useEffect(() => {
-    // Hide Add condition button using MutationObserver
-    const hideAddConditionButton = () => {
-      const buttons = document.querySelectorAll('.row-display-condition-add-button--cs');
-      buttons.forEach(btn => {
-        btn.style.display = 'none';
-      });
-    };
 
-    // Initial hide
-    hideAddConditionButton();
-
-    // Watch for new buttons being added
-    const observer = new MutationObserver(hideAddConditionButton);
-    observer.observe(document.body, {
-      childList: true,
-      subtree: true
-    });
-
-    return () => observer.disconnect();
-  }, []);
 
   //#region Get Extra fields & Landing pages, after Data Ready
   const initFields = () => {
@@ -327,29 +308,45 @@ const CampaignEditor = ({ classes, ...props }) => {
 
   // Get data by campaign id
   useEffect(() => {
-    if (params?.id > 0) {
-      if (localStorage.getItem('reloadBeeEditor') === '1') {
-        localStorage.removeItem('reloadBeeEditor');
-        window.location.reload(true);
-      } else getData();
-    }
-    if (!publicTemplates.length) dispatch(getPublicTemplates(isRTL));
-    if (!productList?.length) dispatch(GetProductsList());
-    dispatch(getAllTemplatesBySubaccountId());
-    // Fetch display conditions FIRST, before anything else
-    dispatch(getDisplayConditions()).then(() => {
-      console.log('Display conditions fetched');
-    });
+    let isMounted = true;
 
-    // Add event listener for refreshing display conditions
-    const handleRefreshDisplayConditions = () => {
-      dispatch(getDisplayConditions());
+    const loadData = async () => {
+      if (params?.id > 0) {
+        if (localStorage.getItem('reloadBeeEditor') === '1') {
+          localStorage.removeItem('reloadBeeEditor');
+          window.location.reload(true);
+        } else if (isMounted) {
+          setLoader(true);
+          await dispatch(getCampaignById(params?.id));
+          if (!isMounted) return;
+          await dispatch(getAccountExtraData());
+          if (!isMounted) return;
+          await dispatch(getPreviousLandingData());
+          if (!isMounted) return;
+          await dispatch(getTestGroups(false));
+          if (!isMounted) return;
+          await dispatch(getUserblocks());
+          if (!isMounted) return;
+          await dispatch(getAuthorizedEmails());
+          if (!isMounted) return;
+          if (productCategories?.length <= 0) {
+            await dispatch(getCategories());
+          }
+          if (!isMounted) return;
+          setDataReady(true);
+          dispatch(getBeeToken());
+        }
+      }
+      if (isMounted && !publicTemplates.length) dispatch(getPublicTemplates(isRTL));
+      if (isMounted && !productList?.length) dispatch(GetProductsList());
+      if (isMounted) dispatch(getAllTemplatesBySubaccountId());
+      if (isMounted) dispatch(getDisplayConditions());
     };
-    
-    window.addEventListener('refreshDisplayConditions', handleRefreshDisplayConditions);
-    
+
+    loadData();
+
     return () => {
-      window.removeEventListener('refreshDisplayConditions', handleRefreshDisplayConditions);
+      isMounted = false;
     };
   }, []);
 
@@ -424,16 +421,14 @@ const CampaignEditor = ({ classes, ...props }) => {
     await dispatch(getTestGroups(false));
     await dispatch(getUserblocks());
     await dispatch(getAuthorizedEmails());
-
     if (productCategories?.length <= 0) {
-      getProductCategories();
+      await getProductCategories();
     }
     setDataReady(true);
-    const initBeeToken = () => {
-      dispatch(getBeeToken());
-    }
-    initBeeToken();
-  }
+    dispatch(getBeeToken());
+  } 
+
+
 
   const initRestrictions = async () => {
     const subAccountEmails = verifiedEmails?.filter((ve) => { return ve?.Number === campaign.FromEmail })[0];
@@ -446,6 +441,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   }, [campaign, verifiedEmails]);
   //#region Init Bee Token & Configuration
   const initTags = () => {
+    if (!config) return;
     let tempTags = [...new Set(userBlocks?.map(item => item.tags))];
     var tags = [].concat.apply([], tempTags);
     let tempRows = [{
@@ -718,7 +714,35 @@ const CampaignEditor = ({ classes, ...props }) => {
     if (beeToken) {
       initBeeEditor();
     }
-  }, [beeToken, displayConditions]);
+  }, [beeToken]);
+
+  useEffect(() => {
+    if (editorRef.current && displayConditions?.length > 0) {
+      const updatedConfig = BeeConfig({
+        classes,
+        displayConditions,
+        onSaveUserBlock,
+        IsRTL: isRTL,
+        EditRow: EditRow,
+        openModal: openModal,
+        SaveCampaign: onSave,
+        AutoSaveCampaign: onAutoSaveCampaign,
+        DesignChange: onDesignChange,
+        SetDialog: setDialog,
+        CampaignId: campaignId,
+        PulseemEditBlock: onEditBlock,
+        DeleteBlock: handleDeleteBlock,
+        getRows,
+        handleEditRow,
+        handleDeleteRow,
+        t: t,
+        languageCode: language,
+        dispatch: dispatch,
+        editorFonts: editorFonts
+      });
+      editorRef.current.loadConfig(updatedConfig);
+    }
+  }, [displayConditions?.length]);
 
   const initOptions = async () => {
     initTags();
@@ -726,12 +750,10 @@ const CampaignEditor = ({ classes, ...props }) => {
       await dispatch(getCommonFeatures());
     }
     if (editorRef.current) {
-      const c = getConfig();
-      editorRef.current.loadConfig(c);
+      editorRef.current.loadConfig(config);
       editorRef.current.load();
     }
   }
-
 
   //#endregion Init Bee Token & Configuration
   //#region Pulseem Methods (Save, Delete, Exit, Back, Test Send)
@@ -1165,37 +1187,29 @@ const CampaignEditor = ({ classes, ...props }) => {
   //   }
   // }
 
-  const getConfig = () => {
-    console.log('=== Display Conditions Debug ===');
-    console.log('displayConditions:', displayConditions);
-    console.log('displayConditions length:', displayConditions?.length);
-    console.log('displayConditions array:', JSON.stringify(displayConditions, null, 2));
-    console.log('================================');
-    
-    return BeeConfig({
-      classes,
-      displayConditions,
-      onSaveUserBlock,
-      IsRTL: isRTL,
-      EditRow: EditRow,
-      openModal: openModal,
-      SaveCampaign: onSave,
-      AutoSaveCampaign: onAutoSaveCampaign,
-      DesignChange: onDesignChange,
-      SetDialog: setDialog,
-      CampaignId: campaignId,
-      PulseemEditBlock: onEditBlock,
-      DeleteBlock: handleDeleteBlock,
-      // HandleAutoSave: handleAutoSave,
-      getRows,
-      handleEditRow,
-      handleDeleteRow,
-      t: t,
-      languageCode: language
-      // handleUndoChange
-    });
-  }
-  const config = getConfig();
+  const editorFonts = FONTS();
+  const config = BeeConfig({
+    classes,
+    displayConditions,
+    onSaveUserBlock,
+    IsRTL: isRTL,
+    EditRow: EditRow,
+    openModal: openModal,
+    SaveCampaign: onSave,
+    AutoSaveCampaign: onAutoSaveCampaign,
+    DesignChange: onDesignChange,
+    SetDialog: setDialog,
+    CampaignId: campaignId,
+    PulseemEditBlock: onEditBlock,
+    DeleteBlock: handleDeleteBlock,
+    getRows,
+    handleEditRow,
+    handleDeleteRow,
+    t: t,
+    languageCode: language,
+    dispatch: dispatch,
+    editorFonts: editorFonts
+  });
 
   // Email Size Indicator
   const EmailSizeIndicator = () => {
