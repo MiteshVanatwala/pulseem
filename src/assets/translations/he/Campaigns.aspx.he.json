@@ -687,6 +687,7 @@
     "tooltipInfo": "Gmail עלול לקצץ מיילים הגדולים מ-102KB",
     "warning80KB": "האימייל שלכם מתקרב למגבלת הגודל של Gmail. מומלץ להישאר מתחת ל-80KB.",
     "overLimitWarning": "המייל הזה עלול להיחתך ב-Gmail. הקטן ב-{{reduction}} KB.",
+    "calculating": "מעבד, אנא המתן...",
     "exceeded": {
       "title": "",
       "mainText": "מייל זה חורג מגודל של 102kb ועלול להיחתך ב-Gmail",
