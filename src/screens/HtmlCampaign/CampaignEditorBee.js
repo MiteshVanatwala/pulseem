@@ -246,8 +246,8 @@ const CampaignEditor = ({ classes, ...props }) => {
     ampKB: 0,
     totalBytes: 0
   });
+  const [isDisplayConditionDialogOpen, setIsDisplayConditionDialogOpen] = useState(false);
   const [pendingAction, setPendingAction] = useState(null);
-  //#endregion State
 
 
 
@@ -717,37 +717,20 @@ const CampaignEditor = ({ classes, ...props }) => {
   }, [beeToken]);
 
   useEffect(() => {
-    if (editorRef.current && displayConditions?.length > 0) {
-      const updatedConfig = BeeConfig({
-        classes,
-        displayConditions,
-        onSaveUserBlock,
-        IsRTL: isRTL,
-        EditRow: EditRow,
-        openModal: openModal,
-        SaveCampaign: onSave,
-        AutoSaveCampaign: onAutoSaveCampaign,
-        DesignChange: onDesignChange,
-        SetDialog: setDialog,
-        CampaignId: campaignId,
-        PulseemEditBlock: onEditBlock,
-        DeleteBlock: handleDeleteBlock,
-        getRows,
-        handleEditRow,
-        handleDeleteRow,
-        t: t,
-        languageCode: language,
-        dispatch: dispatch,
-        editorFonts: editorFonts
-      });
-      editorRef.current.loadConfig(updatedConfig);
+    if (editorRef.current && displayConditions && displayConditions.length > 0) {
+      const updatedConditions = (displayConditions || []).map((cond) => ({
+        ...cond,
+        id: cond.id || cond.ID || Math.random().toString(36).substr(2, 9)
+      }));
+      config.rowDisplayConditions = updatedConditions;
+      editorRef.current.loadConfig(config);
     }
-  }, [displayConditions?.length]);
+  }, [displayConditions]);
 
   const initOptions = async () => {
     initTags();
     if (!accountSettings || accountSettings.SubAccountSettings) {
-      await dispatch(getCommonFeatures());
+      dispatch(getCommonFeatures());
     }
     if (editorRef.current) {
       editorRef.current.loadConfig(config);
@@ -897,15 +880,13 @@ const CampaignEditor = ({ classes, ...props }) => {
   }, 5000);
 
   const onDesignChange = async () => {
+    if (isDisplayConditionDialogOpen) return;
     onAutoSaveCampaign();
     if (editorRef.current) {
       try {
         const content = await editorRef.current.save();
         const html = content?.data?.html || '';
         const ampHtml = content?.data?.htmlAmp || '';
-
-        // const sizeInfo = calculateEmailSize(html, ampHtml);
-        // setEmailSize(sizeInfo);
       } catch (error) {
         console.error('Error calculating email size on change:', error);
       }
@@ -1188,6 +1169,25 @@ const CampaignEditor = ({ classes, ...props }) => {
   // }
 
   const editorFonts = FONTS();
+  const onRefreshConditions = async () => {
+    console.log('onRefreshConditions called');
+    const result = await dispatch(getDisplayConditions());
+    console.log('getDisplayConditions result payload length:', result?.payload?.length);
+    console.log('Condition 27 still exists:', result?.payload?.find(c => c.id === 27));
+    if (result?.payload) {
+      console.log('Updating BEE config with conditions:', result.payload);
+      const updatedConditions = (result.payload || []).map((cond) => ({
+        ...cond,
+        id: cond.id || cond.ID || Math.random().toString(36).substr(2, 9)
+      }));
+      config.rowDisplayConditions = updatedConditions;
+      if (editorRef.current) {
+        console.log('Reloading BEE config');
+        editorRef.current.loadConfig(config);
+      }
+    }
+    setIsDisplayConditionDialogOpen(false);
+  };
   const config = BeeConfig({
     classes,
     displayConditions,
@@ -1208,7 +1208,9 @@ const CampaignEditor = ({ classes, ...props }) => {
     t: t,
     languageCode: language,
     dispatch: dispatch,
-    editorFonts: editorFonts
+    editorFonts: editorFonts,
+    onRefreshConditions: onRefreshConditions,
+    setIsDisplayConditionDialogOpen: setIsDisplayConditionDialogOpen
   });
 
   // Email Size Indicator

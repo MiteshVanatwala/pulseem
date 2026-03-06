@@ -27,15 +27,16 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
   const dispatch = useDispatch();
   const theme = useTheme();
   const { extraData = {} } = useSelector((state) => state.sms || {});
+  const displayConditions = useSelector((state) => state.campaignEditor?.displayConditions || []);
 
   const currentCondition = args?.currentCondition || null;
+  const onRefreshConditions = args?.onRefreshConditions;
   const isEditing = !!currentCondition?.id;
 
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [matchType, setMatchType] = useState('all');
   const [rules, setRules] = useState([]);
-  const [saveForFuture, setSaveForFuture] = useState(false);
   const initializedRef = useRef(false);
 
   useEffect(() => {
@@ -113,17 +114,30 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
   };
 
   useEffect(() => {
-    if (!initializedRef.current && allFields.length > 0) {
-      if (isEditing && currentCondition) {
-        setName(currentCondition.label || currentCondition.name || '');
-        setDescription(currentCondition.description || '');
-        const parsedRules = parseRulesFromSyntax(currentCondition.before);
-        setRules(parsedRules.length > 0 ? parsedRules : []);
+    if (!initializedRef.current) {
+      let conditionToUse = currentCondition;
+      
+      if (isEditing && currentCondition?.id && !currentCondition?.before) {
+        conditionToUse = displayConditions?.find(c => c.id === currentCondition.id || c.ID === currentCondition.id) || currentCondition;
+      }
+      
+      if (isEditing && conditionToUse) {
+        setName(conditionToUse.label || conditionToUse.name || '');
+        setDescription(conditionToUse.description || '');
+        const parsedRules = parseRulesFromSyntax(conditionToUse.before);
+        setRules(parsedRules.length > 0 ? parsedRules : [
+          {
+            id: 'rule-0',
+            field: allFields[0]?.key || 'FirstName',
+            operator: 'eq',
+            value: '',
+          },
+        ]);
       } else {
         setRules([
           {
             id: 'rule-0',
-            field: allFields[0].key,
+            field: allFields[0]?.key || 'FirstName',
             operator: 'eq',
             value: '',
           },
@@ -131,7 +145,7 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
       }
       initializedRef.current = true;
     }
-  }, [allFields.length]);
+  }, []);
 
   const operatorOptions = useMemo(
     () => [
@@ -220,8 +234,11 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
     if (!isEditing || !currentCondition?.id) return;
     
     try {
-      await dispatch(deleteDisplayCondition(currentCondition.id));
-      await dispatch(getDisplayConditions());
+      console.log('Delete started for condition:', currentCondition.id);
+      const deleteResult = await dispatch(deleteDisplayCondition(currentCondition.id));
+      console.log('Delete result:', deleteResult);
+      console.log('Calling onRefreshConditions');
+      onRefreshConditions?.();
       onClose();
     } catch (error) {
       console.error('Error deleting condition:', error);
@@ -254,35 +271,38 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
     }
 
     const conditionLabel = name && name.trim() !== '' ? name.trim() : defaultLabelParts.filter(Boolean).join(' ');
+    const beforeSyntax = `{% if ${previewExpression} %}`;
+    const afterSyntax = '{% endif %}';
 
     const condition = {
       type: 'Recipient fields',
       label: conditionLabel,
       description,
-      before: `{% if ${previewExpression} %}`,
-      after: '{% endif %}',
+      before: beforeSyntax,
+      after: afterSyntax,
     };
 
-    if (saveForFuture || isEditing) {
-      try {
-        const saveData = {
-          Name: conditionLabel,
-          Type: 'Recipient fields',
-          Description: description,
-          SyntaxBefore: condition.before,
-          SyntaxAfter: condition.after
-        };
-        
-        if (isEditing) {
-          saveData.id = currentCondition.id;
-        }
-        
-        const result = await dispatch(saveDisplayCondition(saveData));
-        condition.isNewCondition = !isEditing;
-        condition.id = result?.payload?.id || currentCondition?.id;
-      } catch (error) {
-        console.error('Error saving condition:', error);
+    try {
+      const saveData = {
+        Name: conditionLabel,
+        Type: 'Recipient fields',
+        Description: description,
+        SyntaxBefore: beforeSyntax,
+        SyntaxAfter: afterSyntax
+      };
+      
+      if (isEditing) {
+        saveData.id = currentCondition.id;
       }
+      
+      const result = await dispatch(saveDisplayCondition(saveData));
+      condition.isNewCondition = !isEditing;
+      condition.id = result?.payload?.id || currentCondition?.id;
+      
+      await dispatch(getDisplayConditions());
+      onRefreshConditions?.();
+    } catch (error) {
+      console.error('Error saving condition:', error);
     }
 
     save(condition);
@@ -375,14 +395,6 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
                 <Typography variant="body2" style={styles.displayConditionMatchLabel}>
                   of the following conditions:
                 </Typography>
-                <Button
-                  startIcon={<AddCircleOutline />}
-                  onClick={handleAddRule}
-                  size="small"
-                  style={styles.displayConditionAddButton}
-                >
-                  Add
-                </Button>
               </Box>
 
               <Box style={{display: 'flex', flexDirection: 'column', gap: '8px', maxWidth: '100%'}}>
@@ -427,17 +439,6 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
                   </Box>
                 ))}
               </Box>
-
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={saveForFuture}
-                    onChange={(e) => setSaveForFuture(e.target.checked)}
-                    color="primary"
-                  />
-                }
-                label="Save this condition for future use"
-              />
             </Box>
           </Grid>
 

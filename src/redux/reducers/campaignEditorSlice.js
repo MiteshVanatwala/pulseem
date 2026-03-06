@@ -256,8 +256,16 @@ export const campaignEditorSlice = createSlice({
             .addCase(getDisplayConditions.rejected, (state) => {
                 state.displayConditionsLoading = false;
             })
-            .addCase(saveDisplayCondition.fulfilled, (state) => {
+            .addCase(saveDisplayCondition.fulfilled, (state, action) => {
                 state.displayConditionsLoading = false;
+                if (action.payload?.id) {
+                    const existingIndex = state.displayConditions.findIndex(c => c.id === action.payload.id);
+                    if (existingIndex >= 0) {
+                        state.displayConditions[existingIndex] = action.payload;
+                    } else {
+                        state.displayConditions.push(action.payload);
+                    }
+                }
             })
             .addCase(deleteDisplayCondition.fulfilled, (state, action) => {
                 state.displayConditions = state.displayConditions.filter(c => c.id !== action.payload);

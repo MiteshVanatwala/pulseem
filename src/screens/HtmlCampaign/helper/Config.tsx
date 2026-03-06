@@ -4,7 +4,8 @@ import { FONTS } from '../../../helpers/Fonts/Init';
 import ProductCatalog from '../../../model/ProductCatalog/ProductCatalog';
 import { AddProductCatalogType } from '../../../config/enum';
 import { DisplayConditionsDialog } from '../components/ContentDialogs';
-import { getDisplayConditions, deleteDisplayCondition } from '../../../redux/reducers/campaignEditorSlice';
+import { deleteDisplayCondition } from '../../../redux/reducers/campaignEditorSlice';
+
 
 type dialog = (a: any) => void;
 type save = (a: any) => void;
@@ -31,6 +32,8 @@ export interface ConfigOptions {
     languageCode: number;
     dispatch?: any;
     editorFonts?: any;
+    onRefreshConditions?: Function;
+    setIsDisplayConditionDialogOpen?: Function;
 }
 
 export const BeeConfig = (Options: ConfigOptions) => {
@@ -54,7 +57,9 @@ export const BeeConfig = (Options: ConfigOptions) => {
         t,
         languageCode,
         dispatch,
-        editorFonts
+        editorFonts,
+        onRefreshConditions,
+        setIsDisplayConditionDialogOpen
     } = Options;
 
     const editorLanguage = {
@@ -89,6 +94,12 @@ export const BeeConfig = (Options: ConfigOptions) => {
           .row-display-condition-add-button--cs {
             display: none !important;
             visibility: hidden !important;
+            width: 0 !important;
+            height: 0 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            border: none !important;
+            pointer-events: none !important;
           }
           /* Make display condition buttons same width and padding */
           .row-display-condition-select-button--cs,
@@ -188,21 +199,21 @@ export const BeeConfig = (Options: ConfigOptions) => {
                 label: t('campaigns.displayConditions.openBuilder') || 'Open builder',
                 handler: async (resolve: Function, reject: Function, currentCondition?: any) => {
                     try {
+                        setIsDisplayConditionDialogOpen?.(true);
                         const result: any = await openModal(
                             DisplayConditionsDialog,
-                            { currentCondition },
+                            { currentCondition, onRefreshConditions },
                             classes
                         );
+                        setIsDisplayConditionDialogOpen?.(false);
 
                         if (result && result.before && result.after) {
-                            if (dispatch) {
-                                dispatch(getDisplayConditions());
-                            }
                             resolve(result);
                         } else {
                             reject();
                         }
                     } catch (e) {
+                        setIsDisplayConditionDialogOpen?.(false);
                         reject();
                     }
                 }
@@ -210,21 +221,21 @@ export const BeeConfig = (Options: ConfigOptions) => {
             onEditRowDisplayCondition: {
                 handler: async (resolve: Function, reject: Function, currentCondition?: any) => {
                     try {
+                        setIsDisplayConditionDialogOpen?.(true);
                         const result: any = await openModal(
                             DisplayConditionsDialog,
-                            { currentCondition },
+                            { currentCondition, onRefreshConditions },
                             classes
                         );
+                        setIsDisplayConditionDialogOpen?.(false);
 
                         if (result && result.before && result.after) {
-                            if (dispatch) {
-                                dispatch(getDisplayConditions());
-                            }
                             resolve(result);
                         } else {
                             reject();
                         }
                     } catch (e) {
+                        setIsDisplayConditionDialogOpen?.(false);
                         reject();
                     }
                 }
