@@ -33,7 +33,7 @@ const DynamicConfirmDialog = ({
             <Grid container>
                 <Grid item xs={12} className={clsx(classes.mb4)}>
                     <Box>
-                        <Typography>
+                        <Typography className={classes.textCenter}>
                             {RenderHtml(text)}
                         </Typography>
                     </Box>

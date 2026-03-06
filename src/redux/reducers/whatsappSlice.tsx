@@ -491,6 +491,10 @@ export const getWhatsappChatContactsByPhoneNumber = createAsyncThunk(
 			pageSize,
 			Searchtext,
 			ChatStatus,
+			StartDate,
+			EndDate,
+			AgentIds,
+			TagIds
 		}: APIGetWhatsappChatContactsReq,
 		thunkAPI
 	) => {
@@ -504,6 +508,10 @@ export const getWhatsappChatContactsByPhoneNumber = createAsyncThunk(
 					pageSize,
 					Searchtext,
 					ChatStatus,
+					FromDate: StartDate,
+					ToDate: EndDate,
+					AgentIds,
+					TagIds
 				}
 			);
 
@@ -817,7 +825,11 @@ export const getWhatsappChatContactsByAgent = createAsyncThunk(
 			pageNo,
 			pageSize,
 			Searchtext,
-			ChatStatus
+			ChatStatus,
+			StartDate,
+			EndDate,
+			AgentIds,
+			TagIds
 		}: APIGetWhatsappChatContactsReq,
 		thunkAPI
 	) => {
@@ -830,7 +842,11 @@ export const getWhatsappChatContactsByAgent = createAsyncThunk(
 					pageNo,
 					pageSize,
 					Searchtext,
-					ChatStatus
+					ChatStatus,
+					StartDate,
+					EndDate,
+					AgentIds,
+					TagIds
 				}
 			);
 
@@ -936,6 +952,22 @@ export const deleteQuickResponse = createAsyncThunk(
 					IsDelete: true
 				}
 			);
+			return response.data;
+		} catch (error) {
+			const err = error as ApiError;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
+export const getWhatsappChatTag = createAsyncThunk(
+	'WhatsAppChat/GetWhatsAppChatTags',
+	async (_, thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.get(
+				`WhatsAppChat/GetWhatsAppChatTags`
+			);
+
 			return response.data;
 		} catch (error) {
 			const err = error as ApiError;

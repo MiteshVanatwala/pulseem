@@ -230,6 +230,7 @@
   "PasteOrWizard": "<a class=\"smart-builder\" onclick=\"request.SimpleBuilderClick();\">הדבק </a>נתונים או השתמש <a class=\"smart-builder\" onclick=\"request.SmartBuilderClick();\">באשף</a>",
   "Save": "שמור",
   "Saving": "שומר...",
+  "update": "עדכן",
   "SaveNewSystem": "שמירת מערכת חדשה",
   "SystemIsConnectedToCount": "מערכת זו מקושרת ל ##count##",
   "SystemName": "שם המערכת",
@@ -906,5 +907,7 @@
   "cancelPlanConfirmation": "האם אתה בטוח שברצונך לבטל את התוכנית הנוכחית שלך?",
   "planCancellationRequestSubmitted": "בקשת ביטול התוכנית שלך הוגשה בהצלחה.",
   "nonPolishNumber": "You can not send SMS from non-polish number. Please set a polish number.",
-  "saveColumnStructureAsDefault": "שמור את מבנה העמודות הזה כברירת מחדל"
+  "saveColumnStructureAsDefault": "שמור את מבנה העמודות הזה כברירת מחדל",
+  "manageAgent": "נהל סוכן",
+  "clearAllFilters": "נקה את כל המסננים"
 }
