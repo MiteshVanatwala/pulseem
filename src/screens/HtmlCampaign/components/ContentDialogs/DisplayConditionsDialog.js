@@ -323,20 +323,19 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
       fullWidth={false}
       showDefaultButtons={!isEditing}
       renderButtons={isEditing ? () => (
-        <Box style={{ display: 'flex', gap: '8px' }}>
+        <Box style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
           <Button
             onClick={handleDelete}
-            variant="outlined"
-            color="secondary"
+            className={clsx(classes.btn, classes.btnRounded)}
             startIcon={<Delete />}
           >
-            Delete
+            {t('campaigns.displayConditions.delete')}
           </Button>
-          <Button onClick={onClose} variant="outlined">
-            Cancel
+          <Button onClick={onClose} className={clsx(classes.btn, classes.btnRounded)}>
+            {t('campaigns.displayConditions.cancel')}
           </Button>
-          <Button onClick={handleSave} variant="contained" color="primary">
-            Save
+          <Button onClick={handleSave} variant="contained" color="primary" style={{ borderRadius: '20px', paddingLeft: '24px', paddingRight: '24px' }}>
+            {t('campaigns.displayConditions.save')}
           </Button>
         </Box>
       ) : undefined}
@@ -354,7 +353,7 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
             <Box style={{...styles.displayConditionConditionNameBox, padding: '10px'}}>
               <Box>
                 <Typography variant="body2" style={styles.displayConditionLabelTypography}>
-                  Condition name
+                  {t('campaigns.displayConditions.name')}
                 </Typography>
                 <TextField
                   fullWidth
@@ -368,7 +367,7 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
 
               <Box>
                 <Typography variant="body2" style={styles.displayConditionLabelTypography}>
-                  Description
+                  {t('campaigns.displayConditions.description')}
                 </Typography>
                 <TextField
                   fullWidth
@@ -384,16 +383,16 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
 
               <Box style={styles.displayConditionMatchBox}>
                 <Typography variant="body2" style={styles.displayConditionMatchLabel}>
-                  Match
+                  {t('campaigns.displayConditions.matchType')}
                 </Typography>
                 <FormControl variant="outlined" size="small" style={styles.displayConditionMatchFormControl}>
                   <Select value={matchType} onChange={(e) => setMatchType(e.target.value)}>
-                    <MenuItem value="all">all</MenuItem>
-                    <MenuItem value="any">any</MenuItem>
+                    <MenuItem value="all">{t('campaigns.displayConditions.matchAllConditions')}</MenuItem>
+                    <MenuItem value="any">{t('campaigns.displayConditions.matchAnyConditions')}</MenuItem>
                   </Select>
                 </FormControl>
                 <Typography variant="body2" style={styles.displayConditionMatchLabel}>
-                  of the following conditions:
+                  {t('campaigns.displayConditions.ofTheFollowingConditions')}
                 </Typography>
               </Box>
 

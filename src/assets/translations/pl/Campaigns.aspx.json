@@ -782,5 +782,16 @@
   "selectProduct": "Wybierz produkt z katalogu",
   "selectAllStaticProducts": "Wybierz produkt z katalogu",
   "fromEmailCaution": "<p style='line-height:1.2'><b>Uwaga!</b><br/><br/>Używanie adresu e-mail w polu 'Nazwa nadawcy' może spowodować filtrowanie jako spam.<br/>Zaleca się używanie nazwy wyświetlanej. <br/>Czy chcesz kontynuować?</p>",
-  "aiDeisgner": "Projektuj z AI"
+  "aiDeisgner": "Projektuj z AI",
+  "displayConditions": {
+    "title": "Warunek wyświetlania",
+    "name": "Nazwa warunku",
+    "description": "Opis",
+    "matchType": "Dopasowanie",
+    "ofTheFollowingConditions": "z następujących warunków:",
+    "openBuilder": "Edytor warunków",
+    "save": "Zapisz",
+    "cancel": "Anuluj",
+    "delete": "Usuń"
+  }
 }
