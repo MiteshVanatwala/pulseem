@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import { debounce, get, includes } from 'lodash';
 import BeePlugin from '@mailupinc/bee-plugin'
-import { Box, Button, Grid, TextField, Typography } from '@material-ui/core'
+import { Box, Button, Checkbox, FormControlLabel, Grid, TextField, Typography } from '@material-ui/core'
 import { useRef, useState, useEffect } from 'react'
 import DefaultScreen from '../DefaultScreen'
 import { useSelector, useDispatch } from 'react-redux';
@@ -106,6 +106,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
   const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
   const [showTierPlans, setShowTierPlans] = useState(false);
   const [TierMessageCode, setTierMessageCode] = useState('');
+  const [enableRecaptcha, setEnableRecaptcha] = useState(false);
   //#endregion State
   //#region Get Extra fields & Landing pages, after Data Ready
   const loadAccountExtraData = () => {
@@ -404,7 +405,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
     if (LPBeeToken) {
       initLPBeeEditor();
     }
-  }, [LPBeeToken]);
+  }, [LPBeeToken, enableRecaptcha]);
   const initOptions = async () => {
     initTags();
     //@ts-ignore
@@ -746,6 +747,17 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
   //#region Wizard buttons
   const renderTemplateButtons = () => {
     return <>
+      <FormControlLabel
+        control={
+          <Checkbox
+            color="primary"
+            checked={enableRecaptcha}
+            onChange={() => setEnableRecaptcha(v => !v)}
+          />
+        }
+        label={t('landingPages.enableRecaptcha')}
+        style={{ margin: '8px' }}
+      />
       <Button onClick={() => {
         // setLoader(true);
         setTimeout(() => {
@@ -1321,7 +1333,8 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       t: t,
       form: clientForm,
       onFormAdded: onFormAdded,
-      languageCode: language
+      languageCode: language,
+      enableRecaptcha
     }) as any;
   }
   const config = getConfig();

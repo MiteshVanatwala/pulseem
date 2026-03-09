@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { FONTS } from '../../../helpers/Fonts/Init';
-import { BEE_EDITOR_TYPES } from '../../../helpers/Constants';
+import { BEE_EDITOR_TYPES, reCAPTCHAKey } from '../../../helpers/Constants';
 import { isProdMode } from '../../../config';
 type dialog = (a: any) => void;
 type save = (a: any) => void;
@@ -27,6 +27,7 @@ export interface ConfigOptions {
   onFormAdded: Function;
   BasedOnRTL: any;
   languageCode: any;
+  enableRecaptcha?: boolean;
 }
 export const BeeConfig = (Options: ConfigOptions) => {
   const {
@@ -51,7 +52,8 @@ export const BeeConfig = (Options: ConfigOptions) => {
     form,
     onFormAdded,
     BasedOnRTL,
-    languageCode
+    languageCode,
+    enableRecaptcha
   } = Options;
 
   const layout = [];
@@ -77,6 +79,19 @@ export const BeeConfig = (Options: ConfigOptions) => {
     'nl': 'nl-NL', // Dutch
     'pl': 'pl-PL'  // Polish
   } as any;
+
+  const submitAttributes: any = {
+    value: BasedOnRTL ? 'שלח' : 'Submit',
+    name: "submit_button",
+    "data-action": "submit",
+    "data-submit": 'true'
+  };
+
+  if (enableRecaptcha) {
+    submitAttributes.class = "g-recaptcha";
+    submitAttributes["data-sitekey"] = reCAPTCHAKey;
+    submitAttributes["data-callback"] = "onSubmit";
+  }
 
 
   return {
@@ -110,13 +125,10 @@ export const BeeConfig = (Options: ConfigOptions) => {
             attributes: { dir: BasedOnRTL ? 'right' : 'left' }
           },
           submit: {
-            type: 'submit', label: '', canBeRemovedFromLayout: false,
-            attributes: {
-              value: BasedOnRTL ? 'שלח' : 'Submit',
-              name: "submit_button",
-              "data-action": "submit",
-              "data-submit": 'true'
-            }
+            type: 'submit',
+            label: '',
+            canBeRemovedFromLayout: false,
+            attributes: submitAttributes
           },
         },
         layout: layout,
