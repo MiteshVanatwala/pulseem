@@ -1432,13 +1432,6 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		}
 	}
 
-	const getIndexFromTierId = (tierId: number | undefined) => {
-		if (tierId) {
-			return Number(tierId) - 1;
-		}
-		return 0;
-	};
-
 	const limitNotice = () => {
 		const tierDataFromNumber = from !== '' ? get(first(filter(TierData, { FromNumber: from?.replace(/-/g, '') }) || {}), 'WhatsappTierId', 0) : 0;
 		const tierSettingItem = tierSetting.find(tier => tier.value === String(tierDataFromNumber));

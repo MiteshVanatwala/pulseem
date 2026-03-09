@@ -22,6 +22,8 @@ const ResponseModal = ({
 
   const getTitle = () => {
     switch (message) {
+      case DialogType.SUCCESS_SENT:
+        return t('mainReport.testSend');
       case DialogType.PAYMENT_PROCESSING:
         return t('campaigns.newsLetterEditor.errors.paymentfailed552Title');
       default:
@@ -49,7 +51,6 @@ const ResponseModal = ({
         onClose={onClose}
         onCancel={onClose}
         onConfirm={onClose}
-        onCancel={onClose}
         contentStyle={classes.testSendDialog}
         reduceTitle
         confirmText="common.Ok"

@@ -67,6 +67,16 @@ const graphTextWidth = {
 };
 
 export const getGeneralStyle = (windowSize, isRTL, theme) => ({
+  editAgentIconButton: {
+    background: '#f5f6fa',
+    borderRadius: '50%',
+    boxShadow: '0 1px 4px rgba(0,0,0,0.08)',
+    border: '1px solid #e0e0e0',
+    width: 32,
+    height: 32,
+    padding: 4,
+    minWidth: 0,
+  },
   background: {
     position: 'fixed',
     bottom: 0,
@@ -4745,7 +4755,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   agentNameContainer: {
     backgroundColor: '#5EBD6A',
-    paddingInline: 7
+    color: '#fff',
+    paddingInline: 5,
+    paddingBlock: 2,
+    fontSize: '12px',
+    borderRadius: '4px',
+    whiteSpace: 'nowrap'
   },
   removeMyDataButton: {
     fontSize: '1.2rem',
@@ -5289,5 +5304,509 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     fontSize: '9px !important',
     padding: '0px 6px',
     minWidth: 'auto',
+  },
+  filterChip: {
+    fontSize: '12px',
+    background: 'linear-gradient(90deg, #ffffff 1.31%, #ffffff 33.07%, #ffffff 134.74%)',
+    color: '#070707',
+    border: '1px solid #FF3343',
+    height: '32px',
+    display: 'flex',
+    alignItems: 'center',
+    '& .MuiChip-label': {
+      color: '#070707',
+      justifyContent: 'flex-start',
+      textAlign: 'left',
+      lineHeight: '1'
+    },
+    '& .MuiChip-deleteIcon': {
+      color: '#FF3343'
+    }
+  },
+  agentChip: {
+    fontSize: '12px',
+    background: 'linear-gradient(90deg, #ffffff 1.31%, #ffffff 33.07%, #ffffff 134.74%)',
+    color: '#070707',
+    border: '1px solid #FF3343',
+    height: '32px',
+    display: 'flex',
+    alignItems: 'center',
+    '& .MuiChip-label': {
+      color: '#070707',
+      justifyContent: 'flex-start',
+      textAlign: 'left',
+      lineHeight: '1'
+    },
+    '& .MuiChip-deleteIcon': {
+      color: '#FF3343'
+    }
+  },
+  // Edit Tags Modal Styles
+  editTagsDialogTitle: {
+    backgroundColor: '#FF3343',
+    color: '#fff',
+    padding: '16px 20px',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '20px',
+    justifyContent: 'space-between',
+    flexWrap: 'nowrap',
+    fontSize: '18px',
+  },
+  editTagsHeaderContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '20px',
+    minWidth: 0
+  },
+  editTagsIcon: {
+    flexShrink: 0
+  },
+  editTagsHeaderText: {
+    // fontSize: '16px',
+    fontWeight: '600',
+    whiteSpace: 'nowrap'
+  },
+  editTagsCloseIcon: {
+    fontSize: '30px'
+  },
+  editTagsDialogContent: {
+    padding: '20px',
+    maxHeight: '500px',
+    overflow: 'auto',
+    backgroundColor: '#f9f9f9'
+  },
+  editTagsItem: {
+    marginBottom: '16px',
+    paddingBottom: '16px',
+    borderBottom: '1px solid #e0e0e0'
+  },
+  editTagsLabel: {
+    fontSize: '14px',
+    color: '#bbb',
+    fontWeight: '600',
+    marginBottom: '8px',
+    display: 'block'
+  },
+  editTagsInputRow: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    marginBottom: '8px',
+    justifyContent: 'space-between'
+  },
+  editTagsTextField: {
+    flex: 0.72,
+    marginBottom: '0',
+    '& .MuiOutlinedInput-root': {
+      // fontSize: '13px',
+      // padding: '5px 12px',
+      borderRadius: '4px',
+      backgroundColor: '#fff'
+    },
+    '& .MuiOutlinedInput-input': {
+      // fontSize: '13px',
+      // padding: '5px 12px',
+      borderRadius: '4px',
+      backgroundColor: '#fff'
+    }
+  },
+  editTagsButtonsContainer: {
+    display: 'flex',
+    gap: '8px',
+    alignItems: 'center'
+  },
+  editTagsUpdateButton: {
+    borderColor: '#FF3343',
+    color: '#FF3343',
+    fontSize: '12px',
+    padding: '6px 12px',
+    textTransform: 'none',
+    flexShrink: 0
+  },
+  editTagsDeleteButton: {
+    color: '#FF3343',
+    padding: '6px',
+    flexShrink: 0
+  },
+  editTagsColorContainer: {
+    display: 'flex',
+    gap: '8px',
+    alignItems: 'center'
+  },
+  editTagsColorCircle: {
+    width: '20px',
+    height: '20px',
+    borderRadius: '50%',
+    cursor: 'pointer',
+    border: '2px solid transparent',
+    transition: 'border 0.2s',
+    boxShadow: 'none',
+    flexShrink: 0
+  },
+  editTagsColorCircleSelected: {
+    border: '3px solid #333',
+    boxShadow: '0 0 0 2px #fff'
+  },
+  editTagsAddNewTagBox: {
+    marginTop: '10px',
+    paddingTop: '10px',
+    // borderTop: '1px solid #e0e0e0'
+  },
+  editTagsAddNewTagButton: {
+    borderColor: '#FF3343',
+    color: '#FF3343',
+    padding: '10px',
+    fontSize: '13px',
+    textTransform: 'none',
+    fontWeight: '600'
+  },
+  // Agent Management Buttons Wrapper
+  agentManagementButtonsWrapper: {
+    display: 'flex',
+    gap: '4px',
+    alignItems: 'center',
+    flexDirection: isRTL ? 'row-reverse' : 'row',
+    flexShrink: 0
+  },
+  // Sidebar Header styling
+  sidebarHeader: {
+    display: 'flex',
+    gap: '4px',
+    alignItems: 'center',
+    padding: '8px',
+    flexWrap: 'nowrap',
+    flexDirection: isRTL ? 'row-reverse' : 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    overflow: 'hidden',
+    boxSizing: 'border-box',
+    '& > *': {
+      flexShrink: 1,
+      minWidth: 0
+    },
+    '& .chat__contact-wrapper': {
+      flex: 1,
+      minWidth: 0,
+      overflow: 'hidden'
+    }
+  },
+  // Chips Container - Keep tags and agent chip on same line
+  chipsContainer: {
+    display: 'flex',
+    gap: '8px',
+    padding: '8px 10px',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    justifyContent: 'space-between',
+    overflow: 'auto',
+    flexWrap: 'nowrap'
+  },
+  // Inner chips wrapper - no wrap
+  chipsWrapper: {
+    display: 'flex',
+    gap: '8px',
+    alignItems: 'center',
+    flexWrap: 'nowrap',
+    overflow: 'auto'
+  },
+  
+  // ============ Chat UI Inline Styles ============
+  // ChatUi.tsx styles
+  tagChipsContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    marginInlineEnd: 'auto'
+  },
+  selectFieldStyle: {
+    marginInline: 15
+  },
+  tagChipStyle: {
+    backgroundColor: '#f0f0f0',
+    fontWeight: 600,
+    fontSize: '11px',
+    height: '22px',
+    paddingTop: '9px', 
+    paddingBottom: '9px',
+    margin: '0 4px 0 0',
+    borderRadius: '12px',
+    '& svg': {
+      color: '#fff',
+    }
+  },
+  
+  // ============ SideBarContactList Inline Styles ============
+  // Tag and agent container
+  tagAgentWrapper: {
+    display: 'flex',
+    gap: '4px',
+    alignItems: 'flex-start',
+    flexWrap: 'wrap',
+    padding: '4px 0',
+    justifyContent: 'space-between',
+    minHeight: '32px'
+  },
+  tagsFlexWrapper: {
+    display: 'flex',
+    gap: '4px',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    flex: 1
+  },
+  tagChipSmall: {
+    backgroundColor: '#f0f0f0',
+    color: '#fff',
+    fontWeight: 600,
+    fontSize: '9px',
+    height: '18px',
+    //padding: '0 5px',
+    paddingTop: '8px',
+    paddingBottom: '8px',
+    margin: '0',
+    '& svg': {
+      color: '#fff',
+    }
+  },
+  plusButtonStyle: {
+    width: '22px',
+    height: '22px',
+    backgroundColor: '#f0f0f0',
+    borderRadius: '50%',
+    minWidth: '22px',
+    padding: '2px',
+    margin: '0'
+  },
+  agentBoxContainer: {
+    display: 'flex',
+    gap: '4px',
+    alignItems: 'flex-start',
+    flexShrink: 0
+  },
+  agentNameBlack: {
+    color: '#fff'
+  },
+  
+  // Menu and MenuItem styles
+  menuItemDisabled: {
+    opacity: 0.7,
+    fontWeight: 600
+  },
+  assignedTagMenuItem: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    padding: '8px 16px'
+  },
+  tagNameFlex: {
+    flex: 1
+  },
+  deleteIconButton: {
+    padding: 0,
+    marginLeft: '8px'
+  },
+  tagMenuDivider: {
+    borderTop: '1px solid #eee',
+    margin: '8px 0'
+  },
+  availableTagMenuItem: {
+    padding: '8px 16px'
+  },
+  tagColorDot: {
+    color: 'inherit',
+    fontWeight: 600
+  },
+  tagNameMargin: {
+    marginLeft: '8px'
+  },
+  
+  // ============ SideBar Inline Styles ============
+  // Search and filter area
+  searchAreaWrapper: {
+    padding: '10px',
+    background: '#f6f6f6'
+  },
+  searchWrapperStyle: {
+    display: 'flex',
+    alignItems: 'center',
+    padding: '6px 12px',
+    background: '#fff',
+    borderRadius: '4px',
+    border: '1px solid #e0e0e0'
+  },
+  searchIconsStyle: {
+    display: 'flex',
+    alignItems: 'center',
+    color: '#999'
+  },
+  searchInputHidden: {
+    display: 'none'
+  },
+  searchInputField: {
+    border: 'none',
+    outline: 'none',
+    background: 'transparent',
+    flex: 1,
+    color: '#333',
+    fontSize: '14px'
+  },
+  searchWrapperComplex: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    padding: '8px 12px',
+    backgroundColor: '#FFF',
+    borderRadius: '10px',
+    border: '1px solid #e0e0e0',
+    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.08)',
+    transition: 'all 0.3s ease'
+  },
+  searchIconsRight: {
+    display: 'flex',
+    gap: '8px',
+    pointerEvents: 'none',
+    alignItems: 'center'
+  },
+  iconButtonPointerAuto: {
+    pointerEvents: 'auto'
+  },
+  iconButtonSmallPadding: {
+    padding: '4px'
+  },
+  iconRedColor: {
+    fontSize: '16px',
+    color: '#FF3343'
+  },
+  iconGrayColor: {
+    fontSize: '14px',
+    color: '#666'
+  },
+  
+  // Filter dropdown
+  filterDropdownWrapper: {
+    padding: '10px',
+    backgroundColor: '#f5f5f5',
+    paddingTop: 3
+  },
+  filterFlexContainer: {
+    display: 'flex',
+    gap: '12px',
+    flexDirection: isRTL => isRTL ? 'row-reverse' : 'row',
+    alignItems: 'flex-end'
+  },
+  selectFieldFlexGrow: {
+    flex: 1
+  },
+  selectFieldStyle2: {
+    fontSize: '13px',
+    backgroundColor: '#fff',
+    padding: '8px 10px',
+    borderRadius: '4px',
+    height: '32px'
+  },
+  
+  // Pagination
+  paginationStyle: {
+    borderTop: '1px solid #e0e0e0',
+    backgroundColor: '#f9f9f9',
+    paddingInline: 10,
+    paddingTop: 0,
+    paddingBottom: 0
+  },
+  dateFilterDialog: {
+    padding: '20px'
+  },
+  
+  // Date filter chips
+  dateFilterChipsContainer: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    gap: '8px'
+  },
+  dateFilterChip: {
+    width: '100%',
+    height: '40px',
+    border: '1px solid #ddd',
+    cursor: 'pointer',
+    fontSize: '14px',
+    fontWeight: '500'
+  },
+  dateInputsContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    gap: '12px',
+    marginTop: '12px'
+  },
+  
+  // Dialog header
+  dialogHeaderStyle: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    padding: '10px'
+  },
+  dialogCloseButton: {
+    color: '#fff',
+    padding: '0',
+    position: 'absolute',
+    right: '25px',
+    top: '12px'
+  },
+  
+  // Date filter content
+  dateFilterContent: {
+    marginBottom: '24px'
+  },
+  dateFilterTitle: {
+    margin: '0 0 12px 0',
+    fontSize: '14px',
+    fontWeight: '600',
+    color: '#333'
+  },
+  dateRangeSection: {
+    marginBottom: '24px'
+  },
+  dateRangeHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '12px'
+  },
+  dateRangeTitle: {
+    margin: '0',
+    fontSize: '14px',
+    fontWeight: '600',
+    color: '#333'
+  },
+  dateChipContainer: {
+    width: '100%',
+    height: '40px',
+    border: '1px solid #ddd',
+    cursor: 'pointer',
+    fontSize: '14px',
+    fontWeight: '500'
+  },
+  chatHeader: {
+    display: 'flex',
+    alignItems: 'center',
+    padding: '10px 16px',
+    backgroundColor: '#f0f2f5',
+    borderBottom: '1px solid #d1d7db'
+  },
+  chatAvatarWrapper: {
+    marginRight: '12px'
+  },
+  chatContactWrapper: {
+    flex: '0 0 auto',
+    marginRight: '16px'
+  },
+  chatContactName: {
+    fontSize: '16px',
+    fontWeight: 500,
+    margin: 0
+  },
+  chatContactDesc: {
+    fontSize: '13px',
+    color: '#667781',
+    margin: 0
   }
 });

@@ -1392,7 +1392,9 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		color: '#ffffff',
 		height: '22px',
 		borderRadius: '4px',
-		padding: '2px 4px',
+		//padding: '2px 4px',
+    paddingTop: '9px',
+    paddingBottom: '9px',
 	},
 	testSendRadio: {
 		padding: '8px 12px 0px 12px',
@@ -1774,21 +1776,42 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			outlineColor: 'rgba(129, 202, 231, 0.3)',
 		},
 
-		'&.header': {
+		// '&.header': {
+		// 	background: 'rgb(237, 237, 237)',
+		// 	display: 'flex',
+		// 	justifyContent: 'space-between',
+		// 	alignItems: 'center',
+		// 	// direction: 'ltr',
+		// 	height: '60px',
+		// 	// padding: '0px 10px',
+		// 	/* Fix for height bug with chat sidebar */
+		// 	minHeight: '60px',
+		// 	'&.left': {
+		// 		// '@media screen and (max-width: 759px)': {
+		// 		// 	display: 'none',
+		// 		// },
+		// 	},
+		// },
+		'&.sidebar-header': {
 			background: 'rgb(237, 237, 237)',
 			display: 'flex',
 			justifyContent: 'space-between',
+			direction: 'ltr',
 			alignItems: 'center',
 			height: '60px',
-			// padding: '0px 10px',
-			/* Fix for height bug with chat sidebar */
 			minHeight: '60px',
-			'&.left': {
-				// '@media screen and (max-width: 759px)': {
-				// 	display: 'none',
-				// },
 			},
-		},
+
+		'&.chat-header': {
+			background: 'rgb(237, 237, 237)',
+			display: 'flex',
+			// direction:'ltr',
+			justifyContent: 'space-between',
+			alignItems: 'center',
+			height: '60px',
+			minHeight: '60px',
+			},
+
 
 		'&.avatar': {
 			borderRadius: '50%',
@@ -1929,6 +1952,12 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			cursor: 'pointer',
 		},
 		'&.chat__contact-wrapper': {
+			flex: '1',
+			cursor: 'pointer',
+			display: 'flex',
+			alignItems: 'center',
+		},
+		'&.chat__contact-wrapper-header': {
 			flex: '1',
 			cursor: 'pointer',
 			display: 'flex',
@@ -2607,7 +2636,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		'&.sidebar-contact': {
 			fontFamily: 'Assistant',
 			textDecoration: 'none',
-			height: '72px',
+			height: '100px',
 			padding: '0px 20px',
 			display: 'flex',
 			alignItems: 'center',
@@ -2851,7 +2880,6 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	},
 	whatsappChatStatusSelect: {
 		borderRadius: '22px',
-		paddingLeft: '12px',
 		textAlign: 'center',
 		fontWeight: 'bold',
 		minWidth: '77px',
@@ -2904,7 +2932,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		paddingRight: isRTL ? 12 : 'unset',
 		display: 'flex',
 		alignItems: 'center',
-		gap: 15
+		gap: 5
 	},
 	pdfFileName: {
 		wordWrap: 'break-word',
@@ -3300,8 +3328,6 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		display: 'flex',
 		alignItems: 'center',
 		height: 35,
-		paddingLeft: isRTL ? '' : 16,
-		paddingRight: isRTL ? 16 : '',
 		'& .MuiSelect-select': {
 			color: '#fff',
 		},

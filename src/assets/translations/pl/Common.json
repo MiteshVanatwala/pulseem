@@ -230,6 +230,7 @@
   "PasteOrWizard": "<a class=\"smart-builder\" onclick=\"request.SimpleBuilderClick();\">Wklej</a> dane lub użyj <a class=\"smart-builder\" onclick=\"request.SmartBuilderClick();\">kreatora</a>",
   "Save": "Zapisz",
   "Saving": "Zapisywanie...",
+  "update": "Aktualizuj",
   "SaveNewSystem": "Zapisz nowy system",
   "SystemIsConnectedToCount": "Ten system jest połączony z ##count##",
   "SystemName": "Nazwa systemu",
@@ -953,5 +954,7 @@
   "cancelPlanConfirmation": "Czy na pewno chcesz anulować swój obecny plan?",
   "planCancellationRequestSubmitted": "Twoje żądanie anulowania planu zostało pomyślnie przesłane.",
   "nonPolishNumber": "Nie możesz wysłać SMS-a z numeru spoza Polski. Proszę ustawić polski numer.",
-  "saveColumnStructureAsDefault": "Zapisz tę strukturę kolumn jako domyślną"
+  "saveColumnStructureAsDefault": "Zapisz tę strukturę kolumn jako domyślną",
+  "manageAgent": "Zarządzaj agentem",
+  "clearAllFilters": "Wyczyść wszystkie filtry"
 }

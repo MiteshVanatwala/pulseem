@@ -190,6 +190,9 @@ const CampaignEditor = ({ classes, ...props }) => {
   const componentClasses = useComponentStyles();
   const editorRef = useRef(null);
   const saveRef = useRef(null);
+  const emailSizeRef = useRef({ totalKB: 0, htmlKB: 0, ampKB: 0, totalBytes: 0 });
+  const designChangedRef = useRef(false);
+  const editorReadyRef = useRef(false);
   const [showLoader, setLoader] = useState(true);
   const campaignId = params?.id;
   const [dataReady, setDataReady] = useState(false);
@@ -447,6 +450,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     config.rowsConfiguration.externalContentURLs = tempRows;
   }
   const initBeeEditor = (templateId = null) => {
+    editorReadyRef.current = false;
     initSpecialLinks().then(async (specialLinksFiles) => {
       const isRtlLang = campaign?.LanguageCode === 0 || campaign?.LanguageCode === 8 ? true : false;
       let forceTemplate = null;
@@ -501,6 +505,7 @@ const CampaignEditor = ({ classes, ...props }) => {
                 saveDesign(false, null, false);
               }
               setTimeout(() => {
+                editorReadyRef.current = true; 
                 setButtonDisabled(false);
               }, 2000);
             });
@@ -529,32 +534,29 @@ const CampaignEditor = ({ classes, ...props }) => {
     await dispatch(getCategories());
   }
 
-  const checkEmailSizeBeforeAction = async (actionType) => {
+  const checkEmailSizeBeforeAction = (actionType) => {
+    if (designChangedRef.current) {
+      setToastMessage({
+        severity: 'info',
+        color: 'info',
+        message: t('campaigns.emailSize.calculating'),
+        showAnimtionCheck: false
+      });
+      return true;
+    }
+    const sizeInfo = emailSizeRef.current;
+    if (sizeInfo.totalKB > 102) {
+      setPendingAction(actionType);
+      setDialogType({
+        type: 'emailSizeExceeded',
+        data: {
+          currentSize: sizeInfo.totalKB,
+          reductionNeeded: (sizeInfo.totalKB - 102).toFixed(1)
+        }
+      });
+      return false;
+    }
     return true;
-    // try {
-    //   if (editorRef.current) {
-    //     const content = await editorRef.current.save();
-    //     const html = content?.data?.html || content?.html || '';
-    //     const ampHtml = content?.data?.htmlAmp || content?.htmlAmp || '';
-    //     const sizeInfo = calculateEmailSize(html, ampHtml);
-    //     if (sizeInfo.totalKB > 102) {
-    //       setPendingAction(actionType);
-    //       setDialogType({
-    //         type: 'emailSizeExceeded',
-    //         data: {
-    //           currentSize: sizeInfo.totalKB,
-    //           reductionNeeded: (sizeInfo.totalKB - 102).toFixed(1)
-    //         }
-    //       });
-    //       return false;
-    //     }
-    //     return true;
-    //   }
-    //   return true;
-    // } catch (error) {
-    //   console.error('Error checking email size:', error);
-    //   return true;
-    // }
   };
 
   const executePendingAction = (buttonAction) => {
@@ -562,13 +564,8 @@ const CampaignEditor = ({ classes, ...props }) => {
     setPendingAction(null);
     setDialogType(null);
 
-    if (action === 'save' && buttonAction === 'back') {
-      // User clicked "Back to the Editor" - just close dialog, stay in editor
-      // Dialog already closed above
-    } else if (action === 'testSend' && buttonAction === 'back') {
-      // User clicked "Back to the Editor" - just close dialog, stay in editor
-      // Dialog already closed above
-    } else if (action === 'testSend' && buttonAction === 'continue') {
+    if (buttonAction === 'back') return;
+    if (action === 'testSend' && buttonAction === 'testSend') {
       // User clicked "Continue to test sending" - open test send modal
       const isSharedDomain = campaign.FromEmail.split("@").pop() === SharedEmailDomain;
       if (!isSharedDomain && (!emailProps?.IsVerified || emailProps?.IsRestricted)) {
@@ -590,10 +587,9 @@ const CampaignEditor = ({ classes, ...props }) => {
         setDomainAddressError(domainErrorObj);
         setShowDomainVerification(true);
       } else {
-        saveDesign(false, null, false, true, '', true).then(async () => {
-          setIsResponseModal(false);
-          editorRef.current.send();
-        });
+        setLoader(true);
+        setIsResponseModal(false);
+        editorRef.current.send();
       }
     } else if (action === 'continue') {
       handleContinueFlow(true);
@@ -683,6 +679,12 @@ const CampaignEditor = ({ classes, ...props }) => {
 
   }, [beeToken]);
 
+  useEffect(() => {
+    if (dialog === DialogType.TEST_SEND) {
+      setLoader(false);
+    }
+  }, [dialog]);
+
   const initOptions = async () => {
     initTags();
     if (!accountSettings || accountSettings.SubAccountSettings) {
@@ -700,20 +702,26 @@ const CampaignEditor = ({ classes, ...props }) => {
   //#region Pulseem Methods (Save, Delete, Exit, Back, Test Send)
   const onSave = async (args) => {
     // Calculate email size BEFORE any other validations
-    // const sizeInfo = calculateEmailSize(args.HtmlData, args.AmpData);
-    // setEmailSize(sizeInfo);
+    const sizeInfo = calculateEmailSize(args.HtmlData, args.AmpData);
+    updateEmailSize(sizeInfo);
+    designChangedRef.current = false;
+    setToastMessage(prev =>
+      prev?.severity === 'info' && prev?.message === t('campaigns.emailSize.calculating')
+        ? null
+        : prev
+    );
 
-    // if (sizeInfo.totalKB > 102 && !saveRef.current?.skipSizeCheck) {
-    //   // setPendingAction(saveRef.current?.operation || 'save');
-    //   setDialogType({
-    //     type: 'emailSizeExceeded',
-    //     data: {
-    //       currentSize: sizeInfo.totalKB,
-    //       reductionNeeded: (sizeInfo.totalKB - 102).toFixed(1)
-    //     }
-    //   });
-    //   return false;
-    // }
+    if (sizeInfo.totalKB > 102 && !saveRef.current?.skipSizeCheck) {
+      setLoader(false);
+      setDialogType({
+        type: 'emailSizeExceeded',
+        data: {
+          currentSize: sizeInfo.totalKB,
+          reductionNeeded: (sizeInfo.totalKB - 102).toFixed(1)
+        }
+      });
+      return false;
+    }
 
     const dynamicBlocks = (args.HtmlData?.match(/product-block-container/g) || []).length;
     if (saveRef.current?.checkDynamicBlock && dynamicBlocks > 0) {
@@ -803,6 +811,14 @@ const CampaignEditor = ({ classes, ...props }) => {
         }
       }
 
+      if (saveRef.current?.operation === 'testSend') {
+        saveRef.current.operation = '';
+        if (editorRef.current) {
+          setLoader(false);
+          editorRef.current.send();
+        }
+      }
+
       if (saveRef.current?.saveTemplate) {
         const isTemplateExists = templatesBySubAccount?.filter((template) => {
           return template?.Name === saveRef.current?.templateName && saveRef.current?.templateCategory?.split(',').indexOf(template?.Category) > -1
@@ -831,6 +847,11 @@ const CampaignEditor = ({ classes, ...props }) => {
       setSilentSave(false)
     }, 2000);
   }
+  
+  const updateEmailSize = (sizeInfo) => {
+    emailSizeRef.current = sizeInfo;
+    setEmailSize(sizeInfo);
+  };
 
   const onAutoSaveCampaign = debounce(() => {
     setSilentSave(true)
@@ -838,19 +859,9 @@ const CampaignEditor = ({ classes, ...props }) => {
   }, 5000);
 
   const onDesignChange = async () => {
+    if (!editorReadyRef.current) return;
+    designChangedRef.current = true;
     onAutoSaveCampaign();
-    if (editorRef.current) {
-      try {
-        const content = await editorRef.current.save();
-        const html = content?.data?.html || '';
-        const ampHtml = content?.data?.htmlAmp || '';
-
-        // const sizeInfo = calculateEmailSize(html, ampHtml);
-        // setEmailSize(sizeInfo);
-      } catch (error) {
-        console.error('Error calculating email size on change:', error);
-      }
-    }
   }
 
   const deleteNewsletter = async () => {
@@ -953,6 +964,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   const onTestSendResponse = (statusCode, message = '') => {
     setIsResponseModal(statusCode !== 402);
     switch (statusCode) {
+      case 200: 
       case 201: {
         setDialog(DialogType.SUCCESS_SENT);
         break;
@@ -1087,6 +1099,8 @@ const CampaignEditor = ({ classes, ...props }) => {
   }
   const handleOpenTestSend = async () => {
     setPendingAction('testSend');
+    const canProceed = checkEmailSizeBeforeAction('testSend');
+    if (!canProceed) return;   
     const isSharedDomain = campaign.FromEmail.split("@").pop() === SharedEmailDomain;
     if (!isSharedDomain && (!emailProps?.IsVerified || emailProps?.IsRestricted)) {
       const domainErrorObj = {
@@ -1108,10 +1122,14 @@ const CampaignEditor = ({ classes, ...props }) => {
       setShowDomainVerification(true)
     }
     else {
-      saveDesign(false, null, false, true, 'testSend').then(async (r) => {
+      try {
+        setLoader(true);
         setIsResponseModal(false);
-        editorRef.current.send();
-      });
+        await saveDesign(false, null, false, true, 'testSend');
+      } catch (e) {
+        console.error('Test send save failed:', e);
+        setLoader(false);
+      }
     }
   }
 
@@ -1204,7 +1222,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           </Tooltip>
         </Box>
 
-        {/* <Typography 
+        <Typography
           className={clsx(
             componentClasses.emailSizeValue,
             isRTL ? componentClasses.emailSizeValueRTL : componentClasses.emailSizeValueLTR
@@ -1212,7 +1230,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           style={{ direction: 'ltr', color }}
         >
           {emailSize.totalKB} KB / 102 KB
-        </Typography> */}
+        </Typography>
 
         <Box className={componentClasses.emailSizeProgressContainer}>
           <LinearProgress
@@ -1689,15 +1707,23 @@ const CampaignEditor = ({ classes, ...props }) => {
     }
   }
 
+  const handleContinueClick = () => {
+    setPendingAction('continue');
+    const canProceed = checkEmailSizeBeforeAction('continue');
+    if (!canProceed) return;
+    setLoader(true);
+    handleContinueFlow(false);
+  };
+
   const renderButtons = () => {
     const wizardButtons = [];
     if (!isFromAutomation) {
       wizardButtons.push(<>
         <Button
           size='small'
-          onClick={async () => {
+          onClick={() => {
             setPendingAction('save');
-            const canProceed = await checkEmailSizeBeforeAction('save');
+            const canProceed = checkEmailSizeBeforeAction('save');
             if (!canProceed) return;
             saveDesign(false, null, true, true, 'save');
           }}
@@ -1712,13 +1738,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           key={'saveButton'}
         >{t("common.save")}
         </Button>
-        {fromLink?.toLowerCase() !== 'autoresponder' && <Button onClick={async () => {
-          setPendingAction('continue');
-          const canProceed = await checkEmailSizeBeforeAction('continue');
-          if (!canProceed) return;
-
-          handleContinueFlow(false);
-        }}
+        {fromLink?.toLowerCase() !== 'autoresponder' && <Button onClick={handleContinueClick}
           variant='contained'
           size='small'
           className={clsx(
