@@ -270,8 +270,7 @@ const ChatUi = ({
 					<h2 className={`${classes.whatsappChat} chat__contact-name`}>
 						{' '}
 						{chatContacts.UserName ||
-							chatContacts.PhoneNumber ||
-							translator('common.pulseem')}
+							chatContacts.PhoneNumber}
 					</h2>
 
 					<p className={`${classes.whatsappChat} chat__contact-desc`}></p>
