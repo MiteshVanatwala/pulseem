@@ -2610,7 +2610,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
     border: "3px solid #0371ad",
     borderRadius: 5,
     margin: "1rem",
-    padding: "1rem",
     minWidth: dialogWidth[windowSize],
     "& $notification": {
       "& $iconWrapper": {
@@ -5301,7 +5300,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
     marginBottom: 4,
     padding: '0px',
     color: '#333',
-    fontSize: '14px',
+    fontSize: '15px',
   },
   displayConditionInputRow: {
     display: 'flex',
@@ -5309,7 +5308,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
     marginBottom: '16px',
   },
   displayConditionMatchLabel: {
-    fontSize: 14,
+    fontSize: 15,
     color: '#555',
     fontWeight: 500,
   },
@@ -5326,12 +5325,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
     textTransform: 'none',
     fontWeight: 500,
     marginLeft: '8px',
+    fontSize: 15,
   },
   displayConditionFieldFormControl: {
     width: 180,
   },
   displayConditionMenuItem: {
-    fontSize: 14,
+    fontSize: 15,
   },
   displayConditionOperatorFormControl: {
     width: 150,
@@ -5340,6 +5340,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
     width: 180,
   },
   displayConditionPreviewBox: {
+    fontSize: 18,
     backgroundColor: '#f9fafb',
     borderRadius: 8,
     padding: 16,
@@ -5351,7 +5352,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
     marginBottom: 12,
     color: '#6b7280',
     letterSpacing: 0.5,
-    fontSize: '12px',
+    fontSize: '20px',
   },
   displayConditionPreviewContent: {
     display: 'flex',
@@ -5361,16 +5362,17 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
   displayConditionPreviewItemBox: {
     display: 'flex',
     flexDirection: 'column',
+    fontSize: 20,
     gap: 3,
   },
   displayConditionPreviewCaption: {
-    fontSize: 11,
+    fontSize: 20,
     color: '#9ca3af',
     textTransform: 'uppercase',
     fontWeight: 600,
   },
   displayConditionPreviewBody: {
-    fontSize: 13,
+    fontSize: 20,
     color: '#111827',
   },
   displayConditionCodeBox: {
@@ -5378,7 +5380,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
     padding: '6px 10px',
     borderRadius: 4,
     fontFamily: 'monospace',
-    fontSize: 12,
+    fontSize: 20,
     color: '#374151',
     marginTop: 3,
   },
@@ -5416,6 +5418,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
     width: '20px',
     height: '20px',
     padding: 0,
+  },
+  displayConditionCustomStyle: {
+    minWidth: '900px !important'
   },
   Button_button_l: {
     padding: '12px 24px',
@@ -5483,7 +5488,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
   },
   Button_secondary_s: {
     padding: '8px 16px',
-    fontSize: '12px',
+    fontSize: '15px',
     fontWeight: 600,
     borderRadius: '4px',
     background: '#fff',
@@ -5500,6 +5505,67 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
   displayConditionButtons: {
     minWidth: '140px !important',
     width: '140px !important',
+  },
+  displayConditionPaperProps: {
+    minWidth: '1000px !important',
+    width: '1000px !important',
+    maxWidth: '1000px !important',
+    overflow: 'hidden'
+  },
+  displayConditionMainBox: {
+    padding: '0px',
+    overflow: 'hidden'
+  },
+  displayConditionGridContainer: {
+    overflow: 'hidden'
+  },
+  displayConditionLeftGrid: {
+    overflow: 'hidden'
+  },
+  displayConditionRightGrid: {
+    overflow: 'hidden'
+  },
+  displayConditionRulesBox: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '8px',
+    maxWidth: '100%',
+    overflow: 'hidden'
+  },
+  displayConditionRuleRow: {
+    display: 'grid',
+    gridTemplateColumns: '120px 120px 1fr 50px',
+    gap: '8px',
+    alignItems: 'flex-start',
+    overflow: 'hidden',
+  },
+  displayConditionTextFieldBox: {
+    display: 'flex',
+    flexDirection: 'column',
+    width: '200px',
+    overflow: 'hidden',
+    minWidth: 0,
+  },
+  displayConditionTextFieldStyle: {
+    overflow: 'hidden',
+    width: '100%'
+  },
+  displayConditionPreviewBoxStyle: {
+    maxHeight: '450px',
+    fontSize: 18,
+    overflowY: 'auto',
+    overflow: 'hidden'
+  },
+  displayConditionMatchTypeBox: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    marginBottom: '12px',
+    overflow: 'hidden'
+  },
+  displayConditionAddButton: {
+    textTransform: 'none',
+    marginLeft: 'auto'
   },
 });
 }

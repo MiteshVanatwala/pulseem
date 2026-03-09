@@ -37,6 +37,7 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
   const [description, setDescription] = useState('');
   const [matchType, setMatchType] = useState('all');
   const [rules, setRules] = useState([]);
+  const [errors, setErrors] = useState({});
   const initializedRef = useRef(false);
 
   useEffect(() => {
@@ -116,11 +117,11 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
   useEffect(() => {
     if (!initializedRef.current) {
       let conditionToUse = currentCondition;
-      
+
       if (isEditing && currentCondition?.id && !currentCondition?.before) {
         conditionToUse = displayConditions?.find(c => c.id === currentCondition.id || c.ID === currentCondition.id) || currentCondition;
       }
-      
+
       if (isEditing && conditionToUse) {
         setName(conditionToUse.label || conditionToUse.name || '');
         setDescription(conditionToUse.description || '');
@@ -211,6 +212,14 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
         r.id === id ? { ...r, [key]: value } : r
       )
     );
+    // Clear error for this field when user starts typing
+    if (key === 'value') {
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors[`rule-${rules.findIndex(r => r.id === id)}-value`];
+        return newErrors;
+      });
+    }
   };
 
   const handleAddRule = () => {
@@ -232,7 +241,7 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
 
   const handleDelete = async () => {
     if (!isEditing || !currentCondition?.id) return;
-    
+
     try {
       console.log('Delete started for condition:', currentCondition.id);
       const deleteResult = await dispatch(deleteDisplayCondition(currentCondition.id));
@@ -245,11 +254,28 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
     }
   };
 
+  const validateRules = () => {
+    const newErrors = {};
+
+    rules.forEach((rule, index) => {
+      if (rule.operator !== 'empty' && rule.operator !== 'not_empty') {
+        if (!rule.value || rule.value.trim() === '') {
+          newErrors[`rule-${index}-value`] = 'Value is required'}
+      }
+    });
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSave = async (event) => {
     event?.preventDefault();
-    
+
+    if (!validateRules()) {
+      return;
+    }
+
     if (!previewExpression) {
-      onClose();
       return;
     }
 
@@ -290,15 +316,15 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
         SyntaxBefore: beforeSyntax,
         SyntaxAfter: afterSyntax
       };
-      
+
       if (isEditing) {
         saveData.id = currentCondition.id;
       }
-      
+
       const result = await dispatch(saveDisplayCondition(saveData));
       condition.isNewCondition = !isEditing;
       condition.id = result?.payload?.id || currentCondition?.id;
-      
+
       await dispatch(getDisplayConditions());
       onRefreshConditions?.();
     } catch (error) {
@@ -311,15 +337,18 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
 
   const styles = getGeneralStyle('lg', false, theme);
 
+  const fontSize15Style = { fontSize: 15 };
+
   return (
     <BaseDialog
+      contentStyle={clsx(classes.maxWidth70VW)}
+      childrenStyle={classes.displayConditionCustomStyle}
       classes={classes}
       open={true}
       onClose={onClose}
       onCancel={onClose}
       onConfirm={handleSave}
       title={isEditing ? 'Edit Display Condition' : (t('campaigns.displayConditions.title') || 'Display Condition')}
-      maxWidth={false}
       fullWidth={false}
       showDefaultButtons={!isEditing}
       renderButtons={isEditing ? () => (
@@ -339,20 +368,19 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
           </Button>
         </Box>
       ) : undefined}
-      PaperProps={{ 
+      PaperProps={{
         style: {
           ...styles.displayConditionDialogPaperProps,
-          minWidth: '1000px !important',
-          width: '1000px !important'
+          ...styles.displayConditionPaperProps
         }
       }}
     >
-      <Box style={{...styles.displayConditionMainContainer, padding: '0px'}}>
-        <Grid container spacing={0}>
-          <Grid item xs={8}>
-            <Box style={{...styles.displayConditionConditionNameBox, padding: '10px'}}>
+      <Box style={{ ...styles.displayConditionMainContainer, ...styles.displayConditionMainBox }}>
+        <Grid container spacing={0} style={styles.displayConditionGridContainer}>
+          <Grid item xs={8} style={styles.displayConditionLeftGrid}>
+            <Box style={{ ...styles.displayConditionConditionNameBox, padding: '10px', overflow: 'hidden' }}>
               <Box>
-                <Typography variant="body2" style={styles.displayConditionLabelTypography}>
+                <Typography variant="body2" style={{ ...styles.displayConditionLabelTypography, ...fontSize15Style }}>
                   {t('campaigns.displayConditions.name')}
                 </Typography>
                 <TextField
@@ -362,11 +390,12 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
                   onChange={(e) => setName(e.target.value)}
                   variant="outlined"
                   size="small"
+                  inputProps={{ style: { overflow: 'hidden', textOverflow: 'ellipsis', fontSize: 15 } }}
                 />
               </Box>
 
               <Box>
-                <Typography variant="body2" style={styles.displayConditionLabelTypography}>
+                <Typography variant="body2" style={{ ...styles.displayConditionLabelTypography, ...fontSize15Style }}>
                   {t('campaigns.displayConditions.description')}
                 </Typography>
                 <TextField
@@ -378,31 +407,39 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
                   size="small"
                   multiline
                   rows={2}
+                  inputProps={{ style: { overflow: 'hidden', textOverflow: 'ellipsis', fontSize: 15 } }}
                 />
               </Box>
 
-              <Box style={styles.displayConditionMatchBox}>
-                <Typography variant="body2" style={styles.displayConditionMatchLabel}>
+              <Box style={styles.displayConditionMatchTypeBox}>
+                <Typography variant="body2" style={{ ...styles.displayConditionMatchLabel, ...fontSize15Style }}>
                   {t('campaigns.displayConditions.matchType')}
                 </Typography>
                 <FormControl variant="outlined" size="small" style={styles.displayConditionMatchFormControl}>
                   <Select value={matchType} onChange={(e) => setMatchType(e.target.value)}>
-                    <MenuItem value="all">{t('campaigns.displayConditions.matchAllConditions')}</MenuItem>
-                    <MenuItem value="any">{t('campaigns.displayConditions.matchAnyConditions')}</MenuItem>
+                    <MenuItem value="all" style={fontSize15Style}>{t('campaigns.displayConditions.matchAllConditions')}</MenuItem>
+                    <MenuItem value="any" style={fontSize15Style}>{t('campaigns.displayConditions.matchAnyConditions')}</MenuItem>
                   </Select>
                 </FormControl>
-                <Typography variant="body2" style={styles.displayConditionMatchLabel}>
+                <Typography variant="body2" style={{ ...styles.displayConditionMatchLabel, ...fontSize15Style }}>
                   {t('campaigns.displayConditions.ofTheFollowingConditions')}
                 </Typography>
+                <Button
+                  startIcon={<AddCircleOutline />}
+                  onClick={handleAddRule}
+                  style={{ ...styles.displayConditionAddButton, ...fontSize15Style }}
+                >
+                  {t('campaigns.displayConditions.addCondition') || 'Add Condition'}
+                </Button>
               </Box>
 
-              <Box style={{display: 'flex', flexDirection: 'column', gap: '8px', maxWidth: '100%'}}>
-                {rules.map((rule) => (
-                  <Box key={rule.id} style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 40px', gap: '8px', alignItems: 'center'}}>
+              <Box style={styles.displayConditionRulesBox}>
+                {rules.map((rule, index) => (
+                  <Box key={rule.id} style={styles.displayConditionRuleRow}>
                     <FormControl variant="outlined" size="small">
                       <Select value={rule.field} onChange={(e) => handleRuleChange(rule.id, 'field', e.target.value)}>
                         {allFields.map((field) => (
-                          <MenuItem key={field.key} value={field.key}>
+                          <MenuItem key={field.key} value={field.key} style={{ width: '100%', fontSize: 15 }}>
                             {field.label}
                           </MenuItem>
                         ))}
@@ -412,7 +449,7 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
                     <FormControl variant="outlined" size="small">
                       <Select value={rule.operator} onChange={(e) => handleRuleChange(rule.id, 'operator', e.target.value)}>
                         {operatorOptions.map((op) => (
-                          <MenuItem key={op.value} value={op.value}>
+                          <MenuItem key={op.value} value={op.value} style={fontSize15Style}>
                             {op.label}
                           </MenuItem>
                         ))}
@@ -420,66 +457,81 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
                     </FormControl>
 
                     {rule.operator !== 'empty' && rule.operator !== 'not_empty' && (
-                      <TextField
-                        variant="outlined"
-                        size="small"
-                        value={rule.value}
-                        onChange={(e) => handleRuleChange(rule.id, 'value', e.target.value)}
-                      />
+                      <Box style={styles.displayConditionTextFieldBox}>
+                        <TextField
+                          variant="outlined"
+                          size="small"
+                          value={rule.value}
+                          onChange={(e) => handleRuleChange(rule.id, 'value', e.target.value)}
+                          error={!!errors[`rule-${rules.findIndex(r => r.id === rule.id)}-value`]}
+                          style={styles.displayConditionTextFieldStyle}
+                          inputProps={{ style: { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 15 } }}
+                        />
+                        {errors[`rule-${rules.findIndex(r => r.id === rule.id)}-value`] && (
+                          <Typography variant="caption" style={{ color: 'red', fontSize: 15, marginTop: 4 }}>
+                            {errors[`rule-${rules.findIndex(r => r.id === rule.id)}-value`]}
+                          </Typography>
+                        )}
+                      </Box>
                     )}
 
-                    <IconButton
-                      size="small"
-                      onClick={() => handleRemoveRule(rule.id)}
-                      disabled={rules.length === 1}
-                    >
-                      <DeleteOutline />
-                    </IconButton>
+                    {index > 0 && (
+                      <IconButton
+                        size="small"
+                        onClick={() => handleRemoveRule(rule.id)}
+                        style={{ backgroundColor: 'transparent' }}
+                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                      >
+                        <DeleteOutline />
+                      </IconButton>
+                    )}
+                    {index === 0 && <Box style={{ width: '50px' }} />}
                   </Box>
                 ))}
               </Box>
             </Box>
           </Grid>
 
-          <Grid item xs={4}>
-            <Box style={{...styles.displayConditionPreviewBox, padding: '10px', maxHeight: '450px', overflowY: 'auto'}}>
-              <Typography variant="body2" style={styles.displayConditionPreviewTitle}>
+          <Grid item xs={4} style={styles.displayConditionRightGrid}>
+            <Box style={{ ...styles.displayConditionPreviewBox, padding: '10px', ...styles.displayConditionPreviewBoxStyle }}>
+              <Typography variant="body2" style={{ ...styles.displayConditionPreviewTitle, ...fontSize15Style }}>
                 PREVIEW
               </Typography>
 
               <Box style={styles.displayConditionPreviewContent}>
                 <Box style={styles.displayConditionPreviewItemBox}>
-                  <Typography variant="caption" style={styles.displayConditionPreviewCaption}>
+                  <Typography variant="caption" style={{ ...styles.displayConditionPreviewCaption, ...fontSize15Style }}>
                     Name:
                   </Typography>
-                  <Typography variant="body2" style={styles.displayConditionPreviewBody}>
+                  <Typography variant="body2" style={{ ...styles.displayConditionPreviewBody, ...fontSize15Style }}>
                     {name || 'People'}
                   </Typography>
                 </Box>
 
                 <Box style={styles.displayConditionPreviewItemBox}>
-                  <Typography variant="caption" style={styles.displayConditionPreviewCaption}>
+                  <Typography variant="caption" style={{ ...styles.displayConditionPreviewCaption, ...fontSize15Style }}>
                     Description:
                   </Typography>
-                  <Typography variant="body2" style={styles.displayConditionPreviewBody}>
+                  <Typography variant="body2" style={{ ...styles.displayConditionPreviewBody, ...fontSize15Style }}>
                     {description || 'People in Boston, US'}
                   </Typography>
                 </Box>
 
                 <Box style={styles.displayConditionPreviewItemBox}>
-                  <Typography variant="caption" style={styles.displayConditionPreviewCaption}>
+                  <Typography variant="caption" style={{ ...styles.displayConditionPreviewCaption, ...fontSize15Style }}>
                     Before:
                   </Typography>
-                  <Box style={styles.displayConditionCodeBox}>
+                  <Box style={{ ...styles.displayConditionCodeBox, ...fontSize15Style }}>
                     {previewExpression ? `{% if ${previewExpression} %}` : '{%if %}'}
                   </Box>
                 </Box>
 
                 <Box>
-                  <Typography variant="caption" style={styles.displayConditionPreviewCaption}>
+                  <Typography variant="caption" style={{ ...styles.displayConditionPreviewCaption, ...fontSize15Style }}>
                     After:
                   </Typography>
-                  <Box style={styles.displayConditionCodeBox}>
+                  <Box style={{ ...styles.displayConditionCodeBox, ...fontSize15Style }}>
                     {`{% endif %}`}
                   </Box>
                 </Box>
