@@ -50,6 +50,7 @@ import { logout } from '../../../helpers/Api/PulseemReactAPI'
 import { RenderHtml } from "../../../helpers/Utils/HtmlUtils";
 import useRedirect from "../../../helpers/Routes/Redirect";
 import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
+import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog';
 import { sitePrefix } from '../../../config';
 import { Title } from "../../../components/managment/Title";
 import { Stack } from "@mui/material";
@@ -139,7 +140,7 @@ const SmsCreator = ({ classes }) => {
     ToastMessages,
     extraData
   } = useSelector((state) => state.sms);
-  const { accountSettings, accountFeatures, countryCodeList, isGlobal, subAccount, IsPoland } = useSelector((state) => state.common)
+  const { accountSettings, accountFeatures, countryCodeList, isGlobal, subAccount, IsPoland, isSwippingApprovalSMS } = useSelector((state) => state.common)
   const [dialogType, setDialogType] = useState(null)
   const [alignment, setAlignment] = useState('right');
   const [checked, setChecked] = React.useState(false);
@@ -187,6 +188,9 @@ const SmsCreator = ({ classes }) => {
   const [controller, setController] = useState(null);
   const [ TierMessageCode, setTierMessageCode ] = useState('');
   const [showTierPlans, setShowTierPlans] = useState(false);
+  const [senderDialogOpen, setSenderDialogOpen] = useState(false);
+  const [senderDialogShowSelect, setSenderDialogShowSelect] = useState(false);
+  const [isSenderVerified, setIsSenderVerified] = useState(false);
   const [smsModel, setSmsModel] = useState({
     CreditsPerSms: "1",
     FromNumber: campaignNumber,
@@ -681,6 +685,14 @@ const SmsCreator = ({ classes }) => {
     setremovalMessageButtonDisabled(false);
   }
 
+  const onSenderSelect = (sender) => {
+    setcampaignNumber(sender.SenderName);
+    setrestoreBool(false);
+    setremovalMessageButtonDisabled(true);
+    setIsSenderVerified(true);
+    setSenderDialogOpen(false);
+  };
+
   const onAddText = (text) => {
     text = text.trim();
     let afterUpdateCharCount =
@@ -757,17 +769,34 @@ const SmsCreator = ({ classes }) => {
 
           </Box>
 
-          <TextField
-            id="outlined-basic"
-            type="text"
-            className={
-              clsx(classes.textField, campaignNumberValidated ? classes.error : classes.success)
-            }
-            onChange={onCampaignNumber}
-            inputProps={inputProps}
-            value={campaignNumber}
-            dir={/^[0-9]/.test(campaignNumber) && isRTL ? 'rtl' : 'ltr'}
-          />
+          {isSwippingApprovalSMS ? (
+            <TextField
+              id="outlined-basic"
+              type="text"
+              className={clsx(classes.textField, campaignNumberValidated ? classes.error : classes.success)}
+              onChange={onCampaignNumber}
+              inputProps={inputProps}
+              value={campaignNumber}
+              dir={/^[0-9]/.test(campaignNumber) && isRTL ? 'rtl' : 'ltr'}
+            />
+          ) : (
+            <Box className={classes.senderFieldRow}>
+              <TextField
+                id="outlined-basic"
+                type="text"
+                className={clsx(classes.textField, campaignNumberValidated ? classes.error : classes.success)}
+                inputProps={{ ...inputProps, readOnly: true }}
+                value={campaignNumber}
+                dir={/^[0-9]/.test(campaignNumber) && isRTL ? 'rtl' : 'ltr'}
+              />
+              <Button
+                className={clsx(classes.btn, classes.btnRounded, classes.btnHPadding)}
+                onClick={() => { setSenderDialogShowSelect(true); setSenderDialogOpen(true); }}
+              >
+                {t('sms.replaceButton')}
+              </Button>
+            </Box>
+          )}
           <Typography className={clsx(classes.buttonContent, classes.alertMsg)}>
             {t("mainReport.campRemovalDesc")}
           </Typography>
@@ -1216,7 +1245,11 @@ const SmsCreator = ({ classes }) => {
                       }}
                       onChange={handleNumberChange}
                     />
-                    <Button className={clsx(classes.btn, classes.btnRounded, classes.ml5)} onClick={() => { validationCheckpoint(() => handleSend()) }}>
+                    <Button
+                      className={clsx(classes.btn, classes.btnRounded, classes.ml5)}
+                      disabled={!isSwippingApprovalSMS && !isSenderVerified}
+                      onClick={() => { validationCheckpoint(() => handleSend()) }}
+                    >
                       {t("mainReport.send")}
                     </Button>
 
@@ -1657,6 +1690,7 @@ const SmsCreator = ({ classes }) => {
             classes.backButton,
             buttonsDisabled && classes.disabled
           )}
+          disabled={!isSwippingApprovalSMS && !isSenderVerified}
           endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
           color="primary"
           style={{ margin: '8px' }}
@@ -1672,6 +1706,7 @@ const SmsCreator = ({ classes }) => {
             classes.backButton,
             buttonsDisabled && classes.disabled
           )}
+          disabled={!isSwippingApprovalSMS && !isSenderVerified}
           endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
           color="primary"
           style={{ margin: '8px' }}
@@ -2222,14 +2257,15 @@ const SmsCreator = ({ classes }) => {
         <Title
           Text={(
             <Box className='stepHead'>
-              <Stack className={'stepNum'} alignItems={'center'}>
-                <span >1</span>
-              </Stack>
-              <Stack direction={{ xs: 'column', sm: 'column', md: 'row' }} ml={1} >
-                <span className={'stepTitle'}>
-                  {t('notifications.createContent')}
-                </span>
-
+              <Stack direction='row' alignItems='center'>
+                <Stack className={'stepNum'} alignItems={'center'}>
+                  <span>1</span>
+                </Stack>
+                <Stack direction={{ xs: 'column', sm: 'column', md: 'row' }} ml={1}>
+                  <span className={'stepTitle'}>
+                    {t('notifications.createContent')}
+                  </span>
+                </Stack>
               </Stack>
             </Box>
           )}
@@ -2254,6 +2290,14 @@ const SmsCreator = ({ classes }) => {
         <Title
           Text={t('mainReport.smsCampaign')}
           classes={classes}
+          action={
+            <Button
+              className={clsx(classes.btn, classes.btnRounded)}
+              onClick={() => { setSenderDialogShowSelect(false); setSenderDialogOpen(true); }}
+            >
+              {t('sms.verifySenderButton')}
+            </Button>
+          }
         />
       </Box>
       <Box className={'containerBody'}>
@@ -2288,6 +2332,16 @@ const SmsCreator = ({ classes }) => {
             onSuccess={() => {
               setStaticNumber(campaignNumber);
             }} />}
+          {senderDialogOpen && (
+            <VerificationDialog
+              variant="sms"
+              classes={classes}
+              isOpen={senderDialogOpen}
+              showSelect={senderDialogShowSelect}
+              onClose={() => { setSenderDialogOpen(false); setSenderDialogShowSelect(false); }}
+              onSenderSelect={onSenderSelect}
+            />
+          )}
           <Loader isOpen={showLoader} />
         </Box>
       </Box>
