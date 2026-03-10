@@ -705,7 +705,7 @@ const BillingSettingsPage = ({ classes }: any) => {
                               {t('common.tier.manageCard')}
                             </Button> */}
                             {
-                              currentPlan?.Name !== 'Scale' && !packagesDetails?.Newsletters?.IsBankTransferForTiers && (
+                              currentPlan?.Name !== 'Scale' && (
                                 <Button
                                   className={clsx(classes.btn, classes.btnRounded)}
                                   onClick={(e: any) => { 
