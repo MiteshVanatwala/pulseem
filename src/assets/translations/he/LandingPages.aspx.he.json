@@ -407,6 +407,9 @@
   "addEmailAddress": "הוסף כתובת אימייל",
   "duplicateEmailConfirmation": "הפעל נמען דרך אימייל - Double Opt-In",
   "linkPreviewTooltip": "הגדר את הקישור לתצוגה המקדימה של דף הנחיתה",
+  "popupProperties": "PopupTriggers.popupProperties",
+  "closePopupButton": "PopupTriggers.closePopupButton",
+  "confirmExitPopup": "PopupTriggers.confirmExitPopup",
   "confirmExit": "האם תרצה לשמור את דף הנחיתה לפני היציאה?",
   "handleExitTitle": "יציאה מעריכת דף נחיתה",
   "landingPageNotFound": "דף הנחיתה לא נמצא",
@@ -541,5 +544,13 @@
       "embed": "הטמעה",
       "embedMessage": "העתק והדבק קוד זה לאתר שלך:"
     }
-  }
+  },
+  "enableRecaptcha": "הפעל reCAPTCHA",
+  "recaptchaVersion": "גרסת reCAPTCHA",
+  "recaptchaVersionLabel": "בחר גרסה",
+  "recaptchaSiteKey": "מפתח אתר",
+  "recaptchaSiteKeyPlaceholder": "מפתח האתר של reCAPTCHA שלך",
+  "recaptchaV3": "v3 (בלתי נראה)",
+  "recaptchaV2Checkbox": "v2 (תיבת סימון)",
+  "recaptchaV2Invisible": "v2 (בלתי נראה)"
 }

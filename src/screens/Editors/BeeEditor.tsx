@@ -30,7 +30,7 @@ import moment from 'moment';
 import { loginURL, sitePrefix } from '../../config';
 import { MdArrowBackIos, MdArrowForwardIos, MdCheck, MdGroups, MdOutlinePublic } from 'react-icons/md';
 import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
-import { BEE_EDITOR_TYPES, TierFeatures } from '../../helpers/Constants';
+import { BEE_EDITOR_TYPES, TierFeatures, reCAPTCHAKey } from '../../helpers/Constants';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 import { StateType } from '../../Models/StateTypes';
 import { commonProps } from '../../model/Common/commonProps.types';
@@ -106,7 +106,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
   const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
   const [showTierPlans, setShowTierPlans] = useState(false);
   const [TierMessageCode, setTierMessageCode] = useState('');
-  const [enableRecaptcha, setEnableRecaptcha] = useState(false);
+
   //#endregion State
   //#region Get Extra fields & Landing pages, after Data Ready
   const loadAccountExtraData = () => {
@@ -405,7 +405,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
     if (LPBeeToken) {
       initLPBeeEditor();
     }
-  }, [LPBeeToken, enableRecaptcha]);
+  }, [LPBeeToken]);
   const initOptions = async () => {
     initTags();
     //@ts-ignore
@@ -747,17 +747,6 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
   //#region Wizard buttons
   const renderTemplateButtons = () => {
     return <>
-      <FormControlLabel
-        control={
-          <Checkbox
-            color="primary"
-            checked={enableRecaptcha}
-            onChange={() => setEnableRecaptcha(v => !v)}
-          />
-        }
-        label={t('landingPages.enableRecaptcha')}
-        style={{ margin: '8px' }}
-      />
       <Button onClick={() => {
         // setLoader(true);
         setTimeout(() => {
@@ -1309,6 +1298,11 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
   }
   //#endregion Forms 
   const getConfig = () => {
+    const recaptchaConfig = {
+      enabled: landingPage?.Data?.WebForm?.enableRecaptcha || false,
+      siteKey: landingPage?.Data?.WebForm?.recaptchaSiteKey || reCAPTCHAKey
+    };
+
     return BeeConfig({
       //@ts-ignore
       moduleType,
@@ -1334,7 +1328,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       form: clientForm,
       onFormAdded: onFormAdded,
       languageCode: language,
-      enableRecaptcha
+      recaptchaConfig: recaptchaConfig
     }) as any;
   }
   const config = getConfig();

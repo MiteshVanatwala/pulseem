@@ -541,5 +541,13 @@
       "embed": "Embed",
       "embedMessage": "Copy and paste this code into your website:"
     }
-  }
+  },
+  "enableRecaptcha": "Enable reCAPTCHA",
+  "recaptchaVersion": "reCAPTCHA Version",
+  "recaptchaVersionLabel": "Select Version",
+  "recaptchaSiteKey": "Site Key",
+  "recaptchaSiteKeyPlaceholder": "Your reCAPTCHA Site Key",
+  "recaptchaV3": "v3 (Invisible)",
+  "recaptchaV2Checkbox": "v2 (Checkbox)",
+  "recaptchaV2Invisible": "v2 (Invisible)"
 }

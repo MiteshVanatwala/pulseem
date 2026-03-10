@@ -27,7 +27,10 @@ export interface ConfigOptions {
   onFormAdded: Function;
   BasedOnRTL: any;
   languageCode: any;
-  enableRecaptcha?: boolean;
+  recaptchaConfig?: {
+    enabled: boolean;
+    siteKey: string;
+  };
 }
 export const BeeConfig = (Options: ConfigOptions) => {
   const {
@@ -53,7 +56,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
     onFormAdded,
     BasedOnRTL,
     languageCode,
-    enableRecaptcha
+    recaptchaConfig
   } = Options;
 
   const layout = [];
@@ -87,9 +90,9 @@ export const BeeConfig = (Options: ConfigOptions) => {
     "data-submit": 'true'
   };
 
-  if (enableRecaptcha) {
+  if (recaptchaConfig?.enabled) {
     submitAttributes.class = "g-recaptcha";
-    submitAttributes["data-sitekey"] = reCAPTCHAKey;
+    submitAttributes["data-sitekey"] = recaptchaConfig.siteKey;
     submitAttributes["data-callback"] = "onSubmit";
   }
 
@@ -276,7 +279,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
       }
     }
     //#endregion
-  }
+  };
 };
 
 const getFormsCount = (obj: any) => {
