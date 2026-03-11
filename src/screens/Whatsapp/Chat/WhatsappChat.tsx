@@ -13,6 +13,7 @@ import {
 	APISendWhatsappChat,
 	APISendWhatsAppChatReqPayload,
 	APIWhatsappChatItemsData,
+	ContactsPaginationSetting,
 } from './Types/WhatsappChat.type';
 import { BaseSyntheticEvent, useEffect, useState, useCallback } from 'react';
 import { flushSync } from 'react-dom';
@@ -312,6 +313,12 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const [phoneNumbersList, setPhoneNumbersList] = useState<string[]>([]);
 	const [dynamicModalVariable, setDynamicModalVariable] = useState<number>(0);
 
+	const [contactsPaginationSetting, setContactsPaginationSetting] =
+		useState<ContactsPaginationSetting>({
+			PageNo: 1,
+			PageSize: 20,
+			hasMore: true,
+		});
 
 	const setWhatsappChatCoversationStatus = useCallback(
 		async (StatusId: number, Sendernumber: string, ClientNumber: string) => {
@@ -571,17 +578,17 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				agentSelected > 0
 					? getWhatsappChatContactsByAgent({
 							AgentId: agentSelected,
-							IsPagination: false,
-							pageNo: 1,
-							pageSize: 9999,
+							IsPagination: true,
+							pageNo: contactsPaginationSetting?.PageNo,
+							pageSize: contactsPaginationSetting?.PageSize,
 							ChatStatus: filterBySelected,
 							Searchtext: '',
 						})
 					: getWhatsappChatContactsByPhoneNumber({
 							PhoneNumber: activeUser,
-							IsPagination: false,
-							pageNo: 1,
-							pageSize: 9999,
+							IsPagination: true,
+							pageNo: contactsPaginationSetting?.PageNo,
+							pageSize: contactsPaginationSetting?.PageSize,
 							ChatStatus: filterBySelected,
 						}),
 			);
@@ -616,6 +623,19 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 						changeContactReadStatus(updatedActiveChat, contactData);
 					}
 				}
+				if (contactData?.length < contactsPaginationSetting.PageSize) {
+					setContactsPaginationSetting({
+						...contactsPaginationSetting,
+						hasMore: false,
+						PageNo: 1,
+					});
+				} else {
+					setContactsPaginationSetting({
+						...contactsPaginationSetting,
+						hasMore: true,
+						PageNo: 1,
+					});
+				}
 			} else {
 				if (whatsAppChatContactsData?.StatusCode === 927) {
 					// WHATSAPP_CHAT_INTERFACE
@@ -624,6 +644,11 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 						type: 'tier',
 					});
 				}
+				setContactsPaginationSetting({
+					...contactsPaginationSetting,
+					hasMore: false,
+					PageNo: 1,
+				});
 				setSideChatContacts([]);
 			}
 			// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -683,12 +708,17 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		} else {
 			dispatch(setIsLoader(false));
 			setToastMessage(ToastMessages.ERROR);
+			setContactsPaginationSetting({
+				...contactsPaginationSetting,
+				hasMore: false,
+			});
 		}
 		setPhoneNumbersList([]);
 		return [];
 	}, [
 		dispatch,
 		ToastMessages,
+		contactsPaginationSetting,
 		setAPIWhatsAppChatContacts,
 		fetchTotalsUnfiltered,
 	]);
@@ -1184,6 +1214,9 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			searchText: string,
 			ChatStatus: number = filterBySelected,
 			isPaginationReset: boolean = false,
+			pageSize: number = contactsPaginationSetting.PageSize,
+			pageNumber?: number,
+			isInfiniteScroll: boolean = false,
 			startDate?: string,
 			endDate?: string,
 			agentIds?: number[],
@@ -1192,9 +1225,21 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			endTime?: string,
 		) => {
 			if (activePhoneNumber && activePhoneNumber?.length > 0) {
-				if (isPaginationReset) {
+				if (isPaginationReset && !isInfiniteScroll) {
 					dispatch(setIsLoader(true));
 				}
+
+				// Use normal pagination - backend handles all filtering (dates, agent, search)
+				const effectivePageNo =
+					pageNumber ||
+					(isPaginationReset ? 1 : contactsPaginationSetting?.PageNo + 1);
+
+				// Update pagination settings with new values
+				const newPaginationSettings = {
+					...contactsPaginationSetting,
+					PageSize: pageSize,
+					PageNo: effectivePageNo,
+				};
 
 				// Combine date and time for API payload
 				let finalStartDate = '';
@@ -1206,12 +1251,12 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 					finalEndDate = `${endDate}T${endTime}:00`;
 				}
 
-				// Load all contacts without pagination
+				// Use single API for all filtering - GetWhatsAppChatContacts
 				const apiPayload: any = {
 					PhoneNumber: activePhoneNumber,
-					IsPagination: false,
-					pageNo: 1,
-					pageSize: 9999,
+					IsPagination: true,
+					pageNo: newPaginationSettings.PageNo,
+					pageSize: newPaginationSettings.PageSize,
 					Searchtext: normalizePhoneForSearch(searchText),
 					ChatStatus: ChatStatus,
 				};
@@ -1240,6 +1285,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 
 				dispatch(setIsLoader(false));
 				if (whatsAppChatContactsData?.Status === apiStatus.SUCCESS) {
+					// Backend handles all filtering - use response data directly
 					const items = whatsAppChatContactsData?.Data?.Items || [];
 
 					// ONLY update totals when viewing All (ChatStatus === 0)
@@ -1250,13 +1296,23 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 						setTotalSolvedContacts(whatsAppChatContactsData?.Data?.TotalSolved || 0);
 					}
 
-					if (isPaginationReset) {
+					// Handle pagination based on backend response
+					setContactsPaginationSetting({
+						...newPaginationSettings,
+						hasMore: isInfiniteScroll ? items.length >= pageSize : false,
+					});
+
+					if (isPaginationReset || pageNumber) {
 						const listDivElement = document.getElementById('contact-list-div');
 						if (listDivElement) {
 							listDivElement.scrollTop = 0;
 						}
+						setSideChatContacts(items);
+					} else if (isInfiniteScroll) {
+						setSideChatContacts((prevContacts) => [...prevContacts, ...items]);
+					} else {
+						setSideChatContacts(items);
 					}
-					setSideChatContacts(items);
 				} else {
 					if (whatsAppChatContactsData?.StatusCode === 927) {
 						setTierMessageCode(whatsAppChatContactsData?.Message);
@@ -1265,6 +1321,11 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 						});
 					} else if (whatsAppChatContactsData?.Message === 'No Data Found') {
 						setSideChatContacts([]);
+						setContactsPaginationSetting({
+							...contactsPaginationSetting,
+							PageNo: 1,
+							hasMore: false,
+						});
 					}
 				}
 			}
@@ -1274,6 +1335,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			filterBySelected,
 			agentSelected,
 			dispatch,
+			contactsPaginationSetting,
 		],
 	);
 
@@ -1824,7 +1886,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 												PhoneNumber: phoneNumber,
 												IsPagination: true,
 												pageNo: 1,
-												pageSize: 2,
+												pageSize: 10,
 												ChatStatus: filterBySelected,
 											})
 										);
@@ -1854,7 +1916,8 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 									getStatusClass={getStatusClass}
 									chatContacts={activeChatContacts}
 									fetchMoreContacts={fetchMoreContacts}
-										fetchSearchedContacts={(
+									contactsPaginationSetting={contactsPaginationSetting}
+									fetchSearchedContacts={(
 										searchText: string,
 										ChatStatus: number,
 										isPaginationReset: boolean,
@@ -1865,6 +1928,9 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 											searchText,
 											ChatStatus,
 											isPaginationReset,
+											contactsPaginationSetting?.PageSize || 10,
+											1,
+											false,
 											startDate,
 											endDate,
 										);

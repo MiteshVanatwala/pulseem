@@ -1,4 +1,5 @@
 import {
+	LinearProgress,
 	MenuItem,
 	Menu,
 	Chip,
@@ -17,6 +18,7 @@ import Icon from './Icon';
 import { Link, useParams } from 'react-router-dom';
 import clsx from 'clsx';
 import { lastMessage } from './data';
+import InfiniteScroll from 'react-infinite-scroll-component';
 import { useTranslation } from 'react-i18next';
 import AccountUser from '../../../../assets/images/acc-user.jpg';
 import {
@@ -36,6 +38,8 @@ const SideBarContactList = ({
 	handleChatId,
 	handleUserStatus,
 	getStatusClass,
+	fetchMoreContacts,
+	contactsPaginationSetting,
 	isLoader,
 	tagsList = [],
 	onTagsUpdated,
@@ -185,6 +189,13 @@ const SideBarContactList = ({
 				id="contact-list-div"
 				className={`${classes.whatsappChat} sidebar__contacts`}
 			>
+				<InfiniteScroll
+					dataLength={ChatContacts?.length}
+					next={fetchMoreContacts}
+					hasMore={false}
+					loader={<LinearProgress />}
+					scrollableTarget="contact-list-div"
+				>
 					{ChatContacts?.length === 0 && !isLoader ? (
 						<div className={classes.noContactDiv}>
 							<>{translator('whatsappChat.noContacts')}</>
@@ -534,6 +545,7 @@ const SideBarContactList = ({
 							)}
 						</>
 					)}
+				</InfiniteScroll>
 			</div>
 		</>
 	);
