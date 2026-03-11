@@ -42,7 +42,6 @@ import {
 } from '../../Campaign/Types/WhatsappCampaign.types';
 import { StateType } from '../../../../Models/StateTypes';
 import { setCookie } from '../../../../helpers/Functions/cookies';
-import { TablePagination } from '../../../../components/managment/index';
 import { COLORS } from '../../../../helpers/Constants';
 import { getWhatsappChatTag } from '../../../../redux/reducers/whatsappSlice';
 import { PulseemReactInstance } from '../../../../helpers/Api/PulseemReactAPI';
@@ -62,7 +61,6 @@ const SideBar = ({
 	activePhoneNumber,
 	fetchMoreContacts,
 	fetchSearchedContacts,
-	contactsPaginationSetting,
 	isLoader,
 	filterBySelected,
 	setFilterBySelected,
@@ -94,7 +92,6 @@ const SideBar = ({
 	const debouncedValue = useDebounce<string>(searchText, 500);
 	const [activeTab, setActiveTab] = useState(0);
 	const isInitialMount = useRef(true);
-	const isChangingRowsPerPage = useRef(false);
 	const dateRangeRef = useRef<HTMLDivElement>(null);
 	const [startDate, setStartDate] = useState<string>('');
 	const [endDate, setEndDate] = useState<string>('');
@@ -250,9 +247,6 @@ const SideBar = ({
 			searchText,
 			Number(newValue),
 			true,
-			contactsPaginationSetting?.PageSize || 10,
-			1,
-			false,
 			startDate,
 			endDate,
 			selectedAgents,
@@ -342,9 +336,6 @@ const SideBar = ({
 			searchText,
 			filterBySelected,
 			true,
-			contactsPaginationSetting?.PageSize || 10,
-			1,
-			false,
 			startDate,
 			endDate,
 			newSelectedAgents,
@@ -362,9 +353,6 @@ const SideBar = ({
 			searchText,
 			filterBySelected,
 			true,
-			contactsPaginationSetting?.PageSize || 10,
-			1,
-			false,
 			startDate,
 			endDate,
 			selectedAgents,
@@ -445,9 +433,6 @@ const SideBar = ({
 			searchText,
 			filterBySelected,
 			true,
-			contactsPaginationSetting?.PageSize || 10,
-			1,
-			false,
 			dialogStartDate,
 			dialogEndDate,
 			dialogSelectedAgents,
@@ -554,9 +539,6 @@ const SideBar = ({
 				searchText,
 				filterBySelected,
 				true,
-				contactsPaginationSetting?.PageSize || 10,
-				1,
-				false,
 				newStartDate,
 				newEndDate,
 				selectedAgents,
@@ -767,9 +749,6 @@ const SideBar = ({
 						searchText,
 						filterBySelected,
 						true,
-						contactsPaginationSetting?.PageSize || 10,
-						1,
-						false,
 						startDate,
 						endDate,
 						selectedAgents,
@@ -836,9 +815,6 @@ const SideBar = ({
 			searchText,
 			filterBySelected,
 			true,
-			contactsPaginationSetting?.PageSize || 10,
-			1,
-			false,
 			startDate,
 			endDate,
 			selectedAgents,
@@ -857,9 +833,6 @@ const SideBar = ({
 			searchText,
 			filterBySelected,
 			true,
-			contactsPaginationSetting?.PageSize || 10,
-			1,
-			false,
 			startDate,
 			endDate,
 			selectedAgents,
@@ -878,9 +851,6 @@ const SideBar = ({
 			searchText,
 			filterBySelected,
 			true,
-			contactsPaginationSetting?.PageSize || 10,
-			1,
-			false,
 			startDate,
 			endDate,
 			selectedAgents,
@@ -1224,81 +1194,10 @@ const SideBar = ({
 					handleChatId={handleChatId}
 					handleUserStatus={handleUserStatus}
 					getStatusClass={getStatusClass}
-					fetchMoreContacts={() =>
-						fetchMoreContacts(
-							searchText,
-							filterBySelected,
-							false,
-							contactsPaginationSetting?.PageSize || 10,
-							undefined,
-							false,
-							startDate,
-							endDate,
-							selectedAgents,
-							selectedTags,
-							startTime,
-							endTime,
-						)
-					}
-					contactsPaginationSetting={contactsPaginationSetting}
 					isLoader={isLoader}
 					searchText={searchText}
 					tagsList={tagsList}
 					onTagsUpdated={onTagsUpdated}
-				/>
-				<TablePagination
-					classes={classes}
-					rows={TotalRecord}
-					rowsPerPage={contactsPaginationSetting?.PageSize || 10}
-					page={contactsPaginationSetting?.PageNo || 1}
-					onPageChange={(newPage: number) => {
-						// Skip if we just changed rows per page (to avoid double fetch)
-						if (isChangingRowsPerPage.current) {
-							isChangingRowsPerPage.current = false;
-							return;
-						}
-						fetchMoreContacts(
-							searchText,
-							filterBySelected,
-							true,
-							contactsPaginationSetting?.PageSize || 10,
-							newPage,
-							false,
-							startDate,
-							endDate,
-							selectedAgents,
-							selectedTags,
-							startTime,
-							endTime,
-						);
-					}}
-					rowsPerPageOptions={[10, 20, 50, 100] as any}
-					onRowsPerPageChange={(newPageSize: number) => {
-						// Set flag to prevent onPageChange from firing
-						isChangingRowsPerPage.current = true;
-						// Reset to first page when changing page size
-						fetchMoreContacts(
-							searchText,
-							filterBySelected,
-							true,
-							newPageSize,
-							1,
-							false,
-							startDate,
-							endDate,
-							selectedAgents,
-							selectedTags,
-							startTime,
-							endTime,
-						);
-					}}
-					style={{
-						borderTop: '1px solid #e0e0e0',
-						backgroundColor: '#f9f9f9',
-						paddingInline: 10,
-						paddingTop: 0,
-						paddingBottom: 0,
-					}}
 				/>
 			</aside>
 			{/* Filter Dialog */}

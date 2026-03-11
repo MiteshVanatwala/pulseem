@@ -75,8 +75,6 @@ export type SideBarContactListProps = {
 	) => void;
 	handleUserStatus: (e: SelectChangeEvent, contactPhoneNumber: string) => void;
 	getStatusClass: (status: number) => string | undefined;
-	fetchMoreContacts: () => void;
-	contactsPaginationSetting: ContactsPaginationSetting;
 	isLoader: boolean;
 	searchText: string;
 	tagsList?: Array<{ id: string; TagName: string; TagColor: string }>;
@@ -143,9 +141,6 @@ export type WhatsappChatSideBarProps = {
 		searchText: string,
 		ChatStatus: number,
 		isPaginationReset?: boolean,
-		pageSize?: number,
-		pageNumber?: number,
-		isInfiniteScroll?: boolean,
 		startDate?: string,
 		endDate?: string,
 		agentIds?: number[],
@@ -153,7 +148,6 @@ export type WhatsappChatSideBarProps = {
 		startTime?: string,
 		endTime?: string,
 	) => void;
-	contactsPaginationSetting: ContactsPaginationSetting;
 	fetchSearchedContacts: (
 		searchText: string,
 		ChatStatus: number,
@@ -296,12 +290,6 @@ export type APIWhatsappChatSessionData = {
 	RecentMsg?: string;
 	RecentFromNumber?: string;
 	RecentMsgDate?: string;
-};
-
-export type ContactsPaginationSetting = {
-	PageNo: number;
-	PageSize: number;
-	hasMore: boolean;
 };
 
 export type APIWhatsappChatSessionPayloadData = {
