@@ -291,6 +291,11 @@ export type APIWhatsappChatSessionData = {
 	Minute: string;
 	Second: string;
 	IsNewMessage: boolean;
+	RecentToNumber?: string;
+	RecentClientID?: string;
+	RecentMsg?: string;
+	RecentFromNumber?: string;
+	RecentMsgDate?: string;
 };
 
 export type ContactsPaginationSetting = {
