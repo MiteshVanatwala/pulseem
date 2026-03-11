@@ -31,7 +31,7 @@ import {
   getTestGroups,
   getSMSVirtualNumber
 } from "../../../redux/reducers/smsSlice";
-import { getCommonFeatures } from '../../../redux/reducers/commonSlice';
+import { getCommonFeatures, getAuthorizeNumbers } from '../../../redux/reducers/commonSlice';
 import Summary from "./smsSummary";
 import Paper from "@material-ui/core/Paper";
 import InputBase from "@material-ui/core/InputBase";
@@ -140,7 +140,7 @@ const SmsCreator = ({ classes }) => {
     ToastMessages,
     extraData
   } = useSelector((state) => state.sms);
-  const { accountSettings, accountFeatures, countryCodeList, isGlobal, subAccount, IsPoland, isSwippingApprovalSMS } = useSelector((state) => state.common)
+  const { accountSettings, accountFeatures, countryCodeList, isGlobal, subAccount, IsPoland, isSwippingApprovalSMS, verifiedNumbers } = useSelector((state) => state.common)
   const [dialogType, setDialogType] = useState(null)
   const [alignment, setAlignment] = useState('right');
   const [checked, setChecked] = React.useState(false);
@@ -390,6 +390,7 @@ const SmsCreator = ({ classes }) => {
     await dispatch(getPreviousLandingData());
     await dispatch(getPreviousCampaignData());
     await dispatch(getTestGroups());
+    await dispatch(getAuthorizeNumbers());
 
     let resp = null;
     if (!extraData || extraData?.length === 0) {
@@ -433,7 +434,7 @@ const SmsCreator = ({ classes }) => {
       }
 
       const virtualNumber = await dispatch(getSMSVirtualNumber(fromNumber));
-
+      
       if (fromNumber === -1) {
         fromNumber = virtualNumber.payload.Number;
       }
@@ -684,6 +685,22 @@ const SmsCreator = ({ classes }) => {
     setremovalNumber(response.payload.RemovalKey);
     setremovalMessageButtonDisabled(false);
   }
+  
+  const checkNumberVerifiedAndProceed = (callbackFunc) => {
+    if (isSwippingApprovalSMS) {
+      callbackFunc();
+      return;
+    }
+    const isDefault = campaignNumber === StaticNumber;
+    const isVerified = verifiedNumbers?.some(
+      (n) => n.Number === campaignNumber && n.IsOptIn
+    );
+    if (isDefault || isVerified) {
+      callbackFunc();
+    } else {
+      setDialogType({ type: 'verifyNumber' });
+    }
+  };
 
   const onSenderSelect = (sender) => {
     setcampaignNumber(sender.SenderName);
@@ -785,7 +802,8 @@ const SmsCreator = ({ classes }) => {
                 id="outlined-basic"
                 type="text"
                 className={clsx(classes.textField, campaignNumberValidated ? classes.error : classes.success)}
-                inputProps={{ ...inputProps, readOnly: true }}
+                onChange={onCampaignNumber}
+                inputProps={{ ...inputProps }}
                 value={campaignNumber}
                 dir={/^[0-9]/.test(campaignNumber) && isRTL ? 'rtl' : 'ltr'}
               />
@@ -1168,7 +1186,7 @@ const SmsCreator = ({ classes }) => {
   const onRadiochange = (e) => {
     setradioBtn(e.target.value);
     if (e.target.value === "bottom") {
-      setDialogType({ type: "groups" })
+      checkNumberVerifiedAndProceed(() => setDialogType({ type: "groups" }));
     }
   };
 
@@ -1247,8 +1265,7 @@ const SmsCreator = ({ classes }) => {
                     />
                     <Button
                       className={clsx(classes.btn, classes.btnRounded, classes.ml5)}
-                      disabled={!isSwippingApprovalSMS && !isSenderVerified}
-                      onClick={() => { validationCheckpoint(() => handleSend()) }}
+                      onClick={() => { checkNumberVerifiedAndProceed(() => validationCheckpoint(() => handleSend())) }}
                     >
                       {t("mainReport.send")}
                     </Button>
@@ -1434,6 +1451,47 @@ const SmsCreator = ({ classes }) => {
     } else {
       return t('billing.tier.noFeatureAvailable');
     }
+  };
+
+  const verifyNumberDialog = () => {
+    return {
+      title: t('sms.verifyNumberRequired'),
+      icon: <AiOutlineExclamationCircle />,
+      content: (
+        <Box>
+          <Typography className={classes.f18}>
+            {t('sms.pleaseVerifyNumber')}
+          </Typography>
+        </Box>
+      ),
+      renderButtons: () => (
+        <Grid container spacing={2} className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}>
+          <Grid item>
+            <Button
+              className={clsx(classes.btn, classes.btnRounded)}
+              onClick={() => {
+                setDialogType(null);
+                setSenderDialogShowSelect(false);
+                setSenderDialogOpen(true);
+              }}
+            >
+              {t('sms.verifySenderButton')}
+            </Button>
+          </Grid>
+          <Grid item>
+            <Button
+              className={clsx(classes.btn, classes.btnRounded)}
+              onClick={() => setDialogType(null)}
+            >
+              {t('common.cancel')}
+            </Button>
+          </Grid>
+        </Grid>
+      ),
+      showDefaultButtons: false,
+      onClose: () => setDialogType(null),
+      onConfirm: () => setDialogType(null),
+    };
   };
 
   const getTierValidationDialog = () => {
@@ -1690,13 +1748,11 @@ const SmsCreator = ({ classes }) => {
             classes.backButton,
             buttonsDisabled && classes.disabled
           )}
-          disabled={!isSwippingApprovalSMS && !isSenderVerified}
           endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
           color="primary"
           style={{ margin: '8px' }}
-          onClick={() => {
-            validationCheckpoint(() => onBeforeSave(true, isFromAutomation));
-          }}>
+          onClick={() => { checkNumberVerifiedAndProceed(() => validationCheckpoint(() => onBeforeSave(true, isFromAutomation))); }}
+          >
           {t('mainReport.saveSms')}
         </Button>
         <Button
@@ -1706,12 +1762,11 @@ const SmsCreator = ({ classes }) => {
             classes.backButton,
             buttonsDisabled && classes.disabled
           )}
-          disabled={!isSwippingApprovalSMS && !isSenderVerified}
           endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
           color="primary"
           style={{ margin: '8px' }}
           onClick={() => {
-            validationCheckpoint(() => onBeforeSave(false, isFromAutomation));
+            checkNumberVerifiedAndProceed(() => validationCheckpoint(() => onBeforeSave(false, isFromAutomation)));
           }}>
           {!isFromAutomation ? t("mainReport.continue") : t("sms.saveAndExit")}
         </Button>
@@ -2236,6 +2291,7 @@ const SmsCreator = ({ classes }) => {
       pendingApprovalDialog: pendingApprovalDialog(),
       tier: getTierValidationDialog(),
       underReviewDialog: underReviewDialog(),
+      verifyNumber: verifyNumberDialog(),
     }
 
     const currentDialog = dialogContent[type] || {}

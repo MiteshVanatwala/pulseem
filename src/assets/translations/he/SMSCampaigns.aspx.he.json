@@ -595,5 +595,6 @@
   "colSubmitted": "נשלח",
   "colStatus": "סטטוס",
   "colAction": "פעולה",
-  "statusRejected": "נדחה"
+  "statusRejected": "נדחה",
+  "pleaseVerifyNumber": "ה\"קמפיין מאת \" לא מאומת . אנא אמת לפני שליחת ההודעה"
 }

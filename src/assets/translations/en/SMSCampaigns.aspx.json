@@ -602,5 +602,6 @@
   "colSubmitted": "Submitted",
   "colStatus": "Status",
   "colAction": "Action",
-  "statusRejected": "Rejected"
+  "statusRejected": "Rejected",
+  "pleaseVerifyNumber": "The \"Campaign by\" number is not verified. Please verify it before sending the message."
 }

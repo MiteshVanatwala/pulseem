@@ -53,6 +53,7 @@ const VerificationDialog = ({
 
     let trials = localStorage.getItem('verificationTrial') ? Number(localStorage.getItem('verificationTrial')) : 0
     const SLIDE_HEIGHTS = [25, 20, 20, 20, 20];
+    const isIsraeliPhoneNumber = (val) => /^(\+972|972|0)5\d{8}$/.test(val);
 
     useEffect(() => {
         setDeleteValue(null);
@@ -71,15 +72,15 @@ const VerificationDialog = ({
                 const handleVerificationDialog = async () => {
                     const result = await dispatch(getAuthorizeNumbers());
                     const numbers = result.payload || [];
-                    const alphabeticalSenders = numbers
-                        .filter(n => /[a-zA-Z]/.test(n.Number))
+                    const nonIsraeliSenders = numbers
+                        .filter(n => !isIsraeliPhoneNumber(n.Number))
                         .map(n => ({
                             ID: n.ID,
                             SenderName: n.Number,
                             RequestDate: n.CreateDate,
                             Status: n.IsOptIn ? 0 : 1,
                         }));
-                    setSenderNames(alphabeticalSenders);
+                    setSenderNames(nonIsraeliSenders);
                     setShowLoader(false);
                 }
                 handleVerificationDialog();
@@ -607,7 +608,7 @@ const VerificationDialog = ({
                         >{t('sms.verifySenderButton')}</Button>
                     </Box>
                     <Box className={clsx('contactDataBox', classes.sidebar, classes.verNumListBox)}>
-                        {verifiedNumbers.filter(obj => !/[a-zA-Z]/.test(obj.Number)).map((obj, idx) => (
+                        {verifiedNumbers.filter(obj => isIsraeliPhoneNumber(obj.Number)).map((obj, idx) => (
                             <React.Fragment key={`verificationNumber${obj.ID}`}>
                                 <Box className={clsx(classes.flex, classes.hAuto, 'emailBox', classes.verNumRow)}>
                                     <Box className={clsx(classes.dFlex, classes.alignItemsCenter)}>
@@ -665,7 +666,11 @@ const VerificationDialog = ({
                             return (
                                 <Box key={sender.ID} className={classes.senderTableRow}>
                                     <Typography className={clsx(classes.flex2, classes.senderNameCell)}>{sender.SenderName}</Typography>
-                                    <Typography className={clsx(classes.flex2, classes.senderDateCell)}>{sender.RequestDate}</Typography>
+                                    <Typography className={clsx(classes.flex2, classes.senderDateCell)}>
+                                        {sender.RequestDate
+                                            ? new Date(sender.RequestDate).toLocaleDateString('en-GB')
+                                            : ''}
+                                    </Typography>
                                     <Box className={classes.statusCell}>
                                         <Box className={classes.statusChip} style={{ background: statusBg, color: statusText }}>
                                             <Box className={classes.statusDotIndicator} style={{ background: statusDot }} />
@@ -731,21 +736,9 @@ const VerificationDialog = ({
                                         setVerificationError({ Number: t('sms.newSenderRequired') });
                                         return;
                                     }
-                                    const isPhoneNumber = /^[0-9+\-\s()]+$/.test(selectedVerificationContact);
-                                    const is05Number = isGlobal
-                                        ? isPhoneNumber
-                                        : selectedVerificationContact.startsWith('05');
-
-                                    if (isPhoneNumber && is05Number) {
-                                        if (isGlobal
-                                            ? IsValidPhoneNumberWithCountryCode(selectedVerificationContact, countryCodeList)
-                                            : IsValidNonGlobalPhoneNumber(selectedVerificationContact)
-                                        ) {
-                                            handleSendCode(selectedVerificationContact);
-                                            NextSlide();
-                                        } else {
-                                            setVerificationError({ Number: t('sms.invalidNumber') });
-                                        }
+                                    if (isIsraeliPhoneNumber(selectedVerificationContact)) {
+                                        handleSendCode(selectedVerificationContact);
+                                        NextSlide();
                                     } else {
                                         handleSubmitAlphabeticalSender();
                                     }
