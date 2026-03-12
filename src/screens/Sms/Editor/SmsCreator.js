@@ -1455,7 +1455,7 @@ const SmsCreator = ({ classes }) => {
 
   const verifyNumberDialog = () => {
     return {
-      title: t('sms.verifyNumberRequired'),
+      title: t('sms.verifySenderTitle'),
       icon: <AiOutlineExclamationCircle />,
       content: (
         <Box>
