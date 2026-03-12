@@ -171,7 +171,7 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
 
   const buildRuleExpression = (rule) => {
     if (!rule.field) return '';
-    const fieldExpr = `recipient.${rule.field}`;
+    const fieldExpr = rule.field;
     const safeValue = escapeValue(rule.value);
 
     switch (rule.operator) {
