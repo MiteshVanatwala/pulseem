@@ -41,11 +41,11 @@
     "papaparse": "^5.3.1",
     "prop-types": "^15.8.1",
     "query-string": "^8.1.0",
-    "react": "^17.0.1",
+    "react": "17.0.2",
     "react-chartjs-2": "^3.0.3",
     "react-color": "^2.19.3",
     "react-copy-to-clipboard": "^5.1.0",
-    "react-dom": "^17.0.1",
+    "react-dom": "17.0.2",
     "react-h5-audio-player": "^3.8.6",
     "react-helmet-async": "^1.1.2",
     "react-highlight-words": "^0.18.0",
@@ -92,15 +92,14 @@
     ]
   },
   "devDependencies": {
+    "@types/babel__traverse": "^7.28.0",
     "@types/lodash": "^4.14.192",
+    "@types/node": "^25.5.0",
     "@types/react-copy-to-clipboard": "^5.0.7",
     "@types/react-input-mask": "^3.0.2",
     "@types/react-router-dom": "^5.3.3",
-    "@types/uuid": "^8.3.4"
-  },
-  "peerDependencies": {
-    "react": "^17.0.0 || ^18.0.0",
-    "react-dom": "^17.0.0 || ^18.0.0"
+    "@types/uuid": "^8.3.4",
+    "cypress": "^15.11.0"
   },
   "browser": {
     "fs": false,

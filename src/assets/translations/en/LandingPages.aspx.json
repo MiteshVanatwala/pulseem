@@ -542,7 +542,7 @@
       "embedMessage": "Copy and paste this code into your website:"
     }
   },
-  "enableRecaptcha": "Enable reCAPTCHA",
+  "enableRecaptcha": "Add reCAPTCHA",
   "recaptchaVersion": "reCAPTCHA Version",
   "recaptchaVersionLabel": "Select Version",
   "recaptchaSiteKey": "Site Key",

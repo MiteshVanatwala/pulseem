@@ -11,7 +11,7 @@ import { coreProps } from '../../Whatsapp/Campaign/Types/WhatsappCampaign.types'
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import WizardActions from '../../../components/Wizard/WizardActions';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
-import { BEE_EDITOR_TYPES, CLOSE_BUTTON_HTML, LandingPagesAnswerType, TierFeatures } from '../../../helpers/Constants';
+import { BEE_EDITOR_TYPES, CLOSE_BUTTON_HTML, LandingPagesAnswerType, TierFeatures, PlaceHolders, reCAPTCHAKey } from '../../../helpers/Constants';
 import { FileGallery } from '../../../Models/Files/FileGallery';
 import Gallery from '../../../components/Gallery/Gallery.component';
 import { PulseemFeatures, PulseemFolderType } from '../../../model/PulseemFields/Fields';
@@ -31,7 +31,7 @@ import SeoSettings from './Tabs/SeoSettings';
 import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
 import DevelopmentSettings from './Tabs/DevelopmentSettings';
 import LinkPreviewSettings from './Tabs/LinkPreviewSettings';
-import { injectRecaptchaScript } from './Tabs/RecaptchaHelper';
+
 import { BeeEditorStoreModel, LandingPageModel } from '../../../Models/LandingPage/LandingPage';
 import { PulseemResponse } from '../../../Models/APIResponse';
 import { logout } from '../../../helpers/Api/PulseemReactAPI';
@@ -171,9 +171,6 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 		IsNewEditor: null,
 		WebformsToReportLeadByApi: null,
 		CloseButtonHtml: CLOSE_BUTTON_HTML,
-		enableRecaptcha: false,
-		recaptchaVersion: 'v3',
-		recaptchaSiteKey: ''
 	});
 
 	const [tabValue, setTabValue] = useState<string>('1');
@@ -184,8 +181,6 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 	);
 
 	useEffect(() => {
-		console.log('CreateLandingPage useEffect triggered - location:', location.pathname);
-		console.log('Current landingPageModel.enableRecaptcha:', landingPageModel.enableRecaptcha);
 		setIsLoader(false);
 		setDialogType(null);
 		setToastMessage(null);
@@ -207,8 +202,7 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 	}, [location.pathname, isPopup, language, id]);
 
 	useEffect(() => {
-		console.log('landingPageModel changed - enableRecaptcha:', landingPageModel.enableRecaptcha);
-	}, [landingPageModel.enableRecaptcha]);
+	}, []);
 
 	enum EditorType {
 		SAVE_ONLY = 0,
@@ -281,9 +275,6 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 				autofillEditable: response.Data?.WebForm?.AutofillSettings?.IsEditable,
 				SubscriptionOptin: response.Data?.WebForm?.AutofillSettings?.SubscriptionOptin,
 				CloseButtonHtml: response.Data?.WebForm?.CloseButtonHtml || CLOSE_BUTTON_HTML,
-				enableRecaptcha: response.Data?.WebForm?.enableRecaptcha || false,
-				recaptchaVersion: response.Data?.WebForm?.recaptchaVersion || 'v3',
-				recaptchaSiteKey: response.Data?.WebForm?.recaptchaSiteKey || ''
 			});
 			if (response.Data?.WebForm?.LinkPreviewIconName !== '') {
 				handleSelectedImage(response.Data?.WebForm?.LinkPreviewIconName, true);
@@ -312,9 +303,6 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 				PageUrl: isPopup && !id ? generateGuid() : '',
 				PopupDomains: [],
 				CloseButtonHtml: CLOSE_BUTTON_HTML,
-				enableRecaptcha: false,
-				recaptchaVersion: 'v3',
-				recaptchaSiteKey: ''
 			});
 		}
 
@@ -724,11 +712,7 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 				ClientJavaScript: headScript,
 				ClientBodyScript: bodyScript,
 				CloseButtonHtml: landingPageModel.CloseButtonHtml || '',
-				PageHtml: injectRecaptchaScript(
-					landingPageModel.PageHtml,
-					landingPageModel.enableRecaptcha || false,
-					landingPageModel.recaptchaSiteKey || ''
-				),
+				PageHtml: landingPageModel.PageHtml,
 				AutofillSettings: {
 					IsAutofillEnabled: landingPageModel.autofillEnabled,
 					SelectedFields: landingPageModel.autofillFields,
@@ -737,9 +721,9 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 				},
 				PageType: isPopup ? 5 : landingPageModel.PageType,
 				PopupDomains: (isPopup || landingPageModel.PageType === 5) && landingPageModel.PopupDomains && Array.isArray(landingPageModel.PopupDomains) && landingPageModel.PopupDomains.length > 0 ? landingPageModel.PopupDomains : null,
-				enableRecaptcha: landingPageModel.enableRecaptcha,
-				recaptchaVersion: landingPageModel.recaptchaVersion,
-				recaptchaSiteKey: landingPageModel.recaptchaSiteKey
+				enableRecaptcha: landingPageModel.enableRecaptcha || false,
+				recaptchaSiteKey: landingPageModel.enableRecaptcha ? reCAPTCHAKey : '',
+				recaptchaVersion: 'v3',
 			};
 			//@ts-ignore
 			const response = await dispatch(saveLandingPage(req));
@@ -820,7 +804,7 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 	// navigateBeEditor
 	// 0 - Don't redirect, 1 - New Editor, 2 - Old Editor
 	const handleContinueToEditor = (editorType: EditorType, savedPageID: number) => {
-		console.log('handleContinueToEditor - enableRecaptcha:', landingPageModel.enableRecaptcha);
+		console.log('handleContinueToEditor - editorType:', editorType);
 		const isBeeEditor = (accountFeatures?.indexOf(PulseemFeatures.BEE_EDITOR) > -1 && editorType === EditorType.BEE);
 		const pageId = id || savedPageID;
 
@@ -872,6 +856,7 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 							classes.backButton
 						)}
 						style={{ margin: '8px' }}
+						// @ts-ignore
 						endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
 					>
 						{t("common.save")}
@@ -884,6 +869,7 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 							classes.backButton
 						)}
 						style={{ margin: '8px' }}
+						// @ts-ignore
 						endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
 					>
 						{t('common.continue')}
@@ -902,6 +888,7 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 							classes.backButton
 						)}
 						style={{ margin: '8px' }}
+						// @ts-ignore
 						endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
 						key="saveContinue"
 					>
@@ -920,6 +907,7 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 							classes.backButton
 						)}
 						style={{ margin: '8px' }}
+						// @ts-ignore
 						endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
 						key='newEditor'
 					>
@@ -993,6 +981,7 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 									placement={"top"}
 								>
 									<IconButton className={clsx(classes.icon_Info, classes.noPadding, classes.ml5)}>
+										{/* @ts-ignore */}
 										<BsInfoCircle />
 									</IconButton>
 								</Tooltip>
@@ -1057,6 +1046,7 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 										placement={"top"}
 									>
 										<IconButton className={clsx(classes.icon_Info, classes.noPadding, classes.ml5)}>
+											{/* @ts-ignore */}
 											<BsInfoCircle />
 										</IconButton>
 									</Tooltip>

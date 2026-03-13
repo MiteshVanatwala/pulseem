@@ -32,6 +32,7 @@ import { MdArrowBackIos, MdArrowForwardIos, MdCheck, MdGroups, MdOutlinePublic }
 import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
 import { BEE_EDITOR_TYPES, TierFeatures, reCAPTCHAKey } from '../../helpers/Constants';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
+import { injectRecaptchaScript } from '../../helpers/Utils/RecaptchaHelper';
 import { StateType } from '../../Models/StateTypes';
 import { commonProps } from '../../model/Common/commonProps.types';
 import { BeeEditorModel, BeeEditorStoreModel, LandingPageRow, LandingPageTemplate, LandingPageUserBlocks, SaveLandingPageArguments } from '../../Models/LandingPage/LandingPage';
@@ -432,6 +433,17 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       let finalHtml = args.HtmlData;
       let finalJson = args.JsonData;
 
+      // Inject reCAPTCHA initialization script if enabled
+      const enableRecaptcha = landingPage?.Data?.WebForm?.EnableRecaptcha || localStorage.getItem(`recaptcha_${moduleId}`) === 'true';
+      const recaptchaConfig = {
+        enabled: enableRecaptcha,
+        siteKey: landingPage?.Data?.WebForm?.recaptchaSiteKey || reCAPTCHAKey
+      };
+
+      if (recaptchaConfig.enabled) {
+        finalHtml = injectRecaptchaScript(finalHtml, true, recaptchaConfig.siteKey);
+      }
+
       //@ts-ignore
       let response: any = await dispatch(saveWebform({
         Name: '',
@@ -778,6 +790,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
           classes.backButton
         )}
         style={{ margin: '8px' }}
+        // @ts-ignore
         startIcon={<BiSave />}
       >
         {t('common.saveTemplate')}
@@ -791,6 +804,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
           classes.backButton
         )}
         style={{ margin: '8px' }}
+        // @ts-ignore
         startIcon={<MdGroups />}
       >
         {t('common.Groups')}
@@ -829,6 +843,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
               classes.backButton
             )}
             style={{ margin: '8px' }}
+            // @ts-ignore
             startIcon={silentSave ? <Loader isOpen={silentSave} size={20} showBackdrop={false} contained={true} /> : <BiSave />}
             color="primary"
           >
@@ -854,6 +869,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
                     classes.btnRounded,
                     classes.backButton
                   )}
+                  // @ts-ignore
                   startIcon={<MdOutlinePublic />}
                   style={{ marginInlineStart: '8px' }}
                   color="primary"
@@ -876,6 +892,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
                     classes.btnRounded,
                     classes.backButton
                   )}
+                  // @ts-ignore
                   startIcon={<MdCheck />}
                   style={{ marginInlineStart: '8px' }}
                   color="primary"
@@ -897,8 +914,10 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
             classes.btnRounded,
             classes.backButton
           )}
+          // @ts-ignore
           endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
           style={{ margin: '8px' }}
+          // @ts-ignore
           startIcon={<BiSave />}
           color="primary"
         >{t("common.save")}
@@ -921,6 +940,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
             classes.btnRounded,
             classes.backButton
           )}
+          // @ts-ignore
           startIcon={<MdOutlinePublic />}
           style={{ marginInlineStart: '8px' }}
           color="primary"
@@ -935,6 +955,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
             classes.btnRounded,
             classes.backButton
           )}
+          // @ts-ignore
           endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
           style={{ marginInlineStart: '8px' }}
           color="primary"
@@ -957,9 +978,8 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
     if (showGallery) {
       let dialog = {
         showDivider: false,
-        icon: (
-          <IoMdImages />
-        ),
+        // @ts-ignore
+        icon: <IoMdImages />,
         title: t("common.imageGallery"),
         content: (
           <Gallery

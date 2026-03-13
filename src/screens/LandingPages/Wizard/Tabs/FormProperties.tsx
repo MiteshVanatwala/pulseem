@@ -265,73 +265,9 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
             />
         </Grid>
 
-        <Grid item md={data.PageType < 3 ? 3 : 6} xs={12} sm={12} className={classes.mt25} style={{ visibility: isPopup ? 'hidden' : 'visible' }}>
-            <FormControlLabel
-                control={
-                    <Checkbox
-                        color="primary"
-                        inputProps={{ "aria-label": "recaptcha checkbox" }}
-                        onClick={() => onUpdate({
-                            ...data,
-                            enableRecaptcha: !data.enableRecaptcha
-                        })}
-                        checked={data.enableRecaptcha || false}
-                        value={data.enableRecaptcha}
-                    />
-                }
-                label={translator("landingPages.enableRecaptcha")}
-            />
-        </Grid>
 
-        {data.enableRecaptcha && (
-            <>
-                <Grid item md={3} className={classes.w100}>
-                    <Typography title={translator("landingPages.recaptchaVersion")} className={classes.alignDir}>
-                        {translator("landingPages.recaptchaVersion")}
-                    </Typography>
-                    <FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.w100)}>
-                        <Select
-                            native
-                            variant="standard"
-                            value={data.recaptchaVersion || 'v3'}
-                            className={classes.pbt5}
-                            onChange={(event) => {
-                                onUpdate({ ...data, recaptchaVersion: event.target.value });
-                            }}
-                            IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
-                            MenuProps={{
-                                PaperProps: {
-                                    style: {
-                                        maxHeight: 300,
-                                        direction: isRTL ? 'rtl' : 'ltr'
-                                    },
-                                },
-                            }}
-                        >
-                            <option value="v3">{translator("landingPages.recaptchaV3")}</option>
-                            <option value="v2_checkbox">{translator("landingPages.recaptchaV2Checkbox")}</option>
-                            <option value="v2_invisible">{translator("landingPages.recaptchaV2Invisible")}</option>
-                        </Select>
-                    </FormControl>
-                </Grid>
 
-                <Grid item md={3} className={classes.w100}>
-                    <Typography title={translator("landingPages.recaptchaSiteKey")} className={classes.alignDir}>
-                        {translator("landingPages.recaptchaSiteKey")}
-                    </Typography>
-                    <TextField
-                        label=""
-                        variant="outlined"
-                        value={data.recaptchaSiteKey || ''}
-                        className={clsx(classes.NoPaddingtextField, classes.textField, classes.w100)}
-                        autoComplete="off"
-                        onChange={(e) => onUpdate({ ...data, recaptchaSiteKey: e.target.value })}
-                        title={data.recaptchaSiteKey || ''}
-                        placeholder={translator("landingPages.recaptchaSiteKeyPlaceholder")}
-                    />
-                </Grid>
-            </>
-        )}
+
 
         {
             data.PageType !== 2 && (
