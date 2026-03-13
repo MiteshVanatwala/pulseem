@@ -27,7 +27,6 @@ import {
   getSmsByID,
   smsQuick,
   getCampaignSumm,
-  getCreditsforSMS,
   getTestGroups,
   getSMSVirtualNumber
 } from "../../../redux/reducers/smsSlice";
@@ -112,6 +111,36 @@ const defaultAccountExtraData = [
 ];
 
 
+export const computeCreditsForSms = (count, smsConfig) => {
+  if (!count || count === 0) return 0;
+
+  const countryStr = (smsConfig?.Country ?? '').toLowerCase();
+  const smsLength = smsConfig?.SmsLength ?? null;
+  const provider = smsConfig?.SMSProvider ?? 8; // default Pelephone
+
+  let firstMsgLength = 70;
+  let secondMsgLength = 67;
+
+  // Only Mexico with CardboardFish(2) or SilverStreet(7) changes lengths
+  if (countryStr === 'mx' && (provider === 2 || provider === 7)) {
+    firstMsgLength = 160;
+    secondMsgLength = 160;
+  }
+
+  // mirrors: if (!messageLength.HasValue) messageLength = -1
+  const messageLength = smsLength == null ? -1 : smsLength;
+
+  let total = 1;
+  if (messageLength === -1) {
+    if (count > firstMsgLength) total = Math.ceil(count / secondMsgLength);
+  } else {
+    if (count > messageLength) total = Math.ceil(count / messageLength);
+  }
+
+  return total;
+};
+
+
 const SmsCreator = ({ classes }) => {
   const { t } = useTranslation();
   const { id } = useParams();
@@ -139,7 +168,7 @@ const SmsCreator = ({ classes }) => {
     ToastMessages,
     extraData
   } = useSelector((state) => state.sms);
-  const { accountSettings, accountFeatures, countryCodeList, isGlobal, subAccount, IsPoland } = useSelector((state) => state.common)
+  const { accountSettings, accountFeatures, countryCodeList, isGlobal, subAccount, IsPoland, smsConfig } = useSelector((state) => state.common)
   const [dialogType, setDialogType] = useState(null)
   const [alignment, setAlignment] = useState('right');
   const [checked, setChecked] = React.useState(false);
@@ -184,7 +213,6 @@ const SmsCreator = ({ classes }) => {
   const [editDynamicProductFallbackURL, setEditDynamicProductFallbackURL] = useState('');
   const [dynamicProductButtonDisabled, setDynamicProductButtonDisabled] = useState(false);
   const [buttonsDisabled, setButtonsDisabled] = useState(false);
-  const [controller, setController] = useState(null);
   const [ TierMessageCode, setTierMessageCode ] = useState('');
   const [showTierPlans, setShowTierPlans] = useState(false);
   const [smsModel, setSmsModel] = useState({
@@ -344,12 +372,16 @@ const SmsCreator = ({ classes }) => {
 
   useEffect(() => {
     getcredits(characterCount);
-    return () => {
-      if (controller) {
-        controller.abort();
-      }
-    };
   }, [characterCount])
+
+  const getcredits = (count) => {
+    setButtonsDisabled(true);
+    const total = computeCreditsForSms(count, smsConfig);
+    setmessageCount(total);
+    handleSmsModelChange('CreditsPerSms', total);
+    setButtonsDisabled(false);
+  };
+
 
   const handleSmsModelChange = (name, value) => {
     setSmsModel(prevState => ({
@@ -538,28 +570,6 @@ const SmsCreator = ({ classes }) => {
     }
   }
 
-  const getcredits = (count) => {
-    if (controller) {
-      controller.abort();
-    }
-    // Create new controller
-    const newController = new AbortController();
-    setController(newController);
-
-    setButtonsDisabled(true);
-    dispatch(getCreditsforSMS(count)).then((res) => {
-      let credits = res.payload?.split("#");
-      if (credits && credits !== '') {
-        setmessageCount(credits[0]);
-        handleSmsModelChange("CreditsPerSms", credits[0]);
-      }
-      else {
-        setmessageCount(0);
-        handleSmsModelChange("CreditsPerSms", 0);
-      }
-      setButtonsDisabled(false);
-    });
-  }
   const onCamppaignChange = (e) => {
     handleSmsModelChange("Name", e.target.value);
     setcampaignBool(false);
