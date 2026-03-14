@@ -4,15 +4,15 @@ import { Paper, Box } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { StateType } from '../../Models/StateTypes';
 import { toggleChat, loadSessionMessages, setAIIconStatus, openAIChat } from '../../redux/reducers/aiChatSlice';
+import { toggleSupportChat, loadSupportSessionMessages, setSupportAIIconStatus, openSupportChat } from '../../redux/reducers/supportChatSlice';
 import ChatHeader from './ChatHeader';
 import MessageList from './MessageList';
 import InputArea from './InputArea';
-import MascotImage from "../../assets/images/mascot_pointing.png";
 import { useTypewriter } from '../../hooks/useTypewriter';
 import { useTranslation } from 'react-i18next';
-import { setIsLoader } from '../../redux/reducers/coreSlice';
 import { PulseemFeatures } from '../../model/PulseemFields/Fields';
 import PresetQuestions from './PresetQuestions';
+import { AIChatConfig, advisorConfig } from './chatConfig';
 
 const useStyles = makeStyles((theme) => ({
   PolyWidget: {
@@ -22,7 +22,6 @@ const useStyles = makeStyles((theme) => ({
     width: '58vw',
     height: '50vh',
     maxHeight: '50vh',
-    // minWidth: '200px',
     maxWidth: '1000px',
     display: 'flex',
     flexDirection: 'column',
@@ -31,7 +30,6 @@ const useStyles = makeStyles((theme) => ({
     opacity: 0,
     pointerEvents: 'none',
     borderRadius: '12px',
-    // overflow: 'hidden',
     boxShadow: '0 10px 30px rgba(0,0,0,0.2)',
     '& > *': {
       flexShrink: 0,
@@ -52,7 +50,6 @@ const useStyles = makeStyles((theme) => ({
     flex: 1,
     display: 'flex',
     flexDirection: 'column',
-    // overflow: 'hidden',
   },
   PolywidgetOpen: {
     transform: 'translate(-50%, -50%) scale(1)',
@@ -71,7 +68,7 @@ const useStyles = makeStyles((theme) => ({
     transition: 'opacity 300ms ease-out',
     opacity: 0,
     pointerEvents: 'none',
-    zIndex: 1298, // Below both widget and button
+    zIndex: 1298,
   },
   PolybackdropOpen: {
     opacity: 1,
@@ -83,7 +80,7 @@ const useStyles = makeStyles((theme) => ({
     left: 0,
     right: 0,
     bottom: 0,
-    zIndex: 1300, // Above backdrop, below button
+    zIndex: 1300,
     pointerEvents: 'none',
   },
   PolymascotImage: {
@@ -162,17 +159,27 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const AIChatWidget: React.FC = () => {
+interface AIChatWidgetProps {
+  config?: AIChatConfig;
+}
+
+const AIChatWidget: React.FC<AIChatWidgetProps> = ({ config = advisorConfig }) => {
   const { isRTL } = useSelector((state: any) => state.core);
   const { username } = useSelector((state: any) => state.user);
   const classes = useStyles({ isRTL });
   const dispatch = useDispatch();
   const inputAreaRef = useRef<{ focus: () => void }>(null);
   const { t } = useTranslation();
-  const { isOpen, messages, totalMessagesForUserCount } = useSelector((state: StateType) => state.aiChat);
+
+  const isSupport = config.reduxSliceName === 'supportChat';
+  const chatState = useSelector((state: StateType) =>
+    isSupport ? state.supportChat : state.aiChat
+  );
+  const { isOpen, messages, totalMessagesForUserCount } = chatState;
   const { accountFeatures } = useSelector((state: StateType) => state.common);
+
   const { displayedText, isTyping } = useTypewriter({
-    text: t("common.polyAgentIconTitleMarquee"),
+    text: t(config.bubbleTextKey),
     speed: 100,
     delay: 1000,
     loop: false,
@@ -189,29 +196,35 @@ const AIChatWidget: React.FC = () => {
 
   useEffect(() => {
     if (isOpen) {
-      // Focus the input when the widget opens
       setTimeout(() => {
         inputAreaRef.current?.focus();
-      }, 300); // Small delay to ensure the animation is complete
+      }, 300);
 
-      if (messages.length === 0) dispatch(setAIIconStatus(1));
+      if (messages.length === 0) {
+        if (isSupport) {
+          dispatch(setSupportAIIconStatus(1));
+        } else {
+          dispatch(setAIIconStatus(1));
+        }
+      }
     }
   }, [isOpen]);
 
   useEffect(() => {
     const initializeChat = async () => {
-      if (totalMessagesForUserCount === -1) await dispatch(loadSessionMessages());
-      // Only auto-close if there are no messages at all (neither in API nor in local state)
-      if (totalMessagesForUserCount === 0 && messages.length === 1 && username) {
+      if (totalMessagesForUserCount === -1) {
+        if (isSupport) {
+          await dispatch(loadSupportSessionMessages());
+        } else {
+          await dispatch(loadSessionMessages());
+        }
+      }
+      // Auto-open only for feature 69 (marketing advisor)
+      if (!isSupport && totalMessagesForUserCount === 0 && messages.length === 1 && username) {
         try {
           const hideAIChatDialog = localStorage.getItem('hideAIChatDialog');
           if (hideAIChatDialog !== 'true' && !isOpen) {
             dispatch(openAIChat());
-            // await dispatch(addMessage({
-            //   MessageText: `${t("common.welcomeMessage").replace("{USERNAME}", username)}`,
-            //   MessageTypeID: 1
-            // }));
-            // dispatch(setIsLoader(true));
           }
         } catch (error) {
           console.error('Error sending initial message:', error);
@@ -219,20 +232,18 @@ const AIChatWidget: React.FC = () => {
       }
     };
 
-    if (totalMessagesForUserCount < 1 && username && accountFeatures !== null && accountFeatures?.indexOf(PulseemFeatures.PolyAIAgent) !== -1) {
+    const featureKey = String(config.featureId);
+    if (totalMessagesForUserCount < 1 && username && accountFeatures !== null && accountFeatures?.indexOf(featureKey) !== -1) {
       initializeChat();
     }
+  }, [dispatch, messages, username, totalMessagesForUserCount]);
 
-    // if (totalMessagesForUserCount > 0) {
-    //   dispatch(setIsLoader(false));
-    // }
-  }, [dispatch, messages, username, totalMessagesForUserCount])
+  const featureKey = String(config.featureId);
+  if (accountFeatures === null || accountFeatures?.indexOf(featureKey) === -1) return <></>;
 
-  if (accountFeatures === null || accountFeatures?.indexOf(PulseemFeatures.PolyAIAgent) === -1) return <></>;
-  
   return (
     <div className={classes.PolywidgetContainer}>
-        <div 
+        <div
           className={`${classes.Polybackdrop} ${isOpen ? classes.PolybackdropOpen : ''}`}
           onClick={handleBackdropClick}
         />
@@ -241,18 +252,18 @@ const AIChatWidget: React.FC = () => {
             elevation={5}
             onClick={handleWidgetClick}
         >
-            <ChatHeader />
+            <ChatHeader config={config} />
             <Box className={classes.Polycontent}>
-              <MessageList />
-              <PresetQuestions />
+              <MessageList config={config} />
+              <PresetQuestions config={config} />
             </Box>
-            <InputArea ref={inputAreaRef} />
+            <InputArea ref={inputAreaRef} config={config} />
             <div className={classes.PolymascotImage}>
               <div className="message">
                 {displayedText}
                 {isTyping && <span className={classes.Polycursor} />}
               </div>
-              <img src={MascotImage} alt="Pulseem Mascot" />
+              <img src={config.mascotWidgetImage} alt="Pulseem Mascot" />
             </div>
         </Paper>
     </div>
