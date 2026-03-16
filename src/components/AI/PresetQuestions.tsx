@@ -3,9 +3,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Box, Button, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { addMessage, addUserMessage, setAIIconStatus } from '../../redux/reducers/aiChatSlice';
+import { addSupportMessage, addSupportUserMessage, setSupportAIIconStatus } from '../../redux/reducers/supportChatSlice';
 import { v4 as uuidv4 } from 'uuid';
 import { useTranslation } from 'react-i18next';
 import { StateType } from '../../Models/StateTypes';
+import { AIChatConfig, advisorConfig } from './chatConfig';
 
 const useStyles = makeStyles((theme) => ({
   presetQuestions: {
@@ -35,33 +37,48 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const PresetQuestions: React.FC = () => {
+interface PresetQuestionsProps {
+  config?: AIChatConfig;
+}
+
+const PresetQuestions: React.FC<PresetQuestionsProps> = ({ config = advisorConfig }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const { t } = useTranslation();
-  const { messages, aiIconStatus } = useSelector((state: StateType) => state.aiChat);
 
-  const PRESET_QUESTIONS = [
-    t("common.presetQuestion1"),
-    t("common.presetQuestion2"),
-    t("common.presetQuestion3"),
-    t("common.presetQuestion4"),
-  ];
+  const isSupport = config.reduxSliceName === 'supportChat';
+  const { messages, aiIconStatus } = useSelector((state: StateType) =>
+    isSupport ? state.supportChat : state.aiChat
+  );
+
+  const PRESET_QUESTIONS = config.presetQuestionKeys.map((key) => t(key));
 
   const handlePresetClick = (question: string) => {
-    dispatch(addUserMessage({
-      MessageID: uuidv4(),
-      MessageTimestamp: new Date().toISOString(),
-      MessageTypeID: 1,
-      ResponseTimeMs: null,
-      MessageText: question,
-    }));
-    dispatch(addMessage({ MessageText: question, MessageTypeID: 1 }));
-    dispatch(setAIIconStatus(1));
+    if (isSupport) {
+      dispatch(addSupportUserMessage({
+        MessageID: uuidv4(),
+        MessageTimestamp: new Date().toISOString(),
+        MessageTypeID: 1,
+        ResponseTimeMs: null,
+        MessageText: question,
+      }));
+      dispatch(addSupportMessage({ MessageText: question, MessageTypeID: 1 }));
+      dispatch(setSupportAIIconStatus(1));
+    } else {
+      dispatch(addUserMessage({
+        MessageID: uuidv4(),
+        MessageTimestamp: new Date().toISOString(),
+        MessageTypeID: 1,
+        ResponseTimeMs: null,
+        MessageText: question,
+      }));
+      dispatch(addMessage({ MessageText: question, MessageTypeID: 1 }));
+      dispatch(setAIIconStatus(1));
+    }
   };
 
   const userMessages = messages.filter(msg => msg.MessageTypeID === 1);
-  
+
   if (userMessages.length > 0) {
     return null;
   }
