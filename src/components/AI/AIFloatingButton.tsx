@@ -11,14 +11,21 @@ import { StateType } from '../../Models/StateTypes';
 import { useLocation } from 'react-router-dom';
 import { AIChatConfig, advisorConfig } from './chatConfig';
 
+type StyleProps = { isRTL: boolean; isAffectedPage: boolean; featureId: number; isOpen: boolean };
+
 const useStyles = makeStyles((theme) => ({
   fab: {
     position: 'fixed',
-    bottom: ({ isAffectedPage }: { isRTL: boolean; isAffectedPage: boolean }) => isAffectedPage ? '170px' : '105px',
-    left: ({ isAffectedPage, featureId }: { isRTL: boolean; isAffectedPage: boolean; featureId: number }) => {
-      if (featureId === 73) return isAffectedPage ? '10px' : '5px';
+    bottom: ({ isAffectedPage }: StyleProps) => isAffectedPage ? '170px' : '105px',
+    left: ({ isRTL, isAffectedPage, featureId }: StyleProps) => {
+      if (featureId === 73) return isRTL ? 'auto' : (isAffectedPage ? '10px' : '5px');
+      if (featureId === 69 && isRTL ) return '20px';
+      return 'auto' ;
     },
-    right: '20px',
+    right: ({ isRTL, isAffectedPage, featureId }: StyleProps) => {
+      if (featureId === 73) return isRTL ? (isAffectedPage ? '10px' : '5px') : 'auto';
+      return isRTL ? 'auto' : (isAffectedPage ? '10px' : '20px');
+    },
     width: '60px',
     height: '60px',
     border: 'solid',
@@ -26,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
     borderColor: '#FF1744',
     backgroundColor: 'transparent',
     color: 'white',
-    zIndex: 1300,
+    zIndex: ({ isOpen }: StyleProps) => isOpen ? 1297 : 1300,
     '&:hover': {
       borderColor: '#FF4569',
       backgroundColor: 'transparent',
@@ -37,17 +44,33 @@ const useStyles = makeStyles((theme) => ({
   smallIcon: {
     position: 'absolute',
     top: '-5px',
+    bottom: 'auto',
     right: '-5px',
+    left: 'auto',
     '& img': {
       position: 'absolute',
       top: '-3px',
+      bottom: 'auto',
       right: '-3px',
+      left: 'auto',
       width: '20px',
       height: '20px',
     }
   },
+  smallIconRTL69: {
+    top: 'auto',
+    bottom: '-5px',
+    right: 'auto',
+    left: '-5px',
+    '& img': {
+      top: 'auto',
+      bottom: '-3px',
+      right: 'auto',
+      left: '-3px',
+    }
+  },
   polyIcon: {
-    transform: ({ isRTL }: { isRTL: boolean; isAffectedPage: boolean; featureId: number }) => isRTL ? 'scaleX(-1)' : 'none',
+    transform: ({ isRTL }: StyleProps) => isRTL ? 'scaleX(-1)' : 'none',
   },
   '@keyframes pulse': {
     '0%': {
@@ -74,14 +97,14 @@ const AIFloatingButton: React.FC<AIFloatingButtonProps> = ({ config = advisorCon
   const { accountFeatures } = useSelector((state: StateType) => state.common);
 
   const isSupport = config.reduxSliceName === 'supportChat';
-  const { aiIconStatus } = useSelector((state: StateType) =>
+  const { aiIconStatus, isOpen } = useSelector((state: StateType) =>
     isSupport ? state.supportChat : state.aiChat
   );
   const agentIconTitle = isSupport ? t("common.polyAgentIconTitleSupport") : t("common.polyAgentIconTitle");
   const affectedPages = ['campaigns/editor', 'editor/landingpages', 'popupeditor', 'whatsapp/chat'];
   const pathname = location.pathname.toLowerCase();
   const isAffectedPage = affectedPages.some(page => pathname.includes(page));
-  const classes = useStyles({ isRTL, isAffectedPage, featureId: config.featureId });
+  const classes = useStyles({ isRTL, isAffectedPage, featureId: config.featureId, isOpen });
 
   const handleToggleChat = () => {
     if (isSupport) {
@@ -102,7 +125,7 @@ const AIFloatingButton: React.FC<AIFloatingButtonProps> = ({ config = advisorCon
       open
     >
       <Fab className={classes.fab} onClick={handleToggleChat}>
-        <div className={classes.smallIcon}>
+        <div className={`${classes.smallIcon}${config.featureId === 69 && isRTL ? ` ${classes.smallIconRTL69}` : ''}`}>
           {aiIconStatus === 0 ? (
             <img src={AIImage} alt="AI status" />
           ) : aiIconStatus === 1 ? (

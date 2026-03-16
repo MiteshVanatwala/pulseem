@@ -879,8 +879,8 @@
   "selectFile": "Select file",
   "contactUs": "Contact Us",
   "currency": "Currency",
-  "polyAgentIconTitle": "Hi, I'm Pulsy, your smart AI agent",
-  "polyAgentIconTitleSupport": "Hi, I'm Pulsy, your Support AI agent",
+  "polyAgentIconTitle": "Hi, I'm Pulsy, your smart AI Analyst ",
+  "polyAgentIconTitleSupport": "Hi, I'm Pulsy, your support AI Agent",
   "polyAgentIconTitleMarquee": "Hi! I'm Pulsy, What would you like to improve today?",
   "agentPlaceholder": "Ask me something... (like: \"What are my campaign performance?\") Write freely...",
   "agentPlaceholderSupport": "Ask me anything about Pulseem...(e.g. \"How do I send an SMS?\"). Type freely",
@@ -957,6 +957,7 @@
       "news": "News"
     }
   },
+  "saveColumnStructureAsDefault": "Save this column structure as a default",
   "activeTierSubscription": "Account already has an active email tier subscription.",
   "Submit": "Submit",
   "customPackageQuote": "Don't send every month? For a custom package quote",
@@ -968,8 +969,11 @@
   "cancelPlan": "Cancel Plan",
   "cancelPlanConfirmation": "Are you sure you want to cancel your current plan?",
   "planCancellationRequestSubmitted": "Your plan cancellation request has been submitted successfully.",
-  "nonPolishNumber": "You can not send SMS from non-polish number. Please set a polish number.",
-  "saveColumnStructureAsDefault": "Save this column structure as a default",
+  "nonPolishNumber": "You can not send SMS from non-polish number. Please set a polish number.", 
+   "domainVerificationRequired": "Domain is not verified",
+  "settingsSavedSuccessfuly": "Settings successfuly saved!",
+  "typeFromName": "Type From Name",
+  "typeSubject": "Type Subject",
   "manageAgent": "Manage Agent",
   "clearAllFilters": "Clear all filters"
 }
