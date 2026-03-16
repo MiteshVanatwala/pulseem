@@ -75,6 +75,5 @@ export type StateType = {
     billing: any;
     linksClicksReportSlice: any;
     aiChat: AiChatState;
-    supportChat: AiChatState;
     Ai: any;
 };
