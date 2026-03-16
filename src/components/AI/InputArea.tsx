@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Box, TextField, IconButton, Checkbox, FormControlLabel } from '@material-ui/core';
+import { Box, TextField, IconButton, Checkbox, FormControlLabel, Button } from '@material-ui/core';
 import { Send as SendIcon } from '@material-ui/icons';
 import { makeStyles } from '@material-ui/core/styles';
 import { addMessage, addUserMessage, setAIIconStatus } from '../../redux/reducers/aiChatSlice';
+import { addSupportMessage, addSupportUserMessage, setSupportAIIconStatus, startNewSupportSession } from '../../redux/reducers/supportChatSlice';
 import { StateType } from '../../Models/StateTypes';
 import { v4 as uuidv4 } from 'uuid';
 import { useTranslation } from 'react-i18next';
+import { AIChatConfig, advisorConfig } from './chatConfig';
 
 const useStyles = makeStyles((theme) => ({
   inputArea: {
@@ -44,7 +46,7 @@ const useStyles = makeStyles((theme) => ({
         border: 'none',
     },
     '& .Mui-focused .MuiInputBase-root': {
-        boxShadow: `0 0 0 2px ${theme.palette.primary.main}40`, // 25% opacity
+        boxShadow: `0 0 0 2px ${theme.palette.primary.main}40`,
     },
   },
   characterCount: {
@@ -57,13 +59,22 @@ const useStyles = makeStyles((theme) => ({
     fontSize: '0.875rem',
     color: theme.palette.text.secondary,
   },
+  footerRow: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
 }));
 
 export interface InputAreaHandle {
   focus: () => void;
 }
 
-const InputArea: React.ForwardRefRenderFunction<InputAreaHandle, {}> = (props, ref) => {
+interface InputAreaProps {
+  config?: AIChatConfig;
+}
+
+const InputArea: React.ForwardRefRenderFunction<InputAreaHandle, InputAreaProps> = ({ config = advisorConfig }, ref) => {
   const { isRTL } = useSelector((state: any) => state.core);
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -71,7 +82,11 @@ const InputArea: React.ForwardRefRenderFunction<InputAreaHandle, {}> = (props, r
   const { t } = useTranslation();
   const [text, setText] = useState('');
   const [hideDialog, setHideDialog] = useState(false);
-  const { totalMessagesForUserCount, aiIconStatus } = useSelector((state: StateType) => state.aiChat);
+
+  const isSupport = config.reduxSliceName === 'supportChat';
+  const { totalMessagesForUserCount, aiIconStatus } = useSelector((state: StateType) =>
+    isSupport ? state.supportChat : state.aiChat
+  );
 
   useEffect(() => {
     const savedPreference = localStorage.getItem('hideAIChatDialog');
@@ -89,15 +104,27 @@ const InputArea: React.ForwardRefRenderFunction<InputAreaHandle, {}> = (props, r
   const handleSend = () => {
     const trimmedText = text.trim();
     if (trimmedText) {
-      dispatch(addUserMessage({
-        MessageID: uuidv4(),
-        MessageTimestamp: new Date().toISOString(),
-        MessageTypeID: 1,
-        ResponseTimeMs: null,
-        MessageText: trimmedText,
-      }));
-      dispatch(addMessage({ MessageText: trimmedText, MessageTypeID: 1 }));
-      dispatch(setAIIconStatus(1));
+      if (isSupport) {
+        dispatch(addSupportUserMessage({
+          MessageID: uuidv4(),
+          MessageTimestamp: new Date().toISOString(),
+          MessageTypeID: 1,
+          ResponseTimeMs: null,
+          MessageText: trimmedText,
+        }));
+        dispatch(addSupportMessage({ MessageText: trimmedText, MessageTypeID: 1 }));
+        dispatch(setSupportAIIconStatus(1));
+      } else {
+        dispatch(addUserMessage({
+          MessageID: uuidv4(),
+          MessageTimestamp: new Date().toISOString(),
+          MessageTypeID: 1,
+          ResponseTimeMs: null,
+          MessageText: trimmedText,
+        }));
+        dispatch(addMessage({ MessageText: trimmedText, MessageTypeID: 1 }));
+        dispatch(setAIIconStatus(1));
+      }
       setText('');
     }
   };
@@ -109,11 +136,19 @@ const InputArea: React.ForwardRefRenderFunction<InputAreaHandle, {}> = (props, r
     }
   };
 
+  const handleStartNewConversation = () => {
+    dispatch(startNewSupportSession());
+  };
+
   useImperativeHandle(ref, () => ({
     focus: () => {
       inputRef.current?.focus();
     }
   }));
+
+  const showCheckbox = totalMessagesForUserCount <= 0 && !isSupport;
+  const showNewConversationButton = isSupport;
+  const showFooterRow = showCheckbox || showNewConversationButton;
 
   return (
     <Box display="flex" className={classes.inputArea}>
@@ -124,10 +159,10 @@ const InputArea: React.ForwardRefRenderFunction<InputAreaHandle, {}> = (props, r
           size="small"
           fullWidth
           inputRef={inputRef}
-          placeholder={t("common.agentPlaceholder")}
+          placeholder={isSupport ? t("common.agentPlaceholderSupport") :t("common.agentPlaceholder") }
           value={text}
           onChange={(e) => {
-            if (e.target.value.length <= 500) {
+            if (e.target.value.length <= config.maxChars) {
               setText(e.target.value);
             }
           }}
@@ -136,7 +171,7 @@ const InputArea: React.ForwardRefRenderFunction<InputAreaHandle, {}> = (props, r
           maxRows={3}
           disabled={aiIconStatus === 1}
           inputProps={{
-            maxLength: 500
+            maxLength: config.maxChars
           }}
         />
         <IconButton
@@ -149,24 +184,38 @@ const InputArea: React.ForwardRefRenderFunction<InputAreaHandle, {}> = (props, r
         </IconButton>
       </Box>
       <Box className={classes.characterCount}>
-        {text.length}/{t('common.500chars')}
+        {text.length}/{config.maxChars}
       </Box>
-      {
-        totalMessagesForUserCount <= 0 && (
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={hideDialog}
-                onChange={handleHideDialogChange}
-                color="primary"
-                size="small"
-              />
-            }
-            label={t("common.doNotShowThisDialog")}
-            className={classes.checkboxLabel}
-          />
-        )
-      }
+      {showFooterRow && (
+        <Box className={classes.footerRow}>
+          {showCheckbox ? (
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={hideDialog}
+                  onChange={handleHideDialogChange}
+                  color="primary"
+                  size="small"
+                />
+              }
+              label={t("common.doNotShowThisDialog")}
+              className={classes.checkboxLabel}
+            />
+          ) : (
+            <span />
+          )}
+          {showNewConversationButton && (
+            <Button
+              size="small"
+              color="primary"
+              onClick={handleStartNewConversation}
+              disabled={aiIconStatus === 1}
+            >
+              {t("common.startNewConversation")}
+            </Button>
+          )}
+        </Box>
+      )}
     </Box>
   );
 };

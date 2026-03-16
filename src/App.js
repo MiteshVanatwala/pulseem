@@ -103,6 +103,7 @@ import PopupTriggers from './screens/Popups/DisplayRules/PopupTriggers';
 import BeeEditorPopup from './screens/Editors/BeeEditorPopup';
 import AIFloatingButton from './components/AI/AIFloatingButton';
 import AIChatWidget from './components/AI/AIChatWidget';
+import { advisorConfig, supportConfig } from './components/AI/chatConfig';
 import { getAvailablePlans, getCurrentPlan } from './redux/reducers/TiersSlice';
 import PopupSummary from './screens/Popups/PopupSummary';
 import HelpDrawer from './components/HelpDrawer';
@@ -892,8 +893,10 @@ const App = ({ screenSize }) => {
       <MuiThemeProvider theme={theme}>
         <div dir={isRTL ? 'rtl' : 'ltr'} className={classes.appBody}>
           {renderRoutesByCondition(classes, redirect)}
-          <AIFloatingButton />
-          <AIChatWidget />
+          <AIChatWidget config={advisorConfig} />
+          <AIFloatingButton config={advisorConfig} />
+          <AIChatWidget config={supportConfig} />
+          <AIFloatingButton config={supportConfig} />
           <HelpDrawer open={isOpen} onClose={() => dispatch(closeHelpDrawer())} />
         </div>
         <Loader isOpen={isLoader} showBackdrop={true} />

@@ -7,12 +7,11 @@ import clsx from 'clsx';
 import moment from 'moment';
 import { useTranslation } from 'react-i18next';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
+import { AIChatConfig, advisorConfig } from './chatConfig';
 
 const useStyles = makeStyles((theme) => ({
   messageList: {
-    // height: '50vh', // Fixed height
-    // maxHeight: 'calc(80vh - 300px)', // Maximum height 
-    maxHeight: '80vh', // Maximum height based on viewport height minus header and input area
+    maxHeight: '80vh',
     overflowY: 'auto',
     padding: theme.spacing(2),
     backgroundColor: '#ffffff',
@@ -147,26 +146,16 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const formatTime = (timestamp: string) => {
-  try {
-    // Parse the ISO timestamp and convert to local time
-    const utcDate = new Date(timestamp);
-    const localDate = new Date(utcDate.getTime() - (utcDate.getTimezoneOffset() * 60000));
-    
-    return localDate.toLocaleTimeString(undefined, {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: true
-    }).replace(/\s*(AM|PM)/, (_, meridiem) => ` ${meridiem}`);
-  } catch (error) {
-    console.error('Error formatting time:', error);
-    return '';
-  }
-};
+interface MessageListProps {
+  config?: AIChatConfig;
+}
 
-const MessageList: React.FC = () => {
+const MessageList: React.FC<MessageListProps> = ({ config = advisorConfig }) => {
   const classes = useStyles();
-  const { messages, aiIconStatus } = useSelector((state: StateType) => state.aiChat);
+  const isSupport = config.reduxSliceName === 'supportChat';
+  const { messages, aiIconStatus } = useSelector((state: StateType) =>
+    isSupport ? state.supportChat : state.aiChat
+  );
   const { language } = useSelector((state: StateType) => state.core);
   const scrollRef = useRef<HTMLDivElement>(null);
   const { t } = useTranslation();
@@ -180,11 +169,8 @@ const MessageList: React.FC = () => {
           behavior: 'smooth'
         });
       };
-      
-      // Scroll immediately when new messages are added
+
       scrollToBottom();
-      
-      // Also scroll after a short delay to handle dynamic content (like images) loading
       setTimeout(scrollToBottom, 100);
     }
   }, [messages, aiIconStatus]);
@@ -200,7 +186,7 @@ const MessageList: React.FC = () => {
             msg.MessageTypeID === 1 ? classes.userMessage : classes.aiMessage
           }`}
         >
-          <Box className={msg.MessageTypeID === 1 ?  classes.userBubbleWrapper: classes.aiBubbleWrapper}>
+          <Box className={msg.MessageTypeID === 1 ? classes.userBubbleWrapper : classes.aiBubbleWrapper}>
             <Paper
               className={`${classes.messageBubble} ${
                 msg.MessageTypeID === 1 ? classes.userBubble : classes.aiBubble
@@ -221,7 +207,6 @@ const MessageList: React.FC = () => {
               )}
               {msg.MessageTimestamp && (
                 <Typography className={clsx(classes.messageTime, msg.MessageTypeID === 1 ? classes.userMessageTime : null)}>
-                  {/* {formatTime(msg.MessageTimestamp)} */}
                   {moment(msg.MessageTimestamp)?.format('HH:mm a')}
                 </Typography>
               )}
