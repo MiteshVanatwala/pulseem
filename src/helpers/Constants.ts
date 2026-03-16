@@ -714,7 +714,9 @@ export const BASED_ON_LANG = {
     14: 'pl'
 }
 
-export const reCAPTCHAKey = "6LeJkBorAAAAAC1q2G6fGQqIr-GuqSEF3L91AsT9";
+// export const reCAPTCHAKey = "6LeJkBorAAAAAC1q2G6fGQqIr-GuqSEF3L91AsT9";
+// Note: reCAPTCHA key is now loaded from environment variable REACT_APP_RECAPTCHA_SITEKEY
+export const reCAPTCHAKey = process.env.REACT_APP_RECAPTCHA_SITEKEY || '';
 
 export const defaultAccountExtraData = [
     { "FirstName": "common.first_name" },

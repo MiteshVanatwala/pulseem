@@ -3,11 +3,18 @@ export const injectRecaptchaScript = (htmlData: string, enableRecaptcha: boolean
     return htmlData;
   }
 
+  console.log('injectRecaptchaScript called with siteKey:', siteKey);
+  console.log('HTML contains <body tag:', htmlData.includes('<body'));
+  console.log('HTML length before injection:', htmlData.length);
+
   // Add data attribute to body to mark that reCAPTCHA is enabled
   const bodyWithAttribute = htmlData.replace(
     /<body([^>]*)>/i,
     `<body$1 data-recaptcha-enabled="true" data-recaptcha-sitekey="${siteKey}">`
   );
+
+  console.log('HTML length after body attribute:', bodyWithAttribute.length);
+  console.log('Body attribute added:', bodyWithAttribute.includes('data-recaptcha-enabled'));
 
   // Add initialization script that will inject reCAPTCHA on page load
   const initScript = `

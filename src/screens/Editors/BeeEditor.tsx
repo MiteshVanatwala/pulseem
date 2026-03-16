@@ -442,6 +442,8 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
 
       if (recaptchaConfig.enabled) {
         finalHtml = injectRecaptchaScript(finalHtml, true, recaptchaConfig.siteKey);
+        console.log('reCAPTCHA script injected. Final HTML length:', finalHtml.length);
+        console.log('Script injection check - data-recaptcha-enabled present:', finalHtml.includes('data-recaptcha-enabled'));
       }
 
       //@ts-ignore
