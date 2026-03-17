@@ -6,7 +6,7 @@ interface UseThinkingPhrasesResult {
   visible: boolean;
 }
 
-const INTERVAL_MS = 2500;
+const INTERVAL_MS = 4000;
 const FADE_MS = 250;
 
 export const useThinkingPhrases = (active: boolean): UseThinkingPhrasesResult => {
