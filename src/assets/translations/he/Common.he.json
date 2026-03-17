@@ -882,7 +882,7 @@
   "welcomeMessage": "היי, קוראים לי מיטש {USERNAME}",
   "500chars": "500 תווים",
   "doNotShowThisDialog": "אל תציג בכניסה הבאה",
-  "messageDot": "מנתח את הנתונים שלך, זה יכול לקחת מספר דקות",  
+  "messageDot": "מנתח את הנתונים שלך, זה יכול לקחת מספר דקות",
   "thinkingPhrases": [
     "חופר בתיעוד...",
     "מאבחן...",
@@ -897,7 +897,7 @@
   ],
   "aiAdvisorHeader": "פולסי - יועץ שיווק 🟢 מחובר",
   "supportHeader": "פולסי - סוכן תמיכה 🟢 מחובר",
-  "supportBubbleText": "היי! אני פולסי תמיכה — איך אפשר לעזור?",
+  "supportBubbleText": "היי! אני פולסי תמיכה איך אפשר לעזור?",
   "supportPreset1": "איך מחברים את החנות שלי?",
   "supportPreset2": "איך מייבאים אנשי קשר?",
   "supportPreset3": "איך מגדירים אוטומציה?",
@@ -935,5 +935,5 @@
   "typeFromName": "הקלד שם שולח",
   "typeSubject": "הקלד נושא",
   "manageAgent": "נהל סוכן",
-  "clearAllFilters": "נקה את כל המסננים" 
+  "clearAllFilters": "נקה את כל המסננים"
 }
