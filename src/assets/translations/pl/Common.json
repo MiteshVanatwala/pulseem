@@ -880,7 +880,7 @@
   "welcomeMessage": "Hi, my name is {USERNAME}",
   "500chars": "500 znaków",
   "doNotShowThisDialog": "Nie pokazuj tego dialogu",
-  "messageDot": "Analizujemy Twoje dane, może to zająć kilka minut",  
+  "messageDot": "Analizujemy Twoje dane, może to zająć kilka minut",
   "thinkingPhrases": [
     "Investigating...",
     "Troubleshooting...",
