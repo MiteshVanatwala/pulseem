@@ -705,7 +705,7 @@ const BillingSettingsPage = ({ classes }: any) => {
                               {t('common.tier.manageCard')}
                             </Button> */}
                             {
-                              currentPlan?.Name !== 'Scale' && !packagesDetails?.Newsletters?.IsBankTransferForTiers && (
+                              currentPlan?.Name !== 'Scale' && packagesDetails?.Newsletters?.IsBankTransferForTiers && (
                                 <Button
                                   className={clsx(classes.btn, classes.btnRounded)}
                                   onClick={(e: any) => { 
@@ -1065,6 +1065,7 @@ const BillingSettingsPage = ({ classes }: any) => {
         classes={classes}
         isOpen={showTierPlans}
         onClose={() => setShowTierPlans(false)}
+        isBankTransferForTiers={!!packagesDetails?.Newsletters?.IsBankTransferForTiers}
       />}
       <BillingSettings
         classes={classes}
