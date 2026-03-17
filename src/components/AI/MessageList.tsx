@@ -8,6 +8,7 @@ import moment from 'moment';
 import { useTranslation } from 'react-i18next';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 import { AIChatConfig, advisorConfig } from './chatConfig';
+import { useThinkingPhrases } from '../../hooks/useThinkingPhrases';
 
 const useStyles = makeStyles((theme) => ({
   messageList: {
@@ -158,7 +159,8 @@ const MessageList: React.FC<MessageListProps> = ({ config = advisorConfig }) => 
   );
   const { language } = useSelector((state: StateType) => state.core);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const { t } = useTranslation();
+  const { t } = useTranslation();  
+  const { phrase, visible } = useThinkingPhrases(aiIconStatus === 1);
   moment.locale(language);
 
   useEffect(() => {
@@ -217,8 +219,11 @@ const MessageList: React.FC<MessageListProps> = ({ config = advisorConfig }) => 
       {aiIconStatus === 1 && (
         <Box className={`${classes.messageRow} ${classes.aiMessage}`}>
           <Paper className={classes.typingBubble} elevation={1}>
-            <span className={classes.messageDot}>
-              {t("common.messageDot")}
+           <span
+              className={classes.messageDot}
+              style={{ opacity: visible ? 1 : 0, transition: 'opacity 0.25s ease' }}
+            >
+              {phrase}
             </span>
             <span className={classes.typingDot} />
             <span className={classes.typingDot} />
