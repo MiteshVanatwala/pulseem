@@ -887,7 +887,7 @@
   "welcomeMessage": "Hi, my name is {USERNAME}",
   "500chars": "500 characters",
   "doNotShowThisDialog": "Do not show this dialog",
-  "messageDot": "Analyzing your data, it may take a few minutes",  
+  "messageDot": "Analyzing your data, it may take a few minutes",
   "thinkingPhrases": [
     "Investigating...",
     "Troubleshooting...",
@@ -929,7 +929,7 @@
     "tabs": {
       "support": "Support",
       "whatsNew": "What's New"
-    },
+    },  
     "helpCenter": {
       "title": "Help Center",
       "description": "Find answers, tips, and troubleshooting in our articles."
@@ -981,8 +981,8 @@
   "cancelPlan": "Cancel Plan",
   "cancelPlanConfirmation": "Are you sure you want to cancel your current plan?",
   "planCancellationRequestSubmitted": "Your plan cancellation request has been submitted successfully.",
-  "nonPolishNumber": "You can not send SMS from non-polish number. Please set a polish number.", 
-   "domainVerificationRequired": "Domain is not verified",
+  "nonPolishNumber": "You can not send SMS from non-polish number. Please set a polish number.",
+  "domainVerificationRequired": "Domain is not verified",
   "settingsSavedSuccessfuly": "Settings successfuly saved!",
   "typeFromName": "Type From Name",
   "typeSubject": "Type Subject",
