@@ -112,18 +112,20 @@ const useStyles = makeStyles((theme) => ({
   },
   typingBubble: {
     padding: theme.spacing(1, 2),
-    borderRadius: '20px',
-    backgroundColor: '#f0f0f0',
+    backgroundColor: 'transparent',
     display: 'inline-block',
+    boxShadow: 'none',
   },
   messageDot: {
     paddingInline: '5px',
+    color: '#dd2339',
+    fontSize: '1.5rem',
   },
   typingDot: {
     width: '8px',
     height: '8px',
     borderRadius: '50%',
-    backgroundColor: theme.palette.text.secondary,
+    backgroundColor: '#dd2339',
     display: 'inline-block',
     margin: '0 2px',
     animation: '$blink 1.4s infinite both',
@@ -159,7 +161,7 @@ const MessageList: React.FC<MessageListProps> = ({ config = advisorConfig }) => 
   );
   const { language } = useSelector((state: StateType) => state.core);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const { t } = useTranslation();  
+  const { t } = useTranslation();
   const { phrase, visible } = useThinkingPhrases(aiIconStatus === 1);
   moment.locale(language);
 
@@ -218,8 +220,8 @@ const MessageList: React.FC<MessageListProps> = ({ config = advisorConfig }) => 
       ))}
       {aiIconStatus === 1 && (
         <Box className={`${classes.messageRow} ${classes.aiMessage}`}>
-          <Paper className={classes.typingBubble} elevation={1}>
-           <span
+          <Paper className={classes.typingBubble} elevation={0}>
+            <span
               className={classes.messageDot}
               style={{ opacity: visible ? 1 : 0, transition: 'opacity 0.25s ease' }}
             >
