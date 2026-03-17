@@ -2,8 +2,13 @@ import useRedirect from "../../../helpers/Routes/Redirect";
 import { useSelector } from "react-redux";
 import { RedirectPropTypes } from "../../../helpers/Types/Redirect";
 import { Collapse, IconButton, List, ListItem, ListItemText, Tooltip, Typography } from "@material-ui/core";
-import { FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { FaChevronDown, FaChevronUp, FaWhatsapp } from "react-icons/fa";
+import { MdPeople, MdMarkEmailRead, MdSms, MdSettings, MdNotificationsActive, MdAssignment, MdCreate, MdAccountCircle } from "react-icons/md";
+import { BiPencil } from "react-icons/bi";
+import { FiZap, FiSmartphone } from "react-icons/fi";
+import { IoLogoWhatsapp } from "react-icons/io";
 import clsx from 'clsx';
+
 interface SidebarItemProps {
   item: any;
   isCollapsed: boolean;
@@ -32,6 +37,64 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
   const Redirect = useRedirect();
   const { isRTL } = useSelector((state: any) => state.core);
 
+  const renderIcon = () => {
+    if (item?.iconName === 'MdPeople') {
+      // @ts-ignore
+      return <MdPeople size={28} />;
+    }
+    if (item?.iconName === 'MdMarkEmailRead') {
+      // @ts-ignore
+      return <MdMarkEmailRead size={28} />;
+    }
+    if (item?.iconName === 'MdSms') {
+      // @ts-ignore
+      return <MdSms size={28} />;
+    }
+    if (item?.iconName === 'FaWhatsapp') {
+      // @ts-ignore
+      return <FaWhatsapp size={28} />;
+    }
+    if (item?.iconName === 'IoLogoWhatsapp') {
+      // @ts-ignore
+      return <IoLogoWhatsapp size={28} />;
+    }
+    if (item?.iconName === 'FiSmartphone') {
+      // @ts-ignore
+      return <FiSmartphone size={28} />;
+    }
+    if (item?.iconName === 'BiPencil') {
+      // @ts-ignore
+      return <BiPencil size={28} />;
+    }
+    if (item?.iconName === 'MdCreate') {
+      // @ts-ignore
+      return <MdCreate size={28} />;
+    }
+    if (item?.iconName === 'FiZap') {
+      // @ts-ignore
+      return <FiZap size={28} />;
+    }
+    if (item?.iconName === 'MdSettings') {
+      // @ts-ignore
+      return <MdSettings size={28} />;
+    }
+    if (item?.iconName === 'MdNotificationsActive') {
+      // @ts-ignore
+      return <MdNotificationsActive size={28} />;
+    }
+    if (item?.iconName === 'MdAssignment') {
+      // @ts-ignore
+      return <MdAssignment size={28} />;
+    }
+    if (item?.iconName === 'MdAccountCircle') {
+      // @ts-ignore
+      return <MdAccountCircle size={28} />;
+    }
+    return null;
+  };
+
+  const iconElement = renderIcon();
+
   const handleClick = (e: React.MouseEvent, isCollapseAction: boolean = false) => {
     e.preventDefault();
     e.stopPropagation();
@@ -56,8 +119,6 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
         }
       }
     }
-
-
   };
 
   const hasSubmenu = item.options && item.options.length > 0;
@@ -71,16 +132,24 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
       }}
       onClick={((e: React.MouseEvent) => { handleClick(e, false) })}
     >
-      {(item?.iconUnicode || item?.icon) && <Typography
-        onClick={((e: React.MouseEvent) => { handleClick(e, false) })}
-        className={clsx(classes.phoneAppBarItemIcon, classes.sidebarItemIcon)}>
-        {item?.iconUnicode || item?.icon}
-      </Typography>}
+      {(item?.iconUnicode || item?.icon || item?.iconName) && (
+        iconElement ? (
+          <div className={clsx(classes.phoneAppBarItemIcon, classes.sidebarItemIcon)} onClick={((e: React.MouseEvent) => { handleClick(e, false) })}>
+            {iconElement}
+          </div>
+        ) : (
+          <Typography
+            onClick={((e: React.MouseEvent) => { handleClick(e, false) })}
+            className={clsx(classes.phoneAppBarItemIcon, classes.sidebarItemIcon)}>
+            {item?.iconUnicode || item?.icon}
+          </Typography>
+        )
+      )}
       {!isCollapsed && (
         <>
           <ListItemText
             onClick={((e: React.MouseEvent) => { handleClick(e, false) })}
-            style={{ paddingInlineStart: !item.iconUnicode && !item.icon ? 5 : 0 }}
+            style={{ paddingInlineStart: !item.iconUnicode && !item.icon && !item.iconName ? 5 : 0 }}
             primary={item.title}
             className={classes.sidebarItemText}
           />
@@ -88,6 +157,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
             <IconButton
               onClick={((e: React.MouseEvent) => { handleClick(e, true) })}
               size="small" style={{ color: '#ffffff', width: 30, height: 30 }}>
+              {/* @ts-ignore */}
               {showSubmenu ? <FaChevronUp /> : <FaChevronDown />}
             </IconButton>
           )}

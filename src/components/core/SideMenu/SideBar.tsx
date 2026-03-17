@@ -7,7 +7,7 @@ import useRedirect from '../../../helpers/Routes/Redirect';
 import PulseemNewLogo from '../../../assets/images/PulseemNewLogo';
 import { RedirectPropTypes } from '../../../helpers/Types/Redirect';
 import { setCookie, getCookie } from '../../../helpers/Functions/cookies';
-import { getRoutes } from '../../../helpers/Routes/routes';
+import { getRoutes, getSettingsItem } from '../../../helpers/Routes/routes';
 import { FaTimes, FaChevronLeft, FaChevronRight, } from 'react-icons/fa';
 import { Drawer, IconButton, Button, List } from '@material-ui/core';
 import { SidebarProps } from '../../../Models/SideMenuBar/SideMenuBarModel';
@@ -29,7 +29,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
     isRTL,
     imageURL,
     isClal,
-    userRoles
+    userRoles,
+    isAdmin,
+    isAllowSwitchAccount
   } = useSelector((state: any) => state.core);
 
   const {
@@ -72,6 +74,23 @@ export const Sidebar: React.FC<SidebarProps> = ({
     userRoles,
     isGlobal && IsPoland
   );
+
+  const settingsMenu = getSettingsItem(
+    t,
+    '',
+    isAllowSwitchAccount,
+    t('Settings'),
+    isRTL,
+    accountSettings,
+    accountFeatures,
+    isAdmin,
+    userRoles
+  );
+
+  // Add icon to settings menu
+  if (settingsMenu) {
+    (settingsMenu as any).iconName = 'MdAccountCircle';
+  }
 
   useEffect(() => {
     if (settingsLoaded && currentPage && routes.length > 0) {
@@ -171,10 +190,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
           className={classes.toggleButton}
         >
           {isMobile ? (
+            // @ts-ignore
             <FaTimes />
           ) : isCollapsed ? (
+            // @ts-ignore
             isRTL ? <FaChevronLeft /> : <FaChevronRight />
           ) : (
+            // @ts-ignore
             isRTL ? <FaChevronRight /> : <FaChevronLeft />
           )}
         </IconButton>
@@ -202,6 +224,25 @@ export const Sidebar: React.FC<SidebarProps> = ({
             )}
           </List>
         </nav>
+      </div>
+
+      {/* Sticky Footer - My Account */}
+      <div className={classes.sidebarFooter}>
+        <List>
+          {settingsLoaded && settingsMenu && (
+            <SidebarItem
+              key={settingsMenu.key}
+              item={settingsMenu}
+              isCollapsed={isCollapsed && !isMobile}
+              isActive={settingsMenu.key === currentPage}
+              classes={classes}
+              currentPage={currentPage}
+              subPage={subPage}
+              showSubmenu={openMenus[settingsMenu.key]}
+              toggleSubmenu={() => toggleSubmenu(settingsMenu.key)}
+            />
+          )}
+        </List>
       </div>
     </Drawer>
   );

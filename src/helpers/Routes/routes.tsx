@@ -24,7 +24,6 @@ import { sitePrefix, isProdMode } from "../../config";
 import { WhatsappIcon } from '../../assets/images/drawer/index';
 import { PulseemFeatures } from '../../model/PulseemFields/Fields';
 import { WhiteLabelObject } from '../../components/WhiteLabel/WhiteLabelMigrate';
-import { MdOutlineWhatsapp } from 'react-icons/md';
 import { UserRoles } from '../../Models/SubUser/SubUsers';
 // export const rootDomain = !isProdMode ? 'http://localhost:58123' : '/Pulseem/';
 export const rootDomain = '/Pulseem';
@@ -87,7 +86,7 @@ export const getRoutes = (
       iconUnicode: "\ue0d5",
       href: `${sitePrefix}groups`,
       isShow: true,
-      icon: <img alt="Groups" src={GroupsIcon} />,
+      iconName: 'MdPeople',
       options: [
         {
           key: "groupManagement",
@@ -139,7 +138,7 @@ export const getRoutes = (
       iconUnicode: "\ue0a1",
       href: `${sitePrefix}Campaigns`,
       isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount,
-      icon: <img alt="Newsletter" src={NewsletterIcon} />,
+      iconName: 'MdMarkEmailRead',
       options: [
         {
           key: "newsletterInfo",
@@ -210,7 +209,7 @@ export const getRoutes = (
         features !== null &&
         features.indexOf("7") > -1 &&
         !accountSettings?.SubAccountSettings?.IsTokenAccount,
-      icon: <img alt="Sms" src={SmsIcon} />,
+      iconName: 'MdSms',
       options: [
         {
           key: "create",
@@ -250,7 +249,7 @@ export const getRoutes = (
       key: 'whatsapp',
       title: 'Whatsapp',
       pageTitle: t('whatsapp.Title'),
-      iconUnicode: <MdOutlineWhatsapp style={{ width: 30, height: 30, justifyContent: 'center' }} />,
+      iconName: 'IoLogoWhatsapp',
       href: whatsappRoutes.CAMPAIGN_MANAGEMENT,
       isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount,
       // icon: <WhatsappIcon className='header-whatsapp-icon' />,
@@ -300,7 +299,7 @@ export const getRoutes = (
       iconUnicode: "\ue09d",
       href: `${sitePrefix}EditRegistrationPage`,
       isShow: true,
-      icon: <img alt="Landing Pages" src={LandingPageIcon} />,
+      iconName: 'MdCreate',
       options: [
         {
           key: "createLandingPage",
@@ -338,7 +337,7 @@ export const getRoutes = (
       iconUnicode: "\ue087",
       href: `${sitePrefix}Automations`,
       isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount,
-      icon: <img alt="Automations" src={AutomationsIcon} />,
+      iconName: 'MdSettings',
       options: [
         {
           title: t("master.createTemplate"),
@@ -376,7 +375,7 @@ export const getRoutes = (
         features !== null &&
         features.indexOf("35") > -1 &&
         !accountSettings?.SubAccountSettings?.IsTokenAccount,
-      icon: <img alt="Notifications" src={NotificationsIcon} />,
+      iconName: 'MdNotificationsActive',
       options: [
         {
           key: "createNotification",
@@ -399,7 +398,7 @@ export const getRoutes = (
       iconUnicode: "\ue049",
       href: `${sitePrefix}Reports/NewsletterReports`,
       isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount,
-      icon: <img alt="Reports" src={ReportsIcon} />,
+      iconName: 'MdAssignment',
       options: [
         { title: t('master.clalCollage'), href: `${rootDomain}/ClalReport.aspx?fromreact=true`, isShow: (isClalAccount === 'true' || isClalAccount === true) },
         { key: "newsletterReport", title: t('master.RadMenuItemResource13.Text'), href: `${sitePrefix}reports/NewsletterReports`, isShow: true },
