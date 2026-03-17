@@ -15,7 +15,6 @@ import {
     getPreviousCampaignData,
     getPreviousLandingData,
     getAccountExtraData,
-    getCreditsforSMS,
     getTestGroups,
     getSMSVirtualNumber
 } from "../../redux/reducers/smsSlice";
@@ -29,9 +28,9 @@ import { AiOutlineExclamationCircle, AiOutlinePlusCircle, AiOutlineFile } from "
 import clsx from "clsx";
 import { Loader } from "../Loader/Loader";
 import EmojiPicker from "../Emojis/EmojiPicker";
-import debounce from 'lodash.debounce';
 import { PulseemFeatures } from "../../model/PulseemFields/Fields";
 import { IoIosArrowDown } from "react-icons/io";
+import { computeCreditsForSms } from "../../helpers/Utils/SmsCreditsHelper";
 
 const useStyles = makeStyles((theme) => ({
     customWidth: {
@@ -101,7 +100,7 @@ const Editorbox = ({
         previousLandingData,
         previousCampaignData,
     } = useSelector((state) => state.sms);
-    const { accountSettings, accountFeatures } = useSelector(state => state.common);
+    const { accountSettings, accountFeatures, smsConfig } = useSelector(state => state.common);
     const [dialogType, setDialogType] = useState(null)
     const [alignment, setAlignment] = useState('right');
     const [editmenuClick, seteditmenuClick] = useState(false);
@@ -212,8 +211,7 @@ const Editorbox = ({
     }, [smsModel, isSiteTracking, isLinksStatistics])
 
     useEffect(() => {
-        debouncedCallback(characterCount)
-        //getcredits(characterCount);
+        getcredits(characterCount);
     }, [characterCount])
 
     const handleSmsModelChange = (name, value) => {
@@ -329,21 +327,12 @@ const Editorbox = ({
         }
     }
 
-
     const getcredits = (count) => {
-        dispatch(getCreditsforSMS(count)).then((res) => {
-            let credits = res.payload?.split("#");
-            if (credits && credits !== '') {
-                setmessageCount(credits[0]);
-                handleSmsModelChange("CreditsPerSms", credits[0]);
-            }
-            else {
-                setmessageCount(0);
-                handleSmsModelChange("CreditsPerSms", 0);
-            }
-        });
-    }
-    const debouncedCallback = debounce(getcredits, 100);
+        const total = computeCreditsForSms(count, smsConfig);
+        setmessageCount(total);
+        handleSmsModelChange('CreditsPerSms', total);
+    };
+
     const onAddText = (text) => {
         text = text.trim();
         let afterUpdateCharCount =

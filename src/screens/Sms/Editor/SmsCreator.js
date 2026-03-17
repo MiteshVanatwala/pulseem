@@ -64,6 +64,7 @@ import { TierFeatures, URL_REGEX } from "../../../helpers/Constants";
 import { findPlanByFeatureCode } from "../../../redux/reducers/TiersSlice";
 import TierPlans from "../../../components/TierPlans/TierPlans";
 import { get } from "lodash";
+import { computeCreditsForSms } from "../../../helpers/Utils/SmsCreditsHelper";
 
 const useStyles = makeStyles((theme) => ({
   customWidth: {
@@ -109,37 +110,6 @@ const defaultAccountExtraData = [
   { "State": "common.state" },
   { "Zip": "common.zip" }
 ];
-
-
-export const computeCreditsForSms = (count, smsConfig) => {
-  if (!count || count === 0) return 0;
-
-  const countryStr = (smsConfig?.Country ?? '').toLowerCase();
-  const smsLength = smsConfig?.SmsLength ?? null;
-  const provider = smsConfig?.SMSProvider ?? 8; // default Pelephone
-
-  let firstMsgLength = 70;
-  let secondMsgLength = 67;
-
-  // Only Mexico with CardboardFish(2) or SilverStreet(7) changes lengths
-  if (countryStr === 'mx' && (provider === 2 || provider === 7)) {
-    firstMsgLength = 160;
-    secondMsgLength = 160;
-  }
-
-  // mirrors: if (!messageLength.HasValue) messageLength = -1
-  const messageLength = smsLength == null ? -1 : smsLength;
-
-  let total = 1;
-  if (messageLength === -1) {
-    if (count > firstMsgLength) total = Math.ceil(count / secondMsgLength);
-  } else {
-    if (count > messageLength) total = Math.ceil(count / messageLength);
-  }
-
-  return total;
-};
-
 
 const SmsCreator = ({ classes }) => {
   const { t } = useTranslation();
@@ -381,7 +351,7 @@ const SmsCreator = ({ classes }) => {
     handleSmsModelChange('CreditsPerSms', total);
     setButtonsDisabled(false);
   };
-
+  
 
   const handleSmsModelChange = (name, value) => {
     setSmsModel(prevState => ({
