@@ -85,6 +85,9 @@ export interface LandingPageModel {
     IsNewEditor: boolean | any | never;
     WebformsToReportLeadByApi: WebformsToReportLeadByApi[] | any | never;
     CloseButtonHtml?: string;
+    enableRecaptcha?: boolean;
+    recaptchaVersion?: string;
+    recaptchaSiteKey?: string;
 }
 
 export interface BeeEditorModel {

@@ -407,6 +407,9 @@
   "addEmailAddress": "Dodaj Adres Email",
   "duplicateEmailConfirmation": "Wyślij Podwójną Zgodę (Double Opt-In)",
   "linkPreviewTooltip": "Wybierz, jak będzie wyglądał podgląd linku do Twojej strony docelowej",
+  "popupProperties": "PopupTriggers.popupProperties",
+  "closePopupButton": "PopupTriggers.closePopupButton",
+  "confirmExitPopup": "PopupTriggers.confirmExitPopup",
   "confirmExit": "Czy chcesz zapisać stronę docelową przed wyjściem?",
   "handleExitTitle": "Opuść Stronę Docelową",
   "landingPageNotFound": "Nie znaleziono Strony Docelowej",
@@ -541,5 +544,13 @@
       "embed": "Osadź",
       "embedMessage": "Skopiuj i wklej ten kod na swoją stronę:"
     }
-  }
+  },
+  "enableRecaptcha": "Włącz reCAPTCHA",
+  "recaptchaVersion": "Wersja reCAPTCHA",
+  "recaptchaVersionLabel": "Wybierz wersję",
+  "recaptchaSiteKey": "Klucz witryny",
+  "recaptchaSiteKeyPlaceholder": "Twój klucz witryny reCAPTCHA",
+  "recaptchaV3": "v3 (Niewidoczny)",
+  "recaptchaV2Checkbox": "v2 (Pole wyboru)",
+  "recaptchaV2Invisible": "v2 (Niewidoczny)"
 }
