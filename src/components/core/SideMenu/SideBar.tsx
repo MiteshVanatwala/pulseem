@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import SidebarItem from './SideBarItem';
 import { useTranslation } from "react-i18next";
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import useRedirect from '../../../helpers/Routes/Redirect';
 import PulseemNewLogo from '../../../assets/images/PulseemNewLogo';
@@ -9,9 +9,12 @@ import { RedirectPropTypes } from '../../../helpers/Types/Redirect';
 import { setCookie, getCookie } from '../../../helpers/Functions/cookies';
 import { getRoutes, getSettingsItem } from '../../../helpers/Routes/routes';
 import { FaTimes, FaChevronLeft, FaChevronRight, } from 'react-icons/fa';
-import { Drawer, IconButton, Button, List } from '@material-ui/core';
+import { Drawer, IconButton, Button, List, Box, Popper, Paper, MenuItem, MenuList, ClickAwayListener } from '@material-ui/core';
 import { SidebarProps } from '../../../Models/SideMenuBar/SideMenuBarModel';
-import { setIsDrawerOpen } from '../../../redux/reducers/coreSlice';
+import { setIsDrawerOpen, setLanguage } from '../../../redux/reducers/coreSlice';
+import NotificationBell from '../../NotificationBell/NotificationBell';
+import { BsGlobe2 } from 'react-icons/bs';
+import i18n from '../../../i18n';
 
 export const Sidebar: React.FC<SidebarProps> = ({
   currentPage = '',
@@ -34,6 +37,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
     isAllowSwitchAccount
   } = useSelector((state: any) => state.core);
 
+  const { username } = useSelector((state: any) => state.user);
+
   const {
     accountSettings,
     accountFeatures,
@@ -44,6 +49,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const [isCollapsed, setIsCollapsed] = useState(externalIsCollapsed);
   const [openMenus, setOpenMenus] = useState<{ [key: string]: boolean }>({});
   const [settingsLoaded, setSettingsLoaded] = useState(false);
+  const [languageMenuOpen, setLanguageMenuOpen] = useState(false);
+  const languageButtonRef = useRef(null);
 
   useEffect(() => {
     if (accountSettings && accountSettings !== '') {
@@ -75,11 +82,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
     isGlobal && IsPoland
   );
 
+  const displayUsername = username && username.length > 20 ? `${username.slice(0, 20)}...` : username;
+
   const settingsMenu = getSettingsItem(
     t,
     '',
     isAllowSwitchAccount,
-    t('Settings'),
+    displayUsername || t('Settings'),
     isRTL,
     accountSettings,
     accountFeatures,
@@ -120,6 +129,23 @@ export const Sidebar: React.FC<SidebarProps> = ({
       setCookie('sidebarOpenMenus', JSON.stringify(updated));
       return updated;
     });
+  };
+
+  const handleIconClick = (key: string) => {
+    if (isCollapsed && !isMobile) {
+      // If sidebar is collapsed, expand it and open the specific menu
+      setIsCollapsed(false);
+      setCookie('SidebarCollapsed', 'false', 365);
+      
+      // Open the specific menu
+      setOpenMenus((prev) => {
+        const updated = { ...prev, [key]: true };
+        setCookie('sidebarOpenMenus', JSON.stringify(updated));
+        return updated;
+      });
+      
+      dispatch(setIsDrawerOpen(true));
+    }
   };
 
   const findParentKey = (
@@ -219,6 +245,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   subPage={subPage}
                   showSubmenu={openMenus[route.key || `route-${index}`]}
                   toggleSubmenu={() => toggleSubmenu(route.key || `route-${index}`)}
+                  onIconClick={() => handleIconClick(route.key || `route-${index}`)}
                 />
               )
             )}
@@ -226,24 +253,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </nav>
       </div>
 
-      {/* Sticky Footer - My Account */}
-      <div className={classes.sidebarFooter}>
-        <List>
-          {settingsLoaded && settingsMenu && (
-            <SidebarItem
-              key={settingsMenu.key}
-              item={settingsMenu}
-              isCollapsed={isCollapsed && !isMobile}
-              isActive={settingsMenu.key === currentPage}
-              classes={classes}
-              currentPage={currentPage}
-              subPage={subPage}
-              showSubmenu={openMenus[settingsMenu.key]}
-              toggleSubmenu={() => toggleSubmenu(settingsMenu.key)}
-            />
-          )}
-        </List>
-      </div>
     </Drawer>
   );
 };

@@ -74,7 +74,8 @@ export const sideMenuStyle = (windowSize, isRTL, theme) => ({
     padding: theme.spacing(1, 0),
   },
   sidebarItem: {
-    margin: 0,
+    margin: '6px 4px',
+    margintop: '4px',
     paddingInlineStart: 5,
     paddingInlineEnd: 5,
     borderRadius: 0,

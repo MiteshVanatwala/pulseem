@@ -4970,9 +4970,72 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       fontSize: '14px'
     }
   },
+  // Desktop TopMenu styles - white background
   topMenu: {
-    marginBlock: 15,
     display: 'flex',
-    gap: 25
+    gap: 15,
+    paddingBottom: 5,
+    paddingTop: 10,
+    marginRight: 20,
+    marginBottom: 0,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    backgroundColor: '#fff !important',
+    background: '#fff !important',
+    position: 'relative',
+    zIndex: 1,
+    minHeight: 40,
+    '& > *': {
+      flexShrink: 0,
+      minWidth: 'auto'
+    }
+  },
+  
+  // Mobile TopMenu styles
+  mobileTopMenu: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 56,
+    backgroundColor: '#fff',
+    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+    display: 'flex',
+    alignItems: 'center',
+    padding: '0 16px',
+    zIndex: 1200,
+    justifyContent: 'space-between',
+    marginBlock: 0,
+    gap: 8
+  },
+  
+  mobileHamburgerButton: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 40,
+    height: 40,
+    backgroundColor: 'transparent',
+    border: 'none',
+    cursor: 'pointer',
+    borderRadius: 4,
+    '&:hover': {
+      backgroundColor: 'rgba(0,0,0,0.04)'
+    }
+  },
+  
+  mobileRightItems: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 8
+  },
+  
+  desktopRightItems: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 15,
+    '& > *': {
+      flexShrink: 0
+    }
   }
 });

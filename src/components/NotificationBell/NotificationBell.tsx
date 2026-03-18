@@ -68,6 +68,7 @@ const NotificationBell = ({ classes }: any) => {
           return (
             <Box className={clsx(classes.justifyCenterOfCenter, classes.spaceBetween)}>
               <Box className={classes.dFlex} style={{ alignItems: 'center' }}>
+                {/* @ts-expect-error */}
                 <AiOutlineCloudDownload className={classes.notifyIcon} />
                 <Typography className={classes.font14}>
                   {RenderHtml(t('notifications.fileReadyForDownload').replace('##FileName##', `${option.TargetName}`))}
@@ -96,6 +97,7 @@ const NotificationBell = ({ classes }: any) => {
         }
         case NotifyCenterType.Unsubscribe: {
           return <Box className={classes.dFlex} style={{ alignItems: 'center' }}>
+            {/* @ts-expect-error */}
             <IoMdRemoveCircleOutline className={classes.notifyIcon} />
             <Typography className={classes.font14}>
               {RenderHtml(t('notifications.recipientsRemoved').replace('##Name##', `${option.TargetName}`))}
@@ -104,6 +106,7 @@ const NotificationBell = ({ classes }: any) => {
         }
         case NotifyCenterType.UploadRecipient: {
           return <Box className={classes.dFlex} style={{ alignItems: 'center' }}>
+            {/* @ts-expect-error */}
             <AiOutlineCloudUpload className={classes.notifyIcon} />
             <Typography className={classes.font14}>{RenderHtml(t('notifications.recipientsUploaded').replace('##Name##', `${option.TargetName}`))}</Typography>
           </Box>
@@ -116,7 +119,9 @@ const NotificationBell = ({ classes }: any) => {
               <Box className={classes.dFlex} style={{ alignItems: 'center' }}>
                 {
                   option.NotifyCenterTypeID === NotifyCenterType.TemplateStatusApproved
+                    // @ts-ignore
                     ? <AiOutlineCheckCircle className={classes.notifyIcon} />
+                    // @ts-ignore
                     : <AiOutlineCloseCircle className={classes.notifyIcon} />
                 }
                 <Typography className={classes.font14}>{RenderHtml(t(option.NotifyCenterTypeID === NotifyCenterType.TemplateStatusApproved ? 'whatsapp.templateApproved' : 'whatsapp.templateDeclined').replace('##Name##', `${templateDetils[0] || ''}`))}</Typography>
@@ -216,12 +221,13 @@ const NotificationBell = ({ classes }: any) => {
               toggleDisplayNotifications(!displayNotifications);
               if (unreadMessages > 0) dispatch(markNotificationsAsRead())
             }}
-            style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', fontSize: 23, paddingTop: 2 }}
+            style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', fontSize: 23, color: '#000000' }}
           >
+            {/* @ts-expect-error */}
             <FaBell />
           </div>
         </Badge>
-        <Popper open={displayNotifications} anchorEl={notificationIconRef.current} role={undefined} placement={'bottom-start'} disablePortal className={classes.notificationUpdateContainerPopper}>
+        <Popper open={displayNotifications} anchorEl={notificationIconRef.current} role={undefined} placement={'right-start'} disablePortal={true} className={classes.notificationUpdateContainerPopper} style={{ zIndex: 1400 }}>
           <div className={clsx(classes.notificationUpdateContainer, classes.paddingSides15, classes.pt10)} style={{ direction: isRTL ? 'rtl' : 'ltr', textAlign: isRTL ? 'right' : 'left' }}>
             <div className={clsx(classes.bold)} style={{ textAlign: isRTL ? 'right' : 'left' }}>
               {t('notifications.notifyCenterTitle')}

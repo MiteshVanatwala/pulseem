@@ -1158,7 +1158,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   contactUs: {
     fontSize: 12,
-    marginTop: 20,
+    marginTop: 30,
   },
   verifyLink: {
     paddingInlineStart: 5,

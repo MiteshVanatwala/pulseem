@@ -137,16 +137,16 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
         subPage={subPage}
       />
       <main className={getContentClasses()}>
-        {windowSize === 'xs' && <TopAppBar
-          classes={externalClasses}
-          currentPage={currentPage}
-          showAppBar={showAppBar}
-          onMenuToggle={handleSidebarToggle}
-          isSidebarOpen={isSidebarOpen}
-        />}
-
-        <div className={classes.contentContainer} style={{ paddingTop: 0 }}>
-          {children}
+        <div className={classes.contentContainer} style={{ 
+          marginTop: isMobile ? 56 : 0 
+        }}>
+          {/* Pass the toggle function to children via React.cloneElement */}
+          {React.Children.map(children, child => {
+            if (React.isValidElement(child) && typeof child.type === 'function' && child.type.name === 'TopMenu') {
+              return React.cloneElement(child, { onMenuToggle: handleSidebarToggle });
+            }
+            return child;
+          })}
         </div>
       </main>
     </div>

@@ -20,6 +20,7 @@ interface SidebarItemProps {
   toggleSubmenu?: () => void;
   currentPage: any;
   subPage: any;
+  onIconClick?: () => void;
 }
 
 const SidebarItem: React.FC<SidebarItemProps> = ({
@@ -32,7 +33,8 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
   showSubmenu = false,
   toggleSubmenu,
   currentPage,
-  subPage
+  subPage,
+  onIconClick
 }) => {
   const Redirect = useRedirect();
   const { isRTL } = useSelector((state: any) => state.core);
@@ -121,6 +123,17 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
     }
   };
 
+  const handleIconClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (isCollapsed && onIconClick) {
+      onIconClick();
+    } else {
+      handleClick(e, false);
+    }
+  };
+
   const hasSubmenu = item.options && item.options.length > 0;
 
   const itemContent = (
@@ -134,12 +147,12 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
     >
       {(item?.iconUnicode || item?.icon || item?.iconName) && (
         iconElement ? (
-          <div className={clsx(classes.phoneAppBarItemIcon, classes.sidebarItemIcon)} onClick={((e: React.MouseEvent) => { handleClick(e, false) })}>
+          <div className={clsx(classes.phoneAppBarItemIcon, classes.sidebarItemIcon)} onClick={handleIconClick}>
             {iconElement}
           </div>
         ) : (
           <Typography
-            onClick={((e: React.MouseEvent) => { handleClick(e, false) })}
+            onClick={handleIconClick}
             className={clsx(classes.phoneAppBarItemIcon, classes.sidebarItemIcon)}>
             {item?.iconUnicode || item?.icon}
           </Typography>
@@ -200,6 +213,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
                     option.onClick();
                   }
                 }}
+                onIconClick={onIconClick}
               />
             ))}
           </List>
