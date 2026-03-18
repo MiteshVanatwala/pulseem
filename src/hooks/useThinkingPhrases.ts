@@ -13,7 +13,7 @@ export const useThinkingPhrases = (active: boolean): UseThinkingPhrasesResult =>
   const { t } = useTranslation();
   const phrases = t('common.thinkingPhrases', { returnObjects: true }) as string[];
 
-  const [phraseIndex, setPhraseIndex] = useState(0);
+  const [phraseIndex, setPhraseIndex] = useState(() => Math.floor(Math.random() * phrases.length));
   const [visible, setVisible] = useState(true);
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -23,7 +23,7 @@ export const useThinkingPhrases = (active: boolean): UseThinkingPhrasesResult =>
     if (!active) {
       if (intervalRef.current) clearInterval(intervalRef.current);
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
-      setPhraseIndex(0);
+      setPhraseIndex(Math.floor(Math.random() * phrases.length));
       setVisible(true);
       return;
     }
