@@ -27,6 +27,8 @@ const VerificationDialog = ({
     onClose,
     variant = 'email',
     step = 0, value,
+    onSenderSelect = undefined,
+    showSelect = false,
     ...props }) => {
     const dispatch = useDispatch();
     const { isRTL } = useSelector(state => state.core);
@@ -47,8 +49,11 @@ const VerificationDialog = ({
     const [showConfirmDelete, setShowConfirmDelete] = useState(false);
     const [deleteValue, setDeleteValue] = useState(null);
     const [verificationSuccess, setVerificationSuccess] = useState(false);
+    const [senderNames, setSenderNames] = useState([]);    
+
     let trials = localStorage.getItem('verificationTrial') ? Number(localStorage.getItem('verificationTrial')) : 0
     const SLIDE_HEIGHTS = [25, 20, 20, 20, 20];
+    const isIsraeliPhoneNumber = (val) => /^(\+972|972|0)5\d{8}$/.test(val);
 
     useEffect(() => {
         setDeleteValue(null);
@@ -65,10 +70,20 @@ const VerificationDialog = ({
             }
             case "sms": {
                 const handleVerificationDialog = async () => {
-                    await dispatch(getAuthorizeNumbers());
+                    const result = await dispatch(getAuthorizeNumbers());
+                    const numbers = result.payload || [];
+                    const nonIsraeliSenders = numbers
+                        .filter(n => !isIsraeliPhoneNumber(n.Number))
+                        .map(n => ({
+                            ID: n.ID,
+                            SenderName: n.Number,
+                            RequestDate: n.CreateDate,
+                            Status: n.IsOptIn ? 0 : 1,
+                        }));
+                    setSenderNames(nonIsraeliSenders);
                     setShowLoader(false);
                 }
-                handleVerificationDialog()
+                handleVerificationDialog();
                 break;
             }
             case "emailTFA": {
@@ -134,6 +149,7 @@ const VerificationDialog = ({
         setAuthorizedTypeDisabled(false);
         variant === 'email' && dispatch(getAuthorizedEmails());
         variant === 'sms' && dispatch(getAuthorizeNumbers());
+        variant === 'sms' && setSenderNames([]);
         variant === 'emailTFA' && dispatch(getTwoFactorAuthValues(1));
         variant === 'smsTFA' && dispatch(getTwoFactorAuthValues(2));
 
@@ -170,6 +186,18 @@ const VerificationDialog = ({
             console.log(e);
         }
     }
+
+    const handleSubmitAlphabeticalSender = async () => {
+        setShowLoader(true);
+        const res = await dispatch(sendVerificationCode({ number: selectedVerificationContact }));
+        setShowLoader(false);
+
+        if (res?.payload) {
+            setVerificationStep(4);
+        } else {
+            setVerificationError({ Number: t('common.ErrorOccured') });
+        }
+    };
 
     const handleVerifyCode = async () => {
         setShowLoader(true);
@@ -552,70 +580,133 @@ const VerificationDialog = ({
         )
     }
     const SMS_MODULE = () => {
+        const SMS_SLIDE_HEIGHTS = [42, 22, 22, 20, 20];
+        const slideTransform = (step) => ({ transform: `translate(${isRTL ? (step * 100) : -(step * 100)}%)` });
         const SMS_SLIDE_1 = () => (
-            <Box className={clsx(classes.carouselItem, classes.T05S, classes.emailVerItemContainer)} style={{ position: "relative", transform: `translate(${isRTL ? (verificationStep * 100) : -(verificationStep * 100)}%)` }}>
+            <Box className={clsx(classes.carouselItem, classes.T05S, classes.emailVerItemContainer, classes.posRelative)}
+                style={slideTransform(verificationStep)}>
                 <Box className='cSlide firstSlide'>
                     <Box pb={1}>
                         <Typography variant="body1">
                             {t('sms.verificationBody')} <b>{t('sms.oneTimeProcess')}</b>{' '}{t('sms.foreachSubmission')}
                         </Typography>
-                        <Typography style={{ textDecoration: 'underline' }} className={clsx(classes.mt15, classes.mb15)}>
+                        <Typography className={clsx(classes.mt15, classes.mb15, classes.verNote)}>
                             {t('sms.verificationNote')}
                         </Typography>
                         <Divider />
                     </Box>
-                    <Box style={{ position: 'relative', height: 'calc(100% - 80px)', display: 'flex', flexDirection: 'column' }} >
-                        <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }} className={classes.mb15}>
-                            <Typography className={clsx(classes.bold)} variant='h6'>{t('sms.numbersAccount')} </Typography>
-                            <Button
-                                className={clsx(classes.btn, classes.btnRounded)}
-                                onClick={() => {
-                                    setSelectedVerificationContact('')
-                                    setVerificationError({ Number: '' })
-                                    NextSlide()
-                                }}
-                            >{t('sms.verifyAnotherNumber')}</Button>
-                        </Box>
-                        <Box className={clsx('contactDataBox', classes.sidebar)}>
-                            {
-                                verifiedNumbers.map((obj, idx) => (
-                                    <>
-                                        <Box className={clsx(classes.flex, classes.hAuto, 'emailBox')} style={{ justifyContent: 'space-between', alignItems: 'center', height: 40 }} key={`verificationNumber${obj.ID}`}>
-                                            <Box style={{ display: 'flex', alignItems: 'center' }}>
-                                                <Avatar className={obj.IsOptIn ? classes.checkIcon : classes.redIcon}>
-                                                    <div className={clsx(classes.avatarIcon)} style={{ paddingTop: 4 }}>
-                                                        {obj.IsOptIn ? '\uE134' : '\uE0A7'}
-                                                    </div>
-                                                </Avatar>
-                                                <Typography className='emailText'>{obj.Number} </Typography>
-                                            </Box>
-                                            {!obj.IsOptIn && <Typography className={clsx(classes.link, 'emailVerLink')}
-                                                onClick={() => {
-                                                    setSelectedVerificationContact(obj.Number);
-                                                    setVerificationError({ Number: '' })
-                                                    NextSlide()
-                                                    setAuthorizedTypeDisabled(true);
-                                                }}
-                                            > {t('sms.verifyNumber')}</Typography>}
+                    <Box className={clsx(classes.spaceBetween, classes.alignItemsCenter, classes.mb15)}>
+                        <Typography className={clsx(classes.bold)} variant='h6'>{t('sms.numbersInAccount')}</Typography>
+                        <Button
+                            className={clsx(classes.btn, classes.btnRounded, classes.marginSides5)}
+                            onClick={() => {
+                                setSelectedVerificationContact('');
+                                setVerificationError({ Number: '' });
+                                setAuthorizedTypeDisabled(false);
+                                NextSlide();
+                            }}
+                        >{t('sms.verifySenderButton')}</Button>
+                    </Box>
+                    <Box className={clsx('contactDataBox', classes.sidebar, classes.verNumListBox)}>
+                        {verifiedNumbers.filter(obj => isIsraeliPhoneNumber(obj.Number)).map((obj, idx) => (
+                            <React.Fragment key={`verificationNumber${obj.ID}`}>
+                                <Box className={clsx(classes.flex, classes.hAuto, 'emailBox', classes.verNumRow)}>
+                                    <Box className={clsx(classes.dFlex, classes.alignItemsCenter)}>
+                                        <Avatar className={obj.IsOptIn ? classes.checkIcon : classes.redIcon}>
+                                            <div className={clsx(classes.avatarIcon, classes.verAvatarIcon)}>
+                                                {obj.IsOptIn ? '\uE134' : '\uE0A7'}
+                                            </div>
+                                        </Avatar>
+                                        <Typography className='emailText'>{obj.Number}</Typography>
+                                    </Box>
+                                    {showSelect && obj.IsOptIn && (
+                                        <Button
+                                            className={clsx(classes.btn, classes.btnRounded, classes.marginSides5)}
+                                            classes={{ label: classes.btnLabel12 }}
+                                            size="small"
+                                            onClick={() => {
+                                                onSenderSelect?.({ SenderName: obj.Number, Status: 0 });
+                                                handleClose();
+                                            }}
+                                        >{t('common.select')}</Button>
+                                    )}
+                                    {!obj.IsOptIn && (
+                                        <Typography
+                                            className={clsx(classes.link, 'emailVerLink')}
+                                            onClick={() => {
+                                                setSelectedVerificationContact(obj.Number);
+                                                setVerificationError({ Number: '' });
+                                                NextSlide();
+                                                setAuthorizedTypeDisabled(true);
+                                            }}
+                                        >{t('sms.verifyNumber')}</Typography>
+                                    )}
+                                </Box>
+                            </React.Fragment>
+                        ))}
+                    </Box>
+
+                    <Divider className={classes.verSectionDivider} />
+
+                    <Box className={clsx(classes.spaceBetween, classes.alignItemsCenter, classes.mb15)}>
+                        <Typography className={clsx(classes.bold)} variant='h6'>{t('sms.senderNamesInAccount')}</Typography>
+                    </Box>
+                    <Box className={classes.senderTableHeader}>
+                        <Typography className={clsx(classes.flex2, classes.tableColHeader)}>{t('sms.colSenderName')}</Typography>
+                        <Typography className={clsx(classes.flex2, classes.tableColHeader)}>{t('sms.colSubmitted')}</Typography>
+                        <Typography className={clsx(classes.tableColHeader)} style={{ flex: 1 }}>{t('sms.colStatus')}</Typography>
+                        {showSelect && <Typography className={clsx(classes.tableColHeader)} style={{ flex: 1 }}>{t('sms.colAction')}</Typography>}
+                    </Box>
+                    <Box className={clsx(classes.sidebar, classes.senderNamesListBox)}>
+                        {senderNames.map((sender) => {
+                            const statusDot   = sender.Status === 0 ? '#4caf50' : sender.Status === 1 ? '#ff9800' : '#f44336';
+                            const statusBg    = sender.Status === 0 ? '#e8f5e9' : sender.Status === 1 ? '#fff8e1' : '#fdecea';
+                            const statusText  = sender.Status === 0 ? '#388e3c' : sender.Status === 1 ? '#f57c00' : '#c62828';
+                            const statusLabel = sender.Status === 0 ? t('common.approved') : sender.Status === 1 ? t('common.Pending') : t('sms.statusRejected');
+                            return (
+                                <Box key={sender.ID} className={classes.senderTableRow}>
+                                    <Typography className={clsx(classes.flex2, classes.senderNameCell)}>{sender.SenderName}</Typography>
+                                    <Typography className={clsx(classes.flex2, classes.senderDateCell)}>
+                                        {sender.RequestDate
+                                            ? new Date(sender.RequestDate).toLocaleDateString('en-GB')
+                                            : ''}
+                                    </Typography>
+                                    <Box className={classes.statusCell}>
+                                        <Box className={classes.statusChip} style={{ background: statusBg, color: statusText }}>
+                                            <Box className={classes.statusDotIndicator} style={{ background: statusDot }} />
+                                            {statusLabel}
                                         </Box>
-                                        {idx < verifiedNumbers.length - 1 && <Divider style={{ marginBottom: 6 }} />}
-                                    </>
-                                ))
-                            }
-                        </Box>
+                                    </Box>
+                                    {showSelect && (
+                                        <Box className={classes.senderActionCell}>
+                                            {sender.Status === 0 && (
+                                                <Button
+                                                    className={clsx(classes.btn, classes.btnRounded)}
+                                                    classes={{ label: classes.btnLabel12 }}
+                                                    size="small"
+                                                    onClick={() => {
+                                                        onSenderSelect?.({ SenderName: sender.SenderName, Status: 0 });
+                                                        handleClose();
+                                                    }}
+                                                >{t('common.select')}</Button>
+                                            )}
+                                        </Box>
+                                    )}
+                                </Box>
+                            );
+                        })}
                     </Box>
                 </Box>
             </Box>
         )
 
         const SMS_SLIDE_2 = () => (
-            <Box className={clsx(classes.carouselItem, classes.T05S, classes.emailVerItemContainer)} style={{ transform: `translate(${isRTL ? (verificationStep * 100) : -(verificationStep * 100)}%)` }}>
-                <Box className='cFlexSlide secondSlide' >
+            <Box className={clsx(classes.carouselItem, classes.T05S, classes.emailVerItemContainer)} style={slideTransform(verificationStep)}>
+                <Box className='cFlexSlide secondSlide'>
                     <Box className='titleDescBox'>
-                        <Typography variant='h4'>{t('campaigns.newsLetterMgmt.emailVerification.secondSlide.title')}</Typography>
+                        <Typography variant='h4'>{t('sms.shortVerificationTitle')}</Typography>
                         <Box className='desc'>
-                            <Typography variant='body1' >{t('sms.verificationBody')} {' '}<b>{t('sms.oneTimeProcess')}</b>
-                                {t('sms.foreachSubmission')}</Typography>
+                            <Typography variant='body1'>{t('sms.verificationBody')} <b>{t('sms.oneTimeProcess')}</b>{t('sms.foreachSubmission')}</Typography>
                         </Box>
                     </Box>
                     <Box className={classes.flexColumn}>
@@ -629,29 +720,30 @@ const VerificationDialog = ({
                                     className: classes.textColorBlue
                                 }}
                                 onChange={(e) => {
-                                    !!verificationError?.number && setVerificationError({ number: '' })
-                                    if (!e.target.value || IsValidPhoneNumberKeyPress(e.target.value)) {
-                                        setSelectedVerificationContact(e.target.value?.trim())
-                                    }
+                                    !!verificationError?.Number && setVerificationError({ Number: '' });
+                                    setSelectedVerificationContact(e.target.value?.trim());
                                 }}
-                                style={{ direction: 'ltr' }}
-                                className={clsx(classes.textField, classes.maxWidth400, classes.txtCenter)}
-                                placeholder={t('sms.enterNumberText')}
+                                className={clsx(classes.textField, classes.maxWidth400, classes.txtCenter, classes.directionLTR)}
+                                placeholder={t('sms.newSenderPlaceholder')}
                                 error={!!verificationError?.Number}
-                                onKeyPress={isGlobal ? IsValidPhoneNumberKeyPress : null}
                             />
                         </Box>
                         <Box mt={2}>
-                            <Button className={clsx(classes.btn, classes.btnRounded)}
-                                onClick={() => {
-                                    if (isGlobal ? IsValidPhoneNumberWithCountryCode(selectedVerificationContact, countryCodeList) : IsValidNonGlobalPhoneNumber(selectedVerificationContact)) {
-                                        handleSendCode(selectedVerificationContact)
-                                        NextSlide()
+                            <Button
+                                className={clsx(classes.btn, classes.btnRounded)}
+                                onClick={async () => {
+                                    if (!selectedVerificationContact) {
+                                        setVerificationError({ Number: t('sms.newSenderRequired') });
+                                        return;
                                     }
-                                    else
-                                        setVerificationError({ Number: t('sms.invalidNumber') })
+                                    if (isIsraeliPhoneNumber(selectedVerificationContact)) {
+                                        handleSendCode(selectedVerificationContact);
+                                        NextSlide();
+                                    } else {
+                                        handleSubmitAlphabeticalSender();
+                                    }
                                 }}
-                            >{t('sms.verificationButtonText')}</Button>
+                            >{t('sms.submitSender')}</Button>
                             <Typography className='error' variant="body1">{verificationError?.Number}</Typography>
                         </Box>
                     </Box>
@@ -664,7 +756,7 @@ const VerificationDialog = ({
         )
 
         const SMS_SLIDE_3 = () => (
-            <Box className={clsx(classes.carouselItem, classes.T05S, classes.emailVerItemContainer)} style={{ transform: `translate(${isRTL ? (verificationStep * 100) : -(verificationStep * 100)}%)` }}>
+            <Box className={clsx(classes.carouselItem, classes.T05S, classes.emailVerItemContainer)} style={slideTransform(verificationStep)}>
                 <Box className='cFlexSlide'>
                     <Box>
                         <Typography variant='h4' className={classes.bold}>{t('common.Sent')}</Typography>
@@ -678,9 +770,9 @@ const VerificationDialog = ({
                                 size='small'
                                 className={clsx(classes.textField, classes.maxWidth400)}
                                 onChange={(e) => {
-                                    !!verificationError?.code && setVerificationError({ code: '' })
+                                    !!verificationError?.code && setVerificationError({ code: '' });
                                     if (!e.target.value || /^[0-9]+$/.test(e.target.value.trim())) {
-                                        setVerificationCode(e.target.value.trim())
+                                        setVerificationCode(e.target.value.trim());
                                     }
                                 }}
                                 placeholder={t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.placeholder')}
@@ -694,13 +786,13 @@ const VerificationDialog = ({
                                 onClick={() => {
                                     if (verificationCode) {
                                         handleVerifyCode();
-                                    }
+                                    } 
                                     else {
-                                        setVerificationError({ code: t('sms.verificationCodeError') })
+                                        setVerificationError({ code: t('sms.verificationCodeError') });
                                     }
                                 }}
                             >
-                                {userCodeConfirmed ? <CircularProgress size={31} style={{ color: '#FFF' }} /> : t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.btnText')}
+                                {userCodeConfirmed ? <CircularProgress size={31} className={classes.colorWhite} /> : t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.btnText')}
                             </Button>
                             <Typography className='error' variant="body1">{verificationError?.code}</Typography>
                         </Box>
@@ -713,24 +805,43 @@ const VerificationDialog = ({
             </Box>
         )
         const SMS_SLIDE_SUCCESS = () => (
-            <Box className={clsx(classes.carouselItem, classes.T05S, classes.emailVerItemContainer)} style={{ transform: `translate(${isRTL ? (verificationStep * 100) : -(verificationStep * 100)}%)` }}>
+            <Box className={clsx(classes.carouselItem, classes.T05S, classes.emailVerItemContainer)} style={slideTransform(verificationStep)}>
                 <Box className='cFlexSlide'>
                     <Box>
                         <Typography variant='h4'>{t('sms.verificationSuccessful')}</Typography>
                         <Typography variant='body1' className={classes.mt4}>{t('sms.verificationSuccessMessage')}</Typography>
                         <Button className={clsx(classes.btn, classes.btnRounded)} onClick={() => {
-                            handleClose()
+                            onSenderSelect?.({ SenderName: selectedVerificationContact, Status: 0 });
+                            handleClose();
                         }}>{props.textButtonOnSuccess && props.textButtonOnSuccess !== '' ? props.textButtonOnSuccess : t('common.continue')}</Button>
                     </Box>
                 </Box>
-            </Box >
+            </Box>
         )
+        const SMS_SLIDE_PENDING = () => (
+            <Box className={clsx(classes.carouselItem, classes.T05S, classes.emailVerItemContainer)} style={slideTransform(verificationStep)}>
+                <Box className='cFlexSlide'>
+                    <Box>
+                        <Typography variant='h4'>{t('sms.senderPendingApprovalTitle')}</Typography>
+                        <Typography variant='body1' className={classes.mt4}>{t('sms.senderPendingApproval')}</Typography>
+                    </Box>
+                    <Box mt={2}>
+                        <Button className={clsx(classes.btn, classes.btnRounded)} onClick={() => handleClose()}>
+                            {t('sms.doneSender')}
+                        </Button>
+                    </Box>
+                </Box>
+            </Box>
+        )
+
         return (
-            <Box className={clsx(classes.carouselContainer, classes.sidebar)} style={{ height: `${SLIDE_HEIGHTS[verificationStep]}rem`, transition: 'height .5s' }}>
+            <Box className={clsx(classes.carouselContainer, classes.sidebar, classes.verCarouselContainer)}
+                style={{ height: `${SMS_SLIDE_HEIGHTS[verificationStep]}rem` }}>
                 {SMS_SLIDE_1()}
                 {SMS_SLIDE_2()}
                 {SMS_SLIDE_3()}
                 {SMS_SLIDE_SUCCESS()}
+                {SMS_SLIDE_PENDING()}
             </Box>
         )
 
@@ -1156,7 +1267,7 @@ const VerificationDialog = ({
             case 'email':
                 return t('campaigns.newsLetterMgmt.emailVerification.popupTitle');
             case 'sms':
-                return t('sms.verificationDialogTitle');
+                return t('sms.verifySenderTitle');
             case 'emailTFA':
                 return t('settings.accountSettings.2fa.email.firstSlide.title');
             case 'smsTFA':
@@ -1176,30 +1287,34 @@ const VerificationDialog = ({
         </>
 
         ),
-        renderButtons: () => (<Box className={classes.textCenter}>
-            {verificationStep < 1 && (<Button
-                name="btnConfirm"
-                variant='contained'
-                size='medium'
-                onClick={() => {
-                    handleClose()
-                }}
-                className={clsx(
-                    classes.btn, classes.btnRounded,
-                    classes.ml5
-                )}>
-                {t('common.Ok')}
-            </Button>)}
+        renderButtons: () => {
+            return (
+                <Box className={classes.textCenter}>
+                    {verificationStep < 1 && (<Button
+                        name="btnConfirm"
+                        variant='contained'
+                        size='medium'
+                        onClick={() => {
+                            handleClose()
+                        }}
+                        className={clsx(
+                            classes.btn, classes.btnRounded,
+                            classes.ml5
+                        )}>
+                        {t('common.Ok')}
+                    </Button>)}
 
-            {(verificationStep > 0 && verificationStep < 3) && <Button
-                name="btnConfirm"
-                variant='contained'
-                size='medium'
-                onClick={PrevSlide}
-                className={clsx(classes.btn, classes.btnRounded)}>
-                {t('notifications.back')}
-            </Button>}
-        </Box>)
+                    {(verificationStep > 0 && verificationStep < 3) && <Button
+                        name="btnConfirm"
+                        variant='contained'
+                        size='medium'
+                        onClick={PrevSlide}
+                        className={clsx(classes.btn, classes.btnRounded)}>
+                        {t('notifications.back')}
+                    </Button>}
+                </Box>
+            );
+        }
     })
 
     return (

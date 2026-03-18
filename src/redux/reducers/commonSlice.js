@@ -258,6 +258,7 @@ export const commonSlice = createSlice({
     IsPoland: false,
     companyAdmin: '',
     smsConfig: null,
+    isSwippingApprovalSMS: false,
   },
   extraReducers: builder => {
     builder
@@ -353,6 +354,7 @@ export const commonSlice = createSlice({
           SmsLength: get(payload, 'Data.SmsLength', null),
           SMSProvider: get(payload, 'Data.SMSProvider', 8),
     }
+        state.isSwippingApprovalSMS = get(payload, 'Data.IsSwippingApprovalSMS', false)
       });
   },
   reducers: {
