@@ -881,6 +881,18 @@
   "500chars": "500 znaków",
   "doNotShowThisDialog": "Nie pokazuj tego dialogu",
   "messageDot": "Analizujemy Twoje dane, może to zająć kilka minut",
+  "thinkingPhrases": [
+    "Investigating...",
+    "Troubleshooting...",
+    "Scanning the docs...",
+    "Reproducing the issue...",
+    "Connecting the dots...",
+    "Activating Pulsy thinking...",
+    "Diagnosing...",
+    "Reading between the lines...",
+    "Consulting the playbook...",
+    "Running a Pulsy scan..."
+  ],
   "aiAdvisorHeader": "Pulsy - Marketing Advisor 🟢 Online",
   "supportHeader": "Pulsy - Support Agent 🟢 Online",
   "supportBubbleText": "Hi! I'm Pulsy Support. how can I help! 🛠️",

@@ -219,12 +219,16 @@ const AIChatWidget: React.FC<AIChatWidgetProps> = ({ config = advisorConfig }) =
           await dispatch(loadSessionMessages());
         }
       }
-      // Auto-open only for feature 69 (marketing advisor)
-      if (!isSupport && totalMessagesForUserCount === 0 && messages.length === 1 && username) {
+      // Auto-open for feature 69 (marketing advisor) and feature 73 (support)
+      if (totalMessagesForUserCount === 0 && messages.length === 1 && username) {
         try {
-          const hideAIChatDialog = localStorage.getItem('hideAIChatDialog');
-          if (hideAIChatDialog !== 'true' && !isOpen) {
-            dispatch(openAIChat());
+          const hideDialog = localStorage.getItem(config.localStorageKey);
+          if (hideDialog !== 'true' && !isOpen) {
+            if (isSupport) {
+              dispatch(openSupportChat());
+            } else {
+              dispatch(openAIChat());
+            }
           }
         } catch (error) {
           console.error('Error sending initial message:', error);

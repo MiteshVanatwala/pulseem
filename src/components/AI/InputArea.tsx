@@ -89,7 +89,7 @@ const InputArea: React.ForwardRefRenderFunction<InputAreaHandle, InputAreaProps>
   );
 
   useEffect(() => {
-    const savedPreference = localStorage.getItem('hideAIChatDialog');
+    const savedPreference = localStorage.getItem(config.localStorageKey);
     if (savedPreference) {
       setHideDialog(JSON.parse(savedPreference));
     }
@@ -98,7 +98,7 @@ const InputArea: React.ForwardRefRenderFunction<InputAreaHandle, InputAreaProps>
   const handleHideDialogChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = event.target.checked;
     setHideDialog(newValue);
-    localStorage.setItem('hideAIChatDialog', JSON.stringify(newValue));
+    localStorage.setItem(config.localStorageKey, JSON.stringify(newValue));
   };
 
   const handleSend = () => {
@@ -146,7 +146,7 @@ const InputArea: React.ForwardRefRenderFunction<InputAreaHandle, InputAreaProps>
     }
   }));
 
-  const showCheckbox = totalMessagesForUserCount <= 0 && !isSupport;
+  const showCheckbox = totalMessagesForUserCount <= 0;
   const showNewConversationButton = isSupport;
   const showFooterRow = showCheckbox || showNewConversationButton;
 

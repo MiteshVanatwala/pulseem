@@ -27,7 +27,6 @@ import {
   getSmsByID,
   smsQuick,
   getCampaignSumm,
-  getCreditsforSMS,
   getTestGroups,
   getSMSVirtualNumber
 } from "../../../redux/reducers/smsSlice";
@@ -65,6 +64,7 @@ import { TierFeatures, URL_REGEX } from "../../../helpers/Constants";
 import { findPlanByFeatureCode } from "../../../redux/reducers/TiersSlice";
 import TierPlans from "../../../components/TierPlans/TierPlans";
 import { get } from "lodash";
+import { computeCreditsForSms } from "../../../helpers/Utils/SmsCreditsHelper";
 
 const useStyles = makeStyles((theme) => ({
   customWidth: {
@@ -111,7 +111,6 @@ const defaultAccountExtraData = [
   { "Zip": "common.zip" }
 ];
 
-
 const SmsCreator = ({ classes }) => {
   const { t } = useTranslation();
   const { id } = useParams();
@@ -139,7 +138,7 @@ const SmsCreator = ({ classes }) => {
     ToastMessages,
     extraData
   } = useSelector((state) => state.sms);
-  const { accountSettings, accountFeatures, countryCodeList, isGlobal, subAccount, IsPoland } = useSelector((state) => state.common)
+  const { accountSettings, accountFeatures, countryCodeList, isGlobal, subAccount, IsPoland, smsConfig } = useSelector((state) => state.common)
   const [dialogType, setDialogType] = useState(null)
   const [alignment, setAlignment] = useState('right');
   const [checked, setChecked] = React.useState(false);
@@ -184,7 +183,6 @@ const SmsCreator = ({ classes }) => {
   const [editDynamicProductFallbackURL, setEditDynamicProductFallbackURL] = useState('');
   const [dynamicProductButtonDisabled, setDynamicProductButtonDisabled] = useState(false);
   const [buttonsDisabled, setButtonsDisabled] = useState(false);
-  const [controller, setController] = useState(null);
   const [ TierMessageCode, setTierMessageCode ] = useState('');
   const [showTierPlans, setShowTierPlans] = useState(false);
   const [smsModel, setSmsModel] = useState({
@@ -344,12 +342,16 @@ const SmsCreator = ({ classes }) => {
 
   useEffect(() => {
     getcredits(characterCount);
-    return () => {
-      if (controller) {
-        controller.abort();
-      }
-    };
   }, [characterCount])
+
+  const getcredits = (count) => {
+    setButtonsDisabled(true);
+    const total = computeCreditsForSms(count, smsConfig);
+    setmessageCount(total);
+    handleSmsModelChange('CreditsPerSms', total);
+    setButtonsDisabled(false);
+  };
+  
 
   const handleSmsModelChange = (name, value) => {
     setSmsModel(prevState => ({
@@ -538,28 +540,6 @@ const SmsCreator = ({ classes }) => {
     }
   }
 
-  const getcredits = (count) => {
-    if (controller) {
-      controller.abort();
-    }
-    // Create new controller
-    const newController = new AbortController();
-    setController(newController);
-
-    setButtonsDisabled(true);
-    dispatch(getCreditsforSMS(count)).then((res) => {
-      let credits = res.payload?.split("#");
-      if (credits && credits !== '') {
-        setmessageCount(credits[0]);
-        handleSmsModelChange("CreditsPerSms", credits[0]);
-      }
-      else {
-        setmessageCount(0);
-        handleSmsModelChange("CreditsPerSms", 0);
-      }
-      setButtonsDisabled(false);
-    });
-  }
   const onCamppaignChange = (e) => {
     handleSmsModelChange("Name", e.target.value);
     setcampaignBool(false);

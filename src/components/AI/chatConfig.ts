@@ -14,6 +14,7 @@ export interface AIChatConfig {
   mascotButtonImage: string;
   mascotWidgetImage: string;
   reduxSliceName: string;
+  localStorageKey: string;
 }
 
 export const advisorConfig: AIChatConfig = {
@@ -33,13 +34,14 @@ export const advisorConfig: AIChatConfig = {
   mascotButtonImage: PulseemMascotImage,
   mascotWidgetImage: MascotPointingImage,
   reduxSliceName: 'aiChat',
+  localStorageKey: 'hideAIChatDialog',
 };
 
 export const supportConfig: AIChatConfig = {
   featureId: 73,
-  apiAddMessage: 'PulsySupport/AddMessage',
-  apiLoadSession: 'PulsySupport/LoadSessionMessages',
-  apiNewSession: 'PulsySupport/NewSession',
+  apiAddMessage: 'PulsyAISupport/AddMessage',
+  apiLoadSession: 'PulsyAISupport/LoadSessionMessages',
+  apiNewSession: 'PulsyAISupport/NewConversation',
   maxChars: 2000,
   headerTitleKey: 'common.supportHeader',
   bubbleTextKey: 'common.supportBubbleText',
@@ -52,4 +54,5 @@ export const supportConfig: AIChatConfig = {
   mascotButtonImage: SupportMascotImage,
   mascotWidgetImage: SupportMascotImage,
   reduxSliceName: 'supportChat',
+  localStorageKey: 'hideSupportChatDialog',
 };
