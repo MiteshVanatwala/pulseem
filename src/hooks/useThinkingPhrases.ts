@@ -31,7 +31,13 @@ export const useThinkingPhrases = (active: boolean): UseThinkingPhrasesResult =>
     intervalRef.current = setInterval(() => {
       setVisible(false);
       timeoutRef.current = setTimeout(() => {
-        setPhraseIndex((prev) => (prev + 1) % phrases.length);
+        setPhraseIndex((prev) => {
+          let next = Math.floor(Math.random() * phrases.length);
+          while (next === prev && phrases.length > 1) {
+            next = Math.floor(Math.random() * phrases.length);
+          }
+          return next;
+        });
         setVisible(true);
       }, FADE_MS);
     }, INTERVAL_MS);
