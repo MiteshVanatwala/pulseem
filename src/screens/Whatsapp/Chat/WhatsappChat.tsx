@@ -1116,6 +1116,10 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 					) {
 						setNextMessageAvailable(sendWhatsappChat?.Data?.NextAvailableTime);
 					}
+				} else if (sendWhatsappChat.StatusCode === 107) {
+					setDialogType({
+						type: 'noPermission'
+					});
 				} else if (sendWhatsappChat.StatusCode === 927) {
 					// WHATSAPP_CAMPAIGN_SEND
 					setTierMessageCode(sendWhatsappChat?.Message);
@@ -1340,30 +1344,41 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		[translator, classes, nextMessageAvailable],
 	);
 
-	const getValidationDialog = useCallback(
-		() => ({
-			title: translator('whatsappCampaign.sendValidation'),
-			showDivider: false,
-			content: (
-				<ul className={clsx(classes.noMargin, classes.mb20)}>
-					{groupSendValidationErrors?.map(
-						(requiredField: string, index: number) => (
-							<li key={index} className={classes.validationAlertModalLi}>
-								{requiredField}
-							</li>
-						),
-					)}
-				</ul>
-			),
-			onConfirm: async () => {
-				setDialogType({
-					type: '',
-					data: '',
-				});
-			},
-		}),
-		[translator, classes, groupSendValidationErrors],
-	);
+	const getNoPermissionDialog = useCallback(() => ({
+		title: translator('whatsappCampaign.noPermission'),
+		showDivider: false,
+		content: (
+			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+				{translator('whatsappCampaign.noPermissionToSend')}
+			</Typography>
+		),
+		onConfirm: async () => {
+			setDialogType({
+				type: '',
+				data: ''
+			});
+		}
+	}), [translator, classes]);
+
+	const getValidationDialog = useCallback(() => ({
+		title: translator('whatsappCampaign.sendValidation'),
+		showDivider: false,
+		content: (
+			<ul className={clsx(classes.noMargin, classes.mb20)}>
+				{groupSendValidationErrors?.map((requiredField: string, index: number) => (
+					<li key={index} className={classes.validationAlertModalLi}>
+						{requiredField}
+					</li>
+				))}
+			</ul>
+		),
+		onConfirm: async () => {
+			setDialogType({
+				type: '',
+				data: ''
+			});
+		}
+	}), [translator, classes, groupSendValidationErrors]);
 
 	const handleGetPlanForFeature = useCallback(
 		(tierMessageCode: string) => {
@@ -1745,6 +1760,8 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			currentDialog = getValidationDialog();
 		} else if (type === 'exceedDailyLimit') {
 			currentDialog = getExceedDailyLimit();
+		} else if (type === 'noPermission') {
+			currentDialog = getNoPermissionDialog();
 		} else if (type === 'tier') {
 			currentDialog = getTierValidationDialog();
 		} else if (type === 'dynamicModal') {
@@ -1771,16 +1788,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				)
 			);
 		}
-	}, [
-		dialogType,
-		classes,
-		getValidationDialog,
-		getExceedDailyLimit,
-		getTierValidationDialog,
-		getDynamicModalDialog,
-		addAgentModalDialog,
-		editAgentsModalDialog,
-	]);
+	}, [dialogType, classes, getValidationDialog, getExceedDailyLimit, getTierValidationDialog, getNoPermissionDialog, getDynamicModalDialog, addAgentModalDialog, editAgentsModalDialog]);
 
 	const handleAgentSelection = useCallback((value: number) => {
 		setAgentSelected(value);

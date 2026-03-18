@@ -33,7 +33,8 @@ export enum eSubUserPermissions {
     AllowSend = 1,
     AllowExport = 2,
     AllowDelete = 3,
-    HideRecipients = 4
+    HideRecipients = 4,
+    AllowWhatsAppToAgent = 6,
 }
 
 export interface SubUserChangeLog {
@@ -70,18 +71,21 @@ export const UserRoles = {
         AllowSend: true,
         AllowExport: true,
         AllowDelete: true,
-        HideRecipients: false
+        HideRecipients: false,
+        AllowWhatsAppToAgent: true
     },
     Restricted: {
         AllowSend: false,
         AllowExport: true,
         AllowDelete: false,
-        HideRecipients: false
+        HideRecipients: false,
+        AllowWhatsAppToAgent: false
     },
     ReadOnly: {
         AllowSend: false,
         AllowExport: false,
         AllowDelete: false,
-        HideRecipients: true
+        HideRecipients: true,
+        AllowWhatsAppToAgent: false
     },
 };
