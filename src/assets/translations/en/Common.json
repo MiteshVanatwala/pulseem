@@ -987,5 +987,8 @@
   "typeFromName": "Type From Name",
   "typeSubject": "Type Subject",
   "manageAgent": "Manage Agent",
-  "clearAllFilters": "Clear all filters"
+  "clearAllFilters": "Clear all filters",
+  "field": "Field",
+  "operator": "Operator",
+  "value": "Value"
 }

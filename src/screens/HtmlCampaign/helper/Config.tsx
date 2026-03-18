@@ -3,6 +3,9 @@ import { TRANSLATE_HEBREW, TRANSLATE_ENGLISH } from '../../../assets/translation
 import { FONTS } from '../../../helpers/Fonts/Init';
 import ProductCatalog from '../../../model/ProductCatalog/ProductCatalog';
 import { AddProductCatalogType } from '../../../config/enum';
+import { DisplayConditionsDialog } from '../components/ContentDialogs';
+import { deleteDisplayCondition } from '../../../redux/reducers/campaignEditorSlice';
+
 
 type dialog = (a: any) => void;
 type save = (a: any) => void;
@@ -10,6 +13,7 @@ const AUTO_SAVE_SECONDS = 180; // 3 minutes
 
 export interface ConfigOptions {
     classes: any;
+    displayConditions?: any[];
     onSaveUserBlock: Function;
     IsRTL: Boolean;
     openModal: any;
@@ -24,15 +28,18 @@ export interface ConfigOptions {
     getRows: Function;
     handleDeleteRow: Function;
     handleEditRow: Function;
-    // HandleAutoSave: Function,
     t: any;
     languageCode: number;
-    // handleUndoChange: Function;
+    dispatch?: any;
+    editorFonts?: any;
+    onRefreshConditions?: Function;
+    setIsDisplayConditionDialogOpen?: Function;
 }
 
 export const BeeConfig = (Options: ConfigOptions) => {
     const {
         classes,
+        displayConditions,
         onSaveUserBlock,
         IsRTL,
         EditRow,
@@ -45,12 +52,14 @@ export const BeeConfig = (Options: ConfigOptions) => {
         DesignChange,
         getRows,
         handleEditRow,
-        // HandleAutoSave,
         handleDeleteRow,
         PulseemEditBlock,
         t,
-        languageCode
-        // handleUndoChange
+        languageCode,
+        dispatch,
+        editorFonts,
+        onRefreshConditions,
+        setIsDisplayConditionDialogOpen
     } = Options;
 
     const editorLanguage = {
@@ -70,11 +79,43 @@ export const BeeConfig = (Options: ConfigOptions) => {
         'pl': 'pl-PL'  // Polish
     } as any;
 
+    const conditionsWithIds = (displayConditions || []).map((cond: any) => ({
+        ...cond,
+        id: cond.id || cond.ID || Math.random().toString(36).substr(2, 9)
+    }));
+
     return {
         uid: 'f7768f7b-06af-4ada-bbd3-18a237524c31', //needed for identify resources of the that user and billing stuff
         container: 'bee-plugin-container', //Identifies the id of div element that contains BEE Plugin
         language: editorLanguage[languageCode], //Options.IsRTL ? 'he-IL' : 'en-US',
         customCss: 'https://pulseem.co.il/pulseem/css/beefreeRtlFixes.css',
+        inlineCSS: `
+          /* Hide Add condition button in left sidebar */
+          .row-display-condition-add-button--cs {
+            display: none !important;
+            visibility: hidden !important;
+            width: 0 !important;
+            height: 0 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            border: none !important;
+            pointer-events: none !important;
+          }
+          /* Make display condition buttons same width and padding */
+          .row-display-condition-select-button--cs,
+          .row-display-condition-open-builder-button--cs {
+            min-width: 140px !important;
+            width: 140px !important;
+            max-width: 140px !important;
+            flex: 0 0 140px !important;
+            padding: 8px 16px !important;
+          }
+          /* Show delete button for display conditions */
+          .row-display-condition-delete-button--cs {
+            display: inline-block !important;
+            visibility: visible !important;
+          }
+        `,
         trackChanges: true,
         //autosave: AUTO_SAVE_SECONDS,
         loadingSpinnerDisableOnSave: true,
@@ -86,6 +127,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
                 "widget-warning-desc": t('campaigns.htmlDocTypeNotAllowedWarning'),
             }
         },
+        rowDisplayConditions: conditionsWithIds,
         rowsConfiguration: {
             emptyRows: true,
             defaultRows: false,
@@ -100,7 +142,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
             //     },
             // }]
         },
-        editorFonts: FONTS(),
+        editorFonts: editorFonts,
         workspace: {
             type: 'default', // 'mixed'|'amp_only'|'html_only'
         },
@@ -158,6 +200,64 @@ export const BeeConfig = (Options: ConfigOptions) => {
                     }
                 }
             },
+            rowDisplayConditions: {
+                label: t('campaigns.displayConditions.openBuilder') || 'Open builder',
+                handler: async (resolve: Function, reject: Function, currentCondition?: any) => {
+                    try {
+                        setIsDisplayConditionDialogOpen?.(true);
+                        const result: any = await openModal(
+                            DisplayConditionsDialog,
+                            { currentCondition, onRefreshConditions },
+                            classes
+                        );
+                        setIsDisplayConditionDialogOpen?.(false);
+
+                        if (result && result.before && result.after) {
+                            resolve(result);
+                        } else {
+                            reject();
+                        }
+                    } catch (e) {
+                        setIsDisplayConditionDialogOpen?.(false);
+                        reject();
+                    }
+                }
+            },
+            onEditRowDisplayCondition: {
+                handler: async (resolve: Function, reject: Function, currentCondition?: any) => {
+                    try {
+                        setIsDisplayConditionDialogOpen?.(true);
+                        const result: any = await openModal(
+                            DisplayConditionsDialog,
+                            { currentCondition, onRefreshConditions },
+                            classes
+                        );
+                        setIsDisplayConditionDialogOpen?.(false);
+
+                        if (result && result.before && result.after) {
+                            resolve(result);
+                        } else {
+                            reject();
+                        }
+                    } catch (e) {
+                        setIsDisplayConditionDialogOpen?.(false);
+                        reject();
+                    }
+                }
+            },
+            // onDeleteRowDisplayCondition: {
+            //     handler: async (resolve: Function, reject: Function, condition?: any) => {
+            //         try {
+            //             if (condition?.id) {
+            //                 await dispatch(deleteDisplayCondition(condition.id));
+            //                 await dispatch(getDisplayConditions());
+            //             }
+            //             resolve(true);
+            //         } catch (e) {
+            //             reject();
+            //         }
+            //     }
+            // },
             saveRow: {
                 handler: async (resolve: Function, reject: Function, args: any) => {
                     const results = await openModal(EditRow, args, classes);

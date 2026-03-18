@@ -3,7 +3,7 @@ import { debounce, get } from 'lodash';
 import BeePlugin from '@mailupinc/bee-plugin'
 import { Box, Button, Grid, Typography, Tooltip, LinearProgress, makeStyles } from '@material-ui/core'
 import { IoMdInformationCircleOutline } from 'react-icons/io';
-import { useRef, useState, useEffect } from 'react'
+import { useRef, useState, useEffect, useMemo } from 'react'
 import DefaultScreen from '../DefaultScreen'
 import { useSelector, useDispatch } from 'react-redux';
 import {
@@ -16,7 +16,8 @@ import {
   saveTemplateToAccount,
   getTemplateById,
   getPublicTemplates,
-  getAllTemplatesBySubaccountId
+  getAllTemplatesBySubaccountId,
+  getDisplayConditions
 } from '../../redux/reducers/campaignEditorSlice';
 import { Loader } from '../../components/Loader/Loader';
 import { getAccountExtraData, getPreviousLandingData } from "../../redux/reducers/smsSlice";
@@ -34,6 +35,7 @@ import WizardActions from '../../components/Wizard/WizardActions';
 import { getBeeToken } from '../../redux/reducers/campaignEditorSlice';
 import { initExtraDataField, initLandingPages } from './helper/MigratePulseemData';
 import { BeeConfig, DialogType, DefaultContent } from './helper/Config';
+import { FONTS } from '../../helpers/Fonts/Init';
 import { IoMdImages } from 'react-icons/io';
 import Gallery from '../../components/Gallery/Gallery.component';
 import { PulseemFeatures, PulseemFolderType } from "../../model/PulseemFields/Fields";
@@ -198,7 +200,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   const [dataReady, setDataReady] = useState(false);
   const [mergeData, setPulseemMergeData] = useState({});
   const { productList } = useSelector(state => state.product)
-  const { campaign, userBlocks, ToastMessages, beeToken, publicTemplates, templatesBySubAccount } = useSelector(state => state.campaignEditor);
+  const { campaign, userBlocks, ToastMessages, beeToken, publicTemplates, templatesBySubAccount, displayConditions } = useSelector(state => state.campaignEditor);
   const { extraData, previousLandingData } = useSelector(state => state.sms);
   const { language, isRTL, userRoles } = useSelector(state => state.core)
   const { tokenAlive, accountSettings, accountFeatures, verifiedEmails, subAccount } = useSelector(state => state.common)
@@ -247,8 +249,10 @@ const CampaignEditor = ({ classes, ...props }) => {
     ampKB: 0,
     totalBytes: 0
   });
+  const [isDisplayConditionDialogOpen, setIsDisplayConditionDialogOpen] = useState(false);
   const [pendingAction, setPendingAction] = useState(null);
-  //#endregion State
+
+
 
   //#region Get Extra fields & Landing pages, after Data Ready
   const initFields = () => {
@@ -307,15 +311,46 @@ const CampaignEditor = ({ classes, ...props }) => {
 
   // Get data by campaign id
   useEffect(() => {
-    if (params?.id > 0) {
-      if (localStorage.getItem('reloadBeeEditor') === '1') {
-        localStorage.removeItem('reloadBeeEditor');
-        window.location.reload(true);
-      } else getData();
-    }
-    if (!publicTemplates.length) dispatch(getPublicTemplates(isRTL));
-    if (!productList?.length) dispatch(GetProductsList());
-    dispatch(getAllTemplatesBySubaccountId());
+    let isMounted = true;
+
+    const loadData = async () => {
+      if (params?.id > 0) {
+        if (localStorage.getItem('reloadBeeEditor') === '1') {
+          localStorage.removeItem('reloadBeeEditor');
+          window.location.reload(true);
+        } else if (isMounted) {
+          setLoader(true);
+          await dispatch(getCampaignById(params?.id));
+          if (!isMounted) return;
+          await dispatch(getAccountExtraData());
+          if (!isMounted) return;
+          await dispatch(getPreviousLandingData());
+          if (!isMounted) return;
+          await dispatch(getTestGroups(false));
+          if (!isMounted) return;
+          await dispatch(getUserblocks());
+          if (!isMounted) return;
+          await dispatch(getAuthorizedEmails());
+          if (!isMounted) return;
+          if (productCategories?.length <= 0) {
+            await dispatch(getCategories());
+          }
+          if (!isMounted) return;
+          setDataReady(true);
+          dispatch(getBeeToken());
+        }
+      }
+      if (isMounted && !publicTemplates.length) dispatch(getPublicTemplates(isRTL));
+      if (isMounted && !productList?.length) dispatch(GetProductsList());
+      if (isMounted) dispatch(getAllTemplatesBySubaccountId());
+      if (isMounted) dispatch(getDisplayConditions());
+    };
+
+    loadData();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   useEffect(() => {
@@ -389,16 +424,14 @@ const CampaignEditor = ({ classes, ...props }) => {
     await dispatch(getTestGroups(false));
     await dispatch(getUserblocks());
     await dispatch(getAuthorizedEmails());
-
     if (productCategories?.length <= 0) {
-      getProductCategories();
+      await getProductCategories();
     }
     setDataReady(true);
-    const initBeeToken = () => {
-      dispatch(getBeeToken());
-    }
-    initBeeToken();
-  }
+    dispatch(getBeeToken());
+  } 
+
+
 
   const initRestrictions = async () => {
     const subAccountEmails = verifiedEmails?.filter((ve) => { return ve?.Number === campaign.FromEmail })[0];
@@ -411,6 +444,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   }, [campaign, verifiedEmails]);
   //#region Init Bee Token & Configuration
   const initTags = () => {
+    if (!config) return;
     let tempTags = [...new Set(userBlocks?.map(item => item.tags))];
     var tags = [].concat.apply([], tempTags);
     let tempRows = [{
@@ -676,7 +710,6 @@ const CampaignEditor = ({ classes, ...props }) => {
     if (beeToken) {
       initBeeEditor();
     }
-
   }, [beeToken]);
 
   useEffect(() => {
@@ -685,18 +718,27 @@ const CampaignEditor = ({ classes, ...props }) => {
     }
   }, [dialog]);
 
+  useEffect(() => {
+    if (editorRef.current && displayConditions && displayConditions.length > 0) {
+      const updatedConditions = (displayConditions || []).map((cond) => ({
+        ...cond,
+        id: cond.id || cond.ID || Math.random().toString(36).substr(2, 9)
+      }));
+      config.rowDisplayConditions = updatedConditions;
+      editorRef.current.loadConfig(config);
+    }
+  }, [displayConditions]);
+
   const initOptions = async () => {
     initTags();
     if (!accountSettings || accountSettings.SubAccountSettings) {
-      await dispatch(getCommonFeatures());
+      dispatch(getCommonFeatures());
     }
     if (editorRef.current) {
-      const c = getConfig();
-      editorRef.current.loadConfig(c);
+      editorRef.current.loadConfig(config);
       editorRef.current.load();
     }
   }
-
 
   //#endregion Init Bee Token & Configuration
   //#region Pulseem Methods (Save, Delete, Exit, Back, Test Send)
@@ -861,7 +903,18 @@ const CampaignEditor = ({ classes, ...props }) => {
   const onDesignChange = async () => {
     if (!editorReadyRef.current) return;
     designChangedRef.current = true;
+    
+    if (isDisplayConditionDialogOpen) return;
     onAutoSaveCampaign();
+    if (editorRef.current) {
+      try {
+        const content = await editorRef.current.save();
+        const html = content?.data?.html || '';
+        const ampHtml = content?.data?.htmlAmp || '';
+      } catch (error) {
+        console.error('Error calculating email size on change:', error);
+      }
+    }
   }
 
   const deleteNewsletter = async () => {
@@ -1146,30 +1199,50 @@ const CampaignEditor = ({ classes, ...props }) => {
   //   }
   // }
 
-  const getConfig = () => {
-    return BeeConfig({
-      classes,
-      onSaveUserBlock,
-      IsRTL: isRTL,
-      EditRow: EditRow,
-      openModal: openModal,
-      SaveCampaign: onSave,
-      AutoSaveCampaign: onAutoSaveCampaign,
-      DesignChange: onDesignChange,
-      SetDialog: setDialog,
-      CampaignId: campaignId,
-      PulseemEditBlock: onEditBlock,
-      DeleteBlock: handleDeleteBlock,
-      // HandleAutoSave: handleAutoSave,
-      getRows,
-      handleEditRow,
-      handleDeleteRow,
-      t: t,
-      languageCode: language
-      // handleUndoChange
-    });
-  }
-  const config = getConfig();
+  const editorFonts = FONTS();
+  const onRefreshConditions = async () => {
+    console.log('onRefreshConditions called');
+    const result = await dispatch(getDisplayConditions());
+    console.log('getDisplayConditions result payload length:', result?.payload?.length);
+    console.log('Condition 27 still exists:', result?.payload?.find(c => c.id === 27));
+    if (result?.payload) {
+      console.log('Updating BEE config with conditions:', result.payload);
+      const updatedConditions = (result.payload || []).map((cond) => ({
+        ...cond,
+        id: cond.id || cond.ID || Math.random().toString(36).substr(2, 9)
+      }));
+      config.rowDisplayConditions = updatedConditions;
+      if (editorRef.current) {
+        console.log('Reloading BEE config');
+        editorRef.current.loadConfig(config);
+      }
+    }
+    setIsDisplayConditionDialogOpen(false);
+  };
+  const config = BeeConfig({
+    classes,
+    displayConditions,
+    onSaveUserBlock,
+    IsRTL: isRTL,
+    EditRow: EditRow,
+    openModal: openModal,
+    SaveCampaign: onSave,
+    AutoSaveCampaign: onAutoSaveCampaign,
+    DesignChange: onDesignChange,
+    SetDialog: setDialog,
+    CampaignId: campaignId,
+    PulseemEditBlock: onEditBlock,
+    DeleteBlock: handleDeleteBlock,
+    getRows,
+    handleEditRow,
+    handleDeleteRow,
+    t: t,
+    languageCode: language,
+    dispatch: dispatch,
+    editorFonts: editorFonts,
+    onRefreshConditions: onRefreshConditions,
+    setIsDisplayConditionDialogOpen: setIsDisplayConditionDialogOpen
+  });
 
   // Email Size Indicator
   const EmailSizeIndicator = () => {
