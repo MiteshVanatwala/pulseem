@@ -23,9 +23,10 @@ import { updateTermsOfUse } from '../../redux/reducers/TermsOfUseSlice';
 import { getCommonFeatures } from '../../redux/reducers/commonSlice';
 import { getCookie, setCookie } from '../../helpers/Functions/cookies';
 import BusinessSectorActivity from './Popup/BusinessSectorActivity';
+import { IS_MAX_WINDOW_WIDTH_WHEN_DRAWER_OPEN } from '../../helpers/Constants';
 
 const DashboardScreen = ({ classes }) => {
-  const { windowSize, isRTL, isAdmin } = useSelector(state => state.core);
+  const { windowSize, isRTL, isAdmin, isDrawerOpen } = useSelector(state => state.core);
   const { accountSettings, isGlobal, companyAdmin } = useSelector(state => state.common);
   const { t } = useTranslation();
   const [toastMessage, setToastMessage] = useState(null);
@@ -72,6 +73,8 @@ const DashboardScreen = ({ classes }) => {
     }
   }, [accountSettings])
 
+  // Remove unused useEffect for tablet view, as isTabletMode is already derived from Redux state
+
   const renderToast = () => {
     setTimeout(() => {
       setToastMessage(null);
@@ -101,32 +104,32 @@ const DashboardScreen = ({ classes }) => {
     setShowBusinessSectorActivity(false);
   }
 
-
+  console.log(isDrawerOpen)
   return (
     <DefaultScreen
       currentPage='dashboard'
       classes={classes}
-      customStyle={clsx(classes.dashboard, classes.mb75)}>
+      customStyle={clsx(classes.dashboard)}>
       <Grid container>
-        <Grid item xs={12} sm={8} md={9} lg={9} xl={10} className={clsx(classes.pt20, classes.dashboardTop)}>
+        <Grid item xs={12} sm={8} md={9} lg={9} xl={10} className={clsx(classes.dashboardTop)}>
           <Grid container direction='row'>
-            <Grid item xs={12} sm={12} md={12} lg={4}>
+            <Grid item xs={12} sm={12} md={12} lg={ isDrawerOpen && IS_MAX_WINDOW_WIDTH_WHEN_DRAWER_OPEN ? 12 : 4 } style={{ marginInlineEnd: isDrawerOpen && IS_MAX_WINDOW_WIDTH_WHEN_DRAWER_OPEN ? '30px' : '' }}>
               {<BulkStatus classes={classes} />}
               {<GlobalBalance classes={classes} />}
             </Grid>
-            <Grid item xs={12} sm={12} md={12} lg={8} className={windowSize === "xs" ? classes.pt20 : null}>
+            <Grid item xs={12} sm={12} md={12} lg={ isDrawerOpen && IS_MAX_WINDOW_WIDTH_WHEN_DRAWER_OPEN ? 12 : 8 } className={windowSize === "xs" ? classes.pt20 : null}>
               <RecipientChart classes={classes} />
             </Grid>
           </Grid>
           <Grid container direction='row' className={classes.pt20}>
-            {!isWhiteLabel && <Grid item xs={12} sm={12} md={12} lg={4}>
+            {!isWhiteLabel && <Grid item xs={12} sm={12} md={12} lg={ isDrawerOpen && IS_MAX_WINDOW_WIDTH_WHEN_DRAWER_OPEN ? 12 : 4 } style={{ marginInlineEnd: isDrawerOpen && IS_MAX_WINDOW_WIDTH_WHEN_DRAWER_OPEN ? '30px' : '' }}>
               <PulseemTips
                 classes={classes}
                 t={t}
                 isRTL={isRTL}
               />
             </Grid>}
-            <Grid item xs={12} sm={12} md={12} lg={!isWhiteLabel ? 8 : 12}>
+            <Grid item xs={12} sm={12} md={12} lg={!isWhiteLabel ? (isDrawerOpen && IS_MAX_WINDOW_WIDTH_WHEN_DRAWER_OPEN ? 12 : 8) : 12}>
               <LatestReports
                 classes={classes}
                 windowSize={windowSize}

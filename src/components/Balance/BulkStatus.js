@@ -397,9 +397,48 @@ const BulkStatus = ({ classes }) => {
                       <MdSupportAgent className={classes.linkNoDesign} style={{ fontSize: 30, color: '#ff3343' }} title={t('master.RadMenuItemResource21.Text')} />
                     </IconButton>
                   </Tooltip>
+                <Box className={clsx(classes.dFlex, classes.flexWrap)} justifyContent='center' alignItems='center' style={{ position: 'relative' }}>
+                  <IconButton size="small" className={clsx(classes.noPadding)} onClick={() => window.open(URLS.ContactUs, '_blank')}>
+                    <MdSupportAgent className={classes.linkNoDesign} style={{ fontSize: 30, color: '#ff3343' }} title={t('master.RadMenuItemResource21.Text')} />
+                  </IconButton>
+                  <Box 
+                    className={clsx(classes.tooltipPrimary, classes.f12)}
+                    style={{
+                      position: 'absolute',
+                      top: windowSize === 'xs' || windowSize === 'sm' ? '50%' : '-40px',
+                      left: windowSize === 'xs' || windowSize === 'sm' ? '-80px' : '50%',
+                      transform: windowSize === 'xs' || windowSize === 'sm' ? 'translateY(-50%)' : 'translateX(-50%)',
+                      backgroundColor: '#ff3343',
+                      color: '#fff',
+                      padding: '6px 12px',
+                      borderRadius: '4px',
+                      whiteSpace: 'nowrap',
+                      zIndex: 1000,
+                      fontSize: '12px'
+                    }}
+                  >
+                    {t('master.RadMenuItemResource21.Text')}
+                    <Box
+                      style={{
+                        position: 'absolute',
+                        top: windowSize === 'xs' || windowSize === 'sm' ? '50%' : '100%',
+                        left: windowSize === 'xs' || windowSize === 'sm' ? '100%' : '50%',
+                        marginLeft: windowSize === 'xs' || windowSize === 'sm' ? '0' : '-5px',
+                        marginTop: windowSize === 'xs' || windowSize === 'sm' ? '-5px' : '0',
+                        width: 0,
+                        height: 0,
+                        borderLeft: windowSize === 'xs' || windowSize === 'sm' ? '0' : '5px solid transparent',
+                        borderRight: windowSize === 'xs' || windowSize === 'sm' ? '0' : '5px solid transparent',
+                        borderTop: windowSize === 'xs' || windowSize === 'sm' ? '5px solid transparent' : '5px solid #f74747',
+                        borderBottom: windowSize === 'xs' || windowSize === 'sm' ? '5px solid transparent' : '0',
+                        borderLeftColor: windowSize === 'xs' || windowSize === 'sm' ? '#f74747' : 'transparent'
+                      }}
+                    />
+                  </Box>
                 </Box>
-              }
             </Box>
+          }
+          </Box>
           </Grid>
           <Grid
             container

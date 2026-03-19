@@ -7,11 +7,12 @@ import { useLocation } from 'react-router-dom';
 
 const TawkToContainer = ({ itemId }: any) => {
   const { accountSettings } = useSelector((state: any) => state.common);
+  const { isRTL } = useSelector((state: any) => state.core);
   const tawkMessengerRef: any = useRef();
   const location = useLocation();
 
   const onTawkToLoaded = () => {
-    console.log('loaded')
+    console.log(isRTL)
   }
 
   useEffect(() => {

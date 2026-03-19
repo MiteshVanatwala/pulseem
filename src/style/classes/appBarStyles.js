@@ -3,7 +3,7 @@ const appBarTitleTextSize = { xs: 13, sm: 14, md: 10, lg: 16, xl: 14 }
 export const appBarStyle = (windowSize, isRTL, theme) => ({
   appBarItemContainer: {
     display: 'flex',
-    flexDirection: 'column',
+    // flexDirection: 'column',
     textDecoration: 'none',
     zIndex: 1300,
     height: '100%',
@@ -17,6 +17,9 @@ export const appBarStyle = (windowSize, isRTL, theme) => ({
         color: '#FF0054'
       }
     }
+  },
+  notificationUpdateContainerPopper: {
+    zIndex: '1400 !important'
   },
   appBarHrefContainer: {
     display: 'flex',
@@ -59,7 +62,7 @@ export const appBarStyle = (windowSize, isRTL, theme) => ({
     '& .header-whatsapp-icon': {
       width: '24px',
       height: '24px',
-      marginBottom: '4px',
+      // marginBottom: '4px',
     },
   },
   appBarItemBorder: {
@@ -140,7 +143,7 @@ export const appBarStyle = (windowSize, isRTL, theme) => ({
   },
   appBar: {
     maxWidth: 'calc(100vw - 56px)',
-    backgroundColor: '#fff',
+    backgroundColor: '#fff !important',
     zIndex: 50000000,
     boxShadow: '0px 1px 10px 4a4a4aab',
     height: 62.78,
@@ -197,7 +200,7 @@ export const appBarStyle = (windowSize, isRTL, theme) => ({
     }
   },
   appBarSettingIcon: {
-    width: 21
+    width: 25
   },
   appBarQuestionIcon: {
     fontWeight: 'bold',

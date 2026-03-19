@@ -508,7 +508,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 
 			case 'pl':
 				return authenticationTypes.AUTHENTICATIONPOLSKI;
-		
+
 			case 'en':
 			default:
 				return authenticationTypes.AUTHENTICATIONEN;
@@ -1060,8 +1060,10 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 
 	return (
 		<DefaultScreen
-			subPage={'manage'}
+			key="templatemanagement"
+			subPage={'templatemanagement'}
 			currentPage='whatsapp'
+
 			classes={classes}
 			customPadding={false}
 			containerClass={clsx(classes.management, classes.mb50, classes.whatsapp)}>

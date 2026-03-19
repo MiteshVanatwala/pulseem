@@ -489,7 +489,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 
 			case 'pl':
 				return authenticationTypes.AUTHENTICATIONPOLSKI;
-		
+
 			case 'en':
 			default:
 				return authenticationTypes.AUTHENTICATIONEN;
@@ -1156,7 +1156,8 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 
 	return (
 		<DefaultScreen
-			subPage={'manage'}
+			key="campaignmanagement"
+			subPage={'campaignmanagement'}
 			currentPage='whatsapp'
 			classes={classes}
 			customPadding={false}

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import React from 'react';
 import clsx from 'clsx';
 import DefaultScreen from '../../DefaultScreen';
 import { Title } from '../../../components/managment/Title';
@@ -11,6 +12,7 @@ import { coreProps } from '../../Whatsapp/Campaign/Types/WhatsappCampaign.types'
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import WizardActions from '../../../components/Wizard/WizardActions';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
+import type { IconType } from 'react-icons';
 import { BEE_EDITOR_TYPES, CLOSE_BUTTON_HTML, LandingPagesAnswerType, TierFeatures } from '../../../helpers/Constants';
 import { FileGallery } from '../../../Models/Files/FileGallery';
 import Gallery from '../../../components/Gallery/Gallery.component';
@@ -20,6 +22,7 @@ import { ValidateEmailAddress } from '../../../helpers/Utils/common';
 import { isValidHttpUrl } from '../../../helpers/Utils/TextHelper';
 import { getGroupsBySubAccountId } from '../../../redux/reducers/groupSlice';
 import { BsInfoCircle } from 'react-icons/bs';
+import type { IconBaseProps } from 'react-icons';
 import { getById, getAllLPTemplatesBySubaccountId, getLPPublicTemplates, saveLandingPage } from '../../../redux/reducers/landingPagesSlice';
 import { sitePrefix } from '../../../config';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
@@ -881,6 +884,7 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 							classes.backButton
 						)}
 						style={{ margin: '8px' }}
+						{/* @ts-ignore */}
 						endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
 					>
 						{t("common.save")}
@@ -893,6 +897,7 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 							classes.backButton
 						)}
 						style={{ margin: '8px' }}
+						{/* @ts-ignore */}
 						endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
 					>
 						{t('common.continue')}
@@ -911,6 +916,7 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 							classes.backButton
 						)}
 						style={{ margin: '8px' }}
+						{/* @ts-ignore */}
 						endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
 						key="saveContinue"
 					>
@@ -929,6 +935,7 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 							classes.backButton
 						)}
 						style={{ margin: '8px' }}
+						{/* @ts-ignore */}
 						endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
 						key='newEditor'
 					>
@@ -950,8 +957,10 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 
 	return (
 		<DefaultScreen
+			key="createLandingPage"
 			currentPage="landingPages"
 			subPage={isPopup ? "createPopup" : (id ? "EditLandingPage" : "CreateLandingPage")}
+			// subPage="createLandingPage"
 			classes={classes}
 			customPadding={true}
 			containerClass={clsx(classes.mb50, classes.editorCont)}
@@ -1002,6 +1011,7 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 									placement={"top"}
 								>
 									<IconButton className={clsx(classes.icon_Info, classes.noPadding, classes.ml5)}>
+										{/* @ts-ignore */}
 										<BsInfoCircle />
 									</IconButton>
 								</Tooltip>
@@ -1066,6 +1076,7 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 										placement={"top"}
 									>
 										<IconButton className={clsx(classes.icon_Info, classes.noPadding, classes.ml5)}>
+											{/* @ts-ignore */}
 											<BsInfoCircle />
 										</IconButton>
 									</Tooltip>

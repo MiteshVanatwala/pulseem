@@ -67,7 +67,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme, IsPoland = false) =>
       marginLeft: 207
     },
     '& .topSection': {
-      marginTop: 37.870,
+      // marginTop: 37.870,
       border: '2px solid #F0F5FF',
       borderRadius: 10,
       paddingBottom: 31,
@@ -1163,7 +1163,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme, IsPoland = false) =>
   },
   contactUs: {
     fontSize: 12,
-    marginTop: 20,
+    marginTop: 30,
   },
   verifyLink: {
     paddingInlineStart: 5,
@@ -1696,7 +1696,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme, IsPoland = false) =>
   tipulseemMsg: {
     fontSize: tipsFontSize[windowSize],
     padding: "0px 20px 20px 20px",
-    maxWidth: 204,
+    maxWidth: 260,
     textAlign: 'center',
     margin: 'auto',
     ['@media (max-width:1280px)']: {

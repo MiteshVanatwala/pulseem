@@ -660,7 +660,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 
 			case 'pl':
 				return authenticationTypes.AUTHENTICATIONPOLSKI;
-		
+
 			case 'en':
 			default:
 				return authenticationTypes.AUTHENTICATIONEN;
@@ -1456,7 +1456,8 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 
 	return (
 		<DefaultScreen
-			subPage={'create'}
+			key="createWhatsappCampaign"
+			subPage={'createWhatsappCampaign'}
 			currentPage='whatsapp'
 			classes={classes}
 			customPadding={true}

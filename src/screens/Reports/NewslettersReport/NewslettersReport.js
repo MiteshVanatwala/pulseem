@@ -17,7 +17,7 @@ import { getGetEmailReportsManagement } from '../../../redux/reducers/newsletter
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import { getCookie, setCookie } from '../../../helpers/Functions/cookies';
 import { ExportFile } from '../../../helpers/Export/ExportFile';
-import { EmailStatus, SEND_1, PULSE_1, SizeOptionsOfHandHeldDevices, DateFormats } from '../../../helpers/Constants';
+import { EmailStatus, SEND_1, PULSE_1, SizeOptionsOfHandHeldDevices, DateFormats, IS_MAX_WINDOW_WIDTH_WHEN_DRAWER_OPEN } from '../../../helpers/Constants';
 import { HandleExportData } from '../../../helpers/Export/ExportHelper';
 import { Loader } from '../../../components/Loader/Loader';
 import { useNavigate, useLocation } from 'react-router';
@@ -39,7 +39,7 @@ const NewslettersReport = ({ classes }) => {
   const { state } = useLocation();
   const from = state?.from || "/";
 
-  const { language, windowSize, isRTL, rowsPerPage, userRoles } = useSelector(state => state.core)
+  const { language, windowSize, isRTL, rowsPerPage, userRoles, isDrawerOpen } = useSelector(state => state.core)
   const { accountFeatures, currencySymbol, isCurrencySymbolPrefix } = useSelector(state => state.common);
   const { newslettersReportsParentCampaigns, newslettersReportsChildCampaigns } = useSelector(state => state.newsletter)
   const { t } = useTranslation()
@@ -66,7 +66,12 @@ const NewslettersReport = ({ classes }) => {
   const [expandedIds, setExpandedIds] = useState([]);
   const [parentCampaignsWithChild, setParentCampaignsWithChild] = useState([]);
   const virtuosoRef = useRef();
-
+  const responsiveStyle = (isDrawerOpen && IS_MAX_WINDOW_WIDTH_WHEN_DRAWER_OPEN) ? {
+      flexWrap: "wrap",
+      textAlign: "right",
+      gap: "10px",
+      justifyContent: "end"
+    } : {}
   moment.locale(language)
 
   const getHrefs = (id, Name, revenue = 0, isParent = false) => ({
@@ -453,7 +458,7 @@ const NewslettersReport = ({ classes }) => {
     return (
       <Grid
         container
-        spacing={2}
+        spacing={1}
         className={clsx(SizeOptionsOfHandHeldDevices.indexOf(windowSize) > -1 ? classes.mt15 : classes.lineTopMarging, 'searchLine')}>
         <Grid item>
           <TextField
@@ -468,7 +473,7 @@ const NewslettersReport = ({ classes }) => {
         </Grid>
 
         {windowSize !== 'xs' ?
-          <Grid item>
+          <Grid item md={2}>
             <DateField
               toolbarDisabled={false}
               classes={classes}
@@ -480,7 +485,7 @@ const NewslettersReport = ({ classes }) => {
           : null}
 
         {windowSize !== 'xs' ?
-          <Grid item>
+          <Grid item md={2}>
             <DateField
               toolbarDisabled={false}
               classes={classes}
@@ -904,7 +909,7 @@ const NewslettersReport = ({ classes }) => {
             classes={borderCellStyle}
             align='center'
             className={classes.flex3}>
-            <Grid container className={clsx(classes.justifyEvenly, classes.responsiveFlex)}>
+            <Grid container className={clsx(classes.justifyEvenly, classes.responsiveFlex)} style={responsiveStyle}>
               <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
                 {renderDataTooltip(isParent ? SumOpenCount : row.OpenCount, 'green', hrefs.OpenCount, 'mainReport.OpensTotalTooltip.Text', row.CampaignID)}
               </Grid>
@@ -922,7 +927,7 @@ const NewslettersReport = ({ classes }) => {
             classes={borderCellStyle}
             align='center'
             className={classes.flex3}>
-            <Grid container className={clsx(classes.justifyEvenly, classes.responsiveFlex)}>
+            <Grid container className={clsx(classes.justifyEvenly, classes.responsiveFlex)}  style={responsiveStyle}>
               <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
                 {renderDataTooltip(isParent ? SumClickCount : row.ClickCount, 'blue', hrefs.ClickCount, 'mainReport.ClicksTotalTooltip.Text')}
               </Grid>
@@ -939,7 +944,7 @@ const NewslettersReport = ({ classes }) => {
             classes={borderCellStyle}
             align='center'
             className={classes.flex3}>
-            <Grid container className={clsx(classes.justifyEvenly, classes.responsiveFlex)}>
+            <Grid container className={clsx(classes.justifyEvenly, classes.responsiveFlex)} style={responsiveStyle}>
               <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
                 {renderIntData(isParent ? SumSendError : row.SendError, 'red', hrefs.SendError, isParent && childItems.length > 0 ? false : true, t('mainReport.GridButtonColumnResource4.HeaderText'), childItems.length > 0 ? isParent : false)}
               </Grid>
@@ -1208,6 +1213,8 @@ const NewslettersReport = ({ classes }) => {
 
   return (
     <DefaultScreen
+      key="newsletterReport"
+      subPage='newsletterReport'
       currentPage='reports'
       classes={classes}
       containerClass={clsx(classes.management, classes.mb50)}>

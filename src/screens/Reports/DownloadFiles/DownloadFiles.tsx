@@ -259,7 +259,9 @@ const DownloadFiles = ({ classes }: any) => {
 
     return (
         <DefaultScreen
-            currentPage="downloadfiles"
+            key="groups"
+            currentPage='groups'
+            subPage='downloadfiles'
             classes={classes}
             containerClass={clsx(classes.management, classes.mb50)}
         >

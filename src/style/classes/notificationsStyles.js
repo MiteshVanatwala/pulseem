@@ -700,14 +700,20 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         cursor: 'pointer'
     },
     notificationUpdateContainerPopper: {
-        left: isRTL ? '100px !important' : '-50px !important',
+        //     position: 'fixed !important',
+        bottom: 90,
+        //     right: isRTL ? '10px !important' : 'auto !important',
+        //     left: !isRTL ? '10px !important' : 'auto !important',
+        width: 320,
         zIndex: 999,
+        //  top: 'auto !important',
+        // transform: 'unset !important'
     },
     notificationUpdateContainer: {
         direction: isRTL ? 'rtl' : 'ltr',
         background: '#fff',
         marginTop: '12px',
-        minWidth: '400px',
+        minWidth: 320,
         maxHeight: '300px',
         overflow: 'auto',
         boxShadow: '0px 0px 6px #ababab',
