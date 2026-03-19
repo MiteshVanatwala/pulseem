@@ -54,7 +54,7 @@ const VerificationDialog = ({
     let trials = localStorage.getItem('verificationTrial') ? Number(localStorage.getItem('verificationTrial')) : 0
     const SLIDE_HEIGHTS = [25, 20, 20, 20, 20];
     const isIsraeliPhoneNumber = (val) => /^(\+972|972|0)5\d{8}$/.test(val);
-
+    
     useEffect(() => {
         setDeleteValue(null);
         setAddToFromEmailToSend(false);
@@ -78,7 +78,7 @@ const VerificationDialog = ({
                             ID: n.ID,
                             SenderName: n.Number,
                             RequestDate: n.CreateDate,
-                            Status: n.IsOptIn ? 0 : 1,
+                            Status: n.IsOptIn ? 0 : (n.ReviewType === 'Rejected' ? 2 : 1),
                         }));
                     setSenderNames(nonIsraeliSenders);
                     setShowLoader(false);
