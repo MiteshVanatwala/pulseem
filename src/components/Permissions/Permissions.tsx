@@ -21,7 +21,8 @@ const Permissions = ({ classes, isOpen, subUser, onClose, onConfirm, showButtons
 		accessType: '',
 		allowSending: false,
 		allowExport: false,
-		allowDeleting: false
+		allowDeleting: false,
+		allowWhatsAppAgent: false,
 	})
 	const [userDetails, setUserDetails] = useState<SubUserModel | any>(subUser);
 	const [errors, setErrors] = useState({
@@ -53,20 +54,46 @@ const Permissions = ({ classes, isOpen, subUser, onClose, onConfirm, showButtons
 			subUser?.UserPermissionsList?.indexOf(permission) > -1
 		);
 
+		const hasWhatsApp = subUser?.UserPermissionsList?.indexOf(eSubUserPermissions.AllowWhatsAppToAgent) > -1;
+		const isReadOnly = subUser?.UserPermissionsList?.indexOf(eSubUserPermissions.HideRecipients) > -1;
+		const hasSend = subUser?.UserPermissionsList?.indexOf(eSubUserPermissions.AllowSend) > -1;
+		const hasExport = subUser?.UserPermissionsList?.indexOf(eSubUserPermissions.AllowExport) > -1;
+		const hasDelete = subUser?.UserPermissionsList?.indexOf(eSubUserPermissions.AllowDelete) > -1;
+
 		if (isAdmin) {
 			setPermissions({
 				accessType: PermissionTypes.Admin,
 				allowSending: true,
 				allowExport: true,
-				allowDeleting: true
+				allowDeleting: true,
+				allowWhatsAppAgent: hasWhatsApp
 			})
+		}
+		else if (isReadOnly) {
+			setPermissions({
+				accessType: PermissionTypes.ReadOnly,
+				allowSending: false,
+				allowExport: false,
+				allowDeleting: false,
+				allowWhatsAppAgent: hasWhatsApp
+			});
+		}
+		else if (hasSend || hasExport || hasDelete) {
+			setPermissions({
+				accessType: PermissionTypes.LimitedAccess,
+				allowSending: hasSend,
+				allowExport: hasExport,
+				allowDeleting: hasDelete,
+				allowWhatsAppAgent: hasWhatsApp
+			});
 		}
 		else {
 			setPermissions({
-				accessType: subUser.UserPermissionsList.indexOf(eSubUserPermissions.HideRecipients) > -1 ? PermissionTypes.ReadOnly : PermissionTypes.LimitedAccess,
-				allowSending: subUser.UserPermissionsList.indexOf(eSubUserPermissions.AllowSend) > -1,
-				allowExport: subUser.UserPermissionsList.indexOf(eSubUserPermissions.AllowExport) > -1,
-				allowDeleting: subUser.UserPermissionsList.indexOf(eSubUserPermissions.AllowDelete) > -1
+				accessType: '',
+				allowSending: false,
+				allowExport: false,
+				allowDeleting: false,
+				allowWhatsAppAgent: hasWhatsApp
 			});
 		}
 	}
@@ -83,7 +110,7 @@ const Permissions = ({ classes, isOpen, subUser, onClose, onConfirm, showButtons
 		errorsTemp = {
 			cellPhone: (isGlobal ? !IsValidPhoneNumberWithCountryCode(userDetails?.Cellphone.trim(), countryCodeList) : !IsValidNonGlobalPhoneNumber(userDetails?.Cellphone.trim())) ? t('recipient.errors.cellPhone') : '',
 			emailAddress: userDetails?.Email?.trim() === '' ? t('common.requiredField') : '',
-			accessType: permissions.accessType === '' ? t('SubUsers.permissionIsRequired') : '',
+			accessType: permissions.accessType === '' && !permissions.allowWhatsAppAgent ? t('SubUsers.permissionIsRequired') : '',
 			limitedAccess: permissions.accessType === PermissionTypes.LimitedAccess && permissions.allowSending === false && permissions.allowExport === false && permissions.allowDeleting === false ? t('SubUsers.limitedPermissionIsRequired') : '',
 			firstName: userDetails.FirstName === '' ? t('common.requiredField') : '',
 			lastName: userDetails.LastName === '' ? t('common.requiredField') : '',
@@ -311,16 +338,39 @@ const Permissions = ({ classes, isOpen, subUser, onClose, onConfirm, showButtons
 									checked={permissions.accessType === PermissionTypes.Admin}
 									onChange={(e: any) => {
 										if (e.target.checked) {
+											// Checking Admin - set admin permissions, preserve WhatsApp
+											const newPermissions = [eSubUserPermissions.AllowSend, eSubUserPermissions.AllowExport, eSubUserPermissions.AllowDelete];
+											if (permissions.allowWhatsAppAgent) {
+												newPermissions.push(eSubUserPermissions.AllowWhatsAppToAgent);
+											}
 											setUserDetails({
 												...userDetails,
-												SubUserPermissions: [eSubUserPermissions.AllowSend, eSubUserPermissions.AllowExport, eSubUserPermissions.AllowDelete].join(','),
-												UserPermissionsList: [eSubUserPermissions.AllowSend, eSubUserPermissions.AllowExport, eSubUserPermissions.AllowDelete]
+												SubUserPermissions: newPermissions.join(','),
+												UserPermissionsList: newPermissions
+											})
+											setPermissions({
+												...permissions,
+												accessType: PermissionTypes.Admin,
+												allowSending: true,
+												allowExport: true,
+												allowDeleting: true
+											})
+										} else {
+											// Unchecking Admin - preserve only WhatsApp
+											const newPermissions = permissions.allowWhatsAppAgent ? [eSubUserPermissions.AllowWhatsAppToAgent] : [];
+											setUserDetails({
+												...userDetails,
+												SubUserPermissions: newPermissions.join(','),
+												UserPermissionsList: newPermissions
+											})
+											setPermissions({
+												...permissions,
+												accessType: '',
+												allowSending: false,
+												allowExport: false,
+												allowDeleting: false
 											})
 										}
-										setPermissions({
-											...permissions,
-											accessType: permissions.accessType === PermissionTypes.Admin ? '' : PermissionTypes.Admin
-										})
 									}}
 								/>
 							}
@@ -352,28 +402,34 @@ const Permissions = ({ classes, isOpen, subUser, onClose, onConfirm, showButtons
 									onChange={(e: any) => {
 										scrollToSection();
 										if (e.target.checked) {
+											// Checking Limited Access - set all three sub-permissions, preserve WhatsApp
+											const newPermissions = [eSubUserPermissions.AllowSend, eSubUserPermissions.AllowDelete, eSubUserPermissions.AllowExport];
+											if (permissions.allowWhatsAppAgent) {
+												newPermissions.push(eSubUserPermissions.AllowWhatsAppToAgent);
+											}
 											setUserDetails({
 												...userDetails,
-												SubUserPermissions: [eSubUserPermissions.AllowSend, eSubUserPermissions.AllowDelete, eSubUserPermissions.AllowExport].join(','),
-												UserPermissionsList: [eSubUserPermissions.AllowSend, eSubUserPermissions.AllowDelete, eSubUserPermissions.AllowExport]
+												SubUserPermissions: newPermissions.join(','),
+												UserPermissionsList: newPermissions
 											})
-											const newPermissions = {
+											setPermissions({
+												...permissions,
+												accessType: PermissionTypes.LimitedAccess,
 												allowSending: true,
 												allowExport: true,
 												allowDeleting: true
-											}
-											setPermissions({
-												...newPermissions,
-												accessType: permissions.accessType === PermissionTypes.LimitedAccess ? '' : PermissionTypes.LimitedAccess
 											})
 										}
 										else {
+											// Unchecking Limited Access - preserve only WhatsApp
+											const newPermissions = permissions.allowWhatsAppAgent ? [eSubUserPermissions.AllowWhatsAppToAgent] : [];
 											setUserDetails({
 												...userDetails,
-												SubUserPermissions: '',
-												UserPermissionsList: []
+												SubUserPermissions: newPermissions.join(','),
+												UserPermissionsList: newPermissions
 											})
 											setPermissions({
+												...permissions,
 												accessType: '',
 												allowSending: false,
 												allowExport: false,
@@ -555,23 +611,37 @@ const Permissions = ({ classes, isOpen, subUser, onClose, onConfirm, showButtons
 									checked={permissions.accessType === PermissionTypes.ReadOnly}
 									onChange={(e: any) => {
 										if (permissions.accessType !== PermissionTypes.ReadOnly) {
+											// Checking ReadOnly - set read-only permission, preserve WhatsApp
+											const newPermissions = [eSubUserPermissions.HideRecipients];
+											if (permissions.allowWhatsAppAgent) {
+												newPermissions.push(eSubUserPermissions.AllowWhatsAppToAgent);
+											}
 											setUserDetails({
 												...userDetails,
-												SubUserPermissions: '4',
-												UserPermissionsList: [eSubUserPermissions.HideRecipients]
+												SubUserPermissions: newPermissions.join(','),
+												UserPermissionsList: newPermissions
+											})
+											setPermissions({
+												...permissions,
+												accessType: PermissionTypes.ReadOnly,
+												allowSending: false,
+												allowExport: false,
+												allowDeleting: false
 											})
 										}
 										else {
+											// Unchecking ReadOnly - preserve only WhatsApp
+											const newPermissions = permissions.allowWhatsAppAgent ? [eSubUserPermissions.AllowWhatsAppToAgent] : [];
 											setUserDetails({
 												...userDetails,
-												SubUserPermissions: '',
-												UserPermissionsList: []
+												SubUserPermissions: newPermissions.join(','),
+												UserPermissionsList: newPermissions
+											})
+											setPermissions({
+												...permissions,
+												accessType: ''
 											})
 										}
-										setPermissions({
-											...permissions,
-											accessType: permissions.accessType === PermissionTypes.ReadOnly ? '' : PermissionTypes.ReadOnly
-										})
 									}}
 								/>
 							}
@@ -580,6 +650,49 @@ const Permissions = ({ classes, isOpen, subUser, onClose, onConfirm, showButtons
 					</Grid>
 					<Grid item md={11} xs={11} className={clsx(classes.pt10, classes.dFlex, classes.alignItemsCenter)}>
 						<Typography style={{ marginInline: 10 }}>{t('SubUsers.readOnly')}</Typography>
+					</Grid>
+				</Grid>
+
+				<Grid container>
+					<Grid item md={1} xs={1} className={clsx(isRTL && classes.textRight, classes.pt10)}>
+						<FormControlLabel
+							control={
+								<PulseemSwitch
+									id="whatsapp-agent"
+									switchType='ios'
+									classes={classes}
+									onColor="#0371ad"
+									handleDiameter={20}
+									boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+									activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+									height={15}
+									className={clsx({ [classes.rtlSwitch]: isRTL })}
+									checked={permissions.allowWhatsAppAgent}
+									onChange={(e: any) => {
+										if (e.target.checked) {
+											setPermissions({ ...permissions, allowWhatsAppAgent: true });
+											setUserDetails({
+												...userDetails,
+												SubUserPermissions: [...userDetails.UserPermissionsList, eSubUserPermissions.AllowWhatsAppToAgent].join(','),
+												UserPermissionsList: [...userDetails.UserPermissionsList, eSubUserPermissions.AllowWhatsAppToAgent]
+											})
+										} else {
+											setPermissions({ ...permissions, allowWhatsAppAgent: false });
+											const filteredPermissions = userDetails.UserPermissionsList.filter((x: any) => x !== eSubUserPermissions.AllowWhatsAppToAgent);
+											setUserDetails({
+												...userDetails,
+												SubUserPermissions: filteredPermissions.join(','),
+												UserPermissionsList: filteredPermissions
+											})
+										}
+									}}
+								/>
+							}
+							label=''
+						/>
+					</Grid>
+					<Grid item md={11} xs={11} className={clsx(classes.pt10, classes.dFlex, classes.alignItemsCenter)}>
+						<Typography style={{ marginInline: 10 }}>{t('SubUsers.whatsappAgent')}</Typography>
 					</Grid>
 				</Grid>
 
