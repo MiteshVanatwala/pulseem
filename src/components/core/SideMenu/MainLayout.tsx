@@ -142,8 +142,16 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
         }}>
           {/* Pass the toggle function to children via React.cloneElement */}
           {React.Children.map(children, child => {
-            if (React.isValidElement(child) && typeof child.type === 'function' && child.type.name === 'TopMenu') {
-              return React.cloneElement(child, { onMenuToggle: handleSidebarToggle });
+            if (
+              React.isValidElement(child) &&
+              typeof child.type === 'function' &&
+              // Keep this heuristic: we only want to inject the toggle prop into TopMenu.
+              child.type.name === 'TopMenu'
+            ) {
+              return React.cloneElement(
+                child as React.ReactElement<{ onMenuToggle?: () => void }>,
+                { onMenuToggle: handleSidebarToggle }
+              );
             }
             return child;
           })}
