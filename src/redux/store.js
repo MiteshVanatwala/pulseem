@@ -37,8 +37,11 @@ import PopupSlice from './reducers/PopupSlice';
 import popUpManagementReducer from './reducers/popUpManagementSlice';
 
 import aiChatReducer from './reducers/aiChatSlice';
+import supportChatReducer from './reducers/supportChatSlice';
 import TiersSlice from './reducers/TiersSlice';
 import emailTierScalingReducer from './reducers/emailTierScalingSlice';
+import helpDrawerReducer from './reducers/helpDrawerSlice';
+import contactSupportReducer from './reducers/contactSupportSlice';
 
 
 export default configureStore({
@@ -80,7 +83,10 @@ export default configureStore({
     linksClicksReportSlice: linksClicksReportSlice,
     popup: PopupSlice,
     aiChat: aiChatReducer,
+    supportChat: supportChatReducer,
     tiers: TiersSlice,
-    emailTierScaling: emailTierScalingReducer
+    emailTierScaling: emailTierScalingReducer,
+    helpDrawer: helpDrawerReducer,
+    contactSupport: contactSupportReducer,
   },
 });

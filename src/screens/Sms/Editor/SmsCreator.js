@@ -27,7 +27,6 @@ import {
   getSmsByID,
   smsQuick,
   getCampaignSumm,
-  getCreditsforSMS,
   getTestGroups,
   getSMSVirtualNumber
 } from "../../../redux/reducers/smsSlice";
@@ -65,6 +64,7 @@ import { TierFeatures, URL_REGEX } from "../../../helpers/Constants";
 import { findPlanByFeatureCode } from "../../../redux/reducers/TiersSlice";
 import TierPlans from "../../../components/TierPlans/TierPlans";
 import { get } from "lodash";
+import { computeCreditsForSms } from "../../../helpers/Utils/SmsCreditsHelper";
 
 const useStyles = makeStyles((theme) => ({
   customWidth: {
@@ -111,7 +111,6 @@ const defaultAccountExtraData = [
   { "Zip": "common.zip" }
 ];
 
-
 const SmsCreator = ({ classes }) => {
   const { t } = useTranslation();
   const { id } = useParams();
@@ -139,7 +138,7 @@ const SmsCreator = ({ classes }) => {
     ToastMessages,
     extraData
   } = useSelector((state) => state.sms);
-  const { accountSettings, accountFeatures, countryCodeList, isGlobal, subAccount } = useSelector((state) => state.common)
+  const { accountSettings, accountFeatures, countryCodeList, isGlobal, subAccount, IsPoland, smsConfig } = useSelector((state) => state.common)
   const [dialogType, setDialogType] = useState(null)
   const [alignment, setAlignment] = useState('right');
   const [checked, setChecked] = React.useState(false);
@@ -184,7 +183,6 @@ const SmsCreator = ({ classes }) => {
   const [editDynamicProductFallbackURL, setEditDynamicProductFallbackURL] = useState('');
   const [dynamicProductButtonDisabled, setDynamicProductButtonDisabled] = useState(false);
   const [buttonsDisabled, setButtonsDisabled] = useState(false);
-  const [controller, setController] = useState(null);
   const [ TierMessageCode, setTierMessageCode ] = useState('');
   const [showTierPlans, setShowTierPlans] = useState(false);
   const [smsModel, setSmsModel] = useState({
@@ -293,10 +291,16 @@ const SmsCreator = ({ classes }) => {
         setDialogType({ type: "englishLetterDialog" });
         break;
       }
-      case 550:
-      case 551:
+      case 9: { // Non polish number
+        if (IsPoland && isGlobal) {
+          setToastMessage(ToastMessages.NON_POLISH_NUMBER)
+        }
+        break;
+      }
+      case 550: {
         setDialogType({ type: "pendingApprovalDialog" });
         break;
+      }
       case 9271: {
         setTierMessageCode('SMS_BASIC');
         setDialogType({ type: 'tier' });
@@ -312,6 +316,9 @@ const SmsCreator = ({ classes }) => {
         setDialogType({ type: 'tier' });
         break;
       }
+      case 551:
+        setDialogType({ type: "underReviewDialog" });
+        break;
       default:
       case 5: {// ACCEPTED
         break;
@@ -335,12 +342,16 @@ const SmsCreator = ({ classes }) => {
 
   useEffect(() => {
     getcredits(characterCount);
-    return () => {
-      if (controller) {
-        controller.abort();
-      }
-    };
   }, [characterCount])
+
+  const getcredits = (count) => {
+    setButtonsDisabled(true);
+    const total = computeCreditsForSms(count, smsConfig);
+    setmessageCount(total);
+    handleSmsModelChange('CreditsPerSms', total);
+    setButtonsDisabled(false);
+  };
+  
 
   const handleSmsModelChange = (name, value) => {
     setSmsModel(prevState => ({
@@ -529,28 +540,6 @@ const SmsCreator = ({ classes }) => {
     }
   }
 
-  const getcredits = (count) => {
-    if (controller) {
-      controller.abort();
-    }
-    // Create new controller
-    const newController = new AbortController();
-    setController(newController);
-
-    setButtonsDisabled(true);
-    dispatch(getCreditsforSMS(count)).then((res) => {
-      let credits = res.payload?.split("#");
-      if (credits && credits !== '') {
-        setmessageCount(credits[0]);
-        handleSmsModelChange("CreditsPerSms", credits[0]);
-      }
-      else {
-        setmessageCount(0);
-        handleSmsModelChange("CreditsPerSms", 0);
-      }
-      setButtonsDisabled(false);
-    });
-  }
   const onCamppaignChange = (e) => {
     handleSmsModelChange("Name", e.target.value);
     setcampaignBool(false);
@@ -733,14 +722,18 @@ const SmsCreator = ({ classes }) => {
             <Typography className={classes.buttonHead}>
               {t("mainReport.campFrom")}
             </Typography>
-            <Typography
-              className={classes.restoreBtn}
-              onClick={() => {
-                handleRestore()
-              }}
-            >
-              {t("mainReport.restore")}
-            </Typography>
+            {
+              !IsPoland && (
+                <Typography
+                  className={classes.restoreBtn}
+                  onClick={() => {
+                    handleRestore()
+                  }}
+                >
+                  {t("mainReport.restore")}
+                </Typography>
+              )
+            }
 
           </Box>
 
@@ -760,7 +753,7 @@ const SmsCreator = ({ classes }) => {
           </Typography>
         </Grid>
         <Grid item xs={12} md={4} sm={12} >
-          {restoreBool && removalNumber !== null ? (
+          {!IsPoland && restoreBool && removalNumber !== null ? (
             <Box className={clsx(classes.buttonForm, 'textBoxWrapper')}>
               <Typography className={clsx(classes.buttonHead)}>
                 {t("mainReport.removalReply")}
@@ -1358,6 +1351,10 @@ const SmsCreator = ({ classes }) => {
           setToastMessage(CoreToastMessages.XSS_ERROR);
           break;
         }
+        case 10: {
+          setToastMessage(ToastMessages.NON_POLISH_NUMBER);
+          break;
+        }
         case 927: {
           // Determine feature code from payload or context, fallback to 'SMS_BASIC' if not present
           const featureCode = r.payload.Message || 'SMS_BASIC';
@@ -1498,7 +1495,10 @@ const SmsCreator = ({ classes }) => {
       }
       else if (r.payload.Status === 3) {
         setOTPOpen(true);
-      } else if (r.payload.Status === 927) {
+      } else if (r.payload.Status === 10) {
+        setToastMessage(ToastMessages.NON_POLISH_NUMBER);
+      } 
+      else if (r.payload.Status === 927) {
         setTierMessageCode(r.payload.Message);
         setDialogType({ type: 'tier' });
       }
@@ -1535,6 +1535,9 @@ const SmsCreator = ({ classes }) => {
         else if (saveResponse.payload.Status === 2) {
           setDialogType(null);
           Redirect({ url: !!isFromAutomation ? getAutomationReturnUrl(id) : `${sitePrefix}SMSCampaigns` });
+        } else if (saveResponse.payload.Status === 10) {
+          setToastMessage(ToastMessages.NON_POLISH_NUMBER);
+          return;
         }
         else if (saveResponse.payload.Status === 927) {
           setTierMessageCode(saveResponse.payload.Message);
@@ -2140,6 +2143,25 @@ const SmsCreator = ({ classes }) => {
     }
   }
 
+  const underReviewDialog = () => {
+    return {
+      title: t('campaigns.newsLetterEditor.errors.pendingApproval'),
+      disableBackdropClick: true,
+      icon: (
+        <AiOutlineExclamationCircle />
+      ),
+      content: (
+        <Box>
+          <Typography className={classes.f18}>{t("campaigns.newsLetterEditor.errors.PendingApproval551Desc")}</Typography>
+        </Box>
+      ),
+      showDefaultButtons: true,
+      onClose: () => { setDialogType(null) },
+      onCancel: () => { setDialogType(null) },
+      onConfirm: () => { setDialogType(null) }
+    }
+  }
+
   const renderDialog = () => {
     const { type, data, isOnlySave, returnToAutomation } = dialogType || {}
 
@@ -2157,7 +2179,8 @@ const SmsCreator = ({ classes }) => {
       englishLetterDialog: englishLetterNotAllowed(),
       dynamicProduct: dynamicProductDialog(),
       pendingApprovalDialog: pendingApprovalDialog(),
-      tier: getTierValidationDialog()
+      tier: getTierValidationDialog(),
+      underReviewDialog: underReviewDialog(),
     }
 
     const currentDialog = dialogContent[type] || {}

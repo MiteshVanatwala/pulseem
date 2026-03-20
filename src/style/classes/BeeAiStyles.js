@@ -31,7 +31,9 @@ export const BeeAiStyles = (windowSize, isRTL, theme) => ({
   },
   checkboxDesc: {
     fontSize: 14,
-    whiteSpace: 'nowrap'
+    whiteSpace: 'normal',
+    wordWrap: 'break-word',
+    lineHeight: 1.5,
   },
   optionBox: {
     backgroundColor: '#f9f9f9',

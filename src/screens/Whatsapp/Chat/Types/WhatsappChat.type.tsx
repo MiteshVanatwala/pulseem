@@ -14,6 +14,7 @@ import { SelectChangeEvent } from '@mui/material';
 export type WhatsappChatProps = {
 	classes: ClassesType['classes'];
 	isMobileSideBar: boolean;
+	refetchActiveChatContact?: (phoneNumber: string) => void;
 };
 
 export type WhatsappChatUiProps = {
@@ -23,7 +24,7 @@ export type WhatsappChatUiProps = {
 	savedTemplateList: savedTemplateListProps[];
 	onChoose: (
 		template: savedTemplateListProps,
-		templateText: string | null
+		templateText: string | null,
 	) => void;
 	newMessage: string;
 	setNewMessage: (newMessage: string) => void;
@@ -38,17 +39,17 @@ export type WhatsappChatUiProps = {
 	chatContacts: APIWhatsappChatSidebarContactsItemsData;
 	ChatContacts: APIWhatsappChatSidebarContactsItemsData[];
 	whatsappChatSession: APIWhatsappChatSessionData;
-	handleUserStatus: (e: SelectChangeEvent, contactPhoneNumber: string) => void;
+	handleUserStatus: (e: SelectChangeEvent, contactPhoneNumber: string, setIsStatusUpdating?: (value: boolean) => void) => void;
 	getStatusClass: (status: number) => string | undefined;
 	onChatSend: () => void;
 	allWhatsappChat: APIWhatsappChatItemsData | undefined;
 	setAllWhatsappChat: (
-		whatsappChat: APIWhatsappChatItemsData | undefined
+		whatsappChat: APIWhatsappChatItemsData | undefined,
 	) => void;
 	setAPIInboundChatStatus: () => void;
 	setWhatsappChatSession: (chatSession: APIWhatsappChatSessionData) => void;
 	setUpdatedDynamicVariable: (
-		updatedDynamicVariable: updatedVariable[]
+		updatedDynamicVariable: updatedVariable[],
 	) => void;
 	setDynamicVariable: (dynamicVariable: string[]) => void;
 	setSavedTemplate: (template: string) => void;
@@ -59,6 +60,10 @@ export type WhatsappChatUiProps = {
 	onChatTemplateDelete: () => void;
 	setIsLoader: (showing: boolean) => void;
 	selectedAgent?: WhatsappAgent;
+	ToastMessages?: any;
+	tagsList?: Array<{ id: string; TagName: string; TagColor: string }>;
+	onTagsUpdated?: (phoneNumber: string, tagIds: number[], tags?: any[]) => void;
+	refetchActiveChatContact?: (phoneNumber: string) => void;
 };
 
 export type SideBarContactListProps = {
@@ -66,7 +71,7 @@ export type SideBarContactListProps = {
 	ChatContacts: APIWhatsappChatSidebarContactsItemsData[];
 	handleChatId: (
 		e: BaseSyntheticEvent,
-		Contacts: APIWhatsappChatSidebarContactsItemsData
+		Contacts: APIWhatsappChatSidebarContactsItemsData,
 	) => void;
 	handleUserStatus: (e: SelectChangeEvent, contactPhoneNumber: string) => void;
 	getStatusClass: (status: number) => string | undefined;
@@ -74,6 +79,8 @@ export type SideBarContactListProps = {
 	contactsPaginationSetting: ContactsPaginationSetting;
 	isLoader: boolean;
 	searchText: string;
+	tagsList?: Array<{ id: string; TagName: string; TagColor: string }>;
+	onTagsUpdated?: (phoneNumber: string, tagIds: number[], tags?: any[]) => void;
 };
 
 export type SideHeaderContactDropDownProps = {
@@ -122,7 +129,7 @@ export type WhatsappChatSideBarProps = {
 	setIsMobileSideBar: () => void;
 	handleChatId: (
 		e: BaseSyntheticEvent,
-		Contacts: APIWhatsappChatSidebarContactsItemsData
+		Contacts: APIWhatsappChatSidebarContactsItemsData,
 	) => void;
 	setActiveUser: (activeUser: string) => void;
 	onActiveUserChange: (e: SelectChangeEvent) => void;
@@ -135,13 +142,24 @@ export type WhatsappChatSideBarProps = {
 	fetchMoreContacts: (
 		searchText: string,
 		ChatStatus: number,
-		isPaginationReset?: boolean
+		isPaginationReset?: boolean,
+		pageSize?: number,
+		pageNumber?: number,
+		isInfiniteScroll?: boolean,
+		startDate?: string,
+		endDate?: string,
+		agentIds?: number[],
+		tagIds?: number[],
+		startTime?: string,
+		endTime?: string,
 	) => void;
 	contactsPaginationSetting: ContactsPaginationSetting;
 	fetchSearchedContacts: (
 		searchText: string,
 		ChatStatus: number,
-		isPaginationReset: boolean
+		isPaginationReset: boolean,
+		startDate?: string,
+		endDate?: string,
 	) => void;
 	isLoader: boolean;
 	filterBySelected: number;
@@ -150,6 +168,14 @@ export type WhatsappChatSideBarProps = {
 	setAgentSelected: (agentId: number) => void;
 	onAddAgent: () => void;
 	onEditAgents: () => void;
+	onTagsUpdated?: (phoneNumber: string, tagIds: number[], tags?: any[]) => void;
+	onTagColorUpdated?: (tagId: string, newColor: string) => void;
+	tagsList?: Array<{ id: string; TagName: string; TagColor: string }>;
+	TotalRecord: number;
+	TotalOpen: number;
+	TotalPending: number;
+	TotalSolved: number;
+	refetchActiveChatContact?: (phoneNumber: string) => void,
 };
 
 export type chatModalProps = {
@@ -158,7 +184,7 @@ export type chatModalProps = {
 	savedTemplateList: savedTemplateListProps[];
 	onChoose: (
 		template: savedTemplateListProps,
-		templateText: string | null
+		templateText: string | null,
 	) => void;
 };
 
@@ -180,6 +206,8 @@ export type APIWhatsappChatSidebarContactsItemsData = {
 	PhoneNumber: string;
 	Unread: number;
 	UserName: string;
+	Tags?: Array<{ id?: string; Id?: string; TagName: string; TagColor: string }>;
+	ClientId?: number; // Standardized for WhatsApp chat edit mapping
 };
 
 //SidebarContacts Main inbound data types
@@ -189,6 +217,9 @@ export type APIWhatsappChatSidebarContactsMainData = {
 	Items: APIWhatsappChatSidebarContactsItemsData[];
 	PageSize: number;
 	TotalRecord: number;
+	TotalOpen: number;
+	TotalPending: number;
+	TotalSolved: number;
 };
 
 export type APIWhatsappChatSidebarContactsPayloadData = {
@@ -340,6 +371,10 @@ export type APIGetWhatsappChatContactsReq = {
 	UserNumber?: string;
 	ChatStatus: number;
 	AgentId?: number;
+	StartDate?: string;
+	EndDate?: string;
+	AgentIds?: number[];
+	TagIds?: number[];
 };
 
 export type Timer = {

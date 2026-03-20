@@ -287,14 +287,14 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 								{row?.display_phone_number}
 							</Typography>
 						</Box>
-						<Box className={classes.dFlex}>
+						{/* <Box className={classes.dFlex}>
 							<Typography className={clsx(classes.f18, classes.bold, classes.pe15)}>
 								{t("WhatsappOnBoarding.tier")}:
 							</Typography>
 							<Typography className={classes.f18}>
 								{row?.tier}
 							</Typography>
-						</Box>
+						</Box> */}
 						<Box className={classes.dFlex}>
 							<Typography className={clsx(classes.f18, classes.bold, classes.pe15)}>
 								{t("WhatsappOnBoarding.limit")}:
@@ -354,7 +354,7 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 					className={classes.flex2}>
 					{row?.id}
 				</TableCell>
-				<TableCell
+				 <TableCell
 					classes={cellStyle}
 					align='center'
 					className={classes.flex2}>
@@ -756,5 +756,4 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 		</DefaultScreen>
 	);
 };
-
 export default WhatsappOnBoarding;

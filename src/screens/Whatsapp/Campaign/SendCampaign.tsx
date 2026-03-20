@@ -846,6 +846,38 @@ const SendCampaign = ({
 		/>
 	})
 
+	const getCancelPulseDialog = () => ({
+		title: translator('smsReport.pulseCancel'),
+		showDivider: false,
+		content: (
+			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+				{translator('smsReport.confirmCancelPulse')}
+			</Typography>
+		),
+		renderButtons: () => <ConfirmationButtons
+			classes={classes}
+			onConfirm={() => {
+				setPulseData({
+					pulseSettingsId: 0,
+					pulseAmount: 0,
+					timeInterval: 0,
+					pulseType: 2,
+					random: 0,
+					timeType: 1,
+					pulsePer: "recipients",
+					pulseReci: "",
+					minName: "mins",
+					hourName: "Hours",
+					togglePulse: false,
+					toggleRandom: false,
+					pulsesOpen: false
+				});
+				setDialogType({ type: '', data: '' });
+			}}
+			onCancel={() => setDialogType({ type: '', data: '' })}
+		/>
+	});
+
 	const getDeleteDialog = () => ({
 		title: translator('whatsapp.alertModal.DeleteText'),
 		showDivider: false,
@@ -950,11 +982,20 @@ const SendCampaign = ({
 					navigate(whatsappRoutes.CAMPAIGN_MANAGEMENT)
 				}
 				onBackToAutomation={() => window.location.href = `/Pulseem/CreateAutomations.aspx?AutomationID=${FromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true`}
+				sendType={sendType}
+				sendDate={sendDate}
+				sendTime={sendTime}
+				spectialDateFieldID={spectialDateFieldID}
+				isSpecialDateBefore={isSpecialDateBefore}
+				daysBeforeAfter={daysBeforeAfter}
+				specialDatedropDown={specialDatedropDown}
 			/>
 		),
 		onConfirm: async () => {
 			setDialogType({ type: '' });
-		}
+		},
+		onCancel: () => navigate(whatsappRoutes.CAMPAIGN_MANAGEMENT),
+        onClose: () =>  navigate(whatsappRoutes.CAMPAIGN_MANAGEMENT) ,
 	})
 
 	const handleGetPlanForFeature = (tierMessageCode: string) => {
@@ -1025,6 +1066,8 @@ const SendCampaign = ({
 			currentDialog = getSendCampaignSuccess();
 		} else if (type === 'tier') {
 			currentDialog = getTierValidationDialog();
+		} else if (type === 'cancelPulse') {
+			currentDialog = getCancelPulseDialog();
 		}
 
 		if (type) {
@@ -1136,6 +1179,7 @@ const SendCampaign = ({
 											specialDatedropDown={specialDatedropDown}
 											selectedGroups={selectedGroups}
 											pulseSendingOpen={() => setPulseData({ ...pulseData, pulsesOpen: true })}
+											onCancelPulse={() => setDialogType({ type: 'cancelPulse' })}
 											packetSending={
 												pulseData.togglePulse ? <span style={{ marginBottom: "5px", marginTop: "5px" }}>
 													{translator("smsReport.packetSend")} - {pulseData.pulseAmount} {pulseData.pulsePer === "" || pulseData.pulsePer === "recipients" ? translator("sms.recipients") : translator("common.Percent")} {" "}

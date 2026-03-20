@@ -799,12 +799,28 @@ const ClientSearchResult = ({ classes }) => {
             {LogSms_ErrorType && t(LogSms_ErrorType.indexOf(Separator) === -1 ? getWhatsappError(LogSms_ErrorType) : getMetaError(LogSms_ErrorType))}
           </Typography>
         </>),
-        web: ({ LogSms_ErrorType = '', ...rest }) => (
-          <Typography className={clsx(classes.bold, classes.f16, classes.whatsappReportErrorCell)}>
-            {/* {LogSms_ErrorType} */}
-            {LogSms_ErrorType && t(LogSms_ErrorType.indexOf(Separator) === -1 ? getWhatsappError(LogSms_ErrorType) : getMetaError(LogSms_ErrorType))}
-          </Typography>
-        )
+        web: ({ LogSms_ErrorType = '', ...rest }) => {
+          const errorMessage = LogSms_ErrorType && t(LogSms_ErrorType.indexOf(Separator) === -1 ? getWhatsappError(LogSms_ErrorType) : getMetaError(LogSms_ErrorType));
+          return (
+            <Typography className={clsx(classes.bold, classes.f16, classes.whatsappReportErrorCell)}>
+              {/* {LogSms_ErrorType} */}
+              <CustomTooltip
+                isSimpleTooltip={false}
+                interactive={true}
+                classes={{
+                  tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
+                  arrow: classes.fBlack,
+                }}
+                arrow={true}
+                style={{ fontWeight: "bold" }}
+                placement={"top"}
+                title={errorMessage}
+                text={errorMessage.length > 70 ? `${errorMessage.substring(0, 70)}...` : errorMessage}
+              >
+              </CustomTooltip>
+            </Typography>
+          )
+        }
       },
       // filterComponents: [ErrorDropDown]
     },

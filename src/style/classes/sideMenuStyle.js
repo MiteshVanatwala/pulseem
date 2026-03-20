@@ -66,13 +66,16 @@ export const sideMenuStyle = (windowSize, isRTL, theme) => ({
     flex: 1,
     display: 'flex',
     flexDirection: 'column',
+    overflowY: 'auto',
+    overflowX: 'hidden',
   },
   sidebarNav: {
     flex: 1,
     padding: theme.spacing(1, 0),
   },
   sidebarItem: {
-    margin: 0,
+    margin: '6px 4px',
+    margintop: '4px',
     paddingInlineStart: 5,
     paddingInlineEnd: 5,
     borderRadius: 0,
@@ -119,8 +122,12 @@ export const sideMenuStyle = (windowSize, isRTL, theme) => ({
     },
   },
   sidebarFooter: {
-    borderTop: '1px solid rgba(255, 255, 255, 0.1)',
-    padding: theme.spacing(1),
+    borderTop: '1px solid rgba(255, 255, 255, 0.2)',
+    padding: theme.spacing(1, 0),
+    backgroundColor: 'rgba(0, 0, 0, 0.1)',
+    position: 'sticky',
+    bottom: 0,
+    zIndex: 10,
   },
   languageSelector: {
     margin: theme.spacing(0.5),

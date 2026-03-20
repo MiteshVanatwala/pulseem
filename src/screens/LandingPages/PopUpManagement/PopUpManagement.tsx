@@ -44,6 +44,10 @@ import { sitePrefix } from '../../../config';
 import { ConvertObjectToQueryString } from '../../../helpers/Utils/HtmlUtils';
 import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { findPlanByFeatureCode } from '../../../../src/redux/reducers/TiersSlice';
+import TierPlans from '../../../components/TierPlans/TierPlans';
+import { TierFeatures } from '../../../helpers/Constants';
+import { get } from 'lodash';
 
 interface PopUpManagementProps {
   classes: Record<string, string>;
@@ -55,7 +59,7 @@ interface ToastMessage {
 }
 
 export interface DialogType {
-  type: 'delete' | 'restore' | 'duplicate' | 'embed';
+  type: 'delete' | 'restore' | 'duplicate' | 'embed' | 'tier';
   data: any;
 }
 
@@ -66,6 +70,8 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
   const dispatch = useDispatch<any>();
   const { windowSize } = useSelector((state: any) => state.core);
   const { userRoles } = useSelector((state: any) => state.core);
+  const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
+  const { subAccount, isRTL } = useSelector((state: any) => state.common);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const {
     stats,
@@ -86,6 +92,7 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
   const [previewPopupId, setPreviewPopupId] = useState<number | null>(null);
   const [showLoader, setShowLoader] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [showTierPlans, setShowTierPlans] = useState(false);
   const [filters, setFilters] = useState({
     SearchTerm: '',
     FilterStatus: 'All',
@@ -229,7 +236,7 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
                 classes={classes}
                 title={t('landingPages.popupManagement.statCards.totalPopups')}
                 value={stats.TotalPopups.toString()}
-                change={`${stats.ActiveCount} active • ${stats.InactiveCount} inactive • ${stats.DraftCount} drafts`}
+                change={`${stats.ActiveCount} ${stats.ActiveCount === 1 ? t('landingPages.popupManagement.filters.active') : t('landingPages.popupManagement.filters.activePlural')} • ${stats.InactiveCount} ${stats.InactiveCount === 1 ? t('landingPages.popupManagement.filters.inactive') : t('landingPages.popupManagement.filters.inactivePlural')} • ${stats.DraftCount} ${t('landingPages.popupManagement.filters.draft')}`}
               />
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
@@ -237,7 +244,7 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
                 classes={classes}
                 title={t('landingPages.popupManagement.statCards.viewsThisMonth')}
                 value={stats.MonthlyViews.toLocaleString()}
-                change={`${stats.MonthlyViewsChange > 0 ? '+' : ''}${stats.MonthlyViewsChange.toFixed(2)}% this month`}
+                change={`${stats.MonthlyViewsChange > 0 ? '+' : ''}${stats.MonthlyViewsChange.toFixed(2)}% ${t('landingPages.popupManagement.statCards.thisMonth')}`}
               />
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
@@ -252,8 +259,8 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
               <StatCard
                 classes={classes}
                 title={t('landingPages.popupManagement.statCards.topPerforming')}
-                value={stats.TopPerformer ? stats.TopPerformer.Name : 'N/A'}
-                change={stats.TopPerformer ? `${stats.TopPerformer.ConversionRate.toFixed(2)}% conversion` : ''}
+                value={stats.TopPerformer ? stats.TopPerformer.Name : t('landingPages.popupManagement.statCards.thisMonth')}
+                change={stats.TopPerformer ? `${stats.TopPerformer.ConversionRate.toFixed(2)}% ${t('landingPages.popupManagement.statCards.conversion')}` : ''}
               />
             </Grid>
           </Grid>
@@ -266,8 +273,75 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
     setFilters(prev => ({ ...prev, SearchTerm: searchTerm, PageNumber: 1 }));
   };
 
+  const handleTierRestriction = (message: string) => {
+    setDialogType({ type: 'tier', data: message });
+  };
+
+  const handleGetPlanForFeature = (tierMessageCode: string) => {
+    const planName = findPlanByFeatureCode(
+      tierMessageCode,
+      availablePlans,
+      currentPlan.Id
+    );
+
+    if (planName) {
+      return t('billing.tier.featureNotAvailable')
+        .replace('{feature}', t(TierFeatures[tierMessageCode as keyof typeof TierFeatures] || tierMessageCode))
+        .replace('{planName}', planName);
+    } else {
+      return t('billing.tier.noFeatureAvailable');
+    }
+  };
+
+  const getTierValidationDialog = (data: string) => ({
+    title: t('billing.tier.permission'),
+    showDivider: false,
+    content: (
+      <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+        {handleGetPlanForFeature(data || '')}
+      </Typography>
+    ),
+    renderButtons: () => (
+      <Grid
+        container
+        spacing={2}
+        className={clsx(
+          classes.dialogButtonsContainer,
+          isRTL ? classes.rowReverse : null,
+          !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : ''
+        )}
+      >
+        <Grid item>
+          <Button
+            onClick={() => {
+              setDialogType(null);
+              setShowTierPlans(true);
+            }}
+            className={clsx(classes.btn, classes.btnRounded)}
+          >
+            {t('billing.upgradePlan')}
+          </Button>
+        </Grid>
+        <Grid item>
+          <Button
+            onClick={() => setDialogType(null)}
+            className={clsx(classes.btn, classes.btnRounded)}
+          >
+            {t('common.cancel')}
+          </Button>
+        </Grid>
+      </Grid>
+    )
+  });
+
+
   const renderSearchAndFilterSection = () => {
-    const filterButtons = ['All', 'Active', 'Inactive', 'Draft'];
+    const filterButtons = [
+      { value: 'All', labelKey: 'all' },
+      { value: 'Active', labelKey: 'active' },
+      { value: 'Inactive', labelKey: 'inactive' },
+      { value: 'Draft', labelKey: 'draft' }
+    ];
 
     return (
       <Box className={classes.topSection} mt={3} p={1}>
@@ -288,14 +362,14 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
           <Grid item>
             {filterButtons.map(filter => (
               <Button
-                key={filter}
-                variant={filters.FilterStatus === filter ? "contained" : "text"}
-                color={filters.FilterStatus === filter ? "primary" : "default"}
+                key={filter.value}
+                variant={filters.FilterStatus === filter.value ? "contained" : "text"}
+                color={filters.FilterStatus === filter.value ? "primary" : "default"}
                 className={classes.btnRounded}
-                onClick={() => setFilters(prev => ({ ...prev, FilterStatus: filter, PageNumber: 1 }))}
+                onClick={() => setFilters(prev => ({ ...prev, FilterStatus: filter.value, PageNumber: 1 }))}
                 style={{ marginRight: '5px' }}
               >
-                {t(`landingPages.popupManagement.filters.${filter.toLowerCase()}`)}
+                {t(`landingPages.popupManagement.filters.${filter.labelKey}`)}
               </Button>
             ))}
           </Grid>
@@ -304,28 +378,28 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
           </Grid>
           <Grid item>
             <FormControl variant="outlined" size="small" style={{ minWidth: 120, marginRight: '10px' }}>
-              <InputLabel>Sort By</InputLabel>
+              <InputLabel>{t('landingPages.popupManagement.filters.sortBy')}</InputLabel>
               <Select
                 value={filters.SortBy}
                 onChange={(e) => setFilters(prev => ({ ...prev, SortBy: e.target.value as string }))}
-                label="Sort By"
+                label={t('landingPages.popupManagement.filters.sortBy')}
               >
-                <MenuItem value="CreatedDate">Created Date</MenuItem>
-                <MenuItem value="Name">Name</MenuItem>
-                <MenuItem value="Views">Views</MenuItem>
-                <MenuItem value="ConversionRate">Conversion Rate</MenuItem>
-                <MenuItem value="LastModified">Last Modified</MenuItem>
+                <MenuItem value="CreatedDate">{t('landingPages.popupManagement.filters.createdDate')}</MenuItem>
+                <MenuItem value="Name">{t('landingPages.popupManagement.filters.name')}</MenuItem>
+                <MenuItem value="Views">{t('landingPages.popupManagement.filters.views')}</MenuItem>
+                <MenuItem value="ConversionRate">{t('landingPages.popupManagement.filters.conversionRate')}</MenuItem>
+                <MenuItem value="LastModified">{t('landingPages.popupManagement.filters.lastModified')}</MenuItem>
               </Select>
             </FormControl>
             <FormControl variant="outlined" size="small" style={{ minWidth: 100 }}>
-              <InputLabel>Direction</InputLabel>
+              <InputLabel>{t('landingPages.popupManagement.filters.direction')}</InputLabel>
               <Select
                 value={filters.SortDirection}
                 onChange={(e) => setFilters(prev => ({ ...prev, SortDirection: e.target.value as string }))}
-                label="Direction"
+                label={t('landingPages.popupManagement.filters.direction')}
               >
-                <MenuItem value="ASC">ASC</MenuItem>
-                <MenuItem value="DESC">DESC</MenuItem>
+                <MenuItem value="ASC">{t('landingPages.popupManagement.filters.ascending')}</MenuItem>
+                <MenuItem value="DESC">{t('landingPages.popupManagement.filters.descending')}</MenuItem>
               </Select>
             </FormControl>
           </Grid>
@@ -436,6 +510,7 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
                       popup={page}
                       classes={classes}
                       setDialogType={setDialogType}
+                      onTierRestriction={handleTierRestriction}
                     />
                   </Grid>
                 ))}
@@ -941,14 +1016,28 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
     }
 
     const { data, type } = dialogType;
-    const dialogContent = {
-      delete: getDeleteDialog(data),
-      restore: getRestorDialog(data),
-      duplicate: getDuplicateDialog(data),
-      embed: getEmbedDialog(data),
+
+    let currentDialog: any = null;
+    switch (type) {
+      case 'delete':
+        currentDialog = getDeleteDialog(data);
+        break;
+      case 'restore':
+        currentDialog = getRestorDialog(data);
+        break;
+      case 'duplicate':
+        currentDialog = getDuplicateDialog(data);
+        break;
+      case 'embed':
+        currentDialog = getEmbedDialog(data);
+        break;
+      case 'tier':
+        currentDialog = getTierValidationDialog(data as string);
+        break;
+      default:
+        return null;
     }
 
-    const currentDialog = dialogContent[type];
     if (!currentDialog) return null;
     return (
       <BaseDialog
@@ -965,6 +1054,7 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
   return (
     <DefaultScreen
       currentPage="landingPages"
+      subPage='popupManagement'
       classes={classes}
       containerClass={clsx(classes.management, classes.mb50)}
     >
@@ -987,6 +1077,13 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
       <Loader isOpen={statsLoading || pagesLoading || showLoader} />
       {renderToast()}
       {renderDialog()}
+      {showTierPlans && (
+        <TierPlans
+          classes={classes}
+          isOpen={showTierPlans}
+          onClose={() => setShowTierPlans(false)}
+        />
+      )}
       <PopupPreviewModal
         open={previewPopupId !== null}
         onClose={() => setPreviewPopupId(null)}

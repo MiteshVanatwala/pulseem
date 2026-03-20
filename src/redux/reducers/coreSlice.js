@@ -61,7 +61,8 @@ export const coreSlice = createSlice({
           }
         ]
       }
-    }
+    },
+    isDrawerOpen: false
   },
   reducers: {
     setIsClal: (state, action) => {
@@ -120,11 +121,14 @@ export const coreSlice = createSlice({
     },
     setIsLoader: (state, { payload }) => {
       state.isLoader = payload
+    },
+    setIsDrawerOpen: (state, { payload }) => {
+      state.isDrawerOpen = payload
     }
   }
 })
 
 export const selectUserObject = (state) => state.core.subUserObject;
-export const { setLanguage, setWindowSize, setCoreData, setRowsPerPage, setIsClal, setIsLoader } = coreSlice.actions // setSmsOldVersion
+export const { setLanguage, setWindowSize, setCoreData, setRowsPerPage, setIsClal, setIsLoader, setIsDrawerOpen } = coreSlice.actions // setSmsOldVersion
 
 export default coreSlice.reducer

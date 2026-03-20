@@ -37,6 +37,21 @@ export const compareLastNineDigits = (number1: string, number2: string) => {
     return lastNineDigits1 === lastNineDigits2;
 }
 
+export const normalizePhoneForSearch = (searchText: string) => {
+    // If search looks like a phone number (only digits)
+    const digitsOnly = /^\d+$/.test(searchText);
+    
+    if (digitsOnly) {
+        // Israeli local format with leading 0 (10 digits)
+        if (searchText.startsWith('0') && searchText.length === 10) {
+            return searchText.substring(1); // "0526926507" → "526926507"
+        }
+        // Other formats: return as-is
+    }
+    
+    return searchText;
+}
+
 export const formatNumberWithCommas = (num: string | number) =>{
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }

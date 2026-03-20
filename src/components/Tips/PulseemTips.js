@@ -11,7 +11,7 @@ import { URLS } from '../../config/enum';
 import { MdLibraryBooks } from 'react-icons/md';
 
 const PulseemTips = ({ classes, t, isRTL }) => {
-  const { language } = useSelector(state => state.core);
+  const { language, windowSize } = useSelector(state => state.core);
   const { tips } = useSelector(state => state.dashboard);
   const [activeTip, setActiveTip] = useState(0);
 
@@ -72,21 +72,44 @@ const PulseemTips = ({ classes, t, isRTL }) => {
             {t('dashboard.tip')}{t('dashboard.ulseem')}
           </Typography>
         </Box>
-        <Box className={clsx(classes.dFlex, classes.flexWrap)} justifyContent='center' alignItems='center'>
-          <Tooltip
-            arrow
-            title={t('common.UserGuides')}
-            placement={"top"}
-            open
-            classes={{
-              tooltip: clsx(classes.tooltipPrimary, classes.f12),
-              arrow: classes.colrPrimary
+        <Box className={clsx(classes.dFlex, classes.flexWrap)} justifyContent='center' alignItems='center' style={{ position: 'relative' }}>
+          <IconButton size="small" className={clsx(classes.noPadding)} onClick={() => window.open(URLS.UserGuide, '_blank')}>
+            <MdLibraryBooks className={classes.linkNoDesign} style={{ fontSize: 30, color: '#ff3343' }} title={t('common.UserGuides')} />
+          </IconButton>
+          <Box 
+            className={clsx(classes.tooltipPrimary, classes.f12)}
+            style={{
+              position: 'absolute',
+              top: windowSize === 'xs' || windowSize === 'sm' ? '50%' : '-40px',
+              left: windowSize === 'xs' || windowSize === 'sm' ? '-80px' : '50%',
+              transform: windowSize === 'xs' || windowSize === 'sm' ? 'translateY(-50%)' : 'translateX(-50%)',
+              backgroundColor: '#ff3343',
+              color: '#fff',
+              padding: '6px 12px',
+              borderRadius: '4px',
+              whiteSpace: 'nowrap',
+              zIndex: 1000,
+              fontSize: '12px'
             }}
           >
-            <IconButton size="small" className={clsx(classes.noPadding)} onClick={() => window.open(URLS.UserGuide, '_blank')}>
-              <MdLibraryBooks className={classes.linkNoDesign} style={{ fontSize: 30, color: '#ff3343' }} title={t('common.UserGuides')} />
-            </IconButton>
-          </Tooltip>
+            {t('common.UserGuides')}
+            <Box
+              style={{
+                position: 'absolute',
+                top: windowSize === 'xs' || windowSize === 'sm' ? '50%' : '100%',
+                left: windowSize === 'xs' || windowSize === 'sm' ? '100%' : '50%',
+                marginLeft: windowSize === 'xs' || windowSize === 'sm' ? '0' : '-5px',
+                marginTop: windowSize === 'xs' || windowSize === 'sm' ? '-5px' : '0',
+                width: 0,
+                height: 0,
+                borderLeft: windowSize === 'xs' || windowSize === 'sm' ? '0' : '5px solid transparent',
+                borderRight: windowSize === 'xs' || windowSize === 'sm' ? '0' : '5px solid transparent',
+                borderTop: windowSize === 'xs' || windowSize === 'sm' ? '5px solid transparent' : '5px solid #f74747',
+                borderBottom: windowSize === 'xs' || windowSize === 'sm' ? '5px solid transparent' : '0',
+                borderLeftColor: windowSize === 'xs' || windowSize === 'sm' ? '#f74747' : 'transparent'
+              }}
+            />
+          </Box>
         </Box>
       </Box>
       <Box className={classes.flexJustifyCenter}>

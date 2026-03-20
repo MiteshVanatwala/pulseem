@@ -654,7 +654,7 @@ const PopupSummary = ({ classes }: any) => {
   const renderDisplayRules = () => (
     <Paper elevation={3} style={{ padding: 24, marginBottom: 24, borderRadius: 8 }}>
       <Typography variant="body1" className={clsx(classes.managementTitle, classes.sectionTitlePopupTrigger)} gutterBottom style={{ color: theme.palette.primary.main }}>
-        {t('PopupTriggers.summary.displayRules') || 'Display Rules'}
+        {t('PopupTriggers.summary.displayRules')}
       </Typography>
       <Divider style={{ margin: '8px 0 16px 0' }} />
       <Grid container spacing={4}>
@@ -689,7 +689,7 @@ const PopupSummary = ({ classes }: any) => {
         </Grid>
         <Grid item xs={12} sm={6} md={4}>
           <Typography variant="h6" gutterBottom style={{ color: theme.palette.text.primary }}>
-            {t('PopupTriggers.advanceSettings.postConversion.title') || 'Post-Conversion Behavior'}
+            {t('PopupTriggers.advanceSettings.postConversion.title')}
           </Typography>
           {renderConversionSettings()}
         </Grid>

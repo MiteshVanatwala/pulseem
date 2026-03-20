@@ -550,7 +550,12 @@
       "NEWSLETTER_BULK_ENDED_PURCHASE_OPTION": "Twój pakiet masowy się skończył!<br/>Możesz kupić pakiet Newsletter, klikając przycisk Kup.",
       "pendingApproval": "Oczekuje na zatwierdzenie",
       "PendingApprovalDesc": "Nasz zespół obecnie przegląda Twoje treści. Po zatwierdzeniu wiadomość e-mail zostanie wysłana jak zwykle. Dziękujemy za cierpliwość!",
-      "PendingApproval551Desc": "Użytkownik w trakcie procesu weryfikacji"
+      "PendingApproval551Desc": "Użytkownik w trakcie procesu weryfikacji",
+      "paymentfailed553Title": "Płatność nie powiodła się",
+      "paymentfailed553Desc": "Nie udało się zrealizować płatności.<br />Wysyłka i automatyzacje zostały zamrożone.<br />Zaktualizuj metodę płatności, aby wznowić działanie.",
+      "paymentfailed553Button": "Ureguluj płatność",
+      "paymentfailed552Title": "Płatność jest nadal przetwarzana",
+      "paymentProcessing552Desc": "Twoja płatność jest przetwarzana.<br />Wysyłka została tymczasowo zablokowana do czasu zakończenia procesu.<br />Prosimy poczekać chwilę i spróbować ponownie."
     },
     "success": "Kampania została pomyślnie zapisana",
     "sendSettings": {
@@ -683,6 +688,28 @@
     "quickMsgCautionMsg": "Szybka wysyłka ręczna natychmiast wyśle kampanię tylko do ręcznie dodanych odbiorców.",
     "doYouWantToContinue": "Czy chcesz kontynuować?"
   },
+  "emailSize": {
+    "label": "Rozmiar wiadomości e-mail",
+    "htmlSize": "Rozmiar HTML",
+    "ampSize": "Rozmiar AMP",
+    "tooltipInfo": "Gmail może przycinać wiadomości większe niż 102 KB",
+    "warning80KB": "Zbliżasz się do limitu rozmiaru Gmaila. Spróbuj pozostać poniżej 80 KB.",
+    "overLimitWarning": "Ta wiadomość e-mail może zostać przycięta w Gmailu. Zmniejsz rozmiar o {{reduction}} KB.",
+    "calculating": "Przetwarzanie, proszę czekać...",
+    "exceeded": {
+      "subtitle": "Ta wiadomość e-mail może zostać przycięta w Gmailu",
+      "description": "Ta wiadomość e-mail przekracza limit rozmiaru Gmaila i może zostać przycięta.",
+      "continueEditing": "Kontynuuj edycję",
+      "learnMore": "Dowiedz się, jak zmniejszyć rozmiar",
+      "title": "",
+      "mainText": "This email is over 102kb and might get cut in Gmail",
+      "recommendation": "We recommend you to reduce email size by deleting some of the objects to ensure smooth sending",
+      "backToEditor": "Back to the editor",
+      "continueToSendSettings": "Continue to send settings",
+      "continueToTestSending": "Continue to test sending",
+      "continueToSave": "Continue to save"
+    }
+  },
   "sendToContact": "Wyślij do jednego kontaktu",
   "successSent": "Wysłano pomyślnie",
   "missingApi": "Brakujący klucz API",
@@ -703,6 +730,12 @@
   "savedBlocks": "Zapisane bloki",
   "weSent": "Wysłaliśmy!",
   "campaignIsOnItsWay": "Twoja kampania jest w drodze",
+  "mailingScheduled": "The mailing has been successfully scheduled",
+  "mailingScheduledDesc": "your mailing will be sent on {{DATE_OF_SCHEDULE}} at {{TIME_OF_SCHEDULE}}",
+  "smsScheduled": "The SMS has been successfully scheduled",
+  "smsScheduledDesc": "your sms will be sent on {{DATE_OF_SCHEDULE}} at {{TIME_OF_SCHEDULE}}",
+  "whatsappMailingScheduled": "The campaign has been successfully scheduled",
+  "whatsappMailingScheduledDesc": "your campaign will be sent on {{DATE_OF_SCHEDULE}} at {{TIME_OF_SCHEDULE}}",
   "newsletterSetUp": "Konfiguracja Newslettera",
   "lastSaveAt": "Ostatni zapis o: ",
   "skipToEditor": "Przejdź do edytora e-mail",
@@ -744,10 +777,12 @@
   "ampSelectEmail": "Wybierz co najmniej 1 e-mail do zatwierdzenia AMP",
   "ampPageText": "<b>Czym jest AMP?</b><br/>Wysyłanie e-maila z AMP pozwala nam użyć dynamicznych elementów w treści e-maila<br/>Przykład: Karuzela obrazów <br/>Aby korzystać z tych elementów, adres \"Od e-mail\" musi zostać zatwierdzony przez Google i Yahoo <br/><br/><b>Jak zacząć?</b><br/>Wybierz adresy, z których chcesz wysyłać AMP i kliknij \"Aplikuj do AMP\"<br/>Następnie prześlij <a href='https://forms.gle/fDqLE1gh4wMB6BeQ6' target='_blank'>Formularz rejestracyjny AMP</a><br/><br/>Uwaga! Tylko adresy e-mail w zweryfikowanych domenach mogą być zatwierdzone do AMP",
   "webpNotSupport": "webp nie jest obsługiwany w AMP",
-  "htmlDocTypeNotAllowed": "Znaleziono nieprawidłowe znaczniki w bloku HTML",
+  "htmlDocTypeNotAllowed": "Nieprawidłowe znaczniki znalezione w bloku HTML. Nie obsługujemy następujących znaczników: <br />&lt;!DOCTYPE&gt;, &lt;body&gt;, &lt;html&gt; i &lt;script&gt;",
+  "htmlDocTypeNotAllowedWarning": "Używanie własnego kodu może wpłynąć na sposób wyświetlania wiadomości. Upewnij się, że używasz poprawnego i responsywnego HTML. Nie obsługujemy następujących tagów: <!DOCTYPE>, <body>, <html> oraz <script>.",
   "setupStaticProduct": "Konfiguracja produktu",
   "createProductBlock": "Spersonalizowany blok produktu",
   "selectProduct": "Wybierz produkt z katalogu",
   "selectAllStaticProducts": "Wybierz produkt z katalogu",
-  "fromEmailCaution": "<p style='line-height:1.2'><b>Uwaga!</b><br/><br/>Używanie adresu e-mail w polu 'Nazwa nadawcy' może spowodować filtrowanie jako spam.<br/>Zaleca się używanie nazwy wyświetlanej. <br/>Czy chcesz kontynuować?</p>"
+  "fromEmailCaution": "<p style='line-height:1.2'><b>Uwaga!</b><br/><br/>Używanie adresu e-mail w polu 'Nazwa nadawcy' może spowodować filtrowanie jako spam.<br/>Zaleca się używanie nazwy wyświetlanej. <br/>Czy chcesz kontynuować?</p>",
+  "aiDeisgner": "Projektuj z AI"
 }

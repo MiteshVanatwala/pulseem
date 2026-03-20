@@ -46,6 +46,7 @@
   "multipleInvoiceTypeMessage": "It is not possible to pay a transaction invoice and a tax invoice in the same payment<br/><br/>You can pay <b>transaction invoices or tax invoices separately.</b><br/><br/>For more information, please contact support with Reg the payment<br/><a href=\"tel:035240290\">03-5240290</a><br/><a href=\"mailto:support@pulseem.com\">support@pulseem.com </a>",
   "creditCardPurchase": "Credit Card Purchase",
   "yourPlan": "Your Plan",
+  "plan": "Plan",
   "upgradePlan": "UPGRADE PLAN",
   "cancelPlan": "CANCEL PLAN",
   "upTo": "Up to",
@@ -66,7 +67,7 @@
         "priceDescription": "/month",
         "subtext": "Forever free",
         "recipientLimit": "Up to 100 recipients",
-        "buttonText": "Start Free"
+        "buttonText": "Choose Starter"
       },
       "flow": {
         "title": "Standard",
@@ -100,6 +101,7 @@
       "success": "Welcome to {planName}!",
       "message": "Your subscription is now active",
       "payUsingCC": "Are you sure you want to pay using this credit card?",
+      "upgradePlan": "Are you sure you want to upgrade to plan {planName}?",
       "features": {
         "unlimitedAutomations": {
           "title": "Unlimited Automations",
@@ -216,7 +218,7 @@
     "free": "Free",
     "contactSales": "Contact Us",
     "permission": "Permission",
-    "featureNotAvailable": "This feature is only available in the {planName} plan.",
+    "featureNotAvailable": "This {feature} is only available in the {planName} plan.",
     "noFeatureAvailable": "Oops! no plan has this feature.",
     "salesContactConfirmation": "We got it! One of our sales team members will contact you shortly"
   },
@@ -233,7 +235,8 @@
     "noCardsDescription": "You haven't added any credit cards yet. Add your first card to get started.",
     "addFirstCard": "Add Your First Card",
     "note": "Note",
-    "securityNote": "Your credit card information is securely encrypted and stored. We never store your full card number or CVV."
+    "securityNote": "Your credit card information is securely encrypted and stored. We never store your full card number or CVV.",
+    "selectCreditCard": "Select Credit Card"
   },
   "featureNames": {
     "EMAIL_BASIC": "Basic Email Campaigns",

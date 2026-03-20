@@ -7,6 +7,30 @@ import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
 import { AuditLog } from '../../Models/AuditLog/AuditLog';
 import { selectUserObject } from './coreSlice';
 
+export const getImportConfiguration = createAsyncThunk(
+    'AccountSettings/GetImportConfiguration',
+    async (_, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.get(`AccountSettings/GetImportConfiguration`);
+            return response.data
+        } catch (error) {
+            return console.log(error);
+        }
+    }
+);
+export const saveImportConfiguration = createAsyncThunk(
+    'AccountSettings/SaveImportConfiguration',
+    async (jsonArray: string, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.post(`AccountSettings/SaveImportConfiguration`, {
+                ConfigurationJson: jsonArray
+            });
+            return response.data
+        } catch (error) {
+            return console.log(error);
+        }
+    }
+);
 export const getAccountSettings = createAsyncThunk(
     'AccountSettings/Get',
     async (_, thunkAPI) => {
@@ -234,7 +258,8 @@ const AccountSettingsSlice = createSlice({
         authorizedValues: {
             Emails: [],
             Cellphones: []
-        } as any
+        } as any,
+        importRecipientMapping: "" as string
     },
     reducers: {
         resetTwoFA: (state) => {
@@ -256,7 +281,9 @@ const AccountSettingsSlice = createSlice({
             state.authorizedValues.Emails = action.payload?.Data?.Emails;
             state.authorizedValues.Cellphones = action.payload?.Data?.Cellphones;
         })
-
+        builder.addCase(getImportConfiguration.fulfilled, (state, action) => {
+            state.importRecipientMapping = action.payload?.Data?.ConfigurationJson;
+        })
     },
 })
 

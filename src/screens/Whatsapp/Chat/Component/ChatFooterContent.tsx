@@ -1,4 +1,11 @@
-import { Box, Button, Grid, Tooltip, Typography, makeStyles } from '@material-ui/core';
+import {
+	Box,
+	Button,
+	Grid,
+	Tooltip,
+	Typography,
+	makeStyles,
+} from '@material-ui/core';
 import Icon from './Icon';
 import { Stack } from '@mui/material';
 import EmojiPicker from '../../../../components/Emojis/EmojiPicker';
@@ -25,19 +32,18 @@ const useStyles = makeStyles({
 		backgroundColor: 'black',
 		fontSize: '14px',
 		textAlign: 'center',
-		"& span": {
-			color: '#000'
-		}
+		'& span': {
+			color: '#000',
+		},
 	},
 	noMaxWidth: {
 		maxWidth: 'none',
 	},
 	root: {
 		'& .emoji-picker-react': {
-			top: 0
-		}
-
-	}
+			top: 0,
+		},
+	},
 });
 
 const ChatFooterContent = ({
@@ -84,7 +90,7 @@ const ChatFooterContent = ({
 		let updatedVariable = getVariableValue(variable);
 		const isAvaliable = updatedDynamicVariable?.find(
 			(dynamicVariable: updatedVariable) =>
-				dynamicVariable.VariableIndex === Number(updatedVariable)
+				dynamicVariable.VariableIndex === Number(updatedVariable),
 		);
 		return !!isAvaliable;
 	};
@@ -97,7 +103,7 @@ const ChatFooterContent = ({
 		let updatedVariable = getVariableValue(variable);
 		const matchedVariable = updatedDynamicVariable?.find(
 			(dynamicVariable: updatedVariable) =>
-				dynamicVariable.VariableIndex === Number(updatedVariable)
+				dynamicVariable.VariableIndex === Number(updatedVariable),
 		);
 		const variableValue =
 			matchedVariable?.FieldTypeId === 1
@@ -112,33 +118,40 @@ const ChatFooterContent = ({
 			<strong
 				className={clsx(
 					classes.whatsappCampainHighlightText,
-					`${isUpdated && 'updated'}`
+					`${isUpdated && 'updated'}`,
 				)}
-				onClick={() => openDynamcFieldModal(tagData?.children)}>
+				onClick={() => openDynamcFieldModal(tagData?.children)}
+			>
 				{isUpdated
 					? getUpdatedVariableValue(tagData?.children)
 					: tagData?.children}
 			</strong>
 		);
 	};
-	
+
 	const focusOnMessage = () => {
-    const textArea = document.getElementById("free-from-input");
-    setTimeout(() => {
-      textArea?.focus();
-    }, 500)
-  }
-	
+		const textArea = document.getElementById('free-from-input');
+		setTimeout(() => {
+			textArea?.focus();
+		}, 500);
+	};
+
 	const onEmojiClick = (emoji: string) => {
 		emoji = emoji.trim();
-    let afterUpdateCharCount = newMessage.length + emoji.length;
+		let afterUpdateCharCount = newMessage.length + emoji.length;
 		if (afterUpdateCharCount < 1024) {
-			const txtarea = document.getElementById('free-from-input') as HTMLTextAreaElement;
+			const txtarea = document.getElementById(
+				'free-from-input',
+			) as HTMLTextAreaElement;
 			if (txtarea !== null) {
 				var startPos = txtarea.selectionStart || 0;
 				var endPos = txtarea.selectionEnd || 0;
 				var cursorPos = startPos;
-				setNewMessage(newMessage.substring(0, startPos) + emoji + newMessage.substring(endPos, newMessage.length))
+				setNewMessage(
+					newMessage.substring(0, startPos) +
+						emoji +
+						newMessage.substring(endPos, newMessage.length),
+				);
 				setTimeout(() => {
 					cursorPos += emoji.length;
 					txtarea.selectionStart = txtarea.selectionEnd = cursorPos;
@@ -163,8 +176,9 @@ const ChatFooterContent = ({
 							<>
 								{savedTemplate?.length === 0 && (
 									<button
-										aria-label='Emojis'
-										onClick={() => setShowEmojis(!showEmojis)}>
+										aria-label="Emojis"
+										onClick={() => setShowEmojis(!showEmojis)}
+									>
 										<EmojiPicker
 											classes={classes}
 											OnSelectEmoji={(emoji: string) => {
@@ -178,17 +192,20 @@ const ChatFooterContent = ({
 									disableFocusListener
 									title={translator('whatsappManagement.templates')}
 									classes={{ tooltip: localClasses.customWidth }}
-									placement='top-start'
-									arrow>
+									placement="top-start"
+									arrow
+								>
 									<button
-										aria-label='chat'
-										onClick={() => setIsTemplateModal(true)}>
+										aria-label="chat"
+										onClick={() => setIsTemplateModal(true)}
+									>
 										<Icon
-											id='chat'
-											className={`${classes.whatsappChat} chat__input-icon ${showEmojis
-												? `${classes.whatsappChat} chat__input-icon--highlight`
-												: ''
-												}`}
+											id="chat"
+											className={`${classes.whatsappChat} chat__input-icon ${
+												showEmojis
+													? `${classes.whatsappChat} chat__input-icon--highlight`
+													: ''
+											}`}
 										/>
 									</button>
 								</Tooltip>
@@ -197,7 +214,8 @@ const ChatFooterContent = ({
 										className={`${classes.whatsappChat} chat__input m`}
 										style={{
 											direction: getTextDirection(newMessage, isRTL),
-										}}>
+										}}
+									>
 										{/* @ts-ignore */}
 										<Highlighter
 											searchWords={dynamicVariable}
@@ -235,13 +253,15 @@ const ChatFooterContent = ({
 						) : ChatContacts?.length === 0 && !isContactLoader ? (
 							<div
 								className={classes.noContactDiv}
-								style={{ padding: '2px', marginLeft: '12px', width: '100%' }}>
+								style={{ padding: '2px', marginLeft: '12px', width: '100%' }}
+							>
 								<Stack
-									direction='row'
-									justifyContent='center'
-									alignItems='center'
-									spacing={2}>
-									<Typography color='textSecondary'>
+									direction="row"
+									justifyContent="center"
+									alignItems="center"
+									spacing={2}
+								>
+									<Typography color="textSecondary">
 										<label style={{ fontSize: '22px' }}>
 											<>{translator('whatsappChat.noChat')}</>
 										</label>
@@ -250,13 +270,15 @@ const ChatFooterContent = ({
 							</div>
 						) : (
 							<div
-								style={{ padding: '2px', marginLeft: '12px', width: '100%' }}>
+								style={{ padding: '2px', marginLeft: '12px', width: '100%' }}
+							>
 								<Stack
-									direction='row'
-									justifyContent='space-around'
-									alignItems='center'
-									spacing={2}>
-									<Typography color='textSecondary'>
+									direction="row"
+									justifyContent="space-around"
+									alignItems="center"
+									spacing={2}
+								>
+									<Typography color="textSecondary">
 										<label style={{ fontSize: '22px', fontWeight: 'bolder' }}>
 											<>{translator('whatsappChat.conversation')}</>
 										</label>
@@ -268,11 +290,8 @@ const ChatFooterContent = ({
 
 									<Grid className={classes.manageTemplatesHeaderButtons}>
 										<Button
-											className={clsx(
-												classes.btn,
-												classes.btnRounded
-											)}
-											size='small'
+											className={clsx(classes.btn, classes.btnRounded)}
+											size="small"
 											style={{ padding: '6px 22px' }}
 											onClick={() => setIsTemplateModal(true)}
 										>
@@ -285,10 +304,11 @@ const ChatFooterContent = ({
 						{savedTemplate?.length > 0 && (
 							<>
 								<button
-									aria-label='Delete message'
-									onClick={onChatTemplateDelete}>
+									aria-label="Delete message"
+									onClick={onChatTemplateDelete}
+								>
 									<Icon
-										id='delete'
+										id="delete"
 										className={`${classes.whatsappChat} chat__delete-icon`}
 									/>
 								</button>
@@ -296,22 +316,23 @@ const ChatFooterContent = ({
 						)}{' '}
 						{(whatsappChatSession.IsIn24Window ||
 							savedTemplate?.length > 0) && (
-								<button aria-label='Send message' onClick={onChatSend}>
-									<Icon
-										id='send'
-										className={`${classes.whatsappChat} chat__send-icon`}
-									/>
-								</button>
-							)}{' '}
+							<button aria-label="Send message" onClick={onChatSend}>
+								<Icon
+									id="send"
+									className={`${classes.whatsappChat} chat__send-icon`}
+								/>
+							</button>
+						)}{' '}
 					</>
 				) : (
 					<div style={{ padding: '2px', marginLeft: '12px', width: '100%' }}>
 						<Stack
-							direction='row'
-							justifyContent='center'
-							alignItems='center'
-							spacing={2}>
-							<Typography color='textSecondary'>
+							direction="row"
+							justifyContent="center"
+							alignItems="center"
+							spacing={2}
+						>
+							<Typography color="textSecondary">
 								<label style={{ fontSize: '22px' }}>
 									<>{translator('whatsappChat.unsubscribe')}</>
 								</label>

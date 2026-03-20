@@ -1432,15 +1432,9 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		}
 	}
 
-	const getIndexFromTierId = (tierId: number | undefined) => {
-		if (tierId) {
-			return Number(tierId) - 1;
-		}
-		return 0;
-	};
-
 	const limitNotice = () => {
 		const tierDataFromNumber = from !== '' ? get(first(filter(TierData, { FromNumber: from?.replace(/-/g, '') }) || {}), 'WhatsappTierId', 0) : 0;
+		const tierSettingItem = tierSetting.find(tier => tier.value === String(tierDataFromNumber));
 		return (
 			<Grid item md={12} lg={12} className={classes.WhatsappCampainNotice}>
 				<span style={{ lineHeight: '0' }}>
@@ -1448,14 +1442,10 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				</span>
 
 				{
-					tierDataFromNumber !== 0 && (
+					tierDataFromNumber !== 0 && tierSettingItem && (
 						<div className={classes.pt10}>
 							<div className={classes.dInlineBlock}>
-								{`${translator(
-									tierSetting[
-										getIndexFromTierId(Number(tierDataFromNumber))
-									]?.name
-								)}`}
+								{`${translator(tierSettingItem?.name)}`}
 							</div>
 						</div>
 					)

@@ -494,7 +494,8 @@ export const smsSlice = createSlice({
 			INVALID_RECIPIENTS: { severity: 'error', color: 'error', message: "sms.noRecipientToUpdate", showAnimtionCheck: false },
 			NO_GROUPS: { severity: 'error', color: 'error', message: 'smsReport.NoGroups', showAnimtionCheck: false },
 			DATE_PASS: { severity: 'error', color: 'error', message: 'smsReport.pastDateSelected', showAnimtionCheck: false },
-			INVALID_URL: { severity: 'error', color: 'error', message: 'common.invalidURL', showAnimtionCheck: false }
+			INVALID_URL: { severity: 'error', color: 'error', message: 'common.invalidURL', showAnimtionCheck: false },
+			NON_POLISH_NUMBER: { severity: 'error', color: 'error', message: 'common.nonPolishNumber', showAnimtionCheck: false },
 		}
 	},
 	reducers: {},

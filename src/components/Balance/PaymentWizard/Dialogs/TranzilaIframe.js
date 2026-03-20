@@ -14,7 +14,7 @@ const TranzilaIframe = ({
     packageId,
     onStepBack,
     paymentUrl = null,
-    onComplete = () => { },
+    onComplete = (message) => { },
     hideSummary = false,
 }) => {
     const dispatch = useDispatch();

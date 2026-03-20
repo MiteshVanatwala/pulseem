@@ -15,7 +15,7 @@ export const TablePagination = ({
   onRowsPerPageChange = (val) => { },
   onPageChange = (val) => { },
   returnPageOne = true,
-  style = null
+  style = {}
 }) => {
   const { t } = useTranslation()
   const { windowSize } = useSelector(state => state.core);

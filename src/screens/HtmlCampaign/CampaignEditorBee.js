@@ -1,7 +1,8 @@
 import clsx from 'clsx';
 import { debounce, get } from 'lodash';
 import BeePlugin from '@mailupinc/bee-plugin'
-import { Box, Button, Grid, Typography } from '@material-ui/core'
+import { Box, Button, Grid, Typography, Tooltip, LinearProgress, makeStyles } from '@material-ui/core'
+import { IoMdInformationCircleOutline } from 'react-icons/io';
 import { useRef, useState, useEffect } from 'react'
 import DefaultScreen from '../DefaultScreen'
 import { useSelector, useDispatch } from 'react-redux';
@@ -67,6 +68,118 @@ import { UserRoles } from '../../Models/SubUser/SubUsers';
 import AITemplateCreatorAccordion from './modals/AI_TemplateCreatorAccordion';
 import { BsMagic } from 'react-icons/bs';
 import TierPlans from '../../components/TierPlans/TierPlans';
+import PayPerRecipientNew from '../../components/PayPerRecipient/PayPerRecipientNew';
+import { getPackagesDetails } from '../../redux/reducers/dashboardSlice';
+
+const useComponentStyles = makeStyles((theme) => ({
+  emailSizeContainer: {
+    position: 'fixed',
+    top: 0,
+    backgroundColor: '#fff',
+    padding: '12px 16px',
+    borderRadius: 8,
+    boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+    zIndex: 0,
+    minWidth: 280,
+    maxWidth: 300
+  },
+  emailSizeContainerRTL: {
+    left: '20%'
+  },
+  emailSizeContainerLTR: {
+    right: '20%'
+  },
+  emailSizeHeader: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 8
+  },
+  emailSizeLabel: {
+    fontSize: 14,
+    fontWeight: 600,
+    color: '#333'
+  },
+  emailSizeTooltipContent: {
+    fontSize: 13,
+    padding: 4
+  },
+  emailSizeTooltipSpacer: {
+    marginTop: 4
+  },
+  emailSizeIcon: {
+    fontSize: 18,
+    color: '#666',
+    cursor: 'pointer',
+    marginLeft: 8
+  },
+  emailSizeValue: {
+    fontSize: 16,
+    fontWeight: 700,
+  },
+ emailSizeValueRTL: {
+    textAlign: 'right'
+  },
+  emailSizeValueLTR: {
+    textAlign: 'left'
+  }, 
+  emailSizeProgressContainer: {
+    marginTop: 8,
+    marginBottom: 4
+  },
+  emailSizeProgress: {
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#e0e0e0'
+  },
+  emailSizeWarning: {
+    fontSize: 12,
+    marginTop: 8,
+    padding: '6px 8px',
+    borderRadius: 4
+  },
+  emailSizeWarningOver: {
+    backgroundColor: '#ffebee',
+    color: '#c62828',
+    fontWeight: 600
+  },
+  emailSizeWarningCritical: {
+    backgroundColor: '#fff3e0',
+    color: '#e65100',
+    fontWeight: 400
+  },
+  exceededDialogSubtitle: {
+    marginBottom: 12
+  },
+  exceededDialogSizeBox: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 16,
+    padding: 12,
+    backgroundColor: '#ffebee',
+    borderRadius: 4,
+    border: '1px solid #ef5350'
+  },
+  exceededDialogCurrentSize: {
+    fontSize: 16,
+    fontWeight: 600,
+    color: '#c62828'
+  },
+  exceededDialogMaxSize: {
+    fontSize: 14,
+    color: '#666'
+  },
+  exceededDialogWarning: {
+    marginBottom: 16,
+    color: '#666'
+  },
+  exceededDialogDescription: {
+    fontSize: 14,
+    color: '#888'
+  },
+}));
 
 const CampaignEditor = ({ classes, ...props }) => {
   //#region State
@@ -74,8 +187,12 @@ const CampaignEditor = ({ classes, ...props }) => {
   const dispatch = useDispatch()
   const navigate = useNavigate();
   const params = useParams();
+  const componentClasses = useComponentStyles();
   const editorRef = useRef(null);
   const saveRef = useRef(null);
+  const emailSizeRef = useRef({ totalKB: 0, htmlKB: 0, ampKB: 0, totalBytes: 0 });
+  const designChangedRef = useRef(false);
+  const editorReadyRef = useRef(false);
   const [showLoader, setLoader] = useState(true);
   const campaignId = params?.id;
   const [dataReady, setDataReady] = useState(false);
@@ -123,6 +240,14 @@ const CampaignEditor = ({ classes, ...props }) => {
   const [emailProps, setEmailProps] = useState(null);
   const [dialogType, setDialogType] = useState(null);
   const [TierMessageCode, setTierMessageCode] = useState("");
+  const [ isOpenPayPerRecipient, setIsOpenPayPerRecipient ] = useState(false);
+  const [emailSize, setEmailSize] = useState({
+    totalKB: 0,
+    htmlKB: 0,
+    ampKB: 0,
+    totalBytes: 0
+  });
+  const [pendingAction, setPendingAction] = useState(null);
   //#endregion State
 
   //#region Get Extra fields & Landing pages, after Data Ready
@@ -325,6 +450,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     config.rowsConfiguration.externalContentURLs = tempRows;
   }
   const initBeeEditor = (templateId = null) => {
+    editorReadyRef.current = false;
     initSpecialLinks().then(async (specialLinksFiles) => {
       const isRtlLang = campaign?.LanguageCode === 0 || campaign?.LanguageCode === 8 ? true : false;
       let forceTemplate = null;
@@ -379,6 +505,7 @@ const CampaignEditor = ({ classes, ...props }) => {
                 saveDesign(false, null, false);
               }
               setTimeout(() => {
+                editorReadyRef.current = true; 
                 setButtonDisabled(false);
               }, 2000);
             });
@@ -407,12 +534,156 @@ const CampaignEditor = ({ classes, ...props }) => {
     await dispatch(getCategories());
   }
 
+  const checkEmailSizeBeforeAction = (actionType) => {
+    if (designChangedRef.current) {
+      setToastMessage({
+        severity: 'info',
+        color: 'info',
+        message: t('campaigns.emailSize.calculating'),
+        showAnimtionCheck: false
+      });
+      return true;
+    }
+    const sizeInfo = emailSizeRef.current;
+    if (sizeInfo.totalKB > 102) {
+      setPendingAction(actionType);
+      setDialogType({
+        type: 'emailSizeExceeded',
+        data: {
+          currentSize: sizeInfo.totalKB,
+          reductionNeeded: (sizeInfo.totalKB - 102).toFixed(1)
+        }
+      });
+      return false;
+    }
+    return true;
+  };
+
+  const executePendingAction = (buttonAction) => {
+    const action = pendingAction;
+    setPendingAction(null);
+    setDialogType(null);
+
+    if (buttonAction === 'back') return;
+    if (action === 'testSend' && buttonAction === 'testSend') {
+      // User clicked "Continue to test sending" - open test send modal
+      const isSharedDomain = campaign.FromEmail.split("@").pop() === SharedEmailDomain;
+      if (!isSharedDomain && (!emailProps?.IsVerified || emailProps?.IsRestricted)) {
+        const domainErrorObj = {
+          display: false,
+          address: campaign.FromEmail,
+          verifySharedCallback: null,
+          isSummary: false,
+          isFullDescription: false,
+          preText: t(`common.domainVerification.campaignEditor.${emailProps?.IsRestricted ? 'restricted' : 'nonVerified'}.preText`).replace('##campaignId##', campaign.CampaignID),
+          showSkip: false,
+          options: [{
+            text: t('common.CampaignSettings'),
+            onCallback: () => {
+              window.location = `/react/Campaigns/Create/${campaign.CampaignID}`
+            }
+          }]
+        };
+        setDomainAddressError(domainErrorObj);
+        setShowDomainVerification(true);
+      } else {
+        setLoader(true);
+        setIsResponseModal(false);
+        editorRef.current.send();
+      }
+    } else if (action === 'continue') {
+      handleContinueFlow(true);
+    } else if (action === 'save') {
+      saveDesign(false, null, true, true, '', true).then(async () => {
+        setIsResponseModal(false);
+      });
+    }
+  };
+
+  const handleContinueFlow = (skipSizeCheck = false) => {
+    saveDesign(false, null, false, false, '', skipSizeCheck);
+
+    const isSharedDomain = campaign.FromEmail.split("@").pop() === SharedEmailDomain;
+    if (!isSharedDomain && (!emailProps?.IsVerified || emailProps?.IsRestricted)) {
+      const domainErrorObj = {
+        display: false,
+        address: campaign.FromEmail,
+        verifySharedCallback: null,
+        isSummary: false,
+        isFullDescription: false,
+        preText: t(`common.domainVerification.campaignEditor.${emailProps?.IsRestricted ? 'restricted' : 'nonVerified'}.preText`).replace('##campaignId##', campaign.CampaignID),
+        showSkip: false,
+        options: [{
+          text: t('common.CampaignSettings'),
+          onCallback: () => {
+            window.location = `/react/Campaigns/Create/${campaign.CampaignID}`
+          }
+        }]
+      };
+      setDomainAddressError(domainErrorObj);
+      setShowDomainVerification(true);
+    } else {
+      saveDesign(true, null, true, true, '', skipSizeCheck);
+    }
+  };
+
+  /**
+   * Calculate email size - includes HTML + AMP (all embedded images, videos, components)
+   * JSON data is NOT included as it's only for editor state
+   */
+  const calculateEmailSize = (html = '', ampData = '') => {
+    try {
+      const htmlSize = new Blob([html || '']).size;
+      const ampSize = ampData ? new Blob([ampData]).size : 0;
+      const totalBytes = htmlSize + ampSize;
+      const totalKB = totalBytes / 1024;
+
+      return {
+        totalKB: parseFloat(totalKB.toFixed(1)),
+        totalBytes,
+        htmlKB: parseFloat((htmlSize / 1024).toFixed(1)),
+        ampKB: parseFloat((ampSize / 1024).toFixed(1)),
+        htmlBytes: htmlSize,
+        ampBytes: ampSize
+      };
+    } catch (error) {
+      console.error('Error calculating email size:', error);
+      return { totalKB: 0, totalBytes: 0, htmlKB: 0, ampKB: 0, htmlBytes: 0, ampBytes: 0 };
+    }
+  };
+
+  /**
+   * Get size status for UI coloring and messaging
+   */
+  const getSizeStatus = (sizeKB) => {
+    if (sizeKB >= 102) return 'over';
+    if (sizeKB >= 95) return 'critical';
+    if (sizeKB >= 80) return 'warning';
+    return 'safe';
+  };
+
+  const getSizeColor = (status) => {
+    const colors = {
+      safe: '#4caf50',
+      warning: '#ff9800',
+      critical: '#ff5722',
+      over: '#f44336'
+    };
+    return colors[status] || colors.safe;
+  };
+
   useEffect(() => {
     if (beeToken) {
       initBeeEditor();
     }
 
   }, [beeToken]);
+
+  useEffect(() => {
+    if (dialog === DialogType.TEST_SEND) {
+      setLoader(false);
+    }
+  }, [dialog]);
 
   const initOptions = async () => {
     initTags();
@@ -430,6 +701,28 @@ const CampaignEditor = ({ classes, ...props }) => {
   //#endregion Init Bee Token & Configuration
   //#region Pulseem Methods (Save, Delete, Exit, Back, Test Send)
   const onSave = async (args) => {
+    // Calculate email size BEFORE any other validations
+    const sizeInfo = calculateEmailSize(args.HtmlData, args.AmpData);
+    updateEmailSize(sizeInfo);
+    designChangedRef.current = false;
+    setToastMessage(prev =>
+      prev?.severity === 'info' && prev?.message === t('campaigns.emailSize.calculating')
+        ? null
+        : prev
+    );
+
+    if (sizeInfo.totalKB > 102 && !saveRef.current?.skipSizeCheck) {
+      setLoader(false);
+      setDialogType({
+        type: 'emailSizeExceeded',
+        data: {
+          currentSize: sizeInfo.totalKB,
+          reductionNeeded: (sizeInfo.totalKB - 102).toFixed(1)
+        }
+      });
+      return false;
+    }
+
     const dynamicBlocks = (args.HtmlData?.match(/product-block-container/g) || []).length;
     if (saveRef.current?.checkDynamicBlock && dynamicBlocks > 0) {
       if (dynamicBlocks > 1) {
@@ -518,6 +811,14 @@ const CampaignEditor = ({ classes, ...props }) => {
         }
       }
 
+      if (saveRef.current?.operation === 'testSend') {
+        saveRef.current.operation = '';
+        if (editorRef.current) {
+          setLoader(false);
+          editorRef.current.send();
+        }
+      }
+
       if (saveRef.current?.saveTemplate) {
         const isTemplateExists = templatesBySubAccount?.filter((template) => {
           return template?.Name === saveRef.current?.templateName && saveRef.current?.templateCategory?.split(',').indexOf(template?.Category) > -1
@@ -537,8 +838,8 @@ const CampaignEditor = ({ classes, ...props }) => {
       setLoader(false);
     }
   }
-  const saveDesign = async (redirectAfterSave = false, redirectUrl = null, showAnimation = true, checkDynamicBlock = false, operation = '') => {
-    saveRef.current = { redirectAfterSave: redirectAfterSave, redirectUrl: redirectUrl, showAnimation: showAnimation, checkDynamicBlock, operation };
+  const saveDesign = async (redirectAfterSave = false, redirectUrl = null, showAnimation = true, checkDynamicBlock = false, operation = '', skipSizeCheck = false) => {
+    saveRef.current = { redirectAfterSave: redirectAfterSave, redirectUrl: redirectUrl, showAnimation: showAnimation, checkDynamicBlock: checkDynamicBlock, operation: operation, skipSizeCheck: skipSizeCheck };
     await editorRef.current.save();
     setTimeout(() => {
       // const now = moment();
@@ -546,13 +847,20 @@ const CampaignEditor = ({ classes, ...props }) => {
       setSilentSave(false)
     }, 2000);
   }
+  
+  const updateEmailSize = (sizeInfo) => {
+    emailSizeRef.current = sizeInfo;
+    setEmailSize(sizeInfo);
+  };
 
   const onAutoSaveCampaign = debounce(() => {
     setSilentSave(true)
-    saveDesign(false, null, false);
+    saveDesign(false, null, false, false, '', true);
   }, 5000);
 
   const onDesignChange = async () => {
+    if (!editorReadyRef.current) return;
+    designChangedRef.current = true;
     onAutoSaveCampaign();
   }
 
@@ -621,7 +929,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     const redirectLink = isAutoResponder ? `/Pulseem/AutoSendPlans.aspx?Culture=${isRTL ? 'he-IL' : 'en-US'}` : `${sitePrefix}Campaigns`;
 
     if (saveBeforeExit) {
-      saveDesign(true, redirectLink, false, true, 'exit');
+      saveDesign(true, redirectLink, false, true, 'exit', true);
     }
     else {
       if (isAutoResponder) window.location.href = redirectLink;
@@ -656,6 +964,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   const onTestSendResponse = (statusCode, message = '') => {
     setIsResponseModal(statusCode !== 402);
     switch (statusCode) {
+      case 200: 
       case 201: {
         setDialog(DialogType.SUCCESS_SENT);
         break;
@@ -693,6 +1002,45 @@ const CampaignEditor = ({ classes, ...props }) => {
         // FILE_ATTACHMENT, EMAIL_BASIC
         setTierMessageCode(message);
         setDialogType({ type: 'tier' });
+        break;
+      }
+      case 553: {
+        setIsResponseModal(false);
+        setGenericModalData({
+          title: t('campaigns.newsLetterEditor.errors.paymentfailed553Title'),
+          message: t("campaigns.newsLetterEditor.errors.paymentfailed553Desc"),
+          onConfirm: () => {},
+          onCancel: () => setDialog(null),
+          onClose: () => setDialog(null),
+          showDefaultButtons: false,
+          renderButtons: () => (
+            <Grid
+              container
+              spacing={2}
+              className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+            >
+              <Grid item>
+                <Button
+                  onClick={() => {
+                    setDialog(null);
+                    dispatch(getPackagesDetails());
+                    setIsOpenPayPerRecipient(true)
+                  }}
+                  className={clsx(
+                    classes.btn,
+                    classes.btnRounded
+                  )}>
+                  {t('campaigns.newsLetterEditor.errors.paymentfailed553Button')}
+                </Button>
+              </Grid>
+            </Grid>
+          )
+        });
+        setDialog(DialogType.GENERIC);
+        break;
+      }
+      case 552: {
+        setDialog(DialogType.PAYMENT_PROCESSING);
         break;
       }
       case 500:
@@ -749,7 +1097,10 @@ const CampaignEditor = ({ classes, ...props }) => {
       getData();
     })
   }
-  const handleOpenTestSend = () => {
+  const handleOpenTestSend = async () => {
+    setPendingAction('testSend');
+    const canProceed = checkEmailSizeBeforeAction('testSend');
+    if (!canProceed) return;   
     const isSharedDomain = campaign.FromEmail.split("@").pop() === SharedEmailDomain;
     if (!isSharedDomain && (!emailProps?.IsVerified || emailProps?.IsRestricted)) {
       const domainErrorObj = {
@@ -771,10 +1122,14 @@ const CampaignEditor = ({ classes, ...props }) => {
       setShowDomainVerification(true)
     }
     else {
-      saveDesign(false, null, false, true).then(async (r) => {
+      try {
+        setLoader(true);
         setIsResponseModal(false);
-        editorRef.current.send();
-      });
+        await saveDesign(false, null, false, true, 'testSend');
+      } catch (e) {
+        console.error('Test send save failed:', e);
+        setLoader(false);
+      }
     }
   }
 
@@ -816,6 +1171,93 @@ const CampaignEditor = ({ classes, ...props }) => {
   }
   const config = getConfig();
 
+  // Email Size Indicator
+  const EmailSizeIndicator = () => {
+    if (emailSize.totalKB === 0) return null;
+
+    const status = getSizeStatus(emailSize.totalKB);
+    const color = getSizeColor(status);
+    const percentage = Math.min((emailSize.totalKB / 102) * 100, 100);
+
+    const getWarningText = () => {
+      const reductionNeeded = (emailSize.totalKB - 102).toFixed(1);
+      switch (status) {
+        case 'over':
+          return t('campaigns.emailSize.overLimitWarning', { reduction: reductionNeeded });
+        default:
+          return null;
+      }
+    };
+
+    const warningText = getWarningText();
+
+    return (
+      <Box
+        className={clsx(
+          componentClasses.emailSizeContainer,
+          isRTL ? componentClasses.emailSizeContainerRTL : componentClasses.emailSizeContainerLTR
+        )}
+      >
+        <Box className={componentClasses.emailSizeHeader}>
+          <Typography className={componentClasses.emailSizeLabel}>
+            {t('campaigns.emailSize.label')}
+          </Typography>
+          <Tooltip
+            title={
+              <Box className={componentClasses.emailSizeTooltipContent}>
+                <Typography variant="body2">{t('campaigns.emailSize.htmlSize')}: {emailSize.htmlKB} KB</Typography>
+                {emailSize.ampKB > 0 && (
+                  <Typography variant="body2">{t('campaigns.emailSize.ampSize')}: {emailSize.ampKB} KB</Typography>
+                )}
+                <Typography variant="body2" className={componentClasses.emailSizeTooltipSpacer}>
+                  {t('campaigns.emailSize.tooltipInfo')}
+                </Typography>
+              </Box>
+            }
+            arrow
+          >
+            <Box component="span">
+              <IoMdInformationCircleOutline className={componentClasses.emailSizeIcon} />
+            </Box>
+          </Tooltip>
+        </Box>
+
+        <Typography
+          className={clsx(
+            componentClasses.emailSizeValue,
+            isRTL ? componentClasses.emailSizeValueRTL : componentClasses.emailSizeValueLTR
+          )}
+          style={{ direction: 'ltr', color }}
+        >
+          {emailSize.totalKB} KB / 102 KB
+        </Typography>
+
+        <Box className={componentClasses.emailSizeProgressContainer}>
+          <LinearProgress
+            variant="determinate"
+            value={percentage}
+            className={componentClasses.emailSizeProgress}
+            classes={{
+              bar: classes.progressBar
+            }}
+          />
+        </Box>
+
+        {warningText && (
+          <Typography
+            className={clsx(
+              componentClasses.emailSizeWarning,
+              status === 'over' 
+                ? componentClasses.emailSizeWarningOver 
+                : componentClasses.emailSizeWarningCritical
+            )}
+          >
+            {warningText}
+          </Typography>
+        )}
+      </Box>
+    );
+  };
 
   const saveTemplate = async (name, category) => {
     saveRef.current = { templateName: name, templateCategory: category, saveTemplate: true, showAnimation: true };
@@ -908,7 +1350,7 @@ const CampaignEditor = ({ classes, ...props }) => {
         }, 2000);
       }}
         variant='contained'
-        size='medium'
+        size='small'
         className={clsx(
           classes.btn,
           classes.btnRounded
@@ -919,7 +1361,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       </Button>
       <Button onClick={() => setDialog(DialogType.SAVE_TEMPLATE)}
         variant='contained'
-        size='medium'
+        size='small'
         className={clsx(
           classes.btn,
           classes.btnRounded
@@ -937,6 +1379,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           classes.redButton
         )}
         style={{ margin: 8 }}
+        size='small'
         startIcon={<GiMagicBroom />}
         // color="primary"
         key={'aiButton'}
@@ -1164,10 +1607,77 @@ const CampaignEditor = ({ classes, ...props }) => {
     }
   })
 
+  // Email Size Exceeded Dialog
+  const getEmailSizeExceededDialog = (data = {}) => ({
+    title: t('campaigns.emailSize.exceeded.title'),
+    showDivider: false,
+    contentStyle: classes.maxWidth400,
+    content: (
+      <Box>
+        <Typography className={clsx(classes.textCenter, classes.font18, componentClasses.exceededDialogSubtitle)}>
+          {t('campaigns.emailSize.exceeded.mainText')}
+        </Typography>
+
+        <Box className={componentClasses.exceededDialogSizeBox}>
+          <Typography className={componentClasses.exceededDialogCurrentSize}>
+            {data.currentSize} KB
+          </Typography>
+          <Typography className={componentClasses.exceededDialogMaxSize}>
+            / 102 KB
+          </Typography>
+        </Box>
+
+        <Typography className={clsx(classes.textCenter, classes.font16, componentClasses.exceededDialogWarning)}>
+          {t('campaigns.emailSize.exceeded.recommendation')}
+        </Typography>
+      </Box>
+    ),
+    renderButtons: () => {
+      // Default for save action - just one button
+      return (
+        <Grid
+          container
+          spacing={2}
+          className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+        >
+          <Grid item>
+            <Button
+              onClick={() => executePendingAction('back')}
+              className={clsx(classes.btn, classes.btnRounded)}
+            >
+              {t('campaigns.emailSize.exceeded.backToEditor')}
+            </Button>
+          </Grid>
+          {
+            (pendingAction === 'testSend' || pendingAction === 'save' || pendingAction === 'continue') && (
+              <Grid item>
+                <Button
+                  onClick={() => {
+                    executePendingAction(pendingAction);
+                  }}
+                  variant='contained'
+                  className={clsx(classes.btn, classes.btnRounded)}
+                >
+                  {
+                    pendingAction === 'testSend' 
+                      ? t('campaigns.emailSize.exceeded.continueToTestSending')
+                      : (pendingAction === 'save' ? t('campaigns.emailSize.exceeded.continueToSave') : t('campaigns.emailSize.exceeded.continueToSendSettings'))
+                  }
+                </Button>
+              </Grid>
+            )
+          }
+        </Grid>
+      );
+    }
+  });
+
   const renderDialog = () => {
     const { type, data } = dialogType || {}
     let currentDialog = {};
-    if (type === 'productCatalogPrompt') {
+    if (type === 'emailSizeExceeded') {
+      currentDialog = getEmailSizeExceededDialog(data);
+    } else if (type === 'productCatalogPrompt') {
       currentDialog = productCatalogModal(data);
     } else if (type === 'moreThanOneDynamicBlock') {
       currentDialog = moreThanOneDynamicBlockModal(data);
@@ -1197,13 +1707,26 @@ const CampaignEditor = ({ classes, ...props }) => {
     }
   }
 
+  const handleContinueClick = () => {
+    setPendingAction('continue');
+    const canProceed = checkEmailSizeBeforeAction('continue');
+    if (!canProceed) return;
+    setLoader(true);
+    handleContinueFlow(false);
+  };
+
   const renderButtons = () => {
     const wizardButtons = [];
     if (!isFromAutomation) {
       wizardButtons.push(<>
         <Button
-          onClick={() =>
-            saveDesign(false, null, true, true, 'save')}
+          size='small'
+          onClick={() => {
+            setPendingAction('save');
+            const canProceed = checkEmailSizeBeforeAction('save');
+            if (!canProceed) return;
+            saveDesign(false, null, true, true, 'save');
+          }}
           className={clsx(
             classes.btn,
             classes.btnRounded,
@@ -1215,35 +1738,9 @@ const CampaignEditor = ({ classes, ...props }) => {
           key={'saveButton'}
         >{t("common.save")}
         </Button>
-        {fromLink?.toLowerCase() !== 'autoresponder' && <Button onClick={() => {
-          saveDesign(false, null, false);
-          const isSharedDomain = campaign.FromEmail.split("@").pop() === SharedEmailDomain;
-          if (!isSharedDomain && (!emailProps?.IsVerified || emailProps?.IsRestricted)) {
-            const domainErrorObj = {
-              display: false,
-              address: campaign.FromEmail,
-              verifySharedCallback: null,
-              isSummary: false,
-              isFullDescription: false,
-              preText: t(`common.domainVerification.campaignEditor.${emailProps?.IsRestricted ? 'restricted' : 'nonVerified'}.preText`).replace('##campaignId##', campaign.CampaignID),
-              showSkip: false,
-              options: [{
-                text: t('common.CampaignSettings'),
-                onCallback: () => {
-                  window.location = `/react/Campaigns/Create/${campaign.CampaignID}`
-                }
-              }]
-            }
-            setDomainAddressError(domainErrorObj);
-            setShowDomainVerification(true)
-          }
-          else {
-            saveDesign(true, null, true, true);
-          }
-
-        }}
+        {fromLink?.toLowerCase() !== 'autoresponder' && <Button onClick={handleContinueClick}
           variant='contained'
-          size='medium'
+          size='small'
           className={clsx(
             classes.btn,
             classes.btnRounded,
@@ -1260,6 +1757,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     else {
       wizardButtons.push(<>
         <Button
+          size="small"
           onClick={() =>
             saveDesign(false, null, true)}
           className={clsx(
@@ -1286,6 +1784,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           style={{ marginInlineStart: '8px' }}
           color="primary"
           key={'createAutomationButton'}
+          size="small"
         >{t('common.backToAutomation')}</Button>
       </>)
     }
@@ -1303,6 +1802,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       {renderToast()}
       {showGalleryModal()}
       {showDocumentsModal()}
+      {/* {emailSize.totalKB > 0 && <EmailSizeIndicator />} */}
       {
         dialog === DialogType.Templates && <Templates
           classes={classes}
@@ -1393,6 +1893,14 @@ const CampaignEditor = ({ classes, ...props }) => {
         onClose={() => {
           setShowDomainVerification(false)
         }}
+      />
+      <PayPerRecipientNew
+        classes={classes}
+        isOpen={isOpenPayPerRecipient}
+        onClose={() => {
+          setIsOpenPayPerRecipient(false);
+        }}
+        jumpToStep={2}
       />
       {renderDialog()}
       <Loader isOpen={showLoader} showBackdrop={false} />

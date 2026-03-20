@@ -39,6 +39,7 @@ import WhatsappOnBoarding from './WhatsappOnBoarding.json'
 import RemoveMyData from './RemoveMyData.json'
 import PopupTriggers from './PopupTriggers.json'
 import Popup from './Popup.json';
+import AI from './AI.json';
 
 export const pl = {
 	PopupTriggers,
@@ -81,5 +82,6 @@ export const pl = {
 	TermsOfUse,
 	WhatsappOnBoarding,
 	RemoveMyData,
-	Popup
+	Popup,
+	AI
 };

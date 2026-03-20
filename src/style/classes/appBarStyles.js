@@ -18,6 +18,9 @@ export const appBarStyle = (windowSize, isRTL, theme) => ({
       }
     }
   },
+  notificationUpdateContainerPopper: {
+    zIndex: '1400 !important'
+  },
   appBarHrefContainer: {
     display: 'flex',
     flex: 1,
@@ -95,6 +98,7 @@ export const appBarStyle = (windowSize, isRTL, theme) => ({
     alignSelf: 'center',
     textDecoration: 'none',
     color: '#000',
+    whiteSpace: 'break-spaces',
     '& svg': {
       fontSize: 17,
       color: '#555555',
@@ -139,7 +143,7 @@ export const appBarStyle = (windowSize, isRTL, theme) => ({
   },
   appBar: {
     maxWidth: 'calc(100vw - 56px)',
-    backgroundColor: '#fff',
+    backgroundColor: '#fff !important',
     zIndex: 50000000,
     boxShadow: '0px 1px 10px 4a4a4aab',
     height: 62.78,

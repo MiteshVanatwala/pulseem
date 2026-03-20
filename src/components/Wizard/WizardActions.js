@@ -32,7 +32,9 @@ const WizardActions = ({
             <Grid item xs={12}>
                 <Box className={clsx(classes.wizardButtonContainer, classes.baseButtonsContainer, 'baseButtonsContainer', { [classes.flexJustifyCenter]: windowSize === 'xs', [classes.flexWrap]: windowSize === 'xs' })} style={{ paddingBottom: ignorePaddingBottom ? null : 40 }}>
                     {onBack &&
-                        <Button onClick={() => { onBack?.callback() }}
+                        <Button
+                            size="small"
+                            onClick={() => { onBack?.callback() }}
                             className={clsx(
                                 classes.btn,
                                 classes.btnRounded,
@@ -49,6 +51,7 @@ const WizardActions = ({
                         }
                         {userRoles?.AllowDelete && onDelete &&
                             <Button
+                                size="small"
                                 className={clsx(
                                     classes.btn,
                                     classes.btnRounded
@@ -61,6 +64,7 @@ const WizardActions = ({
                         }
                         {onShowDocuments &&
                             <Button
+                                size="small"
                                 onClick={() => onShowDocuments()}
                                 style={{ marginInline: 8, paddingInline: 10 }}
                                 className={clsx(classes.btn, classes.btnRounded)}
@@ -71,6 +75,7 @@ const WizardActions = ({
                         }
                         {onShowGallery &&
                             <Button
+                                size="small"
                                 onClick={() => onShowGallery()}
                                 style={{ marginInline: 8, paddingInline: 10 }}
                                 className={clsx(classes.btn,
@@ -83,6 +88,7 @@ const WizardActions = ({
                         }
                         {onTestSend && userRoles?.AllowSend &&
                             <Button
+                                size="small"
                                 onClick={() => onTestSend()}
                                 style={{ marginInline: 8, paddingInline: 10 }}
                                 className={clsx(classes.btn,
@@ -95,6 +101,7 @@ const WizardActions = ({
                         }
                         {onExit &&
                             <Button
+                                size="small"
                                 onClick={() =>
                                     onExit()}
                                 className={clsx(
@@ -109,6 +116,7 @@ const WizardActions = ({
                         }
                         {onSave &&
                             <Button
+                                size="small"
                                 onClick={() =>
                                     onSave()}
                                 className={clsx(
@@ -123,7 +131,9 @@ const WizardActions = ({
                             </Button>
                         }
                         {onSave &&
-                            <Button onClick={() => onSave(true)}
+                            <Button
+                                size="small"
+                                onClick={() => onSave(true)}
                                 className={clsx(
                                     classes.btn,
                                     classes.backButton,

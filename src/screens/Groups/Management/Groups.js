@@ -678,7 +678,7 @@ const Groups = ({ classes }) => {
                 container
                 direction='row'
                 justifyContent={windowSize === 'xs' ? 'flex-start' : 'center'}
-                style={{ flexWrap: 'initial' }}
+                style={{ flexWrap: 'wrap' }}
             >
                 {iconsMap.map(icon => (
                     <Grid

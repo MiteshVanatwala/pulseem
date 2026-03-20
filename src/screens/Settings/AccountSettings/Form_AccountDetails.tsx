@@ -20,7 +20,6 @@ import { Title } from '../../../components/managment/Title';
 import { AccDtlPropTypes } from '../../../Models/Settings/AccountDetails';
 import { IsEnglishAndNumbers, IsNumberField, IsValidEmail, IsValidPhoneNumber } from '../../../helpers/Utils/Validations';
 import { AccountSettings } from '../../../Models/Account/AccountSettings';
-import { tierSetting } from '../../Whatsapp/Constant';
 import Illustration_app_Settings from '../../../assets/images/settings/Illustration_app_Settings';
 import { IoIosArrowDown } from 'react-icons/io';
 import PulseemSwitch from '../../../components/Controlls/PulseemSwitch';

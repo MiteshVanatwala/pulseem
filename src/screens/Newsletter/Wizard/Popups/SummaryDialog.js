@@ -41,7 +41,7 @@ const SummaryDialog = ({ classes,
     const [subRecipientsDetails, setsubRecipients] = useState(false);
     const [fromEmail, setFromEmail] = useState(null);
     const [replyTo, setReplyTo] = useState(null);
-    const { isRTL, windowSize } = useSelector(state => state.core);
+    const { isRTL, windowSize, language } = useSelector(state => state.core);
     const { extraData } = useSelector((state) => state.sms);
     const { verifiedEmails, isSweepingApproval, accountSettings, accountFeatures } = useSelector(state => state.common);
     const { newsletterSendSummary, newsletterInfo } = useSelector(state => state.newsletter);
@@ -151,7 +151,7 @@ const SummaryDialog = ({ classes,
                 return `${t("sms.SendNow")} ${IsBestTime ? `- ${t('campaigns.newsLetterEditor.sendSettings.optimalSending')}` : ''}`;
             }
             case 2: {
-                return `${IsBestTime ? `${t('campaigns.newsLetterEditor.sendSettings.optimalSendingFrom')} - ` : ''} ${moment(newsletterSendSummary?.SendDate).format(DateFormats.DATE_TIME_24)}`;
+                return `${IsBestTime ? `${t('campaigns.newsLetterEditor.sendSettings.optimalSendingFrom')} - ` : ''} ${moment(newsletterSendSummary?.SendDate).locale(language).format('dddd, MMMM Do YYYY, h:mm a')}`;
             }
             case 3: {
                 const exDates = { ...extraData };
@@ -176,7 +176,7 @@ const SummaryDialog = ({ classes,
                         specialField = exDates[`ExtraDate${newsletterSendSummary.AutoSendingByUserField}`];
                     }
                 }
-                return RenderHtml(`${newsletterSendSummary.AutoSendDelay.toString().replace('-', '')} ${t("mainReport.days")} ${newsletterSendSummary.AutoSendDelay > 0 ? t("mainReport.after") : t("mainReport.before")}  <span>&nbsp;${specialField}</span> &nbsp;-&nbsp;${moment(newsletterSendSummary.SendDate).format('h:mm a')}`, { display: 'flex' })
+                return RenderHtml(`${newsletterSendSummary.AutoSendDelay.toString().replace('-', '')} ${t("mainReport.days")} ${newsletterSendSummary.AutoSendDelay > 0 ? t("mainReport.after") : t("mainReport.before")}  <span>&nbsp;${specialField}</span> &nbsp;-&nbsp;${moment(newsletterSendSummary.SendDate).locale(language).format('h:mm a')}`, { display: 'flex' })
             }
             default: {
                 //alert("לא נבחר זמן שליחה")

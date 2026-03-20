@@ -24,6 +24,18 @@ const shortcutBoxWidth = {
 
 
 export const getDashboardStyle = (windowSize, isRTL, theme) => ({
+        dashboardTablet: {
+            background: '#fff',
+            padding: windowSize === 'xs' ? '8px' : '16px',
+            borderRadius: '18px',
+            boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
+            maxWidth: '900px',
+            margin: '0 auto',
+            minHeight: 'calc(100vh - 32px)',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '12px',
+        },
     mobileReportHead: {
         fontWeight: 'bold',
         marginTop: 10,
@@ -194,8 +206,8 @@ export const getDashboardStyle = (windowSize, isRTL, theme) => ({
         },
     },
     dashboardSide: {
-        paddingRight: isRTL ? 0 : 30,
-        paddingLeft: !isRTL ? 0 : 30,
+        // paddingRight: isRTL ? 0 : 30,
+        // paddingLeft: !isRTL ? 0 : 30,
         [theme.breakpoints.down('sm')]: {
             order: 2,
             padding: 0,

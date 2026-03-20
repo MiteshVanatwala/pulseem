@@ -550,7 +550,12 @@
       "NEWSLETTER_BULK_ENDED_PURCHASE_OPTION": "Your bulk has ended!<br/>You can buy a Newsletter package by clicking on Purchase button.",
       "pendingApproval": "Pending Approval",
       "PendingApprovalDesc": "Our team is currently reviewing your content. Once approved, the email will be sent as usual. Thanks for your patience!",
-      "PendingApproval551Desc": "User under review process"
+      "PendingApproval551Desc": "User under review process",
+      "paymentfailed553Title": "Payment Failed",
+      "paymentfailed553Desc": "Your payment could not be completed.<br />Sending and automations are frozen.<br />Please update your payment method to resume usage.",
+      "paymentfailed553Button": "Resolve Payment",
+      "paymentfailed552Title": "Payment is still in process",
+      "paymentProcessing552Desc": "Your payment is being processed<br />Sending is temporarily blocked until the process is completed.<br />Please wait a moment and try again."
     },
     "success": "Campaign successfully saved",
     "sendSettings": {
@@ -683,6 +688,24 @@
     "quickMsgCautionMsg": "Quick manual send will immediately send the campaign to the recipients that were added manually only.",
     "doYouWantToContinue": "Do you want to proceed?"
   },
+  "emailSize": {
+    "label": "Email size",
+    "htmlSize": "HTML Size",
+    "ampSize": "AMP Size",
+    "tooltipInfo": "Gmail may clip emails larger than 102KB",
+    "warning80KB": "You're approaching Gmail's size limit. Try to stay under 80KB.",
+    "overLimitWarning": "This email may be clipped in Gmail. Reduce by {{reduction}} KB.",
+    "calculating": "Processing, please wait...",
+    "exceeded": {
+      "title": "",
+      "mainText": "This email is over 102kb and might get cut in Gmail",
+      "recommendation": "We recommend you to reduce email size by deleting some of the objects to ensure smooth sending",
+      "backToEditor": "Back to the editor",
+      "continueToSendSettings": "Continue to send settings",
+      "continueToTestSending": "Continue to test sending",
+      "continueToSave": "Continue to save"
+    }
+  },
   "sendToContact": "Send to one contact",
   "successSent": "Sent Successfully",
   "missingApi": "Missing api key",
@@ -703,6 +726,12 @@
   "savedBlocks": "Saved-blocks",
   "weSent": "We sent!",
   "campaignIsOnItsWay": "Your campaign is on its way",
+  "mailingScheduled": "The mailing has been successfully scheduled",
+  "mailingScheduledDesc": "your mailing will be sent on {{DATE_OF_SCHEDULE}} at {{TIME_OF_SCHEDULE}}",
+  "smsScheduled": "The SMS has been successfully scheduled",
+  "smsScheduledDesc": "your sms will be sent on {{DATE_OF_SCHEDULE}} at {{TIME_OF_SCHEDULE}}",
+  "whatsappMailingScheduled": "The campaign has been successfully scheduled",
+  "whatsappMailingScheduledDesc": "your campaign will be sent on {{DATE_OF_SCHEDULE}} at {{TIME_OF_SCHEDULE}}",
   "newsletterSetUp": "Newsletter Set-Up",
   "lastSaveAt": "Last save at: ",
   "skipToEditor": "Skip to Email Editor",
@@ -744,7 +773,8 @@
   "ampSelectEmail": "Select at least 1 email to AMP approval",
   "ampPageText": "<b>What is AMP?</b><br/>Sending an Email with AMP allows us to use dynamic elements within the body of the Email<br/>Example: Image carousel <br/>In order to use those elements, the \"From Email\" should be approved by Google and Yahoo <br/><br/><b>How do I get started?</b><br/>Select the addresses you want to send AMP with and click on \"Apply to AMP\"<br/>Then, submit the <a href='https://forms.gle/fDqLE1gh4wMB6BeQ6' target='_blank'>AMP Registration Form</a><br/><br/>Please notice! Only email addresses under verified domains can be approved for AMP",
   "webpNotSupport": "webp is not supported in AMP",
-  "htmlDocTypeNotAllowed": "Invalid tags found in HTML block",
+  "htmlDocTypeNotAllowed": "Invalid tags found in HTML block. We do not support the following tags: <br />&lt;!DOCTYPE&gt;, &lt;body&gt;, &lt;html&gt; and &lt;script&gt;",
+  "htmlDocTypeNotAllowedWarning": "Using your own code may affect how the message is rendered. Make sure to use correct and responsive HTML. We do not support the following tags: <!DOCTYPE>, <body>, <html> and <script>.",
   "setupStaticProduct": "Product Set-Up",
   "createProductBlock": "Personalized Product Block",
   "selectProduct": "Select Product From Catalog",

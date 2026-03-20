@@ -71,6 +71,13 @@ export type SendCampaignSuccessModalProps = {
 	onBackToHome: () => void;
 	onBackToCampaigns: () => void;
 	onBackToAutomation?: () => void;
+	sendType?: any;
+	sendDate?: any;
+	sendTime?: any;
+	spectialDateFieldID?: any;
+	daysBeforeAfter?: any;
+	isSpecialDateBefore?: any;
+	specialDatedropDown?: any;
 };
 
 export type infoModalProps = {
@@ -130,6 +137,7 @@ export type RightPaneProps = {
 	pulseSendingOpen: () => void;
 	packetSending: ReactElement;
 	randomSending: ReactElement;
+	onCancelPulse: () => void;
 };
 
 export type LeftPaneProps = {

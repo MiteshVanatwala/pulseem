@@ -115,7 +115,7 @@ export const togglePopupStatus = createAsyncThunk(
   async ({ ID, Status }: { ID: number; Status: number }, thunkAPI) => {
     try {
       const response = await PulseemReactInstance.post('popup/ToggleStatus', { ID, Status });
-      return response.data.Data;
+      return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: (error as Error).message });
     }
@@ -187,15 +187,17 @@ const popUpManagementSlice = createSlice({
       })
       .addCase(togglePopupStatus.fulfilled, (state, action) => {
         state.pagesLoading = false;
-        const { ID, Status } = action.meta.arg;
-        const index = state.pages.findIndex(p => p.ID === ID);
-        if (index !== -1) {
-          if (Status === 2) {
-            state.pages[index].StatusName = 'Active';
-            state.pages[index].Status = 1;
-          } else {
-            state.pages[index].StatusName = 'Inactive';
-            state.pages[index].Status = 0;
+        if (action.payload.StatusCode !== 927) {
+          const { ID, Status } = action.meta.arg;
+          const index = state.pages.findIndex(p => p.ID === ID);
+          if (index !== -1) {
+            if (Status === 2) {
+              state.pages[index].StatusName = 'Active';
+              state.pages[index].Status = 1;
+            } else {
+              state.pages[index].StatusName = 'Inactive';
+              state.pages[index].Status = 0;
+            }
           }
         }
       })

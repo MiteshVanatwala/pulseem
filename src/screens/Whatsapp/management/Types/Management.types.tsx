@@ -102,7 +102,7 @@ export type PageTypeRequest = { [key: string]: number };
 
 export type TierSetting = {
 	name: string;
-	value: '1' | '2' | '3' | '4';
+	value: '1' | '2' | '3' | '4' | '5' | '6';
 	messageLimit: number | string;
 };
 

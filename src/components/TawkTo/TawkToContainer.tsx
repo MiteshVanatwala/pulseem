@@ -16,7 +16,7 @@ const TawkToContainer = ({ itemId }: any) => {
   }
 
   useEffect(() => {
-    const affectedPages = ['campaigns/editor', 'editor/landingpages', 'popupeditor'];
+    const affectedPages = ['campaigns/editor', 'editor/landingpages', 'popupeditor', 'whatsapp/chat'];
     const pathname = location.pathname.toLowerCase();
     const isAffectedPage = affectedPages.some(page => pathname.includes(page));
 
@@ -26,9 +26,9 @@ const TawkToContainer = ({ itemId }: any) => {
       const node: any = document.querySelector('[title="chat widget"]');
       if (node && node?.style) {
         if (isAffectedPage) {
-          node.style.setProperty('bottom', '75px', 'important');
+          node.style.setProperty('bottom', '85px', 'important');
         } else {
-          node.style.setProperty('bottom', '15px', 'important');
+          node.style.setProperty('bottom', '20px', 'important');
         }
       }
 
@@ -36,7 +36,7 @@ const TawkToContainer = ({ itemId }: any) => {
       const indMenuBtn: any = document.getElementById('INDmenu-btn');
       if (indMenuBtn && indMenuBtn?.style) {
         if (isAffectedPage) {
-          indMenuBtn.style.setProperty('bottom', '42px', 'important');
+          indMenuBtn.style.setProperty('bottom', '55px', 'important');
         } else {
           indMenuBtn.style.setProperty('bottom', '-10px', 'important');
         }

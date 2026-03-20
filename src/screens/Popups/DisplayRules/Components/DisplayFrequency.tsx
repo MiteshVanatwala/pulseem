@@ -209,7 +209,7 @@ const DisplayFrequency: React.FC<Props> = ({ classes, lookupData, show, onToggle
                                 value={days}
                                 onChange={(e) => onChange('days', Number(e.target.value))}
                                 InputProps={{
-                                    endAdornment: <InputAdornment position="end">Days</InputAdornment>,
+                                    endAdornment: <InputAdornment position="end">{t('PopupTriggers.displayFrequency.Days')}</InputAdornment>,
                                 }}
                             />
                         </Box>
