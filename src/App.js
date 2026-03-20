@@ -660,7 +660,7 @@ const App = ({ screenSize }) => {
   let location = useLocation();
   const dispatch = useDispatch();
 
-  const { language, isRTL, windowSize, isClal, isDebtAccount, isAdmin, isLoader, userRoles } = useSelector(state => state.core)
+  const { language, isRTL, windowSize, isClal, isDebtAccount, isAdmin, isLoader, userRoles, isOnlyWhatsAppChat } = useSelector(state => state.core)
   const { accountSettings, currencyList, accountFeatures } = useSelector(state => state.common)
   const IsPoland = language === 'pl';
   const { isOpen } = useSelector((state) => state.helpDrawer);
@@ -727,6 +727,7 @@ const App = ({ screenSize }) => {
         basename = '',
         'http://schemas.microsoft.com/ws/2008/06/identity/claims/userdata':
         isAllowSwitchAccount = '',
+        OperationType = ''
       } = jwt;
       dispatch(
         setCoreData({
@@ -740,7 +741,8 @@ const App = ({ screenSize }) => {
           isAdmin,
           isAllowSwitchAccount,
           billingTypeId,
-          unique_name
+          unique_name,
+          isOnlyWhatsAppChat: OperationType === "WhatsappChat",
         })
       );
       let lang = culture || locality; //||'he'
@@ -788,9 +790,47 @@ const App = ({ screenSize }) => {
   if (IsPoland) document.body.classList.add('polish-account');
   else document.body.classList.remove('polish-account');
 
+  // Hide accessibility elements when in WhatsApp chat only mode
+  useEffect(() => {
+    if (isOnlyWhatsAppChat) {
+      document.body.setAttribute('data-only-whatsapp-chat', 'true');
+      // Hide the accessibility widget button
+      const accessibilityBtn = document.getElementById('INDmenu-btn');
+      if (accessibilityBtn) {
+        accessibilityBtn.style.display = 'none';
+      }
+      // Also hide any accessibility container
+      const accessibilityContainer = document.querySelector('[data-accessibility-container]');
+      if (accessibilityContainer) {
+        accessibilityContainer.style.display = 'none';
+      }
+    } else {
+      document.body.removeAttribute('data-only-whatsapp-chat');
+      const accessibilityBtn = document.getElementById('INDmenu-btn');
+      if (accessibilityBtn) {
+        accessibilityBtn.style.display = '';
+      }
+      const accessibilityContainer = document.querySelector('[data-accessibility-container]');
+      if (accessibilityContainer) {
+        accessibilityContainer.style.display = '';
+      }
+    }
+  }, [isOnlyWhatsAppChat]);
+
   const renderRoutesByCondition = (classes, redirect) => {
     const ignoreCookie = getCookie('ignoreTerm')
-    if (accountSettings && accountSettings?.SubAccountSettings?.IsTokenAccount) {
+
+    if (isOnlyWhatsAppChat) {
+      return <Routes>
+        <Route
+          path={whatsappRoutes.CHAT}
+        >
+          <Route index element={<WhatsappChat classes={classes} key="wa-chate" />} />
+          <Route path=":contactID" element={<WhatsappChat classes={classes} key="wa-chat-conversation" />} />
+        </Route>
+        <Route path="*" element={<WhatsappChat classes={classes} key="wa-chat-fallback" />} />
+      </Routes>
+    } else if (accountSettings && accountSettings?.SubAccountSettings?.IsTokenAccount) {
       return <Routes>
         <Route
           path={`${sitePrefix}Groups`}
@@ -893,11 +933,10 @@ const App = ({ screenSize }) => {
       <MuiThemeProvider theme={theme}>
         <div dir={isRTL ? 'rtl' : 'ltr'} className={classes.appBody}>
           {renderRoutesByCondition(classes, redirect)}
-          <AIChatWidget config={advisorConfig} />
-          <AIFloatingButton config={advisorConfig} />
-          <AIChatWidget config={supportConfig} />
-          <AIFloatingButton config={supportConfig} />
-          <HelpDrawer open={isOpen} onClose={() => dispatch(closeHelpDrawer())} />
+          { !isOnlyWhatsAppChat && <AIChatWidget config={advisorConfig} /> }
+          { !isOnlyWhatsAppChat && <AIFloatingButton /> }
+          { !isOnlyWhatsAppChat && <AIChatWidget /> }
+          { !isOnlyWhatsAppChat && <HelpDrawer open={isOpen} onClose={() => dispatch(closeHelpDrawer())} /> }
         </div>
         <Loader isOpen={isLoader} showBackdrop={true} />
       </MuiThemeProvider>

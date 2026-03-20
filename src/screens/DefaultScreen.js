@@ -17,7 +17,7 @@ import { get } from 'lodash';
 
 const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', containerClass, customPadding = false, showAppBar = true, customStyle = '', hideSideImages = false }) => {
   const { t } = useTranslation();
-  const { isAdmin, isAllowSwitchAccount, windowSize, isRTL, isDebtAccount, isClal, userRoles } = useSelector(state => state.core)
+  const { isAdmin, isAllowSwitchAccount, windowSize, isRTL, isDebtAccount, isClal, userRoles, isOnlyWhatsAppChat } = useSelector(state => state.core)
   const { domainVerificationPopUp } = useSelector(state => state.newsletter);
   const { username } = useSelector(state => state.user)
   const [reKey, setReKey] = useState(0);
@@ -83,7 +83,7 @@ const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', cont
         <DomainVerification classes={classes} domain={domainVerificationPopUp} />
         {children}
       </Container>
-      <TawkToContainer itemId={reKey} />
+      { !isOnlyWhatsAppChat && <TawkToContainer itemId={reKey} /> }
     </HelmetProvider>
   )
 }

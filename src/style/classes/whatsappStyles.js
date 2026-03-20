@@ -1740,6 +1740,9 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			display: 'flex',
 			overflow: 'hidden',
 		},
+		'&.only-whatsapp': {
+			height: 'calc(100vh - 40px)',
+		},
 		'@media screen and (min-width: 1450px)': {
 			'&.app': {},
 			'&.app-content': {},
