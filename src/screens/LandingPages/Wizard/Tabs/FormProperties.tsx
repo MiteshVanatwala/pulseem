@@ -1,4 +1,4 @@
-import { Box, Checkbox, FormControl, FormControlLabel, Grid, IconButton, Select, TextField, Tooltip, Typography } from "@material-ui/core";
+import { Box, Checkbox, FormControl, FormControlLabel, Grid, IconButton, MenuItem, Select, TextField, Tooltip, Typography } from "@material-ui/core";
 import clsx from "clsx";
 import { useTranslation } from "react-i18next";
 import { BsInfoCircle } from "react-icons/bs";
@@ -20,6 +20,8 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
     const dispatch = useDispatch();
     const PAYMENT_URL = 'https://pulseem.co.il/Pulseem/Home/PaymentPage';
     const [urlLocked, setUrlLoceked] = useState<boolean>(false);
+
+    console.log('FormProperties rendered - data.enableRecaptcha:', data.enableRecaptcha);
 
     const checkShortURLExist = async (event: any) => {
         const shortUrl = event.target.value.replace(/ /g, '_')
@@ -262,6 +264,10 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
                 label={translator("common.accessibility")}
             />
         </Grid>
+
+
+
+
 
         {
             data.PageType !== 2 && (

@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import { debounce, get, includes } from 'lodash';
 import BeePlugin from '@mailupinc/bee-plugin'
-import { Box, Button, Grid, TextField, Typography } from '@material-ui/core'
+import { Box, Button, Checkbox, FormControlLabel, Grid, TextField, Typography } from '@material-ui/core'
 import { useRef, useState, useEffect } from 'react'
 import DefaultScreen from '../DefaultScreen'
 import { useSelector, useDispatch } from 'react-redux';
@@ -30,8 +30,9 @@ import moment from 'moment';
 import { loginURL, sitePrefix } from '../../config';
 import { MdArrowBackIos, MdArrowForwardIos, MdCheck, MdGroups, MdOutlinePublic } from 'react-icons/md';
 import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
-import { BEE_EDITOR_TYPES, TierFeatures } from '../../helpers/Constants';
+import { BEE_EDITOR_TYPES, TierFeatures, reCAPTCHAKey } from '../../helpers/Constants';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
+import { injectRecaptchaScript } from '../../helpers/Utils/RecaptchaHelper';
 import { StateType } from '../../Models/StateTypes';
 import { commonProps } from '../../model/Common/commonProps.types';
 import { BeeEditorModel, BeeEditorStoreModel, LandingPageRow, LandingPageTemplate, LandingPageUserBlocks, SaveLandingPageArguments } from '../../Models/LandingPage/LandingPage';
@@ -106,6 +107,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
   const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
   const [showTierPlans, setShowTierPlans] = useState(false);
   const [TierMessageCode, setTierMessageCode] = useState('');
+
   //#endregion State
   //#region Get Extra fields & Landing pages, after Data Ready
   const loadAccountExtraData = () => {
@@ -430,6 +432,19 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       if (saveRef.current?.showAnimation) setLoader(true);
       let finalHtml = args.HtmlData;
       let finalJson = args.JsonData;
+
+      // Inject reCAPTCHA initialization script if enabled
+      const enableRecaptcha = landingPage?.Data?.WebForm?.EnableRecaptcha || localStorage.getItem(`recaptcha_${moduleId}`) === 'true';
+      const recaptchaConfig = {
+        enabled: enableRecaptcha,
+        siteKey: landingPage?.Data?.WebForm?.recaptchaSiteKey || reCAPTCHAKey
+      };
+
+      if (recaptchaConfig.enabled) {
+        finalHtml = injectRecaptchaScript(finalHtml, true, recaptchaConfig.siteKey);
+        console.log('reCAPTCHA script injected. Final HTML length:', finalHtml.length);
+        console.log('Script injection check - data-recaptcha-enabled present:', finalHtml.includes('data-recaptcha-enabled'));
+      }
 
       //@ts-ignore
       let response: any = await dispatch(saveWebform({
@@ -777,6 +792,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
           classes.backButton
         )}
         style={{ margin: '8px' }}
+        // @ts-ignore
         startIcon={<BiSave />}
       >
         {t('common.saveTemplate')}
@@ -790,6 +806,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
           classes.backButton
         )}
         style={{ margin: '8px' }}
+        // @ts-ignore
         startIcon={<MdGroups />}
       >
         {t('common.Groups')}
@@ -828,6 +845,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
               classes.backButton
             )}
             style={{ margin: '8px' }}
+            // @ts-ignore
             startIcon={silentSave ? <Loader isOpen={silentSave} size={20} showBackdrop={false} contained={true} /> : <BiSave />}
             color="primary"
           >
@@ -853,6 +871,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
                     classes.btnRounded,
                     classes.backButton
                   )}
+                  // @ts-ignore
                   startIcon={<MdOutlinePublic />}
                   style={{ marginInlineStart: '8px' }}
                   color="primary"
@@ -875,6 +894,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
                     classes.btnRounded,
                     classes.backButton
                   )}
+                  // @ts-ignore
                   startIcon={<MdCheck />}
                   style={{ marginInlineStart: '8px' }}
                   color="primary"
@@ -896,8 +916,10 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
             classes.btnRounded,
             classes.backButton
           )}
+          // @ts-ignore
           endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
           style={{ margin: '8px' }}
+          // @ts-ignore
           startIcon={<BiSave />}
           color="primary"
         >{t("common.save")}
@@ -920,6 +942,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
             classes.btnRounded,
             classes.backButton
           )}
+          // @ts-ignore
           startIcon={<MdOutlinePublic />}
           style={{ marginInlineStart: '8px' }}
           color="primary"
@@ -934,6 +957,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
             classes.btnRounded,
             classes.backButton
           )}
+          // @ts-ignore
           endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
           style={{ marginInlineStart: '8px' }}
           color="primary"
@@ -956,9 +980,8 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
     if (showGallery) {
       let dialog = {
         showDivider: false,
-        icon: (
-          <IoMdImages />
-        ),
+        // @ts-ignore
+        icon: <IoMdImages />,
         title: t("common.imageGallery"),
         content: (
           <Gallery
@@ -1297,6 +1320,11 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
   }
   //#endregion Forms 
   const getConfig = () => {
+    const recaptchaConfig = {
+      enabled: landingPage?.Data?.WebForm?.enableRecaptcha || false,
+      siteKey: landingPage?.Data?.WebForm?.recaptchaSiteKey || reCAPTCHAKey
+    };
+
     return BeeConfig({
       //@ts-ignore
       moduleType,
@@ -1321,7 +1349,8 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       t: t,
       form: clientForm,
       onFormAdded: onFormAdded,
-      languageCode: language
+      languageCode: language,
+      recaptchaConfig: recaptchaConfig
     }) as any;
   }
   const config = getConfig();
