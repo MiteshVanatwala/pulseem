@@ -213,8 +213,7 @@ const OfflineProperties = ({ classes, data, onUpdate, errors, setErrors }: any) 
                     </Typography>
                 </Box>
             </Grid>
-            {renderAutofillFields()}
-            <Grid item md={12} className={clsx(classes.dFlex, classes.alignItems)} style={{ paddingTop: 0 }}>
+            <Grid item md={12} className={clsx(classes.dFlex, classes.alignItems)}>
                 <FormControlLabel
                     control={
                         <Checkbox
@@ -235,6 +234,7 @@ const OfflineProperties = ({ classes, data, onUpdate, errors, setErrors }: any) 
                     label={translator("landingPages.enableRecaptcha")}
                 />
             </Grid>
+            {renderAutofillFields()}
         </Grid>
     )
 }
