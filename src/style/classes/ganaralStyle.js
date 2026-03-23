@@ -757,6 +757,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
     display: "flex",
     justifyContent: "space-between",
   },
+  mobileColumn: {
+    '@media screen and (max-width: 1024px)': {
+      flexDirection: 'column',
+      alignItems: 'flex-start',
+      height: 'auto',
+      gap: 6,
+    },
+  },
   spaceEvenly: {
     display: "flex",
     justifyContent: "space-evenly",
