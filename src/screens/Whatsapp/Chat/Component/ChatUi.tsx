@@ -276,7 +276,7 @@ const ChatUi = ({
 					<p className={`${classes.whatsappChat} chat__contact-desc`}></p>
 				</div>
 
-				<Box className={clsx(classes.spaceBetween, 'mobileColumn')}>
+				<Box className={clsx(classes.spaceBetween, classes.mobileColumn)}>
 					<Box className={classes.whatsappChatUiStatusPadding}>
 						<Select
 							className={clsx(
