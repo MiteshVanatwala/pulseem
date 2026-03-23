@@ -192,7 +192,9 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 
 	const { t: translator } = useTranslation();
 	const { contactID } = useParams();
-	const [isMobileSideBar, setIsMobileSideBar] = useState<boolean>(false);
+	const [isMobileSideBar, setIsMobileSideBar] = useState<boolean>(
+		typeof window !== 'undefined' && window.innerWidth <= 1024,
+	);
 	const [isTemplateModal, setIsTemplateModal] = useState<boolean>(false);
 	const [newMessage, setNewMessage] = useState<string>('');
 	const [savedTemplateList, setSavedTemplateList] = useState<
@@ -913,6 +915,9 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		) => {
 			setActiveChatContacts(contacts);
 			changeContactReadStatus(contacts);
+			if (typeof window !== 'undefined' && window.innerWidth <= 1024) {
+				setIsMobileSideBar(false);
+			}
 		},
 		[changeContactReadStatus],
 	);

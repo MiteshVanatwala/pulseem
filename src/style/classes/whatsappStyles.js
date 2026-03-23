@@ -1739,6 +1739,10 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			zIndex: 100,
 			display: 'flex',
 			overflow: 'hidden',
+			'@media screen and (max-width: 1024px)': {
+				height: 'calc(100vh - 92px)',
+				marginTop: 0,
+			},
 		},
 		'@media screen and (min-width: 1450px)': {
 			'&.app': {},
@@ -1810,8 +1814,15 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			alignItems: 'center',
 			height: '60px',
 			minHeight: '60px',
+			'@media screen and (max-width: 1024px)': {
+				height: 'auto',
+				minHeight: '56px',
+				flexWrap: 'wrap',
+				padding: '6px 8px',
+				gap: 4,
 			},
-
+		},
+		
 
 		'&.avatar': {
 			borderRadius: '50%',
@@ -1926,6 +1937,11 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			flexDirection: 'column',
 			position: 'relative',
 			zIndex: '1',
+			'@media screen and (max-width: 1024px)': {
+				flex: 1,
+				width: '100%',
+				minWidth: 0,
+			},
 		},
 		'&.chat__bg': {
 			top: '0',
@@ -2535,12 +2551,15 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			borderRight: '1px solid #DADADA',
 			display: 'flex',
 			flexDirection: 'column',
-			'@media screen and (max-width: 759px)': {
+			'@media screen and (max-width: 1024px)': {
 				display: 'none',
-				position: 'absolute',
+				position: 'fixed',
 				zIndex: '9999',
-				width: '299px',
-				height: 'inherit',
+				top: 0,
+				left: 0,
+				width: '100%',
+				height: '100vh',
+				overflow: 'hidden',
 				'&.mobile-side-bar': {
 					display: 'flex',
 				},
@@ -2563,9 +2582,6 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			padding: theme.spacing(.75, 1),
 			borderRadius: theme.shape.borderRadius * 2.5,
 			fontWeight: 'bold',
-			'@media screen and (max-width: 1023px)': {
-				minWidth: 56,
-			},
 			'& h2': {
 				color: '#000000',
 				lineHeight: '16px',
@@ -2727,7 +2743,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	},
 	whatsappChatBarButton: {
 		'& svg': { color: '#848484' },
-		'@media screen and (min-width: 760px)': {
+		'@media screen and (min-width: 1025px)': {
 			display: 'none !important',
 		},
 	},
@@ -2932,7 +2948,14 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		paddingRight: isRTL ? 12 : 'unset',
 		display: 'flex',
 		alignItems: 'center',
-		gap: 5
+		gap: 5,
+		'@media screen and (max-width: 1024px)': {
+			flexWrap: 'wrap',
+			gap: 4,
+			paddingLeft: 4,
+			paddingRight: 4,
+			width: '100%',
+		},
 	},
 	pdfFileName: {
 		wordWrap: 'break-word',
