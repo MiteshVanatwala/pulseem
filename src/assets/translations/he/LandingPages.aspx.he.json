@@ -545,7 +545,7 @@
       "embedMessage": "העתק והדבק קוד זה לאתר שלך:"
     }
   },
-  "enableRecaptcha": "הוספת reCAPTCHA",
+  "enableRecaptcha": "הוספת reCAPTCHA לטופס הרשמה",
   "recaptchaVersion": "גרסת reCAPTCHA",
   "recaptchaVersionLabel": "בחר גרסה",
   "recaptchaSiteKey": "מפתח אתר",
