@@ -66,7 +66,7 @@ const ChatFooterContent = ({
 }: ChatFooterContentProps) => {
 	const { t: translator } = useTranslation();
 	const localClasses = useStyles();
-	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
+	const { isRTL, windowSize } = useSelector((state: { core: coreProps }) => state.core);
 	const [showEmojis, setShowEmojis] = useState<boolean>(false);
 	const [textDirection, setTextDirection] = useState<string>('ltr');
 	const freeFormInputHeight = '17px';
@@ -278,15 +278,21 @@ const ChatFooterContent = ({
 									alignItems="center"
 									spacing={2}
 								>
-									<Typography color="textSecondary">
-										<label style={{ fontSize: '22px', fontWeight: 'bolder' }}>
-											<>{translator('whatsappChat.conversation')}</>
-										</label>
-										<br />
-										<label style={{ fontSize: '17px', fontWeight: 'bolder' }}>
-											<>{translator('whatsappChat.cantSend')}</>
-										</label>
-									</Typography>
+											<Typography color="textSecondary">
+												<label style={{
+													fontSize: windowSize === 'xs' ? '16px' : '22px',
+													fontWeight: 'bolder',
+												}}>
+													<>{translator('whatsappChat.conversation')}</>
+												</label>
+												<br />
+												<label style={{
+													fontSize: windowSize === 'xs' ? '13px' : '17px',
+													fontWeight: 'bolder',
+												}}>
+													<>{translator('whatsappChat.cantSend')}</>
+												</label>
+											</Typography>
 
 									<Grid className={classes.manageTemplatesHeaderButtons}>
 										<Button
