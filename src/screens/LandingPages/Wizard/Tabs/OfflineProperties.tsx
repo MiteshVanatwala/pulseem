@@ -214,7 +214,7 @@ const OfflineProperties = ({ classes, data, onUpdate, errors, setErrors }: any) 
                 </Box>
             </Grid>
             {renderAutofillFields()}
-            <Grid item md={12} className={clsx(classes.dFlex, classes.alignItems)}>
+            <Grid item md={12} className={clsx(classes.dFlex, classes.alignItems)} style={{ paddingTop: 0 }}>
                 <FormControlLabel
                     control={
                         <Checkbox
