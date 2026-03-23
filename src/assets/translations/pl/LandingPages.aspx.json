@@ -545,7 +545,7 @@
       "embedMessage": "Skopiuj i wklej ten kod na swoją stronę:"
     }
   },
-  "enableRecaptcha": "Włącz reCAPTCHA",
+  "enableRecaptcha": "Dodaj reCAPTCHA do formularza rejestracji",
   "recaptchaVersion": "Wersja reCAPTCHA",
   "recaptchaVersionLabel": "Wybierz wersję",
   "recaptchaSiteKey": "Klucz witryny",

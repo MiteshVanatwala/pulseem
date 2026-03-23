@@ -5,12 +5,20 @@ import { useTranslation } from 'react-i18next';
 import { defaultAccountExtraDataLandingPage } from '../../../../helpers/Constants';
 import { useSelector } from 'react-redux';
 import { coreProps } from '../../../Whatsapp/Campaign/Types/WhatsappCampaign.types';
+import { useEffect } from 'react';
 
 const OfflineProperties = ({ classes, data, onUpdate, errors, setErrors }: any) => {
     const { t: translator } = useTranslation();
     const { isRTL } = useSelector(
             (state: { core: coreProps }) => state.core
         );
+
+    useEffect(() => {
+        const saved = localStorage.getItem(`recaptcha_${data?.ID}`);
+        if (saved === 'true' && !data?.enableRecaptcha) {
+            onUpdate({ ...data, enableRecaptcha: true });
+        }
+    }, [data?.ID]);
 
     const renderAutofillFields = () => {
         return (
@@ -206,6 +214,27 @@ const OfflineProperties = ({ classes, data, onUpdate, errors, setErrors }: any) 
                 </Box>
             </Grid>
             {renderAutofillFields()}
+            <Grid item md={12} className={clsx(classes.dFlex, classes.alignItems)}>
+                <FormControlLabel
+                    control={
+                        <Checkbox
+                            color="primary"
+                            inputProps={{ "aria-label": "recaptcha checkbox" }}
+                            onClick={() => {
+                                const newValue = !data.enableRecaptcha;
+                                localStorage.setItem(`recaptcha_${data.ID}`, newValue.toString());
+                                onUpdate({
+                                    ...data,
+                                    enableRecaptcha: newValue
+                                });
+                            }}
+                            checked={data.enableRecaptcha || false}
+                            value={data.enableRecaptcha}
+                        />
+                    }
+                    label={translator("landingPages.enableRecaptcha")}
+                />
+            </Grid>
         </Grid>
     )
 }
