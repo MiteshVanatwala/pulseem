@@ -143,11 +143,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		}) => state.common?.accountSettings?.SubAccountSettings,
 	);
 	const { subAccount } = useSelector((state: any) => state.common);
-	const {
-		isRTL,
-		windowSize,
-		isLoader = false,
-	} = useSelector((state: { core: coreProps }) => state.core);
+	const { isRTL, windowSize, isLoader = false, isOnlyWhatsAppChat } = useSelector((state: { core: coreProps }) => state.core);
 	const { agentList } = useSelector((state: StateType) => state.whatsapp);
 	const { currentPlan, availablePlans } = useSelector(
 		(state: any) => state.tiers,
@@ -1815,13 +1811,14 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				currentPage="whatsapp"
 				classes={classes}
 				customPadding={false}
-				containerClass={null}
+				containerClass={!isOnlyWhatsAppChat ? clsx(classes.mb75) : {}}
+				showAppBar={!isOnlyWhatsAppChat}
 			>
 				{isAccountSetup === true && (
 					<>
 						{toastMessage?.message?.length > 0 && <>{renderToast()}</>}
-						<div className={`${classes.whatsappChat} app`}>
-							<div className={`${classes.whatsappChat} app-content`}>
+						<div className={`${classes.whatsappChat} app ${isOnlyWhatsAppChat ? 'only-whatsapp' : ''}`}>
+							<div className={`${classes.whatsappChat} app-content ${isOnlyWhatsAppChat ? 'only-whatsapp' : ''}`}>
 								<SideBar
 									refetchActiveChatContact={async (phoneNumber: string) => {
 										// Fetch the latest contact info and update activeChatContacts

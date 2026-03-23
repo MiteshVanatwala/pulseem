@@ -652,7 +652,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
         getData()
         processSummaryResponse(resJ.StatusCode);
       } else if (resJ.StatusCode !== 1) {
-        setErrorMessage(`${resJ.StatusMessage} <br/>${t('automations.pressHereToEditAutomation').replace('##', data.ID)}`);
+        setErrorMessage(`${resJ.Message || resJ.StatusMessage} <br/>${t('automations.pressHereToEditAutomation').replace('##', data.ID)}`);
         setDialogType({
           type: 'activateError',
           data: data

@@ -14,6 +14,7 @@ export type coreProps = {
 	language: string;
 	isLoader: boolean;
 	userRoles: any;
+	isOnlyWhatsAppChat: boolean;
 };
 
 export type WhatsappCampaignProps = {
