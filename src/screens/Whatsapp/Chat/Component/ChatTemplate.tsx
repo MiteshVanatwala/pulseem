@@ -60,6 +60,11 @@ const ChatTemplate = ({
 	const formatTime = (timeString: string) => {
 		return moment(timeString).format('hh:mm');
 	};
+	const isGif = (message: APIWhatsappChatDetailData): boolean =>
+		!!(
+			message.MediaContentType?.includes('image/gif') ||
+			message.MediaUrl?.toLowerCase().includes('.gif')
+		);
 	const getIconForFile = (message: APIWhatsappChatDetailData) => {
 		if (message.MediaContentType?.includes('spreadsheetml.sheet')) {
 			return XLSX;
@@ -93,6 +98,48 @@ const ChatTemplate = ({
 		}
 	}
 
+	const renderGif = (src: string, caption?: string) => (
+		<div style={{ maxWidth: 280, position: 'relative', borderRadius: 8, overflow: 'hidden' }}>
+			<video
+				autoPlay
+				loop
+				muted
+				playsInline
+				style={{
+					width: '100%',
+					display: 'block',
+					borderRadius: 8,
+					background: '#000',
+				}}
+				src={src}
+			/>
+			{/* GIF badge — bottom-left, like WhatsApp */}
+			<span
+				style={{
+					position: 'absolute',
+					bottom: caption ? 28 : 6,
+					left: 8,
+					background: 'rgba(0,0,0,0.45)',
+					color: '#fff',
+					fontSize: 11,
+					fontWeight: 700,
+					padding: '1px 5px',
+					borderRadius: 4,
+					letterSpacing: 1,
+					pointerEvents: 'none',
+					userSelect: 'none',
+				}}
+			>
+				GIF
+			</span>
+			{caption && caption.length > 0 && (
+				<span style={{ display: 'block', marginTop: 4, fontSize: 13 }}>
+					{caption}
+				</span>
+			)}
+		</div>
+	);
+
 	const getInboundMessageContent = (message: APIWhatsappChatDetailData) => {
 		if (message?.Message?.length === 0 && message?.MediaUrl?.length === 0) {
 			return (
@@ -101,18 +148,51 @@ const ChatTemplate = ({
 				</span>
 			);
 		}
+
+		// ── GIF ───────────────────────────────────────────────────────────────────
+		if (isGif(message)) {
+			return renderGif(message.MediaUrl, message.Message);
+		}
+
+		// ── AUDIO ──────────────────────────────────────────────────────────────────
 		if (message.MediaContentType?.includes('audio')) {
 			return (
-				<>
-					<AudioPlayer
-						src={message?.MediaUrl}
-						layout={isRTL ? 'horizontal-reverse' : 'horizontal'}
-						showJumpControls={false}
-						showFilledVolume={false}
-					/>
-				</>
+				<audio
+					controls
+					style={{ maxWidth: '100%', outline: 'none' }}
+					src={message?.MediaUrl}
+				>
+					{translator('whatsappChat.messageErrorText')}
+				</audio>
 			);
 		}
+
+		// ── VIDEO ──────────────────────────────────────────────────────────────────
+		if (message.MediaContentType?.includes('video')) {
+			return (
+				<div style={{ maxWidth: 280 }}>
+					<video
+						controls
+						style={{
+							width: '100%',
+							borderRadius: 8,
+							display: 'block',
+							background: '#000',
+						}}
+					>
+						<source src={message?.MediaUrl} type={message.MediaContentType} />
+						{translator('whatsappChat.messageErrorText')}
+					</video>
+					{message?.Message?.length > 0 && (
+						<span style={{ display: 'block', marginTop: 4 }}>
+							{message.Message}
+						</span>
+					)}
+				</div>
+			);
+		}
+
+		// ── DOCUMENTS ──────────────────────────────────────────────────────────────
 		if (
 			message.MediaContentType?.includes('pdf') ||
 			message.MediaContentType?.includes('zip') ||
@@ -126,31 +206,30 @@ const ChatTemplate = ({
 					className={clsx(
 						classes.whatsappMobileMessageTextAndImage,
 						'transparent-background'
-					)}>
-					<Grid container alignItems='center'>
+					)}
+				>
+					<Grid container alignItems="center">
 						<img
-							className='pdf-preview-img'
+							className="pdf-preview-img"
 							src={getIconForFile(message)}
-							alt='uploaded-file-preview'
+							alt="uploaded-file-preview"
 						/>
 						<div className={clsx(classes.pdfFileName, 'inbound')}>
-							{
-								message?.Message?.split('/')[
-									message?.Message?.split('/')?.length - 1
-								]
-							}
+							{message?.Message?.split('/')[message?.Message?.split('/')?.length - 1]}
 						</div>
-						<a href={message?.MediaUrl} target='_blank' rel='noreferrer'>
+						<a href={message?.MediaUrl} target="_blank" rel="noreferrer">
 							<img
-								className='download-preview-img'
+								className="download-preview-img"
 								src={Download}
-								alt='uploaded-file-preview'
+								alt="uploaded-file-preview"
 							/>
 						</a>
 					</Grid>
 				</div>
 			);
 		}
+
+		// ── IMAGE / PLAIN TEXT ─────────────────────────────────────────────────────
 		return (
 			<>
 				{message?.MediaUrl?.length === 0 && <span>{message?.Message}</span>}
@@ -422,21 +501,39 @@ const ChatTemplate = ({
 						<p
 							key={msgIndex}
 							className={`${classes.whatsappChat} chat__msg chat__msg--sent`}>
-							<span>
-							{
-								message?.MediaUrl && message?.MediaUrl?.length > 0 && (
-									<>
-										<ImagePreview
-											classes={classes}
-											className={`${classes.whatsappChat} chat__img`}
-											placeholderImg={imagePlaceholder}
-											errorImg={imagePlaceholderX}
-											src={message?.MediaUrl}
-										/>
-									</>
-								)}
-								{message.Message || (!message?.MediaUrl?.length ? translator('whatsappChat.messageErrorText') : '')}
-							</span>
+									<span>
+										{message?.MediaUrl && message?.MediaUrl?.length > 0 && (
+											<>
+												{isGif(message) ? (
+													renderGif(message.MediaUrl, message.Message)
+												) : message.MediaContentType?.includes('video') ? (
+													<div style={{ maxWidth: 280 }}>
+														<video
+															controls
+															style={{ width: '100%', borderRadius: 8, display: 'block', background: '#000' }}
+														>
+															<source src={message.MediaUrl} type={message.MediaContentType} />
+														</video>
+													</div>
+												) : message.MediaContentType?.includes('audio') ? (
+													<audio controls style={{ maxWidth: '100%' }} src={message.MediaUrl} />
+												) : (
+													<ImagePreview
+														classes={classes}
+														className={`${classes.whatsappChat} chat__img`}
+														placeholderImg={imagePlaceholder}
+														errorImg={imagePlaceholderX}
+														src={message?.MediaUrl}
+													/>
+												)}
+											</>
+										)}
+										{/* Only show Message text separately when it's not a GIF (GIF renderer handles caption internally) */}
+										{!isGif(message) && (
+											message.Message ||
+											(!message?.MediaUrl?.length ? translator('whatsappChat.messageErrorText') : '')
+										)}
+									</span>
 							<span className={`${classes.whatsappChat} chat__msg-filler`}>
 								{' '}
 							</span>
