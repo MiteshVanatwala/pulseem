@@ -673,7 +673,7 @@ const SmsCreator = ({ classes }) => {
     }
     const isDefault = campaignNumber === StaticNumber;
     const isVerified = verifiedNumbers?.some(
-      (n) => n.Number === campaignNumber && n.IsOptIn
+      (n) => n.Number.toLowerCase() === campaignNumber.toLowerCase() && n.IsOptIn
     );
     if (isDefault || isVerified) {
       callbackFunc();
@@ -1451,7 +1451,7 @@ const SmsCreator = ({ classes }) => {
               className={clsx(classes.btn, classes.btnRounded)}
               onClick={() => {
                 setDialogType(null);
-                setSenderDialogShowSelect(false);
+                setSenderDialogShowSelect(true);
                 setSenderDialogOpen(true);
               }}
             >
@@ -2329,7 +2329,7 @@ const SmsCreator = ({ classes }) => {
           action={
             <Button
               className={clsx(classes.btn, classes.btnRounded)}
-              onClick={() => { setSenderDialogShowSelect(false); setSenderDialogOpen(true); }}
+              onClick={() => { setSenderDialogShowSelect(true); setSenderDialogOpen(true); }}
             >
               {t('sms.verifySenderButton')}
             </Button>
