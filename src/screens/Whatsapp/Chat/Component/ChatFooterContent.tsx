@@ -278,7 +278,7 @@ const ChatFooterContent = ({
 									alignItems="center"
 									spacing={2}
 								>
-											<Typography color="textSecondary">
+											<Typography color="textSecondary" style={{lineHeight: windowSize === 'xs' ? '16px' : 'normal'}}>
 												<label style={{
 													fontSize: windowSize === 'xs' ? '16px' : '22px',
 													fontWeight: 'bolder',
