@@ -88,34 +88,83 @@ export const BeeConfig = (Options: ConfigOptions) => {
         uid: 'f7768f7b-06af-4ada-bbd3-18a237524c31', //needed for identify resources of the that user and billing stuff
         container: 'bee-plugin-container', //Identifies the id of div element that contains BEE Plugin
         language: editorLanguage[languageCode], //Options.IsRTL ? 'he-IL' : 'en-US',
-        customCss: 'https://pulseem.co.il/pulseem/css/beefreeRtlFixes.css',
-        inlineCSS: `
-          /* Hide Add condition button in left sidebar */
-          .row-display-condition-add-button--cs {
-            display: none !important;
-            visibility: hidden !important;
-            width: 0 !important;
-            height: 0 !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            border: none !important;
-            pointer-events: none !important;
-          }
-          /* Make display condition buttons same width and padding */
-          .row-display-condition-select-button--cs,
-          .row-display-condition-open-builder-button--cs {
-            min-width: 140px !important;
-            width: 140px !important;
-            max-width: 140px !important;
-            flex: 0 0 140px !important;
-            padding: 8px 16px !important;
-          }
-          /* Show delete button for display conditions */
-          .row-display-condition-delete-button--cs {
-            display: inline-block !important;
-            visibility: visible !important;
-          }
-        `,
+        customCss: (() => {
+            const sidebarCss = [
+                `@import url('https://pulseem.co.il/pulseem/css/beefreeRtlFixes.css');`,
+                // Hide the "Add condition" button in the display conditions sidebar
+                `.row-display-condition-add-button--cs {`,
+                `  display: none !important;`,
+                `  visibility: hidden !important;`,
+                `  width: 10 !important;`,
+                `  height: 10 !important;`,
+                `  margin: 0 !important;`,
+                `  padding: 0 !important;`,
+                `  border: none !important;`,
+                `  pointer-events: none !important;`,
+                `}`,
+                // Force parent container to flex so buttons split evenly
+                `.row-display-condition-buttons-container--cs {`,
+                `  display: flex !important;`,
+                `  flex-direction: row !important;`,
+                `  gap: 8px !important;`,
+                `  width: 100% !important;`,
+                `}`,
+                // Equal width — exactly half the container each
+                `.row-display-condition-select-button--cs,`,
+                `.row-display-condition-open-builder-button--cs {`,
+                `  flex: 1 1 0% !important;`,
+                `  width: 35% !important;`,
+                `  min-width: 0 !important;`,
+                `  max-width: 35% !important;`,
+                `  box-sizing: border-box !important;`,
+                `  text-align: center !important;`,
+                `}`,
+                `.row-display-condition-open-builder-button--cs,`,
+                `.row-display-condition-open-builder-button--cs:hover,`,
+                `.row-display-condition-open-builder-button--cs:focus,`,
+                `.row-display-condition-open-builder-button--cs:active,`,
+                `.row-display-condition-open-builder-button--cs.Button_button__IQK4r.Button_text__IQK4r.Button_primary__IQK4r,`,
+                `.row-display-condition-open-builder-button--cs.Button_button__IQK4r.Button_text__IQK4r.Button_primary__IQK4r:hover,`,
+                `.row-display-condition-open-builder-button--cs.Button_button__IQK4r.Button_text__IQK4r.Button_primary__IQK4r:focus,`,
+                `.row-display-condition-open-builder-button--cs.Button_button__IQK4r.Button_text__IQK4r.Button_primary__IQK4r:active {`,
+                `  --custom-brand-primary-color: #ff0054 !important;`,
+                `  background: #ff0054 !important;`,
+                `  background-color: #ff0054 !important;`,
+                `  background-image: none !important;`,
+                `  color: #bd2121 !important;`,
+                `  fill: #ffffff !important;`,
+                `  border-color: #ff0054 !important;`,
+                `}`,
+                `.row-display-condition-open-builder-button--cs *,`,
+                `.row-display-condition-open-builder-button--cs:hover *,`,
+                `.row-display-condition-open-builder-button--cs:focus *,`,
+                `.row-display-condition-open-builder-button--cs:active * {`,
+                `  color: #ffffff !important;`,
+                `  fill: #ffffff !important;`,
+                `}`,
+                // Show delete button
+                `.row-display-condition-delete-button--cs {`,
+                `  display: inline-block !important;`,
+                `  visibility: visible !important;`,
+                `}`,
+                // Hide the Edit action in the selected display condition card
+                `.row-display-condition-edit-button--cs,`,
+                `.row-display-condition-edit-button--cs:hover,`,
+                `.row-display-condition-edit-button--cs:focus,`,
+                `.row-display-condition-edit-button--cs:active {`,
+                `  display: none !important;`,
+                `  visibility: hidden !important;`,
+                `  width: 0 !important;`,
+                `  height: 0 !important;`,
+                `  margin: 0 !important;`,
+                `  padding: 0 !important;`,
+                `  border: none !important;`,
+                `  pointer-events: none !important;`,
+                `}`,
+            ].join('\n');
+            return `data:text/css;charset=utf-8,${encodeURIComponent(sidebarCss)}`;
+        })(),
+        inlineCSS: ``,
         trackChanges: true,
         //autosave: AUTO_SAVE_SECONDS,
         loadingSpinnerDisableOnSave: true,
