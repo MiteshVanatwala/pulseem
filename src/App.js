@@ -934,8 +934,9 @@ const App = ({ screenSize }) => {
         <div dir={isRTL ? 'rtl' : 'ltr'} className={classes.appBody}>
           {renderRoutesByCondition(classes, redirect)}
           { !isOnlyWhatsAppChat && <AIChatWidget config={advisorConfig} />}
-          { !isOnlyWhatsAppChat && <AIFloatingButton /> }
-          { !isOnlyWhatsAppChat && <AIChatWidget /> }
+          { !isOnlyWhatsAppChat && <AIFloatingButton config={advisorConfig} /> }
+          { !isOnlyWhatsAppChat && <AIChatWidget config={supportConfig} /> }
+          { !isOnlyWhatsAppChat && <AIFloatingButton config={supportConfig} /> }
           { !isOnlyWhatsAppChat && <HelpDrawer open={isOpen} onClose={() => dispatch(closeHelpDrawer())} /> }
         </div>
         <Loader isOpen={isLoader} showBackdrop={true} />
