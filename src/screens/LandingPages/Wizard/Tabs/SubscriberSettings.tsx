@@ -15,6 +15,8 @@ import { RenderHtml } from '../../../../helpers/Utils/HtmlUtils';
 import { AiOutlineExclamationCircle } from 'react-icons/ai';
 import { defaultAccountExtraDataLandingPage } from '../../../../helpers/Constants';
 
+const ArrowDownIcon = IoIosArrowDown as any;
+
 const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialog, errors, onDone }: any) => {
     const { t: translator } = useTranslation();
     const { isRTL } = useSelector(
@@ -36,7 +38,7 @@ const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialo
     useEffect(() => {
         const isNewPage = !data?.ID || data?.ID > 0;
         setIsNewPage(isNewPage);
-    }, []);
+    }, [data?.ID]);
 
     const onEditSystem = (id: number) => {
         const found = data?.WebformsToReportLeadByApi.find((x: WebformsToReportLeadByApi) => { return x.ID === id });
@@ -230,7 +232,7 @@ const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialo
                         className={classes.pbt5}
                         renderValue={() => data.IsUpdate}
                         onChange={(event, val) => onUpdate({ ...data, IsUpdate: event.target.value === '1' })}
-                        IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+                        IconComponent={() => <ArrowDownIcon size={20} className={classes.dropdownIconComponent} />}
                         MenuProps={{
                             PaperProps: {
                                 style: {
@@ -307,7 +309,7 @@ const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialo
                             onUpdate({ ...data, Systems: exists.map((x: any) => x.ID.toString()) })
 
                         }}
-                        IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+                        IconComponent={() => <ArrowDownIcon size={20} className={classes.dropdownIconComponent} />}
                         MenuProps={{
                             PaperProps: {
                                 style: {
