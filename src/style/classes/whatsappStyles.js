@@ -2652,7 +2652,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		'&.sidebar-contact': {
 			fontFamily: 'Assistant',
 			textDecoration: 'none',
-			height: '100px',
+			minHeight: '100px',
 			padding: '0px 20px',
 			display: 'flex',
 			alignItems: 'center',
@@ -2669,7 +2669,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			marginRight: isRTL ? 'unset' : '10px',
 			marginLeft: isRTL ? '10px' : 'unset',
 		},
-		'&.sidebar-contact__content': { overflow: 'hidden', flex: '1' },
+		'&.sidebar-contact__content': { overflow: 'hidden', flex: '1', margin: '4px 0px', },
 		'&.sidebar-contact__top-content, .sidebar-contact__bottom-content, .sidebar-contact__message-wrapper':
 		{
 			display: 'flex',

@@ -1021,6 +1021,25 @@ const SideBar = ({
 								padding: isRTL ? '0 40px 0 8px' : '0 8px 0 40px',
 							}}
 						/>
+						{searchText.length > 0 && (
+							<IconButton
+								size="small"
+								disableRipple
+								onMouseDown={(e) => {
+									e.preventDefault();
+									e.stopPropagation();
+								}}
+								onClick={(e) => {
+									e.preventDefault();
+									e.stopPropagation();
+									setSearchText('');
+								}}
+								style={{ padding: '4px', flexShrink: 0 }}
+								title={translator('common.clear')}
+							>
+								<BsX style={{ fontSize: '18px', color: '#999' }} />
+							</IconButton>
+						)}
 						<div
 							className={clsx(
 								`${classes.whatsappChat} search-icons-right`,
