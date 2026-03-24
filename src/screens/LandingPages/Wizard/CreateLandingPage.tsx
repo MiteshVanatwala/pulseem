@@ -12,7 +12,6 @@ import { coreProps } from '../../Whatsapp/Campaign/Types/WhatsappCampaign.types'
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import WizardActions from '../../../components/Wizard/WizardActions';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
-import type { IconType } from 'react-icons';
 import { BEE_EDITOR_TYPES, CLOSE_BUTTON_HTML, LandingPagesAnswerType, TierFeatures } from '../../../helpers/Constants';
 import { FileGallery } from '../../../Models/Files/FileGallery';
 import Gallery from '../../../components/Gallery/Gallery.component';
@@ -22,7 +21,6 @@ import { ValidateEmailAddress } from '../../../helpers/Utils/common';
 import { isValidHttpUrl } from '../../../helpers/Utils/TextHelper';
 import { getGroupsBySubAccountId } from '../../../redux/reducers/groupSlice';
 import { BsInfoCircle } from 'react-icons/bs';
-import type { IconBaseProps } from 'react-icons';
 import { getById, getAllLPTemplatesBySubaccountId, getLPPublicTemplates, saveLandingPage } from '../../../redux/reducers/landingPagesSlice';
 import { sitePrefix } from '../../../config';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
@@ -43,6 +41,9 @@ import CloseButtonConfig from './Tabs/CloseButtonConfig';
 import TierPlans from '../../../components/TierPlans/TierPlans';
 import { UserRoles } from '../../../Models/SubUser/SubUsers';
 import { get } from 'lodash';
+
+const ArrowBackIosIcon = MdArrowBackIos as unknown as React.ComponentType;
+const ArrowForwardIosIcon = MdArrowForwardIos as unknown as React.ComponentType;
 
 const generateGuid = () => {
 	return Date.now().toString(36) + Math.random().toString(36).substring(2);
@@ -884,8 +885,7 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 							classes.backButton
 						)}
 						style={{ margin: '8px' }}
-						{/* @ts-ignore */}
-						endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+						endIcon={isRTL ? <ArrowBackIosIcon /> : <ArrowForwardIosIcon />}
 					>
 						{t("common.save")}
 					</Button>
@@ -897,8 +897,7 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 							classes.backButton
 						)}
 						style={{ margin: '8px' }}
-						{/* @ts-ignore */}
-						endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+						endIcon={isRTL ? <ArrowBackIosIcon /> : <ArrowForwardIosIcon />}
 					>
 						{t('common.continue')}
 					</Button>
@@ -916,8 +915,7 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 							classes.backButton
 						)}
 						style={{ margin: '8px' }}
-						{/* @ts-ignore */}
-						endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+						endIcon={isRTL ? <ArrowBackIosIcon /> : <ArrowForwardIosIcon />}
 						key="saveContinue"
 					>
 						<>{t('common.saveAndContinue')}</>
@@ -935,8 +933,7 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 							classes.backButton
 						)}
 						style={{ margin: '8px' }}
-						{/* @ts-ignore */}
-						endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+						endIcon={isRTL ? <ArrowBackIosIcon /> : <ArrowForwardIosIcon />}
 						key='newEditor'
 					>
 						{t('master.continueToNewEditor')}

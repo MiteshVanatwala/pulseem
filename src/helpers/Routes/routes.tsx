@@ -159,7 +159,7 @@ export const getRoutes = (
         },
         {
           title: t("master.RadMenuItemResource9a.Text"),
-          href: `${rootDomain}/AutoSendPlans.aspx?fromreact=true`,
+          href: `${sitePrefix}AutoSendPlans`,
           isShow: true,
         },
         {

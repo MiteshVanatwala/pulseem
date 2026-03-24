@@ -107,6 +107,7 @@ import { advisorConfig, supportConfig } from './components/AI/chatConfig';
 import { getAvailablePlans, getCurrentPlan } from './redux/reducers/TiersSlice';
 import PopupSummary from './screens/Popups/PopupSummary';
 import HelpDrawer from './components/HelpDrawer';
+import LegacyPageFrame, { LegacyPageWild } from './screens/LegacyPage/LegacyPageFrame';
 import { openHelpDrawer, closeHelpDrawer, toggleHelpDrawer } from './redux/reducers/helpDrawerSlice';
 
 const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
@@ -253,8 +254,8 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
         element={transferUrl('/Pulseem/CampaignsAbTestings.aspx')}
       />
       <Route
-        path={`/AutoSendPlans`}
-        element={transferUrl('/Pulseem/AutoSendPlans.aspx')}
+        path={`${sitePrefix}AutoSendPlans`}
+        element={<LegacyPageFrame path="AutoSendPlans.aspx" />}
       />
       {/* <Route
         path={`/CampaignTemplates`}
@@ -603,6 +604,10 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
         exact
         path={`${sitePrefix}Groups/Download`}
         element={<DownloadFiles classes={classes} />}
+      />
+      <Route
+        path="/Pulseem/:aspxPage"
+        element={<LegacyPageWild />}
       />
       <Route
         path="*" element={<PageNotFound classes={classes} />}

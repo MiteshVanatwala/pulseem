@@ -3482,7 +3482,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   checkbox: {
     '&.MuiCheckbox-root': {
       color: '#FF3343',
-      '&$checked': {
+      '&.Mui-checked': {
         color: 'FF3343',
       },
     },
