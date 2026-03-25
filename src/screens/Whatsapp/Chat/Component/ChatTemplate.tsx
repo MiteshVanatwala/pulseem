@@ -1,7 +1,5 @@
 import { Grid } from '@material-ui/core';
 import moment from 'moment';
-import AudioPlayer from 'react-h5-audio-player';
-import 'react-h5-audio-player/lib/styles.css';
 import {
 	getTemplatePreviewData,
 	getTemplateTextWithVariable,
@@ -60,11 +58,6 @@ const ChatTemplate = ({
 	const formatTime = (timeString: string) => {
 		return moment(timeString).format('hh:mm');
 	};
-	const isGif = (message: APIWhatsappChatDetailData): boolean =>
-		!!(
-			message.MediaContentType?.includes('image/gif') ||
-			message.MediaUrl?.toLowerCase().includes('.gif')
-		);
 	const getIconForFile = (message: APIWhatsappChatDetailData) => {
 		if (message.MediaContentType?.includes('spreadsheetml.sheet')) {
 			return XLSX;
@@ -98,47 +91,19 @@ const ChatTemplate = ({
 		}
 	}
 
-	const renderGif = (src: string, caption?: string) => (
-		<div style={{ maxWidth: 280, position: 'relative', borderRadius: 8, overflow: 'hidden' }}>
-			<video
-				autoPlay
-				loop
-				muted
-				playsInline
-				style={{
-					width: '100%',
-					display: 'block',
-					borderRadius: 8,
-					background: '#000',
-				}}
-				src={src}
-			/>
-			{/* GIF badge — bottom-left, like WhatsApp */}
-			<span
-				style={{
-					position: 'absolute',
-					bottom: caption ? 28 : 6,
-					left: 8,
-					background: 'rgba(0,0,0,0.45)',
-					color: '#fff',
-					fontSize: 11,
-					fontWeight: 700,
-					padding: '1px 5px',
-					borderRadius: 4,
-					letterSpacing: 1,
-					pointerEvents: 'none',
-					userSelect: 'none',
-				}}
-			>
-				GIF
-			</span>
-			{caption && caption.length > 0 && (
-				<span style={{ display: 'block', marginTop: 4, fontSize: 13 }}>
-					{caption}
-				</span>
-			)}
-		</div>
-	);
+	const renderMessageText = (text: string) => {
+		const urlRegex = /(https?:\/\/[^\s]+)/g;
+		const parts = text.split(urlRegex);
+		return parts.map((part, i) =>
+			urlRegex.test(part) ? (
+				<a key={i} href={part} target="_blank" rel="noreferrer" className={classes.blueLink}>
+					{part}
+				</a>
+			) : (
+				<span key={i}>{part}</span>
+			)
+		);
+	};
 
 	const getInboundMessageContent = (message: APIWhatsappChatDetailData) => {
 		if (message?.Message?.length === 0 && message?.MediaUrl?.length === 0) {
@@ -149,42 +114,31 @@ const ChatTemplate = ({
 			);
 		}
 
-		// ── GIF ───────────────────────────────────────────────────────────────────
-		if (isGif(message)) {
-			return renderGif(message.MediaUrl, message.Message);
-		}
-
-		// ── AUDIO ──────────────────────────────────────────────────────────────────
+		// AUDIO
 		if (message.MediaContentType?.includes('audio')) {
 			return (
-				<audio
-					controls
-					style={{ maxWidth: '100%', outline: 'none' }}
-					src={message?.MediaUrl}
-				>
-					{translator('whatsappChat.messageErrorText')}
-				</audio>
+				<div className={classes.whatappVideoAudioCont}>
+					<audio
+						controls
+						src={message?.MediaUrl}
+					>
+						{translator('whatsappChat.messageErrorText')}
+					</audio>
+				</div>
 			);
 		}
 
-		// ── VIDEO ──────────────────────────────────────────────────────────────────
+		// VIDEO
 		if (message.MediaContentType?.includes('video')) {
 			return (
-				<div style={{ maxWidth: 280 }}>
+				<div className={classes.whatappVideoAudioCont}>
 					<video
+						playsInline
 						controls
-						style={{
-							width: '100%',
-							borderRadius: 8,
-							display: 'block',
-							background: '#000',
-						}}
-					>
-						<source src={message?.MediaUrl} type={message.MediaContentType} />
-						{translator('whatsappChat.messageErrorText')}
-					</video>
+						src={message.MediaUrl}
+					/>
 					{message?.Message?.length > 0 && (
-						<span style={{ display: 'block', marginTop: 4 }}>
+						<span style={{ display: 'block', marginTop: 4, fontSize: 13 }}>
 							{message.Message}
 						</span>
 					)}
@@ -192,7 +146,7 @@ const ChatTemplate = ({
 			);
 		}
 
-		// ── DOCUMENTS ──────────────────────────────────────────────────────────────
+		// DOCUMENTS
 		if (
 			message.MediaContentType?.includes('pdf') ||
 			message.MediaContentType?.includes('zip') ||
@@ -232,7 +186,7 @@ const ChatTemplate = ({
 		// ── IMAGE / PLAIN TEXT ─────────────────────────────────────────────────────
 		return (
 			<>
-				{message?.MediaUrl?.length === 0 && <span>{message?.Message}</span>}
+				{message?.MediaUrl?.length === 0 && (<span>{renderMessageText(message?.Message)}</span>)}
 				{message?.MediaUrl && message?.MediaUrl?.length > 0 && (
 					<>
 						<ImagePreview
@@ -242,7 +196,7 @@ const ChatTemplate = ({
 							errorImg={imagePlaceholderX}
 							src={message?.MediaUrl}
 						/>
-						{message?.Message}
+						{message?.Message && renderMessageText(message.Message)}
 					</>
 				)}
 			</>
@@ -504,9 +458,7 @@ const ChatTemplate = ({
 									<span>
 										{message?.MediaUrl && message?.MediaUrl?.length > 0 && (
 											<>
-												{isGif(message) ? (
-													renderGif(message.MediaUrl, message.Message)
-												) : message.MediaContentType?.includes('video') ? (
+												{message.MediaContentType?.includes('video') ? (
 													<div style={{ maxWidth: 280 }}>
 														<video
 															controls
@@ -528,11 +480,9 @@ const ChatTemplate = ({
 												)}
 											</>
 										)}
-										{/* Only show Message text separately when it's not a GIF (GIF renderer handles caption internally) */}
-										{!isGif(message) && (
-											message.Message ||
-											(!message?.MediaUrl?.length ? translator('whatsappChat.messageErrorText') : '')
-										)}
+										{message.Message
+											? renderMessageText(message.Message)
+											: (!message?.MediaUrl?.length ? translator('whatsappChat.messageErrorText') : '')}
 									</span>
 							<span className={`${classes.whatsappChat} chat__msg-filler`}>
 								{' '}
