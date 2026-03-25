@@ -2005,7 +2005,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		},
 		'&.chat__action': { cursor: 'pointer' },
 		'&.chat__action:not(.options-btn)': { display: 'inline-block' },
-		'&.chat__action-icon': { color: 'rgb(145, 145, 145)', paddingRight: 10 },
+		'&.chat__action-icon': { color: 'rgb(145, 145, 145)', paddingRight: 10, marginInlineStart: 5 },
 		'&.chat__action-icon--search': { width: '30px', height: '30px' },
 		'&.chat__content': {
 			flex: 1,
