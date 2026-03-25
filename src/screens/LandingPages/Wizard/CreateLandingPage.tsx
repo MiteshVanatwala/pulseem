@@ -171,6 +171,9 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 		IsNewEditor: null,
 		WebformsToReportLeadByApi: null,
 		CloseButtonHtml: CLOSE_BUTTON_HTML,
+		enableRecaptcha: false,
+		recaptchaVersion: 'v3',
+		recaptchaSiteKey: '',
 	});
 
 	const [tabValue, setTabValue] = useState<string>('1');
@@ -275,6 +278,9 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 				autofillEditable: response.Data?.WebForm?.AutofillSettings?.IsEditable,
 				SubscriptionOptin: response.Data?.WebForm?.AutofillSettings?.SubscriptionOptin,
 				CloseButtonHtml: response.Data?.WebForm?.CloseButtonHtml || CLOSE_BUTTON_HTML,
+				enableRecaptcha: response.Data?.WebForm?.EnableRecaptcha || false,
+				recaptchaVersion: response.Data?.WebForm?.EnableRecaptcha || 'v3',
+				recaptchaSiteKey: response.Data?.WebForm?.EnableRecaptcha ? reCAPTCHAKey : '',
 			});
 			if (response.Data?.WebForm?.LinkPreviewIconName !== '') {
 				handleSelectedImage(response.Data?.WebForm?.LinkPreviewIconName, true);
@@ -303,6 +309,9 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 				PageUrl: isPopup && !id ? generateGuid() : '',
 				PopupDomains: [],
 				CloseButtonHtml: CLOSE_BUTTON_HTML,
+				enableRecaptcha: false,
+				recaptchaVersion: 'v3',
+				recaptchaSiteKey: '',
 			});
 		}
 
@@ -720,10 +729,7 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 					SubscriptionOptin: landingPageModel.SubscriptionOptin,
 				},
 				PageType: isPopup ? 5 : landingPageModel.PageType,
-				PopupDomains: (isPopup || landingPageModel.PageType === 5) && landingPageModel.PopupDomains && Array.isArray(landingPageModel.PopupDomains) && landingPageModel.PopupDomains.length > 0 ? landingPageModel.PopupDomains : null,
-				enableRecaptcha: landingPageModel.enableRecaptcha || false,
-				recaptchaSiteKey: landingPageModel.enableRecaptcha ? reCAPTCHAKey : '',
-				recaptchaVersion: 'v3',
+				PopupDomains: (isPopup || landingPageModel.PageType === 5) && landingPageModel.PopupDomains && Array.isArray(landingPageModel.PopupDomains) && landingPageModel.PopupDomains.length > 0 ? landingPageModel.PopupDomains : null
 			};
 			//@ts-ignore
 			const response = await dispatch(saveLandingPage(req));
