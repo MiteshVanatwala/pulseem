@@ -486,6 +486,22 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			},
 		},
 	},
+	whatappVideoAudioCont: {
+		maxWidth: 280,
+		position: 'relative',
+		borderRadius: 8,
+		overflow: 'hidden',
+		'& audio': {
+			maxWidth: '100%',
+			outline: 'none'
+		},
+		'& video': {
+			width: '100%',
+			display: 'block',
+			borderRadius: 8,
+			background: '#000',
+		},
+	},
 	callToActionButtonsWrapper: {
 		borderTop: '1px solid #cbcbcb',
 		textAlign: 'center',
