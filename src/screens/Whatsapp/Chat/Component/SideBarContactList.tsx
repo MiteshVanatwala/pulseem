@@ -334,45 +334,46 @@ const SideBarContactList = ({
 														contact.Tags ||
 														[]
 													).length > 0 && (
-														<>
-															{(
-																updatedTags[contact.PhoneNumber] ||
-																contact.Tags ||
-																[]
-															).map((tag) => (
-																<Chip
-																	key={tag.id}
-																	label={tag.TagName}
-																	size="small"
-																	style={{
-																		backgroundColor: tag.TagColor || '#888',
-																		color: '#fff',
-																		fontWeight: 600,
-																		fontSize: '15px',
-																		height: '18px',
-																		padding: '13px 0px',
-																		margin: '0',
-																	}}
-																	className={classes.tagChipSmall}
-																	onClick={(e) => {
-																		e.preventDefault();
-																		e.stopPropagation();
-																		e.nativeEvent.stopImmediatePropagation();
-																	}}
-																	onDelete={(e) => {
-																		e.preventDefault();
-																		e.stopPropagation();
-																		e.nativeEvent.stopImmediatePropagation();
-																		handleTagChange(
-																			tag.id,
-																			true,
-																			contact.PhoneNumber,
-																		);
-																	}}
-																/>
-															))}
-														</>
-													)}
+															<Box className={classes.tagsScrollArea}>
+																{(
+																	updatedTags[contact.PhoneNumber] ||
+																	contact.Tags ||
+																	[]
+																).map((tag) => (
+																	<Chip
+																		key={tag.id}
+																		label={tag.TagName}
+																		size="small"
+																		style={{
+																			backgroundColor: tag.TagColor || '#888',
+																			color: '#fff',
+																			fontWeight: 600,
+																			fontSize: '15px',
+																			height: '18px',
+																			padding: '13px 0px',
+																			margin: '0',
+																			flexShrink: 0,
+																		}}
+																		className={classes.tagChipSmall}
+																		onClick={(e) => {
+																			e.preventDefault();
+																			e.stopPropagation();
+																			e.nativeEvent.stopImmediatePropagation();
+																		}}
+																		onDelete={(e) => {
+																			e.preventDefault();
+																			e.stopPropagation();
+																			e.nativeEvent.stopImmediatePropagation();
+																			handleTagChange(
+																				tag.id, 
+																				true, 
+																				contact.PhoneNumber,
+																			);
+																		}}
+																	/>
+																))}
+															</Box>
+														)}
 
 													{/* Plus Button - Small Size */}
 													<IconButton
