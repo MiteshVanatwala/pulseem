@@ -1,12 +1,15 @@
 import React, { useEffect } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
 import { actionURL } from '../../config';
+import DefaultScreen from '../DefaultScreen';
+import clsx from 'clsx';
 
 interface LegacyPageFrameProps {
     /** The .aspx page path relative to the /Pulseem/ base, e.g. "AutoSendPlans.aspx" */
     path: string;
     /** Any extra query params to append after fromreact=true, e.g. "Culture=he-IL" */
     extraQuery?: string;
+    classes?: any;
 }
 
 const isLocalHost = () => {
@@ -17,32 +20,40 @@ const isLocalHost = () => {
     return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 };
 
-const LegacyPageRenderer: React.FC<{ src: string; title?: string }> = ({ src, title }) => {
-    const shouldRedirect = isLocalHost();
-
-    useEffect(() => {
-        // In local dev, legacy servers commonly block framing from localhost.
-        // Redirecting avoids frame policy issues while preserving navigation.
-        if (shouldRedirect) {
-            window.location.href = src;
-        }
-    }, [shouldRedirect, src]);
-
-    if (shouldRedirect) {
-        return null;
-    }
-
+const LegacyPageRenderer: React.FC<{ src: string; title?: string; classes?: any }> = ({ src, title, classes }) => {
+    console.log("src", src)
     return (
-        <iframe
-            title={title}
-            src={src}
-            style={{
-                width: '100%',
-                height: 'calc(100vh - 64px)',
-                border: 'none',
-                display: 'block',
-            }}
-        />
+        <>
+            <DefaultScreen
+                subPage={''}
+                currentPage='reports'
+                classes={classes}
+                containerClass={clsx(classes.management, classes.mb50)}>
+                <div
+                    style={{
+                        padding: '8px 12px',
+                        fontSize: 13,
+                        background: '#fff8e1',
+                        borderBottom: '1px solid #ffe082',
+                        color: '#5d4037',
+                    }}
+                >
+                    Dev: legacy page is loaded in an iframe from another origin. If you see the
+                    login screen inside the frame, cookies are not shared from localhost — test on{' '}
+                    <code>https://clients.stage.pulseem.co.il/react/...</code>
+                </div>
+                <iframe
+                    title={title}
+                    src={src}
+                    style={{
+                        width: '100%',
+                        height: 'calc(100vh - 64px)',
+                        border: 'none',
+                        display: 'block',
+                    }}
+                />
+            </DefaultScreen>
+        </>
     );
 };
 
@@ -51,11 +62,12 @@ const LegacyPageRenderer: React.FC<{ src: string; title?: string }> = ({ src, ti
  * Uses `actionURL` from config so it correctly targets the .NET server
  * in both local development (REACT_APP_ACTION_URL) and production.
  */
-const LegacyPageFrame: React.FC<LegacyPageFrameProps> = ({ path, extraQuery }) => {
+const LegacyPageFrame: React.FC<LegacyPageFrameProps> = ({ path, extraQuery, classes }) => {
     const qs = extraQuery ? `&${extraQuery}` : '';
     const src = `${actionURL}${path}?fromreact=true${qs}`;
+    // const src = `https://www.clients.stage.pulseem.co.il/Pulseem/${path}?fromreact=true${qs}`;
 
-    return <LegacyPageRenderer title={path} src={src} />;
+    return <LegacyPageRenderer title={path} src={src} classes={classes} />;
 };
 
 /**
@@ -67,11 +79,11 @@ export const LegacyPageWild: React.FC = () => {
     const { aspxPage } = useParams<{ aspxPage: string }>();
     const { search } = useLocation();
 
-    // Strip any existing fromreact param then rebuild cleanly
     const params = new URLSearchParams(search);
     params.delete('fromreact');
     const extra = params.toString();
     const src = `${actionURL}${aspxPage}?fromreact=true${extra ? `&${extra}` : ''}`;
+    // const src = `https://www.clients.stage.pulseem.co.il/Pulseem/${aspxPage}?fromreact=true${extra ? `&${extra}` : ''}`;
 
     return <LegacyPageRenderer title={aspxPage} src={src} />;
 };

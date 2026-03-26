@@ -68,7 +68,6 @@ const NotificationBell = ({ classes }: any) => {
           return (
             <Box className={clsx(classes.justifyCenterOfCenter, classes.spaceBetween)}>
               <Box className={classes.dFlex} style={{ alignItems: 'center' }}>
-                {/* @ts-expect-error */}
                 <AiOutlineCloudDownload className={classes.notifyIcon} />
                 <Typography className={classes.font14}>
                   {RenderHtml(t('notifications.fileReadyForDownload').replace('##FileName##', `${option.TargetName}`))}
@@ -97,7 +96,6 @@ const NotificationBell = ({ classes }: any) => {
         }
         case NotifyCenterType.Unsubscribe: {
           return <Box className={classes.dFlex} style={{ alignItems: 'center' }}>
-            {/* @ts-expect-error */}
             <IoMdRemoveCircleOutline className={classes.notifyIcon} />
             <Typography className={classes.font14}>
               {RenderHtml(t('notifications.recipientsRemoved').replace('##Name##', `${option.TargetName}`))}
@@ -106,7 +104,6 @@ const NotificationBell = ({ classes }: any) => {
         }
         case NotifyCenterType.UploadRecipient: {
           return <Box className={classes.dFlex} style={{ alignItems: 'center' }}>
-            {/* @ts-expect-error */}
             <AiOutlineCloudUpload className={classes.notifyIcon} />
             <Typography className={classes.font14}>{RenderHtml(t('notifications.recipientsUploaded').replace('##Name##', `${option.TargetName}`))}</Typography>
           </Box>
@@ -223,7 +220,6 @@ const NotificationBell = ({ classes }: any) => {
             }}
             style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', fontSize: 23, color: '#000000' }}
           >
-            {/* @ts-expect-error */}
             <FaBell />
           </div>
         </Badge>

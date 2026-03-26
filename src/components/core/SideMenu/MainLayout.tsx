@@ -3,7 +3,8 @@ import { Box, useTheme, useMediaQuery } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector } from 'react-redux';
 import { Sidebar } from './SideBar';
-import { TopAppBar } from './TopAppBar';
+import TopMenu from '../TopMenu/TopMenu';
+import type { TopMenuProps } from '../TopMenu/TopMenu';
 
 const SIDEBAR_WIDTH = 280;
 const SIDEBAR_COLLAPSED_WIDTH = 70;
@@ -142,8 +143,11 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
         }}>
           {/* Pass the toggle function to children via React.cloneElement */}
           {React.Children.map(children, child => {
-            if (React.isValidElement(child) && typeof child.type === 'function' && child.type.name === 'TopMenu') {
-              return React.cloneElement(child, { onMenuToggle: handleSidebarToggle });
+            if (React.isValidElement(child) && child.type === TopMenu) {
+              return React.cloneElement(
+                child as React.ReactElement<TopMenuProps>,
+                { onMenuToggle: handleSidebarToggle }
+              );
             }
             return child;
           })}

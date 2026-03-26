@@ -255,7 +255,7 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
       />
       <Route
         path={`${sitePrefix}AutoSendPlans`}
-        element={<LegacyPageFrame path="AutoSendPlans.aspx" />}
+        element={<LegacyPageFrame path="AutoSendPlans.aspx" classes={classes} />}
       />
       {/* <Route
         path={`/CampaignTemplates`}
@@ -267,7 +267,7 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
       />
       <Route
         path={`/SMSSmartResponses`}
-        component={transferUrl('/Pulseem/SMSSmartResponses.aspx')}
+        element={<LegacyPageFrame path="SMSSmartResponses.aspx" classes={classes} />}
       />
       <Route
         path={`/SMSPreviewCampaign/:id`}
@@ -285,7 +285,7 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
       />}
       <Route
         path="/CreateMmsCampaign"
-        component={transferUrl('/Pulseem/MmsCampaignEdit.aspx')}
+        element={<LegacyPageFrame path="MmsCampaignEdit.aspx" classes={classes} />}
       />
       <Route
         path='/MmsCampaignEdit/:id'
@@ -404,11 +404,11 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
       />
       <Route
         path={`/Survey`}
-        component={transferUrl('/Pulseem/LandingPageWizard.aspx')}
+        element={<LegacyPageFrame path="LandingPageWizard.aspx" classes={classes} />}
       />
       <Route
         path={`/FormTemplates`}
-        component={transferUrl('/Pulseem/FormTemplates.aspx')}
+        element={<LegacyPageFrame path="FormTemplates.aspx" classes={classes} />}
       />
       {/* Reports */}
       <Route
@@ -417,7 +417,7 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
       />
       <Route
         path={`/ClalReport`}
-        component={transferUrl('/Pulseem/ClalReport.aspx')}
+        element={<LegacyPageFrame path="ClalReport.aspx" classes={classes} />}
       />
       <Route
         path={`${sitePrefix}Reports/SMSMainReport`}
@@ -438,19 +438,19 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
       /> */}
       <Route
         path={`/AccountReport`}
-        component={transferUrl('/Pulseem/AccountReport.aspx')}
+        element={<LegacyPageFrame path="AccountReport.aspx" classes={classes} />}
       />
       <Route
         path={`/EmailAutoReports`}
-        component={transferUrl('/Pulseem/EmailAutoReports.aspx')}
+        element={<LegacyPageFrame path="EmailAutoReports.aspx" classes={classes} />}
       />
       <Route
         path={`/RemovedStats`}
-        component={transferUrl('/Pulseem/RemovedStats.aspx')}
+        element={<LegacyPageFrame path="RemovedStats.aspx" classes={classes} />}
       />
       <Route
         path={`/DirectEmailReport`}
-        component={transferUrl('/Pulseem/DirectEmailReport.aspx')}
+        element={<LegacyPageFrame path="DirectEmailReport.aspx" classes={classes} />}
       />
       {!userRoles?.HideRecipients && <Route
         exact
@@ -463,8 +463,8 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
         element={<DirectSendReport classes={classes} isArchive={true} />}
       />}
       <Route
-        path={`/EmailCampaignStatistics`}
-        component={transferUrl('/Pulseem/EmailCampaignStatistics.aspx')}
+        path={`${sitePrefix}EmailCampaignStatistics`}
+        element={<LegacyPageFrame path="EmailCampaignStatistics.aspx" classes={classes} />}
       />
       <Route
         path={`${sitePrefix}reports/LinksClicksReport`}
@@ -478,7 +478,7 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
       />
       <Route
         path={`/CreateAutomations`}
-        component={transferUrl('/Pulseem/CreateAutomations.aspx')}
+        element={<LegacyPageFrame path="CreateAutomations.aspx" classes={classes} />}
       />
       <Route
         path={`${sitePrefix}Automations/Create`}
@@ -531,7 +531,7 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
       />}
       <Route
         path={`/AccountBilling`}
-        component={transferUrl('/Pulseem/AccountBilling.aspx')}
+        element={<LegacyPageFrame path="AccountBilling.aspx" classes={classes} />}
       />
       {userRoles === UserRoles.Admin && <Route
         exact
@@ -540,11 +540,11 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
       />}
       {userRoles === UserRoles.Admin && <Route
         path={`/AccountUsersReport`}
-        component={transferUrl('/Pulseem/AccountUsersReport.aspx')}
+        element={<LegacyPageFrame path="AccountUsersReport.aspx" classes={classes} />}
       />}
       <Route
         path={`/ExtraFieldsDefinition`}
-        component={transferUrl('/Pulseem/ExtraFieldsDefinition.aspx')}
+        element={<LegacyPageFrame path="ExtraFieldsDefinition.aspx" classes={classes} />}
       />
       {userRoles?.AllowSend && <Route
         path={`${sitePrefix}ApiSettings`}
@@ -607,7 +607,7 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
       />
       <Route
         path="/Pulseem/:aspxPage"
-        element={<LegacyPageWild />}
+        element={<LegacyPageWild classes={classes} />}
       />
       <Route
         path="*" element={<PageNotFound classes={classes} />}
