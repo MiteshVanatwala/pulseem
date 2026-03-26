@@ -970,6 +970,26 @@ export const getManagmentStyle = (windowSize, isRTL, theme, IsPoland = false) =>
   lineTopMarging: {
     marginTop: "2rem",
   },
+  newsletterActionsContainer: {
+    flexWrap: 'wrap',
+    rowGap: 8,
+    columnGap: 4,
+    ["@media screen and (max-width: 1700px)"]: {
+      justifyContent: 'flex-start',
+    },
+  },
+  newsletterActionItem: {
+    alignItems: 'center',
+    position: 'relative',
+    ["@media screen and (max-width: 1700px)"]: {
+      flex: '0 0 96px',
+      maxWidth: 96,
+    },
+    ["@media screen and (max-width: 1366px)"]: {
+      flex: '0 0 88px',
+      maxWidth: 88,
+    },
+  },
 
   customDialog: {
     "& .MuiDialog-paperScrollPaper": {

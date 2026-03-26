@@ -87,6 +87,8 @@ const DashboardScreen = ({ classes }) => {
   }
 
   const isWhiteLabel = accountSettings.Account?.ReferrerID > 0 && WhiteLabelObject[accountSettings.Account?.ReferrerID] !== undefined;
+  const isCompactDashboard = window.innerWidth <= 1700;
+  const shouldStackDashboardCards = isCompactDashboard || (isDrawerOpen && IS_MAX_WINDOW_WIDTH_WHEN_DRAWER_OPEN);
 
   const onIgnoreTerms = async () => {
     setShowTermsOfUse(false);
@@ -111,25 +113,25 @@ const DashboardScreen = ({ classes }) => {
       classes={classes}
       customStyle={clsx(classes.dashboard)}>
       <Grid container>
-        <Grid item xs={12} sm={8} md={9} lg={9} xl={10} className={clsx(classes.dashboardTop)}>
+        <Grid item xs={12} sm={12} md={12} lg={isCompactDashboard ? 12 : 9} xl={isCompactDashboard ? 12 : 10} className={clsx(classes.dashboardTop)}>
           <Grid container direction='row'>
-            <Grid item xs={12} sm={12} md={12} lg={ isDrawerOpen && IS_MAX_WINDOW_WIDTH_WHEN_DRAWER_OPEN ? 12 : 4 } style={{ marginInlineEnd: isDrawerOpen && IS_MAX_WINDOW_WIDTH_WHEN_DRAWER_OPEN ? '30px' : '' }}>
+            <Grid item xs={12} sm={12} md={12} lg={shouldStackDashboardCards ? 12 : 4} style={{ marginInlineEnd: shouldStackDashboardCards ? '30px' : '' }}>
               {<BulkStatus classes={classes} />}
               {<GlobalBalance classes={classes} />}
             </Grid>
-            <Grid item xs={12} sm={12} md={12} lg={ isDrawerOpen && IS_MAX_WINDOW_WIDTH_WHEN_DRAWER_OPEN ? 12 : 8 } className={windowSize === "xs" ? classes.pt20 : null}>
+            <Grid item xs={12} sm={12} md={12} lg={shouldStackDashboardCards ? 12 : 8} className={windowSize === "xs" ? classes.pt20 : null}>
               <RecipientChart classes={classes} />
             </Grid>
           </Grid>
           <Grid container direction='row' className={classes.pt20}>
-            {!isWhiteLabel && <Grid item xs={12} sm={12} md={12} lg={ isDrawerOpen && IS_MAX_WINDOW_WIDTH_WHEN_DRAWER_OPEN ? 12 : 4 } style={{ marginInlineEnd: isDrawerOpen && IS_MAX_WINDOW_WIDTH_WHEN_DRAWER_OPEN ? '30px' : '' }}>
+            {!isWhiteLabel && <Grid item xs={12} sm={12} md={12} lg={shouldStackDashboardCards ? 12 : 4} style={{ marginInlineEnd: shouldStackDashboardCards ? '30px' : '' }}>
               <PulseemTips
                 classes={classes}
                 t={t}
                 isRTL={isRTL}
               />
             </Grid>}
-            <Grid item xs={12} sm={12} md={12} lg={!isWhiteLabel ? (isDrawerOpen && IS_MAX_WINDOW_WIDTH_WHEN_DRAWER_OPEN ? 12 : 8) : 12}>
+            <Grid item xs={12} sm={12} md={12} lg={!isWhiteLabel ? (shouldStackDashboardCards ? 12 : 8) : 12}>
               <LatestReports
                 classes={classes}
                 windowSize={windowSize}
@@ -140,7 +142,7 @@ const DashboardScreen = ({ classes }) => {
             </Grid>
           </Grid>
         </Grid>
-        <Grid item xs={12} sm={4} md={3} lg={3} xl={2} className={classes.dashboardSide}>
+        <Grid item xs={12} sm={12} md={12} lg={isCompactDashboard ? 12 : 3} xl={isCompactDashboard ? 12 : 2} className={classes.dashboardSide}>
           <Shortcut
             windowSize={windowSize}
             classes={classes}
