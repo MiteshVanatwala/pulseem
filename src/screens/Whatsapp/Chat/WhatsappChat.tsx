@@ -114,6 +114,15 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	// Ref to store PhoneNumber → ClientId mapping
 	const phoneToClientIdMap = useRef<{ [phone: string]: number }>({});
 
+	// Tracks the last RecentMsgDate we processed so we only act on genuinely new inbound messages
+	const lastSeenRecentMsgDateRef = useRef<string>('');
+
+	// Debounce timer ref for the full contacts-list API refresh (5-second debounce)
+	const contactsRefreshDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+	// Always holds the latest fetchMoreContacts callback — avoids a forward-reference TS error
+	const fetchMoreContactsRef = useRef<((searchText: string, ChatStatus: number, isPaginationReset: boolean) => void) | null>(null);
+
 	// Helper to build the mapping from all clients (Cellphone → ClientId)
 	const buildPhoneToClientIdMap = useCallback(async () => {
 		// Fetch all clients (up to 10,000 for mapping)
@@ -482,7 +491,43 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 					}),
 				);
 			if (whatsAppChatSessionStatus?.Status === apiStatus.SUCCESS) {
-				setWhatsappChatSession(whatsAppChatSessionStatus?.Data);
+				const data = whatsAppChatSessionStatus?.Data;
+				if (data) {
+					setWhatsappChatSession(data);
+
+					const isNewInbound =
+						data.RecentFromNumber &&
+						data.RecentMsgDate &&
+						data.RecentMsgDate !== lastSeenRecentMsgDateRef.current;
+
+					if (isNewInbound) {
+						lastSeenRecentMsgDateRef.current = data.RecentMsgDate!;
+
+						// Immediately reorder the sidebar list without waiting for a full API refresh
+						setSideChatContacts((prev) => {
+							const idx = prev.findIndex((c) =>
+								compareLastNineDigits(c.PhoneNumber, data.RecentFromNumber!),
+							);
+							if (idx === -1) return prev; // contact not in list yet — full refresh will add it
+							const updated = [...prev];
+							updated[idx] = {
+								...updated[idx],
+								LastMessage: data.RecentMsg ?? updated[idx].LastMessage,
+								LastMessageDate: data.RecentMsgDate ?? updated[idx].LastMessageDate,
+							};
+							const [promoted] = updated.splice(idx, 1);
+							return [promoted, ...updated];
+						});
+
+						// Debounced full contacts-list refresh (5 seconds)
+						if (contactsRefreshDebounceRef.current) {
+							clearTimeout(contactsRefreshDebounceRef.current);
+						}
+						contactsRefreshDebounceRef.current = setTimeout(() => {
+							fetchMoreContactsRef.current?.('', filterBySelected, true);
+						}, 5000);
+					}
+				}
 			} else {
 				setWhatsappChatSession({
 					IsIn24Window: false,
@@ -500,7 +545,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 					: setToastMessage(ToastMessages.ERROR);
 			}
 		}
-	}, [activeChatContacts, activePhoneNumber, dispatch, ToastMessages]);
+	}, [activeChatContacts, activePhoneNumber, dispatch, ToastMessages, filterBySelected]);
 
 	const setAPIWhatsAppChatContacts = useCallback(
 		async (activeUser: string, isInitial: boolean = false) => {
@@ -785,7 +830,12 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			async () => await setAPIInboundChatStatus(),
 			3000,
 		);
-		return () => clearInterval(ChatStatusTimer);
+		return () => {
+			clearInterval(ChatStatusTimer);
+			if (contactsRefreshDebounceRef.current) {
+				clearTimeout(contactsRefreshDebounceRef.current);
+			}
+		};
 	}, [setAPIInboundChatStatus]);
 
 	useEffect(() => {
@@ -1293,6 +1343,12 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			contactsPaginationSetting,
 		],
 	);
+
+	// Keep the ref pointing at the latest fetchMoreContacts so setAPIInboundChatStatus
+	// can call it without being listed as a dependency (avoids forward-reference TS2448).
+	useEffect(() => {
+		fetchMoreContactsRef.current = fetchMoreContacts;
+	}, [fetchMoreContacts]);
 
 	const updateFreeFormMessage = useCallback(
 		(message: string) => {
