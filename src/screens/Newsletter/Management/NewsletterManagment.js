@@ -582,7 +582,8 @@ const NewsletterManagnentScreen = ({ classes }) => {
     return (
       <Grid
         container
-        direction={windowSize === 'sm' ? 'column' : 'row'}
+        direction='row'
+        className={classes.newsletterActionsContainer}
         justifyContent={windowSize === 'xs' ? 'flex-start' : 'flex-end'}>
         {iconsMap.map((map, index) => (
           <Grid
@@ -594,8 +595,13 @@ const NewsletterManagnentScreen = ({ classes }) => {
             >
               {map.map(icon => (
                 <Grid
-                  style={{ flex: 1, alignItems: 'center', position: 'relative' }}
-                  className={clsx(icon.disable && classes.disabledCursor, 'rowIconContainer', classes.justifyCenter, classes.alignSelfCenter)}
+                  className={clsx(
+                    icon.disable && classes.disabledCursor,
+                    'rowIconContainer',
+                    classes.justifyCenter,
+                    classes.alignSelfCenter,
+                    classes.newsletterActionItem
+                  )}
                   key={icon.key}
                   item>
                   {icon?.errorElement}
