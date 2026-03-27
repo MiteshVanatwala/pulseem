@@ -116,7 +116,7 @@ const LanguageSelector: React.FC<{ classes: any }> = ({ classes }) => {
     );
 };
 
-interface TopMenuProps {
+export interface TopMenuProps {
   classes: any;
   onMenuToggle?: () => void;
 }
