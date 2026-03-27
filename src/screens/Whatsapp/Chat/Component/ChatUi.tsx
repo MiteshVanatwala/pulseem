@@ -276,7 +276,7 @@ const ChatUi = ({
 					<p className={`${classes.whatsappChat} chat__contact-desc`}></p>
 				</div>
 
-				<Box className={clsx(classes.spaceBetween, 'mobileColumn')}>
+				<Box className={clsx(classes.spaceBetween, classes.mobileColumn)}>
 					<Box className={classes.whatsappChatUiStatusPadding}>
 						<Select
 							className={clsx(
@@ -403,6 +403,7 @@ const ChatUi = ({
 											fontSize: '15px',
 											height: '18px',
 											padding: '13px 0px',
+											flexShrink: 0,
 										}}
 										className={classes.tagChipStyle}
 										onDelete={() => onChatTagRemove(tag.id)}
