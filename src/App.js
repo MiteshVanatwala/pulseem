@@ -805,7 +805,7 @@ const App = ({ screenSize }) => {
       whatsapp:         whatsappRoutes.CAMPAIGN_MANAGEMENT,
     };
     const handleIframeMessage = (e) => {
-      if (e.data?.type === 'navigate' && e.data?.page) {
+      if (e.data?.type === 'react-navigate' && e.data?.page) {
         const page = e.data.page.toLowerCase();
         if (page === 'back') return redirect(-1);
         const route = pageRoutes[page] ?? pageRoutes['dashboard'];
