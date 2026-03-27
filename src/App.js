@@ -784,6 +784,37 @@ const App = ({ screenSize }) => {
 
   const theme = getTheme(language)
   const redirect = useNavigate()
+
+  useEffect(() => {
+    const pageRoutes = {
+      dashboard:        `${sitePrefix}`,
+      campaigns:        `${sitePrefix}Campaigns`,
+      sms:              `${sitePrefix}SMSCampaigns`,
+      mms:              `${sitePrefix}MmsCampaigns`,
+      automations:      `${sitePrefix}Automations`,
+      notifications:    `${sitePrefix}Notifications`,
+      groups:           `${sitePrefix}Groups`,
+      landingpages:     `${sitePrefix}EditRegistrationPage`,
+      newsletters:      `${sitePrefix}Reports/NewsletterReports`,
+      smsreport:        `${sitePrefix}Reports/SMSMainReport`,
+      mmsreport:        `${sitePrefix}Reports/MmsMainReport`,
+      billing:          `${sitePrefix}BillingSettings`,
+      accountsettings:  `${sitePrefix}AccountSettings`,
+      integrations:     `${sitePrefix}Integrations`,
+      subusers:         `${sitePrefix}SubUsers`,
+      whatsapp:         whatsappRoutes.CAMPAIGN_MANAGEMENT,
+    };
+    const handleIframeMessage = (e) => {
+      if (e.data?.type === 'react-navigate' && e.data?.page) {
+        const page = e.data.page.toLowerCase();
+        if (page === 'back') return redirect(-1);
+        const route = pageRoutes[page] ?? pageRoutes['dashboard'];
+        redirect(route);
+      }
+    };
+    window.addEventListener('message', handleIframeMessage);
+    return () => window.removeEventListener('message', handleIframeMessage);
+  }, [redirect]);
   document.body.classList.add(classes.sidebar);
 
   if (isRTL) document.body.classList.add('rtl');
