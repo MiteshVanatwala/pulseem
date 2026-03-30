@@ -15,6 +15,8 @@ import {
   Checkbox,
   useTheme,
 } from '@material-ui/core';
+import { KeyboardDatePicker } from '@material-ui/pickers';
+import moment from 'moment';
 import clsx from 'clsx';
 import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
 import { getAccountExtraData } from '../../../../redux/reducers/smsSlice';
@@ -96,18 +98,29 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
   const parseRulesFromSyntax = (syntaxBefore) => {
     if (!syntaxBefore) return [];
     const rules = [];
-    const regex = /recipient\.(\w+)\s*(==|!=|contains)\s*'([^']*)'/g;
+    const regex = /(?:recipient\.)?(\w+)\s*(>=|<=|>|<|==|!=|contains)\s*'([^']*)'/g;
     let match;
     let index = 0;
     while ((match = regex.exec(syntaxBefore)) !== null) {
       const field = match[1];
-      const operator = match[2] === '==' ? 'eq' : match[2] === '!=' ? 'neq' : 'contains';
+      const rawOp = match[2];
       const value = match[3];
+      let operator;
+      if (rawOp === 'contains') operator = 'contains';
+      else if (rawOp === '==' && value === '') operator = 'empty';
+      else if (rawOp === '!=' && value === '') operator = 'not_empty';
+      else if (rawOp === '==') operator = 'eq';
+      else if (rawOp === '!=') operator = 'neq';
+      else if (rawOp === '>') operator = 'gt';
+      else if (rawOp === '<') operator = 'lt';
+      else if (rawOp === '>=') operator = 'gte';
+      else if (rawOp === '<=') operator = 'lte';
+      else operator = 'eq';
       rules.push({
         id: `rule-${index}`,
         field,
         operator,
-        value
+        value: operator === 'empty' || operator === 'not_empty' ? '' : value
       });
       index++;
     }
@@ -123,7 +136,7 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
       }
 
       if (isEditing && conditionToUse) {
-        setName(conditionToUse.label || conditionToUse.name || '');
+        setName((conditionToUse.label || conditionToUse.name || '').split('\n')[0]);
         setDescription(conditionToUse.description || '');
         const parsedRules = parseRulesFromSyntax(conditionToUse.before);
         setRules(parsedRules.length > 0 ? parsedRules : [
@@ -159,6 +172,20 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
     [t]
   );
 
+  const dateOperatorOptions = useMemo(
+    () => [
+      { value: 'eq', label: t('campaigns.displayConditions.operator.equals') },
+      { value: 'neq', label: t('campaigns.displayConditions.operator.notEquals') },
+      { value: 'gt', label: t('campaigns.displayConditions.operator.greaterThan') },
+      { value: 'lt', label: t('campaigns.displayConditions.operator.lessThan') },
+      { value: 'gte', label: t('campaigns.displayConditions.operator.greaterThanOrEqual') },
+      { value: 'lte', label: t('campaigns.displayConditions.operator.lessThanOrEqual') },
+    ],
+    [t]
+  );
+
+  const getOperatorOptions = (field) => isDateField(field) ? dateOperatorOptions : operatorOptions;
+
   const getFieldLabel = useCallback(
     (key) => {
       const found = allFields.find((f) => f.key === key);
@@ -166,6 +193,9 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
     },
     [allFields]
   );
+
+  const DATE_FIELDS = ['ExtraDate1', 'ExtraDate2', 'ExtraDate3', 'ExtraDate4'];
+  const isDateField = (field) => DATE_FIELDS.includes(field);
 
   const escapeValue = (val) => (val || '').replace(/'/g, "\\'");
 
@@ -184,6 +214,18 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
       case 'contains':
         if (!safeValue) return '';
         return `${fieldExpr} contains '${safeValue}'`;
+      case 'gt':
+        if (!safeValue) return '';
+        return `${fieldExpr} > '${safeValue}'`;
+      case 'lt':
+        if (!safeValue) return '';
+        return `${fieldExpr} < '${safeValue}'`;
+      case 'gte':
+        if (!safeValue) return '';
+        return `${fieldExpr} >= '${safeValue}'`;
+      case 'lte':
+        if (!safeValue) return '';
+        return `${fieldExpr} <= '${safeValue}'`;
       case 'empty':
         return `${fieldExpr} == ''`;
       case 'not_empty':
@@ -260,7 +302,7 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
     rules.forEach((rule, index) => {
       if (rule.operator !== 'empty' && rule.operator !== 'not_empty') {
         if (!rule.value || rule.value.trim() === '') {
-          newErrors[`rule-${index}-value`] = 'Value is required'}
+          newErrors[`rule-${index}-value`] = t('campaigns.displayConditions.valueRequired')}
       }
     });
 
@@ -291,18 +333,29 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
     } else {
       defaultLabelParts.push(
         matchType === 'all'
-          ? 'All selected conditions'
-          : 'Any of the selected conditions'
+          ? t('campaigns.displayConditions.allSelectedConditions')
+          : t('campaigns.displayConditions.anySelectedConditions')
       );
     }
 
     const conditionLabel = name && name.trim() !== '' ? name.trim() : defaultLabelParts.filter(Boolean).join(' ');
+
+    const readableSummary = rules.map((rule) => {
+      const fieldLabel = getFieldLabel(rule.field);
+      const opLabel = operatorOptions.find((o) => o.value === rule.operator)?.label || rule.operator;
+      if (rule.operator === 'empty' || rule.operator === 'not_empty') {
+        return `${fieldLabel} ${opLabel}`;
+      }
+      return `${fieldLabel} ${opLabel} "${rule.value}"`;
+    }).join(matchType === 'all' ? ' AND ' : ' OR ');
+
+    const displayLabel = `${conditionLabel}\n${readableSummary}`;
     const beforeSyntax = `{% if ${previewExpression} %}`;
     const afterSyntax = '{% endif %}';
 
     const condition = {
       type: 'Recipient fields',
-      label: conditionLabel,
+      label: displayLabel,
       description,
       before: beforeSyntax,
       after: afterSyntax,
@@ -348,7 +401,7 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
       onClose={onClose}
       onCancel={onClose}
       onConfirm={handleSave}
-      title={isEditing ? 'Edit Display Condition' : (t('campaigns.displayConditions.title') || 'Display Condition')}
+      title={isEditing ? t('campaigns.displayConditions.editDisplayCondition') : t('campaigns.displayConditions.title')}
       fullWidth={false}
       showDefaultButtons={!isEditing}
       renderButtons={isEditing ? () => (
@@ -377,7 +430,7 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
     >
       <Box style={{ ...styles.displayConditionMainContainer, ...styles.displayConditionMainBox }}>
         <Grid container spacing={0} style={styles.displayConditionGridContainer}>
-          <Grid item xs={8} style={styles.displayConditionLeftGrid}>
+          <Grid item xs={12} style={styles.displayConditionLeftGrid}>
             <Box style={{ ...styles.displayConditionConditionNameBox, padding: '10px', overflow: 'hidden' }}>
               <Box>
                 <Typography variant="body2" style={{ ...styles.displayConditionLabelTypography, ...fontSize15Style }}>
@@ -448,7 +501,7 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
 
                     <FormControl variant="outlined" size="small">
                       <Select value={rule.operator} onChange={(e) => handleRuleChange(rule.id, 'operator', e.target.value)}>
-                        {operatorOptions.map((op) => (
+                        {getOperatorOptions(rule.field).map((op) => (
                           <MenuItem key={op.value} value={op.value} style={fontSize15Style}>
                             {op.label}
                           </MenuItem>
@@ -458,15 +511,32 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
 
                     {rule.operator !== 'empty' && rule.operator !== 'not_empty' && (
                       <Box style={styles.displayConditionTextFieldBox}>
-                        <TextField
-                          variant="outlined"
-                          size="small"
-                          value={rule.value}
-                          onChange={(e) => handleRuleChange(rule.id, 'value', e.target.value)}
-                          error={!!errors[`rule-${rules.findIndex(r => r.id === rule.id)}-value`]}
-                          style={styles.displayConditionTextFieldStyle}
-                          inputProps={{ style: { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 15 } }}
-                        />
+                        {isDateField(rule.field) ? (
+                          <KeyboardDatePicker
+                            variant="inline"
+                            inputVariant="outlined"
+                            size="small"
+                            format="DD/MM/YYYY"
+                            value={rule.value ? moment(rule.value, 'DD/MM/YYYY') : null}
+                            onChange={(date) => handleRuleChange(rule.id, 'value', date ? moment(date).format('DD/MM/YYYY') : '')}
+                            error={!!errors[`rule-${rules.findIndex(r => r.id === rule.id)}-value`]}
+                            style={styles.displayConditionTextFieldStyle}
+                            inputProps={{ style: { fontSize: 15 } }}
+                            autoOk
+                            disableToolbar
+                            invalidDateMessage=''
+                          />
+                        ) : (
+                          <TextField
+                            variant="outlined"
+                            size="small"
+                            value={rule.value}
+                            onChange={(e) => handleRuleChange(rule.id, 'value', e.target.value)}
+                            error={!!errors[`rule-${rules.findIndex(r => r.id === rule.id)}-value`]}
+                            style={styles.displayConditionTextFieldStyle}
+                            inputProps={{ style: { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 15 } }}
+                          />
+                        )}
                         {errors[`rule-${rules.findIndex(r => r.id === rule.id)}-value`] && (
                           <Typography variant="caption" style={{ color: 'red', fontSize: 15, marginTop: 4 }}>
                             {errors[`rule-${rules.findIndex(r => r.id === rule.id)}-value`]}
@@ -493,16 +563,16 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
             </Box>
           </Grid>
 
-          <Grid item xs={4} style={styles.displayConditionRightGrid}>
+          <Grid item xs={false} style={{ display: 'none' }}>
             <Box style={{ ...styles.displayConditionPreviewBox, padding: '10px', ...styles.displayConditionPreviewBoxStyle }}>
               <Typography variant="body2" style={{ ...styles.displayConditionPreviewTitle, ...fontSize15Style }}>
-                PREVIEW
+                {t('campaigns.displayConditions.previewTitle')}
               </Typography>
 
               <Box style={styles.displayConditionPreviewContent}>
                 <Box style={styles.displayConditionPreviewItemBox}>
                   <Typography variant="caption" style={{ ...styles.displayConditionPreviewCaption, ...fontSize15Style }}>
-                    Name:
+                    {t('campaigns.displayConditions.previewName')}
                   </Typography>
                   <Typography variant="body2" style={{ ...styles.displayConditionPreviewBody, ...fontSize15Style }}>
                     {name || 'People'}
@@ -511,7 +581,7 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
 
                 <Box style={styles.displayConditionPreviewItemBox}>
                   <Typography variant="caption" style={{ ...styles.displayConditionPreviewCaption, ...fontSize15Style }}>
-                    Description:
+                    {t('campaigns.displayConditions.previewDescription')}
                   </Typography>
                   <Typography variant="body2" style={{ ...styles.displayConditionPreviewBody, ...fontSize15Style }}>
                     {description || 'People in Boston, US'}

@@ -708,9 +708,14 @@
       "notEquals": "שונה מ",
       "contains": "מכיל",
       "empty": "ריק",
-      "notEmpty": "אינו ריק"
+      "notEmpty": "אינו ריק",
+      "greaterThan": "גדול מ",
+      "lessThan": "קטן מ",
+      "greaterThanOrEqual": "גדול מאו שווה ל",
+      "lessThanOrEqual": "קטן מאו שווה ל"
     },
     "value": "ערך",
+    "valueRequired": "שדה חובה",
     "preview": "תצוגה מקדימה",
     "previewEmpty": "הגדר לפחות כלל אחד כדי לראות את התצוגה המקדימה.",
     "openBuilder": "עורך תנאים",
@@ -722,10 +727,16 @@
     "edit": "עריכה",
     "before": "לפני",
     "after": "אחרי",
+    "previewName": "שם:",
+    "previewDescription": "תיאור:",
+    "previewTitle": "תצוגה מקדימה",
     "editDisplayCondition": "עריכת תנאי תצוגה",
+    "matchType": "התאם",
     "matchAllConditions": "הכל",
     "matchAnyConditions": "כל אחד",
-    "ofTheFollowingConditions": "מהתנאים הבאים:"
+    "ofTheFollowingConditions": "מהתנאים הבאים:",
+    "allSelectedConditions": "כל התנאים שנבחרו",
+    "anySelectedConditions": "אחד מהתנאים שנבחרו"
   },
   "sendToContact": "שלח לאיש קשר אחד",
   "successSent": "נשלח בהצלחה",
