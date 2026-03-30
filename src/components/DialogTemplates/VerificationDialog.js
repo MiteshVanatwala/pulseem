@@ -191,11 +191,11 @@ const VerificationDialog = ({
         setShowLoader(true);
         const res = await dispatch(sendVerificationCode({ number: selectedVerificationContact }));
         setShowLoader(false);
-
+  
         if (res?.payload) {
             setVerificationStep(4);
         } else {
-            setVerificationError({ Number: t('common.ErrorOccured') });
+            setVerificationError({ Number: t('common.errorContactSupport') });
         }
     };
 
@@ -349,6 +349,7 @@ const VerificationDialog = ({
                 if (res?.payload?.StatusCode === 404) {
                     dispatch(sendVerificationCode({ number: val })).then((result) => {
                         setCodeResend(isResend);
+                        if (!isResend) NextSlide();
                         return result?.payload;
                     });
                 }
@@ -736,9 +737,10 @@ const VerificationDialog = ({
                                         setVerificationError({ Number: t('sms.newSenderRequired') });
                                         return;
                                     }
-                                    if (isIsraeliPhoneNumber(selectedVerificationContact)) {
-                                        handleSendCode(selectedVerificationContact);
-                                        NextSlide();
+                                    const normalized = selectedVerificationContact.replace(/-/g, '');
+                                    if (isIsraeliPhoneNumber(normalized)) {
+                                        setSelectedVerificationContact(normalized);
+                                        handleSendCode(normalized);
                                     } else {
                                         handleSubmitAlphabeticalSender();
                                     }

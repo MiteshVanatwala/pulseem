@@ -1816,7 +1816,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				currentPage="whatsapp"
 				classes={classes}
 				customPadding={false}
-				containerClass={!isOnlyWhatsAppChat ? clsx(classes.mb75) : {}}
+				containerClass={null}
 				showAppBar={!isOnlyWhatsAppChat}
 			>
 				{isAccountSetup === true && (
