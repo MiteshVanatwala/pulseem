@@ -10,6 +10,7 @@ interface TitleObject {
   isIcon?: boolean;
   subTitle?: any;
   autoWidth?: any;
+  action?: any;
 }
 
 export const Title = ({
@@ -19,7 +20,8 @@ export const Title = ({
   Element = null,
   isIcon = true,
   subTitle,
-  autoWidth = true
+  autoWidth = true,
+  action = null
 }: TitleObject) => {
   return (
     <Box
@@ -46,6 +48,11 @@ export const Title = ({
       {subTitle && subTitle !== '' && <div className={classes.alignItemsCenter}>
         {subTitle}
       </div>}
+      {action && (
+        <Box className={classes.paddingSides10}>
+          {action}
+        </Box>
+      )}
     </Box>
   );
 };

@@ -1199,6 +1199,106 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         display: "flex",
         flexDirection: "column",
         justifyContent: "center"
-    }
-
+    },
+    //SMS Sender Verification UI
+    senderFieldRow: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: 8,
+    },
+    btnHPadding: {
+        paddingLeft: 20,
+        paddingRight: 20,
+    },
+    verNote: {
+        textDecoration: 'underline',
+    },
+    verNumListBox: {
+        maxHeight: 140,
+        overflowY: 'auto',
+    },
+    verNumRow: {
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        height: 40,
+        borderBottom: '1px solid #f0f0f0',
+        padding: '7px 4px',
+    },
+    verAvatarIcon: {
+        paddingTop: 4,
+    },
+    verDividerGap: {
+        marginBottom: 6,
+    },
+    verSectionDivider: {
+        margin: '14px 0 !important',
+    },
+    senderTableHeader: {
+        display: 'flex',
+        flexDirection: 'row',
+        padding: '7px 8px',
+        background: '#f2f3f4',
+        borderRadius: 6,
+        marginBottom: 2,
+    },
+    tableColHeader: {
+        fontWeight: 700,
+        fontSize: 13,
+        color: '#949494',
+        textTransform: 'uppercase',
+        letterSpacing: '0.5px',
+    },
+    senderNamesListBox: {
+        maxHeight: 140,
+        overflowY: 'auto',
+    },
+    senderTableRow: {
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: '7px 8px',
+        borderBottom: '1px solid #f0f0f0',
+    },
+    senderNameCell: {
+        fontSize: 13,
+        fontWeight: 700,
+    },
+    senderDateCell: {
+        fontSize: 12,
+        color: '#888',
+    },
+    statusCell: {
+        display: 'flex',
+        alignItems: 'center',
+        flex: 1,
+        gap: 6,
+    },
+    senderActionCell: {
+        display: 'flex',
+        alignItems: 'center',
+        flex: 1,
+    },
+    btnLabel12: {
+        fontSize: '12px !important',
+    },
+    statusChip: {
+        borderRadius: 20,
+        padding: '3px 10px',
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: 5,
+        fontSize: 11,
+        fontWeight: 700,
+        whiteSpace: 'nowrap',
+        letterSpacing: '0.3px',
+    },
+    statusDotIndicator: {
+        width: 6,
+        height: 6,
+        borderRadius: '50%',
+        flexShrink: 0,
+    },
+    verCarouselContainer: {
+        transition: 'height .5s',
+    },
 });
