@@ -348,6 +348,7 @@
   "SelectTemplate": "Wybierz szablon",
   "DirectUpload": "Bezpośrednie przesyłanie",
   "ErrorOccured": "Wystąpił błąd",
+  "errorContactSupport": "Aby móc wysyłać SMS-y z imienia i nazwiska, a nie z numeru telefonu, należy przejść przez nasz proces weryfikacji. Prosimy o kontakt z naszym zespołem wsparcia",
   "Pending": "Oczekujące",
   "RecipientsName": "Imię odbiorcy",
   "SentFromNumber": "Od",

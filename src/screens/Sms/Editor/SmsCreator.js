@@ -189,6 +189,8 @@ const SmsCreator = ({ classes }) => {
   const [senderDialogOpen, setSenderDialogOpen] = useState(false);
   const [senderDialogShowSelect, setSenderDialogShowSelect] = useState(false);
   const [isSenderVerified, setIsSenderVerified] = useState(false);
+  const [senderDialogInitialStep, setSenderDialogInitialStep] = useState(0);
+  const [senderDialogInitialValue, setSenderDialogInitialValue] = useState('');
   const [smsModel, setSmsModel] = useState({
     CreditsPerSms: "1",
     FromNumber: campaignNumber,
@@ -1390,7 +1392,10 @@ const SmsCreator = ({ classes }) => {
     else {
       switch (r.payload.Status) {
         case 3: {
-          setOTPOpen(true);
+          setSenderDialogInitialStep(1);
+          setSenderDialogInitialValue(campaignNumber);
+          setSenderDialogShowSelect(false);
+          setSenderDialogOpen(true);
           break;
         }
         case 8: {
@@ -1451,6 +1456,8 @@ const SmsCreator = ({ classes }) => {
               className={clsx(classes.btn, classes.btnRounded)}
               onClick={() => {
                 setDialogType(null);
+                setSenderDialogInitialStep(1);
+                setSenderDialogInitialValue(campaignNumber);
                 setSenderDialogShowSelect(true);
                 setSenderDialogOpen(true);
               }}
@@ -1585,7 +1592,10 @@ const SmsCreator = ({ classes }) => {
         setDialogType(null);
       }
       else if (r.payload.Status === 3) {
-        setOTPOpen(true);
+        setSenderDialogInitialStep(1);
+        setSenderDialogInitialValue(campaignNumber);
+        setSenderDialogShowSelect(false);
+        setSenderDialogOpen(true);
       } else if (r.payload.Status === 10) {
         setToastMessage(ToastMessages.NON_POLISH_NUMBER);
       } 
@@ -1620,7 +1630,10 @@ const SmsCreator = ({ classes }) => {
       let saveResponse = await dispatch(smsSave(payloadToPush));
       if (saveResponse) {
         if (saveResponse.payload.Status === 3) {
-          setOTPOpen(true);
+          setSenderDialogInitialStep(1);
+          setSenderDialogInitialValue(campaignNumber);
+          setSenderDialogShowSelect(false);
+          setSenderDialogOpen(true);
           return;
         }
         else if (saveResponse.payload.Status === 2) {
@@ -2374,8 +2387,15 @@ const SmsCreator = ({ classes }) => {
               classes={classes}
               isOpen={senderDialogOpen}
               showSelect={senderDialogShowSelect}
-              onClose={() => { setSenderDialogOpen(false); setSenderDialogShowSelect(false); }}
               onSenderSelect={onSenderSelect}
+              step={senderDialogInitialStep}
+              value={senderDialogInitialValue}
+              onClose={() => {
+                setSenderDialogOpen(false);
+                setSenderDialogShowSelect(false);
+                setSenderDialogInitialStep(0);
+                setSenderDialogInitialValue('');
+              }}
             />
           )}
           <Loader isOpen={showLoader} />

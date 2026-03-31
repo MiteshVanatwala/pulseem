@@ -2628,6 +2628,9 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			display: 'inline-block',
 			marginLeft: '25px',
 			cursor: 'pointer',
+			'@media (max-width: 500px)': {
+				marginLeft: '8px',
+			},
 		},
 		'&.sidebar__action-icon': { color: 'rgb(145, 145, 145)' },
 		'&.sidebar__alert': {
