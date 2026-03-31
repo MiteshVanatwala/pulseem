@@ -5420,7 +5420,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
     padding: 0,
   },
   displayConditionCustomStyle: {
-    minWidth: '900px !important'
+    minWidth: '600px !important'
   },
   Button_button_l: {
     padding: '12px 24px',
@@ -5565,7 +5565,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
   },
   displayConditionAddButton: {
     textTransform: 'none',
-    marginLeft: 'auto'
+    marginLeft: isRTL ? 'auto' : '0px',
+    marginRight: !isRTL ? 'auto' : '0px'
   },
 });
 }

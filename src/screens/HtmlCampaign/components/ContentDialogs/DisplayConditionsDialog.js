@@ -175,7 +175,7 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
   const dateOperatorOptions = useMemo(
     () => [
       { value: 'eq', label: t('campaigns.displayConditions.operator.equals') },
-      { value: 'neq', label: t('campaigns.displayConditions.operator.notEquals') },
+      // { value: 'neq', label: t('campaigns.displayConditions.operator.notEquals') },
       { value: 'gt', label: t('campaigns.displayConditions.operator.greaterThan') },
       { value: 'lt', label: t('campaigns.displayConditions.operator.lessThan') },
       { value: 'gte', label: t('campaigns.displayConditions.operator.greaterThanOrEqual') },
@@ -431,7 +431,7 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
       <Box style={{ ...styles.displayConditionMainContainer, ...styles.displayConditionMainBox }}>
         <Grid container spacing={0} style={styles.displayConditionGridContainer}>
           <Grid item xs={12} style={styles.displayConditionLeftGrid}>
-            <Box style={{ ...styles.displayConditionConditionNameBox, padding: '10px', overflow: 'hidden' }}>
+            <Box style={{ ...styles.displayConditionConditionNameBox, overflow: 'hidden' }}>
               <Box>
                 <Typography variant="body2" style={{ ...styles.displayConditionLabelTypography, ...fontSize15Style }}>
                   {t('campaigns.displayConditions.name')}
