@@ -717,7 +717,9 @@
       "lessThanOrEqual": "קטן מאו שווה ל"
     },
     "value": "ערך",
+    "conditionList": "רשימת התנאים:",
     "valueRequired": "שדה חובה",
+    "invalidDate": "תאריך לא תקין",
     "preview": "תצוגה מקדימה",
     "previewEmpty": "הגדר לפחות כלל אחד כדי לראות את התצוגה המקדימה.",
     "openBuilder": "עורך תנאים",

@@ -29,6 +29,7 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
   const dispatch = useDispatch();
   const theme = useTheme();
   const { extraData = {} } = useSelector((state) => state.sms || {});
+  const { isRTL } = useSelector((state) => state.core);
   const displayConditions = useSelector((state) => state.campaignEditor?.displayConditions || []);
 
   const currentCondition = args?.currentCondition || null;
@@ -302,7 +303,13 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
     rules.forEach((rule, index) => {
       if (rule.operator !== 'empty' && rule.operator !== 'not_empty') {
         if (!rule.value || rule.value.trim() === '') {
-          newErrors[`rule-${index}-value`] = t('campaigns.displayConditions.valueRequired')}
+          newErrors[`rule-${index}-value`] = t('campaigns.displayConditions.valueRequired')
+        } else if (isDateField(rule.field)) {
+          const parsedDate = moment(rule.value, 'DD/MM/YYYY', true);
+          if (!parsedDate.isValid()) {
+            newErrors[`rule-${index}-value`] = t('campaigns.displayConditions.invalidDate') || 'Invalid date';
+          }
+        }
       }
     });
 
@@ -346,7 +353,7 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
       if (rule.operator === 'empty' || rule.operator === 'not_empty') {
         return `${fieldLabel} ${opLabel}`;
       }
-      return `${fieldLabel} ${opLabel} "${rule.value}"`;
+      return `${fieldLabel} ${opLabel} ‪"${rule.value}"‬`;
     }).join(matchType === 'all' ? ' AND ' : ' OR ');
 
     const displayLabel = `${conditionLabel}\n${readableSummary}`;
@@ -468,25 +475,27 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
                 <Typography variant="body2" style={{ ...styles.displayConditionMatchLabel, ...fontSize15Style }}>
                   {t('campaigns.displayConditions.matchType')}
                 </Typography>
-                <FormControl variant="outlined" size="small" style={styles.displayConditionMatchFormControl}>
-                  <Select value={matchType} onChange={(e) => setMatchType(e.target.value)}>
-                    <MenuItem value="all" style={fontSize15Style}>{t('campaigns.displayConditions.matchAllConditions')}</MenuItem>
-                    <MenuItem value="any" style={fontSize15Style}>{t('campaigns.displayConditions.matchAnyConditions')}</MenuItem>
-                  </Select>
-                </FormControl>
-                <Typography variant="body2" style={{ ...styles.displayConditionMatchLabel, ...fontSize15Style }}>
-                  {t('campaigns.displayConditions.ofTheFollowingConditions')}
-                </Typography>
-                <Button
-                  startIcon={<AddCircleOutline />}
-                  onClick={handleAddRule}
-                  style={{ ...styles.displayConditionAddButton, ...fontSize15Style }}
-                >
-                  {t('campaigns.displayConditions.addCondition') || 'Add Condition'}
-                </Button>
+                <Box style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', gap: '12px' }}>
+                  <FormControl variant="outlined" size="small" style={styles.displayConditionMatchFormControl}>
+                    <Select value={matchType} onChange={(e) => setMatchType(e.target.value)}>
+                      <MenuItem value="all" style={fontSize15Style}>{t('campaigns.displayConditions.matchAllConditions')}</MenuItem>
+                      <MenuItem value="any" style={fontSize15Style}>{t('campaigns.displayConditions.matchAnyConditions')}</MenuItem>
+                    </Select>
+                  </FormControl>
+                  <Button
+                    startIcon={<AddCircleOutline />}
+                    onClick={handleAddRule}
+                    style={{ textTransform: 'none', marginLeft: isRTL ? '0px' : 'auto', marginRight: isRTL ? 'auto' : '0px', ...fontSize15Style }}
+                  >
+                    {t('campaigns.displayConditions.addCondition') || 'Add Condition'}
+                  </Button>
+                </Box>
               </Box>
 
               <Box style={styles.displayConditionRulesBox}>
+                <Typography variant="body2" style={{ ...styles.displayConditionMatchLabel, ...fontSize15Style, marginBottom: 8 }}>
+                  {t('campaigns.displayConditions.conditionList')}
+                </Typography>
                 {rules.map((rule, index) => (
                   <Box key={rule.id} style={styles.displayConditionRuleRow}>
                     <FormControl variant="outlined" size="small">
@@ -521,7 +530,8 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
                             onChange={(date) => handleRuleChange(rule.id, 'value', date ? moment(date).format('DD/MM/YYYY') : '')}
                             error={!!errors[`rule-${rules.findIndex(r => r.id === rule.id)}-value`]}
                             style={styles.displayConditionTextFieldStyle}
-                            inputProps={{ style: { fontSize: 15 } }}
+                            inputProps={{ style: { fontSize: 15 }, readOnly: true }}
+                            InputAdornmentProps={{ style: { marginLeft: 0, paddingLeft: 0 } }}
                             autoOk
                             disableToolbar
                             invalidDateMessage=''
@@ -560,6 +570,7 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
                   </Box>
                 ))}
               </Box>
+
             </Box>
           </Grid>
 
@@ -615,3 +626,4 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
 };
 
 export default DisplayConditionsDialog;
+

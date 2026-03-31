@@ -21,7 +21,7 @@ const buildReadableSummary = (syntaxBefore) => {
         else if (rawOp === '<') opLabel = 'Less than';
         else if (rawOp === '>=') opLabel = 'Greater than or equal to';
         else if (rawOp === '<=') opLabel = 'Less than or equal to';
-        const valuePart = value === '' ? '' : ` "${value}"`;
+        const valuePart = value === '' ? '' : ` "${value}" `;
         parts.push(`${field} ${opLabel}${valuePart}`);
     }
     return parts.join(' AND ');

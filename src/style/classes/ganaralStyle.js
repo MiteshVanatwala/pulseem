@@ -5542,7 +5542,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
   displayConditionTextFieldBox: {
     display: 'flex',
     flexDirection: 'column',
-    width: '200px',
+    width: '160px',
     overflow: 'hidden',
     minWidth: 0,
   },
@@ -5558,7 +5558,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
   },
   displayConditionMatchTypeBox: {
     display: 'flex',
-    alignItems: 'center',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
     gap: '8px',
     marginBottom: '12px',
     overflow: 'hidden'
