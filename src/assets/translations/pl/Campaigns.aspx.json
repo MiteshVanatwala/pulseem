@@ -787,6 +787,8 @@
   "aiDeisgner": "Projektuj z AI",
   "displayConditions": {
     "title": "Warunek wyświetlania",
+    "namePlaceholder": "Odbiorcy z Nowego Jorku",
+    "descriptionPlaceholder": "Pokaż jeśli odbiorcy zarejestrowali się w biurze w Nowym Jorku",
     "name": "Nazwa warunku",
     "description": "Opis",
     "matchType": "Dopasowanie",

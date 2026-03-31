@@ -2,6 +2,30 @@ import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { getUniqueValuesOfKey } from '../../helpers/Utils/common';
 
+const buildReadableSummary = (syntaxBefore) => {
+    if (!syntaxBefore) return '';
+    const parts = [];
+    const regex = /(?:recipient\.)?(\w+)\s*(>=|<=|>|<|==|!=|contains)\s*'([^']*)'/g;
+    let match;
+    while ((match = regex.exec(syntaxBefore)) !== null) {
+        const field = match[1];
+        const rawOp = match[2];
+        const value = match[3];
+        let opLabel;
+        if (rawOp === 'contains') opLabel = 'Contains';
+        else if (rawOp === '==' && value === '') opLabel = 'Is empty';
+        else if (rawOp === '!=' && value === '') opLabel = 'Is not empty';
+        else if (rawOp === '==') opLabel = 'Equals';
+        else if (rawOp === '!=') opLabel = 'Does not equal';
+        else if (rawOp === '>') opLabel = 'Greater than';
+        else if (rawOp === '<') opLabel = 'Less than';
+        else if (rawOp === '>=') opLabel = 'Greater than or equal to';
+        else if (rawOp === '<=') opLabel = 'Less than or equal to';
+        const valuePart = value === '' ? '' : ` "${value}" `;
+        parts.push(`${field} ${opLabel}${valuePart}`);
+    }
+    return parts.join(' AND ');
+};
 
 export const getCampaignById = createAsyncThunk(
     '/CampaignEditor/GetCampaignById/', async (id, thunkAPI) => {
@@ -149,14 +173,18 @@ export const getDisplayConditions = createAsyncThunk(
             const items = response.data?.Data?.items || [];
             
             // Transform backend format to Beefree format
-            const transformedItems = items.map(item => ({
-                type: 'Conditions',
-                label: item.name,
-                description: item.description || '',
-                before: item.syntaxBefore,
-                after: item.syntaxAfter,
-                id: item.id
-            }));
+            const transformedItems = items.map(item => {
+                const readableSummary = buildReadableSummary(item.syntaxBefore);
+                const displayLabel = readableSummary ? `${item.name}\n${readableSummary}` : item.name;
+                return {
+                    type: 'Conditions',
+                    label: displayLabel,
+                    description: item.description || '',
+                    before: item.syntaxBefore,
+                    after: item.syntaxAfter,
+                    id: item.id
+                };
+            });
             
             return transformedItems;
         } catch (error) {

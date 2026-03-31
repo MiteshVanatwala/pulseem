@@ -6004,7 +6004,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
     padding: 0,
   },
   displayConditionCustomStyle: {
-    minWidth: '900px !important'
+    minWidth: '600px !important'
   },
   Button_button_l: {
     padding: '12px 24px',
@@ -6098,7 +6098,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
   },
   displayConditionMainBox: {
     padding: '0px',
-    overflow: 'hidden'
   },
   displayConditionGridContainer: {
     overflow: 'hidden'
@@ -6126,7 +6125,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
   displayConditionTextFieldBox: {
     display: 'flex',
     flexDirection: 'column',
-    width: '200px',
+    width: '160px',
     overflow: 'hidden',
     minWidth: 0,
   },
@@ -6142,14 +6141,16 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
   },
   displayConditionMatchTypeBox: {
     display: 'flex',
-    alignItems: 'center',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
     gap: '8px',
     marginBottom: '12px',
     overflow: 'hidden'
   },
   displayConditionAddButton: {
     textTransform: 'none',
-    marginLeft: 'auto'
+    marginLeft: isRTL ? 'auto' : '0px',
+    marginRight: !isRTL ? 'auto' : '0px'
   },
 });
 }
