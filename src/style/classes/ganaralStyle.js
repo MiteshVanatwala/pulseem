@@ -5514,7 +5514,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
   },
   displayConditionMainBox: {
     padding: '0px',
-    overflow: 'hidden'
   },
   displayConditionGridContainer: {
     overflow: 'hidden'

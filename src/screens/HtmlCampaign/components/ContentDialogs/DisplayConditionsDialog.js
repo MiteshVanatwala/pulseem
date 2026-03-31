@@ -438,7 +438,7 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
       <Box style={{ ...styles.displayConditionMainContainer, ...styles.displayConditionMainBox }}>
         <Grid container spacing={0} style={styles.displayConditionGridContainer}>
           <Grid item xs={12} style={styles.displayConditionLeftGrid}>
-            <Box style={{ ...styles.displayConditionConditionNameBox, overflow: 'hidden' }}>
+            <Box style={{ ...styles.displayConditionConditionNameBox }}>
               <Box>
                 <Typography variant="body2" style={{ ...styles.displayConditionLabelTypography, ...fontSize15Style }}>
                   {t('campaigns.displayConditions.name')}
@@ -472,7 +472,7 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
               </Box>
 
               <Box style={styles.displayConditionMatchTypeBox}>
-                <Typography variant="body2" style={{ ...styles.displayConditionMatchLabel, ...fontSize15Style }}>
+                <Typography variant="body2" style={{ ...styles.displayConditionLabelTypography, ...fontSize15Style }}>
                   {t('campaigns.displayConditions.matchType')}
                 </Typography>
                 <Box style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', gap: '12px' }}>
@@ -493,7 +493,7 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
               </Box>
 
               <Box style={styles.displayConditionRulesBox}>
-                <Typography variant="body2" style={{ ...styles.displayConditionMatchLabel, ...fontSize15Style, marginBottom: 8 }}>
+                <Typography variant="body2" style={{ ...styles.displayConditionLabelTypography, ...fontSize15Style }}>
                   {t('campaigns.displayConditions.conditionList')}
                 </Typography>
                 {rules.map((rule, index) => (
@@ -519,7 +519,7 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
                     </FormControl>
 
                     {rule.operator !== 'empty' && rule.operator !== 'not_empty' && (
-                      <Box style={styles.displayConditionTextFieldBox}>
+                      <Box style={{ ...styles.displayConditionTextFieldBox, padding: 0 }}>
                         {isDateField(rule.field) ? (
                           <KeyboardDatePicker
                             variant="inline"
@@ -529,9 +529,16 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
                             value={rule.value ? moment(rule.value, 'DD/MM/YYYY') : null}
                             onChange={(date) => handleRuleChange(rule.id, 'value', date ? moment(date).format('DD/MM/YYYY') : '')}
                             error={!!errors[`rule-${rules.findIndex(r => r.id === rule.id)}-value`]}
-                            style={styles.displayConditionTextFieldStyle}
+                            style={{
+                              ...styles.displayConditionTextFieldStyle,
+                              padding: 0
+                            }}
                             inputProps={{ style: { fontSize: 15 }, readOnly: true }}
-                            InputAdornmentProps={{ style: { marginLeft: 0, paddingLeft: 0 } }}
+                            InputAdornmentProps={{
+                              position: 'end',
+                              style: { marginLeft: 'auto', paddingLeft: 0, paddingRight: 0 }
+                            }}
+                            KeyboardButtonProps={{ edge: 'end' }}
                             autoOk
                             disableToolbar
                             invalidDateMessage=''

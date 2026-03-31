@@ -729,8 +729,8 @@
       "notEmpty": "Is not empty",
       "greaterThan": "Greater than",
       "lessThan": "Less than",
-      "greaterThanOrEqual": "Greater than and equal to",
-      "lessThanOrEqual": "Less than and equal to"
+      "greaterThanOrEqual": "Greater than or equal to",
+      "lessThanOrEqual": "Less than or equal to"
     },
     "value": "Value",
     "conditionList": "Condition list:",
