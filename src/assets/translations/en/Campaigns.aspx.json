@@ -711,6 +711,8 @@
     "description": "Description",
     "ofTheFollowingConditions": "of the following conditions",
     "match": "Match",
+    "namePlaceholder": "Recipients from New York",
+    "descriptionPlaceholder": "Show if the recipients registered in New York Office",
     "name": "Condition name",
     "matchType": "Match",
     "matchAll": "All conditions (AND)",

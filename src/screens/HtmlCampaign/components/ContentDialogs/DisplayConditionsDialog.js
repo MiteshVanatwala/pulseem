@@ -438,7 +438,7 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
                 </Typography>
                 <TextField
                   fullWidth
-                  placeholder="People"
+                  placeholder={t('campaigns.displayConditions.namePlaceholder')}
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   variant="outlined"
@@ -453,7 +453,7 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
                 </Typography>
                 <TextField
                   fullWidth
-                  placeholder="People in Boston, US"
+                  placeholder={t('campaigns.displayConditions.descriptionPlaceholder')}
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   variant="outlined"
