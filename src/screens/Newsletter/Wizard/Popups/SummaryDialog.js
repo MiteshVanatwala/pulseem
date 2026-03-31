@@ -52,6 +52,7 @@ const SummaryDialog = ({ classes,
     const [verifyValue, setVerifyValue] = useState('');
     const [showLoader, setShowLoader] = useState(false);
     const [isSharedDomainEmail, setIsSharedDomainEmail] = useState(false);
+    const [sendToSupervisor, setSendToSupervisor] = useState(false);
 
     const {
         FinalClients,
@@ -84,7 +85,10 @@ const SummaryDialog = ({ classes,
     const handleSendCampaign = async () => {
         setShowLoader(true);
         setDisableSend(true);
-        const sendResponse = await dispatch(sendCampaign(newsletterSendSummary.CampaignID));
+        const sendResponse = await dispatch(sendCampaign({
+            campaignId: newsletterSendSummary.CampaignID,
+            sendToSupervisor
+        }));
 
         const response = sendResponse?.payload;
         console.log(response)
@@ -500,6 +504,19 @@ const SummaryDialog = ({ classes,
                 container
                 // spacing={4}
                 className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}>
+                {newsletterSendSummary?.HasSupervisors && (
+                    <Grid item xs={12} className={classes.paddingSides10} style={{ marginBottom: 8 }}>
+                        <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontSize: 14 }}>
+                            <input
+                                type="checkbox"
+                                checked={sendToSupervisor}
+                                onChange={e => setSendToSupervisor(e.target.checked)}
+                                style={{ width: 16, height: 16, cursor: 'pointer' }}
+                            />
+                            האם לשלוח למפקח?
+                        </label>
+                    </Grid>
+                )}
                 <Grid item className={classes.paddingSides10}>
                     <Button
                         variant='contained'
