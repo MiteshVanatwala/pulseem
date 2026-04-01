@@ -348,6 +348,7 @@
   "SelectTemplate": "Select A Template",
   "DirectUpload": "Direct Upload",
   "ErrorOccured": "Error Occured",
+  "errorContactSupport": "In order to send SMS from name instead of number, you should go through our screening process.Please contact our support team.",
   "Pending": "Pending",
   "RecipientsName": "Recipient's Name",
   "SentFromNumber": "From",
