@@ -176,6 +176,24 @@ export type WhatsappChatSideBarProps = {
 	TotalPending: number;
 	TotalSolved: number;
 	refetchActiveChatContact?: (phoneNumber: string) => void,
+	savedTemplateList: savedTemplateListProps[];
+	onStartNewChat: (toNumber: string) => void;
+	onRefreshChat: () => Promise<void>;
+	personalFields: { [key: string]: string };
+	landingPageData: { CampaignID: number; CampaignName: string; PageHref: string }[];
+};
+
+export type StartNewChatStep = 'phone' | 'template' | 'variables' | 'review';
+
+export type StartNewChatModalProps = {
+	classes: ClassesType['classes'];
+	open: boolean;
+	onClose: () => void;
+	savedTemplateList: savedTemplateListProps[];
+	activePhoneNumber: string;
+	onSendSuccess: (toNumber: string) => void;
+	personalFields: { [key: string]: string };
+	landingPageData: { CampaignID: number; CampaignName: string; PageHref: string }[];
 };
 
 export type chatModalProps = {
@@ -207,6 +225,7 @@ export type APIWhatsappChatSidebarContactsItemsData = {
 	Unread: number;
 	UserName: string;
 	Tags?: Array<{ id?: string; Id?: string; TagName: string; TagColor: string }>;
+	Agents?: Array<{ AgentID: number; AgentName: string }>;
 	ClientId?: number; // Standardized for WhatsApp chat edit mapping
 };
 

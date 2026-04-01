@@ -31,6 +31,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
 	getInboundWhatsappChatStatus,
 	getSavedTemplates,
+	getWhatsappChat,
 	getWhatsappChatContactsByPhoneNumber,
 	getWhatsappChatContactsByUserNumber,
 	manageWhatsappChatCoversationStatus,
@@ -246,6 +247,10 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const totalOpenContactsRef = useRef<number>(0);
 	const totalPendingContactsRef = useRef<number>(0);
 	const totalSolvedContactsRef = useRef<number>(0);
+
+	useEffect(() => {
+		activeChatContactsRef.current = activeChatContacts;
+	}, [activeChatContacts]);
 
 	useEffect(() => {
 		totalOpenContactsRef.current = totalOpenContacts;
@@ -1313,6 +1318,18 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 							listDivElement.scrollTop = 0;
 						}
 						setSideChatContacts(items);
+						// If the active contact was set with minimal data (e.g. after
+						// onStartNewChat), upgrade it with the full record from the
+						// refreshed sidebar so header/tags/status render correctly.
+						const currentPhone = activeChatContactsRef.current?.PhoneNumber;
+						if (currentPhone && !activeChatContactsRef.current?.UserName) {
+							const fullContact = items.find((c) =>
+								compareLastNineDigits(c.PhoneNumber, currentPhone),
+							);
+							if (fullContact) {
+								setActiveChatContacts(fullContact);
+							}
+						}
 					} else if (isInfiniteScroll) {
 						setSideChatContacts((prevContacts) => [...prevContacts, ...items]);
 					} else {
@@ -1349,6 +1366,42 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	useEffect(() => {
 		fetchMoreContactsRef.current = fetchMoreContacts;
 	}, [fetchMoreContacts]);
+	const onStartNewChat = useCallback(
+		(toNumber: string) => {
+			const normalizedTo = toNumber.replace(/\D/g, '');
+
+			// Set a minimal active contact so ChatUi immediately loads the chat
+			// history and footer for this number (IsIn24Window=false until reply).
+			setActiveChatContacts({
+				PhoneNumber: normalizedTo,
+				UserName: '',
+				LastMessage: '',
+				LastMessageDate: '',
+				IsTemplate: true,
+				IsUnsubscribed: false,
+				Unread: 0,
+				ConversationStatusId: 1,
+				Tags: [],
+			});
+
+			// Navigate to the conversation
+			navigate(`/react/whatsapp/chat/${normalizedTo}`);
+
+			// Refresh sidebar — new contact sorts to top (most recent message)
+			void fetchMoreContacts('', filterBySelected, true);
+		},
+		[navigate, fetchMoreContacts, filterBySelected, setActiveChatContacts],
+	);
+
+	const onRefreshChat = useCallback(async () => {
+		await fetchMoreContacts('', filterBySelected, true);
+		if (activeChatContacts?.PhoneNumber) {
+			await dispatch<any>(getWhatsappChat({
+				PhoneNumber: activePhoneNumber,
+				UserNumber: activeChatContacts.PhoneNumber,
+			}));
+		}
+	}, [fetchMoreContacts, filterBySelected, activeChatContacts, activePhoneNumber, dispatch]);
 
 	const updateFreeFormMessage = useCallback(
 		(message: string) => {
@@ -1964,6 +2017,11 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 									TotalOpen={totalOpenContacts}
 									TotalPending={totalPendingContacts}
 									TotalSolved={totalSolvedContacts}
+								savedTemplateList={savedTemplateList}
+								onStartNewChat={onStartNewChat}
+								onRefreshChat={onRefreshChat}
+								personalFields={personalFields}
+								landingPageData={landingPages}
 								/>
 								<ChatUi
 										refetchActiveChatContact={async (phoneNumber: string) => {

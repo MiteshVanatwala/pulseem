@@ -5,6 +5,7 @@
 	"conversation": "השיחה סגורה.",
 	"cantSend": "בשיחה סגורה ניתן לשלוח תבניות בלבד",
 	"send": "שלח תבנית",
+	"sendNewChat": "שלח",
 	"open": "פתוח",
 	"pending": "בטיפול",
 	"solved": "טופל",
@@ -59,5 +60,19 @@
 	"noPermissionManageTags": "אין לך הרשאה לנהל תגים. אנא פנה למנהל המערכת שלך.",
 	"filterChats": "סנן צ'אטים",
 	"calendar": "לוח שנה",
-	"filter": "סנן"
+	"filter": "סנן",
+	"startNewChat": "התחל צ'אט חדש",
+	"startNewChatTooltip": "התחל צ'אט חדש",
+	"enterPhoneNumber": "הזן מספר טלפון",
+	"phoneNumberPlaceholder": "לדוגמה: 972501234567",
+	"selectTemplate": "בחר תבנית",
+	"searchTemplates": "חפש תבניות...",
+	"newTemplate": "+ תבנית חדשה",
+	"fillVariables": "מלא משתנים",
+	"reviewAndSend": "סקירה ושליחה",
+	"sendDirectMessageDisclaimer": "בשליחת הודעת ווטסאפ ישירה, באחריותכם לוודא כי הנמען אכן אישר קבלת דיוור מכם",
+	"chatSentSuccess": "ההודעה נשלחה בהצלחה",
+	"invalidPhoneNumber": "נא להזין מספר טלפון תקין",
+	"noTemplatesFound": "לא נמצאו תבניות",
+	"refreshChat": "רענן"
 }
