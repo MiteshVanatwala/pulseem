@@ -1333,8 +1333,8 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		await fetchMoreContacts('', filterBySelected, true);
 		if (activeChatContacts?.PhoneNumber) {
 			await dispatch<any>(getWhatsappChat({
-				PhoneNumber: activePhoneNumber,
-				UserNumber: activeChatContacts.PhoneNumber,
+				activePhoneNumber: activePhoneNumber,
+				activeUserNumber: activeChatContacts.PhoneNumber,
 			}));
 		}
 	}, [fetchMoreContacts, filterBySelected, activeChatContacts, activePhoneNumber, dispatch]);
