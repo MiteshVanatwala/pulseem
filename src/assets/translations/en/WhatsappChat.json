@@ -5,6 +5,7 @@
 	"conversation": "Conversation is closed.",
 	"cantSend": "You can only send templates in a closed conversation",
 	"send": "Send Template",
+	"sendNewChat": "Send",
 	"open": "Open",
 	"pending": "In Progress",
 	"solved": "Solved",
@@ -59,6 +60,18 @@
 	"noPermissionManageTags": "You do not have permission to manage tags. Please contact your administrator.",
 	"filterChats": "Filter Chats",
 	"calendar": "Calendar",
-	"filter": "Filter"
-
+	"filter": "Filter",
+	"startNewChat": "Start New Chat",
+	"startNewChatTooltip": "Start a new chat",
+	"enterPhoneNumber": "Enter phone number",
+	"phoneNumberPlaceholder": "e.g. 972501234567",
+	"selectTemplate": "Select a template",
+	"searchTemplates": "Search templates...",
+	"newTemplate": "+ New Template",
+	"fillVariables": "Fill in variables",
+	"reviewAndSend": "Review & Send",
+	"sendDirectMessageDisclaimer": "בשליחת הודעת ווטסאפ ישירה, באחריותכם לוודא כי הנמען אכן אישר קבלת דיוור מכם",
+	"chatSentSuccess": "Message sent successfully",
+	"invalidPhoneNumber": "Please enter a valid phone number",
+	"noTemplatesFound": "No templates found"
 }
