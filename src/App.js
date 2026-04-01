@@ -817,29 +817,28 @@ const App = ({ screenSize }) => {
   else document.body.classList.remove('polish-account');
 
   // Hide accessibility elements when in WhatsApp chat only mode
+  // Replace this entire existing useEffect:
   useEffect(() => {
+    const styleId = 'whatsapp-only-hide-accessibility';
+
     if (isOnlyWhatsAppChat) {
       document.body.setAttribute('data-only-whatsapp-chat', 'true');
-      // Hide the accessibility widget button
-      const accessibilityBtn = document.getElementById('INDmenu-btn');
-      if (accessibilityBtn) {
-        accessibilityBtn.style.display = 'none';
-      }
-      // Also hide any accessibility container
-      const accessibilityContainer = document.querySelector('[data-accessibility-container]');
-      if (accessibilityContainer) {
-        accessibilityContainer.style.display = 'none';
+
+      if (!document.getElementById(styleId)) {
+        const style = document.createElement('style');
+        style.id = styleId;
+        style.textContent = `
+        #INDmenu-btn,
+        [data-accessibility-container] { 
+          display: none !important; 
+        }
+      `;
+        document.head.appendChild(style);
       }
     } else {
       document.body.removeAttribute('data-only-whatsapp-chat');
-      const accessibilityBtn = document.getElementById('INDmenu-btn');
-      if (accessibilityBtn) {
-        accessibilityBtn.style.display = '';
-      }
-      const accessibilityContainer = document.querySelector('[data-accessibility-container]');
-      if (accessibilityContainer) {
-        accessibilityContainer.style.display = '';
-      }
+      const style = document.getElementById(styleId);
+      if (style) style.remove();
     }
   }, [isOnlyWhatsAppChat]);
 
