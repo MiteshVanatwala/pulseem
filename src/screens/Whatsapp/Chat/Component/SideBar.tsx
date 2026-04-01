@@ -24,7 +24,7 @@ import {
 } from '@material-ui/core';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { FaBars, FaCalendar, FaFilter, FaTrash } from 'react-icons/fa';
-import { MdAddComment } from 'react-icons/md';
+import { MdAddComment, MdRefresh } from 'react-icons/md';
 import {
 	BsFillTagsFill,
 	BsPeopleFill,
@@ -81,6 +81,7 @@ const SideBar = ({
 	refetchActiveChatContact,
 	savedTemplateList,
 	onStartNewChat,
+	onRefreshChat,
 	personalFields,
 	landingPageData,
 }: WhatsappChatSideBarProps) => {
@@ -98,6 +99,7 @@ const SideBar = ({
 	const dispatch = useDispatch();
 	const [searchText, setSearchText] = useState<string>('');
 	const debouncedValue = useDebounce<string>(searchText, 500);
+	const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
 	const [activeTab, setActiveTab] = useState(0);
 	const isInitialMount = useRef(true);
 	const isChangingRowsPerPage = useRef(false);
@@ -943,6 +945,17 @@ const SideBar = ({
 							className={classes.startNewChatIconButton}
 						>
 							<MdAddComment />
+						</IconButton>
+						<IconButton
+							onClick={async () => {
+								setIsRefreshing(true);
+								await onRefreshChat();
+								setIsRefreshing(false);
+							}}
+							disabled={isRefreshing}
+							title={translator('whatsappChat.refreshChat')}
+						>
+							<MdRefresh style={{ animation: isRefreshing ? 'spin 0.8s linear infinite' : 'none' }} />
 						</IconButton>
 					</div>
 					<div

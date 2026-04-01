@@ -178,6 +178,7 @@ export type WhatsappChatSideBarProps = {
 	refetchActiveChatContact?: (phoneNumber: string) => void,
 	savedTemplateList: savedTemplateListProps[];
 	onStartNewChat: (toNumber: string) => void;
+	onRefreshChat: () => Promise<void>;
 	personalFields: { [key: string]: string };
 	landingPageData: { CampaignID: number; CampaignName: string; PageHref: string }[];
 };

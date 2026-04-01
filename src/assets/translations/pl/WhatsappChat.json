@@ -73,5 +73,6 @@
 	"sendDirectMessageDisclaimer": "בשליחת הודעת ווטסאפ ישירה, באחריותכם לוודא כי הנמען אכן אישר קבלת דיוור מכם",
 	"chatSentSuccess": "Wiadomość wysłana pomyślnie",
 	"invalidPhoneNumber": "Wprowadź prawidłowy numer telefonu",
-	"noTemplatesFound": "Nie znaleziono szablonów"
+	"noTemplatesFound": "Nie znaleziono szablonów",
+	"refreshChat": "Odśwież"
 }

@@ -73,5 +73,6 @@
 	"sendDirectMessageDisclaimer": "בשליחת הודעת ווטסאפ ישירה, באחריותכם לוודא כי הנמען אכן אישר קבלת דיוור מכם",
 	"chatSentSuccess": "Message sent successfully",
 	"invalidPhoneNumber": "Please enter a valid phone number",
-	"noTemplatesFound": "No templates found"
+	"noTemplatesFound": "No templates found",
+	"refreshChat": "Refresh"
 }

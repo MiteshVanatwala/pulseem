@@ -31,6 +31,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
 	getInboundWhatsappChatStatus,
 	getSavedTemplates,
+	getWhatsappChat,
 	getWhatsappChatContactsByPhoneNumber,
 	getWhatsappChatContactsByUserNumber,
 	manageWhatsappChatCoversationStatus,
@@ -1328,6 +1329,16 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		[navigate, fetchMoreContacts, filterBySelected, setActiveChatContacts],
 	);
 
+	const onRefreshChat = useCallback(async () => {
+		await fetchMoreContacts('', filterBySelected, true);
+		if (activeChatContacts?.PhoneNumber) {
+			await dispatch<any>(getWhatsappChat({
+				PhoneNumber: activePhoneNumber,
+				UserNumber: activeChatContacts.PhoneNumber,
+			}));
+		}
+	}, [fetchMoreContacts, filterBySelected, activeChatContacts, activePhoneNumber, dispatch]);
+
 	const updateFreeFormMessage = useCallback(
 		(message: string) => {
 			if (message !== newMessage) {
@@ -1940,6 +1951,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 									TotalSolved={totalSolvedContacts}
 								savedTemplateList={savedTemplateList}
 								onStartNewChat={onStartNewChat}
+								onRefreshChat={onRefreshChat}
 								personalFields={personalFields}
 								landingPageData={landingPages}
 								/>
