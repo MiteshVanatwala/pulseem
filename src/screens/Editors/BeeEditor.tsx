@@ -47,6 +47,8 @@ import { GenericModal } from '../HtmlCampaign/components/GenericModal';
 import SaveTemplate from '../HtmlCampaign/modals/SaveTemplate';
 import { findPlanByFeatureCode } from '../../redux/reducers/TiersSlice';
 import TierPlans from '../../components/TierPlans/TierPlans';
+import { getClientDocsPdfRedirectLink } from '../../helpers/Utils/getClientDocsPdfRedirectLink';
+import { wrapClientDocsPdfSpecialLinks } from '../../helpers/Utils/wrapClientDocsPdfSpecialLinks';
 
 const BeeEditor = ({ classes }: BeeEditorModel) => {
   //#region State
@@ -159,7 +161,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
               specialLinksFiles.push({
                 type: `${folderExtName} ${folderName}`,
                 label: file.FileName,
-                link: file.FileURL
+                link: getClientDocsPdfRedirectLink(file.FileURL, sitePrefix, file.FileName)
               })
             });
             resolve(specialLinksFiles);
@@ -334,7 +336,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       }
       config.uid = accountSettings?.SubAccountSettings?.BeeUniqueID;
       config.mergeTags = mergeData;
-      config.specialLinks = specialLinksFiles;
+      config.specialLinks = wrapClientDocsPdfSpecialLinks(specialLinksFiles, sitePrefix);
       config.titleDefaultStyles = defaultContent.titleDefaultStyles;
       config.contentDefaults = defaultContent.contentDefaults;
 

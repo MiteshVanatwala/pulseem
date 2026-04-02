@@ -28,6 +28,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import moment from 'moment';
 /* END Bee */
 import { loginURL, sitePrefix } from '../../config';
+import { getClientDocsPdfRedirectLink } from '../../helpers/Utils/getClientDocsPdfRedirectLink';
+import { wrapClientDocsPdfSpecialLinks } from '../../helpers/Utils/wrapClientDocsPdfSpecialLinks';
 import { MdArrowBackIos, MdArrowForwardIos, MdCheck, MdGroups, MdOutlinePublic } from 'react-icons/md';
 import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
 import { BEE_EDITOR_TYPES } from '../../helpers/Constants';
@@ -187,7 +189,7 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
               specialLinksFiles.push({
                 type: `${folderExtName} ${folderName}`,
                 label: file.FileName,
-                link: file.FileURL
+                link: getClientDocsPdfRedirectLink(file.FileURL, sitePrefix, file.FileName)
               })
             });
             resolve(specialLinksFiles);
@@ -447,7 +449,7 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
       }
       config.uid = accountSettings?.SubAccountSettings?.BeeUniqueID;
       config.mergeTags = mergeData;
-      config.specialLinks = specialLinksFiles;
+      config.specialLinks = wrapClientDocsPdfSpecialLinks(specialLinksFiles, sitePrefix);
       config.titleDefaultStyles = defaultContent.titleDefaultStyles;
       config.contentDefaults = defaultContent.contentDefaults;
       config.language = editorLanguage;

@@ -82,6 +82,7 @@ import './helpers/global';
 import SurveyDetails from './screens/LandingPages/Survey/SurveyDetails';
 import WebformSummary from './screens/LandingPages/Wizard/WebformSummary';
 import HtmlPreview from './screens/Preview/HtmlPreview';
+import ClientDocsPdfRedirect from './screens/ClientDocs/ClientDocsPdfRedirect';
 import FileUploads from './screens/Groups/FileUploads/FileUploads';
 import AmpRegistration from './screens/Newsletter/AMP/AmpRegistration';
 import AffiliateProgram from './screens/Affiliate/Management/AffiliateProgram';
@@ -637,6 +638,11 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
         path={`${sitePrefix}Previewer/:type/:id`}
         element={<HtmlPreview classes={classes} />}
       />
+      <Route
+        exact
+        path={`${sitePrefix}clientdocs/view`}
+        element={<ClientDocsPdfRedirect />}
+      />
       {userRoles === UserRoles.Admin && <Route
         exact
         path={`${sitePrefix}AffiliateManagement`}
@@ -886,6 +892,11 @@ const App = ({ screenSize }) => {
         <Route
           path={`${sitePrefix}Previewer/:type/:id`}
           element={<HtmlPreview classes={classes} />}
+        />
+        <Route
+          exact
+          path={`${sitePrefix}clientdocs/view`}
+          element={<ClientDocsPdfRedirect />}
         />
         <Route
           path={`${sitePrefix}Groups/Download`}

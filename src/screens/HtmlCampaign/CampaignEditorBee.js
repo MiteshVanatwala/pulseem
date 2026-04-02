@@ -39,6 +39,7 @@ import Gallery from '../../components/Gallery/Gallery.component';
 import { PulseemFeatures, PulseemFolderType } from "../../model/PulseemFields/Fields";
 import { getFileGallery } from '../../redux/reducers/gallerySlice';
 import { BiSave } from 'react-icons/bi'
+import { getClientDocsPdfRedirectLink } from '../../helpers/Utils/getClientDocsPdfRedirectLink';
 // User input controls
 import { EditRow } from './components/ContentDialogs'
 import { GiMagicBroom } from "react-icons/gi";
@@ -70,6 +71,7 @@ import { BsMagic } from 'react-icons/bs';
 import TierPlans from '../../components/TierPlans/TierPlans';
 import PayPerRecipientNew from '../../components/PayPerRecipient/PayPerRecipientNew';
 import { getPackagesDetails } from '../../redux/reducers/dashboardSlice';
+import { wrapClientDocsPdfSpecialLinks } from '../../helpers/Utils/wrapClientDocsPdfSpecialLinks';
 
 const useComponentStyles = makeStyles((theme) => ({
   emailSizeContainer: {
@@ -274,7 +276,7 @@ const CampaignEditor = ({ classes, ...props }) => {
               specialLinksFiles.push({
                 type: `${folderExtName} ${folderName}`,
                 label: file.FileName,
-                link: file.FileURL
+                link: getClientDocsPdfRedirectLink(file.FileURL, sitePrefix, file.FileName)
               })
             });
             resolve(specialLinksFiles);
@@ -473,7 +475,7 @@ const CampaignEditor = ({ classes, ...props }) => {
 
       config.uid = accountSettings?.SubAccountSettings?.BeeUniqueID;
       config.mergeTags = mergeData;
-      config.specialLinks = specialLinksFiles;
+      config.specialLinks = wrapClientDocsPdfSpecialLinks(specialLinksFiles, sitePrefix);
       config.titleDefaultStyles = defaultContent.titleDefaultStyles;
       config.contentDefaults = defaultContent.contentDefaults;
       if (accountFeatures?.indexOf(PulseemFeatures.BEE_AMP) > -1) {
