@@ -584,6 +584,7 @@
   "senderNamesInAccount": "שמות שולח מאושרים",
   "addNewSender": "+ הוסף שולח חדש",
   "newSenderPlaceholder": "הכנס שם שולח או מספר",
+  "onlyEnglishChars": "מותר להשתמש רק באותיות באנגלית, ספרות, +, - ורווחים",
   "newSenderRequired": "נא להזין שם שולח או מספר",
   "newSenderInvalidChars": "מותרים רק אותיות, ספרות ורווחים",
   "newSenderTooLong": "שם השולח ארוך מדי",

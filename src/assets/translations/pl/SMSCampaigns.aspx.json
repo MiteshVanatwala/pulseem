@@ -591,6 +591,7 @@
   "senderNamesInAccount": "Dozwolone nazwy nadawcy",
   "addNewSender": "+ Dodaj nowego nadawcę",
   "newSenderPlaceholder": "Wpisz nazwę nadawcy lub numer",
+  "onlyEnglishChars": "Dozwolone są tylko litery angielskie, cyfry, +, - i spacje",
   "newSenderRequired": "Wprowadź nazwę nadawcy lub numer",
   "newSenderInvalidChars": "Dozwolone są tylko litery, cyfry i spacje",
   "newSenderTooLong": "Nazwa nadawcy jest za długa",
