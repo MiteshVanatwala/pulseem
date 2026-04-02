@@ -552,5 +552,6 @@
   "recaptchaSiteKeyPlaceholder": "מפתח האתר של reCAPTCHA שלך",
   "recaptchaV3": "v3 (בלתי נראה)",
   "recaptchaV2Checkbox": "v2 (תיבת סימון)",
-  "recaptchaV2Invisible": "v2 (בלתי נראה)"
+  "recaptchaV2Invisible": "v2 (בלתי נראה)",
+  "emailConfirmationCheckbox": "שלח אימייל אישור כפול לנמענים שנוספו במצב “ממתין“ (לא סימנו “אישור דיוור“)"
 }

@@ -37,6 +37,7 @@ import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
 import TierPlans from '../../../components/TierPlans/TierPlans';
 import { TierFeatures } from '../../../helpers/Constants';
 import { get } from 'lodash';
+import { RxOpenInNewWindow } from 'react-icons/rx';
 
 const useStyles = makeStyles({
     pwdEveButton: {
@@ -314,7 +315,6 @@ const ApiSettings = ({ classes }: any) => {
                         Element={<Box className={clsx(classes.dFlex, classes.flexWrap)} justifyContent='center' alignItems='center'>
                             <Typography className={clsx(classes.managementTitle, "mgmtTitle")} style={{ width: 'auto' }}>{t('settings.apiSettings.title')}</Typography>
                             <Box style={{ marginInlineStart: 'auto' }}>
-
                                 <Button
                                     style={{ width: windowSize === 'xs' ? '100%' : '', maxWidth: windowSize === 'xs' ? '100%' : 'unset', marginTop: windowSize !== 'xs' ? 'unset' : 10 }}
                                     className={clsx(

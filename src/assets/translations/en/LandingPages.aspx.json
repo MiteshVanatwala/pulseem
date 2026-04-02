@@ -549,5 +549,6 @@
   "recaptchaSiteKeyPlaceholder": "Your reCAPTCHA Site Key",
   "recaptchaV3": "v3 (Invisible)",
   "recaptchaV2Checkbox": "v2 (Checkbox)",
-  "recaptchaV2Invisible": "v2 (Invisible)"
+  "recaptchaV2Invisible": "v2 (Invisible)",
+  "emailConfirmationCheckbox": "Send double opt-in email to recipients added in ”Pending” status"
 }
