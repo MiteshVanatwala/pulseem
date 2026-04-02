@@ -591,6 +591,7 @@
   "senderNamesInAccount": "Allowed Sender Names",
   "addNewSender": "+ Add New Sender",
   "newSenderPlaceholder": "Enter sender name or number",
+  "onlyEnglishChars": "Only English letters, digits, +, -, and spaces are allowed",
   "newSenderRequired": "Please enter a sender name or number",
   "newSenderInvalidChars": "Only letters, digits and spaces are allowed",
   "newSenderTooLong": "Sender name is too long",

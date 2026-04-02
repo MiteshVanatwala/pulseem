@@ -721,8 +721,14 @@ const VerificationDialog = ({
                                     className: classes.textColorBlue
                                 }}
                                 onChange={(e) => {
+                                    const val = e.target.value;
+                                    // Only allow English letters, digits, +, -, and spaces
+                                    if (val && !/^[a-zA-Z0-9+\-\s]*$/.test(val)) {
+                                        setVerificationError({ Number: t('sms.onlyEnglishChars') });
+                                        return;
+                                    }
                                     !!verificationError?.Number && setVerificationError({ Number: '' });
-                                    setSelectedVerificationContact(e.target.value?.trim());
+                                    setSelectedVerificationContact(val.trim());
                                 }}
                                 className={clsx(classes.textField, classes.maxWidth400, classes.txtCenter, classes.directionLTR)}
                                 placeholder={t('sms.newSenderPlaceholder')}
