@@ -43,6 +43,7 @@ import { UserRoles } from '../../../Models/SubUser/SubUsers';
 import { get } from 'lodash';
 import EmailConfirmationSettingsPopUp from './Popups/EmailConfirmationSettingsPopUp';
 import { getCookie, setCookie } from '../../../helpers/Functions/cookies';
+import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog';
 
 const generateGuid = () => {
 	return Date.now().toString(36) + Math.random().toString(36).substring(2);
@@ -71,6 +72,7 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 	const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
 	const [showTierPlans, setShowTierPlans] = useState(false);
 	const [toastMessage, setToastMessage] = useState(null);
+	const [emailVerificationPopup, setEmailVerificationPopup] = useState(false);
 	const [errors, setErrors] = useState({
 		PageName: '',
 		formLanguage: '',
@@ -1194,9 +1196,18 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 					}}
 					optInSettings={landingPageModel}
 					//@ts-ignore
-					onVerificationEmail={() => { onVerificationEmail() }}
+					onVerificationEmail={() => setEmailVerificationPopup(true) }
 				/>
 			}
+			{emailVerificationPopup && <VerificationDialog
+				textButtonOnSuccess={t('common.close')}
+				classes={classes}
+				variant="email"
+				isOpen={emailVerificationPopup}
+				step={0}
+				value={landingPageModel.ConfirmationFromEmail}
+				onClose={() => setEmailVerificationPopup(false)}
+			/>}
 		</DefaultScreen>
 	)
 }
