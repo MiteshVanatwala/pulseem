@@ -352,16 +352,6 @@ export const getRoutes = (
           title: t("landingPages.editLandingPage"),
           href: ``,
           isShow: false,
-        },
-        {
-          title: t("master.RadMenuItemLandingManagement.Text"),
-          href: `${sitePrefix}EditRegistrationPage`,
-          isShow: true,
-        },
-        {
-          title: t("master.FormTemplatesResource1.Text"),
-          href: `/FormTemplates`,
-          isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount,
         }
       ],
     },
