@@ -817,7 +817,6 @@ const App = ({ screenSize }) => {
   else document.body.classList.remove('polish-account');
 
   // Hide accessibility elements when in WhatsApp chat only mode
-  // Replace this entire existing useEffect:
   useEffect(() => {
     const styleId = 'whatsapp-only-hide-accessibility';
 
