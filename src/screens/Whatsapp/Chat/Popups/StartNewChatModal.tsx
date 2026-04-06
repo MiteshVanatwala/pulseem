@@ -15,6 +15,7 @@ import { Stack } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
+import { coreProps } from '../../Campaign/Types/WhatsappCampaign.types';
 import { useNavigate } from 'react-router-dom';
 import clsx from 'clsx';
 import { BsX } from 'react-icons/bs';
@@ -102,6 +103,7 @@ const StartNewChatModal = ({
 	const { t: translator } = useTranslation();
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
+	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
 
 	// ── Template list (refreshed each time modal opens) ──────────────────────
 	const [localTemplateList, setLocalTemplateList] = useState<savedTemplateListProps[]>(
@@ -484,7 +486,7 @@ const StartNewChatModal = ({
 				<Typography
 					variant="caption"
 					style={{ color: '#888', display: 'block', marginBottom: '8px' }}>
-					{`Editing ${varKey}`}
+					{`${translator('whatsappChat.editing')} ${varKey}`}
 				</Typography>
 
 				{/* Type-selector pill buttons — identical to DynamicModal */}
@@ -661,7 +663,9 @@ const StartNewChatModal = ({
 			<Box className={classes.startNewChatPreviewBox}>
 				{buildInterpolatedText()}
 			</Box>
-			<Box className={classes.startNewChatDisclaimerBox}>
+			<Box
+				className={classes.startNewChatDisclaimerBox}
+				style={{ direction: isRTL ? 'rtl' : 'ltr', textAlign: isRTL ? 'right' : 'left' }}>
 				{translator('whatsappChat.sendDirectMessageDisclaimer')}
 			</Box>
 		</Box>

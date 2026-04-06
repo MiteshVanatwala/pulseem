@@ -70,9 +70,11 @@
 	"newTemplate": "+ New Template",
 	"fillVariables": "Fill in variables",
 	"reviewAndSend": "Review & Send",
-	"sendDirectMessageDisclaimer": "בשליחת הודעת ווטסאפ ישירה, באחריותכם לוודא כי הנמען אכן אישר קבלת דיוור מכם",
+	"sendDirectMessageDisclaimer": "By sending a direct WhatsApp message, you are responsible for ensuring that the recipient has consented to receive communications from you.",
 	"chatSentSuccess": "Message sent successfully",
 	"invalidPhoneNumber": "Please enter a valid phone number",
 	"noTemplatesFound": "No templates found",
-	"refreshChat": "Refresh"
+	"refreshChat": "Refresh",
+	"clickPlaceholderHint": "Click a highlighted placeholder to fill it in.",
+	"editing": "Editing"
 }

@@ -74,5 +74,7 @@
 	"chatSentSuccess": "ההודעה נשלחה בהצלחה",
 	"invalidPhoneNumber": "נא להזין מספר טלפון תקין",
 	"noTemplatesFound": "לא נמצאו תבניות",
-	"refreshChat": "רענן"
+	"refreshChat": "רענן",
+	"clickPlaceholderHint": "לחץ על משתנה מסומן כדי למלא אותו.",
+	"editing": "עריכה"
 }
