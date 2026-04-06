@@ -265,6 +265,30 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
     }
   };
 
+  const handleNameChange = (event) => {
+    const value = event.target.value;
+    setName(value);
+    setErrors((prev) => {
+      if (!prev.name) return prev;
+
+      const newErrors = { ...prev };
+      delete newErrors.name;
+      return newErrors;
+    });
+  };
+
+  const handleDescriptionChange = (event) => {
+    const value = event.target.value;
+    setDescription(value);
+    setErrors((prev) => {
+      if (!prev.description) return prev;
+
+      const newErrors = { ...prev };
+      delete newErrors.description;
+      return newErrors;
+    });
+  };
+
   const handleAddRule = () => {
     const defaultField = allFields[0]?.key || '';
     setRules((prev) => [
@@ -297,8 +321,16 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
     }
   };
 
-  const validateRules = () => {
+  const validateForm = () => {
     const newErrors = {};
+
+    if (!name || name.trim() === '') {
+      newErrors.name = t('common.requiredField');
+    }
+
+    if (!description || description.trim() === '') {
+      newErrors.description = t('common.requiredField');
+    }
 
     rules.forEach((rule, index) => {
       if (rule.operator !== 'empty' && rule.operator !== 'not_empty') {
@@ -320,7 +352,7 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
   const handleSave = async (event) => {
     event?.preventDefault();
 
-    if (!validateRules()) {
+    if (!validateForm()) {
       return;
     }
 
@@ -447,7 +479,9 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
                   fullWidth
                   placeholder={t('campaigns.displayConditions.namePlaceholder')}
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  onChange={handleNameChange}
+                  error={!!errors.name}
+                  helperText={errors.name || ''}
                   variant="outlined"
                   size="small"
                   inputProps={{ style: { overflow: 'hidden', textOverflow: 'ellipsis', fontSize: 15 } }}
@@ -462,7 +496,9 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
                   fullWidth
                   placeholder={t('campaigns.displayConditions.descriptionPlaceholder')}
                   value={description}
-                  onChange={(e) => setDescription(e.target.value)}
+                  onChange={handleDescriptionChange}
+                  error={!!errors.description}
+                  helperText={errors.description || ''}
                   variant="outlined"
                   size="small"
                   multiline
