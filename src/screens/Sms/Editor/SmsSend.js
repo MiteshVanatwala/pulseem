@@ -406,10 +406,10 @@ const SmsSend = ({ classes, ...props }) => {
 
   useEffect(() => {
     setOtpPassed(OTPPassed);
-    if (OTPPassed === false) {
+    if (OTPPassed === false && dataSaved.fromNumber) {
       setSenderDialogOpen(true);
     }
-  }, [OTPPassed])
+  }, [OTPPassed, dataSaved.fromNumber])
 
   useEffect(() => {
     setLoader(true);
