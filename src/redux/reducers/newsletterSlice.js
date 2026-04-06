@@ -177,9 +177,14 @@ export const getSendSummary = createAsyncThunk(
   });
 
 export const sendCampaign = createAsyncThunk(
-  'email/SendCampaign', async (campaignId, thunkAPI) => {
+  'email/SendCampaign', async (payload, thunkAPI) => {
     try {
-      const response = await PulseemReactInstance.put(`email/SendCampaign/${campaignId}`);
+      // payload may be a plain campaignId (number) for backward-compat
+      // or an object { campaignId, sendToSupervisor }
+      const campaignId       = typeof payload === 'object' ? payload.campaignId       : payload;
+      const sendToSupervisor = typeof payload === 'object' ? payload.sendToSupervisor : false;
+      const qs = sendToSupervisor ? '?sendToSupervisor=true' : '';
+      const response = await PulseemReactInstance.put(`email/SendCampaign/${campaignId}${qs}`);
       return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
