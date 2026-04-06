@@ -70,9 +70,11 @@
 	"newTemplate": "+ Nowy szablon",
 	"fillVariables": "Wypełnij zmienne",
 	"reviewAndSend": "Przejrzyj i wyślij",
-	"sendDirectMessageDisclaimer": "בשליחת הודעת ווטסאפ ישירה, באחריותכם לוודא כי הנמען אכן אישר קבלת דיוור מכם",
+	"sendDirectMessageDisclaimer": "Wysyłając bezpośrednią wiadomość WhatsApp, jesteś odpowiedzialny za upewnienie się, że odbiorca wyraził zgodę na otrzymywanie wiadomości od Ciebie.",
 	"chatSentSuccess": "Wiadomość wysłana pomyślnie",
 	"invalidPhoneNumber": "Wprowadź prawidłowy numer telefonu",
 	"noTemplatesFound": "Nie znaleziono szablonów",
-	"refreshChat": "Odśwież"
+	"refreshChat": "Odśwież",
+	"clickPlaceholderHint": "Kliknij wyróżniony symbol zastępczy, aby go wypełnić.",
+	"editing": "Edytowanie"
 }
