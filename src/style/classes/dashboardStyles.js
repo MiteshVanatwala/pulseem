@@ -82,6 +82,7 @@ export const getDashboardStyle = (windowSize, isRTL, theme) => ({
         width: shortcutBoxWidth[windowSize],
         height: '100%',
         maxHeight: '730px',
+        margin: '30px auto 19px',
         marginTop: windowSize !== 'xs' ? 30 : '',
         [theme.breakpoints.down('xs')]: {
             margin: '10px 10px 10px 10px',
