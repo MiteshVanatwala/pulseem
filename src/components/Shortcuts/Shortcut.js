@@ -14,7 +14,7 @@ import { CgCloseO } from 'react-icons/cg';
 import { sitePrefix } from '../../config';
 import { PulseemFeatures } from '../../model/PulseemFields/Fields';
 
-const Shortcut = ({ classes, windowSize, t, isRTL }) => {
+const Shortcut = ({ classes, windowSize, t, isRTL, variant = 'panel' }) => {
   const { shortcuts } = useSelector(state => state.shortcuts);
   const { accountFeatures } = useSelector(state => state.common)
   const { userRoles } = useSelector(state => state.core)
@@ -310,6 +310,82 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
     );
   }
 
+  const renderHorizontalShortcutButton = (data, index) => {
+    if (loading[index]) {
+      return (
+        <Box className={classes.shortcutStripItem} key={`shortcutStripLoading${index}`}>
+          <Button className={classes.shortcutStripCard}>
+            <CircularProgress size={22} className={classes.colrPrimary} />
+          </Button>
+        </Box>
+      );
+    }
+
+    const innerRef = createRef();
+    return (
+      <Box
+        onMouseEnter={() => setActiveShortcut(`short_${data.ID}`)}
+        onMouseLeave={() => setActiveShortcut(null)}
+        key={`shortcutStripButton${index}`}
+        ref={innerRef}
+        className={classes.shortcutStripItem}
+      >
+        <Button
+          variant='contained'
+          color='primary'
+          onClick={(e) => {
+            e.preventDefault();
+            if (!['svg', 'path', 'span'].includes(e.target.nodeName.toLowerCase())) {
+              Redirect({ url: data.ShortcutUrl })
+            }
+          }}
+          classes={{
+            root: classes.shortcutStripCard,
+            label: classes.shortcutStripLabel
+          }}
+        >
+          <Box className={classes.shortcutStripTopRow}>
+            <Box className={classes.shortcutStripMeta}>
+              <Typography className={classes.shortcutStripCategory}>{t(data.CategoryName)}</Typography>
+            </Box>
+            <Box className={classes.shortcutStripActions}>
+              {!userRoles?.HideRecipients && <IconButton
+                id="editIcon"
+                style={{ opacity: activeShortcut === `short_${data.ID}` ? 1 : 0 }}
+                className={clsx('shortcutEditIcon', classes.p5)}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  handleShortcutMenuOpen(windowSize === 'xs' ? e : innerRef, data.ID, true, index);
+                }}
+              >
+                {'\uE09C'}
+              </IconButton>}
+              {userRoles?.AllowDelete && <Link
+                className={clsx('deleteShortcut', classes.p5)}
+                style={{ opacity: activeShortcut === `short_${data.ID}` ? 1 : 0 }}
+                onClick={deleteShortcut}
+              ><CgCloseO /></Link>}
+            </Box>
+          </Box>
+          <Divider className={classes.shortcutStripDivider} />
+          <Typography
+            className={classes.shortcutStripTitle}
+            component="a"
+            href={data.ShortcutUrl}
+            onClick={(e) => {
+              e.preventDefault();
+              Redirect({ url: data.ShortcutUrl })
+            }}
+          >
+            {t(data.ShortcutName)}
+          </Typography>
+        </Button>
+        {renderShortcutMenu(data.ID, true, index)}
+      </Box>
+    );
+  }
+
   const renderNewShortcutButtons = () => {
     let newShortcutButtons = [];
     for (let index = shortcuts?.length; index < 5; index++) {
@@ -331,6 +407,51 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
 
     return newShortcutButtons;
   }
+
+  const renderHorizontalNewShortcutButtons = () => {
+    let newShortcutButtons = [];
+    for (let index = shortcuts?.length; index < 5; index++) {
+      const innerRef = createRef();
+      newShortcutButtons.push(
+        <Box className={classes.shortcutStripItem} key={`emptyShortcutStripBtn${index}`} ref={innerRef}>
+          <Button
+            id="btnSelectNew"
+            color='primary'
+            classes={{
+              root: classes.shortcutStripAddCard,
+              label: classes.shortcutStripAddLabel
+            }}
+            onClick={(e) => handleShortcutMenuOpen(windowSize === 'xs' ? e : innerRef, index)}>
+            {'\uE0E4'}
+          </Button>
+          {renderShortcutMenu(index)}
+        </Box>
+      )
+    }
+
+    return newShortcutButtons;
+  }
+
+  const renderHorizontalShortcutStrip = () => {
+    return (
+      <Box className={classes.shortcutStripBox}>
+        <Box className={clsx(classes.dashBoxtitleSection, classes.shortcutStripHeader, classes.flex)}>
+          <FlagIcon className={clsx(classes.marginInlineEnd15, classes.marginInlineStart5)} />
+          <Typography className={'title'}>{t('dashboard.myShortcuts')}</Typography>
+        </Box>
+        <Typography className={classes.shortcutStripSubtitle}>{t('dashboard.addQuickButtons')}</Typography>
+        <Box className={classes.shortcutStripScroller} ref={shortcutRef}>
+          {shortcuts && shortcuts.map((item, index) => renderHorizontalShortcutButton(item, index))}
+          {renderHorizontalNewShortcutButtons()}
+        </Box>
+      </Box>
+    );
+  }
+
+  if (variant === 'horizontal') {
+    return renderHorizontalShortcutStrip();
+  }
+
   if ((shortcuts?.length > 0 && windowSize === 'xs') || windowSize !== 'xs') {
     return (
       <Box className={classes.shortcutBox}>
