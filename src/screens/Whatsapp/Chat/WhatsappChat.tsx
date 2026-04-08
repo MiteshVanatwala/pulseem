@@ -740,14 +740,14 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		fetchTotalsUnfiltered,
 	]);
 
-const onActiveUserChange = useCallback(
-    (e: SelectChangeEvent) => {
-        dispatch(setIsLoader(true));
-        setActivePhoneNumber(e.target.value?.replace(/\D/g, ''));
-        setAPIWhatsAppChatContacts(e.target.value?.replace(/\D/g, ''));
-    },
-    [setAPIWhatsAppChatContacts, dispatch],
-);
+	const onActiveUserChange = useCallback(
+		(e: SelectChangeEvent) => {
+			dispatch(setIsLoader(true));
+			setActivePhoneNumber(e.target.value?.replace(/\D/g, ''));
+			setAPIWhatsAppChatContacts(e.target.value?.replace(/\D/g, ''));
+		},
+		[setAPIWhatsAppChatContacts, dispatch],
+	);
 
 	const getStatusClass = useCallback((status: number) => {
 		switch (status) {
