@@ -34,7 +34,6 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
 
   const currentCondition = args?.currentCondition || null;
   const onRefreshConditions = args?.onRefreshConditions;
-  const isEditing = !!currentCondition?.id;
 
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
@@ -96,6 +95,49 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
 
   const allFields = useMemo(() => [...baseFields, ...extraFieldsList], [baseFields, extraFieldsList]);
 
+  const getConditionId = useCallback((condition) => {
+    if (!condition) return null;
+    return condition.id ?? condition.ID ?? null;
+  }, []);
+
+  const findMatchingCondition = useCallback((conditionsList, condition) => {
+    if (!condition || !Array.isArray(conditionsList)) return null;
+
+    const conditionId = getConditionId(condition);
+    if (conditionId !== null && conditionId !== undefined) {
+      const matchedById = conditionsList.find((item) => getConditionId(item) === conditionId);
+      if (matchedById) {
+        return matchedById;
+      }
+    }
+
+    const conditionBefore = condition.before || condition.SyntaxBefore || '';
+    const conditionAfter = condition.after || condition.SyntaxAfter || '';
+    const conditionLabel = condition.label || '';
+    const conditionName = condition.name || condition.Name || (conditionLabel ? conditionLabel.split('\n')[0] : '');
+
+    return conditionsList.find((item) => {
+      const itemLabel = item.label || '';
+      const itemName = item.name || item.Name || (itemLabel ? itemLabel.split('\n')[0] : '');
+      return (
+        (conditionBefore && item.before === conditionBefore) ||
+        (conditionAfter && item.after === conditionAfter) ||
+        (conditionLabel && itemLabel === conditionLabel) ||
+        (conditionName && itemName === conditionName)
+      );
+    }) || null;
+  }, [getConditionId]);
+
+  const resolvedCurrentCondition = useMemo(() => {
+    if (!currentCondition) return null;
+
+    const matchedCondition = findMatchingCondition(displayConditions, currentCondition);
+    return matchedCondition || currentCondition;
+  }, [currentCondition, displayConditions, findMatchingCondition]);
+
+  const currentConditionId = getConditionId(resolvedCurrentCondition);
+  const isEditing = !!resolvedCurrentCondition;
+
   const parseRulesFromSyntax = (syntaxBefore) => {
     if (!syntaxBefore) return [];
     const rules = [];
@@ -129,38 +171,39 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
   };
 
   useEffect(() => {
-    if (!initializedRef.current) {
-      let conditionToUse = currentCondition;
-
-      if (isEditing && currentCondition?.id && !currentCondition?.before) {
-        conditionToUse = displayConditions?.find(c => c.id === currentCondition.id || c.ID === currentCondition.id) || currentCondition;
-      }
-
-      if (isEditing && conditionToUse) {
-        setName((conditionToUse.label || conditionToUse.name || '').split('\n')[0]);
-        setDescription(conditionToUse.description || '');
-        const parsedRules = parseRulesFromSyntax(conditionToUse.before);
-        setRules(parsedRules.length > 0 ? parsedRules : [
-          {
-            id: 'rule-0',
-            field: allFields[0]?.key || 'FirstName',
-            operator: 'eq',
-            value: '',
-          },
-        ]);
-      } else {
-        setRules([
-          {
-            id: 'rule-0',
-            field: allFields[0]?.key || 'FirstName',
-            operator: 'eq',
-            value: '',
-          },
-        ]);
-      }
-      initializedRef.current = true;
+    if (initializedRef.current) {
+      return;
     }
-  }, []);
+
+    if (isEditing && !resolvedCurrentCondition) {
+      return;
+    }
+
+    const defaultRule = {
+      id: 'rule-0',
+      field: allFields[0]?.key || 'FirstName',
+      operator: 'eq',
+      value: '',
+    };
+
+    if (isEditing && resolvedCurrentCondition) {
+      const conditionToUse = resolvedCurrentCondition;
+      const syntaxBefore = conditionToUse.before || conditionToUse.SyntaxBefore || '';
+      const parsedRules = parseRulesFromSyntax(syntaxBefore);
+      const resolvedLabel = conditionToUse.label || '';
+      const resolvedName = conditionToUse.name || conditionToUse.Name || (resolvedLabel ? resolvedLabel.split('\n')[0] : '');
+      const resolvedDescription = conditionToUse.description || conditionToUse.Description || '';
+
+      setName(resolvedName);
+      setDescription(resolvedDescription);
+      setMatchType(/\sor\s/i.test(syntaxBefore) ? 'any' : 'all');
+      setRules(parsedRules.length > 0 ? parsedRules : [defaultRule]);
+    } else {
+      setRules([defaultRule]);
+    }
+
+    initializedRef.current = true;
+  }, [allFields, isEditing, resolvedCurrentCondition]);
 
   const operatorOptions = useMemo(
     () => [
@@ -307,15 +350,15 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
   };
 
   const handleDelete = async () => {
-    if (!isEditing || !currentCondition?.id) return;
+    if (!isEditing || !currentConditionId) return;
 
     try {
-      console.log('Delete started for condition:', currentCondition.id);
-      const deleteResult = await dispatch(deleteDisplayCondition(currentCondition.id));
+      console.log('Delete started for condition:', currentConditionId);
+      const deleteResult = await dispatch(deleteDisplayCondition(currentConditionId));
       console.log('Delete result:', deleteResult);
       console.log('Calling onRefreshConditions');
-      onRefreshConditions?.();
-      onClose();
+      await onRefreshConditions?.();
+      save({ deleted: true, id: currentConditionId });
     } catch (error) {
       console.error('Error deleting condition:', error);
     }
@@ -410,21 +453,19 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
       };
 
       if (isEditing) {
-        saveData.id = currentCondition.id;
+        saveData.id = currentConditionId;
       }
 
-      const result = await dispatch(saveDisplayCondition(saveData));
       condition.isNewCondition = !isEditing;
-      condition.id = result?.payload?.id || currentCondition?.id;
+      const result = await dispatch(saveDisplayCondition(saveData));
+      condition.id = result?.payload?.id || currentConditionId;
 
-      await dispatch(getDisplayConditions());
+      save(condition);
       onRefreshConditions?.();
+      return;
     } catch (error) {
       console.error('Error saving condition:', error);
     }
-
-    save(condition);
-    onClose();
   };
 
   const styles = getGeneralStyle('lg', false, theme);
@@ -441,6 +482,7 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
       onCancel={onClose}
       onConfirm={handleSave}
       title={isEditing ? t('campaigns.displayConditions.editDisplayCondition') : t('campaigns.displayConditions.title')}
+      confirmText={'campaigns.displayConditions.save'}
       fullWidth={false}
       showDefaultButtons={!isEditing}
       renderButtons={isEditing ? () => (

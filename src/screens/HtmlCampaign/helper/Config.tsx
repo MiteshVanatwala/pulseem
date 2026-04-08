@@ -62,6 +62,8 @@ export const BeeConfig = (Options: ConfigOptions) => {
         setIsDisplayConditionDialogOpen
     } = Options;
 
+    const getConditionId = (condition?: any) => condition?.id ?? condition?.ID ?? null;
+
     const editorLanguage = {
         'he': 'he-IL',
         'en': 'en-US',
@@ -192,9 +194,17 @@ export const BeeConfig = (Options: ConfigOptions) => {
                 `  font-weight: 600 !important;`,
                 `  color: #333 !important;`,
                 `}`,
-                // Style description - hide it
+                // Style description in the selected condition card
                 `.display-condition-description--cs {`,
-                `  display: none !important;`,
+                `  display: block !important;`,
+                `  visibility: visible !important;`,
+                `  margin-top: 6px !important;`,
+                `  font-size: 14px !important;`,
+                `  font-weight: 400 !important;`,
+                `  color: #666 !important;`,
+                `  line-height: 1.4 !important;`,
+                `  white-space: pre-line !important;`,
+                `  word-break: break-word !important;`,
                 `}`,
             ].join('\n');
             return `data:text/css;charset=utf-8,${encodeURIComponent(sidebarCss)}`;
@@ -296,7 +306,9 @@ export const BeeConfig = (Options: ConfigOptions) => {
                         );
                         setIsDisplayConditionDialogOpen?.(false);
 
-                        if (result && result.before && result.after) {
+                        if (result?.deleted) {
+                            resolve(true);
+                        } else if (result && result.before && result.after) {
                             resolve(result);
                         } else {
                             reject();
@@ -318,7 +330,9 @@ export const BeeConfig = (Options: ConfigOptions) => {
                         );
                         setIsDisplayConditionDialogOpen?.(false);
 
-                        if (result && result.before && result.after) {
+                        if (result?.deleted) {
+                            resolve(true);
+                        } else if (result && result.before && result.after) {
                             resolve(result);
                         } else {
                             reject();
@@ -329,19 +343,22 @@ export const BeeConfig = (Options: ConfigOptions) => {
                     }
                 }
             },
-            // onDeleteRowDisplayCondition: {
-            //     handler: async (resolve: Function, reject: Function, condition?: any) => {
-            //         try {
-            //             if (condition?.id) {
-            //                 await dispatch(deleteDisplayCondition(condition.id));
-            //                 await dispatch(getDisplayConditions());
-            //             }
-            //             resolve(true);
-            //         } catch (e) {
-            //             reject();
-            //         }
-            //     }
-            // },
+            onDeleteRowDisplayCondition: {
+                handler: async (resolve: Function, reject: Function, condition?: any) => {
+                    try {
+                        const conditionId = getConditionId(condition);
+
+                        if (conditionId) {
+                            await dispatch((deleteDisplayCondition as any)(conditionId));
+                            await onRefreshConditions?.();
+                        }
+
+                        resolve(true);
+                    } catch (e) {
+                        reject();
+                    }
+                }
+            },
             saveRow: {
                 handler: async (resolve: Function, reject: Function, args: any) => {
                     const results = await openModal(EditRow, args, classes);

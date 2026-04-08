@@ -713,20 +713,17 @@ const CampaignEditor = ({ classes, ...props }) => {
   }, [beeToken]);
 
   useEffect(() => {
-    if (dialog === DialogType.TEST_SEND) {
-      setLoader(false);
+    if (!editorRef.current || !displayConditions) {
+      return;
     }
-  }, [dialog]);
 
-  useEffect(() => {
-    if (editorRef.current && displayConditions && displayConditions.length > 0) {
-      const updatedConditions = (displayConditions || []).map((cond) => ({
-        ...cond,
-        id: cond.id || cond.ID || Math.random().toString(36).substr(2, 9)
-      }));
-      config.rowDisplayConditions = updatedConditions;
-      editorRef.current.loadConfig(config);
-    }
+    const updatedConditions = (displayConditions || []).map((cond) => ({
+      ...cond,
+      id: cond.id || cond.ID || Math.random().toString(36).substr(2, 9)
+    }));
+
+    config.rowDisplayConditions = updatedConditions;
+    editorRef.current.loadConfig(config);
   }, [displayConditions]);
 
   const initOptions = async () => {
@@ -1205,19 +1202,8 @@ const CampaignEditor = ({ classes, ...props }) => {
     const result = await dispatch(getDisplayConditions());
     console.log('getDisplayConditions result payload length:', result?.payload?.length);
     console.log('Condition 27 still exists:', result?.payload?.find(c => c.id === 27));
-    if (result?.payload) {
-      console.log('Updating BEE config with conditions:', result.payload);
-      const updatedConditions = (result.payload || []).map((cond) => ({
-        ...cond,
-        id: cond.id || cond.ID || Math.random().toString(36).substr(2, 9)
-      }));
-      config.rowDisplayConditions = updatedConditions;
-      if (editorRef.current) {
-        console.log('Reloading BEE config');
-        editorRef.current.loadConfig(config);
-      }
-    }
     setIsDisplayConditionDialogOpen(false);
+    return result?.payload;
   };
   const config = BeeConfig({
     classes,
