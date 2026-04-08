@@ -59,18 +59,19 @@ const SideBarContactList = ({
 	const { agentList } = useSelector((state: StateType) => state.whatsapp);
 
 	useEffect(() => {
-		// Sync updatedTags with ChatContacts to preserve tags across searches
-		const syncedTags: { [key: string]: Array<{ id: string; TagName: string; TagColor: string }> } = {};
-		ChatContacts.forEach((contact) => {
-			if (contact.Tags && contact.Tags.length > 0) {
-				syncedTags[contact.PhoneNumber] = contact.Tags.map((tag: any) => ({
-					id: String(tag.id || tag.Id || ''),
-					TagName: tag.TagName,
-					TagColor: tag.TagColor,
-				}));
-			}
+		setUpdatedTags((prev) => {
+			const next: { [key: string]: Array<{ id: string; TagName: string; TagColor: string }> } = { ...prev };
+			ChatContacts.forEach((contact) => {
+				if (next[contact.PhoneNumber] === undefined) {
+					next[contact.PhoneNumber] = (contact.Tags || []).map((tag: any) => ({
+						id: String(tag.id ?? tag.Id ?? ''),
+						TagName: tag.TagName,
+						TagColor: tag.TagColor,
+					}));
+				}
+			});
+			return next;
 		});
-		setUpdatedTags(syncedTags);
 	}, [ChatContacts]);
 
 	const handleOpenTagMenu = (
@@ -131,7 +132,11 @@ const SideBarContactList = ({
 
 		try {
 			// Get current tags - prioritize updatedTags over contact.Tags
-			const currentTags = updatedTags[targetPhone] || contact.Tags || [];
+			const currentTags = updatedTags[targetPhone] || (contact.Tags || []).map((t: any) => ({
+				id: String(t.id ?? t.Id ?? ''),
+				TagName: t.TagName,
+				TagColor: t.TagColor,
+			}));
 			const currentTagIds = currentTags
 				.map((t) => {
 					const id = parseInt(t.id);
