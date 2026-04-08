@@ -364,10 +364,10 @@ const StartNewChatModal = ({
 	);
 
 	const renderPhoneStep = () => (
-		<Box>
+		<Box style={{ direction: isRTL ? 'rtl' : 'ltr' }}>
 			<Typography
 				variant="body2"
-				style={{ marginBottom: '12px', fontWeight: 600 }}>
+				style={{ marginBottom: '12px', fontWeight: 600, textAlign: isRTL ? 'right' : 'left' }}>
 				{translator('whatsappChat.enterPhoneNumber')}
 			</Typography>
 			<TextField
@@ -380,20 +380,21 @@ const StartNewChatModal = ({
 				onChange={(e) => handleNumberChange(e.target.value)}
 				error={!!phoneError}
 				helperText={phoneError}
-				inputProps={{ inputMode: 'numeric', maxLength: 16 }}
+				inputProps={{ inputMode: 'numeric', maxLength: 16, style: { textAlign: isRTL ? 'right' : 'left' } }}
 			/>
 		</Box>
 	);
 
 	// ── Approved Templates tab ────────────────────────────────────────────────
 	const renderTemplatesTab = () => (
-		<Box>
+		<Box style={{ direction: isRTL ? 'rtl' : 'ltr' }}>
 			<Box
 				style={{
 					display: 'flex',
 					justifyContent: 'space-between',
 					alignItems: 'center',
 					marginBottom: '8px',
+					flexDirection: isRTL ? 'row-reverse' : 'row',
 				}}>
 				<TextField
 					className={classes.startNewChatSearchField}
@@ -403,7 +404,8 @@ const StartNewChatModal = ({
 					placeholder={translator('whatsappChat.searchTemplates')}
 					value={templateSearch}
 					onChange={(e) => setTemplateSearch(e.target.value)}
-					style={{ marginRight: '8px' }}
+					style={{ marginRight: isRTL ? '0' : '8px', marginLeft: isRTL ? '8px' : '0' }}
+					inputProps={{ style: { textAlign: isRTL ? 'right' : 'left' } }}
 				/>
 				<Button
 					className={classes.startNewChatNewTemplateButton}
@@ -439,8 +441,9 @@ const StartNewChatModal = ({
 									padding: '10px 12px',
 									borderBottom: '1px solid #f0f0f0',
 									gap: '8px',
+									flexDirection: isRTL ? 'row-reverse' : 'row',
 								}}>
-								<Box style={{ flex: 1, minWidth: 0 }}>
+								<Box style={{ flex: 1, minWidth: 0, textAlign: isRTL ? 'right' : 'left' }}>
 									<Typography variant="body2" style={{ fontWeight: 600 }}>
 										{getTemplateName(template)}
 									</Typography>
@@ -482,10 +485,11 @@ const StartNewChatModal = ({
 					borderTop: '1px solid #f0f0f0',
 					paddingTop: '12px',
 					marginTop: '4px',
+					direction: isRTL ? 'rtl' : 'ltr',
 				}}>
 				<Typography
 					variant="caption"
-					style={{ color: '#888', display: 'block', marginBottom: '8px' }}>
+					style={{ color: '#888', display: 'block', marginBottom: '8px', textAlign: isRTL ? 'right' : 'left' }}>
 					{`${translator('whatsappChat.editing')} ${varKey}`}
 				</Typography>
 
@@ -574,11 +578,11 @@ const StartNewChatModal = ({
 		const parts = bodyText.split(/({{[0-9]+}})/g);
 
 		return (
-			<Box>
+			<Box style={{ direction: isRTL ? 'rtl' : 'ltr' }}>
 				{/* Hint */}
 				<Typography
 					variant="caption"
-					style={{ color: '#888', display: 'block', marginBottom: '6px' }}>
+					style={{ color: '#888', display: 'block', marginBottom: '6px', textAlign: isRTL ? 'right' : 'left' }}>
 					{translator('whatsappChat.clickPlaceholderHint') ||
 						'Click a highlighted placeholder to fill it in.'}
 				</Typography>
@@ -594,6 +598,7 @@ const StartNewChatModal = ({
 						fontSize: '14px',
 						whiteSpace: 'pre-wrap',
 						wordBreak: 'break-word',
+						textAlign: isRTL ? 'right' : 'left',
 					}}>
 					{parts.map((part, i) => {
 						if (/^{{[0-9]+}}$/.test(part)) {
@@ -654,13 +659,15 @@ const StartNewChatModal = ({
 	};
 
 	const renderReviewStep = () => (
-		<Box>
+		<Box style={{ direction: isRTL ? 'rtl' : 'ltr' }}>
 			<Typography
 				variant="body2"
-				style={{ marginBottom: '8px', fontWeight: 600 }}>
+				style={{ marginBottom: '8px', fontWeight: 600, textAlign: isRTL ? 'right' : 'left' }}>
 				{translator('whatsappChat.reviewAndSend')}
 			</Typography>
-			<Box className={classes.startNewChatPreviewBox}>
+			<Box
+				className={classes.startNewChatPreviewBox}
+				style={{ textAlign: isRTL ? 'right' : 'left' }}>
 				{buildInterpolatedText()}
 			</Box>
 			<Box
@@ -685,7 +692,7 @@ const StartNewChatModal = ({
 	};
 
 	const renderActions = () => (
-		<DialogActions className={classes.startNewChatDialogActions}>
+		<DialogActions className={classes.startNewChatDialogActions} style={{ flexDirection: isRTL ? 'row-reverse' : 'row' }}>
 			{/* Back / Previous variable */}
 			<Box>
 				{step === 'template' && (
@@ -765,7 +772,8 @@ const StartNewChatModal = ({
 		<Dialog open={open} onClose={handleModalClose} maxWidth="sm" fullWidth>
 			<DialogTitle
 				disableTypography
-				className={classes.startNewChatDialogTitle}>
+				className={classes.startNewChatDialogTitle}
+				style={{ flexDirection: isRTL ? 'row-reverse' : 'row' }}>
 				<span>{translator('whatsappChat.startNewChat')}</span>
 				<IconButton
 					onClick={handleModalClose}
