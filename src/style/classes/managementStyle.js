@@ -1705,11 +1705,11 @@ export const getManagmentStyle = (windowSize, isRTL, theme, IsPoland = false) =>
       marginInlineEnd: 0,
     },
   },
-  tipMargin: {
-    [theme.breakpoints.up("lg")]: {
-      marginInlineEnd: 0,
-    },
-  },
+  // tipMargin: {
+  //   [theme.breakpoints.up("lg")]: {
+  //     marginInlineEnd: 0,
+  //   },
+  // },
   tipItem: {
     padding: "0 30px 20px 30px",
   },
