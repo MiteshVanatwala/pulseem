@@ -1,8 +1,10 @@
 import {
 	Box,
 	Button,
+	FormControl,
 	FormControlLabel,
 	Grid,
+	Select,
 	Table,
 	TableBody,
 	TableCell,
@@ -66,6 +68,7 @@ import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
 import TierPlans from '../../../components/TierPlans/TierPlans';
 import { get } from 'lodash';
+import { IoIosArrowDown } from 'react-icons/io';
 
 const WhatsappReports = ({ classes }: ClassesType) => {
 	const { t: translator } = useTranslation();
@@ -87,6 +90,8 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 	const [hasRevenue, setHasRevenue] = useState<boolean>(false);
 	const [totalRecord, setTotalRecord] = useState<number>(0);
 	const [includeTestCampaigns, setIncludeTestCampaigns] = useState(false)
+	const [selectedNumber, setSelectedNumber] = useState<string>('');
+	const [phoneNumbers, setPhoneNumbers] = useState<string[]>([]);
 	const [showTierPlans, setShowTierPlans] = useState(false);
 	const [isFromDatePickerOpen, setIsFromDatePickerOpen] =
 		useState<boolean>(false);
@@ -173,6 +178,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 				phoneNumberData?.Data &&
 				phoneNumberData?.Data?.length > 0
 			) {
+				setPhoneNumbers(phoneNumberData.Data);
 				setApiReportData(
 					rowsPerPage
 						? { ...paginationSetting, pageSize: Number(rowsPerPage) }
@@ -235,6 +241,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 		handleToDate(null);
 		setSearching(false);
 		setIncludeTestCampaigns(false);
+		setSelectedNumber('');
 
 		const updatedPagination: AllReportReq = {
 			...paginationSetting,
@@ -242,7 +249,8 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 			campaignName: '',
 			fromDate: null,
 			toDate: null,
-			IsTestCampaign: false
+			IsTestCampaign: false,
+			fromNumber: '',
 		};
 		setPaginationSetting(updatedPagination);
 		setApiReportData(updatedPagination);
@@ -297,6 +305,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 			fromDate: fromDate || null,
 			toDate: toDate || null,
 			IsTestCampaign: includeTestCampaigns,
+			fromNumber: selectedNumber || '',
 		};
 		setPaginationSetting(updatedPagination);
 		setApiReportData(updatedPagination);
@@ -645,7 +654,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 
 	const renderManagmentLine = () => {
 		return (
-			<Grid container spacing={2} className={clsx(classes.linePadding, classes.pb10)}>
+			<Grid container alignItems='center' spacing={2} className={clsx(classes.linePadding, classes.pb10)}>
 				{
 					userRoles?.AllowExport && windowSize !== 'xs' && (
 						<Grid item>
@@ -662,7 +671,54 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 					)
 				}
 
-				<Grid item className={classes.groupsLableContainer} >
+				{/* Phone number filter */}
+				{phoneNumbers.length > 0 && (
+					<Grid item style={{ minWidth: 200 }}>
+						<Box className='selectWrapper'>
+							<Typography
+								title={translator('common.filterByNumber')}
+								className={classes.alignDir}
+								variant='subtitle1'
+							>
+								<b>{translator('common.filterByNumber')}</b>
+							</Typography>
+							<FormControl className={clsx(classes.selectInputFormControl, classes.w100)}>
+								<Select
+									native
+									variant="standard"
+									value={selectedNumber}
+									className={clsx(classes.pbt5, classes.w100)}
+									inputProps={{
+										style: { paddingInlineStart: 0, fontWeight: 500 }
+									}}
+									onChange={(e) => {
+										const num = e.target.value as string;
+										setSelectedNumber(num);
+									}}
+									IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+									MenuProps={{
+										PaperProps: {
+											style: {
+												maxHeight: 300,
+												paddingInlineStart: 0
+											},
+										},
+									}}
+								>
+									<option key='' value='' disabled>
+										{translator('common.select')}
+									</option>
+									{phoneNumbers.map((num) => (
+										<option key={num} value={num}>
+											{num}
+										</option>
+									))}
+								</Select>
+							</FormControl>
+						</Box>
+					</Grid>
+				)}
+				<Grid item className={classes.groupsLableContainer}>
 					<Typography className={classes.groupsLable}>
 						{totalRecord || 0} {translator('whatsappReport.campaigns')}
 					</Typography>
@@ -994,7 +1050,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 	}
 
 	const renderTableBody = () => {
-		let rowData = reportListData;
+		let rowData = selectedNumber ? reportListData.filter((report) => report.FromNumber === selectedNumber) : reportListData;
 		if (rowData.length > 0) {
 			return (
 				<Box className='tableBodyContainer'>
