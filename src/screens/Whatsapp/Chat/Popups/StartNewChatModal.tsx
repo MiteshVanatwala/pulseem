@@ -349,7 +349,12 @@ const StartNewChatModal = ({
 	// ── Renderers ─────────────────────────────────────────────────────────────
 
 	const renderStepIndicator = () => (
-		<Box className={classes.startNewChatStepIndicator}>
+		<Box
+			className={classes.startNewChatStepIndicator}
+			style={{
+				direction: isRTL ? 'rtl' : 'ltr',
+				justifyContent: 'flex-start',
+			}}>
 			{Array.from({ length: STEP_COUNT }).map((_, i) => (
 				<Box
 					key={i}
@@ -692,7 +697,7 @@ const StartNewChatModal = ({
 	};
 
 	const renderActions = () => (
-		<DialogActions className={classes.startNewChatDialogActions} style={{ flexDirection: isRTL ? 'row-reverse' : 'row' }}>
+		<DialogActions className={classes.startNewChatDialogActions} style={{ direction: isRTL ? 'rtl' : 'ltr' }}>
 			{/* Back / Previous variable */}
 			<Box>
 				{step === 'template' && (
