@@ -22,5 +22,17 @@ export const WhiteLabelObject = {
     NotEnoughCredits: 'SimplyClub.notEnoughCreditLeftDesc',
     NotApprovedDesc: 'SimplyClub.englishLetterNotApprovedDescription',
     buyVerifiedDomain: 'SimplyClub.buyVerifiedDomain.text'
+  },
+  6: { // Beeper
+    Phone: '',
+    Email: 'support@beeper.ltd',
+    BillingTitle: 'Beeper.contactSupportForBilling',
+    WelcomeMesasge: 'Beeper.welcomeNewDesignDesc',
+    Contact: 'Beeper.contactSupportForBilling',
+    ContactOnError: 'Beeper.contactUs',
+    GmailVerification: 'Beeper.gmailVerificationDescription',
+    NotEnoughCredits: 'Beeper.notEnoughCreditLeftDesc',
+    NotApprovedDesc: 'Beeper.englishLetterNotApprovedDescription',
+    buyVerifiedDomain: 'Beeper.buyVerifiedDomain.text'
   }
 }
