@@ -71,7 +71,9 @@ export const getRoutes = (
   isRTL: Boolean = false,
   userRoles: any = null,
   isPolandAccount: Boolean = false
-) => [
+) => {
+  const isBeeperAccount = accountSettings?.Account?.ReferrerID === 6 || accountSettings?.Account?.ReferrerID === '6';
+  return [
     // smsOldVersion
     {
       key: "dashboard",
@@ -137,7 +139,7 @@ export const getRoutes = (
       pageTitle: t("campaigns.logPageHeaderResource1.Text"),
       iconUnicode: "\ue0a1",
       href: `${sitePrefix}Campaigns`,
-      isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount,
+      isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount && !isBeeperAccount,
       icon: <img alt="Newsletter" src={NewsletterIcon} />,
       options: [
         {
@@ -249,7 +251,7 @@ export const getRoutes = (
       pageTitle: t('whatsapp.Title'),
       iconUnicode: <MdOutlineWhatsapp />,
       href: whatsappRoutes.CAMPAIGN_MANAGEMENT,
-      isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount,
+      isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount && !isBeeperAccount,
       icon: <WhatsappIcon className='header-whatsapp-icon' />,
       options: [
         {
@@ -318,13 +320,13 @@ export const getRoutes = (
           key: "createPopup",
           title: t("landingPages.createPopup"),
           href: `${sitePrefix}Popups/Create`,
-          isShow: features && features?.indexOf(PulseemFeatures.Popup) > -1,
+          isShow: features && features?.indexOf(PulseemFeatures.Popup) > -1 && !isBeeperAccount,
         },
         {
           key: "popupManagement",
           title: t("master.RadMenuItemPopupManagement.Text"),
           href: `${sitePrefix}PopUpManagement`,
-          isShow: features && features?.indexOf(PulseemFeatures.Popup) > -1,
+          isShow: features && features?.indexOf(PulseemFeatures.Popup) > -1 && !isBeeperAccount,
         },
         {
           key: 'CreateLandingPage',
@@ -358,7 +360,7 @@ export const getRoutes = (
       pageTitle: t("automations.logPageHeaderResource1.Text"),
       iconUnicode: "\ue087",
       href: `${sitePrefix}Automations`,
-      isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount,
+      isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount && !isBeeperAccount,
       icon: <img alt="Automations" src={AutomationsIcon} />,
       options: [
         {
@@ -421,22 +423,23 @@ export const getRoutes = (
       icon: <img alt="Reports" src={ReportsIcon} />,
       options: [
         { title: t('master.clalCollage'), href: `${rootDomain}/ClalReport.aspx?fromreact=true`, isShow: (isClalAccount === 'true' || isClalAccount === true) },
-        { title: t('master.RadMenuItemResource13.Text'), href: `${sitePrefix}reports/NewsletterReports`, isShow: true },
+        { title: t('master.RadMenuItemResource13.Text'), href: `${sitePrefix}reports/NewsletterReports`, isShow: !isBeeperAccount },
         { key: 'SmsReport', title: t('master.RadMenuItemResource24.Text'), href: `${sitePrefix}reports/SMSMainReport`, isShow: true },
         // { key: 'MmsReport', title: t('mmsreport.mmsReport'), href: `${sitePrefix}Reports/MMSMainReport`, isShow: true },
-        { key: 'whatsappReports', title: t('whatsapp.ReportsWhatsapp'), href: whatsappRoutes.REPORTS, isShow: true },
+        { key: 'whatsappReports', title: t('whatsapp.ReportsWhatsapp'), href: whatsappRoutes.REPORTS, isShow: !isBeeperAccount },
         // { title: t('master.AbTestsReport.Text'), href: `${rootDomain}/AbTestsReport.aspx?fromreact=true`, isShow: true },
-        { title: t('master.RadMenuItemResource15.Text'), href: `${rootDomain}/AccountReport.aspx?fromreact=true`, isShow: true },
+        { title: t('master.RadMenuItemResource15.Text'), href: `${rootDomain}/AccountReport.aspx?fromreact=true`, isShow: !isBeeperAccount },
         { title: t('master.RadMenuItemResource16.Text'), href: `${rootDomain}/CampaignComparison.aspx?fromreact=true`, isShow: false },
         { key: 'recipientReport', title: t('master.RadMenuItemResource18.Text'), href: `${sitePrefix}Reports/Recipient`, isShow: !userRoles?.HideRecipients },
-        { title: t('master.RadMenuItemResource30.Text'), href: `${rootDomain}/EmailAutoReports.aspx?fromreact=true`, isShow: true },
-        { title: t('master.locRemovedReason.Text'), href: `${rootDomain}/RemovedStats.aspx?fromreact=true`, isShow: true },
-        { key: 'productsReport', title: t('report.ProductsReport.products'), href: `${sitePrefix}Reports/ProductsReport`, isShow: true },
-        { key: 'directSendReport', title: t('report.DirectSendReport'), href: `${sitePrefix}Reports/DirectSendReport`, isShow: accountSettings && accountSettings?.IsDirectAccount === true && !userRoles?.HideRecipients },
-        { key: 'directSendReportArchive', title: t('report.ArchiveDirectSendReport'), href: `${sitePrefix}Reports/DirectSendReport/Archive`, isShow: accountSettings && accountSettings?.IsDirectAccount === true && !userRoles?.HideRecipients },
-        { title: t('master.OpenedClickedReport'), href: `${rootDomain}/EmailCampaignStatistics.aspx?fromreact=true`, isShow: true },
+        { title: t('master.RadMenuItemResource30.Text'), href: `${rootDomain}/EmailAutoReports.aspx?fromreact=true`, isShow: !isBeeperAccount },
+        { title: t('master.locRemovedReason.Text'), href: `${rootDomain}/RemovedStats.aspx?fromreact=true`, isShow: !isBeeperAccount },
+        { key: 'productsReport', title: t('report.ProductsReport.products'), href: `${sitePrefix}Reports/ProductsReport`, isShow: !isBeeperAccount },
+        { key: 'directSendReport', title: t('report.DirectSendReport'), href: `${sitePrefix}Reports/DirectSendReport`, isShow: accountSettings && accountSettings?.IsDirectAccount === true && !userRoles?.HideRecipients && !isBeeperAccount },
+        { key: 'directSendReportArchive', title: t('report.ArchiveDirectSendReport'), href: `${sitePrefix}Reports/DirectSendReport/Archive`, isShow: accountSettings && accountSettings?.IsDirectAccount === true && !userRoles?.HideRecipients && !isBeeperAccount },
+        { title: t('master.OpenedClickedReport'), href: `${rootDomain}/EmailCampaignStatistics.aspx?fromreact=true`, isShow: !isBeeperAccount },
         { key: 'inboundMessages', title: t('master.responses'), href: `${sitePrefix}Reports/Inbound`, isShow: !userRoles?.HideRecipients },
       ],
     },
     { key: 'termOfUse', title: t('TermsOfUse.title'), href: `${sitePrefix}TermsOfUse`, iconSrc: '', isShow: false }
   ];
+}

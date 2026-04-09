@@ -14,10 +14,18 @@ import { CgCloseO } from 'react-icons/cg';
 import { sitePrefix } from '../../config';
 import { PulseemFeatures } from '../../model/PulseemFields/Fields';
 
+const BEEPER_HIDDEN_SHORTCUT_CATEGORIES = new Set([
+  'appBar.newsletter.title',
+  'appBar.whatsapp.title',
+  'appBar.automation.title',
+  'appBar.mms.title',
+]);
+
 const Shortcut = ({ classes, windowSize, t, isRTL }) => {
   const { shortcuts } = useSelector(state => state.shortcuts);
-  const { accountFeatures } = useSelector(state => state.common)
+  const { accountFeatures, accountSettings } = useSelector(state => state.common)
   const { userRoles } = useSelector(state => state.core)
+  const isBeeperAccount = accountSettings?.Account?.ReferrerID === 6 || accountSettings?.Account?.ReferrerID === '6';
   const shortcutRef = useRef();
   const [selectedCategory, setCategoryValue] = useState({});
   const [selectedPage, setPageValue] = useState({});
@@ -27,7 +35,10 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
   const [loading, setLoading] = useState({});
   const [activeShortcut, setActiveShortcut] = useState(null);
   const dispatch = useDispatch();
-  const categories = { ...DASHBOARD_SHORTCUT };
+  const allCategories = { ...DASHBOARD_SHORTCUT };
+  const categories = isBeeperAccount
+    ? Object.fromEntries(Object.entries(allCategories).filter(([key]) => !BEEPER_HIDDEN_SHORTCUT_CATEGORIES.has(key)))
+    : allCategories;
   const Redirect = useRedirect();
 
   if (accountFeatures && !accountFeatures.error && accountFeatures !== null && accountFeatures?.indexOf(PulseemFeatures.NOTIFICATION) > -1) {
