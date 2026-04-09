@@ -87,8 +87,9 @@ const DashboardScreen = ({ classes }) => {
   }
 
   const isWhiteLabel = accountSettings.Account?.ReferrerID > 0 && WhiteLabelObject[accountSettings.Account?.ReferrerID] !== undefined;
-  const isCompactDashboard = window.innerWidth <= 1700;
-  const shouldStackDashboardCards = isCompactDashboard || (isDrawerOpen && IS_MAX_WINDOW_WIDTH_WHEN_DRAWER_OPEN);
+  // const isCompactDashboard = window.innerWidth <= 1500;
+  // const shouldStackDashboardCards = isCompactDashboard || (isDrawerOpen && IS_MAX_WINDOW_WIDTH_WHEN_DRAWER_OPEN);
+  const shouldStackDashboardCards = isDrawerOpen && IS_MAX_WINDOW_WIDTH_WHEN_DRAWER_OPEN;
 
   const onIgnoreTerms = async () => {
     setShowTermsOfUse(false);
@@ -113,7 +114,8 @@ const DashboardScreen = ({ classes }) => {
       classes={classes}
       customStyle={clsx(classes.dashboard)}>
       <Grid container>
-        <Grid item xs={12} sm={12} md={12} lg={isCompactDashboard ? 12 : 9} xl={isCompactDashboard ? 12 : 10} className={clsx(classes.dashboardTop)}>
+        {/* Previous layout with shortcuts: lg={9} xl={10} */}
+        <Grid item xs={12} sm={12} md={12} lg={12} xl={12} className={clsx(classes.dashboardTop)}>
           <Grid container direction='row'>
             <Grid item xs={12} sm={12} md={12} lg={shouldStackDashboardCards ? 12 : 4} style={{ marginInlineEnd: shouldStackDashboardCards ? '30px' : '' }}>
               {<BulkStatus classes={classes} />}
@@ -121,6 +123,17 @@ const DashboardScreen = ({ classes }) => {
             </Grid>
             <Grid item xs={12} sm={12} md={12} lg={shouldStackDashboardCards ? 12 : 8} className={windowSize === "xs" ? classes.pt20 : null}>
               <RecipientChart classes={classes} />
+            </Grid>
+          </Grid>
+          <Grid container className={classes.pt20}>
+            <Grid item xs={12}>
+              <Shortcut
+                windowSize={windowSize}
+                classes={classes}
+                t={t}
+                isRTL={isRTL}
+                variant='horizontal'
+              />
             </Grid>
           </Grid>
           <Grid container direction='row' className={classes.pt20}>
@@ -142,14 +155,14 @@ const DashboardScreen = ({ classes }) => {
             </Grid>
           </Grid>
         </Grid>
-        <Grid item xs={12} sm={12} md={12} lg={isCompactDashboard ? 12 : 3} xl={isCompactDashboard ? 12 : 2} className={classes.dashboardSide}>
+        {/* <Grid item xs={12} sm={12} md={12} lg={3} xl={2} className={classes.dashboardSide}>
           <Shortcut
             windowSize={windowSize}
             classes={classes}
             t={t}
             isRTL={isRTL}
           />
-        </Grid>
+        </Grid> */}
       </Grid>
       {toastMessage && renderToast()}
       {showChangePassword && <ChangePassword

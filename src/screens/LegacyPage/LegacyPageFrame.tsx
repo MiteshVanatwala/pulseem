@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
-import { actionURL } from '../../config';
+import { actionURL, iframeURL } from '../../config';
 import DefaultScreen from '../DefaultScreen';
 import clsx from 'clsx';
 
@@ -29,19 +29,6 @@ const LegacyPageRenderer: React.FC<{ src: string; title?: string; classes?: any 
                 currentPage='reports'
                 classes={classes}
                 containerClass={clsx(classes.management, classes.mb50)}>
-                <div
-                    style={{
-                        padding: '8px 12px',
-                        fontSize: 13,
-                        background: '#fff8e1',
-                        borderBottom: '1px solid #ffe082',
-                        color: '#5d4037',
-                    }}
-                >
-                    Dev: legacy page is loaded in an iframe from another origin. If you see the
-                    login screen inside the frame, cookies are not shared from localhost — test on{' '}
-                    <code>https://clients.stage.pulseem.co.il/react/...</code>
-                </div>
                 <iframe
                     title={title}
                     src={src}
@@ -64,7 +51,7 @@ const LegacyPageRenderer: React.FC<{ src: string; title?: string; classes?: any 
  */
 const LegacyPageFrame: React.FC<LegacyPageFrameProps> = ({ path, extraQuery, classes }) => {
     const qs = extraQuery ? `&${extraQuery}` : '';
-    const src = `${actionURL}${path}?fromreact=true${qs}`;
+    const src = `${iframeURL}${path}?fromreact=true${qs}`;
     // const src = `https://www.clients.stage.pulseem.co.il/Pulseem/${path}?fromreact=true${qs}`;
 
     return <LegacyPageRenderer title={path} src={src} classes={classes} />;

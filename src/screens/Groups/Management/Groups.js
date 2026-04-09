@@ -793,7 +793,7 @@ const Groups = ({ classes }) => {
                         }
                     </Grid>
                 </TableCell>
-                <TableCell classes={cellStyle} align="center" className={clsx(classes.flex3)}>
+                <TableCell classes={cellStyle} align="center" className={clsx(classes.flex3, classes.statsCell)}>
                     <FlexGrid
                         gridArr={[
                             {
@@ -996,7 +996,7 @@ const Groups = ({ classes }) => {
                     />
                 </TableCell>
 
-                <TableCell classes={cellStyle} align="center" className={clsx(classes.flex3)}>
+                <TableCell classes={cellStyle} align="center" className={clsx(classes.flex3, classes.statsCell)}>
                     <FlexGrid
                         gridArr={[
                             {
