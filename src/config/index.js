@@ -6,7 +6,7 @@ const isProdMode = process.env.REACT_APP_MODE === "PROD";
 const actionURL = isProdMode
   ? `https://${window.location.hostname}/Pulseem/`
   : process.env.REACT_APP_ACTION_URL;
-const iframeURL = `https://${window.location.origin}/Pulseem/`;
+const iframeURL = `${window.location.origin}/Pulseem/`;
 const siteTrackingURL = process.env.REACT_APP_TRACKING_URL;
 const siteTrackingScriptUrl = process.env.REACT_APP_TRACKING_SCRIPT;
 const sitePrefix = process.env.REACT_APP_SITE_PREFIX;
