@@ -21,8 +21,6 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
     const PAYMENT_URL = 'https://pulseem.co.il/Pulseem/Home/PaymentPage';
     const [urlLocked, setUrlLoceked] = useState<boolean>(false);
 
-    console.log('FormProperties rendered - data.enableRecaptcha:', data.enableRecaptcha);
-
     const checkShortURLExist = async (event: any) => {
         const shortUrl = event.target.value.replace(/ /g, '_')
         const req = { WebFormID: data?.ID, ShortUrl: shortUrl };
