@@ -5533,7 +5533,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
   },
   displayConditionRuleRow: {
     display: 'grid',
-    gridTemplateColumns: '120px 120px 1fr 50px',
+    gridTemplateColumns: '150px 130px 180px 50px',
     gap: '8px',
     alignItems: 'flex-start',
     overflow: 'hidden',
