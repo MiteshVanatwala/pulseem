@@ -108,6 +108,22 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
   const [showTierPlans, setShowTierPlans] = useState(false);
   const [TierMessageCode, setTierMessageCode] = useState('');
 
+  const HTML_BLOCK_MIN_PLAN_ID = 3;
+
+  const hasHtmlBlock = (jsonData: string): boolean => {
+    try {
+      const parsed = JSON.parse(jsonData);
+      const rows = parsed?.page?.rows || [];
+      return rows.some((row: any) =>
+        row?.columns?.some((col: any) =>
+          col?.modules?.some((m: any) => m?.type === 'mailup-bee-newsletter-modules-html')
+        )
+      );
+    } catch {
+      return false;
+    }
+  };
+
   //#endregion State
   //#region Get Extra fields & Landing pages, after Data Ready
   const loadAccountExtraData = () => {
@@ -432,6 +448,13 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       if (saveRef.current?.showAnimation) setLoader(true);
       let finalHtml = args.HtmlData;
       let finalJson = args.JsonData;
+      
+      if (hasHtmlBlock(finalJson) && currentPlan?.Id < HTML_BLOCK_MIN_PLAN_ID) {
+        setTierMessageCode('HTML_BLOCK_TIER'); // use whatever feature code your backend/TierFeatures uses
+        setDialogType({ type: 'tier' });
+        setLoader(false);
+        return false;
+      }
 
       // Inject reCAPTCHA initialization script if enabled
       const enableRecaptcha = landingPage?.Data?.WebForm?.EnableRecaptcha || localStorage.getItem(`recaptcha_${moduleId}`) === 'true';
