@@ -978,5 +978,6 @@
   "nonPolishNumber": "Nie możesz wysłać SMS-a z numeru spoza Polski. Proszę ustawić polski numer.",
   "saveColumnStructureAsDefault": "Zapisz tę strukturę kolumn jako domyślną",
   "manageAgent": "Zarządzaj agentem",
-  "clearAllFilters": "Wyczyść wszystkie filtry"
+  "clearAllFilters": "Wyczyść wszystkie filtry",
+  "allNumbers": "Wszystkie liczby"
 }

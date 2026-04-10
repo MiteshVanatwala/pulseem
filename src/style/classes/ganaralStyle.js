@@ -278,6 +278,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     marginRight: 5,
     marginLeft: 5,
   },
+  marginSides10: {
+    marginRight: '10px !important',
+    marginLeft: '10px !important',
+  },
   copyClip: {
     border: "1px solid #3476b0",
     padding: 5,
