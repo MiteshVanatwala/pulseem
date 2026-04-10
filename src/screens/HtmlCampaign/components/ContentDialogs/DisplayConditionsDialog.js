@@ -41,6 +41,9 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
   const [rules, setRules] = useState([]);
   const [errors, setErrors] = useState({});
   const initializedRef = useRef(false);
+  const ruleIdCounter = useRef(0);
+
+  const nextRuleId = () => `rule-${++ruleIdCounter.current}`;
 
   useEffect(() => {
     if (!extraData || Object.keys(extraData).length === 0) {
@@ -103,29 +106,21 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
   const findMatchingCondition = useCallback((conditionsList, condition) => {
     if (!condition || !Array.isArray(conditionsList)) return null;
 
+    // 1st priority: match by unique id
     const conditionId = getConditionId(condition);
     if (conditionId !== null && conditionId !== undefined) {
       const matchedById = conditionsList.find((item) => getConditionId(item) === conditionId);
-      if (matchedById) {
-        return matchedById;
-      }
+      if (matchedById) return matchedById;
     }
 
+    // 2nd priority: match by unique before syntax only (after is always "{% endif %}" — not unique)
     const conditionBefore = condition.before || condition.SyntaxBefore || '';
-    const conditionAfter = condition.after || condition.SyntaxAfter || '';
-    const conditionLabel = condition.label || '';
-    const conditionName = condition.name || condition.Name || (conditionLabel ? conditionLabel.split('\n')[0] : '');
+    if (conditionBefore) {
+      const matchedByBefore = conditionsList.find((item) => (item.before || item.SyntaxBefore || '') === conditionBefore);
+      if (matchedByBefore) return matchedByBefore;
+    }
 
-    return conditionsList.find((item) => {
-      const itemLabel = item.label || '';
-      const itemName = item.name || item.Name || (itemLabel ? itemLabel.split('\n')[0] : '');
-      return (
-        (conditionBefore && item.before === conditionBefore) ||
-        (conditionAfter && item.after === conditionAfter) ||
-        (conditionLabel && itemLabel === conditionLabel) ||
-        (conditionName && itemName === conditionName)
-      );
-    }) || null;
+    return null;
   }, [getConditionId]);
 
   const resolvedCurrentCondition = useMemo(() => {
@@ -160,7 +155,7 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
       else if (rawOp === '<=') operator = 'lte';
       else operator = 'eq';
       rules.push({
-        id: `rule-${index}`,
+        id: nextRuleId(),
         field,
         operator,
         value: operator === 'empty' || operator === 'not_empty' ? '' : value
@@ -171,16 +166,16 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
   };
 
   useEffect(() => {
-    if (initializedRef.current) {
-      return;
-    }
+    if (initializedRef.current) return;
 
-    if (isEditing && !resolvedCurrentCondition) {
-      return;
-    }
+    // Wait until allFields is populated
+    if (!allFields || allFields.length === 0) return;
+
+    // In edit mode, wait until resolvedCurrentCondition is ready
+    if (currentCondition && !resolvedCurrentCondition) return;
 
     const defaultRule = {
-      id: 'rule-0',
+      id: nextRuleId(),
       field: allFields[0]?.key || 'FirstName',
       operator: 'eq',
       value: '',
@@ -203,7 +198,7 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
     }
 
     initializedRef.current = true;
-  }, [allFields, isEditing, resolvedCurrentCondition]);
+  }, [allFields, isEditing, resolvedCurrentCondition, currentCondition]);
 
   const operatorOptions = useMemo(
     () => [
@@ -298,11 +293,10 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
         r.id === id ? { ...r, [key]: value } : r
       )
     );
-    // Clear error for this field when user starts typing
     if (key === 'value') {
       setErrors((prev) => {
         const newErrors = { ...prev };
-        delete newErrors[`rule-${rules.findIndex(r => r.id === id)}-value`];
+        delete newErrors[`${id}-value`];
         return newErrors;
       });
     }
@@ -337,7 +331,7 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
     setRules((prev) => [
       ...prev,
       {
-        id: `rule-${prev.length}`,
+        id: nextRuleId(),
         field: defaultField,
         operator: 'eq',
         value: '',
@@ -375,14 +369,14 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
       newErrors.description = t('common.requiredField');
     }
 
-    rules.forEach((rule, index) => {
+    rules.forEach((rule) => {
       if (rule.operator !== 'empty' && rule.operator !== 'not_empty') {
         if (!rule.value || rule.value.trim() === '') {
-          newErrors[`rule-${index}-value`] = t('campaigns.displayConditions.valueRequired')
+          newErrors[`${rule.id}-value`] = t('campaigns.displayConditions.valueRequired');
         } else if (isDateField(rule.field)) {
           const parsedDate = moment(rule.value, 'DD/MM/YYYY', true);
           if (!parsedDate.isValid()) {
-            newErrors[`rule-${index}-value`] = t('campaigns.displayConditions.invalidDate') || 'Invalid date';
+            newErrors[`${rule.id}-value`] = t('campaigns.displayConditions.invalidDate') || 'Invalid date';
           }
         }
       }
@@ -577,7 +571,12 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
                 {rules.map((rule, index) => (
                   <Box key={rule.id} style={styles.displayConditionRuleRow}>
                     <FormControl variant="outlined" size="small">
-                      <Select value={rule.field} onChange={(e) => handleRuleChange(rule.id, 'field', e.target.value)}>
+                      <Select
+                        value={rule.field}
+                        onChange={(e) => handleRuleChange(rule.id, 'field', e.target.value)}
+                        MenuProps={{ PaperProps: { style: { minWidth: 200 } } }}
+                        SelectDisplayProps={{ title: getFieldLabel(rule.field) }}
+                      >
                         {allFields.map((field) => (
                           <MenuItem key={field.key} value={field.key} style={{ width: '100%', fontSize: 15 }}>
                             {field.label}
@@ -606,7 +605,7 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
                             format="DD/MM/YYYY"
                             value={rule.value ? moment(rule.value, 'DD/MM/YYYY') : null}
                             onChange={(date) => handleRuleChange(rule.id, 'value', date ? moment(date).format('DD/MM/YYYY') : '')}
-                            error={!!errors[`rule-${rules.findIndex(r => r.id === rule.id)}-value`]}
+                            error={!!errors[`${rule.id}-value`]}
                             style={{
                               ...styles.displayConditionTextFieldStyle,
                               padding: 0
@@ -627,14 +626,14 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
                             size="small"
                             value={rule.value}
                             onChange={(e) => handleRuleChange(rule.id, 'value', e.target.value)}
-                            error={!!errors[`rule-${rules.findIndex(r => r.id === rule.id)}-value`]}
+                            error={!!errors[`${rule.id}-value`]}
                             style={styles.displayConditionTextFieldStyle}
                             inputProps={{ style: { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 15 } }}
                           />
                         )}
-                        {errors[`rule-${rules.findIndex(r => r.id === rule.id)}-value`] && (
+                        {errors[`${rule.id}-value`] && (
                           <Typography variant="caption" style={{ color: 'red', fontSize: 15, marginTop: 4 }}>
-                            {errors[`rule-${rules.findIndex(r => r.id === rule.id)}-value`]}
+                            {errors[`${rule.id}-value`]}
                           </Typography>
                         )}
                       </Box>

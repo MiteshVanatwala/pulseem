@@ -714,8 +714,8 @@
       "notEmpty": "אינו ריק",
       "greaterThan": "גדול מ",
       "lessThan": "קטן מ",
-      "greaterThanOrEqual": "גדול מאו שווה ל",
-      "lessThanOrEqual": "קטן מאו שווה ל"
+      "greaterThanOrEqual": "גדול מ או שווה ל",
+      "lessThanOrEqual": "קטן מ או שווה ל"
     },
     "value": "ערך",
     "conditionList": "רשימת התנאים:",
