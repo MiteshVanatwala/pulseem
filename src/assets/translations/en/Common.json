@@ -992,5 +992,6 @@
   "clearAllFilters": "Clear all filters",
   "field": "Field",
   "operator": "Operator",
-  "value": "Value"
+  "value": "Value",
+  "allNumbers": "All Numbers"
 }

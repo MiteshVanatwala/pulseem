@@ -214,15 +214,29 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 		if (
 			(fromDate && moment(fromDate).format('DD/MM/YYYY')?.length > 0) ||
 			(toDate && moment(toDate).format('DD/MM/YYYY')?.length > 0) ||
-			campaignNameSearch?.length > 0
+			campaignNameSearch?.length > 0 ||
+			selectedNumber?.length > 0
 		) {
 			setSearching(true);
+		} else {
+			setSearching(false);
 		}
-	}, [fromDate, toDate, campaignNameSearch]);
+	}, [fromDate, toDate, campaignNameSearch, selectedNumber]);
 
 	useEffect(() => {
-		onSearch();
-	}, [includeTestCampaigns])
+		const updatedPagination: AllReportReq = {
+			...paginationSetting,
+			pageNo: 1,
+			campaignName: campaignNameSearch || '',
+			fromDate: fromDate || null,
+			toDate: toDate || null,
+			IsTestCampaign: includeTestCampaigns,
+			fromNumber: selectedNumber || '',
+		};
+		setPaginationSetting(updatedPagination);
+		setApiReportData(updatedPagination);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [includeTestCampaigns]);
 
 	const handleFromDateChange = (value: MaterialUiPickersDate | null) => {
 		if (toDate && value && value > toDate) {
@@ -539,8 +553,8 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 
 	const renderSearchSection = () => {
 		return (
-			<Grid container spacing={2} className={clsx(SizeOptions_XS_SM.indexOf(windowSize) > -1 ? classes.mt15 : classes.lineTopMarging, 'searchLine')}>
-				<Grid item>
+			<Grid spacing={windowSize !== 'lg' && windowSize !== 'xl' ? 2 : 1 } container className={clsx(SizeOptions_XS_SM.indexOf(windowSize) > -1 ? classes.mt15 : classes.lineTopMarging, 'searchLine')}>
+				<Grid item className={classes.marginSides10}>
 					<TextField
 						variant='outlined'
 						size='small'
@@ -557,7 +571,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 				</Grid>
 
 				{windowSize !== 'xs' && (
-					<Grid item>
+					<Grid item className={classes.marginSides10}>
 						<KeyboardDatePicker
 							inputVariant='outlined'
 							className={clsx(classes.textField)}
@@ -580,7 +594,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 				)}
 
 				{windowSize !== 'xs' && (
-					<Grid item>
+					<Grid item className={classes.marginSides10}>
 						<KeyboardDatePicker
 							inputVariant='outlined'
 							className={clsx(classes.textField)}
@@ -603,7 +617,65 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 					</Grid>
 				)}
 
-				<Grid item style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+				{/* Phone number filter */}
+				{phoneNumbers.length > 0 && (
+					<Grid item xs={12} className={classes.marginSides10} sm='auto'>
+						<Box className='selectWrapper'>
+							{/* <Typography
+								title={translator('common.filterByNumber')}
+								className={classes.alignDir}
+								style={{ fontWeight: 600 }}
+							>
+								{translator('common.filterByNumber')}
+							</Typography> */}
+							<FormControl className={classes.selectInputFormControl}>
+								<Select
+									native
+									variant="standard"
+									value={selectedNumber}
+									style={{ minWidth: 120, maxWidth: 140 }}
+									inputProps={{
+										style: { paddingInlineStart: 5 }
+									}}
+									onChange={(e) => {
+										const num = e.target.value as string;
+										setSelectedNumber(num);
+										const updatedPagination: AllReportReq = {
+											...paginationSetting,
+											pageNo: 1,
+											campaignName: campaignNameSearch || '',
+											fromDate: fromDate || null,
+											toDate: toDate || null,
+											IsTestCampaign: includeTestCampaigns,
+											fromNumber: num,
+										};
+										setPaginationSetting(updatedPagination);
+										setApiReportData(updatedPagination);
+									}}
+									IconComponent={() => <IoIosArrowDown size={16} className={classes.dropdownIconComponent} />}
+									MenuProps={{
+										PaperProps: {
+											style: {
+												maxHeight: 300,
+											},
+										},
+									}}
+								>
+									<option key='' value=''>
+										{translator('common.allNumbers')}
+									</option>
+									{phoneNumbers.map((num) => (
+										<option key={num} value={num}>
+											{num}
+										</option>
+									))}
+								</Select>
+							</FormControl>
+						</Box>
+					</Grid>
+				)}
+
+				<Grid className={classes.marginSides10} item style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
 					<FormControlLabel
 						control={
 							<PulseemSwitch
@@ -625,7 +697,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 					/>
 				</Grid>
 
-				<Grid item>
+				<Grid item className={classes.marginSides10}>
 					<Button
 						size='large'
 						variant='contained'
@@ -636,7 +708,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 					</Button>
 				</Grid>
 				{isSearching && (
-					<Grid item>
+					<Grid item className={classes.marginSides10}>
 						<Button
 							size='large'
 							variant='contained'
@@ -670,54 +742,6 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 						</Grid>
 					)
 				}
-
-				{/* Phone number filter */}
-				{phoneNumbers.length > 0 && (
-					<Grid item style={{ minWidth: 200 }}>
-						<Box className='selectWrapper'>
-							<Typography
-								title={translator('common.filterByNumber')}
-								className={classes.alignDir}
-								variant='subtitle1'
-							>
-								<b>{translator('common.filterByNumber')}</b>
-							</Typography>
-							<FormControl className={clsx(classes.selectInputFormControl, classes.w100)}>
-								<Select
-									native
-									variant="standard"
-									value={selectedNumber}
-									className={clsx(classes.pbt5, classes.w100)}
-									inputProps={{
-										style: { paddingInlineStart: 0, fontWeight: 500 }
-									}}
-									onChange={(e) => {
-										const num = e.target.value as string;
-										setSelectedNumber(num);
-									}}
-									IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
-									MenuProps={{
-										PaperProps: {
-											style: {
-												maxHeight: 300,
-												paddingInlineStart: 0
-											},
-										},
-									}}
-								>
-									<option key='' value='' disabled>
-										{translator('common.select')}
-									</option>
-									{phoneNumbers.map((num) => (
-										<option key={num} value={num}>
-											{num}
-										</option>
-									))}
-								</Select>
-							</FormControl>
-						</Box>
-					</Grid>
-				)}
 				<Grid item className={classes.groupsLableContainer}>
 					<Typography className={classes.groupsLable}>
 						{totalRecord || 0} {translator('whatsappReport.campaigns')}
@@ -1050,7 +1074,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 	}
 
 	const renderTableBody = () => {
-		let rowData = selectedNumber ? reportListData.filter((report) => report.FromNumber === selectedNumber) : reportListData;
+		let rowData = reportListData;
 		if (rowData.length > 0) {
 			return (
 				<Box className='tableBodyContainer'>
