@@ -437,19 +437,19 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
         component={transferUrl('/Pulseem/AbTestsReport.aspx')}
       /> */}
       <Route
-        path={`/AccountReport`}
+        path={`${sitePrefix}AccountReport`}
         element={<LegacyPageFrame path="AccountReport.aspx" classes={classes} />}
       />
       <Route
-        path={`/EmailAutoReports`}
+        path={`${sitePrefix}EmailAutoReports`}
         element={<LegacyPageFrame path="EmailAutoReports.aspx" classes={classes} />}
       />
       <Route
-        path={`/RemovedStats`}
+        path={`${sitePrefix}RemovedStats`}
         element={<LegacyPageFrame path="RemovedStats.aspx" classes={classes} />}
       />
       <Route
-        path={`/DirectEmailReport`}
+        path={`${sitePrefix}DirectEmailReport`}
         element={<LegacyPageFrame path="DirectEmailReport.aspx" classes={classes} />}
       />
       {!userRoles?.HideRecipients && <Route
@@ -477,7 +477,7 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
         element={<AutomationManagment classes={classes} />}
       />
       <Route
-        path={`/CreateAutomations`}
+        path={`${sitePrefix}CreateAutomations`}
         element={<LegacyPageFrame path="CreateAutomations.aspx" classes={classes} />}
       />
       <Route
@@ -530,7 +530,7 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
         element={<BillingSettingsPage classes={classes} />}
       />}
       <Route
-        path={`/AccountBilling`}
+        path={`${sitePrefix}AccountBilling`}
         element={<LegacyPageFrame path="AccountBilling.aspx" classes={classes} />}
       />
       {userRoles === UserRoles.Admin && <Route
@@ -539,11 +539,11 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
         element={<AccountUsers classes={classes} />}
       />}
       {userRoles === UserRoles.Admin && <Route
-        path={`/AccountUsersReport`}
+        path={`${sitePrefix}AccountUsersReport`}
         element={<LegacyPageFrame path="AccountUsersReport.aspx" classes={classes} />}
       />}
       <Route
-        path={`/ExtraFieldsDefinition`}
+        path={`${sitePrefix}ExtraFieldsDefinition`}
         element={<LegacyPageFrame path="ExtraFieldsDefinition.aspx" classes={classes} />}
       />
       {userRoles?.AllowSend && <Route

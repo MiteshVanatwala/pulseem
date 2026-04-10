@@ -165,7 +165,7 @@ export const DASHBOARD_SHORTCUT = {
       // },
       {
         title: 'master.RadMenuItemResource15.Text',
-        link: '/AccountReport'
+        link: `${sitePrefix}AccountReport`
       },
       {
         title: 'master.RadMenuItemResource18.Text',
@@ -173,11 +173,11 @@ export const DASHBOARD_SHORTCUT = {
       },
       {
         title: 'master.RadMenuItemResource30.Text',
-        link: '/EmailAutoReports'
+        link: `${sitePrefix}EmailAutoReports`
       },
       {
         title: 'dashboard.unsubscribeReports',
-        link: '/RemovedStats'
+        link: `${sitePrefix}RemovedStats`
       },
       {
         title: 'master.DirectReportsResource1.Text',
@@ -199,7 +199,7 @@ export const DASHBOARD_SHORTCUT = {
     pages: [
       {
         title: 'automations.createResource.Text',
-        link: '/CreateAutomations'
+        link: `${sitePrefix}CreateAutomations`
       },
       {
         title: 'dashboard.automationManagement',
