@@ -205,8 +205,8 @@ const NewslettersReport = ({ classes }) => {
     },
     RemoveReasons: {
       title: t("mainReport.locRemovedReason.HeaderText"),
-      href: `/Pulseem/RemovedStats.aspx?CampaignID=${id}&fromreact=true`,
-      onClick: () => !userRoles?.HideRecipients && navigate(`/Pulseem/RemovedStats.aspx?CampaignID=${id}&fromreact=true`),
+      href: `${sitePrefix}RemovedStats?CampaignID=${id}`,
+      onClick: () => !userRoles?.HideRecipients && navigate(`${sitePrefix}RemovedStats?CampaignID=${id}`),
       icon: '\uE15D'
     },
     Revenue: {

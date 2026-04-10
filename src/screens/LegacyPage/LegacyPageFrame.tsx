@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useParams, useLocation } from 'react-router-dom';
-import { actionURL, iframeURL } from '../../config';
+import { iframeURL } from '../../config';
 import DefaultScreen from '../DefaultScreen';
 import clsx from 'clsx';
 
@@ -21,7 +21,6 @@ const isLocalHost = () => {
 };
 
 const LegacyPageRenderer: React.FC<{ src: string; title?: string; classes?: any }> = ({ src, title, classes }) => {
-    console.log("src", src)
     return (
         <>
             <DefaultScreen
@@ -50,7 +49,12 @@ const LegacyPageRenderer: React.FC<{ src: string; title?: string; classes?: any 
  * in both local development (REACT_APP_ACTION_URL) and production.
  */
 const LegacyPageFrame: React.FC<LegacyPageFrameProps> = ({ path, extraQuery, classes }) => {
-    const qs = extraQuery ? `&${extraQuery}` : '';
+    const { search } = useLocation();
+    const params = new URLSearchParams(search);
+    params.delete('fromreact');
+    const fromLocation = params.toString();
+    const extra = [extraQuery, fromLocation].filter(Boolean).join('&');
+    const qs = extra ? `&${extra}` : '';
     const src = `${iframeURL}${path}?fromreact=true${qs}`;
     // const src = `https://www.clients.stage.pulseem.co.il/Pulseem/${path}?fromreact=true${qs}`;
 
@@ -69,7 +73,7 @@ export const LegacyPageWild: React.FC = () => {
     const params = new URLSearchParams(search);
     params.delete('fromreact');
     const extra = params.toString();
-    const src = `${actionURL}${aspxPage}?fromreact=true${extra ? `&${extra}` : ''}`;
+    const src = `${iframeURL}${aspxPage}?fromreact=true${extra ? `&${extra}` : ''}`;
     // const src = `https://www.clients.stage.pulseem.co.il/Pulseem/${aspxPage}?fromreact=true${extra ? `&${extra}` : ''}`;
 
     return <LegacyPageRenderer title={aspxPage} src={src} />;
