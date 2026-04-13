@@ -392,7 +392,7 @@ export const TopAppBar = ({ classes, currentPage = '', showAppBar = true }) => {
               Redirect({ url: routes[0].href })
             }}
             // className={clsx(classes.pulseemAppBarLogo, isRTL ? 'logoRTL' : 'logoLTR')}
-            className={clsx(accountSettings?.SubAccountSettings?.IsTokenAccount ? classes.tokenAppBarLogo : classes.pulseemAppBarLogo, 'logo')}
+            className={clsx(accountSettings?.SubAccountSettings?.IsTokenAccount ? classes.tokenAppBarLogo : (accountSettings?.Account?.ReferrerID === 6 || accountSettings?.Account?.ReferrerID === '6') ? classes.beeperAppBarLogo : classes.pulseemAppBarLogo, 'logo')}
           >
             {imageURL !== '' ? (<Box
               component='img'
