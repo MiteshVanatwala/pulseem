@@ -1,4 +1,4 @@
-import clsx from 'clsx';
+﻿import clsx from 'clsx';
 import { debounce, get } from 'lodash';
 import BeePlugin from '@mailupinc/bee-plugin'
 import { Box, Button, Grid, Typography, Tooltip, LinearProgress, makeStyles } from '@material-ui/core'
@@ -723,7 +723,8 @@ const CampaignEditor = ({ classes, ...props }) => {
 
     const updatedConditions = (displayConditions || []).map((cond) => ({
       ...cond,
-      id: cond.id || cond.ID || Math.random().toString(36).substr(2, 9)
+      id: cond.id || cond.ID || Math.random().toString(36).substr(2, 9),
+        type: isRTL ? 'תנאים' : 'Conditions'
     }));
 
     config.rowDisplayConditions = updatedConditions;

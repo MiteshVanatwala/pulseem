@@ -83,13 +83,15 @@ export const BeeConfig = (Options: ConfigOptions) => {
 
     const conditionsWithIds = (displayConditions || []).map((cond: any) => ({
         ...cond,
-        id: cond.id || cond.ID || Math.random().toString(36).substr(2, 9)
+        id: cond.id || cond.ID || Math.random().toString(36).substr(2, 9),
+        type: IsRTL ? 'תנאים' : 'Conditions'
     }));
 
     return {
         uid: 'f7768f7b-06af-4ada-bbd3-18a237524c31', //needed for identify resources of the that user and billing stuff
         container: 'bee-plugin-container', //Identifies the id of div element that contains BEE Plugin
         language: editorLanguage[languageCode], //Options.IsRTL ? 'he-IL' : 'en-US',
+        translations: IsRTL ? TRANSLATE_HEBREW : TRANSLATE_ENGLISH,
         customCss: (() => {
             const sidebarCss = [
                 `@import url('https://pulseem.co.il/pulseem/css/beefreeRtlFixes.css');`,
@@ -188,6 +190,8 @@ export const BeeConfig = (Options: ConfigOptions) => {
                 `  line-height: 1.5 !important;`,
                 `  word-break: break-word !important;`,
                 `  white-space: pre-line !important;`,
+                `  direction: ${IsRTL ? 'rtl' : 'ltr'} !important;`,
+                `  text-align: ${IsRTL ? 'right' : 'left'} !important;`,
                 `}`,
                 `.display-condition-label--cs::first-line {`,
                 `  font-size: 16px !important;`,
@@ -205,7 +209,29 @@ export const BeeConfig = (Options: ConfigOptions) => {
                 `  line-height: 1.4 !important;`,
                 `  white-space: pre-line !important;`,
                 `  word-break: break-word !important;`,
+                `  direction: ${IsRTL ? 'rtl' : 'ltr'} !important;`,
+                `  text-align: ${IsRTL ? 'right' : 'left'} !important;`,
                 `}`,
+                // RTL fixes for the condition selector modal
+                ...(IsRTL ? [
+                `[class*="RowDisplayConditionSelector"],`,
+                `[class*="row-display-condition-selector"],`,
+                `[class*="DisplayConditionSelector"],`,
+                `[class*="ConditionSelector"] {`,
+                `  direction: rtl !important;`,
+                `}`,
+                `[class*="RowDisplayConditionSelector"] *,`,
+                `[class*="row-display-condition-selector"] *,`,
+                `[class*="DisplayConditionSelector"] *,`,
+                `[class*="ConditionSelector"] * {`,
+                `  direction: rtl !important;`,
+                `  text-align: right !important;`,
+                `}`,
+                `[class*="RowDisplayConditionSelector"] input,`,
+                `[class*="DisplayConditionSelector"] input {`,
+                `  text-align: right !important;`,
+                `}`,
+                ] : []),
             ].join('\n');
             return `data:text/css;charset=utf-8,${encodeURIComponent(sidebarCss)}`;
         })(),

@@ -1,4 +1,4 @@
-{
+﻿{
   "AjaxManagerResource1": {
     "ToolTip": ""
   },
@@ -714,7 +714,9 @@
       "greaterThan": "גדול מ",
       "lessThan": "קטן מ",
       "greaterThanOrEqual": "גדול מ או שווה ל",
-      "lessThanOrEqual": "קטן מ או שווה ל"
+      "lessThanOrEqual": "קטן מ או שווה ל",
+        "and": "וגם",
+        "or": "או"
     },
     "value": "ערך",
     "conditionList": "רשימת התנאים:",
