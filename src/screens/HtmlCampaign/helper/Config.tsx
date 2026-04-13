@@ -242,11 +242,6 @@ export const BeeConfig = (Options: ConfigOptions) => {
         sidebarPosition: IsRTL ? 'right' : 'left',
         loadingSpinnerTheme: 'light',
         saveRows: true,
-        translations: {
-            "bee-newsletter-modules-html": {
-                "widget-warning-desc": t('campaigns.htmlDocTypeNotAllowedWarning'),
-            }
-        },
         rowDisplayConditions: conditionsWithIds,
         rowsConfiguration: {
             emptyRows: true,
@@ -519,6 +514,9 @@ export const DefaultContent = (IsRTL: Boolean, languageCode: number) => {
             },
         },
         translations: {
+             "bee-newsletter-modules-html": {
+                "widget-warning-desc": t('campaigns.htmlDocTypeNotAllowedWarning'),
+            },
             "mailup-bee-common-widgets-heading": {
                 "default-text": languageCode === 0 ? "אני כותרת מוכנה לתוכן שלך" : "I&apos;m a new title block",
             }
