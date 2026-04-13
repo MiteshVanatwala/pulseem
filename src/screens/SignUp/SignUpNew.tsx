@@ -242,7 +242,7 @@ const SignUpNew = ({ classes }: any) => {
       // @ts-ignore
       errorsTemp.cellPhone = !isValidPhoneNumber(userDetails.cellPhone, userDetails.countryCode.country) ? t('SignUp.InvalidCellPhone') : '';
     }
-    errorsTemp.emailId = userDetails.emailId ? (IsValidEmail(`${userDetails.emailId}`) ? '' : t('common.invalidEmail')) : t('common.Required');
+    errorsTemp.emailId = userDetails.emailId.trim() ? (IsValidEmail(`${userDetails.emailId.trim()}`) ? '' : t('common.invalidEmail')) : t('common.Required');
 
     setErrors({
       ...errors,
@@ -257,7 +257,7 @@ const SignUpNew = ({ classes }: any) => {
       payload.FirstName = nameArr[0];
       payload.LastName = nameArr.slice(1).join(" ");
       payload.Mobile = `${userDetails.countryCode.code}-${Number(userDetails.cellPhone).toString()}`;
-      payload.Email = userDetails.emailId;
+      payload.Email = userDetails.emailId.trim();
     }
 
     if (activeStep === 1) {
@@ -419,7 +419,7 @@ const SignUpNew = ({ classes }: any) => {
     errorsTemp.companyName = userDetails.companyName ? '' : t('SignUp.BusinessNameRequired');
     errorsTemp.fieldOfInterest = userDetails.fieldOfInterest.length ? '' : t('SignUp.FieldOfInterestRequired');
     errorsTemp.chkPolicy = userDetails.chkPolicy ? '' : t('common.requiredField');
-    errorsTemp.emailId = userDetails.emailId ? (IsValidEmail(`${userDetails.emailId}`) ? '' : t('common.invalidEmail')) : t('common.Required');
+    errorsTemp.emailId = userDetails.emailId.trim() ? (IsValidEmail(`${userDetails.emailId.trim()}`) ? '' : t('common.invalidEmail')) : t('common.Required');
 
     if (!turnstileToken) {
       showMessage('SignUp.pleaseVerifyCaptcha');
@@ -455,7 +455,7 @@ const SignUpNew = ({ classes }: any) => {
         ProductType: interests.join(','),
         UserID: qs?.id,
         chkMailingApproval: userDetails.chkUpdate,
-        Email: userDetails.emailId,
+        Email: userDetails.emailId.trim(),
         ReferralID: qs?.refId,
         Culture: qs?.Culture || 'he-IL',
         TurnstileToken: turnstileToken,

@@ -3,10 +3,10 @@ import { CountryCode } from "../../model/Common/commonProps.types";
 import { PhoneNumberRegEx } from "../Constants";
 
 export const IsValidEmail = (value: string) => {
-  if (value === "" || value === undefined) {
+  if (value.trim() === "" || value.trim() === undefined) {
     return false;
   }
-  return value?.match(
+  return value.trim()?.match(
     /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z\-0-9]{2,}))$/
   );
 };
