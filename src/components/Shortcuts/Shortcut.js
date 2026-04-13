@@ -9,10 +9,25 @@ import { ExpandLess, ExpandMore } from '@material-ui/icons';
 import { getShortcuts, setShortcuts, deleteShortcuts } from '../../redux/reducers/shortcutSlice';
 import { DASHBOARD_SHORTCUT } from '../../model/Shortcuts/DashboardShortcuts';
 import useRedirect from '../../helpers/Routes/Redirect';
-import { FlagIcon } from '../../assets/images/dashboard/index'
+import { FlagIcon, NewsletterIcon, SmsIcon, WhatsappIcon, NotesIcon, ChartIcon, HornIcon, CardIcon, BellIcon } from '../../assets/images/dashboard/index'
 import { CgCloseO } from 'react-icons/cg';
 import { sitePrefix } from '../../config';
 import { PulseemFeatures } from '../../model/PulseemFields/Fields';
+
+const CATEGORY_CONFIG = {
+  'appBar.newsletter.title':    { icon: NewsletterIcon, color: '#6C63FF', bg: '#F0EEFF' },
+  'appBar.sms.title':           { icon: SmsIcon,        color: '#00B4D8', bg: '#E0F7FC' },
+  'appBar.whatsapp.title':      { icon: WhatsappIcon,   color: '#25D366', bg: '#E6F9EE' },
+  'appBar.groups.title':        { icon: NotesIcon,      color: '#FF9F1C', bg: '#FFF4E0' },
+  'appBar.reports.title':       { icon: ChartIcon,      color: '#E63946', bg: '#FDECEA' },
+  'appBar.automation.title':    { icon: HornIcon,       color: '#8338EC', bg: '#F3EAFD' },
+  'appBar.landingPages.title':  { icon: CardIcon,       color: '#3A86FF', bg: '#E8F1FF' },
+  'appBar.mms.title':           { icon: CardIcon,       color: '#FB5607', bg: '#FFF0EA' },
+  'appBar.notifications.title': { icon: BellIcon,       color: '#FB5607', bg: '#FFF0EA' },
+};
+
+const getCategoryConfig = (categoryName) =>
+  CATEGORY_CONFIG[categoryName] || { icon: FlagIcon, color: '#FF477E', bg: '#FFF0F5' };
 
 const Shortcut = ({ classes, windowSize, t, isRTL, variant = 'panel' }) => {
   const { shortcuts } = useSelector(state => state.shortcuts);
@@ -313,46 +328,57 @@ const Shortcut = ({ classes, windowSize, t, isRTL, variant = 'panel' }) => {
   const renderHorizontalShortcutButton = (data, index) => {
     if (loading[index]) {
       return (
-        <Box className={classes.shortcutStripItem} key={`shortcutStripLoading${index}`}>
-          <Button className={classes.shortcutStripCard}>
-            <CircularProgress size={22} className={classes.colrPrimary} />
-          </Button>
+        <Box className={classes.pillItem} key={`shortcutStripLoading${index}`}>
+          <Box className={classes.pillChip} style={{ justifyContent: 'center' }}>
+            <CircularProgress size={16} />
+          </Box>
         </Box>
       );
     }
 
     const innerRef = createRef();
+    const isActive = activeShortcut === `short_${data.ID}`;
+    const cfg = getCategoryConfig(data.CategoryName);
+    const IconComponent = cfg.icon;
+
     return (
       <Box
         onMouseEnter={() => setActiveShortcut(`short_${data.ID}`)}
         onMouseLeave={() => setActiveShortcut(null)}
         key={`shortcutStripButton${index}`}
         ref={innerRef}
-        className={classes.shortcutStripItem}
+        className={classes.pillItem}
       >
-        <Button
-          variant='contained'
-          color='primary'
+        <Box
+          className={classes.pillChip}
+          style={{ borderColor: cfg.color, background: cfg.bg, cursor: 'pointer' }}
           onClick={(e) => {
-            e.preventDefault();
-            if (!['svg', 'path', 'span'].includes(e.target.nodeName.toLowerCase())) {
-              Redirect({ url: data.ShortcutUrl })
+            if (!['svg', 'path', 'button'].includes(e.target.nodeName.toLowerCase())) {
+              Redirect({ url: data.ShortcutUrl });
             }
           }}
-          classes={{
-            root: classes.shortcutStripCard,
-            label: classes.shortcutStripLabel
-          }}
         >
-          <Box className={classes.shortcutStripTopRow}>
-            <Box className={classes.shortcutStripMeta}>
-              <Typography className={classes.shortcutStripCategory}>{t(data.CategoryName)}</Typography>
-            </Box>
-            <Box className={classes.shortcutStripActions}>
-              {!userRoles?.HideRecipients && <IconButton
+          {/* icon */}
+          <Box className={classes.pillIconCircle} style={{ background: '#fff' }}>
+            <IconComponent style={{ width: 18, height: 18 }} />
+          </Box>
+
+          {/* text */}
+          <Box className={classes.pillTextBlock}>
+            <Typography className={classes.pillCategory} style={{ color: cfg.color }}>
+              {t(data.CategoryName)}
+            </Typography>
+            <Typography className={classes.pillTitle}>
+              {t(data.ShortcutName)}
+            </Typography>
+          </Box>
+
+          {/* action buttons */}
+          <Box className={classes.pillActions} style={{ opacity: isActive ? 1 : 0 }}>
+            {!userRoles?.HideRecipients && (
+              <IconButton
                 id="editIcon"
-                style={{ opacity: activeShortcut === `short_${data.ID}` ? 1 : 0 }}
-                className={clsx('shortcutEditIcon', classes.p5)}
+                className={clsx('shortcutEditIcon', classes.pillActionBtn)}
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
@@ -360,27 +386,18 @@ const Shortcut = ({ classes, windowSize, t, isRTL, variant = 'panel' }) => {
                 }}
               >
                 {'\uE09C'}
-              </IconButton>}
-              {userRoles?.AllowDelete && <Link
-                className={clsx('deleteShortcut', classes.p5)}
-                style={{ opacity: activeShortcut === `short_${data.ID}` ? 1 : 0 }}
+              </IconButton>
+            )}
+            {userRoles?.AllowDelete && (
+              <Link
+                className={clsx('deleteShortcut', classes.pillActionBtn)}
                 onClick={deleteShortcut}
-              ><CgCloseO /></Link>}
-            </Box>
+              >
+                <CgCloseO />
+              </Link>
+            )}
           </Box>
-          <Divider className={classes.shortcutStripDivider} />
-          <Typography
-            className={classes.shortcutStripTitle}
-            component="a"
-            href={data.ShortcutUrl}
-            onClick={(e) => {
-              e.preventDefault();
-              Redirect({ url: data.ShortcutUrl })
-            }}
-          >
-            {t(data.ShortcutName)}
-          </Typography>
-        </Button>
+        </Box>
         {renderShortcutMenu(data.ID, true, index)}
       </Box>
     );
@@ -410,25 +427,24 @@ const Shortcut = ({ classes, windowSize, t, isRTL, variant = 'panel' }) => {
 
   const renderHorizontalNewShortcutButtons = () => {
     let newShortcutButtons = [];
-    for (let index = shortcuts?.length; index < 5; index++) {
+    for (let index = shortcuts?.length; index < 8; index++) {
       const innerRef = createRef();
       newShortcutButtons.push(
-        <Box className={classes.shortcutStripItem} key={`emptyShortcutStripBtn${index}`} ref={innerRef}>
-          <Button
+        <Box className={classes.pillItem} key={`emptyShortcutStripBtn${index}`} ref={innerRef}>
+          <Box
             id="btnSelectNew"
-            color='primary'
-            classes={{
-              root: classes.shortcutStripAddCard,
-              label: classes.shortcutStripAddLabel
-            }}
-            onClick={(e) => handleShortcutMenuOpen(windowSize === 'xs' ? e : innerRef, index)}>
-            {'\uE0E4'}
-          </Button>
+            className={classes.pillAddChip}
+            onClick={(e) => handleShortcutMenuOpen(windowSize === 'xs' ? e : innerRef, index)}
+          >
+            <Typography style={{ fontFamily: 'pulseemicons', fontSize: 18, color: '#FF2D76', lineHeight: 1, marginRight: 6 }}>
+              {'\uE0E4'}
+            </Typography>
+            <Typography className={classes.pillAddLabel}>{t('dashboard.addShortcut') || '+ Add'}</Typography>
+          </Box>
           {renderShortcutMenu(index)}
         </Box>
-      )
+      );
     }
-
     return newShortcutButtons;
   }
 
@@ -439,8 +455,7 @@ const Shortcut = ({ classes, windowSize, t, isRTL, variant = 'panel' }) => {
           <FlagIcon className={clsx(classes.marginInlineEnd15, classes.marginInlineStart5)} />
           <Typography className={'title'}>{t('dashboard.myShortcuts')}</Typography>
         </Box>
-        <Typography className={classes.shortcutStripSubtitle}>{t('dashboard.addQuickButtons')}</Typography>
-        <Box className={classes.shortcutStripScroller} ref={shortcutRef}>
+        <Box className={classes.pillScroller} ref={shortcutRef}>
           {shortcuts && shortcuts.map((item, index) => renderHorizontalShortcutButton(item, index))}
           {renderHorizontalNewShortcutButtons()}
         </Box>
