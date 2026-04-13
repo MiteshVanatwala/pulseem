@@ -1,4 +1,4 @@
-{
+﻿{
   "AjaxManagerResource1": {
     "ToolTip": ""
   },
@@ -513,7 +513,7 @@
       "FromEmail": "Only verified emails are allowed",
       "ReplyEmail": "Only verified emails are allowed",
       "clickToVerify": "Click here to verify",
-      "Subject": "When using emojis, it’s advised to use up to 2. Using more than 2 emojis may hurt deliverability.",
+      "Subject": "When using emojis, itâ€™s advised to use up to 2. Using more than 2 emojis may hurt deliverability.",
       "pre_helper_text": "The text will appear in the display bar in the email, before it opens",
       "upload": "The file will appear as an attached file in your mail",
       "newAddress": "new Email",
@@ -539,7 +539,7 @@
       "UNAUTHORIZED_FROM_EMAIL": "This Email address is not authorized for sending email campaigns<br/>For further support please contact us ",
       "NO_RECIPIENTS": "You did not select any recipients<br/>Please select recipients and try again",
       "MONTHLY_RESTRICTIONS": "You have passed your monthly sending restriction<br/>For further support please contact us ",
-      "FIRST_CAMPAIGN_RESTRICTIONS": "Congratulations for sending your first campaign!<br/>Since it’s your first campaign, our team will have to approve it first.<br/>After the approval process is done, the campaign will be sent immediately.",
+      "FIRST_CAMPAIGN_RESTRICTIONS": "Congratulations for sending your first campaign!<br/>Since itâ€™s your first campaign, our team will have to approve it first.<br/>After the approval process is done, the campaign will be sent immediately.",
       "BULK_ENDED": "Your bulk has ended!<br/>To purchase a new bulk enter your dashboard<br/>Or contact our costumer support:",
       "MONTHLY_BULK_ENDED": "You monthly bulk has ended!<br/>To purchase a new bulk enter your dashboard",
       "contactUs": "Phone <a href='tel:03-524-0290'>03-524-0290</a> or Email <a href='mailto:support@pulseem.com'>support@pulseem.com</a>",
@@ -650,7 +650,7 @@
         "error2": "Code is required",
         "error_not_match": "The code you entered is not match",
         "error_expired": "This code is expired",
-        "did_not_recieved": "Didn’t receive it?",
+        "did_not_recieved": "Didnâ€™t receive it?",
         "resend": "Resend",
         "resendSuccess": "Code Sent",
         "placeholder": "Enter code",
@@ -674,7 +674,7 @@
     },
     "payAttention": "Pay attention!",
     "campMadewithOldEditor": "This campaign was made with the old editor",
-    "chooseNewEditorToCreateCamp": "In order to use the new editor go to “Create Campaign” and choose the new editor",
+    "chooseNewEditorToCreateCamp": "In order to use the new editor go to â€œCreate Campaignâ€ and choose the new editor",
     "newsLetterWizard": {
       "continueEditingInOldEditor": "If you created a campaign in the new editor and you want to continue editing it in the old editor",
       "recreateInOldEditor": "You will have to recreate the campaign in the old editor",
@@ -731,8 +731,10 @@
       "greaterThan": "Greater than",
       "lessThan": "Less than",
       "greaterThanOrEqual": "Greater than or equal to",
-      "lessThanOrEqual": "Less than or equal to"
-    },
+      "lessThanOrEqual": "Less than or equal to",
+        "and": "AND",
+        "or": "OR"
+      },
     "value": "Value",
     "conditionList": "Condition list:",
     "valueRequired": "Value is required",

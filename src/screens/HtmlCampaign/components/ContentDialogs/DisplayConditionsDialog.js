@@ -423,7 +423,10 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
         return `${fieldLabel} ${opLabel}`;
       }
       return `${fieldLabel} ${opLabel} ‪"${rule.value}"‬`;
-    }).join(matchType === 'all' ? ' AND ' : ' OR ');
+    }).join(matchType === 'all'
+      ? ` ${t('campaigns.displayConditions.operator.and') || 'AND'} `
+      : ` ${t('campaigns.displayConditions.operator.or') || 'OR'} `
+    );
 
     const displayLabel = `${conditionLabel}\n${readableSummary}`;
     const beforeSyntax = `{% if ${previewExpression} %}`;
@@ -462,7 +465,7 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
     }
   };
 
-  const styles = getGeneralStyle('lg', false, theme);
+  const styles = getGeneralStyle('lg', isRTL, theme);
 
   const fontSize15Style = { fontSize: 15 };
 
