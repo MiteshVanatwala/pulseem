@@ -12,7 +12,8 @@ export const WhiteLabelObject = {
     GmailVerification: 'common.gmailVerificationDescription',
     NotEnoughCredits: 'sms.notEnoughCreditLeftDesc',
     NotApprovedDesc: 'sms.englishLetterNotApprovedDescription',
-    buyVerifiedDomain: 'common.domainVerification.popup.sections.buyVerifiedDomain.text'
+    buyVerifiedDomain: 'common.domainVerification.popup.sections.buyVerifiedDomain.text',
+    HelplineSMS: 'sms.helplineSMS',
   },
   4: { // Simply Club
     Phone: '03-9192513',
@@ -24,10 +25,11 @@ export const WhiteLabelObject = {
     GmailVerification: 'SimplyClub.gmailVerificationDescription',
     NotEnoughCredits: 'SimplyClub.notEnoughCreditLeftDesc',
     NotApprovedDesc: 'SimplyClub.englishLetterNotApprovedDescription',
-    buyVerifiedDomain: 'SimplyClub.buyVerifiedDomain.text'
+    buyVerifiedDomain: 'SimplyClub.buyVerifiedDomain.text',
+    HelplineSMS: 'SimplyClub.helplineSMS',
   },
   6: { // Beeper
-    Phone: '',
+    Phone: '*3750',
     Email: 'support@beeper.ltd',
     BillingTitle: 'Beeper.contactSupportForBilling',
     WelcomeMesasge: 'Beeper.welcomeNewDesignDesc',
@@ -36,6 +38,7 @@ export const WhiteLabelObject = {
     GmailVerification: 'Beeper.gmailVerificationDescription',
     NotEnoughCredits: 'Beeper.notEnoughCreditLeftDesc',
     NotApprovedDesc: 'Beeper.englishLetterNotApprovedDescription',
-    buyVerifiedDomain: 'Beeper.buyVerifiedDomain.text'
+    buyVerifiedDomain: 'Beeper.buyVerifiedDomain.text',
+    HelplineSMS: 'Beeper.helplineSMS',
   }
 }

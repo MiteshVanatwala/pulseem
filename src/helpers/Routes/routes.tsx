@@ -236,12 +236,12 @@ export const getRoutes = (
         {
           title: t("master.NewMMSCampaign.Text"),
           href: `${rootDomain}/MmsCampaignEdit.aspx?fromreact=true`,
-          isShow: features && features?.indexOf(PulseemFeatures.MMS) > -1,
+          isShow: features && features?.indexOf(PulseemFeatures.MMS) > -1 && !isBeeperAccount,
         },
         {
           title: t("master.MmsCampaignMnage.Text"),
           href: `${sitePrefix}MmsCampaigns`,
-          isShow: features && features?.indexOf(PulseemFeatures.MMS) > -1,
+          isShow: features && features?.indexOf(PulseemFeatures.MMS) > -1 && !isBeeperAccount,
         }
       ],
     },
@@ -397,7 +397,8 @@ export const getRoutes = (
         !features.error &&
         features !== null &&
         features.indexOf("35") > -1 &&
-        !accountSettings?.SubAccountSettings?.IsTokenAccount,
+        !accountSettings?.SubAccountSettings?.IsTokenAccount &&
+        !isBeeperAccount,
       icon: <img alt="Notifications" src={NotificationsIcon} />,
       options: [
         {
