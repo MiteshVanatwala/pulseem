@@ -23,7 +23,7 @@ import { HiArrowLeft, HiArrowRight } from "react-icons/hi";
 import { sitePrefix, isProdMode } from "../../config";
 import { WhatsappIcon } from '../../assets/images/drawer/index';
 import { PulseemFeatures } from '../../model/PulseemFields/Fields';
-import { WhiteLabelObject } from '../../components/WhiteLabel/WhiteLabelMigrate';
+import { WhiteLabelObject, getIsBeeperAccount } from '../../components/WhiteLabel/WhiteLabelMigrate';
 import { MdOutlineWhatsapp } from 'react-icons/md';
 import { UserRoles } from '../../Models/SubUser/SubUsers';
 // export const rootDomain = !isProdMode ? 'http://localhost:58123' : '/Pulseem/';
@@ -72,7 +72,7 @@ export const getRoutes = (
   userRoles: any = null,
   isPolandAccount: Boolean = false
 ) => {
-  const isBeeperAccount = accountSettings?.Account?.ReferrerID === 6 || accountSettings?.Account?.ReferrerID === '6';
+  const isBeeperAccount = getIsBeeperAccount(accountSettings);
   return [
     // smsOldVersion
     {
