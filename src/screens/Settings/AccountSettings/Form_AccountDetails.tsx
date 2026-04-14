@@ -36,6 +36,7 @@ import DoubleOptInSettingsPopUp from './Popups/DoubleOptInSettingsPopUp';
 import queryString from 'query-string';
 import DynamicConfirmDialog from '../../../components/DialogTemplates/DynamicConfirmDialog';
 import DoubleOptInSettingsExplanationPopUp from './Popups/DoubleOptInSettingsExplanationPopUp';
+import { getIsBeeperAccount } from '../../../components/WhiteLabel/WhiteLabelMigrate';
 
 const FORM_ACCOUNT_DETAILS = ({
 	classes,
@@ -146,7 +147,16 @@ const FORM_ACCOUNT_DETAILS = ({
 
 	useEffect(() => {
 		setUnsubscribeType(Settings?.UnsubscribeType ? '1' : '0');
-		setAccountDetails(Settings);
+		const isBeeperAccount = getIsBeeperAccount(accountSettings);
+		if (isBeeperAccount && Settings) {
+			setAccountDetails({
+				...Settings,
+				DefaultFromName: Settings.DefaultFromName || 'Beeper',
+				DefaultFromMail: Settings.DefaultFromMail || 'support@beeper.ltd',
+			} as AccountSettings);
+		} else {
+			setAccountDetails(Settings);
+		}
 	}, [Settings]);
 
 	const handleChange = (e: any, name = '') => {

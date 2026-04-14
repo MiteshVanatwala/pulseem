@@ -13,6 +13,7 @@ import { FlagIcon } from '../../assets/images/dashboard/index'
 import { CgCloseO } from 'react-icons/cg';
 import { sitePrefix } from '../../config';
 import { PulseemFeatures } from '../../model/PulseemFields/Fields';
+import { getIsBeeperAccount } from '../WhiteLabel/WhiteLabelMigrate';
 
 const BEEPER_HIDDEN_SHORTCUT_CATEGORIES = new Set([
   'appBar.newsletter.title',
@@ -25,7 +26,7 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
   const { shortcuts } = useSelector(state => state.shortcuts);
   const { accountFeatures, accountSettings } = useSelector(state => state.common)
   const { userRoles } = useSelector(state => state.core)
-  const isBeeperAccount = accountSettings?.Account?.ReferrerID === 6 || accountSettings?.Account?.ReferrerID === '6';
+  const isBeeperAccount = getIsBeeperAccount(accountSettings);
   const shortcutRef = useRef();
   const [selectedCategory, setCategoryValue] = useState({});
   const [selectedPage, setPageValue] = useState({});

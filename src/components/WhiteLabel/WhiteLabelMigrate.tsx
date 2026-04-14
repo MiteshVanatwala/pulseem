@@ -1,3 +1,6 @@
+export const getIsBeeperAccount = (accountSettings: any): boolean =>
+  accountSettings?.Account?.ReferrerID === 6 || accountSettings?.Account?.ReferrerID === '6';
+
 export const WhiteLabelObject = {
   0: { // Default
     Phone: '03-5240290',

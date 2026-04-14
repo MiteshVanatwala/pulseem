@@ -28,6 +28,7 @@ import { RxOpenInNewWindow } from "react-icons/rx";
 import { ListIcon } from "../../assets/images/managment";
 import { useSelector } from "react-redux";
 import DoubleOptInSettingsExplanationPopUp from "../Settings/AccountSettings/Popups/DoubleOptInSettingsExplanationPopUp";
+import { getIsBeeperAccount } from '../../components/WhiteLabel/WhiteLabelMigrate';
 
 
 const Integrations = ({ classes }: any) => {
@@ -35,6 +36,9 @@ const Integrations = ({ classes }: any) => {
   const [tabValue, setTabValue] = useState('0');
   const { windowSize, companyName } = useSelector((state: any) => state.core)
   const [showOptInExplanationPopup, setShowOptInExplanationPopup] = useState<boolean>(false);
+  const { accountSettings } = useSelector((state: any) => state.common);
+  const isBeeperAccount = getIsBeeperAccount(accountSettings);
+
   useEffect(() => {
     const integrationTitles = {
       '0': { title: `${t('integrations.shopify.title')}` },
@@ -48,8 +52,9 @@ const Integrations = ({ classes }: any) => {
       '14': { title: `${t('integrations.verifone.title')}` },
     } as any;
 
-    document.title = `${integrationTitles[tabValue].title} | ${t('master.pulseemSystem')}`;
-  }, [, tabValue]);
+    const systemName = isBeeperAccount ? 'Beeper' : t('master.pulseemSystem');
+    document.title = `${integrationTitles[tabValue].title} | ${systemName}`;
+  }, [, tabValue, isBeeperAccount]);
 
   return (
     <DefaultScreen
