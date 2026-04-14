@@ -17,7 +17,8 @@ import {
   getTemplateById,
   getPublicTemplates,
   getAllTemplatesBySubaccountId,
-  getDisplayConditions
+  getDisplayConditions,
+  deleteDisplayCondition
 } from '../../redux/reducers/campaignEditorSlice';
 import { Loader } from '../../components/Loader/Loader';
 import { getAccountExtraData, getPreviousLandingData } from "../../redux/reducers/smsSlice";
@@ -248,6 +249,8 @@ const CampaignEditor = ({ classes, ...props }) => {
   });
   const [isDisplayConditionDialogOpen, setIsDisplayConditionDialogOpen] = useState(false);
   const [pendingAction, setPendingAction] = useState(null);
+  const previousConditionIdsRef = useRef(null);
+  const recentlyDeletedByPopupRef = useRef(new Set());
 
 
 
@@ -745,21 +748,21 @@ const CampaignEditor = ({ classes, ...props }) => {
   //#endregion Init Bee Token & Configuration
   //#region Pulseem Methods (Save, Delete, Exit, Back, Test Send)
   const onSave = async (args) => {
-    // Calculate email size BEFORE any other validations
-    // const sizeInfo = calculateEmailSize(args.HtmlData, args.AmpData);
-    // setEmailSize(sizeInfo);
-
-    // if (sizeInfo.totalKB > 102 && !saveRef.current?.skipSizeCheck) {
-    //   // setPendingAction(saveRef.current?.operation || 'save');
-    //   setDialogType({
-    //     type: 'emailSizeExceeded',
-    //     data: {
-    //       currentSize: sizeInfo.totalKB,
-    //       reductionNeeded: (sizeInfo.totalKB - 102).toFixed(1)
-    //     }
-    //   });
-    //   return false;
-    // }
+    // Detect sidebar-deleted conditions by comparing previous vs current condition IDs in JSON
+    const currentConditionIds = extractConditionIdsFromJson(args.JsonData);
+    if (previousConditionIdsRef.current !== null) {
+      const removedIds = [...previousConditionIdsRef.current].filter(id =>
+        !currentConditionIds.has(id) && !recentlyDeletedByPopupRef.current.has(id)
+      );
+      recentlyDeletedByPopupRef.current.clear();
+      if (removedIds.length > 0) {
+        for (const id of removedIds) {
+          await dispatch(deleteDisplayCondition(id)).unwrap();
+        }
+        await onRefreshConditions?.();
+      }
+    }
+    previousConditionIdsRef.current = currentConditionIds;
 
     const dynamicBlocks = (args.HtmlData?.match(/product-block-container/g) || []).length;
     if (saveRef.current?.checkDynamicBlock && dynamicBlocks > 0) {
@@ -1173,13 +1176,25 @@ const CampaignEditor = ({ classes, ...props }) => {
   // }
 
   const editorFonts = FONTS();
-  const onRefreshConditions = async () => {
-    console.log('onRefreshConditions called');
+  const onRefreshConditions = async (deletedByPopupId = null) => {
+    if (deletedByPopupId !== null) {
+      recentlyDeletedByPopupRef.current.add(deletedByPopupId);
+    }
     const result = await dispatch(getDisplayConditions());
-    console.log('getDisplayConditions result payload length:', result?.payload?.length);
-    console.log('Condition 27 still exists:', result?.payload?.find(c => c.id === 27));
     setIsDisplayConditionDialogOpen(false);
     return result?.payload;
+  };
+
+  const extractConditionIdsFromJson = (jsonString) => {
+    const ids = new Set();
+    try {
+      const parsed = typeof jsonString === 'string' ? JSON.parse(jsonString) : jsonString;
+      (parsed?.page?.rows || []).forEach((row) => {
+        const id = row?.container?.displayCondition?.id ?? row?.container?.displayCondition?.ID ?? null;
+        if (id !== null && id !== undefined) ids.add(id);
+      });
+    } catch (e) {}
+    return ids;
   };
   const config = BeeConfig({
     classes,

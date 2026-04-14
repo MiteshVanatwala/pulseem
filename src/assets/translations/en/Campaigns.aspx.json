@@ -744,6 +744,13 @@
     "save": "Save",
     "cancel": "Cancel",
     "delete": "Delete",
+    "deleteConfirmation": {
+      "title": "Are you sure you want to delete this condition from the list?",
+      "line1": "Deleting the condition will remove the condition from the conditions list.",
+      "line2": "In order to remove the condition from this specific row - exit this popup and click \"Remove from row\" on the sidebar.",
+      "confirm": "Yes, delete",
+      "cancel": "Cancel"
+    },
     "selectCondition": "Select condition",
     "addCondition": "Add condition",
     "edit": "Edit",
@@ -777,6 +784,12 @@
   "kb": "KB",
   "saveBlock": "Save Block",
   "savedBlocks": "Saved-blocks",
+  "deleteRowConfirmation": {
+    "title": "Delete saved block",
+    "message": "Are you sure you want to delete this saved block?",
+    "confirm": "Yes, delete",
+    "cancel": "Cancel"
+  },
   "weSent": "We sent!",
   "campaignIsOnItsWay": "Your campaign is on its way",
   "mailingScheduled": "The mailing has been successfully scheduled",
