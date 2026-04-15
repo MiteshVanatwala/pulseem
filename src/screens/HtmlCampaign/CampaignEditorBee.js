@@ -251,6 +251,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   const [pendingAction, setPendingAction] = useState(null);
   const previousConditionIdsRef = useRef(null);
   const recentlyDeletedByPopupRef = useRef(new Set());
+  const latestEditorJsonRef = useRef(null);
 
 
 
@@ -292,6 +293,17 @@ const CampaignEditor = ({ classes, ...props }) => {
     })
 
   }
+
+  const updateLatestEditorJson = (jsonValue) => {
+    if (!jsonValue) return;
+
+    try {
+      latestEditorJsonRef.current =
+        typeof jsonValue === 'string' ? JSON.parse(jsonValue) : jsonValue;
+    } catch (error) {
+      console.error('Error parsing editor JSON:', error);
+    }
+  };
 
   useEffect(() => {
     if (dataReady) {
@@ -531,6 +543,8 @@ const CampaignEditor = ({ classes, ...props }) => {
             else {
               template = campaign?.JsonData ? JSON.parse(campaign?.JsonData) : defaultContent.defaultTemplate;
             }
+
+            updateLatestEditorJson(template);
 
             beeTest.start(config, template).then((instance) => {
               editorRef.current = instance;
@@ -1196,6 +1210,60 @@ const CampaignEditor = ({ classes, ...props }) => {
     } catch (e) {}
     return ids;
   };
+
+  const removeDeletedConditionFromDesign = async (deletedConditionId) => {
+    if (!deletedConditionId || !editorRef.current) {
+      return;
+    }
+
+    const currentJson = latestEditorJsonRef.current;
+    const currentRows = currentJson?.page?.rows;
+
+    if (!Array.isArray(currentRows) || currentRows.length === 0) {
+      return;
+    }
+
+    let hasChanges = false;
+    const updatedRows = currentRows.map((row) => {
+      const rowConditionId = row?.container?.displayCondition?.id ?? row?.container?.displayCondition?.ID ?? null;
+
+      if (rowConditionId !== deletedConditionId) {
+        return row;
+      }
+
+      hasChanges = true;
+      const nextContainer = { ...(row?.container || {}) };
+      delete nextContainer.displayCondition;
+
+      return {
+        ...row,
+        container: nextContainer
+      };
+    });
+
+    if (!hasChanges) {
+      return;
+    }
+
+    const updatedJson = {
+      ...currentJson,
+      page: {
+        ...currentJson.page,
+        rows: updatedRows
+      }
+    };
+
+    latestEditorJsonRef.current = updatedJson;
+    previousConditionIdsRef.current = extractConditionIdsFromJson(updatedJson);
+
+    if (typeof editorRef.current.reload === 'function') {
+      await editorRef.current.reload(updatedJson);
+      return;
+    }
+
+    await editorRef.current.load(updatedJson);
+  };
+
   const config = BeeConfig({
     classes,
     displayConditions,
@@ -1218,6 +1286,8 @@ const CampaignEditor = ({ classes, ...props }) => {
     dispatch: dispatch,
     editorFonts: editorFonts,
     onRefreshConditions: onRefreshConditions,
+    onConditionDeletedFromDesign: removeDeletedConditionFromDesign,
+    onEditorJsonChange: updateLatestEditorJson,
     setIsDisplayConditionDialogOpen: setIsDisplayConditionDialogOpen
   });
 
@@ -1540,6 +1610,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           : templateData;
 
         // Load the template into the existing editor
+        updateLatestEditorJson(templateJson);
         await editorRef.current.load(templateJson);
 
         // Save the newly loaded template
