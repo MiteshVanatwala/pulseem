@@ -33,6 +33,8 @@ export interface ConfigOptions {
     dispatch?: any;
     editorFonts?: any;
     onRefreshConditions?: Function;
+    onConditionDeletedFromDesign?: Function;
+    onEditorJsonChange?: Function;
     setIsDisplayConditionDialogOpen?: Function;
 }
 
@@ -59,6 +61,8 @@ export const BeeConfig = (Options: ConfigOptions) => {
         dispatch,
         editorFonts,
         onRefreshConditions,
+        onConditionDeletedFromDesign,
+        onEditorJsonChange,
         setIsDisplayConditionDialogOpen
     } = Options;
 
@@ -86,6 +90,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
         id: cond.id || cond.ID || Math.random().toString(36).substr(2, 9),
         type: IsRTL ? 'תנאים' : 'Conditions'
     }));
+    const removeFromRowLabel = t('campaigns.displayConditions.removeFromRow') || (IsRTL ? 'הסרה משורה' : 'Remove from row');
 
     return {
         uid: 'f7768f7b-06af-4ada-bbd3-18a237524c31', //needed for identify resources of the that user and billing stuff
@@ -155,9 +160,17 @@ export const BeeConfig = (Options: ConfigOptions) => {
                 `  fill: #ffffff !important;`,
                 `}`,
                 // Show delete button
-                `.row-display-condition-delete-button--cs {`,
+                `.row-display-condition-remove-button--cs {`,
                 `  display: inline-block !important;`,
                 `  visibility: visible !important;`,
+                `  color: transparent !important;`,
+                `  position: relative !important;`,
+                `}`,
+                `.row-display-condition-remove-button--cs::after {`,
+                `  content: "${String(removeFromRowLabel).replace(/"/g, '\\"')}" !important;`,
+                `  color: #d12f19 !important;`,
+                `  font-size: 14px !important;`,
+                `  line-height: 1.4 !important;`,
                 `}`,
                 // Hide the Edit action in the selected display condition card
                 `.row-display-condition-edit-button--cs,`,
@@ -336,6 +349,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
                         setIsDisplayConditionDialogOpen?.(false);
 
                         if (result?.deleted) {
+                            await onConditionDeletedFromDesign?.(result.id);
                             resolve(true);
                         } else if (result && result.before && result.after) {
                             resolve(result);
@@ -360,6 +374,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
                         setIsDisplayConditionDialogOpen?.(false);
 
                         if (result?.deleted) {
+                            await onConditionDeletedFromDesign?.(result.id);
                             resolve(true);
                         } else if (result && result.before && result.after) {
                             resolve(result);
@@ -382,6 +397,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
                             if (conditionId) {
                                 await dispatch((deleteDisplayCondition as any)(conditionId)).unwrap();
                                 await onRefreshConditions?.();
+                                await onConditionDeletedFromDesign?.(conditionId);
                             }
                             resolve(true);
                         } else {
@@ -481,10 +497,13 @@ export const BeeConfig = (Options: ConfigOptions) => {
             // console.log('onError ', errorMessage)
         },
         onLoad: async (jsonFile: any) => {
-            // console.log(jsonFile);
+            onEditorJsonChange?.(jsonFile);
         },
         onAutoSave: () => AutoSaveCampaign(),
-        onChange: () => DesignChange()
+        onChange: (jsonFile: any) => {
+            onEditorJsonChange?.(jsonFile);
+            DesignChange();
+        }
         // onChange: (jsonFile: any, response: any) => {
         // https://docs.beefree.io/beefree-sdk/tracking-message-changes#content-codes - Codes
         // Every code should get "00" in the end

@@ -13,11 +13,14 @@ const ConfirmDeleteRowDisplayConditionDialog = ({ onClose, save, args, classes }
       onClose={onClose}
       onCancel={onClose}
       onConfirm={() => save({ confirmed: true })}
-      title={t('campaigns.displayConditions.deleteConfirmation.title')}
+      title={t('common.confirm')}
       confirmText={'campaigns.displayConditions.deleteConfirmation.confirm'}
       cancelText={'campaigns.displayConditions.deleteConfirmation.cancel'}
     >
       <Box style={{ padding: '8px 0', maxWidth: 420 }}>
+        <Typography variant="body2" style={{ marginBottom: 12 }}>
+          {t('campaigns.displayConditions.deleteConfirmation.title')}
+        </Typography>
         <Typography variant="body2" style={{ marginBottom: 12 }}>
           {t('campaigns.displayConditions.deleteConfirmation.line1')}
         </Typography>

@@ -796,6 +796,7 @@
     "openBuilder": "Edytor warunków",
     "save": "Zapisz",
     "cancel": "Anuluj",
-    "delete": "Usuń"
+    "delete": "Usuń",
+    "removeFromRow": "Usuń z wiersza"
   }
 }
