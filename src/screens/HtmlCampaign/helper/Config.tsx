@@ -3,7 +3,7 @@ import { TRANSLATE_HEBREW, TRANSLATE_ENGLISH } from '../../../assets/translation
 import { FONTS } from '../../../helpers/Fonts/Init';
 import ProductCatalog from '../../../model/ProductCatalog/ProductCatalog';
 import { AddProductCatalogType } from '../../../config/enum';
-import { DisplayConditionsDialog } from '../components/ContentDialogs';
+import { DisplayConditionsDialog, ConfirmDeleteRowDialog, ConfirmDeleteRowDisplayConditionDialog } from '../components/ContentDialogs';
 import { deleteDisplayCondition } from '../../../redux/reducers/campaignEditorSlice';
 
 
@@ -374,15 +374,19 @@ export const BeeConfig = (Options: ConfigOptions) => {
             },
             onDeleteRowDisplayCondition: {
                 handler: async (resolve: Function, reject: Function, condition?: any) => {
+                    console.log('[onDeleteRowDisplayCondition] fired', condition);
                     try {
                         const conditionId = getConditionId(condition);
-
-                        if (conditionId) {
-                            await dispatch((deleteDisplayCondition as any)(conditionId));
-                            await onRefreshConditions?.();
+                        const result: any = await openModal(ConfirmDeleteRowDisplayConditionDialog, { condition }, classes);
+                        if (result?.confirmed) {
+                            if (conditionId) {
+                                await dispatch((deleteDisplayCondition as any)(conditionId)).unwrap();
+                                await onRefreshConditions?.();
+                            }
+                            resolve(true);
+                        } else {
+                            reject();
                         }
-
-                        resolve(true);
                     } catch (e) {
                         reject();
                     }
@@ -406,10 +410,19 @@ export const BeeConfig = (Options: ConfigOptions) => {
             },
             onDeleteRow: {
                 handler: async (resolve: Function, reject: Function, args: any) => {
-                    const row_id = args?.row?.metadata?.uuid;
-                    await DeleteBlock(args, row_id);
-                    handleDeleteRow(args);
-                    resolve(true)
+                    try {
+                        const result: any = await openModal(ConfirmDeleteRowDialog, args, classes);
+                        if (result?.confirmed) {
+                            const row_id = args?.row?.metadata?.uuid;
+                            await DeleteBlock(args, row_id);
+                            handleDeleteRow(args);
+                            resolve(true);
+                        } else {
+                            reject();
+                        }
+                    } catch (e) {
+                        reject();
+                    }
                 }
             },
             // onEditRow

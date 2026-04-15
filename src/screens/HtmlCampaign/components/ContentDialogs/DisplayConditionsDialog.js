@@ -40,6 +40,7 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
   const [matchType, setMatchType] = useState('all');
   const [rules, setRules] = useState([]);
   const [errors, setErrors] = useState({});
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const initializedRef = useRef(false);
   const ruleIdCounter = useRef(0);
 
@@ -343,15 +344,12 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
     setRules((prev) => prev.filter((r) => r.id !== id));
   };
 
-  const handleDelete = async () => {
+  const handleDeleteConfirmed = async () => {
     if (!isEditing || !currentConditionId) return;
-
+    setShowDeleteConfirm(false);
     try {
-      console.log('Delete started for condition:', currentConditionId);
-      const deleteResult = await dispatch(deleteDisplayCondition(currentConditionId));
-      console.log('Delete result:', deleteResult);
-      console.log('Calling onRefreshConditions');
-      await onRefreshConditions?.();
+      await dispatch(deleteDisplayCondition(currentConditionId)).unwrap();
+      await onRefreshConditions?.(currentConditionId);
       save({ deleted: true, id: currentConditionId });
     } catch (error) {
       console.error('Error deleting condition:', error);
@@ -470,6 +468,7 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
   const fontSize15Style = { fontSize: 15 };
 
   return (
+    <>
     <BaseDialog
       contentStyle={clsx(classes.maxWidth70VW)}
       childrenStyle={classes.displayConditionCustomStyle}
@@ -485,7 +484,7 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
       renderButtons={isEditing ? () => (
         <Box style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
           <Button
-            onClick={handleDelete}
+            onClick={() => setShowDeleteConfirm(true)}
             className={clsx(classes.btn, classes.btnRounded)}
             startIcon={<Delete />}
           >
@@ -708,7 +707,29 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
           </Grid>
         </Grid>
       </Box>
+      {showDeleteConfirm && (
+        <BaseDialog
+          classes={classes}
+          open={true}
+          onClose={() => setShowDeleteConfirm(false)}
+          onCancel={() => setShowDeleteConfirm(false)}
+          onConfirm={handleDeleteConfirmed}
+          title={t('campaigns.displayConditions.deleteConfirmation.title')}
+          confirmText={'campaigns.displayConditions.deleteConfirmation.confirm'}
+          cancelText={'campaigns.displayConditions.deleteConfirmation.cancel'}
+        >
+          <Box style={{ padding: '8px 0', maxWidth: 420 }}>
+            <Typography variant="body2" style={{ marginBottom: 12 }}>
+              {t('campaigns.displayConditions.deleteConfirmation.line1')}
+            </Typography>
+            <Typography variant="body2">
+              {t('campaigns.displayConditions.deleteConfirmation.line2')}
+            </Typography>
+          </Box>
+        </BaseDialog>
+      )}
     </BaseDialog>
+  </>
   );
 };
 
