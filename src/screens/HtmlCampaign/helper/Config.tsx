@@ -86,6 +86,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
         id: cond.id || cond.ID || Math.random().toString(36).substr(2, 9),
         type: IsRTL ? 'תנאים' : 'Conditions'
     }));
+    const removeFromRowLabel = t('campaigns.displayConditions.removeFromRow') || (IsRTL ? 'הסרה משורה' : 'Remove from row');
 
     return {
         uid: 'f7768f7b-06af-4ada-bbd3-18a237524c31', //needed for identify resources of the that user and billing stuff
@@ -147,9 +148,17 @@ export const BeeConfig = (Options: ConfigOptions) => {
                 `  fill: #ffffff !important;`,
                 `}`,
                 // Show delete button
-                `.row-display-condition-delete-button--cs {`,
+                `.row-display-condition-remove-button--cs {`,
                 `  display: inline-block !important;`,
                 `  visibility: visible !important;`,
+                `  color: transparent !important;`,
+                `  position: relative !important;`,
+                `}`,
+                `.row-display-condition-remove-button--cs::after {`,
+                `  content: "${String(removeFromRowLabel).replace(/"/g, '\\"')}" !important;`,
+                `  color: #d12f19 !important;`,
+                `  font-size: 14px !important;`,
+                `  line-height: 1.4 !important;`,
                 `}`,
                 // Hide the Edit action in the selected display condition card
                 `.row-display-condition-edit-button--cs,`,

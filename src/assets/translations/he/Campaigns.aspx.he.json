@@ -1,4 +1,4 @@
-﻿{
+{
   "AjaxManagerResource1": {
     "ToolTip": ""
   },
@@ -728,6 +728,7 @@
     "save": "שמור",
     "cancel": "ביטול",
     "delete": "מחק",
+    "removeFromRow": "הסרה משורה",
     "selectCondition": "בחר תנאי",
     "addCondition": "הוספת תנאי",
     "edit": "עריכה",
