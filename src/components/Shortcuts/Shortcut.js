@@ -359,8 +359,8 @@ const Shortcut = ({ classes, windowSize, t, isRTL, variant = 'panel' }) => {
           }}
         >
           {/* icon */}
-          <Box className={classes.pillIconCircle} style={{ background: '#fff' }}>
-            <IconComponent style={{ width: 18, height: 18 }} />
+          <Box className={classes.pillIconCircle}>
+            <IconComponent style={{ width: 16, height: 16, color: cfg.color }} />
           </Box>
 
           {/* text */}
@@ -436,10 +436,10 @@ const Shortcut = ({ classes, windowSize, t, isRTL, variant = 'panel' }) => {
             className={classes.pillAddChip}
             onClick={(e) => handleShortcutMenuOpen(windowSize === 'xs' ? e : innerRef, index)}
           >
-            <Typography style={{ fontFamily: 'pulseemicons', fontSize: 18, color: '#FF2D76', lineHeight: 1, marginRight: 6 }}>
-              {'\uE0E4'}
-            </Typography>
-            <Typography className={classes.pillAddLabel}>{t('dashboard.addShortcut') || '+ Add'}</Typography>
+            <Typography style={{ fontFamily: 'pulseemicons', fontSize: 20, color: '#FF2D76', lineHeight: 1, marginRight: 6 }}>
+                {'\uE0E4'}
+              </Typography>
+            <Typography className={classes.pillAddLabel}>{t('dashboard.addShortcut') || '+ Add Shortcut'}</Typography>
           </Box>
           {renderShortcutMenu(index)}
         </Box>
