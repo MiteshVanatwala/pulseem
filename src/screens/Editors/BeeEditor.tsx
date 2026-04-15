@@ -110,13 +110,16 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
 
   const HTML_BLOCK_MIN_PLAN_ID = 3;
 
-  const hasHtmlBlock = (jsonData: string): boolean => {
+   const hasHtmlBlock = (jsonData: string): boolean => {
     try {
       const parsed = JSON.parse(jsonData);
       const rows = parsed?.page?.rows || [];
       return rows.some((row: any) =>
         row?.columns?.some((col: any) =>
-          col?.modules?.some((m: any) => m?.type === 'mailup-bee-newsletter-modules-html')
+          col?.modules?.some((m: any) =>
+            m?.descriptor?.html !== undefined &&
+            typeof m?.type === 'string' && m.type.includes('-html')
+          )
         )
       );
     } catch {
