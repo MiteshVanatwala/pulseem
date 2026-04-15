@@ -25,6 +25,7 @@ import {
 } from '../../../../redux/reducers/whatsappSlice';
 import { getDynamicFields, formatUpdatedDynamicVariable, getTemplateName } from '../../Common';
 import { apiStatus, fieldIDs, fieldNames, whatsappRoutes } from '../../Constant';
+import { PhoneNumberRegEx } from '../../../../helpers/Constants';
 import {
 	APISendWhatsappChat,
 	APISendWhatsAppChatReqPayload,
@@ -173,17 +174,41 @@ const StartNewChatModal = ({
 		onClose();
 	};
 
+	// Phone validation — uses app-wide PhoneNumberRegEx (/^\+?[0-9]*$/)
+	const validatePhone = (value: string): string => {
+		if (!value || value.trim() === '') {
+			return translator('whatsappChat.phoneRequired');
+		}
+		if (value.length < 7) {
+			return translator('whatsappChat.phoneTooShort');
+		}
+		if (value.length > 15) {
+			return translator('whatsappChat.phoneTooLong');
+		}
+		if (!PhoneNumberRegEx.test(value)) {
+			return translator('whatsappChat.invalidPhoneNumber');
+		}
+		return '';
+	};
+
 	// Mirror SMS "Send to one contact" — only allow digits on change
 	const handleNumberChange = (value: string) => {
 		if (value === '' || /^[0-9\b]+$/.test(value)) {
 			setToNumber(value);
-			setPhoneError('');
+			if (phoneError) setPhoneError('');
+		}
+	};
+
+	const handlePhoneBlur = () => {
+		if (toNumber) {
+			setPhoneError(validatePhone(toNumber));
 		}
 	};
 
 	const handlePhoneNext = () => {
-		if (!toNumber || toNumber.length < 7) {
-			setPhoneError(translator('whatsappChat.invalidPhoneNumber'));
+		const error = validatePhone(toNumber);
+		if (error) {
+			setPhoneError(error);
 			return;
 		}
 		setPhoneError('');
@@ -383,9 +408,10 @@ const StartNewChatModal = ({
 				placeholder={translator('whatsappChat.phoneNumberPlaceholder')}
 				value={toNumber}
 				onChange={(e) => handleNumberChange(e.target.value)}
+				onBlur={handlePhoneBlur}
 				error={!!phoneError}
 				helperText={phoneError}
-				inputProps={{ inputMode: 'numeric', maxLength: 16, style: { textAlign: isRTL ? 'right' : 'left' } }}
+				inputProps={{ inputMode: 'numeric', maxLength: 15, style: { textAlign: isRTL ? 'right' : 'left' } }}
 			/>
 		</Box>
 	);
