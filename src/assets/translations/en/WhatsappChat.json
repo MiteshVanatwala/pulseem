@@ -73,7 +73,7 @@
 	"sendDirectMessageDisclaimer": "By sending a direct WhatsApp message, you are responsible for ensuring that the recipient has consented to receive communications from you.",
 	"chatSentSuccess": "Message sent successfully",
 	"phoneRequired": "Phone number is required",
-	"phoneTooShort": "Phone number must be at least 7 digits",
+	"phoneTooShort": "Phone number must be at least 9 digits",
 	"phoneTooLong": "Phone number must not exceed 15 digits",
 	"invalidPhoneNumber": "Please enter a valid phone number",
 	"noTemplatesFound": "No templates found",

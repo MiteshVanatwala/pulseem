@@ -179,7 +179,7 @@ const StartNewChatModal = ({
 		if (!value || value.trim() === '') {
 			return translator('whatsappChat.phoneRequired');
 		}
-		if (value.length < 7) {
+		if (value.length < 9) {
 			return translator('whatsappChat.phoneTooShort');
 		}
 		if (value.length > 15) {
