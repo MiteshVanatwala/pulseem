@@ -1,6 +1,6 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import clsx from "clsx";
-import { TextField, Box, Typography } from "@material-ui/core";
+import { Box, Typography, Chip, InputBase } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import { RiSendPlaneFill } from 'react-icons/ri'
 import PulseemRadio from '../../../components/Controlls/PulseemRadio'
@@ -18,57 +18,63 @@ const TestSend = ({
     onSubmit = () => null
 }) => {
     const { t } = useTranslation();
-    const [recipient, setRecipient] = useState('');
+   const [emails, setEmails] = useState([]);
+   const [inputValue, setInputValue] = useState('');
     const [sendSendMethod, setSendMethod] = useState("1");
     const [toastMessage, setToastMessage] = useState(null);
     //eslint-disable-next-line
     const [selectedGroups, setTestGroups] = useState([]);
     const { isRTL, windowSize } = useSelector(state => state.core);
     const { ToastMessages } = useSelector(state => state.campaignEditor);
-    const emailRef = useRef(null);
     const { testGroups } = useSelector((state) => state.group);
 
-    const handleRecipient = (e) => {
-        validateEmail();
-        setRecipient(e.target.value);
-        if (e.target.value === '') {
-            e.target.style.direction = null;
+    const EMAIL_REGEX = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+    const validateEmail = (email) => EMAIL_REGEX.test(email.trim());
+
+    const addEmail = (value) => {
+        const trimmed = value.trim().replace(/,+$/, '');
+        if (!trimmed) return;
+        if (emails.length >= 5) return;
+        if (!validateEmail(trimmed)) {
+            setToastMessage(ToastMessages.INVALID_EMAIL);
+            return;
         }
-        else {
-            e.target.style.direction = "ltr";
+        if (!emails.includes(trimmed)) {
+            setEmails(prev => [...prev, trimmed]);
         }
-    }
-    const validateEmail = () => {
-        emailRef.current.classList.remove('error');
-        var regex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@(([[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        if (!regex.test(recipient)) {
-            emailRef.current.classList.add('error');
-            return false;
+        setInputValue('');
+    };
+
+    const handleEmailKeyDown = (e) => {
+        if (['Enter', ',', 'Tab'].includes(e.key)) {
+            e.preventDefault();
+            addEmail(inputValue);
+        } else if (e.key === 'Backspace' && !inputValue && emails.length > 0) {
+            setEmails(prev => prev.slice(0, -1));
         }
-        return true;
-    }
+    };
     const handleSendMethod = (e) => {
         const sendMethod = e.target.value;
         setSendMethod(e.target.value);
         if (sendMethod === "1") {
-            setTestGroups([]);
-        }
-        else {
-            setRecipient('');
+            setEmails([]);
+            setInputValue('');
         }
     }
     const onBeforeClose = () => {
-        setRecipient('');
+        setEmails([]);
+        setInputValue('');
         setTestGroups([]);
         onClose();
     }
 
     const prepareForSubmit = () => {
-        if ((sendSendMethod === "1" && validateEmail()) || sendSendMethod === "2") {
+        if ((sendSendMethod === "1" && emails.length > 0) || sendSendMethod === "2") {
             const request = {
                 Language: `${isRTL ? 'he-IL' : 'en-US'}`,
                 CampaignID: campaignId,
-                Emails: sendSendMethod === "1" ? recipient : '',
+                Emails: sendSendMethod === "1" ? emails.join(', ') : '',
                 GroupIds: sendSendMethod === "2" ? selectedGroups : []
             }
             onSubmit(request);
@@ -87,25 +93,42 @@ const TestSend = ({
         {
             value: "1",
             className: classes.radioButtonActive,
-            label: t("campaigns.sendToContact"),
-            child: <TextField
-                variant='outlined'
-                size='small'
-                value={recipient}
-                onChange={handleRecipient}
-                className={clsx(classes.textField, classes.emailField)}
-                onBlur={(e) => {
-                    if (e.target.value === '') {
-                        e.target.style.direction = null;
-                    }
-                    else {
-                        e.target.style.direction = "ltr";
-                    }
-                }}
-                placeholder={t('common.Email')}
-                autoFocus
-                ref={emailRef}
-            />
+            label: t("campaigns.sendToMoreContact"),
+            child: (
+                <Box className={classes.chipBoxWrapper}>
+                    <Box
+                        onClick={() => document.getElementById('email-chip-input')?.focus()}
+                        className={classes.chipBox}
+                    >
+                        {emails.map((email) => (
+                            <Chip
+                                key={email}
+                                label={email}
+                                size="small"
+                                onDelete={() => setEmails(prev => prev.filter(e => e !== email))}
+                                className={classes.chip}
+                            />
+                        ))}
+                        {emails.length < 5 && (
+                            <InputBase
+                                id="email-chip-input"
+                                value={inputValue}
+                                onChange={(e) => setInputValue(e.target.value)}
+                                onKeyDown={handleEmailKeyDown}
+                                onBlur={() => addEmail(inputValue)}
+                                placeholder={t(emails.length === 0 ? 'common.Email' : 'campaigns.testSend.addMoreEmail')}
+                                className={classes.inputBase}
+                                autoFocus
+                            />
+                        )}
+                        {emails.length >= 5 && (
+                            <Typography variant="caption" className={classes.maxEmailsText}>
+                                {t('campaigns.testSend.maxEmails')}
+                            </Typography>
+                        )}
+                    </Box>
+                </Box>
+            )
         },
         {
             value: "2",
@@ -114,7 +137,7 @@ const TestSend = ({
             child: <GroupSelectorDropDown
                 classes={classes}
                 title={'siteTracking.typeGroupName'}
-                style={{ width: windowSize === 'xs' ? 320 : 460 }}
+                style={{ width: '100%', maxWidth: windowSize === 'xs' ? 320 : 460, boxSizing: 'border-box' }}
                 dropdown
                 onRemoveGroup={handleRemoveGroup}
                 groupSelected={selectedGroups}
@@ -156,7 +179,7 @@ const TestSend = ({
                     onClose={onBeforeClose}
                     onCancel={onBeforeClose}
                     onConfirm={prepareForSubmit}
-                    contentStyle={classes.testSendDialog}
+                    contentStyle={classes.testSendDialogContainer}
                     reduceTitle
                     style={{ minWidth: 240, zIndex: '100 !important' }}
                     cancelText="common.Cancel"

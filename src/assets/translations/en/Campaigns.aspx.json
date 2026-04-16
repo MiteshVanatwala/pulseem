@@ -768,7 +768,14 @@
     "allSelectedConditions": "All selected conditions",
     "anySelectedConditions": "Any of the selected conditions"
   },
+  "testSend": {
+    "maxEmails": "Max 5 reached",
+    "emailRequired": "Email address or Group is required",
+    "maxLimitReached": "Test send is limited to 5 email addresses",
+    "addMoreEmail": "Add Email"
+  },
   "sendToContact": "Send to one contact",
+  "sendToMoreContact": "Send to one or more contacts",
   "successSent": "Sent Successfully",
   "missingApi": "Missing api key",
   "campaignNotFound": "Campaign was not found or cannot duplicated for sending",

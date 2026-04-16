@@ -753,7 +753,14 @@
       "cancel": "ביטול"
     }
   },
+  "testSend": {
+    "maxEmails": "הגעת למקסימום 5 כתובות",
+    "emailRequired": "נדרשת כתובת אימייל או קבוצה",
+    "maxLimitReached": "שליחת בדיקה מוגבלת ל-5 כתובות אימייל",
+    "addMoreEmail": "הוסף אימייל"
+  },
   "sendToContact": "שלח לאיש קשר אחד",
+  "sendToMoreContact": "שלחו לנמען אחד או יותר",
   "successSent": "נשלח בהצלחה",
   "missingApi": "מפתח API לא נכון או לא תקין",
   "campaignNotFound": "לא נמצא קמפיין, או נכשל בשכפול קמפיין לצורך שליחה",
