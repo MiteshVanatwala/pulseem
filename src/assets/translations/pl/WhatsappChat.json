@@ -73,7 +73,7 @@
 	"sendDirectMessageDisclaimer": "Wysyłając bezpośrednią wiadomość WhatsApp, jesteś odpowiedzialny za upewnienie się, że odbiorca wyraził zgodę na otrzymywanie wiadomości od Ciebie.",
 	"chatSentSuccess": "Wiadomość wysłana pomyślnie",
 	"phoneRequired": "Numer telefonu jest wymagany",
-	"phoneTooShort": "Numer telefonu musi zawierać co najmniej 7 cyfr",
+	"phoneTooShort": "Numer telefonu musi zawierać co najmniej 9 cyfr",
 	"phoneTooLong": "Numer telefonu nie może przekraczać 15 cyfr",
 	"invalidPhoneNumber": "Wprowadź prawidłowy numer telefonu",
 	"noTemplatesFound": "Nie znaleziono szablonów",

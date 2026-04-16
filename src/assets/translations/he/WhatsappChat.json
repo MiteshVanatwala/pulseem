@@ -73,7 +73,7 @@
 	"sendDirectMessageDisclaimer": "בשליחת הודעת ווטסאפ ישירה, באחריותכם לוודא כי הנמען אכן אישר קבלת דיוור מכם",
 	"chatSentSuccess": "ההודעה נשלחה בהצלחה",
 	"phoneRequired": "מספר טלפון הוא שדה חובה",
-	"phoneTooShort": "מספר הטלפון חייב להכיל לפחות 7 ספרות",
+	"phoneTooShort": "מספר הטלפון חייב להכיל לפחות 9 ספרות",
 	"phoneTooLong": "מספר הטלפון לא יכול לעלות על 15 ספרות",
 	"invalidPhoneNumber": "אנא הכניסו מספר תקני",
 	"noTemplatesFound": "תבניות לא נמצאו",
