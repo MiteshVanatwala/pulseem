@@ -152,6 +152,8 @@ export const campaignEditorSlice = createSlice({
             CAMPAIGN_SAVED: { severity: 'success', color: 'success', message: 'campaigns.campaignSaved', showAnimtionCheck: true },
             TEMPLATE_SAVED: { severity: 'success', color: 'success', message: 'common.templateSaved', showAnimtionCheck: true },
             RECIPIENT_BLOCKED: { severity: 'error', color: 'error', message: "campaigns.recipientBlocked", showAnimtionCheck: false },
+            EMAIL_REQUIRED: { severity: 'warning', color: 'warning', message: 'campaigns.testSend.emailRequired', showAnimtionCheck: false },
+            MAX_LIMIT_REACHED: { severity: 'error', color: 'error', message: 'campaigns.testSend.maxLimitReached', showAnimtionCheck: false },
             NO_CREDITS_LEFT: { severity: 'error', color: 'error', message: "sms.noCredits", showAnimtionCheck: false },
             INVALID_EMAIL: { severity: 'error', color: 'error', message: "common.invalidEmail", showAnimtionCheck: false },
             ERROR_OCCURED: { severity: 'error', color: 'error', message: 'common.ErrorOccured', showAnimtionCheck: false },
