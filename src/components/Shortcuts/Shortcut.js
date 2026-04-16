@@ -16,13 +16,13 @@ import { PulseemFeatures } from '../../model/PulseemFields/Fields';
 
 const CATEGORY_CONFIG = {
   'appBar.newsletter.title':    { icon: NewsletterIcon, color: '#6C63FF', bg: '#F0EEFF' },
-  'appBar.sms.title':           { icon: SmsIcon,        color: '#00B4D8', bg: '#E0F7FC' },
+  'appBar.sms.title':           { icon: SmsIcon,        color: '#FF9F1C', bg: '#FFF4E0' },
   'appBar.whatsapp.title':      { icon: WhatsappIcon,   color: '#25D366', bg: '#E6F9EE' },
-  'appBar.groups.title':        { icon: NotesIcon,      color: '#FF9F1C', bg: '#FFF4E0' },
+  'appBar.groups.title':        { icon: NotesIcon,      color: '#00B4D8', bg: '#E0F7FC' },
   'appBar.reports.title':       { icon: ChartIcon,      color: '#E63946', bg: '#FDECEA' },
-  'appBar.automation.title':    { icon: HornIcon,       color: '#8338EC', bg: '#F3EAFD' },
-  'appBar.landingPages.title':  { icon: CardIcon,       color: '#3A86FF', bg: '#E8F1FF' },
-  'appBar.mms.title':           { icon: CardIcon,       color: '#FB5607', bg: '#FFF0EA' },
+  'appBar.automation.title':    { icon: HornIcon,       color: '#3A86FF', bg: '#E8F1FF' },
+  'appBar.landingPages.title':  { icon: CardIcon,       color: '#8338EC', bg: '#F3EAFD' },
+  'appBar.mms.title':           { icon: CardIcon,       color: '#FF9F1C', bg: '#FFF4E0' },
   'appBar.notifications.title': { icon: BellIcon,       color: '#FB5607', bg: '#FFF0EA' },
 };
 
