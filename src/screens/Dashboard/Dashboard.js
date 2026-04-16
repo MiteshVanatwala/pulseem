@@ -121,10 +121,10 @@ const DashboardScreen = ({ classes }) => {
               {<BulkStatus classes={classes} />}
               {<GlobalBalance classes={classes} />}
             </Grid>
-            <Grid item xs={12} sm={12} md={12} lg={shouldStackDashboardCards ? 12 : 4} className={windowSize === "xs" ? classes.pt20 : null}>
+            <Grid item xs={12} sm={12} md={12} lg={shouldStackDashboardCards ? 12 : 5} className={windowSize === "xs" ? classes.pt20 : null}>
               <RecipientChart classes={classes} />
             </Grid>
-            <Grid item xs={12} sm={12} md={12} lg={shouldStackDashboardCards ? 12 : 4} className={windowSize === "xs" ? classes.pt20 : null} style={{ alignSelf: 'flex-start' }}>
+            <Grid item xs={12} sm={12} md={12} lg={shouldStackDashboardCards ? 12 : 3} className={windowSize === "xs" ? classes.pt20 : null} style={{ alignSelf: 'flex-start' }}>
               <Shortcut
                 windowSize={windowSize}
                 classes={classes}

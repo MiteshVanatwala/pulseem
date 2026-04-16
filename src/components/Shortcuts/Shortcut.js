@@ -41,6 +41,8 @@ const Shortcut = ({ classes, windowSize, t, isRTL, variant = 'panel' }) => {
   const [pageOpen, setPageOpen] = useState(false);
   const [loading, setLoading] = useState({});
   const [activeShortcut, setActiveShortcut] = useState(null);
+  const [moreOpen, setMoreOpen] = useState(false);
+  const moreRef = useRef();
   const dispatch = useDispatch();
   const categories = { ...DASHBOARD_SHORTCUT };
   const Redirect = useRedirect();
@@ -325,11 +327,11 @@ const Shortcut = ({ classes, windowSize, t, isRTL, variant = 'panel' }) => {
     );
   }
 
-  const renderHorizontalShortcutButton = (data, index) => {
+  const renderHorizontalShortcutButton = (data, index, inPopover = false) => {
     if (loading[index]) {
       return (
-        <Box className={classes.pillItem} key={`shortcutStripLoading${index}`}>
-          <Box className={classes.pillChip} style={{ justifyContent: 'center' }}>
+        <Box className={inPopover ? classes.pillPopoverItem : classes.pillItem} key={`shortcutStripLoading${index}`}>
+          <Box className={inPopover ? classes.pillPopoverChip : classes.pillChip} style={{ justifyContent: 'center' }}>
             <CircularProgress size={16} />
           </Box>
         </Box>
@@ -347,10 +349,10 @@ const Shortcut = ({ classes, windowSize, t, isRTL, variant = 'panel' }) => {
         onMouseLeave={() => setActiveShortcut(null)}
         key={`shortcutStripButton${index}`}
         ref={innerRef}
-        className={classes.pillItem}
+        className={inPopover ? classes.pillPopoverItem : classes.pillItem}
       >
         <Box
-          className={classes.pillChip}
+          className={inPopover ? classes.pillPopoverChip : classes.pillChip}
           style={{ borderColor: cfg.color, background: cfg.bg, cursor: 'pointer' }}
           onClick={(e) => {
             if (!['svg', 'path', 'button'].includes(e.target.nodeName.toLowerCase())) {
@@ -426,29 +428,30 @@ const Shortcut = ({ classes, windowSize, t, isRTL, variant = 'panel' }) => {
   }
 
   const renderHorizontalNewShortcutButtons = () => {
-    let newShortcutButtons = [];
-    for (let index = shortcuts?.length; index < 8; index++) {
-      const innerRef = createRef();
-      newShortcutButtons.push(
-        <Box className={classes.pillItem} key={`emptyShortcutStripBtn${index}`} ref={innerRef}>
-          <Box
-            id="btnSelectNew"
-            className={classes.pillAddChip}
-            onClick={(e) => handleShortcutMenuOpen(windowSize === 'xs' ? e : innerRef, index)}
-          >
-            <Typography style={{ fontFamily: 'pulseemicons', fontSize: 20, color: '#FF2D76', lineHeight: 1, marginRight: 6 }}>
-                {'\uE0E4'}
-              </Typography>
-            <Typography className={classes.pillAddLabel}>{t('dashboard.addShortcut') || '+ Add Shortcut'}</Typography>
-          </Box>
-          {renderShortcutMenu(index)}
+    const innerRef = createRef();
+    const idx = shortcuts?.length || 0;
+    return (
+      <Box className={classes.pillItem} key={`emptyShortcutStripBtn`} ref={innerRef}>
+        <Box
+          id="btnSelectNew"
+          className={classes.pillAddChip}
+          onClick={(e) => handleShortcutMenuOpen(windowSize === 'xs' ? e : innerRef, idx)}
+        >
+          <Typography style={{ fontFamily: 'pulseemicons', fontSize: 20, color: '#FF2D76', lineHeight: 1, marginRight: 6 }}>
+            {'\uE0E4'}
+          </Typography>
+          <Typography className={classes.pillAddLabel}>{t('dashboard.addShortcut') || '+ Add Shortcut'}</Typography>
         </Box>
-      );
-    }
-    return newShortcutButtons;
+        {renderShortcutMenu(idx)}
+      </Box>
+    );
   }
 
   const renderHorizontalShortcutStrip = () => {
+    const visibleShortcuts = shortcuts ? shortcuts.slice(0, 4) : [];
+    const hiddenShortcuts = shortcuts ? shortcuts.slice(4) : [];
+    const hasMore = hiddenShortcuts.length > 0;
+
     return (
       <Box className={classes.shortcutStripBox}>
         <Box className={clsx(classes.dashBoxtitleSection, classes.shortcutStripHeader, classes.flex)}>
@@ -456,8 +459,47 @@ const Shortcut = ({ classes, windowSize, t, isRTL, variant = 'panel' }) => {
           <Typography className={'title'}>{t('dashboard.myShortcuts')}</Typography>
         </Box>
         <Box className={classes.pillScroller} ref={shortcutRef}>
-          {shortcuts && shortcuts.map((item, index) => renderHorizontalShortcutButton(item, index))}
-          {renderHorizontalNewShortcutButtons()}
+          {visibleShortcuts.map((item, index) => renderHorizontalShortcutButton(item, index))}
+
+          {/* +N More button with Popper */}
+          {hasMore && (
+            <Box className={classes.pillItem} ref={moreRef}>
+              <Box
+                className={classes.pillMoreBtn}
+                onClick={() => setMoreOpen(prev => !prev)}
+              >
+                <Typography className={classes.pillMoreLabel}>
+                  +{hiddenShortcuts.length} {t('dashboard.more') || 'More'}
+                </Typography>
+              </Box>
+              <Popper
+                open={moreOpen}
+                anchorEl={moreRef.current}
+                placement={isRTL ? 'left-start' : 'right-start'}
+                style={{ zIndex: 10 }}
+              >
+                <ClickAwayListener onClickAway={() => setMoreOpen(false)}>
+                  <Paper className={classes.pillPopoverPaper}>
+                    <Typography className={classes.pillPopoverTitle}>
+                      {t('dashboard.myShortcuts')}
+                    </Typography>
+                    <Box className={classes.pillPopoverList}>
+                      {hiddenShortcuts.map((item, index) => (
+                        <Box key={`popover_${item.ID}`} className={classes.pillPopoverItem}>
+                          {renderHorizontalShortcutButton(item, index + 4, true)}
+                        </Box>
+                      ))}
+                      <Box className={classes.pillPopoverItem}>
+                        {renderHorizontalNewShortcutButtons()}
+                      </Box>
+                    </Box>
+                  </Paper>
+                </ClickAwayListener>
+              </Popper>
+            </Box>
+          )}
+
+          {!hasMore && renderHorizontalNewShortcutButtons()}
         </Box>
       </Box>
     );
