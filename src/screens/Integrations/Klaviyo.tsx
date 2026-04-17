@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { Box, Typography, Button, Grid, TextField, FormControlLabel, FormControl } from "@material-ui/core";
+import React from "react";
+import { Box, Typography, Button, Grid, TextField, FormControlLabel, FormControl, MenuItem } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import clsx from "clsx";
 import { useDispatch, useSelector } from "react-redux";
@@ -42,9 +43,12 @@ const Klaviyo = ({ classes }: any) => {
     UnsubscribePreferenceTypeID: UnsubscribePreferenceType.None,
     isSyncRecipients: false,
     EcommerceSyncOptionsID: UnsubscribePreferenceType.Both,
-    IsInsertAsActive: false
+    IsInsertAsActive: false,
+    RegisterAsActiveOptionsID: UnsubscribePreferenceType.Both
   } as KlaviyoModel);
   const [isAuthenticated, setAuthenticated] = useState(false);
+  const [activeImportType, setActiveImportType] = useState<UnsubscribePreferenceType>(UnsubscribePreferenceType.Both);
+  const ArrowDownIcon = (): JSX.Element => (<span><IoIosArrowDown size={20} className={classes.dropdownIconComponent} /></span>) as JSX.Element;
 
   const renderToast = () => {
     setTimeout(() => {
@@ -154,7 +158,8 @@ const Klaviyo = ({ classes }: any) => {
           IsDeleted: false,
           isSyncRecipients: false,
           EcommerceSyncOptionsID: UnsubscribePreferenceType.Both,
-          IsInsertAsActive: false
+          IsInsertAsActive: false,
+          RegisterAsActiveOptionsID: UnsubscribePreferenceType.Both
         });
         break;
       }
@@ -267,15 +272,48 @@ const Klaviyo = ({ classes }: any) => {
   const showNewRegisteredToActive = () => ({
     title: t("common.notice"),
     showDivider: false,
-    showDefaultButtons: false,
     paperStyle: classes.maxWidth540,
+    confirmText: 'integrations.Klaviyo.iApprove',
     content: (
-      <Typography style={{ wordBreak: 'break-word' }}>
-        <div>{RenderHtml(t("integrations.Klaviyo.newAsActiveDesc1"))}</div>
-        <div className={clsx(classes.pt5)}>{RenderHtml(t("integrations.Klaviyo.newAsActiveDesc2"))}</div>
-      </Typography>
+      <Box>
+        <Typography style={{ wordBreak: 'break-word' }}>
+          <div>{RenderHtml(t("integrations.Klaviyo.newAsActiveDesc1"))}</div>
+          <div className={clsx(classes.pt5)}>{RenderHtml(t("integrations.Klaviyo.newAsActiveDesc2"))}</div>
+        </Typography>
+        <Box className={clsx(classes.pt20)}>
+          <Typography>{t("integrations.Klaviyo.importFromKlaviyo")}</Typography>
+          <FormControl className={clsx(classes.selectInputFormControl, classes.w100)}>
+            <Select
+              variant="standard"
+              value={activeImportType}
+              onChange={(event: any) => setActiveImportType(event.target.value as UnsubscribePreferenceType)}
+              IconComponent={ArrowDownIcon}
+              MenuProps={{
+                anchorOrigin: { vertical: 'top', horizontal: 'left' },
+                transformOrigin: { vertical: 'bottom', horizontal: 'left' },
+                PaperProps: {
+                  style: {
+                    maxHeight: 300,
+                    direction: isRTL ? 'rtl' : 'ltr'
+                  },
+                },
+              }}
+              style={{ padding: 2 }}
+            >
+              <MenuItem value={UnsubscribePreferenceType.Both}>{t('integrations.Klaviyo.bothEmailSMS')}</MenuItem>
+              <MenuItem value={UnsubscribePreferenceType.Email} disabled={smsOnlyScope}>{t('integrations.Klaviyo.emailOnly')}</MenuItem>
+              <MenuItem value={UnsubscribePreferenceType.Sms} disabled={emailOnlyScope}>{t('integrations.Klaviyo.SMSOnly')}</MenuItem>
+            </Select>
+          </FormControl>
+        </Box>
+      </Box>
     ),
     onConfirm: async () => {
+      await handleSave({ ...settings, IsInsertAsActive: true, RegisterAsActiveOptionsID: activeImportType });
+      setDialogType('');
+    },
+    onClose: () => {
+      setActiveImportType(UnsubscribePreferenceType.Both);
       setDialogType('');
     },
   })
@@ -303,6 +341,9 @@ const Klaviyo = ({ classes }: any) => {
 		}
 	}
 
+  const emailOnlyScope = settings?.EcommerceSyncOptionsID === UnsubscribePreferenceType.Email;
+  const smsOnlyScope = settings?.EcommerceSyncOptionsID === UnsubscribePreferenceType.Sms;
+
   return (
     <>
       {toastMessage && renderToast()}
@@ -320,7 +361,7 @@ const Klaviyo = ({ classes }: any) => {
                 classes.mt20
               )}
               color="primary"
-              endIcon={<GoLinkExternal />}
+              endIcon={(<span><GoLinkExternal /></span>) as any}
             >
               {t(`integrations.Klaviyo.howToConnect`)}
             </Button>}
@@ -450,11 +491,62 @@ const Klaviyo = ({ classes }: any) => {
                   </Box>}
                 />
 
-                <Box className={clsx(classes.pt20)}>
+              </Grid>
+
+              <Grid item md={10} xs={12}>
+                <Box style={{ display: 'flex', gap: 32 }}>
+                  <Box style={{ flex: 1 }}>
+                  <Typography>{t("integrations.Klaviyo.importFromKlaviyo")}</Typography>
+                  <FormControl className={clsx(classes.selectInputFormControl, classes.w100)}>
+                    <Select
+                      variant="standard"
+                      value={settings?.EcommerceSyncOptionsID || UnsubscribePreferenceType.Both}
+                      onChange={(event: any) => {
+                        const newScope = Number(event.target.value) as UnsubscribePreferenceType;
+                        const corrected = { ...settings, EcommerceSyncOptionsID: newScope };
+                        if (newScope === UnsubscribePreferenceType.Email && corrected.UnsubscribePreferenceTypeID === UnsubscribePreferenceType.Sms) {
+                          corrected.UnsubscribePreferenceTypeID = UnsubscribePreferenceType.Email;
+                        }
+                        if (newScope === UnsubscribePreferenceType.Sms && corrected.UnsubscribePreferenceTypeID === UnsubscribePreferenceType.Email) {
+                          corrected.UnsubscribePreferenceTypeID = UnsubscribePreferenceType.Sms;
+                        }
+                        if (newScope === UnsubscribePreferenceType.Email && corrected.RegisterAsActiveOptionsID === UnsubscribePreferenceType.Sms) {
+                          corrected.RegisterAsActiveOptionsID = UnsubscribePreferenceType.Email;
+                        }
+                        if (newScope === UnsubscribePreferenceType.Sms && corrected.RegisterAsActiveOptionsID === UnsubscribePreferenceType.Email) {
+                          corrected.RegisterAsActiveOptionsID = UnsubscribePreferenceType.Sms;
+                        }
+                        if (newScope === UnsubscribePreferenceType.Email && activeImportType === UnsubscribePreferenceType.Sms) {
+                          setActiveImportType(UnsubscribePreferenceType.Email);
+                        }
+                        if (newScope === UnsubscribePreferenceType.Sms && activeImportType === UnsubscribePreferenceType.Email) {
+                          setActiveImportType(UnsubscribePreferenceType.Sms);
+                        }
+                        handleSave(corrected);
+                      }}
+                      IconComponent={ArrowDownIcon}
+                      MenuProps={{
+                        anchorOrigin: { vertical: 'top', horizontal: 'left' },
+                        transformOrigin: { vertical: 'bottom', horizontal: 'left' },
+                        PaperProps: {
+                          style: {
+                            maxHeight: 300,
+                            direction: isRTL ? 'rtl' : 'ltr'
+                          },
+                        },
+                      }}
+                      style={{ padding: 2 }}
+                    >
+                      <MenuItem value={UnsubscribePreferenceType.Both}>{t('integrations.Klaviyo.bothEmailSMS')}</MenuItem>
+                      <MenuItem value={UnsubscribePreferenceType.Email}>{t('integrations.Klaviyo.emailOnly')}</MenuItem>
+                      <MenuItem value={UnsubscribePreferenceType.Sms}>{t('integrations.Klaviyo.SMSOnly')}</MenuItem>
+                    </Select>
+                  </FormControl>
+                  </Box>
+                  <Box style={{ flex: 1 }}>
                   <Typography>{t("integrations.Klaviyo.unsubscribe")}</Typography>
                   <FormControl className={clsx(classes.selectInputFormControl, classes.w100)}>
                     <Select
-                      native
                       variant="standard"
                       value={settings?.UnsubscribePreferenceTypeID || UnsubscribePreferenceType.None}
                       onChange={(event: any) => {
@@ -463,8 +555,10 @@ const Klaviyo = ({ classes }: any) => {
                           UnsubscribePreferenceTypeID: event.target.value
                         });
                       }}
-                      IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+                      IconComponent={ArrowDownIcon}
                       MenuProps={{
+                        anchorOrigin: { vertical: 'top', horizontal: 'left' },
+                        transformOrigin: { vertical: 'bottom', horizontal: 'left' },
                         PaperProps: {
                           style: {
                             maxHeight: 300,
@@ -472,51 +566,15 @@ const Klaviyo = ({ classes }: any) => {
                           },
                         },
                       }}
-                      style={{
-                        padding: 2
-                      }}
+                      style={{ padding: 2 }}
                     >
-                      <option value={UnsubscribePreferenceType.None}>{t('report.None')}</option>
-                      <option value={UnsubscribePreferenceType.Email}>{t('common.email')}</option>
-                      <option value={UnsubscribePreferenceType.Sms}>{t('common.SMS')}</option>
-                      <option value={UnsubscribePreferenceType.Both}>{t('integrations.Klaviyo.bothEmailSMS')}</option>
+                      <MenuItem value={UnsubscribePreferenceType.None}>{t('report.None')}</MenuItem>
+                      <MenuItem value={UnsubscribePreferenceType.Email} disabled={smsOnlyScope}>{t('common.email')}</MenuItem>
+                      <MenuItem value={UnsubscribePreferenceType.Sms} disabled={emailOnlyScope}>{t('common.SMS')}</MenuItem>
+                      <MenuItem value={UnsubscribePreferenceType.Both}>{t('integrations.Klaviyo.bothEmailSMS')}</MenuItem>
                     </Select>
                   </FormControl>
-                </Box>
-              </Grid>
-
-              <Grid item md={5} xs={12}>
-                <Box>
-                  <Typography>{t("integrations.Klaviyo.importFromKlaviyo")}</Typography>
-                  <FormControl className={clsx(classes.selectInputFormControl, classes.w100)}>
-                    <Select
-                      native
-                      variant="standard"
-                      value={settings?.EcommerceSyncOptionsID || UnsubscribePreferenceType.Both}
-                      onChange={(event: any) => {
-                        handleSave({
-                          ...settings,
-                          EcommerceSyncOptionsID: event.target.value
-                        });
-                      }}
-                      IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
-                      MenuProps={{
-                        PaperProps: {
-                          style: {
-                            maxHeight: 300,
-                            direction: isRTL ? 'rtl' : 'ltr'
-                          },
-                        },
-                      }}
-                      style={{
-                        padding: 2
-                      }}
-                    >
-                      <option value={UnsubscribePreferenceType.Both}>{t('integrations.Klaviyo.importAll')}</option>
-                      <option value={UnsubscribePreferenceType.Email}>{t('integrations.Klaviyo.importEmailsonly')}</option>
-                      <option value={UnsubscribePreferenceType.Sms}>{t('integrations.Klaviyo.importCellphonesOnly')}</option>
-                    </Select>
-                  </FormControl>
+                  </Box>
                 </Box>
                 <Box className={clsx(classes.pt20)}>
                   <FormControlLabel
@@ -531,9 +589,10 @@ const Klaviyo = ({ classes }: any) => {
                         width={48}
                         className={{ [classes.rtlSwitch]: isRTL }}
                         onChange={(e: any) => {
-                          handleSave({ ...settings, IsInsertAsActive: !settings?.IsInsertAsActive });
                           if (!settings?.IsInsertAsActive) {
                             setDialogType('newToActive');
+                          } else {
+                            handleSave({ ...settings, IsInsertAsActive: false });
                           }
                         }}
                       />
@@ -541,6 +600,15 @@ const Klaviyo = ({ classes }: any) => {
                     label={<Box className={classes.radio}>
                       <Typography style={{ wordBreak: 'break-word', fontSize: '18px' }}>
                         <b>{t("integrations.Klaviyo.newAsActive")}</b>
+                        {settings?.IsInsertAsActive && (
+                          <span style={{ fontWeight: 'normal', marginLeft: 8 }}>
+                            ({settings?.RegisterAsActiveOptionsID === UnsubscribePreferenceType.Both
+                              ? t('integrations.Klaviyo.bothEmailSMS')
+                              : settings?.RegisterAsActiveOptionsID === UnsubscribePreferenceType.Email
+                              ? t('integrations.Klaviyo.emailOnly')
+                              : t('integrations.Klaviyo.SMSOnly')})
+                          </span>
+                        )}
                       </Typography>
                     </Box>}
                   />
