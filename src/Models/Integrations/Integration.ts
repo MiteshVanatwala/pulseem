@@ -64,6 +64,7 @@ export interface KlaviyoModel {
     EcommerceSyncOptionsID: number | null;
     isSyncRecipients?: boolean;
     IsInsertAsActive: boolean;
+    InsertAsActiveTypeID?: UnsubscribePreferenceType;
 }
 
 export enum UnsubscribePreferenceType {
