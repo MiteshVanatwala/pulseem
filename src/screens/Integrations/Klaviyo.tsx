@@ -600,6 +600,15 @@ const Klaviyo = ({ classes }: any) => {
                     label={<Box className={classes.radio}>
                       <Typography style={{ wordBreak: 'break-word', fontSize: '18px' }}>
                         <b>{t("integrations.Klaviyo.newAsActive")}</b>
+                        {settings?.IsInsertAsActive && (
+                          <span style={{ fontWeight: 'normal', marginLeft: 8 }}>
+                            ({settings?.RegisterAsActiveOptionsID === UnsubscribePreferenceType.Both
+                              ? t('integrations.Klaviyo.bothEmailSMS')
+                              : settings?.RegisterAsActiveOptionsID === UnsubscribePreferenceType.Email
+                              ? t('integrations.Klaviyo.emailOnly')
+                              : t('integrations.Klaviyo.SMSOnly')})
+                          </span>
+                        )}
                       </Typography>
                     </Box>}
                   />
