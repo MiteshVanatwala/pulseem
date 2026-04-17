@@ -777,6 +777,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
           classes.backButton
         )}
         style={{ margin: '8px' }}
+        //@ts-ignore
         startIcon={<BiSave />}
       >
         {t('common.saveTemplate')}
@@ -790,6 +791,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
           classes.backButton
         )}
         style={{ margin: '8px' }}
+        //@ts-ignore
         startIcon={<MdGroups />}
       >
         {t('common.Groups')}
@@ -828,6 +830,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
               classes.backButton
             )}
             style={{ margin: '8px' }}
+            //@ts-ignore
             startIcon={silentSave ? <Loader isOpen={silentSave} size={20} showBackdrop={false} contained={true} /> : <BiSave />}
             color="primary"
           >
@@ -853,6 +856,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
                     classes.btnRounded,
                     classes.backButton
                   )}
+                  //@ts-ignore
                   startIcon={<MdOutlinePublic />}
                   style={{ marginInlineStart: '8px' }}
                   color="primary"
@@ -875,6 +879,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
                     classes.btnRounded,
                     classes.backButton
                   )}
+                  //@ts-ignore
                   startIcon={<MdCheck />}
                   style={{ marginInlineStart: '8px' }}
                   color="primary"
@@ -896,8 +901,10 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
             classes.btnRounded,
             classes.backButton
           )}
+          //@ts-ignore
           endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
           style={{ margin: '8px' }}
+          //@ts-ignore
           startIcon={<BiSave />}
           color="primary"
         >{t("common.save")}
@@ -920,6 +927,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
             classes.btnRounded,
             classes.backButton
           )}
+          //@ts-ignore
           startIcon={<MdOutlinePublic />}
           style={{ marginInlineStart: '8px' }}
           color="primary"
@@ -934,6 +942,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
             classes.btnRounded,
             classes.backButton
           )}
+          //@ts-ignore
           endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
           style={{ marginInlineStart: '8px' }}
           color="primary"
@@ -957,6 +966,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       let dialog = {
         showDivider: false,
         icon: (
+          //@ts-ignore
           <IoMdImages />
         ),
         title: t("common.imageGallery"),

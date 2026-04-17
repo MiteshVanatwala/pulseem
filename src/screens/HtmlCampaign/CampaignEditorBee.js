@@ -734,7 +734,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   }, [beeToken]);
 
   useEffect(() => {
-    if (!editorRef.current || !displayConditions) {
+    if (!editorRef.current || !displayConditions || !hasDisplayConditions) {
       return;
     }
 
@@ -1190,6 +1190,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   // }
 
   const editorFonts = FONTS();
+  const hasDisplayConditions = accountFeatures?.indexOf(PulseemFeatures.DisplayConditions) > -1;
   const onRefreshConditions = async (deletedByPopupId = null) => {
     if (deletedByPopupId !== null) {
       recentlyDeletedByPopupRef.current.add(deletedByPopupId);
@@ -1264,7 +1265,8 @@ const CampaignEditor = ({ classes, ...props }) => {
     await editorRef.current.load(updatedJson);
   };
 
-  const config = BeeConfig({
+  // Memoize config to prevent recreation on every render (which was causing modal flicker)
+  const config = useMemo(() => BeeConfig({
     classes,
     displayConditions,
     onSaveUserBlock,
@@ -1288,8 +1290,9 @@ const CampaignEditor = ({ classes, ...props }) => {
     onRefreshConditions: onRefreshConditions,
     onConditionDeletedFromDesign: removeDeletedConditionFromDesign,
     onEditorJsonChange: updateLatestEditorJson,
-    setIsDisplayConditionDialogOpen: setIsDisplayConditionDialogOpen
-  });
+    setIsDisplayConditionDialogOpen: setIsDisplayConditionDialogOpen,
+    hasDisplayConditions: hasDisplayConditions
+  }), [classes, displayConditions, onSaveUserBlock, isRTL, EditRow, openModal, onSave, onAutoSaveCampaign, onDesignChange, setDialog, campaignId, onEditBlock, handleDeleteBlock, getRows, handleEditRow, handleDeleteRow, t, language, dispatch, editorFonts, onRefreshConditions, removeDeletedConditionFromDesign, updateLatestEditorJson, setIsDisplayConditionDialogOpen, hasDisplayConditions]);
 
   // Email Size Indicator
   const EmailSizeIndicator = () => {
