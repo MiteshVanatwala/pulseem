@@ -44,7 +44,7 @@ const Klaviyo = ({ classes }: any) => {
     isSyncRecipients: false,
     EcommerceSyncOptionsID: UnsubscribePreferenceType.Both,
     IsInsertAsActive: false,
-    InsertAsActiveTypeID: UnsubscribePreferenceType.Both
+    RegisterAsActiveOptionsID: UnsubscribePreferenceType.Both
   } as KlaviyoModel);
   const [isAuthenticated, setAuthenticated] = useState(false);
   const [activeImportType, setActiveImportType] = useState<UnsubscribePreferenceType>(UnsubscribePreferenceType.Both);
@@ -159,7 +159,7 @@ const Klaviyo = ({ classes }: any) => {
           isSyncRecipients: false,
           EcommerceSyncOptionsID: UnsubscribePreferenceType.Both,
           IsInsertAsActive: false,
-          InsertAsActiveTypeID: UnsubscribePreferenceType.Both
+          RegisterAsActiveOptionsID: UnsubscribePreferenceType.Both
         });
         break;
       }
@@ -309,7 +309,7 @@ const Klaviyo = ({ classes }: any) => {
       </Box>
     ),
     onConfirm: async () => {
-      await handleSave({ ...settings, IsInsertAsActive: true, InsertAsActiveTypeID: activeImportType });
+      await handleSave({ ...settings, IsInsertAsActive: true, RegisterAsActiveOptionsID: activeImportType });
       setDialogType('');
     },
     onClose: () => {
@@ -541,11 +541,11 @@ const Klaviyo = ({ classes }: any) => {
                         if (newScope === UnsubscribePreferenceType.Sms && corrected.UnsubscribePreferenceTypeID === UnsubscribePreferenceType.Email) {
                           corrected.UnsubscribePreferenceTypeID = UnsubscribePreferenceType.Sms;
                         }
-                        if (newScope === UnsubscribePreferenceType.Email && corrected.InsertAsActiveTypeID === UnsubscribePreferenceType.Sms) {
-                          corrected.InsertAsActiveTypeID = UnsubscribePreferenceType.Email;
+                        if (newScope === UnsubscribePreferenceType.Email && corrected.RegisterAsActiveOptionsID === UnsubscribePreferenceType.Sms) {
+                          corrected.RegisterAsActiveOptionsID = UnsubscribePreferenceType.Email;
                         }
-                        if (newScope === UnsubscribePreferenceType.Sms && corrected.InsertAsActiveTypeID === UnsubscribePreferenceType.Email) {
-                          corrected.InsertAsActiveTypeID = UnsubscribePreferenceType.Sms;
+                        if (newScope === UnsubscribePreferenceType.Sms && corrected.RegisterAsActiveOptionsID === UnsubscribePreferenceType.Email) {
+                          corrected.RegisterAsActiveOptionsID = UnsubscribePreferenceType.Sms;
                         }
                         if (newScope === UnsubscribePreferenceType.Email && activeImportType === UnsubscribePreferenceType.Sms) {
                           setActiveImportType(UnsubscribePreferenceType.Email);
