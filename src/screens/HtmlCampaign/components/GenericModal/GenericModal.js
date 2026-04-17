@@ -1,4 +1,5 @@
 import Modal from 'react-modal'
+import React from 'react'
 
 const GenericModal = (props) => {
   const {
@@ -39,4 +40,4 @@ const GenericModal = (props) => {
   )
 }
 
-export default GenericModal
+export default React.memo(GenericModal)

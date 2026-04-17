@@ -36,6 +36,7 @@ export interface ConfigOptions {
     onConditionDeletedFromDesign?: Function;
     onEditorJsonChange?: Function;
     setIsDisplayConditionDialogOpen?: Function;
+    hasDisplayConditions?: boolean;
 }
 
 export const BeeConfig = (Options: ConfigOptions) => {
@@ -63,7 +64,8 @@ export const BeeConfig = (Options: ConfigOptions) => {
         onRefreshConditions,
         onConditionDeletedFromDesign,
         onEditorJsonChange,
-        setIsDisplayConditionDialogOpen
+        setIsDisplayConditionDialogOpen,
+        hasDisplayConditions
     } = Options;
 
     const getConditionId = (condition?: any) => condition?.id ?? condition?.ID ?? null;
@@ -159,7 +161,8 @@ export const BeeConfig = (Options: ConfigOptions) => {
                 `  color: #ffffff !important;`,
                 `  fill: #ffffff !important;`,
                 `}`,
-                // Show delete button
+                // Show delete button — only if user has display conditions feature
+                ...(hasDisplayConditions ? [
                 `.row-display-condition-remove-button--cs {`,
                 `  display: inline-block !important;`,
                 `  visibility: visible !important;`,
@@ -172,6 +175,24 @@ export const BeeConfig = (Options: ConfigOptions) => {
                 `  font-size: 14px !important;`,
                 `  line-height: 1.4 !important;`,
                 `}`,
+                ] : [
+                // Hide entire display condition section for users without feature 74
+                `.row-display-condition-add-button--cs,`,
+                `.row-display-condition-select-button--cs,`,
+                `.row-display-condition-open-builder-button--cs,`,
+                `.row-display-condition-remove-button--cs,`,
+                `.row-display-condition-buttons-container--cs,`,
+                `[class*="DisplayCondition"],`,
+                `[class*="display-condition"],`,
+                `[class*="row-display-condition"] {`,
+                `  display: none !important;`,
+                `  visibility: hidden !important;`,
+                `  height: 0 !important;`,
+                `  margin: 0 !important;`,
+                `  padding: 0 !important;`,
+                `  pointer-events: none !important;`,
+                `}`,
+                ]),
                 // Hide the Edit action in the selected display condition card
                 `.row-display-condition-edit-button--cs,`,
                 `.row-display-condition-edit-button--cs:hover,`,
@@ -263,7 +284,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
         sidebarPosition: IsRTL ? 'right' : 'left',
         loadingSpinnerTheme: 'light',
         saveRows: true,
-        rowDisplayConditions: conditionsWithIds,
+        rowDisplayConditions: hasDisplayConditions ? conditionsWithIds : [],
         rowsConfiguration: {
             emptyRows: true,
             defaultRows: false,
@@ -336,6 +357,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
                     }
                 }
             },
+            ...(hasDisplayConditions ? {
             rowDisplayConditions: {
                 label: t('campaigns.displayConditions.openBuilder') || 'Open builder',
                 handler: async (resolve: Function, reject: Function, currentCondition?: any) => {
@@ -408,6 +430,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
                     }
                 }
             },
+            } : {}),
             saveRow: {
                 handler: async (resolve: Function, reject: Function, args: any) => {
                     const results = await openModal(EditRow, args, classes);
