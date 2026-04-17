@@ -491,42 +491,11 @@ const Klaviyo = ({ classes }: any) => {
                   </Box>}
                 />
 
-                <Box className={clsx(classes.pt20)}>
-                  <Typography>{t("integrations.Klaviyo.unsubscribe")}</Typography>
-                  <FormControl className={clsx(classes.selectInputFormControl, classes.w100)}>
-                    <Select
-                      variant="standard"
-                      value={settings?.UnsubscribePreferenceTypeID || UnsubscribePreferenceType.None}
-                      onChange={(event: any) => {
-                        handleSave({
-                          ...settings,
-                          UnsubscribePreferenceTypeID: event.target.value
-                        });
-                      }}
-                      IconComponent={ArrowDownIcon}
-                      MenuProps={{
-                        anchorOrigin: { vertical: 'top', horizontal: 'left' },
-                        transformOrigin: { vertical: 'bottom', horizontal: 'left' },
-                        PaperProps: {
-                          style: {
-                            maxHeight: 300,
-                            direction: isRTL ? 'rtl' : 'ltr'
-                          },
-                        },
-                      }}
-                      style={{ padding: 2 }}
-                    >
-                      <MenuItem value={UnsubscribePreferenceType.None}>{t('report.None')}</MenuItem>
-                      <MenuItem value={UnsubscribePreferenceType.Email} disabled={smsOnlyScope}>{t('common.email')}</MenuItem>
-                      <MenuItem value={UnsubscribePreferenceType.Sms} disabled={emailOnlyScope}>{t('common.SMS')}</MenuItem>
-                      <MenuItem value={UnsubscribePreferenceType.Both}>{t('integrations.Klaviyo.bothEmailSMS')}</MenuItem>
-                    </Select>
-                  </FormControl>
-                </Box>
               </Grid>
 
-              <Grid item md={5} xs={12}>
-                <Box>
+              <Grid item md={10} xs={12}>
+                <Box style={{ display: 'flex', gap: 32 }}>
+                  <Box style={{ flex: 1 }}>
                   <Typography>{t("integrations.Klaviyo.importFromKlaviyo")}</Typography>
                   <FormControl className={clsx(classes.selectInputFormControl, classes.w100)}>
                     <Select
@@ -573,6 +542,39 @@ const Klaviyo = ({ classes }: any) => {
                       <MenuItem value={UnsubscribePreferenceType.Sms}>{t('integrations.Klaviyo.SMSOnly')}</MenuItem>
                     </Select>
                   </FormControl>
+                  </Box>
+                  <Box style={{ flex: 1 }}>
+                  <Typography>{t("integrations.Klaviyo.unsubscribe")}</Typography>
+                  <FormControl className={clsx(classes.selectInputFormControl, classes.w100)}>
+                    <Select
+                      variant="standard"
+                      value={settings?.UnsubscribePreferenceTypeID || UnsubscribePreferenceType.None}
+                      onChange={(event: any) => {
+                        handleSave({
+                          ...settings,
+                          UnsubscribePreferenceTypeID: event.target.value
+                        });
+                      }}
+                      IconComponent={ArrowDownIcon}
+                      MenuProps={{
+                        anchorOrigin: { vertical: 'top', horizontal: 'left' },
+                        transformOrigin: { vertical: 'bottom', horizontal: 'left' },
+                        PaperProps: {
+                          style: {
+                            maxHeight: 300,
+                            direction: isRTL ? 'rtl' : 'ltr'
+                          },
+                        },
+                      }}
+                      style={{ padding: 2 }}
+                    >
+                      <MenuItem value={UnsubscribePreferenceType.None}>{t('report.None')}</MenuItem>
+                      <MenuItem value={UnsubscribePreferenceType.Email} disabled={smsOnlyScope}>{t('common.email')}</MenuItem>
+                      <MenuItem value={UnsubscribePreferenceType.Sms} disabled={emailOnlyScope}>{t('common.SMS')}</MenuItem>
+                      <MenuItem value={UnsubscribePreferenceType.Both}>{t('integrations.Klaviyo.bothEmailSMS')}</MenuItem>
+                    </Select>
+                  </FormControl>
+                  </Box>
                 </Box>
                 <Box className={clsx(classes.pt20)}>
                   <FormControlLabel
