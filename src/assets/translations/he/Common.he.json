@@ -349,6 +349,7 @@
   "SelectTemplate": "בחר תבנית",
   "DirectUpload": "העלאה ישירה",
   "ErrorOccured": "אירעה שגיאה",
+  "errorContactSupport": "כדי לשלוח SMS משם שולח באנגלית יש לעבור תהליך אימות פרטני אנא פנו לצוות התמיכה שלנו",
   "Pending": "ממתין",
   "RecipientsName": "שם הנמען",
   "SentFromNumber": "מאת",

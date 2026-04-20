@@ -47,6 +47,7 @@ const SideBarContactList = ({
 	const { t: translator } = useTranslation();
 	const { contactID } = useParams();
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+	const [menuOpen, setMenuOpen] = useState(false);
 	const [selectedPhoneNumber, setSelectedPhoneNumber] = useState<string | null>(
 		null,
 	);
@@ -78,27 +79,43 @@ const SideBarContactList = ({
 	) => {
 		e.preventDefault();
 		e.stopPropagation();
+		e.nativeEvent.stopImmediatePropagation();
 		const rect = e.currentTarget.getBoundingClientRect();
 		const menuWidth = 250;
+		const menuHeight = 300;
 		const viewportWidth = window.innerWidth;
-		
-		let leftPosition = rect.left + window.scrollX;
-		if (leftPosition + menuWidth > viewportWidth) {
-			leftPosition = rect.right + window.scrollX - menuWidth;
+		const viewportHeight = window.innerHeight;
+		const padding = 8;
+
+		let leftPosition = rect.left;
+		let topPosition = rect.bottom;
+		if (leftPosition + menuWidth > viewportWidth - padding) {
+			leftPosition = viewportWidth - menuWidth - padding;
 		}
-		
+		if (leftPosition < padding) {
+			leftPosition = padding;
+		}
+
+		if (topPosition + menuHeight > viewportHeight - padding) {
+			topPosition = Math.max(padding, rect.top - menuHeight);
+		}
+
 		setMenuPosition({
-			top: rect.bottom + window.scrollY,
+			top: topPosition,
 			left: leftPosition
 		});
 		setAnchorEl(e.currentTarget);
 		setSelectedPhoneNumber(phoneNumber);
+		setMenuOpen(true);
 	};
 
 	const handleCloseTagMenu = () => {
-		setAnchorEl(null);
-		setSelectedPhoneNumber(null);
-		setMenuPosition(null);
+		setMenuOpen(false);
+		setTimeout(() => {
+			setAnchorEl(null);
+			setSelectedPhoneNumber(null);
+			setMenuPosition(null);
+		}, 200);
 	};
 
 	const handleTagChange = async (
@@ -129,10 +146,7 @@ const SideBarContactList = ({
 			if (isAssigned) {
 				// Remove tag
 				const tagIdToRemove = parseInt(tagId);
-				newTags = currentTags.filter((t) => {
-					const currentId = parseInt(t.id);
-					return currentId !== tagIdToRemove;
-				});
+				newTags = currentTags.filter((t) => parseInt(t.id) !== tagIdToRemove);
 				newTagIds = newTags
 					.map((t) => parseInt(t.id))
 					.filter((id) => !isNaN(id));
@@ -155,12 +169,6 @@ const SideBarContactList = ({
 				}
 			}
 
-			// Update backend
-			await PulseemReactInstance.put('WhatsAppChat/AssignTagsToChat', {
-				Cellphone: targetPhone,
-				TagIds: newTagIds,
-			});
-
 			// Update local state
 			setUpdatedTags((prev) => ({
 				...prev,
@@ -175,11 +183,26 @@ const SideBarContactList = ({
 				onTagsUpdated(targetPhone, newTagIds, newTags);
 			}
 
-			if (!isAssigned) {
-				handleCloseTagMenu();
-			}
+			handleCloseTagMenu();
+			// Update backend
+			await PulseemReactInstance.put('WhatsAppChat/AssignTagsToChat', {
+				Cellphone: targetPhone,
+				TagIds: newTagIds,
+			});
+
 		} catch (error: any) {
 			console.error('Error updating tags:', error);
+			const revertTags: { id: string; TagName: string; TagColor: string }[] = (
+				contact.Tags || []
+			).map((t: any) => ({
+				id: String(t.id ?? t.Id ?? ''),
+				TagName: t.TagName,
+				TagColor: t.TagColor,
+			}));
+			setUpdatedTags((prev) => ({
+				...prev,
+				[targetPhone]: revertTags,
+			}));
 		}
 	};
 
@@ -311,46 +334,55 @@ const SideBarContactList = ({
 														contact.Tags ||
 														[]
 													).length > 0 && (
-														<>
-															{(
-																updatedTags[contact.PhoneNumber] ||
-																contact.Tags ||
-																[]
-															).map((tag) => (
-																<Chip
-																	key={tag.id}
-																	label={tag.TagName}
-																	size="small"
-																	style={{
-																		backgroundColor: tag.TagColor || '#888',
-																		color: '#fff',
-																		fontWeight: 600,
-																		fontSize: '15px',
-																		height: '18px',
-																		padding: '13px 0px',
-																		margin: '0',
-																	}}
-																	className={classes.tagChipSmall}
-																	onDelete={(e) => {
-																		e.preventDefault();
-																		e.stopPropagation();
-																		handleTagChange(
-																			tag.id,
-																			true,
-																			contact.PhoneNumber,
-																		);
-																	}}
-																/>
-															))}
-														</>
-													)}
+															<Box className={classes.tagsScrollArea}>
+																{(
+																	updatedTags[contact.PhoneNumber] ||
+																	contact.Tags ||
+																	[]
+																).map((tag) => (
+																	<Chip
+																		key={tag.id}
+																		label={tag.TagName}
+																		size="small"
+																		style={{
+																			backgroundColor: tag.TagColor || '#888',
+																			color: '#fff',
+																			fontWeight: 600,
+																			fontSize: '15px',
+																			height: '18px',
+																			padding: '13px 0px',
+																			margin: '0',
+																			flexShrink: 0,
+																		}}
+																		className={classes.tagChipSmall}
+																		onClick={(e) => {
+																			e.preventDefault();
+																			e.stopPropagation();
+																			e.nativeEvent.stopImmediatePropagation();
+																		}}
+																		onDelete={(e) => {
+																			e.preventDefault();
+																			e.stopPropagation();
+																			e.nativeEvent.stopImmediatePropagation();
+																			handleTagChange(
+																				tag.id, 
+																				true, 
+																				contact.PhoneNumber,
+																			);
+																		}}
+																	/>
+																))}
+															</Box>
+														)}
 
 													{/* Plus Button - Small Size */}
 													<IconButton
 														size="small"
-														onClick={(e) =>
-															handleOpenTagMenu(e, contact.PhoneNumber)
-														}
+														onClick={(e) => {
+															e.preventDefault();
+															e.stopPropagation();
+															handleOpenTagMenu(e, contact.PhoneNumber);
+														}}
 														className={classes.plusButtonStyle}
 													>
 														<AiOutlinePlus size={11} />
@@ -385,9 +417,9 @@ const SideBarContactList = ({
 											{/* Tag Menu */}
 											<Menu
 												id={`tag-menu-${contact.PhoneNumber}`}
-												anchorEl={null}
+												anchorEl={anchorEl}
 												open={
-													Boolean(anchorEl) &&
+													menuOpen && 
 													selectedPhoneNumber === contact.PhoneNumber
 												}
 												onClose={handleCloseTagMenu}
@@ -396,15 +428,22 @@ const SideBarContactList = ({
 												disableRestoreFocus
 												disableScrollLock
 												container={() => document.body}
+												transitionDuration={{ enter: 150, exit: 200 }}
+												onClick={(e) => {
+													e.preventDefault();
+													e.stopPropagation();
+													e.nativeEvent.stopImmediatePropagation();
+												}}
 												PaperProps={{
 													style: {
 														maxHeight: '300px',
-														width: '250px',
+														width: 'min(250px, calc(100vw - 16px))',
 														position: 'fixed',
 														zIndex: 9999,
 														top: menuPosition?.top || 0,
 														left: menuPosition?.left || 0,
 														direction: isRTL ? 'rtl' : 'ltr',
+														boxSizing: 'border-box',
 													},
 												}}
 											>
@@ -434,13 +473,17 @@ const SideBarContactList = ({
 															key={tag.id}
 															className={classes.assignedTagMenuItem}
 															style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexDirection: isRTL ? 'row-reverse' : 'row' }}
+															onClick={() => handleCloseTagMenu()}
 														>
 															<span className={classes.tagNameFlex}>
 																{tag.TagName}
 															</span>
 															<IconButton
 																size="small"
-																onClick={() => handleTagChange(tag.id, true)}
+																onClick={(e) => {
+																	e.stopPropagation();
+																	handleTagChange(tag.id, true, contact.PhoneNumber);
+																}}
 																className={classes.deleteIconButton}
 															>
 																<MdClose size={16} />

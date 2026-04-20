@@ -755,6 +755,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     display: "flex",
     justifyContent: "space-between",
   },
+  mobileColumn: {
+    '@media screen and (max-width: 1024px)': {
+      flexDirection: 'column',
+      alignItems: 'flex-start',
+      height: 'auto',
+      gap: 6,
+    },
+  },
   spaceEvenly: {
     display: "flex",
     justifyContent: "space-evenly",
@@ -5627,9 +5635,37 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   // ChatUi.tsx styles
   tagChipsContainer: {
     display: 'flex',
+    gap: '4px',
     alignItems: 'center',
-    flexWrap: 'wrap',
-    marginInlineEnd: 'auto'
+    flexWrap: 'nowrap',
+    overflowX: 'scroll',
+    overflowY: 'hidden',
+    minWidth: 0,
+    width: 'fit-content',
+    marginInlineEnd: 'auto',
+    scrollbarWidth: 'thin',
+    scrollbarColor: '#888888 #e0e0e0',
+    maxWidth: '83vw',
+    '@media (min-width: 1025px)': {
+      maxWidth: '16vw',
+    },
+    '@media (min-width: 1300px)': {
+      maxWidth: '20vw',
+    },
+    '&::-webkit-scrollbar': {
+      height: '2px',
+    },
+    '&::-webkit-scrollbar-track': {
+      background: '#e0e0e0',
+      borderRadius: '10px',
+    },
+    '&::-webkit-scrollbar-thumb': {
+      background: '#888888',
+      borderRadius: '10px',
+    },
+    '&::-webkit-scrollbar-thumb:hover': {
+      background: '#555555',
+    },
   },
   selectFieldStyle: {
     marginInline: 15
@@ -5664,7 +5700,35 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     gap: '4px',
     alignItems: 'center',
     flexWrap: 'wrap',
-    flex: 1
+    flex: 1,
+    minWidth: 0,
+    overflow: 'hidden', 
+  },
+  tagsScrollArea: {
+    display: 'flex',
+    gap: '4px',
+    alignItems: 'center',
+    flexWrap: 'nowrap',
+    overflowX: 'scroll',
+    overflowY: 'hidden',
+    minWidth: 0,
+    maxWidth: 'calc(100% - 28px)',
+    scrollbarWidth: 'thin',
+    scrollbarColor: '#888888 #e0e0e0',
+    '&::-webkit-scrollbar': {
+      height: '2px',
+    },
+    '&::-webkit-scrollbar-track': {
+      background: '#e0e0e0',
+      borderRadius: '10px',
+    },
+    '&::-webkit-scrollbar-thumb': {
+      background: '#888888',
+      borderRadius: '10px',
+    },
+    '&::-webkit-scrollbar-thumb:hover': {
+      background: '#555555',
+    },
   },
   tagChipSmall: {
     backgroundColor: '#f0f0f0',
@@ -5687,7 +5751,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     borderRadius: '50%',
     minWidth: '22px',
     padding: '2px',
-    margin: '0'
+    margin: '0',
+    flexShrink: 0,
   },
   agentBoxContainer: {
     display: 'flex',

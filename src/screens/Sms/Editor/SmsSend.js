@@ -62,6 +62,7 @@ import TierPlans from "../../../components/TierPlans/TierPlans";
 import { DateFormats, TierFeatures } from "../../../helpers/Constants";
 import { get } from "lodash";
 import { Close } from "@material-ui/icons";
+import VerificationDialog from "../../../components/DialogTemplates/VerificationDialog";
 
 function Alert(props) {
   return <MuiAlert elevation={0} variant='filled' {...props} />;
@@ -74,7 +75,7 @@ const SmsSend = ({ classes, ...props }) => {
   const Redirect = useRedirect();
   const { OTPPassed, ToastMessages, extraData, getCampaignSum, testGroups, finishedCampaigns } = useSelector((state) => state.sms);
   const { subAccountAllGroups } = useSelector((state) => state.group);
-  const { accountSettings, subAccount } = useSelector((state) => state.common);
+  const { accountSettings, subAccount, verifiedNumbers, isSwippingApprovalSMS } = useSelector((state) => state.common);
   const { currentPlan, availablePlans } = useSelector((state) => state.tiers);
 
   const dispatch = useDispatch();
@@ -138,6 +139,8 @@ const SmsSend = ({ classes, ...props }) => {
   })
   const [initialheadstate, setinitialheadstate] = useState([]);
   const [dialogType, setDialogType] = useState({ type: null });
+  const [senderDialogOpen, setSenderDialogOpen] = useState(false);
+  const [staticFromNumber, setStaticFromNumber] = useState('');
   const [timeType, setTimeType] = useState(1);
   const [pulseType, setPulseType] = useState(2);
   const [otpPassed, setOtpPassed] = useState(false);
@@ -403,10 +406,10 @@ const SmsSend = ({ classes, ...props }) => {
 
   useEffect(() => {
     setOtpPassed(OTPPassed);
-    if (OTPPassed === false) {
-      setOTPOpen(true);
+    if (OTPPassed === false && dataSaved.fromNumber) {
+      setSenderDialogOpen(true);
     }
-  }, [OTPPassed])
+  }, [OTPPassed, dataSaved.fromNumber])
 
   useEffect(() => {
     setLoader(true);
@@ -440,6 +443,7 @@ const SmsSend = ({ classes, ...props }) => {
       let response = await dispatch(getSmsByID(id))
       if (response) {
         setdataSaved({ ...dataSaved, campaignName: response.payload.Name, fromNumber: response.payload.FromNumber, msg: response.payload.Text, CreditPerSms: response.payload.CreditsPerSms })
+        setStaticFromNumber(response.payload.FromNumber);
       }
     }
   }
@@ -1400,7 +1404,7 @@ const SmsSend = ({ classes, ...props }) => {
 
   const onSaveSettings = async (toggle, exit, groupID = null) => {
     if (!groupID && otpPassed === false) {
-      setOTPOpen(true);
+      setSenderDialogOpen(true);
       return;
     }
     if (!groupID && selectedGroups.length <= 0) {
@@ -1977,8 +1981,19 @@ const SmsSend = ({ classes, ...props }) => {
               //   selectedGroups.length > 0 ? "#5cb85c" : "#91C78D"
             }}
             onClick={() => {
-              onSaveSettings(false)
-            }}>
+              if (!isSwippingApprovalSMS) {
+                const isDefault = dataSaved.fromNumber === staticFromNumber;
+                const isVerified = verifiedNumbers?.some(
+                  (n) => n.Number.toLowerCase() === dataSaved.fromNumber?.toLowerCase() && n.IsOptIn
+                );
+                if (!isDefault && !isVerified) {
+                  setSenderDialogOpen(true);
+                  return;
+                }
+              }
+              onSaveSettings(false);
+            }}
+            >
             {t("mainReport.summary")}
           </Button>}
         </div>
@@ -2755,6 +2770,21 @@ const SmsSend = ({ classes, ...props }) => {
         isOpen={showTierPlans}
         onClose={() => setShowTierPlans(false)}
       />}
+      {senderDialogOpen && (
+        <VerificationDialog
+          variant="sms"
+          classes={classes}
+          isOpen={senderDialogOpen}
+          showSelect={false}
+          step={1}
+          value={dataSaved.fromNumber}
+          onClose={() => setSenderDialogOpen(false)}
+          onSenderSelect={() => {
+            setSenderDialogOpen(false);
+            onSaveSettings(false);
+          }}
+        />
+      )}
     </DefaultScreen>
   );
 };
