@@ -48,7 +48,8 @@ const Klaviyo = ({ classes }: any) => {
   } as KlaviyoModel);
   const [isAuthenticated, setAuthenticated] = useState(false);
   const [activeImportType, setActiveImportType] = useState<UnsubscribePreferenceType>(UnsubscribePreferenceType.Both);
-  const ArrowDownIcon = (): JSX.Element => (<span><IoIosArrowDown size={20} className={classes.dropdownIconComponent} /></span>) as JSX.Element;
+  const ArrowDownIcon = (): JSX.Element => React.createElement('span', null, React.createElement(IoIosArrowDown as any, { size: 20, className: classes.dropdownIconComponent }));
+  const LinkExternalIcon = (): JSX.Element => React.createElement('span', null, React.createElement(GoLinkExternal as any, null));
 
   const renderToast = () => {
     setTimeout(() => {
@@ -113,14 +114,14 @@ const Klaviyo = ({ classes }: any) => {
       case 201: {
         const resp = response?.payload?.Data as KlaviyoModel;
         if (resp.ApiKey) {
-          const resolvedRegisterAsActiveOptionsID =
+          const resolvedRegisterAsActiveOptionsID: UnsubscribePreferenceType =
             resp.IsInsertAsActive && !resp.RegisterAsActiveOptionsID
-              ? resp.EcommerceSyncOptionsID
-              : resp.RegisterAsActiveOptionsID;
+              ? (resp.EcommerceSyncOptionsID as UnsubscribePreferenceType) ?? UnsubscribePreferenceType.Both
+              : (resp.RegisterAsActiveOptionsID as UnsubscribePreferenceType) ?? UnsubscribePreferenceType.Both;
           const resolvedResp = { ...resp, RegisterAsActiveOptionsID: resolvedRegisterAsActiveOptionsID };
           setSettings(resolvedResp);
           setAuthenticated(true);
-          setActiveImportType(resolvedRegisterAsActiveOptionsID as UnsubscribePreferenceType);
+          setActiveImportType(resolvedRegisterAsActiveOptionsID);
         }
         break;
       }
@@ -367,7 +368,7 @@ const Klaviyo = ({ classes }: any) => {
                 classes.mt20
               )}
               color="primary"
-              endIcon={(<span><GoLinkExternal /></span>) as any}
+              endIcon={<LinkExternalIcon />}
             >
               {t(`integrations.Klaviyo.howToConnect`)}
             </Button>}
