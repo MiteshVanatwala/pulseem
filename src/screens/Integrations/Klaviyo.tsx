@@ -115,6 +115,9 @@ const Klaviyo = ({ classes }: any) => {
         if (resp.ApiKey) {
           setSettings(resp);
           setAuthenticated(true);
+          if (resp.RegisterAsActiveOptionsID != null) {
+            setActiveImportType(resp.RegisterAsActiveOptionsID);
+          }
         }
         break;
       }
