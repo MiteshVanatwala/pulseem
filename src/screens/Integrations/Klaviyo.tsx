@@ -113,11 +113,14 @@ const Klaviyo = ({ classes }: any) => {
       case 201: {
         const resp = response?.payload?.Data as KlaviyoModel;
         if (resp.ApiKey) {
-          setSettings(resp);
+          const resolvedRegisterAsActiveOptionsID =
+            resp.IsInsertAsActive && !resp.RegisterAsActiveOptionsID
+              ? resp.EcommerceSyncOptionsID
+              : resp.RegisterAsActiveOptionsID;
+          const resolvedResp = { ...resp, RegisterAsActiveOptionsID: resolvedRegisterAsActiveOptionsID };
+          setSettings(resolvedResp);
           setAuthenticated(true);
-          if (resp.RegisterAsActiveOptionsID != null) {
-            setActiveImportType(resp.RegisterAsActiveOptionsID);
-          }
+          setActiveImportType(resolvedRegisterAsActiveOptionsID as UnsubscribePreferenceType);
         }
         break;
       }
@@ -605,11 +608,11 @@ const Klaviyo = ({ classes }: any) => {
                         <b>{t("integrations.Klaviyo.newAsActive")}</b>
                         {settings?.IsInsertAsActive && (
                           <span style={{ fontWeight: 'normal', marginLeft: 8 }}>
-                            ({settings?.RegisterAsActiveOptionsID === UnsubscribePreferenceType.Both
-                              ? t('integrations.Klaviyo.bothEmailSMS')
-                              : settings?.RegisterAsActiveOptionsID === UnsubscribePreferenceType.Email
+                            ({settings?.RegisterAsActiveOptionsID === UnsubscribePreferenceType.Email
                               ? t('integrations.Klaviyo.emailOnly')
-                              : t('integrations.Klaviyo.SMSOnly')})
+                              : settings?.RegisterAsActiveOptionsID === UnsubscribePreferenceType.Sms
+                              ? t('integrations.Klaviyo.SMSOnly')
+                              : t('integrations.Klaviyo.bothEmailSMS')})
                           </span>
                         )}
                       </Typography>
