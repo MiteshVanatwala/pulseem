@@ -5477,6 +5477,118 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     flexDirection: isRTL ? 'row-reverse' : 'row',
     flexShrink: 0
   },
+  // Start New Chat button in sidebar header — same color as manage agent icon (inherited)
+  startNewChatIconButton: {
+    padding: '6px',
+    '&:hover': {
+      backgroundColor: 'rgba(0, 0, 0, 0.08)',
+      borderRadius: '50%'
+    }
+  },
+  // Start New Chat Modal styles
+  startNewChatDialogTitle: {
+    backgroundColor: '#FF3343',
+    color: '#fff',
+    padding: '16px 20px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    flexWrap: 'nowrap',
+    fontSize: '18px'
+  },
+  startNewChatStepIndicator: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '8px',
+    padding: '10px 20px',
+    borderBottom: '1px solid #e0e0e0',
+    backgroundColor: '#fafafa'
+  },
+  startNewChatStepDot: {
+    width: '10px',
+    height: '10px',
+    borderRadius: '50%',
+    backgroundColor: '#ccc',
+    transition: 'background-color 0.2s ease'
+  },
+  startNewChatStepDotActive: {
+    backgroundColor: '#FF3343'
+  },
+  startNewChatDialogContent: {
+    padding: '20px',
+    minHeight: '220px',
+    backgroundColor: '#f9f9f9'
+  },
+  startNewChatTemplateList: {
+    maxHeight: '300px',
+    overflowY: 'auto',
+    padding: 0,
+    margin: 0,
+    listStyle: 'none',
+    backgroundColor: '#fff',
+    borderRadius: '4px',
+    border: '1px solid #e0e0e0'
+  },
+  startNewChatTemplateItem: {
+    padding: '12px 16px',
+    borderBottom: '1px solid #e0e0e0',
+    cursor: 'pointer',
+    '&:hover': {
+      backgroundColor: '#fff3f4'
+    },
+    '&:last-child': {
+      borderBottom: 'none'
+    }
+  },
+  startNewChatTemplateItemSelected: {
+    backgroundColor: '#fff0f1',
+    borderLeft: '3px solid #FF3343'
+  },
+  startNewChatSearchField: {
+    width: '100%',
+    marginBottom: '12px'
+  },
+  startNewChatVariableField: {
+    width: '100%',
+    marginBottom: '12px'
+  },
+  startNewChatPreviewBox: {
+    backgroundColor: '#e5ddd5',
+    borderRadius: '8px',
+    padding: '16px',
+    marginBottom: '16px',
+    whiteSpace: 'pre-wrap',
+    wordBreak: 'break-word',
+    fontFamily: 'inherit',
+    fontSize: '14px'
+  },
+  startNewChatDisclaimerBox: {
+    backgroundColor: '#fff8e1',
+    border: '1px solid #ffe082',
+    borderRadius: '4px',
+    padding: '10px 14px',
+    fontSize: '13px',
+    direction: 'rtl',
+    textAlign: 'right',
+    color: '#5d4037',
+    marginBottom: '8px'
+  },
+  startNewChatDialogActions: {
+    padding: '12px 20px',
+    borderTop: '1px solid #e0e0e0',
+    justifyContent: 'space-between'
+  },
+  startNewChatNewTemplateButton: {
+    color: '#FF3343',
+    textTransform: 'none',
+    fontWeight: 600,
+    fontSize: '14px',
+    padding: '4px 8px',
+    '&:hover': {
+      backgroundColor: 'rgba(255, 51, 67, 0.08)'
+    }
+  },
   // Sidebar Header styling
   sidebarHeader: {
     display: 'flex',
