@@ -47,11 +47,11 @@ const FileUpload = ({
 
 	const onFileUploadChange = (e: BaseSyntheticEvent) => {
 		if (e.target.files?.length > 0) {
-			if (e.target.files[0].size < 16777216) {
+			if (e.target.files[0].size < 5242880) {
 				setFileData(e.target.files[0]);
 				setFileSize(niceBytes(e.target.files[0].size));
 			} else {
-				setAlert(translator('whatsapp.alertModal.fileSizeAlert'));
+				setAlert(translator('WhatsappApiResponse.uploadMedia.4', { FileSize: '5' }));
 			}
 		}
 	};
