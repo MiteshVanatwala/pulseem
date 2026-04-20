@@ -11,4 +11,4 @@ const DemoModal = ({ modals }) => (
   </>
 )
 
-export default DemoModal
+export default React.memo(DemoModal)

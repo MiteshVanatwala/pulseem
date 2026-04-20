@@ -990,5 +990,8 @@
   "typeSubject": "Type Subject",
   "manageAgent": "Manage Agent",
   "clearAllFilters": "Clear all filters",
-  "allNumbers": "All Numbers"
+  "allNumbers": "All Numbers",
+  "field": "Field",
+  "operator": "Operator",
+  "value": "Value"
 }

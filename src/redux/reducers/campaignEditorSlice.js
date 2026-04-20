@@ -2,6 +2,30 @@ import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { getUniqueValuesOfKey } from '../../helpers/Utils/common';
 
+const buildReadableSummary = (syntaxBefore) => {
+    if (!syntaxBefore) return '';
+    const parts = [];
+    const regex = /(?:recipient\.)?(\w+)\s*(>=|<=|>|<|==|!=|contains)\s*'([^']*)'/g;
+    let match;
+    while ((match = regex.exec(syntaxBefore)) !== null) {
+        const field = match[1];
+        const rawOp = match[2];
+        const value = match[3];
+        let opLabel;
+        if (rawOp === 'contains') opLabel = 'Contains';
+        else if (rawOp === '==' && value === '') opLabel = 'Is empty';
+        else if (rawOp === '!=' && value === '') opLabel = 'Is not empty';
+        else if (rawOp === '==') opLabel = 'Equals';
+        else if (rawOp === '!=') opLabel = 'Does not equal';
+        else if (rawOp === '>') opLabel = 'Greater than';
+        else if (rawOp === '<') opLabel = 'Less than';
+        else if (rawOp === '>=') opLabel = 'Greater than or equal to';
+        else if (rawOp === '<=') opLabel = 'Less than or equal to';
+        const valuePart = value === '' ? '' : ` "${value}" `;
+        parts.push(`${field} ${opLabel}${valuePart}`);
+    }
+    return parts.join(' AND ');
+};
 
 export const getCampaignById = createAsyncThunk(
     '/CampaignEditor/GetCampaignById/', async (id, thunkAPI) => {
@@ -142,12 +166,71 @@ export const updateTemplateMeta = createAsyncThunk(
         }
     })
 
+export const getDisplayConditions = createAsyncThunk(
+    '/api/email/displayconditions', async (_, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.get('email/displayconditions');
+            const items = response.data?.Data?.items || [];
+            
+            // Transform backend format to Beefree format
+            const transformedItems = items.map(item => {
+                const readableSummary = buildReadableSummary(item.syntaxBefore);
+                const displayLabel = readableSummary ? `${item.name}\n${readableSummary}` : item.name;
+                return {
+                    type: 'Conditions',
+                    label: displayLabel,
+                    description: item.description || '',
+                    before: item.syntaxBefore,
+                    after: item.syntaxAfter,
+                    id: item.id
+                };
+            });
+            
+            return transformedItems;
+        } catch (error) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    })
+
+export const saveDisplayCondition = createAsyncThunk(
+    '/api/email/displayconditions/save', async (data, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.post('email/displayconditions', data);
+            return response.data;
+        } catch (error) {
+            return thunkAPI.rejectWithValue({ error: error.response?.data || error.message });
+        }
+    })
+
+export const deleteDisplayCondition = createAsyncThunk(
+    '/api/email/displayconditions/delete', async (id, thunkAPI) => {
+        try {
+            await PulseemReactInstance.delete(`email/displayconditions/${id}`);
+            return id;
+        } catch (error) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    })
+
+export const getDisplayConditionById = createAsyncThunk(
+    '/api/email/displayconditions/getById', async (id, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.get(`email/displayconditions/${id}`);
+            return response.data?.Data;
+        } catch (error) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    }
+)
 export const campaignEditorSlice = createSlice({
     name: 'campaignEditor',
     initialState: {
         beeToken: null,
         campaign: null,
         userBlocks: null,
+        displayConditions: [],
+        currentDisplayCondition: null,
+        displayConditionsLoading: false,
         ToastMessages: {
             CAMPAIGN_SAVED: { severity: 'success', color: 'success', message: 'campaigns.campaignSaved', showAnimtionCheck: true },
             TEMPLATE_SAVED: { severity: 'success', color: 'success', message: 'common.templateSaved', showAnimtionCheck: true },
@@ -190,6 +273,33 @@ export const campaignEditorSlice = createSlice({
             .addCase(getAllTemplatesBySubaccountId.fulfilled, (state, action) => {
                 state.templatesBySubAccount = action.payload.Data || [];
                 state.templatesBySubAccountCategories = getUniqueValuesOfKey(action.payload.Data || [], 'CategoryList');
+            })
+            .addCase(getDisplayConditions.pending, (state) => {
+                state.displayConditionsLoading = true;
+            })
+            .addCase(getDisplayConditions.fulfilled, (state, action) => {
+                state.displayConditions = action.payload;
+                state.displayConditionsLoading = false;
+            })
+            .addCase(getDisplayConditions.rejected, (state) => {
+                state.displayConditionsLoading = false;
+            })
+            .addCase(saveDisplayCondition.fulfilled, (state, action) => {
+                state.displayConditionsLoading = false;
+                if (action.payload?.id) {
+                    const existingIndex = state.displayConditions.findIndex(c => c.id === action.payload.id);
+                    if (existingIndex >= 0) {
+                        state.displayConditions[existingIndex] = action.payload;
+                    } else {
+                        state.displayConditions.push(action.payload);
+                    }
+                }
+            })
+            .addCase(deleteDisplayCondition.fulfilled, (state, action) => {
+                state.displayConditions = state.displayConditions.filter(c => c.id !== action.payload);
+            })
+            .addCase(getDisplayConditionById.fulfilled, (state, action) => {
+                state.currentDisplayCondition = action.payload;
             })
 
     }
