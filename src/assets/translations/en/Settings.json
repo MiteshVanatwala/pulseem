@@ -189,5 +189,36 @@
 		"directApi": "Direct Send API URL Address",
 		"noAPIKeyAccess": "In order to start using our API, please contact our support team on <a href = 'mailto:support@pulseem.com'>support@pulseem.com</a> / <a href='tel:03-7172274'>03-7172274</a>"
 	},
-	"displayRevenueIn": "Display revenue in"
+	"displayRevenueIn": "Display revenue in",
+	"mcpSettings": {
+		"sectionTitle": "MCP — Connect to AI",
+		"sectionSubtitle": "Send SMS, Email and WhatsApp directly from Claude, ChatGPT and Cursor",
+		"createBtn": "+ New MCP Connection",
+		"createFirstBtn": "+ Create First MCP Connection",
+		"emptyTitle": "No AI connections yet",
+		"emptyDesc": "Create an MCP connection and send SMS, Email and WhatsApp directly from Claude, ChatGPT and Cursor — in natural language.",
+		"activeCount": "Active connections ({count})",
+		"colLabel": "Label",
+		"colToken": "Token",
+		"colCreated": "Created",
+		"colLastUsed": "Last Used",
+		"colStatus": "Status",
+		"statusActive": "Active",
+		"statusInactive": "Inactive",
+		"deactivateBtn": "Deactivate",
+		"neverUsed": "Never used",
+		"createDialogTitle": "New MCP Connection",
+		"labelField": "Label (for your reference)",
+		"labelPlaceholder": "e.g. Claude Desktop",
+		"createConfirmBtn": "Create Connection",
+		"successTitle": "Connection created successfully!",
+		"successWarning": "Save this address now — it will not be shown again.",
+		"mcpUrlLabel": "Your MCP address:",
+		"copyUrlBtn": "Copy Address",
+		"copiedLabel": "Copied",
+		"successClose": "Close — I saved the address",
+		"deactivateConfirmTitle": "Deactivate connection?",
+		"deactivateConfirmText": "Deactivate connection \"{label}\"? The bot will not be able to send messages until you create a new connection.",
+		"deactivateConfirmBtn": "Yes, deactivate"
+	}
 }

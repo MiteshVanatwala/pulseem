@@ -188,5 +188,36 @@
 		"directApi": "Adres URL API bezpośredniej wysyłki",
 		"noAPIKeyAccess": "Aby rozpocząć korzystanie z naszego API, skontaktuj się z naszym zespołem wsparcia na <a href = 'mailto:support@pulseem.com'>support@pulseem.com</a> / <a href='tel:03-7172274'>03-7172274</a>"
 	},
-	"displayRevenueIn": "Wyświetl przychód w"
+	"displayRevenueIn": "Wyświetl przychód w",
+	"mcpSettings": {
+		"sectionTitle": "MCP — Połącz z AI",
+		"sectionSubtitle": "Wysyłaj SMS, Email i WhatsApp bezpośrednio z Claude, ChatGPT i Cursor",
+		"createBtn": "+ Nowe połączenie MCP",
+		"createFirstBtn": "+ Utwórz pierwsze połączenie MCP",
+		"emptyTitle": "Brak połączeń AI",
+		"emptyDesc": "Utwórz połączenie MCP i wysyłaj SMS, Email i WhatsApp bezpośrednio z Claude, ChatGPT i Cursor — w naturalnym języku.",
+		"activeCount": "Aktywne połączenia ({count})",
+		"colLabel": "Etykieta",
+		"colToken": "Token",
+		"colCreated": "Utworzono",
+		"colLastUsed": "Ostatnie użycie",
+		"colStatus": "Status",
+		"statusActive": "Aktywny",
+		"statusInactive": "Nieaktywny",
+		"deactivateBtn": "Dezaktywuj",
+		"neverUsed": "Nigdy nie używany",
+		"createDialogTitle": "Nowe połączenie MCP",
+		"labelField": "Etykieta (dla Twojej identyfikacji)",
+		"labelPlaceholder": "np. Claude Desktop",
+		"createConfirmBtn": "Utwórz połączenie",
+		"successTitle": "Połączenie utworzone pomyślnie!",
+		"successWarning": "Zapisz ten adres teraz — nie zostanie pokazany ponownie.",
+		"mcpUrlLabel": "Twój adres MCP:",
+		"copyUrlBtn": "Kopiuj adres",
+		"copiedLabel": "Skopiowano",
+		"successClose": "Zamknij — zapisałem adres",
+		"deactivateConfirmTitle": "Dezaktywować połączenie?",
+		"deactivateConfirmText": "Dezaktywować połączenie \"{label}\"? Bot nie będzie mógł wysyłać wiadomości, dopóki nie utworzysz nowego połączenia.",
+		"deactivateConfirmBtn": "Tak, dezaktywuj"
+	}
 }
