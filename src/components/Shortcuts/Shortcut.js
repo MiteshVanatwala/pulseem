@@ -469,13 +469,13 @@ const Shortcut = ({ classes, windowSize, t, isRTL, variant = 'panel' }) => {
                 onClick={() => setMoreOpen(prev => !prev)}
               >
                 <Typography className={classes.pillMoreLabel}>
-                  +{hiddenShortcuts.length} {t('dashboard.more') || 'More'}
+                  +{hiddenShortcuts.length} {t('dashboard.more')}
                 </Typography>
               </Box>
               <Popper
                 open={moreOpen}
                 anchorEl={moreRef.current}
-                placement={isRTL ? 'left-start' : 'right-start'}
+                placement={isRTL ? 'bottom-end' : 'bottom-start'}
                 style={{ zIndex: 10 }}
               >
                 <ClickAwayListener onClickAway={() => setMoreOpen(false)}>

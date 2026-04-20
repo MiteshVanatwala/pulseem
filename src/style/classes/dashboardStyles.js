@@ -201,16 +201,16 @@ export const getDashboardStyle = (windowSize, isRTL, theme) => ({
         marginTop: -5
     },
     shortcutStripBox: {
-        margin: '30px 16px 0 0',
+        margin: '30px 16px 0 16px',
         borderRadius: 20,
         border: '3px solid #F0F5FF',
         background: '#fff',
         overflow: 'hidden',
         display: 'block',
-        width: 'calc(100% - 16px)',
+        width: 'calc(100% - 32px)',
         [theme.breakpoints.down('xs')]: {
-            margin: '10px 0 0',
-            width: '100%',
+            margin: '10px 16px 0 16px',
+            width: 'calc(100% - 32px)',
         },
     },
     shortcutStripHeader: {
