@@ -48,7 +48,13 @@ const Klaviyo = ({ classes }: any) => {
   } as KlaviyoModel);
   const [isAuthenticated, setAuthenticated] = useState(false);
   const [activeImportType, setActiveImportType] = useState<UnsubscribePreferenceType>(UnsubscribePreferenceType.Both);
-  const ArrowDownIcon = (): JSX.Element => (<span><IoIosArrowDown size={20} className={classes.dropdownIconComponent} /></span>) as JSX.Element;
+  const ArrowDownIcon = (): JSX.Element => React.createElement('span', null, React.createElement(IoIosArrowDown as any, { size: 20, className: classes.dropdownIconComponent }));
+  const LinkExternalIcon = (): JSX.Element => React.createElement('span', null, React.createElement(GoLinkExternal as any, null));
+
+  const normalizePreferenceType = (value: any, fallback: UnsubscribePreferenceType) => {
+    const parsed = Number(value);
+    return Number.isNaN(parsed) ? fallback : parsed as UnsubscribePreferenceType;
+  }
 
   const renderToast = () => {
     setTimeout(() => {
@@ -72,17 +78,33 @@ const Klaviyo = ({ classes }: any) => {
 
   const handleSave = async (req: KlaviyoModel) => {
     setShowLoader(true);
-    setSettings(req);
     setErrors({
       ...errors,
       unsubscribePreferenceTypeID: ''
     })
 
+    const normalizedReq = {
+      ...req,
+      EcommerceSyncOptionsID: normalizePreferenceType(req.EcommerceSyncOptionsID, UnsubscribePreferenceType.Both),
+      UnsubscribePreferenceTypeID: normalizePreferenceType(req.UnsubscribePreferenceTypeID, UnsubscribePreferenceType.None),
+      RegisterAsActiveOptionsID: normalizePreferenceType(req.RegisterAsActiveOptionsID, UnsubscribePreferenceType.Both),
+    } as KlaviyoModel;
+
     const request = {
       IntegrationSource: LU_Plugin.Klaviyo,
-      JsonData: JSON.stringify({ ...req })
+      JsonData: JSON.stringify(normalizedReq)
     } as IntegrationRequest;
-    const response = await dispatch(setIntegration(request));
+    const response = await dispatch(setIntegration(request)) as any;
+    
+    if (response?.payload?.StatusCode === 200 || response?.payload?.StatusCode === 201) {
+      setSettings(normalizedReq);
+      if (normalizedReq.IsInsertAsActive) {
+        localStorage.setItem('klaviyoRegisterAsActiveOptionsID', String(normalizedReq.RegisterAsActiveOptionsID));
+      } else {
+        localStorage.removeItem('klaviyoRegisterAsActiveOptionsID');
+      }
+    }
+    
     handleSubmitFormResponse(response);
     setShowLoader(false);
   }
@@ -110,11 +132,35 @@ const Klaviyo = ({ classes }: any) => {
 
   const handleGetIntegrationResponse = (response: any) => {
     switch (response?.payload?.StatusCode) {
+      case 200:
       case 201: {
         const resp = response?.payload?.Data as KlaviyoModel;
-        if (resp.ApiKey) {
-          setSettings(resp);
+        if (resp?.ApiKey) {
+          const resolvedEcommerceSyncOptionsID = normalizePreferenceType(resp.EcommerceSyncOptionsID, UnsubscribePreferenceType.Both);
+          const resolvedUnsubscribePreferenceTypeID = normalizePreferenceType(resp.UnsubscribePreferenceTypeID, UnsubscribePreferenceType.None);
+          let resolvedRegisterAsActiveOptionsID = normalizePreferenceType(resp.RegisterAsActiveOptionsID, UnsubscribePreferenceType.None);
+          const localRegisterAsActiveOptionsID = normalizePreferenceType(localStorage.getItem('klaviyoRegisterAsActiveOptionsID'), UnsubscribePreferenceType.None);
+
+          if (resp.IsInsertAsActive && resolvedRegisterAsActiveOptionsID === UnsubscribePreferenceType.None) {
+            if (localRegisterAsActiveOptionsID !== UnsubscribePreferenceType.None) {
+              resolvedRegisterAsActiveOptionsID = localRegisterAsActiveOptionsID;
+            } else if (resolvedEcommerceSyncOptionsID === UnsubscribePreferenceType.Email || resolvedEcommerceSyncOptionsID === UnsubscribePreferenceType.Sms) {
+              resolvedRegisterAsActiveOptionsID = resolvedEcommerceSyncOptionsID;
+            } else {
+              resolvedRegisterAsActiveOptionsID = UnsubscribePreferenceType.Both;
+            }
+          }
+
+          const resolvedResp = {
+            ...resp,
+            EcommerceSyncOptionsID: resolvedEcommerceSyncOptionsID,
+            UnsubscribePreferenceTypeID: resolvedUnsubscribePreferenceTypeID,
+            RegisterAsActiveOptionsID: resolvedRegisterAsActiveOptionsID
+          } as KlaviyoModel;
+          console.log('[Klaviyo] resolvedResp', resolvedResp);
+          setSettings(resolvedResp);
           setAuthenticated(true);
+          setActiveImportType(resolvedRegisterAsActiveOptionsID || UnsubscribePreferenceType.Both);
         }
         break;
       }
@@ -150,6 +196,7 @@ const Klaviyo = ({ classes }: any) => {
     switch (response?.payload?.StatusCode) {
       case 201: {
         setAuthenticated(false);
+        localStorage.removeItem('klaviyoRegisterAsActiveOptionsID');
         setSettings({
           ApiKey: '',
           IntervalToRunService: '',
@@ -285,8 +332,8 @@ const Klaviyo = ({ classes }: any) => {
           <FormControl className={clsx(classes.selectInputFormControl, classes.w100)}>
             <Select
               variant="standard"
-              value={activeImportType}
-              onChange={(event: any) => setActiveImportType(event.target.value as UnsubscribePreferenceType)}
+              value={activeImportType || UnsubscribePreferenceType.Both}
+              onChange={(event: any) => setActiveImportType(Number(event.target.value) as UnsubscribePreferenceType)}
               IconComponent={ArrowDownIcon}
               MenuProps={{
                 anchorOrigin: { vertical: 'top', horizontal: 'left' },
@@ -309,11 +356,13 @@ const Klaviyo = ({ classes }: any) => {
       </Box>
     ),
     onConfirm: async () => {
-      await handleSave({ ...settings, IsInsertAsActive: true, RegisterAsActiveOptionsID: activeImportType });
+      const updatedSettings = { ...settings, IsInsertAsActive: true, RegisterAsActiveOptionsID: activeImportType };
+      console.log('[Klaviyo] popup save activeImportType', activeImportType, 'updatedSettings', updatedSettings);
+      await handleSave(updatedSettings);
       setDialogType('');
     },
     onClose: () => {
-      setActiveImportType(UnsubscribePreferenceType.Both);
+      setActiveImportType(settings?.RegisterAsActiveOptionsID || UnsubscribePreferenceType.Both);
       setDialogType('');
     },
   })
@@ -341,8 +390,11 @@ const Klaviyo = ({ classes }: any) => {
 		}
 	}
 
-  const emailOnlyScope = settings?.EcommerceSyncOptionsID === UnsubscribePreferenceType.Email;
-  const smsOnlyScope = settings?.EcommerceSyncOptionsID === UnsubscribePreferenceType.Sms;
+  const normalizedRegisterAsActiveOptionsID = normalizePreferenceType(settings?.RegisterAsActiveOptionsID, UnsubscribePreferenceType.Both);
+  const normalizedEcommerceSyncOptionsID = normalizePreferenceType(settings?.EcommerceSyncOptionsID, UnsubscribePreferenceType.Both);
+  const normalizedUnsubscribePreferenceTypeID = normalizePreferenceType(settings?.UnsubscribePreferenceTypeID, UnsubscribePreferenceType.None);
+  const emailOnlyScope = normalizedEcommerceSyncOptionsID === UnsubscribePreferenceType.Email;
+  const smsOnlyScope = normalizedEcommerceSyncOptionsID === UnsubscribePreferenceType.Sms;
 
   return (
     <>
@@ -361,7 +413,7 @@ const Klaviyo = ({ classes }: any) => {
                 classes.mt20
               )}
               color="primary"
-              endIcon={(<span><GoLinkExternal /></span>) as any}
+              endIcon={<LinkExternalIcon />}
             >
               {t(`integrations.Klaviyo.howToConnect`)}
             </Button>}
@@ -500,7 +552,7 @@ const Klaviyo = ({ classes }: any) => {
                   <FormControl className={clsx(classes.selectInputFormControl, classes.w100)}>
                     <Select
                       variant="standard"
-                      value={settings?.EcommerceSyncOptionsID || UnsubscribePreferenceType.Both}
+                      value={normalizedEcommerceSyncOptionsID}
                       onChange={(event: any) => {
                         const newScope = Number(event.target.value) as UnsubscribePreferenceType;
                         const corrected = { ...settings, EcommerceSyncOptionsID: newScope };
@@ -548,11 +600,11 @@ const Klaviyo = ({ classes }: any) => {
                   <FormControl className={clsx(classes.selectInputFormControl, classes.w100)}>
                     <Select
                       variant="standard"
-                      value={settings?.UnsubscribePreferenceTypeID || UnsubscribePreferenceType.None}
+                      value={normalizedUnsubscribePreferenceTypeID}
                       onChange={(event: any) => {
                         handleSave({
                           ...settings,
-                          UnsubscribePreferenceTypeID: event.target.value
+                          UnsubscribePreferenceTypeID: Number(event.target.value) as UnsubscribePreferenceType
                         });
                       }}
                       IconComponent={ArrowDownIcon}
@@ -590,6 +642,7 @@ const Klaviyo = ({ classes }: any) => {
                         className={{ [classes.rtlSwitch]: isRTL }}
                         onChange={(e: any) => {
                           if (!settings?.IsInsertAsActive) {
+                            setActiveImportType(normalizedRegisterAsActiveOptionsID);
                             setDialogType('newToActive');
                           } else {
                             handleSave({ ...settings, IsInsertAsActive: false });
@@ -602,11 +655,11 @@ const Klaviyo = ({ classes }: any) => {
                         <b>{t("integrations.Klaviyo.newAsActive")}</b>
                         {settings?.IsInsertAsActive && (
                           <span style={{ fontWeight: 'normal', marginLeft: 8 }}>
-                            ({settings?.RegisterAsActiveOptionsID === UnsubscribePreferenceType.Both
-                              ? t('integrations.Klaviyo.bothEmailSMS')
-                              : settings?.RegisterAsActiveOptionsID === UnsubscribePreferenceType.Email
+                            ({normalizedRegisterAsActiveOptionsID === UnsubscribePreferenceType.Email
                               ? t('integrations.Klaviyo.emailOnly')
-                              : t('integrations.Klaviyo.SMSOnly')})
+                              : normalizedRegisterAsActiveOptionsID === UnsubscribePreferenceType.Sms
+                              ? t('integrations.Klaviyo.SMSOnly')
+                              : t('integrations.Klaviyo.bothEmailSMS')})
                           </span>
                         )}
                       </Typography>
