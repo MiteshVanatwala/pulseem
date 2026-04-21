@@ -94,7 +94,7 @@ import { DateFormats, TierFeatures } from '../../../helpers/Constants';
 import { setIsLoader } from '../../../redux/reducers/coreSlice';
 import { getCookie, setCookie } from '../../../helpers/Functions/cookies';
 import { MdSupportAgent } from 'react-icons/md';
-import { logout } from '../../../helpers/Api/PulseemReactAPI';
+import { logout, PulseemReactInstance } from '../../../helpers/Api/PulseemReactAPI';
 import { StateType } from '../../../Models/StateTypes';
 import {
 	compareLastNineDigits,
@@ -124,6 +124,10 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	// Always holds the latest fetchMoreContacts callback — avoids a forward-reference TS error
 	const fetchMoreContactsRef = useRef<((searchText: string, ChatStatus: number, isPaginationReset: boolean) => void) | null>(null);
 
+	const activePhoneNumberRef = useRef<string>('');
+	const filterBySelectedRef = useRef<number>(0);
+	const changeContactReadStatusRef = useRef<((contacts: APIWhatsappChatSidebarContactsItemsData, sideChatContactList?: APIWhatsappChatSidebarContactsItemsData[]) => void) | null>(null);
+    
 	// Helper to build the mapping from all clients (Cellphone → ClientId)
 	const buildPhoneToClientIdMap = useCallback(async () => {
 		// Fetch all clients (up to 10,000 for mapping)
@@ -240,6 +244,12 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const [showConfirmDeleteAgent, setShowConfirmDeleteAgent] =
 		useState<number>(0);
 	const [tagsList, setTagsList] = useState<any[]>([]);
+	const [contactsPaginationSetting, setContactsPaginationSetting] =
+		useState<ContactsPaginationSetting>({
+			PageNo: 1,
+			PageSize: 20,
+			hasMore: true,
+		});
 
 	// Refs to capture current state values for status change logic
 	const activeChatContactsRef = useRef<APIWhatsappChatSidebarContactsItemsData | null>(null);
@@ -248,6 +258,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const totalOpenContactsRef = useRef<number>(0);
 	const totalPendingContactsRef = useRef<number>(0);
 	const totalSolvedContactsRef = useRef<number>(0);
+	const contactsPaginationSettingRef = useRef(contactsPaginationSetting);
 
 	useEffect(() => {
 		activeChatContactsRef.current = activeChatContacts;
@@ -273,6 +284,18 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	useEffect(() => {
 		totalSolvedContactsRef.current = totalSolvedContacts;
 	}, [totalSolvedContacts]);
+
+	useEffect(() => {
+		activePhoneNumberRef.current = activePhoneNumber;
+	}, [activePhoneNumber]);
+
+	useEffect(() => {
+		filterBySelectedRef.current = filterBySelected;
+	}, [filterBySelected]);
+
+	useEffect(() => {
+		contactsPaginationSettingRef.current = contactsPaginationSetting;
+	}, [contactsPaginationSetting]);
 
 	const initialQuickReplyButtons = [
 		{
@@ -325,13 +348,6 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const [landingPages, setLandingPages] = useState<landingPageDataProps[]>([]);
 	const [phoneNumbersList, setPhoneNumbersList] = useState<string[]>([]);
 	const [dynamicModalVariable, setDynamicModalVariable] = useState<number>(0);
-
-	const [contactsPaginationSetting, setContactsPaginationSetting] =
-		useState<ContactsPaginationSetting>({
-			PageNo: 1,
-			PageSize: 20,
-			hasMore: true,
-		});
 
 	const setWhatsappChatCoversationStatus = useCallback(
 		async (StatusId: number, Sendernumber: string, ClientNumber: string) => {
@@ -569,7 +585,6 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				await buildPhoneToClientIdMap();
 			}
 
-			const isReset = !isInitial;
 			if (!isInitial) {
 				isNumberSwitchingRef.current = true;
 			}
@@ -591,6 +606,9 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				setAllWhatsappChat(undefined);
 			}
 
+			const resetPageNo = 1;
+			const resetPageSize = contactsPaginationSettingRef.current?.PageSize || 20;
+
 			const {
 				payload: whatsAppChatContactsData,
 			}: APIWhatsappChatSidebarContactsData = await dispatch<any>(
@@ -598,16 +616,16 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 					? getWhatsappChatContactsByAgent({
 						AgentId: agentSelected,
 						IsPagination: true,
-						pageNo: contactsPaginationSetting?.PageNo,
-						pageSize: contactsPaginationSetting?.PageSize,
+						pageNo: resetPageNo,
+						pageSize: resetPageSize,
 						ChatStatus: filterBySelected,
 						Searchtext: '',
 					})
 					: getWhatsappChatContactsByPhoneNumber({
 						PhoneNumber: activeUser,
 						IsPagination: true,
-						pageNo: contactsPaginationSetting?.PageNo,
-						pageSize: contactsPaginationSetting?.PageSize,
+						pageNo: resetPageNo,
+						pageSize: resetPageSize,
 						ChatStatus: filterBySelected,
 					}),
 			);
@@ -621,53 +639,57 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				// Update total contacts data
 				setTotalContacts(whatsAppChatContactsData?.Data?.TotalRecord || 0);
 				setTotalOpenContacts(whatsAppChatContactsData?.Data?.TotalOpen || 0);
-				setTotalPendingContacts(
-					whatsAppChatContactsData?.Data?.TotalPending || 0,
-				);
-				setTotalSolvedContacts(
-					whatsAppChatContactsData?.Data?.TotalSolved || 0,
-				);
-				if (contactID) {
-					const activeContact = contactData?.find(
-						(contact) => contact?.PhoneNumber === contactID,
-					);
-					if (activeContact) {
-						setActiveChatContacts(activeContact);
-						navigate(`/react/whatsapp/chat/${activeContact?.PhoneNumber}`);
-						changeContactReadStatus(activeContact, contactData);
+				setTotalPendingContacts(whatsAppChatContactsData?.Data?.TotalPending || 0);
+				setTotalSolvedContacts(whatsAppChatContactsData?.Data?.TotalSolved || 0);
+
+				if (!isInitial) {
+					// Number switch: always select first contact
+					if (updatedActiveChat) {
+						setActiveChatContacts(updatedActiveChat);
+						navigate(`/react/whatsapp/chat/${updatedActiveChat?.PhoneNumber}`);
+						changeContactReadStatusRef.current?.(updatedActiveChat, contactData);
 						isNumberSwitchingRef.current = false;
 					}
 				} else {
-					if ((isReset || activeChatContacts?.PhoneNumber === '') && updatedActiveChat) {
+					// Initial load: respect URL contactID or select first
+					if (contactID) {
+						const activeContact = contactData?.find(
+							(contact) => contact?.PhoneNumber === contactID,
+						);
+						if (activeContact) {
+							setActiveChatContacts(activeContact);
+							navigate(`/react/whatsapp/chat/${activeContact?.PhoneNumber}`);
+							changeContactReadStatusRef.current?.(activeContact, contactData);
+							isNumberSwitchingRef.current = false;
+						}
+					} else if (updatedActiveChat) {
 						setActiveChatContacts(updatedActiveChat);
 						navigate(`/react/whatsapp/chat/${updatedActiveChat?.PhoneNumber}`);
-						changeContactReadStatus(updatedActiveChat, contactData);
+						changeContactReadStatusRef.current?.(updatedActiveChat, contactData);
 						isNumberSwitchingRef.current = false;
 					}
 				}
-				if (contactData?.length < contactsPaginationSetting.PageSize) {
+				if (contactData?.length < resetPageSize) {
 					setContactsPaginationSetting({
-						...contactsPaginationSetting,
+						...contactsPaginationSettingRef.current,
 						hasMore: false,
-						PageNo: 1,
+						PageNo: resetPageNo,
 					});
 				} else {
 					setContactsPaginationSetting({
-						...contactsPaginationSetting,
+						...contactsPaginationSettingRef.current,
 						hasMore: true,
-						PageNo: 1,
+						PageNo: resetPageNo,
 					});
 				}
 			} else {
 				if (whatsAppChatContactsData?.StatusCode === 927) {
 					// WHATSAPP_CHAT_INTERFACE
 					setTierMessageCode(whatsAppChatContactsData?.Message);
-					setDialogType({
-						type: 'tier',
-					});
+					setDialogType({ type: 'tier' });
 				}
 				setContactsPaginationSetting({
-					...contactsPaginationSetting,
+					...contactsPaginationSettingRef.current,
 					hasMore: false,
 					PageNo: 1,
 				});
@@ -682,8 +704,41 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			filterBySelected,
 			dispatch,
 			navigate,
+			buildPhoneToClientIdMap,
 		],
 	);
+
+	const refetchActiveChatContact = useCallback(async (phoneNumber: string) => {
+		try {
+			const response = await (PulseemReactInstance as any).post(
+				'WhatsAppChat/GetWhatsAppChatContacts',
+				{
+					PhoneNumber: activePhoneNumberRef.current,  // ← always latest
+					IsPagination: false,
+					pageNo: 1,
+					pageSize: 1,
+					UserNumber: phoneNumber,
+					ChatStatus: filterBySelectedRef.current,    // ← always latest
+				}
+			);
+			const contactsData = response?.data;
+			if (
+				contactsData?.Status === apiStatus.SUCCESS &&
+				Array.isArray(contactsData?.Data?.Items) &&
+				contactsData.Data.Items.length > 0
+			) {
+				const updatedContact = contactsData.Data.Items[0];
+				setActiveChatContacts(updatedContact);
+				setSideChatContacts((prevContacts) =>
+					prevContacts.map((contact) =>
+						contact.PhoneNumber === phoneNumber ? updatedContact : contact
+					)
+				);
+			}
+		} catch (e) {
+			console.error('refetchActiveChatContact failed:', e);
+		}
+	}, []);
 
 	const getAgents = useCallback(async () => {
 		const response: any = await dispatch<any>(getChatAgents());
@@ -979,6 +1034,10 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		[sideChatContacts],
 	);
 
+	useEffect(() => {
+		changeContactReadStatusRef.current = changeContactReadStatus;
+	}, [changeContactReadStatus]);
+
 	const handleChatId = useCallback(
 		(
 			e: BaseSyntheticEvent,
@@ -994,7 +1053,11 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	);
 
 	const handleTagsUpdated = useCallback(
-		(phoneNumber: string, tagIds: number[], tags?: any[]) => {
+		(phoneNumber: string, tagIds: number[], tags?: any[], senderNumber?: string) => {
+			// If senderNumber provided and doesn't match current account, ignore
+			if (senderNumber && senderNumber !== activePhoneNumber) {
+				return;
+			}
 			// Update the activeChatContacts with new tags if it's the current contact
 			if (activeChatContacts?.PhoneNumber === phoneNumber && tags) {
 				setActiveChatContacts((prev) => ({
@@ -1011,7 +1074,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				),
 			);
 		},
-		[activeChatContacts?.PhoneNumber],
+		[activeChatContacts?.PhoneNumber, activePhoneNumber],
 	);
 
 	const handleTagColorUpdated = useCallback(
@@ -1962,28 +2025,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 						<div className={`${classes.whatsappChat} app ${isOnlyWhatsAppChat ? 'only-whatsapp' : ''}`}>
 							<div className={`${classes.whatsappChat} app-content ${isOnlyWhatsAppChat ? 'only-whatsapp' : ''}`}>
 								<SideBar
-									refetchActiveChatContact={async (phoneNumber: string) => {
-										// Fetch the latest contact info and update activeChatContacts
-										const result = await dispatch(
-											getWhatsappChatContactsByPhoneNumber({
-												PhoneNumber: phoneNumber,
-												IsPagination: true,
-												pageNo: 1,
-												pageSize: 10,
-												ChatStatus: filterBySelected,
-											})
-										);
-										// @ts-ignore
-										const contactsData = (result as { payload: any }).payload;
-										if (contactsData?.Status === apiStatus.SUCCESS && Array.isArray(contactsData?.Data?.Items)) {
-											const updatedContact = contactsData.Data.Items.find(
-												(c: { PhoneNumber: string }) => c.PhoneNumber == activeChatContacts?.PhoneNumber
-											);
-											if (updatedContact) {
-												setActiveChatContacts(updatedContact);
-											}
-										}
-									}}
+                                    refetchActiveChatContact={refetchActiveChatContact}
 									isMobileSideBar={isMobileSideBar}
 									classes={classes}
 									setIsMobileSideBar={() =>
@@ -2044,38 +2086,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 								landingPageData={landingPages}
 								/>
 								<ChatUi
-										refetchActiveChatContact={async (phoneNumber: string) => {
-											// Fetch the latest contact info and update activeChatContacts
-											const result = await dispatch(
-												getWhatsappChatContactsByPhoneNumber({
-													PhoneNumber: activePhoneNumber,
-													IsPagination: true,
-													pageNo: 1,
-													pageSize: 10,
-													ChatStatus: filterBySelected,
-												})
-											);
-											// @ts-ignore
-											const contactsData = (result as { payload: any }).payload;
-											if (contactsData?.Status === apiStatus.SUCCESS && Array.isArray(contactsData?.Data?.Items)) {
-												const updatedContact = contactsData.Data.Items.find(
-													(c: { PhoneNumber: string }) => c.PhoneNumber === phoneNumber
-												);
-												if (updatedContact) {
-													setActiveChatContacts(updatedContact);
-													
-													// Also update the contact in sideChatContacts to keep them in sync
-													setSideChatContacts((prevContacts) => {
-														return prevContacts.map((contact) => {
-															if (contact.PhoneNumber === phoneNumber) {
-																return updatedContact;
-															}
-															return contact;
-														});
-													});
-												}
-											}
-										}}
+									refetchActiveChatContact={refetchActiveChatContact}
 									isMobileSideBar={isMobileSideBar}
 									classes={classes}
 									setIsMobileSideBar={() =>
@@ -2116,9 +2127,15 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 									personalFields={personalFields}
 									onChatTemplateDelete={onChatTemplateDelete}
 									setIsLoader={(value: boolean) => dispatch(setIsLoader(value))}
-									selectedAgent={getAgentByCellphone(
-										activeChatContacts.PhoneNumber,
-									)}
+									selectedAgent={
+										(activeChatContacts as any)?.Agents?.length > 0
+											? {
+												AgentId: (activeChatContacts as any).Agents[0].AgentID,
+												Name: (activeChatContacts as any).Agents[0].AgentName,
+												IsDeleted: false,
+											} as WhatsappAgent
+											: {} as WhatsappAgent
+									}
 									ToastMessages={ToastMessages}
 									tagsList={tagsList}
 									onTagsUpdated={handleTagsUpdated}
