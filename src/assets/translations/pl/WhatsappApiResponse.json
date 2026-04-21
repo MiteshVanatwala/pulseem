@@ -62,7 +62,7 @@
 		"1": "{{FilePath}}",
 		"2": "Złe żądanie",
 		"3": "Subkonto nie zostało znalezione",
-		"4": "Rozmiar pliku jest zbyt duży. Maksymalny dozwolony rozmiar pliku to {{FileSize}} MB",
+		"4": "Plik jest zbyt duży. Maksymalny dozwolony rozmiar pliku to {{FileSize}} MB.",
 		"5": "Nie masz uprawnień do przesłania tego pliku",
 		"100": "Błąd wewnętrzny"
 	},

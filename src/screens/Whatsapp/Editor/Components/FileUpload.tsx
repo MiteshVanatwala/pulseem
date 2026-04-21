@@ -54,6 +54,7 @@ const FileUpload = ({
 				setAlert(translator('WhatsappApiResponse.uploadMedia.4', { FileSize: '5' }));
 			}
 		}
+		e.target.value = '';
 	};
 
 	const onFileDeselect = (e: BaseSyntheticEvent) => {
