@@ -138,6 +138,10 @@ const SideBar = ({
 		// No default date range - user can select one if needed
 	}, []);
 
+	useEffect(() => {
+		setSearchText('');
+	}, [activePhoneNumber]);
+
 	// Fetch tags on component mount
 	useEffect(() => {
 		const fetchTags = async () => {
@@ -779,10 +783,6 @@ const SideBar = ({
 					);
 				//}
 
-				if (typeof refetchActiveChatContact === 'function') {
-					refetchActiveChatContact(activePhoneNumber);
-				}
-
 				setToastMessage({
 					message: 'Tag saved successfully',
 					severity: 'success',
@@ -1264,6 +1264,7 @@ const SideBar = ({
 					searchText={searchText}
 					tagsList={tagsList}
 					onTagsUpdated={onTagsUpdated}
+					activePhoneNumber={activePhoneNumber}
 				/>
 				<TablePagination
 					classes={classes}
