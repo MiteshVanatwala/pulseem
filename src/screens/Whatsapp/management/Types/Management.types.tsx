@@ -96,6 +96,7 @@ export type AllReportReq = {
 	pageNo: number;
 	pageSize: number;
 	IsTestCampaign: boolean;
+	fromNumber?: string | null;
 };
 
 export type PageTypeRequest = { [key: string]: number };

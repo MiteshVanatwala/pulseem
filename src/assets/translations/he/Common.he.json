@@ -445,6 +445,7 @@
   "outOf": "מתוך",
   "rowNumber": "מספר שורות",
   "clear": "נקה",
+  "filterByNumber": "סינון לפי מספר",
   "confirm": "אישור",
   "stopped": "נעצר",
   "cancelled": "מבוטל",
@@ -936,5 +937,6 @@
   "typeFromName": "הקלד שם שולח",
   "typeSubject": "הקלד נושא",
   "manageAgent": "נהל סוכן",
-  "clearAllFilters": "נקה את כל המסננים"
+  "clearAllFilters": "נקה את כל המסננים",
+  "allNumbers": "כל המספרים"
 }

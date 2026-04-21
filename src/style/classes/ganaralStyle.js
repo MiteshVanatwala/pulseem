@@ -66,17 +66,19 @@ const graphTextWidth = {
   xl: 250,
 };
 
-export const getGeneralStyle = (windowSize, isRTL, theme) => ({
-  editAgentIconButton: {
-    background: '#f5f6fa',
-    borderRadius: '50%',
-    boxShadow: '0 1px 4px rgba(0,0,0,0.08)',
-    border: '1px solid #e0e0e0',
-    width: 32,
-    height: 32,
-    padding: 4,
-    minWidth: 0,
-  },
+export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
+  const safeTheme = theme && typeof theme.breakpoints !== 'undefined' ? theme : { breakpoints: { down: () => '@media (max-width:0px)' }, spacing: (n) => n * 8 };
+  return ({
+    editAgentIconButton: {
+      background: '#f5f6fa',
+      borderRadius: '50%',
+      boxShadow: '0 1px 4px rgba(0,0,0,0.08)',
+      border: '1px solid #e0e0e0',
+      width: 32,
+      height: 32,
+      padding: 4,
+      minWidth: 0,
+    },
   background: {
     position: 'fixed',
     bottom: 0,
@@ -277,6 +279,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   marginSides5: {
     marginRight: 5,
     marginLeft: 5,
+  },
+  marginSides10: {
+    marginRight: '10px !important',
+    marginLeft: '10px !important',
   },
   copyClip: {
     border: "1px solid #3476b0",
@@ -1477,7 +1483,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     cursor: "pointer",
     border: "solid 1px #ff3343",
     textTransform: "none",
-    [theme.breakpoints.down("xs")]: {
+    [safeTheme.breakpoints.down("xs")]: {
       width: 'auto !important',
       margin: '5px !important',
       fontSize: '14px !important',
@@ -2225,7 +2231,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     fontSize: "22px",
     color: "#555",
     marginInlineEnd: "5px",
-    [theme.breakpoints.down("xs")]: {
+    [safeTheme.breakpoints.down("xs")]: {
       fontSize: 18,
       paddingTop: 5,
       paddingBottom: 10
@@ -2258,7 +2264,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     "@media screen and (max-width: 768px)": {
       fontSize: "14px",
     },
-    [theme.breakpoints.down('xs')]: {
+    [safeTheme.breakpoints.down('xs')]: {
       fontSize: '15px !important',
       width: 80,
       height: 30,
@@ -2277,7 +2283,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     "@media screen and (max-width: 768px)": {
       fontSize: "14px",
     },
-    [theme.breakpoints.down('xs')]: {
+    [safeTheme.breakpoints.down('xs')]: {
       fontSize: '15px !important'
     },
   },
@@ -2313,7 +2319,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       justifyContent: 'center',
       alignItems: 'center',
     },
-    [theme.breakpoints.down("xs")]: {
+    [safeTheme.breakpoints.down("xs")]: {
       minWidth: 'auto',
       fontSize: 16,
     },
@@ -2626,7 +2632,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     border: "3px solid #0371ad",
     borderRadius: 5,
     margin: "1rem",
-    padding: "1rem",
     minWidth: dialogWidth[windowSize],
     "& $notification": {
       "& $iconWrapper": {
@@ -2885,7 +2890,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       paddingTop: 20,
       backgroundColor: '#fff',
       border: "2px solid #F0F5FF",
-      [theme.breakpoints.down("xs")]: {
+      [safeTheme.breakpoints.down("xs")]: {
         paddingTop: 10,
         paddingInline: 10,
       },
@@ -3007,7 +3012,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
           paddingLeft: 15,
           paddingRight: 15,
           paddingBottom: 10,
-          [theme.breakpoints.down("xs")]: {
+          [safeTheme.breakpoints.down("xs")]: {
             paddingLeft: 0,
             paddingRight: 0,
           },
@@ -5191,7 +5196,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     padding: isRTL ? '4px 0px 4px 8px' : '4px 8px 4px 0px'
   },
   frozenCampaignsContainer: {
-    marginBottom: theme.spacing(3),
+    marginBottom: safeTheme.spacing(3),
   },
   contactUsDialog: {
     width: 'auto !important',
@@ -5476,6 +5481,118 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     alignItems: 'center',
     flexDirection: isRTL ? 'row-reverse' : 'row',
     flexShrink: 0
+  },
+  // Start New Chat button in sidebar header — same color as manage agent icon (inherited)
+  startNewChatIconButton: {
+    padding: '6px',
+    '&:hover': {
+      backgroundColor: 'rgba(0, 0, 0, 0.08)',
+      borderRadius: '50%'
+    }
+  },
+  // Start New Chat Modal styles
+  startNewChatDialogTitle: {
+    backgroundColor: '#FF3343',
+    color: '#fff',
+    padding: '16px 20px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    flexWrap: 'nowrap',
+    fontSize: '18px'
+  },
+  startNewChatStepIndicator: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '8px',
+    padding: '10px 20px',
+    borderBottom: '1px solid #e0e0e0',
+    backgroundColor: '#fafafa'
+  },
+  startNewChatStepDot: {
+    width: '10px',
+    height: '10px',
+    borderRadius: '50%',
+    backgroundColor: '#ccc',
+    transition: 'background-color 0.2s ease'
+  },
+  startNewChatStepDotActive: {
+    backgroundColor: '#FF3343'
+  },
+  startNewChatDialogContent: {
+    padding: '20px',
+    minHeight: '220px',
+    backgroundColor: '#f9f9f9'
+  },
+  startNewChatTemplateList: {
+    maxHeight: '300px',
+    overflowY: 'auto',
+    padding: 0,
+    margin: 0,
+    listStyle: 'none',
+    backgroundColor: '#fff',
+    borderRadius: '4px',
+    border: '1px solid #e0e0e0'
+  },
+  startNewChatTemplateItem: {
+    padding: '12px 16px',
+    borderBottom: '1px solid #e0e0e0',
+    cursor: 'pointer',
+    '&:hover': {
+      backgroundColor: '#fff3f4'
+    },
+    '&:last-child': {
+      borderBottom: 'none'
+    }
+  },
+  startNewChatTemplateItemSelected: {
+    backgroundColor: '#fff0f1',
+    borderLeft: '3px solid #FF3343'
+  },
+  startNewChatSearchField: {
+    width: '100%',
+    marginBottom: '12px'
+  },
+  startNewChatVariableField: {
+    width: '100%',
+    marginBottom: '12px'
+  },
+  startNewChatPreviewBox: {
+    backgroundColor: '#e5ddd5',
+    borderRadius: '8px',
+    padding: '16px',
+    marginBottom: '16px',
+    whiteSpace: 'pre-wrap',
+    wordBreak: 'break-word',
+    fontFamily: 'inherit',
+    fontSize: '14px'
+  },
+  startNewChatDisclaimerBox: {
+    backgroundColor: '#fff8e1',
+    border: '1px solid #ffe082',
+    borderRadius: '4px',
+    padding: '10px 14px',
+    fontSize: '13px',
+    direction: 'rtl',
+    textAlign: 'right',
+    color: '#5d4037',
+    marginBottom: '8px'
+  },
+  startNewChatDialogActions: {
+    padding: '12px 20px',
+    borderTop: '1px solid #e0e0e0',
+    justifyContent: 'space-between'
+  },
+  startNewChatNewTemplateButton: {
+    color: '#FF3343',
+    textTransform: 'none',
+    fontWeight: 600,
+    fontSize: '14px',
+    padding: '4px 8px',
+    '&:hover': {
+      backgroundColor: 'rgba(255, 51, 67, 0.08)'
+    }
   },
   // Sidebar Header styling
   sidebarHeader: {
@@ -5873,5 +5990,283 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     fontSize: '13px',
     color: '#667781',
     margin: 0
-  }
+  },
+  // Display Conditions Dialog Styles
+  displayConditionMainContainer: {
+    padding: '0px',
+  },
+  displayConditionLabelTypography: {
+    fontWeight: 600,
+    marginBottom: 4,
+    padding: '0px',
+    color: '#333',
+    fontSize: '15px',
+  },
+  displayConditionInputRow: {
+    display: 'flex',
+    gap: '12px',
+    marginBottom: '16px',
+  },
+  displayConditionMatchLabel: {
+    fontSize: 15,
+    color: '#555',
+    fontWeight: 500,
+  },
+  displayConditionMatchFormControl: {
+    minWidth: 100,
+  },
+  displayConditionMatchRow: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    marginBottom: '12px',
+  },
+  displayConditionAddButton: {
+    textTransform: 'none',
+    fontWeight: 500,
+    marginLeft: '8px',
+    fontSize: 15,
+  },
+  displayConditionFieldFormControl: {
+    width: 180,
+  },
+  displayConditionMenuItem: {
+    fontSize: 15,
+  },
+  displayConditionOperatorFormControl: {
+    width: 150,
+  },
+  displayConditionValueTextField: {
+    width: 180,
+  },
+  displayConditionPreviewBox: {
+    fontSize: 18,
+    backgroundColor: '#f9fafb',
+    borderRadius: 8,
+    padding: 16,
+    height: 'fit-content',
+    border: '1px solid #e5e7eb',
+  },
+  displayConditionPreviewTitle: {
+    fontWeight: 600,
+    marginBottom: 12,
+    color: '#6b7280',
+    letterSpacing: 0.5,
+    fontSize: '20px',
+  },
+  displayConditionPreviewContent: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '12px',
+  },
+  displayConditionPreviewItemBox: {
+    display: 'flex',
+    flexDirection: 'column',
+    fontSize: 20,
+    gap: 3,
+  },
+  displayConditionPreviewCaption: {
+    fontSize: 20,
+    color: '#9ca3af',
+    textTransform: 'uppercase',
+    fontWeight: 600,
+  },
+  displayConditionPreviewBody: {
+    fontSize: 20,
+    color: '#111827',
+  },
+  displayConditionCodeBox: {
+    backgroundColor: '#eef2f7',
+    padding: '6px 10px',
+    borderRadius: 4,
+    fontFamily: 'monospace',
+    fontSize: 20,
+    color: '#374151',
+    marginTop: 3,
+  },
+  displayConditionDialogPaperProps: {
+    borderRadius: 8,
+    padding: '0px',
+    minWidth: '900px !important',
+    maxWidth: '1000px !important',
+    width: '900px !important',
+  },
+  displayConditionConditionNameBox: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '16px',
+  },
+  displayConditionMatchBox: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    marginTop: 6,
+  },
+  displayConditionRulesContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '8px',
+    marginTop: 6,
+  },
+  displayConditionRuleRow: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+  },
+  displayConditionDeleteButton: {
+    minWidth: '20px',
+    width: '20px',
+    height: '20px',
+    padding: 0,
+  },
+  displayConditionCustomStyle: {
+    minWidth: '600px !important'
+  },
+  Button_button_l: {
+    padding: '12px 24px',
+    fontSize: '16px',
+    fontWeight: 6,
+    borderRadius: '8px',
+    border: 'none',
+    cursor: 'pointer',
+    transition: 'all 0.3s ease',
+  },
+  Button_solid_l: {
+    background: 'linear-gradient(90deg, #FF0076 0%, #FF0054 23.8%, #FF4D2A 100%)',
+    color: '#fff',
+    '&:hover': {
+      boxShadow: '0 4px 12px rgba(255, 0, 76, 0.3)',
+    },
+  },
+  Button_solid_m: {
+    padding: '10px 20px',
+    fontSize: '14px',
+    fontWeight: 600,
+    borderRadius: '6px',
+    background: 'linear-gradient(90deg, #FF0076 0%, #FF0054 23.8%, #FF4D2A 100%)',
+    color: '#fff',
+    border: 'none',
+    cursor: 'pointer',
+    transition: 'all 0.3s ease',
+  },
+  Button_solid_s: {
+    padding: '8px 16px',
+    fontSize: '12px',
+    fontWeight: 600,
+    borderRadius: '4px',
+    background: 'linear-gradient(90deg, #FF0076 0%, #FF0054 23.8%, #FF4D2A 100%)',
+    color: '#fff',
+    border: 'none',
+    cursor: 'pointer',
+    transition: 'all 0.3s ease',
+  },
+  Button_secondary_l: {
+    padding: '12px 24px',
+    fontSize: '16px',
+    fontWeight: 600,
+    borderRadius: '8px',
+    background: '#fff',
+    color: '#FF0076',
+    border: '2px solid #FF0076',
+    cursor: 'pointer',
+    transition: 'all 0.3s ease',
+    '&:hover': {
+      background: '#FF0076',
+      color: '#fff',
+    },
+  },
+  Button_secondary_m: {
+    padding: '10px 20px',
+    fontSize: '14px',
+    fontWeight: 600,
+    borderRadius: '6px',
+    background: '#fff',
+    color: '#FF0076',
+    border: '2px solid #FF0076',
+    cursor: 'pointer',
+    transition: 'all 0.3s ease',
+  },
+  Button_secondary_s: {
+    padding: '8px 16px',
+    fontSize: '15px',
+    fontWeight: 600,
+    borderRadius: '4px',
+    background: '#fff',
+    color: '#FF0076',
+    border: '2px solid #FF0076',
+    cursor: 'pointer',
+    transition: 'all 0.3s ease',
+  },
+  Button_disabled: {
+    opacity: 0.6,
+    cursor: 'not-allowed',
+    pointerEvents: 'none',
+  },
+  displayConditionButtons: {
+    minWidth: '140px !important',
+    width: '140px !important',
+  },
+  displayConditionPaperProps: {
+    minWidth: '1000px !important',
+    width: '1000px !important',
+    maxWidth: '1000px !important',
+    overflow: 'hidden'
+  },
+  displayConditionMainBox: {
+    padding: '0px',
+  },
+  displayConditionGridContainer: {
+    overflow: 'hidden'
+  },
+  displayConditionLeftGrid: {
+    overflow: 'hidden'
+  },
+  displayConditionRightGrid: {
+    overflow: 'hidden'
+  },
+  displayConditionRulesBox: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '8px',
+    maxWidth: '100%',
+    overflow: 'hidden'
+  },
+  displayConditionRuleRow: {
+    display: 'grid',
+    gridTemplateColumns: '150px 130px 180px 50px',
+    gap: '8px',
+    alignItems: 'flex-start',
+    overflow: 'hidden',
+  },
+  displayConditionTextFieldBox: {
+    display: 'flex',
+    flexDirection: 'column',
+    width: '160px',
+    overflow: 'hidden',
+    minWidth: 0,
+  },
+  displayConditionTextFieldStyle: {
+    overflow: 'hidden',
+    width: '100%'
+  },
+  displayConditionPreviewBoxStyle: {
+    maxHeight: '450px',
+    fontSize: 18,
+    overflowY: 'auto',
+    overflow: 'hidden'
+  },
+  displayConditionMatchTypeBox: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    gap: '8px',
+    marginBottom: '12px',
+    overflow: 'hidden'
+  },
+  displayConditionAddButton: {
+    textTransform: 'none',
+    marginLeft: isRTL ? 'auto' : '0px',
+    marginRight: !isRTL ? 'auto' : '0px'
+  },
 });
+}
