@@ -77,6 +77,7 @@ const SideBar = ({
 	TotalPending,
 	TotalSolved,
 	refetchActiveChatContact,
+	searchTextRef,
 }: WhatsappChatSideBarProps) => {
 	const { t: translator } = useTranslation();
 	const { isRTL, userRoles } = useSelector(
@@ -137,6 +138,10 @@ const SideBar = ({
 	useEffect(() => {
 		// No default date range - user can select one if needed
 	}, []);
+
+	useEffect(() => {
+		searchTextRef.current = searchText;
+	}, [searchText, searchTextRef]);
 
 	useEffect(() => {
 		setSearchText('');

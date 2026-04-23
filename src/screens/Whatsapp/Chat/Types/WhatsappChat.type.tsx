@@ -177,6 +177,7 @@ export type WhatsappChatSideBarProps = {
 	TotalPending: number;
 	TotalSolved: number;
 	refetchActiveChatContact?: (phoneNumber: string) => void,
+	searchTextRef: React.MutableRefObject<string>;
 };
 
 export type chatModalProps = {
