@@ -117,7 +117,15 @@ const McpSection = ({ classes }: any) => {
         const payload = res?.payload;
         if (!payload || payload.StatusCode === 401) { logout(); return; }
         if (payload.StatusCode === 500) { showError(); return; }
-        setTokens(payload.Data || []);
+        // Normalize PascalCase API response → camelCase interface
+        setTokens((payload.Data || []).map((t: any) => ({
+            id: t.Id,
+            token: t.Token,
+            label: t.Label,
+            createdDate: t.CreatedDate,
+            lastUsedDate: t.LastUsedDate,
+            isActive: t.IsActive
+        })));
     };
 
     const handleCreate = async () => {
@@ -130,13 +138,14 @@ const McpSection = ({ classes }: any) => {
         const data = payload.Data;
         setCreateOpen(false);
         setCreateLabel('');
-        setSuccessData({ mcpUrl: data.mcpUrl, label: data.label || createLabel });
+        // API returns PascalCase — use correct casing here
+        setSuccessData({ mcpUrl: data.McpUrl, label: data.Label || createLabel });
         // Add masked entry to list
         setTokens(prev => [{
-            id: data.id,
-            token: data.token.substring(0, 8) + '...',
-            label: data.label || '',
-            createdDate: data.createdDate,
+            id: data.Id,
+            token: data.Token.substring(0, 8) + '...',
+            label: data.Label || '',
+            createdDate: data.CreatedDate,
             lastUsedDate: undefined,
             isActive: true
         }, ...prev]);
