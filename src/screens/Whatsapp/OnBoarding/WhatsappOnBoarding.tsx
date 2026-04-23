@@ -57,6 +57,8 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
   const [phoneNumberId, setPhoneNumberId] = useState('');
   const [wabaId, setWabaId] = useState('');
   const [code, setCode] = useState('');
+  const [isCoexistenceMode, setIsCoexistenceMode] = useState<boolean>(false);
+  const [isCoexistenceFlow, setIsCoexistenceFlow] = useState<boolean>(false);
 	
   const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot }
   const cellStyle = { head: classes.tableCellHead, body: classes.tableCellBody, root: classes.tableCellRoot }
@@ -96,8 +98,11 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 		if (StatusCode === 1) {
 			setToastMessage({
 				...successToastData,
-				message: t('WhatsappOnBoarding.phoneNumberRegistered')
+				message: isCoexistenceFlow
+					? t('WhatsappOnBoarding.coexistenceSyncStarted')
+					: t('WhatsappOnBoarding.phoneNumberRegistered')
 			});
+			setIsCoexistenceFlow(false);
 			fetchMetaPhoneNumbers();
 		} else {
 			setToastMessage({
@@ -216,9 +221,15 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
           const { phone_number_id, waba_id } = data.data;
 					setPhoneNumberId(phone_number_id);
 					setWabaId(waba_id);
+        } else if (data.event === 'FINISH_WHATSAPP_BUSINESS_APP_ONBOARDING') {
+          const { phone_number_id, waba_id } = data.data;
+					setIsCoexistenceFlow(true);
+					setPhoneNumberId(phone_number_id);
+					setWabaId(waba_id);
         } else if (data.event === 'CANCEL' || data.event === 'ERROR') {
 					setPhoneNumberId('');
 					setWabaId('');
+					setIsCoexistenceFlow(false);
         }
       }
     } catch (error) {
@@ -236,12 +247,12 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 	const launchWhatsAppSignup = () => {
     // @ts-ignore
     window?.FB?.login(fbLoginCallback, {
-      config_id: '1240808773727236', // configuration ID goes here
-      response_type: 'code', // must be set to 'code' for System User access token
-      override_default_response_type: true, // when true, any response types passed in the "response_type" will take precedence over the default types
+      config_id: '1240808773727236',
+      response_type: 'code',
+      override_default_response_type: true,
       extras: {
         setup: {},
-        featureType: '',
+        featureType: isCoexistenceMode ? 'whatsapp_business_app_onboarding' : '',
         sessionInfoVersion: '2',
       },
     });
@@ -691,6 +702,24 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 					WhatsAppPlatformID !== WhatsAppPlatformIDEnum.TWILLIO ? (
 						<>		
 							<Box className={clsx(classes.p20)}>
+								<Box className={clsx(classes.dFlex)} style={{ gap: 12, alignItems: 'center', flexWrap: 'wrap', marginBottom: 12 }}>
+									<Button
+										variant={!isCoexistenceMode ? 'contained' : 'outlined'}
+										color='primary'
+										onClick={() => setIsCoexistenceMode(false)}
+										className={clsx(classes.btn, classes.btnRounded)}
+									>
+										{t('WhatsappOnBoarding.newBusinessAccount')}
+									</Button>
+									<Button
+										variant={isCoexistenceMode ? 'contained' : 'outlined'}
+										color='primary'
+										onClick={() => setIsCoexistenceMode(true)}
+										className={clsx(classes.btn, classes.btnRounded)}
+									>
+										{t('WhatsappOnBoarding.alreadyUseWhatsAppApp')}
+									</Button>
+								</Box>
 								<button
 									onClick={launchWhatsAppSignup}
 									style={{
