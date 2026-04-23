@@ -209,5 +209,36 @@
 		"directApi": "כתובת URL API שליחה ישירה",
 		"noAPIKeyAccess": "על מנת להשתמש ב-API שלנו, אנא פנו לצוות התמיכה שלנו ב <a href = 'mailto:support@pulseem.com'>support@pulseem.com</a> / <a href='tel:03-7172274'>03-7172274</a>"
 	},
-	"displayRevenueIn": "הצג הכנסות ב"
+	"displayRevenueIn": "הצג הכנסות ב",
+	"mcpSettings": {
+		"sectionTitle": "MCP — חיבור ל-AI",
+		"sectionSubtitle": "שלח SMS, Email ו-WhatsApp ישירות מתוך Claude, ChatGPT ו-Cursor",
+		"createBtn": "+ חיבור MCP חדש",
+		"createFirstBtn": "+ צור חיבור MCP ראשון",
+		"emptyTitle": "עדיין לא חיברת AI",
+		"emptyDesc": "צור חיבור MCP ותוכל לשלוח SMS, Email ו-WhatsApp ישירות מ-Claude, ChatGPT ו-Cursor — בשפה טבעית.",
+		"activeCount": "חיבורים פעילים ({count})",
+		"colLabel": "תווית",
+		"colToken": "Token",
+		"colCreated": "נוצר",
+		"colLastUsed": "שימוש אחרון",
+		"colStatus": "סטטוס",
+		"statusActive": "פעיל",
+		"statusInactive": "לא פעיל",
+		"deactivateBtn": "בטל חיבור",
+		"neverUsed": "לא נוסה",
+		"createDialogTitle": "יצירת חיבור MCP חדש",
+		"labelField": "תווית (לזיהוי עצמי)",
+		"labelPlaceholder": "לדוגמה: Claude Desktop",
+		"createConfirmBtn": "צור חיבור",
+		"successTitle": "החיבור נוצר בהצלחה!",
+		"successWarning": "שמור את הכתובת עכשיו — היא לא תוצג שוב.",
+		"mcpUrlLabel": "כתובת MCP שלך:",
+		"copyUrlBtn": "העתק כתובת",
+		"copiedLabel": "הועתק",
+		"successClose": "סגור — שמרתי את הכתובת",
+		"deactivateConfirmTitle": "בטל חיבור?",
+		"deactivateConfirmText": "לבטל את חיבור \"{label}\"? הבוט לא יוכל לשלוח הודעות עד שתצור חיבור חדש.",
+		"deactivateConfirmBtn": "כן, בטל חיבור"
+	}
 }

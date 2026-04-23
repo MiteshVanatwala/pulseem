@@ -38,6 +38,7 @@ import TierPlans from '../../../components/TierPlans/TierPlans';
 import { TierFeatures } from '../../../helpers/Constants';
 import { get } from 'lodash';
 import { RxOpenInNewWindow } from 'react-icons/rx';
+import McpSection from './McpSection';
 
 const useStyles = makeStyles({
     pwdEveButton: {
@@ -530,6 +531,9 @@ const ApiSettings = ({ classes }: any) => {
                         </Box>
                     </Box>
                 </Box>
+            </Box>
+            <Box className={'topSection'} style={{ marginTop: 0 }}>
+                <McpSection classes={classes} />
             </Box>
             {
                 showRegenerate && <BaseDialog
