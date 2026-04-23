@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import pulseemMcpImage from '../../../assets/images/pulseem_mcp.png';
 import {
     Box, Button, Typography, TextField, Divider,
     Table, TableBody, TableCell, TableHead, TableRow,
@@ -31,14 +32,15 @@ const useStyles = makeStyles({
         opacity: 0.5
     },
     emptyBox: {
-        textAlign: 'center',
-        padding: '32px 16px',
+        textAlign: 'right',
+        padding: '32px 24px',
         color: '#666'
     },
-    emptyIcon: {
-        fontSize: 48,
+    emptyImage: {
+        width: 150,
+        marginBottom: 16,
         display: 'block',
-        marginBottom: 8
+        marginRight: 0,
     },
     urlBox: {
         background: '#f5f5f5',
@@ -190,7 +192,7 @@ const McpSection = ({ classes }: any) => {
             <Box className={localClasses.sectionHeader} style={{ justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
                 <Box>
                     <Typography className={clsx(classes.managementTitle, classes.font20)}>
-                        🤖 {t('settings.mcpSettings.sectionTitle')}
+                        {t('settings.mcpSettings.sectionTitle')}
                     </Typography>
                     <Typography style={{ color: '#666', fontSize: 14, marginTop: 2 }}>
                         {t('settings.mcpSettings.sectionSubtitle')}
@@ -218,11 +220,11 @@ const McpSection = ({ classes }: any) => {
             {/* Empty state */}
             {!loading && tokens.length === 0 && (
                 <Box className={localClasses.emptyBox}>
-                    <span className={localClasses.emptyIcon}>🤖</span>
-                    <Typography style={{ fontWeight: 600, marginBottom: 6 }}>
+                    <img src={pulseemMcpImage} alt="Pulseem MCP" className={localClasses.emptyImage} />
+                    <Typography style={{ fontWeight: 700, fontSize: 20, marginBottom: 8 }}>
                         {t('settings.mcpSettings.emptyTitle')}
                     </Typography>
-                    <Typography style={{ fontSize: 14, color: '#888', marginBottom: 16, maxWidth: 340, margin: '0 auto 16px' }}>
+                    <Typography style={{ fontSize: 16, color: '#555', marginBottom: 20, maxWidth: 420 }}>
                         {t('settings.mcpSettings.emptyDesc')}
                     </Typography>
                     <Button

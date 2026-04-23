@@ -211,7 +211,7 @@
 	},
 	"displayRevenueIn": "הצג הכנסות ב",
 	"mcpSettings": {
-		"sectionTitle": "MCP — חיבור ל-AI",
+		"sectionTitle": "MCP חיבור ל-AI",
 		"sectionSubtitle": "שלח SMS, Email ו-WhatsApp ישירות מתוך Claude, ChatGPT ו-Cursor",
 		"createBtn": "+ חיבור MCP חדש",
 		"createFirstBtn": "+ צור חיבור MCP ראשון",

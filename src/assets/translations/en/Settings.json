@@ -210,7 +210,7 @@
 	},
 	"displayRevenueIn": "Display revenue in",
 	"mcpSettings": {
-		"sectionTitle": "MCP — Connect to AI",
+		"sectionTitle": "MCP Connect to AI",
 		"sectionSubtitle": "Send SMS, Email and WhatsApp directly from Claude, ChatGPT and Cursor",
 		"createBtn": "+ New MCP Connection",
 		"createFirstBtn": "+ Create First MCP Connection",
