@@ -182,6 +182,7 @@ export type WhatsappChatSideBarProps = {
 	onRefreshChat: () => Promise<void>;
 	personalFields: { [key: string]: string };
 	landingPageData: { CampaignID: number; CampaignName: string; PageHref: string }[];
+	searchTextRef: React.MutableRefObject<string>;
 };
 
 export type StartNewChatStep = 'phone' | 'template' | 'variables' | 'review';
