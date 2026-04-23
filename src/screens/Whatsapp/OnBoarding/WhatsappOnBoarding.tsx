@@ -88,7 +88,8 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 		const resp = await dispatch(facebookLogin({
 			phone_number_id: phoneNumberId,
 			waba_id: wabaId,
-			code: code
+			code: code,
+			isCoexistence: isCoexistenceFlow
 		})) as any;
 		handleFBloginResponse(resp?.payload as PulseemResponse)
 	}
