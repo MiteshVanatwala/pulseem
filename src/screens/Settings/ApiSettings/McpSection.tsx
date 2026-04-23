@@ -34,7 +34,7 @@ const useStyles = makeStyles({
     emptyBox: {
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'flex-end',
+        alignItems: 'flex-start',
         padding: '32px 24px',
         color: '#666',
     },
@@ -224,10 +224,10 @@ const McpSection = ({ classes }: any) => {
             {!loading && tokens.length === 0 && (
                 <Box className={localClasses.emptyBox}>
                     <img src={pulseemMcpImage} alt="Pulseem MCP" className={localClasses.emptyImage} />
-                    <Typography style={{ fontWeight: 700, fontSize: 20, marginBottom: 8, textAlign: 'right' }}>
+                    <Typography style={{ fontWeight: 700, fontSize: 20, marginBottom: 8, textAlign: 'start' }}>
                         {t('settings.mcpSettings.emptyTitle')}
                     </Typography>
-                    <Typography style={{ fontSize: 16, color: '#555', marginBottom: 20, maxWidth: 420, textAlign: 'right' }}>
+                    <Typography style={{ fontSize: 16, color: '#555', marginBottom: 20, maxWidth: 420, textAlign: 'start' }}>
                         {t('settings.mcpSettings.emptyDesc')}
                     </Typography>
                     <Button
