@@ -50,7 +50,15 @@ const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', cont
   const systemName = isBeeperAccount ? 'Beeper' : t('master.pulseemSystem');
   title = title ? `${title} | ${systemName}` : systemName;
 
-
+  // Swap favicon dynamically based on white-label company
+  useEffect(() => {
+    const link = document.querySelector("link[rel*='icon']");
+    if (link) {
+      link.href = isBeeperAccount
+        ? `${process.env.PUBLIC_URL}/beeper-favicon.ico`
+        : `${process.env.PUBLIC_URL}/favicon.ico`;
+    }
+  }, [isBeeperAccount]);
 
   useEffect(() => {
     setReKey(reKey + 1);

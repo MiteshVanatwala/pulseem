@@ -628,7 +628,7 @@ const BulkStatus = ({ classes }) => {
               </>
             )
           } */}
-          {Notifications.FeatureExist && (
+          {Notifications.FeatureExist && !isBeeperAccount && (
             <>
               <Grid
                 container
@@ -651,7 +651,7 @@ const BulkStatus = ({ classes }) => {
               <Divider />
             </>
           )}
-          {Whatsapp.FeatureExist && Whatsapp.FeatureAllowed && (<>
+          {Whatsapp.FeatureExist && Whatsapp.FeatureAllowed && !isBeeperAccount && (<>
             <Grid
               container
               item sm={12} md={12} lg={12} xl={12}

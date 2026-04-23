@@ -19,6 +19,7 @@ import {
 import { Loader } from '../Loader/Loader';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 import { IsValidNonGlobalPhoneNumber, IsValidPhoneNumberKeyPress, IsValidPhoneNumberWithCountryCode } from '../../helpers/Utils/Validations';
+import { getIsBeeperAccount } from '../WhiteLabel/WhiteLabelMigrate';
 
 
 const VerificationDialog = ({
@@ -33,6 +34,7 @@ const VerificationDialog = ({
     const dispatch = useDispatch();
     const { isRTL } = useSelector(state => state.core);
     const { verifiedEmails, verifiedNumbers, twoFactorAuthEmails, twoFactorAuthNumbers, accountSettings, countryCodeList, isGlobal } = useSelector(state => state.common);
+    const isBeeperAccount = getIsBeeperAccount(accountSettings);
     const { t } = useTranslation();
     const [showLoader, setShowLoader] = useState(true);
     const [verificationStep, setVerificationStep] = useState(step ?? 0)
@@ -382,6 +384,10 @@ const VerificationDialog = ({
             case '4': {
                 return <Typography variant='body1'>{RenderHtml(t('SimplyClub.contactUs'))}</Typography>
             }
+            case 6:
+            case '6': {
+                return <Typography variant='body1'>{RenderHtml(t('Beeper.contactUs'))}</Typography>
+            }
             default: {
                 return <Typography variant='body1'>{RenderHtml(t('campaigns.newsLetterMgmt.emailVerification.secondSlide.contactUs'))}</Typography>
             }
@@ -592,7 +598,7 @@ const VerificationDialog = ({
                             {t('sms.verificationBody')} <b>{t('sms.oneTimeProcess')}</b>{' '}{t('sms.foreachSubmission')}
                         </Typography>
                         <Typography className={clsx(classes.mt15, classes.mb15, classes.verNote)}>
-                            {t('sms.verificationNote')}
+                            {isBeeperAccount ? t('Beeper.verificationNote') : t('sms.verificationNote')}
                         </Typography>
                         <Divider />
                     </Box>
