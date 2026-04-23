@@ -730,6 +730,12 @@ const CampaignEditor = ({ classes, ...props }) => {
   }, [beeToken]);
 
   useEffect(() => {
+    if (dialog === DialogType.TEST_SEND) {
+      setLoader(false);
+    }
+  }, [dialog]);
+
+  useEffect(() => {
     if (!editorRef.current || !displayConditions || !hasDisplayConditions) {
       return;
     }
@@ -935,6 +941,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     designChangedRef.current = true;
     
     if (isDisplayConditionDialogOpen) return;
+    
     onAutoSaveCampaign();
     if (editorRef.current) {
       try {

@@ -62,6 +62,7 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
       { key: 'Country', label: t('common.country') },
       { key: 'Company', label: t('common.company') },
       { key: 'State', label: t('common.state') },
+      { key: 'BirthDate', label: t('common.birth_date') },
     ],
     [t]
   );
@@ -234,7 +235,7 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
     [allFields]
   );
 
-  const DATE_FIELDS = ['ExtraDate1', 'ExtraDate2', 'ExtraDate3', 'ExtraDate4'];
+  const DATE_FIELDS = ['BirthDate', 'ExtraDate1', 'ExtraDate2', 'ExtraDate3', 'ExtraDate4'];
   const isDateField = (field) => DATE_FIELDS.includes(field);
 
   const escapeValue = (val) => (val || '').replace(/'/g, "\\'");

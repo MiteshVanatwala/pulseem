@@ -20,6 +20,7 @@ import { IoIosArrowDown } from "react-icons/io";
 import { IsSharedDomain } from "../../../../helpers/Functions/DomainVerificationHelper";
 import { PulseemFeatures } from "../../../../model/PulseemFields/Fields";
 import { DateFormats } from "../../../../helpers/Constants";
+import { sitePrefix } from "../../../../config";
 
 const SummaryDialog = ({ classes,
     isOpen = false,
@@ -53,6 +54,9 @@ const SummaryDialog = ({ classes,
     const [showLoader, setShowLoader] = useState(false);
     const [isSharedDomainEmail, setIsSharedDomainEmail] = useState(false);
     const [sendToSupervisor, setSendToSupervisor] = useState(false);
+    const embeddedPreviewUrl = newsletterSendSummary?.CampaignID
+        ? `${sitePrefix}previewer/newsletter/${newsletterSendSummary.CampaignID}?embedded=1`
+        : null;
 
     const {
         FinalClients,
@@ -443,10 +447,14 @@ const SummaryDialog = ({ classes,
                                 </Link>
                             </Box>
                         </Box>
-                        {PreviewURL && <Box className={classes.sumRight} style={{ width: windowSize === 'xs' || windowSize === 'sm' ? '100%' : '50%' }}>
+                        {(embeddedPreviewUrl || PreviewURL) && <Box className={classes.sumRight} style={{ width: windowSize === 'xs' || windowSize === 'sm' ? '100%' : '50%' }}>
                             <Stack direction='column' alignItems='center' spacing={2} className={classes.paddingInline25}>
                                 <Stack className={classes.previewIframe}>
-                                    {RenderHtml(`<iframe src="${PreviewURL}&fromReact=1" style="height: inherit; border: 0; background: none; width: 100%; height: 400px;" />`)}
+                                    <iframe
+                                        title="newsletter-summary-preview"
+                                        src={embeddedPreviewUrl || `${PreviewURL}&fromReact=1`}
+                                        style={{ height: '400px', border: 0, background: 'none', width: '100%' }}
+                                    />
                                 </Stack>
                             </Stack>
                         </Box>}
