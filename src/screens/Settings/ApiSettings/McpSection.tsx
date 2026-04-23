@@ -32,15 +32,15 @@ const useStyles = makeStyles({
         opacity: 0.5
     },
     emptyBox: {
-        textAlign: 'right',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'flex-end',
         padding: '32px 24px',
-        color: '#666'
+        color: '#666',
     },
     emptyImage: {
         width: 150,
         marginBottom: 16,
-        display: 'block',
-        marginRight: 0,
     },
     urlBox: {
         background: '#f5f5f5',
@@ -190,13 +190,16 @@ const McpSection = ({ classes }: any) => {
 
             {/* Section header */}
             <Box className={localClasses.sectionHeader} style={{ justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
-                <Box>
-                    <Typography className={clsx(classes.managementTitle, classes.font20)}>
-                        {t('settings.mcpSettings.sectionTitle')}
-                    </Typography>
-                    <Typography style={{ color: '#666', fontSize: 14, marginTop: 2 }}>
-                        {t('settings.mcpSettings.sectionSubtitle')}
-                    </Typography>
+                <Box style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                    <img src={pulseemMcpImage} alt="Pulseem MCP" style={{ width: 52, height: 52, objectFit: 'contain' }} />
+                    <Box>
+                        <Typography className={clsx(classes.managementTitle, classes.font20)}>
+                            {t('settings.mcpSettings.sectionTitle')}
+                        </Typography>
+                        <Typography style={{ color: '#666', fontSize: 14, marginTop: 2 }}>
+                            {t('settings.mcpSettings.sectionSubtitle')}
+                        </Typography>
+                    </Box>
                 </Box>
                 {tokens.length > 0 && (
                     <Button
@@ -221,10 +224,10 @@ const McpSection = ({ classes }: any) => {
             {!loading && tokens.length === 0 && (
                 <Box className={localClasses.emptyBox}>
                     <img src={pulseemMcpImage} alt="Pulseem MCP" className={localClasses.emptyImage} />
-                    <Typography style={{ fontWeight: 700, fontSize: 20, marginBottom: 8 }}>
+                    <Typography style={{ fontWeight: 700, fontSize: 20, marginBottom: 8, textAlign: 'right' }}>
                         {t('settings.mcpSettings.emptyTitle')}
                     </Typography>
-                    <Typography style={{ fontSize: 16, color: '#555', marginBottom: 20, maxWidth: 420 }}>
+                    <Typography style={{ fontSize: 16, color: '#555', marginBottom: 20, maxWidth: 420, textAlign: 'right' }}>
                         {t('settings.mcpSettings.emptyDesc')}
                     </Typography>
                     <Button
