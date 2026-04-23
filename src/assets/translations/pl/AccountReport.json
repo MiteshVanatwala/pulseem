@@ -1,0 +1,10 @@
+{
+  "pageTitle": "Raport Menedżera Konta",
+  "emailsSent": "Wysłane wiadomości",
+  "sentByMonth": "Wysłane wiadomości według miesięcy",
+  "recipientsByDate": "Liczba odbiorców według daty",
+  "total": "Łącznie",
+  "opens": "Otwarcia",
+  "clicks": "Kliknięcia",
+  "bounced": "Odrzucone"
+}

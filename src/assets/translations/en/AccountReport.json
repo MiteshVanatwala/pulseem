@@ -1,0 +1,10 @@
+{
+  "pageTitle": "Account Manager Report",
+  "emailsSent": "Emails Sent",
+  "sentByMonth": "Sent by Month",
+  "recipientsByDate": "Number of recipients by date",
+  "total": "Total",
+  "opens": "Opens",
+  "clicks": "Clicks",
+  "bounced": "Bounced"
+}

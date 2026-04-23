@@ -98,6 +98,7 @@ import { UserRoles } from './Models/SubUser/SubUsers';
 import { PulseemFeatures } from './model/PulseemFields/Fields';
 import RemoveMyData from './screens/RemoveMyData/RemoveMyData';
 import LinksClicksReport from './screens/Reports/LinksClicksReport/LinksClicksReport';
+import AccountReport from './screens/Reports/AccountReport/AccountReport';
 import PopupTriggers from './screens/Popups/DisplayRules/PopupTriggers';
 
 import BeeEditorPopup from './screens/Editors/BeeEditorPopup';
@@ -436,8 +437,8 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
         component={transferUrl('/Pulseem/AbTestsReport.aspx')}
       /> */}
       <Route
-        path={`/AccountReport`}
-        component={transferUrl('/Pulseem/AccountReport.aspx')}
+        path={`${sitePrefix}Reports/AccountReport`}
+        element={<AccountReport classes={classes} />}
       />
       <Route
         path={`/EmailAutoReports`}

@@ -426,7 +426,7 @@ export const getRoutes = (
         // { key: 'MmsReport', title: t('mmsreport.mmsReport'), href: `${sitePrefix}Reports/MMSMainReport`, isShow: true },
         { key: 'whatsappReports', title: t('whatsapp.ReportsWhatsapp'), href: whatsappRoutes.REPORTS, isShow: true },
         // { title: t('master.AbTestsReport.Text'), href: `${rootDomain}/AbTestsReport.aspx?fromreact=true`, isShow: true },
-        { title: t('master.RadMenuItemResource15.Text'), href: `${rootDomain}/AccountReport.aspx?fromreact=true`, isShow: true },
+        { key: 'accountReport', title: t('master.RadMenuItemResource15.Text'), href: `${sitePrefix}Reports/AccountReport`, isShow: true },
         { title: t('master.RadMenuItemResource16.Text'), href: `${rootDomain}/CampaignComparison.aspx?fromreact=true`, isShow: false },
         { key: 'recipientReport', title: t('master.RadMenuItemResource18.Text'), href: `${sitePrefix}Reports/Recipient`, isShow: !userRoles?.HideRecipients },
         { title: t('master.RadMenuItemResource30.Text'), href: `${rootDomain}/EmailAutoReports.aspx?fromreact=true`, isShow: true },
