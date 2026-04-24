@@ -50,6 +50,7 @@ import Toast from '../../../components/Toast/Toast.component';
 import { JSONProps } from './Types/JSON.types';
 import {
 	checkLanguage,
+	getApiErrorResponseMessage,
 	getDynamicFieldIndex,
 	getDynamicFields,
 	getLastDynamicFieldByValue,
@@ -193,6 +194,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	const [TierMessageCode, setTierMessageCode] = useState<string>("");
 	const [dynamicFieldCount, setDynamicFieldCount] = useState<number>(0);
 	const [authenticationButtonText, setAuthenticationButtonText] = useState<string>('');
+	const [fileUploadAlert, setFileUploadAlert] = useState<string>('');
 
 	let updatedTemplateData: templateDataProps = {
 		templateText: '',
@@ -359,17 +361,35 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			const uploadedFile: fileUploadAPIProps = await dispatch<any>(
 				uploadMedia(myFormData)
 			);
-			if (uploadedFile.payload?.Data?.length > 0) {
+
+			const response = uploadedFile?.payload as any;
+			if (
+				(response?.StatusCode === 1 || response?.ErrorCode === 1) &&
+				response?.Data?.length > 0
+			) {
 				setFileData({
-					fileLink: uploadedFile.payload?.Data,
+					fileLink: response.Data,
 					fileType: '',
 				});
-			} else {
-				setFileData({
-					fileLink: '',
-					fileType: '',
-				});
+				return;
 			}
+
+			setFileData({
+				fileLink: '',
+				fileType: '',
+			});
+
+			const errorMessage =
+				(uploadedFile as any)?.error?.message ||
+				translator(
+					getApiErrorResponseMessage(
+						'uploadMedia',
+						response?.StatusCode ?? response?.ErrorCode ?? 4
+					),
+					{ FileSize: '5' }
+				);
+
+			setFileUploadAlert(errorMessage);
 		} else {
 			setFileData({
 				fileLink: '',
@@ -1214,6 +1234,15 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 
 		const fileProp = gallery[""].filter((g: any) => { return g.FileURL === fileUrl });
 
+		// Validate file size - max 5MB (5242880 bytes)
+		const fileSize = fileProp && fileProp[0].Properties?.Size;
+		if (fileSize && fileSize >= 5242880) {
+			const translationKey = getApiErrorResponseMessage('uploadMedia', 4);
+			const errorMessage = translator(translationKey, { FileSize: '5' });
+			setFileUploadAlert(errorMessage);
+			return;
+		}
+
 		setFileData({
 			fileLink: fileUrl,
 			fileType: "0",
@@ -1221,6 +1250,25 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		});
 
 		setIsFileSelected(true);
+	}
+
+	const renderFileUploadAlertDialog = () => {
+		if (fileUploadAlert) {
+			return (
+				<BaseDialog
+					classes={classes}
+					open={!!fileUploadAlert}
+					onCancel={() => setFileUploadAlert('')}
+					onClose={() => setFileUploadAlert('')}
+					onConfirm={() => setFileUploadAlert('')}
+					renderButtons={null}
+				>
+					<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+						{fileUploadAlert}
+					</Typography>
+				</BaseDialog>
+			)
+		}
 	}
 
 	const renderGalleryDialog = () => {
@@ -1645,6 +1693,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				!isLoader && <NoSetup classes={classes} />
 			)}
 			{renderDialog()}
+			{renderFileUploadAlertDialog()}
 			<Loader isOpen={isLoader} showBackdrop={true} />
 			{showTierPlans && <TierPlans
 				classes={classes}
