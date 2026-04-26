@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import pulseemMcpImage from '../../../assets/images/pulseem_mcp.png';
 import {
-    Box, Button, Typography, TextField, Divider,
+    Box, Button, Typography, TextField, Divider, Link,
     Table, TableBody, TableCell, TableHead, TableRow,
     Dialog, DialogTitle, DialogContent, DialogActions,
     makeStyles, CircularProgress
@@ -70,6 +70,19 @@ const useStyles = makeStyles({
         marginBottom: 8,
         fontSize: 13,
         color: '#c62828',
+    },
+    infoBox: {
+        background: '#f5f7ff',
+        border: '1px solid #d0d5f0',
+        borderRadius: 4,
+        padding: '10px 14px',
+        marginBottom: 16,
+        fontSize: 13,
+    },
+    urlDesc: {
+        fontSize: 12,
+        color: '#666',
+        marginBottom: 4,
     },
     deactivatedChip: {
         background: '#e0e0e0',
@@ -209,9 +222,19 @@ const McpSection = ({ classes }: any) => {
                 <Box style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                     <img src={pulseemMcpImage} alt="Pulseem MCP" style={{ width: 52, height: 52, objectFit: 'contain' }} />
                     <Box>
-                        <Typography className={clsx(classes.managementTitle, classes.font20)}>
-                            {t('settings.mcpSettings.sectionTitle')}
-                        </Typography>
+                        <Box style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+                            <Typography className={clsx(classes.managementTitle, classes.font20)}>
+                                {t('settings.mcpSettings.sectionTitle')}
+                            </Typography>
+                            <Link
+                                href="https://site.pulseem.co.il/pulsyai/mcp"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={{ fontSize: 13, whiteSpace: 'nowrap' }}
+                            >
+                                {t('settings.mcpSettings.guideLink')} →
+                            </Link>
+                        </Box>
                         <Typography style={{ color: '#666', fontSize: 14, marginTop: 2 }}>
                             {t('settings.mcpSettings.sectionSubtitle')}
                         </Typography>
@@ -228,6 +251,18 @@ const McpSection = ({ classes }: any) => {
             </Box>
 
             <Divider style={{ marginBottom: 16 }} />
+
+            {/* Connection types info */}
+            <Box className={localClasses.infoBox}>
+                <Typography style={{ fontSize: 13, marginBottom: 3 }}>
+                    <strong>{t('settings.mcpSettings.sectionInfoDirectApiTitle')}</strong>{' '}
+                    {t('settings.mcpSettings.sectionInfoDirectApiDesc')}
+                </Typography>
+                <Typography style={{ fontSize: 13 }}>
+                    <strong>{t('settings.mcpSettings.sectionInfoUiApiTitle')}</strong>{' '}
+                    {t('settings.mcpSettings.sectionInfoUiApiDesc')}
+                </Typography>
+            </Box>
 
             {/* Loading */}
             {loading && (
@@ -352,8 +387,11 @@ const McpSection = ({ classes }: any) => {
                     </Box>
 
                     {/* URL 1: Direct API (mcp.api.pulseem.com) */}
-                    <Typography style={{ fontSize: 14, fontWeight: 600, marginBottom: 4 }}>
+                    <Typography style={{ fontSize: 14, fontWeight: 600, marginBottom: 2 }}>
                         {t('settings.mcpSettings.mcpApiUrlLabel')}
+                    </Typography>
+                    <Typography className={localClasses.urlDesc}>
+                        {t('settings.mcpSettings.mcpApiUrlDesc')}
                     </Typography>
                     <Box className={localClasses.urlBox}>{successData?.mcpApiUrl}</Box>
                     {!hasDirectApi && (
@@ -371,8 +409,11 @@ const McpSection = ({ classes }: any) => {
                     </Box>
 
                     {/* URL 2: Main API (mcp.ui-api.pulseem.com) */}
-                    <Typography style={{ fontSize: 14, fontWeight: 600, marginBottom: 4 }}>
+                    <Typography style={{ fontSize: 14, fontWeight: 600, marginBottom: 2 }}>
                         {t('settings.mcpSettings.mcpUiApiUrlLabel')}
+                    </Typography>
+                    <Typography className={localClasses.urlDesc}>
+                        {t('settings.mcpSettings.mcpUiApiUrlDesc')}
                     </Typography>
                     <Box className={localClasses.urlBox}>{successData?.mcpUiApiUrl}</Box>
                     <Box style={{ display: 'flex', justifyContent: isRTL ? 'flex-start' : 'flex-end', marginTop: 4, marginBottom: 4 }}>
