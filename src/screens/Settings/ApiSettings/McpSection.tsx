@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import pulseemMcpImage from '../../../assets/images/pulseem_mcp.png';
 import {
-    Box, Button, Typography, TextField, Divider,
+    Box, Button, Typography, TextField, Divider, Link,
     Table, TableBody, TableCell, TableHead, TableRow,
     Dialog, DialogTitle, DialogContent, DialogActions,
     makeStyles, CircularProgress
@@ -12,6 +12,7 @@ import clsx from 'clsx';
 import { getMcpTokens, createMcpToken, deactivateMcpToken } from '../../../redux/reducers/McpTokensSlice';
 import { logout } from '../../../helpers/Api/PulseemReactAPI';
 import Toast from '../../../components/Toast/Toast.component';
+import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 
 const useStyles = makeStyles({
     sectionBox: {
@@ -60,6 +61,29 @@ const useStyles = makeStyles({
         marginBottom: 12,
         fontSize: 14,
     },
+    directApiWarning: {
+        background: '#ffebee',
+        border: '1px solid #ef9a9a',
+        borderRadius: 4,
+        padding: '8px 14px',
+        marginTop: 4,
+        marginBottom: 8,
+        fontSize: 13,
+        color: '#c62828',
+    },
+    infoBox: {
+        background: '#f5f7ff',
+        border: '1px solid #d0d5f0',
+        borderRadius: 4,
+        padding: '10px 14px',
+        marginBottom: 16,
+        fontSize: 13,
+    },
+    urlDesc: {
+        fontSize: 12,
+        color: '#666',
+        marginBottom: 4,
+    },
     deactivatedChip: {
         background: '#e0e0e0',
         borderRadius: 12,
@@ -84,6 +108,7 @@ const McpSection = ({ classes }: any) => {
     const dispatch = useDispatch();
     const { isRTL, windowSize } = useSelector((state: any) => state.core);
     const { ToastMessages } = useSelector((state: any) => state?.accountSettings);
+    const { accountFeatures } = useSelector((state: any) => state.common);
     const localClasses = useStyles();
 
     const [tokens, setTokens] = useState<McpToken[]>([]);
@@ -94,8 +119,9 @@ const McpSection = ({ classes }: any) => {
     const [createLabel, setCreateLabel] = useState('');
     const [creating, setCreating] = useState(false);
 
-    const [successData, setSuccessData] = useState<{ mcpUrl: string; label: string } | null>(null);
-    const [copiedUrl, setCopiedUrl] = useState(false);
+    const [successData, setSuccessData] = useState<{ mcpApiUrl: string; mcpUiApiUrl: string; label: string } | null>(null);
+    const [copiedApiUrl, setCopiedApiUrl] = useState(false);
+    const [copiedUiApiUrl, setCopiedUiApiUrl] = useState(false);
 
     const [deactivateTarget, setDeactivateTarget] = useState<McpToken | null>(null);
     const [deactivating, setDeactivating] = useState(false);
@@ -140,8 +166,9 @@ const McpSection = ({ classes }: any) => {
         const data = payload.Data;
         setCreateOpen(false);
         setCreateLabel('');
-        // API returns PascalCase — use correct casing here
-        setSuccessData({ mcpUrl: data.McpUrl, label: data.Label || createLabel });
+        const mcpApiUrl = data.McpUrl;
+        const mcpUiApiUrl = data.McpUrl.replace('//mcp.api.', '//mcp.ui-api.');
+        setSuccessData({ mcpApiUrl, mcpUiApiUrl, label: data.Label || createLabel });
         // Add masked entry to list
         setTokens(prev => [{
             id: data.Id,
@@ -171,11 +198,13 @@ const McpSection = ({ classes }: any) => {
         setDeactivateTarget(null);
     };
 
-    const handleCopyUrl = (url: string) => {
+    const handleCopyUrl = (url: string, setCopied: (v: boolean) => void) => {
         navigator.clipboard.writeText(url);
-        setCopiedUrl(true);
-        setTimeout(() => setCopiedUrl(false), 1500);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 1500);
     };
+
+    const hasDirectApi = accountFeatures?.indexOf(PulseemFeatures.DIRECT_API) > -1;
 
     const formatDate = (dateStr?: string) => {
         if (!dateStr) return t('settings.mcpSettings.neverUsed');
@@ -193,9 +222,19 @@ const McpSection = ({ classes }: any) => {
                 <Box style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                     <img src={pulseemMcpImage} alt="Pulseem MCP" style={{ width: 52, height: 52, objectFit: 'contain' }} />
                     <Box>
-                        <Typography className={clsx(classes.managementTitle, classes.font20)}>
-                            {t('settings.mcpSettings.sectionTitle')}
-                        </Typography>
+                        <Box style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+                            <Typography className={clsx(classes.managementTitle, classes.font20)}>
+                                {t('settings.mcpSettings.sectionTitle')}
+                            </Typography>
+                            <Link
+                                href="https://site.pulseem.co.il/pulsyai/mcp"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={{ fontSize: 13, whiteSpace: 'nowrap' }}
+                            >
+                                {t('settings.mcpSettings.guideLink')} →
+                            </Link>
+                        </Box>
                         <Typography style={{ color: '#666', fontSize: 14, marginTop: 2 }}>
                             {t('settings.mcpSettings.sectionSubtitle')}
                         </Typography>
@@ -212,6 +251,18 @@ const McpSection = ({ classes }: any) => {
             </Box>
 
             <Divider style={{ marginBottom: 16 }} />
+
+            {/* Connection types info */}
+            <Box className={localClasses.infoBox}>
+                <Typography style={{ fontSize: 13, marginBottom: 3 }}>
+                    <strong>{t('settings.mcpSettings.sectionInfoDirectApiTitle')}</strong>{' '}
+                    {t('settings.mcpSettings.sectionInfoDirectApiDesc')}
+                </Typography>
+                <Typography style={{ fontSize: 13 }}>
+                    <strong>{t('settings.mcpSettings.sectionInfoUiApiTitle')}</strong>{' '}
+                    {t('settings.mcpSettings.sectionInfoUiApiDesc')}
+                </Typography>
+            </Box>
 
             {/* Loading */}
             {loading && (
@@ -334,16 +385,43 @@ const McpSection = ({ classes }: any) => {
                     <Box className={localClasses.warningBox}>
                         ⚠️ {t('settings.mcpSettings.successWarning')}
                     </Box>
-                    <Typography style={{ fontSize: 14, marginBottom: 4 }}>
-                        {t('settings.mcpSettings.mcpUrlLabel')}
+
+                    {/* URL 1: Direct API (mcp.api.pulseem.com) */}
+                    <Typography style={{ fontSize: 14, fontWeight: 600, marginBottom: 2 }}>
+                        {t('settings.mcpSettings.mcpApiUrlLabel')}
                     </Typography>
-                    <Box className={localClasses.urlBox}>{successData?.mcpUrl}</Box>
-                    <Box style={{ display: 'flex', justifyContent: isRTL ? 'flex-start' : 'flex-end', marginTop: 8, marginBottom: 12 }}>
+                    <Typography className={localClasses.urlDesc}>
+                        {t('settings.mcpSettings.mcpApiUrlDesc')}
+                    </Typography>
+                    <Box className={localClasses.urlBox}>{successData?.mcpApiUrl}</Box>
+                    {!hasDirectApi && (
+                        <Box className={localClasses.directApiWarning}>
+                            ⚠ {t('settings.mcpSettings.directApiNotActive')}
+                        </Box>
+                    )}
+                    <Box style={{ display: 'flex', justifyContent: isRTL ? 'flex-start' : 'flex-end', marginTop: 4, marginBottom: 20 }}>
                         <Button
                             className={clsx(classes.btn, classes.btnRounded)}
-                            onClick={() => handleCopyUrl(successData?.mcpUrl || '')}
+                            onClick={() => handleCopyUrl(successData?.mcpApiUrl || '', setCopiedApiUrl)}
                         >
-                            {copiedUrl ? `✓ ${t('settings.mcpSettings.copiedLabel')}` : `📋 ${t('settings.mcpSettings.copyUrlBtn')}`}
+                            {copiedApiUrl ? `✓ ${t('settings.mcpSettings.copiedLabel')}` : `📋 ${t('settings.mcpSettings.copyUrlBtn')}`}
+                        </Button>
+                    </Box>
+
+                    {/* URL 2: Main API (mcp.ui-api.pulseem.com) */}
+                    <Typography style={{ fontSize: 14, fontWeight: 600, marginBottom: 2 }}>
+                        {t('settings.mcpSettings.mcpUiApiUrlLabel')}
+                    </Typography>
+                    <Typography className={localClasses.urlDesc}>
+                        {t('settings.mcpSettings.mcpUiApiUrlDesc')}
+                    </Typography>
+                    <Box className={localClasses.urlBox}>{successData?.mcpUiApiUrl}</Box>
+                    <Box style={{ display: 'flex', justifyContent: isRTL ? 'flex-start' : 'flex-end', marginTop: 4, marginBottom: 4 }}>
+                        <Button
+                            className={clsx(classes.btn, classes.btnRounded)}
+                            onClick={() => handleCopyUrl(successData?.mcpUiApiUrl || '', setCopiedUiApiUrl)}
+                        >
+                            {copiedUiApiUrl ? `✓ ${t('settings.mcpSettings.copiedLabel')}` : `📋 ${t('settings.mcpSettings.copyUrlBtn')}`}
                         </Button>
                     </Box>
                 </DialogContent>
