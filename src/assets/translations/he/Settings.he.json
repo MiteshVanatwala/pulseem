@@ -1,4 +1,4 @@
-{
+﻿{
 	"accountSettings": {
 		"title": "הגדרות חשבון",
 		"fixedComDetails": {
@@ -213,7 +213,10 @@
 		"labelPlaceholder": "לדוגמה: Claude Desktop",
 		"createConfirmBtn": "צור חיבור",
 		"successTitle": "החיבור נוצר בהצלחה!",
-		"successWarning": "שמור את הכתובת עכשיו — היא לא תוצג שוב.",
+		"successWarning": "שמרו את שתי הכתובות עכשיו — הן לא יוצגו שוב.",
+			"mcpApiUrlLabel": "כתובת MCP — שליחה ישירה (Direct API):",
+			"mcpUiApiUrlLabel": "כתובת MCP — API ראשי:",
+			"directApiNotActive": "פיצ'ר 'שליחה ישירה' (Direct API) אינו מופעל בחשבונך. אנא פנו לצוות פולסים להפעלתו.",
 		"mcpUrlLabel": "כתובת MCP שלך:",
 		"copyUrlBtn": "העתק כתובת",
 		"copiedLabel": "הועתק",

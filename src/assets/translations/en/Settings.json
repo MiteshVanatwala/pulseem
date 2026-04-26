@@ -1,4 +1,4 @@
-{
+﻿{
 	"accountSettings": {
 		"title": "Account Settings",
 		"fixedComDetails": {
@@ -212,7 +212,10 @@
 		"labelPlaceholder": "e.g. Claude Desktop",
 		"createConfirmBtn": "Create Connection",
 		"successTitle": "Connection created successfully!",
-		"successWarning": "Save this address now — it will not be shown again.",
+		"successWarning": "Save both addresses now — they will not be shown again.",
+			"mcpApiUrlLabel": "MCP Address — Direct Send (Direct API):",
+			"mcpUiApiUrlLabel": "MCP Address — Main API:",
+			"directApiNotActive": "The 'Direct Send' (Direct API) feature is not enabled on your account. Please contact Pulseem support to activate it.",
 		"mcpUrlLabel": "Your MCP address:",
 		"copyUrlBtn": "Copy Address",
 		"copiedLabel": "Copied",

@@ -1,4 +1,4 @@
-{
+﻿{
 	"accountSettings": {
 		"title": "Ustawienia konta",
 		"fixedComDetails": {
@@ -211,7 +211,10 @@
 		"labelPlaceholder": "np. Claude Desktop",
 		"createConfirmBtn": "Utwórz połączenie",
 		"successTitle": "Połączenie utworzone pomyślnie!",
-		"successWarning": "Zapisz ten adres teraz — nie zostanie pokazany ponownie.",
+		"successWarning": "Zapisz oba adresy teraz — nie zostaną pokazane ponownie.",
+			"mcpApiUrlLabel": "Adres MCP — wysyłanie bezpośrednie (Direct API):",
+			"mcpUiApiUrlLabel": "Adres MCP — główne API:",
+			"directApiNotActive": "Funkcja 'Wysyłanie bezpośrednie' (Direct API) nie jest aktywna na Twoim koncie. Skontaktuj się z zespołem Pulseem, aby ją aktywować.",
 		"mcpUrlLabel": "Twój adres MCP:",
 		"copyUrlBtn": "Kopiuj adres",
 		"copiedLabel": "Skopiowano",
