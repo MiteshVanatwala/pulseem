@@ -25,6 +25,9 @@
 	"pin": "קוד אימות",
 	"registerPIN": "אישור",
 	"phoneNumberRegistered": "מספר אומת בהצלחה",
+	"coexistenceSyncStarted": "החיבור בוצע בהצלחה. אנשי הקשר והיסטוריית ההודעות יסונכרנו אוטומטית תוך 24 שעות.",
+	"newBusinessAccount": "חשבון WhatsApp Business חדש",
+	"alreadyUseWhatsAppApp": "כבר משתמש באפליקציית WhatsApp Business",
 	"enterValidPIN": "אנא הכניסו קוד תקין",
 	"loginWithFacebook": "התחבר עם פייסבוק",
 	"SaveWhatsappMetaClientsResponseCode": {

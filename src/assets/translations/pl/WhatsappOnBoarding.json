@@ -25,6 +25,9 @@
 	"pin": "PIN",
 	"registerPIN": "Zarejestruj PIN",
 	"phoneNumberRegistered": "Numer telefonu został pomyślnie zarejestrowany.",
+	"coexistenceSyncStarted": "Połączono pomyślnie. Kontakty i historia wiadomości zostaną zsynchronizowane automatycznie w ciągu 24 godzin.",
+	"newBusinessAccount": "Nowe konto WhatsApp Business",
+	"alreadyUseWhatsAppApp": "Korzystam już z aplikacji WhatsApp Business",
 	"enterValidPIN": "Wprowadź prawidłowy PIN",
 	"loginWithFacebook": "Zaloguj się przez Facebooka",
 	"SaveWhatsappMetaClientsResponseCode": {
