@@ -232,7 +232,7 @@ const McpSection = ({ classes }: any) => {
                                 rel="noopener noreferrer"
                                 style={{ fontSize: 13, whiteSpace: 'nowrap' }}
                             >
-                                {t('settings.mcpSettings.guideLink')} →
+                                {t('settings.mcpSettings.guideLink')}
                             </Link>
                         </Box>
                         <Typography style={{ color: '#666', fontSize: 14, marginTop: 2 }}>
