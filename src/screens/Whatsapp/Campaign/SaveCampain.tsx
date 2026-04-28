@@ -660,7 +660,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 
 			case 'pl':
 				return authenticationTypes.AUTHENTICATIONPOLSKI;
-		
+
 			case 'en':
 			default:
 				return authenticationTypes.AUTHENTICATIONEN;
@@ -973,13 +973,20 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			IsTestCampaign:
 				callFrom === 'send' || callFrom === 'save' ? false : isTestSend,
 		};
-		if (savedTemplateData && savedTemplateData?.Data?.types) {
-			reqData.Variables = adjustTemplateVariablesForLink(
-				savedTemplateData?.Data?.types,
-				formatUpdatedDynamicVariable(updatedDynamicVariable),
-				templateCategory === 3 ? `${authenticationMockTemplate[getAuthTemplate(savedTemplateData.Language || '')].body}` : ''
-			);
-		}
+		// Bug Fix PR-3511: Unconditional space-normalization for links to prevent text bleeding
+		reqData.Variables = reqData.Variables.map((variable) => {
+			if (variable && (variable.FieldTypeId === 3 || variable.FieldTypeId === 4 || variable.FieldTypeId === 5)) {
+				let value = variable.VariableValue;
+				
+				// Unconditionally add spaces if they aren't already there.
+				// This is safe for URLs and ensures they never touch adjacent text.
+				if (value && !value.startsWith(' ')) value = ' ' + value;
+				if (value && !value.endsWith(' ')) value = value + ' ';
+				
+				return { ...variable, VariableValue: value };
+			}
+			return variable;
+		});
 
 		const { payload }: saveCampaignResponseProps = await dispatch<any>(
 			saveCampaign(reqData)
@@ -1342,7 +1349,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			availablePlans,
 			currentPlan.Id
 		);
-		
+
 		if (planName) {
 			return translator('billing.tier.featureNotAvailable').replace('{feature}', translator(TierFeatures[tierMessageCode as keyof typeof TierFeatures] || tierMessageCode)).replace('{planName}', planName);
 		} else {
@@ -1367,10 +1374,10 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				<Grid item>
 					<Button
 						onClick={() => {
-						setDialogType({ type: '', data: '' });
-						setShowTierPlans(true);
-					}}
-					className={clsx(classes.btn, classes.btnRounded)}
+							setDialogType({ type: '', data: '' });
+							setShowTierPlans(true);
+						}}
+						className={clsx(classes.btn, classes.btnRounded)}
 					>
 						{translator('billing.upgradePlan')}
 					</Button>

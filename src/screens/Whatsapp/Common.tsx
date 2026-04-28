@@ -527,54 +527,47 @@ export const adjustTemplateVariablesForLink = (
 		templateData: { templateText },
 	} = getTemplatePreviewData(templateData);
 	if (whatsappTempalteBody !== '') templateText = whatsappTempalteBody;
-	const DynamicFieldsIndex = getDynamicFieldIndex(templateText);
-	const adjustedDynamicVariableForLinks = DynamicFieldsIndex?.map(
-		(fieldIndex, index) => {
-			const variable = updatedDynamicVariable?.find(
-				(dynamicVariable) => dynamicVariable?.VariableIndex === index + 1
-			)!;
-			if (
-				variable &&
-				variable?.IsStatastic !== true &&
-				(variable?.FieldTypeId === 3 ||
-					variable?.FieldTypeId === 4 ||
-					variable?.FieldTypeId === 5)
-			) {
-				let adjustedVariable = variable;
-				if (
-					templateText.charAt(fieldIndex - 1) !== ' ' &&
-					adjustedVariable?.VariableValue?.charAt(0) !== ' '
-				) {
-					adjustedVariable = {
-						...variable,
-						VariableValue: ` ${adjustedVariable?.VariableValue}`,
-					};
+
+	// Robustly find all {{n}} tags and their exact positions in the text
+	const tagPattern = /{{(\d+)}}/g;
+	const tagsInText: { index: number, tag: string, vIndex: number }[] = [];
+	let match;
+	while ((match = tagPattern.exec(templateText)) !== null) {
+		tagsInText.push({
+			index: match.index,
+			tag: match[0],
+			vIndex: Number(match[1])
+		});
+	}
+
+	// Adjust variables only if they are links and touching non-space characters
+	return updatedDynamicVariable.map((variable) => {
+		if (
+			variable &&
+			(variable?.FieldTypeId === 3 ||
+				variable?.FieldTypeId === 4 ||
+				variable?.FieldTypeId === 5)
+		) {
+			const tagUsage = tagsInText.find(t => t.vIndex === variable.VariableIndex);
+			if (tagUsage) {
+				let newVal = variable.VariableValue;
+				
+				// Add leading space if needed
+				if (tagUsage.index > 0 && templateText.charAt(tagUsage.index - 1) !== ' ' && !newVal.startsWith(' ')) {
+					newVal = ' ' + newVal;
 				}
-				if (
-					templateText.charAt(
-						index + 1 <= 9 ? fieldIndex + 5 : fieldIndex + 5
-					) !== ' ' &&
-					adjustedVariable?.VariableValue?.charAt(
-						adjustedVariable?.VariableValue?.length - 1
-					) !== ' '
-				) {
-					if (
-						templateText?.length !==
-						(index + 1 <= 9 ? fieldIndex + 5 : fieldIndex + 5)
-					) {
-						adjustedVariable = {
-							...variable,
-							VariableValue: `${adjustedVariable?.VariableValue}${variable?.FieldTypeId === 4 ? '' : ' '}`,
-						};
-					}
+				
+				// Add trailing space if needed
+				const tagEnd = tagUsage.index + tagUsage.tag.length;
+				if (tagEnd < templateText.length && templateText.charAt(tagEnd) !== ' ' && !newVal.endsWith(' ')) {
+					newVal = newVal + ' ';
 				}
-				return adjustedVariable;
-			} else {
-				return variable;
+
+				return { ...variable, VariableValue: newVal };
 			}
 		}
-	);
-	return adjustedDynamicVariableForLinks;
+		return variable;
+	});
 };
 
 export const detecLanguageMixup = (text: string) => {
