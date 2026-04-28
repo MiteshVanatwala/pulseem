@@ -657,10 +657,8 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		switch (lang) {
 			case 'he':
 				return authenticationTypes.AUTHENTICATIONHEBREW;
-
 			case 'pl':
 				return authenticationTypes.AUTHENTICATIONPOLSKI;
-
 			case 'en':
 			default:
 				return authenticationTypes.AUTHENTICATIONEN;
