@@ -532,15 +532,17 @@ export const adjustTemplateVariablesForLink = (
 	const tagPattern = /{{(\d+)}}/g;
 	const tagsInText: { index: number, tag: string, vIndex: number }[] = [];
 	let match;
-	while ((match = tagPattern.exec(templateText)) !== null) {
-		tagsInText.push({
-			index: match.index,
-			tag: match[0],
-			vIndex: Number(match[1])
-		});
+	if (templateText) {
+		while ((match = tagPattern.exec(templateText)) !== null) {
+			tagsInText.push({
+				index: match.index,
+				tag: match[0],
+				vIndex: Number(match[1])
+			});
+		}
 	}
 
-	// Adjust variables only if they are links and touching non-space characters
+	// Adjust variables only if they are links
 	return updatedDynamicVariable.map((variable) => {
 		if (
 			variable &&
@@ -549,22 +551,31 @@ export const adjustTemplateVariablesForLink = (
 				variable?.FieldTypeId === 5)
 		) {
 			const tagUsage = tagsInText.find(t => t.vIndex === variable.VariableIndex);
+			let newVal = variable.VariableValue || '';
+			
+			// Non-Breaking Space (\u00A0) survives automatic trimming
+			const NBSP = "\u00A0";
+
+			// If we found the tag, check surrounding text. 
+			// If we didn't find the tag (fallback), we ALWAYS add spaces for safety.
 			if (tagUsage) {
-				let newVal = variable.VariableValue;
-				
 				// Add leading space if needed
-				if (tagUsage.index > 0 && templateText.charAt(tagUsage.index - 1) !== ' ' && !newVal.startsWith(' ')) {
-					newVal = ' ' + newVal;
+				if (tagUsage.index === 0 || (templateText.charAt(tagUsage.index - 1) !== ' ' && !newVal.startsWith(NBSP))) {
+					newVal = NBSP + newVal;
 				}
 				
 				// Add trailing space if needed
 				const tagEnd = tagUsage.index + tagUsage.tag.length;
-				if (tagEnd < templateText.length && templateText.charAt(tagEnd) !== ' ' && !newVal.endsWith(' ')) {
-					newVal = newVal + ' ';
+				if (tagEnd >= templateText.length || (templateText.charAt(tagEnd) !== ' ' && !newVal.endsWith(NBSP))) {
+					newVal = newVal + NBSP;
 				}
-
-				return { ...variable, VariableValue: newVal };
+			} else {
+				// Failsafe: Always add spaces to links if tag position is unknown
+				if (!newVal.startsWith(NBSP)) newVal = NBSP + newVal;
+				if (!newVal.endsWith(NBSP)) newVal = newVal + NBSP;
 			}
+
+			return { ...variable, VariableValue: newVal };
 		}
 		return variable;
 	});
