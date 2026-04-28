@@ -1340,7 +1340,6 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			availablePlans,
 			currentPlan.Id
 		);
-
 		if (planName) {
 			return translator('billing.tier.featureNotAvailable').replace('{feature}', translator(TierFeatures[tierMessageCode as keyof typeof TierFeatures] || tierMessageCode)).replace('{planName}', planName);
 		} else {
