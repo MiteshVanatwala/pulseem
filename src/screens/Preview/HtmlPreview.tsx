@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
 import clsx from "clsx";
 import { Box, Typography, Button, Divider } from "@material-ui/core";
-import "moment/locale/he";
 import { Loader } from '../../components/Loader/Loader';
 import { useDispatch } from 'react-redux';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import DefaultScreen from '../DefaultScreen';
 import { getNewsletterPreview } from '../../redux/reducers/newsletterSlice';
 import { getLandingPagePreview } from '../../redux/reducers/landingPagesSlice';
@@ -15,8 +14,73 @@ import CopyToClipboard from 'react-copy-to-clipboard';
 import { actionURL } from '../../config';
 
 
+const escapeHtml = (value = '') => value
+  .replace(/&/g, '&amp;')
+  .replace(/</g, '&lt;')
+  .replace(/>/g, '&gt;')
+  .replace(/"/g, '&quot;')
+  .replace(/'/g, '&#39;');
+
+const normalizeConditionText = (value = '') => value.replace(/\s+/g, ' ').trim();
+
+const buildConditionPreviewLine = (text: string) => {
+  const safeText = escapeHtml(normalizeConditionText(text) || 'Condition');
+
+  return `<span data-preview-condition="true" style="display:block; margin: 10px 0; padding: 4px 10px; background-color: #f8f9fa; border: 1px solid #dcdcdc; border-radius: 4px; color: #444; font-size: 13px; font-weight: 600; font-family: sans-serif; line-height: 1.5; width: fit-content;">[ 👁 ${safeText} ]</span>`;
+};
+
+
+
+const buildConditionPreviewLine_Simple = (text: string) => {
+  const normalized = normalizeConditionText(text);
+  const safeText = escapeHtml(normalized);
+  // Ensure [ 👁 ] for empty text, or [ 👁 Else ] for "Else"
+  const label = normalized ? ` ${safeText} ` : ' ';
+
+  return `<span data-preview-condition="true" style="display:block; margin: 10px 0; padding: 4px 10px; background-color: #f8f9fa; border: 1px solid #dcdcdc; border-radius: 4px; color: #444; font-size: 13px; font-weight: 600; font-family: sans-serif; line-height: 1.5; width: fit-content;">[ 👁${label}]</span>`;
+};
+
+
+
+const formatDisplayConditionsForPreview = (rawHtml: string) => {
+  if (!rawHtml || !rawHtml.includes('{%')) {
+    return rawHtml;
+  }
+
+  const conditionRegex = /{%\s*(if|elif|elseif|else|endif)\b([\s\S]*?)%}/gi;
+  let formattedHtml = '';
+  let lastIndex = 0;
+  let match;
+
+  while ((match = conditionRegex.exec(rawHtml)) !== null) {
+    const [fullMatch, rawKeyword, rawExpression = ''] = match;
+    const keyword = String(rawKeyword).toLowerCase();
+
+    formattedHtml += rawHtml.slice(lastIndex, match.index);
+    lastIndex = match.index + fullMatch.length;
+
+    if (keyword === 'if') {
+      formattedHtml += buildConditionPreviewLine(rawExpression.trim());
+    } else if (keyword === 'elif' || keyword === 'elseif' || keyword === 'else') {
+      const label = keyword === 'else' ? 'Else' : rawExpression.trim();
+      formattedHtml += buildConditionPreviewLine_Simple(''); // Close previous
+      formattedHtml += buildConditionPreviewLine_Simple(label); // Start next
+    } else if (keyword === 'endif') {
+      formattedHtml += buildConditionPreviewLine_Simple('');
+    }
+  }
+
+  formattedHtml += rawHtml.slice(lastIndex);
+
+  return formattedHtml;
+};
+
+
+
+
 const HtmlPreview = ({ classes }: any) => {
   const params = useParams();
+  const location = useLocation();
   const { id, type } = params;
   const { t } = useTranslation();
   const [copyStatus, setCopyStatus] = useState<any>();
@@ -24,6 +88,8 @@ const HtmlPreview = ({ classes }: any) => {
   const [details, setDetails] = useState<any>(null);
   const [html, setHtml] = useState<string>('');
   const dispatch = useDispatch();
+  const isEmbeddedPreview = new URLSearchParams(location.search).get('embedded') === '1'
+    || new URLSearchParams(location.search).get('fromReact') === '1';
 
 
   const implementAmpScripts = async (isAmp: boolean) => {
@@ -72,7 +138,8 @@ const HtmlPreview = ({ classes }: any) => {
     const response = await dispatch(getNewsletterPreview(id)) as any;
 
     implementAmpScripts(response?.payload?.Data?.AmpData !== null).then(() => {
-      setHtml(response?.payload?.Data?.AmpData || response?.payload?.Data?.HTMLtoSend || response?.payload?.Data?.HTML);
+      const rawHtml = response?.payload?.Data?.AmpData || response?.payload?.Data?.HTMLtoSend || response?.payload?.Data?.HTML;
+      setHtml(formatDisplayConditionsForPreview(rawHtml));
       const d = {
         PageName: response?.payload?.Data?.Name,
         ID: response?.payload?.Data?.CampaignID,
@@ -169,6 +236,15 @@ const HtmlPreview = ({ classes }: any) => {
       </Box>
       }
     </Box>
+  }
+
+  if (isEmbeddedPreview) {
+    return <>
+      <Box style={{ maxWidth: '100%', margin: 0, position: 'relative', direction: 'ltr', pointerEvents: 'none', overflow: 'hidden' }} className={clsx(classes.renderHtml)}>
+        {RenderHtml(html)}
+      </Box>
+      <Loader isOpen={showLoader} showBackdrop={true} />
+    </>;
   }
 
   return <DefaultScreen

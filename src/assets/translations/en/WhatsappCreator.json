@@ -22,7 +22,7 @@
 	"uploadFileTitle": "Upload File-PNG,JPG,PDF,MP4",
 	"uploading": "Uploading...",
 	"totalSize": "Total Size",
-	"fileDescription": "Only one file - up to 16 MB",
+	"fileDescription": "Only one file - up to 5 MB",
 	"send": "Send",
 
 	"whatsappTemplate": "Create New WhatsApp Template",
@@ -101,7 +101,7 @@
 		"DeleteTemplateTitle": "Do you want to delete the template?",
 		"ConfirmText": "Submit Campaign",
 		"ConfirmTitle": "Are you sure you want to submit your template?",
-		"fileSizeAlert": "File is larger than 16MB",
+		"fileSizeAlert": "File is larger than 5MB",
 		"fileUploadAlert": "You can not attach media to 'Quick Reply' buttons",
 		"alert": "Alert",
 		"templateTextRequired": "Template text is required",

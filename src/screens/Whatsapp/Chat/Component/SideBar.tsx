@@ -84,6 +84,7 @@ const SideBar = ({
 	onRefreshChat,
 	personalFields,
 	landingPageData,
+	searchTextRef,
 }: WhatsappChatSideBarProps) => {
 	const { t: translator } = useTranslation();
 	const { isRTL, userRoles } = useSelector(
@@ -146,6 +147,14 @@ const SideBar = ({
 	useEffect(() => {
 		// No default date range - user can select one if needed
 	}, []);
+
+	useEffect(() => {
+		searchTextRef.current = searchText;
+	}, [searchText, searchTextRef]);
+
+	useEffect(() => {
+		setSearchText('');
+	}, [activePhoneNumber]);
 
 	// Fetch tags on component mount
 	useEffect(() => {
@@ -788,10 +797,6 @@ const SideBar = ({
 					);
 				//}
 
-				if (typeof refetchActiveChatContact === 'function') {
-					refetchActiveChatContact(activePhoneNumber);
-				}
-
 				setToastMessage({
 					message: 'Tag saved successfully',
 					severity: 'success',
@@ -1291,6 +1296,7 @@ const SideBar = ({
 					searchText={searchText}
 					tagsList={tagsList}
 					onTagsUpdated={onTagsUpdated}
+					activePhoneNumber={activePhoneNumber}
 				/>
 				<TablePagination
 					classes={classes}

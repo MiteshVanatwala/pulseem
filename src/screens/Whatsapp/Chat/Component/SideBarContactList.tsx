@@ -43,6 +43,7 @@ const SideBarContactList = ({
 	isLoader,
 	tagsList = [],
 	onTagsUpdated,
+	activePhoneNumber,
 }: SideBarContactListProps) => {
 	const { t: translator } = useTranslation();
 	const { contactID } = useParams();
@@ -55,22 +56,30 @@ const SideBarContactList = ({
 	const [updatedTags, setUpdatedTags] = useState<{
 		[key: string]: Array<{ id: string; TagName: string; TagColor: string }>;
 	}>({});
+	const [updatedAgents, setUpdatedAgents] = useState<{
+		[key: string]: Array<{ AgentID: number; AgentName: string }>;
+	}>({});
 	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
 	const { agentList } = useSelector((state: StateType) => state.whatsapp);
 
 	useEffect(() => {
-		// Sync updatedTags with ChatContacts to preserve tags across searches
-		const syncedTags: { [key: string]: Array<{ id: string; TagName: string; TagColor: string }> } = {};
+		const nextTags: { [key: string]: Array<{ id: string; TagName: string; TagColor: string }> } = {};
+		const nextAgents: { [key: string]: Array<{ AgentID: number; AgentName: string }> } = {};
+
 		ChatContacts.forEach((contact) => {
-			if (contact.Tags && contact.Tags.length > 0) {
-				syncedTags[contact.PhoneNumber] = contact.Tags.map((tag: any) => ({
-					id: String(tag.id || tag.Id || ''),
-					TagName: tag.TagName,
-					TagColor: tag.TagColor,
-				}));
-			}
+			nextTags[contact.PhoneNumber] = (contact.Tags || []).map((tag: any) => ({
+				id: String(tag.id ?? tag.Id ?? ''),
+				TagName: tag.TagName,
+				TagColor: tag.TagColor,
+			}));
+			nextAgents[contact.PhoneNumber] = ((contact as any)?.Agents || []).map((agent: any) => ({
+				AgentID: agent.AgentID,
+				AgentName: agent.AgentName,
+			}));
 		});
-		setUpdatedTags(syncedTags);
+
+		setUpdatedTags(nextTags);
+		setUpdatedAgents(nextAgents);
 	}, [ChatContacts]);
 
 	const handleOpenTagMenu = (
@@ -131,7 +140,11 @@ const SideBarContactList = ({
 
 		try {
 			// Get current tags - prioritize updatedTags over contact.Tags
-			const currentTags = updatedTags[targetPhone] || contact.Tags || [];
+			const currentTags = updatedTags[targetPhone] || (contact.Tags || []).map((t: any) => ({
+				id: String(t.id ?? t.Id ?? ''),
+				TagName: t.TagName,
+				TagColor: t.TagColor,
+			}));
 			const currentTagIds = currentTags
 				.map((t) => {
 					const id = parseInt(t.id);
@@ -180,7 +193,7 @@ const SideBarContactList = ({
 
 			// Notify parent component
 			if (typeof onTagsUpdated === 'function') {
-				onTagsUpdated(targetPhone, newTagIds, newTags);
+				onTagsUpdated(targetPhone, newTagIds, newTags, activePhoneNumber);
 			}
 
 			handleCloseTagMenu();
@@ -188,6 +201,7 @@ const SideBarContactList = ({
 			await PulseemReactInstance.put('WhatsAppChat/AssignTagsToChat', {
 				Cellphone: targetPhone,
 				TagIds: newTagIds,
+				Sendernumber: activePhoneNumber,
 			});
 
 		} catch (error: any) {
@@ -391,26 +405,21 @@ const SideBarContactList = ({
 
 												{/* Agent Name - Pinned to Top-Right, Won't Move */}
 												<Box className={classes.agentBoxContainer}>
-													{agentList
-														?.filter((agent: WhatsappAgent) =>
-															agent?.Sessions?.some((session) =>
-																compareLastNineDigits(
-																	session.Cellphone,
-																	contact?.PhoneNumber,
-																),
-															),
-														)
-														?.map((agent: WhatsappAgent) => (
-															<div
-																key={agent.AgentId}
-																className={clsx(
-																	classes.agentNameContainer,
-																	classes.agentNameBlack,
-																)}
-															>
-																{agent.Name}
-															</div>
-														))}
+													{(
+														updatedAgents[contact.PhoneNumber]?.length > 0
+															? updatedAgents[contact.PhoneNumber]
+															: ((contact as any)?.Agents || []).map((agent: any) => ({
+																AgentID: agent.AgentID,
+																AgentName: agent.AgentName,
+															}))
+													).map((agent: { AgentID: number; AgentName: string }) => (
+														<div
+															key={agent.AgentID}
+															className={clsx(classes.agentNameContainer, classes.agentNameBlack)}
+														>
+															{agent.AgentName}
+														</div>
+													))}
 												</Box>
 											</Box>
 

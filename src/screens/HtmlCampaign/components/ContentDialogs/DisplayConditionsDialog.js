@@ -62,6 +62,7 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
       { key: 'Country', label: t('common.country') },
       { key: 'Company', label: t('common.company') },
       { key: 'State', label: t('common.state') },
+      // { key: 'BirthDate', label: t('common.birth_date') },
     ],
     [t]
   );
@@ -81,10 +82,10 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
       ExtraField11: extraData.ExtraField11 || t('common.ExtraField11'),
       ExtraField12: extraData.ExtraField12 || t('common.ExtraField12'),
       ExtraField13: extraData.ExtraField13 || t('common.ExtraField13'),
-      ExtraDate1: extraData.ExtraDate1 || t('common.ExtraDate1'),
-      ExtraDate2: extraData.ExtraDate2 || t('common.ExtraDate2'),
-      ExtraDate3: extraData.ExtraDate3 || t('common.ExtraDate3'),
-      ExtraDate4: extraData.ExtraDate4 || t('common.ExtraDate4'),
+      // ExtraDate1: extraData.ExtraDate1 || t('common.ExtraDate1'),
+      // ExtraDate2: extraData.ExtraDate2 || t('common.ExtraDate2'),
+      // ExtraDate3: extraData.ExtraDate3 || t('common.ExtraDate3'),
+      // ExtraDate4: extraData.ExtraDate4 || t('common.ExtraDate4'),
     };
   }, [extraData, t]);
 
@@ -234,7 +235,8 @@ const DisplayConditionsDialog = ({ onClose, save, args, classes }) => {
     [allFields]
   );
 
-  const DATE_FIELDS = ['ExtraDate1', 'ExtraDate2', 'ExtraDate3', 'ExtraDate4'];
+  // const DATE_FIELDS = ['ExtraDate1', 'ExtraDate2', 'ExtraDate3', 'ExtraDate4'];
+  const DATE_FIELDS = [];
   const isDateField = (field) => DATE_FIELDS.includes(field);
 
   const escapeValue = (val) => (val || '').replace(/'/g, "\\'");
