@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Box, Typography, Button, Grid, TextField, FormControlLabel, Checkbox, Accordion, AccordionSummary, AccordionDetails } from "@material-ui/core";
+import { Box, Typography, Button, Grid, TextField, FormControlLabel, Checkbox, Accordion, AccordionSummary, AccordionDetails, Select, MenuItem, Divider } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import clsx from "clsx";
 import { useDispatch, useSelector } from "react-redux";
@@ -59,6 +59,8 @@ const Shopify = ({ classes }: any) => {
     RegisterEventActive: false,
     PurchaseEventActive: false,
     AbandonedEventActive: false,
+    UnsubscribePreferenceTypeID: 0,
+    isSyncUnsubscribes: false,
     Groups: {} as IntegrationGroups
   } as ShopifyModel)
   const renderToast = () => {
@@ -258,6 +260,8 @@ const Shopify = ({ classes }: any) => {
           RegisterEventActive: false,
           PurchaseEventActive: false,
           AbandonedEventActive: false,
+          UnsubscribePreferenceTypeID: 0,
+          isSyncUnsubscribes: false,
           UiApi_ApiKey: '',
           Groups: {},
           CreateDate: '',
@@ -848,6 +852,71 @@ const Shopify = ({ classes }: any) => {
                     </Grid>
                   </Grid>
 
+                  <Divider style={{ margin: "20px 0" }} />
+                  <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.pb15)}>
+                    <Grid item xs={12}>
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={settings.isSyncUnsubscribes || false}
+                            onChange={(event) =>
+                              setSettings({
+                                ...settings,
+                                isSyncUnsubscribes: event.target.checked,
+                                UnsubscribePreferenceTypeID: event.target.checked ? (settings.UnsubscribePreferenceTypeID || 3) : 0
+                              })
+                            }
+                            name="unsubscribeSync"
+                            color="primary"
+                          />
+                        }
+                        label={t('integrations.shopify.unsubscribeSyncWithShopify')}
+                      />
+                    </Grid>
+                    
+                    {settings.isSyncUnsubscribes && (
+                      <>
+                        <Typography className={clsx(classes.managementTitle, classes.f18, classes.pb15, classes.pt15, classes.bold)}>
+                          {t('integrations.shopify.unsubscribeSync')}
+                        </Typography>
+                        <Grid item xs={12} className={clsx(classes.dblock, classes.pb5)}>
+                          <Typography>
+                            {t('integrations.shopify.unsubscribeSyncDesc')}
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={12} className={clsx(classes.dblock, classes.ml30)}>
+                          <Typography className={classes.mb5}>{t('integrations.shopify.syncBy')}</Typography>
+                          <Select
+                            variant="outlined"
+                            value={settings.UnsubscribePreferenceTypeID || 3}
+                            onChange={(event) =>
+                              setSettings({
+                                ...settings,
+                                UnsubscribePreferenceTypeID: event.target.value as number
+                              })
+                            }
+                            className={classes.shopifySettingTextBox}
+                          >
+                            <MenuItem value={1}>{t('integrations.shopify.emailToEmail')}</MenuItem>
+                            <MenuItem value={2}>{t('integrations.shopify.smsOnly')}</MenuItem>
+                            <MenuItem value={3}>{t('integrations.shopify.bothEmailAndCellphone')}</MenuItem>
+                          </Select>
+                        </Grid>
+                        
+                        <Grid item xs={12} className={clsx(classes.dblock, classes.ml30, classes.mt20)}>
+                          <Box style={{ padding: '10px 15px', backgroundColor: '#f9f9f9', borderLeft: '3px solid #ffcc00' }}>
+                            <Typography className={clsx(classes.bold, classes.mb5)}>
+                              &#9650; Please notice!
+                            </Typography>
+                            <Typography>
+                              {t('integrations.shopify.unsubscribeSyncNotice')}
+                            </Typography>
+                          </Box>
+                        </Grid>
+                      </>
+                    )}
+                  </Grid>
+
                   {!!errors.group_not_selected && (
                     <Box className={clsx(classes.flex, classes.pbt15)}>
                       <Typography className={clsx(classes.errorText, classes.f16)}>
@@ -875,7 +944,7 @@ const Shopify = ({ classes }: any) => {
                         classes.redButton
                       )}
                       color="primary"
-                      startIcon={<BiSave className={classes.colorWhite} />}
+                      startIcon={<span><BiSave className={classes.colorWhite} /></span> as any}
                     >
                       {t("common.save")}
                     </Button>

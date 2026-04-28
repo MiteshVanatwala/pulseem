@@ -62,7 +62,16 @@
     "description": "In order to integrate your Shopify store to your Pulseem account, please read the following guide:",
     "connectStoreAction": "Connect Shopify Store",
     "oldConnectionOptionsButton": "Use the old integration",
-    "tryNewIntegrationButton": "Legacy Integration"
+    "tryNewIntegrationButton": "Legacy Integration",
+    "unsubscribeSync": "Unsubscribes Synchronization",
+    "unsubscribeSyncWithShopify": "Unsubscribes sync with Shopify",
+    "unsubscribeSyncDesc": "Make sure write_customers permission is enabled in your app",
+    "syncBy": "Sync by:",
+    "emailToEmail": "Email to Email",
+    "cellphoneToCellphone": "Cellphone to Cellphone",
+    "smsOnly": "SMS Only",
+    "bothEmailAndCellphone": "Both (Email & Cellphone)",
+    "unsubscribeSyncNotice": "Recipients who are removed in Pulseem will also be removed from your Shopify store mailing list. Activating this setting is at your own risk."
   },
   "verifone": {
     "title": "Verifone",
