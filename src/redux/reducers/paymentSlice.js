@@ -1,6 +1,26 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
 
+/**
+ * Replaces the hostname in a payment page URL with the current browser hostname.
+ *
+ * The API server has a hardcoded DomainName in its web.config, so it always
+ * returns URLs like https://www.clients.stage.pulseem.co.il/Pulseem/dlg/payment.aspx.
+ * When the user is on a white-label domain (e.g. customer1.clients.stage.pulseem.co.il)
+ * the iframe must use that same hostname — otherwise the browser blocks it because
+ * the ASP.NET FormsAuth cookie is scoped to the current hostname.
+ */
+function fixPaymentUrlDomain(url) {
+  if (!url) return url;
+  try {
+    const parsed = new URL(url);
+    parsed.hostname = window.location.hostname;
+    return parsed.toString();
+  } catch {
+    return url;
+  }
+}
+
 export const getAccountCards = createAsyncThunk(
   'payment/GetAccountCards', async (_, thunkAPI) => {
     try {
@@ -80,19 +100,19 @@ export const paymentSlice = createSlice({
   extraReducers: builder => {
     builder
       .addCase(getPaymentURL.fulfilled, (state, { payload }) => {
-        state.paymentUrl = payload
+        state.paymentUrl = fixPaymentUrlDomain(payload)
       })
       .addCase(getPaymentURL.rejected, (state, action) => {
         state.paymentUrl = action.error.message
       })
       .addCase(getGlobalPaymentURL.fulfilled, (state, { payload }) => {
-        state.globalPaymentUrl = payload
+        state.globalPaymentUrl = fixPaymentUrlDomain(payload)
       })
       .addCase(getGlobalPaymentURL.rejected, (state, action) => {
         state.globalPaymentUrl = action.error.message
       })
       .addCase(getManualPaymentURL.fulfilled, (state, { payload }) => {
-        state.manualPaymentUrl = payload
+        state.manualPaymentUrl = fixPaymentUrlDomain(payload)
       })
       .addCase(getManualPaymentURL.rejected, (state, action) => {
         state.manualPaymentUrl = action.error.message
