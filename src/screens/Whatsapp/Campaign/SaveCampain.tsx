@@ -973,20 +973,13 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			IsTestCampaign:
 				callFrom === 'send' || callFrom === 'save' ? false : isTestSend,
 		};
-		// Bug Fix PR-3511: Unconditional space-normalization for links to prevent text bleeding
-		reqData.Variables = reqData.Variables.map((variable) => {
-			if (variable && (variable.FieldTypeId === 3 || variable.FieldTypeId === 4 || variable.FieldTypeId === 5)) {
-				let value = variable.VariableValue;
-				
-				// Unconditionally add spaces if they aren't already there.
-				// This is safe for URLs and ensures they never touch adjacent text.
-				if (value && !value.startsWith(' ')) value = ' ' + value;
-				if (value && !value.endsWith(' ')) value = value + ' ';
-				
-				return { ...variable, VariableValue: value };
-			}
-			return variable;
-		});
+		if (savedTemplateData && savedTemplateData?.Data?.types) {
+			reqData.Variables = adjustTemplateVariablesForLink(
+				savedTemplateData?.Data?.types,
+				reqData.Variables,
+				templateCategory === 3 ? `${authenticationMockTemplate[getAuthTemplate(savedTemplateData.Language || '')].body}` : templateData.templateText
+			);
+		}
 
 		const { payload }: saveCampaignResponseProps = await dispatch<any>(
 			saveCampaign(reqData)
