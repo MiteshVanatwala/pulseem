@@ -26,8 +26,21 @@ const normalizeConditionText = (value = '') => value.replace(/\s+/g, ' ').trim()
 const buildConditionPreviewLine = (text: string) => {
   const safeText = escapeHtml(normalizeConditionText(text) || 'Condition');
 
-  return `<span data-preview-condition="true" style="display:block;margin:14px 0;white-space:pre-line;">${safeText}</span>`;
+  return `<span data-preview-condition="true" style="display:block; margin: 10px 0; padding: 4px 10px; background-color: #f8f9fa; border: 1px solid #dcdcdc; border-radius: 4px; color: #444; font-size: 13px; font-weight: 600; font-family: sans-serif; line-height: 1.5; width: fit-content;">[ 👁 ${safeText} ]</span>`;
 };
+
+
+
+const buildConditionPreviewLine_Simple = (text: string) => {
+  const normalized = normalizeConditionText(text);
+  const safeText = escapeHtml(normalized);
+  // Ensure [ 👁 ] for empty text, or [ 👁 Else ] for "Else"
+  const label = normalized ? ` ${safeText} ` : ' ';
+
+  return `<span data-preview-condition="true" style="display:block; margin: 10px 0; padding: 4px 10px; background-color: #f8f9fa; border: 1px solid #dcdcdc; border-radius: 4px; color: #444; font-size: 13px; font-weight: 600; font-family: sans-serif; line-height: 1.5; width: fit-content;">[ 👁${label}]</span>`;
+};
+
+
 
 const formatDisplayConditionsForPreview = (rawHtml: string) => {
   if (!rawHtml || !rawHtml.includes('{%')) {
@@ -35,7 +48,6 @@ const formatDisplayConditionsForPreview = (rawHtml: string) => {
   }
 
   const conditionRegex = /{%\s*(if|elif|elseif|else|endif)\b([\s\S]*?)%}/gi;
-  const conditionStack: string[] = [];
   let formattedHtml = '';
   let lastIndex = 0;
   let match;
@@ -48,37 +60,23 @@ const formatDisplayConditionsForPreview = (rawHtml: string) => {
     lastIndex = match.index + fullMatch.length;
 
     if (keyword === 'if') {
-      conditionStack.push('##');
-      formattedHtml += buildConditionPreviewLine(`## ${rawExpression} ##`);
-      continue;
+      formattedHtml += buildConditionPreviewLine(rawExpression.trim());
+    } else if (keyword === 'elif' || keyword === 'elseif' || keyword === 'else') {
+      const label = keyword === 'else' ? 'Else' : rawExpression.trim();
+      formattedHtml += buildConditionPreviewLine_Simple(''); // Close previous
+      formattedHtml += buildConditionPreviewLine_Simple(label); // Start next
+    } else if (keyword === 'endif') {
+      formattedHtml += buildConditionPreviewLine_Simple('');
     }
-
-    if (keyword === 'elif' || keyword === 'elseif' || keyword === 'else') {
-      const previousMarker = conditionStack.length > 0 ? conditionStack[conditionStack.length - 1] : '##';
-
-      formattedHtml += buildConditionPreviewLine(previousMarker);
-
-      const currentMarker = '###';
-      const previewText = keyword === 'else' ? 'else' : rawExpression;
-
-      if (conditionStack.length > 0) {
-        conditionStack[conditionStack.length - 1] = currentMarker;
-      } else {
-        conditionStack.push(currentMarker);
-      }
-
-      formattedHtml += buildConditionPreviewLine(`${currentMarker} ${previewText} ${currentMarker}`);
-      continue;
-    }
-
-    const endMarker = conditionStack.pop() || '##';
-    formattedHtml += buildConditionPreviewLine(endMarker);
   }
 
   formattedHtml += rawHtml.slice(lastIndex);
 
   return formattedHtml;
 };
+
+
+
 
 const HtmlPreview = ({ classes }: any) => {
   const params = useParams();
