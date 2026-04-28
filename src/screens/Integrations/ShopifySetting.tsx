@@ -898,7 +898,7 @@ const Shopify = ({ classes }: any) => {
                             className={classes.shopifySettingTextBox}
                           >
                             <MenuItem value={1}>{t('integrations.shopify.emailToEmail')}</MenuItem>
-                            <MenuItem value={2}>{t('integrations.shopify.smsOnly')}</MenuItem>
+                            <MenuItem value={2}>{t('integrations.shopify.cellphoneToCellphone')}</MenuItem>
                             <MenuItem value={3}>{t('integrations.shopify.bothEmailAndCellphone')}</MenuItem>
                           </Select>
                         </Grid>

@@ -71,7 +71,7 @@
     "cellphoneToCellphone": "Cellphone to Cellphone",
     "smsOnly": "SMS Only",
     "bothEmailAndCellphone": "Both (Email & Cellphone)",
-    "unsubscribeSyncNotice": "Recipients who are removed in Pulseem will also be removed from your Shopify store mailing list. Activating this setting is at your own risk."
+    "unsubscribeSyncNotice": "Please notice! pay attention! Recipients who are removed in Pulseem will also be removed as recipients from the mailing list of your Shopify store. Activating this setting is at your own risk."
   },
   "verifone": {
     "title": "Verifone",
