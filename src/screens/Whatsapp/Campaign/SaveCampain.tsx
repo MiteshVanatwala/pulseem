@@ -657,10 +657,8 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		switch (lang) {
 			case 'he':
 				return authenticationTypes.AUTHENTICATIONHEBREW;
-
 			case 'pl':
 				return authenticationTypes.AUTHENTICATIONPOLSKI;
-		
 			case 'en':
 			default:
 				return authenticationTypes.AUTHENTICATIONEN;
@@ -976,8 +974,8 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		if (savedTemplateData && savedTemplateData?.Data?.types) {
 			reqData.Variables = adjustTemplateVariablesForLink(
 				savedTemplateData?.Data?.types,
-				formatUpdatedDynamicVariable(updatedDynamicVariable),
-				templateCategory === 3 ? `${authenticationMockTemplate[getAuthTemplate(savedTemplateData.Language || '')].body}` : ''
+				reqData.Variables,
+				templateCategory === 3 ? `${authenticationMockTemplate[getAuthTemplate(savedTemplateData.Language || '')].body}` : templateData.templateText
 			);
 		}
 
@@ -1342,7 +1340,6 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			availablePlans,
 			currentPlan.Id
 		);
-		
 		if (planName) {
 			return translator('billing.tier.featureNotAvailable').replace('{feature}', translator(TierFeatures[tierMessageCode as keyof typeof TierFeatures] || tierMessageCode)).replace('{planName}', planName);
 		} else {
@@ -1367,10 +1364,10 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				<Grid item>
 					<Button
 						onClick={() => {
-						setDialogType({ type: '', data: '' });
-						setShowTierPlans(true);
-					}}
-					className={clsx(classes.btn, classes.btnRounded)}
+							setDialogType({ type: '', data: '' });
+							setShowTierPlans(true);
+						}}
+						className={clsx(classes.btn, classes.btnRounded)}
 					>
 						{translator('billing.upgradePlan')}
 					</Button>
