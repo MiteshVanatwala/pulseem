@@ -14,7 +14,7 @@ import { BaseDialog } from '../DialogTemplates/BaseDialog';
 import { PulseemFeatures } from '../../model/PulseemFields/Fields';
 import useRedirect from '../../helpers/Routes/Redirect';
 import { sitePrefix } from '../../config';
-import { WhiteLabelObject } from '../WhiteLabel/WhiteLabelMigrate';
+import { WhiteLabelObject, getIsBeeperAccount } from '../WhiteLabel/WhiteLabelMigrate';
 import { MdVoiceChat } from "react-icons/md";
 import { URLS } from '../../config/enum';
 import AddCardDialog from '../AddCardDialog/AddCardDialog';
@@ -57,6 +57,7 @@ const BulkStatus = ({ classes }) => {
   const Redirect = useRedirect();
 
   const isWhiteLabel = accountSettings.Account?.ReferrerID > 0 && WhiteLabelObject[accountSettings.Account?.ReferrerID] !== undefined;
+  const isBeeperAccount = getIsBeeperAccount(accountSettings);
 
   const { Mms = {}, Newsletters = {}, Notifications = {}, Sms = {}, Whatsapp = {}, SMSVC } = packagesDetails || {};
 
@@ -442,6 +443,7 @@ const BulkStatus = ({ classes }) => {
             </Grid>
           </Grid>
           <Divider />
+          {!isBeeperAccount && (<>
             <Grid
               container
               item sm={12} md={12} lg={12} xl={12}
@@ -602,6 +604,7 @@ const BulkStatus = ({ classes }) => {
                 }
             </Grid>
           <Divider />
+          </>)}
           {/* {
             isAllowNewsletterForPoland() && Newsletters.eBillingType === 2 && (
               <>
@@ -625,7 +628,7 @@ const BulkStatus = ({ classes }) => {
               </>
             )
           } */}
-          {Notifications.FeatureExist && (
+          {Notifications.FeatureExist && !isBeeperAccount && (
             <>
               <Grid
                 container
@@ -648,7 +651,7 @@ const BulkStatus = ({ classes }) => {
               <Divider />
             </>
           )}
-          {Whatsapp.FeatureExist && Whatsapp.FeatureAllowed && (<>
+          {Whatsapp.FeatureExist && Whatsapp.FeatureAllowed && !isBeeperAccount && (<>
             <Grid
               container
               item sm={12} md={12} lg={12} xl={12}

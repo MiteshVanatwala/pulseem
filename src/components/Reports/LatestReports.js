@@ -14,10 +14,13 @@ import { sitePrefix } from '../../config/index';
 import { userPhoneNumbers } from '../../redux/reducers/whatsappSlice';
 import { apiStatus } from '../../screens/Whatsapp/Constant';
 import NoSetup from '../../screens/Whatsapp/NoSetup/NoSetup';
+import { getIsBeeperAccount } from '../WhiteLabel/WhiteLabelMigrate';
 
 const LatestReports = ({ classes, t, isRTL, isWhiteLabel }) => {
   const { windowSize } = useSelector(state => state.core);
   const { lastCampaignReport } = useSelector(state => state.dashboard);
+  const { accountSettings } = useSelector(state => state.common);
+  const isBeeperAccount = getIsBeeperAccount(accountSettings);
   const dispatch = useDispatch();
   const [tabValue, handleTabValue] = useState(0);
   const dateTimeFormat = 'DD/MM/YY, HH:mm';
@@ -311,7 +314,9 @@ const LatestReports = ({ classes, t, isRTL, isWhiteLabel }) => {
 
   const renderTabsLastReports = () => {
     let updatedOnText;
-    if (tabValue === 0) {
+    if (isBeeperAccount) {
+      updatedOnText = `${smsLastUpdated ? t('common.UpdatedOn') : ''} ${smsLastUpdated}`;
+    } else if (tabValue === 0) {
       updatedOnText = `${newsletterLastUpdated ? t('common.UpdatedOn') : ''} ${newsletterLastUpdated}`;
     } else if (tabValue === 1) {
       updatedOnText = `${smsLastUpdated ? t('common.UpdatedOn') : ''} ${smsLastUpdated}`;
@@ -346,18 +351,18 @@ const LatestReports = ({ classes, t, isRTL, isWhiteLabel }) => {
                 classes={{ indicator: classes.hideIndicator }}
                 visiblescrollbar={'false'}
               >
-                <Tab label={t('appBar.newsletter.title')} classes={{ root: classes.btnTab, selected: classes.currentActiveTab }} />
+                {!isBeeperAccount && <Tab label={t('appBar.newsletter.title')} classes={{ root: classes.btnTab, selected: classes.currentActiveTab }} />}
                 <Tab label={t('appBar.sms.title')} classes={{ root: classes.btnTab, selected: classes.currentActiveTab }} />
-                <Tab label={t('appBar.whatsapp.title')} classes={{ root: classes.btnTab, selected: classes.currentActiveTab }} />
+                {!isBeeperAccount && <Tab label={t('appBar.whatsapp.title')} classes={{ root: classes.btnTab, selected: classes.currentActiveTab }} />}
               </Tabs>
             </Box>
           </Box>
 
         </Grid>
         <Grid item xs={12} className={classes.lastReportsTabPanels}>
-          {renderTab('newsletter', 0)}
-          {renderTab('sms', 1)}
-          {renderTab('whatsapp', 2)}
+          {!isBeeperAccount && renderTab('newsletter', 0)}
+          {isBeeperAccount ? renderTab('sms', 0) : renderTab('sms', 1)}
+          {!isBeeperAccount && renderTab('whatsapp', 2)}
         </Grid>
       </Grid>
     );

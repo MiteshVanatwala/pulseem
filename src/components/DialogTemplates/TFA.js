@@ -6,6 +6,7 @@ import { BaseDialog } from './BaseDialog';
 import { useState } from 'react';
 import { setCookie } from '../../helpers/Functions/cookies';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
+import { getIsBeeperAccount } from '../WhiteLabel/WhiteLabelMigrate';
 
 
 const TFA = ({ classes,
@@ -14,8 +15,9 @@ const TFA = ({ classes,
     onConfirm = () => null
 }) => {
     const { t } = useTranslation();
-    const { isRTL } = useSelector(state => state.core);
-    const { companyName } = useSelector(state => state.core)
+    const { isRTL, companyName } = useSelector(state => state.core);
+    const { accountSettings } = useSelector(state => state.common);
+    const isBeeperAccount = getIsBeeperAccount(accountSettings);
     const [hideThisMessage, setHideThisMessage] = useState(false);
 
     const handleHideThisMessage = (e) => {
@@ -35,7 +37,7 @@ const TFA = ({ classes,
         content: (
             <Grid container>
                 <Grid item xs={12} className={clsx(classes.mb4)} style={{ textAlign: 'center' }}>
-                    {RenderHtml(t('dashboard.2faDescription'))}
+                    {RenderHtml(t(isBeeperAccount ? 'Beeper.2faDescription' : 'dashboard.2faDescription'))}
                     <Box className={classes.mt15}>
                         <FormControlLabel
                             control={
@@ -86,7 +88,7 @@ const TFA = ({ classes,
         ),
         footerText: () => (
             <Typography className={clsx(classes.contactUs, classes.newLine)} style={{ textAlign: 'center' }}>
-                {t('sms.havingIssuesMessage')}
+                {t(isBeeperAccount ? 'Beeper.havingIssues2fa' : 'sms.havingIssuesMessage')}
             </Typography>
         )
     };

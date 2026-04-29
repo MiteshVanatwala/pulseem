@@ -10,6 +10,7 @@ import { useTranslation } from 'react-i18next';
 import { StateType } from '../../Models/StateTypes';
 import { useLocation } from 'react-router-dom';
 import { AIChatConfig, advisorConfig } from './chatConfig';
+import { getIsBeeperAccount } from '../WhiteLabel/WhiteLabelMigrate';
 
 type StyleProps = { isRTL: boolean; isAffectedPage: boolean; featureId: number; isOpen: boolean };
 
@@ -94,7 +95,7 @@ const AIFloatingButton: React.FC<AIFloatingButtonProps> = ({ config = advisorCon
   const isRTL = useSelector((state: StateType) => state.core.isRTL);
   const dispatch = useDispatch();
   const { t } = useTranslation();
-  const { accountFeatures } = useSelector((state: StateType) => state.common);
+  const { accountFeatures, accountSettings } = useSelector((state: StateType) => state.common);
 
   const isSupport = config.reduxSliceName === 'supportChat';
   const { aiIconStatus, isOpen } = useSelector((state: StateType) =>
@@ -116,6 +117,7 @@ const AIFloatingButton: React.FC<AIFloatingButtonProps> = ({ config = advisorCon
 
   const featureKey = String(config.featureId);
   if (accountFeatures === null || accountFeatures?.indexOf(featureKey) === -1) return <></>;
+  if (getIsBeeperAccount(accountSettings)) return <></>;
 
   return (
     <Tooltip

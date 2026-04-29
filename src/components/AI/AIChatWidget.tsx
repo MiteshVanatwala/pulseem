@@ -13,6 +13,7 @@ import { useTranslation } from 'react-i18next';
 import { PulseemFeatures } from '../../model/PulseemFields/Fields';
 import PresetQuestions from './PresetQuestions';
 import { AIChatConfig, advisorConfig } from './chatConfig';
+import { getIsBeeperAccount } from '../WhiteLabel/WhiteLabelMigrate';
 
 const useStyles = makeStyles((theme) => ({
   PolyWidget: {
@@ -176,7 +177,7 @@ const AIChatWidget: React.FC<AIChatWidgetProps> = ({ config = advisorConfig }) =
     isSupport ? state.supportChat : state.aiChat
   );
   const { isOpen, messages, totalMessagesForUserCount } = chatState;
-  const { accountFeatures } = useSelector((state: StateType) => state.common);
+  const { accountFeatures, accountSettings } = useSelector((state: StateType) => state.common);
 
   const { displayedText, isTyping } = useTypewriter({
     text: t(config.bubbleTextKey),
@@ -244,6 +245,7 @@ const AIChatWidget: React.FC<AIChatWidgetProps> = ({ config = advisorConfig }) =
 
   const featureKey = String(config.featureId);
   if (accountFeatures === null || accountFeatures?.indexOf(featureKey) === -1) return <></>;
+  if (getIsBeeperAccount(accountSettings)) return <></>;
 
   return (
     <div className={classes.PolywidgetContainer}>
