@@ -395,7 +395,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				variable?.IsStatastic
 			) {
 				if (
-					(!variable.VariableValue.includes('ref') || !variable.VariableValue.includes('dynamicProduct')) && checkSiteTrackingLink(SubAccountSettings, variable?.VariableValue)
+					(!variable.VariableValue.includes('ref') || variable.VariableValue.includes('dynamicProduct')) && checkSiteTrackingLink(SubAccountSettings, variable?.VariableValue)
 				) {
 					return {
 						...variable,
@@ -404,6 +404,15 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 							: variable?.VariableValue + '?ref=##ClientIDEnc##',
 					};
 				}
+
+				// Bug Fix PR-3511: Bake safety spaces into the Unsubscribe Link value at the state level
+				if (variable.VariableValue === '##WHATSAPPUnsubscribelink##') {
+					return {
+						...variable,
+						VariableValue: ' ##WHATSAPPUnsubscribelink## '
+					};
+				}
+
 				return variable;
 			} else {
 				if (
@@ -576,11 +585,23 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		let updatedVariables = getDynamicFields(tagData?.children, true);
 		const highlightVariables = (
 			<>
-				{updatedVariables?.map((variable, index) => (
-					variable === '\n'
-						? <br />
+				{updatedVariables?.map((variable, index) => {
+					const vIndex = Number(variable?.replace(/[{}]/g, ''));
+					const matchedVariable = updatedDynamicVariable?.find(
+						(dynamicVariable: updatedVariable) =>
+							dynamicVariable?.VariableIndex === vIndex
+					);
+					const isUnsubscribe = matchedVariable?.VariableValue === '##WHATSAPPUnsubscribelink##';
+
+					return variable === '\n'
+						? <br key={index} />
 						: <strong
 							key={index}
+							style={{ 
+								margin: '0 5px',
+								display: 'inline-block',
+								verticalAlign: 'bottom'
+							}}
 							className={clsx(
 								classes.whatsappCampainHighlightText,
 								`${isUpdatedVaraiable(variable) && 'updated'}`
@@ -590,7 +611,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 								? getUpdatedVariableValue(variable)
 								: variable}
 						</strong>
-				))}
+				})}
 			</>
 		);
 		return highlightVariables;
