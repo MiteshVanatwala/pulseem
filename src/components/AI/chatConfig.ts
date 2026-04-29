@@ -7,6 +7,8 @@ export interface AIChatConfig {
   apiAddMessage: string;
   apiLoadSession: string;
   apiNewSession: string;
+  apiEscalate?: string;
+  apiNewMessages?: string;
   maxChars: number;
   headerTitleKey: string;
   bubbleTextKey: string;
@@ -42,6 +44,8 @@ export const supportConfig: AIChatConfig = {
   apiAddMessage: 'PulsyAISupport/AddMessage',
   apiLoadSession: 'PulsyAISupport/LoadSessionMessages',
   apiNewSession: 'PulsyAISupport/NewConversation',
+  apiEscalate: 'PulsyAISupport/EscalateToAgent',
+  apiNewMessages: 'PulsyAISupport/NewMessages',
   maxChars: 2000,
   headerTitleKey: 'common.supportHeader',
   bubbleTextKey: 'common.supportBubbleText',

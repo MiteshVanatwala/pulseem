@@ -4,7 +4,7 @@ import { Paper, Box } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { StateType } from '../../Models/StateTypes';
 import { toggleChat, loadSessionMessages, setAIIconStatus, openAIChat } from '../../redux/reducers/aiChatSlice';
-import { toggleSupportChat, loadSupportSessionMessages, setSupportAIIconStatus, openSupportChat } from '../../redux/reducers/supportChatSlice';
+import { toggleSupportChat, loadSupportSessionMessages, setSupportAIIconStatus, openSupportChat, escapeToAgent, pollAgentMessages } from '../../redux/reducers/supportChatSlice';
 import ChatHeader from './ChatHeader';
 import MessageList from './MessageList';
 import InputArea from './InputArea';
@@ -175,8 +175,14 @@ const AIChatWidget: React.FC<AIChatWidgetProps> = ({ config = advisorConfig }) =
   const chatState = useSelector((state: StateType) =>
     isSupport ? state.supportChat : state.aiChat
   );
-  const { isOpen, messages, totalMessagesForUserCount } = chatState;
+  const { isOpen, messages, totalMessagesForUserCount, isEscalated, suggestAgent, lastAgentMessageId } = chatState;
   const { accountFeatures } = useSelector((state: StateType) => state.common);
+
+  // useRef keeps the cursor fresh inside the interval without restarting it on every poll
+  const lastAgentMessageIdRef = useRef(lastAgentMessageId);
+  useEffect(() => {
+    lastAgentMessageIdRef.current = lastAgentMessageId;
+  }, [lastAgentMessageId]);
 
   const { displayedText, isTyping } = useTypewriter({
     text: t(config.bubbleTextKey),
@@ -186,8 +192,27 @@ const AIChatWidget: React.FC<AIChatWidgetProps> = ({ config = advisorConfig }) =
     startTyping: isOpen
   });
 
+  // Poll for new agent messages (TypeID=4) every 5s when escalated and widget is open.
+  // Cursor (lastAgentMessageIdRef) is read via ref so the interval is never restarted
+  // just because a new message moved the cursor forward.
+  useEffect(() => {
+    if (!isSupport || !isEscalated || !isOpen) return;
+
+    const intervalId = setInterval(() => {
+      dispatch(pollAgentMessages(lastAgentMessageIdRef.current));
+    }, 5000);
+
+    return () => clearInterval(intervalId);
+  }, [isSupport, isEscalated, isOpen, dispatch]);
+
   const handleWidgetClick = (e: React.MouseEvent) => {
     e.stopPropagation();
+  };
+
+  const handleEscalate = () => {
+    if (isSupport && !isEscalated) {
+      dispatch(escapeToAgent());
+    }
   };
 
   const handleBackdropClick = () => {
@@ -259,6 +284,29 @@ const AIChatWidget: React.FC<AIChatWidgetProps> = ({ config = advisorConfig }) =
             <ChatHeader config={config} />
             <Box className={classes.Polycontent}>
               <MessageList config={config} />
+              {isSupport && !isEscalated && (totalMessagesForUserCount >= 2 || suggestAgent) && (
+                <Box style={{ padding: '6px 16px', textAlign: 'center' }}>
+                  <button
+                    onClick={handleEscalate}
+                    style={{
+                      background: 'none',
+                      border: '1px solid #dd2339',
+                      color: '#dd2339',
+                      borderRadius: '16px',
+                      padding: '4px 14px',
+                      fontSize: '0.8rem',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    {t('common.contactAgent')}
+                  </button>
+                </Box>
+              )}
+              {isSupport && isEscalated && (
+                <Box style={{ padding: '6px 16px', textAlign: 'center', fontSize: '0.8rem', color: '#888' }}>
+                  {t('common.connectedToAgent')}
+                </Box>
+              )}
               <PresetQuestions config={config} />
             </Box>
             <InputArea ref={inputAreaRef} config={config} />

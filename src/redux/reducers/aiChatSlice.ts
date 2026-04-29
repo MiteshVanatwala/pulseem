@@ -25,6 +25,9 @@ interface AiChatState {
   isLoading: boolean;
   aiIconStatus: 0|1|2|3; // 0-AI Icon, 1-Loading, 2-Message Sent and response received, 3-Error
   totalMessagesForUserCount: number;
+  isEscalated: boolean;
+  suggestAgent: boolean;
+  lastAgentMessageId: number;
 }
 
 const initialState: AiChatState = {
@@ -32,7 +35,10 @@ const initialState: AiChatState = {
   messages: [],
   isLoading: false,
   aiIconStatus: 0,
-  totalMessagesForUserCount: -1
+  totalMessagesForUserCount: -1,
+  isEscalated: false,
+  suggestAgent: false,
+  lastAgentMessageId: 0,
 };
 
 const aiChatSlice = createSlice({

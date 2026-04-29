@@ -42,6 +42,9 @@ export interface AiChatState {
     isLoading: boolean;
     totalMessagesForUserCount: number;
     aiIconStatus: number;
+    isEscalated: boolean;
+    suggestAgent: boolean;
+    lastAgentMessageId: number;
 }
 
 export type StateType = {
