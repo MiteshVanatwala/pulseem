@@ -395,7 +395,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				variable?.IsStatastic
 			) {
 				if (
-					(!variable.VariableValue.includes('ref') || variable.VariableValue.includes('dynamicProduct')) && checkSiteTrackingLink(SubAccountSettings, variable?.VariableValue)
+					(!variable.VariableValue.includes('ref') || !variable.VariableValue.includes('dynamicProduct')) && checkSiteTrackingLink(SubAccountSettings, variable?.VariableValue)
 				) {
 					return {
 						...variable,
