@@ -17,10 +17,11 @@ import PresetQuestions from './PresetQuestions';
 import { AIChatConfig, advisorConfig } from './chatConfig';
 import { getIsBeeperAccount } from '../WhiteLabel/WhiteLabelMigrate';
 
-const COMPACT_WIDTH = 360;
+const COMPACT_WIDTH  = 360;
 const COMPACT_HEIGHT = 510;
 
 const useStyles = makeStyles((theme) => ({
+  // ── Full-mode widget (UNCHANGED from original) ────────────────────────────
   PolyWidget: {
     position: 'fixed',
     top: '35%',
@@ -49,36 +50,46 @@ const useStyles = makeStyles((theme) => ({
     },
     "@media screen and (max-width: 768px)": {
       top: '30%',
-      width: '90%'
-    }
+      width: '90%',
+    },
   },
-  PolyWidgetCompact: {
-    width: `${COMPACT_WIDTH}px !important`,
-    height: `${COMPACT_HEIGHT}px !important`,
-    maxHeight: `${COMPACT_HEIGHT}px !important`,
-    maxWidth: `${COMPACT_WIDTH}px !important`,
-    top: 'auto !important',
-    left: 'auto !important',
-    // position controlled by inline style when compact
-  },
+
+  // ── Full-mode open state (UNCHANGED from original) ────────────────────────
   PolywidgetOpen: {
     transform: 'translate(-50%, -50%) scale(1)',
     opacity: 1,
     pointerEvents: 'auto',
     zIndex: 1299,
   },
+
+  // ── Compact-mode size overrides ───────────────────────────────────────────
+  // top / left are intentionally NOT set here — they are driven entirely by
+  // the inline style so that drag in both axes works correctly.
+  // transform is reset by PolyWidgetCompactOpen below.
+  PolyWidgetCompact: {
+    width:     `${COMPACT_WIDTH}px !important`,
+    maxWidth:  `${COMPACT_WIDTH}px !important`,
+    height:    `${COMPACT_HEIGHT}px !important`,
+    maxHeight: `${COMPACT_HEIGHT}px !important`,
+  },
+
+  // ── Compact-mode open state ───────────────────────────────────────────────
+  // Removes the centering translate so drag coordinates map 1:1 to screen pixels.
   PolyWidgetCompactOpen: {
     transform: 'none !important',
     opacity: 1,
     pointerEvents: 'auto',
     zIndex: 1299,
   },
+
+  // ── Content area (UNCHANGED from original — no overflow added) ───────────
   Polycontent: {
     flex: 1,
     display: 'flex',
     flexDirection: 'column',
-    overflow: 'hidden',
   },
+
+  // ── Backdrop (UNCHANGED from original) ───────────────────────────────────
   Polybackdrop: {
     position: 'fixed',
     top: 0,
@@ -105,6 +116,8 @@ const useStyles = makeStyles((theme) => ({
     zIndex: 1300,
     pointerEvents: 'none',
   },
+
+  // ── Mascot (UNCHANGED from original) ─────────────────────────────────────
   PolymascotImage: {
     position: 'absolute',
     left: ({ isRTL }: { isRTL: boolean }) => isRTL ? 'auto' : '-300px',
@@ -131,7 +144,7 @@ const useStyles = makeStyles((theme) => ({
         maxWidth: '80%',
         fontSize: '0.9rem',
         minHeight: '25px',
-      }
+      },
     },
     '& div.message': {
       textAlign: 'center',
@@ -157,8 +170,8 @@ const useStyles = makeStyles((theme) => ({
         borderLeft: '10px solid transparent',
         borderRight: '10px solid transparent',
         borderTop: `10px solid ${theme.palette.primary.main}`,
-      }
-    }
+      },
+    },
   },
   Polycursor: {
     display: 'inline-block',
@@ -167,85 +180,167 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: 'white',
     marginLeft: '2px',
     verticalAlign: 'middle',
-    animation: 'cursor-blink 1s step-end infinite'
+    animation: 'cursor-blink 1s step-end infinite',
   },
   '@global': {
     '@keyframes cursor-blink': {
-      '0%': { opacity: 1 },
-      '50%': { opacity: 0 }
-    }
-  }
+      '0%':  { opacity: 1 },
+      '50%': { opacity: 0 },
+    },
+  },
 }));
 
 interface AIChatWidgetProps {
   config?: AIChatConfig;
 }
 
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+
 const defaultCompactPos = () => ({
   x: Math.max(0, window.innerWidth - COMPACT_WIDTH - 24),
   y: 80,
 });
 
+const clampPos = (pos: { x: number; y: number }) => ({
+  x: Math.max(0, Math.min(window.innerWidth  - COMPACT_WIDTH, pos.x)),
+  y: Math.max(0, Math.min(window.innerHeight - 60,            pos.y)),
+});
+
+const loadSavedPos = (key: string) => {
+  try {
+    const raw = localStorage.getItem(key);
+    if (raw) return JSON.parse(raw) as { x: number; y: number };
+  } catch (_) {}
+  return null;
+};
+
+// ─── Component ───────────────────────────────────────────────────────────────
+
 const AIChatWidget: React.FC<AIChatWidgetProps> = ({ config = advisorConfig }) => {
-  const { isRTL } = useSelector((state: any) => state.core);
+  const { isRTL }    = useSelector((state: any) => state.core);
   const { username } = useSelector((state: any) => state.user);
-  const classes = useStyles({ isRTL });
-  const dispatch = useDispatch();
+  const classes      = useStyles({ isRTL });
+  const dispatch     = useDispatch();
   const inputAreaRef = useRef<{ focus: () => void }>(null);
-  const { t } = useTranslation();
+  const { t }        = useTranslation();
 
   const isSupport = config.reduxSliceName === 'supportChat';
   const chatState = useSelector((state: StateType) =>
     isSupport ? state.supportChat : state.aiChat
   );
-  const { isOpen, messages, totalMessagesForUserCount, isEscalated, suggestAgent, lastAgentMessageId } = chatState;
+  const { isOpen, messages, totalMessagesForUserCount,
+          isEscalated, suggestAgent, lastAgentMessageId } = chatState;
     const { accountFeatures, accountSettings } = useSelector((state: StateType) => state.common);
 
-  // ─── Compact mode ──────────────────────────────────────────────────────────
+  // ─── Compact mode state ───────────────────────────────────────────────────
+  const posKey = config.compactModeKey + '_pos';
+
   const [isCompact, setIsCompact] = useState<boolean>(() =>
     localStorage.getItem(config.compactModeKey) === 'true'
   );
-  const [compactPos, setCompactPos] = useState(defaultCompactPos);
 
-  const isDragging = useRef(false);
-  const dragOffset = useRef({ x: 0, y: 0 });
+  // Restore saved position; fall back to default right-side slot.
+  const [compactPos, setCompactPos] = useState<{ x: number; y: number }>(() => {
+    const saved = loadSavedPos(posKey);
+    return saved ? clampPos(saved) : defaultCompactPos();
+  });
 
+  // Keep a ref so drag handlers always read the latest position without
+  // re-creating the callbacks on every frame.
+  const compactPosRef = useRef(compactPos);
+  useEffect(() => { compactPosRef.current = compactPos; }, [compactPos]);
+
+  // ─── Drag logic ───────────────────────────────────────────────────────────
+  const isDragging    = useRef(false);
+  const dragOffset    = useRef({ x: 0, y: 0 });
+
+  // Stable callback — only re-created when isCompact changes.
   const handleHeaderMouseDown = useCallback((e: React.MouseEvent) => {
     if (!isCompact) return;
     isDragging.current = true;
-    dragOffset.current = { x: e.clientX - compactPos.x, y: e.clientY - compactPos.y };
+    dragOffset.current = {
+      x: e.clientX - compactPosRef.current.x,
+      y: e.clientY - compactPosRef.current.y,
+    };
     e.preventDefault();
-  }, [isCompact, compactPos]);
+  }, [isCompact]);
 
   useEffect(() => {
     const onMouseMove = (e: MouseEvent) => {
       if (!isDragging.current) return;
-      setCompactPos({
-        x: Math.max(0, Math.min(window.innerWidth - COMPACT_WIDTH, e.clientX - dragOffset.current.x)),
-        y: Math.max(0, Math.min(window.innerHeight - 60, e.clientY - dragOffset.current.y)),
+      const next = clampPos({
+        x: e.clientX - dragOffset.current.x,
+        y: e.clientY - dragOffset.current.y,
       });
+      setCompactPos(next);
     };
-    const onMouseUp = () => { isDragging.current = false; };
+
+    const onMouseUp = () => {
+      if (!isDragging.current) return;
+      isDragging.current = false;
+      // Persist drag position so it survives minimize/reopen and page reload.
+      try {
+        localStorage.setItem(posKey, JSON.stringify(compactPosRef.current));
+      } catch (_) {}
+    };
+
     document.addEventListener('mousemove', onMouseMove);
-    document.addEventListener('mouseup', onMouseUp);
+    document.addEventListener('mouseup',   onMouseUp);
     return () => {
       document.removeEventListener('mousemove', onMouseMove);
-      document.removeEventListener('mouseup', onMouseUp);
+      document.removeEventListener('mouseup',   onMouseUp);
     };
-  }, []);
+  }, [posKey]);
 
+  // Clamp compact position when the browser window is resized.
+  useEffect(() => {
+    const onResize = () => {
+      setCompactPos(prev => {
+        const clamped = clampPos(prev);
+        try { localStorage.setItem(posKey, JSON.stringify(clamped)); } catch (_) {}
+        return clamped;
+      });
+    };
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, [posKey]);
+
+  // ─── Toggle compact ───────────────────────────────────────────────────────
   const handleToggleCompact = () => {
     const next = !isCompact;
     setIsCompact(next);
-    if (next) setCompactPos(defaultCompactPos());
+    if (next) {
+      // Enter compact: restore saved position or default to right side.
+      const saved = loadSavedPos(posKey);
+      setCompactPos(saved ? clampPos(saved) : defaultCompactPos());
+    }
     try { localStorage.setItem(config.compactModeKey, next ? 'true' : 'false'); } catch (_) {}
   };
 
-  // ─── Minimize — saves preference ──────────────────────────────────────────
+  // ─── Minimize — saves show/hide preference ────────────────────────────────
   const handleMinimize = () => {
     try { localStorage.setItem(config.localStorageKey, 'true'); } catch (_) {}
     dispatch(isSupport ? toggleSupportChat() : toggleChat());
   };
+
+  // ─── Auto-open on mount (ALL users) ──────────────────────────────────────
+  // Runs once when username + accountFeatures are ready.
+  // Checks localStorageKey: null or 'false' → open; 'true' (user minimised) → stay closed.
+  // This replaces the old checkbox-only logic that only applied to brand-new users.
+  const autoOpenDoneRef = useRef(false);
+  useEffect(() => {
+    const featureKey = String(config.featureId);
+    if (!username || !accountFeatures || accountFeatures.indexOf(featureKey) === -1) return;
+    if (autoOpenDoneRef.current || isOpen) return;
+    autoOpenDoneRef.current = true;
+    try {
+      const hide = localStorage.getItem(config.localStorageKey);
+      if (hide !== 'true') {
+        dispatch(isSupport ? openSupportChat() : openAIChat());
+      }
+    } catch (_) {}
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [username, accountFeatures]);
 
   // ─── Agent message cursor ref ─────────────────────────────────────────────
   const lastAgentMessageIdRef = useRef(lastAgentMessageId);
@@ -258,16 +353,16 @@ const AIChatWidget: React.FC<AIChatWidgetProps> = ({ config = advisorConfig }) =
     speed: 100,
     delay: 1000,
     loop: false,
-    startTyping: isOpen
+    startTyping: isOpen,
   });
 
   // ─── Poll for agent messages every 5s ────────────────────────────────────
   useEffect(() => {
     if (!isSupport || !isEscalated || !isOpen) return;
-    const intervalId = setInterval(() => {
+    const id = setInterval(() => {
       dispatch(pollAgentMessages(lastAgentMessageIdRef.current));
     }, 5000);
-    return () => clearInterval(intervalId);
+    return () => clearInterval(id);
   }, [isSupport, isEscalated, isOpen, dispatch]);
 
   const handleWidgetClick = (e: React.MouseEvent) => e.stopPropagation();
@@ -286,38 +381,29 @@ const AIChatWidget: React.FC<AIChatWidgetProps> = ({ config = advisorConfig }) =
     }
   }, [isOpen]);
 
-  // ─── Initialize / auto-open ───────────────────────────────────────────────
+  // ─── Load session messages ────────────────────────────────────────────────
+  // Runs whenever we don't have a count yet (first mount or after session reset).
+  // Auto-open is handled separately above and does NOT live here.
   useEffect(() => {
-    const initializeChat = async () => {
-      if (totalMessagesForUserCount === -1) {
-        await dispatch(isSupport ? loadSupportSessionMessages() : loadSessionMessages());
-      }
-      if (totalMessagesForUserCount === 0 && messages.length === 1 && username) {
-        try {
-          const hideDialog = localStorage.getItem(config.localStorageKey);
-          if (hideDialog !== 'true' && !isOpen) {
-            dispatch(isSupport ? openSupportChat() : openAIChat());
-          }
-        } catch (error) {
-          console.error('Error sending initial message:', error);
-        }
-      }
-    };
-
     const featureKey = String(config.featureId);
-    if (totalMessagesForUserCount < 1 && username &&
-        accountFeatures !== null &&
-        accountFeatures?.indexOf(featureKey) !== -1) {
-      initializeChat();
+    if (
+      totalMessagesForUserCount === -1 && username &&
+      accountFeatures !== null &&
+      accountFeatures?.indexOf(featureKey) !== -1
+    ) {
+      dispatch(isSupport ? loadSupportSessionMessages() : loadSessionMessages());
     }
-  }, [dispatch, messages, username, totalMessagesForUserCount]);
+  }, [dispatch, username, totalMessagesForUserCount, accountFeatures]);
 
+  // ─── Guard: feature not enabled ──────────────────────────────────────────
   const featureKey = String(config.featureId);
   if (accountFeatures === null || accountFeatures?.indexOf(featureKey) === -1) return <></>;
   if (getIsBeeperAccount(accountSettings)) return <></>;
 
+  // ─── Inline style: positions compact widget (overrides PolyWidget top/left)
+  // Only applied when compact; undefined leaves full-mode CSS untouched.
   const compactStyle: React.CSSProperties | undefined = isCompact
-    ? { position: 'fixed', top: compactPos.y, left: compactPos.x }
+    ? { top: compactPos.y, left: compactPos.x }
     : undefined;
 
   const openClass = isOpen
@@ -333,6 +419,7 @@ const AIChatWidget: React.FC<AIChatWidgetProps> = ({ config = advisorConfig }) =
           onClick={() => {}}
         />
       )}
+
       <Paper
         className={`${classes.PolyWidget} ${isCompact ? classes.PolyWidgetCompact : ''} ${openClass}`}
         style={compactStyle}
@@ -346,9 +433,11 @@ const AIChatWidget: React.FC<AIChatWidgetProps> = ({ config = advisorConfig }) =
           onToggleCompact={handleToggleCompact}
           onHeaderMouseDown={handleHeaderMouseDown}
         />
+
         <Box className={classes.Polycontent}>
           <MessageList config={config} />
 
+          {/* "Contact Agent" button — support only, pre-escalation */}
           {isSupport && !isEscalated && (totalMessagesForUserCount >= 2 || suggestAgent) && (
             <Box style={{ padding: '6px 16px', textAlign: 'center' }}>
               <button
@@ -368,6 +457,7 @@ const AIChatWidget: React.FC<AIChatWidgetProps> = ({ config = advisorConfig }) =
             </Box>
           )}
 
+          {/* "Connected to agent" — support only, post-escalation */}
           {isSupport && isEscalated && (
             <Box style={{ padding: '6px 16px', textAlign: 'center', fontSize: '0.8rem', color: '#888' }}>
               {t('common.connectedToAgent')}
@@ -376,9 +466,10 @@ const AIChatWidget: React.FC<AIChatWidgetProps> = ({ config = advisorConfig }) =
 
           <PresetQuestions config={config} />
         </Box>
+
         <InputArea ref={inputAreaRef} config={config} />
 
-        {/* Mascot hidden in compact mode */}
+        {/* Mascot hidden in compact mode — too tall to fit */}
         {!isCompact && (
           <div className={classes.PolymascotImage}>
             <div className="message">
