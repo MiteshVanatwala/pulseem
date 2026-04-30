@@ -201,6 +201,7 @@ const InputArea: React.ForwardRefRenderFunction<InputAreaHandle, InputAreaProps>
                 </span>
               </Tooltip>
               {contactAgentDisabled && (
+                // @ts-ignore
                 <CustomTooltip
                   text={t('common.contactAgentTooltip')}
                   placement="top"
