@@ -201,7 +201,9 @@ const InputArea: React.ForwardRefRenderFunction<InputAreaHandle, InputAreaProps>
               </Tooltip>
               {contactAgentDisabled && (
                 <Tooltip title={t('common.contactAgentTooltip')} arrow placement="top">
-                  <InfoOutlinedIcon style={{ fontSize: '0.95rem', color: '#bbb', cursor: 'default' }} />
+                  <span style={{ display: 'inline-flex', alignItems: 'center', cursor: 'help' }}>
+                    <InfoOutlinedIcon style={{ fontSize: '0.95rem', color: '#999' }} />
+                  </span>
                 </Tooltip>
               )}
             </Box>
