@@ -199,7 +199,7 @@ const AIChatWidget: React.FC<AIChatWidgetProps> = ({ config = advisorConfig }) =
     isSupport ? state.supportChat : state.aiChat
   );
   const { isOpen, messages, totalMessagesForUserCount, isEscalated, suggestAgent, lastAgentMessageId } = chatState;
-  const { accountFeatures } = useSelector((state: StateType) => state.common);
+    const { accountFeatures, accountSettings } = useSelector((state: StateType) => state.common);
 
   // ─── Compact mode ──────────────────────────────────────────────────────────
   const [isCompact, setIsCompact] = useState<boolean>(() =>
