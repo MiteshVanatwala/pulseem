@@ -843,6 +843,8 @@
   "webpNotSupport": "webp is not supported in AMP",
   "htmlDocTypeNotAllowed": "Invalid tags found in HTML block. We do not support the following tags: <br />&lt;!DOCTYPE&gt;, &lt;body&gt;, &lt;html&gt; and &lt;script&gt;",
   "htmlDocTypeNotAllowedWarning": "Using your own code may affect how the message is rendered. Make sure to use correct and responsive HTML. We do not support the following tags: <!DOCTYPE>, <body>, <html> and <script>.",
+  "htmlBodyEmpty": "Email content is empty.",
+  "htmlNoVisibleContent": "Email has no visible text.",
   "setupStaticProduct": "Product Set-Up",
   "createProductBlock": "Personalized Product Block",
   "selectProduct": "Select Product From Catalog",
