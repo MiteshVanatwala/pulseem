@@ -27,12 +27,33 @@ export const startNewSupportSession = createAsyncThunk(
   }
 );
 
+export const escapeToAgent = createAsyncThunk(
+  'supportChat/escapeToAgent',
+  async () => {
+    const response = await PulseemReactInstance.post(supportConfig.apiEscalate!, {});
+    return response.data;
+  }
+);
+
+export const pollAgentMessages = createAsyncThunk(
+  'supportChat/pollAgentMessages',
+  async (afterId: number) => {
+    const response = await PulseemReactInstance.get(
+      `${supportConfig.apiNewMessages!}?afterId=${afterId}`
+    );
+    return response.data;
+  }
+);
+
 const initialState: AiChatState = {
   isOpen: false,
   messages: [],
   isLoading: false,
   aiIconStatus: 0,
   totalMessagesForUserCount: -1,
+  isEscalated: false,
+  suggestAgent: false,
+  lastAgentMessageId: 0,
 };
 
 const supportChatSlice = createSlice({
@@ -58,8 +79,15 @@ const supportChatSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(addSupportMessage.fulfilled, (state, action: any) => {
-        state.messages.push(action.payload?.Data || []);
+        // Data is null when session is escalated (no AI response)
+        if (action.payload?.Data) {
+          state.messages.push(action.payload.Data);
+        }
         state.totalMessagesForUserCount = action.payload?.DataCount?.TotalMessagesForUserCount || 0;
+        state.suggestAgent = action.payload?.DataCount?.SuggestAgent || false;
+        if (action.payload?.DataCount?.IsEscalated) {
+          state.isEscalated = true;
+        }
         state.aiIconStatus = 2;
       })
       .addCase(addSupportMessage.rejected, (state) => {
@@ -71,8 +99,15 @@ const supportChatSlice = createSlice({
       .addCase(loadSupportSessionMessages.fulfilled, (state, action: any) => {
         state.isLoading = false;
         if (action.payload) {
-          state.messages.push(...(action.payload?.Data || []));
+          const msgs = action.payload?.Data || [];
+          state.messages.push(...msgs);
           state.totalMessagesForUserCount = action.payload?.DataCount?.TotalMessagesForUserCount || 0;
+          state.isEscalated = action.payload?.DataCount?.IsEscalated || false;
+          // Set cursor to the highest TypeID=4 MessageID already loaded
+          const agentMsgs = msgs.filter((m: any) => m.MessageTypeID === 4);
+          if (agentMsgs.length > 0) {
+            state.lastAgentMessageId = Math.max(...agentMsgs.map((m: any) => m.MessageID));
+          }
           state.aiIconStatus = 2;
         }
       })
@@ -82,6 +117,25 @@ const supportChatSlice = createSlice({
       .addCase(startNewSupportSession.fulfilled, (state) => {
         state.messages = [];
         state.totalMessagesForUserCount = -1;
+        state.isEscalated = false;
+        state.suggestAgent = false;
+        state.lastAgentMessageId = 0;
+      })
+      .addCase(escapeToAgent.fulfilled, (state, action: any) => {
+        state.isEscalated = true;
+        state.suggestAgent = false;
+        // Push the TypeID=1 escalation request message so it shows immediately
+        if (action.payload?.Data) {
+          state.messages.push(action.payload.Data);
+        }
+        // cursor stays at 0 — agent hasn't replied yet
+      })
+      .addCase(pollAgentMessages.fulfilled, (state, action: any) => {
+        const newMsgs = action.payload?.Data || [];
+        if (newMsgs.length > 0) {
+          state.messages.push(...newMsgs);
+          state.lastAgentMessageId = Math.max(...newMsgs.map((m: any) => m.MessageID));
+        }
       });
   },
 });
@@ -93,5 +147,6 @@ export const {
   setSupportLoading,
   setSupportAIIconStatus,
 } = supportChatSlice.actions;
+
 
 export default supportChatSlice.reducer;

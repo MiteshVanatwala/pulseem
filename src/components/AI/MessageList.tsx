@@ -191,10 +191,16 @@ const MessageList: React.FC<MessageListProps> = ({ config = advisorConfig }) => 
           }`}
         >
           <Box className={msg.MessageTypeID === 1 ? classes.userBubbleWrapper : classes.aiBubbleWrapper}>
+            {msg.MessageTypeID === 4 && (
+              <div style={{ fontSize: '0.7rem', color: '#888', marginBottom: '2px', paddingInlineStart: '4px' }}>
+                {t('common.agentLabel')}
+              </div>
+            )}
             <Paper
               className={`${classes.messageBubble} ${
                 msg.MessageTypeID === 1 ? classes.userBubble : classes.aiBubble
               } ${msg.MessageTypeID === 1 ? 'user-bubble' : 'ai-bubble'}`}
+              style={msg.MessageTypeID === 4 ? { backgroundColor: '#e8f5e9', border: '1px solid #a5d6a7' } : undefined}
               elevation={1}
             >
               {msg.MessageHTML ? (

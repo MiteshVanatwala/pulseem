@@ -108,6 +108,10 @@ const AIFloatingButton: React.FC<AIFloatingButtonProps> = ({ config = advisorCon
   const classes = useStyles({ isRTL, isAffectedPage, featureId: config.featureId, isOpen });
 
   const handleToggleChat = () => {
+    // Save preference: opening → show on reload; closing → hide on reload
+    try {
+      localStorage.setItem(config.localStorageKey, isOpen ? 'true' : 'false');
+    } catch (_) {}
     if (isSupport) {
       dispatch(toggleSupportChat());
     } else {
