@@ -12,7 +12,10 @@ export interface ShopifyModel {
     PurchaseEventActive: boolean;
     AbandonedEventActive: boolean;
     UnsubscribePreferenceTypeID?: number;
-    isSyncUnsubscribes?: boolean;
+    ActivationPreferenceTypeID?: number;
+    IsSyncRemovals?: boolean;
+    IsSyncActivations?: boolean;
+    IsInsertToGroupsActive?: boolean;
     UiApi_ApiKey?: string;
     Groups?: IntegrationGroups;
     CreateDate?: Date | string;
