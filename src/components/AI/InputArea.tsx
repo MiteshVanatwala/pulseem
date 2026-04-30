@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Box, TextField, IconButton, Button, Tooltip } from '@material-ui/core';
-import { Send as SendIcon, InfoOutlined as InfoOutlinedIcon } from '@material-ui/icons';
+import { Send as SendIcon } from '@material-ui/icons';
+import CustomTooltip from '../Tooltip/CustomTooltip';
 import { makeStyles } from '@material-ui/core/styles';
 import { addMessage, addUserMessage, setAIIconStatus } from '../../redux/reducers/aiChatSlice';
 import { addSupportMessage, addSupportUserMessage, setSupportAIIconStatus, startNewSupportSession, escapeToAgent } from '../../redux/reducers/supportChatSlice';
@@ -200,12 +201,12 @@ const InputArea: React.ForwardRefRenderFunction<InputAreaHandle, InputAreaProps>
                 </span>
               </Tooltip>
               {contactAgentDisabled && (
-                <span
-                  title={t('common.contactAgentTooltip')}
-                  style={{ display: 'inline-flex', alignItems: 'center', cursor: 'help' }}
-                >
-                  <InfoOutlinedIcon style={{ fontSize: '0.95rem', color: '#999' }} />
-                </span>
+                <CustomTooltip
+                  text={t('common.contactAgentTooltip')}
+                  placement="top"
+                  isSimpleTooltip={true}
+                  style={{ fontSize: 14 }}
+                />
               )}
             </Box>
           ) : (
