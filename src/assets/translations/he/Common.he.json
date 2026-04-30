@@ -884,6 +884,9 @@
   "welcomeMessage": "היי, קוראים לי מיטש {USERNAME}",
   "500chars": "500 תווים",
   "doNotShowThisDialog": "אל תציג בכניסה הבאה",
+  "chatCompactMode": "מצב צדדי",
+  "chatFullMode": "מצב מלא",
+  "minimize": "מזעור",
   "messageDot": "מנתח את הנתונים שלך, זה יכול לקחת מספר דקות",
   "thinkingPhrases": [
     "מנסה להבין...",

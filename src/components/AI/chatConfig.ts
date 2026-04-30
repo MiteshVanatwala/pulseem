@@ -17,6 +17,7 @@ export interface AIChatConfig {
   mascotWidgetImage: string;
   reduxSliceName: string;
   localStorageKey: string;
+  compactModeKey: string;
 }
 
 export const advisorConfig: AIChatConfig = {
@@ -37,6 +38,7 @@ export const advisorConfig: AIChatConfig = {
   mascotWidgetImage: MascotPointingImage,
   reduxSliceName: 'aiChat',
   localStorageKey: 'hideAIChatDialog',
+  compactModeKey: 'aiChatCompactMode',
 };
 
 export const supportConfig: AIChatConfig = {
@@ -59,4 +61,5 @@ export const supportConfig: AIChatConfig = {
   mascotWidgetImage: SupportMascotImage,
   reduxSliceName: 'supportChat',
   localStorageKey: 'hideSupportChatDialog',
+  compactModeKey: 'supportChatCompactMode',
 };

@@ -889,6 +889,9 @@
   "welcomeMessage": "Hi, my name is {USERNAME}",
   "500chars": "500 characters",
   "doNotShowThisDialog": "Do not show this dialog",
+  "chatCompactMode": "Compact mode",
+  "chatFullMode": "Full mode",
+  "minimize": "Minimize",
   "messageDot": "Analyzing your data, it may take a few minutes",
   "thinkingPhrases": [
     "Investigating...",

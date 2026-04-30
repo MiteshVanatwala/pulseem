@@ -1,18 +1,23 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Paper, Box } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { StateType } from '../../Models/StateTypes';
 import { toggleChat, loadSessionMessages, setAIIconStatus, openAIChat } from '../../redux/reducers/aiChatSlice';
-import { toggleSupportChat, loadSupportSessionMessages, setSupportAIIconStatus, openSupportChat, escapeToAgent, pollAgentMessages } from '../../redux/reducers/supportChatSlice';
+import {
+  toggleSupportChat, loadSupportSessionMessages, setSupportAIIconStatus,
+  openSupportChat, escapeToAgent, pollAgentMessages
+} from '../../redux/reducers/supportChatSlice';
 import ChatHeader from './ChatHeader';
 import MessageList from './MessageList';
 import InputArea from './InputArea';
 import { useTypewriter } from '../../hooks/useTypewriter';
 import { useTranslation } from 'react-i18next';
-import { PulseemFeatures } from '../../model/PulseemFields/Fields';
 import PresetQuestions from './PresetQuestions';
 import { AIChatConfig, advisorConfig } from './chatConfig';
+
+const COMPACT_WIDTH = 360;
+const COMPACT_HEIGHT = 510;
 
 const useStyles = makeStyles((theme) => ({
   PolyWidget: {
@@ -46,16 +51,32 @@ const useStyles = makeStyles((theme) => ({
       width: '90%'
     }
   },
-  Polycontent: {
-    flex: 1,
-    display: 'flex',
-    flexDirection: 'column',
+  PolyWidgetCompact: {
+    width: `${COMPACT_WIDTH}px !important`,
+    height: `${COMPACT_HEIGHT}px !important`,
+    maxHeight: `${COMPACT_HEIGHT}px !important`,
+    maxWidth: `${COMPACT_WIDTH}px !important`,
+    top: 'auto !important',
+    left: 'auto !important',
+    // position controlled by inline style when compact
   },
   PolywidgetOpen: {
     transform: 'translate(-50%, -50%) scale(1)',
     opacity: 1,
     pointerEvents: 'auto',
     zIndex: 1299,
+  },
+  PolyWidgetCompactOpen: {
+    transform: 'none !important',
+    opacity: 1,
+    pointerEvents: 'auto',
+    zIndex: 1299,
+  },
+  Polycontent: {
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    overflow: 'hidden',
   },
   Polybackdrop: {
     position: 'fixed',
@@ -149,12 +170,8 @@ const useStyles = makeStyles((theme) => ({
   },
   '@global': {
     '@keyframes cursor-blink': {
-      '0%': {
-        opacity: 1
-      },
-      '50%': {
-        opacity: 0
-      }
+      '0%': { opacity: 1 },
+      '50%': { opacity: 0 }
     }
   }
 }));
@@ -162,6 +179,11 @@ const useStyles = makeStyles((theme) => ({
 interface AIChatWidgetProps {
   config?: AIChatConfig;
 }
+
+const defaultCompactPos = () => ({
+  x: Math.max(0, window.innerWidth - COMPACT_WIDTH - 24),
+  y: 80,
+});
 
 const AIChatWidget: React.FC<AIChatWidgetProps> = ({ config = advisorConfig }) => {
   const { isRTL } = useSelector((state: any) => state.core);
@@ -178,7 +200,53 @@ const AIChatWidget: React.FC<AIChatWidgetProps> = ({ config = advisorConfig }) =
   const { isOpen, messages, totalMessagesForUserCount, isEscalated, suggestAgent, lastAgentMessageId } = chatState;
   const { accountFeatures } = useSelector((state: StateType) => state.common);
 
-  // useRef keeps the cursor fresh inside the interval without restarting it on every poll
+  // ─── Compact mode ──────────────────────────────────────────────────────────
+  const [isCompact, setIsCompact] = useState<boolean>(() =>
+    localStorage.getItem(config.compactModeKey) === 'true'
+  );
+  const [compactPos, setCompactPos] = useState(defaultCompactPos);
+
+  const isDragging = useRef(false);
+  const dragOffset = useRef({ x: 0, y: 0 });
+
+  const handleHeaderMouseDown = useCallback((e: React.MouseEvent) => {
+    if (!isCompact) return;
+    isDragging.current = true;
+    dragOffset.current = { x: e.clientX - compactPos.x, y: e.clientY - compactPos.y };
+    e.preventDefault();
+  }, [isCompact, compactPos]);
+
+  useEffect(() => {
+    const onMouseMove = (e: MouseEvent) => {
+      if (!isDragging.current) return;
+      setCompactPos({
+        x: Math.max(0, Math.min(window.innerWidth - COMPACT_WIDTH, e.clientX - dragOffset.current.x)),
+        y: Math.max(0, Math.min(window.innerHeight - 60, e.clientY - dragOffset.current.y)),
+      });
+    };
+    const onMouseUp = () => { isDragging.current = false; };
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+    return () => {
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+    };
+  }, []);
+
+  const handleToggleCompact = () => {
+    const next = !isCompact;
+    setIsCompact(next);
+    if (next) setCompactPos(defaultCompactPos());
+    try { localStorage.setItem(config.compactModeKey, next ? 'true' : 'false'); } catch (_) {}
+  };
+
+  // ─── Minimize — saves preference ──────────────────────────────────────────
+  const handleMinimize = () => {
+    try { localStorage.setItem(config.localStorageKey, 'true'); } catch (_) {}
+    dispatch(isSupport ? toggleSupportChat() : toggleChat());
+  };
+
+  // ─── Agent message cursor ref ─────────────────────────────────────────────
   const lastAgentMessageIdRef = useRef(lastAgentMessageId);
   useEffect(() => {
     lastAgentMessageIdRef.current = lastAgentMessageId;
@@ -192,68 +260,42 @@ const AIChatWidget: React.FC<AIChatWidgetProps> = ({ config = advisorConfig }) =
     startTyping: isOpen
   });
 
-  // Poll for new agent messages (TypeID=4) every 5s when escalated and widget is open.
-  // Cursor (lastAgentMessageIdRef) is read via ref so the interval is never restarted
-  // just because a new message moved the cursor forward.
+  // ─── Poll for agent messages every 5s ────────────────────────────────────
   useEffect(() => {
     if (!isSupport || !isEscalated || !isOpen) return;
-
     const intervalId = setInterval(() => {
       dispatch(pollAgentMessages(lastAgentMessageIdRef.current));
     }, 5000);
-
     return () => clearInterval(intervalId);
   }, [isSupport, isEscalated, isOpen, dispatch]);
 
-  const handleWidgetClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-  };
+  const handleWidgetClick = (e: React.MouseEvent) => e.stopPropagation();
 
   const handleEscalate = () => {
-    if (isSupport && !isEscalated) {
-      dispatch(escapeToAgent());
-    }
+    if (isSupport && !isEscalated) dispatch(escapeToAgent());
   };
 
-  const handleBackdropClick = () => {
-    // dispatch(toggleChat());
-  };
-
+  // ─── Auto-focus + icon status on open ────────────────────────────────────
   useEffect(() => {
     if (isOpen) {
-      setTimeout(() => {
-        inputAreaRef.current?.focus();
-      }, 300);
-
+      setTimeout(() => { inputAreaRef.current?.focus(); }, 300);
       if (messages.length === 0) {
-        if (isSupport) {
-          dispatch(setSupportAIIconStatus(1));
-        } else {
-          dispatch(setAIIconStatus(1));
-        }
+        dispatch(isSupport ? setSupportAIIconStatus(1) : setAIIconStatus(1));
       }
     }
   }, [isOpen]);
 
+  // ─── Initialize / auto-open ───────────────────────────────────────────────
   useEffect(() => {
     const initializeChat = async () => {
       if (totalMessagesForUserCount === -1) {
-        if (isSupport) {
-          await dispatch(loadSupportSessionMessages());
-        } else {
-          await dispatch(loadSessionMessages());
-        }
+        await dispatch(isSupport ? loadSupportSessionMessages() : loadSessionMessages());
       }
-      // Auto-open for feature 69 (marketing advisor) and feature 73 (support)
       if (totalMessagesForUserCount === 0 && messages.length === 1 && username) {
         try {
           const hideDialog = localStorage.getItem(config.localStorageKey);
           if (hideDialog !== 'true' && !isOpen) {
-            if (isSupport) {
-              dispatch(openSupportChat());
-            } else {
-              dispatch(openAIChat());
-            }
+            dispatch(isSupport ? openSupportChat() : openAIChat());
           }
         } catch (error) {
           console.error('Error sending initial message:', error);
@@ -262,7 +304,9 @@ const AIChatWidget: React.FC<AIChatWidgetProps> = ({ config = advisorConfig }) =
     };
 
     const featureKey = String(config.featureId);
-    if (totalMessagesForUserCount < 1 && username && accountFeatures !== null && accountFeatures?.indexOf(featureKey) !== -1) {
+    if (totalMessagesForUserCount < 1 && username &&
+        accountFeatures !== null &&
+        accountFeatures?.indexOf(featureKey) !== -1) {
       initializeChat();
     }
   }, [dispatch, messages, username, totalMessagesForUserCount]);
@@ -270,54 +314,79 @@ const AIChatWidget: React.FC<AIChatWidgetProps> = ({ config = advisorConfig }) =
   const featureKey = String(config.featureId);
   if (accountFeatures === null || accountFeatures?.indexOf(featureKey) === -1) return <></>;
 
+  const compactStyle: React.CSSProperties | undefined = isCompact
+    ? { position: 'fixed', top: compactPos.y, left: compactPos.x }
+    : undefined;
+
+  const openClass = isOpen
+    ? (isCompact ? classes.PolyWidgetCompactOpen : classes.PolywidgetOpen)
+    : '';
+
   return (
     <div className={classes.PolywidgetContainer}>
+      {/* Backdrop only in full (non-compact) mode */}
+      {!isCompact && (
         <div
           className={`${classes.Polybackdrop} ${isOpen ? classes.PolybackdropOpen : ''}`}
-          onClick={handleBackdropClick}
+          onClick={() => {}}
         />
-        <Paper
-            className={`${classes.PolyWidget} ${isOpen ? classes.PolywidgetOpen : ''}`}
-            elevation={5}
-            onClick={handleWidgetClick}
-        >
-            <ChatHeader config={config} />
-            <Box className={classes.Polycontent}>
-              <MessageList config={config} />
-              {isSupport && !isEscalated && (totalMessagesForUserCount >= 2 || suggestAgent) && (
-                <Box style={{ padding: '6px 16px', textAlign: 'center' }}>
-                  <button
-                    onClick={handleEscalate}
-                    style={{
-                      background: 'none',
-                      border: '1px solid #dd2339',
-                      color: '#dd2339',
-                      borderRadius: '16px',
-                      padding: '4px 14px',
-                      fontSize: '0.8rem',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    {t('common.contactAgent')}
-                  </button>
-                </Box>
-              )}
-              {isSupport && isEscalated && (
-                <Box style={{ padding: '6px 16px', textAlign: 'center', fontSize: '0.8rem', color: '#888' }}>
-                  {t('common.connectedToAgent')}
-                </Box>
-              )}
-              <PresetQuestions config={config} />
+      )}
+      <Paper
+        className={`${classes.PolyWidget} ${isCompact ? classes.PolyWidgetCompact : ''} ${openClass}`}
+        style={compactStyle}
+        elevation={5}
+        onClick={handleWidgetClick}
+      >
+        <ChatHeader
+          config={config}
+          isCompact={isCompact}
+          onMinimize={handleMinimize}
+          onToggleCompact={handleToggleCompact}
+          onHeaderMouseDown={handleHeaderMouseDown}
+        />
+        <Box className={classes.Polycontent}>
+          <MessageList config={config} />
+
+          {isSupport && !isEscalated && (totalMessagesForUserCount >= 2 || suggestAgent) && (
+            <Box style={{ padding: '6px 16px', textAlign: 'center' }}>
+              <button
+                onClick={handleEscalate}
+                style={{
+                  background: 'none',
+                  border: '1px solid #dd2339',
+                  color: '#dd2339',
+                  borderRadius: '16px',
+                  padding: '4px 14px',
+                  fontSize: '0.8rem',
+                  cursor: 'pointer',
+                }}
+              >
+                {t('common.contactAgent')}
+              </button>
             </Box>
-            <InputArea ref={inputAreaRef} config={config} />
-            <div className={classes.PolymascotImage}>
-              <div className="message">
-                {displayedText}
-                {isTyping && <span className={classes.Polycursor} />}
-              </div>
-              <img src={config.mascotWidgetImage} alt="Pulseem Mascot" />
+          )}
+
+          {isSupport && isEscalated && (
+            <Box style={{ padding: '6px 16px', textAlign: 'center', fontSize: '0.8rem', color: '#888' }}>
+              {t('common.connectedToAgent')}
+            </Box>
+          )}
+
+          <PresetQuestions config={config} />
+        </Box>
+        <InputArea ref={inputAreaRef} config={config} />
+
+        {/* Mascot hidden in compact mode */}
+        {!isCompact && (
+          <div className={classes.PolymascotImage}>
+            <div className="message">
+              {displayedText}
+              {isTyping && <span className={classes.Polycursor} />}
             </div>
-        </Paper>
+            <img src={config.mascotWidgetImage} alt="Pulseem Mascot" />
+          </div>
+        )}
+      </Paper>
     </div>
   );
 };
