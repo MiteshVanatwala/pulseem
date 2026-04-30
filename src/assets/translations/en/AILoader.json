@@ -1,10 +1,12 @@
 {
   "step1": "Analyzing your style preferences",
   "step2": "Generating newsletter layout",
+  "step2LandingPage": "Generating Landing Page layout",
   "step3": "Creating compelling content",
   "step4": "Analyzing Optimizing for engagement",
   "step5": "Finalizing your design",
   "creatingNewsletter": "Creating Your Newsletter",
+  "creatingLandingPage": "Creating Your Landing Page",
   "completed": "Complete",
   "poweredBy": "Powered by AI",
   "Pulseem": "Pulseem"

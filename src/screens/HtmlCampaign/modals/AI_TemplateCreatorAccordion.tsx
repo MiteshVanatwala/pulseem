@@ -55,7 +55,7 @@ const useTooltipStyles = makeStyles((theme) => ({
   }
 }));
 
-const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }: AITemplateCreatorProps) => {
+const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore, loaderText, loaderSteps }: AITemplateCreatorProps) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const tooltipClasses = useTooltipStyles();
@@ -1022,7 +1022,7 @@ const AITemplateCreatorAccordion = ({ classes, campaignId, onUpdate, onRestore }
       />
       {renderToast()}
       {renderDialog()}
-      <AILoader isVisible={showAILoader} key={'loaderAi'} text={t('AILoader.creatingNewsletter')} />
+      <AILoader isVisible={showAILoader} key={'loaderAi'} text={loaderText ?? t('AILoader.creatingNewsletter')} steps={loaderSteps} />
       {showTierPlans && <TierPlans
 					classes={classes}
 					isOpen={showTierPlans}

@@ -15,10 +15,13 @@ import { getById, deleteLPUserBlock, deleteLandingPage, getAllLPTemplatesBySubac
 import { initClientForm, initExtraDataField, initLandingPages } from './helper/MigratePulseemData';
 import { BeeConfig, DialogType, DefaultContent } from './helper/config';
 import { IoMdImages } from 'react-icons/io';
+import { GiMagicBroom } from 'react-icons/gi';
+import { BsMagic } from 'react-icons/bs';
 import Gallery from '../../components/Gallery/Gallery.component';
 import { PulseemFeatures, PulseemFolderType } from "../../model/PulseemFields/Fields";
 import { getFileGallery } from '../../redux/reducers/gallerySlice';
 import { BiSave } from 'react-icons/bi'
+import AITemplateCreatorAccordion from '../HtmlCampaign/modals/AI_TemplateCreatorAccordion';
 // User input controls
 import { EditRow } from './components/ContentDialogs'
 // Generic modal component with event hooks
@@ -601,6 +604,25 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       setSilentSave(false)
     }, 2000);
   }
+  const loadNewTemplate = async (templateData: any) => {
+    setLoader(true);
+    try {
+      if (editorRef.current) {
+        const templateJson = typeof templateData === 'string'
+          ? JSON.parse(templateData)
+          : templateData;
+        //@ts-ignore
+        await editorRef.current.load(templateJson);
+        saveDesign(false, null, false);
+      }
+    } catch (error) {
+      console.error('Error loading template:', error);
+      setToastMessage({ severity: 'error', color: 'error', message: 'Failed to load template', showAnimtionCheck: false } as any);
+    } finally {
+      setLoader(false);
+    }
+  };
+
   const onAutoSavePage = debounce((showGroupPopup: boolean = false) => {
     if (showGroupPopup) {
       saveRef.current = {
@@ -846,6 +868,18 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       >
         {t('common.next')}
       </Button>}
+      {accountFeatures?.indexOf(PulseemFeatures.NewsletterAI) > -1 && (
+        // @ts-ignore
+        <Button
+          key="aiButton"
+          onClick={() => { setDialogType({ type: 'AIDialog' }) }}
+          variant='contained'
+          size='small'
+          className={clsx(classes.btn, classes.btnRounded, classes.redButton)}
+          style={{ margin: '8px' }}
+          startIcon={<GiMagicBroom />}
+        >{t('campaigns.aiDeisgner')}</Button>
+      )}
     </>
   }
   const renderButtons = () => {
@@ -1256,6 +1290,40 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
     )
   })
 
+  const AI_Dialog = () => {
+    return {
+      showDivider: false,
+      icon: <BsMagic />,
+      title: t("AI.popup.designWithAI"),
+      content: (
+        <AITemplateCreatorAccordion
+          classes={classes}
+          campaignId={moduleId}
+          loaderText={t('AILoader.creatingLandingPage')}
+          loaderSteps={[
+            { text: t('AILoader.step1'), icon: "🎨" },
+            { text: t('AILoader.step2LandingPage'), icon: "📐" },
+            { text: t('AILoader.step3'), icon: "✍️" },
+            { text: t('AILoader.step4'), icon: "🚀" },
+            { text: t('AILoader.step5'), icon: "✨" }
+          ]}
+          onRestore={(templateData: any) => {
+            if (templateData) {
+              setDialogType(null);
+              loadNewTemplate(templateData);
+            }
+          }}
+          onUpdate={(status: string, templateData: any) => {
+            if (status === 'success' && templateData) {
+              setDialogType(null);
+              loadNewTemplate(templateData);
+            }
+          }} />
+      ),
+      showDefaultButtons: false
+    };
+  }
+
   const renderDialog = () => {
     const { type, data } = dialogType || {}
     let currentDialog = {};
@@ -1278,7 +1346,9 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       currentDialog = renderTemplateExistsDialog(data);
     } else if (type === 'tier') {
 			currentDialog = getTierValidationDialog();
-		}
+		} else if (type === 'AIDialog') {
+      currentDialog = AI_Dialog();
+    }
     if (type) {
       return (
         dialogType && <BaseDialog
