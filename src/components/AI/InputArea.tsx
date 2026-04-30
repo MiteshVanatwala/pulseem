@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme) => ({
   inputArea: {
     padding: '8px 16px',
     backgroundColor: '#ffffff',
-    borderTop: `1px solid ${theme.palette.divider}`,
+    border: `1px solid ${theme.palette.divider}`,
     flexDirection: 'column',
   },
   inputRow: {
@@ -200,7 +200,12 @@ const InputArea: React.ForwardRefRenderFunction<InputAreaHandle, InputAreaProps>
                 </span>
               </Tooltip>
               {contactAgentDisabled && (
-                <Tooltip title={t('common.contactAgentTooltip')} arrow placement="top">
+                <Tooltip
+                  title={t('common.contactAgentTooltip')}
+                  arrow
+                  placement="top"
+                  PopperProps={{ style: { zIndex: 9999 } }}
+                >
                   <span style={{ display: 'inline-flex', alignItems: 'center', cursor: 'help' }}>
                     <InfoOutlinedIcon style={{ fontSize: '0.95rem', color: '#999' }} />
                   </span>
