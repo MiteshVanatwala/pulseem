@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Box, Typography, Button, Grid, TextField, FormControlLabel, Checkbox, Accordion, AccordionSummary, AccordionDetails, Select, MenuItem, Divider } from "@material-ui/core";
+import { Box, Typography, Button, Grid, TextField, FormControlLabel, Checkbox, Accordion, AccordionSummary, AccordionDetails, Select, MenuItem, Divider, Switch } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import clsx from "clsx";
 import { useDispatch, useSelector } from "react-redux";
@@ -38,6 +38,7 @@ const Shopify = ({ classes }: any) => {
   const [dialogType, setDialogType] = useState<{
     type: string;
   } | null>(null);
+  const [pendingToggle, setPendingToggle] = useState<string | null>(null);
   const [copyStatus, setCopyStatus] = useState<boolean>(false);
   const [errors, setErrors] = useState({
     api_key: '',
@@ -60,7 +61,10 @@ const Shopify = ({ classes }: any) => {
     PurchaseEventActive: false,
     AbandonedEventActive: false,
     UnsubscribePreferenceTypeID: 0,
-    isSyncUnsubscribes: false,
+    EcommerceSyncOptionsID: 0,
+    IsSyncRemovals: false,
+    IsSyncActivations: false,
+    IsInsertToGroupsActive: false,
     Groups: {} as IntegrationGroups
   } as ShopifyModel)
   const renderToast = () => {
@@ -224,7 +228,15 @@ const Shopify = ({ classes }: any) => {
       case 201: {
         const shopifyResponse = response?.payload?.Data as ShopifyModel;
         if (shopifyResponse.api_access_token && shopifyResponse.api_key && shopifyResponse.store_name) {
-          setSettings(response?.payload?.Data as ShopifyModel);
+          const syncValue = shopifyResponse.EcommerceSyncOptionsID || shopifyResponse.ActivationPreferenceTypeID || 0;
+          setSettings({
+            ...shopifyResponse,
+            UnsubscribePreferenceTypeID: shopifyResponse.UnsubscribePreferenceTypeID || 0,
+            EcommerceSyncOptionsID: syncValue,
+            ActivationPreferenceTypeID: syncValue,
+            IsSyncRemovals: (shopifyResponse.UnsubscribePreferenceTypeID || 0) > 0,
+            IsSyncActivations: syncValue > 0,
+          });
           setAuthenticated(true);
           setHideOldIntegration(false);
           setHasShopifyIntegration(true);
@@ -261,7 +273,9 @@ const Shopify = ({ classes }: any) => {
           PurchaseEventActive: false,
           AbandonedEventActive: false,
           UnsubscribePreferenceTypeID: 0,
-          isSyncUnsubscribes: false,
+          ActivationPreferenceTypeID: 0,
+          IsSyncRemovals: false,
+          IsSyncActivations: false,
           UiApi_ApiKey: '',
           Groups: {},
           CreateDate: '',
@@ -460,11 +474,54 @@ const Shopify = ({ classes }: any) => {
     }
   }
 
+  const syncDisclaimerDialog = () => {
+    return {
+      title: t("common.notice"),
+      showDivider: false,
+      paperStyle: classes.maxWidth540,
+      confirmText: 'common.confirm',
+      cancelText: 'common.cancel',
+      onConfirm: () => {
+        if (pendingToggle) {
+          const update: any = {
+            ...settings,
+            [pendingToggle]: true,
+          };
+          if (pendingToggle === 'IsSyncRemovals') {
+            update.UnsubscribePreferenceTypeID = settings.UnsubscribePreferenceTypeID || 3;
+          } else if (pendingToggle === 'IsSyncActivations') {
+            const val = settings.EcommerceSyncOptionsID || settings.ActivationPreferenceTypeID || 3;
+            update.EcommerceSyncOptionsID = val;
+            update.ActivationPreferenceTypeID = val;
+          }
+          setSettings(update);
+        }
+        setDialogType(null);
+        setPendingToggle(null);
+      },
+      onClose: () => {
+        setDialogType(null);
+        setPendingToggle(null);
+      },
+      content: (
+        <Box>
+          <Typography className={classes.f16}>
+            {pendingToggle === 'IsInsertToGroupsActive'
+              ? RenderHtml(t('integrations.shopify.insertToGroupsDisclaimer'))
+              : RenderHtml(t('integrations.shopify.syncDisclaimerText'))}
+          </Typography>
+        </Box>
+      )
+    }
+  }
+
   const renderDialog = () => {
     const { type } = dialogType || {}
     let currentDialog: any = {};
     if (type === 'scriptImplementation') {
       currentDialog = scriptImplementationDialog();
+    } else if (type === 'syncDisclaimer') {
+      currentDialog = syncDisclaimerDialog();
     }
 
     if (type) {
@@ -708,214 +765,293 @@ const Shopify = ({ classes }: any) => {
             {
               isAuthenticated && !hideOldIntegration && (
                 <Box className={classes.pt30}>
-                  <Typography className={clsx(classes.managementTitle, classes.f22, classes.pb15, classes.bold)}>
-                    {t('integrations.shopify.insertClientToGroup')}
-                  </Typography>
-                  <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.pb15)}>
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={settings.RegisterEventActive}
-                          onChange={(event) =>
-                            setSettings({
-                              ...settings,
-                              RegisterEventActive: event.target.checked,
-                              Groups: {
-                                ...settings.Groups,
-                                RegisterGroups: event.target.checked ? settings?.Groups?.RegisterGroups : []
+                  <Accordion defaultExpanded={settings.RegisterEventActive || settings.PurchaseEventActive || settings.AbandonedEventActive} key={'acc_insert_groups'}>
+                    <AccordionSummary
+                      expandIcon={<ExpandMoreIcon style={{ color: '#000' }} />}
+                      className={classes.accordionSummary}
+                      style={{ backgroundColor: '#F0F5FF' }}
+                    >
+                      <Typography className={classes.bold}>
+                        {t('integrations.shopify.insertToGroupsTitle')}
+                      </Typography>
+                    </AccordionSummary>
+                    <AccordionDetails className={classes.accordionDetails}>
+                      <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock)}>
+                        <Grid item xs={12} className={classes.pt10}>
+                          <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.pb10)}>
+                            <FormControlLabel
+                              control={
+                                <Checkbox
+                                  checked={settings.RegisterEventActive}
+                                  onChange={(event) =>
+                                    setSettings({
+                                      ...settings,
+                                      RegisterEventActive: event.target.checked,
+                                      Groups: {
+                                        ...settings.Groups,
+                                        RegisterGroups: event.target.checked ? settings?.Groups?.RegisterGroups : []
+                                      }
+                                    })
+                                  }
+                                  name="signup"
+                                  color="primary"
+                                />
                               }
-                            })
-                          }
-                          name="signup"
-                          color="primary"
-                        />
-                      }
-                      label={t('integrations.shopify.siteSignUp')}
-                    />
-                    <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.shopifySettingMultiSelect)}>
-                      <Box className={clsx('group-dropdown', !settings.RegisterEventActive ? classes.disabled : '')}>
-                        <GroupTags
-                          className='group-select'
-                          groupSelected={settings.Groups?.RegisterGroups || []}
-                          classes={classes}
-                          title={'siteTracking.typeGroupName'}
-                          dropdown
-                          dropDownProps={{
-                            onChange: (e: any, val: any) => {
-                              setSettings({
-                                ...settings,
-                                Groups: {
-                                  ...settings.Groups,
-                                  RegisterGroups: val.reduce((prevVal: any, newVal: any) => [...prevVal, newVal.GroupID], [])
-                                }
-                              })
-                            },
-                            selectedGroups: settings.Groups?.RegisterGroups || [],
-                            groups: []
-                          }}
-                        />
-                      </Box>
-                    </Grid>
-                  </Grid>
+                              label={t('integrations.siteSignUp')}
+                            />
+                            <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.shopifySettingMultiSelect)}>
+                              <Box className={clsx('group-dropdown', !settings.RegisterEventActive ? classes.disabled : '')}>
+                                <GroupTags
+                                  className='group-select'
+                                  groupSelected={settings.Groups?.RegisterGroups || []}
+                                  classes={classes}
+                                  title={'siteTracking.typeGroupName'}
+                                  dropdown
+                                  dropDownProps={{
+                                    onChange: (e: any, val: any) => {
+                                      setSettings({
+                                        ...settings,
+                                        Groups: {
+                                          ...settings.Groups,
+                                          RegisterGroups: val.reduce((prevVal: any, newVal: any) => [...prevVal, newVal.GroupID], [])
+                                        }
+                                      })
+                                    },
+                                    selectedGroups: settings.Groups?.RegisterGroups || [],
+                                    groups: []
+                                  }}
+                                />
+                              </Box>
+                            </Grid>
+                          </Grid>
 
-                  <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.pb15)}>
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={settings.PurchaseEventActive}
-                          onChange={(event) =>
-                            setSettings({
-                              ...settings,
-                              PurchaseEventActive: event.target.checked,
-                              Groups: {
-                                ...settings.Groups,
-                                PurchaseGroups: event.target.checked ? settings?.Groups?.PurchaseGroups : []
+                          <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.pb10)}>
+                            <FormControlLabel
+                              control={
+                                <Checkbox
+                                  checked={settings.PurchaseEventActive}
+                                  onChange={(event) =>
+                                    setSettings({
+                                      ...settings,
+                                      PurchaseEventActive: event.target.checked,
+                                      Groups: {
+                                        ...settings.Groups,
+                                        PurchaseGroups: event.target.checked ? settings?.Groups?.PurchaseGroups : []
+                                      }
+                                    })
+                                  }
+                                  name="signup"
+                                  color="primary"
+                                />
                               }
-                            })
-                          }
-                          name="signup"
-                          color="primary"
-                        />
-                      }
-                      label={t('integrations.purchase')}
-                    />
-                    <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.shopifySettingMultiSelect)}>
-                      <Box className={clsx('group-dropdown', !settings.PurchaseEventActive ? classes.disabled : '')}>
-                        <GroupTags
-                          className='group-select'
-                          groupSelected={settings.Groups?.PurchaseGroups || []}
-                          classes={classes}
-                          title={'siteTracking.typeGroupName'}
-                          dropdown
-                          dropDownProps={{
-                            onChange: (e: any, val: any) => {
-                              setSettings({
-                                ...settings,
-                                Groups: {
-                                  ...settings.Groups,
-                                  PurchaseGroups: val.reduce((prevVal: any, newVal: any) => [...prevVal, newVal.GroupID], [])
-                                }
-                              })
-                            },
-                            selectedGroups: settings.Groups?.PurchaseGroups || [],
-                            groups: []
-                          }}
-                        />
-                      </Box>
-                    </Grid>
-                  </Grid>
+                              label={t('integrations.purchase')}
+                            />
+                            <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.shopifySettingMultiSelect)}>
+                              <Box className={clsx('group-dropdown', !settings.PurchaseEventActive ? classes.disabled : '')}>
+                                <GroupTags
+                                  className='group-select'
+                                  groupSelected={settings.Groups?.PurchaseGroups || []}
+                                  classes={classes}
+                                  title={'siteTracking.typeGroupName'}
+                                  dropdown
+                                  dropDownProps={{
+                                    onChange: (e: any, val: any) => {
+                                      setSettings({
+                                        ...settings,
+                                        Groups: {
+                                          ...settings.Groups,
+                                          PurchaseGroups: val.reduce((prevVal: any, newVal: any) => [...prevVal, newVal.GroupID], [])
+                                        }
+                                      })
+                                    },
+                                    selectedGroups: settings.Groups?.PurchaseGroups || [],
+                                    groups: []
+                                  }}
+                                />
+                              </Box>
+                            </Grid>
+                          </Grid>
 
-                  <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.pb15)}>
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={settings.AbandonedEventActive}
-                          onChange={(event) =>
-                            setSettings({
-                              ...settings,
-                              AbandonedEventActive: event.target.checked,
-                              Groups: {
-                                ...settings.Groups,
-                                AbandonedGroups: event.target.checked ? settings?.Groups?.AbandonedGroups : []
+                          <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.pb10)}>
+                            <FormControlLabel
+                              control={
+                                <Checkbox
+                                  checked={settings.AbandonedEventActive}
+                                  onChange={(event) =>
+                                    setSettings({
+                                      ...settings,
+                                      AbandonedEventActive: event.target.checked,
+                                      Groups: {
+                                        ...settings.Groups,
+                                        AbandonedGroups: event.target.checked ? settings?.Groups?.AbandonedGroups : []
+                                      }
+                                    })
+                                  }
+                                  name="signup"
+                                  color="primary"
+                                />
                               }
-                            })
-                          }
-                          name="signup"
-                          color="primary"
-                        />
-                      }
-                      label={t('integrations.cartAbandonment')}
-                    />
-                    <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.shopifySettingMultiSelect)}>
-                      <Box className={clsx('group-dropdown', !settings.AbandonedEventActive ? classes.disabled : '')}>
-                        <GroupTags
-                          className='group-select'
-                          groupSelected={settings.Groups?.AbandonedGroups || []}
-                          classes={classes}
-                          title={'siteTracking.typeGroupName'}
-                          dropdown
-                          dropDownProps={{
-                            onChange: (e: any, val: any) => {
-                              setSettings({
-                                ...settings,
-                                Groups: {
-                                  ...settings.Groups,
-                                  AbandonedGroups: val.reduce((prevVal: any, newVal: any) => [...prevVal, newVal.GroupID], [])
-                                }
-                              })
-                            },
-                            selectedGroups: settings.Groups?.AbandonedGroups || [],
-                            groups: []
-                          }}
-                        />
-                      </Box>
-                    </Grid>
-                  </Grid>
+                              label={t('integrations.cartAbandonment')}
+                            />
+                            <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.shopifySettingMultiSelect)}>
+                              <Box className={clsx('group-dropdown', !settings.AbandonedEventActive ? classes.disabled : '')}>
+                                <GroupTags
+                                  className='group-select'
+                                  groupSelected={settings.Groups?.AbandonedGroups || []}
+                                  classes={classes}
+                                  title={'siteTracking.typeGroupName'}
+                                  dropdown
+                                  dropDownProps={{
+                                    onChange: (e: any, val: any) => {
+                                      setSettings({
+                                        ...settings,
+                                        Groups: {
+                                          ...settings.Groups,
+                                          AbandonedGroups: val.reduce((prevVal: any, newVal: any) => [...prevVal, newVal.GroupID], [])
+                                        }
+                                      })
+                                    },
+                                    selectedGroups: settings.Groups?.AbandonedGroups || [],
+                                    groups: []
+                                  }}
+                                />
+                              </Box>
+                            </Grid>
+                          </Grid>
+                        </Grid>
+                      </Grid>
+                    </AccordionDetails>
+                  </Accordion>
 
-                  <Divider style={{ margin: "20px 0" }} />
-                  <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.pb15)}>
-                    <Grid item xs={12}>
-                      <FormControlLabel
-                        control={
-                          <Checkbox
-                            checked={settings.isSyncUnsubscribes || false}
-                            onChange={(event) =>
-                              setSettings({
-                                ...settings,
-                                isSyncUnsubscribes: event.target.checked,
-                                UnsubscribePreferenceTypeID: event.target.checked ? (settings.UnsubscribePreferenceTypeID || 3) : 0
-                              })
+                  <Accordion defaultExpanded={settings.IsSyncRemovals || settings.IsSyncActivations} key={'acc_sync_settings'}>
+                    <AccordionSummary
+                      expandIcon={<ExpandMoreIcon style={{ color: '#000' }} />}
+                      className={classes.accordionSummary}
+                      style={{ backgroundColor: '#F0F5FF', marginTop: '10px' }}
+                    >
+                      <Typography className={classes.bold}>
+                        {t('integrations.shopify.unsubscribeSyncTitle')}
+                      </Typography>
+                    </AccordionSummary>
+                    <AccordionDetails className={classes.accordionDetails}>
+                      <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.p10)}>
+                        <Grid item xs={12}>
+                          <FormControlLabel
+                            control={
+                              <Switch
+                                checked={settings.IsSyncRemovals || false}
+                                onChange={(event) => {
+                                  if (event.target.checked) {
+                                    setPendingToggle('IsSyncRemovals');
+                                    setDialogType({ type: 'syncDisclaimer' });
+                                  } else {
+                                    setSettings({
+                                      ...settings,
+                                      IsSyncRemovals: false,
+                                      UnsubscribePreferenceTypeID: 0
+                                    });
+                                  }
+                                }}
+                                name="syncRemovals"
+                                color="primary"
+                              />
                             }
-                            name="unsubscribeSync"
-                            color="primary"
+                            label={t('integrations.shopify.syncRemovalsLabel')}
                           />
-                        }
-                        label={t('integrations.shopify.unsubscribeSyncWithShopify')}
-                      />
-                    </Grid>
-                    
-                    {settings.isSyncUnsubscribes && (
-                      <>
-                        <Typography className={clsx(classes.managementTitle, classes.f18, classes.pb15, classes.pt15, classes.bold)}>
-                          {t('integrations.shopify.unsubscribeSync')}
-                        </Typography>
-                        <Grid item xs={12} className={clsx(classes.dblock, classes.pb5)}>
-                          <Typography>
-                            {t('integrations.shopify.unsubscribeSyncDesc')}
+                          <Typography className={clsx(classes.pb15, classes.f14)}>
+                            {t('integrations.shopify.syncRemovalsSubText')}
                           </Typography>
+                          {settings.IsSyncRemovals && (
+                            <Box className={classes.pb20}>
+                              <Typography className={classes.mb5}>{t('integrations.shopify.syncRemovalsBy')}</Typography>
+                              <Box className="group-dropdown">
+                                <Select
+                                  variant="outlined"
+                                  value={settings.UnsubscribePreferenceTypeID || 0}
+                                  onChange={(event) =>
+                                    setSettings({
+                                      ...settings,
+                                      UnsubscribePreferenceTypeID: event.target.value as number
+                                    })
+                                  }
+                                  className={classes.shopifySettingTextBox}
+                                  fullWidth
+                                  style={{ maxWidth: 400 }}
+                                >
+                                  <MenuItem value={1}>{t('integrations.shopify.emailToEmail')}</MenuItem>
+                                  <MenuItem value={2}>{t('integrations.shopify.cellphoneToCellphone')}</MenuItem>
+                                  <MenuItem value={3}>{t('integrations.shopify.bothEmailAndCellphone')}</MenuItem>
+                                </Select>
+                              </Box>
+                            </Box>
+                          )}
                         </Grid>
-                        <Grid item xs={12} className={clsx(classes.dblock, classes.ml30)}>
-                          <Typography className={classes.mb5}>{t('integrations.shopify.syncBy')}</Typography>
-                          <Select
-                            variant="outlined"
-                            value={settings.UnsubscribePreferenceTypeID || 3}
-                            onChange={(event) =>
-                              setSettings({
-                                ...settings,
-                                UnsubscribePreferenceTypeID: event.target.value as number
-                              })
+
+                        <Grid item xs={12} className={classes.pt20}>
+                          <FormControlLabel
+                            control={
+                              <Switch
+                                checked={settings.IsSyncActivations || false}
+                                onChange={(event) => {
+                                  if (event.target.checked) {
+                                    setPendingToggle('IsSyncActivations');
+                                    setDialogType({ type: 'syncDisclaimer' });
+                                  } else {
+                                    setSettings({
+                                      ...settings,
+                                      IsSyncActivations: false,
+                                      EcommerceSyncOptionsID: 0,
+                                      ActivationPreferenceTypeID: 0
+                                    });
+                                  }
+                                }}
+                                name="syncActivations"
+                                color="primary"
+                              />
                             }
-                            className={classes.shopifySettingTextBox}
-                          >
-                            <MenuItem value={1}>{t('integrations.shopify.emailToEmail')}</MenuItem>
-                            <MenuItem value={2}>{t('integrations.shopify.cellphoneToCellphone')}</MenuItem>
-                            <MenuItem value={3}>{t('integrations.shopify.bothEmailAndCellphone')}</MenuItem>
-                          </Select>
+                            label={t('integrations.shopify.syncActivationsLabel')}
+                          />
+                          <Typography className={clsx(classes.pb15, classes.f14)}>
+                            {t('integrations.shopify.syncActivationsSubText')}
+                          </Typography>
+                          {settings.IsSyncActivations && (
+                            <Box className={classes.pb20}>
+                              <Typography className={classes.mb5}>{t('integrations.shopify.syncActivationsBy')}</Typography>
+                              <Box className="group-dropdown">
+                                <Select
+                                  variant="outlined"
+                                  value={settings.EcommerceSyncOptionsID || 0}
+                                  onChange={(event) => {
+                                    const val = event.target.value as number;
+                                    setSettings({
+                                      ...settings,
+                                      EcommerceSyncOptionsID: val,
+                                      ActivationPreferenceTypeID: val
+                                    })
+                                  }}
+                                  className={classes.shopifySettingTextBox}
+                                  fullWidth
+                                  style={{ maxWidth: 400 }}
+                                >
+                                  <MenuItem value={1}>{t('integrations.shopify.emailToEmail')}</MenuItem>
+                                  <MenuItem value={2}>{t('integrations.shopify.cellphoneToCellphone')}</MenuItem>
+                                  <MenuItem value={3}>{t('integrations.shopify.bothEmailAndCellphone')}</MenuItem>
+                                </Select>
+                              </Box>
+                            </Box>
+                          )}
                         </Grid>
-                        
-                        <Grid item xs={12} className={clsx(classes.dblock, classes.ml30, classes.mt20)}>
-                          <Box style={{ padding: '10px 15px', backgroundColor: '#f9f9f9', borderLeft: '3px solid #ffcc00' }}>
-                            <Typography className={clsx(classes.bold, classes.mb5)}>
-                              &#9650; Please notice!
-                            </Typography>
-                            <Typography>
-                              {t('integrations.shopify.unsubscribeSyncNotice')}
-                            </Typography>
-                          </Box>
-                        </Grid>
-                      </>
-                    )}
-                  </Grid>
+                      </Grid>
+                    </AccordionDetails>
+                  </Accordion>
+
+                  {(settings.IsSyncRemovals || settings.IsSyncActivations) && (
+                    <Grid item xs={12} className={clsx(classes.dblock, classes.pt15, classes.ml30)}>
+                      <Typography className={clsx(classes.bold)}>
+                        {t('integrations.shopify.unsubscribeSyncDesc')}
+                      </Typography>
+                    </Grid>
+                  )}
 
                   {!!errors.group_not_selected && (
                     <Box className={clsx(classes.flex, classes.pbt15)}>

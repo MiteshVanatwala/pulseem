@@ -12,7 +12,11 @@ export interface ShopifyModel {
     PurchaseEventActive: boolean;
     AbandonedEventActive: boolean;
     UnsubscribePreferenceTypeID?: number;
-    isSyncUnsubscribes?: boolean;
+    ActivationPreferenceTypeID?: number; // Kept for backward compatibility if needed, but we will use the one below
+    EcommerceSyncOptionsID?: number;
+    IsSyncRemovals?: boolean;
+    IsSyncActivations?: boolean;
+    IsInsertToGroupsActive?: boolean;
     UiApi_ApiKey?: string;
     Groups?: IntegrationGroups;
     CreateDate?: Date | string;
