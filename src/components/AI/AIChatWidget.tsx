@@ -322,6 +322,25 @@ const AIChatWidget: React.FC<AIChatWidgetProps> = ({ config = advisorConfig }) =
     dispatch(isSupport ? toggleSupportChat() : toggleChat());
   };
 
+  // ─── Auto-open on mount (ALL users) ──────────────────────────────────────
+  // Runs once when username + accountFeatures are ready.
+  // Checks localStorageKey: null or 'false' → open; 'true' (user minimised) → stay closed.
+  // This replaces the old checkbox-only logic that only applied to brand-new users.
+  const autoOpenDoneRef = useRef(false);
+  useEffect(() => {
+    const featureKey = String(config.featureId);
+    if (!username || !accountFeatures || accountFeatures.indexOf(featureKey) === -1) return;
+    if (autoOpenDoneRef.current || isOpen) return;
+    autoOpenDoneRef.current = true;
+    try {
+      const hide = localStorage.getItem(config.localStorageKey);
+      if (hide !== 'true') {
+        dispatch(isSupport ? openSupportChat() : openAIChat());
+      }
+    } catch (_) {}
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [username, accountFeatures]);
+
   // ─── Agent message cursor ref ─────────────────────────────────────────────
   const lastAgentMessageIdRef = useRef(lastAgentMessageId);
   useEffect(() => {
@@ -361,33 +380,19 @@ const AIChatWidget: React.FC<AIChatWidgetProps> = ({ config = advisorConfig }) =
     }
   }, [isOpen]);
 
-  // ─── Initialize / auto-open ───────────────────────────────────────────────
+  // ─── Load session messages ────────────────────────────────────────────────
+  // Runs whenever we don't have a count yet (first mount or after session reset).
+  // Auto-open is handled separately above and does NOT live here.
   useEffect(() => {
-    const initializeChat = async () => {
-      if (totalMessagesForUserCount === -1) {
-        await dispatch(isSupport ? loadSupportSessionMessages() : loadSessionMessages());
-      }
-      if (totalMessagesForUserCount === 0 && messages.length === 1 && username) {
-        try {
-          const hideDialog = localStorage.getItem(config.localStorageKey);
-          if (hideDialog !== 'true' && !isOpen) {
-            dispatch(isSupport ? openSupportChat() : openAIChat());
-          }
-        } catch (error) {
-          console.error('Error sending initial message:', error);
-        }
-      }
-    };
-
     const featureKey = String(config.featureId);
     if (
-      totalMessagesForUserCount < 1 && username &&
+      totalMessagesForUserCount === -1 && username &&
       accountFeatures !== null &&
       accountFeatures?.indexOf(featureKey) !== -1
     ) {
-      initializeChat();
+      dispatch(isSupport ? loadSupportSessionMessages() : loadSessionMessages());
     }
-  }, [dispatch, messages, username, totalMessagesForUserCount]);
+  }, [dispatch, username, totalMessagesForUserCount, accountFeatures]);
 
   // ─── Guard: feature not enabled ──────────────────────────────────────────
   const featureKey = String(config.featureId);
