@@ -906,6 +906,10 @@
   "supportPreset3": "How do I set up an automation?",
   "supportPreset4": "I have an urgent issue 🚨",
   "startNewConversation": "Start New Conversation",
+  "contactAgent": "Skontaktuj z agentem",
+  "connectedToAgent": "Połączono z agentem",
+  "agentLabel": "Agent",
+  "contactAgentTooltip": "Dostępne po 2 wymianach Q&A",
   "tier": {
     "current": "Current Tier",
     "upgrade": "Upgrade Tier",
