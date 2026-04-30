@@ -6,7 +6,7 @@ import { StateType } from '../../Models/StateTypes';
 import { toggleChat, loadSessionMessages, setAIIconStatus, openAIChat } from '../../redux/reducers/aiChatSlice';
 import {
   toggleSupportChat, loadSupportSessionMessages, setSupportAIIconStatus,
-  openSupportChat, escapeToAgent, pollAgentMessages
+  openSupportChat, pollAgentMessages
 } from '../../redux/reducers/supportChatSlice';
 import ChatHeader from './ChatHeader';
 import MessageList from './MessageList';
@@ -66,10 +66,13 @@ const useStyles = makeStyles((theme) => ({
   // the inline style so that drag in both axes works correctly.
   // transform is reset by PolyWidgetCompactOpen below.
   PolyWidgetCompact: {
-    width:     `${COMPACT_WIDTH}px !important`,
-    maxWidth:  `${COMPACT_WIDTH}px !important`,
-    height:    `${COMPACT_HEIGHT}px !important`,
-    maxHeight: `${COMPACT_HEIGHT}px !important`,
+    width:           `${COMPACT_WIDTH}px !important`,
+    maxWidth:        `${COMPACT_WIDTH}px !important`,
+    height:          `${COMPACT_HEIGHT}px !important`,
+    maxHeight:       `${COMPACT_HEIGHT}px !important`,
+    backgroundColor: '#ffffff !important',
+    border:          '1px solid rgba(0,0,0,0.18) !important',
+    boxShadow:       '0 8px 32px rgba(0,0,0,0.28), 0 2px 8px rgba(0,0,0,0.12) !important',
   },
 
   // ── Compact-mode open state ───────────────────────────────────────────────
@@ -366,10 +369,6 @@ const AIChatWidget: React.FC<AIChatWidgetProps> = ({ config = advisorConfig }) =
 
   const handleWidgetClick = (e: React.MouseEvent) => e.stopPropagation();
 
-  const handleEscalate = () => {
-    if (isSupport && !isEscalated) dispatch(escapeToAgent());
-  };
-
   // ─── Auto-focus + icon status on open ────────────────────────────────────
   useEffect(() => {
     if (isOpen) {
@@ -434,34 +433,6 @@ const AIChatWidget: React.FC<AIChatWidgetProps> = ({ config = advisorConfig }) =
 
         <Box className={classes.Polycontent}>
           <MessageList config={config} />
-
-          {/* "Contact Agent" button — support only, pre-escalation */}
-          {isSupport && !isEscalated && (totalMessagesForUserCount >= 2 || suggestAgent) && (
-            <Box style={{ padding: '6px 16px', textAlign: 'center' }}>
-              <button
-                onClick={handleEscalate}
-                style={{
-                  background: 'none',
-                  border: '1px solid #dd2339',
-                  color: '#dd2339',
-                  borderRadius: '16px',
-                  padding: '4px 14px',
-                  fontSize: '0.8rem',
-                  cursor: 'pointer',
-                }}
-              >
-                {t('common.contactAgent')}
-              </button>
-            </Box>
-          )}
-
-          {/* "Connected to agent" — support only, post-escalation */}
-          {isSupport && isEscalated && (
-            <Box style={{ padding: '6px 16px', textAlign: 'center', fontSize: '0.8rem', color: '#888' }}>
-              {t('common.connectedToAgent')}
-            </Box>
-          )}
-
           <PresetQuestions config={config} />
         </Box>
 
