@@ -404,6 +404,15 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 							: variable?.VariableValue + '?ref=##ClientIDEnc##',
 					};
 				}
+
+				// Bug Fix PR-3511: Bake safety spaces into the Unsubscribe Link value at the state level
+				if (variable.VariableValue === '##WHATSAPPUnsubscribelink##') {
+					return {
+						...variable,
+						VariableValue: ' ##WHATSAPPUnsubscribelink## '
+					};
+				}
+
 				return variable;
 			} else {
 				if (
@@ -576,11 +585,23 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		let updatedVariables = getDynamicFields(tagData?.children, true);
 		const highlightVariables = (
 			<>
-				{updatedVariables?.map((variable, index) => (
-					variable === '\n'
-						? <br />
+				{updatedVariables?.map((variable, index) => {
+					const vIndex = Number(variable?.replace(/[{}]/g, ''));
+					const matchedVariable = updatedDynamicVariable?.find(
+						(dynamicVariable: updatedVariable) =>
+							dynamicVariable?.VariableIndex === vIndex
+					);
+					const isUnsubscribe = matchedVariable?.VariableValue === '##WHATSAPPUnsubscribelink##';
+
+					return variable === '\n'
+						? <br key={index} />
 						: <strong
 							key={index}
+							style={{ 
+								margin: '0 5px',
+								display: 'inline-block',
+								verticalAlign: 'bottom'
+							}}
 							className={clsx(
 								classes.whatsappCampainHighlightText,
 								`${isUpdatedVaraiable(variable) && 'updated'}`
@@ -590,7 +611,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 								? getUpdatedVariableValue(variable)
 								: variable}
 						</strong>
-				))}
+				})}
 			</>
 		);
 		return highlightVariables;
@@ -657,10 +678,8 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		switch (lang) {
 			case 'he':
 				return authenticationTypes.AUTHENTICATIONHEBREW;
-
 			case 'pl':
 				return authenticationTypes.AUTHENTICATIONPOLSKI;
-		
 			case 'en':
 			default:
 				return authenticationTypes.AUTHENTICATIONEN;
@@ -976,8 +995,8 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		if (savedTemplateData && savedTemplateData?.Data?.types) {
 			reqData.Variables = adjustTemplateVariablesForLink(
 				savedTemplateData?.Data?.types,
-				formatUpdatedDynamicVariable(updatedDynamicVariable),
-				templateCategory === 3 ? `${authenticationMockTemplate[getAuthTemplate(savedTemplateData.Language || '')].body}` : ''
+				reqData.Variables,
+				templateCategory === 3 ? `${authenticationMockTemplate[getAuthTemplate(savedTemplateData.Language || '')].body}` : templateData.templateText
 			);
 		}
 
@@ -1342,7 +1361,6 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			availablePlans,
 			currentPlan.Id
 		);
-		
 		if (planName) {
 			return translator('billing.tier.featureNotAvailable').replace('{feature}', translator(TierFeatures[tierMessageCode as keyof typeof TierFeatures] || tierMessageCode)).replace('{planName}', planName);
 		} else {
@@ -1367,10 +1385,10 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				<Grid item>
 					<Button
 						onClick={() => {
-						setDialogType({ type: '', data: '' });
-						setShowTierPlans(true);
-					}}
-					className={clsx(classes.btn, classes.btnRounded)}
+							setDialogType({ type: '', data: '' });
+							setShowTierPlans(true);
+						}}
+						className={clsx(classes.btn, classes.btnRounded)}
 					>
 						{translator('billing.upgradePlan')}
 					</Button>

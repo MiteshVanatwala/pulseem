@@ -1,4 +1,4 @@
-{
+﻿{
 	"accountSettings": {
 		"title": "Account Settings",
 		"fixedComDetails": {
@@ -210,9 +210,10 @@
 	},
 	"displayRevenueIn": "Display revenue in",
 	"mcpSettings": {
-		"sectionTitle": "MCP — Connect to AI",
-		"sectionSubtitle": "Send SMS, Email and WhatsApp directly from Claude, ChatGPT and Cursor",
-		"createBtn": "+ New MCP Connection",
+		"sectionTitle": "Connect AI to Pulseem",
+		"sectionSubtitle": "Connect Claude, ChatGPT or Cursor to Pulseem — send SMS, Email and WhatsApp directly from chat",
+		"guideLink": "Setup Guide →",
+		"createBtn": "+ New Connection",
 		"createFirstBtn": "+ Create First MCP Connection",
 		"emptyTitle": "No AI connections yet",
 		"emptyDesc": "Create an MCP connection and send SMS, Email and WhatsApp directly from Claude, ChatGPT and Cursor — in natural language.",
@@ -231,13 +232,22 @@
 		"labelPlaceholder": "e.g. Claude Desktop",
 		"createConfirmBtn": "Create Connection",
 		"successTitle": "Connection created successfully!",
-		"successWarning": "Save this address now — it will not be shown again.",
+		"successWarning": "Copy both addresses now — they won't be shown again.",
+		"mcpApiUrlLabel": "MCP Address — Direct Send (Direct API):",
+		"mcpUiApiUrlLabel": "MCP Address — Pulseem API:",
+		"directApiNotActive": "Direct Send is not enabled on your account. To activate — contact support at support@pulseem.com",
+		"mcpApiUrlDesc": "Send SMS, Email and WhatsApp and view delivery reports.",
+		"mcpUiApiUrlDesc": "Add contacts, create campaigns, manage groups and pull reports. Campaign sending is done through Pulseem.",
+		"sectionInfoDirectApiTitle": "Direct Send (Direct API) —",
+		"sectionInfoDirectApiDesc": "For those with an external system who want to send SMS or Email directly to a number or address — without campaigns. Requires activation.",
+		"sectionInfoUiApiTitle": "Pulseem API —",
+		"sectionInfoUiApiDesc": "For those who manage marketing through Pulseem — contacts, groups, campaigns and reports.",
 		"mcpUrlLabel": "Your MCP address:",
 		"copyUrlBtn": "Copy Address",
 		"copiedLabel": "Copied",
-		"successClose": "Close — I saved the address",
-		"deactivateConfirmTitle": "Deactivate connection?",
-		"deactivateConfirmText": "Deactivate connection \"{label}\"? The bot will not be able to send messages until you create a new connection.",
+		"successClose": "Close — I saved both addresses",
+		"deactivateConfirmTitle": "Deactivate this connection?",
+		"deactivateConfirmText": "Deactivate \"{label}\"? The connected tool won't be able to send messages until you create a new connection.",
 		"deactivateConfirmBtn": "Yes, deactivate"
 	}
 }

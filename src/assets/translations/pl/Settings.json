@@ -1,4 +1,4 @@
-{
+﻿{
 	"accountSettings": {
 		"title": "Ustawienia konta",
 		"fixedComDetails": {
@@ -190,9 +190,10 @@
 	},
 	"displayRevenueIn": "Wyświetl przychód w",
 	"mcpSettings": {
-		"sectionTitle": "MCP — Połącz z AI",
-		"sectionSubtitle": "Wysyłaj SMS, Email i WhatsApp bezpośrednio z Claude, ChatGPT i Cursor",
-		"createBtn": "+ Nowe połączenie MCP",
+		"sectionTitle": "Połącz AI z Pulseem",
+		"sectionSubtitle": "Połącz Claude, ChatGPT lub Cursor z Pulseem — wysyłaj SMS, Email i WhatsApp bezpośrednio z czatu",
+		"guideLink": "Przewodnik konfiguracji →",
+		"createBtn": "+ Nowe połączenie",
 		"createFirstBtn": "+ Utwórz pierwsze połączenie MCP",
 		"emptyTitle": "Brak połączeń AI",
 		"emptyDesc": "Utwórz połączenie MCP i wysyłaj SMS, Email i WhatsApp bezpośrednio z Claude, ChatGPT i Cursor — w naturalnym języku.",
@@ -211,13 +212,22 @@
 		"labelPlaceholder": "np. Claude Desktop",
 		"createConfirmBtn": "Utwórz połączenie",
 		"successTitle": "Połączenie utworzone pomyślnie!",
-		"successWarning": "Zapisz ten adres teraz — nie zostanie pokazany ponownie.",
+		"successWarning": "Skopiuj oba adresy teraz — nie zostaną pokazane ponownie.",
+		"mcpApiUrlLabel": "Adres MCP — wysyłanie bezpośrednie (Direct API):",
+		"mcpUiApiUrlLabel": "Adres MCP — Pulseem API:",
+		"directApiNotActive": "Wysyłanie bezpośrednie nie jest aktywne na Twoim koncie. Aby aktywować — skontaktuj się z pomocą techniczną: support@pulseem.com",
+		"mcpApiUrlDesc": "Wysyłaj SMS, Email i WhatsApp oraz przeglądaj raporty wysyłki.",
+		"mcpUiApiUrlDesc": "Dodawanie klientów i produktów, tworzenie kampanii, zarządzanie grupami i raporty. Wysyłanie kampanii przez interfejs Pulseem.",
+		"sectionInfoDirectApiTitle": "Wysyłanie bezpośrednie (Direct API) —",
+		"sectionInfoDirectApiDesc": "Dla tych, którzy mają zewnętrzny system i chcą wysyłać SMS lub Email bezpośrednio na numer lub adres — bez kampanii. Wymaga aktywacji.",
+		"sectionInfoUiApiTitle": "Pulseem API —",
+		"sectionInfoUiApiDesc": "Dla tych, którzy zarządzają marketingiem przez Pulseem — klienci, grupy, kampanie i raporty.",
 		"mcpUrlLabel": "Twój adres MCP:",
 		"copyUrlBtn": "Kopiuj adres",
 		"copiedLabel": "Skopiowano",
-		"successClose": "Zamknij — zapisałem adres",
-		"deactivateConfirmTitle": "Dezaktywować połączenie?",
-		"deactivateConfirmText": "Dezaktywować połączenie \"{label}\"? Bot nie będzie mógł wysyłać wiadomości, dopóki nie utworzysz nowego połączenia.",
+		"successClose": "Zamknij — zapisałem oba adresy",
+		"deactivateConfirmTitle": "Dezaktywować to połączenie?",
+		"deactivateConfirmText": "Dezaktywować \"{label}\"? Podłączone narzędzie nie będzie mogło wysyłać wiadomości, dopóki nie utworzysz nowego połączenia.",
 		"deactivateConfirmBtn": "Tak, dezaktywuj"
 	}
 }

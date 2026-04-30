@@ -362,9 +362,9 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				uploadMedia(myFormData)
 			);
 
-			const response = uploadedFile?.payload;
+			const response = uploadedFile?.payload as any;
 			if (
-				response?.ErrorCode === 1 &&
+				(response?.StatusCode === 1 || response?.ErrorCode === 1) &&
 				response?.Data?.length > 0
 			) {
 				setFileData({
@@ -384,7 +384,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				translator(
 					getApiErrorResponseMessage(
 						'uploadMedia',
-						response?.ErrorCode ?? 4
+						response?.StatusCode ?? response?.ErrorCode ?? 4
 					),
 					{ FileSize: '5' }
 				);

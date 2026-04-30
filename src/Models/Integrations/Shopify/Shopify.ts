@@ -11,6 +11,8 @@ export interface ShopifyModel {
     RegisterEventActive: boolean;
     PurchaseEventActive: boolean;
     AbandonedEventActive: boolean;
+    UnsubscribePreferenceTypeID?: number;
+    isSyncUnsubscribes?: boolean;
     UiApi_ApiKey?: string;
     Groups?: IntegrationGroups;
     CreateDate?: Date | string;

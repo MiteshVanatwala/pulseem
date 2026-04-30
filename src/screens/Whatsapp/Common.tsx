@@ -444,7 +444,7 @@ export const getApiErrorResponseMessage = (
 export const getWhatsappError = (message: string): string => {
 	const initialCode = message.substring(0, 5);
 	const initialCodeList = [
-		'63005', '63013', '63019', '63027', '63041'
+		'63005', '63013', '63019', '63027', '63041', '63042', '63002'
 	]
 	if (message.indexOf('https://www.twilio.com/docs/api/errors') > -1) {
 		const errorCode = message?.split('/');
@@ -466,8 +466,29 @@ export const getWhatsappError = (message: string): string => {
 		return `WhatsappApiResponse.contentVariablesParameterInvalid.message`;
 	} else if(message.indexOf('The Messaging Service Sid') > -1) {
 		return `WhatsappApiResponse.messagingServiceKeyInvalid.message`;
-	} else if(message.indexOf('The \'To\' number whatsapp') > -1) {
+	} else if (message.indexOf('The \'To\' number whatsapp') > -1) {
 		return `WhatsappApiResponse.NoWhatsApp.message`;
+	} else if (message.indexOf('The account is not registered') > -1) {
+		return `WhatsappApiResponse.authenticate.message`;  // same meaning — account not set up
+	} else if (message.indexOf('Authentication Error') > -1 || message.indexOf('Error validating access token') > -1) {
+		return `WhatsappApiResponse.authenticate.message`;
+	} else if (message.indexOf('(#') > -1 && message.indexOf('<sep>') === -1) {
+		const match = message.match(/\(#(\d+)\)/);
+		if (match) {
+			const code = match[1];
+			const metaErrorCodeList = [
+				"0", "3", "10", "190", "4", "80007", "130429", "131048", "131056", "133016", "368", "130497", "131031",
+				"1", "2", "33", "100", "130472", "131000", "131005", "131008", "131009", "131016", "131021", "131026",
+				"131042", "131045", "131047", "131049", "131051", "131052", "131053", "131057", "132000", "132001",
+				"132005", "132007", "132012", "132015", "132016", "132068", "132069", "133000", "133004", "133005",
+				"133006", "133008", "133009", "133010", "133015", "135000", "131050", "131030", "200", "613", "131037"
+			];
+			if (metaErrorCodeList.indexOf(code) > -1) {
+				return `WhatsappOnBoarding.metaErrorCodes.${code}`;
+			}
+		}
+	} else if (message.indexOf('maintain healthy ecosystem engagement') > -1) {
+		return `WhatsappOnBoarding.metaErrorCodes.131049`;
 	}
 	return 'WhatsappApiResponse.common.error';
 };
@@ -475,7 +496,7 @@ export const getWhatsappError = (message: string): string => {
 export const getMetaError = (message: string): string => {
 	const splittedError = message?.split(Separator);
 	const errorCodeList = [
-		"0", "3", "10", "190", "4", "80007", "130429", "131048", "131056", "133016", "368", "130497", "131031", "1", "2", "33", "100", "130472", "131000", "131005", "131008", "131009", "131016", "131021", "131026", "131042", "131045", "131047", "131049", "131051", "131052", "131053", "131057", "132000", "132001", "132005", "132007", "132012", "132015", "132016", "132068", "132069", "133000", "133004", "133005", "133006", "133008", "133009", "133010", "133015", "135000", "131050"
+		"0", "3", "10", "190", "4", "80007", "130429", "131048", "131056", "133016", "368", "130497", "131031", "1", "2", "33", "100", "130472", "131000", "131005", "131008", "131009", "131016", "131021", "131026", "131042", "131045", "131047", "131049", "131051", "131052", "131053", "131057", "132000", "132001", "132005", "132007", "132012", "132015", "132016", "132068", "132069", "133000", "133004", "133005", "133006", "133008", "133009", "133010", "133015", "135000", "131050", "131030", "200", "613", "131037"
 	]
 	if (splittedError?.length > 0 && errorCodeList.indexOf(splittedError[0]) > -1) {
 		return `WhatsappOnBoarding.metaErrorCodes.${splittedError[0]}`;
@@ -527,54 +548,58 @@ export const adjustTemplateVariablesForLink = (
 		templateData: { templateText },
 	} = getTemplatePreviewData(templateData);
 	if (whatsappTempalteBody !== '') templateText = whatsappTempalteBody;
-	const DynamicFieldsIndex = getDynamicFieldIndex(templateText);
-	const adjustedDynamicVariableForLinks = DynamicFieldsIndex?.map(
-		(fieldIndex, index) => {
-			const variable = updatedDynamicVariable?.find(
-				(dynamicVariable) => dynamicVariable?.VariableIndex === index + 1
-			)!;
-			if (
-				variable &&
-				variable?.IsStatastic !== true &&
-				(variable?.FieldTypeId === 3 ||
-					variable?.FieldTypeId === 4 ||
-					variable?.FieldTypeId === 5)
-			) {
-				let adjustedVariable = variable;
-				if (
-					templateText.charAt(fieldIndex - 1) !== ' ' &&
-					adjustedVariable?.VariableValue?.charAt(0) !== ' '
-				) {
-					adjustedVariable = {
-						...variable,
-						VariableValue: ` ${adjustedVariable?.VariableValue}`,
-					};
-				}
-				if (
-					templateText.charAt(
-						index + 1 <= 9 ? fieldIndex + 5 : fieldIndex + 5
-					) !== ' ' &&
-					adjustedVariable?.VariableValue?.charAt(
-						adjustedVariable?.VariableValue?.length - 1
-					) !== ' '
-				) {
-					if (
-						templateText?.length !==
-						(index + 1 <= 9 ? fieldIndex + 5 : fieldIndex + 5)
-					) {
-						adjustedVariable = {
-							...variable,
-							VariableValue: `${adjustedVariable?.VariableValue}${variable?.FieldTypeId === 4 ? '' : ' '}`,
-						};
-					}
-				}
-				return adjustedVariable;
-			} else {
-				return variable;
-			}
+
+	// Robustly find all {{n}} tags and their exact positions in the text
+	const tagPattern = /{{(\d+)}}/g;
+	const tagsInText: { index: number, tag: string, vIndex: number }[] = [];
+	let match;
+	if (templateText) {
+		while ((match = tagPattern.exec(templateText)) !== null) {
+			tagsInText.push({
+				index: match.index,
+				tag: match[0],
+				vIndex: Number(match[1])
+			});
 		}
-	);
-	return adjustedDynamicVariableForLinks;
+	}
+
+	// Adjust variables only if they are links
+	return updatedDynamicVariable.map((variable) => {
+		if (
+			variable &&
+			(variable?.FieldTypeId === 3 ||
+				variable?.FieldTypeId === 4 ||
+				variable?.FieldTypeId === 5)
+		) {
+			const tagUsage = tagsInText.find(t => t.vIndex === variable.VariableIndex);
+			let newVal = variable.VariableValue || '';
+			
+			// Non-Breaking Space (\u00A0) survives automatic trimming
+			const NBSP = "\u00A0";
+
+			// If we found the tag, check surrounding text. 
+			// If we didn't find the tag (fallback), we ALWAYS add spaces for safety.
+			if (tagUsage) {
+				// Add leading space if needed
+				if (tagUsage.index === 0 || (templateText.charAt(tagUsage.index - 1) !== ' ' && !newVal.startsWith(NBSP))) {
+					newVal = NBSP + newVal;
+				}
+				
+				// Add trailing space if needed
+				const tagEnd = tagUsage.index + tagUsage.tag.length;
+				if (tagEnd >= templateText.length || (templateText.charAt(tagEnd) !== ' ' && !newVal.endsWith(NBSP))) {
+					newVal = newVal + NBSP;
+				}
+			} else {
+				// Failsafe: Always add spaces to links if tag position is unknown
+				if (!newVal.startsWith(NBSP)) newVal = NBSP + newVal;
+				if (!newVal.endsWith(NBSP)) newVal = newVal + NBSP;
+			}
+
+			return { ...variable, VariableValue: newVal };
+		}
+		return variable;
+	});
 };
 
 export const detecLanguageMixup = (text: string) => {

@@ -127,6 +127,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const activePhoneNumberRef = useRef<string>('');
 	const filterBySelectedRef = useRef<number>(0);
 	const changeContactReadStatusRef = useRef<((contacts: APIWhatsappChatSidebarContactsItemsData, sideChatContactList?: APIWhatsappChatSidebarContactsItemsData[]) => void) | null>(null);
+	const sideBarSearchTextRef = useRef<string>('');
     
 	// Helper to build the mapping from all clients (Cellphone → ClientId)
 	const buildPhoneToClientIdMap = useCallback(async () => {
@@ -555,7 +556,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 							clearTimeout(contactsRefreshDebounceRef.current);
 						}
 						contactsRefreshDebounceRef.current = setTimeout(() => {
-							fetchMoreContactsRef.current?.('', filterBySelected, true);
+							fetchMoreContactsRef.current?.(sideBarSearchTextRef.current, filterBySelected, true);
 						}, 5000);
 					}
 				}
@@ -2079,11 +2080,12 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 									TotalOpen={totalOpenContacts}
 									TotalPending={totalPendingContacts}
 									TotalSolved={totalSolvedContacts}
-								savedTemplateList={savedTemplateList}
-								onStartNewChat={onStartNewChat}
-								onRefreshChat={onRefreshChat}
-								personalFields={personalFields}
-								landingPageData={landingPages}
+									savedTemplateList={savedTemplateList}
+									onStartNewChat={onStartNewChat}
+									onRefreshChat={onRefreshChat}
+									personalFields={personalFields}
+									landingPageData={landingPages}
+									searchTextRef={sideBarSearchTextRef}
 								/>
 								<ChatUi
 									refetchActiveChatContact={refetchActiveChatContact}

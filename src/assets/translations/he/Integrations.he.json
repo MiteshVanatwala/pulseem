@@ -62,7 +62,16 @@
     "description": "על מנת לחבר את חנות השופיפיי שלכם לחשבון זה בפולסים, אנא קראו את המדריך הבא:",
     "connectStoreAction": "חברו חנות Shopify",
     "oldConnectionOptionsButton": "ניהול אינטגרציה בגרסאות קודמות",
-    "tryNewIntegrationButton": "נסו את הפלאגין החדש"
+    "tryNewIntegrationButton": "נסו את הפלאגין החדש",
+    "unsubscribeSync": "סנכרון מוסרים",
+    "unsubscribeSyncWithShopify": "סנכרון מוסרים עם שופיפיי",
+    "unsubscribeSyncDesc": "ודאו כי הרשאת write_customers פתוחה באפליקציה שלכם",
+    "syncBy": "סנכרן לפי:",
+    "emailToEmail": "אימייל לאימייל",
+    "cellphoneToCellphone": "סלולרי לסלולרי",
+    "smsOnly": "סמס בלבד",
+    "bothEmailAndCellphone": "שניהם (אימייל וסלולרי)",
+    "unsubscribeSyncNotice": "שימו לב! נמענים שיוסרו בפולסים יוסרו כנמענים גם מרשימת הדיוור של החנות שלכם בשופיפיי. הפעלת הגדרה זאת על אחריותכם בלבד."
   },
   "verifone": {
     "title": "Verifone",
