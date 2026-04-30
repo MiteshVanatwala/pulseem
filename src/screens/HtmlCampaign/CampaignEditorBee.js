@@ -869,6 +869,14 @@ const CampaignEditor = ({ classes, ...props }) => {
           logout();
           return false;
         }
+        case 422: {
+          if (response?.payload?.Message === 'HTML_NO_VISIBLE_CONTENT') {
+            setToastMessage(ToastMessages.HTML_NO_VISIBLE_CONTENT);
+          } else {
+            setToastMessage(ToastMessages.HTML_BODY_EMPTY);
+          }
+          return false;
+        }
         case 500: {
           setToastMessage(ToastMessages.ERROR_OCCURED);
           return false;
@@ -1136,6 +1144,14 @@ const CampaignEditor = ({ classes, ...props }) => {
       }
       case 552: {
         setDialog(DialogType.PAYMENT_PROCESSING);
+        break;
+      }
+      case 422: {
+        if (message === 'HTML_NO_VISIBLE_CONTENT') {
+          setToastMessage(ToastMessages.HTML_NO_VISIBLE_CONTENT);
+        } else {
+          setToastMessage(ToastMessages.HTML_BODY_EMPTY);
+        }
         break;
       }
       case 500:
