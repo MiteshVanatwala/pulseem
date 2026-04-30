@@ -71,8 +71,8 @@ const useStyles = makeStyles((theme) => ({
     height:          `${COMPACT_HEIGHT}px !important`,
     maxHeight:       `${COMPACT_HEIGHT}px !important`,
     backgroundColor: '#ffffff !important',
-    border:          '1px solid rgba(0,0,0,0.18) !important',
-    boxShadow:       '0 8px 32px rgba(0,0,0,0.28), 0 2px 8px rgba(0,0,0,0.12) !important',
+    border:          '2px solid #b0b0b0 !important',
+    boxShadow:       '0 8px 32px rgba(0,0,0,0.32), 0 2px 8px rgba(0,0,0,0.18) !important',
   },
 
   // ── Compact-mode open state ───────────────────────────────────────────────
