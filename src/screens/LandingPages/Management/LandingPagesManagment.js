@@ -38,12 +38,14 @@ import { FaChartPie } from "react-icons/fa";
 import { ClearPageState, GetPageNyName, SetPageState } from '../../../helpers/UI/SessionStorageManager';
 import TierPlans from '../../../components/TierPlans/TierPlans';
 import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
+import { getIsBeeperAccount } from '../../../components/WhiteLabel/WhiteLabelMigrate';
 
 
 const LandingPagesesManagment = ({ classes }) => {
   const navigate = useNavigate()
   const { windowSize, rowsPerPage, isRTL, userRoles } = useSelector(state => state.core)
-  const { accountFeatures } = useSelector(state => state.common);
+  const { accountFeatures, accountSettings } = useSelector(state => state.common);
+  const isBeeperAccount = getIsBeeperAccount(accountSettings);
   const { landingPagesData, landingPagesDeletedData } = useSelector(state => state.landingPages)
   const { currentPlan, availablePlans } = useSelector((state) => state.tiers);
   const { t } = useTranslation()
@@ -373,7 +375,7 @@ const LandingPagesesManagment = ({ classes }) => {
         uIcon: EditIcon,
         lable: t('landingPages.EditResource1.HeaderText'),
         remove: windowSize === 'xs',
-        href: IsNewEditor ? `${sitePrefix}editor/${BEE_EDITOR_TYPES.LANDING_PAGE}/${ID}` : `/Pulseem/NewWebForm/NewFormEdit/${ID}?fromreact=true`,
+        href: (IsNewEditor || isBeeperAccount) ? `${sitePrefix}editor/${BEE_EDITOR_TYPES.LANDING_PAGE}/${ID}` : `/Pulseem/NewWebForm/NewFormEdit/${ID}?fromreact=true`,
         rootClass: classes.paddingIcon,
       },
       {
@@ -792,7 +794,7 @@ const LandingPagesesManagment = ({ classes }) => {
       setPage(1)
       setLoader(true);
       const response = await dispatch(duplicteLandingPage(data));
-      
+
       // Handle response status codes
       if (response.payload?.StatusCode === 927) {
         setTierMessageCode('LANDING_PAGE_MANAGEMENT');
@@ -800,7 +802,16 @@ const LandingPagesesManagment = ({ classes }) => {
         setLoader(false);
         return;
       }
-      
+
+      // For Beeper: open duplicated LP directly in BEE editor
+      if (isBeeperAccount) {
+        const newPageId = response.payload?.Data || response.payload?.ID;
+        if (newPageId) {
+          navigate(`${sitePrefix}editor/${BEE_EDITOR_TYPES.LANDING_PAGE}/${newPageId}`);
+          return;
+        }
+      }
+
       await getData()
       setLoader(false);
     }

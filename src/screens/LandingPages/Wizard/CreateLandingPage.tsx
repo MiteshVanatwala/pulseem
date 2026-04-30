@@ -899,7 +899,7 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 			);
 		}
 		else {
-			if (!landingPageModel.IsNewEditor && !isPopup) {
+			if (!landingPageModel.IsNewEditor && !isPopup && !isBeeperAccount) {
 				wizardButtons.push(
 					<Button
 						onClick={() => { saveAndContinue(EditorType.OLD) }}
@@ -918,7 +918,7 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 				);
 			}
 
-			if (landingPageModel.IsNewEditor || !id) {
+			if (landingPageModel.IsNewEditor || !id || isBeeperAccount) {
 				wizardButtons.push(
 					<Button
 						onClick={() => { saveAndContinue(EditorType.BEE) }}
