@@ -492,8 +492,15 @@ const Shopify = ({ classes }: any) => {
           };
           if (pendingToggle === 'IsSyncRemovals') {
             update.IsSyncUnsubscribes = true;
+            if (!settings.UnsubscribePreferenceTypeID || settings.UnsubscribePreferenceTypeID === 0) {
+              update.UnsubscribePreferenceTypeID = 3;
+            }
           } else if (pendingToggle === 'IsSyncActivations') {
             update.IsSyncRecipients = true;
+            if (!settings.EcommerceSyncOptionsID || settings.EcommerceSyncOptionsID === 0) {
+              update.EcommerceSyncOptionsID = 3;
+              update.ActivationPreferenceTypeID = 3;
+            }
           }
           setSettings(update);
         }
