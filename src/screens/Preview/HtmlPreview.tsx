@@ -14,6 +14,11 @@ import CopyToClipboard from 'react-copy-to-clipboard';
 import { actionURL } from '../../config';
 import { formatDisplayConditionsForPreview } from '../../helpers/Utils/displayConditionPreviewUtils';
 
+// Old approach: SummaryDialog loaded this page inside an iframe using the React route URL:
+// <iframe src="${sitePrefix}previewer/newsletter/${CampaignID}?embedded=1" />
+// The ?embedded=1 flag toggled a minimal render mode (no chrome, no title bar).
+// Replaced by EmailPreviewComponent (Shadow DOM) to avoid loading the full React app inside the iframe.
+
 
 
 
