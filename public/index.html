@@ -28,7 +28,18 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
-  <title>Pulseem</title>
+  <title>Beeper Celluler</title>
+
+  <!-- Beeper white-label: set title and favicon immediately before React loads -->
+  <script>
+    (function () {
+      if (window.location.hostname.indexOf('beeper') !== -1) {
+        document.title = 'Beeper Celluler';
+        var icon = document.querySelector("link[rel*='icon']");
+        if (icon) { icon.href = '/react/beeper-favicon.ico'; }
+      }
+    })();
+  </script>
 
   <!-- Live -->
   <script
