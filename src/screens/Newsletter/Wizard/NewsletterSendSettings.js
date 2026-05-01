@@ -474,7 +474,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             } else {
                 setToastMessage(ToastMessages.HTML_BODY_EMPTY);
             }
-        } else if ([550, 551].indexOf(response.StatusCode)) {
+        } else if ([550, 551].includes(response.StatusCode)) {
             setDialogType(SEND_PROC[response?.StatusCode]);
         } else if ([553].indexOf(response.StatusCode)) {
             setDialogType(SEND_PROC[response?.StatusCode]);
