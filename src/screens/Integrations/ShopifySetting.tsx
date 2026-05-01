@@ -229,13 +229,16 @@ const Shopify = ({ classes }: any) => {
         const shopifyResponse = response?.payload?.Data as ShopifyModel;
         if (shopifyResponse.api_access_token && shopifyResponse.api_key && shopifyResponse.store_name) {
           const syncValue = shopifyResponse.EcommerceSyncOptionsID || shopifyResponse.ActivationPreferenceTypeID || 0;
+          const unsubValue = shopifyResponse.UnsubscribePreferenceTypeID || 0;
           setSettings({
             ...shopifyResponse,
-            UnsubscribePreferenceTypeID: shopifyResponse.UnsubscribePreferenceTypeID || 0,
+            UnsubscribePreferenceTypeID: unsubValue,
             EcommerceSyncOptionsID: syncValue,
             ActivationPreferenceTypeID: syncValue,
-            IsSyncRemovals: (shopifyResponse.UnsubscribePreferenceTypeID || 0) > 0,
+            IsSyncRemovals: unsubValue > 0,
             IsSyncActivations: syncValue > 0,
+            IsSyncUnsubscribes: unsubValue > 0,
+            IsSyncRecipients: syncValue > 0,
           });
           setAuthenticated(true);
           setHideOldIntegration(false);
@@ -488,11 +491,9 @@ const Shopify = ({ classes }: any) => {
             [pendingToggle]: true,
           };
           if (pendingToggle === 'IsSyncRemovals') {
-            update.UnsubscribePreferenceTypeID = settings.UnsubscribePreferenceTypeID || 3;
+            update.IsSyncUnsubscribes = true;
           } else if (pendingToggle === 'IsSyncActivations') {
-            const val = settings.EcommerceSyncOptionsID || settings.ActivationPreferenceTypeID || 3;
-            update.EcommerceSyncOptionsID = val;
-            update.ActivationPreferenceTypeID = val;
+            update.IsSyncRecipients = true;
           }
           setSettings(update);
         }
@@ -948,7 +949,8 @@ const Shopify = ({ classes }: any) => {
                                     setSettings({
                                       ...settings,
                                       IsSyncRemovals: false,
-                                      UnsubscribePreferenceTypeID: 0
+                                      UnsubscribePreferenceTypeID: 0,
+                                      IsSyncUnsubscribes: false
                                     });
                                   }
                                 }}
@@ -968,12 +970,12 @@ const Shopify = ({ classes }: any) => {
                                 <Select
                                   variant="outlined"
                                   value={settings.UnsubscribePreferenceTypeID || 0}
-                                  onChange={(event) =>
+                                  onChange={(event) => {
                                     setSettings({
                                       ...settings,
                                       UnsubscribePreferenceTypeID: event.target.value as number
                                     })
-                                  }
+                                  }}
                                   className={classes.shopifySettingTextBox}
                                   fullWidth
                                   style={{ maxWidth: 400 }}
@@ -1001,7 +1003,8 @@ const Shopify = ({ classes }: any) => {
                                       ...settings,
                                       IsSyncActivations: false,
                                       EcommerceSyncOptionsID: 0,
-                                      ActivationPreferenceTypeID: 0
+                                      ActivationPreferenceTypeID: 0,
+                                      IsSyncRecipients: false
                                     });
                                   }
                                 }}
@@ -1080,7 +1083,7 @@ const Shopify = ({ classes }: any) => {
                         classes.redButton
                       )}
                       color="primary"
-                      startIcon={<span><BiSave className={classes.colorWhite} /></span> as any}
+                      startIcon={<BiSave className={classes.colorWhite} /> as any}
                     >
                       {t("common.save")}
                     </Button>
