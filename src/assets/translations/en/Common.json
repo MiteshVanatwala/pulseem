@@ -917,6 +917,8 @@
   "connectedToAgent": "Connected to Agent",
   "agentLabel": "Agent",
   "contactAgentTooltip": "Available after 2 Q&A exchanges",
+  "contactAgentSuggestion": "Would you like to speak with a human agent? I can connect you right away.",
+  "contactAgentError": "Something went wrong. Please try again.",
   "tier": {
     "current": "Current Tier",
     "upgrade": "Upgrade Tier",

@@ -910,6 +910,8 @@
   "connectedToAgent": "Połączono z agentem",
   "agentLabel": "Agent",
   "contactAgentTooltip": "Dostępne po 2 wymianach Q&A",
+  "contactAgentSuggestion": "Chcesz porozmawiać z agentem? Mogę Cię natychmiast połączyć.",
+  "contactAgentError": "Coś poszło nie tak. Spróbuj ponownie.",
   "tier": {
     "current": "Current Tier",
     "upgrade": "Upgrade Tier",
