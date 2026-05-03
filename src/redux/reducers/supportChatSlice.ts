@@ -130,6 +130,9 @@ const supportChatSlice = createSlice({
         }
         // cursor stays at 0 — agent hasn't replied yet
       })
+      .addCase(escapeToAgent.rejected, () => {
+        // error is handled locally in the UI — no state change needed
+      })
       .addCase(pollAgentMessages.fulfilled, (state, action: any) => {
         const newMsgs = action.payload?.Data || [];
         if (newMsgs.length > 0) {

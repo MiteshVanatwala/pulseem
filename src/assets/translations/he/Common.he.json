@@ -912,6 +912,8 @@
   "connectedToAgent": "מחובר לנציג",
   "agentLabel": "נציג",
   "contactAgentTooltip": "זמין לאחר 2 שאלות ותשובות",
+  "contactAgentSuggestion": "רוצה לדבר עם נציג אנושי? אני יכול לחבר אותך עכשיו.",
+  "contactAgentError": "משהו השתבש. נסה שוב.",
   "tier": {
     "current": "רמה נוכחית",
     "upgrade": "שדרוג רמה",

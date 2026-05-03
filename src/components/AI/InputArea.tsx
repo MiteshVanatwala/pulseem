@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Box, TextField, IconButton, Button, Tooltip } from '@material-ui/core';
+import { Box, TextField, IconButton, Button } from '@material-ui/core';
 import { Send as SendIcon } from '@material-ui/icons';
-import CustomTooltip from '../Tooltip/CustomTooltip';
 import { makeStyles } from '@material-ui/core/styles';
 import { addMessage, addUserMessage, setAIIconStatus } from '../../redux/reducers/aiChatSlice';
-import { addSupportMessage, addSupportUserMessage, setSupportAIIconStatus, startNewSupportSession, escapeToAgent } from '../../redux/reducers/supportChatSlice';
+import { addSupportMessage, addSupportUserMessage, setSupportAIIconStatus, startNewSupportSession } from '../../redux/reducers/supportChatSlice';
 import { StateType } from '../../Models/StateTypes';
 import { v4 as uuidv4 } from 'uuid';
 import { useTranslation } from 'react-i18next';
@@ -59,7 +58,7 @@ const useStyles = makeStyles((theme) => ({
   footerRow: {
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
   },
 }));
 
@@ -80,7 +79,7 @@ const InputArea: React.ForwardRefRenderFunction<InputAreaHandle, InputAreaProps>
   const [text, setText] = useState('');
 
   const isSupport = config.reduxSliceName === 'supportChat';
-  const { totalMessagesForUserCount, aiIconStatus, isEscalated, suggestAgent } = useSelector((state: StateType) =>
+  const { aiIconStatus } = useSelector((state: StateType) =>
     isSupport ? state.supportChat : state.aiChat
   );
 
@@ -123,21 +122,11 @@ const InputArea: React.ForwardRefRenderFunction<InputAreaHandle, InputAreaProps>
     dispatch(startNewSupportSession());
   };
 
-  const handleEscalate = () => {
-    if (!isEscalated) dispatch(escapeToAgent());
-  };
-
   useImperativeHandle(ref, () => ({
     focus: () => {
       inputRef.current?.focus();
     }
   }));
-
-  const showNewConversationButton = isSupport;
-  const showFooterRow = showNewConversationButton;
-  // Contact Agent button: always visible for support pre-escalation, disabled until 2 exchanges
-  const showContactAgentButton = isSupport && !isEscalated;
-  const contactAgentDisabled = (totalMessagesForUserCount < 2 && !suggestAgent) || aiIconStatus === 1;
 
   return (
     <Box display="flex" className={classes.inputArea}>
@@ -148,7 +137,7 @@ const InputArea: React.ForwardRefRenderFunction<InputAreaHandle, InputAreaProps>
           size="small"
           fullWidth
           inputRef={inputRef}
-          placeholder={isSupport ? t("common.agentPlaceholderSupport") :t("common.agentPlaceholder") }
+          placeholder={isSupport ? t("common.agentPlaceholderSupport") : t("common.agentPlaceholder")}
           value={text}
           onChange={(e) => {
             if (e.target.value.length <= config.maxChars) {
@@ -175,54 +164,16 @@ const InputArea: React.ForwardRefRenderFunction<InputAreaHandle, InputAreaProps>
       <Box className={classes.characterCount}>
         {text.length}/{config.maxChars}
       </Box>
-      {showFooterRow && (
+      {isSupport && (
         <Box className={classes.footerRow}>
-          {/* Contact Agent — left side (opposite "Start New Conversation") */}
-          {showContactAgentButton ? (
-            <Box style={{ display: 'flex', alignItems: 'center', gap: '2px' }}>
-              <Tooltip
-                title={contactAgentDisabled ? t('common.contactAgentTooltip') : ''}
-                arrow
-                placement="top"
-              >
-                <span>
-                  <Button
-                    size="small"
-                    onClick={handleEscalate}
-                    disabled={contactAgentDisabled}
-                    style={{
-                      color: contactAgentDisabled ? undefined : '#dd2339',
-                      borderColor: contactAgentDisabled ? undefined : '#dd2339',
-                    }}
-                    variant="outlined"
-                  >
-                    {t('common.contactAgent')}
-                  </Button>
-                </span>
-              </Tooltip>
-              {contactAgentDisabled && (
-                // @ts-ignore
-                <CustomTooltip
-                  text={t('common.contactAgentTooltip')}
-                  placement="top"
-                  isSimpleTooltip={true}
-                  style={{ fontSize: 14 }}
-                />
-              )}
-            </Box>
-          ) : (
-            <span />
-          )}
-          {showNewConversationButton && (
-            <Button
-              size="small"
-              color="primary"
-              onClick={handleStartNewConversation}
-              disabled={aiIconStatus === 1}
-            >
-              {t("common.startNewConversation")}
-            </Button>
-          )}
+          <Button
+            size="small"
+            color="primary"
+            onClick={handleStartNewConversation}
+            disabled={aiIconStatus === 1}
+          >
+            {t("common.startNewConversation")}
+          </Button>
         </Box>
       )}
     </Box>
