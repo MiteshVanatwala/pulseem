@@ -8,8 +8,8 @@ import { FaChevronDown } from 'react-icons/fa';
 import { FaChevronUp } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux'
 import clsx from "clsx";
-import { Stack } from "@mui/material";
 import { getAuthorizedEmails, isSweepingApprovalAccount } from "../../../../redux/reducers/commonSlice";
+import EmailPreviewComponent from "../../../../components/EmailPreview/EmailPreviewComponent";
 import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
 import moment from 'moment';
 import { RenderHtml } from "../../../../helpers/Utils/HtmlUtils";
@@ -20,7 +20,6 @@ import { IoIosArrowDown } from "react-icons/io";
 import { IsSharedDomain } from "../../../../helpers/Functions/DomainVerificationHelper";
 import { PulseemFeatures } from "../../../../model/PulseemFields/Fields";
 import { DateFormats } from "../../../../helpers/Constants";
-import { sitePrefix } from "../../../../config";
 
 const SummaryDialog = ({ classes,
     isOpen = false,
@@ -31,7 +30,6 @@ const SummaryDialog = ({ classes,
     setTierMessageCode = () => null,
     filteredGroups = null,
     filteredCampaigns = null,
-    PreviewURL = null,
     SendDate = "",
     handleSendResponse = () => null,
     IsQuickSend = false,
@@ -54,9 +52,6 @@ const SummaryDialog = ({ classes,
     const [showLoader, setShowLoader] = useState(false);
     const [isSharedDomainEmail, setIsSharedDomainEmail] = useState(false);
     const [sendToSupervisor, setSendToSupervisor] = useState(false);
-    const embeddedPreviewUrl = newsletterSendSummary?.CampaignID
-        ? `${sitePrefix}previewer/newsletter/${newsletterSendSummary.CampaignID}?embedded=1`
-        : null;
 
     const {
         FinalClients,
@@ -447,16 +442,13 @@ const SummaryDialog = ({ classes,
                                 </Link>
                             </Box>
                         </Box>
-                        {(embeddedPreviewUrl || PreviewURL) && <Box className={classes.sumRight} style={{ width: windowSize === 'xs' || windowSize === 'sm' ? '100%' : '50%' }}>
-                            <Stack direction='column' alignItems='center' spacing={2} className={classes.paddingInline25}>
-                                <Stack className={classes.previewIframe}>
-                                    <iframe
-                                        title="newsletter-summary-preview"
-                                        src={embeddedPreviewUrl || `${PreviewURL}&fromReact=1`}
-                                        style={{ height: '400px', border: 0, background: 'none', width: '100%' }}
-                                    />
-                                </Stack>
-                            </Stack>
+                        {/* Old approach: backend URL loaded in iframe
+                            {PreviewURL && RenderHtml(`<iframe src="${PreviewURL}&fromReact=1" style="height: 400px; border: 0; background: none; width: 100%;" />`)}
+                        */}
+                        {newsletterSendSummary?.CampaignID && <Box className={classes.sumRight} style={{ width: windowSize === 'xs' || windowSize === 'sm' ? '100%' : '50%' }}>
+                            <Box className={classes.paddingInline25}>
+                                <EmailPreviewComponent campaignId={newsletterSendSummary.CampaignID} height={400} />
+                            </Box>
                         </Box>}
                     </Box>
                     {!IsQuickSend &&

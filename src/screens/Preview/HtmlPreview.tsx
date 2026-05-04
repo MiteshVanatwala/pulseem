@@ -12,68 +12,12 @@ import { useTranslation } from 'react-i18next';
 import { Title } from '../../components/managment/Title';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import { actionURL } from '../../config';
+import { formatDisplayConditionsForPreview } from '../../helpers/Utils/displayConditionPreviewUtils';
 
-
-const escapeHtml = (value = '') => value
-  .replace(/&/g, '&amp;')
-  .replace(/</g, '&lt;')
-  .replace(/>/g, '&gt;')
-  .replace(/"/g, '&quot;')
-  .replace(/'/g, '&#39;');
-
-const normalizeConditionText = (value = '') => value.replace(/\s+/g, ' ').trim();
-
-const buildConditionPreviewLine = (text: string) => {
-  const safeText = escapeHtml(normalizeConditionText(text) || 'Condition');
-
-  return `<span data-preview-condition="true" style="display:block; margin: 10px 0; padding: 4px 10px; background-color: #f8f9fa; border: 1px solid #dcdcdc; border-radius: 4px; color: #444; font-size: 13px; font-weight: 600; font-family: sans-serif; line-height: 1.5; width: fit-content;">[ 👁 ${safeText} ]</span>`;
-};
-
-
-
-const buildConditionPreviewLine_Simple = (text: string) => {
-  const normalized = normalizeConditionText(text);
-  const safeText = escapeHtml(normalized);
-  // Ensure [ 👁 ] for empty text, or [ 👁 Else ] for "Else"
-  const label = normalized ? ` ${safeText} ` : ' ';
-
-  return `<span data-preview-condition="true" style="display:block; margin: 10px 0; padding: 4px 10px; background-color: #f8f9fa; border: 1px solid #dcdcdc; border-radius: 4px; color: #444; font-size: 13px; font-weight: 600; font-family: sans-serif; line-height: 1.5; width: fit-content;">[ 👁${label}]</span>`;
-};
-
-
-
-const formatDisplayConditionsForPreview = (rawHtml: string) => {
-  if (!rawHtml || !rawHtml.includes('{%')) {
-    return rawHtml;
-  }
-
-  const conditionRegex = /{%\s*(if|elif|elseif|else|endif)\b([\s\S]*?)%}/gi;
-  let formattedHtml = '';
-  let lastIndex = 0;
-  let match;
-
-  while ((match = conditionRegex.exec(rawHtml)) !== null) {
-    const [fullMatch, rawKeyword, rawExpression = ''] = match;
-    const keyword = String(rawKeyword).toLowerCase();
-
-    formattedHtml += rawHtml.slice(lastIndex, match.index);
-    lastIndex = match.index + fullMatch.length;
-
-    if (keyword === 'if') {
-      formattedHtml += buildConditionPreviewLine(rawExpression.trim());
-    } else if (keyword === 'elif' || keyword === 'elseif' || keyword === 'else') {
-      const label = keyword === 'else' ? 'Else' : rawExpression.trim();
-      formattedHtml += buildConditionPreviewLine_Simple(''); // Close previous
-      formattedHtml += buildConditionPreviewLine_Simple(label); // Start next
-    } else if (keyword === 'endif') {
-      formattedHtml += buildConditionPreviewLine_Simple('');
-    }
-  }
-
-  formattedHtml += rawHtml.slice(lastIndex);
-
-  return formattedHtml;
-};
+// Old approach: SummaryDialog loaded this page inside an iframe using the React route URL:
+// <iframe src="${sitePrefix}previewer/newsletter/${CampaignID}?embedded=1" />
+// The ?embedded=1 flag toggled a minimal render mode (no chrome, no title bar).
+// Replaced by EmailPreviewComponent (Shadow DOM) to avoid loading the full React app inside the iframe.
 
 
 
