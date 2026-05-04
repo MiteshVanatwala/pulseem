@@ -423,7 +423,7 @@ const BulkStatus = ({ classes }) => {
 
             <Grid item md={4} xs={4} className={isRTL ? classes.textLeft : classes.textRight}>
               {
-                isAllowSms() && (
+                isAllowSms() && !isBeeperAccount && (
                   <Button
                     className={clsx(classes.btn, classes.btnRounded, classes.f12)}
                     onClick={() => {
