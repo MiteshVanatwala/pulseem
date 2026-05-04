@@ -182,6 +182,30 @@ const useComponentStyles = makeStyles((theme) => ({
     fontSize: 14,
     color: '#888'
   },
+  problematicLinksContainer: {
+    maxHeight: '60vh',
+    overflowY: 'auto',
+    padding: '0 4px'
+  },
+  problematicLinksMt: {
+    marginTop: 12
+  },
+  problematicLinksList: {
+    margin: '4px 0',
+    paddingInlineStart: 20,
+    listStyleType: 'disc',
+    wordBreak: 'break-word',
+    overflowWrap: 'break-word',
+    '& li': {
+      listStyleType: 'disc',
+      wordBreak: 'break-word',
+      overflowWrap: 'break-word',
+    }
+  },
+  problematicLinksWordBreak: {
+    wordBreak: 'break-word',
+    overflowWrap: 'break-word',
+  },
 }));
 
 const CampaignEditor = ({ classes, ...props }) => {
@@ -882,6 +906,18 @@ const CampaignEditor = ({ classes, ...props }) => {
           }
           return false;
         }
+        case 423: {
+          setDialogType({
+            type: 'problematicLinks',
+            data: {
+              links: response?.payload?.Data || [],
+              campaignName: campaign?.Name,
+              campaignId: args.campaignId,
+              companyName: accountSettings?.SubAccountName
+            }
+          });
+          return false;
+        }
         case 927: {
           if (saveRef.current?.operation !== 'exit') {
             // EMAIL_BASIC, BASIC_PERSONALIZATION
@@ -1049,6 +1085,20 @@ const CampaignEditor = ({ classes, ...props }) => {
   const onTestSendSubmit = async (sendRequest) => {
     setLoader(true);
     const reponse = await dispatch(testSend({ ...sendRequest }));
+    if (reponse.payload.StatusCode === 423) {
+      setDialog(null);
+      setDialogType({
+        type: 'problematicLinks',
+        data: {
+          links: reponse.payload.Data || [],
+          campaignName: campaign?.Name,
+          campaignId: campaignId,
+          companyName: accountSettings?.SubAccountName
+        }
+      });
+      setLoader(false);
+      return;
+    }
     onTestSendResponse(reponse.payload.StatusCode, reponse.payload.Message);
     setSummaryData(reponse.payload.Summary);
     setLoader(false);
@@ -1781,6 +1831,79 @@ const CampaignEditor = ({ classes, ...props }) => {
     }
   })
 
+  const getProblematicLinksDialog = (data = {}) => {
+    const {
+      links = [],
+      campaignName = '',
+      campaignId: cid = '',
+      companyName = ''
+    } = data;
+    const tp = 'campaigns.newsLetterEditor.errors.problematicLinks';
+
+    return {
+      showDivider: false,
+      title: t('campaigns.newsLetterEditor.errors.problematicLinksTitle'),
+      content: (
+        <Box className={componentClasses.problematicLinksContainer}>
+          <Typography className={clsx(classes.font16, classes.alignDir, componentClasses.problematicLinksWordBreak)}>
+            {t(`${tp}.greeting`)}
+          </Typography>
+          <Typography className={clsx(classes.font16, classes.alignDir, componentClasses.problematicLinksMt, componentClasses.problematicLinksWordBreak)}>
+            {t(`${tp}.intro`, { companyName })}
+          </Typography>
+          <Typography className={clsx(classes.font16, classes.alignDir, componentClasses.problematicLinksMt, componentClasses.problematicLinksWordBreak)}>
+            {t('common.CampaignName')}: {campaignName}
+          </Typography>
+          <Typography className={clsx(classes.font16, classes.alignDir, componentClasses.problematicLinksWordBreak)}>
+            {t('common.campaignID')}: {cid}
+          </Typography>
+          <Typography className={clsx(classes.font16, classes.alignDir, componentClasses.problematicLinksMt, componentClasses.problematicLinksWordBreak)}>
+            {t(`${tp}.instructions`)}
+          </Typography>
+          <Box className={componentClasses.problematicLinksListBox}>
+            <ul className={componentClasses.problematicLinksList}>
+              {(links || []).map((link, idx) => (
+                <li key={idx} className={clsx(classes.font16, classes.alignDir, componentClasses.problematicLinksWordBreak)}>
+                  {link}
+                </li>
+              ))}
+            </ul>
+          </Box>
+          <Typography className={clsx(classes.font16, classes.alignDir, componentClasses.problematicLinksMt, componentClasses.problematicLinksWordBreak)}>
+            {t(`${tp}.note`)}
+          </Typography>
+          <Typography className={clsx(classes.font16, classes.alignDir, componentClasses.problematicLinksMt, componentClasses.problematicLinksWordBreak)}>
+            {t(`${tp}.supportIntro`)}
+          </Typography>
+          <Typography className={clsx(classes.font16, classes.alignDir, componentClasses.problematicLinksWordBreak)}>
+            {t('common.email')}: support@pulseem.com
+          </Typography>
+          <Typography className={clsx(classes.font16, classes.alignDir, componentClasses.problematicLinksWordBreak)}>
+            {t('common.phone')}: 03-5240290
+          </Typography>
+        </Box>
+      ),
+      renderButtons: () => (
+        <Grid
+          container
+          spacing={2}
+          className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+        >
+          <Grid item>
+            <Button
+              variant='contained'
+              size='small'
+              onClick={() => setDialogType(null)}
+              className={clsx(classes.btn, classes.btnRounded)}
+            >
+              {t('common.Ok')}
+            </Button>
+          </Grid>
+        </Grid>
+      )
+    };
+  };
+
   // Email Size Exceeded Dialog
   const getEmailSizeExceededDialog = (data = {}) => ({
     title: t('campaigns.emailSize.exceeded.title'),
@@ -1861,8 +1984,9 @@ const CampaignEditor = ({ classes, ...props }) => {
       currentDialog = getPendingApprovalModal(551);
     } else if (type === 'tier') {
       currentDialog = getTierValidationDialog();
-    }
-    else if (type === 'AIDialog') {
+    } else if (type === 'problematicLinks') {
+      currentDialog = getProblematicLinksDialog(data);
+    } else if (type === 'AIDialog') {
       currentDialog = AI_Dialog();
     }
 
