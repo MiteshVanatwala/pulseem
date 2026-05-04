@@ -804,9 +804,11 @@ const CampaignEditor = ({ classes, ...props }) => {
     const dynamicBlocks = (args.HtmlData?.match(/product-block-container/g) || []).length;
     if (saveRef.current?.checkDynamicBlock && dynamicBlocks > 0) {
       if (dynamicBlocks > 1) {
+        setLoader(false);
         setDialogType({ type: 'moreThanOneDynamicBlock', data: saveRef.current?.operation })
         return false;
       } else if (['save', 'exit'].indexOf(saveRef.current?.operation) === -1) {
+        setLoader(false);
         setDialogType({
           type: 'productCatalogPrompt',
           data: args
@@ -814,6 +816,7 @@ const CampaignEditor = ({ classes, ...props }) => {
         return false;
       }
     } else if (dynamicBlocks > 1) {
+      setLoader(false);
       return false;
     }
 
@@ -1608,6 +1611,7 @@ const CampaignEditor = ({ classes, ...props }) => {
               size='small'
               onClick={() => {
                 setDialogType(null);
+                setLoader(false);
                 saveRef.current = { ...saveRef.current, checkDynamicBlock: false };
                 onSave(args);
               }}
