@@ -518,68 +518,6 @@ export const isShowTierAlert = (
 	}
 };
 
-export const adjustTemplateVariablesForLink = (
-	templateData: savedTemplateTypesProps,
-	updatedDynamicVariable: updatedVariable[],
-	whatsappTempalteBody: string = ''
-) => {
-	let {
-		templateData: { templateText },
-	} = getTemplatePreviewData(templateData);
-	if (whatsappTempalteBody !== '') templateText = whatsappTempalteBody;
-
-	// Robustly find all {{n}} tags and their exact positions in the text
-	const tagPattern = /{{(\d+)}}/g;
-	const tagsInText: { index: number, tag: string, vIndex: number }[] = [];
-	let match;
-	if (templateText) {
-		while ((match = tagPattern.exec(templateText)) !== null) {
-			tagsInText.push({
-				index: match.index,
-				tag: match[0],
-				vIndex: Number(match[1])
-			});
-		}
-	}
-
-	// Adjust variables only if they are links
-	return updatedDynamicVariable.map((variable) => {
-		if (
-			variable &&
-			(variable?.FieldTypeId === 3 ||
-				variable?.FieldTypeId === 4 ||
-				variable?.FieldTypeId === 5)
-		) {
-			const tagUsage = tagsInText.find(t => t.vIndex === variable.VariableIndex);
-			let newVal = variable.VariableValue || '';
-			
-			// Non-Breaking Space (\u00A0) survives automatic trimming
-			const NBSP = "\u00A0";
-
-			// If we found the tag, check surrounding text. 
-			// If we didn't find the tag (fallback), we ALWAYS add spaces for safety.
-			if (tagUsage) {
-				// Add leading space if needed
-				if (tagUsage.index === 0 || (templateText.charAt(tagUsage.index - 1) !== ' ' && !newVal.startsWith(NBSP))) {
-					newVal = NBSP + newVal;
-				}
-				
-				// Add trailing space if needed
-				const tagEnd = tagUsage.index + tagUsage.tag.length;
-				if (tagEnd >= templateText.length || (templateText.charAt(tagEnd) !== ' ' && !newVal.endsWith(NBSP))) {
-					newVal = newVal + NBSP;
-				}
-			} else {
-				// Failsafe: Always add spaces to links if tag position is unknown
-				if (!newVal.startsWith(NBSP)) newVal = NBSP + newVal;
-				if (!newVal.endsWith(NBSP)) newVal = newVal + NBSP;
-			}
-
-			return { ...variable, VariableValue: newVal };
-		}
-		return variable;
-	});
-};
 
 export const detecLanguageMixup = (text: string) => {
 	let isLanguageMixup = false;

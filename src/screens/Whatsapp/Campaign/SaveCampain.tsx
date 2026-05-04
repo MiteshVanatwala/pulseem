@@ -75,7 +75,6 @@ import QuickReply from '../Editor/Popups/QuickReply';
 import ActionCallPopOver from '../Editor/Popups/ActionCallPopOver';
 import { useNavigate } from 'react-router-dom';
 import {
-	adjustTemplateVariablesForLink,
 	checkSiteTrackingLink,
 	formatUpdatedDynamicVariable,
 	getDynamicFields,
@@ -405,14 +404,6 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 					};
 				}
 
-				// Bug Fix PR-3511: Bake safety spaces into the Unsubscribe Link value at the state level
-				if (variable.VariableValue === '##WHATSAPPUnsubscribelink##') {
-					return {
-						...variable,
-						VariableValue: ' ##WHATSAPPUnsubscribelink## '
-					};
-				}
-
 				return variable;
 			} else {
 				if (
@@ -591,17 +582,11 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 						(dynamicVariable: updatedVariable) =>
 							dynamicVariable?.VariableIndex === vIndex
 					);
-					const isUnsubscribe = matchedVariable?.VariableValue === '##WHATSAPPUnsubscribelink##';
 
 					return variable === '\n'
 						? <br key={index} />
 						: <strong
 							key={index}
-							style={{ 
-								margin: '0 5px',
-								display: 'inline-block',
-								verticalAlign: 'bottom'
-							}}
 							className={clsx(
 								classes.whatsappCampainHighlightText,
 								`${isUpdatedVaraiable(variable) && 'updated'}`
@@ -992,13 +977,6 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			IsTestCampaign:
 				callFrom === 'send' || callFrom === 'save' ? false : isTestSend,
 		};
-		if (savedTemplateData && savedTemplateData?.Data?.types) {
-			reqData.Variables = adjustTemplateVariablesForLink(
-				savedTemplateData?.Data?.types,
-				reqData.Variables,
-				templateCategory === 3 ? `${authenticationMockTemplate[getAuthTemplate(savedTemplateData.Language || '')].body}` : templateData.templateText
-			);
-		}
 
 		const { payload }: saveCampaignResponseProps = await dispatch<any>(
 			saveCampaign(reqData)
