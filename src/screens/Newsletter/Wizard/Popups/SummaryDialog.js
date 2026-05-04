@@ -91,7 +91,19 @@ const SummaryDialog = ({ classes,
 
         const response = sendResponse?.payload;
         console.log(response)
-        if (response.StatusCode === 927) {
+        if (response.StatusCode === 423) {
+            setDialogType({
+                type: 'problematicLinks',
+                data: {
+                    links: response.Data || [],
+                    campaignName: newsletterSendSummary?.CampaignName || '',
+                    campaignId: newsletterSendSummary?.CampaignID || '',
+                    companyName: accountSettings?.SubAccountName || ''
+                }
+            });
+            setShowLoader(false);
+            setDisableSend(false);
+        } else if (response.StatusCode === 927) {
             // EMAIL_BASIC
             setTierMessageCode(response.Message);
             setDialogType(927)
