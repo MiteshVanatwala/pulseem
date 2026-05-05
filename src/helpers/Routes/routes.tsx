@@ -314,7 +314,7 @@ export const getRoutes = (
         {
           title: t("master.FormTemplatesResource1.Text"),
           href: `${rootDomain}/FormTemplates.aspx?fromreact=true`,
-          isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount,
+          isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount && !isBeeperAccount,
         },
         {
           key: "createPopup",
