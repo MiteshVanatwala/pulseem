@@ -84,6 +84,9 @@ const ChatUi = ({
 	} | null>(null);
 	const [contactTags, setContactTags] = useState<any[]>([]);
 	const [toastMessage, setToastMessage] = useState(null);
+	const [localAgentId, setLocalAgentId] = useState<number>(
+		(chatContacts as any)?.Agents?.[0]?.AgentID || 0
+	);
 
 	// Handler to remove a tag from the current chat contact
 	const onChatTagRemove = async (tagId: string) => {
@@ -105,11 +108,12 @@ const ChatUi = ({
 			const response = await PulseemReactInstance.put('WhatsAppChat/AssignTagsToChat', {
 				Cellphone: chatContacts.PhoneNumber,
 				TagIds: newTagIds,
+				Sendernumber: activePhoneNumber,
 			});
 			
 			// Call onTagsUpdated callback to update sidebar immediately
 			if (response && typeof onTagsUpdated === 'function') {
-				onTagsUpdated(chatContacts.PhoneNumber, newTagIds, newTags);
+				onTagsUpdated(chatContacts.PhoneNumber, newTagIds, newTags, activePhoneNumber);
 			}
 		} catch (err) {
 			console.error('Failed to remove tag:', err);
@@ -152,6 +156,7 @@ const ChatUi = ({
 	const { windowSize } = useSelector(
 		(state: { core: coreProps }) => state.core,
 	);
+	const firstAgentId = (chatContacts as any)?.Agents?.[0]?.AgentID ?? 0;
 
 	useEffect(() => {
 		setTimeout(() => {
@@ -167,7 +172,7 @@ const ChatUi = ({
 		} else {
 			setContactTags([]);
 		}
-	}, [chatContacts?.Tags]);
+	}, [chatContacts?.Tags, chatContacts?.PhoneNumber, activePhoneNumber]);
 
 	useEffect(() => {
 		getAPIAllWhatsappChat();
@@ -184,6 +189,14 @@ const ChatUi = ({
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [whatsappChatSession, isStatusUpdating]);
+
+	useEffect(() => {
+		setLocalAgentId(firstAgentId);
+	}, [
+		chatContacts?.PhoneNumber,
+		activePhoneNumber,
+		firstAgentId,
+	]);
 
 	const renderToast = () => {
 		if (toastMessage) {
@@ -227,20 +240,23 @@ const ChatUi = ({
 		}
 	};
 
-	const handleSetAgentToSession = async (
-		agentToSession: WhatsappPhoneSession,
-	) => {
-		const response: any = await dispatch(assignAgentToChat(agentToSession));
-		switch (response?.payload?.StatusCode) {
-			case 201: {
+	const handleSetAgentToSession = async (agentToSession: WhatsappPhoneSession) => {
+		setLocalAgentId(agentToSession.AgentId > 0 ? agentToSession.AgentId : 0);
+
+		try {
+			const response: any = await dispatch(assignAgentToChat({
+				...agentToSession,
+				Sendernumber: activePhoneNumber,
+			}));
+
+			if (response?.payload?.StatusCode === 201) {
 				await dispatch(getChatAgents());
-				//TODO: show success assign
-				break;
+				if (typeof refetchActiveChatContact === 'function') {
+					await refetchActiveChatContact(activeChatContacts.PhoneNumber);
+				}
 			}
-			case 404: {
-				//TODO: not found
-				break;
-			}
+		} catch (e) {
+			setLocalAgentId((chatContacts as any)?.Agents?.[0]?.AgentID || 0);
 		}
 	};
 
@@ -290,24 +306,20 @@ const ChatUi = ({
 							style={
 								chatContacts.ConversationStatusId
 									? {
-											padding: '8px 0px 8px 8px',
-											// position: 'absolute',
-											borderRadius: '24px',
-											textAlign: 'center',
-											// marginTop: '-6px',
-										}
-									: {
-											display: 'none',
-										}
+										padding: '8px 0px 8px 8px',
+										// position: 'absolute',
+										borderRadius: '24px',
+										textAlign: 'center',
+										// marginTop: '-6px',
+									}
+									: { display: 'none' }
 							}
 							onChange={(e: SelectChangeEvent) =>
 								handleUserStatus(e, chatContacts.PhoneNumber, setIsStatusUpdating)
 							}
 						>
 							<MenuItem value={1}>{translator('whatsappChat.open')}</MenuItem>
-							<MenuItem value={2}>
-								{translator('whatsappChat.pending')}
-							</MenuItem>
+							<MenuItem value={2}>{translator('whatsappChat.pending')}</MenuItem>
 							<MenuItem value={3}>{translator('whatsappChat.solved')}</MenuItem>
 						</Select>
 						<div className={classes.agentSelectorContainer}>
@@ -318,8 +330,7 @@ const ChatUi = ({
 									classes.selectFieldStyle,
 								)}
 								autoWidth
-								defaultValue="0"
-								value={`${selectedAgent?.AgentId || 0}`}
+								value={String(localAgentId)}  
 								variant="standard"
 								MenuProps={{
 									PaperProps: {

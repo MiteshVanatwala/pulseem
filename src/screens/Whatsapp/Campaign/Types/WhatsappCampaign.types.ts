@@ -810,4 +810,5 @@ export interface WhatsappSessionToClient {
 export interface WhatsappPhoneSession {
 	Cellphone: string;
 	AgentId: number;
+	Sendernumber?: string; 
 }

@@ -62,7 +62,7 @@ export type WhatsappChatUiProps = {
 	selectedAgent?: WhatsappAgent;
 	ToastMessages?: any;
 	tagsList?: Array<{ id: string; TagName: string; TagColor: string }>;
-	onTagsUpdated?: (phoneNumber: string, tagIds: number[], tags?: any[]) => void;
+	onTagsUpdated?: (phoneNumber: string, tagIds: number[], tags?: any[], senderNumber?: string) => void;
 	refetchActiveChatContact?: (phoneNumber: string) => void;
 };
 
@@ -80,7 +80,8 @@ export type SideBarContactListProps = {
 	isLoader: boolean;
 	searchText: string;
 	tagsList?: Array<{ id: string; TagName: string; TagColor: string }>;
-	onTagsUpdated?: (phoneNumber: string, tagIds: number[], tags?: any[]) => void;
+	onTagsUpdated?: (phoneNumber: string, tagIds: number[], tags?: any[], senderNumber?: string) => void;
+	activePhoneNumber: string;
 };
 
 export type SideHeaderContactDropDownProps = {
@@ -168,7 +169,7 @@ export type WhatsappChatSideBarProps = {
 	setAgentSelected: (agentId: number) => void;
 	onAddAgent: () => void;
 	onEditAgents: () => void;
-	onTagsUpdated?: (phoneNumber: string, tagIds: number[], tags?: any[]) => void;
+	onTagsUpdated?: (phoneNumber: string, tagIds: number[], tags?: any[], senderNumber?: string) => void;
 	onTagColorUpdated?: (tagId: string, newColor: string) => void;
 	tagsList?: Array<{ id: string; TagName: string; TagColor: string }>;
 	TotalRecord: number;
@@ -176,6 +177,25 @@ export type WhatsappChatSideBarProps = {
 	TotalPending: number;
 	TotalSolved: number;
 	refetchActiveChatContact?: (phoneNumber: string) => void,
+	savedTemplateList: savedTemplateListProps[];
+	onStartNewChat: (toNumber: string) => void;
+	onRefreshChat: () => Promise<void>;
+	personalFields: { [key: string]: string };
+	landingPageData: { CampaignID: number; CampaignName: string; PageHref: string }[];
+	searchTextRef: React.MutableRefObject<string>;
+};
+
+export type StartNewChatStep = 'phone' | 'template' | 'variables' | 'review';
+
+export type StartNewChatModalProps = {
+	classes: ClassesType['classes'];
+	open: boolean;
+	onClose: () => void;
+	savedTemplateList: savedTemplateListProps[];
+	activePhoneNumber: string;
+	onSendSuccess: (toNumber: string) => void;
+	personalFields: { [key: string]: string };
+	landingPageData: { CampaignID: number; CampaignName: string; PageHref: string }[];
 };
 
 export type chatModalProps = {
@@ -208,6 +228,7 @@ export type APIWhatsappChatSidebarContactsItemsData = {
 	UserName: string;
 	Tags?: Array<{ id?: string; Id?: string; TagName: string; TagColor: string }>;
 	ClientId?: number; // Standardized for WhatsApp chat edit mapping
+	Agents?: Array<{ AgentID: number; AgentName: string }> | null;
 };
 
 //SidebarContacts Main inbound data types

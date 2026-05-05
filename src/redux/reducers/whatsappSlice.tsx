@@ -899,9 +899,12 @@ export const editChatAgent = createAsyncThunk(
 );
 export const assignAgentToChat = createAsyncThunk(
 	'WhatsAppChat/AssignAgentToChat',
-	async (agentToSession: WhatsappPhoneSession, thunkAPI) => {
+	async ({ AgentId, Cellphone, Sendernumber }: WhatsappPhoneSession, thunkAPI) => {
 		try {
-			const response = await PulseemReactInstance.put(`WhatsAppChat/AssignAgentToChat`, agentToSession);
+			const response = await PulseemReactInstance.put(
+				'WhatsAppChat/AssignAgentToChat',
+				{ AgentId, Cellphone, Sendernumber }
+			);
 			return response.data;
 		} catch (error) {
 			const err = error as ApiError;

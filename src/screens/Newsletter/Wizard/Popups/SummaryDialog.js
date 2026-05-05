@@ -8,8 +8,8 @@ import { FaChevronDown } from 'react-icons/fa';
 import { FaChevronUp } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux'
 import clsx from "clsx";
-import { Stack } from "@mui/material";
 import { getAuthorizedEmails, isSweepingApprovalAccount } from "../../../../redux/reducers/commonSlice";
+import EmailPreviewComponent from "../../../../components/EmailPreview/EmailPreviewComponent";
 import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
 import moment from 'moment';
 import { RenderHtml } from "../../../../helpers/Utils/HtmlUtils";
@@ -30,7 +30,6 @@ const SummaryDialog = ({ classes,
     setTierMessageCode = () => null,
     filteredGroups = null,
     filteredCampaigns = null,
-    PreviewURL = null,
     SendDate = "",
     handleSendResponse = () => null,
     IsQuickSend = false,
@@ -443,12 +442,13 @@ const SummaryDialog = ({ classes,
                                 </Link>
                             </Box>
                         </Box>
-                        {PreviewURL && <Box className={classes.sumRight} style={{ width: windowSize === 'xs' || windowSize === 'sm' ? '100%' : '50%' }}>
-                            <Stack direction='column' alignItems='center' spacing={2} className={classes.paddingInline25}>
-                                <Stack className={classes.previewIframe}>
-                                    {RenderHtml(`<iframe src="${PreviewURL}&fromReact=1" style="height: inherit; border: 0; background: none; width: 100%; height: 400px;" />`)}
-                                </Stack>
-                            </Stack>
+                        {/* Old approach: backend URL loaded in iframe
+                            {PreviewURL && RenderHtml(`<iframe src="${PreviewURL}&fromReact=1" style="height: 400px; border: 0; background: none; width: 100%;" />`)}
+                        */}
+                        {newsletterSendSummary?.CampaignID && <Box className={classes.sumRight} style={{ width: windowSize === 'xs' || windowSize === 'sm' ? '100%' : '50%' }}>
+                            <Box className={classes.paddingInline25}>
+                                <EmailPreviewComponent campaignId={newsletterSendSummary.CampaignID} height={400} />
+                            </Box>
                         </Box>}
                     </Box>
                     {!IsQuickSend &&

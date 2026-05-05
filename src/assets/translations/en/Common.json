@@ -446,6 +446,7 @@
   "outOf": "out of",
   "rowNumber": "Rows",
   "clear": "Clear",
+  "filterByNumber": "Filter By Number",
   "confirm": "Confirm",
   "stopped": "Stopped",
   "cancelled": "Cancelled",
@@ -988,5 +989,9 @@
   "typeFromName": "Type From Name",
   "typeSubject": "Type Subject",
   "manageAgent": "Manage Agent",
-  "clearAllFilters": "Clear all filters"
+  "clearAllFilters": "Clear all filters",
+  "allNumbers": "All Numbers",
+  "field": "Field",
+  "operator": "Operator",
+  "value": "Value"
 }

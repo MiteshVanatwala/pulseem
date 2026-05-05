@@ -24,12 +24,14 @@ import {
 } from '@material-ui/core';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { FaBars, FaCalendar, FaFilter, FaTrash } from 'react-icons/fa';
+import { MdAddComment, MdRefresh } from 'react-icons/md';
 import {
 	BsFillTagsFill,
 	BsPeopleFill,
 	BsPersonWorkspace,
 	BsX,
 } from 'react-icons/bs';
+import StartNewChatModal from '../Popups/StartNewChatModal';
 import { BaseSyntheticEvent, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import SideHeaderContactDropDown from './SideHeaderContactDropDown';
@@ -77,6 +79,12 @@ const SideBar = ({
 	TotalPending,
 	TotalSolved,
 	refetchActiveChatContact,
+	savedTemplateList,
+	onStartNewChat,
+	onRefreshChat,
+	personalFields,
+	landingPageData,
+	searchTextRef,
 }: WhatsappChatSideBarProps) => {
 	const { t: translator } = useTranslation();
 	const { isRTL, userRoles } = useSelector(
@@ -92,6 +100,7 @@ const SideBar = ({
 	const dispatch = useDispatch();
 	const [searchText, setSearchText] = useState<string>('');
 	const debouncedValue = useDebounce<string>(searchText, 500);
+	const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
 	const [activeTab, setActiveTab] = useState(0);
 	const isInitialMount = useRef(true);
 	const isChangingRowsPerPage = useRef(false);
@@ -116,6 +125,7 @@ const SideBar = ({
 	const [dialogStartTime, setDialogStartTime] = useState<string>('');
 	const [dialogEndTime, setDialogEndTime] = useState<string>('');
 	const [showEditTagsDialog, setShowEditTagsDialog] = useState<boolean>(false);
+	const [isStartNewChatOpen, setIsStartNewChatOpen] = useState<boolean>(false);
 	const [tagsList, setTagsList] = useState<
 		Array<{ id: string; TagName: string; TagColor: string }>
 	>([]);
@@ -137,6 +147,14 @@ const SideBar = ({
 	useEffect(() => {
 		// No default date range - user can select one if needed
 	}, []);
+
+	useEffect(() => {
+		searchTextRef.current = searchText;
+	}, [searchText, searchTextRef]);
+
+	useEffect(() => {
+		setSearchText('');
+	}, [activePhoneNumber]);
 
 	// Fetch tags on component mount
 	useEffect(() => {
@@ -779,10 +797,6 @@ const SideBar = ({
 					);
 				//}
 
-				if (typeof refetchActiveChatContact === 'function') {
-					refetchActiveChatContact(activePhoneNumber);
-				}
-
 				setToastMessage({
 					message: 'Tag saved successfully',
 					severity: 'success',
@@ -929,6 +943,24 @@ const SideBar = ({
 						</IconButton>
 						<IconButton onClick={() => handleOpenEditTags()} title={translator('whatsappChat.editTags')}>
 							<BsFillTagsFill />
+						</IconButton>
+						<IconButton
+							onClick={() => setIsStartNewChatOpen(true)}
+							title={translator('whatsappChat.startNewChatTooltip')}
+							className={classes.startNewChatIconButton}
+						>
+							<MdAddComment />
+						</IconButton>
+						<IconButton
+							onClick={async () => {
+								setIsRefreshing(true);
+								await onRefreshChat();
+								setIsRefreshing(false);
+							}}
+							disabled={isRefreshing}
+							title={translator('whatsappChat.refreshChat')}
+						>
+							<MdRefresh style={{ animation: isRefreshing ? 'spin 0.8s linear infinite' : 'none' }} />
 						</IconButton>
 					</div>
 					<div
@@ -1264,6 +1296,7 @@ const SideBar = ({
 					searchText={searchText}
 					tagsList={tagsList}
 					onTagsUpdated={onTagsUpdated}
+					activePhoneNumber={activePhoneNumber}
 				/>
 				<TablePagination
 					classes={classes}
@@ -1815,6 +1848,21 @@ const SideBar = ({
 
 			{/* Toast Notification */}
 			{toastMessage && <Toast customData={toastMessage as any} data={null} />}
+
+			{/* Start New Chat Modal */}
+			<StartNewChatModal
+				classes={classes}
+				open={isStartNewChatOpen}
+				onClose={() => setIsStartNewChatOpen(false)}
+				savedTemplateList={savedTemplateList}
+				activePhoneNumber={activePhoneNumber}
+				onSendSuccess={(toNumber: string) => {
+					setIsStartNewChatOpen(false);
+					onStartNewChat(toNumber);
+				}}
+				personalFields={personalFields}
+				landingPageData={landingPageData}
+			/>
 		</>
 	);
 };
