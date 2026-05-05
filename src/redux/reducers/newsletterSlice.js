@@ -285,7 +285,6 @@ export const newsletterSlice = createSlice({
       GROUP_ALREADY_EXIST: { severity: 'error', color: 'error', message: 'group.alreadyExist', showAnimtionCheck: false },
       FUTURE_DATE_PASSED: { severity: 'error', color: 'error', message: 'campaigns.newsLetterEditor.errors.FUTURE_DATE_PASSED', showAnimtionCheck: false },
       HTML_BODY_EMPTY: { severity: 'error', color: 'error', message: 'campaigns.htmlBodyEmpty', showAnimtionCheck: false },
-      HTML_NO_VISIBLE_CONTENT: { severity: 'error', color: 'error', message: 'campaigns.htmlNoVisibleContent', showAnimtionCheck: false },
     },
     domainVerificationPopUp: {
       domain: {
