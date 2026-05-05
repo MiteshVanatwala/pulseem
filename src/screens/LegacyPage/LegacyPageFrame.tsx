@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
-import { iframeURL } from '../../config';
+import { actionURL } from '../../config';
 import DefaultScreen from '../DefaultScreen';
 import clsx from 'clsx';
 
@@ -11,14 +11,6 @@ interface LegacyPageFrameProps {
     extraQuery?: string;
     classes?: any;
 }
-
-const isLocalHost = () => {
-    if (typeof window === 'undefined') {
-        return false;
-    }
-
-    return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-};
 
 const LegacyPageRenderer: React.FC<{ src: string; title?: string; classes?: any }> = ({ src, title, classes }) => {
     useEffect(() => {
@@ -56,41 +48,63 @@ const LegacyPageRenderer: React.FC<{ src: string; title?: string; classes?: any 
         </>
     );
 };
+const buildLegacySrc = (path: string, routeParams: any, search: string, extraQuery?: string) => {
+    const searchParams = new URLSearchParams(search);
+    searchParams.delete('fromreact');
+    searchParams.delete('iframe');
+    searchParams.delete('isiframe');
+
+    // Start building the query part with the "Magic Switches"
+    const queryParts: string[] = ['fromreact=true', 'iframe=true', 'isiframe=1'];
+
+    // Add Route Params (e.g. :id, :campaignID)
+    Object.entries(routeParams).forEach(([key, value]) => {
+        if (value && key !== 'aspxPage') {
+            queryParts.push(`${key}=${value}`);
+        }
+    });
+
+    // Add browser search params (Culture etc.)
+    const searchStr = searchParams.toString();
+    if (searchStr) {
+        queryParts.push(searchStr);
+    }
+
+    // Add extraQuery if provided
+    if (extraQuery) {
+        queryParts.push(extraQuery);
+    }
+
+    const separator = path.includes('?') ? '&' : '?';
+    return `${actionURL}${path}${separator}${queryParts.join('&')}`;
+};
 
 /**
  * Renders a legacy .NET (.aspx) page inside a full-height iframe.
- * Uses `actionURL` from config so it correctly targets the .NET server
- * in both local development (REACT_APP_ACTION_URL) and production.
+ * Uses `actionURL` from config and appends all query strings/parameters.
  */
 const LegacyPageFrame: React.FC<LegacyPageFrameProps> = ({ path, extraQuery, classes }) => {
+    const routeParams = useParams();
     const { search } = useLocation();
-    const params = new URLSearchParams(search);
-    params.delete('fromreact');
-    const fromLocation = params.toString();
-    const extra = [extraQuery, fromLocation].filter(Boolean).join('&');
-    const qs = extra ? `&${extra}` : '';
-    const src = `${iframeURL}${path}?fromreact=true${qs}`;
-    // const src = `https://www.clients.stage.pulseem.co.il/Pulseem/${path}?fromreact=true${qs}`;
+
+    const src = buildLegacySrc(path, routeParams, search, extraQuery);
 
     return <LegacyPageRenderer title={path} src={src} classes={classes} />;
 };
 
 /**
  * Generic wildcard handler for routes matching /Pulseem/:aspxPage
- * Preserves the original query string (minus fromreact) so the .NET page
- * receives parameters like Culture, AutomationID etc.
+ * Preserves the original query string and path parameters.
  */
 export const LegacyPageWild: React.FC = () => {
     const { aspxPage } = useParams<{ aspxPage: string }>();
+    const routeParams = useParams();
     const { search } = useLocation();
 
-    const params = new URLSearchParams(search);
-    params.delete('fromreact');
-    const extra = params.toString();
-    const src = `${iframeURL}${aspxPage}?fromreact=true${extra ? `&${extra}` : ''}`;
-    // const src = `https://www.clients.stage.pulseem.co.il/Pulseem/${aspxPage}?fromreact=true${extra ? `&${extra}` : ''}`;
+    const src = buildLegacySrc(aspxPage || '', routeParams, search);
 
     return <LegacyPageRenderer title={aspxPage} src={src} />;
 };
 
 export default LegacyPageFrame;
+
