@@ -1,4 +1,4 @@
-{
+﻿{
 	"accountSettings": {
 		"title": "Ustawienia konta",
 		"fixedComDetails": {
@@ -188,5 +188,46 @@
 		"directApi": "Adres URL API bezpośredniej wysyłki",
 		"noAPIKeyAccess": "Aby rozpocząć korzystanie z naszego API, skontaktuj się z naszym zespołem wsparcia na <a href = 'mailto:support@pulseem.com'>support@pulseem.com</a> / <a href='tel:03-7172274'>03-7172274</a>"
 	},
-	"displayRevenueIn": "Wyświetl przychód w"
+	"displayRevenueIn": "Wyświetl przychód w",
+	"mcpSettings": {
+		"sectionTitle": "Połącz AI z Pulseem",
+		"sectionSubtitle": "Połącz Claude, ChatGPT lub Cursor z Pulseem — wysyłaj SMS, Email i WhatsApp bezpośrednio z czatu",
+		"guideLink": "Przewodnik konfiguracji →",
+		"createBtn": "+ Nowe połączenie",
+		"createFirstBtn": "+ Utwórz pierwsze połączenie MCP",
+		"emptyTitle": "Brak połączeń AI",
+		"emptyDesc": "Utwórz połączenie MCP i wysyłaj SMS, Email i WhatsApp bezpośrednio z Claude, ChatGPT i Cursor — w naturalnym języku.",
+		"activeCount": "Aktywne połączenia ({count})",
+		"colLabel": "Etykieta",
+		"colToken": "Token",
+		"colCreated": "Utworzono",
+		"colLastUsed": "Ostatnie użycie",
+		"colStatus": "Status",
+		"statusActive": "Aktywny",
+		"statusInactive": "Nieaktywny",
+		"deactivateBtn": "Dezaktywuj",
+		"neverUsed": "Nigdy nie używany",
+		"createDialogTitle": "Nowe połączenie MCP",
+		"labelField": "Etykieta (dla Twojej identyfikacji)",
+		"labelPlaceholder": "np. Claude Desktop",
+		"createConfirmBtn": "Utwórz połączenie",
+		"successTitle": "Połączenie utworzone pomyślnie!",
+		"successWarning": "Skopiuj oba adresy teraz — nie zostaną pokazane ponownie.",
+		"mcpApiUrlLabel": "Adres MCP — wysyłanie bezpośrednie (Direct API):",
+		"mcpUiApiUrlLabel": "Adres MCP — Pulseem API:",
+		"directApiNotActive": "Wysyłanie bezpośrednie nie jest aktywne na Twoim koncie. Aby aktywować — skontaktuj się z pomocą techniczną: support@pulseem.com",
+		"mcpApiUrlDesc": "Wysyłaj SMS, Email i WhatsApp oraz przeglądaj raporty wysyłki.",
+		"mcpUiApiUrlDesc": "Dodawanie klientów i produktów, tworzenie kampanii, zarządzanie grupami i raporty. Wysyłanie kampanii przez interfejs Pulseem.",
+		"sectionInfoDirectApiTitle": "Wysyłanie bezpośrednie (Direct API) —",
+		"sectionInfoDirectApiDesc": "Dla tych, którzy mają zewnętrzny system i chcą wysyłać SMS lub Email bezpośrednio na numer lub adres — bez kampanii. Wymaga aktywacji.",
+		"sectionInfoUiApiTitle": "Pulseem API —",
+		"sectionInfoUiApiDesc": "Dla tych, którzy zarządzają marketingiem przez Pulseem — klienci, grupy, kampanie i raporty.",
+		"mcpUrlLabel": "Twój adres MCP:",
+		"copyUrlBtn": "Kopiuj adres",
+		"copiedLabel": "Skopiowano",
+		"successClose": "Zamknij — zapisałem oba adresy",
+		"deactivateConfirmTitle": "Dezaktywować to połączenie?",
+		"deactivateConfirmText": "Dezaktywować \"{label}\"? Podłączone narzędzie nie będzie mogło wysyłać wiadomości, dopóki nie utworzysz nowego połączenia.",
+		"deactivateConfirmBtn": "Tak, dezaktywuj"
+	}
 }
