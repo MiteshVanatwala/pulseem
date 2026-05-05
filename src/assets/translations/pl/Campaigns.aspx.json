@@ -555,7 +555,15 @@
       "paymentfailed553Desc": "Nie udało się zrealizować płatności.<br />Wysyłka i automatyzacje zostały zamrożone.<br />Zaktualizuj metodę płatności, aby wznowić działanie.",
       "paymentfailed553Button": "Ureguluj płatność",
       "paymentfailed552Title": "Płatność jest nadal przetwarzana",
-      "paymentProcessing552Desc": "Twoja płatność jest przetwarzana.<br />Wysyłka została tymczasowo zablokowana do czasu zakończenia procesu.<br />Prosimy poczekać chwilę i spróbować ponownie."
+      "paymentProcessing552Desc": "Twoja płatność jest przetwarzana.<br />Wysyłka została tymczasowo zablokowana do czasu zakończenia procesu.<br />Prosimy poczekać chwilę i spróbować ponownie.",
+      "problematicLinksTitle": "Wykryto problematyczne linki",
+      "problematicLinks": {
+        "greeting": "Cześć,",
+        "intro": "Wykryliśmy linki w kampanii (konto: {{companyName}}), które mogą negatywnie wpłynąć na dostarczalność oraz śledzenie.",
+        "instructions": "Aby kontynuować, sprawdź i zamień następujące problematyczne linki:",
+        "note": "Mogą występować również inne linki powodujące podobne problemy, dlatego zalecamy sprawdzenie wszystkich linków przed kontynuowaniem.",
+        "supportIntro": "Jeśli potrzebujesz pomocy, możesz skontaktować się z zespołem wsparcia Pulseem:"
+      }
     },
     "success": "Kampania została pomyślnie zapisana",
     "sendSettings": {
@@ -779,6 +787,8 @@
   "webpNotSupport": "webp nie jest obsługiwany w AMP",
   "htmlDocTypeNotAllowed": "Nieprawidłowe znaczniki znalezione w bloku HTML. Nie obsługujemy następujących znaczników: <br />&lt;!DOCTYPE&gt;, &lt;body&gt;, &lt;html&gt; i &lt;script&gt;",
   "htmlDocTypeNotAllowedWarning": "Używanie własnego kodu może wpłynąć na sposób wyświetlania wiadomości. Upewnij się, że używasz poprawnego i responsywnego HTML. Nie obsługujemy następujących tagów: <!DOCTYPE>, <body>, <html> oraz <script>.",
+  "htmlBodyEmpty": "Treść e-maila jest pusta.",
+  "htmlNoVisibleContent": "E-mail nie zawiera widocznego tekstu.",
   "setupStaticProduct": "Konfiguracja produktu",
   "createProductBlock": "Spersonalizowany blok produktu",
   "selectProduct": "Wybierz produkt z katalogu",

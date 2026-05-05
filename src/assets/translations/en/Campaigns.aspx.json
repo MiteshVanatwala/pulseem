@@ -555,7 +555,15 @@
       "paymentfailed553Desc": "Your payment could not be completed.<br />Sending and automations are frozen.<br />Please update your payment method to resume usage.",
       "paymentfailed553Button": "Resolve Payment",
       "paymentfailed552Title": "Payment is still in process",
-      "paymentProcessing552Desc": "Your payment is being processed<br />Sending is temporarily blocked until the process is completed.<br />Please wait a moment and try again."
+      "paymentProcessing552Desc": "Your payment is being processed<br />Sending is temporarily blocked until the process is completed.<br />Please wait a moment and try again.",
+      "problematicLinksTitle": "Problematic Links Detected",
+      "problematicLinks": {
+        "greeting": "Hi,",
+        "intro": "We detected links in your campaign (account: {{companyName}}) that may negatively impact your deliverability and tracking performance.",
+        "instructions": "To proceed, please review and replace the following problematic links:",
+        "note": "There may be additional links that could cause similar issues, so we recommend reviewing all links before continuing.",
+        "supportIntro": "If you need help, you can contact Pulseem support at:"
+      }
     },
     "success": "Campaign successfully saved",
     "sendSettings": {
@@ -843,6 +851,8 @@
   "webpNotSupport": "webp is not supported in AMP",
   "htmlDocTypeNotAllowed": "Invalid tags found in HTML block. We do not support the following tags: <br />&lt;!DOCTYPE&gt;, &lt;body&gt;, &lt;html&gt; and &lt;script&gt;",
   "htmlDocTypeNotAllowedWarning": "Using your own code may affect how the message is rendered. Make sure to use correct and responsive HTML. We do not support the following tags: <!DOCTYPE>, <body>, <html> and <script>.",
+  "htmlBodyEmpty": "Email content is empty.",
+  "htmlNoVisibleContent": "Email has no visible text.",
   "setupStaticProduct": "Product Set-Up",
   "createProductBlock": "Personalized Product Block",
   "selectProduct": "Select Product From Catalog",

@@ -89,7 +89,34 @@ const useStyles = makeStyles((theme) => ({
         padding: 0,
         textTransform: 'capitalize',
         color: '#CA332F'
-    }
+    },
+    problematicLinksContainer: {
+        maxHeight: '60vh',
+        overflowY: 'auto',
+        padding: '0 4px'
+    },
+    problematicLinksMt: {
+        marginTop: 12
+    },
+    problematicLinksListBox: {
+        marginTop: 4
+    },
+    problematicLinksList: {
+        margin: '4px 0',
+        paddingInlineStart: 20,
+        listStyleType: 'disc',
+        wordBreak: 'break-word',
+        overflowWrap: 'break-word',
+        '& li': {
+            listStyleType: 'disc',
+            wordBreak: 'break-word',
+            overflowWrap: 'break-word',
+        }
+    },
+    problematicLinksWordBreak: {
+        wordBreak: 'break-word',
+        overflowWrap: 'break-word',
+    },
 }));
 
 const useSnackRecipients = makeStyles((theme) => ({
@@ -468,7 +495,13 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 ...errorToastData,
                 message: t('whatsappCampaign.metaPhoneNumberNotVerified')
             });
-        } else if ([550, 551].indexOf(response.StatusCode)) {
+        } else if (response?.StatusCode === 422) {
+            if (response.Message === 'HTML_NO_VISIBLE_CONTENT') {
+                setToastMessage(ToastMessages.HTML_NO_VISIBLE_CONTENT);
+            } else {
+                setToastMessage(ToastMessages.HTML_BODY_EMPTY);
+            }
+        } else if ([550, 551].includes(response.StatusCode)) {
             setDialogType(SEND_PROC[response?.StatusCode]);
         } else if ([553].indexOf(response.StatusCode)) {
             setDialogType(SEND_PROC[response?.StatusCode]);
@@ -1089,6 +1122,79 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         )
     })
 
+    const getProblematicLinksDialog = (data = {}) => {
+        const {
+            links = [],
+            campaignName = '',
+            campaignId: cid = '',
+            companyName = ''
+        } = data;
+        const tp = 'campaigns.newsLetterEditor.errors.problematicLinks';
+
+        return {
+            showDivider: false,
+            title: t('campaigns.newsLetterEditor.errors.problematicLinksTitle'),
+            content: (
+                <Box className={styles.problematicLinksContainer}>
+                    <Typography className={clsx(classes.font16, classes.alignDir, styles.problematicLinksWordBreak)}>
+                        {t(`${tp}.greeting`)}
+                    </Typography>
+                    <Typography className={clsx(classes.font16, classes.alignDir, styles.problematicLinksMt, styles.problematicLinksWordBreak)}>
+                        {t(`${tp}.intro`, { companyName })}
+                    </Typography>
+                    <Typography className={clsx(classes.font16, classes.alignDir, styles.problematicLinksMt, styles.problematicLinksWordBreak)}>
+                        {t('common.CampaignName')}: {campaignName}
+                    </Typography>
+                    <Typography className={clsx(classes.font16, classes.alignDir, styles.problematicLinksWordBreak)}>
+                        {t('common.campaignID')}: {cid}
+                    </Typography>
+                    <Typography className={clsx(classes.font16, classes.alignDir, styles.problematicLinksMt, styles.problematicLinksWordBreak)}>
+                        {t(`${tp}.instructions`)}
+                    </Typography>
+                    <Box className={styles.problematicLinksListBox}>
+                        <ul className={styles.problematicLinksList}>
+                            {(links || []).map((link, idx) => (
+                                <li key={idx} className={clsx(classes.font16, classes.alignDir, styles.problematicLinksWordBreak)}>
+                                    {link}
+                                </li>
+                            ))}
+                        </ul>
+                    </Box>
+                    <Typography className={clsx(classes.font16, classes.alignDir, styles.problematicLinksMt, styles.problematicLinksWordBreak)}>
+                        {t(`${tp}.note`)}
+                    </Typography>
+                    <Typography className={clsx(classes.font16, classes.alignDir, styles.problematicLinksMt, styles.problematicLinksWordBreak)}>
+                        {t(`${tp}.supportIntro`)}
+                    </Typography>
+                    <Typography className={clsx(classes.font16, classes.alignDir, styles.problematicLinksWordBreak)}>
+                        {t('common.email')}: support@pulseem.com
+                    </Typography>
+                    <Typography className={clsx(classes.font16, classes.alignDir, styles.problematicLinksWordBreak)}>
+                        {t('common.phone')}: 03-5240290
+                    </Typography>
+                </Box>
+            ),
+            renderButtons: () => (
+                <Grid
+                    container
+                    spacing={2}
+                    className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+                >
+                    <Grid item>
+                        <Button
+                            variant='contained'
+                            size='small'
+                            onClick={() => setDialogType(null)}
+                            className={clsx(classes.btn, classes.btnRounded)}
+                        >
+                            {t('common.Ok')}
+                        </Button>
+                    </Grid>
+                </Grid>
+            )
+        };
+    };
+
     const renderDialog = () => {
         const { type, data } = dialogType || {}
 
@@ -1159,7 +1265,8 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                         {t('common.Ok')}
                     </Button>
                 ),
-            }
+            },
+            problematicLinks: getProblematicLinksDialog(data),
         }
 
         const currentDialog = dialogContent[type] || {}
@@ -1571,7 +1678,11 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 onConfirm={() => onSaveSettings(true)}
                 isOpen={dialogType?.type === 'SummaryDialog'}
                 setDialogType={(code = null) => {
-                    setDialogType({ type: code === 927 ? 'tier' : code });
+                    if (code !== null && typeof code === 'object' && code.type === 'problematicLinks') {
+                        setDialogType(code);
+                    } else {
+                        setDialogType({ type: code === 927 ? 'tier' : code });
+                    }
                 }}
                 setTierMessageCode={(code) => setTierMessageCode(code)}
                 groups={selectedGroups}
