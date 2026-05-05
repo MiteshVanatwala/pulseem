@@ -77,6 +77,8 @@ const TestSend = ({
                 Emails: sendSendMethod === "1" ? emails.join(', ') : '',
                 GroupIds: sendSendMethod === "2" ? selectedGroups : []
             }
+            setEmails([]);
+            setInputValue('');
             onSubmit(request);
         }
         else {

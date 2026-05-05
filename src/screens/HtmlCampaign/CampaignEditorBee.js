@@ -1138,6 +1138,11 @@ const CampaignEditor = ({ classes, ...props }) => {
       }
       case 406: {
         setDialog(null);
+        setToastMessage(ToastMessages.RECIPIENT_BLOCKED);
+        break;
+      }
+      case 407: {
+        setDialog(null);
         setToastMessage(ToastMessages.EMAIL_REQUIRED);
         break;
       }
