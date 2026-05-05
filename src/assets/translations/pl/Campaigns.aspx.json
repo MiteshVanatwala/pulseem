@@ -795,7 +795,6 @@
   "htmlDocTypeNotAllowed": "Nieprawidłowe znaczniki znalezione w bloku HTML. Nie obsługujemy następujących znaczników: <br />&lt;!DOCTYPE&gt;, &lt;body&gt;, &lt;html&gt; i &lt;script&gt;",
   "htmlDocTypeNotAllowedWarning": "Używanie własnego kodu może wpłynąć na sposób wyświetlania wiadomości. Upewnij się, że używasz poprawnego i responsywnego HTML. Nie obsługujemy następujących tagów: <!DOCTYPE>, <body>, <html> oraz <script>.",
   "htmlBodyEmpty": "Treść e-maila jest pusta.",
-  "htmlNoVisibleContent": "E-mail nie zawiera widocznego tekstu.",
   "setupStaticProduct": "Konfiguracja produktu",
   "createProductBlock": "Spersonalizowany blok produktu",
   "selectProduct": "Wybierz produkt z katalogu",
