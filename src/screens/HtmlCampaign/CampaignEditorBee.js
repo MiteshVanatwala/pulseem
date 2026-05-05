@@ -870,11 +870,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           return false;
         }
         case 422: {
-          if (response?.payload?.Message === 'HTML_NO_VISIBLE_CONTENT') {
-            setToastMessage(ToastMessages.HTML_NO_VISIBLE_CONTENT);
-          } else {
-            setToastMessage(ToastMessages.HTML_BODY_EMPTY);
-          }
+          setToastMessage(ToastMessages.HTML_BODY_EMPTY);
           return false;
         }
         case 500: {
@@ -1141,11 +1137,8 @@ const CampaignEditor = ({ classes, ...props }) => {
         break;
       }
       case 422: {
-        if (message === 'HTML_NO_VISIBLE_CONTENT') {
-          setToastMessage(ToastMessages.HTML_NO_VISIBLE_CONTENT);
-        } else {
-          setToastMessage(ToastMessages.HTML_BODY_EMPTY);
-        }
+        setDialog(null);
+        setToastMessage(ToastMessages.HTML_BODY_EMPTY);
         break;
       }
       case 500:

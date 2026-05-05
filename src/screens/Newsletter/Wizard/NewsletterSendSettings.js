@@ -469,11 +469,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 message: t('whatsappCampaign.metaPhoneNumberNotVerified')
             });
         } else if (response?.StatusCode === 422) {
-            if (response.Message === 'HTML_NO_VISIBLE_CONTENT') {
-                setToastMessage(ToastMessages.HTML_NO_VISIBLE_CONTENT);
-            } else {
-                setToastMessage(ToastMessages.HTML_BODY_EMPTY);
-            }
+            setToastMessage(ToastMessages.HTML_BODY_EMPTY);
         } else if ([550, 551].includes(response.StatusCode)) {
             setDialogType(SEND_PROC[response?.StatusCode]);
         } else if ([553].indexOf(response.StatusCode)) {

@@ -241,7 +241,6 @@ export const campaignEditorSlice = createSlice({
             WEBP_NOT_SUPPORTED: { severity: 'error', color: 'error', message: 'campaigns.webpNotSupport', showAnimtionCheck: false },
             HTML_DOCTYPE_ERROR: { severity: 'error', color: 'error', message: 'campaigns.htmlDocTypeNotAllowed', showAnimtionCheck: false },
             HTML_BODY_EMPTY: { severity: 'error', color: 'error', message: 'campaigns.htmlBodyEmpty', showAnimtionCheck: false },
-            HTML_NO_VISIBLE_CONTENT: { severity: 'error', color: 'error', message: 'campaigns.htmlNoVisibleContent', showAnimtionCheck: false },
         },
         templateDetails: {},
         publicTemplates: [],
