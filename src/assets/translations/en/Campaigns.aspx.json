@@ -559,7 +559,7 @@
       "problematicLinksTitle": "Problematic Links Detected",
       "problematicLinks": {
         "greeting": "Hi,",
-        "intro": "We detected links in your campaign (<b>account: {{companyName}}</b>) that may negatively impact your deliverability and tracking performance.",
+        "intro": "We detected links in your campaign (account: {{companyName}}) that may negatively impact your deliverability and tracking performance.",
         "instructions": "To proceed, please review and replace the following problematic links:",
         "note": "There may be additional links that could cause similar issues, so we recommend reviewing all links before continuing.",
         "supportIntro": "If you need help, you can contact Pulseem support at:"

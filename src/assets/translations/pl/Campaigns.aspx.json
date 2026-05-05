@@ -559,7 +559,7 @@
       "problematicLinksTitle": "Wykryto problematyczne linki",
       "problematicLinks": {
         "greeting": "Cześć,",
-        "intro": "Wykryliśmy linki w kampanii (<b>konto: {{companyName}}</b>), które mogą negatywnie wpłynąć na dostarczalność oraz śledzenie.",
+        "intro": "Wykryliśmy linki w kampanii (konto: {{companyName}}), które mogą negatywnie wpłynąć na dostarczalność oraz śledzenie.",
         "instructions": "Aby kontynuować, sprawdź i zamień następujące problematyczne linki:",
         "note": "Mogą występować również inne linki powodujące podobne problemy, dlatego zalecamy sprawdzenie wszystkich linków przed kontynuowaniem.",
         "supportIntro": "Jeśli potrzebujesz pomocy, możesz skontaktować się z zespołem wsparcia Pulseem:"
