@@ -833,7 +833,6 @@
   "htmlDocTypeNotAllowed": "נמצאו תגים לא חוקיים בבלוק ה-HTML. אנחנו לא תומכים בתגי ה HTML הבאים:   <br />&lt;!DOCTYPE&gt;, &lt;body&gt;, &lt;html&gt; and &lt;script&gt;",
   "htmlDocTypeNotAllowedWarning": "שימוש בקוד HTML משלכם עשוי להשפיע על איך שההודעה תיטען. אנא וודאו שהינכם משתמשים בקוד נכון ורספונסיבי. אנחנו לא תומכים בתגי ה HTML הבאים: <!DOCTYPE>, <body>, <html> ו<script>.",
   "htmlBodyEmpty": "תוכן האימייל ריק",
-  "htmlNoVisibleContent": "האימייל לא מכיל טקסט נראה לעין",
   "setupStaticProduct": "הגדרות מוצר",
   "createProductBlock": "בלוק מוצר מותאם אישית",
   "selectProduct": "בחירת מוצר מקטלוג",

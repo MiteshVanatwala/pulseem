@@ -926,18 +926,23 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			(selectionEnd === 0 && textLength === 0) ||
 			selectionEnd === textLength
 		) {
-			updatedTemplateText =
-				updatedTemplateText +
-				getLastDynamicFieldByValue(
-					getLastDynamicFieldValue(updatedTemplateText)
-				);
+			const dynamicField = getLastDynamicFieldByValue(
+				getLastDynamicFieldValue(updatedTemplateText)
+			);
+			const needsLeadingSpace = updatedTemplateText.length > 0 && updatedTemplateText.slice(-1) !== ' ';
+			updatedTemplateText = updatedTemplateText + (needsLeadingSpace ? ' ' : '') + dynamicField;
 		} else {
+			const before = updatedTemplateText.slice(0, selectionEnd);
+			const after = updatedTemplateText.slice(selectionEnd);
+			const dynamicField = getLastDynamicFieldByValue(
+				getLastDynamicFieldValue(before)
+			);
+			const needsLeadingSpace = before.length > 0 && before.slice(-1) !== ' ';
+			const needsTrailingSpace = after.length > 0 && after[0] !== ' ';
 			updatedTemplateText = [
-				updatedTemplateText.slice(0, selectionEnd),
-				getLastDynamicFieldByValue(
-					getLastDynamicFieldValue(updatedTemplateText.slice(0, selectionEnd))
-				),
-				updatedTemplateText.slice(selectionEnd),
+				before,
+				(needsLeadingSpace ? ' ' : '') + dynamicField + (needsTrailingSpace ? ' ' : ''),
+				after,
 			].join('');
 		}
 
@@ -1073,11 +1078,22 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		}
 	};
 
+	const addSpacesAroundDynamicFields = (text: string) => {
+		return text.replace(/(\{\{[0-9]{1,2}\}\})/g, (match, _variable, offset, string) => {
+			const charBefore = string[offset - 1];
+			const charAfter = string[offset + match.length];
+			const before = offset > 0 && charBefore !== ' ' && charBefore !== '\n' ? ' ' : '';
+			const after = charAfter !== undefined && charAfter !== ' ' && charAfter !== '\n' ? ' ' : '';
+			return before + match + after;
+		});
+	};
+
 	const updateTemplateText = (text: string) => {
-		setDynamicFieldCount(getDynamicFieldIndex(text)?.length || 0);
+		const processed = addSpacesAroundDynamicFields(reOrderDynamicFieldValue(text));
+		setDynamicFieldCount(getDynamicFieldIndex(processed)?.length || 0);
 		setTemplateData({
 			...templateData,
-			templateText: reOrderDynamicFieldValue(text),
+			templateText: processed,
 		});
 	};
 

@@ -279,7 +279,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   const previousConditionIdsRef = useRef(null);
   const recentlyDeletedByPopupRef = useRef(new Set());
   const latestEditorJsonRef = useRef(null);
-
+  const isProblematicLinksDialogOpenRef = useRef(false);
 
 
   //#region Get Extra fields & Landing pages, after Data Ready
@@ -897,11 +897,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           return false;
         }
         case 422: {
-          if (response?.payload?.Message === 'HTML_NO_VISIBLE_CONTENT') {
-            setToastMessage(ToastMessages.HTML_NO_VISIBLE_CONTENT);
-          } else {
-            setToastMessage(ToastMessages.HTML_BODY_EMPTY);
-          }
+          setToastMessage(ToastMessages.HTML_BODY_EMPTY);
           return false;
         }
         case 500: {
@@ -915,6 +911,8 @@ const CampaignEditor = ({ classes, ...props }) => {
           return false;
         }
         case 423: {
+          isProblematicLinksDialogOpenRef.current = true;
+          onAutoSaveCampaign.cancel();
           setDialogType({
             type: 'problematicLinks',
             data: {
@@ -987,17 +985,9 @@ const CampaignEditor = ({ classes, ...props }) => {
     if (!editorReadyRef.current) return;
     designChangedRef.current = true;
     if (isDisplayConditionDialogOpen) return;
+    if (isProblematicLinksDialogOpenRef.current) return;
     
     onAutoSaveCampaign();
-    if (editorRef.current) {
-      try {
-        const content = await editorRef.current.save();
-        const html = content?.data?.html || '';
-        const ampHtml = content?.data?.htmlAmp || '';
-      } catch (error) {
-        console.error('Error calculating email size on change:', error);
-      }
-    }
   }
 
   const deleteNewsletter = async () => {
@@ -1194,11 +1184,8 @@ const CampaignEditor = ({ classes, ...props }) => {
         break;
       }
       case 422: {
-        if (message === 'HTML_NO_VISIBLE_CONTENT') {
-          setToastMessage(ToastMessages.HTML_NO_VISIBLE_CONTENT);
-        } else {
-          setToastMessage(ToastMessages.HTML_BODY_EMPTY);
-        }
+        setDialog(null);
+        setToastMessage(ToastMessages.HTML_BODY_EMPTY);
         break;
       }
       case 500:
@@ -1909,7 +1896,11 @@ const CampaignEditor = ({ classes, ...props }) => {
             <Button
               variant='contained'
               size='small'
-              onClick={() => setDialogType(null)}
+              onClick={() => {
+                isProblematicLinksDialogOpenRef.current = false;
+                onAutoSaveCampaign.cancel();
+                setDialogType(null);
+              }}
               className={clsx(classes.btn, classes.btnRounded)}
             >
               {t('common.Ok')}
@@ -2011,8 +2002,16 @@ const CampaignEditor = ({ classes, ...props }) => {
         dialogType && <BaseDialog
           classes={classes}
           open={dialogType}
-          onCancel={() => setDialogType(null)}
-          onClose={() => setDialogType(null)}
+          onCancel={() => {
+            isProblematicLinksDialogOpenRef.current = false;
+            onAutoSaveCampaign.cancel();
+            setDialogType(null);
+          }}
+          onClose={() => {
+            isProblematicLinksDialogOpenRef.current = false;
+            onAutoSaveCampaign.cancel();
+            setDialogType(null);
+          }}
           renderButtons={currentDialog?.renderButtons || null}
           {...currentDialog}>
           {currentDialog?.content}
