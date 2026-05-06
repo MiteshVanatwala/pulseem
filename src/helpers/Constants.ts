@@ -825,8 +825,9 @@ export const TIER_PLANS = [
             // 'billing.tier.features.subaccountsCreation',
             // 'billing.tier.features.manageUsersPermissions',
             'billing.tier.features.phoneSupport',
-            'billing.tier.features.AMPEmail'
+            'billing.tier.features.AMPEmail',
             // 'billing.tier.features.dynamicProducts'
+            'billing.tier.features.displayCondition'
         ],
         isPopular: true,
     },
@@ -865,6 +866,7 @@ export const TierFeatures = {
   "BASIC_REPORTS": "billing.featureNames.BASIC_REPORTS",
   "CHAT_EMAIL_SUPPORT": "billing.featureNames.CHAT_EMAIL_SUPPORT",
   "NEWSLETTER_TEMPLATES": "billing.featureNames.NEWSLETTER_TEMPLATES",
+  "DISPLAY_CONDITION": "billing.featureNames.DISPLAY_CONDITION",
   "BASIC_PERSONALIZATION": "billing.featureNames.BASIC_PERSONALIZATION",
   "SMS_CLICK_TRACKING": "billing.featureNames.SMS_CLICK_TRACKING",
   "WHATSAPP_TEMPLATES": "billing.featureNames.WHATSAPP_TEMPLATES",

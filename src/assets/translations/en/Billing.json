@@ -189,7 +189,8 @@
       "VIPSupport": "VIP Support",
       "PersonalTraining": "Personal Training",
       "DedicatedAITeam": "Dedicated AI Team: Analyst + Marketing Expert 24/7",
-      "BuildNewslettersAI": "Build Newsletters with AI in 3 minutes!"
+      "BuildNewslettersAI": "Build Newsletters with AI in 3 minutes!",
+      "displayCondition": "Display conditions" 
     },
     "steps": {
       "selectPlan": "Select Plan",
@@ -246,6 +247,7 @@
     "BASIC_REPORTS": "Basic Reports",
     "CHAT_EMAIL_SUPPORT": "Chat & Email Support",
     "NEWSLETTER_TEMPLATES": "Newsletter Templates",
+    "DISPLAY_CONDITION": "Display Conditions",
     "BASIC_PERSONALIZATION": "Basic Personalization",
     "SMS_CLICK_TRACKING": "SMS Click Tracking",
     "WHATSAPP_TEMPLATES": "WhatsApp Template Management",

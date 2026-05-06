@@ -844,6 +844,23 @@ const CampaignEditor = ({ classes, ...props }) => {
       return false;
     }
 
+    const displayConditionBlocks = (
+      args.HtmlData?.match(/\{\%\s*if\b[\s\S]*?\{\%\s*endif\s*\%\}/g) || []
+    ).length;
+    if (displayConditionBlocks > 0) {
+      const planName = findPlanByFeatureCode(
+        "DISPLAY_CONDITION",
+        availablePlans,
+        currentPlan.Id
+      );
+      if (!planName) {
+        setLoader(false);
+        setTierMessageCode("DISPLAY_CONDITION");
+        setDialogType({ type: 'tier' });
+        return false;
+      }
+    }
+
     const reInit = saveRef.current?.reInitEditor;
 
     try {

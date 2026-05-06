@@ -173,7 +173,8 @@
       "VIPSupport": "תמיכת VIP",
       "PersonalTraining": "הדרכות אישיות",
       "DedicatedAITeam": "צוות AI ייעודי: אנליסט + מומחה שיווק 24/7",
-      "BuildNewslettersAI": "AI לבניית ניזולטרים ב-3 דקות!"
+      "BuildNewslettersAI": "AI לבניית ניזולטרים ב-3 דקות!",
+      "displayCondition": "תנאי תצוגה"
     },
     "steps": {
       "selectPlan": "בחר תוכנית",
@@ -230,6 +231,7 @@
     "BASIC_REPORTS": "דוחות בסיסיים",
     "CHAT_EMAIL_SUPPORT": "תמיכה באימייל ובצ'אט",
     "NEWSLETTER_TEMPLATES": "תבניות אימייל",
+    "DISPLAY_CONDITION": "תנאי תצוגה",
     "BASIC_PERSONALIZATION": "התאמה אישית בסיסית",
     "SMS_CLICK_TRACKING": "מעקב אחר לחיצות ב-SMS",
     "WHATSAPP_TEMPLATES": "ניהול תבניות וואטסאפ",
