@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
-import { actionURL } from '../../config';
+import { iframeURL } from '../../config';
 import DefaultScreen from '../DefaultScreen';
 import clsx from 'clsx';
 
@@ -76,7 +76,7 @@ const buildLegacySrc = (path: string, routeParams: any, search: string, extraQue
     }
 
     const separator = path.includes('?') ? '&' : '?';
-    return `${actionURL}${path}${separator}${queryParts.join('&')}`;
+    return `${iframeURL}${path}${separator}${queryParts.join('&')}`;
 };
 
 /**
