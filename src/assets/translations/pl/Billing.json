@@ -162,7 +162,8 @@
       "VIPSupport": "Wsparcie VIP",
       "PersonalTraining": "Indywidualne szkolenie",
       "DedicatedAITeam": "Dedykowany zespół AI: analityk + ekspert marketingowy 24/7",
-      "BuildNewslettersAI": "Twórz newslettery z pomocą AI w 3 minuty!"
+      "BuildNewslettersAI": "Twórz newslettery z pomocą AI w 3 minuty!",
+      "displayCondition": "Warunki wyświetlania treści spersonalizowanych" 
     },
     "steps": {
       "selectPlan": "Wybierz Plan",

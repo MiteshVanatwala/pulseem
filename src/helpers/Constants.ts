@@ -825,9 +825,9 @@ export const TIER_PLANS = [
             // 'billing.tier.features.subaccountsCreation',
             // 'billing.tier.features.manageUsersPermissions',
             'billing.tier.features.phoneSupport',
-            'billing.tier.features.AMPEmail',
+            'billing.tier.features.displayCondition',
+            'billing.tier.features.AMPEmail'
             // 'billing.tier.features.dynamicProducts'
-            'billing.tier.features.displayCondition'
         ],
         isPopular: true,
     },
