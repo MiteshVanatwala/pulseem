@@ -844,14 +844,14 @@ const CampaignEditor = ({ classes, ...props }) => {
       return false;
     }
 
-    const displayConditionBlocks = (
-      args.HtmlData?.match(/\{\%\s*if\b[\s\S]*?\{\%\s*endif\s*\%\}/g) || []
-    ).length;
-    if (displayConditionBlocks > 0 && currentPlan.Id !== 3 && currentPlan.Id !== 5 ) {
-      setLoader(false);
-      setTierMessageCode("DISPLAY_CONDITION");
-      setDialogType({ type: 'tier' });
-      return false;
+    if (currentPlan.Id !== 3 && currentPlan.Id !== 5) {
+      const hasDisplayConditions = /\{\%\s*if\b[\s\S]*?\{\%\s*endif\s*\%\}/.test(args.HtmlData);
+      if (hasDisplayConditions) {
+        setLoader(false);
+        setTierMessageCode("DISPLAY_CONDITION");
+        setDialogType({ type: 'tier' });
+        return false;
+      }
     }
 
     const reInit = saveRef.current?.reInitEditor;
