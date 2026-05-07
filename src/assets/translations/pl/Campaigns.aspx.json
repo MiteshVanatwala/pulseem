@@ -583,6 +583,7 @@
       "summarySegmCritCb4": "Odbiorcy, którzy nie kliknęli w linki",
       "summarySegmCritCb5": "Odbiorcy, którzy nie otworzyli e-maila i nie kliknęli w linki",
       "filterInputText": "Nie wysyłaj do odbiorców, którzy otrzymali Newsletter w ciągu ostatnich dni",
+      "filterInputTextBase": "Nie wysyłaj do odbiorców, którzy otrzymali Newsletter w ciągu ostatnich",
       "insertCampaginName": "Które ustawienia wysyłki chcesz zduplikować z ##campaignName##?",
       "emailFilterInput": "Nie wysyłaj do odbiorców, którzy otrzymali e-mail w ciągu ostatnich dni",
       "pendingClients": "Klienci oczekujący na zatwierdzenie",

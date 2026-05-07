@@ -6268,5 +6268,18 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
     marginLeft: isRTL ? 'auto' : '0px',
     marginRight: !isRTL ? 'auto' : '0px'
   },
+  filterInputLabelSpan: {
+    display: 'inline-block',
+    marginTop: 2,
+  },
+  filterTimeframeBox: {
+    marginRight: isRTL ? 'auto' : 'unset',
+    marginLeft: !isRTL ? 'auto' : 'unset',
+    alignItems: 'center',
+  },
+  filterTimeframeFormControl: {
+    marginInlineStart: 8,
+    minWidth: 90,
+  },
 });
 }
