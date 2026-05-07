@@ -66,11 +66,11 @@ const FilterRecipientsDialog = ({ classes, onClose = () => null, onConfirm = () 
                                 IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                                 MenuProps={{ PaperProps: { style: { maxHeight: 300, direction: isRTL ? 'rtl' : 'ltr' } } }}
                             >
-                                <MenuItem value="1">{t('common.hours') || 'שעות'}</MenuItem>
-                                <MenuItem value="2">{t('common.days') || 'ימים'}</MenuItem>
-                                <MenuItem value="3">{t('common.weeks') || 'שבועות'}</MenuItem>
-                                <MenuItem value="4">{t('common.months') || 'חודשים'}</MenuItem>
-                                <MenuItem value="5">{t('common.years') || 'שנים'}</MenuItem>
+                                <MenuItem value="1">{t('common.hours')}</MenuItem>
+                                <MenuItem value="2">{t('common.days')}</MenuItem>
+                                <MenuItem value="3">{t('common.weeks')}</MenuItem>
+                                <MenuItem value="4">{t('common.months')}</MenuItem>
+                                <MenuItem value="5">{t('common.years')}</MenuItem>
                             </Select>
                         </FormControl>
                     </Box>
