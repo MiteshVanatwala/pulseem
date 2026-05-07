@@ -153,14 +153,16 @@ const SmsSend = ({ classes, ...props }) => {
   const [showTierPlans, setShowTierPlans] = useState(false);
   const [filterValues, setFilterValues] = useState({
     dontSend: false,
-    days: ''
+    exceptionalDays: '',
+    exceptionalDaysTimeframe: 2
   });
   const [filterDialogValues, setFilterDialogValues] = useState({
     dontSend: false,
     days: '',
     exceptionalDays: '',
     selectedFilterCampaigns: [],
-    selectedFilterGroups: []
+    selectedFilterGroups: [],
+    exceptionalDaysTimeframe: 2
   });
   const [headers, setheaders] = useState(initialheadstate);
   const [pulsesOpen, setPulsesOpen] = useState(false);
@@ -284,7 +286,8 @@ const SmsSend = ({ classes, ...props }) => {
         days: '',
         exceptionalDays: '',
         selectedFilterCampaigns: [],
-        selectedFilterGroups: []
+        selectedFilterGroups: [],
+        exceptionalDaysTimeframe: 2
       };
 
       if (campaignSettings.PulseSettings) {
@@ -324,9 +327,15 @@ const SmsSend = ({ classes, ...props }) => {
         setExceptionalDays(`${campaignSettings.SendExeptional.ExceptionalDays}`)
         settoggleReci(true);
         setbsDot(true);
-        setFilterValues({ ...filterValues, dontSend: true, exceptionalDays: `${campaignSettings.SendExeptional.ExceptionalDays}` });
+        setFilterValues({
+          ...filterValues,
+          dontSend: true,
+          exceptionalDays: `${campaignSettings.SendExeptional.ExceptionalDays}`,
+          exceptionalDaysTimeframe: campaignSettings.SendExeptional.ExceptionalDaysTimeframe || 2
+        });
         filteredValues.dontSend = true;
         filteredValues.exceptionalDays = `${campaignSettings.SendExeptional.ExceptionalDays}`;
+        filteredValues.exceptionalDaysTimeframe = campaignSettings.SendExeptional.ExceptionalDaysTimeframe ?? 2;
       }
       if (campaignSettings.PulseSettings != null && campaignSettings.PulseSettings.PulseSettingsID !== -1) {
         settogglePulse(true);
@@ -374,7 +383,11 @@ const SmsSend = ({ classes, ...props }) => {
         }
       }
 
-      setFilterDialogValues({ ...filterDialogValues, ...filteredValues });
+      setFilterDialogValues({
+        ...filterDialogValues,
+        ...filteredValues,
+        exceptionalDaysTimeframe: filteredValues.exceptionalDaysTimeframe || filterDialogValues.exceptionalDaysTimeframe || 2
+      });
 
       setLoader(false);
     }
@@ -437,7 +450,8 @@ const SmsSend = ({ classes, ...props }) => {
         dontSend: filterValues.dontSend,
         exceptionalDays: filterValues.exceptionalDays,
         selectedFilterCampaigns: filterDialogValues.selectedFilterCampaigns,
-        selectedFilterGroups: filterDialogValues.selectedFilterGroups
+        selectedFilterGroups: filterDialogValues.selectedFilterGroups,
+        exceptionalDaysTimeframe: filterValues.exceptionalDaysTimeframe || 2
       });
     }
   }, [dialogType])
@@ -991,36 +1005,49 @@ const SmsSend = ({ classes, ...props }) => {
     }
   }, [filterDialogValues.dontSend])
   const handleFilterConfirm = () => {
+    const rawDays = filterDialogValues.exceptionalDays;
+    const rawTimeframe = filterDialogValues.exceptionalDaysTimeframe || 2;
+
     setFilterValues({
       dontSend: filterDialogValues.dontSend,
-      exceptionalDays: filterDialogValues.exceptionalDays
+      exceptionalDays: rawDays,
+      exceptionalDaysTimeframe: rawTimeframe
     });
-    setExceptionalDays(filterDialogValues.exceptionalDays);
+    setExceptionalDays(rawDays);
+
     let formIsvalid = true;
     settoggleReci(filterDialogValues.dontSend);
+
     if (filterDialogValues.dontSend) {
       formIsvalid = validationCheck();
       if (formIsvalid) {
-        if (filterDialogValues.selectedFilterGroups.length !== 0 || (filterDialogValues.exceptionalDays !== undefined && filterDialogValues.exceptionalDays !== "") || filterDialogValues.selectedFilterCampaigns.length !== 0) {
+        if (
+          filterDialogValues.selectedFilterGroups.length !== 0 ||
+          rawDays !== '' ||
+          filterDialogValues.selectedFilterCampaigns.length !== 0
+        ) {
           setbsDot(true);
-        }
-        else {
+        } else {
           setbsDot(false);
         }
       }
-    }
-    else {
-      if (filterDialogValues.selectedFilterGroups.length !== 0 || (filterDialogValues.exceptionalDays !== undefined && filterDialogValues.exceptionalDays !== "") || filterDialogValues.selectedFilterCampaigns.length !== 0) {
+    } else {
+      if (
+        filterDialogValues.selectedFilterGroups.length !== 0 ||
+        rawDays !== '' ||
+        filterDialogValues.selectedFilterCampaigns.length !== 0
+      ) {
         setbsDot(true);
-      }
-      else {
-        settoggleReci(false)
+      } else {
+        settoggleReci(false);
         setbsDot(false);
         setCampaignSettings({
-          ...campaignSettings, SendExeptional: {
+          ...campaignSettings,
+          SendExeptional: {
             Groups: filterDialogValues.selectedFilterGroups ?? [],
             Campaigns: filterDialogValues.selectedFilterCampaigns ?? [],
-            ExceptionalDays: ''
+            ExceptionalDays: '',
+            ExceptionalDaysTimeframe: 2
           }
         })
       }
@@ -1428,11 +1455,11 @@ const SmsSend = ({ classes, ...props }) => {
       RandomSettings: {
         RandomAmount: random
       },
-      SendExeptional:
-      {
+      SendExeptional: {
         Groups: filterDialogValues?.selectedFilterGroups?.map((c) => { return c.GroupID }),
         Campaigns: filterDialogValues?.selectedFilterCampaigns?.map((c) => { return c.SMSCampaignID }),
-        ExceptionalDays: exceptionalDays
+        ExceptionalDays: exceptionalDays,
+        ExceptionalDaysTimeframe: filterValues.exceptionalDaysTimeframe || 2
       },
       SendTypeID: sendType,
       SmsCampaignID: id,
@@ -2028,10 +2055,13 @@ const SmsSend = ({ classes, ...props }) => {
                 })
               }
             />
-            <span style={{ display: 'inline-block', marginTop: 2 }} className={classes.font13}>
-              {t("smsReport.filterInputText")}
+            <span className={clsx(classes.font13, classes.filterInputLabelSpan)}>
+              {t("smsReport.filterInputTextBase")}{' '}
+              {t(`common.${{ 1: 'hours', 2: 'days', 3: 'weeks', 4: 'months', 5: 'years' }[filterDialogValues.exceptionalDaysTimeframe || 2]}`)}
             </span>
-            <div style={{ marginRight: isRTL ? 'auto' : null, marginLeft: !isRTL ? 'auto' : null }}>
+            <Box
+              className={clsx(classes.dFlex, classes.marginInlineStart5, classes.filterTimeframeBox)}
+            >
               <input
                 type="text"
                 disabled={!filterDialogValues.dontSend}
@@ -2042,12 +2072,38 @@ const SmsSend = ({ classes, ...props }) => {
                 }
                 onChange={(e) => { handleReciInput(e) }}
                 value={filterDialogValues.exceptionalDays}
-                maxLength="3"
+                maxLength={filterDialogValues.exceptionalDaysTimeframe === 1 ? "4" : "3"}
               />
-            </div>
+              <FormControl className={clsx(classes.selectInputFormControl, classes.filterTimeframeFormControl)}>
+                <Select
+                  variant="standard"
+                  displayEmpty
+                  disabled={!filterDialogValues.dontSend}
+                  value={String(filterDialogValues.exceptionalDaysTimeframe || 2)}
+                  className={classes.pbt5}
+                  onChange={(e) =>
+                    setFilterDialogValues({
+                      ...filterDialogValues,
+                      exceptionalDaysTimeframe: Number(e.target.value),
+                      exceptionalDays: ''
+                    })
+                  }
+                  IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+                  MenuProps={{ PaperProps: { style: { maxHeight: 300, direction: isRTL ? 'rtl' : 'ltr' } } }}
+                >
+                  <MenuItem value="1">{t('common.hours')}</MenuItem>
+                  <MenuItem value="2">{t('common.days')}</MenuItem>
+                  <MenuItem value="3">{t('common.weeks')}</MenuItem>
+                  <MenuItem value="4">{t('common.months')}</MenuItem>
+                  <MenuItem value="5">{t('common.years')}</MenuItem>
+                </Select>
+              </FormControl>
+            </Box>
           </div>
           <div>
-            <span className={classes.font13}> {t("smsReport.inputTextFilter")}:</span>
+            <Box className={classes.mb10}>
+              <Typography className={clsx(classes.font14, classes.bold)}>{t("smsReport.inputTextFilter")}:</Typography>
+            </Box>
             <div>
               <div
                 className={clsx(classes.sidebar)}
@@ -2605,12 +2661,6 @@ const SmsSend = ({ classes, ...props }) => {
     const currentDialog = dialogContent[type] || {}
 
     if (type) {
-      if (dialogType === 'filterRecipients') {
-        setFilterValues({
-          dontSend: toggleReci,
-          days: exceptionalDays
-        });
-      }
       return (
         dialogType && <BaseDialog
           classes={classes}
