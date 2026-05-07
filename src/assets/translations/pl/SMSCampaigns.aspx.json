@@ -528,6 +528,7 @@
   "recipientsFromFollowingCampaign": "Odbiorcy z następujących kampanii",
   "filtersSave": "Twoje zmiany zostały zapisane",
   "invalidNumber": "Nieprawidłowy numer telefonu",
+  "noVoiceCredits": "Niewystarczająca liczba kredytów SMS Voice do wysłania kampanii",
   "toUnsubscribe": "Aby wypisać się, odpowiedz ",
   "recipients": "Odbiorcy",
   "recipient": "odbiorca",

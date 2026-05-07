@@ -486,6 +486,7 @@ export const smsSlice = createSlice({
 			ERROR: { severity: 'error', color: 'error', message: 'sms.error', showAnimtionCheck: false },
 			OTP: { severity: 'success', color: 'success', message: 'sms.otpVerifiedSuccess', showAnimtionCheck: true },
 			INVALID_NUMBER: { severity: 'error', color: 'error', message: "sms.invalidNumber", showAnimtionCheck: false },
+			SHORT_SMSVC_CREDITS: { severity: 'error', color: 'error', message: "sms.noVoiceCredits", showAnimtionCheck: false },
 			QUICK_SEND_ERROR: { severity: 'error', color: 'error', message: "sms.errorQuickSend", showAnimtionCheck: false },
 			SENT_ALREADY: { severity: 'success', color: 'success', message: "sms.alreadySent", showAnimtionCheck: false },
 			PROVISION: { severity: 'error', color: 'error', message: "sms.recipientBlocked", showAnimtionCheck: false },

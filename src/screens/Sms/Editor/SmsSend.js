@@ -228,6 +228,10 @@ const SmsSend = ({ classes, ...props }) => {
         setDialogType({ type: "englishLetterDialog" });
         break;
       }
+      case 12: {// SHORT_SMSVC_CREDITS
+        setToastMessage(ToastMessages.SHORT_SMSVC_CREDITS)
+        break;
+      }
       case 550:
       case 551:
         setDialogType({ type: "pendingApprovalDialog", data: smsSendResult });
