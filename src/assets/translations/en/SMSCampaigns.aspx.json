@@ -528,6 +528,7 @@
   "recipientsFromFollowingCampaign": "Recipients From Following Campaigns",
   "filtersSave": "Your changes have been saved",
   "invalidNumber": "Invalid phone number",
+  "noVoiceCredits": "Not enough SMS Voice credits in order to send the campaign",
   "toUnsubscribe": "To unsubscribe reply ",
   "recipients": "Recipients",
   "recipient": "recipient",

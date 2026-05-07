@@ -63,7 +63,8 @@ export enum eSendResult {
     NO_CREDITS = 2,
     INVALID_NUMBER = 3,
     OTP_NEEDED = 4,
-    ACCEPTED = 5
+    ACCEPTED = 5,
+    SHORT_SMSVC_CREDITS = 12
 }
 export enum SmsCountry {
     Global = 0,
