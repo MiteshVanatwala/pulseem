@@ -574,6 +574,7 @@
       "summarySegmCritCb4": "לקוחות שלא הקליקו על קישורים בדיוור",
       "summarySegmCritCb5": "לקוחות שלא פתחו דיוור ולא הקליקו על קישורים",
       "filterInputText": "לא לשלוח ללקוחות שקיבלו דוור במספר הימים האחרונים",
+      "filterInputTextBase": "לא לשלוח ללקוחות שקיבלו דוור ב-",
       "insertCampaginName": "אילו הגדרות שליחה לשכפל מקמפיין ##campaignName##?",
       "emailFilterInput": "לא לשלוח ללקוחות שקיבלו ניוזלטר במספר הימים האחרונים",
       "pendingClients": "לקוחות הממתינים לאישור",

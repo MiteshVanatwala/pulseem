@@ -298,6 +298,10 @@ const SmsCreator = ({ classes }) => {
         setDialogType({ type: "englishLetterDialog" });
         break;
       }
+      case 12: {// SHORT_SMSVC_CREDITS
+        setToastMessage(ToastMessages.SHORT_SMSVC_CREDITS)
+        break;
+      }
       case 9: { // Non polish number
         if (IsPoland && isGlobal) {
           setToastMessage(ToastMessages.NON_POLISH_NUMBER)

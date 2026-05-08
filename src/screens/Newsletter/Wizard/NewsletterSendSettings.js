@@ -185,6 +185,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         toggleReci: false,
         selectedFilterGroups: [],
         exceptionalDays: "",
+        exceptionalDaysTimeframe: 2,
         RecipientsBool: '',
         selectArray: [],
         selectedFilterCampaigns: [],
@@ -288,7 +289,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             if (newsletterSettings.length === 0)
                 return;
 
-            const { GroupList = [], ExeptionalGroups = [], ExeptionalCampaigns = [], ExceptionalDays = null } = newsletterSettings;
+            const { GroupList = [], ExeptionalGroups = [], ExeptionalCampaigns = [], ExceptionalDays = null, ExceptionalDaysTimeframe = null } = newsletterSettings;
             const Groups = subAccountAllGroups || [];
             let selecteddGroup = [];
 
@@ -304,7 +305,8 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 toggleReci: ExceptionalDays !== '' && ExceptionalDays > 0,
                 selectedFilterGroups: ExeptionalGroups ? subAccountAllGroups?.filter((c) => ExeptionalGroups.indexOf(c.GroupID) > -1) : [],
                 selectedFilterCampaigns: ExeptionalCampaigns ? previousCampaignData?.filter((c) => ExeptionalCampaigns.indexOf(c.CampaignID) > -1) : [],
-                exceptionalDays: ExceptionalDays > 0 ? ExceptionalDays : ''
+                exceptionalDays: ExceptionalDays > 0 ? ExceptionalDays : '',
+                exceptionalDaysTimeframe: ExceptionalDaysTimeframe ?? 2
             });
             setSmsMarketingIndication(newsletterSettings?.HasSmsMarekting || false);
 
@@ -408,6 +410,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             GroupIds: overrideGroupIds ?? selectedGroups.map(grp => grp.GroupID).join(","),
             GroupList: selectedGroups.map((g) => g.GroupID),
             ExceptionalDays: filterValues?.exceptionalDays,
+            ExceptionalDaysTimeframe: filterValues?.exceptionalDaysTimeframe || 2,
             IsBestTime: campaignValues.IsBestTime,
             IsSummaryRequest: false
         }

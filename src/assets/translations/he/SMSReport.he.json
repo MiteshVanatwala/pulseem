@@ -4,6 +4,7 @@
   "searchSms":"חיפוש",
   "recipientsFilter":"סינון נמענים",
   "filterInputText":"לא לשלוח ללקוחות שקיבלו SMS במספר הימים האחרונים",
+  "filterInputTextBase":"לא לשלוח ללקוחות שקיבלו SMS ב-",
   "inputTextFilter":"לא לשלוח ללקוחות מהקבוצות הבאות",
   "campaignInfo":"לא לשלוח ללקוחות מהקמפיינים הבאים",
   "okBtn":"בסדר",
