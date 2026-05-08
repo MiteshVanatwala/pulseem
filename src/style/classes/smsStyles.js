@@ -1301,4 +1301,39 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
     verCarouselContainer: {
         transition: 'height .5s',
     },
+    // send test styles
+    testSendDialogContainer: {
+        maxWidth: 390
+    },
+    chipBox: {
+        display: 'flex',
+        flexWrap: 'wrap',
+        alignItems: 'center',
+        gap: 4,
+        border: '1px solid rgba(0,0,0,0.23)',
+        borderRadius: 4,
+        padding: '6px 8px',
+        minHeight: 40,
+        cursor: 'text',
+        width: '100%',
+        maxWidth: '100%',
+        boxSizing: 'border-box',
+    },
+    chipBoxWrapper: {
+        width: '100%',
+        minWidth: 0,
+    },
+    chip: {
+        maxWidth: 200,
+    },
+    inputBase: {
+        flex: 1,
+        minWidth: 80,
+        fontSize: 14,
+        direction: 'ltr',
+    },
+    maxEmailsText: {
+        color: '#999',
+        marginLeft: 4,
+    },
 });

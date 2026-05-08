@@ -1130,12 +1130,22 @@ const CampaignEditor = ({ classes, ...props }) => {
         setToastMessage(ToastMessages.RECIPIENT_BLOCKED);
         break;
       }
+      case 407: {
+        setDialog(null);
+        setToastMessage(ToastMessages.EMAIL_REQUIRED);
+        break;
+      }
       case 550: {
         setDialog(DialogType.PENDING_APPROVAL);
         break;
       }
       case 551: {
         setDialog(DialogType.UNDER_REVIEW);
+        break;
+      }
+      case 554: {
+        setDialog(null);
+        setToastMessage(ToastMessages.MAX_LIMIT_REACHED);
         break;
       }
       case 927: {
