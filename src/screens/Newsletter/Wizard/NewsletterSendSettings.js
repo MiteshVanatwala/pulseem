@@ -293,7 +293,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             const Groups = subAccountAllGroups || [];
             let selecteddGroup = [];
 
-            setSegmantIndication(ExeptionalGroups?.length > 0 || newsletterSettings.IsOpened || newsletterSettings.IsOpenedClicked || newsletterSettings.IsNotClicked || newsletterSettings.IsNotOpened)
+            setSegmantIndication(ExeptionalGroups?.length > 0 || ExceptionalDays > 0 || newsletterSettings.IsOpened || newsletterSettings.IsOpenedClicked || newsletterSettings.IsNotClicked || newsletterSettings.IsNotOpened)
             setPulseIndication(newsletterSettings.PulseAmount > 0 || newsletterSettings.TimeInterval > 0);
             setCampaignValues({ ...newsletterSettings })
 
