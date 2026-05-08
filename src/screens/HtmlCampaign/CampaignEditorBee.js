@@ -844,7 +844,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       return false;
     }
 
-    if (currentPlan.Id !== 3 && currentPlan.Id !== 5) {
+    if (currentPlan.Id < 3) {
       const hasDisplayConditions = /\{\%\s*if\b[\s\S]*?\{\%\s*endif\s*\%\}/.test(args.HtmlData);
       if (hasDisplayConditions) {
         setLoader(false);
