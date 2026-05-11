@@ -718,7 +718,14 @@
       "continueToSave": "Continue to save"
     }
   },
+  "testSend": {
+    "maxEmails": "Osiągnięto limit 5 adresów",
+    "emailRequired": "Wymagany jest adres e-mail lub grupa",
+    "maxLimitReached": "Wysyłka testowa jest ograniczona do 5 adresów e-mail",
+    "addMoreEmail": "Dodaj e-mail"
+},
   "sendToContact": "Wyślij do jednego kontaktu",
+  "sendToMoreContact": "Wyślij do jednego lub więcej kontaktów",
   "successSent": "Wysłano pomyślnie",
   "missingApi": "Brakujący klucz API",
   "campaignNotFound": "Kampania nie została znaleziona lub nie można jej zduplikować do wysyłki",

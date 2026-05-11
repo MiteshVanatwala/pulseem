@@ -29,5 +29,30 @@ export const getCampaignEditorStyle = (windowSize, isRTL) => ({
     maxHeight: 400,
     overflowY: 'hidden',
     alignSelf: 'flex-end'
-  }
+  },
+  testSendSummaryContainer: {
+    marginTop: 12,
+    width: '100%',
+  },
+  testSendSummaryRow: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: '6px 0',
+    borderBottom: '1px solid #f0f0f0',
+  },
+  testSendSummaryEmail: {
+    direction: 'ltr',
+    flex: 1,
+  },
+  testSendSummaryStatus: {
+    fontWeight: 600,
+    marginInlineStart: 8,
+    whiteSpace: 'nowrap',
+  },
+  testSendSummaryNotSent: {
+    marginInlineEnd: 4,
+    fontWeight: 700,
+    color: '#f44336',
+  },
 });
