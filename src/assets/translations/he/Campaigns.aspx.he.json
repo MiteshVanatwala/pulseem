@@ -838,5 +838,6 @@
   "selectProduct": "בחירת מוצר מקטלוג",
   "selectAllStaticProducts": "בחירת מוצר מקטלוג",
   "fromEmailCaution": "<p style='line-height:1.2'><b>שימו לב!</b><br/><br/>שימוש באימייל בשדה 'שם השולח' עלול לגרום לסינון כהודעת ספאם.<br/>מומלץ להשתמש בשם תצוגה.<br/>האם להמשיך?</p>",
-  "aiDeisgner": "עצבו עם AI"
+  "aiDeisgner": "עצבו עם AI",
+  "size_warning_suppress_label": "אל תציג שוב ל-24 שעות"
 }

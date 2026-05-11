@@ -807,5 +807,6 @@
     "cancel": "Anuluj",
     "delete": "Usuń",
     "removeFromRow": "Usuń z wiersza"
-  }
+  },
+  "size_warning_suppress_label": "Nie pokazuj ponownie przez 24 godziny"
 }

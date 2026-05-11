@@ -740,9 +740,9 @@
       "lessThan": "Less than",
       "greaterThanOrEqual": "Greater than or equal to",
       "lessThanOrEqual": "Less than or equal to",
-        "and": "AND",
-        "or": "OR"
-      },
+      "and": "AND",
+      "or": "OR"
+    },
     "value": "Value",
     "conditionList": "Condition list:",
     "valueRequired": "Value is required",
@@ -857,5 +857,6 @@
   "selectProduct": "Select Product From Catalog",
   "selectAllStaticProducts": "Select Product From Catalog",
   "fromEmailCaution": "<p style='line-height:1.2'><b>Pay attention!</b><br/><br/>Using an email in the 'From Name' field may cause filtering as spam.<br/>It is recommended to use a display name. <br/>Do you want to continue?</p>",
-  "aiDeisgner": "Design with AI"
+  "aiDeisgner": "Design with AI",
+  "size_warning_suppress_label": "Don't show again for 24 hours"
 }
