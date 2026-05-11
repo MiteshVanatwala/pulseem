@@ -662,6 +662,9 @@ const Shopify = ({ classes }: any) => {
                     <Typography className={clsx(classes.mb5)}>
                       {t("integrations.shopify.insertToken")}
                     </Typography>
+                    <Typography className={clsx(classes.mb5)}>
+                      {t("integrations.shopify.insertToken2")}
+                    </Typography>
                     <TextField
                       size="small"
                       name="DefaultFromName"
