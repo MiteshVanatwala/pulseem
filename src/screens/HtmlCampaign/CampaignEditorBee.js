@@ -74,6 +74,7 @@ import { BsMagic } from 'react-icons/bs';
 import TierPlans from '../../components/TierPlans/TierPlans';
 import PayPerRecipientNew from '../../components/PayPerRecipient/PayPerRecipientNew';
 import { getPackagesDetails } from '../../redux/reducers/dashboardSlice';
+import { getCookie, setCookie } from '../../helpers/Functions/cookies';
 
 const SUPPRESS_SIZE_WARNING_COOKIE = 'suppress_size_warning';
 const SUPPRESS_SIZE_WARNING_TTL = 86400; // 24 hours in seconds
@@ -625,8 +626,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       return true;
     }
     const sizeInfo = emailSizeRef.current;
-    const suppressCookie = document.cookie.split('; ').find(row => row.startsWith(`${SUPPRESS_SIZE_WARNING_COOKIE}=`));
-    const isSuppressed = suppressCookie ? suppressCookie.split('=')[1] === 'true' : false;
+    const isSuppressed = getCookie(SUPPRESS_SIZE_WARNING_COOKIE) === 'true';
 
     if (sizeInfo.totalKB > 102 && !isSuppressed) {
       setPendingAction(actionType);
@@ -651,7 +651,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     if (buttonAction === 'back') return;
 
     if (suppressSizeWarningChecked) {
-      document.cookie = `${SUPPRESS_SIZE_WARNING_COOKIE}=true; max-age=${SUPPRESS_SIZE_WARNING_TTL}; path=/`;
+      setCookie(SUPPRESS_SIZE_WARNING_COOKIE, 'true', { maxAge: SUPPRESS_SIZE_WARNING_TTL });
     }
 
     if (action === 'testSend' && buttonAction === 'testSend') {
@@ -812,8 +812,7 @@ const CampaignEditor = ({ classes, ...props }) => {
         : prev
     );
 
-    const suppressCookie = document.cookie.split('; ').find(row => row.startsWith(`${SUPPRESS_SIZE_WARNING_COOKIE}=`));
-    const isSuppressed = suppressCookie ? suppressCookie.split('=')[1] === 'true' : false;
+    const isSuppressed = getCookie(SUPPRESS_SIZE_WARNING_COOKIE) === 'true';
 
     if (sizeInfo.totalKB > 102 && !saveRef.current?.skipSizeCheck && !isSuppressed) {
       setLoader(false);
