@@ -47,7 +47,7 @@ export const getSettingsItem = (
     { key: 'billingSettings', title: t('master.linkAccountBilling.Text'), href: `${sitePrefix}BillingSettings`, iconSrc: DolarMenuIcon, isShow: companyAdmin && !accountSettings?.SubAccountSettings?.IsTokenAccount && userRoles === UserRoles.Admin },
     { key: 'affiliateManagement', title: t('master.affiliateManagement'), href: `${sitePrefix}AffiliateManagement`, iconSrc: DolarMenuIcon, isShow: features && features?.indexOf(PulseemFeatures.AFFILIATE) > -1 && !accountSettings?.SubAccountSettings?.IsTokenAccount && userRoles === UserRoles.Admin },
     { key: 'accountUsers', title: t('master.RadMenuItemResource3.Text'), href: `${sitePrefix}AccountUsers`, iconSrc: GroupMenuIcon, isShow: companyAdmin && !accountSettings?.SubAccountSettings?.IsTokenAccount && userRoles === UserRoles.Admin },
-    { title: t('master.RadMenuItemResource4.Text'), href: `${sitePrefix}AccountUsersReport`, iconSrc: GrafMenuIcon, isShow: companyAdmin && !accountSettings?.SubAccountSettings?.IsTokenAccount && userRoles === UserRoles.Admin },
+    { title: t('master.RadMenuItemResource4.Text'), href: `${rootDomain}/AccountUsersReport.aspx?fromreact=true`, iconSrc: GrafMenuIcon, isShow: companyAdmin && !accountSettings?.SubAccountSettings?.IsTokenAccount && userRoles === UserRoles.Admin },
     { title: t('master.RadMenuItemResource23.Text'), href: `${sitePrefix}AccountSettings/ExtraFields`, iconSrc: StarMenuIcon, isShow: true },
     //@ts-ignore
     { title: t('master.linkApiSettingsResource1.Text'), href: `${sitePrefix}ApiSettings`, iconSrc: CodeMenuIcon, isShow: userRoles.AllowSend && (!accountSettings?.SubAccountSettings?.IsTokenAccount && (WhiteLabelObject[accountSettings?.Account?.ReferrerID] === undefined || !accountSettings?.Account?.ReferrerID || accountSettings?.Account?.ReferrerID === 0)) ? true : false },
@@ -159,7 +159,7 @@ export const getRoutes = (
         },
         {
           title: t("master.RadMenuItemResource9a.Text"),
-          href: `${sitePrefix}AutoSendPlans`,
+          href: `${rootDomain}/AutoSendPlans.aspx?fromreact=true`,
           isShow: true,
         },
         {
@@ -225,7 +225,7 @@ export const getRoutes = (
         },
         {
           title: t("master.chatbotSMS"),
-          href: `/SMSSmartResponses`,
+          href: `${rootDomain}/SMSSmartResponses.aspx?fromreact=true`,
           isShow: true,
         },
         // {
@@ -235,7 +235,7 @@ export const getRoutes = (
         // },
         {
           title: t("master.NewMMSCampaign.Text"),
-          href: `/CreateMmsCampaign`,
+          href: `${rootDomain}/MmsCampaignEdit.aspx?fromreact=true`,
           isShow: features && features?.indexOf(PulseemFeatures.MMS) > -1,
         },
         {
@@ -314,7 +314,7 @@ export const getRoutes = (
         },
         {
           title: t("master.FormTemplatesResource1.Text"),
-          href: `/FormTemplates`,
+          href: `${rootDomain}/FormTemplates.aspx?fromreact=true`,
           isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount,
         },
         {
@@ -425,21 +425,21 @@ export const getRoutes = (
       isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount,
       iconName: 'MdAssignment',
       options: [
-        { title: t('master.clalCollage'), href: `/ClalReport`, isShow: (isClalAccount === 'true' || isClalAccount === true) },
+        { title: t('master.clalCollage'), href: `${rootDomain}/ClalReport.aspx?fromreact=true`, isShow: (isClalAccount === 'true' || isClalAccount === true) },
         { key: "newsletterReport", title: t('master.RadMenuItemResource13.Text'), href: `${sitePrefix}reports/NewsletterReports`, isShow: true },
         { key: 'SmsReport', title: t('master.RadMenuItemResource24.Text'), href: `${sitePrefix}reports/SMSMainReport`, isShow: true },
         // { key: 'MmsReport', title: t('mmsreport.mmsReport'), href: `${sitePrefix}Reports/MMSMainReport`, isShow: true },
         { key: 'whatsappReports', title: t('whatsapp.ReportsWhatsapp'), href: whatsappRoutes.REPORTS, isShow: true },
         // { title: t('master.AbTestsReport.Text'), href: `${rootDomain}/AbTestsReport.aspx?fromreact=true`, isShow: true },
-        { title: t('master.RadMenuItemResource15.Text'), href: `${sitePrefix}AccountReport`, isShow: true },
+        { title: t('master.RadMenuItemResource15.Text'), href: `${rootDomain}/AccountReport.aspx?fromreact=true`, isShow: true },
         { title: t('master.RadMenuItemResource16.Text'), href: `${rootDomain}/CampaignComparison.aspx?fromreact=true`, isShow: false },
         { key: 'recipientReport', title: t('master.RadMenuItemResource18.Text'), href: `${sitePrefix}Reports/Recipient`, isShow: !userRoles?.HideRecipients },
-        { title: t('master.RadMenuItemResource30.Text'), href: `${sitePrefix}EmailAutoReports`, isShow: true },
-        { title: t('master.locRemovedReason.Text'), href: `${sitePrefix}RemovedStats`, isShow: true },
+        { title: t('master.RadMenuItemResource30.Text'), href: `${rootDomain}/EmailAutoReports.aspx?fromreact=true`, isShow: true },
+        { title: t('master.locRemovedReason.Text'), href: `${rootDomain}/RemovedStats.aspx?fromreact=true`, isShow: true },
         { key: 'productsReport', title: t('report.ProductsReport.products'), href: `${sitePrefix}Reports/ProductsReport`, isShow: true },
         { key: 'directSendReport', title: t('report.DirectSendReport'), href: `${sitePrefix}Reports/DirectSendReport`, isShow: accountSettings && accountSettings?.IsDirectAccount === true && !userRoles?.HideRecipients },
         { key: 'directSendReportArchive', title: t('report.ArchiveDirectSendReport'), href: `${sitePrefix}Reports/DirectSendReport/Archive`, isShow: accountSettings && accountSettings?.IsDirectAccount === true && !userRoles?.HideRecipients },
-        { title: t('master.OpenedClickedReport'), href: `${sitePrefix}EmailCampaignStatistics`, isShow: true },
+        { title: t('master.OpenedClickedReport'), href: `${rootDomain}/EmailCampaignStatistics.aspx?fromreact=true`, isShow: true },
         { key: 'inboundMessages', title: t('master.responses'), href: `${sitePrefix}Reports/Inbound`, isShow: !userRoles?.HideRecipients },
       ],
     },
