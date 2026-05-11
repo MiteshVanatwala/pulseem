@@ -942,7 +942,7 @@ export const TierFeatures = {
   "AI_LANDING_PAGE_DESIGNER": "billing.featureNames.AI_LANDING_PAGE_DESIGNER",
   "RCS_MESSAGING": "billing.featureNames.RCS_MESSAGING",
   "KOSHER_SEND": "billing.featureNames.KOSHER_SEND",
-  "HTML_BLOCK_TIER": "billing.featureNames.HTML_BLOCK_TIER",
+  "LANDING_PAGE_HTML_BLOCK": "billing.featureNames.LANDING_PAGE_HTML_BLOCK",
 }
 
 

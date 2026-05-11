@@ -288,7 +288,7 @@
     "AI_LANDING_PAGE_DESIGNER": "AI Landing Page Designer",
     "RCS_MESSAGING": "RCS Messaging",
     "KOSHER_SEND": "Kosher Send",
-    "HTML_BLOCK_TIER": "Blok HTML"
+    "LANDING_PAGE_HTML_BLOCK": "Blok HTML"
   },
   "EmailMarketingList": "Jaki jest rozmiar Twojej listy mailingowej?",
   "EmailMarketingListSending": "(Nielimitowane wysyłanie w zależności od wielkości listy)",
