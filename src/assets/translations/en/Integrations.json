@@ -31,7 +31,7 @@
   "shopify": {
     "title": "Shopify",
     "authentication": "Authentication",
-    "apiAccessToken": "API Access Token (Legacy Custom App) / API Secret (Dev Dashboard App)*",
+    "apiAccessToken": "API Access Token (Legacy Custom App) / API Secret (Dev Dashboard App)",
     "shopifyURL": "Store Name",
     "siteSignUp": "Site Sign Up",
     "settingsSaved": "Settings saved",

@@ -31,7 +31,7 @@
   "shopify": {
     "title": "Shopify",
     "authentication": "חיבור",
-    "apiAccessToken": "API Access Token (Legacy Custom App) / API Secret (Dev Dashboard App)*",
+    "apiAccessToken": "API Access Token (Legacy Custom App) / API Secret (Dev Dashboard App)",
     "shopifyURL": "שם חנות",
     "siteSignUp": "הרשמה",
     "settingsSaved": "הגדרות נשמרו בהצלחה",
