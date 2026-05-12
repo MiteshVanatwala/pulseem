@@ -844,6 +844,16 @@ const CampaignEditor = ({ classes, ...props }) => {
       return false;
     }
 
+    if (currentPlan.Id < 3) {
+      const hasDisplayConditions = /\{\%\s*if\b[\s\S]*?\{\%\s*endif\s*\%\}/.test(args.HtmlData);
+      if (hasDisplayConditions) {
+        setLoader(false);
+        setTierMessageCode("DISPLAY_CONDITION");
+        setDialogType({ type: 'tier' });
+        return false;
+      }
+    }
+
     const reInit = saveRef.current?.reInitEditor;
 
     try {
