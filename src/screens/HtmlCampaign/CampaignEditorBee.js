@@ -1,7 +1,7 @@
-﻿import clsx from 'clsx';
+import clsx from 'clsx';
 import { debounce, get } from 'lodash';
 import BeePlugin from '@mailupinc/bee-plugin'
-import { Box, Button, Grid, Typography, Tooltip, LinearProgress, makeStyles } from '@material-ui/core'
+import { Box, Button, Grid, Typography, Tooltip, LinearProgress, makeStyles, Checkbox, FormControlLabel } from '@material-ui/core'
 import { IoMdInformationCircleOutline } from 'react-icons/io';
 import { useRef, useState, useEffect, useMemo } from 'react'
 import DefaultScreen from '../DefaultScreen'
@@ -47,6 +47,7 @@ import { EditRow } from './components/ContentDialogs'
 import { GiMagicBroom } from "react-icons/gi";
 
 
+
 // Generic modal component with event hooks
 import useModals from './hooks/useModals'
 import { DemoModal } from './components/DemoModal'
@@ -73,6 +74,10 @@ import { BsMagic } from 'react-icons/bs';
 import TierPlans from '../../components/TierPlans/TierPlans';
 import PayPerRecipientNew from '../../components/PayPerRecipient/PayPerRecipientNew';
 import { getPackagesDetails } from '../../redux/reducers/dashboardSlice';
+import { getCookie, setCookie } from '../../helpers/Functions/cookies';
+
+const SUPPRESS_SIZE_WARNING_COOKIE = 'suppress_size_warning';
+const SUPPRESS_SIZE_WARNING_TTL = 86400; // 24 hours in seconds
 
 const useComponentStyles = makeStyles((theme) => ({
   emailSizeContainer: {
@@ -120,12 +125,12 @@ const useComponentStyles = makeStyles((theme) => ({
     fontSize: 16,
     fontWeight: 700,
   },
- emailSizeValueRTL: {
+  emailSizeValueRTL: {
     textAlign: 'right'
   },
   emailSizeValueLTR: {
     textAlign: 'left'
-  }, 
+  },
   emailSizeProgressContainer: {
     marginTop: 8,
     marginBottom: 4
@@ -267,7 +272,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   const [emailProps, setEmailProps] = useState(null);
   const [dialogType, setDialogType] = useState(null);
   const [TierMessageCode, setTierMessageCode] = useState("");
-  const [ isOpenPayPerRecipient, setIsOpenPayPerRecipient ] = useState(false);
+  const [isOpenPayPerRecipient, setIsOpenPayPerRecipient] = useState(false);
   const [emailSize, setEmailSize] = useState({
     totalKB: 0,
     htmlKB: 0,
@@ -280,6 +285,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   const recentlyDeletedByPopupRef = useRef(new Set());
   const latestEditorJsonRef = useRef(null);
   const isProblematicLinksDialogOpenRef = useRef(false);
+  const [suppressSizeWarningChecked, setSuppressSizeWarningChecked] = useState(false);
 
 
   //#region Get Extra fields & Landing pages, after Data Ready
@@ -468,7 +474,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     }
     setDataReady(true);
     dispatch(getBeeToken());
-  } 
+  }
 
 
 
@@ -580,7 +586,7 @@ const CampaignEditor = ({ classes, ...props }) => {
                 saveDesign(false, null, false);
               }
               setTimeout(() => {
-                editorReadyRef.current = true; 
+                editorReadyRef.current = true;
                 setButtonDisabled(false);
               }, 2000);
             });
@@ -620,8 +626,11 @@ const CampaignEditor = ({ classes, ...props }) => {
       return true;
     }
     const sizeInfo = emailSizeRef.current;
-    if (sizeInfo.totalKB > 102) {
+    const isSuppressed = getCookie(SUPPRESS_SIZE_WARNING_COOKIE) === 'true';
+
+    if (sizeInfo.totalKB > 102 && !isSuppressed) {
       setPendingAction(actionType);
+      setSuppressSizeWarningChecked(false);
       setDialogType({
         type: 'emailSizeExceeded',
         data: {
@@ -640,6 +649,11 @@ const CampaignEditor = ({ classes, ...props }) => {
     setDialogType(null);
 
     if (buttonAction === 'back') return;
+
+    if (suppressSizeWarningChecked) {
+      setCookie(SUPPRESS_SIZE_WARNING_COOKIE, 'true', { maxAge: SUPPRESS_SIZE_WARNING_TTL });
+    }
+
     if (action === 'testSend' && buttonAction === 'testSend') {
       // User clicked "Continue to test sending" - open test send modal
       const isSharedDomain = campaign.FromEmail.split("@").pop() === SharedEmailDomain;
@@ -767,7 +781,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     const updatedConditions = (displayConditions || []).map((cond) => ({
       ...cond,
       id: cond.id || cond.ID || Math.random().toString(36).substr(2, 9),
-        type: isRTL ? 'תנאים' : 'Conditions'
+      type: isRTL ? 'תנאים' : 'Conditions'
     }));
 
     config.rowDisplayConditions = updatedConditions;
@@ -798,8 +812,11 @@ const CampaignEditor = ({ classes, ...props }) => {
         : prev
     );
 
-    if (sizeInfo.totalKB > 102 && !saveRef.current?.skipSizeCheck) {
+    const isSuppressed = getCookie(SUPPRESS_SIZE_WARNING_COOKIE) === 'true';
+
+    if (sizeInfo.totalKB > 102 && !saveRef.current?.skipSizeCheck && !isSuppressed) {
       setLoader(false);
+      setSuppressSizeWarningChecked(false);
       setDialogType({
         type: 'emailSizeExceeded',
         data: {
@@ -980,7 +997,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       setSilentSave(false)
     }, 2000);
   }
-  
+
   const updateEmailSize = (sizeInfo) => {
     emailSizeRef.current = sizeInfo;
     setEmailSize(sizeInfo);
@@ -996,7 +1013,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     designChangedRef.current = true;
     if (isDisplayConditionDialogOpen) return;
     if (isProblematicLinksDialogOpenRef.current) return;
-    
+
     onAutoSaveCampaign();
   }
 
@@ -1114,7 +1131,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   const onTestSendResponse = (statusCode, message = '') => {
     setIsResponseModal(statusCode !== 402);
     switch (statusCode) {
-      case 200: 
+      case 200:
       case 201: {
         setDialog(DialogType.SUCCESS_SENT);
         break;
@@ -1169,7 +1186,7 @@ const CampaignEditor = ({ classes, ...props }) => {
         setGenericModalData({
           title: t('campaigns.newsLetterEditor.errors.paymentfailed553Title'),
           message: t("campaigns.newsLetterEditor.errors.paymentfailed553Desc"),
-          onConfirm: () => {},
+          onConfirm: () => { },
           onCancel: () => setDialog(null),
           onClose: () => setDialog(null),
           showDefaultButtons: false,
@@ -1265,7 +1282,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   const handleOpenTestSend = async () => {
     setPendingAction('testSend');
     const canProceed = checkEmailSizeBeforeAction('testSend');
-    if (!canProceed) return;   
+    if (!canProceed) return;
     const isSharedDomain = campaign.FromEmail.split("@").pop() === SharedEmailDomain;
     if (!isSharedDomain && (!emailProps?.IsVerified || emailProps?.IsRestricted)) {
       const domainErrorObj = {
@@ -1330,7 +1347,7 @@ const CampaignEditor = ({ classes, ...props }) => {
         const id = row?.container?.displayCondition?.id ?? row?.container?.displayCondition?.ID ?? null;
         if (id !== null && id !== undefined) ids.add(id);
       });
-    } catch (e) {}
+    } catch (e) { }
     return ids;
   };
 
@@ -1492,8 +1509,8 @@ const CampaignEditor = ({ classes, ...props }) => {
           <Typography
             className={clsx(
               componentClasses.emailSizeWarning,
-              status === 'over' 
-                ? componentClasses.emailSizeWarningOver 
+              status === 'over'
+                ? componentClasses.emailSizeWarningOver
                 : componentClasses.emailSizeWarningCritical
             )}
           >
@@ -1789,17 +1806,17 @@ const CampaignEditor = ({ classes, ...props }) => {
   }
 
   const handleGetPlanForFeature = (tierMessageCode) => {
-      const planName = findPlanByFeatureCode(
-          tierMessageCode,
-          availablePlans,
-          currentPlan.Id
-      );
-      
-      if (planName) {
-          return t('billing.tier.featureNotAvailable').replace('{feature}', t(TierFeatures[tierMessageCode] || tierMessageCode)).replace('{planName}', planName);
-      } else {
-          return t('billing.tier.noFeatureAvailable');
-      }
+    const planName = findPlanByFeatureCode(
+      tierMessageCode,
+      availablePlans,
+      currentPlan.Id
+    );
+
+    if (planName) {
+      return t('billing.tier.featureNotAvailable').replace('{feature}', t(TierFeatures[tierMessageCode] || tierMessageCode)).replace('{planName}', planName);
+    } else {
+      return t('billing.tier.noFeatureAvailable');
+    }
   };
 
   const getTierValidationDialog = () => ({
@@ -1812,28 +1829,28 @@ const CampaignEditor = ({ classes, ...props }) => {
     ),
     renderButtons: () => (
       <Grid
-          container
-          spacing={2}
-          className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}
+        container
+        spacing={2}
+        className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}
       >
-          <Grid item>
-              <Button
-                  onClick={() => {
-                      setShowTierPlans(true);
-                  }}
-                  className={clsx(classes.btn, classes.btnRounded)}
-              >
-                  {t('billing.upgradePlan')}
-              </Button>
-          </Grid>
-          <Grid item>
-              <Button
-                  onClick={() => setDialogType(null)}
-                  className={clsx(classes.btn, classes.btnRounded)}
-              >
-                  {t('common.cancel')}
-              </Button>
-          </Grid>
+        <Grid item>
+          <Button
+            onClick={() => {
+              setShowTierPlans(true);
+            }}
+            className={clsx(classes.btn, classes.btnRounded)}
+          >
+            {t('billing.upgradePlan')}
+          </Button>
+        </Grid>
+        <Grid item>
+          <Button
+            onClick={() => setDialogType(null)}
+            className={clsx(classes.btn, classes.btnRounded)}
+          >
+            {t('common.cancel')}
+          </Button>
+        </Grid>
       </Grid>
     )
   });
@@ -1954,6 +1971,19 @@ const CampaignEditor = ({ classes, ...props }) => {
         <Typography className={clsx(classes.textCenter, classes.font16, componentClasses.exceededDialogWarning)}>
           {t('campaigns.emailSize.exceeded.recommendation')}
         </Typography>
+
+        <Box mt={2} display="flex" justifyContent="center">
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={suppressSizeWarningChecked}
+                onChange={(e) => setSuppressSizeWarningChecked(e.target.checked)}
+                color="primary"
+              />
+            }
+            label={t('campaigns.size_warning_suppress_label')}
+          />
+        </Box>
       </Box>
     ),
     renderButtons: () => {
@@ -1983,7 +2013,7 @@ const CampaignEditor = ({ classes, ...props }) => {
                   className={clsx(classes.btn, classes.btnRounded)}
                 >
                   {
-                    pendingAction === 'testSend' 
+                    pendingAction === 'testSend'
                       ? t('campaigns.emailSize.exceeded.continueToTestSending')
                       : (pendingAction === 'save' ? t('campaigns.emailSize.exceeded.continueToSave') : t('campaigns.emailSize.exceeded.continueToSendSettings'))
                   }
