@@ -639,6 +639,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		return templateData.templateButtons.map((button: quickReplyButtonProps) => {
 			return {
 				id: button.id,
+				type: 'QUICK_REPLY',
 				title: getValueByFieldName(button, 'whatsapp.websiteButtonText'),
 			};
 		});
