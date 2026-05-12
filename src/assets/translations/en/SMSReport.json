@@ -4,6 +4,7 @@
   "searchSms": "Search",
   "recipientsFilter": "Recipients Filter",
   "filterInputText": "Don't send to recipients that got SMS in last previous days",
+  "filterInputTextBase": "Don't send to recipients that got SMS in the last",
   "inputTextFilter": "Don't send to recipients from the following groups",
   "campaignInfo": "Don't send to recipients from the following campaigns",
   "okBtn": "Ok",
