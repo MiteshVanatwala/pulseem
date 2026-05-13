@@ -12,6 +12,7 @@ import Toast from '../../components/Toast/Toast.component';
 import { getAuthorizedEmails, getCommonFeatures, isAlive } from '../../redux/reducers/commonSlice';
 import WizardActions from '../../components/Wizard/WizardActions';
 import { getById, deleteLPUserBlock, deleteLandingPage, getAllLPTemplatesBySubaccountId, getLPPublicTemplates, getLPTemplateById, getLPUserblocks, saveLPTemplateToAccount, saveLPUserBlock, saveWebform, publish, setWebformGroups } from '../../redux/reducers/PopupSlice';
+import { getPopupStages, addPopupStage, deletePopupStage, savePopupStageContent, PopupStage } from '../../redux/reducers/popUpManagementSlice';
 import { initClientForm, initExtraDataField, initLandingPages } from './helper/MigratePulseemData';
 import { DialogType, DefaultContent, BeeConfig } from './helper/configPopup';
 import { IoMdImages } from 'react-icons/io';
@@ -28,7 +29,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import moment from 'moment';
 /* END Bee */
 import { loginURL, sitePrefix } from '../../config';
-import { MdArrowBackIos, MdArrowForwardIos, MdCheck, MdGroups, MdOutlinePublic } from 'react-icons/md';
+import { MdArrowBackIos, MdArrowForwardIos, MdCheck, MdGroups, MdOutlinePublic, MdAdd } from 'react-icons/md';
 import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
 import { BEE_EDITOR_TYPES } from '../../helpers/Constants';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
@@ -118,6 +119,12 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
   // Draft credentials for dialog (avoid hooks inside non-component functions)
   const [popupDraftClientId, setPopupDraftClientId] = useState<string>(propClientId || '');
   const [popupDraftClientSecret, setPopupDraftClientSecret] = useState<string>(propClientSecret || '');
+  // Multi-stage state
+  const stageParam = parseInt(new URLSearchParams(window.location.search).get("stage") || "1");
+  const [currentStage, setCurrentStage] = useState<number>(stageParam);
+  const [stages, setStages] = useState<number[]>([1]);
+  const [showDeleteStageConfirm, setShowDeleteStageConfirm] = useState<number | null>(null);
+  const stageDataRef = useRef<PopupStage[]>([]);
   //#endregion State
 
   const getLanguageCodeFromBaseLanguage = (baseLanguage: number): string => {
@@ -296,6 +303,13 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
     await dispatch(getTestGroups());
     await dispatch(getLPUserblocks());
     await dispatch(getAuthorizedEmails());
+    if (Number(moduleId) > 0) {
+      //@ts-ignore
+      const stagesResult = await dispatch(getPopupStages(Number(moduleId))) as any;
+      const stagesData: PopupStage[] = stagesResult?.payload?.Data || [];
+      stageDataRef.current = stagesData;
+      setStages(stagesData.length > 0 ? stagesData.map((s: PopupStage) => s.StageNumber) : [1]);
+    }
     setDataReady(true);
     const initBeeToken = async () => {
       await dispatch(getLPBeeToken());
@@ -467,7 +481,15 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
           }
           else {
             const beeTest = new BeePlugin(JSON.parse(LPBeeToken.Message));
-            const template = forceTemplate !== null ? forceTemplate : webform?.JsonData ? JSON.parse(webform?.JsonData) : defaultContent.defaultTemplate;
+            const currentStageData = stageDataRef.current.find((s: PopupStage) => s.StageNumber === currentStage);
+            const stageJson = currentStage > 1 ? currentStageData?.JsonData : null;
+            const template = forceTemplate !== null
+              ? forceTemplate
+              : stageJson
+                ? JSON.parse(stageJson)
+                : webform?.JsonData
+                  ? JSON.parse(webform?.JsonData)
+                  : defaultContent.defaultTemplate;
 
             //@ts-ignore
             beeTest.start(config, template).then((instance) => {
@@ -565,6 +587,43 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
         } else {
           finalHtml = finalHtml.replace(/(<html[^>]*>)/i, `$1${cssInjection}`);
         }
+      }
+
+      // Always persist stage content to the stages table
+      //@ts-ignore
+      await dispatch(savePopupStageContent({
+        webFormId: Number(args.campaignId),
+        stageNumber: currentStage,
+        htmlContent: finalHtml,
+        jsonData: finalJson,
+      }));
+
+      // Handle pending stage switch — navigate after saving current stage
+      //@ts-ignore
+      if (saveRef.current?.pendingStageSwitch != null) {
+        //@ts-ignore
+        const targetStage = saveRef.current.pendingStageSwitch;
+        //@ts-ignore
+        saveRef.current = { ...saveRef.current, pendingStageSwitch: null };
+        const url = new URL(window.location.href);
+        url.searchParams.set('stage', String(targetStage));
+        window.location.href = url.toString();
+        return;
+      }
+
+      // For stage > 1, skip saveWebform (to avoid overwriting stage 1 WebForm data)
+      if (currentStage > 1) {
+        //@ts-ignore
+        if (saveRef.current?.showAnimation && !saveRef.current?.saveTemplate) {
+          // @ts-ignore
+          setToastMessage({
+            severity: 'success',
+            color: 'success',
+            message: t('PopupTriggers.popupSaved'),
+            showAnimtionCheck: true
+          } as any);
+        }
+        return;
       }
 
       //@ts-ignore
@@ -874,6 +933,48 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
     //@ts-ignore
     await editorRef.current.save();
   }
+  //#region Stage management
+  const handleStageSwitch = (targetStage: number) => {
+    if (targetStage === currentStage) return;
+    //@ts-ignore
+    saveRef.current = { ...saveRef.current, pendingStageSwitch: targetStage, showAnimation: false };
+    //@ts-ignore
+    editorRef.current.save();
+  };
+
+  const handleAddStage = async () => {
+    setLoader(true);
+    //@ts-ignore
+    const result = await dispatch(addPopupStage(Number(moduleId))) as any;
+    if (result?.payload?.StatusCode === 201) {
+      const newStage = result.payload.Data?.StageNumber;
+      const url = new URL(window.location.href);
+      url.searchParams.set('stage', String(newStage));
+      window.location.href = url.toString();
+    } else {
+      // @ts-ignore
+      setToastMessage({ severity: 'error', color: 'error', message: result?.payload?.Message, showAnimtionCheck: false });
+      setLoader(false);
+    }
+  };
+
+  const handleDeleteStage = async (stageNumber: number) => {
+    setShowDeleteStageConfirm(null);
+    setLoader(true);
+    //@ts-ignore
+    const result = await dispatch(deletePopupStage({ webFormId: Number(moduleId), stageNumber })) as any;
+    if (result?.payload?.StatusCode === 201) {
+      const url = new URL(window.location.href);
+      url.searchParams.set('stage', '1');
+      window.location.href = url.toString();
+    } else {
+      // @ts-ignore
+      setToastMessage({ severity: 'error', color: 'error', message: result?.payload?.Message, showAnimtionCheck: false });
+      setLoader(false);
+    }
+  };
+  //#endregion Stage management
+
   //#region Wizard buttons
   const renderTemplateButtons = () => {
     return <>
@@ -925,6 +1026,43 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
       >
         {t('common.Groups')}
       </Button>
+      {/* Stage tabs */}
+      {stages.map((stageNum) => (
+        <Box key={stageNum} style={{ display: 'inline-flex', alignItems: 'center', margin: '4px' }}>
+          <Button
+            size='medium'
+            variant={currentStage === stageNum ? 'contained' : 'outlined'}
+            color='primary'
+            className={clsx(classes.btn, classes.btnRounded)}
+            onClick={() => handleStageSwitch(stageNum)}
+          >
+            {t('Popup.popup_stage_n', { n: stageNum })}
+          </Button>
+          {stageNum > 1 && (
+            <Button
+              size='small'
+              className={clsx(classes.btn, classes.btnRounded)}
+              style={{ minWidth: 'unset', padding: '4px 8px', marginInlineStart: 2 }}
+              onClick={() => setShowDeleteStageConfirm(stageNum)}
+            >
+              ✕
+            </Button>
+          )}
+        </Box>
+      ))}
+      {stages.length < 3 && (
+        <Button
+          size='medium'
+          variant='outlined'
+          color='primary'
+          className={clsx(classes.btn, classes.btnRounded)}
+          style={{ margin: '4px' }}
+          startIcon={<MdAdd />}
+          onClick={handleAddStage}
+        >
+          {t('Popup.popup_add_stage')}
+        </Button>
+      )}
     </>
   }
   const renderButtons = () => {
@@ -1476,6 +1614,19 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
         }}
         isOpen={dialog === DialogType.SAVE_TEMPLATE}
       />
+      {showDeleteStageConfirm !== null && (
+        <BaseDialog
+          classes={classes}
+          open={true}
+          title={t('Popup.popup_stage_n', { n: showDeleteStageConfirm })}
+          //@ts-ignore
+          onClose={() => setShowDeleteStageConfirm(null)}
+          onCancel={() => setShowDeleteStageConfirm(null)}
+          onConfirm={() => handleDeleteStage(showDeleteStageConfirm)}
+        >
+          <Typography>{t('Popup.popup_delete_stage_confirm')}</Typography>
+        </BaseDialog>
+      )}
     </DefaultScreen>
   )
 }

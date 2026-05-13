@@ -6,5 +6,9 @@
 	"DeletePopupTitle": "Usuń okienko",
 	"DeletePopup": "Czy chcesz usunąć okienko?",
 	"DuplicatePopupTitle": "Duplikuj okienko",
-	"DuplicatePopup": "Czy chcesz skopiować okienko?"
+	"DuplicatePopup": "Czy chcesz skopiować okienko?",
+	"popup_stage": "Etap",
+	"popup_stage_n": "Etap {{n}}",
+	"popup_add_stage": "Dodaj etap",
+	"popup_delete_stage_confirm": "Czy chcesz usunąć ten etap?"
 }

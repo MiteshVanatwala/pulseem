@@ -6,5 +6,9 @@
 	"DeletePopupTitle": "Delete Popup",
 	"DeletePopupDesc": "Do you want to delete the popup?",
 	"DuplicatePopupTitle": "Duplicate Popup",
-	"DuplicatePopupDesc": "Do you want to duplicate the popup?"
+	"DuplicatePopupDesc": "Do you want to duplicate the popup?",
+	"popup_stage": "Stage",
+	"popup_stage_n": "Stage {{n}}",
+	"popup_add_stage": "Add Stage",
+	"popup_delete_stage_confirm": "Are you sure you want to delete this stage?"
 }
