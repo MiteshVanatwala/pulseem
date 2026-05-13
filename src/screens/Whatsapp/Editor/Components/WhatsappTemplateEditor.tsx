@@ -120,7 +120,7 @@ const WhatsappTemplateEditor = ({
 			return true;
 		} else if (
 			buttonTitle?.indexOf('quickReplay') > -1 &&
-			(buttonType === 'callToAction' || fileData?.fileLink?.length > 0)
+			(buttonType === 'callToAction')
 		) {
 			return true;
 		} else if (

@@ -19,7 +19,7 @@ export const FONTS = (isLandingPage: boolean = false) => {
     } as font;
 
     if (isLandingPage) {
-        allowedFonts.customFonts = HebrewFonts;
+        allowedFonts.customFonts = [...HebrewFonts];
     }
     else {
         allowedFonts.customFonts.push(googleFonts.Outfit);
@@ -33,6 +33,32 @@ export const FONTS = (isLandingPage: boolean = false) => {
             }
         }
     }
+
+    const ragSansFont = {
+        name: "RAG Sans",
+        fontFamily: "'RAG Sans', sans-serif",
+        url: (() => {
+            if (typeof window === 'undefined') return '';
+            const origin = window.location.origin;
+            if (origin.includes('localhost') || origin.includes('127.0.0.1')) {
+                // Fallback to staging to bypass CORS/Loopback security blocks on localhost inside BEE iframe
+                return 'https://clients.reactstage.club/assets/fonts/RAGSans/RAGSans.css';
+            }
+            return `${origin}/assets/fonts/RAGSans/RAGSans.css`;
+        })(),
+        fontWeight: {
+            100: 'Thin',
+            200: 'Extra Light',
+            300: 'Light',
+            400: 'Regular',
+            500: 'Medium',
+            600: 'Semi-bold',
+            700: 'Bold',
+            800: 'Extra-bold',
+            900: 'Black'
+        }
+    };
+    allowedFonts.customFonts.push(ragSansFont);
 
     return allowedFonts;
 }

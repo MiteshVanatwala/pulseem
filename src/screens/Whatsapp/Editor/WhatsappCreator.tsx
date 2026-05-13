@@ -639,6 +639,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		return templateData.templateButtons.map((button: quickReplyButtonProps) => {
 			return {
 				id: button.id,
+				type: 'QUICK_REPLY',
 				title: getValueByFieldName(button, 'whatsapp.websiteButtonText'),
 			};
 		});
@@ -1635,7 +1636,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 										category !== authenticationTypes.AUTHENTICATIONEN && category !== authenticationTypes.AUTHENTICATIONHEBREW && (		
 											<Grid className={classes.whatsappFileUploadWrapper} item>
 												<Grid container spacing={1}>
-													<Grid item className={buttonType === 'quickReply' ? classes.disabled : ''}>
+													<Grid item>
 														<FileUpload
 															classes={classes}
 															buttonType={buttonType}
@@ -1663,7 +1664,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 																setIsFileSelected(false);
 																setDialogType({ type: 'gallery' });
 															}}
-															disabled={buttonType === 'quickReply'}
+															disabled={false}
 														>
 															{translator('common.SelectFile')}
 														</Button>
