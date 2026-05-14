@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import { debounce, includes } from 'lodash';
 import BeePlugin from '@mailupinc/bee-plugin'
-import { Box, Button, Grid, TextField, Typography } from '@material-ui/core'
+import { Box, Button, Divider, Grid, Menu, MenuItem, TextField, Typography } from '@material-ui/core'
 import { useRef, useState, useEffect } from 'react'
 import DefaultScreen from '../DefaultScreen'
 import { useSelector, useDispatch } from 'react-redux';
@@ -29,7 +29,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import moment from 'moment';
 /* END Bee */
 import { loginURL, sitePrefix } from '../../config';
-import { MdArrowBackIos, MdArrowForwardIos, MdCheck, MdGroups, MdOutlinePublic, MdAdd } from 'react-icons/md';
+import { MdArrowBackIos, MdArrowForwardIos, MdCheck, MdGroups, MdOutlinePublic, MdAdd, MdKeyboardArrowDown, MdMoreVert, MdDelete } from 'react-icons/md';
 import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
 import { BEE_EDITOR_TYPES } from '../../helpers/Constants';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
@@ -46,6 +46,9 @@ import LPTemplates from './modals/Templates';
 import { GenericModal } from '../HtmlCampaign/components/GenericModal';
 import SaveTemplate from '../HtmlCampaign/modals/SaveTemplate';
 import { getLPBeeToken } from '../../redux/reducers/landingPagesSlice';
+import TierPlans from '../../components/TierPlans/TierPlans';
+import { findPlanByFeatureCode } from '../../redux/reducers/TiersSlice';
+import { TierFeatures } from '../../helpers/Constants';
 
 interface BeeEditorPopupProps extends BeeEditorModel {
   clientId?: string;
@@ -67,6 +70,7 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
   const { extraData, previousLandingData } = useSelector((state: { sms: SMSStoreProps }) => state.sms);
   const { language, isRTL, userRoles } = useSelector((state: StateType) => state.core);
   const { tokenAlive, accountSettings, accountFeatures } = useSelector((state: { common: commonProps }) => state.common);
+  const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
   const { landingPage, landingPageUserBlocks, ToastMessages, LPBeeToken, publicTemplates, templatesBySubAccount } = useSelector((state: { landingPages: BeeEditorStoreModel }) => state.landingPages)
   // const { BeeToken } = useSelector((state: { popup: any }) => state.popup)
   const [showLoader, setLoader] = useState(false);
@@ -125,6 +129,10 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
   const [stages, setStages] = useState<number[]>([1]);
   const [showDeleteStageConfirm, setShowDeleteStageConfirm] = useState<number | null>(null);
   const stageDataRef = useRef<PopupStage[]>([]);
+  const [stagesMenuAnchor, setStagesMenuAnchor] = useState<null | HTMLElement>(null);
+  const [stageOptionsAnchor, setStageOptionsAnchor] = useState<null | HTMLElement>(null);
+  const [showTierPlans, setShowTierPlans] = useState(false);
+  const [tierMessageCode, setTierMessageCode] = useState('');
   //#endregion State
 
   const getLanguageCodeFromBaseLanguage = (baseLanguage: number): string => {
@@ -934,6 +942,16 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
     await editorRef.current.save();
   }
   //#region Stage management
+  const handleGetPlanForFeature = (code: string) => {
+    const planName = findPlanByFeatureCode(code, availablePlans, currentPlan?.Id);
+    if (planName) {
+      return t('billing.tier.featureNotAvailable')
+        .replace('{feature}', t(TierFeatures[code as keyof typeof TierFeatures] || code))
+        .replace('{planName}', planName);
+    }
+    return t('billing.tier.noFeatureAvailable');
+  };
+
   const handleStageSwitch = (targetStage: number) => {
     if (targetStage === currentStage) return;
     //@ts-ignore
@@ -943,6 +961,13 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
   };
 
   const handleAddStage = async () => {
+    console.log("currentPlan?.Id = ",currentPlan?.Id);
+    // Plan gate: POPUP_STAGES requires Pro plan (ID >= 3)
+    if ((currentPlan?.Id || 0) < 3) {
+      setTierMessageCode('POPUP_STAGES');
+      setDialogType({ type: 'tier' });
+      return;
+    }
     setLoader(true);
     //@ts-ignore
     const result = await dispatch(addPopupStage(Number(moduleId))) as any;
@@ -951,6 +976,10 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
       const url = new URL(window.location.href);
       url.searchParams.set('stage', String(newStage));
       window.location.href = url.toString();
+    } else if (result?.payload?.StatusCode === 927) {
+      setTierMessageCode(result?.payload?.Message || 'POPUP_STAGES');
+      setDialogType({ type: 'tier' });
+      setLoader(false);
     } else {
       // @ts-ignore
       setToastMessage({ severity: 'error', color: 'error', message: result?.payload?.Message, showAnimtionCheck: false });
@@ -1026,43 +1055,116 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
       >
         {t('common.Groups')}
       </Button>
-      {/* Stage tabs */}
-      {stages.map((stageNum) => (
-        <Box key={stageNum} style={{ display: 'inline-flex', alignItems: 'center', margin: '4px' }}>
+      {/* Stages dropdown */}
+      <Box style={{ display: 'inline-flex', alignItems: 'center', margin: '4px 8px', gap: 6 }}>
+        <Typography style={{ fontSize: 14, fontWeight: 600, whiteSpace: 'nowrap' }}>
+          {t('Popup.popup_stage')}:
+        </Typography>
+
+        {currentStage === 1 ? (
+          /* Stage 1 — simple button matching toolbar style */
           <Button
             size='medium'
-            variant={currentStage === stageNum ? 'contained' : 'outlined'}
-            color='primary'
             className={clsx(classes.btn, classes.btnRounded)}
-            onClick={() => handleStageSwitch(stageNum)}
+            endIcon={<MdKeyboardArrowDown />}
+            onClick={(e) => setStagesMenuAnchor(e.currentTarget)}
+            style={{ minWidth: 110 }}
           >
-            {t('Popup.popup_stage_n', { n: stageNum })}
+            {t('Popup.popup_stage_n', { n: currentStage })}
           </Button>
-          {stageNum > 1 && (
+        ) : (
+          /* Stage 2 / 3 — joined split button: [ Stage N ▼ | ⋮ ] */
+          <Box
+            style={{
+              display: 'inline-flex',
+              alignItems: 'stretch',
+              border: '2px solid #F65026',
+              borderRadius: 20,
+              overflow: 'hidden',
+              minHeight: 34,
+              background: '#fff',
+            }}
+          >
+            <Button
+              size='medium'
+              className={clsx(classes.btn)}
+              endIcon={<MdKeyboardArrowDown />}
+              onClick={(e) => setStagesMenuAnchor(e.currentTarget)}
+              style={{ border: 'none', borderRadius: 0, minWidth: 110, paddingLeft: 14, boxShadow: 'none' }}
+            >
+              {t('Popup.popup_stage_n', { n: currentStage })}
+            </Button>
+            {/* pipe — same orange as border */}
+            <Box style={{ width: 2, backgroundColor: '#F65026', flexShrink: 0 }} />
             <Button
               size='small'
-              className={clsx(classes.btn, classes.btnRounded)}
-              style={{ minWidth: 'unset', padding: '4px 8px', marginInlineStart: 2 }}
-              onClick={() => setShowDeleteStageConfirm(stageNum)}
+              className={clsx(classes.btn)}
+              onClick={(e) => setStageOptionsAnchor(e.currentTarget)}
+              style={{ border: 'none', borderRadius: 0, minWidth: 'unset', padding: '4px 10px', boxShadow: 'none' }}
             >
-              ✕
+              <MdMoreVert style={{ fontSize: 20 }} />
             </Button>
-          )}
-        </Box>
-      ))}
-      {stages.length < 3 && (
-        <Button
-          size='medium'
-          variant='outlined'
-          color='primary'
-          className={clsx(classes.btn, classes.btnRounded)}
-          style={{ margin: '4px' }}
-          startIcon={<MdAdd />}
-          onClick={handleAddStage}
+          </Box>
+        )}
+
+        {/* Stages dropdown menu (shared for both layouts) */}
+        <Menu
+          anchorEl={stagesMenuAnchor}
+          open={Boolean(stagesMenuAnchor)}
+          onClose={() => setStagesMenuAnchor(null)}
+          getContentAnchorEl={null}
+          anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
+          transformOrigin={{ vertical: 'bottom', horizontal: 'left' }}
         >
-          {t('Popup.popup_add_stage')}
-        </Button>
-      )}
+          {stages.map((stageNum) => (
+            <MenuItem
+              key={stageNum}
+              selected={currentStage === stageNum}
+              onClick={() => {
+                setStagesMenuAnchor(null);
+                handleStageSwitch(stageNum);
+              }}
+            >
+              {t('Popup.popup_stage_n', { n: stageNum })}
+            </MenuItem>
+          ))}
+          {stages.length < 3 && <Divider />}
+          {stages.length < 3 && (
+            <MenuItem
+              onClick={() => {
+                setStagesMenuAnchor(null);
+                handleAddStage();
+              }}
+            >
+              <MdAdd style={{ marginInlineEnd: 6, fontSize: 18 }} />
+              {t('Popup.popup_add_stage')}
+            </MenuItem>
+          )}
+        </Menu>
+
+        {/* Three-dot options menu (stage 2/3 only) */}
+        {currentStage > 1 && (
+          <Menu
+            anchorEl={stageOptionsAnchor}
+            open={Boolean(stageOptionsAnchor)}
+            onClose={() => setStageOptionsAnchor(null)}
+            getContentAnchorEl={null}
+            anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
+            transformOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+          >
+            <MenuItem
+              onClick={() => {
+                setStageOptionsAnchor(null);
+                setShowDeleteStageConfirm(currentStage);
+              }}
+              style={{ color: '#d32f2f' }}
+            >
+              <MdDelete style={{ marginInlineEnd: 6, fontSize: 18 }} />
+              {t('common.Delete')}
+            </MenuItem>
+          </Menu>
+        )}
+      </Box>
     </>
   }
   const renderButtons = () => {
@@ -1417,7 +1519,44 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
   const renderDialog = () => {
     const { type, data } = dialogType || {}
     let currentDialog = {};
-    if (type === DialogType.Templates) {
+    if (type === 'tier') {
+      currentDialog = {
+        showDivider: false,
+        title: t('billing.tier.permission'),
+        showDefaultButtons: false,
+        content: (
+          <Typography style={{ fontSize: 16, textAlign: 'center' }}>
+            {handleGetPlanForFeature(tierMessageCode)}
+          </Typography>
+        ),
+        renderButtons: () => (
+          <Grid container spacing={2} justifyContent='center' style={{ marginTop: 8 }}>
+            <Grid item>
+              <Button
+                size='small'
+                variant='contained'
+                className={clsx(classes.btn, classes.btnRounded)}
+                onClick={() => { setDialogType(null); setShowTierPlans(true); }}
+              >
+                {t('billing.upgradePlan')}
+              </Button>
+            </Grid>
+            <Grid item>
+              <Button
+                size='small'
+                variant='contained'
+                className={clsx(classes.btn, classes.btnRounded)}
+                onClick={() => setDialogType(null)}
+              >
+                {t('common.cancel')}
+              </Button>
+            </Grid>
+          </Grid>
+        ),
+        onClose: () => setDialogType(null),
+        onCancel: () => setDialogType(null),
+      };
+    } else if (type === DialogType.Templates) {
       currentDialog = renderTemplateDialog();
     } else if (type === DialogType.LOGOUT) {
       currentDialog = logoutDialog();
@@ -1614,6 +1753,13 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
         }}
         isOpen={dialog === DialogType.SAVE_TEMPLATE}
       />
+      {showTierPlans && (
+        <TierPlans
+          classes={classes}
+          isOpen={showTierPlans}
+          onClose={() => setShowTierPlans(false)}
+        />
+      )}
       {showDeleteStageConfirm !== null && (
         <BaseDialog
           classes={classes}

@@ -1,6 +1,24 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
 
+// Mocking stages in localStorage for development/testing before backend is ready
+// Set to false once backend endpoints are live
+const MOCK_STAGES = false;
+
+const mockStagesKey = (webFormId: number) => `mockPopupStages_${webFormId}`;
+
+const mockGetStages = (webFormId: number): PopupStage[] => {
+  const stored = localStorage.getItem(mockStagesKey(webFormId));
+  if (stored) return JSON.parse(stored);
+  const initial: PopupStage[] = [{ StageNumber: 1 }];
+  localStorage.setItem(mockStagesKey(webFormId), JSON.stringify(initial));
+  return initial;
+};
+
+const mockSaveStages = (webFormId: number, stages: PopupStage[]) => {
+  localStorage.setItem(mockStagesKey(webFormId), JSON.stringify(stages));
+};
+
 // --- Interfaces --- //
 export interface PopupStage {
   StageNumber: number;
@@ -161,6 +179,9 @@ export const getDeletedPopups = createAsyncThunk(
 export const getPopupStages = createAsyncThunk(
   'popUpManagement/getPopupStages',
   async (webFormId: number, thunkAPI) => {
+    if (MOCK_STAGES) {
+      return { StatusCode: 201, Data: mockGetStages(webFormId) };
+    }
     try {
       const response = await PulseemReactInstance.get(`popup/GetPopupStages/${webFormId}`);
       return response.data;
@@ -173,6 +194,16 @@ export const getPopupStages = createAsyncThunk(
 export const addPopupStage = createAsyncThunk(
   'popUpManagement/addPopupStage',
   async (webFormId: number, thunkAPI) => {
+    if (MOCK_STAGES) {
+      const stages = mockGetStages(webFormId);
+      if (stages.length >= 3) {
+        return thunkAPI.rejectWithValue({ error: 'Maximum 3 stages allowed' });
+      }
+      const newStageNumber = stages.length + 1;
+      stages.push({ StageNumber: newStageNumber });
+      mockSaveStages(webFormId, stages);
+      return { StatusCode: 201, Data: { StageNumber: newStageNumber, TotalStages: stages.length } };
+    }
     try {
       const response = await PulseemReactInstance.post('popup/AddPopupStage', { WebFormId: webFormId });
       return response.data;
@@ -185,6 +216,13 @@ export const addPopupStage = createAsyncThunk(
 export const deletePopupStage = createAsyncThunk(
   'popUpManagement/deletePopupStage',
   async ({ webFormId, stageNumber }: { webFormId: number; stageNumber: number }, thunkAPI) => {
+    if (MOCK_STAGES) {
+      let stages = mockGetStages(webFormId).filter(s => s.StageNumber !== stageNumber);
+      // Renumber sequentially after deletion
+      stages = stages.map((s, i) => ({ ...s, StageNumber: i + 1 }));
+      mockSaveStages(webFormId, stages);
+      return { StatusCode: 201, Data: null };
+    }
     try {
       const response = await PulseemReactInstance.post('popup/DeletePopupStage', { WebFormId: webFormId, StageNumber: stageNumber });
       return response.data;
@@ -197,6 +235,17 @@ export const deletePopupStage = createAsyncThunk(
 export const savePopupStageContent = createAsyncThunk(
   'popUpManagement/savePopupStageContent',
   async ({ webFormId, stageNumber, htmlContent, jsonData }: { webFormId: number; stageNumber: number; htmlContent: string; jsonData: string }, thunkAPI) => {
+    if (MOCK_STAGES) {
+      const stages = mockGetStages(webFormId);
+      const idx = stages.findIndex(s => s.StageNumber === stageNumber);
+      if (idx > -1) {
+        stages[idx] = { ...stages[idx], HtmlContent: htmlContent, JsonData: jsonData };
+      } else {
+        stages.push({ StageNumber: stageNumber, HtmlContent: htmlContent, JsonData: jsonData });
+      }
+      mockSaveStages(webFormId, stages);
+      return { StatusCode: 201, Data: null };
+    }
     try {
       const response = await PulseemReactInstance.post('popup/SavePopupStageContent', { WebFormId: webFormId, StageNumber: stageNumber, HtmlContent: htmlContent, JsonData: jsonData });
       return response.data;

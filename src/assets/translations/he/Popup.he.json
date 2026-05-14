@@ -9,6 +9,6 @@
   "DuplicatePopupDesc": "האם ברצונכם לשכפל את הפופאפ?",
   "popup_stage": "שלב",
   "popup_stage_n": "שלב {{n}}",
-  "popup_add_stage": "הוספת שלב +",
+  "popup_add_stage": "הוספת שלב",
   "popup_delete_stage_confirm": "האם ברצונכם למחוק את השלב?"
 }
