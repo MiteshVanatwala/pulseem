@@ -1944,15 +1944,10 @@ const ClientSearchResult = ({ classes }) => {
         }
         case DialogType.EDIT_RECIPIENT: {
           let mappedGroups = [];
-          if (data && data?.find((obj) => obj.ClientID === selectedClients[0])?.GroupIds?.length > 0) {
-            mappedGroups = data?.find((obj) => obj.ClientID === selectedClients[0])?.GroupIds?.split(',')?.map(function (x) {
-              return parseInt(x, 10);
-            });
-          }
-          else if (searchData?.GroupIds && searchData?.GroupIds?.length > 0) {
-            mappedGroups = searchData?.GroupIds?.map(function (x) {
-              return parseInt(x, 10);
-            })
+          if (clientToEdit?.GroupIds?.length > 0) {
+            mappedGroups = typeof clientToEdit.GroupIds === 'string'
+              ? clientToEdit.GroupIds.split(',').map(x => parseInt(x, 10)).filter(Boolean)
+              : clientToEdit.GroupIds;
           }
 
           return <AddRecipientPopup
