@@ -150,7 +150,7 @@ const AddRecipientPopup = ({ classes,
         if (recipientData) {
             let { ExtraFields, ...restData } = { ...addRecipientData, ...recipientData }
             setAddRecipientData({ ...restData, ...ExtraFields })
-            setSelectedLocalGroups([...selectedLocalGroups, ...selectedGroups])
+            setSelectedLocalGroups([...selectedGroups])
         }
 
     }, [recipientData])
