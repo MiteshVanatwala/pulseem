@@ -27,13 +27,7 @@ const FileUpload = ({
 		}
 	}, [sourceFileSize])
 
-	const checkFileUploadAvailability = (e: BaseSyntheticEvent) => {
-		if (buttonType === 'quickReply') {
-			e.preventDefault();
-			e.stopPropagation();
-			setAlert(translator('whatsapp.alertModal.fileUploadAlert'));
-		}
-	};
+	const checkFileUploadAvailability = (_e: BaseSyntheticEvent) => {};
 
 	function niceBytes(x: string) {
 		let l = 0,
