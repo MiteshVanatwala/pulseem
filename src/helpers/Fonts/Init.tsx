@@ -2,6 +2,7 @@ import { useSelector } from 'react-redux';
 //import { getCookie } from '../Functions/cookies';
 import { googleFonts, HebrewFonts } from './GoogleFonts';
 import { PulseemFeatures } from '../../model/PulseemFields/Fields';
+import { sitePrefix } from '../../config/index';
 
 interface font {
     showDefaultFonts: boolean,
@@ -38,13 +39,12 @@ export const FONTS = (isLandingPage: boolean = false) => {
         name: "RAG Sans",
         fontFamily: "'RAGSans', 'RAG Sans', sans-serif",
         url: (() => {
-            if (typeof window === 'undefined') return 'https://www.pulseem.co.il/react/assets/fonts/RAGSans/RAGSans.css';
             const origin = window.location.origin;
             if (origin.includes('localhost') || origin.includes('127.0.0.1')) {
                 // Fallback to staging to bypass CORS/Loopback security blocks on localhost inside BEE iframe
                 return 'https://clients.reactstage.club/assets/fonts/RAGSans/RAGSans.css';
             }
-            return `${origin}/react/assets/fonts/RAGSans/RAGSans.css`;
+            return `${origin}${sitePrefix}assets/fonts/RAGSans/RAGSans.css`;
         })(),
         fontWeight: {
             100: 'Thin',
