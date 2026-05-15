@@ -193,7 +193,7 @@ const ProductsReport = ({ classes }) => {
                             labelId="category"
                             id="category"
                             multiple
-                            style={{ minWidth: windowSize !== 'xs' ? 300 : 200 }}
+                            style={{ width: windowSize !== 'xs' ? 300 : 200 }}
                             value={searchData.CategoryID}
                             IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                             inputProps={{
@@ -202,9 +202,14 @@ const ProductsReport = ({ classes }) => {
 
                             }}
                             MenuProps={{
+                                variant: 'menu',
+                                disableScrollLock: true,
+                                anchorOrigin: { vertical: 'bottom', horizontal: isRTL ? 'right' : 'left' },
+                                transformOrigin: { vertical: 'top', horizontal: isRTL ? 'right' : 'left' },
                                 PaperProps: {
                                     style: {
                                         maxHeight: 300,
+                                        width: windowSize !== 'xs' ? 300 : 200,
                                         direction: isRTL ? 'rtl' : 'ltr'
                                     },
                                 },
