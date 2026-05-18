@@ -2,6 +2,7 @@ import { useSelector } from 'react-redux';
 //import { getCookie } from '../Functions/cookies';
 import { googleFonts, HebrewFonts } from './GoogleFonts';
 import { PulseemFeatures } from '../../model/PulseemFields/Fields';
+import { sitePrefix } from '../../config/index';
 
 interface font {
     showDefaultFonts: boolean,
@@ -9,7 +10,7 @@ interface font {
 }
 
 export const FONTS = (isLandingPage: boolean = false) => {
-    const { accountFeatures } = useSelector((state: any) => state.common);
+    const { subAccount, accountFeatures } = useSelector((state: any) => state.common);
     const { language } = useSelector((state: any) => state.core);
     const IsPoland = language === 'pl';
 
@@ -26,7 +27,7 @@ export const FONTS = (isLandingPage: boolean = false) => {
         if (accountFeatures?.indexOf(PulseemFeatures.BEE_ENABLE_GOOGLE_FONTS) > -1) { // EnableBeeGoogleFonts
             allowedFonts.customFonts.push(googleFonts.Rubik);
             allowedFonts.customFonts.push(googleFonts.OpenSans);
-            
+
             // Add Helvetica for Polish accounts
             if (IsPoland) {
                 allowedFonts.customFonts.push(googleFonts.Helvetica);
@@ -36,15 +37,14 @@ export const FONTS = (isLandingPage: boolean = false) => {
 
     const ragSansFont = {
         name: "RAG Sans",
-        fontFamily: "'RAG Sans', sans-serif",
+        fontFamily: "'RAGSans', 'RAG Sans', sans-serif",
         url: (() => {
-            if (typeof window === 'undefined') return '';
             const origin = window.location.origin;
             if (origin.includes('localhost') || origin.includes('127.0.0.1')) {
                 // Fallback to staging to bypass CORS/Loopback security blocks on localhost inside BEE iframe
                 return 'https://clients.reactstage.club/assets/fonts/RAGSans/RAGSans.css';
             }
-            return `${origin}/assets/fonts/RAGSans/RAGSans.css`;
+            return `${origin}${sitePrefix}assets/fonts/RAGSans/RAGSans.css`;
         })(),
         fontWeight: {
             100: 'Thin',

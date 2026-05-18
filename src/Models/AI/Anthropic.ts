@@ -5,6 +5,8 @@ export interface AITemplateCreatorProps {
   campaignId: any;
   onUpdate: (status: string, templateData?: any) => void;
   onRestore: (templateData?: any) => void;
+  loaderText?: string;
+  loaderSteps?: { text: string, icon: string }[];
 }
 
 export interface AnthropicUserRequest {
