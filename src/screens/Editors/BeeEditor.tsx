@@ -1271,7 +1271,19 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       icon: <BsMagic />,
       title: t("AI.popup.designWithAI"),
       content: (
-        <AITemplateCreatorAccordion
+        <>
+          <Box className={classes.aiFormNotice}>
+            <span className={classes.aiFormNoticeIcon}>⚠️</span>
+            <Box>
+              <Typography className={classes.aiFormNoticeTitle}>
+                {t('AI.popup.formNotSupportedTitle')}
+              </Typography>
+              <Typography className={classes.aiFormNoticeDesc}>
+                {t('AI.popup.formNotSupportedDesc')}
+              </Typography>
+            </Box>
+          </Box>
+          <AITemplateCreatorAccordion
           classes={classes}
           campaignId={moduleId}
           loaderText={t('AILoader.creatingLandingPage')}
@@ -1294,6 +1306,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
               loadNewTemplate(templateData);
             }
           }} />
+        </>
       ),
       showDefaultButtons: false
     };

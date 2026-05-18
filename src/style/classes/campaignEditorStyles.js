@@ -1,4 +1,30 @@
 export const getCampaignEditorStyle = (windowSize, isRTL) => ({
+  aiFormNotice: {
+    backgroundColor: '#fff3f3',
+    border: '2px solid #d32f2f',
+    borderRadius: 6,
+    padding: '10px 14px',
+    marginBottom: 14,
+    display: 'flex',
+    alignItems: 'flex-start',
+    gap: 8
+  },
+  aiFormNoticeIcon: {
+    fontSize: 18,
+    lineHeight: 1.4
+  },
+  aiFormNoticeTitle: {
+    color: '#b71c1c',
+    fontWeight: 700,
+    fontSize: 14,
+    lineHeight: 1.5
+  },
+  aiFormNoticeDesc: {
+    color: '#b71c1c',
+    fontWeight: 400,
+    fontSize: 14,
+    lineHeight: 1.5
+  },
   emailField: {
     /*direction: 'ltr',
     textAlign: 'right'*/
