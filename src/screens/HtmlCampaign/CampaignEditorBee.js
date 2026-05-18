@@ -36,7 +36,7 @@ import WizardActions from '../../components/Wizard/WizardActions';
 import { getBeeToken } from '../../redux/reducers/campaignEditorSlice';
 import { initExtraDataField, initLandingPages } from './helper/MigratePulseemData';
 import { BeeConfig, DialogType, DefaultContent } from './helper/Config';
-import { FONTS } from '../../helpers/Fonts/Init';
+import { FONTS, injectRagSansFontFace } from '../../helpers/Fonts/Init';
 import { IoMdImages } from 'react-icons/io';
 import Gallery from '../../components/Gallery/Gallery.component';
 import { PulseemFeatures, PulseemFolderType } from "../../model/PulseemFields/Fields";
@@ -875,7 +875,7 @@ const CampaignEditor = ({ classes, ...props }) => {
 
     try {
       if (saveRef.current?.showAnimation) setLoader(true);
-      let finalHtml = args.HtmlData;
+      let finalHtml = injectRagSansFontFace(args.HtmlData);
       let finalJson = args.JsonData;
       let finalAmpData = args.AmpData;
 

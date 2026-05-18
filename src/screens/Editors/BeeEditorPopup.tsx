@@ -45,6 +45,7 @@ import LPTemplates from './modals/Templates';
 import { GenericModal } from '../HtmlCampaign/components/GenericModal';
 import SaveTemplate from '../HtmlCampaign/modals/SaveTemplate';
 import { getLPBeeToken } from '../../redux/reducers/landingPagesSlice';
+import { injectRagSansFontFace } from '../../helpers/Fonts/Init';
 
 interface BeeEditorPopupProps extends BeeEditorModel {
   clientId?: string;
@@ -545,7 +546,7 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
     try {
       //@ts-ignore
       if (saveRef.current?.showAnimation) setLoader(true);
-      let finalHtml = args.HtmlData;
+      let finalHtml = injectRagSansFontFace(args.HtmlData);
       let finalJson = args.JsonData;
 
       if (!finalHtml.includes('id="popup-form-fix"')) {
