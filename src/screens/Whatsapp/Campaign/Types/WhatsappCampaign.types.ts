@@ -405,6 +405,7 @@ export type campaignDataProps = {
 	UpdateDate: string;
 	WACampaignID: number;
 	TemplateId: string;
+	IsPulseSend?: boolean;
 };
 
 export type searchArrayProps = {
@@ -439,6 +440,7 @@ export type reportDataProps = {
 	TemplateID: string;
 	Revenue: number;
 	Cost: number;
+	IsPulseSend?: boolean;
 };
 
 export type exportDataProps = {

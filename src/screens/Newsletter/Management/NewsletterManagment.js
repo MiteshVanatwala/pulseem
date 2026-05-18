@@ -614,7 +614,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
     )
   }
 
-  const renderStatusCell = (status) => {
+  const renderStatusCell = (status, isPulseSend) => {
     const statuses = {
       1: 'common.Created',
       2: 'common.Sending',
@@ -625,7 +625,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
       7: 'campaigns.Approve'
     }
     return (
-      <>
+      <Box>
         <Typography className={clsx(
           classes.middleText,
           classes.recipientsStatus,
@@ -638,7 +638,12 @@ const NewsletterManagnentScreen = ({ classes }) => {
         )}>
           {t(statuses[status])}
         </Typography>
-      </>
+        {isPulseSend && (
+          <Typography className={classes.pulseSendPill}>
+            {t('common.pulseSendPill')}
+          </Typography>
+        )}
+      </Box>
     )
   }
 
@@ -751,7 +756,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
             classes={cellStyle}
             align='center'
             className={classes.flex1}>
-            {!(isExpanded && isParent) && renderStatusCell(row.Status)}
+            {!(isExpanded && isParent) && renderStatusCell(row.Status, newslettersChildCampaigns.some(c => c?.ParentCampaignId === row.CampaignID && c.Name?.includes(PULSE_1)))}
           </TableCell>
           <TableCell
             component='th'
@@ -813,7 +818,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
                 {renderNameCell(row, isParent)}
               </Box>
               <Box>
-                {!(isExpanded && isParent) && renderStatusCell(row.Status)}
+                {!(isExpanded && isParent) && renderStatusCell(row.Status, newslettersChildCampaigns.some(c => c?.ParentCampaignId === row.CampaignID && c.Name?.includes(PULSE_1)))}
               </Box>
             </Box>
             {renderCellIcons(row)}
