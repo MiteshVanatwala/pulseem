@@ -74,7 +74,7 @@
 		"131009": "One or more parameter values are invalid.",
 		"131016": "A service is temporarily unavailable.",
 		"131021": "Sender and recipient phone number is the same.",
-		"131026": "Message undeliverable",
+		"131026": "Unable to deliver message. The recipient may not have a WhatsApp account, is using an outdated version, or has not accepted the latest Terms of Service.",
 		"131030": "Recipient phone number not in allowed list",
 		"131037": "WhatsApp provided number needs display name approval before message can be sent.",
 		"131042": "There was an error related to your payment method.",
