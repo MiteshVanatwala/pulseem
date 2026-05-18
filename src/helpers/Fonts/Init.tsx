@@ -4,6 +4,29 @@ import { googleFonts, HebrewFonts } from './GoogleFonts';
 import { PulseemFeatures } from '../../model/PulseemFields/Fields';
 import { sitePrefix } from '../../config/index';
 
+const RAG_SANS_BASE_URL = 'https://www.pulseem.co.il/react/assets/fonts/RAGSans';
+
+const RAG_SANS_FONT_FACE_CSS = `
+@font-face{font-family:'RAGSans';font-style:normal;font-weight:100;src:url('${RAG_SANS_BASE_URL}/RAG-Sans-1.1-Thin.woff2') format('woff2'),url('${RAG_SANS_BASE_URL}/RAG-Sans-1.1-Thin.woff') format('woff')}
+@font-face{font-family:'RAGSans';font-style:normal;font-weight:200;src:url('${RAG_SANS_BASE_URL}/RAG-Sans-1.1-ExtraLight.woff2') format('woff2'),url('${RAG_SANS_BASE_URL}/RAG-Sans-1.1-ExtraLight.woff') format('woff')}
+@font-face{font-family:'RAGSans';font-style:normal;font-weight:300;src:url('${RAG_SANS_BASE_URL}/RAG-Sans-1.1-Light.woff2') format('woff2'),url('${RAG_SANS_BASE_URL}/RAG-Sans-1.1-Light.woff') format('woff')}
+@font-face{font-family:'RAGSans';font-style:normal;font-weight:400;src:url('${RAG_SANS_BASE_URL}/RAG-Sans-1.1-Regular.woff2') format('woff2'),url('${RAG_SANS_BASE_URL}/RAG-Sans-1.1-Regular.woff') format('woff')}
+@font-face{font-family:'RAGSans';font-style:normal;font-weight:500;src:url('${RAG_SANS_BASE_URL}/RAG-Sans-1.1-Medium.woff2') format('woff2'),url('${RAG_SANS_BASE_URL}/RAG-Sans-1.1-Medium.woff') format('woff')}
+@font-face{font-family:'RAGSans';font-style:normal;font-weight:600;src:url('${RAG_SANS_BASE_URL}/RAG-Sans-1.1-SemiBold.woff2') format('woff2'),url('${RAG_SANS_BASE_URL}/RAG-Sans-1.1-SemiBold.woff') format('woff')}
+@font-face{font-family:'RAGSans';font-style:normal;font-weight:700;src:url('${RAG_SANS_BASE_URL}/RAG-Sans-1.1-Bold.woff2') format('woff2'),url('${RAG_SANS_BASE_URL}/RAG-Sans-1.1-Bold.woff') format('woff')}
+@font-face{font-family:'RAGSans';font-style:normal;font-weight:800;src:url('${RAG_SANS_BASE_URL}/RAG-Sans-1.1-ExtraBold.woff2') format('woff2'),url('${RAG_SANS_BASE_URL}/RAG-Sans-1.1-ExtraBold.woff') format('woff')}
+@font-face{font-family:'RAGSans';font-style:normal;font-weight:900;src:url('${RAG_SANS_BASE_URL}/RAG-Sans-1.1-Black.woff2') format('woff2'),url('${RAG_SANS_BASE_URL}/RAG-Sans-1.1-Black.woff') format('woff')}
+`.trim();
+
+export const injectRagSansFontFace = (html: string): string => {
+    if (!html || !html.includes('RAGSans')) return html;
+    const styleTag = `<style>${RAG_SANS_FONT_FACE_CSS}</style>`;
+    if (html.includes('</head>')) {
+        return html.replace('</head>', `${styleTag}</head>`);
+    }
+    return styleTag + html;
+};
+
 interface font {
     showDefaultFonts: boolean,
     customFonts: [] | any
