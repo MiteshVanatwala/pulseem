@@ -490,12 +490,12 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
           else {
             const beeTest = new BeePlugin(JSON.parse(LPBeeToken.Message));
             const currentStageData = stageDataRef.current.find((s: PopupStage) => s.StageNumber === currentStage);
-            const stageJson = currentStage > 1 ? currentStageData?.JsonData : null;
+            const stageJson = currentStageData?.JsonData ?? null;
             const template = forceTemplate !== null
               ? forceTemplate
               : stageJson
                 ? JSON.parse(stageJson)
-                : webform?.JsonData
+                : currentStage === 1 && webform?.JsonData
                   ? JSON.parse(webform?.JsonData)
                   : defaultContent.defaultTemplate;
 

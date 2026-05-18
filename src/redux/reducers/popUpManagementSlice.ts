@@ -3,7 +3,7 @@ import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
 
 // Mocking stages in localStorage for development/testing before backend is ready
 // Set to false once backend endpoints are live
-const MOCK_STAGES = false;
+const MOCK_STAGES = true;
 
 const mockStagesKey = (webFormId: number) => `mockPopupStages_${webFormId}`;
 

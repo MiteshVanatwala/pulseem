@@ -23,10 +23,9 @@ const PopupPreviewModal: React.FC<PopupPreviewModalProps> = ({
 }) => {
   const dispatch = useDispatch<any>();
   const { t } = useTranslation();
-  const [html, setHtml] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [contentWidth, setContentWidth] = useState<number>(400);
-  const [contentHeight, setContentHeight] = useState<number>(600);
+  const [stageHeights, setStageHeights] = useState<Record<number, number>>({});
   const [closeButtonData, setCloseButtonData] = useState<{
     color?: string;
     bgcolor?: string;
@@ -35,80 +34,30 @@ const PopupPreviewModal: React.FC<PopupPreviewModalProps> = ({
   } | null>(null);
   const [stages, setStages] = useState<PopupStage[]>([]);
   const [currentPreviewStage, setCurrentPreviewStage] = useState<number>(1);
-  const stageHtmlMapRef = useRef<Record<number, string>>({});
-  const contentRef = useRef<HTMLDivElement>(null);
-  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const [stageHtmlMap, setStageHtmlMap] = useState<Record<number, string>>({});
+  const iframeRefs = useRef<Record<number, HTMLIFrameElement | null>>({});
 
   useEffect(() => {
     if (open && popupId) {
       setCurrentPreviewStage(1);
       setStages([]);
-      stageHtmlMapRef.current = {};
+      setStageHtmlMap({});
+      setStageHeights({});
       loadPreview();
     }
   }, [open, popupId]);
-
-  useEffect(() => {
-    if (!loading && html && contentRef.current) {
-      setTimeout(() => {
-        if (contentRef.current) {
-          const content = contentRef.current.firstElementChild as HTMLElement;
-          let width = 400;
-
-          if (content) {
-            const renderedWidth = content.offsetWidth || content.scrollWidth;
-            const styleWidth = extractMaxWidthFromHtml(html);
-            width = styleWidth || renderedWidth || 400;
-          }
-
-          const minWidth = 400;
-          const maxWidth = window.innerWidth * 0.9;
-          setContentWidth(Math.min(Math.max(width, minWidth), maxWidth));
-        }
-      }, 100);
-    }
-  }, [loading, html]);
-
-  useEffect(() => {
-    if (!loading && html && iframeRef.current) {
-      const iframe = iframeRef.current;
-
-      const adjustIframeHeight = () => {
-        try {
-          const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
-          if (iframeDoc && iframeDoc.body) {
-            const height = iframeDoc.body.scrollHeight;
-            const maxHeight = window.innerHeight * 0.9;
-            setContentHeight(Math.min(height, maxHeight));
-          }
-        } catch (error) {
-          console.error('Error adjusting iframe height:', error);
-        }
-      };
-
-      iframe.addEventListener('load', adjustIframeHeight);
-      setTimeout(adjustIframeHeight, 100);
-
-      return () => {
-        iframe.removeEventListener('load', adjustIframeHeight);
-      };
-    }
-  }, [loading, html]);
 
   const extractMaxWidthFromHtml = (htmlContent: string): number | null => {
     try {
       const maxWidthRegex = /max-width:\s*(\d+)px/gi;
       const matches = htmlContent.match(maxWidthRegex);
-
       if (matches && matches.length > 0) {
         const widths = matches.map(match => {
           const widthMatch = match.match(/(\d+)/);
           return widthMatch ? parseInt(widthMatch[1], 10) : 0;
         });
-
         const sortedWidths = Array.from(new Set(widths)).sort((a, b) => b - a);
-        const secondMaxWidth = sortedWidths.length > 1 ? sortedWidths[1] : sortedWidths[0];
-        return secondMaxWidth;
+        return sortedWidths.length > 1 ? sortedWidths[1] : sortedWidths[0];
       }
     } catch (error) {
       console.error('Error extracting max-width:', error);
@@ -125,7 +74,6 @@ const PopupPreviewModal: React.FC<PopupPreviewModalProps> = ({
       beeFixCss.href = `${actionURL}Content/bee-fix.css`;
       document.getElementsByTagName('head')[0].appendChild(beeFixCss);
 
-      // Load Stage 1 preview (canonical — includes CloseButtonHtml)
       // @ts-ignore
       const previewResponse = await dispatch(getLandingPagePreview(popupId)) as any;
       const stage1Html = previewResponse?.payload?.Data?.HtmlData || '';
@@ -145,12 +93,10 @@ const PopupPreviewModal: React.FC<PopupPreviewModalProps> = ({
         }
       }
 
-      // Load stages for multi-stage preview
       // @ts-ignore
       const stagesResult = await dispatch(getPopupStages(popupId)) as any;
       const stagesData: PopupStage[] = stagesResult?.payload?.Data || [];
 
-      // Build stage → HTML map
       const htmlMap: Record<number, string> = { 1: stage1Html };
       stagesData.forEach((stage: PopupStage) => {
         if (stage.StageNumber > 1 && stage.HtmlContent) {
@@ -158,12 +104,16 @@ const PopupPreviewModal: React.FC<PopupPreviewModalProps> = ({
         }
       });
 
-      stageHtmlMapRef.current = htmlMap;
+      const styleWidth = extractMaxWidthFromHtml(stage1Html);
+      if (styleWidth) {
+        const minWidth = 400;
+        const maxWidth = window.innerWidth * 0.9;
+        setContentWidth(Math.min(Math.max(styleWidth, minWidth), maxWidth));
+      }
 
-      // Show tabs only when there are 2+ stages
       const multiStages = stagesData.length > 1 ? stagesData : [];
       setStages(multiStages);
-      setHtml(stage1Html);
+      setStageHtmlMap(htmlMap);
       setCurrentPreviewStage(1);
     } catch (error) {
       console.error('Error loading preview:', error);
@@ -172,23 +122,41 @@ const PopupPreviewModal: React.FC<PopupPreviewModalProps> = ({
     }
   };
 
+  const measureIframeHeight = (stageNum: number, iframe: HTMLIFrameElement) => {
+    try {
+      const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+      if (iframeDoc && iframeDoc.body) {
+        const height = iframeDoc.body.scrollHeight;
+        const maxHeight = window.innerHeight * 0.9;
+        setStageHeights(prev => ({ ...prev, [stageNum]: Math.min(height, maxHeight) }));
+      }
+    } catch (error) {
+      console.error('Error measuring iframe height:', error);
+    }
+  };
+
+  const handleIframeLoad = (stageNum: number, iframe: HTMLIFrameElement) => {
+    // Measure immediately, then re-measure after a tick in case fonts/images
+    // affect layout slightly after the load event fires.
+    measureIframeHeight(stageNum, iframe);
+    setTimeout(() => measureIframeHeight(stageNum, iframe), 100);
+  };
+
   const handleStageTabClick = (stageNum: number) => {
     if (stageNum === currentPreviewStage) return;
     setCurrentPreviewStage(stageNum);
-    setHtml(stageHtmlMapRef.current[stageNum] || '');
+    // Re-measure when the stage becomes visible — hidden iframes may have
+    // had inaccurate layout at onLoad time (display:none skips layout compute).
+    setTimeout(() => {
+      const iframe = iframeRefs.current[stageNum];
+      if (iframe) measureIframeHeight(stageNum, iframe);
+    }, 50);
   };
 
   const renderStageTabs = () => {
     if (stages.length < 2) return null;
     return (
-      <Box
-        style={{
-          display: 'flex',
-          gap: 8,
-          padding: '10px 16px 0',
-          justifyContent: 'center',
-        }}
-      >
+      <Box style={{ display: 'flex', gap: 8, padding: '10px 16px 0', justifyContent: 'center' }}>
         {stages.map((stage) => {
           const isActive = currentPreviewStage === stage.StageNumber;
           return (
@@ -274,23 +242,28 @@ const PopupPreviewModal: React.FC<PopupPreviewModalProps> = ({
         ) : (
           <>
             {renderStageTabs()}
-            <div
-              ref={contentRef}
-              className={classes.popupPreviewContent}
-            >
-              <iframe
-                ref={iframeRef}
-                style={{
-                  width: '100%',
-                  height: `${contentHeight}px`,
-                  border: 'none',
-                  display: 'block',
-                  overflow: 'auto',
-                  borderRadius: '8px'
-                }}
-                title="Popup Preview"
-                srcDoc={html}
-              />
+            <div className={classes.popupPreviewContent}>
+              {Object.entries(stageHtmlMap).map(([stageNumStr, stageHtml]) => {
+                const stageNum = Number(stageNumStr);
+                const isVisible = stageNum === currentPreviewStage;
+                return (
+                  <iframe
+                    key={stageNum}
+                    ref={el => { iframeRefs.current[stageNum] = el; }}
+                    style={{
+                      width: '100%',
+                      height: `${stageHeights[stageNum] || 600}px`,
+                      border: 'none',
+                      display: isVisible ? 'block' : 'none',
+                      overflow: 'auto',
+                      borderRadius: '8px',
+                    }}
+                    title={`Popup Preview Stage ${stageNum}`}
+                    srcDoc={stageHtml}
+                    onLoad={e => handleIframeLoad(stageNum, e.currentTarget)}
+                  />
+                );
+              })}
             </div>
           </>
         )}
