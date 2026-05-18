@@ -41,7 +41,9 @@
     "extractColorsFromImage": "חלצו צבעים מתמונה",
     "useUrlImageAsLogo": "השתמש בתמונה מהקישור הבא כתמונת לוגו בראש התבנית",
     "selectLogo": "בחרו לוגו",
-    "addLogo": "הוספת לוגו"
+    "addLogo": "הוספת לוגו",
+    "formNotSupportedTitle": "שימו לב! עורך ה-AI לא תומך בטפסים בשלב זה",
+    "formNotSupportedDesc": "יש להכניס את בלוק הטופס ידנית לאחר שהעיצוב נטען בעורך"
   },
   "responses": {
     "201": "עיצוב נוצר בהצלחה!",
