@@ -501,6 +501,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
         },
         //#region Methods
         onSave: async (jsonFile: any, htmlFile: any, ampHtml: any) => {
+            console.log(htmlFile)
             await SaveCampaign({
                 campaignId: CampaignId,
                 JsonData: jsonFile,

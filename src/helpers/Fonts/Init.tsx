@@ -4,6 +4,38 @@ import { googleFonts, HebrewFonts } from './GoogleFonts';
 import { PulseemFeatures } from '../../model/PulseemFields/Fields';
 import { sitePrefix } from '../../config/index';
 
+const RAG_SANS_BASE_URL = 'https://www.pulseem.co.il/react/assets/fonts/RAGSans';
+
+const RAG_SANS_FONT_FACE_CSS = [
+    [100, 'Thin'],
+    [200, 'ExtraLight'],
+    [300, 'Light'],
+    [400, 'Regular'],
+    [500, 'Medium'],
+    [600, 'SemiBold'],
+    [700, 'Bold'],
+    [800, 'ExtraBold'],
+    [900, 'Black'],
+].map(([weight, name]) =>
+    `@font-face{font-family:'RAGSans';font-style:normal;font-weight:${weight};src:url('${RAG_SANS_BASE_URL}/RAG-Sans-1.1-${name}.woff2') format('woff2'),url('${RAG_SANS_BASE_URL}/RAG-Sans-1.1-${name}.woff') format('woff')}`
+).join('\n');
+
+export const injectRagSansFontFace = (html: string): string => {
+    if (!html || !html.includes('RAGSans')) return html;
+    // Guard: skip if already injected
+    if (html.includes("font-family:'RAGSans';font-style:normal")) return html;
+    // Inject into the existing <style> tag so Gmail processes it in the main style block
+    if (/<style[^>]*>/.test(html)) {
+        return html.replace(/<style([^>]*)>/, `<style$1>\n${RAG_SANS_FONT_FACE_CSS}\n`);
+    }
+    // Fallback: insert a new <style> tag before </head>
+    const styleTag = `<style>\n${RAG_SANS_FONT_FACE_CSS}\n</style>`;
+    if (html.includes('</head>')) {
+        return html.replace('</head>', `${styleTag}</head>`);
+    }
+    return styleTag + html;
+};
+
 interface font {
     showDefaultFonts: boolean,
     customFonts: [] | any

@@ -36,6 +36,7 @@ import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
 import { BEE_EDITOR_TYPES, TierFeatures, reCAPTCHAKey } from '../../helpers/Constants';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 import { injectRecaptchaScript } from '../../helpers/Utils/RecaptchaHelper';
+import { injectRagSansFontFace } from '../../helpers/Fonts/Init';
 import { StateType } from '../../Models/StateTypes';
 import { commonProps } from '../../model/Common/commonProps.types';
 import { BeeEditorModel, BeeEditorStoreModel, LandingPageRow, LandingPageTemplate, LandingPageUserBlocks, SaveLandingPageArguments } from '../../Models/LandingPage/LandingPage';
@@ -433,7 +434,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
     try {
       //@ts-ignore
       if (saveRef.current?.showAnimation) setLoader(true);
-      let finalHtml = args.HtmlData;
+      let finalHtml = injectRagSansFontFace(args.HtmlData);
       let finalJson = args.JsonData;
 
       // Inject reCAPTCHA initialization script if enabled
