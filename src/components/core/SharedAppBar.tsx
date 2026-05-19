@@ -16,7 +16,9 @@ import i18n from '../../i18n';
 const SharedAppBar = ({ classes, title }: any) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const { windowSize, isRTL, language } = useSelector((state: StateType) => state.core);
+  const { windowSize, isRTL, language, imageURL } = useSelector((state: StateType) => state.core);
+
+  const isBeeperDomain = window.location.hostname.includes('beeper');
 
   const changeLanguage = (value: any) => {
     setCookie('Culture', `${value}-${value === 'he' ? 'IL' : 'US'}`);
@@ -24,13 +26,23 @@ const SharedAppBar = ({ classes, title }: any) => {
     dispatch(setLanguage(value));
   }
 
-  return <AppBar component="nav" className={clsx(classes.p10, classes.f18, classes.bold, classes.flexColCenter, classes.gradientBackground, windowSize === 'xl' ? classes.p10 : '')}>
+  return <AppBar
+    component="nav"
+    className={clsx(classes.p10, classes.f18, classes.bold, classes.flexColCenter, windowSize === 'xl' ? classes.p10 : '')}
+    style={isBeeperDomain ? { background: '#ffffff', color: '#333' } : {}}
+    classes={isBeeperDomain ? {} : { root: classes.gradientBackground }}
+  >
     <Grid container>
       <Grid md={2}></Grid>
 
-      <Grid md={8}>
-        <PulseemNewLogo />
-        {title && title !== '' && <span className={clsx(classes.f25, classes.dInlineBlock, classes.pr10, classes.verticalAlignTop)}>
+      <Grid md={8} style={{ display: 'flex', alignItems: 'center' }}>
+        {isBeeperDomain && imageURL
+          ? <img src={imageURL as string} alt="Beeper" className={classes.appBarLogo} />
+          : isBeeperDomain
+            ? <img src={`${window.location.origin}/Pulseem/Images/beeper/beeper-logo.png`} alt="Beeper" style={{ height: 40 }} />
+            : <PulseemNewLogo />
+        }
+        {title && title !== '' && <span className={clsx(classes.f25, classes.dInlineBlock, classes.pr10, classes.verticalAlignTop)} style={isBeeperDomain ? { color: '#333' } : {}}>
           -&nbsp;&nbsp;{title}
         </span>}
       </Grid>

@@ -30,6 +30,7 @@ import integrations from './Integrations.he.json';
 import WhatsappApiResponse from './WhatsappApiResponse.json';
 import SignUp from './SignUp.json';
 import SimplyClub from './WhiteLabel/SimplyClub.he.json';
+import Beeper from './WhiteLabel/Beeper.he.json';
 import FileUploads from './FileUploads.he.json';
 import affiliate from './Affiliate.he.json';
 import SubAccount from './SubAccount.he.json';
@@ -79,6 +80,7 @@ export const he = {
 	SignUp,
 	FileUploads,
 	SimplyClub,
+	Beeper,
 	affiliate,
 	SubAccount,
 	billing,

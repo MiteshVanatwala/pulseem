@@ -15,6 +15,7 @@ import { useNavigate } from 'react-router';
 import { ChartIcon } from '../../assets/images/dashboard/index'
 import { sitePrefix } from '../../config';
 import { Loader } from '../Loader/Loader';
+import { getIsBeeperAccount } from '../WhiteLabel/WhiteLabelMigrate';
 
 
 const RecipientChart = ({ classes, }) => {
@@ -24,12 +25,15 @@ const RecipientChart = ({ classes, }) => {
     const { recipientsReport } = useSelector(state => state.recipientReports);
     const { windowSize, userRoles } = useSelector(state => state.core);
     const { packagesDetails } = useSelector(state => state.dashboard);
+    const { accountSettings } = useSelector(state => state.common);
     const { Notifications = {}, Sms = {} } = packagesDetails || {};
+    const isBeeperAccount = getIsBeeperAccount(accountSettings);
 
     let slidesCount = 0;
     recipientsReport?.forEach(report => {
         if ((report.ReportSection === 2 && !Notifications.FeatureExist) ||
-            (report.ReportSection === 1 && !Sms.FeatureExist)) {
+            (report.ReportSection === 1 && !Sms.FeatureExist) ||
+            (report.ReportSection === 0 && isBeeperAccount)) {
             return
         }
         else {
@@ -51,7 +55,7 @@ const RecipientChart = ({ classes, }) => {
             centerTitle: 'dashboard.noNewsletters',
         },
         {
-            mainTitle: 'dashboard.smsWhatsapp',
+            mainTitle: isBeeperAccount ? 'Beeper.smsTitle' : 'dashboard.smsWhatsapp',
             centerTitle: 'dashboard.noSMS'
         },
         {
@@ -404,7 +408,9 @@ const RecipientChart = ({ classes, }) => {
 
         const recipientsReportChart = recipientsReport.reduce((prevVal, newVal) => {
             if (newVal.Total > 0) {
-                if ((!Notifications.FeatureExist && newVal.ReportSection === 2) || (!Sms.FeatureExist && newVal.ReportSection === 1)) return prevVal
+                if ((!Notifications.FeatureExist && newVal.ReportSection === 2) ||
+                    (!Sms.FeatureExist && newVal.ReportSection === 1) ||
+                    (isBeeperAccount && newVal.ReportSection === 0)) return prevVal
                 else prevVal.push(newVal);
             }
             return prevVal
@@ -421,7 +427,8 @@ const RecipientChart = ({ classes, }) => {
                         selectedItem={carouselItem}>
                         {recipientsReportChart.map((report, index) => {
                             if ((report.ReportSection === 2 && !Notifications.FeatureExist)
-                                || (report.ReportSection === 1 && !Sms.FeatureExist)) {
+                                || (report.ReportSection === 1 && !Sms.FeatureExist)
+                                || (report.ReportSection === 0 && isBeeperAccount)) {
                                 return null;
                             }
                             if (report.Total) {
@@ -458,7 +465,8 @@ const RecipientChart = ({ classes, }) => {
             <Grid item container justifyContent='space-evenly'>
                 {recipientsReport && totalRecipientsReport > 0 ? recipientsReport.map((report, index) => {
                     if ((report.ReportSection === 2 && !Notifications.FeatureExist) ||
-                        (report.ReportSection === 1 && !Sms.FeatureExist)) {
+                        (report.ReportSection === 1 && !Sms.FeatureExist) ||
+                        (report.ReportSection === 0 && isBeeperAccount)) {
                         return null;
                     }
                     if (report.Total) {

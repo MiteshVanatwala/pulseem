@@ -156,6 +156,12 @@ const wl_referrerObject = (account) => {
       retVal.Telephone = '03-9192513'
       break;
     }
+    case '6':
+    case 6: {
+      retVal.Email = 'support@beeper.ltd';
+      retVal.Telephone = '*3750'
+      break;
+    }
     default: {
       break;
     }

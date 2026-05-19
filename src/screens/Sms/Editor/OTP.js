@@ -1,7 +1,8 @@
 import clsx from "clsx";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { WhiteLabelObject } from '../../../components/WhiteLabel/WhiteLabelMigrate';
 import { Loader } from '../../../components/Loader/Loader';
 import Gif from "../../../assets/images/managment/check-circle.gif";
 import { Typography, Box, Button, TextField } from "@material-ui/core";
@@ -15,6 +16,8 @@ import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
 const OTP = ({ classes, campaignNumber, isOpen = false, onClose = () => null, onSuccess = () => null }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
+    const { accountSettings } = useSelector(state => state.common);
+    const isWhiteLabel = accountSettings?.Account?.ReferrerID > 0 && WhiteLabelObject[accountSettings?.Account?.ReferrerID] !== undefined;
     const [otpValue, setotpValue] = useState(null);
     const [showLoader, setLoader] = useState(true);
     const [dialogType, setDialogType] = useState(null);
@@ -101,7 +104,7 @@ const OTP = ({ classes, campaignNumber, isOpen = false, onClose = () => null, on
                             classes.btnRounded
                         )} style={{ whiteSpace: 'nowrap', width: 'auto' }} onClick={() => { handleVerifyOTP() }}>{t("sms.sendVerificationCode")}</Button>
                     <Typography className={classes.otpContactUs}>{t("sms.otpContactUs")}</Typography>
-                    <Typography style={{ fontSize: "14px" }}>{t("sms.helplineSMS")}</Typography>
+                    <Typography style={{ fontSize: "14px" }}>{t(WhiteLabelObject[isWhiteLabel ? accountSettings?.Account?.ReferrerID : 0]['HelplineSMS'])}</Typography>
                 </Box>
             ),
             showDefaultButtons: false,

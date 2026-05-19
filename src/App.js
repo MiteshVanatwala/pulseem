@@ -96,6 +96,7 @@ import CreateAutomationTemplate from './screens/Automations/CreateAutomation';
 import SignUpNew from './screens/SignUp/SignUpNew';
 import { UserRoles } from './Models/SubUser/SubUsers';
 import { PulseemFeatures } from './model/PulseemFields/Fields';
+import { getIsBeeperAccount } from './components/WhiteLabel/WhiteLabelMigrate';
 import RemoveMyData from './screens/RemoveMyData/RemoveMyData';
 import LinksClicksReport from './screens/Reports/LinksClicksReport/LinksClicksReport';
 import PopupTriggers from './screens/Popups/DisplayRules/PopupTriggers';
@@ -109,7 +110,7 @@ import PopupSummary from './screens/Popups/PopupSummary';
 import HelpDrawer from './components/HelpDrawer';
 import { openHelpDrawer, closeHelpDrawer, toggleHelpDrawer } from './redux/reducers/helpDrawerSlice';
 
-const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
+const renderRoutes = (classes, redirect, userRoles, accountFeatures, isBeeperAccount) => {
   const transferUrl =
     (url = '', param = '') =>
       () => {
@@ -278,7 +279,7 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
       />
 
       {/* MMS */}
-      {accountFeatures && accountFeatures?.indexOf(PulseemFeatures.MMS) > -1 && <Route
+      {accountFeatures && accountFeatures?.indexOf(PulseemFeatures.MMS) > -1 && !isBeeperAccount && <Route
         path={`${sitePrefix}MmsCampaigns`}
         element={<MmsManagment classes={classes} />}
       />}
@@ -662,6 +663,7 @@ const App = ({ screenSize }) => {
 
   const { language, isRTL, windowSize, isClal, isDebtAccount, isAdmin, isLoader, userRoles, isOnlyWhatsAppChat } = useSelector(state => state.core)
   const { accountSettings, currencyList, accountFeatures } = useSelector(state => state.common)
+  const isBeeperAccount = getIsBeeperAccount(accountSettings);
   const IsPoland = language === 'pl';
   const { isOpen } = useSelector((state) => state.helpDrawer);
   const classes = useClasses(windowSize, isRTL, IsPoland)();
@@ -921,7 +923,7 @@ const App = ({ screenSize }) => {
       </Routes>
     }
     else {
-      return renderRoutes(classes, redirect, userRoles, accountFeatures);
+      return renderRoutes(classes, redirect, userRoles, accountFeatures, isBeeperAccount);
     }
 
   }

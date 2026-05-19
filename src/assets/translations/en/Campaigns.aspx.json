@@ -659,7 +659,7 @@
         "error2": "Code is required",
         "error_not_match": "The code you entered is not match",
         "error_expired": "This code is expired",
-        "did_not_recieved": "Didnâ€™t receive it?",
+        "did_not_recieved": "Didn't receive it? ",
         "resend": "Resend",
         "resendSuccess": "Code Sent",
         "placeholder": "Enter code",

@@ -25,12 +25,15 @@ import Wix from "./Wix";
 import Klaviyo from "./Klaviyo";
 import { useSelector } from "react-redux";
 import { StateType } from "../../Models/StateTypes";
+import { getIsBeeperAccount } from '../../components/WhiteLabel/WhiteLabelMigrate';
 
 
 const Integrations = ({ classes }: any) => {
   const { t } = useTranslation();
   const [tabValue, setTabValue] = useState('0');
   const { companyName } = useSelector((state: StateType) => state.core);
+  const { accountSettings } = useSelector((state: any) => state.common);
+  const isBeeperAccount = getIsBeeperAccount(accountSettings);
 
   useEffect(() => {
     const integrationTitles = {
@@ -45,8 +48,9 @@ const Integrations = ({ classes }: any) => {
       '14': { title: `${t('integrations.verifone.title')}` },
     } as any;
 
-    document.title = `${integrationTitles[tabValue].title} | ${t('master.pulseemSystem')}`;
-  }, [, tabValue]);
+    const systemName = isBeeperAccount ? 'Beeper' : t('master.pulseemSystem');
+    document.title = `${integrationTitles[tabValue].title} | ${systemName}`;
+  }, [, tabValue, isBeeperAccount]);
 
   return (
     <DefaultScreen

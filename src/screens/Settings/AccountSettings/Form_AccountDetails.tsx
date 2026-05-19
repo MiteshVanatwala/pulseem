@@ -30,6 +30,7 @@ import { logout } from '../../../helpers/Api/PulseemReactAPI';
 import { OtpRequestFor } from '../../../Models/Authorization/AuthorizationModels';
 import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 import { AuditLog, eAuditActionType } from '../../../Models/AuditLog/AuditLog';
+import { getIsBeeperAccount } from '../../../components/WhiteLabel/WhiteLabelMigrate';
 
 const FORM_ACCOUNT_DETAILS = ({
 	classes,
@@ -86,7 +87,16 @@ const FORM_ACCOUNT_DETAILS = ({
 
 	useEffect(() => {
 		setUnsubscribeType(Settings?.UnsubscribeType ? '1' : '0');
-		setAccountDetails(Settings);
+		const isBeeperAccount = getIsBeeperAccount(accountSettings);
+		if (isBeeperAccount && Settings) {
+			setAccountDetails({
+				...Settings,
+				DefaultFromName: Settings.DefaultFromName || 'Beeper',
+				DefaultFromMail: Settings.DefaultFromMail || 'support@beeper.ltd',
+			} as AccountSettings);
+		} else {
+			setAccountDetails(Settings);
+		}
 	}, [Settings]);
 
 	const handleChange = (e: any, name = '') => {
