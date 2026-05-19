@@ -41,7 +41,9 @@
     "extractColorsFromImage": "Extract colors from image",
     "useUrlImageAsLogo": "Use the image from the following link as the logo image at the top of the template",
     "selectLogo": "Select Logo",
-    "addLogo": "Add Logo"
+    "addLogo": "Add Logo",
+    "formNotSupportedTitle": "Please notice – The AI editor does not support forms at this moment.",
+    "formNotSupportedDesc": "Please insert your form block manually after the design is created in the editor."
   },
   "responses": {
     "201": "Success",

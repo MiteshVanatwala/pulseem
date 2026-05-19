@@ -41,7 +41,9 @@
     "extractColorsFromImage": "Wyodrębnij kolory z obrazu",
     "useUrlImageAsLogo": "Użyj obrazu z następującego linku jako obrazu logo w nagłówku szablonu",
     "selectLogo": "Wybierz logo",
-    "addLogo": "Dodaj logo"
+    "addLogo": "Dodaj logo",
+    "formNotSupportedTitle": "Uwaga! Edytor AI nie obsługuje formularzy na tym etapie",
+    "formNotSupportedDesc": "Należy ręcznie wstawić blok formularza po załadowaniu projektu w edytorze"
   },
   "responses": {
     "201": "Projekt utworzony pomyślnie!",
