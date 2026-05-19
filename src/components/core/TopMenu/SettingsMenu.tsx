@@ -24,15 +24,24 @@ const SettingsMenu = ({ classes }: any) => {
         isAllowSwitchAccount,
         userRoles
     } = useSelector((state: any) => state.core);
-    // const { username } = useSelector((state: any) => state.user);
-    const username = 'Ya Yuda122Ya Yuda122Ya Yuda122Ya Yuda122Ya Yuda122Ya Yuda122Ya Yuda122Ya Yuda122Ya Yuda122Ya Yuda122Ya Yuda122Ya Yuda122'
+    const { username } = useSelector((state: any) => state.user);
     const buttonRef = useRef(null);
+
+    const getAccountName = () => {
+        if (accountSettings?.IsDirectAccount && subAccount?.DirectAccountCompanyName) {
+            return subAccount.DirectAccountCompanyName;
+        }
+        return accountSettings?.SubAccountName || username;
+    };
+
+    const accountName = getAccountName();
+    const displayAccountName = accountName && accountName.length > 20 ? `${accountName.slice(0, 20)}...` : accountName;
 
     const settings = getSettingsItem(
         t,
         '',
         (isAllowSwitchAccount && (isAllowSwitchAccount.toLowerCase() === 'true' || isAdmin !== '')),
-        username.length > 20 ? `${username.slice(0, 20)}...` : username,
+        displayAccountName || t('Settings'),
         isRTL,
         accountSettings,
         accountFeatures,
@@ -75,13 +84,13 @@ const SettingsMenu = ({ classes }: any) => {
             startIcon={<FaUserCircle style={{ fontSize: 23 }} />}
             className={classes.userSettings}
         >
-            {username.length > 20 ? `${username.substring(0, 20)}...` : username}
+            {displayAccountName || t('Settings')}
         </Button>
         {showSettings && <Popper
             open={showSettings}
             anchorEl={buttonRef.current}
             role={undefined}
-            placement={'bottom-start'}
+            placement={isRTL ? 'bottom-start' : 'bottom-end'}
             style={{ backgroundColor: '#fff', zIndex: 600, marginTop: 15 }}
             disablePortal className={classes.userSettingsContainerPopper}
         >
