@@ -7,6 +7,16 @@ import { useTranslation } from "react-i18next";
 import { getProductURLS } from "../../../../redux/reducers/productSlice";
 import { useEffect, useRef, useState } from "react";
 
+const ArrowDownIcon = IoIosArrowDown as any;
+const safeDecodeURIComponent = (url: any) => {
+  if (typeof url !== 'string') return '';
+  try {
+    return decodeURIComponent(url);
+  } catch (e) {
+    return url;
+  }
+};
+
 const SelectProductUrl = ({ classes, data, onUpdate, disabled }: any) => {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const { isRTL } = useSelector((state: StateType) => state.core);
@@ -102,16 +112,16 @@ const SelectProductUrl = ({ classes, data, onUpdate, disabled }: any) => {
 
         }}
         renderValue={(e: any) => {
-          const selectedCategories = productUrls?.filter((item: any) => {
+          const selectedCategories = (productUrls || [])?.filter((item: any) => {
             return data?.indexOf(item?.ID?.toString()) > -1;
           })
-          return <>{selectedCategories?.map((c: any) => { return c?.URL })?.join(',')}</>
+          return <>{selectedCategories?.map((c: any) => safeDecodeURIComponent(c?.URL))?.join(',')}</>
         }}
         disabled={disabled}
         variant='standard'
         value={data || []}
         onChange={(event: any) => onUpdate(event.target.value)}
-        IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+        IconComponent={() => <ArrowDownIcon size={20} className={classes.dropdownIconComponent} />}
         className={clsx(classes.w100, classes.mt10)}
         MenuProps={{
           anchorOrigin: {
@@ -144,9 +154,10 @@ const SelectProductUrl = ({ classes, data, onUpdate, disabled }: any) => {
             autoFocus
           />
         </Box>
-        {productUrls
+        {(productUrls || [])
           .filter((pc: any) => {
-            return searchTerm === '' || pc.URL?.toLowerCase()?.indexOf(searchTerm?.toLowerCase()) > -1
+            const decodedUrl = safeDecodeURIComponent(pc?.URL);
+            return searchTerm === '' || decodedUrl.toLowerCase().indexOf(searchTerm.toLowerCase()) > -1;
           })
           .sort((a: any, b: any) => {
             const aSelected = data?.indexOf(a?.ID?.toString()) > -1;
@@ -155,7 +166,7 @@ const SelectProductUrl = ({ classes, data, onUpdate, disabled }: any) => {
             if (aSelected && !bSelected) return -1;
             if (!aSelected && bSelected) return 1;
 
-            return decodeURIComponent(a?.URL).localeCompare(decodeURIComponent(b?.URL));
+            return safeDecodeURIComponent(a?.URL).localeCompare(safeDecodeURIComponent(b?.URL));
           })
           .map((item: any) => {
             return (
@@ -165,8 +176,8 @@ const SelectProductUrl = ({ classes, data, onUpdate, disabled }: any) => {
                   style={{ whiteSpace: 'normal', direction: 'ltr', textAlign: 'left' }}
                   primary={
                     searchTerm.trim() ?
-                      highlightText(item?.URL, searchTerm) :
-                      decodeURIComponent(item?.URL)
+                      highlightText(safeDecodeURIComponent(item?.URL), searchTerm) :
+                      safeDecodeURIComponent(item?.URL)
                   }
                 />
               </MenuItem>
