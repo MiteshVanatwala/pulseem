@@ -610,7 +610,7 @@ const NewslettersReport = ({ classes }) => {
 
   const renderNameCell = (row, isParent) => {
     const { CampaignID, Name, SendDate, isChecked = false, Status, LastEditDate } = row
-    const isPulseSend = newslettersReportsChildCampaigns.some(c => c?.ParentCampaignId === row.CampaignID && c.Name?.includes(PULSE_1));
+    const isPulseSend = row.IsPulseSend === true;
 
     const date = SendDate ? moment(SendDate) : ''
     const showDate = SendDate ? date.format(DateFormats.DATE_ONLY) : ''
