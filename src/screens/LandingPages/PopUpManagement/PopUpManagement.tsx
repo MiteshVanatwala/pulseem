@@ -84,6 +84,7 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
     pagesError,
     deletedPopups,
     allActivePages,
+    allActivePagesLoaded,
   } = useSelector((state: any) => state.popUpManagement);  
   const [view, setView] = useState<'card' | 'table'>('card');
   const [toastMessage, setToastMessage] = useState<ToastMessage | null>(null);
@@ -183,7 +184,6 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
         dispatch(getPerformanceStats()),
         dispatch(getPopupPages(filters)),
         dispatch(getDeletedPopups()),
-        dispatch(getAllActivePopups(filters.PageType)),
       ]);
       setIsInitialLoad(false);
     };
@@ -197,6 +197,13 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
       dispatch(getPopupPages(filters));
     }
   }, [dispatch, filters, isInitialLoad]);
+
+  useEffect(() => {
+    if (stats && stats.ActiveCount > 0) {
+      dispatch(getAllActivePopups({ pageSize: stats.ActiveCount, pageType: filters.PageType }));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stats]);
 
   useEffect(() => {
     if (statsError) {
@@ -258,7 +265,7 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
               <StatCard
                 classes={classes}
                 title={t('landingPages.popupManagement.statCards.avgConversionRate')}
-                value={`${activeAvgConversionRate.toFixed(2)}%`}
+                value={allActivePagesLoaded ? `${activeAvgConversionRate.toFixed(2)}%` : '...'}
               // change={`${stats.AverageConversionChange > 0 ? '+' : ''}${stats.AverageConversionChange.toFixed(2)}% this week`}
               />
             </Grid>
