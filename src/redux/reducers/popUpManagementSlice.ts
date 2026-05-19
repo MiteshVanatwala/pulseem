@@ -55,8 +55,6 @@ interface PopUpManagementState {
   pagesLoading: boolean;
   pagesError: string | null;
   deletedPopups: Page[];
-  allActivePages: Page[];
-  allActivePagesLoaded: boolean;
 }
 
 // --- Initial State --- //
@@ -70,8 +68,6 @@ const initialState: PopUpManagementState = {
   pagesLoading: false,
   pagesError: null,
   deletedPopups: [],
-  allActivePages: [],
-  allActivePagesLoaded: false,
 };
 
 // --- Async Thunks --- //
@@ -150,26 +146,6 @@ export const getDeletedPopups = createAsyncThunk(
   }
 );
 
-export const getAllActivePopups = createAsyncThunk(
-  'popUpManagement/getAllActivePopups',
-  async ({ pageSize, pageType }: { pageSize: number; pageType: number }, thunkAPI) => {
-    try {
-      const response = await PulseemReactInstance.post('popup/GetPopupPages', {
-        SearchTerm: '',
-        FilterStatus: 'Active',
-        SortBy: 'CreatedDate',
-        SortDirection: 'DESC',
-        PageNumber: 1,
-        PageSize: pageSize,
-        PageType: pageType,
-      });
-      return (response.data.Data?.Pages ?? []) as Page[];
-    } catch (error) {
-      return thunkAPI.rejectWithValue({ error: (error as Error).message });
-    }
-  }
-);
-
 // --- Slice --- //
 const popUpManagementSlice = createSlice({
   name: 'popUpManagement',
@@ -218,13 +194,9 @@ const popUpManagementSlice = createSlice({
             if (Status === 2) {
               state.pages[index].StatusName = 'Active';
               state.pages[index].Status = 1;
-              if (!state.allActivePages.find(p => p.ID === ID)) {
-                state.allActivePages.push({ ...state.pages[index] });
-              }
             } else {
               state.pages[index].StatusName = 'Inactive';
               state.pages[index].Status = 0;
-              state.allActivePages = state.allActivePages.filter(p => p.ID !== ID);
             }
           }
         }
@@ -240,7 +212,6 @@ const popUpManagementSlice = createSlice({
       .addCase(deletePopup.fulfilled, (state, action) => {
         state.pagesLoading = false;
         state.pages = state.pages.filter(p => p.ID !== action.payload);
-        state.allActivePages = state.allActivePages.filter(p => p.ID !== action.payload);
       })
       .addCase(deletePopup.rejected, (state, action) => {
         state.pagesLoading = false;
@@ -257,16 +228,6 @@ const popUpManagementSlice = createSlice({
       .addCase(getDeletedPopups.rejected, (state, action) => {
         state.pagesLoading = false;
         state.pagesError = (action.payload as { error: string }).error;
-      })
-      .addCase(getAllActivePopups.pending, (state) => {
-        state.allActivePagesLoaded = false;
-      })
-      .addCase(getAllActivePopups.fulfilled, (state, action) => {
-        state.allActivePages = action.payload;
-        state.allActivePagesLoaded = true;
-      })
-      .addCase(getAllActivePopups.rejected, (state) => {
-        state.allActivePagesLoaded = true;
       });
   },
 });
