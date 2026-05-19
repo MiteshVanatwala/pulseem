@@ -49,7 +49,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
     accountSettings,
     accountFeatures,
     isGlobal,
-    IsPoland
+    IsPoland,
+    subAccount
   } = useSelector((state: any) => state.common);
 
   const { currentPlan } = useSelector((state: any) => state.tiers);
@@ -90,13 +91,21 @@ export const Sidebar: React.FC<SidebarProps> = ({
     isGlobal && IsPoland
   );
 
-  const displayUsername = username && username.length > 20 ? `${username.slice(0, 20)}...` : username;
+  const getAccountName = () => {
+    if (accountSettings?.IsDirectAccount && subAccount?.DirectAccountCompanyName) {
+      return subAccount.DirectAccountCompanyName;
+    }
+    return accountSettings?.SubAccountName || username;
+  };
+
+  const accountName = getAccountName();
+  const displayAccountName = accountName && accountName.length > 20 ? `${accountName.slice(0, 20)}...` : accountName;
 
   const settingsMenu = getSettingsItem(
     t,
     '',
     isAllowSwitchAccount,
-    displayUsername || t('Settings'),
+    displayAccountName || t('Settings'),
     isRTL,
     accountSettings,
     accountFeatures,
@@ -144,14 +153,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
       // If sidebar is collapsed, expand it and open the specific menu
       setIsCollapsed(false);
       setCookie('SidebarCollapsed', 'false', 365);
-      
+
       // Open the specific menu
       setOpenMenus((prev) => {
         const updated = { ...prev, [key]: true };
         setCookie('sidebarOpenMenus', JSON.stringify(updated));
         return updated;
       });
-      
+
       dispatch(setIsDrawerOpen(true));
     }
   };
@@ -244,7 +253,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </div>
             <CrownIcon className={classes.sidebarPlanHeaderIcon} />
           </div>
-          
+
           <div className={classes.sidebarPlanName}>
             {currentPlan.Name}
           </div>
@@ -327,6 +336,24 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </List>
         </nav>
       </div>
+
+      {settingsLoaded && settingsMenu && (
+        <div className={classes.sidebarFooter}>
+          <div className={classes.userSection}>
+            <SidebarItem
+              item={settingsMenu}
+              isCollapsed={isCollapsed && !isMobile}
+              isActive={currentPage === 'settings'}
+              classes={classes}
+              currentPage={currentPage}
+              subPage={subPage}
+              showSubmenu={openMenus[settingsMenu.key]}
+              toggleSubmenu={() => toggleSubmenu(settingsMenu.key)}
+              onIconClick={() => handleIconClick(settingsMenu.key)}
+            />
+          </div>
+        </div>
+      )}
 
     </Drawer>
   );
