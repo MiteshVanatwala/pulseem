@@ -183,7 +183,7 @@ export const getPopupStages = createAsyncThunk(
       return { StatusCode: 201, Data: mockGetStages(webFormId) };
     }
     try {
-      const response = await PulseemReactInstance.get(`popup/GetPopupStages/${webFormId}`);
+      const response = await PulseemReactInstance.get(`popup/GetPopupStages`, { params: { webFormId } });
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: (error as Error).message });
