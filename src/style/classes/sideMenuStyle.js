@@ -149,6 +149,55 @@ export const sideMenuStyle = (windowSize, isRTL, theme) => ({
     color: '#fff',
     fontSize: '0.8rem',
   },
+  tooltipArrow: {
+    color: '#333',
+  },
+  planTooltipCard: {
+    padding: '4px 2px',
+    minWidth: 0,
+  },
+  planTooltipLabel: {
+    fontSize: '0.68rem',
+    fontWeight: 600,
+    textTransform: 'uppercase',
+    letterSpacing: '1px',
+    color: 'rgba(255, 255, 255, 0.6)',
+    marginBottom: 2,
+    display: 'block',
+  },
+  planTooltipName: {
+    fontSize: '0.95rem',
+    fontWeight: 700,
+    color: '#FFD23F',
+    display: 'block',
+    marginBottom: 8,
+  },
+  planTooltipDivider: {
+    borderTop: '1px solid rgba(255, 255, 255, 0.15)',
+    marginBottom: 8,
+  },
+  planTooltipDatesRow: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    gap: 16,
+  },
+  planTooltipDateCol: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 2,
+  },
+  planTooltipDateLabel: {
+    fontSize: '0.65rem',
+    fontWeight: 600,
+    color: 'rgba(255, 255, 255, 0.5)',
+    textTransform: 'uppercase',
+    letterSpacing: '0.4px',
+  },
+  planTooltipDateValue: {
+    fontSize: '0.78rem',
+    fontWeight: 600,
+    color: '#ffffff',
+  },
   // Mobile styles
   mobileOverlay: {
     [theme.breakpoints.down('sm')]: {
@@ -257,19 +306,13 @@ export const sideMenuStyle = (windowSize, isRTL, theme) => ({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: theme.spacing(1.5),
-    margin: theme.spacing(1, 'auto'),
-    borderRadius: '50%',
-    width: 40,
-    height: 40,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    border: '1px solid rgba(255, 255, 255, 0.15)',
+    padding: theme.spacing(1),
+    margin: theme.spacing(2, 'auto', 0, 'auto'),
     color: '#ffffff',
     cursor: 'pointer',
     transition: 'all 0.2s ease-in-out',
     '&:hover': {
-      backgroundColor: 'rgba(255, 255, 255, 0.25)',
-      transform: 'scale(1.05)',
+      color: 'rgba(255, 255, 255, 0.7)',
     },
   },
   sidebarUpgradeBtn: {

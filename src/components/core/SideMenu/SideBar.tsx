@@ -19,6 +19,7 @@ import moment from 'moment';
 import { DateFormats } from '../../../helpers/Constants';
 import { FiZap } from 'react-icons/fi';
 import { sitePrefix } from '../../../config';
+import TierPlans from '../../TierPlans/TierPlans';
 
 export const Sidebar: React.FC<SidebarProps> = ({
   currentPage = '',
@@ -58,6 +59,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const [openMenus, setOpenMenus] = useState<{ [key: string]: boolean }>({});
   const [settingsLoaded, setSettingsLoaded] = useState(false);
   const [languageMenuOpen, setLanguageMenuOpen] = useState(false);
+  const [showTierPlans, setShowTierPlans] = useState(false);
   const languageButtonRef = useRef(null);
 
   useEffect(() => {
@@ -244,62 +246,80 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </IconButton>
       </div>
 
-      {!isCollapsed && currentPlan && currentPlan.Name && currentPlan.Name !== 'GRAND_FATHER' && (
-        <div className={classes.sidebarPlanSection}>
-          <div className={classes.sidebarPlanCardHeader}>
-            <div className={classes.sidebarPlanTitle}>
+      {currentPlan && currentPlan.Name && currentPlan.Name !== 'GRAND_FATHER' && (() => {
+        const planTooltipContent = (
+          <div className={classes.planTooltipCard}>
+            <div className={classes.planTooltipLabel}>
               {t('billing.yourPlan')}
             </div>
-          </div>
-
-          <div className={classes.sidebarPlanNameRow}>
-            <div className={classes.sidebarPlanName}>
+            <div className={classes.planTooltipName}>
               {currentPlan.Name}
             </div>
-
-            {currentPlan.Name !== 'Scale' && (
-              <Button
-                className={classes.sidebarUpgradeBtn}
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  Redirect({ url: `${sitePrefix}BillingSettings` } as RedirectPropTypes);
-                }}
-              >
-                {t('billing.upgradePlan')}
-              </Button>
+            {currentPlan.TierSubscriptionStartDate && currentPlan.TierSubscriptionEndDate && (
+              <>
+                <div className={classes.planTooltipDivider} />
+                <div className={classes.planTooltipDatesRow}>
+                  <div className={classes.planTooltipDateCol}>
+                    <span className={classes.planTooltipDateLabel}>{t("common.startDate")}</span>
+                    <span className={classes.planTooltipDateValue}>
+                      {moment(currentPlan.TierSubscriptionStartDate).format(DateFormats.DATE_ONLY)}
+                    </span>
+                  </div>
+                  <div className={classes.planTooltipDateCol}>
+                    <span className={classes.planTooltipDateLabel}>{t("common.endDate")}</span>
+                    <span className={classes.planTooltipDateValue}>
+                      {moment(currentPlan.TierSubscriptionEndDate).format(DateFormats.DATE_ONLY)}
+                    </span>
+                  </div>
+                </div>
+              </>
             )}
           </div>
-        </div>
-      )}
+        );
 
-      {isCollapsed && !isMobile && currentPlan && currentPlan.Name && currentPlan.Name !== 'GRAND_FATHER' && (
-        <Tooltip
-          title={
-            <Box style={{ padding: 6 }}>
-              <Typography style={{ fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', color: 'rgba(255, 255, 255, 0.7)' }}>
-                {t('billing.yourPlan')}
-              </Typography>
-              <Typography style={{ fontSize: '0.9rem', fontWeight: 700, color: '#ffffff', marginBlock: 4 }}>
-                {currentPlan.Name}
-              </Typography>
-              {currentPlan.TierSubscriptionStartDate && currentPlan.TierSubscriptionEndDate && (
-                <Typography style={{ fontSize: '0.7rem', color: 'rgba(255, 255, 255, 0.9)', lineHeight: 1.4 }}>
-                  • {t("common.startDate")}: {moment(currentPlan.TierSubscriptionStartDate).format(DateFormats.DATE_ONLY)}
-                  <br />
-                  • {t("common.endDate")}: {moment(currentPlan.TierSubscriptionEndDate).format(DateFormats.DATE_ONLY)}
-                </Typography>
-              )}
-            </Box>
-          }
-          placement="right"
-          classes={{ tooltip: classes.tooltip }}
-        >
-          <div className={classes.sidebarPlanCollapsedIcon}>
-            <ZapIcon size={20} />
-          </div>
-        </Tooltip>
-      )}
+        return (
+          <>
+            {/* Expanded sidebar — plan card with tooltip on hover */}
+            {!isCollapsed && (
+              <Tooltip arrow title={planTooltipContent} placement="right" classes={{ tooltip: classes.tooltip, arrow: classes.tooltipArrow }} PopperProps={{ modifiers: { offset: { enabled: true, offset: '0, 8' } } }}>
+                <div className={classes.sidebarPlanSection}>
+                  <div className={classes.sidebarPlanCardHeader}>
+                    <div className={classes.sidebarPlanTitle}>
+                      {t('billing.yourPlan')}
+                    </div>
+                  </div>
+                  <div className={classes.sidebarPlanNameRow}>
+                    <div className={classes.sidebarPlanName}>
+                      {currentPlan.Name}
+                    </div>
+                    {currentPlan.Name !== 'Scale' && (
+                      <Button
+                        className={classes.sidebarUpgradeBtn}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setShowTierPlans(true);
+                        }}
+                      >
+                        {t('billing.upgradePlan')}
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              </Tooltip>
+            )}
+
+            {/* Collapsed sidebar — just the zap icon with tooltip */}
+            {isCollapsed && !isMobile && (
+              <Tooltip arrow title={planTooltipContent} placement="right" classes={{ tooltip: classes.tooltip, arrow: classes.tooltipArrow }} PopperProps={{ modifiers: { offset: { enabled: true, offset: '0, 8' } } }}>
+                <div className={classes.sidebarPlanCollapsedIcon}>
+                  <ZapIcon size={20} />
+                </div>
+              </Tooltip>
+            )}
+          </>
+        );
+      })()}
 
       {/* Content */}
       <div className={classes.sidebarContent}>
@@ -326,22 +346,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </nav>
       </div>
 
-      {settingsLoaded && settingsMenu && (
-        <div className={classes.sidebarFooter}>
-          <div className={classes.userSection}>
-            <SidebarItem
-              item={settingsMenu}
-              isCollapsed={isCollapsed && !isMobile}
-              isActive={currentPage === 'settings'}
-              classes={classes}
-              currentPage={currentPage}
-              subPage={subPage}
-              showSubmenu={openMenus[settingsMenu.key]}
-              toggleSubmenu={() => toggleSubmenu(settingsMenu.key)}
-              onIconClick={() => handleIconClick(settingsMenu.key)}
-            />
-          </div>
-        </div>
+
+
+
+      {showTierPlans && (
+        <TierPlans
+          classes={classes}
+          isOpen={showTierPlans}
+          onClose={() => setShowTierPlans(false)}
+        />
       )}
 
     </Drawer>
