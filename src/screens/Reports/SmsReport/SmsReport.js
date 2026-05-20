@@ -627,6 +627,7 @@ const SmsReport = ({ classes }) => {
     const showUpdateDate = UpdateDate ? udate.format(DateFormats.DATE_ONLY) : '';
     const showTimeUpdate = UpdateDate ? udate.format(DateFormats.TIME_ONLY) : '';
 
+    const isPulseSend = row.IsPulseSend === true;
     return (
       <>
         <Typography className={classes.nameEllipsis}>
@@ -645,7 +646,11 @@ const SmsReport = ({ classes }) => {
             </Typography>
           )
         }
-
+        {isPulseSend && (
+          <Typography className={classes.pulseSendPill}>
+            {t('common.pulseSendPill')}
+          </Typography>
+        )}
       </>
     )
   }

@@ -610,6 +610,7 @@ const NewslettersReport = ({ classes }) => {
 
   const renderNameCell = (row, isParent) => {
     const { CampaignID, Name, SendDate, isChecked = false, Status, LastEditDate } = row
+    const isPulseSend = row.IsPulseSend === true || row.Name?.includes('_Pulse_') || (row.PulseAmount > 0) || newslettersReportsChildCampaigns.some(c => c?.ParentCampaignId === row.CampaignID && c.Name?.includes('_Pulse_'));
 
     const date = SendDate ? moment(SendDate) : ''
     const showDate = SendDate ? date.format(DateFormats.DATE_ONLY) : ''
@@ -647,6 +648,11 @@ const NewslettersReport = ({ classes }) => {
               </Typography>
             )
           }
+          {isPulseSend && (
+            <Typography className={classes.pulseSendPill}>
+              {t('common.pulseSendPill')}
+            </Typography>
+          )}
         </>
       )
     }
@@ -702,6 +708,11 @@ const NewslettersReport = ({ classes }) => {
                 {t("common.UpdatedOn")} {`${isRTL ? showUpdateDate : moment(showUpdateDate).format(DateFormats.DATE_ONLY)} ${showTimeUpdate}`}
               </Typography>
             )}
+          {isPulseSend && (
+            <Typography className={classes.pulseSendPill}>
+              {t('common.pulseSendPill')}
+            </Typography>
+          )}
         </Grid>
       </Grid>
     )

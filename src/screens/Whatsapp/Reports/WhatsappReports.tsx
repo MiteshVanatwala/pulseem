@@ -286,6 +286,8 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 					: translator('common.SentOn');
 		}
 
+		const isPulseSend = row.IsPulseSend === true;
+
 		return (
 			<>
 				<CustomTooltip
@@ -307,6 +309,11 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 				<Typography className={classes.grayTextCell}>
 					{`${text} ${date.format(DateFormats.DATE_TIME_24)}`}
 				</Typography>
+				{isPulseSend && (
+					<Typography className={classes.pulseSendPill}>
+						{translator('common.pulseSendPill')}
+					</Typography>
+				)}
 			</>
 		);
 	};

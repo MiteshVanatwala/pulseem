@@ -300,30 +300,35 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 			</>
 		);
 	};
-	const renderStatusCell = (status: number) => {
+	const renderStatusCell = (status: number, isPulseSend?: boolean) => {
 		return (
-			// <Box className={classes.justifyBetween}>
-			<Typography
-				className={clsx(classes.middleText, classes.whatsappCampaignStatus, {
-					[classes.whatsappCampaignStatusCreated]:
-						status === campaignStatuses.CREATED,
-					[classes.whatsappCampaignStatusSending]:
-						status === campaignStatuses.SENDING,
-					[classes.whatsappCampaignStatusStopped]:
-						status === campaignStatuses.STOPPED,
-					[classes.whatsappCampaignStatusFinished]:
-						status === campaignStatuses.FINISHED,
-					[classes.whatsappCampaignStatusCanceled]:
-						status === campaignStatuses.CANCELED,
-				})}
-			>
-				{translator(
-					`whatsappManagement.${campaignStatus[
-						status
-					]?.toLocaleLowerCase()}`
+			<Box>
+				<Typography
+					className={clsx(classes.middleText, classes.whatsappCampaignStatus, {
+						[classes.whatsappCampaignStatusCreated]:
+							status === campaignStatuses.CREATED,
+						[classes.whatsappCampaignStatusSending]:
+							status === campaignStatuses.SENDING,
+						[classes.whatsappCampaignStatusStopped]:
+							status === campaignStatuses.STOPPED,
+						[classes.whatsappCampaignStatusFinished]:
+							status === campaignStatuses.FINISHED,
+						[classes.whatsappCampaignStatusCanceled]:
+							status === campaignStatuses.CANCELED,
+					})}
+				>
+					{translator(
+						`whatsappManagement.${campaignStatus[
+							status
+						]?.toLocaleLowerCase()}`
+					)}
+				</Typography>
+				{isPulseSend && (
+					<Typography className={classes.pulseSendPill}>
+						{translator('common.pulseSendPill')}
+					</Typography>
 				)}
-			</Typography>
-			// </Box>
+			</Box>
 		);
 	};
 
@@ -1075,7 +1080,10 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 						classes.flex1,
 						classes.tableCellBody
 					)}>
-					{renderStatusCell(campaign.Status)}
+					{renderStatusCell(
+						campaign.Status,
+						campaign.IsPulseSend === true
+					)}
 				</TableCell>
 				<TableCell
 					component='th'
@@ -1103,7 +1111,10 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 							{renderNameCell(campaign)}
 						</Box>
 						<Box className={classes.inlineGrid}>
-							{renderStatusCell(campaign.Status)}
+							{renderStatusCell(
+								campaign.Status,
+								campaign.IsPulseSend === true
+							)}
 						</Box>
 					</Box>
 					<Grid container className={classes.pt5}>

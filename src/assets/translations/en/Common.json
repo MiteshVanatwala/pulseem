@@ -1005,5 +1005,6 @@
   "field": "Field",
   "operator": "Operator",
   "value": "Value",
-  "allNumbers": "All Numbers"
+  "allNumbers": "All Numbers",
+  "pulseSendPill": "Pulse Send"
 }
