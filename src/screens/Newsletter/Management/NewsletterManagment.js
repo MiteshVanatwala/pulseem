@@ -756,7 +756,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
             classes={cellStyle}
             align='center'
             className={classes.flex1}>
-            {!(isExpanded && isParent) && renderStatusCell(row.Status, row.IsPulseSend === true)}
+            {!(isExpanded && isParent) && renderStatusCell(row.Status, row.IsPulseSend === true || row.Name?.includes('_Pulse_') || (row.PulseAmount > 0) || newslettersChildCampaigns.some(c => c?.ParentCampaignId === row.CampaignID && c.Name?.includes('_Pulse_')))}
           </TableCell>
           <TableCell
             component='th'
@@ -818,7 +818,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
                 {renderNameCell(row, isParent)}
               </Box>
               <Box>
-                {!(isExpanded && isParent) && renderStatusCell(row.Status, row.IsPulseSend === true)}
+                {!(isExpanded && isParent) && renderStatusCell(row.Status, row.IsPulseSend === true || row.Name?.includes('_Pulse_') || (row.PulseAmount > 0) || newslettersChildCampaigns.some(c => c?.ParentCampaignId === row.CampaignID && c.Name?.includes('_Pulse_')))}
               </Box>
             </Box>
             {renderCellIcons(row)}
