@@ -30,7 +30,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   const Redirect = useRedirect();
   const { t } = useTranslation();
-  const CrownIcon = FaCrown as any;
   const ZapIcon = FiZap as any;
   const dispatch = useDispatch();
   const {
@@ -251,36 +250,26 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <div className={classes.sidebarPlanTitle}>
               {t('billing.yourPlan')}
             </div>
-            <CrownIcon className={classes.sidebarPlanHeaderIcon} />
           </div>
 
-          <div className={classes.sidebarPlanName}>
-            {currentPlan.Name}
-          </div>
-
-          {currentPlan.TierSubscriptionStartDate && currentPlan.TierSubscriptionEndDate && (
-            <div className={classes.sidebarPlanDatesContainer}>
-              <div className={classes.sidebarPlanDateRow}>
-                <span>{t("common.startDate")}: <strong>{moment(currentPlan.TierSubscriptionStartDate).format(DateFormats.DATE_ONLY)}</strong></span>
-              </div>
-              <div className={classes.sidebarPlanDateRow}>
-                <span>{t("common.endDate")}: <strong>{moment(currentPlan.TierSubscriptionEndDate).format(DateFormats.DATE_ONLY)}</strong></span>
-              </div>
+          <div className={classes.sidebarPlanNameRow}>
+            <div className={classes.sidebarPlanName}>
+              {currentPlan.Name}
             </div>
-          )}
 
-          {currentPlan.Name !== 'Scale' && (
-            <Button
-              className={classes.sidebarUpgradeBtn}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                Redirect({ url: `${sitePrefix}BillingSettings` } as RedirectPropTypes);
-              }}
-            >
-              {t('billing.upgradePlan')}
-            </Button>
-          )}
+            {currentPlan.Name !== 'Scale' && (
+              <Button
+                className={classes.sidebarUpgradeBtn}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  Redirect({ url: `${sitePrefix}BillingSettings` } as RedirectPropTypes);
+                }}
+              >
+                {t('billing.upgradePlan')}
+              </Button>
+            )}
+          </div>
         </div>
       )}
 
