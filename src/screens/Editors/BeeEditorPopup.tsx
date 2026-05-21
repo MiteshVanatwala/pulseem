@@ -219,6 +219,13 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
   }
   useEffect(() => {
     if (dataReady) {
+      if (stepParam > 1 && (currentPlan?.Id || 0) < 3) {
+        const url = new URL(window.location.href);
+        url.searchParams.set('step', '1');
+        window.history.replaceState({}, '', url.toString());
+        currentStepRef.current = 1;
+        setCurrentStep(1);
+      }
       Promise.all([initFields()]).then(() => {
         return true;
       })
@@ -1022,6 +1029,11 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
 
   const handleStepSwitch = (targetStep: number) => {
     if (targetStep === currentStep) return;
+    if (targetStep > 1 && (currentPlan?.Id || 0) < 3) {
+      setTierMessageCode('POPUP_STEPS');
+      setDialogType({ type: 'tier' });
+      return;
+    }
     //@ts-ignore
     saveRef.current = { ...saveRef.current, pendingStepSwitch: targetStep, showAnimation: false };
     //@ts-ignore
@@ -1029,11 +1041,11 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
   };
 
   const handleAddStepClick = () => {
-    // if ((currentPlan?.Id || 0) < 3) {
-    //   setTierMessageCode('POPUP_STEPS');
-    //   setDialogType({ type: 'tier' });
-    //   return;
-    // }
+    if ((currentPlan?.Id || 0) < 3) {
+      setTierMessageCode('POPUP_STEPS');
+      setDialogType({ type: 'tier' });
+      return;
+    }
     setShowAddStepOptions(true);
   };
 
