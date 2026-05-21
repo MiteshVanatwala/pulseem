@@ -129,8 +129,10 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
   const [stages, setStages] = useState<number[]>([1]);
   const [showDeleteStageConfirm, setShowDeleteStageConfirm] = useState<number | null>(null);
   const stageDataRef = useRef<PopupStage[]>([]);
-  const [stagesMenuAnchor, setStagesMenuAnchor] = useState<null | HTMLElement>(null);
+  const currentStageRef = useRef<number>(stageParam);
   const [stageOptionsAnchor, setStageOptionsAnchor] = useState<null | HTMLElement>(null);
+  const [optionsForStage, setOptionsForStage] = useState<number>(0);
+  const [showAddStepOptions, setShowAddStepOptions] = useState(false);
   const [showTierPlans, setShowTierPlans] = useState(false);
   const [tierMessageCode, setTierMessageCode] = useState('');
   //#endregion State
@@ -316,7 +318,7 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
       const stagesResult = await dispatch(getPopupStages(Number(moduleId))) as any;
       const stagesData: PopupStage[] = stagesResult?.payload?.Data || [];
       stageDataRef.current = stagesData;
-      setStages(stagesData.length > 0 ? stagesData.map((s: PopupStage) => s.StageNumber) : [1]);
+      setStages(stagesData.length > 0 ? stagesData.map((s: PopupStage) => s.StepNumber) : [1]);
     }
     setDataReady(true);
     const initBeeToken = async () => {
@@ -489,7 +491,7 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
           }
           else {
             const beeTest = new BeePlugin(JSON.parse(LPBeeToken.Message));
-            const currentStageData = stageDataRef.current.find((s: PopupStage) => s.StageNumber === currentStage);
+            const currentStageData = stageDataRef.current.find((s: PopupStage) => s.StepNumber === currentStage);
             const stageJson = currentStageData?.JsonData ?? null;
             const template = forceTemplate !== null
               ? forceTemplate
@@ -601,26 +603,61 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
       //@ts-ignore
       await dispatch(savePopupStageContent({
         webFormId: Number(args.campaignId),
-        stageNumber: currentStage,
+        stageNumber: currentStageRef.current,
         htmlContent: finalHtml,
         jsonData: finalJson,
       }));
+      // Keep stageDataRef in sync so switchToStage can load the latest saved content
+      stageDataRef.current = stageDataRef.current.map(s =>
+        s.StepNumber === currentStageRef.current ? { ...s, HtmlContent: finalHtml, JsonData: finalJson } : s
+      );
 
-      // Handle pending stage switch — navigate after saving current stage
+      // Handle pending duplicate — create new step and copy current content into it
+      //@ts-ignore
+      if (saveRef.current?.pendingDuplicateStage) {
+        //@ts-ignore
+        saveRef.current = { ...saveRef.current, pendingDuplicateStage: false };
+        //@ts-ignore
+        const dupResult = await dispatch(addPopupStage(Number(args.campaignId))) as any;
+        if (dupResult?.payload?.StatusCode === 201) {
+          const newStage = dupResult.payload.Data?.StepNumber;
+          //@ts-ignore
+          await dispatch(savePopupStageContent({
+            webFormId: Number(args.campaignId),
+            stageNumber: newStage,
+            htmlContent: finalHtml,
+            jsonData: finalJson,
+          }));
+          //@ts-ignore
+          const refreshResult = await dispatch(getPopupStages(Number(args.campaignId))) as any;
+          const refreshedStages: PopupStage[] = refreshResult?.payload?.Data || [];
+          stageDataRef.current = refreshedStages;
+          setStages(refreshedStages.length > 0 ? refreshedStages.map((s: PopupStage) => s.StepNumber) : [1]);
+          switchToStage(newStage, refreshedStages);
+        } else if (dupResult?.payload?.StatusCode === 927) {
+          setTierMessageCode(dupResult?.payload?.Message || 'POPUP_STEPS');
+          setDialogType({ type: 'tier' });
+        } else {
+          // @ts-ignore
+          setToastMessage({ severity: 'error', color: 'error', message: dupResult?.payload?.Message, showAnimtionCheck: false });
+        }
+        setLoader(false);
+        return;
+      }
+
+      // Handle pending stage switch — reload canvas only, no full page reload
       //@ts-ignore
       if (saveRef.current?.pendingStageSwitch != null) {
         //@ts-ignore
         const targetStage = saveRef.current.pendingStageSwitch;
         //@ts-ignore
         saveRef.current = { ...saveRef.current, pendingStageSwitch: null };
-        const url = new URL(window.location.href);
-        url.searchParams.set('stage', String(targetStage));
-        window.location.href = url.toString();
+        switchToStage(targetStage);
         return;
       }
 
       // For stage > 1, skip saveWebform (to avoid overwriting stage 1 WebForm data)
-      if (currentStage > 1) {
+      if (currentStageRef.current > 1) {
         //@ts-ignore
         if (saveRef.current?.showAnimation && !saveRef.current?.saveTemplate) {
           // @ts-ignore
@@ -942,6 +979,37 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
     await editorRef.current.save();
   }
   //#region Stage management
+  // Reloads only the editor canvas for the target stage — no full page reload
+  const switchToStage = (targetStage: number, updatedStageData?: PopupStage[]) => {
+    const stageData = updatedStageData ?? stageDataRef.current;
+    const webform = landingPage?.Data?.WebForm;
+    const isRtlLang = webform?.BaseLanguage === 0 || webform?.BaseLanguage === 8 ? true : false;
+    const defaultContent = DefaultContent(isRtlLang, webform?.BaseLanguage);
+
+    const targetStageData = stageData.find((s: PopupStage) => s.StepNumber === targetStage);
+    const stageJson = targetStageData?.JsonData ?? null;
+    const template = stageJson
+      ? JSON.parse(stageJson)
+      : targetStage === 1 && webform?.JsonData
+        ? JSON.parse(webform.JsonData)
+        : defaultContent.defaultTemplate;
+
+    // Update URL param without triggering a navigation/reload
+    const url = new URL(window.location.href);
+    url.searchParams.set('stage', String(targetStage));
+    window.history.replaceState({}, '', url.toString());
+
+    // Keep ref and state in sync so subsequent saves target the right stage
+    currentStageRef.current = targetStage;
+    setCurrentStage(targetStage);
+
+    // Reload only the canvas — BeePlugin loads the new template in-place
+    if (editorRef.current) {
+      // @ts-ignore
+      editorRef.current.load(template);
+    }
+  };
+
   const handleGetPlanForFeature = (code: string) => {
     const planName = findPlanByFeatureCode(code, availablePlans, currentPlan?.Id);
     if (planName) {
@@ -960,24 +1028,31 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
     editorRef.current.save();
   };
 
-  const handleAddStage = async () => {
-    console.log("currentPlan?.Id = ",currentPlan?.Id);
-    // Plan gate: POPUP_STAGES requires Pro plan (ID >= 3)
-    if ((currentPlan?.Id || 0) < 3) {
-      setTierMessageCode('POPUP_STAGES');
-      setDialogType({ type: 'tier' });
-      return;
-    }
+  const handleAddStepClick = () => {
+    // if ((currentPlan?.Id || 0) < 3) {
+    //   setTierMessageCode('POPUP_STEPS');
+    //   setDialogType({ type: 'tier' });
+    //   return;
+    // }
+    setShowAddStepOptions(true);
+  };
+
+  const handleAddStageBlank = async () => {
+    setShowAddStepOptions(false);
     setLoader(true);
     //@ts-ignore
     const result = await dispatch(addPopupStage(Number(moduleId))) as any;
     if (result?.payload?.StatusCode === 201) {
-      const newStage = result.payload.Data?.StageNumber;
-      const url = new URL(window.location.href);
-      url.searchParams.set('stage', String(newStage));
-      window.location.href = url.toString();
+      const newStage = result.payload.Data?.StepNumber;
+      //@ts-ignore
+      const stagesResult = await dispatch(getPopupStages(Number(moduleId))) as any;
+      const stagesData: PopupStage[] = stagesResult?.payload?.Data || [];
+      stageDataRef.current = stagesData;
+      setStages(stagesData.length > 0 ? stagesData.map((s: PopupStage) => s.StepNumber) : [1]);
+      setLoader(false);
+      switchToStage(newStage, stagesData);
     } else if (result?.payload?.StatusCode === 927) {
-      setTierMessageCode(result?.payload?.Message || 'POPUP_STAGES');
+      setTierMessageCode(result?.payload?.Message || 'POPUP_STEPS');
       setDialogType({ type: 'tier' });
       setLoader(false);
     } else {
@@ -987,15 +1062,28 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
     }
   };
 
+  const handleAddStageDuplicate = () => {
+    setShowAddStepOptions(false);
+    setLoader(true);
+    //@ts-ignore
+    saveRef.current = { ...saveRef.current, pendingDuplicateStage: true, showAnimation: false };
+    //@ts-ignore
+    editorRef.current.save();
+  };
+
   const handleDeleteStage = async (stageNumber: number) => {
     setShowDeleteStageConfirm(null);
     setLoader(true);
     //@ts-ignore
     const result = await dispatch(deletePopupStage({ webFormId: Number(moduleId), stageNumber })) as any;
     if (result?.payload?.StatusCode === 201) {
-      const url = new URL(window.location.href);
-      url.searchParams.set('stage', '1');
-      window.location.href = url.toString();
+      //@ts-ignore
+      const stagesResult = await dispatch(getPopupStages(Number(moduleId))) as any;
+      const stagesData: PopupStage[] = stagesResult?.payload?.Data || [];
+      stageDataRef.current = stagesData;
+      setStages(stagesData.length > 0 ? stagesData.map((s: PopupStage) => s.StepNumber) : [1]);
+      setLoader(false);
+      switchToStage(1, stagesData);
     } else {
       // @ts-ignore
       setToastMessage({ severity: 'error', color: 'error', message: result?.payload?.Message, showAnimtionCheck: false });
@@ -1055,25 +1143,9 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
       >
         {t('common.Groups')}
       </Button>
-      {/* Stages dropdown */}
-      <Box style={{ display: 'inline-flex', alignItems: 'center', margin: '4px 8px', gap: 6 }}>
-        <Typography style={{ fontSize: 14, fontWeight: 600, whiteSpace: 'nowrap' }}>
-          {t('Popup.popup_stage')}:
-        </Typography>
-
-        {currentStage === 1 ? (
-          /* Stage 1 — simple button matching toolbar style */
-          <Button
-            size='medium'
-            className={clsx(classes.btn, classes.btnRounded)}
-            endIcon={<MdKeyboardArrowDown />}
-            onClick={(e) => setStagesMenuAnchor(e.currentTarget)}
-            style={{ minWidth: 110 }}
-          >
-            {t('Popup.popup_stage_n', { n: currentStage })}
-          </Button>
-        ) : (
-          /* Stage 2 / 3 — joined split button: [ Stage N ▼ | ⋮ ] */
+      {/* Steps segmented control — only render after data is ready to avoid flash of Step 1 */}
+      {dataReady && (
+        <>
           <Box
             style={{
               display: 'inline-flex',
@@ -1081,81 +1153,90 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
               border: '2px solid #F65026',
               borderRadius: 20,
               overflow: 'hidden',
-              minHeight: 34,
               background: '#fff',
+              margin: '4px 8px',
+              minHeight: 34,
             }}
           >
-            <Button
-              size='medium'
-              className={clsx(classes.btn)}
-              endIcon={<MdKeyboardArrowDown />}
-              onClick={(e) => setStagesMenuAnchor(e.currentTarget)}
-              style={{ border: 'none', borderRadius: 0, minWidth: 110, paddingLeft: 14, boxShadow: 'none' }}
-            >
-              {t('Popup.popup_stage_n', { n: currentStage })}
-            </Button>
-            {/* pipe — same orange as border */}
-            <Box style={{ width: 2, backgroundColor: '#F65026', flexShrink: 0 }} />
-            <Button
-              size='small'
-              className={clsx(classes.btn)}
-              onClick={(e) => setStageOptionsAnchor(e.currentTarget)}
-              style={{ border: 'none', borderRadius: 0, minWidth: 'unset', padding: '4px 10px', boxShadow: 'none' }}
-            >
-              <MdMoreVert style={{ fontSize: 20 }} />
-            </Button>
+            {stages.map((stageNum, index) => {
+              const isActive = currentStage === stageNum;
+              return (
+                <Box key={stageNum} style={{ display: 'inline-flex', alignItems: 'stretch' }}>
+                  {index > 0 && (
+                    <Box style={{ width: 2, backgroundColor: '#F65026', flexShrink: 0 }} />
+                  )}
+                  <Button
+                    size='medium'
+                    className={clsx(classes.btn, isActive && classes.btnStepActive)}
+                    onClick={() => handleStageSwitch(stageNum)}
+                    style={{
+                      border: 'none',
+                      borderRadius: 0,
+                      boxShadow: 'none',
+                      padding: '4px 14px',
+                      whiteSpace: 'nowrap',
+                      minWidth: 'unset',
+                    }}
+                  >
+                    {t('Popup.popup_step_n', { n: stageNum })}
+                  </Button>
+                  {stageNum > 1 && isActive && (
+                    <Button
+                      size='small'
+                      className={clsx(classes.btn, classes.btnStepActive)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setOptionsForStage(stageNum);
+                        setStageOptionsAnchor(e.currentTarget);
+                      }}
+                      style={{
+                        border: 'none',
+                        borderRadius: 0,
+                        minWidth: 'unset',
+                        padding: '4px 8px',
+                        boxShadow: 'none',
+                      }}
+                    >
+                      <MdMoreVert style={{ fontSize: 18 }} />
+                    </Button>
+                  )}
+                </Box>
+              );
+            })}
+            {stages.length < 3 && (
+              <Box style={{ display: 'inline-flex', alignItems: 'stretch' }}>
+                <Box style={{ width: 2, backgroundColor: '#F65026', flexShrink: 0 }} />
+                <Button
+                  size='medium'
+                  className={clsx(classes.btn)}
+                  onClick={handleAddStepClick}
+                  style={{
+                    border: 'none',
+                    borderRadius: 0,
+                    boxShadow: 'none',
+                    padding: '4px 10px',
+                    minWidth: 'unset',
+                  }}
+                >
+                  <MdAdd style={{ fontSize: 20 }} />
+                </Button>
+              </Box>
+            )}
           </Box>
-        )}
 
-        {/* Stages dropdown menu (shared for both layouts) */}
-        <Menu
-          anchorEl={stagesMenuAnchor}
-          open={Boolean(stagesMenuAnchor)}
-          onClose={() => setStagesMenuAnchor(null)}
-          getContentAnchorEl={null}
-          anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-          transformOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-        >
-          {stages.map((stageNum) => (
-            <MenuItem
-              key={stageNum}
-              selected={currentStage === stageNum}
-              onClick={() => {
-                setStagesMenuAnchor(null);
-                handleStageSwitch(stageNum);
-              }}
-            >
-              {t('Popup.popup_stage_n', { n: stageNum })}
-            </MenuItem>
-          ))}
-          {stages.length < 3 && <Divider />}
-          {stages.length < 3 && (
-            <MenuItem
-              onClick={() => {
-                setStagesMenuAnchor(null);
-                handleAddStage();
-              }}
-            >
-              <MdAdd style={{ marginInlineEnd: 6, fontSize: 18 }} />
-              {t('Popup.popup_add_stage')}
-            </MenuItem>
-          )}
-        </Menu>
-
-        {/* Three-dot options menu (stage 2/3 only) */}
-        {currentStage > 1 && (
+          {/* Step options menu — delete for steps 2 and 3 */}
           <Menu
             anchorEl={stageOptionsAnchor}
             open={Boolean(stageOptionsAnchor)}
             onClose={() => setStageOptionsAnchor(null)}
             getContentAnchorEl={null}
-            anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-            transformOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+            transformOrigin={{ vertical: 'bottom', horizontal: 'center' }}
           >
             <MenuItem
               onClick={() => {
                 setStageOptionsAnchor(null);
-                setShowDeleteStageConfirm(currentStage);
+                setShowDeleteStageConfirm(optionsForStage);
               }}
               style={{ color: '#d32f2f' }}
             >
@@ -1163,8 +1244,8 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
               {t('common.Delete')}
             </MenuItem>
           </Menu>
-        )}
-      </Box>
+        </>
+      )}
     </>
   }
   const renderButtons = () => {
@@ -1760,17 +1841,51 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
           onClose={() => setShowTierPlans(false)}
         />
       )}
+      {showAddStepOptions && (
+        <BaseDialog
+          classes={classes}
+          open={true}
+          title={t('Popup.popup_add_step')}
+          //@ts-ignore
+          showDefaultButtons={false}
+          childrenStyle={classes.noMargin}
+          onClose={() => setShowAddStepOptions(false)}
+          onCancel={() => setShowAddStepOptions(false)}
+        >
+          <Box style={{ textAlign: 'center', padding: '12px 0 16px' }}>
+            <Typography style={{ marginBottom: 16, color: '#555' }}>
+              {t('Popup.popup_add_step_choose')}
+            </Typography>
+            <Box style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
+              <Button
+                variant='contained'
+                className={clsx(classes.btn, classes.btnRounded)}
+                onClick={handleAddStageBlank}
+              >
+                {t('Popup.popup_add_step_blank')}
+              </Button>
+              <Button
+                variant='contained'
+                className={clsx(classes.btn, classes.btnRounded)}
+                onClick={handleAddStageDuplicate}
+              >
+                {t('Popup.popup_add_step_duplicate')}
+              </Button>
+            </Box>
+          </Box>
+        </BaseDialog>
+      )}
       {showDeleteStageConfirm !== null && (
         <BaseDialog
           classes={classes}
           open={true}
-          title={t('Popup.popup_stage_n', { n: showDeleteStageConfirm })}
+          title={t('Popup.popup_step_n', { n: showDeleteStageConfirm })}
           //@ts-ignore
           onClose={() => setShowDeleteStageConfirm(null)}
           onCancel={() => setShowDeleteStageConfirm(null)}
           onConfirm={() => handleDeleteStage(showDeleteStageConfirm)}
         >
-          <Typography>{t('Popup.popup_delete_stage_confirm')}</Typography>
+          <Typography>{t('Popup.popup_delete_step_confirm')}</Typography>
         </BaseDialog>
       )}
     </DefaultScreen>

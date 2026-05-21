@@ -827,7 +827,7 @@ export const TIER_PLANS = [
             'billing.tier.features.phoneSupport',
             'billing.tier.features.displayCondition',
             'billing.tier.features.AMPEmail',
-            'billing.tier.features.multiStagePopup',
+            'billing.tier.features.multiStepPopup',
             // 'billing.tier.features.dynamicProducts'
         ],
         isPopular: true,
@@ -935,7 +935,7 @@ export const TierFeatures = {
   "AI_LANDING_PAGE_DESIGNER": "billing.featureNames.AI_LANDING_PAGE_DESIGNER",
   "RCS_MESSAGING": "billing.featureNames.RCS_MESSAGING",
   "KOSHER_SEND": "billing.featureNames.KOSHER_SEND",
-  "POPUP_STAGES": "billing.featureNames.POPUP_STAGES"
+  "POPUP_STEPS": "billing.featureNames.POPUP_STEPS"
 }
 
 

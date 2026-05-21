@@ -99,8 +99,8 @@ const PopupPreviewModal: React.FC<PopupPreviewModalProps> = ({
 
       const htmlMap: Record<number, string> = { 1: stage1Html };
       stagesData.forEach((stage: PopupStage) => {
-        if (stage.StageNumber > 1 && stage.HtmlContent) {
-          htmlMap[stage.StageNumber] = stage.HtmlContent;
+        if (stage.StepNumber > 1 && stage.HtmlContent) {
+          htmlMap[stage.StepNumber] = stage.HtmlContent;
         }
       });
 
@@ -158,12 +158,12 @@ const PopupPreviewModal: React.FC<PopupPreviewModalProps> = ({
     return (
       <Box style={{ display: 'flex', gap: 8, padding: '10px 16px 0', justifyContent: 'center' }}>
         {stages.map((stage) => {
-          const isActive = currentPreviewStage === stage.StageNumber;
+          const isActive = currentPreviewStage === stage.StepNumber;
           return (
             <Button
-              key={stage.StageNumber}
+              key={stage.StepNumber}
               size="small"
-              onClick={() => handleStageTabClick(stage.StageNumber)}
+              onClick={() => handleStageTabClick(stage.StepNumber)}
               style={{
                 minWidth: 90,
                 borderRadius: 20,
@@ -178,7 +178,7 @@ const PopupPreviewModal: React.FC<PopupPreviewModalProps> = ({
                 transition: 'none',
               }}
             >
-              {t('Popup.popup_stage_n', { n: stage.StageNumber })}
+              {t('Popup.popup_step_n', { n: stage.StepNumber })}
             </Button>
           );
         })}
@@ -242,7 +242,7 @@ const PopupPreviewModal: React.FC<PopupPreviewModalProps> = ({
         ) : (
           <>
             {renderStageTabs()}
-            <div className={classes.popupPreviewContent}>
+            <div className={classes.popupPreviewContent} style={{ position: 'relative' }}>
               {Object.entries(stageHtmlMap).map(([stageNumStr, stageHtml]) => {
                 const stageNum = Number(stageNumStr);
                 const isVisible = stageNum === currentPreviewStage;
@@ -254,9 +254,18 @@ const PopupPreviewModal: React.FC<PopupPreviewModalProps> = ({
                       width: '100%',
                       height: `${stageHeights[stageNum] || 600}px`,
                       border: 'none',
-                      display: isVisible ? 'block' : 'none',
+                      display: 'block',
                       overflow: 'auto',
                       borderRadius: '8px',
+                      // Hidden iframes stay in layout (position:absolute removes from flow
+                      // but keeps scrollHeight accurate). display:none skips layout entirely,
+                      // causing inaccurate measurements and a height flicker on first tab visit.
+                      position: isVisible ? 'static' : 'absolute',
+                      top: isVisible ? undefined : 0,
+                      left: isVisible ? undefined : 0,
+                      visibility: isVisible ? 'visible' : 'hidden',
+                      pointerEvents: isVisible ? 'auto' : 'none',
+                      opacity: isVisible ? 1 : 0,
                     }}
                     title={`Popup Preview Stage ${stageNum}`}
                     srcDoc={stageHtml}

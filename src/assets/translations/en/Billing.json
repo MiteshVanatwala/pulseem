@@ -185,7 +185,7 @@
       "SubAccounts": "Sub-accounts",
       "UserManagementPermissions": "User Management & Permissions",
       "PopUpsUnlimited": "Pop-ups (unlimited)",
-      "multiStagePopup": "Multi-Stage Popup",
+      "multiStepPopup": "Multi-Step Popup",
       "AMPEmail": "AMP for Email (including image carousel – requires Google & Yahoo approval)",
       "VIPSupport": "VIP Support",
       "PersonalTraining": "Personal Training",
@@ -316,7 +316,7 @@
     "AI_LANDING_PAGE_DESIGNER": "AI Landing Page Designer",
     "RCS_MESSAGING": "RCS Messaging",
     "KOSHER_SEND": "Kosher Send",
-    "POPUP_STAGES": "Multi-Stage Popups"
+    "POPUP_STEPS": "Multi-Step Popups"
   },
   "EmailMarketingList": "What's your mailing list size?",
   "EmailMarketingListSending": "(Unlimited sending based on list size)",

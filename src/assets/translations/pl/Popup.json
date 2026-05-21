@@ -7,8 +7,14 @@
 	"DeletePopup": "Czy chcesz usunąć okienko?",
 	"DuplicatePopupTitle": "Duplikuj okienko",
 	"DuplicatePopup": "Czy chcesz skopiować okienko?",
-	"popup_stage": "Etap",
-	"popup_stage_n": "Etap {{n}}",
-	"popup_add_stage": "Dodaj etap",
-	"popup_delete_stage_confirm": "Czy chcesz usunąć ten etap?"
+	"popup_step": "Etap",
+	"popup_step_n": "Etap {{n}}",
+	"popup_step_1": "Etap 1",
+	"popup_step_2": "Etap 2",
+	"popup_step_3": "Etap 3",
+	"popup_add_step": "Dodaj etap",
+	"popup_add_step_choose": "Jak chcesz dodać nowy etap?",
+	"popup_add_step_blank": "Pusty etap",
+	"popup_add_step_duplicate": "Duplikuj bieżący etap",
+	"popup_delete_step_confirm": "Czy chcesz usunąć ten etap?"
 }

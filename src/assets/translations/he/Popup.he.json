@@ -7,8 +7,14 @@
   "DeletePopupDesc": "האם ברצונכם למחוק את פופאפ?",
   "DuplicatePopupTitle": "שכפל פופאפ",
   "DuplicatePopupDesc": "האם ברצונכם לשכפל את הפופאפ?",
-  "popup_stage": "שלב",
-  "popup_stage_n": "שלב {{n}}",
-  "popup_add_stage": "הוספת שלב",
-  "popup_delete_stage_confirm": "האם ברצונכם למחוק את השלב?"
+  "popup_step": "שלב",
+  "popup_step_n": "שלב {{n}}",
+  "popup_step_1": "שלב 1",
+  "popup_step_2": "שלב 2",
+  "popup_step_3": "שלב 3",
+  "popup_add_step": "הוספת שלב",
+  "popup_add_step_choose": "כיצד ברצונכם להוסיף את השלב החדש?",
+  "popup_add_step_blank": "שלב ריק",
+  "popup_add_step_duplicate": "שכפל שלב נוכחי",
+  "popup_delete_step_confirm": "האם ברצונכם למחוק את השלב?"
 }
