@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import SidebarItem from './SideBarItem';
 import { useTranslation } from "react-i18next";
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import useRedirect from '../../../helpers/Routes/Redirect';
 import PulseemNewLogo from '../../../assets/images/PulseemNewLogo';
@@ -81,7 +81,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     }
   }, [externalIsCollapsed]);
 
-  const routes = getRoutes(
+  const routes = useMemo(() => getRoutes(
     t,
     isClal,
     accountFeatures,
@@ -90,7 +90,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     isRTL,
     userRoles,
     isGlobal && IsPoland
-  );
+  ), [t, isClal, accountFeatures, accountSettings, windowSize, isRTL, userRoles, isGlobal, IsPoland]);
 
   const getAccountName = () => {
     if (accountSettings?.IsDirectAccount && subAccount?.DirectAccountCompanyName) {
