@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
 
 // --- Interfaces --- //
-export interface PopupStage {
+export interface PopupStep {
   StepNumber: number;
   HtmlContent?: string;
   JsonData?: string;
@@ -61,9 +61,9 @@ interface PopUpManagementState {
   pagesLoading: boolean;
   pagesError: string | null;
   deletedPopups: Page[];
-  stages: PopupStage[];
-  stagesLoading: boolean;
-  stagesError: string | null;
+  steps: PopupStep[];
+  stepsLoading: boolean;
+  stepsError: string | null;
 }
 
 // --- Initial State --- //
@@ -77,9 +77,9 @@ const initialState: PopUpManagementState = {
   pagesLoading: false,
   pagesError: null,
   deletedPopups: [],
-  stages: [],
-  stagesLoading: false,
-  stagesError: null,
+  steps: [],
+  stepsLoading: false,
+  stepsError: null,
 };
 
 // --- Async Thunks --- //
@@ -158,8 +158,8 @@ export const getDeletedPopups = createAsyncThunk(
   }
 );
 
-export const getPopupStages = createAsyncThunk(
-  'popUpManagement/getPopupStages',
+export const getPopupSteps = createAsyncThunk(
+  'popUpManagement/getPopupSteps',
   async (webFormId: number, thunkAPI) => {
     try {
       const response = await PulseemReactInstance.get(`popup/GetPopupSteps`, { params: { webFormId } });
@@ -170,8 +170,8 @@ export const getPopupStages = createAsyncThunk(
   }
 );
 
-export const addPopupStage = createAsyncThunk(
-  'popUpManagement/addPopupStage',
+export const addPopupStep = createAsyncThunk(
+  'popUpManagement/addPopupStep',
   async (webFormId: number, thunkAPI) => {
     try {
       const response = await PulseemReactInstance.post('popup/AddPopupStep', { WebFormId: webFormId });
@@ -182,11 +182,11 @@ export const addPopupStage = createAsyncThunk(
   }
 );
 
-export const deletePopupStage = createAsyncThunk(
-  'popUpManagement/deletePopupStage',
-  async ({ webFormId, stageNumber }: { webFormId: number; stageNumber: number }, thunkAPI) => {
+export const deletePopupStep = createAsyncThunk(
+  'popUpManagement/deletePopupStep',
+  async ({ webFormId, stepNumber }: { webFormId: number; stepNumber: number }, thunkAPI) => {
     try {
-      const response = await PulseemReactInstance.post('popup/DeletePopupStep', { WebFormId: webFormId, StepNumber: stageNumber });
+      const response = await PulseemReactInstance.post('popup/DeletePopupStep', { WebFormId: webFormId, StepNumber: stepNumber });
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: (error as Error).message });
@@ -194,11 +194,11 @@ export const deletePopupStage = createAsyncThunk(
   }
 );
 
-export const savePopupStageContent = createAsyncThunk(
-  'popUpManagement/savePopupStageContent',
-  async ({ webFormId, stageNumber, htmlContent, jsonData }: { webFormId: number; stageNumber: number; htmlContent: string; jsonData: string }, thunkAPI) => {
+export const savePopupStepContent = createAsyncThunk(
+  'popUpManagement/savePopupStepContent',
+  async ({ webFormId, stepNumber, htmlContent, jsonData }: { webFormId: number; stepNumber: number; htmlContent: string; jsonData: string }, thunkAPI) => {
     try {
-      const response = await PulseemReactInstance.post('popup/SavePopupStepContent', { WebFormId: webFormId, StepNumber: stageNumber, HtmlContent: htmlContent, JsonData: jsonData });
+      const response = await PulseemReactInstance.post('popup/SavePopupStepContent', { WebFormId: webFormId, StepNumber: stepNumber, HtmlContent: htmlContent, JsonData: jsonData });
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: (error as Error).message });
@@ -289,51 +289,51 @@ const popUpManagementSlice = createSlice({
         state.pagesLoading = false;
         state.pagesError = (action.payload as { error: string }).error;
       })
-      // Stage Reducers
-      .addCase(getPopupStages.pending, (state) => {
-        state.stagesLoading = true;
-        state.stagesError = null;
+      // Step Reducers
+      .addCase(getPopupSteps.pending, (state) => {
+        state.stepsLoading = true;
+        state.stepsError = null;
       })
-      .addCase(getPopupStages.fulfilled, (state, action) => {
-        state.stagesLoading = false;
-        state.stages = action.payload?.Data || [];
+      .addCase(getPopupSteps.fulfilled, (state, action) => {
+        state.stepsLoading = false;
+        state.steps = action.payload?.Data || [];
       })
-      .addCase(getPopupStages.rejected, (state, action) => {
-        state.stagesLoading = false;
-        state.stagesError = (action.payload as { error: string })?.error || null;
+      .addCase(getPopupSteps.rejected, (state, action) => {
+        state.stepsLoading = false;
+        state.stepsError = (action.payload as { error: string })?.error || null;
       })
-      .addCase(addPopupStage.pending, (state) => {
-        state.stagesLoading = true;
-        state.stagesError = null;
+      .addCase(addPopupStep.pending, (state) => {
+        state.stepsLoading = true;
+        state.stepsError = null;
       })
-      .addCase(addPopupStage.fulfilled, (state) => {
-        state.stagesLoading = false;
+      .addCase(addPopupStep.fulfilled, (state) => {
+        state.stepsLoading = false;
       })
-      .addCase(addPopupStage.rejected, (state, action) => {
-        state.stagesLoading = false;
-        state.stagesError = (action.payload as { error: string })?.error || null;
+      .addCase(addPopupStep.rejected, (state, action) => {
+        state.stepsLoading = false;
+        state.stepsError = (action.payload as { error: string })?.error || null;
       })
-      .addCase(deletePopupStage.pending, (state) => {
-        state.stagesLoading = true;
-        state.stagesError = null;
+      .addCase(deletePopupStep.pending, (state) => {
+        state.stepsLoading = true;
+        state.stepsError = null;
       })
-      .addCase(deletePopupStage.fulfilled, (state) => {
-        state.stagesLoading = false;
+      .addCase(deletePopupStep.fulfilled, (state) => {
+        state.stepsLoading = false;
       })
-      .addCase(deletePopupStage.rejected, (state, action) => {
-        state.stagesLoading = false;
-        state.stagesError = (action.payload as { error: string })?.error || null;
+      .addCase(deletePopupStep.rejected, (state, action) => {
+        state.stepsLoading = false;
+        state.stepsError = (action.payload as { error: string })?.error || null;
       })
-      .addCase(savePopupStageContent.pending, (state) => {
-        state.stagesLoading = true;
-        state.stagesError = null;
+      .addCase(savePopupStepContent.pending, (state) => {
+        state.stepsLoading = true;
+        state.stepsError = null;
       })
-      .addCase(savePopupStageContent.fulfilled, (state) => {
-        state.stagesLoading = false;
+      .addCase(savePopupStepContent.fulfilled, (state) => {
+        state.stepsLoading = false;
       })
-      .addCase(savePopupStageContent.rejected, (state, action) => {
-        state.stagesLoading = false;
-        state.stagesError = (action.payload as { error: string })?.error || null;
+      .addCase(savePopupStepContent.rejected, (state, action) => {
+        state.stepsLoading = false;
+        state.stepsError = (action.payload as { error: string })?.error || null;
       });
   },
 });

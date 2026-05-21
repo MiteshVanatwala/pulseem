@@ -4,7 +4,7 @@ import { Close as CloseIcon } from '@material-ui/icons';
 import { useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { getLandingPagePreview } from '../../../redux/reducers/landingPagesSlice';
-import { getPopupStages, PopupStage } from '../../../redux/reducers/popUpManagementSlice';
+import { getPopupSteps, PopupStep } from '../../../redux/reducers/popUpManagementSlice';
 import { Loader } from '../../../components/Loader/Loader';
 import { actionURL } from '../../../config';
 
@@ -25,24 +25,24 @@ const PopupPreviewModal: React.FC<PopupPreviewModalProps> = ({
   const { t } = useTranslation();
   const [loading, setLoading] = useState<boolean>(false);
   const [contentWidth, setContentWidth] = useState<number>(400);
-  const [stageHeights, setStageHeights] = useState<Record<number, number>>({});
+  const [stepHeights, setStepHeights] = useState<Record<number, number>>({});
   const [closeButtonData, setCloseButtonData] = useState<{
     color?: string;
     bgcolor?: string;
     size?: string;
     position?: string;
   } | null>(null);
-  const [stages, setStages] = useState<PopupStage[]>([]);
-  const [currentPreviewStage, setCurrentPreviewStage] = useState<number>(1);
-  const [stageHtmlMap, setStageHtmlMap] = useState<Record<number, string>>({});
+  const [steps, setSteps] = useState<PopupStep[]>([]);
+  const [currentPreviewStep, setCurrentPreviewStep] = useState<number>(1);
+  const [stepHtmlMap, setStepHtmlMap] = useState<Record<number, string>>({});
   const iframeRefs = useRef<Record<number, HTMLIFrameElement | null>>({});
 
   useEffect(() => {
     if (open && popupId) {
-      setCurrentPreviewStage(1);
-      setStages([]);
-      setStageHtmlMap({});
-      setStageHeights({});
+      setCurrentPreviewStep(1);
+      setSteps([]);
+      setStepHtmlMap({});
+      setStepHeights({});
       loadPreview();
     }
   }, [open, popupId]);
@@ -76,7 +76,7 @@ const PopupPreviewModal: React.FC<PopupPreviewModalProps> = ({
 
       // @ts-ignore
       const previewResponse = await dispatch(getLandingPagePreview(popupId)) as any;
-      const stage1Html = previewResponse?.payload?.Data?.HtmlData || '';
+      const step1Html = previewResponse?.payload?.Data?.HtmlData || '';
 
       const closeButtonHtml = previewResponse?.payload?.Data?.CloseButtonHtml;
       if (closeButtonHtml) {
@@ -94,27 +94,27 @@ const PopupPreviewModal: React.FC<PopupPreviewModalProps> = ({
       }
 
       // @ts-ignore
-      const stagesResult = await dispatch(getPopupStages(popupId)) as any;
-      const stagesData: PopupStage[] = stagesResult?.payload?.Data || [];
+      const stepsResult = await dispatch(getPopupSteps(popupId)) as any;
+      const stepsData: PopupStep[] = stepsResult?.payload?.Data || [];
 
-      const htmlMap: Record<number, string> = { 1: stage1Html };
-      stagesData.forEach((stage: PopupStage) => {
-        if (stage.StepNumber > 1 && stage.HtmlContent) {
-          htmlMap[stage.StepNumber] = stage.HtmlContent;
+      const htmlMap: Record<number, string> = { 1: step1Html };
+      stepsData.forEach((step: PopupStep) => {
+        if (step.StepNumber > 1 && step.HtmlContent) {
+          htmlMap[step.StepNumber] = step.HtmlContent;
         }
       });
 
-      const styleWidth = extractMaxWidthFromHtml(stage1Html);
+      const styleWidth = extractMaxWidthFromHtml(step1Html);
       if (styleWidth) {
         const minWidth = 400;
         const maxWidth = window.innerWidth * 0.9;
         setContentWidth(Math.min(Math.max(styleWidth, minWidth), maxWidth));
       }
 
-      const multiStages = stagesData.length > 1 ? stagesData : [];
-      setStages(multiStages);
-      setStageHtmlMap(htmlMap);
-      setCurrentPreviewStage(1);
+      const multiSteps = stepsData.length > 1 ? stepsData : [];
+      setSteps(multiSteps);
+      setStepHtmlMap(htmlMap);
+      setCurrentPreviewStep(1);
     } catch (error) {
       console.error('Error loading preview:', error);
     } finally {
@@ -122,48 +122,48 @@ const PopupPreviewModal: React.FC<PopupPreviewModalProps> = ({
     }
   };
 
-  const measureIframeHeight = (stageNum: number, iframe: HTMLIFrameElement) => {
+  const measureIframeHeight = (stepNum: number, iframe: HTMLIFrameElement) => {
     try {
       const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
       if (iframeDoc && iframeDoc.body) {
         const height = iframeDoc.body.scrollHeight;
         const maxHeight = window.innerHeight * 0.9;
-        setStageHeights(prev => ({ ...prev, [stageNum]: Math.min(height, maxHeight) }));
+        setStepHeights(prev => ({ ...prev, [stepNum]: Math.min(height, maxHeight) }));
       }
     } catch (error) {
       console.error('Error measuring iframe height:', error);
     }
   };
 
-  const handleIframeLoad = (stageNum: number, iframe: HTMLIFrameElement) => {
+  const handleIframeLoad = (stepNum: number, iframe: HTMLIFrameElement) => {
     // Measure immediately, then re-measure after a tick in case fonts/images
     // affect layout slightly after the load event fires.
-    measureIframeHeight(stageNum, iframe);
-    setTimeout(() => measureIframeHeight(stageNum, iframe), 100);
+    measureIframeHeight(stepNum, iframe);
+    setTimeout(() => measureIframeHeight(stepNum, iframe), 100);
   };
 
-  const handleStageTabClick = (stageNum: number) => {
-    if (stageNum === currentPreviewStage) return;
-    setCurrentPreviewStage(stageNum);
-    // Re-measure when the stage becomes visible — hidden iframes may have
+  const handleStepTabClick = (stepNum: number) => {
+    if (stepNum === currentPreviewStep) return;
+    setCurrentPreviewStep(stepNum);
+    // Re-measure when the step becomes visible — hidden iframes may have
     // had inaccurate layout at onLoad time (display:none skips layout compute).
     setTimeout(() => {
-      const iframe = iframeRefs.current[stageNum];
-      if (iframe) measureIframeHeight(stageNum, iframe);
+      const iframe = iframeRefs.current[stepNum];
+      if (iframe) measureIframeHeight(stepNum, iframe);
     }, 50);
   };
 
-  const renderStageTabs = () => {
-    if (stages.length < 2) return null;
+  const renderStepTabs = () => {
+    if (steps.length < 2) return null;
     return (
       <Box style={{ display: 'flex', gap: 8, padding: '10px 16px 0', justifyContent: 'center' }}>
-        {stages.map((stage) => {
-          const isActive = currentPreviewStage === stage.StepNumber;
+        {steps.map((step) => {
+          const isActive = currentPreviewStep === step.StepNumber;
           return (
             <Button
-              key={stage.StepNumber}
+              key={step.StepNumber}
               size="small"
-              onClick={() => handleStageTabClick(stage.StepNumber)}
+              onClick={() => handleStepTabClick(step.StepNumber)}
               style={{
                 minWidth: 90,
                 borderRadius: 20,
@@ -178,7 +178,7 @@ const PopupPreviewModal: React.FC<PopupPreviewModalProps> = ({
                 transition: 'none',
               }}
             >
-              {t('Popup.popup_step_n', { n: stage.StepNumber })}
+              {t('Popup.popup_step_n', { n: step.StepNumber })}
             </Button>
           );
         })}
@@ -241,18 +241,18 @@ const PopupPreviewModal: React.FC<PopupPreviewModalProps> = ({
           </Box>
         ) : (
           <>
-            {renderStageTabs()}
+            {renderStepTabs()}
             <div className={classes.popupPreviewContent} style={{ position: 'relative' }}>
-              {Object.entries(stageHtmlMap).map(([stageNumStr, stageHtml]) => {
-                const stageNum = Number(stageNumStr);
-                const isVisible = stageNum === currentPreviewStage;
+              {Object.entries(stepHtmlMap).map(([stepNumStr, stepHtml]) => {
+                const stepNum = Number(stepNumStr);
+                const isVisible = stepNum === currentPreviewStep;
                 return (
                   <iframe
-                    key={stageNum}
-                    ref={el => { iframeRefs.current[stageNum] = el; }}
+                    key={stepNum}
+                    ref={el => { iframeRefs.current[stepNum] = el; }}
                     style={{
                       width: '100%',
-                      height: `${stageHeights[stageNum] || 600}px`,
+                      height: `${stepHeights[stepNum] || 600}px`,
                       border: 'none',
                       display: 'block',
                       overflow: 'auto',
@@ -267,9 +267,9 @@ const PopupPreviewModal: React.FC<PopupPreviewModalProps> = ({
                       pointerEvents: isVisible ? 'auto' : 'none',
                       opacity: isVisible ? 1 : 0,
                     }}
-                    title={`Popup Preview Stage ${stageNum}`}
-                    srcDoc={stageHtml}
-                    onLoad={e => handleIframeLoad(stageNum, e.currentTarget)}
+                    title={`Popup Preview Step ${stepNum}`}
+                    srcDoc={stepHtml}
+                    onLoad={e => handleIframeLoad(stepNum, e.currentTarget)}
                   />
                 );
               })}
