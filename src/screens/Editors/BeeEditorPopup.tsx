@@ -130,6 +130,7 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
   const [showDeleteStepConfirm, setShowDeleteStepConfirm] = useState<number | null>(null);
   const stepDataRef = useRef<PopupStep[]>([]);
   const currentStepRef = useRef<number>(stepParam);
+  const isSwitchingStep = useRef(false);
   const [stepOptionsAnchor, setStepOptionsAnchor] = useState<null | HTMLElement>(null);
   const [optionsForStep, setOptionsForStep] = useState<number>(0);
   const [showAddStepOptions, setShowAddStepOptions] = useState(false);
@@ -579,6 +580,15 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
 
   //#region Pulseem Methods (Save, Delete, Exit, Back, Test Send)
   const onSave = async (args: SaveLandingPageArguments) => {
+    // Discard saves fired by BeePlugin during load() on a step switch —
+    // the previous step's content was already persisted before switchToStep ran.
+    if (isSwitchingStep.current) {
+      isSwitchingStep.current = false;
+      return;
+    }
+    // Capture the target step once so that if switchToStep() is called later
+    // in this same callback (changing the ref), the step number stays consistent.
+    const savedForStep = currentStepRef.current;
     //@ts-ignore
     const reInit = saveRef.current?.reInitEditor;
     try {
@@ -610,13 +620,13 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
       //@ts-ignore
       await dispatch(savePopupStepContent({
         webFormId: Number(args.campaignId),
-        stepNumber: currentStepRef.current,
+        stepNumber: savedForStep,
         htmlContent: finalHtml,
         jsonData: finalJson,
       }));
       // Keep stepDataRef in sync so switchToStep can load the latest saved content
       stepDataRef.current = stepDataRef.current.map(s =>
-        s.StepNumber === currentStepRef.current ? { ...s, HtmlContent: finalHtml, JsonData: finalJson } : s
+        s.StepNumber === savedForStep ? { ...s, HtmlContent: finalHtml, JsonData: finalJson } : s
       );
 
       // Handle pending duplicate — create new step and copy current content into it
@@ -664,7 +674,7 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
       }
 
       // For step > 1, skip saveWebform (to avoid overwriting step 1 WebForm data)
-      if (currentStepRef.current > 1) {
+      if (savedForStep > 1) {
         //@ts-ignore
         if (saveRef.current?.showAnimation && !saveRef.current?.saveTemplate) {
           // @ts-ignore
@@ -1012,8 +1022,12 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
 
     // Reload only the canvas — BeePlugin loads the new template in-place
     if (editorRef.current) {
+      isSwitchingStep.current = true;
       // @ts-ignore
       editorRef.current.load(template);
+      // Reset after the current call stack clears so any onSave fired
+      // synchronously by load() is caught and discarded above
+      setTimeout(() => { isSwitchingStep.current = false; }, 0);
     }
   };
 
