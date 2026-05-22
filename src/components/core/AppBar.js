@@ -263,7 +263,7 @@ export const TopAppBar = ({ classes, currentPage = '', showAppBar = true }) => {
         <Box style={{ zIndex: 1300 }}>
           <LanguageSelector classes={classes} />
         </Box>
-        {!cameFromSubAccount && isAdmin !== '' && <AppBarItem
+        {!cameFromSubAccount && isAdmin !== '' && isAdmin !== 'True' && <AppBarItem
           classes={classes}
           item={{ title: t('appBar.admin') }}
           onMainClick={() => {
