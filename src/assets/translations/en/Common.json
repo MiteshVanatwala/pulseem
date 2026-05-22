@@ -996,5 +996,6 @@
   "allNumbers": "All Numbers",
   "field": "Field",
   "operator": "Operator",
-  "value": "Value"
+  "value": "Value",
+  "pulseSendPill": "Pulse Send"
 }

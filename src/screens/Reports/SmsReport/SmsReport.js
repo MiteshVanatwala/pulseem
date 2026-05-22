@@ -621,6 +621,7 @@ const SmsReport = ({ classes }) => {
     const udate = UpdateDate ? moment(UpdateDate) : null
     const isSchedule = date ? date > moment() : false
 
+    const isPulseSend = row.IsPulseSend === true;
     return (
       <>
         <Typography className={classes.nameEllipsis}>
@@ -639,7 +640,11 @@ const SmsReport = ({ classes }) => {
             </Typography>
           )
         }
-
+        {isPulseSend && (
+          <Typography className={classes.pulseSendPill}>
+            {t('common.pulseSendPill')}
+          </Typography>
+        )}
       </>
     )
   }

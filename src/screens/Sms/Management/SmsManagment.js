@@ -430,7 +430,7 @@ const SmsManagnentScreen = ({ classes }) => {
 		)
 	}
 
-	const renderStatusCell = (status) => {
+	const renderStatusCell = (status, isPulseSend) => {
 		const statuses = {
 			1: 'common.Created',
 			2: 'common.Sending',
@@ -441,7 +441,7 @@ const SmsManagnentScreen = ({ classes }) => {
 			7: 'campaigns.Approve'
 		}
 		return (
-			<>
+			<Box>
 				<Typography className={clsx(
 					classes.middleText,
 					classes.recipientsStatus,
@@ -456,7 +456,12 @@ const SmsManagnentScreen = ({ classes }) => {
 				>
 					{t(statuses[status])}
 				</Typography>
-			</>
+				{isPulseSend && (
+					<Typography className={classes.pulseSendPill}>
+						{t('common.pulseSendPill')}
+					</Typography>
+				)}
+			</Box>
 		)
 	}
 
@@ -540,7 +545,7 @@ const SmsManagnentScreen = ({ classes }) => {
 					{renderMessagesCell(row.CreditsPerSms)}
 				</TableCell>
 				<TableCell classes={cellStyle} align='center' className={classes.flex1}>
-					{renderStatusCell(row.Status)}
+					{renderStatusCell(row.Status, row.IsPulseSend === true)}
 				</TableCell>
 				<TableCell
 					component='th'
@@ -561,7 +566,7 @@ const SmsManagnentScreen = ({ classes }) => {
 					classes={{ root: classes.tableCellRoot }}>
 					<Box className={classes.justifyBetween}>
 						<Box className={classes.inlineGrid}>{renderNameCell(row)}</Box>
-						<Box>{renderStatusCell(row.Status)}</Box>
+						<Box>{renderStatusCell(row.Status, row.IsPulseSend === true)}</Box>
 					</Box>
 					{renderCellIcons(row)}
 				</TableCell>
