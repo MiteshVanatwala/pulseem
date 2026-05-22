@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import { debounce, includes } from 'lodash';
 import BeePlugin from '@mailupinc/bee-plugin'
-import { Box, Button, Grid, TextField, Typography } from '@material-ui/core'
+import { Box, Button, Divider, Grid, Menu, MenuItem, TextField, Typography } from '@material-ui/core'
 import { useRef, useState, useEffect } from 'react'
 import DefaultScreen from '../DefaultScreen'
 import { useSelector, useDispatch } from 'react-redux';
@@ -12,6 +12,7 @@ import Toast from '../../components/Toast/Toast.component';
 import { getAuthorizedEmails, getCommonFeatures, isAlive } from '../../redux/reducers/commonSlice';
 import WizardActions from '../../components/Wizard/WizardActions';
 import { getById, deleteLPUserBlock, deleteLandingPage, getAllLPTemplatesBySubaccountId, getLPPublicTemplates, getLPTemplateById, getLPUserblocks, saveLPTemplateToAccount, saveLPUserBlock, saveWebform, publish, setWebformGroups } from '../../redux/reducers/PopupSlice';
+import { getPopupSteps, addPopupStep, deletePopupStep, savePopupStepContent, PopupStep } from '../../redux/reducers/popUpManagementSlice';
 import { initClientForm, initExtraDataField, initLandingPages } from './helper/MigratePulseemData';
 import { DialogType, DefaultContent, BeeConfig } from './helper/configPopup';
 import { IoMdImages } from 'react-icons/io';
@@ -28,7 +29,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import moment from 'moment';
 /* END Bee */
 import { loginURL, sitePrefix } from '../../config';
-import { MdArrowBackIos, MdArrowForwardIos, MdCheck, MdGroups, MdOutlinePublic } from 'react-icons/md';
+import { MdArrowBackIos, MdArrowForwardIos, MdCheck, MdGroups, MdOutlinePublic, MdAdd, MdKeyboardArrowDown, MdMoreVert, MdDelete } from 'react-icons/md';
 import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
 import { BEE_EDITOR_TYPES } from '../../helpers/Constants';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
@@ -46,6 +47,9 @@ import { GenericModal } from '../HtmlCampaign/components/GenericModal';
 import SaveTemplate from '../HtmlCampaign/modals/SaveTemplate';
 import { getLPBeeToken } from '../../redux/reducers/landingPagesSlice';
 import { injectRagSansFontFace } from '../../helpers/Fonts/Init';
+import TierPlans from '../../components/TierPlans/TierPlans';
+import { findPlanByFeatureCode } from '../../redux/reducers/TiersSlice';
+import { TierFeatures } from '../../helpers/Constants';
 
 interface BeeEditorPopupProps extends BeeEditorModel {
   clientId?: string;
@@ -67,6 +71,7 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
   const { extraData, previousLandingData } = useSelector((state: { sms: SMSStoreProps }) => state.sms);
   const { language, isRTL, userRoles } = useSelector((state: StateType) => state.core);
   const { tokenAlive, accountSettings, accountFeatures } = useSelector((state: { common: commonProps }) => state.common);
+  const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
   const { landingPage, landingPageUserBlocks, ToastMessages, LPBeeToken, publicTemplates, templatesBySubAccount } = useSelector((state: { landingPages: BeeEditorStoreModel }) => state.landingPages)
   // const { BeeToken } = useSelector((state: { popup: any }) => state.popup)
   const [showLoader, setLoader] = useState(false);
@@ -119,6 +124,19 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
   // Draft credentials for dialog (avoid hooks inside non-component functions)
   const [popupDraftClientId, setPopupDraftClientId] = useState<string>(propClientId || '');
   const [popupDraftClientSecret, setPopupDraftClientSecret] = useState<string>(propClientSecret || '');
+  // Multi-step state
+  const stepParam = parseInt(new URLSearchParams(window.location.search).get("step") || "1");
+  const [currentStep, setCurrentStep] = useState<number>(stepParam);
+  const [steps, setSteps] = useState<number[]>([1]);
+  const [showDeleteStepConfirm, setShowDeleteStepConfirm] = useState<number | null>(null);
+  const stepDataRef = useRef<PopupStep[]>([]);
+  const currentStepRef = useRef<number>(stepParam);
+  const isSwitchingStep = useRef(false);
+  const [stepOptionsAnchor, setStepOptionsAnchor] = useState<null | HTMLElement>(null);
+  const [optionsForStep, setOptionsForStep] = useState<number>(0);
+  const [showAddStepOptions, setShowAddStepOptions] = useState(false);
+  const [showTierPlans, setShowTierPlans] = useState(false);
+  const [tierMessageCode, setTierMessageCode] = useState('');
   //#endregion State
 
   const getLanguageCodeFromBaseLanguage = (baseLanguage: number): string => {
@@ -203,6 +221,13 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
   }
   useEffect(() => {
     if (dataReady) {
+      if (stepParam > 1 && (currentPlan?.Id || 0) < 3) {
+        const url = new URL(window.location.href);
+        url.searchParams.set('step', '1');
+        window.history.replaceState({}, '', url.toString());
+        currentStepRef.current = 1;
+        setCurrentStep(1);
+      }
       Promise.all([initFields()]).then(() => {
         return true;
       })
@@ -297,6 +322,13 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
     await dispatch(getTestGroups());
     await dispatch(getLPUserblocks());
     await dispatch(getAuthorizedEmails());
+    if (Number(moduleId) > 0) {
+      //@ts-ignore
+      const stepsResult = await dispatch(getPopupSteps(Number(moduleId))) as any;
+      const stepsData: PopupStep[] = stepsResult?.payload?.Data || [];
+      stepDataRef.current = stepsData;
+      setSteps(stepsData.length > 0 ? stepsData.map((s: PopupStep) => s.StepNumber) : [1]);
+    }
     setDataReady(true);
     const initBeeToken = async () => {
       await dispatch(getLPBeeToken());
@@ -468,7 +500,15 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
           }
           else {
             const beeTest = new BeePlugin(JSON.parse(LPBeeToken.Message));
-            const template = forceTemplate !== null ? forceTemplate : webform?.JsonData ? JSON.parse(webform?.JsonData) : defaultContent.defaultTemplate;
+            const currentStepData = stepDataRef.current.find((s: PopupStep) => s.StepNumber === currentStep);
+            const stepJson = currentStepData?.JsonData ?? null;
+            const template = forceTemplate !== null
+              ? forceTemplate
+              : stepJson
+                ? JSON.parse(stepJson)
+                : currentStep === 1 && webform?.JsonData
+                  ? JSON.parse(webform?.JsonData)
+                  : defaultContent.defaultTemplate;
 
             //@ts-ignore
             beeTest.start(config, template).then((instance) => {
@@ -541,6 +581,15 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
 
   //#region Pulseem Methods (Save, Delete, Exit, Back, Test Send)
   const onSave = async (args: SaveLandingPageArguments) => {
+    // Discard saves fired by BeePlugin during load() on a step switch —
+    // the previous step's content was already persisted before switchToStep ran.
+    if (isSwitchingStep.current) {
+      isSwitchingStep.current = false;
+      return;
+    }
+    // Capture the target step once so that if switchToStep() is called later
+    // in this same callback (changing the ref), the step number stays consistent.
+    const savedForStep = currentStepRef.current;
     //@ts-ignore
     const reInit = saveRef.current?.reInitEditor;
     try {
@@ -566,6 +615,78 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
         } else {
           finalHtml = finalHtml.replace(/(<html[^>]*>)/i, `$1${cssInjection}`);
         }
+      }
+
+      // Always persist step content to the steps table
+      //@ts-ignore
+      await dispatch(savePopupStepContent({
+        webFormId: Number(args.campaignId),
+        stepNumber: savedForStep,
+        htmlContent: finalHtml,
+        jsonData: finalJson,
+      }));
+      // Keep stepDataRef in sync so switchToStep can load the latest saved content
+      stepDataRef.current = stepDataRef.current.map(s =>
+        s.StepNumber === savedForStep ? { ...s, HtmlContent: finalHtml, JsonData: finalJson } : s
+      );
+
+      // Handle pending duplicate — create new step and copy current content into it
+      //@ts-ignore
+      if (saveRef.current?.pendingDuplicateStep) {
+        //@ts-ignore
+        saveRef.current = { ...saveRef.current, pendingDuplicateStep: false };
+        //@ts-ignore
+        const dupResult = await dispatch(addPopupStep(Number(args.campaignId))) as any;
+        if (dupResult?.payload?.StatusCode === 201) {
+          const newStep = dupResult.payload.Data?.StepNumber;
+          //@ts-ignore
+          await dispatch(savePopupStepContent({
+            webFormId: Number(args.campaignId),
+            stepNumber: newStep,
+            htmlContent: finalHtml,
+            jsonData: finalJson,
+          }));
+          //@ts-ignore
+          const refreshResult = await dispatch(getPopupSteps(Number(args.campaignId))) as any;
+          const refreshedSteps: PopupStep[] = refreshResult?.payload?.Data || [];
+          stepDataRef.current = refreshedSteps;
+          setSteps(refreshedSteps.length > 0 ? refreshedSteps.map((s: PopupStep) => s.StepNumber) : [1]);
+          switchToStep(newStep, refreshedSteps);
+        } else if (dupResult?.payload?.StatusCode === 927) {
+          setTierMessageCode(dupResult?.payload?.Message || 'POPUP_STEPS');
+          setDialogType({ type: 'tier' });
+        } else {
+          // @ts-ignore
+          setToastMessage({ severity: 'error', color: 'error', message: dupResult?.payload?.Message, showAnimtionCheck: false });
+        }
+        setLoader(false);
+        return;
+      }
+
+      // Handle pending step switch — reload canvas only, no full page reload
+      //@ts-ignore
+      if (saveRef.current?.pendingStepSwitch != null) {
+        //@ts-ignore
+        const targetStep = saveRef.current.pendingStepSwitch;
+        //@ts-ignore
+        saveRef.current = { ...saveRef.current, pendingStepSwitch: null };
+        switchToStep(targetStep);
+        return;
+      }
+
+      // For step > 1, skip saveWebform (to avoid overwriting step 1 WebForm data)
+      if (savedForStep > 1) {
+        //@ts-ignore
+        if (saveRef.current?.showAnimation && !saveRef.current?.saveTemplate) {
+          // @ts-ignore
+          setToastMessage({
+            severity: 'success',
+            color: 'success',
+            message: t('PopupTriggers.popupSaved'),
+            showAnimtionCheck: true
+          } as any);
+        }
+        return;
       }
 
       //@ts-ignore
@@ -875,6 +996,129 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
     //@ts-ignore
     await editorRef.current.save();
   }
+  //#region Step management
+  // Reloads only the editor canvas for the target step — no full page reload
+  const switchToStep = (targetStep: number, updatedStepData?: PopupStep[]) => {
+    const stepData = updatedStepData ?? stepDataRef.current;
+    const webform = landingPage?.Data?.WebForm;
+    const isRtlLang = webform?.BaseLanguage === 0 || webform?.BaseLanguage === 8 ? true : false;
+    const defaultContent = DefaultContent(isRtlLang, webform?.BaseLanguage);
+
+    const targetStepData = stepData.find((s: PopupStep) => s.StepNumber === targetStep);
+    const stepJson = targetStepData?.JsonData ?? null;
+    const template = stepJson
+      ? JSON.parse(stepJson)
+      : targetStep === 1 && webform?.JsonData
+        ? JSON.parse(webform.JsonData)
+        : defaultContent.defaultTemplate;
+
+    // Update URL param without triggering a navigation/reload
+    const url = new URL(window.location.href);
+    url.searchParams.set('step', String(targetStep));
+    window.history.replaceState({}, '', url.toString());
+
+    // Keep ref and state in sync so subsequent saves target the right step
+    currentStepRef.current = targetStep;
+    setCurrentStep(targetStep);
+
+    // Reload only the canvas — BeePlugin loads the new template in-place
+    if (editorRef.current) {
+      isSwitchingStep.current = true;
+      // @ts-ignore
+      editorRef.current.load(template);
+      // Reset after the current call stack clears so any onSave fired
+      // synchronously by load() is caught and discarded above
+      setTimeout(() => { isSwitchingStep.current = false; }, 0);
+    }
+  };
+
+  const handleGetPlanForFeature = (code: string) => {
+    const planName = findPlanByFeatureCode(code, availablePlans, currentPlan?.Id);
+    if (planName) {
+      return t('billing.tier.featureNotAvailable')
+        .replace('{feature}', t(TierFeatures[code as keyof typeof TierFeatures] || code))
+        .replace('{planName}', planName);
+    }
+    return t('billing.tier.noFeatureAvailable');
+  };
+
+  const handleStepSwitch = (targetStep: number) => {
+    if (targetStep === currentStep) return;
+    if (targetStep > 1 && (currentPlan?.Id || 0) < 3) {
+      setTierMessageCode('POPUP_STEPS');
+      setDialogType({ type: 'tier' });
+      return;
+    }
+    //@ts-ignore
+    saveRef.current = { ...saveRef.current, pendingStepSwitch: targetStep, showAnimation: false };
+    //@ts-ignore
+    editorRef.current.save();
+  };
+
+  const handleAddStepClick = () => {
+    if ((currentPlan?.Id || 0) < 3) {
+      setTierMessageCode('POPUP_STEPS');
+      setDialogType({ type: 'tier' });
+      return;
+    }
+    setShowAddStepOptions(true);
+  };
+
+  const handleAddStepBlank = async () => {
+    setShowAddStepOptions(false);
+    setLoader(true);
+    //@ts-ignore
+    const result = await dispatch(addPopupStep(Number(moduleId))) as any;
+    if (result?.payload?.StatusCode === 201) {
+      const newStep = result.payload.Data?.StepNumber;
+      //@ts-ignore
+      const stepsResult = await dispatch(getPopupSteps(Number(moduleId))) as any;
+      const stepsData: PopupStep[] = stepsResult?.payload?.Data || [];
+      stepDataRef.current = stepsData;
+      setSteps(stepsData.length > 0 ? stepsData.map((s: PopupStep) => s.StepNumber) : [1]);
+      setLoader(false);
+      switchToStep(newStep, stepsData);
+    } else if (result?.payload?.StatusCode === 927) {
+      setTierMessageCode(result?.payload?.Message || 'POPUP_STEPS');
+      setDialogType({ type: 'tier' });
+      setLoader(false);
+    } else {
+      // @ts-ignore
+      setToastMessage({ severity: 'error', color: 'error', message: result?.payload?.Message, showAnimtionCheck: false });
+      setLoader(false);
+    }
+  };
+
+  const handleAddStepDuplicate = () => {
+    setShowAddStepOptions(false);
+    setLoader(true);
+    //@ts-ignore
+    saveRef.current = { ...saveRef.current, pendingDuplicateStep: true, showAnimation: false };
+    //@ts-ignore
+    editorRef.current.save();
+  };
+
+  const handleDeleteStep = async (stepNumber: number) => {
+    setShowDeleteStepConfirm(null);
+    setLoader(true);
+    //@ts-ignore
+    const result = await dispatch(deletePopupStep({ webFormId: Number(moduleId), stepNumber })) as any;
+    if (result?.payload?.StatusCode === 201) {
+      //@ts-ignore
+      const stepsResult = await dispatch(getPopupSteps(Number(moduleId))) as any;
+      const stepsData: PopupStep[] = stepsResult?.payload?.Data || [];
+      stepDataRef.current = stepsData;
+      setSteps(stepsData.length > 0 ? stepsData.map((s: PopupStep) => s.StepNumber) : [1]);
+      setLoader(false);
+      switchToStep(1, stepsData);
+    } else {
+      // @ts-ignore
+      setToastMessage({ severity: 'error', color: 'error', message: result?.payload?.Message, showAnimtionCheck: false });
+      setLoader(false);
+    }
+  };
+  //#endregion Step management
+
   //#region Wizard buttons
   const renderTemplateButtons = () => {
     return <>
@@ -926,6 +1170,109 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
       >
         {t('common.Groups')}
       </Button>
+      {/* Steps segmented control — only render after data is ready to avoid flash of Step 1 */}
+      {dataReady && (
+        <>
+          <Box
+            style={{
+              display: 'inline-flex',
+              alignItems: 'stretch',
+              border: '2px solid #F65026',
+              borderRadius: 20,
+              overflow: 'hidden',
+              background: '#fff',
+              margin: '4px 8px',
+              minHeight: 34,
+            }}
+          >
+            {steps.map((stepNum, index) => {
+              const isActive = currentStep === stepNum;
+              return (
+                <Box key={stepNum} style={{ display: 'inline-flex', alignItems: 'stretch' }}>
+                  {index > 0 && (
+                    <Box style={{ width: 2, backgroundColor: '#F65026', flexShrink: 0 }} />
+                  )}
+                  <Button
+                    size='medium'
+                    className={clsx(classes.btn, isActive && classes.btnStepActive)}
+                    onClick={() => handleStepSwitch(stepNum)}
+                    style={{
+                      border: 'none',
+                      borderRadius: 0,
+                      boxShadow: 'none',
+                      padding: '4px 14px',
+                      whiteSpace: 'nowrap',
+                      minWidth: 'unset',
+                    }}
+                  >
+                    {t('Popup.popup_step_n', { n: stepNum })}
+                  </Button>
+                  {stepNum > 1 && isActive && (
+                    <Button
+                      size='small'
+                      className={clsx(classes.btn, classes.btnStepActive)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setOptionsForStep(stepNum);
+                        setStepOptionsAnchor(e.currentTarget);
+                      }}
+                      style={{
+                        border: 'none',
+                        borderRadius: 0,
+                        minWidth: 'unset',
+                        padding: '4px 8px',
+                        boxShadow: 'none',
+                      }}
+                    >
+                      <MdMoreVert style={{ fontSize: 18 }} />
+                    </Button>
+                  )}
+                </Box>
+              );
+            })}
+            {steps.length < 3 && (
+              <Box style={{ display: 'inline-flex', alignItems: 'stretch' }}>
+                <Box style={{ width: 2, backgroundColor: '#F65026', flexShrink: 0 }} />
+                <Button
+                  size='medium'
+                  className={clsx(classes.btn)}
+                  onClick={handleAddStepClick}
+                  style={{
+                    border: 'none',
+                    borderRadius: 0,
+                    boxShadow: 'none',
+                    padding: '4px 10px',
+                    minWidth: 'unset',
+                  }}
+                >
+                  <MdAdd style={{ fontSize: 20 }} />
+                </Button>
+              </Box>
+            )}
+          </Box>
+
+          {/* Step options menu — delete for steps 2 and 3 */}
+          <Menu
+            anchorEl={stepOptionsAnchor}
+            open={Boolean(stepOptionsAnchor)}
+            onClose={() => setStepOptionsAnchor(null)}
+            getContentAnchorEl={null}
+            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+            transformOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+          >
+            <MenuItem
+              onClick={() => {
+                setStepOptionsAnchor(null);
+                setShowDeleteStepConfirm(optionsForStep);
+              }}
+              style={{ color: '#d32f2f' }}
+            >
+              <MdDelete style={{ marginInlineEnd: 6, fontSize: 18 }} />
+              {t('common.Delete')}
+            </MenuItem>
+          </Menu>
+        </>
+      )}
     </>
   }
   const renderButtons = () => {
@@ -1280,7 +1627,44 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
   const renderDialog = () => {
     const { type, data } = dialogType || {}
     let currentDialog = {};
-    if (type === DialogType.Templates) {
+    if (type === 'tier') {
+      currentDialog = {
+        showDivider: false,
+        title: t('billing.tier.permission'),
+        showDefaultButtons: false,
+        content: (
+          <Typography style={{ fontSize: 16, textAlign: 'center' }}>
+            {handleGetPlanForFeature(tierMessageCode)}
+          </Typography>
+        ),
+        renderButtons: () => (
+          <Grid container spacing={2} justifyContent='center' style={{ marginTop: 8 }}>
+            <Grid item>
+              <Button
+                size='small'
+                variant='contained'
+                className={clsx(classes.btn, classes.btnRounded)}
+                onClick={() => { setDialogType(null); setShowTierPlans(true); }}
+              >
+                {t('billing.upgradePlan')}
+              </Button>
+            </Grid>
+            <Grid item>
+              <Button
+                size='small'
+                variant='contained'
+                className={clsx(classes.btn, classes.btnRounded)}
+                onClick={() => setDialogType(null)}
+              >
+                {t('common.cancel')}
+              </Button>
+            </Grid>
+          </Grid>
+        ),
+        onClose: () => setDialogType(null),
+        onCancel: () => setDialogType(null),
+      };
+    } else if (type === DialogType.Templates) {
       currentDialog = renderTemplateDialog();
     } else if (type === DialogType.LOGOUT) {
       currentDialog = logoutDialog();
@@ -1477,6 +1861,60 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
         }}
         isOpen={dialog === DialogType.SAVE_TEMPLATE}
       />
+      {showTierPlans && (
+        <TierPlans
+          classes={classes}
+          isOpen={showTierPlans}
+          onClose={() => setShowTierPlans(false)}
+        />
+      )}
+      {showAddStepOptions && (
+        <BaseDialog
+          classes={classes}
+          open={true}
+          title={t('Popup.popup_add_step')}
+          //@ts-ignore
+          showDefaultButtons={false}
+          childrenStyle={classes.noMargin}
+          onClose={() => setShowAddStepOptions(false)}
+          onCancel={() => setShowAddStepOptions(false)}
+        >
+          <Box style={{ textAlign: 'center', padding: '12px 0 16px' }}>
+            <Typography style={{ marginBottom: 16, color: '#555' }}>
+              {t('Popup.popup_add_step_choose')}
+            </Typography>
+            <Box style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
+              <Button
+                variant='contained'
+                className={clsx(classes.btn, classes.btnRounded)}
+                onClick={handleAddStepBlank}
+              >
+                {t('Popup.popup_add_step_blank')}
+              </Button>
+              <Button
+                variant='contained'
+                className={clsx(classes.btn, classes.btnRounded)}
+                onClick={handleAddStepDuplicate}
+              >
+                {t('Popup.popup_add_step_duplicate')}
+              </Button>
+            </Box>
+          </Box>
+        </BaseDialog>
+      )}
+      {showDeleteStepConfirm !== null && (
+        <BaseDialog
+          classes={classes}
+          open={true}
+          title={t('Popup.popup_step_n', { n: showDeleteStepConfirm })}
+          //@ts-ignore
+          onClose={() => setShowDeleteStepConfirm(null)}
+          onCancel={() => setShowDeleteStepConfirm(null)}
+          onConfirm={() => handleDeleteStep(showDeleteStepConfirm)}
+        >
+          <Typography>{t('Popup.popup_delete_step_confirm')}</Typography>
+        </BaseDialog>
+      )}
     </DefaultScreen>
   )
 }
