@@ -276,13 +276,9 @@ const popUpManagementSlice = createSlice({
             if (Status === 2) {
               state.pages[index].StatusName = 'Active';
               state.pages[index].Status = 1;
-              if (!state.allActivePages.find(p => p.ID === ID)) {
-                state.allActivePages.push({ ...state.pages[index] });
-              }
             } else {
               state.pages[index].StatusName = 'Inactive';
               state.pages[index].Status = 0;
-              state.allActivePages = state.allActivePages.filter(p => p.ID !== ID);
             }
           }
         }
@@ -298,7 +294,6 @@ const popUpManagementSlice = createSlice({
       .addCase(deletePopup.fulfilled, (state, action) => {
         state.pagesLoading = false;
         state.pages = state.pages.filter(p => p.ID !== action.payload);
-        state.allActivePages = state.allActivePages.filter(p => p.ID !== action.payload);
       })
       .addCase(deletePopup.rejected, (state, action) => {
         state.pagesLoading = false;

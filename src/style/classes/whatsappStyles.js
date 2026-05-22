@@ -2916,6 +2916,16 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		color: '#F59A23',
 		fontWeight: 700,
 	},
+	pulseSendPill: {
+		display: 'inline-block',
+		backgroundColor: '#F59A23',
+		color: '#FFFFFF',
+		borderRadius: 12,
+		padding: '2px 10px',
+		fontSize: 13,
+		fontWeight: 700,
+		marginTop: 4,
+	},
 	whatsappChatStatusSelect: {
 		borderRadius: '22px',
 		textAlign: 'center',

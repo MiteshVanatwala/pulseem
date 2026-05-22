@@ -28,7 +28,7 @@ import { exportSurvey } from '../../../redux/reducers/landingPagesSlice';
 import { ExportFile } from '../../../helpers/Export/ExportFile';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
-import { getPerformanceStats, getPopupPages, getAllActivePopups, Page, deletePopup, getDeletedPopups } from '../../../../src/redux/reducers/popUpManagementSlice';
+import { getPerformanceStats, getPopupPages, Page, deletePopup, getDeletedPopups } from '../../../../src/redux/reducers/popUpManagementSlice';
 import { restoreLandingPages, duplicteLandingPage, getPageHeight } from '../../../../src/redux/reducers/landingPagesSlice';
 import { Title } from '../../../components/managment/Title';
 import { Loader } from '../../../components/Loader/Loader';
@@ -83,8 +83,7 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
     pagesLoading,
     pagesError,
     deletedPopups,
-    allActivePages,
-  } = useSelector((state: any) => state.popUpManagement);  
+  } = useSelector((state: any) => state.popUpManagement);
   const [view, setView] = useState<'card' | 'table'>('card');
   const [toastMessage, setToastMessage] = useState<ToastMessage | null>(null);
   const [dialogType, setDialogType] = useState<DialogType | null>(null);
@@ -93,13 +92,6 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
   const [showLoader, setShowLoader] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [showTierPlans, setShowTierPlans] = useState(false);
-
-  const activeAvgConversionRate = useMemo(() => {
-    if (!allActivePages || allActivePages.length === 0) return 0;
-    const total = allActivePages.reduce((sum: number, p: Page) => sum + (p.ConversionRate || 0), 0);
-    return total / allActivePages.length;
-  }, [allActivePages]);
-
   const [filters, setFilters] = useState({
     SearchTerm: '',
     FilterStatus: 'All',
@@ -109,6 +101,7 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
     PageSize: 6,
     PageType: 5
   });
+
 
   const handleCreatePopup = () => {
     navigate(`${sitePrefix}Popups/Create`);
@@ -182,8 +175,7 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
       await Promise.all([
         dispatch(getPerformanceStats()),
         dispatch(getPopupPages(filters)),
-        dispatch(getDeletedPopups()),
-        dispatch(getAllActivePopups(filters.PageType)),
+        dispatch(getDeletedPopups())
       ]);
       setIsInitialLoad(false);
     };
@@ -258,7 +250,7 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
               <StatCard
                 classes={classes}
                 title={t('landingPages.popupManagement.statCards.avgConversionRate')}
-                value={`${activeAvgConversionRate.toFixed(2)}%`}
+                value={`${stats.AverageConversionRate.toFixed(2)}%`}
               // change={`${stats.AverageConversionChange > 0 ? '+' : ''}${stats.AverageConversionChange.toFixed(2)}% this week`}
               />
             </Grid>
