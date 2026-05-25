@@ -13,6 +13,8 @@ export type phoneNumbersInterface = {
   verified_name: string;
   tier?: string;
   limit?: number;
+  isCoexistenceEnabled?: boolean;
+  isBusinessNumber?: boolean;
 };
 
 export type virtualNumbersInterface = {

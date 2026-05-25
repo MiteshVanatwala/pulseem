@@ -883,6 +883,7 @@ export const TierFeatures = {
   "WHATSAPP_RESPONSE_REPORT": "billing.featureNames.WHATSAPP_RESPONSE_REPORT",
   "WHATSAPP_REPORT": "billing.featureNames.WHATSAPP_REPORT",
   "WHATSAPP_CHAT_INTERFACE": "billing.featureNames.WHATSAPP_CHAT_INTERFACE",
+  "WHATSAPP_COEXISTENCE": "billing.featureNames.WHATSAPP_COEXISTENCE",
   "SMS_RESPONSE_REPORT": "billing.featureNames.SMS_RESPONSE_REPORT",
   "SMS_REPORT": "billing.featureNames.SMS_REPORT",
   "SMS_BASIC_PERSONALIZATION": "billing.featureNames.SMS_BASIC_PERSONALIZATION",
