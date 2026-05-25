@@ -51,7 +51,7 @@ import {
 import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
 import { useNavigate } from 'react-router-dom';
 import { GetPageNyName } from '../../../helpers/UI/SessionStorageManager';
-import { campaignStatus } from '../Constant';
+import { campaignStatus, campaignStatuses } from '../Constant';
 import {
 	AllReportReq,
 	PageTypeRequest,
@@ -287,6 +287,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 		}
 
 		const isPulseSend = row.IsPulseSend === true;
+		const isCancelled = row.Status === campaignStatuses.CANCELED;
 
 		return (
 			<>
@@ -309,6 +310,11 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 				<Typography className={classes.grayTextCell}>
 					{`${text} ${date.format(DateFormats.DATE_TIME_24)}`}
 				</Typography>
+				{isCancelled && (
+					<Typography className={clsx(classes.whatsappCampaignStatus, classes.whatsappCampaignStatusCanceled)}>
+						{translator(`whatsappManagement.${campaignStatus[row.Status]?.toLocaleLowerCase()}`)}
+					</Typography>
+				)}
 				{isPulseSend && (
 					<Typography className={classes.pulseSendPill}>
 						{translator('common.pulseSendPill')}
