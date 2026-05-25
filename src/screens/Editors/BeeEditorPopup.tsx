@@ -196,6 +196,15 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
           dispatch(getFileGallery(PulseemFolderType.DOCUMENT)).then((response) => {
             const gallery = response.payload;
             const specialLinksFiles = items;
+
+            if (isPopupBuilder) {
+              specialLinksFiles.push(
+                { type: 'Popup Navigation', label: 'Next Step',     link: 'pulseem://next-step' },
+                { type: 'Popup Navigation', label: 'Previous Step', link: 'pulseem://prev-step' },
+                { type: 'Popup Navigation', label: 'Skip Step',     link: 'pulseem://skip-step' }
+              );
+            }
+
             const folderExtName = t('common.files');
             gallery?.Files?.forEach((file: FileGallery) => {
               let folderName = file.FolderName === 'main' ? t('common.main') : file.FolderName;
