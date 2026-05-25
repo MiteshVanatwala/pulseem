@@ -26,10 +26,15 @@
 	"registerPIN": "Register Pin",
 	"phoneNumberRegistered": "Phone number has been registered succesfully.",
 	"coexistenceSyncStarted": "Connected successfully. Your contacts and message history will sync automatically within 24 hours.",
+	"coexistenceToggleLabel": "Sync with WhatsApp Business App (Coexistence)",
+	"coexistenceToggleDescription": "Enable to sync messages between Pulseem and your native WhatsApp Business App.",
+	"coexistenceNotAllowed": "Coexistence is available on PRO plan only.",
 	"newBusinessAccount": "New WhatsApp Business Account",
 	"alreadyUseWhatsAppApp": "Already use WhatsApp Business App",
 	"enterValidPIN": "Enter valid PIN",
 	"loginWithFacebook": "Login With Facebook",
+	"loginWithFacebookCoexistence": "Login With Facebook (Coexistence)",
+	"coexistenceColumn": "Coexistence",
 	"SaveWhatsappMetaClientsResponseCode": {
 		"3": "Sub account not found",
 		"4": "Meta configuration missing",
@@ -37,6 +42,7 @@
 		"6": "You cannot use another WhatsApp business account",
 		"7": "Access token not found from meta",
 		"8": "Phone data not found from meta",
+		"9": "Coexistence is available on PRO plan only",
 		"100": "Internal Error"
 	},
 	"MetaPhoneRegister": {

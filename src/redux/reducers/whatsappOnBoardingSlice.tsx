@@ -90,6 +90,19 @@ export const MetaPhoneRegister = createAsyncThunk(
 	}
 );
 
+export const setCoexistenceMode = createAsyncThunk(
+	'WhatsAppAccountOnBoard/SetCoexistenceMode',
+	async (request: { enable: boolean; phone_number: string; message_service_id: string }, thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.post(`WhatsAppAccountOnBoard/SetCoexistenceMode`, request);
+			return response.data as PulseemResponse;
+		} catch (error) {
+			const err = error as ApiError;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
 export const whatsappOnBoardingSlice = createSlice({
 	name: 'whatsappOnBoardingSlice',
 	initialState: {},
