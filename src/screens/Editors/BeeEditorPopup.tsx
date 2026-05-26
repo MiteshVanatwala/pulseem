@@ -131,6 +131,7 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
   const stepDataRef = useRef<PopupStep[]>([]);
   const currentStepRef = useRef<number>(stepParam);
   const isSwitchingStep = useRef(false);
+  const prevPulseemLinksRef = useRef<Set<string>>(new Set());
   const [stepOptionsAnchor, setStepOptionsAnchor] = useState<null | HTMLElement>(null);
   const [optionsForStep, setOptionsForStep] = useState<number>(0);
   const [showAddStepOptions, setShowAddStepOptions] = useState(false);
@@ -489,6 +490,45 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
       config.uid = accountSettings?.SubAccountSettings?.BeeUniqueID;
       config.mergeTags = mergeData;
       config.specialLinks = specialLinksFiles;
+
+      if (isPopupBuilder && !(config as any).__pulseemNavWrapped) {
+        (config as any).__pulseemNavWrapped = true;
+        const _prevOnChange = config.onChange;
+
+        // Seed the ref with whatever pulseem links already exist in the current template
+        // so loading a step that already has navigation links does NOT trigger the dialog.
+        const initialJson = typeof webform?.JsonData === 'string' ? webform.JsonData : '';
+        prevPulseemLinksRef.current = new Set(
+          (initialJson.match(/pulseem:\/\/[^"'\s]*/g) || [])
+        );
+
+        config.onChange = (jsonFile: any, response: any) => {
+          if ((currentPlan?.Id || 0) < 3 && typeof jsonFile === 'string') {
+            const currentLinks = new Set<string>(
+              (jsonFile.match(/pulseem:\/\/[^"'\s]*/g) || [])
+            );
+            // Show dialog if ANY link in the current snapshot is new (not in the previous snapshot).
+            // This fires on first add AND on every subsequent change (next→prev, etc.).
+            const hasNewLink = Array.from(currentLinks).some(
+              link => !prevPulseemLinksRef.current.has(link)
+            );
+            if (hasNewLink) {
+              setTierMessageCode('POPUP_STEPS');
+              setDialogType({ type: 'tier' });
+              (editorRef.current as any)?.load(JSON.parse(jsonFile.replace(/pulseem:\/\/[^"'\s]*/g, '')));
+            }
+            prevPulseemLinksRef.current = currentLinks;
+          }
+          _prevOnChange?.(jsonFile, response);
+        };
+      } else if (isPopupBuilder) {
+        // On step switch: re-seed the ref so existing links on the new step don't false-positive
+        const initialJson = typeof webform?.JsonData === 'string' ? webform.JsonData : '';
+        prevPulseemLinksRef.current = new Set(
+          (initialJson.match(/pulseem:\/\/[^"'\s]*/g) || [])
+        );
+      }
+
       config.titleDefaultStyles = defaultContent.titleDefaultStyles;
       config.contentDefaults = defaultContent.contentDefaults;
       config.language = editorLanguage;
