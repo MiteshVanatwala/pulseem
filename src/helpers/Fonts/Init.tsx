@@ -47,6 +47,7 @@ export const FONTS = (isLandingPage: boolean = false) => {
     }
     else {
         allowedFonts.customFonts.push(googleFonts.Outfit);
+        allowedFonts.customFonts.push(googleFonts.Assistant);
         if (accountFeatures?.indexOf(PulseemFeatures.BEE_ENABLE_GOOGLE_FONTS) > -1) { // EnableBeeGoogleFonts
             allowedFonts.customFonts.push(googleFonts.Rubik);
             allowedFonts.customFonts.push(googleFonts.OpenSans);
