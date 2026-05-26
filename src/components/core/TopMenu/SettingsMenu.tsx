@@ -59,7 +59,7 @@ const SettingsMenu = ({ classes }: any) => {
 
     return <Box>
         {/* Admin/Return buttons */}
-        {!cameFromSubAccount && isAdmin !== '' && (
+        {!cameFromSubAccount && isAdmin !== '' && isAdmin !== 'True' && (
             <Button
                 onClick={returnToAdmin}
                 className={classes.languageSelector}
