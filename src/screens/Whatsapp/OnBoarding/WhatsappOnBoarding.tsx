@@ -57,7 +57,6 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
   const [phoneNumberId, setPhoneNumberId] = useState('');
   const [wabaId, setWabaId] = useState('');
   const [code, setCode] = useState('');
-  const [isCoexistenceMode, setIsCoexistenceMode] = useState<boolean>(false);
   const [isCoexistenceFlow, setIsCoexistenceFlow] = useState<boolean>(false);
 	
   const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot }
@@ -243,11 +242,6 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 					setIsCoexistenceFlow(true);
 					setPhoneNumberId(phone_number_id);
 					setWabaId(waba_id);
-        } else if (data.event === 'FINISH_WHATSAPP_BUSINESS_APP_ONBOARDING') {
-          const { phone_number_id, waba_id } = data.data;
-					setIsCoexistenceFlow(true);
-					setPhoneNumberId(phone_number_id);
-					setWabaId(waba_id);
         } else if (data.event === 'CANCEL' || data.event === 'ERROR') {
 					setPhoneNumberId('');
 					setWabaId('');
@@ -274,7 +268,7 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
       override_default_response_type: true,
       extras: {
         setup: {},
-        featureType: isCoexistenceMode ? 'whatsapp_business_app_onboarding' : '',
+        featureType: coexistenceMode ? 'whatsapp_business_app_onboarding' : '',
         sessionInfoVersion: '2',
       },
     });
@@ -739,41 +733,44 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 					WhatsAppPlatformID !== WhatsAppPlatformIDEnum.TWILLIO ? (
 						<>		
 							<Box className={clsx(classes.p20)}>
-								<Box className={clsx(classes.dFlex)} style={{ gap: 12, alignItems: 'center', flexWrap: 'wrap', marginBottom: 12 }}>
-									<Button
-										variant={!isCoexistenceMode ? 'contained' : 'outlined'}
-										color='primary'
-										onClick={() => setIsCoexistenceMode(false)}
-										className={clsx(classes.btn, classes.btnRounded)}
+								<Box className={clsx(classes.dFlex)} style={{ gap: 16, alignItems: 'center', flexWrap: 'wrap', marginBottom: 16 }}>
+									<button
+										// @ts-ignore
+										onClick={() => launchWhatsAppSignup(false)}
+										style={{
+											backgroundColor: '#1877f2',
+											border: '0',
+											borderRadius: '4px',
+											color: '#fff',
+											cursor: 'pointer',
+											fontFamily: 'Helvetica, Arial, sans-serif',
+											fontSize: '16px',
+											fontWeight: 'bold',
+											height: '40px',
+											padding: '0 24px',
+										}}
 									>
-										{t('WhatsappOnBoarding.newBusinessAccount')}
-									</Button>
-									<Button
-										variant={isCoexistenceMode ? 'contained' : 'outlined'}
-										color='primary'
-										onClick={() => setIsCoexistenceMode(true)}
-										className={clsx(classes.btn, classes.btnRounded)}
+										{t('WhatsappOnBoarding.loginWithFacebook')}
+									</button>
+									<button
+										// @ts-ignore
+										onClick={() => launchWhatsAppSignup(true)}
+										style={{
+											backgroundColor: '#42b72a',
+											border: '0',
+											borderRadius: '4px',
+											color: '#fff',
+											cursor: 'pointer',
+											fontFamily: 'Helvetica, Arial, sans-serif',
+											fontSize: '16px',
+											fontWeight: 'bold',
+											height: '40px',
+											padding: '0 24px',
+										}}
 									>
-										{t('WhatsappOnBoarding.alreadyUseWhatsAppApp')}
-									</Button>
+										{t('WhatsappOnBoarding.loginWithFacebookCoexistence')}
+									</button>
 								</Box>
-								<button
-									onClick={launchWhatsAppSignup}
-									style={{
-										backgroundColor: '#1877f2',
-										border: '0',
-										borderRadius: '4px',
-										color: '#fff',
-										cursor: 'pointer',
-										fontFamily: 'Helvetica, Arial, sans-serif',
-										fontSize: '16px',
-										fontWeight: 'bold',
-										height: '40px',
-										padding: '0 24px',
-									}}
-								>
-									{t('WhatsappOnBoarding.loginWithFacebook')}
-								</button>
 
 								<Typography className={clsx(classes.f22, classes.pt10, classes.semibold)}>{t('WhatsappOnBoarding.instruction')}</Typography>
 								<ul className={clsx(classes.mt1, classes.noPadding)}>
