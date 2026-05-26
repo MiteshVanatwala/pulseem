@@ -736,6 +736,7 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 							<Box className={clsx(classes.p20)}>
 								<Box className={clsx(classes.dFlex)} style={{ gap: 16, alignItems: 'center', flexWrap: 'wrap', marginBottom: 16 }}>
 									<button
+										// @ts-ignore
 										onClick={() => launchWhatsAppSignup(false)}
 										style={{
 											backgroundColor: '#1877f2',
@@ -753,6 +754,7 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 										{t('WhatsappOnBoarding.loginWithFacebook')}
 									</button>
 									<button
+									    // @ts-ignore
 										onClick={() => launchWhatsAppSignup(true)}
 										style={{
 											backgroundColor: '#42b72a',
