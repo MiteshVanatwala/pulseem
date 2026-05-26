@@ -55,8 +55,8 @@ export const googleFonts = {
             900: 'Black'
         }
     },
-    Assistant: {
-        name: "Assistant",
+    GoogleAssistant: {
+        name: "Google Assistant",
         fontFamily: "'Assistant', sans-serif",
         url: 'https://fonts.googleapis.com/css2?family=Assistant:wght@200..800',
         fontWeight: {
@@ -550,7 +550,7 @@ export const HebrewFonts = [
     googleFonts.Heebo,
     googleFonts.Arimo,
     googleFonts.Varela,
-    googleFonts.Assistant,
+    googleFonts.GoogleAssistant,
     googleFonts.MPlus,
     googleFonts.FrankRuhlLibre,
     googleFonts.AmaticSC,
