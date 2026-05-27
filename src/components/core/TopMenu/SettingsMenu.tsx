@@ -14,7 +14,6 @@ const SettingsMenu = ({ classes }: any) => {
     const [showSettings, setShowSettings] = useState<boolean>(false);
     const Redirect = useRedirect();
 
-    console.log(classes.userSettings);
 
     const { accountSettings, accountFeatures, subAccount } = useSelector((state: any) => state.common);
     const {
@@ -99,7 +98,7 @@ const SettingsMenu = ({ classes }: any) => {
                     style={{ padding: 0 }}>
                     {settings.options && settings.options.filter((item) => item.isShow !== false)
                         .map((option: any, index: any, row: any) => {
-                            console.log(option);
+
                             return <Box
                                 key={index}
                                 component='a'
@@ -108,7 +107,11 @@ const SettingsMenu = ({ classes }: any) => {
                                     key={index}
                                     onClick={(e: any) => {
                                         e.preventDefault();
-                                        Redirect({ url: option.href, openNewTab: option.openInNewWindow } as RedirectPropTypes)
+                                        if (option.onClick) {
+                                            option.onClick();
+                                        } else {
+                                            Redirect({ url: option.href, openNewTab: option.openInNewWindow } as RedirectPropTypes)
+                                        }
                                     }}
                                     classes={{ root: classes.appBarItemMenuRoot }}
                                     className={clsx(option.title === t("appBar.logout") && classes.lastItemBorderRadius, classes.appBarItemMenuItem, index !== row.length - 1 ? classes.appBarItemBorder : '', option.title === t("appBar.logout") ? 'active' : '')}

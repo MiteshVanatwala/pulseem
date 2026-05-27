@@ -13,13 +13,14 @@ const redirectToLogin = () => {
 export const logout = async () => {
     try {
         await axios.get(logoutURL)
+    } catch (err) {
+        console.log("logout error", err)
+    } finally {
         setCookie('jtoken', '')
         setCookie('accountFeatures', '');
         setCookie('accountSettings', '');
         setCookie('ignoreTerm', '');
         redirectToLogin()
-    } catch (err) {
-        console.log("logout error", err)
     }
 }
 
