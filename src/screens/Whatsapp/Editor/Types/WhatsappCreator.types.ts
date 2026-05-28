@@ -50,7 +50,8 @@ export type FileUploadProps = {
 	};
 	setFileData: (fileData: File | undefined) => void;
 	buttonType: string;
-	sourceFileSize?: string
+	sourceFileSize?: string;
+	accept?: string;
 };
 
 export type ReduxUserProps = {
@@ -302,6 +303,7 @@ export type savedTemplateListProps = {
 	FriendlyTemplateName: string;
 	IsAllowEdit: boolean;
 	Language?: string;
+	media_type?: 'IMAGE' | 'VIDEO' | 'DOCUMENT' | null;
 };
 
 export type toastProps = {
@@ -378,6 +380,7 @@ export type saveTemplateItemsProps = {
 	UpdatedOn: string;
 	Category: string;
 	CategoryId: number;
+	media_type?: 'IMAGE' | 'VIDEO' | 'DOCUMENT' | null;
 };
 
 export type saveTemplateDataProps = {
@@ -453,6 +456,7 @@ export type templateListItemsProps = {
 	UpdatedOn: string;
 	Category: string;
 	CategoryId: number;
+	media_type?: 'IMAGE' | 'VIDEO' | 'DOCUMENT' | null;
 };
 
 export type templateListDataProps = {

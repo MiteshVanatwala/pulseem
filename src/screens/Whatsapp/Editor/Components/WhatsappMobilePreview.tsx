@@ -19,6 +19,9 @@ import { fileTypes } from '../../Constant';
 import { checkLanguage, getFileType, getTextDirection } from '../../Common';
 import clsx from 'clsx';
 
+const resolveFileType = (fileLink: string, fileType?: string): fileTypes | undefined =>
+	getFileType(fileLink) ?? (fileType?.toLowerCase() as fileTypes | undefined);
+
 const WhatsappMobilePreview = ({
 	classes,
 	templateData,
@@ -158,7 +161,7 @@ const WhatsappMobilePreview = ({
 																	className={
 																		classes.whatsappMobileMessageTextAndImage
 																	}>
-																	{getFileType(fileData?.fileLink) ===
+																	{resolveFileType(fileData?.fileLink, fileData?.fileType) ===
 																		fileTypes.IMAGE &&
 																		fileData?.fileLink?.length > 0 && (
 																			<img
@@ -166,7 +169,7 @@ const WhatsappMobilePreview = ({
 																				alt='uploaded-file-preview'
 																			/>
 																		)}
-																	{getFileType(fileData?.fileLink) ===
+																	{resolveFileType(fileData?.fileLink, fileData?.fileType) ===
 																		fileTypes.VIDEO &&
 																		fileData?.fileLink?.length > 0 && (
 																			<a
@@ -180,7 +183,7 @@ const WhatsappMobilePreview = ({
 																				/>
 																			</a>
 																		)}
-																	{getFileType(fileData?.fileLink) ===
+																	{resolveFileType(fileData?.fileLink, fileData?.fileType) ===
 																		fileTypes.DOCUMENT &&
 																		fileData?.fileLink?.length > 0 && (
 																			<Grid container alignItems='center'>

@@ -11,7 +11,8 @@ const FileUpload = ({
 	fileData,
 	buttonType,
 	setFileData,
-	sourceFileSize = ''
+	sourceFileSize = '',
+	accept = 'image/png, image/jpeg, application/pdf, video/mp4',
 }: FileUploadProps) => {
 	const { t: translator } = useTranslation();
 	const [fileSize, setFileSize] = useState<string>('');
@@ -91,7 +92,7 @@ const FileUpload = ({
 				<input
 					type='file'
 					className={classes.formFieldInput}
-					accept='image/png, image/jpeg, application/pdf, video/mp4'
+					accept={accept}
 					onClick={(e) => checkFileUploadAvailability(e)}
 					onChange={(e) => onFileUploadChange(e)}
 				/>
