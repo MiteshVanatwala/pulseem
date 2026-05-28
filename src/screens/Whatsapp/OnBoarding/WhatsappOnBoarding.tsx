@@ -360,7 +360,11 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 	}
 
 	const renderCoexistenceCell = (row: phoneNumbersInterface) => {
-		if (!row.isBusinessNumber) return null;
+		if (!row.isBusinessNumber) return (
+			<Typography className={clsx(classes.f14)} style={{ color: '#9e9e9e' }}>
+				{t('WhatsappOnBoarding.coexistenceNotAvailable')}
+			</Typography>
+		);
 		return (
 			<Switch
 				checked={!!row.isCoexistenceEnabled}
