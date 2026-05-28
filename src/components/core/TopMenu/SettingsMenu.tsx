@@ -90,8 +90,8 @@ const SettingsMenu = ({ classes }: any) => {
             anchorEl={buttonRef.current}
             role={undefined}
             placement={isRTL ? 'bottom-start' : 'bottom-end'}
-            style={{ backgroundColor: '#fff', zIndex: 600, marginTop: 15 }}
-            disablePortal className={classes.userSettingsContainerPopper}
+            style={{ backgroundColor: '#fff', zIndex: 99999, marginTop: 15 }}
+            className={classes.userSettingsContainerPopper}
         >
             <ClickAwayListener onClickAway={() => setShowSettings(false)}>
                 <MenuList

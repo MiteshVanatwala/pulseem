@@ -1713,7 +1713,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		// '@import url(./App.darktheme.css)': true,
 		//App
 		'&.app': {
-			marginTop: 20,
+			marginTop: 5,
 			width: '100%',
 			background: '#dddbd1',
 			position: 'relative',
@@ -1731,7 +1731,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		'&.app__mobile-message': { display: 'none' },
 		'&.app-content': {
 			width: '100%',
-			height: 'calc(100vh - 100px)',
+			height: 'calc(100vh - 57px)',
 			margin: '0 auto',
 			boxShadow:
 				'0 1px 1px 0 rgba(0, 0, 0, 0.06), 0 2px 5px 0 rgba(0, 0, 0, 0.2)',

@@ -5808,8 +5808,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   topMenu: {
     display: 'flex',
     gap: 15,
-    paddingBottom: 5,
-    paddingTop: 10,
+    paddingBottom: 2,
+    paddingTop: 5,
     marginRight: 20,
     marginBottom: 0,
     justifyContent: 'flex-end',

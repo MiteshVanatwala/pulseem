@@ -89,11 +89,10 @@ const LanguageSelector: React.FC<{ classes: any }> = ({ classes }) => {
             {buttonContent}
 
             <Popper
-                style={{ zIndex: 600 }}
+                style={{ zIndex: 99999 }}
                 open={Boolean(anchorEl)}
                 anchorEl={anchorEl}
                 placement="bottom"
-                disablePortal
             >
                 <ClickAwayListener onClickAway={handleClose}>
                     <Paper className={classes.languageSelector}>

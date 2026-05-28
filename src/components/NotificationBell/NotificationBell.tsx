@@ -223,7 +223,7 @@ const NotificationBell = ({ classes }: any) => {
             <FaBell />
           </div>
         </Badge>
-        <Popper open={displayNotifications} anchorEl={notificationIconRef.current} role={undefined} placement={'right-start'} disablePortal={true} className={classes.notificationUpdateContainerPopper} style={{ zIndex: 1400 }}>
+        <Popper open={displayNotifications} anchorEl={notificationIconRef.current} role={undefined} placement={'right-start'} className={classes.notificationUpdateContainerPopper} style={{ zIndex: 99999 }}>
           <div className={clsx(classes.notificationUpdateContainer, classes.paddingSides15, classes.pt10)} style={{ direction: isRTL ? 'rtl' : 'ltr', textAlign: isRTL ? 'right' : 'left' }}>
             <div className={clsx(classes.bold)} style={{ textAlign: isRTL ? 'right' : 'left' }}>
               {t('notifications.notifyCenterTitle')}

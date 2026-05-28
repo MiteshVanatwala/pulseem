@@ -113,12 +113,13 @@ export const sideMenuStyle = (windowSize, isRTL, theme) => ({
     color: '#fff',
     '& $sidebarItem': {
       '&:hover': {
-        backgroundColor: 'rgba(255, 255, 255, 0.2)', //'linear-gradient(90deg, #FF0076 0%, #FF0054 23.8%, #FF4D2A 100%)',
+        backgroundColor: 'rgba(255, 255, 255, 0.2)',
         color: "#fff"
       }
     },
     '& .MuiListItem-root': {
-      paddingLeft: theme.spacing(4),
+      paddingLeft: isRTL ? theme.spacing(1) : theme.spacing(4),
+      paddingRight: isRTL ? theme.spacing(4) : theme.spacing(1),
     },
   },
   sidebarFooter: {
