@@ -5,8 +5,6 @@ import TawkMessengerReact from '@tawk.to/tawk-messenger-react';
 import { tawkToPropertyId } from '../../config';
 import { useLocation } from 'react-router-dom';
 
-const STYLE_TAG_ID = 'tawk-position-override';
-
 const TawkToContainer = ({ itemId }: any) => {
   const { accountSettings } = useSelector((state: any) => state.common);
   const { isRTL } = useSelector((state: any) => state.core);
@@ -21,90 +19,70 @@ const TawkToContainer = ({ itemId }: any) => {
     const isAffectedPage = affectedPages.some(page => pathname.includes(page));
     const bottom = isAffectedPage ? '85px' : '10px';
 
-    const injectCSSFallback = () => {
-      const existing = document.getElementById(STYLE_TAG_ID);
-      if (existing) existing.remove();
-      const style = document.createElement('style');
-      style.id = STYLE_TAG_ID;
-      style.textContent = `
-        @keyframes tawk-glow-pulse {
-          0%   { box-shadow: 0 0 0 2px white, 0 0 0 0    rgba(255, 23, 68, 0.4); }
-          70%  { box-shadow: 0 0 0 2px white, 0 0 0 10px rgba(255, 23, 68, 0);   }
-          100% { box-shadow: 0 0 0 2px white, 0 0 0 0    rgba(255, 23, 68, 0);   }
-        }
-      `;
-      document.head.appendChild(style);
-    };
-
     const getSidebarWidth = (): number => {
       const sidebarPaper = document.querySelector('.MuiDrawer-paper') as HTMLElement | null;
       return sidebarPaper ? sidebarPaper.getBoundingClientRect().width : 70;
     };
 
+    // Find the Tawk.to bubble iframe by its actual rendered size.
+    // The bubble is a small fixed iframe (≤120px). The chat window is large.
+    // This is more reliable than checking src/title/id which varies per environment.
+    const findTawkBubbleIframe = (): HTMLIFrameElement | null => {
+      const iframes = Array.from(document.querySelectorAll('iframe')) as HTMLIFrameElement[];
+      return iframes.find(f => {
+        const rect = f.getBoundingClientRect();
+        const style = window.getComputedStyle(f);
+        return (
+          style.position === 'fixed' &&
+          rect.width > 0  && rect.width  <= 120 &&
+          rect.height > 0 && rect.height <= 120 &&
+          !f.id.toLowerCase().includes('ind')   // exclude INDmenu iframe
+        );
+      }) || null;
+    };
+
+    // Apply position to the bubble iframe so it actually moves in the viewport
     const applyIframeStyles = (iframe: HTMLIFrameElement) => {
       if (isRTL) {
         const sidebarWidth = getSidebarWidth();
         iframe.style.setProperty('bottom', bottom, 'important');
+        // Slide the bubble left of the sidebar edge as sidebar opens/closes
         iframe.style.setProperty('right', `${sidebarWidth + 5}px`, 'important');
         iframe.style.setProperty('left', 'auto', 'important');
-        iframe.style.setProperty('transform', 'scale(0.89)', 'important');
+        iframe.style.setProperty('transform', 'scale(0.82)', 'important');
         iframe.style.setProperty('transform-origin', 'bottom right', 'important');
-        iframe.style.setProperty('border-radius', '50%', 'important');
-        iframe.style.setProperty('animation', 'tawk-glow-pulse 2s infinite', 'important');
-
-        const parent = iframe.parentElement as HTMLElement | null;
-        if (parent) {
-          parent.style.setProperty('overflow', 'visible', 'important');
-        }
       } else {
-        // LTR: restore Tawk.to's default position and remove all RTL-only styles
+        // LTR: restore Tawk.to's default position
         iframe.style.setProperty('right', '20px', 'important');
         iframe.style.setProperty('left', 'auto', 'important');
+        iframe.style.setProperty('bottom', bottom, 'important');
         iframe.style.removeProperty('transform');
         iframe.style.removeProperty('transform-origin');
-        iframe.style.removeProperty('border-radius');
-        iframe.style.removeProperty('animation');
-
-        const parent = iframe.parentElement as HTMLElement | null;
-        if (parent) {
-          parent.style.removeProperty('overflow');
-        }
       }
     };
 
-    let compactRef: HTMLIFrameElement | null = null;
-
-    const findCompact = (): HTMLIFrameElement | null => {
-      const iframes = Array.from(document.querySelectorAll('iframe')) as HTMLIFrameElement[];
-      return iframes.find(f =>
-        (f.src === 'about:blank' || f.src === '') &&
-        (f.title || '') === '' &&
-        f.id !== '' &&
-        !f.id.toLowerCase().includes('ind') &&
-        parseInt(window.getComputedStyle(f).width || '999') <= 100
-      ) || null;
-    };
+    let iframeRef: HTMLIFrameElement | null = null;
 
     const applyAll = () => {
-      if (!compactRef) compactRef = findCompact();
-      if (compactRef) applyIframeStyles(compactRef);
+      if (!iframeRef) iframeRef = findTawkBubbleIframe();
+      if (iframeRef) applyIframeStyles(iframeRef);
 
+      // INDmenu-btn (accessibility widget) vertical positioning
       const indMenuBtn = document.getElementById('INDmenu-btn') as HTMLElement;
       if (indMenuBtn?.style) {
         indMenuBtn.style.setProperty('bottom', isAffectedPage ? '55px' : '-10px', 'important');
       }
     };
 
-    injectCSSFallback();
     applyAll();
 
-    // RAF loop for first 5 seconds to beat Tawk.to's init-time style resets
+    // RAF loop for first 5 seconds — beats Tawk.to's init-time style resets
     let rafId: number | null = null;
     const rafLoop = () => {
-      if (compactRef) {
-        applyIframeStyles(compactRef);
+      if (iframeRef) {
+        applyIframeStyles(iframeRef);
       } else {
-        compactRef = findCompact();
+        iframeRef = findTawkBubbleIframe();
       }
       rafId = requestAnimationFrame(rafLoop);
     };
@@ -113,20 +91,20 @@ const TawkToContainer = ({ itemId }: any) => {
       if (rafId !== null) cancelAnimationFrame(rafId);
     }, 5000);
 
-    // MutationObserver for new iframes injected after 5 seconds
+    // MutationObserver — catches the iframe if Tawk.to injects it after 5 seconds
     const observer = new MutationObserver(() => {
-      compactRef = findCompact();
-      if (compactRef) applyIframeStyles(compactRef);
+      if (!iframeRef) iframeRef = findTawkBubbleIframe();
+      if (iframeRef) applyIframeStyles(iframeRef);
     });
     observer.observe(document.body, { childList: true, subtree: true });
 
-    // ResizeObserver on sidebar paper — tracks sidebar width as it opens/closes
+    // ResizeObserver on sidebar paper — re-positions bubble as sidebar opens/closes
     let sidebarObserver: ResizeObserver | null = null;
     if (isRTL) {
       const sidebarPaper = document.querySelector('.MuiDrawer-paper') as HTMLElement | null;
       if (sidebarPaper) {
         sidebarObserver = new ResizeObserver(() => {
-          if (compactRef) applyIframeStyles(compactRef);
+          if (iframeRef) applyIframeStyles(iframeRef);
         });
         sidebarObserver.observe(sidebarPaper);
       }
