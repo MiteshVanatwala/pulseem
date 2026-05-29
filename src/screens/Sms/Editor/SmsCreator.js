@@ -121,9 +121,7 @@ const SmsCreator = ({ classes }) => {
   document.title = t("sms.pageTitle");
   const styles = useStyles();
   const btnStyle = useStyleNew();
-  const inputProps = {
-    maxLength: "13"
-  }
+  const FROM_NUMBER_MAX = 11;
 
   const Redirect = useRedirect();
   const dispatch = useDispatch();
@@ -169,6 +167,8 @@ const SmsCreator = ({ classes }) => {
   const [storedValue, setstoredValue] = useState("");
   const [summary, setsummary] = useState(false);
   const [campaignNumberValidated, setcampaignNumberValidated] = useState(false);
+  const [senderNameTooLong, setSenderNameTooLong] = useState(false);
+  const [senderNumberTooLong, setSenderNumberTooLong] = useState(false);
   const [showLoader, setLoader] = useState(true);
   const [selectValue, setselectValue] = useState("Personilization");
   const [isTestCampaign, setIsTestCampaign] = useState(false);
@@ -237,8 +237,6 @@ const SmsCreator = ({ classes }) => {
     }
   };
   const smsMessageRef = useRef(null);
-  const FROM_NUMBER_MAX_LETTERS = 11;
-  const FROM_NUMBER_MAX_NUMBERS = 13;
 
   useEffect(() => {
     setAlignment(isRTL ? "right" : "left");
@@ -558,23 +556,19 @@ const SmsCreator = ({ classes }) => {
 
   const onCampaignNumber = (e) => {
     const text = e.target.value;
-    // var lastChar = text.substring(text.length, text.length - 1);
     var onlyNumbersWithHyphenAndSpace = /^[0-9 -]*$/;
     var onlyNumbers = /^[0-9]*$/;
     var english = /^[A-Za-z0-9_ -]*$/
-
-    if (!text.match(onlyNumbersWithHyphenAndSpace) && text.match(english) && text.length >= FROM_NUMBER_MAX_LETTERS) {
-      e.target.value = text.substring(0, FROM_NUMBER_MAX_LETTERS);
-    }
-    if (text.match(onlyNumbersWithHyphenAndSpace) && text.length >= FROM_NUMBER_MAX_NUMBERS) {
-      e.target.value = text.substring(0, FROM_NUMBER_MAX_NUMBERS);
-    }
 
     if (text.match(onlyNumbersWithHyphenAndSpace) && !text.match(onlyNumbers)) {
       e.target.value = e.target.value.replace(/[^0-9]/g, '');
     } else if (!text.match(english)) {
       e.target.value = text.replace(/[^A-Za-z0-9_ -]/g, '');
     }
+
+    const isNumeric = onlyNumbersWithHyphenAndSpace.test(e.target.value);
+    setSenderNumberTooLong(isNumeric && e.target.value.length > FROM_NUMBER_MAX);
+    setSenderNameTooLong(!isNumeric && e.target.value.length > FROM_NUMBER_MAX);
 
     setrestoreBool(false);
     setremovalMessageButtonDisabled(true);
@@ -605,6 +599,18 @@ const SmsCreator = ({ classes }) => {
       setcampaignNumberValidated(true);
       isValid = false;
     }
+
+    if (campaignNumber.length > FROM_NUMBER_MAX) {
+      setcampaignNumberValidated(true);
+      const isNumericSender = /^[0-9 -]*$/.test(campaignNumber);
+      if (isNumericSender) {
+        setSenderNumberTooLong(true);
+      } else {
+        setSenderNameTooLong(true);
+      }
+      isValid = false;
+    }
+
     if (!isValid) {
       setDialogType({ type: "valiateError" })
     } else if ((smsModel.Text.includes(DynamicProductLink.LATEST_PURCHASE) || smsModel.Text.includes(DynamicProductLink.LATEST_ABANDONMENT)) && !IsValidURL(editDynamicProductFallbackURL)) {
@@ -776,9 +782,8 @@ const SmsCreator = ({ classes }) => {
             <TextField
               id="outlined-basic"
               type="text"
-              className={clsx(classes.textField, campaignNumberValidated ? classes.error : classes.success)}
+              className={clsx(classes.textField, (campaignNumberValidated || senderNameTooLong || senderNumberTooLong) ? classes.error : classes.success)}
               onChange={onCampaignNumber}
-              inputProps={inputProps}
               value={campaignNumber}
               dir={/^[0-9]/.test(campaignNumber) && isRTL ? 'rtl' : 'ltr'}
             />
@@ -787,9 +792,8 @@ const SmsCreator = ({ classes }) => {
               <TextField
                 id="outlined-basic"
                 type="text"
-                className={clsx(classes.textField, campaignNumberValidated ? classes.error : classes.success)}
+                className={clsx(classes.textField, (campaignNumberValidated || senderNameTooLong || senderNumberTooLong) ? classes.error : classes.success)}
                 onChange={onCampaignNumber}
-                inputProps={{ ...inputProps }}
                 value={campaignNumber}
                 dir={/^[0-9]/.test(campaignNumber) && isRTL ? 'rtl' : 'ltr'}
               />
@@ -800,6 +804,16 @@ const SmsCreator = ({ classes }) => {
                 {t('sms.replaceButton')}
               </Button>
             </Box>
+          )}
+          {senderNameTooLong && (
+            <Typography className={classes.buttonContent} style={{ color: '#f44336', marginTop: 4 }}>
+              {t("mainReport.campaignFromMaxLength")}
+            </Typography>
+          )}
+          {senderNumberTooLong && (
+            <Typography className={classes.buttonContent} style={{ color: '#f44336', marginTop: 4 }}>
+              {t("mainReport.campaignFromNumberMaxLength")}
+            </Typography>
           )}
           <Typography className={clsx(classes.buttonContent, classes.alertMsg)}>
             {t("mainReport.campRemovalDesc")}
@@ -1999,8 +2013,14 @@ const SmsCreator = ({ classes }) => {
                 {t("mainReport.campaignRequire")}
               </li> : null}
               {smsModel.Text === "" ? <li>{t("mainReport.msgRequire")}</li> : null}
-              {campaignNumberValidated ? <li style={{ marginBottom: "8px" }}>
+              {campaignNumberValidated && !senderNameTooLong && !senderNumberTooLong ? <li style={{ marginBottom: "8px" }}>
                 {t("mainReport.campaignFromRequire")} / {t("common.invalid")}
+              </li> : null}
+              {senderNameTooLong ? <li style={{ marginBottom: "8px" }}>
+                {t("mainReport.campaignFromMaxLength")}
+              </li> : null}
+              {senderNumberTooLong ? <li style={{ marginBottom: "8px" }}>
+                {t("mainReport.campaignFromNumberMaxLength")}
               </li> : null}
             </ul>
           </div>
