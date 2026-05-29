@@ -269,7 +269,7 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
       extras: {
         setup: {},
         featureType: coexistenceMode ? 'whatsapp_business_app_onboarding' : '',
-        sessionInfoVersion: '2',
+        sessionInfoVersion: '3',
       },
     });
   };
