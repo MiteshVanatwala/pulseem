@@ -1001,12 +1001,23 @@ const SmsReport = ({ classes }) => {
         </>
 
       ),
-      onClose: () => { setDialogType(null) },
-      onConfirm: async () => {
-        setDialogType(null);
+      onClose: () => {
         if (showNoticeDialog) {
-          setCookie('SMSReportNotice', showNoticeDialog);
+          setCookie('SMSReportNotice', 'true', { maxAge: 2147483647 });
         }
+        setDialogType(null);
+      },
+      onCancel: () => {
+        if (showNoticeDialog) {
+          setCookie('SMSReportNotice', 'true', { maxAge: 2147483647 });
+        }
+        setDialogType(null);
+      },
+      onConfirm: () => {
+        if (showNoticeDialog) {
+          setCookie('SMSReportNotice', 'true', { maxAge: 2147483647 });
+        }
+        setDialogType(null);
       }
     }
   }
