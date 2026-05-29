@@ -54,6 +54,7 @@
       "Removed": "Unsubscribed",
       "Restricted": "Restricted",
       "Invalid": "Invalid",
+      "invalidTooltip": "This recipient is flagged as invalid by Pulseem. Contact support before activating it.",
       "Pending": "Pending"
     },
     "sms": {

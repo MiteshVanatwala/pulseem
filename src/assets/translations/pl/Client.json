@@ -54,7 +54,8 @@
       "Removed": "Wypisany",
       "Restricted": "Ograniczony",
       "Invalid": "Nieprawidłowy",
-      "Pending": "Oczekujący"
+      "Pending": "Oczekujący",
+      "invalidTooltip": "Ten odbiorca jest oznaczony jako nieprawidłowy przez Pulseem. Przed aktywacją skontaktuj się z pomocą techniczną."
     },
     "sms": {
       "NoSms": "Brak statusu",
