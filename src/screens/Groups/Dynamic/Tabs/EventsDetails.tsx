@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import {
     Grid, Checkbox, FormControlLabel, InputLabel, TextField, Button, FormHelperText,
-    Select, FormControl
+    Select, FormControl, Tooltip
 } from '@material-ui/core'
 import { IoIosArrowDown } from 'react-icons/io';
 import 'moment/locale/he';
@@ -605,7 +605,6 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
     const renderPageViewed = () => {
         const matchType = data.dynamicData?.MyActivities.PageViewedMatchType || 'exact';
         const isPageViewed = !!data.dynamicData?.MyActivities.IsPageViewed;
-    console.log(isPageViewed);
 
         return (
             <Grid container spacing={4} className={classes.pt25}>
@@ -656,7 +655,7 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                                         hideInvalidDateMessage={true}
                                     />
                                     {
-                                        data.dynamicData?.MyActivities?.IsPageViewedFromDate && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate('IsAbandonedFromDate', null)}>{t("recipient.reset")}</Button>
+                                        data.dynamicData?.MyActivities?.IsPageViewedFromDate && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate('IsPageViewedFromDate', null)}>{t("recipient.reset")}</Button>
                                     }
                                 </Grid>
 
@@ -679,7 +678,7 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                                         hideInvalidDateMessage={true}
                                     />
                                     {
-                                        data.dynamicData?.MyActivities?.IsPageViewedToDate && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate('IsAbandonedToDate', null)}>{t("recipient.reset")}</Button>
+                                        data.dynamicData?.MyActivities?.IsPageViewedToDate && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate('IsPageViewedToDate', null)}>{t("recipient.reset")}</Button>
                                     }
                                 </Grid>
                             </Grid>
@@ -735,25 +734,29 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                             className={clsx(classes.selectInputFormControl, classes.w100)}
                             style={{ paddingLeft: 15, paddingRight: 10, marginTop: 12 }}
                         >
-                            <TextField
-                                disabled={!isPageViewed}
-                                placeholder='/checkout, utm_source=email, /product/'
-                                variant='standard'
-                                fullWidth
-                                value={data.dynamicData?.MyActivities?.PageViewedContainsText || ''}
-                                error={containsTextError}
-                                onChange={(event: any) => {
-                                    const val = event.target.value;
-                                    setContainsTextError(false);
-                                    onUpdate('PageViewedContainsText', val);
-                                }}
-                                onBlur={() => {
-                                    if (!data.dynamicData?.MyActivities?.PageViewedContainsText?.trim()) {
-                                        setContainsTextError(true);
-                                    }
-                                }}
-                                InputProps={{ disableUnderline: true }}
-                            />
+                            <Tooltip title={t('common.page_viewed_contains_tooltip')} placement="top" arrow>
+                                <span>
+                                    <TextField
+                                        disabled={!isPageViewed}
+                                        placeholder={t('common.page_viewed_contains_placeholder')}
+                                        variant='standard'
+                                        fullWidth
+                                        value={data.dynamicData?.MyActivities?.PageViewedContainsText || ''}
+                                        error={containsTextError}
+                                        onChange={(event: any) => {
+                                            const val = event.target.value;
+                                            setContainsTextError(false);
+                                            onUpdate('PageViewedContainsText', val);
+                                        }}
+                                        onBlur={() => {
+                                            if (!data.dynamicData?.MyActivities?.PageViewedContainsText?.trim()) {
+                                                setContainsTextError(true);
+                                            }
+                                        }}
+                                        InputProps={{ disableUnderline: true }}
+                                    />
+                                </span>
+                            </Tooltip>
                         </FormControl>
                         <FormHelperText error={containsTextError} style={{ paddingLeft: 18 }}>
                             {containsTextError ? t('common.field_required') : ' '}
