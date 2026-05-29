@@ -96,6 +96,7 @@ const SelectProductUrl = ({ classes, data, onUpdate, disabled }: any) => {
     <FormControl
       variant="standard"
       className={clsx(classes.selectInputFormControl, classes.w100, classes.ellipsisText)}
+      style={{ paddingLeft: 15, paddingRight: 10 }}
     >
       <Select
         displayEmpty={true}

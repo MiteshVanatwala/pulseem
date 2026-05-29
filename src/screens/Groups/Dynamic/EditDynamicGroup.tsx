@@ -316,6 +316,12 @@ const EditDynamicGroup = ({ classes }: any) => {
                 message = t('group.saveDynamicGroupResponse.daysBackError');
                 isValid = false;
             }
+            else if ((dynamicGroupModel.dynamicData.MyActivities.PageViewedMatchType || 'exact') === 'contains') {
+                if (!dynamicGroupModel.dynamicData.MyActivities.PageViewedContainsText?.trim()) {
+                    message = t('common.field_required');
+                    isValid = false;
+                }
+            }
             else if (!dynamicGroupModel.dynamicData.MyActivities.PageViewedUrlIDs?.split(',')) {
                 message = t('group.saveDynamicGroupResponse.pageUrlRequired');
                 isValid = false;
@@ -324,7 +330,21 @@ const EditDynamicGroup = ({ classes }: any) => {
 
         if (isValid) {
             setLoader(true);
-            var requestObject = { Group: dynamicGroupModel?.Group, DynamicData: dynamicGroupModel?.dynamicData } as any;
+            const activities = dynamicGroupModel?.dynamicData?.MyActivities;
+            const effectiveMatchType = activities?.PageViewedMatchType || 'exact';
+            const cleanActivities = activities?.IsPageViewed
+                ? {
+                    ...activities,
+                    ...(effectiveMatchType === 'contains'
+                        ? { PageViewedUrlIDs: null }
+                        : { PageViewedContainsText: undefined }
+                    )
+                }
+                : activities;
+            var requestObject = {
+                Group: dynamicGroupModel?.Group,
+                DynamicData: { ...dynamicGroupModel?.dynamicData, MyActivities: cleanActivities }
+            } as any;
             const response = await dispatch(save(requestObject));
             handleResponse(response.payload, isExit);
         }
@@ -689,7 +709,9 @@ const EditDynamicGroup = ({ classes }: any) => {
                                         IsPageViewedMaxPrice: null,
                                         IsPageViewedInterval: ActivtyTimeInterval.Last2Weeks,
                                         PageViewedPrice: null,
-                                        IsPageViewedProductCategory: null
+                                        IsPageViewedProductCategory: null,
+                                        PageViewedMatchType: undefined,
+                                        PageViewedContainsText: ''
                                     }
                                 }
                             });
