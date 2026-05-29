@@ -322,7 +322,7 @@ const EditDynamicGroup = ({ classes }: any) => {
                     isValid = false;
                 }
             }
-            else if (!dynamicGroupModel.dynamicData.MyActivities.PageViewedUrlIDs?.split(',')) {
+            else if (!dynamicGroupModel.dynamicData.MyActivities.PageViewedUrlIDs) {
                 message = t('group.saveDynamicGroupResponse.pageUrlRequired');
                 isValid = false;
             }
