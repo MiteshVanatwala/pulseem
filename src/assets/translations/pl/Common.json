@@ -832,6 +832,9 @@
   "maxPrice": "Maksymalna cena",
   "abandonedCart": "Porzucony koszyk w",
   "pageViewed": "Strona wyświetlona w",
+  "page_viewed_match_exact": "Dokładnie",
+  "page_viewed_match_contains": "Zawiera",
+  "field_required": "Pole wymagane",
   "priceRangeError": "Maksymalna cena nie może być większa niż minimalna cena",
   "verifyByEmail": "Przez e-mail",
   "verifyBySms": "Przez SMS",
@@ -992,5 +995,7 @@
   "manageAgent": "Zarządzaj agentem",
   "clearAllFilters": "Wyczyść wszystkie filtry",
   "allNumbers": "Wszystkie liczby",
-  "pulseSendPill": "Wysyłka pulsacyjna"
+  "pulseSendPill": "Wysyłka pulsacyjna",
+  "page_viewed_contains_placeholder": "/checkout",
+  "page_viewed_contains_tooltip": "Dopasowuje kontakty, które odwiedziły stronę, której URL zawiera ten tekst. Bez rozróżniania wielkości liter. Uwzględnia parametry URL. Wpisz tylko jedną wartość — nie rozdzielaj przecinkami."
 }
