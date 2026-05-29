@@ -1688,8 +1688,9 @@ const ClientSearchResult = ({ classes }) => {
                       placement={"top"}
                       arrow={true}
                       title={<Typography className={classes.bold}>{t("client.clientStatus.email.invalidTooltip")}</Typography>}
-                      text={<Typography className={clsx(classes.bold, cssClasses(true))}>{switchStatus(true)}</Typography>}
-                    />
+                    >
+                      <Typography className={clsx(classes.bold, cssClasses(true))}>{switchStatus(true)}</Typography>
+                    </CustomTooltip>
                   : <Typography className={clsx(classes.bold, cssClasses(true))}>{switchStatus(true)}</Typography>,
                 classes: { text: localClasses.noWrap },
               }
@@ -1777,8 +1778,9 @@ const ClientSearchResult = ({ classes }) => {
                         placement={"top"}
                         arrow={true}
                         title={<Typography className={classes.bold}>{t("client.clientStatus.email.invalidTooltip")}</Typography>}
-                        text={<Typography align='left' className={clsx(classes.middle, classes.bold, Status === 1 ? classes.sendIconText : classes.textColorRed)}>({switchStatus(true)})</Typography>}
-                      />
+                      >
+                        <Typography align='left' className={clsx(classes.middle, classes.bold, Status === 1 ? classes.sendIconText : classes.textColorRed)}>({switchStatus(true)})</Typography>
+                      </CustomTooltip>
                     : <Typography align='left' className={clsx(classes.middle, classes.bold, Status === 1 ? classes.sendIconText : classes.textColorRed)}>({switchStatus(true)})</Typography>
                   }
                 </Typography>
