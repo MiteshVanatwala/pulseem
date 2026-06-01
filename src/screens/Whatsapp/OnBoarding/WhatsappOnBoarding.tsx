@@ -84,12 +84,14 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 	}, [phoneNumberId, wabaId, code]);
 
 	const FBlogin = async () => {
-		const resp = await dispatch(facebookLogin({
+		const payload = {
 			phone_number_id: phoneNumberId,
 			waba_id: wabaId,
 			code: code,
 			isCoexistence: isCoexistenceFlow
-		})) as any;
+		};
+		console.log('[SaveWhatsappMetaClients] Calling API with payload:', payload);
+		const resp = await dispatch(facebookLogin(payload)) as any;
 		handleFBloginResponse(resp?.payload as PulseemResponse)
 	}
 
@@ -239,6 +241,11 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 					setWabaId(waba_id);
         } else if (data.event === 'FINISH_WHATSAPP_BUSINESS_APP_ONBOARDING') {
           const { phone_number_id, waba_id } = data.data;
+					console.log('[Coexistence] FINISH_WHATSAPP_BUSINESS_APP_ONBOARDING received from Meta:', {
+						phone_number_id,
+						waba_id,
+						full_payload: data
+					});
 					setIsCoexistenceFlow(true);
 					setPhoneNumberId(phone_number_id);
 					setWabaId(waba_id);
