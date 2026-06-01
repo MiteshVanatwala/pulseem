@@ -15,9 +15,10 @@ const storageKey = (userId?: string | number | null): string =>
  */
 export const extractPrimaryFontName = (fontFamilyCss: string): string => {
     if (!fontFamilyCss) return '';
-    const first = fontFamilyCss.split(',')[0];
-    // Strip surrounding quotes and whitespace
-    return first.replace(/["']/g, '').trim();
+    let first = fontFamilyCss.split(',')[0];
+    // Strip surrounding quotes (including HTML entities) and whitespace
+    first = first.replace(/&quot;/g, '').replace(/&#39;/g, '').replace(/["']/g, '');
+    return first.trim();
 };
 
 /**
