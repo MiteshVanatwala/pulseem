@@ -75,6 +75,13 @@ import TierPlans from '../../components/TierPlans/TierPlans';
 import PayPerRecipientNew from '../../components/PayPerRecipient/PayPerRecipientNew';
 import { getPackagesDetails } from '../../redux/reducers/dashboardSlice';
 import { getCookie, setCookie } from '../../helpers/Functions/cookies';
+import FontValidationModal from './modals/FontValidationModal';
+import {
+  extractAllFontFamilies,
+  isWebSafeFont,
+  isFontSuppressed,
+  suppressFont,
+} from '../../helpers/Fonts/fontValidationUtils';
 
 const SUPPRESS_SIZE_WARNING_COOKIE = 'suppress_size_warning';
 const SUPPRESS_SIZE_WARNING_TTL = 86400; // 24 hours in seconds
@@ -286,6 +293,19 @@ const CampaignEditor = ({ classes, ...props }) => {
   const latestEditorJsonRef = useRef(null);
   const isProblematicLinksDialogOpenRef = useRef(false);
   const [suppressSizeWarningChecked, setSuppressSizeWarningChecked] = useState(false);
+
+  // ── Font Validation State ────────────────────────────────────────────────
+  /** All font names found in the previous onChange snapshot (used to detect NEW additions) */
+  const lastKnownFontNamesRef = useRef(new Set());
+  /** The editor JSON from the previous onChange call — used as the revert snapshot */
+  const prevEditorJsonRef = useRef(null);
+  /** Stored revert target when modal opens */
+  const preFontChangeJsonRef = useRef(null);
+  const [fontValidationModal, setFontValidationModal] = useState({
+    open: false,
+    fontName: '',
+  });
+  // ────────────────────────────────────────────────────────────────────────
 
 
   //#region Get Extra fields & Landing pages, after Data Ready
@@ -1332,6 +1352,67 @@ const CampaignEditor = ({ classes, ...props }) => {
 
   const editorFonts = FONTS();
   const hasDisplayConditions = accountFeatures?.indexOf(PulseemFeatures.DisplayConditions) > -1;
+
+  /**
+   * Receives the full Beefree editor JSON on every onChange event.
+   * Scans ALL font-family values (global, block-level, and inline HTML)
+   * and triggers the validation pop-up if a new non-web-safe font is detected.
+   */
+  const handleFontChange = (jsonFile) => {
+    try {
+      const currentFontNames = extractAllFontFamilies(jsonFile);
+      const previousFontNames = lastKnownFontNamesRef.current;
+
+      const userId = subAccount?.UserID ?? subAccount?.userId;
+
+      // Find a font that is newly present AND non-web-safe AND not suppressed
+      let newNonSafeFont = null;
+      for (const fontName of currentFontNames) {
+        if (previousFontNames.has(fontName)) continue;   // not new
+        if (isWebSafeFont(fontName)) continue;            // web-safe, no warning
+        if (isFontSuppressed(userId, fontName)) continue; // user suppressed
+        newNonSafeFont = fontName;
+        break;
+      }
+
+      if (newNonSafeFont) {
+        // Store the state BEFORE this change so we can revert to it
+        preFontChangeJsonRef.current = prevEditorJsonRef.current;
+        setFontValidationModal({ open: true, fontName: newNonSafeFont });
+      }
+
+      // Always advance the tracking refs to the current state
+      prevEditorJsonRef.current = typeof jsonFile === 'string' ? JSON.parse(jsonFile) : jsonFile;
+      lastKnownFontNamesRef.current = currentFontNames;
+    } catch (e) {
+      console.error('[FontValidation] Error during font detection:', e);
+    }
+  };
+
+  /** "Use Anyway" — optionally suppresses future warnings for this font */
+  const handleFontValidationUseAnyway = (doNotShowAgain) => {
+    const { fontName } = fontValidationModal;
+    if (doNotShowAgain) {
+      const userId = subAccount?.UserID ?? subAccount?.userId;
+      suppressFont(userId, fontName);
+    }
+    // Accept the chosen font — mark it known so subsequent onChange calls don't re-trigger
+    lastKnownFontNamesRef.current = new Set([...lastKnownFontNamesRef.current, fontName]);
+    setFontValidationModal({ open: false, fontName: '' });
+  };
+
+  /** "Choose Different Font" — reverts the editor to the pre-change JSON snapshot */
+  const handleFontValidationChooseDifferent = async () => {
+    setFontValidationModal({ open: false, fontName: '' });
+    if (preFontChangeJsonRef.current && editorRef.current) {
+      try {
+        await editorRef.current.load(preFontChangeJsonRef.current);
+      } catch (e) {
+        console.error('[FontValidation] Failed to revert editor font:', e);
+      }
+    }
+    preFontChangeJsonRef.current = null;
+  };
   const onRefreshConditions = async (deletedByPopupId = null) => {
     if (deletedByPopupId !== null) {
       recentlyDeletedByPopupRef.current.add(deletedByPopupId);
@@ -1432,8 +1513,9 @@ const CampaignEditor = ({ classes, ...props }) => {
     onConditionDeletedFromDesign: removeDeletedConditionFromDesign,
     onEditorJsonChange: updateLatestEditorJson,
     setIsDisplayConditionDialogOpen: setIsDisplayConditionDialogOpen,
+    onFontChange: handleFontChange,
     hasDisplayConditions: hasDisplayConditions
-  }), [classes, displayConditions, onSaveUserBlock, isRTL, EditRow, openModal, onSave, onAutoSaveCampaign, onDesignChange, setDialog, campaignId, onEditBlock, handleDeleteBlock, getRows, handleEditRow, handleDeleteRow, t, language, dispatch, editorFonts, onRefreshConditions, removeDeletedConditionFromDesign, updateLatestEditorJson, setIsDisplayConditionDialogOpen, hasDisplayConditions]);
+  }), [classes, displayConditions, onSaveUserBlock, isRTL, EditRow, openModal, onSave, onAutoSaveCampaign, onDesignChange, setDialog, campaignId, onEditBlock, handleDeleteBlock, getRows, handleEditRow, handleDeleteRow, t, language, dispatch, editorFonts, onRefreshConditions, removeDeletedConditionFromDesign, updateLatestEditorJson, setIsDisplayConditionDialogOpen, hasDisplayConditions, handleFontChange]);
 
   // Email Size Indicator
   const EmailSizeIndicator = () => {
@@ -2268,6 +2350,17 @@ const CampaignEditor = ({ classes, ...props }) => {
         jumpToStep={2}
       />
       {renderDialog()}
+
+      {/* ── Font Validation Pop-up (Beefree Email Editor only) ── */}
+      <FontValidationModal
+        open={fontValidationModal.open}
+        classes={classes}
+        fontName={fontValidationModal.fontName}
+        isRTL={isRTL}
+        onUseAnyway={handleFontValidationUseAnyway}
+        onChooseDifferent={handleFontValidationChooseDifferent}
+      />
+
       <Loader isOpen={showLoader} showBackdrop={false} />
       {showTierPlans && <TierPlans
         classes={classes}
