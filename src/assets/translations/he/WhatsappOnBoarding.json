@@ -34,7 +34,7 @@
 	"enterValidPIN": "אנא הכניסו קוד תקין",
 	"loginWithFacebook": "התחבר עם פייסבוק",
 	"loginWithFacebookCoexistence": "התחבר עם פייסבוק (Coexistence)",
-	"coexistenceColumn": "Coexistence",
+	"coexistenceColumn": "דו-קיום",
 	"coexistenceNotAvailable": "לא זמין למספר זה",
 	"SaveWhatsappMetaClientsResponseCode": {
 		"3": "תת חשבון לא נמצא",
