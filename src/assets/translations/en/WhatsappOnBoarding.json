@@ -119,6 +119,7 @@
 	"business_statuses": {
 		"notVerified": "Not verified",
 		"pending": "Pending",
+		"pending_submission": "Pending submission",
 		"verified": "Verified",
 		"rejected": "Rejected",
 		"inReview": "In review",
