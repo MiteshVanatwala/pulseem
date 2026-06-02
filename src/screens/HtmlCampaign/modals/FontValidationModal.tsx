@@ -132,7 +132,6 @@ const FontValidationModal: React.FC<FontValidationModalProps> = ({
                             {t('campaigns.fontValidation.doNotShow')}
                         </Typography>
                     }
-                    labelPlacement={isRTL ? 'start' : 'end'}
                 />
             </div>
         </BaseDialog>

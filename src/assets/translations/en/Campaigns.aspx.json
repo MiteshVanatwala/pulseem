@@ -871,7 +871,7 @@
     "title": "Font Compatibility Warning",
     "body": "This font may not be supported in Gmail, Outlook, and some devices. It could display as a fallback font for some recipients.",
     "useAnyway": "Use Anyway",
-    "cancel": "Choose Different Font",
+    "cancel": "Select different font",
     "doNotShow": "Do not show this warning again for this font"
   }
 }
