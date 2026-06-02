@@ -600,6 +600,9 @@ const CampaignEditor = ({ classes, ...props }) => {
 
             updateLatestEditorJson(template);
 
+            // Pre-calculate fonts present in the initial template so we don't warn for them
+            lastKnownFontCountsRef.current = extractAllFontFamilies(template);
+
             beeTest.start(config, template).then((instance) => {
               editorRef.current = instance;
               if ((!campaign || !campaign.HtmlData) && (!params?.id || params?.id === 0)) {
@@ -1367,10 +1370,6 @@ const CampaignEditor = ({ classes, ...props }) => {
       let newNonSafeFont = null;
       for (const [fontName, count] of currentFontCounts.entries()) {
         const prevCount = previousFontCounts.get(fontName) || 0;
-        
-        // If it's the very first onChange (previous map is empty), it means the editor just loaded the template.
-        // We don't want to popup for fonts already in the saved template, so we skip if size === 0.
-        if (previousFontCounts.size === 0) continue;
         
         if (count <= prevCount) continue;                 // not a new occurrence
         if (isWebSafeFont(fontName)) continue;            // web-safe, no warning
