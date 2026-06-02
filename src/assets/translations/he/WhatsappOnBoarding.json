@@ -115,6 +115,7 @@
 	"business_statuses": {
 		"notVerified": "לא מאומת",
 		"pending": "ממתין לאימות",
+		"pending_submission": "ממתין להגשה",
 		"verified": "מאומת",
 		"rejected": "נדחה",
 		"inReview": "בתהליך אימות",
