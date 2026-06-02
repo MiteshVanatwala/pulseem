@@ -827,6 +827,9 @@
   "maxPrice": "מחיר מקסימלי",
   "abandonedCart": "נטש עגלה ב",
   "pageViewed": "צפה בעמוד ב",
+  "page_viewed_match_exact": "בדיוק",
+  "page_viewed_match_contains": "כולל",
+  "field_required": "שדה חובה",
   "priceRangeError": "מחיר המקסימום גבוה ממחיר המינימום",
   "verifyByEmail": "אימות באימייל",
   "verifyBySms": "אימות ב-SMS",
@@ -942,5 +945,7 @@
   "manageAgent": "נהל סוכן",
   "clearAllFilters": "נקה את כל המסננים",
   "allNumbers": "כל המספרים",
-  "pulseSendPill": "שליחה בפולסים"
+  "pulseSendPill": "שליחה בפולסים",
+  "page_viewed_contains_placeholder": "/checkout",
+  "page_viewed_contains_tooltip": "מתאים לאנשי קשר שביקרו בעמוד שה-URL שלו מכיל טקסט זה. לא תלוי רישיות. כולל פרמטרים של URL. יש להזין ערך אחד בלבד – ללא פסיקים."
 }

@@ -832,6 +832,9 @@
   "maxPrice": "Maximum Price",
   "abandonedCart": "Abandoned Cart in",
   "pageViewed": "Page Viewed in",
+  "page_viewed_match_exact": "Exact",
+  "page_viewed_match_contains": "Contains",
+  "field_required": "Required field",
   "priceRangeError": "Maximum price cannot be larger then Minimum Price",
   "verifyByEmail": "Via Email",
   "verifyBySms": "Via SMS",
@@ -997,5 +1000,7 @@
   "field": "Field",
   "operator": "Operator",
   "value": "Value",
-  "pulseSendPill": "Pulse Send"
+  "pulseSendPill": "Pulse Send",
+  "page_viewed_contains_placeholder": "/checkout",
+  "page_viewed_contains_tooltip": "Matches contacts who visited any page whose URL contains this text. Case-insensitive. URL parameters are included (e.g. utm_source=email). Enter one value only — not comma-separated."
 }
