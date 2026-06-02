@@ -295,8 +295,8 @@ const CampaignEditor = ({ classes, ...props }) => {
   const [suppressSizeWarningChecked, setSuppressSizeWarningChecked] = useState(false);
 
   // ── Font Validation State ────────────────────────────────────────────────
-  /** All font names found in the previous onChange snapshot (used to detect NEW additions) */
-  const lastKnownFontNamesRef = useRef(new Set());
+  /** Tracks the occurrence count of all fonts to detect when a font is applied to a new element */
+  const lastKnownFontCountsRef = useRef(new Map());
   /** The editor JSON from the previous onChange call — used as the revert snapshot */
   const prevEditorJsonRef = useRef(null);
   /** Stored revert target when modal opens */
@@ -1358,17 +1358,24 @@ const CampaignEditor = ({ classes, ...props }) => {
    */
   const handleFontChange = (jsonFile) => {
     try {
-      const currentFontNames = extractAllFontFamilies(jsonFile);
-      const previousFontNames = lastKnownFontNamesRef.current;
+      const currentFontCounts = extractAllFontFamilies(jsonFile);
+      const previousFontCounts = lastKnownFontCountsRef.current;
 
       const userId = subAccount?.UserID ?? subAccount?.userId;
 
-      // Find a font that is newly present AND non-web-safe AND not suppressed
+      // Find a font that is newly present OR increased in count AND non-web-safe AND not suppressed
       let newNonSafeFont = null;
-      for (const fontName of currentFontNames) {
-        if (previousFontNames.has(fontName)) continue;   // not new
+      for (const [fontName, count] of currentFontCounts.entries()) {
+        const prevCount = previousFontCounts.get(fontName) || 0;
+        
+        // If it's the very first onChange (previous map is empty), it means the editor just loaded the template.
+        // We don't want to popup for fonts already in the saved template, so we skip if size === 0.
+        if (previousFontCounts.size === 0) continue;
+        
+        if (count <= prevCount) continue;                 // not a new occurrence
         if (isWebSafeFont(fontName)) continue;            // web-safe, no warning
         if (isFontSuppressed(userId, fontName)) continue; // user suppressed
+        
         newNonSafeFont = fontName;
         break;
       }
@@ -1381,7 +1388,7 @@ const CampaignEditor = ({ classes, ...props }) => {
 
       // Always advance the tracking refs to the current state
       prevEditorJsonRef.current = typeof jsonFile === 'string' ? JSON.parse(jsonFile) : jsonFile;
-      lastKnownFontNamesRef.current = currentFontNames;
+      lastKnownFontCountsRef.current = currentFontCounts;
     } catch (e) {
       console.error('[FontValidation] Error during font detection:', e);
     }
@@ -1394,8 +1401,8 @@ const CampaignEditor = ({ classes, ...props }) => {
       const userId = subAccount?.UserID ?? subAccount?.userId;
       suppressFont(userId, fontName);
     }
-    // Accept the chosen font — mark it known so subsequent onChange calls don't re-trigger
-    lastKnownFontNamesRef.current = new Set([...lastKnownFontNamesRef.current, fontName]);
+    // Note: Because we already updated lastKnownFontCountsRef in handleFontChange,
+    // the new higher count is already recorded. We don't need to manually update it here.
     setFontValidationModal({ open: false, fontName: '' });
   };
 

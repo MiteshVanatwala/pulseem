@@ -22,52 +22,53 @@ export const extractPrimaryFontName = (fontFamilyCss: string): string => {
 };
 
 /**
- * Scans the entire Beefree editor JSON and returns a Set of all primary font
- * names found — covering:
+ * Scans the entire Beefree editor JSON and returns a Map of all primary font
+ * names found to their occurrence count — covering:
  *  1. Global body font  (page.body.content.style["font-family"])
  *  2. Block-level fonts (module.descriptor.style["font-family"])
  *  3. Inline HTML fonts (font-family inside style attributes of HTML strings)
  */
-export const extractAllFontFamilies = (jsonData: any): Set<string> => {
-    const fonts = new Set<string>();
+export const extractAllFontFamilies = (jsonData: any): Map<string, number> => {
+    const fonts = new Map<string, number>();
     try {
         const json = typeof jsonData === 'string' ? JSON.parse(jsonData) : jsonData;
 
         const addFont = (css: string) => {
             const name = extractPrimaryFontName(css);
-            if (name) fonts.add(name);
+            if (name) {
+                fonts.set(name, (fonts.get(name) || 0) + 1);
+            }
         };
 
-        // 1. Global body font
-        const globalFont = json?.page?.body?.content?.style?.['font-family'];
-        if (globalFont) addFont(globalFont);
+        // 1. Recursive extractor to find fonts ANYWHERE in the JSON (Buttons, Menus, Text, Global, etc.)
+        const extractFontsRecursive = (obj: any) => {
+            if (!obj) return;
+            if (typeof obj === 'string') {
+                // Parse inline HTML for style attributes safely matching the correct quote pair
+                const styleRegex = /style=(["'])(.*?)\1/gi;
+                let styleMatch;
+                while ((styleMatch = styleRegex.exec(obj)) !== null) {
+                    const styleStr = styleMatch[2];
+                    const fontMatch = styleStr.match(/font-family\s*:\s*([^;]+)/i);
+                    if (fontMatch) {
+                        addFont(fontMatch[1].trim());
+                    }
+                }
+            } else if (Array.isArray(obj)) {
+                obj.forEach(extractFontsRecursive);
+            } else if (typeof obj === 'object') {
+                for (const key in obj) {
+                    // Match block-level or global font-family CSS properties
+                    if (key === 'font-family' && typeof obj[key] === 'string') {
+                        addFont(obj[key]);
+                    }
+                    extractFontsRecursive(obj[key]);
+                }
+            }
+        };
 
-        // 2 & 3. Walk every row → column → module
-        const inlineRegex = /font-family:\s*([^;]+)/g;
-        (json?.page?.rows || []).forEach((row: any) => {
-            (row?.columns || []).forEach((col: any) => {
-                (col?.modules || []).forEach((module: any) => {
-                    // Block-level font
-                    const blockFont = module?.descriptor?.style?.['font-family'];
-                    if (blockFont) addFont(blockFont);
-
-                    // Inline HTML font-family values (inline text toolbar)
-                    const htmlSources = [
-                        module?.descriptor?.text?.html,
-                        module?.descriptor?.heading?.html,
-                        module?.descriptor?.title?.html,
-                    ];
-                    htmlSources.forEach((html: string) => {
-                        if (!html) return;
-                        let m;
-                        inlineRegex.lastIndex = 0;
-                        while ((m = inlineRegex.exec(html)) !== null) {
-                            addFont(m[1].trim());
-                        }
-                    });
-                });
-            });
-        });
+        // Run the recursive extractor on the entire JSON root
+        extractFontsRecursive(json);
     } catch {
         // Silently ignore parse errors during font detection
     }
