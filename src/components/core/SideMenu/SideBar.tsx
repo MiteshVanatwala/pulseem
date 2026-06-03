@@ -60,7 +60,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const [settingsLoaded, setSettingsLoaded] = useState(false);
   const [languageMenuOpen, setLanguageMenuOpen] = useState(false);
   const [showTierPlans, setShowTierPlans] = useState(false);
+  const [imageError, setImageError] = useState(false);
   const languageButtonRef = useRef(null);
+
+  useEffect(() => {
+    setImageError(false);
+  }, [imageURL]);
 
   useEffect(() => {
     if (accountSettings && accountSettings !== '') {
@@ -137,6 +142,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
       const newState = !isCollapsed;
       setIsCollapsed(newState);
       setCookie('SidebarCollapsed', String(newState), 365); // שמור לשנה
+      onToggle(newState);
+      dispatch(setIsDrawerOpen(newState));
+      return;
     }
     dispatch(setIsDrawerOpen(isCollapsed));
   };
@@ -154,6 +162,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       // If sidebar is collapsed, expand it and open the specific menu
       setIsCollapsed(false);
       setCookie('SidebarCollapsed', 'false', 365);
+      onToggle(false);
 
       // Open the specific menu
       setOpenMenus((prev) => {
@@ -219,11 +228,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
           }}
           style={{ padding: 0, margin: 0 }}
         >
-          {imageURL !== '' ? (
+          {imageURL !== '' && !imageError ? (
             <img
               src={imageURL}
               alt="Logo"
               className={classes.sidebarLogo}
+              onError={() => setImageError(true)}
             />
           ) : (
             <PulseemNewLogo />

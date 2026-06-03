@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import {
   AppBar, Toolbar, Typography, Button, IconButton, Box
 } from '@material-ui/core';
@@ -42,6 +42,11 @@ export const TopAppBar: React.FC<TopAppBarProps> = ({
   } = useSelector((state: any) => state.common);
 
   const topNavRef = useRef(null);
+  const [imageError, setImageError] = useState(false);
+
+  useEffect(() => {
+    setImageError(false);
+  }, [imageURL]);
 
   // On mobile, show a simplified top bar with hamburger menu
   const isMobile = windowSize === 'xs' || windowSize === 'sm';
@@ -96,11 +101,12 @@ export const TopAppBar: React.FC<TopAppBarProps> = ({
               'logo'
             )}
           >
-            {imageURL !== '' ? (
+            {imageURL !== '' && !imageError ? (
               <img
                 src={imageURL}
                 alt='Logo'
                 className={classes.appBarLogo}
+                onError={() => setImageError(true)}
               />
             ) : (
               <PulseemNewLogo />

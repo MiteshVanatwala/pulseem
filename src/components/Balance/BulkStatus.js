@@ -371,33 +371,12 @@ const BulkStatus = ({ classes }) => {
                   {t('dashboard.yourBulkStatus')}
                 </Typography>
               </Box>
-              {isWhiteLabel ? <Box className={clsx(classes.mr15, 'bubbleNew')}>
-                <Typography className='bubbleText'>{t('common.new')}</Typography>
-                <TooltipBubble />
-              </Box> :
-                <Box className={clsx(classes.dFlex, classes.flexWrap)} justifyContent='center' alignItems='center'>
-                  <Tooltip
-                    arrow
-                    title={t('dashboard.helpDrawer.support.helpCenter.title')}
-                    placement={"top"}
-                    open
-                    classes={{
-                      tooltip: clsx(classes.tooltipPrimary, classes.f12),
-                      arrow: classes.colrPrimary
-                    }}
-                  >
-                    <IconButton
-                      size="small"
-                      className={clsx(classes.noPadding)}
-                      onClick={() => {
-                        dispatch(toggleHelpDrawer())
-                      }}
-                    >
-                      <MdSupportAgent className={classes.linkNoDesign} style={{ fontSize: 30, color: '#ff3343' }} title={t('master.RadMenuItemResource21.Text')} />
-                    </IconButton>
-                  </Tooltip>
+              {isWhiteLabel && (
+                <Box className={clsx(classes.mr15, 'bubbleNew')}>
+                  <Typography className='bubbleText'>{t('common.new')}</Typography>
+                  <TooltipBubble />
                 </Box>
-          }
+              )}
           </Box>
           </Grid>
           <Grid

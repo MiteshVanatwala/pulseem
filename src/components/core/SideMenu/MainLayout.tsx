@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 import { Sidebar } from './SideBar';
 import TopMenu from '../TopMenu/TopMenu';
 import type { TopMenuProps } from '../TopMenu/TopMenu';
+import { getCookie } from '../../../helpers/Functions/cookies';
 
 const SIDEBAR_WIDTH = 280;
 const SIDEBAR_COLLAPSED_WIDTH = 70;
@@ -95,7 +96,11 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
   const { windowSize, isRTL } = useSelector((state: any) => state.core);
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(!isMobile);
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => {
+    const cookie = getCookie('SidebarCollapsed');
+    if (cookie !== null) return cookie === 'true';
+    return window.innerWidth <= 1366;
+  });
 
   // Handle responsive behavior
   useEffect(() => {
@@ -106,11 +111,11 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
     }
   }, [isMobile]);
 
-  const handleSidebarToggle = () => {
+  const handleSidebarToggle = (newState?: boolean) => {
     if (isMobile) {
-      setIsSidebarOpen(!isSidebarOpen);
+      setIsSidebarOpen(typeof newState === 'boolean' ? newState : !isSidebarOpen);
     } else {
-      setIsSidebarCollapsed(!isSidebarCollapsed);
+      setIsSidebarCollapsed(typeof newState === 'boolean' ? newState : !isSidebarCollapsed);
     }
   };
 

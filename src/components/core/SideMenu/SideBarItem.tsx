@@ -101,23 +101,17 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
     e.preventDefault();
     e.stopPropagation();
 
-    if (item.href && !isCollapseAction) {
-      Redirect({ url: item.href } as RedirectPropTypes);
-    }
-    else {
-      if (item.options && item.options.length > 0) {
-        toggleSubmenu && toggleSubmenu();
+    if (item.options && item.options.length > 0) {
+      toggleSubmenu && toggleSubmenu();
+    } else {
+      if (onItemClick) {
+        onItemClick();
       } else {
-        if (onItemClick) {
-          onItemClick();
+        if (item.href) {
+          Redirect({ url: item.href } as RedirectPropTypes);
         }
-        else {
-          if (item.href) {
-            Redirect({ url: item.href } as RedirectPropTypes);
-          }
-          if (item.onClick) {
-            item.onClick();
-          }
+        if (item.onClick) {
+          item.onClick();
         }
       }
     }
@@ -141,7 +135,9 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
       button
       className={clsx(classes.sidebarItem, isActive && 'active')}
       style={{
-        paddingLeft: level > 0 ? 32 + (level * 16) : !isRTL ? 8 : 16, paddingRight: level > 0 ? 32 + (level * 16) : isRTL ? 8 : 16
+        paddingLeft: level > 0 ? 32 + (level * 16) : !isRTL ? 8 : 16, 
+        paddingRight: level > 0 ? 32 + (level * 16) : isRTL ? 8 : 16,
+        marginBottom: hasSubmenu && showSubmenu ? 0 : undefined
       }}
       onClick={((e: React.MouseEvent) => { handleClick(e, false) })}
     >

@@ -112,6 +112,7 @@ export const sideMenuStyle = (windowSize, isRTL, theme) => ({
     backgroundColor: 'rgb(255 120 120 / 45%)',
     color: '#fff',
     '& $sidebarItem': {
+      margin: 0,
       '&:hover': {
         backgroundColor: 'rgba(255, 255, 255, 0.2)',
         color: "#fff"

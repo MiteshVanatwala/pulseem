@@ -1,4 +1,4 @@
-import { Box, Button, ClickAwayListener, MenuItem, MenuList, Paper, Popper, Tooltip, IconButton } from "@material-ui/core";
+import { Box, Button, ClickAwayListener, MenuItem, MenuList, Paper, Popper, Tooltip, IconButton, makeStyles } from "@material-ui/core";
 import NotificationBell from "../../NotificationBell/NotificationBell";
 import SettingsMenu from "./SettingsMenu";
 import clsx from 'clsx';
@@ -10,6 +10,8 @@ import { Language } from "../../../Models/SideMenuBar/SideMenuBarModel";
 import { setLanguage } from "../../../redux/reducers/coreSlice";
 import { BsGlobe2 } from "react-icons/bs";
 import { IoIosArrowDown } from "react-icons/io";
+import { MdSupportAgent } from 'react-icons/md';
+import { toggleHelpDrawer } from "../../../redux/reducers/helpDrawerSlice";
 import i18n from "../../../i18n";
 
 
@@ -80,7 +82,7 @@ const LanguageSelector: React.FC<{ classes: any }> = ({ classes }) => {
         >
             {/* @ts-ignore */}
             <BsGlobe2 style={{ fontSize: 21 }} />
-            
+
         </Button>
     );
 
@@ -96,15 +98,18 @@ const LanguageSelector: React.FC<{ classes: any }> = ({ classes }) => {
             >
                 <ClickAwayListener onClickAway={handleClose}>
                     <Paper className={classes.languageSelector}>
-                        <MenuList style={{ backgroundColor: '#fff' }}>
+                        <MenuList style={{ backgroundColor: '#fff', padding: 0 }}>
                             {languages.map((lang) => (
                                 <MenuItem
-                                    style={{ paddingInline: isCollapsed ? 15 : 15 }}
+                                    style={{ paddingInline: 20, paddingBlock: 12, minWidth: 140 }}
                                     key={lang.value}
                                     onClick={() => changeLanguage(lang)}
                                     selected={lang.value.toLowerCase() === language.toLowerCase()}
                                 >
-                                    {lang.title}
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
+                                        <span style={{ fontWeight: 500 }}>{lang.title}</span>
+                                        <span style={{ color: '#888', fontSize: '0.85em', fontWeight: 600, marginLeft: 20 }}>{lang.mobileTitle}</span>
+                                    </div>
                                 </MenuItem>
                             ))}
                         </MenuList>
@@ -116,16 +121,29 @@ const LanguageSelector: React.FC<{ classes: any }> = ({ classes }) => {
 };
 
 export interface TopMenuProps {
-  classes: any;
-  onMenuToggle?: () => void;
+    classes: any;
+    onMenuToggle?: () => void;
 }
 
+const useLocalStyles = makeStyles(() => ({
+    blackTooltip: {
+        backgroundColor: '#000',
+        color: '#fff',
+    },
+    blackArrow: {
+        color: '#000',
+    }
+}));
+
 const TopMenu: React.FC<TopMenuProps> = ({ classes, onMenuToggle }) => {
+    const localClasses = useLocalStyles();
+    const dispatch = useDispatch();
+    const { t } = useTranslation();
     const { windowSize } = useSelector((state: any) => state.core);
     const isMobile = windowSize === 'xs' || windowSize === 'sm';
 
     return (
-        <Box 
+        <Box
             className={clsx(isMobile ? classes.mobileTopMenu : classes.topMenu)}
         >
             {/* Mobile Hamburger Menu */}
@@ -149,18 +167,39 @@ const TopMenu: React.FC<TopMenuProps> = ({ classes, onMenuToggle }) => {
                     </IconButton>
                 </Box>
             )}
-            
+
             {/* Mobile Logo/Title */}
             {isMobile && (
                 <Box style={{ flex: 1, textAlign: 'center' }}>
                     <span style={{ fontSize: '18px', fontWeight: '500', color: '#333' }}>
-                        
+
                     </span>
                 </Box>
             )}
-            
+
             {/* Desktop/Mobile Right Side Items */}
             <Box className={clsx(isMobile ? classes.mobileRightItems : classes.desktopRightItems)}>
+                <Box>
+                    <Tooltip
+                        arrow
+                        title={t('dashboard.helpDrawer.support.helpCenter.title')}
+                        placement="bottom"
+                        classes={{
+                            tooltip: clsx(classes.f12, localClasses.blackTooltip),
+                            arrow: localClasses.blackArrow
+                        }}
+                    >
+                        <IconButton
+                            size="small"
+                            className={clsx(classes.noPadding)}
+                            onClick={() => {
+                                dispatch(toggleHelpDrawer());
+                            }}
+                        >
+                            <MdSupportAgent style={{ fontSize: 26, color: '#000' }} title={t('master.RadMenuItemResource21.Text')} />
+                        </IconButton>
+                    </Tooltip>
+                </Box>
                 <Box>
                     <NotificationBell classes={classes} />
                 </Box>
