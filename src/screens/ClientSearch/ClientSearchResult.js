@@ -48,6 +48,7 @@ import {
 } from "../../redux/reducers/clientSlice";
 import { getAccountExtraData } from '../../redux/reducers/smsSlice';
 import { BiSortDown, BiSortUp } from "react-icons/bi";
+import { BsInfoCircle } from "react-icons/bs";
 import SummaryRow from '../../components/Grids/SummaryRow';
 import AddGroupPopUp from "../Groups/Management/Popup/AddGroupPopUp";
 import UnsubscribeOrDeletePopup from "../Groups/Management/Popup/UnsubscribeOrDeletePopup";
@@ -1504,7 +1505,8 @@ const ClientSearchResult = ({ classes }) => {
       ErrorTypeText,
       OpenTime,
       SubmitDates,
-      IsOptIn
+      IsOptIn,
+      IsPulseemFlagged
     } = row;
     let iconsCells = [row.IsAutoResponder, row.IsConnectedToWebForm].filter((e) => {
       return e === true
@@ -1681,7 +1683,22 @@ const ClientSearchResult = ({ classes }) => {
               },
               {
                 label: "",
-                component: <Typography className={clsx(classes.bold, cssClasses(true))}>{switchStatus(true)}</Typography>,
+                component: Status === 4 && IsPulseemFlagged
+                  ? <Box style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <Typography className={clsx(classes.bold, cssClasses(true))}>{switchStatus(true)}</Typography>
+                    <CustomTooltip
+                      enterTouchDelay={50}
+                      leaveTouchDelay={3000}
+                      isSimpleTooltip={false}
+                      placement={"top"}
+                      arrow={true}
+                      title={<Typography className={classes.bold}>{t("client.clientStatus.email.invalidTooltip")}</Typography>}
+                    >
+                      <span style={{ flexShrink: 0, display: 'inline-flex' }}><BsInfoCircle style={{ cursor: 'pointer' }} /></span>
+                    </CustomTooltip>
+                  </Box>
+
+                  : <Typography className={clsx(classes.bold, cssClasses(true))}>{switchStatus(true)}</Typography>,
                 classes: { text: localClasses.noWrap },
               }
             ]}
@@ -1728,7 +1745,8 @@ const ClientSearchResult = ({ classes }) => {
       LogSms_ErrorType,
       LastSendDate,
       snt_OpeningDate,
-      SubmitDates
+      SubmitDates,
+      IsPulseemFlagged
     } = row;
 
     const switchStatus = (isEmail) => {
@@ -1761,7 +1779,22 @@ const ClientSearchResult = ({ classes }) => {
               <Box className={clsx(classes.flex6, classes.w60)}>
                 <Typography className={classes.bold}>{t("recipient.emails")}</Typography>
                 <Typography className={clsx(classes.elipsis, classes.dFlex)}>
-                  {Email}&nbsp;<Typography align='left' className={clsx(classes.middle, classes.bold, Status === 1 ? classes.sendIconText : classes.textColorRed)}>({switchStatus(true)})</Typography>
+                  {Email}&nbsp;{Status === 4 && IsPulseemFlagged
+                    ? <Box style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <Typography align='left' className={clsx(classes.middle, classes.bold, Status === 1 ? classes.sendIconText : classes.textColorRed)}>({switchStatus(true)})</Typography>
+                      <CustomTooltip
+                        enterTouchDelay={50}
+                        leaveTouchDelay={3000}
+                        isSimpleTooltip={false}
+                        placement={"top"}
+                        arrow={true}
+                        title={<Typography className={classes.bold}>{t("client.clientStatus.email.invalidTooltip")}</Typography>}
+                      >
+                        <span style={{ flexShrink: 0, display: 'inline-flex' }}><BsInfoCircle style={{ cursor: 'pointer' }} /></span>
+                      </CustomTooltip>
+                    </Box>
+                    : <Typography align='left' className={clsx(classes.middle, classes.bold, Status === 1 ? classes.sendIconText : classes.textColorRed)}>({switchStatus(true)})</Typography>
+                  }
                 </Typography>
               </Box>
             </Box>

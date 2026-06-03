@@ -54,6 +54,7 @@
       "Removed": "מוסר",
       "Restricted": "חסום",
       "Invalid": "שגוי",
+      "invalidTooltip": "נמען זה מסומן כשגוי על ידי Pulseem. צור קשר עם התמיכה לפני הפעלתו.",
       "Pending": "ממתין לאישור"
     },
     "sms": {
