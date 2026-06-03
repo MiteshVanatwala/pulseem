@@ -796,9 +796,9 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 							</Box>
 
 							<Box className={clsx(classes.p20)}>
-								{renderBusinessDetails()}
 								<Grid container spacing={3}>
 									<Grid item md={6} sm={12} xs={12}>
+										{renderBusinessDetails()}
 										{renderVirtualNumbers()}
 										{
 											phoneNumbers.length > 0 && (
