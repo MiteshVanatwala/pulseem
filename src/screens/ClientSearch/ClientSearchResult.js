@@ -1664,25 +1664,20 @@ const ClientSearchResult = ({ classes }) => {
               {
                 label: t(""),
                 component: (
-                  <Box style={{ direction: 'ltr', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <Typography noWrap={false} className={classes.nameEllipsis}>{`${Email && Email.length > 20 ? Email.substring(0, 20) + '...' : Email}`}</Typography>
-                    <CustomTooltip
-                      enterTouchDelay={50}
-                      leaveTouchDelay={3000}
-                      isSimpleTooltip={false}
-                      interactive={true}
-                      classes={{
-                        tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
-                        arrow: classes.fBlack,
-                      }}
-                      arrow={true}
-                      style={{ fontWeight: "bold" }}
-                      placement={"top"}
-                      title={<Typography title={Email} className={classes.bold}>{`${Email}`}</Typography>}
-                    >
-                      <span style={{ flexShrink: 0, display: 'inline-flex' }}><BsInfoCircle style={{ cursor: 'pointer' }} /></span>
-                    </CustomTooltip>
-                  </Box>
+                  <CustomTooltip
+                    isSimpleTooltip={false}
+                    interactive={true}
+                    classes={{
+                      tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
+                      arrow: classes.fBlack,
+                    }}
+                    arrow={true}
+                    style={{ fontWeight: "bold" }}
+                    placement={"top"}
+                    title={<Typography title={Email} className={classes.bold}>{`${Email}`}</Typography>}
+                    text={<Box style={{ direction: 'ltr' }}>{`${Email && Email.length > 20 ? Email.substring(0, 20) + '...' : Email}`}</Box>}
+                  >
+                  </CustomTooltip>
                 ),
                 classes: { text: localClasses.noWrap },
               },
@@ -1690,18 +1685,19 @@ const ClientSearchResult = ({ classes }) => {
                 label: "",
                 component: Status === 4 && IsPulseemFlagged
                   ? <Box style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      <Typography className={clsx(classes.bold, cssClasses(true))}>{switchStatus(true)}</Typography>
-                      <CustomTooltip
-                        enterTouchDelay={50}
-                        leaveTouchDelay={3000}
-                        isSimpleTooltip={false}
-                        placement={"top"}
-                        arrow={true}
-                        title={<Typography className={classes.bold}>{t("client.clientStatus.email.invalidTooltip")}</Typography>}
-                      >
-                        <span style={{ flexShrink: 0, display: 'inline-flex' }}><BsInfoCircle style={{ cursor: 'pointer' }} /></span>
-                      </CustomTooltip>
-                    </Box>
+                    <Typography className={clsx(classes.bold, cssClasses(true))}>{switchStatus(true)}</Typography>
+                    <CustomTooltip
+                      enterTouchDelay={50}
+                      leaveTouchDelay={3000}
+                      isSimpleTooltip={false}
+                      placement={"top"}
+                      arrow={true}
+                      title={<Typography className={classes.bold}>{t("client.clientStatus.email.invalidTooltip")}</Typography>}
+                    >
+                      <span style={{ flexShrink: 0, display: 'inline-flex' }}><BsInfoCircle style={{ cursor: 'pointer' }} /></span>
+                    </CustomTooltip>
+                  </Box>
+
                   : <Typography className={clsx(classes.bold, cssClasses(true))}>{switchStatus(true)}</Typography>,
                 classes: { text: localClasses.noWrap },
               }
@@ -1783,38 +1779,20 @@ const ClientSearchResult = ({ classes }) => {
               <Box className={clsx(classes.flex6, classes.w60)}>
                 <Typography className={classes.bold}>{t("recipient.emails")}</Typography>
                 <Typography className={clsx(classes.elipsis, classes.dFlex)}>
-                  <Box style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <Typography className={classes.nameEllipsis}>{`${Email && Email.length > 20 ? Email.substring(0, 20) + '...' : Email}`}</Typography>
-                    <CustomTooltip
-                      enterTouchDelay={50}
-                      leaveTouchDelay={3000}
-                      isSimpleTooltip={false}
-                      interactive={true}
-                      classes={{
-                        tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
-                        arrow: classes.fBlack,
-                      }}
-                      arrow={true}
-                      style={{ fontWeight: "bold" }}
-                      placement={"top"}
-                      title={<Typography title={Email} className={classes.bold}>{`${Email}`}</Typography>}
-                    >
-                      <span style={{ flexShrink: 0, display: 'inline-flex' }}><BsInfoCircle style={{ cursor: 'pointer' }} /></span>
-                    </CustomTooltip>
-                  </Box>&nbsp;{Status === 4 && IsPulseemFlagged
+                  {Email}&nbsp;{Status === 4 && IsPulseemFlagged
                     ? <Box style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                        <Typography align='left' className={clsx(classes.middle, classes.bold, Status === 1 ? classes.sendIconText : classes.textColorRed)}>({switchStatus(true)})</Typography>
-                        <CustomTooltip
-                          enterTouchDelay={50}
-                          leaveTouchDelay={3000}
-                          isSimpleTooltip={false}
-                          placement={"top"}
-                          arrow={true}
-                          title={<Typography className={classes.bold}>{t("client.clientStatus.email.invalidTooltip")}</Typography>}
-                        >
-                          <span style={{ flexShrink: 0, display: 'inline-flex' }}><BsInfoCircle style={{ cursor: 'pointer' }} /></span>
-                        </CustomTooltip>
-                      </Box>
+                      <Typography align='left' className={clsx(classes.middle, classes.bold, Status === 1 ? classes.sendIconText : classes.textColorRed)}>({switchStatus(true)})</Typography>
+                      <CustomTooltip
+                        enterTouchDelay={50}
+                        leaveTouchDelay={3000}
+                        isSimpleTooltip={false}
+                        placement={"top"}
+                        arrow={true}
+                        title={<Typography className={classes.bold}>{t("client.clientStatus.email.invalidTooltip")}</Typography>}
+                      >
+                        <span style={{ flexShrink: 0, display: 'inline-flex' }}><BsInfoCircle style={{ cursor: 'pointer' }} /></span>
+                      </CustomTooltip>
+                    </Box>
                     : <Typography align='left' className={clsx(classes.middle, classes.bold, Status === 1 ? classes.sendIconText : classes.textColorRed)}>({switchStatus(true)})</Typography>
                   }
                 </Typography>
