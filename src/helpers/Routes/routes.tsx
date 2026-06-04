@@ -318,18 +318,6 @@ export const getRoutes = (
           isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount,
         },
         {
-          key: "createPopup",
-          title: t("landingPages.createPopup"),
-          href: `${sitePrefix}Popups/Create`,
-          isShow: features && features?.indexOf(PulseemFeatures.Popup) > -1,
-        },
-        {
-          key: "popupManagement",
-          title: t("master.RadMenuItemPopupManagement.Text"),
-          href: `${sitePrefix}PopUpManagement`,
-          isShow: features && features?.indexOf(PulseemFeatures.Popup) > -1,
-        },
-        {
           key: 'CreateLandingPage',
           title: t("landingPages.createLandingPage"),
           href: ``,
@@ -356,13 +344,36 @@ export const getRoutes = (
       ],
     },
     {
+      key: "popups",
+      title: t("landingPages.popups") || "Pop Ups",
+      pageTitle: t("landingPages.popups") || "Pop Ups",
+      iconUnicode: "\ue09d",
+      href: `${sitePrefix}PopUpManagement`,
+      isShow: features && features?.indexOf(PulseemFeatures.Popup) > -1,
+      iconName: 'FaRegWindowRestore',
+      options: [
+        {
+          key: "createPopup",
+          title: t("landingPages.createPopup"),
+          href: `${sitePrefix}Popups/Create`,
+          isShow: true,
+        },
+        {
+          key: "popupManagement",
+          title: t("master.RadMenuItemPopupManagement.Text"),
+          href: `${sitePrefix}PopUpManagement`,
+          isShow: true,
+        },
+      ],
+    },
+    {
       key: "automations",
       title: t("master.Automations"),
       pageTitle: t("automations.logPageHeaderResource1.Text"),
       iconUnicode: "\ue087",
       href: `${sitePrefix}Automations`,
       isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount,
-      iconName: 'MdSettings',
+      iconName: 'FaSync',
       options: [
         {
           title: t("master.createTemplate"),

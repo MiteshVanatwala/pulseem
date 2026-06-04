@@ -106,7 +106,7 @@ const RecipientChart = ({ classes, }) => {
         });
     }
 
-    const renderDoughnut = (report, index, colorScheme) => {
+    const renderDoughnut = (report, index, colorScheme, slidesCount) => {
 
         const getOrCreateTooltip = (chart) => {
             let tooltipEl = chart.canvas.parentNode.querySelector('div');
@@ -262,7 +262,7 @@ const RecipientChart = ({ classes, }) => {
         return (
             <Grid
                 key={`doughnut${report.ReportSection}`}
-                item xs={12} sm={12} md={4}
+                item xs={12} sm={12} md={12 / (slidesCount || 1)}
                 className={classes.doughnutGrid}>
                 <Box className={classes.doughnutBox}>
                     <Link
@@ -425,7 +425,7 @@ const RecipientChart = ({ classes, }) => {
                                 return null;
                             }
                             if (report.Total) {
-                                return renderDoughnut(report, index, COLOR_SCHEME[index])
+                                return renderDoughnut(report, index, COLOR_SCHEME[index], slidesCount)
                             }
                             return null;
                         })}
@@ -455,14 +455,14 @@ const RecipientChart = ({ classes, }) => {
         }, 0);
 
         return (
-            <Grid item container justifyContent='space-evenly'>
+            <Grid item xs={12} container justifyContent='space-evenly'>
                 {recipientsReport && totalRecipientsReport > 0 ? recipientsReport.map((report, index) => {
                     if ((report.ReportSection === 2 && !Notifications.FeatureExist) ||
                         (report.ReportSection === 1 && !Sms.FeatureExist)) {
                         return null;
                     }
                     if (report.Total) {
-                        return renderDoughnut(report, index, COLOR_SCHEME[index])
+                        return renderDoughnut(report, index, COLOR_SCHEME[index], slidesCount)
                     }
                     return null;
                 }) :

@@ -2,7 +2,7 @@ import useRedirect from "../../../helpers/Routes/Redirect";
 import { useSelector } from "react-redux";
 import { RedirectPropTypes } from "../../../helpers/Types/Redirect";
 import { Collapse, IconButton, List, ListItem, ListItemText, Tooltip, Typography } from "@material-ui/core";
-import { FaChevronDown, FaChevronUp, FaWhatsapp } from "react-icons/fa";
+import { FaChevronDown, FaChevronUp, FaWhatsapp, FaSync, FaRegWindowRestore } from "react-icons/fa";
 import { MdPeople, MdMarkEmailRead, MdSms, MdSettings, MdNotificationsActive, MdAssignment, MdCreate, MdAccountCircle } from "react-icons/md";
 import { BiPencil } from "react-icons/bi";
 import { FiZap, FiSmartphone } from "react-icons/fi";
@@ -80,6 +80,14 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
       // @ts-ignore
       return <MdSettings size={28} />;
     }
+    if (item?.iconName === 'FaSync') {
+      // @ts-ignore
+      return <FaSync size={24} />;
+    }
+    if (item?.iconName === 'FaRegWindowRestore') {
+      // @ts-ignore
+      return <FaRegWindowRestore size={24} />;
+    }
     if (item?.iconName === 'MdNotificationsActive') {
       // @ts-ignore
       return <MdNotificationsActive size={28} />;
@@ -120,7 +128,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
   const handleIconClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     if (isCollapsed && onIconClick) {
       onIconClick();
     } else {
@@ -135,7 +143,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
       button
       className={clsx(classes.sidebarItem, isActive && 'active')}
       style={{
-        paddingLeft: level > 0 ? 32 + (level * 16) : !isRTL ? 8 : 16, 
+        paddingLeft: level > 0 ? 32 + (level * 16) : !isRTL ? 8 : 16,
         paddingRight: level > 0 ? 32 + (level * 16) : isRTL ? 8 : 16,
         marginBottom: hasSubmenu && showSubmenu ? 0 : undefined
       }}

@@ -26,6 +26,7 @@ export type CoreStateType = {
     billingTypeId: String | null;
     accountSettings: any;
     userRoles: any;
+    isDrawerOpen: boolean;
 };
 
 export interface Message {

@@ -7,7 +7,7 @@ import { useLocation } from 'react-router-dom';
 
 const TawkToContainer = ({ itemId }: any) => {
   const { accountSettings } = useSelector((state: any) => state.common);
-  const { isRTL } = useSelector((state: any) => state.core);
+  const { isRTL, isDrawerOpen } = useSelector((state: any) => state.core);
   const tawkMessengerRef: any = useRef();
   const location = useLocation();
 
@@ -18,11 +18,7 @@ const TawkToContainer = ({ itemId }: any) => {
     const pathname = location.pathname.toLowerCase();
     const isAffectedPage = affectedPages.some(page => pathname.includes(page));
     const bottom = isAffectedPage ? '85px' : '10px';
-
-    const getSidebarWidth = (): number => {
-      const sidebarPaper = document.querySelector('.MuiDrawer-paper') as HTMLElement | null;
-      return sidebarPaper ? sidebarPaper.getBoundingClientRect().width : 70;
-    };
+    const sidebarWidthOffset = isDrawerOpen ? 75 : 285;
 
     // Find the Tawk.to bubble iframe by its actual rendered size.
     // The bubble is a small fixed iframe (≤120px). The chat window is large.
@@ -44,13 +40,13 @@ const TawkToContainer = ({ itemId }: any) => {
     // Apply position to the bubble iframe so it actually moves in the viewport
     const applyIframeStyles = (iframe: HTMLIFrameElement) => {
       if (isRTL) {
-        const sidebarWidth = getSidebarWidth();
         iframe.style.setProperty('bottom', bottom, 'important');
         // Slide the bubble left of the sidebar edge as sidebar opens/closes
-        iframe.style.setProperty('right', `${sidebarWidth + 5}px`, 'important');
+        iframe.style.setProperty('right', `${sidebarWidthOffset + 5}px`, 'important');
         iframe.style.setProperty('left', 'auto', 'important');
         iframe.style.setProperty('transform', 'scale(0.82)', 'important');
         iframe.style.setProperty('transform-origin', 'bottom right', 'important');
+        iframe.style.setProperty('transition', 'right 0.3s ease', 'important');
       } else {
         // LTR: restore Tawk.to's default position
         iframe.style.setProperty('right', '20px', 'important');
@@ -58,20 +54,31 @@ const TawkToContainer = ({ itemId }: any) => {
         iframe.style.setProperty('bottom', bottom, 'important');
         iframe.style.removeProperty('transform');
         iframe.style.removeProperty('transform-origin');
+        iframe.style.removeProperty('transition');
       }
     };
 
     let iframeRef: HTMLIFrameElement | null = null;
 
+    const applyIndMenuStyles = () => {
+      const indMenuBtn = document.getElementById('INDmenu-btn') as HTMLElement;
+      if (!indMenuBtn?.style) return;
+      
+      indMenuBtn.style.setProperty('bottom', isAffectedPage ? '55px' : '-10px', 'important');
+      
+      if (!isRTL) {
+        indMenuBtn.style.setProperty('left', `${sidebarWidthOffset + 5}px`, 'important');
+        indMenuBtn.style.setProperty('transition', 'left 0.3s ease', 'important');
+      } else {
+        indMenuBtn.style.removeProperty('left');
+        indMenuBtn.style.removeProperty('transition');
+      }
+    };
+
     const applyAll = () => {
       if (!iframeRef) iframeRef = findTawkBubbleIframe();
       if (iframeRef) applyIframeStyles(iframeRef);
-
-      // INDmenu-btn (accessibility widget) vertical positioning
-      const indMenuBtn = document.getElementById('INDmenu-btn') as HTMLElement;
-      if (indMenuBtn?.style) {
-        indMenuBtn.style.setProperty('bottom', isAffectedPage ? '55px' : '-10px', 'important');
-      }
+      applyIndMenuStyles();
     };
 
     applyAll();
@@ -98,25 +105,12 @@ const TawkToContainer = ({ itemId }: any) => {
     });
     observer.observe(document.body, { childList: true, subtree: true });
 
-    // ResizeObserver on sidebar paper — re-positions bubble as sidebar opens/closes
-    let sidebarObserver: ResizeObserver | null = null;
-    if (isRTL) {
-      const sidebarPaper = document.querySelector('.MuiDrawer-paper') as HTMLElement | null;
-      if (sidebarPaper) {
-        sidebarObserver = new ResizeObserver(() => {
-          if (iframeRef) applyIframeStyles(iframeRef);
-        });
-        sidebarObserver.observe(sidebarPaper);
-      }
-    }
-
     return () => {
       if (rafId !== null) cancelAnimationFrame(rafId);
       clearTimeout(stopRaf);
       observer.disconnect();
-      sidebarObserver?.disconnect();
     };
-  }, [location, isRTL]);
+  }, [location, isRTL, isDrawerOpen]);
 
   return (accountSettings?.Account?.ReferrerID === 0) ?
     <>

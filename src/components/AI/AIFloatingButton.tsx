@@ -11,21 +11,40 @@ import { StateType } from '../../Models/StateTypes';
 import { useLocation } from 'react-router-dom';
 import { AIChatConfig, advisorConfig } from './chatConfig';
 
-type StyleProps = { isRTL: boolean; isAffectedPage: boolean; featureId: number; isOpen: boolean };
+type StyleProps = { isRTL: boolean; isAffectedPage: boolean; featureId: number; isOpen: boolean; isDrawerOpen: boolean };
 
 const useStyles = makeStyles((theme) => ({
-  fab: {
+  container: {
     position: 'fixed',
-    bottom: ({ isAffectedPage }: StyleProps) => isAffectedPage ? '170px' : '105px',
-    left: ({ isRTL, isAffectedPage, featureId }: StyleProps) => {
-      if (featureId === 73) return isRTL ? 'auto' : (isAffectedPage ? '10px' : '5px');
-      if (featureId === 69 && isRTL ) return '20px';
-      return 'auto' ;
+    width: '60px',
+    height: '60px',
+    bottom: ({ isAffectedPage }: StyleProps) => isAffectedPage ? 'calc(170px - 5vh)' : 'calc(105px - 5vh)',
+    left: ({ isRTL, isAffectedPage, featureId, isDrawerOpen }: StyleProps) => {
+      if (featureId === 73) {
+        // Support Mascot: In LTR, sidebar is on the left, so it must slide.
+        return isRTL ? 'auto' : (isDrawerOpen ? '75px' : '285px');
+      }
+      if (featureId === 69) {
+        // Pulsy AI: In RTL, it's on the left (opposite of sidebar), no sliding needed.
+        return isRTL ? (isAffectedPage ? '0px' : '5px') : 'auto';
+      }
+      return 'auto';
     },
-    right: ({ isRTL, isAffectedPage, featureId }: StyleProps) => {
-      if (featureId === 73) return isRTL ? (isAffectedPage ? '10px' : '5px') : 'auto';
-      return isRTL ? 'auto' : (isAffectedPage ? '10px' : '20px');
+    right: ({ isRTL, isAffectedPage, featureId, isDrawerOpen }: StyleProps) => {
+      if (featureId === 73) {
+        // Support Mascot: In RTL, sidebar is on the right, so it must slide.
+        return isRTL ? (isDrawerOpen ? '75px' : '285px') : 'auto';
+      }
+      if (featureId === 69) {
+        // Pulsy AI: In LTR, it's on the right (opposite of sidebar), no sliding needed.
+        return isRTL ? 'auto' : (isAffectedPage ? '10px' : '20px');
+      }
+      return 'auto';
     },
+    zIndex: ({ isOpen }: StyleProps) => isOpen ? 1297 : 1300,
+    transition: 'bottom 0.3s ease, right 0.3s ease, left 0.3s ease',
+  },
+  fab: {
     width: '60px',
     height: '60px',
     border: 'solid',
@@ -39,7 +58,6 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: 'transparent',
     },
     animation: '$pulse 2s infinite',
-    transition: 'bottom 0.3s ease',
   },
   smallIcon: {
     position: 'absolute',
@@ -83,6 +101,14 @@ const useStyles = makeStyles((theme) => ({
       boxShadow: '0 0 0 0 rgba(255, 23, 68, 0)',
     },
   },
+  customTooltip: {
+    maxWidth: '250px',
+    width: 'max-content',
+    fontSize: '13px',
+    padding: '8px 12px',
+    textAlign: 'center',
+    lineHeight: 1.3,
+  }
 }));
 
 interface AIFloatingButtonProps {
@@ -91,7 +117,7 @@ interface AIFloatingButtonProps {
 
 const AIFloatingButton: React.FC<AIFloatingButtonProps> = ({ config = advisorConfig }) => {
   const location = useLocation();
-  const isRTL = useSelector((state: StateType) => state.core.isRTL);
+  const { isRTL, isDrawerOpen } = useSelector((state: StateType) => state.core);
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const { accountFeatures } = useSelector((state: StateType) => state.common);
@@ -104,7 +130,7 @@ const AIFloatingButton: React.FC<AIFloatingButtonProps> = ({ config = advisorCon
   const affectedPages = ['campaigns/editor', 'editor/landingpages', 'popupeditor', 'whatsapp/chat'];
   const pathname = location.pathname.toLowerCase();
   const isAffectedPage = affectedPages.some(page => pathname.includes(page));
-  const classes = useStyles({ isRTL, isAffectedPage, featureId: config.featureId, isOpen });
+  const classes = useStyles({ isRTL, isAffectedPage, featureId: config.featureId, isOpen, isDrawerOpen });
 
   const handleToggleChat = () => {
     if (isSupport) {
@@ -118,25 +144,29 @@ const AIFloatingButton: React.FC<AIFloatingButtonProps> = ({ config = advisorCon
   if (accountFeatures === null || accountFeatures?.indexOf(featureKey) === -1) return <></>;
 
   return (
-    <Tooltip
-      arrow
-      title={agentIconTitle}
-      placement={"top"}
-      open
-    >
-      <Fab className={classes.fab} onClick={handleToggleChat}>
-        <div className={`${classes.smallIcon}${config.featureId === 69 && isRTL ? ` ${classes.smallIconRTL69}` : ''}`}>
-          {aiIconStatus === 0 ? (
-            <img src={AIImage} alt="AI status" />
-          ) : aiIconStatus === 1 ? (
-            <CircularProgress size={15} />
-          ) : (
-            <Check fontSize="small" color="primary" style={{ color: 'green' }} />
-          )}
-        </div>
-        <img width={60} src={config.mascotButtonImage} className={classes.polyIcon} alt="Pulseem mascot" />
-      </Fab>
-    </Tooltip>
+    <div className={classes.container}>
+      <Tooltip
+        arrow
+        title={agentIconTitle}
+        placement={config.featureId === 73 ? "top-start" : "top-end"}
+        open
+        PopperProps={{ disablePortal: true }}
+        classes={{ tooltip: classes.customTooltip }}
+      >
+        <Fab className={classes.fab} onClick={handleToggleChat}>
+          <div className={`${classes.smallIcon}${config.featureId === 69 && isRTL ? ` ${classes.smallIconRTL69}` : ''}`}>
+            {aiIconStatus === 0 ? (
+              <img src={AIImage} alt="AI status" />
+            ) : aiIconStatus === 1 ? (
+              <CircularProgress size={15} />
+            ) : (
+              <Check fontSize="small" color="primary" style={{ color: 'green' }} />
+            )}
+          </div>
+          <img width={60} src={config.mascotButtonImage} className={classes.polyIcon} alt="Pulseem mascot" />
+        </Fab>
+      </Tooltip>
+    </div>
   );
 };
 

@@ -78,8 +78,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
     const collapsedFromCookie = getCookie('SidebarCollapsed');
     if (collapsedFromCookie !== null) {
       setIsCollapsed(collapsedFromCookie === 'true');
+      dispatch(setIsDrawerOpen(collapsedFromCookie === 'true'));
     } else {
       setIsCollapsed(externalIsCollapsed);
+      dispatch(setIsDrawerOpen(externalIsCollapsed));
     }
     if (collapseOpenMenus !== null && collapseOpenMenus !== undefined) {
       setOpenMenus(collapseOpenMenus);

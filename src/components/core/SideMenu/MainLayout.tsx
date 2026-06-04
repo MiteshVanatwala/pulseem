@@ -1,14 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Box, useTheme, useMediaQuery } from '@material-ui/core';
+import { useTheme, useMediaQuery } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector } from 'react-redux';
 import { Sidebar } from './SideBar';
 import TopMenu from '../TopMenu/TopMenu';
 import type { TopMenuProps } from '../TopMenu/TopMenu';
 import { getCookie } from '../../../helpers/Functions/cookies';
-
-const SIDEBAR_WIDTH = 280;
-const SIDEBAR_COLLAPSED_WIDTH = 70;
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -25,16 +22,16 @@ const useStyles = makeStyles((theme) => ({
   },
   content: {
     flexGrow: 1,
-    transition: theme.transitions.create(['margin', 'width'], {
+    minWidth: 0,
+    transition: theme.transitions.create(['margin'], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
-    width: '100%',
     display: 'flex',
     flexDirection: 'column',
   },
   contentShift: {
-    transition: theme.transitions.create(['margin', 'width'], {
+    transition: theme.transitions.create(['margin'], {
       easing: theme.transitions.easing.easeOut,
       duration: theme.transitions.duration.enteringScreen,
     }),
@@ -45,24 +42,16 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   contentShiftRTL: {
-    // marginRight: SIDEBAR_WIDTH,
     marginLeft: 0,
-    width: `calc(100% - ${SIDEBAR_WIDTH}px)`,
   },
   contentShiftLTR: {
-    // marginLeft: SIDEBAR_WIDTH,
     marginRight: 0,
-    width: `calc(100% - ${SIDEBAR_WIDTH}px)`,
   },
   contentCollapsedRTL: {
-    marginRight: SIDEBAR_COLLAPSED_WIDTH,
     marginLeft: 0,
-    width: `calc(100% - ${SIDEBAR_COLLAPSED_WIDTH}px)`,
   },
   contentCollapsedLTR: {
-    marginLeft: SIDEBAR_COLLAPSED_WIDTH,
     marginRight: 0,
-    width: `calc(100% - ${SIDEBAR_COLLAPSED_WIDTH}px)`,
   },
   contentContainer: {
     // paddingInline: theme.spacing(3),
@@ -93,7 +82,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-  const { windowSize, isRTL } = useSelector((state: any) => state.core);
+  const { isRTL } = useSelector((state: any) => state.core);
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(!isMobile);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => {
