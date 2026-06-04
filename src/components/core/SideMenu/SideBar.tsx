@@ -201,6 +201,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     <Drawer
       variant={drawerVariant}
       open={drawerOpen}
+      // @ts-ignore
       onClose={onToggle}
       anchor={isRTL ? 'right' : 'left'}
       PaperProps={{
