@@ -733,7 +733,7 @@ const VerificationDialog = ({
                                     } else {
                                         !!verificationError?.Number && setVerificationError({ Number: '' });
                                     }
-                                    setSelectedVerificationContact(val.trim());
+                                    setSelectedVerificationContact(val);
                                 }}
                                 className={clsx(classes.textField, classes.maxWidth400, classes.txtCenter, classes.directionLTR)}
                                 placeholder={t('sms.newSenderPlaceholder')}
