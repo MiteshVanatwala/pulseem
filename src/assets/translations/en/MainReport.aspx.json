@@ -534,6 +534,8 @@
   "typeAddress":"Type Address",
   "deleteSms":"Delete Campaign",
   "campaignFromRequire":"Campaign From - Required field",
+  "campaignFromMaxLength":"Sender name cannot exceed 11 characters",
+  "campaignFromNumberMaxLength":"Sender number cannot exceed 11 characters",
   "selectGroups":"Select group for test sending",
   "handleExitTitle" : "Leave Campaign Creation",
   "leaveCampaign":"Would you like to save your changes before exiting?",

@@ -534,6 +534,8 @@
   "typeAddress": "Wpisz adres",
   "deleteSms": "Usuń kampanię",
   "campaignFromRequire": "Kampania od - Pole wymagane",
+  "campaignFromMaxLength": "Nazwa nadawcy nie może przekraczać 11 znaków",
+  "campaignFromNumberMaxLength": "Numer nadawcy nie może przekraczać 11 znaków",
   "selectGroups": "Wybierz grupę do wysyłki testowej",
   "handleExitTitle": "Opuść tworzenie kampanii",
   "leaveCampaign": "Czy chcesz zapisać zmiany przed wyjściem?",
