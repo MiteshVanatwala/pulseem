@@ -724,7 +724,7 @@
     "emailRequired": "Wymagany jest adres e-mail lub grupa",
     "maxLimitReached": "Wysyłka testowa jest ograniczona do 5 adresów e-mail",
     "addMoreEmail": "Dodaj e-mail"
-},
+  },
   "sendToContact": "Wyślij do jednego kontaktu",
   "sendToMoreContact": "Wyślij do jednego lub więcej kontaktów",
   "successSent": "Wysłano pomyślnie",
@@ -816,5 +816,12 @@
     "delete": "Usuń",
     "removeFromRow": "Usuń z wiersza"
   },
-  "size_warning_suppress_label": "Nie pokazuj ponownie przez 24 godziny"
+  "size_warning_suppress_label": "Nie pokazuj ponownie przez 24 godziny",
+  "fontValidation": {
+    "title": "Ostrzeżenie o zgodności czcionki",
+    "body": "Ta czcionka może nie być obsługiwana w Gmail, Outlook i na niektórych urządzeniach. Może wyświetlać się jako czcionka zastępcza u niektórych odbiorców.",
+    "useAnyway": "Użyj mimo to",
+    "cancel": "Wybierz inną czcionkę",
+    "doNotShow": "Nie pokazuj ponownie tego ostrzeżenia dla tej czcionki"
+  }
 }
