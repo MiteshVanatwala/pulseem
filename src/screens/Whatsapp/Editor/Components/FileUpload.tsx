@@ -1,4 +1,4 @@
-import { Box, Button, Typography } from '@material-ui/core';
+import { Box, Button, Tooltip, Typography } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import { FileUploadProps, coreProps } from '../Types/WhatsappCreator.types';
 import { BaseSyntheticEvent, useEffect, useState } from 'react';
@@ -13,6 +13,8 @@ const FileUpload = ({
 	setFileData,
 	sourceFileSize = '',
 	accept = 'image/png, image/jpeg, application/pdf, video/mp4',
+	showReplaceNotice = false,
+	title,
 }: FileUploadProps) => {
 	const { t: translator } = useTranslation();
 	const [fileSize, setFileSize] = useState<string>('');
@@ -79,7 +81,7 @@ const FileUpload = ({
 	return (
 		<Box className={clsx(classes.buttonForm, classes.fileUpload)}>
 			<Typography className={classes.buttonHead}>
-				<>{translator('whatsapp.uploadFileTitle')}</>
+				<>{title ?? translator('whatsapp.uploadFileTitle')}</>
 			</Typography>
 			<label
 				className={classes.customFileUpload}
@@ -138,6 +140,29 @@ const FileUpload = ({
 					<>{translator('whatsapp.fileDescription')}</>
 				)}
 			</Typography>
+			{showReplaceNotice && fileData?.fileLink?.length > 0 && (
+				<Typography
+					style={{
+						fontSize: 12,
+						color: '#e65100',
+						marginTop: 6,
+						display: 'flex',
+						alignItems: 'center',
+						gap: 4,
+						direction: isRTL ? 'rtl' : 'ltr',
+					}}>
+					{translator('whatsapp.replaceFileNotice')}
+					<Tooltip
+						arrow
+						placement={isRTL ? 'left' : 'right'}
+						title={translator('whatsapp.replaceFileTooltip')}>
+						<span
+							style={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center' }}>
+							<i className='zmdi zmdi-info-outline' style={{ fontSize: 16 }} />
+						</span>
+					</Tooltip>
+				</Typography>
+			)}
 			{renderDialog()}
 		</Box>
 	);

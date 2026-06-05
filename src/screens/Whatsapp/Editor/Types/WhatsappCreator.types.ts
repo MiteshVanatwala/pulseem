@@ -52,6 +52,8 @@ export type FileUploadProps = {
 	buttonType: string;
 	sourceFileSize?: string;
 	accept?: string;
+	showReplaceNotice?: boolean;
+	title?: string;
 };
 
 export type ReduxUserProps = {
@@ -304,6 +306,7 @@ export type savedTemplateListProps = {
 	IsAllowEdit: boolean;
 	Language?: string;
 	media_type?: 'IMAGE' | 'VIDEO' | 'DOCUMENT' | null;
+	RequestJson?: string;
 };
 
 export type toastProps = {

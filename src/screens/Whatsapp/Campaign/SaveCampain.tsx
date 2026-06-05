@@ -84,6 +84,7 @@ import {
 	checkSiteTrackingLink,
 	formatUpdatedDynamicVariable,
 	getDynamicFields,
+	getFileType,
 	getTemplatePreviewData,
 	getTextDirection,
 } from '../Common';
@@ -216,6 +217,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const [isTrackLink, setIsTrackLink] = useState<boolean>(false);
 	const [mediaFileData, setMediaFileData] = useState<{ fileLink: string; fileType: string }>({ fileLink: '', fileType: '' });
 	const [mediaFileError, setMediaFileError] = useState<string>('');
+	const [templateMediaType, setTemplateMediaType] = useState<string>('');
 	const [isGalleryConfirmed, setIsGalleryConfirmed] = useState<boolean>(false);
 	const [nextMessageAvailable, setNextMessageAvailable] = useState<string>('');
 	const [templateTextLimit, setTemplateTextLimit] = useState<number>(1024);
@@ -460,6 +462,17 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 					onSavedTemplateChange(campaignData?.Data?.TemplateID, templateList);
 					setCampaignName(campaignData?.Data?.Name);
 					setFrom(campaignData?.Data?.FromNumber);
+
+					const savedMediaEntry = campaignData?.Data?.VariableValues?.find(
+						(v: any) => v.FieldTypeId === -1
+					);
+					if (savedMediaEntry?.VariableValue) {
+						setMediaFileData({
+							fileLink: savedMediaEntry.VariableValue,
+							fileType: '',
+						});
+					}
+
 					// chech siteLink and update dynamicvariable
 					const processedDynamicVariable =
 						campaignData?.Data?.VariableValues?.map((variable) => {
@@ -617,11 +630,22 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	};
 
 	const isFileTypeValid = (file: File): boolean => {
-		const expected = fileData.fileType?.toLowerCase();
-		if (!expected) return true;
-		if (expected === 'image') return file.type === 'image/png' || file.type === 'image/jpeg';
-		if (expected === 'video') return file.type === 'video/mp4';
-		if (expected === 'document') return file.type === 'application/pdf';
+		if (!templateMediaType) return true;
+
+		const mime = file.type.toLowerCase();
+		const ext = file.name.split('.').pop()?.toLowerCase() || '';
+
+		if (templateMediaType === 'image') {
+			return ['image/png', 'image/jpeg', 'image/jpg', 'image/x-png'].includes(mime)
+				|| ['png', 'jpg', 'jpeg'].includes(ext);
+		}
+		if (templateMediaType === 'video') {
+			return mime === 'video/mp4' || ext === 'mp4';
+		}
+		if (templateMediaType === 'document') {
+			return ['application/pdf', 'application/x-pdf'].includes(mime)
+				|| ext === 'pdf';
+		}
 		return true;
 	};
 
@@ -657,6 +681,13 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			setMediaFileError(translator('WhatsappApiResponse.uploadMedia.4', { FileSize: '5' }));
 			return;
 		}
+		if (templateMediaType) {
+			const detectedType = getFileType(fileUrl);
+			if (detectedType && detectedType !== templateMediaType) {
+				setMediaFileError(translator('whatsappCampaign.media_type_mismatch_error'));
+				return;
+			}
+		}
 		setMediaFileData({ fileLink: fileUrl, fileType: '' });
 		setMediaFileError('');
 		setIsGalleryConfirmed(true);
@@ -669,6 +700,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		resetDynamicFields();
 		setMediaFileData({ fileLink: '', fileType: '' });
 		setMediaFileError('');
+		setTemplateMediaType('');
 		setIsGalleryConfirmed(false);
 		setSavedTemplate(TemplateId);
 		let templatePreviewData: templatePreviewDataProps = {
@@ -693,11 +725,36 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		if (savedTemplateData?.CategoryId === 3) {
 			renderAuthenticationPreview(savedTemplateData);
 		} else {
-			setFileData(templatePreviewData?.fileData);
+			// URL extension is ground truth — prioritize it over stored media_type
+			// which can be stale/wrong in the DB (e.g. media_type="image" for an .mp4 file).
+			const urlType = getFileType(templatePreviewData?.fileData?.fileLink);
+			let resolvedFileType = (
+				urlType
+				|| templatePreviewData?.fileData?.fileType
+				|| savedTemplateData?.media_type
+				|| ''
+			).toLowerCase();
+
+			if (!resolvedFileType && savedTemplateData?.RequestJson) {
+				try {
+					const reqJson = JSON.parse(savedTemplateData.RequestJson);
+					resolvedFileType = (
+						reqJson?.types?.media?.media_type
+						|| reqJson?.media_type
+						|| ''
+					).toLowerCase();
+				} catch (_) {}
+			}
+
+			setTemplateMediaType(resolvedFileType);
+			setFileData({
+				...templatePreviewData?.fileData,
+				fileType: resolvedFileType,
+			});
 			if (templatePreviewData?.fileData?.fileLink) {
 				setMediaFileData({
 					fileLink: templatePreviewData.fileData.fileLink,
-					fileType: templatePreviewData.fileData.fileType,
+					fileType: resolvedFileType,
 				});
 			}
 			setButtonType(templatePreviewData?.buttonType);
@@ -1734,9 +1791,9 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 															setFileData={uploadMediaFile}
 															buttonType=''
 															accept={
-																fileData.fileType?.toLowerCase() === 'image' ? 'image/png, image/jpeg' :
-																fileData.fileType?.toLowerCase() === 'video' ? 'video/mp4' :
-																fileData.fileType?.toLowerCase() === 'document' ? 'application/pdf' :
+																templateMediaType === 'image' ? 'image/png, image/jpeg' :
+																templateMediaType === 'video' ? 'video/mp4' :
+																templateMediaType === 'document' ? 'application/pdf' :
 																'image/png, image/jpeg, application/pdf, video/mp4'
 															}
 														/>
