@@ -20,10 +20,12 @@
 	"submitted": "התבנית נשלחה בהצלחה",
 	"error": "משהו השתבש",
 	"online": "מחוברת",
-	"uploadFileTitle": "העלה קובץ-PNG,JPG,PDF,MP4",
+	"uploadFileTitle": "העלאת קובץ-PNG,JPG,PDF,MP4",
 	"uploading": "מעלה...",
 	"totalSize": "גודל כולל",
 	"fileDescription": "רק קובץ אחד - עד 5 מגה-בייט",
+	"replaceFileNotice": "החלפת קובץ - שימו לב! ניתן להחליף רק בקובץ מאותו סוג איתו הוגשה התבנית",
+	"replaceFileTooltip": "דוגמא - אם הגשתי תבנית עם קובץ png, אני לא יכול להחליף אותו בקובץ mp3",
 
 	"whatsappTemplate": "צור תבנית WhatsApp חדשה",
 	"toolTip1": "צור את התוכן שברצונך לשלוח לנמענים שלך ולאחר מכן בחר כיצד, מתי ולמי לשלוח",

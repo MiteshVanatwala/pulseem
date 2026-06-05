@@ -69,6 +69,7 @@ import {
 	deleteCampaign,
 	duplicateCampaign,
 	getAllCampaigns,
+	getCampaignDetailById,
 	getSavedTemplatesPreviewById,
 	restoreWhatsAppCampaigns,
 	userPhoneNumbers,
@@ -76,6 +77,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import {
 	campaignDataProps,
+	CampaignDetailById,
 	phoneNumberAPIProps,
 } from '../Campaign/Types/WhatsappCampaign.types';
 import { Loader } from '../../../components/Loader/Loader';
@@ -127,6 +129,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 		fileLink: '',
 		fileType: '',
 	});
+	const [mediaPreviewOverrideUrl, setMediaPreviewOverrideUrl] = useState<string | undefined>(undefined);
 
 	const [infoModalData, setInfoModalData] = useState<string[]>([
 		'Group 1',
@@ -529,23 +532,30 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 		const previewTemplateId = getTemplateIdFromId(campaignId);
 		if (previewTemplateId) {
 			setIsLoader(true);
-			const templateData: templateListAPIProps = await dispatch<any>(
-				getSavedTemplatesPreviewById({
-					templateId: previewTemplateId,
-				})
-			);
+			const [templateData, campaignDetail]: [templateListAPIProps, CampaignDetailById] =
+				await Promise.all([
+					dispatch<any>(getSavedTemplatesPreviewById({ templateId: previewTemplateId })),
+					dispatch<any>(getCampaignDetailById(campaignId)),
+				]);
 			setIsLoader(false);
+
 			if (templateData.payload.Status === apiStatus.SUCCESS) {
 				const templates = templateData.payload?.Data?.Items;
 				if (templates && templates?.length > 0) {
-					const templateData = templates[0];
-					if (templateData.CategoryId === 3) {
-						renderAuthenticationPreview(templateData);
+					const tmpl = templates[0];
+					if (tmpl.CategoryId === 3) {
+						renderAuthenticationPreview(tmpl);
 					} else {
-						onSavedTemplateChange(templateData?.Data);
+						onSavedTemplateChange(tmpl?.Data);
 					}
 				}
-				setDialogType({ type: 'preview', data: previewTemplateId })
+
+				const mediaEntry = campaignDetail?.payload?.Data?.VariableValues?.find(
+					(v: any) => v.FieldTypeId === -1
+				);
+				setMediaPreviewOverrideUrl(mediaEntry?.VariableValue || undefined);
+
+				setDialogType({ type: 'preview', data: previewTemplateId });
 			} else {
 				templateData?.payload?.Message
 					? setToastMessage({
@@ -912,7 +922,11 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 					classes={classes}
 					templateData={templateData}
 					buttonType={buttonType}
-					fileData={fileData}
+					fileData={
+						mediaPreviewOverrideUrl
+							? { ...fileData, fileLink: mediaPreviewOverrideUrl }
+							: fileData
+					}
 					templateId={templateId}
 				/>
 			</Box>

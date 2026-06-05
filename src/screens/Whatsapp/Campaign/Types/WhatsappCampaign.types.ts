@@ -253,6 +253,7 @@ export type SummaryModalProps = {
 	setRandomlyCount: (value: string) => void;
 	resetRandomCount: () => void;
 	pulseData?: any;
+	overrideMediaUrl?: string;
 };
 
 export type ApiSendCampaignData = {
@@ -768,6 +769,7 @@ export type TestSendReq = {
 	TestGroupsIds?: number[];
 	PhoneNumber?: string;
 	Random?: number;
+	Variables?: updatedVariable[];
 };
 
 export type SaveQuickSendGroupReq = {

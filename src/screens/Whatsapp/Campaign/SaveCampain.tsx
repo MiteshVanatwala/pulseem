@@ -39,6 +39,9 @@ import {
 	ApiGetCampaignSummary,
 } from './Types/WhatsappCampaign.types';
 import CampaignFields from './Components/CampaignFields';
+import FileUpload from '../Editor/Components/FileUpload';
+import Gallery from '../../../components/Gallery/Gallery.component';
+import { PulseemFolderType } from '../../../model/PulseemFields/Fields';
 import clsx from 'clsx';
 import WhatsappMobilePreview from '../Editor/Components/WhatsappMobilePreview';
 import {
@@ -54,6 +57,7 @@ import {
 	templateDataProps,
 	templatePreviewDataProps,
 	toastProps,
+	fileUploadAPIProps,
 } from '../Editor/Types/WhatsappCreator.types';
 import Highlighter from 'react-highlight-words';
 import DynamicModal from './Popups/DynamicModal';
@@ -68,6 +72,7 @@ import {
 	saveQuickSendGroups,
 	getWhatsAppCampaignSummary,
 	deleteCampaign,
+	uploadMedia,
 } from '../../../redux/reducers/whatsappSlice';
 import TestGroupModal from './Popups/TestGroupModal';
 import { RiCloseFill } from 'react-icons/ri';
@@ -75,9 +80,11 @@ import QuickReply from '../Editor/Popups/QuickReply';
 import ActionCallPopOver from '../Editor/Popups/ActionCallPopOver';
 import { useNavigate } from 'react-router-dom';
 import {
+	adjustTemplateVariablesForLink,
 	checkSiteTrackingLink,
 	formatUpdatedDynamicVariable,
 	getDynamicFields,
+	getFileType,
 	getTemplatePreviewData,
 	getTextDirection,
 } from '../Common';
@@ -115,6 +122,8 @@ import { filter, first, get } from 'lodash';
 import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
 import TierPlans from '../../../components/TierPlans/TierPlans';
 
+const MEDIA_HEADER_TYPES = ['IMAGE', 'VIDEO', 'DOCUMENT'];
+
 const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const { t: translator } = useTranslation();
 	const { campaignID } = useParams();
@@ -137,6 +146,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		(state: { common: CommonRedux }) => state.common
 	);
 	const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
+	const { gallery } = useSelector((state: { gallery: any }) => state.gallery);
 	const websiteField = [
 		{
 			fieldName: 'whatsapp.websiteButtonText',
@@ -205,6 +215,10 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const [showValidation, setShowValidation] = useState<boolean>(false);
 	const [isTestSend, setIsTestSend] = useState<boolean>(false);
 	const [isTrackLink, setIsTrackLink] = useState<boolean>(false);
+	const [mediaFileData, setMediaFileData] = useState<{ fileLink: string; fileType: string }>({ fileLink: '', fileType: '' });
+	const [mediaFileError, setMediaFileError] = useState<string>('');
+	const [templateMediaType, setTemplateMediaType] = useState<string>('');
+	const [isGalleryConfirmed, setIsGalleryConfirmed] = useState<boolean>(false);
 	const [nextMessageAvailable, setNextMessageAvailable] = useState<string>('');
 	const [templateTextLimit, setTemplateTextLimit] = useState<number>(1024);
 	const [templateTextCount, setTemplateTextCount] = useState<number>(0);
@@ -218,6 +232,8 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		fileLink: '',
 		fileType: '',
 	});
+	const hasMediaHeader = MEDIA_HEADER_TYPES.includes(fileData.fileType?.toUpperCase());
+
 	const [dialogType, setDialogType] = useState<any>({ type: '' });
 	const [TierMessageCode, setTierMessageCode] = useState<string>('');
 	const [savedTemplate, setSavedTemplate] = useState<string>('');
@@ -447,6 +463,17 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 					onSavedTemplateChange(campaignData?.Data?.TemplateID, templateList);
 					setCampaignName(campaignData?.Data?.Name);
 					setFrom(campaignData?.Data?.FromNumber);
+
+					const savedMediaEntry = campaignData?.Data?.VariableValues?.find(
+						(v: any) => v.FieldTypeId === -1
+					);
+					if (savedMediaEntry?.VariableValue) {
+						setMediaFileData({
+							fileLink: savedMediaEntry.VariableValue,
+							fileType: '',
+						});
+					}
+
 					// chech siteLink and update dynamicvariable
 					const processedDynamicVariable =
 						campaignData?.Data?.VariableValues?.map((variable) => {
@@ -609,12 +636,79 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		setDynamicModalVariable(0);
 	};
 
+	const isFileTypeValid = (file: File): boolean => {
+		if (!templateMediaType) return true;
+
+		const mime = file.type.toLowerCase();
+		const ext = file.name.split('.').pop()?.toLowerCase() || '';
+
+		if (templateMediaType === 'image') {
+			return ['image/png', 'image/jpeg', 'image/jpg', 'image/x-png'].includes(mime)
+				|| ['png', 'jpg', 'jpeg'].includes(ext);
+		}
+		if (templateMediaType === 'video') {
+			return mime === 'video/mp4' || ext === 'mp4';
+		}
+		if (templateMediaType === 'document') {
+			return ['application/pdf', 'application/x-pdf'].includes(mime)
+				|| ext === 'pdf';
+		}
+		return true;
+	};
+
+	const uploadMediaFile = async (file: File | undefined) => {
+		if (file) {
+			if (!isFileTypeValid(file)) {
+				setMediaFileError(translator('whatsappCampaign.media_type_mismatch_error'));
+				return;
+			}
+			setMediaFileError('');
+			setMediaFileData({ fileLink: 'uploading', fileType: '' });
+			const myFormData = new FormData();
+			myFormData.append('file', file);
+			const uploadedFile: fileUploadAPIProps = await dispatch<any>(uploadMedia(myFormData));
+			const response = uploadedFile?.payload as any;
+			if ((response?.StatusCode === 1 || response?.ErrorCode === 1) && response?.Data?.length > 0) {
+				setMediaFileData({ fileLink: response.Data, fileType: '' });
+			} else {
+				setMediaFileData({ fileLink: '', fileType: '' });
+			}
+		} else {
+			setMediaFileData({ fileLink: '', fileType: '' });
+			setMediaFileError('');
+		}
+	};
+
+	const handleSelectedMediaImage = (fileUrl: any) => {
+		setDialogType(null);
+		if (!fileUrl || fileUrl === '') return;
+		const fileProp = gallery?.['']?.filter((g: any) => g.FileURL === fileUrl);
+		const fileSize = fileProp?.[0]?.Properties?.Size;
+		if (fileSize && fileSize >= 5242880) {
+			setMediaFileError(translator('WhatsappApiResponse.uploadMedia.4', { FileSize: '5' }));
+			return;
+		}
+		if (templateMediaType) {
+			const detectedType = getFileType(fileUrl);
+			if (detectedType && detectedType !== templateMediaType) {
+				setMediaFileError(translator('whatsappCampaign.media_type_mismatch_error'));
+				return;
+			}
+		}
+		setMediaFileData({ fileLink: fileUrl, fileType: '' });
+		setMediaFileError('');
+		setIsGalleryConfirmed(true);
+	};
+
 	const onSavedTemplateChange = (
 		TemplateId: string,
 		templateList: savedTemplateListProps[] = savedTemplateList
 	) => {
 		resetDynamicFields();
-
+		setMediaFileData({ fileLink: '', fileType: '' });
+		setMediaFileError('');
+		setTemplateMediaType('');
+		setIsGalleryConfirmed(false);
 		setSavedTemplate(TemplateId);
 		let templatePreviewData: templatePreviewDataProps = {
 			templateData: {
@@ -638,7 +732,38 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		if (savedTemplateData?.CategoryId === 3) {
 			renderAuthenticationPreview(savedTemplateData);
 		} else {
-			setFileData(templatePreviewData?.fileData);
+			// URL extension is ground truth — prioritize it over stored media_type
+			// which can be stale/wrong in the DB (e.g. media_type="image" for an .mp4 file).
+			const urlType = getFileType(templatePreviewData?.fileData?.fileLink);
+			let resolvedFileType = (
+				urlType
+				|| templatePreviewData?.fileData?.fileType
+				|| savedTemplateData?.media_type
+				|| ''
+			).toLowerCase();
+
+			if (!resolvedFileType && savedTemplateData?.RequestJson) {
+				try {
+					const reqJson = JSON.parse(savedTemplateData.RequestJson);
+					resolvedFileType = (
+						reqJson?.types?.media?.media_type
+						|| reqJson?.media_type
+						|| ''
+					).toLowerCase();
+				} catch (_) {}
+			}
+
+			setTemplateMediaType(resolvedFileType);
+			setFileData({
+				...templatePreviewData?.fileData,
+				fileType: resolvedFileType,
+			});
+			if (templatePreviewData?.fileData?.fileLink) {
+				setMediaFileData({
+					fileLink: templatePreviewData.fileData.fileLink,
+					fileType: resolvedFileType,
+				});
+			}
 			setButtonType(templatePreviewData?.buttonType);
 			setTemplateData(templatePreviewData?.templateData);
 			setDynamicVariable(
@@ -752,6 +877,13 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			validationErrors.push(translator('whatsappChat.pleaseUpdate'));
 			isValidated = false;
 		}
+		if (hasMediaHeader) {
+			const hasUploadedFile = mediaFileData.fileLink && mediaFileData.fileLink !== 'uploading';
+			if (!hasUploadedFile) {
+				validationErrors.push(`${translator('whatsappCampaign.media_url')} - required`);
+				isValidated = false;
+			}
+		}
 		if (!isValidated) {
 			setGroupSendValidationErrors([...validationErrors]);
 			setShowValidation(true);
@@ -796,6 +928,11 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		}
 		if (Number(randomlyCount) > 0) {
 			payload.Random = Number(randomlyCount);
+		}
+		if (hasMediaHeader && mediaFileData.fileLink && mediaFileData.fileLink !== 'uploading') {
+			payload.Variables = [
+				{ FieldTypeId: -1, VariableIndex: 0, VariableValue: mediaFileData.fileLink, IsStatastic: false },
+			];
 		}
 		if (campaignID) {
 			if (validateSaveCampaign(true)) {
@@ -914,7 +1051,10 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 								) {
 									if (campaignSummaryData?.Data?.WhatsappSmsLeft > 0) {
 										setDialogType({
-											type: 'summary'
+											type: 'summary',
+											overrideMediaUrl: hasMediaHeader && mediaFileData.fileLink && mediaFileData.fileLink !== 'uploading'
+												? mediaFileData.fileLink
+												: undefined,
 										});
 									} else {
 										setDialogType({
@@ -923,7 +1063,10 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 									}
 								} else {
 									setDialogType({
-										type: 'summary'
+										type: 'summary',
+										overrideMediaUrl: hasMediaHeader && mediaFileData.fileLink && mediaFileData.fileLink !== 'uploading'
+											? mediaFileData.fileLink
+											: undefined,
 									});
 								}
 							} else {
@@ -977,6 +1120,19 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			IsTestCampaign:
 				callFrom === 'send' || callFrom === 'save' ? false : isTestSend,
 		};
+		if (savedTemplateData && savedTemplateData?.Data?.types) {
+			reqData.Variables = adjustTemplateVariablesForLink(
+				savedTemplateData?.Data?.types,
+				formatUpdatedDynamicVariable(updatedDynamicVariable),
+				templateCategory === 3 ? `${authenticationMockTemplate[getAuthTemplate(savedTemplateData.Language || '')].body}` : ''
+			);
+		}
+		if (hasMediaHeader && mediaFileData.fileLink && mediaFileData.fileLink !== 'uploading') {
+			reqData.Variables = [
+				...reqData.Variables,
+				{ FieldTypeId: -1, VariableIndex: 0, VariableValue: mediaFileData.fileLink, IsStatastic: false },
+			];
+		}
 
 		const { payload }: saveCampaignResponseProps = await dispatch<any>(
 			saveCampaign(reqData)
@@ -1019,6 +1175,9 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 					onExitCampaign();
 				}
 				return data?.Data;
+			} else if (data?.Message === 'media_type_mismatch_error') {
+				setMediaFileError(translator('whatsappCampaign.media_type_mismatch_error'));
+				return null;
 			} else {
 				data?.Message
 					? setToastMessage({ ...ToastMessages.ERROR, message: data?.Message })
@@ -1202,6 +1361,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				randomlyCount={randomlyCount}
 				setRandomlyCount={setRandomlyCount}
 				resetRandomCount={() => setRandomlyCount('')}
+				overrideMediaUrl={dialogType?.overrideMediaUrl}
 			/>
 		),
 		onConfirm: async () => {
@@ -1383,10 +1543,29 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		)
 	})
 
+	const getGalleryDialog = () => ({
+		showDivider: false,
+		title: translator('common.documentGallery'),
+		content: (
+			<Gallery
+				classes={classes}
+				isConfirm={isGalleryConfirmed}
+				forceReload={true}
+				callbackSelectFile={handleSelectedMediaImage}
+				multiSelect={false}
+				selected={mediaFileData}
+				folderType={PulseemFolderType.CLIENT_IMAGES}
+			/>
+		),
+		onConfirm: () => setIsGalleryConfirmed(true),
+	});
+
 	const renderDialog = () => {
 		const { type } = dialogType || {}
 		let currentDialog: any = {};
-		if (type === 'exit') {
+		if (type === 'gallery') {
+			currentDialog = getGalleryDialog();
+		} else if (type === 'exit') {
 			currentDialog = getExitDialog();
 		} else if (type === 'delete') {
 			currentDialog = getDeleteDialog();
@@ -1606,13 +1785,50 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 													</span>
 												</Box>
 											</Grid>
-										</Grid>
+										{hasMediaHeader && (
+											<Grid className={classes.whatsappFileUploadWrapper} item>
+												<Grid container spacing={1}>
+													<Grid item>
+														<FileUpload
+															classes={classes}
+															fileData={mediaFileData}
+															setFileData={uploadMediaFile}
+															buttonType=''
+															accept={
+																templateMediaType === 'image' ? 'image/png, image/jpeg' :
+																templateMediaType === 'video' ? 'video/mp4' :
+																templateMediaType === 'document' ? 'application/pdf' :
+																'image/png, image/jpeg, application/pdf, video/mp4'
+															}
+														/>
+														{mediaFileError && (
+															<Typography style={{ color: 'red', fontSize: 12, marginTop: 4 }}>
+																{mediaFileError}
+															</Typography>
+														)}
+													</Grid>
+													<Grid item style={{ paddingTop: 60, paddingLeft: 10 }}>
+														<Button
+															variant='contained'
+															size='medium'
+															className={clsx(classes.btn, classes.btnRounded, classes.mt50)}
+															color='primary'
+															onClick={() => { setIsGalleryConfirmed(false); setDialogType({ type: 'gallery' }); }}
+															disabled={false}
+														>
+															{translator('common.SelectFile')}
+														</Button>
+													</Grid>
+												</Grid>
+											</Grid>
+										)}
 									</Grid>
-									<Grid
-										className={classes.WhatsappCampainP1Right}
-										item
-										md={12}
-										lg={6}>
+								</Grid>
+								<Grid
+									className={classes.WhatsappCampainP1Right}
+									item
+									md={12}
+									lg={6}>
 										<Grid container>
 											<Grid item xs={12} sm={12} md={12} lg={12}>
 												<Box className={classes.WhatsappCampainMobilePreviewBox}>
@@ -1620,7 +1836,11 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 														classes={classes}
 														templateData={templateData}
 														buttonType={buttonType}
-														fileData={fileData}
+														fileData={
+															hasMediaHeader && mediaFileData.fileLink
+																? { ...fileData, fileLink: mediaFileData.fileLink }
+																: fileData
+														}
 													/>
 												</Box>
 											</Grid>

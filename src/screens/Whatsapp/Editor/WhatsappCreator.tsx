@@ -1644,6 +1644,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 															fileData={fileData}
 															setFileData={(fileData) => uploadFile(fileData)}
 															sourceFileSize={fileData?.properties && fileData?.properties?.Size}
+															showReplaceNotice={true}
 														/>
 													</Grid>
 													<Grid item
