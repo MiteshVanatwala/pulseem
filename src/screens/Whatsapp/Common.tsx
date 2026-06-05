@@ -554,3 +554,62 @@ export const detecLanguageMixup = (text: string) => {
 	}
 	return isLanguageMixup;
 }
+
+export const adjustTemplateVariablesForLink = (
+	templateData: savedTemplateTypesProps,
+	updatedDynamicVariable: updatedVariable[],
+	whatsappTempalteBody: string = ''
+) => {
+	let {
+		templateData: { templateText },
+	} = getTemplatePreviewData(templateData);
+	if (whatsappTempalteBody !== '') templateText = whatsappTempalteBody;
+	const DynamicFieldsIndex = getDynamicFieldIndex(templateText);
+	const adjustedDynamicVariableForLinks = DynamicFieldsIndex?.map(
+		(fieldIndex, index) => {
+			const variable = updatedDynamicVariable?.find(
+				(dynamicVariable) => dynamicVariable?.VariableIndex === index + 1
+			)!;
+			if (
+				variable &&
+				variable?.IsStatastic !== true &&
+				(variable?.FieldTypeId === 3 ||
+					variable?.FieldTypeId === 4 ||
+					variable?.FieldTypeId === 5)
+			) {
+				let adjustedVariable = variable;
+				if (
+					templateText.charAt(fieldIndex - 1) !== ' ' &&
+					adjustedVariable?.VariableValue?.charAt(0) !== ' '
+				) {
+					adjustedVariable = {
+						...variable,
+						VariableValue: ` ${adjustedVariable?.VariableValue}`,
+					};
+				}
+				if (
+					templateText.charAt(
+						index + 1 <= 9 ? fieldIndex + 5 : fieldIndex + 5
+					) !== ' ' &&
+					adjustedVariable?.VariableValue?.charAt(
+						adjustedVariable?.VariableValue?.length - 1
+					) !== ' '
+				) {
+					if (
+						templateText?.length !==
+						(index + 1 <= 9 ? fieldIndex + 5 : fieldIndex + 5)
+					) {
+						adjustedVariable = {
+							...variable,
+							VariableValue: `${adjustedVariable?.VariableValue}${variable?.FieldTypeId === 4 ? '' : ' '}`,
+						};
+					}
+				}
+				return adjustedVariable;
+			} else {
+				return variable;
+			}
+		}
+	);
+	return adjustedDynamicVariableForLinks;
+};
