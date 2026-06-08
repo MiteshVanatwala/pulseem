@@ -36,7 +36,6 @@
 	"loginWithFacebookCoexistence": "התחבר עם פייסבוק (Coexistence)",
 	"coexistenceColumn": "דו-קיום",
 	"coexistenceNotAvailable": "לא זמין למספר זה",
-	"unsubscribe": "בטל מנוי",
 	"SaveWhatsappMetaClientsResponseCode": {
 		"3": "תת חשבון לא נמצא",
 		"4": "קונפיגורציה של מטא חסרה",

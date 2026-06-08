@@ -36,7 +36,6 @@
 	"loginWithFacebookCoexistence": "Login With Facebook (Coexistence)",
 	"coexistenceColumn": "Coexistence",
 	"coexistenceNotAvailable": "Not Available",
-	"unsubscribe": "Unsubscribe",
 	"SaveWhatsappMetaClientsResponseCode": {
 		"3": "Sub account not found",
 		"4": "Meta configuration missing",
