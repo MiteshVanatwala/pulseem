@@ -345,7 +345,6 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
   }
 
 	const renderPhoneNumberStatus = (row: phoneNumbersInterface) => {
-		if (row.isBusinessNumber) return null;
 		return (
 			<>
 				{
@@ -357,12 +356,14 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 						</Badge>
 					)
 				}
-				<Button
-					onClick={() => setDialogType({ type: 'OTP', data: row })}
-					className={clsx(classes.searchButton, classes.btn, classes.btnRounded, classes.ml10)}
-				>
-					{t('reconnect')}
-				</Button>
+				{!row.isBusinessNumber && (
+					<Button
+						onClick={() => setDialogType({ type: 'OTP', data: row })}
+						className={clsx(classes.searchButton, classes.btn, classes.btnRounded, classes.ml10)}
+					>
+						{t('reconnect')}
+					</Button>
+				)}
 			</>
 		)
 	}
@@ -374,11 +375,13 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 			</Typography>
 		);
 		return (
-			<Switch
-				checked={!!row.isCoexistenceEnabled}
-				onChange={(e) => handleCoexistenceToggle(row.id, row.display_phone_number, e.target.checked)}
-				color='primary'
-			/>
+			<Button
+				onClick={() => handleCoexistenceToggle(row.id, row.display_phone_number, false)}
+				className={clsx(classes.btn, classes.btnRounded)}
+				style={{ backgroundColor: '#f44336', color: '#fff' }}
+			>
+				{t('WhatsappOnBoarding.unsubscribe')}
+			</Button>
 		)
 	}
 
