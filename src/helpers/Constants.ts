@@ -220,7 +220,7 @@ export const DateFormats = {
 
 export const FBBusiness = 'https://business.facebook.com/wa/manage/';
 
-export const SizeOptionsOfHandHeldDevices = ['xs', 'sm', 'md'];
+export const SizeOptionsOfHandHeldDevices = ['xs', 'sm', 'md', 'sl'];
 export const SizeOptions_XS_SM = ['xs', 'sm'];
 
 export const DynamicProductGrid: any = {

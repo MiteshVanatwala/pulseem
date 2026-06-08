@@ -63,9 +63,6 @@ export const getManagmentStyle = (windowSize, isRTL, theme, IsPoland = false) =>
   return ({
   management: {
     maxWidth: 1500,
-    '&.MuiContainer-root': {
-      marginLeft: 207
-    },
     '& .topSection': {
       // marginTop: 37.870,
       border: '2px solid #F0F5FF',
@@ -605,7 +602,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme, IsPoland = false) =>
   },
 
   tableStyle: {
-    overflowX: "clip",
+    overflowX: "auto",
     border: "2px solid #F0F5FF",
     borderRadius: 20
   },

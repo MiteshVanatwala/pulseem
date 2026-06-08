@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useTheme, useMediaQuery } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { setSidebarCollapsed } from '../../../redux/reducers/coreSlice';
 import { Sidebar } from './SideBar';
 import TopMenu from '../TopMenu/TopMenu';
 import type { TopMenuProps } from '../TopMenu/TopMenu';
@@ -54,11 +55,8 @@ const useStyles = makeStyles((theme) => ({
     marginRight: 0,
   },
   contentContainer: {
-    // paddingInline: theme.spacing(3),
+    paddingInline: theme.spacing(2),
     flexGrow: 1,
-    [theme.breakpoints.down('sm')]: {
-      paddingInline: theme.spacing(2),
-    },
     [theme.breakpoints.down('xs')]: {
       paddingInline: theme.spacing(1),
     },
@@ -83,6 +81,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const { isRTL } = useSelector((state: any) => state.core);
+  const dispatch = useDispatch();
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(!isMobile);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => {
@@ -99,6 +98,10 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
       setIsSidebarOpen(true);
     }
   }, [isMobile]);
+
+  useEffect(() => {
+    dispatch(setSidebarCollapsed(isSidebarCollapsed));
+  }, [isSidebarCollapsed]);
 
   const handleSidebarToggle = (newState?: boolean) => {
     if (isMobile) {
