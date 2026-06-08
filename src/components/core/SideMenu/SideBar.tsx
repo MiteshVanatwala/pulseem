@@ -8,7 +8,7 @@ import PulseemNewLogo from '../../../assets/images/PulseemNewLogo';
 import { RedirectPropTypes } from '../../../helpers/Types/Redirect';
 import { setCookie, getCookie } from '../../../helpers/Functions/cookies';
 import { getRoutes, getSettingsItem } from '../../../helpers/Routes/routes';
-import { FaTimes, FaChevronLeft, FaChevronRight, FaCrown } from 'react-icons/fa';
+import { FaTimes, FaChevronLeft, FaChevronRight, FaCrown, FaUserCircle } from 'react-icons/fa';
 import { Drawer, IconButton, Button, List, Box, Popper, Paper, MenuItem, MenuList, ClickAwayListener, Tooltip, Typography } from '@material-ui/core';
 import { SidebarProps } from '../../../Models/SideMenuBar/SideMenuBarModel';
 import { setIsDrawerOpen, setLanguage } from '../../../redux/reducers/coreSlice';
@@ -293,6 +293,24 @@ export const Sidebar: React.FC<SidebarProps> = ({
         return (
           <>
             {/* Expanded sidebar — plan card with tooltip on hover */}
+            {!isCollapsed && (
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                padding: '8px 12px',
+                margin: '8px 16px',
+                backgroundColor: 'rgba(255, 255, 255, 0.15)',
+                borderRadius: '8px',
+                color: '#fff',
+                fontSize: '0.95rem',
+                fontWeight: 600,
+                wordBreak: 'break-word',
+                boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
+              }}>
+                <FaUserCircle style={{ fontSize: 20, marginRight: isRTL ? 0 : 10, marginLeft: isRTL ? 10 : 0, opacity: 0.9 }} />
+                <span>{displayAccountName}</span>
+              </div>
+            )}
             {!isCollapsed && (
               <Tooltip arrow title={planTooltipContent} placement="right" classes={{ tooltip: classes.tooltip, arrow: classes.tooltipArrow }} PopperProps={{ modifiers: { offset: { enabled: true, offset: '0, 8' } } }}>
                 <div className={classes.sidebarPlanSection}>

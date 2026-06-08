@@ -2,10 +2,10 @@ import useRedirect from "../../../helpers/Routes/Redirect";
 import { useSelector } from "react-redux";
 import { RedirectPropTypes } from "../../../helpers/Types/Redirect";
 import { Collapse, IconButton, List, ListItem, ListItemText, Tooltip, Typography } from "@material-ui/core";
-import { FaChevronDown, FaChevronUp, FaWhatsapp, FaSync, FaRegWindowRestore } from "react-icons/fa";
-import { MdPeople, MdMarkEmailRead, MdSms, MdSettings, MdNotificationsActive, MdAssignment, MdCreate, MdAccountCircle } from "react-icons/md";
-import { BiPencil } from "react-icons/bi";
-import { FiZap, FiSmartphone } from "react-icons/fi";
+import { FaChevronDown, FaChevronUp, FaWhatsapp, FaRegWindowRestore } from "react-icons/fa";
+import { MdPeople, MdMarkEmailRead, MdSms, MdSettings, MdNotificationsActive, MdAccountCircle } from "react-icons/md";
+import { BiPencil, BiSitemap } from "react-icons/bi";
+import { FiZap, FiSmartphone, FiFileText, FiPieChart } from "react-icons/fi";
 import { IoLogoWhatsapp } from "react-icons/io";
 import clsx from 'clsx';
 
@@ -68,10 +68,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
       // @ts-ignore
       return <BiPencil size={28} />;
     }
-    if (item?.iconName === 'MdCreate') {
-      // @ts-ignore
-      return <MdCreate size={28} />;
-    }
+
     if (item?.iconName === 'FiZap') {
       // @ts-ignore
       return <FiZap size={28} />;
@@ -80,21 +77,25 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
       // @ts-ignore
       return <MdSettings size={28} />;
     }
-    if (item?.iconName === 'FaSync') {
+    if (item?.iconName === 'BiSitemap') {
       // @ts-ignore
-      return <FaSync size={24} />;
+      return <BiSitemap size={24} />;
     }
     if (item?.iconName === 'FaRegWindowRestore') {
       // @ts-ignore
       return <FaRegWindowRestore size={24} />;
     }
+    if (item?.iconName === 'FiFileText') {
+      // @ts-ignore
+      return <FiFileText size={24} />;
+    }
     if (item?.iconName === 'MdNotificationsActive') {
       // @ts-ignore
       return <MdNotificationsActive size={28} />;
     }
-    if (item?.iconName === 'MdAssignment') {
+    if (item?.iconName === 'FiPieChart') {
       // @ts-ignore
-      return <MdAssignment size={28} />;
+      return <FiPieChart size={24} />;
     }
     if (item?.iconName === 'MdAccountCircle') {
       // @ts-ignore

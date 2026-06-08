@@ -299,7 +299,7 @@ export const getRoutes = (
       iconUnicode: "\ue09d",
       href: `${sitePrefix}EditRegistrationPage`,
       isShow: true,
-      iconName: 'MdCreate',
+      iconName: 'FiFileText',
       options: [
         {
           key: "createLandingPage",
@@ -373,7 +373,7 @@ export const getRoutes = (
       iconUnicode: "\ue087",
       href: `${sitePrefix}Automations`,
       isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount,
-      iconName: 'FaSync',
+      iconName: 'BiSitemap',
       options: [
         {
           title: t("master.createTemplate"),
@@ -434,7 +434,7 @@ export const getRoutes = (
       iconUnicode: "\ue049",
       href: `${sitePrefix}Reports/NewsletterReports`,
       isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount,
-      iconName: 'MdAssignment',
+      iconName: 'FiPieChart',
       options: [
         { title: t('master.clalCollage'), href: `${rootDomain}/ClalReport.aspx?fromreact=true`, isShow: (isClalAccount === 'true' || isClalAccount === true) },
         { key: "newsletterReport", title: t('master.RadMenuItemResource13.Text'), href: `${sitePrefix}reports/NewsletterReports`, isShow: true },

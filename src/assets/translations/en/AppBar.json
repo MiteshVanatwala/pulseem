@@ -36,5 +36,6 @@
     "title": "Notifications"
   },
   "logout": "Logout",
-  "returnToMainAccount": "Main Account"
+  "returnToMainAccount": "Main Account",
+  "myAccount": "My Account"
 }

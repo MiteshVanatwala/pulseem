@@ -83,7 +83,7 @@ const SettingsMenu = ({ classes }: any) => {
             startIcon={<FaUserCircle style={{ fontSize: 23 }} />}
             className={classes.userSettings}
         >
-            {displayAccountName || t('Settings')}
+            {t('appBar.myAccount', 'My Account')}
         </Button>
         {showSettings && <Popper
             open={showSettings}

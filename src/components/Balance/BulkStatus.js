@@ -371,12 +371,54 @@ const BulkStatus = ({ classes }) => {
                   {t('dashboard.yourBulkStatus')}
                 </Typography>
               </Box>
-              {isWhiteLabel && (
-                <Box className={clsx(classes.mr15, 'bubbleNew')}>
-                  <Typography className='bubbleText'>{t('common.new')}</Typography>
-                  <TooltipBubble />
+              {isWhiteLabel ? <Box className={clsx(classes.mr15, 'bubbleNew')}>
+                <Typography className='bubbleText'>{t('common.new')}</Typography>
+                <TooltipBubble />
+              </Box> :
+                <Box className={clsx(classes.dFlex, classes.flexWrap)} justifyContent='center' alignItems='center' position="relative">
+                  {/* Pure CSS permanent tooltip so it perfectly sticks during layout shifts */}
+                  <Box
+                    position="absolute"
+                    top="-35px"
+                    left="50%"
+                    style={{
+                      transform: 'translateX(-50%)',
+                      backgroundColor: '#ff3343',
+                      color: '#fff',
+                      padding: '4px 8px',
+                      borderRadius: '4px',
+                      fontSize: '12px',
+                      whiteSpace: 'nowrap',
+                      pointerEvents: 'none',
+                      zIndex: 10
+                    }}
+                  >
+                    {t('dashboard.helpDrawer.support.helpCenter.title')}
+                    {/* Tooltip Arrow */}
+                    <Box
+                      position="absolute"
+                      bottom="-4px"
+                      left="50%"
+                      style={{
+                        transform: 'translateX(-50%) rotate(45deg)',
+                        width: '8px',
+                        height: '8px',
+                        backgroundColor: '#ff3343',
+                        zIndex: -1
+                      }}
+                    />
+                  </Box>
+                  <IconButton
+                    size="small"
+                    className={clsx(classes.noPadding)}
+                    onClick={() => {
+                      dispatch(toggleHelpDrawer())
+                    }}
+                  >
+                    <MdSupportAgent className={classes.linkNoDesign} style={{ fontSize: 30, color: '#ff3343' }} title={t('master.RadMenuItemResource21.Text')} />
+                  </IconButton>
                 </Box>
-              )}
+              }
           </Box>
           </Grid>
           <Grid
