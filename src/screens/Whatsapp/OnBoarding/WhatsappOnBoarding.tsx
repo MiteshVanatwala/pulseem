@@ -375,13 +375,11 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 			</Typography>
 		);
 		return (
-			<Button
-				onClick={() => handleCoexistenceToggle(row.id, row.display_phone_number, false)}
-				className={clsx(classes.btn, classes.btnRounded)}
-				style={{ backgroundColor: '#f44336', color: '#fff' }}
-			>
-				{t('WhatsappOnBoarding.unsubscribe')}
-			</Button>
+			<Switch
+				checked={!!row.isCoexistenceEnabled}
+				onChange={(e) => handleCoexistenceToggle(row.id, row.display_phone_number, e.target.checked)}
+				color='primary'
+			/>
 		)
 	}
 
