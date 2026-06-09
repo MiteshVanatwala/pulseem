@@ -276,7 +276,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
     const initBeeToken = async () => {
       await dispatch(getLPBeeToken());
     }
-    initBeeToken();
+    await initBeeToken();
     //@ts-ignore
     if (!publicTemplates.length) dispatch(getLPPublicTemplates(isRTL));
     if (!templatesBySubAccount.length) dispatch(getAllLPTemplatesBySubaccountId());
