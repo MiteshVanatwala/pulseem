@@ -115,6 +115,7 @@
     "responseId": "ID odpowiedzi"
   },
   "ArchiveDirectSendReport": "Archiwum raportów bezpośredniej wysyłki",
+  "archiveSearchError": "Nie udało się załadować danych archiwum. Spróbuj ponownie.",
   "Reactivate": "Reaktywuj / Anuluj usunięcie",
   "ExportLimitation": "Eksportowane dokumenty nie mogą zawierać więcej niż 600 tys. wyników",
   "clientName": "Nazwa klienta",
