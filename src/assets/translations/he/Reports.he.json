@@ -115,6 +115,7 @@
     "responseId": "זיהוי תגובה"
   },
   "ArchiveDirectSendReport": "ארכיון שליחה ישירה",
+  "archiveSearchError": "טעינת נתוני הארכיון נכשלה. אנא נסה שנית.",
   "Reactivate": "Reactivate / בטל הסרה",
   "ExportLimitation": "לא ניתן להוריד קובץ שמכיל מעל 600 אלף רשומות",
   "clientName": "שם לקוח",

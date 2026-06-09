@@ -207,9 +207,6 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
         window.location.reload();
       } else getData();
     }
-    //@ts-ignore
-    if (!publicTemplates.length) dispatch(getLPPublicTemplates(isRTL));
-    if (!templatesBySubAccount.length) dispatch(getAllLPTemplatesBySubaccountId());
   }, []);
   //@ts-ignore
   useEffect(() => {
@@ -280,6 +277,9 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       await dispatch(getLPBeeToken());
     }
     initBeeToken();
+    //@ts-ignore
+    if (!publicTemplates.length) dispatch(getLPPublicTemplates(isRTL));
+    if (!templatesBySubAccount.length) dispatch(getAllLPTemplatesBySubaccountId());
   }
   //#region Init Bee Token & Configuration
   const initTags = () => {

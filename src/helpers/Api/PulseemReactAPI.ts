@@ -35,23 +35,23 @@ PulseemReactInstance.interceptors.request.use(async (config: any) => {
     try {
         const jtoken = getCookie('jtoken')
         let token = jtoken
-        const language = getCookie('Culture')
-        const { data, request } = await axios.get(refreshTokenURL, {
-            headers: {
-                language
-            },
-            withCredentials: true
-        })
-        console.log('[PulseemReactAPI] RefreshToken URL check:', {
-            expected: refreshTokenURL,
-            received: request.responseURL,
-            matched: refreshTokenURL === request.responseURL
-        })
         if (isProdMode && !NoAuthenticationAPIs.some(word => (config?.url || '').includes(word))) {
             if (!jtoken) {
                 redirectToLogin()
                 return Promise.reject('Unautorized')
             }
+            const language = getCookie('Culture')
+            const { data, request } = await axios.get(refreshTokenURL, {
+                headers: {
+                    language
+                },
+                withCredentials: true
+            })
+            console.log('[PulseemReactAPI] RefreshToken URL check:', {
+                expected: refreshTokenURL,
+                received: request.responseURL,
+                matched: refreshTokenURL === request.responseURL
+            })
             // Firefox normalises responseURL differently than Chrome (trailing slashes,
             // ASP.NET internal rewrites), so avoid strict equality. Instead detect a
             // genuine session-expired redirect by checking for the login page path or

@@ -382,9 +382,8 @@ const CampaignEditor = ({ classes, ...props }) => {
       if (params?.id > 0) {
         if (localStorage.getItem('reloadBeeEditor') === '1') {
           localStorage.removeItem('reloadBeeEditor');
-          // Fall through — dispatches below re-fetch all data fresh, hard reload not needed.
-        }
-        if (isMounted) {
+          window.location.reload(true);
+        } else if (isMounted) {
           setLoader(true);
           await dispatch(getCampaignById(params?.id));
           if (!isMounted) return;
