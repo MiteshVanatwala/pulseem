@@ -33,7 +33,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	},
 	whatsappFuncDiv: {
 		width: '100%',
-		height: '60px',
+		minHeight: '60px',
 		boxSizing: 'border-box',
 		display: 'inline-block',
 		gridTemplateColumns: '64px auto',
