@@ -5,6 +5,7 @@ import { BaseSyntheticEvent, useEffect, useState } from 'react';
 import clsx from 'clsx';
 import { useSelector } from 'react-redux';
 import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
+import { MdUpload, MdClose, MdInfoOutline } from 'react-icons/md';
 
 const FileUpload = ({
 	classes,
@@ -94,6 +95,7 @@ const FileUpload = ({
 				<input
 					type='file'
 					className={classes.formFieldInput}
+					style={{ display: 'none' }}
 					accept={accept}
 					onClick={(e) => checkFileUploadAvailability(e)}
 					onChange={(e) => onFileUploadChange(e)}
@@ -115,17 +117,17 @@ const FileUpload = ({
 							[fileData?.fileLink?.split('/')?.length - 1]?.substring(0, 25) +
 								'...'}
 							&emsp;
-							<i
+							<MdClose
 								style={{
 									padding: '2px 4px',
 									cursor: 'pointer',
 								}}
 								onClick={(e) => onFileDeselect(e)}
-								className='zmdi zmdi-close'></i>
+							/>
 						</Button>
 					</div>
 				) : (
-					<i className='zmdi zmdi-upload'></i>
+					<MdUpload />
 				)}
 			</label>
 
@@ -158,7 +160,7 @@ const FileUpload = ({
 						title={translator('whatsapp.replaceFileTooltip')}>
 						<span
 							style={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center' }}>
-							<i className='zmdi zmdi-info-outline' style={{ fontSize: 16 }} />
+							<MdInfoOutline style={{ fontSize: 16 }} />
 						</span>
 					</Tooltip>
 				</Typography>
