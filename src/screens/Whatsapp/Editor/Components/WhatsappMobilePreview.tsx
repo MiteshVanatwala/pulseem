@@ -1,3 +1,4 @@
+import { MdBattery80, MdSignalCellular4Bar, MdWifi, MdStar, MdArrowBack, MdMoreVert, MdPhone, MdOpenInNew, MdVideocam } from 'react-icons/md';
 import AccountUser from '../../../../assets/images/acc-user.jpg';
 import Video from '../../../../assets/images/video.png';
 import PDF from '../../../../assets/images/pdf.png';
@@ -109,23 +110,23 @@ const WhatsappMobilePreview = ({
 								<div className={classes.whatsappMobileStatusBar}>
 									<div className='time'>{mobileTime}</div>
 									<div className='battery'>
-										<i className='zmdi zmdi-battery'></i>
+										<MdBattery80 />
 									</div>
 									<div className='network'>
-										<i className='zmdi zmdi-network'></i>
+										<MdSignalCellular4Bar />
 									</div>
 									<div className='wifi'>
-										<i className='zmdi zmdi-wifi-alt-2'></i>
+										<MdWifi />
 									</div>
 									<div className='star'>
-										<i className='zmdi zmdi-star'></i>
+										<MdStar />
 									</div>
 								</div>
 								<div className={classes.whatsappMobileChat}>
 									<div className={classes.whatsappMobileChatContainer}>
 										<div className={classes.whatsappMobileUserBar}>
 											<div className='back'>
-												<i className='zmdi zmdi-arrow-left navigation-arrow'></i>
+												<MdArrowBack className='navigation-arrow' />
 											</div>
 											<div className='avatar'>
 												<img src={AccountUser} alt='Avatar' />
@@ -137,16 +138,13 @@ const WhatsappMobilePreview = ({
 												</span>
 											</div>
 											<div className='actions more'>
-												<i className='zmdi zmdi-more-vert'></i>
+												<MdMoreVert />
 											</div>
 											<div className='actions attachment'>
-												<i className='zmdi zmdi-phone'></i>
+												<MdPhone />
 											</div>
 											<div className='actions'>
-												<img
-													src='https://i.ibb.co/LdnbHSG/ic-action-videocall.png'
-													alt='video-call'
-												/>
+												<MdVideocam />
 											</div>
 										</div>
 										<div className={classes.whatsappMobileConversation}>
@@ -263,8 +261,7 @@ const WhatsappMobilePreview = ({
 																								'whatsapp.phoneNumber'
 																							)}`}
 																							rel='noreferrer'>
-																							<i
-																								className={`${classes.callToActionButton} zmdi zmdi-phone`}></i>
+																							<MdPhone className={classes.callToActionButton} />
 																							<span
 																								className={
 																									classes.callToActionButtonText
@@ -283,8 +280,7 @@ const WhatsappMobilePreview = ({
 																							)}
 																							target='_blank'
 																							rel='noreferrer'>
-																							<i
-																								className={`${classes.callToActionButton} zmdi zmdi-open-in-new`}></i>
+																							<MdOpenInNew className={classes.callToActionButton} />
 																							<span
 																								className={
 																									classes.callToActionButtonText

@@ -476,15 +476,17 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 
 					// chech siteLink and update dynamicvariable
 					const processedDynamicVariable =
-						campaignData?.Data?.VariableValues?.map((variable) => {
-							if (variable?.FieldTypeId === 1) {
-								return {
-									...variable,
-									VariableValue: variable.VariableValue?.replaceAll('#', ''),
-								};
-							}
-							return variable;
-						});
+						campaignData?.Data?.VariableValues
+							?.filter((variable) => variable?.FieldTypeId !== -1)
+							?.map((variable) => {
+								if (variable?.FieldTypeId === 1) {
+									return {
+										...variable,
+										VariableValue: variable.VariableValue?.replaceAll('#', ''),
+									};
+								}
+								return variable;
+							});
 
 					setUpdatedDynamicVariableWithLinks(processedDynamicVariable);
 					if (campaignData?.Data?.VariableValues?.length > 0) {
@@ -868,11 +870,13 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			}
 			isValidated = false;
 		}
+		const textPlaceholderCount =
+			getDynamicFields(templateData?.templateText)?.filter((v) => v !== '\n')?.length ?? 0;
 		if (
 			validateDynamicVaraiable &&
 			savedTemplate?.length > 0 &&
-			getDynamicFields(templateData?.templateText)?.filter((v) => v !== '\n')?.length !==
-			updatedDynamicVariable?.length
+			textPlaceholderCount !== 0 &&
+			textPlaceholderCount !== updatedDynamicVariable.filter((v) => v.FieldTypeId !== -1).length
 		) {
 			validationErrors.push(translator('whatsappChat.pleaseUpdate'));
 			isValidated = false;
@@ -1044,6 +1048,11 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 								setNextMessageAvailable(
 									campaignSummaryData?.Data?.NextAvailableTime
 								);
+								const effectiveMediaUrl = hasMediaHeader
+									? ((mediaFileData.fileLink && mediaFileData.fileLink !== 'uploading')
+										? mediaFileData.fileLink
+										: fileData.fileLink || undefined)
+									: undefined;
 								if (
 									campaignSummaryData.Data.WhatsappTierID === 1 ||
 									campaignSummaryData.Data.WhatsappTierID === 2 ||
@@ -1052,9 +1061,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 									if (campaignSummaryData?.Data?.WhatsappSmsLeft > 0) {
 										setDialogType({
 											type: 'summary',
-											overrideMediaUrl: hasMediaHeader && mediaFileData.fileLink && mediaFileData.fileLink !== 'uploading'
-												? mediaFileData.fileLink
-												: undefined,
+											overrideMediaUrl: effectiveMediaUrl,
 										});
 									} else {
 										setDialogType({
@@ -1064,9 +1071,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 								} else {
 									setDialogType({
 										type: 'summary',
-										overrideMediaUrl: hasMediaHeader && mediaFileData.fileLink && mediaFileData.fileLink !== 'uploading'
-											? mediaFileData.fileLink
-											: undefined,
+										overrideMediaUrl: effectiveMediaUrl,
 									});
 								}
 							} else {
