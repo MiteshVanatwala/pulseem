@@ -281,7 +281,7 @@ export const getTemplatePreviewData = (
 		templatePreviewData.templateData.templateText = mediaData?.body;
 		if (mediaData?.media?.length > 0) {
 			templatePreviewData.fileData.fileLink = mediaData?.media[0];
-			templatePreviewData.fileData.fileType = mediaData?.media_type;
+			templatePreviewData.fileData.fileType = getFileType(mediaData?.media[0]) || mediaData?.media_type || '';
 		}
 	};
 
