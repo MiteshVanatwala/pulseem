@@ -645,7 +645,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		const ext = file.name.split('.').pop()?.toLowerCase() || '';
 
 		if (templateMediaType === 'image') {
-			return ['image/png', 'image/jpeg', 'image/jpg', 'image/x-png'].includes(mime)
+			return ['image/png', 'image/jpeg', 'image/x-png'].includes(mime)
 				|| ['png', 'jpg', 'jpeg'].includes(ext);
 		}
 		if (templateMediaType === 'video') {
@@ -684,6 +684,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const handleSelectedMediaImage = (fileUrl: any) => {
 		setDialogType(null);
 		if (!fileUrl || fileUrl === '') return;
+		// Gallery images are stored under the '' (empty string) root key in Redux
 		const fileProp = gallery?.['']?.filter((g: any) => g.FileURL === fileUrl);
 		const fileSize = fileProp?.[0]?.Properties?.Size;
 		if (fileSize && fileSize >= 5242880) {
@@ -1051,7 +1052,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 								const effectiveMediaUrl = hasMediaHeader
 									? ((mediaFileData.fileLink && mediaFileData.fileLink !== 'uploading')
 										? mediaFileData.fileLink
-										: fileData.fileLink || undefined)
+										: (!mediaFileData.fileLink ? fileData.fileLink || undefined : undefined))
 									: undefined;
 								if (
 									campaignSummaryData.Data.WhatsappTierID === 1 ||
@@ -1134,7 +1135,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		}
 		if (hasMediaHeader && mediaFileData.fileLink && mediaFileData.fileLink !== 'uploading') {
 			reqData.Variables = [
-				...reqData.Variables,
+				...reqData.Variables.filter((v) => v.FieldTypeId !== -1),
 				{ FieldTypeId: -1, VariableIndex: 0, VariableValue: mediaFileData.fileLink, IsStatastic: false },
 			];
 		}
