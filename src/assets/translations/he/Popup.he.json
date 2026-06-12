@@ -16,5 +16,6 @@
   "popup_add_step_choose": "כיצד ברצונכם להוסיף את השלב החדש?",
   "popup_add_step_blank": "שלב ריק",
   "popup_add_step_duplicate": "שכפל שלב נוכחי",
-  "popup_delete_step_confirm": "האם ברצונכם למחוק את השלב?"
+  "popup_delete_step_confirm": "האם ברצונכם למחוק את השלב?",
+  "duplicateFieldAcrossSteps": "{{fields}} כבר בשימוש בשלב אחר — כל שדה יכול להופיע פעם אחת בלבד בכל השלבים."
 }
