@@ -118,6 +118,9 @@ export const sideMenuStyle = (windowSize, isRTL, theme) => ({
     '& .MuiListItemText-primary': {
       fontSize: '0.9rem',
       fontWeight: 500,
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+      whiteSpace: 'nowrap',
     },
   },
   sidebarSubmenu: {

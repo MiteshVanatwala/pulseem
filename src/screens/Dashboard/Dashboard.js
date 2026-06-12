@@ -124,7 +124,7 @@ const DashboardScreen = ({ classes }) => {
             <Grid item xs={12} sm={12} md={12} lg={shouldStackDashboardCards ? 12 : 5} className={windowSize === "xs" ? classes.pt20 : null}>
               <RecipientChart classes={classes} />
             </Grid>
-            <Grid item xs={12} sm={12} md={12} lg={shouldStackDashboardCards ? 12 : 3} className={windowSize === "xs" ? classes.pt20 : null} style={{ alignSelf: 'flex-start', transform: shouldStackDashboardCards ? 'none' : (isRTL ? 'translateX(1%)' : 'translateX(-1%)') }}>
+            <Grid item xs={12} sm={12} md={12} lg={shouldStackDashboardCards ? 12 : 3} className={windowSize === "xs" ? classes.pt20 : null} style={{ alignSelf: 'flex-start', transform: shouldStackDashboardCards ? 'none' : (isRTL ? 'translateX(4%)' : 'translateX(-4%)') }}>
               <Shortcut
                 windowSize={windowSize}
                 classes={classes}

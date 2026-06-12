@@ -3,11 +3,11 @@ import { getSettingsItem } from "../../../helpers/Routes/routes";
 import { get } from "lodash";
 import { useSelector } from "react-redux";
 import { useRef, useState } from "react";
-import { Box, Button, ClickAwayListener, MenuItem, MenuList, Popper } from "@material-ui/core";
+import { Box, Button, ClickAwayListener, MenuItem, MenuList, Popper, Paper } from "@material-ui/core";
 import clsx from 'clsx';
 import useRedirect from "../../../helpers/Routes/Redirect";
 import { RedirectPropTypes } from "../../../helpers/Types/Redirect";
-import { FaUserCircle } from "react-icons/fa";
+import { FaUserCircle, FaCog } from "react-icons/fa";
 
 const SettingsMenu = ({ classes }: any) => {
     const { t } = useTranslation();
@@ -97,19 +97,40 @@ const SettingsMenu = ({ classes }: any) => {
             }}
         >
             <FaUserCircle style={{ fontSize: 20, marginRight: isRTL ? 0 : 10, marginLeft: isRTL ? 10 : 0, opacity: 0.9 }} />
-            <span>{displayAccountName}</span>
+            <span style={{ flex: 1, textAlign: isRTL ? 'right' : 'left', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{displayAccountName}</span>
+            <FaCog style={{ fontSize: 16, opacity: 0.8 }} />
         </Button>
         {showSettings && <Popper
             open={showSettings}
             anchorEl={buttonRef.current}
             role={undefined}
-            placement={isRTL ? 'bottom-start' : 'bottom-end'}
-            style={{ backgroundColor: '#fff', zIndex: 99999, marginTop: 15 }}
+            placement={isRTL ? 'left-start' : 'right-start'}
+            style={{ zIndex: 99999 }}
+            modifiers={{
+                offset: {
+                    enabled: true,
+                    offset: '0, 30'
+                }
+            }}
             className={classes.userSettingsContainerPopper}
         >
             <ClickAwayListener onClickAway={() => setShowSettings(false)}>
-                <MenuList
-                    style={{ padding: 0 }}>
+                <Paper style={{ position: 'relative', overflow: 'visible', filter: 'drop-shadow(0px 4px 10px rgba(0,0,0,0.1))', backgroundColor: '#fff' }}>
+                    <Box
+                        style={{
+                            position: 'absolute',
+                            width: 0,
+                            height: 0,
+                            borderTop: '8px solid transparent',
+                            borderBottom: '8px solid transparent',
+                            [isRTL ? 'right' : 'left']: '-8px',
+                            top: '12px',
+                            borderLeft: isRTL ? '8px solid #fff' : 'none',
+                            borderRight: isRTL ? 'none' : '8px solid #fff',
+                        }}
+                    />
+                    <MenuList
+                        style={{ padding: 0 }}>
                     {settings.options && settings.options.filter((item) => item.isShow !== false)
                         .map((option: any, index: any, row: any) => {
 
@@ -139,6 +160,7 @@ const SettingsMenu = ({ classes }: any) => {
                         })
                     }
                 </MenuList>
+                </Paper>
             </ClickAwayListener>
         </Popper>}
     </Box>
