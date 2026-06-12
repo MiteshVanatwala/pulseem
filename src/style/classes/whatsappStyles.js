@@ -33,7 +33,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	},
 	whatsappFuncDiv: {
 		width: '100%',
-		height: '60px',
+		minHeight: '60px',
 		boxSizing: 'border-box',
 		display: 'inline-block',
 		gridTemplateColumns: '64px auto',
@@ -321,6 +321,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			transform: 'translateY(-50%)',
 			margin: '0 0 0 8px',
 			fontWeight: '600',
+			'& svg': { display: 'block', fontSize: '14px' },
 		},
 	},
 	/* Chat */
@@ -352,18 +353,23 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			position: 'relative',
 			top: '50%',
 		},
+		'& .back': {
+			'& svg': { display: 'block', fontSize: '24px' },
+		},
 		'& .actions': {
 			float: isRTL ? 'left' : 'right',
-			margin: isRTL ? '5px 0 0 0' : '5px 0 0 10px',
+			margin: isRTL ? '0' : '0 0 0 10px',
 			'& img': {
 				height: '28px',
 			},
+			'& svg': { display: 'block', fontSize: '28px' },
 			'&.more': {
-				margin: isRTL ? '0 20px 0 12px' : '0 12px 0 20px',
+				margin: isRTL ? '0 8px 0 0' : '0 0 0 8px',
+				'& svg': { display: 'block', fontSize: '24px' },
 			},
 			'&.attachment': {
-				margin: isRTL ? '0 20px 0 0' : '0 0 0 20px',
-				'& i': { display: 'block' },
+				margin: isRTL ? '0 16px 0 0' : '0 0 0 16px',
+			    '& svg': { display: 'block', fontSize: '24px' }
 			},
 		},
 		'& .avatar': {
@@ -385,7 +391,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			margin: isRTL ? '0 8px 0 0' : '0 0 0 8px',
 			overflow: 'hidden',
 			whiteSpace: 'nowrap',
-			width: 'calc(100% - 177px)',
+			width: 'calc(100% - 200px)',
 		},
 		'& .status': {
 			display: 'block',

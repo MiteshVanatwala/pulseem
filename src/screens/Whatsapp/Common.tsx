@@ -80,17 +80,17 @@ export const getVariableValue = (variable: string) => {
 };
 
 export const getFileType = (fileLink: string) => {
-	if (
-		fileLink?.includes('.png') ||
-		fileLink?.includes('.jpeg') ||
-		fileLink?.includes('.jpg')
-	) {
+	if (!fileLink) return undefined;
+	const path = (() => { try { return new URL(fileLink).pathname; } catch { return fileLink; } })();
+	const lower = path.toLowerCase();
+	if (lower.includes('.png') || lower.includes('.jpeg') || lower.includes('.jpg')
+		|| lower.includes('.gif') || lower.includes('.webp'))
 		return fileTypes.IMAGE;
-	} else if (fileLink?.includes('.pdf')) {
-		return fileTypes.DOCUMENT;
-	} else if (fileLink?.includes('.mp4')) {
+	if (lower.includes('.mp4') || lower.includes('.3gp'))
 		return fileTypes.VIDEO;
-	}
+	if (lower.includes('.pdf'))
+		return fileTypes.DOCUMENT;
+	return undefined;
 };
 
 export const getTemplateIdByName = (
@@ -282,7 +282,7 @@ export const getTemplatePreviewData = (
 		templatePreviewData.templateData.templateText = mediaData?.body;
 		if (mediaData?.media?.length > 0) {
 			templatePreviewData.fileData.fileLink = mediaData?.media[0];
-			templatePreviewData.fileData.fileType = mediaData?.media_type;
+			templatePreviewData.fileData.fileType = getFileType(mediaData?.media[0]) || mediaData?.media_type || '';
 		}
 	};
 
