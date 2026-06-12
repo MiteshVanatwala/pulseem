@@ -1,6 +1,5 @@
 import { Box, Button, ClickAwayListener, MenuItem, MenuList, Paper, Popper, Tooltip, IconButton, makeStyles } from "@material-ui/core";
 import NotificationBell from "../../NotificationBell/NotificationBell";
-import SettingsMenu from "./SettingsMenu";
 import clsx from 'clsx';
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
@@ -205,9 +204,6 @@ const TopMenu: React.FC<TopMenuProps> = ({ classes, onMenuToggle }) => {
                 </Box>
                 <Box className={classes.dFlex}>
                     <LanguageSelector classes={classes} />
-                </Box>
-                <Box>
-                    <SettingsMenu classes={classes} />
                 </Box>
             </Box>
         </Box>

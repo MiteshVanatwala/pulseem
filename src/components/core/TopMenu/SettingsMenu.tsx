@@ -76,14 +76,28 @@ const SettingsMenu = ({ classes }: any) => {
         )}
         <Button
             ref={buttonRef}
-            style={{ padding: 0 }}
+            style={{
+                display: 'flex',
+                alignItems: 'center',
+                padding: '8px 12px',
+                margin: '8px 16px',
+                backgroundColor: 'rgba(255, 255, 255, 0.15)',
+                borderRadius: '8px',
+                color: '#fff',
+                fontSize: '0.95rem',
+                fontWeight: 600,
+                wordBreak: 'break-word',
+                boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                textTransform: 'none',
+                width: 'calc(100% - 32px)',
+                justifyContent: 'flex-start'
+            }}
             onClick={() => {
                 setShowSettings(!showSettings)
             }}
-            startIcon={<FaUserCircle style={{ fontSize: 23 }} />}
-            className={classes.userSettings}
         >
-            {t('appBar.myAccount', 'My Account')}
+            <FaUserCircle style={{ fontSize: 20, marginRight: isRTL ? 0 : 10, marginLeft: isRTL ? 10 : 0, opacity: 0.9 }} />
+            <span>{displayAccountName}</span>
         </Button>
         {showSettings && <Popper
             open={showSettings}

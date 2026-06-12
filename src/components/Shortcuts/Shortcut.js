@@ -15,15 +15,15 @@ import { sitePrefix } from '../../config';
 import { PulseemFeatures } from '../../model/PulseemFields/Fields';
 
 const CATEGORY_CONFIG = {
-  'appBar.newsletter.title':    { icon: NewsletterIcon, color: '#6C63FF', bg: '#F0EEFF' },
-  'appBar.sms.title':           { icon: SmsIcon,        color: '#FF9F1C', bg: '#FFF4E0' },
-  'appBar.whatsapp.title':      { icon: WhatsappIcon,   color: '#25D366', bg: '#E6F9EE' },
-  'appBar.groups.title':        { icon: NotesIcon,      color: '#00B4D8', bg: '#E0F7FC' },
-  'appBar.reports.title':       { icon: ChartIcon,      color: '#E63946', bg: '#FDECEA' },
-  'appBar.automation.title':    { icon: HornIcon,       color: '#3A86FF', bg: '#E8F1FF' },
-  'appBar.landingPages.title':  { icon: CardIcon,       color: '#8338EC', bg: '#F3EAFD' },
-  'appBar.mms.title':           { icon: CardIcon,       color: '#FF9F1C', bg: '#FFF4E0' },
-  'appBar.notifications.title': { icon: BellIcon,       color: '#FB5607', bg: '#FFF0EA' },
+  'appBar.newsletter.title':    { icon: NewsletterIcon, color: '#FF1744', bg: '#FFF0F3' },
+  'appBar.sms.title':           { icon: SmsIcon,        color: '#FF1744', bg: '#FFF0F3' },
+  'appBar.whatsapp.title':      { icon: WhatsappIcon,   color: '#FF1744', bg: '#FFF0F3' },
+  'appBar.groups.title':        { icon: NotesIcon,      color: '#FF1744', bg: '#FFF0F3' },
+  'appBar.reports.title':       { icon: ChartIcon,      color: '#FF1744', bg: '#FFF0F3' },
+  'appBar.automation.title':    { icon: HornIcon,       color: '#FF1744', bg: '#FFF0F3' },
+  'appBar.landingPages.title':  { icon: CardIcon,       color: '#FF1744', bg: '#FFF0F3' },
+  'appBar.mms.title':           { icon: CardIcon,       color: '#FF1744', bg: '#FFF0F3' },
+  'appBar.notifications.title': { icon: BellIcon,       color: '#FF1744', bg: '#FFF0F3' },
 };
 
 const getCategoryConfig = (categoryName) =>
@@ -361,8 +361,8 @@ const Shortcut = ({ classes, windowSize, t, isRTL, variant = 'panel' }) => {
           }}
         >
           {/* icon */}
-          <Box className={classes.pillIconCircle}>
-            <IconComponent style={{ width: 16, height: 16, color: cfg.color }} />
+          <Box className={classes.pillIconCircle} style={{ backgroundColor: '#FFFFFF' }}>
+            <IconComponent style={{ width: 16, height: 16, color: '#6C757D' }} />
           </Box>
 
           {/* text */}
@@ -437,7 +437,7 @@ const Shortcut = ({ classes, windowSize, t, isRTL, variant = 'panel' }) => {
           className={classes.pillAddChip}
           onClick={(e) => handleShortcutMenuOpen(windowSize === 'xs' ? e : innerRef, idx)}
         >
-          <Typography style={{ fontFamily: 'pulseemicons', fontSize: 20, color: '#FF2D76', lineHeight: 1, marginRight: 6 }}>
+          <Typography style={{ fontFamily: 'pulseemicons', fontSize: 20, color: '#FF1744', lineHeight: 1, marginRight: 6 }}>
             {'\uE0E4'}
           </Typography>
           <Typography className={classes.pillAddLabel}>{t('dashboard.addShortcut') || '+ Add Shortcut'}</Typography>

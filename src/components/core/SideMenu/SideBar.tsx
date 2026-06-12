@@ -13,6 +13,7 @@ import { Drawer, IconButton, Button, List, Box, Popper, Paper, MenuItem, MenuLis
 import { SidebarProps } from '../../../Models/SideMenuBar/SideMenuBarModel';
 import { setIsDrawerOpen, setLanguage } from '../../../redux/reducers/coreSlice';
 import NotificationBell from '../../NotificationBell/NotificationBell';
+import SettingsMenu from '../TopMenu/SettingsMenu';
 import { BsGlobe2 } from 'react-icons/bs';
 import i18n from '../../../i18n';
 import moment from 'moment';
@@ -294,22 +295,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <>
             {/* Expanded sidebar — plan card with tooltip on hover */}
             {!isCollapsed && (
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                padding: '8px 12px',
-                margin: '8px 16px',
-                backgroundColor: 'rgba(255, 255, 255, 0.15)',
-                borderRadius: '8px',
-                color: '#fff',
-                fontSize: '0.95rem',
-                fontWeight: 600,
-                wordBreak: 'break-word',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
-              }}>
-                <FaUserCircle style={{ fontSize: 20, marginRight: isRTL ? 0 : 10, marginLeft: isRTL ? 10 : 0, opacity: 0.9 }} />
-                <span>{displayAccountName}</span>
-              </div>
+              <SettingsMenu classes={classes} />
             )}
             {!isCollapsed && (
               <Tooltip arrow title={planTooltipContent} placement="right" classes={{ tooltip: classes.tooltip, arrow: classes.tooltipArrow }} PopperProps={{ modifiers: { offset: { enabled: true, offset: '0, 8' } } }}>

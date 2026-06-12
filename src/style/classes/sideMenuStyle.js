@@ -1,6 +1,6 @@
 const appBarTitleTextSize = { xs: 13, sm: 14, md: 10, lg: 16, xl: 14 }
 
-const SIDEBAR_WIDTH = 280;
+const SIDEBAR_WIDTH = 224;
 const SIDEBAR_COLLAPSED_WIDTH = 70;
 
 export const sideMenuStyle = (windowSize, isRTL, theme) => ({
@@ -32,10 +32,16 @@ export const sideMenuStyle = (windowSize, isRTL, theme) => ({
       duration: theme.transitions.duration.enteringScreen,
     }),
     overflowX: 'hidden',
-    borderBottomLeftRadius: isRTL ? 15 : 0,
-    borderTopLeftRadius: isRTL ? 15 : 0,
-    borderBottomRightRadius: isRTL ? 0 : 15,
-    borderTopRightRadius: isRTL ? 0 : 15
+    borderBottomLeftRadius: 0,
+    borderTopLeftRadius: 0,
+    borderBottomRightRadius: 0,
+    borderTopRightRadius: 0,
+    // Hide scrollbar globally for the wrapper
+    '&::-webkit-scrollbar': {
+      display: 'none',
+    },
+    '-ms-overflow-style': 'none',
+    'scrollbar-width': 'none',
   },
   sidebarPaperCollapsed: {
     width: SIDEBAR_COLLAPSED_WIDTH,
@@ -68,6 +74,12 @@ export const sideMenuStyle = (windowSize, isRTL, theme) => ({
     flexDirection: 'column',
     overflowY: 'auto',
     overflowX: 'hidden',
+    // Hide scrollbar globally for the scrollable container
+    '&::-webkit-scrollbar': {
+      display: 'none',
+    },
+    '-ms-overflow-style': 'none',
+    'scrollbar-width': 'none',
   },
   sidebarNav: {
     flex: 1,
