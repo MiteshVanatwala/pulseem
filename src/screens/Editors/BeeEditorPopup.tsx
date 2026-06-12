@@ -56,6 +56,31 @@ interface BeeEditorPopupProps extends BeeEditorModel {
   isPopupBuilder?: boolean;
 }
 
+const getActiveFieldKeysFromJson = (jsonData: string | null | undefined): Set<string> => {
+  if (!jsonData) return new Set();
+  try {
+    const parsed = JSON.parse(jsonData);
+    const keys = new Set<string>();
+    parsed?.page?.rows?.forEach((row: any) => {
+      row?.columns?.forEach((col: any) => {
+        col?.modules?.forEach((mod: any) => {
+          const fields = mod?.descriptor?.form?.structure?.fields;
+          if (fields) {
+            Object.entries(fields).forEach(([key, value]: [string, any]) => {
+              if (key !== 'optIn' && key !== 'submit' && value?.removeFromLayout === false) {
+                keys.add(key);
+              }
+            });
+          }
+        });
+      });
+    });
+    return keys;
+  } catch {
+    return new Set();
+  }
+};
+
 const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propClientSecret, isPopupBuilder: propIsPopupBuilder }: BeeEditorPopupProps) => {
   //#region State
   const { t } = useTranslation();
@@ -638,6 +663,30 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
     // Capture the target step once so that if switchToStep() is called later
     // in this same callback (changing the ref), the step number stays consistent.
     const savedForStep = currentStepRef.current;
+
+    // Duplicate-field guard using the actual current editor JSON (args.JsonData),
+    // which is more accurate than stepDataRef for the current step.
+    if (stepDataRef.current.length > 1) {
+      const _webform = landingPage?.Data?.WebForm;
+      const currentActiveFields = getActiveFieldKeysFromJson(args.JsonData);
+      const otherStepsFields = new Set<string>();
+      stepDataRef.current.forEach((step) => {
+        if (step.StepNumber === savedForStep) return;
+        const json = step.StepNumber === 1
+          ? (step.JsonData ?? _webform?.JsonData)
+          : step.JsonData;
+        getActiveFieldKeysFromJson(json).forEach(k => otherStepsFields.add(k));
+      });
+      const duplicates = Array.from(currentActiveFields).filter(k => otherStepsFields.has(k));
+      if (duplicates.length > 0) {
+        if (!(saveRef.current as any)?.isAutoSave) {
+            // @ts-ignore
+          setToastMessage({ severity: 'error', color: 'error', message: t('Popup.duplicateFieldAcrossSteps', { fields: duplicates.join(', ') }), showAnimtionCheck: false } as any);
+        }
+        return;
+      }
+    }
+
     //@ts-ignore
     const reInit = saveRef.current?.reInitEditor;
     try {
@@ -851,9 +900,38 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
       setLoader(false);
     }
   }
-  const saveDesign = async (redirectAfterSave = false, redirectUrl: string | null | undefined = null, showAnimation = true, isPublish: boolean = false) => {
+  const getDuplicateFieldsAcrossSteps = (): Set<string> => {
+    if (stepDataRef.current.length <= 1) return new Set();
+    const webform = landingPage?.Data?.WebForm;
+    const fieldToSteps = new Map<string, number[]>();
+    stepDataRef.current.forEach((step) => {
+      const json = step.StepNumber === 1
+        ? (step.JsonData ?? webform?.JsonData)
+        : step.JsonData;
+      const keys = getActiveFieldKeysFromJson(json);
+      keys.forEach((key) => {
+        const existing = fieldToSteps.get(key) ?? [];
+        fieldToSteps.set(key, [...existing, step.StepNumber]);
+      });
+    });
+    const duplicates = new Set<string>();
+    fieldToSteps.forEach((stepNumbers, key) => {
+      if (stepNumbers.length > 1) duplicates.add(key);
+    });
+    return duplicates;
+  };
+
+  const saveDesign = async (redirectAfterSave = false, redirectUrl: string | null | undefined = null, showAnimation = true, isPublish: boolean = false, isAutoSave: boolean = false) => {
+    const duplicates = getDuplicateFieldsAcrossSteps();
+    if (duplicates.size > 0) {
+      if (!isAutoSave) {
+        // @ts-ignore
+        setToastMessage({ severity: 'error', color: 'error', message: t('Popup.duplicateFieldAcrossSteps', { fields: Array.from(duplicates).join(', ') }), showAnimtionCheck: false } as any);
+      }
+      return;
+    }
     //@ts-ignore
-    saveRef.current = { ...saveRef.current, redirectAfterSave: redirectAfterSave, redirectUrl: redirectUrl, showAnimation: showAnimation, isPublish: isPublish };
+    saveRef.current = { ...saveRef.current, redirectAfterSave: redirectAfterSave, redirectUrl: redirectUrl, showAnimation: showAnimation, isPublish: isPublish, isAutoSave: isAutoSave };
     //@ts-ignore
     await editorRef.current.save();
     setTimeout(() => {
@@ -871,7 +949,7 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
       }
     }
     setSilentSave(true)
-    saveDesign(false, null, false);
+    saveDesign(false, null, false, false, true);
   }, 100);
   const deleteCurrentLandingPage = async () => {
     //@ts-ignore
