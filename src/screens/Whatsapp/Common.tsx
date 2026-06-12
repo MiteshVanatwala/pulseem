@@ -81,7 +81,8 @@ export const getVariableValue = (variable: string) => {
 
 export const getFileType = (fileLink: string) => {
 	if (!fileLink) return undefined;
-	const lower = fileLink.toLowerCase();
+	const path = (() => { try { return new URL(fileLink).pathname; } catch { return fileLink; } })();
+	const lower = path.toLowerCase();
 	if (lower.includes('.png') || lower.includes('.jpeg') || lower.includes('.jpg')
 		|| lower.includes('.gif') || lower.includes('.webp'))
 		return fileTypes.IMAGE;
