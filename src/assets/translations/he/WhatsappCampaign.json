@@ -78,5 +78,10 @@
 	"atTime": "בשעה",
 	"filterInputText": "לא לשלוח ללקוחות שקיבלו Whatsapp במספר הימים האחרונים",
 	"metaBusinessNotVerified": "Meta business is not verified",
-	"metaPhoneNumberNotVerified": "Meta phone number is not verified"
+	"metaPhoneNumberNotVerified": "Meta phone number is not verified",
+	"media_url": "כתובת קובץ מדיה",
+	"media_url_placeholder": "הכנס כתובת קובץ מדיה",
+	"media_type_mismatch_error": "סוג המדיה אינו תואם לתבנית המאושרת",
+	"media_text": "טקסט הודעה",
+	"media_text_placeholder": "הכנס טקסט כאן - עד 1024 תווים"
 }

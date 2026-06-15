@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import Toast from '../../../components/Toast/Toast.component';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import {
@@ -257,6 +258,13 @@ const DirectEmailReportTab = ({
   const { isGlobal } = useSelector((state) => state.common)
   const { t } = useTranslation();
   const [showLoader, setLoader] = useState(false)
+  const [toastMessage, setToastMessage] = useState(null)
+
+  useEffect(() => {
+    if (!toastMessage) return;
+    const timer = setTimeout(() => setToastMessage(null), 4000);
+    return () => clearTimeout(timer);
+  }, [toastMessage]);
 
   const handleSearch = async () => {
     const { email = {} } = searchData || {};
@@ -282,11 +290,16 @@ const DirectEmailReportTab = ({
     })
 
     setLoader(true)
-    await dispatch(isArchive ? getArchiveDirectReport(searchObjects) : getNewsletterDirectReport(searchObjects))
-    if (isGlobal) dispatch(GetGlobalAccountPackagesDetails());
-    handleSearching('email', true);
-    handlePageChange(1);
-    setLoader(false)
+    try {
+      await dispatch(isArchive ? getArchiveDirectReport(searchObjects) : getNewsletterDirectReport(searchObjects)).unwrap()
+      if (isGlobal) dispatch(GetGlobalAccountPackagesDetails());
+      handleSearching('email', true);
+      handlePageChange(1);
+    } catch (error) {
+      setToastMessage({ severity: 'error', color: 'error', message: 'report.archiveSearchError', showAnimtionCheck: false });
+    } finally {
+      setLoader(false)
+    }
   }
 
   const searchRequest = async (pageSize, pageIndex) => {
@@ -297,8 +310,13 @@ const DirectEmailReportTab = ({
       PageIndex: pageIndex,
       ...email
     };
-    await dispatch(isArchive ? getArchiveDirectReport(params) : getNewsletterDirectReport(params))
-    setLoader(false);
+    try {
+      await dispatch(isArchive ? getArchiveDirectReport(params) : getNewsletterDirectReport(params)).unwrap()
+    } catch (error) {
+      setToastMessage({ severity: 'error', color: 'error', message: 'report.archiveSearchError', showAnimtionCheck: false });
+    } finally {
+      setLoader(false);
+    }
   }
 
   const handlePageSearching = (val) => {
@@ -740,6 +758,7 @@ const DirectEmailReportTab = ({
       {renderTablePagination()}
       {<TotalSection classes={classes} TotalObject={directEmailReport} callerType="email" />}
       <Loader isOpen={showLoader} />
+      {toastMessage && <Toast data={toastMessage} />}
     </>
   );
 }

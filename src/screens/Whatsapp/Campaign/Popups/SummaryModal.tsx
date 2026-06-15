@@ -52,7 +52,8 @@ const SummaryModal = ({
 	randomlyCount,
 	setRandomlyCount,
 	resetRandomCount,
-	pulseData
+	pulseData,
+	overrideMediaUrl,
 }: SummaryModalProps) => {
 	const dispatch = useDispatch();
 	const { campaignID } = useParams();
@@ -594,7 +595,11 @@ const SummaryModal = ({
 										classes={classes}
 										templateData={templateData}
 										buttonType={buttonType}
-										fileData={fileData}
+										fileData={
+											overrideMediaUrl
+												? { ...fileData, fileLink: overrideMediaUrl }
+												: fileData
+										}
 									/>
 								</Box>
 

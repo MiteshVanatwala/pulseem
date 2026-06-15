@@ -10,7 +10,6 @@ import {
 	getTemplateName,
 	getTemplateNameById,
 } from '../../Common';
-
 const CampaignFields = ({
 	classes,
 	savedTemplateList,
@@ -166,6 +165,7 @@ const CampaignFields = ({
 					<>{translator('whatsappCampaign.chooseTemplateDesc')}</>
 				</Typography>
 			</Grid>
+
 		</Grid>
 	);
 };

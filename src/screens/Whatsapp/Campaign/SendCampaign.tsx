@@ -27,6 +27,7 @@ import {
 	GetTestGroups,
 	ApiSendCampaignData,
 	coreProps,
+	CampaignDetailById,
 } from './Types/WhatsappCampaign.types';
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
@@ -46,6 +47,7 @@ import {
 	deleteCampaign,
 	getAccountExtraData,
 	getAllGroups,
+	getCampaignDetailById,
 	getCampaignSettings,
 	getWhatsAppCampaignSummary,
 	getWhatsappCampaignNameFilter,
@@ -156,6 +158,7 @@ const SendCampaign = ({
 		type: '',
 		data: ''
 	});
+	const [mediaOverrideUrl, setMediaOverrideUrl] = useState<string | undefined>(undefined);
 	const [showTierPlans, setShowTierPlans] = useState(false);
 	
 	const [ pulseData, setPulseData ] = useState({
@@ -361,6 +364,17 @@ const SendCampaign = ({
 					pulsesOpen: false
 				})
 			}
+
+			const { payload: campaignData }: CampaignDetailById =
+				await dispatch<any>(getCampaignDetailById(campaignID));
+			if (campaignData?.Status === apiStatus.SUCCESS) {
+				const mediaEntry = campaignData?.Data?.VariableValues?.find(
+					(v: any) => v.FieldTypeId === -1
+				);
+				if (mediaEntry?.VariableValue) {
+					setMediaOverrideUrl(mediaEntry.VariableValue);
+				}
+			}
 		}
 	};
 
@@ -507,7 +521,8 @@ const SendCampaign = ({
 								sendType === '3'
 							) {
 								setDialogType({
-									type: 'summary'
+									type: 'summary',
+									overrideMediaUrl: mediaOverrideUrl,
 								})
 							} else {
 								setDialogType({
@@ -516,7 +531,8 @@ const SendCampaign = ({
 							}
 						} else {
 							setDialogType({
-								type: 'summary'
+								type: 'summary',
+								overrideMediaUrl: mediaOverrideUrl,
 							})
 						}
 					} else {
@@ -959,6 +975,7 @@ const SendCampaign = ({
 				setRandomlyCount={setRandomlyCount}
 				resetRandomCount={() => setRandomlyCount('')}
 				pulseData={pulseData}
+				overrideMediaUrl={dialogType?.overrideMediaUrl}
 			/>
 		),
 		onConfirm: async () => {

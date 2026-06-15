@@ -1200,6 +1200,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       }
       case 927: {
         // FILE_ATTACHMENT, EMAIL_BASIC
+        setIsResponseModal(false);
         setTierMessageCode(message);
         setDialogType({ type: 'tier' });
         break;
