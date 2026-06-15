@@ -1,0 +1,18 @@
+/* Import existing RTL + popup fixes from the production server */
+@import url('https://www.pulseem.co.il/Pulseem/Css/beefreeRtlFixesPopup.css');
+
+/* Fix: "Add new field" dropdown causes horizontal scroll in sidebar.
+   For RTL: the inner scroll view has margin-left:-17px for scrollbar compensation;
+   when the field-picker dropdown expands it overflows the container.
+   rc-scrollbars manages scrolling in JS, so we also suppress its horizontal track. */
+div.widget-bar__scroll-container {
+  overflow-x: hidden !important;
+}
+div.widget-bar__scroll-container .rc-scrollbars-track-h {
+  display: none !important;
+}
+/* Scope the inner view fix to RTL only — the -17px margin only exists there */
+html[lang="he-IL"] div.widget-bar__scroll-container .rc-scrollbars-view {
+  overflow-x: hidden !important;
+  min-width: 0 !important;
+}
