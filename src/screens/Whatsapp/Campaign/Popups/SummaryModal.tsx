@@ -201,12 +201,30 @@ const SummaryModal = ({
 		return null;
 	};
 
+	let effectiveSendAmount = campaignSummary?.FinalCount || 0;
+	if (pulseData?.togglePulse) {
+		const amount = Number(pulseData?.pulseAmount) || 0;
+		let amountPerPulse = amount;
+		if (pulseData?.pulsePer !== "" && pulseData?.pulsePer !== "recipients") {
+			amountPerPulse = Math.ceil((effectiveSendAmount * amount) / 100);
+		}
+		
+		const interval = Number(pulseData?.timeInterval) || 1;
+		const isMins = pulseData?.hourName === "" || pulseData?.minName === "mins";
+		const intervalInHours = isMins ? interval / 60 : interval;
+		
+		const pulsesIn24h = intervalInHours >= 24 ? 1 : Math.ceil(24 / intervalInHours);
+		const calculatedAmount = amountPerPulse * pulsesIn24h;
+		// Ensure we never calculate a daily send amount larger than the entire campaign itself
+		effectiveSendAmount = Math.min(campaignSummary?.FinalCount || 0, calculatedAmount);
+	}
+
 	const validateSummary = () => {
 		let validationErrors = [];
 		let isValidated = true;
 		const showTierAlert = isShowTierAlert(
 			campaignSummary?.WhatsappSmsLeft || 0,
-			campaignSummary?.FinalCount || 0,
+			effectiveSendAmount,
 			campaignSummary?.WhatsappTierID || 1,
 			sendType,
 			isIn24HrWindow
@@ -515,7 +533,7 @@ const SummaryModal = ({
 								}
 								{isShowTierAlert(
 									campaignSummary?.WhatsappSmsLeft || 0,
-									campaignSummary?.FinalCount || 0,
+									effectiveSendAmount,
 									campaignSummary?.WhatsappTierID || 1,
 									sendType,
 									isIn24HrWindow
