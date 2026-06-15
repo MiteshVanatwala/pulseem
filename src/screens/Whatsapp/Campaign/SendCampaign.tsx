@@ -801,6 +801,12 @@ const SendCampaign = ({
 				setTierMessageCode(sendCampaignData?.Message);
 				setDialogType({ type: 'tier' })
 			}
+			else if (sendCampaignData?.StatusCode === 7 || sendCampaignData?.StatusCode === "7") {
+				setDialogType({ 
+					type: 'apiError',
+					data: sendCampaignData?.Message || translator('settings.accountSettings.actDetails.fields.exceedLimitMessage')
+				});
+			}
 			else if (sendCampaignData?.Status === apiStatus.SUCCESS) {
 				setDialogType({
 					type: 'sendCampaignSuccess'
@@ -1049,6 +1055,19 @@ const SendCampaign = ({
 		)
 	})
 
+	const getApiErrorDialog = () => ({
+		title: '',
+		showDivider: false,
+		content: (
+			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+				{dialogType?.data}
+			</Typography>
+		),
+		onConfirm: async () => {
+			setDialogType({ type: '', data: '' });
+		}
+	});
+
 	const renderDialog = () => {
 		const { type } = dialogType || {}
 		let currentDialog: any = {};
@@ -1068,6 +1087,8 @@ const SendCampaign = ({
 			currentDialog = getTierValidationDialog();
 		} else if (type === 'cancelPulse') {
 			currentDialog = getCancelPulseDialog();
+		} else if (type === 'apiError') {
+			currentDialog = getApiErrorDialog();
 		}
 
 		if (type) {
