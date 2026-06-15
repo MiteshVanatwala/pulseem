@@ -39,7 +39,7 @@ export const getNewsletterDirectReport = createAsyncThunk(
 export const getArchiveDirectReport = createAsyncThunk(
   'directReport/GetArchiveEmailDirectReport', async (data, thunkAPI) => {
     try {
-      const response = await PulseemReactInstance.post(`directReport/GetArchiveEmailDirectReport`, data);
+      const response = await PulseemReactInstance.post(`directReport/GetArchiveEmailDirectReport`, data, { timeout: 30000 });
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });

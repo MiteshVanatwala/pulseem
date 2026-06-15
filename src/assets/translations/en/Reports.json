@@ -115,6 +115,7 @@
     "responseId": "Response Id"
   },
   "ArchiveDirectSendReport": "DirectSend Report Archive",
+  "archiveSearchError": "Failed to load archive data. Please try again.",
   "Reactivate": "Reactivate / Cancel removal",
   "ExportLimitation": "Exported docs cannot contain more than 600K results",
   "clientName": "Client Name",
