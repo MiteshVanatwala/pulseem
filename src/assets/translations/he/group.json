@@ -76,5 +76,6 @@
   "exportGroupNames": "ייצא גם שמות קבוצות (עלול לקחת יותר זמן)",
   "exportGroupNamesTooltip": "This will take a little bit more time",
   "selectePages": "בחר עמודים",
-  "featuredDisallowDeleteGroup": "לא ניתן למחוק קבוצות אשר משוייך להן אחד מן הפיצ'רים הבאים:<br/><br/><li>AutoResponder</li><li>אוטומציה</li><li>דף נחיתה</li>"
+  "featuredDisallowDeleteGroup": "לא ניתן למחוק קבוצות אשר משוייך להן אחד מן הפיצ'רים הבאים:<br/><br/><li>AutoResponder</li><li>אוטומציה</li><li>דף נחיתה</li>",
+  "dynamic_group_purchase_conflict": "לא ניתן לבחור גם \"רכש\" וגם \"לא רכש\" בו-זמנית"
 }
