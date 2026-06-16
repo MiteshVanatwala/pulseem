@@ -121,6 +121,8 @@ const EditDynamicGroup = ({ classes }: any) => {
                 IsPageViewedToDate: null,
                 PageViewedPrice: null,
                 PageViewedUrlIDs: null,
+                PageViewedMatchType: undefined,
+                PageViewedContainsText: '',
 
                 ProductCategory: null
             } as MyActivities,
@@ -316,7 +318,7 @@ const EditDynamicGroup = ({ classes }: any) => {
                 message = t('group.saveDynamicGroupResponse.daysBackError');
                 isValid = false;
             }
-            else if ((dynamicGroupModel.dynamicData.MyActivities.PageViewedMatchType || 'exact') === 'contains') {
+            else if (['contains', 'not-contains'].includes(dynamicGroupModel.dynamicData.MyActivities.PageViewedMatchType || 'exact')) {
                 if (!dynamicGroupModel.dynamicData.MyActivities.PageViewedContainsText?.trim()) {
                     message = t('common.field_required');
                     isValid = false;
@@ -335,7 +337,7 @@ const EditDynamicGroup = ({ classes }: any) => {
             const cleanActivities = activities?.IsPageViewed
                 ? {
                     ...activities,
-                    ...(effectiveMatchType === 'contains'
+                    ...(['contains', 'not-contains'].includes(effectiveMatchType)
                         ? { PageViewedUrlIDs: null }
                         : { PageViewedContainsText: undefined }
                     )

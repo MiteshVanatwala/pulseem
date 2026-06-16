@@ -696,7 +696,7 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                             variant='standard'
                             value={matchType}
                             onChange={(event: any) => {
-                                const newMatchType = event.target.value as 'exact' | 'contains';
+                                const newMatchType = event.target.value as 'exact' | 'contains' | 'not-contains';
                                 setContainsTextError(false);
                                 onUpdate('', '', {
                                     PageViewedMatchType: newMatchType,
@@ -709,6 +709,7 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                         >
                             <option value="exact">{t('common.page_viewed_match_exact')}</option>
                             <option value="contains">{t('common.page_viewed_match_contains')}</option>
+                            <option value="not-contains">{t('common.page_viewed_match_not_contains')}</option>
                         </Select>
                     </FormControl>
                 </Grid>
@@ -734,7 +735,7 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                             className={clsx(classes.selectInputFormControl, classes.w100)}
                             style={{ paddingLeft: 15, paddingRight: 10, marginTop: 12 }}
                         >
-                            <Tooltip title={t('common.page_viewed_contains_tooltip')} placement="top" arrow>
+                            <Tooltip title={t(matchType === 'not-contains' ? 'common.page_viewed_not_contains_tooltip' : 'common.page_viewed_contains_tooltip')} placement="top" arrow>
                                 <span>
                                     <TextField
                                         disabled={!isPageViewed}

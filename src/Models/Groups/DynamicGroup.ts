@@ -88,7 +88,7 @@ export interface MyActivities {
     IsPageViewedToDate: Date | string | null;
     PageViewedPrice: number | string | null;
     ProductCategory: string[] | null;
-    PageViewedMatchType?: 'exact' | 'contains';
+    PageViewedMatchType?: 'exact' | 'contains' | 'not-contains';
     PageViewedContainsText?: string;
 
 }
