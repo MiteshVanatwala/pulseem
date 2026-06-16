@@ -1,4 +1,4 @@
-﻿{
+{
 	"accountSettings": {
 		"title": "Account Settings",
 		"fixedComDetails": {
@@ -47,6 +47,7 @@
 				"tier6": "Unlimited",
 				"exceedLimitMessage": "This campaign is exceeding daily rate limit",
 				"exceedLimitNumberMessage": "Messages left for today: ",
+				"metaExceedLimitMessage": "The amount of recipients you selected to send the campaign to, exceeds your META account's {{limit}} daily limit.\nPlease try again after waiting 24 hours of your last send.",
 				"sendRandomlyTo": "Send Randomly to -",
 				"insert": "Insert",
 				"recipientsOutOfTotal": "Recipients out of total",
