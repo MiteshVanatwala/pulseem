@@ -211,8 +211,6 @@ const EditDynamicGroup = ({ classes }: any) => {
     const onSave = async (isExit: boolean | never = false) => {
         let isValid = true;
         let message = '';
-        // Add validations
-        // IsPageViewed && Range && required min & max - SpecificDates && required min & max  
 
         if (dynamicGroupModel.dynamicData.MyActivities.IsPurchased === true) {
             switch (dynamicGroupModel.dynamicData.MyActivities?.IsPurchasedComparingType.toString()) {
@@ -233,7 +231,7 @@ const EditDynamicGroup = ({ classes }: any) => {
                 }
             }
         }
-        else if (dynamicGroupModel.dynamicData.MyActivities.IsNotPurchased === true) {
+        if (dynamicGroupModel.dynamicData.MyActivities.IsNotPurchased === true) {
             switch (dynamicGroupModel.dynamicData.MyActivities?.IsNotPurchasedComparingType.toString()) {
                 case ActivityEvent.Range: {
                     if ((dynamicGroupModel.dynamicData.MyActivities.IsNotPurchasedMinPrice === null ||
@@ -252,7 +250,7 @@ const EditDynamicGroup = ({ classes }: any) => {
                 }
             }
         }
-        else if (dynamicGroupModel.dynamicData.MyActivities.IsAbandoned === true) {
+        if (dynamicGroupModel.dynamicData.MyActivities.IsAbandoned === true) {
             switch (dynamicGroupModel.dynamicData.MyActivities?.IsAbandonedComparingType.toString()) {
                 case ActivityEvent.Range: {
                     if ((dynamicGroupModel.dynamicData.MyActivities.IsAbandonedMinPrice === null ||

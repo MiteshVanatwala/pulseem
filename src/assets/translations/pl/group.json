@@ -76,5 +76,6 @@
   "exportGroupNames": "Eksportuj nazwy grup (Zajmie to nieco więcej czasu)",
   "exportGroupNamesTooltip": "Zajmie to nieco więcej czasu",
   "selectePages": "Wybierz strony",
-  "featuredDisallowDeleteGroup": "Grupy, które mają powiązane z nimi jedną z następujących funkcji, nie mogą zostać usunięte:<br/><br/><li>AutoResponder</li><li>Automatyzacja</li><li>Strona docelowa</li>"
+  "featuredDisallowDeleteGroup": "Grupy, które mają powiązane z nimi jedną z następujących funkcji, nie mogą zostać usunięte:<br/><br/><li>AutoResponder</li><li>Automatyzacja</li><li>Strona docelowa</li>",
+  "dynamic_group_purchase_conflict": "Nie można jednocześnie wybrać zarówno \"Zakupiono\" jak i \"Nie zakupiono\""
 }
