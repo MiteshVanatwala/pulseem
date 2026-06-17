@@ -834,7 +834,6 @@
   "pageViewed": "Page Viewed in",
   "page_viewed_match_exact": "Exact",
   "page_viewed_match_contains": "Contains",
-  "page_viewed_match_not_contains": "Not Contains",
   "field_required": "Required field",
   "priceRangeError": "Maximum price cannot be larger then Minimum Price",
   "verifyByEmail": "Via Email",
@@ -1003,6 +1002,5 @@
   "value": "Value",
   "pulseSendPill": "Pulse Send",
   "page_viewed_contains_placeholder": "/checkout",
-  "page_viewed_contains_tooltip": "Matches contacts who visited any page whose URL contains this text. Case-insensitive. URL parameters are included (e.g. utm_source=email). Enter one value only — not comma-separated.",
-  "page_viewed_not_contains_tooltip": "Excludes contacts who visited any page whose URL contains this text. Case-insensitive. URL parameters are included. Enter one value only."
+  "page_viewed_contains_tooltip": "Matches contacts who visited any page whose URL contains this text. Case-insensitive. URL parameters are included (e.g. utm_source=email). Enter one value only — not comma-separated."
 }
