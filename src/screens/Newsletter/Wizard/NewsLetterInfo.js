@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import MuiAlert from '@material-ui/lab/Alert';
 import DefaultScreen from "../../DefaultScreen";
 import clsx from "clsx";
 import { IoIosArrowDown } from 'react-icons/io';
@@ -151,6 +152,10 @@ const useStyles = makeStyles({
     }
 })
 
+function Alert(props) {
+    return <MuiAlert elevation={0} variant="filled" {...props} />;
+}
+
 const NewsLetterInfo = ({ classes }) => {
     const { id } = useParams();
     const queryParams = new URLSearchParams(window.location.search)
@@ -263,6 +268,7 @@ const NewsLetterInfo = ({ classes }) => {
     const [hideCautionNewMessage, setHideCautionNewMessage] = useState(false)
     const [hideCautionOldMessage, setHideCautionOldMessage] = useState(false)
     const [isVerifiedDomain, setIsVerifiedDomain] = useState(false);
+    const [senderNotVerified, setSenderNotVerified] = useState(false);
 
     const defaultValues = { WebViewLocation: 1, PrintLocation: 2, UnsubscribeLocation: 2, UpdateClient: 2 }
 
@@ -359,7 +365,14 @@ const NewsLetterInfo = ({ classes }) => {
     const handleGetNewsletterResponse = (res) => {
         switch (res?.StatusCode || 201) {
             case 201: {
-                setCampaingnValues({ ...res?.Message })
+                const campaignData = res?.Message;
+                // PR-3666: clear stale unverified sender from draft
+                if (res?.IsFromEmailVerified === false) {
+                    setSenderNotVerified(true);
+                    setCampaingnValues({ ...campaignData, FromEmail: '-1' });
+                } else {
+                    setCampaingnValues({ ...campaignData });
+                }
                 setCampaignLoaded(true);
                 break;
             }
@@ -403,6 +416,10 @@ const NewsLetterInfo = ({ classes }) => {
             }
             case 406: {
                 setToastMessage(ToastMessages.NULL_FILE)
+                break;
+            }
+            case 426: {
+                setToastMessage(ToastMessages.FROM_EMAIL_NOT_VERIFIED)
                 break;
             }
             case 451: {
@@ -572,6 +589,7 @@ const NewsLetterInfo = ({ classes }) => {
             ReplyTo: isSharedDomain ? ((campaingnValues.ReplyTo !== '' && campaingnValues.ReplyTo) || verifiedEmails[0].Number) : event.target.value
         });
         setErrors({ ...errors, FromEmail: '' });
+        setSenderNotVerified(false);
         // if (!isSharedDomain && (!fromEmailProperty.IsVerified || fromEmailProperty.IsRestricted === true)) {
         //     const emailObj = {
         //         NonVerified: 'common.domainVerification.campaignCreation.nonVerified.preText',
@@ -896,61 +914,68 @@ const NewsLetterInfo = ({ classes }) => {
                         content:
                             <Box className='selectWrapper'>
                                 <Typography title={t("campaigns.newsLetterEditor.fromEmail").replace('<b>', '').replace('</b>', '')} className={classes.alignDir}>{RenderHtml(t("campaigns.newsLetterEditor.fromEmail"))}</Typography>
-                                <FormControl
-                                    className={clsx(classes.selectInputFormControl, classes.w100)}
-                                >
-                                    <Select
-                                        native
-                                        variant="standard"
-                                        name="FromEmail"
-                                        value={campaingnValues?.FromEmail}
-                                        className={clsx(classes.pbt5, classes.fromEmailSelect, !isVerifiedDomain ? classes.errorBg : null)}
-                                        onChange={(event, val) => {
-                                            handleFromEmailChange(event);
-                                        }}
-                                        IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
-                                        MenuProps={{
-                                            PaperProps: {
-                                                style: {
-                                                    maxHeight: 300,
-                                                },
-                                            },
-                                        }}
+                                {senderNotVerified && (
+                                    <Alert severity="warning" style={{ marginBottom: 8 }}>
+                                        {t('campaigns.newsLetterEditor.senderNotVerifiedWarning')}
+                                    </Alert>
+                                )}
+                                {verifiedEmails.length === 0 ? (
+                                    <>
+                                        <Typography variant="body2" color="error">
+                                            {t('campaigns.newsLetterEditor.noVerifiedSenders')}
+                                        </Typography>
+                                        <Typography variant="caption">
+                                            {t('campaigns.newsLetterEditor.noVerifiedSendersHint')}
+                                        </Typography>
+                                    </>
+                                ) : (
+                                    <FormControl
+                                        className={clsx(classes.selectInputFormControl, classes.w100)}
                                     >
-                                        <option
-                                            key='-1'
-                                            value='-1'
-                                            disabled
+                                        <Select
+                                            native
+                                            variant="standard"
+                                            name="FromEmail"
+                                            value={campaingnValues?.FromEmail}
+                                            className={clsx(classes.pbt5, classes.fromEmailSelect, !isVerifiedDomain ? classes.errorBg : null)}
+                                            onChange={(event, val) => {
+                                                handleFromEmailChange(event);
+                                            }}
+                                            IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+                                            MenuProps={{
+                                                PaperProps: {
+                                                    style: {
+                                                        maxHeight: 300,
+                                                    },
+                                                },
+                                            }}
                                         >
-                                            {t("common.select")}
-                                        </option>
-                                        {verifiedEmails.map((item, index) => {
-                                            // if (item && item.IsRestricted) {
-                                            //     return false;
-                                            // }
-                                            return <option
-                                                key={index}
-                                                value={item.Number}
-                                                name={item.Number}
+                                            <option
+                                                key='-1'
+                                                value='-1'
+                                                disabled
                                             >
-                                                {/* {item?.IsVerified && <ListItemIcon style={{ minWidth: 25 }}>
-                                                    <MdOutlineVerified style={{ color: 'green', fontSize: 20 }} title={t('common.domainVerification.verifiedDomain')} />
-                                                </ListItemIcon>} */}
-                                                {t(item.Number)}
+                                                {t("common.select")}
                                             </option>
-                                        })}
-                                        {accountFeatures?.indexOf(PulseemFeatures.HIDE_SHARED_DOMAIN) === -1 && accountSettings?.SubAccountSettings?.SharedEmailDomain && <option
-                                            key={verifiedEmails.length + 1}
-                                            value={accountSettings?.SubAccountSettings?.SharedEmailDomain}
-                                            name={accountSettings?.SubAccountSettings?.SharedEmailDomain}
-                                        >
-                                            {/* <ListItemIcon style={{ minWidth: 25 }}>
-                                                <MdOutlineVerified style={{ color: 'green', fontSize: 20 }} title={t('common.domainVerification.verifiedDomain')} />
-                                            </ListItemIcon> */}
-                                            {t(accountSettings?.SubAccountSettings?.SharedEmailDomain)}
-                                        </option>}
-                                    </Select>
-                                </FormControl>
+                                            {verifiedEmails.map((item, index) => {
+                                                return <option
+                                                    key={index}
+                                                    value={item.Number}
+                                                    name={item.Number}
+                                                >
+                                                    {t(item.Number)}
+                                                </option>
+                                            })}
+                                            {accountFeatures?.indexOf(PulseemFeatures.HIDE_SHARED_DOMAIN) === -1 && accountSettings?.SubAccountSettings?.SharedEmailDomain && <option
+                                                key={verifiedEmails.length + 1}
+                                                value={accountSettings?.SubAccountSettings?.SharedEmailDomain}
+                                                name={accountSettings?.SubAccountSettings?.SharedEmailDomain}
+                                            >
+                                                {t(accountSettings?.SubAccountSettings?.SharedEmailDomain)}
+                                            </option>}
+                                        </Select>
+                                    </FormControl>
+                                )}
                                 <Typography className={clsx(errors.FromEmail ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
                                     {errors.FromEmail ? errors.FromEmail : helperTexts.FromEmail + ' '}
                                     <strong className={clsx(classes.link, classes.textRed)} onClick={() => setVerPopupOpen(true)}>{t('campaigns.newsLetterEditor.helpTexts.clickToVerify')}</strong>
@@ -1133,6 +1158,7 @@ const NewsLetterInfo = ({ classes }) => {
         const wizardButtons = [];
         const showCautionOldEditor = getCookie('showCautionOldEditor') !== "false" && accountFeatures?.indexOf(PulseemFeatures.BEE_EDITOR) > -1
         const showCautionNewEditor = getCookie('showCautionNewEditor') !== "false" && accountFeatures?.indexOf(PulseemFeatures.BEE_EDITOR) > -1 && !isPolishAccount;
+        const noVerifiedSenders = verifiedEmails.length === 0;
         if (accountFeatures?.indexOf(PulseemFeatures.BEE_EDITOR) === -1) {
             wizardButtons.push(<>
                 <Button
@@ -1148,6 +1174,7 @@ const NewsLetterInfo = ({ classes }) => {
                 >{t("common.save")}
                 </Button>
                 <Button onClick={() => handleSubmit(true, false, false)}
+                    disabled={noVerifiedSenders}
                     className={clsx(
                         classes.btn,
                         classes.btnRounded,
@@ -1161,6 +1188,7 @@ const NewsLetterInfo = ({ classes }) => {
         else {
             if (id !== null && campaingnValues.IsNewEditor === true) {
                 wizardButtons.push(<Button onClick={() => handleSubmit(true, false, true)}
+                    disabled={noVerifiedSenders}
                     className={clsx(
                         classes.btn,
                         classes.btnRounded,
@@ -1173,6 +1201,7 @@ const NewsLetterInfo = ({ classes }) => {
             else {
                 wizardButtons.push(<>
                     { !isPolishAccount && <Button
+                            disabled={noVerifiedSenders}
                             onClick={() => showCautionOldEditor ? setDialogType({ type: "cautionNewEditor" }) : handleSubmit(true, false, false)}
                             className={clsx(
                                 classes.btn,
@@ -1185,7 +1214,7 @@ const NewsLetterInfo = ({ classes }) => {
                         >{t('common.saveAndContinue')}</Button>
                     }
                     {(id === null || id === undefined) && <Button
-                        disabled={newEditorDisabled}
+                        disabled={newEditorDisabled || noVerifiedSenders}
                         onClick={() => showCautionNewEditor ? setDialogType({ type: "cautionOldEditor" }) : handleSubmit(true, false, true)}
                         className={clsx(
                             classes.btn,

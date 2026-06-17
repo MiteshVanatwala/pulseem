@@ -526,6 +526,7 @@
       "fileExtNotAlwd": "Rozszerzenie pliku niedozwolone",
       "fileCanNotNull": "Plik nie może być pusty",
       "generalError": "Wystąpił błąd, skontaktuj się z naszą obsługą klienta:",
+      "fromEmailNotVerified": "Adres nadawcy nie jest zweryfikowany. Przed zapisaniem zweryfikuj go.",
       "campaignName": "Proszę wypełnić nazwę kampanii",
       "fromName": "Proszę wypełnić imię",
       "fromEmail": "Proszę podać adres e-mail",
@@ -627,7 +628,10 @@
       "smsComplementary": "Uzupełniający marketing SMS",
       "optimalPulseConflictMessage": "Wybór \"Optymalnej wysyłki\" anuluje wysyłkę Pulse, którą już ustawiłeś.<br/>Czy chcesz kontynuować?"
     },
-    "domainVerificationTooltip": "Wysyłanie wiadomości będzie możliwe tylko z zweryfikowanej domeny.<br/>Po skonfigurowaniu zweryfikowanej domeny możesz wybrać adres e-mail do odpowiedzi w następnym polu."
+    "domainVerificationTooltip": "Wysyłanie wiadomości będzie możliwe tylko z zweryfikowanej domeny.<br/>Po skonfigurowaniu zweryfikowanej domeny możesz wybrać adres e-mail do odpowiedzi w następnym polu.",
+    "noVerifiedSenders": "Nie znaleziono zweryfikowanych adresów nadawcy.",
+    "noVerifiedSendersHint": "Przed kontynuowaniem zweryfikuj adres nadawcy w Ustawieniach konta.",
+    "senderNotVerifiedWarning": "Zapisany adres nadawcy nie jest już zweryfikowany. Wybierz zweryfikowanego nadawcę, aby kontynuować."
   },
   "newsLetterMgmt": {
     "emailVerification": {
