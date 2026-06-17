@@ -526,6 +526,7 @@
       "fileExtNotAlwd": "File extension not allowed",
       "fileCanNotNull": "File cannot be null",
       "generalError": "Error Occured, Please contact our costumer support:",
+      "fromEmailNotVerified": "This email address is not verified. Please verify it in account settings.",
       "campaignName": "Please fill in campaign name",
       "fromName": "Please fill in name",
       "fromEmail": "Please fill in an email address",

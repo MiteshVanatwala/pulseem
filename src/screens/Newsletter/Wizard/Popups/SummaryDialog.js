@@ -140,13 +140,8 @@ const SummaryDialog = ({ classes,
     }, [isSweepingApproval])
 
     useEffect(() => {
-        const verifiedEmail = verifiedEmails.filter((vm) => { return (vm.Number === newsletterSendSummary?.FromEmail && vm.IsOptIn === true) || IsSharedDomain(newsletterSendSummary?.FromEmail) });
         setFromEmail(newsletterSendSummary?.FromEmail);
         setReplyTo(newsletterSendSummary?.ReplyTo);
-        if ((!verifiedEmail || verifiedEmail?.length <= 0) && !isSweepingApproval && !isSharedDomainEmail) {
-            setDisableSend(true);
-            setFromEmailVerified(false);
-        }
     }, [newsletterSendSummary]);
 
     const handleSharedDomain = (emailAddress) => {
