@@ -1,4 +1,4 @@
-﻿{
+{
 	"accountSettings": {
 		"title": "הגדרות חשבון",
 		"fixedComDetails": {
@@ -47,6 +47,7 @@
 				"tier6": "ללא הגבלה",
 				"exceedLimitMessage": "קמפיין זה חורג ממגבלת השליחה היומית",
 				"exceedLimitNumberMessage": "הודעות שנשארו להיום: ",
+				"metaExceedLimitMessage": "הכמות הנמענים שנבחרה לשליחה זאת, עוקפת את המגבלה היומית של {{limit}} של החשבון ה META שלכם\nנא לנסות שוב אחרי המתנה של 24 שעות מהשליחה האחרונה שלכם",
 				"sendRandomlyTo": "שלח רנדולמית ל-",
 				"insert": "הכנס",
 				"recipientsOutOfTotal": "נמענים מהסך הכולל",

@@ -734,7 +734,8 @@ const VerificationDialog = ({
                                         return;
                                     }
                                     const isNumeric = /^[0-9+\-\s]*$/.test(val);
-                                    if (val.length > 11) {
+                                    const startsWith972 = /^\+?972/.test(val.trim());
+                                    if (!startsWith972 && val.length > 11) {
                                         setVerificationError({ Number: isNumeric ? t("mainReport.campaignFromNumberMaxLength") : t("mainReport.campaignFromMaxLength") });
                                     } else {
                                         !!verificationError?.Number && setVerificationError({ Number: '' });
@@ -755,7 +756,8 @@ const VerificationDialog = ({
                                         return;
                                     }
                                     const isNumeric = /^[0-9+\-\s]*$/.test(selectedVerificationContact);
-                                    if (selectedVerificationContact.length > 11) {
+                                    const startsWith972 = /^\+?972/.test(selectedVerificationContact.trim());
+                                    if (!startsWith972 && selectedVerificationContact.length > 11) {
                                         setVerificationError({ Number: isNumeric ? t("mainReport.campaignFromNumberMaxLength") : t("mainReport.campaignFromMaxLength") });
                                         return;
                                     }

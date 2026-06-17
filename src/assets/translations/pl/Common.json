@@ -834,7 +834,6 @@
   "pageViewed": "Strona wyświetlona w",
   "page_viewed_match_exact": "Dokładnie",
   "page_viewed_match_contains": "Zawiera",
-  "page_viewed_match_not_contains": "Nie zawiera",
   "field_required": "Pole wymagane",
   "priceRangeError": "Maksymalna cena nie może być większa niż minimalna cena",
   "verifyByEmail": "Przez e-mail",
@@ -998,6 +997,5 @@
   "allNumbers": "Wszystkie liczby",
   "pulseSendPill": "Wysyłka pulsacyjna",
   "page_viewed_contains_placeholder": "/checkout",
-  "page_viewed_contains_tooltip": "Dopasowuje kontakty, które odwiedziły stronę, której URL zawiera ten tekst. Bez rozróżniania wielkości liter. Uwzględnia parametry URL. Wpisz tylko jedną wartość — nie rozdzielaj przecinkami.",
-  "page_viewed_not_contains_tooltip": "Wyklucza kontakty, które odwiedziły stronę, której URL zawiera ten tekst. Bez uwzględniania wielkości liter. Parametry URL są uwzględniane. Podaj tylko jedną wartość."
+  "page_viewed_contains_tooltip": "Dopasowuje kontakty, które odwiedziły stronę, której URL zawiera ten tekst. Bez rozróżniania wielkości liter. Uwzględnia parametry URL. Wpisz tylko jedną wartość — nie rozdzielaj przecinkami."
 }

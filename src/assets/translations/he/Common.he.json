@@ -829,7 +829,6 @@
   "pageViewed": "צפה בעמוד ב",
   "page_viewed_match_exact": "בדיוק",
   "page_viewed_match_contains": "כולל",
-  "page_viewed_match_not_contains": "לא מכיל",
   "field_required": "שדה חובה",
   "priceRangeError": "מחיר המקסימום גבוה ממחיר המינימום",
   "verifyByEmail": "אימות באימייל",
@@ -957,6 +956,5 @@
   "allNumbers": "כל המספרים",
   "pulseSendPill": "שליחה בפולסים",
   "page_viewed_contains_placeholder": "/checkout",
-  "page_viewed_contains_tooltip": "מתאים לאנשי קשר שביקרו בעמוד שה-URL שלו מכיל טקסט זה. לא תלוי רישיות. כולל פרמטרים של URL. יש להזין ערך אחד בלבד – ללא פסיקים.",
-  "page_viewed_not_contains_tooltip": "מסנן אנשי קשר שביקרו בדף שכתובת ה-URL שלו מכילה את הטקסט הזה. לא תלוי רישיות. פרמטרים של ה-URL נכללים. הזן ערך אחד בלבד."
+  "page_viewed_contains_tooltip": "מתאים לאנשי קשר שביקרו בעמוד שה-URL שלו מכיל טקסט זה. לא תלוי רישיות. כולל פרמטרים של URL. יש להזין ערך אחד בלבד – ללא פסיקים."
 }
