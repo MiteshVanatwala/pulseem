@@ -567,8 +567,9 @@ const SmsCreator = ({ classes }) => {
     }
 
     const isNumeric = onlyNumbersWithHyphenAndSpace.test(e.target.value);
-    setSenderNumberTooLong(isNumeric && e.target.value.length > FROM_NUMBER_MAX);
-    setSenderNameTooLong(!isNumeric && e.target.value.length > FROM_NUMBER_MAX);
+    const startsWith972 = /^\+?972/.test(e.target.value.trim());
+    setSenderNumberTooLong(isNumeric && !startsWith972 && e.target.value.length > FROM_NUMBER_MAX);
+    setSenderNameTooLong(!isNumeric && !startsWith972 && e.target.value.length > FROM_NUMBER_MAX);
 
     setrestoreBool(false);
     setremovalMessageButtonDisabled(true);
@@ -600,7 +601,8 @@ const SmsCreator = ({ classes }) => {
       isValid = false;
     }
 
-    if (campaignNumber.length > FROM_NUMBER_MAX) {
+    const startsWith972 = /^\+?972/.test(campaignNumber.trim());
+    if (!startsWith972 && campaignNumber.length > FROM_NUMBER_MAX) {
       setcampaignNumberValidated(true);
       const isNumericSender = /^[0-9 -]*$/.test(campaignNumber);
       if (isNumericSender) {
