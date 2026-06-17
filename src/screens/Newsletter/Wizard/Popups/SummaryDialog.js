@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import MuiAlert from "@material-ui/lab/Alert";
 import { FaMobileAlt } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
 import { FormControl, Link } from "@material-ui/core";
@@ -21,10 +20,6 @@ import { IoIosArrowDown } from "react-icons/io";
 import { IsSharedDomain } from "../../../../helpers/Functions/DomainVerificationHelper";
 import { PulseemFeatures } from "../../../../model/PulseemFields/Fields";
 import { DateFormats } from "../../../../helpers/Constants";
-
-function Alert(props) {
-    return <MuiAlert elevation={0} variant="filled" {...props} />;
-}
 
 const SummaryDialog = ({ classes,
     isOpen = false,
@@ -145,14 +140,8 @@ const SummaryDialog = ({ classes,
     }, [isSweepingApproval])
 
     useEffect(() => {
-        // PR-3666: final guard before send — sender must be verified
-        const verifiedEmail = verifiedEmails.filter((vm) => { return (vm.Number === newsletterSendSummary?.FromEmail && vm.IsOptIn === true) || IsSharedDomain(newsletterSendSummary?.FromEmail) });
         setFromEmail(newsletterSendSummary?.FromEmail);
         setReplyTo(newsletterSendSummary?.ReplyTo);
-        if ((!verifiedEmail || verifiedEmail?.length <= 0) && !isSweepingApproval && !isSharedDomainEmail) {
-            setDisableSend(true);
-            setFromEmailVerified(false);
-        }
     }, [newsletterSendSummary]);
 
     const handleSharedDomain = (emailAddress) => {
@@ -533,13 +522,6 @@ const SummaryDialog = ({ classes,
                             />
                             האם לשלוח למפקח?
                         </label>
-                    </Grid>
-                )}
-                {!fromEmailVerified && !isSharedDomainEmail && (
-                    <Grid item xs={12} className={classes.paddingSides10} style={{ marginBottom: 8 }}>
-                        <Alert severity="warning">
-                            {t('campaigns.newsLetterEditor.senderNotVerifiedWarning')}
-                        </Alert>
                     </Grid>
                 )}
                 <Grid item className={classes.paddingSides10}>

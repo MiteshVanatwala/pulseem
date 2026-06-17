@@ -872,7 +872,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     }
 
     const renderButtons = () => {
-        const senderUnverified = newsletterInfo?.IsFromEmailVerified === false;
         return (
             <>
                 <Button
@@ -889,11 +888,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                     color="primary"
                 >{t("common.save")}
                 </Button>
-                {senderUnverified && (
-                    <Alert severity="warning" style={{ marginBottom: 8, width: '100%' }}>
-                        {t('campaigns.newsLetterEditor.senderNotVerifiedWarning')}
-                    </Alert>
-                )}
                 {userRoles?.AllowSend && <Button
                     variant='contained'
                     size='medium'
@@ -910,9 +904,9 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                     color="primary"
                     style={{
                         margin: '8px',
-                        pointerEvents: selectedGroups.length > 0 && totalClientsToSend > 0 && !senderUnverified ? "auto" : "none",
+                        pointerEvents: selectedGroups.length > 0 && totalClientsToSend > 0 ? "auto" : "none",
                     }}
-                    disabled={!selectedGroups.length || !totalClientsToSend || senderUnverified}
+                    disabled={!selectedGroups.length || !totalClientsToSend}
                     onClick={() => {
                         onSaveSettings(true).then(async (results) => {
                             setLoader(true);

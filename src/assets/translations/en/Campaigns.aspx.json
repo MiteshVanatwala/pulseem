@@ -526,7 +526,7 @@
       "fileExtNotAlwd": "File extension not allowed",
       "fileCanNotNull": "File cannot be null",
       "generalError": "Error Occured, Please contact our costumer support:",
-      "fromEmailNotVerified": "The sender email is not verified. Please verify it before saving.",
+      "fromEmailNotVerified": "This email address is not verified. Please verify it in account settings.",
       "campaignName": "Please fill in campaign name",
       "fromName": "Please fill in name",
       "fromEmail": "Please fill in an email address",
@@ -628,10 +628,7 @@
       "smsComplementary": "Complementary SMS Marketing",
       "optimalPulseConflictMessage": "Choosing \"Optimal Send\" will cancel the Pulse send you already set.<br/>Do you wish to proceed?"
     },
-    "domainVerificationTooltip": "Sending mailings will only be possible from a verified domain.<br/>After setting up the verified domain, you can choose an email address to reply to in the next field.",
-    "noVerifiedSenders": "No verified sender emails found.",
-    "noVerifiedSendersHint": "Please verify a sender email in Account Settings before continuing.",
-    "senderNotVerifiedWarning": "The saved sender email is no longer verified. Please select a verified sender to continue."
+    "domainVerificationTooltip": "Sending mailings will only be possible from a verified domain.<br/>After setting up the verified domain, you can choose an email address to reply to in the next field."
   },
   "newsLetterMgmt": {
     "emailVerification": {
