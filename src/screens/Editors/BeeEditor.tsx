@@ -685,7 +685,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
     const isAutoResponder = fromLink?.toLowerCase() === 'autoresponder';
     const redirectLink = isAutoResponder ? `/Pulseem/AutoSendPlans.aspx?Culture=${isRTL ? 'he-IL' : 'en-US'}` : `${sitePrefix}EditRegistrationPage`;
     if (saveBeforeExit) {
-      await saveDesign(true, redirectLink, false, false);
+      await saveDesign(true, redirectLink, true, false);
     }
     else {
       window.location.href = redirectLink;
