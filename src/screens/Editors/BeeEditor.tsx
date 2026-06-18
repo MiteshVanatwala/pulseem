@@ -680,12 +680,12 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
     getData(false);
   }
 
-  const handleExitLandingPage = (saveBeforeExit = true) => {
+  const handleExitLandingPage = async (saveBeforeExit = true) => {
     setDialogType(null);
     const isAutoResponder = fromLink?.toLowerCase() === 'autoresponder';
     const redirectLink = isAutoResponder ? `/Pulseem/AutoSendPlans.aspx?Culture=${isRTL ? 'he-IL' : 'en-US'}` : `${sitePrefix}EditRegistrationPage`;
     if (saveBeforeExit) {
-      saveDesign(true, redirectLink, false, false);
+      await saveDesign(true, redirectLink, false, false);
     }
     else {
       window.location.href = redirectLink;
@@ -1109,8 +1109,22 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
           {RenderHtml(t("landingPages.confirmExit"))}
         </Typography>
       ),
-      onConfirm: () => handleExitLandingPage(true),
-      onClose: () => handleExitLandingPage(false)
+      onConfirm: async () => {
+        try {
+          setLoader(true);
+          await handleExitLandingPage(true);
+        } catch (error) {
+          setLoader(false);
+          setToastMessage({ severity: 'error', color: 'error', message: 'Failed to exit page', showAnimtionCheck: false } as any);
+        }
+      },
+      onClose: async () => {
+        try {
+          await handleExitLandingPage(false);
+        } catch (error) {
+          setToastMessage({ severity: 'error', color: 'error', message: 'Failed to exit page', showAnimtionCheck: false } as any);
+        }
+      }
     };
   }
   const deleteDialog = () => {
@@ -1413,7 +1427,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
         helperText={<label style={{ fontSize: 14 }}>{lastSaveText}</label>}
       />
       {renderDialog()}
-      <Loader isOpen={showLoader} showBackdrop={false} />
+      <Loader isOpen={showLoader} showBackdrop={true} color="inherit" />
       {/* @ts-ignore */}
       {showGroupSelection && <GroupSelectorPopUp
         classes={classes}
