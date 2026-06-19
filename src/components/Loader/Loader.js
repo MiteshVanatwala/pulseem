@@ -10,8 +10,6 @@ const useStyles = makeStyles((theme) => ({
   backdrop: {
     zIndex: theme.zIndex.drawer + 1,
     color: '#fff',
-    backdropFilter: 'blur(4px)',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   loader: {
     top: 30,

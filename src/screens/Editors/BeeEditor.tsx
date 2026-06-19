@@ -497,6 +497,8 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
             if (isFromAutomation) {
               window.location.href = `/pulseem/CreateAutomations.aspx?AutomationID=${isFromAutomation}&NodeToEdit=${NodeToEdit}&id=${args.campaignId}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`;
             } else {
+              //@ts-ignore
+              saveRef.current.saveResult = true;
               localStorage.setItem('reloadLPBeeEditor', '1');
               //@ts-ignore
               navigate(saveRef.current?.redirectUrl ?? `${sitePrefix}LandingPages/summary/${args.campaignId}`);
@@ -505,13 +507,15 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
           }
           //@ts-ignore
           else if (saveRef.current?.showAnimation && !saveRef.current?.saveTemplate) {
-             //@ts-ignore
+            //@ts-ignore
             setToastMessage(ToastMessages.LANDING_PAGE_SAVED);
           }
           //@ts-ignore
           if (reInit && !saveRef.current?.saveTemplate) {
             getData();
           }
+          //@ts-ignore
+          saveRef.current.saveResult = true;
           break;
         }
         case 405: {
@@ -569,7 +573,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
   }
   const saveDesign = async (redirectAfterSave = false, redirectUrl: string | null | undefined = null, showAnimation = true, isPublish: boolean = false) => {
     //@ts-ignore
-    saveRef.current = { ...saveRef.current, redirectAfterSave: redirectAfterSave, redirectUrl: redirectUrl, showAnimation: showAnimation, isPublish: isPublish };
+    saveRef.current = { ...saveRef.current, redirectAfterSave: redirectAfterSave, redirectUrl: redirectUrl, showAnimation: showAnimation, isPublish: isPublish, saveResult: false };
     //@ts-ignore
     await editorRef.current.save();
     setTimeout(() => {
@@ -577,6 +581,8 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       setLastSaveText(`${t('common.lastSaveAt')} ${moment(now).format("hh:mm:ss")}`)
       setSilentSave(false)
     }, 2000);
+    //@ts-ignore
+    return saveRef.current.saveResult === true;
   }
   const onAutoSavePage = debounce((showGroupPopup: boolean = false) => {
     if (showGroupPopup) {
@@ -685,10 +691,16 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
     const isAutoResponder = fromLink?.toLowerCase() === 'autoresponder';
     const redirectLink = isAutoResponder ? `/Pulseem/AutoSendPlans.aspx?Culture=${isRTL ? 'he-IL' : 'en-US'}` : `${sitePrefix}EditRegistrationPage`;
     if (saveBeforeExit) {
-      await saveDesign(true, redirectLink, true, false);
-    }
-    else {
-      window.location.href = redirectLink;
+      setLoader(true);
+      const saved = await saveDesign(true, redirectLink, true, false);
+      if (saved) {
+        setLoader(false);
+      }
+      else {
+        setLoader(true);
+      }
+    } else {
+      navigate(redirectLink);
     }
   }
   const onExit = () => setDialogType({ type: DialogType.EXIT })
@@ -1197,15 +1209,15 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
 
   const handleGetPlanForFeature = (tierMessageCode: string) => {
     const planName = findPlanByFeatureCode(
-        tierMessageCode,
-        availablePlans,
-        currentPlan.Id
+      tierMessageCode,
+      availablePlans,
+      currentPlan.Id
     );
-    
+
     if (planName) {
-        return t('billing.tier.featureNotAvailable').replace('{feature}', t(TierFeatures[tierMessageCode as keyof typeof TierFeatures] || tierMessageCode)).replace('{planName}', planName);
+      return t('billing.tier.featureNotAvailable').replace('{feature}', t(TierFeatures[tierMessageCode as keyof typeof TierFeatures] || tierMessageCode)).replace('{planName}', planName);
     } else {
-        return t('billing.tier.noFeatureAvailable');
+      return t('billing.tier.noFeatureAvailable');
     }
   };
 
@@ -1219,28 +1231,28 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
     ),
     renderButtons: () => (
       <Grid
-          container
-          spacing={2}
-          className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}
+        container
+        spacing={2}
+        className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}
       >
-          <Grid item>
-              <Button
-                  onClick={() => {
-                      setShowTierPlans(true);
-                  }}
-                  className={clsx(classes.btn, classes.btnRounded)}
-              >
-                  {t('billing.upgradePlan')}
-              </Button>
-          </Grid>
-          <Grid item>
-              <Button
-                  onClick={() => setDialogType(null)}
-                  className={clsx(classes.btn, classes.btnRounded)}
-              >
-                  {t('common.cancel')}
-              </Button>
-          </Grid>
+        <Grid item>
+          <Button
+            onClick={() => {
+              setShowTierPlans(true);
+            }}
+            className={clsx(classes.btn, classes.btnRounded)}
+          >
+            {t('billing.upgradePlan')}
+          </Button>
+        </Grid>
+        <Grid item>
+          <Button
+            onClick={() => setDialogType(null)}
+            className={clsx(classes.btn, classes.btnRounded)}
+          >
+            {t('common.cancel')}
+          </Button>
+        </Grid>
       </Grid>
     )
   })
@@ -1266,8 +1278,8 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
     } else if (type === DialogType.TEMPLAGE_EXISTS) {
       currentDialog = renderTemplateExistsDialog(data);
     } else if (type === 'tier') {
-			currentDialog = getTierValidationDialog();
-		}
+      currentDialog = getTierValidationDialog();
+    }
     if (type) {
       return (
         dialogType && <BaseDialog
@@ -1451,10 +1463,10 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       />
 
       {showTierPlans && <TierPlans
-				classes={classes}
-				isOpen={showTierPlans}
-				onClose={() => setShowTierPlans(false)}
-			/>}
+        classes={classes}
+        isOpen={showTierPlans}
+        onClose={() => setShowTierPlans(false)}
+      />}
     </DefaultScreen>
   )
 }
