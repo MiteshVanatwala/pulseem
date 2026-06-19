@@ -5243,6 +5243,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
       borderRadius: 15
     },
   },
+  apiErrorDialogContainer: {
+    "& .MuiDialog-paperWidthSm": {
+      maxWidth: '600px !important',
+      width: '100% !important',
+      minWidth: 'unset !important',
+      margin: '0 auto',
+    },
+  },
   textUnderlineDialogButton: {
     textDecoration: 'underline',
     cursor: 'pointer',

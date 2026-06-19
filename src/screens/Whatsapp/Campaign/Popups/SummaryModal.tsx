@@ -202,10 +202,12 @@ const SummaryModal = ({
 		return null;
 	};
 
+	const isPulseEnabled = pulseData?.togglePulse || pulseData?.toggleRandom;
+
 	const validateSummary = () => {
 		let validationErrors = [];
 		let isValidated = true;
-		const showTierAlert = isShowTierAlert(
+		const showTierAlert = !isPulseEnabled && isShowTierAlert(
 			campaignSummary?.WhatsappSmsLeft || 0,
 			campaignSummary?.FinalCount || 0,
 			campaignSummary?.WhatsappTierID || 1,
@@ -514,7 +516,7 @@ const SummaryModal = ({
 										</Box>
 									)
 								}
-								{isShowTierAlert(
+								{!isPulseEnabled && isShowTierAlert(
 									campaignSummary?.WhatsappSmsLeft || 0,
 									campaignSummary?.FinalCount || 0,
 									campaignSummary?.WhatsappTierID || 1,

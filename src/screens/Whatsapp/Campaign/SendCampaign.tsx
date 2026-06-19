@@ -63,6 +63,7 @@ import {
 	resetToastData,
 	tabs,
 	whatsappRoutes,
+	tierSetting,
 } from '../Constant';
 import { getTestGroups } from '../../../redux/reducers/smsSlice';
 import {
@@ -817,6 +818,18 @@ const SendCampaign = ({
 				setTierMessageCode(sendCampaignData?.Message);
 				setDialogType({ type: 'tier' })
 			}
+			else if (sendCampaignData?.StatusCode === 7 || sendCampaignData?.StatusCode === "7") {
+				const matchedTier = tierSetting.find(tier => tier.value === String(campaignSummary?.WhatsappTierID));
+				let tierLimit = matchedTier ? matchedTier.messageLimit : 'X';
+				if (typeof tierLimit === 'number') {
+					tierLimit = tierLimit.toLocaleString('en-US');
+				}
+				
+				setDialogType({ 
+					type: 'apiError',
+					data: translator('settings.accountSettings.actDetails.fields.metaExceedLimitMessage', { limit: tierLimit })
+				});
+			}
 			else if (sendCampaignData?.Status === apiStatus.SUCCESS) {
 				setDialogType({
 					type: 'sendCampaignSuccess'
@@ -1066,6 +1079,20 @@ const SendCampaign = ({
 		)
 	})
 
+	const getApiErrorDialog = () => ({
+		title: '',
+		showDivider: false,
+		customContainerStyle: classes.apiErrorDialogContainer,
+		content: (
+			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+				{dialogType?.data}
+			</Typography>
+		),
+		onConfirm: async () => {
+			setDialogType({ type: '', data: '' });
+		}
+	});
+
 	const renderDialog = () => {
 		const { type } = dialogType || {}
 		let currentDialog: any = {};
@@ -1085,6 +1112,8 @@ const SendCampaign = ({
 			currentDialog = getTierValidationDialog();
 		} else if (type === 'cancelPulse') {
 			currentDialog = getCancelPulseDialog();
+		} else if (type === 'apiError') {
+			currentDialog = getApiErrorDialog();
 		}
 
 		if (type) {
