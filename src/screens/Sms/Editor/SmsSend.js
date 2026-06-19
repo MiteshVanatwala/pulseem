@@ -932,11 +932,9 @@ const SmsSend = ({ classes, ...props }) => {
           {manualClick === true ? (
             <div className={classes.manualChild} style={{ justifyContent: areaData === "" ? "flex-end" : "space-between" }}>
               {areaData !== "" ? (
-                <div>
+                <div className={classes.manualButtonGroup}>
                   <Button
-                    className={clsx(
-                      classes.ml5,
-                      classes.btn, classes.btnRounded)}
+                    className={clsx(classes.btn, classes.btnRounded)}
                     onClick={() => {
                       handlePasted();
                     }}
@@ -945,10 +943,7 @@ const SmsSend = ({ classes, ...props }) => {
                     {t("sms.editFields")}
                   </Button>
                   <Button
-                    className={clsx(
-                      classes.ml5,
-                      windowSize === "xs" ? classes.mt1 : '',
-                      classes.btn, classes.btnRounded)}
+                    className={clsx(classes.btn, classes.btnRounded)}
                     onClick={() => {
                       setareaData("");
                       setContacts([]);
