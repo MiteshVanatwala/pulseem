@@ -49,7 +49,8 @@
     "notClickChannelRequired": "Aby wyszukać klientów, którzy nie kliknęli, należy wybrać co najmniej jeden kanał kampanii",
     "specificDateIsRequired": "Proszę wybrać konkretne daty",
     "daysBackError": "Wprowadź liczbę dni wstecz",
-    "pageUrlRequired": "Należy wybrać co najmniej jedną stronę z listy adresów"
+    "pageUrlRequired": "Należy wybrać co najmniej jedną stronę z listy adresów",
+    "events_conflict_purchased_validation": "Nie można wybrać \"Kupiono\" i \"Nie kupiono\" z tym samym okresem czasu. Zmień jeden z nich."
   },
   "updateFrequency": "Częstotliwość Aktualizacji",
   "results": "Wyniki",

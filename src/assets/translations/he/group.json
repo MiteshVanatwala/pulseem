@@ -49,7 +49,8 @@
     "notClickChannelRequired": "יש לבחור לפחות ערוץ קמפיינים אחד לפחות על מנת לחפש לקוחות שלא הקליקו",
     "specificDateIsRequired": "יש לבחור תאריכים ספציפיים",
     "daysBackError": "יש להזין מספר ימים אחורה",
-    "pageUrlRequired": "יש לבחור עמוד אחד לפחות מרשימת העמודים"
+    "pageUrlRequired": "יש לבחור עמוד אחד לפחות מרשימת העמודים",
+    "events_conflict_purchased_validation": "לא ניתן לבחור 'בוצעה רכישה' ו'לא בוצעה רכישה' עם אותה תקופת זמן. אנא שנה אחת מהן."
   },
   "updateFrequency": "אופן העלאה",
   "results": "לחץ לתוצאות",

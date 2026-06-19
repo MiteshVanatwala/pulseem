@@ -30,13 +30,11 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                             <Checkbox
                                 onChange={(event: any) => onUpdate('IsPurchased', !!event.target.checked)}
                                 checked={!!data.dynamicData?.MyActivities.IsPurchased}
-                                disabled={!!data.dynamicData?.MyActivities.IsNotPurchased}
                                 name="openedinlast"
                                 color="primary"
                             />
                         }
                         label={t('common.isPurchase')}
-                        disabled={!!data.dynamicData?.MyActivities.IsNotPurchased}
                         className={clsx(classes.pt5)}
                     />
                 </Grid>
@@ -221,13 +219,11 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                             <Checkbox
                                 onChange={(event: any) => onUpdate('IsNotPurchased', !!event.target.checked)}
                                 checked={!!data.dynamicData?.MyActivities.IsNotPurchased}
-                                disabled={!!data.dynamicData?.MyActivities.IsPurchased}
                                 name="openedinlast"
                                 color="primary"
                             />
                         }
                         label={t('common.isNotPurchase')}
-                        disabled={!!data.dynamicData?.MyActivities.IsPurchased}
                         className={clsx(classes.pt5)}
                     />
                 </Grid>
