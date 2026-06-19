@@ -101,7 +101,8 @@ const CampaignFields = ({
 						required
 						type='text'
 						disabled
-						className={clsx(classes.buttonField)}
+						className={clsx(classes.buttonField, classes.buttonWhatsappAutocomplete, classes.whatsAppCampaignPadding, classes.success)}
+						InputProps={{ disableUnderline: true }}
 						onChange={(e: BaseSyntheticEvent) =>
 							onFromChange(e.target.value?.replace(/\D/g, ''))
 						}
@@ -111,7 +112,12 @@ const CampaignFields = ({
 					<TextField
 						select
 						type='text'
-						className={classes.buttonField}
+						className={
+							showValidation && !from
+								? clsx(classes.buttonField, classes.buttonWhatsappAutocomplete, classes.whatsAppCampaignPadding, classes.error)
+								: clsx(classes.buttonField, classes.buttonWhatsappAutocomplete, classes.whatsAppCampaignPadding, classes.success)
+						}
+						InputProps={{ disableUnderline: true }}
 						onChange={(e: BaseSyntheticEvent) =>
 							onFromChange(e.target.value?.replace(/\D/g, ''))
 						}
