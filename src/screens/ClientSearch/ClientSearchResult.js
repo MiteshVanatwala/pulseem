@@ -321,9 +321,6 @@ const ClientSearchResult = ({ classes }) => {
       if (location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Revenue || location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.WhatsappRevenue || location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Product) {
         updatingObject["Revenue"] = t('common.campaignRevenue');
       }
-      if ((searchData?.PageType ?? searchData?.PageType) === CLIENT_CONSTANTS.PAGE_TYPES.FailureCountSMSCampaignID) {
-        updatingObject["ErrorTypeText"] = t('recipient.errorMessage');
-      }
       if ((searchData?.PageType ?? searchData?.PageType) === CLIENT_CONSTANTS.PAGE_TYPES.OpenedCampaignID) {
         updatingObject["snt_OpeningDate"] = t('common.OpenTime');
       }
@@ -366,6 +363,10 @@ const ClientSearchResult = ({ classes }) => {
         }
       }
       updatingObject = ReplaceExtraFieldHeader(updatingObject, extraData);
+      if ((searchData?.PageType ?? searchData?.PageType) === CLIENT_CONSTANTS.PAGE_TYPES.FailureCountSMSCampaignID ||
+        (searchData?.PageType ?? searchData?.PageType) === CLIENT_CONSTANTS.PAGE_TYPES.WhatsappFailed) {
+        updatingObject["ErrorTypeText"] = t('recipient.errorMessage');
+      }
       exportColumnHeader.current = updatingObject;
     }
 
@@ -429,6 +430,17 @@ const ClientSearchResult = ({ classes }) => {
           let orderList = [];
           // const deletedProperties = [];
           orderList = data.Clients.map((ol) => ol);
+
+          if (searchData?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.WhatsappFailed) {
+            orderList = orderList.map((row) => ({
+              ...row,
+              ErrorTypeText: row.ErrorTypeText
+                ? t(row.ErrorTypeText.indexOf(Separator) === -1
+                  ? getWhatsappError(row.ErrorTypeText)
+                  : getMetaError(row.ErrorTypeText))
+                : ''
+            }));
+          }
 
           const fields = { ...exportColumnHeader.current };
 
