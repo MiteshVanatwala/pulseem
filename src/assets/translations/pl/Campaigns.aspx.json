@@ -526,6 +526,7 @@
       "fileExtNotAlwd": "Rozszerzenie pliku niedozwolone",
       "fileCanNotNull": "Plik nie może być pusty",
       "generalError": "Wystąpił błąd, skontaktuj się z naszą obsługą klienta:",
+      "fromEmailNotVerified": "Ten adres e-mail nie jest zweryfikowany. Zweryfikuj go w ustawieniach konta.",
       "campaignName": "Proszę wypełnić nazwę kampanii",
       "fromName": "Proszę wypełnić imię",
       "fromEmail": "Proszę podać adres e-mail",
