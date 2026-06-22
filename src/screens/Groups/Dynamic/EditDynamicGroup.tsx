@@ -267,6 +267,33 @@ const EditDynamicGroup = ({ classes }: any) => {
                 }
             }
         }
+        if (isValid &&
+            dynamicGroupModel.dynamicData.MyActivities.IsPurchased === true &&
+            dynamicGroupModel.dynamicData.MyActivities.IsNotPurchased === true
+        ) {
+            const pInterval = dynamicGroupModel.dynamicData.MyActivities.IsPurchasedInterval?.toString();
+            const npInterval = dynamicGroupModel.dynamicData.MyActivities.IsNotPurchasedInterval?.toString();
+            if (pInterval === npInterval) {
+                let durationMatch = true;
+                if (pInterval === ActivtyTimeInterval.DaysBack) {
+                    const pDays = dynamicGroupModel.dynamicData.MyActivities.IsPurchasedDaysBack;
+                    const npDays = dynamicGroupModel.dynamicData.MyActivities.IsNotPurchasedDaysBack;
+                    durationMatch =
+                        !!pDays && !!npDays &&
+                        String(pDays) === String(npDays);
+                } else if (pInterval === ActivtyTimeInterval.SpecificDates) {
+                    durationMatch =
+                        dynamicGroupModel.dynamicData.MyActivities.IsPurchasedFromDate ===
+                            dynamicGroupModel.dynamicData.MyActivities.IsNotPurchasedFromDate &&
+                        dynamicGroupModel.dynamicData.MyActivities.IsPurchasedToDate ===
+                            dynamicGroupModel.dynamicData.MyActivities.IsNotPurchasedToDate;
+                }
+                if (durationMatch) {
+                    message = t('group.saveDynamicGroupResponse.events_conflict_purchased_validation');
+                    isValid = false;
+                }
+            }
+        }
         if (dynamicGroupModel.dynamicData.MyActivities.IsClicked === true) {
 
             if (!dynamicGroupModel.dynamicData.MyActivities.IsClickInCampaignTypes) {
