@@ -90,7 +90,8 @@ const SettingsMenu = ({ classes }: any) => {
                 boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
                 textTransform: 'none',
                 width: 'calc(100% - 32px)',
-                justifyContent: 'flex-start'
+                justifyContent: 'flex-start',
+                transition: 'all 0.3s ease'
             }}
             onClick={() => {
                 setShowSettings(!showSettings)
@@ -98,8 +99,9 @@ const SettingsMenu = ({ classes }: any) => {
         >
             <FaUserCircle style={{ fontSize: 20, marginRight: isRTL ? 0 : 10, marginLeft: isRTL ? 10 : 0, opacity: 0.9 }} />
             <span style={{ flex: 1, textAlign: isRTL ? 'right' : 'left', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{displayAccountName}</span>
-            <FaCog style={{ fontSize: 16, opacity: 0.8 }} />
+            <FaCog style={{ fontSize: 16, opacity: 0.8, transform: showSettings ? 'rotate(180deg) scale(1.1)' : 'rotate(0deg) scale(1)', transition: 'all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)' }} />
         </Button>
+
         {showSettings && <Popper
             open={showSettings}
             anchorEl={buttonRef.current}
@@ -109,57 +111,98 @@ const SettingsMenu = ({ classes }: any) => {
             modifiers={{
                 offset: {
                     enabled: true,
-                    offset: '0, 30'
+                    offset: '0, 10'
+                },
+                preventOverflow: {
+                    enabled: false
+                },
+                flip: {
+                    enabled: false
                 }
             }}
-            className={classes.userSettingsContainerPopper}
         >
             <ClickAwayListener onClickAway={() => setShowSettings(false)}>
-                <Paper style={{ position: 'relative', overflow: 'visible', filter: 'drop-shadow(0px 4px 10px rgba(0,0,0,0.1))', backgroundColor: '#fff' }}>
-                    <Box
-                        style={{
-                            position: 'absolute',
-                            width: 0,
-                            height: 0,
-                            borderTop: '8px solid transparent',
-                            borderBottom: '8px solid transparent',
-                            [isRTL ? 'right' : 'left']: '-8px',
-                            top: '12px',
-                            borderLeft: isRTL ? '8px solid #fff' : 'none',
-                            borderRight: isRTL ? 'none' : '8px solid #fff',
-                        }}
-                    />
-                    <MenuList
-                        style={{ padding: 0 }}>
-                    {settings.options && settings.options.filter((item) => item.isShow !== false)
-                        .map((option: any, index: any, row: any) => {
-
-                            return <Box
-                                key={index}
-                                component='a'
-                                className={clsx(classes.appBarItemMenuItem, classes.textLeft)}>
-                                <MenuItem
-                                    key={index}
-                                    onClick={(e: any) => {
-                                        e.preventDefault();
-                                        if (option.onClick) {
-                                            option.onClick();
-                                        } else {
-                                            Redirect({ url: option.href, openNewTab: option.openInNewWindow } as RedirectPropTypes)
-                                        }
-                                    }}
-                                    classes={{ root: classes.appBarItemMenuRoot }}
-                                    className={clsx(option.title === t("appBar.logout") && classes.lastItemBorderRadius, classes.appBarItemMenuItem, index !== row.length - 1 ? classes.appBarItemBorder : '', option.title === t("appBar.logout") ? 'active' : '')}
-                                >
-                                    {option?.title}
-                                    {
-                                        option.title === t("appBar.logout") && <option.iconSrc style={{ padding: '0 5px', marginInlineStart: 'auto', color: '#fff' }} />
-                                    }
-                                </MenuItem>
-                            </Box>
-                        })
-                    }
-                </MenuList>
+                <Paper style={{ 
+                    position: 'relative', 
+                    overflow: 'visible', 
+                    filter: 'drop-shadow(0px 10px 24px rgba(0, 0, 0, 0.12))', 
+                    backgroundColor: '#ffffff',
+                    borderRadius: '12px',
+                    minWidth: '180px',
+                    border: '1px solid rgba(0, 0, 0, 0.05)',
+                    borderTop: '4px solid #FF1744',
+                    animation: 'floatUp 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)',
+                    transformOrigin: isRTL ? 'top right' : 'top left',
+                    marginLeft: '12px'
+                }}>
+                    <style>
+                        {`
+                        @keyframes floatUp {
+                            0% { opacity: 0; transform: translateY(-10px) scale(0.95); }
+                            100% { opacity: 1; transform: translateY(0) scale(1); }
+                        }
+                        @keyframes slideText {
+                            0% { opacity: 0; transform: translateX(-6px); }
+                            100% { opacity: 1; transform: translateX(0); }
+                        }
+                        `}
+                    </style>
+                    <MenuList style={{ padding: '6px 4px' }}>
+                        {settings.options && settings.options.filter((item) => item.isShow !== false)
+                            .map((option: any, index: any, row: any) => {
+                                const isLogout = option.title === t("appBar.logout");
+                                return (
+                                    <Box
+                                        key={index}
+                                        component='a'
+                                        style={{ textDecoration: 'none', display: 'block', padding: '0' }}
+                                    >
+                                        <MenuItem
+                                            onClick={(e: any) => {
+                                                e.preventDefault();
+                                                if (option.onClick) {
+                                                    option.onClick();
+                                                } else {
+                                                    Redirect({ url: option.href, openNewTab: option.openInNewWindow } as RedirectPropTypes)
+                                                }
+                                            }}
+                                            style={{
+                                                color: isLogout ? '#FF1744' : '#424242',
+                                                fontSize: '0.86rem',
+                                                padding: '8px 12px',
+                                                fontFamily: 'Assistant, sans-serif',
+                                                fontWeight: 600,
+                                                borderRadius: '6px',
+                                                backgroundColor: 'transparent',
+                                                transition: 'all 0.2s ease',
+                                                opacity: 0,
+                                                animation: `slideText 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards`,
+                                                animationDelay: `${0.03 + (index * 0.03)}s`,
+                                                borderLeft: '3px solid transparent'
+                                            }}
+                                            onMouseEnter={(e: any) => {
+                                                e.currentTarget.style.backgroundColor = isLogout ? 'rgba(255, 23, 68, 0.08)' : 'rgba(0, 0, 0, 0.03)';
+                                                e.currentTarget.style.color = isLogout ? '#D50000' : '#1A1A1A';
+                                                e.currentTarget.style.borderLeft = isLogout ? '3px solid #D50000' : '3px solid #FF1744';
+                                                e.currentTarget.style.transform = 'translateX(4px)';
+                                            }}
+                                            onMouseLeave={(e: any) => {
+                                                e.currentTarget.style.backgroundColor = 'transparent';
+                                                e.currentTarget.style.color = isLogout ? '#FF1744' : '#424242';
+                                                e.currentTarget.style.borderLeft = '3px solid transparent';
+                                                e.currentTarget.style.transform = 'translateX(0)';
+                                            }}
+                                        >
+                                            <span style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+                                                {option?.title}
+                                                {isLogout && <option.iconSrc style={{ padding: '0 5px', marginInlineStart: 'auto', color: '#FF1744' }} />}
+                                            </span>
+                                        </MenuItem>
+                                    </Box>
+                                );
+                            })
+                        }
+                    </MenuList>
                 </Paper>
             </ClickAwayListener>
         </Popper>}

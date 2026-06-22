@@ -87,7 +87,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => {
     const cookie = getCookie('SidebarCollapsed');
     if (cookie !== null) return cookie === 'true';
-    return window.innerWidth <= 1366;
+    return false;
   });
 
   // Handle responsive behavior

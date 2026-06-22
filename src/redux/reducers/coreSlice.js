@@ -20,7 +20,7 @@ export const coreSlice = createSlice({
     isSidebarCollapsed: (() => {
       const cookie = getCookie('SidebarCollapsed');
       if (cookie !== null) return cookie === 'true';
-      return typeof window !== 'undefined' && window.innerWidth <= 1366;
+      return false;
     })(),
     basename: '',
     email: '',

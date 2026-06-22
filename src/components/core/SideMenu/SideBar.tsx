@@ -260,6 +260,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </IconButton>
       </div>
 
+      {!isCollapsed && (
+        <SettingsMenu classes={classes} />
+      )}
+
       {currentPlan && currentPlan.Name && currentPlan.Name !== 'GRAND_FATHER' && (() => {
         const planTooltipContent = (
           <div className={classes.planTooltipCard}>
@@ -294,9 +298,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
         return (
           <>
             {/* Expanded sidebar — plan card with tooltip on hover */}
-            {!isCollapsed && (
-              <SettingsMenu classes={classes} />
-            )}
             {!isCollapsed && (
               <Tooltip arrow title={planTooltipContent} placement="right" classes={{ tooltip: classes.tooltip, arrow: classes.tooltipArrow }} PopperProps={{ modifiers: { offset: { enabled: true, offset: '0, 8' } } }}>
                 <div className={classes.sidebarPlanSection}>

@@ -34,7 +34,23 @@ import moment from 'moment';
 import { DateFormats } from '../../helpers/Constants';
 import { logout } from '../../helpers/Api/PulseemReactAPI';
 
+import { makeStyles } from '@material-ui/core/styles';
+
+const useLocalStyles = makeStyles({
+  customArrow: {
+    color: '#ff1946'
+  },
+  customTooltip: {
+    whiteSpace: 'nowrap',
+    padding: '6px 12px',
+    borderRadius: '4px',
+    fontWeight: 500,
+    transform: 'translateY(-5px)'
+  }
+});
+
 const BulkStatus = ({ classes }) => {
+  const localClasses = useLocalStyles();
   const { billingTypeId, windowSize, isRTL } = useSelector(state => state.core)
   const { accountSettings, accountFeatures, isGlobal, IsPoland, accountCurrencySymbol, accountIsCurrencySymbolPrefix } = useSelector(state => state.common);
   const { packagesDetails, accountAvailablePackages } = useSelector(state => state.dashboard);
@@ -376,38 +392,17 @@ const BulkStatus = ({ classes }) => {
                 <TooltipBubble />
               </Box> :
                 <Box className={clsx(classes.dFlex, classes.flexWrap)} justifyContent='center' alignItems='center' position="relative">
-                  {/* Pure CSS permanent tooltip so it perfectly sticks during layout shifts */}
-                  <Box
-                    position="absolute"
-                    top="-35px"
-                    left="50%"
-                    style={{
-                      transform: 'translateX(-50%)',
-                      backgroundColor: '#ff3343',
-                      color: '#fff',
-                      padding: '4px 8px',
-                      borderRadius: '4px',
-                      fontSize: '12px',
-                      whiteSpace: 'nowrap',
-                      pointerEvents: 'none',
-                      zIndex: 10
+                  <Tooltip
+                    arrow
+                    placement="top"
+                    open={true}
+                    PopperProps={{ disablePortal: true }}
+                    title={t('dashboard.helpDrawer.support.helpCenter.title')}
+                    classes={{
+                        tooltip: clsx(classes.f12, classes.tooltipPrimary, localClasses.customTooltip),
+                        arrow: localClasses.customArrow
                     }}
                   >
-                    {t('dashboard.helpDrawer.support.helpCenter.title')}
-                    {/* Tooltip Arrow */}
-                    <Box
-                      position="absolute"
-                      bottom="-4px"
-                      left="50%"
-                      style={{
-                        transform: 'translateX(-50%) rotate(45deg)',
-                        width: '8px',
-                        height: '8px',
-                        backgroundColor: '#ff3343',
-                        zIndex: -1
-                      }}
-                    />
-                  </Box>
                   <IconButton
                     size="small"
                     className={clsx(classes.noPadding)}
@@ -417,6 +412,7 @@ const BulkStatus = ({ classes }) => {
                   >
                     <MdSupportAgent className={classes.linkNoDesign} style={{ fontSize: 30, color: '#ff3343' }} title={t('master.RadMenuItemResource21.Text')} />
                   </IconButton>
+                  </Tooltip>
                 </Box>
               }
           </Box>
