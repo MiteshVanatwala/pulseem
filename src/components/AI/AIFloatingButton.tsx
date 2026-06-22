@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
     left: ({ isRTL, isAffectedPage, featureId, isDrawerOpen }: StyleProps) => {
       if (featureId === 73) {
         // Support Mascot: In LTR, sidebar is on the left, so it must slide.
-        return isRTL ? 'auto' : (isDrawerOpen ? '75px' : '285px');
+        return isRTL ? 'auto' : (isDrawerOpen ? '75px' : '249px');
       }
       if (featureId === 69) {
         // Pulsy AI: In RTL, it's on the left (opposite of sidebar), no sliding needed.
@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
     right: ({ isRTL, isAffectedPage, featureId, isDrawerOpen }: StyleProps) => {
       if (featureId === 73) {
         // Support Mascot: In RTL, sidebar is on the right, so it must slide.
-        return isRTL ? (isDrawerOpen ? '75px' : '285px') : 'auto';
+        return isRTL ? (isDrawerOpen ? '75px' : '249px') : 'auto';
       }
       if (featureId === 69) {
         // Pulsy AI: In LTR, it's on the right (opposite of sidebar), no sliding needed.

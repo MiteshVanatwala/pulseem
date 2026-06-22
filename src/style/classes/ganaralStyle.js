@@ -98,7 +98,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     }
   },
   appBody: {
-    maxWidth: 'calc(100vw - 6px)',
+    overflowX: 'hidden',
     '& input::placeholder': {
       color: 'rgba(0,0,0,.65)',
       opacity: 1/* Firefox */

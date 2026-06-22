@@ -134,8 +134,8 @@ export const sideMenuStyle = (windowSize, isRTL, theme) => ({
       }
     },
     '& .MuiListItem-root': {
-      paddingLeft: isRTL ? theme.spacing(1) : theme.spacing(4),
-      paddingRight: isRTL ? theme.spacing(4) : theme.spacing(1),
+      paddingLeft: isRTL ? 18 : 40,
+      paddingRight: isRTL ? 38 : 18,
     },
   },
   sidebarFooter: {

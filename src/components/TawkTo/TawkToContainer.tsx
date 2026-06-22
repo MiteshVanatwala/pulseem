@@ -18,7 +18,7 @@ const TawkToContainer = ({ itemId }: any) => {
     const pathname = location.pathname.toLowerCase();
     const isAffectedPage = affectedPages.some(page => pathname.includes(page));
     const bottom = isAffectedPage ? '85px' : '10px';
-    const sidebarWidthOffset = isDrawerOpen ? 75 : 285;
+    const sidebarWidthOffset = isDrawerOpen ? 75 : 249;
 
     // Find the Tawk.to bubble iframe by its actual rendered size.
     // The bubble is a small fixed iframe (≤120px). The chat window is large.

@@ -144,8 +144,8 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
       button
       className={clsx(classes.sidebarItem, isActive && 'active')}
       style={{
-        paddingLeft: level > 0 ? 32 + (level * 16) : !isRTL ? 8 : 16,
-        paddingRight: level > 0 ? 32 + (level * 16) : isRTL ? 8 : 16,
+        paddingLeft: level > 0 ? undefined : (!isRTL ? 8 : 16),
+        paddingRight: level > 0 ? undefined : (isRTL ? 8 : 16),
         marginBottom: hasSubmenu && showSubmenu ? 0 : undefined
       }}
       onClick={((e: React.MouseEvent) => { handleClick(e, false) })}
@@ -188,8 +188,9 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
     <>
       {isCollapsed && typeof item.title === 'string' ? (
         <Tooltip
+          arrow
           title={item.title}
-          placement="right"
+          placement={isRTL ? "left" : "right"}
           classes={{ tooltip: classes.tooltip }}
         >
           {itemContent}

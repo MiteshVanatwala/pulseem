@@ -111,7 +111,7 @@ const SettingsMenu = ({ classes }: any) => {
             modifiers={{
                 offset: {
                     enabled: true,
-                    offset: '0, 10'
+                    offset: isRTL ? '0, 0' : '0, 10'
                 },
                 preventOverflow: {
                     enabled: false
@@ -122,21 +122,23 @@ const SettingsMenu = ({ classes }: any) => {
             }}
         >
             <ClickAwayListener onClickAway={() => setShowSettings(false)}>
-                <Paper style={{ 
-                    position: 'relative', 
-                    overflow: 'visible', 
-                    filter: 'drop-shadow(0px 10px 24px rgba(0, 0, 0, 0.12))', 
-                    backgroundColor: '#ffffff',
-                    borderRadius: '12px',
-                    minWidth: '180px',
-                    border: '1px solid rgba(0, 0, 0, 0.05)',
-                    borderTop: '4px solid #FF1744',
-                    animation: 'floatUp 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)',
-                    transformOrigin: isRTL ? 'top right' : 'top left',
-                    marginLeft: '12px'
-                }}>
-                    <style>
-                        {`
+                <div>
+                    <Paper style={{
+                        position: 'relative',
+                        left: isRTL ? '49px' : undefined,
+                        overflow: 'visible',
+                        filter: 'drop-shadow(0px 10px 24px rgba(0, 0, 0, 0.12))',
+                        backgroundColor: '#ffffff',
+                        borderRadius: '12px',
+                        minWidth: '180px',
+                        border: '1px solid rgba(0, 0, 0, 0.05)',
+                        borderTop: '4px solid #FF1744',
+                        animation: 'floatUp 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)',
+                        transformOrigin: isRTL ? 'top right' : 'top left',
+                        marginLeft: isRTL ? 0 : '12px'
+                    }}>
+                            <style>
+                                {`
                         @keyframes floatUp {
                             0% { opacity: 0; transform: translateY(-10px) scale(0.95); }
                             100% { opacity: 1; transform: translateY(0) scale(1); }
@@ -146,64 +148,65 @@ const SettingsMenu = ({ classes }: any) => {
                             100% { opacity: 1; transform: translateX(0); }
                         }
                         `}
-                    </style>
-                    <MenuList style={{ padding: '6px 4px' }}>
-                        {settings.options && settings.options.filter((item) => item.isShow !== false)
-                            .map((option: any, index: any, row: any) => {
-                                const isLogout = option.title === t("appBar.logout");
-                                return (
-                                    <Box
-                                        key={index}
-                                        component='a'
-                                        style={{ textDecoration: 'none', display: 'block', padding: '0' }}
-                                    >
-                                        <MenuItem
-                                            onClick={(e: any) => {
-                                                e.preventDefault();
-                                                if (option.onClick) {
-                                                    option.onClick();
-                                                } else {
-                                                    Redirect({ url: option.href, openNewTab: option.openInNewWindow } as RedirectPropTypes)
-                                                }
-                                            }}
-                                            style={{
-                                                color: isLogout ? '#FF1744' : '#424242',
-                                                fontSize: '0.86rem',
-                                                padding: '8px 12px',
-                                                fontFamily: 'Assistant, sans-serif',
-                                                fontWeight: 600,
-                                                borderRadius: '6px',
-                                                backgroundColor: 'transparent',
-                                                transition: 'all 0.2s ease',
-                                                opacity: 0,
-                                                animation: `slideText 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards`,
-                                                animationDelay: `${0.03 + (index * 0.03)}s`,
-                                                borderLeft: '3px solid transparent'
-                                            }}
-                                            onMouseEnter={(e: any) => {
-                                                e.currentTarget.style.backgroundColor = isLogout ? 'rgba(255, 23, 68, 0.08)' : 'rgba(0, 0, 0, 0.03)';
-                                                e.currentTarget.style.color = isLogout ? '#D50000' : '#1A1A1A';
-                                                e.currentTarget.style.borderLeft = isLogout ? '3px solid #D50000' : '3px solid #FF1744';
-                                                e.currentTarget.style.transform = 'translateX(4px)';
-                                            }}
-                                            onMouseLeave={(e: any) => {
-                                                e.currentTarget.style.backgroundColor = 'transparent';
-                                                e.currentTarget.style.color = isLogout ? '#FF1744' : '#424242';
-                                                e.currentTarget.style.borderLeft = '3px solid transparent';
-                                                e.currentTarget.style.transform = 'translateX(0)';
-                                            }}
-                                        >
-                                            <span style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
-                                                {option?.title}
-                                                {isLogout && <option.iconSrc style={{ padding: '0 5px', marginInlineStart: 'auto', color: '#FF1744' }} />}
-                                            </span>
-                                        </MenuItem>
-                                    </Box>
-                                );
-                            })
-                        }
-                    </MenuList>
-                </Paper>
+                            </style>
+                            <MenuList style={{ padding: '6px 4px' }}>
+                                {settings.options && settings.options.filter((item) => item.isShow !== false)
+                                    .map((option: any, index: any, row: any) => {
+                                        const isLogout = option.title === t("appBar.logout");
+                                        return (
+                                            <Box
+                                                key={index}
+                                                component='a'
+                                                style={{ textDecoration: 'none', display: 'block', padding: '0' }}
+                                            >
+                                                <MenuItem
+                                                    onClick={(e: any) => {
+                                                        e.preventDefault();
+                                                        if (option.onClick) {
+                                                            option.onClick();
+                                                        } else {
+                                                            Redirect({ url: option.href, openNewTab: option.openInNewWindow } as RedirectPropTypes)
+                                                        }
+                                                    }}
+                                                    style={{
+                                                        color: isLogout ? '#FF1744' : '#424242',
+                                                        fontSize: '0.86rem',
+                                                        padding: '8px 12px',
+                                                        fontFamily: 'Assistant, sans-serif',
+                                                        fontWeight: 600,
+                                                        borderRadius: '6px',
+                                                        backgroundColor: 'transparent',
+                                                        transition: 'all 0.2s ease',
+                                                        opacity: 0,
+                                                        animation: `slideText 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards`,
+                                                        animationDelay: `${0.03 + (index * 0.03)}s`,
+                                                        borderLeft: '3px solid transparent'
+                                                    }}
+                                                    onMouseEnter={(e: any) => {
+                                                        e.currentTarget.style.backgroundColor = isLogout ? 'rgba(255, 23, 68, 0.08)' : 'rgba(0, 0, 0, 0.03)';
+                                                        e.currentTarget.style.color = isLogout ? '#D50000' : '#1A1A1A';
+                                                        e.currentTarget.style.borderLeft = isLogout ? '3px solid #D50000' : '3px solid #FF1744';
+                                                        e.currentTarget.style.transform = 'translateX(4px)';
+                                                    }}
+                                                    onMouseLeave={(e: any) => {
+                                                        e.currentTarget.style.backgroundColor = 'transparent';
+                                                        e.currentTarget.style.color = isLogout ? '#FF1744' : '#424242';
+                                                        e.currentTarget.style.borderLeft = '3px solid transparent';
+                                                        e.currentTarget.style.transform = 'translateX(0)';
+                                                    }}
+                                                >
+                                                    <span style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+                                                        {option?.title}
+                                                        {isLogout && <option.iconSrc style={{ padding: '0 5px', marginInlineStart: 'auto', color: '#FF1744' }} />}
+                                                    </span>
+                                                </MenuItem>
+                                            </Box>
+                                        );
+                                    })
+                                }
+                            </MenuList>
+                    </Paper>
+                </div>
             </ClickAwayListener>
         </Popper>}
     </Box>
