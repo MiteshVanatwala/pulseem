@@ -111,7 +111,7 @@ const SettingsMenu = ({ classes }: any) => {
             modifiers={{
                 offset: {
                     enabled: true,
-                    offset: isRTL ? '0, 0' : '0, 10'
+                    offset: '0, 16'
                 },
                 preventOverflow: {
                     enabled: false
@@ -125,7 +125,6 @@ const SettingsMenu = ({ classes }: any) => {
                 <div>
                     <Paper style={{
                         position: 'relative',
-                        left: isRTL ? '49px' : undefined,
                         overflow: 'visible',
                         filter: 'drop-shadow(0px 10px 24px rgba(0, 0, 0, 0.12))',
                         backgroundColor: '#ffffff',
@@ -135,8 +134,24 @@ const SettingsMenu = ({ classes }: any) => {
                         borderTop: '4px solid #FF1744',
                         animation: 'floatUp 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)',
                         transformOrigin: isRTL ? 'top right' : 'top left',
-                        marginLeft: isRTL ? 0 : '12px'
                     }}>
+                        <Box
+                            style={{
+                                position: 'absolute',
+                                top: '24px',
+                                right: isRTL ? '-6px' : undefined,
+                                left: !isRTL ? '-6px' : undefined,
+                                width: '12px',
+                                height: '12px',
+                                backgroundColor: '#ffffff',
+                                transform: 'rotate(45deg)',
+                                borderTop: isRTL ? '1px solid rgba(0,0,0,0.05)' : 'none',
+                                borderRight: isRTL ? '1px solid rgba(0,0,0,0.05)' : 'none',
+                                borderBottom: !isRTL ? '1px solid rgba(0,0,0,0.05)' : 'none',
+                                borderLeft: !isRTL ? '1px solid rgba(0,0,0,0.05)' : 'none',
+                                zIndex: -1,
+                            }}
+                        />
                             <style>
                                 {`
                         @keyframes floatUp {
