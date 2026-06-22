@@ -466,14 +466,10 @@ const Shortcut = ({ classes, windowSize, t, isRTL, variant = 'panel' }) => {
             <Box className={classes.pillItem} ref={moreRef}>
               <Box
                 className={classes.pillMoreBtn}
-                style={{
-                  borderColor: '#FF1744',
-                  backgroundColor: '#FFF0F3',
-                }}
                 onClick={() => setMoreOpen(prev => !prev)}
               >
-                <Typography className={classes.pillMoreLabel} style={{ color: '#FF1744' }}>
-                  {t('dashboard.moreShortcuts')}
+                <Typography className={classes.pillMoreLabel}>
+                  +{hiddenShortcuts.length} {t('dashboard.more')}
                 </Typography>
               </Box>
               <Popper

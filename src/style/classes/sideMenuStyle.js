@@ -1,6 +1,6 @@
 const appBarTitleTextSize = { xs: 13, sm: 14, md: 10, lg: 16, xl: 14 }
 
-const SIDEBAR_WIDTH = 280;
+const SIDEBAR_WIDTH = 224;
 const SIDEBAR_COLLAPSED_WIDTH = 70;
 
 export const sideMenuStyle = (windowSize, isRTL, theme) => ({
