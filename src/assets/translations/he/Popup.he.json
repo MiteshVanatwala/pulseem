@@ -17,5 +17,8 @@
   "popup_add_step_blank": "שלב ריק",
   "popup_add_step_duplicate": "שכפל שלב נוכחי",
   "popup_delete_step_confirm": "האם ברצונכם למחוק את השלב?",
-  "duplicateFieldAcrossSteps": "{{fields}} כבר בשימוש בשלב אחר — כל שדה יכול להופיע פעם אחת בלבד בכל השלבים."
+  "duplicateFieldAcrossSteps": "{{fields}} כבר בשימוש בשלב אחר — כל שדה יכול להופיע פעם אחת בלבד בכל השלבים.",
+  "contactFieldRequiredTitle": "שדה איש קשר נדרש",
+  "contactFieldRequiredMessage": "הטופס שלך אינו כולל שדה אימייל או טלפון נייד. לא תוכל להמשיך עד שתוסיף אחד מהשדות הללו.",
+  "contactFieldRequiredOkay": "אישור"
 }

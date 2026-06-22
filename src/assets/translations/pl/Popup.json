@@ -17,5 +17,8 @@
 	"popup_add_step_blank": "Pusty etap",
 	"popup_add_step_duplicate": "Duplikuj bieżący etap",
 	"popup_delete_step_confirm": "Czy chcesz usunąć ten etap?",
-	"duplicateFieldAcrossSteps": "{{fields}} już używane w innym etapie — każde pole może pojawić się tylko raz we wszystkich etapach."
+	"duplicateFieldAcrossSteps": "{{fields}} już używane w innym etapie — każde pole może pojawić się tylko raz we wszystkich etapach.",
+	"contactFieldRequiredTitle": "Wymagane pole kontaktowe",
+	"contactFieldRequiredMessage": "Twój formularz nie zawiera pola Email lub Telefon komórkowy. Nie będziesz mógł kontynuować, dopóki nie dodasz jednego z tych pól.",
+	"contactFieldRequiredOkay": "OK"
 }
