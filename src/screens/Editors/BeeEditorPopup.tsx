@@ -1256,6 +1256,7 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
 
   //#region Wizard buttons
   const renderTemplateButtons = () => {
+    const showAddStepButton = steps.length < 3;
     return <>
       <Button onClick={() => {
         // setLoader(true);
@@ -1314,7 +1315,6 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
               alignItems: 'stretch',
               border: '2px solid #F65026',
               borderRadius: 20,
-              overflow: 'hidden',
               background: '#fff',
               margin: '4px 8px',
               minHeight: 34,
@@ -1322,6 +1322,23 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
           >
             {steps.map((stepNum, index) => {
               const isActive = currentStep === stepNum;
+              const isLastStep = index === steps.length - 1;
+              const hasEllipsis = stepNum > 1 && isActive;
+              // Without overflow:hidden the pill no longer auto-clips square button
+              // corners into its rounded shape, so whichever element actually ends up
+              // rendered last/first needs its own outer corner radius (container radius
+              // minus border width) to nest inside the border instead of poking past it.
+              // The step button only gets the end radius when nothing is rendered after
+              // it — once the ellipsis (or add) button shows up beside it, that button
+              // becomes the true edge and carries the radius instead.
+              const isFirstButton = index === 0;
+              const isLastButton = isLastStep && !showAddStepButton && !hasEllipsis;
+              const startRadius = isRTL
+                ? { borderTopRightRadius: 18, borderBottomRightRadius: 18 }
+                : { borderTopLeftRadius: 18, borderBottomLeftRadius: 18 };
+              const endRadius = isRTL
+                ? { borderTopLeftRadius: 18, borderBottomLeftRadius: 18 }
+                : { borderTopRightRadius: 18, borderBottomRightRadius: 18 };
               return (
                 <Box key={stepNum} style={{ display: 'inline-flex', alignItems: 'stretch' }}>
                   {index > 0 && (
@@ -1338,11 +1355,13 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
                       padding: '4px 14px',
                       whiteSpace: 'nowrap',
                       minWidth: 'unset',
+                      ...(isFirstButton ? startRadius : {}),
+                      ...(isLastButton ? endRadius : {}),
                     }}
                   >
                     {t('Popup.popup_step_n', { n: stepNum })}
                   </Button>
-                  {stepNum > 1 && isActive && (
+                  {hasEllipsis && (
                     <Button
                       size='small'
                       className={clsx(classes.btn, classes.btnStepActive)}
@@ -1357,6 +1376,7 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
                         minWidth: 'unset',
                         padding: '4px 8px',
                         boxShadow: 'none',
+                        ...(isLastStep && !showAddStepButton ? endRadius : {}),
                       }}
                     >
                       <MdMoreVert style={{ fontSize: 18 }} />
@@ -1365,7 +1385,7 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
                 </Box>
               );
             })}
-            {steps.length < 3 && (
+            {showAddStepButton && (
               <Box style={{ display: 'inline-flex', alignItems: 'stretch' }}>
                 <Box style={{ width: 2, backgroundColor: '#F65026', flexShrink: 0 }} />
                 <Button
@@ -1378,6 +1398,9 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
                     boxShadow: 'none',
                     padding: '4px 10px',
                     minWidth: 'unset',
+                    ...(isRTL
+                      ? { borderTopLeftRadius: 18, borderBottomLeftRadius: 18 }
+                      : { borderTopRightRadius: 18, borderBottomRightRadius: 18 }),
                   }}
                 >
                   <MdAdd style={{ fontSize: 20 }} />
