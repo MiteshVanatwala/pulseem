@@ -33,6 +33,7 @@ import { MdArrowBackIos, MdArrowForwardIos, MdCheck, MdGroups, MdOutlinePublic, 
 import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
 import { BEE_EDITOR_TYPES } from '../../helpers/Constants';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
+import { getActiveFieldKeysFromJson, checkFormContactRequirement } from '../../helpers/Utils/formContactValidation';
 import { StateType } from '../../Models/StateTypes';
 import { commonProps } from '../../model/Common/commonProps.types';
 import { BeeEditorModel, BeeEditorStoreModel, LandingPageRow, LandingPageTemplate, LandingPageUserBlocks, SaveLandingPageArguments } from '../../Models/LandingPage/LandingPage';
@@ -56,30 +57,6 @@ interface BeeEditorPopupProps extends BeeEditorModel {
   isPopupBuilder?: boolean;
 }
 
-const getActiveFieldKeysFromJson = (jsonData: string | null | undefined): Set<string> => {
-  if (!jsonData) return new Set();
-  try {
-    const parsed = JSON.parse(jsonData);
-    const keys = new Set<string>();
-    parsed?.page?.rows?.forEach((row: any) => {
-      row?.columns?.forEach((col: any) => {
-        col?.modules?.forEach((mod: any) => {
-          const fields = mod?.descriptor?.form?.structure?.fields;
-          if (fields) {
-            Object.entries(fields).forEach(([key, value]: [string, any]) => {
-              if (key !== 'optIn' && key !== 'submit' && value?.removeFromLayout === false) {
-                keys.add(key);
-              }
-            });
-          }
-        });
-      });
-    });
-    return keys;
-  } catch {
-    return new Set();
-  }
-};
 
 const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propClientSecret, isPopupBuilder: propIsPopupBuilder }: BeeEditorPopupProps) => {
   //#region State
@@ -153,6 +130,7 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
   const [currentStep, setCurrentStep] = useState<number>(stepParam);
   const [steps, setSteps] = useState<number[]>([1]);
   const [showDeleteStepConfirm, setShowDeleteStepConfirm] = useState<number | null>(null);
+  const [showContactFieldWarning, setShowContactFieldWarning] = useState<boolean>(false);
   const stepDataRef = useRef<PopupStep[]>([]);
   const currentStepRef = useRef<number>(stepParam);
   const isSwitchingStep = useRef(false);
@@ -687,6 +665,37 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
       }
     }
 
+    // Contact-field guard — opt-in only. Explicit Save / Continue clicks set
+    // saveRef.current.contactFieldCheckMode via saveDesign(). The flag is
+    // consumed (read once, then cleared) here so it can never leak into later
+    // internal saves (step switch, duplicate step, auto-save, re-init) that
+    // mutate saveRef.current directly without going through saveDesign().
+    //   'warn'  → show the dialog but let the save proceed (Save button)
+    //   'block' → show the dialog and stop the save (Continue button)
+    const _contactFieldCheckMode = (saveRef.current as any)?.contactFieldCheckMode as ('warn' | 'block' | undefined);
+    if (_contactFieldCheckMode) {
+      // @ts-ignore
+      saveRef.current = { ...(saveRef.current as any), contactFieldCheckMode: undefined };
+
+      const _webform = landingPage?.Data?.WebForm;
+      const jsonsToCheck: (string | null | undefined)[] =
+        stepDataRef.current.length > 0
+          ? stepDataRef.current.map((s: PopupStep) => {
+              if (s.StepNumber === savedForStep) return args.JsonData;
+              return s.StepNumber === 1 ? (s.JsonData ?? _webform?.JsonData) : s.JsonData;
+            })
+          : [args.JsonData];
+
+      const { hasForm, hasContactField } = checkFormContactRequirement(jsonsToCheck);
+      if (hasForm && !hasContactField) {
+        setShowContactFieldWarning(true);
+        if (_contactFieldCheckMode === 'block') {
+          return;
+        }
+        // 'warn' mode: fall through — the save below still proceeds normally.
+      }
+    }
+
     //@ts-ignore
     const reInit = saveRef.current?.reInitEditor;
     try {
@@ -921,7 +930,7 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
     return duplicates;
   };
 
-  const saveDesign = async (redirectAfterSave = false, redirectUrl: string | null | undefined = null, showAnimation = true, isPublish: boolean = false, isAutoSave: boolean = false) => {
+  const saveDesign = async (redirectAfterSave = false, redirectUrl: string | null | undefined = null, showAnimation = true, isPublish: boolean = false, isAutoSave: boolean = false, contactFieldCheckMode: 'warn' | 'block' | undefined = undefined) => {
     const duplicates = getDuplicateFieldsAcrossSteps();
     if (duplicates.size > 0) {
       if (!isAutoSave) {
@@ -931,7 +940,7 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
       return;
     }
     //@ts-ignore
-    saveRef.current = { ...saveRef.current, redirectAfterSave: redirectAfterSave, redirectUrl: redirectUrl, showAnimation: showAnimation, isPublish: isPublish, isAutoSave: isAutoSave };
+    saveRef.current = { ...saveRef.current, redirectAfterSave: redirectAfterSave, redirectUrl: redirectUrl, showAnimation: showAnimation, isPublish: isPublish, isAutoSave: isAutoSave, contactFieldCheckMode: contactFieldCheckMode };
     //@ts-ignore
     await editorRef.current.save();
     setTimeout(() => {
@@ -1413,7 +1422,7 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
                 ...saveRef.current,
                 showGroupPopup: showGroupSelection && selectedGroups?.length <= 0
               };
-              saveDesign(false, null, true)
+              saveDesign(false, null, true, false, false, 'warn')
             }}
             className={clsx(
               classes.btn,
@@ -1459,7 +1468,7 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
                     ...saveRef.current,
                     showGroupPopup: showGroupSelection && selectedGroups?.length <= 0
                   };
-                  saveDesign(true, `${sitePrefix}Popups/DisplayRules/${moduleId}?from=editor`, false, landingPage.Status === 2);
+                  saveDesign(true, `${sitePrefix}Popups/DisplayRules/${moduleId}?from=editor`, false, landingPage.Status === 2, false, 'block');
                 }}
                   variant='contained'
                   size='medium'
@@ -2039,6 +2048,32 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
           onConfirm={() => handleDeleteStep(showDeleteStepConfirm)}
         >
           <Typography>{t('Popup.popup_delete_step_confirm')}</Typography>
+        </BaseDialog>
+      )}
+      {showContactFieldWarning && (
+        <BaseDialog
+          classes={classes}
+          open={true}
+          title={t('Popup.contactFieldRequiredTitle')}
+          //@ts-ignore
+          onClose={() => setShowContactFieldWarning(false)}
+          onCancel={() => setShowContactFieldWarning(false)}
+          renderButtons={() => (
+            <Grid container spacing={2} justifyContent='center' className={clsx(classes.dialogButtonsContainer)}>
+              <Grid item>
+                <Button
+                  variant='contained'
+                  size='small'
+                  className={clsx(classes.btn, classes.btnRounded)}
+                  onClick={() => setShowContactFieldWarning(false)}
+                >
+                  {t('Popup.contactFieldRequiredOkay')}
+                </Button>
+              </Grid>
+            </Grid>
+          )}
+        >
+          <Typography>{t('Popup.contactFieldRequiredMessage')}</Typography>
         </BaseDialog>
       )}
     </DefaultScreen>
