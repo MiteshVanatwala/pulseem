@@ -910,36 +910,12 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
       setLoader(false);
     }
   }
-  const getDuplicateFieldsAcrossSteps = (): Set<string> => {
-    if (stepDataRef.current.length <= 1) return new Set();
-    const webform = landingPage?.Data?.WebForm;
-    const fieldToSteps = new Map<string, number[]>();
-    stepDataRef.current.forEach((step) => {
-      const json = step.StepNumber === 1
-        ? (step.JsonData ?? webform?.JsonData)
-        : step.JsonData;
-      const keys = getActiveFieldKeysFromJson(json);
-      keys.forEach((key) => {
-        const existing = fieldToSteps.get(key) ?? [];
-        fieldToSteps.set(key, [...existing, step.StepNumber]);
-      });
-    });
-    const duplicates = new Set<string>();
-    fieldToSteps.forEach((stepNumbers, key) => {
-      if (stepNumbers.length > 1) duplicates.add(key);
-    });
-    return duplicates;
-  };
-
   const saveDesign = async (redirectAfterSave = false, redirectUrl: string | null | undefined = null, showAnimation = true, isPublish: boolean = false, isAutoSave: boolean = false, contactFieldCheckMode: 'warn' | 'block' | undefined = undefined) => {
-    const duplicates = getDuplicateFieldsAcrossSteps();
-    if (duplicates.size > 0) {
-      if (!isAutoSave) {
-        // @ts-ignore
-        setToastMessage({ severity: 'error', color: 'error', message: t('Popup.duplicateFieldAcrossSteps', { fields: Array.from(duplicates).join(', ') }), showAnimtionCheck: false } as any);
-      }
-      return;
-    }
+    // Duplicate-field detection across steps happens inside onSave(), using the
+    // editor's live JSON for the current step (args.JsonData). Checking here against
+    // stepDataRef.current would compare against a stale cache for the step being
+    // edited right now — stepDataRef only reflects a step's true content after that
+    // step's own save round-trip has completed. See onSave()'s duplicate-field guard.
     //@ts-ignore
     saveRef.current = { ...saveRef.current, redirectAfterSave: redirectAfterSave, redirectUrl: redirectUrl, showAnimation: showAnimation, isPublish: isPublish, isAutoSave: isAutoSave, contactFieldCheckMode: contactFieldCheckMode };
     //@ts-ignore
