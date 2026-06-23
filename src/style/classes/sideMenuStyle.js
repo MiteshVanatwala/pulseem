@@ -97,7 +97,6 @@ export const sideMenuStyle = (windowSize, isRTL, theme) => ({
       backgroundColor: 'rgba(255, 255, 255, 0.1)',
     },
     '&.active': {
-      backgroundColor: 'rgba(255, 255, 255, 0.2)',
       color: '#fff',
       '$sidebarItemIcon, & svg': {
         color: '#fff',

@@ -400,6 +400,14 @@ export const getRoutes = (
       ],
     },
     {
+      key: "Integrations",
+      title: t("integrations.hubTitle"),
+      pageTitle: t("integrations.hubTitle"),
+      href: `${sitePrefix}Integrations`,
+      isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount && userRoles?.AllowSend,
+      iconName: 'MdOutlineDashboardCustomize',
+    },
+    {
       key: "notifications",
       title: t("master.notifications"),
       pageTitle: t("notifications.notificationManagement"),

@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { RedirectPropTypes } from "../../../helpers/Types/Redirect";
 import { Collapse, IconButton, List, ListItem, ListItemText, Tooltip, Typography } from "@material-ui/core";
 import { FaChevronDown, FaChevronUp, FaWhatsapp, FaRegWindowRestore } from "react-icons/fa";
-import { MdPeople, MdMarkEmailRead, MdSms, MdSettings, MdNotificationsActive, MdAccountCircle } from "react-icons/md";
+import { MdPeople, MdMarkEmailRead, MdSms, MdSettings, MdNotificationsActive, MdAccountCircle, MdOutlineDashboardCustomize } from "react-icons/md";
 import { BiPencil, BiSitemap } from "react-icons/bi";
 import { FiZap, FiSmartphone, FiFileText, FiPieChart } from "react-icons/fi";
 import { IoLogoWhatsapp } from "react-icons/io";
@@ -100,6 +100,10 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
     if (item?.iconName === 'MdAccountCircle') {
       // @ts-ignore
       return <MdAccountCircle size={28} />;
+    }
+    if (item?.iconName === 'MdOutlineDashboardCustomize') {
+      // @ts-ignore
+      return <MdOutlineDashboardCustomize size={28} />;
     }
     return null;
   };
