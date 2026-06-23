@@ -3404,5 +3404,8 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		'& .MuiButton-root': {
 			color: '#fff',
 		}
+	}, 
+	whatsAppCampaignPadding: {
+		padding: '8px 12px 8px 4px',
 	}
 });

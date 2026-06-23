@@ -7,7 +7,7 @@ import { IoIosArrowDown } from 'react-icons/io';
 import 'moment/locale/he';
 import { ActivityEvent, ActivtyTimeInterval } from '../../../../Models/Groups/DynamicGroup';
 import { useTranslation } from 'react-i18next';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import SelectActivityInteval from '../Components/SelectActivityInteval';
 import { DateField } from '../../../../components/managment';
 import moment from 'moment';
@@ -19,16 +19,7 @@ import SelectProductUrl from '../Components/SelectProductUrl';
 
 const EventsDetails = ({ classes, data, onUpdate }: any) => {
     const { t } = useTranslation();
-    const [optionsDisabled, setOptionDisabled] = useState<boolean>(false);
     const [containsTextError, setContainsTextError] = useState<boolean>(false);
-
-    useEffect(() => {
-        setOptionDisabled(data.dynamicData?.MyActivities.IsPurchased ||
-            data.dynamicData?.MyActivities.IsNotPurchased ||
-            data.dynamicData?.MyActivities.IsAbandoned ||
-            data.dynamicData?.MyActivities.IsPageViewed
-        )
-    }, [data.dynamicData?.MyActivities]);
 
     const renderIsPurchased = () => {
         return (
@@ -37,7 +28,6 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                     <FormControlLabel
                         control={
                             <Checkbox
-                                disabled={optionsDisabled && !data.dynamicData?.MyActivities.IsPurchased}
                                 onChange={(event: any) => onUpdate('IsPurchased', !!event.target.checked)}
                                 checked={!!data.dynamicData?.MyActivities.IsPurchased}
                                 name="openedinlast"
@@ -227,8 +217,6 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                     <FormControlLabel
                         control={
                             <Checkbox
-                                disabled={optionsDisabled && !data.dynamicData?.MyActivities.IsNotPurchased}
-                                // disabled={data.dynamicData?.MyActivities?.IsPurchased === true}
                                 onChange={(event: any) => onUpdate('IsNotPurchased', !!event.target.checked)}
                                 checked={!!data.dynamicData?.MyActivities.IsNotPurchased}
                                 name="openedinlast"
@@ -418,8 +406,6 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                     <FormControlLabel
                         control={
                             <Checkbox
-                                disabled={optionsDisabled && !data.dynamicData?.MyActivities.IsAbandoned}
-                                // disabled={data.dynamicData?.MyActivities?.IsPurchased === true}
                                 onChange={(event: any) => onUpdate('IsAbandoned', !!event.target.checked)}
                                 checked={!!data.dynamicData?.MyActivities.IsAbandoned}
                                 name="openedinlast"
@@ -612,7 +598,6 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                     <FormControlLabel
                         control={
                             <Checkbox
-                                disabled={optionsDisabled && !isPageViewed}
                                 onChange={(event: any) => onUpdate('IsPageViewed', !!event.target.checked)}
                                 checked={isPageViewed}
                                 name="openedinlast"

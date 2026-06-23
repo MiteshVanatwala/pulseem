@@ -600,6 +600,16 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
             }
         },
     },
+    manualButtonGroup:
+    {
+        display: "flex",
+        alignItems: "center",
+        gap: theme.spacing(1),
+        flexWrap: "wrap",
+        [theme.breakpoints.down('xs')]: {
+            justifyContent: 'center',
+        },
+    },
     listValues:
     {
         fontSize: "20px", color: "red", fontWeight: "600"
