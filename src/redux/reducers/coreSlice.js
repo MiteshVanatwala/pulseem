@@ -88,7 +88,7 @@ export const coreSlice = createSlice({
       state.isSidebarCollapsed = action.payload
       setCookie('SidebarCollapsed', action.payload, { maxAge: 2147483647 })
       const w = typeof window !== 'undefined' ? window.innerWidth : 0
-      const isSlScreen = w >= 1280 && w < 1367
+      const isSlScreen = w >= 1300 && w < 1367
       if (isSlScreen) {
         state.windowSize = action.payload ? 'lg' : 'sl'
       }

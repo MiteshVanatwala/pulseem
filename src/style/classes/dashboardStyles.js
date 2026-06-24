@@ -201,16 +201,14 @@ export const getDashboardStyle = (windowSize, isRTL, theme) => ({
         marginTop: -5
     },
     shortcutStripBox: {
-        margin: '30px 16px 0 16px',
+        margin: '30px 30px 0 30px',
         borderRadius: 20,
         border: '3px solid #F0F5FF',
         background: '#fff',
         overflow: 'hidden',
         display: 'block',
-        width: 'calc(100% - 32px)',
         [theme.breakpoints.down('xs')]: {
-            margin: '10px 16px 0 16px',
-            width: 'calc(100% - 32px)',
+            margin: '10px 10px 0 10px',
         },
     },
     shortcutStripHeader: {
@@ -228,12 +226,19 @@ export const getDashboardStyle = (windowSize, isRTL, theme) => ({
         gap: 8,
         padding: '12px 14px 16px',
         boxSizing: 'border-box',
+        [theme.breakpoints.up('md')]: {
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+        },
     },
     pillItem: {
         position: 'relative',
         width: '100%',
         minWidth: 0,
         boxSizing: 'border-box',
+        [theme.breakpoints.up('md')]: {
+            width: 'calc(50% - 4px)',
+        },
     },
     pillChip: {
         display: 'flex',

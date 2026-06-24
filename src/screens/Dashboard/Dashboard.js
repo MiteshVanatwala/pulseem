@@ -117,14 +117,14 @@ const DashboardScreen = ({ classes }) => {
         {/* Previous layout with shortcuts: lg={9} xl={10} */}
         <Grid item xs={12} sm={12} md={12} lg={12} xl={12} className={clsx(classes.dashboardTop)}>
           <Grid container direction='row'>
-            <Grid item xs={12} sm={12} md={12} lg={shouldStackDashboardCards ? 12 : 4} style={{ marginInlineEnd: shouldStackDashboardCards ? '30px' : '' }}>
+            <Grid item xs={12} sm={12} md={6} lg={shouldStackDashboardCards ? 12 : 4} style={{ marginInlineEnd: (shouldStackDashboardCards && windowSize !== 'xs' && windowSize !== 'sm' && windowSize !== 'md') ? '30px' : '' }}>
               {<BulkStatus classes={classes} />}
               {<GlobalBalance classes={classes} />}
             </Grid>
-            <Grid item xs={12} sm={12} md={12} lg={shouldStackDashboardCards ? 12 : 5} className={windowSize === "xs" ? classes.pt20 : null}>
+            <Grid item xs={12} sm={12} md={6} lg={shouldStackDashboardCards ? 12 : 5}>
               <RecipientChart classes={classes} />
             </Grid>
-            <Grid item xs={12} sm={12} md={12} lg={shouldStackDashboardCards ? 12 : 3} className={windowSize === "xs" ? classes.pt20 : null} style={{ alignSelf: 'flex-start', transform: shouldStackDashboardCards ? 'none' : (isRTL ? 'translateX(4%)' : 'translateX(-4%)') }}>
+            <Grid item xs={12} sm={12} md={12} lg={shouldStackDashboardCards ? 12 : 3} className={windowSize === "xs" ? classes.pt20 : null} style={{ alignSelf: 'flex-start', transform: (shouldStackDashboardCards || windowSize === 'xs' || windowSize === 'sm' || windowSize === 'md') ? 'none' : (isRTL ? 'translateX(4%)' : 'translateX(-4%)') }}>
               <Shortcut
                 windowSize={windowSize}
                 classes={classes}

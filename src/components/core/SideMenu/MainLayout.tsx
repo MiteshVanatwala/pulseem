@@ -78,7 +78,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
 }) => {
   const classes = useStyles();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   const { isRTL } = useSelector((state: any) => state.core);
   const dispatch = useDispatch();

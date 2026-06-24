@@ -139,7 +139,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   }, [settingsLoaded, currentPage, routes]);
 
   const toggleSidebar = () => {
-    if (windowSize === 'xs' || windowSize === 'sm') {
+    if (windowSize === 'xs' || windowSize === 'sm' || windowSize === 'md') {
       onToggle();
     } else {
       const newState = !isCollapsed;
@@ -194,7 +194,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     return null;
   };
 
-  const isMobile = windowSize === 'xs' || windowSize === 'sm';
+  const isMobile = windowSize === 'xs' || windowSize === 'sm' || windowSize === 'md';
   const drawerVariant = isMobile ? 'temporary' : 'permanent';
   const drawerOpen = isMobile ? isOpen : true;
 

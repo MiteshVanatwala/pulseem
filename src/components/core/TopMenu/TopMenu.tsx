@@ -139,7 +139,7 @@ const TopMenu: React.FC<TopMenuProps> = ({ classes, onMenuToggle }) => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const { windowSize } = useSelector((state: any) => state.core);
-    const isMobile = windowSize === 'xs' || windowSize === 'sm';
+    const isMobile = windowSize === 'xs' || windowSize === 'sm' || windowSize === 'md';
 
     return (
         <Box

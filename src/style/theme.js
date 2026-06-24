@@ -33,7 +33,7 @@ export const getTheme = (language) => {
           xs: 0,
           sm: 600,
           md: 960,
-          sl: 1280,
+          sl: 1300,
           lg: 1367,
           xl: 1920,
         },
