@@ -18,7 +18,10 @@
 	"popup_add_step_duplicate": "Duplicate Current Step",
 	"popup_delete_step_confirm": "Are you sure you want to delete this step?",
 	"duplicateFieldAcrossSteps": "{{fields}} already used in another step — each field can only appear once across all steps.",
+	"duplicateStepFormWarning": "This step contains a form. The form won't be copied to the new step — you can add a new form to it afterward.",
 	"contactFieldRequiredTitle": "Contact Field Required",
 	"contactFieldRequiredMessage": "Your form does not include an Email or Cellphone field. You won't be able to proceed until you add one of these fields.",
+	"contactFieldRequiredMessageOptIn": "Your form does not include the opt-in checkbox (\"I agree to receiving marketing content\"). You won't be able to proceed until you add it.",
+	"contactFieldRequiredMessageBoth": "Your form does not include an Email or Cellphone field and the marketing consent checkbox (\"I agree to receiving marketing content\"). You won't be able to proceed until you add these.",
 	"contactFieldRequiredOkay": "Okay"
 }
