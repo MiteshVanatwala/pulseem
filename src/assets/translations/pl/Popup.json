@@ -18,7 +18,10 @@
 	"popup_add_step_duplicate": "Duplikuj bieżący etap",
 	"popup_delete_step_confirm": "Czy chcesz usunąć ten etap?",
 	"duplicateFieldAcrossSteps": "{{fields}} już używane w innym etapie — każde pole może pojawić się tylko raz we wszystkich etapach.",
+	"duplicateStepFormWarning": "Ten etap zawiera formularz. Formularz nie zostanie skopiowany do nowego etapu — możesz dodać do niego nowy formularz później.",
 	"contactFieldRequiredTitle": "Wymagane pole kontaktowe",
 	"contactFieldRequiredMessage": "Twój formularz nie zawiera pola Email lub Telefon komórkowy. Nie będziesz mógł kontynuować, dopóki nie dodasz jednego z tych pól.",
+	"contactFieldRequiredMessageOptIn": "Twój formularz nie zawiera pola wyboru zgody (\"Wyrażam zgodę na otrzymywanie treści marketingowych\"). Nie będziesz mógł kontynuować, dopóki go nie dodasz.",
+	"contactFieldRequiredMessageBoth": "Twój formularz nie zawiera pola Email lub Telefon komórkowy oraz pola wyboru zgody marketingowej (\"Wyrażam zgodę na otrzymywanie treści marketingowych\"). Nie będziesz mógł kontynuować, dopóki nie dodasz tych elementów.",
 	"contactFieldRequiredOkay": "OK"
 }

@@ -8,7 +8,9 @@ const CONTACT_FIELD_KEYS = ['Email', 'Cellphone'] as const;
 
 /**
  * Returns the set of active (non-removed) form field keys found in a Bee JSON string.
- * Excludes `optIn` and `submit` which are never contact-capture fields.
+ * Excludes only `submit`, which every form always has exactly one of and which is
+ * never user-removable. `optIn` IS included — it is subject to the same cross-step
+ * duplicate-field rules as Email/FirstName/etc.
  */
 export const getActiveFieldKeysFromJson = (jsonData: string | null | undefined): Set<string> => {
   if (!jsonData) return new Set();
@@ -21,7 +23,7 @@ export const getActiveFieldKeysFromJson = (jsonData: string | null | undefined):
           const fields = mod?.descriptor?.form?.structure?.fields;
           if (fields) {
             Object.entries(fields).forEach(([key, value]: [string, any]) => {
-              if (key !== 'optIn' && key !== 'submit' && value?.removeFromLayout === false) {
+              if (key !== 'submit' && value?.removeFromLayout === false) {
                 keys.add(key);
               }
             });
@@ -58,25 +60,30 @@ export const hasFormModule = (jsonData: string | null | undefined): boolean => {
 };
 
 /**
- * Checks whether a contact field (Email or Cellphone) is present and
- * active across the supplied set of Bee JSON strings (one per step/page).
+ * Checks whether a contact field (Email or Cellphone) AND the optIn checkbox
+ * are present and active across the supplied set of Bee JSON strings (one per
+ * step/page). These are two independent minimum-presence requirements — each
+ * field must appear at least once across all form-bearing steps (the maximum
+ * of "at most once" is enforced separately, by the cross-step duplicate-field
+ * guard in BeeEditorPopup.tsx).
  *
  * Only steps that actually contain a form module are considered — steps without
  * a form do not participate in the requirement.
  *
  * Returns:
  *   hasForm        — true if at least one JSON has a form module
- *   hasContactField — true if at least one form-bearing step has Email/Cellphone/Telephone active
+ *   hasContactField — true if at least one form-bearing step has Email/Cellphone active
+ *   hasOptIn        — true if at least one form-bearing step has optIn active
  *
- * Callers should block save when `hasForm && !hasContactField`.
+ * Callers should block save when `hasForm && (!hasContactField || !hasOptIn)`.
  */
 export const checkFormContactRequirement = (
   jsonStrings: (string | null | undefined)[]
-): { hasForm: boolean; hasContactField: boolean } => {
+): { hasForm: boolean; hasContactField: boolean; hasOptIn: boolean } => {
   const formJsons = jsonStrings.filter(json => hasFormModule(json));
 
   if (formJsons.length === 0) {
-    return { hasForm: false, hasContactField: true };
+    return { hasForm: false, hasContactField: true, hasOptIn: true };
   }
 
   const activeFields = new Set<string>(
@@ -84,6 +91,7 @@ export const checkFormContactRequirement = (
   );
 
   const hasContactField = CONTACT_FIELD_KEYS.some(key => activeFields.has(key));
+  const hasOptIn = activeFields.has('optIn');
 
-  return { hasForm: true, hasContactField };
+  return { hasForm: true, hasContactField, hasOptIn };
 };
