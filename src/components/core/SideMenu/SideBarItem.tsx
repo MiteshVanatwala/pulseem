@@ -1,13 +1,14 @@
 import useRedirect from "../../../helpers/Routes/Redirect";
 import { useSelector } from "react-redux";
 import { RedirectPropTypes } from "../../../helpers/Types/Redirect";
-import { Collapse, IconButton, List, ListItem, ListItemText, Tooltip, Typography } from "@material-ui/core";
+import { Collapse, IconButton, List, ListItem, ListItemText, Typography } from "@material-ui/core";
 import { FaChevronDown, FaChevronUp, FaWhatsapp, FaRegWindowRestore } from "react-icons/fa";
 import { MdPeople, MdMarkEmailRead, MdSms, MdSettings, MdNotificationsActive, MdAccountCircle, MdOutlineDashboardCustomize } from "react-icons/md";
 import { BiPencil, BiSitemap } from "react-icons/bi";
 import { FiZap, FiSmartphone, FiFileText, FiPieChart } from "react-icons/fi";
 import { IoLogoWhatsapp } from "react-icons/io";
 import clsx from 'clsx';
+import SidebarTooltip from './SidebarTooltip';
 
 interface SidebarItemProps {
   item: any;
@@ -18,7 +19,7 @@ interface SidebarItemProps {
   onItemClick?: () => void;
   showSubmenu?: boolean;
   toggleSubmenu?: () => void;
-  currentPage: any;
+  currentPage: any; // passed through to sub-items only
   subPage: any;
   onIconClick?: () => void;
 }
@@ -40,77 +41,28 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
   const { isRTL } = useSelector((state: any) => state.core);
 
   const renderIcon = () => {
-    if (item?.iconName === 'MdPeople') {
-      // @ts-ignore
-      return <MdPeople size={28} />;
-    }
-    if (item?.iconName === 'MdMarkEmailRead') {
-      // @ts-ignore
-      return <MdMarkEmailRead size={28} />;
-    }
-    if (item?.iconName === 'MdSms') {
-      // @ts-ignore
-      return <MdSms size={28} />;
-    }
-    if (item?.iconName === 'FaWhatsapp') {
-      // @ts-ignore
-      return <FaWhatsapp size={28} />;
-    }
-    if (item?.iconName === 'IoLogoWhatsapp') {
-      // @ts-ignore
-      return <IoLogoWhatsapp size={28} />;
-    }
-    if (item?.iconName === 'FiSmartphone') {
-      // @ts-ignore
-      return <FiSmartphone size={28} />;
-    }
-    if (item?.iconName === 'BiPencil') {
-      // @ts-ignore
-      return <BiPencil size={28} />;
-    }
-
-    if (item?.iconName === 'FiZap') {
-      // @ts-ignore
-      return <FiZap size={28} />;
-    }
-    if (item?.iconName === 'MdSettings') {
-      // @ts-ignore
-      return <MdSettings size={28} />;
-    }
-    if (item?.iconName === 'BiSitemap') {
-      // @ts-ignore
-      return <BiSitemap size={24} />;
-    }
-    if (item?.iconName === 'FaRegWindowRestore') {
-      // @ts-ignore
-      return <FaRegWindowRestore size={24} />;
-    }
-    if (item?.iconName === 'FiFileText') {
-      // @ts-ignore
-      return <FiFileText size={24} />;
-    }
-    if (item?.iconName === 'MdNotificationsActive') {
-      // @ts-ignore
-      return <MdNotificationsActive size={28} />;
-    }
-    if (item?.iconName === 'FiPieChart') {
-      // @ts-ignore
-      return <FiPieChart size={24} />;
-    }
-    if (item?.iconName === 'MdAccountCircle') {
-      // @ts-ignore
-      return <MdAccountCircle size={28} />;
-    }
-    if (item?.iconName === 'MdOutlineDashboardCustomize') {
-      // @ts-ignore
-      return <MdOutlineDashboardCustomize size={28} />;
-    }
+    if (item?.iconName === 'MdPeople') return <MdPeople size={28} />;
+    if (item?.iconName === 'MdMarkEmailRead') return <MdMarkEmailRead size={28} />;
+    if (item?.iconName === 'MdSms') return <MdSms size={28} />;
+    if (item?.iconName === 'FaWhatsapp') return <FaWhatsapp size={28} />;
+    if (item?.iconName === 'IoLogoWhatsapp') return <IoLogoWhatsapp size={28} />;
+    if (item?.iconName === 'FiSmartphone') return <FiSmartphone size={28} />;
+    if (item?.iconName === 'BiPencil') return <BiPencil size={28} />;
+    if (item?.iconName === 'FiZap') return <FiZap size={28} />;
+    if (item?.iconName === 'MdSettings') return <MdSettings size={28} />;
+    if (item?.iconName === 'BiSitemap') return <BiSitemap size={24} />;
+    if (item?.iconName === 'FaRegWindowRestore') return <FaRegWindowRestore size={24} />;
+    if (item?.iconName === 'FiFileText') return <FiFileText size={24} />;
+    if (item?.iconName === 'MdNotificationsActive') return <MdNotificationsActive size={28} />;
+    if (item?.iconName === 'FiPieChart') return <FiPieChart size={24} />;
+    if (item?.iconName === 'MdAccountCircle') return <MdAccountCircle size={28} />;
+    if (item?.iconName === 'MdOutlineDashboardCustomize') return <MdOutlineDashboardCustomize size={28} />;
     return null;
   };
 
   const iconElement = renderIcon();
 
-  const handleClick = (e: React.MouseEvent, isCollapseAction: boolean = false) => {
+  const handleClick = (e: React.MouseEvent, _isCollapseAction: boolean = false) => {
     e.preventDefault();
     e.stopPropagation();
 
@@ -120,12 +72,8 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
       if (onItemClick) {
         onItemClick();
       } else {
-        if (item.href) {
-          Redirect({ url: item.href } as RedirectPropTypes);
-        }
-        if (item.onClick) {
-          item.onClick();
-        }
+        if (item.href) Redirect({ url: item.href } as RedirectPropTypes);
+        if (item.onClick) item.onClick();
       }
     }
   };
@@ -133,7 +81,6 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
   const handleIconClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-
     if (isCollapsed && onIconClick) {
       onIconClick();
     } else {
@@ -142,6 +89,30 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
   };
 
   const hasSubmenu = item.options && item.options.length > 0;
+
+  const iconContainerElement = (item?.iconUnicode || item?.icon || item?.iconName) ? (
+    iconElement ? (
+      <div
+        className={clsx(classes.phoneAppBarItemIcon, classes.sidebarItemIcon)}
+        onClick={handleIconClick}
+      >
+        {iconElement}
+      </div>
+    ) : (
+      <Typography
+        onClick={handleIconClick}
+        className={clsx(classes.phoneAppBarItemIcon, classes.sidebarItemIcon)}
+      >
+        {item?.iconUnicode || item?.icon}
+      </Typography>
+    )
+  ) : null;
+
+  const wrappedIcon = isCollapsed && typeof item.title === 'string' && iconContainerElement ? (
+    <SidebarTooltip title={item.title} placement={isRTL ? 'left' : 'right'}>
+      {iconContainerElement}
+    </SidebarTooltip>
+  ) : iconContainerElement;
 
   const itemContent = (
     <ListItem
@@ -154,19 +125,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
       }}
       onClick={((e: React.MouseEvent) => { handleClick(e, false) })}
     >
-      {(item?.iconUnicode || item?.icon || item?.iconName) && (
-        iconElement ? (
-          <div className={clsx(classes.phoneAppBarItemIcon, classes.sidebarItemIcon)} onClick={handleIconClick}>
-            {iconElement}
-          </div>
-        ) : (
-          <Typography
-            onClick={handleIconClick}
-            className={clsx(classes.phoneAppBarItemIcon, classes.sidebarItemIcon)}>
-            {item?.iconUnicode || item?.icon}
-          </Typography>
-        )
-      )}
+      {wrappedIcon}
       {!isCollapsed && (
         <>
           <ListItemText
@@ -190,22 +149,11 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
 
   return (
     <>
-      {isCollapsed && typeof item.title === 'string' ? (
-        <Tooltip
-          arrow
-          title={item.title}
-          placement={isRTL ? "left" : "right"}
-          classes={{ tooltip: classes.tooltip }}
-        >
-          {itemContent}
-        </Tooltip>
-      ) : (
-        itemContent
-      )}
+      {itemContent}
 
       {hasSubmenu && !isCollapsed && (
         <Collapse in={showSubmenu} timeout="auto" unmountOnExit>
-          <List className={classes.sidebarSubmenu} style={{ paddingTop: 0, paddingBottom: 0, }}>
+          <List className={classes.sidebarSubmenu} style={{ paddingTop: 0, paddingBottom: 0 }}>
             {item.options && item.options.filter((option: any) => option.isShow !== false).map((option: any, index: number) => (
               <SidebarItem
                 isActive={option.key === subPage}
@@ -232,6 +180,5 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
     </>
   );
 };
-
 
 export default SidebarItem;

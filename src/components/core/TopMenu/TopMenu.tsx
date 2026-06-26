@@ -1,4 +1,4 @@
-import { Box, Button, ClickAwayListener, MenuItem, MenuList, Paper, Popper, Tooltip, IconButton, makeStyles } from "@material-ui/core";
+import { Box, Button, ClickAwayListener, MenuItem, MenuList, Paper, Popper, IconButton } from "@material-ui/core";
 import NotificationBell from "../../NotificationBell/NotificationBell";
 import clsx from 'clsx';
 import { useDispatch, useSelector } from "react-redux";
@@ -8,10 +8,10 @@ import { getCookie, setCookie } from "../../../helpers/Functions/cookies";
 import { Language } from "../../../Models/SideMenuBar/SideMenuBarModel";
 import { setLanguage } from "../../../redux/reducers/coreSlice";
 import { BsGlobe2 } from "react-icons/bs";
-import { IoIosArrowDown } from "react-icons/io";
 import { MdSupportAgent } from 'react-icons/md';
 import { toggleHelpDrawer } from "../../../redux/reducers/helpDrawerSlice";
 import i18n from "../../../i18n";
+import SidebarTooltip from '../SideMenu/SidebarTooltip';
 
 
 const LanguageSelector: React.FC<{ classes: any }> = ({ classes }) => {
@@ -124,18 +124,7 @@ export interface TopMenuProps {
     onMenuToggle?: () => void;
 }
 
-const useLocalStyles = makeStyles(() => ({
-    blackTooltip: {
-        backgroundColor: '#000',
-        color: '#fff',
-    },
-    blackArrow: {
-        color: '#000',
-    }
-}));
-
 const TopMenu: React.FC<TopMenuProps> = ({ classes, onMenuToggle }) => {
-    const localClasses = useLocalStyles();
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const { windowSize } = useSelector((state: any) => state.core);
@@ -179,14 +168,9 @@ const TopMenu: React.FC<TopMenuProps> = ({ classes, onMenuToggle }) => {
             {/* Desktop/Mobile Right Side Items */}
             <Box className={clsx(isMobile ? classes.mobileRightItems : classes.desktopRightItems)}>
                 <Box>
-                    <Tooltip
-                        arrow
+                    <SidebarTooltip
                         title={t('dashboard.helpDrawer.support.helpCenter.title')}
                         placement="bottom"
-                        classes={{
-                            tooltip: clsx(classes.f12, localClasses.blackTooltip),
-                            arrow: localClasses.blackArrow
-                        }}
                     >
                         <IconButton
                             size="small"
@@ -197,7 +181,7 @@ const TopMenu: React.FC<TopMenuProps> = ({ classes, onMenuToggle }) => {
                         >
                             <MdSupportAgent style={{ fontSize: 26, color: '#000' }} title={t('master.RadMenuItemResource21.Text')} />
                         </IconButton>
-                    </Tooltip>
+                    </SidebarTooltip>
                 </Box>
                 <Box>
                     <NotificationBell classes={classes} />

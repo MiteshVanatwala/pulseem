@@ -110,8 +110,11 @@ export const sideMenuStyle = (windowSize, isRTL, theme) => ({
     color: '#ffffff',
     width: 30,
     height: 30,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
     paddingInlineEnd: 15,
-    justifyContent: 'center'
   },
   sidebarItemText: {
     '& .MuiListItemText-primary': {

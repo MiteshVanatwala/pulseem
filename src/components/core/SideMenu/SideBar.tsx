@@ -9,7 +9,8 @@ import { RedirectPropTypes } from '../../../helpers/Types/Redirect';
 import { setCookie, getCookie } from '../../../helpers/Functions/cookies';
 import { getRoutes, getSettingsItem } from '../../../helpers/Routes/routes';
 import { FaTimes, FaChevronLeft, FaChevronRight, FaCrown, FaUserCircle } from 'react-icons/fa';
-import { Drawer, IconButton, Button, List, Box, Popper, Paper, MenuItem, MenuList, ClickAwayListener, Tooltip, Typography } from '@material-ui/core';
+import { Drawer, IconButton, Button, List, Box, Popper, Paper, MenuItem, MenuList, ClickAwayListener, Typography } from '@material-ui/core';
+import SidebarTooltip from './SidebarTooltip';
 import { SidebarProps } from '../../../Models/SideMenuBar/SideMenuBarModel';
 import { setIsDrawerOpen, setLanguage } from '../../../redux/reducers/coreSlice';
 import NotificationBell from '../../NotificationBell/NotificationBell';
@@ -299,7 +300,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <>
             {/* Expanded sidebar — plan card with tooltip on hover */}
             {!isCollapsed && (
-              <Tooltip arrow title={planTooltipContent} placement="right" classes={{ tooltip: classes.tooltip, arrow: classes.tooltipArrow }} PopperProps={{ modifiers: { offset: { enabled: true, offset: '0, 8' } } }}>
+              <SidebarTooltip title={planTooltipContent} placement={isRTL ? 'left' : 'right'}>
                 <div className={classes.sidebarPlanSection}>
                   <div className={classes.sidebarPlanCardHeader}>
                     <div className={classes.sidebarPlanTitle}>
@@ -324,16 +325,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     )}
                   </div>
                 </div>
-              </Tooltip>
+              </SidebarTooltip>
             )}
 
             {/* Collapsed sidebar — just the zap icon with tooltip */}
             {isCollapsed && !isMobile && (
-              <Tooltip arrow title={planTooltipContent} placement="right" classes={{ tooltip: classes.tooltip, arrow: classes.tooltipArrow }} PopperProps={{ modifiers: { offset: { enabled: true, offset: '0, 8' } } }}>
-                <div className={classes.sidebarPlanCollapsedIcon}>
+              <div className={classes.sidebarPlanCollapsedIcon}>
+                <SidebarTooltip title={planTooltipContent} placement={isRTL ? 'left' : 'right'}>
                   <ZapIcon size={20} />
-                </div>
-              </Tooltip>
+                </SidebarTooltip>
+              </div>
             )}
           </>
         );
