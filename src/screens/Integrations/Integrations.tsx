@@ -30,6 +30,7 @@ import { LU_Plugin } from "../../Models/Integrations/Integration";
 import { URL_HELPER } from "../../helpers/Links/ExternalLink";
 import { makeStyles } from "@material-ui/core/styles";
 import InfoIcon from '@material-ui/icons/Info';
+import { MdArrowForwardIos, MdArrowBackIos } from "react-icons/md";
 
 const useStyles = makeStyles((theme) => ({
   hubHeader: {
@@ -144,14 +145,27 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 700,
     textTransform: "none",
     width: "100%",
-    backgroundColor: "#FF0054",
-    color: "#ffffff",
     boxShadow: "none",
     transition: "all 0.2s ease",
     border: "1px solid transparent",
+  },
+  cardCtaConnect: {
+    backgroundColor: "#FF0054",
+    color: "#ffffff",
     "&:hover": {
       backgroundColor: "#e0004a",
       boxShadow: "0 4px 12px rgba(255, 0, 84, 0.25)",
+    },
+  },
+  cardCtaGuideBtn: {
+    backgroundColor: "transparent !important",
+    color: "#FF0054",
+    border: "1px solid #FF0054 !important",
+    boxShadow: "none !important",
+    "&:hover": {
+      backgroundColor: "#fff5f7 !important",
+      color: "#e0004a",
+      borderColor: "#e0004a !important",
     },
   },
   cardCtaConnected: {
@@ -591,8 +605,12 @@ const Integrations = ({ classes }: any) => {
                           </Typography>
                         </Box>
                         <Button
-                          variant="contained"
-                          className={localClasses.cardCta}
+                          variant={item.hasStatus ? "contained" : "outlined"}
+                          className={clsx(
+                            localClasses.cardCta,
+                            item.hasStatus ? localClasses.cardCtaConnect : localClasses.cardCtaGuideBtn
+                          )}
+                          endIcon={!item.hasStatus ? (isRTL ? <MdArrowBackIos size={10} /> : <MdArrowForwardIos size={10} />) : null}
                           onClick={() => {
                             if (item.hasStatus) {
                               handleNavigateToIntegration(item.key);
