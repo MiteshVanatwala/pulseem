@@ -3,6 +3,7 @@ import { Box, Typography, Grid, Button } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import DefaultScreen from "../DefaultScreen";
 import clsx from "clsx";
+import { Title } from "../../components/managment/Title";
 import Shopify from "./ShopifySetting";
 import VerifoneSetting from "./VerifoneSetting";
 import WooCommerce from "./WooCommerce";
@@ -107,6 +108,8 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 700,
     textTransform: "uppercase",
     letterSpacing: "0.5px",
+    whiteSpace: "nowrap",
+    textAlign: "center",
   },
   statusActive: {
     backgroundColor: "#dcfce7",
@@ -544,13 +547,10 @@ const Integrations = ({ classes }: any) => {
       {selectedKey && activeIntegration ? (
         // Detail Configuration View
         <Box>
-          <Box className={localClasses.detailHeader}>
-            <Typography variant="h2" className={localClasses.detailTitle}>
-              <img src={activeIntegration.icon} alt={activeIntegration.title} className={localClasses.detailIcon} />
-              {activeIntegration.title}
-            </Typography>
+          <Box className="head">
+            <Title Text={activeIntegration.title} classes={classes} />
           </Box>
-          <Box className={localClasses.detailBody}>
+          <Box className={"containerBody"}>
             {renderActiveIntegrationComponent()}
           </Box>
         </Box>
@@ -574,7 +574,7 @@ const Integrations = ({ classes }: any) => {
                 {filteredIntegrations.map((item) => {
                   const isConnected = item.hasStatus && statuses[item.key];
                   return (
-                    <Grid item xs={12} sm={6} md={3} key={item.key} className={localClasses.gridItem}>
+                    <Grid item xs={12} sm={6} md={6} lg={3} key={item.key} className={localClasses.gridItem}>
                       <Box className={localClasses.card}>
                         <Box>
                           <Box className={localClasses.cardTop}>
