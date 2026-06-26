@@ -222,22 +222,23 @@ export const getDashboardStyle = (windowSize, isRTL, theme) => ({
     // Pill / chip styles
     pillScroller: {
         display: 'flex',
-        flexDirection: 'column',
+        flexDirection: 'row',
+        flexWrap: 'wrap',
         gap: 8,
         padding: '12px 14px 16px',
         boxSizing: 'border-box',
-        [theme.breakpoints.up('md')]: {
-            flexDirection: 'row',
-            flexWrap: 'wrap',
+        ['@media (min-width:1300px)']: {
+            flexDirection: 'column',
+            flexWrap: 'nowrap',
         },
     },
     pillItem: {
         position: 'relative',
-        width: '100%',
+        width: 'calc(50% - 4px)',
         minWidth: 0,
         boxSizing: 'border-box',
-        [theme.breakpoints.up('md')]: {
-            width: 'calc(50% - 4px)',
+        ['@media (min-width:1300px)']: {
+            width: '100%',
         },
     },
     pillChip: {
