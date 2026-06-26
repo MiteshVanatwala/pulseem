@@ -29,6 +29,7 @@ const VerificationDialog = ({
     step = 0, value,
     onSenderSelect = undefined,
     showSelect = false,
+    value,
     ...props }) => {
     const dispatch = useDispatch();
     const { isRTL } = useSelector(state => state.core);

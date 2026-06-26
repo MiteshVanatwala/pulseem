@@ -119,6 +119,25 @@
 			"popup": {
 				"text": "<b>Please note,</b> you are about to change the default recipient removal settings.<br/>The change of settings you intend to make will mean that when a recipient requests to remove himself from the distribution list, only the means of communication through which the recipient requested the removal will be removed - the phone number or the email address, as opposed to removing any means of communication provided by the recipient. <br/><br/><b>Changing the aforementioned settings is done at your sole responsibility,</b> and by doing so you confirm that Pulseem will not bear any responsibility for any damage caused to you and/or Pulseem as a result and they will apply only to you."
 			}
+		},
+		"optIn": {
+			"title": "“Pending” Status Settings",
+			"checkboxTitle": "Send double opt-in Email to new “Pending” status recipients",
+			"redirectButton": "Email Settings for New Subscribers",
+			"edit": "Edit Double Opt in Email",
+			"regulationPopup": {
+				"title": "Pay attention!",
+				"text": "For your attention, by activating <b>Send double opt-in Email to new “Pending” status recipients setting</b>, you are requesting to activate, in relation to all recipients who are added to the Pulseem system through external systems integrations, the sending of a confirmation email for the receipt of mail by Pulseem company in accordance with the requirements of the law. Changing the aforementioned settings is carried out at your sole responsibility, and in doing so you confirm that Pulseem will not bear any responsibility for any damage caused to you and/or to Pulseem as a result, and therefore these damages will apply only to you.",
+				"acceptAgreement": "By clicking OK, I agree and accept the legal responsibility",
+				"reEnterPassword": "Re-Enter Password to complete the action",
+				"selectAuthType": "Choose a way to verify the account via email or SMS associated with this account:",
+				"typePassword": "Account Password"
+			},
+			"confirmTitle": "disable double opt-in emails",
+			"confirmDisable": "Are you sure you want to stop sending the double opt-in email to recipients with 'pending' status?",
+			"explanationPopUp": "A recipient with “Pending” status is someone who registered through a form on your website (e.g., during signup or checkout) but has not yet confirmed their subscription to receive mailings.<br/>The recipient will be added to the system along with any additional information received through the integration (such as cart details), but you will not be able to send mailings to them until they provide consent.<br/><br/><u><b>You can:</b></u><br/><ul style='list-style: disc'><li>Automatically set “Pending” recipient as active – this is at your own legal responsibility.</li><li>Send a confirmation email asking them to approve receiving your mailings.</li></ul><br/><b>Please Note:</b><br/>This setting does not apply to recipient entering with ”Pending” status through landing pages.<br/>For landing pages, the recipient status is defined separately for each page within the ”Create Landing Page” section.<br/>",
+			"explanationButton": "What does “Pending” status mean?",
+			"redirectToAccountSettings": "Go to account settings"
 		}
 	},
 	"billingSettings": {
