@@ -179,7 +179,7 @@ const TopMenu: React.FC<TopMenuProps> = ({ classes, onMenuToggle }) => {
                                 dispatch(toggleHelpDrawer());
                             }}
                         >
-                            <MdSupportAgent style={{ fontSize: 26, color: '#000' }} title={t('master.RadMenuItemResource21.Text')} />
+                            <MdSupportAgent style={{ fontSize: 26, color: '#000' }} />
                         </IconButton>
                     </SidebarTooltip>
                 </Box>

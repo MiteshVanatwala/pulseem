@@ -1,3 +1,5 @@
+import React, { useRef, useState, useCallback, useLayoutEffect } from 'react';
+import ReactDOM from 'react-dom';
 import useRedirect from "../../../helpers/Routes/Redirect";
 import { useSelector } from "react-redux";
 import { RedirectPropTypes } from "../../../helpers/Types/Redirect";
@@ -8,7 +10,9 @@ import { BiPencil, BiSitemap } from "react-icons/bi";
 import { FiZap, FiSmartphone, FiFileText, FiPieChart } from "react-icons/fi";
 import { IoLogoWhatsapp } from "react-icons/io";
 import clsx from 'clsx';
-import SidebarTooltip from './SidebarTooltip';
+
+const ARROW = 6;
+const GAP = 8;
 
 interface SidebarItemProps {
   item: any;
@@ -19,7 +23,7 @@ interface SidebarItemProps {
   onItemClick?: () => void;
   showSubmenu?: boolean;
   toggleSubmenu?: () => void;
-  currentPage: any; // passed through to sub-items only
+  currentPage: any;
   subPage: any;
   onIconClick?: () => void;
 }
@@ -39,6 +43,13 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
 }) => {
   const Redirect = useRedirect();
   const { isRTL } = useSelector((state: any) => state.core);
+
+  const iconRef = useRef<HTMLElement>(null);
+  const tooltipRef = useRef<HTMLDivElement>(null);
+  // targetY = the exact viewport Y of the icon's vertical center we want the tooltip centered on.
+  const [tooltipPos, setTooltipPos] = useState<{ x: number; targetY: number; side: 'left' | 'right' } | null>(null);
+  // correctionY self-corrects for any transformed ancestor / containing-block offset.
+  const [correctionY, setCorrectionY] = useState(0);
 
   const renderIcon = () => {
     if (item?.iconName === 'MdPeople') return <MdPeople size={28} />;
@@ -61,6 +72,34 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
   };
 
   const iconElement = renderIcon();
+
+  const handleIconMouseEnter = useCallback(() => {
+    if (!isCollapsed || !iconRef.current || typeof item.title !== 'string') return;
+    const el = iconRef.current;
+    const rect = el.getBoundingClientRect();
+    const paper = el.closest('.MuiDrawer-paper');
+    const pRect = paper?.getBoundingClientRect();
+    const targetY = rect.top + rect.height / 2;
+    if (isRTL) {
+      setTooltipPos({ x: window.innerWidth - (pRect ? pRect.left : rect.left) + GAP, targetY, side: 'right' });
+    } else {
+      setTooltipPos({ x: (pRect ? pRect.right : rect.right) + GAP, targetY, side: 'left' });
+    }
+  }, [isCollapsed, isRTL, item.title]);
+
+  const handleIconMouseLeave = useCallback(() => setTooltipPos(null), []);
+
+  // After the tooltip renders, measure its true vertical center and snap it onto the icon center.
+  // This compensates for any transformed ancestor that would otherwise offset a position:fixed element.
+  useLayoutEffect(() => {
+    if (!tooltipPos || !tooltipRef.current) return;
+    const r = tooltipRef.current.getBoundingClientRect();
+    const actualCenter = r.top + r.height / 2;
+    const delta = tooltipPos.targetY - actualCenter;
+    if (Math.abs(delta) > 0.5) {
+      setCorrectionY((c) => c + delta);
+    }
+  }, [tooltipPos]);
 
   const handleClick = (e: React.MouseEvent, _isCollapseAction: boolean = false) => {
     e.preventDefault();
@@ -93,14 +132,20 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
   const iconContainerElement = (item?.iconUnicode || item?.icon || item?.iconName) ? (
     iconElement ? (
       <div
+        ref={iconRef as React.Ref<HTMLDivElement>}
         className={clsx(classes.phoneAppBarItemIcon, classes.sidebarItemIcon)}
         onClick={handleIconClick}
+        onMouseEnter={handleIconMouseEnter}
+        onMouseLeave={handleIconMouseLeave}
       >
         {iconElement}
       </div>
     ) : (
       <Typography
+        ref={iconRef as any}
         onClick={handleIconClick}
+        onMouseEnter={handleIconMouseEnter}
+        onMouseLeave={handleIconMouseLeave}
         className={clsx(classes.phoneAppBarItemIcon, classes.sidebarItemIcon)}
       >
         {item?.iconUnicode || item?.icon}
@@ -108,11 +153,50 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
     )
   ) : null;
 
-  const wrappedIcon = isCollapsed && typeof item.title === 'string' && iconContainerElement ? (
-    <SidebarTooltip title={item.title} placement={isRTL ? 'left' : 'right'}>
-      {iconContainerElement}
-    </SidebarTooltip>
-  ) : iconContainerElement;
+  const tooltipPortal = tooltipPos ? ReactDOM.createPortal(
+    <div
+      ref={tooltipRef}
+      style={{
+        position: 'fixed',
+        ...(tooltipPos.side === 'left' ? { left: tooltipPos.x } : { right: tooltipPos.x }),
+        top: tooltipPos.targetY + correctionY,
+        transform: 'translateY(-50%)',
+        backgroundColor: '#333',
+        color: '#fff',
+        fontSize: '0.8rem',
+        padding: '4px 10px',
+        borderRadius: 4,
+        whiteSpace: 'nowrap',
+        zIndex: 99999,
+        pointerEvents: 'none',
+      }}
+    >
+      <div
+        style={{
+          position: 'absolute',
+          width: 0,
+          height: 0,
+          top: '50%',
+          transform: 'translateY(-50%)',
+          ...(tooltipPos.side === 'left'
+            ? {
+                right: '100%',
+                borderTop: `${ARROW}px solid transparent`,
+                borderBottom: `${ARROW}px solid transparent`,
+                borderRight: `${ARROW}px solid #333`,
+              }
+            : {
+                left: '100%',
+                borderTop: `${ARROW}px solid transparent`,
+                borderBottom: `${ARROW}px solid transparent`,
+                borderLeft: `${ARROW}px solid #333`,
+              }),
+        }}
+      />
+      {item.title}
+    </div>,
+    document.body
+  ) : null;
 
   const itemContent = (
     <ListItem
@@ -125,7 +209,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
       }}
       onClick={((e: React.MouseEvent) => { handleClick(e, false) })}
     >
-      {wrappedIcon}
+      {iconContainerElement}
       {!isCollapsed && (
         <>
           <ListItemText
@@ -150,6 +234,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
   return (
     <>
       {itemContent}
+      {tooltipPortal}
 
       {hasSubmenu && !isCollapsed && (
         <Collapse in={showSubmenu} timeout="auto" unmountOnExit>

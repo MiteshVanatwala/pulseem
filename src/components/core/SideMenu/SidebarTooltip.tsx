@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useLayoutEffect } from 'react';
 import ReactDOM from 'react-dom';
 
 interface SidebarTooltipProps {
@@ -9,11 +9,23 @@ interface SidebarTooltipProps {
 
 const GAP = 8;
 const ARROW = 6;
-const Y_NUDGE = 0;
+
+// pos.center = the viewport coordinate (X for bottom, Y for left/right) the tooltip must be centered on.
+// pos.edge   = the fixed coordinate on the other axis (top for bottom; left/right edge for sides).
+interface TooltipPos {
+  center: number;
+  edge: number;
+  side: 'left' | 'right';
+}
 
 const SidebarTooltip: React.FC<SidebarTooltipProps> = ({ title, placement = 'right', children }) => {
-  const [pos, setPos] = useState<{ x: number; y: number; side: 'left' | 'right' } | null>(null);
+  const [pos, setPos] = useState<TooltipPos | null>(null);
+  const [correction, setCorrection] = useState(0);
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const tooltipRef = useRef<HTMLDivElement>(null);
+
+  const isBottom = placement === 'bottom';
+  const isLeft = placement === 'left';
 
   const show = useCallback(() => {
     if (!title || !wrapperRef.current) return;
@@ -22,41 +34,57 @@ const SidebarTooltip: React.FC<SidebarTooltipProps> = ({ title, placement = 'rig
     const pRect = paper?.getBoundingClientRect();
 
     if (placement === 'right' || placement === 'left') {
+      const listItem = el.closest('.MuiListItem-root') as HTMLElement | null;
       const svgEl = el.querySelector('svg') as SVGElement | null;
-      const rect = (svgEl ?? el).getBoundingClientRect();
-      const y = rect.top + rect.height / 2 + Y_NUDGE;
+      const measureEl = listItem ?? svgEl ?? el;
+      const rect = measureEl.getBoundingClientRect();
+      const center = rect.top + rect.height / 2;
 
       if (placement === 'right') {
-        setPos({ x: (pRect ? pRect.right : rect.right) + GAP, y, side: 'left' });
+        setPos({ center, edge: (pRect ? pRect.right : rect.right) + GAP, side: 'left' });
       } else {
-        setPos({ x: window.innerWidth - (pRect ? pRect.left : rect.left) + GAP, y, side: 'right' });
+        setPos({ center, edge: window.innerWidth - (pRect ? pRect.left : rect.left) + GAP, side: 'right' });
       }
     } else {
       const rect = el.getBoundingClientRect();
-      setPos({ x: rect.left + rect.width / 2, y: rect.bottom + GAP, side: 'left' });
+      setPos({ center: rect.left + rect.width / 2, edge: rect.bottom + GAP, side: 'left' });
     }
   }, [title, placement]);
 
   const hide = useCallback(() => setPos(null), []);
 
-  const isBottom = placement === 'bottom';
-  const isLeft = placement === 'left';
+  // After render, measure the tooltip's true center on the centering axis and snap it onto the target.
+  // Corrects for any transformed ancestor that offsets a position:fixed element.
+  useLayoutEffect(() => {
+    if (!pos || !tooltipRef.current) return;
+    const r = tooltipRef.current.getBoundingClientRect();
+    const actualCenter = isBottom ? r.left + r.width / 2 : r.top + r.height / 2;
+    const delta = pos.center - actualCenter;
+    if (Math.abs(delta) > 0.5) {
+      setCorrection((c) => c + delta);
+    }
+  }, [pos, isBottom]);
 
   const boxStyle: React.CSSProperties | null = pos
-    ? {
-        position: 'fixed',
-        ...(pos.side === 'left' ? { left: pos.x } : { right: pos.x }),
-        top: pos.y,
-        transform: isBottom ? 'translateX(-50%)' : 'translateY(-50%)',
-        backgroundColor: '#333',
-        color: '#fff',
-        fontSize: '0.8rem',
-        padding: '4px 10px',
-        borderRadius: 4,
-        whiteSpace: 'nowrap',
-        zIndex: 99999,
-        pointerEvents: 'none',
-      }
+    ? isBottom
+      ? {
+          position: 'fixed',
+          left: pos.center + correction,
+          top: pos.edge,
+          transform: 'translateX(-50%)',
+          backgroundColor: '#333', color: '#fff', fontSize: '0.8rem',
+          padding: '4px 10px', borderRadius: 4, whiteSpace: 'nowrap',
+          zIndex: 99999, pointerEvents: 'none',
+        }
+      : {
+          position: 'fixed',
+          ...(pos.side === 'left' ? { left: pos.edge } : { right: pos.edge }),
+          top: pos.center + correction,
+          transform: 'translateY(-50%)',
+          backgroundColor: '#333', color: '#fff', fontSize: '0.8rem',
+          padding: '4px 10px', borderRadius: 4, whiteSpace: 'nowrap',
+          zIndex: 99999, pointerEvents: 'none',
+        }
     : null;
 
   const arrowStyle: React.CSSProperties = isBottom
@@ -95,7 +123,7 @@ const SidebarTooltip: React.FC<SidebarTooltipProps> = ({ title, placement = 'rig
       </div>
 
       {pos && title && boxStyle && ReactDOM.createPortal(
-        <div style={boxStyle}>
+        <div ref={tooltipRef} style={boxStyle}>
           <div style={arrowStyle} />
           {title}
         </div>,
