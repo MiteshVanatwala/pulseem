@@ -64,7 +64,7 @@ const useStyles = makeStyles((theme) => ({
     background: "#ffffff",
     border: "1px solid #e2e8f0",
     borderRadius: "20px",
-    padding: "24px",
+    padding: "16px",
     height: "100%",
     display: "flex",
     flexDirection: "column",
@@ -84,6 +84,7 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     justifyContent: "space-between",
     alignItems: "flex-start",
+    gap: "12px",
     marginBottom: "20px",
   },
   iconWrapper: {
@@ -105,7 +106,7 @@ const useStyles = makeStyles((theme) => ({
   statusBadge: {
     padding: "6px 12px",
     borderRadius: "20px",
-    fontSize: "12px",
+    fontSize: "10px",
     fontWeight: 700,
     textTransform: "uppercase",
     letterSpacing: "0.5px",
