@@ -115,6 +115,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
             optIn: {
               type: 'checkbox', label: BasedOnRTL ? 'אני מאשר/ת קבלת דיוור' : 'I agree to receiving marketing content',
               canBeRemovedFromLayout: true,
+              removeFromLayout: false,
               attributes: { dir: BasedOnRTL ? 'right' : 'left' }
             },
           } : {}),
