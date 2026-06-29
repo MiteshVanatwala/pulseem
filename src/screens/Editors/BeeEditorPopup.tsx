@@ -752,9 +752,14 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
       // requirement — every form-bearing popup needs at least one of each
       // somewhere across its steps. Same dialog for all three cases; only the
       // message shown varies by which requirement(s) are unmet.
+      // Exception: when DoubleOptin === false, the popup's Subscriber Settings
+      // already register every recipient as Active unconditionally, so opt-in
+      // is never required and must not factor into the warning.
       const { hasForm, hasContactField, hasOptIn } = checkFormContactRequirement(jsonsToCheck);
-      if (hasForm && (!hasContactField || !hasOptIn)) {
-        setContactFieldWarningType(!hasContactField && !hasOptIn ? 'both' : !hasContactField ? 'contact' : 'optIn');
+      const optInRequired = _webform?.DoubleOptin !== false;
+      const effectiveHasOptIn = optInRequired ? hasOptIn : true;
+      if (hasForm && (!hasContactField || !effectiveHasOptIn)) {
+        setContactFieldWarningType(!hasContactField && !effectiveHasOptIn ? 'both' : !hasContactField ? 'contact' : 'optIn');
         setShowContactFieldWarning(true);
         if (_contactFieldCheckMode === 'block') {
           return;
