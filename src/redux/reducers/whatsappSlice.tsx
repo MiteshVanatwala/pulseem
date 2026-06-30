@@ -587,6 +587,8 @@ export const getInboundWhatsappChatStatus = createAsyncThunk(
 		data: {
 			activePhoneNumber: string;
 			activeUserNumber: string;
+			lastCurrentChatMsgId?: number | null;
+			lastAllChatsMsgId?: number | null;
 		},
 		thunkAPI
 	) => {
@@ -596,6 +598,8 @@ export const getInboundWhatsappChatStatus = createAsyncThunk(
 				{
 					PhoneNumber: data.activePhoneNumber,
 					UserNumber: data.activeUserNumber,
+					LastCurrentChatMsgId: data.lastCurrentChatMsgId ?? null,
+					LastAllChatsMsgId: data.lastAllChatsMsgId ?? null,
 				}
 			);
 

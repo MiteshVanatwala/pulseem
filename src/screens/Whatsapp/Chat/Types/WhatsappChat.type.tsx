@@ -306,7 +306,7 @@ export type APIWhatsappChatData = {
 };
 
 export type APIWhatsappChatSessionData = {
-	ExpiryTime: string;
+	ExpiryTime: string | null;
 	IsIn24Window: boolean;
 	Hour: string;
 	Minute: string;
@@ -317,6 +317,8 @@ export type APIWhatsappChatSessionData = {
 	RecentMsg?: string;
 	RecentFromNumber?: string;
 	RecentMsgDate?: string;
+	LastCurrentChatMsgId?: number | null;
+	LastAllChatsMsgId?: number | null;
 };
 
 export type ContactsPaginationSetting = {
