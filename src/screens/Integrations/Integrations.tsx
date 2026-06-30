@@ -31,6 +31,7 @@ import { URL_HELPER } from "../../helpers/Links/ExternalLink";
 import { makeStyles } from "@material-ui/core/styles";
 import InfoIcon from '@material-ui/icons/Info';
 import { MdArrowForwardIos, MdArrowBackIos } from "react-icons/md";
+import { ListIcon } from "../../assets/images/managment";
 
 const useStyles = makeStyles((theme) => ({
   hubHeader: {
@@ -563,7 +564,55 @@ const Integrations = ({ classes }: any) => {
         // Detail Configuration View
         <Box>
           <Box className="head">
-            <Title Text={activeIntegration.title} classes={classes} />
+            <Box
+              className={clsx(
+                classes.flex,
+                classes.alignItemsCenter,
+                classes.mgmtTitleContainer
+              )}
+              style={{ justifyContent: "space-between", width: "auto" }}
+            >
+              {/* Left Side: Icon & Title Text (always aligned on one row) */}
+              <Box className={clsx(classes.flex, classes.alignItemsCenter)}>
+                <ListIcon className={classes.mr15} />
+                <Typography className={clsx(classes.managementTitle, "mgmtTitle")}>
+                  {activeIntegration.title}
+                </Typography>
+              </Box>
+
+              {/* Right Side: Pulseem-Themed Back Button */}
+              <Button
+                onClick={handleBackToHub}
+                style={{
+                  color: "#FF0054",
+                  fontSize: "14px",
+                  fontWeight: 700,
+                  textTransform: "none",
+                  fontFamily: "'Outfit', 'Inter', sans-serif",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  padding: "6px 12px",
+                  borderRadius: "8px",
+                  cursor: "pointer",
+                  transition: "all 0.2s ease",
+                  flexShrink: 0,
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = "rgba(255, 0, 84, 0.04)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "transparent";
+                }}
+              >
+                {isRTL ? (
+                  <MdArrowForwardIos size={12} style={{ marginLeft: 6 }} />
+                ) : (
+                  <MdArrowBackIos size={12} style={{ marginRight: 6 }} />
+                )}
+                {t("integrations.backToHub")}
+              </Button>
+            </Box>
           </Box>
           <Box className={"containerBody"}>
             {renderActiveIntegrationComponent()}
