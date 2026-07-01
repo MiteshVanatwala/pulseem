@@ -159,7 +159,7 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 			const {
 				businessInfo, phoneNumbers
 			} = Data;
-			setBusinessInfo(businessInfo);
+			setBusinessInfo({ ...businessInfo, business_verification_status: businessInfo?.business_verification_status || 'pending' });
 			setPhoneNumbers(phoneNumbers);
 		} else if (StatusCode === 4) {
 		}
