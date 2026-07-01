@@ -553,40 +553,47 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 					// Q2: new message from another contact detected — update sidebar
 					// LastAllChatsMsgId is non-null only when SP found a row from another contact after the cursor
 					if (data.LastAllChatsMsgId != null) {
+						const isFirstQ2Poll = lastAllChatsMsgIdRef.current === null;
 						lastAllChatsMsgIdRef.current = data.LastAllChatsMsgId;
 
-						const isNewInbound =
-							data.RecentFromNumber &&
-							data.RecentMsgDate &&
-							data.RecentMsgDate !== lastSeenRecentMsgDateRef.current;
+						if (isFirstQ2Poll) {
+							// First poll: cursor was null so SP returned historical rows — just record
+							// the baseline date so the next poll can detect genuinely new messages.
+							lastSeenRecentMsgDateRef.current = data.RecentMsgDate ?? '';
+						} else {
+							const isNewInbound =
+								data.RecentFromNumber &&
+								data.RecentMsgDate &&
+								data.RecentMsgDate !== lastSeenRecentMsgDateRef.current;
 
-						if (isNewInbound) {
-							lastSeenRecentMsgDateRef.current = data.RecentMsgDate!;
+							if (isNewInbound) {
+								lastSeenRecentMsgDateRef.current = data.RecentMsgDate!;
 
-							// Immediately reorder sidebar without waiting for a full API refresh
-							setSideChatContacts((prev) => {
-								const idx = prev.findIndex((c) =>
-									compareLastNineDigits(c.PhoneNumber, data.RecentFromNumber!),
-								);
-								if (idx === -1) return prev;
-								const updated = [...prev];
-								updated[idx] = {
-									...updated[idx],
-									LastMessage: data.RecentMsg ?? updated[idx].LastMessage,
-									LastMessageDate: data.RecentMsgDate ?? updated[idx].LastMessageDate,
-								};
-								const [promoted] = updated.splice(idx, 1);
-								return [promoted, ...updated];
-							});
+								// Immediately reorder sidebar without waiting for a full API refresh
+								setSideChatContacts((prev) => {
+									const idx = prev.findIndex((c) =>
+										compareLastNineDigits(c.PhoneNumber, data.RecentFromNumber!),
+									);
+									if (idx === -1) return prev;
+									const updated = [...prev];
+									updated[idx] = {
+										...updated[idx],
+										LastMessage: data.RecentMsg ?? updated[idx].LastMessage,
+										LastMessageDate: data.RecentMsgDate ?? updated[idx].LastMessageDate,
+									};
+									const [promoted] = updated.splice(idx, 1);
+									return [promoted, ...updated];
+								});
 
-							// Debounced full contacts-list refresh (5 seconds)
-							if (contactsRefreshDebounceRef.current) {
-								clearTimeout(contactsRefreshDebounceRef.current);
+								// Debounced full contacts-list refresh (5 seconds)
+								if (contactsRefreshDebounceRef.current) {
+									clearTimeout(contactsRefreshDebounceRef.current);
+								}
+								contactsRefreshDebounceRef.current = setTimeout(() => {
+									suppressNextLoaderRef.current = true;
+									fetchMoreContactsRef.current?.(sideBarSearchTextRef.current, filterBySelected, true);
+								}, 5000);
 							}
-							contactsRefreshDebounceRef.current = setTimeout(() => {
-								suppressNextLoaderRef.current = true;
-								fetchMoreContactsRef.current?.(sideBarSearchTextRef.current, filterBySelected, true);
-							}, 5000);
 						}
 					}
 				}
