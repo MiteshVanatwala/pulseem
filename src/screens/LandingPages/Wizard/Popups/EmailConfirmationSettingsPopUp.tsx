@@ -176,7 +176,7 @@ const EmailConfirmationSettingsPopUp = ({ classes, isOpen, onClose, onConfirm, o
                         >
                             {t("common.select")}
                         </option>
-                        {verifiedEmails.map((item: any, index: any) => {
+                        {verifiedEmails.filter((item: any) => item.IsVerified).map((item: any, index: any) => {
                             return <option
                                 key={index}
                                 value={item.Number}
