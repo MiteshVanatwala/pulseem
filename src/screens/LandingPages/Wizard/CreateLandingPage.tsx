@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import DefaultScreen from '../../DefaultScreen';
 import { Title } from '../../../components/managment/Title';
@@ -41,6 +41,9 @@ import CloseButtonConfig from './Tabs/CloseButtonConfig';
 import TierPlans from '../../../components/TierPlans/TierPlans';
 import { UserRoles } from '../../../Models/SubUser/SubUsers';
 import { get } from 'lodash';
+import EmailConfirmationSettingsPopUp from './Popups/EmailConfirmationSettingsPopUp';
+import { getCookie, setCookie } from '../../../helpers/Functions/cookies';
+import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog';
 
 const generateGuid = () => {
 	return Date.now().toString(36) + Math.random().toString(36).substring(2);
@@ -69,6 +72,7 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 	const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
 	const [showTierPlans, setShowTierPlans] = useState(false);
 	const [toastMessage, setToastMessage] = useState(null);
+	const [emailVerificationPopup, setEmailVerificationPopup] = useState(false);
 	const [errors, setErrors] = useState({
 		PageName: '',
 		formLanguage: '',
@@ -174,9 +178,15 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 		enableRecaptcha: false,
 		recaptchaVersion: 'v3',
 		recaptchaSiteKey: '',
+		IsEmailConfirmationActive: false,
+		ConfirmationFromEmail: '',
+		ConfirmationFromName: '',
+		ConfirmationSubject: ''
 	});
 
 	const [tabValue, setTabValue] = useState<string>('1');
+	const [showConfirmationSettings, setShowConfirmationSettings] = useState<boolean>(false);
+	const isFirstRender = useRef(true);
 	// const [template, setTemplate] = useState('');
 	const [TierMessageCode, setTierMessageCode] = useState<string>('');
 	const { publicTemplates, templatesBySubAccount } = useSelector(
@@ -221,6 +231,7 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 
 	const getData = async () => {
 		setIsLoader(true);
+		const emailConfirmatopmCookie = getCookie('LP-EmailConfirmation');
 
 		const lpId: number | any = id || -1;
 		// @ts-ignore
@@ -281,6 +292,11 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 				enableRecaptcha: response.Data?.WebForm?.EnableRecaptcha || false,
 				recaptchaVersion: response.Data?.WebForm?.EnableRecaptcha || 'v3',
 				recaptchaSiteKey: response.Data?.WebForm?.EnableRecaptcha ? reCAPTCHAKey : '',
+				IsEmailConfirmationActive: (lpId && lpId > 0) ? response.Data?.WebForm?.IsEmailConfirmationActive : emailConfirmatopmCookie?.IsEmailConfirmationActive ?? true,
+				ConfirmationFromEmail: (lpId && lpId > 0) ? response.Data?.WebForm?.ConfirmationFromEmail : emailConfirmatopmCookie?.ConfirmationFromEmail ?? '',
+				ConfirmationSubject: (lpId && lpId > 0) ? response.Data?.WebForm?.ConfirmationSubject : emailConfirmatopmCookie?.ConfirmationSubject ?? '',
+				ConfirmationFromName: (lpId && lpId > 0) ? response.Data?.WebForm?.ConfirmationFromName : emailConfirmatopmCookie?.ConfirmationFromName ?? '',
+				DoubleOptin: (lpId && lpId > 0) ? response.Data?.WebForm?.DoubleOptin : emailConfirmatopmCookie?.DoubleOptin ?? ''
 			});
 			if (response.Data?.WebForm?.LinkPreviewIconName !== '') {
 				handleSelectedImage(response.Data?.WebForm?.LinkPreviewIconName, true);
@@ -735,6 +751,13 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 			const response = await dispatch(saveLandingPage(req));
 			setIsLoader(false);
 			handleSaveResponse(response?.payload, editorType);
+			setCookie('LP-EmailConfirmation', JSON.stringify({
+				DoubleOptin: landingPageModel.DoubleOptin,
+				ConfirmationFromEmail: landingPageModel.ConfirmationFromEmail,
+				ConfirmationFromName: landingPageModel.ConfirmationFromName,
+				ConfirmationSubject: landingPageModel.ConfirmationSubject,
+				IsEmailConfirmationActive: landingPageModel.IsEmailConfirmationActive
+			}));
 			return true;
 		} else {
 			setDialogType({ type: 'validationDialog' })
@@ -933,6 +956,34 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 		return <Toast customData={null} data={toastMessage} />;
 	};
 
+	const onRefresh = () => {
+		getData()
+		return;
+	}
+
+	const onConfirmEmailSettings = (retVal: any) => {
+		const newDetails = {
+			...landingPageModel,
+			...retVal
+		};
+		setLandingPageModel(newDetails)
+		setShowConfirmationSettings(false);
+	}
+
+	// useEffect(() => {
+	// 	if (isFirstRender.current && !landingPageModel.ID) {
+	// 		return;
+	// 	}
+	// 	if (isFirstRender.current && landingPageModel?.IsEmailConfirmationActive === true) {
+	// 		isFirstRender.current = false;
+	// 		return;
+	// 	}
+
+	// 	if (landingPageModel?.IsEmailConfirmationActive === true) {
+	// 		setShowConfirmationSettings(true);
+	// 	}
+	// }, [landingPageModel.IsEmailConfirmationActive])
+
 	return (
 		<DefaultScreen
 			currentPage="landingPages"
@@ -1035,6 +1086,7 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 									removeEmailId={removeEmailId}
 									errors={errors}
 									onDone={getData}
+									onShowEmailConfirmationSettings={(show: boolean) => setShowConfirmationSettings(show)}
 								/>
 								{/* {renderAutofillFields()} */}
 							</Grid>}
@@ -1131,7 +1183,32 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 				isOpen={showTierPlans}
 				onClose={() => setShowTierPlans(false)}
 			/>}
-		</DefaultScreen >
+			{
+				showConfirmationSettings && <EmailConfirmationSettingsPopUp
+					classes={classes}
+					isOpen={showConfirmationSettings}
+					onClose={() => {
+						setShowConfirmationSettings(false);
+						onRefresh();
+					}}
+					onConfirm={(retVal: any) => {
+						onConfirmEmailSettings(retVal);
+					}}
+					optInSettings={landingPageModel}
+					//@ts-ignore
+					onVerificationEmail={() => setEmailVerificationPopup(true) }
+				/>
+			}
+			{emailVerificationPopup && <VerificationDialog
+				textButtonOnSuccess={t('common.close')}
+				classes={classes}
+				variant="email"
+				isOpen={emailVerificationPopup}
+				step={0}
+				value={landingPageModel.ConfirmationFromEmail}
+				onClose={() => setEmailVerificationPopup(false)}
+			/>}
+		</DefaultScreen>
 	)
 }
 
