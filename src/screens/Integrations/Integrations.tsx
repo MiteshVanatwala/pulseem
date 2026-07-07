@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Tabs, Tab, Box } from "@material-ui/core";
+import { Tabs, Tab, Box, Button, Typography } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import DefaultScreen from "../DefaultScreen";
 import clsx from "clsx";
@@ -23,15 +23,18 @@ import Ecwid from "./Ecwid";
 import EShop from "./EShop";
 import Wix from "./Wix";
 import Klaviyo from "./Klaviyo";
-import { useSelector } from "react-redux";
 import { StateType } from "../../Models/StateTypes";
+import { RxOpenInNewWindow } from "react-icons/rx";
+import { ListIcon } from "../../assets/images/managment";
+import { useSelector } from "react-redux";
+import DoubleOptInSettingsExplanationPopUp from "../Settings/AccountSettings/Popups/DoubleOptInSettingsExplanationPopUp";
 
 
 const Integrations = ({ classes }: any) => {
   const { t } = useTranslation();
   const [tabValue, setTabValue] = useState('0');
-  const { companyName } = useSelector((state: StateType) => state.core);
-
+  const { windowSize, companyName } = useSelector((state: any) => state.core)
+  const [showOptInExplanationPopup, setShowOptInExplanationPopup] = useState<boolean>(false);
   useEffect(() => {
     const integrationTitles = {
       '0': { title: `${t('integrations.shopify.title')}` },
@@ -60,11 +63,62 @@ const Integrations = ({ classes }: any) => {
       <Box className={"head"}>
         <Box className={'topSection'}>
           <Title
-            Text={t('integrations.title')}
             classes={classes}
+            Element={
+              <Box className={clsx(classes.flex, windowSize !== 'xs' ? classes.spaceBetween : '', classes.flexWrap)}>
+                {
+                  windowSize === 'xs' && <ListIcon className={classes.mr15} />
+                }
+                <Typography
+                  style={{ width: 'auto' }}
+                  className={clsx(classes.managementTitle, "mgmtTitle")}
+                >
+                  {t('integrations.title')}
+                </Typography>
+                <Button
+                  style={{ width: windowSize === 'xs' ? '100%' : '', maxWidth: windowSize === 'xs' ? '100%' : 'unset', marginTop: windowSize !== 'xs' ? 'unset' : 10 }}
+                  className={clsx(
+                    classes.btn,
+                    classes.btnRounded,
+                    classes.mr10
+                  )}
+                  onClick={() =>
+                    setShowOptInExplanationPopup(true)
+                  }
+                >
+                  <>
+                    {t("settings.accountSettings.optIn.redirectButton")}
+                  </>
+                </Button>
+              </Box>
+            }
           />
         </Box>
       </Box>
+      {showOptInExplanationPopup && <DoubleOptInSettingsExplanationPopUp
+        classes={classes}
+        isOpen={showOptInExplanationPopup}
+        onClose={() => {
+          setShowOptInExplanationPopup(false);
+        }}
+        onCancel={() => {
+          setShowOptInExplanationPopup(false);
+        }}
+        redirectButton={<Button
+          className={clsx(
+            classes.btn,
+            classes.btnRounded
+          )}
+          onClick={() =>
+            window.open('/react/AccountSettings?doi=true', '_blank')
+          }
+          startIcon={<RxOpenInNewWindow />}
+        >
+          <>
+            {t("settings.accountSettings.optIn.redirectButton")}
+          </>
+        </Button>}
+      />}
       <Box className={'containerBody'}>
         <Tabs
           value={tabValue}
@@ -139,17 +193,13 @@ const Integrations = ({ classes }: any) => {
             className={classes.iconTab}
             value='10'
           />
-          {
-            companyName === 'LizaD' && (
-              <Tab
-                label={t('integrations.verifone.title')}
-                icon={<img src={VerifoneIcon} alt={t('integrations.verifone.title')} />}
-                classes={{ root: classes.tabText, selected: classes.activeTab }}
-                className={classes.iconTab}
-                value='14'
-              />
-            )
-          }
+          <Tab
+            label={t('integrations.verifone.title')}
+            icon={<img src={VerifoneIcon} alt={t('integrations.verifone.title')} />}
+            classes={{ root: classes.tabText, selected: classes.activeTab }}
+            className={classes.iconTab}
+            value='14'
+          />
         </Tabs>
         <TabContext value={`${tabValue}`}>
           <TabPanel value='0' className={clsx(classes.pt0)}>

@@ -66,7 +66,19 @@ const graphTextWidth = {
   xl: 250,
 };
 
-export const getGeneralStyle = (windowSize, isRTL, theme) => ({
+export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
+  const safeTheme = theme && typeof theme.breakpoints !== 'undefined' ? theme : { breakpoints: { down: () => '@media (max-width:0px)' }, spacing: (n) => n * 8 };
+  return ({
+    editAgentIconButton: {
+      background: '#f5f6fa',
+      borderRadius: '50%',
+      boxShadow: '0 1px 4px rgba(0,0,0,0.08)',
+      border: '1px solid #e0e0e0',
+      width: 32,
+      height: 32,
+      padding: 4,
+      minWidth: 0,
+    },
   background: {
     position: 'fixed',
     bottom: 0,
@@ -267,6 +279,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   marginSides5: {
     marginRight: 5,
     marginLeft: 5,
+  },
+  marginSides10: {
+    marginRight: '10px !important',
+    marginLeft: '10px !important',
   },
   copyClip: {
     border: "1px solid #3476b0",
@@ -744,6 +760,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   spaceBetween: {
     display: "flex",
     justifyContent: "space-between",
+  },
+  mobileColumn: {
+    '@media screen and (max-width: 1024px)': {
+      flexDirection: 'column',
+      alignItems: 'flex-start',
+      height: 'auto',
+      gap: 6,
+    },
   },
   spaceEvenly: {
     display: "flex",
@@ -1459,7 +1483,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     cursor: "pointer",
     border: "solid 1px #ff3343",
     textTransform: "none",
-    [theme.breakpoints.down("xs")]: {
+    [safeTheme.breakpoints.down("xs")]: {
       width: 'auto !important',
       margin: '5px !important',
       fontSize: '14px !important',
@@ -2207,7 +2231,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     fontSize: "22px",
     color: "#555",
     marginInlineEnd: "5px",
-    [theme.breakpoints.down("xs")]: {
+    [safeTheme.breakpoints.down("xs")]: {
       fontSize: 18,
       paddingTop: 5,
       paddingBottom: 10
@@ -2240,7 +2264,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     "@media screen and (max-width: 768px)": {
       fontSize: "14px",
     },
-    [theme.breakpoints.down('xs')]: {
+    [safeTheme.breakpoints.down('xs')]: {
       fontSize: '15px !important',
       width: 80,
       height: 30,
@@ -2259,7 +2283,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     "@media screen and (max-width: 768px)": {
       fontSize: "14px",
     },
-    [theme.breakpoints.down('xs')]: {
+    [safeTheme.breakpoints.down('xs')]: {
       fontSize: '15px !important'
     },
   },
@@ -2295,7 +2319,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       justifyContent: 'center',
       alignItems: 'center',
     },
-    [theme.breakpoints.down("xs")]: {
+    [safeTheme.breakpoints.down("xs")]: {
       minWidth: 'auto',
       fontSize: 16,
     },
@@ -2608,7 +2632,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     border: "3px solid #0371ad",
     borderRadius: 5,
     margin: "1rem",
-    padding: "1rem",
     minWidth: dialogWidth[windowSize],
     "& $notification": {
       "& $iconWrapper": {
@@ -2867,7 +2890,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       paddingTop: 20,
       backgroundColor: '#fff',
       border: "2px solid #F0F5FF",
-      [theme.breakpoints.down("xs")]: {
+      [safeTheme.breakpoints.down("xs")]: {
         paddingTop: 10,
         paddingInline: 10,
       },
@@ -2989,7 +3012,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
           paddingLeft: 15,
           paddingRight: 15,
           paddingBottom: 10,
-          [theme.breakpoints.down("xs")]: {
+          [safeTheme.breakpoints.down("xs")]: {
             paddingLeft: 0,
             paddingRight: 0,
           },
@@ -3008,7 +3031,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
           },
           '& .svg_app_settings': {
             position: 'absolute',
-            top: 121.3,
+            top: 40,
             right: isRTL ? 'auto' : 90,
             left: isRTL ? 90 : 'auto',
             transform: isRTL ? 'scaleX(1)' : 'scaleX(-1)'
@@ -3632,9 +3655,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
         minHeight: 25,
         display: 'block',
         alignItems: 'center',
-        '&:focus': {
-          backgroundColor: '#fff !important'
-        }
+        // '&:focus': {
+        //   backgroundColor: '#fff !important'
+        // }
       },
       '& svg': {
         color: '#ff3343',
@@ -4247,9 +4270,15 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     '& .MuiInput-root': {
       direction: 'ltr !important',
     },
+    '@media screen and (max-width: 960px)': {
+      '& .MuiAutocomplete-input': {
+        textAlign: 'center',
+        marginLeft: '2rem',
+      },
+    },
   },
   SignUpLanguageDropdown: {
-    width: 200,
+    width: 180,
     borderRadius: 5,
     '& .MuiSelect-select': {
       padding: '5px 10px !important',
@@ -4307,6 +4336,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     display: 'flex',
     alignItems: 'center',
     flexDirection: 'row'
+  },
+  mInline5: {
+    marginInline: 5
   },
   mInline15: {
     marginInline: 15
@@ -4374,8 +4406,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       maxWidth: '80vw'
     },
     '& .payPerRecipientChild': {
-      minHeight: '70vh',
-      maxHeight: '70vh'
+      // minHeight: '70vh',
+      maxHeight: '70vh',
+      overflowX: 'hidden'
     }
   },
   customSlider: {
@@ -4480,6 +4513,26 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     background: 'linear-gradient(0deg, #FF0076 0%, #FF0054 23.8%, #FF4D2A 100%)',
     overflowX: 'hidden',
     fontFamily: isRTL ? 'Heebo' : 'inherit',
+    position: 'relative',
+    "@media (max-width: 768px)": {
+      background: 'linear-gradient(0deg, #FF4D2A 0%, #FF0054 76.2%, #FF0076 100%)'
+    },
+    '& h1': {
+      color: '#beff00',
+      fontWeight: 900,
+      marginBottom: '.75rem',
+      fontSize: '2.75rem',
+      "@media screen and (min-width: 1280px)": {
+        fontSize: '3.5rem',
+        lineHeight: '6rem',
+      },
+      "@media screen and (min-width: 1621px)": {
+        fontSize: '4.5rem',
+      },
+      "@media screen and (min-width: 2480px)": {
+        fontSize: '6rem',
+      },
+    },
     '& *': {
       fontSize: 'x-large',
       "@media screen and (max-width: 768px)": {
@@ -4488,17 +4541,24 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     },
     '& .signUpContainer': {
       marginTop: '5%',
+      position: 'relative',
       '& .widgetContainer': {
         position: 'relative',
         background: '#fff',
-        width: '40%',
         margin: 'auto',
         height: '50%',
         borderRadius: '50px',
         padding: '20px 50px',
         boxShadow: '0 10px 30px -6px black',
         fontSize: '2rem',
-        '&.remove-my-data': {
+        zIndex: 10,
+        "@media screen and (max-width: 1440px)": {
+          padding: '20px 40px',
+        },
+        "@media screen and (max-width: 1200px)": {
+          padding: '20px 35px',
+        },
+        "&.remove-my-data": {
           width: '35%',
           padding: '20px',
           paddingBottom: '2rem',
@@ -4520,52 +4580,200 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
           position: 'absolute',
           padding: '0px',
           fontSize: '5rem',
-          color: 'black'
+          color: 'black',
+          "@media screen and (max-width: 1440px)": {
+            height: '70px',
+            width: '70px',
+            fontSize: '4.5rem',
+          },
+          "@media screen and (max-width: 1200px)": {
+            height: '65px',
+            width: '65px',
+            fontSize: '4rem',
+          },
         },
         '& .previous': {
           left: '-40px',
+          "@media screen and (max-width: 1440px)": {
+            left: '-35px',
+          },
+          "@media screen and (max-width: 1200px)": {
+            left: '-32px',
+          },
         },
         '& .next': {
           right: '-40px',
+          "@media screen and (max-width: 1440px)": {
+            right: '-35px',
+          },
+          "@media screen and (max-width: 1200px)": {
+            right: '-32px',
+          },
         },
+      },
+    },
+    '& .down-arrow-container': {
+      display: 'none',
+      zIndex: 1,
+      pointerEvents: 'none',
+      position: 'relative',
+      "@media screen and (min-width: 960px)": {
+        display: 'flex',
+        justifyContent: 'end',
+        alignItems: 'flex-start',
+      },
+      '& .down-arrow-image': {
+        width: 'clamp(90px, 8vw, 120px)',
+        height: 'auto',
+        position: 'absolute',
+        right: 'clamp(0.5rem, 1vw, 1.5rem)',
+        top: 'clamp(-18rem, -19vw, -22rem)',
+      },
+    },
+    '& .mascot-container': {
+      display: 'none',
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+      justifyContent: 'flex-start',
+      zIndex: 1,
+      pointerEvents: 'none',
+      position: 'relative',
+      marginTop: '10rem',
+      "@media screen and (min-width: 2100px)": {
+        marginTop: '14rem',
+      },
+      "@media screen and (min-width: 960px)": {
+        display: 'flex',
+      },
+      '& .mascot-image': {
+        width: 'clamp(240px, 20vw, 320px)',
+        height: 'auto',
+        marginLeft: 'clamp(-4.5rem, -5vw, -6rem)',
+      },
+      '& .arrow-image': {
+        width: 'clamp(90px, 7.5vw, 120px)',
+        height: 'auto',
+        marginTop: 'clamp(5rem, 5vw, 6rem)',
+      },
+      '& .time-text': {
+        color: '#fff',
+        fontSize: 'clamp(1.1rem, 1.3vw, 1.5rem)',
+        fontWeight: 700,
+        textAlign: 'center',
+        lineHeight: 1.2,
+        marginTop: '1rem',
+        width: '115px',
+        whiteSpace: 'normal',
+        wordBreak: 'break-word',
+        direction: isRTL ? 'rtl' : 'ltr',
+        marginLeft: 'clamp(-105px, -7.5vw, -85px)',
+        "@media screen and (min-width: 960px) and (max-width: 1023px)": {
+          marginLeft: 'clamp(-105px, -7.5vw, -95px)',
+        },
+        "@media screen and (min-width: 960px) and (max-width: 1075px)": {
+          marginTop: '0rem',
+        },
+        "@media screen and (min-width: 1157px) and (max-width: 1490px)": {
+          width: '100px',
+          wordBreak: 'break-word',
+        },
+        "@media screen and (min-width: 960px) and (max-width: 1157px)": {
+          wordBreak: 'normal',
+          width: '110px',
+        },
+      },
+    },
+    '& .mobile-header-container': {
+      '& h1': {
+        margin: 0,
+        fontSize: '2rem',
+      },
+      '& .MuiMobileStepper-root': {
+         margin: '8px auto',
+         padding: 5,
+      },
+      '& .mobile-down-arrow': {
+        position: 'absolute',
+        zIndex: 999,
+        marginLeft: '15vw',
+        marginTop: '-2.75rem',
+        height: 70,
+      },
+      '& .mobile-mascot': {
+        position: 'absolute',
+        zIndex: 998,
+        right: isRTL ? '1rem' : 'auto',
+        bottom: 0,
+        height: 155,
+        transform: isRTL ? 'none' : 'scaleX(-1)',
       },
     },
     '& .stepper': {
       width: 'fit-content',
-      margin: 'auto',
+      margin: '16px auto',
       background: 'transparent',
-      border: 'solid 2px #fff',
-      marginTop: '20px',
-      '& .MuiMobileStepper-dot': {
-        backgroundColor: '#fff',
-        '&.MuiMobileStepper-dotActive': {
-          backgroundColor: '#beff00',
-        }
-      }
+      border: '1.25px solid #beff00',
+    },
+    '& .MuiMobileStepper-dotActive': {
+      backgroundColor: '#beff00 !important',
+    },
+    '& .MuiMobileStepper-dot': {
+      backgroundColor: '#fff',
     }
   },
   signUpFieldOfInterestButton: {
     borderRadius: 50,
     borderColor: '#000',
+    transition: 'background 0.2s ease',
     "@media screen and (max-width: 768px)": {
       width: '100%',
       display: 'flex'
     },
     '&.selected': {
-      background: '#beff00'
-    },
-    '&:hover': {
-      background: '#beff00',
+      background: '#beff00 !important',
       color: '#000',
       '& svg': {
         color: '#000',
         fill: '#000'
       }
     },
+    '@media (hover: hover)': {
+      '&:hover:not(.selected)': {
+        background: '#beff00',
+        color: '#000',
+        '& svg': {
+          color: '#000',
+          fill: '#000'
+        },
+      },
+    },
+    '@media (hover: none)': {
+      '&:active:not(.selected)': {
+        background: '#beff00',
+        color: '#000',
+        '& svg': {
+          color: '#000',
+          fill: '#000'
+        },
+      },
+      '&:hover:not(.selected)': {
+        background: 'transparent',
+        color: '#000',
+        '& svg': {
+          color: '#000',
+          fill: '#000'
+        },
+      },
+    },
   },
   agentNameContainer: {
     backgroundColor: '#5EBD6A',
-    paddingInline: 7
+    color: '#fff',
+    paddingInline: 5,
+    paddingBlock: 2,
+    fontSize: '12px',
+    borderRadius: '4px',
+    whiteSpace: 'nowrap'
   },
   removeMyDataButton: {
     fontSize: '1.2rem',
@@ -4628,7 +4836,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     background: 'linear-gradient(-45deg, #ff0076, #ff4d2a)',
     color: 'white',
     padding: '6px',
-    width: '45%',
+    width: '50%',
     borderRadius: '10px',
     fontWeight: 'bold',
     fontSize: '0.8rem',
@@ -4833,7 +5041,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   // Email Marketing Slider Styles
   emailMarketingSliderContainer: {
     padding: 24,
-    maxWidth: 1200,
     background: '#fff',
     border: '1px solid #e2e8f0',
     borderRadius: 12,
@@ -4987,5 +5194,1100 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
    pulseCheckbox: {
     padding: isRTL ? '4px 0px 4px 8px' : '4px 8px 4px 0px'
-  }
+  },
+  frozenCampaignsContainer: {
+    marginBottom: safeTheme.spacing(3),
+  },
+  contactUsDialog: {
+    width: 'auto !important',
+    minWidth: '500px !important',
+    maxWidth: '600px !important',
+    '@media (max-width: 768px)': {
+      minWidth: '400px !important',
+      maxWidth: '500px !important',
+    },
+    '@media (max-width: 600px)': {
+      minWidth: '350px !important',
+      maxWidth: '450px !important',
+    },
+    '@media (max-width: 500px)': {
+      minWidth: '350px !important',
+      maxWidth: '400px !important',
+    },
+  },
+  contactUsContent: {
+    padding: '0px 8px',
+    margin: '0px',
+  },
+  contactUsDialogContainer: {
+    "& .MuiPaper-root": {
+      overflowX: "hidden",
+      width: 'auto',
+      minWidth: '500px !important',
+      maxWidth: '600px !important',
+    },
+    "& .MuiDialog-scrollPaper": {
+      "@media screen and (max-width: 450px)": {
+        zoom: '85%'
+      },
+      "@media screen and (max-width: 330px)": {
+        zoom: '70%'
+      }
+    },
+    "& .MuiDialog-paperWidthSm": {
+      minWidth: '500px !important',
+      maxWidth: '600px !important',
+    },
+    "& .MuiDialog-paperScrollPaper": {
+      maxHeight: "100%",
+      borderRadius: 15
+    },
+  },
+  apiErrorDialogContainer: {
+    "& .MuiDialog-paperWidthSm": {
+      maxWidth: '600px !important',
+      width: '100% !important',
+      minWidth: 'unset !important',
+      margin: '0 auto',
+    },
+  },
+  textUnderlineDialogButton: {
+    textDecoration: 'underline',
+    cursor: 'pointer',
+    fontWeight: 700,
+    margin: isRTL ? '0px 5px 0px 0px' : '0px 0px 0px 5px',
+    color: '#ff0076'
+  },
+  textColorHeading: {
+    color: '#ff0076',
+    fontWeight: 900,
+  },
+  contactUsCloseCont: {
+    marginBottom: 8,
+    borderRadius: '50%',
+    width: 36,
+    height: 36,
+    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
+    '& svg': {
+      width: 16,
+      height: 16,
+      padding: 10
+    },
+  },
+  contactUsInputField: {
+    maxWidth: 'auto',
+    margin: '0 auto',
+    '& .MuiOutlinedInput-root': {
+      borderRadius: '12px',
+      backgroundColor: '#f5f5f5',
+      '& fieldset': {
+        borderColor: '#e0e0e0',
+      },
+      '&:hover fieldset': {
+        borderColor: '#bdbdbd',
+      },
+      '&.Mui-focused fieldset': {
+        borderColor: '#1976d2',
+      },
+    },
+    '& .MuiOutlinedInput-input': {
+      padding: '8px 16px',
+    },
+  },
+  contactUsTextField: {
+    maxWidth: 'auto',
+    margin: '0 auto',
+    '& .MuiOutlinedInput-root': {
+      borderRadius: '12px',
+      backgroundColor: '#f5f5f5',
+      '& fieldset': {
+        borderColor: '#e0e0e0',
+      },
+      '&:hover fieldset': {
+        borderColor: '#bdbdbd',
+      },
+      '&.Mui-focused fieldset': {
+        borderColor: '#1976d2',
+      },
+    },
+    '& .MuiOutlinedInput-multiline': {
+      padding: '12px',
+    },
+  },
+  errorPlaceholder: {
+    boxShadow: '0 1px 8px rgba(0, 0, 0, 0.15)',
+    borderRadius: '12px',
+    padding: 12,
+    textAlign: 'center'
+  },
+  smallButton: {
+    minHeight: 'auto',
+    fontSize: '9px !important',
+    padding: '0px 6px',
+    minWidth: 'auto',
+  },
+  filterChip: {
+    fontSize: '12px',
+    background: 'linear-gradient(90deg, #ffffff 1.31%, #ffffff 33.07%, #ffffff 134.74%)',
+    color: '#070707',
+    border: '1px solid #FF3343',
+    height: '32px',
+    display: 'flex',
+    alignItems: 'center',
+    '& .MuiChip-label': {
+      color: '#070707',
+      justifyContent: 'flex-start',
+      textAlign: 'left',
+      lineHeight: '1'
+    },
+    '& .MuiChip-deleteIcon': {
+      color: '#FF3343'
+    }
+  },
+  agentChip: {
+    fontSize: '12px',
+    background: 'linear-gradient(90deg, #ffffff 1.31%, #ffffff 33.07%, #ffffff 134.74%)',
+    color: '#070707',
+    border: '1px solid #FF3343',
+    height: '32px',
+    display: 'flex',
+    alignItems: 'center',
+    '& .MuiChip-label': {
+      color: '#070707',
+      justifyContent: 'flex-start',
+      textAlign: 'left',
+      lineHeight: '1'
+    },
+    '& .MuiChip-deleteIcon': {
+      color: '#FF3343'
+    }
+  },
+  // Edit Tags Modal Styles
+  editTagsDialogTitle: {
+    backgroundColor: '#FF3343',
+    color: '#fff',
+    padding: '16px 20px',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '20px',
+    justifyContent: 'space-between',
+    flexWrap: 'nowrap',
+    fontSize: '18px',
+  },
+  editTagsHeaderContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '20px',
+    minWidth: 0
+  },
+  editTagsIcon: {
+    flexShrink: 0
+  },
+  editTagsHeaderText: {
+    // fontSize: '16px',
+    fontWeight: '600',
+    whiteSpace: 'nowrap'
+  },
+  editTagsCloseIcon: {
+    fontSize: '30px'
+  },
+  editTagsDialogContent: {
+    padding: '20px',
+    maxHeight: '500px',
+    overflow: 'auto',
+    backgroundColor: '#f9f9f9'
+  },
+  editTagsItem: {
+    marginBottom: '16px',
+    paddingBottom: '16px',
+    borderBottom: '1px solid #e0e0e0'
+  },
+  editTagsLabel: {
+    fontSize: '14px',
+    color: '#bbb',
+    fontWeight: '600',
+    marginBottom: '8px',
+    display: 'block'
+  },
+  editTagsInputRow: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    marginBottom: '8px',
+    justifyContent: 'space-between'
+  },
+  editTagsTextField: {
+    flex: 0.72,
+    marginBottom: '0',
+    '& .MuiOutlinedInput-root': {
+      // fontSize: '13px',
+      // padding: '5px 12px',
+      borderRadius: '4px',
+      backgroundColor: '#fff'
+    },
+    '& .MuiOutlinedInput-input': {
+      // fontSize: '13px',
+      // padding: '5px 12px',
+      borderRadius: '4px',
+      backgroundColor: '#fff'
+    }
+  },
+  editTagsButtonsContainer: {
+    display: 'flex',
+    gap: '8px',
+    alignItems: 'center'
+  },
+  editTagsUpdateButton: {
+    borderColor: '#FF3343',
+    color: '#FF3343',
+    fontSize: '12px',
+    padding: '6px 12px',
+    textTransform: 'none',
+    flexShrink: 0
+  },
+  editTagsDeleteButton: {
+    color: '#FF3343',
+    padding: '6px',
+    flexShrink: 0
+  },
+  editTagsColorContainer: {
+    display: 'flex',
+    gap: '8px',
+    alignItems: 'center'
+  },
+  editTagsColorCircle: {
+    width: '20px',
+    height: '20px',
+    borderRadius: '50%',
+    cursor: 'pointer',
+    border: '2px solid transparent',
+    transition: 'border 0.2s',
+    boxShadow: 'none',
+    flexShrink: 0
+  },
+  editTagsColorCircleSelected: {
+    border: '3px solid #333',
+    boxShadow: '0 0 0 2px #fff'
+  },
+  editTagsAddNewTagBox: {
+    marginTop: '10px',
+    paddingTop: '10px',
+    // borderTop: '1px solid #e0e0e0'
+  },
+  editTagsAddNewTagButton: {
+    borderColor: '#FF3343',
+    color: '#FF3343',
+    padding: '10px',
+    fontSize: '13px',
+    textTransform: 'none',
+    fontWeight: '600'
+  },
+  // Agent Management Buttons Wrapper
+  agentManagementButtonsWrapper: {
+    display: 'flex',
+    gap: '4px',
+    alignItems: 'center',
+    flexDirection: isRTL ? 'row-reverse' : 'row',
+    flexShrink: 0
+  },
+  // Start New Chat button in sidebar header — same color as manage agent icon (inherited)
+  startNewChatIconButton: {
+    padding: '6px',
+    '&:hover': {
+      backgroundColor: 'rgba(0, 0, 0, 0.08)',
+      borderRadius: '50%'
+    }
+  },
+  // Start New Chat Modal styles
+  startNewChatDialogTitle: {
+    backgroundColor: '#FF3343',
+    color: '#fff',
+    padding: '16px 20px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    flexWrap: 'nowrap',
+    fontSize: '18px'
+  },
+  startNewChatStepIndicator: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '8px',
+    padding: '10px 20px',
+    borderBottom: '1px solid #e0e0e0',
+    backgroundColor: '#fafafa'
+  },
+  startNewChatStepDot: {
+    width: '10px',
+    height: '10px',
+    borderRadius: '50%',
+    backgroundColor: '#ccc',
+    transition: 'background-color 0.2s ease'
+  },
+  startNewChatStepDotActive: {
+    backgroundColor: '#FF3343'
+  },
+  startNewChatDialogContent: {
+    padding: '20px',
+    minHeight: '220px',
+    backgroundColor: '#f9f9f9'
+  },
+  startNewChatTemplateList: {
+    maxHeight: '300px',
+    overflowY: 'auto',
+    padding: 0,
+    margin: 0,
+    listStyle: 'none',
+    backgroundColor: '#fff',
+    borderRadius: '4px',
+    border: '1px solid #e0e0e0'
+  },
+  startNewChatTemplateItem: {
+    padding: '12px 16px',
+    borderBottom: '1px solid #e0e0e0',
+    cursor: 'pointer',
+    '&:hover': {
+      backgroundColor: '#fff3f4'
+    },
+    '&:last-child': {
+      borderBottom: 'none'
+    }
+  },
+  startNewChatTemplateItemSelected: {
+    backgroundColor: '#fff0f1',
+    borderLeft: '3px solid #FF3343'
+  },
+  startNewChatSearchField: {
+    width: '100%',
+    marginBottom: '12px'
+  },
+  startNewChatVariableField: {
+    width: '100%',
+    marginBottom: '12px'
+  },
+  startNewChatPreviewBox: {
+    backgroundColor: '#e5ddd5',
+    borderRadius: '8px',
+    padding: '16px',
+    marginBottom: '16px',
+    whiteSpace: 'pre-wrap',
+    wordBreak: 'break-word',
+    fontFamily: 'inherit',
+    fontSize: '14px'
+  },
+  startNewChatDisclaimerBox: {
+    backgroundColor: '#fff8e1',
+    border: '1px solid #ffe082',
+    borderRadius: '4px',
+    padding: '10px 14px',
+    fontSize: '13px',
+    direction: 'rtl',
+    textAlign: 'right',
+    color: '#5d4037',
+    marginBottom: '8px'
+  },
+  startNewChatDialogActions: {
+    padding: '12px 20px',
+    borderTop: '1px solid #e0e0e0',
+    justifyContent: 'space-between'
+  },
+  startNewChatNewTemplateButton: {
+    color: '#FF3343',
+    textTransform: 'none',
+    fontWeight: 600,
+    fontSize: '14px',
+    padding: '4px 8px',
+    '&:hover': {
+      backgroundColor: 'rgba(255, 51, 67, 0.08)'
+    }
+  },
+  // Sidebar Header styling
+  sidebarHeader: {
+    display: 'flex',
+    gap: '4px',
+    alignItems: 'center',
+    padding: '8px',
+    flexWrap: 'nowrap',
+    flexDirection: isRTL ? 'row-reverse' : 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    overflow: 'hidden',
+    boxSizing: 'border-box',
+    '& > *': {
+      flexShrink: 1,
+      minWidth: 0
+    },
+    '& .chat__contact-wrapper': {
+      flex: 1,
+      minWidth: 0,
+      overflow: 'hidden'
+    }
+  },
+  // Chips Container - Keep tags and agent chip on same line
+  chipsContainer: {
+    display: 'flex',
+    gap: '8px',
+    padding: '8px 10px',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    justifyContent: 'space-between',
+    overflow: 'auto',
+    flexWrap: 'nowrap'
+  },
+  // Inner chips wrapper - no wrap
+  chipsWrapper: {
+    display: 'flex',
+    gap: '8px',
+    alignItems: 'center',
+    flexWrap: 'nowrap',
+    overflow: 'auto'
+  },
+  
+  // ============ Chat UI Inline Styles ============
+  // ChatUi.tsx styles
+  tagChipsContainer: {
+    display: 'flex',
+    gap: '4px',
+    alignItems: 'center',
+    flexWrap: 'nowrap',
+    overflowX: 'scroll',
+    overflowY: 'hidden',
+    minWidth: 0,
+    width: 'fit-content',
+    marginInlineEnd: 'auto',
+    scrollbarWidth: 'thin',
+    scrollbarColor: '#888888 #e0e0e0',
+    maxWidth: '83vw',
+    '@media (min-width: 1025px)': {
+      maxWidth: '16vw',
+    },
+    '@media (min-width: 1300px)': {
+      maxWidth: '20vw',
+    },
+    '&::-webkit-scrollbar': {
+      height: '2px',
+    },
+    '&::-webkit-scrollbar-track': {
+      background: '#e0e0e0',
+      borderRadius: '10px',
+    },
+    '&::-webkit-scrollbar-thumb': {
+      background: '#888888',
+      borderRadius: '10px',
+    },
+    '&::-webkit-scrollbar-thumb:hover': {
+      background: '#555555',
+    },
+  },
+  selectFieldStyle: {
+    marginInline: 15
+  },
+  tagChipStyle: {
+    backgroundColor: '#f0f0f0',
+    fontWeight: 600,
+    fontSize: '11px',
+    height: '22px',
+    paddingTop: '9px', 
+    paddingBottom: '9px',
+    margin: '0 4px 0 0',
+    borderRadius: '12px',
+    '& svg': {
+      color: '#fff',
+    }
+  },
+  
+  // ============ SideBarContactList Inline Styles ============
+  // Tag and agent container
+  tagAgentWrapper: {
+    display: 'flex',
+    gap: '4px',
+    alignItems: 'flex-start',
+    flexWrap: 'wrap',
+    padding: '4px 0',
+    justifyContent: 'space-between',
+    minHeight: '32px'
+  },
+  tagsFlexWrapper: {
+    display: 'flex',
+    gap: '4px',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    flex: 1,
+    minWidth: 0,
+    overflow: 'hidden', 
+  },
+  tagsScrollArea: {
+    display: 'flex',
+    gap: '4px',
+    alignItems: 'center',
+    flexWrap: 'nowrap',
+    overflowX: 'scroll',
+    overflowY: 'hidden',
+    minWidth: 0,
+    maxWidth: 'calc(100% - 28px)',
+    scrollbarWidth: 'thin',
+    scrollbarColor: '#888888 #e0e0e0',
+    '&::-webkit-scrollbar': {
+      height: '2px',
+    },
+    '&::-webkit-scrollbar-track': {
+      background: '#e0e0e0',
+      borderRadius: '10px',
+    },
+    '&::-webkit-scrollbar-thumb': {
+      background: '#888888',
+      borderRadius: '10px',
+    },
+    '&::-webkit-scrollbar-thumb:hover': {
+      background: '#555555',
+    },
+  },
+  tagChipSmall: {
+    backgroundColor: '#f0f0f0',
+    color: '#fff',
+    fontWeight: 600,
+    fontSize: '9px',
+    height: '18px',
+    //padding: '0 5px',
+    paddingTop: '8px',
+    paddingBottom: '8px',
+    margin: '0',
+    '& svg': {
+      color: '#fff',
+    }
+  },
+  plusButtonStyle: {
+    width: '22px',
+    height: '22px',
+    backgroundColor: '#f0f0f0',
+    borderRadius: '50%',
+    minWidth: '22px',
+    padding: '2px',
+    margin: '0',
+    flexShrink: 0,
+  },
+  agentBoxContainer: {
+    display: 'flex',
+    gap: '4px',
+    alignItems: 'flex-start',
+    flexShrink: 0
+  },
+  agentNameBlack: {
+    color: '#fff'
+  },
+  
+  // Menu and MenuItem styles
+  menuItemDisabled: {
+    opacity: 0.7,
+    fontWeight: 600
+  },
+  assignedTagMenuItem: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    padding: '8px 16px'
+  },
+  tagNameFlex: {
+    flex: 1
+  },
+  deleteIconButton: {
+    padding: 0,
+    marginLeft: '8px'
+  },
+  tagMenuDivider: {
+    borderTop: '1px solid #eee',
+    margin: '8px 0'
+  },
+  availableTagMenuItem: {
+    padding: '8px 16px'
+  },
+  tagColorDot: {
+    color: 'inherit',
+    fontWeight: 600
+  },
+  tagNameMargin: {
+    marginLeft: '8px'
+  },
+  
+  // ============ SideBar Inline Styles ============
+  // Search and filter area
+  searchAreaWrapper: {
+    padding: '10px',
+    background: '#f6f6f6'
+  },
+  searchWrapperStyle: {
+    display: 'flex',
+    alignItems: 'center',
+    padding: '6px 12px',
+    background: '#fff',
+    borderRadius: '4px',
+    border: '1px solid #e0e0e0'
+  },
+  searchIconsStyle: {
+    display: 'flex',
+    alignItems: 'center',
+    color: '#999'
+  },
+  searchInputHidden: {
+    display: 'none'
+  },
+  searchInputField: {
+    border: 'none',
+    outline: 'none',
+    background: 'transparent',
+    flex: 1,
+    color: '#333',
+    fontSize: '14px'
+  },
+  searchWrapperComplex: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    padding: '8px 12px',
+    backgroundColor: '#FFF',
+    borderRadius: '10px',
+    border: '1px solid #e0e0e0',
+    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.08)',
+    transition: 'all 0.3s ease'
+  },
+  searchIconsRight: {
+    display: 'flex',
+    gap: '8px',
+    pointerEvents: 'none',
+    alignItems: 'center'
+  },
+  iconButtonPointerAuto: {
+    pointerEvents: 'auto'
+  },
+  iconButtonSmallPadding: {
+    padding: '4px'
+  },
+  iconRedColor: {
+    fontSize: '16px',
+    color: '#FF3343'
+  },
+  iconGrayColor: {
+    fontSize: '14px',
+    color: '#666'
+  },
+  
+  // Filter dropdown
+  filterDropdownWrapper: {
+    padding: '10px',
+    backgroundColor: '#f5f5f5',
+    paddingTop: 3
+  },
+  filterFlexContainer: {
+    display: 'flex',
+    gap: '12px',
+    flexDirection: isRTL => isRTL ? 'row-reverse' : 'row',
+    alignItems: 'flex-end'
+  },
+  selectFieldFlexGrow: {
+    flex: 1
+  },
+  selectFieldStyle2: {
+    fontSize: '13px',
+    backgroundColor: '#fff',
+    padding: '8px 10px',
+    borderRadius: '4px',
+    height: '32px'
+  },
+  
+  // Pagination
+  paginationStyle: {
+    borderTop: '1px solid #e0e0e0',
+    backgroundColor: '#f9f9f9',
+    paddingInline: 10,
+    paddingTop: 0,
+    paddingBottom: 0
+  },
+  dateFilterDialog: {
+    padding: '20px'
+  },
+  
+  // Date filter chips
+  dateFilterChipsContainer: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    gap: '8px'
+  },
+  dateFilterChip: {
+    width: '100%',
+    height: '40px',
+    border: '1px solid #ddd',
+    cursor: 'pointer',
+    fontSize: '14px',
+    fontWeight: '500'
+  },
+  dateInputsContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    gap: '12px',
+    marginTop: '12px'
+  },
+  
+  // Dialog header
+  dialogHeaderStyle: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    padding: '10px'
+  },
+  dialogCloseButton: {
+    color: '#fff',
+    padding: '0',
+    position: 'absolute',
+    right: '25px',
+    top: '12px'
+  },
+  
+  // Date filter content
+  dateFilterContent: {
+    marginBottom: '24px'
+  },
+  dateFilterTitle: {
+    margin: '0 0 12px 0',
+    fontSize: '14px',
+    fontWeight: '600',
+    color: '#333'
+  },
+  dateRangeSection: {
+    marginBottom: '24px'
+  },
+  dateRangeHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '12px'
+  },
+  dateRangeTitle: {
+    margin: '0',
+    fontSize: '14px',
+    fontWeight: '600',
+    color: '#333'
+  },
+  dateChipContainer: {
+    width: '100%',
+    height: '40px',
+    border: '1px solid #ddd',
+    cursor: 'pointer',
+    fontSize: '14px',
+    fontWeight: '500'
+  },
+  chatHeader: {
+    display: 'flex',
+    alignItems: 'center',
+    padding: '10px 16px',
+    backgroundColor: '#f0f2f5',
+    borderBottom: '1px solid #d1d7db'
+  },
+  chatAvatarWrapper: {
+    marginRight: '12px'
+  },
+  chatContactWrapper: {
+    flex: '0 0 auto',
+    marginRight: '16px'
+  },
+  chatContactName: {
+    fontSize: '16px',
+    fontWeight: 500,
+    margin: 0
+  },
+  chatContactDesc: {
+    fontSize: '13px',
+    color: '#667781',
+    margin: 0
+  },
+  // Display Conditions Dialog Styles
+  displayConditionMainContainer: {
+    padding: '0px',
+  },
+  displayConditionLabelTypography: {
+    fontWeight: 600,
+    marginBottom: 4,
+    padding: '0px',
+    color: '#333',
+    fontSize: '15px',
+  },
+  displayConditionInputRow: {
+    display: 'flex',
+    gap: '12px',
+    marginBottom: '16px',
+  },
+  displayConditionMatchLabel: {
+    fontSize: 15,
+    color: '#555',
+    fontWeight: 500,
+  },
+  displayConditionMatchFormControl: {
+    minWidth: 100,
+  },
+  displayConditionMatchRow: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    marginBottom: '12px',
+  },
+  displayConditionAddButton: {
+    textTransform: 'none',
+    fontWeight: 500,
+    marginLeft: '8px',
+    fontSize: 15,
+  },
+  displayConditionFieldFormControl: {
+    width: 180,
+  },
+  displayConditionMenuItem: {
+    fontSize: 15,
+  },
+  displayConditionOperatorFormControl: {
+    width: 150,
+  },
+  displayConditionValueTextField: {
+    width: 180,
+  },
+  displayConditionPreviewBox: {
+    fontSize: 18,
+    backgroundColor: '#f9fafb',
+    borderRadius: 8,
+    padding: 16,
+    height: 'fit-content',
+    border: '1px solid #e5e7eb',
+  },
+  displayConditionPreviewTitle: {
+    fontWeight: 600,
+    marginBottom: 12,
+    color: '#6b7280',
+    letterSpacing: 0.5,
+    fontSize: '20px',
+  },
+  displayConditionPreviewContent: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '12px',
+  },
+  displayConditionPreviewItemBox: {
+    display: 'flex',
+    flexDirection: 'column',
+    fontSize: 20,
+    gap: 3,
+  },
+  displayConditionPreviewCaption: {
+    fontSize: 20,
+    color: '#9ca3af',
+    textTransform: 'uppercase',
+    fontWeight: 600,
+  },
+  displayConditionPreviewBody: {
+    fontSize: 20,
+    color: '#111827',
+  },
+  displayConditionCodeBox: {
+    backgroundColor: '#eef2f7',
+    padding: '6px 10px',
+    borderRadius: 4,
+    fontFamily: 'monospace',
+    fontSize: 20,
+    color: '#374151',
+    marginTop: 3,
+  },
+  displayConditionDialogPaperProps: {
+    borderRadius: 8,
+    padding: '0px',
+    minWidth: '900px !important',
+    maxWidth: '1000px !important',
+    width: '900px !important',
+  },
+  displayConditionConditionNameBox: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '16px',
+  },
+  displayConditionMatchBox: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    marginTop: 6,
+  },
+  displayConditionRulesContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '8px',
+    marginTop: 6,
+  },
+  displayConditionRuleRow: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+  },
+  displayConditionDeleteButton: {
+    minWidth: '20px',
+    width: '20px',
+    height: '20px',
+    padding: 0,
+  },
+  displayConditionCustomStyle: {
+    minWidth: '600px !important'
+  },
+  Button_button_l: {
+    padding: '12px 24px',
+    fontSize: '16px',
+    fontWeight: 6,
+    borderRadius: '8px',
+    border: 'none',
+    cursor: 'pointer',
+    transition: 'all 0.3s ease',
+  },
+  Button_solid_l: {
+    background: 'linear-gradient(90deg, #FF0076 0%, #FF0054 23.8%, #FF4D2A 100%)',
+    color: '#fff',
+    '&:hover': {
+      boxShadow: '0 4px 12px rgba(255, 0, 76, 0.3)',
+    },
+  },
+  Button_solid_m: {
+    padding: '10px 20px',
+    fontSize: '14px',
+    fontWeight: 600,
+    borderRadius: '6px',
+    background: 'linear-gradient(90deg, #FF0076 0%, #FF0054 23.8%, #FF4D2A 100%)',
+    color: '#fff',
+    border: 'none',
+    cursor: 'pointer',
+    transition: 'all 0.3s ease',
+  },
+  Button_solid_s: {
+    padding: '8px 16px',
+    fontSize: '12px',
+    fontWeight: 600,
+    borderRadius: '4px',
+    background: 'linear-gradient(90deg, #FF0076 0%, #FF0054 23.8%, #FF4D2A 100%)',
+    color: '#fff',
+    border: 'none',
+    cursor: 'pointer',
+    transition: 'all 0.3s ease',
+  },
+  Button_secondary_l: {
+    padding: '12px 24px',
+    fontSize: '16px',
+    fontWeight: 600,
+    borderRadius: '8px',
+    background: '#fff',
+    color: '#FF0076',
+    border: '2px solid #FF0076',
+    cursor: 'pointer',
+    transition: 'all 0.3s ease',
+    '&:hover': {
+      background: '#FF0076',
+      color: '#fff',
+    },
+  },
+  Button_secondary_m: {
+    padding: '10px 20px',
+    fontSize: '14px',
+    fontWeight: 600,
+    borderRadius: '6px',
+    background: '#fff',
+    color: '#FF0076',
+    border: '2px solid #FF0076',
+    cursor: 'pointer',
+    transition: 'all 0.3s ease',
+  },
+  Button_secondary_s: {
+    padding: '8px 16px',
+    fontSize: '15px',
+    fontWeight: 600,
+    borderRadius: '4px',
+    background: '#fff',
+    color: '#FF0076',
+    border: '2px solid #FF0076',
+    cursor: 'pointer',
+    transition: 'all 0.3s ease',
+  },
+  Button_disabled: {
+    opacity: 0.6,
+    cursor: 'not-allowed',
+    pointerEvents: 'none',
+  },
+  displayConditionButtons: {
+    minWidth: '140px !important',
+    width: '140px !important',
+  },
+  displayConditionPaperProps: {
+    minWidth: '1000px !important',
+    width: '1000px !important',
+    maxWidth: '1000px !important',
+    overflow: 'hidden'
+  },
+  displayConditionMainBox: {
+    padding: '0px',
+  },
+  displayConditionGridContainer: {
+    overflow: 'hidden'
+  },
+  displayConditionLeftGrid: {
+    overflow: 'hidden'
+  },
+  displayConditionRightGrid: {
+    overflow: 'hidden'
+  },
+  displayConditionRulesBox: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '8px',
+    maxWidth: '100%',
+    overflow: 'hidden'
+  },
+  displayConditionRuleRow: {
+    display: 'grid',
+    gridTemplateColumns: '150px 130px 180px 50px',
+    gap: '8px',
+    alignItems: 'flex-start',
+    overflow: 'hidden',
+  },
+  displayConditionTextFieldBox: {
+    display: 'flex',
+    flexDirection: 'column',
+    width: '160px',
+    overflow: 'hidden',
+    minWidth: 0,
+  },
+  displayConditionTextFieldStyle: {
+    overflow: 'hidden',
+    width: '100%'
+  },
+  displayConditionPreviewBoxStyle: {
+    maxHeight: '450px',
+    fontSize: 18,
+    overflowY: 'auto',
+    overflow: 'hidden'
+  },
+  displayConditionMatchTypeBox: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    gap: '8px',
+    marginBottom: '12px',
+    overflow: 'hidden'
+  },
+  displayConditionAddButton: {
+    textTransform: 'none',
+    marginLeft: isRTL ? 'auto' : '0px',
+    marginRight: !isRTL ? 'auto' : '0px'
+  },
+  filterInputLabelSpan: {
+    display: 'inline-block',
+    marginTop: 2,
+  },
+  filterTimeframeBox: {
+    marginRight: isRTL ? 'auto' : 'unset',
+    marginLeft: !isRTL ? 'auto' : 'unset',
+    alignItems: 'center',
+  },
+  filterTimeframeFormControl: {
+    marginInlineStart: 8,
+    minWidth: 90,
+  },
 });
+}

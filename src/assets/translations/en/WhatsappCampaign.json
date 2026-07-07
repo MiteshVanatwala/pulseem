@@ -80,5 +80,10 @@
 	"atTime": "at",
 	"filterInputText": "Don't send to recipients that got Whatsapp Campaign in last previous days",
 	"metaBusinessNotVerified": "Meta business is not verified",
-	"metaPhoneNumberNotVerified": "Meta phone number is not verified"
+	"metaPhoneNumberNotVerified": "Meta phone number is not verified",
+	"media_url": "Media URL",
+	"media_url_placeholder": "Enter media file URL",
+	"media_type_mismatch_error": "Media type does not match the approved template",
+	"media_text": "Message Text",
+	"media_text_placeholder": "Insert text here - up to 1024 characters"
 }

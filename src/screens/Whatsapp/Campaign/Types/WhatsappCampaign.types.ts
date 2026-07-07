@@ -14,6 +14,7 @@ export type coreProps = {
 	language: string;
 	isLoader: boolean;
 	userRoles: any;
+	isOnlyWhatsAppChat: boolean;
 };
 
 export type WhatsappCampaignProps = {
@@ -252,6 +253,7 @@ export type SummaryModalProps = {
 	setRandomlyCount: (value: string) => void;
 	resetRandomCount: () => void;
 	pulseData?: any;
+	overrideMediaUrl?: string;
 };
 
 export type ApiSendCampaignData = {
@@ -404,6 +406,7 @@ export type campaignDataProps = {
 	UpdateDate: string;
 	WACampaignID: number;
 	TemplateId: string;
+	IsPulseSend?: boolean;
 };
 
 export type searchArrayProps = {
@@ -438,6 +441,7 @@ export type reportDataProps = {
 	TemplateID: string;
 	Revenue: number;
 	Cost: number;
+	IsPulseSend?: boolean;
 };
 
 export type exportDataProps = {
@@ -765,6 +769,7 @@ export type TestSendReq = {
 	TestGroupsIds?: number[];
 	PhoneNumber?: string;
 	Random?: number;
+	Variables?: updatedVariable[];
 };
 
 export type SaveQuickSendGroupReq = {
@@ -809,4 +814,5 @@ export interface WhatsappSessionToClient {
 export interface WhatsappPhoneSession {
 	Cellphone: string;
 	AgentId: number;
+	Sendernumber?: string; 
 }

@@ -209,8 +209,6 @@ const EditDynamicGroup = ({ classes }: any) => {
     const onSave = async (isExit: boolean | never = false) => {
         let isValid = true;
         let message = '';
-        // Add validations
-        // IsPageViewed && Range && required min & max - SpecificDates && required min & max  
 
         if (dynamicGroupModel.dynamicData.MyActivities.IsPurchased === true) {
             switch (dynamicGroupModel.dynamicData.MyActivities?.IsPurchasedComparingType.toString()) {
@@ -231,7 +229,7 @@ const EditDynamicGroup = ({ classes }: any) => {
                 }
             }
         }
-        else if (dynamicGroupModel.dynamicData.MyActivities.IsNotPurchased === true) {
+        if (dynamicGroupModel.dynamicData.MyActivities.IsNotPurchased === true) {
             switch (dynamicGroupModel.dynamicData.MyActivities?.IsNotPurchasedComparingType.toString()) {
                 case ActivityEvent.Range: {
                     if ((dynamicGroupModel.dynamicData.MyActivities.IsNotPurchasedMinPrice === null ||
@@ -250,7 +248,7 @@ const EditDynamicGroup = ({ classes }: any) => {
                 }
             }
         }
-        else if (dynamicGroupModel.dynamicData.MyActivities.IsAbandoned === true) {
+        if (dynamicGroupModel.dynamicData.MyActivities.IsAbandoned === true) {
             switch (dynamicGroupModel.dynamicData.MyActivities?.IsAbandonedComparingType.toString()) {
                 case ActivityEvent.Range: {
                     if ((dynamicGroupModel.dynamicData.MyActivities.IsAbandonedMinPrice === null ||
@@ -266,6 +264,33 @@ const EditDynamicGroup = ({ classes }: any) => {
                         isValid = false;
                     }
                     break;
+                }
+            }
+        }
+        if (isValid &&
+            dynamicGroupModel.dynamicData.MyActivities.IsPurchased === true &&
+            dynamicGroupModel.dynamicData.MyActivities.IsNotPurchased === true
+        ) {
+            const pInterval = dynamicGroupModel.dynamicData.MyActivities.IsPurchasedInterval?.toString();
+            const npInterval = dynamicGroupModel.dynamicData.MyActivities.IsNotPurchasedInterval?.toString();
+            if (pInterval === npInterval) {
+                let durationMatch = true;
+                if (pInterval === ActivtyTimeInterval.DaysBack) {
+                    const pDays = dynamicGroupModel.dynamicData.MyActivities.IsPurchasedDaysBack;
+                    const npDays = dynamicGroupModel.dynamicData.MyActivities.IsNotPurchasedDaysBack;
+                    durationMatch =
+                        !!pDays && !!npDays &&
+                        String(pDays) === String(npDays);
+                } else if (pInterval === ActivtyTimeInterval.SpecificDates) {
+                    durationMatch =
+                        dynamicGroupModel.dynamicData.MyActivities.IsPurchasedFromDate ===
+                            dynamicGroupModel.dynamicData.MyActivities.IsNotPurchasedFromDate &&
+                        dynamicGroupModel.dynamicData.MyActivities.IsPurchasedToDate ===
+                            dynamicGroupModel.dynamicData.MyActivities.IsNotPurchasedToDate;
+                }
+                if (durationMatch) {
+                    message = t('group.saveDynamicGroupResponse.events_conflict_purchased_validation');
+                    isValid = false;
                 }
             }
         }
@@ -316,7 +341,13 @@ const EditDynamicGroup = ({ classes }: any) => {
                 message = t('group.saveDynamicGroupResponse.daysBackError');
                 isValid = false;
             }
-            else if (!dynamicGroupModel.dynamicData.MyActivities.PageViewedUrlIDs?.split(',')) {
+            else if ((dynamicGroupModel.dynamicData.MyActivities.PageViewedMatchType || 'exact') === 'contains') {
+                if (!dynamicGroupModel.dynamicData.MyActivities.PageViewedContainsText?.trim()) {
+                    message = t('common.field_required');
+                    isValid = false;
+                }
+            }
+            else if (!dynamicGroupModel.dynamicData.MyActivities.PageViewedUrlIDs) {
                 message = t('group.saveDynamicGroupResponse.pageUrlRequired');
                 isValid = false;
             }
@@ -324,7 +355,21 @@ const EditDynamicGroup = ({ classes }: any) => {
 
         if (isValid) {
             setLoader(true);
-            var requestObject = { Group: dynamicGroupModel?.Group, DynamicData: dynamicGroupModel?.dynamicData } as any;
+            const activities = dynamicGroupModel?.dynamicData?.MyActivities;
+            const effectiveMatchType = activities?.PageViewedMatchType || 'exact';
+            const cleanActivities = activities?.IsPageViewed
+                ? {
+                    ...activities,
+                    ...(effectiveMatchType === 'contains'
+                        ? { PageViewedUrlIDs: null }
+                        : { PageViewedContainsText: undefined }
+                    )
+                }
+                : activities;
+            var requestObject = {
+                Group: dynamicGroupModel?.Group,
+                DynamicData: { ...dynamicGroupModel?.dynamicData, MyActivities: cleanActivities }
+            } as any;
             const response = await dispatch(save(requestObject));
             handleResponse(response.payload, isExit);
         }
@@ -689,7 +734,9 @@ const EditDynamicGroup = ({ classes }: any) => {
                                         IsPageViewedMaxPrice: null,
                                         IsPageViewedInterval: ActivtyTimeInterval.Last2Weeks,
                                         PageViewedPrice: null,
-                                        IsPageViewedProductCategory: null
+                                        IsPageViewedProductCategory: null,
+                                        PageViewedMatchType: undefined,
+                                        PageViewedContainsText: ''
                                     }
                                 }
                             });

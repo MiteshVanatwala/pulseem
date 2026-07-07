@@ -48,6 +48,7 @@ import {
 } from "../../redux/reducers/clientSlice";
 import { getAccountExtraData } from '../../redux/reducers/smsSlice';
 import { BiSortDown, BiSortUp } from "react-icons/bi";
+import { BsInfoCircle } from "react-icons/bs";
 import SummaryRow from '../../components/Grids/SummaryRow';
 import AddGroupPopUp from "../Groups/Management/Popup/AddGroupPopUp";
 import UnsubscribeOrDeletePopup from "../Groups/Management/Popup/UnsubscribeOrDeletePopup";
@@ -320,9 +321,6 @@ const ClientSearchResult = ({ classes }) => {
       if (location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Revenue || location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.WhatsappRevenue || location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Product) {
         updatingObject["Revenue"] = t('common.campaignRevenue');
       }
-      if ((searchData?.PageType ?? searchData?.PageType) === CLIENT_CONSTANTS.PAGE_TYPES.FailureCountSMSCampaignID) {
-        updatingObject["ErrorTypeText"] = t('recipient.errorMessage');
-      }
       if ((searchData?.PageType ?? searchData?.PageType) === CLIENT_CONSTANTS.PAGE_TYPES.OpenedCampaignID) {
         updatingObject["snt_OpeningDate"] = t('common.OpenTime');
       }
@@ -365,6 +363,10 @@ const ClientSearchResult = ({ classes }) => {
         }
       }
       updatingObject = ReplaceExtraFieldHeader(updatingObject, extraData);
+      if ((searchData?.PageType ?? searchData?.PageType) === CLIENT_CONSTANTS.PAGE_TYPES.FailureCountSMSCampaignID ||
+        (searchData?.PageType ?? searchData?.PageType) === CLIENT_CONSTANTS.PAGE_TYPES.WhatsappFailed) {
+        updatingObject["ErrorTypeText"] = t('recipient.errorMessage');
+      }
       exportColumnHeader.current = updatingObject;
     }
 
@@ -428,6 +430,17 @@ const ClientSearchResult = ({ classes }) => {
           let orderList = [];
           // const deletedProperties = [];
           orderList = data.Clients.map((ol) => ol);
+
+          if (searchData?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.WhatsappFailed) {
+            orderList = orderList.map((row) => ({
+              ...row,
+              ErrorTypeText: row.ErrorTypeText
+                ? t(row.ErrorTypeText.indexOf(Separator) === -1
+                  ? getWhatsappError(row.ErrorTypeText)
+                  : getMetaError(row.ErrorTypeText))
+                : ''
+            }));
+          }
 
           const fields = { ...exportColumnHeader.current };
 
@@ -799,12 +812,28 @@ const ClientSearchResult = ({ classes }) => {
             {LogSms_ErrorType && t(LogSms_ErrorType.indexOf(Separator) === -1 ? getWhatsappError(LogSms_ErrorType) : getMetaError(LogSms_ErrorType))}
           </Typography>
         </>),
-        web: ({ LogSms_ErrorType = '', ...rest }) => (
-          <Typography className={clsx(classes.bold, classes.f16, classes.whatsappReportErrorCell)}>
-            {/* {LogSms_ErrorType} */}
-            {LogSms_ErrorType && t(LogSms_ErrorType.indexOf(Separator) === -1 ? getWhatsappError(LogSms_ErrorType) : getMetaError(LogSms_ErrorType))}
-          </Typography>
-        )
+        web: ({ LogSms_ErrorType = '', ...rest }) => {
+          const errorMessage = LogSms_ErrorType && t(LogSms_ErrorType.indexOf(Separator) === -1 ? getWhatsappError(LogSms_ErrorType) : getMetaError(LogSms_ErrorType));
+          return (
+            <Typography className={clsx(classes.bold, classes.f16, classes.whatsappReportErrorCell)}>
+              {/* {LogSms_ErrorType} */}
+              <CustomTooltip
+                isSimpleTooltip={false}
+                interactive={true}
+                classes={{
+                  tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
+                  arrow: classes.fBlack,
+                }}
+                arrow={true}
+                style={{ fontWeight: "bold" }}
+                placement={"top"}
+                title={errorMessage}
+                text={errorMessage.length > 70 ? `${errorMessage.substring(0, 70)}...` : errorMessage}
+              >
+              </CustomTooltip>
+            </Typography>
+          )
+        }
       },
       // filterComponents: [ErrorDropDown]
     },
@@ -1488,7 +1517,8 @@ const ClientSearchResult = ({ classes }) => {
       ErrorTypeText,
       OpenTime,
       SubmitDates,
-      IsOptIn
+      IsOptIn,
+      IsPulseemFlagged
     } = row;
     let iconsCells = [row.IsAutoResponder, row.IsConnectedToWebForm].filter((e) => {
       return e === true
@@ -1665,7 +1695,22 @@ const ClientSearchResult = ({ classes }) => {
               },
               {
                 label: "",
-                component: <Typography className={clsx(classes.bold, cssClasses(true))}>{switchStatus(true)}</Typography>,
+                component: Status === 4 && IsPulseemFlagged
+                  ? <Box style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <Typography className={clsx(classes.bold, cssClasses(true))}>{switchStatus(true)}</Typography>
+                    <CustomTooltip
+                      enterTouchDelay={50}
+                      leaveTouchDelay={3000}
+                      isSimpleTooltip={false}
+                      placement={"top"}
+                      arrow={true}
+                      title={<Typography className={classes.bold}>{t("client.clientStatus.email.invalidTooltip")}</Typography>}
+                    >
+                      <span style={{ flexShrink: 0, display: 'inline-flex' }}><BsInfoCircle style={{ cursor: 'pointer' }} /></span>
+                    </CustomTooltip>
+                  </Box>
+
+                  : <Typography className={clsx(classes.bold, cssClasses(true))}>{switchStatus(true)}</Typography>,
                 classes: { text: localClasses.noWrap },
               }
             ]}
@@ -1712,7 +1757,8 @@ const ClientSearchResult = ({ classes }) => {
       LogSms_ErrorType,
       LastSendDate,
       snt_OpeningDate,
-      SubmitDates
+      SubmitDates,
+      IsPulseemFlagged
     } = row;
 
     const switchStatus = (isEmail) => {
@@ -1745,7 +1791,22 @@ const ClientSearchResult = ({ classes }) => {
               <Box className={clsx(classes.flex6, classes.w60)}>
                 <Typography className={classes.bold}>{t("recipient.emails")}</Typography>
                 <Typography className={clsx(classes.elipsis, classes.dFlex)}>
-                  {Email}&nbsp;<Typography align='left' className={clsx(classes.middle, classes.bold, Status === 1 ? classes.sendIconText : classes.textColorRed)}>({switchStatus(true)})</Typography>
+                  {Email}&nbsp;{Status === 4 && IsPulseemFlagged
+                    ? <Box style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <Typography align='left' className={clsx(classes.middle, classes.bold, Status === 1 ? classes.sendIconText : classes.textColorRed)}>({switchStatus(true)})</Typography>
+                      <CustomTooltip
+                        enterTouchDelay={50}
+                        leaveTouchDelay={3000}
+                        isSimpleTooltip={false}
+                        placement={"top"}
+                        arrow={true}
+                        title={<Typography className={classes.bold}>{t("client.clientStatus.email.invalidTooltip")}</Typography>}
+                      >
+                        <span style={{ flexShrink: 0, display: 'inline-flex' }}><BsInfoCircle style={{ cursor: 'pointer' }} /></span>
+                      </CustomTooltip>
+                    </Box>
+                    : <Typography align='left' className={clsx(classes.middle, classes.bold, Status === 1 ? classes.sendIconText : classes.textColorRed)}>({switchStatus(true)})</Typography>
+                  }
                 </Typography>
               </Box>
             </Box>
@@ -1928,15 +1989,10 @@ const ClientSearchResult = ({ classes }) => {
         }
         case DialogType.EDIT_RECIPIENT: {
           let mappedGroups = [];
-          if (data && data?.find((obj) => obj.ClientID === selectedClients[0])?.GroupIds?.length > 0) {
-            mappedGroups = data?.find((obj) => obj.ClientID === selectedClients[0])?.GroupIds?.split(',')?.map(function (x) {
-              return parseInt(x, 10);
-            });
-          }
-          else if (searchData?.GroupIds && searchData?.GroupIds?.length > 0) {
-            mappedGroups = searchData?.GroupIds?.map(function (x) {
-              return parseInt(x, 10);
-            })
+          if (clientToEdit?.GroupIds?.length > 0) {
+            mappedGroups = typeof clientToEdit.GroupIds === 'string'
+              ? clientToEdit.GroupIds.split(',').map(x => parseInt(x, 10)).filter(Boolean)
+              : clientToEdit.GroupIds;
           }
 
           return <AddRecipientPopup

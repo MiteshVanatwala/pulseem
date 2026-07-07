@@ -8,6 +8,12 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Force Helvetica font for Polish accounts */
+body.polish-account,
+body.polish-account * {
+  font-family: 'Helvetica', 'Helvetica Neue', Arial, sans-serif !important;
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;

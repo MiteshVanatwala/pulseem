@@ -44,4 +44,7 @@ export interface WebForm {
     JsonData: string | any | null;
     HtmlData: string | any | null;
     Blocks: string | any | null;
+    enableRecaptcha?: boolean;
+    recaptchaVersion?: string;
+    recaptchaSiteKey?: string;
 }

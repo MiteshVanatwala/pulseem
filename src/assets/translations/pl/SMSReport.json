@@ -4,6 +4,7 @@
   "searchSms": "Szukaj",
   "recipientsFilter": "Filtr odbiorców",
   "filterInputText": "Nie wysyłaj do odbiorców, którzy otrzymali SMS w ciągu ostatnich dni",
+  "filterInputTextBase": "Nie wysyłaj do odbiorców, którzy otrzymali SMS w ciągu ostatnich",
   "inputTextFilter": "Nie wysyłaj do odbiorców z następujących grup",
   "campaignInfo": "Nie wysyłaj do odbiorców z następujących kampanii",
   "okBtn": "Ok",

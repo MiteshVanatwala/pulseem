@@ -57,6 +57,9 @@ import { WhatsappCampaignStatus, WhatsAppPlatformIDEnum } from "../../../config/
 import { errorToastData } from "../../Whatsapp/Constant";
 import TierPlans from "../../../components/TierPlans/TierPlans";
 import { get } from "lodash";
+import { DialogType } from "../../Editors/helper/config";
+import GenericModal from "../../HtmlCampaign/modals/GenericModal";
+import PayPerRecipientNew from "../../../components/PayPerRecipient/PayPerRecipientNew";
 
 function Alert(props) {
     return <MuiAlert elevation={0} variant="filled" {...props} />;
@@ -86,7 +89,34 @@ const useStyles = makeStyles((theme) => ({
         padding: 0,
         textTransform: 'capitalize',
         color: '#CA332F'
-    }
+    },
+    problematicLinksContainer: {
+        maxHeight: '60vh',
+        overflowY: 'auto',
+        padding: '0 4px'
+    },
+    problematicLinksMt: {
+        marginTop: 12
+    },
+    problematicLinksListBox: {
+        marginTop: 4
+    },
+    problematicLinksList: {
+        margin: '4px 0',
+        paddingInlineStart: 20,
+        listStyleType: 'disc',
+        wordBreak: 'break-word',
+        overflowWrap: 'break-word',
+        '& li': {
+            listStyleType: 'disc',
+            wordBreak: 'break-word',
+            overflowWrap: 'break-word',
+        }
+    },
+    problematicLinksWordBreak: {
+        wordBreak: 'break-word',
+        overflowWrap: 'break-word',
+    },
 }));
 
 const useSnackRecipients = makeStyles((theme) => ({
@@ -155,6 +185,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         toggleReci: false,
         selectedFilterGroups: [],
         exceptionalDays: "",
+        exceptionalDaysTimeframe: 2,
         RecipientsBool: '',
         selectArray: [],
         selectedFilterCampaigns: [],
@@ -194,6 +225,11 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const [noCreditLeft, setNoCreditLeft] = useState(false);
     const [showDeleteSmsMarketingDialog, setShowDeleteSmsMarketingDialog] = useState(false);
     const [domainIsAllowed, setDomainIsAllowed] = useState(true);
+    const [genericModalData, setGenericModalData] = useState({
+        title: "",
+        message: ""
+    })
+    const [ isOpenPayPerRecipient, setIsOpenPayPerRecipient ] = useState(false);
     const MAX_UPLOAD_LIMITATION = 5000;
 
     useEffect(() => {
@@ -253,11 +289,11 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             if (newsletterSettings.length === 0)
                 return;
 
-            const { GroupList = [], ExeptionalGroups = [], ExeptionalCampaigns = [], ExceptionalDays = null } = newsletterSettings;
+            const { GroupList = [], ExeptionalGroups = [], ExeptionalCampaigns = [], ExceptionalDays = null, ExceptionalDaysTimeframe = null } = newsletterSettings;
             const Groups = subAccountAllGroups || [];
             let selecteddGroup = [];
 
-            setSegmantIndication(ExeptionalGroups?.length > 0 || newsletterSettings.IsOpened || newsletterSettings.IsOpenedClicked || newsletterSettings.IsNotClicked || newsletterSettings.IsNotOpened)
+            setSegmantIndication(ExeptionalGroups?.length > 0 || ExceptionalDays > 0 || newsletterSettings.IsOpened || newsletterSettings.IsOpenedClicked || newsletterSettings.IsNotClicked || newsletterSettings.IsNotOpened)
             setPulseIndication(newsletterSettings.PulseAmount > 0 || newsletterSettings.TimeInterval > 0);
             setCampaignValues({ ...newsletterSettings })
 
@@ -269,7 +305,8 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 toggleReci: ExceptionalDays !== '' && ExceptionalDays > 0,
                 selectedFilterGroups: ExeptionalGroups ? subAccountAllGroups?.filter((c) => ExeptionalGroups.indexOf(c.GroupID) > -1) : [],
                 selectedFilterCampaigns: ExeptionalCampaigns ? previousCampaignData?.filter((c) => ExeptionalCampaigns.indexOf(c.CampaignID) > -1) : [],
-                exceptionalDays: ExceptionalDays > 0 ? ExceptionalDays : ''
+                exceptionalDays: ExceptionalDays > 0 ? ExceptionalDays : '',
+                exceptionalDaysTimeframe: ExceptionalDaysTimeframe ?? 2
             });
             setSmsMarketingIndication(newsletterSettings?.HasSmsMarekting || false);
 
@@ -373,6 +410,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             GroupIds: overrideGroupIds ?? selectedGroups.map(grp => grp.GroupID).join(","),
             GroupList: selectedGroups.map((g) => g.GroupID),
             ExceptionalDays: filterValues?.exceptionalDays,
+            ExceptionalDaysTimeframe: filterValues?.exceptionalDaysTimeframe || 2,
             IsBestTime: campaignValues.IsBestTime,
             IsSummaryRequest: false
         }
@@ -435,9 +473,13 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         411: { type: 'SendResponse', data: { Title: t('campaigns.newsLetterEditor.errors.campaignWasNotSent'), Text: t('campaigns.newsLetterEditor.errors.ACCOUNT_RESTRICTED'), ShowContactSupport: true } },
         550: { type: 'SendResponse', data: { Title: t('campaigns.newsLetterEditor.errors.pendingApproval'), Text: t('campaigns.newsLetterEditor.errors.PendingApprovalDesc'), ShowContactSupport: false } },
         551: { type: 'SendResponse', data: { Title: t('campaigns.newsLetterEditor.errors.pendingApproval'), Text: t('campaigns.newsLetterEditor.errors.PendingApproval551Desc'), ShowContactSupport: false } },
+        553: { type: 'SendResponse', data: { Title: t('campaigns.newsLetterEditor.errors.paymentfailed553Title'), Text: t('campaigns.newsLetterEditor.errors.paymentfailed553Desc'), ShowContactSupport: false } },
+        552: { type: 'SendResponse', data: { Title: t('campaigns.newsLetterEditor.errors.paymentfailed552Title'), Text: t('campaigns.newsLetterEditor.errors.paymentProcessing552Desc'), ShowContactSupport: false } },
     };
 
     const handleSendResponse = (response) => {
+        // setDialogType(SEND_PROC[552]);
+        // return false;
         if (response?.StatusCode === 201) {
             setDialogType({ type: 'sendSuccess' });
         }
@@ -456,7 +498,11 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 ...errorToastData,
                 message: t('whatsappCampaign.metaPhoneNumberNotVerified')
             });
-        } else if ([550, 551].indexOf(response.StatusCode)) {
+        } else if (response?.StatusCode === 422) {
+            setToastMessage(ToastMessages.HTML_BODY_EMPTY);
+        } else if ([550, 551].includes(response.StatusCode)) {
+            setDialogType(SEND_PROC[response?.StatusCode]);
+        } else if ([553].indexOf(response.StatusCode)) {
             setDialogType(SEND_PROC[response?.StatusCode]);
         }
         else {
@@ -489,8 +535,8 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             onSaveSettings(true, groupId.toString()).then(async () => {
                 if (isEmailVerified || isVerified?.length > 0 || IsSharedDomain(newsletterInfo?.FromEmail)) {
                     setLoader(true);
-                    await dispatch(getSendSummary(params?.id));
-                    setDialogType({ type: 'SummaryDialog', IsQuickSend: true });
+                    const response = await dispatch(getSendSummary(params?.id));
+                    processSummaryResponse(response.payload);
                     setLoader(false);
                 }
                 else {
@@ -777,6 +823,54 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         }
     }
 
+    const processSummaryResponse = (response) => {
+        if (response?.StatusCode === 201) {
+            setDialogType({ type: 'SummaryDialog', IsQuickSend: false });
+        }
+        else if (response?.StatusCode === 553) {
+            setGenericModalData({
+                title: t('campaigns.newsLetterEditor.errors.paymentfailed553Title'),
+                message: t("campaigns.newsLetterEditor.errors.paymentfailed553Desc"),
+                onConfirm: () => {},
+                onCancel: () => setDialogType(null),
+                onClose: () => setDialogType(null),
+                showDefaultButtons: false,
+                renderButtons: () => (
+                <Grid
+                    container
+                    spacing={2}
+                    className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+                >
+                    <Grid item>
+                    <Button
+                        onClick={() => {
+                            setDialogType(null)
+                            setIsOpenPayPerRecipient(true);
+                        }}
+                        className={clsx(
+                            classes.btn,
+                            classes.btnRounded
+                        )}>
+                        {t('campaigns.newsLetterEditor.errors.paymentfailed553Button')}
+                    </Button>
+                    </Grid>
+                </Grid>
+                )
+            });
+            setDialogType({ type: DialogType.GENERIC });
+        } else if (response?.StatusCode === 552) {
+            setGenericModalData({
+                title: t('campaigns.newsLetterEditor.errors.paymentfailed552Title'),
+                message: t("campaigns.newsLetterEditor.errors.paymentProcessing552Desc"),
+                onConfirm: () => {},
+                onCancel: () => setDialogType(null),
+                onClose: () => setDialogType(null),
+                showDefaultButtons: false,
+            });
+            setDialogType({ type: DialogType.GENERIC });
+        }
+    }
+
     const renderButtons = () => {
         return (
             <>
@@ -817,8 +911,8 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                         onSaveSettings(true).then(async (results) => {
                             setLoader(true);
                             if (results?.StatusCode === 201) {
-                                await dispatch(getSendSummary(params?.id));
-                                setDialogType({ type: 'SummaryDialog' });
+                                const response = await dispatch(getSendSummary(params?.id));
+                                processSummaryResponse(response.payload);
                             }
                             setLoader(false);
                             // if (isEmailVerified) {
@@ -1027,6 +1121,79 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         )
     })
 
+    const getProblematicLinksDialog = (data = {}) => {
+        const {
+            links = [],
+            campaignName = '',
+            campaignId: cid = '',
+            companyName = ''
+        } = data;
+        const tp = 'campaigns.newsLetterEditor.errors.problematicLinks';
+
+        return {
+            showDivider: false,
+            title: t('campaigns.newsLetterEditor.errors.problematicLinksTitle'),
+            content: (
+                <Box className={styles.problematicLinksContainer}>
+                    <Typography className={clsx(classes.font16, classes.alignDir, styles.problematicLinksWordBreak)}>
+                        {t(`${tp}.greeting`)}
+                    </Typography>
+                    <Typography className={clsx(classes.font16, classes.alignDir, styles.problematicLinksMt, styles.problematicLinksWordBreak)}>
+                        {t(`${tp}.intro`, { companyName })}
+                    </Typography>
+                    <Typography className={clsx(classes.font16, classes.alignDir, styles.problematicLinksMt, styles.problematicLinksWordBreak)}>
+                        {t('common.CampaignName')}: {campaignName}
+                    </Typography>
+                    <Typography className={clsx(classes.font16, classes.alignDir, styles.problematicLinksWordBreak)}>
+                        {t('common.campaignID')}: {cid}
+                    </Typography>
+                    <Typography className={clsx(classes.font16, classes.alignDir, styles.problematicLinksMt, styles.problematicLinksWordBreak)}>
+                        {t(`${tp}.instructions`)}
+                    </Typography>
+                    <Box className={styles.problematicLinksListBox}>
+                        <ul className={styles.problematicLinksList}>
+                            {(links || []).map((link, idx) => (
+                                <li key={idx} className={clsx(classes.font16, classes.alignDir, styles.problematicLinksWordBreak)}>
+                                    {link}
+                                </li>
+                            ))}
+                        </ul>
+                    </Box>
+                    <Typography className={clsx(classes.font16, classes.alignDir, styles.problematicLinksMt, styles.problematicLinksWordBreak)}>
+                        {t(`${tp}.note`)}
+                    </Typography>
+                    <Typography className={clsx(classes.font16, classes.alignDir, styles.problematicLinksMt, styles.problematicLinksWordBreak)}>
+                        {t(`${tp}.supportIntro`)}
+                    </Typography>
+                    <Typography className={clsx(classes.font16, classes.alignDir, styles.problematicLinksWordBreak)}>
+                        {t('common.email')}: support@pulseem.com
+                    </Typography>
+                    <Typography className={clsx(classes.font16, classes.alignDir, styles.problematicLinksWordBreak)}>
+                        {t('common.phone')}: 03-5240290
+                    </Typography>
+                </Box>
+            ),
+            renderButtons: () => (
+                <Grid
+                    container
+                    spacing={2}
+                    className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+                >
+                    <Grid item>
+                        <Button
+                            variant='contained'
+                            size='small'
+                            onClick={() => setDialogType(null)}
+                            className={clsx(classes.btn, classes.btnRounded)}
+                        >
+                            {t('common.Ok')}
+                        </Button>
+                    </Grid>
+                </Grid>
+            )
+        };
+    };
+
     const renderDialog = () => {
         const { type, data } = dialogType || {}
 
@@ -1097,7 +1264,8 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                         {t('common.Ok')}
                     </Button>
                 ),
-            }
+            },
+            problematicLinks: getProblematicLinksDialog(data),
         }
 
         const currentDialog = dialogContent[type] || {}
@@ -1509,7 +1677,11 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 onConfirm={() => onSaveSettings(true)}
                 isOpen={dialogType?.type === 'SummaryDialog'}
                 setDialogType={(code = null) => {
-                    setDialogType({ type: code === 927 ? 'tier' : code });
+                    if (code !== null && typeof code === 'object' && code.type === 'problematicLinks') {
+                        setDialogType(code);
+                    } else {
+                        setDialogType({ type: code === 927 ? 'tier' : code });
+                    }
                 }}
                 setTierMessageCode={(code) => setTierMessageCode(code)}
                 groups={selectedGroups}
@@ -1634,6 +1806,19 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 isOpen={showTierPlans}
                 onClose={() => setShowTierPlans(false)}
             />}
+            <GenericModal
+                classes={classes}
+                modalData={genericModalData}
+                isOpen={dialogType?.type === DialogType.GENERIC}
+            />
+            <PayPerRecipientNew
+                classes={classes}
+                isOpen={isOpenPayPerRecipient}
+                onClose={() => {
+                    setIsOpenPayPerRecipient(false);
+                }}
+                jumpToStep={2}
+            />
             <Loader isOpen={showLoader} />
         </DefaultScreen>
     )

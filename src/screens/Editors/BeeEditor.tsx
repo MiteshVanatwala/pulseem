@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import { debounce, get, includes } from 'lodash';
 import BeePlugin from '@mailupinc/bee-plugin'
-import { Box, Button, Grid, TextField, Typography } from '@material-ui/core'
+import { Box, Button, Checkbox, FormControlLabel, Grid, TextField, Typography } from '@material-ui/core'
 import { useRef, useState, useEffect } from 'react'
 import DefaultScreen from '../DefaultScreen'
 import { useSelector, useDispatch } from 'react-redux';
@@ -15,10 +15,13 @@ import { getById, deleteLPUserBlock, deleteLandingPage, getAllLPTemplatesBySubac
 import { initClientForm, initExtraDataField, initLandingPages } from './helper/MigratePulseemData';
 import { BeeConfig, DialogType, DefaultContent } from './helper/config';
 import { IoMdImages } from 'react-icons/io';
+import { GiMagicBroom } from 'react-icons/gi';
+import { BsMagic } from 'react-icons/bs';
 import Gallery from '../../components/Gallery/Gallery.component';
 import { PulseemFeatures, PulseemFolderType } from "../../model/PulseemFields/Fields";
 import { getFileGallery } from '../../redux/reducers/gallerySlice';
 import { BiSave } from 'react-icons/bi'
+import AITemplateCreatorAccordion from '../HtmlCampaign/modals/AI_TemplateCreatorAccordion';
 // User input controls
 import { EditRow } from './components/ContentDialogs'
 // Generic modal component with event hooks
@@ -30,8 +33,9 @@ import moment from 'moment';
 import { loginURL, sitePrefix } from '../../config';
 import { MdArrowBackIos, MdArrowForwardIos, MdCheck, MdGroups, MdOutlinePublic } from 'react-icons/md';
 import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
-import { BEE_EDITOR_TYPES, TierFeatures } from '../../helpers/Constants';
+import { BEE_EDITOR_TYPES, TierFeatures, reCAPTCHAKey } from '../../helpers/Constants';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
+import { injectRecaptchaScript } from '../../helpers/Utils/RecaptchaHelper';
 import { StateType } from '../../Models/StateTypes';
 import { commonProps } from '../../model/Common/commonProps.types';
 import { BeeEditorModel, BeeEditorStoreModel, LandingPageRow, LandingPageTemplate, LandingPageUserBlocks, SaveLandingPageArguments } from '../../Models/LandingPage/LandingPage';
@@ -106,6 +110,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
   const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
   const [showTierPlans, setShowTierPlans] = useState(false);
   const [TierMessageCode, setTierMessageCode] = useState('');
+
   //#endregion State
   //#region Get Extra fields & Landing pages, after Data Ready
   const loadAccountExtraData = () => {
@@ -201,9 +206,6 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
         window.location.reload();
       } else getData();
     }
-    //@ts-ignore
-    if (!publicTemplates.length) dispatch(getLPPublicTemplates(isRTL));
-    if (!templatesBySubAccount.length) dispatch(getAllLPTemplatesBySubaccountId());
   }, []);
   //@ts-ignore
   useEffect(() => {
@@ -273,7 +275,10 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
     const initBeeToken = async () => {
       await dispatch(getLPBeeToken());
     }
-    initBeeToken();
+    await initBeeToken();
+    //@ts-ignore
+    if (!publicTemplates.length) dispatch(getLPPublicTemplates(isRTL));
+    if (!templatesBySubAccount.length) dispatch(getAllLPTemplatesBySubaccountId());
   }
   //#region Init Bee Token & Configuration
   const initTags = () => {
@@ -431,6 +436,19 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       let finalHtml = args.HtmlData;
       let finalJson = args.JsonData;
 
+      // Inject reCAPTCHA initialization script if enabled
+      const enableRecaptcha = landingPage?.Data?.WebForm?.EnableRecaptcha || localStorage.getItem(`recaptcha_${moduleId}`) === 'true';
+      const recaptchaConfig = {
+        enabled: enableRecaptcha,
+        siteKey: landingPage?.Data?.WebForm?.recaptchaSiteKey || reCAPTCHAKey
+      };
+
+      if (recaptchaConfig.enabled) {
+        finalHtml = injectRecaptchaScript(finalHtml, true, recaptchaConfig.siteKey);
+        console.log('reCAPTCHA script injected. Final HTML length:', finalHtml.length);
+        console.log('Script injection check - data-recaptcha-enabled present:', finalHtml.includes('data-recaptcha-enabled'));
+      }
+
       //@ts-ignore
       let response: any = await dispatch(saveWebform({
         Name: '',
@@ -466,9 +484,11 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
                 navigate(`${sitePrefix}LandingPages/summary/${args?.campaignId}`);
               }
               //@ts-ignore
-            } else if (saveRef.current?.showAnimation && response.payload?.StatusCode === 927) {
+            } else if (response.payload?.StatusCode === 927) {
               setTierMessageCode(response?.payload?.Message);
               setDialogType({ type: 'tier' });
+              setLoader(false);
+              return false;
             }
             else {
               // TODO: Handle publish response
@@ -561,6 +581,25 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       setSilentSave(false)
     }, 2000);
   }
+  const loadNewTemplate = async (templateData: any) => {
+    setLoader(true);
+    try {
+      if (editorRef.current) {
+        const templateJson = typeof templateData === 'string'
+          ? JSON.parse(templateData)
+          : templateData;
+        //@ts-ignore
+        await editorRef.current.load(templateJson);
+        saveDesign(false, null, false);
+      }
+    } catch (error) {
+      console.error('Error loading template:', error);
+      setToastMessage({ severity: 'error', color: 'error', message: 'Failed to load template', showAnimtionCheck: false } as any);
+    } finally {
+      setLoader(false);
+    }
+  };
+
   const onAutoSavePage = debounce((showGroupPopup: boolean = false) => {
     if (showGroupPopup) {
       saveRef.current = {
@@ -775,6 +814,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
           classes.backButton
         )}
         style={{ margin: '8px' }}
+        // @ts-ignore
         startIcon={<BiSave />}
       >
         {t('common.saveTemplate')}
@@ -788,6 +828,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
           classes.backButton
         )}
         style={{ margin: '8px' }}
+        // @ts-ignore
         startIcon={<MdGroups />}
       >
         {t('common.Groups')}
@@ -804,6 +845,18 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       >
         {t('common.next')}
       </Button>}
+      {accountFeatures?.indexOf(PulseemFeatures.NewsletterAI) > -1 && (
+        // @ts-ignore
+        <Button
+          key="aiButton"
+          onClick={() => { setDialogType({ type: 'AIDialog' }) }}
+          variant='contained'
+          size='small'
+          className={clsx(classes.btn, classes.btnRounded, classes.redButton)}
+          style={{ margin: '8px' }}
+          startIcon={<GiMagicBroom />}
+        >{t('campaigns.aiDeisgner')}</Button>
+      )}
     </>
   }
   const renderButtons = () => {
@@ -826,6 +879,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
               classes.backButton
             )}
             style={{ margin: '8px' }}
+            // @ts-ignore
             startIcon={silentSave ? <Loader isOpen={silentSave} size={20} showBackdrop={false} contained={true} /> : <BiSave />}
             color="primary"
           >
@@ -851,6 +905,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
                     classes.btnRounded,
                     classes.backButton
                   )}
+                  // @ts-ignore
                   startIcon={<MdOutlinePublic />}
                   style={{ marginInlineStart: '8px' }}
                   color="primary"
@@ -873,6 +928,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
                     classes.btnRounded,
                     classes.backButton
                   )}
+                  // @ts-ignore
                   startIcon={<MdCheck />}
                   style={{ marginInlineStart: '8px' }}
                   color="primary"
@@ -894,8 +950,10 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
             classes.btnRounded,
             classes.backButton
           )}
+          // @ts-ignore
           endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
           style={{ margin: '8px' }}
+          // @ts-ignore
           startIcon={<BiSave />}
           color="primary"
         >{t("common.save")}
@@ -918,6 +976,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
             classes.btnRounded,
             classes.backButton
           )}
+          // @ts-ignore
           startIcon={<MdOutlinePublic />}
           style={{ marginInlineStart: '8px' }}
           color="primary"
@@ -932,6 +991,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
             classes.btnRounded,
             classes.backButton
           )}
+          // @ts-ignore
           endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
           style={{ marginInlineStart: '8px' }}
           color="primary"
@@ -954,9 +1014,8 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
     if (showGallery) {
       let dialog = {
         showDivider: false,
-        icon: (
-          <IoMdImages />
-        ),
+        // @ts-ignore
+        icon: <IoMdImages />,
         title: t("common.imageGallery"),
         content: (
           <Gallery
@@ -1206,6 +1265,53 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
     )
   })
 
+  const AI_Dialog = () => {
+    return {
+      showDivider: false,
+      icon: <BsMagic />,
+      title: t("AI.popup.designWithAI"),
+      content: (
+        <>
+          <Box className={classes.aiFormNotice}>
+            <span className={classes.aiFormNoticeIcon}>⚠️</span>
+            <Box>
+              <Typography className={classes.aiFormNoticeTitle}>
+                {t('AI.popup.formNotSupportedTitle')}
+              </Typography>
+              <Typography className={classes.aiFormNoticeDesc}>
+                {t('AI.popup.formNotSupportedDesc')}
+              </Typography>
+            </Box>
+          </Box>
+          <AITemplateCreatorAccordion
+          classes={classes}
+          campaignId={moduleId}
+          loaderText={t('AILoader.creatingLandingPage')}
+          loaderSteps={[
+            { text: t('AILoader.step1'), icon: "🎨" },
+            { text: t('AILoader.step2LandingPage'), icon: "📐" },
+            { text: t('AILoader.step3'), icon: "✍️" },
+            { text: t('AILoader.step4'), icon: "🚀" },
+            { text: t('AILoader.step5'), icon: "✨" }
+          ]}
+          onRestore={(templateData: any) => {
+            if (templateData) {
+              setDialogType(null);
+              loadNewTemplate(templateData);
+            }
+          }}
+          onUpdate={(status: string, templateData: any) => {
+            if (status === 'success' && templateData) {
+              setDialogType(null);
+              loadNewTemplate(templateData);
+            }
+          }} />
+        </>
+      ),
+      showDefaultButtons: false
+    };
+  }
+
   const renderDialog = () => {
     const { type, data } = dialogType || {}
     let currentDialog = {};
@@ -1228,7 +1334,9 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       currentDialog = renderTemplateExistsDialog(data);
     } else if (type === 'tier') {
 			currentDialog = getTierValidationDialog();
-		}
+		} else if (type === 'AIDialog') {
+      currentDialog = AI_Dialog();
+    }
     if (type) {
       return (
         dialogType && <BaseDialog
@@ -1295,6 +1403,11 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
   }
   //#endregion Forms 
   const getConfig = () => {
+    const recaptchaConfig = {
+      enabled: landingPage?.Data?.WebForm?.enableRecaptcha || false,
+      siteKey: landingPage?.Data?.WebForm?.recaptchaSiteKey || reCAPTCHAKey
+    };
+
     return BeeConfig({
       //@ts-ignore
       moduleType,
@@ -1319,7 +1432,8 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       t: t,
       form: clientForm,
       onFormAdded: onFormAdded,
-      languageCode: language
+      languageCode: language,
+      recaptchaConfig: recaptchaConfig
     }) as any;
   }
   const config = getConfig();

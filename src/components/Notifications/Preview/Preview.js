@@ -122,7 +122,7 @@ export const Preview = (
             </Typography>}
             <div className={clsx(classes.footerWrapper, isChrome ? classes.chromeNotification : null)} style={{ flexDirection: isRTL ? (model.Direction === 1 ? 'row-reverse' : 'row') : (model.Direction === 1 ? 'row' : 'row-reverse') }}>
               <div className={classes.iconWrapper}>
-                <div className={clsx(classes.flexJustifyCenter, classes.icon)}
+                <div className={clsx(classes.flexJustifyCenter, classes.notificationIcon)}
                   style={{
                     backgroundImage: `url(${model.Icon})`,
                     cursor: 'unset',

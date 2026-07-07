@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
 import clsx from "clsx";
 import { Box, Typography, Button, Divider } from "@material-ui/core";
-import "moment/locale/he";
 import { Loader } from '../../components/Loader/Loader';
 import { useDispatch } from 'react-redux';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import DefaultScreen from '../DefaultScreen';
 import { getNewsletterPreview } from '../../redux/reducers/newsletterSlice';
 import { getLandingPagePreview } from '../../redux/reducers/landingPagesSlice';
@@ -13,10 +12,19 @@ import { useTranslation } from 'react-i18next';
 import { Title } from '../../components/managment/Title';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import { actionURL } from '../../config';
+import { formatDisplayConditionsForPreview } from '../../helpers/Utils/displayConditionPreviewUtils';
+
+// Old approach: SummaryDialog loaded this page inside an iframe using the React route URL:
+// <iframe src="${sitePrefix}previewer/newsletter/${CampaignID}?embedded=1" />
+// The ?embedded=1 flag toggled a minimal render mode (no chrome, no title bar).
+// Replaced by EmailPreviewComponent (Shadow DOM) to avoid loading the full React app inside the iframe.
+
+
 
 
 const HtmlPreview = ({ classes }: any) => {
   const params = useParams();
+  const location = useLocation();
   const { id, type } = params;
   const { t } = useTranslation();
   const [copyStatus, setCopyStatus] = useState<any>();
@@ -24,6 +32,8 @@ const HtmlPreview = ({ classes }: any) => {
   const [details, setDetails] = useState<any>(null);
   const [html, setHtml] = useState<string>('');
   const dispatch = useDispatch();
+  const isEmbeddedPreview = new URLSearchParams(location.search).get('embedded') === '1'
+    || new URLSearchParams(location.search).get('fromReact') === '1';
 
 
   const implementAmpScripts = async (isAmp: boolean) => {
@@ -72,7 +82,8 @@ const HtmlPreview = ({ classes }: any) => {
     const response = await dispatch(getNewsletterPreview(id)) as any;
 
     implementAmpScripts(response?.payload?.Data?.AmpData !== null).then(() => {
-      setHtml(response?.payload?.Data?.AmpData || response?.payload?.Data?.HTMLtoSend || response?.payload?.Data?.HTML);
+      const rawHtml = response?.payload?.Data?.AmpData || response?.payload?.Data?.HTMLtoSend || response?.payload?.Data?.HTML;
+      setHtml(formatDisplayConditionsForPreview(rawHtml));
       const d = {
         PageName: response?.payload?.Data?.Name,
         ID: response?.payload?.Data?.CampaignID,
@@ -169,6 +180,15 @@ const HtmlPreview = ({ classes }: any) => {
       </Box>
       }
     </Box>
+  }
+
+  if (isEmbeddedPreview) {
+    return <>
+      <Box style={{ maxWidth: '100%', margin: 0, position: 'relative', direction: 'ltr', pointerEvents: 'none', overflow: 'hidden' }} className={clsx(classes.renderHtml)}>
+        {RenderHtml(html)}
+      </Box>
+      <Loader isOpen={showLoader} showBackdrop={true} />
+    </>;
   }
 
   return <DefaultScreen

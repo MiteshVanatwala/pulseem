@@ -62,7 +62,7 @@
 		"1": "{{FilePath}}",
 		"2": "Bad Request",
 		"3": "Sub account not found",
-		"4": "File size is too large. Maximum file size permitted is {{FileSize}} MB",
+		"4": "הקובץ שניסיתם להעלות גדול מדי, הגודל המקסימלי הוא {{FileSize}} MB",
 		"5": "You are not allowed to upload this file",
 		"100": "Internal Error"
 	},

@@ -229,6 +229,8 @@
   "EmptySystemNameValidator": "Enter the system name (only for your use)",
   "PasteOrWizard": "<a class=\"smart-builder\" onclick=\"request.SimpleBuilderClick();\">Paste</a> data or use the <a class=\"smart-builder\" onclick=\"request.SmartBuilderClick();\">wizard</a>",
   "Save": "Save",
+  "Saving": "Saving...",
+  "update": "Update",
   "SaveNewSystem": "Save new system",
   "SystemIsConnectedToCount": "This system is connected to ##count##",
   "SystemName": "System name",
@@ -346,6 +348,7 @@
   "SelectTemplate": "Select A Template",
   "DirectUpload": "Direct Upload",
   "ErrorOccured": "Error Occured",
+  "errorContactSupport": "In order to send SMS from name instead of number, you should go through our screening process.Please contact our support team.",
   "Pending": "Pending",
   "RecipientsName": "Recipient's Name",
   "SentFromNumber": "From",
@@ -443,6 +446,7 @@
   "outOf": "out of",
   "rowNumber": "Rows",
   "clear": "Clear",
+  "filterByNumber": "Filter By Number",
   "confirm": "Confirm",
   "stopped": "Stopped",
   "cancelled": "Cancelled",
@@ -528,6 +532,9 @@
   "minutes": "Minutes",
   "hours": "Hours",
   "days": "Days",
+  "weeks": "Weeks",
+  "months": "Months",
+  "years": "Years",
   "requiredField": "Required Field",
   "continue": "Continue",
   "errorDetected": "Payment incomplete!",
@@ -825,6 +832,9 @@
   "maxPrice": "Maximum Price",
   "abandonedCart": "Abandoned Cart in",
   "pageViewed": "Page Viewed in",
+  "page_viewed_match_exact": "Exact",
+  "page_viewed_match_contains": "Contains",
+  "field_required": "Required field",
   "priceRangeError": "Maximum price cannot be larger then Minimum Price",
   "verifyByEmail": "Via Email",
   "verifyBySms": "Via SMS",
@@ -877,13 +887,35 @@
   "selectFile": "Select file",
   "contactUs": "Contact Us",
   "currency": "Currency",
-  "polyAgentIconTitle": "Hi, I'm Pulsy, your smart AI agent",
+  "polyAgentIconTitle": "Hi, I'm Pulsy, your smart AI Analyst ",
+  "polyAgentIconTitleSupport": "Hi, I'm Pulsy, your support AI Agent",
   "polyAgentIconTitleMarquee": "Hi! I'm Pulsy, What would you like to improve today?",
   "agentPlaceholder": "Ask me something... (like: \"What are my campaign performance?\") Write freely...",
+  "agentPlaceholderSupport": "Ask me anything about Pulseem...(e.g. \"How do I send an SMS?\"). Type freely",
   "welcomeMessage": "Hi, my name is {USERNAME}",
   "500chars": "500 characters",
   "doNotShowThisDialog": "Do not show this dialog",
   "messageDot": "Analyzing your data, it may take a few minutes",
+  "thinkingPhrases": [
+    "Investigating...",
+    "Troubleshooting...",
+    "Scanning the docs...",
+    "Reproducing the issue...",
+    "Connecting the dots...",
+    "Activating Pulsy thinking...",
+    "Diagnosing...",
+    "Reading between the lines...",
+    "Consulting the playbook...",
+    "Running a Pulsy scan..."
+  ],
+  "aiAdvisorHeader": "Pulsy - Marketing Advisor 🟢 Online",
+  "supportHeader": "Pulsy - Support Agent 🟢 Online",
+  "supportBubbleText": "Hi! I'm Pulsy Support. how can I help? 🛠️",
+  "supportPreset1": "How do I connect my store?",
+  "supportPreset2": "How do I import contacts?",
+  "supportPreset3": "How do I set up an automation?",
+  "supportPreset4": "I have an urgent issue 🚨",
+  "startNewConversation": "Start New Conversation",
   "tier": {
     "current": "Current Tier",
     "upgrade": "Upgrade Tier",
@@ -897,5 +929,78 @@
   "presetQuestion2": "How to increase opens and clicks?",
   "presetQuestion3": "Create a VIP customer segment for me",
   "presetQuestion4": "Create a segment of customers who open but don’t click",
-  "numbersAllowedOnly": "Only numbers are allowed"
+  "numbersAllowedOnly": "Only numbers are allowed",
+  "helpDrawer": {
+    "title": "Need help?",
+    "subtitle": "We've got everything you need right here.",
+    "searchPlaceholder": "Search for help",
+    "tabs": {
+      "support": "Support",
+      "whatsNew": "What's New"
+    },  
+    "helpCenter": {
+      "title": "Help Center",
+      "description": "Find answers, tips, and troubleshooting in our articles."
+    },
+    "supportTickets": {
+      "title": "Support and Tickets",
+      "description": "Make a request to our support team to get help, and find all your tickets."
+    },
+    "hireAgency": {
+      "title": "Hire an agency",
+      "description": "Looking for help with a project? We can match you with the right certified Agency partner."
+    },
+    "apiDocs": {
+      "title": "API documentation",
+      "description": "Use our APIs to unlock the power of Pulseem."
+    },
+    "community": {
+      "title": "Community",
+      "description": "Discuss with other users to know how to get the best out of Pulseem."
+    },
+    "news": {
+      "item1": {
+        "title": "New Feature: AI-Powered Campaigns",
+        "description": "We've launched a new AI feature to help you create better campaigns with personalized content suggestions."
+      },
+      "item2": {
+        "title": "System Maintenance Scheduled",
+        "description": "Scheduled maintenance on December 25th from 2 AM to 4 AM EST. Services may be temporarily unavailable."
+      },
+      "item3": {
+        "title": "Enhanced Analytics Dashboard",
+        "description": "Check out our newly redesigned analytics dashboard with more insights and better visualization."
+      }
+    },
+    "bottomNav": {
+      "resourceCenter": "Resource Center",
+      "news": "News"
+    }
+  },
+  "saveColumnStructureAsDefault": "Save this column structure as a default",
+  "activeTierSubscription": "Account already has an active email tier subscription.",
+  "Submit": "Submit",
+  "customPackageQuote": "Don't send every month? For a custom package quote",
+  "getStarted": "Let's Get Started!",
+  "fillDetails": "Fill in your details and we'll get back to you soon",
+  "enterMessage": "Enter Message",
+  "contactUsSuccess": "Your message has been sent successfully",
+  "upgrade": "Upgrade",
+  "cancelPlan": "Cancel Plan",
+  "cancelPlanConfirmation": "Are you sure you want to cancel your current plan?",
+  "planCancellationRequestSubmitted": "Your plan cancellation request has been submitted successfully.",
+  "nonPolishNumber": "You can not send SMS from non-polish number. Please set a polish number.",
+  "domainVerificationRequired": "Domain is not verified",
+  "settingsSavedSuccessfuly": "Settings successfuly saved!",
+  "typeFromName": "Type From Name",
+  "typeSubject": "Type Subject",
+  "manageAgent": "Manage Agent",
+  "clearAllFilters": "Clear all filters",
+  "allNumbers": "All Numbers",
+  "field": "Field",
+  "operator": "Operator",
+  "value": "Value",
+  "pulseSendPill": "Pulse Send",
+  "page_viewed_contains_placeholder": "/checkout",
+  "page_viewed_contains_tooltip": "Matches contacts who visited any page whose URL contains this text. Case-insensitive. URL parameters are included (e.g. utm_source=email). Enter one value only — not comma-separated."
 }

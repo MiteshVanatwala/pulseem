@@ -102,10 +102,11 @@ const TemplateFields = ({
 							}
 							onChange={onTemplateNameChange}
 							value={templateName}
+							inputProps={{ maxLength: 50 }}
 						/>
 
 						<Typography className={classes.buttonContent}>
-							<>{translator('whatsapp.templateDesc')}</>
+							<>{translator('whatsapp.templateDesc')} - {translator('whatsapp.alertModal.templateNameLengthError')}</>
 						</Typography>
 					</Grid>
 

@@ -229,6 +229,8 @@
   "EmptySystemNameValidator": "Wprowadź nazwę systemu (tylko do twojego użytku)",
   "PasteOrWizard": "<a class=\"smart-builder\" onclick=\"request.SimpleBuilderClick();\">Wklej</a> dane lub użyj <a class=\"smart-builder\" onclick=\"request.SmartBuilderClick();\">kreatora</a>",
   "Save": "Zapisz",
+  "Saving": "Zapisywanie...",
+  "update": "Aktualizuj",
   "SaveNewSystem": "Zapisz nowy system",
   "SystemIsConnectedToCount": "Ten system jest połączony z ##count##",
   "SystemName": "Nazwa systemu",
@@ -346,6 +348,7 @@
   "SelectTemplate": "Wybierz szablon",
   "DirectUpload": "Bezpośrednie przesyłanie",
   "ErrorOccured": "Wystąpił błąd",
+  "errorContactSupport": "Aby móc wysyłać SMS-y z imienia i nazwiska, a nie z numeru telefonu, należy przejść przez nasz proces weryfikacji. Prosimy o kontakt z naszym zespołem wsparcia",
   "Pending": "Oczekujące",
   "RecipientsName": "Imię odbiorcy",
   "SentFromNumber": "Od",
@@ -443,6 +446,7 @@
   "outOf": "z",
   "rowNumber": "Wiersze",
   "clear": "Wyczyść",
+  "filterByNumber": "Filtruj według numeru",
   "confirm": "Potwierdź",
   "stopped": "Zatrzymane",
   "cancelled": "Anulowane",
@@ -528,6 +532,9 @@
   "minutes": "Minuty",
   "hours": "Godziny",
   "days": "Dni",
+  "weeks": "Tygodnie",
+  "months": "Miesiące",
+  "years": "Lata",
   "requiredField": "Pole wymagane",
   "continue": "Kontynuuj",
   "errorDetected": "Płatność niekompletna!",
@@ -825,6 +832,9 @@
   "maxPrice": "Maksymalna cena",
   "abandonedCart": "Porzucony koszyk w",
   "pageViewed": "Strona wyświetlona w",
+  "page_viewed_match_exact": "Dokładnie",
+  "page_viewed_match_contains": "Zawiera",
+  "field_required": "Pole wymagane",
   "priceRangeError": "Maksymalna cena nie może być większa niż minimalna cena",
   "verifyByEmail": "Przez e-mail",
   "verifyBySms": "Przez SMS",
@@ -879,6 +889,26 @@
   "500chars": "500 znaków",
   "doNotShowThisDialog": "Nie pokazuj tego dialogu",
   "messageDot": "Analizujemy Twoje dane, może to zająć kilka minut",
+  "thinkingPhrases": [
+    "Investigating...",
+    "Troubleshooting...",
+    "Scanning the docs...",
+    "Reproducing the issue...",
+    "Connecting the dots...",
+    "Activating Pulsy thinking...",
+    "Diagnosing...",
+    "Reading between the lines...",
+    "Consulting the playbook...",
+    "Running a Pulsy scan..."
+  ],
+  "aiAdvisorHeader": "Pulsy - Marketing Advisor 🟢 Online",
+  "supportHeader": "Pulsy - Support Agent 🟢 Online",
+  "supportBubbleText": "Hi! I'm Pulsy Support. how can I help! 🛠️",
+  "supportPreset1": "How do I connect my store?",
+  "supportPreset2": "How do I import contacts?",
+  "supportPreset3": "How do I set up an automation?",
+  "supportPreset4": "I have an urgent issue 🚨",
+  "startNewConversation": "Start New Conversation",
   "tier": {
     "current": "Current Tier",
     "upgrade": "Upgrade Tier",
@@ -892,5 +922,71 @@
   "presetQuestion2": "Jak zwiększyć otwarcia i kliknięcia?",
   "presetQuestion3": "Utwórz dla mnie grupę klientów VIP",
   "presetQuestion4": "Utwórz grupę klientów, którzy otwierają, ale nie klikają",
-  "numbersAllowedOnly": "Dozwolone są tylko cyfry"
+  "numbersAllowedOnly": "Dozwolone są tylko cyfry",
+  "helpDrawer": {
+    "title": "Potrzebujesz pomocy?",
+    "subtitle": "Mamy wszystko, czego potrzebujesz.",
+    "searchPlaceholder": "Szukaj pomocy",
+    "tabs": {
+      "support": "Wsparcie",
+      "whatsNew": "Co nowego"
+    },
+    "helpCenter": {
+      "title": "Centrum pomocy",
+      "description": "Znajdź odpowiedzi, wskazówki i rozwiązywanie problemów w naszych artykułach."
+    },
+    "supportTickets": {
+      "title": "Wsparcie i zgłoszenia",
+      "description": "Złóż prośbę do naszego zespołu wsparcia, aby uzyskać pomoc i znajdź wszystkie swoje zgłoszenia."
+    },
+    "hireAgency": {
+      "title": "Zatrudnij agencję",
+      "description": "Szukasz pomocy przy projekcie? Możemy dopasować Cię do odpowiedniego certyfikowanego partnera agencyjnego."
+    },
+    "apiDocs": {
+      "title": "Dokumentacja API",
+      "description": "Użyj naszych interfejsów API, aby odblokować moc Pulseem."
+    },
+    "community": {
+      "title": "Społeczność",
+      "description": "Dyskutuj z innymi użytkownikami, aby dowiedzieć się, jak najlepiej wykorzystać Pulseem."
+    },
+    "news": {
+      "item1": {
+        "title": "Nowa funkcja: Kampanie oparte na AI",
+        "description": "Uruchomiliśmy nową funkcję AI, która pomoże Ci tworzyć lepsze kampanie z spersonalizowanymi sugestiami treści."
+      },
+      "item2": {
+        "title": "Zaplanowana konserwacja systemu",
+        "description": "Zaplanowana konserwacja 25 grudnia od 2:00 do 4:00 EST. Usługi mogą być tymczasowo niedostępne."
+      },
+      "item3": {
+        "title": "Ulepszony pulpit analityczny",
+        "description": "Sprawdź nasz nowo zaprojektowany pulpit analityczny z większą ilością spostrzeżeń i lepszą wizualizacją."
+      }
+    },
+    "bottomNav": {
+      "resourceCenter": "Centrum zasobów",
+      "news": "Wiadomości"
+    }
+  },
+  "activeTierSubscription": "Account already has an active email tier subscription.",
+  "Submit": "Wyślij",
+  "customPackageQuote": "Nie wysyłasz co miesiąc? Poproś o wycenę niestandardowego pakietu",
+  "getStarted": "Zaczynajmy!",
+  "fillDetails": "Wypełnij swoje dane, a wkrótce się z Tobą skontaktujemy",
+  "enterMessage": "Wprowadź wiadomość",
+  "contactUsSuccess": "Twoja wiadomość została pomyślnie wysłana",
+  "upgrade": "Ulepsz",
+  "cancelPlan": "Anuluj plan",
+  "cancelPlanConfirmation": "Czy na pewno chcesz anulować swój obecny plan?",
+  "planCancellationRequestSubmitted": "Twoje żądanie anulowania planu zostało pomyślnie przesłane.",
+  "nonPolishNumber": "Nie możesz wysłać SMS-a z numeru spoza Polski. Proszę ustawić polski numer.",
+  "saveColumnStructureAsDefault": "Zapisz tę strukturę kolumn jako domyślną",
+  "manageAgent": "Zarządzaj agentem",
+  "clearAllFilters": "Wyczyść wszystkie filtry",
+  "allNumbers": "Wszystkie liczby",
+  "pulseSendPill": "Wysyłka pulsacyjna",
+  "page_viewed_contains_placeholder": "/checkout",
+  "page_viewed_contains_tooltip": "Dopasowuje kontakty, które odwiedziły stronę, której URL zawiera ten tekst. Bez rozróżniania wielkości liter. Uwzględnia parametry URL. Wpisz tylko jedną wartość — nie rozdzielaj przecinkami."
 }

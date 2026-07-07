@@ -1,4 +1,4 @@
-import { Box, Checkbox, FormControl, FormControlLabel, Grid, IconButton, Select, TextField, Tooltip, Typography } from "@material-ui/core";
+import { Box, Checkbox, FormControl, FormControlLabel, Grid, IconButton, MenuItem, Select, TextField, Tooltip, Typography } from "@material-ui/core";
 import clsx from "clsx";
 import { useTranslation } from "react-i18next";
 import { BsInfoCircle } from "react-icons/bs";
@@ -262,6 +262,10 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
                 label={translator("common.accessibility")}
             />
         </Grid>
+
+
+
+
 
         {
             data.PageType !== 2 && (

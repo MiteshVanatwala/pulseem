@@ -67,7 +67,8 @@ const AffiliateProgram = ({ classes }: any) => {
             setAffiliateFee(fee);
             setPaid(paid);
             setToBePaid(toPay);
-            setBalance(toPay - paid);
+            const toPayAllTime = affiliateDetails?.Data.reduce((n: any, { ToPayAllTime }: any) => n + ToPayAllTime, 0);
+            setBalance(toPayAllTime - paid);
             setRefId(referralID);
             setShowLoader(false);
           }

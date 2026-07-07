@@ -257,6 +257,8 @@ export const commonSlice = createSlice({
     TierData: [],
     IsPoland: false,
     companyAdmin: '',
+    smsConfig: null,
+    isSwippingApprovalSMS: false,
   },
   extraReducers: builder => {
     builder
@@ -347,6 +349,12 @@ export const commonSlice = createSlice({
         state.WhatsAppPlatformID = get(payload, 'Data.WhatsappPlatformId', null)
         state.TierData = get(payload, 'Data.TierData', [])
         state.IsPoland = get(payload, 'Data.IsPoland', false)
+        state.smsConfig = {
+          Country: get(payload, 'Data.Country', '-1'),
+          SmsLength: get(payload, 'Data.SmsLength', null),
+          SMSProvider: get(payload, 'Data.SMSProvider', 8),
+        }
+        state.isSwippingApprovalSMS = get(payload, 'Data.IsSwippingApprovalSMS', false)
       });
   },
   reducers: {

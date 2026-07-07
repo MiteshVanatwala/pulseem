@@ -15,11 +15,12 @@ import { surveyStyle } from './surveyStyles';
 import { BeeAiStyles } from './BeeAiStyles';
 import { getPopupTriggersStyle } from './popupTriggers';
 import { getPopUpManagementStyle } from './popUpManagementStyle';
+import { getAnimationStyle } from './animationStyles';
 
-export const useClasses = (windowSize, isRTL = false) => makeStyles(theme => ({
+export const useClasses = (windowSize, isRTL = false, IsPoland = false) => makeStyles(theme => ({
   ...getDrawerStyle(windowSize, isRTL, theme),
   ...appBarStyle(windowSize, isRTL, theme),
-  ...getManagmentStyle(windowSize, isRTL, theme),
+  ...getManagmentStyle(windowSize, isRTL, theme, IsPoland),
   ...getGeneralStyle(windowSize, isRTL, theme),
   ...getNotificationStyle(windowSize, isRTL, theme),
   ...getDashboardStyle(windowSize, isRTL, theme),
@@ -32,5 +33,6 @@ export const useClasses = (windowSize, isRTL = false) => makeStyles(theme => ({
   ...surveyStyle(windowSize, isRTL, theme),
   ...BeeAiStyles(windowSize, isRTL, theme),
   ...getPopupTriggersStyle(windowSize, isRTL, theme),
-  ...getPopUpManagementStyle(windowSize, isRTL, theme)
+  ...getPopUpManagementStyle(windowSize, isRTL, theme),
+  ...getAnimationStyle(windowSize, isRTL, theme)
 }))

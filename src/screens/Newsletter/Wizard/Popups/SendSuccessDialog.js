@@ -24,7 +24,7 @@ const SendSuccessDialog = ({
             }
             case 3: {
                 let specialField = null;
-                switch (newsletterSendSummary.AutoSendingByUserField) {
+                switch (newsletterSendSummary?.AutoSendingByUserField) {
                     case "5":
                     case 5: {
                         specialField = `${t("mainReport.birthday")} ${newsletterSendSummary?.IsBestTime ? `- ${t('campaigns.newsLetterEditor.sendSettings.optimalSending')}` : ''}`;
@@ -44,8 +44,8 @@ const SendSuccessDialog = ({
                         specialField = t('campaigns.weSent');
                     }
                 }
-                const date = `${newsletterSendSummary.AutoSendDelay.toString().replace('-', '')} ${t("mainReport.days")} ${newsletterSendSummary.AutoSendDelay > 0 ? t("mainReport.after") : t("mainReport.before")} ${specialField}`;
-                const time = moment(newsletterSendSummary.SendDate).format('h:mm a');
+                const date = `${newsletterSendSummary?.AutoSendDelay.toString().replace('-', '')} ${t("mainReport.days")} ${newsletterSendSummary?.AutoSendDelay > 0 ? t("mainReport.after") : t("mainReport.before")} ${specialField}`;
+                const time = moment(newsletterSendSummary?.SendDate).format('h:mm a');
                 return t('campaigns.mailingScheduledDesc', { DATE_OF_SCHEDULE: date, TIME_OF_SCHEDULE: time })
             }
             default: {
@@ -61,7 +61,7 @@ const SendSuccessDialog = ({
             <Box className={clsx(classes.flexColumnCenter, classes.p20)}>
                 <img src={Gif} style={{ width: 150, height: 150 }} alt="Success" />
                 <Typography className={clsx(classes.fontBold, classes.font24, classes.mt2)}>
-                    {t( newsletterSendSummary.SendingMethod === 1 ? 'campaigns.weSent' : 'campaigns.mailingScheduled' )}
+                    {t( newsletterSendSummary?.SendingMethod === 1 ? 'campaigns.weSent' : 'campaigns.mailingScheduled' )}
                 </Typography>
                 <Typography className={clsx(classes.font18, classes.mt2)}>
                     { renderWhenToSend() }

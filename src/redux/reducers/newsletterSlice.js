@@ -39,7 +39,7 @@ export const getNewsletterDirectReport = createAsyncThunk(
 export const getArchiveDirectReport = createAsyncThunk(
   'directReport/GetArchiveEmailDirectReport', async (data, thunkAPI) => {
     try {
-      const response = await PulseemReactInstance.post(`directReport/GetArchiveEmailDirectReport`, data);
+      const response = await PulseemReactInstance.post(`directReport/GetArchiveEmailDirectReport`, data, { timeout: 30000 });
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -177,9 +177,14 @@ export const getSendSummary = createAsyncThunk(
   });
 
 export const sendCampaign = createAsyncThunk(
-  'email/SendCampaign', async (campaignId, thunkAPI) => {
+  'email/SendCampaign', async (payload, thunkAPI) => {
     try {
-      const response = await PulseemReactInstance.put(`email/SendCampaign/${campaignId}`);
+      // payload may be a plain campaignId (number) for backward-compat
+      // or an object { campaignId, sendToSupervisor }
+      const campaignId       = typeof payload === 'object' ? payload.campaignId       : payload;
+      const sendToSupervisor = typeof payload === 'object' ? payload.sendToSupervisor : false;
+      const qs = sendToSupervisor ? '?sendToSupervisor=true' : '';
+      const response = await PulseemReactInstance.put(`email/SendCampaign/${campaignId}${qs}`);
       return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -279,6 +284,7 @@ export const newsletterSlice = createSlice({
       CAMPAIGN_DELETED_SUCCESS: { severity: 'success', color: 'success', message: "campaigns.newsLetterEditor.sendSettings.deleted", showAnimtionCheck: false },
       GROUP_ALREADY_EXIST: { severity: 'error', color: 'error', message: 'group.alreadyExist', showAnimtionCheck: false },
       FUTURE_DATE_PASSED: { severity: 'error', color: 'error', message: 'campaigns.newsLetterEditor.errors.FUTURE_DATE_PASSED', showAnimtionCheck: false },
+      HTML_BODY_EMPTY: { severity: 'error', color: 'error', message: 'campaigns.htmlBodyEmpty', showAnimtionCheck: false },
     },
     domainVerificationPopUp: {
       domain: {

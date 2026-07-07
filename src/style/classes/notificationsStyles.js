@@ -277,6 +277,15 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         backgroundRepeat: 'no-repeat',
         cursor: 'pointer',
     },
+    notificationIcon: {
+        direction: 'rtl',
+        position: 'relative',
+        backgroundSize: 'cover',
+        width: notificationIconWidth[windowSize],
+        height: notificationIconHeight[windowSize],
+        // backgroundPosition: 'center center',
+        backgroundRepeat: 'no-repeat',
+    },
     notificationContent: {
         lineHeight: '1 !important',
         padding: '15px 0 0 0',

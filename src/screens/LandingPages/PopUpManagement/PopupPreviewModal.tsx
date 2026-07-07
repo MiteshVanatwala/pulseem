@@ -69,7 +69,7 @@ const PopupPreviewModal: React.FC<PopupPreviewModalProps> = ({
           const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
           if (iframeDoc && iframeDoc.body) {
             const height = iframeDoc.body.scrollHeight;
-            const maxHeight = window.innerHeight * 0.8;
+            const maxHeight = window.innerHeight * 0.9;
             setContentHeight(Math.min(height, maxHeight));
           }
         } catch (error) {
@@ -97,8 +97,12 @@ const PopupPreviewModal: React.FC<PopupPreviewModalProps> = ({
           const widthMatch = match.match(/(\d+)/);
           return widthMatch ? parseInt(widthMatch[1], 10) : 0;
         });
-        
-        return Math.max(...widths);
+
+        const sortedWidths = Array.from(new Set(widths)).sort((a, b) => b - a);
+
+        const secondMaxWidth = sortedWidths.length > 1 ? sortedWidths[1] : sortedWidths[0];
+
+        return secondMaxWidth;
       }
     } catch (error) {
       console.error('Error extracting max-width:', error);

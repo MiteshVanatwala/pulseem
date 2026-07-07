@@ -27,4 +27,9 @@ i18n
     }
   })
 
+// Expose i18n to window for third-party libraries like Tawk
+if (typeof window !== 'undefined') {
+  window.i18next = i18n;
+}
+
 export default i18n;

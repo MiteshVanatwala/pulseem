@@ -89,6 +89,9 @@ export const getPopUpManagementStyle = (windowSize, isRTL, theme) => ({
     maxHeight: '90vh',
     width: 'auto',
     margin: '32px',
+    "@media screen and (max-width: 475px)": {
+      maxWidth: '100%',
+    },
   },
   popupPreviewContainer: {
     position: 'relative',

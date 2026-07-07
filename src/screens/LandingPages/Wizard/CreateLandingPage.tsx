@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import DefaultScreen from '../../DefaultScreen';
 import { Title } from '../../../components/managment/Title';
@@ -11,7 +11,7 @@ import { coreProps } from '../../Whatsapp/Campaign/Types/WhatsappCampaign.types'
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import WizardActions from '../../../components/Wizard/WizardActions';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
-import { BEE_EDITOR_TYPES, CLOSE_BUTTON_HTML, LandingPagesAnswerType, TierFeatures } from '../../../helpers/Constants';
+import { BEE_EDITOR_TYPES, CLOSE_BUTTON_HTML, LandingPagesAnswerType, TierFeatures, PlaceHolders, reCAPTCHAKey } from '../../../helpers/Constants';
 import { FileGallery } from '../../../Models/Files/FileGallery';
 import Gallery from '../../../components/Gallery/Gallery.component';
 import { PulseemFeatures, PulseemFolderType } from '../../../model/PulseemFields/Fields';
@@ -31,6 +31,7 @@ import SeoSettings from './Tabs/SeoSettings';
 import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
 import DevelopmentSettings from './Tabs/DevelopmentSettings';
 import LinkPreviewSettings from './Tabs/LinkPreviewSettings';
+
 import { BeeEditorStoreModel, LandingPageModel } from '../../../Models/LandingPage/LandingPage';
 import { PulseemResponse } from '../../../Models/APIResponse';
 import { logout } from '../../../helpers/Api/PulseemReactAPI';
@@ -40,6 +41,9 @@ import CloseButtonConfig from './Tabs/CloseButtonConfig';
 import TierPlans from '../../../components/TierPlans/TierPlans';
 import { UserRoles } from '../../../Models/SubUser/SubUsers';
 import { get } from 'lodash';
+import EmailConfirmationSettingsPopUp from './Popups/EmailConfirmationSettingsPopUp';
+import { getCookie, setCookie } from '../../../helpers/Functions/cookies';
+import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog';
 
 const generateGuid = () => {
 	return Date.now().toString(36) + Math.random().toString(36).substring(2);
@@ -68,6 +72,7 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 	const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
 	const [showTierPlans, setShowTierPlans] = useState(false);
 	const [toastMessage, setToastMessage] = useState(null);
+	const [emailVerificationPopup, setEmailVerificationPopup] = useState(false);
 	const [errors, setErrors] = useState({
 		PageName: '',
 		formLanguage: '',
@@ -169,10 +174,19 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 		FacebookPixelCode: '',
 		IsNewEditor: null,
 		WebformsToReportLeadByApi: null,
-		CloseButtonHtml: CLOSE_BUTTON_HTML
+		CloseButtonHtml: CLOSE_BUTTON_HTML,
+		enableRecaptcha: false,
+		recaptchaVersion: 'v3',
+		recaptchaSiteKey: '',
+		IsEmailConfirmationActive: false,
+		ConfirmationFromEmail: '',
+		ConfirmationFromName: '',
+		ConfirmationSubject: ''
 	});
 
 	const [tabValue, setTabValue] = useState<string>('1');
+	const [showConfirmationSettings, setShowConfirmationSettings] = useState<boolean>(false);
+	const isFirstRender = useRef(true);
 	// const [template, setTemplate] = useState('');
 	const [TierMessageCode, setTierMessageCode] = useState<string>('');
 	const { publicTemplates, templatesBySubAccount } = useSelector(
@@ -198,41 +212,10 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 			limitSubscribers: '', emailId: '', DepartmentId: '', DownloadUrl: '',
 			PopupDomains: '',
 		});
-
-		const getDefaultLanguage = () => {
-			return language === 'pl' ? 14 : language === 'he' ? 0 : 1;
-		};
-
-		setLandingPageModel({
-			ID: 0, GroupID: 0, GroupIDs: [], IsClientScript: false,
-			CmbSelection: '', HtmlFileName: '', ButtonText: '', PageName: '',
-			AnswerOption: '', autofillEnabled: false, autofillFields: [],
-			AnswerData: '', SubmitCounter: 0, ViewCounter: 0,
-			ConfirmationText: '', Status: 1, PageHtml: '',
-			HasPrefunpage: false, PrefunImage: '', HasComments: false,
-			PageUrl: isPopup && !id ? generateGuid() : '',
-			PageType: isPopup ? 5 : 1, AnswerType: 1,
-			IsResponsive: true, DownloadUrl: '', OfflineDate: '',
-			OfflineUrl: '', HtmlToEdit: '', HtmlFile: '',
-			BaseLanguage: getDefaultLanguage(),
-			IsTemplate: false, CategoryID: null, IsUpdate: false,
-			SubscriptionOptin: false, IsAccessibility: true,
-			TerminalNumber: '', APIUserName: '', PopupDomains: [],
-			DepartmentId: null, LinkPreviewTitle: '', LinkPreviewIcon: '',
-			LinkPreviewIconName: '', LinkPreviewDescription: '',
-			LinkPreviewIconExtrnalURL: '', IsPreviewIconFromExtrnalURL: false,
-			EmailsToReport: [], SplitRegistrations: false, DoubleOptin: false,
-			SubscriptionsLimit: null, Systems: [], FacebookPageID: '',
-			FacebookPrefunPage: false, FacebookPrefunImage: '',
-			FacebookComments: false, ClientJavaScript: '', ClientBodyScript: '',
-			ClientHtmlCode: '', ClientCssStyle: '', PageTitle: '',
-			MetaDescription: '', MetaKeywords: '', GoogleAnalyticsCode: '',
-			GoogleConvertionCode: '', GoogleTagManagerCode: '',
-			FacebookPixelCode: '', IsNewEditor: null,
-			WebformsToReportLeadByApi: null,
-			CloseButtonHtml: CLOSE_BUTTON_HTML
-		});
 	}, [location.pathname, isPopup, language, id]);
+
+	useEffect(() => {
+	}, []);
 
 	enum EditorType {
 		SAVE_ONLY = 0,
@@ -248,6 +231,7 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 
 	const getData = async () => {
 		setIsLoader(true);
+		const emailConfirmatopmCookie = getCookie('LP-EmailConfirmation');
 
 		const lpId: number | any = id || -1;
 		// @ts-ignore
@@ -304,7 +288,15 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 				autofillFields: response.Data?.WebForm?.AutofillSettings?.SelectedFields,
 				autofillEditable: response.Data?.WebForm?.AutofillSettings?.IsEditable,
 				SubscriptionOptin: response.Data?.WebForm?.AutofillSettings?.SubscriptionOptin,
-				CloseButtonHtml: response.Data?.WebForm?.CloseButtonHtml || CLOSE_BUTTON_HTML
+				CloseButtonHtml: response.Data?.WebForm?.CloseButtonHtml || CLOSE_BUTTON_HTML,
+				enableRecaptcha: response.Data?.WebForm?.EnableRecaptcha || false,
+				recaptchaVersion: response.Data?.WebForm?.EnableRecaptcha || 'v3',
+				recaptchaSiteKey: response.Data?.WebForm?.EnableRecaptcha ? reCAPTCHAKey : '',
+				IsEmailConfirmationActive: (lpId && lpId > 0) ? response.Data?.WebForm?.IsEmailConfirmationActive : emailConfirmatopmCookie?.IsEmailConfirmationActive ?? true,
+				ConfirmationFromEmail: (lpId && lpId > 0) ? response.Data?.WebForm?.ConfirmationFromEmail : emailConfirmatopmCookie?.ConfirmationFromEmail ?? '',
+				ConfirmationSubject: (lpId && lpId > 0) ? response.Data?.WebForm?.ConfirmationSubject : emailConfirmatopmCookie?.ConfirmationSubject ?? '',
+				ConfirmationFromName: (lpId && lpId > 0) ? response.Data?.WebForm?.ConfirmationFromName : emailConfirmatopmCookie?.ConfirmationFromName ?? '',
+				DoubleOptin: (lpId && lpId > 0) ? response.Data?.WebForm?.DoubleOptin : emailConfirmatopmCookie?.DoubleOptin ?? ''
 			});
 			if (response.Data?.WebForm?.LinkPreviewIconName !== '') {
 				handleSelectedImage(response.Data?.WebForm?.LinkPreviewIconName, true);
@@ -332,7 +324,10 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 				autofillEditable: false,
 				PageUrl: isPopup && !id ? generateGuid() : '',
 				PopupDomains: [],
-				CloseButtonHtml: CLOSE_BUTTON_HTML
+				CloseButtonHtml: CLOSE_BUTTON_HTML,
+				enableRecaptcha: false,
+				recaptchaVersion: 'v3',
+				recaptchaSiteKey: '',
 			});
 		}
 
@@ -348,7 +343,7 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 
 	useEffect(() => {
 		getData();
-	}, [, isRTL]);
+	}, [id, isRTL]);
 
 
 	const handleSelectedImage = async (file: string, preventUpdateModel: boolean) => {
@@ -550,8 +545,8 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 		content: (
 			<ul className={clsx(classes.noMargin, classes.mb20, classes.errorText)}>
 				{
-					Object.values(errors).map((error: any) => error && (
-						<li className={classes.validationAlertModalLi}>
+					Object.entries(errors).map(([key, error]: any) => error && (
+						<li key={key} className={classes.validationAlertModalLi}>
 							{error}
 						</li>
 					))
@@ -742,6 +737,7 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 				ClientJavaScript: headScript,
 				ClientBodyScript: bodyScript,
 				CloseButtonHtml: landingPageModel.CloseButtonHtml || '',
+				PageHtml: landingPageModel.PageHtml,
 				AutofillSettings: {
 					IsAutofillEnabled: landingPageModel.autofillEnabled,
 					SelectedFields: landingPageModel.autofillFields,
@@ -755,6 +751,13 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 			const response = await dispatch(saveLandingPage(req));
 			setIsLoader(false);
 			handleSaveResponse(response?.payload, editorType);
+			setCookie('LP-EmailConfirmation', JSON.stringify({
+				DoubleOptin: landingPageModel.DoubleOptin,
+				ConfirmationFromEmail: landingPageModel.ConfirmationFromEmail,
+				ConfirmationFromName: landingPageModel.ConfirmationFromName,
+				ConfirmationSubject: landingPageModel.ConfirmationSubject,
+				IsEmailConfirmationActive: landingPageModel.IsEmailConfirmationActive
+			}));
 			return true;
 		} else {
 			setDialogType({ type: 'validationDialog' })
@@ -830,6 +833,7 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 	// navigateBeEditor
 	// 0 - Don't redirect, 1 - New Editor, 2 - Old Editor
 	const handleContinueToEditor = (editorType: EditorType, savedPageID: number) => {
+		console.log('handleContinueToEditor - editorType:', editorType);
 		const isBeeEditor = (accountFeatures?.indexOf(PulseemFeatures.BEE_EDITOR) > -1 && editorType === EditorType.BEE);
 		const pageId = id || savedPageID;
 
@@ -881,6 +885,7 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 							classes.backButton
 						)}
 						style={{ margin: '8px' }}
+						// @ts-ignore
 						endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
 					>
 						{t("common.save")}
@@ -893,6 +898,7 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 							classes.backButton
 						)}
 						style={{ margin: '8px' }}
+						// @ts-ignore
 						endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
 					>
 						{t('common.continue')}
@@ -911,6 +917,7 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 							classes.backButton
 						)}
 						style={{ margin: '8px' }}
+						// @ts-ignore
 						endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
 						key="saveContinue"
 					>
@@ -929,6 +936,7 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 							classes.backButton
 						)}
 						style={{ margin: '8px' }}
+						// @ts-ignore
 						endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
 						key='newEditor'
 					>
@@ -948,10 +956,38 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 		return <Toast customData={null} data={toastMessage} />;
 	};
 
+	const onRefresh = () => {
+		getData()
+		return;
+	}
+
+	const onConfirmEmailSettings = (retVal: any) => {
+		const newDetails = {
+			...landingPageModel,
+			...retVal
+		};
+		setLandingPageModel(newDetails)
+		setShowConfirmationSettings(false);
+	}
+
+	// useEffect(() => {
+	// 	if (isFirstRender.current && !landingPageModel.ID) {
+	// 		return;
+	// 	}
+	// 	if (isFirstRender.current && landingPageModel?.IsEmailConfirmationActive === true) {
+	// 		isFirstRender.current = false;
+	// 		return;
+	// 	}
+
+	// 	if (landingPageModel?.IsEmailConfirmationActive === true) {
+	// 		setShowConfirmationSettings(true);
+	// 	}
+	// }, [landingPageModel.IsEmailConfirmationActive])
+
 	return (
 		<DefaultScreen
 			currentPage="landingPages"
-			subPage={id ? "EditLandingPage" : "CreateLandingPage"}
+			subPage={isPopup ? "createPopup" : (id ? "EditLandingPage" : "CreateLandingPage")}
 			classes={classes}
 			customPadding={true}
 			containerClass={clsx(classes.mb50, classes.editorCont)}
@@ -1002,6 +1038,7 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 									placement={"top"}
 								>
 									<IconButton className={clsx(classes.icon_Info, classes.noPadding, classes.ml5)}>
+										{/* @ts-ignore */}
 										<BsInfoCircle />
 									</IconButton>
 								</Tooltip>
@@ -1049,6 +1086,7 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 									removeEmailId={removeEmailId}
 									errors={errors}
 									onDone={getData}
+									onShowEmailConfirmationSettings={(show: boolean) => setShowConfirmationSettings(show)}
 								/>
 								{/* {renderAutofillFields()} */}
 							</Grid>}
@@ -1066,6 +1104,7 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 										placement={"top"}
 									>
 										<IconButton className={clsx(classes.icon_Info, classes.noPadding, classes.ml5)}>
+											{/* @ts-ignore */}
 											<BsInfoCircle />
 										</IconButton>
 									</Tooltip>
@@ -1144,7 +1183,32 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 				isOpen={showTierPlans}
 				onClose={() => setShowTierPlans(false)}
 			/>}
-		</DefaultScreen >
+			{
+				showConfirmationSettings && <EmailConfirmationSettingsPopUp
+					classes={classes}
+					isOpen={showConfirmationSettings}
+					onClose={() => {
+						setShowConfirmationSettings(false);
+						onRefresh();
+					}}
+					onConfirm={(retVal: any) => {
+						onConfirmEmailSettings(retVal);
+					}}
+					optInSettings={landingPageModel}
+					//@ts-ignore
+					onVerificationEmail={() => setEmailVerificationPopup(true) }
+				/>
+			}
+			{emailVerificationPopup && <VerificationDialog
+				textButtonOnSuccess={t('common.close')}
+				classes={classes}
+				variant="email"
+				isOpen={emailVerificationPopup}
+				step={0}
+				value={landingPageModel.ConfirmationFromEmail}
+				onClose={() => setEmailVerificationPopup(false)}
+			/>}
+		</DefaultScreen>
 	)
 }
 

@@ -3,6 +3,7 @@
   "signUp": "הרשמה",
   "purchase": "רכישה",
   "cartAbandonment": "נטישת עגלה",
+  "siteSignUp": "הרשמה",
   "orderStatusCompleted": "סטטוס הזמנה -הושלם",
   "register": "הרשמה",
   "authResponses": {
@@ -30,13 +31,14 @@
   "shopify": {
     "title": "Shopify",
     "authentication": "חיבור",
-    "apiAccessToken": "הזן API Token",
+    "apiAccessToken": "API Access Token (Legacy Custom App) / API Secret (Dev Dashboard App)",
     "shopifyURL": "שם חנות",
     "siteSignUp": "הרשמה",
     "settingsSaved": "הגדרות נשמרו בהצלחה",
     "connectionFail": "לא ניתן להתחבר לאפליקציה, אנא וודאו שהפרטים שהזנתם נכונים",
     "insertClientToGroup": "הכנס לקוחות לקבוצות:",
-    "insertToken": "הזינו את הטוקן החד-פעמי אותו קיבלתם ביצירת האפליקציה",
+    "insertToken": "Legacy Custom App: הזינו את הטוקן החד-פעמי אותו קיבלתם ביצירת האפליקציה",
+    "insertToken2": "Dev Dashboard App: הזינו את API Secret",
     "insertAPIKey": "הזינו את המפתח אותו קיבלתם ביצירת האפליקציה",
     "insertShopifyURL": "הכניסו את שם / מזהה החנות שלכם",
     "authenticate": "התחבר",
@@ -62,7 +64,26 @@
     "description": "על מנת לחבר את חנות השופיפיי שלכם לחשבון זה בפולסים, אנא קראו את המדריך הבא:",
     "connectStoreAction": "חברו חנות Shopify",
     "oldConnectionOptionsButton": "ניהול אינטגרציה בגרסאות קודמות",
-    "tryNewIntegrationButton": "נסו את הפלאגין החדש"
+    "tryNewIntegrationButton": "נסו את הפלאגין החדש",
+    "unsubscribeSync": "סנכרון מוסרים",
+    "unsubscribeSyncTitle": "הגדרות סנכרון",
+    "syncRemovalsTitle": "סנכרון הסרות",
+    "syncRemovalsLabel": "סנכרון הסרות עם שופיפיי",
+    "syncRemovalsSubText": "נמענים שיוסרו או יבקשו הסרה מחשבונכם בפולסים יוסרו מדיוור גם בחשבונכם בשופיפיי",
+    "syncRemovalsBy": "סנכרן הסרות לפי:",
+    "syncActivationsTitle": "סנכרון הפעלות",
+    "syncActivationsLabel": "סנכרון הפעלות עם שופיפיי",
+    "syncActivationsSubText": "נמענים שיופעלו בחשבונכם בפולסים יופעלו כמאושרי דיוור גם בחשבונכם בשופיפיי",
+    "syncActivationsBy": "סנכרן הפעלות לפי:",
+    "insertToGroupsTitle": "הכנסת לקוחות לקבוצות",
+    "insertToGroupsLabel": "הכנסת לקוחות לקבוצות משופיפי",
+    "insertToGroupsDisclaimer": "שימו לב - על ידי הפעלת תכונה זו, לקוחות שופיפי יתווספו אוטומטית לקבוצות הפולסים שבחרתם. פעולה זו מבוצעת באחריותכם הבלעדית.",
+    "syncDisclaimerText": "לתשומת ליבכם, ע\"י הפעלת הגדרת סנכרון סטטוס נמענים עם שופיפיי הינכם מבקשים לעדכן באופן פעיל את סטטוס הנמען בשופיפיי (מערכת חיצונית) לפי סטטוס הנמען בפולסים. שינוי הגדרה זו כאמור מתבצע על אחריותכם בלבד, ובביצועו הינכם מאשרים כי פולסים לא תישא בכל אחריות לכל נזק שיגרם לך ו/או לחברת פולסים כתוצאה מכך והם יחולו עליכם בלבד.",
+    "unsubscribeSyncDesc": "ודאו כי הרשאת write_customers פתוחה באפליקציה שלכם",
+    "emailToEmail": "אימייל לאימייל",
+    "cellphoneToCellphone": "סלולרי לסלולרי",
+    "smsOnly": "סמס בלבד",
+    "bothEmailAndCellphone": "שניהם (אימייל וסלולרי)"
   },
   "verifone": {
     "title": "Verifone",
@@ -159,6 +180,7 @@
     "newAsActiveDesc1": "לתשומת ליבכם, ע\"י הפעלת הגדרת הוסף את כל הנמענים החדשים שנרשמו דרך קלאביו בסטטוס \"פעיל\" הינכם מבקשים להוסיף נמענים שלא בהכרח אישרו דיוור לחשבונכם בפולסים בסטטוס פעיל, מה שאומר שנמענים אלה יקבלו מכם דיוור.",
     "newAsActiveDesc2": "שינוי הגדרות כאמור מתבצע על אחריותכם בלבד, ובביצועו הינכם מאשרים כי פולסים לא תישא בכל אחריות לכל נזק שיגרם לך ו/או לחברת פולסים כתוצאה מכך והם יחולו עליכם בלבד. ",
     "importFromKlaviyo": "יבוא מקלאביו",
-    "integrationSaved": "השינויים נשמרו"
+    "integrationSaved": "השינויים נשמרו",
+    "iApprove": "אני מאשר\\ת"
   }
 }

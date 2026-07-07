@@ -1,8 +1,9 @@
 import clsx from 'clsx';
 import { debounce, get } from 'lodash';
 import BeePlugin from '@mailupinc/bee-plugin'
-import { Box, Button, Grid, Typography } from '@material-ui/core'
-import { useRef, useState, useEffect } from 'react'
+import { Box, Button, Grid, Typography, Tooltip, LinearProgress, makeStyles, Checkbox, FormControlLabel } from '@material-ui/core'
+import { IoMdInformationCircleOutline } from 'react-icons/io';
+import { useRef, useState, useEffect, useMemo } from 'react'
 import DefaultScreen from '../DefaultScreen'
 import { useSelector, useDispatch } from 'react-redux';
 import {
@@ -15,7 +16,9 @@ import {
   saveTemplateToAccount,
   getTemplateById,
   getPublicTemplates,
-  getAllTemplatesBySubaccountId
+  getAllTemplatesBySubaccountId,
+  getDisplayConditions,
+  deleteDisplayCondition
 } from '../../redux/reducers/campaignEditorSlice';
 import { Loader } from '../../components/Loader/Loader';
 import { getAccountExtraData, getPreviousLandingData } from "../../redux/reducers/smsSlice";
@@ -33,6 +36,7 @@ import WizardActions from '../../components/Wizard/WizardActions';
 import { getBeeToken } from '../../redux/reducers/campaignEditorSlice';
 import { initExtraDataField, initLandingPages } from './helper/MigratePulseemData';
 import { BeeConfig, DialogType, DefaultContent } from './helper/Config';
+import { FONTS } from '../../helpers/Fonts/Init';
 import { IoMdImages } from 'react-icons/io';
 import Gallery from '../../components/Gallery/Gallery.component';
 import { PulseemFeatures, PulseemFolderType } from "../../model/PulseemFields/Fields";
@@ -41,6 +45,7 @@ import { BiSave } from 'react-icons/bi'
 // User input controls
 import { EditRow } from './components/ContentDialogs'
 import { GiMagicBroom } from "react-icons/gi";
+
 
 
 // Generic modal component with event hooks
@@ -67,6 +72,153 @@ import { UserRoles } from '../../Models/SubUser/SubUsers';
 import AITemplateCreatorAccordion from './modals/AI_TemplateCreatorAccordion';
 import { BsMagic } from 'react-icons/bs';
 import TierPlans from '../../components/TierPlans/TierPlans';
+import PayPerRecipientNew from '../../components/PayPerRecipient/PayPerRecipientNew';
+import { getPackagesDetails } from '../../redux/reducers/dashboardSlice';
+import { getCookie, setCookie } from '../../helpers/Functions/cookies';
+import FontValidationModal from './modals/FontValidationModal';
+import {
+  extractAllFontFamilies,
+  isWebSafeFont,
+  isFontSuppressed,
+  suppressFont,
+} from '../../helpers/Fonts/fontValidationUtils';
+
+const SUPPRESS_SIZE_WARNING_COOKIE = 'suppress_size_warning';
+const SUPPRESS_SIZE_WARNING_TTL = 86400; // 24 hours in seconds
+
+const useComponentStyles = makeStyles((theme) => ({
+  emailSizeContainer: {
+    position: 'fixed',
+    top: 0,
+    backgroundColor: '#fff',
+    padding: '12px 16px',
+    borderRadius: 8,
+    boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+    zIndex: 0,
+    minWidth: 280,
+    maxWidth: 300
+  },
+  emailSizeContainerRTL: {
+    left: '20%'
+  },
+  emailSizeContainerLTR: {
+    right: '20%'
+  },
+  emailSizeHeader: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 8
+  },
+  emailSizeLabel: {
+    fontSize: 14,
+    fontWeight: 600,
+    color: '#333'
+  },
+  emailSizeTooltipContent: {
+    fontSize: 13,
+    padding: 4
+  },
+  emailSizeTooltipSpacer: {
+    marginTop: 4
+  },
+  emailSizeIcon: {
+    fontSize: 18,
+    color: '#666',
+    cursor: 'pointer',
+    marginLeft: 8
+  },
+  emailSizeValue: {
+    fontSize: 16,
+    fontWeight: 700,
+  },
+  emailSizeValueRTL: {
+    textAlign: 'right'
+  },
+  emailSizeValueLTR: {
+    textAlign: 'left'
+  },
+  emailSizeProgressContainer: {
+    marginTop: 8,
+    marginBottom: 4
+  },
+  emailSizeProgress: {
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#e0e0e0'
+  },
+  emailSizeWarning: {
+    fontSize: 12,
+    marginTop: 8,
+    padding: '6px 8px',
+    borderRadius: 4
+  },
+  emailSizeWarningOver: {
+    backgroundColor: '#ffebee',
+    color: '#c62828',
+    fontWeight: 600
+  },
+  emailSizeWarningCritical: {
+    backgroundColor: '#fff3e0',
+    color: '#e65100',
+    fontWeight: 400
+  },
+  exceededDialogSubtitle: {
+    marginBottom: 12
+  },
+  exceededDialogSizeBox: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 16,
+    padding: 12,
+    backgroundColor: '#ffebee',
+    borderRadius: 4,
+    border: '1px solid #ef5350'
+  },
+  exceededDialogCurrentSize: {
+    fontSize: 16,
+    fontWeight: 600,
+    color: '#c62828'
+  },
+  exceededDialogMaxSize: {
+    fontSize: 14,
+    color: '#666'
+  },
+  exceededDialogWarning: {
+    marginBottom: 16,
+    color: '#666'
+  },
+  exceededDialogDescription: {
+    fontSize: 14,
+    color: '#888'
+  },
+  problematicLinksContainer: {
+    maxHeight: '60vh',
+    overflowY: 'auto',
+    padding: '0 4px'
+  },
+  problematicLinksMt: {
+    marginTop: 12
+  },
+  problematicLinksList: {
+    margin: '4px 0',
+    paddingInlineStart: 20,
+    listStyleType: 'disc',
+    wordBreak: 'break-word',
+    overflowWrap: 'break-word',
+    '& li': {
+      listStyleType: 'disc',
+      wordBreak: 'break-word',
+      overflowWrap: 'break-word',
+    }
+  },
+  problematicLinksWordBreak: {
+    wordBreak: 'break-word',
+    overflowWrap: 'break-word',
+  },
+}));
 
 const CampaignEditor = ({ classes, ...props }) => {
   //#region State
@@ -74,14 +226,18 @@ const CampaignEditor = ({ classes, ...props }) => {
   const dispatch = useDispatch()
   const navigate = useNavigate();
   const params = useParams();
+  const componentClasses = useComponentStyles();
   const editorRef = useRef(null);
   const saveRef = useRef(null);
+  const emailSizeRef = useRef({ totalKB: 0, htmlKB: 0, ampKB: 0, totalBytes: 0 });
+  const designChangedRef = useRef(false);
+  const editorReadyRef = useRef(false);
   const [showLoader, setLoader] = useState(true);
   const campaignId = params?.id;
   const [dataReady, setDataReady] = useState(false);
   const [mergeData, setPulseemMergeData] = useState({});
   const { productList } = useSelector(state => state.product)
-  const { campaign, userBlocks, ToastMessages, beeToken, publicTemplates, templatesBySubAccount } = useSelector(state => state.campaignEditor);
+  const { campaign, userBlocks, ToastMessages, beeToken, publicTemplates, templatesBySubAccount, displayConditions } = useSelector(state => state.campaignEditor);
   const { extraData, previousLandingData } = useSelector(state => state.sms);
   const { language, isRTL, userRoles } = useSelector(state => state.core)
   const { tokenAlive, accountSettings, accountFeatures, verifiedEmails, subAccount } = useSelector(state => state.common)
@@ -123,7 +279,34 @@ const CampaignEditor = ({ classes, ...props }) => {
   const [emailProps, setEmailProps] = useState(null);
   const [dialogType, setDialogType] = useState(null);
   const [TierMessageCode, setTierMessageCode] = useState("");
-  //#endregion State
+  const [isOpenPayPerRecipient, setIsOpenPayPerRecipient] = useState(false);
+  const [emailSize, setEmailSize] = useState({
+    totalKB: 0,
+    htmlKB: 0,
+    ampKB: 0,
+    totalBytes: 0
+  });
+  const [isDisplayConditionDialogOpen, setIsDisplayConditionDialogOpen] = useState(false);
+  const [pendingAction, setPendingAction] = useState(null);
+  const previousConditionIdsRef = useRef(null);
+  const recentlyDeletedByPopupRef = useRef(new Set());
+  const latestEditorJsonRef = useRef(null);
+  const isProblematicLinksDialogOpenRef = useRef(false);
+  const [suppressSizeWarningChecked, setSuppressSizeWarningChecked] = useState(false);
+
+  // ── Font Validation State ────────────────────────────────────────────────
+  /** Tracks the occurrence count of all fonts to detect when a font is applied to a new element */
+  const lastKnownFontCountsRef = useRef(new Map());
+  /** The editor JSON from the previous onChange call — used as the revert snapshot */
+  const prevEditorJsonRef = useRef(null);
+  /** Stored revert target when modal opens */
+  const preFontChangeJsonRef = useRef(null);
+  const [fontValidationModal, setFontValidationModal] = useState({
+    open: false,
+    fontName: '',
+  });
+  // ────────────────────────────────────────────────────────────────────────
+
 
   //#region Get Extra fields & Landing pages, after Data Ready
   const initFields = () => {
@@ -164,6 +347,17 @@ const CampaignEditor = ({ classes, ...props }) => {
 
   }
 
+  const updateLatestEditorJson = (jsonValue) => {
+    if (!jsonValue) return;
+
+    try {
+      latestEditorJsonRef.current =
+        typeof jsonValue === 'string' ? JSON.parse(jsonValue) : jsonValue;
+    } catch (error) {
+      console.error('Error parsing editor JSON:', error);
+    }
+  };
+
   useEffect(() => {
     if (dataReady) {
       Promise.all([initFields()]).then(() => {
@@ -182,15 +376,46 @@ const CampaignEditor = ({ classes, ...props }) => {
 
   // Get data by campaign id
   useEffect(() => {
-    if (params?.id > 0) {
-      if (localStorage.getItem('reloadBeeEditor') === '1') {
-        localStorage.removeItem('reloadBeeEditor');
-        window.location.reload(true);
-      } else getData();
-    }
-    if (!publicTemplates.length) dispatch(getPublicTemplates(isRTL));
-    if (!productList?.length) dispatch(GetProductsList());
-    dispatch(getAllTemplatesBySubaccountId());
+    let isMounted = true;
+
+    const loadData = async () => {
+      if (params?.id > 0) {
+        if (localStorage.getItem('reloadBeeEditor') === '1') {
+          localStorage.removeItem('reloadBeeEditor');
+          window.location.reload(true);
+        } else if (isMounted) {
+          setLoader(true);
+          await dispatch(getCampaignById(params?.id));
+          if (!isMounted) return;
+          await dispatch(getAccountExtraData());
+          if (!isMounted) return;
+          await dispatch(getPreviousLandingData());
+          if (!isMounted) return;
+          await dispatch(getTestGroups(false));
+          if (!isMounted) return;
+          await dispatch(getUserblocks());
+          if (!isMounted) return;
+          await dispatch(getAuthorizedEmails());
+          if (!isMounted) return;
+          if (productCategories?.length <= 0) {
+            await dispatch(getCategories());
+          }
+          if (!isMounted) return;
+          setDataReady(true);
+          dispatch(getBeeToken());
+        }
+      }
+      if (isMounted && !publicTemplates.length) dispatch(getPublicTemplates(isRTL));
+      if (isMounted && !productList?.length) dispatch(GetProductsList());
+      if (isMounted) dispatch(getAllTemplatesBySubaccountId());
+      if (isMounted) dispatch(getDisplayConditions());
+    };
+
+    loadData();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   useEffect(() => {
@@ -264,16 +489,14 @@ const CampaignEditor = ({ classes, ...props }) => {
     await dispatch(getTestGroups(false));
     await dispatch(getUserblocks());
     await dispatch(getAuthorizedEmails());
-
     if (productCategories?.length <= 0) {
-      getProductCategories();
+      await getProductCategories();
     }
     setDataReady(true);
-    const initBeeToken = () => {
-      dispatch(getBeeToken());
-    }
-    initBeeToken();
+    dispatch(getBeeToken());
   }
+
+
 
   const initRestrictions = async () => {
     const subAccountEmails = verifiedEmails?.filter((ve) => { return ve?.Number === campaign.FromEmail })[0];
@@ -286,6 +509,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   }, [campaign, verifiedEmails]);
   //#region Init Bee Token & Configuration
   const initTags = () => {
+    if (!config) return;
     let tempTags = [...new Set(userBlocks?.map(item => item.tags))];
     var tags = [].concat.apply([], tempTags);
     let tempRows = [{
@@ -325,6 +549,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     config.rowsConfiguration.externalContentURLs = tempRows;
   }
   const initBeeEditor = (templateId = null) => {
+    editorReadyRef.current = false;
     initSpecialLinks().then(async (specialLinksFiles) => {
       const isRtlLang = campaign?.LanguageCode === 0 || campaign?.LanguageCode === 8 ? true : false;
       let forceTemplate = null;
@@ -373,12 +598,18 @@ const CampaignEditor = ({ classes, ...props }) => {
               template = campaign?.JsonData ? JSON.parse(campaign?.JsonData) : defaultContent.defaultTemplate;
             }
 
+            updateLatestEditorJson(template);
+
+            // Pre-calculate fonts present in the initial template so we don't warn for them
+            lastKnownFontCountsRef.current = extractAllFontFamilies(template);
+
             beeTest.start(config, template).then((instance) => {
               editorRef.current = instance;
               if ((!campaign || !campaign.HtmlData) && (!params?.id || params?.id === 0)) {
                 saveDesign(false, null, false);
               }
               setTimeout(() => {
+                editorReadyRef.current = true;
                 setButtonDisabled(false);
               }, 2000);
             });
@@ -407,35 +638,241 @@ const CampaignEditor = ({ classes, ...props }) => {
     await dispatch(getCategories());
   }
 
+  const checkEmailSizeBeforeAction = (actionType) => {
+    if (designChangedRef.current) {
+      setToastMessage({
+        severity: 'info',
+        color: 'info',
+        message: t('campaigns.emailSize.calculating'),
+        showAnimtionCheck: false
+      });
+      return true;
+    }
+    const sizeInfo = emailSizeRef.current;
+    const isSuppressed = getCookie(SUPPRESS_SIZE_WARNING_COOKIE) === 'true';
+
+    if (sizeInfo.totalKB > 102 && !isSuppressed) {
+      setPendingAction(actionType);
+      setSuppressSizeWarningChecked(false);
+      setDialogType({
+        type: 'emailSizeExceeded',
+        data: {
+          currentSize: sizeInfo.totalKB,
+          reductionNeeded: (sizeInfo.totalKB - 102).toFixed(1)
+        }
+      });
+      return false;
+    }
+    return true;
+  };
+
+  const executePendingAction = (buttonAction) => {
+    const action = pendingAction;
+    setPendingAction(null);
+    setDialogType(null);
+
+    if (buttonAction === 'back') return;
+
+    if (suppressSizeWarningChecked) {
+      setCookie(SUPPRESS_SIZE_WARNING_COOKIE, 'true', { maxAge: SUPPRESS_SIZE_WARNING_TTL });
+    }
+
+    if (action === 'testSend' && buttonAction === 'testSend') {
+      // User clicked "Continue to test sending" - open test send modal
+      const isSharedDomain = campaign.FromEmail.split("@").pop() === SharedEmailDomain;
+      if (!isSharedDomain && (!emailProps?.IsVerified || emailProps?.IsRestricted)) {
+        const domainErrorObj = {
+          display: false,
+          address: campaign.FromEmail,
+          verifySharedCallback: null,
+          isSummary: false,
+          isFullDescription: false,
+          preText: t(`common.domainVerification.campaignEditor.${emailProps?.IsRestricted ? 'restricted' : 'nonVerified'}.preText`).replace('##campaignId##', campaign.CampaignID),
+          showSkip: false,
+          options: [{
+            text: t('common.CampaignSettings'),
+            onCallback: () => {
+              window.location = `/react/Campaigns/Create/${campaign.CampaignID}`
+            }
+          }]
+        };
+        setDomainAddressError(domainErrorObj);
+        setShowDomainVerification(true);
+      } else {
+        setLoader(true);
+        setIsResponseModal(false);
+        editorRef.current.send();
+      }
+    } else if (action === 'continue') {
+      handleContinueFlow(true);
+    } else if (action === 'save') {
+      saveDesign(false, null, true, true, '', true).then(async () => {
+        setIsResponseModal(false);
+      });
+    }
+  };
+
+  const handleContinueFlow = (skipSizeCheck = false) => {
+    saveDesign(false, null, false, false, '', skipSizeCheck);
+
+    const isSharedDomain = campaign.FromEmail.split("@").pop() === SharedEmailDomain;
+    if (!isSharedDomain && (!emailProps?.IsVerified || emailProps?.IsRestricted)) {
+      const domainErrorObj = {
+        display: false,
+        address: campaign.FromEmail,
+        verifySharedCallback: null,
+        isSummary: false,
+        isFullDescription: false,
+        preText: t(`common.domainVerification.campaignEditor.${emailProps?.IsRestricted ? 'restricted' : 'nonVerified'}.preText`).replace('##campaignId##', campaign.CampaignID),
+        showSkip: false,
+        options: [{
+          text: t('common.CampaignSettings'),
+          onCallback: () => {
+            window.location = `/react/Campaigns/Create/${campaign.CampaignID}`
+          }
+        }]
+      };
+      setDomainAddressError(domainErrorObj);
+      setShowDomainVerification(true);
+    } else {
+      saveDesign(true, null, true, true, '', skipSizeCheck);
+    }
+  };
+
+  /**
+   * Calculate email size - includes HTML + AMP (all embedded images, videos, components)
+   * JSON data is NOT included as it's only for editor state
+   */
+  const calculateEmailSize = (html = '', ampData = '') => {
+    try {
+      const htmlSize = new Blob([html || '']).size;
+      const ampSize = ampData ? new Blob([ampData]).size : 0;
+      const totalBytes = htmlSize + ampSize;
+      const totalKB = totalBytes / 1024;
+
+      return {
+        totalKB: parseFloat(totalKB.toFixed(1)),
+        totalBytes,
+        htmlKB: parseFloat((htmlSize / 1024).toFixed(1)),
+        ampKB: parseFloat((ampSize / 1024).toFixed(1)),
+        htmlBytes: htmlSize,
+        ampBytes: ampSize
+      };
+    } catch (error) {
+      console.error('Error calculating email size:', error);
+      return { totalKB: 0, totalBytes: 0, htmlKB: 0, ampKB: 0, htmlBytes: 0, ampBytes: 0 };
+    }
+  };
+
+  /**
+   * Get size status for UI coloring and messaging
+   */
+  const getSizeStatus = (sizeKB) => {
+    if (sizeKB >= 102) return 'over';
+    if (sizeKB >= 95) return 'critical';
+    if (sizeKB >= 80) return 'warning';
+    return 'safe';
+  };
+
+  const getSizeColor = (status) => {
+    const colors = {
+      safe: '#4caf50',
+      warning: '#ff9800',
+      critical: '#ff5722',
+      over: '#f44336'
+    };
+    return colors[status] || colors.safe;
+  };
+
   useEffect(() => {
     if (beeToken) {
       initBeeEditor();
     }
-
   }, [beeToken]);
+
+  useEffect(() => {
+    if (dialog === DialogType.TEST_SEND) {
+      setLoader(false);
+    }
+  }, [dialog]);
+
+  useEffect(() => {
+    if (!editorRef.current || !displayConditions || !hasDisplayConditions) {
+      return;
+    }
+
+    const updatedConditions = (displayConditions || []).map((cond) => ({
+      ...cond,
+      id: cond.id || cond.ID || Math.random().toString(36).substr(2, 9),
+      type: isRTL ? 'תנאים' : 'Conditions'
+    }));
+
+    config.rowDisplayConditions = updatedConditions;
+    editorRef.current.loadConfig(config);
+  }, [displayConditions]);
 
   const initOptions = async () => {
     initTags();
     if (!accountSettings || accountSettings.SubAccountSettings) {
-      await dispatch(getCommonFeatures());
+      dispatch(getCommonFeatures());
     }
     if (editorRef.current) {
-      const c = getConfig();
-      editorRef.current.loadConfig(c);
+      editorRef.current.loadConfig(config);
       editorRef.current.load();
     }
   }
 
-
   //#endregion Init Bee Token & Configuration
   //#region Pulseem Methods (Save, Delete, Exit, Back, Test Send)
   const onSave = async (args) => {
+    // Calculate email size BEFORE any other validations
+    const sizeInfo = calculateEmailSize(args.HtmlData, args.AmpData);
+    updateEmailSize(sizeInfo);
+    designChangedRef.current = false;
+    setToastMessage(prev =>
+      prev?.severity === 'info' && prev?.message === t('campaigns.emailSize.calculating')
+        ? null
+        : prev
+    );
+
+    const isSuppressed = getCookie(SUPPRESS_SIZE_WARNING_COOKIE) === 'true';
+
+    if (sizeInfo.totalKB > 102 && !saveRef.current?.skipSizeCheck && !isSuppressed) {
+      setLoader(false);
+      setSuppressSizeWarningChecked(false);
+      setDialogType({
+        type: 'emailSizeExceeded',
+        data: {
+          currentSize: sizeInfo.totalKB,
+          reductionNeeded: (sizeInfo.totalKB - 102).toFixed(1)
+        }
+      });
+      return false;
+    }
+    // Detect sidebar-deleted conditions by comparing previous vs current condition IDs in JSON
+    const currentConditionIds = extractConditionIdsFromJson(args.JsonData);
+    if (previousConditionIdsRef.current !== null) {
+      const removedIds = [...previousConditionIdsRef.current].filter(id =>
+        !currentConditionIds.has(id) && !recentlyDeletedByPopupRef.current.has(id)
+      );
+      recentlyDeletedByPopupRef.current.clear();
+      if (removedIds.length > 0) {
+        for (const id of removedIds) {
+          await dispatch(deleteDisplayCondition(id)).unwrap();
+        }
+        await onRefreshConditions?.();
+      }
+    }
+    previousConditionIdsRef.current = currentConditionIds;
+
     const dynamicBlocks = (args.HtmlData?.match(/product-block-container/g) || []).length;
     if (saveRef.current?.checkDynamicBlock && dynamicBlocks > 0) {
       if (dynamicBlocks > 1) {
+        setLoader(false);
         setDialogType({ type: 'moreThanOneDynamicBlock', data: saveRef.current?.operation })
         return false;
       } else if (['save', 'exit'].indexOf(saveRef.current?.operation) === -1) {
+        setLoader(false);
         setDialogType({
           type: 'productCatalogPrompt',
           data: args
@@ -443,7 +880,18 @@ const CampaignEditor = ({ classes, ...props }) => {
         return false;
       }
     } else if (dynamicBlocks > 1) {
+      setLoader(false);
       return false;
+    }
+
+    if (currentPlan.Id < 3) {
+      const hasDisplayConditions = /\{\%\s*if\b[\s\S]*?\{\%\s*endif\s*\%\}/.test(args.HtmlData);
+      if (hasDisplayConditions) {
+        setLoader(false);
+        setTierMessageCode("DISPLAY_CONDITION");
+        setDialogType({ type: 'tier' });
+        return false;
+      }
     }
 
     const reInit = saveRef.current?.reInitEditor;
@@ -498,6 +946,10 @@ const CampaignEditor = ({ classes, ...props }) => {
           logout();
           return false;
         }
+        case 422: {
+          setToastMessage(ToastMessages.HTML_BODY_EMPTY);
+          return false;
+        }
         case 500: {
           setToastMessage(ToastMessages.ERROR_OCCURED);
           return false;
@@ -508,6 +960,20 @@ const CampaignEditor = ({ classes, ...props }) => {
           }
           return false;
         }
+        case 423: {
+          isProblematicLinksDialogOpenRef.current = true;
+          onAutoSaveCampaign.cancel();
+          setDialogType({
+            type: 'problematicLinks',
+            data: {
+              links: response?.payload?.Data || [],
+              campaignName: campaign?.Name,
+              campaignId: args.campaignId,
+              companyName: accountSettings?.SubAccountName
+            }
+          });
+          return false;
+        }
         case 927: {
           if (saveRef.current?.operation !== 'exit') {
             // EMAIL_BASIC, BASIC_PERSONALIZATION
@@ -515,6 +981,14 @@ const CampaignEditor = ({ classes, ...props }) => {
             setDialogType({ type: 'tier' });
           }
           return false;
+        }
+      }
+
+      if (saveRef.current?.operation === 'testSend') {
+        saveRef.current.operation = '';
+        if (editorRef.current) {
+          setLoader(false);
+          editorRef.current.send();
         }
       }
 
@@ -537,8 +1011,8 @@ const CampaignEditor = ({ classes, ...props }) => {
       setLoader(false);
     }
   }
-  const saveDesign = async (redirectAfterSave = false, redirectUrl = null, showAnimation = true, checkDynamicBlock = false, operation = '') => {
-    saveRef.current = { redirectAfterSave: redirectAfterSave, redirectUrl: redirectUrl, showAnimation: showAnimation, checkDynamicBlock, operation };
+  const saveDesign = async (redirectAfterSave = false, redirectUrl = null, showAnimation = true, checkDynamicBlock = false, operation = '', skipSizeCheck = false) => {
+    saveRef.current = { redirectAfterSave: redirectAfterSave, redirectUrl: redirectUrl, showAnimation: showAnimation, checkDynamicBlock: checkDynamicBlock, operation: operation, skipSizeCheck: skipSizeCheck };
     await editorRef.current.save();
     setTimeout(() => {
       // const now = moment();
@@ -547,12 +1021,22 @@ const CampaignEditor = ({ classes, ...props }) => {
     }, 2000);
   }
 
+  const updateEmailSize = (sizeInfo) => {
+    emailSizeRef.current = sizeInfo;
+    setEmailSize(sizeInfo);
+  };
+
   const onAutoSaveCampaign = debounce(() => {
     setSilentSave(true)
-    saveDesign(false, null, false);
+    saveDesign(false, null, false, false, '', true);
   }, 5000);
 
   const onDesignChange = async () => {
+    if (!editorReadyRef.current) return;
+    designChangedRef.current = true;
+    if (isDisplayConditionDialogOpen) return;
+    if (isProblematicLinksDialogOpenRef.current) return;
+
     onAutoSaveCampaign();
   }
 
@@ -621,7 +1105,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     const redirectLink = isAutoResponder ? `/Pulseem/AutoSendPlans.aspx?Culture=${isRTL ? 'he-IL' : 'en-US'}` : `${sitePrefix}Campaigns`;
 
     if (saveBeforeExit) {
-      saveDesign(true, redirectLink, false, true, 'exit');
+      saveDesign(true, redirectLink, false, true, 'exit', true);
     }
     else {
       if (isAutoResponder) window.location.href = redirectLink;
@@ -649,6 +1133,20 @@ const CampaignEditor = ({ classes, ...props }) => {
   const onTestSendSubmit = async (sendRequest) => {
     setLoader(true);
     const reponse = await dispatch(testSend({ ...sendRequest }));
+    if (reponse.payload.StatusCode === 423) {
+      setDialog(null);
+      setDialogType({
+        type: 'problematicLinks',
+        data: {
+          links: reponse.payload.Data || [],
+          campaignName: campaign?.Name,
+          campaignId: campaignId,
+          companyName: accountSettings?.SubAccountName
+        }
+      });
+      setLoader(false);
+      return;
+    }
     onTestSendResponse(reponse.payload.StatusCode, reponse.payload.Message);
     setSummaryData(reponse.payload.Summary);
     setLoader(false);
@@ -656,6 +1154,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   const onTestSendResponse = (statusCode, message = '') => {
     setIsResponseModal(statusCode !== 402);
     switch (statusCode) {
+      case 200:
       case 201: {
         setDialog(DialogType.SUCCESS_SENT);
         break;
@@ -681,6 +1180,11 @@ const CampaignEditor = ({ classes, ...props }) => {
         setToastMessage(ToastMessages.RECIPIENT_BLOCKED);
         break;
       }
+      case 407: {
+        setDialog(null);
+        setToastMessage(ToastMessages.EMAIL_REQUIRED);
+        break;
+      }
       case 550: {
         setDialog(DialogType.PENDING_APPROVAL);
         break;
@@ -689,10 +1193,60 @@ const CampaignEditor = ({ classes, ...props }) => {
         setDialog(DialogType.UNDER_REVIEW);
         break;
       }
+      case 554: {
+        setDialog(null);
+        setToastMessage(ToastMessages.MAX_LIMIT_REACHED);
+        break;
+      }
       case 927: {
         // FILE_ATTACHMENT, EMAIL_BASIC
+        setIsResponseModal(false);
         setTierMessageCode(message);
         setDialogType({ type: 'tier' });
+        break;
+      }
+      case 553: {
+        setIsResponseModal(false);
+        setGenericModalData({
+          title: t('campaigns.newsLetterEditor.errors.paymentfailed553Title'),
+          message: t("campaigns.newsLetterEditor.errors.paymentfailed553Desc"),
+          onConfirm: () => { },
+          onCancel: () => setDialog(null),
+          onClose: () => setDialog(null),
+          showDefaultButtons: false,
+          renderButtons: () => (
+            <Grid
+              container
+              spacing={2}
+              className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+            >
+              <Grid item>
+                <Button
+                  onClick={() => {
+                    setDialog(null);
+                    dispatch(getPackagesDetails());
+                    setIsOpenPayPerRecipient(true)
+                  }}
+                  className={clsx(
+                    classes.btn,
+                    classes.btnRounded
+                  )}>
+                  {t('campaigns.newsLetterEditor.errors.paymentfailed553Button')}
+                </Button>
+              </Grid>
+            </Grid>
+          )
+        });
+        setDialog(DialogType.GENERIC);
+        break;
+      }
+      case 552: {
+        setDialog(DialogType.PAYMENT_PROCESSING);
+        break;
+      }
+      case 422: {
+        setDialog(null);
+        setToastMessage(ToastMessages.HTML_BODY_EMPTY);
         break;
       }
       case 500:
@@ -749,7 +1303,10 @@ const CampaignEditor = ({ classes, ...props }) => {
       getData();
     })
   }
-  const handleOpenTestSend = () => {
+  const handleOpenTestSend = async () => {
+    setPendingAction('testSend');
+    const canProceed = checkEmailSizeBeforeAction('testSend');
+    if (!canProceed) return;
     const isSharedDomain = campaign.FromEmail.split("@").pop() === SharedEmailDomain;
     if (!isSharedDomain && (!emailProps?.IsVerified || emailProps?.IsRestricted)) {
       const domainErrorObj = {
@@ -771,10 +1328,14 @@ const CampaignEditor = ({ classes, ...props }) => {
       setShowDomainVerification(true)
     }
     else {
-      saveDesign(false, null, false, true).then(async (r) => {
+      try {
+        setLoader(true);
         setIsResponseModal(false);
-        editorRef.current.send();
-      });
+        await saveDesign(false, null, false, true, 'testSend');
+      } catch (e) {
+        console.error('Test send save failed:', e);
+        setLoader(false);
+      }
     }
   }
 
@@ -791,31 +1352,263 @@ const CampaignEditor = ({ classes, ...props }) => {
   //   }
   // }
 
-  const getConfig = () => {
-    return BeeConfig({
-      classes,
-      onSaveUserBlock,
-      IsRTL: isRTL,
-      EditRow: EditRow,
-      openModal: openModal,
-      SaveCampaign: onSave,
-      AutoSaveCampaign: onAutoSaveCampaign,
-      DesignChange: onDesignChange,
-      SetDialog: setDialog,
-      CampaignId: campaignId,
-      PulseemEditBlock: onEditBlock,
-      DeleteBlock: handleDeleteBlock,
-      // HandleAutoSave: handleAutoSave,
-      getRows,
-      handleEditRow,
-      handleDeleteRow,
-      t: t,
-      languageCode: language
-      // handleUndoChange
-    });
-  }
-  const config = getConfig();
+  const editorFonts = FONTS();
+  const hasDisplayConditions = accountFeatures?.indexOf(PulseemFeatures.DisplayConditions) > -1;
 
+  /**
+   * Receives the full Beefree editor JSON on every onChange event.
+   * Scans ALL font-family values (global, block-level, and inline HTML)
+   * and triggers the validation pop-up if a new non-web-safe font is detected.
+   */
+  const handleFontChange = (jsonFile) => {
+    try {
+      const currentFontCounts = extractAllFontFamilies(jsonFile);
+      const previousFontCounts = lastKnownFontCountsRef.current;
+
+      const userId = subAccount?.UserID ?? subAccount?.userId;
+
+      // Find a font that is newly present OR increased in count AND non-web-safe AND not suppressed
+      let newNonSafeFont = null;
+      for (const [fontName, count] of currentFontCounts.entries()) {
+        const prevCount = previousFontCounts.get(fontName) || 0;
+        
+        if (count <= prevCount) continue;                 // not a new occurrence
+        if (isWebSafeFont(fontName)) continue;            // web-safe, no warning
+        if (isFontSuppressed(userId, fontName)) continue; // user suppressed
+        
+        newNonSafeFont = fontName;
+        break;
+      }
+
+      if (newNonSafeFont) {
+        // Store the state BEFORE this change so we can revert to it
+        preFontChangeJsonRef.current = prevEditorJsonRef.current;
+        setFontValidationModal({ open: true, fontName: newNonSafeFont });
+      }
+
+      // Always advance the tracking refs to the current state
+      prevEditorJsonRef.current = typeof jsonFile === 'string' ? JSON.parse(jsonFile) : jsonFile;
+      lastKnownFontCountsRef.current = currentFontCounts;
+    } catch (e) {
+      console.error('[FontValidation] Error during font detection:', e);
+    }
+  };
+
+  /** "Use Anyway" — optionally suppresses future warnings for this font */
+  const handleFontValidationUseAnyway = (doNotShowAgain) => {
+    const { fontName } = fontValidationModal;
+    if (doNotShowAgain) {
+      const userId = subAccount?.UserID ?? subAccount?.userId;
+      suppressFont(userId, fontName);
+    }
+    // Note: Because we already updated lastKnownFontCountsRef in handleFontChange,
+    // the new higher count is already recorded. We don't need to manually update it here.
+    setFontValidationModal({ open: false, fontName: '' });
+  };
+
+  /** "Choose Different Font" — reverts the editor to the pre-change JSON snapshot */
+  const handleFontValidationChooseDifferent = async () => {
+    setFontValidationModal({ open: false, fontName: '' });
+    if (preFontChangeJsonRef.current && editorRef.current) {
+      try {
+        await editorRef.current.load(preFontChangeJsonRef.current);
+      } catch (e) {
+        console.error('[FontValidation] Failed to revert editor font:', e);
+      }
+    }
+    preFontChangeJsonRef.current = null;
+  };
+  const onRefreshConditions = async (deletedByPopupId = null) => {
+    if (deletedByPopupId !== null) {
+      recentlyDeletedByPopupRef.current.add(deletedByPopupId);
+    }
+    const result = await dispatch(getDisplayConditions());
+    setIsDisplayConditionDialogOpen(false);
+    return result?.payload;
+  };
+
+  const extractConditionIdsFromJson = (jsonString) => {
+    const ids = new Set();
+    try {
+      const parsed = typeof jsonString === 'string' ? JSON.parse(jsonString) : jsonString;
+      (parsed?.page?.rows || []).forEach((row) => {
+        const id = row?.container?.displayCondition?.id ?? row?.container?.displayCondition?.ID ?? null;
+        if (id !== null && id !== undefined) ids.add(id);
+      });
+    } catch (e) { }
+    return ids;
+  };
+
+  const removeDeletedConditionFromDesign = async (deletedConditionId) => {
+    if (!deletedConditionId || !editorRef.current) {
+      return;
+    }
+
+    const currentJson = latestEditorJsonRef.current;
+    const currentRows = currentJson?.page?.rows;
+
+    if (!Array.isArray(currentRows) || currentRows.length === 0) {
+      return;
+    }
+
+    let hasChanges = false;
+    const updatedRows = currentRows.map((row) => {
+      const rowConditionId = row?.container?.displayCondition?.id ?? row?.container?.displayCondition?.ID ?? null;
+
+      if (rowConditionId !== deletedConditionId) {
+        return row;
+      }
+
+      hasChanges = true;
+      const nextContainer = { ...(row?.container || {}) };
+      delete nextContainer.displayCondition;
+
+      return {
+        ...row,
+        container: nextContainer
+      };
+    });
+
+    if (!hasChanges) {
+      return;
+    }
+
+    const updatedJson = {
+      ...currentJson,
+      page: {
+        ...currentJson.page,
+        rows: updatedRows
+      }
+    };
+
+    latestEditorJsonRef.current = updatedJson;
+    previousConditionIdsRef.current = extractConditionIdsFromJson(updatedJson);
+
+    if (typeof editorRef.current.reload === 'function') {
+      await editorRef.current.reload(updatedJson);
+      return;
+    }
+
+    await editorRef.current.load(updatedJson);
+  };
+
+  // Memoize config to prevent recreation on every render (which was causing modal flicker)
+  const config = useMemo(() => BeeConfig({
+    classes,
+    displayConditions,
+    onSaveUserBlock,
+    IsRTL: isRTL,
+    EditRow: EditRow,
+    openModal: openModal,
+    SaveCampaign: onSave,
+    AutoSaveCampaign: onAutoSaveCampaign,
+    DesignChange: onDesignChange,
+    SetDialog: setDialog,
+    CampaignId: campaignId,
+    PulseemEditBlock: onEditBlock,
+    DeleteBlock: handleDeleteBlock,
+    getRows,
+    handleEditRow,
+    handleDeleteRow,
+    t: t,
+    languageCode: language,
+    dispatch: dispatch,
+    editorFonts: editorFonts,
+    onRefreshConditions: onRefreshConditions,
+    onConditionDeletedFromDesign: removeDeletedConditionFromDesign,
+    onEditorJsonChange: updateLatestEditorJson,
+    setIsDisplayConditionDialogOpen: setIsDisplayConditionDialogOpen,
+    onFontChange: handleFontChange,
+    hasDisplayConditions: hasDisplayConditions
+  }), [classes, displayConditions, onSaveUserBlock, isRTL, EditRow, openModal, onSave, onAutoSaveCampaign, onDesignChange, setDialog, campaignId, onEditBlock, handleDeleteBlock, getRows, handleEditRow, handleDeleteRow, t, language, dispatch, editorFonts, onRefreshConditions, removeDeletedConditionFromDesign, updateLatestEditorJson, setIsDisplayConditionDialogOpen, hasDisplayConditions, handleFontChange]);
+
+  // Email Size Indicator
+  const EmailSizeIndicator = () => {
+    if (emailSize.totalKB === 0) return null;
+
+    const status = getSizeStatus(emailSize.totalKB);
+    const color = getSizeColor(status);
+    const percentage = Math.min((emailSize.totalKB / 102) * 100, 100);
+
+    const getWarningText = () => {
+      const reductionNeeded = (emailSize.totalKB - 102).toFixed(1);
+      switch (status) {
+        case 'over':
+          return t('campaigns.emailSize.overLimitWarning', { reduction: reductionNeeded });
+        default:
+          return null;
+      }
+    };
+
+    const warningText = getWarningText();
+
+    return (
+      <Box
+        className={clsx(
+          componentClasses.emailSizeContainer,
+          isRTL ? componentClasses.emailSizeContainerRTL : componentClasses.emailSizeContainerLTR
+        )}
+      >
+        <Box className={componentClasses.emailSizeHeader}>
+          <Typography className={componentClasses.emailSizeLabel}>
+            {t('campaigns.emailSize.label')}
+          </Typography>
+          <Tooltip
+            title={
+              <Box className={componentClasses.emailSizeTooltipContent}>
+                <Typography variant="body2">{t('campaigns.emailSize.htmlSize')}: {emailSize.htmlKB} KB</Typography>
+                {emailSize.ampKB > 0 && (
+                  <Typography variant="body2">{t('campaigns.emailSize.ampSize')}: {emailSize.ampKB} KB</Typography>
+                )}
+                <Typography variant="body2" className={componentClasses.emailSizeTooltipSpacer}>
+                  {t('campaigns.emailSize.tooltipInfo')}
+                </Typography>
+              </Box>
+            }
+            arrow
+          >
+            <Box component="span">
+              <IoMdInformationCircleOutline className={componentClasses.emailSizeIcon} />
+            </Box>
+          </Tooltip>
+        </Box>
+
+        <Typography
+          className={clsx(
+            componentClasses.emailSizeValue,
+            isRTL ? componentClasses.emailSizeValueRTL : componentClasses.emailSizeValueLTR
+          )}
+          style={{ direction: 'ltr', color }}
+        >
+          {emailSize.totalKB} KB / 102 KB
+        </Typography>
+
+        <Box className={componentClasses.emailSizeProgressContainer}>
+          <LinearProgress
+            variant="determinate"
+            value={percentage}
+            className={componentClasses.emailSizeProgress}
+            classes={{
+              bar: classes.progressBar
+            }}
+          />
+        </Box>
+
+        {warningText && (
+          <Typography
+            className={clsx(
+              componentClasses.emailSizeWarning,
+              status === 'over'
+                ? componentClasses.emailSizeWarningOver
+                : componentClasses.emailSizeWarningCritical
+            )}
+          >
+            {warningText}
+          </Typography>
+        )}
+      </Box>
+    );
+  };
 
   const saveTemplate = async (name, category) => {
     saveRef.current = { templateName: name, templateCategory: category, saveTemplate: true, showAnimation: true };
@@ -908,7 +1701,7 @@ const CampaignEditor = ({ classes, ...props }) => {
         }, 2000);
       }}
         variant='contained'
-        size='medium'
+        size='small'
         className={clsx(
           classes.btn,
           classes.btnRounded
@@ -919,7 +1712,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       </Button>
       <Button onClick={() => setDialog(DialogType.SAVE_TEMPLATE)}
         variant='contained'
-        size='medium'
+        size='small'
         className={clsx(
           classes.btn,
           classes.btnRounded
@@ -937,6 +1730,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           classes.redButton
         )}
         style={{ margin: 8 }}
+        size='small'
         startIcon={<GiMagicBroom />}
         // color="primary"
         key={'aiButton'}
@@ -996,6 +1790,7 @@ const CampaignEditor = ({ classes, ...props }) => {
               size='small'
               onClick={() => {
                 setDialogType(null);
+                setLoader(false);
                 saveRef.current = { ...saveRef.current, checkDynamicBlock: false };
                 onSave(args);
               }}
@@ -1047,6 +1842,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           : templateData;
 
         // Load the template into the existing editor
+        updateLatestEditorJson(templateJson);
         await editorRef.current.load(templateJson);
 
         // Save the newly loaded template
@@ -1099,17 +1895,17 @@ const CampaignEditor = ({ classes, ...props }) => {
   }
 
   const handleGetPlanForFeature = (tierMessageCode) => {
-      const planName = findPlanByFeatureCode(
-          tierMessageCode,
-          availablePlans,
-          currentPlan.Id
-      );
-      
-      if (planName) {
-          return t('billing.tier.featureNotAvailable').replace('{feature}', t(TierFeatures[tierMessageCode] || tierMessageCode)).replace('{planName}', planName);
-      } else {
-          return t('billing.tier.noFeatureAvailable');
-      }
+    const planName = findPlanByFeatureCode(
+      tierMessageCode,
+      availablePlans,
+      currentPlan.Id
+    );
+
+    if (planName) {
+      return t('billing.tier.featureNotAvailable').replace('{feature}', t(TierFeatures[tierMessageCode] || tierMessageCode)).replace('{planName}', planName);
+    } else {
+      return t('billing.tier.noFeatureAvailable');
+    }
   };
 
   const getTierValidationDialog = () => ({
@@ -1122,28 +1918,28 @@ const CampaignEditor = ({ classes, ...props }) => {
     ),
     renderButtons: () => (
       <Grid
-          container
-          spacing={2}
-          className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}
+        container
+        spacing={2}
+        className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, !get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '')}
       >
-          <Grid item>
-              <Button
-                  onClick={() => {
-                      setShowTierPlans(true);
-                  }}
-                  className={clsx(classes.btn, classes.btnRounded)}
-              >
-                  {t('billing.upgradePlan')}
-              </Button>
-          </Grid>
-          <Grid item>
-              <Button
-                  onClick={() => setDialogType(null)}
-                  className={clsx(classes.btn, classes.btnRounded)}
-              >
-                  {t('common.cancel')}
-              </Button>
-          </Grid>
+        <Grid item>
+          <Button
+            onClick={() => {
+              setShowTierPlans(true);
+            }}
+            className={clsx(classes.btn, classes.btnRounded)}
+          >
+            {t('billing.upgradePlan')}
+          </Button>
+        </Grid>
+        <Grid item>
+          <Button
+            onClick={() => setDialogType(null)}
+            className={clsx(classes.btn, classes.btnRounded)}
+          >
+            {t('common.cancel')}
+          </Button>
+        </Grid>
       </Grid>
     )
   });
@@ -1164,10 +1960,167 @@ const CampaignEditor = ({ classes, ...props }) => {
     }
   })
 
+  const getProblematicLinksDialog = (data = {}) => {
+    const {
+      links = [],
+      campaignName = '',
+      campaignId: cid = '',
+      companyName = ''
+    } = data;
+    const tp = 'campaigns.newsLetterEditor.errors.problematicLinks';
+
+    return {
+      showDivider: false,
+      title: t('campaigns.newsLetterEditor.errors.problematicLinksTitle'),
+      content: (
+        <Box className={componentClasses.problematicLinksContainer}>
+          <Typography className={clsx(classes.font16, classes.alignDir, componentClasses.problematicLinksWordBreak)}>
+            {t(`${tp}.greeting`)}
+          </Typography>
+          <Typography className={clsx(classes.font16, classes.alignDir, componentClasses.problematicLinksMt, componentClasses.problematicLinksWordBreak)}>
+            {t(`${tp}.intro`, { companyName })}
+          </Typography>
+          <Typography className={clsx(classes.font16, classes.alignDir, componentClasses.problematicLinksMt, componentClasses.problematicLinksWordBreak)}>
+            {t('common.CampaignName')}: {campaignName}
+          </Typography>
+          <Typography className={clsx(classes.font16, classes.alignDir, componentClasses.problematicLinksWordBreak)}>
+            {t('common.campaignID')}: {cid}
+          </Typography>
+          <Typography className={clsx(classes.font16, classes.alignDir, componentClasses.problematicLinksMt, componentClasses.problematicLinksWordBreak)}>
+            {t(`${tp}.instructions`)}
+          </Typography>
+          <Box className={componentClasses.problematicLinksListBox}>
+            <ul className={componentClasses.problematicLinksList}>
+              {(links || []).map((link, idx) => (
+                <li key={idx} className={clsx(classes.font16, classes.alignDir, componentClasses.problematicLinksWordBreak)}>
+                  {link}
+                </li>
+              ))}
+            </ul>
+          </Box>
+          <Typography className={clsx(classes.font16, classes.alignDir, componentClasses.problematicLinksMt, componentClasses.problematicLinksWordBreak)}>
+            {t(`${tp}.note`)}
+          </Typography>
+          <Typography className={clsx(classes.font16, classes.alignDir, componentClasses.problematicLinksMt, componentClasses.problematicLinksWordBreak)}>
+            {t(`${tp}.supportIntro`)}
+          </Typography>
+          <Typography className={clsx(classes.font16, classes.alignDir, componentClasses.problematicLinksWordBreak)}>
+            {t('common.email')}: support@pulseem.com
+          </Typography>
+          <Typography className={clsx(classes.font16, classes.alignDir, componentClasses.problematicLinksWordBreak)}>
+            {t('common.phone')}: 03-5240290
+          </Typography>
+        </Box>
+      ),
+      renderButtons: () => (
+        <Grid
+          container
+          spacing={2}
+          className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+        >
+          <Grid item>
+            <Button
+              variant='contained'
+              size='small'
+              onClick={() => {
+                isProblematicLinksDialogOpenRef.current = false;
+                onAutoSaveCampaign.cancel();
+                setDialogType(null);
+              }}
+              className={clsx(classes.btn, classes.btnRounded)}
+            >
+              {t('common.Ok')}
+            </Button>
+          </Grid>
+        </Grid>
+      )
+    };
+  };
+
+  // Email Size Exceeded Dialog
+  const getEmailSizeExceededDialog = (data = {}) => ({
+    title: t('campaigns.emailSize.exceeded.title'),
+    showDivider: false,
+    contentStyle: classes.maxWidth400,
+    content: (
+      <Box>
+        <Typography className={clsx(classes.textCenter, classes.font18, componentClasses.exceededDialogSubtitle)}>
+          {t('campaigns.emailSize.exceeded.mainText')}
+        </Typography>
+
+        <Box className={componentClasses.exceededDialogSizeBox}>
+          <Typography className={componentClasses.exceededDialogCurrentSize}>
+            {data.currentSize} KB
+          </Typography>
+          <Typography className={componentClasses.exceededDialogMaxSize}>
+            / 102 KB
+          </Typography>
+        </Box>
+
+        <Typography className={clsx(classes.textCenter, classes.font16, componentClasses.exceededDialogWarning)}>
+          {t('campaigns.emailSize.exceeded.recommendation')}
+        </Typography>
+
+        <Box mt={2} display="flex" justifyContent="center">
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={suppressSizeWarningChecked}
+                onChange={(e) => setSuppressSizeWarningChecked(e.target.checked)}
+                color="primary"
+              />
+            }
+            label={t('campaigns.size_warning_suppress_label')}
+          />
+        </Box>
+      </Box>
+    ),
+    renderButtons: () => {
+      // Default for save action - just one button
+      return (
+        <Grid
+          container
+          spacing={2}
+          className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+        >
+          <Grid item>
+            <Button
+              onClick={() => executePendingAction('back')}
+              className={clsx(classes.btn, classes.btnRounded)}
+            >
+              {t('campaigns.emailSize.exceeded.backToEditor')}
+            </Button>
+          </Grid>
+          {
+            (pendingAction === 'testSend' || pendingAction === 'save' || pendingAction === 'continue') && (
+              <Grid item>
+                <Button
+                  onClick={() => {
+                    executePendingAction(pendingAction);
+                  }}
+                  variant='contained'
+                  className={clsx(classes.btn, classes.btnRounded)}
+                >
+                  {
+                    pendingAction === 'testSend'
+                      ? t('campaigns.emailSize.exceeded.continueToTestSending')
+                      : (pendingAction === 'save' ? t('campaigns.emailSize.exceeded.continueToSave') : t('campaigns.emailSize.exceeded.continueToSendSettings'))
+                  }
+                </Button>
+              </Grid>
+            )
+          }
+        </Grid>
+      );
+    }
+  });
+
   const renderDialog = () => {
     const { type, data } = dialogType || {}
     let currentDialog = {};
-    if (type === 'productCatalogPrompt') {
+    if (type === 'emailSizeExceeded') {
+      currentDialog = getEmailSizeExceededDialog(data);
+    } else if (type === 'productCatalogPrompt') {
       currentDialog = productCatalogModal(data);
     } else if (type === 'moreThanOneDynamicBlock') {
       currentDialog = moreThanOneDynamicBlockModal(data);
@@ -1177,8 +2130,9 @@ const CampaignEditor = ({ classes, ...props }) => {
       currentDialog = getPendingApprovalModal(551);
     } else if (type === 'tier') {
       currentDialog = getTierValidationDialog();
-    }
-    else if (type === 'AIDialog') {
+    } else if (type === 'problematicLinks') {
+      currentDialog = getProblematicLinksDialog(data);
+    } else if (type === 'AIDialog') {
       currentDialog = AI_Dialog();
     }
 
@@ -1187,8 +2141,16 @@ const CampaignEditor = ({ classes, ...props }) => {
         dialogType && <BaseDialog
           classes={classes}
           open={dialogType}
-          onCancel={() => setDialogType(null)}
-          onClose={() => setDialogType(null)}
+          onCancel={() => {
+            isProblematicLinksDialogOpenRef.current = false;
+            onAutoSaveCampaign.cancel();
+            setDialogType(null);
+          }}
+          onClose={() => {
+            isProblematicLinksDialogOpenRef.current = false;
+            onAutoSaveCampaign.cancel();
+            setDialogType(null);
+          }}
           renderButtons={currentDialog?.renderButtons || null}
           {...currentDialog}>
           {currentDialog?.content}
@@ -1197,13 +2159,26 @@ const CampaignEditor = ({ classes, ...props }) => {
     }
   }
 
+  const handleContinueClick = () => {
+    setPendingAction('continue');
+    const canProceed = checkEmailSizeBeforeAction('continue');
+    if (!canProceed) return;
+    setLoader(true);
+    handleContinueFlow(false);
+  };
+
   const renderButtons = () => {
     const wizardButtons = [];
     if (!isFromAutomation) {
       wizardButtons.push(<>
         <Button
-          onClick={() =>
-            saveDesign(false, null, true, true, 'save')}
+          size='small'
+          onClick={() => {
+            setPendingAction('save');
+            const canProceed = checkEmailSizeBeforeAction('save');
+            if (!canProceed) return;
+            saveDesign(false, null, true, true, 'save');
+          }}
           className={clsx(
             classes.btn,
             classes.btnRounded,
@@ -1215,35 +2190,9 @@ const CampaignEditor = ({ classes, ...props }) => {
           key={'saveButton'}
         >{t("common.save")}
         </Button>
-        {fromLink?.toLowerCase() !== 'autoresponder' && <Button onClick={() => {
-          saveDesign(false, null, false);
-          const isSharedDomain = campaign.FromEmail.split("@").pop() === SharedEmailDomain;
-          if (!isSharedDomain && (!emailProps?.IsVerified || emailProps?.IsRestricted)) {
-            const domainErrorObj = {
-              display: false,
-              address: campaign.FromEmail,
-              verifySharedCallback: null,
-              isSummary: false,
-              isFullDescription: false,
-              preText: t(`common.domainVerification.campaignEditor.${emailProps?.IsRestricted ? 'restricted' : 'nonVerified'}.preText`).replace('##campaignId##', campaign.CampaignID),
-              showSkip: false,
-              options: [{
-                text: t('common.CampaignSettings'),
-                onCallback: () => {
-                  window.location = `/react/Campaigns/Create/${campaign.CampaignID}`
-                }
-              }]
-            }
-            setDomainAddressError(domainErrorObj);
-            setShowDomainVerification(true)
-          }
-          else {
-            saveDesign(true, null, true, true);
-          }
-
-        }}
+        {fromLink?.toLowerCase() !== 'autoresponder' && <Button onClick={handleContinueClick}
           variant='contained'
-          size='medium'
+          size='small'
           className={clsx(
             classes.btn,
             classes.btnRounded,
@@ -1260,6 +2209,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     else {
       wizardButtons.push(<>
         <Button
+          size="small"
           onClick={() =>
             saveDesign(false, null, true)}
           className={clsx(
@@ -1286,6 +2236,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           style={{ marginInlineStart: '8px' }}
           color="primary"
           key={'createAutomationButton'}
+          size="small"
         >{t('common.backToAutomation')}</Button>
       </>)
     }
@@ -1303,6 +2254,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       {renderToast()}
       {showGalleryModal()}
       {showDocumentsModal()}
+      {/* {emailSize.totalKB > 0 && <EmailSizeIndicator />} */}
       {
         dialog === DialogType.Templates && <Templates
           classes={classes}
@@ -1394,7 +2346,26 @@ const CampaignEditor = ({ classes, ...props }) => {
           setShowDomainVerification(false)
         }}
       />
+      <PayPerRecipientNew
+        classes={classes}
+        isOpen={isOpenPayPerRecipient}
+        onClose={() => {
+          setIsOpenPayPerRecipient(false);
+        }}
+        jumpToStep={2}
+      />
       {renderDialog()}
+
+      {/* ── Font Validation Pop-up (Beefree Email Editor only) ── */}
+      <FontValidationModal
+        open={fontValidationModal.open}
+        classes={classes}
+        fontName={fontValidationModal.fontName}
+        isRTL={isRTL}
+        onUseAnyway={handleFontValidationUseAnyway}
+        onChooseDifferent={handleFontValidationChooseDifferent}
+      />
+
       <Loader isOpen={showLoader} showBackdrop={false} />
       {showTierPlans && <TierPlans
         classes={classes}

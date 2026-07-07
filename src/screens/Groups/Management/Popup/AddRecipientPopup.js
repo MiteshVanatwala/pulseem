@@ -150,7 +150,7 @@ const AddRecipientPopup = ({ classes,
         if (recipientData) {
             let { ExtraFields, ...restData } = { ...addRecipientData, ...recipientData }
             setAddRecipientData({ ...restData, ...ExtraFields })
-            setSelectedLocalGroups([...selectedLocalGroups, ...selectedGroups])
+            setSelectedLocalGroups([...selectedGroups])
         }
 
     }, [recipientData])
@@ -312,6 +312,7 @@ const AddRecipientPopup = ({ classes,
                 //BUG: INITIALLY when dialog opens local selected groups is empty, this will result in removal of clients from selected groups 
             }
             const response = await dispatch(addRecipient(request))
+            
             handleResponses(response, {
                 'S_201': {
                     code: 201,
@@ -321,7 +322,7 @@ const AddRecipientPopup = ({ classes,
                             selectGroup([]);
                         }
                         new Promise(async (resolutionFunc, rejectionFunc) => {
-                            resolutionFunc(onAddRecipient());
+                          resolutionFunc(onAddRecipient());
                         }).then((res) => {
                             callback?.()
                         })
@@ -374,7 +375,6 @@ const AddRecipientPopup = ({ classes,
 
         }
         catch (err) {
-            console.log('errr:', err)
             dispatch(sendToTeamChannel({
                 MethodName: 'handleSubmit',
                 ComponentName: 'AddRecipientPopup.js',

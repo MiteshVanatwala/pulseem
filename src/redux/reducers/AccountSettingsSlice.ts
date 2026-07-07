@@ -7,6 +7,30 @@ import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
 import { AuditLog } from '../../Models/AuditLog/AuditLog';
 import { selectUserObject } from './coreSlice';
 
+export const getImportConfiguration = createAsyncThunk(
+    'AccountSettings/GetImportConfiguration',
+    async (_, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.get(`AccountSettings/GetImportConfiguration`);
+            return response.data
+        } catch (error) {
+            return console.log(error);
+        }
+    }
+);
+export const saveImportConfiguration = createAsyncThunk(
+    'AccountSettings/SaveImportConfiguration',
+    async (jsonArray: string, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.post(`AccountSettings/SaveImportConfiguration`, {
+                ConfigurationJson: jsonArray
+            });
+            return response.data
+        } catch (error) {
+            return console.log(error);
+        }
+    }
+);
 export const getAccountSettings = createAsyncThunk(
     'AccountSettings/Get',
     async (_, thunkAPI) => {
@@ -190,6 +214,27 @@ export const SetRevenueFeature = createAsyncThunk(
         }
     })
 
+export const setDoubleOptItSettings = createAsyncThunk(
+    'AccountSettings/SetDoubleOptItSettings',
+    async (request: any, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.post(`AccountSettings/SetDoubleOptItSettings`, request);
+            return response.data;
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    })
+export const disableDoubleOptItSettings = createAsyncThunk(
+    'AccountSettings/DisableDoubleOptItSettings',
+    async (_: any, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.put(`AccountSettings/DisableDoubleOptItSettings`);
+            return response.data;
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    })
+
 
 
 interface AuthorizationValues {
@@ -234,7 +279,8 @@ const AccountSettingsSlice = createSlice({
         authorizedValues: {
             Emails: [],
             Cellphones: []
-        } as any
+        } as any,
+        importRecipientMapping: "" as string
     },
     reducers: {
         resetTwoFA: (state) => {
@@ -256,7 +302,9 @@ const AccountSettingsSlice = createSlice({
             state.authorizedValues.Emails = action.payload?.Data?.Emails;
             state.authorizedValues.Cellphones = action.payload?.Data?.Cellphones;
         })
-
+        builder.addCase(getImportConfiguration.fulfilled, (state, action) => {
+            state.importRecipientMapping = action.payload?.Data?.ConfigurationJson;
+        })
     },
 })
 

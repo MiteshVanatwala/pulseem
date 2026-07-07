@@ -27,11 +27,10 @@ import {
   getSmsByID,
   smsQuick,
   getCampaignSumm,
-  getCreditsforSMS,
   getTestGroups,
   getSMSVirtualNumber
 } from "../../../redux/reducers/smsSlice";
-import { getCommonFeatures } from '../../../redux/reducers/commonSlice';
+import { getCommonFeatures, getAuthorizeNumbers } from '../../../redux/reducers/commonSlice';
 import Summary from "./smsSummary";
 import Paper from "@material-ui/core/Paper";
 import InputBase from "@material-ui/core/InputBase";
@@ -50,6 +49,7 @@ import { logout } from '../../../helpers/Api/PulseemReactAPI'
 import { RenderHtml } from "../../../helpers/Utils/HtmlUtils";
 import useRedirect from "../../../helpers/Routes/Redirect";
 import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
+import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog';
 import { sitePrefix } from '../../../config';
 import { Title } from "../../../components/managment/Title";
 import { Stack } from "@mui/material";
@@ -65,6 +65,7 @@ import { TierFeatures, URL_REGEX } from "../../../helpers/Constants";
 import { findPlanByFeatureCode } from "../../../redux/reducers/TiersSlice";
 import TierPlans from "../../../components/TierPlans/TierPlans";
 import { get } from "lodash";
+import { computeCreditsForSms } from "../../../helpers/Utils/SmsCreditsHelper";
 
 const useStyles = makeStyles((theme) => ({
   customWidth: {
@@ -111,7 +112,6 @@ const defaultAccountExtraData = [
   { "Zip": "common.zip" }
 ];
 
-
 const SmsCreator = ({ classes }) => {
   const { t } = useTranslation();
   const { id } = useParams();
@@ -121,9 +121,7 @@ const SmsCreator = ({ classes }) => {
   document.title = t("sms.pageTitle");
   const styles = useStyles();
   const btnStyle = useStyleNew();
-  const inputProps = {
-    maxLength: "13"
-  }
+  const FROM_NUMBER_MAX = 11;
 
   const Redirect = useRedirect();
   const dispatch = useDispatch();
@@ -139,7 +137,7 @@ const SmsCreator = ({ classes }) => {
     ToastMessages,
     extraData
   } = useSelector((state) => state.sms);
-  const { accountSettings, accountFeatures, countryCodeList, isGlobal, subAccount } = useSelector((state) => state.common)
+  const { accountSettings, accountFeatures, countryCodeList, isGlobal, subAccount, IsPoland, smsConfig, isSwippingApprovalSMS, verifiedNumbers } = useSelector((state) => state.common)
   const [dialogType, setDialogType] = useState(null)
   const [alignment, setAlignment] = useState('right');
   const [checked, setChecked] = React.useState(false);
@@ -169,6 +167,8 @@ const SmsCreator = ({ classes }) => {
   const [storedValue, setstoredValue] = useState("");
   const [summary, setsummary] = useState(false);
   const [campaignNumberValidated, setcampaignNumberValidated] = useState(false);
+  const [senderNameTooLong, setSenderNameTooLong] = useState(false);
+  const [senderNumberTooLong, setSenderNumberTooLong] = useState(false);
   const [showLoader, setLoader] = useState(true);
   const [selectValue, setselectValue] = useState("Personilization");
   const [isTestCampaign, setIsTestCampaign] = useState(false);
@@ -184,9 +184,13 @@ const SmsCreator = ({ classes }) => {
   const [editDynamicProductFallbackURL, setEditDynamicProductFallbackURL] = useState('');
   const [dynamicProductButtonDisabled, setDynamicProductButtonDisabled] = useState(false);
   const [buttonsDisabled, setButtonsDisabled] = useState(false);
-  const [controller, setController] = useState(null);
   const [ TierMessageCode, setTierMessageCode ] = useState('');
   const [showTierPlans, setShowTierPlans] = useState(false);
+  const [senderDialogOpen, setSenderDialogOpen] = useState(false);
+  const [senderDialogShowSelect, setSenderDialogShowSelect] = useState(false);
+  const [isSenderVerified, setIsSenderVerified] = useState(false);
+  const [senderDialogInitialStep, setSenderDialogInitialStep] = useState(0);
+  const [senderDialogInitialValue, setSenderDialogInitialValue] = useState('');
   const [smsModel, setSmsModel] = useState({
     CreditsPerSms: "1",
     FromNumber: campaignNumber,
@@ -233,8 +237,6 @@ const SmsCreator = ({ classes }) => {
     }
   };
   const smsMessageRef = useRef(null);
-  const FROM_NUMBER_MAX_LETTERS = 11;
-  const FROM_NUMBER_MAX_NUMBERS = 13;
 
   useEffect(() => {
     setAlignment(isRTL ? "right" : "left");
@@ -293,10 +295,20 @@ const SmsCreator = ({ classes }) => {
         setDialogType({ type: "englishLetterDialog" });
         break;
       }
-      case 550:
-      case 551:
+      case 12: {// SHORT_SMSVC_CREDITS
+        setToastMessage(ToastMessages.SHORT_SMSVC_CREDITS)
+        break;
+      }
+      case 9: { // Non polish number
+        if (IsPoland && isGlobal) {
+          setToastMessage(ToastMessages.NON_POLISH_NUMBER)
+        }
+        break;
+      }
+      case 550: {
         setDialogType({ type: "pendingApprovalDialog" });
         break;
+      }
       case 9271: {
         setTierMessageCode('SMS_BASIC');
         setDialogType({ type: 'tier' });
@@ -312,6 +324,9 @@ const SmsCreator = ({ classes }) => {
         setDialogType({ type: 'tier' });
         break;
       }
+      case 551:
+        setDialogType({ type: "underReviewDialog" });
+        break;
       default:
       case 5: {// ACCEPTED
         break;
@@ -335,12 +350,16 @@ const SmsCreator = ({ classes }) => {
 
   useEffect(() => {
     getcredits(characterCount);
-    return () => {
-      if (controller) {
-        controller.abort();
-      }
-    };
   }, [characterCount])
+
+  const getcredits = (count) => {
+    setButtonsDisabled(true);
+    const total = computeCreditsForSms(count, smsConfig);
+    setmessageCount(total);
+    handleSmsModelChange('CreditsPerSms', total);
+    setButtonsDisabled(false);
+  };
+  
 
   const handleSmsModelChange = (name, value) => {
     setSmsModel(prevState => ({
@@ -377,6 +396,7 @@ const SmsCreator = ({ classes }) => {
     await dispatch(getPreviousLandingData());
     await dispatch(getPreviousCampaignData());
     await dispatch(getTestGroups());
+    await dispatch(getAuthorizeNumbers());
 
     let resp = null;
     if (!extraData || extraData?.length === 0) {
@@ -420,7 +440,7 @@ const SmsCreator = ({ classes }) => {
       }
 
       const virtualNumber = await dispatch(getSMSVirtualNumber(fromNumber));
-
+      
       if (fromNumber === -1) {
         fromNumber = virtualNumber.payload.Number;
       }
@@ -529,28 +549,6 @@ const SmsCreator = ({ classes }) => {
     }
   }
 
-  const getcredits = (count) => {
-    if (controller) {
-      controller.abort();
-    }
-    // Create new controller
-    const newController = new AbortController();
-    setController(newController);
-
-    setButtonsDisabled(true);
-    dispatch(getCreditsforSMS(count)).then((res) => {
-      let credits = res.payload?.split("#");
-      if (credits && credits !== '') {
-        setmessageCount(credits[0]);
-        handleSmsModelChange("CreditsPerSms", credits[0]);
-      }
-      else {
-        setmessageCount(0);
-        handleSmsModelChange("CreditsPerSms", 0);
-      }
-      setButtonsDisabled(false);
-    });
-  }
   const onCamppaignChange = (e) => {
     handleSmsModelChange("Name", e.target.value);
     setcampaignBool(false);
@@ -558,23 +556,20 @@ const SmsCreator = ({ classes }) => {
 
   const onCampaignNumber = (e) => {
     const text = e.target.value;
-    // var lastChar = text.substring(text.length, text.length - 1);
     var onlyNumbersWithHyphenAndSpace = /^[0-9 -]*$/;
     var onlyNumbers = /^[0-9]*$/;
     var english = /^[A-Za-z0-9_ -]*$/
-
-    if (!text.match(onlyNumbersWithHyphenAndSpace) && text.match(english) && text.length >= FROM_NUMBER_MAX_LETTERS) {
-      e.target.value = text.substring(0, FROM_NUMBER_MAX_LETTERS);
-    }
-    if (text.match(onlyNumbersWithHyphenAndSpace) && text.length >= FROM_NUMBER_MAX_NUMBERS) {
-      e.target.value = text.substring(0, FROM_NUMBER_MAX_NUMBERS);
-    }
 
     if (text.match(onlyNumbersWithHyphenAndSpace) && !text.match(onlyNumbers)) {
       e.target.value = e.target.value.replace(/[^0-9]/g, '');
     } else if (!text.match(english)) {
       e.target.value = text.replace(/[^A-Za-z0-9_ -]/g, '');
     }
+
+    const isNumeric = onlyNumbersWithHyphenAndSpace.test(e.target.value);
+    const startsWith972 = /^\+?972/.test(e.target.value.trim());
+    setSenderNumberTooLong(isNumeric && !startsWith972 && e.target.value.length > FROM_NUMBER_MAX);
+    setSenderNameTooLong(!isNumeric && !startsWith972 && e.target.value.length > FROM_NUMBER_MAX);
 
     setrestoreBool(false);
     setremovalMessageButtonDisabled(true);
@@ -605,6 +600,19 @@ const SmsCreator = ({ classes }) => {
       setcampaignNumberValidated(true);
       isValid = false;
     }
+
+    const startsWith972 = /^\+?972/.test(campaignNumber.trim());
+    if (!startsWith972 && campaignNumber.length > FROM_NUMBER_MAX) {
+      setcampaignNumberValidated(true);
+      const isNumericSender = /^[0-9 -]*$/.test(campaignNumber);
+      if (isNumericSender) {
+        setSenderNumberTooLong(true);
+      } else {
+        setSenderNameTooLong(true);
+      }
+      isValid = false;
+    }
+
     if (!isValid) {
       setDialogType({ type: "valiateError" })
     } else if ((smsModel.Text.includes(DynamicProductLink.LATEST_PURCHASE) || smsModel.Text.includes(DynamicProductLink.LATEST_ABANDONMENT)) && !IsValidURL(editDynamicProductFallbackURL)) {
@@ -671,6 +679,30 @@ const SmsCreator = ({ classes }) => {
     setremovalNumber(response.payload.RemovalKey);
     setremovalMessageButtonDisabled(false);
   }
+  
+  const checkNumberVerifiedAndProceed = (callbackFunc) => {
+    if (isSwippingApprovalSMS) {
+      callbackFunc();
+      return;
+    }
+    const isDefault = campaignNumber === StaticNumber;
+    const isVerified = verifiedNumbers?.some(
+      (n) => n.Number.toLowerCase() === campaignNumber.toLowerCase() && n.IsOptIn
+    );
+    if (isDefault || isVerified) {
+      callbackFunc();
+    } else {
+      setDialogType({ type: 'verifyNumber' });
+    }
+  };
+
+  const onSenderSelect = (sender) => {
+    setcampaignNumber(sender.SenderName);
+    setrestoreBool(false);
+    setremovalMessageButtonDisabled(true);
+    setIsSenderVerified(true);
+    setSenderDialogOpen(false);
+  };
 
   const onAddText = (text) => {
     text = text.trim();
@@ -733,34 +765,64 @@ const SmsCreator = ({ classes }) => {
             <Typography className={classes.buttonHead}>
               {t("mainReport.campFrom")}
             </Typography>
-            <Typography
-              className={classes.restoreBtn}
-              onClick={() => {
-                handleRestore()
-              }}
-            >
-              {t("mainReport.restore")}
-            </Typography>
+            {
+              !IsPoland && (
+                <Typography
+                  className={classes.restoreBtn}
+                  onClick={() => {
+                    handleRestore()
+                  }}
+                >
+                  {t("mainReport.restore")}
+                </Typography>
+              )
+            }
 
           </Box>
 
-          <TextField
-            id="outlined-basic"
-            type="text"
-            className={
-              clsx(classes.textField, campaignNumberValidated ? classes.error : classes.success)
-            }
-            onChange={onCampaignNumber}
-            inputProps={inputProps}
-            value={campaignNumber}
-            dir={/^[0-9]/.test(campaignNumber) && isRTL ? 'rtl' : 'ltr'}
-          />
+          {isSwippingApprovalSMS ? (
+            <TextField
+              id="outlined-basic"
+              type="text"
+              className={clsx(classes.textField, (campaignNumberValidated || senderNameTooLong || senderNumberTooLong) ? classes.error : classes.success)}
+              onChange={onCampaignNumber}
+              value={campaignNumber}
+              dir={/^[0-9]/.test(campaignNumber) && isRTL ? 'rtl' : 'ltr'}
+            />
+          ) : (
+            <Box className={classes.senderFieldRow}>
+              <TextField
+                id="outlined-basic"
+                type="text"
+                className={clsx(classes.textField, (campaignNumberValidated || senderNameTooLong || senderNumberTooLong) ? classes.error : classes.success)}
+                onChange={onCampaignNumber}
+                value={campaignNumber}
+                dir={/^[0-9]/.test(campaignNumber) && isRTL ? 'rtl' : 'ltr'}
+              />
+              <Button
+                className={clsx(classes.btn, classes.btnRounded, classes.btnHPadding)}
+                onClick={() => { setSenderDialogShowSelect(true); setSenderDialogOpen(true); }}
+              >
+                {t('sms.replaceButton')}
+              </Button>
+            </Box>
+          )}
+          {senderNameTooLong && (
+            <Typography className={classes.buttonContent} style={{ color: '#f44336', marginTop: 4 }}>
+              {t("mainReport.campaignFromMaxLength")}
+            </Typography>
+          )}
+          {senderNumberTooLong && (
+            <Typography className={classes.buttonContent} style={{ color: '#f44336', marginTop: 4 }}>
+              {t("mainReport.campaignFromNumberMaxLength")}
+            </Typography>
+          )}
           <Typography className={clsx(classes.buttonContent, classes.alertMsg)}>
             {t("mainReport.campRemovalDesc")}
           </Typography>
         </Grid>
         <Grid item xs={12} md={4} sm={12} >
-          {restoreBool && removalNumber !== null ? (
+          {!IsPoland && restoreBool && removalNumber !== null ? (
             <Box className={clsx(classes.buttonForm, 'textBoxWrapper')}>
               <Typography className={clsx(classes.buttonHead)}>
                 {t("mainReport.removalReply")}
@@ -1126,7 +1188,7 @@ const SmsCreator = ({ classes }) => {
   const onRadiochange = (e) => {
     setradioBtn(e.target.value);
     if (e.target.value === "bottom") {
-      setDialogType({ type: "groups" })
+      checkNumberVerifiedAndProceed(() => setDialogType({ type: "groups" }));
     }
   };
 
@@ -1203,7 +1265,10 @@ const SmsCreator = ({ classes }) => {
                       }}
                       onChange={handleNumberChange}
                     />
-                    <Button className={clsx(classes.btn, classes.btnRounded, classes.ml5)} onClick={() => { validationCheckpoint(() => handleSend()) }}>
+                    <Button
+                      className={clsx(classes.btn, classes.btnRounded, classes.ml5)}
+                      onClick={() => { checkNumberVerifiedAndProceed(() => validationCheckpoint(() => handleSend())) }}
+                    >
                       {t("mainReport.send")}
                     </Button>
 
@@ -1347,7 +1412,10 @@ const SmsCreator = ({ classes }) => {
     else {
       switch (r.payload.Status) {
         case 3: {
-          setOTPOpen(true);
+          setSenderDialogInitialStep(1);
+          setSenderDialogInitialValue(campaignNumber);
+          setSenderDialogShowSelect(false);
+          setSenderDialogOpen(true);
           break;
         }
         case 8: {
@@ -1356,6 +1424,10 @@ const SmsCreator = ({ classes }) => {
         }
         case 9: {
           setToastMessage(CoreToastMessages.XSS_ERROR);
+          break;
+        }
+        case 10: {
+          setToastMessage(ToastMessages.NON_POLISH_NUMBER);
           break;
         }
         case 927: {
@@ -1384,6 +1456,49 @@ const SmsCreator = ({ classes }) => {
     } else {
       return t('billing.tier.noFeatureAvailable');
     }
+  };
+
+  const verifyNumberDialog = () => {
+    return {
+      title: t('sms.verifySenderTitle'),
+      icon: <AiOutlineExclamationCircle />,
+      content: (
+        <Box>
+          <Typography className={classes.f18}>
+            {t('sms.pleaseVerifyNumber')}
+          </Typography>
+        </Box>
+      ),
+      renderButtons: () => (
+        <Grid container spacing={2} className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}>
+          <Grid item>
+            <Button
+              className={clsx(classes.btn, classes.btnRounded)}
+              onClick={() => {
+                setDialogType(null);
+                setSenderDialogInitialStep(1);
+                setSenderDialogInitialValue(campaignNumber);
+                setSenderDialogShowSelect(true);
+                setSenderDialogOpen(true);
+              }}
+            >
+              {t('sms.verifySenderButton')}
+            </Button>
+          </Grid>
+          <Grid item>
+            <Button
+              className={clsx(classes.btn, classes.btnRounded)}
+              onClick={() => setDialogType(null)}
+            >
+              {t('common.cancel')}
+            </Button>
+          </Grid>
+        </Grid>
+      ),
+      showDefaultButtons: false,
+      onClose: () => setDialogType(null),
+      onConfirm: () => setDialogType(null),
+    };
   };
 
   const getTierValidationDialog = () => {
@@ -1497,8 +1612,14 @@ const SmsCreator = ({ classes }) => {
         setDialogType(null);
       }
       else if (r.payload.Status === 3) {
-        setOTPOpen(true);
-      } else if (r.payload.Status === 927) {
+        setSenderDialogInitialStep(1);
+        setSenderDialogInitialValue(campaignNumber);
+        setSenderDialogShowSelect(false);
+        setSenderDialogOpen(true);
+      } else if (r.payload.Status === 10) {
+        setToastMessage(ToastMessages.NON_POLISH_NUMBER);
+      } 
+      else if (r.payload.Status === 927) {
         setTierMessageCode(r.payload.Message);
         setDialogType({ type: 'tier' });
       }
@@ -1529,12 +1650,18 @@ const SmsCreator = ({ classes }) => {
       let saveResponse = await dispatch(smsSave(payloadToPush));
       if (saveResponse) {
         if (saveResponse.payload.Status === 3) {
-          setOTPOpen(true);
+          setSenderDialogInitialStep(1);
+          setSenderDialogInitialValue(campaignNumber);
+          setSenderDialogShowSelect(false);
+          setSenderDialogOpen(true);
           return;
         }
         else if (saveResponse.payload.Status === 2) {
           setDialogType(null);
           Redirect({ url: !!isFromAutomation ? getAutomationReturnUrl(id) : `${sitePrefix}SMSCampaigns` });
+        } else if (saveResponse.payload.Status === 10) {
+          setToastMessage(ToastMessages.NON_POLISH_NUMBER);
+          return;
         }
         else if (saveResponse.payload.Status === 927) {
           setTierMessageCode(saveResponse.payload.Message);
@@ -1637,9 +1764,8 @@ const SmsCreator = ({ classes }) => {
           endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
           color="primary"
           style={{ margin: '8px' }}
-          onClick={() => {
-            validationCheckpoint(() => onBeforeSave(true, isFromAutomation));
-          }}>
+          onClick={() => { checkNumberVerifiedAndProceed(() => validationCheckpoint(() => onBeforeSave(true, isFromAutomation))); }}
+          >
           {t('mainReport.saveSms')}
         </Button>
         <Button
@@ -1653,7 +1779,7 @@ const SmsCreator = ({ classes }) => {
           color="primary"
           style={{ margin: '8px' }}
           onClick={() => {
-            validationCheckpoint(() => onBeforeSave(false, isFromAutomation));
+            checkNumberVerifiedAndProceed(() => validationCheckpoint(() => onBeforeSave(false, isFromAutomation)));
           }}>
           {!isFromAutomation ? t("mainReport.continue") : t("sms.saveAndExit")}
         </Button>
@@ -1889,8 +2015,14 @@ const SmsCreator = ({ classes }) => {
                 {t("mainReport.campaignRequire")}
               </li> : null}
               {smsModel.Text === "" ? <li>{t("mainReport.msgRequire")}</li> : null}
-              {campaignNumberValidated ? <li style={{ marginBottom: "8px" }}>
+              {campaignNumberValidated && !senderNameTooLong && !senderNumberTooLong ? <li style={{ marginBottom: "8px" }}>
                 {t("mainReport.campaignFromRequire")} / {t("common.invalid")}
+              </li> : null}
+              {senderNameTooLong ? <li style={{ marginBottom: "8px" }}>
+                {t("mainReport.campaignFromMaxLength")}
+              </li> : null}
+              {senderNumberTooLong ? <li style={{ marginBottom: "8px" }}>
+                {t("mainReport.campaignFromNumberMaxLength")}
               </li> : null}
             </ul>
           </div>
@@ -2140,6 +2272,25 @@ const SmsCreator = ({ classes }) => {
     }
   }
 
+  const underReviewDialog = () => {
+    return {
+      title: t('campaigns.newsLetterEditor.errors.pendingApproval'),
+      disableBackdropClick: true,
+      icon: (
+        <AiOutlineExclamationCircle />
+      ),
+      content: (
+        <Box>
+          <Typography className={classes.f18}>{t("campaigns.newsLetterEditor.errors.PendingApproval551Desc")}</Typography>
+        </Box>
+      ),
+      showDefaultButtons: true,
+      onClose: () => { setDialogType(null) },
+      onCancel: () => { setDialogType(null) },
+      onConfirm: () => { setDialogType(null) }
+    }
+  }
+
   const renderDialog = () => {
     const { type, data, isOnlySave, returnToAutomation } = dialogType || {}
 
@@ -2157,7 +2308,9 @@ const SmsCreator = ({ classes }) => {
       englishLetterDialog: englishLetterNotAllowed(),
       dynamicProduct: dynamicProductDialog(),
       pendingApprovalDialog: pendingApprovalDialog(),
-      tier: getTierValidationDialog()
+      tier: getTierValidationDialog(),
+      underReviewDialog: underReviewDialog(),
+      verifyNumber: verifyNumberDialog(),
     }
 
     const currentDialog = dialogContent[type] || {}
@@ -2179,14 +2332,15 @@ const SmsCreator = ({ classes }) => {
         <Title
           Text={(
             <Box className='stepHead'>
-              <Stack className={'stepNum'} alignItems={'center'}>
-                <span >1</span>
-              </Stack>
-              <Stack direction={{ xs: 'column', sm: 'column', md: 'row' }} ml={1} >
-                <span className={'stepTitle'}>
-                  {t('notifications.createContent')}
-                </span>
-
+              <Stack direction='row' alignItems='center'>
+                <Stack className={'stepNum'} alignItems={'center'}>
+                  <span>1</span>
+                </Stack>
+                <Stack direction={{ xs: 'column', sm: 'column', md: 'row' }} ml={1}>
+                  <span className={'stepTitle'}>
+                    {t('notifications.createContent')}
+                  </span>
+                </Stack>
               </Stack>
             </Box>
           )}
@@ -2211,6 +2365,14 @@ const SmsCreator = ({ classes }) => {
         <Title
           Text={t('mainReport.smsCampaign')}
           classes={classes}
+          action={
+            <Button
+              className={clsx(classes.btn, classes.btnRounded)}
+              onClick={() => { setSenderDialogShowSelect(true); setSenderDialogOpen(true); }}
+            >
+              {t('sms.verifySenderButton')}
+            </Button>
+          }
         />
       </Box>
       <Box className={'containerBody'}>
@@ -2245,6 +2407,23 @@ const SmsCreator = ({ classes }) => {
             onSuccess={() => {
               setStaticNumber(campaignNumber);
             }} />}
+          {senderDialogOpen && (
+            <VerificationDialog
+              variant="sms"
+              classes={classes}
+              isOpen={senderDialogOpen}
+              showSelect={senderDialogShowSelect}
+              onSenderSelect={onSenderSelect}
+              step={senderDialogInitialStep}
+              value={senderDialogInitialValue}
+              onClose={() => {
+                setSenderDialogOpen(false);
+                setSenderDialogShowSelect(false);
+                setSenderDialogInitialStep(0);
+                setSenderDialogInitialValue('');
+              }}
+            />
+          )}
           <Loader isOpen={showLoader} />
         </Box>
       </Box>

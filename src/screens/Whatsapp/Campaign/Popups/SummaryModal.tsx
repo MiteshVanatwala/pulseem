@@ -52,7 +52,8 @@ const SummaryModal = ({
 	randomlyCount,
 	setRandomlyCount,
 	resetRandomCount,
-	pulseData
+	pulseData,
+	overrideMediaUrl,
 }: SummaryModalProps) => {
 	const dispatch = useDispatch();
 	const { campaignID } = useParams();
@@ -201,10 +202,12 @@ const SummaryModal = ({
 		return null;
 	};
 
+	const isPulseEnabled = pulseData?.togglePulse || pulseData?.toggleRandom;
+
 	const validateSummary = () => {
 		let validationErrors = [];
 		let isValidated = true;
-		const showTierAlert = isShowTierAlert(
+		const showTierAlert = !isPulseEnabled && isShowTierAlert(
 			campaignSummary?.WhatsappSmsLeft || 0,
 			campaignSummary?.FinalCount || 0,
 			campaignSummary?.WhatsappTierID || 1,
@@ -312,12 +315,7 @@ const SummaryModal = ({
 		}
 	};
 
-	const getIndexFromTierId = (tierId: number | undefined) => {
-		if (tierId) {
-			return Number(tierId) - 1;
-		}
-		return 0;
-	};
+
 
 	const getValidationDialog = () => ({
 		title: translator('whatsappCampaign.sendValidation'),
@@ -476,9 +474,7 @@ const SummaryModal = ({
 												<div>
 													<span className={clsx(classes.f15)}>
 														{`${translator(
-															tierSetting[
-																getIndexFromTierId(campaignSummary?.WhatsappTierID)
-															]?.name
+														tierSetting.find(tier => tier.value === String(campaignSummary?.WhatsappTierID))?.name || ''
 														)}`}
 													</span>
 													<Tooltip
@@ -520,7 +516,7 @@ const SummaryModal = ({
 										</Box>
 									)
 								}
-								{isShowTierAlert(
+								{!isPulseEnabled && isShowTierAlert(
 									campaignSummary?.WhatsappSmsLeft || 0,
 									campaignSummary?.FinalCount || 0,
 									campaignSummary?.WhatsappTierID || 1,
@@ -601,7 +597,11 @@ const SummaryModal = ({
 										classes={classes}
 										templateData={templateData}
 										buttonType={buttonType}
-										fileData={fileData}
+										fileData={
+											overrideMediaUrl
+												? { ...fileData, fileLink: overrideMediaUrl }
+												: fileData
+										}
 									/>
 								</Box>
 

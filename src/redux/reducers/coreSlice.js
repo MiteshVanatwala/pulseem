@@ -37,6 +37,7 @@ export const coreSlice = createSlice({
     },
     isLoader: false,
     subUserName: '',
+    onlyWhatsAppChat: false,
     subUserObject: {
       Data: {
         UserName: '',
@@ -99,6 +100,7 @@ export const coreSlice = createSlice({
       state.subUserObject.Data.UserName = userToken?.Name;
       state.subUserObject.Data.Emails[0].AuthValue = userToken?.Email;
       state.subUserObject.Data.Cellphones[0].AuthValue = userToken?.Cellphone;
+      state.isOnlyWhatsAppChat = payload?.isOnlyWhatsAppChat || false;
 
       if (isSuperUser) {
         state.userRoles = UserRoles.Admin;

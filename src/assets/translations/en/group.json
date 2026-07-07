@@ -49,7 +49,8 @@
     "notClickChannelRequired": "At least one campaign channel must be selected in order to search for customers who did not click",
     "specificDateIsRequired": "Please select specific dates",
     "daysBackError": "Enter several days back",
-    "pageUrlRequired": "At least one page must be selected from the address list"
+    "pageUrlRequired": "At least one page must be selected from the address list",
+    "events_conflict_purchased_validation": "Purchased In and Not Purchased In cannot have the same duration. Please adjust one of them."
   },
   "updateFrequency": "Update Frequency",
   "results": "Results",
@@ -76,5 +77,6 @@
   "exportGroupNames": "Export Group names (This will take a little bit more time)",
   "exportGroupNamesTooltip": "This will take a little bit more time",
   "selectePages": "Select pages",
-  "featuredDisallowDeleteGroup": "Groups that have one of the following features associated with them cannot be deleted:<br/><br/><li>AutoResponder</li><li>Automation</li><li>Landing Page</li>"
+  "featuredDisallowDeleteGroup": "Groups that have one of the following features associated with them cannot be deleted:<br/><br/><li>AutoResponder</li><li>Automation</li><li>Landing Page</li>",
+  "dynamic_group_purchase_conflict": "\"Purchase\" and \"Not Purchased\" cannot be selected at the same time"
 }

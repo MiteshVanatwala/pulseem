@@ -80,17 +80,17 @@ export const getVariableValue = (variable: string) => {
 };
 
 export const getFileType = (fileLink: string) => {
-	if (
-		fileLink?.includes('.png') ||
-		fileLink?.includes('.jpeg') ||
-		fileLink?.includes('.jpg')
-	) {
+	if (!fileLink) return undefined;
+	const path = (() => { try { return new URL(fileLink).pathname; } catch { return fileLink; } })();
+	const lower = path.toLowerCase();
+	if (lower.includes('.png') || lower.includes('.jpeg') || lower.includes('.jpg')
+		|| lower.includes('.gif') || lower.includes('.webp'))
 		return fileTypes.IMAGE;
-	} else if (fileLink?.includes('.pdf')) {
-		return fileTypes.DOCUMENT;
-	} else if (fileLink?.includes('.mp4')) {
+	if (lower.includes('.mp4') || lower.includes('.3gp'))
 		return fileTypes.VIDEO;
-	}
+	if (lower.includes('.pdf'))
+		return fileTypes.DOCUMENT;
+	return undefined;
 };
 
 export const getTemplateIdByName = (
@@ -282,7 +282,7 @@ export const getTemplatePreviewData = (
 		templatePreviewData.templateData.templateText = mediaData?.body;
 		if (mediaData?.media?.length > 0) {
 			templatePreviewData.fileData.fileLink = mediaData?.media[0];
-			templatePreviewData.fileData.fileType = mediaData?.media_type;
+			templatePreviewData.fileData.fileType = getFileType(mediaData?.media[0]) || mediaData?.media_type || '';
 		}
 	};
 
@@ -444,7 +444,7 @@ export const getApiErrorResponseMessage = (
 export const getWhatsappError = (message: string): string => {
 	const initialCode = message.substring(0, 5);
 	const initialCodeList = [
-		'63005', '63013', '63019', '63027', '63041'
+		'63005', '63013', '63019', '63027', '63041', '63042', '63002'
 	]
 	if (message.indexOf('https://www.twilio.com/docs/api/errors') > -1) {
 		const errorCode = message?.split('/');
@@ -466,8 +466,29 @@ export const getWhatsappError = (message: string): string => {
 		return `WhatsappApiResponse.contentVariablesParameterInvalid.message`;
 	} else if(message.indexOf('The Messaging Service Sid') > -1) {
 		return `WhatsappApiResponse.messagingServiceKeyInvalid.message`;
-	} else if(message.indexOf('The \'To\' number whatsapp') > -1) {
+	} else if (message.indexOf('The \'To\' number whatsapp') > -1) {
 		return `WhatsappApiResponse.NoWhatsApp.message`;
+	} else if (message.indexOf('The account is not registered') > -1) {
+		return `WhatsappApiResponse.authenticate.message`;  // same meaning — account not set up
+	} else if (message.indexOf('Authentication Error') > -1 || message.indexOf('Error validating access token') > -1) {
+		return `WhatsappApiResponse.authenticate.message`;
+	} else if (message.indexOf('(#') > -1 && message.indexOf('<sep>') === -1) {
+		const match = message.match(/\(#(\d+)\)/);
+		if (match) {
+			const code = match[1];
+			const metaErrorCodeList = [
+				"0", "3", "10", "190", "4", "80007", "130429", "131048", "131056", "133016", "368", "130497", "131031",
+				"1", "2", "33", "100", "130472", "131000", "131005", "131008", "131009", "131016", "131021", "131026",
+				"131042", "131045", "131047", "131049", "131051", "131052", "131053", "131057", "132000", "132001",
+				"132005", "132007", "132012", "132015", "132016", "132068", "132069", "133000", "133004", "133005",
+				"133006", "133008", "133009", "133010", "133015", "135000", "131050", "131030", "200", "613", "131037"
+			];
+			if (metaErrorCodeList.indexOf(code) > -1) {
+				return `WhatsappOnBoarding.metaErrorCodes.${code}`;
+			}
+		}
+	} else if (message.indexOf('maintain healthy ecosystem engagement') > -1) {
+		return `WhatsappOnBoarding.metaErrorCodes.131049`;
 	}
 	return 'WhatsappApiResponse.common.error';
 };
@@ -475,7 +496,7 @@ export const getWhatsappError = (message: string): string => {
 export const getMetaError = (message: string): string => {
 	const splittedError = message?.split(Separator);
 	const errorCodeList = [
-		"0", "3", "10", "190", "4", "80007", "130429", "131048", "131056", "133016", "368", "130497", "131031", "1", "2", "33", "100", "130472", "131000", "131005", "131008", "131009", "131016", "131021", "131026", "131042", "131045", "131047", "131049", "131051", "131052", "131053", "131057", "132000", "132001", "132005", "132007", "132012", "132015", "132016", "132068", "132069", "133000", "133004", "133005", "133006", "133008", "133009", "133010", "133015", "135000", "131050"
+		"0", "3", "10", "190", "4", "80007", "130429", "131048", "131056", "133016", "368", "130497", "131031", "1", "2", "33", "100", "130472", "131000", "131005", "131008", "131009", "131016", "131021", "131026", "131042", "131045", "131047", "131049", "131051", "131052", "131053", "131057", "132000", "132001", "132005", "132007", "132012", "132015", "132016", "132068", "132069", "133000", "133004", "133005", "133006", "133008", "133009", "133010", "133015", "135000", "131050", "131030", "200", "613", "131037"
 	]
 	if (splittedError?.length > 0 && errorCodeList.indexOf(splittedError[0]) > -1) {
 		return `WhatsappOnBoarding.metaErrorCodes.${splittedError[0]}`;

@@ -27,7 +27,10 @@ const SmsSummary = ({ classes,
   const [subDetailsActive, setsubDetailsActive] = useState(false);
   const [subRecipientsDetails, setsubRecipients] = useState(false);
   const { isRTL, language } = useSelector(state => state.core)
+  const { isGlobal, IsPoland } = useSelector(state => state.common);
   const { t } = useTranslation();
+  const isPolishAccount = IsPoland && isGlobal;
+
   let totalFiletered = groups?.length > 0 && groups.reduce(function (a, b) {
     return parseInt(a) + parseInt(b['Recipients']);
   }, 0) - (summaryPayload.FinalCount + summaryPayload.FinalVoiceCount);
@@ -170,6 +173,16 @@ const SmsSummary = ({ classes,
                 {summaryPayload.DuplicateCellphoneSharedWithClienCount}
               </span>
             </span>}
+            {
+              isPolishAccount && summaryPayload.NonPolishCount?.toLocaleString() && (
+                <span className={classes.summaryDetailsSpan}>
+                  {t("sms.nonPolishNumber")}:
+                  <span className={classes.summaryDetailsSpanBold}>
+                    {summaryPayload.NonPolishCount?.toLocaleString()}
+                  </span>
+                </span>
+              )
+            }
 
             {summaryPayload.Removed === 0 ? null : <span
               className={classes.summaryDetailsSpan}

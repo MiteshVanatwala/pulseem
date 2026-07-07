@@ -15,7 +15,7 @@ export interface LandingPageManagement {
     IsSurvey: boolean;
 }
 
-export interface LandingPageModel {
+export interface LandingPageModel extends EmailConfirmationSettings {
     ID: number;
     GroupID: number;
     GroupIDs: string[];
@@ -85,6 +85,9 @@ export interface LandingPageModel {
     IsNewEditor: boolean | any | never;
     WebformsToReportLeadByApi: WebformsToReportLeadByApi[] | any | never;
     CloseButtonHtml?: string;
+    enableRecaptcha?: boolean;
+    recaptchaVersion?: string;
+    recaptchaSiteKey?: string;
 }
 
 export interface BeeEditorModel {
@@ -225,4 +228,19 @@ export interface SurveyDataBarChart {
     answer: number;
     question: string;
     percentage: string;
+}
+
+export interface EmailConfirmationRequest extends EmailConfirmationSettings {
+    webformID: number;
+    ipAddress: string;
+}
+
+export interface EmailConfirmationSettings {
+    ConfirmationEmailID?: number;
+    IsEmailConfirmationActive?: boolean;
+    ConfirmationFromEmail?: string;
+    ConfirmationFromName?: string;
+    ConfirmationSubject?: string;
+    CreationDate?: string;
+    UpdatedDate?: string | null;
 }

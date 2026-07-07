@@ -120,7 +120,7 @@ export const getArchiveSMSDirectReport = createAsyncThunk(
 	'directReport/GetArchiveSmsDirect',
 	async (data, thunkAPI) => {
 		try {
-			const response = await PulseemReactInstance.post(`directReport/GetArchiveSmsDirect`, data);
+			const response = await PulseemReactInstance.post(`directReport/GetArchiveSmsDirect`, data, { timeout: 30000 });
 			return JSON.parse(response.data);
 		} catch (error) {
 			return thunkAPI.rejectWithValue({ error: error.message });
@@ -486,6 +486,7 @@ export const smsSlice = createSlice({
 			ERROR: { severity: 'error', color: 'error', message: 'sms.error', showAnimtionCheck: false },
 			OTP: { severity: 'success', color: 'success', message: 'sms.otpVerifiedSuccess', showAnimtionCheck: true },
 			INVALID_NUMBER: { severity: 'error', color: 'error', message: "sms.invalidNumber", showAnimtionCheck: false },
+			SHORT_SMSVC_CREDITS: { severity: 'error', color: 'error', message: "sms.noVoiceCredits", showAnimtionCheck: false },
 			QUICK_SEND_ERROR: { severity: 'error', color: 'error', message: "sms.errorQuickSend", showAnimtionCheck: false },
 			SENT_ALREADY: { severity: 'success', color: 'success', message: "sms.alreadySent", showAnimtionCheck: false },
 			PROVISION: { severity: 'error', color: 'error', message: "sms.recipientBlocked", showAnimtionCheck: false },
@@ -494,7 +495,8 @@ export const smsSlice = createSlice({
 			INVALID_RECIPIENTS: { severity: 'error', color: 'error', message: "sms.noRecipientToUpdate", showAnimtionCheck: false },
 			NO_GROUPS: { severity: 'error', color: 'error', message: 'smsReport.NoGroups', showAnimtionCheck: false },
 			DATE_PASS: { severity: 'error', color: 'error', message: 'smsReport.pastDateSelected', showAnimtionCheck: false },
-			INVALID_URL: { severity: 'error', color: 'error', message: 'common.invalidURL', showAnimtionCheck: false }
+			INVALID_URL: { severity: 'error', color: 'error', message: 'common.invalidURL', showAnimtionCheck: false },
+			NON_POLISH_NUMBER: { severity: 'error', color: 'error', message: 'common.nonPolishNumber', showAnimtionCheck: false },
 		}
 	},
 	reducers: {},

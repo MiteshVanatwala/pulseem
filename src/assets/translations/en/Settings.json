@@ -39,12 +39,15 @@
 				"setupWhatsappTier": "Set Up WhatsApp Tier",
 				"checkTier": "Check Your Tier",
 				"tier": "Tier",
-				"tier1": "1,000 messages in 24h",
-				"tier2": "10,000 messages in 24h",
-				"tier3": "100,000 messages in 24h",
-				"tier4": "Unlimited",
+				"tier1": "50 messages in 24h",
+				"tier2": "250 messages in 24h",
+				"tier3": "2,000 messages in 24h",
+				"tier4": "10,000 messages in 24h",
+				"tier5": "100,000 messages in 24h",
+				"tier6": "Unlimited",
 				"exceedLimitMessage": "This campaign is exceeding daily rate limit",
 				"exceedLimitNumberMessage": "Messages left for today: ",
+				"metaExceedLimitMessage": "The amount of recipients you selected to send the campaign to, exceeds your META account's {{limit}} daily limit.\nPlease try again after waiting 24 hours of your last send.",
 				"sendRandomlyTo": "Send Randomly to -",
 				"insert": "Insert",
 				"recipientsOutOfTotal": "Recipients out of total",
@@ -116,6 +119,25 @@
 			"popup": {
 				"text": "<b>Please note,</b> you are about to change the default recipient removal settings.<br/>The change of settings you intend to make will mean that when a recipient requests to remove himself from the distribution list, only the means of communication through which the recipient requested the removal will be removed - the phone number or the email address, as opposed to removing any means of communication provided by the recipient. <br/><br/><b>Changing the aforementioned settings is done at your sole responsibility,</b> and by doing so you confirm that Pulseem will not bear any responsibility for any damage caused to you and/or Pulseem as a result and they will apply only to you."
 			}
+		},
+		"optIn": {
+			"title": "“Pending” Status Settings",
+			"checkboxTitle": "Send double opt-in Email to new “Pending” status recipients",
+			"redirectButton": "Email Settings for New Subscribers",
+			"edit": "Edit Double Opt in Email",
+			"regulationPopup": {
+				"title": "Pay attention!",
+				"text": "For your attention, by activating <b>Send double opt-in Email to new “Pending” status recipients setting</b>, you are requesting to activate, in relation to all recipients who are added to the Pulseem system through external systems integrations, the sending of a confirmation email for the receipt of mail by Pulseem company in accordance with the requirements of the law. Changing the aforementioned settings is carried out at your sole responsibility, and in doing so you confirm that Pulseem will not bear any responsibility for any damage caused to you and/or to Pulseem as a result, and therefore these damages will apply only to you.",
+				"acceptAgreement": "By clicking OK, I agree and accept the legal responsibility",
+				"reEnterPassword": "Re-Enter Password to complete the action",
+				"selectAuthType": "Choose a way to verify the account via email or SMS associated with this account:",
+				"typePassword": "Account Password"
+			},
+			"confirmTitle": "disable double opt-in emails",
+			"confirmDisable": "Are you sure you want to stop sending the double opt-in email to recipients with 'pending' status?",
+			"explanationPopUp": "A recipient with “Pending” status is someone who registered through a form on your website (e.g., during signup or checkout) but has not yet confirmed their subscription to receive mailings.<br/>The recipient will be added to the system along with any additional information received through the integration (such as cart details), but you will not be able to send mailings to them until they provide consent.<br/><br/><u><b>You can:</b></u><br/><ul style='list-style: disc'><li>Automatically set “Pending” recipient as active – this is at your own legal responsibility.</li><li>Send a confirmation email asking them to approve receiving your mailings.</li></ul><br/><b>Please Note:</b><br/>This setting does not apply to recipient entering with ”Pending” status through landing pages.<br/>For landing pages, the recipient status is defined separately for each page within the ”Create Landing Page” section.<br/>",
+			"explanationButton": "What does “Pending” status mean?",
+			"redirectToAccountSettings": "Go to account settings"
 		}
 	},
 	"billingSettings": {
@@ -187,5 +209,46 @@
 		"directApi": "Direct Send API URL Address",
 		"noAPIKeyAccess": "In order to start using our API, please contact our support team on <a href = 'mailto:support@pulseem.com'>support@pulseem.com</a> / <a href='tel:03-7172274'>03-7172274</a>"
 	},
-	"displayRevenueIn": "Display revenue in"
+	"displayRevenueIn": "Display revenue in",
+	"mcpSettings": {
+		"sectionTitle": "Connect AI to Pulseem",
+		"sectionSubtitle": "Connect Claude, ChatGPT or Cursor to Pulseem — send SMS, Email and WhatsApp directly from chat",
+		"guideLink": "Setup Guide →",
+		"createBtn": "+ New Connection",
+		"createFirstBtn": "+ Create First MCP Connection",
+		"emptyTitle": "No AI connections yet",
+		"emptyDesc": "Create an MCP connection and send SMS, Email and WhatsApp directly from Claude, ChatGPT and Cursor — in natural language.",
+		"activeCount": "Active connections ({count})",
+		"colLabel": "Label",
+		"colToken": "Token",
+		"colCreated": "Created",
+		"colLastUsed": "Last Used",
+		"colStatus": "Status",
+		"statusActive": "Active",
+		"statusInactive": "Inactive",
+		"deactivateBtn": "Deactivate",
+		"neverUsed": "Never used",
+		"createDialogTitle": "New MCP Connection",
+		"labelField": "Label (for your reference)",
+		"labelPlaceholder": "e.g. Claude Desktop",
+		"createConfirmBtn": "Create Connection",
+		"successTitle": "Connection created successfully!",
+		"successWarning": "Copy both addresses now — they won't be shown again.",
+		"mcpApiUrlLabel": "MCP Address — Direct Send (Direct API):",
+		"mcpUiApiUrlLabel": "MCP Address — Pulseem API:",
+		"directApiNotActive": "Direct Send is not enabled on your account. To activate — contact support at support@pulseem.com",
+		"mcpApiUrlDesc": "Send SMS, Email and WhatsApp and view delivery reports.",
+		"mcpUiApiUrlDesc": "Add contacts, create campaigns, manage groups and pull reports. Campaign sending is done through Pulseem.",
+		"sectionInfoDirectApiTitle": "Direct Send (Direct API) —",
+		"sectionInfoDirectApiDesc": "For those with an external system who want to send SMS or Email directly to a number or address — without campaigns. Requires activation.",
+		"sectionInfoUiApiTitle": "Pulseem API —",
+		"sectionInfoUiApiDesc": "For those who manage marketing through Pulseem — contacts, groups, campaigns and reports.",
+		"mcpUrlLabel": "Your MCP address:",
+		"copyUrlBtn": "Copy Address",
+		"copiedLabel": "Copied",
+		"successClose": "Close — I saved both addresses",
+		"deactivateConfirmTitle": "Deactivate this connection?",
+		"deactivateConfirmText": "Deactivate \"{label}\"? The connected tool won't be able to send messages until you create a new connection.",
+		"deactivateConfirmBtn": "Yes, deactivate"
+	}
 }

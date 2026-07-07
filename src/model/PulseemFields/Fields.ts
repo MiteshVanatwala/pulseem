@@ -1,3 +1,4 @@
+import { DisplayConditionsDialog } from "../../screens/HtmlCampaign/components/ContentDialogs";
 
 export const ClientFields = [
   {
@@ -196,5 +197,7 @@ export const PulseemFeatures = {
   PolishLangMenu: '67',
   NewsletterAI: '68',
   PolyAIAgent: '69',
-  Popup: '70'
+  Popup: '70',
+  PolyAISupport: '73',
+  DisplayConditions: '74'
 }

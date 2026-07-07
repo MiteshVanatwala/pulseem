@@ -38,6 +38,7 @@ interface PopUpCardProps {
   popup: Page;
   classes: Record<string, string>;
   setDialogType: Dispatch<SetStateAction<DialogType | null>>;
+  onTierRestriction?: (message: string) => void;
 }
 
 interface StatItemProps {
@@ -52,16 +53,20 @@ interface StatItemProps {
   onSubtitleClick?: (index: number) => void;
 }
 
-const PopUpCard: React.FC<PopUpCardProps> = ({ popup, classes, setDialogType }) => {
+const PopUpCard: React.FC<PopUpCardProps> = ({ popup, classes, setDialogType, onTierRestriction }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch<any>();
   const navigate = useNavigate();
   const { userRoles, isRTL } = useSelector((state: any) => state.core);
   const [showPreview, setShowPreview] = useState(false);
 
-  const handleStatusChange = () => {
+   const handleStatusChange = async () => {
     const newStatus = popup.StatusName === 'Active' ? 5 : 2;
-    (dispatch as any)(togglePopupStatus({ ID: popup.ID, Status: newStatus }));
+    const response = await dispatch(togglePopupStatus({ ID: popup.ID, Status: newStatus }));
+    const statusCode = response?.payload?.StatusCode;
+    if (statusCode === 927 || statusCode === '927' || String(statusCode) === '927') {
+      onTierRestriction?.(response?.payload?.Message || 'POPUP_ACTIVATION');
+    }
   };
 
   const handleSettings = () => {

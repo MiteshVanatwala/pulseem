@@ -27,5 +27,10 @@
 	"rejected": "נפסלה",
 	"finished": "נשלח",
 	"sending": "בשליחה",
-	"canceled": "מבוטל"
+	"canceled": "מבוטל",
+	"CreatedOnlyforPulseem": "נוצר רק עבור Pulseem",
+	"tagDeletedSuccessfully": "התג נמחק בהצלחה",
+	"failedToDeleteTag": "הסרת התג נכשלה",
+	"tagNameCannotBeEmpty": "שם התג לא יכול להיות ריק",
+	"tagAlreadyExists": "תג עם שם זה כבר קיים. אנא השתמש בשם אחר."
 }

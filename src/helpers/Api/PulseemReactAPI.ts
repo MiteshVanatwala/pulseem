@@ -31,6 +31,8 @@ const PulseemReactInstance = axios.create({
     timeout: 300000
 })
 
+let refreshPromise: Promise<string> | null = null;
+
 PulseemReactInstance.interceptors.request.use(async (config: any) => {
     try {
         const jtoken = getCookie('jtoken')
@@ -40,18 +42,26 @@ PulseemReactInstance.interceptors.request.use(async (config: any) => {
                 redirectToLogin()
                 return Promise.reject('Unautorized')
             }
-            const language = getCookie('Culture')
-            const { data, request } = await axios.get(refreshTokenURL, {
-                headers: {
-                    language
-                }
-            })
-            if (refreshTokenURL !== request.responseURL) {
-                redirectToLogin()
-                return Promise.reject('Unautorized')
+            if (!refreshPromise) {
+                const language = getCookie('Culture')
+                refreshPromise = axios.get(refreshTokenURL, {
+                    headers: { language },
+                    withCredentials: true
+                }).then(({ data, request }) => {
+                    const sessionExpired =
+                        request.responseURL.includes('Login.aspx') ||
+                        !request.responseURL.startsWith(new URL(refreshTokenURL).origin)
+                    if (sessionExpired) {
+                        redirectToLogin()
+                        return Promise.reject('Session expired')
+                    }
+                    setCookie('jtoken', data)
+                    return data
+                }).finally(() => {
+                    refreshPromise = null
+                })
             }
-            token = data
-            setCookie('jtoken', token)
+            token = await refreshPromise
         }
         config.headers.Authorization = `Bearer ${token}`
         return config

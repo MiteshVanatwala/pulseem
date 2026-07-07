@@ -617,16 +617,11 @@ const SmsReport = ({ classes }) => {
   const renderNameCell = (row) => {
     const { Name, SendDate, UpdateDate, Status } = row
 
-    const date = SendDate ? moment(SendDate) : ''
-    const udate = UpdateDate ? moment(UpdateDate) : '';
-    const showDate = SendDate ? date.format(DateFormats.DATE_ONLY) : ''
-    const showTime = SendDate ? date.format(DateFormats.TIME_ONLY) : ''
-    //const now =  moment().add('months',-1).utc();
-    //const isSchedule = moment(SendDate).isAfter(now.format());
-    const isSchedule = moment(SendDate) > moment();
-    const showUpdateDate = UpdateDate ? udate.format(DateFormats.DATE_ONLY) : '';
-    const showTimeUpdate = UpdateDate ? udate.format(DateFormats.TIME_ONLY) : '';
+    const date = SendDate ? moment(SendDate) : null
+    const udate = UpdateDate ? moment(UpdateDate) : null
+    const isSchedule = date ? date > moment() : false
 
+    const isPulseSend = row.IsPulseSend === true;
     return (
       <>
         <Typography className={classes.nameEllipsis}>
@@ -636,16 +631,20 @@ const SmsReport = ({ classes }) => {
         {SendDate !== null ?
           (
             <Typography className={classes.grayTextCell}>
-              {isSchedule ? t("common.ScheduledFor") : t("common.SentOn")} {`${isRTL ? showDate : moment(showDate).format(DateFormats.DATE_ONLY)} ${showTime}`}
+              {isSchedule ? t("common.ScheduledFor") : t("common.SentOn")} {date ? `${date.format(DateFormats.DATE_ONLY)} ${date.format(DateFormats.TIME_ONLY)}` : ''}
             </Typography>
           ) :
           (
             <Typography className={classes.grayTextCell}>
-              {t("common.UpdatedOn")} {`${isRTL ? showUpdateDate : moment(showUpdateDate).format(DateFormats.DATE_ONLY)} ${showTimeUpdate}`}
+              {t("common.UpdatedOn")} {udate ? `${udate.format(DateFormats.DATE_ONLY)} ${udate.format(DateFormats.TIME_ONLY)}` : ''}
             </Typography>
           )
         }
-
+        {isPulseSend && (
+          <Typography className={classes.pulseSendPill}>
+            {t('common.pulseSendPill')}
+          </Typography>
+        )}
       </>
     )
   }
@@ -1002,12 +1001,23 @@ const SmsReport = ({ classes }) => {
         </>
 
       ),
-      onClose: () => { setDialogType(null) },
-      onConfirm: async () => {
-        setDialogType(null);
+      onClose: () => {
         if (showNoticeDialog) {
-          setCookie('SMSReportNotice', showNoticeDialog);
+          setCookie('SMSReportNotice', 'true', { maxAge: 2147483647 });
         }
+        setDialogType(null);
+      },
+      onCancel: () => {
+        if (showNoticeDialog) {
+          setCookie('SMSReportNotice', 'true', { maxAge: 2147483647 });
+        }
+        setDialogType(null);
+      },
+      onConfirm: () => {
+        if (showNoticeDialog) {
+          setCookie('SMSReportNotice', 'true', { maxAge: 2147483647 });
+        }
+        setDialogType(null);
       }
     }
   }

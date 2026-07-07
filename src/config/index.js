@@ -15,7 +15,6 @@ const SharedEmailDomain = 'pulseem.co'
 const loginURL = '/Pulseem/Login.aspx?ReturnUrl=/Pulseem/HomePageMiddleware.aspx?fromreact=true';
 const tawkToPropertyId = process.env.REACT_APP_TAWK_TO_PROPERTY_ID;
 
-
 export {
   apiURL,
   actionURL,

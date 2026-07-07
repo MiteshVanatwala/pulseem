@@ -8,8 +8,8 @@ import { FaChevronDown } from 'react-icons/fa';
 import { FaChevronUp } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux'
 import clsx from "clsx";
-import { Stack } from "@mui/material";
 import { getAuthorizedEmails, isSweepingApprovalAccount } from "../../../../redux/reducers/commonSlice";
+import EmailPreviewComponent from "../../../../components/EmailPreview/EmailPreviewComponent";
 import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
 import moment from 'moment';
 import { RenderHtml } from "../../../../helpers/Utils/HtmlUtils";
@@ -30,7 +30,6 @@ const SummaryDialog = ({ classes,
     setTierMessageCode = () => null,
     filteredGroups = null,
     filteredCampaigns = null,
-    PreviewURL = null,
     SendDate = "",
     handleSendResponse = () => null,
     IsQuickSend = false,
@@ -52,6 +51,7 @@ const SummaryDialog = ({ classes,
     const [verifyValue, setVerifyValue] = useState('');
     const [showLoader, setShowLoader] = useState(false);
     const [isSharedDomainEmail, setIsSharedDomainEmail] = useState(false);
+    const [sendToSupervisor, setSendToSupervisor] = useState(false);
 
     const {
         FinalClients,
@@ -84,11 +84,26 @@ const SummaryDialog = ({ classes,
     const handleSendCampaign = async () => {
         setShowLoader(true);
         setDisableSend(true);
-        const sendResponse = await dispatch(sendCampaign(newsletterSendSummary.CampaignID));
+        const sendResponse = await dispatch(sendCampaign({
+            campaignId: newsletterSendSummary.CampaignID,
+            sendToSupervisor
+        }));
 
         const response = sendResponse?.payload;
         console.log(response)
-        if (response.StatusCode === 927) {
+        if (response.StatusCode === 423) {
+            setDialogType({
+                type: 'problematicLinks',
+                data: {
+                    links: response.Data || [],
+                    campaignName: newsletterSendSummary?.CampaignName || '',
+                    campaignId: newsletterSendSummary?.CampaignID || '',
+                    companyName: accountSettings?.SubAccountName || ''
+                }
+            });
+            setShowLoader(false);
+            setDisableSend(false);
+        } else if (response.StatusCode === 927) {
             // EMAIL_BASIC
             setTierMessageCode(response.Message);
             setDialogType(927)
@@ -125,13 +140,8 @@ const SummaryDialog = ({ classes,
     }, [isSweepingApproval])
 
     useEffect(() => {
-        const verifiedEmail = verifiedEmails.filter((vm) => { return (vm.Number === newsletterSendSummary?.FromEmail && vm.IsOptIn === true) || IsSharedDomain(newsletterSendSummary?.FromEmail) });
         setFromEmail(newsletterSendSummary?.FromEmail);
         setReplyTo(newsletterSendSummary?.ReplyTo);
-        if ((!verifiedEmail || verifiedEmail?.length <= 0) && !isSweepingApproval && !isSharedDomainEmail) {
-            setDisableSend(true);
-            setFromEmailVerified(false);
-        }
     }, [newsletterSendSummary]);
 
     const handleSharedDomain = (emailAddress) => {
@@ -439,12 +449,13 @@ const SummaryDialog = ({ classes,
                                 </Link>
                             </Box>
                         </Box>
-                        {PreviewURL && <Box className={classes.sumRight} style={{ width: windowSize === 'xs' || windowSize === 'sm' ? '100%' : '50%' }}>
-                            <Stack direction='column' alignItems='center' spacing={2} className={classes.paddingInline25}>
-                                <Stack className={classes.previewIframe}>
-                                    {RenderHtml(`<iframe src="${PreviewURL}&fromReact=1" style="height: inherit; border: 0; background: none; width: 100%; height: 400px;" />`)}
-                                </Stack>
-                            </Stack>
+                        {/* Old approach: backend URL loaded in iframe
+                            {PreviewURL && RenderHtml(`<iframe src="${PreviewURL}&fromReact=1" style="height: 400px; border: 0; background: none; width: 100%;" />`)}
+                        */}
+                        {newsletterSendSummary?.CampaignID && <Box className={classes.sumRight} style={{ width: windowSize === 'xs' || windowSize === 'sm' ? '100%' : '50%' }}>
+                            <Box className={classes.paddingInline25}>
+                                <EmailPreviewComponent campaignId={newsletterSendSummary.CampaignID} height={400} />
+                            </Box>
                         </Box>}
                     </Box>
                     {!IsQuickSend &&
@@ -500,6 +511,19 @@ const SummaryDialog = ({ classes,
                 container
                 // spacing={4}
                 className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}>
+                {newsletterSendSummary?.HasSupervisors && (
+                    <Grid item xs={12} className={classes.paddingSides10} style={{ marginBottom: 8 }}>
+                        <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontSize: 14 }}>
+                            <input
+                                type="checkbox"
+                                checked={sendToSupervisor}
+                                onChange={e => setSendToSupervisor(e.target.checked)}
+                                style={{ width: 16, height: 16, cursor: 'pointer' }}
+                            />
+                            האם לשלוח למפקח?
+                        </label>
+                    </Grid>
+                )}
                 <Grid item className={classes.paddingSides10}>
                     <Button
                         variant='contained'

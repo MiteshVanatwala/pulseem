@@ -92,5 +92,8 @@
   "fullName": "שם מלא",
   "fullNameRequired": "שם מלא הוא שדה חובה",
   "countryCode": "קוד מדינה",
-  "Ecommerce":"E-commerce"
+  "Ecommerce":"E-commerce",
+  "CREATEANACCOUNT": "כאן מצטרפים לפולסים",
+  "JOINPULSEEM": "מצטרפים לפולסים",
+  "TAKESTHREEMIN": "3 דקות וסיימנו!"
 }

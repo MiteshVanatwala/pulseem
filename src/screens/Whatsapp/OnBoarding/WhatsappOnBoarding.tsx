@@ -266,46 +266,46 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
           classes={rowStyle}
         >
           <TableCell style={{ flex: 1 }} classes={{ root: clsx(classes.tableCellRoot, classes.p10) }} className={classes.p20}>
-            <Box className={clsx(classes.justifyBetween, classes.pb5)}>
-              <Box className={clsx(classes.dFlex, classes.f18)}>
-								<Typography className={clsx(classes.f18, classes.bold, classes.pe15)}>
-									{t("WhatsappOnBoarding.ID")}:
-								</Typography>
-								<Typography className={classes.f18}>
-									{row?.id}
-								</Typography>
-              </Box>
-              <Box className={clsx(classes.dInlineBlock, classes.textCapitalize)}>
-								{renderPhoneNumberStatus(row)}
-              </Box>
-            </Box>
-						<Box className={classes.dFlex}>
+					<Box className={clsx(classes.justifyBetween, classes.pb5)}>
+						<Box className={clsx(classes.dFlex, classes.f18)}>
 							<Typography className={clsx(classes.f18, classes.bold, classes.pe15)}>
-								{t("WhatsappOnBoarding.phoneNumber")}:
+								{t("WhatsappOnBoarding.ID")}:
 							</Typography>
 							<Typography className={classes.f18}>
-								{row?.display_phone_number}
+								{row?.id}
 							</Typography>
 						</Box>
-						<Box className={classes.dFlex}>
+						<Box className={clsx(classes.dInlineBlock, classes.textCapitalize, classes.flexColCenter, classes.ml10)}>
+							{renderPhoneNumberStatus(row)}
+						</Box>
+					</Box>
+					<Box className={classes.dFlex}>
+						<Typography className={clsx(classes.f18, classes.bold, classes.pe15)}>
+							{t("WhatsappOnBoarding.phoneNumber")}:
+						</Typography>
+						<Typography className={classes.f18}>
+							{row?.display_phone_number}
+						</Typography>
+					</Box>
+					{/* <Box className={classes.dFlex}>
 							<Typography className={clsx(classes.f18, classes.bold, classes.pe15)}>
 								{t("WhatsappOnBoarding.tier")}:
 							</Typography>
 							<Typography className={classes.f18}>
 								{row?.tier}
 							</Typography>
-						</Box>
-						<Box className={classes.dFlex}>
-							<Typography className={clsx(classes.f18, classes.bold, classes.pe15)}>
-								{t("WhatsappOnBoarding.limit")}:
-							</Typography>
-							<Typography className={classes.f18}>
-								{row?.limit}
-							</Typography>
-						</Box>
-          </TableCell>
-        </TableRow>
-      </>
+						</Box> */}
+					<Box className={classes.dFlex}>
+						<Typography className={clsx(classes.f18, classes.bold, classes.pe15)}>
+							{t("WhatsappOnBoarding.limit")}:
+						</Typography>
+						<Typography className={classes.f18}>
+							{row?.limit}
+						</Typography>
+					</Box>
+				</TableCell>
+			</TableRow>
+		</>
     )
   }
 
@@ -314,22 +314,30 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 			<>
 				{
 					row?.status !== WHATSAPP_ONBOARDING_STATUS.CONNECTED
-					? row?.status?.toLowerCase()
+					? t(`WhatsappOnBoarding.virtualPhoneNumberStatus.${row?.status?.toLowerCase()}`)
 					: (
-						<Badge color="primary" variant="dot" anchorOrigin={{vertical: 'top', horizontal: 'left'}} className={clsx(classes.connectedDot)}>
-							{row?.status?.toLowerCase()}
+						<Badge color="primary" variant="dot" anchorOrigin={{vertical: 'top', horizontal: 'left'}} className={clsx(classes.connectedDot, classes.ml5)}>
+							{t(`WhatsappOnBoarding.virtualPhoneNumberStatus.${row?.status?.toLowerCase()}`)}
 						</Badge>
 					)
 				}
 				{
-					row?.status !== WHATSAPP_ONBOARDING_STATUS.CONNECTED && (
-						<Button
-							onClick={() => setDialogType({ type: 'OTP', data: row })}
-							className={clsx(classes.searchButton, classes.btn, classes.btnRounded, classes.ml10)}
-						>
-							{t('Connect')}
-						</Button>
-					)
+					row?.status !== WHATSAPP_ONBOARDING_STATUS.CONNECTED
+						? (
+							<Button
+								onClick={() => setDialogType({ type: 'OTP', data: row })}
+								className={clsx(classes.searchButton, classes.btn, classes.btnRounded, classes.ml10)}
+							>
+								{t('Connect')}
+							</Button>
+						) : (
+							<Button
+								onClick={() => setDialogType({ type: 'OTP', data: row })}
+								className={clsx(classes.searchButton, classes.btn, classes.btnRounded, classes.ml10, classes.line1)}
+							>
+								{t('common.reconnect')}
+							</Button>
+						)
 				}
 			</>
 		)
@@ -354,12 +362,12 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 					className={classes.flex2}>
 						{row?.id}
 				</TableCell>
-				<TableCell
+				{/* <TableCell
 					classes={cellStyle}
 					align='center'
 					className={classes.flex2}>
 						{row?.tier}
-				</TableCell>
+				</TableCell> */}
 				<TableCell
 					classes={cellStyle}
 					align='center'
@@ -396,7 +404,7 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
         <TableRow classes={rowStyle}>
           <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t('WhatsappOnBoarding.phoneNumber')}</TableCell>
           <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t('WhatsappOnBoarding.ID')}</TableCell>
-          <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t('WhatsappOnBoarding.tier')}</TableCell>
+          {/* <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t('WhatsappOnBoarding.tier')}</TableCell> */}
           <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t('WhatsappOnBoarding.limit')}</TableCell>
           <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t('WhatsappOnBoarding.status')}</TableCell>
         </TableRow>
@@ -570,10 +578,10 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 										className={classes.flex1}>
 											{
 												businessInfo?.business_verification_status !== WHATSAPP_ONBOARDING_STATUS.BUSINESS_VERIFIED
-												? businessInfo?.business_verification_status
+												? t(`WhatsappOnBoarding.business_statuses.${businessInfo?.business_verification_status}`)
 												: (
 													<Badge color="primary" variant="dot" anchorOrigin={{vertical: 'top', horizontal: 'left'}} className={clsx(classes.connectedDot, classes.textCapitalize)}>
-														{businessInfo?.business_verification_status}
+														{t(`WhatsappOnBoarding.business_statuses.${businessInfo?.business_verification_status}`)}
 													</Badge>
 												)
 											}

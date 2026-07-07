@@ -1,18 +1,19 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
-const AILoader = ({ isVisible = true, text = '' }) => {
+const AILoader = ({ isVisible = true, text = '', steps: stepsProp = null }: { isVisible?: boolean, text?: string, steps?: { text: string, icon: string }[] | null }) => {
   const [progress, setProgress] = useState(0);
   const [currentStep, setCurrentStep] = useState(0);
   const { t } = useTranslation();
 
-  const steps = [
+  const defaultSteps = [
     { text: t('AILoader.step1'), icon: "🎨" },
     { text: t('AILoader.step2'), icon: "📐" },
     { text: t('AILoader.step3'), icon: "✍️" },
     { text: t('AILoader.step4'), icon: "🚀" },
     { text: t('AILoader.step5'), icon: "✨" }
   ];
+  const steps = stepsProp ?? defaultSteps;
 
   useEffect(() => {
     if (!isVisible) {
