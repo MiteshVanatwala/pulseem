@@ -10,6 +10,7 @@ export enum LU_Plugin {
     Isracard = 3,
     EShop = 5,
     Klaviyo = 10,
+    Yotpo = 11,
     Verifone = 14
 }
 export enum LU_PluginGroupType {
@@ -65,6 +66,19 @@ export interface KlaviyoModel {
     isSyncRecipients?: boolean;
     IsInsertAsActive: boolean;
     RegisterAsActiveOptionsID?: UnsubscribePreferenceType;
+}
+
+export interface YotpoModel {
+    ApiGuid: string;
+    ApiKey: string;
+    IsDeleted: boolean;
+    IntervalToRunService?: string;
+    UnsubscribePreferenceTypeID?: UnsubscribePreferenceType;
+    EcommerceSyncOptionsID?: number | null;
+    isSyncRecipients?: boolean;
+    IsInsertAsActive?: boolean;
+    RegisterAsActiveOptionsID?: UnsubscribePreferenceType;
+    WebhookUrl?: string;
 }
 
 export enum UnsubscribePreferenceType {

@@ -182,5 +182,29 @@
     "importFromKlaviyo": "Import from Klaviyo",
     "integrationSaved": "Changes have been saved",
     "iApprove": "I approve"
+  },
+  "Yotpo": {
+    "title": "Yotpo",
+    "apiGuid": "API GUID",
+    "guidSubTitle": "Insert your Yotpo Loyalty GUID (store identifier)",
+    "subTitle": "Insert your Yotpo Loyalty API key",
+    "guidRequired": "Please insert your Yotpo GUID",
+    "apiKeyRequired": "Please insert your Yotpo API key",
+    "notice": "Your Yotpo loyalty program is connected. Loyalty data (points, tier, expiry) will sync automatically for matching recipients.",
+    "webhookUrl": "Webhook URL",
+    "webhookDesc": "Copy this URL and register it in your Yotpo admin under <b>Settings &gt; Webhooks</b> for the topics: points earned, points changed, tier earned, tier lost, referral completed and opt in/out. This keeps loyalty data updated in real time.",
+    "copy": "Copy",
+    "webhookCopied": "Webhook URL copied",
+    "syncRecipients": "Add unknown loyalty members as recipients",
+    "syncRecipientsDesc": "When a Yotpo loyalty update arrives for a customer that does not exist in your Pulseem account, the customer will be added as a new recipient automatically.",
+    "bothEmailSMS": "Both Email & SMS",
+    "SMSOnly": "SMS Only",
+    "emailOnly": "Email Only",
+    "newAsActive": "Add all new recipients coming from Yotpo as \"Active\"",
+    "newAsActiveDesc1": "For your attention, by activating Add all new recipients coming from Yotpo as “Active” setting, you are requesting to add recipients which have not opted in to receive mailing, which means these recipients will receive Emails, SMS and WhatsApp campaigns that you send.",
+    "newAsActiveDesc2": "Changing the aforementioned settings is carried out at your sole responsibility, and in doing so you confirm that Pulseem will not bear any responsibility for any damage caused to you and/or to Pulseem as a result, and therefore these damages will apply only to you.",
+    "importFromYotpo": "Import from Yotpo",
+    "integrationSaved": "Changes have been saved",
+    "iApprove": "I approve"
   }
 }

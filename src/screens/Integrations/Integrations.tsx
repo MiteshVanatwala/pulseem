@@ -23,6 +23,8 @@ import Ecwid from "./Ecwid";
 import EShop from "./EShop";
 import Wix from "./Wix";
 import Klaviyo from "./Klaviyo";
+import Yotpo from "./Yotpo";
+import YotpoIcon from '../../assets/images/yotpo.png';
 import { StateType } from "../../Models/StateTypes";
 import { RxOpenInNewWindow } from "react-icons/rx";
 import { ListIcon } from "../../assets/images/managment";
@@ -45,6 +47,7 @@ const Integrations = ({ classes }: any) => {
       '5': { title: `${t('integrations.eShop.title')}` },
       '6': { title: `${t('integrations.wix.title')}` },
       '10': { title: `${t('integrations.Klaviyo.title')}` },
+      '11': { title: `${t('integrations.Yotpo.title')}` },
       '14': { title: `${t('integrations.verifone.title')}` },
     } as any;
 
@@ -194,6 +197,13 @@ const Integrations = ({ classes }: any) => {
             value='10'
           />
           <Tab
+            label={t('integrations.Yotpo.title')}
+            icon={<img src={YotpoIcon} alt={t('integrations.Yotpo.title')} />}
+            classes={{ root: classes.tabText, selected: classes.activeTab }}
+            className={classes.iconTab}
+            value='11'
+          />
+          <Tab
             label={t('integrations.verifone.title')}
             icon={<img src={VerifoneIcon} alt={t('integrations.verifone.title')} />}
             classes={{ root: classes.tabText, selected: classes.activeTab }}
@@ -232,7 +242,11 @@ const Integrations = ({ classes }: any) => {
           <TabPanel value='10'>
             <Klaviyo classes={classes} />
           </TabPanel>
-          
+
+          <TabPanel value='11'>
+            <Yotpo classes={classes} />
+          </TabPanel>
+
           <TabPanel value='14' className={clsx(classes.pt0)}>
             <VerifoneSetting classes={classes} />
           </TabPanel>

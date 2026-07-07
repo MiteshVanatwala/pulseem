@@ -160,5 +160,29 @@
     "newAsActiveDesc2": "Zmiana wyżej wymienionych ustawień odbywa się na Twoją wyłączną odpowiedzialność i dokonując tego potwierdzasz, że Pulseem nie ponosi żadnej odpowiedzialności za jakiekolwiek szkody wyrządzone Tobie i/lub Pulseem w wyniku tego, a zatem szkody te będą dotyczyć wyłącznie Ciebie.",
     "importFromKlaviyo": "Importuj z Klaviyo",
     "integrationSaved": "Zmiany zostały zapisane"
+  },
+  "Yotpo": {
+    "title": "Yotpo",
+    "apiGuid": "API GUID",
+    "guidSubTitle": "Wprowadź identyfikator sklepu (GUID) programu lojalnościowego Yotpo",
+    "subTitle": "Wprowadź klucz API programu lojalnościowego Yotpo",
+    "guidRequired": "Wprowadź GUID Yotpo",
+    "apiKeyRequired": "Wprowadź klucz API Yotpo",
+    "notice": "Twój program lojalnościowy Yotpo jest połączony. Dane lojalnościowe (punkty, poziom, data ważności) będą synchronizowane automatycznie.",
+    "webhookUrl": "Adres URL webhooka",
+    "webhookDesc": "Skopiuj ten adres URL i zarejestruj go w panelu Yotpo w <b>Settings &gt; Webhooks</b> dla zdarzeń: zdobycie punktów, zmiana punktów, zmiana poziomu, ukończone polecenie oraz zapis/wypis. Dzięki temu dane lojalnościowe będą aktualizowane na bieżąco.",
+    "copy": "Kopiuj",
+    "webhookCopied": "Adres URL webhooka skopiowany",
+    "syncRecipients": "Dodawaj nieznanych członków programu lojalnościowego jako odbiorców",
+    "syncRecipientsDesc": "Gdy z Yotpo nadejdzie aktualizacja lojalnościowa dla klienta, który nie istnieje na Twoim koncie Pulseem, klient zostanie automatycznie dodany jako nowy odbiorca.",
+    "bothEmailSMS": "Email i SMS",
+    "SMSOnly": "Tylko SMS",
+    "emailOnly": "Tylko Email",
+    "newAsActive": "Dodaj wszystkich nowych odbiorców z Yotpo jako \"Aktywnych\"",
+    "newAsActiveDesc1": "Uwaga, aktywując ustawienie dodawania wszystkich nowych odbiorców z Yotpo jako \"Aktywnych\", żądasz dodania odbiorców, którzy nie wyrazili zgody na otrzymywanie wiadomości, co oznacza, że odbiorcy ci będą otrzymywać kampanie Email, SMS i WhatsApp, które wysyłasz.",
+    "newAsActiveDesc2": "Zmiana wyżej wymienionych ustawień odbywa się na Twoją wyłączną odpowiedzialność i dokonując tego potwierdzasz, że Pulseem nie ponosi żadnej odpowiedzialności za jakiekolwiek szkody wyrządzone Tobie i/lub Pulseem w wyniku tego, a zatem szkody te będą dotyczyć wyłącznie Ciebie.",
+    "importFromYotpo": "Importuj z Yotpo",
+    "integrationSaved": "Zmiany zostały zapisane",
+    "iApprove": "Zatwierdzam"
   }
 }
