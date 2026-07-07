@@ -18,10 +18,12 @@ import Toast from "../../../../components/Toast/Toast.component";
 import DomainsVerificationPopUp from "../../../Settings/AccountSettings/Popups/DomainsVerificationPopUp";
 import { EmailConfirmationSettings } from "../../../../Models/LandingPage/LandingPage";
 import { getCookie } from "../../../../helpers/Functions/cookies";
+import { Loader } from "../../../../components/Loader/Loader";
 
 const EmailConfirmationSettingsPopUp = ({ classes, isOpen, onClose, onConfirm, optInSettings, onVerificationEmail }: any) => {
     const { t } = useTranslation();
     const { verifiedEmails, accountSettings, accountFeatures } = useSelector((state: StateType) => state.common);
+    const [showLoader, setShowLoader] = useState<boolean>(true);
     const [isVerifiedDomain, setIsVerifiedDomain] = useState(false);
     const [toastMessage, setToastMessage] = useState<any>();
     const [showVerificationDomains, setShowVerificationDomains] = useState<boolean>(false);
@@ -47,14 +49,26 @@ const EmailConfirmationSettingsPopUp = ({ classes, isOpen, onClose, onConfirm, o
     const dispatch = useDispatch();
 
     const initVerifiedEmails = async () => {
+        const startTime = Date.now();
         await dispatch(getAuthorizedEmails());
+        // Keep the loader visible past the backdrop's fade-in transition (~225ms)
+        // so a fast response doesn't reverse the fade before it becomes noticeable.
+        const minLoaderDuration = 400;
+        const elapsed = Date.now() - startTime;
+        if (elapsed < minLoaderDuration) {
+            setTimeout(() => setShowLoader(false), minLoaderDuration - elapsed);
+        } else {
+            setShowLoader(false);
+        }
     }
     // Initialize verified emails if needed
     useEffect(() => {
         if (!verifiedEmails || verifiedEmails?.length < 1) {
             initVerifiedEmails();
+        } else {
+            setShowLoader(false);
         }
-    }, [verifiedEmails]); // Add verifiedEmails as dependency
+    }, []);
 
     // Update optIn state when optInSettings changes
     useEffect(() => {
@@ -176,7 +190,7 @@ const EmailConfirmationSettingsPopUp = ({ classes, isOpen, onClose, onConfirm, o
                         >
                             {t("common.select")}
                         </option>
-                        {verifiedEmails.filter((item: any) => item.IsVerified).map((item: any, index: any) => {
+                        {verifiedEmails.filter((item: any) => item.IsVerified === true).map((item: any, index: any) => {
                             return <option
                                 key={index}
                                 value={item.Number}
@@ -250,6 +264,7 @@ const EmailConfirmationSettingsPopUp = ({ classes, isOpen, onClose, onConfirm, o
                 </Button>
             </Box>
             {renderToast()}
+            <Loader isOpen={showLoader} />
             {showVerificationDomains && <DomainsVerificationPopUp
                 classes={classes} isOpen={showVerificationDomains}
                 onClose={() => setShowVerificationDomains(false)}
