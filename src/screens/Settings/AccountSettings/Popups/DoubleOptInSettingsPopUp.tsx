@@ -61,13 +61,12 @@ const DoubleOptInSettingsPopUp = ({ classes, isOpen, onClose, onConfirm, optInSe
             setShowLoader(false);
         }
     }
-    // Initialize verified emails if needed
+    // Always refresh verified emails on open so stale data isn't shown
     useEffect(() => {
-        if (!verifiedEmails || verifiedEmails?.length < 1) {
-            initVerifiedEmails();
-        } else {
+        if (verifiedEmails && verifiedEmails?.length > 0) {
             setShowLoader(false);
         }
+        initVerifiedEmails();
     }, []);
 
     // Update optIn state when optInSettings changes
@@ -112,13 +111,13 @@ const DoubleOptInSettingsPopUp = ({ classes, isOpen, onClose, onConfirm, optInSe
 
     const validateSettings = () => {
         let isValid = true;
-        const selectedEmail = verifiedEmails.filter((e: any) => { return e.Number === optIn.OptInFromEmail })[0];
+        const selectedEmail = verifiedEmails?.filter((e: any) => { return e.Number === optIn.OptInFromEmail })[0];
         const newErr: any = {
             OptInEmail: '',
             OptInFromName: '',
             OptInSubject: ''
         };
-        if (optIn.OptInFromEmail === '' || !selectedEmail.IsVerified) {
+        if (optIn.OptInFromEmail === '' || !selectedEmail?.IsVerified) {
             isValid = false;
             newErr.OptInFromEmail = t('common.domainVerificationRequired');
         }
@@ -216,7 +215,7 @@ const DoubleOptInSettingsPopUp = ({ classes, isOpen, onClose, onConfirm, optInSe
                         >
                             {t("common.select")}
                         </option>
-                        {verifiedEmails.filter((email: VerifiedEmail) => { return email.IsVerified === true && email.IsOptIn }).map((item: any, index: any) => {
+                        {verifiedEmails.filter((email: VerifiedEmail) => { return email.IsVerified === true }).map((item: any, index: any) => {
                             return <option
                                 key={index}
                                 value={item.Number}
