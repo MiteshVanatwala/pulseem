@@ -18,10 +18,12 @@ import { MAX_TEXTFIELD_LENGTH } from "../../../../helpers/Constants";
 import Toast from "../../../../components/Toast/Toast.component";
 import DomainsVerificationPopUp from "./DomainsVerificationPopUp";
 import { VerifiedEmail } from "../../../../model/Common/commonProps.types";
+import { Loader } from "../../../../components/Loader/Loader";
 
 const DoubleOptInSettingsPopUp = ({ classes, isOpen, onClose, onConfirm, optInSettings, onVerificationEmail }: any) => {
     const { t } = useTranslation();
     const { verifiedEmails, accountSettings, accountFeatures } = useSelector((state: StateType) => state.common);
+    const [showLoader, setShowLoader] = useState<boolean>(true);
     const [isVerifiedDomain, setIsVerifiedDomain] = useState(false);
     const [toastMessage, setToastMessage] = useState<any>();
     const [showVerificationDomains, setShowVerificationDomains] = useState<boolean>(false);
@@ -47,14 +49,25 @@ const DoubleOptInSettingsPopUp = ({ classes, isOpen, onClose, onConfirm, optInSe
     const dispatch = useDispatch();
 
     const initVerifiedEmails = async () => {
+        const startTime = Date.now();
         await dispatch(getAuthorizedEmails());
-    }
-    // Initialize verified emails if needed
-    useEffect(() => {
-        if (!verifiedEmails || verifiedEmails?.length < 1) {
-            initVerifiedEmails();
+        // Keep the loader visible past the backdrop's fade-in transition (~225ms)
+        // so a fast response doesn't reverse the fade before it becomes noticeable.
+        const minLoaderDuration = 400;
+        const elapsed = Date.now() - startTime;
+        if (elapsed < minLoaderDuration) {
+            setTimeout(() => setShowLoader(false), minLoaderDuration - elapsed);
+        } else {
+            setShowLoader(false);
         }
-    }, [verifiedEmails]); // Add verifiedEmails as dependency
+    }
+    // Always refresh verified emails on open so stale data isn't shown
+    useEffect(() => {
+        if (verifiedEmails && verifiedEmails?.length > 0) {
+            setShowLoader(false);
+        }
+        initVerifiedEmails();
+    }, []);
 
     // Update optIn state when optInSettings changes
     useEffect(() => {
@@ -98,13 +111,13 @@ const DoubleOptInSettingsPopUp = ({ classes, isOpen, onClose, onConfirm, optInSe
 
     const validateSettings = () => {
         let isValid = true;
-        const selectedEmail = verifiedEmails.filter((e: any) => { return e.Number === optIn.OptInFromEmail })[0];
+        const selectedEmail = verifiedEmails?.filter((e: any) => { return e.Number === optIn.OptInFromEmail })[0];
         const newErr: any = {
             OptInEmail: '',
             OptInFromName: '',
             OptInSubject: ''
         };
-        if (optIn.OptInFromEmail === '' || !selectedEmail.IsVerified) {
+        if (optIn.OptInFromEmail === '' || !selectedEmail?.IsVerified) {
             isValid = false;
             newErr.OptInFromEmail = t('common.domainVerificationRequired');
         }
@@ -202,7 +215,7 @@ const DoubleOptInSettingsPopUp = ({ classes, isOpen, onClose, onConfirm, optInSe
                         >
                             {t("common.select")}
                         </option>
-                        {verifiedEmails.filter((email: VerifiedEmail) => { return email.IsVerified && email.IsOptIn }).map((item: any, index: any) => {
+                        {verifiedEmails.filter((email: VerifiedEmail) => { return email.IsVerified === true }).map((item: any, index: any) => {
                             return <option
                                 key={index}
                                 value={item.Number}
@@ -276,6 +289,7 @@ const DoubleOptInSettingsPopUp = ({ classes, isOpen, onClose, onConfirm, optInSe
                 </Button>
             </Box>
             {renderToast()}
+            <Loader isOpen={showLoader} />
             {showVerificationDomains && <DomainsVerificationPopUp
                 classes={classes} isOpen={showVerificationDomains}
                 onClose={() => setShowVerificationDomains(false)}
