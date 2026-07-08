@@ -118,11 +118,17 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	// Tracks the last RecentMsgDate we processed so we only act on genuinely new inbound messages
 	const lastSeenRecentMsgDateRef = useRef<string>('');
 
+	// Cursors for SP-level scan optimisation
+	const lastCurrentChatMsgIdRef = useRef<number | null>(null); // last known msg Id from active contact
+	const lastAllChatsMsgIdRef    = useRef<number | null>(null); // last known msg Id from any other contact
+
 	// Debounce timer ref for the full contacts-list API refresh (5-second debounce)
 	const contactsRefreshDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
 	// Always holds the latest fetchMoreContacts callback — avoids a forward-reference TS error
 	const fetchMoreContactsRef = useRef<((searchText: string, ChatStatus: number, isPaginationReset: boolean) => void) | null>(null);
+	// Set to true before a background sidebar refresh so fetchMoreContacts skips the global loader
+	const suppressNextLoaderRef = useRef<boolean>(false);
 
 	const activePhoneNumberRef = useRef<string>('');
 	const filterBySelectedRef = useRef<number>(0);
@@ -194,7 +200,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const [whatsappChatSession, setWhatsappChatSession] =
 		useState<APIWhatsappChatSessionData>({
 			IsIn24Window: false,
-			ExpiryTime: '',
+			ExpiryTime: null,
 			Hour: '0',
 			Minute: '0',
 			Second: '0',
@@ -520,50 +526,81 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 					getInboundWhatsappChatStatus({
 						activePhoneNumber: activePhoneNumber,
 						activeUserNumber: activeChatContacts.PhoneNumber,
+						lastCurrentChatMsgId: lastCurrentChatMsgIdRef.current,
+						lastAllChatsMsgId: lastAllChatsMsgIdRef.current,
 					}),
 				);
 			if (whatsAppChatSessionStatus?.Status === apiStatus.SUCCESS) {
 				const data = whatsAppChatSessionStatus?.Data;
 				if (data) {
-					setWhatsappChatSession(data);
+					// Q1: SP always includes the cursor row (>=) so H/M/S and IsIn24Window are always fresh.
+					// Update window state on every successful response.
+					setWhatsappChatSession((prev) => ({
+						...prev,
+						IsIn24Window: data.IsIn24Window,
+						ExpiryTime: data.ExpiryTime,
+						IsNewMessage: data.IsNewMessage,
+						Hour: data.Hour ?? '0',
+						Minute: data.Minute ?? '0',
+						Second: data.Second ?? '0',
+					}));
 
-					const isNewInbound =
-						data.RecentFromNumber &&
-						data.RecentMsgDate &&
-						data.RecentMsgDate !== lastSeenRecentMsgDateRef.current;
+					// Advance Q1 cursor to the latest known message ID
+					if (data.LastCurrentChatMsgId != null) {
+						lastCurrentChatMsgIdRef.current = data.LastCurrentChatMsgId;
+					}
 
-					if (isNewInbound) {
-						lastSeenRecentMsgDateRef.current = data.RecentMsgDate!;
+					// Q2: new message from another contact detected — update sidebar
+					// LastAllChatsMsgId is non-null only when SP found a row from another contact after the cursor
+					if (data.LastAllChatsMsgId != null) {
+						const isFirstQ2Poll = lastAllChatsMsgIdRef.current === null;
+						lastAllChatsMsgIdRef.current = data.LastAllChatsMsgId;
 
-						// Immediately reorder the sidebar list without waiting for a full API refresh
-						setSideChatContacts((prev) => {
-							const idx = prev.findIndex((c) =>
-								compareLastNineDigits(c.PhoneNumber, data.RecentFromNumber!),
-							);
-							if (idx === -1) return prev; // contact not in list yet — full refresh will add it
-							const updated = [...prev];
-							updated[idx] = {
-								...updated[idx],
-								LastMessage: data.RecentMsg ?? updated[idx].LastMessage,
-								LastMessageDate: data.RecentMsgDate ?? updated[idx].LastMessageDate,
-							};
-							const [promoted] = updated.splice(idx, 1);
-							return [promoted, ...updated];
-						});
+						if (isFirstQ2Poll) {
+							// First poll: cursor was null so SP returned historical rows — just record
+							// the baseline date so the next poll can detect genuinely new messages.
+							lastSeenRecentMsgDateRef.current = data.RecentMsgDate ?? '';
+						} else {
+							const isNewInbound =
+								data.RecentFromNumber &&
+								data.RecentMsgDate &&
+								data.RecentMsgDate !== lastSeenRecentMsgDateRef.current;
 
-						// Debounced full contacts-list refresh (5 seconds)
-						if (contactsRefreshDebounceRef.current) {
-							clearTimeout(contactsRefreshDebounceRef.current);
+							if (isNewInbound) {
+								lastSeenRecentMsgDateRef.current = data.RecentMsgDate!;
+
+								// Immediately reorder sidebar without waiting for a full API refresh
+								setSideChatContacts((prev) => {
+									const idx = prev.findIndex((c) =>
+										compareLastNineDigits(c.PhoneNumber, data.RecentFromNumber!),
+									);
+									if (idx === -1) return prev;
+									const updated = [...prev];
+									updated[idx] = {
+										...updated[idx],
+										LastMessage: data.RecentMsg ?? updated[idx].LastMessage,
+										LastMessageDate: data.RecentMsgDate ?? updated[idx].LastMessageDate,
+									};
+									const [promoted] = updated.splice(idx, 1);
+									return [promoted, ...updated];
+								});
+
+								// Debounced full contacts-list refresh (5 seconds)
+								if (contactsRefreshDebounceRef.current) {
+									clearTimeout(contactsRefreshDebounceRef.current);
+								}
+								contactsRefreshDebounceRef.current = setTimeout(() => {
+									suppressNextLoaderRef.current = true;
+									fetchMoreContactsRef.current?.(sideBarSearchTextRef.current, filterBySelected, true);
+								}, 5000);
+							}
 						}
-						contactsRefreshDebounceRef.current = setTimeout(() => {
-							fetchMoreContactsRef.current?.(sideBarSearchTextRef.current, filterBySelected, true);
-						}, 5000);
 					}
 				}
 			} else {
 				setWhatsappChatSession({
 					IsIn24Window: false,
-					ExpiryTime: '',
+					ExpiryTime: null,
 					Hour: '0',
 					Minute: '0',
 					Second: '0',
@@ -903,21 +940,36 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	}, []);
 
 	useEffect(() => {
-		/**
-		 * This will check that is current user is allowed to send freeform message
-		 * or not every 3 second.
-		 */
-		let ChatStatusTimer = setInterval(
-			async () => await setAPIInboundChatStatus(),
-			3000,
-		);
+		// Reset cursors whenever the active contact changes (setAPIInboundChatStatus is recreated on contact change)
+		lastCurrentChatMsgIdRef.current  = null;
+		lastAllChatsMsgIdRef.current     = null;
+		lastSeenRecentMsgDateRef.current = '';
+
+		let pollingTimer: ReturnType<typeof setTimeout> | null = null;
+		let cancelled = false;
+
+		const poll = async () => {
+			try {
+				await setAPIInboundChatStatus();
+			} catch {
+				// errors are handled inside setAPIInboundChatStatus; loop must not break on failure
+			}
+			if (!cancelled) {
+				pollingTimer = setTimeout(poll, 5000);
+			}
+		};
+
+		poll(); // fire immediately, then chain every 5 s after each response
+
 		return () => {
-			clearInterval(ChatStatusTimer);
+			cancelled = true;
+			if (pollingTimer) clearTimeout(pollingTimer);
 			if (contactsRefreshDebounceRef.current) {
 				clearTimeout(contactsRefreshDebounceRef.current);
 			}
 		};
 	}, [setAPIInboundChatStatus]);
+
 
 	useEffect(() => {
 		const updatedPersonalField = {
@@ -1319,7 +1371,9 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			endTime?: string,
 		) => {
 			if (activePhoneNumber && activePhoneNumber?.length > 0) {
-				if (isPaginationReset && !isInfiniteScroll) {
+				const skipLoader = suppressNextLoaderRef.current;
+				suppressNextLoaderRef.current = false;
+				if (isPaginationReset && !isInfiniteScroll && !skipLoader) {
 					dispatch(setIsLoader(true));
 				}
 
