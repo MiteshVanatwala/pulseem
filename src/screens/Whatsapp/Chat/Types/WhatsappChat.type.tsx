@@ -229,7 +229,7 @@ export type APIWhatsappChatSidebarContactsItemsData = {
 	UserName: string;
 	Tags?: Array<{ id?: string; Id?: string; TagName: string; TagColor: string }>;
 	ClientId?: number; // Standardized for WhatsApp chat edit mapping
-	Agents?: Array<{ AgentID: number; AgentName: string }> | null;
+	Agents?: Array<{ AgentID: number; AgentName: string; IsCurrentUser: boolean }> | null;
 };
 
 //SidebarContacts Main inbound data types
