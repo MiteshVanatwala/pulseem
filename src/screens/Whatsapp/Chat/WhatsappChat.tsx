@@ -1942,20 +1942,22 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 							}}
 							className={clsx(classes.flex)}
 						>
-							<Button
-								className={clsx(classes.btn, classes.btnRounded)}
-								onClick={(e: BaseSyntheticEvent) => {
-									setDialogType({ type: 'addAgent', data: null });
-								}}
-							>
-								{translator('whatsappChat.addAgent')}
-							</Button>
+							{!userRoles?.HideRecipients && (
+								<Button
+									className={clsx(classes.btn, classes.btnRounded)}
+									onClick={(e: BaseSyntheticEvent) => {
+										setDialogType({ type: 'addAgent', data: null });
+									}}
+								>
+									{translator('whatsappChat.addAgent')}
+								</Button>
+							)}
 						</Box>
 					</Box>
 				</Grid>
 			),
 		};
-	}, [translator, classes, allAgents, updateAgent, onEditAgent]);
+	}, [translator, classes, allAgents, updateAgent, onEditAgent, userRoles]);
 
 	const addAgentModalDialog = useCallback(() => {
 		return {
