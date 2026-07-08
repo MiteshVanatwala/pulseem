@@ -70,6 +70,7 @@ const SideBar = ({
 	setFilterBySelected,
 	selectedAgent,
 	setAgentSelected,
+	agentCookieKey,
 	onAddAgent,
 	onEditAgents,
 	onTagsUpdated,
@@ -282,7 +283,7 @@ const SideBar = ({
 
 	const handleAgentSelected = (e: SelectChangeEvent) => {
 		setAgentSelected(Number(e.target.value));
-		setCookie('whatsappSelectedAgentId', e.target.value);
+		setCookie(agentCookieKey, e.target.value);
 	};
 
 	// Helper function to get date chip label with time
@@ -348,11 +349,11 @@ const SideBar = ({
 		// Update single agent selector if needed
 		if (newSelectedAgents.length === 0) {
 			setAgentSelected(0);
-			setCookie('whatsappSelectedAgentId', '0');
+			setCookie(agentCookieKey, '0');
 		} else if (selectedAgent === agentId) {
 			// If we removed the currently selected single agent, update to first remaining
 			setAgentSelected(newSelectedAgents[0]);
-			setCookie('whatsappSelectedAgentId', String(newSelectedAgents[0]));
+			setCookie(agentCookieKey, String(newSelectedAgents[0]));
 		}
 
 		// Trigger fetch immediately with remaining filters
@@ -412,7 +413,7 @@ const SideBar = ({
 		setStartTime('');
 		setEndTime('');
 		setAgentSelected(0);
-		setCookie('whatsappSelectedAgentId', '0');
+		setCookie(agentCookieKey, '0');
 		setSelectedAgents([]);
 		setSelectedTags([]);
 		// Note: useEffects will handle the fetch after state updates
@@ -452,10 +453,10 @@ const SideBar = ({
 		// If agents selected, apply the first one as selectedAgent
 		if (dialogSelectedAgents.length > 0) {
 			setAgentSelected(dialogSelectedAgents[0]);
-			setCookie('whatsappSelectedAgentId', String(dialogSelectedAgents[0]));
+			setCookie(agentCookieKey, String(dialogSelectedAgents[0]));
 		} else {
 			setAgentSelected(0);
-			setCookie('whatsappSelectedAgentId', '0');
+			setCookie(agentCookieKey, '0');
 		}
 
 		// AND logic: send agents and tags separately
