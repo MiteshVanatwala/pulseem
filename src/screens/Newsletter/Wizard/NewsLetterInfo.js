@@ -502,7 +502,15 @@ const NewsLetterInfo = ({ classes }) => {
                 }
             }, [])
 
-            setextraAccountDATA([..._clientFields, ...arr])
+            // PR-3418 — Yotpo loyalty personalization tokens
+            const loyaltyFields = [
+                { value: 'loyalty_points', label: t('campaigns.loyalty.points'), selected: false },
+                { value: 'loyalty_tier', label: t('campaigns.loyalty.tier'), selected: false },
+                { value: 'loyalty_points_earned', label: t('campaigns.loyalty.pointsEarned'), selected: false },
+                { value: 'loyalty_tier_multiplier', label: t('campaigns.loyalty.tierMultiplier'), selected: false },
+                { value: 'loyalty_points_expiry', label: t('campaigns.loyalty.pointsExpiry'), selected: false },
+            ];
+            setextraAccountDATA([..._clientFields, ...arr, ...loyaltyFields])
         }
 
         initClientFields();

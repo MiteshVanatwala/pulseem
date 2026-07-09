@@ -874,5 +874,12 @@
     "useAnyway": "Use Anyway",
     "cancel": "Select different font",
     "doNotShow": "Do not show this warning again for this font"
+  },
+  "loyalty": {
+    "points": "Loyalty Points",
+    "tier": "Loyalty Tier",
+    "pointsEarned": "Points Earned (Total)",
+    "tierMultiplier": "Tier Multiplier",
+    "pointsExpiry": "Points Expiry Date"
   }
 }

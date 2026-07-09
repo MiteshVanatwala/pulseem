@@ -824,5 +824,12 @@
     "useAnyway": "Użyj mimo to",
     "cancel": "Wybierz inną czcionkę",
     "doNotShow": "Nie pokazuj ponownie tego ostrzeżenia dla tej czcionki"
+  },
+  "loyalty": {
+    "points": "Punkty lojalnościowe",
+    "tier": "Poziom lojalnościowy",
+    "pointsEarned": "Zdobyte punkty (łącznie)",
+    "tierMultiplier": "Mnożnik poziomu",
+    "pointsExpiry": "Data ważności punktów"
   }
 }
