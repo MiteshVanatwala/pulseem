@@ -93,7 +93,7 @@ function showForcedLogoutOverlay(message: string): void {
 }
 
 const isDeletedUserResponse = (data: any): boolean =>
-    data?.success === false && data?.message?.trim() === 'Access denied,User Deleted';
+    data?.success === false && data?.errorCode === 'USER_DELETED';
 
 const handleDeletedUserResponse = (rejectedWith: any): Promise<never> => {
     if (!isForcedLogoutInProgress) {
