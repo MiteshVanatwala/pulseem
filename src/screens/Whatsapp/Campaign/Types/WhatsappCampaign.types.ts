@@ -803,7 +803,8 @@ export interface WhatsappAgent {
 	CreationDate?: Date | string;
 	UpdatedDate?: Date | string | null;
 	Sessions?: WhatsappSessionToClient[] | null | never;
-	ChatSessions?: string | null
+	ChatSessions?: string | null;
+	IsCurrentUser?: boolean;
 }
 
 export interface WhatsappSessionToClient {

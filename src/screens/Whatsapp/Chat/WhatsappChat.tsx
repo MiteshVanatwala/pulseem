@@ -132,6 +132,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 
 	const activePhoneNumberRef = useRef<string>('');
 	const filterBySelectedRef = useRef<number>(0);
+	const agentAutoSelectedRef = useRef<boolean>(false);
 	const changeContactReadStatusRef = useRef<((contacts: APIWhatsappChatSidebarContactsItemsData, sideChatContactList?: APIWhatsappChatSidebarContactsItemsData[]) => void) | null>(null);
 	const sideBarSearchTextRef = useRef<string>('');
     
@@ -166,6 +167,8 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const { subAccount } = useSelector((state: any) => state.common);
 	const { isRTL, windowSize, isLoader = false, isOnlyWhatsAppChat } = useSelector((state: { core: coreProps }) => state.core);
 	const { agentList } = useSelector((state: StateType) => state.whatsapp);
+	const { userRoles, isAdmin, subUserObject } = useSelector((state: any) => state.core);
+	const agentCookieKey = `whatsappSelectedAgentId_${subUserObject?.Data?.Emails?.[0]?.AuthValue || ''}`;
 	const { currentPlan, availablePlans } = useSelector(
 		(state: any) => state.tiers,
 	);
@@ -195,7 +198,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const [activePhoneNumber, setActivePhoneNumber] = useState<string>('');
 	const [filterBySelected, setFilterBySelected] = useState(0);
 	const [agentSelected, setAgentSelected] = useState(
-		Number(getCookie('whatsappSelectedAgentId') || 0),
+		Number(getCookie(agentCookieKey) || 0),
 	);
 	const [whatsappChatSession, setWhatsappChatSession] =
 		useState<APIWhatsappChatSessionData>({
@@ -1417,9 +1420,16 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 					apiPayload.EndDate = finalEndDate;
 				}
 
-				// Only add AgentIds and TagIds if they have values
-				if (agentIds && agentIds.length > 0) {
-					apiPayload.AgentIds = agentIds;
+				// Only add AgentIds and TagIds if they have values.
+				// Fall back to [agentSelected] so single-agent selection (dropdown / auto-select) filters correctly.
+				const effectiveAgentIds =
+					agentIds && agentIds.length > 0
+						? agentIds
+						: agentSelected > 0
+						? [agentSelected]
+						: [];
+				if (effectiveAgentIds.length > 0) {
+					apiPayload.AgentIds = effectiveAgentIds;
 				}
 				if (tagIds && tagIds.length > 0) {
 					apiPayload.TagIds = tagIds;
@@ -2040,8 +2050,8 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 
 	const handleAgentSelection = useCallback((value: number) => {
 		setAgentSelected(value);
-		setCookie('whatsappSelectedAgentId', value.toString());
-	}, []);
+		setCookie(agentCookieKey, value.toString());
+	}, [agentCookieKey]);
 
 	const getAgentByCellphone = useCallback(
 		(targetCellphone: any) => {
@@ -2063,6 +2073,26 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		},
 		[agentList],
 	);
+
+	// Runs once per session after initial data is ready; never overwrites a manual selection.
+	// Guards: isAdmin excludes super-users who inherit AllowWhatsAppToAgent=true by default.
+	useEffect(() => {
+		if (!isAccountSetup) return;
+		if (agentAutoSelectedRef.current) return;
+		if (!userRoles?.AllowWhatsAppToAgent) return;
+		if (isAdmin) return;
+		if (agentSelected !== 0) return;
+		if (!allAgents || allAgents.length === 0) return;
+		if (!activePhoneNumber) return;
+
+		const matchingAgent = allAgents.find(
+			(agent: WhatsappAgent) => !agent.IsDeleted && agent.IsCurrentUser,
+		);
+		if (!matchingAgent) return;
+
+		agentAutoSelectedRef.current = true;
+		handleAgentSelection(matchingAgent.AgentId);
+	}, [isAccountSetup, allAgents, activePhoneNumber, userRoles, isAdmin, agentSelected, handleAgentSelection]);
 
 	return (
 		<>
@@ -2120,6 +2150,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 									setFilterBySelected={setFilterBySelected}
 									setAgentSelected={handleAgentSelection}
 									selectedAgent={agentSelected}
+									agentCookieKey={agentCookieKey}
 									onAddAgent={() => {
 										setDialogType({ type: 'addAgent', data: null });
 									}}

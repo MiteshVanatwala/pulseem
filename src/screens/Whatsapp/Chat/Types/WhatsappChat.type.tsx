@@ -167,6 +167,7 @@ export type WhatsappChatSideBarProps = {
 	setFilterBySelected: (filterId: number) => void;
 	selectedAgent?: number;
 	setAgentSelected: (agentId: number) => void;
+	agentCookieKey: string;
 	onAddAgent: () => void;
 	onEditAgents: () => void;
 	onTagsUpdated?: (phoneNumber: string, tagIds: number[], tags?: any[], senderNumber?: string) => void;
@@ -228,7 +229,7 @@ export type APIWhatsappChatSidebarContactsItemsData = {
 	UserName: string;
 	Tags?: Array<{ id?: string; Id?: string; TagName: string; TagColor: string }>;
 	ClientId?: number; // Standardized for WhatsApp chat edit mapping
-	Agents?: Array<{ AgentID: number; AgentName: string }> | null;
+	Agents?: Array<{ AgentID: number; AgentName: string; IsCurrentUser: boolean }> | null;
 };
 
 //SidebarContacts Main inbound data types
