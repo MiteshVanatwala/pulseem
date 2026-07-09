@@ -1,4 +1,5 @@
 import axios from 'axios'
+import i18n from '../../i18n'
 import { getCookie, setCookie } from '../Functions/cookies';
 import { apiURL, actionURL, isProdMode } from '../../config/index'
 import { NoAuthenticationAPIs } from '../Constants';
@@ -79,5 +80,43 @@ PulseemReactInstance.interceptors.response.use(
         return Promise.reject(error.response.data)
     })
 
+let isForcedLogoutInProgress = false;
+
+function showForcedLogoutOverlay(message: string): void {
+    const overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:2147483647;display:flex;align-items:center;justify-content:center;';
+    const box = document.createElement('div');
+    box.style.cssText = 'background:#fff;padding:32px 40px;border-radius:8px;max-width:480px;text-align:center;font-size:16px;line-height:1.5;color:#333;box-shadow:0 4px 24px rgba(0,0,0,0.18);';
+    box.textContent = message;
+    overlay.appendChild(box);
+    document.body.appendChild(overlay);
+}
+
+const isDeletedUserResponse = (data: any): boolean =>
+    data?.success === false && data?.errorCode === 'USER_DELETED';
+
+const handleDeletedUserResponse = (rejectedWith: any): Promise<never> => {
+    if (!isForcedLogoutInProgress) {
+        isForcedLogoutInProgress = true;
+        showForcedLogoutOverlay(i18n.t('SubUsers.userDeletedSessionEnded'));
+        logout();
+    }
+    return Promise.reject(rejectedWith);
+};
+
+PulseemReactInstance.interceptors.response.use(
+    (res) => {
+        if (isDeletedUserResponse(res?.data)) {
+            return handleDeletedUserResponse(res.data);
+        }
+        return res;
+    },
+    (error) => {
+        if (isDeletedUserResponse(error)) {
+            return handleDeletedUserResponse(error);
+        }
+        return Promise.reject(error);
+    }
+);
 
 export { PulseemReactInstance }

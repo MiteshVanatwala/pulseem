@@ -936,12 +936,14 @@ const SideBar = ({
 						activePhoneNumber={activePhoneNumber}
 					/>
 					<div className={classes.agentManagementButtonsWrapper}>
-						<IconButton
-							onClick={() => onEditAgents()}
-							title={translator('common.manageAgent')}
-						>
-							<BsPeopleFill />
-						</IconButton>
+						{!userRoles?.HideRecipients && (
+							<IconButton
+								onClick={() => onEditAgents()}
+								title={translator('common.manageAgent')}
+							>
+								<BsPeopleFill />
+							</IconButton>
+						)}
 						<IconButton onClick={() => handleOpenEditTags()} title={translator('whatsappChat.editTags')}>
 							<BsFillTagsFill />
 						</IconButton>
