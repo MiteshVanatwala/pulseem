@@ -167,7 +167,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const { subAccount } = useSelector((state: any) => state.common);
 	const { isRTL, windowSize, isLoader = false, isOnlyWhatsAppChat } = useSelector((state: { core: coreProps }) => state.core);
 	const { agentList } = useSelector((state: StateType) => state.whatsapp);
-	const { userRoles, subUserName, isAdmin, subUserObject } = useSelector((state: any) => state.core);
+	const { userRoles, isAdmin, subUserObject } = useSelector((state: any) => state.core);
 	const agentCookieKey = `whatsappSelectedAgentId_${subUserObject?.Data?.Emails?.[0]?.AuthValue || ''}`;
 	const { currentPlan, availablePlans } = useSelector(
 		(state: any) => state.tiers,
@@ -2085,18 +2085,14 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		if (!allAgents || allAgents.length === 0) return;
 		if (!activePhoneNumber) return;
 
-		const normalizedUserName = subUserName?.trim() ?? '';
-		if (!normalizedUserName) return;
-
 		const matchingAgent = allAgents.find(
-			(agent: WhatsappAgent) =>
-				!agent.IsDeleted && agent.Name?.trim() === normalizedUserName,
+			(agent: WhatsappAgent) => !agent.IsDeleted && agent.IsCurrentUser,
 		);
 		if (!matchingAgent) return;
 
 		agentAutoSelectedRef.current = true;
 		handleAgentSelection(matchingAgent.AgentId);
-	}, [isAccountSetup, allAgents, activePhoneNumber, userRoles, isAdmin, subUserName, agentSelected, handleAgentSelection]);
+	}, [isAccountSetup, allAgents, activePhoneNumber, userRoles, isAdmin, agentSelected, handleAgentSelection]);
 
 	return (
 		<>
