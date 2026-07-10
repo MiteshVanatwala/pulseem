@@ -1,10 +1,16 @@
 import React, { useState, useRef, useCallback, useLayoutEffect } from 'react';
 import ReactDOM from 'react-dom';
+import { getTooltipPortalRoot } from '../../../helpers/Functions/tooltipPortalRoot';
 
 interface SidebarTooltipProps {
   title: React.ReactNode;
   placement?: 'right' | 'left' | 'bottom';
   children: React.ReactElement;
+  // Stretch the wrapper to fill the remaining width of its flex parent, instead
+  // of shrinking to the content's own size. Needed when wrapping a truncatable
+  // text label (e.g. a submenu row); leave unset when wrapping a fixed-size
+  // icon/button so it keeps its parent's centering.
+  fillWidth?: boolean;
 }
 
 const GAP = 8;
@@ -18,7 +24,7 @@ interface TooltipPos {
   side: 'left' | 'right';
 }
 
-const SidebarTooltip: React.FC<SidebarTooltipProps> = ({ title, placement = 'right', children }) => {
+const SidebarTooltip: React.FC<SidebarTooltipProps> = ({ title, placement = 'right', children, fillWidth = false }) => {
   const [pos, setPos] = useState<TooltipPos | null>(null);
   const [correction, setCorrection] = useState(0);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -72,8 +78,8 @@ const SidebarTooltip: React.FC<SidebarTooltipProps> = ({ title, placement = 'rig
           left: pos.center + correction,
           top: pos.edge,
           transform: 'translateX(-50%)',
-          backgroundColor: '#333', color: '#fff', fontSize: '0.8rem',
-          padding: '4px 10px', borderRadius: 4, whiteSpace: 'nowrap',
+          backgroundColor: '#333', color: '#fff', fontSize: '0.84rem',
+          padding: '4.2px 10.5px', borderRadius: 4, whiteSpace: 'nowrap',
           zIndex: 99999, pointerEvents: 'none',
         }
       : {
@@ -81,8 +87,8 @@ const SidebarTooltip: React.FC<SidebarTooltipProps> = ({ title, placement = 'rig
           ...(pos.side === 'left' ? { left: pos.edge } : { right: pos.edge }),
           top: pos.center + correction,
           transform: 'translateY(-50%)',
-          backgroundColor: '#333', color: '#fff', fontSize: '0.8rem',
-          padding: '4px 10px', borderRadius: 4, whiteSpace: 'nowrap',
+          backgroundColor: '#333', color: '#fff', fontSize: '0.84rem',
+          padding: '4.2px 10.5px', borderRadius: 4, whiteSpace: 'nowrap',
           zIndex: 99999, pointerEvents: 'none',
         }
     : null;
@@ -117,7 +123,9 @@ const SidebarTooltip: React.FC<SidebarTooltipProps> = ({ title, placement = 'rig
         ref={wrapperRef}
         onMouseEnter={show}
         onMouseLeave={hide}
-        style={{ display: 'flex', alignSelf: 'center' }}
+        style={fillWidth
+          ? { display: 'flex', alignSelf: 'center', flex: 1, minWidth: 0, overflow: 'hidden' }
+          : { display: 'flex', alignSelf: 'center' }}
       >
         {children}
       </div>
@@ -127,7 +135,7 @@ const SidebarTooltip: React.FC<SidebarTooltipProps> = ({ title, placement = 'rig
           <div style={arrowStyle} />
           {title}
         </div>,
-        document.body,
+        getTooltipPortalRoot(),
       )}
     </>
   );

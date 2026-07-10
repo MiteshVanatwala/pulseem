@@ -48,24 +48,12 @@ const SettingsMenu = ({ classes }: any) => {
         userRoles
     );
 
-    const returnToAdmin = () => {
-        window.location.href = '/Pulseem/ReactRedirect.aspx';
-    };
-
     const returnToMainAccount = () => {
         window.location.href = '/Pulseem/ReactRedirect.aspx?fromreact=true';
     };
 
     return <Box>
-        {/* Admin/Return buttons */}
-        {!cameFromSubAccount && isAdmin !== '' && isAdmin !== 'True' && (
-            <Button
-                onClick={returnToAdmin}
-                className={classes.languageSelector}
-            >
-                {t('appBar.admin')}
-            </Button>
-        )}
+        {/* Return to main account button */}
         {cameFromSubAccount && (
             <Button
                 onClick={returnToMainAccount}

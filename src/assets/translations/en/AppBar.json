@@ -1,5 +1,6 @@
 {
   "admin": "Admin",
+  "backToAdmin": "Back to Admin",
   "dashboard": "Dashboard",
   "groups": {
     "title": "Groups",

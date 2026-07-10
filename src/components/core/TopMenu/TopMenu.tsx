@@ -127,8 +127,13 @@ export interface TopMenuProps {
 const TopMenu: React.FC<TopMenuProps> = ({ classes, onMenuToggle }) => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
-    const { windowSize } = useSelector((state: any) => state.core);
+    const { windowSize, cameFromSubAccount, isAdmin } = useSelector((state: any) => state.core);
     const isMobile = windowSize === 'xs' || windowSize === 'sm' || windowSize === 'md';
+    const showBackToAdmin = !cameFromSubAccount && isAdmin !== '' && isAdmin !== 'True';
+
+    const returnToAdmin = () => {
+        window.location.href = '/Pulseem/ReactRedirect.aspx';
+    };
 
     return (
         <Box
@@ -167,6 +172,13 @@ const TopMenu: React.FC<TopMenuProps> = ({ classes, onMenuToggle }) => {
 
             {/* Desktop/Mobile Right Side Items */}
             <Box className={clsx(isMobile ? classes.mobileRightItems : classes.desktopRightItems)}>
+                {showBackToAdmin && (
+                    <Box>
+                        <Button onClick={returnToAdmin} className={classes.backToAdminButton}>
+                            {t('appBar.backToAdmin')}
+                        </Button>
+                    </Box>
+                )}
                 <Box>
                     <SidebarTooltip
                         title={t('dashboard.helpDrawer.support.helpCenter.title')}

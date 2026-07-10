@@ -208,6 +208,43 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   noMargin: {
     margin: '0px !important',
   },
+  newNavigationDialogPaper: {
+    width: 462,
+    maxWidth: '96vw !important',
+    borderRadius: '15px !important',
+    overflow: 'hidden',
+  },
+  newNavigationCloseButton: {
+    position: 'absolute',
+    right: isRTL ? 'initial' : 8,
+    left: !isRTL ? 'initial' : 8,
+    top: 8,
+    background: 'transparent',
+    color: '#fff',
+    filter: 'drop-shadow(0 1px 3px rgba(0,0,0,0.4))',
+    '&:hover': {
+      background: 'rgba(255,255,255,0.15)',
+    },
+  },
+  newNavigationDialogContent: {
+    '&&': {
+      border: 'none',
+      margin: 0,
+      padding: 0,
+      minWidth: '0 !important',
+    },
+  },
+  newNavigationDialogChildren: {
+    '&&': {
+      margin: 0,
+      marginBlock: 0,
+      marginTop: 0,
+      padding: 0,
+      paddingRight: '0px !important',
+      paddingLeft: 0,
+      minWidth: '0 !important',
+    },
+  },
   wizardFlex: {
     flex: 1,
     alignContent: "flex-end",
@@ -5871,5 +5908,19 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     '& > *': {
       flexShrink: 0
     }
+  },
+  backToAdminButton: {
+    padding: '6px 16px',
+    borderRadius: 50,
+    background: 'linear-gradient(90deg, #FF0076 0%, #FF0054 23.8%, #FF4D2A 100%)',
+    color: '#fff',
+    fontWeight: 600,
+    fontSize: '0.85rem',
+    textTransform: 'none',
+    whiteSpace: 'nowrap',
+    '&:hover': {
+      background: 'linear-gradient(90deg, #FF0076 0%, #FF0054 23.8%, #FF4D2A 100%)',
+      opacity: 0.9,
+    },
   }
 });

@@ -10,6 +10,8 @@ import { BiPencil, BiSitemap } from "react-icons/bi";
 import { FiZap, FiSmartphone, FiFileText, FiPieChart } from "react-icons/fi";
 import { IoLogoWhatsapp } from "react-icons/io";
 import clsx from 'clsx';
+import SidebarTooltip from "./SidebarTooltip";
+import { getTooltipPortalRoot } from "../../../helpers/Functions/tooltipPortalRoot";
 
 const ARROW = 6;
 const GAP = 8;
@@ -153,6 +155,15 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
     )
   ) : null;
 
+  const itemTextElement = (
+    <ListItemText
+      onClick={((e: React.MouseEvent) => { handleClick(e, false) })}
+      style={{ paddingInlineStart: !item.iconUnicode && !item.icon && !item.iconName ? 5 : 0 }}
+      primary={item.title}
+      className={classes.sidebarItemText}
+    />
+  );
+
   const tooltipPortal = tooltipPos ? ReactDOM.createPortal(
     <div
       ref={tooltipRef}
@@ -195,7 +206,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
       />
       {item.title}
     </div>,
-    document.body
+    getTooltipPortalRoot()
   ) : null;
 
   const itemContent = (
@@ -212,12 +223,11 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
       {iconContainerElement}
       {!isCollapsed && (
         <>
-          <ListItemText
-            onClick={((e: React.MouseEvent) => { handleClick(e, false) })}
-            style={{ paddingInlineStart: !item.iconUnicode && !item.icon && !item.iconName ? 5 : 0 }}
-            primary={item.title}
-            className={classes.sidebarItemText}
-          />
+          {level > 0 && typeof item.title === 'string' ? (
+            <SidebarTooltip title={item.title} placement={isRTL ? 'left' : 'right'} fillWidth>
+              {itemTextElement}
+            </SidebarTooltip>
+          ) : itemTextElement}
           {hasSubmenu && (
             <IconButton
               onClick={((e: React.MouseEvent) => { handleClick(e, true) })}
