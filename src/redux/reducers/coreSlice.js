@@ -126,7 +126,10 @@ export const coreSlice = createSlice({
         state.userRoles = UserRoles.Admin;
       }
       else if (isReadOnly) {
-        state.userRoles = UserRoles.ReadOnly;
+        const hasWhatsAppAgent = userToken?.UserPermissions?.indexOf(eSubUserPermissions.AllowWhatsAppToAgent) > -1;
+        state.userRoles = hasWhatsAppAgent
+          ? { ...UserRoles.ReadOnly, AllowWhatsAppToAgent: true }
+          : UserRoles.ReadOnly;
       }
       else {
         const roles = {
