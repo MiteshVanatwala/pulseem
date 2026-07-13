@@ -1854,7 +1854,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 												sm={12}
 												md={12}
 												lg={12}>
-												{userRoles?.AllowSend && <Box
+												{(userRoles?.AllowSend || userRoles?.AllowWhatsAppToAgent) && <Box
 													className={clsx(
 														classes.switchDiv,
 														classes.testSendWrapper
