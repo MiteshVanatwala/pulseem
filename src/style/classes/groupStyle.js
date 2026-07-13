@@ -36,5 +36,21 @@ export const getGroupStyle = (windowSize, isRTL, theme) => ({
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    statsCell: {
+        '& > div': {
+            flexWrap: 'wrap',
+            justifyContent: 'center',
+            '& > div': {
+                flexBasis: '30%',
+                minWidth: 60,
+                "@media screen and (max-width: 1300px)": {
+                    flexBasis: '45%',
+                },
+                "@media screen and (max-width: 1100px)": {
+                    flexBasis: '100%',
+                },
+            }
+        }
     }
 })

@@ -17,6 +17,11 @@ export const coreSlice = createSlice({
     language: 'he',
     isRTL: false,
     windowSize: 'lg',
+    isSidebarCollapsed: (() => {
+      const cookie = getCookie('SidebarCollapsed');
+      if (cookie !== null) return cookie === 'true';
+      return false;
+    })(),
     basename: '',
     email: '',
     imageURL: '',
@@ -62,7 +67,8 @@ export const coreSlice = createSlice({
           }
         ]
       }
-    }
+    },
+    isDrawerOpen: false
   },
   reducers: {
     setIsClal: (state, action) => {
@@ -73,7 +79,20 @@ export const coreSlice = createSlice({
       state.isRTL = rtlLanguages.includes(action.payload)
     },
     setWindowSize: (state, action) => {
-      state.windowSize = action.payload
+      if (action.payload === 'sl' && state.isSidebarCollapsed) {
+        state.windowSize = 'lg'
+      } else {
+        state.windowSize = action.payload
+      }
+    },
+    setSidebarCollapsed: (state, action) => {
+      state.isSidebarCollapsed = action.payload
+      setCookie('SidebarCollapsed', action.payload, { maxAge: 2147483647 })
+      const w = typeof window !== 'undefined' ? window.innerWidth : 0
+      const isSlScreen = w >= 1300 && w < 1367
+      if (isSlScreen) {
+        state.windowSize = action.payload ? 'lg' : 'sl'
+      }
     },
     setRowsPerPage: (state, action) => {
       state.rowsPerPage = action.payload
@@ -122,11 +141,14 @@ export const coreSlice = createSlice({
     },
     setIsLoader: (state, { payload }) => {
       state.isLoader = payload
+    },
+    setIsDrawerOpen: (state, { payload }) => {
+      state.isDrawerOpen = payload
     }
   }
 })
 
 export const selectUserObject = (state) => state.core.subUserObject;
-export const { setLanguage, setWindowSize, setCoreData, setRowsPerPage, setIsClal, setIsLoader } = coreSlice.actions // setSmsOldVersion
+export const { setLanguage, setWindowSize, setCoreData, setRowsPerPage, setIsClal, setIsLoader, setIsDrawerOpen, setSidebarCollapsed } = coreSlice.actions // setSmsOldVersion
 
 export default coreSlice.reducer

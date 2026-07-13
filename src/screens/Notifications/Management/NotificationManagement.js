@@ -1290,6 +1290,8 @@ const NotificationManagement = ({ classes }) => {
 
   return (
     <DefaultScreen
+      key='notifications'
+      subPage='notifications'
       currentPage='notifications'
       classes={classes}
       containerClass={clsx(classes.management, classes.mb50)}>

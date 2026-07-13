@@ -582,7 +582,8 @@ const NewsletterManagnentScreen = ({ classes }) => {
     return (
       <Grid
         container
-        direction={windowSize === 'sm' ? 'column' : 'row'}
+        direction='row'
+        className={classes.newsletterActionsContainer}
         justifyContent={windowSize === 'xs' ? 'flex-start' : 'flex-end'}>
         {iconsMap.map((map, index) => (
           <Grid
@@ -594,8 +595,13 @@ const NewsletterManagnentScreen = ({ classes }) => {
             >
               {map.map(icon => (
                 <Grid
-                  style={{ flex: 1, alignItems: 'center', position: 'relative' }}
-                  className={clsx(icon.disable && classes.disabledCursor, 'rowIconContainer', classes.justifyCenter, classes.alignSelfCenter)}
+                  className={clsx(
+                    icon.disable && classes.disabledCursor,
+                    'rowIconContainer',
+                    classes.justifyCenter,
+                    classes.alignSelfCenter,
+                    classes.newsletterActionItem
+                  )}
                   key={icon.key}
                   item>
                   {icon?.errorElement}
@@ -725,7 +731,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
 
   const renderRow = (row, isParent = true, isEven = false) => {
     const childItems = (isParent ? newslettersChildCampaigns.filter(childCampaign => childCampaign?.ParentCampaignId === row?.CampaignID) : []).sort((a, b) => a.CampaignID - b.CampaignID);
-    const rowPlusChildItems = [ row, ...childItems ];
+    const rowPlusChildItems = [row, ...childItems];
     const isExpanded = expandedIds.indexOf(row.CampaignID) > -1;
     return (
       <>
@@ -1080,7 +1086,9 @@ const NewsletterManagnentScreen = ({ classes }) => {
 
   return (
     <DefaultScreen
+      key="newsletter"
       currentPage='newsletter'
+      subPage='newsletterManagment'
       classes={classes}
       containerClass={clsx(classes.management, classes.mb50)}>
       <Box className={'topSection'}>

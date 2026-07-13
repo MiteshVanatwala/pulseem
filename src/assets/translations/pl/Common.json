@@ -988,5 +988,16 @@
   "allNumbers": "Wszystkie liczby",
   "pulseSendPill": "Wysyłka pulsacyjna",
   "page_viewed_contains_placeholder": "/checkout",
-  "page_viewed_contains_tooltip": "Dopasowuje kontakty, które odwiedziły stronę, której URL zawiera ten tekst. Bez rozróżniania wielkości liter. Uwzględnia parametry URL. Wpisz tylko jedną wartość — nie rozdzielaj przecinkami."
+  "page_viewed_contains_tooltip": "Dopasowuje kontakty, które odwiedziły stronę, której URL zawiera ten tekst. Bez rozróżniania wielkości liter. Uwzględnia parametry URL. Wpisz tylko jedną wartość — nie rozdzielaj przecinkami.",
+  "internalError": "Błąd wewnętrzny",
+  "selectEmail": "Wybierz e-mail",
+  "selectCellphone": "Wybierz telefon komórkowy",
+  "creditsPerMessage": "Kredyty za wiadomość",
+  "selectFile": "Wybierz plik",
+  "polyAgentIconTitleSupport": "Cześć, jestem Pulsy, twoim agentem wsparcia AI",
+  "agentPlaceholderSupport": "Zapytaj mnie o Pulseem... (np. \"Jak wysłać SMS?\"). Pisz swobodnie",
+  "domainVerificationRequired": "Domena nie jest zweryfikowana",
+  "settingsSavedSuccessfuly": "Ustawienia zostały pomyślnie zapisane!",
+  "typeFromName": "Wpisz nazwę nadawcy",
+  "typeSubject": "Wpisz temat"
 }
