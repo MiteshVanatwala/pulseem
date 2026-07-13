@@ -1206,7 +1206,9 @@ const RecipientReport = ({ classes }: any) => {
 
   return (
     <DefaultScreen
-      currentPage="downloadfiles"
+      key="recipientReport"
+      subPage='recipientReport'
+      currentPage="reports"
       classes={classes}
       containerClass={clsx(classes.management, classes.mb50)}
     >

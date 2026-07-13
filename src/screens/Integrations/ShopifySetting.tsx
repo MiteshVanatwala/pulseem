@@ -550,7 +550,7 @@ const Shopify = ({ classes }: any) => {
   return (
     <>
       {toastMessage && renderToast()}
-      <Box className={clsx(classes.containerBody, classes.mt20)}>
+      <Box className={clsx(classes.containerBody)}>
         <Box>
           {t(`integrations.shopify.description`)}
         </Box>

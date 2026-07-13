@@ -24,7 +24,6 @@ import { sitePrefix, isProdMode } from "../../config";
 import { WhatsappIcon } from '../../assets/images/drawer/index';
 import { PulseemFeatures } from '../../model/PulseemFields/Fields';
 import { WhiteLabelObject } from '../../components/WhiteLabel/WhiteLabelMigrate';
-import { MdOutlineWhatsapp } from 'react-icons/md';
 import { UserRoles } from '../../Models/SubUser/SubUsers';
 // export const rootDomain = !isProdMode ? 'http://localhost:58123' : '/Pulseem/';
 export const rootDomain = '/Pulseem';
@@ -87,7 +86,7 @@ export const getRoutes = (
       iconUnicode: "\ue0d5",
       href: `${sitePrefix}groups`,
       isShow: true,
-      icon: <img alt="Groups" src={GroupsIcon} />,
+      iconName: 'MdPeople',
       options: [
         {
           key: "groupManagement",
@@ -119,12 +118,13 @@ export const getRoutes = (
           isShow: false,
         },
         {
+          key: 'fileUploads',
           title: t("master.RadMenuItemResourceFileUploads.Text"),
           href: `${sitePrefix}Groups/FileUploads`,
           isShow: true,
         },
         {
-          key: 'downloadReports',
+          key: 'downloadfiles',
           title: t('master.fileDownload'),
           href: `${sitePrefix}groups/Download`,
           isShow: true
@@ -138,7 +138,7 @@ export const getRoutes = (
       iconUnicode: "\ue0a1",
       href: `${sitePrefix}Campaigns`,
       isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount,
-      icon: <img alt="Newsletter" src={NewsletterIcon} />,
+      iconName: 'MdMarkEmailRead',
       options: [
         {
           key: "newsletterInfo",
@@ -147,6 +147,7 @@ export const getRoutes = (
           isShow: true,
         },
         {
+          key: "newsletterManagment",
           title: t("master.RadMenuItemResource9.Text"),
           href: `${sitePrefix}Campaigns`,
           isShow: true,
@@ -208,7 +209,7 @@ export const getRoutes = (
         features !== null &&
         features.indexOf("7") > -1 &&
         !accountSettings?.SubAccountSettings?.IsTokenAccount,
-      icon: <img alt="Sms" src={SmsIcon} />,
+      iconName: 'MdSms',
       options: [
         {
           key: "create",
@@ -217,6 +218,7 @@ export const getRoutes = (
           isShow: true,
         },
         {
+          key: "smsManagment",
           title: t("master.RadMenuItemResource102.Text"),
           href: `${sitePrefix}SMSCampaigns`,
           isShow: true,
@@ -247,10 +249,10 @@ export const getRoutes = (
       key: 'whatsapp',
       title: 'Whatsapp',
       pageTitle: t('whatsapp.Title'),
-      iconUnicode: <MdOutlineWhatsapp />,
+      iconName: 'IoLogoWhatsapp',
       href: whatsappRoutes.CAMPAIGN_MANAGEMENT,
       isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount,
-      icon: <WhatsappIcon className='header-whatsapp-icon' />,
+      // icon: <WhatsappIcon className='header-whatsapp-icon' />,
       options: [
         {
           key: 'create',
@@ -259,7 +261,7 @@ export const getRoutes = (
           isShow: true,
         },
         {
-          key: 'send',
+          key: 'createWhatsappCampaign',
           title: t('whatsapp.SendWhatsappCampaign'),
           href: whatsappRoutes.CREATE_CAMPAIGN_PAGE1,
           isShow: true,
@@ -297,9 +299,10 @@ export const getRoutes = (
       iconUnicode: "\ue09d",
       href: `${sitePrefix}EditRegistrationPage`,
       isShow: true,
-      icon: <img alt="Landing Pages" src={LandingPageIcon} />,
+      iconName: 'FiFileText',
       options: [
         {
+          key: "createLandingPage",
           title: t("master.RadMenuItemLandingPage.Text"),
           href: `${sitePrefix}LandingPages/Create`,
           isShow: true,
@@ -313,18 +316,6 @@ export const getRoutes = (
           title: t("master.FormTemplatesResource1.Text"),
           href: `${rootDomain}/FormTemplates.aspx?fromreact=true`,
           isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount,
-        },
-        {
-          key: "createPopup",
-          title: t("landingPages.createPopup"),
-          href: `${sitePrefix}Popups/Create`,
-          isShow: features && features?.indexOf(PulseemFeatures.Popup) > -1,
-        },
-        {
-          key: "popupManagement",
-          title: t("master.RadMenuItemPopupManagement.Text"),
-          href: `${sitePrefix}PopUpManagement`,
-          isShow: features && features?.indexOf(PulseemFeatures.Popup) > -1,
         },
         {
           key: 'CreateLandingPage',
@@ -348,8 +339,31 @@ export const getRoutes = (
           key: 'previewer',
           title: t("landingPages.editLandingPage"),
           href: ``,
-          isShow: false
+          isShow: false,
         }
+      ],
+    },
+    {
+      key: "popups",
+      title: t("landingPages.popups") || "Pop Ups",
+      pageTitle: t("landingPages.popups") || "Pop Ups",
+      iconUnicode: "\ue09d",
+      href: `${sitePrefix}PopUpManagement`,
+      isShow: features && features?.indexOf(PulseemFeatures.Popup) > -1,
+      iconName: 'FaRegWindowRestore',
+      options: [
+        {
+          key: "createPopup",
+          title: t("landingPages.createPopup"),
+          href: `${sitePrefix}Popups/Create`,
+          isShow: true,
+        },
+        {
+          key: "popupManagement",
+          title: t("master.RadMenuItemPopupManagement.Text"),
+          href: `${sitePrefix}PopUpManagement`,
+          isShow: true,
+        },
       ],
     },
     {
@@ -359,7 +373,7 @@ export const getRoutes = (
       iconUnicode: "\ue087",
       href: `${sitePrefix}Automations`,
       isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount,
-      icon: <img alt="Automations" src={AutomationsIcon} />,
+      iconName: 'BiSitemap',
       options: [
         {
           title: t("master.createTemplate"),
@@ -378,11 +392,20 @@ export const getRoutes = (
           isShow: true,
         },
         {
+          key: "automations",
           title: t("master.RadMenuItemManageAutomationResource.Text"),
           href: `${sitePrefix}Automations`,
           isShow: true,
         },
       ],
+    },
+    {
+      key: "Integrations",
+      title: t("integrations.hubTitle"),
+      pageTitle: t("integrations.hubTitle"),
+      href: `${sitePrefix}Integrations`,
+      isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount && userRoles?.AllowSend,
+      iconName: 'MdOutlineDashboardCustomize',
     },
     {
       key: "notifications",
@@ -396,15 +419,16 @@ export const getRoutes = (
         features !== null &&
         features.indexOf("35") > -1 &&
         !accountSettings?.SubAccountSettings?.IsTokenAccount,
-      icon: <img alt="Notifications" src={NotificationsIcon} />,
+      iconName: 'MdNotificationsActive',
       options: [
         {
-          key: "create",
+          key: "createNotification",
           title: t("master.createNotification"),
           href: `${sitePrefix}Notification/create`,
           isShow: true,
         },
         {
+          key: "notifications",
           title: t("master.manageNotifications"),
           href: `${sitePrefix}Notifications`,
           isShow: true,
@@ -418,10 +442,10 @@ export const getRoutes = (
       iconUnicode: "\ue049",
       href: `${sitePrefix}Reports/NewsletterReports`,
       isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount,
-      icon: <img alt="Reports" src={ReportsIcon} />,
+      iconName: 'FiPieChart',
       options: [
         { title: t('master.clalCollage'), href: `${rootDomain}/ClalReport.aspx?fromreact=true`, isShow: (isClalAccount === 'true' || isClalAccount === true) },
-        { title: t('master.RadMenuItemResource13.Text'), href: `${sitePrefix}reports/NewsletterReports`, isShow: true },
+        { key: "newsletterReport", title: t('master.RadMenuItemResource13.Text'), href: `${sitePrefix}reports/NewsletterReports`, isShow: true },
         { key: 'SmsReport', title: t('master.RadMenuItemResource24.Text'), href: `${sitePrefix}reports/SMSMainReport`, isShow: true },
         // { key: 'MmsReport', title: t('mmsreport.mmsReport'), href: `${sitePrefix}Reports/MMSMainReport`, isShow: true },
         { key: 'whatsappReports', title: t('whatsapp.ReportsWhatsapp'), href: whatsappRoutes.REPORTS, isShow: true },

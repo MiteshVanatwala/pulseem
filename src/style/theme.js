@@ -28,6 +28,16 @@ export const getTheme = (language) => {
   return createTheme(
     {
       direction,
+      breakpoints: {
+        values: {
+          xs: 0,
+          sm: 600,
+          md: 960,
+          sl: 1300,
+          lg: 1367,
+          xl: 1920,
+        },
+      },
       palette: {
         primary: {
           main: "#FF1744",

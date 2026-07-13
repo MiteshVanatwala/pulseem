@@ -2059,6 +2059,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	return (
 		<>
 			<DefaultScreen
+				key="chat"
 				subPage={'chat'}
 				currentPage="whatsapp"
 				classes={classes}

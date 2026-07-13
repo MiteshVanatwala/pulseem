@@ -29,6 +29,8 @@ import { MdAutoAwesome } from 'react-icons/md';
 import { ContactSupportDialog } from './ContactSupportDialog';
 import { URLS } from '../../config/enum';
 
+const AutoAwesomeIcon = MdAutoAwesome as unknown as React.ComponentType;
+
 const useStyles = makeStyles((theme) => ({
   drawer: {
     width: 420,
@@ -274,7 +276,7 @@ export const HelpDrawer: React.FC = () => {
       action: () => window.open(getHelpCenterUrl, '_blank'),
     },
     {
-      icon: <MdAutoAwesome />,
+      icon: <AutoAwesomeIcon />,
       title: t('dashboard.helpDrawer.support.pulseemGPT.title'),
       description: t('dashboard.helpDrawer.support.pulseemGPT.description'),
       action: () => window.open('https://chatgpt.com/g/g-683fe7903e188191b223275d68aa42ed-pulseem-support', '_blank'),
@@ -391,14 +393,15 @@ export const HelpDrawer: React.FC = () => {
                       {item.icon}
                     </ListItemIcon>
                     <ListItemText
+                      disableTypography
                       primary={
                         <Typography className={classes.menuTitle}>
                           {item.title}
                         </Typography>
                       }
                       secondary={
-                        <>
-                          <Typography className={classes.menuDescription}>
+                        <span>
+                          <Typography component="span" display="block" className={classes.menuDescription}>
                             {item.description}
                           </Typography>
                           {item.hasButtons && (
@@ -429,7 +432,7 @@ export const HelpDrawer: React.FC = () => {
                               </Button>
                             </Box>
                           )}
-                        </>
+                        </span>
                       }
                     />
                   </ListItem>

@@ -100,7 +100,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
     }
   },
   appBody: {
-    maxWidth: 'calc(100vw - 6px)',
+    overflowX: 'hidden',
     '& input::placeholder': {
       color: 'rgba(0,0,0,.65)',
       opacity: 1/* Firefox */
@@ -129,39 +129,34 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
       width: 6,
       height: 6,
     },
-    /* Track */
     "&::-webkit-scrollbar-track": {
       boxShadow: "inset 0 0 0px",
       borderRadius: 10,
       backgroundColor: "#fff !important",
     },
-    /* Handle */
     "&::-webkit-scrollbar-thumb": {
       background: "#ccc",
       borderRadius: 10,
     },
-    /* Handle on hover */
     "&::-webkit-scrollbar-thumb:hover": {
       background: "#999",
     },
+
     '& *': {
       "&::-webkit-scrollbar": {
         display: "block !important",
         width: 6,
         height: 6,
       },
-      /* Track */
       "&::-webkit-scrollbar-track": {
         boxShadow: "inset 0 0 0px",
         borderRadius: 10,
         backgroundColor: "#fff !important",
       },
-      /* Handle */
       "&::-webkit-scrollbar-thumb": {
         background: "#ccc",
         borderRadius: 10,
       },
-      /* Handle on hover */
       "&::-webkit-scrollbar-thumb:hover": {
         background: "#999",
       },
@@ -214,6 +209,43 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
   },
   noMargin: {
     margin: '0px !important',
+  },
+  newNavigationDialogPaper: {
+    width: 462,
+    maxWidth: '96vw !important',
+    borderRadius: '15px !important',
+    overflow: 'hidden',
+  },
+  newNavigationCloseButton: {
+    position: 'absolute',
+    right: isRTL ? 'initial' : 8,
+    left: !isRTL ? 'initial' : 8,
+    top: 8,
+    background: 'transparent',
+    color: '#fff',
+    filter: 'drop-shadow(0 1px 3px rgba(0,0,0,0.4))',
+    '&:hover': {
+      background: 'rgba(255,255,255,0.15)',
+    },
+  },
+  newNavigationDialogContent: {
+    '&&': {
+      border: 'none',
+      margin: 0,
+      padding: 0,
+      minWidth: '0 !important',
+    },
+  },
+  newNavigationDialogChildren: {
+    '&&': {
+      margin: 0,
+      marginBlock: 0,
+      marginTop: 0,
+      padding: 0,
+      paddingRight: '0px !important',
+      paddingLeft: 0,
+      minWidth: '0 !important',
+    },
   },
   wizardFlex: {
     flex: 1,
@@ -2976,7 +3008,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
     height: '100%',
     marginBottom: 68,
     background: '#fff',
-    marginTop: 30,
+    // marginTop: 30,
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
     '& .head': {
@@ -3500,7 +3532,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
   checkbox: {
     '&.MuiCheckbox-root': {
       color: '#FF3343',
-      '&$checked': {
+      '&.Mui-checked': {
         color: 'FF3343',
       },
     },
@@ -3705,8 +3737,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
     maxWidth: 390
   },
   containerFullHeight: {
-    minHeight: 'calc(100vh - 80px)',
-    height: 'calc(100vh - 80px)'
+    minHeight: 'calc(100vh - 140px)',
+    height: 'calc(100vh - 140px)'
   },
   pb15: {
     paddingBottom: 15
@@ -6289,5 +6321,87 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
     marginInlineStart: 8,
     minWidth: 90,
   },
+  // Desktop TopMenu styles - white background
+  topMenu: {
+    display: 'flex',
+    gap: 15,
+    paddingBottom: 2,
+    paddingTop: 5,
+    marginInlineEnd: 20,
+    marginBottom: 0,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    backgroundColor: '#fff !important',
+    background: '#fff !important',
+    position: 'relative',
+    zIndex: 1,
+    minHeight: 40,
+    '& > *': {
+      flexShrink: 0,
+      minWidth: 'auto'
+    }
+  },
+  
+  // Mobile TopMenu styles
+  mobileTopMenu: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 56,
+    backgroundColor: '#fff',
+    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+    display: 'flex',
+    alignItems: 'center',
+    padding: '0 16px',
+    zIndex: 1200,
+    justifyContent: 'space-between',
+    marginBlock: 0,
+    gap: 8
+  },
+  
+  mobileHamburgerButton: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 40,
+    height: 40,
+    backgroundColor: 'transparent',
+    border: 'none',
+    cursor: 'pointer',
+    borderRadius: 4,
+    '&:hover': {
+      backgroundColor: 'rgba(0,0,0,0.04)'
+    }
+  },
+  
+  mobileRightItems: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 8
+  },
+  
+  desktopRightItems: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 15,
+    '& > *': {
+      flexShrink: 0
+    }
+  },
+  backToAdminButton: {
+    padding: '6px 16px',
+    borderRadius: 50,
+    background: 'linear-gradient(90deg, #FF0076 0%, #FF0054 23.8%, #FF4D2A 100%)',
+    color: '#fff',
+    fontWeight: 600,
+    fontSize: '0.85rem',
+    textTransform: 'none',
+    whiteSpace: 'nowrap',
+    '&:hover': {
+      background: 'linear-gradient(90deg, #FF0076 0%, #FF0054 23.8%, #FF4D2A 100%)',
+      opacity: 0.9,
+    },
+  }
 });
 }

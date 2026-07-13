@@ -1058,7 +1058,7 @@ const DynamicGroups = ({ classes }: any) => {
                         }
                     </Grid>
                 </TableCell>
-                <TableCell classes={cellStyle} align="center" className={clsx(classes.flex3)}>
+                <TableCell classes={cellStyle} align="center" className={clsx(classes.flex3, classes.statsCell)}>
                     <FlexGrid
                         gridArr={[
                             {
@@ -1119,7 +1119,7 @@ const DynamicGroups = ({ classes }: any) => {
                     />
                 </TableCell>
 
-                <TableCell classes={cellStyle} align="center" className={clsx(classes.flex3)}>
+                <TableCell classes={cellStyle} align="center" className={clsx(classes.flex3, classes.statsCell)}>
                     <FlexGrid
                         gridArr={[
                             {
