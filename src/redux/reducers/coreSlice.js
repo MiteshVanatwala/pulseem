@@ -133,7 +133,8 @@ export const coreSlice = createSlice({
           Restricted: {
             AllowSend: userToken.UserPermissions.indexOf(eSubUserPermissions.AllowSend) > -1,
             AllowExport: userToken.UserPermissions.indexOf(eSubUserPermissions.AllowExport) > -1,
-            AllowDelete: userToken.UserPermissions.indexOf(eSubUserPermissions.AllowDelete) > -1
+            AllowDelete: userToken.UserPermissions.indexOf(eSubUserPermissions.AllowDelete) > -1,
+            AllowWhatsAppToAgent: userToken.UserPermissions.indexOf(eSubUserPermissions.AllowWhatsAppToAgent) > -1
           }
         }
         state.userRoles = roles.Restricted;

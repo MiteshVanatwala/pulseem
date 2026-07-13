@@ -45,6 +45,8 @@
 	"oneContact": "Wyślij do jednego kontaktu",
 	"testGroups": "Wyślij do grup testowych",
 	"sendTitle": "Wybierz grupę do testowego wysyłania",
+	"noPermission": "Brak uprawnień",
+	"noPermissionToSend": "Brak uprawnień do wysyłania",
 	"sendValidation": "Następujące pola są nieprawidłowe",
 	"sendButton": "WYŚLIJ",
 	"checkLimit": "Sprawdź swój limit",
