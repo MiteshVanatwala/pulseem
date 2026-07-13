@@ -5,6 +5,7 @@ const rtlLanguages = ['he', 'ar']
 
 export const isSuperUserSelector = (permissions) => {
   if (permissions.indexOf(-1) > -1) return true;
+  if (permissions.indexOf(4) > -1) return false;
   const adminPermissions = [1, 2, 3];
   return adminPermissions?.every(permission =>
     permissions?.indexOf(permission) > -1
@@ -121,7 +122,7 @@ export const coreSlice = createSlice({
       state.subUserObject.Data.Cellphones[0].AuthValue = userToken?.Cellphone;
       state.isOnlyWhatsAppChat = payload?.isOnlyWhatsAppChat || false;
 
-      if (isSuperUser) {
+      if (isSuperUser && !isReadOnly) {
         state.userRoles = UserRoles.Admin;
       }
       else if (isReadOnly) {

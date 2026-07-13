@@ -880,7 +880,7 @@ const App = ({ screenSize }) => {
   const renderRoutesByCondition = (classes, redirect) => {
     const ignoreCookie = getCookie('ignoreTerm')
 
-    if (isOnlyWhatsAppChat) {
+    if (isOnlyWhatsAppChat && userRoles?.AllowWhatsAppToAgent) {
       return <Routes>
         <Route
           path={whatsappRoutes.CHAT}

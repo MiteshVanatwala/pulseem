@@ -167,6 +167,7 @@ export type WhatsappChatSideBarProps = {
 	setFilterBySelected: (filterId: number) => void;
 	selectedAgent?: number;
 	setAgentSelected: (agentId: number) => void;
+	agentCookieKey: string;
 	onAddAgent: () => void;
 	onEditAgents: () => void;
 	onTagsUpdated?: (phoneNumber: string, tagIds: number[], tags?: any[], senderNumber?: string) => void;

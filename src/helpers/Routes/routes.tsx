@@ -282,7 +282,7 @@ export const getRoutes = (
           key: 'chat',
           title: t('whatsapp.ChatWhatsapp'),
           href: whatsappRoutes.CHAT,
-          isShow: true,
+          isShow: userRoles?.AllowWhatsAppToAgent,
         },
         {
           key: 'onboarding',
