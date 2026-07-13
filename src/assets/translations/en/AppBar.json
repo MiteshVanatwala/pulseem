@@ -1,5 +1,6 @@
 {
   "admin": "Admin",
+  "backToAdmin": "Back to Admin",
   "dashboard": "Dashboard",
   "groups": {
     "title": "Groups",
@@ -36,5 +37,6 @@
     "title": "Notifications"
   },
   "logout": "Logout",
-  "returnToMainAccount": "Main Account"
+  "returnToMainAccount": "Main Account",
+  "myAccount": "My Account"
 }

@@ -1637,7 +1637,8 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 
 	return (
 		<DefaultScreen
-			subPage={'create'}
+			key="createWhatsappCampaign"
+			subPage={'createWhatsappCampaign'}
 			currentPage='whatsapp'
 			classes={classes}
 			customPadding={true}

@@ -85,7 +85,7 @@ export const DASHBOARD_SHORTCUT = {
       },
       {
         title: 'master.chatbotSMS',
-        link: '/Pulseem/SMSSmartResponses.aspx'
+        link: '/SMSSmartResponses'
       },
       {
         title: 'master.linkSMSResponsesReport.Text',
@@ -123,7 +123,7 @@ export const DASHBOARD_SHORTCUT = {
     pages: [
       {
         title: 'common.CreateMMS',
-        link: '/Pulseem/MmsCampaignEdit.aspx'
+        link: '/CreateMmsCampaign'
       },
       {
         title: 'dashboard.mmsManagement',
@@ -165,7 +165,7 @@ export const DASHBOARD_SHORTCUT = {
       // },
       {
         title: 'master.RadMenuItemResource15.Text',
-        link: '/Pulseem/AccountReport.aspx'
+        link: `${sitePrefix}AccountReport`
       },
       {
         title: 'master.RadMenuItemResource18.Text',
@@ -173,11 +173,11 @@ export const DASHBOARD_SHORTCUT = {
       },
       {
         title: 'master.RadMenuItemResource30.Text',
-        link: '/Pulseem/EmailAutoReports.aspx'
+        link: `${sitePrefix}EmailAutoReports`
       },
       {
         title: 'dashboard.unsubscribeReports',
-        link: '/Pulseem/RemovedStats.aspx'
+        link: `${sitePrefix}RemovedStats`
       },
       {
         title: 'master.DirectReportsResource1.Text',
@@ -189,7 +189,7 @@ export const DASHBOARD_SHORTCUT = {
       },
       {
         title: 'dashboard.openedClickedReport',
-        link: '/Pulseem/EmailCampaignStatistics.aspx'
+        link: `${sitePrefix}EmailCampaignStatistics`
       }
 
     ]
@@ -199,7 +199,7 @@ export const DASHBOARD_SHORTCUT = {
     pages: [
       {
         title: 'automations.createResource.Text',
-        link: '/Pulseem/CreateAutomations.aspx'
+        link: `${sitePrefix}CreateAutomations`
       },
       {
         title: 'dashboard.automationManagement',

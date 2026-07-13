@@ -2302,7 +2302,7 @@ const CampaignEditor = ({ classes, ...props }) => {
         disabled={buttonDisabled}
         campaignId={campaignId}
         ignorePaddingBottom={true}
-        innerStyle={{ paddingInline: 15, marginBottom: 40 }}
+        innerStyle={{ paddingInline: 15 }}
         classes={classes}
         onExit={!isFromAutomation && onExit}
         onTestSend={campaign?.IsFirstCampaign === false && handleOpenTestSend}

@@ -154,10 +154,10 @@
   "activeSubscribers": "Active Subscribers:",
   "arrived": "Arrived",
   "arrivedTootltip": "The number of Notifications that arrived to your recipients' browsers",
-  "fileReadyForDownload": "File <b>\"##FileName##\"</b> is ready for download!",
+  "fileReadyForDownload": "File <b>\"##FileName##\"</b><br/>is ready for download!",
   "downloadHere": "Download Here",
-  "recipientsRemoved": "Recipients were successfully removed from <b>\"##Name##\"</b>",
-  "recipientsUploaded": "Recipients were successfully uploaded to <b>\"##Name##\"</b>",
+  "recipientsRemoved": "Recipients were successfully<br/>removed from <b>\"##Name##\"</b>",
+  "recipientsUploaded": "Recipients were successfully<br/>uploaded to <b>\"##Name##\"</b>",
   "notifyCenterTitle": "Notifications",
   "noNewNotify": "There are no new notifications",
   "domainValidation": {
