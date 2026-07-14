@@ -21,10 +21,12 @@ const SettingsMenu = ({ classes }: any) => {
         isRTL,
         isAdmin,
         isAllowSwitchAccount,
-        userRoles
+        userRoles,
+        windowSize
     } = useSelector((state: any) => state.core);
     const { username } = useSelector((state: any) => state.user);
     const buttonRef = useRef(null);
+    const isMobile = windowSize === 'xs' || windowSize === 'sm';
 
     const getAccountName = () => {
         if (accountSettings?.IsDirectAccount && subAccount?.DirectAccountCompanyName) {
@@ -94,12 +96,12 @@ const SettingsMenu = ({ classes }: any) => {
             open={showSettings}
             anchorEl={buttonRef.current}
             role={undefined}
-            placement={isRTL ? 'left-start' : 'right-start'}
+            placement={isMobile ? 'bottom' : (isRTL ? 'left-start' : 'right-start')}
             style={{ zIndex: 99999 }}
             modifiers={{
                 offset: {
                     enabled: true,
-                    offset: '0, 16'
+                    offset: isMobile ? '0, 10' : '0, 16'
                 },
                 preventOverflow: {
                     enabled: false
@@ -110,7 +112,7 @@ const SettingsMenu = ({ classes }: any) => {
             }}
         >
             <ClickAwayListener onClickAway={() => setShowSettings(false)}>
-                <div>
+                <div dir={isRTL ? 'rtl' : 'ltr'}>
                     <Paper style={{
                         position: 'relative',
                         overflow: 'visible',
@@ -121,22 +123,22 @@ const SettingsMenu = ({ classes }: any) => {
                         border: '1px solid rgba(0, 0, 0, 0.05)',
                         borderTop: '4px solid #FF1744',
                         animation: 'floatUp 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)',
-                        transformOrigin: isRTL ? 'top right' : 'top left',
+                        transformOrigin: isMobile ? 'top center' : (isRTL ? 'top right' : 'top left'),
                     }}>
                         <Box
                             style={{
                                 position: 'absolute',
-                                top: '24px',
-                                right: isRTL ? '-6px' : undefined,
-                                left: !isRTL ? '-6px' : undefined,
+                                top: isMobile ? '-6px' : '24px',
+                                right: isMobile ? undefined : (isRTL ? '-6px' : undefined),
+                                left: isMobile ? 'calc(50% - 6px)' : (!isRTL ? '-6px' : undefined),
                                 width: '12px',
                                 height: '12px',
                                 backgroundColor: '#ffffff',
                                 transform: 'rotate(45deg)',
-                                borderTop: isRTL ? '1px solid rgba(0,0,0,0.05)' : 'none',
-                                borderRight: isRTL ? '1px solid rgba(0,0,0,0.05)' : 'none',
-                                borderBottom: !isRTL ? '1px solid rgba(0,0,0,0.05)' : 'none',
-                                borderLeft: !isRTL ? '1px solid rgba(0,0,0,0.05)' : 'none',
+                                borderTop: isMobile ? '1px solid rgba(0,0,0,0.05)' : (isRTL ? '1px solid rgba(0,0,0,0.05)' : 'none'),
+                                borderRight: isMobile ? 'none' : (isRTL ? '1px solid rgba(0,0,0,0.05)' : 'none'),
+                                borderBottom: isMobile ? 'none' : (!isRTL ? '1px solid rgba(0,0,0,0.05)' : 'none'),
+                                borderLeft: isMobile ? '1px solid rgba(0,0,0,0.05)' : (!isRTL ? '1px solid rgba(0,0,0,0.05)' : 'none'),
                                 zIndex: -1,
                             }}
                         />
@@ -147,7 +149,7 @@ const SettingsMenu = ({ classes }: any) => {
                             100% { opacity: 1; transform: translateY(0) scale(1); }
                         }
                         @keyframes slideText {
-                            0% { opacity: 0; transform: translateX(-6px); }
+                            0% { opacity: 0; transform: translateX(${isRTL ? '6px' : '-6px'}); }
                             100% { opacity: 1; transform: translateX(0); }
                         }
                         `}
@@ -183,18 +185,18 @@ const SettingsMenu = ({ classes }: any) => {
                                                         opacity: 0,
                                                         animation: `slideText 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards`,
                                                         animationDelay: `${0.03 + (index * 0.03)}s`,
-                                                        borderLeft: '3px solid transparent'
+                                                        borderInlineStart: '3px solid transparent'
                                                     }}
                                                     onMouseEnter={(e: any) => {
                                                         e.currentTarget.style.backgroundColor = isLogout ? 'rgba(255, 23, 68, 0.08)' : 'rgba(0, 0, 0, 0.03)';
                                                         e.currentTarget.style.color = isLogout ? '#D50000' : '#1A1A1A';
-                                                        e.currentTarget.style.borderLeft = isLogout ? '3px solid #D50000' : '3px solid #FF1744';
-                                                        e.currentTarget.style.transform = 'translateX(4px)';
+                                                        e.currentTarget.style.borderInlineStart = isLogout ? '3px solid #D50000' : '3px solid #FF1744';
+                                                        e.currentTarget.style.transform = `translateX(${isRTL ? -4 : 4}px)`;
                                                     }}
                                                     onMouseLeave={(e: any) => {
                                                         e.currentTarget.style.backgroundColor = 'transparent';
                                                         e.currentTarget.style.color = isLogout ? '#FF1744' : '#424242';
-                                                        e.currentTarget.style.borderLeft = '3px solid transparent';
+                                                        e.currentTarget.style.borderInlineStart = '3px solid transparent';
                                                         e.currentTarget.style.transform = 'translateX(0)';
                                                     }}
                                                 >

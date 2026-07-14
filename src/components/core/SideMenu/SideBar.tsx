@@ -261,7 +261,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </IconButton>
       </div>
 
-      {!isCollapsed && (
+      {!(isMobile ? false : isCollapsed) && (
         <SettingsMenu classes={classes} />
       )}
 
