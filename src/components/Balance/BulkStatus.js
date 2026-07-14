@@ -60,7 +60,8 @@ const BulkStatus = ({ classes }) => {
 
   const { Mms = {}, Newsletters = {}, Notifications = {}, Sms = {}, Whatsapp = {}, SMSVC } = packagesDetails || {};
 
-  const hideEmailWithTier = true;
+  // Email With Tier (11) is Israeli/ILS only - show only for non-global, non-Poland accounts.
+  const hideEmailWithTier = isGlobal || IsPoland;
 
   const getBillingTypeText = (product) => {
     switch (product?.eBillingType) {
