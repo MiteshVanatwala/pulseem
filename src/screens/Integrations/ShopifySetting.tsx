@@ -556,7 +556,7 @@ const Shopify = ({ classes }: any) => {
         </Box>
         <Box className={clsx(classes.dFlex)} style={{ gap: 25 }}>
           <Button
-            onClick={() => window.open('https://site.pulseem.co.il/pulseem-shopify-plugin/', '_blank')}
+            onClick={() => window.open('https://site.pulseem.co.il/מדרכים/חיבור-תוסף-פולסים-ל-shopify/', '_blank')}
             variant='contained'
             size='medium'
             className={clsx(
