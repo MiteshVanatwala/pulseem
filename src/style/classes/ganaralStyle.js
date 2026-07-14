@@ -210,9 +210,15 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
   noMargin: {
     margin: '0px !important',
   },
+  newNavigationDialogContainer: {
+    '&& .MuiDialog-paperWidthSm': {
+      minWidth: '0 !important',
+    }
+  },
   newNavigationDialogPaper: {
     width: 462,
     maxWidth: '96vw !important',
+    minWidth: '0 !important',
     borderRadius: '15px !important',
     overflow: 'hidden',
   },
@@ -243,8 +249,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
       marginTop: 0,
       padding: 0,
       paddingRight: '0px !important',
-      paddingLeft: 0,
+      paddingLeft: '0px !important',
       minWidth: '0 !important',
+      overflowX: 'hidden !important',
+      '&::-webkit-scrollbar': {
+        display: 'none !important'
+      }
     },
   },
   wizardFlex: {
