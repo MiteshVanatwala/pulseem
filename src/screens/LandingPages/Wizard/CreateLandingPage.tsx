@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState,useRef } from 'react';
+import React from 'react';
 import clsx from 'clsx';
 import DefaultScreen from '../../DefaultScreen';
 import { Title } from '../../../components/managment/Title';
@@ -44,6 +45,9 @@ import { get } from 'lodash';
 import EmailConfirmationSettingsPopUp from './Popups/EmailConfirmationSettingsPopUp';
 import { getCookie, setCookie } from '../../../helpers/Functions/cookies';
 import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog';
+
+const ArrowBackIosIcon = MdArrowBackIos as unknown as React.ComponentType;
+const ArrowForwardIosIcon = MdArrowForwardIos as unknown as React.ComponentType;
 
 const generateGuid = () => {
 	return Date.now().toString(36) + Math.random().toString(36).substring(2);
@@ -885,8 +889,7 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 							classes.backButton
 						)}
 						style={{ margin: '8px' }}
-						// @ts-ignore
-						endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+						endIcon={isRTL ? <ArrowBackIosIcon /> : <ArrowForwardIosIcon />}
 					>
 						{t("common.save")}
 					</Button>
@@ -898,8 +901,7 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 							classes.backButton
 						)}
 						style={{ margin: '8px' }}
-						// @ts-ignore
-						endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+						endIcon={isRTL ? <ArrowBackIosIcon /> : <ArrowForwardIosIcon />}
 					>
 						{t('common.continue')}
 					</Button>
@@ -917,8 +919,7 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 							classes.backButton
 						)}
 						style={{ margin: '8px' }}
-						// @ts-ignore
-						endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+						endIcon={isRTL ? <ArrowBackIosIcon /> : <ArrowForwardIosIcon />}
 						key="saveContinue"
 					>
 						<>{t('common.saveAndContinue')}</>
@@ -936,8 +937,7 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 							classes.backButton
 						)}
 						style={{ margin: '8px' }}
-						// @ts-ignore
-						endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+						endIcon={isRTL ? <ArrowBackIosIcon /> : <ArrowForwardIosIcon />}
 						key='newEditor'
 					>
 						{t('master.continueToNewEditor')}
@@ -986,8 +986,10 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 
 	return (
 		<DefaultScreen
+			key="createLandingPage"
 			currentPage="landingPages"
 			subPage={isPopup ? "createPopup" : (id ? "EditLandingPage" : "CreateLandingPage")}
+			// subPage="createLandingPage"
 			classes={classes}
 			customPadding={true}
 			containerClass={clsx(classes.mb50, classes.editorCont)}

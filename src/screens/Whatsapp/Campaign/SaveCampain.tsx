@@ -787,7 +787,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 
 			case 'pl':
 				return authenticationTypes.AUTHENTICATIONPOLSKI;
-		
+
 			case 'en':
 			default:
 				return authenticationTypes.AUTHENTICATIONEN;
@@ -1633,7 +1633,8 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 
 	return (
 		<DefaultScreen
-			subPage={'create'}
+			key="createWhatsappCampaign"
+			subPage={'createWhatsappCampaign'}
 			currentPage='whatsapp'
 			classes={classes}
 			customPadding={true}
@@ -1853,7 +1854,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 												sm={12}
 												md={12}
 												lg={12}>
-												{userRoles?.AllowSend && <Box
+												{(userRoles?.AllowSend || userRoles?.AllowWhatsAppToAgent) && <Box
 													className={clsx(
 														classes.switchDiv,
 														classes.testSendWrapper

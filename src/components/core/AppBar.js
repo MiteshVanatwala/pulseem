@@ -212,7 +212,12 @@ export const TopAppBar = ({ classes, currentPage = '', showAppBar = true }) => {
   const phoneMenuButtonRef = useRef(null)
   const [open, setOpen] = useState(false)
   const [settingsLoaded, setSettingsLoaded] = useState(false);
+  const [imageError, setImageError] = useState(false);
   const topNavRef = useRef(null)
+
+  useEffect(() => {
+    setImageError(false);
+  }, [imageURL]);
 
   useEffect(() => {
     if (accountSettings && accountSettings !== '') {
@@ -263,7 +268,7 @@ export const TopAppBar = ({ classes, currentPage = '', showAppBar = true }) => {
         <Box style={{ zIndex: 1300 }}>
           <LanguageSelector classes={classes} />
         </Box>
-        {!cameFromSubAccount && isAdmin !== '' && <AppBarItem
+        {!cameFromSubAccount && isAdmin !== '' && isAdmin !== 'True' && <AppBarItem
           classes={classes}
           item={{ title: t('appBar.admin') }}
           onMainClick={() => {
@@ -394,11 +399,12 @@ export const TopAppBar = ({ classes, currentPage = '', showAppBar = true }) => {
             // className={clsx(classes.pulseemAppBarLogo, isRTL ? 'logoRTL' : 'logoLTR')}
             className={clsx(accountSettings?.SubAccountSettings?.IsTokenAccount ? classes.tokenAppBarLogo : classes.pulseemAppBarLogo, 'logo')}
           >
-            {imageURL !== '' ? (<Box
+            {imageURL !== '' && !imageError ? (<Box
               component='img'
               src={`${imageURL}`}
               alt='Logo'
-              className={classes.appBarLogo} />)
+              className={classes.appBarLogo}
+              onError={() => setImageError(true)} />)
               :
               (<PulseemNewLogo />)}
           </Button>

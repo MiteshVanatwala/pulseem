@@ -16,6 +16,7 @@ import { BeeAiStyles } from './BeeAiStyles';
 import { getPopupTriggersStyle } from './popupTriggers';
 import { getPopUpManagementStyle } from './popUpManagementStyle';
 import { getAnimationStyle } from './animationStyles';
+import { sideMenuStyle } from './sideMenuStyle'
 
 export const useClasses = (windowSize, isRTL = false, IsPoland = false) => makeStyles(theme => ({
   ...getDrawerStyle(windowSize, isRTL, theme),
@@ -34,5 +35,6 @@ export const useClasses = (windowSize, isRTL = false, IsPoland = false) => makeS
   ...BeeAiStyles(windowSize, isRTL, theme),
   ...getPopupTriggersStyle(windowSize, isRTL, theme),
   ...getPopUpManagementStyle(windowSize, isRTL, theme),
-  ...getAnimationStyle(windowSize, isRTL, theme)
+  ...getAnimationStyle(windowSize, isRTL, theme),
+  ...sideMenuStyle(windowSize, isRTL, theme)
 }))

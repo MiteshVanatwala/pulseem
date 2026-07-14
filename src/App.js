@@ -107,6 +107,7 @@ import { advisorConfig, supportConfig } from './components/AI/chatConfig';
 import { getAvailablePlans, getCurrentPlan } from './redux/reducers/TiersSlice';
 import PopupSummary from './screens/Popups/PopupSummary';
 import HelpDrawer from './components/HelpDrawer';
+import LegacyPageFrame, { LegacyPageWild } from './screens/LegacyPage/LegacyPageFrame';
 import { openHelpDrawer, closeHelpDrawer, toggleHelpDrawer } from './redux/reducers/helpDrawerSlice';
 
 const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
@@ -253,8 +254,8 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
         element={transferUrl('/Pulseem/CampaignsAbTestings.aspx')}
       />
       <Route
-        path={`/AutoSendPlans`}
-        element={transferUrl('/Pulseem/AutoSendPlans.aspx')}
+        path={`${sitePrefix}AutoSendPlans`}
+        element={<LegacyPageFrame path="AutoSendPlans.aspx" classes={classes} />}
       />
       {/* <Route
         path={`/CampaignTemplates`}
@@ -266,7 +267,7 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
       />
       <Route
         path={`/SMSSmartResponses`}
-        component={transferUrl('/Pulseem/SMSSmartResponses.aspx')}
+        element={<LegacyPageFrame path="SMSSmartResponses.aspx" classes={classes} />}
       />
       <Route
         path={`/SMSPreviewCampaign/:id`}
@@ -284,7 +285,7 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
       />}
       <Route
         path="/CreateMmsCampaign"
-        component={transferUrl('/Pulseem/MmsCampaignEdit.aspx')}
+        element={<LegacyPageFrame path="MmsCampaignEdit.aspx" classes={classes} />}
       />
       <Route
         path='/MmsCampaignEdit/:id'
@@ -301,57 +302,80 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
       {/* Landing Pages */}
       {/* Whatsapp */}
 
-      <Route
-        path={whatsappRoutes.CREATE_TEMPLATE}
-        element={<WhatsappCreator classes={classes} key="wa-create" />}
-      />
+      {
+        userRoles?.AllowWhatsAppToAgent &&
+        <Route
+          path={whatsappRoutes.CREATE_TEMPLATE}
+          element={<WhatsappCreator classes={classes} key="wa-create" />}
+        />
+      }
+      {
+        userRoles?.AllowWhatsAppToAgent && 
+        <Route
+          path={whatsappRoutes.CREATE_CAMPAIGN_PAGE1}
+          element={<SaveCampain classes={classes} />}
+        />
+      }
+      {
+        userRoles?.AllowWhatsAppToAgent &&
+        <Route
+          path={whatsappRoutes.CREATE_CAMPAIGN_PAGE2}
+          element={<SendCampaign classes={classes} key="wa-send" />}
+        />
+      }
+      {
+        userRoles?.AllowWhatsAppToAgent &&
+        <Route
+          path={whatsappRoutes.TEMPLATE_MANAGEMENT}
+          element={<ManageWhatsAppTemplates classes={classes} key="wa-template-management" />}
+        />
+      }
+      {
+        userRoles?.AllowWhatsAppToAgent &&
+        <Route
+          path={whatsappRoutes.REPORTS}
+          element={<WhatsappReports classes={classes} key="wa-reports" />}
+        />
+      }
+      {
+        userRoles?.AllowWhatsAppToAgent &&
+        <Route
+          path={whatsappRoutes.CAMPAIGN_MANAGEMENT}
+          element={<ManageWhatsAppCampaigns classes={classes} key="wa-CAMPAIGN_MANAGEMENT" />}
+        />
+      }
 
-      <Route
-        path={whatsappRoutes.CREATE_CAMPAIGN_PAGE1}
-        element={<SaveCampain classes={classes} />}
-      />
+      {
+        userRoles?.AllowWhatsAppToAgent &&
+        <Route
+          path={whatsappRoutes.EDIT_TEMPLATE}
+          element={<WhatsappCreator classes={classes} key="wa-edit" />}
+        />
+      }
+      {
+        userRoles?.AllowWhatsAppToAgent &&
+        <Route
+          path={whatsappRoutes.EDIT_CAMPAIGN_PAGE1}
+          element={<SaveCampain classes={classes} />}
+        />
+      }
+      {
+        userRoles?.AllowWhatsAppToAgent &&
+        <Route
+          path={whatsappRoutes.EDIT_CAMPAIGN_PAGE2}
+          element={<SendCampaign classes={classes} key="wa-send-campaign-page2" />}
+        />
+      }
 
-      <Route
-        path={whatsappRoutes.CREATE_CAMPAIGN_PAGE2}
-        element={<SendCampaign classes={classes} key="wa-send" />}
-      />
-
-      <Route
-        path={whatsappRoutes.TEMPLATE_MANAGEMENT}
-        element={<ManageWhatsAppTemplates classes={classes} key="wa-template-management" />}
-      />
-
-      <Route
-        path={whatsappRoutes.REPORTS}
-        element={<WhatsappReports classes={classes} key="wa-reports" />}
-      />
-
-      <Route
-        path={whatsappRoutes.CAMPAIGN_MANAGEMENT}
-        element={<ManageWhatsAppCampaigns classes={classes} key="wa-CAMPAIGN_MANAGEMENT" />}
-      />
-
-      <Route
-        path={whatsappRoutes.EDIT_TEMPLATE}
-        element={<WhatsappCreator classes={classes} key="wa-edit" />}
-      />
-
-      <Route
-        path={whatsappRoutes.EDIT_CAMPAIGN_PAGE1}
-        element={<SaveCampain classes={classes} />}
-      />
-
-      <Route
-        path={whatsappRoutes.EDIT_CAMPAIGN_PAGE2}
-        element={<SendCampaign classes={classes} key="wa-send-campaign-page2" />}
-      />
-
-      <Route
-        path={whatsappRoutes.CHAT}
-      >
-        <Route index element={<WhatsappChat classes={classes} key="wa-chate" />} />
-        <Route path=":contactID" element={<WhatsappChat classes={classes} key="wa-chat-conversation" />} />
-      </Route>
+      {
+        userRoles?.AllowWhatsAppToAgent &&
+        <Route
+          path={whatsappRoutes.CHAT}
+        >
+          <Route index element={<WhatsappChat classes={classes} key="wa-chate" />} />
+          <Route path=":contactID" element={<WhatsappChat classes={classes} key="wa-chat-conversation" />} />
+        </Route>
+      }
       <Route
         path='/NewWebForm/NewFormEdit/:id'
         component={transferUrl('/Pulseem/NewWebForm/NewFormEdit/', 'id')}
@@ -383,7 +407,7 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
       />
       <Route
         path={`${sitePrefix}Popups/Create`}
-        element={<CreateLandingPage classes={classes} isPopup={true}  key="popup-create"/>}
+        element={<CreateLandingPage classes={classes} isPopup={true} key="popup-create" />}
       />
       <Route
         path={`${sitePrefix}Popups/Create/:id`}
@@ -403,11 +427,11 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
       />
       <Route
         path={`/Survey`}
-        component={transferUrl('/Pulseem/LandingPageWizard.aspx')}
+        element={<LegacyPageFrame path="LandingPageWizard.aspx" classes={classes} />}
       />
       <Route
         path={`/FormTemplates`}
-        component={transferUrl('/Pulseem/FormTemplates.aspx')}
+        element={<LegacyPageFrame path="FormTemplates.aspx" classes={classes} />}
       />
       {/* Reports */}
       <Route
@@ -416,7 +440,7 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
       />
       <Route
         path={`/ClalReport`}
-        component={transferUrl('/Pulseem/ClalReport.aspx')}
+        element={<LegacyPageFrame path="ClalReport.aspx" classes={classes} />}
       />
       <Route
         path={`${sitePrefix}Reports/SMSMainReport`}
@@ -436,20 +460,20 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
         component={transferUrl('/Pulseem/AbTestsReport.aspx')}
       /> */}
       <Route
-        path={`/AccountReport`}
-        component={transferUrl('/Pulseem/AccountReport.aspx')}
+        path={`${sitePrefix}AccountReport`}
+        element={<LegacyPageFrame path="AccountReport.aspx" classes={classes} />}
       />
       <Route
-        path={`/EmailAutoReports`}
-        component={transferUrl('/Pulseem/EmailAutoReports.aspx')}
+        path={`${sitePrefix}EmailAutoReports`}
+        element={<LegacyPageFrame path="EmailAutoReports.aspx" classes={classes} />}
       />
       <Route
-        path={`/RemovedStats`}
-        component={transferUrl('/Pulseem/RemovedStats.aspx')}
+        path={`${sitePrefix}RemovedStats`}
+        element={<LegacyPageFrame path="RemovedStats.aspx" classes={classes} />}
       />
       <Route
-        path={`/DirectEmailReport`}
-        component={transferUrl('/Pulseem/DirectEmailReport.aspx')}
+        path={`${sitePrefix}DirectEmailReport`}
+        element={<LegacyPageFrame path="DirectEmailReport.aspx" classes={classes} />}
       />
       {!userRoles?.HideRecipients && <Route
         exact
@@ -462,8 +486,8 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
         element={<DirectSendReport classes={classes} isArchive={true} />}
       />}
       <Route
-        path={`/EmailCampaignStatistics`}
-        component={transferUrl('/Pulseem/EmailCampaignStatistics.aspx')}
+        path={`${sitePrefix}EmailCampaignStatistics`}
+        element={<LegacyPageFrame path="EmailCampaignStatistics.aspx" classes={classes} />}
       />
       <Route
         path={`${sitePrefix}reports/LinksClicksReport`}
@@ -476,8 +500,8 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
         element={<AutomationManagment classes={classes} />}
       />
       <Route
-        path={`/CreateAutomations`}
-        component={transferUrl('/Pulseem/CreateAutomations.aspx')}
+        path={`${sitePrefix}CreateAutomations`}
+        element={<LegacyPageFrame path="CreateAutomations.aspx" classes={classes} />}
       />
       <Route
         path={`${sitePrefix}Automations/Create`}
@@ -529,8 +553,8 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
         element={<BillingSettingsPage classes={classes} />}
       />}
       <Route
-        path={`/AccountBilling`}
-        component={transferUrl('/Pulseem/AccountBilling.aspx')}
+        path={`${sitePrefix}AccountBilling`}
+        element={<LegacyPageFrame path="AccountBilling.aspx" classes={classes} />}
       />
       {userRoles === UserRoles.Admin && <Route
         exact
@@ -538,12 +562,12 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
         element={<AccountUsers classes={classes} />}
       />}
       {userRoles === UserRoles.Admin && <Route
-        path={`/AccountUsersReport`}
-        component={transferUrl('/Pulseem/AccountUsersReport.aspx')}
+        path={`${sitePrefix}AccountUsersReport`}
+        element={<LegacyPageFrame path="AccountUsersReport.aspx" classes={classes} />}
       />}
       <Route
-        path={`/ExtraFieldsDefinition`}
-        component={transferUrl('/Pulseem/ExtraFieldsDefinition.aspx')}
+        path={`${sitePrefix}ExtraFieldsDefinition`}
+        element={<LegacyPageFrame path="ExtraFieldsDefinition.aspx" classes={classes} />}
       />
       {userRoles?.AllowSend && <Route
         path={`${sitePrefix}ApiSettings`}
@@ -575,10 +599,13 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
         path={`${sitePrefix}Integrations`}
         element={<Integrations classes={classes} />}
       />}
-      <Route exact
-        path={`${sitePrefix}whatsapp-onboarding`}
-        element={<WhatsappOnBoarding classes={classes} />}
-      />
+      {
+        userRoles?.AllowWhatsAppToAgent && 
+        <Route exact
+          path={`${sitePrefix}whatsapp-onboarding`}
+          element={<WhatsappOnBoarding classes={classes} />}
+        />
+      }
       {!userRoles?.HideRecipients && <Route
         exact
         path={`${sitePrefix}reports/Inbound`}
@@ -603,6 +630,10 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
         exact
         path={`${sitePrefix}Groups/Download`}
         element={<DownloadFiles classes={classes} />}
+      />
+      <Route
+        path="/Pulseem/:aspxPage"
+        element={<LegacyPageWild classes={classes} />}
       />
       <Route
         path="*" element={<PageNotFound classes={classes} />}
@@ -781,6 +812,37 @@ const App = ({ screenSize }) => {
 
   const theme = getTheme(language)
   const redirect = useNavigate()
+
+  useEffect(() => {
+    const pageRoutes = {
+      dashboard:        `${sitePrefix}`,
+      campaigns:        `${sitePrefix}Campaigns`,
+      sms:              `${sitePrefix}SMSCampaigns`,
+      mms:              `${sitePrefix}MmsCampaigns`,
+      automations:      `${sitePrefix}Automations`,
+      notifications:    `${sitePrefix}Notifications`,
+      groups:           `${sitePrefix}Groups`,
+      landingpages:     `${sitePrefix}EditRegistrationPage`,
+      newsletters:      `${sitePrefix}Reports/NewsletterReports`,
+      smsreport:        `${sitePrefix}Reports/SMSMainReport`,
+      mmsreport:        `${sitePrefix}Reports/MmsMainReport`,
+      billing:          `${sitePrefix}BillingSettings`,
+      accountsettings:  `${sitePrefix}AccountSettings`,
+      integrations:     `${sitePrefix}Integrations`,
+      subusers:         `${sitePrefix}SubUsers`,
+      whatsapp:         whatsappRoutes.CAMPAIGN_MANAGEMENT,
+    };
+    const handleIframeMessage = (e) => {
+      if (e.data?.type === 'react-navigate' && e.data?.page) {
+        const page = e.data.page.toLowerCase();
+        if (page === 'back') return redirect(-1);
+        const route = pageRoutes[page] ?? pageRoutes['dashboard'];
+        redirect(route);
+      }
+    };
+    window.addEventListener('message', handleIframeMessage);
+    return () => window.removeEventListener('message', handleIframeMessage);
+  }, [redirect]);
   document.body.classList.add(classes.sidebar);
 
   if (isRTL) document.body.classList.add('rtl');
@@ -818,7 +880,7 @@ const App = ({ screenSize }) => {
   const renderRoutesByCondition = (classes, redirect) => {
     const ignoreCookie = getCookie('ignoreTerm')
 
-    if (isOnlyWhatsAppChat) {
+    if (isOnlyWhatsAppChat && userRoles?.AllowWhatsAppToAgent) {
       return <Routes>
         <Route
           path={whatsappRoutes.CHAT}

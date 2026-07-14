@@ -1070,7 +1070,9 @@ const SmsManagnentScreen = ({ classes }) => {
 	}
 	return (
 		<DefaultScreen
+			key="sms"
 			currentPage='sms'
+			subPage='smsManagment'
 			classes={classes}
 			containerClass={clsx(classes.management, classes.mb50)}>
 			<Box className={'topSection'}>

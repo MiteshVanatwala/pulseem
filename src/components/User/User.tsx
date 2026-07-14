@@ -45,7 +45,7 @@ const initSubUser = {
 	SubUserPermissions: [],
 	UserName: '',
 	UserPermissionsList: '',
-	ConfirmPassword: ''
+	ConfirmPassword: '',
 } as SubUserModel;
 
 const useStyles = makeStyles({

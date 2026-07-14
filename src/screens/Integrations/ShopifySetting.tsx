@@ -550,13 +550,13 @@ const Shopify = ({ classes }: any) => {
   return (
     <>
       {toastMessage && renderToast()}
-      <Box className={clsx(classes.containerBody, classes.mt20)}>
+      <Box className={clsx(classes.containerBody)}>
         <Box>
           {t(`integrations.shopify.description`)}
         </Box>
         <Box className={clsx(classes.dFlex)} style={{ gap: 25 }}>
           <Button
-            onClick={() => window.open('https://site.pulseem.co.il/pulseem-shopify-plugin/', '_blank')}
+            onClick={() => window.open('https://site.pulseem.co.il/מדרכים/חיבור-תוסף-פולסים-ל-shopify/', '_blank')}
             variant='contained'
             size='medium'
             className={clsx(

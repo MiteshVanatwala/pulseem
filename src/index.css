@@ -8,6 +8,12 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+@media screen and (min-width: 1024px) and (max-width: 1440px) {
+  body {
+    zoom: 0.95;
+  }
+}
+
 /* Force Helvetica font for Polish accounts */
 body.polish-account,
 body.polish-account * {

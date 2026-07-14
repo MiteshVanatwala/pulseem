@@ -336,7 +336,9 @@ const FileUploads = ({ classes }: ClassesType) => {
 
   return (
     <DefaultScreen
-      currentPage="FileUploads"
+      key="groups"
+      currentPage='groups'
+      subPage='fileUploads'
       classes={classes}
       containerClass={clsx(classes.management, classes.mb50)}
     >
