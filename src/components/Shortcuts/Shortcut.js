@@ -509,7 +509,8 @@ const Shortcut = ({ classes, windowSize, t, isRTL, variant = 'panel' }) => {
     return renderHorizontalShortcutStrip();
   }
 
-  if ((shortcuts?.length > 0 && windowSize === 'xs') || windowSize !== 'xs') {
+  // Always render on mobile so users can add shortcuts even when none exist
+  if (windowSize === 'xs' || windowSize !== 'xs') {
     return (
       <Box className={classes.shortcutBox}>
         <Box className={clsx(classes.dashBoxtitleSection, classes.shortcutTitle, classes.flex)}>
