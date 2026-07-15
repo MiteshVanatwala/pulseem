@@ -113,7 +113,6 @@ const DashboardScreen = ({ classes }) => {
     setShowBusinessSectorActivity(false);
   }
 
-  console.log(isDrawerOpen)
   return (
     <DefaultScreen
       currentPage='dashboard'
