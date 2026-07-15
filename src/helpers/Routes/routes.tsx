@@ -16,7 +16,7 @@ import {
   GrafMenuIcon,
   GroupMenuIcon,
 } from '../../assets/images/settings/index';
-import { FaBinoculars } from 'react-icons/fa';
+import { FaBinoculars, FaCommentDots } from 'react-icons/fa';
 import { whatsappRoutes } from '../../screens/Whatsapp/Constant';
 import { logout } from "../Api/PulseemReactAPI";
 import { HiArrowLeft, HiArrowRight } from "react-icons/hi";
@@ -406,6 +406,23 @@ export const getRoutes = (
       href: `${sitePrefix}Integrations`,
       isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount && userRoles?.AllowSend,
       iconName: 'MdOutlineDashboardCustomize',
+    },
+    {
+      key: "widgets",
+      title: t("common.widget_chat_widget"),
+      pageTitle: t("common.widget_chat_widget"),
+      iconUnicode: "\ue087",
+      href: `${sitePrefix}Widgets`,
+      isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount,
+      icon: <FaCommentDots size={24} color="#909aa2" />,
+      options: [
+        {
+          key: "chatWidget",
+          title: t("common.widget_chat_widget"),
+          href: `${sitePrefix}Widgets`,
+          isShow: true,
+        }
+      ],
     },
     {
       key: "notifications",
