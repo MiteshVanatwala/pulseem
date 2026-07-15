@@ -19,7 +19,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
 import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
 import { ERROR_TYPE } from "../../../helpers/Types/common";
-import { getCurrentPlan, getAvailablePlans, downgradePlan, deletePolandSubscription } from "../../../redux/reducers/TiersSlice";
+import { getCurrentPlan, getAvailablePlans, downgradePlan, cancelEmailWithTier } from "../../../redux/reducers/TiersSlice";
 import BillingDetails from "./BillingDetails";
 import { getCreditCardIframe, getAccountOperations, payDebtInvoices, inactiveCreditCard, cancelFrozenSends, releaseFrozenSends, getAccountBilling } from "../../../redux/reducers/BillingSlice";
 import { Loader } from "../../../components/Loader/Loader";
@@ -57,7 +57,7 @@ const BillingSettingsPage = ({ classes }: any) => {
   const Redirect = useRedirect();
   const debtPanel: any = useRef(null);
   const { isRTL, windowSize, isAdmin, isDebtAccount, userRoles } = useSelector((state: any) => state.core);
-  const { accountFeatures } = useSelector((state: any) => state.common);
+  const { accountFeatures, isGlobal, IsPoland } = useSelector((state: any) => state.common);
   const { creditCards } = useSelector((state: any) => state.payment);
   const { subAccount } = useSelector((state: any) => state.common);
   const { currentPlan } = useSelector((state: any) => state.tiers);
@@ -88,7 +88,8 @@ const BillingSettingsPage = ({ classes }: any) => {
   const [ showCancelMessage, setShowCancelMessage ] = useState(false);
   const [ showFrozenDialog, setShowFrozenDialog ] = useState(false);
   const [ isOpenBillingSettings, setIsOpenBillingSettings ] = useState(false);
-  const hideEmailWithTier = true;
+  // Email With Tier (11) is Israeli/ILS only - show only for non-global, non-Poland accounts.
+  const hideEmailWithTier = isGlobal || IsPoland;
 
   const isBillingDetailsRequired = billingDetail?.CompanyName === '' || billingDetail?.CompanyName === null || billingDetail?.CorporationNumber === '' || billingDetail?.CorporationNumber === null || billingDetail?.Email === '' || billingDetail?.Email === null;
 
@@ -1001,7 +1002,7 @@ const BillingSettingsPage = ({ classes }: any) => {
           if (packagesDetails?.Newsletters?.IsEmailTierSubscribed && !hideEmailWithTier) {
             setConfirmCancelPlan(false);
             setShowLoader(true);
-            dispatch(deletePolandSubscription() as any).then((response: any) => {
+            dispatch(cancelEmailWithTier() as any).then((response: any) => {
               switch (response?.payload?.StatusCode) {
                 case 201:
                 case 200: {
