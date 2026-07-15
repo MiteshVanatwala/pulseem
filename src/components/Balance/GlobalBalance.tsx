@@ -7,23 +7,32 @@ import { CardIcon } from '../../assets/images/dashboard/index'
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import GlobalBalancePaymentWizard from './GlobalBalancePaymentWizard';
 import { GetGlobalAccountPackagesDetails } from '../../redux/reducers/commonSlice';
+import { getAccountBilling } from '../../redux/reducers/BillingSlice';
+import BillingSettings from '../BillingSettings/BillingSettings';
 
 const GlobalBalance = ({ classes }: any) => {
   const { isRTL } = useSelector((state: any) => state.core)
   const dispatch: any = useDispatch();
   const { accountIsCurrencySymbolPrefix, accountCurrencySymbol, finalGlobalBalance, isGlobal, IsPoland } = useSelector((state: any) => state.common)
+  const { billing: { Data: billingDetail } } = useSelector((state: any) => state.billing);
   const { t } = useTranslation();
   const [dialogType, setDialogType] = useState<{
     type: string;
     data: any
   } | null>(null);
+  const [isOpenBillingSettings, setIsOpenBillingSettings] = useState(false);
 
   useEffect(() => {
-    if (isGlobal) dispatch(GetGlobalAccountPackagesDetails());
+    if (isGlobal) {
+      dispatch(GetGlobalAccountPackagesDetails());
+      dispatch(getAccountBilling());
+    }
   }, [])
 
   if (isGlobal === false) return <></>;
   else if (isGlobal === true && IsPoland) return <></>;
+
+  const isBillingDetailsRequired = billingDetail?.CompanyName === '' || billingDetail?.CompanyName === null || billingDetail?.CorporationNumber === '' || billingDetail?.CorporationNumber === null || billingDetail?.Email === '' || billingDetail?.Email === null;
 
   return (
     <>
@@ -50,7 +59,13 @@ const GlobalBalance = ({ classes }: any) => {
                 <div className={classes.pt10}>{t('SubAccount.balance')}</div>
                 <div className={classes.pt10}>{ accountIsCurrencySymbolPrefix ? accountCurrencySymbol : '' } {finalGlobalBalance} { !accountIsCurrencySymbolPrefix ? accountCurrencySymbol : '' }</div>
                 <Box className={classes.pt10}>
-                  <Button className={clsx(classes.btn, classes.btnRounded, classes.f12)} onClick={() => setDialogType({ type: 'PaymentDialog', data: {} })}>
+                  <Button className={clsx(classes.btn, classes.btnRounded, classes.f12)} onClick={() => {
+                    if (isBillingDetailsRequired) {
+                      setIsOpenBillingSettings(true);
+                    } else {
+                      setDialogType({ type: 'PaymentDialog', data: {} });
+                    }
+                  }}>
                     {t('common.topUp')}
                     {isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                   </Button>
@@ -69,6 +84,12 @@ const GlobalBalance = ({ classes }: any) => {
         </Grid>
       </Paper>
       <GlobalBalancePaymentWizard classes={classes} isOpen={dialogType?.type === 'PaymentDialog'} onClose={() => setDialogType(null)} />
+      <BillingSettings classes={classes} isOpen={isOpenBillingSettings} onClose={(isSuccess: boolean) => {
+        setIsOpenBillingSettings(false);
+        if (isSuccess) {
+          setDialogType({ type: 'PaymentDialog', data: {} });
+        }
+      }} />
     </>
   )
 }
