@@ -77,7 +77,8 @@ const BulkStatus = ({ classes }) => {
 
   const { Mms = {}, Newsletters = {}, Notifications = {}, Sms = {}, Whatsapp = {}, SMSVC } = packagesDetails || {};
 
-  const hideEmailWithTier = true;
+  // Email With Tier (11) is Israeli/ILS only - show only for non-global, non-Poland accounts.
+  const hideEmailWithTier = isGlobal || IsPoland;
 
   const getBillingTypeText = (product) => {
     switch (product?.eBillingType) {
@@ -613,7 +614,27 @@ const BulkStatus = ({ classes }) => {
                                 </Grid>
                               </Grid>
                             </>
-                          ) : null
+                          ) : (
+                            // Not yet subscribed -> show the Subscribe button that opens the Email With Tier plans.
+                            isAllowNewsletterSubscription && !Newsletters?.IsEmailTierSubscribed ? (
+                              <>
+                                <Divider className={clsx(classes.rocketImage, classes.mt1)} />
+                                <Grid container className={clsx(classes.mt1)} alignItems='center'>
+                                  <Grid item md={8} xs={8}>
+                                    <Typography className={clsx(classes.bulkTitle, classes.mlr30, classes.pl5)}>{t('billing.plan')}</Typography>
+                                  </Grid>
+                                  <Grid item md={4} xs={4} className={clsx(classes.justifyContentEnd)}>
+                                    <Button
+                                      className={clsx(classes.btn, classes.btnRounded, classes.smallButton)}
+                                      onClick={() => { setIsOpenEmailTierPlans(true); }}
+                                    >
+                                      {t('dashboard.purchase')}
+                                    </Button>
+                                  </Grid>
+                                </Grid>
+                              </>
+                            ) : null
+                          )
                       }
                     </>
                   )

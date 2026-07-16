@@ -69,6 +69,23 @@ export const deletePolandSubscription = createAsyncThunk(
     }
 );
 
+// Cancel Email With Tier (11) - arrears cancel: marks "won't renew"; stays active to period end,
+// final month still billed; no hard-delete.
+export const cancelEmailWithTier = createAsyncThunk(
+    'FeatureTier/CancelEmailWithTier',
+    async (_, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.post(
+                `FeatureTier/CancelEmailWithTier`,
+                {}
+            );
+            return response.data as PulseemResponse;
+        } catch (error) {
+            return thunkAPI.rejectWithValue(error);
+        }
+    }
+);
+
 // Upgrade Tier Plan
 export const upgradePlan = createAsyncThunk(
     'FeatureTier/UpgradeTier',
