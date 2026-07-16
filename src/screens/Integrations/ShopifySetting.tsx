@@ -400,6 +400,7 @@ const Shopify = ({ classes }: any) => {
           <Typography className={clsx(classes.pb10, classes.f18)}>
             {RenderHtml(t('integrations.shopify.scriptDescription2'))}
           </Typography>
+          {/* @ts-ignore */}
           <CopyToClipboard text={siteScript} onCopy={handleCopyScript}>
             <Button
               variant="outlined"
@@ -442,6 +443,7 @@ const Shopify = ({ classes }: any) => {
           <Typography className={clsx(classes.pb10, classes.f18)}>
             {RenderHtml(t('integrations.shopify.scriptDescription5'))}
           </Typography>
+          {/* @ts-ignore */}
           <CopyToClipboard text={SHOPIFY_SITE_TRACKING} onCopy={handleCopyScript}>
             <Button
               variant="outlined"
@@ -556,7 +558,7 @@ const Shopify = ({ classes }: any) => {
         </Box>
         <Box className={clsx(classes.dFlex)} style={{ gap: 25 }}>
           <Button
-            onClick={() => window.open('https://site.pulseem.co.il/pulseem-shopify-plugin/', '_blank')}
+            onClick={() => window.open('https://site.pulseem.co.il/מדרכים/חיבור-תוסף-פולסים-ל-shopify/', '_blank')}
             variant='contained'
             size='medium'
             className={clsx(
@@ -687,6 +689,7 @@ const Shopify = ({ classes }: any) => {
                     <Typography className={clsx(classes.mb5)}>
                       {t("integrations.shopify.apiVersionDesc")}
                     </Typography>
+                    {/* @ts-ignore */}
                     <InputMask
                       name="apiVersion"
                       className={clsx(classes.InputMaskTextField, classes.textField, classes.dBlock, classes.shopifySettingTextBox)}

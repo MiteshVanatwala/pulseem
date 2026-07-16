@@ -22,6 +22,7 @@ const NewNavigationPopup = ({ classes, isOpen, onClose }: any) => {
         hideHeader={true}
         disableBackdropClick={true}
         showDefaultButtons={false}
+        customContainerStyle={clsx(classes.newNavigationDialogContainer)}
         className={clsx(classes.newNavigationDialogPaper)}
         contentStyle={clsx(classes.newNavigationDialogContent)}
         childrenStyle={clsx(classes.newNavigationDialogChildren)}

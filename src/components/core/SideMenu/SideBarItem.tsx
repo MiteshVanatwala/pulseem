@@ -191,17 +191,17 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
           transform: 'translateY(-50%)',
           ...(tooltipPos.side === 'left'
             ? {
-                right: '100%',
-                borderTop: `${ARROW}px solid transparent`,
-                borderBottom: `${ARROW}px solid transparent`,
-                borderRight: `${ARROW}px solid #333`,
-              }
+              right: '100%',
+              borderTop: `${ARROW}px solid transparent`,
+              borderBottom: `${ARROW}px solid transparent`,
+              borderRight: `${ARROW}px solid #333`,
+            }
             : {
-                left: '100%',
-                borderTop: `${ARROW}px solid transparent`,
-                borderBottom: `${ARROW}px solid transparent`,
-                borderLeft: `${ARROW}px solid #333`,
-              }),
+              left: '100%',
+              borderTop: `${ARROW}px solid transparent`,
+              borderBottom: `${ARROW}px solid transparent`,
+              borderLeft: `${ARROW}px solid #333`,
+            }),
         }}
       />
       {item.title}
@@ -212,6 +212,8 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
   const itemContent = (
     <ListItem
       button
+      component={item.href && !hasSubmenu ? 'a' : 'div'}
+      href={item.href && !hasSubmenu ? item.href : undefined}
       className={clsx(classes.sidebarItem, isActive && 'active')}
       style={{
         paddingLeft: level > 0 ? undefined : (!isRTL ? 8 : 16),

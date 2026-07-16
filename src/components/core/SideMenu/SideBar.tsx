@@ -63,6 +63,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const [languageMenuOpen, setLanguageMenuOpen] = useState(false);
   const [showTierPlans, setShowTierPlans] = useState(false);
   const [imageError, setImageError] = useState(false);
+  const [isSettingsMenuOpen, setIsSettingsMenuOpen] = useState(false);
   const languageButtonRef = useRef(null);
 
   useEffect(() => {
@@ -204,7 +205,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
       variant={drawerVariant}
       open={drawerOpen}
       // @ts-ignore
-      onClose={onToggle}
+      onClose={() => {
+        // If the settings dropdown is open, the first "click outside" should only
+        // close that dropdown — the sidebar itself only closes on the next one.
+        if (isSettingsMenuOpen) {
+          setIsSettingsMenuOpen(false);
+          return;
+        }
+        onToggle();
+      }}
       anchor={isRTL ? 'right' : 'left'}
       PaperProps={{
         style: {
@@ -261,8 +270,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </IconButton>
       </div>
 
-      {!isCollapsed && (
-        <SettingsMenu classes={classes} />
+      {!(isMobile ? false : isCollapsed) && (
+        <SettingsMenu classes={classes} isOpen={isSettingsMenuOpen} onOpenChange={setIsSettingsMenuOpen} />
       )}
 
       {currentPlan && currentPlan.Name && currentPlan.Name !== 'GRAND_FATHER' && (() => {

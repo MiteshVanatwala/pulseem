@@ -173,6 +173,12 @@ export const getDashboardStyle = (windowSize, isRTL, theme) => ({
                 PointerEvent: 'all',
             }
         },
+        [theme.breakpoints.down('xs')]: {
+            width: '100%',
+            height: 82,
+            marginBottom: 18,
+            borderRadius: 12,
+        },
 
     },
     shortcutDottedButton: {
@@ -186,6 +192,13 @@ export const getDashboardStyle = (windowSize, isRTL, theme) => ({
         width: '85%',
         '&:hover': {
             background: 'none'
+        }
+        ,
+        [theme.breakpoints.down('xs')]: {
+            width: '100%',
+            height: 82,
+            marginBottom: 18,
+            borderRadius: 12,
         }
     },
     shortcutList: {
@@ -239,6 +252,9 @@ export const getDashboardStyle = (windowSize, isRTL, theme) => ({
         boxSizing: 'border-box',
         ['@media (min-width:1300px)']: {
             width: '100%',
+        },
+        [theme.breakpoints.down('xs')]: {
+            width: '100%'
         },
     },
     pillChip: {

@@ -1258,6 +1258,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				FromNumber: activePhoneNumber,
 				ToNumber: activeChatContacts?.PhoneNumber,
 				IsFreeFormChat: savedTemplate?.length === 0 ? true : false,
+				IsNewchat: false,
 			};
 			if (savedTemplate?.length > 0) {
 				chatReqPayload.TemplateId = savedTemplate;
