@@ -596,7 +596,27 @@ const BulkStatus = ({ classes }) => {
                                 </Grid>
                               </Grid>
                             </>
-                          ) : null
+                          ) : (
+                            // Not yet subscribed -> show the Subscribe button that opens the Email With Tier plans.
+                            isAllowNewsletterSubscription && !Newsletters?.IsEmailTierSubscribed ? (
+                              <>
+                                <Divider className={clsx(classes.rocketImage, classes.mt1)} />
+                                <Grid container className={clsx(classes.mt1)} alignItems='center'>
+                                  <Grid item md={8} xs={8}>
+                                    <Typography className={clsx(classes.bulkTitle, classes.mlr30, classes.pl5)}>{t('billing.plan')}</Typography>
+                                  </Grid>
+                                  <Grid item md={4} xs={4} className={clsx(classes.justifyContentEnd)}>
+                                    <Button
+                                      className={clsx(classes.btn, classes.btnRounded, classes.smallButton)}
+                                      onClick={() => { setIsOpenEmailTierPlans(true); }}
+                                    >
+                                      {t('dashboard.purchase')}
+                                    </Button>
+                                  </Grid>
+                                </Grid>
+                              </>
+                            ) : null
+                          )
                       }
                     </>
                   )
