@@ -167,8 +167,15 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const { subAccount } = useSelector((state: any) => state.common);
 	const { isRTL, windowSize, isLoader = false, isOnlyWhatsAppChat } = useSelector((state: { core: coreProps }) => state.core);
 	const { agentList } = useSelector((state: StateType) => state.whatsapp);
-	const { userRoles, isAdmin, subUserObject } = useSelector((state: any) => state.core);
+	const { userRoles, subUserObject } = useSelector((state: any) => state.core);
 	const agentCookieKey = `whatsappSelectedAgentId_${subUserObject?.Data?.Emails?.[0]?.AuthValue || ''}`;
+	const isAccountAdmin = !!(
+		userRoles &&
+		userRoles.AllowSend &&
+		userRoles.AllowExport &&
+		userRoles.AllowDelete &&
+		!userRoles.HideRecipients
+	);
 	const { currentPlan, availablePlans } = useSelector(
 		(state: any) => state.tiers,
 	);
@@ -2076,13 +2083,12 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		[agentList],
 	);
 
-	// Runs once per session after initial data is ready; never overwrites a manual selection.
-	// Guards: isAdmin excludes super-users who inherit AllowWhatsAppToAgent=true by default.
+	// Guards: isAccountAdmin excludes super-users who inherit AllowWhatsAppToAgent=true by default.
 	useEffect(() => {
 		if (!isAccountSetup) return;
 		if (agentAutoSelectedRef.current) return;
 		if (!userRoles?.AllowWhatsAppToAgent) return;
-		if (isAdmin) return;
+		if (isAccountAdmin) return;
 		if (agentSelected !== 0) return;
 		if (!allAgents || allAgents.length === 0) return;
 		if (!activePhoneNumber) return;
@@ -2094,7 +2100,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 
 		agentAutoSelectedRef.current = true;
 		handleAgentSelection(matchingAgent.AgentId);
-	}, [isAccountSetup, allAgents, activePhoneNumber, userRoles, isAdmin, agentSelected, handleAgentSelection]);
+	}, [isAccountSetup, allAgents, activePhoneNumber, userRoles, isAccountAdmin, agentSelected, handleAgentSelection]);
 
 	return (
 		<>
