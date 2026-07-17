@@ -133,6 +133,8 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const activePhoneNumberRef = useRef<string>('');
 	const filterBySelectedRef = useRef<number>(0);
 	const agentAutoSelectedRef = useRef<boolean>(false);
+	const userRolesRef = useRef<any>(null);
+	const isAccountAdminRef = useRef<boolean>(false);
 	const changeContactReadStatusRef = useRef<((contacts: APIWhatsappChatSidebarContactsItemsData, sideChatContactList?: APIWhatsappChatSidebarContactsItemsData[]) => void) | null>(null);
 	const sideBarSearchTextRef = useRef<string>('');
     
@@ -309,6 +311,14 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	useEffect(() => {
 		filterBySelectedRef.current = filterBySelected;
 	}, [filterBySelected]);
+
+	useEffect(() => {
+		userRolesRef.current = userRoles;
+	}, [userRoles]);
+
+	useEffect(() => {
+		isAccountAdminRef.current = isAccountAdmin;
+	}, [isAccountAdmin]);
 
 	useEffect(() => {
 		contactsPaginationSettingRef.current = contactsPaginationSetting;
@@ -627,7 +637,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	}, [activeChatContacts, activePhoneNumber, dispatch, ToastMessages, filterBySelected]);
 
 	const setAPIWhatsAppChatContacts = useCallback(
-		async (activeUser: string, isInitial: boolean = false) => {
+		async (activeUser: string, isInitial: boolean = false, overrideAgentId?: number) => {
 			// Ensure mapping is built before loading contacts
 			if (Object.keys(phoneToClientIdMap.current).length === 0) {
 				await buildPhoneToClientIdMap();
@@ -657,12 +667,15 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			const resetPageNo = 1;
 			const resetPageSize = contactsPaginationSettingRef.current?.PageSize || 20;
 
+			const effectiveAgentId =
+				overrideAgentId !== undefined ? overrideAgentId : agentSelected;
+
 			const {
 				payload: whatsAppChatContactsData,
 			}: APIWhatsappChatSidebarContactsData = await dispatch<any>(
-				agentSelected > 0
+				effectiveAgentId > 0
 					? getWhatsappChatContactsByAgent({
-						AgentId: agentSelected,
+						AgentId: effectiveAgentId,
 						IsPagination: true,
 						pageNo: resetPageNo,
 						pageSize: resetPageSize,
@@ -792,6 +805,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		const response: any = await dispatch<any>(getChatAgents());
 		const agents: WhatsappAgent[] = response?.payload?.Data as any;
 		setAllAgents(agents);
+		return agents;
 	}, [dispatch]);
 
 	const getTags = useCallback(async () => {
@@ -821,12 +835,12 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		}
 	}, [activePhoneNumber, dispatch]);
 
-	const getPhoneNumber = useCallback(async () => {
+	const getPhoneNumber = useCallback(async (overrideAgentId?: number) => {
 		const { payload: phoneNumberData }: phoneNumberAPIProps =
 			await dispatch<any>(userPhoneNumbers());
 		if (phoneNumberData?.Data?.length > 0) {
 			setActivePhoneNumber(phoneNumberData?.Data[0]);
-			await setAPIWhatsAppChatContacts(phoneNumberData?.Data[0], true);
+			await setAPIWhatsAppChatContacts(phoneNumberData?.Data[0], true, overrideAgentId);
 			setPhoneNumbersList(phoneNumberData?.Data);
 			await fetchTotalsUnfiltered();
 			return phoneNumberData?.Data;
@@ -919,24 +933,31 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				phoneNumberData?.Data?.length > 0
 			) {
 				/**
-				 * Load all initial data in parallel for better performance
+				 * Load the agent list and other independent data in parallel;
 				 */
-				if (!personalFields || landingPages?.length <= 0) {
-					await Promise.all([
-						getDynamicModalValues(),
-						getSavedTemplateFields(),
-						getAgents(),
-						getTags(),
-						getPhoneNumber(),
-					]);
-				} else {
-					await Promise.all([
-						getSavedTemplateFields(),
-						getAgents(),
-						getTags(),
-						getPhoneNumber(),
-					]);
+				const otherLoads =
+					!personalFields || landingPages?.length <= 0
+						? [getDynamicModalValues(), getSavedTemplateFields(), getTags()]
+						: [getSavedTemplateFields(), getTags()];
+
+				const [agents] = await Promise.all([getAgents(), ...otherLoads]);
+
+				let resolvedAgentId = agentSelected;
+				if (
+					resolvedAgentId === 0 &&
+					userRolesRef.current?.AllowWhatsAppToAgent &&
+					!isAccountAdminRef.current
+				) {
+					const matchingAgent = agents?.find(
+						(agent: WhatsappAgent) => !agent.IsDeleted && agent.IsCurrentUser,
+					);
+					if (matchingAgent) {
+						resolvedAgentId = matchingAgent.AgentId;
+						handleAgentSelection(resolvedAgentId);
+					}
 				}
+
+				await getPhoneNumber(resolvedAgentId);
 				setIsAccountSetup(true);
 			} else {
 				setIsAccountSetup(false);
@@ -2058,6 +2079,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	}, [dialogType, classes, getValidationDialog, getExceedDailyLimit, getTierValidationDialog, getNoPermissionDialog, getDynamicModalDialog, addAgentModalDialog, editAgentsModalDialog]);
 
 	const handleAgentSelection = useCallback((value: number) => {
+		agentAutoSelectedRef.current = true;
 		setAgentSelected(value);
 		setCookie(agentCookieKey, value.toString());
 	}, [agentCookieKey]);
@@ -2098,7 +2120,6 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		);
 		if (!matchingAgent) return;
 
-		agentAutoSelectedRef.current = true;
 		handleAgentSelection(matchingAgent.AgentId);
 	}, [isAccountSetup, allAgents, activePhoneNumber, userRoles, isAccountAdmin, agentSelected, handleAgentSelection]);
 
