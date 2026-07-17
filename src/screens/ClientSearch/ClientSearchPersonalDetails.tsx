@@ -30,7 +30,7 @@ export const ClientSearchPersonalDetails = ({ classes, data, onUpdate }: any) =>
   };
 
   return <Grid container spacing={3}>
-    <Grid item xs={4} sm={4} md={4}>
+    <Grid item xs={12} sm={6} md={4}>
       <TextField
         label={t('common.first_name')}
         variant='standard'
@@ -46,7 +46,7 @@ export const ClientSearchPersonalDetails = ({ classes, data, onUpdate }: any) =>
         }}
       />
     </Grid>
-    <Grid item xs={4} sm={4} md={4}>
+    <Grid item xs={12} sm={6} md={4}>
       <TextField
         label={t('common.last_name')}
         variant='standard'
@@ -62,7 +62,7 @@ export const ClientSearchPersonalDetails = ({ classes, data, onUpdate }: any) =>
         }}
       />
     </Grid>
-    <Grid item xs={4} sm={4} md={4}>
+    <Grid item xs={12} sm={6} md={4}>
       <TextField
         label={t('common.email')}
         variant='standard'
@@ -78,7 +78,7 @@ export const ClientSearchPersonalDetails = ({ classes, data, onUpdate }: any) =>
         }}
       />
     </Grid>
-    <Grid item xs={4} sm={4} md={4}>
+    <Grid item xs={12} sm={6} md={4}>
       <TextField
         label={t('common.cellphone')}
         variant='standard'
@@ -95,7 +95,7 @@ export const ClientSearchPersonalDetails = ({ classes, data, onUpdate }: any) =>
         }}
       />
     </Grid>
-    <Grid item xs={4} sm={4} md={4}>
+    <Grid item xs={12} sm={6} md={4}>
       <TextField
         label={t('common.telephone')}
         variant='standard'
@@ -111,7 +111,7 @@ export const ClientSearchPersonalDetails = ({ classes, data, onUpdate }: any) =>
         }}
       />
     </Grid>
-    <Grid item xs={4} sm={4} md={4}>
+    <Grid item xs={12} sm={6} md={4}>
       <TextField
         label={t('common.company')}
         variant='standard'

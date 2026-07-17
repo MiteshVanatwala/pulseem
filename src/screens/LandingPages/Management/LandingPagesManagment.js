@@ -360,7 +360,6 @@ const LandingPagesesManagment = ({ classes }) => {
         key: 'preview',
         uIcon: PreviewIcon,
         lable: t('campaigns.Image1Resource1.ToolTip'),
-        remove: windowSize === 'xs',
         disable: !PageLink,
         rootClass: classes.paddingIcon,
         onClick: () => {
