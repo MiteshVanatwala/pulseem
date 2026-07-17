@@ -150,6 +150,14 @@ const SideBar = ({
 	}, []);
 
 	useEffect(() => {
+		if (selectedAgent && selectedAgent > 0) {
+			setSelectedAgents((prev) =>
+				prev.includes(selectedAgent) ? prev : [...prev, selectedAgent],
+			);
+		}
+	}, [selectedAgent]);
+
+	useEffect(() => {
 		searchTextRef.current = searchText;
 	}, [searchText, searchTextRef]);
 
@@ -346,11 +354,13 @@ const SideBar = ({
 		const newSelectedAgents = selectedAgents.filter((id) => id !== agentId);
 		setSelectedAgents(newSelectedAgents);
 
-		// Update single agent selector if needed
 		if (newSelectedAgents.length === 0) {
 			setAgentSelected(0);
 			setCookie(agentCookieKey, '0');
-		} else if (selectedAgent === agentId) {
+			return;
+		}
+
+		if (selectedAgent === agentId) {
 			// If we removed the currently selected single agent, update to first remaining
 			setAgentSelected(newSelectedAgents[0]);
 			setCookie(agentCookieKey, String(newSelectedAgents[0]));
@@ -407,6 +417,7 @@ const SideBar = ({
 
 	// Clear all filters at once
 	const handleClearAllFilters = () => {
+		setSearchText('');
 		setTimePeriod('');
 		setStartDate('');
 		setEndDate('');
@@ -454,26 +465,26 @@ const SideBar = ({
 		if (dialogSelectedAgents.length > 0) {
 			setAgentSelected(dialogSelectedAgents[0]);
 			setCookie(agentCookieKey, String(dialogSelectedAgents[0]));
+
+			// AND logic: send agents and tags separately
+			fetchMoreContacts(
+				searchText,
+				filterBySelected,
+				true,
+				contactsPaginationSetting?.PageSize || 10,
+				1,
+				false,
+				dialogStartDate,
+				dialogEndDate,
+				dialogSelectedAgents,
+				dialogSelectedTags,
+				dialogStartTime,
+				dialogEndTime,
+			);
 		} else {
 			setAgentSelected(0);
 			setCookie(agentCookieKey, '0');
 		}
-
-		// AND logic: send agents and tags separately
-		fetchMoreContacts(
-			searchText,
-			filterBySelected,
-			true,
-			contactsPaginationSetting?.PageSize || 10,
-			1,
-			false,
-			dialogStartDate,
-			dialogEndDate,
-			dialogSelectedAgents,
-			dialogSelectedTags,
-			dialogStartTime,
-			dialogEndTime,
-		);
 	};
 
 	const handleSetDateRange = (period: string) => {
