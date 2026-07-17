@@ -183,6 +183,7 @@
   "eshopDesc": "Zintegruj E-Shop, aby przechwytywać dane kupujących, synchronizować kontakty i konfigurować automatyczne procesy.",
   "klaviyoDesc": "Połącz Klaviyo, aby importować listy, synchronizować preferencje użytkowników i koordynować działania wielokanałowe.",
   "verifoneDesc": "Połącz swoje konto Verifone, aby automatycznie synchronizować dane klientów i śledzić zdarzenia zakupów detalicznych.",
+  "yotpoDesc": "Połącz Yotpo, aby synchronizować dane programu lojalnościowego — punkty, poziom i aktywność poleceń — dla pasujących odbiorców.",
   "Yotpo": {
     "title": "Yotpo",
     "apiGuid": "API GUID",

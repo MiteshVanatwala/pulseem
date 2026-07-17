@@ -279,6 +279,7 @@ const tabToKeyMap: Record<string, string> = {
   '4': 'ecwid',
   '5': 'eshop',
   '10': 'klaviyo',
+  '11': 'yotpo',
   '14': 'verifone'
 };
 
@@ -291,6 +292,7 @@ const keyToTabMap: Record<string, string> = {
   'ecwid': '4',
   'eshop': '5',
   'klaviyo': '10',
+  'yotpo': '11',
   'verifone': '14'
 };
 
@@ -313,6 +315,7 @@ const Integrations = ({ classes }: any) => {
     istores: false,
     eshop: false,
     klaviyo: false,
+    yotpo: false,
     verifone: false
   });
 
@@ -402,6 +405,16 @@ const Integrations = ({ classes }: any) => {
       guideUrl: URL_HELPER.Integrations.Klaviyo.guide
     },
     {
+      key: 'yotpo',
+      tabValue: '11',
+      pluginCode: LU_Plugin.Yotpo,
+      title: t('integrations.Yotpo.title'),
+      icon: YotpoIcon,
+      desc: t('integrations.yotpoDesc'),
+      category: 'marketing',
+      hasStatus: true
+    },
+    {
       key: 'verifone',
       tabValue: '14',
       pluginCode: LU_Plugin.Verifone,
@@ -450,6 +463,7 @@ const Integrations = ({ classes }: any) => {
           { key: 'istores', code: LU_Plugin.Isracard, check: (data: any) => !!(data?.api_key || data?.StoreID) },
           { key: 'eshop', code: LU_Plugin.EShop, check: (data: any) => !!(data?.ApiKey) },
           { key: 'klaviyo', code: LU_Plugin.Klaviyo, check: (data: any) => !!(data?.ApiKey) },
+          { key: 'yotpo', code: LU_Plugin.Yotpo, check: (data: any) => !!(data?.ApiGuid && data?.ApiKey) },
           { key: 'verifone', code: LU_Plugin.Verifone, check: (data: any) => !!(data?.username || data?.chainID) },
         ];
 
@@ -531,6 +545,8 @@ const Integrations = ({ classes }: any) => {
         return <Wix classes={classes} />;
       case 'klaviyo':
         return <Klaviyo classes={classes} />;
+      case 'yotpo':
+        return <Yotpo classes={classes} />;
       case 'verifone':
         return <VerifoneSetting classes={classes} />;
       default:

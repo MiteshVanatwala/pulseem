@@ -205,6 +205,7 @@
   "eshopDesc": "Integrate E-Shop to capture shopper details, sync contacts, and set up automated workflows.",
   "klaviyoDesc": "Connect Klaviyo to import lists, sync user permissions, and coordinate automated cross-platform flows.",
   "verifoneDesc": "Connect your Verifone account to automatically sync customer data and retail purchase events.",
+  "yotpoDesc": "Connect Yotpo to sync loyalty program data — points, tier, and referral activity — for matching recipients.",
   "Yotpo": {
     "title": "Yotpo",
     "apiGuid": "API GUID",
