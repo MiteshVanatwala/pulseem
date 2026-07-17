@@ -417,6 +417,7 @@ const SideBar = ({
 
 	// Clear all filters at once
 	const handleClearAllFilters = () => {
+		setSearchText('');
 		setTimePeriod('');
 		setStartDate('');
 		setEndDate('');
