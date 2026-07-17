@@ -2580,10 +2580,14 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 				display: 'none',
 				position: 'fixed',
 				zIndex: '9999',
-				top: 0,
+				// Start below the app's global TopMenu bar (56px) instead of at the viewport
+				// top; otherwise this fixed overlay's own header renders behind the opaque
+				// TopMenu (the aside lives inside .app-content's z-index:100 stacking context,
+				// so its z-index:9999 can't beat the TopMenu) and stays invisible.
+				top: 56,
 				left: 0,
 				width: '100%',
-				height: '100vh',
+				height: 'calc(100vh - 56px)',
 				overflow: 'hidden',
 				'&.mobile-side-bar': {
 					display: 'flex',

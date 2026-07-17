@@ -5634,8 +5634,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
       backgroundColor: 'rgba(255, 51, 67, 0.08)'
     }
   },
-  // Sidebar Header styling
-  sidebarHeader: {
+  // Sidebar Header styling (WhatsApp chat contact-list header — named distinctly from
+  // sideMenuStyle.js's own "sidebarHeader" key, which was silently overwriting this one
+  // since both get spread into the same combined classes object in style/classes/index.js)
+  whatsappSidebarHeader: {
     display: 'flex',
     gap: '4px',
     alignItems: 'center',
