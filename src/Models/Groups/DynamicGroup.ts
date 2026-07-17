@@ -147,6 +147,18 @@ export interface CondGroup {
     ExtraField12Cond: CondType;
     ExtraField13: string;
     ExtraField13Cond: CondType;
+    // PR-3418 — Yotpo loyalty conditions (operator = plain token string)
+    LoyaltyPoints?: string;
+    LoyaltyPointsTo?: string;
+    LoyaltyPointsCond?: string;
+    LoyaltyTier?: string;
+    LoyaltyTierCond?: string;
+    LoyaltyPointsEarned?: string;
+    LoyaltyPointsEarnedTo?: string;
+    LoyaltyPointsEarnedCond?: string;
+    LoyaltyExpiry?: string;
+    LoyaltyExpiryCond?: string;
+    LoyaltyOptedInCond?: string;
     ExtraDate1From: Date | string | null;
     ExtraDate1To: Date | string | null;
     ExtraDate2From: Date | string | null;

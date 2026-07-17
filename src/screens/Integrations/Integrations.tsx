@@ -23,6 +23,8 @@ import EShop from "./EShop";
 import Wix from "./Wix";
 import Klaviyo from "./Klaviyo";
 import { useDispatch, useSelector } from "react-redux";
+import Yotpo from "./Yotpo";
+import YotpoIcon from '../../assets/images/yotpo.png';
 import { StateType } from "../../Models/StateTypes";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getIntegration } from "../../redux/reducers/integrationSlice";
@@ -301,6 +303,19 @@ const Integrations = ({ classes }: any) => {
   const { isRTL } = useSelector((state: StateType) => state.core);
   const { companyName } = useSelector((state: StateType) => state.core);
   const [showOptInExplanationPopup, setShowOptInExplanationPopup] = useState<boolean>(false);
+  useEffect(() => {
+    const integrationTitles = {
+      '0': { title: `${t('integrations.shopify.title')}` },
+      '1': { title: `${t('integrations.wooCommerce.title')}` },
+      '2': { title: `${t('integrations.cashCow.title')}` },
+      '3': { title: `${t('integrations.Istores.title')}` },
+      '4': { title: `${t('integrations.ecwid.title')}` },
+      '5': { title: `${t('integrations.eShop.title')}` },
+      '6': { title: `${t('integrations.wix.title')}` },
+      '10': { title: `${t('integrations.Klaviyo.title')}` },
+      '11': { title: `${t('integrations.Yotpo.title')}` },
+      '14': { title: `${t('integrations.verifone.title')}` },
+    } as any;
 
   // States
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
@@ -732,6 +747,136 @@ const Integrations = ({ classes }: any) => {
           </>
         </Button>}
       />}
+      <Box className={'containerBody'}>
+        <Tabs
+          value={tabValue}
+          onChange={(e, value) => setTabValue(value)}
+          className={clsx(classes.mr15, classes.ml15)}
+          classes={{ indicator: classes.hideIndicator }}
+          variant="scrollable"
+          scrollButtons="auto"
+        >
+          <Tab
+            // @ts-ignore
+            label={t('integrations.shopify.title')}
+            icon={<img src={ShopifyIcon} alt="אייקון של Shopify" />}
+            classes={{ root: classes.tabText, selected: classes.activeTab }}
+            className={classes.iconTab}
+            value='0'
+          />
+
+          <Tab
+            // @ts-ignore
+            label={t('integrations.wix.title')}
+            icon={<img src={WixIcon} alt="אייקון של Wix" />}
+            classes={{ root: classes.tabText, selected: classes.activeTab }}
+            className={classes.iconTab}
+            value='6'
+          />
+
+          <Tab
+            // @ts-ignore
+            label={t('integrations.wooCommerce.title')}
+            icon={<img src={WooCommerceIcon} alt="אייקון של WooCommerce" />}
+            classes={{ root: classes.tabText, selected: classes.activeTab }}
+            className={classes.iconTab}
+            value='1'
+          />
+
+          <Tab
+            // @ts-ignore
+            label={t('integrations.cashCow.title')}
+            icon={<img src={CashCowIcon} alt="אייקון של CashCow" />}
+            classes={{ root: classes.tabText, selected: classes.activeTab }}
+            className={classes.iconTab}
+            value='2'
+          />
+
+          <Tab
+            // @ts-ignore
+            label={t('integrations.Istores.title')}
+            icon={<img src={IsraCardIcon} alt="אייקון של Isracard" />}
+            classes={{ root: classes.tabText, selected: classes.activeTab }}
+            className={classes.iconTab}
+            value='3'
+          />
+          <Tab
+            label={t('integrations.ecwid.title')}
+            icon={<img src={EcwidIcon} alt="אייקון של Ecwid" />}
+            classes={{ root: classes.tabText, selected: classes.activeTab }}
+            className={classes.iconTab}
+            value='4'
+          />
+          <Tab
+            label={t('integrations.eShop.title')}
+            icon={<img src={EShopIcon} alt={t('integrations.eShop.title')} />}
+            classes={{ root: classes.tabText, selected: classes.activeTab }}
+            className={classes.iconTab}
+            value='5'
+          />
+          <Tab
+            label={t('integrations.Klaviyo.title')}
+            icon={<img src={KlaviyoIcon} alt={t('integrations.Klaviyo.title')} />}
+            classes={{ root: classes.tabText, selected: classes.activeTab }}
+            className={classes.iconTab}
+            value='10'
+          />
+          <Tab
+            label={t('integrations.Yotpo.title')}
+            icon={<img src={YotpoIcon} alt={t('integrations.Yotpo.title')} />}
+            classes={{ root: classes.tabText, selected: classes.activeTab }}
+            className={classes.iconTab}
+            value='11'
+          />
+          <Tab
+            label={t('integrations.verifone.title')}
+            icon={<img src={VerifoneIcon} alt={t('integrations.verifone.title')} />}
+            classes={{ root: classes.tabText, selected: classes.activeTab }}
+            className={classes.iconTab}
+            value='14'
+          />
+        </Tabs>
+        <TabContext value={`${tabValue}`}>
+          <TabPanel value='0' className={clsx(classes.pt0)}>
+            <Shopify classes={classes} />
+          </TabPanel>
+
+          <TabPanel value='1'>
+            <WooCommerce classes={classes} />
+          </TabPanel>
+
+          <TabPanel value='2'>
+            <CashCow classes={classes} />
+          </TabPanel>
+
+          <TabPanel value='3'>
+            <Istores classes={classes} />
+          </TabPanel>
+
+          <TabPanel value='4'>
+            <Ecwid classes={classes} />
+          </TabPanel>
+
+          <TabPanel value='5' className={clsx(classes.pt0)}>
+            <EShop classes={classes} />
+          </TabPanel>
+
+          <TabPanel value='6'>
+            <Wix classes={classes} />
+          </TabPanel>
+          <TabPanel value='10'>
+            <Klaviyo classes={classes} />
+          </TabPanel>
+
+          <TabPanel value='11'>
+            <Yotpo classes={classes} />
+          </TabPanel>
+
+          <TabPanel value='14' className={clsx(classes.pt0)}>
+            <VerifoneSetting classes={classes} />
+          </TabPanel>
+        </TabContext>
+      </Box>
     </DefaultScreen>
   );
 };

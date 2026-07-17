@@ -416,6 +416,17 @@ const SmsCreator = ({ classes }) => {
     for (let i = 0; i < additionalExtraData.length; i++) {
       defaultAccountExtraData.push({ ...additionalExtraData[i], selected: false })
     }
+    // PR-3418 — Yotpo loyalty personalization tokens (resolve to empty for non-loyalty accounts)
+    const loyaltyTokens = [
+      { loyalty_points: "campaigns.loyalty.points" },
+      { loyalty_tier: "campaigns.loyalty.tier" },
+      { loyalty_points_earned: "campaigns.loyalty.pointsEarned" },
+      { loyalty_tier_multiplier: "campaigns.loyalty.tierMultiplier" },
+      { loyalty_points_expiry: "campaigns.loyalty.pointsExpiry" },
+    ];
+    for (let i = 0; i < loyaltyTokens.length; i++) {
+      defaultAccountExtraData.push({ ...loyaltyTokens[i], selected: false })
+    }
     setextraAccountDATA(defaultAccountExtraData)
 
     await getSavedData();
