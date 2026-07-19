@@ -128,6 +128,12 @@ export const getRoutes = (
           title: t('master.fileDownload'),
           href: `${sitePrefix}groups/Download`,
           isShow: true
+        },
+        {
+          key: 'dataSources',
+          title: t('DataSources.menuTitle'),
+          href: `${sitePrefix}DataSources`,
+          isShow: features && features?.indexOf(PulseemFeatures.DATA_SOURCES) > -1
         }
       ],
     },

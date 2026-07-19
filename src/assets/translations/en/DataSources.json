@@ -1,0 +1,197 @@
+{
+  "menuTitle": "Data Sources",
+  "title": "Data Sources",
+  "uploadButton": "Upload New Source",
+  "searchPlaceholder": "Search by name or description",
+  "clearSearch": "Clear",
+  "backToList": "Back to sources list",
+  "goToSend": "Go to send page",
+  "retry": "Try again",
+  "viewOnlyBadge": "View only",
+  "viewOnlyTooltip": "This source has no identity columns — it cannot be sent to",
+  "activeVersion": "Active",
+  "historicalVersionBanner": "Showing historical version V{{n}}",
+  "backToActiveVersion": "Back to the active version",
+  "lastVersionFailedTooltip": "The latest version failed; the active version is: V{{n}}",
+  "table": {
+    "name": "Name",
+    "description": "Description",
+    "status": "Status",
+    "rows": "Rows",
+    "version": "Version",
+    "actions": "Actions",
+    "uploadedBy": "Uploaded by <b>{{name}}</b> on <b>{{date}}</b>"
+  },
+  "statuses": {
+    "0": "Pending processing",
+    "1": "Processing",
+    "2": "Ready",
+    "3": "Error",
+    "4": "Cancelled",
+    "delayed": "Processing is delayed"
+  },
+  "emptyState": {
+    "title": "No data sources yet",
+    "subtitle": "Upload an Excel or CSV file — every column becomes an available data field",
+    "cta": "Upload your first source",
+    "noResults": "No sources match your search"
+  },
+  "wizard": {
+    "title": "Upload data source",
+    "steps": {
+      "file": "Select file",
+      "identity": "Identity mapping",
+      "details": "Source details"
+    },
+    "dragHere": "Drag an xlsx or csv file here, or click to browse",
+    "uploading": "Uploading the file...",
+    "roleNone": "Data field",
+    "roleEmail": "Email — identity",
+    "roleCellphone": "Mobile — identity",
+    "previewTitle": "Preview — first 5 rows",
+    "identityBanner": "All other columns will be saved as dynamic data fields using the file headers",
+    "noIdentityWarning": "No identity columns were marked — the source will be saved for viewing, search and export only, and cannot be sent to",
+    "createMissingClients": "Create new recipients for identities that do not exist in the system",
+    "searchableLabel": "Searchable",
+    "columnNameLabel": "Column name",
+    "originalHeader": "Original header",
+    "nameLabel": "Source name",
+    "descriptionLabel": "Description",
+    "newVersionNotice": "A source with this name exists — the file will be uploaded as a new version (V{{n}}) and the previous version will be kept",
+    "confirmUpload": "Upload",
+    "next": "Next",
+    "back": "Back",
+    "abandonConfirm": "The upload will be cancelled — leave?",
+    "errors": {
+      "emptyFile": "The file contains no data",
+      "fileTooLarge": "The file exceeds the maximum size ({{max}} MB)",
+      "invalidExtension": "Unsupported file type — you can upload csv, xls, xlsx or tsv",
+      "maxRowsExceeded": "The file contains more than {{max}} rows — above the allowed quota",
+      "nameRequired": "Please enter a source name",
+      "nameTooLong": "Source name is longer than 100 characters"
+    }
+  },
+  "summary": {
+    "title": "Upload summary",
+    "totalRows": "Total rows",
+    "resolvedRows": "Rows with resolved identity",
+    "created": "New recipients created",
+    "noIdentity": "Rows without identity",
+    "duplicates": "Duplicates",
+    "noValue": "No value",
+    "truncated": "Truncated cells",
+    "emailSection": "Email channel",
+    "cellSection": "Mobile channel",
+    "matched": "Matched to existing recipients",
+    "notFound": "Not found",
+    "failTitle": "The upload failed",
+    "uploadAgain": "Upload again"
+  },
+  "view": {
+    "freeTextPlaceholder": "Search by email, mobile or any cell",
+    "addFilter": "Add filter",
+    "operator": {
+      "1": "Equals",
+      "2": "Starts with",
+      "3": "Contains"
+    },
+    "containsSlowHint": "A \"contains\" search may be slow on large sources",
+    "notSearchableTooltip": "Enable search for this column in the column editor",
+    "noRows": "No rows match the filter",
+    "clearFilters": "Clear filters",
+    "processing": "Processing is in progress — the data will be shown when it completes",
+    "match": {
+      "email": {
+        "1": "Matched to an existing recipient",
+        "2": "Recipient created",
+        "3": "Not found"
+      },
+      "cell": {
+        "1": "Matched to an existing recipient",
+        "2": "Recipient created",
+        "3": "Not found"
+      }
+    },
+    "duplicateTooltip": "An earlier row in the file won this identity",
+    "resolveEmail": "Email match",
+    "resolveCell": "Mobile match"
+  },
+  "column": {
+    "editTitle": "Edit column",
+    "displayName": "Display name",
+    "dataType": "Data type",
+    "formatHint": "Format",
+    "isSearchable": "Searchable",
+    "dataTypes": {
+      "1": "Text",
+      "2": "Number",
+      "3": "Date",
+      "4": "Email",
+      "5": "Phone"
+    },
+    "formatHints": {
+      "0": "None",
+      "1": "Currency",
+      "2": "Percent"
+    },
+    "identityLocked": "Identity cannot be changed after processing — to change identity upload a new version",
+    "buildingSearchIndex": "Building search index — this may take a few minutes",
+    "searchableRemaining": "{{n}} searchable columns remaining in this version",
+    "searchableQuotaReached": "The searchable-columns quota ({{max}}) is used up — turn off search on another column to mark this one"
+  },
+  "versions": {
+    "title": "Version history",
+    "viewVersion": "View this version",
+    "exportVersion": "Export this version",
+    "summary": "Summary"
+  },
+  "export": {
+    "title": "Export source",
+    "format": "Format",
+    "notifyEmail": "Notification email (optional)",
+    "csvOnly": "Above 100,000 rows you can export to CSV only",
+    "runningInBackground": "The export is running in the background — the file will appear on the downloads page and a notification will be sent by email",
+    "ready": "The file is ready on the downloads page",
+    "goToDownloads": "Go to the downloads page"
+  },
+  "delete": {
+    "title": "Delete source",
+    "body": "The source will be removed from the list; historical campaigns and links will keep working. You can upload a new source with the same name.",
+    "blockedTitle": "Cannot delete",
+    "blockedBody": "The source is locked by active campaigns:"
+  },
+  "edit": {
+    "title": "Edit source"
+  },
+  "errors": {
+    "nameExists": "An active source with this name already exists",
+    "uploadInProgress": "A previous upload for this source is still in progress — wait for it to finish",
+    "quotaExceeded": "You have exceeded your quota",
+    "featureNotAvailable": "This feature is not available on this account",
+    "invalidChars": "The text contains forbidden characters",
+    "duplicateIdentity": "You can mark only one email column and one mobile column",
+    "columnNotSearchable": "You cannot filter by this column — enable search on it first",
+    "tooManySearchableColumns": "You can mark up to {{max}} searchable columns per version — turn off search on another column first",
+    "columnLockedByCampaign": "Search cannot be turned off for this column — it is used by an active campaign",
+    "editBlockedDuringSend": "A column cannot be edited while a send is in progress",
+    "sourceDeleted": "The source was deleted",
+    "generalError": "An error occurred — try again"
+  },
+  "toasts": {
+    "created": "The source was created — processing has started",
+    "ready": "The source is ready to use",
+    "failed": "Source processing failed",
+    "updated": "The source was updated",
+    "deleted": "The source was deleted",
+    "columnUpdated": "The column was updated",
+    "exportStarted": "The export has started"
+  },
+  "actions": {
+    "view": "View content",
+    "export": "Export",
+    "edit": "Edit",
+    "versions": "Version history",
+    "delete": "Delete",
+    "summary": "Upload summary"
+  }
+}

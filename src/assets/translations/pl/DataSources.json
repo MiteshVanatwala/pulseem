@@ -1,0 +1,197 @@
+{
+  "menuTitle": "Źródła danych",
+  "title": "Źródła danych",
+  "uploadButton": "Prześlij nowe źródło",
+  "searchPlaceholder": "Szukaj według nazwy lub opisu",
+  "clearSearch": "Wyczyść",
+  "backToList": "Powrót do listy źródeł",
+  "goToSend": "Przejdź do strony wysyłki",
+  "retry": "Spróbuj ponownie",
+  "viewOnlyBadge": "Tylko do podglądu",
+  "viewOnlyTooltip": "To źródło nie ma kolumn tożsamości — nie można do niego wysyłać",
+  "activeVersion": "Aktywna",
+  "historicalVersionBanner": "Wyświetlana wersja historyczna V{{n}}",
+  "backToActiveVersion": "Powrót do wersji aktywnej",
+  "lastVersionFailedTooltip": "Ostatnia wersja nie powiodła się; wersja aktywna: V{{n}}",
+  "table": {
+    "name": "Nazwa",
+    "description": "Opis",
+    "status": "Status",
+    "rows": "Wiersze",
+    "version": "Wersja",
+    "actions": "Akcje",
+    "uploadedBy": "Przesłane przez <b>{{name}}</b> dnia <b>{{date}}</b>"
+  },
+  "statuses": {
+    "0": "Oczekuje na przetwarzanie",
+    "1": "Przetwarzanie",
+    "2": "Gotowe",
+    "3": "Błąd",
+    "4": "Anulowane",
+    "delayed": "Przetwarzanie opóźnione"
+  },
+  "emptyState": {
+    "title": "Brak źródeł danych",
+    "subtitle": "Prześlij plik Excel lub CSV — każda kolumna stanie się dostępnym polem danych",
+    "cta": "Prześlij pierwsze źródło",
+    "noResults": "Brak źródeł pasujących do wyszukiwania"
+  },
+  "wizard": {
+    "title": "Przesyłanie źródła danych",
+    "steps": {
+      "file": "Wybór pliku",
+      "identity": "Mapowanie tożsamości",
+      "details": "Szczegóły źródła"
+    },
+    "dragHere": "Przeciągnij tutaj plik xlsx lub csv albo kliknij, aby wybrać",
+    "uploading": "Przesyłanie pliku...",
+    "roleNone": "Pole danych",
+    "roleEmail": "E-mail — tożsamość",
+    "roleCellphone": "Telefon komórkowy — tożsamość",
+    "previewTitle": "Podgląd — pierwsze 5 wierszy",
+    "identityBanner": "Wszystkie pozostałe kolumny zostaną zapisane jako dynamiczne pola danych z nagłówkami z pliku",
+    "noIdentityWarning": "Nie zaznaczono kolumn tożsamości — źródło zostanie zapisane tylko do podglądu, wyszukiwania i eksportu, bez możliwości wysyłki",
+    "createMissingClients": "Utwórz nowych odbiorców dla tożsamości nieistniejących w systemie",
+    "searchableLabel": "Z możliwością wyszukiwania",
+    "columnNameLabel": "Nazwa kolumny",
+    "originalHeader": "Oryginalny nagłówek",
+    "nameLabel": "Nazwa źródła",
+    "descriptionLabel": "Opis",
+    "newVersionNotice": "Źródło o tej nazwie już istnieje — plik zostanie przesłany jako nowa wersja (V{{n}}), a poprzednia wersja zostanie zachowana",
+    "confirmUpload": "Prześlij",
+    "next": "Dalej",
+    "back": "Wstecz",
+    "abandonConfirm": "Przesyłanie zostanie anulowane — wyjść?",
+    "errors": {
+      "emptyFile": "Plik nie zawiera danych",
+      "fileTooLarge": "Plik przekracza maksymalny rozmiar ({{max}} MB)",
+      "invalidExtension": "Nieobsługiwany typ pliku — można przesłać csv, xls, xlsx lub tsv",
+      "maxRowsExceeded": "Plik zawiera więcej niż {{max}} wierszy — powyżej dozwolonego limitu",
+      "nameRequired": "Wprowadź nazwę źródła",
+      "nameTooLong": "Nazwa źródła przekracza 100 znaków"
+    }
+  },
+  "summary": {
+    "title": "Podsumowanie przesyłania",
+    "totalRows": "Łączna liczba wierszy",
+    "resolvedRows": "Wiersze z rozpoznaną tożsamością",
+    "created": "Utworzeni nowi odbiorcy",
+    "noIdentity": "Wiersze bez tożsamości",
+    "duplicates": "Duplikaty",
+    "noValue": "Brak wartości",
+    "truncated": "Skrócone komórki",
+    "emailSection": "Kanał e-mail",
+    "cellSection": "Kanał telefoniczny",
+    "matched": "Dopasowane do istniejących odbiorców",
+    "notFound": "Nie znaleziono",
+    "failTitle": "Przesyłanie nie powiodło się",
+    "uploadAgain": "Prześlij ponownie"
+  },
+  "view": {
+    "freeTextPlaceholder": "Szukaj po e-mailu, telefonie lub dowolnej komórce",
+    "addFilter": "Dodaj filtr",
+    "operator": {
+      "1": "Równa się",
+      "2": "Zaczyna się od",
+      "3": "Zawiera"
+    },
+    "containsSlowHint": "Wyszukiwanie „zawiera” może być wolne w dużych źródłach",
+    "notSearchableTooltip": "Włącz wyszukiwanie dla tej kolumny w edytorze kolumny",
+    "noRows": "Brak wierszy pasujących do filtra",
+    "clearFilters": "Wyczyść filtry",
+    "processing": "Trwa przetwarzanie — dane zostaną wyświetlone po jego zakończeniu",
+    "match": {
+      "email": {
+        "1": "Dopasowano do istniejącego odbiorcy",
+        "2": "Utworzono odbiorcę",
+        "3": "Nie znaleziono"
+      },
+      "cell": {
+        "1": "Dopasowano do istniejącego odbiorcy",
+        "2": "Utworzono odbiorcę",
+        "3": "Nie znaleziono"
+      }
+    },
+    "duplicateTooltip": "Wcześniejszy wiersz w pliku otrzymał tę tożsamość",
+    "resolveEmail": "Dopasowanie e-mail",
+    "resolveCell": "Dopasowanie telefonu"
+  },
+  "column": {
+    "editTitle": "Edytuj kolumnę",
+    "displayName": "Nazwa wyświetlana",
+    "dataType": "Typ danych",
+    "formatHint": "Format",
+    "isSearchable": "Z możliwością wyszukiwania",
+    "dataTypes": {
+      "1": "Tekst",
+      "2": "Liczba",
+      "3": "Data",
+      "4": "E-mail",
+      "5": "Telefon"
+    },
+    "formatHints": {
+      "0": "Brak",
+      "1": "Waluta",
+      "2": "Procent"
+    },
+    "identityLocked": "Tożsamości nie można zmienić po przetworzeniu — aby ją zmienić, prześlij nową wersję",
+    "buildingSearchIndex": "Tworzenie indeksu wyszukiwania — ta operacja może potrwać kilka minut",
+    "searchableRemaining": "Pozostało {{n}} kolumn wyszukiwania w tej wersji",
+    "searchableQuotaReached": "Wykorzystano limit kolumn wyszukiwania ({{max}}) — wyłącz wyszukiwanie w innej kolumnie, aby zaznaczyć tę"
+  },
+  "versions": {
+    "title": "Historia wersji",
+    "viewVersion": "Wyświetl tę wersję",
+    "exportVersion": "Eksportuj tę wersję",
+    "summary": "Podsumowanie"
+  },
+  "export": {
+    "title": "Eksport źródła",
+    "format": "Format",
+    "notifyEmail": "E-mail powiadomienia (opcjonalnie)",
+    "csvOnly": "Powyżej 100 000 wierszy można eksportować tylko do CSV",
+    "runningInBackground": "Eksport działa w tle — plik pojawi się na stronie pobierania, a powiadomienie zostanie wysłane e-mailem",
+    "ready": "Plik jest gotowy na stronie pobierania",
+    "goToDownloads": "Przejdź do strony pobierania"
+  },
+  "delete": {
+    "title": "Usuń źródło",
+    "body": "Źródło zostanie usunięte z listy; historyczne kampanie i linki będą nadal działać. Można przesłać nowe źródło o tej samej nazwie.",
+    "blockedTitle": "Nie można usunąć",
+    "blockedBody": "Źródło jest zablokowane przez aktywne kampanie:"
+  },
+  "edit": {
+    "title": "Edytuj źródło"
+  },
+  "errors": {
+    "nameExists": "Aktywne źródło o tej nazwie już istnieje",
+    "uploadInProgress": "Poprzednie przesyłanie tego źródła nadal trwa — poczekaj na jego zakończenie",
+    "quotaExceeded": "Przekroczono limit",
+    "featureNotAvailable": "Ta funkcja nie jest dostępna na tym koncie",
+    "invalidChars": "Tekst zawiera niedozwolone znaki",
+    "duplicateIdentity": "Można zaznaczyć tylko jedną kolumnę e-mail i jedną kolumnę telefonu",
+    "columnNotSearchable": "Nie można filtrować według tej kolumny — najpierw włącz dla niej wyszukiwanie",
+    "tooManySearchableColumns": "Można zaznaczyć maksymalnie {{max}} kolumn wyszukiwania w wersji — najpierw wyłącz wyszukiwanie w innej kolumnie",
+    "columnLockedByCampaign": "Nie można wyłączyć wyszukiwania dla tej kolumny — jest używana przez aktywną kampanię",
+    "editBlockedDuringSend": "Nie można edytować kolumny podczas trwającej wysyłki",
+    "sourceDeleted": "Źródło zostało usunięte",
+    "generalError": "Wystąpił błąd — spróbuj ponownie"
+  },
+  "toasts": {
+    "created": "Źródło zostało utworzone — rozpoczęto przetwarzanie",
+    "ready": "Źródło jest gotowe do użycia",
+    "failed": "Przetwarzanie źródła nie powiodło się",
+    "updated": "Źródło zostało zaktualizowane",
+    "deleted": "Źródło zostało usunięte",
+    "columnUpdated": "Kolumna została zaktualizowana",
+    "exportStarted": "Rozpoczęto eksport"
+  },
+  "actions": {
+    "view": "Wyświetl zawartość",
+    "export": "Eksport",
+    "edit": "Edytuj",
+    "versions": "Historia wersji",
+    "delete": "Usuń",
+    "summary": "Podsumowanie przesyłania"
+  }
+}

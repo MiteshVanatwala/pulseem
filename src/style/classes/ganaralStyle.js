@@ -215,6 +215,22 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
       minWidth: '0 !important',
     }
   },
+  // OUTER MUI paper override for the tier-graph dialog ONLY. The doubled '&&' beats
+  // dialogContainer's `& .MuiDialog-paperWidthSm { maxWidth: 1080px !important }` (0,2,0) with (0,3,0),
+  // lifting the 1080 cap so the outer paper is exactly min(1120px,94vw) — the single width source of
+  // truth. Passed as customContainerStyle (BaseDialog ignores PaperProps/fullWidth). Same trick as
+  // newNavigationDialogContainer above.
+  tierGraphDialogContainer: {
+    '&& .MuiDialog-paperWidthSm': {
+      minWidth: '0 !important',
+      width: '94vw !important',
+      maxWidth: '1120px !important',
+      margin: '16px !important',
+    },
+    '&& .MuiDialog-paperScrollPaper': {
+      maxHeight: 'calc(100% - 32px)', // leave room for the 16px top/bottom margin
+    },
+  },
   newNavigationDialogPaper: {
     width: 462,
     maxWidth: '96vw !important',
@@ -6133,6 +6149,38 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
     fontSize: 20,
     color: '#374151',
     marginTop: 3,
+  },
+  // INNER paper (BaseDialog's <Paper>, via paperStyle): FILLS the outer paper exactly so it can
+  // never overflow it in either direction — the actual width lives on the OUTER paper
+  // (tierGraphDialogContainer). inner margin-box == outer content box => overflowX:hidden has
+  // nothing to clip, in RTL or LTR, at any viewport.
+  tierGraphDialogPaperProps: {
+    borderRadius: 15,
+    padding: '0px',
+    width: '100%',
+    maxWidth: '100% !important',
+    minWidth: '0 !important',
+    maxHeight: '92vh',
+    margin: '0 !important',        // gutter comes solely from the outer paper (no double margin)
+    boxSizing: 'border-box',
+    overflow: 'hidden',
+  },
+  // reclaim dialogContent's residual 1rem side margin + minWidth so the graph is full-bleed
+  tierGraphDialogContent: {
+    border: 'none !important',
+    margin: '0 !important',
+    padding: '0 !important',
+    minWidth: '0 !important',
+    width: '100%',
+    boxSizing: 'border-box',
+  },
+  // reclaim dialogChildren's marginBlock / summaryPadding (overflowY stays auto for tall dialogs)
+  tierGraphDialogChildren: {
+    margin: '0 !important',
+    marginBlock: '0 !important',
+    padding: '0 !important',
+    minWidth: '0 !important',
+    overflowX: 'hidden',
   },
   displayConditionDialogPaperProps: {
     borderRadius: 8,

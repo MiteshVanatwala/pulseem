@@ -1,0 +1,197 @@
+{
+  "menuTitle": "מקורות נתונים",
+  "title": "מקורות נתונים",
+  "uploadButton": "העלאת מקור חדש",
+  "searchPlaceholder": "חיפוש לפי שם או תיאור",
+  "clearSearch": "נקה",
+  "backToList": "חזרה לרשימת המקורות",
+  "goToSend": "מעבר לדף השליחה",
+  "retry": "נסה שוב",
+  "viewOnlyBadge": "לצפייה בלבד",
+  "viewOnlyTooltip": "למקור אין עמודות זהות — לא ניתן לשלוח אליו",
+  "activeVersion": "פעילה",
+  "historicalVersionBanner": "מוצגת גרסה היסטורית V{{n}}",
+  "backToActiveVersion": "חזרה לגרסה הפעילה",
+  "lastVersionFailedTooltip": "הגרסה האחרונה נכשלה; הגרסה הפעילה: V{{n}}",
+  "table": {
+    "name": "שם",
+    "description": "תיאור",
+    "status": "סטטוס",
+    "rows": "שורות",
+    "version": "גרסה",
+    "actions": "פעולות",
+    "uploadedBy": "הועלה ע\"י <b>{{name}}</b> בתאריך <b>{{date}}</b>"
+  },
+  "statuses": {
+    "0": "ממתין לעיבוד",
+    "1": "בעיבוד",
+    "2": "מוכן",
+    "3": "שגיאה",
+    "4": "בוטל",
+    "delayed": "העיבוד מתעכב"
+  },
+  "emptyState": {
+    "title": "עדיין אין מקורות נתונים",
+    "subtitle": "העלו קובץ אקסל או CSV — כל עמודה תהפוך לשדה מידע זמין",
+    "cta": "העלאת מקור ראשון",
+    "noResults": "לא נמצאו מקורות התואמים את החיפוש"
+  },
+  "wizard": {
+    "title": "העלאת מקור נתונים",
+    "steps": {
+      "file": "בחירת קובץ",
+      "identity": "מיפוי זהות",
+      "details": "פרטי מקור"
+    },
+    "dragHere": "גררו לכאן קובץ xlsx או csv, או לחצו לבחירה",
+    "uploading": "מעלה את הקובץ...",
+    "roleNone": "שדה מידע",
+    "roleEmail": "אימייל — זהות",
+    "roleCellphone": "סלולרי — זהות",
+    "previewTitle": "תצוגה מקדימה — 5 שורות ראשונות",
+    "identityBanner": "כל שאר העמודות יישמרו כשדות מידע דינמיים עם הכותרות מהקובץ",
+    "noIdentityWarning": "לא סומנו עמודות זהות — המקור יישמר לצפייה, חיפוש וייצוא בלבד ולא ניתן יהיה לשלוח אליו",
+    "createMissingClients": "צור נמענים חדשים עבור זהויות שאינן קיימות במערכת",
+    "searchableLabel": "ניתנת לחיפוש",
+    "columnNameLabel": "שם עמודה",
+    "originalHeader": "כותרת מקורית",
+    "nameLabel": "שם המקור",
+    "descriptionLabel": "תיאור",
+    "newVersionNotice": "קיים מקור בשם זה — הקובץ יועלה כגרסה חדשה (V{{n}}) והגרסה הקודמת תישמר",
+    "confirmUpload": "העלה",
+    "next": "הבא",
+    "back": "חזרה",
+    "abandonConfirm": "ההעלאה תבוטל — לצאת?",
+    "errors": {
+      "emptyFile": "הקובץ אינו מכיל נתונים",
+      "fileTooLarge": "הקובץ חורג מהגודל המרבי ({{max}} MB)",
+      "invalidExtension": "סוג קובץ לא נתמך — ניתן להעלות csv, xls, xlsx או tsv",
+      "maxRowsExceeded": "הקובץ מכיל יותר מ-{{max}} שורות — מעל המכסה המותרת",
+      "nameRequired": "יש להזין שם למקור",
+      "nameTooLong": "שם המקור ארוך מ-100 תווים"
+    }
+  },
+  "summary": {
+    "title": "סיכום העלאה",
+    "totalRows": "סה\"כ שורות",
+    "resolvedRows": "שורות עם זהות שנפתרה",
+    "created": "נמענים חדשים שנוצרו",
+    "noIdentity": "שורות ללא זהות",
+    "duplicates": "כפולים",
+    "noValue": "ללא ערך",
+    "truncated": "תאים שקוצצו",
+    "emailSection": "ערוץ אימייל",
+    "cellSection": "ערוץ סלולרי",
+    "matched": "הותאמו לנמענים קיימים",
+    "notFound": "לא נמצאו",
+    "failTitle": "ההעלאה נכשלה",
+    "uploadAgain": "העלה שוב"
+  },
+  "view": {
+    "freeTextPlaceholder": "חיפוש באימייל, בסלולרי או בכל תא",
+    "addFilter": "הוסף סינון",
+    "operator": {
+      "1": "שווה ל־",
+      "2": "מתחיל ב־",
+      "3": "מכיל"
+    },
+    "containsSlowHint": "חיפוש \"מכיל\" עשוי להיות איטי במקורות גדולים",
+    "notSearchableTooltip": "הפעל חיפוש לעמודה זו בעריכת העמודה",
+    "noRows": "אין שורות התואמות את הסינון",
+    "clearFilters": "נקה סינונים",
+    "processing": "העיבוד בעיצומו — הנתונים יוצגו בסיומו",
+    "match": {
+      "email": {
+        "1": "הותאם לנמען קיים",
+        "2": "נמען נוצר",
+        "3": "לא נמצא"
+      },
+      "cell": {
+        "1": "הותאם לנמען קיים",
+        "2": "נמען נוצר",
+        "3": "לא נמצא"
+      }
+    },
+    "duplicateTooltip": "שורה מוקדמת יותר בקובץ זכתה בזהות זו",
+    "resolveEmail": "התאמת אימייל",
+    "resolveCell": "התאמת סלולרי"
+  },
+  "column": {
+    "editTitle": "עריכת עמודה",
+    "displayName": "שם תצוגה",
+    "dataType": "סוג נתונים",
+    "formatHint": "עיצוב",
+    "isSearchable": "ניתנת לחיפוש",
+    "dataTypes": {
+      "1": "טקסט",
+      "2": "מספר",
+      "3": "תאריך",
+      "4": "אימייל",
+      "5": "טלפון"
+    },
+    "formatHints": {
+      "0": "ללא",
+      "1": "מטבע",
+      "2": "אחוז"
+    },
+    "identityLocked": "זהות אינה ניתנת לשינוי לאחר עיבוד — להחלפת זהות העלה גרסה חדשה",
+    "buildingSearchIndex": "בונה אינדקס חיפוש — פעולה זו עשויה להימשך מספר דקות",
+    "searchableRemaining": "נותרו {{n}} עמודות חיפוש בגרסה זו",
+    "searchableQuotaReached": "נוצלה מכסת עמודות החיפוש ({{max}}) — בטל חיפוש מעמודה אחרת כדי לסמן זו"
+  },
+  "versions": {
+    "title": "היסטוריית גרסאות",
+    "viewVersion": "צפה בגרסה זו",
+    "exportVersion": "ייצוא גרסה זו",
+    "summary": "סיכום"
+  },
+  "export": {
+    "title": "ייצוא מקור",
+    "format": "פורמט",
+    "notifyEmail": "מייל להתראה (אופציונלי)",
+    "csvOnly": "מעל 100,000 שורות ניתן לייצא ל-CSV בלבד",
+    "runningInBackground": "הייצוא רץ ברקע — הקובץ יופיע בדף ההורדות ותישלח התראה למייל",
+    "ready": "הקובץ מוכן בדף ההורדות",
+    "goToDownloads": "מעבר לדף ההורדות"
+  },
+  "delete": {
+    "title": "מחיקת מקור",
+    "body": "המקור יוסר מהרשימה; קמפיינים היסטוריים ולינקים ימשיכו לעבוד. ניתן להעלות מקור חדש באותו שם.",
+    "blockedTitle": "לא ניתן למחוק",
+    "blockedBody": "המקור נעול על ידי קמפיינים פעילים:"
+  },
+  "edit": {
+    "title": "עריכת מקור"
+  },
+  "errors": {
+    "nameExists": "קיים כבר מקור פעיל בשם זה",
+    "uploadInProgress": "העלאה קודמת לאותו מקור עדיין בעיצומה — המתן לסיומה",
+    "quotaExceeded": "חרגת מהמכסה",
+    "featureNotAvailable": "הפיצ'ר אינו זמין בחשבון זה",
+    "invalidChars": "הטקסט מכיל תווים אסורים",
+    "duplicateIdentity": "ניתן לסמן עמודת אימייל אחת ועמודת סלולרי אחת בלבד",
+    "columnNotSearchable": "לא ניתן לסנן לפי עמודה זו — הפעל עליה חיפוש תחילה",
+    "tooManySearchableColumns": "ניתן לסמן עד {{max}} עמודות לחיפוש בגרסה — בטל חיפוש מעמודה אחרת תחילה",
+    "columnLockedByCampaign": "לא ניתן לבטל חיפוש לעמודה זו — היא משמשת קמפיין פעיל",
+    "editBlockedDuringSend": "לא ניתן לערוך עמודה בזמן שליחה פעילה",
+    "sourceDeleted": "המקור נמחק",
+    "generalError": "אירעה שגיאה — נסה שוב"
+  },
+  "toasts": {
+    "created": "המקור נוצר — העיבוד החל",
+    "ready": "המקור מוכן לשימוש",
+    "failed": "עיבוד המקור נכשל",
+    "updated": "המקור עודכן",
+    "deleted": "המקור נמחק",
+    "columnUpdated": "העמודה עודכנה",
+    "exportStarted": "הייצוא החל"
+  },
+  "actions": {
+    "view": "צפייה בתוכן",
+    "export": "ייצוא",
+    "edit": "עריכה",
+    "versions": "היסטוריית גרסאות",
+    "delete": "מחיקה",
+    "summary": "סיכום העלאה"
+  }
+}
