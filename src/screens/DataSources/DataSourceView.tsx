@@ -69,14 +69,14 @@ const DataSourceView = ({ classes }: ClassesType) => {
     // ── third gating layer ──
     useEffect(() => {
         if (accountFeatures?.length && accountFeatures.indexOf(PulseemFeatures.DATA_SOURCES) === -1)
-            Redirect({ url: sitePrefix });
+            Redirect({ url: sitePrefix ?? '', openNewTab: false });
     }, [accountFeatures]);
 
     // ── load source (race-guarded) on id change ──
     useEffect(() => {
         // A non-numeric :id → numId=NaN, and NaN!==NaN would make the race guard bail on every response
         // (page hangs on the loader). Reject up front.
-        if (!Number.isFinite(numId)) { Redirect({ url: `${sitePrefix}DataSources` }); return; }
+        if (!Number.isFinite(numId)) { Redirect({ url: `${sitePrefix}DataSources`, openNewTab: false }); return; }
         requestedIdRef.current = numId;
         setViewVersionId(null); setFilters([]); setFreeText(''); setPage(1);
         dispatch(clearCurrent()); dispatch(clearRows());
@@ -92,7 +92,7 @@ const DataSourceView = ({ classes }: ClassesType) => {
         const payload = res?.payload;
         if (payload?.StatusCode === 404) {
             setToastMessage({ ...ToastMessages.GENERAL_ERROR, message: 'DataSources.errors.sourceDeleted' } as ERROR_TYPE);
-            Redirect({ url: `${sitePrefix}DataSources` });
+            Redirect({ url: `${sitePrefix}DataSources`, openNewTab: false });
             return;
         }
         // true 500 / network error → thunk rejects (no StatusCode in payload)
@@ -114,11 +114,11 @@ const DataSourceView = ({ classes }: ClassesType) => {
             setToastMessage({ ...ToastMessages.GENERAL_ERROR, message: 'DataSources.errors.columnNotSearchable' } as ERROR_TYPE);
         } else if (p?.StatusCode === 404) {
             setToastMessage({ ...ToastMessages.GENERAL_ERROR, message: 'DataSources.errors.sourceDeleted' } as ERROR_TYPE);
-            Redirect({ url: `${sitePrefix}DataSources` });
+            Redirect({ url: `${sitePrefix}DataSources`, openNewTab: false });
         } else if (p?.StatusCode === 405) {
             // HideRecipietns sub-user reached the row viewer by direct navigation — no PII access.
             setToastMessage({ ...ToastMessages.GENERAL_ERROR, message: 'DataSources.errors.featureNotAvailable' } as ERROR_TYPE);
-            Redirect({ url: `${sitePrefix}DataSources` });
+            Redirect({ url: `${sitePrefix}DataSources`, openNewTab: false });
         } else if (p?.StatusCode === 403) {
             setToastMessage({ ...ToastMessages.GENERAL_ERROR, message: 'DataSources.errors.invalidChars' } as ERROR_TYPE);
         } else if (p?.StatusCode && p.StatusCode >= 400) {
@@ -172,7 +172,7 @@ const DataSourceView = ({ classes }: ClassesType) => {
     const renderHeader = () => (
         <Box style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
             <Box style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <Button startIcon={<ArrowBack />} onClick={() => Redirect({ url: `${sitePrefix}DataSources` })}>
+                <Button startIcon={<ArrowBack />} onClick={() => Redirect({ url: `${sitePrefix}DataSources`, openNewTab: false })}>
                     {t('DataSources.backToList')}
                 </Button>
                 <Typography style={{ fontSize: 20, fontWeight: 700 }}>{details?.Name}</Typography>
@@ -196,7 +196,7 @@ const DataSourceView = ({ classes }: ClassesType) => {
                     <Tooltip title={t('DataSources.actions.summary')}><IconButton aria-label={t('DataSources.actions.summary')} onClick={() => openSummary()}><Assessment /></IconButton></Tooltip>
                 )}
                 {!isViewOnly && details?.Status === eDataSourceStatus.READY && (
-                    <Tooltip title={t('DataSources.goToSend')}><IconButton aria-label={t('DataSources.goToSend')} onClick={() => Redirect({ url: `${sitePrefix}Campaigns` })}><Send /></IconButton></Tooltip>
+                    <Tooltip title={t('DataSources.goToSend')}><IconButton aria-label={t('DataSources.goToSend')} onClick={() => Redirect({ url: `${sitePrefix}Campaigns`, openNewTab: false })}><Send /></IconButton></Tooltip>
                 )}
             </Box>
         </Box>
@@ -215,7 +215,7 @@ const DataSourceView = ({ classes }: ClassesType) => {
         if (details.Status === eDataSourceStatus.FAIL) {
             return (
                 <Alert severity="error" style={{ marginTop: 16 }}
-                    action={<Button color="inherit" size="small" onClick={() => Redirect({ url: `${sitePrefix}DataSources` })}>{t('DataSources.summary.uploadAgain')}</Button>}>
+                    action={<Button color="inherit" size="small" onClick={() => Redirect({ url: `${sitePrefix}DataSources`, openNewTab: false })}>{t('DataSources.summary.uploadAgain')}</Button>}>
                     <Typography style={{ fontWeight: 700 }}>{t('DataSources.summary.failTitle')}</Typography>
                     {details.ErrorData && <Typography style={{ fontSize: 13 }}>{details.ErrorData}</Typography>}
                 </Alert>
