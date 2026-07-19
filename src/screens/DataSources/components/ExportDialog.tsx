@@ -88,7 +88,7 @@ const ExportDialog = ({ classes, open, dataSource, versionId, totalRows, onClose
                     {readyMessage && (
                         <Box>
                             <Typography style={{ color: '#067647' }}>{readyMessage}</Typography>
-                            <Link component="button" onClick={() => Redirect({ url: `${sitePrefix}Groups/Download` })}>
+                            <Link component="button" onClick={() => Redirect({ url: `${sitePrefix}Groups/Download`, openNewTab: false })}>
                                 {t('DataSources.export.goToDownloads')}
                             </Link>
                         </Box>
