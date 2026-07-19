@@ -259,10 +259,10 @@ const DataSourceView = ({ classes }: ClassesType) => {
                     component="div"
                     count={rows?.total ?? 0}
                     page={Math.max(0, page - 1)}
-                    onChangePage={changePage}
+                    onPageChange={changePage}
                     rowsPerPage={ROWS_PAGE_SIZE}
                     rowsPerPageOptions={[ROWS_PAGE_SIZE]}
-                    onChangeRowsPerPage={() => { /* fixed page size for the content grid */ }}
+                    onRowsPerPageChange={() => { /* fixed page size for the content grid */ }}
                 />
             </>
         );
