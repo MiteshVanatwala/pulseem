@@ -85,7 +85,7 @@ const DataSources = ({ classes }: ClassesType) => {
     // ── third gating layer (redirect out only once features have actually loaded) ──
     useEffect(() => {
         if (accountFeatures?.length && accountFeatures.indexOf(PulseemFeatures.DATA_SOURCES) === -1)
-            Redirect({ url: sitePrefix });
+            Redirect({ url: sitePrefix ?? '', openNewTab: false });
     }, [accountFeatures]);
 
     // ── load on searchData change + persist page state ──
@@ -154,8 +154,8 @@ const DataSources = ({ classes }: ClassesType) => {
     const changePage = (_: any, page: number) => setSearchData(s => ({ ...s, PageIndex: page + 1 }));
     const changeRows = (e: any) => setSearchData(s => ({ ...s, PageSize: parseInt(e.target.value, 10), PageIndex: 1 }));
 
-    const goToView = (id: number) => Redirect({ url: `${sitePrefix}DataSources/View/${id}` });
-    const goToSend = (id: number) => Redirect({ url: `${sitePrefix}Campaigns` }); // stub navigation only
+    const goToView = (id: number) => Redirect({ url: `${sitePrefix}DataSources/View/${id}`, openNewTab: false });
+    const goToSend = (id: number) => Redirect({ url: `${sitePrefix}Campaigns`, openNewTab: false }); // stub navigation only
 
     const openSummary = async (id: number) => {
         const res: any = await dispatch(getDataSource(id));
