@@ -362,9 +362,9 @@ const DataSources = ({ classes }: ClassesType) => {
                     component="div"
                     count={total}
                     page={Math.max(0, searchData.PageIndex - 1)}
-                    onChangePage={changePage}
+                    onPageChange={changePage}
                     rowsPerPage={searchData.PageSize}
-                    onChangeRowsPerPage={changeRows}
+                    onRowsPerPageChange={changeRows}
                     rowsPerPageOptions={ROWS_OPTIONS}
                 />
             </>
