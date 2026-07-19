@@ -418,7 +418,7 @@ const DataSources = ({ classes }: ClassesType) => {
                 <DialogContent>
                     <Typography>{t('DataSources.delete.blockedBody')}</Typography>
                     <ul>
-                        {(Array.isArray(dialog?.data) ? dialog?.data : []).map((c: any) => <li key={c.CampaignID}>{c.CampaignName}</li>)}
+                        {(dialog && Array.isArray(dialog.data) ? dialog.data : []).map((c: any) => <li key={c.CampaignID}>{c.CampaignName}</li>)}
                     </ul>
                 </DialogContent>
                 <DialogActions>
