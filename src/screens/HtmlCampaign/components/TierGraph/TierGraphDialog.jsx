@@ -14,8 +14,6 @@ function reducer(state, action) {
   switch (action.type) {
     case 'SELECT':
       return { ...state, selected: action.selected };
-    case 'SET_TAB':
-      return { ...state, activeTab: action.tab };
     case 'SET_BG_FIELD': {
       const g = clone(state.graph);
       let val = action.val;
@@ -87,6 +85,7 @@ export default function TierGraphDialog({ onClose, onInsert, mergeData, t }) {
   const userKey = core.userId || core.userID || core.subAccountId || core.SubAccountID || 'default';
   const storageKey = 'tierGraph_' + userKey;
 
+  // always open with the LAST graph (persisted in localStorage); importing a link replaces it.
   const init = () => {
     let graph = defaultState();
     try {
@@ -96,10 +95,10 @@ export default function TierGraphDialog({ onClose, onInsert, mergeData, t }) {
         if (parsed && parsed.version === 4) graph = parsed;
       }
     } catch (e) { /* localStorage blocked/full — fall back to defaults */ }
-    return { graph, selected: null, activeTab: 'link' };
+    return { graph, selected: null };
   };
   const [state, dispatch] = useReducer(reducer, undefined, init);
-  const { graph, selected, activeTab } = state;
+  const { graph, selected } = state;
 
   const md = Array.isArray(mergeData) ? mergeData : [];
 
@@ -114,7 +113,7 @@ export default function TierGraphDialog({ onClose, onInsert, mergeData, t }) {
   }, []);
   const measureText = useMemo(() => measureTextFactory(), [fontTick]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // debounced persistence (per user) — never let a storage error break the UI.
+  // debounced persistence to localStorage on EVERY change — never let it break the UI.
   useEffect(() => {
     const id = setTimeout(() => {
       try { localStorage.setItem(storageKey, JSON.stringify(graph)); } catch (e) { /* noop */ }
@@ -123,14 +122,18 @@ export default function TierGraphDialog({ onClose, onInsert, mergeData, t }) {
   }, [graph, storageKey]);
 
   const [inserting, setInserting] = useState(false);
-  const [copied, setCopied] = useState(false);
-  const [msg, setMsg] = useState(null); // { kind:'error', text }
+  const [msg, setMsg] = useState(null);            // footer message { kind:'error'|'warn', text }
+  const [defaultAcked, setDefaultAcked] = useState(false); // "add anyway" ack for an unchanged graph
+  const [importOpen, setImportOpen] = useState(false);
   const [linkInput, setLinkInput] = useState('');
+  const [importError, setImportError] = useState(null);
 
-  const { url, imgTag } = buildLink(graph);
+  const { url } = buildLink(graph);
   const cfgPart = url.split('cfg=')[1];
   const cfgLen = cfgPart ? cfgPart.split('&')[0].length : 0;
   const tooLong = cfgLen > 4096 || url.length > 6000;
+
+  const isDefaultGraph = () => JSON.stringify(graph) === JSON.stringify(defaultState());
 
   const onInlineAmountEdit = (index, newText) => {
     const cur = graph.tiers[index].amount;
@@ -140,11 +143,16 @@ export default function TierGraphDialog({ onClose, onInsert, mergeData, t }) {
   const handleInsert = async () => {
     setMsg(null);
     if (tooLong) { setMsg({ kind: 'error', text: t('campaigns.tierGraph.urlTooLong') }); return; }
+    // validation: warn once if nothing was customized (maybe they forgot to edit the sample)
+    if (isDefaultGraph() && !defaultAcked) {
+      setDefaultAcked(true);
+      setMsg({ kind: 'warn', text: t('campaigns.tierGraph.defaultUnchangedWarn') });
+      return;
+    }
     setInserting(true);
     try {
       await onInsert(url, graph.width);
     } catch (e) {
-      // keep the popup open, keep the state, surface the error
       setInserting(false);
       setMsg({ kind: 'error', text: t('campaigns.tierGraph.insertError') });
       return;
@@ -152,22 +160,18 @@ export default function TierGraphDialog({ onClose, onInsert, mergeData, t }) {
     onClose(); // success — close the dialog (no setState after this)
   };
 
-  const handleCopy = () => {
-    try { if (navigator.clipboard) navigator.clipboard.writeText(url); } catch (e) { /* noop */ }
-    setCopied(true);
-    setTimeout(() => setCopied(false), 1200);
-  };
-
-  // #3 — load an existing graph back from its image link (inverse of buildLink).
-  const handleLoadFromLink = () => {
-    setMsg(null);
+  // "import image" — load an existing graph back from its image link (inverse of buildLink).
+  const handleImportOpen = () => { setLinkInput(''); setImportError(null); setImportOpen(true); };
+  const handleImportConfirm = () => {
     const parsed = parseTierGraphUrl(linkInput);
     if (!parsed || parsed.version !== 4) {
-      setMsg({ kind: 'error', text: t('campaigns.tierGraph.invalidFile') });
+      setImportError(t('campaigns.tierGraph.invalidFile'));
       return;
     }
     dispatch({ type: 'IMPORT_JSON', obj: parsed });
-    setLinkInput('');
+    setDefaultAcked(false);
+    setMsg(null);
+    setImportOpen(false);
   };
 
   const btn = {
@@ -178,7 +182,7 @@ export default function TierGraphDialog({ onClose, onInsert, mergeData, t }) {
   const segBtn = (on) => ({ border: 0, background: on ? '#4f46e5' : '#fff', color: on ? '#fff' : '#6b7280', padding: '5px 12px', fontWeight: 700, cursor: 'pointer', fontSize: 13 });
 
   return (
-    <div style={{ width: '100%', display: 'flex', flexDirection: 'column', minHeight: 520 }}>
+    <div style={{ position: 'relative', width: '100%', display: 'flex', flexDirection: 'column', minHeight: 520 }}>
       {/* header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap', padding: '12px 16px', borderBottom: '1px solid #e2e6ee' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -198,19 +202,8 @@ export default function TierGraphDialog({ onClose, onInsert, mergeData, t }) {
           <input type="number" min={320} max={900} step={10} value={graph.height} onChange={(e) => dispatch({ type: 'SET_BG_FIELD', key: 'height', val: parseFloat(e.target.value) || 420 })} style={{ width: 70, fontSize: 13, border: '1px solid #e2e6ee', borderRadius: 7, padding: '5px 7px' }} />
         </div>
         <div style={{ flex: 1 }} />
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <input
-            type="text"
-            value={linkInput}
-            onChange={(e) => setLinkInput(e.target.value)}
-            onKeyDown={(e) => { if (e.key === 'Enter') handleLoadFromLink(); }}
-            placeholder={t('campaigns.tierGraph.loadFromLinkPlaceholder')}
-            style={{ width: 180, fontSize: 12.5, border: '1px solid #e2e6ee', borderRadius: 7, padding: '6px 8px', direction: 'ltr' }}
-          />
-          <button type="button" style={btn} onClick={handleLoadFromLink}>{t('campaigns.tierGraph.loadFromLink')}</button>
-        </div>
+        <button type="button" style={btn} onClick={handleImportOpen}>{t('campaigns.tierGraph.importImage')}</button>
         <button type="button" style={btn} onClick={() => dispatch({ type: 'RESET_DEFAULT' })}>{t('campaigns.tierGraph.loadSample')}</button>
-        <button type="button" style={btn} onClick={handleCopy}>{copied ? t('campaigns.tierGraph.copied') : t('campaigns.tierGraph.copyLink')}</button>
       </div>
 
       {/* body: stage + editor panel */}
@@ -231,24 +224,47 @@ export default function TierGraphDialog({ onClose, onInsert, mergeData, t }) {
         </aside>
       </div>
 
-      {/* footer: tabs + output + add button */}
-      <div style={{ borderTop: '1px solid #e2e6ee', padding: '10px 16px', background: '#fbfcfe' }}>
-        <div style={{ display: 'flex', gap: 6, marginBottom: 7 }}>
-          <button type="button" onClick={() => dispatch({ type: 'SET_TAB', tab: 'link' })} style={{ ...btn, background: activeTab === 'link' ? '#e8f1fd' : '#f3f4f8', fontSize: 12.5 }}>{t('campaigns.tierGraph.linkTab')}</button>
-          <button type="button" onClick={() => dispatch({ type: 'SET_TAB', tab: 'json' })} style={{ ...btn, background: activeTab === 'json' ? '#e8f1fd' : '#f3f4f8', fontSize: 12.5 }}>{t('campaigns.tierGraph.jsonTab')}</button>
-        </div>
-        <pre style={{ background: '#f2f5f9', border: '1px solid #e2e6ee', borderRadius: 8, padding: '8px 10px', maxHeight: 70, overflow: 'auto', fontSize: 11.5, direction: 'ltr', textAlign: 'left', whiteSpace: 'pre-wrap', wordBreak: 'break-all', margin: 0 }}>
-          {activeTab === 'link' ? imgTag : JSON.stringify(graph, null, 2)}
-        </pre>
-        {msg ? <div style={{ marginTop: 6, fontSize: 12.5, color: msg.kind === 'error' ? '#b42318' : '#067647' }}>{msg.text}</div> : null}
-        {tooLong ? <div style={{ marginTop: 6, fontSize: 12.5, color: '#b42318' }}>{t('campaigns.tierGraph.urlTooLong')}</div> : null}
-        <div style={{ display: 'flex', gap: 10, justifyContent: 'center', marginTop: 10 }}>
+      {/* footer: messages + actions */}
+      <div style={{ borderTop: '1px solid #e2e6ee', padding: '12px 16px', background: '#fbfcfe' }}>
+        {msg ? <div style={{ marginBottom: 8, fontSize: 12.5, textAlign: 'center', color: msg.kind === 'error' ? '#b42318' : '#b54708' }}>{msg.text}</div> : null}
+        {tooLong ? <div style={{ marginBottom: 8, fontSize: 12.5, textAlign: 'center', color: '#b42318' }}>{t('campaigns.tierGraph.urlTooLong')}</div> : null}
+        <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
           <button type="button" style={{ ...btn, background: '#f3f4f8' }} onClick={onClose}>{t('common.cancel')}</button>
           <button type="button" style={{ ...primaryBtn, opacity: inserting || tooLong ? 0.6 : 1 }} disabled={inserting || tooLong} onClick={handleInsert}>
             {t('campaigns.tierGraph.insertButton')}
           </button>
         </div>
       </div>
+
+      {/* import-from-link popup */}
+      {importOpen ? (
+        <div
+          style={{ position: 'absolute', inset: 0, zIndex: 30, background: 'rgba(17,21,29,.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 15 }}
+          onClick={() => setImportOpen(false)}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{ width: 'min(540px, 92%)', background: '#fff', borderRadius: 14, boxShadow: '0 24px 70px rgba(0,0,0,.35)', padding: '24px 26px', direction: 'rtl' }}
+          >
+            <div style={{ fontSize: 18, fontWeight: 800, marginBottom: 6 }}>{t('campaigns.tierGraph.importImage')}</div>
+            <div style={{ fontSize: 13, color: '#6b7280', marginBottom: 16, lineHeight: 1.6 }}>{t('campaigns.tierGraph.importImageHint')}</div>
+            <input
+              autoFocus
+              type="text"
+              value={linkInput}
+              onChange={(e) => { setLinkInput(e.target.value); setImportError(null); }}
+              onKeyDown={(e) => { if (e.key === 'Enter') handleImportConfirm(); if (e.key === 'Escape') setImportOpen(false); }}
+              placeholder={t('campaigns.tierGraph.loadFromLinkPlaceholder')}
+              style={{ width: '100%', boxSizing: 'border-box', fontSize: 13, border: '1px solid #cfd6e0', borderRadius: 9, padding: '11px 12px', direction: 'ltr' }}
+            />
+            {importError ? <div style={{ color: '#b42318', fontSize: 12.5, marginTop: 8 }}>{importError}</div> : null}
+            <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-start', marginTop: 20 }}>
+              <button type="button" style={{ ...primaryBtn, padding: '10px 24px' }} onClick={handleImportConfirm}>{t('campaigns.tierGraph.importImageConfirm')}</button>
+              <button type="button" style={{ ...btn, padding: '10px 20px' }} onClick={() => setImportOpen(false)}>{t('common.cancel')}</button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }

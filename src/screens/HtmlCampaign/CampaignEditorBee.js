@@ -1694,7 +1694,8 @@ const CampaignEditor = ({ classes, ...props }) => {
   // removeDeletedConditionFromDesign + loadNewTemplate). Rejects on failure so
   // TierGraphDialog can show insertError and keep the popup open. Plan §4.4.
   const insertTierGraphRow = async (url, width) => {
-    const updatedJson = JSON.parse(JSON.stringify(latestEditorJsonRef.current));
+    if (!editorRef.current) throw new Error('Editor not ready');
+    const updatedJson = JSON.parse(JSON.stringify(latestEditorJsonRef.current || null));
     if (!updatedJson || !updatedJson.page || !Array.isArray(updatedJson.page.rows)) {
       throw new Error('Editor JSON not ready');
     }
@@ -1703,11 +1704,14 @@ const CampaignEditor = ({ classes, ...props }) => {
         buildTierGraphRow(url, width, t('campaigns.tierGraph.imgAlt'))
       );
       updateLatestEditorJson(updatedJson);
-      await editorRef.current.load(updatedJson);   // load only — aligned to the proven loadNewTemplate flow (reload was unstable)
-      await saveDesign(false, null, false);          // await for reliable persistence
+      await editorRef.current.load(updatedJson);   // add the row (proven pattern: loadNewTemplate)
+      saveDesign(false, null, false);               // persist in background — fire-and-forget, EXACTLY like
+                                                     // loadNewTemplate. Awaiting it would surface a background
+                                                     // save error (e.g. onSave size/link check) as a false
+                                                     // "insert failed", even though the row was already added.
     } catch (e) {
       console.error('insertTierGraphRow failed:', e);
-      throw e; // handleInsert surfaces the error only on a real failure
+      throw e;
     }
     // NOTE: the dialog closes itself (onClose) on success.
   };
