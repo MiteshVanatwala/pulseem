@@ -59,7 +59,9 @@ import OverwriteTemplatePopUp from '../Groups/Management/Popup/OverwriteTemplate
 import SaveTemplate from './modals/SaveTemplate';
 /* END Bee */
 import { sitePrefix } from '../../config';
-import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
+import { MdArrowBackIos, MdArrowForwardIos, MdBarChart } from 'react-icons/md';
+import { buildTierGraphRow } from './helper/Template';
+import TierGraphDialog from './components/TierGraph/TierGraphDialog';
 import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
 import { getAuthorizedEmails } from '../../redux/reducers/commonSlice';
 import DomainVerification from '../../Shared/Dialogs/DomainVerification';
@@ -1689,6 +1691,28 @@ const CampaignEditor = ({ classes, ...props }) => {
     }
   }
 
+  // Inject the tier-graph as a new BEE image row, then reload + save (pattern:
+  // removeDeletedConditionFromDesign + loadNewTemplate). Rejects on failure so
+  // TierGraphDialog can show insertError and keep the popup open. Plan §4.4.
+  const insertTierGraphRow = async (url, width) => {
+    const updatedJson = JSON.parse(JSON.stringify(latestEditorJsonRef.current));
+    if (!updatedJson || !updatedJson.page || !Array.isArray(updatedJson.page.rows)) {
+      throw new Error('Editor JSON not ready');
+    }
+    try {
+      updatedJson.page.rows.push(
+        buildTierGraphRow(url, width, t('campaigns.tierGraph.imgAlt'))
+      );
+      updateLatestEditorJson(updatedJson);
+      await editorRef.current.load(updatedJson);   // load only — aligned to the proven loadNewTemplate flow (reload was unstable)
+      await saveDesign(false, null, false);          // await for reliable persistence
+    } catch (e) {
+      console.error('insertTierGraphRow failed:', e);
+      throw e; // handleInsert surfaces the error only on a real failure
+    }
+    // NOTE: the dialog closes itself (onClose) on success.
+  };
+
   const renderTemplateButtons = () => {
     return <>
       <Button onClick={() => {
@@ -1737,6 +1761,25 @@ const CampaignEditor = ({ classes, ...props }) => {
         key={'aiButton'}
       >{t('campaigns.aiDeisgner')}</Button>
       }
+      {/* Tier graph ("גרף המדרגות") — generic tool, no feature gate by default.
+          TODO(owner: product): to stage the rollout, add a `TierGraph` code to
+          PulseemFeatures (Fields.ts, precedent DisplayConditions:'74') and wrap
+          this button in `accountFeatures?.indexOf(PulseemFeatures.TierGraph) > -1`. */}
+      <Button
+        disabled={buttonDisabled}
+        onClick={() => setDialogType({ type: 'tierGraph' })}
+        variant='contained'
+        size='small'
+        className={clsx(
+          classes.btn,
+          classes.btnRounded
+        )}
+        style={{ margin: '8px' }}
+        startIcon={<MdBarChart />}
+        key={'tierGraphButton'}
+      >
+        {t('campaigns.tierGraph.openButton')}
+      </Button>
     </>
   }
 
@@ -2135,6 +2178,25 @@ const CampaignEditor = ({ classes, ...props }) => {
       currentDialog = getProblematicLinksDialog(data);
     } else if (type === 'AIDialog') {
       currentDialog = AI_Dialog();
+    } else if (type === 'tierGraph') {
+      currentDialog = {
+        title: t('campaigns.tierGraph.title'),
+        showDefaultButtons: false,
+        customContainerStyle: classes.tierGraphDialogContainer, // sizes the OUTER MUI paper past the 1080 cap (this dialog only)
+        paperStyle: classes.tierGraphDialogPaperProps,          // INNER paper — now fills the outer, never overflows
+        contentStyle: classes.tierGraphDialogContent,           // drop dialogContent's 1rem margin / minWidth
+        childrenStyle: classes.tierGraphDialogChildren,         // drop dialogChildren's marginBlock / padding
+        content: (
+          <TierGraphDialog
+            mergeData={Array.isArray(mergeData) ? mergeData : []} // MANDATORY guard — initial mergeData is {}
+            t={t}
+            isRTL={isRTL}
+            classes={classes}
+            onInsert={insertTierGraphRow}
+            onClose={() => setDialogType(null)}
+          />
+        )
+      };
     }
 
     if (type) {

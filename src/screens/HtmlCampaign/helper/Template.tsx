@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from 'uuid';
+
 const paragraphDescriptor = {
   "paragraph": {
     "html": "",
@@ -293,3 +295,49 @@ export const PulDynamicProductDetail = {
   "uuid": "",
   "locked": false
 }
+
+/**
+ * buildTierGraphRow — a generic one-column BEE row holding a native image module
+ * whose src is the tier-graph link. Plan §4.3.
+ *
+ * Two verified pitfalls of PulRow are handled explicitly:
+ *  1) PulRow.columns is an EMPTY array — the column is built from PulColItem.
+ *  2) PulRow is a 'Dynamic-Products' / 'Product Catalog' row — existing code
+ *     branches on type/name/metadata AND on the container marker
+ *     `product-block-container` (onSave counts /product-block-container/g). All
+ *     of these are neutralized so the graph row is a plain generic row and is
+ *     never treated as a dynamic product block.
+ */
+export const buildTierGraphRow = (url: string, width: number, alt: string) => {
+  const row = JSON.parse(JSON.stringify(PulRow));       // styling shell only
+
+  // MANDATORY neutralization -> generic one-column row
+  row.type = 'one-column-empty';
+  row.name = '';
+  row.metadata = { name: '', tags: '', uuid: '' };      // drop EventType/ProductCategory/NumOfProdcuts
+  if (row.container && row.container.style) {
+    // remove the product-block marker so onSave's /product-block-container/g count
+    // does not classify the graph row as a dynamic product block.
+    delete row.container.style['product-block-container'];
+  }
+
+  // MANDATORY explicit column — PulRow.columns is empty; build it from PulColItem.
+  const col = JSON.parse(JSON.stringify(PulColItem));
+  const img = JSON.parse(JSON.stringify(PulImage));
+  img.descriptor.image.src = url;
+  img.descriptor.image.alt = alt;                       // t('campaigns.tierGraph.imgAlt')
+  // Do NOT overwrite image.width with a numeric px value — PulImage keeps width:"100%"
+  // (percWidth:"100") so the image renders responsive; a numeric width can make BEE
+  // reject the module on load (silent, since onError is a no-op). `width` param unused.
+  img.descriptor.image.href = '';                       // NO <a> wrapper — ever
+  img.uuid = uuidv4();
+
+  col.uuid = uuidv4();
+  col['grid-columns'] = 12;
+  col.modules = [img];
+
+  row.uuid = uuidv4();
+  row.metadata.uuid = row.uuid;
+  row.columns = [col];
+  return row;
+};
