@@ -25,7 +25,7 @@ import {
 // dedicated "mock switch" commit right after the API PR merges flips this to false,
 // deletes ./_mocks/dataSourcesMock.ts, removes the guard lines, and re-runs the M2/M3
 // acceptance criteria against the real API. grep USE_DS_MOCK / _mocks must return 0 after.
-const USE_DS_MOCK = true;
+const USE_DS_MOCK = false;
 
 const api = 'DataSources/';
 
