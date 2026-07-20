@@ -827,6 +827,10 @@ const CampaignEditor = ({ classes, ...props }) => {
   //#endregion Init Bee Token & Configuration
   //#region Pulseem Methods (Save, Delete, Exit, Back, Test Send)
   const onSave = async (args) => {
+    // Keep the design snapshot fresh: features that clone the current design (e.g. the tier-graph
+    // "add to email") read latestEditorJsonRef. onSave receives the authoritative JSON, so refresh
+    // it here — otherwise the snapshot can lag/stay empty and the clone fails ("Editor JSON not ready").
+    if (args?.JsonData) updateLatestEditorJson(args.JsonData);
     // Calculate email size BEFORE any other validations
     const sizeInfo = calculateEmailSize(args.HtmlData, args.AmpData);
     updateEmailSize(sizeInfo);
@@ -1695,23 +1699,48 @@ const CampaignEditor = ({ classes, ...props }) => {
   // TierGraphDialog can show insertError and keep the popup open. Plan §4.4.
   const insertTierGraphRow = async (url, width) => {
     if (!editorRef.current) throw new Error('Editor not ready');
-    const updatedJson = JSON.parse(JSON.stringify(latestEditorJsonRef.current || null));
-    if (!updatedJson || !updatedJson.page || !Array.isArray(updatedJson.page.rows)) {
-      throw new Error('Editor JSON not ready');
-    }
+
+    // Resolve a valid base design to clone. The tier-graph row is appended to the CURRENT design,
+    // so we need a BEE template snapshot ({ page: { rows: [...] } }). That snapshot lives in
+    // latestEditorJsonRef (seeded at init; refreshed by BEE onLoad/onChange and by onSave). As a
+    // safety net we also accept the onChange snapshot (prevEditorJsonRef) and a bare page object
+    // (some BEE callbacks emit the page directly). ROOT CAUSE of the old "add to email" failure:
+    // this ref was EMPTY on stale builds, so the guard threw "Editor JSON not ready" before any
+    // load/save ever ran (no console error, no network call — verified on stage).
+    const toTemplate = (j) => {
+      if (!j || typeof j !== 'object') return null;
+      if (j.page && Array.isArray(j.page.rows)) return j;   // already a full template
+      if (Array.isArray(j.rows)) return { page: j };         // bare page object -> wrap it
+      return null;
+    };
+    const base = toTemplate(latestEditorJsonRef.current) || toTemplate(prevEditorJsonRef.current);
+    if (!base) throw new Error('Editor JSON not ready');
+
+    const updatedJson = JSON.parse(JSON.stringify(base));
     try {
       updatedJson.page.rows.push(
         buildTierGraphRow(url, width, t('campaigns.tierGraph.imgAlt'))
       );
       updateLatestEditorJson(updatedJson);
-      await editorRef.current.load(updatedJson);   // add the row (proven pattern: loadNewTemplate)
+      // In-place refresh: prefer .reload (soft refresh of the current design) over
+      // .load (full new-template load). This mirrors removeDeletedConditionFromDesign
+      // — the proven pattern for MODIFYING the existing design. .load has been the
+      // suspect for "add to email" rejecting on some designs; .reload is gentler.
+      if (typeof editorRef.current.reload === 'function') {
+        await editorRef.current.reload(updatedJson);
+      } else {
+        await editorRef.current.load(updatedJson);
+      }
       saveDesign(false, null, false);               // persist in background — fire-and-forget, EXACTLY like
                                                      // loadNewTemplate. Awaiting it would surface a background
                                                      // save error (e.g. onSave size/link check) as a false
                                                      // "insert failed", even though the row was already added.
     } catch (e) {
       console.error('insertTierGraphRow failed:', e);
-      throw e;
+      // Re-throw with a readable message so the dialog can SHOW the real BEE rejection
+      // (the handoff calls this out: the actual error is needed to diagnose).
+      const detail = e && (e.message || (typeof e === 'string' ? e : JSON.stringify(e)));
+      throw new Error(detail || 'reload/load rejected');
     }
     // NOTE: the dialog closes itself (onClose) on success.
   };
