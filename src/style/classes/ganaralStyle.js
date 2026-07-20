@@ -5400,6 +5400,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
     padding: '0px 6px',
     minWidth: 'auto',
   },
+  tierPlanBtn: {
+    minHeight: 'auto',
+    fontSize: '12px !important',
+    fontWeight: 600,
+    padding: '5px 16px !important',
+    minWidth: '80px',
+    whiteSpace: 'nowrap',
+  },
   filterChip: {
     fontSize: '12px',
     background: 'linear-gradient(90deg, #ffffff 1.31%, #ffffff 33.07%, #ffffff 134.74%)',

@@ -541,7 +541,7 @@ const BulkStatus = ({ classes }) => {
                             <>
                               <Divider className={clsx(classes.rocketImage, classes.mt1)} />
                               <Grid container className={clsx(classes.mt1)} alignItems='center'>
-                                <Grid item md={5} xs={4}>
+                                <Grid item md={4} xs={4}>
                                   <Typography className={clsx(classes.bulkTitle, classes.mlr30, classes.pl5)}>{t('billing.plan')}</Typography>
                                 </Grid>
                                 <Grid item md={3} xs={4} className={clsx(classes.paddingSides10, windowSize === 'xs' ? classes.textRight : '')}>
@@ -561,13 +561,15 @@ const BulkStatus = ({ classes }) => {
                                     </Tooltip>
                                   }
                                 </Grid>
-                                 <Grid item md={4} xs={4} className={clsx(classes.justifyContentEnd)}>
+                                 <Grid item md={5} xs={4} className={clsx(classes.justifyContentEnd)}>
                                   <Button
+                                    variant="contained"
+                                    color="primary"
                                     className={clsx(
                                       classes.btn,
                                       classes.btnRounded,
                                       classes.marginSides5,
-                                      classes.smallButton
+                                      classes.tierPlanBtn
                                     )}
                                     onClick={() => {
                                       setIsOpenEmailTierPlans(true);
@@ -576,10 +578,13 @@ const BulkStatus = ({ classes }) => {
                                     {t('billing.tier.steps.upgrade')}
                                   </Button>
                                   <Button
+                                    variant="outlined"
+                                    color="primary"
                                     className={clsx(
                                       classes.btn,
                                       classes.btnRounded,
-                                      classes.smallButton
+                                      classes.marginSides5,
+                                      classes.tierPlanBtn
                                     )}
                                     onClick={() => {
                                       setIsOpenCancelConfirmDialog(true);
