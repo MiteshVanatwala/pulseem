@@ -116,9 +116,9 @@ const SettingsMenu = ({ classes }: any) => {
                                     <ListItemText
                                         className={classes.sidebarItemText}
                                         primary={
-                                            <span style={{ display: 'flex', alignItems: 'center', width: '100%', color: isLogout ? '#FF1744' : undefined }}>
+                                            <span style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
                                                 {option?.title}
-                                                {isLogout && <option.iconSrc style={{ padding: '0 5px', marginInlineStart: 'auto', color: '#FF1744' }} />}
+                                                {isLogout && <option.iconSrc style={{ padding: '0 5px', marginInlineStart: 'auto' }} />}
                                             </span>
                                         }
                                     />
