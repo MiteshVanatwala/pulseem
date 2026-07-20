@@ -154,7 +154,9 @@ export default function TierGraphDialog({ onClose, onInsert, mergeData, t }) {
       await onInsert(url, graph.width);
     } catch (e) {
       setInserting(false);
-      setMsg({ kind: 'error', text: t('campaigns.tierGraph.insertError') });
+      // append the real failure detail — turns the opaque "failed" into a diagnosable message.
+      const detail = e && (e.message || String(e));
+      setMsg({ kind: 'error', text: t('campaigns.tierGraph.insertError') + (detail ? ' — ' + detail : '') });
       return;
     }
     onClose(); // success — close the dialog (no setState after this)
@@ -182,7 +184,7 @@ export default function TierGraphDialog({ onClose, onInsert, mergeData, t }) {
   const segBtn = (on) => ({ border: 0, background: on ? '#4f46e5' : '#fff', color: on ? '#fff' : '#6b7280', padding: '5px 12px', fontWeight: 700, cursor: 'pointer', fontSize: 13 });
 
   return (
-    <div style={{ position: 'relative', width: '100%', display: 'flex', flexDirection: 'column', minHeight: 520 }}>
+    <div style={{ position: 'relative', width: '100%', display: 'flex', flexDirection: 'column', flex: '1 1 auto', minHeight: 0, maxHeight: '100%' }}>
       {/* header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap', padding: '12px 16px', borderBottom: '1px solid #e2e6ee' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -254,7 +256,6 @@ export default function TierGraphDialog({ onClose, onInsert, mergeData, t }) {
               value={linkInput}
               onChange={(e) => { setLinkInput(e.target.value); setImportError(null); }}
               onKeyDown={(e) => { if (e.key === 'Enter') handleImportConfirm(); if (e.key === 'Escape') setImportOpen(false); }}
-              placeholder={t('campaigns.tierGraph.loadFromLinkPlaceholder')}
               style={{ width: '100%', boxSizing: 'border-box', fontSize: 13, border: '1px solid #cfd6e0', borderRadius: 9, padding: '11px 12px', direction: 'ltr' }}
             />
             {importError ? <div style={{ color: '#b42318', fontSize: 12.5, marginTop: 8 }}>{importError}</div> : null}

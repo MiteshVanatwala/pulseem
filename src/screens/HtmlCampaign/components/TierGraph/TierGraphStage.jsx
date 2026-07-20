@@ -6,12 +6,12 @@ function CenterRow({ cx, y, value, cat, valColor, dotColor, measureText }) {
   const size = 15;
   const dotR = 5;
   const gap = 8;
-  const tw = measureText(value, size, '800');
+  const tw = measureText(value, size, '600');
   const total = dotR * 2 + gap + tw;
   const left = cx - total / 2;
   return (
     <g>
-      <text x={left + tw / 2} y={y} textAnchor="middle" dominantBaseline="middle" fontSize={size} fontWeight={800} fill={valColor}>{value}</text>
+      <text x={left + tw / 2} y={y} textAnchor="middle" dominantBaseline="middle" fontSize={size} fontWeight={600} fill={valColor}>{value}</text>
       <circle cx={cx + total / 2 - dotR} cy={y} r={dotR} fill={dotColor} />
       {cat ? <text x={cx} y={y + 18} textAnchor="middle" fontSize={12} fill="#9aa1ad">{cat}</text> : null}
     </g>
@@ -88,7 +88,7 @@ export default function TierGraphStage({ graph, selected, onSelect, onInlineAmou
           const gTop = Math.max(barTop, hY);
           const txt = amountDisp(tr.amount);
           const small = isTok(tr.amount.t);
-          const pw = Math.max(94, measureText(txt, small ? 14 : 17, '800') + 28);
+          const pw = Math.max(94, measureText(txt, small ? 14 : 17, '600') + 28);
           const ph = 34;
           const px = bx + barW / 2;
           const py = barTop - ph - 12;
@@ -110,7 +110,7 @@ export default function TierGraphStage({ graph, selected, onSelect, onInlineAmou
                 : null}
               <g style={{ cursor: 'pointer' }} onClick={(e) => stop(e, () => onSelect({ type: 'tier', index: i }))} onDoubleClick={(e) => openInline(e, i)}>
                 <rect x={px - pw / 2} y={py} width={pw} height={ph} rx={17} fill="#fff" stroke="#0000000f" />
-                <text x={px} y={py + ph / 2 + 1} textAnchor="middle" dominantBaseline="middle" fontSize={small ? 14 : 17} fontWeight={800} fill={tr.labelColor}>{txt}</text>
+                <text x={px} y={py + ph / 2 + 1} textAnchor="middle" dominantBaseline="middle" fontSize={small ? 14 : 17} fontWeight={600} fill={tr.labelColor}>{txt}</text>
                 <path d={`M${px - 7},${py + ph} L${px + 7},${py + ph} L${px},${py + ph + 8} Z`} fill="#fff" />
               </g>
               <g style={{ cursor: 'pointer' }} onClick={(e) => stop(e, () => onSelect({ type: 'box', index: i }))}>
@@ -124,7 +124,8 @@ export default function TierGraphStage({ graph, selected, onSelect, onInlineAmou
 
         {graph.here.show ? (() => {
           const lbl = graph.here.text + ' · ' + CUR + fmt(numG(graph.here.value));
-          const pw = measureText(lbl, 14, '700') + 30;
+          // never let the pill exceed the chart width (max 100%): clamp to the usable span.
+          const pw = Math.min(measureText(lbl, 14, '700') + 30, W - (marginX - 4) * 2);
           return (
             <g>
               <line x1={marginX - 4} y1={hY} x2={W - marginX + 4} y2={hY} stroke={graph.here.color} strokeWidth={2.5} strokeDasharray="8 6" style={{ cursor: 'pointer' }} onClick={(e) => stop(e, () => onSelect({ type: 'here' }))} />
