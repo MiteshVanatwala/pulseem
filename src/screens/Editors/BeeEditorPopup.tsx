@@ -347,8 +347,7 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
     setAlertLogout(true);
   });
   const navigateToLandingPageManagement = () => {
-    // navigate(`${sitePrefix}EditRegistrationPage`);
-    return false;
+    navigate(`${sitePrefix}PopUpManagement`);
   }
   const onLogoutAlert = () => {
     setIsResponseModal(false);
@@ -1951,7 +1950,7 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
         </Typography>
       ),
       onConfirm: () => deleteCurrentLandingPage(),
-      onClose: () => navigateToLandingPageManagement(),
+      onClose: () => setDialogType(null),
     };
   }
   const renderTemplateConfirmationDialog = (newTemplate: LandingPageTemplate) => {
