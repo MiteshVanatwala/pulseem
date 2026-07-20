@@ -1,19 +1,62 @@
 import React, { useState } from 'react';
 import { computeLayout, sizeG, isTok, amountDisp, numG, fmt, CUR } from './tierGraphCore';
 
+// greedy word-wrap: split into lines that each fit within maxW (px), via the shared canvas measurer.
+function wrapLines(text, maxW, size, weight, measureText) {
+  const words = String(text == null ? '' : text).split(/\s+/).filter(Boolean);
+  if (!words.length) return [''];
+  const lines = [];
+  let cur = words[0];
+  for (let i = 1; i < words.length; i++) {
+    if (measureText(cur + ' ' + words[i], size, weight) <= maxW) cur += ' ' + words[i];
+    else { lines.push(cur); cur = words[i]; }
+  }
+  lines.push(cur);
+  return lines;
+}
+
 // value + colored dot + caption, centered around cx (POC centerRow).
-function CenterRow({ cx, y, value, cat, valColor, dotColor, measureText }) {
+// A value that would be wider than the card wraps to stay INSIDE the column (max 2 lines; a single
+// unbreakable line that is still too wide is compressed with textLength) so text never spills sideways.
+function CenterRow({ cx, y, value, cat, valColor, dotColor, measureText, maxW }) {
   const size = 15;
   const dotR = 5;
   const gap = 8;
-  const tw = measureText(value, size, '600');
-  const total = dotR * 2 + gap + tw;
-  const left = cx - total / 2;
+  const lineH = 17;
+  const avail = Math.max(24, (maxW || 9999) - 12);   // usable width inside the card
+  const textAvail = avail - (dotR * 2 + gap);         // reserve room for the accent dot
+  const oneW = measureText(value, size, '600');
+
+  // Fast path — fits on one line: render exactly as before (centered value + dot unit).
+  if (oneW <= textAvail) {
+    const total = dotR * 2 + gap + oneW;
+    const left = cx - total / 2;
+    return (
+      <g>
+        <text x={left + oneW / 2} y={y} textAnchor="middle" dominantBaseline="middle" fontSize={size} fontWeight={600} fill={valColor}>{value}</text>
+        <circle cx={cx + total / 2 - dotR} cy={y} r={dotR} fill={dotColor} />
+        {cat ? <text x={cx} y={y + 18} textAnchor="middle" fontSize={12} fill="#9aa1ad">{cat}</text> : null}
+      </g>
+    );
+  }
+
+  // Long value — wrap (max 2 lines), compress any still-too-wide line, keep the dot by the first line.
+  let lines = wrapLines(value, textAvail, size, '600', measureText);
+  if (lines.length > 2) { lines = lines.slice(0, 2); lines[1] += '…'; }
+  const n = lines.length;
+  const startY = y - ((n - 1) * lineH) / 2;           // vertically center the block on y
+  const firstW = Math.min(measureText(lines[0], size, '600'), textAvail);
   return (
     <g>
-      <text x={left + tw / 2} y={y} textAnchor="middle" dominantBaseline="middle" fontSize={size} fontWeight={600} fill={valColor}>{value}</text>
-      <circle cx={cx + total / 2 - dotR} cy={y} r={dotR} fill={dotColor} />
-      {cat ? <text x={cx} y={y + 18} textAnchor="middle" fontSize={12} fill="#9aa1ad">{cat}</text> : null}
+      {lines.map((ln, i) => {
+        const w = measureText(ln, size, '600');
+        const fit = w > textAvail ? { textLength: textAvail, lengthAdjust: 'spacingAndGlyphs' } : {};
+        return (
+          <text key={i} x={cx} y={startY + i * lineH} textAnchor="middle" dominantBaseline="middle" fontSize={size} fontWeight={600} fill={valColor} {...fit}>{ln}</text>
+        );
+      })}
+      <circle cx={cx + firstW / 2 + gap / 2 + dotR} cy={startY} r={dotR} fill={dotColor} />
+      {cat ? <text x={cx} y={startY + (n - 1) * lineH + 18} textAnchor="middle" fontSize={12} fill="#9aa1ad">{cat}</text> : null}
     </g>
   );
 }
@@ -115,8 +158,8 @@ export default function TierGraphStage({ graph, selected, onSelect, onInlineAmou
               </g>
               <g style={{ cursor: 'pointer' }} onClick={(e) => stop(e, () => onSelect({ type: 'box', index: i }))}>
                 <rect x={cardX} y={cardY} width={cardW} height={cardH} rx={14} fill={tr.box.fill} stroke={tr.highlight ? graph.here.color : '#0000001a'} strokeWidth={tr.highlight ? 2 : 1} />
-                <CenterRow cx={cx} y={cardY + 30} value={tr.box.line1} cat={tr.box.cat1} valColor={tr.box.textColor} dotColor={tr.box.accent} measureText={measureText} />
-                <CenterRow cx={cx} y={cardY + cardH - 34} value={tr.box.line2} cat={tr.box.cat2} valColor={tr.box.textColor} dotColor={tr.box.accent} measureText={measureText} />
+                <CenterRow cx={cx} y={cardY + 30} value={tr.box.line1} cat={tr.box.cat1} valColor={tr.box.textColor} dotColor={tr.box.accent} measureText={measureText} maxW={cardW} />
+                <CenterRow cx={cx} y={cardY + cardH - 34} value={tr.box.line2} cat={tr.box.cat2} valColor={tr.box.textColor} dotColor={tr.box.accent} measureText={measureText} maxW={cardW} />
               </g>
             </g>
           );

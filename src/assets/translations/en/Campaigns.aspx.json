@@ -764,7 +764,7 @@
     "sampleValueLabel": "Sample value (for preview height only)",
     "sampleValueHint": "Used only to illustrate the height here. At send time the height is set from the recipient's real value.",
     "tokenHint": "Type a plain value, or ##Field## which is replaced with the recipient's real value at send time. Amount fields — numbers only, no & or #.",
-    "tokenNotCanonicalHint": "A free token is not replaced automatically by the merge engine — make sure the send page supports it.",
+    "tokenNotCanonicalHint": "Custom field — map it to a source-file column on the send page.",
     "personalField": "Add personal field…",
     "clickElementHint": "Click any part of the graph (bar · \"you are here\" line · card · background) to edit it here. Tip: in any field you can type ##Field## and it will be replaced from the data source at send time.",
     "linkTab": "🔗 Image link",

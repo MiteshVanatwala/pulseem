@@ -316,6 +316,21 @@ export const buildTierGraphRow = (url: string, width: number, alt: string) => {
   img.descriptor.image.href = '';                   // NO <a> wrapper — ever
   img.uuid = uuidv4();
 
+  // Force FULL-WIDTH responsive display. PulImage defaults to `align:right` + `right fixedwidth`
+  // + `autoWidth:50%`, which BEE rendered at ~15% (small, right-aligned). Switch to centered
+  // `autowidth` at 100% so the graph fills the email column at full width on every client.
+  img.align = 'center';
+  img.autoWidth = '100%';
+  img.descriptor.image.percWidth = '100';
+  img.descriptor.image.width = (width && width > 0 ? Math.round(width) : 600) + 'px';
+  img.descriptor.image.style = { width: '100%', 'max-width': '100%' };
+  img.descriptor.style = { ...(img.descriptor.style || {}), width: '100%' };
+  img.descriptor.computedStyle = {
+    ...(img.descriptor.computedStyle || {}),
+    class: 'center autowidth',
+    width: '100%',
+  };
+
   return {
     type: 'one-column-empty',
     container: {
