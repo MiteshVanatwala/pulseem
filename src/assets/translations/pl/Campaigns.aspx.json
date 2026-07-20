@@ -851,7 +851,7 @@
     "sampleValueLabel": "Przykładowa wartość (tylko dla podglądu wysokości)",
     "sampleValueHint": "Służy tylko do zilustrowania wysokości. Przy wysyłce wysokość ustalana jest z rzeczywistej wartości odbiorcy.",
     "tokenHint": "Wpisz zwykłą wartość lub ##Pole##, które zostanie zastąpione rzeczywistą wartością odbiorcy przy wysyłce. Pola kwot — tylko liczby, bez & i #.",
-    "tokenNotCanonicalHint": "Wolny token nie jest zastępowany automatycznie przez mechanizm scalania — upewnij się, że strona wysyłki go obsługuje.",
+    "tokenNotCanonicalHint": "Pole niestandardowe — zmapuj je do kolumny pliku źródłowego na stronie wysyłki.",
     "personalField": "Dodaj pole osobiste…",
     "clickElementHint": "Kliknij dowolną część wykresu (słupek · linia „jesteś tutaj” · karta · tło), aby ją tutaj edytować. Wskazówka: w każdym polu możesz wpisać ##Pole##, które zostanie zastąpione ze źródła danych przy wysyłce.",
     "linkTab": "🔗 Link obrazu",

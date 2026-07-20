@@ -82,7 +82,7 @@ export default function GeoField({ label, geo, onChange, mergeData, t }) {
         {t('campaigns.tierGraph.tokenHint')}
       </div>
       {notCanonical && (
-        <div style={{ fontSize: 11.5, color: '#b54708', marginTop: 3, lineHeight: 1.5 }}>
+        <div style={{ fontSize: 11.5, color: '#4f46e5', marginTop: 3, lineHeight: 1.5 }}>
           {t('campaigns.tierGraph.tokenNotCanonicalHint')}
         </div>
       )}
