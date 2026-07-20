@@ -297,47 +297,67 @@ export const PulDynamicProductDetail = {
 }
 
 /**
- * buildTierGraphRow — a generic one-column BEE row holding a native image module
- * whose src is the tier-graph link. Plan §4.3.
+ * buildTierGraphRow — a GENUINE one-column-empty BEE row (byte-for-byte the shape
+ * DefaultContent(...).defaultTemplate.page.rows[0] produces in helper/Config.tsx)
+ * holding a native image module whose src is the tier-graph link.
  *
- * Two verified pitfalls of PulRow are handled explicitly:
- *  1) PulRow.columns is an EMPTY array — the column is built from PulColItem.
- *  2) PulRow is a 'Dynamic-Products' / 'Product Catalog' row — existing code
- *     branches on type/name/metadata AND on the container marker
- *     `product-block-container` (onSave counts /product-block-container/g). All
- *     of these are neutralized so the graph row is a plain generic row and is
- *     never treated as a dynamic product block.
+ * IMPORTANT: we build a clean row literal, NOT a clone of PulRow. PulRow is a
+ * 'Dynamic-Products' / 'Product Catalog' row carrying `synced`, product `metadata`,
+ * a `product-block-container` marker and product-ish container/content — mutating
+ * a few of its fields leaves a "Frankenstein" row whose extra keys BEE can silently
+ * reject on load/reload (onError is a no-op), which breaks "Add to email". A real
+ * one-column-empty row has NO metadata/name/synced keys — exactly this shape.
+ * The image stays responsive (PulImage keeps width:"100%"); `width` is unused.
  */
 export const buildTierGraphRow = (url: string, width: number, alt: string) => {
-  const row = JSON.parse(JSON.stringify(PulRow));       // styling shell only
-
-  // MANDATORY neutralization -> generic one-column row
-  row.type = 'one-column-empty';
-  row.name = '';
-  row.metadata = { name: '', tags: '', uuid: '' };      // drop EventType/ProductCategory/NumOfProdcuts
-  if (row.container && row.container.style) {
-    // remove the product-block marker so onSave's /product-block-container/g count
-    // does not classify the graph row as a dynamic product block.
-    delete row.container.style['product-block-container'];
-  }
-
-  // MANDATORY explicit column — PulRow.columns is empty; build it from PulColItem.
-  const col = JSON.parse(JSON.stringify(PulColItem));
-  const img = JSON.parse(JSON.stringify(PulImage));
+  const img = JSON.parse(JSON.stringify(PulImage)); // native BEE image module (Template.tsx:34)
   img.descriptor.image.src = url;
-  img.descriptor.image.alt = alt;                       // t('campaigns.tierGraph.imgAlt')
-  // Do NOT overwrite image.width with a numeric px value — PulImage keeps width:"100%"
-  // (percWidth:"100") so the image renders responsive; a numeric width can make BEE
-  // reject the module on load (silent, since onError is a no-op). `width` param unused.
-  img.descriptor.image.href = '';                       // NO <a> wrapper — ever
+  img.descriptor.image.alt = alt;                   // t('campaigns.tierGraph.imgAlt')
+  img.descriptor.image.href = '';                   // NO <a> wrapper — ever
   img.uuid = uuidv4();
 
-  col.uuid = uuidv4();
-  col['grid-columns'] = 12;
-  col.modules = [img];
-
-  row.uuid = uuidv4();
-  row.metadata.uuid = row.uuid;
-  row.columns = [col];
-  return row;
+  return {
+    type: 'one-column-empty',
+    container: {
+      style: {
+        'background-color': 'transparent',
+        'background-image': 'none',
+        'background-repeat': 'no-repeat',
+        'background-position': 'top left',
+      },
+    },
+    content: {
+      style: {
+        'background-color': 'transparent',
+        color: '#000000',
+        width: '600px',
+        'background-image': 'none',
+        'background-repeat': 'no-repeat',
+        'background-position': 'top left',
+      },
+      computedStyle: {
+        rowColStackOnMobile: true,
+        rowReverseColStackOnMobile: false,
+      },
+    },
+    columns: [
+      {
+        'grid-columns': 12,
+        modules: [img],
+        style: {
+          'background-color': 'transparent',
+          'padding-top': '5px',
+          'padding-right': '0px',
+          'padding-bottom': '5px',
+          'padding-left': '0px',
+          'border-top': '0px solid transparent',
+          'border-right': '0px solid transparent',
+          'border-bottom': '0px solid transparent',
+          'border-left': '0px solid transparent',
+        },
+        uuid: uuidv4(),
+      },
+    ],
+    uuid: uuidv4(),
+  };
 };
