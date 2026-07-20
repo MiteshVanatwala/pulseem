@@ -3,7 +3,7 @@ import { getSettingsItem } from "../../../helpers/Routes/routes";
 import { get } from "lodash";
 import { useSelector } from "react-redux";
 import { useRef, useState } from "react";
-import { Box, Button, ClickAwayListener, MenuItem, MenuList, Popper, Paper } from "@material-ui/core";
+import { Box, Button, ClickAwayListener, MenuItem, MenuList, Popper, Paper, Collapse, List, ListItem, ListItemText } from "@material-ui/core";
 import clsx from 'clsx';
 import useRedirect from "../../../helpers/Routes/Redirect";
 import { RedirectPropTypes } from "../../../helpers/Types/Redirect";
@@ -21,8 +21,10 @@ const SettingsMenu = ({ classes }: any) => {
         isRTL,
         isAdmin,
         isAllowSwitchAccount,
-        userRoles
+        userRoles,
+        windowSize
     } = useSelector((state: any) => state.core);
+    const isMobile = windowSize === 'xs' || windowSize === 'sm' || windowSize === 'md';
     const { username } = useSelector((state: any) => state.user);
     const buttonRef = useRef(null);
 
@@ -90,7 +92,43 @@ const SettingsMenu = ({ classes }: any) => {
             <FaCog style={{ fontSize: 16, opacity: 0.8, transform: showSettings ? 'rotate(180deg) scale(1.1)' : 'rotate(0deg) scale(1)', transition: 'all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)' }} />
         </Button>
 
-        {showSettings && <Popper
+        {isMobile ? (
+            <Collapse in={showSettings} timeout="auto" unmountOnExit>
+                <List className={classes.sidebarSubmenu} style={{ paddingTop: 0, paddingBottom: 0 }}>
+                    {settings.options && settings.options.filter((item) => item.isShow !== false)
+                        .map((option: any, index: any) => {
+                            const isLogout = option.title === t("appBar.logout");
+                            return (
+                                <ListItem
+                                    button
+                                    key={index}
+                                    className={classes.sidebarItem}
+                                    onClick={(e: any) => {
+                                        e.preventDefault();
+                                        setShowSettings(false);
+                                        if (option.onClick) {
+                                            option.onClick();
+                                        } else {
+                                            Redirect({ url: option.href, openNewTab: option.openInNewWindow } as RedirectPropTypes)
+                                        }
+                                    }}
+                                >
+                                    <ListItemText
+                                        className={classes.sidebarItemText}
+                                        primary={
+                                            <span style={{ display: 'flex', alignItems: 'center', width: '100%', color: isLogout ? '#FF1744' : undefined }}>
+                                                {option?.title}
+                                                {isLogout && <option.iconSrc style={{ padding: '0 5px', marginInlineStart: 'auto', color: '#FF1744' }} />}
+                                            </span>
+                                        }
+                                    />
+                                </ListItem>
+                            );
+                        })
+                    }
+                </List>
+            </Collapse>
+        ) : showSettings && <Popper
             open={showSettings}
             anchorEl={buttonRef.current}
             role={undefined}
