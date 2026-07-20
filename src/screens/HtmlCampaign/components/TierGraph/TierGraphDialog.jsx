@@ -41,12 +41,6 @@ function reducer(state, action) {
       g.tiers[action.i][action.key] = action.val;
       return { ...state, graph: g };
     }
-    case 'SET_TIER_HIGHLIGHT': {
-      const g = clone(state.graph);
-      g.tiers.forEach((tr) => { tr.highlight = false; }); // exclusive
-      g.tiers[action.i].highlight = action.val;
-      return { ...state, graph: g };
-    }
     case 'SET_BOX_FIELD': {
       const g = clone(state.graph);
       g.tiers[action.i].box[action.key] = action.val;

@@ -8,7 +8,7 @@ import { isTok } from '../tierGraphCore';
  * sample defaults to 100000 (matches the POC / SET_GEO reducer).
  * Props: { label, geo:{t,s}, onChange({t,s}), mergeData, t }
  */
-export default function GeoField({ label, geo, onChange, mergeData, t }) {
+export default function GeoField({ label, geo, onChange, mergeData, t, fontSize, onFontSize }) {
   const ref = useRef(null);
   const text = geo && geo.t != null ? String(geo.t) : '';
   const sample = geo ? geo.s : undefined;
@@ -50,6 +50,19 @@ export default function GeoField({ label, geo, onChange, mergeData, t }) {
           border: '1px solid ' + (tok ? '#a5b4fc' : '#e2e6ee'), background: tok ? '#f5f7ff' : '#fff',
         }}
       />
+      {onFontSize && (
+        <div style={{ marginTop: 6, display: 'flex', alignItems: 'center', gap: 6 }}>
+          <label style={{ fontSize: 11.5, color: '#6b7280' }}>{t('campaigns.tierGraph.fontSizeLabel')}</label>
+          <input
+            type="number" min={8} max={72}
+            value={fontSize == null ? '' : fontSize}
+            placeholder={t('campaigns.tierGraph.fontSizeAuto')}
+            onChange={(e) => onFontSize(e.target.value === '' ? undefined : (parseInt(e.target.value, 10) || undefined))}
+            style={{ width: 70, fontSize: 12.5, border: '1px solid #e2e6ee', borderRadius: 7, padding: '4px 6px' }}
+          />
+          <span style={{ fontSize: 11, color: '#9aa1ad' }}>px</span>
+        </div>
+      )}
       {list.length > 0 && (
         <select
           value=""

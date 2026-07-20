@@ -307,7 +307,8 @@ export const PulDynamicProductDetail = {
  * a few of its fields leaves a "Frankenstein" row whose extra keys BEE can silently
  * reject on load/reload (onError is a no-op), which breaks "Add to email". A real
  * one-column-empty row has NO metadata/name/synced keys — exactly this shape.
- * The image stays responsive (PulImage keeps width:"100%"); `width` is unused.
+ * The image renders full-width & fluid (center autowidth + style width/max-width:100%); `width`
+ * sets a px cap on descriptor.image.width (the graph's natural width).
  */
 export const buildTierGraphRow = (url: string, width: number, alt: string) => {
   const img = JSON.parse(JSON.stringify(PulImage)); // native BEE image module (Template.tsx:34)
