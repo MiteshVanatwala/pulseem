@@ -130,20 +130,25 @@ export const b64url = (s) =>
 // Returns { url, imgTag }. Param order is FIXED: gt first, cfg second, then p1..pN.
 export const buildLink = (state) => {
   let pCounter = 1;
-  const params = [];                      // raw pN values — NO encoding whatsoever
+  // pN values are URL-ENCODED so ANY token content — Hebrew, spaces, punctuation — rides safely
+  // inside the image URL (a raw ## + spaces would be an invalid URL and could be mangled on export).
+  // The C# renderer reads pN already %xx-decoded and treats a value still containing '##' as an
+  // un-replaced token (preview → sample). At send, the sender maps the token to a source column and
+  // writes the recipient's URL-encoded value into pN. See buildTierGraphRow / SendScreen contract.
+  const params = [];
 
   const geoSlot = (g) => {                // height slot (here.value, tiers[i].amount)
     if (!isTok(g.t)) return { v: String(g.t) };
     const slot = { dyn: 'p' + pCounter, s: gv(g.t, g.s) };
     if (pureTok(g.t)) slot.n = tokName(g.t);       // token name for the preview bubble
-    params.push('p' + (pCounter++) + '=' + g.t);   // raw ## kept literal
+    params.push('p' + (pCounter++) + '=' + encodeURIComponent(g.t)); // URL-safe token (any content)
     return slot;
   };
 
   const txtSlot = (t) => {                // text slot (here.text, box.c1/c2/l1/l2)
     if (!isTok(t)) return { v: String(t) };
     const slot = { dyn: 'p' + pCounter, s: String(t).replace(/#/g, '') }; // preview sample
-    params.push('p' + (pCounter++) + '=' + t);
+    params.push('p' + (pCounter++) + '=' + encodeURIComponent(t));   // URL-safe token (any content)
     return slot;
   };
 
@@ -186,11 +191,15 @@ export const parseTierGraphUrl = (url) => {
     while (b64.length % 4) b64 += '=';
     const cfg = JSON.parse(decodeURIComponent(escape(atob(b64))));
 
-    // raw pN params — buildLink emits the literal ## tokens un-encoded
+    // pN params — buildLink URL-encodes the token, so decode it back to the literal ##...## here.
     const params = {};
     u.split('&').forEach((kv) => {
       const m = kv.match(/^p(\d+)=(.*)$/);
-      if (m) params['p' + m[1]] = m[2];
+      if (m) {
+        let val = m[2];
+        try { val = decodeURIComponent(m[2]); } catch (e) { /* malformed — keep raw */ }
+        params['p' + m[1]] = val;
+      }
     });
 
     const d = defaultState();

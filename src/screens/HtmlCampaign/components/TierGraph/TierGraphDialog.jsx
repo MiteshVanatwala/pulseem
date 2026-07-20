@@ -208,9 +208,12 @@ export default function TierGraphDialog({ onClose, onInsert, mergeData, t }) {
         <button type="button" style={btn} onClick={() => dispatch({ type: 'RESET_DEFAULT' })}>{t('campaigns.tierGraph.loadSample')}</button>
       </div>
 
-      {/* body: stage + editor panel */}
-      <div style={{ flex: 1, display: 'flex', minHeight: 0, flexDirection: 'row', flexWrap: 'wrap' }}>
-        <div style={{ flex: 1, minWidth: 0, overflow: 'auto', padding: 18, background: '#eef1f6', display: 'flex', alignItems: 'flex-start', justifyContent: 'center' }}>
+      {/* body: stage + editor panel.
+          NOTE: flexWrap MUST stay 'nowrap' — with 'wrap' the row's height is driven by the tallest
+          item's CONTENT (not the container), so the editor panel grows past the dialog and the footer
+          overlaps it instead of the panel scrolling. nowrap + minHeight:0 lets each column scroll. */}
+      <div style={{ flex: 1, display: 'flex', minHeight: 0, flexDirection: 'row', flexWrap: 'nowrap' }}>
+        <div style={{ flex: 1, minWidth: 0, minHeight: 0, overflow: 'auto', padding: 18, background: '#eef1f6', display: 'flex', alignItems: 'flex-start', justifyContent: 'center' }}>
           <div style={{ width: '100%', maxWidth: graph.width, boxShadow: '0 8px 30px rgba(0,0,0,.14)', borderRadius: 8, overflow: 'hidden', background: '#fff' }}>
             <TierGraphStage
               graph={graph}
@@ -221,7 +224,7 @@ export default function TierGraphDialog({ onClose, onInsert, mergeData, t }) {
             />
           </div>
         </div>
-        <aside style={{ flex: '0 1 340px', minWidth: 300, boxSizing: 'border-box', borderInlineStart: '1px solid #e2e6ee', overflowY: 'auto', padding: 16, background: '#fff' }}>
+        <aside style={{ flex: '0 1 340px', minWidth: 300, minHeight: 0, boxSizing: 'border-box', borderInlineStart: '1px solid #e2e6ee', overflowY: 'auto', padding: 16, background: '#fff' }}>
           <TierGraphEditorPanel graph={graph} selected={selected} dispatch={dispatch} mergeData={md} t={t} />
         </aside>
       </div>

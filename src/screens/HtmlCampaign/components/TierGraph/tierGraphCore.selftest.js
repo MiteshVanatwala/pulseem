@@ -95,8 +95,8 @@ s2.tiers[0].amount = { t: '##ExtraField1##', s: 120000 };
 const { url, imgTag } = buildLink(s2);
 
 ok('url gt first, cfg second', /\?gt=stairs&cfg=/.test(url));
-ok('url raw p1/p2 (## not encoded)', url.includes('&p1=##ExtraField7##&p2=##ExtraField1##'));
-ok('url has no %23', !url.includes('%23'));
+ok('url p1/p2 URL-encoded', url.includes('&p1=%23%23ExtraField7%23%23&p2=%23%23ExtraField1%23%23'));
+ok('url encodes ## as %23', url.includes('%23%23ExtraField7%23%23'));
 ok('imgTag well-formed', imgTag.startsWith('<img src="') && imgTag.includes('alt="גרף התקדמות"') && imgTag.includes('width="' + defaultState().width + '"'));
 
 const cfg = decodeCfg(url.split('cfg=')[1].split('&')[0]);
@@ -122,7 +122,8 @@ s3.tiers[1].amount = { t: '##H##', s: 8 };   // p8
 const { url: u3 } = buildLink(s3);
 const q3 = u3.split('?')[1].split('&').filter((p) => p.startsWith('p'));
 eq('pN deterministic order', q3, [
-  'p1=##A##', 'p2=##B##', 'p3=##C##', 'p4=##D##', 'p5=##E##', 'p6=##F##', 'p7=##G##', 'p8=##H##',
+  'p1=%23%23A%23%23', 'p2=%23%23B%23%23', 'p3=%23%23C%23%23', 'p4=%23%23D%23%23',
+  'p5=%23%23E%23%23', 'p6=%23%23F%23%23', 'p7=%23%23G%23%23', 'p8=%23%23H%23%23',
 ]);
 const cfg3 = decodeCfg(u3.split('cfg=')[1].split('&')[0]);
 eq('cfg3 only active tiers', cfg3.tiers.length, 2);
@@ -149,6 +150,14 @@ st.tiers[0].amount = { t: '##ExtraField1##', s: 120000 };
 const rtTok = parseTierGraphUrl(buildLink(st).url);
 eq('parse token here.value', rtTok.here.value, { t: '##ExtraField7##', s: 42000 });
 eq('parse token tier0.amount', rtTok.tiers[0].amount, { t: '##ExtraField1##', s: 120000 });
+
+// tokens with Hebrew + spaces must stay URL-valid (no raw # / whitespace in pN) AND round-trip
+const stHeb = defaultState();
+stHeb.tiers[0].amount = { t: '##יעד פרס 1##', s: 120000 };
+const urlHeb = buildLink(stHeb).url;
+const pHeb = urlHeb.split('&').filter((p) => p.startsWith('p')).join('&');
+ok('hebrew/space token URL-safe (no raw # or whitespace in pN)', !/[#\s]/.test(pHeb));
+eq('hebrew/space token round-trips via parse', parseTierGraphUrl(urlHeb).tiers[0].amount.t, '##יעד פרס 1##');
 
 // 2 active tiers -> tierCountActive 2, array padded to 4
 const st2 = defaultState(); st2.tierCountActive = 2;
