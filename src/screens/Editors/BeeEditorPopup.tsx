@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import { debounce, includes } from 'lodash';
 import BeePlugin from '@mailupinc/bee-plugin'
-import { Box, Button, Grid, TextField, Typography } from '@material-ui/core'
+import { Box, Button, Divider, Grid, Menu, MenuItem, TextField, Typography } from '@material-ui/core'
 import { useRef, useState, useEffect } from 'react'
 import DefaultScreen from '../DefaultScreen'
 import { useSelector, useDispatch } from 'react-redux';
@@ -12,6 +12,7 @@ import Toast from '../../components/Toast/Toast.component';
 import { getAuthorizedEmails, getCommonFeatures, isAlive } from '../../redux/reducers/commonSlice';
 import WizardActions from '../../components/Wizard/WizardActions';
 import { getById, deleteLPUserBlock, deleteLandingPage, getAllLPTemplatesBySubaccountId, getLPPublicTemplates, getLPTemplateById, getLPUserblocks, saveLPTemplateToAccount, saveLPUserBlock, saveWebform, publish, setWebformGroups } from '../../redux/reducers/PopupSlice';
+import { getPopupSteps, addPopupStep, deletePopupStep, savePopupStepContent, PopupStep } from '../../redux/reducers/popUpManagementSlice';
 import { initClientForm, initExtraDataField, initLandingPages } from './helper/MigratePulseemData';
 import { DialogType, DefaultContent, BeeConfig } from './helper/configPopup';
 import { IoMdImages } from 'react-icons/io';
@@ -28,10 +29,11 @@ import { useNavigate, useParams } from 'react-router-dom';
 import moment from 'moment';
 /* END Bee */
 import { loginURL, sitePrefix } from '../../config';
-import { MdArrowBackIos, MdArrowForwardIos, MdCheck, MdGroups, MdOutlinePublic } from 'react-icons/md';
+import { MdArrowBackIos, MdArrowForwardIos, MdCheck, MdGroups, MdOutlinePublic, MdAdd, MdKeyboardArrowDown, MdMoreVert, MdDelete } from 'react-icons/md';
 import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
 import { BEE_EDITOR_TYPES } from '../../helpers/Constants';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
+import { getActiveFieldKeysFromJson, checkFormContactRequirement, hasFormModule } from '../../helpers/Utils/formContactValidation';
 import { StateType } from '../../Models/StateTypes';
 import { commonProps } from '../../model/Common/commonProps.types';
 import { BeeEditorModel, BeeEditorStoreModel, LandingPageRow, LandingPageTemplate, LandingPageUserBlocks, SaveLandingPageArguments } from '../../Models/LandingPage/LandingPage';
@@ -45,12 +47,16 @@ import LPTemplates from './modals/Templates';
 import { GenericModal } from '../HtmlCampaign/components/GenericModal';
 import SaveTemplate from '../HtmlCampaign/modals/SaveTemplate';
 import { getLPBeeToken } from '../../redux/reducers/landingPagesSlice';
+import TierPlans from '../../components/TierPlans/TierPlans';
+import { findPlanByFeatureCode } from '../../redux/reducers/TiersSlice';
+import { TierFeatures } from '../../helpers/Constants';
 
 interface BeeEditorPopupProps extends BeeEditorModel {
   clientId?: string;
   clientSecret?: string;
   isPopupBuilder?: boolean;
 }
+
 
 const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propClientSecret, isPopupBuilder: propIsPopupBuilder }: BeeEditorPopupProps) => {
   //#region State
@@ -66,6 +72,7 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
   const { extraData, previousLandingData } = useSelector((state: { sms: SMSStoreProps }) => state.sms);
   const { language, isRTL, userRoles } = useSelector((state: StateType) => state.core);
   const { tokenAlive, accountSettings, accountFeatures } = useSelector((state: { common: commonProps }) => state.common);
+  const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
   const { landingPage, landingPageUserBlocks, ToastMessages, LPBeeToken, publicTemplates, templatesBySubAccount } = useSelector((state: { landingPages: BeeEditorStoreModel }) => state.landingPages)
   // const { BeeToken } = useSelector((state: { popup: any }) => state.popup)
   const [showLoader, setLoader] = useState(false);
@@ -118,6 +125,34 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
   // Draft credentials for dialog (avoid hooks inside non-component functions)
   const [popupDraftClientId, setPopupDraftClientId] = useState<string>(propClientId || '');
   const [popupDraftClientSecret, setPopupDraftClientSecret] = useState<string>(propClientSecret || '');
+  // Multi-step state
+  const stepParam = parseInt(new URLSearchParams(window.location.search).get("step") || "1");
+  const [currentStep, setCurrentStep] = useState<number>(stepParam);
+  const [steps, setSteps] = useState<number[]>([1]);
+  const [showDeleteStepConfirm, setShowDeleteStepConfirm] = useState<number | null>(null);
+  const [showContactFieldWarning, setShowContactFieldWarning] = useState<boolean>(false);
+  // Which minimum-presence requirement is unmet — drives which message the
+  // contact-field warning dialog shows. Same dialog, message varies by condition.
+  const [contactFieldWarningType, setContactFieldWarningType] = useState<'contact' | 'optIn' | 'both' | null>(null);
+  const stepDataRef = useRef<PopupStep[]>([]);
+  const currentStepRef = useRef<number>(stepParam);
+  const isSwitchingStep = useRef(false);
+  const prevPulseemLinksRef = useRef<Set<string>>(new Set());
+  const latestConfigRef = useRef<any>(null);
+  // Snapshot of fields actively used on steps OTHER than the one currently loaded,
+  // captured once per step switch (see switchToStep / initLPBeeEditor). The reactive
+  // onFormAdded handler reads this on every form change instead of recomputing it.
+  const fieldsUsedElsewhereRef = useRef<Set<string>>(new Set());
+  // Per-step active field keys, keyed by StepNumber. Rebuilt in full whenever the
+  // step list is (re)fetched, and updated incrementally for one step on every save
+  // (manual or auto) — see onSave. getFieldsUsedInOtherSteps reads from this instead
+  // of re-parsing every other step's JSON on every call.
+  const stepFieldsCacheRef = useRef<Map<number, Set<string>>>(new Map());
+  const [stepOptionsAnchor, setStepOptionsAnchor] = useState<null | HTMLElement>(null);
+  const [optionsForStep, setOptionsForStep] = useState<number>(0);
+  const [showAddStepOptions, setShowAddStepOptions] = useState(false);
+  const [showTierPlans, setShowTierPlans] = useState(false);
+  const [tierMessageCode, setTierMessageCode] = useState('');
   //#endregion State
 
   const getLanguageCodeFromBaseLanguage = (baseLanguage: number): string => {
@@ -178,6 +213,15 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
           dispatch(getFileGallery(PulseemFolderType.DOCUMENT)).then((response) => {
             const gallery = response.payload;
             const specialLinksFiles = items;
+
+            if (isPopupBuilder) {
+              specialLinksFiles.push(
+                { type: 'Popup Navigation', label: 'Next Step',     link: 'pulseem://next-step' },
+                { type: 'Popup Navigation', label: 'Previous Step', link: 'pulseem://prev-step' },
+                { type: 'Popup Navigation', label: 'Skip Step',     link: 'pulseem://skip-step' }
+              );
+            }
+
             const folderExtName = t('common.files');
             gallery?.Files?.forEach((file: FileGallery) => {
               let folderName = file.FolderName === 'main' ? t('common.main') : file.FolderName;
@@ -202,6 +246,13 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
   }
   useEffect(() => {
     if (dataReady) {
+      if (stepParam > 1 && (currentPlan?.Id || 0) < 3) {
+        const url = new URL(window.location.href);
+        url.searchParams.set('step', '1');
+        window.history.replaceState({}, '', url.toString());
+        currentStepRef.current = 1;
+        setCurrentStep(1);
+      }
       Promise.all([initFields()]).then(() => {
         return true;
       })
@@ -214,6 +265,24 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
       initLPBeeEditor();
     }
   }, [isRTL]);
+
+  // Keep BEE's live config (the "Add new field" dropdown for brand-new forms) in
+  // sync with the active step. Reads the ref cached during render (see latestConfigRef
+  // above getConfig()) — never calls getConfig() here directly, since BeeConfig() pulls
+  // in useSelector internally and hooks may only run during render.
+  useEffect(() => {
+    if (stepDataRef.current.length > 1 && editorRef.current) {
+      (editorRef.current as any).loadConfig(latestConfigRef.current);
+    }
+  }, [currentStep]);
+
+  // Same sync, triggered when a step is added/removed — covers the case where
+  // currentStep itself doesn't change (e.g. already on step 1 when step 2 is deleted).
+  useEffect(() => {
+    if (stepDataRef.current.length > 1 && editorRef.current) {
+      (editorRef.current as any).loadConfig(latestConfigRef.current);
+    }
+  }, [steps]);
 
   useEffect(() => {
     if (Number(moduleId) > 0 && reInit === true) {
@@ -296,6 +365,14 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
     await dispatch(getTestGroups());
     await dispatch(getLPUserblocks());
     await dispatch(getAuthorizedEmails());
+    if (Number(moduleId) > 0) {
+      //@ts-ignore
+      const stepsResult = await dispatch(getPopupSteps(Number(moduleId))) as any;
+      const stepsData: PopupStep[] = stepsResult?.payload?.Data || [];
+      stepDataRef.current = stepsData;
+      rebuildFieldsCache(stepsData);
+      setSteps(stepsData.length > 0 ? stepsData.map((s: PopupStep) => s.StepNumber) : [1]);
+    }
     setDataReady(true);
     const initBeeToken = async () => {
       await dispatch(getLPBeeToken());
@@ -448,6 +525,45 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
       config.uid = accountSettings?.SubAccountSettings?.BeeUniqueID;
       config.mergeTags = mergeData;
       config.specialLinks = specialLinksFiles;
+
+      if (isPopupBuilder && !(config as any).__pulseemNavWrapped) {
+        (config as any).__pulseemNavWrapped = true;
+        const _prevOnChange = config.onChange;
+
+        // Seed the ref with whatever pulseem links already exist in the current template
+        // so loading a step that already has navigation links does NOT trigger the dialog.
+        const initialJson = typeof webform?.JsonData === 'string' ? webform.JsonData : '';
+        prevPulseemLinksRef.current = new Set(
+          (initialJson.match(/pulseem:\/\/[^"'\s]*/g) || [])
+        );
+
+        config.onChange = (jsonFile: any, response: any) => {
+          if ((currentPlan?.Id || 0) < 3 && typeof jsonFile === 'string') {
+            const currentLinks = new Set<string>(
+              (jsonFile.match(/pulseem:\/\/[^"'\s]*/g) || [])
+            );
+            // Show dialog if ANY link in the current snapshot is new (not in the previous snapshot).
+            // This fires on first add AND on every subsequent change (next→prev, etc.).
+            const hasNewLink = Array.from(currentLinks).some(
+              link => !prevPulseemLinksRef.current.has(link)
+            );
+            if (hasNewLink) {
+              setTierMessageCode('POPUP_STEPS');
+              setDialogType({ type: 'tier' });
+              (editorRef.current as any)?.load(JSON.parse(jsonFile.replace(/pulseem:\/\/[^"'\s]*/g, '')));
+            }
+            prevPulseemLinksRef.current = currentLinks;
+          }
+          _prevOnChange?.(jsonFile, response);
+        };
+      } else if (isPopupBuilder) {
+        // On step switch: re-seed the ref so existing links on the new step don't false-positive
+        const initialJson = typeof webform?.JsonData === 'string' ? webform.JsonData : '';
+        prevPulseemLinksRef.current = new Set(
+          (initialJson.match(/pulseem:\/\/[^"'\s]*/g) || [])
+        );
+      }
+
       config.titleDefaultStyles = defaultContent.titleDefaultStyles;
       config.contentDefaults = defaultContent.contentDefaults;
       config.language = editorLanguage;
@@ -467,10 +583,26 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
           }
           else {
             const beeTest = new BeePlugin(JSON.parse(LPBeeToken.Message));
-            const template = forceTemplate !== null ? forceTemplate : webform?.JsonData ? JSON.parse(webform?.JsonData) : defaultContent.defaultTemplate;
+            const currentStepData = stepDataRef.current.find((s: PopupStep) => s.StepNumber === currentStep);
+            const stepJson = currentStepData?.JsonData ?? null;
+            const template = forceTemplate !== null
+              ? forceTemplate
+              : stepJson
+                ? JSON.parse(stepJson)
+                : currentStep === 1 && webform?.JsonData
+                  ? JSON.parse(webform?.JsonData)
+                  : defaultContent.defaultTemplate;
+
+            // Cache the fields used elsewhere for the initial step — same cache
+            // switchToStep populates, read reactively by onFormAdded.
+            fieldsUsedElsewhereRef.current = getFieldsUsedInOtherSteps(currentStep);
+
+            // Rerender the dropdown for the initial step the same way switchToStep does.
+            const synced = syncFormFieldsForStep(JSON.stringify(template), fieldsUsedElsewhereRef.current);
+            const templateToLoad = synced ? synced.template : template;
 
             //@ts-ignore
-            beeTest.start(config, template).then((instance) => {
+            beeTest.start(config, templateToLoad).then((instance) => {
               //@ts-ignore
               editorRef.current = instance;
               //@ts-ignore
@@ -538,8 +670,103 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
   }
   //#endregion Init Bee Token & Configuration
 
+  // Strips the form module (and anything inside it — fields, optIn, submit)
+  // out of a step's JSON entirely. Used when duplicating a step: the form is
+  // never copied to the new step, so it can never start out as a cross-step
+  // duplicate — the user adds a fresh form to the new step if/when they want one.
+  const removeFormModuleFromTemplate = (jsonData: string): string => {
+    let template: any;
+    try {
+      template = JSON.parse(jsonData);
+    } catch {
+      return jsonData;
+    }
+    template?.page?.rows?.forEach((row: any) => {
+      row?.columns?.forEach((col: any) => {
+        if (Array.isArray(col?.modules)) {
+          col.modules = col.modules.filter((mod: any) => !mod?.descriptor?.form);
+        }
+      });
+    });
+    return JSON.stringify(template);
+  };
+
   //#region Pulseem Methods (Save, Delete, Exit, Back, Test Send)
   const onSave = async (args: SaveLandingPageArguments) => {
+    // Discard saves fired by BeePlugin during load() on a step switch —
+    // the previous step's content was already persisted before switchToStep ran.
+    if (isSwitchingStep.current) {
+      isSwitchingStep.current = false;
+      return;
+    }
+    // Capture the target step once so that if switchToStep() is called later
+    // in this same callback (changing the ref), the step number stays consistent.
+    const savedForStep = currentStepRef.current;
+
+    // Duplicate-field guard using the actual current editor JSON (args.JsonData),
+    // which is more accurate than stepDataRef for the current step.
+    if (stepDataRef.current.length > 1) {
+      const _webform = landingPage?.Data?.WebForm;
+      const currentActiveFields = getActiveFieldKeysFromJson(args.JsonData);
+      const otherStepsFields = new Set<string>();
+      stepDataRef.current.forEach((step) => {
+        if (step.StepNumber === savedForStep) return;
+        const json = step.StepNumber === 1
+          ? (step.JsonData ?? _webform?.JsonData)
+          : step.JsonData;
+        getActiveFieldKeysFromJson(json).forEach(k => otherStepsFields.add(k));
+      });
+      const duplicates = Array.from(currentActiveFields).filter(k => otherStepsFields.has(k));
+      if (duplicates.length > 0) {
+        if (!(saveRef.current as any)?.isAutoSave) {
+            // @ts-ignore
+          setToastMessage({ severity: 'error', color: 'error', message: t('Popup.duplicateFieldAcrossSteps', { fields: duplicates.join(', ') }), showAnimtionCheck: false } as any);
+        }
+        return;
+      }
+    }
+
+    // Contact-field guard — only runs when explicitly requested. Explicit Save /
+    // Continue clicks set saveRef.current.contactFieldCheckMode via saveDesign().
+    // The flag is consumed (read once, then cleared) here so it can never leak
+    // into later internal saves (step switch, duplicate step, auto-save, re-init)
+    // that mutate saveRef.current directly without going through saveDesign().
+    //   'warn'  → show the dialog but let the save proceed (Save button)
+    //   'block' → show the dialog and stop the save (Continue button)
+    const _contactFieldCheckMode = (saveRef.current as any)?.contactFieldCheckMode as ('warn' | 'block' | undefined);
+    if (_contactFieldCheckMode) {
+      // @ts-ignore
+      saveRef.current = { ...(saveRef.current as any), contactFieldCheckMode: undefined };
+
+      const _webform = landingPage?.Data?.WebForm;
+      const jsonsToCheck: (string | null | undefined)[] =
+        stepDataRef.current.length > 0
+          ? stepDataRef.current.map((s: PopupStep) => {
+              if (s.StepNumber === savedForStep) return args.JsonData;
+              return s.StepNumber === 1 ? (s.JsonData ?? _webform?.JsonData) : s.JsonData;
+            })
+          : [args.JsonData];
+
+      // Email/Cellphone and optIn are each an independent minimum-presence
+      // requirement — every form-bearing popup needs at least one of each
+      // somewhere across its steps. Same dialog for all three cases; only the
+      // message shown varies by which requirement(s) are unmet.
+      // Exception: when DoubleOptin === false, the popup's Subscriber Settings
+      // already register every recipient as Active unconditionally, so opt-in
+      // is never required and must not factor into the warning.
+      const { hasForm, hasContactField, hasOptIn } = checkFormContactRequirement(jsonsToCheck);
+      const optInRequired = _webform?.DoubleOptin !== false;
+      const effectiveHasOptIn = optInRequired ? hasOptIn : true;
+      if (hasForm && (!hasContactField || !effectiveHasOptIn)) {
+        setContactFieldWarningType(!hasContactField && !effectiveHasOptIn ? 'both' : !hasContactField ? 'contact' : 'optIn');
+        setShowContactFieldWarning(true);
+        if (_contactFieldCheckMode === 'block') {
+          return;
+        }
+        // 'warn' mode: fall through — the save below still proceeds normally.
+      }
+    }
+
     //@ts-ignore
     const reInit = saveRef.current?.reInitEditor;
     try {
@@ -565,6 +792,104 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
         } else {
           finalHtml = finalHtml.replace(/(<html[^>]*>)/i, `$1${cssInjection}`);
         }
+      }
+
+      // Always persist step content to the steps table
+      //@ts-ignore
+      await dispatch(savePopupStepContent({
+        webFormId: Number(args.campaignId),
+        stepNumber: savedForStep,
+        htmlContent: finalHtml,
+        jsonData: finalJson,
+      }));
+      // Keep stepDataRef in sync so switchToStep can load the latest saved content
+      stepDataRef.current = stepDataRef.current.map(s =>
+        s.StepNumber === savedForStep ? { ...s, HtmlContent: finalHtml, JsonData: finalJson } : s
+      );
+      // Update the cache for just this step — covers both manual save and auto-save,
+      // since both flow through onSave (differing only by saveRef.current.isAutoSave).
+      stepFieldsCacheRef.current.set(savedForStep, getActiveFieldKeysFromJson(finalJson));
+
+      // Handle pending duplicate — create new step and copy current content into it
+      //@ts-ignore
+      if (saveRef.current?.pendingDuplicateStep) {
+        //@ts-ignore
+        saveRef.current = { ...saveRef.current, pendingDuplicateStep: false };
+        //@ts-ignore
+        const dupResult = await dispatch(addPopupStep(Number(args.campaignId))) as any;
+        if (dupResult?.payload?.StatusCode === 201) {
+          const newStep = dupResult.payload.Data?.StepNumber;
+          const hadForm = hasFormModule(finalJson);
+          const duplicatedJson = hadForm ? removeFormModuleFromTemplate(finalJson) : finalJson;
+          //@ts-ignore
+          await dispatch(savePopupStepContent({
+            webFormId: Number(args.campaignId),
+            stepNumber: newStep,
+            htmlContent: finalHtml,
+            jsonData: duplicatedJson,
+          }));
+          //@ts-ignore
+          const refreshResult = await dispatch(getPopupSteps(Number(args.campaignId))) as any;
+          const refreshedSteps: PopupStep[] = refreshResult?.payload?.Data || [];
+          stepDataRef.current = refreshedSteps;
+          rebuildFieldsCache(refreshedSteps);
+          setSteps(refreshedSteps.length > 0 ? refreshedSteps.map((s: PopupStep) => s.StepNumber) : [1]);
+          switchToStep(newStep, refreshedSteps);
+          // finalHtml above still renders the source step's form (BEE generates HTML
+          // from its live canvas, not from this stripped JSON). switchToStep just loaded
+          // the form-stripped template into the canvas, so an autosave right after picks
+          // up correctly-matching HTML/JSON for the new step, once it settles.
+          if (hadForm) {
+            onAutoSavePage(true);
+          }
+        } else if (dupResult?.payload?.StatusCode === 927) {
+          setTierMessageCode(dupResult?.payload?.Message || 'POPUP_STEPS');
+          setDialogType({ type: 'tier' });
+        } else {
+          // @ts-ignore
+          setToastMessage({ severity: 'error', color: 'error', message: dupResult?.payload?.Message, showAnimtionCheck: false });
+        }
+        setLoader(false);
+        return;
+      }
+
+      // Handle pending step switch — reload canvas only, no full page reload
+      //@ts-ignore
+      if (saveRef.current?.pendingStepSwitch != null) {
+        //@ts-ignore
+        const targetStep = saveRef.current.pendingStepSwitch;
+        //@ts-ignore
+        saveRef.current = { ...saveRef.current, pendingStepSwitch: null };
+        switchToStep(targetStep);
+        return;
+      }
+
+      // For step > 1, skip saveWebform (to avoid overwriting step 1 WebForm data).
+      // Still honor a pending redirect (Exit/Continue/Back) — otherwise the step
+      // content saves but the user is left stranded on the editor screen.
+      if (savedForStep > 1) {
+        //@ts-ignore
+        if (saveRef.current?.redirectAfterSave) {
+          if (isFromAutomation) {
+            window.location.href = `/pulseem/CreateAutomations.aspx?AutomationID=${isFromAutomation}&NodeToEdit=${NodeToEdit}&id=${args.campaignId}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`;
+          } else {
+            localStorage.setItem('reloadLPBeeEditor', '1');
+            //@ts-ignore
+            navigate(saveRef.current?.redirectUrl ?? `${sitePrefix}LandingPages/Summary/${args.campaignId}`);
+          }
+          return;
+        }
+        //@ts-ignore
+        if (saveRef.current?.showAnimation && !saveRef.current?.saveTemplate) {
+          // @ts-ignore
+          setToastMessage({
+            severity: 'success',
+            color: 'success',
+            message: t('PopupTriggers.popupSaved'),
+            showAnimtionCheck: true
+          } as any);
+        }
+        return;
       }
 
       //@ts-ignore
@@ -681,9 +1006,14 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
       setLoader(false);
     }
   }
-  const saveDesign = async (redirectAfterSave = false, redirectUrl: string | null | undefined = null, showAnimation = true, isPublish: boolean = false) => {
+  const saveDesign = async (redirectAfterSave = false, redirectUrl: string | null | undefined = null, showAnimation = true, isPublish: boolean = false, isAutoSave: boolean = false, contactFieldCheckMode: 'warn' | 'block' | undefined = undefined) => {
+    // Duplicate-field detection across steps happens inside onSave(), using the
+    // editor's live JSON for the current step (args.JsonData). Checking here against
+    // stepDataRef.current would compare against a stale cache for the step being
+    // edited right now — stepDataRef only reflects a step's true content after that
+    // step's own save round-trip has completed. See onSave()'s duplicate-field guard.
     //@ts-ignore
-    saveRef.current = { ...saveRef.current, redirectAfterSave: redirectAfterSave, redirectUrl: redirectUrl, showAnimation: showAnimation, isPublish: isPublish };
+    saveRef.current = { ...saveRef.current, redirectAfterSave: redirectAfterSave, redirectUrl: redirectUrl, showAnimation: showAnimation, isPublish: isPublish, isAutoSave: isAutoSave, contactFieldCheckMode: contactFieldCheckMode };
     //@ts-ignore
     await editorRef.current.save();
     setTimeout(() => {
@@ -701,7 +1031,7 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
       }
     }
     setSilentSave(true)
-    saveDesign(false, null, false);
+    saveDesign(false, null, false, false, true);
   }, 100);
   const deleteCurrentLandingPage = async () => {
     //@ts-ignore
@@ -874,8 +1204,283 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
     //@ts-ignore
     await editorRef.current.save();
   }
+  //#region Step management
+  // Rebuilds the full per-step active-field cache from a fresh step list — call
+  // whenever stepDataRef is replaced wholesale (initial load, add step, delete step,
+  // duplicate step). Incremental per-step updates after a save happen in onSave.
+  const rebuildFieldsCache = (stepsData: PopupStep[]) => {
+    const _webform = landingPage?.Data?.WebForm;
+    const next = new Map<number, Set<string>>();
+    stepsData.forEach((step) => {
+      const json = step.StepNumber === 1
+        ? (step.JsonData ?? _webform?.JsonData)
+        : step.JsonData;
+      next.set(step.StepNumber, getActiveFieldKeysFromJson(json));
+    });
+    stepFieldsCacheRef.current = next;
+  };
+
+  // Fields actively placed on any step OTHER than targetStepNumber, read from the
+  // cache (kept fresh by rebuildFieldsCache + the incremental update in onSave)
+  // rather than re-parsing every other step's JSON on every call.
+  const getFieldsUsedInOtherSteps = (targetStepNumber: number): Set<string> => {
+    const usedElsewhere = new Set<string>();
+    stepFieldsCacheRef.current.forEach((fields, stepNum) => {
+      if (stepNum === targetStepNumber) return;
+      fields.forEach(k => usedElsewhere.add(k));
+    });
+    return usedElsewhere;
+  };
+
+  // Mirrors the optIn field definition BeeConfig itself would generate (configPopup.tsx),
+  // so a freed optIn re-injected into another step's form looks identical to one BEE
+  // added by default. `submit` has no equivalent here — it's never removed/re-injected,
+  // every form always keeps exactly one.
+  const getOptInFieldDefinition = () => {
+    const basedOnRTL = landingPage?.Data?.WebForm?.BaseLanguage === 0 || landingPage?.Data?.WebForm?.BaseLanguage === 8;
+    return {
+      type: 'checkbox',
+      label: basedOnRTL ? 'אני מאשר/ת קבלת דיוור' : 'I agree to receiving marketing content',
+      canBeRemovedFromLayout: true,
+      attributes: { dir: basedOnRTL ? 'right' : 'left' },
+    };
+  };
+
+  // Keeps a step's form module(s) in sync with which fields are used elsewhere:
+  // deletes any key used on another step (removing it both from the live form and
+  // from the "Add new field" dropdown — keys absent from `fields` never appear
+  // there), and re-injects (as available, not placed) any key that's no longer used
+  // elsewhere but missing from this module (freed by another step since last load).
+  // `layout` lists which keys render as rows — BEE indexes `fields[key]` for every
+  // key still listed there, so it must be kept in sync on every delete/inject,
+  // otherwise BEE crashes reading `.removeFromLayout` off an orphaned key.
+  // Returns null when nothing needed correcting (avoids pointless reloads).
+  const syncFormFieldsForStep = (
+    jsonData: string,
+    fieldsUsedElsewhere: Set<string>
+  ): { template: any } | null => {
+    let template: any;
+    try {
+      template = JSON.parse(jsonData);
+    } catch {
+      return null;
+    }
+    if (!template?.page?.rows) return null;
+
+    // Canonical field order (same order BeeConfig builds a brand-new form's layout
+    // in: configPopup.tsx:57-62) — used so a re-injected field lands back in its
+    // natural position instead of always at the bottom of the dropdown list.
+    const fieldOrder = [...Object.keys(clientForm), 'optIn', 'submit'];
+    const orderIndexOf = (key: string) => {
+      const idx = fieldOrder.indexOf(key);
+      return idx === -1 ? fieldOrder.length : idx;
+    };
+
+    let changed = false;
+    template.page.rows.forEach((row: any) => {
+      row?.columns?.forEach((col: any) => {
+        col?.modules?.forEach((mod: any) => {
+          const structure = mod?.descriptor?.form?.structure;
+          const fields = structure?.fields;
+          if (!fields) return;
+          const layout: string[][] | null = Array.isArray(structure?.layout) ? structure.layout : null;
+
+          // Remove fields now used on another step. `submit` is the only exemption —
+          // every form always keeps exactly one, never removable, never "used elsewhere".
+          Object.keys(fields).forEach((key) => {
+            if (key === 'submit') return;
+            if (!fieldsUsedElsewhere.has(key)) return;
+
+            delete fields[key];
+            changed = true;
+            if (layout) {
+              for (let i = layout.length - 1; i >= 0; i--) {
+                layout[i] = layout[i].filter((k) => k !== key);
+                if (layout[i].length === 0) layout.splice(i, 1);
+              }
+            }
+          });
+
+          // Re-inject fields freed by other steps since this module was last loaded.
+          // optIn is included alongside every clientForm key — it's subject to the
+          // same cross-step duplicate rules as any other field. Must always run,
+          // even when fieldsUsedElsewhere is empty.
+          [...Object.keys(clientForm), 'optIn'].forEach((key) => {
+            if (fieldsUsedElsewhere.has(key) || key in fields) return;
+            const definition = key === 'optIn' ? getOptInFieldDefinition() : (clientForm as any)[key];
+            fields[key] = { ...definition, removeFromLayout: true };
+            changed = true;
+            if (layout && !layout.some((r) => r.includes(key))) {
+              // Insert at the row matching this key's canonical position, rather
+              // than always appending at the bottom of the dropdown list.
+              const keyIndex = orderIndexOf(key);
+              const insertAt = layout.findIndex((r) => orderIndexOf(r[0]) > keyIndex);
+              if (insertAt === -1) {
+                layout.push([key]);
+              } else {
+                layout.splice(insertAt, 0, [key]);
+              }
+            }
+          });
+        });
+      });
+    });
+
+    return changed ? { template } : null;
+  };
+
+  // Reloads only the editor canvas for the target step — no full page reload
+  const switchToStep = (targetStep: number, updatedStepData?: PopupStep[]) => {
+    const stepData = updatedStepData ?? stepDataRef.current;
+    const webform = landingPage?.Data?.WebForm;
+    const isRtlLang = webform?.BaseLanguage === 0 || webform?.BaseLanguage === 8 ? true : false;
+    const defaultContent = DefaultContent(isRtlLang, webform?.BaseLanguage);
+
+    const targetStepData = stepData.find((s: PopupStep) => s.StepNumber === targetStep);
+    const stepJson = targetStepData?.JsonData ?? null;
+    const template = stepJson
+      ? JSON.parse(stepJson)
+      : targetStep === 1 && webform?.JsonData
+        ? JSON.parse(webform.JsonData)
+        : defaultContent.defaultTemplate;
+
+    // Cache the fields used elsewhere for THIS step — read reactively by
+    // onFormAdded on every subsequent form change, not recomputed per change.
+    fieldsUsedElsewhereRef.current = getFieldsUsedInOtherSteps(targetStep);
+
+    // Rerender the "Add new field" dropdown immediately for the step being
+    // entered, using the just-refreshed cache, instead of waiting for the user
+    // to trigger a form change first.
+    const synced = syncFormFieldsForStep(JSON.stringify(template), fieldsUsedElsewhereRef.current);
+    const templateToLoad = synced ? synced.template : template;
+
+    // Update URL param without triggering a navigation/reload
+    const url = new URL(window.location.href);
+    url.searchParams.set('step', String(targetStep));
+    window.history.replaceState({}, '', url.toString());
+
+    // Keep ref and state in sync so subsequent saves target the right step
+    currentStepRef.current = targetStep;
+    setCurrentStep(targetStep);
+
+    // Reload only the canvas — BeePlugin loads the new template in-place
+    if (editorRef.current) {
+      isSwitchingStep.current = true;
+      // @ts-ignore
+      editorRef.current.load(templateToLoad);
+      // Reset after the current call stack clears so any onSave fired
+      // synchronously by load() is caught and discarded above
+      setTimeout(() => { isSwitchingStep.current = false; }, 0);
+    }
+  };
+
+  const handleGetPlanForFeature = (code: string) => {
+    const planName = findPlanByFeatureCode(code, availablePlans, currentPlan?.Id);
+    if (planName) {
+      return t('billing.tier.featureNotAvailable')
+        .replace('{feature}', t(TierFeatures[code as keyof typeof TierFeatures] || code))
+        .replace('{planName}', planName);
+    }
+    return t('billing.tier.noFeatureAvailable');
+  };
+
+  const handleStepSwitch = (targetStep: number) => {
+    if (targetStep === currentStep) return;
+    if (targetStep > 1 && (currentPlan?.Id || 0) < 3) {
+      setTierMessageCode('POPUP_STEPS');
+      setDialogType({ type: 'tier' });
+      return;
+    }
+    //@ts-ignore
+    saveRef.current = { ...saveRef.current, pendingStepSwitch: targetStep, showAnimation: false };
+    //@ts-ignore
+    editorRef.current.save();
+  };
+
+  const handleAddStepClick = () => {
+    if ((currentPlan?.Id || 0) < 3) {
+      setTierMessageCode('POPUP_STEPS');
+      setDialogType({ type: 'tier' });
+      return;
+    }
+    setShowAddStepOptions(true);
+  };
+
+  const handleAddStepBlank = async () => {
+    setShowAddStepOptions(false);
+    setLoader(true);
+    //@ts-ignore
+    const result = await dispatch(addPopupStep(Number(moduleId))) as any;
+    if (result?.payload?.StatusCode === 201) {
+      const newStep = result.payload.Data?.StepNumber;
+      //@ts-ignore
+      const stepsResult = await dispatch(getPopupSteps(Number(moduleId))) as any;
+      const stepsData: PopupStep[] = stepsResult?.payload?.Data || [];
+      stepDataRef.current = stepsData;
+      rebuildFieldsCache(stepsData);
+      setSteps(stepsData.length > 0 ? stepsData.map((s: PopupStep) => s.StepNumber) : [1]);
+      setLoader(false);
+      switchToStep(newStep, stepsData);
+    } else if (result?.payload?.StatusCode === 927) {
+      setTierMessageCode(result?.payload?.Message || 'POPUP_STEPS');
+      setDialogType({ type: 'tier' });
+      setLoader(false);
+    } else {
+      // @ts-ignore
+      setToastMessage({ severity: 'error', color: 'error', message: result?.payload?.Message, showAnimtionCheck: false });
+      setLoader(false);
+    }
+  };
+
+  // Resolves the current step's last-saved JSON (same step-1/WebForm.JsonData
+  // fallback used everywhere else in this file).
+  const getCurrentStepJson = (): string | null | undefined => {
+    const webform = landingPage?.Data?.WebForm;
+    const currentStepData = stepDataRef.current.find((s: PopupStep) => s.StepNumber === currentStepRef.current);
+    return currentStepRef.current === 1
+      ? (currentStepData?.JsonData ?? webform?.JsonData)
+      : currentStepData?.JsonData;
+  };
+
+  // Used to show a note in the "add step" options dialog — forms are never
+  // duplicated across steps (would immediately create a cross-step duplicate
+  // field), so the user is told upfront that duplicating strips the form.
+  const currentStepHasForm = (): boolean => hasFormModule(getCurrentStepJson());
+
+  const handleAddStepDuplicate = () => {
+    setShowAddStepOptions(false);
+    setLoader(true);
+    //@ts-ignore
+    saveRef.current = { ...saveRef.current, pendingDuplicateStep: true, showAnimation: false };
+    //@ts-ignore
+    editorRef.current.save();
+  };
+
+  const handleDeleteStep = async (stepNumber: number) => {
+    setShowDeleteStepConfirm(null);
+    setLoader(true);
+    //@ts-ignore
+    const result = await dispatch(deletePopupStep({ webFormId: Number(moduleId), stepNumber })) as any;
+    if (result?.payload?.StatusCode === 201) {
+      //@ts-ignore
+      const stepsResult = await dispatch(getPopupSteps(Number(moduleId))) as any;
+      const stepsData: PopupStep[] = stepsResult?.payload?.Data || [];
+      stepDataRef.current = stepsData;
+      rebuildFieldsCache(stepsData);
+      setSteps(stepsData.length > 0 ? stepsData.map((s: PopupStep) => s.StepNumber) : [1]);
+      setLoader(false);
+      switchToStep(1, stepsData);
+    } else {
+      // @ts-ignore
+      setToastMessage({ severity: 'error', color: 'error', message: result?.payload?.Message, showAnimtionCheck: false });
+      setLoader(false);
+    }
+  };
+  //#endregion Step management
+
   //#region Wizard buttons
   const renderTemplateButtons = () => {
+    const showAddStepButton = steps.length < 3;
     return <>
       <Button onClick={() => {
         // setLoader(true);
@@ -925,6 +1530,131 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
       >
         {t('common.Groups')}
       </Button>
+      {/* Steps segmented control — only render after data is ready to avoid flash of Step 1 */}
+      {dataReady && (
+        <>
+          <Box
+            style={{
+              display: 'inline-flex',
+              alignItems: 'stretch',
+              border: '2px solid #F65026',
+              borderRadius: 20,
+              background: '#fff',
+              margin: '4px 8px',
+              minHeight: 34,
+            }}
+          >
+            {steps.map((stepNum, index) => {
+              const isActive = currentStep === stepNum;
+              const isLastStep = index === steps.length - 1;
+              const hasEllipsis = stepNum > 1 && isActive;
+              // Without overflow:hidden the pill no longer auto-clips square button
+              // corners into its rounded shape, so whichever element actually ends up
+              // rendered last/first needs its own outer corner radius (container radius
+              // minus border width) to nest inside the border instead of poking past it.
+              // The step button only gets the end radius when nothing is rendered after
+              // it — once the ellipsis (or add) button shows up beside it, that button
+              // becomes the true edge and carries the radius instead.
+              const isFirstButton = index === 0;
+              const isLastButton = isLastStep && !showAddStepButton && !hasEllipsis;
+              const startRadius = isRTL
+                ? { borderTopRightRadius: 18, borderBottomRightRadius: 18 }
+                : { borderTopLeftRadius: 18, borderBottomLeftRadius: 18 };
+              const endRadius = isRTL
+                ? { borderTopLeftRadius: 18, borderBottomLeftRadius: 18 }
+                : { borderTopRightRadius: 18, borderBottomRightRadius: 18 };
+              return (
+                <Box key={stepNum} style={{ display: 'inline-flex', alignItems: 'stretch' }}>
+                  {index > 0 && (
+                    <Box style={{ width: 2, backgroundColor: '#F65026', flexShrink: 0 }} />
+                  )}
+                  <Button
+                    size='medium'
+                    className={clsx(classes.btn, isActive && classes.btnStepActive)}
+                    onClick={() => handleStepSwitch(stepNum)}
+                    style={{
+                      border: 'none',
+                      borderRadius: 0,
+                      boxShadow: 'none',
+                      padding: '4px 14px',
+                      whiteSpace: 'nowrap',
+                      minWidth: 'unset',
+                      ...(isFirstButton ? startRadius : {}),
+                      ...(isLastButton ? endRadius : {}),
+                    }}
+                  >
+                    {t('Popup.popup_step_n', { n: stepNum })}
+                  </Button>
+                  {hasEllipsis && (
+                    <Button
+                      size='small'
+                      className={clsx(classes.btn, classes.btnStepActive)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setOptionsForStep(stepNum);
+                        setStepOptionsAnchor(e.currentTarget);
+                      }}
+                      style={{
+                        border: 'none',
+                        borderRadius: 0,
+                        minWidth: 'unset',
+                        padding: '4px 8px',
+                        boxShadow: 'none',
+                        ...(isLastStep && !showAddStepButton ? endRadius : {}),
+                      }}
+                    >
+                      <MdMoreVert style={{ fontSize: 18 }} />
+                    </Button>
+                  )}
+                </Box>
+              );
+            })}
+            {showAddStepButton && (
+              <Box style={{ display: 'inline-flex', alignItems: 'stretch' }}>
+                <Box style={{ width: 2, backgroundColor: '#F65026', flexShrink: 0 }} />
+                <Button
+                  size='medium'
+                  className={clsx(classes.btn)}
+                  onClick={handleAddStepClick}
+                  style={{
+                    border: 'none',
+                    borderRadius: 0,
+                    boxShadow: 'none',
+                    padding: '4px 10px',
+                    minWidth: 'unset',
+                    ...(isRTL
+                      ? { borderTopLeftRadius: 18, borderBottomLeftRadius: 18 }
+                      : { borderTopRightRadius: 18, borderBottomRightRadius: 18 }),
+                  }}
+                >
+                  <MdAdd style={{ fontSize: 20 }} />
+                </Button>
+              </Box>
+            )}
+          </Box>
+
+          {/* Step options menu — delete for steps 2 and 3 */}
+          <Menu
+            anchorEl={stepOptionsAnchor}
+            open={Boolean(stepOptionsAnchor)}
+            onClose={() => setStepOptionsAnchor(null)}
+            getContentAnchorEl={null}
+            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+            transformOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+          >
+            <MenuItem
+              onClick={() => {
+                setStepOptionsAnchor(null);
+                setShowDeleteStepConfirm(optionsForStep);
+              }}
+              style={{ color: '#d32f2f' }}
+            >
+              <MdDelete style={{ marginInlineEnd: 6, fontSize: 18 }} />
+              {t('common.Delete')}
+            </MenuItem>
+          </Menu>
+        </>
+      )}
     </>
   }
   const renderButtons = () => {
@@ -939,7 +1669,7 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
                 ...saveRef.current,
                 showGroupPopup: showGroupSelection && selectedGroups?.length <= 0
               };
-              saveDesign(false, null, true)
+              saveDesign(false, null, true, false, false, 'warn')
             }}
             className={clsx(
               classes.btn,
@@ -985,7 +1715,7 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
                     ...saveRef.current,
                     showGroupPopup: showGroupSelection && selectedGroups?.length <= 0
                   };
-                  saveDesign(true, `${sitePrefix}Popups/DisplayRules/${moduleId}?from=editor`, false, landingPage.Status === 2);
+                  saveDesign(true, `${sitePrefix}Popups/DisplayRules/${moduleId}?from=editor`, false, landingPage.Status === 2, false, 'block');
                 }}
                   variant='contained'
                   size='medium'
@@ -1279,7 +2009,44 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
   const renderDialog = () => {
     const { type, data } = dialogType || {}
     let currentDialog = {};
-    if (type === DialogType.Templates) {
+    if (type === 'tier') {
+      currentDialog = {
+        showDivider: false,
+        title: t('billing.tier.permission'),
+        showDefaultButtons: false,
+        content: (
+          <Typography style={{ fontSize: 16, textAlign: 'center' }}>
+            {handleGetPlanForFeature(tierMessageCode)}
+          </Typography>
+        ),
+        renderButtons: () => (
+          <Grid container spacing={2} justifyContent='center' style={{ marginTop: 8 }}>
+            <Grid item>
+              <Button
+                size='small'
+                variant='contained'
+                className={clsx(classes.btn, classes.btnRounded)}
+                onClick={() => { setDialogType(null); setShowTierPlans(true); }}
+              >
+                {t('billing.upgradePlan')}
+              </Button>
+            </Grid>
+            <Grid item>
+              <Button
+                size='small'
+                variant='contained'
+                className={clsx(classes.btn, classes.btnRounded)}
+                onClick={() => setDialogType(null)}
+              >
+                {t('common.cancel')}
+              </Button>
+            </Grid>
+          </Grid>
+        ),
+        onClose: () => setDialogType(null),
+        onCancel: () => setDialogType(null),
+      };
+    } else if (type === DialogType.Templates) {
       currentDialog = renderTemplateDialog();
     } else if (type === DialogType.LOGOUT) {
       currentDialog = logoutDialog();
@@ -1317,14 +2084,36 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
   }
   //#endregion Dialogs
   //#region Forms
-  const onFormAdded = (formsCount: number) => {
+  const onFormAdded = (formsCount: number, currentJson?: string) => {
+    // Update this step's cache entry the instant BEE reports a change — do not
+    // wait for the (debounced) auto-save to land. Without this, switching steps
+    // right after removing/adding a field can read a stale cache: the field
+    // removal's own save may not have completed yet when the switch's save fires.
+    // An empty/no form module naturally yields an empty Set here, so a fully
+    // deleted form correctly empties this step's cache with no special case.
+    if (currentJson) {
+      stepFieldsCacheRef.current.set(currentStepRef.current, getActiveFieldKeysFromJson(currentJson));
+    }
+
     if (formsCount > 1) {
       // @ts-ignore
       setToastMessage(ToastMessages.MULTIPLE_FORMS_NOT_ALLOWED);
+      return;
     }
-    else {
-      onAutoSavePage(true);
+
+    // Fires on every form-module change (field added/removed, form created, etc.).
+    // If the change just placed or exposed a field that's already used on another
+    // step, strip it out of this form (and its dropdown) and reload the correction.
+    if (currentJson) {
+      const corrected = syncFormFieldsForStep(currentJson, fieldsUsedElsewhereRef.current);
+      if (corrected && editorRef.current) {
+        // @ts-ignore
+        editorRef.current.load(corrected.template);
+        return;
+      }
     }
+
+    onAutoSavePage(true);
   }
   const updateWebFormGroups = async (list: Array<number>) => {
     if (landingPage?.Data?.WebForm?.HtmlData?.indexOf('submithandler.axd') > -1 && list?.length === 0) {
@@ -1362,8 +2151,15 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
       setLoader(false);
     }
   }
-  //#endregion Forms 
+  //#endregion Forms
   const getConfig = () => {
+    const fieldsUsedElsewhere = stepDataRef.current.length > 1
+      ? getFieldsUsedInOtherSteps(currentStepRef.current)
+      : new Set<string>();
+    const activeClientForm = Object.fromEntries(
+      Object.entries(clientForm).filter(([key]) => !fieldsUsedElsewhere.has(key))
+    );
+
     return BeeConfig({
       //@ts-ignore
       moduleType,
@@ -1386,7 +2182,8 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
       handleEditRow,
       handleDeleteRow,
       t: t,
-      form: clientForm,
+      form: activeClientForm,
+      includeOptIn: !fieldsUsedElsewhere.has('optIn'),
       onFormAdded: onFormAdded,
       // languageCode: language
       languageCode: editorLanguage
@@ -1394,6 +2191,7 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
   }
 
   const config = getConfig();
+  latestConfigRef.current = config;
 
   return (
     <DefaultScreen
@@ -1476,6 +2274,99 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
         }}
         isOpen={dialog === DialogType.SAVE_TEMPLATE}
       />
+      {showTierPlans && (
+        <TierPlans
+          classes={classes}
+          isOpen={showTierPlans}
+          onClose={() => setShowTierPlans(false)}
+        />
+      )}
+      {showAddStepOptions && (
+        <BaseDialog
+          classes={classes}
+          open={true}
+          title={t('Popup.popup_add_step')}
+          //@ts-ignore
+          showDefaultButtons={false}
+          childrenStyle={classes.noMargin}
+          onClose={() => setShowAddStepOptions(false)}
+          onCancel={() => setShowAddStepOptions(false)}
+        >
+          <Box style={{ textAlign: 'center', padding: '12px 0 16px' }}>
+            <Typography style={{ marginBottom: currentStepHasForm() ? 4 : 16, color: '#555' }}>
+              {t('Popup.popup_add_step_choose')}
+            </Typography>
+            {currentStepHasForm() && (
+              <Typography style={{ marginBottom: 16, color: '#888', fontSize: 13 }}>
+                {t('Popup.duplicateStepFormWarning')}
+              </Typography>
+            )}
+            <Box style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
+              <Button
+                variant='contained'
+                className={clsx(classes.btn, classes.btnRounded)}
+                onClick={handleAddStepBlank}
+              >
+                {t('Popup.popup_add_step_blank')}
+              </Button>
+              <Button
+                variant='contained'
+                className={clsx(classes.btn, classes.btnRounded)}
+                onClick={handleAddStepDuplicate}
+              >
+                {t('Popup.popup_add_step_duplicate')}
+              </Button>
+            </Box>
+          </Box>
+        </BaseDialog>
+      )}
+      {showDeleteStepConfirm !== null && (
+        <BaseDialog
+          classes={classes}
+          open={true}
+          title={t('Popup.popup_step_n', { n: showDeleteStepConfirm })}
+          //@ts-ignore
+          onClose={() => setShowDeleteStepConfirm(null)}
+          onCancel={() => setShowDeleteStepConfirm(null)}
+          onConfirm={() => handleDeleteStep(showDeleteStepConfirm)}
+        >
+          <Typography>{t('Popup.popup_delete_step_confirm')}</Typography>
+        </BaseDialog>
+      )}
+      {showContactFieldWarning && (
+        <BaseDialog
+          classes={classes}
+          open={true}
+          title={t('Popup.contactFieldRequiredTitle')}
+          //@ts-ignore
+          onClose={() => setShowContactFieldWarning(false)}
+          onCancel={() => setShowContactFieldWarning(false)}
+          renderButtons={() => (
+            <Grid container spacing={2} justifyContent='center' className={clsx(classes.dialogButtonsContainer)}>
+              <Grid item>
+                <Button
+                  variant='contained'
+                  size='small'
+                  className={clsx(classes.btn, classes.btnRounded)}
+                  onClick={() => setShowContactFieldWarning(false)}
+                >
+                  {t('Popup.contactFieldRequiredOkay')}
+                </Button>
+              </Grid>
+            </Grid>
+          )}
+        >
+          <Typography>
+            {t(
+              contactFieldWarningType === 'both'
+                ? 'Popup.contactFieldRequiredMessageBoth'
+                : contactFieldWarningType === 'optIn'
+                  ? 'Popup.contactFieldRequiredMessageOptIn'
+                  : 'Popup.contactFieldRequiredMessage'
+            )}
+          </Typography>
+        </BaseDialog>
+      )}
     </DefaultScreen>
   )
 }
