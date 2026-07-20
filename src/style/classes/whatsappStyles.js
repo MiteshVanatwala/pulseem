@@ -2695,12 +2695,6 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			},
 		},
 		'&.sidebar-contact:hover': { backgroundColor: '#EBEBEB' },
-		'&.sidebar-contact__avatar-wrapper': {
-			width: '50px',
-			height: '50px',
-			marginRight: isRTL ? 'unset' : '10px',
-			marginLeft: isRTL ? '10px' : 'unset',
-		},
 		'&.sidebar-contact__content': { overflow: 'hidden', flex: '1', margin: '4px 0px', },
 		'&.sidebar-contact__top-content, .sidebar-contact__bottom-content, .sidebar-contact__message-wrapper':
 		{

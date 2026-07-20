@@ -198,6 +198,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
     "& .MuiDialog-paperWidthSm": {
       minWidth: 400,
       maxWidth: `${maxDialogWidth[windowSize]}px !important`,
+      "@media screen and (max-width: 450px)": {
+        minWidth: "unset",
+        maxWidth: "96vw !important",
+      },
     },
     "& .MuiDialog-paperScrollPaper": {
       maxHeight: "100%",
