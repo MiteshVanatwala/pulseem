@@ -18,7 +18,7 @@ if (typeof globalThis.atob === 'undefined') {
 import {
   amountDisp, num, fmt, gv, sizeG, numG, isTok, pureTok, tokName,
   defaultState, computeLayout, buildLink, b64url, PALETTE, STATE_VERSION,
-  parseTierGraphUrl,
+  parseTierGraphUrl, autoHighlightIndex,
 } from './tierGraphCore.js';
 
 let failures = 0;
@@ -168,6 +168,30 @@ eq('parse 2-tier array padded', rt2.tiers.length, 4);
 // invalid inputs -> null (soft error, no throw)
 eq('parse invalid string', parseTierGraphUrl('not a url'), null);
 eq('parse empty', parseTierGraphUrl(''), null);
+
+/* ---------------- auto-highlight (by value) ---------------- */
+eq('autoHighlight 42k -> tier0', autoHighlightIndex([120000, 150000, 180000, 240000], 42000), 0);
+eq('autoHighlight 130k -> tier1', autoHighlightIndex([120000, 150000, 180000, 240000], 130000), 1);
+eq('autoHighlight exact 150k -> tier1', autoHighlightIndex([120000, 150000, 180000, 240000], 150000), 1);
+eq('autoHighlight exceeds-all -> largest', autoHighlightIndex([120000, 150000, 180000, 240000], 999999), 3);
+eq('autoHighlight tie -> lowest index', autoHighlightIndex([100, 100, 100], 50), 0);
+
+/* ---------------- per-field font sizes (asz/l1sz/..) + row show/hide (r1/r2) ---------------- */
+const sx = defaultState();
+sx.tiers[0].box.row2Show = false;
+sx.tiers[0].box.line1Size = 22; sx.tiers[0].box.cat1Size = 9;
+sx.tiers[0].amountSize = 30; sx.here.textSize = 18;
+const cfgX = decodeCfg(buildLink(sx).url.split('cfg=')[1].split('&')[0]);
+eq('cfg emits r2:0 when hidden', cfgX.tiers[0].box.r2, 0);
+eq('cfg emits asz/tsz', [cfgX.tiers[0].asz, cfgX.here.tsz], [30, 18]);
+eq('cfg emits l1sz/c1sz', [cfgX.tiers[0].box.l1sz, cfgX.tiers[0].box.c1sz], [22, 9]);
+const rtX = parseTierGraphUrl(buildLink(sx).url);
+eq('parse row2Show=false, row1Show default true', [rtX.tiers[0].box.row2Show, rtX.tiers[0].box.row1Show], [false, true]);
+eq('parse sizes round-trip', [rtX.tiers[0].box.line1Size, rtX.tiers[0].box.cat1Size, rtX.tiers[0].amountSize, rtX.here.textSize], [22, 9, 30, 18]);
+
+const cfgDef = decodeCfg(buildLink(defaultState()).url.split('cfg=')[1].split('&')[0]);
+ok('default cfg omits all size/row keys', !/r1|r2|asz|tsz|l1sz|c1sz|l2sz|c2sz/.test(JSON.stringify(cfgDef)));
+ok('default cfg omits dead hl key', !/"hl"/.test(JSON.stringify(cfgDef)));
 
 /* ---------------- summary ---------------- */
 if (failures > 0) {

@@ -73,6 +73,22 @@ export const amountDisp = (g) => {
   return pureTok(g.t) ? tokName(g.t) + ' · ' + CUR + fmt(sample) : CUR + fmt(sample);
 };
 
+// Auto-highlight: index of the tier the current value is working toward — the smallest tier value
+// that is >= the current value; if the value exceeds every tier, the largest tier. This replaces the
+// old manual per-tier highlight. Both renderers (React TierGraphStage + C# RenderStairs) MUST use this
+// exact rule so the editor preview and the per-recipient sent image agree.
+export const autoHighlightIndex = (tierSizes, hereVal) => {
+  let idx = -1, best = Infinity;
+  for (let i = 0; i < tierSizes.length; i++) {
+    if (tierSizes[i] >= hereVal && tierSizes[i] < best) { best = tierSizes[i]; idx = i; }
+  }
+  if (idx < 0) {
+    let mx = -Infinity;
+    for (let i = 0; i < tierSizes.length; i++) { if (tierSizes[i] > mx) { mx = tierSizes[i]; idx = i; } }
+  }
+  return idx;
+};
+
 /* ---------------- default state (hard-coded Hebrew content) ---------------- */
 export const defaultState = () => ({
   version: 4,
@@ -82,16 +98,16 @@ export const defaultState = () => ({
   progressFill: '#7ed98c',
   tierCountActive: 4,
   tiers: [
-    { amount: { t: '120000', s: 120000 }, fill: '#c4cdf2', labelColor: '#3b3b6b', highlight: true,
+    { amount: { t: '120000', s: 120000 }, fill: '#c4cdf2', labelColor: '#3b3b6b',
       box: { fill: '#ffffff', textColor: '#1e7e34', accent: '#2bb24c',
              line1: 'יחיד', cat1: 'פרס טיסה', line2: 'זוגי', cat2: 'פרס משפחות' } },
-    { amount: { t: '150000', s: 150000 }, fill: '#c4cdf2', labelColor: '#3b3b6b', highlight: false,
+    { amount: { t: '150000', s: 150000 }, fill: '#c4cdf2', labelColor: '#3b3b6b',
       box: { fill: '#ffffff', textColor: '#1e7e34', accent: '#2bb24c',
              line1: 'זוגי', cat1: 'פרס טיסה', line2: '+1', cat2: 'פרס משפחות' } },
-    { amount: { t: '180000', s: 180000 }, fill: '#c4cdf2', labelColor: '#3b3b6b', highlight: false,
+    { amount: { t: '180000', s: 180000 }, fill: '#c4cdf2', labelColor: '#3b3b6b',
       box: { fill: '#ffffff', textColor: '#1e7e34', accent: '#2bb24c',
              line1: 'זוגי', cat1: 'פרס טיסה', line2: '+2', cat2: 'פרס משפחות' } },
-    { amount: { t: '240000', s: 240000 }, fill: '#c4cdf2', labelColor: '#3b3b6b', highlight: false,
+    { amount: { t: '240000', s: 240000 }, fill: '#c4cdf2', labelColor: '#3b3b6b',
       box: { fill: '#ffffff', textColor: '#1e7e34', accent: '#2bb24c',
              line1: 'זוגי', cat1: 'פרס טיסה', line2: '+3', cat2: 'פרס משפחות' } },
   ],
@@ -160,14 +176,22 @@ export const buildLink = (state) => {
     here: {
       show: state.here.show, color: state.here.color,
       v: geoSlot(state.here.value), t: txtSlot(state.here.text),
+      ...(state.here.textSize ? { tsz: state.here.textSize } : {}),   // D: pill font size
     },
     tiers: state.tiers.slice(0, state.tierCountActive).map((tr) => ({
-      fill: tr.fill, lc: tr.labelColor, hl: tr.highlight,
+      fill: tr.fill, lc: tr.labelColor,
       a: geoSlot(tr.amount),
+      ...(tr.amountSize ? { asz: tr.amountSize } : {}),               // D: amount font size
       box: {
         f: tr.box.fill, tc: tr.box.textColor, ac: tr.box.accent,
         c1: txtSlot(tr.box.cat1), c2: txtSlot(tr.box.cat2),
         l1: txtSlot(tr.box.line1), l2: txtSlot(tr.box.line2),
+        ...(tr.box.row1Show === false ? { r1: 0 } : {}),              // E: hide row 1
+        ...(tr.box.row2Show === false ? { r2: 0 } : {}),              // E: hide row 2
+        ...(tr.box.line1Size ? { l1sz: tr.box.line1Size } : {}),      // D: per-field font sizes
+        ...(tr.box.cat1Size ? { c1sz: tr.box.cat1Size } : {}),
+        ...(tr.box.line2Size ? { l2sz: tr.box.line2Size } : {}),
+        ...(tr.box.cat2Size ? { c2sz: tr.box.cat2Size } : {}),
       },
     })),
   };
@@ -229,13 +253,16 @@ export const parseTierGraphUrl = (url) => {
           amount: geo(tr.a),
           fill: tr.fill || d.tiers[0].fill,
           labelColor: tr.lc || d.tiers[0].labelColor,
-          highlight: !!tr.hl,
+          amountSize: tr.asz,                                          // D
           box: {
             fill: box.f || d.tiers[0].box.fill,
             textColor: box.tc || d.tiers[0].box.textColor,
             accent: box.ac || d.tiers[0].box.accent,
             cat1: txt(box.c1), cat2: txt(box.c2),
             line1: txt(box.l1), line2: txt(box.l2),
+            row1Show: box.r1 !== 0, row2Show: box.r2 !== 0,            // E
+            line1Size: box.l1sz, cat1Size: box.c1sz,                  // D
+            line2Size: box.l2sz, cat2Size: box.c2sz,
           },
         };
       }),
@@ -244,6 +271,7 @@ export const parseTierGraphUrl = (url) => {
         color: (cfg.here && cfg.here.color) || d.here.color,
         value: geo(cfg.here && cfg.here.v),
         text: txt(cfg.here && cfg.here.t),
+        textSize: cfg.here && cfg.here.tsz,                            // D: pill font size
       },
     };
     if (!g.tiers.length) return null; // no tiers -> not a valid graph URL

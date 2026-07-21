@@ -68,7 +68,7 @@ export default function TierGraphEditorPanel({ graph, selected, dispatch, mergeD
         <Head icon="📍" name={t('campaigns.tierGraph.hereTitle')} t={t} />
         <ToggleField label={t('campaigns.tierGraph.hereShow')} value={hr.show} onChange={(v) => dispatch({ type: 'SET_HERE_FIELD', key: 'show', val: v })} />
         <GeoField label={t('campaigns.tierGraph.hereValue')} geo={hr.value} mergeData={mergeData} t={t} onChange={(geo) => dispatch({ type: 'SET_GEO', path: 'here', geo })} />
-        <TokenTextField label={t('campaigns.tierGraph.hereText')} value={hr.text} mergeData={mergeData} t={t} onChange={(v) => dispatch({ type: 'SET_HERE_FIELD', key: 'text', val: v })} />
+        <TokenTextField label={t('campaigns.tierGraph.hereText')} value={hr.text} mergeData={mergeData} t={t} fontSize={hr.textSize} onFontSize={(v) => dispatch({ type: 'SET_HERE_FIELD', key: 'textSize', val: v })} onChange={(v) => dispatch({ type: 'SET_HERE_FIELD', key: 'text', val: v })} />
         <ColorField label={t('campaigns.tierGraph.hereColor')} value={hr.color} onChange={(v) => dispatch({ type: 'SET_HERE_FIELD', key: 'color', val: v })} />
       </div>
     );
@@ -81,10 +81,11 @@ export default function TierGraphEditorPanel({ graph, selected, dispatch, mergeD
       <div>
         <Head icon="📊" name={t('campaigns.tierGraph.tierTitle', { n: i + 1 })} t={t} />
         {/* tier amounts may be personalized too — a ##Field## resolves per-recipient at send time */}
-        <GeoField label={t('campaigns.tierGraph.amountLabel')} geo={tr.amount} mergeData={mergeData} t={t} onChange={(geo) => dispatch({ type: 'SET_GEO', path: i, geo })} />
+        <GeoField label={t('campaigns.tierGraph.amountLabel')} geo={tr.amount} mergeData={mergeData} t={t} fontSize={tr.amountSize} onFontSize={(v) => dispatch({ type: 'SET_TIER_FIELD', i, key: 'amountSize', val: v })} onChange={(geo) => dispatch({ type: 'SET_GEO', path: i, geo })} />
         <ColorField label={t('campaigns.tierGraph.fillColor')} value={tr.fill} onChange={(v) => dispatch({ type: 'SET_TIER_FIELD', i, key: 'fill', val: v })} />
         <ColorField label={t('campaigns.tierGraph.labelColor')} value={tr.labelColor} onChange={(v) => dispatch({ type: 'SET_TIER_FIELD', i, key: 'labelColor', val: v })} />
-        <ToggleField label={t('campaigns.tierGraph.highlightToggle')} value={tr.highlight} onChange={(v) => dispatch({ type: 'SET_TIER_HIGHLIGHT', i, val: v })} />
+        {/* highlight is AUTOMATIC by the "here" value now — no manual toggle */}
+        <div style={{ fontSize: 11.5, color: '#6b7280', marginTop: 4, lineHeight: 1.5 }}>{t('campaigns.tierGraph.highlightAutoNote')}</div>
       </div>
     );
   }
@@ -95,11 +96,15 @@ export default function TierGraphEditorPanel({ graph, selected, dispatch, mergeD
     return (
       <div>
         <Head icon="🟩" name={t('campaigns.tierGraph.boxTitle', { n: i + 1 })} t={t} />
-        {/* card labels may be personalized too — a ##Field## resolves per-recipient at send time */}
-        <TokenTextField label={t('campaigns.tierGraph.line1Value')} value={b.line1} mergeData={mergeData} t={t} onChange={(v) => dispatch({ type: 'SET_BOX_FIELD', i, key: 'line1', val: v })} />
-        <TokenTextField label={t('campaigns.tierGraph.line1Cat')} value={b.cat1} mergeData={mergeData} t={t} onChange={(v) => dispatch({ type: 'SET_BOX_FIELD', i, key: 'cat1', val: v })} />
-        <TokenTextField label={t('campaigns.tierGraph.line2Value')} value={b.line2} mergeData={mergeData} t={t} onChange={(v) => dispatch({ type: 'SET_BOX_FIELD', i, key: 'line2', val: v })} />
-        <TokenTextField label={t('campaigns.tierGraph.line2Cat')} value={b.cat2} mergeData={mergeData} t={t} onChange={(v) => dispatch({ type: 'SET_BOX_FIELD', i, key: 'cat2', val: v })} />
+        {/* E: show/hide each row — lets a 2-row card become a 1-row card */}
+        <ToggleField label={t('campaigns.tierGraph.row1Show')} value={b.row1Show !== false} onChange={(v) => dispatch({ type: 'SET_BOX_FIELD', i, key: 'row1Show', val: v })} />
+        <ToggleField label={t('campaigns.tierGraph.row2Show')} value={b.row2Show !== false} onChange={(v) => dispatch({ type: 'SET_BOX_FIELD', i, key: 'row2Show', val: v })} />
+        {/* card labels may be personalized too — a ##Field## resolves per-recipient at send time.
+            D: each field carries an optional font size (px). */}
+        <TokenTextField label={t('campaigns.tierGraph.line1Value')} value={b.line1} mergeData={mergeData} t={t} fontSize={b.line1Size} onFontSize={(v) => dispatch({ type: 'SET_BOX_FIELD', i, key: 'line1Size', val: v })} onChange={(v) => dispatch({ type: 'SET_BOX_FIELD', i, key: 'line1', val: v })} />
+        <TokenTextField label={t('campaigns.tierGraph.line1Cat')} value={b.cat1} mergeData={mergeData} t={t} fontSize={b.cat1Size} onFontSize={(v) => dispatch({ type: 'SET_BOX_FIELD', i, key: 'cat1Size', val: v })} onChange={(v) => dispatch({ type: 'SET_BOX_FIELD', i, key: 'cat1', val: v })} />
+        <TokenTextField label={t('campaigns.tierGraph.line2Value')} value={b.line2} mergeData={mergeData} t={t} fontSize={b.line2Size} onFontSize={(v) => dispatch({ type: 'SET_BOX_FIELD', i, key: 'line2Size', val: v })} onChange={(v) => dispatch({ type: 'SET_BOX_FIELD', i, key: 'line2', val: v })} />
+        <TokenTextField label={t('campaigns.tierGraph.line2Cat')} value={b.cat2} mergeData={mergeData} t={t} fontSize={b.cat2Size} onFontSize={(v) => dispatch({ type: 'SET_BOX_FIELD', i, key: 'cat2Size', val: v })} onChange={(v) => dispatch({ type: 'SET_BOX_FIELD', i, key: 'cat2', val: v })} />
         <ColorField label={t('campaigns.tierGraph.boxFill')} value={b.fill} onChange={(v) => dispatch({ type: 'SET_BOX_FIELD', i, key: 'fill', val: v })} />
         <ColorField label={t('campaigns.tierGraph.boxTextColor')} value={b.textColor} onChange={(v) => dispatch({ type: 'SET_BOX_FIELD', i, key: 'textColor', val: v })} />
         <ColorField label={t('campaigns.tierGraph.boxAccent')} value={b.accent} onChange={(v) => dispatch({ type: 'SET_BOX_FIELD', i, key: 'accent', val: v })} />
