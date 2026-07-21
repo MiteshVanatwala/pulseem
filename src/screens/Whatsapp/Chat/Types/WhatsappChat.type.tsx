@@ -352,6 +352,7 @@ export type APISendWhatsAppChatReqPayload = {
 	FromNumber: string;
 	ToNumber: string;
 	IsFreeFormChat: boolean;
+	IsNewchat: boolean;
 	TextMessage?: string;
 	mediaUrl?: string;
 	TemplateId?: string;
