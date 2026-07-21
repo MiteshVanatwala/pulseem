@@ -93,8 +93,27 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
                 const data = new Uint8Array(e.target.result);
                 const wb = XLSX.read(data, { type: 'array', sheetRows: 6 }); // parse only 6 rows → fast on big files
                 const sheet = wb.Sheets[wb.SheetNames[0]];
-                const rows: any[][] = XLSX.utils.sheet_to_json(sheet, { header: 1, blankrows: false });
-                resolve(rows.map(row => row.map((c: any) => (c === null || c === undefined) ? '' : String(c))));
+                const raw: any[][] = XLSX.utils.sheet_to_json(sheet, { header: 1, blankrows: false });
+                // sheet_to_json (header:1) returns SPARSE arrays - a cell absent from the
+                // used range is a HOLE, and Array.prototype.map SKIPS holes, so they used
+                // to survive the String() normalization, reach the columns array, become
+                // null in the request JSON and crash the server (NRE on SourceHeader).
+                // Densify explicitly, and drop the columns BEFORE the header row's first
+                // present cell: the worker reads the file shifted to exactly that column
+                // (DataSourcesWorker FileParser offset rule), so keeping a leading empty
+                // column here would silently shift the whole column mapping by one.
+                const hdr: any[] = raw.length > 0 ? raw[0] : [];
+                let start = 0;
+                while (start < hdr.length && !(start in hdr)) start++;   // skip leading holes only
+                resolve(raw.map(row => {
+                    const width = Math.max(row.length, hdr.length);
+                    const dense: string[] = [];
+                    for (let i = start; i < width; i++) {
+                        const c = row[i];
+                        dense.push(c === null || c === undefined ? '' : String(c));
+                    }
+                    return dense;
+                }));
             } catch (err) { reject(err); }
         };
         r.onerror = reject;
