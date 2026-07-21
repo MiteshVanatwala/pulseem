@@ -7,7 +7,7 @@ import { getPackagesDetails } from '../../redux/reducers/dashboardSlice';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
-import { MdArrowBackIos, MdArrowForwardIos, MdSupportAgent } from 'react-icons/md';
+import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { BellIcon, WhatsappIcon, SmsIcon, CardIcon, NewsletterIcon } from '../../assets/images/dashboard/index'
 import { TooltipBubble } from '../../assets/images/dashboard/index';
 import { BaseDialog } from '../DialogTemplates/BaseDialog';
@@ -25,7 +25,6 @@ import { BiCog } from 'react-icons/bi';
 import { getAccountBilling } from '../../redux/reducers/BillingSlice';
 import BillingSettings from '../BillingSettings/BillingSettings';
 import TierPlans from '../TierPlans/TierPlans';
-import { toggleHelpDrawer } from '../../redux/reducers/helpDrawerSlice';
 import { contactSalesForScale, deletePolandSubscription, getCurrentPlan } from '../../redux/reducers/TiersSlice';
 import { getAccountSettings } from '../../redux/reducers/AccountSettingsSlice';
 import { Loader } from '../Loader/Loader';
@@ -34,23 +33,7 @@ import moment from 'moment';
 import { DateFormats } from '../../helpers/Constants';
 import { logout } from '../../helpers/Api/PulseemReactAPI';
 
-import { makeStyles } from '@material-ui/core/styles';
-
-const useLocalStyles = makeStyles({
-  customArrow: {
-    color: '#ff1946'
-  },
-  customTooltip: {
-    whiteSpace: 'nowrap',
-    padding: '6px 12px',
-    borderRadius: '4px',
-    fontWeight: 500,
-    transform: 'translateY(-5px)'
-  }
-});
-
 const BulkStatus = ({ classes }) => {
-  const localClasses = useLocalStyles();
   const { billingTypeId, windowSize, isRTL } = useSelector(state => state.core)
   const { accountSettings, accountFeatures, isGlobal, IsPoland, accountCurrencySymbol, accountIsCurrencySymbolPrefix } = useSelector(state => state.common);
   const { packagesDetails, accountAvailablePackages } = useSelector(state => state.dashboard);
@@ -389,11 +372,11 @@ const BulkStatus = ({ classes }) => {
                   {t('dashboard.yourBulkStatus')}
                 </Typography>
               </Box>
-              {isWhiteLabel ? <Box className={clsx(classes.mr15, 'bubbleNew')}>
+              {isWhiteLabel && <Box className={clsx(classes.mr15, 'bubbleNew')}>
                 <Typography className='bubbleText'>{t('common.new')}</Typography>
                 <TooltipBubble />
-              </Box> : null}
-          </Box>
+              </Box>}
+            </Box>
           </Grid>
           <Grid
             container

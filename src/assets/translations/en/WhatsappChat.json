@@ -78,6 +78,7 @@
 	"invalidPhoneNumber": "Please enter a valid phone number",
 	"noTemplatesFound": "No templates found",
 	"refreshChat": "Refresh",
+	"moreActions": "More actions",
 	"clickPlaceholderHint": "Click a highlighted placeholder to fill it in.",
 	"editing": "Editing"
 }
