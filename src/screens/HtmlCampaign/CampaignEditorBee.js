@@ -2214,6 +2214,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       currentDialog = {
         title: t('campaigns.tierGraph.title'),
         showDefaultButtons: false,
+        maxHeight: '86vh',                                      // raise the children cap so the FIXED-height dialog body (TierGraphDialog root: 80vh) never clips — panel scrolls, popup never jumps
         customContainerStyle: classes.tierGraphDialogContainer, // sizes the OUTER MUI paper past the 1080 cap (this dialog only)
         paperStyle: classes.tierGraphDialogPaperProps,          // INNER paper — now fills the outer, never overflows
         contentStyle: classes.tierGraphDialogContent,           // drop dialogContent's 1rem margin / minWidth

@@ -6164,6 +6164,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
     margin: '0 !important',        // gutter comes solely from the outer paper (no double margin)
     boxSizing: 'border-box',
     overflow: 'hidden',
+    // undo the app-wide "::placeholder { color: red }" leak (Whatsapp/Chat/css/overrides.css) — scope a
+    // neutral placeholder color to this dialog only. Higher specificity beats the global rule.
+    '& input::placeholder': { color: '#9aa1ad', opacity: 1 },
+    '& input::-ms-input-placeholder': { color: '#9aa1ad' },
   },
   // reclaim dialogContent's residual 1rem side margin + minWidth so the graph is full-bleed
   tierGraphDialogContent: {

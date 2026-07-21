@@ -111,7 +111,7 @@ export const defaultState = () => ({
       box: { fill: '#ffffff', textColor: '#1e7e34', accent: '#2bb24c',
              line1: 'זוגי', cat1: 'פרס טיסה', line2: '+3', cat2: 'פרס משפחות' } },
   ],
-  here: { value: { t: '42000', s: 42000 }, text: 'אתה כאן', color: '#2bb24c', show: true },
+  here: { value: { t: '##סכום עדכני של סוכן##', s: 42000 }, text: 'אתה כאן', color: '#2bb24c', show: true },
 });
 
 /* ---------------- layout constants (identical in the C# renderer) ---------- */
