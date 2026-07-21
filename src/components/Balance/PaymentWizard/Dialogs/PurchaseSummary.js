@@ -24,7 +24,7 @@ const PurchaseSummary = ({
     const productName = {
         2: t('common.newsletterMessages'),
         3: t('common.smsMessages'),
-        4: t('common.whatsappBalance'),
+        4: t('SubAccount.balance'),
     };
     return (
         <Grid container spacing={1} className={classes.paymentDialog}>

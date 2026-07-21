@@ -6,5 +6,22 @@
   "DeletePopupTitle": "מחק פופאפ",
   "DeletePopupDesc": "האם ברצונכם למחוק את פופאפ?",
   "DuplicatePopupTitle": "שכפל פופאפ",
-  "DuplicatePopupDesc": "האם ברצונכם לשכפל את הפופאפ?"
+  "DuplicatePopupDesc": "האם ברצונכם לשכפל את הפופאפ?",
+  "popup_step": "שלב",
+  "popup_step_n": "שלב {{n}}",
+  "popup_step_1": "שלב 1",
+  "popup_step_2": "שלב 2",
+  "popup_step_3": "שלב 3",
+  "popup_add_step": "הוספת שלב",
+  "popup_add_step_choose": "כיצד ברצונכם להוסיף את השלב החדש?",
+  "popup_add_step_blank": "שלב ריק",
+  "popup_add_step_duplicate": "שכפל שלב נוכחי",
+  "popup_delete_step_confirm": "האם ברצונכם למחוק את השלב?",
+  "duplicateFieldAcrossSteps": "{{fields}} כבר בשימוש בשלב אחר — כל שדה יכול להופיע פעם אחת בלבד בכל השלבים.",
+  "duplicateStepFormWarning": "שלב זה כולל טופס, הטופס לא יועתק לשלב הבא, תוכלו להוסיף שדה טופס באופן ידני כל עוד הוא כולל שדה שלא השתמשתם בו בשלב אחר.",
+  "contactFieldRequiredTitle": "שדה איש קשר נדרש",
+  "contactFieldRequiredMessage": "הטופס אינו מכיל אימייל או סלולרי ו\\או את שדה ״אישור דיוור״.\nאנא שלבו את אחד מהשדות אימייל או סלולרי על מנת להמשיך.",
+  "contactFieldRequiredMessageOptIn": "הטופס שלכם אינו כולל צ׳קבוקס אישור דיוור. אנא הוסיפו אותו על מנת להמשיך.",
+  "contactFieldRequiredMessageBoth": "הטופס אינו מכיל אימייל או סלולרי ו\\או את שדה ״אישור דיוור״.\nאנא שלבו את אחד מהשדות אימייל או סלולרי בנוסף לאישור דיוור על מנת להמשיך",
+  "contactFieldRequiredOkay": "אישור"
 }

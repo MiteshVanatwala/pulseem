@@ -24,9 +24,14 @@ export interface ConfigOptions {
   handleEditRow: Function;
   t: any;
   form: any;
-  onFormAdded: Function;
+  onFormAdded: (formsCount: number, currentJson?: string) => void;
   BasedOnRTL: any;
   languageCode: any;
+  // Whether a brand-new form should default to including the optIn checkbox.
+  // Defaults to true (existing behaviour). The popup editor sets this to false
+  // when optIn is already in use on another step, the same way used-elsewhere
+  // fields are omitted from `form` entirely.
+  includeOptIn?: boolean;
 }
 export const BeeConfig = (Options: ConfigOptions) => {
   const {
@@ -51,14 +56,15 @@ export const BeeConfig = (Options: ConfigOptions) => {
     form,
     onFormAdded,
     BasedOnRTL,
-    languageCode
+    languageCode,
+    includeOptIn = true
   } = Options;
 
   const layout = [];
   Object.keys(form).forEach((key, index) => {
     layout.push([`${key}`]);
   });
-  layout.push(['optIn']);
+  if (includeOptIn) layout.push(['optIn']);
   layout.push(['submit']);
 
   const editorLanguage = {
@@ -83,7 +89,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
     uid: 'e945eb6b-249c-4dea-bee1-e4b98b8719cc', //needed for identify resources of the that user and billing stuff
     container: 'page-bee-plugin-container-popup', //Identifies the id of div element that contains BEE Plugin
     // language: editorLanguage[languageCode], //IsRTL ? 'he-IL' : 'en-US',
-    customCss: 'https://www.pulseem.co.il/Pulseem/Css/beefreeRtlFixesPopup.css',
+    customCss: `https://www.pulseem.co.il/Pulseem/Css/beefreeRtlFixesPopup.css`,
     trackChanges: true,
     //autosave: AUTO_SAVE_SECONDS,
     loadingSpinnerDisableOnSave: true,
@@ -105,11 +111,14 @@ export const BeeConfig = (Options: ConfigOptions) => {
         description: BasedOnRTL ? "טופס הרשמה" : 'Registeration Form',
         fields: {
           ...form,
-          optIn: {
-            type: 'checkbox', label: BasedOnRTL ? 'אני מאשר/ת קבלת דיוור' : 'I agree to receiving marketing content',
-            canBeRemovedFromLayout: true,
-            attributes: { dir: BasedOnRTL ? 'right' : 'left' }
-          },
+          ...(includeOptIn ? {
+            optIn: {
+              type: 'checkbox', label: BasedOnRTL ? 'אני מאשר/ת קבלת דיוור' : 'I agree to receiving marketing content',
+              canBeRemovedFromLayout: true,
+              removeFromLayout: false,
+              attributes: { dir: BasedOnRTL ? 'right' : 'left' }
+            },
+          } : {}),
           submit: {
             type: 'submit', label: '', canBeRemovedFromLayout: false,
             attributes: {
@@ -438,7 +447,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
         }
         case "0900": {
           const formsCount = getFormsCount(jsonFile);
-          onFormAdded(formsCount);
+          onFormAdded(formsCount, jsonFile);
           break;
         }
         default: {
