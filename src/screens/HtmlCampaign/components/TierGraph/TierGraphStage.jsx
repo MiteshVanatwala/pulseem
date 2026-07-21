@@ -30,13 +30,14 @@ function CenterRow({ cx, y, value, cat, valColor, dotColor, dotShape, measureTex
   const dotR = 5;
   const gap = 8;
   const lineH = size + 2;
+  const dotSpace = dotShape === 'none' ? 0 : (dotR * 2 + gap);   // no reserved dot space when hidden → text centers
   const avail = Math.max(24, (maxW || 9999) - 12);   // usable width inside the card
-  const textAvail = avail - (dotR * 2 + gap);         // reserve room for the accent dot
+  const textAvail = avail - dotSpace;
   const oneW = measureText(value, size, '700');
 
   // Fast path — fits on one line: render exactly as before (centered value + dot unit).
   if (oneW <= textAvail) {
-    const total = dotR * 2 + gap + oneW;
+    const total = dotSpace + oneW;
     const left = cx - total / 2;
     return (
       <g>

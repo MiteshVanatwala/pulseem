@@ -178,7 +178,7 @@ export default function TierGraphDialog({ onClose, onInsert, mergeData, t }) {
   const segBtn = (on) => ({ border: 0, background: on ? '#4f46e5' : '#fff', color: on ? '#fff' : '#6b7280', padding: '5px 12px', fontWeight: 700, cursor: 'pointer', fontSize: 13 });
 
   return (
-    <div style={{ position: 'relative', width: '100%', display: 'flex', flexDirection: 'column', flex: '1 1 auto', minHeight: 0, maxHeight: '100%' }}>
+    <div style={{ position: 'relative', width: '100%', display: 'flex', flexDirection: 'column', height: '80vh' }}>
       {/* header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap', padding: '12px 16px', borderBottom: '1px solid #e2e6ee' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
