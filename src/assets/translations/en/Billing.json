@@ -317,7 +317,8 @@
     "RCS_MESSAGING": "RCS Messaging",
     "KOSHER_SEND": "Kosher Send",
     "LANDING_PAGE_HTML_BLOCK": "HTML Block",
-    "POPUP_STEPS": "Multi-Step Popups"
+    "POPUP_STEPS": "Multi-Step Popups",
+    "POPUP_MANGEMENT": "Popup Management"
   },
   "EmailMarketingList": "What's your mailing list size?",
   "EmailMarketingListSending": "(Unlimited sending based on list size)",
