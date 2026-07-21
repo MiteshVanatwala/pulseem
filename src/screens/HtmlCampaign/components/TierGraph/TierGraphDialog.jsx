@@ -207,7 +207,9 @@ export default function TierGraphDialog({ onClose, onInsert, mergeData, t }) {
           item's CONTENT (not the container), so the editor panel grows past the dialog and the footer
           overlaps it instead of the panel scrolling. nowrap + minHeight:0 lets each column scroll. */}
       <div style={{ flex: 1, display: 'flex', minHeight: 0, flexDirection: 'row', flexWrap: 'nowrap' }}>
-        <div style={{ flex: 1, minWidth: 0, minHeight: 0, overflow: 'auto', padding: 18, background: '#eef1f6', display: 'flex', alignItems: 'flex-start', justifyContent: 'center' }}>
+        {/* stage: NO horizontal scroll (overflowX hidden) — this also kills the scrollbar-induced
+            "jump" when selecting an element; only the panel scrolls, vertically. */}
+        <div style={{ flex: 1, minWidth: 0, minHeight: 0, overflowX: 'hidden', overflowY: 'auto', padding: 18, background: '#eef1f6', display: 'flex', alignItems: 'flex-start', justifyContent: 'center' }}>
           <div style={{ width: '100%', maxWidth: graph.width, boxShadow: '0 8px 30px rgba(0,0,0,.14)', borderRadius: 8, overflow: 'hidden', background: '#fff' }}>
             <TierGraphStage
               graph={graph}
@@ -218,7 +220,7 @@ export default function TierGraphDialog({ onClose, onInsert, mergeData, t }) {
             />
           </div>
         </div>
-        <aside style={{ flex: '0 1 340px', minWidth: 300, minHeight: 0, boxSizing: 'border-box', borderInlineStart: '1px solid #e2e6ee', overflowY: 'auto', padding: 16, background: '#fff' }}>
+        <aside style={{ flex: '0 0 380px', minWidth: 380, minHeight: 0, boxSizing: 'border-box', borderInlineStart: '1px solid #e2e6ee', overflowX: 'hidden', overflowY: 'auto', padding: 16, background: '#fff' }}>
           <TierGraphEditorPanel graph={graph} selected={selected} dispatch={dispatch} mergeData={md} t={t} />
         </aside>
       </div>
@@ -245,7 +247,7 @@ export default function TierGraphDialog({ onClose, onInsert, mergeData, t }) {
             onClick={(e) => e.stopPropagation()}
             style={{ width: 'min(540px, 92%)', background: '#fff', borderRadius: 14, boxShadow: '0 24px 70px rgba(0,0,0,.35)', padding: '24px 26px', direction: 'rtl' }}
           >
-            <div style={{ fontSize: 18, fontWeight: 800, marginBottom: 6 }}>{t('campaigns.tierGraph.importImage')}</div>
+            <div style={{ fontSize: 18, fontWeight: 700, marginBottom: 6 }}>{t('campaigns.tierGraph.importImage')}</div>
             <div style={{ fontSize: 13, color: '#6b7280', marginBottom: 16, lineHeight: 1.6 }}>{t('campaigns.tierGraph.importImageHint')}</div>
             <input
               autoFocus

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { computeLayout, sizeG, isTok, amountDisp, fmt, CUR, autoHighlightIndex } from './tierGraphCore';
+import { computeLayout, sizeG, pureTok, tokName, gv, amountDisp, fmt, CUR, autoHighlightIndex } from './tierGraphCore';
 
 // greedy word-wrap: split into lines that each fit within maxW (px), via the shared canvas measurer.
 function wrapLines(text, maxW, size, weight, measureText) {
@@ -15,10 +15,18 @@ function wrapLines(text, maxW, size, weight, measureText) {
   return lines;
 }
 
+// accent mark next to a card value — shape ∈ circle | square | dot (small) | none.
+function Dot({ cx, cy, r, shape, color }) {
+  if (shape === 'none') return null;
+  if (shape === 'square') return <rect x={cx - r} y={cy - r} width={r * 2} height={r * 2} rx={1.5} fill={color} />;
+  const rr = shape === 'dot' ? r * 0.6 : r;   // 'dot' = a smaller circle; default/circle = full
+  return <circle cx={cx} cy={cy} r={rr} fill={color} />;
+}
+
 // value + colored dot + caption, centered around cx (POC centerRow).
 // A value that would be wider than the card wraps to stay INSIDE the column (max 2 lines; a single
 // unbreakable line that is still too wide is compressed with textLength) so text never spills sideways.
-function CenterRow({ cx, y, value, cat, valColor, dotColor, measureText, maxW, size = 15, capSize = 12 }) {
+function CenterRow({ cx, y, value, cat, valColor, dotColor, dotShape, measureText, maxW, size = 15, capSize = 12 }) {
   const dotR = 5;
   const gap = 8;
   const lineH = size + 2;
@@ -33,7 +41,7 @@ function CenterRow({ cx, y, value, cat, valColor, dotColor, measureText, maxW, s
     return (
       <g>
         <text x={left + oneW / 2} y={y} textAnchor="middle" dominantBaseline="middle" fontSize={size} fontWeight={700} fill={valColor}>{value}</text>
-        <circle cx={cx + total / 2 - dotR} cy={y} r={dotR} fill={dotColor} />
+        <Dot cx={cx + total / 2 - dotR} cy={y} r={dotR} shape={dotShape} color={dotColor} />
         {cat ? <text x={cx} y={y + 18} textAnchor="middle" fontSize={capSize} fill="#9aa1ad">{cat}</text> : null}
       </g>
     );
@@ -54,7 +62,7 @@ function CenterRow({ cx, y, value, cat, valColor, dotColor, measureText, maxW, s
           <text key={i} x={cx} y={startY + i * lineH} textAnchor="middle" dominantBaseline="middle" fontSize={size} fontWeight={700} fill={valColor} {...fit}>{ln}</text>
         );
       })}
-      <circle cx={cx + firstW / 2 + gap / 2 + dotR} cy={startY} r={dotR} fill={dotColor} />
+      <Dot cx={cx + firstW / 2 + gap / 2 + dotR} cy={startY} r={dotR} shape={dotShape} color={dotColor} />
       {cat ? <text x={cx} y={startY + (n - 1) * lineH + 18} textAnchor="middle" fontSize={capSize} fill="#9aa1ad">{cat}</text> : null}
     </g>
   );
@@ -130,11 +138,16 @@ export default function TierGraphStage({ graph, selected, onSelect, onInlineAmou
           const bx = xRight(i);
           const barTop = hereY(sizes[i]);
           const gTop = Math.max(barTop, hY);
-          const txt = amountDisp(tr.amount);
-          const small = isTok(tr.amount.t);
-          const aSize = tr.amountSize || (small ? 14 : 17);   // D: amount font size (fallback to default)
-          const pw = Math.max(94, measureText(txt, aSize, '700') + 28);
-          const ph = 34;
+          // amount bubble: a pure ##token## shows the VALUE big with the field NAME small under it
+          // (2 lines — stops the long "name · value" from being clipped); the bubble grows with the font.
+          const isPure = pureTok(tr.amount.t);
+          const valTxt = isPure ? (CUR + fmt(gv(tr.amount.t, tr.amount.s))) : amountDisp(tr.amount);
+          const nameTxt = isPure ? tokName(tr.amount.t) : '';
+          const valSize = tr.amountSize || 17;                          // D + grows with the font
+          const nameSize = Math.max(9, Math.round(valSize * 0.6));
+          const bubW = Math.max(measureText(valTxt, valSize, '700'), nameTxt ? measureText(nameTxt, nameSize, '600') : 0);
+          const pw = Math.max(94, bubW + 28);
+          const ph = nameTxt ? (valSize + nameSize + 16) : (valSize + 16);
           const px = bx + barW / 2;
           const py = barTop - ph - 12;
           const cardY = chartBottom + 20;
@@ -154,8 +167,15 @@ export default function TierGraphStage({ graph, selected, onSelect, onInlineAmou
                 ? <rect x={bx - 3} y={barTop - 3} width={barW + 6} height={chartBottom - barTop + 6} rx={21} fill="none" stroke={graph.here.color} strokeWidth={2.5} />
                 : null}
               <g style={{ cursor: 'pointer' }} onClick={(e) => stop(e, () => onSelect({ type: 'tier', index: i }))} onDoubleClick={(e) => openInline(e, i)}>
-                <rect x={px - pw / 2} y={py} width={pw} height={ph} rx={17} fill="#fff" stroke="#0000000f" />
-                <text x={px} y={py + ph / 2} textAnchor="middle" dominantBaseline="middle" fontSize={aSize} fontWeight={700} fill={tr.labelColor}>{txt}</text>
+                <rect x={px - pw / 2} y={py} width={pw} height={ph} rx={Math.min(17, ph / 2)} fill="#fff" stroke="#0000000f" />
+                {nameTxt ? (
+                  <React.Fragment>
+                    <text x={px} y={py + 6 + valSize / 2} textAnchor="middle" dominantBaseline="middle" fontSize={valSize} fontWeight={700} fill={tr.labelColor}>{valTxt}</text>
+                    <text x={px} y={py + ph - 6 - nameSize / 2} textAnchor="middle" dominantBaseline="middle" fontSize={nameSize} fontWeight={600} fill="#9aa1ad">{nameTxt}</text>
+                  </React.Fragment>
+                ) : (
+                  <text x={px} y={py + ph / 2} textAnchor="middle" dominantBaseline="middle" fontSize={valSize} fontWeight={700} fill={tr.labelColor}>{valTxt}</text>
+                )}
                 <path d={`M${px - 7},${py + ph} L${px + 7},${py + ph} L${px},${py + ph + 8} Z`} fill="#fff" />
               </g>
               {(() => {
@@ -167,8 +187,8 @@ export default function TierGraphStage({ graph, selected, onSelect, onInlineAmou
                 return (
                   <g style={{ cursor: 'pointer' }} onClick={(e) => stop(e, () => onSelect({ type: 'box', index: i }))}>
                     <rect x={cardX} y={cardY} width={cardW} height={cardH} rx={14} fill={b.fill} stroke={i === hiIdx ? graph.here.color : '#0000001a'} strokeWidth={i === hiIdx ? 2 : 1} />
-                    {r1 ? <CenterRow cx={cx} y={y1} value={b.line1} cat={b.cat1} valColor={b.textColor} dotColor={b.accent} measureText={measureText} maxW={cardW} size={b.line1Size || 15} capSize={b.cat1Size || 12} /> : null}
-                    {r2 ? <CenterRow cx={cx} y={y2} value={b.line2} cat={b.cat2} valColor={b.textColor} dotColor={b.accent} measureText={measureText} maxW={cardW} size={b.line2Size || 15} capSize={b.cat2Size || 12} /> : null}
+                    {r1 ? <CenterRow cx={cx} y={y1} value={b.line1} cat={b.cat1} valColor={b.textColor} dotColor={b.accent} dotShape={b.dotShape} measureText={measureText} maxW={cardW} size={b.line1Size || 15} capSize={b.cat1Size || 12} /> : null}
+                    {r2 ? <CenterRow cx={cx} y={y2} value={b.line2} cat={b.cat2} valColor={b.textColor} dotColor={b.accent} dotShape={b.dotShape} measureText={measureText} maxW={cardW} size={b.line2Size || 15} capSize={b.cat2Size || 12} /> : null}
                   </g>
                 );
               })()}
@@ -179,17 +199,24 @@ export default function TierGraphStage({ graph, selected, onSelect, onInlineAmou
         {graph.here.show ? (() => {
           const lbl = graph.here.text + ' · ' + CUR + fmt(hereVal);
           const pSize = graph.here.textSize || 14;   // D: pill font size
-          // never let the pill exceed the chart width (max 100%): clamp to the usable span.
-          const pw = Math.min(measureText(lbl, pSize, '700') + 30, W - (marginX - 4) * 2);
-          // center the pill over the highlighted column, clamped to stay inside the chart span.
           const colCx = (hiIdx >= 0 ? xRight(hiIdx) : (W - barW) / 2) + barW / 2;
+          // the pill must NOT exceed the column width — wrap to a new line instead. It grows with the font.
+          const pillMax = Math.max(40, barW - 24);
+          const plines = wrapLines(lbl, pillMax, pSize, '700', measureText);
+          const lineH = pSize + 3;
+          const widest = Math.max.apply(null, plines.map((l) => measureText(l, pSize, '700')));
+          const pw = Math.min(widest + 24, barW);
+          const ph = plines.length * lineH + 12;
           const left = Math.max(marginX - 4, Math.min(colCx - pw / 2, W - marginX + 4 - pw));
+          const top = hY - ph / 2;
           return (
             <g>
               <line x1={marginX - 4} y1={hY} x2={W - marginX + 4} y2={hY} stroke={graph.here.color} strokeWidth={2.5} strokeDasharray="8 6" style={{ cursor: 'pointer' }} onClick={(e) => stop(e, () => onSelect({ type: 'here' }))} />
               <g style={{ cursor: 'pointer' }} onClick={(e) => stop(e, () => onSelect({ type: 'here' }))}>
-                <rect x={left} y={hY - 15} width={pw} height={30} rx={15} fill="#eafaf0" stroke={graph.here.color} strokeWidth={1.5} />
-                <text x={left + pw / 2} y={hY} textAnchor="middle" dominantBaseline="middle" fontSize={pSize} fontWeight={700} fill="#1e7e34">{lbl}</text>
+                <rect x={left} y={top} width={pw} height={ph} rx={Math.min(15, ph / 2)} fill="#eafaf0" stroke={graph.here.color} strokeWidth={1.5} />
+                {plines.map((ln, k) => (
+                  <text key={k} x={left + pw / 2} y={top + 6 + k * lineH + lineH / 2} textAnchor="middle" dominantBaseline="middle" fontSize={pSize} fontWeight={700} fill="#1e7e34">{ln}</text>
+                ))}
               </g>
             </g>
           );
