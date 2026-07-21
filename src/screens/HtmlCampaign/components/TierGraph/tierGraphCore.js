@@ -30,7 +30,7 @@ export const CUR = '₪';
 // Exactly 13 colors, in the exact POC order.
 export const PALETTE = [
   '#c4cdf2', '#aab6ee', '#8e9ce9', '#7ed98c', '#2bb24c', '#1e7e34', '#ffffff',
-  '#fdf0ea', '#fff3cd', '#e0e0e0', '#3b3b6b', '#1f2937', '#d14343',
+  '#fdf0ea', '#fff3cd', '#e0e0e0', '#3b3b6b', '#1f2937', '#dc2626',
 ];
 
 // Absolute endpoint. In prod actionURL = `https://${host}/Pulseem/`.
@@ -98,16 +98,16 @@ export const defaultState = () => ({
   progressFill: '#7ed98c',
   tierCountActive: 4,
   tiers: [
-    { amount: { t: '120000', s: 120000 }, fill: '#c4cdf2', labelColor: '#3b3b6b',
+    { amount: { t: '##פרס עמודה ראשונה##', s: 120000 }, fill: '#c4cdf2', labelColor: '#3b3b6b',
       box: { fill: '#ffffff', textColor: '#1e7e34', accent: '#2bb24c',
              line1: 'יחיד', cat1: 'פרס טיסה', line2: 'זוגי', cat2: 'פרס משפחות' } },
-    { amount: { t: '150000', s: 150000 }, fill: '#c4cdf2', labelColor: '#3b3b6b',
+    { amount: { t: '##פרס עמודה שנייה##', s: 150000 }, fill: '#c4cdf2', labelColor: '#3b3b6b',
       box: { fill: '#ffffff', textColor: '#1e7e34', accent: '#2bb24c',
              line1: 'זוגי', cat1: 'פרס טיסה', line2: '+1', cat2: 'פרס משפחות' } },
-    { amount: { t: '180000', s: 180000 }, fill: '#c4cdf2', labelColor: '#3b3b6b',
+    { amount: { t: '##פרס עמודה שלישית##', s: 180000 }, fill: '#c4cdf2', labelColor: '#3b3b6b',
       box: { fill: '#ffffff', textColor: '#1e7e34', accent: '#2bb24c',
              line1: 'זוגי', cat1: 'פרס טיסה', line2: '+2', cat2: 'פרס משפחות' } },
-    { amount: { t: '240000', s: 240000 }, fill: '#c4cdf2', labelColor: '#3b3b6b',
+    { amount: { t: '##פרס עמודה רביעית##', s: 240000 }, fill: '#c4cdf2', labelColor: '#3b3b6b',
       box: { fill: '#ffffff', textColor: '#1e7e34', accent: '#2bb24c',
              line1: 'זוגי', cat1: 'פרס טיסה', line2: '+3', cat2: 'פרס משפחות' } },
   ],
@@ -192,6 +192,7 @@ export const buildLink = (state) => {
         ...(tr.box.cat1Size ? { c1sz: tr.box.cat1Size } : {}),
         ...(tr.box.line2Size ? { l2sz: tr.box.line2Size } : {}),
         ...(tr.box.cat2Size ? { c2sz: tr.box.cat2Size } : {}),
+        ...(tr.box.dotShape && tr.box.dotShape !== 'circle' ? { ds: tr.box.dotShape } : {}),  // accent shape
       },
     })),
   };
@@ -263,6 +264,7 @@ export const parseTierGraphUrl = (url) => {
             row1Show: box.r1 !== 0, row2Show: box.r2 !== 0,            // E
             line1Size: box.l1sz, cat1Size: box.c1sz,                  // D
             line2Size: box.l2sz, cat2Size: box.c2sz,
+            dotShape: box.ds || 'circle',                            // accent shape
           },
         };
       }),

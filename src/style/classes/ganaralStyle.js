@@ -224,7 +224,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
     '&& .MuiDialog-paperWidthSm': {
       minWidth: '0 !important',
       width: '94vw !important',
-      maxWidth: '1120px !important',
+      maxWidth: '75% !important',
       margin: '16px !important',
     },
     '&& .MuiDialog-paperScrollPaper': {

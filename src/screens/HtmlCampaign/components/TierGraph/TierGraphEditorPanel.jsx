@@ -27,7 +27,7 @@ function Head({ icon, name, t }) {
       <h2 style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '.4px', color: '#6b7280', margin: '0 0 4px' }}>
         {t('campaigns.tierGraph.editElement')}
       </h2>
-      <div style={{ fontSize: 16, fontWeight: 800, display: 'flex', alignItems: 'center', gap: 8 }}>
+      <div style={{ fontSize: 16, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 8 }}>
         <span>{icon}</span>{name}
       </div>
     </div>
@@ -93,21 +93,31 @@ export default function TierGraphEditorPanel({ graph, selected, dispatch, mergeD
   if (selected.type === 'box') {
     const i = selected.index;
     const b = graph.tiers[i].box;
+    const setBox = (key, val) => dispatch({ type: 'SET_BOX_FIELD', i, key, val });
     return (
       <div>
         <Head icon="🟩" name={t('campaigns.tierGraph.boxTitle', { n: i + 1 })} t={t} />
-        {/* E: show/hide each row — lets a 2-row card become a 1-row card */}
-        <ToggleField label={t('campaigns.tierGraph.row1Show')} value={b.row1Show !== false} onChange={(v) => dispatch({ type: 'SET_BOX_FIELD', i, key: 'row1Show', val: v })} />
-        <ToggleField label={t('campaigns.tierGraph.row2Show')} value={b.row2Show !== false} onChange={(v) => dispatch({ type: 'SET_BOX_FIELD', i, key: 'row2Show', val: v })} />
-        {/* card labels may be personalized too — a ##Field## resolves per-recipient at send time.
-            D: each field carries an optional font size (px). */}
-        <TokenTextField label={t('campaigns.tierGraph.line1Value')} value={b.line1} mergeData={mergeData} t={t} fontSize={b.line1Size} onFontSize={(v) => dispatch({ type: 'SET_BOX_FIELD', i, key: 'line1Size', val: v })} onChange={(v) => dispatch({ type: 'SET_BOX_FIELD', i, key: 'line1', val: v })} />
-        <TokenTextField label={t('campaigns.tierGraph.line1Cat')} value={b.cat1} mergeData={mergeData} t={t} fontSize={b.cat1Size} onFontSize={(v) => dispatch({ type: 'SET_BOX_FIELD', i, key: 'cat1Size', val: v })} onChange={(v) => dispatch({ type: 'SET_BOX_FIELD', i, key: 'cat1', val: v })} />
-        <TokenTextField label={t('campaigns.tierGraph.line2Value')} value={b.line2} mergeData={mergeData} t={t} fontSize={b.line2Size} onFontSize={(v) => dispatch({ type: 'SET_BOX_FIELD', i, key: 'line2Size', val: v })} onChange={(v) => dispatch({ type: 'SET_BOX_FIELD', i, key: 'line2', val: v })} />
-        <TokenTextField label={t('campaigns.tierGraph.line2Cat')} value={b.cat2} mergeData={mergeData} t={t} fontSize={b.cat2Size} onFontSize={(v) => dispatch({ type: 'SET_BOX_FIELD', i, key: 'cat2Size', val: v })} onChange={(v) => dispatch({ type: 'SET_BOX_FIELD', i, key: 'cat2', val: v })} />
-        <ColorField label={t('campaigns.tierGraph.boxFill')} value={b.fill} onChange={(v) => dispatch({ type: 'SET_BOX_FIELD', i, key: 'fill', val: v })} />
-        <ColorField label={t('campaigns.tierGraph.boxTextColor')} value={b.textColor} onChange={(v) => dispatch({ type: 'SET_BOX_FIELD', i, key: 'textColor', val: v })} />
-        <ColorField label={t('campaigns.tierGraph.boxAccent')} value={b.accent} onChange={(v) => dispatch({ type: 'SET_BOX_FIELD', i, key: 'accent', val: v })} />
+        {/* --- Row 1: its show toggle sits ABOVE the row's fields --- */}
+        <ToggleField label={t('campaigns.tierGraph.row1Show')} value={b.row1Show !== false} onChange={(v) => setBox('row1Show', v)} />
+        <TokenTextField label={t('campaigns.tierGraph.line1Value')} value={b.line1} mergeData={mergeData} t={t} fontSize={b.line1Size} onFontSize={(v) => setBox('line1Size', v)} onChange={(v) => setBox('line1', v)} />
+        <TokenTextField label={t('campaigns.tierGraph.line1Cat')} value={b.cat1} mergeData={mergeData} t={t} fontSize={b.cat1Size} onFontSize={(v) => setBox('cat1Size', v)} onChange={(v) => setBox('cat1', v)} />
+        {/* --- Row 2: its show toggle sits before the row's fields --- */}
+        <ToggleField label={t('campaigns.tierGraph.row2Show')} value={b.row2Show !== false} onChange={(v) => setBox('row2Show', v)} />
+        <TokenTextField label={t('campaigns.tierGraph.line2Value')} value={b.line2} mergeData={mergeData} t={t} fontSize={b.line2Size} onFontSize={(v) => setBox('line2Size', v)} onChange={(v) => setBox('line2', v)} />
+        <TokenTextField label={t('campaigns.tierGraph.line2Cat')} value={b.cat2} mergeData={mergeData} t={t} fontSize={b.cat2Size} onFontSize={(v) => setBox('cat2Size', v)} onChange={(v) => setBox('cat2', v)} />
+        {/* --- styling --- */}
+        <ColorField label={t('campaigns.tierGraph.boxFill')} value={b.fill} onChange={(v) => setBox('fill', v)} />
+        <ColorField label={t('campaigns.tierGraph.boxTextColor')} value={b.textColor} onChange={(v) => setBox('textColor', v)} />
+        <ColorField label={t('campaigns.tierGraph.boxAccent')} value={b.accent} onChange={(v) => setBox('accent', v)} />
+        <div style={{ marginBottom: 13 }}>
+          <label style={{ display: 'block', fontWeight: 700, fontSize: 12.5, marginBottom: 4 }}>{t('campaigns.tierGraph.dotShapeLabel')}</label>
+          <select value={b.dotShape || 'circle'} onChange={(e) => setBox('dotShape', e.target.value)} style={{ width: '100%', fontSize: 13, border: '1px solid #e2e6ee', borderRadius: 7, padding: '6px 8px', background: '#fff' }}>
+            <option value="circle">{t('campaigns.tierGraph.dotShapeCircle')}</option>
+            <option value="square">{t('campaigns.tierGraph.dotShapeSquare')}</option>
+            <option value="dot">{t('campaigns.tierGraph.dotShapeDot')}</option>
+            <option value="none">{t('campaigns.tierGraph.dotShapeNone')}</option>
+          </select>
+        </div>
       </div>
     );
   }

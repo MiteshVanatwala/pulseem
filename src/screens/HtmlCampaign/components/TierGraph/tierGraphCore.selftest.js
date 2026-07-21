@@ -42,7 +42,7 @@ const decodeCfg = (b64) => {
 /* ---------------- constants ---------------- */
 eq('STATE_VERSION', STATE_VERSION, 4);
 eq('PALETTE length', PALETTE.length, 13);
-eq('PALETTE[0]/[12]', [PALETTE[0], PALETTE[12]], ['#c4cdf2', '#d14343']);
+eq('PALETTE[0]/[12]', [PALETTE[0], PALETTE[12]], ['#c4cdf2', '#dc2626']);
 
 /* ---------------- token helpers ---------------- */
 ok('isTok mixed', isTok('בונוס ##X##'));
@@ -139,7 +139,7 @@ eq('b64url hebrew round-trip', round, 'אתה כאן · ₪42,000');
 const rtDef = parseTierGraphUrl(buildLink(defaultState()).url);
 eq('parse default width/height', [rtDef.width, rtDef.height], [640, 420]);
 eq('parse default tierCount', rtDef.tierCountActive, 4);
-eq('parse default tier0 amount static', rtDef.tiers[0].amount.t, '120000');
+eq('parse default tier0 amount token', [rtDef.tiers[0].amount.t, rtDef.tiers[0].amount.s], ['##פרס עמודה ראשונה##', 120000]);
 eq('parse default here text', rtDef.here.text, 'אתה כאן');
 eq('parse default box texts', [rtDef.tiers[0].box.line1, rtDef.tiers[0].box.cat1], ['יחיד', 'פרס טיסה']);
 
