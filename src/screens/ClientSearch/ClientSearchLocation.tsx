@@ -30,7 +30,7 @@ export const ClientSearchLocation = ({ classes, data, onUpdate }: any) => {
   };
 
   return <Grid container spacing={3}>
-    <Grid item xs={8} sm={8} md={8}>
+    <Grid item xs={12} sm={8} md={8}>
       <TextField
         label={t('common.address')}
         variant='standard'
@@ -46,7 +46,7 @@ export const ClientSearchLocation = ({ classes, data, onUpdate }: any) => {
         }}
       />
     </Grid>
-    <Grid item xs={4} sm={4} md={4}>
+    <Grid item xs={12} sm={4} md={4}>
       <TextField
         label={t('common.country')}
         variant='standard'
@@ -62,7 +62,7 @@ export const ClientSearchLocation = ({ classes, data, onUpdate }: any) => {
         }}
       />
     </Grid>
-    <Grid item xs={4} sm={4} md={4}>
+    <Grid item xs={12} sm={4} md={4}>
       <TextField
         label={t('common.state')}
         variant='standard'
@@ -78,7 +78,7 @@ export const ClientSearchLocation = ({ classes, data, onUpdate }: any) => {
         }}
       />
     </Grid>
-    <Grid item xs={4} sm={4} md={4}>
+    <Grid item xs={12} sm={4} md={4}>
       <TextField
         label={t('common.city')}
         variant='standard'
@@ -94,7 +94,7 @@ export const ClientSearchLocation = ({ classes, data, onUpdate }: any) => {
         }}
       />
     </Grid>
-    <Grid item xs={4} sm={4} md={4}>
+    <Grid item xs={12} sm={4} md={4}>
       <TextField
         label={t('common.zip')}
         variant='standard'
