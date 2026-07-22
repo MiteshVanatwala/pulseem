@@ -8,9 +8,10 @@
   "goToSend": "Go to send page",
   "send": {
     "title": "Smart Send",
+    "campaignLabel": "Campaign: {{name}}",
     "notMapped": "This campaign is not mapped to a data source yet",
     "mappedTo": "Mapped to source: {{name}}",
-    "tokensFound": "{{count}} tokens detected in the template",
+    "tokensFound": "{{count}} fields detected in the template",
     "channel": {
       "title": "Send channel",
       "email": "Email",
@@ -31,19 +32,26 @@
       "blockedNoEmail": "No email column — cannot send by email",
       "zeroResolved": "This source has no rows resolved to email",
       "empty": "No sources are ready to send",
-      "loadError": "Failed to load the source list"
+      "loadError": "Failed to load the source list",
+      "truncated": "Showing {{shown}} of {{total}} sources",
+      "incomingTitle": "A different source was requested",
+      "incomingBody": "You arrived from \"{{name}}\", but this campaign is already mapped to a different source. Switching will clear the current field mapping.",
+      "incomingSwitch": "Switch and clear mapping",
+      "incomingConfirmTitle": "Clear the current field mapping?",
+      "incomingConfirmBody": "Switching to \"{{name}}\" removes every field mapping on this campaign. This cannot be undone from this screen."
     },
     "mapping": {
-      "title": "Token mapping",
-      "hint": "For each token in the template, pick the source column that replaces it on send",
-      "tokenCol": "Token",
+      "title": "Field mapping",
+      "hint": "For each field in the template, pick the source column that replaces it on send",
+      "searchPlaceholder": "Search fields",
+      "tokenCol": "Field",
       "columnCol": "Source column",
       "selectColumn": "Select a column",
       "none": "Not mapped",
       "unmapped": "Unmapped",
       "systemFieldWarn": "System field — mapping to a source overrides the recipient's account value",
       "vanishedColumn": "The mapped column no longer exists in this version — remap it",
-      "noTokens": "No tokens found in the template",
+      "noTokens": "No fields found in the template",
       "badge": {
         "graph": "Graph",
         "systemField": "System field",
@@ -73,8 +81,8 @@
     },
     "preview": "Preview",
     "unmapped": {
-      "title": "There are unmapped tokens",
-      "body": "The following tokens are not mapped and will be sent raw: {{tokens}}",
+      "title": "There are unmapped fields",
+      "body": "The following fields are not mapped and will be sent raw: {{tokens}}",
       "confirm": "I understand — send anyway"
     },
     "actions": {
@@ -83,13 +91,14 @@
       "testSend": "Test send",
       "sendToAll": "Send to all"
     },
-    "testSendWarn": "Test send duplicates the campaign without the mapping — source tokens will appear raw (##field##) in the test email.",
+    "testSendWarn": "Test send duplicates the campaign without the mapping — source fields will appear raw (##field##) in the test email.",
     "saveFirst": "Save the mapping to continue to preview and send",
-    "pickCampaignBanner": "Pick a campaign for smart send with the selected source",
     "smartSendAction": "Smart send (data source)",
     "close": "Close",
     "cancel": "Cancel",
     "backToCampaigns": "Back to campaigns",
+    "backToPicker": "Back to campaign selection",
+    "unsavedWarning": "Leaving now discards the field mapping you have not saved.",
     "summary": {
       "title": "Send summary",
       "recipients": "Final recipients",
@@ -103,11 +112,11 @@
       "removed": "Removed",
       "sendToSupervisor": "Also send to supervisor?",
       "combinedTitle": "Combined campaign",
-      "combinedNote": "A recipient from a regular group (not from the source) — a mapped token is replaced with an empty string."
+      "combinedNote": "A recipient from a regular group (not from the source) — a mapped field is replaced with an empty string."
     },
     "result": {
       "success": "The campaign was sent successfully",
-      "successDesc": "The campaign was sent through the existing pipeline. The sender replaces the tokens per recipient.",
+      "successDesc": "The campaign was sent through the existing pipeline. The sender replaces the fields per recipient.",
       "problematicLinks": "Problematic links were found",
       "domainNotVerified": "The domain is not verified",
       "pendingApproval": "Pending approval",
@@ -135,7 +144,29 @@
       "groupMergeLimit": "The campaign passed the group-merge limit — remove regular groups or split the campaign",
       "dataIncorrect": "The submitted data is invalid — refresh the columns and try again",
       "channelNotSupported": "This channel is not supported yet",
-      "featureOff": "The Data Sources feature is not active for this account"
+      "featureOff": "The Data Sources feature is not active for this account",
+      "retryAction": "Try again"
+    },
+    "picker": {
+      "title": "Smart Send",
+      "step1": "Step 1",
+      "step2": "Step 2 — Select a campaign",
+      "fromSource": "Sending from source: {{name}}",
+      "searchPlaceholder": "Search campaigns by name",
+      "onlySendable": "Show only sendable campaigns",
+      "continue": "Continue to field mapping",
+      "empty": "No campaigns to show",
+      "noneSendable": "No campaigns are ready to send",
+      "showAll": "Show all campaigns",
+      "noResults": "No campaigns match your search",
+      "clearSearch": "Clear search",
+      "loadError": "Failed to load the campaign list",
+      "updated": "Updated {{date}}",
+      "blocked": {
+        "notSendable": "Already sent / cannot be sent",
+        "oldEditor": "Legacy editor — not supported"
+      },
+      "selectAria": "Select a campaign to send"
     }
   },
   "retry": "Try again",

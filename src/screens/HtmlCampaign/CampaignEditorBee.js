@@ -2303,7 +2303,7 @@ const CampaignEditor = ({ classes, ...props }) => {
         }
         {/* Entry B (§11.2): after saving the design, go straight to the smart-send screen
             (gated on DATA_SOURCES). Sends via a data source instead of the regular flow. */}
-        {accountFeatures?.indexOf(PulseemFeatures.DATA_SOURCES) > -1 && campaignId && <Button
+        {userRoles?.AllowSend && accountFeatures?.indexOf(PulseemFeatures.DATA_SOURCES) > -1 && campaignId && <Button
           onClick={() => saveDesign(true, `${sitePrefix}Campaigns/SmartSend/${campaignId}`)}
           variant='outlined'
           size='small'

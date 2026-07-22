@@ -14,7 +14,6 @@ import {
     setMapping, fillAndSummarize, setEmailSendSettingsWrapped, loadSourceColumns,
     getSendSummaryWrapped, getEmailSendSettingsWrapped, selectUnmappedTokens,
 } from '../../redux/reducers/smartSendSlice';
-import ChannelSelector from './components/ChannelSelector';
 import SourcePicker from './components/SourcePicker';
 import TokenMappingTable from './components/TokenMappingTable';
 import BusinessColumnsPicker from './components/BusinessColumnsPicker';
@@ -25,7 +24,7 @@ import SmartSendPreview from './components/SmartSendPreview';
 import SendSummaryDialog from './components/SendSummaryDialog';
 import TestSendDialog from './components/TestSendDialog';
 
-// Smart-Send screen (מסך השליחה החכמה). Wizard: ChannelSelector → SourcePicker →
+// Smart-Send screen (מסך השליחה החכמה). Wizard: SourcePicker →
 // TokenMappingTable → BusinessColumnsPicker → Preview → Summary → Send (§11/§13).
 // Route: `${sitePrefix}Campaigns/SmartSend/:id` (+ optional ?dataSourceId= from entry A).
 const ERR_KEY: { [k: string]: string } = {
@@ -41,16 +40,34 @@ const SmartSendScreen = ({ classes }: any) => {
     const { id } = useParams();
     const [searchParams] = useSearchParams();
     const dataSourceId = searchParams.get('dataSourceId');
+    // Entry A ?dataSourceId — a garbage param must land as null, never as a bogus id.
+    // A NaN guard alone is NOT enough: `Number('')` is 0 (and `Number(' ')` is 0 too), so
+    // `?dataSourceId=` — which the picker emits whenever its source chip is cleared, and
+    // which any hand-edited URL can produce — would pass the guard and store 0. SourcePicker
+    // then treats a stored id as "an id to preselect". Reject anything <= 0 as well, so the
+    // only values that reach the store are real, positive source ids.
+    // Hoisted out of the load effect because the back-to-picker link in the header has to hand
+    // the SAME sanitised id back to the picker.
+    const dsNum = dataSourceId != null ? Number(dataSourceId) : NaN;
+    const parsedDsId = !Number.isNaN(dsNum) && dsNum > 0 ? dsNum : null;
 
     const campaignId = Number(id);
     const { accountFeatures } = useSelector((state: any) => state.common);
     const smartSend = useSelector((state: any) => state.smartSend);
-    const dsList = useSelector((state: any) => state.dataSources.list);
     const unmapped = useSelector(selectUnmappedTokens);
+    // The campaign identity shown in the header. It comes from the newsletter summary the reused
+    // pipeline hydrates (getSendSummaryWrapped, dispatched from openSummary) — deliberately NO
+    // extra fetch is added here, so until that lands the line is simply absent rather than a
+    // placeholder. `newsletterSendSummary` is session-sticky (newsletterSlice.js:263 seeds it to
+    // [] and nothing ever clears it), so a summary left over from a DIFFERENT campaign would
+    // otherwise label this screen with the wrong name — the whole point of the label is that the
+    // user can trust it, so it renders only when the hydrated CampaignID is this campaign's.
+    const sendSummary = useSelector((state: any) => state.newsletter && state.newsletter.newsletterSendSummary);
+    const campaignName: string | null = sendSummary && sendSummary.CampaignID === campaignId
+        ? (sendSummary.CampaignName || null)
+        : null;
 
     const currentSourceId = smartSend.dataSource?.DataSourceID ?? smartSend.dataSourceId ?? null;
-    const selectedSourceItem =
-        (dsList && dsList.items ? dsList.items.find((it: any) => it.DataSourceID === currentSourceId) : null) ?? null;
     const hasColumns = smartSend.columns.length > 0;
 
     const [confirmUnmapped, setConfirmUnmapped] = useState(false);
@@ -58,12 +75,25 @@ const SmartSendScreen = ({ classes }: any) => {
     const [showPreview, setShowPreview] = useState(false);
     const [summaryOpen, setSummaryOpen] = useState(false);
     const [testOpen, setTestOpen] = useState(false);
+    // Set by SendSummaryDialog's onSent (a 200/201 from sendSmart) and NOT acted on until the
+    // user closes the dialog — see the SendSummaryDialog block at the bottom of this file.
+    const [sent, setSent] = useState(false);
+    // The working tokenMap differs from what is persisted. There is no dirty flag in the slice
+    // and none can be derived from it: setMapping.fulfilled does not write the new mapping back
+    // onto `tokens`, so comparing tokenMap to `tokens[].MappedColumnID` would keep claiming
+    // "unsaved" straight after a successful save. Tracked here instead, at the one place in this
+    // screen that edits the map.
+    const [dirty, setDirty] = useState(false);
     const [toast, setToast] = useState<{ open: boolean; ok: boolean; msg: string }>({ open: false, ok: true, msg: '' });
 
     const showToast = (ok: boolean, msg: string) => setToast({ open: true, ok, msg });
 
     useEffect(() => {
-        if (accountFeatures && accountFeatures.indexOf(PulseemFeatures.DATA_SOURCES) === -1) {
+        // `accountFeatures?.length &&`, NOT `accountFeatures &&` — the same guard SmartSendPicker.tsx:38,
+        // DataSources.tsx:90 and DataSourceView.tsx:73 use. The cookie-backed list is null until it
+        // loads (commonSlice.js:239) and a bare truthiness check would let an unentitled user through
+        // on `undefined`; `?.length` also covers an empty array. Redirect only once features arrived.
+        if (accountFeatures?.length && accountFeatures.indexOf(PulseemFeatures.DATA_SOURCES) === -1) {
             // `sitePrefix` is `string | undefined` (it comes straight from process.env), so it
             // needs the same `?? ''` the other feature-gate redirects use — see
             // DataSources.tsx:88 and DataSourceView.tsx:72.
@@ -78,16 +108,23 @@ const SmartSendScreen = ({ classes }: any) => {
         setConfirmUnmapped(false);
     }, [smartSend.columns, smartSend.tokenMap]);
 
+    // Nothing is unsaved right after the mapping (re)loads — getMapping.fulfilled reseeds
+    // `tokens` AND `tokenMap` from the server — nor right after a source switch, which empties
+    // the map (selectSource, smartSendSlice.ts:292). `tokens` is a fresh array on every load, so
+    // its identity is the load signal; a plain setTokenMapping never touches it.
+    useEffect(() => {
+        setDirty(false);
+    }, [smartSend.tokens, currentSourceId]);
+
     useEffect(() => {
         if (!campaignId || Number.isNaN(campaignId) || campaignId <= 0) return;
-        // Entry A ?dataSourceId — NaN-guard a garbage param to null (never store NaN).
-        const parsedDsId = dataSourceId != null && !Number.isNaN(Number(dataSourceId)) ? Number(dataSourceId) : null;
         dispatch(setCampaignContext({ campaignId, dataSourceId: parsedDsId }));
         dispatch(getMapping(campaignId));
-    }, [dispatch, campaignId, dataSourceId]);
+    }, [dispatch, campaignId, parsedDsId]);
 
     // ── save flow (§13 step 6): setMapping (lock + PulseemDS_ group + TokenMap) → get
-    // SyntheticGroupID → setEmailSendSettings with it in BOTH GroupList AND GroupIds (§10). ──
+    // SyntheticGroupID → READ the campaign's current send settings → post them back with the
+    // synthetic group MERGED into GroupIds (§10). Read-modify-write, never a partial body. ──
     const buildSaveRequest = () => {
         const colSet = new Set(smartSend.columns.map((c: any) => c.ColumnID));
         return {
@@ -118,9 +155,73 @@ const SmartSendScreen = ({ classes }: any) => {
             return false;
         }
         const gid = r.Data && r.Data.SyntheticGroupID;
-        // Synthetic group id must ride in BOTH GroupList (array) AND GroupIds (CSV) — §10.
-        await dispatch(setEmailSendSettingsWrapped({ CampaignID: campaignId, GroupList: [gid], GroupIds: String(gid), SendingMethod: 1, SendDate: null }));
+
+        // Attaching the synthetic group means posting the WHOLE settings row back, not a patch:
+        // the server handler (NewsletterLogic.cs:1175-1193) forwards EVERY SendSettings field to
+        // the stored proc, so a field missing from this body arrives as its DEFAULT and silently
+        // overwrites whatever the user configured on the classic send-settings screen —
+        // PulseAmount, TimeInterval, FromDate/ToDate, the IsOpened/IsOpenedClicked/IsNotClicked/
+        // IsNotOpened filters, ExceptionalDays, ExeptionalCampaigns, ExeptionalGroups,
+        // AutoSendingByUserField, AutoSendDelay, IsBestTime. Hence read-modify-write, with the
+        // read as a HARD precondition: if it fails there is nothing to preserve, and posting a
+        // minimal body "anyway" is precisely the data loss this guards against — fail the save.
+        // GetSendSettings answers 201 on success (EmailController.cs:517), NOT 200 — the SmartSend
+        // mock returns 200, which is exactly what would hide this until the mock is switched off.
+        // Both are accepted so the screen behaves identically in mock and real mode.
+        const cur: any = await dispatch(getEmailSendSettingsWrapped(campaignId));
+        const curPayload = cur && cur.payload ? cur.payload : {};
+        const ok = curPayload.StatusCode === 201 || curPayload.StatusCode === 200;
+        const settings = ok && curPayload.Data ? curPayload.Data.Settings : null;
+        // `!settings` alone would pass an [] or {} straight through (both truthy / spreadable to an
+        // empty body), producing a POST with no CampaignID — worse than the minimal body this
+        // replaced. Require the identifying field.
+        if (!settings || !settings.CampaignID) {
+            setSaving(false);
+            showToast(false, t('DataSources.send.errors.' + (ERR_KEY[curPayload.Message] || 'generalError')));
+            return false;
+        }
+
+        // GroupIds (CSV) is the ONE field that changes — and the authoritative one: SendSettings
+        // .GroupList (SendSettings.cs:35-41) is a getter-only computed property, so the GroupList
+        // that came back from the GET rides along untouched and is simply ignored server-side.
+        // MERGE, never replace: a combined campaign (source + regular groups, §16) keeps its
+        // regular groups. Trim + de-dupe so a loose or empty CSV ('', '301,,302', '301, 302')
+        // yields no empty entries and a re-save cannot append the synthetic group twice.
+        const ids: string[] = String(settings.GroupIds ?? '').split(',').map((s: string) => s.trim()).filter((s: string) => s !== '');
+        // A 200 with no SyntheticGroupID must never push the literal "undefined" into the CSV;
+        // post the settings back unchanged rather than corrupt the group list.
+        if (gid != null && Number(gid) > 0 && ids.indexOf(String(gid)) === -1) ids.push(String(gid));
+        // Everything else rides verbatim — EXCEPT two scheduling fields that cannot be echoed back
+        // blindly, both mirroring what the classic screen already does with the SAME payload:
+        //  1. SendingMethod: 0 is a real stored value, and the classic normalises it to 1 on every
+        //     post (NewsletterSendSettings.js:409). Echoing 0 writes back an invalid send method.
+        //  2. A stored "scheduled" method with no SendDate is a reachable state — the classic
+        //     DISABLES its save button on exactly that combination (NewsletterSendSettings.js:895-898)
+        //     and the server answers 405 SEND_DATE_MISSING. Echoing it verbatim would make the
+        //     mapping permanently unsavable for that campaign. Only an ALREADY-INVALID combination
+        //     is normalised to "send now"; a valid schedule is preserved untouched.
+        const METHOD_SCHEDULED = 2, METHOD_AUTO = 3;
+        let method = settings.SendingMethod === 0 ? 1 : (settings.SendingMethod ?? 1);
+        let sendDate = settings.SendDate;
+        const scheduleBroken =
+            (method === METHOD_SCHEDULED && !sendDate) ||
+            (method === METHOD_AUTO && !sendDate && !settings.AutoSendDelay);
+        if (scheduleBroken) { method = 1; sendDate = null; }
+        const setRes: any = await dispatch(setEmailSendSettingsWrapped({
+            ...settings, GroupIds: ids.join(','), SendingMethod: method, SendDate: sendDate,
+        }));
+        const s = setRes && setRes.payload ? setRes.payload : {};
+        // SetSendSettings answers 201 on success (NewsletterSendSettings.js:429-431 switches on
+        // exactly these codes). Anything else — 401/405/409/410/500 — means the synthetic group
+        // was NOT attached, so the campaign would still send to its old recipients: that is a
+        // FAILED save. It must not clear `dirty` and must not show the success toast.
+        if (s.StatusCode !== 201 && s.StatusCode !== 200) {
+            setSaving(false);
+            showToast(false, t('DataSources.send.errors.' + (ERR_KEY[s.Message] || 'generalError')));
+            return false;
+        }
         setSaving(false);
+        setDirty(false); // persisted — the unsaved-changes hint must go away
         if (!silent) showToast(true, t('DataSources.send.toasts.mappingSaved'));
         return true;
     };
@@ -134,7 +235,10 @@ const SmartSendScreen = ({ classes }: any) => {
         setSummaryOpen(true);
     };
 
-    const canSend = hasColumns && (unmapped.length === 0 || confirmUnmapped);
+    // `!sent`: once sendSmart has answered 200/201 for this campaign the screen must not be able
+    // to arm a second send. Closing the summary dialog navigates away, but this gate deliberately
+    // does not depend on that navigation actually happening.
+    const canSend = hasColumns && !sent && (unmapped.length === 0 || confirmUnmapped);
 
     const renderBody = () => {
         if (!campaignId || Number.isNaN(campaignId) || campaignId <= 0) {
@@ -154,8 +258,30 @@ const SmartSendScreen = ({ classes }: any) => {
                     </Box>
                 );
             }
-            if (smartSend.mappingError === 927) return <Typography>{t('DataSources.send.errors.featureOff')}</Typography>;
-            return <Typography>{t('DataSources.send.errors.generalError')}</Typography>;
+            // 927 (feature off) and the generic branch were both bare text: the screen has no
+            // other control on it in this state, so a transient failure — or an entitlement that
+            // was switched on server-side moments ago — left the user with a dead end and no way
+            // out but the browser. Both now re-run the only request this screen loads with.
+            const retry = (
+                <Button variant="outlined" color="primary" size="small" startIcon={<Refresh />}
+                    onClick={() => dispatch(getMapping(campaignId))}>
+                    {t('DataSources.send.errors.retryAction')}
+                </Button>
+            );
+            if (smartSend.mappingError === 927) {
+                return (
+                    <Box>
+                        <Typography style={{ marginBottom: 12 }}>{t('DataSources.send.errors.featureOff')}</Typography>
+                        {retry}
+                    </Box>
+                );
+            }
+            return (
+                <Box>
+                    <Typography style={{ marginBottom: 12 }}>{t('DataSources.send.errors.generalError')}</Typography>
+                    {retry}
+                </Box>
+            );
         }
 
         return (
@@ -171,7 +297,19 @@ const SmartSendScreen = ({ classes }: any) => {
                     {t('DataSources.send.tokensFound', { count: smartSend.tokens.length })}
                 </Typography>
 
-                <ChannelSelector source={selectedSourceItem} />
+                {/* The channel is no longer picked here — it is chosen on the SmartSend picker
+                    screen, which dispatches setChannel before navigating to this route. Landing
+                    on this route directly (campaign-row icon, BEE editor button, or a pasted URL)
+                    simply skips that step, and smartSend.selectedChannel correctly falls back to
+                    the slice default (eSendChannel.EMAIL); it is still read from the slice and
+                    sent in every request that carries a channel.
+                    NOTE: `clearSmartSend` (smartSendSlice.ts:316) is exported but has ZERO
+                    dispatch sites, so nothing ever resets the slice — selectedChannel is written
+                    once by the picker and then survives the entire SPA session, across campaigns.
+                    Harmless today because EMAIL is the only enabled channel (setChannel rejects
+                    disabled ones), so the fallback and the sticky value are the same value. This
+                    MUST be revisited when SMS is wired: a channel chosen for campaign A would
+                    otherwise silently apply to a campaign B reached by a direct link. */}
                 <SourcePicker />
 
                 {/* Source-column load (after a pick) — loading spinner + error/retry so a
@@ -194,7 +332,7 @@ const SmartSendScreen = ({ classes }: any) => {
                             tokens={smartSend.tokens}
                             columns={smartSend.columns}
                             value={smartSend.tokenMap}
-                            onChange={(token, columnId) => dispatch(setTokenMapping({ token, columnId }))}
+                            onChange={(token, columnId) => { dispatch(setTokenMapping({ token, columnId })); setDirty(true); }}
                             warnSystemFieldOverride
                         />
                         <BusinessColumnsPicker
@@ -239,13 +377,76 @@ const SmartSendScreen = ({ classes }: any) => {
     };
 
     return (
-        <DefaultScreen currentPage="groups" subPage="dataSources" classes={classes} containerClass={clsx(classes.management, classes.mb50)}>
+        // subPage drives BOTH the side-menu highlight (SideBarItem.tsx:256 matches
+        // `option.key === subPage`) and the document title (DefaultScreen.js:41-43 looks the
+        // option up by key inside the `groups` route). This screen's own route entry is
+        // `smartSend` (routes.tsx), so `dataSources` highlighted the wrong sibling and titled
+        // the page "Data Sources" for every user who continued from the picker.
+        <DefaultScreen currentPage="groups" subPage="smartSend" classes={classes} containerClass={clsx(classes.management, classes.mb50)}>
             <Box style={{ padding: 16 }}>
-                <Typography variant="h5" style={{ marginBottom: 16 }}>{t('DataSources.send.title')}</Typography>
+                <Box style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap', marginBottom: 16 }}>
+                    <Box>
+                        <Typography variant="h5">{t('DataSources.send.title')}</Typography>
+                        {/* Which campaign is about to go out. On entry A (a source tile → this
+                            screen) the title alone identified nothing, so the user could confirm a
+                            send to every recipient in the source without ever seeing the campaign
+                            name. Absent (or belonging to another campaign) → render nothing; a
+                            placeholder here would be worse than no line at all. */}
+                        {campaignName && (
+                            <Typography variant="body2" color="textSecondary">
+                                {t('DataSources.send.campaignLabel', { name: campaignName })}
+                            </Typography>
+                        )}
+                    </Box>
+                    <Box style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                        {/* Text only, by contract: no router blocker and no beforeunload handler.
+                            It just has to be true at the moment it is shown — hence the local
+                            `dirty` flag rather than a comparison against the slice. */}
+                        {dirty && (
+                            <Typography variant="caption" color="textSecondary" style={{ maxWidth: 320 }}>
+                                {t('DataSources.send.unsavedWarning')}
+                            </Typography>
+                        )}
+                        {/* The picker is this screen's entry point, so the way back to it must exist
+                            on the NORMAL path too — not only in the 404 branch. Rendered in the header
+                            (outside renderBody) so it is also reachable while the mapping is still
+                            loading or has failed. `Redirect` requires `openNewTab`.
+                            The ?dataSourceId= the screen was entered with is handed BACK: without it
+                            the picker loses the "sending from source" context the user started in and
+                            a second continue would drop the source entirely. The sanitised
+                            `parsedDsId` is used, not the raw param, so garbage is not round-tripped;
+                            it is a positive number, so it needs no encoding (contrast
+                            SmartSendPicker.tsx:64, which forwards the raw string). */}
+                        <Button size="small" color="primary"
+                            onClick={() => Redirect({ url: `${sitePrefix}SmartSend${parsedDsId != null ? `?dataSourceId=${parsedDsId}` : ''}`, openNewTab: false })}>
+                            {t('DataSources.send.backToPicker')}
+                        </Button>
+                    </Box>
+                </Box>
                 {renderBody()}
             </Box>
 
-            <SendSummaryDialog open={summaryOpen} campaignId={campaignId} onClose={() => setSummaryOpen(false)} />
+            {/* onSent fires only on a 200/201 from sendSmart, on the line right after the dialog
+                sets its own phase to 'result' (SendSummaryDialog.tsx:69-70). It must therefore do
+                NOTHING that unmounts or navigates: React 17 renders both updates before the
+                browser ever paints, so closing the dialog here made the dialog's success banner
+                literally impossible to see — a completed send gave the user zero confirmation.
+                It only records the outcome now; the dialog stays open on its result phase and
+                renders the banner itself.
+                Navigation is moved onto the close of a SUCCESSFUL send (every exit the dialog
+                offers — its Close button, the X and the backdrop — comes through onClose), which
+                still keeps the user off a screen whose "Send to all" would otherwise be re-armed.
+                `canSend` also gates on `sent`, so the second send is blocked even if the redirect
+                does not happen. */}
+            <SendSummaryDialog
+                open={summaryOpen}
+                campaignId={campaignId}
+                onClose={() => {
+                    setSummaryOpen(false);
+                    if (sent) Redirect({ url: `${sitePrefix}Campaigns`, openNewTab: false });
+                }}
+                onSent={() => setSent(true)}
+            />
             <TestSendDialog open={testOpen} campaignId={campaignId} onClose={() => setTestOpen(false)} onToast={(r) => showToast(r.ok, r.msg)} />
 
             <Snackbar

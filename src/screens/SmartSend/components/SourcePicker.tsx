@@ -1,14 +1,15 @@
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Box, Typography, Chip, Tooltip, CircularProgress, Button } from '@material-ui/core';
+import { Box, Typography, Chip, Tooltip, CircularProgress, Button, Dialog, IconButton } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { CheckCircle, Storage, Refresh } from '@material-ui/icons';
+import { CheckCircle, Storage, Refresh, Close } from '@material-ui/icons';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import { getChannelDescriptor } from '../../../Models/DataSources/SmartSend';
 import { eDataSourceStatus } from '../../../Models/DataSources/DataSource';
 import { selectSource, loadSourceColumns } from '../../../redux/reducers/smartSendSlice';
 import { getDataSources } from '../../../redux/reducers/dataSourcesSlice';
+import InlineBanner from './InlineBanner';
 
 // §11.1/§13 · pick a READY, sendable source (GetMany). "Sendable" for the selected channel
 // is read via the descriptor's identity-flag NAME (never a hardcoded field). READY sources
@@ -18,6 +19,11 @@ import { getDataSources } from '../../../redux/reducers/dataSourcesSlice';
 // flagged. Source data comes from the DataSources module (getDataSources, USE_DS_MOCK).
 // a11y mirrors ChannelSelector: radiogroup, roving tabindex, arrows, Enter/Space; disabled
 // cards carry aria-describedby → sr-only reason and don't steal focus.
+
+// The server clamps PageSize at 100 (DataSourcesController.cs:135), so asking for more is a lie.
+// It also doubles as the marker that tells OUR response apart from the DataSources page's 6-row
+// page in the shared `dataSources.list` slice — see the `isOurPage` check below.
+const SOURCE_PAGE_SIZE = 100;
 
 const useStyles = makeStyles((theme) => ({
     grid: { display: 'flex', flexWrap: 'wrap', gap: theme.spacing(2), marginTop: theme.spacing(1) },
@@ -44,6 +50,11 @@ const useStyles = makeStyles((theme) => ({
         position: 'absolute', width: 1, height: 1, padding: 0, margin: -1,
         overflow: 'hidden', clip: 'rect(0 0 0 0)', whiteSpace: 'nowrap', border: 0,
     },
+    // Confirm dialog — same head/body/foot skeleton TestSendDialog uses, so the two
+    // SmartSend dialogs are visually identical (MUI v4 core Dialog, no lab dependency).
+    dlgHead: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: theme.spacing(2, 3), borderBottom: '1px solid #e0e0e0' },
+    dlgBody: { padding: theme.spacing(3) },
+    dlgFoot: { display: 'flex', gap: theme.spacing(1.5), padding: theme.spacing(2, 3), borderTop: '1px solid #e0e0e0' },
 }));
 
 const SourcePicker: React.FC = () => {
@@ -67,13 +78,17 @@ const SourcePicker: React.FC = () => {
     //     looped the endpoint forever and made the retry button below unreachable.
     //  2. `list` may already hold a SEARCHED or small-page result left by the DataSources page,
     //     and gating on `!list` would silently show that filtered subset here instead of the
-    //     full PageSize:200 list this screen needs.
+    //     full PageSize:100 list this screen needs.
     // The retry button dispatches directly, so it still works with the ref already set.
+    // PageSize is 100, not the 200 this used to ask for: DataSourcesController.cs:135 clamps with
+    // Math.Min(pageSize <= 0 ? 6 : pageSize, 100), so 200 was never honoured. Asking for the real
+    // ceiling keeps the request honest and makes list.pageSize/list.total mean what they say —
+    // the caption below is what tells the user when there is more than one page of sources.
     const didFetch = useRef(false);
     useEffect(() => {
         if (didFetch.current) return;
         didFetch.current = true;
-        dispatch(getDataSources({ PageIndex: 1, PageSize: 200, SearchTerm: '' }));
+        dispatch(getDataSources({ PageIndex: 1, PageSize: SOURCE_PAGE_SIZE, SearchTerm: '' }));
     }, [dispatch]);
 
     const ready = useMemo(
@@ -91,7 +106,7 @@ const SourcePicker: React.FC = () => {
     // Two failure modes it has to avoid at once:
     //  - latching on "the list arrived" loses the preselect entirely when that first list is a
     //    stale/filtered one left by the DataSources page that does not contain the target: the
-    //    fresh PageSize:200 list then arrives to an already-burnt latch and nothing ever loads.
+    //    fresh PageSize:100 list then arrives to an already-burnt latch and nothing ever loads.
     //    Not finding the target is therefore NOT a latch — we simply wait for the next list.
     //  - not latching at all re-fires on a manual pick, because `pick` sets dataSourceId and
     //    clears columns via selectSource, flipping both deps; `pick` claims the id itself.
@@ -107,6 +122,41 @@ const SourcePicker: React.FC = () => {
         dispatch(loadSourceColumns(idNum));
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [list, dataSourceId, hasColumns]);
+
+    // Entry A can arrive with a ?dataSourceId that is NOT the source this campaign is already
+    // mapped to. PRODUCT DECISION: the SAVED MAPPING WINS and is never overwritten automatically
+    // — that is exactly what the `|| hasColumns` bail in the effect above does, since getMapping
+    // has already filled columns for the mapped source. But losing silently is the bug: the
+    // screen would simply ignore the source the user pressed "Smart Send" from, with no clue why.
+    // So make the conflict visible and OFFER the switch; never take it.
+    // All three conditions must hold:
+    //  • a positive incoming id is stored (SmartSendScreen already rejects <= 0 / NaN; re-checked
+    //    here because this component reads the store, not the URL),
+    //  • it resolves to a READY, sendable-on-this-channel source in this list — an unknown,
+    //    deleted or view-only id gets NO banner, because there is nothing we could switch to,
+    //  • the campaign is genuinely mapped to a DIFFERENT source. `dataSource` is null both for an
+    //    unmapped campaign (nothing to protect — the preselect above just loads the incoming one)
+    //    and for the whole window between selectSource and loadSourceColumns.fulfilled, so
+    //    requiring a non-null mapped id is also what stops the banner flashing back for a frame
+    //    right after the user accepts the switch.
+    const mappedSourceId = useSelector((s: any) => s.smartSend.dataSource?.DataSourceID ?? null);
+    const incoming = useMemo(() => {
+        const idNum = Number(dataSourceId);
+        if (dataSourceId == null || Number.isNaN(idNum) || idNum <= 0) return null;
+        if (mappedSourceId == null || mappedSourceId === idNum) return null;
+        return ready.find((it: any) => it.DataSourceID === idNum && canSend(it)) ?? null;
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [dataSourceId, mappedSourceId, ready, descriptor.identityFlag]);
+
+    // Switching source is DESTRUCTIVE and un-undoable from this screen: selectSource
+    // (smartSendSlice.ts:287-302) drops tokenMap, supervisorColumnId, gapColumnId, sortColumnId,
+    // lockedVersionId, columns, sampleValues and isMapped — up to 20 hand-made field mappings —
+    // and nothing on this screen can bring them back. The banner button therefore only OPENS this
+    // confirm, and the confirm is the ONLY route from the banner into `pick`. (A direct card
+    // click still calls `pick` unguarded — that one is the user explicitly choosing a different
+    // source, not a button sitting under reassuring text.) No auto-focus / ok-by-default
+    // shortcut: the destructive button is a deliberate second click.
+    const [confirmOpen, setConfirmOpen] = useState(false);
 
     const pick = (it: any) => {
         if (!canSend(it) || it.DataSourceID === currentSourceId) return;
@@ -156,7 +206,7 @@ const SourcePicker: React.FC = () => {
                 <Typography variant="subtitle1" style={{ fontWeight: 600 }}>{t('DataSources.send.source.title')}</Typography>
                 <Box className={classes.state}>
                     <Typography color="error">{t('DataSources.send.source.loadError')}</Typography>
-                    <Button size="small" startIcon={<Refresh />} onClick={() => dispatch(getDataSources({ PageIndex: 1, PageSize: 200, SearchTerm: '' }))}>
+                    <Button size="small" startIcon={<Refresh />} onClick={() => dispatch(getDataSources({ PageIndex: 1, PageSize: SOURCE_PAGE_SIZE, SearchTerm: '' }))}>
                         {t('DataSources.retry')}
                     </Button>
                 </Box>
@@ -168,9 +218,80 @@ const SourcePicker: React.FC = () => {
     const selectedIdx = ready.findIndex((it: any) => canSend(it) && it.DataSourceID === currentSourceId);
     const rovingTarget = selectedIdx >= 0 ? selectedIdx : (sendableIdx.length ? sendableIdx[0] : -1);
 
+    // The server clamps PageSize to 100 (DataSourcesController.cs:135) and echoes back the TRUE
+    // total, so an account with more than 100 sources is served a truncated list. This screen has
+    // no paging and no search (both out of scope), so sources 101+ are unreachable here — the one
+    // thing we must not do is let them vanish silently. Counted off `list.items`, the raw fetched
+    // page, not `ready`: this caption is about what the server withheld, not about what the READY
+    // /sendable filters removed from what it sent.
+    // `list` is shared with the DataSources page, which fetches 6 rows at a time and can leave a
+    // searched/small page in the store. Until OUR request lands, `total` and `items` are that
+    // screen's numbers and would read as truncation on an account that has none. The echoed
+    // pageSize identifies whose response this is: that screen asks for 6, this one for 100.
+    const fetched = ((list && list.items) ? list.items : []).length;
+    const isOurPage = (list.pageSize ?? 0) >= SOURCE_PAGE_SIZE;
+    const truncated = isOurPage && list.total > fetched;
+
     return (
         <Box style={{ marginTop: 24 }}>
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>{t('DataSources.send.source.title')}</Typography>
+            {incoming && (
+                <Box style={{ marginTop: 8 }}>
+                    <InlineBanner
+                        severity="info"
+                        role="status"
+                        title={t('DataSources.send.source.incomingTitle')}
+                        body={t('DataSources.send.source.incomingBody', { name: incoming.Name })}
+                        action={(
+                            /* Opens the confirm — it does NOT switch. The banner explains what is
+                               about to be lost; the dialog is where the user accepts it. */
+                            <Button size="small" variant="outlined" color="primary" onClick={() => setConfirmOpen(true)}>
+                                {t('DataSources.send.source.incomingSwitch')}
+                            </Button>
+                        )}
+                    />
+                    {/* Rendered inside the `incoming &&` block on purpose: if the conflict resolves
+                        for any reason (the switch lands, the mapping reloads, the list refreshes)
+                        the dialog goes with it and cannot act on a stale source. */}
+                    <Dialog
+                        open={confirmOpen}
+                        onClose={() => setConfirmOpen(false)}
+                        maxWidth="sm"
+                        fullWidth
+                        aria-labelledby="smartsend-switch-confirm-title"
+                        aria-describedby="smartsend-switch-confirm-body"
+                    >
+                        <Box className={classes.dlgHead}>
+                            <Typography variant="h6" id="smartsend-switch-confirm-title">
+                                {t('DataSources.send.source.incomingConfirmTitle')}
+                            </Typography>
+                            <IconButton size="small" onClick={() => setConfirmOpen(false)} aria-label={t('DataSources.send.close')}>
+                                <Close />
+                            </IconButton>
+                        </Box>
+                        <Box className={classes.dlgBody}>
+                            <Typography variant="body2" id="smartsend-switch-confirm-body">
+                                {t('DataSources.send.source.incomingConfirmBody', { name: incoming.Name })}
+                            </Typography>
+                        </Box>
+                        <Box className={classes.dlgFoot}>
+                            {/* The ONLY caller of `pick` for the banner path. It runs the exact same
+                                selectSource + loadSourceColumns a manual card click does — including
+                                claiming the preselect latch, which stops the effect above from firing
+                                a duplicate load when dataSourceId/columns flip. Close first so the
+                                dialog never lingers over the re-rendering picker. */}
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={() => { setConfirmOpen(false); pick(incoming); }}
+                            >
+                                {t('DataSources.send.source.incomingSwitch')}
+                            </Button>
+                            <Button onClick={() => setConfirmOpen(false)}>{t('DataSources.send.cancel')}</Button>
+                        </Box>
+                    </Dialog>
+                </Box>
+            )}
             {!ready.length ? (
                 <Typography variant="body2" color="textSecondary" style={{ marginTop: 8 }}>
                     {t('DataSources.send.source.empty')}
@@ -233,6 +354,14 @@ const SourcePicker: React.FC = () => {
                             );
                     })}
                 </Box>
+            )}
+            {/* Rendered outside the ready/empty branches on purpose: "no sources are ready to send"
+                is a different and much more confusing message when the server only sent us the
+                first 100 of many. */}
+            {truncated && (
+                <Typography variant="caption" color="textSecondary" display="block" style={{ marginTop: 8 }}>
+                    {t('DataSources.send.source.truncated', { shown: fetched, total: list.total })}
+                </Typography>
             )}
         </Box>
     );

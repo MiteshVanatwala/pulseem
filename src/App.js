@@ -86,6 +86,7 @@ import FileUploads from './screens/Groups/FileUploads/FileUploads';
 import DataSources from './screens/DataSources/DataSources';
 import DataSourceView from './screens/DataSources/DataSourceView';
 import SmartSendScreen from './screens/SmartSend/SmartSendScreen';
+import SmartSendPicker from './screens/SmartSend/SmartSendPicker';
 import AmpRegistration from './screens/Newsletter/AMP/AmpRegistration';
 import AffiliateProgram from './screens/Affiliate/Management/AffiliateProgram';
 import AccountUsers from './screens/AccountUsers/AccountUsers';
@@ -648,10 +649,15 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
         path={`${sitePrefix}DataSources/View/:id`}
         element={<DataSourceView classes={classes} />}
       />}
-      {accountFeatures && accountFeatures?.indexOf(PulseemFeatures.DATA_SOURCES) > -1 && <Route
+      {userRoles?.AllowSend && accountFeatures && accountFeatures?.indexOf(PulseemFeatures.DATA_SOURCES) > -1 && <Route
         exact
         path={`${sitePrefix}Campaigns/SmartSend/:id`}
         element={<SmartSendScreen classes={classes} />}
+      />}
+      {userRoles?.AllowSend && accountFeatures && accountFeatures?.indexOf(PulseemFeatures.DATA_SOURCES) > -1 && <Route
+        exact
+        path={`${sitePrefix}SmartSend`}
+        element={<SmartSendPicker classes={classes} />}
       />}
       <Route
         path="*" element={<PageNotFound classes={classes} />}

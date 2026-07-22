@@ -23,7 +23,7 @@ const TestSendDialog: React.FC<{ open: boolean; campaignId: number; onClose: () 
         const dispatch = useDispatch();
         const { t } = useTranslation();
         const classes = useStyles();
-        const language = useSelector((s: any) => s.core && s.core.language);
+        const isRTL = useSelector((s: any) => s.core && s.core.isRTL);
         const [emails, setEmails] = useState('');
         const [sending, setSending] = useState(false);
 
@@ -32,7 +32,8 @@ const TestSendDialog: React.FC<{ open: boolean; campaignId: number; onClose: () 
         const doTest = async () => {
             setSending(true);
             const list = emails.split(',').map((e) => e.trim()).filter(Boolean).slice(0, 5).join(', ');
-            const res: any = await dispatch(testSendWrapped({ Language: language || 'he', CampaignID: campaignId, Emails: list, GroupIds: '' }));
+            // Server picks the Hebrew subject with `campaignRequest.Language.ToLower() == "he-il"` (NewsletterLogic.cs:521) — a bare 'he' fails it, so send the full culture code exactly like legacy TestSend.js:75.
+            const res: any = await dispatch(testSendWrapped({ Language: `${isRTL ? 'he-IL' : 'en-US'}`, CampaignID: campaignId, Emails: list, GroupIds: '' }));
             setSending(false);
             const r = res && res.payload ? res.payload : {};
             const ok = r.StatusCode === 200 || r.StatusCode === 201;

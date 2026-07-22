@@ -101,6 +101,12 @@ const SendSummaryDialog: React.FC<{ open: boolean; campaignId: number; onClose: 
                         <>
                             <Box className={classes.grid}>
                                 <Box className={classes.col}>
+                                    {/* Campaign name first: this dialog is the last step before a real
+                                        send, and until now nothing on the smart-send path named the
+                                        campaign. The header label on the mapping screen cannot serve
+                                        this — the summary it reads is only fetched when this dialog
+                                        opens, by which point the dialog covers the header. */}
+                                    {sum.CampaignName ? line(t('DataSources.send.campaignLabel', { name: sum.CampaignName }), '') : null}
                                     {line(t('DataSources.send.summary.recipients'), <span className={classes.big}>{(sum.FinalClients ?? 0).toLocaleString()}</span>)}
                                     {line(t('DataSources.send.summary.from'), sum.FromEmail || '')}
                                     {line(t('DataSources.send.summary.replyTo'), sum.ReplyTo || '')}
