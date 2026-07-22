@@ -79,5 +79,8 @@
 	"noTemplatesFound": "תבניות לא נמצאו",
 	"refreshChat": "רענן",
 	"clickPlaceholderHint": "לחצו על המשתנה המודגש כדי למלא אותו",
-	"editing": "עריכה"
+	"editing": "עריכה",
+	"filter_groups": "קבוצות",
+	"filter_search_placeholder": "חיפוש...",
+	"filter_empty_groups": "לא נמצאו קבוצות"
 }

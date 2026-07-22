@@ -153,6 +153,7 @@ export type WhatsappChatSideBarProps = {
 		tagIds?: number[],
 		startTime?: string,
 		endTime?: string,
+		groupIds?: number[],
 	) => void;
 	contactsPaginationSetting: ContactsPaginationSetting;
 	fetchSearchedContacts: (
@@ -184,6 +185,7 @@ export type WhatsappChatSideBarProps = {
 	personalFields: { [key: string]: string };
 	landingPageData: { CampaignID: number; CampaignName: string; PageHref: string }[];
 	searchTextRef: React.MutableRefObject<string>;
+	selectedGroupsRef: React.MutableRefObject<number[]>;
 };
 
 export type StartNewChatStep = 'phone' | 'template' | 'variables' | 'review';
