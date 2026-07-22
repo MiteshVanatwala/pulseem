@@ -4,6 +4,7 @@ import { useParams, useSearchParams } from 'react-router-dom';
 import { Box, LinearProgress, Typography, Button, Snackbar, CircularProgress } from '@material-ui/core';
 import { Refresh } from '@material-ui/icons';
 import { useTranslation } from 'react-i18next';
+import clsx from 'clsx';
 import DefaultScreen from '../DefaultScreen';
 import useRedirect from '../../helpers/Routes/Redirect';
 import { sitePrefix } from '../../config';
@@ -63,7 +64,10 @@ const SmartSendScreen = ({ classes }: any) => {
 
     useEffect(() => {
         if (accountFeatures && accountFeatures.indexOf(PulseemFeatures.DATA_SOURCES) === -1) {
-            Redirect({ url: sitePrefix });
+            // `sitePrefix` is `string | undefined` (it comes straight from process.env), so it
+            // needs the same `?? ''` the other feature-gate redirects use — see
+            // DataSources.tsx:88 and DataSourceView.tsx:72.
+            Redirect({ url: sitePrefix ?? '', openNewTab: false });
         }
     }, [accountFeatures]);
 
@@ -144,7 +148,7 @@ const SmartSendScreen = ({ classes }: any) => {
                 return (
                     <Box>
                         <Typography style={{ marginBottom: 12 }}>{t('DataSources.send.errors.notFound')}</Typography>
-                        <Button variant="outlined" color="primary" onClick={() => Redirect({ url: `${sitePrefix}Campaigns` })}>
+                        <Button variant="outlined" color="primary" onClick={() => Redirect({ url: `${sitePrefix}Campaigns`, openNewTab: false })}>
                             {t('DataSources.send.backToCampaigns')}
                         </Button>
                     </Box>
@@ -235,7 +239,7 @@ const SmartSendScreen = ({ classes }: any) => {
     };
 
     return (
-        <DefaultScreen currentPage="groups" subPage="dataSources" classes={classes}>
+        <DefaultScreen currentPage="groups" subPage="dataSources" classes={classes} containerClass={clsx(classes.management, classes.mb50)}>
             <Box style={{ padding: 16 }}>
                 <Typography variant="h5" style={{ marginBottom: 16 }}>{t('DataSources.send.title')}</Typography>
                 {renderBody()}
