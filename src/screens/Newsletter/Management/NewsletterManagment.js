@@ -588,7 +588,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
         key: 'smartSend',
         uIcon: SendIcon,
         lable: t('DataSources.send.smartSendAction'),
-        remove: Status !== 1 || !IsNewEditor || !(accountFeatures?.indexOf(PulseemFeatures.DATA_SOURCES) > -1),
+        remove: Status !== 1 || !IsNewEditor || !(accountFeatures?.indexOf(PulseemFeatures.DATA_SOURCES) > -1) || windowSize === 'xs',
         rootClass: clsx(classes.sendIcon, 'smartSendIcon'),
         textClass: classes.sendIconText,
         onClick: () => {

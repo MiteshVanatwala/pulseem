@@ -26,7 +26,7 @@
 import {
     GetMappingResult, SmartSendColumn, SmartSendTokenInfo, SaveMappingRequest,
     FillSummary, eSendChannel
-} from '../../Models/DataSources/SmartSend';
+} from '../../../Models/DataSources/SmartSend';
 
 // ── shared fixtures ──────────────────────────────────────────────────────────
 

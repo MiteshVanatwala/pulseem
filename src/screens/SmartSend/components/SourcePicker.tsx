@@ -61,9 +61,20 @@ const SourcePicker: React.FC = () => {
 
     const canSend = (it: any) => !!it[descriptor.identityFlag];
 
+    // Fetch exactly once per mount, tracked by a ref rather than inferred from store state.
+    // Two reasons this is not `!list && listStatus === '...'`:
+    //  1. Any store-derived condition re-satisfies itself after a failure (list stays null), which
+    //     looped the endpoint forever and made the retry button below unreachable.
+    //  2. `list` may already hold a SEARCHED or small-page result left by the DataSources page,
+    //     and gating on `!list` would silently show that filtered subset here instead of the
+    //     full PageSize:200 list this screen needs.
+    // The retry button dispatches directly, so it still works with the ref already set.
+    const didFetch = useRef(false);
     useEffect(() => {
-        if (!list && listStatus !== 'loading') dispatch(getDataSources({ PageIndex: 0, PageSize: 200, SearchTerm: '' }));
-    }, [dispatch, list, listStatus]);
+        if (didFetch.current) return;
+        didFetch.current = true;
+        dispatch(getDataSources({ PageIndex: 1, PageSize: 200, SearchTerm: '' }));
+    }, [dispatch]);
 
     const ready = useMemo(
         () => ((list && list.items) ? list.items : []).filter((it: any) => it.Status === eDataSourceStatus.READY),
@@ -76,16 +87,33 @@ const SourcePicker: React.FC = () => {
 
     // Preselect (entry A ?dataSourceId): load the source's columns once, if it is sendable.
     // NaN-guarded — a garbage ?dataSourceId never dispatches (R2 note).
+    // The latch records WHICH id we already loaded, and is set only when we actually dispatch.
+    // Two failure modes it has to avoid at once:
+    //  - latching on "the list arrived" loses the preselect entirely when that first list is a
+    //    stale/filtered one left by the DataSources page that does not contain the target: the
+    //    fresh PageSize:200 list then arrives to an already-burnt latch and nothing ever loads.
+    //    Not finding the target is therefore NOT a latch — we simply wait for the next list.
+    //  - not latching at all re-fires on a manual pick, because `pick` sets dataSourceId and
+    //    clears columns via selectSource, flipping both deps; `pick` claims the id itself.
+    // `idNum <= 0` also rejects `?dataSourceId=` (empty), which Number() turns into 0.
+    const preselectedFor = useRef<number | null>(null);
     useEffect(() => {
         const idNum = Number(dataSourceId);
-        if (!list || dataSourceId == null || Number.isNaN(idNum) || hasColumns) return;
+        if (!list || dataSourceId == null || Number.isNaN(idNum) || idNum <= 0 || hasColumns) return;
+        if (preselectedFor.current === idNum) return;
         const pre = ready.find((it: any) => it.DataSourceID === idNum && canSend(it));
-        if (pre) dispatch(loadSourceColumns(idNum));
+        if (!pre) return;
+        preselectedFor.current = idNum;
+        dispatch(loadSourceColumns(idNum));
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [list, dataSourceId, hasColumns]);
 
     const pick = (it: any) => {
         if (!canSend(it) || it.DataSourceID === currentSourceId) return;
+        // Claim the id before dispatching so the preselect effect above — which is about to
+        // re-run, since selectSource changes dataSourceId and clears columns — sees it as
+        // already handled and does not fire a duplicate load.
+        preselectedFor.current = it.DataSourceID;
         dispatch(selectSource(it.DataSourceID));
         dispatch(loadSourceColumns(it.DataSourceID));
     };
@@ -103,10 +131,16 @@ const SourcePicker: React.FC = () => {
         else if (e.key === 'ArrowUp' || e.key === 'ArrowRight') { e.preventDefault(); moveFocus(idx, -1); }
     };
 
-    // Before the list resolves the store is 'idle' then 'loading' (the fetch is dispatched
-    // in a post-paint effect) — treat the whole pre-resolve window as loading so the empty
-    // "no sources" message never flashes before the first fetch (§ה loading-state mandate).
-    if (!list && listStatus !== 'failed') {
+    // Spin ONLY while the fetch is genuinely outstanding ('idle' before the post-paint dispatch,
+    // then 'loading') so the empty "no sources" message never flashes before the first fetch
+    // (§ה loading-state mandate). Anything else with no list is terminal and falls through to the
+    // retry block below — including StatusCode!=200 responses, which this API returns inside an
+    // HTTP 200 envelope, so the thunk resolves as fulfilled and listStatus becomes 'succeeded'
+    // with list still null. Keying the spinner on `!== 'failed'` would hang it there forever.
+    // `!didFetch.current` covers the very first render: the fetch is dispatched in a post-paint
+    // effect, so a store left in a terminal state by another screen would otherwise flash the
+    // error block for one frame before our own request starts.
+    if (!list && (!didFetch.current || listStatus === 'idle' || listStatus === 'loading')) {
         return (
             <Box style={{ marginTop: 24 }}>
                 <Typography variant="subtitle1" style={{ fontWeight: 600 }}>{t('DataSources.send.source.title')}</Typography>
@@ -114,13 +148,15 @@ const SourcePicker: React.FC = () => {
             </Box>
         );
     }
-    if (listStatus === 'failed' && !list) {
+    // Terminal with no list: a rejected request ('failed') OR a resolved-but-empty envelope
+    // ('succeeded' with Data null — the dominant server-error path here). Both get the retry.
+    if (!list) {
         return (
             <Box style={{ marginTop: 24 }}>
                 <Typography variant="subtitle1" style={{ fontWeight: 600 }}>{t('DataSources.send.source.title')}</Typography>
                 <Box className={classes.state}>
                     <Typography color="error">{t('DataSources.send.source.loadError')}</Typography>
-                    <Button size="small" startIcon={<Refresh />} onClick={() => dispatch(getDataSources({ PageIndex: 0, PageSize: 200, SearchTerm: '' }))}>
+                    <Button size="small" startIcon={<Refresh />} onClick={() => dispatch(getDataSources({ PageIndex: 1, PageSize: 200, SearchTerm: '' }))}>
                         {t('DataSources.retry')}
                     </Button>
                 </Box>
@@ -143,7 +179,12 @@ const SourcePicker: React.FC = () => {
                 <Box className={classes.grid} role="radiogroup" aria-label={t('DataSources.send.source.title')}>
                     {ready.map((it: any, idx: number) => {
                         const sendable = canSend(it);
-                        const isSelected = it.DataSourceID === currentSourceId;
+                        // `sendable &&` matters: a stale/hand-typed ?dataSourceId pointing at a
+                        // view-only or wrong-channel source would otherwise paint that card as
+                        // checked (border + CheckCircle + aria-checked) while `pick` refuses it —
+                        // a checked radio the user cannot uncheck, on a screen that then shows
+                        // neither columns nor an error.
+                        const isSelected = sendable && it.DataSourceID === currentSourceId;
                         const count = it[descriptor.resolvedCountField] ?? 0;
                         const zeroResolved = sendable && count === 0;
                         const blockedKey = it.HasCellIdentity ? 'blockedNoEmail' : 'viewOnly'; // only used when !sendable
