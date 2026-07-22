@@ -51,16 +51,39 @@ const viewOnlyColumns = [
     { ColumnID: 602, Ordinal: 2, SourceHeader: 'revenue', DisplayName: 'מחזור', ColumnKey: 'c2', DataType: eDataType.NUMBER, FormatHint: eFormatHint.CURRENCY, SemanticRole: eSemanticRole.NONE, IsSearchable: true }
 ];
 
+// SmartSend coherence: source 9 "לקוחות כלל" is the source the smartSend mapped scenarios
+// (smartSendMock 602-609) lock onto — its columns MUST match smartSendMock COLUMNS_V41
+// (ids 55-62) so that whether the mapping columns arrive via GetMapping (mapped campaign)
+// or via getDataSource (re-selecting source 9), the ColumnIDs are identical.
+// (SmartSend only reads source 9's COLUMNS via getDataSource; its DataSources-PAGE rows/
+// results preview reuses the generic rich fixtures like every source — cosmetic, and the
+// page is out of SmartSend's scope.)
+const clalColumns = [
+    { ColumnID: 56, Ordinal: 1, SourceHeader: 'שם פרטי', DisplayName: 'שם פרטי', ColumnKey: 'c1', DataType: eDataType.TEXT, FormatHint: eFormatHint.NONE, SemanticRole: eSemanticRole.NONE, IsSearchable: false },
+    { ColumnID: 60, Ordinal: 2, SourceHeader: 'אימייל', DisplayName: 'אימייל', ColumnKey: 'c2', DataType: eDataType.EMAIL, FormatHint: eFormatHint.NONE, SemanticRole: eSemanticRole.RECIPIENT_EMAIL, IsSearchable: false },
+    { ColumnID: 55, Ordinal: 3, SourceHeader: 'פרמיה חודשית', DisplayName: 'פרמיה חודשית', ColumnKey: 'c3', DataType: eDataType.NUMBER, FormatHint: eFormatHint.CURRENCY, SemanticRole: eSemanticRole.NONE, IsSearchable: false },
+    { ColumnID: 57, Ordinal: 4, SourceHeader: 'יעד', DisplayName: 'יעד רבעוני', ColumnKey: 'c4', DataType: eDataType.NUMBER, FormatHint: eFormatHint.CURRENCY, SemanticRole: eSemanticRole.NONE, IsSearchable: false },
+    { ColumnID: 58, Ordinal: 5, SourceHeader: 'עמלה', DisplayName: 'עמלה', ColumnKey: 'c5', DataType: eDataType.NUMBER, FormatHint: eFormatHint.PERCENT, SemanticRole: eSemanticRole.NONE, IsSearchable: false },
+    { ColumnID: 61, Ordinal: 6, SourceHeader: 'אימייל מפקח', DisplayName: 'אימייל מפקח', ColumnKey: 'c6', DataType: eDataType.EMAIL, FormatHint: eFormatHint.NONE, SemanticRole: eSemanticRole.NONE, IsSearchable: true },
+    { ColumnID: 62, Ordinal: 7, SourceHeader: 'פער', DisplayName: 'פער מהיעד', ColumnKey: 'c7', DataType: eDataType.NUMBER, FormatHint: eFormatHint.CURRENCY, SemanticRole: eSemanticRole.NONE, IsSearchable: true }
+];
+
 const twoHoursAgoIso = '2020-01-01T00:00:00'; // safely > 2h in the past → StatusChip shows "delayed"
 
 const allItems = [
+    // SmartSend source (the mapped scenarios lock onto this one; columns = clalColumns 55-62).
+    { DataSourceID: 9, Name: 'לקוחות כלל — יולי', Description: 'מקור השליחה החכמה', CreatedBy: 'idan@leadfeed.io', CreatedDate: '2026-07-09T08:00:00', DataSourceVersionID: 41, VersionNumber: 1, Status: eDataSourceStatus.READY, TotalRows: 1250, ProcessedRows: 1250, ProgressPercent: 100, ResolvedRowsEmail: 1185, ResolvedRowsCell: 0, NoIdentityRows: 40, DuplicateRows: 25, UploadedBy: 'idan@leadfeed.io', LastUploadDate: '2026-07-09T08:00:00', RunDateStart: '2026-07-09T08:01:00', HasEmailIdentity: true, HasCellIdentity: false },
     { DataSourceID: 12, Name: 'לקוחות Q3', Description: 'ייצוא CRM רבעוני', CreatedBy: 'idan@leadfeed.io', CreatedDate: '2026-07-13T09:12:00', DataSourceVersionID: 31, VersionNumber: 2, Status: eDataSourceStatus.PROCESSING, TotalRows: 120000, ProcessedRows: 50400, ProgressPercent: 42, ResolvedRowsEmail: 40000, ResolvedRowsCell: 0, NoIdentityRows: 1800, DuplicateRows: 950, UploadedBy: 'idan@leadfeed.io', LastUploadDate: '2026-07-13T09:12:00', RunDateStart: '2026-07-13T09:13:20', HasEmailIdentity: true, HasCellIdentity: false },
     { DataSourceID: 13, Name: 'ספקים', Description: 'רשימת ספקים לצפייה', CreatedBy: 'idan@leadfeed.io', CreatedDate: '2026-07-12T11:00:00', DataSourceVersionID: 33, VersionNumber: 1, Status: eDataSourceStatus.READY, TotalRows: 540, ProcessedRows: 540, ProgressPercent: 100, ResolvedRowsEmail: 0, ResolvedRowsCell: 0, NoIdentityRows: 540, DuplicateRows: 0, UploadedBy: 'idan@leadfeed.io', LastUploadDate: '2026-07-12T11:00:00', RunDateStart: '2026-07-12T11:01:00', HasEmailIdentity: false, HasCellIdentity: false },
     { DataSourceID: 14, Name: 'אירועים', Description: 'קובץ שנכשל בעיבוד', CreatedBy: 'idan@leadfeed.io', CreatedDate: '2026-07-11T08:00:00', DataSourceVersionID: 34, VersionNumber: 1, Status: eDataSourceStatus.FAIL, TotalRows: null, ProcessedRows: null, ProgressPercent: null, ResolvedRowsEmail: 0, ResolvedRowsCell: 0, NoIdentityRows: 0, DuplicateRows: 0, UploadedBy: 'idan@leadfeed.io', LastUploadDate: '2026-07-11T08:00:00', RunDateStart: null, HasEmailIdentity: true, HasCellIdentity: true },
     { DataSourceID: 15, Name: 'מנויים 2026', Description: 'אימייל + סלולרי, כל סוגי העמודות', CreatedBy: 'dana@leadfeed.io', CreatedDate: '2026-07-10T14:30:00', DataSourceVersionID: 40, VersionNumber: 3, Status: eDataSourceStatus.READY, TotalRows: 8500, ProcessedRows: 8500, ProgressPercent: 100, ResolvedRowsEmail: 7200, ResolvedRowsCell: 6100, NoIdentityRows: 300, DuplicateRows: 210, UploadedBy: 'dana@leadfeed.io', LastUploadDate: '2026-07-10T14:30:00', RunDateStart: '2026-07-10T14:31:00', HasEmailIdentity: true, HasCellIdentity: true },
     { DataSourceID: 16, Name: 'רשימת המתנה', Description: 'ממתין בתור לעיבוד', CreatedBy: 'idan@leadfeed.io', CreatedDate: '2026-07-14T07:55:00', DataSourceVersionID: 41, VersionNumber: 1, Status: eDataSourceStatus.PENDING, TotalRows: null, ProcessedRows: null, ProgressPercent: null, ResolvedRowsEmail: 0, ResolvedRowsCell: 0, NoIdentityRows: 0, DuplicateRows: 0, UploadedBy: 'idan@leadfeed.io', LastUploadDate: '2026-07-14T07:55:00', RunDateStart: null, HasEmailIdentity: true, HasCellIdentity: false },
     { DataSourceID: 17, Name: 'לקוחות VIP', Description: 'עיבוד שנתקע (מתעכב)', CreatedBy: 'idan@leadfeed.io', CreatedDate: twoHoursAgoIso, DataSourceVersionID: 42, VersionNumber: 1, Status: eDataSourceStatus.PROCESSING, TotalRows: 50000, ProcessedRows: 12000, ProgressPercent: 24, ResolvedRowsEmail: 9000, ResolvedRowsCell: 3000, NoIdentityRows: 100, DuplicateRows: 50, UploadedBy: 'idan@leadfeed.io', LastUploadDate: twoHoursAgoIso, RunDateStart: twoHoursAgoIso, HasEmailIdentity: true, HasCellIdentity: true },
-    { DataSourceID: 18, Name: 'קמפיין ישן', Description: 'גרסה שבוטלה', CreatedBy: 'idan@leadfeed.io', CreatedDate: '2026-06-01T10:00:00', DataSourceVersionID: 43, VersionNumber: 1, Status: eDataSourceStatus.CANCELLED, TotalRows: 0, ProcessedRows: 0, ProgressPercent: 0, ResolvedRowsEmail: 0, ResolvedRowsCell: 0, NoIdentityRows: 0, DuplicateRows: 0, UploadedBy: 'idan@leadfeed.io', LastUploadDate: '2026-06-01T10:00:00', RunDateStart: null, HasEmailIdentity: true, HasCellIdentity: false }
+    { DataSourceID: 18, Name: 'קמפיין ישן', Description: 'גרסה שבוטלה', CreatedBy: 'idan@leadfeed.io', CreatedDate: '2026-06-01T10:00:00', DataSourceVersionID: 43, VersionNumber: 1, Status: eDataSourceStatus.CANCELLED, TotalRows: 0, ProcessedRows: 0, ProgressPercent: 0, ResolvedRowsEmail: 0, ResolvedRowsCell: 0, NoIdentityRows: 0, DuplicateRows: 0, UploadedBy: 'idan@leadfeed.io', LastUploadDate: '2026-06-01T10:00:00', RunDateStart: null, HasEmailIdentity: true, HasCellIdentity: false },
+    // SmartSend §7.2 coverage: cell-only source (blocked for Email, ready for a future Cell channel)
+    { DataSourceID: 19, Name: 'מנויי SMS', Description: 'סלולרי בלבד — אין עמודת אימייל', CreatedBy: 'idan@leadfeed.io', CreatedDate: '2026-07-15T12:00:00', DataSourceVersionID: 44, VersionNumber: 1, Status: eDataSourceStatus.READY, TotalRows: 4500, ProcessedRows: 4500, ProgressPercent: 100, ResolvedRowsEmail: 0, ResolvedRowsCell: 4200, NoIdentityRows: 120, DuplicateRows: 180, UploadedBy: 'idan@leadfeed.io', LastUploadDate: '2026-07-15T12:00:00', RunDateStart: '2026-07-15T12:01:00', HasEmailIdentity: false, HasCellIdentity: true },
+    // SmartSend §7.2 coverage: READY sender source whose email column resolved 0 rows (all notFound, create-missing off)
+    { DataSourceID: 20, Name: 'לידים קרים', Description: 'עמודת אימייל קיימת אך אף שורה לא נפתרה', CreatedBy: 'idan@leadfeed.io', CreatedDate: '2026-07-16T09:00:00', DataSourceVersionID: 45, VersionNumber: 1, Status: eDataSourceStatus.READY, TotalRows: 300, ProcessedRows: 300, ProgressPercent: 100, ResolvedRowsEmail: 0, ResolvedRowsCell: 0, NoIdentityRows: 0, DuplicateRows: 0, UploadedBy: 'idan@leadfeed.io', LastUploadDate: '2026-07-16T09:00:00', RunDateStart: '2026-07-16T09:01:00', HasEmailIdentity: true, HasCellIdentity: false }
 ];
 
 const RICH_RESULTS_JSON = JSON.stringify({
@@ -106,9 +129,9 @@ export const mockGetMany = (req: any) => {
 
 // ── GET Get/{id} — details + columns + versions, varied by state ──
 export const mockGet = (id: number) => {
-    const it = allItems.find(i => i.DataSourceID === id) || allItems[3];
+    const it = allItems.find(i => i.DataSourceID === id) || allItems.find(i => i.DataSourceID === 15)!;
     const viewOnly = !it.HasEmailIdentity && !it.HasCellIdentity;
-    const cols = viewOnly ? viewOnlyColumns : richColumns;
+    const cols = it.DataSourceID === 9 ? clalColumns : (viewOnly ? viewOnlyColumns : richColumns);
     return {
         StatusCode: 200, Message: '',
         Data: {

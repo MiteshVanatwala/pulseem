@@ -196,7 +196,7 @@ const DataSourceView = ({ classes }: ClassesType) => {
                     <Tooltip title={t('DataSources.actions.summary')}><IconButton aria-label={t('DataSources.actions.summary')} onClick={() => openSummary()}><Assessment /></IconButton></Tooltip>
                 )}
                 {!isViewOnly && details?.Status === eDataSourceStatus.READY && (
-                    <Tooltip title={t('DataSources.goToSend')}><IconButton aria-label={t('DataSources.goToSend')} onClick={() => Redirect({ url: `${sitePrefix}Campaigns`, openNewTab: false })}><Send /></IconButton></Tooltip>
+                    <Tooltip title={t('DataSources.goToSend')}><IconButton aria-label={t('DataSources.goToSend')} onClick={() => Redirect({ url: `${sitePrefix}Campaigns?dataSourceId=${details?.DataSourceID}`, openNewTab: false })}><Send /></IconButton></Tooltip>
                 )}
             </Box>
         </Box>

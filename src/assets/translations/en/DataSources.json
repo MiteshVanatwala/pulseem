@@ -6,6 +6,138 @@
   "clearSearch": "Clear",
   "backToList": "Back to sources list",
   "goToSend": "Go to send page",
+  "send": {
+    "title": "Smart Send",
+    "notMapped": "This campaign is not mapped to a data source yet",
+    "mappedTo": "Mapped to source: {{name}}",
+    "tokensFound": "{{count}} tokens detected in the template",
+    "channel": {
+      "title": "Send channel",
+      "email": "Email",
+      "sms": "SMS",
+      "whatsapp": "WhatsApp",
+      "comingSoon": "Coming soon",
+      "comingSoonTooltip": "This channel is coming soon — the infrastructure is ready",
+      "comingSoonNoCell": "Coming soon · this source has no cellphone column",
+      "recipientsAvailable": "{{count}} recipients available in the source",
+      "selectAria": "Select send channel"
+    },
+    "source": {
+      "title": "Select a data source",
+      "current": "Selected source",
+      "change": "Change source",
+      "recipients": "{{count}} recipients available",
+      "viewOnly": "View only",
+      "blockedNoEmail": "No email column — cannot send by email",
+      "zeroResolved": "This source has no rows resolved to email",
+      "empty": "No sources are ready to send",
+      "loadError": "Failed to load the source list"
+    },
+    "mapping": {
+      "title": "Token mapping",
+      "hint": "For each token in the template, pick the source column that replaces it on send",
+      "tokenCol": "Token",
+      "columnCol": "Source column",
+      "selectColumn": "Select a column",
+      "none": "Not mapped",
+      "unmapped": "Unmapped",
+      "systemFieldWarn": "System field — mapping to a source overrides the recipient's account value",
+      "vanishedColumn": "The mapped column no longer exists in this version — remap it",
+      "noTokens": "No tokens found in the template",
+      "badge": {
+        "graph": "Graph",
+        "systemField": "System field",
+        "free": "Free"
+      }
+    },
+    "business": {
+      "title": "Business columns (optional)",
+      "supervisor": "Supervisor email column",
+      "gap": "Gap column",
+      "sort": "Sort column",
+      "none": "None",
+      "hint": "The gap and sort columns affect the supervisor email only",
+      "needSupervisor": "Pick a supervisor column so gap and sort take effect",
+      "sortDefault": "By default the table is sorted by the gap column. Pick a sort column only to sort by a different column."
+    },
+    "stale": {
+      "title": "A newer version is available",
+      "body": "A newer version of the source was published. Saving will lock the new version."
+    },
+    "mismatch": {
+      "title": "Send-group mismatch",
+      "body": "The campaign's synthetic group was dropped or merged. Save again to repair.",
+      "cloneTitle": "Duplicated campaign — mapping required",
+      "cloneBody": "This campaign was duplicated with a foreign source group ({{name}}) but no mapping. Pick a source and remap.",
+      "repair": "Repair and save"
+    },
+    "preview": "Preview",
+    "unmapped": {
+      "title": "There are unmapped tokens",
+      "body": "The following tokens are not mapped and will be sent raw: {{tokens}}",
+      "confirm": "I understand — send anyway"
+    },
+    "actions": {
+      "saveMapping": "Save mapping",
+      "preview": "Preview",
+      "testSend": "Test send",
+      "sendToAll": "Send to all"
+    },
+    "testSendWarn": "Test send duplicates the campaign without the mapping — source tokens will appear raw (##field##) in the test email.",
+    "saveFirst": "Save the mapping to continue to preview and send",
+    "pickCampaignBanner": "Pick a campaign for smart send with the selected source",
+    "smartSendAction": "Smart send (data source)",
+    "close": "Close",
+    "cancel": "Cancel",
+    "backToCampaigns": "Back to campaigns",
+    "summary": {
+      "title": "Send summary",
+      "recipients": "Final recipients",
+      "from": "From",
+      "replyTo": "Reply-To",
+      "subject": "Subject",
+      "groups": "Groups",
+      "totalInSource": "Total in source",
+      "noEmail": "No email",
+      "duplicates": "Duplicates",
+      "removed": "Removed",
+      "sendToSupervisor": "Also send to supervisor?",
+      "combinedTitle": "Combined campaign",
+      "combinedNote": "A recipient from a regular group (not from the source) — a mapped token is replaced with an empty string."
+    },
+    "result": {
+      "success": "The campaign was sent successfully",
+      "successDesc": "The campaign was sent through the existing pipeline. The sender replaces the tokens per recipient.",
+      "problematicLinks": "Problematic links were found",
+      "domainNotVerified": "The domain is not verified",
+      "pendingApproval": "Pending approval",
+      "underReview": "Under review",
+      "noCredit": "No credit",
+      "sendBlocked": "Sending is blocked",
+      "bodyEmpty": "The email body is empty",
+      "genericError": "Sending failed"
+    },
+    "testSend": {
+      "title": "Note",
+      "emailsLabel": "Test addresses (up to 5, comma-separated)",
+      "emailsPlaceholder": "a@b.com, c@d.com",
+      "sentOk": "Test email sent",
+      "sentFail": "Test send failed"
+    },
+    "toasts": {
+      "mappingSaved": "Mapping saved successfully"
+    },
+    "errors": {
+      "generalError": "Something went wrong, please try again",
+      "notFound": "Campaign not found",
+      "viewOnlyBlocked": "This source is view-only — it has no identity column for sending",
+      "editBlockedDuringSend": "The mapping cannot be edited while a send is in progress",
+      "groupMergeLimit": "The campaign passed the group-merge limit — remove regular groups or split the campaign",
+      "dataIncorrect": "The submitted data is invalid — refresh the columns and try again",
+      "channelNotSupported": "This channel is not supported yet",
+      "featureOff": "The Data Sources feature is not active for this account"
+    }
+  },
   "retry": "Try again",
   "viewOnlyBadge": "View only",
   "viewOnlyTooltip": "This source has no identity columns — it cannot be sent to",

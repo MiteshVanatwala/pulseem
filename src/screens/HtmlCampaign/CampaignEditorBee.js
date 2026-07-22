@@ -2300,6 +2300,17 @@ const CampaignEditor = ({ classes, ...props }) => {
           key={'createButton'}
         >{t('common.continue')}</Button>
         }
+        {/* Entry B (§11.2): after saving the design, go straight to the smart-send screen
+            (gated on DATA_SOURCES). Sends via a data source instead of the regular flow. */}
+        {accountFeatures?.indexOf(PulseemFeatures.DATA_SOURCES) > -1 && campaignId && <Button
+          onClick={() => saveDesign(true, `${sitePrefix}Campaigns/SmartSend/${campaignId}`)}
+          variant='outlined'
+          size='small'
+          className={clsx(classes.btn, classes.btnRounded, classes.backButton)}
+          style={{ marginInlineStart: '8px' }}
+          color="primary"
+          key={'smartSendButton'}
+        >{t('DataSources.send.smartSendAction')}</Button>}
       </>)
     }
     else {
