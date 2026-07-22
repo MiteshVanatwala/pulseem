@@ -32,6 +32,11 @@ export interface ConfigOptions {
   // when optIn is already in use on another step, the same way used-elsewhere
   // fields are omitted from `form` entirely.
   includeOptIn?: boolean;
+  // Fired synchronously as soon as BEE reports a load() has completed (initial
+  // mount, step switch, or corrective reload). The popup editor uses this to
+  // turn off the step-switch loader only once the new step's content is
+  // actually in the canvas, instead of as soon as the outgoing save resolves.
+  onContentLoaded?: () => void;
 }
 export const BeeConfig = (Options: ConfigOptions) => {
   const {
@@ -57,7 +62,8 @@ export const BeeConfig = (Options: ConfigOptions) => {
     onFormAdded,
     BasedOnRTL,
     languageCode,
-    includeOptIn = true
+    includeOptIn = true,
+    onContentLoaded
   } = Options;
 
   const layout = [];
@@ -253,6 +259,11 @@ export const BeeConfig = (Options: ConfigOptions) => {
       // console.log('onError ', errorMessage)
     },
     onLoad: (jsonFile: any) => {
+      // Signal that the new content is actually in the canvas — fires for every
+      // load() (initial mount, step switch, corrective reload). The popup editor
+      // uses this to turn off the step-switch loader at the right moment.
+      onContentLoaded?.();
+
       // Apply popup-editor class to containers and iframes
       const applyPopupEditorClass = () => {
         // Apply to main container

@@ -290,7 +290,8 @@
     "RCS_MESSAGING": "RCS Messaging",
     "KOSHER_SEND": "Kosher Send",
     "LANDING_PAGE_HTML_BLOCK": "Blok HTML",
-    "POPUP_STEPS": "Wieloetapowe Popupy"
+    "POPUP_STEPS": "Wieloetapowe Popupy",
+    "POPUP_MANGEMENT": "Zarządzanie Popupami"
   },
   "EmailMarketingList": "Jaki jest rozmiar Twojej listy mailingowej?",
   "EmailMarketingListSending": "(Nielimitowane wysyłanie w zależności od wielkości listy)",

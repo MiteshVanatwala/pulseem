@@ -344,6 +344,7 @@ const StartNewChatModal = ({
 			FromNumber: activePhoneNumber,
 			ToNumber: toNumber,
 			IsFreeFormChat: false,
+			IsNewchat: true,
 			TemplateId: selectedTemplate.TemplateId,
 			Variables: formatUpdatedDynamicVariable(updatedDynamicVariable),
 		};
