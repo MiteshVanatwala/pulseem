@@ -33,6 +33,7 @@
       "zeroResolved": "This source has no rows resolved to email",
       "empty": "No sources are ready to send",
       "loadError": "Failed to load the source list",
+      "truncated": "Showing {{shown}} of {{total}} sources",
       "incomingTitle": "A different source was requested",
       "incomingBody": "You arrived from \"{{name}}\", but this campaign is already mapped to a different source. Switching will clear the current field mapping.",
       "incomingSwitch": "Switch and clear mapping",
@@ -160,7 +161,6 @@
       "noResults": "No campaigns match your search",
       "clearSearch": "Clear search",
       "loadError": "Failed to load the campaign list",
-      "recipients": "{{count}} recipients",
       "updated": "Updated {{date}}",
       "blocked": {
         "notSendable": "Already sent / cannot be sent",

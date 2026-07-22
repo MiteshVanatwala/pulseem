@@ -141,7 +141,11 @@ const CampaignPicker: React.FC<Props> = ({ value, onChange }) => {
             // campaigns". This endpoint is NOT a PulseemResponse envelope: it returns
             // { MainList, ChildList } directly, so there is no StatusCode to branch on.
             ok = typeof res?.type === 'string' && res.type.endsWith('/fulfilled');
-        } catch {
+        } catch (err) {
+            // Surface it: a 500 from GetEmailCampaignsManagement is otherwise completely invisible
+            // to support — the user just sees the generic retry block with no trace anywhere.
+            // eslint-disable-next-line no-console
+            console.error('SmartSend campaign list failed', err);
             // `await dispatch(thunk)` is NOT safe on this endpoint. The fulfilled reducer
             // (newsletterSlice.js:346) does `payload.MainList === null ? [] : payload.MainList`
             // and then `.filter(...)`: a 200 body that OMITS MainList (or is not an object at
@@ -361,7 +365,7 @@ const CampaignPicker: React.FC<Props> = ({ value, onChange }) => {
         }
         return (
             <>
-                <Box className={classes.list} role="radiogroup" aria-label={t('DataSources.send.picker.selectAria')}>
+                <Box className={classes.list} role="radiogroup" aria-orientation="vertical" aria-label={t('DataSources.send.picker.selectAria')}>
                     {visible.map(renderRow)}
                 </Box>
                 {/* Rows exist that the toggle is holding back — one click reveals them, disabled

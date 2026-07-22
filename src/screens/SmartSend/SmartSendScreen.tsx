@@ -123,7 +123,8 @@ const SmartSendScreen = ({ classes }: any) => {
     }, [dispatch, campaignId, parsedDsId]);
 
     // ── save flow (§13 step 6): setMapping (lock + PulseemDS_ group + TokenMap) → get
-    // SyntheticGroupID → setEmailSendSettings with it in BOTH GroupList AND GroupIds (§10). ──
+    // SyntheticGroupID → READ the campaign's current send settings → post them back with the
+    // synthetic group MERGED into GroupIds (§10). Read-modify-write, never a partial body. ──
     const buildSaveRequest = () => {
         const colSet = new Set(smartSend.columns.map((c: any) => c.ColumnID));
         return {
@@ -154,8 +155,71 @@ const SmartSendScreen = ({ classes }: any) => {
             return false;
         }
         const gid = r.Data && r.Data.SyntheticGroupID;
-        // Synthetic group id must ride in BOTH GroupList (array) AND GroupIds (CSV) — §10.
-        await dispatch(setEmailSendSettingsWrapped({ CampaignID: campaignId, GroupList: [gid], GroupIds: String(gid), SendingMethod: 1, SendDate: null }));
+
+        // Attaching the synthetic group means posting the WHOLE settings row back, not a patch:
+        // the server handler (NewsletterLogic.cs:1175-1193) forwards EVERY SendSettings field to
+        // the stored proc, so a field missing from this body arrives as its DEFAULT and silently
+        // overwrites whatever the user configured on the classic send-settings screen —
+        // PulseAmount, TimeInterval, FromDate/ToDate, the IsOpened/IsOpenedClicked/IsNotClicked/
+        // IsNotOpened filters, ExceptionalDays, ExeptionalCampaigns, ExeptionalGroups,
+        // AutoSendingByUserField, AutoSendDelay, IsBestTime. Hence read-modify-write, with the
+        // read as a HARD precondition: if it fails there is nothing to preserve, and posting a
+        // minimal body "anyway" is precisely the data loss this guards against — fail the save.
+        // GetSendSettings answers 201 on success (EmailController.cs:517), NOT 200 — the SmartSend
+        // mock returns 200, which is exactly what would hide this until the mock is switched off.
+        // Both are accepted so the screen behaves identically in mock and real mode.
+        const cur: any = await dispatch(getEmailSendSettingsWrapped(campaignId));
+        const curPayload = cur && cur.payload ? cur.payload : {};
+        const ok = curPayload.StatusCode === 201 || curPayload.StatusCode === 200;
+        const settings = ok && curPayload.Data ? curPayload.Data.Settings : null;
+        // `!settings` alone would pass an [] or {} straight through (both truthy / spreadable to an
+        // empty body), producing a POST with no CampaignID — worse than the minimal body this
+        // replaced. Require the identifying field.
+        if (!settings || !settings.CampaignID) {
+            setSaving(false);
+            showToast(false, t('DataSources.send.errors.' + (ERR_KEY[curPayload.Message] || 'generalError')));
+            return false;
+        }
+
+        // GroupIds (CSV) is the ONE field that changes — and the authoritative one: SendSettings
+        // .GroupList (SendSettings.cs:35-41) is a getter-only computed property, so the GroupList
+        // that came back from the GET rides along untouched and is simply ignored server-side.
+        // MERGE, never replace: a combined campaign (source + regular groups, §16) keeps its
+        // regular groups. Trim + de-dupe so a loose or empty CSV ('', '301,,302', '301, 302')
+        // yields no empty entries and a re-save cannot append the synthetic group twice.
+        const ids: string[] = String(settings.GroupIds ?? '').split(',').map((s: string) => s.trim()).filter((s: string) => s !== '');
+        // A 200 with no SyntheticGroupID must never push the literal "undefined" into the CSV;
+        // post the settings back unchanged rather than corrupt the group list.
+        if (gid != null && Number(gid) > 0 && ids.indexOf(String(gid)) === -1) ids.push(String(gid));
+        // Everything else rides verbatim — EXCEPT two scheduling fields that cannot be echoed back
+        // blindly, both mirroring what the classic screen already does with the SAME payload:
+        //  1. SendingMethod: 0 is a real stored value, and the classic normalises it to 1 on every
+        //     post (NewsletterSendSettings.js:409). Echoing 0 writes back an invalid send method.
+        //  2. A stored "scheduled" method with no SendDate is a reachable state — the classic
+        //     DISABLES its save button on exactly that combination (NewsletterSendSettings.js:895-898)
+        //     and the server answers 405 SEND_DATE_MISSING. Echoing it verbatim would make the
+        //     mapping permanently unsavable for that campaign. Only an ALREADY-INVALID combination
+        //     is normalised to "send now"; a valid schedule is preserved untouched.
+        const METHOD_SCHEDULED = 2, METHOD_AUTO = 3;
+        let method = settings.SendingMethod === 0 ? 1 : (settings.SendingMethod ?? 1);
+        let sendDate = settings.SendDate;
+        const scheduleBroken =
+            (method === METHOD_SCHEDULED && !sendDate) ||
+            (method === METHOD_AUTO && !sendDate && !settings.AutoSendDelay);
+        if (scheduleBroken) { method = 1; sendDate = null; }
+        const setRes: any = await dispatch(setEmailSendSettingsWrapped({
+            ...settings, GroupIds: ids.join(','), SendingMethod: method, SendDate: sendDate,
+        }));
+        const s = setRes && setRes.payload ? setRes.payload : {};
+        // SetSendSettings answers 201 on success (NewsletterSendSettings.js:429-431 switches on
+        // exactly these codes). Anything else — 401/405/409/410/500 — means the synthetic group
+        // was NOT attached, so the campaign would still send to its old recipients: that is a
+        // FAILED save. It must not clear `dirty` and must not show the success toast.
+        if (s.StatusCode !== 201 && s.StatusCode !== 200) {
+            setSaving(false);
+            showToast(false, t('DataSources.send.errors.' + (ERR_KEY[s.Message] || 'generalError')));
+            return false;
+        }
         setSaving(false);
         setDirty(false); // persisted — the unsaved-changes hint must go away
         if (!silent) showToast(true, t('DataSources.send.toasts.mappingSaved'));

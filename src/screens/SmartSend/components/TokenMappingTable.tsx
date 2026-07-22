@@ -70,7 +70,9 @@ const TokenMappingTable: React.FC<Props> = ({ tokens, columns, value, onChange, 
                         variant="outlined"
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        placeholder={t('DataSources.searchPlaceholder')}
+                        // This box filters FIELD names. `DataSources.searchPlaceholder` is the
+                        // sources-list string ("search by name or description") and was wrong here.
+                        placeholder={t('DataSources.send.mapping.searchPlaceholder')}
                         InputProps={{ startAdornment: <InputAdornment position="start"><Search fontSize="small" /></InputAdornment> }}
                         inputProps={{ 'aria-label': t('DataSources.send.mapping.title') }}
                     />

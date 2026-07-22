@@ -20,6 +20,11 @@ import InlineBanner from './InlineBanner';
 // a11y mirrors ChannelSelector: radiogroup, roving tabindex, arrows, Enter/Space; disabled
 // cards carry aria-describedby → sr-only reason and don't steal focus.
 
+// The server clamps PageSize at 100 (DataSourcesController.cs:135), so asking for more is a lie.
+// It also doubles as the marker that tells OUR response apart from the DataSources page's 6-row
+// page in the shared `dataSources.list` slice — see the `isOurPage` check below.
+const SOURCE_PAGE_SIZE = 100;
+
 const useStyles = makeStyles((theme) => ({
     grid: { display: 'flex', flexWrap: 'wrap', gap: theme.spacing(2), marginTop: theme.spacing(1) },
     card: {
@@ -73,13 +78,17 @@ const SourcePicker: React.FC = () => {
     //     looped the endpoint forever and made the retry button below unreachable.
     //  2. `list` may already hold a SEARCHED or small-page result left by the DataSources page,
     //     and gating on `!list` would silently show that filtered subset here instead of the
-    //     full PageSize:200 list this screen needs.
+    //     full PageSize:100 list this screen needs.
     // The retry button dispatches directly, so it still works with the ref already set.
+    // PageSize is 100, not the 200 this used to ask for: DataSourcesController.cs:135 clamps with
+    // Math.Min(pageSize <= 0 ? 6 : pageSize, 100), so 200 was never honoured. Asking for the real
+    // ceiling keeps the request honest and makes list.pageSize/list.total mean what they say —
+    // the caption below is what tells the user when there is more than one page of sources.
     const didFetch = useRef(false);
     useEffect(() => {
         if (didFetch.current) return;
         didFetch.current = true;
-        dispatch(getDataSources({ PageIndex: 1, PageSize: 200, SearchTerm: '' }));
+        dispatch(getDataSources({ PageIndex: 1, PageSize: SOURCE_PAGE_SIZE, SearchTerm: '' }));
     }, [dispatch]);
 
     const ready = useMemo(
@@ -97,7 +106,7 @@ const SourcePicker: React.FC = () => {
     // Two failure modes it has to avoid at once:
     //  - latching on "the list arrived" loses the preselect entirely when that first list is a
     //    stale/filtered one left by the DataSources page that does not contain the target: the
-    //    fresh PageSize:200 list then arrives to an already-burnt latch and nothing ever loads.
+    //    fresh PageSize:100 list then arrives to an already-burnt latch and nothing ever loads.
     //    Not finding the target is therefore NOT a latch — we simply wait for the next list.
     //  - not latching at all re-fires on a manual pick, because `pick` sets dataSourceId and
     //    clears columns via selectSource, flipping both deps; `pick` claims the id itself.
@@ -197,7 +206,7 @@ const SourcePicker: React.FC = () => {
                 <Typography variant="subtitle1" style={{ fontWeight: 600 }}>{t('DataSources.send.source.title')}</Typography>
                 <Box className={classes.state}>
                     <Typography color="error">{t('DataSources.send.source.loadError')}</Typography>
-                    <Button size="small" startIcon={<Refresh />} onClick={() => dispatch(getDataSources({ PageIndex: 1, PageSize: 200, SearchTerm: '' }))}>
+                    <Button size="small" startIcon={<Refresh />} onClick={() => dispatch(getDataSources({ PageIndex: 1, PageSize: SOURCE_PAGE_SIZE, SearchTerm: '' }))}>
                         {t('DataSources.retry')}
                     </Button>
                 </Box>
@@ -208,6 +217,20 @@ const SourcePicker: React.FC = () => {
     // Roving tabindex: exactly one sendable card is tabbable (the selected one, else the first).
     const selectedIdx = ready.findIndex((it: any) => canSend(it) && it.DataSourceID === currentSourceId);
     const rovingTarget = selectedIdx >= 0 ? selectedIdx : (sendableIdx.length ? sendableIdx[0] : -1);
+
+    // The server clamps PageSize to 100 (DataSourcesController.cs:135) and echoes back the TRUE
+    // total, so an account with more than 100 sources is served a truncated list. This screen has
+    // no paging and no search (both out of scope), so sources 101+ are unreachable here — the one
+    // thing we must not do is let them vanish silently. Counted off `list.items`, the raw fetched
+    // page, not `ready`: this caption is about what the server withheld, not about what the READY
+    // /sendable filters removed from what it sent.
+    // `list` is shared with the DataSources page, which fetches 6 rows at a time and can leave a
+    // searched/small page in the store. Until OUR request lands, `total` and `items` are that
+    // screen's numbers and would read as truncation on an account that has none. The echoed
+    // pageSize identifies whose response this is: that screen asks for 6, this one for 100.
+    const fetched = ((list && list.items) ? list.items : []).length;
+    const isOurPage = (list.pageSize ?? 0) >= SOURCE_PAGE_SIZE;
+    const truncated = isOurPage && list.total > fetched;
 
     return (
         <Box style={{ marginTop: 24 }}>
@@ -331,6 +354,14 @@ const SourcePicker: React.FC = () => {
                             );
                     })}
                 </Box>
+            )}
+            {/* Rendered outside the ready/empty branches on purpose: "no sources are ready to send"
+                is a different and much more confusing message when the server only sent us the
+                first 100 of many. */}
+            {truncated && (
+                <Typography variant="caption" color="textSecondary" display="block" style={{ marginTop: 8 }}>
+                    {t('DataSources.send.source.truncated', { shown: fetched, total: list.total })}
+                </Typography>
             )}
         </Box>
     );

@@ -33,6 +33,7 @@
       "zeroResolved": "To źródło nie ma wierszy przypisanych do e-maila",
       "empty": "Brak źródeł gotowych do wysyłki",
       "loadError": "Nie udało się wczytać listy źródeł",
+      "truncated": "Wyświetlono {{shown}} z {{total}} źródeł",
       "incomingTitle": "Zażądano innego źródła",
       "incomingBody": "Przyszedłeś ze źródła „{{name}}”, ale ta kampania jest zmapowana do innego źródła. Przełączenie wyczyści bieżące mapowanie pól.",
       "incomingSwitch": "Przełącz i wyczyść mapowanie",
@@ -160,7 +161,6 @@
       "noResults": "Brak kampanii pasujących do wyszukiwania",
       "clearSearch": "Wyczyść wyszukiwanie",
       "loadError": "Nie udało się wczytać listy kampanii",
-      "recipients": "Odbiorcy: {{count}}",
       "updated": "Zaktualizowano {{date}}",
       "blocked": {
         "notSendable": "Już wysłana / nie można wysłać",
