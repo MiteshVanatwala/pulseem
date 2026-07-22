@@ -6,6 +6,138 @@
   "clearSearch": "Wyczyść",
   "backToList": "Powrót do listy źródeł",
   "goToSend": "Przejdź do strony wysyłki",
+  "send": {
+    "title": "Inteligentna wysyłka",
+    "notMapped": "Ta kampania nie jest jeszcze zmapowana do źródła danych",
+    "mappedTo": "Zmapowano do źródła: {{name}}",
+    "tokensFound": "Wykryto {{count}} tokenów w szablonie",
+    "channel": {
+      "title": "Kanał wysyłki",
+      "email": "E-mail",
+      "sms": "SMS",
+      "whatsapp": "WhatsApp",
+      "comingSoon": "Wkrótce",
+      "comingSoonTooltip": "Ten kanał będzie wkrótce dostępny — infrastruktura jest już gotowa",
+      "comingSoonNoCell": "Wkrótce · to źródło nie ma kolumny telefonu komórkowego",
+      "recipientsAvailable": "Dostępni odbiorcy w źródle: {{count}}",
+      "selectAria": "Wybierz kanał wysyłki"
+    },
+    "source": {
+      "title": "Wybierz źródło danych",
+      "current": "Wybrane źródło",
+      "change": "Zmień źródło",
+      "recipients": "Dostępni odbiorcy: {{count}}",
+      "viewOnly": "Tylko do podglądu",
+      "blockedNoEmail": "Brak kolumny e-mail — nie można wysłać e-mailem",
+      "zeroResolved": "To źródło nie ma wierszy przypisanych do e-maila",
+      "empty": "Brak źródeł gotowych do wysyłki",
+      "loadError": "Nie udało się wczytać listy źródeł"
+    },
+    "mapping": {
+      "title": "Mapowanie tokenów",
+      "hint": "Dla każdego tokena w szablonie wybierz kolumnę źródła, która go zastąpi przy wysyłce",
+      "tokenCol": "Token",
+      "columnCol": "Kolumna źródła",
+      "selectColumn": "Wybierz kolumnę",
+      "none": "Bez mapowania",
+      "unmapped": "Niezmapowany",
+      "systemFieldWarn": "Pole systemowe — zmapowanie do źródła nadpisze wartość konta odbiorcy",
+      "vanishedColumn": "Zmapowana kolumna nie istnieje już w tej wersji — zmapuj ponownie",
+      "noTokens": "Nie znaleziono tokenów w szablonie",
+      "badge": {
+        "graph": "Wykres",
+        "systemField": "Pole systemowe",
+        "free": "Dowolny"
+      }
+    },
+    "business": {
+      "title": "Kolumny biznesowe (opcjonalnie)",
+      "supervisor": "Kolumna e-maila przełożonego",
+      "gap": "Kolumna różnicy",
+      "sort": "Kolumna sortowania",
+      "none": "Brak",
+      "hint": "Kolumny różnicy i sortowania wpływają tylko na e-mail przełożonego",
+      "needSupervisor": "Wybierz kolumnę przełożonego, aby różnica i sortowanie miały efekt",
+      "sortDefault": "Domyślnie tabela jest sortowana według kolumny różnicy. Wybierz kolumnę sortowania tylko, aby sortować według innej kolumny."
+    },
+    "stale": {
+      "title": "Dostępna jest nowsza wersja",
+      "body": "Opublikowano nowszą wersję źródła. Zapis zablokuje nową wersję."
+    },
+    "mismatch": {
+      "title": "Niezgodność grupy wysyłki",
+      "body": "Grupa syntetyczna kampanii została usunięta lub scalona. Zapisz ponownie, aby naprawić.",
+      "cloneTitle": "Zduplikowana kampania — wymagane mapowanie",
+      "cloneBody": "Ta kampania została zduplikowana z obcą grupą źródła ({{name}}) bez mapowania. Wybierz źródło i zmapuj ponownie.",
+      "repair": "Napraw i zapisz"
+    },
+    "preview": "Podgląd",
+    "unmapped": {
+      "title": "Istnieją niezmapowane tokeny",
+      "body": "Następujące tokeny nie są zmapowane i zostaną wysłane w surowej postaci: {{tokens}}",
+      "confirm": "Rozumiem — wyślij mimo to"
+    },
+    "actions": {
+      "saveMapping": "Zapisz mapowanie",
+      "preview": "Podgląd",
+      "testSend": "Wysyłka testowa",
+      "sendToAll": "Wyślij do wszystkich"
+    },
+    "testSendWarn": "Wysyłka testowa duplikuje kampanię bez mapowania — tokeny źródła pojawią się w surowej postaci (##pole##) w e-mailu testowym.",
+    "saveFirst": "Zapisz mapowanie, aby przejść do podglądu i wysyłki",
+    "pickCampaignBanner": "Wybierz kampanię do inteligentnej wysyłki z wybranym źródłem",
+    "smartSendAction": "Inteligentna wysyłka (źródło danych)",
+    "close": "Zamknij",
+    "cancel": "Anuluj",
+    "backToCampaigns": "Powrót do kampanii",
+    "summary": {
+      "title": "Podsumowanie wysyłki",
+      "recipients": "Odbiorcy końcowi",
+      "from": "Od",
+      "replyTo": "Odpowiedz do",
+      "subject": "Temat",
+      "groups": "Grupy",
+      "totalInSource": "Łącznie w źródle",
+      "noEmail": "Bez e-maila",
+      "duplicates": "Duplikaty",
+      "removed": "Usunięci",
+      "sendToSupervisor": "Wysłać też do przełożonego?",
+      "combinedTitle": "Kampania łączona",
+      "combinedNote": "Odbiorca z grupy zwykłej (nie ze źródła) — zmapowany token zostanie zastąpiony pustym ciągiem."
+    },
+    "result": {
+      "success": "Kampania została wysłana pomyślnie",
+      "successDesc": "Kampania została wysłana przez istniejący potok. Nadawca zastępuje tokeny per odbiorca.",
+      "problematicLinks": "Znaleziono problematyczne linki",
+      "domainNotVerified": "Domena nie jest zweryfikowana",
+      "pendingApproval": "Oczekuje na zatwierdzenie",
+      "underReview": "W trakcie weryfikacji",
+      "noCredit": "Brak kredytów",
+      "sendBlocked": "Wysyłka zablokowana",
+      "bodyEmpty": "Treść e-maila jest pusta",
+      "genericError": "Wysyłka nie powiodła się"
+    },
+    "testSend": {
+      "title": "Uwaga",
+      "emailsLabel": "Adresy testowe (do 5, oddzielone przecinkami)",
+      "emailsPlaceholder": "a@b.com, c@d.com",
+      "sentOk": "E-mail testowy wysłany",
+      "sentFail": "Wysyłka testowa nie powiodła się"
+    },
+    "toasts": {
+      "mappingSaved": "Mapowanie zostało zapisane"
+    },
+    "errors": {
+      "generalError": "Coś poszło nie tak, spróbuj ponownie",
+      "notFound": "Nie znaleziono kampanii",
+      "viewOnlyBlocked": "To źródło jest tylko do podglądu — nie ma kolumny tożsamości do wysyłki",
+      "editBlockedDuringSend": "Nie można edytować mapowania podczas trwającej wysyłki",
+      "groupMergeLimit": "Kampania przekroczyła limit scalania grup — usuń zwykłe grupy lub podziel kampanię",
+      "dataIncorrect": "Przesłane dane są nieprawidłowe — odśwież kolumny i spróbuj ponownie",
+      "channelNotSupported": "Ten kanał nie jest jeszcze obsługiwany",
+      "featureOff": "Funkcja źródeł danych nie jest aktywna dla tego konta"
+    }
+  },
   "retry": "Spróbuj ponownie",
   "viewOnlyBadge": "Tylko do podglądu",
   "viewOnlyTooltip": "To źródło nie ma kolumn tożsamości — nie można do niego wysyłać",
