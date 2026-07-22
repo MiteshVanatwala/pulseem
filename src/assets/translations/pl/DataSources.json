@@ -8,9 +8,10 @@
   "goToSend": "Przejdź do strony wysyłki",
   "send": {
     "title": "Inteligentna wysyłka",
+    "campaignLabel": "Kampania: {{name}}",
     "notMapped": "Ta kampania nie jest jeszcze zmapowana do źródła danych",
     "mappedTo": "Zmapowano do źródła: {{name}}",
-    "tokensFound": "Wykryto {{count}} tokenów w szablonie",
+    "tokensFound": "Wykryte pola w szablonie: {{count}}",
     "channel": {
       "title": "Kanał wysyłki",
       "email": "E-mail",
@@ -31,23 +32,29 @@
       "blockedNoEmail": "Brak kolumny e-mail — nie można wysłać e-mailem",
       "zeroResolved": "To źródło nie ma wierszy przypisanych do e-maila",
       "empty": "Brak źródeł gotowych do wysyłki",
-      "loadError": "Nie udało się wczytać listy źródeł"
+      "loadError": "Nie udało się wczytać listy źródeł",
+      "incomingTitle": "Zażądano innego źródła",
+      "incomingBody": "Przyszedłeś ze źródła „{{name}}”, ale ta kampania jest zmapowana do innego źródła. Przełączenie wyczyści bieżące mapowanie pól.",
+      "incomingSwitch": "Przełącz i wyczyść mapowanie",
+      "incomingConfirmTitle": "Wyczyścić bieżące mapowanie pól?",
+      "incomingConfirmBody": "Przełączenie na „{{name}}” usunie wszystkie mapowania pól tej kampanii. Nie można tego cofnąć z tego ekranu."
     },
     "mapping": {
-      "title": "Mapowanie tokenów",
-      "hint": "Dla każdego tokena w szablonie wybierz kolumnę źródła, która go zastąpi przy wysyłce",
-      "tokenCol": "Token",
+      "title": "Mapowanie pól",
+      "hint": "Dla każdego pola w szablonie wybierz kolumnę źródła, która je zastąpi przy wysyłce",
+      "searchPlaceholder": "Szukaj pól",
+      "tokenCol": "Pole",
       "columnCol": "Kolumna źródła",
       "selectColumn": "Wybierz kolumnę",
       "none": "Bez mapowania",
-      "unmapped": "Niezmapowany",
+      "unmapped": "Niezmapowane",
       "systemFieldWarn": "Pole systemowe — zmapowanie do źródła nadpisze wartość konta odbiorcy",
       "vanishedColumn": "Zmapowana kolumna nie istnieje już w tej wersji — zmapuj ponownie",
-      "noTokens": "Nie znaleziono tokenów w szablonie",
+      "noTokens": "Nie znaleziono pól w szablonie",
       "badge": {
         "graph": "Wykres",
         "systemField": "Pole systemowe",
-        "free": "Dowolny"
+        "free": "Dowolne"
       }
     },
     "business": {
@@ -73,8 +80,8 @@
     },
     "preview": "Podgląd",
     "unmapped": {
-      "title": "Istnieją niezmapowane tokeny",
-      "body": "Następujące tokeny nie są zmapowane i zostaną wysłane w surowej postaci: {{tokens}}",
+      "title": "Istnieją niezmapowane pola",
+      "body": "Następujące pola nie są zmapowane i zostaną wysłane w surowej postaci: {{tokens}}",
       "confirm": "Rozumiem — wyślij mimo to"
     },
     "actions": {
@@ -83,13 +90,14 @@
       "testSend": "Wysyłka testowa",
       "sendToAll": "Wyślij do wszystkich"
     },
-    "testSendWarn": "Wysyłka testowa duplikuje kampanię bez mapowania — tokeny źródła pojawią się w surowej postaci (##pole##) w e-mailu testowym.",
+    "testSendWarn": "Wysyłka testowa duplikuje kampanię bez mapowania — pola źródła pojawią się w surowej postaci (##pole##) w e-mailu testowym.",
     "saveFirst": "Zapisz mapowanie, aby przejść do podglądu i wysyłki",
-    "pickCampaignBanner": "Wybierz kampanię do inteligentnej wysyłki z wybranym źródłem",
     "smartSendAction": "Inteligentna wysyłka (źródło danych)",
     "close": "Zamknij",
     "cancel": "Anuluj",
     "backToCampaigns": "Powrót do kampanii",
+    "backToPicker": "Powrót do wyboru kampanii",
+    "unsavedWarning": "Wyjście teraz spowoduje utratę niezapisanego mapowania pól.",
     "summary": {
       "title": "Podsumowanie wysyłki",
       "recipients": "Odbiorcy końcowi",
@@ -103,11 +111,11 @@
       "removed": "Usunięci",
       "sendToSupervisor": "Wysłać też do przełożonego?",
       "combinedTitle": "Kampania łączona",
-      "combinedNote": "Odbiorca z grupy zwykłej (nie ze źródła) — zmapowany token zostanie zastąpiony pustym ciągiem."
+      "combinedNote": "Odbiorca z grupy zwykłej (nie ze źródła) — zmapowane pole zostanie zastąpione pustym ciągiem."
     },
     "result": {
       "success": "Kampania została wysłana pomyślnie",
-      "successDesc": "Kampania została wysłana przez istniejący potok. Nadawca zastępuje tokeny per odbiorca.",
+      "successDesc": "Kampania została wysłana przez istniejący potok. Nadawca zastępuje pola per odbiorca.",
       "problematicLinks": "Znaleziono problematyczne linki",
       "domainNotVerified": "Domena nie jest zweryfikowana",
       "pendingApproval": "Oczekuje na zatwierdzenie",
@@ -135,7 +143,30 @@
       "groupMergeLimit": "Kampania przekroczyła limit scalania grup — usuń zwykłe grupy lub podziel kampanię",
       "dataIncorrect": "Przesłane dane są nieprawidłowe — odśwież kolumny i spróbuj ponownie",
       "channelNotSupported": "Ten kanał nie jest jeszcze obsługiwany",
-      "featureOff": "Funkcja źródeł danych nie jest aktywna dla tego konta"
+      "featureOff": "Funkcja źródeł danych nie jest aktywna dla tego konta",
+      "retryAction": "Spróbuj ponownie"
+    },
+    "picker": {
+      "title": "Inteligentna wysyłka",
+      "step1": "Krok 1",
+      "step2": "Krok 2 — Wybór kampanii",
+      "fromSource": "Wysyłka ze źródła: {{name}}",
+      "searchPlaceholder": "Szukaj kampanii według nazwy",
+      "onlySendable": "Pokaż tylko kampanie gotowe do wysyłki",
+      "continue": "Przejdź do mapowania pól",
+      "empty": "Brak kampanii do wyświetlenia",
+      "noneSendable": "Brak kampanii gotowych do wysyłki",
+      "showAll": "Pokaż wszystkie kampanie",
+      "noResults": "Brak kampanii pasujących do wyszukiwania",
+      "clearSearch": "Wyczyść wyszukiwanie",
+      "loadError": "Nie udało się wczytać listy kampanii",
+      "recipients": "Odbiorcy: {{count}}",
+      "updated": "Zaktualizowano {{date}}",
+      "blocked": {
+        "notSendable": "Już wysłana / nie można wysłać",
+        "oldEditor": "Stary edytor — nieobsługiwany"
+      },
+      "selectAria": "Wybierz kampanię do wysyłki"
     }
   },
   "retry": "Spróbuj ponownie",

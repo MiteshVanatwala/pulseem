@@ -29,6 +29,7 @@ import {
 import {
     DataSourceListItem, DataSourceDetails, DataSourceVersion, eDataSourceStatus
 } from '../../Models/DataSources/DataSource';
+import { getChannelDescriptor, eSendChannel } from '../../Models/DataSources/SmartSend';
 import StatusChip from './components/StatusChip';
 import EditDataSourceDialog from './components/EditDataSourceDialog';
 import UploadWizardDialog from './components/UploadWizardDialog';
@@ -39,6 +40,12 @@ import VersionsHistoryDialog from './components/VersionsHistoryDialog';
 const PAGE_NAME = 'DataSources';
 const POLL_MS = 4000;
 const ROWS_OPTIONS = [6, 10, 20, 50];
+// EMAIL is the only wired Smart Send channel in v1, and the mapping screen's SourcePicker accepts a
+// source only when it carries THAT channel's identity flag (`canSend` there = it[identityFlag]).
+// "Not view-only" is a weaker test — a cell-only source passes it, so offering Smart Send on that
+// basis routed the user to a screen that silently dropped the ?dataSourceId. Read the flag NAME
+// from the descriptor (never a hardcoded field) so this entry gate cannot drift from that one.
+const EMAIL_IDENTITY_FLAG = getChannelDescriptor(eSendChannel.EMAIL).identityFlag;
 
 const DataSources = ({ classes }: ClassesType) => {
     const { t } = useTranslation();
@@ -78,6 +85,9 @@ const DataSources = ({ classes }: ClassesType) => {
     // HideRecipietns hides recipient PII → also hide viewing row content + exporting (the server enforces 405).
     const canViewRecipients = !userRoles?.HideRecipients;
     const canExport = !!userRoles?.AllowExport && canViewRecipients;
+    // Mirrors the server's AllowSend gate on every Smart Send action (SetMapping/FillAndSummarize/Send),
+    // so a user who cannot send never reaches a screen where every action 405s after the mapping work.
+    const canSend = !!userRoles?.AllowSend;
 
     const items: DataSourceListItem[] = list?.items ?? [];
     const total: number = list?.total ?? 0;
@@ -155,7 +165,7 @@ const DataSources = ({ classes }: ClassesType) => {
     const changeRows = (e: any) => setSearchData(s => ({ ...s, PageSize: parseInt(e.target.value, 10), PageIndex: 1 }));
 
     const goToView = (id: number) => Redirect({ url: `${sitePrefix}DataSources/View/${id}`, openNewTab: false });
-    const goToSend = (id: number) => Redirect({ url: `${sitePrefix}Campaigns`, openNewTab: false }); // stub navigation only
+    const goToSend = (id: number) => Redirect({ url: `${sitePrefix}SmartSend?dataSourceId=${id}`, openNewTab: false });
 
     const openSummary = async (id: number) => {
         const res: any = await dispatch(getDataSource(id));
@@ -252,7 +262,7 @@ const DataSources = ({ classes }: ClassesType) => {
                         <IconButton size="small" aria-label={t('DataSources.actions.delete')} onClick={() => setDialog({ type: 'delete', data: row })}><DeleteIcon fontSize="small" /></IconButton>
                     </Tooltip>
                 )}
-                {!isViewOnly(row) && row.Status === eDataSourceStatus.READY && (
+                {canSend && row[EMAIL_IDENTITY_FLAG] && row.Status === eDataSourceStatus.READY && (
                     <Tooltip title={t('DataSources.goToSend')}>
                         <IconButton size="small" aria-label={t('DataSources.goToSend')} onClick={() => goToSend(row.DataSourceID)}><Send fontSize="small" /></IconButton>
                     </Tooltip>
@@ -433,11 +443,18 @@ const DataSources = ({ classes }: ClassesType) => {
             <Box className={classes.mb50}>
                 <Box className={'topSection onlyTitleBar'} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
                     <Title Text={t('DataSources.title')} classes={classes} ContainerStyle={{ border: 'none !important' }} />
-                    {canUpload && (
-                        <Button variant="contained" color="primary" startIcon={<Add />} onClick={() => setWizardOpen(true)}>
-                            {t('DataSources.uploadButton')}
-                        </Button>
-                    )}
+                    <Box style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        {canSend && (
+                            <Button variant="outlined" color="primary" startIcon={<Send />} onClick={() => Redirect({ url: `${sitePrefix}SmartSend`, openNewTab: false })}>
+                                {t('DataSources.send.title')}
+                            </Button>
+                        )}
+                        {canUpload && (
+                            <Button variant="contained" color="primary" startIcon={<Add />} onClick={() => setWizardOpen(true)}>
+                                {t('DataSources.uploadButton')}
+                            </Button>
+                        )}
+                    </Box>
                 </Box>
 
                 <Box style={{ display: 'flex', gap: 8, alignItems: 'center', margin: '12px 0' }}>

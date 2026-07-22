@@ -23,6 +23,7 @@ import {
 import {
     DataSourceColumn, DataSourceVersion, RowsFilter, eDataSourceStatus
 } from '../../Models/DataSources/DataSource';
+import { getChannelDescriptor, eSendChannel } from '../../Models/DataSources/SmartSend';
 import StatusChip from './components/StatusChip';
 import RowsTable from './components/RowsTable';
 import FiltersBar from './components/FiltersBar';
@@ -33,6 +34,9 @@ import DataSourceSummary from './components/DataSourceSummary';
 import EditDataSourceDialog from './components/EditDataSourceDialog';
 
 const ROWS_PAGE_SIZE = 50;
+// Same gate the mapping screen's SourcePicker applies for the only wired channel — see the note in
+// DataSources.tsx. "Not view-only" would let a cell-only source through to a screen that drops it.
+const EMAIL_IDENTITY_FLAG = getChannelDescriptor(eSendChannel.EMAIL).identityFlag;
 
 const DataSourceView = ({ classes }: ClassesType) => {
     const { t } = useTranslation();
@@ -60,6 +64,8 @@ const DataSourceView = ({ classes }: ClassesType) => {
 
     const canExport = !!userRoles?.AllowExport;
     const canEditMeta = !userRoles?.HideRecipients;
+    // Mirrors the server's AllowSend gate on every Smart Send action — see DataSources.tsx.
+    const canSend = !!userRoles?.AllowSend;
     const isHistorical = viewVersionId !== null && details && viewVersionId !== details.ActiveVersionID;
     const isViewOnly = details && !details.HasEmailIdentity && !details.HasCellIdentity;
 
@@ -195,8 +201,8 @@ const DataSourceView = ({ classes }: ClassesType) => {
                 {details?.Status === eDataSourceStatus.READY && (
                     <Tooltip title={t('DataSources.actions.summary')}><IconButton aria-label={t('DataSources.actions.summary')} onClick={() => openSummary()}><Assessment /></IconButton></Tooltip>
                 )}
-                {!isViewOnly && details?.Status === eDataSourceStatus.READY && (
-                    <Tooltip title={t('DataSources.goToSend')}><IconButton aria-label={t('DataSources.goToSend')} onClick={() => Redirect({ url: `${sitePrefix}Campaigns?dataSourceId=${details?.DataSourceID}`, openNewTab: false })}><Send /></IconButton></Tooltip>
+                {canSend && details?.[EMAIL_IDENTITY_FLAG] && details?.Status === eDataSourceStatus.READY && (
+                    <Tooltip title={t('DataSources.goToSend')}><IconButton aria-label={t('DataSources.goToSend')} onClick={() => Redirect({ url: `${sitePrefix}SmartSend?dataSourceId=${details?.DataSourceID}`, openNewTab: false })}><Send /></IconButton></Tooltip>
                 )}
             </Box>
         </Box>

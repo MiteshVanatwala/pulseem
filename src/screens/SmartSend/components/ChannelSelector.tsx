@@ -54,12 +54,16 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 interface Props {
-    // The selected source row (dataSources GetMany shape) — provided by SourcePicker (M8).
-    // When present, per-channel recipient counts + the "no cellphone column" hint light up.
+    // OPTIONAL. The selected source row (dataSources GetMany shape) — when present, per-channel
+    // recipient counts + the "no cellphone column" hint light up. The picker screen renders this
+    // selector BEFORE any source is known and passes nothing at all; in that case those two
+    // source-derived extras are simply omitted and everything else (selection, keyboard a11y,
+    // coming-soon chips) behaves identically. Defaulted to null so `undefined` and "no source"
+    // are one case for every guard below.
     source?: any;
 }
 
-const ChannelSelector: React.FC<Props> = ({ source }) => {
+const ChannelSelector: React.FC<Props> = ({ source = null }) => {
     const classes = useStyles();
     const { t } = useTranslation();
     const dispatch = useDispatch();

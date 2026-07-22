@@ -1,14 +1,15 @@
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Box, Typography, Chip, Tooltip, CircularProgress, Button } from '@material-ui/core';
+import { Box, Typography, Chip, Tooltip, CircularProgress, Button, Dialog, IconButton } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { CheckCircle, Storage, Refresh } from '@material-ui/icons';
+import { CheckCircle, Storage, Refresh, Close } from '@material-ui/icons';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import { getChannelDescriptor } from '../../../Models/DataSources/SmartSend';
 import { eDataSourceStatus } from '../../../Models/DataSources/DataSource';
 import { selectSource, loadSourceColumns } from '../../../redux/reducers/smartSendSlice';
 import { getDataSources } from '../../../redux/reducers/dataSourcesSlice';
+import InlineBanner from './InlineBanner';
 
 // §11.1/§13 · pick a READY, sendable source (GetMany). "Sendable" for the selected channel
 // is read via the descriptor's identity-flag NAME (never a hardcoded field). READY sources
@@ -44,6 +45,11 @@ const useStyles = makeStyles((theme) => ({
         position: 'absolute', width: 1, height: 1, padding: 0, margin: -1,
         overflow: 'hidden', clip: 'rect(0 0 0 0)', whiteSpace: 'nowrap', border: 0,
     },
+    // Confirm dialog — same head/body/foot skeleton TestSendDialog uses, so the two
+    // SmartSend dialogs are visually identical (MUI v4 core Dialog, no lab dependency).
+    dlgHead: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: theme.spacing(2, 3), borderBottom: '1px solid #e0e0e0' },
+    dlgBody: { padding: theme.spacing(3) },
+    dlgFoot: { display: 'flex', gap: theme.spacing(1.5), padding: theme.spacing(2, 3), borderTop: '1px solid #e0e0e0' },
 }));
 
 const SourcePicker: React.FC = () => {
@@ -108,6 +114,41 @@ const SourcePicker: React.FC = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [list, dataSourceId, hasColumns]);
 
+    // Entry A can arrive with a ?dataSourceId that is NOT the source this campaign is already
+    // mapped to. PRODUCT DECISION: the SAVED MAPPING WINS and is never overwritten automatically
+    // — that is exactly what the `|| hasColumns` bail in the effect above does, since getMapping
+    // has already filled columns for the mapped source. But losing silently is the bug: the
+    // screen would simply ignore the source the user pressed "Smart Send" from, with no clue why.
+    // So make the conflict visible and OFFER the switch; never take it.
+    // All three conditions must hold:
+    //  • a positive incoming id is stored (SmartSendScreen already rejects <= 0 / NaN; re-checked
+    //    here because this component reads the store, not the URL),
+    //  • it resolves to a READY, sendable-on-this-channel source in this list — an unknown,
+    //    deleted or view-only id gets NO banner, because there is nothing we could switch to,
+    //  • the campaign is genuinely mapped to a DIFFERENT source. `dataSource` is null both for an
+    //    unmapped campaign (nothing to protect — the preselect above just loads the incoming one)
+    //    and for the whole window between selectSource and loadSourceColumns.fulfilled, so
+    //    requiring a non-null mapped id is also what stops the banner flashing back for a frame
+    //    right after the user accepts the switch.
+    const mappedSourceId = useSelector((s: any) => s.smartSend.dataSource?.DataSourceID ?? null);
+    const incoming = useMemo(() => {
+        const idNum = Number(dataSourceId);
+        if (dataSourceId == null || Number.isNaN(idNum) || idNum <= 0) return null;
+        if (mappedSourceId == null || mappedSourceId === idNum) return null;
+        return ready.find((it: any) => it.DataSourceID === idNum && canSend(it)) ?? null;
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [dataSourceId, mappedSourceId, ready, descriptor.identityFlag]);
+
+    // Switching source is DESTRUCTIVE and un-undoable from this screen: selectSource
+    // (smartSendSlice.ts:287-302) drops tokenMap, supervisorColumnId, gapColumnId, sortColumnId,
+    // lockedVersionId, columns, sampleValues and isMapped — up to 20 hand-made field mappings —
+    // and nothing on this screen can bring them back. The banner button therefore only OPENS this
+    // confirm, and the confirm is the ONLY route from the banner into `pick`. (A direct card
+    // click still calls `pick` unguarded — that one is the user explicitly choosing a different
+    // source, not a button sitting under reassuring text.) No auto-focus / ok-by-default
+    // shortcut: the destructive button is a deliberate second click.
+    const [confirmOpen, setConfirmOpen] = useState(false);
+
     const pick = (it: any) => {
         if (!canSend(it) || it.DataSourceID === currentSourceId) return;
         // Claim the id before dispatching so the preselect effect above — which is about to
@@ -171,6 +212,63 @@ const SourcePicker: React.FC = () => {
     return (
         <Box style={{ marginTop: 24 }}>
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>{t('DataSources.send.source.title')}</Typography>
+            {incoming && (
+                <Box style={{ marginTop: 8 }}>
+                    <InlineBanner
+                        severity="info"
+                        role="status"
+                        title={t('DataSources.send.source.incomingTitle')}
+                        body={t('DataSources.send.source.incomingBody', { name: incoming.Name })}
+                        action={(
+                            /* Opens the confirm — it does NOT switch. The banner explains what is
+                               about to be lost; the dialog is where the user accepts it. */
+                            <Button size="small" variant="outlined" color="primary" onClick={() => setConfirmOpen(true)}>
+                                {t('DataSources.send.source.incomingSwitch')}
+                            </Button>
+                        )}
+                    />
+                    {/* Rendered inside the `incoming &&` block on purpose: if the conflict resolves
+                        for any reason (the switch lands, the mapping reloads, the list refreshes)
+                        the dialog goes with it and cannot act on a stale source. */}
+                    <Dialog
+                        open={confirmOpen}
+                        onClose={() => setConfirmOpen(false)}
+                        maxWidth="sm"
+                        fullWidth
+                        aria-labelledby="smartsend-switch-confirm-title"
+                        aria-describedby="smartsend-switch-confirm-body"
+                    >
+                        <Box className={classes.dlgHead}>
+                            <Typography variant="h6" id="smartsend-switch-confirm-title">
+                                {t('DataSources.send.source.incomingConfirmTitle')}
+                            </Typography>
+                            <IconButton size="small" onClick={() => setConfirmOpen(false)} aria-label={t('DataSources.send.close')}>
+                                <Close />
+                            </IconButton>
+                        </Box>
+                        <Box className={classes.dlgBody}>
+                            <Typography variant="body2" id="smartsend-switch-confirm-body">
+                                {t('DataSources.send.source.incomingConfirmBody', { name: incoming.Name })}
+                            </Typography>
+                        </Box>
+                        <Box className={classes.dlgFoot}>
+                            {/* The ONLY caller of `pick` for the banner path. It runs the exact same
+                                selectSource + loadSourceColumns a manual card click does — including
+                                claiming the preselect latch, which stops the effect above from firing
+                                a duplicate load when dataSourceId/columns flip. Close first so the
+                                dialog never lingers over the re-rendering picker. */}
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={() => { setConfirmOpen(false); pick(incoming); }}
+                            >
+                                {t('DataSources.send.source.incomingSwitch')}
+                            </Button>
+                            <Button onClick={() => setConfirmOpen(false)}>{t('DataSources.send.cancel')}</Button>
+                        </Box>
+                    </Dialog>
+                </Box>
+            )}
             {!ready.length ? (
                 <Typography variant="body2" color="textSecondary" style={{ marginTop: 8 }}>
                     {t('DataSources.send.source.empty')}

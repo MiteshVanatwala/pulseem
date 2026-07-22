@@ -26,7 +26,7 @@ import { pulseemNewTab } from '../../../helpers/Functions/functions';
 import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { setCookie, getCookie } from '../../../helpers/Functions/cookies';
 import { Title } from '../../../components/managment/Title';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
@@ -69,10 +69,6 @@ const NewsletterManagnentScreen = ({ classes }) => {
   const dispatch = useDispatch();
   const [hideDuplicateCautionMessage, setHideDuplicateCautionMessage] = useState(false)
   const navigate = useNavigate();
-  // Entry A (§11.2): arriving from a data source (?dataSourceId=) — carried into the
-  // per-row smart-send action so the target campaign pre-selects that source.
-  const [smartSendParams] = useSearchParams();
-  const smartSendSourceId = smartSendParams.get('dataSourceId');
   const [duplicateOptions, setDuplicateOptions] = useState([])
   const { publicTemplates } = useSelector(state => state.campaignEditor);
   const [duplicateDialog, setDuplicateDialog] = useState({});
@@ -583,16 +579,20 @@ const NewsletterManagnentScreen = ({ classes }) => {
         }
       },
       {
-        // Entry A+B (§11.2): smart send via a data source. BEE campaigns only, sendable
-        // status, feature-gated (§17.3). Carries ?dataSourceId when arriving from a source.
+        // Entry B (§11.2): smart send from the campaign the user is already looking at. BEE
+        // campaigns only, sendable status, feature-gated (§17.3). The data source is picked on
+        // the mapping screen — entry A now goes straight to the SmartSend picker instead.
         key: 'smartSend',
         uIcon: SendIcon,
-        lable: t('DataSources.send.smartSendAction'),
-        remove: Status !== 1 || !IsNewEditor || !(accountFeatures?.indexOf(PulseemFeatures.DATA_SOURCES) > -1) || windowSize === 'xs',
-        rootClass: clsx(classes.sendIcon, 'smartSendIcon'),
-        textClass: classes.sendIconText,
+        // Short label + the ordinary secondary-action styling. The long
+        // `send.smartSendAction` string with the primary `sendIcon` treatment (copied from the
+        // 'send' action above, whose label is just "שלח") stretched the filled block across half
+        // the row. This is a secondary action and should not outweigh Send visually.
+        lable: t('DataSources.send.title'),
+        remove: !userRoles?.AllowSend || Status !== 1 || !IsNewEditor || !(accountFeatures?.indexOf(PulseemFeatures.DATA_SOURCES) > -1) || windowSize === 'xs',
+        rootClass: clsx(classes.paddingIcon, 'smartSendIcon'),
         onClick: () => {
-          navigate(`${sitePrefix}Campaigns/SmartSend/${CampaignID}${smartSendSourceId ? `?dataSourceId=${smartSendSourceId}` : ''}`);
+          navigate(`${sitePrefix}Campaigns/SmartSend/${CampaignID}`);
         }
       },
     ]]
@@ -1112,14 +1112,6 @@ const NewsletterManagnentScreen = ({ classes }) => {
         <Title Text={t('campaigns.logPageHeaderResource1.Text')} classes={classes} />
         {renderSearchLine()}
       </Box>
-      {/* Entry A (§11.2): arrived from a data source — prompt the user to pick a campaign.
-          Dismissing clears the ?dataSourceId param. Gated on DATA_SOURCES. */}
-      {smartSendSourceId && accountFeatures?.indexOf(PulseemFeatures.DATA_SOURCES) > -1 && (
-        <Box style={{ display: 'flex', alignItems: 'center', gap: 12, background: '#e8f0fe', border: '1px solid #b3d1ff', borderRadius: 8, padding: '10px 16px', margin: '0 0 12px' }}>
-          <span style={{ flex: 1, color: '#1a56db', fontWeight: 600 }}>{t('DataSources.send.pickCampaignBanner')}</span>
-          <span role="button" aria-label={t('DataSources.send.close')} style={{ cursor: 'pointer', color: '#1a56db', fontSize: 18 }} onClick={() => navigate(`${sitePrefix}Campaigns`)}>✕</span>
-        </Box>
-      )}
       {renderManagmentLine()}
       {renderTable()}
       {renderTablePagination()}

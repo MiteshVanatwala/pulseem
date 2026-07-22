@@ -133,7 +133,13 @@ export const getRoutes = (
           key: 'dataSources',
           title: t('DataSources.menuTitle'),
           href: `${sitePrefix}DataSources`,
-          isShow: features && features?.indexOf(PulseemFeatures.DATA_SOURCES) > -1
+          isShow: !!(features && features.indexOf(PulseemFeatures.DATA_SOURCES) > -1)
+        },
+        {
+          key: 'smartSend',
+          title: t('DataSources.send.title'),
+          href: `${sitePrefix}SmartSend`,
+          isShow: !!(userRoles?.AllowSend && features && features.indexOf(PulseemFeatures.DATA_SOURCES) > -1)
         }
       ],
     },
