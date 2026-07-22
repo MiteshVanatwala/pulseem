@@ -134,6 +134,15 @@ export const sendSmart = createAsyncThunk(
 // consumed reducer state — no hydration needed. In real mode every wrapper
 // delegates to the original thunk (its own reducers fire normally).
 
+// newsletterSlice and campaignEditorSlice are plain JS. Their createAsyncThunk payload creators
+// carry no type annotations, so the TS build cannot infer a ThunkArg for the thunks they export
+// and falls back to `void` — which makes every `getSendSummary(campaignId)` below fail the build
+// with TS2554 "Expected 0 arguments, but got 1". The calls are correct at runtime: the argument
+// reaches the payload creator exactly as it does from the JS screens that already call these.
+// `jsThunk` restores the argument in the type system only; it compiles away and changes nothing
+// that runs. Drop it if those two slices are ever converted to TS with typed payload creators.
+const jsThunk = (t: any) => t as (arg?: any) => any;
+
 export const getSendSummaryWrapped = createAsyncThunk(
     'SmartSend/GetSendSummaryWrapped', async (campaignId: number, thunkAPI) => {
         if (USE_SEND_MOCK) {
@@ -141,7 +150,7 @@ export const getSendSummaryWrapped = createAsyncThunk(
             thunkAPI.dispatch({ type: getSendSummary.fulfilled.type, payload: fixture });
             return fixture;
         }
-        const res: any = await thunkAPI.dispatch(getSendSummary(campaignId));
+        const res: any = await thunkAPI.dispatch(jsThunk(getSendSummary)(campaignId));
         return res.payload;
     });
 
@@ -152,7 +161,7 @@ export const getEmailSendSettingsWrapped = createAsyncThunk(
             thunkAPI.dispatch({ type: getEmailSendSettings.fulfilled.type, payload: fixture });
             return fixture;
         }
-        const res: any = await thunkAPI.dispatch(getEmailSendSettings(campaignId));
+        const res: any = await thunkAPI.dispatch(jsThunk(getEmailSendSettings)(campaignId));
         return res.payload;
     });
 
@@ -162,7 +171,7 @@ export const setEmailSendSettingsWrapped = createAsyncThunk(
         // BOTH in GroupList (array) AND in GroupIds (CSV) — the CSV is authoritative
         // server-side (SendSettings.cs GroupList is a getter-only computed property).
         if (USE_SEND_MOCK) return mockSetEmailSendSettings(payload);
-        const res: any = await thunkAPI.dispatch(setEmailSendSettings(payload));
+        const res: any = await thunkAPI.dispatch(jsThunk(setEmailSendSettings)(payload));
         return res.payload;
     });
 
@@ -176,21 +185,21 @@ export const getNewsletterPreviewWrapped = createAsyncThunk(
             thunkAPI.dispatch({ type: getNewsletterPreview.fulfilled.type, payload: fixture });
             return fixture;
         }
-        const res: any = await thunkAPI.dispatch(getNewsletterPreview(campaignId));
+        const res: any = await thunkAPI.dispatch(jsThunk(getNewsletterPreview)(campaignId));
         return res.payload;
     });
 
 export const saveCampaignInfoWrapped = createAsyncThunk(
     'SmartSend/SaveCampaignInfoWrapped', async (info: any, thunkAPI) => {
         if (USE_SEND_MOCK) return mockSaveCampaignInfo(info);
-        const res: any = await thunkAPI.dispatch(saveCampaignInfo(info));
+        const res: any = await thunkAPI.dispatch(jsThunk(saveCampaignInfo)(info));
         return res.payload;
     });
 
 export const getCampaignInfoWrapped = createAsyncThunk(
     'SmartSend/GetCampaignInfoWrapped', async (campaignId: number, thunkAPI) => {
         if (USE_SEND_MOCK) return mockGetCampaignInfo(campaignId);
-        const res: any = await thunkAPI.dispatch(getCampaignInfo(campaignId));
+        const res: any = await thunkAPI.dispatch(jsThunk(getCampaignInfo)(campaignId));
         return res.payload;
     });
 
@@ -200,7 +209,7 @@ export const getCampaignInfoWrapped = createAsyncThunk(
 export const testSendWrapped = createAsyncThunk(
     'SmartSend/TestSendWrapped', async (payload: any, thunkAPI) => {
         if (USE_SEND_MOCK) return mockTestSend(payload);
-        const res: any = await thunkAPI.dispatch(testSend(payload));
+        const res: any = await thunkAPI.dispatch(jsThunk(testSend)(payload));
         return res.payload;
     });
 
