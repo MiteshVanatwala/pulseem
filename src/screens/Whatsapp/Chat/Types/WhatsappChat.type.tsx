@@ -159,6 +159,7 @@ export type WhatsappChatSideBarProps = {
 		startTime?: string,
 		endTime?: string,
 		groupIds?: number[],
+		campaignIds?: number[],
 	) => void;
 	contactsPaginationSetting: ContactsPaginationSetting;
 	fetchSearchedContacts: (
@@ -191,6 +192,7 @@ export type WhatsappChatSideBarProps = {
 	landingPageData: { CampaignID: number; CampaignName: string; PageHref: string }[];
 	searchTextRef: React.MutableRefObject<string>;
 	selectedGroupsRef: React.MutableRefObject<number[]>;
+	selectedCampaignsRef: React.MutableRefObject<number[]>;
 	onRegisterMobileActions?: (actions: { openNewChat: () => void; openEditTags: () => void }) => void;
 };
 
@@ -413,6 +415,8 @@ export type APIGetWhatsappChatContactsReq = {
 	EndDate?: string;
 	AgentIds?: number[];
 	TagIds?: number[];
+	GroupIds?: number[];
+	CampaignIds?: number[];
 };
 
 export type Timer = {

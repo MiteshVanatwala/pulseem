@@ -83,5 +83,7 @@
 	"editing": "עריכה",
 	"filter_groups": "קבוצות",
 	"filter_search_placeholder": "חיפוש...",
-	"filter_empty_groups": "לא נמצאו קבוצות"
+	"filter_empty_groups": "לא נמצאו קבוצות",
+	"filter_received_wa_campaign": "קמפיין וואטסאפ שהתקבל",
+	"filter_empty_campaigns": "טרם נשלחו קמפיינים"
 }

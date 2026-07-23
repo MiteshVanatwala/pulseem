@@ -48,9 +48,10 @@ import { StateType } from '../../../../Models/StateTypes';
 import { setCookie } from '../../../../helpers/Functions/cookies';
 import { TablePagination } from '../../../../components/managment/index';
 import { COLORS } from '../../../../helpers/Constants';
-import { getWhatsappChatTag } from '../../../../redux/reducers/whatsappSlice';
+import { getWhatsappChatTag, getAllReports } from '../../../../redux/reducers/whatsappSlice';
 import { getGroupsBySubAccountId } from '../../../../redux/reducers/groupSlice';
 import { Group } from '../../../../Models/Groups/Group';
+import { allReportInitialPagination, campaignStatuses } from '../../Constant';
 import { PulseemReactInstance } from '../../../../helpers/Api/PulseemReactAPI';
 import Toast from '../../../../components/Toast/Toast.component';
 import DynamicConfirmDialog from '../../../../components/DialogTemplates/DynamicConfirmDialog';
@@ -90,6 +91,7 @@ const SideBar = ({
 	landingPageData,
 	searchTextRef,
 	selectedGroupsRef,
+	selectedCampaignsRef,
 	onRegisterMobileActions,
 }: WhatsappChatSideBarProps) => {
 	const { t: translator } = useTranslation();
@@ -132,6 +134,15 @@ const SideBar = ({
 	);
 	const [groupsLoaded, setGroupsLoaded] = useState<boolean>(false);
 	const [groupsLoading, setGroupsLoading] = useState<boolean>(false);
+	const [selectedCampaigns, setSelectedCampaigns] = useState<number[]>([]);
+	const [dialogSelectedCampaigns, setDialogSelectedCampaigns] = useState<
+		number[]
+	>([]);
+	const [sentCampaigns, setSentCampaigns] = useState<
+		{ WACampaignID: number; Name: string }[]
+	>([]);
+	const [campaignsLoaded, setCampaignsLoaded] = useState<boolean>(false);
+	const [campaignsLoading, setCampaignsLoading] = useState<boolean>(false);
 	const [dialogTimePeriod, setDialogTimePeriod] = useState<string>('');
 	const [dialogStartDate, setDialogStartDate] = useState<string>('');
 	const [dialogEndDate, setDialogEndDate] = useState<string>('');
@@ -176,6 +187,10 @@ const SideBar = ({
 	useEffect(() => {
 		selectedGroupsRef.current = selectedGroups;
 	}, [selectedGroups, selectedGroupsRef]);
+
+	useEffect(() => {
+		selectedCampaignsRef.current = selectedCampaigns;
+	}, [selectedCampaigns, selectedCampaignsRef]);
 
 	useEffect(() => {
 		setSearchText('');
@@ -303,6 +318,7 @@ const SideBar = ({
 			startTime,
 			endTime,
 			selectedGroups,
+			selectedCampaigns,
 		);
 	};
 
@@ -398,6 +414,7 @@ const SideBar = ({
 			startTime,
 			endTime,
 			selectedGroups,
+			selectedCampaigns,
 		);
 	};
 
@@ -419,6 +436,7 @@ const SideBar = ({
 			startTime,
 			endTime,
 			selectedGroups,
+			selectedCampaigns,
 		);
 	};
 
@@ -452,6 +470,7 @@ const SideBar = ({
 			startTime,
 			endTime,
 			newSelectedGroups,
+			selectedCampaigns,
 		);
 	};
 
@@ -463,6 +482,42 @@ const SideBar = ({
 					(g) => g.GroupID === groupId,
 				);
 				return group ? { id: groupId, name: group.GroupName } : null;
+			})
+			.filter(Boolean);
+	};
+
+	const handleRemoveCampaignFilter = (campaignId: number) => {
+		const newSelectedCampaigns = selectedCampaigns.filter(
+			(id) => id !== campaignId,
+		);
+		setSelectedCampaigns(newSelectedCampaigns);
+		// Trigger fetch immediately with remaining filters
+		fetchMoreContacts(
+			searchText,
+			filterBySelected,
+			true,
+			contactsPaginationSetting?.PageSize || 10,
+			1,
+			false,
+			startDate,
+			endDate,
+			selectedAgents,
+			selectedTags,
+			startTime,
+			endTime,
+			selectedGroups,
+			newSelectedCampaigns,
+		);
+	};
+
+	// Get selected campaigns details (name), for the filter chips row
+	const getSelectedCampaignsDetails = () => {
+		return selectedCampaigns
+			.map((campaignId) => {
+				const campaign = sentCampaigns.find(
+					(c) => c.WACampaignID === campaignId,
+				);
+				return campaign ? { id: campaignId, name: campaign.Name } : null;
 			})
 			.filter(Boolean);
 	};
@@ -480,6 +535,7 @@ const SideBar = ({
 		setSelectedAgents([]);
 		setSelectedTags([]);
 		setSelectedGroups([]);
+		setSelectedCampaigns([]);
 		// Note: useEffects will handle the fetch after state updates
 	};
 
@@ -515,6 +571,7 @@ const SideBar = ({
 		setSelectedAgents(dialogSelectedAgents);
 
 		setSelectedGroups(dialogSelectedGroups);
+		setSelectedCampaigns(dialogSelectedCampaigns);
 
 		// If agents selected, apply the first one as selectedAgent
 		if (dialogSelectedAgents.length > 0) {
@@ -536,6 +593,7 @@ const SideBar = ({
 				dialogStartTime,
 				dialogEndTime,
 				dialogSelectedGroups,
+				dialogSelectedCampaigns,
 			);
 		} else {
 			setAgentSelected(0);
@@ -650,6 +708,7 @@ const SideBar = ({
 				'00:01',
 				'23:59',
 				selectedGroups,
+				selectedCampaigns,
 			);
 		}
 	};
@@ -874,6 +933,7 @@ const SideBar = ({
 						startTime,
 						endTime,
 						selectedGroups,
+						selectedCampaigns,
 					);
 				//}
 
@@ -940,6 +1000,7 @@ const SideBar = ({
 			startTime,
 			endTime,
 			selectedGroups,
+			selectedCampaigns,
 		);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [selectedAgent, debouncedValue]);
@@ -962,6 +1023,7 @@ const SideBar = ({
 			startTime,
 			endTime,
 			selectedGroups,
+			selectedCampaigns,
 		);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [startDate, endDate]);
@@ -984,6 +1046,7 @@ const SideBar = ({
 			startTime,
 			endTime,
 			selectedGroups,
+			selectedCampaigns,
 		);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [selectedTags]);
@@ -1004,9 +1067,32 @@ const SideBar = ({
 			startTime,
 			endTime,
 			selectedGroups,
+			selectedCampaigns,
 		);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [selectedGroups]);
+
+	// Fetch chats when selectedCampaigns changes (but not on initial mount)
+	useEffect(() => {
+		if (isInitialMount.current) return;
+		fetchMoreContacts(
+			searchText,
+			filterBySelected,
+			true,
+			contactsPaginationSetting?.PageSize || 10,
+			1,
+			false,
+			startDate,
+			endDate,
+			selectedAgents,
+			selectedTags,
+			startTime,
+			endTime,
+			selectedGroups,
+			selectedCampaigns,
+		);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [selectedCampaigns]);
 
 	return (
 		<>
@@ -1245,6 +1331,7 @@ const SideBar = ({
 										setDialogSelectedAgents([...selectedAgents]);
 										setDialogSelectedTags([...selectedTags]);
 										setDialogSelectedGroups([...selectedGroups]);
+										setDialogSelectedCampaigns([...selectedCampaigns]);
 										setShowFilterDialog(true);
 										// Lazy-load the groups list on first open of the filter panel
 										if (!groupsLoaded && !groupsLoading) {
@@ -1253,6 +1340,38 @@ const SideBar = ({
 												setGroupsLoading(false);
 												setGroupsLoaded(true);
 											});
+										}
+										// Lazy-load the sent WhatsApp campaigns list on first open of the filter panel
+										if (!campaignsLoaded && !campaignsLoading) {
+											setCampaignsLoading(true);
+											dispatch<any>(
+												getAllReports({
+													...allReportInitialPagination,
+													isPagination: false,
+												}),
+											)
+												.then((result: any) => {
+													const items = result?.payload?.Data?.Items || [];
+													// "Sent" = campaign has started sending at least once;
+													// excludes drafts (CREATED) and never-sent CANCELED campaigns.
+													const sentOnly = items.filter((c: any) =>
+														[
+															campaignStatuses.SENDING,
+															campaignStatuses.STOPPED,
+															campaignStatuses.FINISHED,
+														].includes(c.Status),
+													);
+													setSentCampaigns(
+														sentOnly.map((c: any) => ({
+															WACampaignID: c.WACampaignID,
+															Name: c.Name,
+														})),
+													);
+												})
+												.finally(() => {
+													setCampaignsLoading(false);
+													setCampaignsLoaded(true);
+												});
 										}
 									}}
 									onMouseDown={(e) => {
@@ -1270,7 +1389,8 @@ const SideBar = ({
 				{(getDateChipLabel() ||
 					selectedAgents.length > 0 ||
 					selectedTags.length > 0 ||
-					selectedGroups.length > 0) && (
+					selectedGroups.length > 0 ||
+					selectedCampaigns.length > 0) && (
 					<Box className={classes.chipsContainer}>
 						<Box className={classes.chipsWrapper}>
 							{getDateChipLabel() && (
@@ -1309,6 +1429,15 @@ const SideBar = ({
 									key={group.id}
 									label={group.name}
 									onDelete={() => handleRemoveGroupFilter(group.id)}
+									size="small"
+									className={classes.agentChip}
+								/>
+							))}
+							{getSelectedCampaignsDetails().map((campaign: any) => (
+								<Chip
+									key={campaign.id}
+									label={campaign.name}
+									onDelete={() => handleRemoveCampaignFilter(campaign.id)}
 									size="small"
 									className={classes.agentChip}
 								/>
@@ -1403,6 +1532,7 @@ const SideBar = ({
 							startTime,
 							endTime,
 							selectedGroups,
+							selectedCampaigns,
 						)
 					}
 					contactsPaginationSetting={contactsPaginationSetting}
@@ -1437,6 +1567,7 @@ const SideBar = ({
 							startTime,
 							endTime,
 							selectedGroups,
+							selectedCampaigns,
 						);
 					}}
 					rowsPerPageOptions={[10, 20, 50, 100] as any}
@@ -1458,6 +1589,7 @@ const SideBar = ({
 							startTime,
 							endTime,
 							selectedGroups,
+							selectedCampaigns,
 						);
 					}}
 					style={{
@@ -1728,6 +1860,63 @@ const SideBar = ({
 										style={{ [isRTL ? 'marginLeft' : 'marginRight']: 8 }}
 									/>
 									{group.GroupName}
+								</li>
+							)}
+							renderInput={(params) => (
+								// @ts-ignore mixing @mui/material Autocomplete params with the v4 TextField, matching GroupSelectorPopUp.tsx
+								<TextField
+									{...params}
+									placeholder={translator(
+										'whatsappChat.filter_search_placeholder',
+									)}
+									size="small"
+									variant="outlined"
+								/>
+							)}
+							style={{ width: '100%', direction: isRTL ? 'rtl' : 'ltr' }}
+						/>
+					</Box>
+					{/* Received WhatsApp Campaign Section */}
+					<Box style={{ marginBottom: '24px' }}>
+						<h3
+							style={{
+								margin: '0 0 12px 0',
+								fontSize: '14px',
+								fontWeight: '600',
+								color: '#333',
+							}}
+						>
+							{translator('whatsappChat.filter_received_wa_campaign')}
+						</h3>
+						<Autocomplete
+							multiple
+							disableCloseOnSelect
+							loading={campaignsLoading}
+							options={sentCampaigns || []}
+							getOptionLabel={(campaign: any) => campaign.Name}
+							isOptionEqualToValue={(option: any, value: any) =>
+								option.WACampaignID === value.WACampaignID
+							}
+							value={(sentCampaigns || []).filter((c) =>
+								dialogSelectedCampaigns.includes(c.WACampaignID),
+							)}
+							onChange={(_e, newValue: { WACampaignID: number; Name: string }[]) => {
+								setDialogSelectedCampaigns(newValue.map((c) => c.WACampaignID));
+							}}
+							noOptionsText={translator('whatsappChat.filter_empty_campaigns')}
+							renderOption={(props, campaign: any) => (
+								<li
+									{...props}
+									key={campaign.WACampaignID}
+									style={{ direction: isRTL ? 'rtl' : 'ltr' }}
+								>
+									<Checkbox
+										checked={dialogSelectedCampaigns.includes(
+											campaign.WACampaignID,
+										)}
+										style={{ [isRTL ? 'marginLeft' : 'marginRight']: 8 }}
+									/>
+									{campaign.Name}
 								</li>
 							)}
 							renderInput={(params) => (
