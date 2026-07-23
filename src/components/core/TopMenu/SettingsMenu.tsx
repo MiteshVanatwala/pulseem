@@ -79,6 +79,24 @@ const SettingsMenu = ({ classes }: any) => {
         {/* Return to main account button */}
         {cameFromSubAccount && (
             <Button
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                padding: '8px 12px',
+                margin: '8px 16px',
+                backgroundColor: 'rgba(255, 255, 255, 0.15)',
+                borderRadius: '8px',
+                color: '#fff',
+                fontSize: '0.95rem',
+                fontWeight: 600,
+                wordBreak: 'break-word',
+                boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                textTransform: 'none',
+                width: 'calc(100% - 32px)',
+                justifyContent: 'center',
+                transition: 'all 0.3s ease'
+                }}
+
                 onClick={returnToMainAccount}
                 className={classes.languageSelector}
             >
