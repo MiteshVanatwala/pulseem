@@ -18,16 +18,28 @@ const useStyles = makeStyles((theme) => ({
     foot: { display: 'flex', gap: theme.spacing(1.5), padding: theme.spacing(2, 3), borderTop: '1px solid #e0e0e0' },
 }));
 
-const TestSendDialog: React.FC<{ open: boolean; campaignId: number; onClose: () => void; onToast: (r: { ok: boolean; msg: string }) => void }> =
-    ({ open, campaignId, onClose, onToast }) => {
+const TestSendDialog: React.FC<{ open: boolean; campaignId: number; onClose: () => void; onToast: (r: { ok: boolean; msg: string }) => void; dirty?: boolean; onSaveMapping?: () => Promise<{ ok: boolean }> }> =
+    ({ open, campaignId, onClose, onToast, dirty, onSaveMapping }) => {
         const dispatch = useDispatch();
         const { t } = useTranslation();
         const classes = useStyles();
         const isRTL = useSelector((s: any) => s.core && s.core.isRTL);
         const [emails, setEmails] = useState('');
         const [sending, setSending] = useState(false);
+        const [savingMapping, setSavingMapping] = useState(false);
 
         if (!open) return null;
+
+        // item 4: TestSend NEVER auto-saves — a save attaches the source's recipients to the
+        // campaign, the exact mutation a "test" must not cause. When the mapping has unsaved
+        // changes we OFFER a save inline (below); the test proceeds either way, and the test
+        // email is bit-identical because the clone carries no mapping (see the warning banner).
+        const doSaveMapping = async () => {
+            if (!onSaveMapping) return;
+            setSavingMapping(true);
+            await onSaveMapping();
+            setSavingMapping(false);
+        };
 
         const doTest = async () => {
             setSending(true);
@@ -49,6 +61,18 @@ const TestSendDialog: React.FC<{ open: boolean; campaignId: number; onClose: () 
                 </Box>
                 <Box className={classes.body}>
                     <InlineBanner severity="warning" role="alert" title={t('DataSources.send.testSend.title')} body={t('DataSources.send.testSendWarn')} />
+                    {dirty && (
+                        <InlineBanner
+                            severity="info"
+                            title={t('DataSources.send.testSavePrompt.title')}
+                            body={t('DataSources.send.testSavePrompt.body')}
+                            action={(
+                                <Button size="small" variant="outlined" color="primary" disabled={savingMapping} onClick={doSaveMapping}>
+                                    {savingMapping ? <CircularProgress size={16} color="inherit" /> : t('DataSources.send.actions.saveMapping')}
+                                </Button>
+                            )}
+                        />
+                    )}
                     <TextField
                         fullWidth variant="outlined" size="small" style={{ marginTop: 8 }}
                         label={t('DataSources.send.testSend.emailsLabel')}

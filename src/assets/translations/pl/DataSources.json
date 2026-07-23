@@ -98,7 +98,20 @@
     "cancel": "Anuluj",
     "backToCampaigns": "Powrót do kampanii",
     "backToPicker": "Powrót do wyboru kampanii",
-    "unsavedWarning": "Wyjście teraz spowoduje utratę niezapisanego mapowania pól.",
+    "saveBar": {
+      "unsaved": "Masz niezapisane zmiany w mapowaniu pól."
+    },
+    "exit": {
+      "title": "Zapisać zmiany przed wyjściem?",
+      "body": "Twoje mapowanie pól nie zostało jeszcze zapisane.",
+      "saveAndExit": "Zapisz i wyjdź",
+      "exitWithoutSaving": "Wyjdź bez zapisywania",
+      "saveFailed": "Zapis nie powiódł się — pozostajesz na stronie."
+    },
+    "testSavePrompt": {
+      "title": "Niezapisane zmiany mapowania",
+      "body": "Zapisz teraz lub uruchom test bez zapisywania — oba sposoby działają."
+    },
     "summary": {
       "title": "Podsumowanie wysyłki",
       "recipients": "Odbiorcy końcowi",
@@ -157,7 +170,8 @@
       "continue": "Przejdź do mapowania pól",
       "empty": "Brak kampanii do wyświetlenia",
       "noneSendable": "Brak kampanii gotowych do wysyłki",
-      "showAll": "Pokaż wszystkie kampanie",
+      "showAll": "Pokaż też niedostępne kampanie",
+      "showMore": "Pokaż więcej: {{count}}",
       "noResults": "Brak kampanii pasujących do wyszukiwania",
       "clearSearch": "Wyczyść wyszukiwanie",
       "loadError": "Nie udało się wczytać listy kampanii",

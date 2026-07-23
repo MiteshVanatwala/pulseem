@@ -98,7 +98,20 @@
     "cancel": "Cancel",
     "backToCampaigns": "Back to campaigns",
     "backToPicker": "Back to campaign selection",
-    "unsavedWarning": "Leaving now discards the field mapping you have not saved.",
+    "saveBar": {
+      "unsaved": "You have unsaved field-mapping changes."
+    },
+    "exit": {
+      "title": "Save your changes before leaving?",
+      "body": "Your field-mapping changes are not saved yet.",
+      "saveAndExit": "Save and exit",
+      "exitWithoutSaving": "Exit without saving",
+      "saveFailed": "Saving failed — you are still on the page."
+    },
+    "testSavePrompt": {
+      "title": "Unsaved mapping changes",
+      "body": "Save it now, or run the test without saving — either works."
+    },
     "summary": {
       "title": "Send summary",
       "recipients": "Final recipients",
@@ -157,7 +170,8 @@
       "continue": "Continue to field mapping",
       "empty": "No campaigns to show",
       "noneSendable": "No campaigns are ready to send",
-      "showAll": "Show all campaigns",
+      "showAll": "Show unavailable campaigns too",
+      "showMore": "Show {{count}} more",
       "noResults": "No campaigns match your search",
       "clearSearch": "Clear search",
       "loadError": "Failed to load the campaign list",

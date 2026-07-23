@@ -39,8 +39,8 @@ const useStyles = makeStyles((theme) => ({
     muted: { color: theme.palette.text.secondary },
 }));
 
-const SendSummaryDialog: React.FC<{ open: boolean; campaignId: number; onClose: () => void; onSent?: () => void }> =
-    ({ open, campaignId, onClose, onSent }) => {
+const SendSummaryDialog: React.FC<{ open: boolean; campaignId: number; onClose: () => void; onSent?: () => void; beforeSend?: () => Promise<boolean> }> =
+    ({ open, campaignId, onClose, onSent, beforeSend }) => {
         const dispatch = useDispatch();
         const { t } = useTranslation();
         const classes = useStyles();
@@ -63,6 +63,14 @@ const SendSummaryDialog: React.FC<{ open: boolean; campaignId: number; onClose: 
 
         const doSend = async () => {
             setPhase('sending');
+            // item 2: attach the synthetic group to the campaign's real GroupIds ONLY here, at a
+            // confirmed send — never when merely opening this dialog (that pre-confirmation attach
+            // was the silent production mutation). If the attach fails the parent has shown a
+            // toast, so drop back to the summary rather than send against an unwired campaign.
+            if (beforeSend) {
+                const attached = await beforeSend();
+                if (!attached) { setPhase('summary'); return; }
+            }
             const res: any = await dispatch(sendSmart({ campaignId, sendToSupervisor, channel }));
             const r = res && res.payload ? res.payload : { StatusCode: 500 };
             setResult(r);
