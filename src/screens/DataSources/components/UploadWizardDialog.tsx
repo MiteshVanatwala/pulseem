@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import {
     Dialog, DialogTitle, DialogContent, DialogActions, Button, Box, Typography, Stepper, Step, StepLabel,
     Table, TableBody, TableCell, TableHead, TableRow, Select, MenuItem, Checkbox, FormControlLabel,
-    TextField, LinearProgress
+    TextField, LinearProgress, FormControl
 } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
@@ -24,8 +24,39 @@ interface UploadWizardDialogProps {
 }
 
 const ALLOWED = ['csv', 'xls', 'xlsx', 'tsv'];
+
+// ── per-column value classification (drives the wizard's auto-typing) ──
 const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
-const PHONE_RE = /^(\+?972|0)?[\s-]?\d[\d\s-]{6,}$/;
+const cleanDigits = (v: any) => String(v).replace(/[\s\-()+]/g, '');
+const isEmailVal = (v: any) => EMAIL_RE.test(String(v).trim());
+// Israeli mobile only, per spec: local 05 + 8 digits (10 total), or intl 9725 + 8 digits (12 total).
+const isPhoneVal = (v: any) => { const c = cleanDigits(v); return /^05\d{8}$/.test(c) || /^9725\d{8}$/.test(c); };
+const isDateVal = (v: any) => /^\d{1,4}[-/.]\d{1,2}[-/.]\d{1,4}$/.test(String(v).trim());
+const isNumberVal = (v: any) => { const s = String(v).trim(); return s !== '' && (/^-?\d{1,3}(,\d{3})*(\.\d+)?$/.test(s) || /^-?\d+(\.\d+)?$/.test(s)); };
+type ColKind = 'email' | 'phone' | 'date' | 'number' | 'text';
+// Order matters: email → phone (phones are all-digits too) → date → number → text.
+const classifyColumn = (vals: any[]): ColKind => {
+    if (vals.length === 0) return 'text';
+    if (vals.every(isEmailVal)) return 'email';
+    if (vals.every(isPhoneVal)) return 'phone';
+    if (vals.every(isDateVal)) return 'date';
+    if (vals.every(isNumberVal)) return 'number';
+    return 'text';
+};
+
+// A "supervisor email" is stored as a plain INFO field (SemanticRole NONE, DataType EMAIL) — this
+// UI-only flag just remembers the wizard's supervisor tag so the role dropdown reflects it. It is
+// stripped from the payload before upload (the server has no such column).
+type WizardColumn = UploadColumnDef & { IsSupervisorEmail?: boolean };
+
+// Dropdown menus must open BELOW the field (never over it) and stay right-anchored in RTL.
+// getContentAnchorEl:null is what lets anchorOrigin.vertical:'bottom' actually take effect in MUI v4.
+const MENU_PROPS: any = {
+    getContentAnchorEl: null,
+    anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
+    transformOrigin: { vertical: 'top', horizontal: 'right' },
+    PaperProps: { style: { maxHeight: 320, marginTop: 4 } }
+};
 
 const extOf = (name: string) => {
     const parts = (name || '').split('.');
@@ -42,7 +73,7 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
     const [file, setFile] = useState<File | null>(null);
     const [headers, setHeaders] = useState<string[]>([]);
     const [previewRows, setPreviewRows] = useState<string[][]>([]);
-    const [columns, setColumns] = useState<UploadColumnDef[]>([]);
+    const [columns, setColumns] = useState<WizardColumn[]>([]);
     const [rowCount, setRowCount] = useState<number | null>(null);
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
@@ -138,25 +169,51 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
         });
     });
 
-    const buildColumns = (hdrs: string[], sample: string[][]): UploadColumnDef[] => {
-        const usedRoles = new Set<number>();
+    // Auto-typing from the sampled values (+ header hints for identity when a column has no sample):
+    //   email→email-identity (2nd+ email → "supervisor email", saved as an info field);
+    //   05######## / 9725######## → cellphone-identity; else number / date / text by value shape.
+    // Email, cellphone and supervisor-email default to searchable (capped by the version quota).
+    const buildColumns = (hdrs: string[], sample: string[][]): WizardColumn[] => {
+        let emailCount = 0;
+        let hasCell = false;
+        let searchableBudget = maxSearchable;
         return hdrs.map((h, i) => {
             const header = (h && h.trim()) ? h.trim() : `${t('DataSources.table.name')} ${i + 1}`;
-            const colVals = sample.map(r => r[i]).filter(v => v !== undefined && v !== '');
-            let role: eSemanticRole = eSemanticRole.NONE;
             const lower = header.toLowerCase();
-            const looksEmail = colVals.length > 0 && colVals.every(v => EMAIL_RE.test(String(v)));
-            const looksPhone = colVals.length > 0 && colVals.every(v => PHONE_RE.test(String(v).replace(/\s/g, '')));
-            if (!usedRoles.has(eSemanticRole.RECIPIENT_EMAIL) && (/mail|אימייל|דוא/.test(lower) || looksEmail)) {
-                role = eSemanticRole.RECIPIENT_EMAIL; usedRoles.add(role);
-            } else if (!usedRoles.has(eSemanticRole.RECIPIENT_CELLPHONE) && (/phone|נייד|סלולר|cell|mobile|טלפון/.test(lower) || looksPhone)) {
-                role = eSemanticRole.RECIPIENT_CELLPHONE; usedRoles.add(role);
+            const colVals = sample.map(r => r[i]).filter(v => v !== undefined && v !== null && String(v).trim() !== '');
+            const kind = classifyColumn(colVals);
+            const headerEmail = /mail|אימייל|דוא/.test(lower);
+            const headerPhone = /phone|נייד|סלולר|cell|mobile|טלפון/.test(lower);
+
+            let role: eSemanticRole = eSemanticRole.NONE;
+            let dataType: eDataType = eDataType.TEXT;
+            let isSupervisor = false;
+
+            const looksEmail = kind === 'email' || (headerEmail && colVals.length === 0);
+            const looksPhone = kind === 'phone' || (headerPhone && colVals.length === 0);
+
+            if (looksEmail) {
+                if (emailCount === 0) { role = eSemanticRole.RECIPIENT_EMAIL; dataType = eDataType.EMAIL; }
+                else { isSupervisor = true; dataType = eDataType.EMAIL; }   // 2nd+ email → supervisor (saved as info field)
+                emailCount++;
+            } else if (looksPhone) {
+                if (!hasCell) { role = eSemanticRole.RECIPIENT_CELLPHONE; dataType = eDataType.PHONE; hasCell = true; }
+                else { dataType = eDataType.TEXT; }   // only one cellphone identity allowed — extra phone stays text
+            } else if (kind === 'number') {
+                dataType = eDataType.NUMBER;
+            } else if (kind === 'date') {
+                dataType = eDataType.DATE;
             }
-            const dataType = role === eSemanticRole.RECIPIENT_EMAIL ? eDataType.EMAIL
-                : role === eSemanticRole.RECIPIENT_CELLPHONE ? eDataType.PHONE : eDataType.TEXT;
+
+            const isIdentityOrSup = role === eSemanticRole.RECIPIENT_EMAIL || role === eSemanticRole.RECIPIENT_CELLPHONE || isSupervisor;
+            let isSearchable = false;
+            if (isIdentityOrSup && searchableBudget > 0) { isSearchable = true; searchableBudget--; }
+
             return {
-                Ordinal: i + 1, SourceHeader: header, DisplayName: header,
-                DataType: dataType, FormatHint: eFormatHint.NONE, SemanticRole: role, IsSearchable: false
+                Ordinal: i + 1, SourceHeader: header,
+                DisplayName: isSupervisor ? t('DataSources.wizard.roleSupervisorEmail') : header,
+                DataType: dataType, FormatHint: eFormatHint.NONE, SemanticRole: role,
+                IsSearchable: isSearchable, IsSupervisorEmail: isSupervisor
             };
         });
     };
@@ -212,16 +269,27 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
     };
 
     // ── identity mapping ──────────────────────────────────────────────────────
-    const setRole = (idx: number, role: eSemanticRole) => {
+    // The role dropdown carries a UI value ('none' | 'email' | 'cell' | 'sup'). 'sup' = supervisor
+    // email — stored as an info field (SemanticRole NONE + DataType EMAIL) plus the UI-only flag.
+    // Picking email/cell/supervisor also turns on search by default when the quota still allows it.
+    const setRoleValue = (idx: number, value: string) => {
         setColumns(cols => cols.map((c, i) => {
             if (i === idx) {
+                if (value === 'sup') {
+                    const enable = c.IsSearchable || searchableRemaining > 0;
+                    return { ...c, SemanticRole: eSemanticRole.NONE, DataType: eDataType.EMAIL, FormatHint: eFormatHint.NONE, IsSupervisorEmail: true, IsSearchable: enable };
+                }
+                const role = value === 'email' ? eSemanticRole.RECIPIENT_EMAIL
+                    : value === 'cell' ? eSemanticRole.RECIPIENT_CELLPHONE : eSemanticRole.NONE;
                 const dataType = role === eSemanticRole.RECIPIENT_EMAIL ? eDataType.EMAIL
                     : role === eSemanticRole.RECIPIENT_CELLPHONE ? eDataType.PHONE : eDataType.TEXT;
+                const enable = role !== eSemanticRole.NONE ? (c.IsSearchable || searchableRemaining > 0) : c.IsSearchable;
                 // identity columns never carry a currency/percent format
-                return { ...c, SemanticRole: role, DataType: dataType, FormatHint: role === eSemanticRole.NONE ? c.FormatHint : eFormatHint.NONE };
+                return { ...c, SemanticRole: role, DataType: dataType, FormatHint: role === eSemanticRole.NONE ? c.FormatHint : eFormatHint.NONE, IsSupervisorEmail: false, IsSearchable: enable };
             }
             // enforce ≤1 of each identity role — clear the previous holder
-            if (role !== eSemanticRole.NONE && c.SemanticRole === role) return { ...c, SemanticRole: eSemanticRole.NONE, DataType: eDataType.TEXT };
+            if (value === 'email' && c.SemanticRole === eSemanticRole.RECIPIENT_EMAIL) return { ...c, SemanticRole: eSemanticRole.NONE, DataType: eDataType.TEXT };
+            if (value === 'cell' && c.SemanticRole === eSemanticRole.RECIPIENT_CELLPHONE) return { ...c, SemanticRole: eSemanticRole.NONE, DataType: eDataType.TEXT };
             return c;
         }));
     };
@@ -261,7 +329,13 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
         fd.append('name', name.trim());
         fd.append('description', description || '');
         fd.append('createMissingClients', createMissingClients ? 'true' : 'false');
-        fd.append('columns', JSON.stringify(columns));
+        // Supervisor email is a UI-only tag — send only the server-known fields (it persists as a
+        // plain info field: SemanticRole NONE + DataType EMAIL).
+        const payloadColumns: UploadColumnDef[] = columns.map(c => ({
+            Ordinal: c.Ordinal, SourceHeader: c.SourceHeader, DisplayName: c.DisplayName,
+            DataType: c.DataType, FormatHint: c.FormatHint, SemanticRole: c.SemanticRole, IsSearchable: c.IsSearchable
+        }));
+        fd.append('columns', JSON.stringify(payloadColumns));
 
         setUploading(true);
         const res: any = await dispatch(insertDataSource(fd));
@@ -291,10 +365,18 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
 
     // ── render ──────────────────────────────────────────────────────────────
     const roleOptions = [
-        { value: eSemanticRole.NONE, label: t('DataSources.wizard.roleNone') },
-        { value: eSemanticRole.RECIPIENT_EMAIL, label: t('DataSources.wizard.roleEmail') },
-        { value: eSemanticRole.RECIPIENT_CELLPHONE, label: t('DataSources.wizard.roleCellphone') }
+        { value: 'none', label: t('DataSources.wizard.roleNone') },
+        { value: 'email', label: t('DataSources.wizard.roleEmail') },
+        { value: 'cell', label: t('DataSources.wizard.roleCellphone') },
+        { value: 'sup', label: t('DataSources.wizard.roleSupervisorEmail') }
     ];
+    // Both 'none' and 'sup' map to SemanticRole NONE, so the dropdown value is derived, not the role.
+    const roleValueOf = (c: WizardColumn) => c.IsSupervisorEmail ? 'sup'
+        : c.SemanticRole === eSemanticRole.RECIPIENT_EMAIL ? 'email'
+            : c.SemanticRole === eSemanticRole.RECIPIENT_CELLPHONE ? 'cell' : 'none';
+
+    // Readable, slightly-larger-than-field header labels for the mapping table.
+    const hdrCellStyle: any = { fontSize: 15, fontWeight: 700, color: '#344054' };
 
     const renderFileStep = () => (
         <Box>
@@ -333,52 +415,60 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
                     <Typography style={{ color: '#b54708' }}>{t('DataSources.wizard.noIdentityWarning')}</Typography>
                 </Box>
             )}
-            <Typography style={{ fontSize: 13, color: '#5b6b7b', marginBottom: 8 }}>
+            <Typography style={{ fontSize: 14, color: '#5b6b7b', marginBottom: 8 }}>
                 {t('DataSources.column.searchableRemaining', { n: searchableRemaining })}
             </Typography>
             <Box style={{ overflowX: 'auto' }}>
                 <Table size="small">
                     <TableHead><TableRow>
-                        <TableCell>{t('DataSources.wizard.columnNameLabel')}</TableCell>
-                        <TableCell>{t('DataSources.wizard.steps.identity')}</TableCell>
-                        <TableCell>{t('DataSources.column.dataType')}</TableCell>
-                        <TableCell>{t('DataSources.column.formatHint')}</TableCell>
-                        <TableCell align="center">{t('DataSources.wizard.searchableLabel')}</TableCell>
+                        <TableCell style={hdrCellStyle}>{t('DataSources.wizard.columnNameLabel')}</TableCell>
+                        <TableCell style={hdrCellStyle}>{t('DataSources.wizard.steps.identity')}</TableCell>
+                        <TableCell style={hdrCellStyle}>{t('DataSources.column.dataType')}</TableCell>
+                        <TableCell style={hdrCellStyle}>{t('DataSources.column.formatHint')}</TableCell>
+                        <TableCell align="center" style={hdrCellStyle}>{t('DataSources.wizard.searchableLabel')}</TableCell>
                     </TableRow></TableHead>
                     <TableBody>
                         {columns.map((c, i) => {
-                            const isInfo = c.SemanticRole === eSemanticRole.NONE;
+                            // Supervisor email is stored as an info field but is type-locked like an identity (Email).
+                            const isInfo = c.SemanticRole === eSemanticRole.NONE && !c.IsSupervisorEmail;
                             return (
                                 <TableRow key={i}>
-                                    <TableCell style={{ minWidth: 160 }}>
-                                        <TextField value={c.DisplayName} onChange={(e) => setDisplayName(i, e.target.value)}
-                                            inputProps={{ maxLength: 200 }} fullWidth />
-                                        <Typography style={{ fontSize: 11, color: '#95A5A6' }}>
+                                    <TableCell style={{ minWidth: 190 }}>
+                                        <TextField variant="outlined" size="small" value={c.DisplayName} onChange={(e) => setDisplayName(i, e.target.value)}
+                                            inputProps={{ maxLength: 200, style: { fontSize: 14 } }} fullWidth />
+                                        <Typography style={{ fontSize: 12, color: '#95A5A6', marginTop: 2 }}>
                                             {`${t('DataSources.wizard.originalHeader')}: ${c.SourceHeader}`}
                                         </Typography>
                                     </TableCell>
                                     <TableCell>
-                                        <Select value={c.SemanticRole} onChange={(e) => setRole(i, Number(e.target.value) as eSemanticRole)} style={{ minWidth: 150 }}>
-                                            {roleOptions.map(o => <MenuItem key={o.value} value={o.value}>{o.label}</MenuItem>)}
-                                        </Select>
+                                        <FormControl variant="outlined" size="small" style={{ minWidth: 165 }}>
+                                            <Select value={roleValueOf(c)} MenuProps={MENU_PROPS} style={{ fontSize: 14 }}
+                                                onChange={(e) => setRoleValue(i, String(e.target.value))}>
+                                                {roleOptions.map(o => <MenuItem key={o.value} value={o.value}>{o.label}</MenuItem>)}
+                                            </Select>
+                                        </FormControl>
                                     </TableCell>
                                     <TableCell>
-                                        {/* Identity columns are locked to Email(4)/Phone(5); info columns pick Text/Number/Date. */}
-                                        <Select value={c.DataType} disabled={!isInfo} style={{ minWidth: 110 }}
-                                            onChange={(e) => setDataType(i, Number(e.target.value) as eDataType)}>
-                                            {(isInfo ? [eDataType.TEXT, eDataType.NUMBER, eDataType.DATE] : [c.DataType]).map(v => (
-                                                <MenuItem key={v} value={v}>{t(`DataSources.column.dataTypes.${v}`)}</MenuItem>
-                                            ))}
-                                        </Select>
+                                        {/* Identity + supervisor columns are type-locked (Email/Phone); info columns pick Text/Number/Date. */}
+                                        <FormControl variant="outlined" size="small" style={{ minWidth: 120 }}>
+                                            <Select value={c.DataType} disabled={!isInfo} MenuProps={MENU_PROPS} style={{ fontSize: 14 }}
+                                                onChange={(e) => setDataType(i, Number(e.target.value) as eDataType)}>
+                                                {(isInfo ? [eDataType.TEXT, eDataType.NUMBER, eDataType.DATE] : [c.DataType]).map(v => (
+                                                    <MenuItem key={v} value={v}>{t(`DataSources.column.dataTypes.${v}`)}</MenuItem>
+                                                ))}
+                                            </Select>
+                                        </FormControl>
                                     </TableCell>
                                     <TableCell>
                                         {/* Currency/Percent only apply to numeric info columns. */}
-                                        <Select value={c.FormatHint} disabled={!isInfo || c.DataType !== eDataType.NUMBER} style={{ minWidth: 100 }}
-                                            onChange={(e) => setFormatHint(i, Number(e.target.value) as eFormatHint)}>
-                                            {[eFormatHint.NONE, eFormatHint.CURRENCY, eFormatHint.PERCENT].map(v => (
-                                                <MenuItem key={v} value={v}>{t(`DataSources.column.formatHints.${v}`)}</MenuItem>
-                                            ))}
-                                        </Select>
+                                        <FormControl variant="outlined" size="small" style={{ minWidth: 110 }}>
+                                            <Select value={c.FormatHint} disabled={!isInfo || c.DataType !== eDataType.NUMBER} MenuProps={MENU_PROPS} style={{ fontSize: 14 }}
+                                                onChange={(e) => setFormatHint(i, Number(e.target.value) as eFormatHint)}>
+                                                {[eFormatHint.NONE, eFormatHint.CURRENCY, eFormatHint.PERCENT].map(v => (
+                                                    <MenuItem key={v} value={v}>{t(`DataSources.column.formatHints.${v}`)}</MenuItem>
+                                                ))}
+                                            </Select>
+                                        </FormControl>
                                     </TableCell>
                                     <TableCell align="center">
                                         <Checkbox checked={c.IsSearchable} onChange={(e) => toggleSearchable(i, e.target.checked)}
@@ -398,10 +488,10 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
     );
 
     const renderDetailsStep = () => (
-        <Box style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            <TextField label={t('DataSources.wizard.nameLabel')} value={name} onChange={(e) => setName(e.target.value)}
+        <Box style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+            <TextField variant="outlined" label={t('DataSources.wizard.nameLabel')} value={name} onChange={(e) => setName(e.target.value)}
                 error={!!errors.name} helperText={errors.name} inputProps={{ maxLength: 100 }} fullWidth />
-            <TextField label={t('DataSources.wizard.descriptionLabel')} value={description} onChange={(e) => setDescription(e.target.value)}
+            <TextField variant="outlined" label={t('DataSources.wizard.descriptionLabel')} value={description} onChange={(e) => setDescription(e.target.value)}
                 inputProps={{ maxLength: 500 }} multiline rows={2} fullWidth />
             {nameExists && (
                 <Typography style={{ color: '#b54708', fontSize: 13 }}>

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import {
     Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, Select, MenuItem,
-    FormControlLabel, Checkbox, Box, Typography, InputLabel, FormControl
+    FormControlLabel, Checkbox, Box, Typography, FormControl
 } from '@material-ui/core';
 import { useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
@@ -30,6 +30,16 @@ const EditColumnDialog = ({ classes, open, column, searchableRemaining, maxSearc
     const [isSearchable, setIsSearchable] = useState(false);
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState('');
+
+    // Field titles must be clearly readable — slightly larger than the field's own text (14px).
+    const labelStyle: any = { fontSize: 16, fontWeight: 600, color: '#344054', marginBottom: 6 };
+    // Dropdowns drop below the field, right-anchored (RTL).
+    const menuProps: any = {
+        getContentAnchorEl: null,
+        anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
+        transformOrigin: { vertical: 'top', horizontal: 'right' },
+        PaperProps: { style: { maxHeight: 320, marginTop: 4 } }
+    };
 
     useEffect(() => {
         if (open && column) {
@@ -74,35 +84,43 @@ const EditColumnDialog = ({ classes, open, column, searchableRemaining, maxSearc
         <Dialog open={open} onClose={saving ? undefined : onClose} fullWidth maxWidth="sm" dir="rtl">
             <DialogTitle>{t('DataSources.column.editTitle')}</DialogTitle>
             <DialogContent>
-                <Box style={{ display: 'flex', flexDirection: 'column', gap: 14, paddingTop: 4 }}>
-                    <TextField label={t('DataSources.column.displayName')} value={displayName}
-                        onChange={(e) => setDisplayName(e.target.value)} inputProps={{ maxLength: 200 }} fullWidth />
+                <Box style={{ display: 'flex', flexDirection: 'column', gap: 16, paddingTop: 4 }}>
+                    <Box>
+                        <Typography style={labelStyle}>{t('DataSources.column.displayName')}</Typography>
+                        <TextField variant="outlined" size="small" value={displayName}
+                            onChange={(e) => setDisplayName(e.target.value)}
+                            inputProps={{ maxLength: 200, style: { fontSize: 14 } }} fullWidth />
+                    </Box>
 
-                    <FormControl fullWidth>
-                        <InputLabel shrink>{t('DataSources.column.dataType')}</InputLabel>
+                    <Box>
+                        <Typography style={labelStyle}>{t('DataSources.column.dataType')}</Typography>
                         {/* Identity columns are locked to Email(4)/Phone(5); info columns pick Text/Number/Date — same rule as the wizard. */}
-                        <Select value={dataType} disabled={isIdentity}
-                            onChange={(e) => {
-                                const dt = Number(e.target.value) as eDataType;
-                                setDataType(dt);
-                                if (dt !== eDataType.NUMBER) setFormatHint(eFormatHint.NONE);
-                            }}>
-                            {(isIdentity ? [dataType] : [eDataType.TEXT, eDataType.NUMBER, eDataType.DATE]).map(v => (
-                                <MenuItem key={v} value={v}>{t(`DataSources.column.dataTypes.${v}`)}</MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
+                        <FormControl variant="outlined" size="small" fullWidth>
+                            <Select value={dataType} disabled={isIdentity} MenuProps={menuProps} style={{ fontSize: 14 }}
+                                onChange={(e) => {
+                                    const dt = Number(e.target.value) as eDataType;
+                                    setDataType(dt);
+                                    if (dt !== eDataType.NUMBER) setFormatHint(eFormatHint.NONE);
+                                }}>
+                                {(isIdentity ? [dataType] : [eDataType.TEXT, eDataType.NUMBER, eDataType.DATE]).map(v => (
+                                    <MenuItem key={v} value={v}>{t(`DataSources.column.dataTypes.${v}`)}</MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                    </Box>
 
-                    <FormControl fullWidth>
-                        <InputLabel shrink>{t('DataSources.column.formatHint')}</InputLabel>
+                    <Box>
+                        <Typography style={labelStyle}>{t('DataSources.column.formatHint')}</Typography>
                         {/* Currency/Percent apply only to numeric info columns. */}
-                        <Select value={formatHint} disabled={isIdentity || dataType !== eDataType.NUMBER}
-                            onChange={(e) => setFormatHint(Number(e.target.value) as eFormatHint)}>
-                            {[eFormatHint.NONE, eFormatHint.CURRENCY, eFormatHint.PERCENT].map(v => (
-                                <MenuItem key={v} value={v}>{t(`DataSources.column.formatHints.${v}`)}</MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
+                        <FormControl variant="outlined" size="small" fullWidth>
+                            <Select value={formatHint} disabled={isIdentity || dataType !== eDataType.NUMBER} MenuProps={menuProps} style={{ fontSize: 14 }}
+                                onChange={(e) => setFormatHint(Number(e.target.value) as eFormatHint)}>
+                                {[eFormatHint.NONE, eFormatHint.CURRENCY, eFormatHint.PERCENT].map(v => (
+                                    <MenuItem key={v} value={v}>{t(`DataSources.column.formatHints.${v}`)}</MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                    </Box>
 
                     <FormControlLabel
                         control={<Checkbox checked={isSearchable} disabled={saving}

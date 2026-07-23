@@ -48,7 +48,7 @@ const ROWS_OPTIONS = [6, 10, 20, 50];
 const EMAIL_IDENTITY_FLAG = getChannelDescriptor(eSendChannel.EMAIL).identityFlag;
 
 const DataSources = ({ classes }: ClassesType) => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const dispatch = useDispatch();
     const Redirect = useRedirect();
     const { windowSize, rowsPerPage, userRoles } = useSelector((s: any) => s.core);
@@ -88,6 +88,11 @@ const DataSources = ({ classes }: ClassesType) => {
     // Mirrors the server's AllowSend gate on every Smart Send action (SetMapping/FillAndSummarize/Send),
     // so a user who cannot send never reaches a screen where every action 405s after the mapping work.
     const canSend = !!userRoles?.AllowSend;
+
+    // The Send glyph is a paper-plane pointing forward-in-LTR; in an RTL UI "forward" is leftward, so
+    // mirror it horizontally (scaleX, NOT rotate — rotate would flip it upside-down).
+    const isRtl = (i18n.dir?.() ?? 'rtl') === 'rtl';
+    const sendIconStyle = isRtl ? { transform: 'scaleX(-1)' } : undefined;
 
     const items: DataSourceListItem[] = list?.items ?? [];
     const total: number = list?.total ?? 0;
@@ -264,7 +269,7 @@ const DataSources = ({ classes }: ClassesType) => {
                 )}
                 {canSend && row[EMAIL_IDENTITY_FLAG] && row.Status === eDataSourceStatus.READY && (
                     <Tooltip title={t('DataSources.goToSend')}>
-                        <IconButton size="small" aria-label={t('DataSources.goToSend')} onClick={() => goToSend(row.DataSourceID)}><Send fontSize="small" /></IconButton>
+                        <IconButton size="small" aria-label={t('DataSources.goToSend')} onClick={() => goToSend(row.DataSourceID)}><Send fontSize="small" style={sendIconStyle} /></IconButton>
                     </Tooltip>
                 )}
             </Box>
@@ -273,7 +278,7 @@ const DataSources = ({ classes }: ClassesType) => {
 
     const renderNameCell = (row: DataSourceListItem) => (
         <Box>
-            <Box style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <Box style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
                 <Typography style={{ fontWeight: 600 }}>{row.Name}</Typography>
                 {isViewOnly(row) && (
                     <Tooltip title={t('DataSources.viewOnlyTooltip')}>
@@ -289,8 +294,8 @@ const DataSources = ({ classes }: ClassesType) => {
 
     const renderRow = (row: DataSourceListItem) => (
         <TableRow key={row.DataSourceID} classes={rowStyle}>
-            <TableCell classes={cellStyle} align="right" className={clsx(classes.flex3)}>{renderNameCell(row)}</TableCell>
-            <TableCell classes={cellStyle} align="right" className={clsx(classes.flex2)}>{row.Description}</TableCell>
+            <TableCell classes={cellStyle} align="center" className={clsx(classes.flex3)}>{renderNameCell(row)}</TableCell>
+            <TableCell classes={cellStyle} align="center" className={clsx(classes.flex2)}>{row.Description}</TableCell>
             <TableCell classes={cellStyle} align="center" className={clsx(classes.flex2)}>
                 <StatusChip status={row.Status} progress={row.ProgressPercent} runDateStart={row.RunDateStart} createdDate={row.CreatedDate} t={t} />
             </TableCell>
@@ -321,8 +326,8 @@ const DataSources = ({ classes }: ClassesType) => {
     const renderTableHead = () => (
         <TableHead>
             <TableRow classes={rowStyle}>
-                <TableCell classes={cellStyle} className={clsx(classes.flex3)}>{t('DataSources.table.name')}</TableCell>
-                <TableCell classes={cellStyle} className={clsx(classes.flex2)}>{t('DataSources.table.description')}</TableCell>
+                <TableCell classes={cellStyle} className={clsx(classes.flex3)} align="center">{t('DataSources.table.name')}</TableCell>
+                <TableCell classes={cellStyle} className={clsx(classes.flex2)} align="center">{t('DataSources.table.description')}</TableCell>
                 <TableCell classes={cellStyle} className={clsx(classes.flex2)} align="center">{t('DataSources.table.status')}</TableCell>
                 <TableCell classes={cellStyle} className={clsx(classes.flex1)} align="center">{t('DataSources.table.rows')}</TableCell>
                 <TableCell classes={cellStyle} className={clsx(classes.flex1)} align="center">{t('DataSources.table.version')}</TableCell>
@@ -444,14 +449,14 @@ const DataSources = ({ classes }: ClassesType) => {
                 <Box className={'topSection onlyTitleBar'} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
                     <Title Text={t('DataSources.title')} classes={classes} ContainerStyle={{ border: 'none !important' }} />
                     <Box style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                        {canSend && (
-                            <Button variant="outlined" color="primary" startIcon={<Send />} onClick={() => Redirect({ url: `${sitePrefix}SmartSend`, openNewTab: false })}>
-                                {t('DataSources.send.title')}
-                            </Button>
-                        )}
                         {canUpload && (
                             <Button variant="contained" color="primary" startIcon={<Add />} onClick={() => setWizardOpen(true)}>
                                 {t('DataSources.uploadButton')}
+                            </Button>
+                        )}
+                        {canSend && (
+                            <Button variant="outlined" color="primary" startIcon={<Send style={sendIconStyle} />} onClick={() => Redirect({ url: `${sitePrefix}SmartSend`, openNewTab: false })}>
+                                {t('DataSources.send.title')}
                             </Button>
                         )}
                     </Box>
@@ -459,13 +464,14 @@ const DataSources = ({ classes }: ClassesType) => {
 
                 <Box style={{ display: 'flex', gap: 8, alignItems: 'center', margin: '12px 0' }}>
                     <TextField
-                        placeholder={t('DataSources.searchPlaceholder')}
+                        variant="outlined"
+                        label={t('DataSources.searchPlaceholder')}
                         value={searchInput}
                         onChange={(e) => setSearchInput(e.target.value)}
                         onKeyDown={(e) => { if (e.key === 'Enter') doSearch(); }}
                         InputProps={{ startAdornment: <InputAdornment position="start"><Search fontSize="small" /></InputAdornment> }}
                         size="small"
-                        style={{ minWidth: 280 }}
+                        style={{ minWidth: 320 }}
                     />
                     <Button onClick={doSearch} variant="outlined">{t('common.search')}</Button>
                     {searchData.SearchTerm && <Button onClick={clearSearch}>{t('DataSources.clearSearch')}</Button>}
