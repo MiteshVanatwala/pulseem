@@ -101,7 +101,15 @@ export const BeeConfig = (Options: ConfigOptions) => {
         uid: 'f7768f7b-06af-4ada-bbd3-18a237524c31', //needed for identify resources of the that user and billing stuff
         container: 'bee-plugin-container', //Identifies the id of div element that contains BEE Plugin
         language: editorLanguage[languageCode], //Options.IsRTL ? 'he-IL' : 'en-US',
-        // translations: IsRTL ? TRANSLATE_HEBREW : TRANSLATE_ENGLISH,
+        translations: {
+            ...(IsRTL ? TRANSLATE_HEBREW : TRANSLATE_ENGLISH),
+            "bee-newsletter-modules-html": {
+                "widget-warning-desc": t('campaigns.htmlDocTypeNotAllowedWarning'),
+            },
+            "mailup-bee-common-widgets-heading": {
+                "default-text": languageCode === 0 ? "אני כותרת מוכנה לתוכן שלך" : "I&apos;m a new title block",
+            },
+        },
         customCss: (() => {
             const sidebarCss = [
                 `@import url('https://pulseem.co.il/pulseem/css/beefreeRtlFixes.css');`,
@@ -279,12 +287,6 @@ export const BeeConfig = (Options: ConfigOptions) => {
         sidebarPosition: IsRTL ? 'right' : 'left',
         loadingSpinnerTheme: 'light',
         saveRows: true,
-        translations: {
-            ...(IsRTL ? TRANSLATE_HEBREW : TRANSLATE_ENGLISH),
-            "bee-newsletter-modules-html": {
-                "widget-warning-desc": t('campaigns.htmlDocTypeNotAllowedWarning'),
-            }
-        },
         rowDisplayConditions: hasDisplayConditions ? conditionsWithIds : [],
         rowsConfiguration: {
             emptyRows: true,
@@ -579,11 +581,6 @@ export const DefaultContent = (IsRTL: Boolean, languageCode: number) => {
                 direction: isRTLdirection ? "rtl" : "ltr",
                 "text-align": isRTLdirection ? "right" : "left",
             },
-        },
-        translations: {
-            "mailup-bee-common-widgets-heading": {
-                "default-text": languageCode === 0 ? "אני כותרת מוכנה לתוכן שלך" : "I&apos;m a new title block",
-            }
         },
         contentDefaults: {
             title: {

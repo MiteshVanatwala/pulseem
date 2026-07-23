@@ -45,6 +45,7 @@ import { get } from 'lodash';
 import EmailConfirmationSettingsPopUp from './Popups/EmailConfirmationSettingsPopUp';
 import { getCookie, setCookie } from '../../../helpers/Functions/cookies';
 import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog';
+import { getIsBeeperAccount } from '../../../components/WhiteLabel/WhiteLabelMigrate';
 
 const ArrowBackIosIcon = MdArrowBackIos as unknown as React.ComponentType;
 const ArrowForwardIosIcon = MdArrowForwardIos as unknown as React.ComponentType;
@@ -71,7 +72,8 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 		type: string;
 	} | null>(null);
 	const { subAccountAllGroups } = useSelector((state: any) => state.group);
-	const { accountFeatures, subAccount } = useSelector((state: any) => state.common);
+	const { accountFeatures, subAccount, accountSettings } = useSelector((state: any) => state.common);
+	const isBeeperAccount = getIsBeeperAccount(accountSettings);
 	const { ToastMessages } = useSelector((state: { landingPages: BeeEditorStoreModel }) => state.landingPages);
 	const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
 	const [showTierPlans, setShowTierPlans] = useState(false);
@@ -731,8 +733,21 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 			headScript = prepareHeadScript();
 			bodyScript = prepareBodyScript();
 
+			// For Beeper accounts with a redirect URL, inject ?bp=1 so success.aspx
+			// can detect Beeper branding without any extra config per landing page.
+			let answerData = landingPageModel.AnswerData;
+			if (
+				isBeeperAccount &&
+				landingPageModel.AnswerType === LandingPagesAnswerType.REDIRECT_URL &&
+				answerData &&
+				!answerData.includes('bp=1')
+			) {
+				answerData += answerData.includes('?') ? '&bp=1' : '?bp=1';
+			}
+
 			const req = {
 				...landingPageModel,
+				AnswerData: answerData,
 				SelectedGroupList: null,
 				EmailsToReport: landingPageModel?.EmailsToReport?.join(','),
 				GroupIDs: landingPageModel?.GroupIDs?.join(','),

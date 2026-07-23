@@ -22,6 +22,7 @@ import { BsGlobe2 } from 'react-icons/bs';
 import { sitePrefix } from '../../config';
 import PulseemNewLogo from '../../assets/images/PulseemNewLogo';
 import { get } from 'lodash';
+import { getIsBeeperAccount } from '../WhiteLabel/WhiteLabelMigrate';
 
 const AppBarItem = ({
   item,
@@ -209,6 +210,7 @@ export const TopAppBar = ({ classes, currentPage = '', showAppBar = true }) => {
 
   const { windowSize, isRTL, imageURL, cameFromSubAccount, isAdmin, isAllowSwitchAccount, isClal, userRoles } = useSelector(state => state.core) // smsOldVersion
   const { accountSettings, accountFeatures, subAccount } = useSelector(state => state.common);
+  const isBeeperAccount = getIsBeeperAccount(accountSettings);
   const phoneMenuButtonRef = useRef(null)
   const [open, setOpen] = useState(false)
   const [settingsLoaded, setSettingsLoaded] = useState(false);
@@ -268,7 +270,7 @@ export const TopAppBar = ({ classes, currentPage = '', showAppBar = true }) => {
         <Box style={{ zIndex: 1300 }}>
           <LanguageSelector classes={classes} />
         </Box>
-        {!cameFromSubAccount && isAdmin !== '' && isAdmin !== 'True' && <AppBarItem
+        {!cameFromSubAccount && isAdmin !== '' && isAdmin !== 'True' && !isBeeperAccount && <AppBarItem
           classes={classes}
           item={{ title: t('appBar.admin') }}
           onMainClick={() => {
@@ -295,7 +297,7 @@ export const TopAppBar = ({ classes, currentPage = '', showAppBar = true }) => {
       routes[3],
       routes[4],
       routes[5],
-      { title: t('appBar.reports.newsletterReports'), iconUnicode: '\ue049', href: reportsOptions[1].href, isShow: true },
+      { title: t('appBar.reports.newsletterReports'), iconUnicode: '\ue049', href: reportsOptions[1].href, isShow: !isBeeperAccount },
       { title: t('appBar.reports.smsReports'), iconUnicode: '\ue04c', href: reportsOptions[2].href, isShow: true },
       { title: t('report.DirectSendReport'), key: 'directSendReport', href: `${sitePrefix}Reports/DirectSendReport`, isShow: accountSettings && accountSettings?.IsDirectAccount === true }      //routes[1]
     ]
@@ -397,7 +399,7 @@ export const TopAppBar = ({ classes, currentPage = '', showAppBar = true }) => {
               Redirect({ url: routes[0].href })
             }}
             // className={clsx(classes.pulseemAppBarLogo, isRTL ? 'logoRTL' : 'logoLTR')}
-            className={clsx(accountSettings?.SubAccountSettings?.IsTokenAccount ? classes.tokenAppBarLogo : classes.pulseemAppBarLogo, 'logo')}
+            className={clsx(accountSettings?.SubAccountSettings?.IsTokenAccount ? classes.tokenAppBarLogo : (accountSettings?.Account?.ReferrerID === 6 || accountSettings?.Account?.ReferrerID === '6') ? classes.beeperAppBarLogo : classes.pulseemAppBarLogo, 'logo')}
           >
             {imageURL !== '' && !imageError ? (<Box
               component='img'

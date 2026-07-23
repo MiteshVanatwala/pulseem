@@ -61,6 +61,7 @@ interface PopUpManagementState {
   pagesLoading: boolean;
   pagesError: string | null;
   deletedPopups: Page[];
+  allActivePages: Page[];
   steps: PopupStep[];
   stepsLoading: boolean;
   stepsError: string | null;
@@ -77,6 +78,7 @@ const initialState: PopUpManagementState = {
   pagesLoading: false,
   pagesError: null,
   deletedPopups: [],
+  allActivePages: [],
   steps: [],
   stepsLoading: false,
   stepsError: null,
@@ -153,6 +155,26 @@ export const getDeletedPopups = createAsyncThunk(
       const response = await PulseemReactInstance.get('popup/GetDeletedPopups');
       return response.data.Data;
     } catch (error) {
+      return thunkAPI.rejectWithValue({ error: (error as Error).message });
+    }
+  }
+);
+
+export const getAllActivePopups = createAsyncThunk(
+  'popUpManagement/getAllActivePopups',
+  async (pageType: number, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.post('popup/GetPopupPages', {
+        SearchTerm: '',
+        FilterStatus: 'Active',
+        SortBy: 'CreatedDate',
+        SortDirection: 'DESC',
+        PageNumber: 1,
+        PageSize: 9999,
+        PageType: pageType,
+      });
+      return (response.data.Data?.Pages ?? []) as Page[];
+      } catch (error) {
       return thunkAPI.rejectWithValue({ error: (error as Error).message });
     }
   }
@@ -288,6 +310,10 @@ const popUpManagementSlice = createSlice({
       .addCase(getDeletedPopups.rejected, (state, action) => {
         state.pagesLoading = false;
         state.pagesError = (action.payload as { error: string }).error;
+      })
+      // All Active Popups Reducers (for accurate average conversion rate)
+      .addCase(getAllActivePopups.fulfilled, (state, action) => {
+        state.allActivePages = action.payload;
       })
       // Step Reducers
       .addCase(getPopupSteps.pending, (state) => {

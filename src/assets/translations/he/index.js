@@ -30,6 +30,7 @@ import integrations from './Integrations.he.json';
 import WhatsappApiResponse from './WhatsappApiResponse.json';
 import SignUp from './SignUp.json';
 import SimplyClub from './WhiteLabel/SimplyClub.he.json';
+import Beeper from './WhiteLabel/Beeper.he.json';
 import FileUploads from './FileUploads.he.json';
 import affiliate from './Affiliate.he.json';
 import SubAccount from './SubAccount.he.json';
@@ -43,6 +44,7 @@ import AILoader from './AILoader.he.json'
 import RemoveMyData from './RemoveMyData.json';
 import PopupTriggers from './PopupTriggers.json';
 import Popup from './Popup.he.json';
+import DataSources from './DataSources.he.json';
 
 export const he = {
 	PopupTriggers,
@@ -79,6 +81,7 @@ export const he = {
 	SignUp,
 	FileUploads,
 	SimplyClub,
+	Beeper,
 	affiliate,
 	SubAccount,
 	billing,
@@ -89,5 +92,6 @@ export const he = {
 	colorPalette,
 	AILoader,
 	RemoveMyData,
-	Popup
+	Popup,
+	DataSources
 };

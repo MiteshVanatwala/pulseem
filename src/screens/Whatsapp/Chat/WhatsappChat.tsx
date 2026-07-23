@@ -279,6 +279,12 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const totalPendingContactsRef = useRef<number>(0);
 	const totalSolvedContactsRef = useRef<number>(0);
 	const contactsPaginationSettingRef = useRef(contactsPaginationSetting);
+	// Populated by SideBar so the mobile chat header can trigger its "New Chat"/"Edit Tags"
+	// actions too, even though the sidebar itself is display:none while a chat is open on mobile.
+	const mobileSideBarActionsRef = useRef<{ openNewChat: () => void; openEditTags: () => void }>({
+		openNewChat: () => {},
+		openEditTags: () => {},
+	});
 
 	useEffect(() => {
 		activeChatContactsRef.current = activeChatContacts;
@@ -1548,6 +1554,11 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		],
 	);
 
+	// Keep the ref pointing at the latest fetchMoreContacts so setAPIInboundChatStatus
+	// can call it without being listed as a dependency (avoids forward-reference TS2448).
+	useEffect(() => {
+		fetchMoreContactsRef.current = fetchMoreContacts;
+	}, [fetchMoreContacts]);
 	const onStartNewChat = useCallback(
 		(toNumber: string) => {
 			const normalizedTo = toNumber.replace(/\D/g, '');
@@ -1584,11 +1595,6 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			}));
 		}
 	}, [fetchMoreContacts, filterBySelected, activeChatContacts, activePhoneNumber, dispatch]);
-	// Keep the ref pointing at the latest fetchMoreContacts so setAPIInboundChatStatus
-	// can call it without being listed as a dependency (avoids forward-reference TS2448).
-	useEffect(() => {
-		fetchMoreContactsRef.current = fetchMoreContacts;
-	}, [fetchMoreContacts]);
 
 	const updateFreeFormMessage = useCallback(
 		(message: string) => {
@@ -2060,7 +2066,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		} else if (type === 'exceedDailyLimit') {
 			currentDialog = getExceedDailyLimit();
 		} else if (type === 'noPermission') {
-			currentDialog = getNoPermissionDialog(); // Add this
+			currentDialog = getNoPermissionDialog();
 		} else if (type === 'tier') {
 			currentDialog = getTierValidationDialog();
 		} else if (type === 'dynamicModal') {
@@ -2213,9 +2219,22 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 									landingPageData={landingPages}
 									searchTextRef={sideBarSearchTextRef}
 									selectedGroupsRef={selectedGroupsRef}
+									onRegisterMobileActions={(actions) => {
+										mobileSideBarActionsRef.current = actions;
+									}}
 								/>
 								<ChatUi
 									refetchActiveChatContact={refetchActiveChatContact}
+									onAddAgent={() => {
+										setDialogType({ type: 'addAgent', data: null });
+									}}
+									onEditAgents={() => {
+										getAgents();
+										setDialogType({ type: 'editAgents' });
+									}}
+									onRefreshChat={onRefreshChat}
+									onOpenNewChat={() => mobileSideBarActionsRef.current.openNewChat()}
+									onOpenEditTags={() => mobileSideBarActionsRef.current.openEditTags()}
 									isMobileSideBar={isMobileSideBar}
 									classes={classes}
 									setIsMobileSideBar={() =>

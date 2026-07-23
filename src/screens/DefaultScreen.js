@@ -14,6 +14,7 @@ import { sitePrefix } from '../config';
 import useRedirect from '../helpers/Routes/Redirect';
 import { getCookie } from '../helpers/Functions/cookies';
 import { get } from 'lodash';
+import { getIsBeeperAccount } from '../components/WhiteLabel/WhiteLabelMigrate';
 import { MainLayout } from '../components/core/SideMenu/MainLayout';
 import TopMenu from '../components/core/TopMenu/TopMenu';
 
@@ -25,6 +26,7 @@ const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', cont
   const [reKey, setReKey] = useState(0);
   const Redirect = useRedirect();
   const { accountSettings, accountFeatures, subAccount } = useSelector(state => state.common);
+  const isBeeperAccount = getIsBeeperAccount(accountSettings);
 
   let route, title;
 
@@ -47,9 +49,18 @@ const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', cont
     title = (route && route[0] && route[0].pageTitle) || (route && route[0] && route[0].title) || '';
   }
 
-  title = title ? `${title} | ${t('master.pulseemSystem')}` : t('master.pulseemSystem');
+  const systemName = isBeeperAccount ? 'Beeper' : t('master.pulseemSystem');
+  title = title ? `${title} | ${systemName}` : systemName;
 
-
+  // Swap favicon dynamically based on white-label company
+  useEffect(() => {
+    const link = document.querySelector("link[rel*='icon']");
+    if (link) {
+      link.href = isBeeperAccount
+        ? `${process.env.PUBLIC_URL}/beeper-favicon.ico`
+        : `${process.env.PUBLIC_URL}/favicon.ico`;
+    }
+  }, [isBeeperAccount]);
 
   useEffect(() => {
     setReKey(reKey + 1);

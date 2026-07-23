@@ -44,7 +44,21 @@ SiteTrackingInstance.interceptors.request.use(async (config: any) => {
                     language
                 }
             })
-            if (refreshTokenURL !== request.responseURL) {
+            let isRedirected = false
+            if (request.responseURL) {
+                try {
+                    const reqUrl = new URL(refreshTokenURL)
+                    const respUrl = new URL(request.responseURL)
+                    if (reqUrl.pathname.toLowerCase() !== respUrl.pathname.toLowerCase()) {
+                        isRedirected = true
+                    }
+                } catch (e) {
+                    if (refreshTokenURL !== request.responseURL) {
+                        isRedirected = true
+                    }
+                }
+            }
+            if (isRedirected) {
                 logout()
                 return Promise.reject('Unautorized')
             }

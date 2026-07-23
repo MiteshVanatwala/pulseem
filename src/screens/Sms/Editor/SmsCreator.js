@@ -60,7 +60,7 @@ import { PulseemFeatures } from "../../../model/PulseemFields/Fields";
 import { CgWebsite } from "react-icons/cg";
 import { DynamicProductLink } from "../../../Models/PushNotifications/Enums";
 import { IsValidNonGlobalPhoneNumber, IsValidPhoneNumberWithCountryCode, IsValidURL } from "../../../helpers/Utils/Validations";
-import { WhiteLabelObject } from "../../../components/WhiteLabel/WhiteLabelMigrate";
+import { WhiteLabelObject, getIsBeeperAccount } from "../../../components/WhiteLabel/WhiteLabelMigrate";
 import { TierFeatures, URL_REGEX } from "../../../helpers/Constants";
 import { findPlanByFeatureCode } from "../../../redux/reducers/TiersSlice";
 import TierPlans from "../../../components/TierPlans/TierPlans";
@@ -118,7 +118,6 @@ const SmsCreator = ({ classes }) => {
   const queryParams = new URLSearchParams(window.location.search)
   const isFromAutomation = queryParams.get("FromAutomation");
   const NodeToEdit = queryParams.get("NodeToEdit");
-  document.title = t("sms.pageTitle");
   const styles = useStyles();
   const btnStyle = useStyleNew();
   const FROM_NUMBER_MAX = 11;
@@ -138,6 +137,8 @@ const SmsCreator = ({ classes }) => {
     extraData
   } = useSelector((state) => state.sms);
   const { accountSettings, accountFeatures, countryCodeList, isGlobal, subAccount, IsPoland, smsConfig, isSwippingApprovalSMS, verifiedNumbers } = useSelector((state) => state.common)
+  const isBeeperAccount = getIsBeeperAccount(accountSettings);
+  document.title = isBeeperAccount ? t('Beeper.smsCreatorPageTitle') : t("sms.pageTitle");
   const [dialogType, setDialogType] = useState(null)
   const [alignment, setAlignment] = useState('right');
   const [checked, setChecked] = React.useState(false);
@@ -414,6 +415,17 @@ const SmsCreator = ({ classes }) => {
 
     for (let i = 0; i < additionalExtraData.length; i++) {
       defaultAccountExtraData.push({ ...additionalExtraData[i], selected: false })
+    }
+    // PR-3418 — Yotpo loyalty personalization tokens (resolve to empty for non-loyalty accounts)
+    const loyaltyTokens = [
+      { loyalty_points: "campaigns.loyalty.points" },
+      { loyalty_tier: "campaigns.loyalty.tier" },
+      { loyalty_points_earned: "campaigns.loyalty.pointsEarned" },
+      { loyalty_tier_multiplier: "campaigns.loyalty.tierMultiplier" },
+      { loyalty_points_expiry: "campaigns.loyalty.pointsExpiry" },
+    ];
+    for (let i = 0; i < loyaltyTokens.length; i++) {
+      defaultAccountExtraData.push({ ...loyaltyTokens[i], selected: false })
     }
     setextraAccountDATA(defaultAccountExtraData)
 

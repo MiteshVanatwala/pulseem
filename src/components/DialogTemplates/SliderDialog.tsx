@@ -196,13 +196,16 @@ const SliderDialog = ({
         classes.T05S,
         classes.emailVerItemContainer
       )}
+      // @ts-ignore
       style={{
         transform: `translate(${isRTL ? step || currentStep * 100 : -(step || currentStep * 100)
           }%)`,
         ...slideStyle,
       }}
     >
-      <Stack style={{ ...style_SlideBody }} className={className_SlideBody}>
+      <Stack 
+      // @ts-ignore
+      style={{ ...style_SlideBody }} className={className_SlideBody}>
         {children}
       </Stack>
     </Stack>

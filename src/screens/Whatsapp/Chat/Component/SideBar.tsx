@@ -25,7 +25,7 @@ import {
 } from '@material-ui/core';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import Autocomplete from '@mui/material/Autocomplete';
-import { FaBars, FaCalendar, FaFilter, FaTrash } from 'react-icons/fa';
+import { FaCalendar, FaFilter, FaTrash } from 'react-icons/fa';
 import { MdAddComment, MdRefresh } from 'react-icons/md';
 import {
 	BsFillTagsFill,
@@ -58,7 +58,6 @@ import DynamicConfirmDialog from '../../../../components/DialogTemplates/Dynamic
 const SideBar = ({
 	classes,
 	isMobileSideBar,
-	setIsMobileSideBar,
 	handleChatId,
 	onActiveUserChange,
 	sideChatContacts,
@@ -91,6 +90,7 @@ const SideBar = ({
 	landingPageData,
 	searchTextRef,
 	selectedGroupsRef,
+	onRegisterMobileActions,
 }: WhatsappChatSideBarProps) => {
 	const { t: translator } = useTranslation();
 	const { isRTL, userRoles } = useSelector(
@@ -672,6 +672,16 @@ const SideBar = ({
 		setShowEditTagsDialog(false);
 	};
 
+	// Expose these two mobile-hidden actions (their dialogs live here, driven by
+	// local state/data like tagsList) so the chat header can trigger them too,
+	// since on mobile this sidebar is display:none while a chat is open.
+	useEffect(() => {
+		onRegisterMobileActions?.({
+			openNewChat: () => setIsStartNewChatOpen(true),
+			openEditTags: handleOpenEditTags,
+		});
+	});
+
 	const handleUpdateTag = (
 		index: number,
 		field: 'TagName' | 'TagColor',
@@ -1008,7 +1018,7 @@ const SideBar = ({
 				<header
 					className={clsx(
 						`${classes.whatsappChat} sidebar-header`,
-						classes.sidebarHeader,
+						classes.whatsappSidebarHeader,
 					)}
 				>
 					<div
@@ -1056,17 +1066,6 @@ const SideBar = ({
 							title={translator('whatsappChat.refreshChat')}
 						>
 							<MdRefresh style={{ animation: isRefreshing ? 'spin 0.8s linear infinite' : 'none' }} />
-						</IconButton>
-					</div>
-					<div
-						className={`${classes.whatsappChat} sidebar__actions`}
-						style={{ flexShrink: 0 }}
-					>
-						<IconButton
-							className={classes.whatsappChatBarButton}
-							onClick={setIsMobileSideBar}
-						>
-							<FaBars />
 						</IconButton>
 					</div>
 				</header>

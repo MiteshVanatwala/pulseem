@@ -36,6 +36,7 @@ import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
 import { BEE_EDITOR_TYPES, TierFeatures, reCAPTCHAKey } from '../../helpers/Constants';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 import { injectRecaptchaScript } from '../../helpers/Utils/RecaptchaHelper';
+import { injectRagSansFontFace } from '../../helpers/Fonts/Init';
 import { StateType } from '../../Models/StateTypes';
 import { commonProps } from '../../model/Common/commonProps.types';
 import { BeeEditorModel, BeeEditorStoreModel, LandingPageRow, LandingPageTemplate, LandingPageUserBlocks, SaveLandingPageArguments } from '../../Models/LandingPage/LandingPage';
@@ -433,7 +434,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
     try {
       //@ts-ignore
       if (saveRef.current?.showAnimation) setLoader(true);
-      let finalHtml = args.HtmlData;
+      let finalHtml = injectRagSansFontFace(args.HtmlData);
       let finalJson = args.JsonData;
 
       // Inject reCAPTCHA initialization script if enabled
@@ -826,7 +827,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
           classes.backButton
         )}
         style={{ margin: '8px' }}
-        // @ts-ignore
+        //@ts-ignore
         startIcon={<BiSave />}
       >
         {t('common.saveTemplate')}
@@ -840,7 +841,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
           classes.backButton
         )}
         style={{ margin: '8px' }}
-        // @ts-ignore
+        //@ts-ignore
         startIcon={<MdGroups />}
       >
         {t('common.Groups')}
@@ -891,7 +892,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
               classes.backButton
             )}
             style={{ margin: '8px' }}
-            // @ts-ignore
+            //@ts-ignore
             startIcon={silentSave ? <Loader isOpen={silentSave} size={20} showBackdrop={false} contained={true} /> : <BiSave />}
             color="primary"
           >
@@ -917,7 +918,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
                     classes.btnRounded,
                     classes.backButton
                   )}
-                  // @ts-ignore
+                  //@ts-ignore
                   startIcon={<MdOutlinePublic />}
                   style={{ marginInlineStart: '8px' }}
                   color="primary"
@@ -940,7 +941,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
                     classes.btnRounded,
                     classes.backButton
                   )}
-                  // @ts-ignore
+                  //@ts-ignore
                   startIcon={<MdCheck />}
                   style={{ marginInlineStart: '8px' }}
                   color="primary"
@@ -962,10 +963,10 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
             classes.btnRounded,
             classes.backButton
           )}
-          // @ts-ignore
+          //@ts-ignore
           endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
           style={{ margin: '8px' }}
-          // @ts-ignore
+          //@ts-ignore
           startIcon={<BiSave />}
           color="primary"
         >{t("common.save")}
@@ -988,7 +989,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
             classes.btnRounded,
             classes.backButton
           )}
-          // @ts-ignore
+          //@ts-ignore
           startIcon={<MdOutlinePublic />}
           style={{ marginInlineStart: '8px' }}
           color="primary"
@@ -1003,7 +1004,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
             classes.btnRounded,
             classes.backButton
           )}
-          // @ts-ignore
+          //@ts-ignore
           endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
           style={{ marginInlineStart: '8px' }}
           color="primary"
@@ -1026,8 +1027,10 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
     if (showGallery) {
       let dialog = {
         showDivider: false,
-        // @ts-ignore
-        icon: <IoMdImages />,
+        icon: (
+          //@ts-ignore
+          <IoMdImages />
+        ),
         title: t("common.imageGallery"),
         content: (
           <Gallery

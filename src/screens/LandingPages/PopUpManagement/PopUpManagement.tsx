@@ -84,7 +84,6 @@ const PopUpManagement: React.FC<PopUpManagementProps> = ({ classes }) => {
     pagesError,
     deletedPopups,
   } = useSelector((state: any) => state.popUpManagement);
-
   const [view, setView] = useState<'card' | 'table'>('card');
   const [toastMessage, setToastMessage] = useState<ToastMessage | null>(null);
   const [dialogType, setDialogType] = useState<DialogType | null>(null);

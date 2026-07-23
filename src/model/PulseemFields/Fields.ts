@@ -199,5 +199,6 @@ export const PulseemFeatures = {
   PolyAIAgent: '69',
   Popup: '70',
   PolyAISupport: '73',
-  DisplayConditions: '74'
+  DisplayConditions: '74',
+  DATA_SOURCES: '76'
 }

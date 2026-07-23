@@ -69,16 +69,16 @@ const graphTextWidth = {
 export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
   const safeTheme = theme && typeof theme.breakpoints !== 'undefined' ? theme : { breakpoints: { down: () => '@media (max-width:0px)' }, spacing: (n) => n * 8 };
   return ({
-    editAgentIconButton: {
-      background: '#f5f6fa',
-      borderRadius: '50%',
-      boxShadow: '0 1px 4px rgba(0,0,0,0.08)',
-      border: '1px solid #e0e0e0',
-      width: 32,
-      height: 32,
-      padding: 4,
-      minWidth: 0,
-    },
+  editAgentIconButton: {
+    background: '#f5f6fa',
+    borderRadius: '50%',
+    boxShadow: '0 1px 4px rgba(0,0,0,0.08)',
+    border: '1px solid #e0e0e0',
+    width: 32,
+    height: 32,
+    padding: 4,
+    minWidth: 0,
+  },
   background: {
     position: 'fixed',
     bottom: 0,
@@ -198,6 +198,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
     "& .MuiDialog-paperWidthSm": {
       minWidth: 400,
       maxWidth: `${maxDialogWidth[windowSize]}px !important`,
+      "@media screen and (max-width: 450px)": {
+        minWidth: "unset",
+        maxWidth: "96vw !important",
+      },
     },
     "& .MuiDialog-paperScrollPaper": {
       maxHeight: "100%",
@@ -214,6 +218,22 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
     '&& .MuiDialog-paperWidthSm': {
       minWidth: '0 !important',
     }
+  },
+  // OUTER MUI paper override for the tier-graph dialog ONLY. The doubled '&&' beats
+  // dialogContainer's `& .MuiDialog-paperWidthSm { maxWidth: 1080px !important }` (0,2,0) with (0,3,0),
+  // lifting the 1080 cap so the outer paper is exactly min(1120px,94vw) — the single width source of
+  // truth. Passed as customContainerStyle (BaseDialog ignores PaperProps/fullWidth). Same trick as
+  // newNavigationDialogContainer above.
+  tierGraphDialogContainer: {
+    '&& .MuiDialog-paperWidthSm': {
+      minWidth: '0 !important',
+      width: '94vw !important',
+      maxWidth: '75% !important',
+      margin: '16px !important',
+    },
+    '&& .MuiDialog-paperScrollPaper': {
+      maxHeight: 'calc(100% - 32px)', // leave room for the 16px top/bottom margin
+    },
   },
   newNavigationDialogPaper: {
     width: 462,
@@ -5384,6 +5404,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
     padding: '0px 6px',
     minWidth: 'auto',
   },
+  tierPlanBtn: {
+    minHeight: 'auto',
+    fontSize: '12px !important',
+    fontWeight: 600,
+    padding: '5px 16px !important',
+    minWidth: '80px',
+    whiteSpace: 'nowrap',
+  },
   filterChip: {
     fontSize: '12px',
     background: 'linear-gradient(90deg, #ffffff 1.31%, #ffffff 33.07%, #ffffff 134.74%)',
@@ -5660,8 +5688,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
       backgroundColor: 'rgba(255, 51, 67, 0.08)'
     }
   },
-  // Sidebar Header styling
-  sidebarHeader: {
+  // Sidebar Header styling (WhatsApp chat contact-list header — named distinctly from
+  // sideMenuStyle.js's own "sidebarHeader" key, which was silently overwriting this one
+  // since both get spread into the same combined classes object in style/classes/index.js)
+  whatsappSidebarHeader: {
     display: 'flex',
     gap: '4px',
     alignItems: 'center',
@@ -6149,6 +6179,42 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
     fontSize: 20,
     color: '#374151',
     marginTop: 3,
+  },
+  // INNER paper (BaseDialog's <Paper>, via paperStyle): FILLS the outer paper exactly so it can
+  // never overflow it in either direction — the actual width lives on the OUTER paper
+  // (tierGraphDialogContainer). inner margin-box == outer content box => overflowX:hidden has
+  // nothing to clip, in RTL or LTR, at any viewport.
+  tierGraphDialogPaperProps: {
+    borderRadius: 15,
+    padding: '0px',
+    width: '100%',
+    maxWidth: '100% !important',
+    minWidth: '0 !important',
+    maxHeight: '92vh',
+    margin: '0 !important',        // gutter comes solely from the outer paper (no double margin)
+    boxSizing: 'border-box',
+    overflow: 'hidden',
+    // undo the app-wide "::placeholder { color: red }" leak (Whatsapp/Chat/css/overrides.css) — scope a
+    // neutral placeholder color to this dialog only. Higher specificity beats the global rule.
+    '& input::placeholder': { color: '#9aa1ad', opacity: 1 },
+    '& input::-ms-input-placeholder': { color: '#9aa1ad' },
+  },
+  // reclaim dialogContent's residual 1rem side margin + minWidth so the graph is full-bleed
+  tierGraphDialogContent: {
+    border: 'none !important',
+    margin: '0 !important',
+    padding: '0 !important',
+    minWidth: '0 !important',
+    width: '100%',
+    boxSizing: 'border-box',
+  },
+  // reclaim dialogChildren's marginBlock / summaryPadding (overflowY stays auto for tall dialogs)
+  tierGraphDialogChildren: {
+    margin: '0 !important',
+    marginBlock: '0 !important',
+    padding: '0 !important',
+    minWidth: '0 !important',
+    overflowX: 'hidden',
   },
   displayConditionDialogPaperProps: {
     borderRadius: 8,

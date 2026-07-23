@@ -1,6 +1,6 @@
-import React, { useRef, useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import { Box, Typography, Paper } from '@material-ui/core';
+import React, { useRef, useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { Box, Typography, Paper, Button, CircularProgress } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { StateType } from '../../Models/StateTypes';
 import clsx from 'clsx';
@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 import { AIChatConfig, advisorConfig } from './chatConfig';
 import { useThinkingPhrases } from '../../hooks/useThinkingPhrases';
+import { escapeToAgent } from '../../redux/reducers/supportChatSlice';
 
 const useStyles = makeStyles((theme) => ({
   messageList: {
@@ -147,6 +148,30 @@ const useStyles = makeStyles((theme) => ({
       opacity: 0.2,
     },
   },
+  contactBubble: {
+    padding: '10px 16px',
+    backgroundColor: '#fff8e1',
+    border: '1px solid #ffe082',
+    borderRadius: '16px',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '8px',
+    maxWidth: '85%',
+  },
+  escalateButton: {
+    color: '#dd2339',
+    borderColor: '#dd2339',
+    alignSelf: 'flex-start',
+    '&:hover': {
+      backgroundColor: '#ffeaea',
+      borderColor: '#dd2339',
+    },
+  },
+  escalateError: {
+    fontSize: '0.75rem',
+    color: '#dd2339',
+    marginTop: '2px',
+  },
 }));
 
 interface MessageListProps {
@@ -155,15 +180,33 @@ interface MessageListProps {
 
 const MessageList: React.FC<MessageListProps> = ({ config = advisorConfig }) => {
   const classes = useStyles();
+  const dispatch = useDispatch();
+  const { t } = useTranslation();
   const isSupport = config.reduxSliceName === 'supportChat';
-  const { messages, aiIconStatus } = useSelector((state: StateType) =>
+  const { messages, aiIconStatus, totalMessagesForUserCount, isEscalated, suggestAgent } = useSelector((state: StateType) =>
     isSupport ? state.supportChat : state.aiChat
   );
   const { language } = useSelector((state: StateType) => state.core);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const { t } = useTranslation();
   const { phrase, visible } = useThinkingPhrases(aiIconStatus === 1);
   moment.locale(language);
+
+  const [isEscalating, setIsEscalating] = useState(false);
+  const [escalateError, setEscalateError] = useState(false);
+
+  const showContactBubble = isSupport && (totalMessagesForUserCount >= 2 || suggestAgent) && !isEscalated && aiIconStatus !== 1;
+
+  const handleEscalate = async () => {
+    setIsEscalating(true);
+    setEscalateError(false);
+    try {
+      await (dispatch(escapeToAgent()) as any).unwrap();
+    } catch (_) {
+      setEscalateError(true);
+    } finally {
+      setIsEscalating(false);
+    }
+  };
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -191,10 +234,16 @@ const MessageList: React.FC<MessageListProps> = ({ config = advisorConfig }) => 
           }`}
         >
           <Box className={msg.MessageTypeID === 1 ? classes.userBubbleWrapper : classes.aiBubbleWrapper}>
+            {msg.MessageTypeID === 4 && (
+              <div style={{ fontSize: '0.7rem', color: '#888', marginBottom: '2px', paddingInlineStart: '4px' }}>
+                {t('common.agentLabel')}
+              </div>
+            )}
             <Paper
               className={`${classes.messageBubble} ${
                 msg.MessageTypeID === 1 ? classes.userBubble : classes.aiBubble
               } ${msg.MessageTypeID === 1 ? 'user-bubble' : 'ai-bubble'}`}
+              style={msg.MessageTypeID === 4 ? { backgroundColor: '#e8f5e9', border: '1px solid #a5d6a7' } : undefined}
               elevation={1}
             >
               {msg.MessageHTML ? (
@@ -231,6 +280,31 @@ const MessageList: React.FC<MessageListProps> = ({ config = advisorConfig }) => 
             <span className={classes.typingDot} />
             <span className={classes.typingDot} />
           </Paper>
+        </Box>
+      )}
+      {showContactBubble && (
+        <Box className={`${classes.messageRow} ${classes.aiMessage}`}>
+          <Box className={classes.contactBubble}>
+            <Typography variant="body2">
+              {t('common.contactAgentSuggestion')}
+            </Typography>
+            <Button
+              size="small"
+              variant="outlined"
+              className={classes.escalateButton}
+              onClick={handleEscalate}
+              disabled={isEscalating}
+            >
+              {isEscalating
+                ? <CircularProgress size={16} style={{ color: '#dd2339' }} />
+                : t('common.contactAgent')}
+            </Button>
+            {escalateError && (
+              <Typography className={classes.escalateError}>
+                {t('common.contactAgentError')}
+              </Typography>
+            )}
+          </Box>
         </Box>
       )}
     </Box>

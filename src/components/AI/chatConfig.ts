@@ -7,6 +7,8 @@ export interface AIChatConfig {
   apiAddMessage: string;
   apiLoadSession: string;
   apiNewSession: string;
+  apiEscalate?: string;
+  apiNewMessages?: string;
   maxChars: number;
   headerTitleKey: string;
   bubbleTextKey: string;
@@ -15,6 +17,7 @@ export interface AIChatConfig {
   mascotWidgetImage: string;
   reduxSliceName: string;
   localStorageKey: string;
+  compactModeKey: string;
 }
 
 export const advisorConfig: AIChatConfig = {
@@ -35,6 +38,7 @@ export const advisorConfig: AIChatConfig = {
   mascotWidgetImage: MascotPointingImage,
   reduxSliceName: 'aiChat',
   localStorageKey: 'hideAIChatDialog',
+  compactModeKey: 'aiChatCompactMode',
 };
 
 export const supportConfig: AIChatConfig = {
@@ -42,6 +46,8 @@ export const supportConfig: AIChatConfig = {
   apiAddMessage: 'PulsyAISupport/AddMessage',
   apiLoadSession: 'PulsyAISupport/LoadSessionMessages',
   apiNewSession: 'PulsyAISupport/NewConversation',
+  apiEscalate: 'PulsyAISupport/EscalateToAgent',
+  apiNewMessages: 'PulsyAISupport/NewMessages',
   maxChars: 2000,
   headerTitleKey: 'common.supportHeader',
   bubbleTextKey: 'common.supportBubbleText',
@@ -55,4 +61,5 @@ export const supportConfig: AIChatConfig = {
   mascotWidgetImage: SupportMascotImage,
   reduxSliceName: 'supportChat',
   localStorageKey: 'hideSupportChatDialog',
+  compactModeKey: 'supportChatCompactMode',
 };

@@ -23,7 +23,8 @@ import { HiArrowLeft, HiArrowRight } from "react-icons/hi";
 import { sitePrefix, isProdMode } from "../../config";
 import { WhatsappIcon } from '../../assets/images/drawer/index';
 import { PulseemFeatures } from '../../model/PulseemFields/Fields';
-import { WhiteLabelObject } from '../../components/WhiteLabel/WhiteLabelMigrate';
+import { WhiteLabelObject, getIsBeeperAccount } from '../../components/WhiteLabel/WhiteLabelMigrate';
+import { MdOutlineWhatsapp } from 'react-icons/md';
 import { UserRoles } from '../../Models/SubUser/SubUsers';
 // export const rootDomain = !isProdMode ? 'http://localhost:58123' : '/Pulseem/';
 export const rootDomain = '/Pulseem';
@@ -70,7 +71,9 @@ export const getRoutes = (
   isRTL: Boolean = false,
   userRoles: any = null,
   isPolandAccount: Boolean = false
-) => [
+) => {
+  const isBeeperAccount = getIsBeeperAccount(accountSettings);
+  return [
     // smsOldVersion
     {
       key: "dashboard",
@@ -128,6 +131,12 @@ export const getRoutes = (
           title: t('master.fileDownload'),
           href: `${sitePrefix}groups/Download`,
           isShow: true
+        },
+        {
+          key: 'dataSources',
+          title: t('DataSources.menuTitle'),
+          href: `${sitePrefix}DataSources`,
+          isShow: features && features?.indexOf(PulseemFeatures.DATA_SOURCES) > -1
         }
       ],
     },
@@ -137,8 +146,8 @@ export const getRoutes = (
       pageTitle: t("campaigns.logPageHeaderResource1.Text"),
       iconUnicode: "\ue0a1",
       href: `${sitePrefix}Campaigns`,
-      isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount,
-      iconName: 'MdMarkEmailRead',
+      isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount && !isBeeperAccount,
+      icon: <img alt="Newsletter" src={NewsletterIcon} />,
       options: [
         {
           key: "newsletterInfo",
@@ -236,12 +245,12 @@ export const getRoutes = (
         {
           title: t("master.NewMMSCampaign.Text"),
           href: `${rootDomain}/MmsCampaignEdit.aspx?fromreact=true`,
-          isShow: features && features?.indexOf(PulseemFeatures.MMS) > -1,
+          isShow: features && features?.indexOf(PulseemFeatures.MMS) > -1 && !isBeeperAccount,
         },
         {
           title: t("master.MmsCampaignMnage.Text"),
           href: `${sitePrefix}MmsCampaigns`,
-          isShow: features && features?.indexOf(PulseemFeatures.MMS) > -1,
+          isShow: features && features?.indexOf(PulseemFeatures.MMS) > -1 && !isBeeperAccount,
         }
       ],
     },
@@ -251,8 +260,8 @@ export const getRoutes = (
       pageTitle: t('whatsapp.Title'),
       iconName: 'IoLogoWhatsapp',
       href: whatsappRoutes.CAMPAIGN_MANAGEMENT,
-      isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount,
-      // icon: <WhatsappIcon className='header-whatsapp-icon' />,
+      isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount && !isBeeperAccount,
+      icon: <WhatsappIcon className='header-whatsapp-icon' />,
       options: [
         {
           key: 'create',
@@ -318,6 +327,18 @@ export const getRoutes = (
           isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount,
         },
         {
+          key: "createPopup",
+          title: t("landingPages.createPopup"),
+          href: `${sitePrefix}Popups/Create`,
+          isShow: features && features?.indexOf(PulseemFeatures.Popup) > -1 && !isBeeperAccount,
+        },
+        {
+          key: "popupManagement",
+          title: t("master.RadMenuItemPopupManagement.Text"),
+          href: `${sitePrefix}PopUpManagement`,
+          isShow: features && features?.indexOf(PulseemFeatures.Popup) > -1 && !isBeeperAccount,
+        },
+        {
           key: 'CreateLandingPage',
           title: t("landingPages.createLandingPage"),
           href: ``,
@@ -372,8 +393,8 @@ export const getRoutes = (
       pageTitle: t("automations.logPageHeaderResource1.Text"),
       iconUnicode: "\ue087",
       href: `${sitePrefix}Automations`,
-      isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount,
-      iconName: 'BiSitemap',
+      isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount && !isBeeperAccount,
+      icon: <img alt="Automations" src={AutomationsIcon} />,
       options: [
         {
           title: t("master.createTemplate"),
@@ -418,8 +439,9 @@ export const getRoutes = (
         !features.error &&
         features !== null &&
         features.indexOf("35") > -1 &&
-        !accountSettings?.SubAccountSettings?.IsTokenAccount,
-      iconName: 'MdNotificationsActive',
+        !accountSettings?.SubAccountSettings?.IsTokenAccount &&
+        !isBeeperAccount,
+      icon: <img alt="Notifications" src={NotificationsIcon} />,
       options: [
         {
           key: "createNotification",
@@ -445,22 +467,23 @@ export const getRoutes = (
       iconName: 'FiPieChart',
       options: [
         { title: t('master.clalCollage'), href: `${rootDomain}/ClalReport.aspx?fromreact=true`, isShow: (isClalAccount === 'true' || isClalAccount === true) },
-        { key: "newsletterReport", title: t('master.RadMenuItemResource13.Text'), href: `${sitePrefix}reports/NewsletterReports`, isShow: true },
+        { title: t('master.RadMenuItemResource13.Text'), href: `${sitePrefix}reports/NewsletterReports`, isShow: !isBeeperAccount },
         { key: 'SmsReport', title: t('master.RadMenuItemResource24.Text'), href: `${sitePrefix}reports/SMSMainReport`, isShow: true },
         // { key: 'MmsReport', title: t('mmsreport.mmsReport'), href: `${sitePrefix}Reports/MMSMainReport`, isShow: true },
-        { key: 'whatsappReports', title: t('whatsapp.ReportsWhatsapp'), href: whatsappRoutes.REPORTS, isShow: true },
+        { key: 'whatsappReports', title: t('whatsapp.ReportsWhatsapp'), href: whatsappRoutes.REPORTS, isShow: !isBeeperAccount },
         // { title: t('master.AbTestsReport.Text'), href: `${rootDomain}/AbTestsReport.aspx?fromreact=true`, isShow: true },
-        { title: t('master.RadMenuItemResource15.Text'), href: `${rootDomain}/AccountReport.aspx?fromreact=true`, isShow: true },
+        { title: t('master.RadMenuItemResource15.Text'), href: `${rootDomain}/AccountReport.aspx?fromreact=true`, isShow: !isBeeperAccount },
         { title: t('master.RadMenuItemResource16.Text'), href: `${rootDomain}/CampaignComparison.aspx?fromreact=true`, isShow: false },
         { key: 'recipientReport', title: t('master.RadMenuItemResource18.Text'), href: `${sitePrefix}Reports/Recipient`, isShow: !userRoles?.HideRecipients },
-        { title: t('master.RadMenuItemResource30.Text'), href: `${rootDomain}/EmailAutoReports.aspx?fromreact=true`, isShow: true },
-        { title: t('master.locRemovedReason.Text'), href: `${rootDomain}/RemovedStats.aspx?fromreact=true`, isShow: true },
-        { key: 'productsReport', title: t('report.ProductsReport.products'), href: `${sitePrefix}Reports/ProductsReport`, isShow: true },
-        { key: 'directSendReport', title: t('report.DirectSendReport'), href: `${sitePrefix}Reports/DirectSendReport`, isShow: accountSettings && accountSettings?.IsDirectAccount === true && !userRoles?.HideRecipients },
-        { key: 'directSendReportArchive', title: t('report.ArchiveDirectSendReport'), href: `${sitePrefix}Reports/DirectSendReport/Archive`, isShow: accountSettings && accountSettings?.IsDirectAccount === true && !userRoles?.HideRecipients },
-        { title: t('master.OpenedClickedReport'), href: `${rootDomain}/EmailCampaignStatistics.aspx?fromreact=true`, isShow: true },
+        { title: t('master.RadMenuItemResource30.Text'), href: `${rootDomain}/EmailAutoReports.aspx?fromreact=true`, isShow: !isBeeperAccount },
+        { title: t('master.locRemovedReason.Text'), href: `${rootDomain}/RemovedStats.aspx?fromreact=true`, isShow: !isBeeperAccount },
+        { key: 'productsReport', title: t('report.ProductsReport.products'), href: `${sitePrefix}Reports/ProductsReport`, isShow: !isBeeperAccount },
+        { key: 'directSendReport', title: t('report.DirectSendReport'), href: `${sitePrefix}Reports/DirectSendReport`, isShow: accountSettings && accountSettings?.IsDirectAccount === true && !userRoles?.HideRecipients && !isBeeperAccount },
+        { key: 'directSendReportArchive', title: t('report.ArchiveDirectSendReport'), href: `${sitePrefix}Reports/DirectSendReport/Archive`, isShow: accountSettings && accountSettings?.IsDirectAccount === true && !userRoles?.HideRecipients && !isBeeperAccount },
+        { title: t('master.OpenedClickedReport'), href: `${rootDomain}/EmailCampaignStatistics.aspx?fromreact=true`, isShow: !isBeeperAccount },
         { key: 'inboundMessages', title: t('master.responses'), href: `${sitePrefix}Reports/Inbound`, isShow: !userRoles?.HideRecipients },
       ],
     },
     { key: 'termOfUse', title: t('TermsOfUse.title'), href: `${sitePrefix}TermsOfUse`, iconSrc: '', isShow: false }
   ];
+}

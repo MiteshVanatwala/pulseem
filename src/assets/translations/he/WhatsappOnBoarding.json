@@ -25,8 +25,17 @@
 	"pin": "קוד אימות",
 	"registerPIN": "אישור",
 	"phoneNumberRegistered": "מספר אומת בהצלחה",
+	"coexistenceSyncStarted": "החיבור בוצע בהצלחה. אנשי הקשר והיסטוריית ההודעות יסונכרנו אוטומטית תוך 24 שעות.",
+	"coexistenceToggleLabel": "סנכרון עם אפליקציית WhatsApp Business (Coexistence)",
+	"coexistenceToggleDescription": "הפעל כדי לסנכרן הודעות בין Pulseem לאפליקציית WhatsApp Business שלך.",
+	"coexistenceNotAllowed": "Coexistence זמין בתוכנית PRO בלבד.",
+	"newBusinessAccount": "חשבון WhatsApp Business חדש",
+	"alreadyUseWhatsAppApp": "כבר משתמש באפליקציית WhatsApp Business",
 	"enterValidPIN": "אנא הכניסו קוד תקין",
 	"loginWithFacebook": "התחבר עם פייסבוק",
+	"loginWithFacebookCoexistence": "התחבר עם פייסבוק (Coexistence)",
+	"coexistenceColumn": "דו-קיום",
+	"coexistenceNotAvailable": "לא זמין למספר זה",
 	"SaveWhatsappMetaClientsResponseCode": {
 		"3": "תת חשבון לא נמצא",
 		"4": "קונפיגורציה של מטא חסרה",
@@ -34,6 +43,7 @@
 		"6": "אינכם יכולים להשתמש בחשבון וואטסאפ עסקי נוסף",
 		"7": "טוקן גישה ממטא לא נמצא",
 		"8": "פרטי מספר טלפון ממטא לא נמצאו",
+		"9": "Coexistence זמין בתוכנית PRO בלבד",
 		"100": "Internal Error"
 	},
 	"MetaPhoneRegister": {
@@ -109,6 +119,7 @@
 	"business_statuses": {
 		"notVerified": "לא מאומת",
 		"pending": "ממתין לאימות",
+		"pending_submission": "ממתין להגשה",
 		"verified": "מאומת",
 		"rejected": "נדחה",
 		"inReview": "בתהליך אימות",

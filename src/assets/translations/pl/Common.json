@@ -888,6 +888,9 @@
   "welcomeMessage": "Hi, my name is {USERNAME}",
   "500chars": "500 znaków",
   "doNotShowThisDialog": "Nie pokazuj tego dialogu",
+  "chatCompactMode": "Tryb boczny",
+  "chatFullMode": "Tryb pełny",
+  "minimize": "Minimalizuj",
   "messageDot": "Analizujemy Twoje dane, może to zająć kilka minut",
   "thinkingPhrases": [
     "Investigating...",
@@ -909,6 +912,12 @@
   "supportPreset3": "How do I set up an automation?",
   "supportPreset4": "I have an urgent issue 🚨",
   "startNewConversation": "Start New Conversation",
+  "contactAgent": "Skontaktuj z agentem",
+  "connectedToAgent": "Połączono z agentem",
+  "agentLabel": "Agent",
+  "contactAgentTooltip": "Dostępne po 2 wymianach Q&A",
+  "contactAgentSuggestion": "Chcesz porozmawiać z agentem? Mogę Cię natychmiast połączyć.",
+  "contactAgentError": "Coś poszło nie tak. Spróbuj ponownie.",
   "tier": {
     "current": "Current Tier",
     "upgrade": "Upgrade Tier",

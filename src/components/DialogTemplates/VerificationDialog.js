@@ -19,6 +19,7 @@ import {
 import { Loader } from '../Loader/Loader';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 import { IsValidNonGlobalPhoneNumber, IsValidPhoneNumberKeyPress, IsValidPhoneNumberWithCountryCode } from '../../helpers/Utils/Validations';
+import { getIsBeeperAccount } from '../WhiteLabel/WhiteLabelMigrate';
 
 
 const VerificationDialog = ({
@@ -33,6 +34,7 @@ const VerificationDialog = ({
     const dispatch = useDispatch();
     const { isRTL } = useSelector(state => state.core);
     const { verifiedEmails, verifiedNumbers, twoFactorAuthEmails, twoFactorAuthNumbers, accountSettings, countryCodeList, isGlobal } = useSelector(state => state.common);
+    const isBeeperAccount = getIsBeeperAccount(accountSettings);
     const { t } = useTranslation();
     const [showLoader, setShowLoader] = useState(true);
     const [verificationStep, setVerificationStep] = useState(step ?? 0)
@@ -382,6 +384,10 @@ const VerificationDialog = ({
             case '4': {
                 return <Typography variant='body1'>{RenderHtml(t('SimplyClub.contactUs'))}</Typography>
             }
+            case 6:
+            case '6': {
+                return <Typography variant='body1'>{RenderHtml(t('Beeper.contactUs'))}</Typography>
+            }
             default: {
                 return <Typography variant='body1'>{RenderHtml(t('campaigns.newsLetterMgmt.emailVerification.secondSlide.contactUs'))}</Typography>
             }
@@ -551,7 +557,7 @@ const VerificationDialog = ({
                         </Box>
                     </Box>
                     <Box>
-                        <Typography variant='body1'>{t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.did_not_recieved')} <span className={clsx(classes.link, resendDisabled ? classes.disabled : null)} onClick={() => handleSendCode(selectedVerificationContact, true)}>{t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.resend')}</span>{resendDisabled && resendInterval !== 0 && resendInterval !== 10 && <span>{resendInterval}</span>}</Typography>
+                        <Typography variant='body1'>{t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.did_not_recieved')}<span className={clsx(classes.link, resendDisabled ? classes.disabled : null)} style={{ cursor: 'pointer', textDecoration: 'underline' }} onClick={() => handleSendCode(selectedVerificationContact, true)}>{t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.resend')}</span>{resendDisabled && resendInterval !== 0 && resendInterval !== 10 && <span>{resendInterval}</span>}</Typography>
                         <Typography className='success' variant="body1">{codeResend ? t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.resendSuccess') : ''}</Typography>
                     </Box>
                 </Box>
@@ -592,7 +598,7 @@ const VerificationDialog = ({
                             {t('sms.verificationBody')} <b>{t('sms.oneTimeProcess')}</b>{' '}{t('sms.foreachSubmission')}
                         </Typography>
                         <Typography className={clsx(classes.mt15, classes.mb15, classes.verNote)}>
-                            {t('sms.verificationNote')}
+                            {isBeeperAccount ? t('Beeper.verificationNote') : t('sms.verificationNote')}
                         </Typography>
                         <Divider />
                     </Box>
@@ -780,8 +786,8 @@ const VerificationDialog = ({
                 <Box className='cFlexSlide'>
                     <Box>
                         <Typography variant='h4' className={classes.bold}>{t('common.Sent')}</Typography>
-                        <Typography variant='body1' className={classes.mt4}> {t('sms.verificationSentToNumber')}{selectedVerificationContact}</Typography>
-                        <Typography variant='body1' mt={1}> {t('sms.pleaseNoteCode')}</Typography>
+                        <Typography variant='body1' className={classes.mt4}>{t('sms.verificationSentToNumber')}{' '}{selectedVerificationContact}</Typography>
+                        <Typography variant='body1' mt={1}>{t('sms.pleaseNoteCode')}</Typography>
                     </Box>
                     <Box className={classes.flexColumn}>
                         <Box>
@@ -806,7 +812,7 @@ const VerificationDialog = ({
                                 onClick={() => {
                                     if (verificationCode) {
                                         handleVerifyCode();
-                                    } 
+                                    }
                                     else {
                                         setVerificationError({ code: t('sms.verificationCodeError') });
                                     }
@@ -818,7 +824,7 @@ const VerificationDialog = ({
                         </Box>
                     </Box>
                     <Box>
-                        <Typography variant='body1'>{t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.did_not_recieved')} <span className={clsx(classes.link, resendDisabled ? classes.disabled : null)} onClick={() => handleSendCode(selectedVerificationContact, true)}>{t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.resend')}</span>{resendDisabled && resendInterval !== 0 && resendInterval !== 10 && <span>{resendInterval}</span>}</Typography>
+                        <Typography variant='body1'>{t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.did_not_recieved')}<span className={clsx(classes.link, resendDisabled ? classes.disabled : null)} style={{ cursor: 'pointer', textDecoration: 'underline' }} onClick={() => handleSendCode(selectedVerificationContact, true)}>{t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.resend')}</span>{resendDisabled && resendInterval !== 0 && resendInterval !== 10 && <span>{resendInterval}</span>}</Typography>
                         <Typography className='success' variant="body1">{codeResend ? t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.resendSuccess') : ''}</Typography>
                     </Box>
                 </Box>
@@ -992,8 +998,8 @@ const VerificationDialog = ({
                 <Box className='cFlexSlide'>
                     <Box>
                         <Typography variant='h4' className={classes.bold}>{t('common.Sent')}</Typography>
-                        <Typography variant='body1' className={classes.mt4}> {t('sms.verificationSentToNumber')}{selectedVerificationContact}</Typography>
-                        <Typography variant='body1' mt={1}> {t('sms.pleaseNoteCode')}</Typography>
+                        <Typography variant='body1' className={classes.mt4}>{t('sms.verificationSentToNumber')}{' '}{selectedVerificationContact}</Typography>
+                        <Typography variant='body1' mt={1}>{t('sms.pleaseNoteCode')}</Typography>
                     </Box>
                     <Box className={classes.flexColumn}>
                         <Box>
@@ -1030,7 +1036,7 @@ const VerificationDialog = ({
                         </Box>
                     </Box>
                     <Box>
-                        <Typography variant='body1'>{t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.did_not_recieved')} <span className={clsx(classes.link, resendDisabled ? classes.disabled : null)} onClick={() => handleSendCode(selectedVerificationContact, true)}>{t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.resend')}</span>{resendDisabled && resendInterval !== 0 && resendInterval !== 10 && <span>{resendInterval}</span>}</Typography>
+                        <Typography variant='body1'>{t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.did_not_recieved')}<span className={clsx(classes.link, resendDisabled ? classes.disabled : null)} style={{ cursor: 'pointer', textDecoration: 'underline' }} onClick={() => handleSendCode(selectedVerificationContact, true)}>{t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.resend')}</span>{resendDisabled && resendInterval !== 0 && resendInterval !== 10 && <span>{resendInterval}</span>}</Typography>
                         <Typography className='success' variant="body1">{codeResend ? t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.resendSuccess') : ''}</Typography>
                     </Box>
                 </Box>
@@ -1238,7 +1244,7 @@ const VerificationDialog = ({
                         </Box>
                     </Box>
                     <Box>
-                        <Typography variant='body1'>{t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.did_not_recieved')} <span className={clsx(classes.link, resendDisabled ? classes.disabled : null)} onClick={() => handleSendCode(selectedVerificationContact, true)}>{t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.resend')}</span>{resendDisabled && resendInterval !== 0 && resendInterval !== 10 && <span>{resendInterval}</span>}</Typography>
+                        <Typography variant='body1'>{t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.did_not_recieved')}<span className={clsx(classes.link, resendDisabled ? classes.disabled : null)} style={{ cursor: 'pointer', textDecoration: 'underline' }} onClick={() => handleSendCode(selectedVerificationContact, true)}>{t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.resend')}</span>{resendDisabled && resendInterval !== 0 && resendInterval !== 10 && <span>{resendInterval}</span>}</Typography>
                         <Typography className='success' variant="body1">{codeResend ? t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.resendSuccess') : ''}</Typography>
                     </Box>
                 </Box>

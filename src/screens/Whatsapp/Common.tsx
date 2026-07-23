@@ -539,6 +539,23 @@ export const isShowTierAlert = (
 	}
 };
 
+
+export const detecLanguageMixup = (text: string) => {
+	let isLanguageMixup = false;
+	const hasEnglish = /[A-Za-z]/.test(text);
+	const hasPolish = /[\u0100-\u024F]/.test(text);
+	const hasHebrew = /[\u0590-\u05FF]/.test(text);
+
+	if (hasEnglish && hasPolish) {
+		isLanguageMixup = true;
+	} else if (hasEnglish && hasHebrew) {
+		isLanguageMixup = true;
+	} else if (hasPolish && hasHebrew) {
+		isLanguageMixup = true;
+	}
+	return isLanguageMixup;
+}
+
 export const adjustTemplateVariablesForLink = (
 	templateData: savedTemplateTypesProps,
 	updatedDynamicVariable: updatedVariable[],
@@ -597,19 +614,3 @@ export const adjustTemplateVariablesForLink = (
 	);
 	return adjustedDynamicVariableForLinks;
 };
-
-export const detecLanguageMixup = (text: string) => {
-	let isLanguageMixup = false;
-	const hasEnglish = /[A-Za-z]/.test(text);
-	const hasPolish = /[\u0100-\u024F]/.test(text);
-	const hasHebrew = /[\u0590-\u05FF]/.test(text);
-
-	if (hasEnglish && hasPolish) {
-		isLanguageMixup = true;
-	} else if (hasEnglish && hasHebrew) {
-		isLanguageMixup = true;
-	} else if (hasPolish && hasHebrew) {
-		isLanguageMixup = true;
-	}
-	return isLanguageMixup;
-}

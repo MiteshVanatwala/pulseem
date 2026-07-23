@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Box, TextField, IconButton, Checkbox, FormControlLabel, Button } from '@material-ui/core';
+import { Box, TextField, IconButton, Button } from '@material-ui/core';
 import { Send as SendIcon } from '@material-ui/icons';
 import { makeStyles } from '@material-ui/core/styles';
 import { addMessage, addUserMessage, setAIIconStatus } from '../../redux/reducers/aiChatSlice';
@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme) => ({
   inputArea: {
     padding: '8px 16px',
     backgroundColor: '#ffffff',
-    borderTop: `1px solid ${theme.palette.divider}`,
+    border: `1px solid ${theme.palette.divider}`,
     flexDirection: 'column',
   },
   inputRow: {
@@ -55,14 +55,10 @@ const useStyles = makeStyles((theme) => ({
     marginTop: '2px',
     textAlign: 'right',
   },
-  checkboxLabel: {
-    fontSize: '0.875rem',
-    color: theme.palette.text.secondary,
-  },
   footerRow: {
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
   },
 }));
 
@@ -81,25 +77,11 @@ const InputArea: React.ForwardRefRenderFunction<InputAreaHandle, InputAreaProps>
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const { t } = useTranslation();
   const [text, setText] = useState('');
-  const [hideDialog, setHideDialog] = useState(false);
 
   const isSupport = config.reduxSliceName === 'supportChat';
-  const { totalMessagesForUserCount, aiIconStatus } = useSelector((state: StateType) =>
+  const { aiIconStatus } = useSelector((state: StateType) =>
     isSupport ? state.supportChat : state.aiChat
   );
-
-  useEffect(() => {
-    const savedPreference = localStorage.getItem(config.localStorageKey);
-    if (savedPreference) {
-      setHideDialog(JSON.parse(savedPreference));
-    }
-  }, []);
-
-  const handleHideDialogChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = event.target.checked;
-    setHideDialog(newValue);
-    localStorage.setItem(config.localStorageKey, JSON.stringify(newValue));
-  };
 
   const handleSend = () => {
     const trimmedText = text.trim();
@@ -146,10 +128,6 @@ const InputArea: React.ForwardRefRenderFunction<InputAreaHandle, InputAreaProps>
     }
   }));
 
-  const showCheckbox = totalMessagesForUserCount <= 0;
-  const showNewConversationButton = isSupport;
-  const showFooterRow = showCheckbox || showNewConversationButton;
-
   return (
     <Box display="flex" className={classes.inputArea}>
       <Box className={classes.inputRow}>
@@ -159,7 +137,7 @@ const InputArea: React.ForwardRefRenderFunction<InputAreaHandle, InputAreaProps>
           size="small"
           fullWidth
           inputRef={inputRef}
-          placeholder={isSupport ? t("common.agentPlaceholderSupport") :t("common.agentPlaceholder") }
+          placeholder={isSupport ? t("common.agentPlaceholderSupport") : t("common.agentPlaceholder")}
           value={text}
           onChange={(e) => {
             if (e.target.value.length <= config.maxChars) {
@@ -186,34 +164,16 @@ const InputArea: React.ForwardRefRenderFunction<InputAreaHandle, InputAreaProps>
       <Box className={classes.characterCount}>
         {text.length}/{config.maxChars}
       </Box>
-      {showFooterRow && (
+      {isSupport && (
         <Box className={classes.footerRow}>
-          {showCheckbox ? (
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={hideDialog}
-                  onChange={handleHideDialogChange}
-                  color="primary"
-                  size="small"
-                />
-              }
-              label={t("common.doNotShowThisDialog")}
-              className={classes.checkboxLabel}
-            />
-          ) : (
-            <span />
-          )}
-          {showNewConversationButton && (
-            <Button
-              size="small"
-              color="primary"
-              onClick={handleStartNewConversation}
-              disabled={aiIconStatus === 1}
-            >
-              {t("common.startNewConversation")}
-            </Button>
-          )}
+          <Button
+            size="small"
+            color="primary"
+            onClick={handleStartNewConversation}
+            disabled={aiIconStatus === 1}
+          >
+            {t("common.startNewConversation")}
+          </Button>
         </Box>
       )}
     </Box>

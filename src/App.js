@@ -83,6 +83,8 @@ import SurveyDetails from './screens/LandingPages/Survey/SurveyDetails';
 import WebformSummary from './screens/LandingPages/Wizard/WebformSummary';
 import HtmlPreview from './screens/Preview/HtmlPreview';
 import FileUploads from './screens/Groups/FileUploads/FileUploads';
+import DataSources from './screens/DataSources/DataSources';
+import DataSourceView from './screens/DataSources/DataSourceView';
 import AmpRegistration from './screens/Newsletter/AMP/AmpRegistration';
 import AffiliateProgram from './screens/Affiliate/Management/AffiliateProgram';
 import AccountUsers from './screens/AccountUsers/AccountUsers';
@@ -635,6 +637,16 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
         path="/Pulseem/:aspxPage"
         element={<LegacyPageWild classes={classes} />}
       />
+      {accountFeatures && accountFeatures?.indexOf(PulseemFeatures.DATA_SOURCES) > -1 && <Route
+        exact
+        path={`${sitePrefix}DataSources`}
+        element={<DataSources classes={classes} />}
+      />}
+      {accountFeatures && accountFeatures?.indexOf(PulseemFeatures.DATA_SOURCES) > -1 && <Route
+        exact
+        path={`${sitePrefix}DataSources/View/:id`}
+        element={<DataSourceView classes={classes} />}
+      />}
       <Route
         path="*" element={<PageNotFound classes={classes} />}
       />

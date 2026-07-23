@@ -7,14 +7,14 @@ import { getPackagesDetails } from '../../redux/reducers/dashboardSlice';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
-import { MdArrowBackIos, MdArrowForwardIos, MdSupportAgent } from 'react-icons/md';
+import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { BellIcon, WhatsappIcon, SmsIcon, CardIcon, NewsletterIcon } from '../../assets/images/dashboard/index'
 import { TooltipBubble } from '../../assets/images/dashboard/index';
 import { BaseDialog } from '../DialogTemplates/BaseDialog';
 import { PulseemFeatures } from '../../model/PulseemFields/Fields';
 import useRedirect from '../../helpers/Routes/Redirect';
 import { sitePrefix } from '../../config';
-import { WhiteLabelObject } from '../WhiteLabel/WhiteLabelMigrate';
+import { WhiteLabelObject, getIsBeeperAccount } from '../WhiteLabel/WhiteLabelMigrate';
 import { MdVoiceChat } from "react-icons/md";
 import { URLS } from '../../config/enum';
 import AddCardDialog from '../AddCardDialog/AddCardDialog';
@@ -25,7 +25,6 @@ import { BiCog } from 'react-icons/bi';
 import { getAccountBilling } from '../../redux/reducers/BillingSlice';
 import BillingSettings from '../BillingSettings/BillingSettings';
 import TierPlans from '../TierPlans/TierPlans';
-import { toggleHelpDrawer } from '../../redux/reducers/helpDrawerSlice';
 import { contactSalesForScale, deletePolandSubscription, getCurrentPlan } from '../../redux/reducers/TiersSlice';
 import { getAccountSettings } from '../../redux/reducers/AccountSettingsSlice';
 import { Loader } from '../Loader/Loader';
@@ -34,23 +33,7 @@ import moment from 'moment';
 import { DateFormats } from '../../helpers/Constants';
 import { logout } from '../../helpers/Api/PulseemReactAPI';
 
-import { makeStyles } from '@material-ui/core/styles';
-
-const useLocalStyles = makeStyles({
-  customArrow: {
-    color: '#ff1946'
-  },
-  customTooltip: {
-    whiteSpace: 'nowrap',
-    padding: '6px 12px',
-    borderRadius: '4px',
-    fontWeight: 500,
-    transform: 'translateY(-5px)'
-  }
-});
-
 const BulkStatus = ({ classes }) => {
-  const localClasses = useLocalStyles();
   const { billingTypeId, windowSize, isRTL } = useSelector(state => state.core)
   const { accountSettings, accountFeatures, isGlobal, IsPoland, accountCurrencySymbol, accountIsCurrencySymbolPrefix } = useSelector(state => state.common);
   const { packagesDetails, accountAvailablePackages } = useSelector(state => state.dashboard);
@@ -73,10 +56,12 @@ const BulkStatus = ({ classes }) => {
   const Redirect = useRedirect();
 
   const isWhiteLabel = accountSettings.Account?.ReferrerID > 0 && WhiteLabelObject[accountSettings.Account?.ReferrerID] !== undefined;
+  const isBeeperAccount = getIsBeeperAccount(accountSettings);
 
   const { Mms = {}, Newsletters = {}, Notifications = {}, Sms = {}, Whatsapp = {}, SMSVC } = packagesDetails || {};
 
-  const hideEmailWithTier = true;
+  // Email With Tier (11) is Israeli/ILS only - show only for non-global, non-Poland accounts.
+  const hideEmailWithTier = isGlobal || IsPoland;
 
   const getBillingTypeText = (product) => {
     switch (product?.eBillingType) {
@@ -387,11 +372,11 @@ const BulkStatus = ({ classes }) => {
                   {t('dashboard.yourBulkStatus')}
                 </Typography>
               </Box>
-              {isWhiteLabel ? <Box className={clsx(classes.mr15, 'bubbleNew')}>
+              {isWhiteLabel && <Box className={clsx(classes.mr15, 'bubbleNew')}>
                 <Typography className='bubbleText'>{t('common.new')}</Typography>
                 <TooltipBubble />
-              </Box> : null}
-          </Box>
+              </Box>}
+            </Box>
           </Grid>
           <Grid
             container
@@ -434,6 +419,7 @@ const BulkStatus = ({ classes }) => {
             </Grid>
           </Grid>
           <Divider />
+          {!isBeeperAccount && (<>
             <Grid
               container
               item sm={12} md={12} lg={12} xl={12}
@@ -538,7 +524,7 @@ const BulkStatus = ({ classes }) => {
                             <>
                               <Divider className={clsx(classes.rocketImage, classes.mt1)} />
                               <Grid container className={clsx(classes.mt1)} alignItems='center'>
-                                <Grid item md={5} xs={4}>
+                                <Grid item md={4} xs={4}>
                                   <Typography className={clsx(classes.bulkTitle, classes.mlr30, classes.pl5)}>{t('billing.plan')}</Typography>
                                 </Grid>
                                 <Grid item md={3} xs={4} className={clsx(classes.paddingSides10, windowSize === 'xs' ? classes.textRight : '')}>
@@ -558,13 +544,15 @@ const BulkStatus = ({ classes }) => {
                                     </Tooltip>
                                   }
                                 </Grid>
-                                 <Grid item md={4} xs={4} className={clsx(classes.justifyContentEnd)}>
+                                 <Grid item md={5} xs={4} className={clsx(classes.justifyContentEnd)}>
                                   <Button
+                                    variant="contained"
+                                    color="primary"
                                     className={clsx(
                                       classes.btn,
                                       classes.btnRounded,
                                       classes.marginSides5,
-                                      classes.smallButton
+                                      classes.tierPlanBtn
                                     )}
                                     onClick={() => {
                                       setIsOpenEmailTierPlans(true);
@@ -573,10 +561,13 @@ const BulkStatus = ({ classes }) => {
                                     {t('billing.tier.steps.upgrade')}
                                   </Button>
                                   <Button
+                                    variant="outlined"
+                                    color="primary"
                                     className={clsx(
                                       classes.btn,
                                       classes.btnRounded,
-                                      classes.smallButton
+                                      classes.marginSides5,
+                                      classes.tierPlanBtn
                                     )}
                                     onClick={() => {
                                       setIsOpenCancelConfirmDialog(true);
@@ -587,13 +578,34 @@ const BulkStatus = ({ classes }) => {
                                 </Grid>
                               </Grid>
                             </>
-                          ) : null
+                          ) : (
+                            // Not yet subscribed -> show the Subscribe button that opens the Email With Tier plans.
+                            isAllowNewsletterSubscription && !Newsletters?.IsEmailTierSubscribed ? (
+                              <>
+                                <Divider className={clsx(classes.rocketImage, classes.mt1)} />
+                                <Grid container className={clsx(classes.mt1)} alignItems='center'>
+                                  <Grid item md={8} xs={8}>
+                                    <Typography className={clsx(classes.bulkTitle, classes.mlr30, classes.pl5)}>{t('billing.plan')}</Typography>
+                                  </Grid>
+                                  <Grid item md={4} xs={4} className={clsx(classes.justifyContentEnd)}>
+                                    <Button
+                                      className={clsx(classes.btn, classes.btnRounded, classes.smallButton)}
+                                      onClick={() => { setIsOpenEmailTierPlans(true); }}
+                                    >
+                                      {t('dashboard.purchase')}
+                                    </Button>
+                                  </Grid>
+                                </Grid>
+                              </>
+                            ) : null
+                          )
                       }
                     </>
                   )
                 }
             </Grid>
           <Divider />
+          </>)}
           {/* {
             isAllowNewsletterForPoland() && Newsletters.eBillingType === 2 && (
               <>
@@ -617,7 +629,7 @@ const BulkStatus = ({ classes }) => {
               </>
             )
           } */}
-          {Notifications.FeatureExist && (
+          {Notifications.FeatureExist && !isBeeperAccount && (
             <>
               <Grid
                 container
@@ -640,7 +652,7 @@ const BulkStatus = ({ classes }) => {
               <Divider />
             </>
           )}
-          {Whatsapp.FeatureExist && Whatsapp.FeatureAllowed && (<>
+          {Whatsapp.FeatureExist && Whatsapp.FeatureAllowed && !isBeeperAccount && (<>
             <Grid
               container
               item sm={12} md={12} lg={12} xl={12}

@@ -21,6 +21,7 @@ import { Title } from '../../../components/managment/Title';
 import { AccDtlPropTypes } from '../../../Models/Settings/AccountDetails';
 import { IsEnglishAndNumbers, IsNumberField, IsValidEmail, IsValidPhoneNumber } from '../../../helpers/Utils/Validations';
 import { AccountSettings } from '../../../Models/Account/AccountSettings';
+// import { tierSetting } from '../../Whatsapp/Constant';
 import Illustration_app_Settings from '../../../assets/images/settings/Illustration_app_Settings';
 // import { IoIosArrowDown } from 'react-icons/io';
 import PulseemSwitch from '../../../components/Controlls/PulseemSwitch';
@@ -35,6 +36,7 @@ import DoubleOptInSettingsPopUp from './Popups/DoubleOptInSettingsPopUp';
 import queryString from 'query-string';
 import DynamicConfirmDialog from '../../../components/DialogTemplates/DynamicConfirmDialog';
 import DoubleOptInSettingsExplanationPopUp from './Popups/DoubleOptInSettingsExplanationPopUp';
+import { getIsBeeperAccount } from '../../../components/WhiteLabel/WhiteLabelMigrate';
 
 const FORM_ACCOUNT_DETAILS = ({
 	classes,
@@ -145,7 +147,16 @@ const FORM_ACCOUNT_DETAILS = ({
 
 	useEffect(() => {
 		setUnsubscribeType(Settings?.UnsubscribeType ? '1' : '0');
-		setAccountDetails(Settings);
+		const isBeeperAccount = getIsBeeperAccount(accountSettings);
+		if (isBeeperAccount && Settings) {
+			setAccountDetails({
+				...Settings,
+				DefaultFromName: Settings.DefaultFromName || 'Beeper',
+				DefaultFromMail: Settings.DefaultFromMail || 'support@beeper.ltd',
+			} as AccountSettings);
+		} else {
+			setAccountDetails(Settings);
+		}
 	}, [Settings]);
 
 	const handleChange = (e: any, name = '') => {

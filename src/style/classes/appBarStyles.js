@@ -141,6 +141,18 @@ export const appBarStyle = (windowSize, isRTL, theme) => ({
       }
     }
   },
+  beeperAppBarLogo: {
+    background: '#ffffff',
+    borderRadius: 0,
+    height: '100%',
+    '&.logo': {
+      padding: isRTL ? '15px 15px 15px 0px' : '15px 0px 15px 15px',
+      marginLeft: isRTL ? 0 : '-24px',
+      marginRight: isRTL ? '-24px' : 0,
+      borderBottomLeftRadius: isRTL ? 0 : 40,
+      borderBottomRightRadius: isRTL ? 40 : 0,
+    }
+  },
   appBar: {
     maxWidth: 'calc(100vw - 56px)',
     backgroundColor: '#fff !important',

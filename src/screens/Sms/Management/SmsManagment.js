@@ -58,10 +58,13 @@ import DuplicateCampaign from '../../../components/Campaigns/DuplicateCampaign';
 import { FaEye } from 'react-icons/fa';
 import { getGroupsBySubAccountId } from '../../../redux/reducers/groupSlice';
 import { DateFormats } from '../../../helpers/Constants';
+import { getIsBeeperAccount } from '../../../components/WhiteLabel/WhiteLabelMigrate';
 
 const SmsManagnentScreen = ({ classes }) => {
 	const { language, windowSize, rowsPerPage, isRTL, userRoles } = useSelector(state => state.core) // smsOldVersion, isRTL
 	const { smsData, smsDeletedData } = useSelector(state => state.sms)
+	const { accountSettings } = useSelector(state => state.common)
+	const isBeeperAccount = getIsBeeperAccount(accountSettings)
 	const { t } = useTranslation()
 	const [fromDate, handleFromDate] = useState(null);
 	const [toDate, handleToDate] = useState(null);
@@ -932,7 +935,7 @@ const SmsManagnentScreen = ({ classes }) => {
 					{t('sms.verificationButtonText')}
 				</Button>
 				<Typography className={clsx(classes.contactUs, classes.newLine)}>
-					{t('sms.havingIssuesMessage')}
+					{isBeeperAccount ? t('Beeper.havingIssuesMessage') : t('sms.havingIssuesMessage')}
 				</Typography>
 			</Box>
 		),
