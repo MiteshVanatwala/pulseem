@@ -1362,8 +1362,8 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
     } else if (type === DialogType.TEMPLAGE_EXISTS) {
       currentDialog = renderTemplateExistsDialog(data);
     } else if (type === 'tier') {
-			currentDialog = getTierValidationDialog();
-		} else if (type === 'AIDialog') {
+      currentDialog = getTierValidationDialog();
+    } else if (type === 'AIDialog') {
       currentDialog = AI_Dialog();
     }
     if (type) {

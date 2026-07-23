@@ -2,7 +2,7 @@ import clsx from 'clsx';
 import { debounce, includes } from 'lodash';
 import BeePlugin from '@mailupinc/bee-plugin'
 import { Box, Button, Divider, Grid, Menu, MenuItem, TextField, Typography } from '@material-ui/core'
-import { useRef, useState, useEffect } from 'react'
+import { useRef, useState, useEffect, useMemo } from 'react'
 import DefaultScreen from '../DefaultScreen'
 import { useSelector, useDispatch } from 'react-redux';
 import { Loader } from '../../components/Loader/Loader';
@@ -138,6 +138,21 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
   const stepDataRef = useRef<PopupStep[]>([]);
   const currentStepRef = useRef<number>(stepParam);
   const isSwitchingStep = useRef(false);
+  // Queue of step numbers, one push per requestEditorSave() call, consumed FIFO by
+  // onSave. Lets onSave attribute a save to the step that was active when the save
+  // was REQUESTED, instead of whatever currentStepRef happens to be when the async
+  // save RESOLVES (which can already be a different step if the user switched in
+  // between) — see MultiStepPopupEditor_StepSwitchSaveRace_2026-07-21.md, point 4.
+  // NOTE: this is the part flagged as possibly-revertable — if reverted, restore
+  // `const savedForStep = currentStepRef.current;` in onSave and drop this ref and
+  // the requestEditorSave() wrapper (calling editorRef.current.save() directly again).
+  const pendingSaveStepsRef = useRef<number[]>([]);
+  // True from the moment a step-switch is requested until the new step's content
+  // has actually loaded into the canvas — keeps the loader up for the whole
+  // transition instead of it flickering off as soon as the outgoing step's save
+  // round-trip completes.
+  const stepSwitchLoaderRef = useRef(false);
+  const stepSwitchLoaderTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const prevPulseemLinksRef = useRef<Set<string>>(new Set());
   const latestConfigRef = useRef<any>(null);
   // Snapshot of fields actively used on steps OTHER than the one currently loaded,
@@ -348,8 +363,7 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
     setAlertLogout(true);
   });
   const navigateToLandingPageManagement = () => {
-    // navigate(`${sitePrefix}EditRegistrationPage`);
-    return false;
+    navigate(`${sitePrefix}PopUpManagement`);
   }
   const onLogoutAlert = () => {
     setIsResponseModal(false);
@@ -693,6 +707,44 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
   };
 
   //#region Pulseem Methods (Save, Delete, Exit, Back, Test Send)
+  // Wraps every editorRef.current.save() call so the step that was active AT
+  // REQUEST TIME is recorded, not just whatever step is active when the save
+  // later resolves. See pendingSaveStepsRef above for why this matters.
+  const requestEditorSave = () => {
+    pendingSaveStepsRef.current.push(currentStepRef.current);
+    //@ts-ignore
+    return editorRef.current.save();
+  };
+  // Called from onSave's validation guards when they block a save that was meant
+  // to precede a step switch — without this, a blocked switch would leave the
+  // step-switch loader stuck on forever, since the load() that would normally
+  // clear it (via onContentLoaded) never happens.
+  const abortPendingStepSwitch = () => {
+    //@ts-ignore
+    if (saveRef.current?.pendingStepSwitch != null) {
+      //@ts-ignore
+      saveRef.current = { ...saveRef.current, pendingStepSwitch: null };
+    }
+    if (stepSwitchLoaderTimeoutRef.current) {
+      clearTimeout(stepSwitchLoaderTimeoutRef.current);
+      stepSwitchLoaderTimeoutRef.current = null;
+    }
+    stepSwitchLoaderRef.current = false;
+  };
+  // BEE's onLoad hook (see configPopup.tsx) — fires once new content has actually
+  // loaded into the canvas. This is what actually turns the step-switch loader
+  // off in the normal/successful case (the 8s timeout in handleStepSwitch is only
+  // a safety net for when this never fires).
+  const onEditorContentLoaded = () => {
+    if (stepSwitchLoaderTimeoutRef.current) {
+      clearTimeout(stepSwitchLoaderTimeoutRef.current);
+      stepSwitchLoaderTimeoutRef.current = null;
+    }
+    if (stepSwitchLoaderRef.current) {
+      stepSwitchLoaderRef.current = false;
+      setLoader(false);
+    }
+  };
   const onSave = async (args: SaveLandingPageArguments) => {
     // Discard saves fired by BeePlugin during load() on a step switch —
     // the previous step's content was already persisted before switchToStep ran.
@@ -700,9 +752,14 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
       isSwitchingStep.current = false;
       return;
     }
-    // Capture the target step once so that if switchToStep() is called later
-    // in this same callback (changing the ref), the step number stays consistent.
-    const savedForStep = currentStepRef.current;
+    // Attribute this save to the step that was active when it was REQUESTED
+    // (queued by requestEditorSave), not currentStepRef.current — by the time this
+    // callback fires the user may have already switched to a different step, and
+    // reading the ref here would silently persist stale content under the wrong
+    // step number. Falls back to the ref only if something saved without going
+    // through requestEditorSave().
+    const dequeuedStep = pendingSaveStepsRef.current.shift();
+    const savedForStep = dequeuedStep !== undefined ? dequeuedStep : currentStepRef.current;
 
     // Duplicate-field guard using the actual current editor JSON (args.JsonData),
     // which is more accurate than stepDataRef for the current step.
@@ -723,6 +780,7 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
             // @ts-ignore
           setToastMessage({ severity: 'error', color: 'error', message: t('Popup.duplicateFieldAcrossSteps', { fields: duplicates.join(', ') }), showAnimtionCheck: false } as any);
         }
+        abortPendingStepSwitch();
         return;
       }
     }
@@ -762,6 +820,7 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
         setContactFieldWarningType(!hasContactField && !effectiveHasOptIn ? 'both' : !hasContactField ? 'contact' : 'optIn');
         setShowContactFieldWarning(true);
         if (_contactFieldCheckMode === 'block') {
+          abortPendingStepSwitch();
           return;
         }
         // 'warn' mode: fall through — the save below still proceeds normally.
@@ -1004,7 +1063,12 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
       console.error(e);
     }
     finally {
-      setLoader(false);
+      // While a step switch is in flight, leave the loader up — it's turned off
+      // by onContentLoaded once the new step's content has actually loaded, not
+      // as soon as the outgoing step's save round-trip completes.
+      if (!stepSwitchLoaderRef.current) {
+        setLoader(false);
+      }
     }
   }
   const saveDesign = async (redirectAfterSave = false, redirectUrl: string | null | undefined = null, showAnimation = true, isPublish: boolean = false, isAutoSave: boolean = false, contactFieldCheckMode: 'warn' | 'block' | undefined = undefined) => {
@@ -1016,14 +1080,22 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
     //@ts-ignore
     saveRef.current = { ...saveRef.current, redirectAfterSave: redirectAfterSave, redirectUrl: redirectUrl, showAnimation: showAnimation, isPublish: isPublish, isAutoSave: isAutoSave, contactFieldCheckMode: contactFieldCheckMode };
     //@ts-ignore
-    await editorRef.current.save();
+    await requestEditorSave();
     setTimeout(() => {
       const now = moment();
       setLastSaveText(`${t('common.lastSaveAt')} ${moment(now).format("hh:mm:ss")}`)
       setSilentSave(false)
     }, 2000);
   }
-  const onAutoSavePage = debounce((showGroupPopup: boolean = false) => {
+  // saveDesign is recreated every render — keep a ref to the latest one so the
+  // memoized debounce below can call it without closing over a stale version.
+  const saveDesignRef = useRef(saveDesign);
+  saveDesignRef.current = saveDesign;
+  // Memoized so the SAME debounced function persists across renders — this makes
+  // onAutoSavePage.cancel() (used by handleStepSwitch) reliably cancel whichever
+  // timer is actually pending, instead of a fresh instance every render leaving
+  // any previously-armed timer uncancellable.
+  const onAutoSavePage = useMemo(() => debounce((showGroupPopup: boolean = false) => {
     if (showGroupPopup) {
       saveRef.current = {
         //@ts-ignore
@@ -1032,8 +1104,8 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
       }
     }
     setSilentSave(true)
-    saveDesign(false, null, false, false, true);
-  }, 100);
+    saveDesignRef.current(false, null, false, false, true);
+  }, 100), []);
   const deleteCurrentLandingPage = async () => {
     //@ts-ignore
     await dispatch(deleteLandingPage(moduleId));
@@ -1197,13 +1269,13 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
       showAnimation: true
     };
     //@ts-ignore
-    await editorRef.current.save();
+    await requestEditorSave();
   }
   const onBeforeReinit = async () => {
     //@ts-ignore
     saveRef.current = { showAnimation: false, reInitEditor: true };
     //@ts-ignore
-    await editorRef.current.save();
+    await requestEditorSave();
   }
   //#region Step management
   // Rebuilds the full per-step active-field cache from a fresh step list — call
@@ -1392,10 +1464,39 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
       setDialogType({ type: 'tier' });
       return;
     }
+    // Ignore additional clicks while a switch is already in flight. Without this,
+    // rapid clicking can start a second overlapping switch before `currentStep`
+    // (React state, only updated once the first switch's save resolves) has had
+    // a chance to update — both requests then fight over the single-slot
+    // pendingStepSwitch and the shared timeout ref, and it's possible for the
+    // request that ends up driving switchToStep() to not be the one whose click
+    // this was, leaving the OTHER request's loader with no load()/onContentLoaded
+    // left to clear it (stuck until the 8s safety timeout, which itself keeps
+    // getting pushed back by every further rapid click). One switch at a time
+    // removes the overlap entirely.
+    if (stepSwitchLoaderRef.current) return;
+    // Cancel any debounced auto-save armed by an edit made just before this click.
+    // The explicit save below already flushes the step being left — the debounced
+    // one is redundant, and if left pending it can resolve AFTER switchToStep has
+    // already moved currentStepRef to the new step, misattributing this step's
+    // content to the new step. See MultiStepPopupEditor_StepSwitchSaveRace_2026-07-21.md.
+    onAutoSavePage.cancel();
+
+    // Show the loader for the whole switch, not just the outgoing save — turned
+    // off by onContentLoaded once the new step's content has loaded (or by the
+    // safety-net timeout below / abortPendingStepSwitch if the switch gets blocked).
+    stepSwitchLoaderRef.current = true;
+    setLoader(true);
+    if (stepSwitchLoaderTimeoutRef.current) clearTimeout(stepSwitchLoaderTimeoutRef.current);
+    stepSwitchLoaderTimeoutRef.current = setTimeout(() => {
+      stepSwitchLoaderRef.current = false;
+      stepSwitchLoaderTimeoutRef.current = null;
+      setLoader(false);
+    }, 8000);
+
     //@ts-ignore
     saveRef.current = { ...saveRef.current, pendingStepSwitch: targetStep, showAnimation: false };
-    //@ts-ignore
-    editorRef.current.save();
+    requestEditorSave();
   };
 
   const handleAddStepClick = () => {
@@ -1454,7 +1555,7 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
     //@ts-ignore
     saveRef.current = { ...saveRef.current, pendingDuplicateStep: true, showAnimation: false };
     //@ts-ignore
-    editorRef.current.save();
+    requestEditorSave();
   };
 
   const handleDeleteStep = async (stepNumber: number) => {
@@ -1952,7 +2053,7 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
         </Typography>
       ),
       onConfirm: () => deleteCurrentLandingPage(),
-      onClose: () => navigateToLandingPageManagement(),
+      onClose: () => setDialogType(null),
     };
   }
   const renderTemplateConfirmationDialog = (newTemplate: LandingPageTemplate) => {
@@ -2141,7 +2242,7 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
             groups: tempArr
           };
           //@ts-ignore
-          await editorRef.current.save();
+          await requestEditorSave();
         }
       }
       else {
@@ -2187,7 +2288,8 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
       includeOptIn: !fieldsUsedElsewhere.has('optIn'),
       onFormAdded: onFormAdded,
       // languageCode: language
-      languageCode: editorLanguage
+      languageCode: editorLanguage,
+      onContentLoaded: onEditorContentLoaded
     }) as any;
   }
 
