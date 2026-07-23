@@ -211,6 +211,7 @@
     "roleNone": "Pole danych",
     "roleEmail": "E-mail — tożsamość",
     "roleCellphone": "Telefon komórkowy — tożsamość",
+    "roleSupervisorEmail": "E-mail przełożonego",
     "previewTitle": "Podgląd — pierwsze 5 wierszy",
     "identityBanner": "Wszystkie pozostałe kolumny zostaną zapisane jako dynamiczne pola danych z nagłówkami z pliku",
     "noIdentityWarning": "Nie zaznaczono kolumn tożsamości — źródło zostanie zapisane tylko do podglądu, wyszukiwania i eksportu, bez możliwości wysyłki",
@@ -252,6 +253,7 @@
   },
   "view": {
     "freeTextPlaceholder": "Szukaj po e-mailu, telefonie lub dowolnej komórce",
+    "filterValueLabel": "Wartość filtra",
     "addFilter": "Dodaj filtr",
     "operator": {
       "1": "Równa się",

@@ -39,7 +39,10 @@ const ROWS_PAGE_SIZE = 50;
 const EMAIL_IDENTITY_FLAG = getChannelDescriptor(eSendChannel.EMAIL).identityFlag;
 
 const DataSourceView = ({ classes }: ClassesType) => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+    // RTL: mirror the Send paper-plane horizontally so it points "forward" (leftward) — see DataSources.tsx.
+    const isRtl = (i18n.dir?.() ?? 'rtl') === 'rtl';
+    const sendIconStyle = isRtl ? { transform: 'scaleX(-1)' } : undefined;
     const dispatch = useDispatch();
     const Redirect = useRedirect();
     const { id } = useParams();
@@ -202,7 +205,7 @@ const DataSourceView = ({ classes }: ClassesType) => {
                     <Tooltip title={t('DataSources.actions.summary')}><IconButton aria-label={t('DataSources.actions.summary')} onClick={() => openSummary()}><Assessment /></IconButton></Tooltip>
                 )}
                 {canSend && details?.[EMAIL_IDENTITY_FLAG] && details?.Status === eDataSourceStatus.READY && (
-                    <Tooltip title={t('DataSources.goToSend')}><IconButton aria-label={t('DataSources.goToSend')} onClick={() => Redirect({ url: `${sitePrefix}SmartSend?dataSourceId=${details?.DataSourceID}`, openNewTab: false })}><Send /></IconButton></Tooltip>
+                    <Tooltip title={t('DataSources.goToSend')}><IconButton aria-label={t('DataSources.goToSend')} onClick={() => Redirect({ url: `${sitePrefix}SmartSend?dataSourceId=${details?.DataSourceID}`, openNewTab: false })}><Send style={sendIconStyle} /></IconButton></Tooltip>
                 )}
             </Box>
         </Box>

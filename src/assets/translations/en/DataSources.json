@@ -211,6 +211,7 @@
     "roleNone": "Data field",
     "roleEmail": "Email — identity",
     "roleCellphone": "Mobile — identity",
+    "roleSupervisorEmail": "Supervisor email",
     "previewTitle": "Preview — first 5 rows",
     "identityBanner": "All other columns will be saved as dynamic data fields using the file headers",
     "noIdentityWarning": "No identity columns were marked — the source will be saved for viewing, search and export only, and cannot be sent to",
@@ -252,6 +253,7 @@
   },
   "view": {
     "freeTextPlaceholder": "Search by email, mobile or any cell",
+    "filterValueLabel": "Filter value",
     "addFilter": "Add filter",
     "operator": {
       "1": "Equals",
