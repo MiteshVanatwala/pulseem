@@ -181,6 +181,23 @@
         "oldEditor": "Legacy editor — not supported"
       },
       "selectAria": "Select a campaign to send"
+    },
+    "manage": {
+      "title": "Smart Send campaigns",
+      "columns": {
+        "campaign": "Campaign",
+        "source": "Data source",
+        "status": "Status",
+        "version": "Version",
+        "channel": "Channel",
+        "updated": "Last updated",
+        "actions": "Actions"
+      },
+      "empty": "No smart-send campaigns yet",
+      "outdatedOnly": "Show outdated only",
+      "staleChip": "V{{mapped}} · V{{latest}}",
+      "tabSources": "Sources",
+      "tabSmartSend": "Smart Send"
     }
   },
   "retry": "Try again",

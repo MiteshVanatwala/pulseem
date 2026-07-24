@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import {
     Box, Button, TextField, InputAdornment, IconButton, Table, TableBody, TableCell, TableContainer,
     TableHead, TableRow, TablePagination, Typography, Tooltip, Chip, Card, CardContent, Dialog,
-    DialogTitle, DialogContent, DialogActions
+    DialogTitle, DialogContent, DialogActions, Tabs, Tab
 } from '@material-ui/core';
 import {
     Visibility, GetApp, Edit as EditIcon, History, Assessment, Delete as DeleteIcon, Send, Search, Add
@@ -36,6 +36,7 @@ import UploadWizardDialog from './components/UploadWizardDialog';
 import DataSourceSummary from './components/DataSourceSummary';
 import ExportDialog from './components/ExportDialog';
 import VersionsHistoryDialog from './components/VersionsHistoryDialog';
+import SmartSendManageTab from './SmartSendManageTab';
 
 const PAGE_NAME = 'DataSources';
 const POLL_MS = 4000;
@@ -73,6 +74,9 @@ const DataSources = ({ classes }: ClassesType) => {
     const [versionsData, setVersionsData] = useState<{ dataSourceId: number | null; versions: DataSourceVersion[]; activeVersionId: number | null }>({ dataSourceId: null, versions: [], activeVersionId: null });
     const [toastMessage, setToastMessage] = useState<ERROR_TYPE>(null);
     const [loading, setLoading] = useState(false);
+    // Which tab is showing. The sources tab keeps its own PAGE_NAME/search/polling unchanged; the
+    // Smart Send management tab owns its own state (PAGE_NAME_SS='DataSourcesSmartSend') inside SmartSendManageTab.
+    const [activeTab, setActiveTab] = useState('sources');
 
     const pollingRef = useRef<any>(null);
     const prevStatusesRef = useRef<Map<number, number>>(new Map());
@@ -131,7 +135,7 @@ const DataSources = ({ classes }: ClassesType) => {
     // ── silent polling while any source is pending/processing (no flicker, no interval leak) ──
     const hasInFlight = items.some(i => i.Status === eDataSourceStatus.PENDING || i.Status === eDataSourceStatus.PROCESSING);
     useEffect(() => {
-        if (hasInFlight && !pollingRef.current) {
+        if (hasInFlight && activeTab === 'sources' && !pollingRef.current) {
             pollingRef.current = setInterval(async () => {
                 const res: any = await dispatch(getDataSources({ ...searchData, silent: true }));
                 const polled: DataSourceListItem[] = res?.payload?.Data?.items ?? [];
@@ -149,7 +153,8 @@ const DataSources = ({ classes }: ClassesType) => {
                 });
             }, POLL_MS);
         }
-        if (!hasInFlight && pollingRef.current) {
+        // Pause the poll on the other tab too: stop when nothing is in-flight OR the Smart Send tab is active.
+        if ((!hasInFlight || activeTab !== 'sources') && pollingRef.current) {
             clearInterval(pollingRef.current);
             pollingRef.current = null;
         }
@@ -161,7 +166,7 @@ const DataSources = ({ classes }: ClassesType) => {
             if (pollingRef.current) { clearInterval(pollingRef.current); pollingRef.current = null; }
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [hasInFlight, searchData]);
+    }, [hasInFlight, searchData, activeTab]);
 
     // ── handlers ──
     const doSearch = () => setSearchData(s => ({ ...s, SearchTerm: searchInput.trim(), PageIndex: 1 }));
@@ -448,20 +453,35 @@ const DataSources = ({ classes }: ClassesType) => {
             <Box className={classes.mb50}>
                 <Box className={'topSection onlyTitleBar'} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
                     <Title Text={t('DataSources.title')} classes={classes} ContainerStyle={{ border: 'none !important' }} />
-                    <Box style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                        {canUpload && (
-                            <Button variant="contained" color="primary" startIcon={<Add />} onClick={() => setWizardOpen(true)}>
-                                {t('DataSources.uploadButton')}
-                            </Button>
-                        )}
-                        {canSend && (
-                            <Button variant="outlined" color="primary" startIcon={<Send style={sendIconStyle} />} onClick={() => Redirect({ url: `${sitePrefix}SmartSend`, openNewTab: false })}>
-                                {t('DataSources.send.title')}
-                            </Button>
-                        )}
-                    </Box>
+                    {activeTab === 'sources' && (
+                        <Box style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                            {canUpload && (
+                                <Button variant="contained" color="primary" startIcon={<Add />} onClick={() => setWizardOpen(true)}>
+                                    {t('DataSources.uploadButton')}
+                                </Button>
+                            )}
+                            {canSend && (
+                                <Button variant="outlined" color="primary" startIcon={<Send style={sendIconStyle} />} onClick={() => Redirect({ url: `${sitePrefix}SmartSend`, openNewTab: false })}>
+                                    {t('DataSources.send.title')}
+                                </Button>
+                            )}
+                        </Box>
+                    )}
                 </Box>
 
+                <Tabs
+                    value={activeTab}
+                    onChange={(_: any, v: string) => setActiveTab(v)}
+                    indicatorColor="primary"
+                    textColor="primary"
+                    style={{ borderBottom: '1px solid #e0e0e0', marginTop: 8 }}
+                >
+                    <Tab value="sources" label={t('DataSources.send.manage.tabSources')} />
+                    <Tab value="smartsend" label={t('DataSources.send.manage.tabSmartSend')} />
+                </Tabs>
+
+                {activeTab === 'sources' ? (
+                <>
                 <Box style={{ display: 'flex', gap: 8, alignItems: 'center', margin: '12px 0' }}>
                     <TextField
                         variant="outlined"
@@ -482,6 +502,10 @@ const DataSources = ({ classes }: ClassesType) => {
                 <Loader isOpen={loading && listStatus === 'loading'} />
                 {toastMessage && <Toast data={toastMessage} />}
                 {renderDialogs()}
+                </>
+                ) : (
+                    <SmartSendManageTab classes={classes} />
+                )}
             </Box>
         </DefaultScreen>
     );

@@ -4,7 +4,7 @@ import { ERROR_TYPE } from '../../helpers/Types/common';
 import {
     eSendChannel, CHANNELS, getChannelDescriptor,
     GetMappingResult, SaveMappingRequest, SmartSendTokenInfo, SmartSendColumn,
-    SmartSendDataSourceInfo, FillSummary
+    SmartSendDataSourceInfo, FillSummary, SmartSendListItem
 } from '../../Models/DataSources/SmartSend';
 import {
     getSendSummary, getEmailSendSettings, setEmailSendSettings,
@@ -15,7 +15,8 @@ import { getDataSource } from './dataSourcesSlice';
 import {
     mockGetMapping, mockSetMapping, mockGetSampleValues, mockFillAndSummarize, mockSendSmart,
     mockGetSendSummary, mockGetEmailSendSettings, mockSetEmailSendSettings,
-    mockGetNewsletterPreview, mockTestSend, mockSaveCampaignInfo, mockGetCampaignInfo
+    mockGetNewsletterPreview, mockTestSend, mockSaveCampaignInfo, mockGetCampaignInfo,
+    mockGetSmartSendList
 } from './_mocks/smartSendMock';
 
 // ── MOCK SWITCH ──────────────────────────────────────────────────────────────
@@ -57,6 +58,10 @@ interface SmartSendState {
     mappingError: number | null;              // StatusCode of a failed getMapping (404/927 → distinct UI, §16)
     columnsStatus: LoadStatus;                // loadSourceColumns lifecycle (spinner/retry for the source-column load)
     saveStatus: LoadStatus;
+    // Session-B · the DataSources "Smart Send" management-tab list (own state; the tab
+    // reads s.smartSend.smartSendList). Shape mirrors dataSourcesSlice.list.
+    smartSendList: { items: SmartSendListItem[]; total: number; page: number; pageSize: number } | null;
+    smartSendListStatus: LoadStatus;
     ToastMessages: { [k: string]: ERROR_TYPE };
 }
 
@@ -114,6 +119,26 @@ export const sendSmart = createAsyncThunk(
         try {
             const response = await PulseemReactInstance.put(
                 `${api}Send/${arg.campaignId}?sendToSupervisor=${arg.sendToSupervisor}&channel=${arg.channel}`);
+            return response.data;
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    });
+
+// Session-B · the management-tab list (GET DataSourcesSender/GetList). Read-only, gated
+// server-side by CheckAccess only (like GetMapping). MOCK-GATED like every own thunk until
+// the API deploys. Paging is rowsToSkip/pageSize (server contract), computed by the tab.
+export const getSmartSendList = createAsyncThunk(
+    'SmartSend/GetList', async (arg: { search?: string; outdatedOnly?: boolean; channel?: eSendChannel; pageSize?: number; rowsToSkip?: number }, thunkAPI) => {
+        if (USE_SEND_MOCK) return mockGetSmartSendList(arg);
+        try {
+            const qs = new URLSearchParams();
+            if (arg.search) qs.set('search', arg.search);
+            if (arg.outdatedOnly) qs.set('outdatedOnly', String(arg.outdatedOnly));
+            if (arg.channel != null) qs.set('channel', String(arg.channel));
+            if (arg.pageSize != null) qs.set('pageSize', String(arg.pageSize));
+            if (arg.rowsToSkip != null) qs.set('rowsToSkip', String(arg.rowsToSkip));
+            const response = await PulseemReactInstance.get(`${api}GetList?${qs.toString()}`);
             return response.data;
         } catch (error: any) {
             return thunkAPI.rejectWithValue({ error: error.message });
@@ -252,6 +277,8 @@ const initialState: SmartSendState = {
     mappingError: null,
     columnsStatus: 'idle',
     saveStatus: 'idle',
+    smartSendList: null,
+    smartSendListStatus: 'idle',
     // message = i18n key (Toast runs it through t()). showAnimtionCheck spelling is intentional.
     ToastMessages: {
         GENERAL_ERROR: { severity: 'error', color: 'error', message: 'DataSources.send.errors.generalError', showAnimtionCheck: false },
@@ -416,6 +443,20 @@ export const smartSendSlice = createSlice({
         });
         builder.addCase(sendSmart.rejected, (state) => {
             state.sendResult = { StatusCode: 500, Message: 'internalerror', Data: null };
+        });
+
+        // Session-B · management-tab list. The tab does not poll, so status transitions are
+        // unconditional — mirrors dataSourcesSlice.getDataSources (minus the silent-poll guard).
+        builder.addCase(getSmartSendList.pending, (state) => {
+            state.smartSendListStatus = 'loading';
+        });
+        builder.addCase(getSmartSendList.fulfilled, (state, action: any) => {
+            const data = action.payload?.Data;
+            if (data) state.smartSendList = { items: data.items, total: data.total, page: data.page, pageSize: data.pageSize };
+            state.smartSendListStatus = 'succeeded';
+        });
+        builder.addCase(getSmartSendList.rejected, (state) => {
+            state.smartSendListStatus = 'failed';
         });
     }
 });

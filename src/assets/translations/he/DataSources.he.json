@@ -181,6 +181,23 @@
         "oldEditor": "עורך ישן — לא נתמך"
       },
       "selectAria": "בחירת קמפיין לשליחה"
+    },
+    "manage": {
+      "title": "קמפיינים לשליחה חכמה",
+      "columns": {
+        "campaign": "קמפיין",
+        "source": "מקור נתונים",
+        "status": "סטטוס",
+        "version": "גרסה",
+        "channel": "ערוץ",
+        "updated": "עודכן לאחרונה",
+        "actions": "פעולות"
+      },
+      "empty": "אין עדיין קמפיינים לשליחה חכמה",
+      "outdatedOnly": "הצג מיושנות בלבד",
+      "staleChip": "V{{mapped}} · V{{latest}}",
+      "tabSources": "מקורות",
+      "tabSmartSend": "שליחה חכמה"
     }
   },
   "retry": "נסה שוב",

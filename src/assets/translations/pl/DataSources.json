@@ -181,6 +181,23 @@
         "oldEditor": "Stary edytor — nieobsługiwany"
       },
       "selectAria": "Wybierz kampanię do wysyłki"
+    },
+    "manage": {
+      "title": "Kampanie inteligentnej wysyłki",
+      "columns": {
+        "campaign": "Kampania",
+        "source": "Źródło danych",
+        "status": "Status",
+        "version": "Wersja",
+        "channel": "Kanał",
+        "updated": "Ostatnia aktualizacja",
+        "actions": "Akcje"
+      },
+      "empty": "Brak kampanii inteligentnej wysyłki",
+      "outdatedOnly": "Pokaż tylko nieaktualne",
+      "staleChip": "V{{mapped}} · V{{latest}}",
+      "tabSources": "Źródła",
+      "tabSmartSend": "Inteligentna wysyłka"
     }
   },
   "retry": "Spróbuj ponownie",
