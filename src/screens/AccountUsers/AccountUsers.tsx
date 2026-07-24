@@ -152,7 +152,7 @@ const AccountUsers = ({ classes }: any) => {
         key: 'login',
         uIcon: AiOutlineLogin,
         lable: t('common.Login'),
-        remove: windowSize === 'xs' || !isGlobal || IsPoland,
+        remove: windowSize !== 'xs' && (!isGlobal || IsPoland),
         disable: false,
         rootClass: clsx(classes.paddingIcon, classes.f18),
         onClick: () => window.location.href = `/Pulseem/MiddleWareReactLogin.aspx?encSubAccountID=${row.CustomGuidEnc}`
