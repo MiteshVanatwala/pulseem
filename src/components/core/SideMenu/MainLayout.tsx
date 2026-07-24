@@ -140,7 +140,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
       />
       <main className={getContentClasses()}>
         <div className={classes.contentContainer} style={{ 
-          marginTop: isMobile ? 56 : 0 
+          marginTop: isMobile ? 76 : 0 
         }}>
           {/* Pass the toggle function to children via React.cloneElement */}
           {React.Children.map(children, child => {
