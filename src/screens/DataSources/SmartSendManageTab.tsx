@@ -100,6 +100,11 @@ const SmartSendManageTab = ({ classes }: ClassesType) => {
     const changePage = (_: any, page: number) => setSearchData(s => ({ ...s, PageIndex: page + 1 }));
     const changeRows = (e: any) => setSearchData(s => ({ ...s, PageSize: parseInt(e.target.value, 10), PageIndex: 1 }));
     const toggleOutdated = (e: any) => setSearchData(s => ({ ...s, OutdatedOnly: e.target.checked, PageIndex: 1 }));
+    // Distinguish "no data yet" from "no match": when a search term OR the outdatedOnly filter is
+    // active, an empty grid means "no results" — and the reset must clear BOTH (the toolbar's
+    // clearSearch clears only the term).
+    const hasFilter = !!searchData.SearchTerm || searchData.OutdatedOnly;
+    const resetFilters = () => { setSearchInput(''); setSearchData(s => ({ ...s, SearchTerm: '', OutdatedOnly: false, PageIndex: 1 })); };
 
     // The version chip is the ONLY entry into the mapping screen from this tab (§7.3): amber +
     // clickable when a newer source version exists, otherwise plain text. Same route as SmartSendPicker.
@@ -189,8 +194,10 @@ const SmartSendManageTab = ({ classes }: ClassesType) => {
 
     const renderEmptyState = () => (
         <Box style={{ textAlign: 'center', padding: '48px 16px', color: '#5b6b7b' }}>
-            <Typography style={{ fontSize: 18, fontWeight: 600 }}>{t('DataSources.send.manage.empty')}</Typography>
-            {!!searchData.SearchTerm && <Button onClick={clearSearch} style={{ marginTop: 12 }}>{t('DataSources.clearSearch')}</Button>}
+            <Typography style={{ fontSize: 18, fontWeight: 600 }}>
+                {t(hasFilter ? 'DataSources.send.picker.noResults' : 'DataSources.send.manage.empty')}
+            </Typography>
+            {hasFilter && <Button onClick={resetFilters} style={{ marginTop: 12 }}>{t('DataSources.clearSearch')}</Button>}
         </Box>
     );
 
@@ -225,7 +232,7 @@ const SmartSendManageTab = ({ classes }: ClassesType) => {
             <Box style={{ display: 'flex', gap: 8, alignItems: 'center', margin: '12px 0', flexWrap: 'wrap' }}>
                 <TextField
                     variant="outlined"
-                    label={t('DataSources.searchPlaceholder')}
+                    label={t('DataSources.send.picker.searchPlaceholder')}
                     value={searchInput}
                     onChange={(e) => setSearchInput(e.target.value)}
                     onKeyDown={(e) => { if (e.key === 'Enter') doSearch(); }}
