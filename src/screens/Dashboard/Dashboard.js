@@ -95,7 +95,7 @@ const DashboardScreen = ({ classes }) => {
   const isWhiteLabel = accountSettings.Account?.ReferrerID > 0 && WhiteLabelObject[accountSettings.Account?.ReferrerID] !== undefined;
   // const isCompactDashboard = window.innerWidth <= 1500;
   // const shouldStackDashboardCards = isCompactDashboard || (isDrawerOpen && IS_MAX_WINDOW_WIDTH_WHEN_DRAWER_OPEN);
-  const shouldStackDashboardCards = isDrawerOpen && IS_MAX_WINDOW_WIDTH_WHEN_DRAWER_OPEN;
+  const shouldStackDashboardCards = isDrawerOpen && IS_MAX_WINDOW_WIDTH_WHEN_DRAWER_OPEN();
 
   const onIgnoreTerms = async () => {
     setShowTermsOfUse(false);
@@ -122,7 +122,7 @@ const DashboardScreen = ({ classes }) => {
         {/* Previous layout with shortcuts: lg={9} xl={10} */}
         <Grid item xs={12} sm={12} md={12} lg={12} xl={12} className={clsx(classes.dashboardTop)}>
           <Grid container direction='row'>
-            <Grid item xs={12} sm={12} md={6} lg={shouldStackDashboardCards ? 12 : 4} style={{ marginInlineEnd: (shouldStackDashboardCards && windowSize !== 'xs' && windowSize !== 'sm' && windowSize !== 'md') ? '30px' : '' }}>
+            <Grid item xs={12} sm={12} md={6} lg={shouldStackDashboardCards ? 12 : 4} style={{ marginInlineEnd: (shouldStackDashboardCards && windowSize !== 'xs' && windowSize !== 'sm' && windowSize !== 'md' && windowSize !== 'sl') ? '30px' : '' }}>
               {<BulkStatus classes={classes} />}
               {<GlobalBalance classes={classes} />}
             </Grid>

@@ -66,7 +66,7 @@ const SmsReport = ({ classes }) => {
   const [dialogType, setDialogType] = useState(null);
   const [TierMessageCode, setTierMessageCode] = useState('');
   const [showTierPlans, setShowTierPlans] = useState(false);
-  const responsiveStyle = (isDrawerOpen && IS_MAX_WINDOW_WIDTH_WHEN_DRAWER_OPEN) ? {
+  const responsiveStyle = (isDrawerOpen && IS_MAX_WINDOW_WIDTH_WHEN_DRAWER_OPEN()) ? {
       flexWrap: "wrap",
       textAlign: "right",
       gap: "10px",
