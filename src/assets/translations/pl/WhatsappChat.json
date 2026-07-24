@@ -80,5 +80,8 @@
 	"refreshChat": "Odśwież",
 	"moreActions": "Więcej opcji",
 	"clickPlaceholderHint": "Kliknij wyróżniony symbol zastępczy, aby go wypełnić.",
-	"editing": "Edytowanie"
+	"editing": "Edytowanie",
+	"filter_groups": "Grupy",
+	"filter_search_placeholder": "Szukaj...",
+	"filter_empty_groups": "Nie znaleziono grup"
 }

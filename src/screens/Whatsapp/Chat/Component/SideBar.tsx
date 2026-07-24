@@ -5,6 +5,7 @@ import AccountUser from '../../../../assets/images/acc-user.jpg';
 import {
 	Box,
 	Button,
+	Checkbox,
 	IconButton,
 	MenuItem,
 	Tab,
@@ -23,6 +24,7 @@ import {
 	Typography,
 } from '@material-ui/core';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
+import Autocomplete from '@mui/material/Autocomplete';
 import { FaCalendar, FaFilter, FaTrash } from 'react-icons/fa';
 import { MdAddComment, MdRefresh } from 'react-icons/md';
 import {
@@ -47,6 +49,8 @@ import { setCookie } from '../../../../helpers/Functions/cookies';
 import { TablePagination } from '../../../../components/managment/index';
 import { COLORS } from '../../../../helpers/Constants';
 import { getWhatsappChatTag } from '../../../../redux/reducers/whatsappSlice';
+import { getGroupsBySubAccountId } from '../../../../redux/reducers/groupSlice';
+import { Group } from '../../../../Models/Groups/Group';
 import { PulseemReactInstance } from '../../../../helpers/Api/PulseemReactAPI';
 import Toast from '../../../../components/Toast/Toast.component';
 import DynamicConfirmDialog from '../../../../components/DialogTemplates/DynamicConfirmDialog';
@@ -85,6 +89,7 @@ const SideBar = ({
 	personalFields,
 	landingPageData,
 	searchTextRef,
+	selectedGroupsRef,
 	onRegisterMobileActions,
 }: WhatsappChatSideBarProps) => {
 	const { t: translator } = useTranslation();
@@ -92,6 +97,7 @@ const SideBar = ({
 		(state: { core: coreProps }) => state.core,
 	);
 	const { agentList } = useSelector((state: StateType) => state.whatsapp);
+	const { subAccountAllGroups } = useSelector((state: any) => state.group);
 	const isAdmin =
 		userRoles &&
 		userRoles.AllowSend &&
@@ -120,6 +126,12 @@ const SideBar = ({
 		[],
 	);
 	const [dialogSelectedTags, setDialogSelectedTags] = useState<number[]>([]);
+	const [selectedGroups, setSelectedGroups] = useState<number[]>([]);
+	const [dialogSelectedGroups, setDialogSelectedGroups] = useState<number[]>(
+		[],
+	);
+	const [groupsLoaded, setGroupsLoaded] = useState<boolean>(false);
+	const [groupsLoading, setGroupsLoading] = useState<boolean>(false);
 	const [dialogTimePeriod, setDialogTimePeriod] = useState<string>('');
 	const [dialogStartDate, setDialogStartDate] = useState<string>('');
 	const [dialogEndDate, setDialogEndDate] = useState<string>('');
@@ -160,6 +172,10 @@ const SideBar = ({
 	useEffect(() => {
 		searchTextRef.current = searchText;
 	}, [searchText, searchTextRef]);
+
+	useEffect(() => {
+		selectedGroupsRef.current = selectedGroups;
+	}, [selectedGroups, selectedGroupsRef]);
 
 	useEffect(() => {
 		setSearchText('');
@@ -286,6 +302,7 @@ const SideBar = ({
 			selectedTags,
 			startTime,
 			endTime,
+			selectedGroups,
 		);
 	};
 
@@ -380,6 +397,7 @@ const SideBar = ({
 			selectedTags,
 			startTime,
 			endTime,
+			selectedGroups,
 		);
 	};
 
@@ -400,6 +418,7 @@ const SideBar = ({
 			newSelectedTags,
 			startTime,
 			endTime,
+			selectedGroups,
 		);
 	};
 
@@ -411,6 +430,39 @@ const SideBar = ({
 				return tag
 					? { id: tagId, name: tag.TagName, color: tag.TagColor }
 					: null;
+			})
+			.filter(Boolean);
+	};
+
+	const handleRemoveGroupFilter = (groupId: number) => {
+		const newSelectedGroups = selectedGroups.filter((id) => id !== groupId);
+		setSelectedGroups(newSelectedGroups);
+		// Trigger fetch immediately with remaining filters
+		fetchMoreContacts(
+			searchText,
+			filterBySelected,
+			true,
+			contactsPaginationSetting?.PageSize || 10,
+			1,
+			false,
+			startDate,
+			endDate,
+			selectedAgents,
+			selectedTags,
+			startTime,
+			endTime,
+			newSelectedGroups,
+		);
+	};
+
+	// Get selected groups details (name), for the filter chips row
+	const getSelectedGroupsDetails = () => {
+		return selectedGroups
+			.map((groupId) => {
+				const group = (subAccountAllGroups as Group[])?.find(
+					(g) => g.GroupID === groupId,
+				);
+				return group ? { id: groupId, name: group.GroupName } : null;
 			})
 			.filter(Boolean);
 	};
@@ -427,6 +479,7 @@ const SideBar = ({
 		setCookie(agentCookieKey, '0');
 		setSelectedAgents([]);
 		setSelectedTags([]);
+		setSelectedGroups([]);
 		// Note: useEffects will handle the fetch after state updates
 	};
 
@@ -461,12 +514,14 @@ const SideBar = ({
 		// Apply agents from dialog to actual state
 		setSelectedAgents(dialogSelectedAgents);
 
+		setSelectedGroups(dialogSelectedGroups);
+
 		// If agents selected, apply the first one as selectedAgent
 		if (dialogSelectedAgents.length > 0) {
 			setAgentSelected(dialogSelectedAgents[0]);
 			setCookie(agentCookieKey, String(dialogSelectedAgents[0]));
 
-			// AND logic: send agents and tags separately
+			// AND logic: send agents, tags, and groups separately
 			fetchMoreContacts(
 				searchText,
 				filterBySelected,
@@ -480,6 +535,7 @@ const SideBar = ({
 				dialogSelectedTags,
 				dialogStartTime,
 				dialogEndTime,
+				dialogSelectedGroups,
 			);
 		} else {
 			setAgentSelected(0);
@@ -593,6 +649,7 @@ const SideBar = ({
 				selectedTags,
 				'00:01',
 				'23:59',
+				selectedGroups,
 			);
 		}
 	};
@@ -816,6 +873,7 @@ const SideBar = ({
 						selectedTags,
 						startTime,
 						endTime,
+						selectedGroups,
 					);
 				//}
 
@@ -881,6 +939,7 @@ const SideBar = ({
 			selectedTags,
 			startTime,
 			endTime,
+			selectedGroups,
 		);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [selectedAgent, debouncedValue]);
@@ -902,6 +961,7 @@ const SideBar = ({
 			selectedTags,
 			startTime,
 			endTime,
+			selectedGroups,
 		);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [startDate, endDate]);
@@ -923,9 +983,30 @@ const SideBar = ({
 			selectedTags,
 			startTime,
 			endTime,
+			selectedGroups,
 		);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [selectedTags]);
+
+	useEffect(() => {
+		if (isInitialMount.current) return;
+		fetchMoreContacts(
+			searchText,
+			filterBySelected,
+			true,
+			contactsPaginationSetting?.PageSize || 10,
+			1,
+			false,
+			startDate,
+			endDate,
+			selectedAgents,
+			selectedTags,
+			startTime,
+			endTime,
+			selectedGroups,
+		);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [selectedGroups]);
 
 	return (
 		<>
@@ -1163,7 +1244,16 @@ const SideBar = ({
 										// Initialize dialog states from current values
 										setDialogSelectedAgents([...selectedAgents]);
 										setDialogSelectedTags([...selectedTags]);
+										setDialogSelectedGroups([...selectedGroups]);
 										setShowFilterDialog(true);
+										// Lazy-load the groups list on first open of the filter panel
+										if (!groupsLoaded && !groupsLoading) {
+											setGroupsLoading(true);
+											dispatch<any>(getGroupsBySubAccountId()).finally(() => {
+												setGroupsLoading(false);
+												setGroupsLoaded(true);
+											});
+										}
 									}}
 									onMouseDown={(e) => {
 										e.preventDefault();
@@ -1179,7 +1269,8 @@ const SideBar = ({
 				</div>
 				{(getDateChipLabel() ||
 					selectedAgents.length > 0 ||
-					selectedTags.length > 0) && (
+					selectedTags.length > 0 ||
+					selectedGroups.length > 0) && (
 					<Box className={classes.chipsContainer}>
 						<Box className={classes.chipsWrapper}>
 							{getDateChipLabel() && (
@@ -1211,6 +1302,15 @@ const SideBar = ({
 										fontWeight: '500',
 										margin: '2px',
 									}}
+								/>
+							))}
+							{getSelectedGroupsDetails().map((group: any) => (
+								<Chip
+									key={group.id}
+									label={group.name}
+									onDelete={() => handleRemoveGroupFilter(group.id)}
+									size="small"
+									className={classes.agentChip}
 								/>
 							))}
 						</Box>
@@ -1302,6 +1402,7 @@ const SideBar = ({
 							selectedTags,
 							startTime,
 							endTime,
+							selectedGroups,
 						)
 					}
 					contactsPaginationSetting={contactsPaginationSetting}
@@ -1335,6 +1436,7 @@ const SideBar = ({
 							selectedTags,
 							startTime,
 							endTime,
+							selectedGroups,
 						);
 					}}
 					rowsPerPageOptions={[10, 20, 50, 100] as any}
@@ -1355,6 +1457,7 @@ const SideBar = ({
 							selectedTags,
 							startTime,
 							endTime,
+							selectedGroups,
 						);
 					}}
 					style={{
@@ -1586,6 +1689,61 @@ const SideBar = ({
 							</Box>
 						</Box>
 					)}
+					{/* Groups Section */}
+					<Box style={{ marginBottom: '24px' }}>
+						<h3
+							style={{
+								margin: '0 0 12px 0',
+								fontSize: '14px',
+								fontWeight: '600',
+								color: '#333',
+							}}
+						>
+							{translator('whatsappChat.filter_groups')}
+						</h3>
+						<Autocomplete
+							multiple
+							disableCloseOnSelect
+							loading={groupsLoading}
+							options={(subAccountAllGroups as Group[]) || []}
+							getOptionLabel={(group: any) => group.GroupName}
+							isOptionEqualToValue={(option: any, value: any) =>
+								option.GroupID === value.GroupID
+							}
+							value={((subAccountAllGroups as Group[]) || []).filter((g) =>
+								dialogSelectedGroups.includes(g.GroupID),
+							)}
+							onChange={(_e, newValue: Group[]) => {
+								setDialogSelectedGroups(newValue.map((g) => g.GroupID));
+							}}
+							noOptionsText={translator('whatsappChat.filter_empty_groups')}
+							renderOption={(props, group: any) => (
+								<li
+									{...props}
+									key={group.GroupID}
+									style={{ direction: isRTL ? 'rtl' : 'ltr' }}
+								>
+									<Checkbox
+										checked={dialogSelectedGroups.includes(group.GroupID)}
+										style={{ [isRTL ? 'marginLeft' : 'marginRight']: 8 }}
+									/>
+									{group.GroupName}
+								</li>
+							)}
+							renderInput={(params) => (
+								// @ts-ignore mixing @mui/material Autocomplete params with the v4 TextField, matching GroupSelectorPopUp.tsx
+								<TextField
+									{...params}
+									placeholder={translator(
+										'whatsappChat.filter_search_placeholder',
+									)}
+									size="small"
+									variant="outlined"
+								/>
+							)}
+							style={{ width: '100%', direction: isRTL ? 'rtl' : 'ltr' }}
+						/>
+					</Box>
 					<div ref={dateRangeRef}>
 						<Box style={{ marginBottom: '24px' }}>
 							<h3

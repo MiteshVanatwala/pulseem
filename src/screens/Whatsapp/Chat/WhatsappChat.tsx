@@ -137,6 +137,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const isAccountAdminRef = useRef<boolean>(false);
 	const changeContactReadStatusRef = useRef<((contacts: APIWhatsappChatSidebarContactsItemsData, sideChatContactList?: APIWhatsappChatSidebarContactsItemsData[]) => void) | null>(null);
 	const sideBarSearchTextRef = useRef<string>('');
+	const selectedGroupsRef = useRef<number[]>([]);
     
 	// Helper to build the mapping from all clients (Cellphone → ClientId)
 	const buildPhoneToClientIdMap = useCallback(async () => {
@@ -1407,6 +1408,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			tagIds?: number[],
 			startTime?: string,
 			endTime?: string,
+			groupIds?: number[],
 		) => {
 			if (activePhoneNumber && activePhoneNumber?.length > 0) {
 				const skipLoader = suppressNextLoaderRef.current;
@@ -1468,6 +1470,14 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				}
 				if (tagIds && tagIds.length > 0) {
 					apiPayload.TagIds = tagIds;
+				}
+
+				const effectiveGroupIds =
+					groupIds && groupIds.length > 0
+						? groupIds
+						: selectedGroupsRef.current;
+				if (effectiveGroupIds && effectiveGroupIds.length > 0) {
+					apiPayload.GroupIds = effectiveGroupIds;
 				}
 
 				const {
@@ -2208,6 +2218,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 									personalFields={personalFields}
 									landingPageData={landingPages}
 									searchTextRef={sideBarSearchTextRef}
+									selectedGroupsRef={selectedGroupsRef}
 									onRegisterMobileActions={(actions) => {
 										mobileSideBarActionsRef.current = actions;
 									}}
