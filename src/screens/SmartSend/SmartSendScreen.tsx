@@ -470,10 +470,12 @@ const SmartSendScreen = ({ classes }: any) => {
                 {renderBody()}
 
                 {/* item 3: sticky save bar — shown only when there are unsaved mapping changes.
-                    Colours mirror InlineBanner's `warning` severity; it hosts the Save action so
-                    the unsaved indicator and the way to resolve it sit together (replacing the old
-                    header caption that sat far from the Save button). Sticky (not fixed) so it
-                    keeps its place in the RTL content column and never overlaps the side menu. */}
+                    Background + border mirror InlineBanner's `warning` severity; the text is
+                    DARKENED to #8a5a00 (not InlineBanner's #b7791f) for WCAG-AA contrast — keep it
+                    dark. It hosts the Save action so the unsaved indicator and the way to resolve
+                    it sit together (replacing the old header caption that sat far from the Save
+                    button). Sticky (not fixed) so it keeps its place in the RTL content column and
+                    never overlaps the side menu. */}
                 {dirty && (
                     <Box style={{
                         position: 'sticky', bottom: 0, marginTop: 20, zIndex: 2,
