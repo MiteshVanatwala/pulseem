@@ -83,5 +83,7 @@
 	"editing": "Edytowanie",
 	"filter_groups": "Grupy",
 	"filter_search_placeholder": "Szukaj...",
-	"filter_empty_groups": "Nie znaleziono grup"
+	"filter_empty_groups": "Nie znaleziono grup",
+	"filter_received_wa_campaign": "Otrzymana kampania WhatsApp",
+	"filter_empty_campaigns": "Brak wysłanych kampanii"
 }

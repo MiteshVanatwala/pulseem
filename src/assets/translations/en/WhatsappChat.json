@@ -83,5 +83,7 @@
 	"editing": "Editing",
 	"filter_groups": "Groups",
 	"filter_search_placeholder": "Search...",
-	"filter_empty_groups": "No groups found"
+	"filter_empty_groups": "No groups found",
+	"filter_received_wa_campaign": "Received WhatsApp Campaign",
+	"filter_empty_campaigns": "No campaigns sent yet"
 }

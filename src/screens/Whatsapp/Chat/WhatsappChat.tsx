@@ -138,6 +138,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const changeContactReadStatusRef = useRef<((contacts: APIWhatsappChatSidebarContactsItemsData, sideChatContactList?: APIWhatsappChatSidebarContactsItemsData[]) => void) | null>(null);
 	const sideBarSearchTextRef = useRef<string>('');
 	const selectedGroupsRef = useRef<number[]>([]);
+	const selectedCampaignsRef = useRef<number[]>([]);
     
 	// Helper to build the mapping from all clients (Cellphone → ClientId)
 	const buildPhoneToClientIdMap = useCallback(async () => {
@@ -1409,6 +1410,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			startTime?: string,
 			endTime?: string,
 			groupIds?: number[],
+			campaignIds?: number[],
 		) => {
 			if (activePhoneNumber && activePhoneNumber?.length > 0) {
 				const skipLoader = suppressNextLoaderRef.current;
@@ -1478,6 +1480,14 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 						: selectedGroupsRef.current;
 				if (effectiveGroupIds && effectiveGroupIds.length > 0) {
 					apiPayload.GroupIds = effectiveGroupIds;
+				}
+
+				const effectiveCampaignIds =
+					campaignIds && campaignIds.length > 0
+						? campaignIds
+						: selectedCampaignsRef.current;
+				if (effectiveCampaignIds && effectiveCampaignIds.length > 0) {
+					apiPayload.CampaignIds = effectiveCampaignIds;
 				}
 
 				const {
@@ -2219,6 +2229,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 									landingPageData={landingPages}
 									searchTextRef={sideBarSearchTextRef}
 									selectedGroupsRef={selectedGroupsRef}
+									selectedCampaignsRef={selectedCampaignsRef}
 									onRegisterMobileActions={(actions) => {
 										mobileSideBarActionsRef.current = actions;
 									}}
