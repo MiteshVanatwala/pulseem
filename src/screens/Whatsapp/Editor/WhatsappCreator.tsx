@@ -55,6 +55,8 @@ import {
 	getDynamicFields,
 	getLastDynamicFieldByValue,
 	getLastDynamicFieldValue,
+	isApprovedWhatsAppMediaExtension,
+	isApprovedWhatsAppMediaFile,
 } from '../Common';
 import {
 	APIStatuses,
@@ -352,6 +354,10 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 
 	const uploadFile = async (file: File | undefined) => {
 		if (file) {
+			if (!isApprovedWhatsAppMediaFile(file)) {
+				setFileUploadAlert(translator('common.notAllowedExtension'));
+				return;
+			}
 			setFileData({
 				fileLink: translator('whatsapp.uploading'),
 				fileType: '',
@@ -1251,6 +1257,11 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		if (!fileUrl || fileUrl === '') return;
 
 		const fileProp = gallery[""].filter((g: any) => { return g.FileURL === fileUrl });
+
+		if (!isApprovedWhatsAppMediaExtension(fileUrl)) {
+			setFileUploadAlert(translator('common.notAllowedExtension'));
+			return;
+		}
 
 		// Validate file size - max 5MB (5242880 bytes)
 		const fileSize = fileProp && fileProp[0].Properties?.Size;
