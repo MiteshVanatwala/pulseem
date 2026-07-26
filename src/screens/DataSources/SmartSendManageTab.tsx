@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import {
     Box, Button, TextField, InputAdornment, Table, TableBody, TableCell, TableContainer,
     TableHead, TableRow, TablePagination, Typography, Tooltip, Chip, Card, CardContent,
-    FormControlLabel, Switch
+    FormControlLabel, Switch, Dialog, Snackbar, CircularProgress
 } from '@material-ui/core';
 import { Search } from '@material-ui/icons';
 import { useSelector, useDispatch } from 'react-redux';
@@ -15,7 +15,7 @@ import { DateFormats } from '../../helpers/Constants';
 import { SetPageState, GetPageNyName } from '../../helpers/UI/SessionStorageManager';
 import useRedirect from '../../helpers/Routes/Redirect';
 import { sitePrefix } from '../../config';
-import { getSmartSendList } from '../../redux/reducers/smartSendSlice';
+import { getSmartSendList, deleteMapping } from '../../redux/reducers/smartSendSlice';
 import { SmartSendListItem, eSendChannel, getChannelDescriptor } from '../../Models/DataSources/SmartSend';
 import { eCampaignStatus } from '../../Models/Enums/Campaign';
 
@@ -59,6 +59,10 @@ const SmartSendManageTab = ({ classes }: ClassesType) => {
     });
     const [searchInput, setSearchInput] = useState(searchData.SearchTerm);
     const [loading, setLoading] = useState(false);
+    // delete (manage tab) — confirm-dialog target + in-flight flag + feedback toast.
+    const [deleteTarget, setDeleteTarget] = useState<SmartSendListItem | null>(null);
+    const [deleting, setDeleting] = useState(false);
+    const [toast, setToast] = useState<{ open: boolean; ok: boolean; msg: string }>({ open: false, ok: true, msg: '' });
 
     const items: SmartSendListItem[] = smartSendList?.items ?? [];
     const total: number = smartSendList?.total ?? 0;
@@ -111,6 +115,20 @@ const SmartSendManageTab = ({ classes }: ClassesType) => {
     const goToMapping = (campaignId: number) =>
         Redirect({ url: `${sitePrefix}Campaigns/SmartSend/${campaignId}`, openNewTab: false });
 
+    // Delete a mapping (offered only on Created rows; the server re-checks the not-sent gate).
+    // deleteMapping calls the delete endpoint ONLY — it never arms/attaches anything. On success
+    // the row is gone, so refetch the current page.
+    const confirmDelete = async () => {
+        if (!deleteTarget) return;
+        setDeleting(true);
+        const res: any = await dispatch(deleteMapping(deleteTarget.CampaignID));
+        const ok = res?.payload?.StatusCode === 200;
+        setDeleting(false);
+        setDeleteTarget(null);
+        setToast({ open: true, ok, msg: t(ok ? 'DataSources.send.manage.deleteOk' : 'DataSources.send.manage.deleteFailed') });
+        if (ok) loadList();
+    };
+
     // ── cell renderers ──
     const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot };
     const cellStyle = { head: classes.tableCellHead, body: classes.tableCellBody, root: classes.tableCellRoot };
@@ -158,13 +176,17 @@ const SmartSendManageTab = ({ classes }: ClassesType) => {
                 {updatedText(row)}
             </TableCell>
             <TableCell classes={cellStyle} align="center" className={clsx(classes.flex1, classes.noBorderOnLastCell)}>
-                {/* Edit is the existing route into the mapping screen. Gated on Created: once a send
-                    has started/finished the mapping must not be re-opened for editing (§ 'until sent').
-                    Delete is deferred to Phase 1 — it needs a new backend detach endpoint. */}
+                {/* Edit + Delete are offered ONLY on Created rows — once a send has started/finished
+                    the mapping is locked (§ 'until sent'); the server re-checks both. */}
                 {row.CampaignStatus === eCampaignStatus.Created && (
-                    <Button size="small" variant="outlined" color="primary" onClick={() => goToMapping(row.CampaignID)}>
-                        {t('DataSources.send.manage.edit')}
-                    </Button>
+                    <Box style={{ display: 'flex', gap: 6, justifyContent: 'center', flexWrap: 'wrap' }}>
+                        <Button size="small" variant="outlined" color="primary" onClick={() => goToMapping(row.CampaignID)}>
+                            {t('DataSources.send.manage.edit')}
+                        </Button>
+                        <Button size="small" variant="outlined" style={{ color: '#c0392b', borderColor: '#e6b0aa' }} onClick={() => setDeleteTarget(row)}>
+                            {t('DataSources.send.manage.delete')}
+                        </Button>
+                    </Box>
                 )}
             </TableCell>
         </TableRow>
@@ -184,9 +206,14 @@ const SmartSendManageTab = ({ classes }: ClassesType) => {
                         </Box>
                         <Typography style={{ marginTop: 8, fontSize: 12, color: '#5b6b7b', direction: 'ltr' }}>{updatedText(row)}</Typography>
                         {row.CampaignStatus === eCampaignStatus.Created && (
-                            <Button size="small" variant="outlined" color="primary" style={{ marginTop: 8 }} onClick={() => goToMapping(row.CampaignID)}>
-                                {t('DataSources.send.manage.edit')}
-                            </Button>
+                            <Box style={{ marginTop: 8, display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                                <Button size="small" variant="outlined" color="primary" onClick={() => goToMapping(row.CampaignID)}>
+                                    {t('DataSources.send.manage.edit')}
+                                </Button>
+                                <Button size="small" variant="outlined" style={{ color: '#c0392b', borderColor: '#e6b0aa' }} onClick={() => setDeleteTarget(row)}>
+                                    {t('DataSources.send.manage.delete')}
+                                </Button>
+                            </Box>
                         )}
                     </CardContent>
                 </Card>
@@ -267,6 +294,35 @@ const SmartSendManageTab = ({ classes }: ClassesType) => {
             {renderTable()}
 
             <Loader isOpen={loading && smartSendListStatus === 'loading'} />
+
+            {/* Delete confirm — destructive, so the primary button is red and there is no
+                autofocus/ok-by-default. Closing is blocked while the delete is in flight. */}
+            <Dialog open={!!deleteTarget} onClose={() => { if (!deleting) setDeleteTarget(null); }} maxWidth="xs" fullWidth>
+                <Box style={{ padding: '16px 24px', borderBottom: '1px solid #e0e0e0' }}>
+                    <Typography variant="h6">{t('DataSources.send.manage.deleteConfirmTitle')}</Typography>
+                </Box>
+                <Box style={{ padding: 24 }}>
+                    <Typography variant="body2" color="textSecondary">
+                        {t('DataSources.send.manage.deleteConfirmBody', { name: deleteTarget?.CampaignName ?? '' })}
+                    </Typography>
+                </Box>
+                <Box style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '16px 24px', borderTop: '1px solid #e0e0e0' }}>
+                    <Button variant="contained" disabled={deleting} onClick={confirmDelete} style={{ backgroundColor: '#c0392b', color: '#fff' }}>
+                        {deleting ? <CircularProgress size={18} color="inherit" /> : t('DataSources.send.manage.delete')}
+                    </Button>
+                    <Box style={{ flex: 1 }} />
+                    <Button disabled={deleting} onClick={() => setDeleteTarget(null)}>{t('DataSources.send.cancel')}</Button>
+                </Box>
+            </Dialog>
+
+            <Snackbar
+                open={toast.open}
+                autoHideDuration={3500}
+                onClose={() => setToast({ ...toast, open: false })}
+                message={toast.msg}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+                ContentProps={{ style: { backgroundColor: toast.ok ? '#2e7d32' : '#c0392b' } }}
+            />
         </Box>
     );
 };

@@ -190,6 +190,11 @@
     "manage": {
       "title": "Smart Send campaigns",
       "edit": "Edit",
+      "delete": "Delete",
+      "deleteConfirmTitle": "Delete the mapping?",
+      "deleteConfirmBody": "The mapping for campaign \"{{name}}\" will be removed. You can map it again anytime. This can't be undone.",
+      "deleteOk": "Mapping deleted",
+      "deleteFailed": "Failed to delete the mapping",
       "columns": {
         "campaign": "Campaign",
         "source": "Data source",

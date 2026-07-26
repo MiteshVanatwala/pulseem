@@ -190,6 +190,11 @@
     "manage": {
       "title": "Kampanie inteligentnej wysyłki",
       "edit": "Edytuj",
+      "delete": "Usuń",
+      "deleteConfirmTitle": "Usunąć mapowanie?",
+      "deleteConfirmBody": "Mapowanie kampanii \"{{name}}\" zostanie usunięte. Możesz je zmapować ponownie w każdej chwili. Tej operacji nie można cofnąć.",
+      "deleteOk": "Mapowanie usunięte",
+      "deleteFailed": "Nie udało się usunąć mapowania",
       "columns": {
         "campaign": "Kampania",
         "source": "Źródło danych",
