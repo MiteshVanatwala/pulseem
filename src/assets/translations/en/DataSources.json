@@ -101,6 +101,11 @@
     "saveBar": {
       "unsaved": "You have unsaved field-mapping changes."
     },
+    "autosave": {
+      "saving": "Saving…",
+      "saved": "All changes saved",
+      "saveFailed": "Couldn't save"
+    },
     "exit": {
       "title": "Save your changes before leaving?",
       "body": "Your field-mapping changes are not saved yet.",
@@ -184,6 +189,7 @@
     },
     "manage": {
       "title": "Smart Send campaigns",
+      "edit": "Edit",
       "columns": {
         "campaign": "Campaign",
         "source": "Data source",

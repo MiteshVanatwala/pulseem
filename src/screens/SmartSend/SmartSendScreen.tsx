@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { Box, LinearProgress, Typography, Button, Snackbar, CircularProgress, Dialog } from '@material-ui/core';
@@ -92,6 +92,19 @@ const SmartSendScreen = ({ classes }: any) => {
     const [exitSaveFailed, setExitSaveFailed] = useState(false);
     const [toast, setToast] = useState<{ open: boolean; ok: boolean; msg: string }>({ open: false, ok: true, msg: '' });
 
+    // ── auto-save (replaces the manual Save button) ─────────────────────────────────────────────
+    // saveState drives the header status indicator. The refs coordinate a DEBOUNCED, SINGLE-FLIGHT
+    // persist: only one setMapping is ever in flight, and edits made while one is running are
+    // coalesced into a single trailing re-save — so two saves can never land out of order and
+    // silently drop a column (each save is a full snapshot and setMapping has no server ordering
+    // guard). sendLockedRef latches auto-save OFF once the campaign is sending (-6), so a permanent
+    // 409 can never turn into a retry loop.
+    const [saveState, setSaveState] = useState<'idle' | 'saving' | 'saved' | 'error' | 'locked'>('idle');
+    const saveTimer = useRef<any>(null);
+    const saveInFlight = useRef(false);
+    const savePending = useRef(false);
+    const sendLockedRef = useRef(false);
+
     const showToast = (ok: boolean, msg: string) => setToast({ open: true, ok, msg });
 
     useEffect(() => {
@@ -181,6 +194,45 @@ const SmartSendScreen = ({ classes }: any) => {
         return { ok: true, gid: gid != null ? Number(gid) : null };
     };
 
+    // Auto-save the mapping. Calls setMapping ONLY (never attachGroup / fillAndSummarize), so it can
+    // NEVER arm a send — the persist/arm split is preserved. Single-flight with a trailing coalesce.
+    const runAutoSave = async () => {
+        if (sendLockedRef.current) return;
+        if (saveInFlight.current) { savePending.current = true; return; }
+        saveInFlight.current = true;
+        setSaveState('saving');
+        const res: any = await dispatch(setMapping(buildSaveRequest()));
+        const r = res && res.payload ? res.payload : {};
+        saveInFlight.current = false;
+        if (r.StatusCode === 200) {
+            setDirty(false);
+            setSaveState('saved');
+        } else if (r.Message === 'EDIT_BLOCKED_DURING_SEND') {
+            sendLockedRef.current = true;          // campaign is sending — stop auto-saving
+            setSaveState('locked');
+        } else {
+            setSaveState('error');                 // keep dirty=true so Retry + beforeunload stay armed
+        }
+        // Re-fire once with the latest snapshot if edits arrived while this save was in flight.
+        if (savePending.current && !sendLockedRef.current) { savePending.current = false; runAutoSave(); }
+    };
+
+    // Debounced trigger: whenever the mapping changes and there is something to persist, schedule a
+    // single trailing save (~750ms). CREATE-ON-FIRST-PICK — an empty post-source-select map has
+    // nothing to save, so merely picking a source writes nothing to the (shared prod) DB. Driven off
+    // the slice fields, NOT the onChange handlers, so buildSaveRequest reads FRESH post-dispatch state.
+    useEffect(() => {
+        if (!hasColumns || !dirty || sendLockedRef.current) return undefined;
+        const hasAnyMapping =
+            Object.values(smartSend.tokenMap).some((c: any) => c && c > 0) ||
+            smartSend.supervisorColumnId != null || smartSend.gapColumnId != null ||
+            smartSend.sortColumnId != null || smartSend.isMapped;
+        if (!hasAnyMapping) return undefined;
+        saveTimer.current = setTimeout(() => { saveTimer.current = null; runAutoSave(); }, 750);
+        return () => { if (saveTimer.current) { clearTimeout(saveTimer.current); saveTimer.current = null; } };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [smartSend.tokenMap, smartSend.supervisorColumnId, smartSend.gapColumnId, smartSend.sortColumnId, dirty, hasColumns]);
+
     // Attach the synthetic group to the campaign's GroupIds — called ONLY from a confirmed Send
     // (SendSummaryDialog.beforeSend), never on preview.
     const attachGroup = async (gid: number | null): Promise<boolean> => {
@@ -261,6 +313,7 @@ const SmartSendScreen = ({ classes }: any) => {
         // §6), its group is still in GroupIds, so re-filling here refreshes an already-armed
         // campaign. No worse than the pre-split behaviour; a durable fix needs a detach endpoint.
         // Flagged to the product owner.
+        if (saveTimer.current) { clearTimeout(saveTimer.current); saveTimer.current = null; }
         const { ok, gid } = await saveMapping(true);
         if (!ok) return;
         setPendingGid(gid);
@@ -476,20 +529,35 @@ const SmartSendScreen = ({ classes }: any) => {
                     it sit together (replacing the old header caption that sat far from the Save
                     button). Sticky (not fixed) so it keeps its place in the RTL content column and
                     never overlaps the side menu. */}
-                {dirty && (
+                {saveState !== 'idle' && (
                     <Box style={{
                         position: 'sticky', bottom: 0, marginTop: 20, zIndex: 2,
-                        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                        gap: 12, flexWrap: 'wrap', padding: '12px 16px', borderRadius: 6,
-                        background: '#fff8e1', border: '1px solid #ffe082',
+                        display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap',
+                        padding: '10px 16px', borderRadius: 6,
+                        background: (saveState === 'error' || saveState === 'locked') ? '#fdecea' : '#f1f8e9',
+                        border: `1px solid ${(saveState === 'error' || saveState === 'locked') ? '#f5c6cb' : '#c5e1a5'}`,
                         boxShadow: '0 -2px 8px rgba(0,0,0,0.06)',
-                    }}>
-                        <Typography variant="body2" style={{ color: '#8a5a00', fontWeight: 600 }}>
-                            {t('DataSources.send.saveBar.unsaved')}
-                        </Typography>
-                        <Button variant="contained" color="primary" size="small" disabled={saving} onClick={() => saveMapping()}>
-                            {saving ? <CircularProgress size={16} color="inherit" /> : t('DataSources.send.actions.saveMapping')}
-                        </Button>
+                    }} aria-live="polite">
+                        {saveState === 'saving' && (
+                            <>
+                                <CircularProgress size={16} />
+                                <Typography variant="body2" style={{ color: '#5b6b7b' }}>{t('DataSources.send.autosave.saving')}</Typography>
+                            </>
+                        )}
+                        {saveState === 'saved' && (
+                            <Typography variant="body2" style={{ color: '#33691e', fontWeight: 600 }}>{`✓ ${t('DataSources.send.autosave.saved')}`}</Typography>
+                        )}
+                        {saveState === 'locked' && (
+                            <Typography variant="body2" style={{ color: '#8a1c1c', fontWeight: 600 }}>{t('DataSources.send.errors.editBlockedDuringSend')}</Typography>
+                        )}
+                        {saveState === 'error' && (
+                            <>
+                                <Typography variant="body2" style={{ color: '#8a1c1c', fontWeight: 600 }}>{t('DataSources.send.autosave.saveFailed')}</Typography>
+                                <Button variant="outlined" color="primary" size="small" startIcon={<Refresh />} onClick={() => runAutoSave()}>
+                                    {t('DataSources.send.errors.retryAction')}
+                                </Button>
+                            </>
+                        )}
                     </Box>
                 )}
             </Box>
