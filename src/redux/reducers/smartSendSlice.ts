@@ -26,7 +26,7 @@ import {
 // ONLY the wrappers). The single dedicated flip commit after the API deploys sets
 // this to false, deletes ./_mocks/smartSendMock.ts and removes the guard lines.
 // grep USE_SEND_MOCK / smartSendMock must return 0 after the flip.
-const USE_SEND_MOCK = true;
+const USE_SEND_MOCK = false;
 
 const api = 'DataSourcesSender/';
 
