@@ -154,8 +154,18 @@ const SmartSendManageTab = ({ classes }: ClassesType) => {
             <TableCell classes={cellStyle} align="center" className={clsx(classes.flex2)}>{row.DataSourceName}</TableCell>
             <TableCell classes={cellStyle} align="center" className={clsx(classes.flex2)}>{renderVersionChip(row)}</TableCell>
             <TableCell classes={cellStyle} align="center" className={clsx(classes.flex1)}>{channelLabel(row.Channel)}</TableCell>
-            <TableCell classes={cellStyle} align="center" className={clsx(classes.flex2, classes.noBorderOnLastCell)} style={{ direction: 'ltr' }}>
+            <TableCell classes={cellStyle} align="center" className={clsx(classes.flex2)} style={{ direction: 'ltr' }}>
                 {updatedText(row)}
+            </TableCell>
+            <TableCell classes={cellStyle} align="center" className={clsx(classes.flex1, classes.noBorderOnLastCell)}>
+                {/* Edit is the existing route into the mapping screen. Gated on Created: once a send
+                    has started/finished the mapping must not be re-opened for editing (§ 'until sent').
+                    Delete is deferred to Phase 1 — it needs a new backend detach endpoint. */}
+                {row.CampaignStatus === eCampaignStatus.Created && (
+                    <Button size="small" variant="outlined" color="primary" onClick={() => goToMapping(row.CampaignID)}>
+                        {t('DataSources.send.manage.edit')}
+                    </Button>
+                )}
             </TableCell>
         </TableRow>
     );
@@ -173,6 +183,11 @@ const SmartSendManageTab = ({ classes }: ClassesType) => {
                             <Chip size="small" variant="outlined" label={channelLabel(row.Channel)} />
                         </Box>
                         <Typography style={{ marginTop: 8, fontSize: 12, color: '#5b6b7b', direction: 'ltr' }}>{updatedText(row)}</Typography>
+                        {row.CampaignStatus === eCampaignStatus.Created && (
+                            <Button size="small" variant="outlined" color="primary" style={{ marginTop: 8 }} onClick={() => goToMapping(row.CampaignID)}>
+                                {t('DataSources.send.manage.edit')}
+                            </Button>
+                        )}
                     </CardContent>
                 </Card>
             </TableCell>
@@ -187,7 +202,8 @@ const SmartSendManageTab = ({ classes }: ClassesType) => {
                 <TableCell classes={cellStyle} className={clsx(classes.flex2)} align="center">{t('DataSources.send.manage.columns.source')}</TableCell>
                 <TableCell classes={cellStyle} className={clsx(classes.flex2)} align="center">{t('DataSources.send.manage.columns.version')}</TableCell>
                 <TableCell classes={cellStyle} className={clsx(classes.flex1)} align="center">{t('DataSources.send.manage.columns.channel')}</TableCell>
-                <TableCell classes={cellStyle} className={clsx(classes.flex2, classes.noBorderOnLastCell)} align="center">{t('DataSources.send.manage.columns.updated')}</TableCell>
+                <TableCell classes={cellStyle} className={clsx(classes.flex2)} align="center">{t('DataSources.send.manage.columns.updated')}</TableCell>
+                <TableCell classes={cellStyle} className={clsx(classes.flex1, classes.noBorderOnLastCell)} align="center">{t('DataSources.send.manage.columns.actions')}</TableCell>
             </TableRow>
         </TableHead>
     );

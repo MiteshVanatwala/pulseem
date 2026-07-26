@@ -101,6 +101,11 @@
     "saveBar": {
       "unsaved": "Masz niezapisane zmiany w mapowaniu pól."
     },
+    "autosave": {
+      "saving": "Zapisywanie…",
+      "saved": "Wszystkie zmiany zapisane",
+      "saveFailed": "Nie udało się zapisać"
+    },
     "exit": {
       "title": "Zapisać zmiany przed wyjściem?",
       "body": "Twoje mapowanie pól nie zostało jeszcze zapisane.",
@@ -184,6 +189,7 @@
     },
     "manage": {
       "title": "Kampanie inteligentnej wysyłki",
+      "edit": "Edytuj",
       "columns": {
         "campaign": "Kampania",
         "source": "Źródło danych",
