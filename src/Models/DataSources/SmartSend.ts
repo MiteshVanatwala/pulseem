@@ -114,3 +114,34 @@ export interface FillSummary {
     SkippedDuplicates: number;
     SkippedRemovedOrMissing: number;
 }
+
+// ── Smart-Send management list (Session-B frozen contract) ───────────────────
+// One row of the DataSources "Smart Send" management tab. PascalCase = server JSON
+// keys (DataSources_GetSmartSendList resultset, mirrored 1:1 by the C# SmartSendListItem
+// in DataSourceModels.cs). IsOutdated drives the amber "newer version available" chip;
+// Latest* are null when the mapped version already IS the latest. CampaignStatus is an
+// eCampaignStatus value (Models/Enums/Campaign) — the tab's status chip maps it exactly
+// as CampaignPicker's STATUS_KEY does.
+export interface SmartSendListItem {
+    CampaignID: number;
+    Channel: eSendChannel;              // tinyint server-side; v1 always 1 (EMAIL)
+    DataSourceID: number;
+    DataSourceName: string;
+    CampaignName: string;
+    CampaignStatus: number;             // eCampaignStatus
+    MappedVersionID: number;
+    MappedVersionNumber: number;
+    LatestVersionNumber: number | null;
+    LatestVersionID: number | null;
+    IsOutdated: boolean;
+    SyntheticGroupID: number | null;
+    LastUpdated: string | null;
+}
+
+// Data payload of GET DataSourcesSender/GetList (PulseemResponse.Data).
+export interface SmartSendListResult {
+    items: SmartSendListItem[];
+    total: number;
+    page: number;
+    pageSize: number;
+}

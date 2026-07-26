@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useSearchParams } from 'react-router-dom';
-import { Box, LinearProgress, Typography, Button, Snackbar, CircularProgress } from '@material-ui/core';
+import { Box, LinearProgress, Typography, Button, Snackbar, CircularProgress, Dialog } from '@material-ui/core';
 import { Refresh } from '@material-ui/icons';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
@@ -84,6 +84,12 @@ const SmartSendScreen = ({ classes }: any) => {
     // "unsaved" straight after a successful save. Tracked here instead, at the one place in this
     // screen that edits the map.
     const [dirty, setDirty] = useState(false);
+    // item 2: the synthetic group id returned by saveMapping, held so the confirmed Send inside
+    // SendSummaryDialog can attach it (attachGroup) — the attach is deferred out of openSummary.
+    const [pendingGid, setPendingGid] = useState<number | null>(null);
+    // item 3: three-way exit confirm (Save & exit / Exit without saving / Cancel).
+    const [exitOpen, setExitOpen] = useState(false);
+    const [exitSaveFailed, setExitSaveFailed] = useState(false);
     const [toast, setToast] = useState<{ open: boolean; ok: boolean; msg: string }>({ open: false, ok: true, msg: '' });
 
     const showToast = (ok: boolean, msg: string) => setToast({ open: true, ok, msg });
@@ -116,6 +122,16 @@ const SmartSendScreen = ({ classes }: any) => {
         setDirty(false);
     }, [smartSend.tokens, currentSourceId]);
 
+    // item 3: warn on tab close / refresh while there are unsaved mapping changes. react-router
+    // 6.4.2 exposes no useBlocker, so this covers only real unloads; in-SPA navigation is
+    // mitigated by the sticky save bar. Pattern mirrors LegacyPageFrame.tsx:17-27.
+    useEffect(() => {
+        if (!dirty) return undefined;
+        const handler = (e: BeforeUnloadEvent) => { e.preventDefault(); e.returnValue = ''; };
+        window.addEventListener('beforeunload', handler);
+        return () => window.removeEventListener('beforeunload', handler);
+    }, [dirty]);
+
     useEffect(() => {
         if (!campaignId || Number.isNaN(campaignId) || campaignId <= 0) return;
         dispatch(setCampaignContext({ campaignId, dataSourceId: parsedDsId }));
@@ -145,16 +161,29 @@ const SmartSendScreen = ({ classes }: any) => {
         };
     };
 
-    const doSave = async (silent?: boolean): Promise<boolean> => {
+    // ── save flow, SPLIT (item 2): saveMapping persists the mapping and returns the synthetic
+    //    group id but does NOT attach it; attachGroup performs the GroupIds merge (the mutation
+    //    that decides who the campaign sends to). Opening the summary — or saving from the test
+    //    dialog — calls saveMapping only; the attach is deferred to a confirmed Send. ──
+    const saveMapping = async (silent?: boolean): Promise<{ ok: boolean; gid: number | null }> => {
         setSaving(true);
         const res: any = await dispatch(setMapping(buildSaveRequest()));
         const r = res && res.payload ? res.payload : {};
         if (r.StatusCode !== 200) {
             setSaving(false);
             showToast(false, t('DataSources.send.errors.' + (ERR_KEY[r.Message] || 'generalError')));
-            return false;
+            return { ok: false, gid: null };
         }
         const gid = r.Data && r.Data.SyntheticGroupID;
+        setSaving(false);
+        setDirty(false); // the mapping is persisted — the unsaved-changes bar must go away
+        if (!silent) showToast(true, t('DataSources.send.toasts.mappingSaved'));
+        return { ok: true, gid: gid != null ? Number(gid) : null };
+    };
+
+    // Attach the synthetic group to the campaign's GroupIds — called ONLY from a confirmed Send
+    // (SendSummaryDialog.beforeSend), never on preview.
+    const attachGroup = async (gid: number | null): Promise<boolean> => {
 
         // Attaching the synthetic group means posting the WHOLE settings row back, not a patch:
         // the server handler (NewsletterLogic.cs:1175-1193) forwards EVERY SendSettings field to
@@ -176,7 +205,6 @@ const SmartSendScreen = ({ classes }: any) => {
         // empty body), producing a POST with no CampaignID — worse than the minimal body this
         // replaced. Require the identifying field.
         if (!settings || !settings.CampaignID) {
-            setSaving(false);
             showToast(false, t('DataSources.send.errors.' + (ERR_KEY[curPayload.Message] || 'generalError')));
             return false;
         }
@@ -216,23 +244,41 @@ const SmartSendScreen = ({ classes }: any) => {
         // was NOT attached, so the campaign would still send to its old recipients: that is a
         // FAILED save. It must not clear `dirty` and must not show the success toast.
         if (s.StatusCode !== 201 && s.StatusCode !== 200) {
-            setSaving(false);
             showToast(false, t('DataSources.send.errors.' + (ERR_KEY[s.Message] || 'generalError')));
             return false;
         }
-        setSaving(false);
-        setDirty(false); // persisted — the unsaved-changes hint must go away
-        if (!silent) showToast(true, t('DataSources.send.toasts.mappingSaved'));
         return true;
     };
 
     const openSummary = async () => {
-        const saved = await doSave(true);
-        if (!saved) return;
+        // item 2: persist the mapping (fillAndSummarize needs it) and stash the synthetic group
+        // id, but DO NOT attach it here — the attach is deferred to the confirmed Send
+        // (SendSummaryDialog.beforeSend → attachGroup). fillAndSummarize fills the staging group
+        // and feeds the recipient counts the dialog shows; it does not wire the campaign, so
+        // opening — and abandoning — the summary leaves GroupIds untouched (item 2 / §6).
+        // KNOWN EDGE (adversarial review): if the campaign was already attached by a PRIOR send
+        // whose pipeline then failed (attachGroup ok but sendSmart errored → no detach exists,
+        // §6), its group is still in GroupIds, so re-filling here refreshes an already-armed
+        // campaign. No worse than the pre-split behaviour; a durable fix needs a detach endpoint.
+        // Flagged to the product owner.
+        const { ok, gid } = await saveMapping(true);
+        if (!ok) return;
+        setPendingGid(gid);
         await dispatch(fillAndSummarize({ campaignId, channel: smartSend.selectedChannel }));
         await dispatch(getSendSummaryWrapped(campaignId));
         await dispatch(getEmailSendSettingsWrapped(campaignId));
         setSummaryOpen(true);
+    };
+
+    // item 3: leaving the loaded screen. The only in-screen exit is the back-to-picker link (the
+    // 404 branch has nothing to lose; the summary-close redirect runs only after a real send).
+    const doExit = () => Redirect({ url: `${sitePrefix}SmartSend${parsedDsId != null ? `?dataSourceId=${parsedDsId}` : ''}`, openNewTab: false });
+    const handleBackToPicker = () => { if (dirty) { setExitSaveFailed(false); setExitOpen(true); } else doExit(); };
+    // Save & exit must NOT navigate on a failed save (saveMapping returns ok:false on StatusCode
+    // != 200); navigating then would silently drop the very changes the user asked to keep.
+    const handleSaveAndExit = async () => {
+        const { ok } = await saveMapping();
+        if (ok) { setExitOpen(false); doExit(); } else setExitSaveFailed(true);
     };
 
     // `!sent`: once sendSmart has answered 200/201 for this campaign the screen must not be able
@@ -340,7 +386,7 @@ const SmartSendScreen = ({ classes }: any) => {
                             supervisorColumnId={smartSend.supervisorColumnId}
                             gapColumnId={smartSend.gapColumnId}
                             sortColumnId={smartSend.sortColumnId}
-                            onChange={(role, columnId) => dispatch(setBusinessColumn({ role, columnId }))}
+                            onChange={(role, columnId) => { dispatch(setBusinessColumn({ role, columnId })); setDirty(true); }}
                             supervisorEnabled
                         />
 
@@ -348,11 +394,9 @@ const SmartSendScreen = ({ classes }: any) => {
                             <UnmappedTokensWarning tokens={unmapped} confirmed={confirmUnmapped} onConfirmChange={setConfirmUnmapped} />
                         </Box>
 
-                        {/* wizard actions */}
+                        {/* wizard actions. Save moved to the sticky save bar (shown only when
+                            there are unsaved changes), co-located with the unsaved indicator. */}
                         <Box style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginTop: 20, borderTop: '1px solid #e0e0e0', paddingTop: 18 }}>
-                            <Button variant="contained" color="primary" disabled={saving} onClick={() => doSave()}>
-                                {t('DataSources.send.actions.saveMapping')}
-                            </Button>
                             <Button variant="outlined" color="primary" onClick={() => setShowPreview((v) => !v)}>
                                 {t('DataSources.send.actions.preview')}
                             </Button>
@@ -383,7 +427,9 @@ const SmartSendScreen = ({ classes }: any) => {
         // `smartSend` (routes.tsx), so `dataSources` highlighted the wrong sibling and titled
         // the page "Data Sources" for every user who continued from the picker.
         <DefaultScreen currentPage="groups" subPage="smartSend" classes={classes} containerClass={clsx(classes.management, classes.mb50)}>
-            <Box style={{ padding: 16 }}>
+            {/* paddingBottom reserves clearance so the sticky save bar (below) never rests over
+                the "Send to all" button / last action row (contract §3). */}
+            <Box style={{ padding: 16, paddingBottom: 88 }}>
                 <Box style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap', marginBottom: 16 }}>
                     <Box>
                         <Typography variant="h5">{t('DataSources.send.title')}</Typography>
@@ -399,15 +445,14 @@ const SmartSendScreen = ({ classes }: any) => {
                         )}
                     </Box>
                     <Box style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-                        {/* Text only, by contract: no router blocker and no beforeunload handler.
-                            It just has to be true at the moment it is shown — hence the local
-                            `dirty` flag rather than a comparison against the slice. */}
-                        {dirty && (
-                            <Typography variant="caption" color="textSecondary" style={{ maxWidth: 320 }}>
-                                {t('DataSources.send.unsavedWarning')}
-                            </Typography>
-                        )}
-                        {/* The picker is this screen's entry point, so the way back to it must exist
+                        {/* Unsaved changes now surface in a sticky save bar at the bottom of the
+                            screen (next to the Save action), not as a caption here. Per the
+                            product-owner reversal the screen DOES guard exits: a beforeunload
+                            handler (above) for tab close/refresh, and a three-way confirm dialog on
+                            the back-to-picker link (below). In-SPA side-menu navigation still cannot
+                            be intercepted (react-router 6.4.2 has no useBlocker) — the sticky bar is
+                            the mitigation for that path.
+                            The picker is this screen's entry point, so the way back to it must exist
                             on the NORMAL path too — not only in the 404 branch. Rendered in the header
                             (outside renderBody) so it is also reachable while the mapping is still
                             loading or has failed. `Redirect` requires `openNewTab`.
@@ -417,13 +462,36 @@ const SmartSendScreen = ({ classes }: any) => {
                             `parsedDsId` is used, not the raw param, so garbage is not round-tripped;
                             it is a positive number, so it needs no encoding (contrast
                             SmartSendPicker.tsx:64, which forwards the raw string). */}
-                        <Button size="small" color="primary"
-                            onClick={() => Redirect({ url: `${sitePrefix}SmartSend${parsedDsId != null ? `?dataSourceId=${parsedDsId}` : ''}`, openNewTab: false })}>
+                        <Button size="small" color="primary" onClick={handleBackToPicker}>
                             {t('DataSources.send.backToPicker')}
                         </Button>
                     </Box>
                 </Box>
                 {renderBody()}
+
+                {/* item 3: sticky save bar — shown only when there are unsaved mapping changes.
+                    Background + border mirror InlineBanner's `warning` severity; the text is
+                    DARKENED to #8a5a00 (not InlineBanner's #b7791f) for WCAG-AA contrast — keep it
+                    dark. It hosts the Save action so the unsaved indicator and the way to resolve
+                    it sit together (replacing the old header caption that sat far from the Save
+                    button). Sticky (not fixed) so it keeps its place in the RTL content column and
+                    never overlaps the side menu. */}
+                {dirty && (
+                    <Box style={{
+                        position: 'sticky', bottom: 0, marginTop: 20, zIndex: 2,
+                        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                        gap: 12, flexWrap: 'wrap', padding: '12px 16px', borderRadius: 6,
+                        background: '#fff8e1', border: '1px solid #ffe082',
+                        boxShadow: '0 -2px 8px rgba(0,0,0,0.06)',
+                    }}>
+                        <Typography variant="body2" style={{ color: '#8a5a00', fontWeight: 600 }}>
+                            {t('DataSources.send.saveBar.unsaved')}
+                        </Typography>
+                        <Button variant="contained" color="primary" size="small" disabled={saving} onClick={() => saveMapping()}>
+                            {saving ? <CircularProgress size={16} color="inherit" /> : t('DataSources.send.actions.saveMapping')}
+                        </Button>
+                    </Box>
+                )}
             </Box>
 
             {/* onSent fires only on a 200/201 from sendSmart, on the line right after the dialog
@@ -441,13 +509,41 @@ const SmartSendScreen = ({ classes }: any) => {
             <SendSummaryDialog
                 open={summaryOpen}
                 campaignId={campaignId}
+                beforeSend={() => attachGroup(pendingGid)}
                 onClose={() => {
                     setSummaryOpen(false);
                     if (sent) Redirect({ url: `${sitePrefix}Campaigns`, openNewTab: false });
                 }}
                 onSent={() => setSent(true)}
             />
-            <TestSendDialog open={testOpen} campaignId={campaignId} onClose={() => setTestOpen(false)} onToast={(r) => showToast(r.ok, r.msg)} />
+            <TestSendDialog open={testOpen} campaignId={campaignId} dirty={dirty} onSaveMapping={saveMapping} onClose={() => setTestOpen(false)} onToast={(r) => showToast(r.ok, r.msg)} />
+
+            {/* item 3: three-way exit confirm. Save & exit is primary + autofocus; Exit without
+                saving is muted and set apart (destructive — up to ~20 mappings); Esc → Cancel via
+                onClose. A failed save keeps the dialog open and does NOT navigate. */}
+            <Dialog open={exitOpen} onClose={() => setExitOpen(false)} maxWidth="xs" fullWidth>
+                <Box style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 24px', borderBottom: '1px solid #e0e0e0' }}>
+                    <Typography variant="h6">{t('DataSources.send.exit.title')}</Typography>
+                </Box>
+                <Box style={{ padding: 24 }}>
+                    <Typography variant="body2" color="textSecondary">{t('DataSources.send.exit.body')}</Typography>
+                    {exitSaveFailed && (
+                        <Typography variant="body2" style={{ color: '#c0392b', marginTop: 12 }}>
+                            {t('DataSources.send.exit.saveFailed')}
+                        </Typography>
+                    )}
+                </Box>
+                <Box style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '16px 24px', borderTop: '1px solid #e0e0e0' }}>
+                    <Button variant="contained" color="primary" disabled={saving} onClick={handleSaveAndExit} autoFocus>
+                        {saving ? <CircularProgress size={18} color="inherit" /> : t('DataSources.send.exit.saveAndExit')}
+                    </Button>
+                    <Box style={{ flex: 1 }} />
+                    <Button variant="text" disabled={saving} onClick={doExit} style={{ color: '#8a8a8a' }}>
+                        {t('DataSources.send.exit.exitWithoutSaving')}
+                    </Button>
+                    <Button onClick={() => setExitOpen(false)} disabled={saving}>{t('DataSources.send.cancel')}</Button>
+                </Box>
+            </Dialog>
 
             <Snackbar
                 open={toast.open}

@@ -25,7 +25,7 @@
 //   Channel !== 1 anywhere → 400 CHANNEL_NOT_SUPPORTED (mirrors the controller gate)
 import {
     GetMappingResult, SmartSendColumn, SmartSendTokenInfo, SaveMappingRequest,
-    FillSummary, eSendChannel
+    FillSummary, eSendChannel, SmartSendListItem
 } from '../../../Models/DataSources/SmartSend';
 
 // ── shared fixtures ──────────────────────────────────────────────────────────
@@ -122,6 +122,39 @@ export const mockGetMapping = (campaignId: number) => {
         case 660: return ok(baseMapping(660));
         default:  return ok(baseMapping(campaignId)); // 602, 608, 62x — mapped-full
     }
+};
+
+// ── GetList (management tab — Session-B) ─────────────────────────────────────
+// Small fixture for the DataSources "Smart Send" management tab. Reuses the same
+// sources ("לקוחות כלל …") and campaign-name family as the mapping fixtures.
+// CampaignStatus mirrors eCampaignStatus (1=Created, 2=Sending, 4=Sent, 7=Approve)
+// so the tab exercises the 7-status chip. Rows 603 & 609 are IsOutdated (mapped <
+// latest → the amber, clickable version chip); the other two are up-to-date, so their
+// Latest* are null exactly as the SP returns when the mapped version IS the latest.
+const SMARTSEND_LIST: SmartSendListItem[] = [
+    { CampaignID: 602, Channel: eSendChannel.EMAIL, DataSourceID: 9,  DataSourceName: 'לקוחות כלל — יולי',   CampaignName: 'קמפיין כלל — עדכון רבעוני', CampaignStatus: 1, MappedVersionID: 41, MappedVersionNumber: 41, LatestVersionNumber: null, LatestVersionID: null, IsOutdated: false, SyntheticGroupID: 7602, LastUpdated: '2026-07-22T09:15:00' },
+    { CampaignID: 603, Channel: eSendChannel.EMAIL, DataSourceID: 9,  DataSourceName: 'לקוחות כלל — יולי',   CampaignName: 'ניוזלטר יולי — סוכנים',    CampaignStatus: 2, MappedVersionID: 41, MappedVersionNumber: 41, LatestVersionNumber: 42, LatestVersionID: 42, IsOutdated: true,  SyntheticGroupID: 7603, LastUpdated: '2026-07-21T14:40:00' },
+    { CampaignID: 607, Channel: eSendChannel.EMAIL, DataSourceID: 12, DataSourceName: 'לקוחות כלל — פרימיום', CampaignName: 'עדכון עמלות רבעון 3',      CampaignStatus: 4, MappedVersionID: 5,  MappedVersionNumber: 5,  LatestVersionNumber: null, LatestVersionID: null, IsOutdated: false, SyntheticGroupID: 7607, LastUpdated: '2026-07-18T08:00:00' },
+    { CampaignID: 609, Channel: eSendChannel.EMAIL, DataSourceID: 12, DataSourceName: 'לקוחות כלל — פרימיום', CampaignName: 'מבצע חידושים',             CampaignStatus: 7, MappedVersionID: 3,  MappedVersionNumber: 3,  LatestVersionNumber: 7,    LatestVersionID: 7,    IsOutdated: true,  SyntheticGroupID: 7609, LastUpdated: '2026-07-23T16:20:00' }
+];
+
+// Mirrors the real endpoint's server-side filter/paging (search over campaign+source
+// name, outdatedOnly, channel, rowsToSkip/pageSize) so the tab's controls actually work
+// in mock mode. Shape = { items, total, page, pageSize } — the frozen SmartSendListResult.
+export const mockGetSmartSendList = (
+    arg: { search?: string; outdatedOnly?: boolean; channel?: eSendChannel; pageSize?: number; rowsToSkip?: number }
+) => {
+    const term = (arg.search ?? '').trim().toLowerCase();
+    let rows = SMARTSEND_LIST.slice();
+    if (arg.channel != null) rows = rows.filter(r => r.Channel === arg.channel);
+    if (arg.outdatedOnly) rows = rows.filter(r => r.IsOutdated);
+    if (term) rows = rows.filter(r =>
+        r.CampaignName.toLowerCase().indexOf(term) > -1 || r.DataSourceName.toLowerCase().indexOf(term) > -1);
+    const total = rows.length;
+    const pageSize = arg.pageSize && arg.pageSize > 0 ? arg.pageSize : 10;
+    const rowsToSkip = arg.rowsToSkip && arg.rowsToSkip > 0 ? arg.rowsToSkip : 0;
+    const page = Math.floor(rowsToSkip / pageSize) + 1;
+    return ok({ items: rows.slice(rowsToSkip, rowsToSkip + pageSize), total, page, pageSize });
 };
 
 // ── SetMapping ───────────────────────────────────────────────────────────────

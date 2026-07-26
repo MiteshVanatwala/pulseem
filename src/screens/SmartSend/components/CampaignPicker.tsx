@@ -19,8 +19,8 @@ import { getNewslatterParentChildData } from '../../../redux/reducers/newsletter
 // Not-selectable campaigns stay VISIBLE but disabled, each carrying its own reason: hiding
 // them turns "why can't I send this?" into "where did my campaign go?", which is worse.
 // a11y mirrors SourcePicker/ChannelSelector: radiogroup, roving tabindex, arrows, Enter/Space;
-// disabled rows carry aria-describedby → sr-only reason and don't steal focus. The one deliberate
-// difference is the arrow map — this list is a vertical column, not SourcePicker's RTL grid (see
+// disabled rows carry aria-describedby → sr-only reason and don't steal focus. Like SourcePicker
+// this is a wrapping RTL grid, so the arrow map is that file's grid map, not a column map (see
 // onKeyDown).
 
 // Row shape of MainList (newsletterSlice.js:243/345). Only the fields this screen reads are
@@ -70,6 +70,11 @@ const isSelectable = (row: CampaignRow) =>
 // it, and the row would sort last on 0 despite having a perfectly good UpdatedDate.
 const rowTime = (row: CampaignRow) => parseServerDate(row.SendDate || row.UpdatedDate)?.valueOf() ?? 0;
 
+// Cap the rendered grid so the primary action stays above the fold on a long account-wide list —
+// a "show more" control reveals the rest on demand. Applied AFTER the onlySendable filter, so it
+// counts only the campaigns actually on offer.
+const CAP = 12;
+
 const useStyles = makeStyles((theme) => ({
     wrap: { marginTop: theme.spacing(1) },
     toolbar: {
@@ -77,14 +82,12 @@ const useStyles = makeStyles((theme) => ({
         gap: theme.spacing(2), margin: `${theme.spacing(1)}px 0`,
     },
     search: { minWidth: 280 },
-    list: {
-        display: 'flex', flexDirection: 'column', gap: theme.spacing(1),
-        // Cap the list instead of pushing the primary action below the fold — the account-wide
-        // list can run to hundreds of rows and the CTA must stay reachable without scrolling past.
-        maxHeight: 420, overflowY: 'auto', paddingInlineEnd: theme.spacing(0.5),
-    },
+    // Wrapping grid (SourcePicker idiom), not a scrolling column: a grid that scrolls inside its
+    // own maxHeight would hide the Continue button below the fold. The list is capped by card
+    // count + a "show more" control instead — see CAP.
+    list: { display: 'flex', flexWrap: 'wrap', gap: theme.spacing(2), marginTop: theme.spacing(1) },
     row: {
-        position: 'relative', boxSizing: 'border-box', width: '100%', padding: theme.spacing(1.5),
+        position: 'relative', boxSizing: 'border-box', width: 264, padding: theme.spacing(1.5),
         border: '2px solid #e0e0e0', borderRadius: 8, cursor: 'pointer', outline: 'none',
         transition: 'border-color .15s, box-shadow .15s',
         '&:hover': { borderColor: theme.palette.primary.light },
@@ -97,13 +100,23 @@ const useStyles = makeStyles((theme) => ({
         '&:focus, &:focus-visible': { boxShadow: 'none' },
     },
     head: { display: 'flex', alignItems: 'center', gap: theme.spacing(1), flexWrap: 'wrap', paddingInlineEnd: theme.spacing(3) },
-    name: { fontWeight: 600, overflowWrap: 'anywhere' },
+    // Clamp to two lines with a matching min-height so a mix of short and long names does not
+    // leave the fixed-width (264) grid ragged — every card reserves the same two-line name box.
+    name: {
+        fontWeight: 600, overflowWrap: 'anywhere',
+        display: '-webkit-box', WebkitBoxOrient: 'vertical', WebkitLineClamp: 2,
+        overflow: 'hidden', minHeight: '3em',
+    },
     meta: { marginTop: theme.spacing(0.5), display: 'flex', alignItems: 'center', gap: theme.spacing(1.5), flexWrap: 'wrap' },
     check: { position: 'absolute', top: 8, insetInlineEnd: 8 },
     state: { display: 'flex', alignItems: 'center', gap: theme.spacing(1), marginTop: theme.spacing(2) },
     empty: { textAlign: 'center', padding: '32px 16px', color: '#5b6b7b' },
     emptyActions: { display: 'flex', alignItems: 'center', justifyContent: 'center', gap: theme.spacing(1), flexWrap: 'wrap' },
     hiddenNote: { display: 'flex', alignItems: 'center', gap: theme.spacing(1), flexWrap: 'wrap', marginTop: theme.spacing(1) },
+    // The cap expander is a pagination-style "reveal more of the same list" — a centered, neutral
+    // outlined button, deliberately UNLIKE the primary-coloured filter-toggle link below it so the
+    // two reveal controls never read as twins.
+    moreBar: { display: 'flex', justifyContent: 'center', marginTop: theme.spacing(2) },
     // MUI v4 Tooltip cannot attach to a disabled/non-interactive target — wrap it in a <span>.
     tooltipSpan: { display: 'block', width: '100%' },
     srOnly: {
@@ -125,6 +138,7 @@ const CampaignPicker: React.FC<Props> = ({ value, onChange }) => {
     const [status, setStatus] = useState<'idle' | 'loading' | 'succeeded' | 'failed'>('idle');
     const [search, setSearch] = useState('');
     const [onlySendable, setOnlySendable] = useState(true);
+    const [expanded, setExpanded] = useState(false);   // cap expander — reveals rows past CAP
     const rowRefs = useRef<Array<HTMLDivElement | null>>([]);
 
     // newsletterSlice carries NO loading flag (§2) — the request state has to live here.
@@ -187,9 +201,26 @@ const CampaignPicker: React.FC<Props> = ({ value, onChange }) => {
         [matches, onlySendable],
     );
     const hiddenCount = matches.length - visible.length;
+    // `capped` is what the grid actually renders: rows past CAP stay out of the DOM — and so out
+    // of the roving-tabindex / arrow order below — until "show more" is pressed. Every index-based
+    // helper (selectableIdx, rovingTarget, rowRefs) is therefore computed over `capped`, never over
+    // the full `visible`, or the indices would not line up with the rendered cards.
+    // One exception keeps the radiogroup usable: cap to CAP UNLESS the row that must hold the tab
+    // stop — the selected campaign if selectable, else the first selectable row — sorts past CAP.
+    // Capping it away would either trap the keyboard (every rendered card tabIndex=-1, rovingTarget
+    // =-1, arrows no-op) or hide the checked selection, so in that one case we reveal the whole
+    // list. A target of -1 (no selectable row anywhere) is NOT "past the cap": nothing to focus, so
+    // the plain CAP slice stands.
+    const capped = useMemo(() => {
+        if (expanded) return visible;
+        const sel = value != null ? visible.findIndex((row) => isSelectable(row) && row.CampaignID === value) : -1;
+        const target = sel >= 0 ? sel : visible.findIndex(isSelectable);
+        return target >= CAP ? visible : visible.slice(0, CAP);
+    }, [visible, expanded, value]);
+    const moreCount = visible.length - capped.length;   // rows the cap is still holding back
     const selectableIdx = useMemo(
-        () => visible.reduce<number[]>((acc, row, i) => (isSelectable(row) ? [...acc, i] : acc), []),
-        [visible],
+        () => capped.reduce<number[]>((acc, row, i) => (isSelectable(row) ? [...acc, i] : acc), []),
+        [capped],
     );
 
     const pick = (row: CampaignRow) => { if (isSelectable(row)) onChange(row); };
@@ -203,12 +234,11 @@ const CampaignPicker: React.FC<Props> = ({ value, onChange }) => {
     const onKeyDown = (e: React.KeyboardEvent, idx: number, row: CampaignRow) => {
         if (!isSelectable(row)) return;
         if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(row); }
-        // This radiogroup is a VERTICAL column, unlike SourcePicker's horizontal RTL grid, so it
-        // does not inherit that file's map: there, Left is "forward" because the grid flows
-        // right-to-left. Here the reading order is top-to-bottom and Down/Right both mean next,
-        // Up/Left both mean previous (WAI-ARIA radiogroup, vertical orientation).
-        else if (e.key === 'ArrowDown' || e.key === 'ArrowRight') { e.preventDefault(); moveFocus(idx, 1); }
-        else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') { e.preventDefault(); moveFocus(idx, -1); }
+        // Wrapping RTL grid, same map as SourcePicker: ArrowLeft = next (the grid flows right→left)
+        // and ArrowRight = prev; ArrowDown/ArrowUp follow the same next/prev. moveFocus walks only
+        // the selectable rows, so disabled cards are stepped over rather than landed on.
+        else if (e.key === 'ArrowDown' || e.key === 'ArrowLeft') { e.preventDefault(); moveFocus(idx, 1); }
+        else if (e.key === 'ArrowUp' || e.key === 'ArrowRight') { e.preventDefault(); moveFocus(idx, -1); }
     };
 
     // No section heading of its own: the screen renders `picker.step2` ("Step 2 — Select a
@@ -238,7 +268,10 @@ const CampaignPicker: React.FC<Props> = ({ value, onChange }) => {
     }
 
     // Roving tabindex: exactly one selectable row is tabbable (the selected one, else the first).
-    const selectedIdx = visible.findIndex((row) => isSelectable(row) && row.CampaignID === value);
+    // Both are guaranteed to be within `capped`: the cap auto-reveals the full list whenever the
+    // selected-or-first-selectable row would otherwise sort past it (see `capped`), so this cannot
+    // resolve to -1 while any selectable row exists.
+    const selectedIdx = capped.findIndex((row) => isSelectable(row) && row.CampaignID === value);
     const rovingTarget = selectedIdx >= 0 ? selectedIdx : (selectableIdx.length ? selectableIdx[0] : -1);
 
     const renderRow = (row: CampaignRow, idx: number) => {
@@ -365,13 +398,23 @@ const CampaignPicker: React.FC<Props> = ({ value, onChange }) => {
         }
         return (
             <>
-                <Box className={classes.list} role="radiogroup" aria-orientation="vertical" aria-label={t('DataSources.send.picker.selectAria')}>
-                    {visible.map(renderRow)}
+                <Box className={classes.list} role="radiogroup" aria-label={t('DataSources.send.picker.selectAria')}>
+                    {capped.map(renderRow)}
                 </Box>
-                {/* Rows exist that the toggle is holding back — one click reveals them, disabled
-                    and labelled with their reason, instead of leaving the user to wonder. Same
-                    key as the empty-state button above: it is the same action on the same toggle,
-                    and labelling one button two ways is its own small bug. */}
+                {/* Cap expander — pagination-style "reveal more of the same list". A centered,
+                    neutral OUTLINED button, visually distinct from the primary-coloured filter
+                    toggle below (which changes WHAT is listed). `moreCount` is how many sendable-
+                    list rows the cap is still holding back; hidden once expanded or when it fits. */}
+                {moreCount > 0 && (
+                    <Box className={classes.moreBar}>
+                        <Button size="small" variant="outlined" onClick={() => setExpanded(true)}>
+                            {t('DataSources.send.picker.showMore', { count: moreCount })}
+                        </Button>
+                    </Box>
+                )}
+                {/* Filter toggle, NOT "show more": this reveals the campaigns the onlySendable switch
+                    is hiding (already-sent / old-editor), each rendered disabled with its reason.
+                    Same key/action as the empty-state button above. */}
                 {hiddenCount > 0 && (
                     <Box className={classes.hiddenNote}>
                         <Button size="small" color="primary" onClick={() => setOnlySendable(false)}>
