@@ -190,6 +190,11 @@
     "manage": {
       "title": "קמפיינים לשליחה חכמה",
       "edit": "עריכה",
+      "delete": "מחיקה",
+      "deleteConfirmTitle": "למחוק את המיפוי?",
+      "deleteConfirmBody": "המיפוי של הקמפיין \"{{name}}\" יימחק. אפשר למפות מחדש בכל עת. לא ניתן לבטל.",
+      "deleteOk": "המיפוי נמחק",
+      "deleteFailed": "מחיקת המיפוי נכשלה",
       "columns": {
         "campaign": "קמפיין",
         "source": "מקור נתונים",

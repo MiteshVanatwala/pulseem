@@ -16,7 +16,7 @@ import {
     mockGetMapping, mockSetMapping, mockGetSampleValues, mockFillAndSummarize, mockSendSmart,
     mockGetSendSummary, mockGetEmailSendSettings, mockSetEmailSendSettings,
     mockGetNewsletterPreview, mockTestSend, mockSaveCampaignInfo, mockGetCampaignInfo,
-    mockGetSmartSendList
+    mockGetSmartSendList, mockDeleteMapping
 } from './_mocks/smartSendMock';
 
 // ── MOCK SWITCH ──────────────────────────────────────────────────────────────
@@ -139,6 +139,20 @@ export const getSmartSendList = createAsyncThunk(
             if (arg.pageSize != null) qs.set('pageSize', String(arg.pageSize));
             if (arg.rowsToSkip != null) qs.set('rowsToSkip', String(arg.rowsToSkip));
             const response = await PulseemReactInstance.get(`${api}GetList?${qs.toString()}`);
+            return response.data;
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    });
+
+// Session-B · delete a mapping from the manage tab (DELETE DataSourcesSender/DeleteMapping/{id}).
+// MOCK-GATED like every own thunk. Server-gated to Status=Created — a campaign that has sent
+// returns -6 (EDIT_BLOCKED_DURING_SEND / 409). Success = StatusCode 200, no Data.
+export const deleteMapping = createAsyncThunk(
+    'SmartSend/DeleteMapping', async (campaignId: number, thunkAPI) => {
+        if (USE_SEND_MOCK) return mockDeleteMapping(campaignId);
+        try {
+            const response = await PulseemReactInstance.delete(`${api}DeleteMapping/${campaignId}`);
             return response.data;
         } catch (error: any) {
             return thunkAPI.rejectWithValue({ error: error.message });

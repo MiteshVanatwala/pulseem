@@ -169,6 +169,14 @@ export const mockSetMapping = (req: SaveMappingRequest) => {
     return ok({ SyntheticGroupID: 7000 + (req.CampaignID % 1000) });
 };
 
+// ── DeleteMapping ─────────────────────────────────────────────────────────────
+// Removes a mapping. 660 → a send has happened (-6 / 409). Otherwise ok (idempotent).
+export const mockDeleteMapping = (campaignId: number) => {
+    const g = gate(campaignId); if (g) return g;
+    if (campaignId === 660) return err(409, 'EDIT_BLOCKED_DURING_SEND');
+    return ok(null);
+};
+
 // ── GetSampleValues ──────────────────────────────────────────────────────────
 // NULL value in the sample row → empty string, NEVER a raw ##token## (§7.2).
 export const mockGetSampleValues = (campaignId: number) => {
