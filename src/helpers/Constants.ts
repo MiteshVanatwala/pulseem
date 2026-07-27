@@ -220,7 +220,7 @@ export const DateFormats = {
 
 export const FBBusiness = 'https://business.facebook.com/wa/manage/';
 
-export const SizeOptionsOfHandHeldDevices = ['xs', 'sm', 'md', 'sl'];
+export const SizeOptionsOfHandHeldDevices = ['xs', 'sm', 'md'];
 export const SizeOptions_XS_SM = ['xs', 'sm'];
 
 export const DynamicProductGrid: any = {
@@ -952,4 +952,6 @@ export const TierFeatures = {
 export const CLOSE_BUTTON_HTML = "<div ID='PulseemCloseButton' data-color='#000000' data-bgcolor='#fee6e6' data-Size='20' data-Position='Right'>X</div>"
 
 export const COLORS = ['#E74C3C', '#F39C12', '#27AE60', '#3498DB', '#9B59B6'];
-export const IS_MAX_WINDOW_WIDTH_WHEN_DRAWER_OPEN = window.innerWidth <= 1400;
+// Function, not a frozen constant: window.innerWidth must be read live on each call,
+// not baked in once at module load (which was frozen at whatever width the page first loaded at).
+export const IS_MAX_WINDOW_WIDTH_WHEN_DRAWER_OPEN = () => window.innerWidth <= 1400;

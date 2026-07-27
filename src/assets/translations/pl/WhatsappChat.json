@@ -78,6 +78,7 @@
 	"invalidPhoneNumber": "Wprowadź prawidłowy numer telefonu",
 	"noTemplatesFound": "Nie znaleziono szablonów",
 	"refreshChat": "Odśwież",
+	"moreActions": "Więcej opcji",
 	"clickPlaceholderHint": "Kliknij wyróżniony symbol zastępczy, aby go wypełnić.",
 	"editing": "Edytowanie"
 }

@@ -171,7 +171,7 @@ const DynamicGroups = ({ classes }: any) => {
         {
             label: t("common.GroupName"),
             classes: cellStyle,
-            className: classes.flex3,
+            className: classes.flex2,
             align: "center",
         },
         {
@@ -189,7 +189,7 @@ const DynamicGroups = ({ classes }: any) => {
         {
             label: "",
             classes: cellStyle,
-            className: clsx(classes.flex3),
+            className: clsx(classes.flex4),
             align: "center",
         },
     ];
@@ -1007,7 +1007,7 @@ const DynamicGroups = ({ classes }: any) => {
                 <TableCell
                     classes={cellBodyStyle}
                     align='center'
-                    className={clsx(classes.flex3)}>
+                    className={clsx(classes.flex2)}>
                     <Grid container direction="row">
                         <Grid item sm={colSize}>
                             {renderNameCell({ GroupID, GroupName, IsChecked: true, CreationDate, UpdateDate } as GroupData)}
@@ -1187,7 +1187,7 @@ const DynamicGroups = ({ classes }: any) => {
                     component="th"
                     scope="row"
                     className={clsx(
-                        classes.flex3,
+                        classes.flex4,
                         classes.tableCellRoot
                     )}
                 >

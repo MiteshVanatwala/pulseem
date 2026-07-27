@@ -1009,7 +1009,9 @@ const App = ({ screenSize }) => {
 function useWidth() {
   const { language } = useSelector((state) => state.core);
   const theme = getTheme(language);
-  const keys = [...theme.breakpoints.keys].reverse();
+  // theme.breakpoints.keys is hardcoded by MUI to ['xs','sm','md','lg','xl'] and ignores
+  // custom keys added to theme.js's breakpoint values, so 'sl' is inserted here manually.
+  const keys = ['xl', 'lg', 'sl', 'md', 'sm', 'xs'];
   return (
     keys.reduce((output, key) => {
       // eslint-disable-next-line react-hooks/rules-of-hooks

@@ -25,6 +25,7 @@ export const sideMenuStyle = (windowSize, isRTL, theme) => ({
   },
   sidebarPaper: {
     width: SIDEBAR_WIDTH,
+    zIndex: 1201,
     background: 'linear-gradient(90deg, #FF0076 1.31%, #FF0054 33.07%, #FF4D2A 134.74%)',
     color: '#ffffff',
     transition: theme.transitions.create('width', {
