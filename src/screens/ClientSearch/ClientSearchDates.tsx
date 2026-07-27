@@ -27,10 +27,10 @@ export const ClientSearchDates = ({ classes, data, onUpdate }: any) => {
 
   return (
     <Grid container className={classes.pt25}>
-      <Grid item xs={6} sm={6} md={6} className={clsx(classes.p10)}>
+      <Grid item xs={12} sm={6} md={6} className={clsx(classes.p10)}>
         <InputLabel className={classes.fBlack}>{t('common.birthdayFrom')}:</InputLabel>
         <Grid container spacing={3} className={clsx(classes.pt25)}>
-          <Grid item xs={6} sm={6} md={6}>
+          <Grid item xs={12} sm={6} md={6}>
             {/* @ts-ignore */}
             <DateField
               toolbarDisabled={false}
@@ -55,7 +55,7 @@ export const ClientSearchDates = ({ classes, data, onUpdate }: any) => {
             }
           </Grid>
 
-          <Grid item xs={6} sm={6} md={6}>
+          <Grid item xs={12} sm={6} md={6}>
             {/* @ts-ignore */}
             <DateField
               toolbarDisabled={false}
@@ -79,7 +79,7 @@ export const ClientSearchDates = ({ classes, data, onUpdate }: any) => {
         </Grid>
       </Grid>
 
-      <Grid item xs={6} sm={6} md={6} className={clsx(classes.p10)}>
+      <Grid item xs={12} sm={6} md={6} className={clsx(classes.p10)}>
         <InputLabel className={classes.fBlack}>{t('common.birthdayWithoutYear')}:</InputLabel>
         <Grid container spacing={3} className={clsx(classes.pt25)}>
           <Grid item xs={6} sm={6} md={6}>
@@ -106,7 +106,7 @@ export const ClientSearchDates = ({ classes, data, onUpdate }: any) => {
             }
           </Grid>
 
-          <Grid item xs={6} sm={6} md={6}>
+          <Grid item xs={12} sm={6} md={6}>
             {/* @ts-ignore */}
             <DateField
               toolbarDisabled={false}
@@ -132,7 +132,7 @@ export const ClientSearchDates = ({ classes, data, onUpdate }: any) => {
         </Grid>
       </Grid>
 
-      <Grid item xs={6} sm={6} md={6} className={clsx(classes.p10)}>
+      <Grid item xs={12} sm={6} md={6} className={clsx(classes.p10)}>
         <InputLabel className={classes.fBlack}>{t('common.reminderFrom')}:</InputLabel>
         <Grid container spacing={3} className={clsx(classes.pt25)}>
           <Grid item xs={6} sm={6} md={6}>
@@ -157,7 +157,7 @@ export const ClientSearchDates = ({ classes, data, onUpdate }: any) => {
             }
           </Grid>
 
-          <Grid item xs={6} sm={6} md={6}>
+          <Grid item xs={12} sm={6} md={6}>
             {/* @ts-ignore */}
             <DateField
               toolbarDisabled={false}
@@ -180,7 +180,7 @@ export const ClientSearchDates = ({ classes, data, onUpdate }: any) => {
           </Grid>
         </Grid>
       </Grid>
-      {extraData.ExtraDate1 && <Grid item xs={6} sm={6} md={6} className={clsx(classes.p10)}>
+      {extraData.ExtraDate1 && <Grid item xs={12} sm={6} md={6} className={clsx(classes.p10)}>
         <InputLabel className={classes.fBlack}>{extraData.ExtraDate1}:</InputLabel>
         <Grid container spacing={3} className={clsx(classes.pt25)}>
           <Grid item xs={6} sm={6} md={6}>
@@ -203,7 +203,7 @@ export const ClientSearchDates = ({ classes, data, onUpdate }: any) => {
             {data?.MyConditions[0]['ExtraDate1From'] && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate('ExtraDate1From', null)}>{t("recipient.reset")}</Button>}
           </Grid>
 
-          <Grid item xs={6} sm={6} md={6}>
+          <Grid item xs={12} sm={6} md={6}>
             {/* @ts-ignore */}
             <DateField
               toolbarDisabled={false}
@@ -224,10 +224,10 @@ export const ClientSearchDates = ({ classes, data, onUpdate }: any) => {
           </Grid>
         </Grid>
       </Grid>}
-      {extraData.ExtraDate2 && <Grid item xs={6} sm={6} md={6} className={clsx(classes.p10)}>
+      {extraData.ExtraDate2 && <Grid item xs={12} sm={6} md={6} className={clsx(classes.p10)}>
         <InputLabel className={classes.fBlack}>{extraData.ExtraDate2}:</InputLabel>
         <Grid container spacing={3} className={clsx(classes.pt25)}>
-          <Grid item xs={6} sm={6} md={6}>
+          <Grid item xs={12} sm={6} md={6}>
             {/* @ts-ignore */}
             <DateField
               toolbarDisabled={false}
@@ -247,7 +247,7 @@ export const ClientSearchDates = ({ classes, data, onUpdate }: any) => {
             {data?.MyConditions[0]['ExtraDate2From'] && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate('ExtraDate2From', null)}>{t("recipient.reset")}</Button>}
           </Grid>
 
-          <Grid item xs={6} sm={6} md={6}>
+          <Grid item xs={12} sm={6} md={6}>
             {/* @ts-ignore */}
             <DateField
               toolbarDisabled={false}
@@ -268,10 +268,10 @@ export const ClientSearchDates = ({ classes, data, onUpdate }: any) => {
           </Grid>
         </Grid>
       </Grid>}
-      {extraData.ExtraDate3 && <Grid item xs={6} sm={6} md={6} className={clsx(classes.p10)}>
+      {extraData.ExtraDate3 && <Grid item xs={12} sm={6} md={6} className={clsx(classes.p10)}>
         <InputLabel className={classes.fBlack}>{extraData.ExtraDate3}:</InputLabel>
         <Grid container spacing={3} className={clsx(classes.pt25)}>
-          <Grid item xs={6} sm={6} md={6}>
+          <Grid item xs={12} sm={6} md={6}>
             {/* @ts-ignore */}
             <DateField
               toolbarDisabled={false}
@@ -291,7 +291,7 @@ export const ClientSearchDates = ({ classes, data, onUpdate }: any) => {
             {data?.MyConditions[0]['ExtraDate3From'] && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate('ExtraDate3From', null)}>{t("recipient.reset")}</Button>}
           </Grid>
 
-          <Grid item xs={6} sm={6} md={6}>
+          <Grid item xs={12} sm={6} md={6}>
             {/* @ts-ignore */}
             <DateField
               toolbarDisabled={false}
@@ -312,10 +312,10 @@ export const ClientSearchDates = ({ classes, data, onUpdate }: any) => {
           </Grid>
         </Grid>
       </Grid>}
-      {extraData.ExtraDate4 && <Grid item xs={6} sm={6} md={6} className={clsx(classes.p10)}>
+      {extraData.ExtraDate4 && <Grid item xs={12} sm={6} md={6} className={clsx(classes.p10)}>
         <InputLabel className={classes.fBlack}>{extraData.ExtraDate4}:</InputLabel>
         <Grid container spacing={3} className={clsx(classes.pt25)}>
-          <Grid item xs={6} sm={6} md={6}>
+          <Grid item xs={12} sm={6} md={6}>
             {/* @ts-ignore */}
             <DateField
               toolbarDisabled={false}
@@ -335,7 +335,7 @@ export const ClientSearchDates = ({ classes, data, onUpdate }: any) => {
             {data?.MyConditions[0]['ExtraDate4From'] && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate('ExtraDate4From', null)}>{t("recipient.reset")}</Button>}
           </Grid>
 
-          <Grid item xs={6} sm={6} md={6}>
+          <Grid item xs={12} sm={6} md={6}>
             {/* @ts-ignore */}
             <DateField
               toolbarDisabled={false}

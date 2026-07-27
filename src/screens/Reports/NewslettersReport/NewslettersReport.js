@@ -66,7 +66,7 @@ const NewslettersReport = ({ classes }) => {
   const [expandedIds, setExpandedIds] = useState([]);
   const [parentCampaignsWithChild, setParentCampaignsWithChild] = useState([]);
   const virtuosoRef = useRef();
-  const responsiveStyle = (isDrawerOpen && IS_MAX_WINDOW_WIDTH_WHEN_DRAWER_OPEN) ? {
+  const responsiveStyle = (isDrawerOpen && IS_MAX_WINDOW_WIDTH_WHEN_DRAWER_OPEN()) ? {
       flexWrap: "wrap",
       textAlign: "right",
       gap: "10px",
@@ -1075,7 +1075,7 @@ const NewslettersReport = ({ classes }) => {
                       {renderIntData(isParent ? SumOpenCount : OpenCount, 'green', hrefs.OpenCount, false)}
                     </Grid>
                     <Grid item xs={6}>
-                      {renderIntData(isParent ? SumOpenCountUnique : OpenCountUnique, 'green', hrefs.OpenCountUnique, false)}
+                      {renderIntData(isParent ? SumOpenCountUnique : OpenCountUnique, 'green', hrefs.OpenCountUnique, true)}
                     </Grid>
                   </Grid>
                 </Grid>
@@ -1088,7 +1088,7 @@ const NewslettersReport = ({ classes }) => {
                       {renderIntData(isParent ? SumClickCount : ClickCount, 'blue', hrefs.ClickCount, false)}
                     </Grid>
                     <Grid item xs={6}>
-                      {renderIntData(isParent ? SumClickCountUnique : ClickCountUnique, 'blue', hrefs.ClickCountUnique, false)}
+                      {renderIntData(isParent ? SumClickCountUnique : ClickCountUnique, 'blue', hrefs.ClickCountUnique, true)}
                     </Grid>
                   </Grid>
                 </Grid>
@@ -1109,19 +1109,19 @@ const NewslettersReport = ({ classes }) => {
                 <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
                   {t("mainReport.GridButtonColumnResource4.HeaderText")}
                 </Typography>
-                {renderIntData(isParent ? SumSendError : SendError, 'red', hrefs.SendError, false)}
+                {renderIntData(isParent ? SumSendError : SendError, 'red', hrefs.SendError, isParent && parentCampaignsWithChild.indexOf(row.CampaignID) > -1 ? false : true)}
               </Grid>
               <Grid item xs={3}>
                 <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
                   {t("mainReport.removals")}
                 </Typography>
-                {renderIntData(isParent ? SumRemovedClients : RemovedClients, 'red', hrefs.RemovedClients, false)}
+                {renderIntData(isParent ? SumRemovedClients : RemovedClients, 'red', hrefs.RemovedClients, true)}
               </Grid>
               <Grid item xs={3}>
                 <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
                   {t("mainReport.GridButtonColumnResource3.HeaderText")}
                 </Typography>
-                {renderIntData(isParent ? SumNotOpened : NotOpened, 'red', hrefs.NotOpened, false)}
+                {renderIntData(isParent ? SumNotOpened : NotOpened, 'red', hrefs.NotOpened, true)}
               </Grid>
               {hasRevenue && <Grid item xs={3}>
                 <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
