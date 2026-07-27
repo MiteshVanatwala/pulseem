@@ -413,6 +413,7 @@ export type APIGetWhatsappChatContactsReq = {
 	EndDate?: string;
 	AgentIds?: number[];
 	TagIds?: number[];
+	GroupIds?: number[];
 };
 
 export type Timer = {
