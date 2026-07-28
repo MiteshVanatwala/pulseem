@@ -14,26 +14,46 @@ import { computeLayout, geoNum } from './tierGraphCore';
  * in GeoField): the field shows the inherited/auto value as a placeholder, and CLEARING
  * it is the reset — it emits `undefined`, not 0. Without a placeholder the legacy
  * empty -> 0 behaviour is kept for width / height / axisMax.
+ *
+ * §17 (FIX 5): `resolved` is the value the renderers actually DRAW when there is no override —
+ * displayed, in muted grey, wherever `value` is absent. This is the same bug the top bar's sliders
+ * were built to fix, still living here: an EMPTY number input jumps to its `min` on the first
+ * spinner click, so selecting a tier and nudging "Bar width" snapped straight to 24 — the exact
+ * report. Showing the resolved number means the spinner steps from where the user already is.
+ * Opt-in per field: a call site that passes no `resolved` behaves exactly as before (width /
+ * height / axis max keep the legacy empty -> 0 contract, and card width is excluded on purpose —
+ * see its call site).
+ * DISPLAY ONLY — nothing here calls `onChange`, so a graph that was never edited still holds no
+ * geometry keys and buildLink still emits a cfg without them; `''` remains the reset, because the
+ * user can still clear the field and `emit('')` is untouched.
  */
-function NumField({ label, value, min, max, step, placeholder, onChange }) {
+function NumField({ label, value, min, max, step, placeholder, resolved, onChange }) {
   const auto = placeholder != null;
   const emit = (raw) => {
     if (raw === '') return onChange(auto ? undefined : 0);
     const n = parseFloat(raw);
     return onChange(Number.isNaN(n) ? (auto ? undefined : 0) : n);
   };
+  // Grey + regular weight while the number on screen is the auto one, solid + bold once it is an
+  // override — the affordance the (now rarely visible) "Auto (N)" placeholder used to carry, and
+  // the same convention the header readouts use.
+  const showsAuto = value == null && resolved != null;
+  const shown = value == null ? (resolved == null ? '' : resolved) : value;
   return (
     <div style={{ marginBottom: 13 }}>
       <label style={{ display: 'block', fontWeight: 700, fontSize: 12.5, marginBottom: 4 }}>{label}</label>
       <input
         type="number"
-        value={value == null ? '' : value}
+        value={shown}
         min={min}
         max={max}
         step={step}
         placeholder={placeholder}
         onChange={(e) => emit(e.target.value)}
-        style={{ width: '100%', fontSize: 13, border: '1px solid #e2e6ee', borderRadius: 7, padding: '6px 8px' }}
+        style={{
+          width: '100%', fontSize: 13, border: '1px solid #e2e6ee', borderRadius: 7, padding: '6px 8px',
+          color: showsAuto ? '#8a94a6' : '#1f2430', fontWeight: showsAuto ? 400 : 700,
+        }}
       />
     </div>
   );
@@ -48,6 +68,9 @@ const at = (arr, i) => {
 };
 // "auto (N)" placeholder — absent when the auto value cannot be resolved.
 const autoHint = (t, v) => (v == null ? undefined : t('campaigns.tierGraph.autoPlaceholder', { v: Math.round(v) }));
+// §17 (FIX 5): the resolved number a field DISPLAYS while it carries no override. ROUNDED, because
+// every geometry input is `step={1}` — an unrounded 116.45 would render the field `:invalid`.
+const autoShown = (v) => (v == null ? undefined : Math.round(v));
 
 /* ---- §16c A13: min/max mirror the REDUCER's clamps ------------------------------------------
    `min`/`max` on a number input stay advisory (a paste walks past them; the reducer in
@@ -168,10 +191,21 @@ export default function TierGraphEditorPanel({ graph, selected, dispatch, mergeD
         <GeoField label={t('campaigns.tierGraph.amountLabel')} geo={tr.amount} mergeData={mergeData} t={t} fontSize={tr.amountSize} onFontSize={(v) => dispatch({ type: 'SET_TIER_FIELD', i, key: 'amountSize', val: v })} onChange={(geo) => dispatch({ type: 'SET_GEO', path: i, geo })} />
         <ColorField label={t('campaigns.tierGraph.fillColor')} value={tr.fill} onChange={(v) => dispatch({ type: 'SET_TIER_FIELD', i, key: 'fill', val: v })} />
         <ColorField label={t('campaigns.tierGraph.labelColor')} value={tr.labelColor} onChange={(v) => dispatch({ type: 'SET_TIER_FIELD', i, key: 'labelColor', val: v })} />
-        {/* geometry overrides — plain numbers, empty = inherit the global / auto value */}
+        {/* geometry overrides — plain numbers, empty = inherit the global / auto value.
+            §17 (FIX 5): `resolved` makes them SHOW that inherited value instead of sitting empty.
+            An empty number input steps to its `min` on the first spinner click, so this field was
+            still one click from snapping to 24 — the bug the top bar's sliders were built to fix,
+            reported against the panel and never fixed here. Both resolved values are provably
+            inside this field's own min/max (the auto bar width is `min(190, max(24, share))`, and
+            `radii` is clamped by computeLayout with the exact expression used for `max` below), so
+            nothing can render `:invalid`. `cardWidth` deliberately does NOT get this: core resolves
+            its auto to `min(barW + 8, hi)` WITHOUT the 90px floor (tierGraphCore.js:192-194 calls
+            that out), so on a small canvas the resolved value is legitimately below the field's own
+            `min` and displaying it would make the input permanently invalid. */}
         <NumField
           label={t('campaigns.tierGraph.barWidthLabel')}
           value={tr.barWidth}
+          resolved={autoShown(barWi)}
           min={BAR_MIN}
           max={tierBarMax(graph, lay, i)}
           step={1}
@@ -181,6 +215,7 @@ export default function TierGraphEditorPanel({ graph, selected, dispatch, mergeD
         <NumField
           label={t('campaigns.tierGraph.cornerRadiusLabel')}
           value={tr.cornerRadius}
+          resolved={autoShown(at(lay.radii, i))}
           min={0}
           max={barWi == null ? 40 : Math.min(40, Math.floor(barWi / 2))}
           step={1}

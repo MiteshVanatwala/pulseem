@@ -42,19 +42,39 @@ import { SmartSendColumn } from '../../Models/DataSources/SmartSend';
 // he "אימייל מפקח" / en "Supervisor email" / pl "E-mail przełożonego".
 export const SUPERVISOR_NAME_RE = /מפקח|supervisor|przełożon/i;
 
+// "This column holds email addresses", by NAME. Needed because DataType is not reliable —
+// see isEmailish below.
+const EMAIL_NAME_RE = /e-?mail|מייל|אימייל|דוא"?ל/i;
+
 // DataSourceColumns.DataType: 1=Text, 2=Number, 3=Date, 4=Email, 5=Phone
 const DATA_TYPE_EMAIL = 4;
 // DataSourceColumns.SemanticRole: 0=None, 1=RecipientEmail, 2=RecipientCellphone
 const SEMANTIC_ROLE_NONE = 0;
+const SEMANTIC_ROLE_RECIPIENT_EMAIL = 1;
 
 // A supervisor-email column has NO server-side marker: the wizard's IsSupervisorEmail flag is
 // UI-only and is stripped before upload (UploadWizardDialog states this explicitly, and the
-// string appears in zero .cs files). What survives in the DB is exactly the pair
-// (DataType = 4 EMAIL, SemanticRole = 0 NONE) — an email column that is NOT the recipient
-// identity. That predicate is DB-backed: SemanticRole = 1 is unique per version, enforced by the
-// filtered index IX_DataSourceColumns__VersionID_EmailRole.
-const isCandidateSupervisor = (c: SmartSendColumn) =>
-    c.DataType === DATA_TYPE_EMAIL && c.SemanticRole === SEMANTIC_ROLE_NONE;
+// string appears in zero .cs files). Only two things survive to the DB:
+//   · the pair (DataType = EMAIL, SemanticRole = NONE) — an email column that is not the identity;
+//   · on the wizard's AUTO path only, a DisplayName rewritten to the localized supervisor label.
+//
+// DataType alone is NOT a dependable signal, which is why the name is also consulted:
+//   · a source created programmatically (the worker / API upload path) never runs the wizard's
+//     value-sampling, so its columns can all land as TEXT;
+//   · EditColumnDialog offers only TEXT/NUMBER/DATE for a SemanticRole=NONE column, so one stray
+//     pick demotes a supervisor column away from EMAIL with NO route back;
+//   · a column whose values were not recognised as emails at upload time stays TEXT.
+// Requiring DataType = EMAIL therefore makes the default silently not fire on perfectly ordinary
+// sources. The identity column is excluded by SemanticRole, which IS dependable: RecipientEmail is
+// unique per version, enforced by the filtered index IX_DataSourceColumns__VersionID_EmailRole.
+const columnText = (c: SmartSendColumn) => `${c.DisplayName || ''} ${c.SourceHeader || ''}`;
+
+// Not the recipient identity — the one hard requirement in every tier below.
+const isNotIdentity = (c: SmartSendColumn) => c.SemanticRole !== SEMANTIC_ROLE_RECIPIENT_EMAIL;
+
+// Looks like it carries email addresses, by tag OR by name.
+const isEmailish = (c: SmartSendColumn) =>
+    c.DataType === DATA_TYPE_EMAIL || EMAIL_NAME_RE.test(columnText(c));
 
 /**
  * Default for the supervisor-email picker.
@@ -67,10 +87,15 @@ const isCandidateSupervisor = (c: SmartSendColumn) =>
  * (DataType = EMAIL, SemanticRole = NONE), plus — on the auto path only — a DisplayName rewritten
  * to the localized "supervisor email" label.
  *
- * Tier 1: a non-identity email column whose DisplayName carries that label (the strong signal;
- *         the manual 'sup' pick in the wizard does NOT rewrite DisplayName, so it lands in tier 2).
- * Tier 2: the FIRST non-identity email column in Ordinal order — i.e. literally "the second email
- *         column in the file", which is the product rule.
+ * Three tiers, first hit wins. Every tier excludes the recipient-identity column.
+ *   1. Its name says "supervisor" — the wizard's auto path rewrites DisplayName to exactly that,
+ *      so this is the strongest signal. Deliberately does NOT require an email DataType: a
+ *      column literally called "אימייל מפקח" is the supervisor column whatever its tag says.
+ *   2. It is tagged DataType = EMAIL — the classic case, "the second email column in the file".
+ *   3. Its NAME looks like an email column — the fallback for sources whose columns were never
+ *      typed as EMAIL (programmatic upload, or a DataType destroyed via EditColumnDialog).
+ * Within a tier the FIRST match in Ordinal order wins, which is literally the product rule:
+ * the first email column is the recipient identity, the next one is the supervisor.
  *
  * Both server paths return columns ordered by Ordinal (CampaignsToDataSources_Get RS2 and
  * DataSources_Get RS2 both end in ORDER BY c.Ordinal ASC), so array order IS document order and
@@ -78,10 +103,15 @@ const isCandidateSupervisor = (c: SmartSendColumn) =>
  */
 export const pickDefaultSupervisorColumn = (columns: SmartSendColumn[] | null | undefined): number | null => {
     if (!columns || !columns.length) return null;
-    const candidates = columns.filter(isCandidateSupervisor);
-    if (!candidates.length) return null;
-    const named = candidates.find((c) => SUPERVISOR_NAME_RE.test(c.DisplayName || ''));
-    return (named || candidates[0]).ColumnID;
+    const eligible = columns.filter(isNotIdentity);
+    if (!eligible.length) return null;
+
+    const hit =
+        eligible.find((c) => SUPERVISOR_NAME_RE.test(columnText(c)))
+        || eligible.find((c) => c.DataType === DATA_TYPE_EMAIL)
+        || eligible.find(isEmailish);
+
+    return hit ? hit.ColumnID : null;
 };
 
 /**

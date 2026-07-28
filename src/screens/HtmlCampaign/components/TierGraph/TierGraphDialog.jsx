@@ -376,31 +376,13 @@ function reducer(state, action) {
   }
 }
 
-/* Apply the top-bar geometry DRAFTS (§14, the two commit-on-blur inputs) to a graph, off-render.
-   Used by the unmount flush: Escape closes the MUI dialog WITHOUT firing blur, so a typed-but-
-   uncommitted value never reached the reducer and the flush then persisted a graph without it —
-   the edit was lost permanently, not just for the session. Routed through `reducer` itself, not
-   through a hand-written assignment, so a draft committed this way passes EXACTLY the same
-   clamps (numOrUndef -> clampGap / clampGlobalBar -> reclampDependents) as one committed on blur;
-   '' still means auto. Module-level and given everything it needs, so the mount-scoped effect
-   that calls it closes over nothing that can go stale. Returns the SAME object when there is
-   nothing in flight, which is how the caller knows a re-write is unnecessary. */
-const commitDrafts = (graph0, drafts) => {
-  let g = graph0;
-  for (let i = 0; i < drafts.length; i += 1) {
-    const d = drafts[i];
-    if (d.val === null || d.val === undefined) continue;
-    g = reducer({ graph: g, selected: null }, { type: 'SET_BG_FIELD', key: d.key, val: d.val }).graph;
-  }
-  return g;
-};
-
 /* §11 popup fit. `--tg-chrome-h` is everything the dialog puts AROUND the image:
    header + footer + the stage column's own padding (18*2 = 36). NEITHER bar has a constant
-   height. The header is `flexWrap:'wrap'`, its content is ~966px in EN and ~1090px in PL/HE, and
-   since §14 added the bar-width and gap groups it wraps to a second row (+~43px) in pl/he, or in
-   ANY language once the paper is narrower than ~1030px (the paper now fits the IMAGE, 1056px at
-   the 640 default — it is no longer a flat 94vw). The FOOTER grows 26-52px the moment it renders
+   height. The header is `flexWrap:'wrap'`. §17 compacted it (sliders instead of the two number
+   inputs, a narrower numInput, tighter button padding, no `flex:1` spacer) so its content fits the
+   default 1056px paper on ONE row in en/he — MEASURED at 1366x768: en 1022px, he 1046px — but PL
+   needs 1159px and still wraps, as does ANY language once the paper is narrower (the paper fits
+   the IMAGE, 1056px at the 640 default — it is not a flat 94vw). The FOOTER grows 26-52px on
    a message (`msg`, `tooLong`, or the insert error) — two clicks away: "Insert to campaign" on an
    unmodified graph shows `defaultUnchangedWarn`. A hard-coded 153 was measured against the
    ONE-LINE 55px header and an EMPTY 62px footer, so on every wrapped/messaged layout the root
@@ -477,27 +459,18 @@ export default function TierGraphDialog({ onClose, onInsert, mergeData, t }) {
   }, []);
   const measureText = useMemo(() => measureTextFactory(), [fontTick]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  /* §14 top-bar geometry inputs — UNCOMMITTED text while the field has focus, `null` when it does
-     not. The reducer clamps on EVERY dispatch (it must: it is the last line of defence against a
-     paste), so dispatching per keystroke made the ceiling values unreachable by typing — the first
-     `1` of `150` clamped to the `24` floor, then `1502` -> ... The user could never type a
-     three-digit width at all. Holding the raw string and committing on blur/Enter keeps the clamp
-     exactly where it was, one step later. Only these two fields: the pre-existing width/height
-     inputs coerce with `parseFloat(...) || 640` per keystroke and are deliberately untouched.
-     Each draft is MIRRORED into a ref, because the unmount flush below runs outside render and
-     must see the value as of the moment the dialog closed — declared HERE, above the persistence
-     effects, so those can read the refs. */
-  const [barDraft, setBarDraftState] = useState(null);
-  const [gapDraft, setGapDraftState] = useState(null);
-  const barDraftRef = useRef(null);
-  const gapDraftRef = useRef(null);
-  const setBarDraft = (v) => { barDraftRef.current = v; setBarDraftState(v); };
-  const setGapDraft = (v) => { gapDraftRef.current = v; setGapDraftState(v); };
-  const commitDraft = (key, draft, setDraft) => {
-    setDraft(null);
-    if (draft === null) return;                  // never focused / nothing typed
-    dispatch({ type: 'SET_BG_FIELD', key, val: draft });
-  };
+  /* §17: the §14 barDraft/gapDraft machinery is GONE. It existed only because the two top-bar
+     geometry controls were `type=number` fields the reducer clamped per keystroke (the first `1`
+     of `150` snapped to the 24 floor), so the raw text had to be held un-dispatched until
+     blur/Enter — which is exactly why the graph stopped updating live. Those two controls are now
+     RANGE sliders (see the header JSX): every value a slider can produce is already inside
+     [min, max], so there is no partially-typed state to protect and `onChange` dispatches
+     immediately. FIX 4 puts a small `type=number` back BESIDE each slider for exact entry, so a
+     partially-typed value exists again — but only while that one field has focus, and it is
+     committed on blur/Enter. Clicking Insert or Cancel fires blur (mousedown precedes click), so
+     the commit lands before the action; only ESCAPE, which closes the MUI dialog without a blur,
+     discards it — the same "escape throws the edit away" every other commit-on-blur field has, and
+     the graph it discards was never dispatched, so the flush below still has nothing to commit. */
 
   // debounced persistence to localStorage on EVERY change — never let it break the UI.
   // Holds the write the pending timer would perform; `done` flips once the timer has fired (H-f).
@@ -525,21 +498,17 @@ export default function TierGraphDialog({ onClose, onInsert, mergeData, t }) {
      fires; `pendingWrite.done` says whether the timer had already fired, so an unchanged, already-
      written graph is never written twice. It writes the SAME value the timer would
      have written 500ms later — no new state, and nothing changes for a dialog left open.
-     It also COMMITS the two in-flight top-bar drafts FIRST (see `commitDrafts`): Escape closes the
-     MUI dialog without firing blur, so `60` typed into Gap was dropped by React AND then persisted
-     over by this very flush — the loss survived to the next open. Committing before the write is
-     what makes the persisted graph include the edit; `p.done` alone can no longer skip the write,
-     because a graph that was already flushed 500ms ago may still be missing a draft typed since. */
+     §17: it no longer has to commit top-bar drafts first. That step existed because Escape closes
+     the MUI dialog WITHOUT firing blur, so a value typed into the commit-on-blur Gap field was
+     dropped by React and then persisted over by this very flush. The sliders dispatch on every
+     change, so the graph in `pendingWrite` already contains every edit and `p.done` is once again
+     a sufficient reason to skip the write. */
   useEffect(() => () => {
     const p = pendingWrite.current;
     if (!p) return;
     pendingWrite.current = null;
-    const g = commitDrafts(p.graph, [
-      { key: 'barWidth', val: barDraftRef.current },
-      { key: 'gap', val: gapDraftRef.current },
-    ]);
-    if (p.done && g === p.graph) return;   // already on disk and no draft to add
-    try { localStorage.setItem(p.storageKey, JSON.stringify(g)); } catch (e) { /* noop */ }
+    if (p.done) return;                    // the timer already put this exact graph on disk
+    try { localStorage.setItem(p.storageKey, JSON.stringify(p.graph)); } catch (e) { /* noop */ }
   }, []);
 
   const headerRef = useRef(null);        // the wrapping header row — variable-height chrome
@@ -636,8 +605,11 @@ export default function TierGraphDialog({ onClose, onInsert, mergeData, t }) {
   const [importOpen, setImportOpen] = useState(false);
   const [linkInput, setLinkInput] = useState('');
   const [importError, setImportError] = useState(null);
-  // barDraft / gapDraft (§14) and commitDraft are declared ABOVE, next to the persistence effects
-  // that have to read their refs on unmount.
+  /* §17: the two top-bar geometry controls hold NO local state for the SLIDER — every value a
+     slider can produce is already inside [min, max], so it dispatches live. The one draft slot
+     below belongs to the exact-entry readouts added by FIX 4 (see the note above `geoText`): at
+     most one of the two fields can be mid-typing, and it is committed on blur/Enter. */
+  const [geoDraft, setGeoDraft] = useState(null);   // { key, text } | null
 
   const { url } = buildLink(graph);
   const cfgPart = url.split('cfg=')[1];
@@ -687,33 +659,141 @@ export default function TierGraphDialog({ onClose, onInsert, mergeData, t }) {
     setImportOpen(false);
   };
 
+  /* §17: the header has to hold SEVEN groups on one row inside the default paper's 1024px content
+     box (the paper fits the image: 640 + 416 = 1056px). The padding/width numbers below are the
+     compaction that buys the ~120px this needed — do not widen them back without re-measuring. */
+  /* §17 (FIX 4 fallout, MEASURED at 1366x768 / paper 1056px): swapping the two 26px readout SPANS
+     for 48px entry fields costs the header 44px, which took HE from 1035px (fitting, 21px spare) to
+     1079px — a wrap, i.e. exactly the regression FIX 2 exists to prevent. 24px is bought back here
+     and in the two `gap`s below (button padding 10 -> 8 horizontal, header gap 10 -> 8, group gap
+     6 -> 5), landing EN at 1022 and HE at 1046 — both one row, with more slack than the 2px the
+     cheaper combinations left. Do not widen these back without re-measuring BOTH languages. */
   const btn = {
-    border: 0, borderRadius: 8, padding: '7px 13px', fontWeight: 700, cursor: 'pointer',
+    border: 0, borderRadius: 8, padding: '7px 8px', fontWeight: 700, cursor: 'pointer',
     background: '#f3f4f8', color: '#1f2430', fontSize: 12.5,
   };
   const primaryBtn = { ...btn, background: '#1565d8', color: '#fff', padding: '9px 22px', fontSize: 14 };
-  const segBtn = (on) => ({ border: 0, background: on ? '#4f46e5' : '#fff', color: on ? '#fff' : '#6b7280', padding: '5px 12px', fontWeight: 700, cursor: 'pointer', fontSize: 13 });
-  const numInput = { width: 70, fontSize: 13, border: '1px solid #e2e6ee', borderRadius: 7, padding: '5px 7px' };
+  const segBtn = (on) => ({ border: 0, background: on ? '#4f46e5' : '#fff', color: on ? '#fff' : '#6b7280', padding: '5px 9px', fontWeight: 700, cursor: 'pointer', fontSize: 13 });
+  // 52px still fits a 4-digit width plus the spinner (~46px of content) — the W/H fields only.
+  const numInput = { width: 52, fontSize: 13, border: '1px solid #e2e6ee', borderRadius: 7, padding: '5px 7px' };
+  const rangeInput = { width: 80, margin: 0, padding: 0, accentColor: '#4f46e5', cursor: 'pointer' };
+  // §17 (FIX 4): the live readout is ALSO the exact-entry field. 48px holds three digits plus the
+  // spinner at 12.5px — the smallest that does; the header has no width to spare (see §17 note).
+  const readoutInput = {
+    width: 48, boxSizing: 'border-box', fontSize: 12.5, textAlign: 'center',
+    border: '1px solid #e2e6ee', borderRadius: 7, padding: '4px 3px', fontVariantNumeric: 'tabular-nums',
+  };
 
-  // §14 top-bar geometry controls. §10 affordance: empty value + a placeholder showing the AUTO
-  // value — an empty field IS the reset. Never the magic-zero convention (0 is a legal gap/radius).
   const nActive = nOf(graph);
   const gapDisabled = nActive < 2;                 // §9: no inter-bar space to distribute at n == 1
   const crowded = bubbleCrowded(graph);            // §9 SOFT warning — amber affordance, never a block
-  const warnInput = crowded ? { ...numInput, borderColor: '#f59e0b' } : numInput;
-  // The amber border alone is an unexplained colour. Pair it with the §13 warning string so the user
-  // is told WHAT is wrong and HOW to fix it. `title` (not an inline row) on purpose: it adds no
+  // The amber colour alone is an unexplained affordance. Pair it with the §13 warning string so the
+  // user is told WHAT is wrong and HOW to fix it. `title` (not an inline row) on purpose: it adds no
   // layout at all — and a header row that DOES appear is now measured (--tg-chrome-h) rather than
   // assumed, so a wrap-jump costs the stage nothing either way.
   const crowdedHint = crowded ? t('campaigns.tierGraph.bubbleCrowdedWarn') : undefined;
-  /* §9 ceilings for the two top-bar geometry inputs, each read from the SAME function its clamp
+  /* §9 ceilings for the two top-bar geometry controls, each read from the SAME function its clamp
      uses (`gapMaxOf` / `globalBarMaxOf`) so a `max` can never disagree with the reducer — §16c A13
      / §16d A18. Both are FLOORED, which since §16d A21(a) is an exact mirror rather than a
      compromise: the reducer now stores integers, so `floor(hi)` IS the largest value it can keep.
-     `step` is 1 for the same reason. `step={2}` off `min` 24 / 0 marks every odd value the reducer
-     legitimately stores as `:invalid` (stepMismatch) — including a floored `max` that lands odd. */
+     `step` is 1 for the same reason. §17 (report #5): these ARE "the maximum according to the image
+     width" — both are functions of `usable = W - 92`. Since FIX 1/FIX 3 they bound the DISPLAYED
+     value only; the two sliders carry their own, wider/narrower track ceilings (see below), because
+     a clamp ceiling and a usable track are not the same requirement. */
   const gapMax = Math.floor(gapMaxOf(graph));
   const barMax = Math.floor(globalBarMaxOf(graph));
+  /* §17 (reports #1/#2/#3/#5) — the two geometry controls are RANGE SLIDERS.
+     WHY NOT a number input: with the override absent (§10 auto) its `value` was '', and the first
+     spinner click on an EMPTY number input jumps to the `min` attribute — 24 for the bar, 1 for the
+     gap, which is exactly what the user hit. Showing the RESOLVED value instead fixes that at the
+     root, and a slider additionally has no partially-typed state, so the §14 draft (commit on
+     blur/Enter — the reason the graph stopped following the control) is not needed for the SLIDER.
+     FIX 4 puts one back for the small typed readout beside it, and for that field only.
+     DISPLAYED VALUE = the override if set, else the computed AUTO value, which is derived from the
+     image width — report #1. Clamped into the slider's own [min, max] so the thumb and the readout
+     can never disagree (round(auto) can land 1px above floor(max)). */
+  const barSet = geoNum(graph.barWidth);
+  const gapSet = geoNum(graph.gap);
+  const barVal = clampInt(barSet != null ? barSet : autoBarOf(graph), BAR_MIN, barMax);
+  const gapVal = clampInt(gapOf(graph), 0, gapMax);
+  /* §17 (FIX 1) — the SLIDER's ceiling, which is deliberately NOT the reducer's. `globalBarMaxOf`
+     subtracts the CURRENT gap, so with no per-tier override it collapses to the very expression
+     `autoBarOf` uses: `barVal === barMax` on every auto graph and the thumb had ZERO travel to the
+     right (default 640/n=4: 116 of 116 — a dead control). The track therefore runs to the ceiling
+     that would apply if the gap went to zero, `min(190, floor(usable / n))` = 137 at the default,
+     which is the widest bar the canvas can ever hold. The reducer's clamp is UNTOUCHED and still
+     decides what is stored, so dragging past what currently fits settles at the true limit — honest
+     feedback rather than a control that cannot move. No gap-shrinking, no redistribution.
+     `barVal` can legitimately sit ABOVE that ceiling when pinned neighbours inflate the auto share
+     (W=320, three tiers at 24 -> 121 > 57), so the max widens to it: a `value` above `max` is
+     silently pinned by the DOM and the readout beside it would then lie. */
+  const barSliderMax = Math.max(barVal, Math.min(BAR_MAX, Math.floor(usableOf(graph) / nOf(graph))));
+  /* §17 (FIX 3) — the gap slider is CAPPED at 120px. `gapMaxOf` is the reducer's raw clamp ceiling
+     and reaches 1260 at W=1400/n=2; on an 80px track that squeezes every useful value into the
+     leftmost ~2% of the travel. 120 is already far past any legible layout. The clamp is unchanged,
+     so a larger value can still be typed, stored or imported — and when one IS stored the max
+     widens to it, for the same "the thumb must be able to represent the value" reason as above. */
+  const gapSliderMax = Math.max(gapVal, Math.min(gapMax, 120));
+  const geoIsAuto = barSet == null && gapSet == null;
+  /* Commit LIVE (report #3) — but ONLY when the requested integer differs from the one already
+     displayed. That single guard is what keeps AUTO reachable: with the key absent the slider sits
+     on the auto value, so a drag that lands back on it writes nothing and `graph.barWidth` / `gap`
+     stay ABSENT. Absent is what buildLink's `!= null` cfg guards, isDefaultGraph() and the
+     persisted blob all read as "never customised" — a default graph therefore still emits a cfg
+     with no `bwg` and no `gp`, and the "you haven't changed anything" warning still fires. */
+  const setGeo = (key, raw, shown) => {
+    const v = Math.round(Number(raw));
+    if (!Number.isFinite(v) || v === shown) return;
+    dispatch({ type: 'SET_BG_FIELD', key, val: v });
+  };
+  /* §17 (FIX 4) — the readout is a small `type=number`, so an EXACT value can be typed and not only
+     dragged, and it feeds the SAME `setGeo` path as the slider. Typing must not dispatch per
+     keystroke — that is precisely the §14 bug this feature removed (the first `1` of `150` was
+     clamped to the 24 floor and the field fought the user) — so the raw text sits in ONE draft slot
+     and is committed on blur/Enter, while the slider keeps committing live on change. Only one of
+     the two fields can be mid-typing, hence one slot keyed by `key`. An EMPTY draft is discarded
+     rather than dispatched: `Number('')` is 0, so clearing the box would otherwise write a real
+     override (gap 0 / bar 24) — auto is reached with the reset button beside it, which is what that
+     button is for. Dragging the slider clears any draft so the two can never disagree. */
+  const geoText = (key, shown) => (geoDraft && geoDraft.key === key ? geoDraft.text : String(shown));
+  const commitGeoDraft = (key, shown) => {
+    const d = geoDraft;
+    if (!d || d.key !== key) return;
+    setGeoDraft(null);                                 // always drop the draft; `shown` takes over
+    if (String(d.text).trim() === '') return;          // not a value — revert, never write 0
+    setGeo(key, d.text, shown);                        // setGeo re-checks finite + "already shown"
+  };
+  // label + slider + px readout/entry field. The readout is also the AUTO affordance the placeholder
+  // used to be: muted grey while the value is auto-derived, solid once it is an override, amber
+  // (with the §9 hint) while the bubbles are crowded.
+  const geoSlider = (key, label, shown, isAuto, min, max, disabled) => (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 5, opacity: disabled ? 0.45 : 1 }} title={crowdedHint}>
+      <label style={{ fontSize: 12.5 }} htmlFor={'tg-' + key}>{label}</label>
+      <input
+        id={'tg-' + key} type="range" min={min} max={max} step={1}
+        value={shown}
+        disabled={disabled}
+        onChange={(e) => { setGeoDraft(null); setGeo(key, e.target.value, shown); }}
+        style={rangeInput}
+      />
+      <input
+        type="number" min={min} max={max} step={1}
+        aria-label={label}
+        value={geoText(key, shown)}
+        disabled={disabled}
+        onChange={(e) => setGeoDraft({ key, text: e.target.value })}
+        onBlur={() => commitGeoDraft(key, shown)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') { e.preventDefault(); commitGeoDraft(key, shown); }
+          else if (e.key === 'Escape') setGeoDraft(null);
+        }}
+        style={{
+          ...readoutInput,
+          color: crowded ? '#b45309' : (isAuto ? '#8a94a6' : '#1f2430'), fontWeight: isAuto ? 500 : 700,
+        }}
+      />
+    </div>
+  );
 
   return (
     /* §11: track graph.height so the popup has no tall grey band under the image, but keep the 80vh
@@ -729,8 +809,8 @@ export default function TierGraphDialog({ onClose, onInsert, mergeData, t }) {
           republishes a smaller chrome-h — a monotonically shrinking header plus "ResizeObserver
           loop completed with undelivered notifications". At 0 its layout height depends only on
           its own content and the paper's WIDTH, so the loop has no edge to close. */}
-      <div ref={headerRef} style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap', flexShrink: 0, padding: '12px 16px', borderBottom: '1px solid #e2e6ee' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+      <div ref={headerRef} style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', flexShrink: 0, padding: '12px 16px', borderBottom: '1px solid #e2e6ee' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
           <label style={{ fontWeight: 500, fontSize: 12.5 }}>{t('campaigns.tierGraph.tiersCount')}</label>
           <div style={{ display: 'flex', border: '1px solid #e2e6ee', borderRadius: 8, overflow: 'hidden' }}>
             {[1, 2, 3, 4].map((num) => (
@@ -738,43 +818,38 @@ export default function TierGraphDialog({ onClose, onInsert, mergeData, t }) {
             ))}
           </div>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
           <label style={{ fontSize: 12.5 }}>{t('campaigns.tierGraph.widthLabel')}</label>
           <input type="number" min={320} max={1400} step={10} value={graph.width} onChange={(e) => dispatch({ type: 'SET_BG_FIELD', key: 'width', val: parseFloat(e.target.value) || 640 })} style={numInput} />
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
           <label style={{ fontSize: 12.5 }}>{t('campaigns.tierGraph.heightLabel')}</label>
           <input type="number" min={320} max={900} step={10} value={graph.height} onChange={(e) => dispatch({ type: 'SET_BG_FIELD', key: 'height', val: parseFloat(e.target.value) || 420 })} style={numInput} />
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <label style={{ fontSize: 12.5 }}>{t('campaigns.tierGraph.barWidthLabel')}</label>
-          <input
-            type="number" min={BAR_MIN} max={barMax} step={1}
-            value={barDraft !== null ? barDraft : (graph.barWidth == null ? '' : graph.barWidth)}
-            placeholder={t('campaigns.tierGraph.autoPlaceholder', { v: Math.round(autoBarOf(graph)) })}
-            onChange={(e) => setBarDraft(e.target.value)}
-            onBlur={() => commitDraft('barWidth', barDraft, setBarDraft)}
-            onKeyDown={(e) => { if (e.key === 'Enter') commitDraft('barWidth', barDraft, setBarDraft); }}
-            style={warnInput}
-            title={crowdedHint}
-          />
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, opacity: gapDisabled ? 0.45 : 1 }}>
-          <label style={{ fontSize: 12.5 }}>{t('campaigns.tierGraph.gapLabel')}</label>
-          <input
-            type="number" min={0} max={gapMax} step={1}
-            disabled={gapDisabled}
-            value={gapDraft !== null ? gapDraft : (graph.gap == null ? '' : graph.gap)}
-            placeholder={t('campaigns.tierGraph.autoPlaceholder', { v: Math.round(autoGapOf(graph)) })}
-            onChange={(e) => setGapDraft(e.target.value)}
-            onBlur={() => commitDraft('gap', gapDraft, setGapDraft)}
-            onKeyDown={(e) => { if (e.key === 'Enter') commitDraft('gap', gapDraft, setGapDraft); }}
-            style={warnInput}
-            title={crowdedHint}
-          />
-        </div>
-        <div style={{ flex: 1 }} />
-        <button type="button" style={btn} onClick={handleImportOpen}>{t('campaigns.tierGraph.importImage')}</button>
+        {geoSlider('barWidth', t('campaigns.tierGraph.barWidthLabel'), barVal, barSet == null, BAR_MIN, barSliderMax, false)}
+        {geoSlider('gap', t('campaigns.tierGraph.gapLabel'), gapVal, gapSet == null, 0, gapSliderMax, gapDisabled)}
+        {/* §17 (report #4) — reset the TWO geometry overrides to auto, and nothing else. Deliberately
+            NOT `RESET_DEFAULT`: "Load sample" throws the whole graph away, which is not what someone
+            who only over-shot a slider wants. `val: ''` is §10's existing reset — SET_BG_FIELD maps it
+            through numOrUndef to `undefined` and DELETES the key, so the graph goes back to emitting
+            no geometry at all. Sits inside the geometry cluster and disables itself once both are
+            already auto, which is what tells it apart from the whole-graph button on the right. */}
+        <button
+          type="button"
+          style={geoIsAuto ? { ...btn, opacity: 0.45, cursor: 'default' } : btn}
+          disabled={geoIsAuto}
+          title={t('campaigns.tierGraph.resetGeometryHint')}
+          onClick={() => {
+            dispatch({ type: 'SET_BG_FIELD', key: 'barWidth', val: '' });
+            dispatch({ type: 'SET_BG_FIELD', key: 'gap', val: '' });
+          }}
+        >
+          {t('campaigns.tierGraph.resetGeometry')}
+        </button>
+        {/* §17 (report #6): `marginInlineStart:'auto'` instead of a `<div style={{flex:1}}/>` spacer.
+            The spacer never caused the wrap (a flex-basis-0 item adds 0 to the intrinsic width) but it
+            did cost one extra 10px gap; `auto` right-aligns these two identically, RTL included. */}
+        <button type="button" style={{ ...btn, marginInlineStart: 'auto' }} onClick={handleImportOpen}>{t('campaigns.tierGraph.importImage')}</button>
         <button type="button" style={btn} onClick={() => dispatch({ type: 'RESET_DEFAULT' })}>{t('campaigns.tierGraph.loadSample')}</button>
       </div>
 
