@@ -379,9 +379,9 @@ function reducer(state, action) {
 /* §11 popup fit. `--tg-chrome-h` is everything the dialog puts AROUND the image:
    header + footer + the stage column's own padding (18*2 = 36). NEITHER bar has a constant
    height. The header is `flexWrap:'wrap'`. §17 compacted it (sliders instead of the two number
-   inputs, a narrower numInput, tighter button padding, no `flex:1` spacer) so its ~1000px of
-   content fits the 1024px content box of the default 1056px paper on ONE row in en/he — but PL is
-   ~70px longer and still wraps, as does ANY language once the paper is narrower (the paper fits
+   inputs, a narrower numInput, tighter button padding, no `flex:1` spacer) so its content fits the
+   default 1056px paper on ONE row in en/he — MEASURED at 1366x768: en 1022px, he 1046px — but PL
+   needs 1159px and still wraps, as does ANY language once the paper is narrower (the paper fits
    the IMAGE, 1056px at the 640 default — it is not a flat 94vw). The FOOTER grows 26-52px on
    a message (`msg`, `tooLong`, or the insert error) — two clicks away: "Insert to campaign" on an
    unmodified graph shows `defaultUnchangedWarn`. A hard-coded 153 was measured against the
@@ -662,8 +662,14 @@ export default function TierGraphDialog({ onClose, onInsert, mergeData, t }) {
   /* §17: the header has to hold SEVEN groups on one row inside the default paper's 1024px content
      box (the paper fits the image: 640 + 416 = 1056px). The padding/width numbers below are the
      compaction that buys the ~120px this needed — do not widen them back without re-measuring. */
+  /* §17 (FIX 4 fallout, MEASURED at 1366x768 / paper 1056px): swapping the two 26px readout SPANS
+     for 48px entry fields costs the header 44px, which took HE from 1035px (fitting, 21px spare) to
+     1079px — a wrap, i.e. exactly the regression FIX 2 exists to prevent. 24px is bought back here
+     and in the two `gap`s below (button padding 10 -> 8 horizontal, header gap 10 -> 8, group gap
+     6 -> 5), landing EN at 1022 and HE at 1046 — both one row, with more slack than the 2px the
+     cheaper combinations left. Do not widen these back without re-measuring BOTH languages. */
   const btn = {
-    border: 0, borderRadius: 8, padding: '7px 10px', fontWeight: 700, cursor: 'pointer',
+    border: 0, borderRadius: 8, padding: '7px 8px', fontWeight: 700, cursor: 'pointer',
     background: '#f3f4f8', color: '#1f2430', fontSize: 12.5,
   };
   const primaryBtn = { ...btn, background: '#1565d8', color: '#fff', padding: '9px 22px', fontSize: 14 };
@@ -701,7 +707,8 @@ export default function TierGraphDialog({ onClose, onInsert, mergeData, t }) {
      spinner click on an EMPTY number input jumps to the `min` attribute — 24 for the bar, 1 for the
      gap, which is exactly what the user hit. Showing the RESOLVED value instead fixes that at the
      root, and a slider additionally has no partially-typed state, so the §14 draft (commit on
-     blur/Enter — the reason the graph stopped following the control) is no longer needed.
+     blur/Enter — the reason the graph stopped following the control) is not needed for the SLIDER.
+     FIX 4 puts one back for the small typed readout beside it, and for that field only.
      DISPLAYED VALUE = the override if set, else the computed AUTO value, which is derived from the
      image width — report #1. Clamped into the slider's own [min, max] so the thumb and the readout
      can never disagree (round(auto) can land 1px above floor(max)). */
@@ -760,7 +767,7 @@ export default function TierGraphDialog({ onClose, onInsert, mergeData, t }) {
   // used to be: muted grey while the value is auto-derived, solid once it is an override, amber
   // (with the §9 hint) while the bubbles are crowded.
   const geoSlider = (key, label, shown, isAuto, min, max, disabled) => (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 6, opacity: disabled ? 0.45 : 1 }} title={crowdedHint}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 5, opacity: disabled ? 0.45 : 1 }} title={crowdedHint}>
       <label style={{ fontSize: 12.5 }} htmlFor={'tg-' + key}>{label}</label>
       <input
         id={'tg-' + key} type="range" min={min} max={max} step={1}
@@ -802,8 +809,8 @@ export default function TierGraphDialog({ onClose, onInsert, mergeData, t }) {
           republishes a smaller chrome-h — a monotonically shrinking header plus "ResizeObserver
           loop completed with undelivered notifications". At 0 its layout height depends only on
           its own content and the paper's WIDTH, so the loop has no edge to close. */}
-      <div ref={headerRef} style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', flexShrink: 0, padding: '12px 16px', borderBottom: '1px solid #e2e6ee' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+      <div ref={headerRef} style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', flexShrink: 0, padding: '12px 16px', borderBottom: '1px solid #e2e6ee' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
           <label style={{ fontWeight: 500, fontSize: 12.5 }}>{t('campaigns.tierGraph.tiersCount')}</label>
           <div style={{ display: 'flex', border: '1px solid #e2e6ee', borderRadius: 8, overflow: 'hidden' }}>
             {[1, 2, 3, 4].map((num) => (
@@ -811,11 +818,11 @@ export default function TierGraphDialog({ onClose, onInsert, mergeData, t }) {
             ))}
           </div>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
           <label style={{ fontSize: 12.5 }}>{t('campaigns.tierGraph.widthLabel')}</label>
           <input type="number" min={320} max={1400} step={10} value={graph.width} onChange={(e) => dispatch({ type: 'SET_BG_FIELD', key: 'width', val: parseFloat(e.target.value) || 640 })} style={numInput} />
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
           <label style={{ fontSize: 12.5 }}>{t('campaigns.tierGraph.heightLabel')}</label>
           <input type="number" min={320} max={900} step={10} value={graph.height} onChange={(e) => dispatch({ type: 'SET_BG_FIELD', key: 'height', val: parseFloat(e.target.value) || 420 })} style={numInput} />
         </div>

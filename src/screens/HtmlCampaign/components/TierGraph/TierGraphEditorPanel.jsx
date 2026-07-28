@@ -18,8 +18,11 @@ import { computeLayout, geoNum } from './tierGraphCore';
  * §17 (FIX 5): `resolved` is the value the renderers actually DRAW when there is no override —
  * displayed, in muted grey, wherever `value` is absent. This is the same bug the top bar's sliders
  * were built to fix, still living here: an EMPTY number input jumps to its `min` on the first
- * spinner click, so selecting a tier and nudging "Bar width" snapped straight to 24 (and card width
- * to 90). Showing the resolved number means the spinner steps from where the user already is.
+ * spinner click, so selecting a tier and nudging "Bar width" snapped straight to 24 — the exact
+ * report. Showing the resolved number means the spinner steps from where the user already is.
+ * Opt-in per field: a call site that passes no `resolved` behaves exactly as before (width /
+ * height / axis max keep the legacy empty -> 0 contract, and card width is excluded on purpose —
+ * see its call site).
  * DISPLAY ONLY — nothing here calls `onChange`, so a graph that was never edited still holds no
  * geometry keys and buildLink still emits a cfg without them; `''` remains the reset, because the
  * user can still clear the field and `emit('')` is untouched.
