@@ -465,8 +465,12 @@ export default function TierGraphDialog({ onClose, onInsert, mergeData, t }) {
      blur/Enter — which is exactly why the graph stopped updating live. Those two controls are now
      RANGE sliders (see the header JSX): every value a slider can produce is already inside
      [min, max], so there is no partially-typed state to protect and `onChange` dispatches
-     immediately. Nothing is ever in flight, and the unmount flush below no longer has drafts to
-     commit — only the debounced write to flush. */
+     immediately. FIX 4 puts a small `type=number` back BESIDE each slider for exact entry, so a
+     partially-typed value exists again — but only while that one field has focus, and it is
+     committed on blur/Enter. Clicking Insert or Cancel fires blur (mousedown precedes click), so
+     the commit lands before the action; only ESCAPE, which closes the MUI dialog without a blur,
+     discards it — the same "escape throws the edit away" every other commit-on-blur field has, and
+     the graph it discards was never dispatched, so the flush below still has nothing to commit. */
 
   // debounced persistence to localStorage on EVERY change — never let it break the UI.
   // Holds the write the pending timer would perform; `done` flips once the timer has fired (H-f).
@@ -601,8 +605,11 @@ export default function TierGraphDialog({ onClose, onInsert, mergeData, t }) {
   const [importOpen, setImportOpen] = useState(false);
   const [linkInput, setLinkInput] = useState('');
   const [importError, setImportError] = useState(null);
-  // §17: the two top-bar geometry controls hold NO local state at all any more — see the note
-  // above the persistence effects and the slider block below.
+  /* §17: the two top-bar geometry controls hold NO local state for the SLIDER — every value a
+     slider can produce is already inside [min, max], so it dispatches live. The one draft slot
+     below belongs to the exact-entry readouts added by FIX 4 (see the note above `geoText`): at
+     most one of the two fields can be mid-typing, and it is committed on blur/Enter. */
+  const [geoDraft, setGeoDraft] = useState(null);   // { key, text } | null
 
   const { url } = buildLink(graph);
   const cfgPart = url.split('cfg=')[1];
@@ -664,6 +671,12 @@ export default function TierGraphDialog({ onClose, onInsert, mergeData, t }) {
   // 52px still fits a 4-digit width plus the spinner (~46px of content) — the W/H fields only.
   const numInput = { width: 52, fontSize: 13, border: '1px solid #e2e6ee', borderRadius: 7, padding: '5px 7px' };
   const rangeInput = { width: 80, margin: 0, padding: 0, accentColor: '#4f46e5', cursor: 'pointer' };
+  // §17 (FIX 4): the live readout is ALSO the exact-entry field. 48px holds three digits plus the
+  // spinner at 12.5px — the smallest that does; the header has no width to spare (see §17 note).
+  const readoutInput = {
+    width: 48, boxSizing: 'border-box', fontSize: 12.5, textAlign: 'center',
+    border: '1px solid #e2e6ee', borderRadius: 7, padding: '4px 3px', fontVariantNumeric: 'tabular-nums',
+  };
 
   const nActive = nOf(graph);
   const gapDisabled = nActive < 2;                 // §9: no inter-bar space to distribute at n == 1
@@ -678,7 +691,9 @@ export default function TierGraphDialog({ onClose, onInsert, mergeData, t }) {
      / §16d A18. Both are FLOORED, which since §16d A21(a) is an exact mirror rather than a
      compromise: the reducer now stores integers, so `floor(hi)` IS the largest value it can keep.
      `step` is 1 for the same reason. §17 (report #5): these ARE "the maximum according to the image
-     width" — both are functions of `usable = W - 92` — so the sliders need no ceiling of their own. */
+     width" — both are functions of `usable = W - 92`. Since FIX 1/FIX 3 they bound the DISPLAYED
+     value only; the two sliders carry their own, wider/narrower track ceilings (see below), because
+     a clamp ceiling and a usable track are not the same requirement. */
   const gapMax = Math.floor(gapMaxOf(graph));
   const barMax = Math.floor(globalBarMaxOf(graph));
   /* §17 (reports #1/#2/#3/#5) — the two geometry controls are RANGE SLIDERS.
@@ -694,6 +709,24 @@ export default function TierGraphDialog({ onClose, onInsert, mergeData, t }) {
   const gapSet = geoNum(graph.gap);
   const barVal = clampInt(barSet != null ? barSet : autoBarOf(graph), BAR_MIN, barMax);
   const gapVal = clampInt(gapOf(graph), 0, gapMax);
+  /* §17 (FIX 1) — the SLIDER's ceiling, which is deliberately NOT the reducer's. `globalBarMaxOf`
+     subtracts the CURRENT gap, so with no per-tier override it collapses to the very expression
+     `autoBarOf` uses: `barVal === barMax` on every auto graph and the thumb had ZERO travel to the
+     right (default 640/n=4: 116 of 116 — a dead control). The track therefore runs to the ceiling
+     that would apply if the gap went to zero, `min(190, floor(usable / n))` = 137 at the default,
+     which is the widest bar the canvas can ever hold. The reducer's clamp is UNTOUCHED and still
+     decides what is stored, so dragging past what currently fits settles at the true limit — honest
+     feedback rather than a control that cannot move. No gap-shrinking, no redistribution.
+     `barVal` can legitimately sit ABOVE that ceiling when pinned neighbours inflate the auto share
+     (W=320, three tiers at 24 -> 121 > 57), so the max widens to it: a `value` above `max` is
+     silently pinned by the DOM and the readout beside it would then lie. */
+  const barSliderMax = Math.max(barVal, Math.min(BAR_MAX, Math.floor(usableOf(graph) / nOf(graph))));
+  /* §17 (FIX 3) — the gap slider is CAPPED at 120px. `gapMaxOf` is the reducer's raw clamp ceiling
+     and reaches 1260 at W=1400/n=2; on an 80px track that squeezes every useful value into the
+     leftmost ~2% of the travel. 120 is already far past any legible layout. The clamp is unchanged,
+     so a larger value can still be typed, stored or imported — and when one IS stored the max
+     widens to it, for the same "the thumb must be able to represent the value" reason as above. */
+  const gapSliderMax = Math.max(gapVal, Math.min(gapMax, 120));
   const geoIsAuto = barSet == null && gapSet == null;
   /* Commit LIVE (report #3) — but ONLY when the requested integer differs from the one already
      displayed. That single guard is what keeps AUTO reachable: with the key absent the slider sits
@@ -706,9 +739,26 @@ export default function TierGraphDialog({ onClose, onInsert, mergeData, t }) {
     if (!Number.isFinite(v) || v === shown) return;
     dispatch({ type: 'SET_BG_FIELD', key, val: v });
   };
-  // label + slider + live px readout. The readout is also the AUTO affordance the placeholder used
-  // to be: muted grey while the value is auto-derived, solid once it is an override, amber (with
-  // the §9 hint) while the bubbles are crowded.
+  /* §17 (FIX 4) — the readout is a small `type=number`, so an EXACT value can be typed and not only
+     dragged, and it feeds the SAME `setGeo` path as the slider. Typing must not dispatch per
+     keystroke — that is precisely the §14 bug this feature removed (the first `1` of `150` was
+     clamped to the 24 floor and the field fought the user) — so the raw text sits in ONE draft slot
+     and is committed on blur/Enter, while the slider keeps committing live on change. Only one of
+     the two fields can be mid-typing, hence one slot keyed by `key`. An EMPTY draft is discarded
+     rather than dispatched: `Number('')` is 0, so clearing the box would otherwise write a real
+     override (gap 0 / bar 24) — auto is reached with the reset button beside it, which is what that
+     button is for. Dragging the slider clears any draft so the two can never disagree. */
+  const geoText = (key, shown) => (geoDraft && geoDraft.key === key ? geoDraft.text : String(shown));
+  const commitGeoDraft = (key, shown) => {
+    const d = geoDraft;
+    if (!d || d.key !== key) return;
+    setGeoDraft(null);                                 // always drop the draft; `shown` takes over
+    if (String(d.text).trim() === '') return;          // not a value — revert, never write 0
+    setGeo(key, d.text, shown);                        // setGeo re-checks finite + "already shown"
+  };
+  // label + slider + px readout/entry field. The readout is also the AUTO affordance the placeholder
+  // used to be: muted grey while the value is auto-derived, solid once it is an override, amber
+  // (with the §9 hint) while the bubbles are crowded.
   const geoSlider = (key, label, shown, isAuto, min, max, disabled) => (
     <div style={{ display: 'flex', alignItems: 'center', gap: 6, opacity: disabled ? 0.45 : 1 }} title={crowdedHint}>
       <label style={{ fontSize: 12.5 }} htmlFor={'tg-' + key}>{label}</label>
@@ -716,16 +766,25 @@ export default function TierGraphDialog({ onClose, onInsert, mergeData, t }) {
         id={'tg-' + key} type="range" min={min} max={max} step={1}
         value={shown}
         disabled={disabled}
-        onChange={(e) => setGeo(key, e.target.value, shown)}
+        onChange={(e) => { setGeoDraft(null); setGeo(key, e.target.value, shown); }}
         style={rangeInput}
       />
-      <span style={{
-        minWidth: 26, textAlign: 'center', fontSize: 12.5, fontVariantNumeric: 'tabular-nums',
-        color: crowded ? '#b45309' : (isAuto ? '#8a94a6' : '#1f2430'), fontWeight: isAuto ? 500 : 700,
-      }}
-      >
-        {shown}
-      </span>
+      <input
+        type="number" min={min} max={max} step={1}
+        aria-label={label}
+        value={geoText(key, shown)}
+        disabled={disabled}
+        onChange={(e) => setGeoDraft({ key, text: e.target.value })}
+        onBlur={() => commitGeoDraft(key, shown)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') { e.preventDefault(); commitGeoDraft(key, shown); }
+          else if (e.key === 'Escape') setGeoDraft(null);
+        }}
+        style={{
+          ...readoutInput,
+          color: crowded ? '#b45309' : (isAuto ? '#8a94a6' : '#1f2430'), fontWeight: isAuto ? 500 : 700,
+        }}
+      />
     </div>
   );
 
@@ -760,8 +819,8 @@ export default function TierGraphDialog({ onClose, onInsert, mergeData, t }) {
           <label style={{ fontSize: 12.5 }}>{t('campaigns.tierGraph.heightLabel')}</label>
           <input type="number" min={320} max={900} step={10} value={graph.height} onChange={(e) => dispatch({ type: 'SET_BG_FIELD', key: 'height', val: parseFloat(e.target.value) || 420 })} style={numInput} />
         </div>
-        {geoSlider('barWidth', t('campaigns.tierGraph.barWidthLabel'), barVal, barSet == null, BAR_MIN, barMax, false)}
-        {geoSlider('gap', t('campaigns.tierGraph.gapLabel'), gapVal, gapSet == null, 0, gapMax, gapDisabled)}
+        {geoSlider('barWidth', t('campaigns.tierGraph.barWidthLabel'), barVal, barSet == null, BAR_MIN, barSliderMax, false)}
+        {geoSlider('gap', t('campaigns.tierGraph.gapLabel'), gapVal, gapSet == null, 0, gapSliderMax, gapDisabled)}
         {/* §17 (report #4) — reset the TWO geometry overrides to auto, and nothing else. Deliberately
             NOT `RESET_DEFAULT`: "Load sample" throws the whole graph away, which is not what someone
             who only over-shot a slider wants. `val: ''` is §10's existing reset — SET_BG_FIELD maps it
