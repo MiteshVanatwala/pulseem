@@ -944,7 +944,9 @@ export const TierFeatures = {
   "RCS_MESSAGING": "billing.featureNames.RCS_MESSAGING",
   "KOSHER_SEND": "billing.featureNames.KOSHER_SEND",
   "LANDING_PAGE_HTML_BLOCK": "billing.featureNames.LANDING_PAGE_HTML_BLOCK",
-  "POPUP_STEPS": "billing.featureNames.POPUP_STEPS"
+  "POPUP_STEPS": "billing.featureNames.POPUP_STEPS",
+  "WIDGET_FEEDBACK": "billing.featureNames.WIDGET_FEEDBACK",
+  "WIDGET_MARKETING": "billing.featureNames.WIDGET_MARKETING",
 }
 
 

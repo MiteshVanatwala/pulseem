@@ -109,6 +109,8 @@ import PopupSummary from './screens/Popups/PopupSummary';
 import HelpDrawer from './components/HelpDrawer';
 import LegacyPageFrame, { LegacyPageWild } from './screens/LegacyPage/LegacyPageFrame';
 import { openHelpDrawer, closeHelpDrawer, toggleHelpDrawer } from './redux/reducers/helpDrawerSlice';
+import ChatWidgetConfigPage from './screens/Widgets/ChatWidgetConfigPage';
+import WidgetListPage from './screens/Widgets/WidgetListPage';
 
 const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
   const transferUrl =
@@ -683,6 +685,16 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
         path={`${sitePrefix}ClientSearch`}
         element={<ClientSearch classes={classes} />}
       />}
+      <Route
+        exact
+        path={`${sitePrefix}Widgets`}
+        element={<WidgetListPage classes={classes} />}
+      />
+      <Route
+        exact
+        path={`${sitePrefix}Widgets/:widgetId`}
+        element={<ChatWidgetConfigPage classes={classes} />}
+      />
     </Routes>
   )
 }
