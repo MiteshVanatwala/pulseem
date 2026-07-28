@@ -314,7 +314,7 @@ const DataSources = ({ classes }: ClassesType) => {
             <TableCell classes={cellStyle} align="center" className={clsx(classes.flex3)}>{renderNameCell(row)}</TableCell>
             <TableCell classes={cellStyle} align="center" className={clsx(classes.flex2)}>{row.Description}</TableCell>
             <TableCell classes={cellStyle} align="center" className={clsx(classes.flex2)}>
-                <StatusChip status={row.Status} progress={row.ProgressPercent} runDateStart={row.RunDateStart} createdDate={row.CreatedDate} t={t} />
+                <StatusChip status={row.Status} progress={row.ProgressPercent} runDateStart={row.RunDateStart} createdDate={row.CreatedDate} t={t} align="center" />
             </TableCell>
             <TableCell classes={cellStyle} align="center" className={clsx(classes.flex1)} style={{ direction: 'ltr' }}>
                 {row.TotalRows !== null && row.TotalRows !== undefined ? row.TotalRows.toLocaleString() : '—'}
@@ -331,7 +331,7 @@ const DataSources = ({ classes }: ClassesType) => {
                     <CardContent>
                         {renderNameCell(row)}
                         <Box style={{ marginTop: 8 }}>
-                            <StatusChip status={row.Status} progress={row.ProgressPercent} runDateStart={row.RunDateStart} createdDate={row.CreatedDate} t={t} />
+                            <StatusChip status={row.Status} progress={row.ProgressPercent} runDateStart={row.RunDateStart} createdDate={row.CreatedDate} t={t} align="center" />
                         </Box>
                         <Box style={{ marginTop: 8 }}>{renderActions(row)}</Box>
                     </CardContent>

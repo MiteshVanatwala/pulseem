@@ -74,7 +74,9 @@ const rowTime = (row: CampaignRow) => parseServerDate(row.SendDate || row.Update
 // Cap the rendered grid so the primary action stays above the fold on a long account-wide list —
 // a "show more" control reveals the rest on demand. Applied AFTER the onlySendable filter, so it
 // counts only the campaigns actually on offer.
-const CAP = 12;
+// Two full rows of four. Keeps the "show more" control — and therefore the Continue button —
+// above the fold on the account-wide list, instead of pushing them down a third row.
+const CAP = 8;
 
 const useStyles = makeStyles((theme) => ({
     wrap: { marginTop: theme.spacing(1) },
@@ -107,9 +109,24 @@ const useStyles = makeStyles((theme) => ({
     // Wrapping grid (SourcePicker idiom), not a scrolling column: a grid that scrolls inside its
     // own maxHeight would hide the Continue button below the fold. The list is capped by card
     // count + a "show more" control instead — see CAP.
-    list: { display: 'flex', flexWrap: 'wrap', gap: theme.spacing(2), marginTop: theme.spacing(1) },
+    // A fixed FOUR-column grid, not a wrapping flex row of fixed-width cards: with flex-wrap the
+    // number of cards per row changed with the viewport (five fit on a wide screen), so the
+    // CAP of 8 did not correspond to a whole number of rows. A grid pins it at 4 × 2 and the
+    // cards stretch to fill instead. Column count steps down on narrow viewports so a card never
+    // becomes unreadably thin.
+    list: {
+        display: 'grid',
+        gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
+        gap: theme.spacing(2),
+        marginTop: theme.spacing(1),
+        [theme.breakpoints.down('md')]: { gridTemplateColumns: 'repeat(3, minmax(0, 1fr))' },
+        [theme.breakpoints.down('sm')]: { gridTemplateColumns: 'repeat(2, minmax(0, 1fr))' },
+        [theme.breakpoints.down('xs')]: { gridTemplateColumns: '1fr' },
+    },
     row: {
-        position: 'relative', boxSizing: 'border-box', width: 264, padding: theme.spacing(1.5),
+        // No fixed width — the grid cell sets it. minWidth:0 stops a long unbroken campaign name
+        // from forcing the track wider than its share (grid items default to min-content).
+        position: 'relative', boxSizing: 'border-box', minWidth: 0, padding: theme.spacing(1.5),
         border: '2px solid #e0e0e0', borderRadius: 8, cursor: 'pointer', outline: 'none',
         transition: 'border-color .15s, box-shadow .15s',
         '&:hover': { borderColor: theme.palette.primary.light },

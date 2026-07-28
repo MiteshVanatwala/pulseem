@@ -8,6 +8,11 @@ interface StatusChipProps {
     runDateStart: string | null;
     createdDate?: string | null;
     t: (key: string) => string;
+    // The label row is a flex container, so it does NOT inherit a TableCell's align="center" (flex items
+    // ignore text-align) — it would sit at the flex start, i.e. the right edge under RTL. List tables pass
+    // 'center'; the view-screen header keeps the default 'start' so the status stays tight against the
+    // source name instead of floating in the middle of the minWidth:120 box.
+    align?: 'start' | 'center';
 }
 
 // The single place the "processing delayed" threshold lives (mirrors the worker's 2h stale threshold).
@@ -32,7 +37,7 @@ const colorFor = (status: eDataSourceStatus): string => {
     }
 };
 
-const StatusChip = ({ status, progress, runDateStart, createdDate, t }: StatusChipProps) => {
+const StatusChip = ({ status, progress, runDateStart, createdDate, t, align = 'start' }: StatusChipProps) => {
     const inFlight = status === eDataSourceStatus.PENDING || status === eDataSourceStatus.PROCESSING;
     const delayed = inFlight && isDelayed(runDateStart, createdDate);
 
@@ -42,7 +47,7 @@ const StatusChip = ({ status, progress, runDateStart, createdDate, t }: StatusCh
 
     return (
         <Box role="status" aria-live="polite" style={{ minWidth: 120 }}>
-            <Box style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <Box style={{ display: 'flex', alignItems: 'center', gap: 6, justifyContent: align === 'center' ? 'center' : 'flex-start' }}>
                 {inFlight && progress === null && <CircularProgress size={14} thickness={5} />}
                 <Typography style={{ color: delayed ? '#B54708' : colorFor(status), fontWeight: 700, fontSize: 14 }}>
                     {label}
