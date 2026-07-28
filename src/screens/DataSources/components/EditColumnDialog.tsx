@@ -7,6 +7,7 @@ import { useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { updateColumnMeta } from '../../../redux/reducers/dataSourcesSlice';
 import { DataSourceColumn, eDataType, eFormatHint, eSemanticRole } from '../../../Models/DataSources/DataSource';
+import { useDsDialogStyles } from './dialogStyles';
 
 interface EditColumnDialogProps {
     classes: { [key: string]: string };
@@ -24,6 +25,7 @@ interface EditColumnDialogProps {
 const EditColumnDialog = ({ classes, open, column, searchableRemaining, maxSearchable, onClose, onSaved }: EditColumnDialogProps) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
+    const dsDialog = useDsDialogStyles();
     const [displayName, setDisplayName] = useState('');
     const [dataType, setDataType] = useState<eDataType>(eDataType.TEXT);
     const [formatHint, setFormatHint] = useState<eFormatHint>(eFormatHint.NONE);
@@ -31,8 +33,9 @@ const EditColumnDialog = ({ classes, open, column, searchableRemaining, maxSearc
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState('');
 
-    // Field titles must be clearly readable — slightly larger than the field's own text (14px).
-    const labelStyle: any = { fontSize: 16, fontWeight: 600, color: '#344054', marginBottom: 6 };
+    // Field titles must be clearly readable — slightly larger than the field's own text (16px, from the
+    // shared dialog scale), so the size comes from that same scale (17px) and only the weight is set here.
+    const labelStyle: any = { fontWeight: 600, color: '#344054', marginBottom: 6 };
     // Dropdowns drop below the field, right-anchored (RTL).
     const menuProps: any = {
         getContentAnchorEl: null,
@@ -81,7 +84,7 @@ const EditColumnDialog = ({ classes, open, column, searchableRemaining, maxSearc
     };
 
     return (
-        <Dialog open={open} onClose={saving ? undefined : onClose} fullWidth maxWidth="sm" dir="rtl">
+        <Dialog open={open} onClose={saving ? undefined : onClose} fullWidth maxWidth="sm" dir="rtl" PaperProps={{ className: dsDialog.paper }}>
             <DialogTitle>{t('DataSources.column.editTitle')}</DialogTitle>
             <DialogContent>
                 <Box style={{ display: 'flex', flexDirection: 'column', gap: 16, paddingTop: 4 }}>
@@ -89,14 +92,14 @@ const EditColumnDialog = ({ classes, open, column, searchableRemaining, maxSearc
                         <Typography style={labelStyle}>{t('DataSources.column.displayName')}</Typography>
                         <TextField variant="outlined" size="small" value={displayName}
                             onChange={(e) => setDisplayName(e.target.value)}
-                            inputProps={{ maxLength: 200, style: { fontSize: 14 } }} fullWidth />
+                            inputProps={{ maxLength: 200 }} fullWidth />
                     </Box>
 
                     <Box>
                         <Typography style={labelStyle}>{t('DataSources.column.dataType')}</Typography>
                         {/* Identity columns are locked to Email(4)/Phone(5); info columns pick Text/Number/Date — same rule as the wizard. */}
                         <FormControl variant="outlined" size="small" fullWidth>
-                            <Select value={dataType} disabled={isIdentity} MenuProps={menuProps} style={{ fontSize: 14 }}
+                            <Select value={dataType} disabled={isIdentity} MenuProps={menuProps}
                                 onChange={(e) => {
                                     const dt = Number(e.target.value) as eDataType;
                                     setDataType(dt);
@@ -113,7 +116,7 @@ const EditColumnDialog = ({ classes, open, column, searchableRemaining, maxSearc
                         <Typography style={labelStyle}>{t('DataSources.column.formatHint')}</Typography>
                         {/* Currency/Percent apply only to numeric info columns. */}
                         <FormControl variant="outlined" size="small" fullWidth>
-                            <Select value={formatHint} disabled={isIdentity || dataType !== eDataType.NUMBER} MenuProps={menuProps} style={{ fontSize: 14 }}
+                            <Select value={formatHint} disabled={isIdentity || dataType !== eDataType.NUMBER} MenuProps={menuProps}
                                 onChange={(e) => setFormatHint(Number(e.target.value) as eFormatHint)}>
                                 {[eFormatHint.NONE, eFormatHint.CURRENCY, eFormatHint.PERCENT].map(v => (
                                     <MenuItem key={v} value={v}>{t(`DataSources.column.formatHints.${v}`)}</MenuItem>

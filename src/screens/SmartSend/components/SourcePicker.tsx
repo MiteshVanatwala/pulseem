@@ -5,6 +5,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import { CheckCircle, Storage, Refresh, Close } from '@material-ui/icons';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
+import moment from 'moment';
+import { DateFormats } from '../../../helpers/Constants';
 import { getChannelDescriptor } from '../../../Models/DataSources/SmartSend';
 import { eDataSourceStatus } from '../../../Models/DataSources/DataSource';
 import { selectSource, loadSourceColumns } from '../../../redux/reducers/smartSendSlice';
@@ -43,6 +45,9 @@ const useStyles = makeStyles((theme) => ({
     name: { fontWeight: 600, display: 'flex', alignItems: 'center', gap: theme.spacing(0.5), overflowWrap: 'anywhere' },
     desc: { marginTop: theme.spacing(0.5) },
     meta: { marginTop: theme.spacing(1), display: 'flex', alignItems: 'center', gap: theme.spacing(1), flexWrap: 'wrap' },
+    // Second metadata row: column count + last upload date. Its own row rather than more chips in
+    // `meta`, so the recipients chip never wraps away from the blocked-reason chip beside it.
+    sub: { marginTop: theme.spacing(0.5), display: 'flex', alignItems: 'center', gap: theme.spacing(1.5), flexWrap: 'wrap' },
     check: { position: 'absolute', top: 8, insetInlineEnd: 8 },
     zero: { color: '#c0392b' },
     state: { display: 'flex', alignItems: 'center', gap: theme.spacing(1), marginTop: theme.spacing(2) },
@@ -61,6 +66,7 @@ const SourcePicker: React.FC = () => {
     const classes = useStyles();
     const { t } = useTranslation();
     const dispatch = useDispatch();
+    const isRTL = useSelector((s: any) => s.core && s.core.isRTL);
     const list = useSelector((s: any) => s.dataSources.list);
     const listStatus = useSelector((s: any) => s.dataSources.listStatus);
     const selectedChannel = useSelector((s: any) => s.smartSend.selectedChannel);
@@ -258,6 +264,11 @@ const SourcePicker: React.FC = () => {
                         onClose={() => setConfirmOpen(false)}
                         maxWidth="sm"
                         fullWidth
+                        // Portalled to document.body, outside App.js:1018's <div dir=...>, and
+                        // <html dir> is stuck at "ltr" (App.js:727-730 has an empty dep array and
+                        // runs before i18n.changeLanguage at App.js:806). Without this the dialog
+                        // renders LTR for Hebrew users.
+                        dir={isRTL ? 'rtl' : 'ltr'}
                         aria-labelledby="smartsend-switch-confirm-title"
                         aria-describedby="smartsend-switch-confirm-body"
                     >
@@ -309,8 +320,25 @@ const SourcePicker: React.FC = () => {
                         const count = it[descriptor.resolvedCountField] ?? 0;
                         const zeroResolved = sendable && count === 0;
                         const blockedKey = it.HasCellIdentity ? 'blockedNoEmail' : 'viewOnly'; // only used when !sendable
+                        // 0 also covers "the SP script is not deployed yet" — see the JSX comment.
+                        const fields = Number(it.ColumnsCount) > 0 ? Number(it.ColumnsCount) : 0;
+                        const when = it.LastUploadDate ? moment(it.LastUploadDate) : null;
+                        const uploaded = when && when.isValid() ? when.format(DateFormats.DATE_TIME_24) : null;
                         const blockedText = t(`DataSources.send.source.${blockedKey}`);
                         const descId = `smartsend-src-desc-${it.DataSourceID}`;
+                        // `aria-label` below sets the card's accessible NAME, which suppresses all of
+                        // its inner text for screen readers — so the recipients chip, the blocked
+                        // reason and the zero-resolved caption were already unannounced before this
+                        // change. Rather than fold the two new facts into the name (which would
+                        // announce columns+date but still not the recipient count — the worst of both),
+                        // everything the card shows is collected into ONE sr-only description node,
+                        // now rendered for every card and not only for blocked ones.
+                        const description = [
+                            !sendable ? blockedText : t('DataSources.send.source.recipients', { count }),
+                            zeroResolved ? t('DataSources.send.source.zeroResolved') : null,
+                            fields > 0 ? t('DataSources.send.source.columns', { n: fields }) : null,
+                            uploaded ? t('DataSources.send.source.updated', { date: uploaded }) : null,
+                        ].filter(Boolean).join('. ');
 
                         const card = (
                             <div
@@ -320,7 +348,7 @@ const SourcePicker: React.FC = () => {
                                 aria-checked={isSelected}
                                 aria-disabled={sendable ? undefined : true}
                                 aria-label={it.Name}
-                                aria-describedby={!sendable ? descId : undefined}
+                                aria-describedby={descId}
                                 tabIndex={sendable ? (idx === rovingTarget ? 0 : -1) : -1}
                                 onMouseDown={sendable ? undefined : (e) => e.preventDefault()}
                                 onClick={() => pick(it)}
@@ -341,7 +369,34 @@ const SourcePicker: React.FC = () => {
                                         <Typography variant="caption" className={classes.zero}>{t('DataSources.send.source.zeroResolved')}</Typography>
                                     )}
                                 </Box>
-                                {!sendable && <span id={descId} className={classes.srOnly}>{blockedText}</span>}
+                                {/* How many columns the file has, and when it was last uploaded.
+                                    ColumnsCount comes from DataSourceVersions.ColumnCount, projected
+                                    by DataSources_GetMany; it is 0 until that SP script is deployed
+                                    (GInt returns 0 for an absent column), so render nothing rather
+                                    than a false "0 columns".
+                                    LastUploadDate is the LATEST VERSION's CreatedDate — re-uploading
+                                    the same source creates a new version and leaves DataSources.
+                                    CreatedDate untouched, so this is the only field that means "last
+                                    updated". Plain moment(), not CampaignPicker's parseServerDate:
+                                    that helper exists for the campaigns endpoint's '.FFF' masks,
+                                    whereas this is a Newtonsoft-serialised DateTime? (ISO-8601).
+                                    Mirrors DataSources.tsx and SmartSendManageTab, which both use
+                                    raw moment on this same payload. */}
+                                {(fields > 0 || uploaded) && (
+                                    <Box className={classes.sub}>
+                                        {fields > 0 && (
+                                            <Typography variant="caption" color="textSecondary">
+                                                {t('DataSources.send.source.columns', { n: fields })}
+                                            </Typography>
+                                        )}
+                                        {uploaded && (
+                                            <Typography variant="caption" color="textSecondary">
+                                                {t('DataSources.send.source.updated', { date: uploaded })}
+                                            </Typography>
+                                        )}
+                                    </Box>
+                                )}
+                                <span id={descId} className={classes.srOnly}>{description}</span>
                             </div>
                         );
 

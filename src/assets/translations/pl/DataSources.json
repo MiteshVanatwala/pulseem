@@ -28,6 +28,8 @@
       "current": "Wybrane źródło",
       "change": "Zmień źródło",
       "recipients": "Dostępni odbiorcy: {{count}}",
+      "columns": "Kolumny: {{n}}",
+      "updated": "Zaktualizowano {{date}}",
       "viewOnly": "Tylko do podglądu",
       "blockedNoEmail": "Brak kolumny e-mail — nie można wysłać e-mailem",
       "zeroResolved": "To źródło nie ma wierszy przypisanych do e-maila",
@@ -59,14 +61,13 @@
       }
     },
     "business": {
-      "title": "Kolumny biznesowe (opcjonalnie)",
+      "title": "E-mail przełożonego",
       "supervisor": "Kolumna e-maila przełożonego",
-      "gap": "Kolumna różnicy",
-      "sort": "Kolumna sortowania",
+      "gapSort": "Kolumna różnicy do celu",
       "none": "Brak",
-      "hint": "Kolumny różnicy i sortowania wpływają tylko na e-mail przełożonego",
-      "needSupervisor": "Wybierz kolumnę przełożonego, aby różnica i sortowanie miały efekt",
-      "sortDefault": "Domyślnie tabela jest sortowana według kolumny różnicy. Wybierz kolumnę sortowania tylko, aby sortować według innej kolumny."
+      "hint": "Te kolumny wpływają tylko na e-mail przełożonego. Agenci są wypisani według różnicy do celu, od najmniejszej.",
+      "needSupervisor": "Wybierz kolumnę przełożonego, aby kolumna różnicy miała efekt",
+      "legacySortDiffers": "Zapisane mapowanie używa innej kolumny sortowania („{{sort}}”) niż kolumny różnicy („{{gap}}”). Zmiana kolumny poniżej zastąpi także zapisaną kolumnę sortowania."
     },
     "stale": {
       "title": "Dostępna jest nowsza wersja",
@@ -74,7 +75,7 @@
     },
     "mismatch": {
       "title": "Niezgodność grupy wysyłki",
-      "body": "Grupa syntetyczna kampanii została usunięta lub scalona. Zapisz ponownie, aby naprawić.",
+      "body": "Grupa odbiorców kampanii została usunięta lub scalona. Kliknij „Wyślij do wszystkich”, aby ją odbudować — lista jest odbudowywana ze źródła przed potwierdzeniem wysyłki.",
       "cloneTitle": "Zduplikowana kampania — wymagane mapowanie",
       "cloneBody": "Ta kampania została zduplikowana z obcą grupą źródła ({{name}}) bez mapowania. Wybierz źródło i zmapuj ponownie.",
       "repair": "Napraw i zapisz"
@@ -181,6 +182,12 @@
       "clearSearch": "Wyczyść wyszukiwanie",
       "loadError": "Nie udało się wczytać listy kampanii",
       "updated": "Zaktualizowano {{date}}",
+      "fieldsCount": "Pola: {{n}}",
+      "fieldsEmpty": "Brak pól w szablonie",
+      "fieldsAria": "Pola mapowania ({{n}}): {{list}}",
+      "fieldsLoadError": "Nie udało się wczytać pól mapowania",
+      "fieldsPanelTitle": "Pola mapowania w kampanii „{{name}}”",
+      "fieldsPanelClose": "Zamknij",
       "blocked": {
         "notSendable": "Już wysłana / nie można wysłać",
         "oldEditor": "Stary edytor — nieobsługiwany"
@@ -251,9 +258,13 @@
     "dragHere": "Przeciągnij tutaj plik xlsx lub csv albo kliknij, aby wybrać",
     "uploading": "Przesyłanie pliku...",
     "roleNone": "Pole danych",
-    "roleEmail": "E-mail — tożsamość",
-    "roleCellphone": "Telefon komórkowy — tożsamość",
+    "roleEmail": "E-mail (tożsamość)",
+    "roleCellphone": "Telefon komórkowy (tożsamość)",
     "roleSupervisorEmail": "E-mail przełożonego",
+    "identityEmailShort": "E-mail",
+    "identityCellShort": "Telefon komórkowy",
+    "identityNoneShort": "Nie wybrano kolumn tożsamości",
+    "rowsUnknown": "Zostanie obliczone po przetworzeniu",
     "previewTitle": "Podgląd — pierwsze 5 wierszy",
     "identityBanner": "Wszystkie pozostałe kolumny zostaną zapisane jako dynamiczne pola danych z nagłówkami z pliku",
     "noIdentityWarning": "Nie zaznaczono kolumn tożsamości — źródło zostanie zapisane tylko do podglądu, wyszukiwania i eksportu, bez możliwości wysyłki",
@@ -355,7 +366,8 @@
   "export": {
     "title": "Eksport źródła",
     "format": "Format",
-    "notifyEmail": "E-mail powiadomienia (opcjonalnie)",
+    "formatNote": "Plik jest generowany raz — na stronie pobierania możesz go pobrać jako CSV lub Excel",
+    "notifyEmail":"E-mail powiadomienia (opcjonalnie)",
     "csvOnly": "Powyżej 100 000 wierszy można eksportować tylko do CSV",
     "runningInBackground": "Eksport działa w tle — plik pojawi się na stronie pobierania, a powiadomienie zostanie wysłane e-mailem",
     "ready": "Plik jest gotowy na stronie pobierania",

@@ -88,6 +88,19 @@ const baseMapping = (campaignId: number): GetMappingResult => ({
     Columns: COLUMNS_V41
 });
 
+// ── GetTokensBulk (campaign-picker field counts) ─────────────────────────────
+// Mirrors the server: campaigns the caller cannot read are simply OMITTED from Items, so the
+// slice can exercise its "requested but unanswered ⇒ failed" branch. 991 (NOT_FOUND) stands in
+// for an unowned id; 601 is the campaign with no fields, so the "no fields" chip is reachable.
+export const mockGetCampaignTokens = (campaignIds: number[]) => ok({
+    Items: (campaignIds || [])
+        .filter(id => id !== 991)
+        .map(id => ({
+            CampaignID: id,
+            Tokens: id === 601 ? [] : mapTokens({})
+        }))
+});
+
 // ── GetMapping ───────────────────────────────────────────────────────────────
 export const mockGetMapping = (campaignId: number) => {
     const g = gate(campaignId); if (g) return g;

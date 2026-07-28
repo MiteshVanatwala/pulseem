@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import {
-    Dialog, DialogTitle, DialogContent, DialogActions, Button, Box, Typography, RadioGroup, Radio,
-    FormControlLabel, TextField, Link
+    Dialog, DialogTitle, DialogContent, DialogActions, Button, Box, Typography, TextField, Link
 } from '@material-ui/core';
 import { useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
@@ -9,6 +8,7 @@ import useRedirect from '../../../helpers/Routes/Redirect';
 import { sitePrefix } from '../../../config';
 import { ERROR_TYPE } from '../../../helpers/Types/common';
 import { exportDataSource } from '../../../redux/reducers/dataSourcesSlice';
+import { useDsDialogStyles } from './dialogStyles';
 
 interface ExportDialogProps {
     classes: { [key: string]: string };
@@ -26,8 +26,8 @@ const ExportDialog = ({ classes, open, dataSource, versionId, totalRows, onClose
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const Redirect = useRedirect();
+    const dsDialog = useDsDialogStyles();
     const csvOnly = totalRows > CSV_ONLY_THRESHOLD;
-    const [fileType, setFileType] = useState<'csv' | 'xlsx'>('csv');
     const [notifyEmail, setNotifyEmail] = useState('');
     const [busy, setBusy] = useState(false);
     const [error, setError] = useState('');
@@ -35,7 +35,7 @@ const ExportDialog = ({ classes, open, dataSource, versionId, totalRows, onClose
 
     useEffect(() => {
         if (open) {
-            setFileType('csv'); setNotifyEmail(''); setBusy(false); setError(''); setReadyMessage('');
+            setNotifyEmail(''); setBusy(false); setError(''); setReadyMessage('');
         }
     }, [open]);
 
@@ -45,7 +45,9 @@ const ExportDialog = ({ classes, open, dataSource, versionId, totalRows, onClose
         const res: any = await dispatch(exportDataSource({
             DataSourceID: dataSource.ID,
             VersionID: versionId,
-            FileType: csvOnly ? 'csv' : fileType,
+            // The file is generated once; the downloads page serves it as either CSV or Excel, so there is
+            // nothing to ask the user here — 'csv' is just the payload field the API still requires.
+            FileType: 'csv',
             NotifyEmail: notifyEmail || undefined
         }));
         setBusy(false);
@@ -66,19 +68,18 @@ const ExportDialog = ({ classes, open, dataSource, versionId, totalRows, onClose
     };
 
     return (
-        <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm" dir="rtl">
+        <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm" dir="rtl" PaperProps={{ className: dsDialog.paper }}>
             <DialogTitle>{t('DataSources.export.title')}</DialogTitle>
             <DialogContent>
                 <Box style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                     <Box>
-                        <Typography style={{ fontWeight: 600 }}>{t('DataSources.export.format')}</Typography>
-                        <RadioGroup row value={csvOnly ? 'csv' : fileType} onChange={(e) => setFileType(e.target.value as 'csv' | 'xlsx')}>
-                            <FormControlLabel value="csv" control={<Radio />} label="CSV" />
-                            <FormControlLabel value="xlsx" control={<Radio />} label="Excel" disabled={csvOnly} />
-                        </RadioGroup>
+                        <Typography style={{ fontSize: 13, color: '#5b6b7b' }}>{t('DataSources.export.formatNote')}</Typography>
                         {csvOnly && <Typography style={{ fontSize: 12, color: '#b54708' }}>{t('DataSources.export.csvOnly')}</Typography>}
                     </Box>
+                    {/* Outlined for the same reason the edit dialog's fields are: a bare-variant field on
+                        a white dialog surface reads as static text, not as something you can type into. */}
                     <TextField
+                        variant="outlined"
                         label={t('DataSources.export.notifyEmail')}
                         value={notifyEmail}
                         onChange={(e) => setNotifyEmail(e.target.value)}

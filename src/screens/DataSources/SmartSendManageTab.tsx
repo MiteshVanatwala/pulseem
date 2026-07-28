@@ -42,7 +42,7 @@ const SmartSendManageTab = ({ classes }: ClassesType) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const Redirect = useRedirect();
-    const { windowSize, rowsPerPage } = useSelector((s: any) => s.core);
+    const { windowSize, rowsPerPage, isRTL } = useSelector((s: any) => s.core);
     const { smartSendList, smartSendListStatus } = useSelector((s: any) => s.smartSend);
 
     const restored = GetPageNyName(PAGE_NAME_SS);
@@ -297,12 +297,20 @@ const SmartSendManageTab = ({ classes }: ClassesType) => {
 
             {/* Delete confirm — destructive, so the primary button is red and there is no
                 autofocus/ok-by-default. Closing is blocked while the delete is in flight. */}
-            <Dialog open={!!deleteTarget} onClose={() => { if (!deleting) setDeleteTarget(null); }} maxWidth="xs" fullWidth>
+            {/* dir is required and is NOT inherited: MUI v4 Dialogs portal into document.body,
+                outside the <div dir={isRTL...}> at App.js:1018, and <html dir> stays "ltr" because
+                App.js:727-730 writes it once at mount from i18n.language — still the 'en' default
+                from i18n.js:20 at that point. Every sibling dialog in this folder carries it
+                (ExportDialog.tsx:71, EditColumnDialog.tsx:87, UploadWizardDialog.tsx:555). */}
+            <Dialog open={!!deleteTarget} onClose={() => { if (!deleting) setDeleteTarget(null); }} maxWidth="xs" fullWidth dir={isRTL ? 'rtl' : 'ltr'}>
+                {/* Sizes are set inline rather than via components/dialogStyles.ts: this dialog builds its
+                    chrome from plain Boxes, so that class's DialogTitle/Content/Actions selectors would not
+                    match. Keep these numbers in step with dialogStyles.ts — it is the source of truth. */}
                 <Box style={{ padding: '16px 24px', borderBottom: '1px solid #e0e0e0' }}>
-                    <Typography variant="h6">{t('DataSources.send.manage.deleteConfirmTitle')}</Typography>
+                    <Typography variant="h6" style={{ fontSize: 22, fontWeight: 700 }}>{t('DataSources.send.manage.deleteConfirmTitle')}</Typography>
                 </Box>
                 <Box style={{ padding: 24 }}>
-                    <Typography variant="body2" color="textSecondary">
+                    <Typography variant="body2" color="textSecondary" style={{ fontSize: 17 }}>
                         {t('DataSources.send.manage.deleteConfirmBody', { name: deleteTarget?.CampaignName ?? '' })}
                     </Typography>
                 </Box>

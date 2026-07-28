@@ -5,6 +5,7 @@ import {
 import { useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { updateDataSource } from '../../../redux/reducers/dataSourcesSlice';
+import { useDsDialogStyles } from './dialogStyles';
 
 interface EditSource {
     ID: number;
@@ -25,6 +26,7 @@ interface EditDataSourceDialogProps {
 const EditDataSourceDialog = ({ classes, open, source, onClose, onSaved }: EditDataSourceDialogProps) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
+    const dsDialog = useDsDialogStyles();
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [nameError, setNameError] = useState('');
@@ -78,11 +80,12 @@ const EditDataSourceDialog = ({ classes, open, source, onClose, onSaved }: EditD
     };
 
     return (
-        <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm" dir="rtl">
+        <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm" dir="rtl" PaperProps={{ className: dsDialog.paper }}>
             <DialogTitle>{t('DataSources.edit.title')}</DialogTitle>
             <DialogContent>
                 <Box style={{ display: 'flex', flexDirection: 'column', gap: 12, paddingTop: 4 }}>
                     <TextField
+                        variant="outlined"
                         label={t('DataSources.wizard.nameLabel')}
                         value={name}
                         onChange={(e) => setName(e.target.value)}
@@ -93,6 +96,7 @@ const EditDataSourceDialog = ({ classes, open, source, onClose, onSaved }: EditD
                         autoFocus
                     />
                     <TextField
+                        variant="outlined"
                         label={t('DataSources.wizard.descriptionLabel')}
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}

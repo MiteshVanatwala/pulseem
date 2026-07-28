@@ -4,21 +4,34 @@ import { makeStyles } from '@material-ui/core/styles';
 import { useTranslation } from 'react-i18next';
 import { SmartSendColumn } from '../../../Models/DataSources/SmartSend';
 
-// §11.4 · optional business columns. ALL version columns are offered for each role
-// (NOT filtered by SemanticRole — supervisor/gap/sort are free choices, §4). Gap & Sort
-// affect the supervisor email table ONLY (V3); when no supervisor is picked they are
+// §11.4 · the supervisor-email block. ALL version columns are offered for each role
+// (NOT filtered by SemanticRole — supervisor/gap are free choices, §4). These columns affect
+// the supervisor email table ONLY (V3); when no supervisor is picked the shortfall picker is
 // disabled with an explanation so the user never selects something with no effect (§11.4).
-// The supervisor picker is active because M11 is in scope (PO decision); pass
-// supervisorEnabled={false} to hide it if M11 is ever de-scoped (§9.3 v1 behavior).
-// Effective sort is ISNULL(Sort, Gap) server-side — leaving Sort empty falls back to Gap.
+//
+// MERGED CONTROL: gap and sort used to be two separate pickers. They are now ONE, because the
+// business rule is fixed — the supervisor's table is always ordered by the smallest shortfall to
+// target — so a separate "sort by something else" control only invited a wrong answer. The server
+// contract is untouched: setBusinessColumn('gapSort') writes the same ColumnID into GapColumnID
+// and SortColumnID, and readers compute ISNULL(Sort, Gap) exactly as before.
+// A mapping saved BEFORE the merge can still hold two different columns; `storedGapColumnId` /
+// `storedSortColumnId` (the raw server values) drive a warning rather than a silent collapse.
+//
+// Both pickers can arrive PRE-FILLED by screens/SmartSend/businessColumnDefaults.ts. Those
+// defaults are applied inside the slice, never mark the form dirty, and therefore never autosave
+// on their own — read that file's header before changing this one.
 
-type Role = 'supervisor' | 'gap' | 'sort';
+type Role = 'supervisor' | 'gapSort';
 
 interface Props {
     columns: SmartSendColumn[];
     supervisorColumnId: number | null;
+    // The effective shortfall column. `sortColumnId` is no longer a separate control — the screen
+    // keeps writing it (always equal to the gap column) because it is still a real server field.
     gapColumnId: number | null;
-    sortColumnId: number | null;
+    // Raw server values, for the pre-merge divergence warning only. Absent → no warning.
+    storedGapColumnId?: number | null;
+    storedSortColumnId?: number | null;
     onChange: (role: Role, columnId: number | null) => void;
     supervisorEnabled?: boolean;
 }
@@ -30,12 +43,13 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const BusinessColumnsPicker: React.FC<Props> = ({
-    columns, supervisorColumnId, gapColumnId, sortColumnId, onChange, supervisorEnabled = true,
+    columns, supervisorColumnId, gapColumnId,
+    storedGapColumnId, storedSortColumnId, onChange, supervisorEnabled = true,
 }) => {
     const classes = useStyles();
     const { t } = useTranslation();
-    // Gap/Sort only matter for the supervisor email → disable them until a supervisor is chosen.
-    const gapSortDisabled = supervisorEnabled && supervisorColumnId == null;
+    // The shortfall column only matters for the supervisor email → disable until one is chosen.
+    const gapDisabled = supervisorEnabled && supervisorColumnId == null;
 
     const menu = () => [
         <MenuItem key="none" value={0}>{t('DataSources.send.business.none')}</MenuItem>,
@@ -56,6 +70,18 @@ const BusinessColumnsPicker: React.FC<Props> = ({
         </FormControl>
     );
 
+    const colName = (id: number | null | undefined) => {
+        if (id == null) return '';
+        const c = columns.find((x) => x.ColumnID === id);
+        return c ? c.DisplayName : String(id);
+    };
+
+    // Only for mappings saved before gap and sort were merged: the server still holds two
+    // DIFFERENT columns, and saving from this screen will collapse them onto the gap column.
+    // Say so rather than discarding the user's old sort choice silently.
+    const legacyDiffers =
+        storedGapColumnId != null && storedSortColumnId != null && storedGapColumnId !== storedSortColumnId;
+
     return (
         <Box style={{ marginTop: 24 }}>
             <Typography variant="subtitle1" style={{ fontWeight: 600 }}>
@@ -64,17 +90,21 @@ const BusinessColumnsPicker: React.FC<Props> = ({
             <Typography variant="body2" color="textSecondary">{t('DataSources.send.business.hint')}</Typography>
             <Box className={classes.row}>
                 {supervisorEnabled && picker('supervisor', 'DataSources.send.business.supervisor', supervisorColumnId, false)}
-                {picker('gap', 'DataSources.send.business.gap', gapColumnId, gapSortDisabled)}
-                {picker('sort', 'DataSources.send.business.sort', sortColumnId, gapSortDisabled)}
+                {/* Displays the GAP id: it is the effective column either way (the server resolves
+                    ISNULL(Sort, Gap)), and setBusinessColumn('gapSort') keeps the two in step. */}
+                {picker('gapSort', 'DataSources.send.business.gapSort', gapColumnId, gapDisabled)}
             </Box>
-            {gapSortDisabled && (
+            {gapDisabled && (
                 <Typography variant="caption" color="textSecondary" className={classes.hint}>
                     {t('DataSources.send.business.needSupervisor')}
                 </Typography>
             )}
-            {!gapSortDisabled && (gapColumnId != null || sortColumnId != null || supervisorColumnId != null) && (
+            {legacyDiffers && (
                 <Typography variant="caption" color="textSecondary" className={classes.hint}>
-                    {t('DataSources.send.business.sortDefault')}
+                    {t('DataSources.send.business.legacySortDiffers', {
+                        sort: colName(storedSortColumnId),
+                        gap: colName(storedGapColumnId),
+                    })}
                 </Typography>
             )}
         </Box>
