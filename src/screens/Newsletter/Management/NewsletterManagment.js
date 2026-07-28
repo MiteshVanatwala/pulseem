@@ -578,6 +578,23 @@ const NewsletterManagnentScreen = ({ classes }) => {
           }
         }
       },
+      {
+        // Entry B (§11.2): smart send from the campaign the user is already looking at. BEE
+        // campaigns only, sendable status, feature-gated (§17.3). The data source is picked on
+        // the mapping screen — entry A now goes straight to the SmartSend picker instead.
+        key: 'smartSend',
+        uIcon: SendIcon,
+        // Short label + the ordinary secondary-action styling. The long
+        // `send.smartSendAction` string with the primary `sendIcon` treatment (copied from the
+        // 'send' action above, whose label is just "שלח") stretched the filled block across half
+        // the row. This is a secondary action and should not outweigh Send visually.
+        lable: t('DataSources.send.title'),
+        remove: !userRoles?.AllowSend || Status !== 1 || !IsNewEditor || !(accountFeatures?.indexOf(PulseemFeatures.DATA_SOURCES) > -1) || windowSize === 'xs',
+        rootClass: clsx(classes.paddingIcon, 'smartSendIcon'),
+        onClick: () => {
+          navigate(`${sitePrefix}Campaigns/SmartSend/${CampaignID}`);
+        }
+      },
     ]]
     return (
       <Grid

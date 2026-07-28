@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import {
     Box, Button, TextField, InputAdornment, IconButton, Table, TableBody, TableCell, TableContainer,
     TableHead, TableRow, TablePagination, Typography, Tooltip, Chip, Card, CardContent, Dialog,
-    DialogTitle, DialogContent, DialogActions
+    DialogTitle, DialogContent, DialogActions, Tabs, Tab
 } from '@material-ui/core';
 import {
     Visibility, GetApp, Edit as EditIcon, History, Assessment, Delete as DeleteIcon, Send, Search, Add
@@ -29,19 +29,27 @@ import {
 import {
     DataSourceListItem, DataSourceDetails, DataSourceVersion, eDataSourceStatus
 } from '../../Models/DataSources/DataSource';
+import { getChannelDescriptor, eSendChannel } from '../../Models/DataSources/SmartSend';
 import StatusChip from './components/StatusChip';
 import EditDataSourceDialog from './components/EditDataSourceDialog';
 import UploadWizardDialog from './components/UploadWizardDialog';
 import DataSourceSummary from './components/DataSourceSummary';
 import ExportDialog from './components/ExportDialog';
 import VersionsHistoryDialog from './components/VersionsHistoryDialog';
+import SmartSendManageTab from './SmartSendManageTab';
 
 const PAGE_NAME = 'DataSources';
 const POLL_MS = 4000;
 const ROWS_OPTIONS = [6, 10, 20, 50];
+// EMAIL is the only wired Smart Send channel in v1, and the mapping screen's SourcePicker accepts a
+// source only when it carries THAT channel's identity flag (`canSend` there = it[identityFlag]).
+// "Not view-only" is a weaker test — a cell-only source passes it, so offering Smart Send on that
+// basis routed the user to a screen that silently dropped the ?dataSourceId. Read the flag NAME
+// from the descriptor (never a hardcoded field) so this entry gate cannot drift from that one.
+const EMAIL_IDENTITY_FLAG = getChannelDescriptor(eSendChannel.EMAIL).identityFlag;
 
 const DataSources = ({ classes }: ClassesType) => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const dispatch = useDispatch();
     const Redirect = useRedirect();
     const { windowSize, rowsPerPage, userRoles } = useSelector((s: any) => s.core);
@@ -66,6 +74,9 @@ const DataSources = ({ classes }: ClassesType) => {
     const [versionsData, setVersionsData] = useState<{ dataSourceId: number | null; versions: DataSourceVersion[]; activeVersionId: number | null }>({ dataSourceId: null, versions: [], activeVersionId: null });
     const [toastMessage, setToastMessage] = useState<ERROR_TYPE>(null);
     const [loading, setLoading] = useState(false);
+    // Which tab is showing. The sources tab keeps its own PAGE_NAME/search/polling unchanged; the
+    // Smart Send management tab owns its own state (PAGE_NAME_SS='DataSourcesSmartSend') inside SmartSendManageTab.
+    const [activeTab, setActiveTab] = useState('sources');
 
     const pollingRef = useRef<any>(null);
     const prevStatusesRef = useRef<Map<number, number>>(new Map());
@@ -78,6 +89,14 @@ const DataSources = ({ classes }: ClassesType) => {
     // HideRecipietns hides recipient PII → also hide viewing row content + exporting (the server enforces 405).
     const canViewRecipients = !userRoles?.HideRecipients;
     const canExport = !!userRoles?.AllowExport && canViewRecipients;
+    // Mirrors the server's AllowSend gate on every Smart Send action (SetMapping/FillAndSummarize/Send),
+    // so a user who cannot send never reaches a screen where every action 405s after the mapping work.
+    const canSend = !!userRoles?.AllowSend;
+
+    // The Send glyph is a paper-plane pointing forward-in-LTR; in an RTL UI "forward" is leftward, so
+    // mirror it horizontally (scaleX, NOT rotate — rotate would flip it upside-down).
+    const isRtl = (i18n.dir?.() ?? 'rtl') === 'rtl';
+    const sendIconStyle = isRtl ? { transform: 'scaleX(-1)' } : undefined;
 
     const items: DataSourceListItem[] = list?.items ?? [];
     const total: number = list?.total ?? 0;
@@ -116,7 +135,7 @@ const DataSources = ({ classes }: ClassesType) => {
     // ── silent polling while any source is pending/processing (no flicker, no interval leak) ──
     const hasInFlight = items.some(i => i.Status === eDataSourceStatus.PENDING || i.Status === eDataSourceStatus.PROCESSING);
     useEffect(() => {
-        if (hasInFlight && !pollingRef.current) {
+        if (hasInFlight && activeTab === 'sources' && !pollingRef.current) {
             pollingRef.current = setInterval(async () => {
                 const res: any = await dispatch(getDataSources({ ...searchData, silent: true }));
                 const polled: DataSourceListItem[] = res?.payload?.Data?.items ?? [];
@@ -134,7 +153,8 @@ const DataSources = ({ classes }: ClassesType) => {
                 });
             }, POLL_MS);
         }
-        if (!hasInFlight && pollingRef.current) {
+        // Pause the poll on the other tab too: stop when nothing is in-flight OR the Smart Send tab is active.
+        if ((!hasInFlight || activeTab !== 'sources') && pollingRef.current) {
             clearInterval(pollingRef.current);
             pollingRef.current = null;
         }
@@ -146,7 +166,7 @@ const DataSources = ({ classes }: ClassesType) => {
             if (pollingRef.current) { clearInterval(pollingRef.current); pollingRef.current = null; }
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [hasInFlight, searchData]);
+    }, [hasInFlight, searchData, activeTab]);
 
     // ── handlers ──
     const doSearch = () => setSearchData(s => ({ ...s, SearchTerm: searchInput.trim(), PageIndex: 1 }));
@@ -155,7 +175,7 @@ const DataSources = ({ classes }: ClassesType) => {
     const changeRows = (e: any) => setSearchData(s => ({ ...s, PageSize: parseInt(e.target.value, 10), PageIndex: 1 }));
 
     const goToView = (id: number) => Redirect({ url: `${sitePrefix}DataSources/View/${id}`, openNewTab: false });
-    const goToSend = (id: number) => Redirect({ url: `${sitePrefix}Campaigns`, openNewTab: false }); // stub navigation only
+    const goToSend = (id: number) => Redirect({ url: `${sitePrefix}SmartSend?dataSourceId=${id}`, openNewTab: false });
 
     const openSummary = async (id: number) => {
         const res: any = await dispatch(getDataSource(id));
@@ -252,9 +272,9 @@ const DataSources = ({ classes }: ClassesType) => {
                         <IconButton size="small" aria-label={t('DataSources.actions.delete')} onClick={() => setDialog({ type: 'delete', data: row })}><DeleteIcon fontSize="small" /></IconButton>
                     </Tooltip>
                 )}
-                {!isViewOnly(row) && row.Status === eDataSourceStatus.READY && (
+                {canSend && row[EMAIL_IDENTITY_FLAG] && row.Status === eDataSourceStatus.READY && (
                     <Tooltip title={t('DataSources.goToSend')}>
-                        <IconButton size="small" aria-label={t('DataSources.goToSend')} onClick={() => goToSend(row.DataSourceID)}><Send fontSize="small" /></IconButton>
+                        <IconButton size="small" aria-label={t('DataSources.goToSend')} onClick={() => goToSend(row.DataSourceID)}><Send fontSize="small" style={sendIconStyle} /></IconButton>
                     </Tooltip>
                 )}
             </Box>
@@ -263,7 +283,7 @@ const DataSources = ({ classes }: ClassesType) => {
 
     const renderNameCell = (row: DataSourceListItem) => (
         <Box>
-            <Box style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <Box style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
                 <Typography style={{ fontWeight: 600 }}>{row.Name}</Typography>
                 {isViewOnly(row) && (
                     <Tooltip title={t('DataSources.viewOnlyTooltip')}>
@@ -279,8 +299,8 @@ const DataSources = ({ classes }: ClassesType) => {
 
     const renderRow = (row: DataSourceListItem) => (
         <TableRow key={row.DataSourceID} classes={rowStyle}>
-            <TableCell classes={cellStyle} align="right" className={clsx(classes.flex3)}>{renderNameCell(row)}</TableCell>
-            <TableCell classes={cellStyle} align="right" className={clsx(classes.flex2)}>{row.Description}</TableCell>
+            <TableCell classes={cellStyle} align="center" className={clsx(classes.flex3)}>{renderNameCell(row)}</TableCell>
+            <TableCell classes={cellStyle} align="center" className={clsx(classes.flex2)}>{row.Description}</TableCell>
             <TableCell classes={cellStyle} align="center" className={clsx(classes.flex2)}>
                 <StatusChip status={row.Status} progress={row.ProgressPercent} runDateStart={row.RunDateStart} createdDate={row.CreatedDate} t={t} />
             </TableCell>
@@ -311,8 +331,8 @@ const DataSources = ({ classes }: ClassesType) => {
     const renderTableHead = () => (
         <TableHead>
             <TableRow classes={rowStyle}>
-                <TableCell classes={cellStyle} className={clsx(classes.flex3)}>{t('DataSources.table.name')}</TableCell>
-                <TableCell classes={cellStyle} className={clsx(classes.flex2)}>{t('DataSources.table.description')}</TableCell>
+                <TableCell classes={cellStyle} className={clsx(classes.flex3)} align="center">{t('DataSources.table.name')}</TableCell>
+                <TableCell classes={cellStyle} className={clsx(classes.flex2)} align="center">{t('DataSources.table.description')}</TableCell>
                 <TableCell classes={cellStyle} className={clsx(classes.flex2)} align="center">{t('DataSources.table.status')}</TableCell>
                 <TableCell classes={cellStyle} className={clsx(classes.flex1)} align="center">{t('DataSources.table.rows')}</TableCell>
                 <TableCell classes={cellStyle} className={clsx(classes.flex1)} align="center">{t('DataSources.table.version')}</TableCell>
@@ -433,22 +453,45 @@ const DataSources = ({ classes }: ClassesType) => {
             <Box className={classes.mb50}>
                 <Box className={'topSection onlyTitleBar'} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
                     <Title Text={t('DataSources.title')} classes={classes} ContainerStyle={{ border: 'none !important' }} />
-                    {canUpload && (
-                        <Button variant="contained" color="primary" startIcon={<Add />} onClick={() => setWizardOpen(true)}>
-                            {t('DataSources.uploadButton')}
-                        </Button>
+                    {activeTab === 'sources' && (
+                        <Box style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                            {canUpload && (
+                                <Button variant="contained" color="primary" startIcon={<Add />} onClick={() => setWizardOpen(true)}>
+                                    {t('DataSources.uploadButton')}
+                                </Button>
+                            )}
+                            {canSend && (
+                                <Button variant="outlined" color="primary" startIcon={<Send style={sendIconStyle} />} onClick={() => Redirect({ url: `${sitePrefix}SmartSend`, openNewTab: false })}>
+                                    {t('DataSources.send.title')}
+                                </Button>
+                            )}
+                        </Box>
                     )}
                 </Box>
 
+                <Tabs
+                    value={activeTab}
+                    onChange={(_: any, v: string) => setActiveTab(v)}
+                    indicatorColor="primary"
+                    textColor="primary"
+                    style={{ borderBottom: '1px solid #e0e0e0', marginTop: 8 }}
+                >
+                    <Tab value="sources" label={t('DataSources.send.manage.tabSources')} />
+                    <Tab value="smartsend" label={t('DataSources.send.manage.tabSmartSend')} />
+                </Tabs>
+
+                {activeTab === 'sources' ? (
+                <>
                 <Box style={{ display: 'flex', gap: 8, alignItems: 'center', margin: '12px 0' }}>
                     <TextField
-                        placeholder={t('DataSources.searchPlaceholder')}
+                        variant="outlined"
+                        label={t('DataSources.searchPlaceholder')}
                         value={searchInput}
                         onChange={(e) => setSearchInput(e.target.value)}
                         onKeyDown={(e) => { if (e.key === 'Enter') doSearch(); }}
                         InputProps={{ startAdornment: <InputAdornment position="start"><Search fontSize="small" /></InputAdornment> }}
                         size="small"
-                        style={{ minWidth: 280 }}
+                        style={{ minWidth: 320 }}
                     />
                     <Button onClick={doSearch} variant="outlined">{t('common.search')}</Button>
                     {searchData.SearchTerm && <Button onClick={clearSearch}>{t('DataSources.clearSearch')}</Button>}
@@ -459,6 +502,10 @@ const DataSources = ({ classes }: ClassesType) => {
                 <Loader isOpen={loading && listStatus === 'loading'} />
                 {toastMessage && <Toast data={toastMessage} />}
                 {renderDialogs()}
+                </>
+                ) : (
+                    <SmartSendManageTab classes={classes} />
+                )}
             </Box>
         </DefaultScreen>
     );

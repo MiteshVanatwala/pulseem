@@ -43,6 +43,7 @@ import emailTierScalingReducer from './reducers/emailTierScalingSlice';
 import helpDrawerReducer from './reducers/helpDrawerSlice';
 import contactSupportReducer from './reducers/contactSupportSlice';
 import dataSourcesReducer from './reducers/dataSourcesSlice';
+import smartSendReducer from './reducers/smartSendSlice';
 
 
 export default configureStore({
@@ -90,5 +91,6 @@ export default configureStore({
     helpDrawer: helpDrawerReducer,
     contactSupport: contactSupportReducer,
     dataSources: dataSourcesReducer,
+    smartSend: smartSendReducer,
   },
 });

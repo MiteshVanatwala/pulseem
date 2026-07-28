@@ -87,6 +87,8 @@ import {
 	getFileType,
 	getTemplatePreviewData,
 	getTextDirection,
+	isApprovedWhatsAppMediaExtension,
+	isApprovedWhatsAppMediaFile,
 } from '../Common';
 import {
 	getAccountExtraData,
@@ -666,6 +668,10 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 
 	const uploadMediaFile = async (file: File | undefined) => {
 		if (file) {
+			if (!isApprovedWhatsAppMediaFile(file)) {
+				setMediaFileError(translator('common.notAllowedExtension'));
+				return;
+			}
 			if (!isFileTypeValid(file)) {
 				setMediaFileError(translator('whatsappCampaign.media_type_mismatch_error'));
 				return;
@@ -695,6 +701,10 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		const fileSize = fileProp?.[0]?.Properties?.Size;
 		if (fileSize && fileSize >= 5242880) {
 			setMediaFileError(translator('WhatsappApiResponse.uploadMedia.4', { FileSize: '5' }));
+			return;
+		}
+		if (!isApprovedWhatsAppMediaExtension(fileUrl)) {
+			setMediaFileError(translator('common.notAllowedExtension'));
 			return;
 		}
 		if (templateMediaType) {

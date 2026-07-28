@@ -37,9 +37,9 @@ const DataSourceSummary = ({ classes, open, details, onClose }: DataSourceSummar
     );
 
     return (
-        <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm" dir="rtl">
+        <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm" dir="rtl" scroll="body">
             <DialogTitle>{t('DataSources.summary.title')}</DialogTitle>
-            <DialogContent>
+            <DialogContent style={{ overflowY: 'visible', height: 'auto' }}>
                 <Box style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
                     <Typography>{t('DataSources.summary.totalRows')}</Typography>
                     <Typography style={{ fontWeight: 700 }}>{num(details?.TotalRows ?? (parsed.rows ? parsed.rows.total : undefined))}</Typography>

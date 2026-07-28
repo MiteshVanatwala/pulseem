@@ -6,6 +6,211 @@
   "clearSearch": "Wyczyść",
   "backToList": "Powrót do listy źródeł",
   "goToSend": "Przejdź do strony wysyłki",
+  "send": {
+    "title": "Inteligentna wysyłka",
+    "campaignLabel": "Kampania: {{name}}",
+    "notMapped": "Ta kampania nie jest jeszcze zmapowana do źródła danych",
+    "mappedTo": "Zmapowano do źródła: {{name}}",
+    "tokensFound": "Wykryte pola w szablonie: {{count}}",
+    "channel": {
+      "title": "Kanał wysyłki",
+      "email": "E-mail",
+      "sms": "SMS",
+      "whatsapp": "WhatsApp",
+      "comingSoon": "Wkrótce",
+      "comingSoonTooltip": "Ten kanał będzie wkrótce dostępny — infrastruktura jest już gotowa",
+      "comingSoonNoCell": "Wkrótce · to źródło nie ma kolumny telefonu komórkowego",
+      "recipientsAvailable": "Dostępni odbiorcy w źródle: {{count}}",
+      "selectAria": "Wybierz kanał wysyłki"
+    },
+    "source": {
+      "title": "Wybierz źródło danych",
+      "current": "Wybrane źródło",
+      "change": "Zmień źródło",
+      "recipients": "Dostępni odbiorcy: {{count}}",
+      "viewOnly": "Tylko do podglądu",
+      "blockedNoEmail": "Brak kolumny e-mail — nie można wysłać e-mailem",
+      "zeroResolved": "To źródło nie ma wierszy przypisanych do e-maila",
+      "empty": "Brak źródeł gotowych do wysyłki",
+      "loadError": "Nie udało się wczytać listy źródeł",
+      "truncated": "Wyświetlono {{shown}} z {{total}} źródeł",
+      "incomingTitle": "Zażądano innego źródła",
+      "incomingBody": "Przyszedłeś ze źródła „{{name}}”, ale ta kampania jest zmapowana do innego źródła. Przełączenie wyczyści bieżące mapowanie pól.",
+      "incomingSwitch": "Przełącz i wyczyść mapowanie",
+      "incomingConfirmTitle": "Wyczyścić bieżące mapowanie pól?",
+      "incomingConfirmBody": "Przełączenie na „{{name}}” usunie wszystkie mapowania pól tej kampanii. Nie można tego cofnąć z tego ekranu."
+    },
+    "mapping": {
+      "title": "Mapowanie pól",
+      "hint": "Dla każdego pola w szablonie wybierz kolumnę źródła, która je zastąpi przy wysyłce",
+      "searchPlaceholder": "Szukaj pól",
+      "tokenCol": "Pole",
+      "columnCol": "Kolumna źródła",
+      "selectColumn": "Wybierz kolumnę",
+      "none": "Bez mapowania",
+      "unmapped": "Niezmapowane",
+      "systemFieldWarn": "Pole systemowe — zmapowanie do źródła nadpisze wartość konta odbiorcy",
+      "vanishedColumn": "Zmapowana kolumna nie istnieje już w tej wersji — zmapuj ponownie",
+      "noTokens": "Nie znaleziono pól w szablonie",
+      "badge": {
+        "graph": "Wykres",
+        "systemField": "Pole systemowe",
+        "free": "Dowolne"
+      }
+    },
+    "business": {
+      "title": "Kolumny biznesowe (opcjonalnie)",
+      "supervisor": "Kolumna e-maila przełożonego",
+      "gap": "Kolumna różnicy",
+      "sort": "Kolumna sortowania",
+      "none": "Brak",
+      "hint": "Kolumny różnicy i sortowania wpływają tylko na e-mail przełożonego",
+      "needSupervisor": "Wybierz kolumnę przełożonego, aby różnica i sortowanie miały efekt",
+      "sortDefault": "Domyślnie tabela jest sortowana według kolumny różnicy. Wybierz kolumnę sortowania tylko, aby sortować według innej kolumny."
+    },
+    "stale": {
+      "title": "Dostępna jest nowsza wersja",
+      "body": "Opublikowano nowszą wersję źródła. Zapis zablokuje nową wersję."
+    },
+    "mismatch": {
+      "title": "Niezgodność grupy wysyłki",
+      "body": "Grupa syntetyczna kampanii została usunięta lub scalona. Zapisz ponownie, aby naprawić.",
+      "cloneTitle": "Zduplikowana kampania — wymagane mapowanie",
+      "cloneBody": "Ta kampania została zduplikowana z obcą grupą źródła ({{name}}) bez mapowania. Wybierz źródło i zmapuj ponownie.",
+      "repair": "Napraw i zapisz"
+    },
+    "preview": "Podgląd",
+    "unmapped": {
+      "title": "Istnieją niezmapowane pola",
+      "body": "Następujące pola nie są zmapowane i zostaną wysłane w surowej postaci: {{tokens}}",
+      "confirm": "Rozumiem — wyślij mimo to"
+    },
+    "actions": {
+      "saveMapping": "Zapisz mapowanie",
+      "preview": "Podgląd",
+      "testSend": "Wysyłka testowa",
+      "sendToAll": "Wyślij do wszystkich"
+    },
+    "testSendWarn": "Wysyłka testowa duplikuje kampanię bez mapowania — pola źródła pojawią się w surowej postaci (##pole##) w e-mailu testowym.",
+    "saveFirst": "Zapisz mapowanie, aby przejść do podglądu i wysyłki",
+    "smartSendAction": "Inteligentna wysyłka (źródło danych)",
+    "close": "Zamknij",
+    "cancel": "Anuluj",
+    "backToCampaigns": "Powrót do kampanii",
+    "backToPicker": "Powrót do wyboru kampanii",
+    "saveBar": {
+      "unsaved": "Masz niezapisane zmiany w mapowaniu pól."
+    },
+    "autosave": {
+      "saving": "Zapisywanie…",
+      "saved": "Wszystkie zmiany zapisane",
+      "saveFailed": "Nie udało się zapisać"
+    },
+    "exit": {
+      "title": "Zapisać zmiany przed wyjściem?",
+      "body": "Twoje mapowanie pól nie zostało jeszcze zapisane.",
+      "saveAndExit": "Zapisz i wyjdź",
+      "exitWithoutSaving": "Wyjdź bez zapisywania",
+      "saveFailed": "Zapis nie powiódł się — pozostajesz na stronie."
+    },
+    "testSavePrompt": {
+      "title": "Niezapisane zmiany mapowania",
+      "body": "Zapisz teraz lub uruchom test bez zapisywania — oba sposoby działają."
+    },
+    "summary": {
+      "title": "Podsumowanie wysyłki",
+      "recipients": "Odbiorcy końcowi",
+      "from": "Od",
+      "replyTo": "Odpowiedz do",
+      "subject": "Temat",
+      "groups": "Grupy",
+      "totalInSource": "Łącznie w źródle",
+      "noEmail": "Bez e-maila",
+      "duplicates": "Duplikaty",
+      "removed": "Usunięci",
+      "sendToSupervisor": "Wysłać też do przełożonego?",
+      "combinedTitle": "Kampania łączona",
+      "combinedNote": "Odbiorca z grupy zwykłej (nie ze źródła) — zmapowane pole zostanie zastąpione pustym ciągiem."
+    },
+    "result": {
+      "success": "Kampania została wysłana pomyślnie",
+      "successDesc": "Kampania została wysłana przez istniejący potok. Nadawca zastępuje pola per odbiorca.",
+      "problematicLinks": "Znaleziono problematyczne linki",
+      "domainNotVerified": "Domena nie jest zweryfikowana",
+      "pendingApproval": "Oczekuje na zatwierdzenie",
+      "underReview": "W trakcie weryfikacji",
+      "noCredit": "Brak kredytów",
+      "sendBlocked": "Wysyłka zablokowana",
+      "bodyEmpty": "Treść e-maila jest pusta",
+      "genericError": "Wysyłka nie powiodła się"
+    },
+    "testSend": {
+      "title": "Uwaga",
+      "emailsLabel": "Adresy testowe (do 5, oddzielone przecinkami)",
+      "emailsPlaceholder": "a@b.com, c@d.com",
+      "sentOk": "E-mail testowy wysłany",
+      "sentFail": "Wysyłka testowa nie powiodła się"
+    },
+    "toasts": {
+      "mappingSaved": "Mapowanie zostało zapisane"
+    },
+    "errors": {
+      "generalError": "Coś poszło nie tak, spróbuj ponownie",
+      "notFound": "Nie znaleziono kampanii",
+      "viewOnlyBlocked": "To źródło jest tylko do podglądu — nie ma kolumny tożsamości do wysyłki",
+      "editBlockedDuringSend": "Nie można edytować mapowania podczas trwającej wysyłki",
+      "groupMergeLimit": "Kampania przekroczyła limit scalania grup — usuń zwykłe grupy lub podziel kampanię",
+      "dataIncorrect": "Przesłane dane są nieprawidłowe — odśwież kolumny i spróbuj ponownie",
+      "channelNotSupported": "Ten kanał nie jest jeszcze obsługiwany",
+      "featureOff": "Funkcja źródeł danych nie jest aktywna dla tego konta",
+      "retryAction": "Spróbuj ponownie"
+    },
+    "picker": {
+      "title": "Inteligentna wysyłka",
+      "step1": "Krok 1",
+      "step2": "Krok 2 — Wybór kampanii",
+      "fromSource": "Wysyłka ze źródła: {{name}}",
+      "searchPlaceholder": "Szukaj kampanii według nazwy",
+      "onlySendable": "Pokaż tylko kampanie gotowe do wysyłki",
+      "continue": "Przejdź do mapowania pól",
+      "empty": "Brak kampanii do wyświetlenia",
+      "noneSendable": "Brak kampanii gotowych do wysyłki",
+      "showAll": "Pokaż też niedostępne kampanie",
+      "showMore": "Pokaż więcej: {{count}}",
+      "noResults": "Brak kampanii pasujących do wyszukiwania",
+      "clearSearch": "Wyczyść wyszukiwanie",
+      "loadError": "Nie udało się wczytać listy kampanii",
+      "updated": "Zaktualizowano {{date}}",
+      "blocked": {
+        "notSendable": "Już wysłana / nie można wysłać",
+        "oldEditor": "Stary edytor — nieobsługiwany"
+      },
+      "selectAria": "Wybierz kampanię do wysyłki"
+    },
+    "manage": {
+      "title": "Kampanie inteligentnej wysyłki",
+      "edit": "Edytuj",
+      "delete": "Usuń",
+      "deleteConfirmTitle": "Usunąć mapowanie?",
+      "deleteConfirmBody": "Mapowanie kampanii \"{{name}}\" zostanie usunięte. Możesz je zmapować ponownie w każdej chwili. Tej operacji nie można cofnąć.",
+      "deleteOk": "Mapowanie usunięte",
+      "deleteFailed": "Nie udało się usunąć mapowania",
+      "columns": {
+        "campaign": "Kampania",
+        "source": "Źródło danych",
+        "status": "Status",
+        "version": "Wersja",
+        "channel": "Kanał",
+        "updated": "Ostatnia aktualizacja",
+        "actions": "Akcje"
+      },
+      "empty": "Brak kampanii inteligentnej wysyłki",
+      "outdatedOnly": "Pokaż tylko nieaktualne",
+      "staleChip": "V{{mapped}} · V{{latest}}",
+      "tabSources": "Źródła",
+      "tabSmartSend": "Inteligentna wysyłka"
+    }
+  },
   "retry": "Spróbuj ponownie",
   "viewOnlyBadge": "Tylko do podglądu",
   "viewOnlyTooltip": "To źródło nie ma kolumn tożsamości — nie można do niego wysyłać",
@@ -48,6 +253,7 @@
     "roleNone": "Pole danych",
     "roleEmail": "E-mail — tożsamość",
     "roleCellphone": "Telefon komórkowy — tożsamość",
+    "roleSupervisorEmail": "E-mail przełożonego",
     "previewTitle": "Podgląd — pierwsze 5 wierszy",
     "identityBanner": "Wszystkie pozostałe kolumny zostaną zapisane jako dynamiczne pola danych z nagłówkami z pliku",
     "noIdentityWarning": "Nie zaznaczono kolumn tożsamości — źródło zostanie zapisane tylko do podglądu, wyszukiwania i eksportu, bez możliwości wysyłki",
@@ -89,6 +295,7 @@
   },
   "view": {
     "freeTextPlaceholder": "Szukaj po e-mailu, telefonie lub dowolnej komórce",
+    "filterValueLabel": "Wartość filtra",
     "addFilter": "Dodaj filtr",
     "operator": {
       "1": "Równa się",

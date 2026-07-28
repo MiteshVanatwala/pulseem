@@ -93,6 +93,29 @@ export const getFileType = (fileLink: string) => {
 	return undefined;
 };
 
+// Meta only approves PDF, JPG, PNG and MP4 for WhatsApp template headers/media (GIF and others are rejected).
+const WHATSAPP_ALLOWED_MEDIA_EXTENSIONS = ['png', 'jpg', 'jpeg', 'pdf', 'mp4'];
+const WHATSAPP_ALLOWED_MEDIA_MIME_TYPES = [
+	'image/png',
+	'image/jpeg',
+	'image/x-png',
+	'application/pdf',
+	'application/x-pdf',
+	'video/mp4',
+];
+
+export const isApprovedWhatsAppMediaExtension = (fileNameOrUrl: string) => {
+	if (!fileNameOrUrl) return false;
+	const path = (() => { try { return new URL(fileNameOrUrl).pathname; } catch { return fileNameOrUrl; } })();
+	const lower = path.toLowerCase();
+	return WHATSAPP_ALLOWED_MEDIA_EXTENSIONS.some((ext) => lower.includes(`.${ext}`));
+};
+
+export const isApprovedWhatsAppMediaFile = (file: File) => {
+	const mime = file.type?.toLowerCase() || '';
+	return WHATSAPP_ALLOWED_MEDIA_MIME_TYPES.includes(mime) || isApprovedWhatsAppMediaExtension(file.name);
+};
+
 export const getTemplateIdByName = (
 	savedTemplateList: savedTemplateListProps[],
 	templateName: string
