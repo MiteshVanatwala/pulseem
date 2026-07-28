@@ -106,34 +106,23 @@ import {
 import { BsTrash } from 'react-icons/bs';
 import ConfirmDeletePopUp from '../../Groups/Management/Popup/ConfirmDeletePopUp';
 import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
-import { ServiceChannel } from '../../Service/Conversations/ServiceChannelDropdown';
-import { IConversation } from '../../../Models/Service/Conversation';
-import { getConversations as getServiceConversations } from '../../../redux/reducers/conversationsSlice';
 import TierPlans from '../../../components/TierPlans/TierPlans';
 import { get } from 'lodash';
 
 import { useRef } from 'react';
 import { searchAllClients } from '../../../redux/reducers/clientSlice';
 
-<<<<<<< HEAD
 // ── Service (widget) conversations — PR-2455 ────────────────────────────────
 // This inbox is shared between WhatsApp and site-widget chats. Widget rows are
 // adapted into the same sidebar shape so one contact list can render both.
 
-=======
-// --- Service widget → WhatsApp-sidebar adapters (PR-2455 deep merge) ---
->>>>>>> d93918d27 (Implemented Team management)
 const svcHostOf = (c: IConversation): string => {
 	if (c.domain) return c.domain;
 	try { return c.pageUrl ? new URL(c.pageUrl).host : ''; } catch { return ''; }
 };
-<<<<<<< HEAD
 
 const SVC_STATUS_ID: Record<string, number> = { new: 0, open: 1, resolved: 3, archived: 4 };
 
-=======
-const SVC_STATUS_ID: Record<string, number> = { new: 0, open: 1, resolved: 3, archived: 4 };
->>>>>>> d93918d27 (Implemented Team management)
 const adaptWidgetToSidebar = (list: IConversation[]): APIWhatsappChatSidebarContactsItemsData[] =>
 	list.map((c) => ({
 		ConversationStatusId: SVC_STATUS_ID[c.status] ?? 0,
@@ -144,15 +133,12 @@ const adaptWidgetToSidebar = (list: IConversation[]): APIWhatsappChatSidebarCont
 		PhoneNumber: c.id,
 		Unread: 0,
 		UserName: c.visitorName || `Visitor ${(c.visitorId || '').slice(-6)}`,
-<<<<<<< HEAD
 		channel: 'widget',
 		conversationId: c.id,
 		// Carried through so the chat header's agent picker can show the current
 		// assignment; without these it would read as unassigned on every conversation.
 		assignedAgentId: c.assignedAgentId ?? 0,
 		assignedAgentName: c.assignedAgentName ?? null,
-=======
->>>>>>> d93918d27 (Implemented Team management)
 	} as APIWhatsappChatSidebarContactsItemsData));
 
 const WhatsappChat = ({ classes }: WhatsappChatProps) => {
@@ -269,7 +255,6 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const [totalSolvedContacts, setTotalSolvedContacts] = useState<number>(0);
 	const [activePhoneNumber, setActivePhoneNumber] = useState<string>('');
 	const [filterBySelected, setFilterBySelected] = useState(0);
-<<<<<<< HEAD
 
 	// ── Service channel (PR-2455) ──────────────────────────────────────────
 	// Opens on a specific channel when linked with ?channel=widget|all|whatsapp
@@ -364,25 +349,6 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [selectedChannel]);
 
-=======
-	const [selectedChannel, setSelectedChannel] = useState<ServiceChannel>('whatsapp');
-	const [widgetConversations, setWidgetConversations] = useState<IConversation[]>([]);
-	const [serviceDomain, setServiceDomain] = useState<string>('');
-	const serviceDomains = Array.from(new Set(widgetConversations.map(svcHostOf).filter(Boolean)));
-	const widgetSidebarContacts = adaptWidgetToSidebar(
-		serviceDomain ? widgetConversations.filter((c) => svcHostOf(c) === serviceDomain) : widgetConversations,
-	);
-	useEffect(() => {
-		if (selectedChannel !== 'widget') return;
-		(dispatch as any)(getServiceConversations(undefined)).then((res: any) => {
-			const list: IConversation[] = res?.payload || [];
-			setWidgetConversations(list);
-			const domains = Array.from(new Set(list.map(svcHostOf).filter(Boolean)));
-			setServiceDomain((prev) => prev || domains[0] || '');
-		});
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [selectedChannel]);
->>>>>>> d93918d27 (Implemented Team management)
 	const [agentSelected, setAgentSelected] = useState(
 		Number(getCookie(agentCookieKey) || 0),
 	);
@@ -2403,11 +2369,6 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 						<div className={`${classes.whatsappChat} app ${isOnlyWhatsAppChat ? 'only-whatsapp' : ''}`}>
 							<div className={`${classes.whatsappChat} app-content ${isOnlyWhatsAppChat ? 'only-whatsapp' : ''}`}>
 								<SideBar
-									onServiceChannelChange={setSelectedChannel}
-									selectedServiceChannel={selectedChannel}
-									serviceDomains={serviceDomains}
-									serviceDomain={serviceDomain}
-									onServiceDomainChange={setServiceDomain}
                                     refetchActiveChatContact={refetchActiveChatContact}
 									isMobileSideBar={isMobileSideBar}
 									classes={classes}
@@ -2418,7 +2379,6 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 									activePhoneNumber={activePhoneNumber}
 									setActiveUser={setActivePhoneNumber}
 									onActiveUserChange={onActiveUserChange}
-<<<<<<< HEAD
 									selectedServiceChannel={selectedChannel}
 									onServiceChannelChange={setSelectedChannel}
 									serviceDomains={serviceDomains}
@@ -2427,9 +2387,6 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 									serviceSource={allSource}
 									onServiceSourceChange={setAllSource}
 									sideChatContacts={displayedSidebarContacts}
-=======
-									sideChatContacts={selectedChannel === 'widget' ? widgetSidebarContacts : sideChatContacts}
->>>>>>> d93918d27 (Implemented Team management)
 									phoneNumbersList={phoneNumbersList}
 									handleUserStatus={handleUserStatus}
 									getStatusClass={getStatusClass}
