@@ -13,6 +13,7 @@ import {
     UploadColumnDef, eDataType, eFormatHint, eSemanticRole, DataSourceLimits
 } from '../../../Models/DataSources/DataSource';
 import { checkQuota, insertDataSource, setUploadProgress } from '../../../redux/reducers/dataSourcesSlice';
+import { useDsDialogStyles } from './dialogStyles';
 
 interface UploadWizardDialogProps {
     classes: { [key: string]: string };
@@ -66,6 +67,7 @@ const extOf = (name: string) => {
 const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessage, existingSources = [] }: UploadWizardDialogProps) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
+    const dsDialog = useDsDialogStyles();
     const { uploadProgress, quota } = useSelector((s: any) => s.dataSources);
     const limits: DataSourceLimits | null = quota?.Limits ?? null;
 
@@ -117,7 +119,13 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
         r.readAsText(slice, 'utf-8');
     });
 
-    const parseXlsx = (file: File): Promise<string[][]> => new Promise((resolve, reject) => {
+    // Workbooks above this size are previewed but NOT counted: the full (uncapped) parse below walks
+    // every cell and would freeze the tab on a huge sheet. The worker still enforces MaxRows server-side.
+    const XLSX_COUNT_MAX_BYTES = 15 * 1024 * 1024;
+
+    // Resolves the preview rows plus the sheet's total row count (header row INCLUDED, exactly like
+    // countCsvRows), or null when the count could not be established.
+    const parseXlsx = (file: File): Promise<{ rows: string[][]; rowCount: number | null }> => new Promise((resolve, reject) => {
         const r = new FileReader();
         r.onload = (e: any) => {
             try {
@@ -136,7 +144,7 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
                 const hdr: any[] = raw.length > 0 ? raw[0] : [];
                 let start = 0;
                 while (start < hdr.length && !(start in hdr)) start++;   // skip leading holes only
-                resolve(raw.map(row => {
+                const rows = raw.map(row => {
                     const width = Math.max(row.length, hdr.length);
                     const dense: string[] = [];
                     for (let i = start; i < width; i++) {
@@ -144,7 +152,24 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
                         dense.push(c === null || c === undefined ? '' : String(c));
                     }
                     return dense;
-                }));
+                });
+                // The preview above is capped at 6 rows, so the real height needs a second, uncapped
+                // read of the same buffer. Count via sheet_to_json with the SAME options the preview
+                // uses (blankrows:false) rather than the sheet's '!ref' range: a range covers every
+                // formatted-but-empty trailing row, which would both overstate the count shown to the
+                // user and trip the MaxRows pre-flight below on a file the worker would accept.
+                // blankrows:false also matches countCsvRows' skipEmptyLines, so both paths mean the
+                // same thing by "rows". Best-effort: any failure leaves the count unknown rather than
+                // losing a preview that already parsed fine.
+                let total: number | null = null;
+                if (file.size <= XLSX_COUNT_MAX_BYTES) {
+                    try {
+                        const fullWb = XLSX.read(data, { type: 'array' });
+                        const fullSheet = fullWb.Sheets[fullWb.SheetNames[0]];
+                        if (fullSheet) total = (XLSX.utils.sheet_to_json(fullSheet, { header: 1, blankrows: false }) as any[]).length;
+                    } catch { total = null; }
+                }
+                resolve({ rows, rowCount: total });
             } catch (err) { reject(err); }
         };
         r.onerror = reject;
@@ -236,7 +261,9 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
             let rows: string[][];
             let count: number | null = null;
             if (ext === 'xls' || ext === 'xlsx') {
-                rows = await parseXlsx(chosen); // no cheap row count for xlsx (worker enforces MaxRows)
+                const parsed = await parseXlsx(chosen); // count is null on oversized/unreadable workbooks (worker still enforces MaxRows)
+                rows = parsed.rows;
+                count = parsed.rowCount;
             } else {
                 const enc = await detectEncoding(chosen);
                 rows = await parseCsvPreview(chosen, enc);
@@ -249,7 +276,7 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
             }
             const hdrs = rows[0];
             const dataRows = rows.slice(1, 6);
-            // csv/tsv: enforce MaxRows locally before upload
+            // enforce MaxRows locally before upload, whenever the row count is known (csv/tsv always, xlsx when countable)
             if (count !== null && limits && limits.MaxRows > 0 && (count - 1) > limits.MaxRows) {
                 setParsing(false);
                 setErrors({ file: t('DataSources.wizard.errors.maxRowsExceeded', { max: limits.MaxRows.toLocaleString() }) });
@@ -376,7 +403,8 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
             : c.SemanticRole === eSemanticRole.RECIPIENT_CELLPHONE ? 'cell' : 'none';
 
     // Readable, slightly-larger-than-field header labels for the mapping table.
-    const hdrCellStyle: any = { fontSize: 15, fontWeight: 700, color: '#344054' };
+    // (16 keeps the intended one-step lead now that the shared dialog scale puts body cells at 15.)
+    const hdrCellStyle: any = { fontSize: 16, fontWeight: 700, color: '#344054' };
 
     const renderFileStep = () => (
         <Box>
@@ -498,9 +526,22 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
                     {t('DataSources.wizard.newVersionNotice', { n: nextVersion })}
                 </Typography>
             )}
+            {/* Summary: muted label + bold value, one pair per line (it used to read as two raw
+                concatenated strings). Identity uses the SHORT labels — the role dropdown's
+                "(identity)" suffix is redundant on a line already labelled "identity mapping". */}
             <Box style={{ background: '#f6f9fc', borderRadius: 8, padding: 12 }}>
-                <Typography>{`${t('DataSources.table.rows')}: ${rowCount !== null ? (rowCount - 1).toLocaleString() : '—'}`}</Typography>
-                <Typography>{`${t('DataSources.wizard.steps.identity')}: ${[hasEmail ? t('DataSources.wizard.roleEmail') : null, hasCell ? t('DataSources.wizard.roleCellphone') : null].filter(Boolean).join(', ') || t('DataSources.viewOnlyBadge')}`}</Typography>
+                <Box style={{ display: 'flex', alignItems: 'baseline', marginBottom: 4 }}>
+                    <Typography color="textSecondary">{`${t('DataSources.table.rows')}:`}</Typography>
+                    <Typography style={{ fontWeight: 700, marginInlineStart: 6 }}>
+                        {rowCount !== null ? (rowCount - 1).toLocaleString() : t('DataSources.wizard.rowsUnknown')}
+                    </Typography>
+                </Box>
+                <Box style={{ display: 'flex', alignItems: 'baseline' }}>
+                    <Typography color="textSecondary">{`${t('DataSources.wizard.steps.identity')}:`}</Typography>
+                    <Typography style={{ fontWeight: 700, marginInlineStart: 6 }}>
+                        {[hasEmail ? t('DataSources.wizard.identityEmailShort') : null, hasCell ? t('DataSources.wizard.identityCellShort') : null].filter(Boolean).join(', ') || t('DataSources.wizard.identityNoneShort')}
+                    </Typography>
+                </Box>
             </Box>
             {uploading && uploadProgress !== null && <LinearProgress variant="determinate" value={uploadProgress} />}
             {errors.upload && <Typography style={{ color: '#B42318' }}>{errors.upload}</Typography>}
@@ -511,7 +552,7 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
     const canNext = step === 0 ? (!!file && previewRows.length > 0) : true;
 
     return (
-        <Dialog open={open} onClose={requestClose} fullWidth maxWidth="md" dir="rtl">
+        <Dialog open={open} onClose={requestClose} fullWidth maxWidth="md" dir="rtl" PaperProps={{ className: dsDialog.paper }}>
             <DialogTitle>{t('DataSources.wizard.title')}</DialogTitle>
             <DialogContent>
                 <Stepper activeStep={step} alternativeLabel>

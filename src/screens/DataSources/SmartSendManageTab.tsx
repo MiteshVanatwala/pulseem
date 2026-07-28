@@ -298,11 +298,14 @@ const SmartSendManageTab = ({ classes }: ClassesType) => {
             {/* Delete confirm — destructive, so the primary button is red and there is no
                 autofocus/ok-by-default. Closing is blocked while the delete is in flight. */}
             <Dialog open={!!deleteTarget} onClose={() => { if (!deleting) setDeleteTarget(null); }} maxWidth="xs" fullWidth>
+                {/* Sizes are set inline rather than via components/dialogStyles.ts: this dialog builds its
+                    chrome from plain Boxes, so that class's DialogTitle/Content/Actions selectors would not
+                    match. Keep these numbers in step with dialogStyles.ts — it is the source of truth. */}
                 <Box style={{ padding: '16px 24px', borderBottom: '1px solid #e0e0e0' }}>
-                    <Typography variant="h6">{t('DataSources.send.manage.deleteConfirmTitle')}</Typography>
+                    <Typography variant="h6" style={{ fontSize: 22, fontWeight: 700 }}>{t('DataSources.send.manage.deleteConfirmTitle')}</Typography>
                 </Box>
                 <Box style={{ padding: 24 }}>
-                    <Typography variant="body2" color="textSecondary">
+                    <Typography variant="body2" color="textSecondary" style={{ fontSize: 17 }}>
                         {t('DataSources.send.manage.deleteConfirmBody', { name: deleteTarget?.CampaignName ?? '' })}
                     </Typography>
                 </Box>
