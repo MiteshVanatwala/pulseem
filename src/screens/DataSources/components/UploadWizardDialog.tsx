@@ -32,7 +32,15 @@ const cleanDigits = (v: any) => String(v).replace(/[\s\-()+]/g, '');
 const isEmailVal = (v: any) => EMAIL_RE.test(String(v).trim());
 // Israeli mobile only, per spec: local 05 + 8 digits (10 total), or intl 9725 + 8 digits (12 total).
 const isPhoneVal = (v: any) => { const c = cleanDigits(v); return /^05\d{8}$/.test(c) || /^9725\d{8}$/.test(c); };
-const isDateVal = (v: any) => /^\d{1,4}[-/.]\d{1,2}[-/.]\d{1,4}$/.test(String(v).trim());
+/* Three digit groups separated by / - or . , with an OPTIONAL time part.
+   The time part is why this changed: the old expression anchored $ straight after the year, so a
+   real export like "14/12/2017 12:47 PM" failed and the whole column silently fell through to
+   text. `\s+` (not a single space) because Excel exports do emit double spaces before the time.
+   Deliberately NOT validated as a real date — 99/99/9999 matches. This only decides a DISPLAY
+   LABEL: the cell is stored and sent as the raw string either way, and nothing downstream parses
+   it. Do not "improve" this into a real date parser without deciding day-first vs month-first
+   first — 05/04/1956 is ambiguous and today nobody has to resolve it. */
+const isDateVal = (v: any) => /^\d{1,4}[-/.]\d{1,2}[-/.]\d{1,4}(?:(?:\s+|T)\d{1,2}:\d{2}(?::\d{2})?(?:\s*[AaPp]\.?[Mm]\.?)?)?$/.test(String(v).trim());
 const isNumberVal = (v: any) => { const s = String(v).trim(); return s !== '' && (/^-?\d{1,3}(,\d{3})*(\.\d+)?$/.test(s) || /^-?\d+(\.\d+)?$/.test(s)); };
 type ColKind = 'email' | 'phone' | 'date' | 'number' | 'text';
 // Order matters: email → phone (phones are all-digits too) → date → number → text.

@@ -376,17 +376,45 @@ function reducer(state, action) {
   }
 }
 
+/* Apply the top-bar geometry DRAFTS (§14, the two commit-on-blur inputs) to a graph, off-render.
+   Used by the unmount flush: Escape closes the MUI dialog WITHOUT firing blur, so a typed-but-
+   uncommitted value never reached the reducer and the flush then persisted a graph without it —
+   the edit was lost permanently, not just for the session. Routed through `reducer` itself, not
+   through a hand-written assignment, so a draft committed this way passes EXACTLY the same
+   clamps (numOrUndef -> clampGap / clampGlobalBar -> reclampDependents) as one committed on blur;
+   '' still means auto. Module-level and given everything it needs, so the mount-scoped effect
+   that calls it closes over nothing that can go stale. Returns the SAME object when there is
+   nothing in flight, which is how the caller knows a re-write is unnecessary. */
+const commitDrafts = (graph0, drafts) => {
+  let g = graph0;
+  for (let i = 0; i < drafts.length; i += 1) {
+    const d = drafts[i];
+    if (d.val === null || d.val === undefined) continue;
+    g = reducer({ graph: g, selected: null }, { type: 'SET_BG_FIELD', key: d.key, val: d.val }).graph;
+  }
+  return g;
+};
+
 /* §11 popup fit. `--tg-chrome-h` is everything the dialog puts AROUND the image:
-   header + footer (62) + the stage column's own padding (18*2 = 36). Only the HEADER can change
-   height — it is `flexWrap:'wrap'`, its content is ~966px in EN and ~1090px in PL/HE, and since
-   §14 added the bar-width and gap groups it wraps to a second row (+~43px) in pl/he, or in ANY
-   language once the paper is narrower than ~1030px (the paper now fits the IMAGE, 1056px at the
-   640 default — it is no longer a flat 94vw). A hard-coded 153 was measured against the ONE-LINE
-   55px header, so on every wrapped layout the root asked for 43px less than it needs and the stage
-   scrolled — the exact symptom this feature exists to remove. So the header is MEASURED and only
-   the constant remainder is added; 153 survives solely as the SSR/pre-measure fallback. */
-const CHROME_BELOW_HEADER = 98;   // footer 62 + stage column padding 18*2
-const CHROME_H_FALLBACK = 153;    // = 55 (one-line header) + CHROME_BELOW_HEADER
+   header + footer + the stage column's own padding (18*2 = 36). NEITHER bar has a constant
+   height. The header is `flexWrap:'wrap'`, its content is ~966px in EN and ~1090px in PL/HE, and
+   since §14 added the bar-width and gap groups it wraps to a second row (+~43px) in pl/he, or in
+   ANY language once the paper is narrower than ~1030px (the paper now fits the IMAGE, 1056px at
+   the 640 default — it is no longer a flat 94vw). The FOOTER grows 26-52px the moment it renders
+   a message (`msg`, `tooLong`, or the insert error) — two clicks away: "Insert to campaign" on an
+   unmodified graph shows `defaultUnchangedWarn`. A hard-coded 153 was measured against the
+   ONE-LINE 55px header and an EMPTY 62px footer, so on every wrapped/messaged layout the root
+   asked for less than it needs and the stage scrolled — the exact symptom this feature exists to
+   remove. WORSE, a hard-coded footer made the measurement a FEEDBACK LOOP: the root under-sized
+   its own content, the header (a column-flex item) was compressed to absorb it, the
+   ResizeObserver read the SMALLER offsetHeight and republished an even smaller chrome-h. So BOTH
+   bars are measured, and BOTH carry `flexShrink: 0` (see the JSX) — a measured height can then
+   never be a function of the value measuring it. Only the true constant is added; the two
+   fallbacks below are SSR/pre-measure only and still sum to the historical 153. */
+const STAGE_PAD_H = 36;           // stage column padding 18*2 — the only genuinely fixed part
+const HEADER_H_FALLBACK = 55;     // one-line header, pre-measure only
+const FOOTER_H_FALLBACK = 62;     // message-less footer, pre-measure only
+const CHROME_H_FALLBACK = HEADER_H_FALLBACK + FOOTER_H_FALLBACK + STAGE_PAD_H;   // = 153
 
 /* ----------------------------- component ----------------------------- */
 /**
@@ -449,8 +477,30 @@ export default function TierGraphDialog({ onClose, onInsert, mergeData, t }) {
   }, []);
   const measureText = useMemo(() => measureTextFactory(), [fontTick]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  /* §14 top-bar geometry inputs — UNCOMMITTED text while the field has focus, `null` when it does
+     not. The reducer clamps on EVERY dispatch (it must: it is the last line of defence against a
+     paste), so dispatching per keystroke made the ceiling values unreachable by typing — the first
+     `1` of `150` clamped to the `24` floor, then `1502` -> ... The user could never type a
+     three-digit width at all. Holding the raw string and committing on blur/Enter keeps the clamp
+     exactly where it was, one step later. Only these two fields: the pre-existing width/height
+     inputs coerce with `parseFloat(...) || 640` per keystroke and are deliberately untouched.
+     Each draft is MIRRORED into a ref, because the unmount flush below runs outside render and
+     must see the value as of the moment the dialog closed — declared HERE, above the persistence
+     effects, so those can read the refs. */
+  const [barDraft, setBarDraftState] = useState(null);
+  const [gapDraft, setGapDraftState] = useState(null);
+  const barDraftRef = useRef(null);
+  const gapDraftRef = useRef(null);
+  const setBarDraft = (v) => { barDraftRef.current = v; setBarDraftState(v); };
+  const setGapDraft = (v) => { gapDraftRef.current = v; setGapDraftState(v); };
+  const commitDraft = (key, draft, setDraft) => {
+    setDraft(null);
+    if (draft === null) return;                  // never focused / nothing typed
+    dispatch({ type: 'SET_BG_FIELD', key, val: draft });
+  };
+
   // debounced persistence to localStorage on EVERY change — never let it break the UI.
-  // Holds the write the pending timer would perform, or null once it has fired (H-f).
+  // Holds the write the pending timer would perform; `done` flips once the timer has fired (H-f).
   const pendingWrite = useRef(null);
   useEffect(() => {
     // §16b A3: the write is UNCONDITIONAL. §12's `userKey === 'default'` guard was defending against
@@ -458,9 +508,10 @@ export default function TierGraphDialog({ onClose, onInsert, mergeData, t }) {
     // SubAccountID, so userKey is ALWAYS 'default' and the guard fired for every user, meaning the
     // last graph was never saved for anyone. The key itself must also stay 'tierGraph_' + userKey:
     // switching it to core.email would orphan every graph already saved under the old key.
-    pendingWrite.current = { graph, storageKey };
+    const rec = { graph, storageKey, done: false };
+    pendingWrite.current = rec;
     const id = setTimeout(() => {
-      pendingWrite.current = null;              // fired — nothing left for the unmount flush to do
+      rec.done = true;                          // fired — this graph is on disk already
       try { localStorage.setItem(storageKey, JSON.stringify(graph)); } catch (e) { /* noop */ }
     }, 500);
     return () => clearTimeout(id);
@@ -471,17 +522,28 @@ export default function TierGraphDialog({ onClose, onInsert, mergeData, t }) {
      edit does persist. This is a SEPARATE mount-lifetime effect on purpose: the effect above also
      cleans up on every `graph` change, where writing would defeat the debounce entirely. React
      runs unmount cleanups in declaration order, so `clearTimeout` has already run when this one
-     fires; `pendingWrite` is non-null only when the timer was cancelled without having fired, so
-     an already-written graph is never written twice. It writes the SAME value the timer would
-     have written 500ms later — no new state, and nothing changes for a dialog left open. */
+     fires; `pendingWrite.done` says whether the timer had already fired, so an unchanged, already-
+     written graph is never written twice. It writes the SAME value the timer would
+     have written 500ms later — no new state, and nothing changes for a dialog left open.
+     It also COMMITS the two in-flight top-bar drafts FIRST (see `commitDrafts`): Escape closes the
+     MUI dialog without firing blur, so `60` typed into Gap was dropped by React AND then persisted
+     over by this very flush — the loss survived to the next open. Committing before the write is
+     what makes the persisted graph include the edit; `p.done` alone can no longer skip the write,
+     because a graph that was already flushed 500ms ago may still be missing a draft typed since. */
   useEffect(() => () => {
     const p = pendingWrite.current;
     if (!p) return;
     pendingWrite.current = null;
-    try { localStorage.setItem(p.storageKey, JSON.stringify(p.graph)); } catch (e) { /* noop */ }
+    const g = commitDrafts(p.graph, [
+      { key: 'barWidth', val: barDraftRef.current },
+      { key: 'gap', val: gapDraftRef.current },
+    ]);
+    if (p.done && g === p.graph) return;   // already on disk and no draft to add
+    try { localStorage.setItem(p.storageKey, JSON.stringify(g)); } catch (e) { /* noop */ }
   }, []);
 
-  const headerRef = useRef(null);        // the wrapping header row — the one variable-height chrome
+  const headerRef = useRef(null);        // the wrapping header row — variable-height chrome
+  const footerRef = useRef(null);        // the footer row — grows 26-52px when it shows a message
   const publishChrome = useRef(null);    // latest publish fn, owned by the mount effect below
   const publishedChrome = useRef(null);  // last value written to --tg-chrome-h ('153px'), or null
 
@@ -507,16 +569,21 @@ export default function TierGraphDialog({ onClose, onInsert, mergeData, t }) {
   useLayoutEffect(() => {
     if (typeof document === 'undefined' || !document.documentElement) return undefined;
     const root = document.documentElement;
+    /* `offsetHeight` FIRST, not `getBoundingClientRect()`: the rect reports the TRANSFORMED box,
+       so a dialog opening under a scale transition would measure a shrunken bar and keep that
+       number for good — a ResizeObserver reports the LAYOUT box and never fires when a transform
+       ends. offsetHeight is that same layout box, already an integer. rect is only the fallback
+       (an inline/absent layout box), and it is ceil'd: half a pixel short brings back the exact
+       scrollbar this effect exists to remove. */
+    const measure = (el) => (el
+      ? Math.ceil(el.offsetHeight || (el.getBoundingClientRect && el.getBoundingClientRect().height) || 0)
+      : 0);
     const publish = () => {
-      const el = headerRef.current;
-      /* `offsetHeight` FIRST, not `getBoundingClientRect()`: the rect reports the TRANSFORMED box,
-         so a dialog opening under a scale transition would measure a shrunken header and keep that
-         number for good — a ResizeObserver reports the LAYOUT box and never fires when a transform
-         ends. offsetHeight is that same layout box, already an integer. rect is only the fallback
-         (an inline/absent layout box), and it is ceil'd: half a pixel short brings back the exact
-         scrollbar this effect exists to remove. */
-      const h = el ? Math.ceil(el.offsetHeight || (el.getBoundingClientRect && el.getBoundingClientRect().height) || 0) : 0;
-      const px = (h > 0 ? h + CHROME_BELOW_HEADER : CHROME_H_FALLBACK) + 'px';
+      // Each bar falls back INDEPENDENTLY, so a missing ref degrades to its own historical
+      // constant instead of throwing the whole sum away; with both absent this is still 153.
+      const h = measure(headerRef.current);
+      const f = measure(footerRef.current);
+      const px = ((h > 0 ? h : HEADER_H_FALLBACK) + (f > 0 ? f : FOOTER_H_FALLBACK) + STAGE_PAD_H) + 'px';
       if (px === publishedChrome.current) return;   // unchanged: no style write, no restyle churn
       publishedChrome.current = px;
       root.style.setProperty('--tg-chrome-h', px);
@@ -524,17 +591,20 @@ export default function TierGraphDialog({ onClose, onInsert, mergeData, t }) {
     publishChrome.current = publish;
     publish();
 
-    /* A ResizeObserver catches EVERY header height change — viewport resize, font load, a wrapped
-       row appearing — including the ones that happen with no re-render at all. Where it is missing
-       (old Safari/Edge) the `resize` listener covers the viewport case and the per-commit effect
-       below covers language / tier-count / width. Referenced off `window` so a missing global is a
-       falsy read rather than a ReferenceError. */
+    /* ONE ResizeObserver, watching BOTH bars: it catches every chrome height change — viewport
+       resize, font load, a wrapped row appearing, a footer message rendering — including the ones
+       that happen with no re-render at all. Where it is missing (old Safari/Edge) the `resize`
+       listener covers the viewport case and the per-commit effect below covers language /
+       tier-count / width. Referenced off `window` so a missing global is a falsy read rather than
+       a ReferenceError. It cannot self-trigger: both observed elements are `flexShrink: 0`, so
+       what it publishes (the container's HEIGHT) is not an input to what it measures. */
     const RO = typeof window !== 'undefined' ? window.ResizeObserver : null;
     let ro = null;
     let onWinResize = null;
-    if (RO && headerRef.current) {
+    if (RO && (headerRef.current || footerRef.current)) {
       ro = new RO(publish);
-      ro.observe(headerRef.current);
+      if (headerRef.current) ro.observe(headerRef.current);
+      if (footerRef.current) ro.observe(footerRef.current);
     } else if (typeof window !== 'undefined' && window.addEventListener) {
       onWinResize = publish;
       window.addEventListener('resize', onWinResize);
@@ -547,12 +617,18 @@ export default function TierGraphDialog({ onClose, onInsert, mergeData, t }) {
       root.style.removeProperty('--tg-chrome-h');
     };
   }, []);
-  /* Re-measure after EVERY commit — deliberately no dependency array. The header's height is a
-     function of its rendered CONTENT (language, the 1/2/3/4 buttons, the auto placeholders that
-     grow with W), not of any single value worth listing, and this is one getBoundingClientRect
-     guarded by an equality check, in a layout phase the browser is already in. It is what keeps
-     the fallback path correct where ResizeObserver does not exist. */
-  useLayoutEffect(() => { if (publishChrome.current) publishChrome.current(); });
+  /* Re-measure when the chrome's CONTENT can have changed. This is the fallback path for browsers
+     with no ResizeObserver (the RO already catches everything, re-render or not), so it only has
+     to cover the height inputs a re-render brings: the language (`t` — a new identity on every
+     i18n change, which is what catches a header WRAP after switching to pl/he), the canvas W/H,
+     and the active tier count.
+     It ran with NO dependency array before, which made every commit read `offsetHeight` and force
+     a synchronous style+layout flush — including one per KEYSTROKE in any editor-panel text field
+     and on every re-render of the un-memoized parent. `nOf(graph)` is called inline rather than
+     reusing the `nActive` further down: that const is declared BELOW this hook, so naming it here
+     is a TDZ ReferenceError. */
+  useLayoutEffect(() => { if (publishChrome.current) publishChrome.current(); },
+    [graph.width, graph.height, nOf(graph), t]);
 
   const [inserting, setInserting] = useState(false);
   const [msg, setMsg] = useState(null);            // footer message { kind:'error'|'warn', text }
@@ -560,20 +636,8 @@ export default function TierGraphDialog({ onClose, onInsert, mergeData, t }) {
   const [importOpen, setImportOpen] = useState(false);
   const [linkInput, setLinkInput] = useState('');
   const [importError, setImportError] = useState(null);
-  /* §14 top-bar geometry inputs — UNCOMMITTED text while the field has focus, `null` when it does
-     not. The reducer clamps on EVERY dispatch (it must: it is the last line of defence against a
-     paste), so dispatching per keystroke made the ceiling values unreachable by typing — the first
-     `1` of `150` clamped to the `24` floor, then `1502` -> ... The user could never type a
-     three-digit width at all. Holding the raw string and committing on blur/Enter keeps the clamp
-     exactly where it was, one step later. Only these two fields: the pre-existing width/height
-     inputs coerce with `parseFloat(...) || 640` per keystroke and are deliberately untouched. */
-  const [barDraft, setBarDraft] = useState(null);
-  const [gapDraft, setGapDraft] = useState(null);
-  const commitDraft = (key, draft, setDraft) => {
-    setDraft(null);
-    if (draft === null) return;                  // never focused / nothing typed
-    dispatch({ type: 'SET_BG_FIELD', key, val: draft });
-  };
+  // barDraft / gapDraft (§14) and commitDraft are declared ABOVE, next to the persistence effects
+  // that have to read their refs on unmount.
 
   const { url } = buildLink(graph);
   const cfgPart = url.split('cfg=')[1];
@@ -655,10 +719,17 @@ export default function TierGraphDialog({ onClose, onInsert, mergeData, t }) {
     /* §11: track graph.height so the popup has no tall grey band under the image, but keep the 80vh
        cap and the 480px floor. Deliberately NOT tied to panel selection — that reintroduces the
        dialog-jump bug 80vh was introduced to fix. --tg-chrome-h is PUBLISHED from the measured
-       header (see CHROME_BELOW_HEADER); the 153px here is only the pre-measure fallback. */
+       header AND the measured footer (see the CHROME_* note); the 153px here is only the
+       pre-measure fallback, and it is the sum of the three CHROME_* fallbacks by construction. */
     <div style={{ position: 'relative', width: '100%', display: 'flex', flexDirection: 'column', height: 'min(max(480px, calc(var(--tg-img-h, 420px) + var(--tg-chrome-h, 153px))), 80vh)' }}>
-      {/* header — measured (headerRef): it WRAPS, so its height is not a constant. */}
-      <div ref={headerRef} style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap', padding: '12px 16px', borderBottom: '1px solid #e2e6ee' }}>
+      {/* header — measured (headerRef): it WRAPS, so its height is not a constant.
+          `flexShrink: 0` is LOAD-BEARING, not cosmetic: this element is both a column-flex item of
+          a height-constrained root AND the thing --tg-chrome-h is measured from. Shrinkable, an
+          under-sized root compresses it, the ResizeObserver reads the compressed offsetHeight and
+          republishes a smaller chrome-h — a monotonically shrinking header plus "ResizeObserver
+          loop completed with undelivered notifications". At 0 its layout height depends only on
+          its own content and the paper's WIDTH, so the loop has no edge to close. */}
+      <div ref={headerRef} style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap', flexShrink: 0, padding: '12px 16px', borderBottom: '1px solid #e2e6ee' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           <label style={{ fontWeight: 500, fontSize: 12.5 }}>{t('campaigns.tierGraph.tiersCount')}</label>
           <div style={{ display: 'flex', border: '1px solid #e2e6ee', borderRadius: 8, overflow: 'hidden' }}>
@@ -730,8 +801,10 @@ export default function TierGraphDialog({ onClose, onInsert, mergeData, t }) {
         </aside>
       </div>
 
-      {/* footer: messages + actions */}
-      <div style={{ borderTop: '1px solid #e2e6ee', padding: '12px 16px', background: '#fbfcfe' }}>
+      {/* footer: messages + actions — measured (footerRef) and `flexShrink: 0` for exactly the
+          reasons on the header: it GROWS 26-52px whenever a message renders, and it is the other
+          half of --tg-chrome-h. */}
+      <div ref={footerRef} style={{ borderTop: '1px solid #e2e6ee', flexShrink: 0, padding: '12px 16px', background: '#fbfcfe' }}>
         {msg ? <div style={{ marginBottom: 8, fontSize: 12.5, textAlign: 'center', color: msg.kind === 'error' ? '#b42318' : '#b54708' }}>{msg.text}</div> : null}
         {tooLong ? <div style={{ marginBottom: 8, fontSize: 12.5, textAlign: 'center', color: '#b42318' }}>{t('campaigns.tierGraph.urlTooLong')}</div> : null}
         <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>

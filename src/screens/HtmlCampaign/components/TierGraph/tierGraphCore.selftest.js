@@ -15,9 +15,6 @@ if (typeof globalThis.atob === 'undefined') {
   globalThis.atob = (b) => Buffer.from(b, 'base64').toString('binary');
 }
 
-import { readFileSync } from 'fs';
-import { join } from 'path';
-
 import {
   amountDisp, num, fmt, gv, sizeG, numG, isTok, pureTok, tokName,
   defaultState, computeLayout, buildLink, b64url, PALETTE, STATE_VERSION,
@@ -34,26 +31,18 @@ import {
    runs every assertion below at import time and then fails the run on a non-zero count — that is
    the only way the suite actually executes in this repo (`node tierGraphCore.selftest.js` needs
    `"type":"module"` in package.json, and `.selftest.js` matches no CRA `testMatch`).
-   Two consequences, both handled here and nowhere else — no assertion changes:
-   1. `import.meta.url` is GONE. Jest compiles this module to CommonJS, where `import.meta` is a
-      hard syntax error — the file would not even parse. `__dirname` is what that transform gives;
-      the cwd candidates keep a plain ESM/script run working from the repo root or the folder
-      itself. First candidate that actually reads wins (A19 asserts that one of them did).
-   2. `process.exit` is not called under jest — it would kill the worker mid-suite. */
+   One consequence, handled here and nowhere else — no assertion changes: `process.exit` is NOT
+   called under jest, it would kill the worker mid-suite.
+
+   THE SUITE IS BEHAVIOURAL ONLY. It asserts what the shipped exports COMPUTE (clipRx / ringRx /
+   fontPx / computeLayout / buildLink / parseTierGraphUrl), never how any file is SPELLED. The 14
+   assertions that used to read TierGraphStage.jsx as TEXT — whitespace-exact `includes()` plus an
+   "exactly 7 `rx={`" / "exactly 1 `ry={`" rect census — are GONE: a prettier or `eslint --fix`
+   pass, or one added rounded rect, red-failed `npm test` with no behaviour change at all, and the
+   read helper returned '' on a miss, so a wrong cwd failed all 14 at once under a misleading
+   label. The `fs`/`path` imports went with them; nothing here touches the filesystem. */
 const UNDER_JEST = typeof jest !== 'undefined'
   || (typeof process !== 'undefined' && !!(process.env && process.env.JEST_WORKER_ID));
-const CANDIDATE_DIRS = [];
-if (typeof __dirname !== 'undefined') CANDIDATE_DIRS.push(__dirname);
-if (typeof process !== 'undefined' && typeof process.cwd === 'function') {
-  CANDIDATE_DIRS.push(process.cwd());
-  CANDIDATE_DIRS.push(join(process.cwd(), 'src', 'screens', 'HtmlCampaign', 'components', 'TierGraph'));
-}
-const readBeside = (file) => {
-  for (let i = 0; i < CANDIDATE_DIRS.length; i += 1) {
-    try { return readFileSync(join(CANDIDATE_DIRS[i], file), 'utf8'); } catch (e) { /* next candidate */ }
-  }
-  return '';
-};
 
 let failures = 0;
 let assertions = 0;      // exported below, so the jest wrapper can prove the suite RAN, not just
@@ -340,35 +329,13 @@ ok('A9 ringRx == C# Math.Min(radius + 3, (barH + 6)/2) over the integer barH',
   [LA9, LA9d].every((LL) => [0, 1].every((i) => i >= LL.n
     || ringOf(LL, i) === Math.min(LL.radii[i] + 3, Math.floor((bhSpec(LL, i) + 6) / 2)))));
 
-/* -------- A15 + A19 + A21d (§16d): the Stage SOURCE is pinned, not paraphrased ---- */
-// A19's finding: every A6/A9 assertion above used to pass with the `Math.floor` deleted
-// from TierGraphStage.jsx, because the formula was re-declared in THIS file. They now call
-// the module's exports — but that only pins the Stage if the Stage really CALLS them, and a
-// node ESM test cannot import JSX. So the Stage is pinned as SOURCE: these fail the moment
-// the arithmetic is inlined back or a radius leg is dropped.
-// RUNNER NOTE: place TierGraphStage.jsx beside the two core files (it is read, never imported).
-const stageSrc = readBeside('TierGraphStage.jsx');
-ok('A19 TierGraphStage.jsx is readable (the runner must copy it beside the core files)', stageSrc.length > 0);
-ok('A19 Stage imports clipRx/ringRx from tierGraphCore',
-  /import\s*\{[^}]*\bclipRx\b[^}]*\bringRx\b[^}]*\}\s*from\s*'\.\/tierGraphCore'/.test(stageSrc));
-ok('A19 Stage CALLS clipRx for the bar clip (no inline re-derivation)',
-  stageSrc.includes('clipRx(radii[i], barTop, chartBottom)'));
-ok('A19 Stage CALLS ringRx for the highlight ring (no inline re-derivation)',
-  stageSrc.includes('ringRx(radii[i], barTop, chartBottom)'));
-ok('A19 Stage keeps NO local copy of the radius arithmetic',
-  !/Math\.min\(\s*radii\[/.test(stageSrc) && !/barHInt/.test(stageSrc));
-// A15/A21d — the three remaining rounded rects: BOTH legs, floored to match the C# ints.
-ok('A15 here-pill rx caps by BOTH legs, floored — min(15, floor(ph/2), floor(pw/2))',
-  stageSrc.includes('rx={Math.min(15, Math.floor(ph / 2), Math.floor(pw / 2))}'));
-ok('A15 amount bubble rx caps by BOTH legs, floored — min(17, floor(ph/2), floor(pw/2))',
-  stageSrc.includes('rx={Math.min(17, Math.floor(ph / 2), Math.floor(pw / 2))}'));
-ok('A21d card rx floors the width leg — min(14, floor(cardW/2), 60)',
-  stageSrc.includes('Math.min(14, Math.floor(cardW / 2), 60)'));
-// a NEW rounded rect must not slip past the both-legs audit unnoticed
-eq('A15 the Stage has exactly 7 rx= rects (5 parity + selection frame + accent square)',
-  (stageSrc.match(/\brx=\{/g) || []).length, 7);
-eq('A15 only the bar clip carries an explicit ry (rx == ry there by construction)',
-  (stageSrc.match(/\bry=\{/g) || []).length, 1);
+/* -------- A21d (§16d): the both-legs rounded-rect arithmetic, as VALUES --------- */
+// A19's finding: every A6/A9 assertion above used to pass with the `Math.floor` deleted from
+// TierGraphStage.jsx, because the formula was re-declared in THIS file. They now call the
+// module's exports (clipRx / ringRx), which is what actually pins the two radii — see the A9
+// spec assertions above and the §1 sweep below, both of which run the SHIPPED expressions.
+// What is NOT asserted any more is how the Stage SPELLS its remaining rects; the deltas the
+// A21d amendment mandates are pinned here as arithmetic instead.
 // A21d moves the bubble/pill height leg by up to 0.5px on a graph with NO keys set. That is
 // a KNOWING §1 deviation, mandated by the amendment ("0.5-0.75px each") and in the same class
 // as A6's clip integerisation: both move JS ONTO the integer C# has always drawn. Computed
@@ -535,17 +502,9 @@ eq('H-c parse junk w/h -> defaultState()\'s 640x420 (was the junk itself)',
   [rtJunkWH.width, rtJunkWH.height], [640, 420]);
 ok('H-c parse INERT for a real cfg: the pre-change fixture\'s 800x500 is untouched (asserted below)', true);
 
-/* -------- H-d: the accent square\'s rx matches C# (2, not 1.5) -------------------- */
-ok('H-d accent square rx is 2 — C# draws this 10x10 mark with radius 2 (:3314)',
-  stageSrc.includes('rx={2} fill={color}') && !stageSrc.includes('rx={1.5}'));
-
-/* -------- H-b Stage wiring: both font sites go through the shared gate ----------- */
-ok('H-b Stage imports fontPx from tierGraphCore',
-  /import\s*\{[^}]*\bfontPx\b[^}]*\}\s*from\s*'\.\/tierGraphCore'/.test(stageSrc));
-ok('H-b Stage gates the amount font size — fontPx(tr.amountSize, 17)',
-  stageSrc.includes('fontPx(tr.amountSize, 17)') && !stageSrc.includes('tr.amountSize || 17'));
-ok('H-b Stage gates the pill font size — fontPx(graph.here.textSize, 14)',
-  stageSrc.includes('fontPx(graph.here.textSize, 14)') && !stageSrc.includes('graph.here.textSize || 14'));
+/* H-d (accent square rx 2, C# :3314) and the H-b Stage WIRING used to be pinned here by reading
+   TierGraphStage.jsx as text; both were in the 14 removed with the fs/path imports. H-b's own
+   behaviour — the [6,200] gate itself — is fully covered by the fontPx value assertions above. */
 
 /* -------- §1 INVARIANT, SWEPT: clamping never moves an AUTO value ---------------- */
 // A2 clamps SUPPLIED values only. Verified, not assumed: across the whole reachable

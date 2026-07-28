@@ -18,9 +18,12 @@ function wrapLines(text, maxW, size, weight, measureText) {
 // accent mark next to a card value — shape ∈ circle | square | dot (small) | none.
 function Dot({ cx, cy, r, shape, color }) {
   if (shape === 'none') return null;
-  // H-d: rx 2, not 1.5 — C# draws this 10x10 mark with radius 2 (PulseemHandler.cs:3314).
-  // Non-geometry, <=0.5px, and the last known JS/C# radius asymmetry (logged by F4/A15).
-  if (shape === 'square') return <rect x={cx - r} y={cy - r} width={r * 2} height={r * 2} rx={2} fill={color} />;
+  /* rx stays 1.5, deliberately. The C# renderer draws this 10x10 mark with radius 2, so the two
+     differ by 0.5px — a pre-existing asymmetry, NOT one this feature introduced. "Fixing" it here
+     would change how every existing graph's preview renders, including graphs carrying none of the
+     new geometry keys, to buy half a pixel on a decorative square. Leaving old graphs rendering
+     exactly as they always did outranks that. Close it on the C# side if it ever matters. */
+  if (shape === 'square') return <rect x={cx - r} y={cy - r} width={r * 2} height={r * 2} rx={1.5} fill={color} />;
   const rr = shape === 'dot' ? r * 0.6 : r;   // 'dot' = a smaller circle; default/circle = full
   return <circle cx={cx} cy={cy} r={rr} fill={color} />;
 }
