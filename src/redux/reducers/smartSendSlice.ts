@@ -12,11 +12,12 @@ import {
 } from './newsletterSlice';
 import { testSend } from './campaignEditorSlice';
 import { getDataSource } from './dataSourcesSlice';
+import { applyBusinessColumnDefaults } from '../../screens/SmartSend/businessColumnDefaults';
 import {
     mockGetMapping, mockSetMapping, mockGetSampleValues, mockFillAndSummarize, mockSendSmart,
     mockGetSendSummary, mockGetEmailSendSettings, mockSetEmailSendSettings,
     mockGetNewsletterPreview, mockTestSend, mockSaveCampaignInfo, mockGetCampaignInfo,
-    mockGetSmartSendList, mockDeleteMapping
+    mockGetSmartSendList, mockDeleteMapping, mockGetCampaignTokens
 } from './_mocks/smartSendMock';
 
 // ── MOCK SWITCH ──────────────────────────────────────────────────────────────
@@ -46,6 +47,17 @@ interface SmartSendState {
     supervisorColumnId: number | null;
     gapColumnId: number | null;
     sortColumnId: number | null;
+    // What the SERVER returned for gap/sort, before any UI default was applied. The gap and sort
+    // pickers were merged into one control, so a mapping saved BEFORE the merge can still hold two
+    // different columns; these two fields are what lets the picker say so instead of silently
+    // collapsing them on the next save. Not sent to the server, never edited by the user.
+    storedGapColumnId: number | null;
+    storedSortColumnId: number | null;
+    // Campaign-picker field counts, keyed by CampaignID. Token NAMES in order of first
+    // appearance; the card's number is `.length`. Kept OUT of `tokens` (which belongs to the one
+    // campaign the mapping screen is editing) so the two can never overwrite each other.
+    campaignTokens: { [campaignId: number]: string[] };
+    campaignTokensStatus: { [campaignId: number]: LoadStatus };
     syntheticGroupId: number | null;
     foreignSyntheticGroupId: number | null;   // clone detection (PO decision #6)
     foreignSyntheticGroupName: string | null;
@@ -119,6 +131,29 @@ export const sendSmart = createAsyncThunk(
         try {
             const response = await PulseemReactInstance.put(
                 `${api}Send/${arg.campaignId}?sendToSupervisor=${arg.sendToSupervisor}&channel=${arg.channel}`);
+            return response.data;
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    });
+
+// Field counts for the CAMPAIGN PICKER cards (POST DataSourcesSender/GetTokensBulk).
+//
+// A separate thunk on purpose: `getMapping` must NEVER be reused for this. Its fulfilled
+// reducer overwrites campaignId / tokens / tokenMap / dataSource / isStale / mismatch /
+// mappingStatus, so a dozen dispatches would leave the slice describing whichever campaign
+// resolved last, and the mapping screen would then mount on poisoned state.
+//
+// The server caps a batch at 10 ids; the picker slices its RENDERED cards and re-fires as
+// each batch resolves, so the full list drains without ever asking for the whole account.
+export const getCampaignTokens = createAsyncThunk(
+    'SmartSend/GetTokensBulk', async (arg: { campaignIds: number[]; channel?: eSendChannel }, thunkAPI) => {
+        if (USE_SEND_MOCK) return mockGetCampaignTokens(arg.campaignIds);
+        try {
+            const response = await PulseemReactInstance.post(`${api}GetTokensBulk`, {
+                Channel: arg.channel ?? eSendChannel.EMAIL,
+                CampaignIDs: arg.campaignIds
+            });
             return response.data;
         } catch (error: any) {
             return thunkAPI.rejectWithValue({ error: error.message });
@@ -279,6 +314,10 @@ const initialState: SmartSendState = {
     supervisorColumnId: null,
     gapColumnId: null,
     sortColumnId: null,
+    storedGapColumnId: null,
+    storedSortColumnId: null,
+    campaignTokens: {},
+    campaignTokensStatus: {},
     syntheticGroupId: null,
     foreignSyntheticGroupId: null,
     foreignSyntheticGroupName: null,
@@ -334,6 +373,10 @@ export const smartSendSlice = createSlice({
             state.supervisorColumnId = null;
             state.gapColumnId = null;
             state.sortColumnId = null;
+            // The legacy gap!=sort warning describes the SAVED mapping; switching source discards
+            // that mapping, so the warning must go with it.
+            state.storedGapColumnId = null;
+            state.storedSortColumnId = null;
             state.lockedVersionId = null;
             state.columns = [];
             state.sampleValues = null;
@@ -348,7 +391,17 @@ export const smartSendSlice = createSlice({
         setBusinessColumn: (state, action) => {
             const { role, columnId } = action.payload || {};
             if (role === 'supervisor') state.supervisorColumnId = columnId ?? null;
-            else if (role === 'gap') state.gapColumnId = columnId ?? null;
+            // 'gapSort' is the MERGED control: the UI now shows one picker where there used to be
+            // two, and it writes the SAME ColumnID into both slots. The server keeps storing them
+            // as two independent columns (SortColumnID is persisted "as given"; readers compute
+            // ISNULL(Sort, Gap)), so writing both keeps the stored shape unambiguous and needs no
+            // API or SP change. Clearing to "none" clears both.
+            // 'gap'/'sort' are kept for compatibility with any caller that still addresses one
+            // slot; nothing in the app does today.
+            else if (role === 'gapSort') {
+                state.gapColumnId = columnId ?? null;
+                state.sortColumnId = columnId ?? null;
+            } else if (role === 'gap') state.gapColumnId = columnId ?? null;
             else if (role === 'sort') state.sortColumnId = columnId ?? null;
         },
         clearSendResult: (state) => {
@@ -371,9 +424,32 @@ export const smartSendSlice = createSlice({
                 state.lockedVersionId = data.DataSource?.LockedVersionID ?? null;
                 state.tokens = data.Tokens || [];
                 state.columns = data.Columns || [];
-                state.supervisorColumnId = data.SupervisorColumnID;
-                state.gapColumnId = data.GapColumnID;
-                state.sortColumnId = data.SortColumnID;
+                // Business columns: whatever the server stored WINS; the default only fills a hole.
+                // Applied here (and not in a screen effect) so a guessed value can never set the
+                // screen's `dirty` flag and therefore can never trip the 750ms autosave — see the
+                // header of screens/SmartSend/businessColumnDefaults.ts.
+                //
+                // `!data.IsMapped` is load-bearing, not a micro-optimisation. Once a mapping is
+                // SAVED, a NULL supervisor column is a DECISION the user made by picking "ללא" —
+                // the picker maps None to null and the SP stores it verbatim, so it looks exactly
+                // like "never chosen". Defaulting unconditionally would reinstate the guess on
+                // every load and re-persist it on the next save, leaving no way to keep
+                // "no supervisor" on a source that happens to have a second email column.
+                {
+                    const bc = applyBusinessColumnDefaults(state.columns, {
+                        supervisorColumnId: data.SupervisorColumnID,
+                        gapColumnId: data.GapColumnID,
+                        sortColumnId: data.SortColumnID,
+                    }, !data.IsMapped);
+                    state.supervisorColumnId = bc.supervisorColumnId;
+                    state.gapColumnId = bc.gapColumnId;
+                    state.sortColumnId = bc.sortColumnId;
+                    // What the SERVER actually has, kept separately so BusinessColumnsPicker can
+                    // warn when a pre-merge mapping stored a Sort column different from its Gap
+                    // column (the merged control is about to collapse them into one).
+                    state.storedGapColumnId = data.GapColumnID;
+                    state.storedSortColumnId = data.SortColumnID;
+                }
                 state.syntheticGroupId = data.SyntheticGroupID;
                 state.foreignSyntheticGroupId = data.ForeignSyntheticGroupID;
                 state.foreignSyntheticGroupName = data.ForeignSyntheticGroupName;
@@ -422,6 +498,25 @@ export const smartSendSlice = createSlice({
             const payload = action.payload;
             if (payload?.StatusCode === 200 && payload.Data) {
                 state.columns = payload.Data.columns || [];
+                // Source-switch path. selectSource has just nulled all three business ids, so this
+                // re-arms the default against the NEW source's columns. Runs on every visit
+                // (including a return to a previously visited source), which is why the default
+                // lives here rather than behind a one-shot ref in the screen.
+                // `true`: picking a source always starts a blank slate for the business columns —
+                // selectSource cleared them a moment ago, so there is no saved decision to respect.
+                {
+                    const bc = applyBusinessColumnDefaults(state.columns, {
+                        supervisorColumnId: state.supervisorColumnId,
+                        gapColumnId: state.gapColumnId,
+                        sortColumnId: state.sortColumnId,
+                    }, true);
+                    state.supervisorColumnId = bc.supervisorColumnId;
+                    state.gapColumnId = bc.gapColumnId;
+                    state.sortColumnId = bc.sortColumnId;
+                    // A brand-new source has no stored mapping yet — nothing to warn about.
+                    state.storedGapColumnId = null;
+                    state.storedSortColumnId = null;
+                }
                 const details = payload.Data.details;
                 if (details) {
                     state.lockedVersionId = details.ActiveVersionID ?? null;
@@ -440,6 +535,39 @@ export const smartSendSlice = createSlice({
         builder.addCase(loadSourceColumns.rejected, (state, action: any) => {
             if (action.meta.requestId !== state.columnsReqId) return;
             state.columnsStatus = 'failed';
+        });
+
+        // ── campaign-picker field counts ─────────────────────────────────────────────────
+        // Status is tracked PER CAMPAIGN ID off action.meta.arg, not by a latest-request id:
+        // batches are additive and disjoint, so two in-flight responses cannot clobber each
+        // other and out-of-order arrival is harmless.
+        builder.addCase(getCampaignTokens.pending, (state, action: any) => {
+            (action.meta.arg.campaignIds || []).forEach((id: number) => {
+                state.campaignTokensStatus[id] = 'loading';
+            });
+        });
+        builder.addCase(getCampaignTokens.fulfilled, (state, action: any) => {
+            const requested: number[] = action.meta.arg.campaignIds || [];
+            const payload = action.payload;
+            if (payload?.StatusCode === 200 && payload.Data) {
+                const items = payload.Data.Items || [];
+                const answered = new Set<number>();
+                items.forEach((it: any) => {
+                    state.campaignTokens[it.CampaignID] = (it.Tokens || []).map((t: any) => t.Token);
+                    state.campaignTokensStatus[it.CampaignID] = 'succeeded';
+                    answered.add(it.CampaignID);
+                });
+                // The server OMITS campaigns the caller does not own. Marking those 'failed' keeps
+                // the card blank instead of asserting a confident and wrong "0 fields".
+                requested.forEach((id) => { if (!answered.has(id)) state.campaignTokensStatus[id] = 'failed'; });
+            } else {
+                requested.forEach((id) => { state.campaignTokensStatus[id] = 'failed'; });
+            }
+        });
+        builder.addCase(getCampaignTokens.rejected, (state, action: any) => {
+            (action.meta.arg.campaignIds || []).forEach((id: number) => {
+                state.campaignTokensStatus[id] = 'failed';
+            });
         });
 
         builder.addCase(getSampleValues.fulfilled, (state, action: any) => {

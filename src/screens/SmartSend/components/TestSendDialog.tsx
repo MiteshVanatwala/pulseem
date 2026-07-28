@@ -54,16 +54,29 @@ const TestSendDialog: React.FC<{ open: boolean; campaignId: number; onClose: () 
         };
 
         return (
-            <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+            // `dir` is MANDATORY on every Dialog in this app and is NOT inherited.
+            // App.js:727-730 sets <html dir> inside a useEffect with an EMPTY dependency array,
+            // reading i18n.language at mount — but i18n.js:20 initialises `lng: 'en'` and the real
+            // language is only applied later at App.js:806, so <html dir="ltr"> is permanent even
+            // for Hebrew users. The app looks RTL only because of the in-app wrapper
+            // <div dir={isRTL...}> at App.js:1018, and MUI v4 <Dialog> portals into document.body
+            // — OUTSIDE that wrapper. jss-rtl mirrors physical CSS properties but never sets the
+            // `direction` property, so it cannot compensate: the header's space-between put the
+            // title left and the ✕ right, and the banner's text-align:start resolved to left.
+            // Every sibling DataSources dialog already carries this attribute (ExportDialog.tsx:71,
+            // EditColumnDialog.tsx:87, UploadWizardDialog.tsx:555, DataSources.tsx:439/448).
+            // Reactive, not hardcoded "rtl", so en/pl accounts still render LTR.
+            <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth dir={isRTL ? 'rtl' : 'ltr'}>
                 <Box className={classes.head}>
                     <Typography variant="h6">{t('DataSources.send.actions.testSend')}</Typography>
                     <IconButton size="small" onClick={onClose} aria-label={t('DataSources.send.close')}><Close /></IconButton>
                 </Box>
                 <Box className={classes.body}>
-                    <InlineBanner severity="warning" role="alert" title={t('DataSources.send.testSend.title')} body={t('DataSources.send.testSendWarn')} />
+                    <InlineBanner severity="warning" role="alert" size="lg" title={t('DataSources.send.testSend.title')} body={t('DataSources.send.testSendWarn')} />
                     {dirty && (
                         <InlineBanner
                             severity="info"
+                            size="lg"
                             title={t('DataSources.send.testSavePrompt.title')}
                             body={t('DataSources.send.testSavePrompt.body')}
                             action={(
