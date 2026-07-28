@@ -760,35 +760,30 @@ export default function TierGraphDialog({ onClose, onInsert, mergeData, t }) {
           <label style={{ fontSize: 12.5 }}>{t('campaigns.tierGraph.heightLabel')}</label>
           <input type="number" min={320} max={900} step={10} value={graph.height} onChange={(e) => dispatch({ type: 'SET_BG_FIELD', key: 'height', val: parseFloat(e.target.value) || 420 })} style={numInput} />
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <label style={{ fontSize: 12.5 }}>{t('campaigns.tierGraph.barWidthLabel')}</label>
-          <input
-            type="number" min={BAR_MIN} max={barMax} step={1}
-            value={barDraft !== null ? barDraft : (graph.barWidth == null ? '' : graph.barWidth)}
-            placeholder={t('campaigns.tierGraph.autoPlaceholder', { v: Math.round(autoBarOf(graph)) })}
-            onChange={(e) => setBarDraft(e.target.value)}
-            onBlur={() => commitDraft('barWidth', barDraft, setBarDraft)}
-            onKeyDown={(e) => { if (e.key === 'Enter') commitDraft('barWidth', barDraft, setBarDraft); }}
-            style={warnInput}
-            title={crowdedHint}
-          />
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, opacity: gapDisabled ? 0.45 : 1 }}>
-          <label style={{ fontSize: 12.5 }}>{t('campaigns.tierGraph.gapLabel')}</label>
-          <input
-            type="number" min={0} max={gapMax} step={1}
-            disabled={gapDisabled}
-            value={gapDraft !== null ? gapDraft : (graph.gap == null ? '' : graph.gap)}
-            placeholder={t('campaigns.tierGraph.autoPlaceholder', { v: Math.round(autoGapOf(graph)) })}
-            onChange={(e) => setGapDraft(e.target.value)}
-            onBlur={() => commitDraft('gap', gapDraft, setGapDraft)}
-            onKeyDown={(e) => { if (e.key === 'Enter') commitDraft('gap', gapDraft, setGapDraft); }}
-            style={warnInput}
-            title={crowdedHint}
-          />
-        </div>
-        <div style={{ flex: 1 }} />
-        <button type="button" style={btn} onClick={handleImportOpen}>{t('campaigns.tierGraph.importImage')}</button>
+        {geoSlider('barWidth', t('campaigns.tierGraph.barWidthLabel'), barVal, barSet == null, BAR_MIN, barMax, false)}
+        {geoSlider('gap', t('campaigns.tierGraph.gapLabel'), gapVal, gapSet == null, 0, gapMax, gapDisabled)}
+        {/* §17 (report #4) — reset the TWO geometry overrides to auto, and nothing else. Deliberately
+            NOT `RESET_DEFAULT`: "Load sample" throws the whole graph away, which is not what someone
+            who only over-shot a slider wants. `val: ''` is §10's existing reset — SET_BG_FIELD maps it
+            through numOrUndef to `undefined` and DELETES the key, so the graph goes back to emitting
+            no geometry at all. Sits inside the geometry cluster and disables itself once both are
+            already auto, which is what tells it apart from the whole-graph button on the right. */}
+        <button
+          type="button"
+          style={geoIsAuto ? { ...btn, opacity: 0.45, cursor: 'default' } : btn}
+          disabled={geoIsAuto}
+          title={t('campaigns.tierGraph.resetGeometryHint')}
+          onClick={() => {
+            dispatch({ type: 'SET_BG_FIELD', key: 'barWidth', val: '' });
+            dispatch({ type: 'SET_BG_FIELD', key: 'gap', val: '' });
+          }}
+        >
+          {t('campaigns.tierGraph.resetGeometry')}
+        </button>
+        {/* §17 (report #6): `marginInlineStart:'auto'` instead of a `<div style={{flex:1}}/>` spacer.
+            The spacer never caused the wrap (a flex-basis-0 item adds 0 to the intrinsic width) but it
+            did cost one extra 10px gap; `auto` right-aligns these two identically, RTL included. */}
+        <button type="button" style={{ ...btn, marginInlineStart: 'auto' }} onClick={handleImportOpen}>{t('campaigns.tierGraph.importImage')}</button>
         <button type="button" style={btn} onClick={() => dispatch({ type: 'RESET_DEFAULT' })}>{t('campaigns.tierGraph.loadSample')}</button>
       </div>
 
