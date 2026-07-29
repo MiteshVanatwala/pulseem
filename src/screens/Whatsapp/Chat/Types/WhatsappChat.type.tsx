@@ -126,6 +126,11 @@ export type ChatTemplateProps = {
 
 export type WhatsappChatSideBarProps = {
 	classes: ClassesType['classes'];
+	onServiceChannelChange?: (channel: 'whatsapp' | 'widget') => void;
+	selectedServiceChannel?: 'whatsapp' | 'widget';
+	serviceDomains?: string[];
+	serviceDomain?: string;
+	onServiceDomainChange?: (domain: string) => void;
 	isMobileSideBar: boolean;
 	setIsMobileSideBar: () => void;
 	handleChatId: (
