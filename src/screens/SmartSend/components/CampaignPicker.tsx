@@ -5,13 +5,14 @@ import {
     FormControlLabel, Switch
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { CheckCircle, Search, Refresh } from '@material-ui/icons';
+import { CheckCircle, Search, Refresh, TextFields, Close } from '@material-ui/icons';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import moment from 'moment';
 import { eCampaignStatus } from '../../../Models/Enums/Campaign';
 import { DateFormats } from '../../../helpers/Constants';
 import { getNewslatterParentChildData } from '../../../redux/reducers/newsletterSlice';
+import { getCampaignTokens } from '../../../redux/reducers/smartSendSlice';
 
 // §7.3 · pick the campaign to smart-send. Rows come from the campaigns-management endpoint
 // (email/GetEmailCampaignsManagement → MainList) which does NO filtering, paging, search or
@@ -73,7 +74,9 @@ const rowTime = (row: CampaignRow) => parseServerDate(row.SendDate || row.Update
 // Cap the rendered grid so the primary action stays above the fold on a long account-wide list —
 // a "show more" control reveals the rest on demand. Applied AFTER the onlySendable filter, so it
 // counts only the campaigns actually on offer.
-const CAP = 12;
+// Two full rows of four. Keeps the "show more" control — and therefore the Continue button —
+// above the fold on the account-wide list, instead of pushing them down a third row.
+const CAP = 8;
 
 const useStyles = makeStyles((theme) => ({
     wrap: { marginTop: theme.spacing(1) },
@@ -81,13 +84,49 @@ const useStyles = makeStyles((theme) => ({
         display: 'flex', alignItems: 'center', flexWrap: 'wrap',
         gap: theme.spacing(2), margin: `${theme.spacing(1)}px 0`,
     },
-    search: { minWidth: 280 },
+    // OUTLINED, deliberately. MUI v4's default TextField variant is `standard`
+    // (TextField.js:127), which draws no box — only a bottom underline — and that underline is
+    // itself killed app-wide by an unscoped global rule in
+    // components/Notifications/Preview/preview.styles.css:1-4
+    // (`.MuiInput-underline:before,:after { border-bottom: none !important }`), which reaches
+    // every screen because App.js:8 statically imports MmsManagment.js → Preview.js:6 and there
+    // is no React.lazy anywhere in App.js. A `standard` field therefore renders with ZERO chrome
+    // and does not read as an input at all. `outlined` uses .MuiOutlinedInput-notchedOutline,
+    // which that rule does not touch, so this sidesteps the global CSS instead of fighting it.
+    // Colours mirror the house recipe at style/classes/managementStyle.js:533-550.
+    // The focused fieldset is left alone on purpose — MUI's default 2px primary is the strongest
+    // focus cue and matches the card focus ring at `row` below.
+    search: {
+        minWidth: 320,
+        '& .MuiOutlinedInput-root': {
+            background: '#fff',
+            borderRadius: 6,
+            '& fieldset': { borderColor: '#a6a6a6' },
+            '&:hover fieldset': { borderColor: '#797979' },
+        },
+        '& .MuiInputAdornment-positionStart': { color: '#797979' },
+    },
     // Wrapping grid (SourcePicker idiom), not a scrolling column: a grid that scrolls inside its
     // own maxHeight would hide the Continue button below the fold. The list is capped by card
     // count + a "show more" control instead — see CAP.
-    list: { display: 'flex', flexWrap: 'wrap', gap: theme.spacing(2), marginTop: theme.spacing(1) },
+    // A fixed FOUR-column grid, not a wrapping flex row of fixed-width cards: with flex-wrap the
+    // number of cards per row changed with the viewport (five fit on a wide screen), so the
+    // CAP of 8 did not correspond to a whole number of rows. A grid pins it at 4 × 2 and the
+    // cards stretch to fill instead. Column count steps down on narrow viewports so a card never
+    // becomes unreadably thin.
+    list: {
+        display: 'grid',
+        gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
+        gap: theme.spacing(2),
+        marginTop: theme.spacing(1),
+        [theme.breakpoints.down('md')]: { gridTemplateColumns: 'repeat(3, minmax(0, 1fr))' },
+        [theme.breakpoints.down('sm')]: { gridTemplateColumns: 'repeat(2, minmax(0, 1fr))' },
+        [theme.breakpoints.down('xs')]: { gridTemplateColumns: '1fr' },
+    },
     row: {
-        position: 'relative', boxSizing: 'border-box', width: 264, padding: theme.spacing(1.5),
+        // No fixed width — the grid cell sets it. minWidth:0 stops a long unbroken campaign name
+        // from forcing the track wider than its share (grid items default to min-content).
+        position: 'relative', boxSizing: 'border-box', minWidth: 0, padding: theme.spacing(1.5),
         border: '2px solid #e0e0e0', borderRadius: 8, cursor: 'pointer', outline: 'none',
         transition: 'border-color .15s, box-shadow .15s',
         '&:hover': { borderColor: theme.palette.primary.light },
@@ -108,6 +147,27 @@ const useStyles = makeStyles((theme) => ({
         overflow: 'hidden', minHeight: '3em',
     },
     meta: { marginTop: theme.spacing(0.5), display: 'flex', alignItems: 'center', gap: theme.spacing(1.5), flexWrap: 'wrap' },
+    // The field-count chip gets its OWN row with a reserved height, rather than another entry in
+    // `meta`. `meta` is flexWrap inside a 264px card whose inner width is ~236px, and "#123" plus
+    // "עודכן dd/MM/yyyy HH:mm" already fill most of it — a ~90px chip added there wraps and grows
+    // every card in the row by a line the moment the counts land. The fixed height means the grid
+    // geometry is final on first paint and does not reflow when the fetch resolves.
+    fieldsRow: { marginTop: theme.spacing(0.5), minHeight: 26, display: 'flex', alignItems: 'center' },
+    // Not a MUI `clickable` Chip: in v4 that renders role="button" tabIndex={0}, which would put a
+    // focusable element inside a role="radio" (an ARIA violation) and add one Tab stop per card,
+    // destroying the radiogroup's single-tab-stop invariant. A plain span with a click handler
+    // keeps the chip inert; the roving tabindex on the card is untouched.
+    fieldsChip: { display: 'inline-flex', cursor: 'pointer' },
+    // Expansion panel, rendered BELOW the grid and OUTSIDE the radiogroup — see renderList.
+    panel: {
+        marginTop: theme.spacing(2), padding: theme.spacing(1.5, 2),
+        border: '1px solid #e0e0e0', borderRadius: 8, background: '#fafafa',
+    },
+    panelHead: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: theme.spacing(1) },
+    panelList: {
+        marginTop: theme.spacing(1), display: 'flex', flexWrap: 'wrap', gap: theme.spacing(1),
+        maxHeight: 220, overflowY: 'auto',
+    },
     check: { position: 'absolute', top: 8, insetInlineEnd: 8 },
     state: { display: 'flex', alignItems: 'center', gap: theme.spacing(1), marginTop: theme.spacing(2) },
     empty: { textAlign: 'center', padding: '32px 16px', color: '#5b6b7b' },
@@ -135,6 +195,12 @@ const CampaignPicker: React.FC<Props> = ({ value, onChange }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const campaigns: CampaignRow[] = useSelector((s: any) => s.newsletter.newslettersParentCampaigns);
+    const campaignTokens = useSelector((s: any) => s.smartSend.campaignTokens);
+    const tokensStatus = useSelector((s: any) => s.smartSend.campaignTokensStatus);
+    const selectedChannel = useSelector((s: any) => s.smartSend.selectedChannel);
+    // Which campaign's field list is expanded, or null. Lives here (not per card) because the
+    // panel is rendered once, below the grid.
+    const [openFields, setOpenFields] = useState<number | null>(null);
     const [status, setStatus] = useState<'idle' | 'loading' | 'succeeded' | 'failed'>('idle');
     const [search, setSearch] = useState('');
     const [onlySendable, setOnlySendable] = useState(true);
@@ -218,6 +284,41 @@ const CampaignPicker: React.FC<Props> = ({ value, onChange }) => {
         return target >= CAP ? visible : visible.slice(0, CAP);
     }, [visible, expanded, value]);
     const moreCount = visible.length - capped.length;   // rows the cap is still holding back
+
+    // Fetch field counts for the cards that are actually RENDERED, never for the whole account.
+    // Only selectable rows are asked for: the count is not shown on blocked cards (they already
+    // carry their own reason chip and tooltip), and skipping them roughly halves the traffic.
+    //
+    // ONE BATCH AT A TIME. The server caps a request at BATCH_MAX, so a rendered list longer than
+    // that needs several passes — but they must be SEQUENTIAL. `tokensStatus` is in the deps
+    // (it has to be: it is what tells the effect a batch finished), and getCampaignTokens.pending
+    // writes 'loading' into that same object synchronously inside dispatch. So the effect re-enters
+    // immediately on the PENDING write, not on the response, and without this guard the whole
+    // rendered list would go out as ceil(N/BATCH_MAX) near-simultaneous POSTs against the shared
+    // production DB — each id costing two stored-procedure round trips. `inFlight` collapses that
+    // back to the intended drain: dispatch, wait, dispatch the next slice.
+    const BATCH_MAX = 10;   // must not exceed the server's cap in DataSourcesSenderController
+    const tokensInFlight = useRef(false);
+    useEffect(() => {
+        if (tokensInFlight.current) return;
+        const need = capped
+            .filter(isSelectable)
+            .map((row) => row.CampaignID)
+            .filter((id) => tokensStatus[id] == null);   // never re-ask, including after a failure
+        if (!need.length) return;
+        tokensInFlight.current = true;
+        // Cleared in BOTH outcomes: the thunk is wrapped so it never rejects, but a throw here
+        // would latch the flag on and stop every later batch for the rest of the session.
+        Promise.resolve(dispatch(getCampaignTokens({ campaignIds: need.slice(0, BATCH_MAX), channel: selectedChannel })))
+            .finally(() => { tokensInFlight.current = false; });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [capped, tokensStatus]);
+
+    // A stale panel must not point at a card that is no longer rendered.
+    useEffect(() => {
+        if (openFields != null && !capped.some((row) => row.CampaignID === openFields)) setOpenFields(null);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [capped]);
     const selectableIdx = useMemo(
         () => capped.reduce<number[]>((acc, row, i) => (isSelectable(row) ? [...acc, i] : acc), []),
         [capped],
@@ -292,6 +393,15 @@ const CampaignPicker: React.FC<Props> = ({ value, onChange }) => {
         // the label entirely on rows that do have the other date.
         const when = parseServerDate(row.UpdatedDate || row.SendDate);
         const descId = `smartsend-campaign-desc-${row.CampaignID}`;
+        const fieldsId = `smartsend-campaign-fields-${row.CampaignID}`;
+
+        // The ##fields## this campaign's template contains. Shown on selectable cards only.
+        // `names` is undefined until the batch resolves; 'failed' also leaves it undefined, and in
+        // BOTH cases the chip is simply absent — the card stays selectable and Continue still works,
+        // because nothing about choosing a campaign depends on the count.
+        // An EMPTY array is different from undefined and MUST render: "no fields in template" is
+        // real, actionable information (that campaign has nothing to map), not a loading state.
+        const names: string[] | undefined = selectable ? campaignTokens[row.CampaignID] : undefined;
 
         const card = (
             <div
@@ -303,7 +413,13 @@ const CampaignPicker: React.FC<Props> = ({ value, onChange }) => {
                 // The id rides in the accessible name too: two campaigns may share a name, and the
                 // id is the only thing that tells a screen-reader user which row is which.
                 aria-label={`${row.Name} #${row.CampaignID}`}
-                aria-describedby={!selectable ? descId : undefined}
+                // Space-separated id LIST — the blocked-reason id must be preserved, not replaced.
+                // The field count reaches assistive tech through this description rather than
+                // through a control, so the radiogroup keeps exactly one tab stop.
+                aria-describedby={[
+                    !selectable ? descId : null,
+                    names ? fieldsId : null,
+                ].filter(Boolean).join(' ') || undefined}
                 tabIndex={selectable ? (idx === rovingTarget ? 0 : -1) : -1}
                 onMouseDown={selectable ? undefined : (e) => e.preventDefault()}
                 onClick={() => pick(row)}
@@ -330,7 +446,40 @@ const CampaignPicker: React.FC<Props> = ({ value, onChange }) => {
                     )}
                     {!selectable && <Chip size="small" label={blockedText} />}
                 </Box>
+                {/* Field count. Always occupies a reserved-height row so the counts landing later
+                    cannot reflow the grid. Clicking it toggles the list panel BELOW the grid — the
+                    handler sits on a plain span, never on the Chip (a MUI v4 clickable Chip becomes
+                    role="button" tabIndex=0, i.e. a focusable descendant of a radio and an extra Tab
+                    stop per card). stopPropagation is what keeps the click from also selecting the
+                    campaign via the card's own onClick. */}
+                {selectable && (
+                    <Box className={classes.fieldsRow}>
+                        {names && (
+                            <span
+                                className={classes.fieldsChip}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setOpenFields(openFields === row.CampaignID ? null : row.CampaignID);
+                                }}
+                            >
+                                <Chip
+                                    size="small"
+                                    icon={<TextFields fontSize="small" />}
+                                    label={names.length
+                                        ? t('DataSources.send.picker.fieldsCount', { n: names.length })
+                                        : t('DataSources.send.picker.fieldsEmpty')}
+                                    variant={openFields === row.CampaignID ? 'default' : 'outlined'}
+                                />
+                            </span>
+                        )}
+                    </Box>
+                )}
                 {!selectable && <span id={descId} className={classes.srOnly}>{blockedText}</span>}
+                {names && (
+                    <span id={fieldsId} className={classes.srOnly}>
+                        {t('DataSources.send.picker.fieldsAria', { n: names.length, list: names.join(', ') })}
+                    </span>
+                )}
             </div>
         );
 
@@ -401,6 +550,70 @@ const CampaignPicker: React.FC<Props> = ({ value, onChange }) => {
                 <Box className={classes.list} role="radiogroup" aria-label={t('DataSources.send.picker.selectAria')}>
                     {capped.map(renderRow)}
                 </Box>
+                {/* The expanded field list, rendered OUTSIDE the radiogroup on purpose.
+                    Inside a card it would either grow the card (reflowing the whole wrapping grid)
+                    or need a Popover/Tooltip: a v4 Popover steals focus out of the roving tabindex,
+                    and a controlled v4 Tooltip has no Escape and no click-away handler, so with the
+                    hover/focus/touch listeners disabled its onClose is unreachable and the bubble
+                    cannot be dismissed. Out here a real focusable close Button is legal and the
+                    grid's single-tab-stop invariant is untouched. */}
+                {openFields != null && campaignTokens[openFields] && (
+                    <Box className={classes.panel} role="region" aria-live="polite">
+                        <Box className={classes.panelHead}>
+                            <Typography variant="subtitle2" style={{ fontWeight: 600 }}>
+                                {t('DataSources.send.picker.fieldsPanelTitle', {
+                                    name: (capped.find((r) => r.CampaignID === openFields) || { Name: '' }).Name,
+                                })}
+                            </Typography>
+                            {/* Return focus to the card this panel belongs to. The Close button is
+                                the focused element and unmounts itself, so without this the focus
+                                position is lost and the next Tab resumes from wherever the removed
+                                node sat rather than from the card the user was working on. */}
+                            <Button
+                                size="small"
+                                startIcon={<Close fontSize="small" />}
+                                onClick={() => {
+                                    const idx = capped.findIndex((r) => r.CampaignID === openFields);
+                                    setOpenFields(null);
+                                    if (idx >= 0) rowRefs.current[idx]?.focus();
+                                }}
+                            >
+                                {t('DataSources.send.picker.fieldsPanelClose')}
+                            </Button>
+                        </Box>
+                        <Box className={classes.panelList}>
+                            {campaignTokens[openFields].length
+                                ? campaignTokens[openFields].map((n: string) => (
+                                    // The token exactly as it appears in the template, ##…## included,
+                                    // so the user can match it against the editor by eye.
+                                    <Chip key={n} size="small" variant="outlined" label={`##${n}##`} />
+                                ))
+                                : <Typography variant="body2" color="textSecondary">{t('DataSources.send.picker.fieldsEmpty')}</Typography>}
+                        </Box>
+                    </Box>
+                )}
+                {/* ONE shared retry for the whole grid, not an error chip per card: a failed batch
+                    would otherwise print the same message up to twelve times on one screen. */}
+                {capped.some((row) => isSelectable(row) && tokensStatus[row.CampaignID] === 'failed') && (
+                    <Box className={classes.hiddenNote}>
+                        <Typography variant="caption" color="textSecondary">
+                            {t('DataSources.send.picker.fieldsLoadError')}
+                        </Typography>
+                        <Button
+                            size="small"
+                            startIcon={<Refresh />}
+                            onClick={() => dispatch(getCampaignTokens({
+                                campaignIds: capped
+                                    .filter((row) => isSelectable(row) && tokensStatus[row.CampaignID] === 'failed')
+                                    .map((row) => row.CampaignID)
+                                    .slice(0, BATCH_MAX),
+                                channel: selectedChannel,
+                            }))}
+                        >
+                            {t('DataSources.retry')}
+                        </Button>
+                    </Box>
+                )}
                 {/* Cap expander — pagination-style "reveal more of the same list". A centered,
                     neutral OUTLINED button, visually distinct from the primary-coloured filter
                     toggle below (which changes WHAT is listed). `moreCount` is how many sendable-
@@ -432,7 +645,19 @@ const CampaignPicker: React.FC<Props> = ({ value, onChange }) => {
                 {/* `picker.searchPlaceholder` ("Search campaigns by name"), NOT the similarly named
                     `mapping.searchPlaceholder` ("Search fields") — that one belongs to the field
                     mapping table on the next step and searches something else entirely. */}
+                {/* `placeholder`, NOT `label`. MUI v4 does not shrink an InputLabel while a
+                    startAdornment is present on an empty, unfocused field, so a label would sit
+                    ON the magnifier — the DataSources search boxes (DataSources.tsx:488,
+                    SmartSendManageTab.tsx:277, FiltersBar.tsx:54) all carry that glitch because
+                    none of them passes InputLabelProps={{ shrink: true }}. The correct in-screen
+                    precedent is TokenMappingTable.tsx:67-79: outlined + placeholder + the same
+                    start adornment. theme.js:49-52 already renders outlined placeholders near-
+                    black at weight 500, so the hint stays highly legible.
+                    `position="start"` is correct under RTL and must NOT become "end": jss-rtl
+                    (App.js:1047) mirrors MUI's positionStart marginRight, so the magnifier paints
+                    on the RIGHT in Hebrew. Same as DataSources.tsx:492. */}
                 <TextField
+                    variant="outlined"
                     placeholder={t('DataSources.send.picker.searchPlaceholder')}
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}

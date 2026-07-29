@@ -53,6 +53,7 @@ const SmartSendScreen = ({ classes }: any) => {
 
     const campaignId = Number(id);
     const { accountFeatures } = useSelector((state: any) => state.common);
+    const isRTL = useSelector((state: any) => state.core && state.core.isRTL);
     const smartSend = useSelector((state: any) => state.smartSend);
     const unmapped = useSelector(selectUnmappedTokens);
     // The campaign identity shown in the header. It comes from the newsletter summary the reused
@@ -434,11 +435,17 @@ const SmartSendScreen = ({ classes }: any) => {
                             onChange={(token, columnId) => { dispatch(setTokenMapping({ token, columnId })); setDirty(true); }}
                             warnSystemFieldOverride
                         />
+                        {/* Gap + Sort are ONE control now; `setBusinessColumn('gapSort')` writes the
+                            same ColumnID into both slice fields, so buildSaveRequest keeps sending
+                            both server fields and no API/SP change was needed. `stored*` are the raw
+                            server values, used only to warn when a pre-merge mapping held two
+                            different columns. */}
                         <BusinessColumnsPicker
                             columns={smartSend.columns}
                             supervisorColumnId={smartSend.supervisorColumnId}
                             gapColumnId={smartSend.gapColumnId}
-                            sortColumnId={smartSend.sortColumnId}
+                            storedGapColumnId={smartSend.storedGapColumnId}
+                            storedSortColumnId={smartSend.storedSortColumnId}
                             onChange={(role, columnId) => { dispatch(setBusinessColumn({ role, columnId })); setDirty(true); }}
                             supervisorEnabled
                         />
@@ -589,7 +596,11 @@ const SmartSendScreen = ({ classes }: any) => {
             {/* item 3: three-way exit confirm. Save & exit is primary + autofocus; Exit without
                 saving is muted and set apart (destructive — up to ~20 mappings); Esc → Cancel via
                 onClose. A failed save keeps the dialog open and does NOT navigate. */}
-            <Dialog open={exitOpen} onClose={() => setExitOpen(false)} maxWidth="xs" fullWidth>
+            {/* dir is required: MUI v4 Dialogs portal into document.body, outside the
+                <div dir={isRTL...}> at App.js:1018, and <html dir> is permanently "ltr" because
+                App.js:727-730 sets it once at mount from i18n.language, which is still the 'en'
+                default from i18n.js:20 at that moment (the real language lands later, App.js:806). */}
+            <Dialog open={exitOpen} onClose={() => setExitOpen(false)} maxWidth="xs" fullWidth dir={isRTL ? 'rtl' : 'ltr'}>
                 <Box style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 24px', borderBottom: '1px solid #e0e0e0' }}>
                     <Typography variant="h6">{t('DataSources.send.exit.title')}</Typography>
                 </Box>

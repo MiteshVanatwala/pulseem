@@ -221,14 +221,23 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
   },
   // OUTER MUI paper override for the tier-graph dialog ONLY. The doubled '&&' beats
   // dialogContainer's `& .MuiDialog-paperWidthSm { maxWidth: 1080px !important }` (0,2,0) with (0,3,0),
-  // lifting the 1080 cap so the outer paper is exactly min(1120px,94vw) — the single width source of
-  // truth. Passed as customContainerStyle (BaseDialog ignores PaperProps/fullWidth). Same trick as
+  // lifting the 1080 cap so the outer paper is the single width source of truth. Passed as
+  // customContainerStyle (BaseDialog ignores PaperProps/fullWidth). Same trick as
   // newNavigationDialogContainer above.
+  // The paper now TRACKS THE IMAGE instead of always taking 94vw, so a 640px graph no longer sits in
+  // wide grey margins. --tg-img-w is published on <html> by TierGraphDialog. --tg-chrome-w defaults to
+  // 416px = editor panel 380 (flex-basis 380 with boxSizing:'border-box', so its own 16px padding and
+  // 1px inline-start border are INSIDE the 380) + stage column padding 18*2. Nothing else contributes:
+  // tierGraphDialogPaperProps / tierGraphDialogContent / tierGraphDialogChildren all force padding 0.
+  // maxWidth was 75%, which BEAT the width line above and re-broke the §17 one-row header on every
+  // laptop: at 1366px it capped the paper at 1024.5px, ~32px under the 1056px a default 640px graph
+  // asks for, so the header wrapped again below ~1408px of viewport. 95% keeps a ceiling for large
+  // graphs while letting the 94vw term above be the real cap (it is always the smaller of the two).
   tierGraphDialogContainer: {
     '&& .MuiDialog-paperWidthSm': {
       minWidth: '0 !important',
-      width: '94vw !important',
-      maxWidth: '75% !important',
+      width: 'min(calc(var(--tg-img-w, 640px) + var(--tg-chrome-w, 416px)), 94vw) !important',
+      maxWidth: '95% !important',
       margin: '16px !important',
     },
     '&& .MuiDialog-paperScrollPaper': {

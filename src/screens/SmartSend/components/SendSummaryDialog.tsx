@@ -44,6 +44,10 @@ const SendSummaryDialog: React.FC<{ open: boolean; campaignId: number; onClose: 
         const dispatch = useDispatch();
         const { t } = useTranslation();
         const classes = useStyles();
+        // Dialogs portal outside App.js:1018's <div dir=...>, and <html dir> is stuck at "ltr"
+        // (App.js:727-730 runs once at mount, when i18n.language is still the 'en' default set at
+        // i18n.js:20). Without an explicit dir every dialog in this feature renders LTR.
+        const isRTL = useSelector((s: any) => s.core && s.core.isRTL);
         const summary = useSelector((s: any) => s.newsletter && s.newsletter.newsletterSendSummary);
         const channel = useSelector((s: any) => s.smartSend.selectedChannel) as eSendChannel;
         const [sendToSupervisor, setSendToSupervisor] = useState(false);
@@ -88,18 +92,18 @@ const SendSummaryDialog: React.FC<{ open: boolean; campaignId: number; onClose: 
         const renderResult = () => {
             const code = result ? result.StatusCode : 0;
             if (code === 200 || code === 201) {
-                return <InlineBanner severity="info" title={t('DataSources.send.result.success')} body={t('DataSources.send.result.successDesc')} />;
+                return <InlineBanner severity="info" size="lg" title={t('DataSources.send.result.success')} body={t('DataSources.send.result.successDesc')} />;
             }
             const meta = RESULTS[code];
             const key = meta ? meta.key : 'genericError';
             const body = code === 423 && Array.isArray(result.Data)
                 ? result.Data.join('  ·  ')
                 : t('DataSources.send.result.' + key);
-            return <InlineBanner severity={meta ? meta.sev : 'error'} role="alert" title={t('DataSources.send.result.' + key)} body={body} />;
+            return <InlineBanner severity={meta ? meta.sev : 'error'} role="alert" size="lg" title={t('DataSources.send.result.' + key)} body={body} />;
         };
 
         return (
-            <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
+            <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth dir={isRTL ? 'rtl' : 'ltr'}>
                 <Box className={classes.head}>
                     <Typography variant="h6">{t('DataSources.send.summary.title')}</Typography>
                     <IconButton size="small" onClick={onClose} aria-label={t('DataSources.send.close')}><Close /></IconButton>

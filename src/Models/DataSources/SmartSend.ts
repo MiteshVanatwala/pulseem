@@ -81,6 +81,24 @@ export interface GetMappingResult {
     Columns: SmartSendColumn[];
 }
 
+// ── GetTokensBulk (campaign-picker field counts) ─────────────────────────────
+// POST api/DataSourcesSender/GetTokensBulk → Data: BulkTokensResult.
+// Mirrors DAL.Models.DataSources.{CampaignTokensItem,BulkTokensResult}. Reuses
+// SmartSendTokenInfo so the number on a picker card is the SAME number the mapping screen
+// shows — both come from the server's single ExtractTokens. MappedColumnID is always null
+// here (this call carries no mapping context).
+// A requested CampaignID may be ABSENT from Items when the caller does not own it; the slice
+// marks those ids failed rather than rendering a misleading 0.
+
+export interface CampaignTokensItem {
+    CampaignID: number;
+    Tokens: SmartSendTokenInfo[];
+}
+
+export interface BulkTokensResult {
+    Items: CampaignTokensItem[];
+}
+
 // ── SetMapping ───────────────────────────────────────────────────────────────
 
 export interface TokenMapEntry {

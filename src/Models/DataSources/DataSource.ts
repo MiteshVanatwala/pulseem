@@ -71,6 +71,11 @@ export interface DataSourceListItem {
     RunDateStart: string | null;
     HasEmailIdentity: boolean;
     HasCellIdentity: boolean;
+    // Number of columns in the active version, projected from DataSourceVersions.ColumnCount by
+    // DataSources_GetMany. 0 while the SP script (DataSourcesDB/15_GetMany_ColumnCount.sql) is not
+    // deployed — GInt returns 0 for a column the resultset does not carry — so callers must treat
+    // 0 as "unknown" and render nothing rather than "0 columns".
+    ColumnsCount: number;
 }
 
 // Aligned to DB §7½ Get RS1. Fields after ResultsJson are UI-needed "§7½ gaps" (may be null if the

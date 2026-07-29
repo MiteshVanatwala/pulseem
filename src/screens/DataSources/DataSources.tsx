@@ -36,6 +36,7 @@ import UploadWizardDialog from './components/UploadWizardDialog';
 import DataSourceSummary from './components/DataSourceSummary';
 import ExportDialog from './components/ExportDialog';
 import VersionsHistoryDialog from './components/VersionsHistoryDialog';
+import { useDsDialogStyles } from './components/dialogStyles';
 import SmartSendManageTab from './SmartSendManageTab';
 
 const PAGE_NAME = 'DataSources';
@@ -47,11 +48,22 @@ const ROWS_OPTIONS = [6, 10, 20, 50];
 // basis routed the user to a screen that silently dropped the ?dataSourceId. Read the flag NAME
 // from the descriptor (never a hardcoded field) so this entry gate cannot drift from that one.
 const EMAIL_IDENTITY_FLAG = getChannelDescriptor(eSendChannel.EMAIL).identityFlag;
+// Action-strip sizing, shared with the versions-history dialog's action column (design feedback: the 7
+// icons read as one smudge, and were asked to grow). NOTE: `fontSize="small"` is NOT 16px here — MUI v4
+// resolves it to pxToRem(20), and this theme's coef is 1 (typography.fontSize 14 / 14), so it renders at
+// exactly 20px. Pinning 20 would therefore have changed nothing; 22 is the actual step up. Breathing room
+// comes from the 6px gap plus the 6px IconButton padding (hit target 26px → 34px, without `size="small"`
+// jumping to MUI's 48px default). Keep this in lockstep with the versions dialog so both read as one system.
+const ACTION_ICON_STYLE = { fontSize: 22 };
+const ACTION_BTN_STYLE = { padding: 6 };
+// MUI v4 Tab labels are 0.875rem — a step small against this page's header.
+const TAB_LABEL_STYLE = { fontSize: 16, fontWeight: 600 };
 
 const DataSources = ({ classes }: ClassesType) => {
     const { t, i18n } = useTranslation();
     const dispatch = useDispatch();
     const Redirect = useRedirect();
+    const dsDialog = useDsDialogStyles();
     const { windowSize, rowsPerPage, userRoles } = useSelector((s: any) => s.core);
     const { accountFeatures } = useSelector((s: any) => s.common);
     const { list, listStatus, ToastMessages } = useSelector((s: any) => s.dataSources);
@@ -243,38 +255,38 @@ const DataSources = ({ classes }: ClassesType) => {
     const renderActions = (row: DataSourceListItem) => {
         const canViewContent = row.Status === eDataSourceStatus.READY || row.Status === eDataSourceStatus.PROCESSING || row.Status === eDataSourceStatus.PENDING;
         return (
-            <Box style={{ display: 'flex', gap: 2, flexWrap: 'wrap', justifyContent: 'center' }}>
+            <Box style={{ display: 'flex', gap: 6, flexWrap: 'wrap', justifyContent: 'center' }}>
                 {canViewRecipients && canViewContent && (
                     <Tooltip title={t('DataSources.actions.view')}>
-                        <IconButton size="small" aria-label={t('DataSources.actions.view')} onClick={() => goToView(row.DataSourceID)}><Visibility fontSize="small" /></IconButton>
+                        <IconButton size="small" style={ACTION_BTN_STYLE} aria-label={t('DataSources.actions.view')} onClick={() => goToView(row.DataSourceID)}><Visibility fontSize="small" style={ACTION_ICON_STYLE} /></IconButton>
                     </Tooltip>
                 )}
                 {canExport && row.Status === eDataSourceStatus.READY && (
                     <Tooltip title={t('DataSources.actions.export')}>
-                        <IconButton size="small" aria-label={t('DataSources.actions.export')} onClick={() => setDialog({ type: 'export', data: row })}><GetApp fontSize="small" /></IconButton>
+                        <IconButton size="small" style={ACTION_BTN_STYLE} aria-label={t('DataSources.actions.export')} onClick={() => setDialog({ type: 'export', data: row })}><GetApp fontSize="small" style={ACTION_ICON_STYLE} /></IconButton>
                     </Tooltip>
                 )}
                 {canUpload && (
                     <Tooltip title={t('DataSources.actions.edit')}>
-                        <IconButton size="small" aria-label={t('DataSources.actions.edit')} onClick={() => setDialog({ type: 'edit', data: row })}><EditIcon fontSize="small" /></IconButton>
+                        <IconButton size="small" style={ACTION_BTN_STYLE} aria-label={t('DataSources.actions.edit')} onClick={() => setDialog({ type: 'edit', data: row })}><EditIcon fontSize="small" style={ACTION_ICON_STYLE} /></IconButton>
                     </Tooltip>
                 )}
                 <Tooltip title={t('DataSources.actions.versions')}>
-                    <IconButton size="small" aria-label={t('DataSources.actions.versions')} onClick={() => openVersions(row.DataSourceID)}><History fontSize="small" /></IconButton>
+                    <IconButton size="small" style={ACTION_BTN_STYLE} aria-label={t('DataSources.actions.versions')} onClick={() => openVersions(row.DataSourceID)}><History fontSize="small" style={ACTION_ICON_STYLE} /></IconButton>
                 </Tooltip>
                 {row.Status === eDataSourceStatus.READY && (
                     <Tooltip title={t('DataSources.actions.summary')}>
-                        <IconButton size="small" aria-label={t('DataSources.actions.summary')} onClick={() => openSummary(row.DataSourceID)}><Assessment fontSize="small" /></IconButton>
+                        <IconButton size="small" style={ACTION_BTN_STYLE} aria-label={t('DataSources.actions.summary')} onClick={() => openSummary(row.DataSourceID)}><Assessment fontSize="small" style={ACTION_ICON_STYLE} /></IconButton>
                     </Tooltip>
                 )}
                 {canDelete && (
                     <Tooltip title={t('DataSources.actions.delete')}>
-                        <IconButton size="small" aria-label={t('DataSources.actions.delete')} onClick={() => setDialog({ type: 'delete', data: row })}><DeleteIcon fontSize="small" /></IconButton>
+                        <IconButton size="small" style={ACTION_BTN_STYLE} aria-label={t('DataSources.actions.delete')} onClick={() => setDialog({ type: 'delete', data: row })}><DeleteIcon fontSize="small" style={ACTION_ICON_STYLE} /></IconButton>
                     </Tooltip>
                 )}
                 {canSend && row[EMAIL_IDENTITY_FLAG] && row.Status === eDataSourceStatus.READY && (
                     <Tooltip title={t('DataSources.goToSend')}>
-                        <IconButton size="small" aria-label={t('DataSources.goToSend')} onClick={() => goToSend(row.DataSourceID)}><Send fontSize="small" style={sendIconStyle} /></IconButton>
+                        <IconButton size="small" style={ACTION_BTN_STYLE} aria-label={t('DataSources.goToSend')} onClick={() => goToSend(row.DataSourceID)}><Send fontSize="small" style={{ ...ACTION_ICON_STYLE, ...sendIconStyle }} /></IconButton>
                     </Tooltip>
                 )}
             </Box>
@@ -302,7 +314,7 @@ const DataSources = ({ classes }: ClassesType) => {
             <TableCell classes={cellStyle} align="center" className={clsx(classes.flex3)}>{renderNameCell(row)}</TableCell>
             <TableCell classes={cellStyle} align="center" className={clsx(classes.flex2)}>{row.Description}</TableCell>
             <TableCell classes={cellStyle} align="center" className={clsx(classes.flex2)}>
-                <StatusChip status={row.Status} progress={row.ProgressPercent} runDateStart={row.RunDateStart} createdDate={row.CreatedDate} t={t} />
+                <StatusChip status={row.Status} progress={row.ProgressPercent} runDateStart={row.RunDateStart} createdDate={row.CreatedDate} t={t} align="center" />
             </TableCell>
             <TableCell classes={cellStyle} align="center" className={clsx(classes.flex1)} style={{ direction: 'ltr' }}>
                 {row.TotalRows !== null && row.TotalRows !== undefined ? row.TotalRows.toLocaleString() : '—'}
@@ -319,7 +331,7 @@ const DataSources = ({ classes }: ClassesType) => {
                     <CardContent>
                         {renderNameCell(row)}
                         <Box style={{ marginTop: 8 }}>
-                            <StatusChip status={row.Status} progress={row.ProgressPercent} runDateStart={row.RunDateStart} createdDate={row.CreatedDate} t={t} />
+                            <StatusChip status={row.Status} progress={row.ProgressPercent} runDateStart={row.RunDateStart} createdDate={row.CreatedDate} t={t} align="center" />
                         </Box>
                         <Box style={{ marginTop: 8 }}>{renderActions(row)}</Box>
                     </CardContent>
@@ -424,7 +436,7 @@ const DataSources = ({ classes }: ClassesType) => {
                 canExport={canExport}
             />
             {/* delete confirmation */}
-            <Dialog open={dialog?.type === 'delete'} onClose={() => setDialog(null)} dir="rtl">
+            <Dialog open={dialog?.type === 'delete'} onClose={() => setDialog(null)} dir="rtl" PaperProps={{ className: dsDialog.paper }}>
                 <DialogTitle>{t('DataSources.delete.title')}</DialogTitle>
                 <DialogContent><Typography>{t('DataSources.delete.body')}</Typography></DialogContent>
                 <DialogActions>
@@ -433,7 +445,7 @@ const DataSources = ({ classes }: ClassesType) => {
                 </DialogActions>
             </Dialog>
             {/* delete blocked by campaigns */}
-            <Dialog open={dialog?.type === 'deleteBlocked'} onClose={() => setDialog(null)} dir="rtl">
+            <Dialog open={dialog?.type === 'deleteBlocked'} onClose={() => setDialog(null)} dir="rtl" PaperProps={{ className: dsDialog.paper }}>
                 <DialogTitle>{t('DataSources.delete.blockedTitle')}</DialogTitle>
                 <DialogContent>
                     <Typography>{t('DataSources.delete.blockedBody')}</Typography>
@@ -476,8 +488,8 @@ const DataSources = ({ classes }: ClassesType) => {
                     textColor="primary"
                     style={{ borderBottom: '1px solid #e0e0e0', marginTop: 8 }}
                 >
-                    <Tab value="sources" label={t('DataSources.send.manage.tabSources')} />
-                    <Tab value="smartsend" label={t('DataSources.send.manage.tabSmartSend')} />
+                    <Tab value="sources" style={TAB_LABEL_STYLE} label={t('DataSources.send.manage.tabSources')} />
+                    <Tab value="smartsend" style={TAB_LABEL_STYLE} label={t('DataSources.send.manage.tabSmartSend')} />
                 </Tabs>
 
                 {activeTab === 'sources' ? (

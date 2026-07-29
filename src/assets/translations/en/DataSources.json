@@ -28,6 +28,8 @@
       "current": "Selected source",
       "change": "Change source",
       "recipients": "{{count}} recipients available",
+      "columns": "Columns: {{n}}",
+      "updated": "Updated {{date}}",
       "viewOnly": "View only",
       "blockedNoEmail": "No email column — cannot send by email",
       "zeroResolved": "This source has no rows resolved to email",
@@ -59,14 +61,13 @@
       }
     },
     "business": {
-      "title": "Business columns (optional)",
+      "title": "Supervisor email",
       "supervisor": "Supervisor email column",
-      "gap": "Gap column",
-      "sort": "Sort column",
+      "gapSort": "Shortfall-to-target column",
       "none": "None",
-      "hint": "The gap and sort columns affect the supervisor email only",
-      "needSupervisor": "Pick a supervisor column so gap and sort take effect",
-      "sortDefault": "By default the table is sorted by the gap column. Pick a sort column only to sort by a different column."
+      "hint": "These columns affect the supervisor email only. Agents are listed by shortfall to target, smallest first.",
+      "needSupervisor": "Pick a supervisor column so the shortfall column takes effect",
+      "legacySortDiffers": "The saved mapping uses a different sort column (\"{{sort}}\") from its gap column (\"{{gap}}\"). Changing the column below will replace the saved sort column too."
     },
     "stale": {
       "title": "A newer version is available",
@@ -74,7 +75,7 @@
     },
     "mismatch": {
       "title": "Send-group mismatch",
-      "body": "The campaign's synthetic group was dropped or merged. Save again to repair.",
+      "body": "The campaign's recipient group was dropped or merged. Click \"Send to all\" to rebuild it — the list is rebuilt from the source before you confirm any send.",
       "cloneTitle": "Duplicated campaign — mapping required",
       "cloneBody": "This campaign was duplicated with a foreign source group ({{name}}) but no mapping. Pick a source and remap.",
       "repair": "Repair and save"
@@ -181,6 +182,12 @@
       "clearSearch": "Clear search",
       "loadError": "Failed to load the campaign list",
       "updated": "Updated {{date}}",
+      "fieldsCount": "Fields: {{n}}",
+      "fieldsEmpty": "No fields in template",
+      "fieldsAria": "Mapping fields ({{n}}): {{list}}",
+      "fieldsLoadError": "Failed to load the mapping fields",
+      "fieldsPanelTitle": "Mapping fields in \"{{name}}\"",
+      "fieldsPanelClose": "Close",
       "blocked": {
         "notSendable": "Already sent / cannot be sent",
         "oldEditor": "Legacy editor — not supported"
@@ -251,9 +258,13 @@
     "dragHere": "Drag an xlsx or csv file here, or click to browse",
     "uploading": "Uploading the file...",
     "roleNone": "Data field",
-    "roleEmail": "Email — identity",
-    "roleCellphone": "Mobile — identity",
+    "roleEmail": "Email (identity)",
+    "roleCellphone": "Mobile (identity)",
     "roleSupervisorEmail": "Supervisor email",
+    "identityEmailShort": "Email",
+    "identityCellShort": "Mobile",
+    "identityNoneShort": "No identity columns selected",
+    "rowsUnknown": "Calculated once processing completes",
     "previewTitle": "Preview — first 5 rows",
     "identityBanner": "All other columns will be saved as dynamic data fields using the file headers",
     "noIdentityWarning": "No identity columns were marked — the source will be saved for viewing, search and export only, and cannot be sent to",
@@ -355,7 +366,8 @@
   "export": {
     "title": "Export source",
     "format": "Format",
-    "notifyEmail": "Notification email (optional)",
+    "formatNote": "The file is generated once — the downloads page lets you take it as CSV or Excel",
+    "notifyEmail":"Notification email (optional)",
     "csvOnly": "Above 100,000 rows you can export to CSV only",
     "runningInBackground": "The export is running in the background — the file will appear on the downloads page and a notification will be sent by email",
     "ready": "The file is ready on the downloads page",

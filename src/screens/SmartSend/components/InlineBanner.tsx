@@ -31,18 +31,28 @@ interface Props {
     body: string;
     role?: 'status' | 'alert';
     action?: React.ReactNode;
+    // 'lg' bumps title+body from body2 (14px) to body1 (16px) and enlarges the icon.
+    // Used INSIDE DIALOGS ONLY. The default stays 'md' so the mapping screen's own banners
+    // (StaleVersionBanner / MappingMismatchBanner / UnmappedTokensWarning / the test-save prompt)
+    // keep their current size and the page layout does not shift.
+    // Why the dialog needs it: index.css:11-15 applies `body { zoom: 0.95 }` between 1024 and
+    // 1440px, so body2 lands at ~13.3px effective — too small for a warning the user must read
+    // before sending. The dialog TITLE is deliberately not touched; h6 (20px) is already the
+    // house dialog-title size.
+    size?: 'md' | 'lg';
 }
 
-const InlineBanner: React.FC<Props> = ({ severity, title, body, role = 'status', action }) => {
+const InlineBanner: React.FC<Props> = ({ severity, title, body, role = 'status', action, size = 'md' }) => {
     const classes = useStyles();
     const s = SEVERITY[severity];
     const Icon = s.Icon;
+    const textVariant = size === 'lg' ? 'body1' : 'body2';
     return (
         <Box className={classes.banner} role={role} style={{ background: s.bg, borderColor: s.border }}>
-            <Icon className={classes.icon} fontSize="small" style={{ color: s.color }} />
+            <Icon className={classes.icon} fontSize={size === 'lg' ? 'default' : 'small'} style={{ color: s.color }} />
             <Box className={classes.text}>
-                <Typography variant="body2" className={classes.title} style={{ color: s.color }}>{title}</Typography>
-                <Typography variant="body2" color="textSecondary">{body}</Typography>
+                <Typography variant={textVariant} className={classes.title} style={{ color: s.color }}>{title}</Typography>
+                <Typography variant={textVariant} color="textSecondary">{body}</Typography>
             </Box>
             {action && <Box className={classes.action}>{action}</Box>}
         </Box>
