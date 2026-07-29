@@ -240,7 +240,9 @@ export const getDashboardStyle = (windowSize, isRTL, theme) => ({
         gap: 8,
         padding: '12px 14px 16px',
         boxSizing: 'border-box',
-        ['@media (min-width:1300px)']: {
+        // theme.breakpoints here resolves against MUI's default theme (App's own MuiThemeProvider
+        // doesn't wrap App's own render body), so the real 'lg' value (1367, from theme.js) is hardcoded.
+        ['@media (min-width:1367px)']: {
             flexDirection: 'column',
             flexWrap: 'nowrap',
         },
@@ -250,7 +252,7 @@ export const getDashboardStyle = (windowSize, isRTL, theme) => ({
         width: 'calc(50% - 4px)',
         minWidth: 0,
         boxSizing: 'border-box',
-        ['@media (min-width:1300px)']: {
+        ['@media (min-width:1367px)']: {
             width: '100%',
         },
         [theme.breakpoints.down('xs')]: {

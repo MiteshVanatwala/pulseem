@@ -78,7 +78,11 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
 }) => {
   const classes = useStyles();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  // theme.breakpoints.down('md') resolves against a hardcoded key list that doesn't know about
+  // the custom 'sl' breakpoint, so it would treat 1300-1366px as mobile too (matches Sidebar.tsx's
+  // own isMobile cutoff instead, which is the actual "sidebar closes below 1300px" boundary).
+  // 1300 is theme.js's 'sl' value; passed as a number since the Breakpoint type doesn't know 'sl'.
+  const isMobile = !useMediaQuery(theme.breakpoints.up(1300));
 
   const { isRTL } = useSelector((state: any) => state.core);
   const dispatch = useDispatch();
@@ -136,7 +140,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
       />
       <main className={getContentClasses()}>
         <div className={classes.contentContainer} style={{ 
-          marginTop: isMobile ? 56 : 0 
+          marginTop: isMobile ? 76 : 0 
         }}>
           {/* Pass the toggle function to children via React.cloneElement */}
           {React.Children.map(children, child => {

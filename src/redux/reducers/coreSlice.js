@@ -80,20 +80,11 @@ export const coreSlice = createSlice({
       state.isRTL = rtlLanguages.includes(action.payload)
     },
     setWindowSize: (state, action) => {
-      if (action.payload === 'sl' && state.isSidebarCollapsed) {
-        state.windowSize = 'lg'
-      } else {
-        state.windowSize = action.payload
-      }
+      state.windowSize = action.payload
     },
     setSidebarCollapsed: (state, action) => {
       state.isSidebarCollapsed = action.payload
       setCookie('SidebarCollapsed', action.payload, { maxAge: 2147483647 })
-      const w = typeof window !== 'undefined' ? window.innerWidth : 0
-      const isSlScreen = w >= 1300 && w < 1367
-      if (isSlScreen) {
-        state.windowSize = action.payload ? 'lg' : 'sl'
-      }
     },
     setRowsPerPage: (state, action) => {
       state.rowsPerPage = action.payload

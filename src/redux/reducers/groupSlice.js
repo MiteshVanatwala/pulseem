@@ -20,6 +20,15 @@ export const getAllGroupsBySubAccountId = createAsyncThunk(
             return thunkAPI.rejectWithValue({ error: error.message });
         }
     });
+export const getGroupNames = createAsyncThunk(
+    'Group/GetGroupNames', async (_, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.get(`Group/GetGroupNames`);
+            return response.data
+        } catch (error) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    });
 export const getGroups = createAsyncThunk(
     'Group/Get', async (data, thunkAPI) => {
         try {

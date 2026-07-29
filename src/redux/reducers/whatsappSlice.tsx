@@ -385,6 +385,21 @@ export const getAllReports = createAsyncThunk(
 	}
 );
 
+export const getSentCampaignNames = createAsyncThunk(
+	'WhatsAppCampaign/GetSentCampaignNames',
+	async (_, thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.get(
+				`WhatsAppCampaign/GetSentCampaignNames`
+			);
+			return response.data;
+		} catch (error) {
+			const err = error as ApiError;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
 export const getAllGroups = createAsyncThunk(
 	'smsCampaign/GetGroupsBySubAccountId',
 	async (_, thunkAPI) => {
