@@ -48,10 +48,8 @@ import { StateType } from '../../../../Models/StateTypes';
 import { setCookie } from '../../../../helpers/Functions/cookies';
 import { TablePagination } from '../../../../components/managment/index';
 import { COLORS } from '../../../../helpers/Constants';
-import { getWhatsappChatTag, getAllReports } from '../../../../redux/reducers/whatsappSlice';
-import { getGroupsBySubAccountId } from '../../../../redux/reducers/groupSlice';
-import { Group } from '../../../../Models/Groups/Group';
-import { allReportInitialPagination, campaignStatuses } from '../../Constant';
+import { getWhatsappChatTag, getSentCampaignNames } from '../../../../redux/reducers/whatsappSlice';
+import { getGroupNames } from '../../../../redux/reducers/groupSlice';
 import { PulseemReactInstance } from '../../../../helpers/Api/PulseemReactAPI';
 import Toast from '../../../../components/Toast/Toast.component';
 import DynamicConfirmDialog from '../../../../components/DialogTemplates/DynamicConfirmDialog';
@@ -99,7 +97,6 @@ const SideBar = ({
 		(state: { core: coreProps }) => state.core,
 	);
 	const { agentList } = useSelector((state: StateType) => state.whatsapp);
-	const { subAccountAllGroups } = useSelector((state: any) => state.group);
 	const isAdmin =
 		userRoles &&
 		userRoles.AllowSend &&
@@ -132,6 +129,9 @@ const SideBar = ({
 	const [dialogSelectedGroups, setDialogSelectedGroups] = useState<number[]>(
 		[],
 	);
+	const [filterGroups, setFilterGroups] = useState<
+		{ GroupID: number; GroupName: string }[]
+	>([]);
 	const [groupsLoaded, setGroupsLoaded] = useState<boolean>(false);
 	const [groupsLoading, setGroupsLoading] = useState<boolean>(false);
 	const [selectedCampaigns, setSelectedCampaigns] = useState<number[]>([]);
@@ -478,9 +478,7 @@ const SideBar = ({
 	const getSelectedGroupsDetails = () => {
 		return selectedGroups
 			.map((groupId) => {
-				const group = (subAccountAllGroups as Group[])?.find(
-					(g) => g.GroupID === groupId,
-				);
+				const group = filterGroups?.find((g) => g.GroupID === groupId);
 				return group ? { id: groupId, name: group.GroupName } : null;
 			})
 			.filter(Boolean);
@@ -1336,42 +1334,46 @@ const SideBar = ({
 										// Lazy-load the groups list on first open of the filter panel
 										if (!groupsLoaded && !groupsLoading) {
 											setGroupsLoading(true);
-											dispatch<any>(getGroupsBySubAccountId()).finally(() => {
-												setGroupsLoading(false);
-												setGroupsLoaded(true);
-											});
+											(async () => {
+												try {
+													const payload = await dispatch<any>(
+														getGroupNames(),
+													).unwrap();
+													setFilterGroups(payload || []);
+												} catch (error: any) {
+													console.error('Error fetching groups for filter:', error);
+													setToastMessage({
+														message: translator('common.ErrorOccured'),
+														severity: 'error',
+													});
+													setTimeout(() => setToastMessage(null), 3000);
+												} finally {
+													setGroupsLoading(false);
+													setGroupsLoaded(true);
+												}
+											})();
 										}
 										// Lazy-load the sent WhatsApp campaigns list on first open of the filter panel
 										if (!campaignsLoaded && !campaignsLoading) {
 											setCampaignsLoading(true);
-											dispatch<any>(
-												getAllReports({
-													...allReportInitialPagination,
-													isPagination: false,
-												}),
-											)
-												.then((result: any) => {
-													const items = result?.payload?.Data?.Items || [];
-													// "Sent" = campaign has started sending at least once;
-													// excludes drafts (CREATED) and never-sent CANCELED campaigns.
-													const sentOnly = items.filter((c: any) =>
-														[
-															campaignStatuses.SENDING,
-															campaignStatuses.STOPPED,
-															campaignStatuses.FINISHED,
-														].includes(c.Status),
-													);
-													setSentCampaigns(
-														sentOnly.map((c: any) => ({
-															WACampaignID: c.WACampaignID,
-															Name: c.Name,
-														})),
-													);
-												})
-												.finally(() => {
+											(async () => {
+												try {
+													const payload = await dispatch<any>(
+														getSentCampaignNames(),
+													).unwrap();
+													setSentCampaigns(payload || []);
+												} catch (error: any) {
+													console.error('Error fetching campaigns for filter:', error);
+													setToastMessage({
+														message: translator('common.ErrorOccured'),
+														severity: 'error',
+													});
+													setTimeout(() => setToastMessage(null), 3000);
+												} finally {
 													setCampaignsLoading(false);
 													setCampaignsLoaded(true);
-												});
+												}
+											})();
 										}
 									}}
 									onMouseDown={(e) => {
@@ -1837,15 +1839,18 @@ const SideBar = ({
 							multiple
 							disableCloseOnSelect
 							loading={groupsLoading}
-							options={(subAccountAllGroups as Group[]) || []}
+							options={filterGroups || []}
 							getOptionLabel={(group: any) => group.GroupName}
 							isOptionEqualToValue={(option: any, value: any) =>
 								option.GroupID === value.GroupID
 							}
-							value={((subAccountAllGroups as Group[]) || []).filter((g) =>
+							value={(filterGroups || []).filter((g) =>
 								dialogSelectedGroups.includes(g.GroupID),
 							)}
-							onChange={(_e, newValue: Group[]) => {
+							onChange={(
+								_e,
+								newValue: { GroupID: number; GroupName: string }[],
+							) => {
 								setDialogSelectedGroups(newValue.map((g) => g.GroupID));
 							}}
 							noOptionsText={translator('whatsappChat.filter_empty_groups')}
