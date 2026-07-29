@@ -89,9 +89,9 @@ const SettingsMenu = ({ classes, isOpen: controlledIsOpen, onOpenChange }: any) 
                 .map((option: any, index: any, row: any) => {
                     const isLogout = option.title === t("appBar.logout");
                     return (
-                        <Box
+                        <a
                             key={index}
-                            component='a'
+                            href={option.href || undefined}
                             style={{ textDecoration: 'none', display: 'block', padding: '0' }}
                         >
                             <MenuItem
@@ -135,7 +135,7 @@ const SettingsMenu = ({ classes, isOpen: controlledIsOpen, onOpenChange }: any) 
                                     {isLogout && <option.iconSrc style={{ padding: '0 5px', marginInlineStart: 'auto', color: '#FF1744' }} />}
                                 </span>
                             </MenuItem>
-                        </Box>
+                        </a>
                     );
                 })
             }
@@ -244,16 +244,20 @@ const SettingsMenu = ({ classes, isOpen: controlledIsOpen, onOpenChange }: any) 
                         0% { opacity: 0; transform: translateX(-6px); }
                         100% { opacity: 1; transform: translateX(0); }
                     }
+                    @keyframes slideTextRTL {
+                        0% { opacity: 0; transform: translateX(6px); }
+                        100% { opacity: 1; transform: translateX(0); }
+                    }
                     `}
                         </style>
-                        <MenuList style={{ padding: '6px 4px' }}>
+                        <MenuList style={{ padding: '6px 4px', direction: isRTL ? 'rtl' : 'ltr' }}>
                             {settings.options && settings.options.filter((item) => item.isShow !== false)
                                 .map((option: any, index: any, row: any) => {
                                     const isLogout = option.title === t("appBar.logout");
                                     return (
-                                        <Box
+                                        <a
                                             key={index}
-                                            component='a'
+                                            href={option.href || undefined}
                                             style={{ textDecoration: 'none', display: 'block', padding: '0' }}
                                         >
                                             <MenuItem
@@ -275,20 +279,21 @@ const SettingsMenu = ({ classes, isOpen: controlledIsOpen, onOpenChange }: any) 
                                                     backgroundColor: 'transparent',
                                                     transition: 'all 0.2s ease',
                                                     opacity: 0,
-                                                    animation: `slideText 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards`,
+                                                    animation: `${isRTL ? 'slideTextRTL' : 'slideText'} 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards`,
                                                     animationDelay: `${0.03 + (index * 0.03)}s`,
-                                                    borderLeft: '3px solid transparent'
+                                                    borderInlineStart: '3px solid transparent',
+                                                    textAlign: isRTL ? 'right' : 'left',
                                                 }}
                                                 onMouseEnter={(e: any) => {
                                                     e.currentTarget.style.backgroundColor = isLogout ? 'rgba(255, 23, 68, 0.08)' : 'rgba(0, 0, 0, 0.03)';
                                                     e.currentTarget.style.color = isLogout ? '#D50000' : '#1A1A1A';
-                                                    e.currentTarget.style.borderLeft = isLogout ? '3px solid #D50000' : '3px solid #FF1744';
-                                                    e.currentTarget.style.transform = 'translateX(4px)';
+                                                    e.currentTarget.style.borderInlineStart = isLogout ? '3px solid #D50000' : '3px solid #FF1744';
+                                                    e.currentTarget.style.transform = `translateX(${isRTL ? -4 : 4}px)`;
                                                 }}
                                                 onMouseLeave={(e: any) => {
                                                     e.currentTarget.style.backgroundColor = 'transparent';
                                                     e.currentTarget.style.color = isLogout ? '#FF1744' : '#424242';
-                                                    e.currentTarget.style.borderLeft = '3px solid transparent';
+                                                    e.currentTarget.style.borderInlineStart = '3px solid transparent';
                                                     e.currentTarget.style.transform = 'translateX(0)';
                                                 }}
                                             >
@@ -297,7 +302,7 @@ const SettingsMenu = ({ classes, isOpen: controlledIsOpen, onOpenChange }: any) 
                                                     {isLogout && <option.iconSrc style={{ padding: '0 5px', marginInlineStart: 'auto', color: '#FF1744' }} />}
                                                 </span>
                                             </MenuItem>
-                                        </Box>
+                                        </a>
                                     );
                                 })
                             }
@@ -315,30 +320,35 @@ const SettingsMenu = ({ classes, isOpen: controlledIsOpen, onOpenChange }: any) 
                         .map((option: any, index: any) => {
                             const isLogout = option.title === t("appBar.logout");
                             return (
-                                <ListItem
-                                    button
+                                <a
                                     key={index}
-                                    className={classes.sidebarItem}
-                                    onClick={(e: any) => {
-                                        e.preventDefault();
-                                        setShowSettings(false);
-                                        if (option.onClick) {
-                                            option.onClick();
-                                        } else {
-                                            Redirect({ url: option.href, openNewTab: option.openInNewWindow } as RedirectPropTypes)
-                                        }
-                                    }}
+                                    href={option.href || undefined}
+                                    style={{ textDecoration: 'none', display: 'block' }}
                                 >
-                                    <ListItemText
-                                        className={classes.sidebarItemText}
-                                        primary={
-                                            <span style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
-                                                {option?.title}
-                                                {isLogout && <option.iconSrc style={{ padding: '0 5px', marginInlineStart: 'auto' }} />}
-                                            </span>
-                                        }
-                                    />
-                                </ListItem>
+                                    <ListItem
+                                        button
+                                        className={classes.sidebarItem}
+                                        onClick={(e: any) => {
+                                            e.preventDefault();
+                                            setShowSettings(false);
+                                            if (option.onClick) {
+                                                option.onClick();
+                                            } else {
+                                                Redirect({ url: option.href, openNewTab: option.openInNewWindow } as RedirectPropTypes)
+                                            }
+                                        }}
+                                    >
+                                        <ListItemText
+                                            className={classes.sidebarItemText}
+                                            primary={
+                                                <span style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+                                                    {option?.title}
+                                                    {isLogout && <option.iconSrc style={{ padding: '0 5px', marginInlineStart: 'auto' }} />}
+                                                </span>
+                                            }
+                                        />
+                                    </ListItem>
+                                </a>
                             );
                         })
                     }
