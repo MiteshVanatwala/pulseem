@@ -6,6 +6,7 @@ import {
 import { makeStyles } from '@material-ui/core/styles';
 import { Warning, ShowChart, VpnKey, TextFields, Search } from '@material-ui/icons';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 import { SmartSendColumn, SmartSendTokenInfo } from '../../../Models/DataSources/SmartSend';
 
 // §11.4 · one row per ##token## → a Select over the version's columns (by DisplayName).
@@ -38,6 +39,9 @@ const useStyles = makeStyles((theme) => ({
 const TokenMappingTable: React.FC<Props> = ({ tokens, columns, value, onChange, warnSystemFieldOverride = true }) => {
     const classes = useStyles();
     const { t } = useTranslation();
+    // §2.5 · the Select menu portals to document.body — outside App's inner <div dir> — and
+    // <html dir> is stuck "ltr", so the dropdown opens LTR. Force its direction like the dialogs.
+    const isRTL = useSelector((s: any) => s.core && s.core.isRTL);
     const [search, setSearch] = useState('');
 
     const columnSet = useMemo(() => new Set(columns.map((c) => c.ColumnID)), [columns]);
@@ -115,6 +119,7 @@ const TokenMappingTable: React.FC<Props> = ({ tokens, columns, value, onChange, 
                                             value={vanished ? 0 : (mapped ?? 0)}
                                             onChange={(e) => { const v = Number(e.target.value); onChange(tok.Token, v > 0 ? v : null); }}
                                             inputProps={{ 'aria-label': `${t('DataSources.send.mapping.columnCol')} — ${tok.Token}` }}
+                                            MenuProps={{ PaperProps: { dir: isRTL ? 'rtl' : 'ltr' } }}
                                         >
                                             <MenuItem value={0}><em>{t('DataSources.send.mapping.selectColumn')}</em></MenuItem>
                                             {columns.map((c) => <MenuItem key={c.ColumnID} value={c.ColumnID}>{c.DisplayName}</MenuItem>)}
