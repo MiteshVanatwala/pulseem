@@ -219,11 +219,15 @@ const AIFloatingButton: React.FC<AIFloatingButtonProps> = ({ config = advisorCon
       style={draggable.style}
       {...draggable.handlers}
       onClickCapture={(e) => {
-        // A drag must not also open the chat — swallow the click it produced.
+        // A drag must not open the chat — swallow the click it produced.
         if (draggable.consumeClickAfterDrag()) {
           e.preventDefault();
           e.stopPropagation();
+          return;
         }
+        // Real tap / click / keyboard. setPointerCapture retargets the click to this
+        // container, so the Fab's own onClick never fires — open from here instead.
+        handleToggleChat();
       }}
     >
       <Tooltip
