@@ -2,6 +2,7 @@ import React from 'react';
 import { Box, Typography, FormControl, InputLabel, Select, MenuItem } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 import { SmartSendColumn } from '../../../Models/DataSources/SmartSend';
 
 // §11.4 · the supervisor-email block. ALL version columns are offered for each role
@@ -48,6 +49,9 @@ const BusinessColumnsPicker: React.FC<Props> = ({
 }) => {
     const classes = useStyles();
     const { t } = useTranslation();
+    // §2.5 · the Select menu portals to document.body — outside App's inner <div dir> — and
+    // <html dir> is stuck "ltr", so the dropdown opens LTR. Force its direction like the dialogs.
+    const isRTL = useSelector((s: any) => s.core && s.core.isRTL);
     // The shortfall column only matters for the supervisor email → disable until one is chosen.
     const gapDisabled = supervisorEnabled && supervisorColumnId == null;
 
@@ -64,6 +68,7 @@ const BusinessColumnsPicker: React.FC<Props> = ({
                 label={t(labelKey)}
                 value={value ?? 0}
                 onChange={(e) => { const v = Number(e.target.value); onChange(role, v > 0 ? v : null); }}
+                MenuProps={{ PaperProps: { dir: isRTL ? 'rtl' : 'ltr' } }}
             >
                 {menu()}
             </Select>

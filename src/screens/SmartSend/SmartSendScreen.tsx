@@ -468,12 +468,30 @@ const SmartSendScreen = ({ classes }: any) => {
                             </Button>
                         </Box>
 
-                        {showPreview && (
-                            <Box style={{ marginTop: 20 }}>
-                                <Typography variant="subtitle1" style={{ fontWeight: 600, marginBottom: 4 }}>{t('DataSources.send.preview')}</Typography>
-                                <SmartSendPreview campaignId={campaignId} height={420} />
+                        {/* Preview moved from an inline block into a dialog. Same SmartSendPreview,
+                            same campaignId — only the container changed. The toggle button above opens
+                            it; onClose (backdrop / Esc / close button) closes it. Body-height is
+                            viewport-relative (90vh) so it fits laptops; the email scrolls INSIDE the
+                            preview, header/footer stay pinned. dir like the screen's other dialogs:
+                            MUI v4 portals into document.body, outside App's inner <div dir>. */}
+                        <Dialog
+                            open={showPreview}
+                            onClose={() => setShowPreview(false)}
+                            maxWidth="md"
+                            fullWidth
+                            dir={isRTL ? 'rtl' : 'ltr'}
+                            PaperProps={{ style: { height: '90vh' } }}
+                        >
+                            <Box style={{ flex: '0 0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 24px', borderBottom: '1px solid #e0e0e0' }}>
+                                <Typography variant="h6">{t('DataSources.send.preview')}</Typography>
                             </Box>
-                        )}
+                            <Box style={{ flex: '1 1 auto', minHeight: 0, padding: 12 }}>
+                                <SmartSendPreview campaignId={campaignId} height="100%" />
+                            </Box>
+                            <Box style={{ flex: '0 0 auto', display: 'flex', justifyContent: 'flex-end', gap: 12, padding: '16px 24px', borderTop: '1px solid #e0e0e0' }}>
+                                <Button onClick={() => setShowPreview(false)}>{t('DataSources.send.cancel')}</Button>
+                            </Box>
+                        </Dialog>
                     </>
                 )}
             </Box>

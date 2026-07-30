@@ -43,7 +43,7 @@ export const replaceTokensForPreview = (html: string, values: { [k: string]: str
     return out;
 };
 
-const SmartSendPreview: React.FC<{ campaignId: number; height?: number }> = ({ campaignId, height = 400 }) => {
+const SmartSendPreview: React.FC<{ campaignId: number; height?: number | string }> = ({ campaignId, height = 400 }) => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const hostRef = useRef<HTMLDivElement | null>(null);
