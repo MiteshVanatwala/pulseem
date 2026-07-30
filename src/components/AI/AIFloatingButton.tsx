@@ -207,10 +207,8 @@ const AIFloatingButton: React.FC<AIFloatingButtonProps> = ({ config = advisorCon
     } else {
       dispatch(toggleChat());
     }
-  };
+   };
 
-  const featureKey = String(config.featureId);
-  if (accountFeatures === null || accountFeatures?.indexOf(featureKey) === -1) return <></>;
   if (getIsBeeperAccount(accountSettings)) return <></>;
   if (!isEnabled) return <></>;
 
