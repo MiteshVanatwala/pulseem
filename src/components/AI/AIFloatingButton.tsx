@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Fab, Tooltip, CircularProgress } from '@material-ui/core';
 import { Check } from '@material-ui/icons';
 import { useDispatch, useSelector } from 'react-redux';
@@ -11,6 +11,7 @@ import { StateType } from '../../Models/StateTypes';
 import { useLocation } from 'react-router-dom';
 import { AIChatConfig, advisorConfig } from './chatConfig';
 import { getIsBeeperAccount } from '../WhiteLabel/WhiteLabelMigrate';
+import { useDraggable } from '../../hooks/useDraggable';
 
 type StyleProps = { isRTL: boolean; isAffectedPage: boolean; featureId: number; isOpen: boolean; isDrawerOpen: boolean; isMobile: boolean };
 
@@ -19,6 +20,25 @@ type StyleProps = { isRTL: boolean; isAffectedPage: boolean; featureId: number; 
 // just hides while the sidebar is open — Pulsy (69) is always on the opposite side and never needs to hide.
 const shouldHideOnMobileDrawer = ({ featureId, isMobile, isDrawerOpen }: StyleProps) =>
   featureId === 73 && isMobile && isDrawerOpen;
+
+// Group dynamic route segments (numeric ids, GUIDs) so the same logical screen
+// shares one saved position (e.g. every campaign editor, not per campaign id).
+const normalizeScreenKey = (pathname: string): string =>
+  pathname
+    .toLowerCase()
+    .split('/')
+    .filter(Boolean)
+    .filter((seg) => !/^\d+$/.test(seg) && !/^[0-9a-f]{8}-[0-9a-f]{4}-/.test(seg))
+    .join('/') || 'root';
+
+// One-time "you can drag me" discoverability hint — shown once per user, then never again.
+const HINT_FLAG = 'pulsiDragHintSeen';
+const hintAlreadySeen = (): boolean => {
+  try { return window.localStorage.getItem(HINT_FLAG) === '1'; } catch { return false; }
+};
+const markHintSeen = (): void => {
+  try { window.localStorage.setItem(HINT_FLAG, '1'); } catch { /* private mode — hint may re-show */ }
+};
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -71,6 +91,9 @@ const useStyles = makeStyles((theme) => ({
       borderColor: '#FF4569',
       backgroundColor: 'transparent',
     },
+    // Inherit the container's grab/grabbing cursor (MUI's ButtonBase forces `pointer`,
+    // which would otherwise mask the drag affordance on desktop).
+    cursor: 'inherit',
     animation: '$pulse 2s infinite',
   },
   smallIcon: {
@@ -147,11 +170,38 @@ const AIFloatingButton: React.FC<AIFloatingButtonProps> = ({ config = advisorCon
   const isAffectedPage = affectedPages.some(page => pathname.includes(page));
   const classes = useStyles({ isRTL, isAffectedPage, featureId: config.featureId, isOpen, isDrawerOpen, isMobile });
 
+  // Draggable + per-screen persistence. Key by mascot (featureId) and current screen.
+  const screenKey = `${config.featureId}:${normalizeScreenKey(location.pathname)}`;
+  const draggable = useDraggable({ storageKey: screenKey });
+
+  // One-time drag hint: reuse the mascot's own speech bubble to say "you can drag me" once.
+  const featureKey = String(config.featureId);
+  const isEnabled = accountFeatures !== null && accountFeatures.indexOf(featureKey) !== -1;
+  const [showHint, setShowHint] = useState(false);
+  const dismissHint = useCallback(() => {
+    setShowHint(false);
+    markHintSeen();
+  }, []);
+
+  // Show the hint on first appearance, then auto-dismiss after a few seconds.
+  useEffect(() => {
+    if (!isEnabled || hintAlreadySeen()) return;
+    setShowHint(true);
+    const timer = setTimeout(dismissHint, 5000);
+    return () => clearTimeout(timer);
+  }, [isEnabled, dismissHint]);
+
+  // A drag also dismisses the hint — the user has clearly discovered the gesture.
+  useEffect(() => {
+    if (draggable.isDragging) dismissHint();
+  }, [draggable.isDragging, dismissHint]);
+
   const handleToggleChat = () => {
     // Save preference: opening → show on reload; closing → hide on reload
     try {
       localStorage.setItem(config.localStorageKey, isOpen ? 'true' : 'false');
     } catch (_) {}
+    if (showHint) dismissHint();
     if (isSupport) {
       dispatch(toggleSupportChat());
     } else {
@@ -162,18 +212,42 @@ const AIFloatingButton: React.FC<AIFloatingButtonProps> = ({ config = advisorCon
   const featureKey = String(config.featureId);
   if (accountFeatures === null || accountFeatures?.indexOf(featureKey) === -1) return <></>;
   if (getIsBeeperAccount(accountSettings)) return <></>;
+  if (!isEnabled) return <></>;
 
   return (
-    <div className={classes.container}>
+    <div
+      ref={draggable.ref}
+      className={classes.container}
+      style={draggable.style}
+      {...draggable.handlers}
+      onClickCapture={(e) => {
+        // A drag must not also open the chat — swallow the click it produced.
+        if (draggable.consumeClickAfterDrag()) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+      }}
+    >
       <Tooltip
         arrow
-        title={agentIconTitle}
+        title={showHint ? t("common.dragHint") : agentIconTitle}
         placement={config.featureId === 73 ? "top-start" : "top-end"}
-        {...(isMobile ? {} : { open: true })}
+        {...(showHint
+          ? { open: true }
+          : isMobile
+            ? {}
+            : { open: !draggable.isDragging })}
         PopperProps={{ disablePortal: true }}
         classes={{ tooltip: classes.customTooltip }}
       >
-        <Fab className={classes.fab} onClick={handleToggleChat}>
+        <Fab
+          className={classes.fab}
+          onClick={handleToggleChat}
+          aria-label={agentIconTitle}
+          style={draggable.isDragging
+            ? { transform: 'scale(1.05)', boxShadow: '0 8px 20px rgba(0, 0, 0, 0.25)', animationPlayState: 'paused' }
+            : undefined}
+        >
           <div className={`${classes.smallIcon}${config.featureId === 69 && isRTL ? ` ${classes.smallIconRTL69}` : ''}`}>
             {aiIconStatus === 0 ? (
               <img src={AIImage} alt="AI status" />
@@ -183,7 +257,7 @@ const AIFloatingButton: React.FC<AIFloatingButtonProps> = ({ config = advisorCon
               <Check fontSize="small" color="primary" style={{ color: 'green' }} />
             )}
           </div>
-          <img width={60} src={config.mascotButtonImage} className={classes.polyIcon} alt="Pulseem mascot" />
+          <img width={60} src={config.mascotButtonImage} className={classes.polyIcon} alt="Pulseem mascot" draggable={false} />
         </Fab>
       </Tooltip>
     </div>
