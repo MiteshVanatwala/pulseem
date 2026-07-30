@@ -18,7 +18,7 @@ import {
 	APIWhatsappChatItemsData,
 	ContactsPaginationSetting,
 } from './Types/WhatsappChat.type';
-import { BaseSyntheticEvent, useEffect, useState, useCallback } from 'react';
+import { BaseSyntheticEvent, useEffect, useState, useCallback, useMemo } from 'react';
 import { flushSync } from 'react-dom';
 import {
 	callToActionProps,
@@ -128,6 +128,8 @@ const adaptWidgetToSidebar = (list: IConversation[]): APIWhatsappChatSidebarCont
 		PhoneNumber: c.id,
 		Unread: 0,
 		UserName: c.visitorName || `Visitor ${(c.visitorId || '').slice(-6)}`,
+		channel: 'widget',
+		conversationId: c.id,
 	} as APIWhatsappChatSidebarContactsItemsData));
 
 const WhatsappChat = ({ classes }: WhatsappChatProps) => {
@@ -230,12 +232,44 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const [selectedChannel, setSelectedChannel] = useState<ServiceChannel>('whatsapp');
 	const [widgetConversations, setWidgetConversations] = useState<IConversation[]>([]);
 	const [serviceDomain, setServiceDomain] = useState<string>('');
-	const serviceDomains = Array.from(new Set(widgetConversations.map(svcHostOf).filter(Boolean)));
-	const widgetSidebarContacts = adaptWidgetToSidebar(
-		serviceDomain ? widgetConversations.filter((c) => svcHostOf(c) === serviceDomain) : widgetConversations,
+	// All-mode source filter: 'all' | 'wa:<number>' | 'dom:<domain>'
+	const [allSource, setAllSource] = useState<string>('all');
+	// Memoized so they don't recompute on every render (polling / search keystrokes).
+	const serviceDomains = useMemo(
+		() => Array.from(new Set(widgetConversations.map(svcHostOf).filter(Boolean))),
+		[widgetConversations],
 	);
+	const widgetSidebarContacts = useMemo(
+		() =>
+			adaptWidgetToSidebar(
+				serviceDomain
+					? widgetConversations.filter((c) => svcHostOf(c) === serviceDomain)
+					: widgetConversations,
+			),
+		[widgetConversations, serviceDomain],
+	);
+	// "All" merges WhatsApp + widget rows, newest first (both share the sidebar shape).
+	const allSidebarContacts = useMemo(
+		() =>
+			[...sideChatContacts, ...widgetSidebarContacts].sort(
+				(a, b) =>
+					new Date(b.LastMessageDate || 0).getTime() -
+					new Date(a.LastMessageDate || 0).getTime(),
+			),
+		[sideChatContacts, widgetSidebarContacts],
+	);
+	// The list actually shown, per channel and (in All mode) the source filter.
+	const displayedSidebarContacts = useMemo(() => {
+		if (selectedChannel === 'widget') return widgetSidebarContacts;
+		if (selectedChannel === 'all') {
+			if (allSource.startsWith('wa:')) return sideChatContacts;
+			if (allSource.startsWith('dom:')) return widgetSidebarContacts;
+			return allSidebarContacts;
+		}
+		return sideChatContacts;
+	}, [selectedChannel, allSource, sideChatContacts, widgetSidebarContacts, allSidebarContacts]);
 	useEffect(() => {
-		if (selectedChannel !== 'widget') return;
+		if (selectedChannel === 'whatsapp') return;
 		(dispatch as any)(getServiceConversations(undefined)).then((res: any) => {
 			const list: IConversation[] = res?.payload || [];
 			setWidgetConversations(list);
@@ -578,6 +612,9 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	);
 
 	const setAPIInboundChatStatus = useCallback(async () => {
+		// Widget conversations are not WhatsApp sessions — skip the WhatsApp inbound poll
+		// so it can't overwrite the adapted widget messages or reorder the widget list.
+		if ((activeChatContacts as any)?.channel === 'widget') return;
 		if (activeChatContacts && activeChatContacts?.PhoneNumber?.length > 0) {
 			const { payload: whatsAppChatSessionStatus }: APIWhatsappChatSession =
 				await dispatch<any>(
@@ -907,6 +944,22 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			setAPIWhatsAppChatContacts(e.target.value?.replace(/\D/g, ''));
 		},
 		[setAPIWhatsAppChatContacts, dispatch],
+	);
+
+	// All-mode "source" dropdown: narrow the merged list to one WhatsApp number,
+	// one widget domain, or show everything.
+	const handleAllSourceChange = useCallback(
+		(val: string) => {
+			setAllSource(val);
+			if (val.startsWith('wa:')) {
+				onActiveUserChange({ target: { value: val.slice(3) } } as any);
+			} else if (val.startsWith('dom:')) {
+				setServiceDomain(val.slice(4));
+			} else {
+				setServiceDomain('');
+			}
+		},
+		[onActiveUserChange],
 	);
 
 	const getStatusClass = useCallback((status: number) => {
@@ -2193,7 +2246,9 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 									activePhoneNumber={activePhoneNumber}
 									setActiveUser={setActivePhoneNumber}
 									onActiveUserChange={onActiveUserChange}
-									sideChatContacts={selectedChannel === 'widget' ? widgetSidebarContacts : sideChatContacts}
+									sideChatContacts={displayedSidebarContacts}
+									serviceSource={allSource}
+									onServiceSourceChange={handleAllSourceChange}
 									phoneNumbersList={phoneNumbersList}
 									handleUserStatus={handleUserStatus}
 									getStatusClass={getStatusClass}

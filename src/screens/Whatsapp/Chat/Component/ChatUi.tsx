@@ -5,6 +5,7 @@ import {
 	APIWhatsappChatData,
 	WhatsappChatUiProps,
 	APIWhatsappChatDetailData,
+	APIWhatsappChatItemsData,
 } from '../Types/WhatsappChat.type';
 import { Box, IconButton, MenuItem, Chip } from '@material-ui/core';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
@@ -19,6 +20,9 @@ import {
 	getWhatsappChat,
 	getWhatsappChatTag,
 } from '../../../../redux/reducers/whatsappSlice';
+import { getMessages as getServiceMessages } from '../../../../redux/reducers/conversationsSlice';
+import { IMessage } from '../../../../Models/Service/Conversation';
+import moment from 'moment';
 import ChatTemplate from './ChatTemplate';
 import ChatFooterContent from './ChatFooterContent';
 import clsx from 'clsx';
@@ -35,6 +39,29 @@ import AddRecipientPopup from '../../../Groups/Management/Popup/AddRecipientPopu
 import { PulseemReactInstance } from '../../../../helpers/Api/PulseemReactAPI';
 import Toast from '../../../../components/Toast/Toast.component';
 import { useNavigate } from 'react-router-dom';
+
+// Adapts widget/service messages (IMessage[]) into the WhatsApp chat pane's
+// date-bucketed shape so the existing ChatTemplate bubbles render them unchanged.
+// Visitor messages are inbound (left); agent/AI messages are outbound (right).
+const adaptWidgetMessages = (msgs: IMessage[]): APIWhatsappChatItemsData => {
+	const buckets: APIWhatsappChatItemsData = {};
+	(msgs || []).forEach((m) => {
+		const dateLabel = moment(m.sentAt).format('DD/MM/YYYY');
+		if (!buckets[dateLabel]) buckets[dateLabel] = [];
+		buckets[dateLabel].push({
+			IsInbound: m.sender === 'visitor',
+			IsTemplate: false,
+			MediaContentType: '',
+			MediaUrl: m.fileUrl || '',
+			Message: m.content || '',
+			MessageDate: m.sentAt,
+			MessageDateText: moment(m.sentAt).format('HH:mm'),
+			SmsStatus: '',
+			SmsStatusId: 0,
+		} as any);
+	});
+	return buckets;
+};
 
 const ChatUi = ({
 	classes,
@@ -209,6 +236,32 @@ const ChatUi = ({
 	};
 
 	const getAPIAllWhatsappChat = async (isNewMessage: boolean = false) => {
+		// Widget conversations load from the Service slice and are adapted into the
+		// same date-bucketed shape the WhatsApp pane renders.
+		if ((chatContacts as any)?.channel === 'widget') {
+			const conversationId =
+				(chatContacts as any)?.conversationId || chatContacts?.PhoneNumber;
+			if (!conversationId) {
+				setAllWhatsappChat(undefined);
+				return;
+			}
+			!isNewMessage && setIsLoader(true);
+			try {
+				const res: any = await dispatch<any>(getServiceMessages(conversationId));
+				const msgs: IMessage[] = res?.payload || [];
+				setAllWhatsappChat(adaptWidgetMessages(msgs));
+				const element = document.getElementById('chat-messages');
+				if (element !== null) {
+					setTimeout(() => {
+						element.scrollTop = element.scrollHeight;
+					}, 300);
+				}
+			} catch {
+				setAllWhatsappChat(undefined);
+			}
+			!isNewMessage && setIsLoader(false);
+			return;
+		}
 		if (activePhoneNumber && chatContacts?.PhoneNumber) {
 			!isNewMessage && setIsLoader(true);
 			const allWhatsAppChatData: APIWhatsappChatData = await dispatch<any>(

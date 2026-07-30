@@ -36,6 +36,7 @@ import { useTranslation } from 'react-i18next';
 import SideHeaderContactDropDown from './SideHeaderContactDropDown';
 import ServiceChannelDropdown from '../../../Service/Conversations/ServiceChannelDropdown';
 import ServiceDomainDropdown from '../../../Service/Conversations/ServiceDomainDropdown';
+import ServiceSourceDropdown from '../../../Service/Conversations/ServiceSourceDropdown';
 import SideBarContactList from './SideBarContactList';
 import useDebounce from '../Hook/useDebounce';
 import { useSelector, useDispatch } from 'react-redux';
@@ -59,6 +60,8 @@ const SideBar = ({
 	serviceDomains = [],
 	serviceDomain = '',
 	onServiceDomainChange,
+	serviceSource = 'all',
+	onServiceSourceChange,
 	isMobileSideBar,
 	setIsMobileSideBar,
 	handleChatId,
@@ -947,6 +950,13 @@ const SideBar = ({
 							domains={serviceDomains}
 							value={serviceDomain}
 							onChange={onServiceDomainChange}
+						/>
+					) : selectedServiceChannel === 'all' ? (
+						<ServiceSourceDropdown
+							numbers={phoneNumbersList || []}
+							domains={serviceDomains}
+							value={serviceSource}
+							onChange={onServiceSourceChange}
 						/>
 					) : (
 						<SideHeaderContactDropDown

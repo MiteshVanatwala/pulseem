@@ -2,8 +2,9 @@ import React from 'react';
 import { Select, MenuItem, Box } from '@material-ui/core';
 import WhatsAppIcon from '@material-ui/icons/WhatsApp';
 import ChatBubbleOutlineIcon from '@material-ui/icons/ChatBubbleOutline';
+import AllInboxIcon from '@material-ui/icons/AllInbox';
 
-export type ServiceChannel = 'whatsapp' | 'widget';
+export type ServiceChannel = 'all' | 'whatsapp' | 'widget';
 
 interface Props {
   value: ServiceChannel;
@@ -11,12 +12,14 @@ interface Props {
 }
 
 // Channel selector shown in the sidebar header (replaces the old avatar).
-// WhatsApp → shows the number dropdown next to it; Widget → shows the domain dropdown.
+// All → WhatsApp + widget merged; WhatsApp → number dropdown; Widget → domain dropdown.
 const ServiceChannelDropdown = ({ value, onChange }: Props) => {
   const icon = (ch: ServiceChannel, size = 18) =>
     ch === 'whatsapp'
       ? <WhatsAppIcon style={{ fontSize: size, color: '#25D366' }} />
-      : <ChatBubbleOutlineIcon style={{ fontSize: size, color: '#f4511e' }} />;
+      : ch === 'widget'
+      ? <ChatBubbleOutlineIcon style={{ fontSize: size, color: '#f4511e' }} />
+      : <AllInboxIcon style={{ fontSize: size, color: '#546e7a' }} />;
 
   return (
     <Select
@@ -28,6 +31,9 @@ const ServiceChannelDropdown = ({ value, onChange }: Props) => {
         <Box display="flex" alignItems="center" justifyContent="center">{icon(v)}</Box>
       )}
     >
+      <MenuItem value="all">
+        <Box display="flex" alignItems="center" style={{ gap: 8 }}>{icon('all')} All</Box>
+      </MenuItem>
       <MenuItem value="whatsapp">
         <Box display="flex" alignItems="center" style={{ gap: 8 }}>{icon('whatsapp')} WhatsApp</Box>
       </MenuItem>
