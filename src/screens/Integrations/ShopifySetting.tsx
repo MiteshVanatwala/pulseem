@@ -65,6 +65,8 @@ const Shopify = ({ classes }: any) => {
     IsSyncRemovals: false,
     IsSyncActivations: false,
     IsInsertToGroupsActive: false,
+    ShopifyRemoveActiveClient: false,
+    ShopifyActivateRemovedClient: false,
     Groups: {} as IntegrationGroups
   } as ShopifyModel)
   const renderToast = () => {
@@ -279,6 +281,8 @@ const Shopify = ({ classes }: any) => {
           ActivationPreferenceTypeID: 0,
           IsSyncRemovals: false,
           IsSyncActivations: false,
+          ShopifyRemoveActiveClient: false,
+          ShopifyActivateRemovedClient: false,
           UiApi_ApiKey: '',
           Groups: {},
           CreateDate: '',
@@ -1056,6 +1060,65 @@ const Shopify = ({ classes }: any) => {
                               </Box>
                             </Box>
                           )}
+                        </Grid>
+                      </Grid>
+                    </AccordionDetails>
+                  </Accordion>
+
+                  <Accordion defaultExpanded={settings.ShopifyRemoveActiveClient || settings.ShopifyActivateRemovedClient} key={'acc_reverse_sync_settings'}>
+                    <AccordionSummary
+                      expandIcon={<ExpandMoreIcon style={{ color: '#000' }} />}
+                      className={classes.accordionSummary}
+                      style={{ backgroundColor: '#F0F5FF', marginTop: '10px' }}
+                    >
+                      <Typography className={classes.bold}>
+                        {t('integrations.shopify.reverseSyncTitle')}
+                      </Typography>
+                    </AccordionSummary>
+                    <AccordionDetails className={classes.accordionDetails}>
+                      <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.p10)}>
+                        <Grid item xs={12}>
+                          <FormControlLabel
+                            control={
+                              <Switch
+                                checked={settings.ShopifyRemoveActiveClient || false}
+                                onChange={(event) => {
+                                  setSettings({
+                                    ...settings,
+                                    ShopifyRemoveActiveClient: event.target.checked,
+                                  });
+                                }}
+                                name="shopifyRemoveActiveClient"
+                                color="primary"
+                              />
+                            }
+                            label={t('integrations.shopify.reverseSyncRemovalsLabel')}
+                          />
+                          <Typography className={clsx(classes.pb15, classes.f14)}>
+                            {t('integrations.shopify.reverseSyncRemovalsSubText')}
+                          </Typography>
+                        </Grid>
+
+                        <Grid item xs={12} className={classes.pt20}>
+                          <FormControlLabel
+                            control={
+                              <Switch
+                                checked={settings.ShopifyActivateRemovedClient || false}
+                                onChange={(event) => {
+                                  setSettings({
+                                    ...settings,
+                                    ShopifyActivateRemovedClient: event.target.checked,
+                                  });
+                                }}
+                                name="shopifyActivateRemovedClient"
+                                color="primary"
+                              />
+                            }
+                            label={t('integrations.shopify.reverseSyncActivationsLabel')}
+                          />
+                          <Typography className={clsx(classes.pb15, classes.f14)}>
+                            {t('integrations.shopify.reverseSyncActivationsSubText')}
+                          </Typography>
                         </Grid>
                       </Grid>
                     </AccordionDetails>

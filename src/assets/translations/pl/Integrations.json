@@ -62,7 +62,12 @@
     "description": "Aby zintegrować swój sklep Shopify z kontem Pulseem, przeczytaj poniższy poradnik:",
     "connectStoreAction": "Połącz sklep Shopify",
     "oldConnectionOptionsButton": "Użyj starej integracji",
-    "tryNewIntegrationButton": "Integracja ze starszymi wersjami"
+    "tryNewIntegrationButton": "Integracja ze starszymi wersjami",
+    "reverseSyncTitle": "Ustawienia synchronizacji Shopify do Pulseem",
+    "reverseSyncRemovalsLabel": "Usuń w Pulseem",
+    "reverseSyncRemovalsSubText": "Gdy klient zostanie usunięty w Shopify, ale jest aktywny w Pulseem - czy chcesz go usunąć w Pulseem?",
+    "reverseSyncActivationsLabel": "Aktywuj w Pulseem",
+    "reverseSyncActivationsSubText": "Gdy klient wyrazi zgodę (opt-in) w Shopify, ale jest usunięty w Pulseem - czy chcesz go aktywować w Pulseem?"
   },
   "verifone": {
     "title": "Verifone",
