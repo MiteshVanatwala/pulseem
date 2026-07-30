@@ -19,6 +19,8 @@ export interface ShopifyModel {
     IsSyncUnsubscribes?: boolean;
     IsSyncRecipients?: boolean;
     IsInsertToGroupsActive?: boolean;
+    ShopifyRemoveActiveClient?: boolean;
+    ShopifyActivateRemovedClient?: boolean;
     UiApi_ApiKey?: string;
     Groups?: IntegrationGroups;
     CreateDate?: Date | string;
