@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { PulseemReactInstance } from "../../helpers/Api/PulseemReactAPI";
 import { PulseemResponse } from "../../Models/APIResponse";
 import { SubUserModel, SubUserRequest } from "../../Models/SubUser/SubUsers";
+import { Team, SaveTeamPayload } from "../../Models/Team/Team";
 
 export const getAllUsers = createAsyncThunk(
   'SubUser/GetAllUsers',
@@ -49,6 +50,42 @@ export const resendConfirmationEmail = createAsyncThunk(
   }
 );
 
+// PR-2456: Teams feature — thunks below are additive, existing SubUser thunks/cases above are unchanged.
+export const getTeams = createAsyncThunk(
+  'Team/GetAll',
+  async (_data: void, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.get(`Team/GetAll`);
+      return response.data as PulseemResponse;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  }
+);
+
+export const saveTeam = createAsyncThunk(
+  'Team/CreateOrEdit',
+  async (payload: SaveTeamPayload, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.post(`Team/CreateOrEdit`, payload);
+      return response.data as PulseemResponse;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  }
+);
+
+export const deleteTeam = createAsyncThunk(
+  'Team/Delete',
+  async (teamId: number, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.delete(`Team/Delete/${teamId}`);
+      return response.data as PulseemResponse;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  }
+);
 
 
 const SubUserSlice = createSlice({
@@ -72,12 +109,54 @@ const SubUserSlice = createSlice({
       INTERNAL_ERROR: { severity: 'error', color: 'error', message: 'common.internalError', showAnimtionCheck: false },
 
     },
-    test: 'hello'
+    test: 'hello',
+    // PR-2456: Teams feature state — additive, default empty so a failed/absent API leaves the UI empty rather than crashed.
+    teams: [] as Team[],
+    teamsLoading: false,
+    teamsError: null as string | null,
   },
   reducers: {},
   extraReducers: (builder) => {
     builder.addCase(getAllUsers.fulfilled, (state, { payload }) => {
       state.subUsers = payload?.Data?.Items || [];
+    });
+
+    // PR-2456: Teams feature cases — additive, existing cases above are untouched.
+    builder.addCase(getTeams.pending, (state) => {
+      state.teamsLoading = true;
+      state.teamsError = null;
+    });
+    builder.addCase(getTeams.fulfilled, (state, { payload }) => {
+      state.teamsLoading = false;
+      state.teams = payload?.Data || [];
+    });
+    builder.addCase(getTeams.rejected, (state, action: any) => {
+      state.teamsLoading = false;
+      state.teamsError = action.payload?.error || null;
+    });
+
+    builder.addCase(saveTeam.pending, (state) => {
+      state.teamsLoading = true;
+      state.teamsError = null;
+    });
+    builder.addCase(saveTeam.fulfilled, (state) => {
+      state.teamsLoading = false;
+    });
+    builder.addCase(saveTeam.rejected, (state, action: any) => {
+      state.teamsLoading = false;
+      state.teamsError = action.payload?.error || null;
+    });
+
+    builder.addCase(deleteTeam.pending, (state) => {
+      state.teamsLoading = true;
+      state.teamsError = null;
+    });
+    builder.addCase(deleteTeam.fulfilled, (state) => {
+      state.teamsLoading = false;
+    });
+    builder.addCase(deleteTeam.rejected, (state, action: any) => {
+      state.teamsLoading = false;
+      state.teamsError = action.payload?.error || null;
     });
   },
 });
