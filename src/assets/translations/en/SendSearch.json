@@ -1,0 +1,113 @@
+{
+  "title": "Send search",
+  "nav": {
+    "sendSearch": "Send search"
+  },
+  "searchPlaceholder": "Name, email or mobile of an agent or supervisor…",
+  "role": {
+    "all": "Agent and supervisor",
+    "agent": "Agent only",
+    "supervisor": "Supervisor only"
+  },
+  "kind": {
+    "all": "All",
+    "agents": "Agents only",
+    "rollup": "Roll-up recipients only"
+  },
+  "campaign": {
+    "all": "All campaigns"
+  },
+  "dateFrom": "From date",
+  "dateTo": "To date",
+  "search": "Search",
+  "moreFilters": "More filters ▾",
+  "clearAll": "Clear all",
+  "includeOverOneYear": "Include sends older than one year (the search will take longer)",
+  "col": {
+    "recipient": "Recipient",
+    "supervisor": "Supervisor",
+    "mailing": "Mailing",
+    "channelsAndResult": "Channels and result",
+    "lastEvidence": "Latest evidence",
+    "sent": "Sent"
+  },
+  "roster": {
+    "title": "The {{count}} recipients this roll-up covered",
+    "recipient": "Recipient",
+    "channels": "Channels",
+    "gap": "Gap",
+    "viewEvidence": "Viewing evidence",
+    "covered": "Recipients covered"
+  },
+  "version": {
+    "label": "Version",
+    "number": "V{{n}}",
+    "outdated": "Outdated",
+    "latest": "Latest version: V{{n}}",
+    "source": {
+      "recorded": "Recorded",
+      "inferred": "Inferred",
+      "unverifiable": "Unverifiable"
+    },
+    "state": {
+      "available": "Available",
+      "purged": "Purged",
+      "scrubbed": "Identifying details removed"
+    },
+    "tooltip": {
+      "recorded": "The version was recorded at the moment of the send — this is the version that was actually sent.",
+      "inferred": "There is no send record for the version, but the mapping has not been changed since the send — so this is the version that was sent.",
+      "unverifiable": "The mapping was changed after the send — which version was sent cannot be established with certainty."
+    }
+  },
+  "delivery": {
+    "pending": "Pending",
+    "sent": "Sent",
+    "delivered": "Delivered",
+    "failed": "Failed",
+    "unsubscribed": "Unsubscribe request",
+    "canceled": "Canceled",
+    "stopped": "Stopped",
+    "invalidNumber": "Invalid number",
+    "noSession": "No active conversation window",
+    "unknown": "Unrecognised status"
+  },
+  "engagement": {
+    "none": "No activity recorded",
+    "opened": "Open recorded",
+    "clicked": "Clicked",
+    "read": "Read",
+    "replied": "Replied",
+    "unknown": "Unrecognised"
+  },
+  "empty": {
+    "noResults": "No results match your search",
+    "notSent": "Not sent on any channel"
+  },
+  "results": {
+    "count": "{{count}} results"
+  },
+  "action": {
+    "view": "Details",
+    "viewRollup": "Roll-up details",
+    "back": "Back to {{name}}",
+    "close": "Close"
+  },
+  "drawer": {
+    "sendDetails": "Send details",
+    "provenance": "Which version was sent",
+    "coverage": "Roll-up coverage",
+    "coverageCaveat": "These are counts, not percentages: email has no delivery receipt, SMS has no open metric, and a recipient may have been reached on more than one channel — so the denominator differs per channel.",
+    "rosterReconstructed": "This recipient list is reconstructed from the current mapping and is not a record of who was actually sent to."
+  },
+  "footnote": {
+    "tracking": "Open and click data come from tracking and are not available on every channel; no recorded activity is not proof the message went unseen."
+  },
+  "error": {
+    "loadFailed": "Loading the results failed",
+    "permissionDenied": "You do not have permission to view recipient details"
+  },
+  "export": {
+    "button": "Export"
+  }
+}

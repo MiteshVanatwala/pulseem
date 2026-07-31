@@ -87,6 +87,7 @@ import DataSources from './screens/DataSources/DataSources';
 import DataSourceView from './screens/DataSources/DataSourceView';
 import SmartSendScreen from './screens/SmartSend/SmartSendScreen';
 import SmartSendPicker from './screens/SmartSend/SmartSendPicker';
+import SendSearchScreen from './screens/SendSearch/SendSearchScreen';
 import AmpRegistration from './screens/Newsletter/AMP/AmpRegistration';
 import AffiliateProgram from './screens/Affiliate/Management/AffiliateProgram';
 import AccountUsers from './screens/AccountUsers/AccountUsers';
@@ -658,6 +659,11 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
         exact
         path={`${sitePrefix}SmartSend`}
         element={<SmartSendPicker classes={classes} />}
+      />}
+      {accountFeatures && accountFeatures?.indexOf(PulseemFeatures.DATA_SOURCES) > -1 && <Route
+        exact
+        path={`${sitePrefix}SendSearch`}
+        element={<SendSearchScreen classes={classes} />}
       />}
       <Route
         path="*" element={<PageNotFound classes={classes} />}

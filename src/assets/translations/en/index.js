@@ -44,6 +44,7 @@ import RemoveMyData from './RemoveMyData.json'
 import PopupTriggers from './PopupTriggers.json';
 import Popup from './Popup.json'
 import DataSources from './DataSources.json';
+import SendSearch from './SendSearch.json';
 
 export const en = {
 	PopupTriggers,
@@ -91,5 +92,6 @@ export const en = {
 	AILoader,
 	RemoveMyData,
 	Popup,
-	DataSources
+	DataSources,
+	SendSearch
 };
