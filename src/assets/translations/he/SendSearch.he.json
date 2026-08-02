@@ -1,0 +1,113 @@
+{
+  "title": "חיפוש שליחות",
+  "nav": {
+    "sendSearch": "חיפוש שליחות"
+  },
+  "searchPlaceholder": "שם, אימייל או סלולרי של סוכן או מפקח…",
+  "role": {
+    "all": "סוכן ומפקח",
+    "agent": "סוכן בלבד",
+    "supervisor": "מפקח בלבד"
+  },
+  "kind": {
+    "all": "הכל",
+    "agents": "סוכנים בלבד",
+    "rollup": "נמעני ריכוז בלבד"
+  },
+  "campaign": {
+    "all": "כל הקמפיינים"
+  },
+  "dateFrom": "מתאריך",
+  "dateTo": "עד תאריך",
+  "search": "חפש",
+  "moreFilters": "עוד מסננים ▾",
+  "clearAll": "נקה הכל",
+  "includeOverOneYear": "כלול חיפוש שליחות מעל שנה (זמן החיפוש ארוך יותר)",
+  "col": {
+    "recipient": "נמען",
+    "supervisor": "מפקח",
+    "mailing": "דיוור",
+    "channelsAndResult": "ערוצים ותוצאה",
+    "lastEvidence": "הראיה האחרונה",
+    "sent": "נשלח"
+  },
+  "roster": {
+    "title": "{{count}} הנמענים שהריכוז כיסה",
+    "recipient": "נמען",
+    "channels": "ערוצים",
+    "gap": "פער",
+    "viewEvidence": "ראיית צפייה",
+    "covered": "נמענים שכוסו"
+  },
+  "version": {
+    "label": "גרסה",
+    "number": "V{{n}}",
+    "outdated": "מיושנת",
+    "latest": "הגרסה העדכנית: V{{n}}",
+    "source": {
+      "recorded": "מתועד",
+      "inferred": "משוחזר",
+      "unverifiable": "לא ניתן לאימות"
+    },
+    "state": {
+      "available": "זמינה",
+      "purged": "נמחקה",
+      "scrubbed": "פרטים מזהים הוסרו"
+    },
+    "tooltip": {
+      "recorded": "הגרסה נרשמה ברגע השליחה — זו הגרסה שנשלחה בפועל.",
+      "inferred": "אין רישום שליחה לגרסה, אך המיפוי לא עודכן מאז השליחה — ולכן זו הגרסה שנשלחה.",
+      "unverifiable": "המיפוי עודכן אחרי השליחה — לא ניתן לקבוע בוודאות איזו גרסה נשלחה."
+    }
+  },
+  "delivery": {
+    "pending": "ממתין",
+    "sent": "נשלח",
+    "delivered": "נמסר",
+    "failed": "נכשל",
+    "unsubscribed": "בקשת הסרה",
+    "canceled": "בוטל",
+    "stopped": "הופסק",
+    "invalidNumber": "מספר לא תקין",
+    "noSession": "אין חלון שיחה פעיל",
+    "unknown": "סטטוס לא מזוהה"
+  },
+  "engagement": {
+    "none": "לא נרשמה פעילות",
+    "opened": "נרשמה פתיחה",
+    "clicked": "הוקלק",
+    "read": "נקרא",
+    "replied": "השיב",
+    "unknown": "לא מזוהה"
+  },
+  "empty": {
+    "noResults": "לא נמצאו תוצאות התואמות את החיפוש",
+    "notSent": "לא נשלח בשום ערוץ"
+  },
+  "results": {
+    "count": "{{count}} תוצאות"
+  },
+  "action": {
+    "view": "פירוט",
+    "viewRollup": "פירוט ריכוז",
+    "back": "חזרה ל{{name}}",
+    "close": "סגירה"
+  },
+  "drawer": {
+    "sendDetails": "פרטי השליחה",
+    "provenance": "איזו גרסה נשלחה",
+    "coverage": "כיסוי הריכוז",
+    "coverageCaveat": "המספרים אינם אחוזים: לאימייל אין אישור מסירה, ל-SMS אין מדד פתיחה, וייתכן שנמען הושג ביותר מערוץ אחד — לכן המכנה שונה בכל ערוץ.",
+    "rosterReconstructed": "רשימת הנמענים משוחזרת מהמיפוי הנוכחי ואינה רישום של מי שנשלח בפועל."
+  },
+  "footnote": {
+    "tracking": "נתוני פתיחה והקלקה מגיעים ממעקב ואינם זמינים בכל ערוץ; היעדר פעילות אינו הוכחה שההודעה לא נצפתה."
+  },
+  "error": {
+    "loadFailed": "טעינת התוצאות נכשלה",
+    "permissionDenied": "אין לך הרשאה לצפות בפרטי נמענים"
+  },
+  "export": {
+    "button": "ייצוא"
+  }
+}

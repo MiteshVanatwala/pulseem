@@ -143,6 +143,16 @@ export const getRoutes = (
           title: t('DataSources.send.title'),
           href: `${sitePrefix}SmartSend`,
           isShow: !!(userRoles?.AllowSend && features && features.indexOf(PulseemFeatures.DATA_SOURCES) > -1)
+        },
+        {
+          // Feature-gated only — NOT gated on AllowSend, unlike smartSend above. SendSearch is a
+          // read-only report; requiring send permission would hide it from the supervisors and
+          // support staff it exists for. Same gate as the `dataSources` entry, and it must stay
+          // identical to the route gate in App.js (P3.2).
+          key: 'sendSearch',
+          title: t('SendSearch.nav.sendSearch'),
+          href: `${sitePrefix}SendSearch`,
+          isShow: !!(features && features.indexOf(PulseemFeatures.DATA_SOURCES) > -1)
         }
       ],
     },

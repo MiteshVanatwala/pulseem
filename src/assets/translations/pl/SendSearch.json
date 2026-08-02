@@ -1,0 +1,113 @@
+{
+  "title": "Wyszukiwanie wysyłek",
+  "nav": {
+    "sendSearch": "Wyszukiwanie wysyłek"
+  },
+  "searchPlaceholder": "Imię, e-mail lub telefon agenta albo przełożonego…",
+  "role": {
+    "all": "Agent i przełożony",
+    "agent": "Tylko agent",
+    "supervisor": "Tylko przełożony"
+  },
+  "kind": {
+    "all": "Wszystko",
+    "agents": "Tylko agenci",
+    "rollup": "Tylko odbiorcy zbiorczy"
+  },
+  "campaign": {
+    "all": "Wszystkie kampanie"
+  },
+  "dateFrom": "Data od",
+  "dateTo": "Data do",
+  "search": "Szukaj",
+  "moreFilters": "Więcej filtrów ▾",
+  "clearAll": "Wyczyść wszystko",
+  "includeOverOneYear": "Uwzględnij wysyłki starsze niż rok (wyszukiwanie potrwa dłużej)",
+  "col": {
+    "recipient": "Odbiorca",
+    "supervisor": "Przełożony",
+    "mailing": "Wysyłka",
+    "channelsAndResult": "Kanały i wynik",
+    "lastEvidence": "Najnowszy dowód",
+    "sent": "Wysłano"
+  },
+  "roster": {
+    "title": "{{count}} odbiorców objętych wysyłką zbiorczą",
+    "recipient": "Odbiorca",
+    "channels": "Kanały",
+    "gap": "Luka",
+    "viewEvidence": "Dowód wyświetlenia",
+    "covered": "Objęci odbiorcy"
+  },
+  "version": {
+    "label": "Wersja",
+    "number": "V{{n}}",
+    "outdated": "Nieaktualna",
+    "latest": "Najnowsza wersja: V{{n}}",
+    "source": {
+      "recorded": "Zapisana",
+      "inferred": "Wywnioskowana",
+      "unverifiable": "Niemożliwa do potwierdzenia"
+    },
+    "state": {
+      "available": "Dostępna",
+      "purged": "Usunięta",
+      "scrubbed": "Dane identyfikujące usunięte"
+    },
+    "tooltip": {
+      "recorded": "Wersja została zapisana w momencie wysyłki — to wersja, która faktycznie została wysłana.",
+      "inferred": "Brak zapisu wysyłki dla wersji, ale mapowanie nie zmieniło się od czasu wysyłki — więc to ta wersja została wysłana.",
+      "unverifiable": "Mapowanie zmieniono po wysyłce — nie da się jednoznacznie ustalić, która wersja została wysłana."
+    }
+  },
+  "delivery": {
+    "pending": "Oczekuje",
+    "sent": "Wysłano",
+    "delivered": "Dostarczono",
+    "failed": "Niepowodzenie",
+    "unsubscribed": "Żądanie usunięcia",
+    "canceled": "Anulowano",
+    "stopped": "Zatrzymano",
+    "invalidNumber": "Nieprawidłowy numer",
+    "noSession": "Brak aktywnego okna rozmowy",
+    "unknown": "Nierozpoznany status"
+  },
+  "engagement": {
+    "none": "Brak zarejestrowanej aktywności",
+    "opened": "Zarejestrowano otwarcie",
+    "clicked": "Kliknięto",
+    "read": "Przeczytano",
+    "replied": "Odpowiedziano",
+    "unknown": "Nierozpoznane"
+  },
+  "empty": {
+    "noResults": "Brak wyników odpowiadających wyszukiwaniu",
+    "notSent": "Nie wysłano w żadnym kanale"
+  },
+  "results": {
+    "count": "Wyniki: {{count}}"
+  },
+  "action": {
+    "view": "Szczegóły",
+    "viewRollup": "Szczegóły zbiorcze",
+    "back": "Powrót do {{name}}",
+    "close": "Zamknij"
+  },
+  "drawer": {
+    "sendDetails": "Szczegóły wysyłki",
+    "provenance": "Która wersja została wysłana",
+    "coverage": "Zasięg wysyłki zbiorczej",
+    "coverageCaveat": "To liczby, nie procenty: e-mail nie ma potwierdzenia doręczenia, SMS nie ma wskaźnika otwarć, a odbiorca mógł zostać osiągnięty w więcej niż jednym kanale — mianownik jest inny dla każdego kanału.",
+    "rosterReconstructed": "Ta lista odbiorców została odtworzona z bieżącego mapowania i nie jest zapisem tego, do kogo faktycznie wysłano."
+  },
+  "footnote": {
+    "tracking": "Dane o otwarciach i kliknięciach pochodzą ze śledzenia i nie są dostępne w każdym kanale; brak zarejestrowanej aktywności nie dowodzi, że wiadomość nie została zobaczona."
+  },
+  "error": {
+    "loadFailed": "Nie udało się wczytać wyników",
+    "permissionDenied": "Nie masz uprawnień do przeglądania danych odbiorców"
+  },
+  "export": {
+    "button": "Eksport"
+  }
+}
