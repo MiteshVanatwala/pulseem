@@ -38,6 +38,9 @@ import ExportDialog from './components/ExportDialog';
 import VersionsHistoryDialog from './components/VersionsHistoryDialog';
 import { useDsDialogStyles } from './components/dialogStyles';
 import SmartSendManageTab from './SmartSendManageTab';
+// Third tab — חיפוש סוכנים ומפקחים. The SAME component the standalone /SendSearch route renders,
+// so the two entry points cannot drift apart (see SendSearchPanel.tsx's header).
+import SendSearchPanel from '../SendSearch/SendSearchPanel';
 
 const PAGE_NAME = 'DataSources';
 const POLL_MS = 4000;
@@ -490,6 +493,7 @@ const DataSources = ({ classes }: ClassesType) => {
                 >
                     <Tab value="sources" style={TAB_LABEL_STYLE} label={t('DataSources.send.manage.tabSources')} />
                     <Tab value="smartsend" style={TAB_LABEL_STYLE} label={t('DataSources.send.manage.tabSmartSend')} />
+                    <Tab value="sendsearch" style={TAB_LABEL_STYLE} label={t('DataSources.send.manage.tabSendSearch')} />
                 </Tabs>
 
                 {activeTab === 'sources' ? (
@@ -515,8 +519,12 @@ const DataSources = ({ classes }: ClassesType) => {
                 {toastMessage && <Toast data={toastMessage} />}
                 {renderDialogs()}
                 </>
-                ) : (
+                ) : activeTab === 'smartsend' ? (
                     <SmartSendManageTab classes={classes} />
+                ) : (
+                    // No `showTitle` — the page heading above ("מקורות נתונים") plus the tab label
+                    // already name this view; a second <h1> inside the tab would be duplicate chrome.
+                    <SendSearchPanel />
                 )}
             </Box>
         </DefaultScreen>

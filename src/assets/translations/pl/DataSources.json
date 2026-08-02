@@ -215,7 +215,8 @@
       "outdatedOnly": "Pokaż tylko nieaktualne",
       "staleChip": "V{{mapped}} · V{{latest}}",
       "tabSources": "Źródła",
-      "tabSmartSend": "Inteligentna wysyłka"
+      "tabSmartSend": "Inteligentna wysyłka",
+      "tabSendSearch": "Wyszukiwanie agentów i przełożonych"
     }
   },
   "retry": "Spróbuj ponownie",

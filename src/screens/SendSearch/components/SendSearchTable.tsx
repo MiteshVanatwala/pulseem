@@ -142,7 +142,10 @@ const SendSearchTable: React.FC<Props> = ({
                         {r.IsSupervisor && (
                             <Chip
                                 size="small"
-                                label={t(`${SS}kind.rollup`)}
+                                // `badge.supervisor` ("מפקח"), NOT `kind.rollup` — that key is the
+                                // FILTER label ("מפקחים בלבד") and rendering it here put a filter
+                                // caption next to a person's name.
+                                label={t(`${SS}badge.supervisor`)}
                                 style={{ backgroundColor: '#E7F1F8', color: '#0371AD', fontWeight: 800, fontSize: 11.5 }}
                             />
                         )}

@@ -215,7 +215,8 @@
       "outdatedOnly": "Show outdated only",
       "staleChip": "V{{mapped}} · V{{latest}}",
       "tabSources": "Sources",
-      "tabSmartSend": "Smart Send"
+      "tabSmartSend": "Smart Send",
+      "tabSendSearch": "Agent & supervisor search"
     }
   },
   "retry": "Try again",
