@@ -12,7 +12,10 @@
   "kind": {
     "all": "All",
     "agents": "Agents only",
-    "rollup": "Roll-up recipients only"
+    "rollup": "Supervisors only"
+  },
+  "badge": {
+    "supervisor": "Supervisor"
   },
   "campaign": {
     "all": "All campaigns"

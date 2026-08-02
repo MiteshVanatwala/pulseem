@@ -12,7 +12,10 @@
   "kind": {
     "all": "Wszystko",
     "agents": "Tylko agenci",
-    "rollup": "Tylko odbiorcy zbiorczy"
+    "rollup": "Tylko przełożeni"
+  },
+  "badge": {
+    "supervisor": "Przełożony"
   },
   "campaign": {
     "all": "Wszystkie kampanie"
