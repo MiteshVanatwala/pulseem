@@ -282,6 +282,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
         translations: {
             ...(IsRTL ? TRANSLATE_HEBREW : TRANSLATE_ENGLISH),
             "bee-newsletter-modules-html": {
+                ...(IsRTL ? TRANSLATE_HEBREW : TRANSLATE_ENGLISH)["bee-newsletter-modules-html"],
                 "widget-warning-desc": t('campaigns.htmlDocTypeNotAllowedWarning'),
             }
         },
