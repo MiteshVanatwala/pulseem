@@ -99,6 +99,8 @@
   "drawer": {
     "sendDetails": "Send details",
     "provenance": "Which version was sent",
+    "rowValues": "The values sent to this recipient",
+    "noRowValues": "No source row was sent for this recipient — the tokens were sent empty",
     "coverage": "Roll-up coverage",
     "coverageCaveat": "These are counts, not percentages: email has no delivery receipt, SMS has no open metric, and a recipient may have been reached on more than one channel — so the denominator differs per channel.",
     "rosterReconstructed": "This recipient list is reconstructed from the current mapping and is not a record of who was actually sent to."

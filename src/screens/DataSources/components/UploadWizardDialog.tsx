@@ -67,6 +67,18 @@ const MENU_PROPS: any = {
     PaperProps: { style: { maxHeight: 320, marginTop: 4 } }
 };
 
+// Role dropdown value → SemanticRole. 'none' and 'sup' are deliberately absent: both persist as
+// SemanticRole NONE ('sup' adds the UI-only supervisor flag), so they map to NONE by lookup miss.
+// This map is also the single source of truth for the "at most one column per role" rule below —
+// roles 3/4 have (or are getting) the same filtered unique index roles 1/2 have, so a duplicate is
+// a 400 IDENTITY_COLUMNS_INVALID from the server, not a silently-picked winner.
+const ROLE_OF_VALUE: { [k: string]: eSemanticRole } = {
+    email: eSemanticRole.RECIPIENT_EMAIL,
+    cell: eSemanticRole.RECIPIENT_CELLPHONE,
+    firstName: eSemanticRole.FIRST_NAME,
+    lastName: eSemanticRole.LAST_NAME
+};
+
 const extOf = (name: string) => {
     const parts = (name || '').split('.');
     return parts.length > 0 ? parts[parts.length - 1].toLowerCase() : '';
@@ -88,6 +100,12 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [createMissingClients, setCreateMissingClients] = useState(true);
+    // Name enrichment of ALREADY-MATCHED recipients. Both default to false: UpdateClientNames = 0 is
+    // the back-compat guarantee (behaviour byte-identical to today), and an overwrite of a real name
+    // leaves no audit trail (tr_clients_update_log logs only Email/Status/Cellphone/SmsStatus), so it
+    // must always be an explicit per-upload opt-in.
+    const [updateClientNames, setUpdateClientNames] = useState(false);
+    const [overwriteClientNames, setOverwriteClientNames] = useState(false);
     const [errors, setErrors] = useState<{ [k: string]: string }>({});
     const [uploading, setUploading] = useState(false);
     const [parsing, setParsing] = useState(false);
@@ -108,6 +126,7 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
     const reset = () => {
         setStep(0); setFile(null); setHeaders([]); setPreviewRows([]); setColumns([]);
         setRowCount(null); setName(''); setDescription(''); setCreateMissingClients(true);
+        setUpdateClientNames(false); setOverwriteClientNames(false);
         setErrors({}); setUploading(false); setParsing(false);
         dispatch(setUploadProgress(null));
     };
@@ -304,27 +323,36 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
     };
 
     // ── identity mapping ──────────────────────────────────────────────────────
-    // The role dropdown carries a UI value ('none' | 'email' | 'cell' | 'sup'). 'sup' = supervisor
-    // email — stored as an info field (SemanticRole NONE + DataType EMAIL) plus the UI-only flag.
-    // Picking email/cell/supervisor also turns on search by default when the quota still allows it.
+    // The role dropdown carries a UI value ('none' | 'email' | 'cell' | 'firstName' | 'lastName' |
+    // 'sup'). 'sup' = supervisor email — stored as an info field (SemanticRole NONE + DataType EMAIL)
+    // plus the UI-only flag. Picking email/cell/supervisor also turns on search by default when the
+    // quota still allows it; firstName/lastName deliberately do NOT (see below).
     const setRoleValue = (idx: number, value: string) => {
+        const picked = ROLE_OF_VALUE[value] ?? eSemanticRole.NONE;
         setColumns(cols => cols.map((c, i) => {
             if (i === idx) {
                 if (value === 'sup') {
                     const enable = c.IsSearchable || searchableRemaining > 0;
                     return { ...c, SemanticRole: eSemanticRole.NONE, DataType: eDataType.EMAIL, FormatHint: eFormatHint.NONE, IsSupervisorEmail: true, IsSearchable: enable };
                 }
-                const role = value === 'email' ? eSemanticRole.RECIPIENT_EMAIL
-                    : value === 'cell' ? eSemanticRole.RECIPIENT_CELLPHONE : eSemanticRole.NONE;
+                const role = picked;
                 const dataType = role === eSemanticRole.RECIPIENT_EMAIL ? eDataType.EMAIL
                     : role === eSemanticRole.RECIPIENT_CELLPHONE ? eDataType.PHONE : eDataType.TEXT;
-                const enable = role !== eSemanticRole.NONE ? (c.IsSearchable || searchableRemaining > 0) : c.IsSearchable;
-                // identity columns never carry a currency/percent format
+                // Only email/cell are matching identities. A name is enrichment data, so it must not
+                // silently spend one of the version's scarce searchable-column slots.
+                const isIdentity = role === eSemanticRole.RECIPIENT_EMAIL || role === eSemanticRole.RECIPIENT_CELLPHONE;
+                const enable = isIdentity ? (c.IsSearchable || searchableRemaining > 0) : c.IsSearchable;
+                // role columns never carry a currency/percent format
                 return { ...c, SemanticRole: role, DataType: dataType, FormatHint: role === eSemanticRole.NONE ? c.FormatHint : eFormatHint.NONE, IsSupervisorEmail: false, IsSearchable: enable };
             }
-            // enforce ≤1 of each identity role — clear the previous holder
-            if (value === 'email' && c.SemanticRole === eSemanticRole.RECIPIENT_EMAIL) return { ...c, SemanticRole: eSemanticRole.NONE, DataType: eDataType.TEXT };
-            if (value === 'cell' && c.SemanticRole === eSemanticRole.RECIPIENT_CELLPHONE) return { ...c, SemanticRole: eSemanticRole.NONE, DataType: eDataType.TEXT };
+            // Enforce ≤1 column per role — clear the previous holder. This covers ALL FOUR roles
+            // (1 email, 2 cell, 3 firstName, 4 lastName), not just the two identities: DataSourceColumns
+            // carries a filtered unique index per role, so a second column on role 3/4 is rejected by
+            // the server with 400 IDENTITY_COLUMNS_INVALID and the user gets a misleading
+            // "duplicate identity" toast for a mapping the UI itself allowed.
+            if (picked !== eSemanticRole.NONE && c.SemanticRole === picked) {
+                return { ...c, SemanticRole: eSemanticRole.NONE, DataType: eDataType.TEXT };
+            }
             return c;
         }));
     };
@@ -364,6 +392,10 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
         fd.append('name', name.trim());
         fd.append('description', description || '');
         fd.append('createMissingClients', createMissingClients ? 'true' : 'false');
+        fd.append('updateClientNames', updateClientNames ? 'true' : 'false');
+        // `&& updateClientNames` keeps the pair coherent on the wire even if a future edit breaks the
+        // checkbox's reset — overwrite is meaningless (and dangerous to read as intent) without update.
+        fd.append('overwriteClientNames', (updateClientNames && overwriteClientNames) ? 'true' : 'false');
         // Supervisor email is a UI-only tag — send only the server-known fields (it persists as a
         // plain info field: SemanticRole NONE + DataType EMAIL).
         const payloadColumns: UploadColumnDef[] = columns.map(c => ({
@@ -403,12 +435,16 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
         { value: 'none', label: t('DataSources.wizard.roleNone') },
         { value: 'email', label: t('DataSources.wizard.roleEmail') },
         { value: 'cell', label: t('DataSources.wizard.roleCellphone') },
+        { value: 'firstName', label: t('DataSources.wizard.roleFirstName') },
+        { value: 'lastName', label: t('DataSources.wizard.roleLastName') },
         { value: 'sup', label: t('DataSources.wizard.roleSupervisorEmail') }
     ];
     // Both 'none' and 'sup' map to SemanticRole NONE, so the dropdown value is derived, not the role.
     const roleValueOf = (c: WizardColumn) => c.IsSupervisorEmail ? 'sup'
         : c.SemanticRole === eSemanticRole.RECIPIENT_EMAIL ? 'email'
-            : c.SemanticRole === eSemanticRole.RECIPIENT_CELLPHONE ? 'cell' : 'none';
+            : c.SemanticRole === eSemanticRole.RECIPIENT_CELLPHONE ? 'cell'
+                : c.SemanticRole === eSemanticRole.FIRST_NAME ? 'firstName'
+                    : c.SemanticRole === eSemanticRole.LAST_NAME ? 'lastName' : 'none';
 
     // Readable, slightly-larger-than-field header labels for the mapping table.
     // (16 keeps the intended one-step lead now that the shared dialog scale puts body cells at 15.)
@@ -465,7 +501,13 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
                     </TableRow></TableHead>
                     <TableBody>
                         {columns.map((c, i) => {
-                            // Supervisor email is stored as an info field but is type-locked like an identity (Email).
+                            // isInfo == "the user may still choose DataType/FormatHint". False for every
+                            // column whose role already fixes its type: email→Email, cell→Phone,
+                            // supervisor→Email (stored as an info field but type-locked all the same),
+                            // and firstName/lastName→Text. setRoleValue already forced DataType to Text
+                            // and FormatHint to None for the two name roles, so the locked Select renders
+                            // "Text" and the format Select stays disabled — correct, not a wrong lock:
+                            // Currency/Percent on a person's name is never a legal combination.
                             const isInfo = c.SemanticRole === eSemanticRole.NONE && !c.IsSupervisorEmail;
                             return (
                                 <TableRow key={i}>
@@ -520,6 +562,34 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
                 control={<Checkbox checked={createMissingClients} onChange={(e) => setCreateMissingClients(e.target.checked)} />}
                 label={t('DataSources.wizard.createMissingClients')}
             />
+            {/* Name enrichment of recipients that ALREADY exist. Two nested questions: "update at all?"
+                then "overwrite an existing name?". Unchecking the first must reset the second — leaving
+                a stale checked-but-disabled overwrite would send OverwriteClientNames=1 the moment the
+                user re-checks update, which is the one irreversible, unaudited write in this feature. */}
+            <Box style={{ display: 'flex', flexDirection: 'column' }}>
+                <FormControlLabel
+                    control={<Checkbox checked={updateClientNames} onChange={(e) => {
+                        const on = e.target.checked;
+                        setUpdateClientNames(on);
+                        if (!on) setOverwriteClientNames(false);
+                    }} />}
+                    label={t('DataSources.wizard.updateClientNames')}
+                />
+                <Typography style={{ fontSize: 12, color: '#95A5A6', marginTop: -6, marginInlineStart: 32 }}>
+                    {t('DataSources.wizard.updateClientNamesHint')}
+                </Typography>
+                <Box style={{ paddingInlineStart: 26 }}>
+                    <FormControlLabel
+                        disabled={!updateClientNames}
+                        control={<Checkbox checked={overwriteClientNames} disabled={!updateClientNames}
+                            onChange={(e) => setOverwriteClientNames(e.target.checked)} />}
+                        label={t('DataSources.wizard.overwriteClientNames')}
+                    />
+                    <Typography style={{ fontSize: 12, color: '#95A5A6', marginTop: -6, marginInlineStart: 32 }}>
+                        {t('DataSources.wizard.overwriteClientNamesHint')}
+                    </Typography>
+                </Box>
+            </Box>
         </Box>
     );
 

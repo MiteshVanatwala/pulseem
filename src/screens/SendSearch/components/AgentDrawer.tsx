@@ -5,16 +5,29 @@
 // DELIVERY PATH: _delivery\SendSearch-V1\react\screens\SendSearch\components\AgentDrawer.tsx
 // TARGET PATH:   ReactCode\src\screens\SendSearch\components\AgentDrawer.tsx
 //
-// The mock's card order is kept: verdict → channel lines → send details → provenance → actions.
+// The mock's card order is kept: verdict → channel lines → send details → provenance → values.
 // The verdict is a SENTENCE, not a status chip: the whole point of the drawer is that an operator can
 // read one line to a client on the phone.
 //
-// What is deliberately NOT here:
+// PER-RECIPIENT VALUES — a reversal, recorded here because this comment used to say the opposite.
+// V1 said: "V1 does not store per-recipient as-sent values (CONTRACT D5/§9)", so no such card.
+// That was true of a REBUILD from template + data — which is what the mock's "המייל שנשלח" panel
+// (`:394-404`) is, and which would have been an invented email presented as a record.
+// It was NOT true of the token VALUES: `dbo.DataSources_GetRowValuesForPreviewByClient` reads the
+// row out of the LOCKED source version that was actually sent, so the values are read, not
+// reconstructed. Idan reversed the decision on 2026-08-03 and the fourth card below is the result.
+// The distinction the old comment was defending still holds, and still holds here:
+//   • the values are shown because they were RECORDED;
+//   • `HasRow = false` means there was no source row for this client, i.e. the sender emitted empty
+//     strings — so the card says that IN WORDS and renders no rows at all. Printing the blank
+//     values would read as "this recipient was deliberately sent empty text", which is precisely
+//     the confident over-claim this header exists to forbid.
+//
+// What is STILL deliberately NOT here:
 //   • no percentages (the denominator differs per channel — `:443`);
-//   • no reconstructed message body. The mock's "המייל שנשלח" panel (`:394-404`) is a REBUILD from
-//     template + data, and V1 does not store per-recipient as-sent values (CONTRACT D5/§9). Offering
-//     the button and rendering an invented email would be the strongest possible over-claim, so the
-//     message level is opened only when the caller says a stored message exists.
+//   • no reconstructed message body, and no preview button — deferred by Idan's explicit decision,
+//     so no preview token is minted from this screen. The message drawer level is opened only when
+//     the caller says a stored message exists.
 // ═══════════════════════════════════════════════════════════════════════════════════════════
 
 import React from 'react';
@@ -27,6 +40,7 @@ import {
     SS,
     SendSearchRow,
     SendProvenanceRow,
+    SendRowValue,
     StateTone,
     camelCaseState,
     deliveryTone,
@@ -51,6 +65,16 @@ interface Props {
     // ("the mapping was not touched, so this IS the version that was sent"). Asserting that from a
     // request that never returned is the confident-lie failure mode, so the two cases are separated.
     provenanceError?: string | null;
+    // ── the values this recipient actually received (GET api/SendSearch/RowValues) ───────────
+    // Three props, not one, for the same reason provenance needs three: an empty list means
+    // something ("the campaign has no token mapping"), a failed fetch means something else
+    // ("we do not know"), and neither may be rendered as the other.
+    rowValues?: SendRowValue[];
+    rowValuesLoading?: boolean;
+    rowValuesError?: string | null;
+    // The ClientID the loaded values belong to. The store holds ONE slot; if it is not this
+    // recipient's, the list is not rendered at all — see `valuesUnavailable` below.
+    rowValuesClientId?: number | null;
 }
 
 const Card: React.FC<{ title?: string; children: React.ReactNode }> = ({ title, children }) => (
@@ -74,8 +98,30 @@ const Kv: React.FC<{ label: string; children: React.ReactNode }> = ({ label, chi
     </Box>
 );
 
-const AgentDrawer: React.FC<Props> = ({ row, provenance, provenanceLoading, provenanceError }) => {
+const AgentDrawer: React.FC<Props> = ({
+    row, provenance, provenanceLoading, provenanceError,
+    rowValues, rowValuesLoading, rowValuesError, rowValuesClientId,
+}) => {
     const { t } = useTranslation();
+
+    const values: SendRowValue[] = rowValues ?? [];
+    // The recipient has a source row in the sent version. `HasRow` is a per-CLIENT fact that the SP
+    // repeats on every returned row, so `some` and `every` agree in practice; `some` is used because
+    // the failure it guards against is rendering blanks, and one real row is enough to justify the
+    // table. FALSE (or an empty list) ⇒ the sender emitted empty strings for every token, and the
+    // card must say so in words instead of printing a column of blanks.
+    const hasSourceRow = values.some((v) => v.HasRow);
+    // The row-values fetch is keyed on ClientID. A row that arrived without one — an older server
+    // that does not yet project it (B.2) — means the fetch was never dispatched, which is "we did
+    // not ask", NOT "the recipient received nothing". Rendering the no-values sentence for it would
+    // assert the second from the first, so it degrades to the load-failure line instead: the
+    // conservative end, claiming nothing about the data.
+    //
+    // The second half is the anti-staleness guard: the slice holds ONE values slot, so a slot that
+    // belongs to a different ClientID must not be rendered under this name. In practice the two
+    // dispatches (push the drawer, fetch the values) happen in the same handler, so the id is
+    // already this recipient's by first paint; the guard is for every path that does not fetch.
+    const valuesUnavailable = !row.ClientID || row.ClientID <= 0 || rowValuesClientId !== row.ClientID;
 
     const attempts = rowAttempts(row);
     // NARROWED FIRST — the verdict must be built from the same narrowed value the channel lines
@@ -206,6 +252,51 @@ const AgentDrawer: React.FC<Props> = ({ row, provenance, provenanceLoading, prov
                         </Box>
                     </Kv>
                 ))}
+            </Card>
+
+            {/* ── the values this recipient actually received (GET api/SendSearch/RowValues) ──
+                Read from the LOCKED source version that was sent, not rebuilt from the template —
+                see the reversal note in the header. Order is the SERVER's (the SP already sorts by
+                tm.DisplayOrder, tm.TokenMapID); this must never re-sort, or the card stops matching
+                the mapping screen the operator has open beside it.
+                NO preview button: deferred by decision, so this screen mints no preview token. */}
+            <Card title={t(`${SS}drawer.rowValues`)}>
+                {rowValuesLoading && <CircularProgress size={18} />}
+                {!rowValuesLoading && (!!rowValuesError || valuesUnavailable) && (
+                    // Could not load, or was never asked. Say THAT — never the no-values sentence
+                    // below, which is a positive claim about data we do not have. Reuses the
+                    // screen's existing `error.loadFailed` string rather than minting a key the
+                    // JSON does not carry, exactly as the provenance card above does.
+                    <Typography component="div" style={{ fontSize: 13.5, color: '#B42318', fontWeight: 700 }}>
+                        {/* Both keys already exist in all three locales. The permission case gets its
+                            own sentence because "you may not see recipient data" and "loading failed"
+                            send the operator to two different places, and only one of them is a bug. */}
+                        {t(rowValuesError === 'PERMISSION_DENIED'
+                            ? `${SS}error.permissionDenied`
+                            : `${SS}error.loadFailed`)}
+                    </Typography>
+                )}
+                {!rowValuesLoading && !rowValuesError && !valuesUnavailable && !hasSourceRow && (
+                    // HasRow = false, or an empty list (the campaign carries no token mapping).
+                    // Both mean the same thing to the operator on the phone: nothing personal was
+                    // filled in for this person. NO value rows are rendered in this branch — a
+                    // column of blanks would read as "we sent them empty text on purpose".
+                    <Typography component="div" style={{ fontSize: 13.5, color: '#5b6b7b' }}>
+                        {t(`${SS}drawer.noRowValues`)}
+                    </Typography>
+                )}
+                {!rowValuesLoading && !rowValuesError && !valuesUnavailable && hasSourceRow
+                    && values.map((v, i) => (
+                        <Kv key={`${v.Token}-${i}`} label={v.Token}>
+                            {/* An em-dash, never an empty cell: a token that genuinely resolved to
+                                '' is a real fact about the send, and a blank <Box> is indistinguishable
+                                from a rendering bug. `direction: ltr` because the values are IDs,
+                                policy numbers and dates — RTL would reorder their digits on screen. */}
+                            <Typography component="span" style={{ fontWeight: 700, direction: 'ltr' }}>
+                                {(v.Value || '').trim() !== '' ? v.Value : '—'}
+                            </Typography>
+                        </Kv>
+                    ))}
             </Card>
         </>
     );

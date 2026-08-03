@@ -31,7 +31,9 @@ export enum eFormatHint {
     PERCENT = 2
 }
 
-// 3/4 exist in the DB for enrichment; the wizard v1 only emits 0-2.
+// All five values are emitted by the upload wizard. 3/4 drive the client FirstName/LastName
+// enrichment on match (DataSourceVersions.UpdateClientNames / OverwriteClientNames) — they are NOT
+// identity/matching roles, matching still happens on email (1) and cellphone (2) only.
 export enum eSemanticRole {
     NONE = 0,
     RECIPIENT_EMAIL = 1,

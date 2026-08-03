@@ -99,6 +99,8 @@
   "drawer": {
     "sendDetails": "Szczegóły wysyłki",
     "provenance": "Która wersja została wysłana",
+    "rowValues": "Wartości wysłane do tego odbiorcy",
+    "noRowValues": "Dla tego odbiorcy nie wysłano wiersza źródłowego — tokeny zostały wysłane puste",
     "coverage": "Zasięg wysyłki zbiorczej",
     "coverageCaveat": "To liczby, nie procenty: e-mail nie ma potwierdzenia doręczenia, SMS nie ma wskaźnika otwarć, a odbiorca mógł zostać osiągnięty w więcej niż jednym kanale — mianownik jest inny dla każdego kanału.",
     "rosterReconstructed": "Ta lista odbiorców została odtworzona z bieżącego mapowania i nie jest zapisem tego, do kogo faktycznie wysłano."

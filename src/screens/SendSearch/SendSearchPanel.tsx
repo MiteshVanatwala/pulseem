@@ -24,7 +24,7 @@ import { useTranslation } from 'react-i18next';
 import { Loader } from '../../components/Loader/Loader';
 import InlineBanner from '../SmartSend/components/InlineBanner';
 import {
-    searchSends, getSendProvenance,
+    searchSends, getSendProvenance, getSendRowValues,
     setFilters, setPageIndex, setPageSize, clearFilters,
     pushDrawer, popDrawer, closeDrawer,
 } from '../../redux/reducers/sendSearchSlice';
@@ -109,6 +109,20 @@ const SendSearchPanel: React.FC<Props> = ({ showTitle }) => {
     const rowByKey = (rowKey: string): SendSearchRow | null =>
         items.filter((r) => sendSearchRowKey(r) === rowKey)[0] ?? null;
 
+    // GET api/SendSearch/RowValues for ONE recipient. Guarded on ClientID because the field is new
+    // (B.2 adds it to dbo.DataSources_SearchSends): against a server that has not been deployed yet
+    // the value is `undefined`, and dispatching would send `clientId=undefined` for the API to answer
+    // 400. Not dispatching leaves the drawer's own `valuesUnavailable` branch to say "could not
+    // load" — which is the truth — instead of the no-values sentence, which would be a claim.
+    const fetchRowValues = (row: SendSearchRow) => {
+        if (!row.ClientID || row.ClientID <= 0) return;
+        dispatch(getSendRowValues({
+            campaignId: row.ChannelCampaignID,
+            clientId: row.ClientID,
+            channel: row.Channel,
+        }));
+    };
+
     const openRow = (row: SendSearchRow) => {
         // A supervisor / roll-up recipient opens the ROLL-UP level; everyone else opens the agent level.
         const level = row.IsSupervisor ? 'rollup' : 'agent';
@@ -124,6 +138,9 @@ const SendSearchPanel: React.FC<Props> = ({ showTitle }) => {
         // The per-campaign provenance history backs the drawer's version card. Fetched on open, not
         // with the grid: it is one request per opened row instead of one per page of rows.
         dispatch(getSendProvenance({ campaignId: row.ChannelCampaignID, channel: row.Channel }));
+        // The values card lives in AgentDrawer only, so the roll-up level does not pay for a request
+        // it will not render. `fetchRowValues` guards the ClientID.
+        if (level === 'agent') fetchRowValues(row);
     };
 
     // Roster row → push the agent level ON TOP of the roll-up (Mock-v3:473 `pushAgent`). The
@@ -138,6 +155,12 @@ const SendSearchPanel: React.FC<Props> = ({ showTitle }) => {
             Subtitle: row.RecipientEmail || null,
             Channel: null,
         } as DrawerEntry));
+        // MANDATORY here, not only in openRow: the roll-up and the agent share a campaign, so the
+        // provenance already in the store is still correct — but the values are per PERSON. Without
+        // this dispatch the agent pushed from the roster would render the SUPERVISOR's ID numbers
+        // under the agent's name, which is a confident lie of exactly the kind this drawer exists
+        // to prevent.
+        fetchRowValues(row);
     };
 
     // The recipients a roll-up covered. §3.2 gives a report row only `SupervisorName` — a STRING; there
@@ -175,6 +198,15 @@ const SendSearchPanel: React.FC<Props> = ({ showTitle }) => {
                 provenance={sendSearch.provenance ?? []}
                 provenanceLoading={!!sendSearch.provenanceLoading}
                 provenanceError={sendSearch.provenanceError ?? null}
+                rowValues={sendSearch.rowValues ?? []}
+                rowValuesLoading={!!sendSearch.rowValuesLoading}
+                rowValuesError={sendSearch.rowValuesError ?? null}
+                // WHOSE values are in the store. The slice has ONE slot, and the drawer refuses to
+                // render it unless it belongs to the recipient on screen: someone else's ID and
+                // policy numbers under this person's name are indistinguishable, on screen, from
+                // the truth. A mismatch also covers "the fetch was never dispatched", which the
+                // drawer must report as unknown rather than as "nothing was sent".
+                rowValuesClientId={sendSearch.rowValuesClientId ?? null}
             />
         );
     };

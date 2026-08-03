@@ -22,6 +22,7 @@ import {
     SendSearchRequest,
     SendSearchFilters,
     SendProvenanceRow,
+    SendRowValue,
     DrawerEntry,
     MAX_DRAWER_DEPTH,
     defaultSendSearchFilters,
@@ -53,6 +54,20 @@ interface SendSearchState {
     // version that was sent" — a positive claim about the data, asserted from a request that never
     // came back. That is the same over-claim as a blank version cell, only worse: it is confident.
     provenanceError: string | null;
+    // ── per-recipient sent values (GET api/SendSearch/RowValues) ─────────────────────────────
+    // Same three-field shape as provenance above, for the same three reasons: its own loading flag
+    // so it never blanks the grid behind it, its own error flag so a FAILED fetch is not read as
+    // "this recipient received nothing", and its own identity field so "not fetched yet" is
+    // distinguishable from "fetched and genuinely empty".
+    rowValues: SendRowValue[];
+    rowValuesLoading: boolean;
+    rowValuesError: string | null;
+    // The ClientID whose values are currently loaded. Provenance keys on campaign; this keys on the
+    // PERSON, because that is what changes when the user pops the roll-up drawer and opens a second
+    // agent from the roster — the campaign is identical, the recipient is not. Without it the second
+    // agent's card would show the first agent's values, which is the exact confident-lie failure this
+    // card exists to prevent.
+    rowValuesClientId: number | null;
 }
 
 // ── Thunks ───────────────────────────────────────────────────────────────────────────────────
@@ -81,6 +96,23 @@ export const getSendProvenance = createAsyncThunk(
         }
     });
 
+// GET api/SendSearch/RowValues?campaignId=&clientId=&channel=  →  Data: List<SendRowValue>  (B.3)
+// Cloned from getSendProvenance above, deliberately verbatim in shape: same `.get` + `params`, same
+// `return response.data`, same rejectWithValue. The only difference is the third param — this asks
+// about a PERSON inside a campaign, provenance asks about the campaign.
+export const getSendRowValues = createAsyncThunk(
+    'SendSearch/RowValues',
+    async (arg: { campaignId: number; clientId: number; channel: eSendChannel }, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.get(`${api}RowValues`, {
+                params: { campaignId: arg.campaignId, clientId: arg.clientId, channel: arg.channel }
+            });
+            return response.data;
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    });
+
 // ── Slice ────────────────────────────────────────────────────────────────────────────────────
 
 const initialState: SendSearchState = {
@@ -95,6 +127,20 @@ const initialState: SendSearchState = {
     searchReqId: '',
     provenanceCampaignId: null,
     provenanceError: null,
+    rowValues: [],
+    rowValuesLoading: false,
+    rowValuesError: null,
+    rowValuesClientId: null,
+};
+
+// One definition of "forget the recipient's values", shared by `closeDrawer`, `popDrawer` (last
+// level) and `clearRowValues`, so the four fields can never be reset in three slightly different
+// ways. Takes the Immer draft; mutates it in place, exactly as the reducers do.
+const clearRowValuesState = (state: SendSearchState) => {
+    state.rowValues = [];
+    state.rowValuesClientId = null;
+    state.rowValuesLoading = false;
+    state.rowValuesError = null;
 };
 
 export const sendSearchSlice = createSlice({
@@ -132,16 +178,34 @@ export const sendSearchSlice = createSlice({
         // (Mock-v3:353 `popD`).
         popDrawer: (state) => {
             state.drawerStack.pop();
+            // Popping the LAST level is a close, so the same cleanup runs. Popping an inner level is
+            // not: the level underneath is a different person and re-reads its own values on open.
+            if (state.drawerStack.length === 0) clearRowValuesState(state);
         },
         // Scrim click / ✕ closes ALL levels (Mock-v3:354 `closeD`).
         closeDrawer: (state) => {
             state.drawerStack = [];
+            // The values card is about ONE recipient. Left in the store, it is the next drawer's
+            // first paint — someone else's ID numbers and policy numbers under this person's name,
+            // for as long as the new fetch is in flight. Cleared here rather than only in the
+            // thunk's `pending`, because the next drawer may never fire a fetch at all (a row with
+            // no ClientID) and would then render the previous recipient's values indefinitely.
+            clearRowValuesState(state);
         },
         clearProvenance: (state) => {
             state.provenance = [];
             state.provenanceCampaignId = null;
             state.provenanceLoading = false;
             state.provenanceError = null;
+        },
+        // The twin of `clearProvenance`, kept for callers that need to drop the values without
+        // touching the drawer stack. NOTE: unlike `clearProvenance` — which is exported but
+        // dispatched nowhere in the repo, so provenance is in practice only ever reset by the next
+        // fetch's `pending` — the row-values cleanup ALSO runs from `closeDrawer`/`popDrawer` above.
+        // Mirroring `clearProvenance` exactly would have produced a cleanup that never runs, and
+        // B.4 requires the values to be cleared when the drawer closes.
+        clearRowValues: (state) => {
+            clearRowValuesState(state);
         },
     },
     extraReducers: (builder) => {
@@ -208,12 +272,48 @@ export const sendSearchSlice = createSlice({
             state.provenance = [];
             state.provenanceError = action.payload?.error ?? action.error?.message ?? 'PROVENANCE_FAILED';
         });
+
+        // Row values (drawer) — same three-case shape as provenance, same reasons.
+        builder.addCase(getSendRowValues.pending, (state, action: any) => {
+            state.rowValuesLoading = true;
+            state.rowValuesClientId = action.meta.arg?.clientId ?? null;
+            // Cleared on PENDING, not only on fulfilled: the previous recipient's values must not
+            // stay on screen under the new recipient's name while the request is in flight.
+            state.rowValues = [];
+            state.rowValuesError = null;
+        });
+        builder.addCase(getSendRowValues.fulfilled, (state, action: any) => {
+            state.rowValuesLoading = false;
+            if (action.payload?.StatusCode === 405) {
+                // eSubUserPermissions.HideRecipietns. This endpoint returns raw recipient data, so it
+                // is gated where Provenance is not (B.3). Surfaced as its own value rather than as a
+                // generic failure: "you may not see recipient data" and "the request broke" are
+                // different facts, and the card must not tell the operator to go debug a working
+                // system. It is emphatically NOT the empty branch — that one asserts something about
+                // the DATA, and we were told nothing about the data.
+                state.rowValues = [];
+                state.rowValuesError = 'PERMISSION_DENIED';
+                return;
+            }
+            state.rowValues = action.payload?.Data ?? [];
+            // A 200 whose body carries no `Data` at all is a failure that did not throw. An empty
+            // ARRAY is a legitimate answer (the campaign has no token mapping, B.1) and leaves the
+            // flag null so the card can say so in words.
+            state.rowValuesError = action.payload && 'Data' in action.payload && action.payload.Data != null
+                ? null
+                : (action.payload?.Message ?? 'ROWVALUES_FAILED');
+        });
+        builder.addCase(getSendRowValues.rejected, (state, action: any) => {
+            state.rowValuesLoading = false;
+            state.rowValues = [];
+            state.rowValuesError = action.payload?.error ?? action.error?.message ?? 'ROWVALUES_FAILED';
+        });
     }
 });
 
 export const {
     setFilters, setPageIndex, setPageSize, clearFilters,
-    pushDrawer, popDrawer, closeDrawer, clearProvenance,
+    pushDrawer, popDrawer, closeDrawer, clearProvenance, clearRowValues,
 } = sendSearchSlice.actions;
 
 export default sendSearchSlice.reducer;
