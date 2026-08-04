@@ -51,7 +51,7 @@ import Toast from '../Toast/Toast.component';
 import ContactUsDialog from '../EmailPlans/ContactUsDialog';
 import BillingSettings from '../BillingSettings/BillingSettings';
 
-const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false, isBankTransferForTiers = false  }: any) => {
+const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false, isBankTransferForTiers = false, onCancelClick = undefined }: any) => {
   const { t, i18n } = useTranslation();
   const dispatch = useDispatch();
   const [activeStep, setActiveStep] = useState(0);
@@ -307,10 +307,23 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false, isBankT
               displayPrice = emailPriceTier.Price;
             }
           }
-          // Determine if the plan is lower than the current plan
-          const currentLevel = currentPlan?.Level ?? currentPlan?.level ?? currentPlan?.Id ?? 0;
+          // Determine if the plan is lower than the current plan.
+          // For Email With Tier, "lower" only makes sense once the account is already
+          // subscribed to an Email With Tier plan (existingPlan) - compare against THAT,
+          // not the account's unrelated product-10 tier (currentPlan). A fresh account
+          // (e.g. Starter on product 10, no EWT subscription yet) must be able to pick
+          // ANY tier - including Starter - as their first Email With Tier purchase.
           const planLevel = plan.Level ?? plan.level ?? plan.Id ?? 0;
-          const isLowerPlan = planLevel <= currentLevel;
+          let isLowerPlan = false;
+          if (isEmailMarketing) {
+            if (existingPlan) {
+              const currentEmailLevel = existingPlan?.AccountCategoryFeatureTier_Id ?? 0;
+              isLowerPlan = planLevel <= currentEmailLevel;
+            }
+          } else {
+            const currentLevel = currentPlan?.Level ?? currentPlan?.level ?? currentPlan?.Id ?? 0;
+            isLowerPlan = planLevel <= currentLevel;
+          }
           return (
             <Grid item xs={12} sm={6} md={3} key={plan.Id}>
               <Box 
@@ -1023,6 +1036,27 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false, isBankT
         onClose={handleClose}
         onCancel={handleClose}
         showDefaultButtons={false}
+        renderTitle={() => (
+          <Box style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <Typography className={clsx(classes?.dialogTitle)}>
+              {t('billing.tier.ui.upgradeYourPlan')}
+            </Typography>
+            {/* Cancel Email With Tier subscription: lives here (top-right of the tier/band popup),
+                deliberately separate from the per-plan "Choose X" / Upgrade buttons below, and only
+                shown once the account already has an active Email With Tier subscription. */}
+            {isEmailMarketing && existingPlan && activeStep === 0 && onCancelClick && (
+              <Button
+                variant="outlined"
+                color="primary"
+                size="small"
+                className={clsx(classes.btn, classes.btnRounded, classes.tierPlanBtn, classes.marginSides5)}
+                onClick={onCancelClick}
+              >
+                {t('common.cancel')}
+              </Button>
+            )}
+          </Box>
+        )}
         renderButtons={() => (
           <Box style={{ padding: '8px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <Box>

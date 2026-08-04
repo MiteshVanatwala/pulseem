@@ -560,21 +560,7 @@ const BulkStatus = ({ classes }) => {
                                   >
                                     {t('billing.tier.steps.upgrade')}
                                   </Button>
-                                  <Button
-                                    variant="outlined"
-                                    color="primary"
-                                    className={clsx(
-                                      classes.btn,
-                                      classes.btnRounded,
-                                      classes.marginSides5,
-                                      classes.tierPlanBtn
-                                    )}
-                                    onClick={() => {
-                                      setIsOpenCancelConfirmDialog(true);
-                                    }}
-                                  >
-                                    {t('common.cancel')}
-                                  </Button>
+                                  {/* Cancel moved into the TierPlans (tier & band) popup, top-right - see onCancelClick prop below */}
                                 </Grid>
                               </Grid>
                             </>
@@ -782,6 +768,7 @@ const BulkStatus = ({ classes }) => {
         }}
         isEmailMarketing={true}
         isBankTransferForTiers={Newsletters?.IsBankTransferForTiers}
+        onCancelClick={() => setIsOpenCancelConfirmDialog(true)}
       />
         <PayPerRecipientNew
           classes={classes}
