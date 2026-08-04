@@ -88,6 +88,7 @@ import AffiliateProgram from './screens/Affiliate/Management/AffiliateProgram';
 import AccountUsers from './screens/AccountUsers/AccountUsers';
 import TermsOfUsePage from './screens/TermsOfUse/TermsOfUsePage';
 import SubUsers from './screens/UsersAndPermissions/SubUsers';
+import Teams from './screens/UsersAndPermissions/Teams';
 import WhatsappOnBoarding from './screens/Whatsapp/OnBoarding/WhatsappOnBoarding';
 import SubUserConfirmationPage from './screens/UsersAndPermissions/SubUserConfirmationPage';
 import { Loader } from './components/Loader/Loader';
@@ -586,6 +587,10 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
       <Route
         path={`${sitePrefix}SubUsers`}
         element={<SubUsers classes={classes} />}
+      />
+      <Route
+        path={`${sitePrefix}Teams`}
+        element={<Teams classes={classes} />}
       />
       {/* Support */}
       <Route

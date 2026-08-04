@@ -21,9 +21,10 @@ interface TeamFormDialogProps {
     editRecord?: Team | null;
     availableAgents: AvailableAgent[];
     isSaving?: boolean;
+    rosterTruncated?: boolean;
 }
 
-const TeamFormDialog = ({ classes, isOpen, onClose, onSaved, editRecord = null, availableAgents, isSaving = false }: TeamFormDialogProps) => {
+const TeamFormDialog = ({ classes, isOpen, onClose, onSaved, editRecord = null, availableAgents, isSaving = false, rosterTruncated = false }: TeamFormDialogProps) => {
     const { t } = useTranslation();
     const { isRTL } = useSelector((state: any) => state.core);
     const [name, setName] = useState<string>('');
@@ -32,7 +33,7 @@ const TeamFormDialog = ({ classes, isOpen, onClose, onSaved, editRecord = null, 
 
     useEffect(() => {
         if (isOpen && editRecord) {
-            setName(editRecord.Name);
+            setName(editRecord.TeamName);
             setSelectedAgentIds(editRecord.AgentIds || []);
             setNameError('');
         }
@@ -58,10 +59,14 @@ const TeamFormDialog = ({ classes, isOpen, onClose, onSaved, editRecord = null, 
             setNameError(t('SubUsers.teams.nameRequired'));
             return;
         }
+        if (trimmedName.length > TEAM_NAME_MAX_LENGTH) {
+            setNameError(t('SubUsers.teams.nameTooLong'));
+            return;
+        }
         setNameError('');
         onSaved({
-            ...(editRecord ? { Id: editRecord.Id } : {}),
-            Name: trimmedName,
+            ...(editRecord ? { TeamID: editRecord.TeamID } : {}),
+            TeamName: trimmedName,
             AgentIds: selectedAgentIds,
         });
     };
@@ -74,7 +79,7 @@ const TeamFormDialog = ({ classes, isOpen, onClose, onSaved, editRecord = null, 
             onClose={onClose}
             onCancel={onClose}
             renderButtons={() => (
-                <Grid container spacing={2} className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}>
+                <Grid container spacing={2} style={{ width: '100%', margin: 0 }} className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}>
                     <Grid item>
                         <Button
                             disabled={isSaving}
@@ -95,7 +100,7 @@ const TeamFormDialog = ({ classes, isOpen, onClose, onSaved, editRecord = null, 
                 </Grid>
             )}
         >
-            <Grid container spacing={2}>
+            <Grid container spacing={2} style={{ width: '100%', margin: 0 }}>
                 <Grid item xs={12}>
                     <TextField
                         fullWidth
@@ -110,23 +115,52 @@ const TeamFormDialog = ({ classes, isOpen, onClose, onSaved, editRecord = null, 
                     />
                 </Grid>
                 <Grid item xs={12}>
-                    <Typography>{t('SubUsers.teams.agentsLabel')}</Typography>
-                    <Box style={{ maxHeight: 240, overflowY: 'auto' }}>
+                    <Grid container justifyContent="space-between" alignItems="center">
+                        <Grid item>
+                            <Typography>{t('SubUsers.teams.agentsLabel')}</Typography>
+                        </Grid>
+                        {selectedAgentIds.length > 0 && (
+                            <Grid item>
+                                <Typography variant="caption" color="textSecondary">
+                                    {`${selectedAgentIds.length} ${t('SubUsers.teams.selected')}`}
+                                </Typography>
+                            </Grid>
+                        )}
+                    </Grid>
+                    {rosterTruncated && (
+                        <Typography variant="caption" color="textSecondary">
+                            {t('SubUsers.teams.rosterTruncated')}
+                        </Typography>
+                    )}
+                    <Box
+                        style={{
+                            maxHeight: 240,
+                            overflowY: 'auto',
+                            overflowX: 'hidden',
+                            border: '2px solid #F0F5FF',
+                            borderRadius: 12,
+                            marginTop: 8,
+                            padding: availableAgents.length === 0 ? 16 : 8,
+                        }}
+                    >
                         {availableAgents.length === 0 ? (
                             <Typography>{t('SubUsers.teams.noAgents')}</Typography>
                         ) : (
-                            availableAgents.map((agent) => (
-                                <FormControlLabel
-                                    key={agent.id}
-                                    control={
-                                        <Checkbox
-                                            checked={selectedAgentIds.includes(agent.id)}
-                                            onChange={() => toggleAgent(agent.id)}
+                            <Grid container spacing={1} style={{ width: '100%', margin: 0 }}>
+                                {availableAgents.map((agent) => (
+                                    <Grid item xs={12} sm={6} key={agent.id}>
+                                        <FormControlLabel
+                                            control={
+                                                <Checkbox
+                                                    checked={selectedAgentIds.includes(agent.id)}
+                                                    onChange={() => toggleAgent(agent.id)}
+                                                />
+                                            }
+                                            label={agent.name}
                                         />
-                                    }
-                                    label={agent.name}
-                                />
-                            ))
+                                    </Grid>
+                                ))}
+                            </Grid>
                         )}
                     </Box>
                 </Grid>

@@ -58,7 +58,7 @@ export const getTeams = createAsyncThunk(
       const response = await PulseemReactInstance.get(`Team/GetAll`);
       return response.data as PulseemResponse;
     } catch (error: any) {
-      return thunkAPI.rejectWithValue({ error: error.message });
+      return thunkAPI.rejectWithValue({ error: error.Message || error.message });
     }
   }
 );
@@ -70,7 +70,7 @@ export const saveTeam = createAsyncThunk(
       const response = await PulseemReactInstance.post(`Team/CreateOrEdit`, payload);
       return response.data as PulseemResponse;
     } catch (error: any) {
-      return thunkAPI.rejectWithValue({ error: error.message });
+      return thunkAPI.rejectWithValue({ error: error.Message || error.message });
     }
   }
 );
@@ -82,7 +82,7 @@ export const deleteTeam = createAsyncThunk(
       const response = await PulseemReactInstance.delete(`Team/Delete/${teamId}`);
       return response.data as PulseemResponse;
     } catch (error: any) {
-      return thunkAPI.rejectWithValue({ error: error.message });
+      return thunkAPI.rejectWithValue({ error: error.Message || error.message });
     }
   }
 );
@@ -128,7 +128,11 @@ const SubUserSlice = createSlice({
     });
     builder.addCase(getTeams.fulfilled, (state, { payload }) => {
       state.teamsLoading = false;
-      state.teams = payload?.Data || [];
+      if (payload?.StatusCode === 201) {
+        state.teams = payload?.Data || [];
+      } else {
+        state.teamsError = payload?.Message || null;
+      }
     });
     builder.addCase(getTeams.rejected, (state, action: any) => {
       state.teamsLoading = false;
