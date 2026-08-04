@@ -13,10 +13,10 @@ import { Loader } from '../../../components/Loader/Loader';
 import Toast from '../../../components/Toast/Toast.component';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { errorToastData, resetToastData, successToastData, WHATSAPP_ONBOARDING_STATUS } from '../Constant';
-import { Badge, Box, Button, Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@material-ui/core';
+import { Badge, Box, Button, Grid, Switch, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@material-ui/core';
 import { Title } from '../../../components/managment/Title';
 import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
-import { facebookLogin, getMetaPhoneNumbers, getWhatsAppCodeVirtualNumbers, getWhatsAppSMSVirtualNumbers, MetaPhoneRegister } from '../../../redux/reducers/whatsappOnBoardingSlice';
+import { facebookLogin, getMetaPhoneNumbers, getWhatsAppCodeVirtualNumbers, getWhatsAppSMSVirtualNumbers, MetaPhoneRegister, setCoexistenceMode } from '../../../redux/reducers/whatsappOnBoardingSlice';
 import { PulseemResponse } from '../../../Models/APIResponse';
 import { flatten, get } from 'lodash';
 import { IsValidPhoneNumberKeyPress } from '../../../helpers/Utils/Validations';
@@ -54,13 +54,15 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 		pin: '',
 		pinError: ''
 	});
-	const [phoneNumberId, setPhoneNumberId] = useState('');
-	const [wabaId, setWabaId] = useState('');
-	const [code, setCode] = useState('');
+  const [phoneNumberId, setPhoneNumberId] = useState('');
+  const [wabaId, setWabaId] = useState('');
+  const [code, setCode] = useState('');
+  const [isCoexistenceFlow, setIsCoexistenceFlow] = useState<boolean>(false);
 
-	const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot }
-	const cellStyle = { head: classes.tableCellHead, body: classes.tableCellBody, root: classes.tableCellRoot }
 
+  const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot }
+  const cellStyle = { head: classes.tableCellHead, body: classes.tableCellBody, root: classes.tableCellRoot }
+  
 	useEffect(() => {
 		if (WhatsAppPlatformID !== WhatsAppPlatformIDEnum.TWILLIO) {
 			fetchMetaPhoneNumbers();
@@ -83,11 +85,14 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 	}, [phoneNumberId, wabaId, code]);
 
 	const FBlogin = async () => {
-		const resp = await dispatch(facebookLogin({
+		const payload = {
 			phone_number_id: phoneNumberId,
 			waba_id: wabaId,
-			code: code
-		})) as any;
+			code: code,
+			isCoexistence: isCoexistenceFlow
+		};
+		console.log('[SaveWhatsappMetaClients] Calling API with payload:', payload);
+		const resp = await dispatch(facebookLogin(payload)) as any;
 		handleFBloginResponse(resp?.payload as PulseemResponse)
 	}
 
@@ -96,8 +101,11 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 		if (StatusCode === 1) {
 			setToastMessage({
 				...successToastData,
-				message: t('WhatsappOnBoarding.phoneNumberRegistered')
+				message: isCoexistenceFlow
+					? t('WhatsappOnBoarding.coexistenceSyncStarted')
+					: t('WhatsappOnBoarding.phoneNumberRegistered')
 			});
+			setIsCoexistenceFlow(false);
 			fetchMetaPhoneNumbers();
 		} else {
 			setToastMessage({
@@ -106,6 +114,22 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 			});
 		}
 	}
+
+	const handleCoexistenceToggle = async (messageServiceId: string, phoneNumber: string, enabled: boolean) => {
+		// Optimistic update
+		setPhoneNumbers(prev => prev.map(p => p.id === messageServiceId ? { ...p, isCoexistenceEnabled: enabled } : p));
+		const resp = await dispatch(setCoexistenceMode({
+			enable: enabled,
+			phone_number: phoneNumber,
+			message_service_id: messageServiceId
+		})) as any;
+		const payload = resp?.payload as PulseemResponse;
+		if (payload?.StatusCode !== 1) {
+			// Revert on failure
+			setPhoneNumbers(prev => prev.map(p => p.id === messageServiceId ? { ...p, isCoexistenceEnabled: !enabled } : p));
+			setToastMessage({ ...errorToastData, message: payload?.Message || t('common.Error') });
+		}
+	};
 
 	const fetchMetaPhoneNumbers = async () => {
 		const resp = await dispatch(getMetaPhoneNumbers({})) as any;
@@ -135,7 +159,7 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 			const {
 				businessInfo, phoneNumbers
 			} = Data;
-			setBusinessInfo(businessInfo);
+			setBusinessInfo({ ...businessInfo, business_verification_status: businessInfo?.business_verification_status || 'pending' });
 			setPhoneNumbers(phoneNumbers);
 		} else if (StatusCode === 4) {
 		}
@@ -216,36 +240,47 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 					const { phone_number_id, waba_id } = data.data;
 					setPhoneNumberId(phone_number_id);
 					setWabaId(waba_id);
-				} else if (data.event === 'CANCEL' || data.event === 'ERROR') {
+        } else if (data.event === 'FINISH_WHATSAPP_BUSINESS_APP_ONBOARDING') {
+          const { phone_number_id, waba_id } = data.data;
+					console.log('[Coexistence] FINISH_WHATSAPP_BUSINESS_APP_ONBOARDING received from Meta:', {
+						phone_number_id,
+						waba_id,
+						full_payload: data
+					});
+					setIsCoexistenceFlow(true);
+					setPhoneNumberId(phone_number_id);
+					setWabaId(waba_id);
+        } else if (data.event === 'CANCEL' || data.event === 'ERROR') {
 					setPhoneNumberId('');
 					setWabaId('');
-				}
-			}
-		} catch (error) {
-			console.log('Non JSON Responses', event.data);
-		}
-	};
-
-	const fbLoginCallback = (response: any) => {
+					setIsCoexistenceFlow(false);
+        }
+      }
+    } catch (error) {
+      console.log('Non JSON Responses', event.data);
+    }
+  };
+ 
+  const fbLoginCallback = (response: any) => {
 		if (response.authResponse) {
 			const code = response.authResponse.code;
 			setCode(code);
 		}
 	};
 
-	const launchWhatsAppSignup = () => {
-		// @ts-ignore
-		window?.FB?.login(fbLoginCallback, {
-			config_id: '1240808773727236', // configuration ID goes here
-			response_type: 'code', // must be set to 'code' for System User access token
-			override_default_response_type: true, // when true, any response types passed in the "response_type" will take precedence over the default types
-			extras: {
-				setup: {},
-				featureType: '',
-				sessionInfoVersion: '2',
-			},
-		});
-	};
+	const launchWhatsAppSignup = (coexistenceMode: boolean = false) => {
+    // @ts-ignore
+    window?.FB?.login(fbLoginCallback, {
+      config_id: '1240808773727236',
+      response_type: 'code',
+      override_default_response_type: true,
+      extras: {
+        setup: {},
+        featureType: coexistenceMode ? 'whatsapp_business_app_onboarding' : '',
+        sessionInfoVersion: '3',
+      },
+    });
+  };
 
 	const renderPhoneNumbersTableBody = () => {
 		return (
@@ -258,36 +293,36 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 	}
 
 	const renderPhoneNumbersPhoneRow = (row: phoneNumbersInterface) => {
-		return (
-			<>
-				<TableRow
-					key={row.id}
-					component='div'
-					classes={rowStyle}
-				>
-					<TableCell style={{ flex: 1 }} classes={{ root: clsx(classes.tableCellRoot, classes.p10) }} className={classes.p20}>
-						<Box className={clsx(classes.justifyBetween, classes.pb5)}>
-							<Box className={clsx(classes.dFlex, classes.f18)}>
+    return (
+      <>
+        <TableRow
+          key={row.id}
+          component='div'
+          classes={rowStyle}
+        >
+          <TableCell style={{ flex: 1 }} classes={{ root: clsx(classes.tableCellRoot, classes.p10) }} className={classes.p20}>
+            <Box className={clsx(classes.justifyBetween, classes.pb5)}>
+              <Box className={clsx(classes.dFlex, classes.f18)}>
 								<Typography className={clsx(classes.f18, classes.bold, classes.pe15)}>
 									{t("WhatsappOnBoarding.ID")}:
 								</Typography>
 								<Typography className={classes.f18}>
 									{row?.id}
 								</Typography>
-							</Box>
-							<Box className={clsx(classes.dInlineBlock, classes.textCapitalize, classes.flexColCenter, classes.ml10)}>
+              </Box>
+              <Box className={clsx(classes.dInlineBlock, classes.textCapitalize)}>
 								{renderPhoneNumberStatus(row)}
-							</Box>
-						</Box>
+              </Box>
+            </Box>
 						<Box className={classes.dFlex}>
 							<Typography className={clsx(classes.f18, classes.bold, classes.pe15)}>
 								{t("WhatsappOnBoarding.phoneNumber")}:
-						</Typography>
-						<Typography className={classes.f18}>
-							{row?.display_phone_number}
-						</Typography>
-					</Box>
-					{/* <Box className={classes.dFlex}>
+							</Typography>
+							<Typography className={classes.f18}>
+								{row?.display_phone_number}
+							</Typography>
+						</Box>
+						{/* <Box className={classes.dFlex}>
 							<Typography className={clsx(classes.f18, classes.bold, classes.pe15)}>
 								{t("WhatsappOnBoarding.tier")}:
 							</Typography>
@@ -303,43 +338,48 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 								{row?.limit}
 							</Typography>
 						</Box>
-					</TableCell>
-				</TableRow>
-			</>
-		)
-	}
+          </TableCell>
+        </TableRow>
+      </>
+    )
+  }
 
 	const renderPhoneNumberStatus = (row: phoneNumbersInterface) => {
 		return (
 			<>
 				{
-					row?.status !== WHATSAPP_ONBOARDING_STATUS.CONNECTED
-						? t(`WhatsappOnBoarding.virtualPhoneNumberStatus.${row?.status?.toLowerCase()}`)
-						: (
-							<Badge color="primary" variant="dot" anchorOrigin={{ vertical: 'top', horizontal: 'left' }} className={clsx(classes.connectedDot, classes.ml5)}>
-								{t(`WhatsappOnBoarding.virtualPhoneNumberStatus.${row?.status?.toLowerCase()}`)}
-							</Badge>
-						)
+					row?.status?.toUpperCase() !== WHATSAPP_ONBOARDING_STATUS.CONNECTED
+					? t(`WhatsappOnBoarding.virtualPhoneNumberStatus.${row?.status?.toLowerCase()}`)
+					: (
+						<Badge color="primary" variant="dot" anchorOrigin={{vertical: 'top', horizontal: 'left'}} className={clsx(classes.connectedDot)}>
+							{t(`WhatsappOnBoarding.virtualPhoneNumberStatus.${row?.status?.toLowerCase()}`)}
+						</Badge>
+					)
 				}
-				{
-					row?.status !== WHATSAPP_ONBOARDING_STATUS.CONNECTED
-						? (
-							<Button
-								onClick={() => setDialogType({ type: 'OTP', data: row })}
-								className={clsx(classes.searchButton, classes.btn, classes.btnRounded, classes.ml10)}
-							>
-								{t('Connect')}
-							</Button>
-						) : (
-							<Button
-								onClick={() => setDialogType({ type: 'OTP', data: row })}
-								className={clsx(classes.searchButton, classes.btn, classes.btnRounded, classes.ml10, classes.line1)}
-							>
-								{t('common.reconnect')}
-							</Button>
-						)
-				}
+				{!row.isBusinessNumber && (
+					<Button
+						onClick={() => setDialogType({ type: 'OTP', data: row })}
+						className={clsx(classes.searchButton, classes.btn, classes.btnRounded, classes.ml10)}
+					>
+						{t('reconnect')}
+					</Button>
+				)}
 			</>
+		)
+	}
+
+	const renderCoexistenceCell = (row: phoneNumbersInterface) => {
+		if (!row.isBusinessNumber) return (
+			<Typography className={clsx(classes.f14)} style={{ color: '#9e9e9e' }}>
+				{t('WhatsappOnBoarding.coexistenceNotAvailable')}
+			</Typography>
+		);
+		return (
+			<Switch
+				checked={!!row.isCoexistenceEnabled}
+				onChange={(e) => handleCoexistenceToggle(row.id, row.display_phone_number, e.target.checked)}
+				color='primary'
+			/>
 		)
 	}
 
@@ -380,6 +420,12 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 					className={clsx(classes.flex2, classes.dInlineBlock, classes.textCapitalize)}>
 					{renderPhoneNumberStatus(row)}
 				</TableCell>
+				<TableCell
+					classes={cellStyle}
+					align='center'
+					className={classes.flex2}>
+						{renderCoexistenceCell(row)}
+				</TableCell>
 			</TableRow>
 		)
 	}
@@ -399,18 +445,19 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 	}
 
 	const renderPhoneNumbersTableHead = () => {
-		return (
-			<TableHead>
-				<TableRow classes={rowStyle}>
-					<TableCell classes={cellStyle} className={classes.flex2} align='center'>{t('WhatsappOnBoarding.phoneNumber')}</TableCell>
-					<TableCell classes={cellStyle} className={classes.flex2} align='center'>{t('WhatsappOnBoarding.ID')}</TableCell>
-					<TableCell classes={cellStyle} className={classes.flex2} align='center'>{t('WhatsappOnBoarding.tier')}</TableCell>
-					<TableCell classes={cellStyle} className={classes.flex2} align='center'>{t('WhatsappOnBoarding.limit')}</TableCell>
-					<TableCell classes={cellStyle} className={classes.flex2} align='center'>{t('WhatsappOnBoarding.status')}</TableCell>
-				</TableRow>
-			</TableHead>
-		)
-	}
+    return (
+      <TableHead>
+        <TableRow classes={rowStyle}>
+          <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t('WhatsappOnBoarding.phoneNumber')}</TableCell>
+          <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t('WhatsappOnBoarding.ID')}</TableCell>
+          {/* <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t('WhatsappOnBoarding.tier')}</TableCell> */}
+          <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t('WhatsappOnBoarding.limit')}</TableCell>
+          <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t('WhatsappOnBoarding.status')}</TableCell>
+          <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t('WhatsappOnBoarding.coexistenceColumn')}</TableCell>
+        </TableRow>
+      </TableHead>
+    )
+  }
 
 	const renderVirtualNumbers = () => {
 		if (virtualNumbers.length === 0) return <></>;
@@ -700,23 +747,44 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 					WhatsAppPlatformID !== WhatsAppPlatformIDEnum.TWILLIO ? (
 						<>
 							<Box className={clsx(classes.p20)}>
-								<button
-									onClick={launchWhatsAppSignup}
-									style={{
-										backgroundColor: '#1877f2',
-										border: '0',
-										borderRadius: '4px',
-										color: '#fff',
-										cursor: 'pointer',
-										fontFamily: 'Helvetica, Arial, sans-serif',
-										fontSize: '16px',
-										fontWeight: 'bold',
-										height: '40px',
-										padding: '0 24px',
-									}}
-								>
-									{t('WhatsappOnBoarding.loginWithFacebook')}
-								</button>
+								<Box className={clsx(classes.dFlex)} style={{ gap: 16, alignItems: 'center', flexWrap: 'wrap', marginBottom: 16 }}>
+									<button
+										// @ts-ignore
+										onClick={() => launchWhatsAppSignup(false)}
+										style={{
+											backgroundColor: '#1877f2',
+											border: '0',
+											borderRadius: '4px',
+											color: '#fff',
+											cursor: 'pointer',
+											fontFamily: 'Helvetica, Arial, sans-serif',
+											fontSize: '16px',
+											fontWeight: 'bold',
+											height: '40px',
+											padding: '0 24px',
+										}}
+									>
+										{t('WhatsappOnBoarding.loginWithFacebook')}
+									</button>
+									<button
+									    // @ts-ignore
+										onClick={() => launchWhatsAppSignup(true)}
+										style={{
+											backgroundColor: '#42b72a',
+											border: '0',
+											borderRadius: '4px',
+											color: '#fff',
+											cursor: 'pointer',
+											fontFamily: 'Helvetica, Arial, sans-serif',
+											fontSize: '16px',
+											fontWeight: 'bold',
+											height: '40px',
+											padding: '0 24px',
+										}}
+									>
+										{t('WhatsappOnBoarding.loginWithFacebookCoexistence')}
+									</button>
+								</Box>
 
 								<Typography className={clsx(classes.f22, classes.pt10, classes.semibold)}>{t('WhatsappOnBoarding.instruction')}</Typography>
 								<ul className={clsx(classes.mt1, classes.noPadding)}>
@@ -732,6 +800,7 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 							<Box className={clsx(classes.p20)}>
 								<Grid container spacing={3}>
 									<Grid item md={6} sm={12} xs={12}>
+										{renderBusinessDetails()}
 										{renderVirtualNumbers()}
 										{
 											phoneNumbers.length > 0 && (
@@ -742,7 +811,6 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 										}
 									</Grid>
 									<Grid item md={6} sm={12} xs={12}>
-										{renderBusinessDetails()}
 										<Box>
 											{renderIncomingMessages()}
 										</Box>
