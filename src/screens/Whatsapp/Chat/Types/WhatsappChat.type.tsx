@@ -114,6 +114,8 @@ export type ChatFooterContentProps = {
 	isContactLoader: boolean;
 	personalFields: personalFieldDataProps;
 	onChatTemplateDelete: () => void;
+	isWidget?: boolean;
+	onWidgetAttach?: (file: File) => void;
 };
 
 export type ChatTemplateProps = {

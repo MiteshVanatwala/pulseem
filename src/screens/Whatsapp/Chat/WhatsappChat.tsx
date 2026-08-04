@@ -229,7 +229,16 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const [totalSolvedContacts, setTotalSolvedContacts] = useState<number>(0);
 	const [activePhoneNumber, setActivePhoneNumber] = useState<string>('');
 	const [filterBySelected, setFilterBySelected] = useState(0);
-	const [selectedChannel, setSelectedChannel] = useState<ServiceChannel>('whatsapp');
+	// Opens on a specific channel when linked with ?channel=widget|all|whatsapp
+	// (e.g. from the Service Dashboard "View Chats" action); defaults to WhatsApp.
+	const [selectedChannel, setSelectedChannel] = useState<ServiceChannel>(() => {
+		try {
+			const ch = new URLSearchParams(window.location.search).get('channel');
+			return ch === 'all' || ch === 'widget' || ch === 'whatsapp' ? ch : 'whatsapp';
+		} catch {
+			return 'whatsapp';
+		}
+	});
 	const [widgetConversations, setWidgetConversations] = useState<IConversation[]>([]);
 	const [serviceDomain, setServiceDomain] = useState<string>('');
 	// All-mode source filter: 'all' | 'wa:<number>' | 'dom:<domain>'
@@ -364,13 +373,16 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	}, [totalPendingContacts]);
 
 	useEffect(() => {
+		// In Widget/All mode, don't auto-select a WhatsApp contact — that navigation
+		// drops the ?channel= param and remounts the screen, resetting the dropdown.
+		if (selectedChannel !== 'whatsapp') return;
 		if (isNumberSwitchingRef.current && !activeChatContacts?.PhoneNumber && sideChatContacts?.length > 0) {
 			const firstContact = sideChatContacts[0];
 			isNumberSwitchingRef.current = false;
 			setActiveChatContacts(firstContact);
 			navigate(`/react/whatsapp/chat/${firstContact?.PhoneNumber}`);
 		}
-	}, [sideChatContacts, activeChatContacts?.PhoneNumber, navigate]);
+	}, [sideChatContacts, activeChatContacts?.PhoneNumber, navigate, selectedChannel]);
 
 	useEffect(() => {
 		totalSolvedContactsRef.current = totalSolvedContacts;

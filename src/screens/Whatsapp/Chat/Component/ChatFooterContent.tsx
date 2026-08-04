@@ -10,6 +10,7 @@ import Icon from './Icon';
 import { Stack } from '@mui/material';
 import EmojiPicker from '../../../../components/Emojis/EmojiPicker';
 import Highlighter from 'react-highlight-words';
+import { MdAttachFile } from 'react-icons/md';
 import { ChatFooterContentProps } from '../Types/WhatsappChat.type';
 import { useTranslation } from 'react-i18next';
 import { BaseSyntheticEvent, useEffect, useRef, useState } from 'react';
@@ -63,6 +64,8 @@ const ChatFooterContent = ({
 	isContactLoader,
 	personalFields,
 	onChatTemplateDelete,
+	isWidget = false,
+	onWidgetAttach,
 }: ChatFooterContentProps) => {
 	const { t: translator } = useTranslation();
 	const localClasses = useStyles();
@@ -172,8 +175,29 @@ const ChatFooterContent = ({
 			<div className={`${classes.whatsappChat} chat__input-wrapper`}>
 				{!activeChatContacts?.IsUnsubscribed ? (
 					<>
-						{whatsappChatSession.IsIn24Window || savedTemplate?.length > 0 ? (
+						{whatsappChatSession.IsIn24Window || savedTemplate?.length > 0 || isWidget ? (
 							<>
+								{isWidget && (
+									<>
+										<input
+											type="file"
+											id="svc-widget-attach"
+											style={{ display: 'none' }}
+											onChange={(e) => {
+												const f = e.target.files?.[0];
+												if (f && onWidgetAttach) onWidgetAttach(f);
+												(e.target as HTMLInputElement).value = '';
+											}}
+										/>
+										<button
+											aria-label="Attach file"
+											title="Attach file"
+											onClick={() => document.getElementById('svc-widget-attach')?.click()}
+										>
+											<MdAttachFile size={22} />
+										</button>
+									</>
+								)}
 								{savedTemplate?.length === 0 && (
 									<button
 										aria-label="Emojis"
@@ -321,7 +345,7 @@ const ChatFooterContent = ({
 							</>
 						)}{' '}
 						{(whatsappChatSession.IsIn24Window ||
-							savedTemplate?.length > 0) && (
+							savedTemplate?.length > 0 || isWidget) && (
 							<button aria-label="Send message" onClick={onChatSend}>
 								<Icon
 									id="send"

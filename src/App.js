@@ -112,6 +112,7 @@ import { openHelpDrawer, closeHelpDrawer, toggleHelpDrawer } from './redux/reduc
 import ChatWidgetConfigPage from './screens/Widgets/ChatWidgetConfigPage';
 import WidgetListPage from './screens/Widgets/WidgetListPage';
 import Conversations from './screens/Service/Conversations/Conversations';
+import Dashboard from './screens/Service/Dashboard/Dashboard';
 
 const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
   const transferUrl =
@@ -695,6 +696,11 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
         exact
         path={`${sitePrefix}Widgets/:widgetId`}
         element={<ChatWidgetConfigPage classes={classes} />}
+      />
+      <Route
+        exact
+        path={`${sitePrefix}Dashboard`}
+        element={<Dashboard classes={classes} />}
       />
       <Route
         exact

@@ -20,7 +20,11 @@ import {
 	getWhatsappChat,
 	getWhatsappChatTag,
 } from '../../../../redux/reducers/whatsappSlice';
-import { getMessages as getServiceMessages } from '../../../../redux/reducers/conversationsSlice';
+import {
+	getMessages as getServiceMessages,
+	sendMessage as sendServiceMessage,
+	uploadFile as uploadServiceFile,
+} from '../../../../redux/reducers/conversationsSlice';
 import { IMessage } from '../../../../Models/Service/Conversation';
 import moment from 'moment';
 import ChatTemplate from './ChatTemplate';
@@ -61,6 +65,29 @@ const adaptWidgetMessages = (msgs: IMessage[]): APIWhatsappChatItemsData => {
 		} as any);
 	});
 	return buckets;
+};
+
+// Appends a single widget/service message to the date-bucketed shape (used for
+// optimistic send, so the reply appears instantly without a full reload).
+const appendWidgetMessage = (
+	buckets: APIWhatsappChatItemsData | undefined,
+	m: IMessage,
+): APIWhatsappChatItemsData => {
+	const dateLabel = moment(m.sentAt).format('DD/MM/YYYY');
+	const next: APIWhatsappChatItemsData = { ...(buckets || {}) };
+	const detail = {
+		IsInbound: m.sender === 'visitor',
+		IsTemplate: false,
+		MediaContentType: '',
+		MediaUrl: m.fileUrl || '',
+		Message: m.content || '',
+		MessageDate: m.sentAt,
+		MessageDateText: moment(m.sentAt).format('HH:mm'),
+		SmsStatus: '',
+		SmsStatusId: 0,
+	} as any;
+	next[dateLabel] = [...(next[dateLabel] || []), detail];
+	return next;
 };
 
 const ChatUi = ({
@@ -293,6 +320,58 @@ const ChatUi = ({
 		}
 	};
 
+	const isWidgetChat = (chatContacts as any)?.channel === 'widget';
+
+	const scrollChatToBottom = () => {
+		const el = document.getElementById('chat-messages');
+		if (el) setTimeout(() => { el.scrollTop = el.scrollHeight; }, 100);
+	};
+
+	// Send a widget reply via the Service slice and optimistically append it.
+	const handleWidgetSend = async () => {
+		const conversationId = (chatContacts as any)?.conversationId || chatContacts?.PhoneNumber;
+		const text = (newMessage || '').trim();
+		if (!conversationId || !text) return;
+		setNewMessage('');
+		try {
+			const res: any = await dispatch<any>(sendServiceMessage({ conversationId, content: text }));
+			const msg: IMessage | undefined = res?.payload;
+			if (msg) setAllWhatsappChat(appendWidgetMessage(allWhatsappChat, msg));
+			scrollChatToBottom();
+		} catch {
+			/* keep the composer responsive on failure */
+		}
+	};
+
+	// Upload a file for a widget reply, then send it as a message.
+	const handleWidgetAttach = async (file: File) => {
+		const conversationId = (chatContacts as any)?.conversationId || chatContacts?.PhoneNumber;
+		if (!conversationId || !file) return;
+		try {
+			const up: any = await dispatch<any>(uploadServiceFile(file));
+			const fileUrl = up?.payload?.fileUrl;
+			if (!fileUrl) return;
+			const res: any = await dispatch<any>(
+				sendServiceMessage({ conversationId, content: (newMessage || '').trim() || file.name, fileUrl }),
+			);
+			const msg: IMessage | undefined = res?.payload;
+			setNewMessage('');
+			if (msg) setAllWhatsappChat(appendWidgetMessage(allWhatsappChat, msg));
+			scrollChatToBottom();
+		} catch {
+			/* ignore upload failure */
+		}
+	};
+
+	// Route send to the widget path for widget conversations, WhatsApp otherwise.
+	const handleChatSend = () => {
+		if (isWidgetChat) {
+			handleWidgetSend();
+			return;
+		}
+		onChatSend();
+	};
+
 	const handleSetAgentToSession = async (agentToSession: WhatsappPhoneSession) => {
 		setLocalAgentId(agentToSession.AgentId > 0 ? agentToSession.AgentId : 0);
 
@@ -512,7 +591,9 @@ const ChatUi = ({
 					savedTemplate={savedTemplate}
 					dynamicVariable={dynamicVariable}
 					whatsappChatSession={whatsappChatSession}
-					onChatSend={onChatSend}
+					onChatSend={handleChatSend}
+					isWidget={isWidgetChat}
+					onWidgetAttach={handleWidgetAttach}
 					activeChatContacts={activeChatContacts}
 					ChatContacts={ChatContacts}
 					isContactLoader={isContactLoader}

@@ -293,6 +293,34 @@ export const getRoutes = (
       ],
     },
     {
+      key: "service",
+      title: "Service",
+      pageTitle: "Dashboard",
+      iconName: 'MdOutlineDashboardCustomize',
+      href: `${sitePrefix}Dashboard`,
+      isShow: true,
+      options: [
+        {
+          key: 'serviceDashboard',
+          title: "Dashboard",
+          href: `${sitePrefix}Dashboard`,
+          isShow: true,
+        },
+        {
+          key: 'serviceConversations',
+          title: "Conversations",
+          href: `${sitePrefix}Conversations`,
+          isShow: true,
+        },
+        {
+          key: 'serviceWidgets',
+          title: "Widgets",
+          href: `${sitePrefix}Widgets`,
+          isShow: true,
+        },
+      ],
+    },
+    {
       key: "landingPages",
       title: t("master.RadItemLandingPagesMenu.Text"),
       pageTitle: t("landingPages.logPageHeaderResource1.Text"),
