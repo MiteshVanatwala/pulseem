@@ -2,7 +2,7 @@ import clsx from 'clsx';
 import { useTranslation } from 'react-i18next'
 import { Box, Button, Grid, TextField, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Typography } from '@material-ui/core';
 import { useEffect, useRef, useState } from 'react';
-import { MdAdd, MdArrowBackIos, MdArrowForwardIos, MdOutlinePersonAddAlt, MdPassword } from 'react-icons/md';
+import { MdArrowBackIos, MdArrowForwardIos, MdOutlinePersonAddAlt, MdPassword } from 'react-icons/md';
 import { useDispatch, useSelector } from 'react-redux';
 import DefaultScreen from '../DefaultScreen';
 import { Title } from '../../components/managment/Title';
@@ -15,16 +15,13 @@ import { DateFormats, rowsOptions, TierFeatures } from '../../helpers/Constants'
 import { setRowsPerPage } from '../../redux/reducers/coreSlice';
 import { DeleteIcon, EditIcon, PreviewIcon } from '../../assets/images/managment';
 import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
-import DynamicConfirmDialog from '../../components/DialogTemplates/DynamicConfirmDialog';
 import moment from 'moment';
 import CustomTooltip from '../../components/Tooltip/CustomTooltip';
 import User from '../../components/User/User';
 import Permissions from '../../components/Permissions/Permissions';
 import PermissionsHistory from '../../components/PermissionsHistory/PermissionsHistory';
-import { getAllUsers, getTeams, resendConfirmationEmail, save, saveTeam, deleteTeam } from '../../redux/reducers/SubUserSlice';
-import { eSubUserAction, eSubUserPermissions, SubUserModel, SubUserRequest, UserRoles } from '../../Models/SubUser/SubUsers';
-import { Team, SaveTeamPayload } from '../../Models/Team/Team';
-import TeamFormDialog, { AvailableAgent } from './TeamFormDialog';
+import { getAllUsers, resendConfirmationEmail, save } from '../../redux/reducers/SubUserSlice';
+import { eSubUserAction, SubUserModel, SubUserRequest, UserRoles } from '../../Models/SubUser/SubUsers';
 import PermissionList from './PermissionList';
 import { logout } from '../../helpers/Api/PulseemReactAPI';
 import SubUserChangePassword from './SubUserChangePassword';
@@ -33,13 +30,9 @@ import { findPlanByFeatureCode } from '../../redux/reducers/TiersSlice';
 import TierPlans from '../../components/TierPlans/TierPlans';
 import { get } from 'lodash';
 
-// PR-2456: flip to true once the Team/GetAll, Team/CreateOrEdit, Team/Delete backend endpoints ship.
-// Keeping this false hides the Teams section and dispatches zero related requests.
-const TEAMS_FEATURE_ENABLED = false;
-
 const SubUsers = ({ classes }: any) => {
   const { language, windowSize, isRTL, rowsPerPage, userRoles, subUserName } = useSelector((state: any) => state.core);
-  const { ToastMessages, teams, teamsLoading } = useSelector((state: any) => state?.subUser);
+  const { ToastMessages } = useSelector((state: any) => state?.subUser);
   const { currentPlan, availablePlans } = useSelector((state: any) => state.tiers);
   const { subAccount } = useSelector((state: any) => state.common);
   const { t } = useTranslation();
@@ -65,11 +58,6 @@ const SubUsers = ({ classes }: any) => {
   const [showTierPlans, setShowTierPlans] = useState(false);
   const [userList, setUserList] = useState<SubUserModel[]>();
   const [TierMessageCode, setTierMessageCode] = useState<string>('');
-  const [openTeamDialog, setOpenTeamDialog] = useState<boolean>(false);
-  const [editingTeam, setEditingTeam] = useState<Team | null>(null);
-  const [teamToDelete, setTeamToDelete] = useState<Team | null>(null);
-  const [isSavingTeam, setIsSavingTeam] = useState<boolean>(false);
-  const [agentCandidates, setAgentCandidates] = useState<SubUserModel[]>([]);
   const rowStyle = { head: clsx(classes.tableRowHead, classes.pt10, classes.pb10), root: classes.tableRowRoot }
   const cellStyle = { head: clsx(classes.tableCellHead, classes.noPadding, classes.f16), body: classes.tableCellBody, root: clsx(classes.tableCellRoot, classes.p0) }
   const cellBodyStyle = { body: clsx(classes.tableCellBody, classes.f16), root: clsx(classes.tableCellRoot, classes.noPadding) }
@@ -104,56 +92,6 @@ const SubUsers = ({ classes }: any) => {
     }
     setShowLoader(false);
   }
-
-  // PR-2456: Teams feature mount fetch — separate dispatch, does not alter the existing getData()/getAllUsers call above.
-  useEffect(() => {
-    if (!TEAMS_FEATURE_ENABLED) return;
-
-    dispatch(getTeams());
-
-    // Fetches the full sub-user roster (not the paginated table view) so the agent picker
-    // isn't limited to whichever page of users happens to be on screen.
-    const fetchAgentCandidates = async () => {
-      const response = await dispatch(getAllUsers({ PageNumber: 1, PageSize: 1000, SearchTerm: '' })) as any;
-      if (response?.payload?.StatusCode === 201) {
-        setAgentCandidates(response?.payload?.Data?.Users || []);
-      }
-    };
-    fetchAgentCandidates();
-  }, []);
-
-  // PR-2456: agent source = permission-flagged sub-users (excludes IsDeleted and not-yet-approved
-  // sub-users). Pending Parth's confirmation that the backend keys team membership on SubUserID —
-  // if the agent roster is a separate identity (e.g. the WhatsappAgent roster), this line changes.
-  const availableAgents: AvailableAgent[] = agentCandidates
-    .filter((u) => !u.IsDeleted && u.IsApproved && u.UserPermissionsList?.includes(eSubUserPermissions.AllowWhatsAppToAgent))
-    .map((u) => ({ id: u.ID, name: u.UserName }));
-
-  const saveTeamHandler = async (payload: SaveTeamPayload) => {
-    setIsSavingTeam(true);
-    const response = await dispatch(saveTeam(payload)) as any;
-    if (response?.payload?.StatusCode === 201) {
-      setToastMessage({ severity: 'success', color: 'success', message: 'SubUsers.teams.teamSaved', showAnimtionCheck: true });
-      setOpenTeamDialog(false);
-      setEditingTeam(null);
-      dispatch(getTeams());
-    } else {
-      setToastMessage({ severity: 'error', color: 'error', message: 'SubUsers.teams.genericError', showAnimtionCheck: false });
-    }
-    setIsSavingTeam(false);
-  };
-
-  const deleteTeamHandler = async () => {
-    if (!teamToDelete) return;
-    const response = await dispatch(deleteTeam(teamToDelete.Id)) as any;
-    if (response?.payload?.StatusCode === 201) {
-      setToastMessage({ severity: 'success', color: 'success', message: 'SubUsers.teams.teamDeleted', showAnimtionCheck: true });
-      dispatch(getTeams());
-    } else {
-      setToastMessage({ severity: 'error', color: 'error', message: 'SubUsers.teams.genericError', showAnimtionCheck: false });
-    }
-    setTeamToDelete(null);
-  };
 
   const renderToast = () => {
     if (toastMessage.message?.length > 0) {
@@ -573,82 +511,6 @@ const SubUsers = ({ classes }: any) => {
 
   //#endregion Data Table
 
-  //#region Teams (PR-2456) — additive section, rendered below the existing users table.
-
-  const renderTeamsSection = () => {
-    if (!TEAMS_FEATURE_ENABLED) return null;
-
-    return (
-      <Box className={classes.mt50}>
-        <Grid container className={clsx(classes.linePadding, classes.pb10)} spacing={2} alignItems='center'>
-          <Grid item md={8} xs={12} sm={12}>
-            <Title Text={t('SubUsers.teams.sectionTitle')} classes={classes} />
-          </Grid>
-          <Grid item md={4} xs={12} sm={12} className={clsx(classes.groupsLableContainer)}>
-            {userRoles === UserRoles.Admin && (
-              <Button
-                className={clsx(classes.btn, classes.btnRounded, classes.marginInlineStart5)}
-                endIcon={<MdAdd />}
-                onClick={() => { setEditingTeam(null); setOpenTeamDialog(true); }}
-              >
-                {t('SubUsers.teams.createTeam')}
-              </Button>
-            )}
-          </Grid>
-        </Grid>
-        <TableContainer className={classes.tableStyle}>
-          <Table className={classes.tableContainer}>
-            <TableHead>
-              <TableRow classes={rowStyle}>
-                <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t('SubUsers.teams.name')}</TableCell>
-                <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t('SubUsers.teams.agentCount')}</TableCell>
-                <TableCell classes={cellStyle} className={clsx(classes.flex1, classes.noBorderOnLastCell)} align='center' />
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {teams?.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={3} align='center'>
-                    <Typography>{t('SubUsers.teams.noTeams')}</Typography>
-                  </TableCell>
-                </TableRow>
-              ) : teams?.map((team: Team) => (
-                <TableRow key={team.Id} classes={rowStyle}>
-                  <TableCell classes={cellBodyStyle} align='center' className={classes.flex2}>{team.Name}</TableCell>
-                  <TableCell classes={cellBodyStyle} align='center' className={classes.flex1}>{team.AgentIds?.length || 0}</TableCell>
-                  <TableCell classes={cellBodyStyle} align='center' className={clsx(classes.flex1, classes.noBorderOnLastCell)}>
-                    {userRoles === UserRoles.Admin && (
-                      <Grid container justifyContent='center'>
-                        {/* @ts-ignore */}
-                        <ManagmentIcon
-                          classes={classes}
-                          uIcon={<EditIcon width={18} height={20} className={'rowIcon'} />}
-                          lable={t('campaigns.Image2Resource1.ToolTip')}
-                          rootClass={classes.paddingIcon}
-                          onClick={() => { setEditingTeam(team); setOpenTeamDialog(true); }}
-                        />
-                        {/* @ts-ignore */}
-                        <ManagmentIcon
-                          classes={classes}
-                          uIcon={<DeleteIcon width={18} height={20} className={'rowIcon'} />}
-                          lable={t('campaigns.DeleteResource1.HeaderText')}
-                          rootClass={classes.paddingIcon}
-                          onClick={() => setTeamToDelete(team)}
-                        />
-                      </Grid>
-                    )}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Box>
-    );
-  };
-
-  //#endregion Teams (PR-2456)
-
   const getDeleteDialog = (subUser: SubUserModel) => ({
     title: t('common.Delete'),
     showDivider: false,
@@ -680,7 +542,7 @@ const SubUsers = ({ classes }: any) => {
         availablePlans,
         currentPlan.Id
     );
-    
+
     if (planName) {
       return t('billing.tier.featureNotAvailable').replace('{feature}', t(TierFeatures[tierMessageCode as keyof typeof TierFeatures] || tierMessageCode)).replace('{planName}', planName);
     } else {
@@ -762,7 +624,6 @@ const SubUsers = ({ classes }: any) => {
       {renderManagmentLine()}
       {renderTable()}
       {renderTablePagination()}
-      {renderTeamsSection()}
       {renderDialog()}
       {renderToast()}
 
@@ -799,28 +660,6 @@ const SubUsers = ({ classes }: any) => {
         onClose={() => setOpenPermissionsHistoryDialog(false)}
       />
       }
-      {TEAMS_FEATURE_ENABLED && <TeamFormDialog
-        classes={classes}
-        isOpen={openTeamDialog}
-        onClose={() => { setOpenTeamDialog(false); setEditingTeam(null); }}
-        onSaved={saveTeamHandler}
-        editRecord={editingTeam}
-        availableAgents={availableAgents}
-        isSaving={isSavingTeam || teamsLoading}
-      />}
-
-      {TEAMS_FEATURE_ENABLED && teamToDelete && <DynamicConfirmDialog
-        classes={classes}
-        isOpen={!!teamToDelete}
-        title={t('common.Delete')}
-        text={t('SubUsers.teams.deleteTeamPrompt')}
-        confirmButtonText={t('SubUsers.delete')}
-        cancelButtonText='SubUsers.cancel'
-        onConfirm={deleteTeamHandler}
-        onCancel={() => setTeamToDelete(null)}
-        onClose={() => setTeamToDelete(null)}
-      />}
-
       <Loader isOpen={showLoader} zIndex={9999} />
       {showTierPlans && <TierPlans
         classes={classes}

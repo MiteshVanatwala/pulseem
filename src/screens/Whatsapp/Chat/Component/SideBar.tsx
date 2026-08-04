@@ -1,7 +1,6 @@
 import Icon from './Icon';
 import clsx from 'clsx';
 import { WhatsappChatSideBarProps } from '../Types/WhatsappChat.type';
-import AccountUser from '../../../../assets/images/acc-user.jpg';
 import {
 	Box,
 	Button,
@@ -35,6 +34,8 @@ import StartNewChatModal from '../Popups/StartNewChatModal';
 import { BaseSyntheticEvent, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import SideHeaderContactDropDown from './SideHeaderContactDropDown';
+import ServiceChannelDropdown from '../../../Service/Conversations/ServiceChannelDropdown';
+import ServiceDomainDropdown from '../../../Service/Conversations/ServiceDomainDropdown';
 import SideBarContactList from './SideBarContactList';
 import useDebounce from '../Hook/useDebounce';
 import { useSelector, useDispatch } from 'react-redux';
@@ -53,6 +54,11 @@ import DynamicConfirmDialog from '../../../../components/DialogTemplates/Dynamic
 
 const SideBar = ({
 	classes,
+	onServiceChannelChange,
+	selectedServiceChannel = 'whatsapp',
+	serviceDomains = [],
+	serviceDomain = '',
+	onServiceDomainChange,
 	isMobileSideBar,
 	handleChatId,
 	onActiveUserChange,
@@ -940,22 +946,26 @@ const SideBar = ({
 						classes.whatsappSidebarHeader,
 					)}
 				>
-					<div
-						className={`${classes.whatsappChat} sidebar__avatar-wrapper`}
-						style={{ flexShrink: 0 }}
-					>
-						<img
-							src={AccountUser}
-							alt="Avatar"
-							className={`${classes.whatsappChat} avatar`}
+					<div style={{ flexShrink: 0, width: 'auto', marginInlineEnd: 12, display: 'flex', alignItems: 'center' }}>
+						<ServiceChannelDropdown
+							value={selectedServiceChannel}
+							onChange={(ch) => onServiceChannelChange && onServiceChannelChange(ch)}
 						/>
 					</div>
-					<SideHeaderContactDropDown
-						classes={classes}
-						phoneNumbersList={phoneNumbersList}
-						onActiveUserChange={onActiveUserChange}
-						activePhoneNumber={activePhoneNumber}
-					/>
+					{selectedServiceChannel === 'widget' ? (
+						<ServiceDomainDropdown
+							domains={serviceDomains}
+							value={serviceDomain}
+							onChange={onServiceDomainChange}
+						/>
+					) : (
+						<SideHeaderContactDropDown
+							classes={classes}
+							phoneNumbersList={phoneNumbersList}
+							onActiveUserChange={onActiveUserChange}
+							activePhoneNumber={activePhoneNumber}
+						/>
+					)}
 					<div className={classes.agentManagementButtonsWrapper}>
 						{!userRoles?.HideRecipients && (
 							<IconButton

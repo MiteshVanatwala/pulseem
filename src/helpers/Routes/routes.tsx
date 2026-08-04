@@ -16,7 +16,7 @@ import {
   GrafMenuIcon,
   GroupMenuIcon,
 } from '../../assets/images/settings/index';
-import { FaBinoculars } from 'react-icons/fa';
+import { FaBinoculars, FaCommentDots } from 'react-icons/fa';
 import { whatsappRoutes } from '../../screens/Whatsapp/Constant';
 import { logout } from "../Api/PulseemReactAPI";
 import { HiArrowLeft, HiArrowRight } from "react-icons/hi";
@@ -54,6 +54,7 @@ export const getSettingsItem = (
     { key: 'SiteTracking', title: t('master.siteTracking'), href: `${sitePrefix}SiteTracking`, iconSrc: FaBinoculars, isFaIcon: true, isShow: userRoles.AllowSend && !accountSettings?.SubAccountSettings?.IsTokenAccount },
     { key: 'Integrations', title: t('integrations.title'), href: `${sitePrefix}Integrations`, iconSrc: SettingsMenuIcon, isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount && userRoles.AllowSend },
     { key: 'SubUsers', title: t('SubUsers.title'), href: `${sitePrefix}SubUsers`, iconSrc: SettingsMenuIcon, isShow: true },
+    { key: 'Teams', title: t('SubUsers.teams.sectionTitle'), href: `${sitePrefix}Teams`, iconSrc: SettingsMenuIcon, isShow: true },
     //@ts-ignore
     { key: 'Guides', title: t('common.UserGuides'), href: `https://site.pulseem.co.il/guides-2/`, iconSrc: SettingsMenuIcon, isShow: (!accountSettings?.SubAccountSettings?.IsTokenAccount && (WhiteLabelObject[accountSettings?.Account?.ReferrerID] === undefined || !accountSettings?.Account?.ReferrerID || accountSettings?.Account?.ReferrerID === 0)) ? true : false, openInNewWindow: true },
     { title: t("appBar.logout"), onClick: logout, iconSrc: isRTL ? HiArrowLeft : HiArrowRight, isFaIcon: true, isShow: true },
@@ -400,12 +401,21 @@ export const getRoutes = (
       ],
     },
     {
-      key: "Integrations",
-      title: t("integrations.hubTitle"),
-      pageTitle: t("integrations.hubTitle"),
-      href: `${sitePrefix}Integrations`,
-      isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount && userRoles?.AllowSend,
-      iconName: 'MdOutlineDashboardCustomize',
+      key: "widgets",
+      title: t("common.widget_chat_widget"),
+      pageTitle: t("common.widget_chat_widget"),
+      iconUnicode: "\ue087",
+      href: `${sitePrefix}Widgets`,
+      isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount,
+      icon: <FaCommentDots size={24} color="#909aa2" />,
+      options: [
+        {
+          key: "chatWidget",
+          title: t("common.widget_chat_widget"),
+          href: `${sitePrefix}Widgets`,
+          isShow: true,
+        }
+      ],
     },
     {
       key: "notifications",
