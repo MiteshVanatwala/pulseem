@@ -35,6 +35,8 @@
 	"loginWithFacebook": "התחבר עם פייסבוק",
 	"loginWithFacebookCoexistence": "התחבר עם פייסבוק (Coexistence)",
 	"coexistenceColumn": "דו-קיום",
+	"syncColumn": "סנכרון היסטוריה מ-6 החודשים האחרונים",
+	"syncTooltip": "יש להגדיר בתוך 24 שעות מרגע החיבור.",
 	"coexistenceNotAvailable": "לא זמין למספר זה",
 	"SaveWhatsappMetaClientsResponseCode": {
 		"3": "תת חשבון לא נמצא",

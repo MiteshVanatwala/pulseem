@@ -20,7 +20,7 @@
 	"ID": "ID",
 	"phoneNumber": "Phone Number",
 	"tier": "Tier",
-	"limit": "limit",
+	"limit": "Limit",
 	"enterPin": "Enter Pin",
 	"pin": "Pin",
 	"registerPIN": "Register Pin",
@@ -35,6 +35,8 @@
 	"loginWithFacebook": "Login With Facebook",
 	"loginWithFacebookCoexistence": "Login With Facebook (Coexistence)",
 	"coexistenceColumn": "Coexistence",
+	"syncColumn": "Sync Last 6 months History",
+	"syncTooltip": "It should be set within 24 hours after onboarding.",
 	"coexistenceNotAvailable": "Not Available",
 	"SaveWhatsappMetaClientsResponseCode": {
 		"3": "Sub account not found",

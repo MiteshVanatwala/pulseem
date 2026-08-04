@@ -20,7 +20,7 @@
 	"ID": "ID",
 	"phoneNumber": "Numer Telefonu",
 	"tier": "Poziom",
-	"limit": "limit",
+	"limit": "Limit",
 	"enterPin": "Wprowadź PIN",
 	"pin": "PIN",
 	"registerPIN": "Zarejestruj PIN",
@@ -35,6 +35,8 @@
 	"loginWithFacebook": "Zaloguj się przez Facebooka",
 	"loginWithFacebookCoexistence": "Zaloguj się przez Facebooka (Coexistence)",
 	"coexistenceColumn": "Coexistence",
+	"syncColumn": "Synchronizuj historię z ostatnich 6 miesięcy",
+	"syncTooltip": "Należy ustawić w ciągu 24 godzin od podłączenia.",
 	"SaveWhatsappMetaClientsResponseCode": {
 		"3": "Subkonto nie znalezione",
 		"4": "Brak konfiguracji Meta",
