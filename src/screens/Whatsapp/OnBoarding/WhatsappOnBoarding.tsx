@@ -17,7 +17,7 @@ import { Badge, Box, Button, Grid, Switch, Table, TableBody, TableCell, TableCon
 import InfoOutlined from '@material-ui/icons/InfoOutlined';
 import { Title } from '../../../components/managment/Title';
 import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
-import { facebookLogin, getMetaPhoneNumbers, getWhatsAppCodeVirtualNumbers, getWhatsAppSMSVirtualNumbers, MetaPhoneRegister, setCoexistenceMode } from '../../../redux/reducers/whatsappOnBoardingSlice';
+import { facebookLogin, getMetaPhoneNumbers, getWhatsAppCodeVirtualNumbers, getWhatsAppSMSVirtualNumbers, MetaPhoneRegister, setCoexistenceMode, syncCoexistenceHistoryRecords } from '../../../redux/reducers/whatsappOnBoardingSlice';
 import { PulseemResponse } from '../../../Models/APIResponse';
 import { flatten, get } from 'lodash';
 import { IsValidPhoneNumberKeyPress } from '../../../helpers/Utils/Validations';
@@ -87,12 +87,6 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
   // exactly one call per handshake - the Meta code is single-use, so a duplicate
   // would fail token exchange and report a false error to the user.
   const isSubmittingRef = useRef<boolean>(false);
-  // Per-number: whether Pulseem ingests messages/contacts coming from the user's
-  // native WhatsApp Business App. Keyed by message_service_id, matching Meta's API,
-  // which scopes the sync to a phone number rather than the account. Local-only for
-  // now: there is no persistence endpoint yet, so this resets on reload. See the
-  // note in handleSyncToggle.
-  const [appSyncByNumber, setAppSyncByNumber] = useState<Record<string, boolean>>({});
 
   const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot }
   const cellStyle = { head: classes.tableCellHead, body: classes.tableCellBody, root: classes.tableCellRoot }
@@ -441,13 +435,28 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 		)
 	}
 
-	// TODO(backend): needs an endpoint to persist this against the phone number before
-	// it can survive a reload. Note this switch governs ongoing ingestion of the
-	// smb_message_echoes / smb_app_state_sync webhooks - the initial 180-day history
-	// backfill is a separate one-shot trigger (POST /{phone_number_id}/smb_app_data)
-	// that Meta only accepts once, within 24h of onboarding.
-	const handleSyncToggle = (messageServiceId: string, enabled: boolean) => {
-		setAppSyncByNumber(prev => ({ ...prev, [messageServiceId]: enabled }));
+	// Meta accepts the 6-month backfill once per onboarding, so this is a one-way trigger
+	// rather than a setting: switching on fires the sync, and there is nothing to switch
+	// off afterwards. Ignore any attempt to turn it back off.
+	const handleSyncToggle = async (row: phoneNumbersInterface, enabled: boolean) => {
+		if (!enabled || row.isLast6MonthsRecordCoexistance || !row.isCoexistenceEnabled) return;
+		const setSynced = (value: boolean) => setPhoneNumbers(prev =>
+			prev.map(p => p.id === row.id ? { ...p, isLast6MonthsRecordCoexistance: value } : p)
+		);
+		setSynced(true);
+		const resp = await dispatch(syncCoexistenceHistoryRecords({
+			// The API example uses bare digits, so strip the display formatting
+			phone_number: (row.display_phone_number || '').replace(/[^\d]/g, ''),
+			message_service_id: row.id
+		})) as any;
+		const payload = resp?.payload as PulseemResponse;
+		if (payload?.StatusCode === 1) {
+			setToastMessage({ ...successToastData, message: t('WhatsappOnBoarding.coexistenceSyncStarted') });
+			fetchMetaPhoneNumbers();
+		} else {
+			setSynced(false);
+			setToastMessage({ ...errorToastData, message: payload?.Message || t('common.Error') });
+		}
 	};
 
 	// Hide the control only when Meta has positively told us the number is not on the
@@ -470,14 +479,18 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 				{t('WhatsappOnBoarding.coexistenceNotAvailable')}
 			</Typography>
 		);
+		const isSynced = !!row.isLast6MonthsRecordCoexistance;
 		return (
 			<Switch
-				checked={!!appSyncByNumber[row.id]}
-				onChange={(e) => handleSyncToggle(row.id, e.target.checked)}
+				checked={isSynced}
+				onChange={(e) => handleSyncToggle(row, e.target.checked)}
 				color='primary'
 				size='small'
 				style={SWITCH_INSET}
-				disabled={!isSyncWindowOpen(row)}
+				// Coexistence must be on first - there is no history to pull for a number
+				// that is not sharing with the WhatsApp Business App. Also dead once the
+				// sync has run or Meta's 24-hour window has closed.
+				disabled={!row.isCoexistenceEnabled || isSynced || !isSyncWindowOpen(row)}
 			/>
 		)
 	}
