@@ -93,6 +93,7 @@ import AffiliateProgram from './screens/Affiliate/Management/AffiliateProgram';
 import AccountUsers from './screens/AccountUsers/AccountUsers';
 import TermsOfUsePage from './screens/TermsOfUse/TermsOfUsePage';
 import SubUsers from './screens/UsersAndPermissions/SubUsers';
+import Teams from './screens/UsersAndPermissions/Teams';
 import WhatsappOnBoarding from './screens/Whatsapp/OnBoarding/WhatsappOnBoarding';
 import SubUserConfirmationPage from './screens/UsersAndPermissions/SubUserConfirmationPage';
 import { Loader } from './components/Loader/Loader';
@@ -114,6 +115,9 @@ import PopupSummary from './screens/Popups/PopupSummary';
 import HelpDrawer from './components/HelpDrawer';
 import LegacyPageFrame, { LegacyPageWild } from './screens/LegacyPage/LegacyPageFrame';
 import { openHelpDrawer, closeHelpDrawer, toggleHelpDrawer } from './redux/reducers/helpDrawerSlice';
+import ChatWidgetConfigPage from './screens/Widgets/ChatWidgetConfigPage';
+import WidgetListPage from './screens/Widgets/WidgetListPage';
+import Conversations from './screens/Service/Conversations/Conversations';
 
 const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
   const transferUrl =
@@ -582,6 +586,10 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
         path={`${sitePrefix}SubUsers`}
         element={<SubUsers classes={classes} />}
       />
+      <Route
+        path={`${sitePrefix}Teams`}
+        element={<Teams classes={classes} />}
+      />
       {/* Support */}
       <Route
         path={`/Support`}
@@ -713,6 +721,26 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
         path={`${sitePrefix}ClientSearch`}
         element={<ClientSearch classes={classes} />}
       />}
+      <Route
+        exact
+        path={`${sitePrefix}Widgets`}
+        element={<WidgetListPage classes={classes} />}
+      />
+      <Route
+        exact
+        path={`${sitePrefix}Widgets/:widgetId`}
+        element={<ChatWidgetConfigPage classes={classes} />}
+      />
+      <Route
+        exact
+        path={`${sitePrefix}Conversations`}
+        element={<Conversations classes={classes} />}
+      />
+      <Route
+        exact
+        path={`${sitePrefix}Conversations/:conversationId`}
+        element={<Conversations classes={classes} />}
+      />
     </Routes>
   )
 }

@@ -3,6 +3,9 @@ import SideBar from './Component/SideBar';
 import './css/index.css';
 import clsx from 'clsx';
 import DefaultScreen from '../../DefaultScreen';
+import { ServiceChannel } from '../../Service/Conversations/ServiceChannelDropdown';
+import { getConversations as getServiceConversations } from '../../../redux/reducers/conversationsSlice';
+import { IConversation } from '../../../Models/Service/Conversation';
 import {
 	APIWhatsappChatConversationStatusData,
 	APIWhatsappChatSessionData,
@@ -109,6 +112,24 @@ import { get } from 'lodash';
 import { useRef } from 'react';
 import { searchAllClients } from '../../../redux/reducers/clientSlice';
 
+// --- Service widget → WhatsApp-sidebar adapters (PR-2455 deep merge) ---
+const svcHostOf = (c: IConversation): string => {
+	if (c.domain) return c.domain;
+	try { return c.pageUrl ? new URL(c.pageUrl).host : ''; } catch { return ''; }
+};
+const SVC_STATUS_ID: Record<string, number> = { new: 0, open: 1, resolved: 3, archived: 4 };
+const adaptWidgetToSidebar = (list: IConversation[]): APIWhatsappChatSidebarContactsItemsData[] =>
+	list.map((c) => ({
+		ConversationStatusId: SVC_STATUS_ID[c.status] ?? 0,
+		IsTemplate: false,
+		IsUnsubscribed: false,
+		LastMessage: c.lastMessage || '',
+		LastMessageDate: c.lastActivityAt || '',
+		PhoneNumber: c.id,
+		Unread: 0,
+		UserName: c.visitorName || `Visitor ${(c.visitorId || '').slice(-6)}`,
+	} as APIWhatsappChatSidebarContactsItemsData));
+
 const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const dispatch = useDispatch();
 
@@ -208,6 +229,23 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const [totalSolvedContacts, setTotalSolvedContacts] = useState<number>(0);
 	const [activePhoneNumber, setActivePhoneNumber] = useState<string>('');
 	const [filterBySelected, setFilterBySelected] = useState(0);
+	const [selectedChannel, setSelectedChannel] = useState<ServiceChannel>('whatsapp');
+	const [widgetConversations, setWidgetConversations] = useState<IConversation[]>([]);
+	const [serviceDomain, setServiceDomain] = useState<string>('');
+	const serviceDomains = Array.from(new Set(widgetConversations.map(svcHostOf).filter(Boolean)));
+	const widgetSidebarContacts = adaptWidgetToSidebar(
+		serviceDomain ? widgetConversations.filter((c) => svcHostOf(c) === serviceDomain) : widgetConversations,
+	);
+	useEffect(() => {
+		if (selectedChannel !== 'widget') return;
+		(dispatch as any)(getServiceConversations(undefined)).then((res: any) => {
+			const list: IConversation[] = res?.payload || [];
+			setWidgetConversations(list);
+			const domains = Array.from(new Set(list.map(svcHostOf).filter(Boolean)));
+			setServiceDomain((prev) => prev || domains[0] || '');
+		});
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [selectedChannel]);
 	const [agentSelected, setAgentSelected] = useState(
 		Number(getCookie(agentCookieKey) || 0),
 	);
@@ -2167,6 +2205,11 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 						<div className={`${classes.whatsappChat} app ${isOnlyWhatsAppChat ? 'only-whatsapp' : ''}`}>
 							<div className={`${classes.whatsappChat} app-content ${isOnlyWhatsAppChat ? 'only-whatsapp' : ''}`}>
 								<SideBar
+									onServiceChannelChange={setSelectedChannel}
+									selectedServiceChannel={selectedChannel}
+									serviceDomains={serviceDomains}
+									serviceDomain={serviceDomain}
+									onServiceDomainChange={setServiceDomain}
                                     refetchActiveChatContact={refetchActiveChatContact}
 									isMobileSideBar={isMobileSideBar}
 									classes={classes}
@@ -2177,7 +2220,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 									activePhoneNumber={activePhoneNumber}
 									setActiveUser={setActivePhoneNumber}
 									onActiveUserChange={onActiveUserChange}
-									sideChatContacts={sideChatContacts}
+									sideChatContacts={selectedChannel === 'widget' ? widgetSidebarContacts : sideChatContacts}
 									phoneNumbersList={phoneNumbersList}
 									handleUserStatus={handleUserStatus}
 									getStatusClass={getStatusClass}
