@@ -3476,7 +3476,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
       fontSize: 30
     },
     '& .dialogTitle': {
-      width: 'calc(100% - 60px)',
+      width: 'calc(100% - 65px)',
       direction: isRTL ? 'rtl' : 'ltr',
     }
   },
