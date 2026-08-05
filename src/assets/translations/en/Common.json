@@ -890,6 +890,7 @@
   "polyAgentIconTitle": "Hi, I'm Pulsy, your smart AI Analyst ",
   "polyAgentIconTitleSupport": "Hi, I'm Pulsy, your support AI Agent",
   "polyAgentIconTitleMarquee": "Hi! I'm Pulsy, What would you like to improve today?",
+  "dragHint": "You can drag me anywhere 👋",
   "agentPlaceholder": "Ask me something... (like: \"What are my campaign performance?\") Write freely...",
   "agentPlaceholderSupport": "Ask me anything about Pulseem...(e.g. \"How do I send an SMS?\"). Type freely",
   "welcomeMessage": "Hi, my name is {USERNAME}",

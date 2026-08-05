@@ -316,6 +316,12 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const totalPendingContactsRef = useRef<number>(0);
 	const totalSolvedContactsRef = useRef<number>(0);
 	const contactsPaginationSettingRef = useRef(contactsPaginationSetting);
+	// Populated by SideBar so the mobile chat header can trigger its "New Chat"/"Edit Tags"
+	// actions too, even though the sidebar itself is display:none while a chat is open on mobile.
+	const mobileSideBarActionsRef = useRef<{ openNewChat: () => void; openEditTags: () => void }>({
+		openNewChat: () => {},
+		openEditTags: () => {},
+	});
 
 	useEffect(() => {
 		activeChatContactsRef.current = activeChatContacts;
@@ -1324,6 +1330,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				FromNumber: activePhoneNumber,
 				ToNumber: activeChatContacts?.PhoneNumber,
 				IsFreeFormChat: savedTemplate?.length === 0 ? true : false,
+				IsNewchat: false,
 			};
 			if (savedTemplate?.length > 0) {
 				chatReqPayload.TemplateId = savedTemplate;
@@ -2244,9 +2251,22 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 									personalFields={personalFields}
 									landingPageData={landingPages}
 									searchTextRef={sideBarSearchTextRef}
+									onRegisterMobileActions={(actions) => {
+										mobileSideBarActionsRef.current = actions;
+									}}
 								/>
 								<ChatUi
 									refetchActiveChatContact={refetchActiveChatContact}
+									onAddAgent={() => {
+										setDialogType({ type: 'addAgent', data: null });
+									}}
+									onEditAgents={() => {
+										getAgents();
+										setDialogType({ type: 'editAgents' });
+									}}
+									onRefreshChat={onRefreshChat}
+									onOpenNewChat={() => mobileSideBarActionsRef.current.openNewChat()}
+									onOpenEditTags={() => mobileSideBarActionsRef.current.openEditTags()}
 									isMobileSideBar={isMobileSideBar}
 									classes={classes}
 									setIsMobileSideBar={() =>

@@ -20,7 +20,6 @@ import clsx from 'clsx';
 import { lastMessage } from './data';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useTranslation } from 'react-i18next';
-import AccountUser from '../../../../assets/images/acc-user.jpg';
 import {
 	coreProps,
 	WhatsappAgent,
@@ -257,15 +256,6 @@ const SideBarContactList = ({
 										to={`/react/whatsapp/chat/${contact?.PhoneNumber}`}
 										onClick={(e) => handleChatId(e, contact)}
 									>
-										<div
-											className={`${classes.whatsappChat} sidebar-contact__avatar-wrapper`}
-										>
-											<img
-												src={AccountUser}
-												alt={'profile_picture'}
-												className={`${classes.whatsappChat} avatar`}
-											/>
-										</div>
 										<div
 											className={`${classes.whatsappChat} sidebar-contact__content`}
 										>

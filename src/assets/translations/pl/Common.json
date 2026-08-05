@@ -884,6 +884,7 @@
   "currency": "Waluta",
   "polyAgentIconTitle": "Cześć, jestem Pulsy, twoim inteligentnym agentem AI",
   "polyAgentIconTitleMarquee": "Cześć! Jestem Pulsy, Co chcesz poprawić dziś?",
+  "dragHint": "Możesz mnie przeciągnąć w dowolne miejsce 👋",
   "agentPlaceholder": "Zapytaj mnie o coś... (na przykład: \"Jakie są moje wyniki kampanii?\") Napisz swobodnie...",
   "welcomeMessage": "Hi, my name is {USERNAME}",
   "500chars": "500 znaków",

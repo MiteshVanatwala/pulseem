@@ -88,6 +88,7 @@ import AffiliateProgram from './screens/Affiliate/Management/AffiliateProgram';
 import AccountUsers from './screens/AccountUsers/AccountUsers';
 import TermsOfUsePage from './screens/TermsOfUse/TermsOfUsePage';
 import SubUsers from './screens/UsersAndPermissions/SubUsers';
+import Teams from './screens/UsersAndPermissions/Teams';
 import WhatsappOnBoarding from './screens/Whatsapp/OnBoarding/WhatsappOnBoarding';
 import SubUserConfirmationPage from './screens/UsersAndPermissions/SubUserConfirmationPage';
 import { Loader } from './components/Loader/Loader';
@@ -580,6 +581,10 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
         path={`${sitePrefix}SubUsers`}
         element={<SubUsers classes={classes} />}
       />
+      <Route
+        path={`${sitePrefix}Teams`}
+        element={<Teams classes={classes} />}
+      />
       {/* Support */}
       <Route
         path={`/Support`}
@@ -1032,7 +1037,9 @@ const App = ({ screenSize }) => {
 function useWidth() {
   const { language } = useSelector((state) => state.core);
   const theme = getTheme(language);
-  const keys = [...theme.breakpoints.keys].reverse();
+  // theme.breakpoints.keys is hardcoded by MUI to ['xs','sm','md','lg','xl'] and ignores
+  // custom keys added to theme.js's breakpoint values, so 'sl' is inserted here manually.
+  const keys = ['xl', 'lg', 'sl', 'md', 'sm', 'xs'];
   return (
     keys.reduce((output, key) => {
       // eslint-disable-next-line react-hooks/rules-of-hooks
