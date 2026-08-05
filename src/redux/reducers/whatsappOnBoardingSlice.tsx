@@ -103,6 +103,21 @@ export const setCoexistenceMode = createAsyncThunk(
 	}
 );
 
+// Triggers Meta's one-time backfill of the last 6 months of chats and contacts for a
+// coexistence number. Meta accepts this once per onboarding, within 24 hours.
+export const syncCoexistenceHistoryRecords = createAsyncThunk(
+	'WhatsAppAccountOnBoard/SyncCoexistenceHistoryRecords',
+	async (request: { phone_number: string; message_service_id: string }, thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.post(`WhatsAppAccountOnBoard/SyncCoexistenceHistoryRecords`, request);
+			return response.data as PulseemResponse;
+		} catch (error) {
+			const err = error as ApiError;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
 export const whatsappOnBoardingSlice = createSlice({
 	name: 'whatsappOnBoardingSlice',
 	initialState: {},
