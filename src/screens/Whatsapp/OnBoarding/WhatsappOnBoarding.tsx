@@ -34,11 +34,16 @@ const FB_SDK_SCRIPT_ID = 'facebook-jssdk-whatsapp-onboarding';
 // tableCellRoot's 10px padding and tableCellBody's 10px margin, top and bottom. Nothing
 // here pins a height - the business verification table and the numbers table both take
 // that natural 60px, and the coexistence controls line is padded to land on it too.
-// size='small' gives a 24px-tall Switch instead of the default 38px, which would make the
-// coexistence controls line taller than a row of text. A 2px inset either side takes it
-// to 20px - a text line - so that line matches the details line above it. Small enough
-// not to crop the thumb, unlike insetting a full-size switch.
-const SWITCH_INSET = { marginTop: -2, marginBottom: -2 } as const;
+// A size='small' Switch is 24px tall, which would make the coexistence controls line
+// taller than a row of text. Rather than putting negative margins on the Switch itself -
+// which shifts it against its own track - the switch sits in a 20px wrapper (one text
+// line) and overflows it symmetrically. Layout reserves 20px; the control is untouched
+// and stays perfectly centred.
+const SWITCH_WRAPPER = { height: 20, display: 'flex', alignItems: 'center' } as const;
+
+// SyncCoexistenceHistoryRecords returns this when Meta refuses because more than 24
+// hours have passed since onboarding. The window never reopens for that number.
+const SYNC_WINDOW_EXPIRED_CODE = 9;
 
 // Local development aid. Meta's coexistence onboarding cannot be completed against
 // localhost, and the backend does not yet return is_on_biz_app, so every number looks
@@ -87,6 +92,10 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
   // exactly one call per handshake - the Meta code is single-use, so a duplicate
   // would fail token exchange and report a false error to the user.
   const isSubmittingRef = useRef<boolean>(false);
+  // message_service_ids the backend has told us are past Meta's 24-hour sync window
+  // (status 9). Kept client-side so the switch stays disabled for the rest of the
+  // session; GetMetaPhoneNumbers does not yet expose the onboarding date.
+  const [expiredSyncIds, setExpiredSyncIds] = useState<Set<string>>(new Set());
 
   const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot }
   const cellStyle = { head: classes.tableCellHead, body: classes.tableCellBody, root: classes.tableCellRoot }
@@ -450,13 +459,23 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 			message_service_id: row.id
 		})) as any;
 		const payload = resp?.payload as PulseemResponse;
-		if (payload?.StatusCode === 1) {
+		const { StatusCode, Message } = payload as any;
+		if (StatusCode === 1) {
 			setToastMessage({ ...successToastData, message: t('WhatsappOnBoarding.coexistenceSyncStarted') });
 			fetchMetaPhoneNumbers();
-		} else {
-			setSynced(false);
-			setToastMessage({ ...errorToastData, message: payload?.Message || t('common.Error') });
+			return;
 		}
+		setSynced(false);
+		if (StatusCode === SYNC_WINDOW_EXPIRED_CODE) {
+			// Meta refused because the 24-hour window has closed. It will never reopen for
+			// this number, so remember it and leave the switch disabled rather than letting
+			// the user keep firing a request that cannot succeed.
+			setExpiredSyncIds(prev => new Set(prev).add(row.id));
+		}
+		setToastMessage({
+			...errorToastData,
+			message: t(`WhatsappOnBoarding.SyncCoexistenceHistoryResponseCode.${StatusCode}`, { defaultValue: Message || t('common.Error') })
+		});
 	};
 
 	// Hide the control only when Meta has positively told us the number is not on the
@@ -469,6 +488,8 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 	// (it is WhatsAppMetaOnBoardClientsInfo.CreatedOn); until it is, the field is absent
 	// and the window is treated as open rather than wrongly disabling the control.
 	const isSyncWindowOpen = (row: phoneNumbersInterface) => {
+		// The backend told us the window has closed for this number (status 9)
+		if (expiredSyncIds.has(row.id)) return false;
 		if (!row.onboardedOn) return true;
 		return moment().diff(moment(row.onboardedOn), 'hours') < 24;
 	};
@@ -481,17 +502,18 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 		);
 		const isSynced = !!row.isLast6MonthsRecordCoexistance;
 		return (
-			<Switch
-				checked={isSynced}
-				onChange={(e) => handleSyncToggle(row, e.target.checked)}
-				color='primary'
-				size='small'
-				style={SWITCH_INSET}
-				// Coexistence must be on first - there is no history to pull for a number
-				// that is not sharing with the WhatsApp Business App. Also dead once the
-				// sync has run or Meta's 24-hour window has closed.
-				disabled={!row.isCoexistenceEnabled || isSynced || !isSyncWindowOpen(row)}
-			/>
+			<Box style={SWITCH_WRAPPER}>
+				<Switch
+					checked={isSynced}
+					onChange={(e) => handleSyncToggle(row, e.target.checked)}
+					color='primary'
+					size='small'
+					// Coexistence must be on first - there is no history to pull for a number
+					// that is not sharing with the WhatsApp Business App. Also dead once the
+					// sync has run or Meta's 24-hour window has closed.
+					disabled={!row.isCoexistenceEnabled || isSynced || !isSyncWindowOpen(row)}
+				/>
+			</Box>
 		)
 	}
 
@@ -502,13 +524,14 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 			</Typography>
 		);
 		return (
-			<Switch
-				checked={!!row.isCoexistenceEnabled}
-				onChange={(e) => handleCoexistenceToggle(row.id, row.display_phone_number, e.target.checked)}
-				color='primary'
-				size='small'
-				style={SWITCH_INSET}
-			/>
+			<Box style={SWITCH_WRAPPER}>
+				<Switch
+					checked={!!row.isCoexistenceEnabled}
+					onChange={(e) => handleCoexistenceToggle(row.id, row.display_phone_number, e.target.checked)}
+					color='primary'
+					size='small'
+				/>
+			</Box>
 		)
 	}
 
