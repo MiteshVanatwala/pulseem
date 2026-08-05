@@ -37,6 +37,9 @@
 	"coexistenceColumn": "Coexistence",
 	"syncColumn": "Synchronizuj historię z ostatnich 6 miesięcy",
 	"syncTooltip": "Należy ustawić w ciągu 24 godzin od podłączenia.",
+	"SyncCoexistenceHistoryResponseCode": {
+		"9": "To żądanie można wykonać tylko w ciągu 24 godzin od podłączenia. Okno synchronizacji dla tego numeru zostało zamknięte."
+	},
 	"SaveWhatsappMetaClientsResponseCode": {
 		"3": "Subkonto nie znalezione",
 		"4": "Brak konfiguracji Meta",

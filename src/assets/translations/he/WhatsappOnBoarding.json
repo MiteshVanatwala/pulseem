@@ -37,6 +37,9 @@
 	"coexistenceColumn": "דו-קיום",
 	"syncColumn": "סנכרון היסטוריה מ-6 החודשים האחרונים",
 	"syncTooltip": "יש להגדיר בתוך 24 שעות מרגע החיבור.",
+	"SyncCoexistenceHistoryResponseCode": {
+		"9": "ניתן לבצע בקשה זו רק בתוך 24 שעות מרגע החיבור. חלון הסנכרון עבור מספר זה נסגר."
+	},
 	"coexistenceNotAvailable": "לא זמין למספר זה",
 	"SaveWhatsappMetaClientsResponseCode": {
 		"3": "תת חשבון לא נמצא",

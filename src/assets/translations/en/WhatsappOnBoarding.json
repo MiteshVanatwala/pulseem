@@ -37,6 +37,9 @@
 	"coexistenceColumn": "Coexistence",
 	"syncColumn": "Sync Last 6 months History",
 	"syncTooltip": "It should be set within 24 hours after onboarding.",
+	"SyncCoexistenceHistoryResponseCode": {
+		"9": "This request can only be made within 24 hours of onboarding. The sync window for this number has closed."
+	},
 	"coexistenceNotAvailable": "Not Available",
 	"SaveWhatsappMetaClientsResponseCode": {
 		"3": "Sub account not found",
