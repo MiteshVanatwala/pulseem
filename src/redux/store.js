@@ -45,6 +45,7 @@ import contactSupportReducer from './reducers/contactSupportSlice';
 import dataSourcesReducer from './reducers/dataSourcesSlice';
 import smartSendReducer from './reducers/smartSendSlice';
 import sendSearchReducer from './reducers/sendSearchSlice';
+import conversationsReducer from './reducers/conversationsSlice';
 
 
 export default configureStore({
@@ -94,5 +95,6 @@ export default configureStore({
     dataSources: dataSourcesReducer,
     smartSend: smartSendReducer,
     sendSearch: sendSearchReducer,
+    conversations: conversationsReducer,
   },
 });
