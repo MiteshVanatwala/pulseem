@@ -23,13 +23,10 @@ import { updateTermsOfUse } from '../../redux/reducers/TermsOfUseSlice';
 import { getCommonFeatures } from '../../redux/reducers/commonSlice';
 import { getCookie, setCookie } from '../../helpers/Functions/cookies';
 import BusinessSectorActivity from './Popup/BusinessSectorActivity';
-import NewNavigationPopup from './Popup/NewNavigationPopup';
 import { IS_MAX_WINDOW_WIDTH_WHEN_DRAWER_OPEN } from '../../helpers/Constants';
 
-const NEW_NAVIGATION_POPUP_KEY_PREFIX = 'hideNewNavigationPopup_';
-
 const DashboardScreen = ({ classes }) => {
-  const { windowSize, isRTL, isAdmin, isDrawerOpen, companyName } = useSelector(state => state.core);
+  const { windowSize, isRTL, isAdmin, isDrawerOpen } = useSelector(state => state.core);
   const { accountSettings, isGlobal, companyAdmin } = useSelector(state => state.common);
   const { t } = useTranslation();
   const [toastMessage, setToastMessage] = useState(null);
@@ -41,7 +38,6 @@ const DashboardScreen = ({ classes }) => {
   });
   const [showBusinessSectorActivity, setShowBusinessSectorActivity] = useState(false);
   const [showThankYou, setShowThankYou] = useState(false);
-  const [showNewNavigationPopup, setShowNewNavigationPopup] = useState(false);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -49,8 +45,6 @@ const DashboardScreen = ({ classes }) => {
       let popupShowing = false;
       const hasCookie = getCookie('ignoreTerm');
       const dontShowAgainBusinessSector = getCookie('dontShowAgainBusinessSector');
-      const hideNewNavigationPopup = localStorage.getItem(`${NEW_NAVIGATION_POPUP_KEY_PREFIX}${companyName}`);
-      setShowNewNavigationPopup(hideNewNavigationPopup !== 'true');
 
       if (document.referrer.toLocaleLowerCase().includes('login.aspx')) {
         const member = accountSettings?.SubAccountSettings?.MembershipDetails;
@@ -218,16 +212,6 @@ const DashboardScreen = ({ classes }) => {
           }
         }} />
       </BaseDialog>
-      <NewNavigationPopup
-        classes={classes}
-        isOpen={showNewNavigationPopup}
-        onClose={(dontShowAgain) => {
-          if (dontShowAgain) {
-            localStorage.setItem(`${NEW_NAVIGATION_POPUP_KEY_PREFIX}${companyName}`, 'true');
-          }
-          setShowNewNavigationPopup(false);
-        }}
-      />
     </DefaultScreen>
   )
 }

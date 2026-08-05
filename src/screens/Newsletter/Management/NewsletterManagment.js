@@ -610,7 +610,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
               container
               className={windowSize === 'xs' ? classes.mt1 : ''}
             >
-              {map.map(icon => (
+              {map.filter(icon => !icon.remove).map(icon => (
                 <Grid
                   className={clsx(
                     icon.disable && classes.disabledCursor,
