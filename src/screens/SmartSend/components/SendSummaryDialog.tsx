@@ -28,14 +28,27 @@ const RESULTS: { [code: number]: { sev: 'error' | 'warning'; key: string } } = {
 };
 
 const useStyles = makeStyles((theme) => ({
-    head: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: theme.spacing(2, 3), borderBottom: '1px solid #e0e0e0' },
-    body: { padding: theme.spacing(3) },
-    foot: { display: 'flex', gap: theme.spacing(1.5), padding: theme.spacing(2, 3), borderTop: '1px solid #e0e0e0' },
-    grid: { display: 'flex', flexWrap: 'wrap', gap: theme.spacing(3) },
-    col: { flex: 1, minWidth: 260 },
+    // head/foot fixed, body takes the rest: the dialog now has an explicit 90vh
+    // height (see the Dialog below) so the preview can fill the column instead of
+    // being pinned to 300px and scrolling. Same flex chain as the standalone
+    // preview dialog in SmartSendScreen, kept identical on purpose.
+    head: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: theme.spacing(2, 3), borderBottom: '1px solid #e0e0e0', flex: '0 0 auto' },
+    body: { padding: theme.spacing(3), flex: '1 1 auto', minHeight: 0, overflowY: 'auto', display: 'flex', flexDirection: 'column' },
+    foot: { display: 'flex', gap: theme.spacing(1.5), padding: theme.spacing(2, 3), borderTop: '1px solid #e0e0e0', flex: '0 0 auto' },
+    // flex:1 + minHeight:0 rather than height:100% — the combined banner and the
+    // supervisor checkbox are siblings, and height:100% would push them past the body.
+    grid: { display: 'flex', flexWrap: 'wrap', gap: theme.spacing(3), flex: 1, minHeight: 0 },
+    // overflowY:auto is required, not cosmetic. `grid` is flex:1 + minHeight:0, so on a short
+    // viewport it is squeezed below its content height; without a scroll container here the
+    // summary rows overflow VISIBLY and paint over the combined-campaign banner and the
+    // send-to-supervisor checkbox below — a control that changes who actually receives the send.
+    col: { flex: 1, minWidth: 260, display: 'flex', flexDirection: 'column', minHeight: 0, overflowY: 'auto' },
     line: { display: 'flex', justifyContent: 'space-between', padding: theme.spacing(0.75, 0), borderBottom: '1px dashed #eee' },
     line_b: { fontWeight: 600, color: '#42526b' },
-    big: { fontSize: 30, fontWeight: 800, color: theme.palette.primary.main },
+    // Not a warning colour: this is the final-recipient count on a healthy send.
+    // It used to inherit palette.primary.main (#FF1744), which read as an error.
+    // #2e7d32 is the established success green used elsewhere in this feature.
+    big: { fontSize: 22, fontWeight: 700, color: '#2e7d32' },
     muted: { color: theme.palette.text.secondary },
 }));
 
@@ -103,7 +116,8 @@ const SendSummaryDialog: React.FC<{ open: boolean; campaignId: number; onClose: 
         };
 
         return (
-            <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth dir={isRTL ? 'rtl' : 'ltr'}>
+            <Dialog open={open} onClose={onClose} maxWidth="lg" fullWidth dir={isRTL ? 'rtl' : 'ltr'}
+                PaperProps={{ style: { height: '90vh' } }}>
                 <Box className={classes.head}>
                     <Typography variant="h6">{t('DataSources.send.summary.title')}</Typography>
                     <IconButton size="small" onClick={onClose} aria-label={t('DataSources.send.close')}><Close /></IconButton>
@@ -130,8 +144,10 @@ const SendSummaryDialog: React.FC<{ open: boolean; campaignId: number; onClose: 
                                     {line(t('DataSources.send.summary.removed'), sum.RemovedClients ?? 0, true)}
                                 </Box>
                                 <Box className={classes.col}>
-                                    <Typography variant="subtitle2" style={{ marginBottom: 6, fontWeight: 600 }}>{t('DataSources.send.preview')}</Typography>
-                                    <SmartSendPreview campaignId={campaignId} height={300} />
+                                    <Typography variant="subtitle2" style={{ marginBottom: 6, fontWeight: 600, flex: '0 0 auto' }}>{t('DataSources.send.preview')}</Typography>
+                                    <Box style={{ flex: '1 1 auto', minHeight: 0 }}>
+                                        <SmartSendPreview campaignId={campaignId} height="100%" />
+                                    </Box>
                                 </Box>
                             </Box>
                             {isCombined && (

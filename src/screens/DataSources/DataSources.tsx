@@ -408,7 +408,7 @@ const DataSources = ({ classes }: ClassesType) => {
 
     const renderDialogs = () => (
         <>
-            <UploadWizardDialog classes={classes} open={wizardOpen} onClose={() => setWizardOpen(false)} onUploaded={onUploaded} setToastMessage={setToastMessage} existingSources={items.map(i => ({ Name: i.Name, VersionNumber: i.VersionNumber }))} />
+            <UploadWizardDialog classes={classes} open={wizardOpen} onClose={() => setWizardOpen(false)} onUploaded={onUploaded} setToastMessage={setToastMessage} existingSources={items.map(i => ({ Name: i.Name, VersionNumber: i.VersionNumber, Description: i.Description }))} />
             <EditDataSourceDialog
                 classes={classes}
                 open={dialog?.type === 'edit'}

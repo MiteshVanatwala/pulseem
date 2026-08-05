@@ -283,6 +283,10 @@ export interface SendSearchRow {
     EngagementAt: string | null;
     RollupValue: string;
     HasRow: boolean;
+    // The recipient's `dbo.clients.ClientID` (`csl.RecipientID` in dbo.DataSources_SearchSends).
+    // Added so the drawer can ask GET api/SendSearch/RowValues what this person actually received —
+    // without it the row identifies a PERSON on screen but nothing the server can key on.
+    ClientID: number;
 }
 
 export interface SendSearchResponse {
@@ -314,6 +318,22 @@ export interface SendProvenanceRow {
     FinalClients: number | null;
     SkippedRemovedOrMissing: number | null;
     CreatedBy: string;
+}
+
+// ── per-recipient sent values (mirror of the C# `SendRowValue`, B.3) ────────────────────────
+// One row per mapped token, ALREADY ORDERED by the SP (tm.DisplayOrder, tm.TokenMapID) — the client
+// must not re-sort: the order is the order the operator sees in the mapping screen.
+//
+// `HasRow` is the honesty flag and the reason this shape has three fields instead of two. It is
+// FALSE when the client had no source row in the sent version, which means the sender emitted empty
+// strings for every token. `Value` is `ISNULL(...,'')` server-side, so a HasRow=false payload is a
+// list of tokens with blank values — and rendering those blanks would read as "this recipient was
+// deliberately sent empty text". It is not the same claim, so the renderer must branch on HasRow
+// and say so in words instead (AgentDrawer, `drawer.noRowValues`).
+export interface SendRowValue {
+    Token: string;
+    Value: string;
+    HasRow: boolean;
 }
 
 // ── screen state types ──────────────────────────────────────────────────────────────────────

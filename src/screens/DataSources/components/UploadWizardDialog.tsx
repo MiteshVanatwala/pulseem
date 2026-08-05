@@ -21,7 +21,10 @@ interface UploadWizardDialogProps {
     onClose: () => void;
     onUploaded: (id: number) => void;
     setToastMessage: (msg: ERROR_TYPE) => void;
-    existingSources?: { Name: string; VersionNumber: number }[];
+    // Description is optional because it is only needed to PRE-FILL the description box when the
+    // typed name matches an existing source (see the seeding effect below). A caller that omits it
+    // still gets correct behaviour, just an empty box.
+    existingSources?: { Name: string; VersionNumber: number; Description?: string }[];
 }
 
 const ALLOWED = ['csv', 'xls', 'xlsx', 'tsv'];
@@ -67,6 +70,18 @@ const MENU_PROPS: any = {
     PaperProps: { style: { maxHeight: 320, marginTop: 4 } }
 };
 
+// Role dropdown value → SemanticRole. 'none' and 'sup' are deliberately absent: both persist as
+// SemanticRole NONE ('sup' adds the UI-only supervisor flag), so they map to NONE by lookup miss.
+// This map is also the single source of truth for the "at most one column per role" rule below —
+// roles 3/4 have (or are getting) the same filtered unique index roles 1/2 have, so a duplicate is
+// a 400 IDENTITY_COLUMNS_INVALID from the server, not a silently-picked winner.
+const ROLE_OF_VALUE: { [k: string]: eSemanticRole } = {
+    email: eSemanticRole.RECIPIENT_EMAIL,
+    cell: eSemanticRole.RECIPIENT_CELLPHONE,
+    firstName: eSemanticRole.FIRST_NAME,
+    lastName: eSemanticRole.LAST_NAME
+};
+
 const extOf = (name: string) => {
     const parts = (name || '').split('.');
     return parts.length > 0 ? parts[parts.length - 1].toLowerCase() : '';
@@ -88,10 +103,21 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [createMissingClients, setCreateMissingClients] = useState(true);
+    // Name enrichment of ALREADY-MATCHED recipients. Both default to false: UpdateClientNames = 0 is
+    // the back-compat guarantee (behaviour byte-identical to today), and an overwrite of a real name
+    // leaves no audit trail (tr_clients_update_log logs only Email/Status/Cellphone/SmsStatus), so it
+    // must always be an explicit per-upload opt-in.
+    const [updateClientNames, setUpdateClientNames] = useState(false);
+    const [overwriteClientNames, setOverwriteClientNames] = useState(false);
     const [errors, setErrors] = useState<{ [k: string]: string }>({});
     const [uploading, setUploading] = useState(false);
     const [parsing, setParsing] = useState(false);
     const dragRef = useRef(false);
+    /* Has the user typed in the description box themselves? A REF, not state, on purpose: it must
+       never trigger a render, and — more importantly — it must be readable synchronously by the
+       seeding effect below. Once true it stays true for the life of the dialog (reset() clears it
+       on every open), which is what guarantees the seeding can never fight the user's typing. */
+    const descriptionTouched = useRef(false);
 
     const maxSearchable = limits?.MaxSearchableColumnsPerVersion ?? 10;
     const searchableCount = columns.filter(c => c.IsSearchable).length;
@@ -108,6 +134,8 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
     const reset = () => {
         setStep(0); setFile(null); setHeaders([]); setPreviewRows([]); setColumns([]);
         setRowCount(null); setName(''); setDescription(''); setCreateMissingClients(true);
+        descriptionTouched.current = false;   // fresh open => box is empty AND re-seedable again
+        setUpdateClientNames(false); setOverwriteClientNames(false);
         setErrors({}); setUploading(false); setParsing(false);
         dispatch(setUploadProgress(null));
     };
@@ -304,27 +332,36 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
     };
 
     // ── identity mapping ──────────────────────────────────────────────────────
-    // The role dropdown carries a UI value ('none' | 'email' | 'cell' | 'sup'). 'sup' = supervisor
-    // email — stored as an info field (SemanticRole NONE + DataType EMAIL) plus the UI-only flag.
-    // Picking email/cell/supervisor also turns on search by default when the quota still allows it.
+    // The role dropdown carries a UI value ('none' | 'email' | 'cell' | 'firstName' | 'lastName' |
+    // 'sup'). 'sup' = supervisor email — stored as an info field (SemanticRole NONE + DataType EMAIL)
+    // plus the UI-only flag. Picking email/cell/supervisor also turns on search by default when the
+    // quota still allows it; firstName/lastName deliberately do NOT (see below).
     const setRoleValue = (idx: number, value: string) => {
+        const picked = ROLE_OF_VALUE[value] ?? eSemanticRole.NONE;
         setColumns(cols => cols.map((c, i) => {
             if (i === idx) {
                 if (value === 'sup') {
                     const enable = c.IsSearchable || searchableRemaining > 0;
                     return { ...c, SemanticRole: eSemanticRole.NONE, DataType: eDataType.EMAIL, FormatHint: eFormatHint.NONE, IsSupervisorEmail: true, IsSearchable: enable };
                 }
-                const role = value === 'email' ? eSemanticRole.RECIPIENT_EMAIL
-                    : value === 'cell' ? eSemanticRole.RECIPIENT_CELLPHONE : eSemanticRole.NONE;
+                const role = picked;
                 const dataType = role === eSemanticRole.RECIPIENT_EMAIL ? eDataType.EMAIL
                     : role === eSemanticRole.RECIPIENT_CELLPHONE ? eDataType.PHONE : eDataType.TEXT;
-                const enable = role !== eSemanticRole.NONE ? (c.IsSearchable || searchableRemaining > 0) : c.IsSearchable;
-                // identity columns never carry a currency/percent format
+                // Only email/cell are matching identities. A name is enrichment data, so it must not
+                // silently spend one of the version's scarce searchable-column slots.
+                const isIdentity = role === eSemanticRole.RECIPIENT_EMAIL || role === eSemanticRole.RECIPIENT_CELLPHONE;
+                const enable = isIdentity ? (c.IsSearchable || searchableRemaining > 0) : c.IsSearchable;
+                // role columns never carry a currency/percent format
                 return { ...c, SemanticRole: role, DataType: dataType, FormatHint: role === eSemanticRole.NONE ? c.FormatHint : eFormatHint.NONE, IsSupervisorEmail: false, IsSearchable: enable };
             }
-            // enforce ≤1 of each identity role — clear the previous holder
-            if (value === 'email' && c.SemanticRole === eSemanticRole.RECIPIENT_EMAIL) return { ...c, SemanticRole: eSemanticRole.NONE, DataType: eDataType.TEXT };
-            if (value === 'cell' && c.SemanticRole === eSemanticRole.RECIPIENT_CELLPHONE) return { ...c, SemanticRole: eSemanticRole.NONE, DataType: eDataType.TEXT };
+            // Enforce ≤1 column per role — clear the previous holder. This covers ALL FOUR roles
+            // (1 email, 2 cell, 3 firstName, 4 lastName), not just the two identities: DataSourceColumns
+            // carries a filtered unique index per role, so a second column on role 3/4 is rejected by
+            // the server with 400 IDENTITY_COLUMNS_INVALID and the user gets a misleading
+            // "duplicate identity" toast for a mapping the UI itself allowed.
+            if (picked !== eSemanticRole.NONE && c.SemanticRole === picked) {
+                return { ...c, SemanticRole: eSemanticRole.NONE, DataType: eDataType.TEXT };
+            }
             return c;
         }));
     };
@@ -352,6 +389,35 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
     const nameExists = !!matchedSource;
     const nextVersion = matchedSource ? (matchedSource.VersionNumber || 0) + 1 : 0;
 
+    /* ── seed the description box from the matched existing source ────────────────────────────
+       WHY this exists: on the same-name / new-version path the box used to open empty, so a user
+       who did not retype sent ''. The API maps '' to DBNull (DataSourcesLogic.cs:286) and the SP
+       fix reads that as "leave the existing description alone" — correct, but INVISIBLE: the user
+       could not see which description they were keeping. Seeding makes the kept value legible and
+       editable in place.
+
+       WHY IT CANNOT FIGHT THE USER: the effect early-returns forever once descriptionTouched is
+       set, and that flag is set on the FIRST keystroke in the box (see the TextField's onChange).
+       So the box is only ever written by this effect while it still holds a value the user never
+       authored. reset() clears both the text and the flag on every open, so "fresh open => empty"
+       holds regardless of what the previous session left behind.
+
+       Deps are the matched source's PRIMITIVES, not the object: `matchedSource` is a `.find()`
+       result, so its identity is only as stable as the `existingSources` array the parent rebuilds
+       on every render (DataSources.tsx:411 maps it inline). Depending on the object would re-run
+       this on every parent render; depending on Name+Description re-runs it exactly when the match
+       actually changes.
+
+       Falling back to '' when nothing matches is deliberate: it clears a previously seeded value
+       once the name no longer points at that source, so the box never shows a description
+       belonging to a source the user is no longer targeting. It cannot wipe user input — the
+       touched flag already short-circuits that case. */
+    useEffect(() => {
+        if (descriptionTouched.current) return;
+        setDescription(matchedSource?.Description || '');
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [matchedSource?.Name, matchedSource?.Description]);
+
     // ── upload ────────────────────────────────────────────────────────────────
     const doUpload = async () => {
         setErrors({});
@@ -364,6 +430,10 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
         fd.append('name', name.trim());
         fd.append('description', description || '');
         fd.append('createMissingClients', createMissingClients ? 'true' : 'false');
+        fd.append('updateClientNames', updateClientNames ? 'true' : 'false');
+        // `&& updateClientNames` keeps the pair coherent on the wire even if a future edit breaks the
+        // checkbox's reset — overwrite is meaningless (and dangerous to read as intent) without update.
+        fd.append('overwriteClientNames', (updateClientNames && overwriteClientNames) ? 'true' : 'false');
         // Supervisor email is a UI-only tag — send only the server-known fields (it persists as a
         // plain info field: SemanticRole NONE + DataType EMAIL).
         const payloadColumns: UploadColumnDef[] = columns.map(c => ({
@@ -403,12 +473,16 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
         { value: 'none', label: t('DataSources.wizard.roleNone') },
         { value: 'email', label: t('DataSources.wizard.roleEmail') },
         { value: 'cell', label: t('DataSources.wizard.roleCellphone') },
+        { value: 'firstName', label: t('DataSources.wizard.roleFirstName') },
+        { value: 'lastName', label: t('DataSources.wizard.roleLastName') },
         { value: 'sup', label: t('DataSources.wizard.roleSupervisorEmail') }
     ];
     // Both 'none' and 'sup' map to SemanticRole NONE, so the dropdown value is derived, not the role.
     const roleValueOf = (c: WizardColumn) => c.IsSupervisorEmail ? 'sup'
         : c.SemanticRole === eSemanticRole.RECIPIENT_EMAIL ? 'email'
-            : c.SemanticRole === eSemanticRole.RECIPIENT_CELLPHONE ? 'cell' : 'none';
+            : c.SemanticRole === eSemanticRole.RECIPIENT_CELLPHONE ? 'cell'
+                : c.SemanticRole === eSemanticRole.FIRST_NAME ? 'firstName'
+                    : c.SemanticRole === eSemanticRole.LAST_NAME ? 'lastName' : 'none';
 
     // Readable, slightly-larger-than-field header labels for the mapping table.
     // (16 keeps the intended one-step lead now that the shared dialog scale puts body cells at 15.)
@@ -465,7 +539,13 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
                     </TableRow></TableHead>
                     <TableBody>
                         {columns.map((c, i) => {
-                            // Supervisor email is stored as an info field but is type-locked like an identity (Email).
+                            // isInfo == "the user may still choose DataType/FormatHint". False for every
+                            // column whose role already fixes its type: email→Email, cell→Phone,
+                            // supervisor→Email (stored as an info field but type-locked all the same),
+                            // and firstName/lastName→Text. setRoleValue already forced DataType to Text
+                            // and FormatHint to None for the two name roles, so the locked Select renders
+                            // "Text" and the format Select stays disabled — correct, not a wrong lock:
+                            // Currency/Percent on a person's name is never a legal combination.
                             const isInfo = c.SemanticRole === eSemanticRole.NONE && !c.IsSupervisorEmail;
                             return (
                                 <TableRow key={i}>
@@ -520,6 +600,34 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
                 control={<Checkbox checked={createMissingClients} onChange={(e) => setCreateMissingClients(e.target.checked)} />}
                 label={t('DataSources.wizard.createMissingClients')}
             />
+            {/* Name enrichment of recipients that ALREADY exist. Two nested questions: "update at all?"
+                then "overwrite an existing name?". Unchecking the first must reset the second — leaving
+                a stale checked-but-disabled overwrite would send OverwriteClientNames=1 the moment the
+                user re-checks update, which is the one irreversible, unaudited write in this feature. */}
+            <Box style={{ display: 'flex', flexDirection: 'column' }}>
+                <FormControlLabel
+                    control={<Checkbox checked={updateClientNames} onChange={(e) => {
+                        const on = e.target.checked;
+                        setUpdateClientNames(on);
+                        if (!on) setOverwriteClientNames(false);
+                    }} />}
+                    label={t('DataSources.wizard.updateClientNames')}
+                />
+                <Typography style={{ fontSize: 12, color: '#95A5A6', marginTop: -6, marginInlineStart: 32 }}>
+                    {t('DataSources.wizard.updateClientNamesHint')}
+                </Typography>
+                <Box style={{ paddingInlineStart: 26 }}>
+                    <FormControlLabel
+                        disabled={!updateClientNames}
+                        control={<Checkbox checked={overwriteClientNames} disabled={!updateClientNames}
+                            onChange={(e) => setOverwriteClientNames(e.target.checked)} />}
+                        label={t('DataSources.wizard.overwriteClientNames')}
+                    />
+                    <Typography style={{ fontSize: 12, color: '#95A5A6', marginTop: -6, marginInlineStart: 32 }}>
+                        {t('DataSources.wizard.overwriteClientNamesHint')}
+                    </Typography>
+                </Box>
+            </Box>
         </Box>
     );
 
@@ -527,7 +635,21 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
         <Box style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
             <TextField variant="outlined" label={t('DataSources.wizard.nameLabel')} value={name} onChange={(e) => setName(e.target.value)}
                 error={!!errors.name} helperText={errors.name} inputProps={{ maxLength: 100 }} fullWidth />
-            <TextField variant="outlined" label={t('DataSources.wizard.descriptionLabel')} value={description} onChange={(e) => setDescription(e.target.value)}
+            {/* descriptionTouched: from the first keystroke the box belongs to the user and the
+                seeding effect above stops writing to it — including when the user clears it.
+
+                helperText, only on the same-name path: clearing the box is a SILENT NO-OP there and
+                the user has no way to tell. The API maps '' to DBNull (DataSourcesLogic.cs:286) and
+                the SP writes ISNULL(@prm_Description, Description), i.e. blank means "leave the
+                existing description alone" — the approved product decision. Pre-filling the box (the
+                seeding effect above) makes "select all + delete" the natural gesture for a user who
+                wants to REMOVE the description, and that gesture does nothing. There is no way to
+                clear a description anywhere in the product today, so this line states the rule rather
+                than pointing at a workaround that does not exist. Gated on nameExists because on the
+                NEW-source path blank genuinely means "no description" and the line would be false. */}
+            <TextField variant="outlined" label={t('DataSources.wizard.descriptionLabel')} value={description}
+                onChange={(e) => { descriptionTouched.current = true; setDescription(e.target.value); }}
+                helperText={nameExists ? t('DataSources.wizard.descriptionKeepHint') : undefined}
                 inputProps={{ maxLength: 500 }} multiline rows={2} fullWidth />
             {nameExists && (
                 <Typography style={{ color: '#b54708', fontSize: 13 }}>
