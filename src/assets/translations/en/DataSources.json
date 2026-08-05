@@ -54,6 +54,10 @@
       "systemFieldWarn": "System field — mapping to a source overrides the recipient's account value",
       "vanishedColumn": "The mapped column no longer exists in this version — remap it",
       "noTokens": "No fields found in the template",
+      "suggestApply": "Suggested: {{name}}",
+      "suggestTip": "Click to map this field to that column",
+      "unmappedCount": "{{n}} unmapped",
+      "showUnmappedOnly": "Unmapped only",
       "badge": {
         "graph": "Graph",
         "systemField": "System field",
@@ -281,6 +285,7 @@
     "originalHeader": "Original header",
     "nameLabel": "Source name",
     "descriptionLabel": "Description",
+    "descriptionKeepHint": "If left empty, the existing description is kept",
     "newVersionNotice": "A source with this name exists — the file will be uploaded as a new version (V{{n}}) and the previous version will be kept",
     "confirmUpload": "Upload",
     "next": "Next",

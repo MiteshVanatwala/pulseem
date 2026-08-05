@@ -54,6 +54,10 @@
       "systemFieldWarn": "Pole systemowe — zmapowanie do źródła nadpisze wartość konta odbiorcy",
       "vanishedColumn": "Zmapowana kolumna nie istnieje już w tej wersji — zmapuj ponownie",
       "noTokens": "Nie znaleziono pól w szablonie",
+      "suggestApply": "Sugestia: {{name}}",
+      "suggestTip": "Kliknij, aby zmapować to pole do tej kolumny",
+      "unmappedCount": "{{n}} niezmapowanych",
+      "showUnmappedOnly": "Tylko niezmapowane",
       "badge": {
         "graph": "Wykres",
         "systemField": "Pole systemowe",
@@ -281,6 +285,7 @@
     "originalHeader": "Oryginalny nagłówek",
     "nameLabel": "Nazwa źródła",
     "descriptionLabel": "Opis",
+    "descriptionKeepHint": "Jeśli pole pozostanie puste, istniejący opis zostanie zachowany",
     "newVersionNotice": "Źródło o tej nazwie już istnieje — plik zostanie przesłany jako nowa wersja (V{{n}}), a poprzednia wersja zostanie zachowana",
     "confirmUpload": "Prześlij",
     "next": "Dalej",

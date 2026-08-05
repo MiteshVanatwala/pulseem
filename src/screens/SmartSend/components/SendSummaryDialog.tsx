@@ -38,7 +38,11 @@ const useStyles = makeStyles((theme) => ({
     // flex:1 + minHeight:0 rather than height:100% — the combined banner and the
     // supervisor checkbox are siblings, and height:100% would push them past the body.
     grid: { display: 'flex', flexWrap: 'wrap', gap: theme.spacing(3), flex: 1, minHeight: 0 },
-    col: { flex: 1, minWidth: 260, display: 'flex', flexDirection: 'column', minHeight: 0 },
+    // overflowY:auto is required, not cosmetic. `grid` is flex:1 + minHeight:0, so on a short
+    // viewport it is squeezed below its content height; without a scroll container here the
+    // summary rows overflow VISIBLY and paint over the combined-campaign banner and the
+    // send-to-supervisor checkbox below — a control that changes who actually receives the send.
+    col: { flex: 1, minWidth: 260, display: 'flex', flexDirection: 'column', minHeight: 0, overflowY: 'auto' },
     line: { display: 'flex', justifyContent: 'space-between', padding: theme.spacing(0.75, 0), borderBottom: '1px dashed #eee' },
     line_b: { fontWeight: 600, color: '#42526b' },
     // Not a warning colour: this is the final-recipient count on a healthy send.

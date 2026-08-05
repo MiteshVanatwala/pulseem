@@ -54,6 +54,10 @@
       "systemFieldWarn": "שדה מערכת — מיפוי למקור ידרוס את ערך החשבון של הנמען",
       "vanishedColumn": "העמודה הממופה אינה קיימת בגרסה — יש למפות מחדש",
       "noTokens": "לא נמצאו שדות בתבנית",
+      "suggestApply": "הצעה: {{name}}",
+      "suggestTip": "לחיצה תמפה את השדה לעמודה הזו",
+      "unmappedCount": "{{n}} לא ממופים",
+      "showUnmappedOnly": "רק לא ממופים",
       "badge": {
         "graph": "גרף",
         "systemField": "שדה מערכת",
@@ -281,6 +285,7 @@
     "originalHeader": "כותרת מקורית",
     "nameLabel": "שם המקור",
     "descriptionLabel": "תיאור",
+    "descriptionKeepHint": "אם השדה יישאר ריק, התיאור הקיים יישמר",
     "newVersionNotice": "קיים מקור בשם זה — הקובץ יועלה כגרסה חדשה (V{{n}}) והגרסה הקודמת תישמר",
     "confirmUpload": "העלה",
     "next": "הבא",

@@ -68,6 +68,12 @@ interface SendSearchState {
     // agent's card would show the first agent's values, which is the exact confident-lie failure this
     // card exists to prevent.
     rowValuesClientId: number | null;
+    // Stale-response guard, same mechanism as searchReqId (:45). rowValuesClientId alone is NOT
+    // enough: open recipient A, then B before A resolves. `pending` for B has already moved
+    // rowValuesClientId to B, so when A's slower response lands last it overwrites rowValues while
+    // the id field says B — AgentDrawer's clientId check then passes and A's national-ID / policy
+    // numbers render under B's name, permanently. Only the request identity catches that ordering.
+    rowValuesReqId: string;
 }
 
 // ── Thunks ───────────────────────────────────────────────────────────────────────────────────
@@ -131,6 +137,7 @@ const initialState: SendSearchState = {
     rowValuesLoading: false,
     rowValuesError: null,
     rowValuesClientId: null,
+    rowValuesReqId: '',
 };
 
 // One definition of "forget the recipient's values", shared by `closeDrawer`, `popDrawer` (last
@@ -141,6 +148,9 @@ const clearRowValuesState = (state: SendSearchState) => {
     state.rowValuesClientId = null;
     state.rowValuesLoading = false;
     state.rowValuesError = null;
+    // Also invalidate the in-flight request: a response that lands after the drawer closed must not
+    // repopulate the slot for a recipient nobody is looking at any more.
+    state.rowValuesReqId = '';
 };
 
 export const sendSearchSlice = createSlice({
@@ -277,12 +287,17 @@ export const sendSearchSlice = createSlice({
         builder.addCase(getSendRowValues.pending, (state, action: any) => {
             state.rowValuesLoading = true;
             state.rowValuesClientId = action.meta.arg?.clientId ?? null;
+            state.rowValuesReqId = action.meta.requestId;
             // Cleared on PENDING, not only on fulfilled: the previous recipient's values must not
             // stay on screen under the new recipient's name while the request is in flight.
             state.rowValues = [];
             state.rowValuesError = null;
         });
         builder.addCase(getSendRowValues.fulfilled, (state, action: any) => {
+            // Stale response: a slower request for a PREVIOUS recipient landing after a newer one.
+            // Must return before touching rowValues — writing them here would paint one recipient's
+            // values under another's name and rowValuesClientId would not catch it (see :71).
+            if (action.meta.requestId !== state.rowValuesReqId) return;
             state.rowValuesLoading = false;
             if (action.payload?.StatusCode === 405) {
                 // eSubUserPermissions.HideRecipietns. This endpoint returns raw recipient data, so it
@@ -304,6 +319,9 @@ export const sendSearchSlice = createSlice({
                 : (action.payload?.Message ?? 'ROWVALUES_FAILED');
         });
         builder.addCase(getSendRowValues.rejected, (state, action: any) => {
+            // Same stale guard as fulfilled: a failed OLD request must not clear the values of the
+            // recipient the user is actually looking at, nor flip the card into an error state.
+            if (action.meta.requestId !== state.rowValuesReqId) return;
             state.rowValuesLoading = false;
             state.rowValues = [];
             state.rowValuesError = action.payload?.error ?? action.error?.message ?? 'ROWVALUES_FAILED';

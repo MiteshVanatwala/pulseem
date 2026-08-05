@@ -21,7 +21,10 @@ interface UploadWizardDialogProps {
     onClose: () => void;
     onUploaded: (id: number) => void;
     setToastMessage: (msg: ERROR_TYPE) => void;
-    existingSources?: { Name: string; VersionNumber: number }[];
+    // Description is optional because it is only needed to PRE-FILL the description box when the
+    // typed name matches an existing source (see the seeding effect below). A caller that omits it
+    // still gets correct behaviour, just an empty box.
+    existingSources?: { Name: string; VersionNumber: number; Description?: string }[];
 }
 
 const ALLOWED = ['csv', 'xls', 'xlsx', 'tsv'];
@@ -110,6 +113,11 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
     const [uploading, setUploading] = useState(false);
     const [parsing, setParsing] = useState(false);
     const dragRef = useRef(false);
+    /* Has the user typed in the description box themselves? A REF, not state, on purpose: it must
+       never trigger a render, and — more importantly — it must be readable synchronously by the
+       seeding effect below. Once true it stays true for the life of the dialog (reset() clears it
+       on every open), which is what guarantees the seeding can never fight the user's typing. */
+    const descriptionTouched = useRef(false);
 
     const maxSearchable = limits?.MaxSearchableColumnsPerVersion ?? 10;
     const searchableCount = columns.filter(c => c.IsSearchable).length;
@@ -126,6 +134,7 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
     const reset = () => {
         setStep(0); setFile(null); setHeaders([]); setPreviewRows([]); setColumns([]);
         setRowCount(null); setName(''); setDescription(''); setCreateMissingClients(true);
+        descriptionTouched.current = false;   // fresh open => box is empty AND re-seedable again
         setUpdateClientNames(false); setOverwriteClientNames(false);
         setErrors({}); setUploading(false); setParsing(false);
         dispatch(setUploadProgress(null));
@@ -380,6 +389,35 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
     const nameExists = !!matchedSource;
     const nextVersion = matchedSource ? (matchedSource.VersionNumber || 0) + 1 : 0;
 
+    /* ── seed the description box from the matched existing source ────────────────────────────
+       WHY this exists: on the same-name / new-version path the box used to open empty, so a user
+       who did not retype sent ''. The API maps '' to DBNull (DataSourcesLogic.cs:286) and the SP
+       fix reads that as "leave the existing description alone" — correct, but INVISIBLE: the user
+       could not see which description they were keeping. Seeding makes the kept value legible and
+       editable in place.
+
+       WHY IT CANNOT FIGHT THE USER: the effect early-returns forever once descriptionTouched is
+       set, and that flag is set on the FIRST keystroke in the box (see the TextField's onChange).
+       So the box is only ever written by this effect while it still holds a value the user never
+       authored. reset() clears both the text and the flag on every open, so "fresh open => empty"
+       holds regardless of what the previous session left behind.
+
+       Deps are the matched source's PRIMITIVES, not the object: `matchedSource` is a `.find()`
+       result, so its identity is only as stable as the `existingSources` array the parent rebuilds
+       on every render (DataSources.tsx:411 maps it inline). Depending on the object would re-run
+       this on every parent render; depending on Name+Description re-runs it exactly when the match
+       actually changes.
+
+       Falling back to '' when nothing matches is deliberate: it clears a previously seeded value
+       once the name no longer points at that source, so the box never shows a description
+       belonging to a source the user is no longer targeting. It cannot wipe user input — the
+       touched flag already short-circuits that case. */
+    useEffect(() => {
+        if (descriptionTouched.current) return;
+        setDescription(matchedSource?.Description || '');
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [matchedSource?.Name, matchedSource?.Description]);
+
     // ── upload ────────────────────────────────────────────────────────────────
     const doUpload = async () => {
         setErrors({});
@@ -597,7 +635,21 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
         <Box style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
             <TextField variant="outlined" label={t('DataSources.wizard.nameLabel')} value={name} onChange={(e) => setName(e.target.value)}
                 error={!!errors.name} helperText={errors.name} inputProps={{ maxLength: 100 }} fullWidth />
-            <TextField variant="outlined" label={t('DataSources.wizard.descriptionLabel')} value={description} onChange={(e) => setDescription(e.target.value)}
+            {/* descriptionTouched: from the first keystroke the box belongs to the user and the
+                seeding effect above stops writing to it — including when the user clears it.
+
+                helperText, only on the same-name path: clearing the box is a SILENT NO-OP there and
+                the user has no way to tell. The API maps '' to DBNull (DataSourcesLogic.cs:286) and
+                the SP writes ISNULL(@prm_Description, Description), i.e. blank means "leave the
+                existing description alone" — the approved product decision. Pre-filling the box (the
+                seeding effect above) makes "select all + delete" the natural gesture for a user who
+                wants to REMOVE the description, and that gesture does nothing. There is no way to
+                clear a description anywhere in the product today, so this line states the rule rather
+                than pointing at a workaround that does not exist. Gated on nameExists because on the
+                NEW-source path blank genuinely means "no description" and the line would be false. */}
+            <TextField variant="outlined" label={t('DataSources.wizard.descriptionLabel')} value={description}
+                onChange={(e) => { descriptionTouched.current = true; setDescription(e.target.value); }}
+                helperText={nameExists ? t('DataSources.wizard.descriptionKeepHint') : undefined}
                 inputProps={{ maxLength: 500 }} multiline rows={2} fullWidth />
             {nameExists && (
                 <Typography style={{ color: '#b54708', fontSize: 13 }}>
