@@ -106,7 +106,9 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 	useEffect(() => loadFacebookSDK(), []);
 
 	useEffect(() => {
+		// @ts-ignore
 		if (phoneNumberId && wabaId && code && !isSubmittingRef.current) {
+			// @ts-ignore
 			isSubmittingRef.current = true;
 			FBlogin();
 		}
@@ -118,6 +120,7 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 		setPhoneNumberId('');
 		setWabaId('');
 		setCode('');
+		// @ts-ignore
 		isSubmittingRef.current = false;
 	};
 
