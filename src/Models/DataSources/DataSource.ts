@@ -31,16 +31,95 @@ export enum eFormatHint {
     PERCENT = 2
 }
 
-// All five values are emitted by the upload wizard. 3/4 drive the client FirstName/LastName
-// enrichment on match (DataSourceVersions.UpdateClientNames / OverwriteClientNames) — they are NOT
-// identity/matching roles, matching still happens on email (1) and cellphone (2) only.
+// Matching roles ONLY. 1 and 2 are the identity columns the resolve procedure joins on.
+//
+// 3 and 4 are LEGACY and are no longer offered by the wizard: they were the two hard-coded
+// name-enrichment roles, superseded by ClientFieldTarget below, which expresses the same idea for
+// every writable field instead of two. They stay in the enum because they are seeded rows in
+// dbo.LU_DataSourceSemanticRole behind an enforced FK — removing them would break that constraint.
+// Verified 2026-08-05 against the live DB: roles 3/4 have ZERO rows in dbo.DataSourceColumns, so
+// nothing in production ever used them and no back-compatibility path is required.
 export enum eSemanticRole {
     NONE = 0,
     RECIPIENT_EMAIL = 1,
     RECIPIENT_CELLPHONE = 2,
+    /** @deprecated superseded by eClientField.FIRST_NAME — never used in production. */
     FIRST_NAME = 3,
+    /** @deprecated superseded by eClientField.LAST_NAME — never used in production. */
     LAST_NAME = 4
 }
+
+/**
+ * WRITE-BACK TARGETS — "this column also updates the recipient's own record".
+ *
+ * Orthogonal to eSemanticRole on purpose: a column keeps whatever it already is (a plain info
+ * field, or an identity column) and MAY ALSO carry one of these. That is why this is a separate
+ * nullable property rather than more eSemanticRole values — ~26 new roles would each have needed a
+ * seeded lookup row behind an FK and a filtered unique index on dbo.DataSourceColumns.
+ *
+ * Numbering is blocked so the origin of every id is readable at a glance and the blocks can grow
+ * independently. These values are persisted, so they are append-only — never renumber.
+ *   1..99    columns of dbo.clients
+ *   101..113 dbo.ClientExtraData.ExtraField1..13
+ *   201..204 dbo.ClientExtraData.ExtraDate1..4
+ *
+ * NEVER offered, deliberately: Email and Cellphone (the identity keys the run matches on — writing
+ * them mid-run would mutate what the run is matching against), Status and SmsStatus (consent, not
+ * profile data), and every behavioural/system column.
+ */
+export enum eClientField {
+    FIRST_NAME = 1,
+    LAST_NAME = 2,
+    TELEPHONE = 3,
+    ADDRESS = 4,
+    CITY = 5,
+    STATE = 6,
+    COUNTRY = 7,
+    ZIP = 8,
+    BIRTH_DATE = 9,
+    COMPANY = 10,
+
+    EXTRA_FIELD_1 = 101, EXTRA_FIELD_2 = 102, EXTRA_FIELD_3 = 103, EXTRA_FIELD_4 = 104,
+    EXTRA_FIELD_5 = 105, EXTRA_FIELD_6 = 106, EXTRA_FIELD_7 = 107, EXTRA_FIELD_8 = 108,
+    EXTRA_FIELD_9 = 109, EXTRA_FIELD_10 = 110, EXTRA_FIELD_11 = 111, EXTRA_FIELD_12 = 112,
+    EXTRA_FIELD_13 = 113,
+
+    EXTRA_DATE_1 = 201, EXTRA_DATE_2 = 202, EXTRA_DATE_3 = 203, EXTRA_DATE_4 = 204
+}
+
+/** Highest id the server accepts. Mirrored in C# (DataSourcesController) — keep both in step. */
+export const CLIENT_FIELD_MAX_ID = 204;
+
+export interface ClientFieldOption {
+    Id: eClientField;
+    /** i18n key, for the fixed profile fields only. */
+    LabelKey?: string;
+    /** The account's own name for an extra field (dbo.AccountExtraFields). Blank => not offered. */
+    AccountLabel?: string;
+    /** Target column width. Longer source values are truncated to fit. Null for dates. */
+    MaxLength: number | null;
+    IsDate: boolean;
+    Group: 'recipient' | 'extraField' | 'extraDate';
+}
+
+/**
+ * The fixed half of the catalogue. Lengths mirror dbo.clients exactly (verified 2026-08-05):
+ * every text target is nvarchar(100) except Zip, which is nvarchar(50).
+ * The extra-field half is per-account and comes from the server — only the account knows what it
+ * calls ExtraField7.
+ */
+export const CLIENT_FIELD_CATALOGUE: ClientFieldOption[] = [
+    { Id: eClientField.FIRST_NAME, LabelKey: 'firstName', MaxLength: 100,  IsDate: false, Group: 'recipient' },
+    { Id: eClientField.LAST_NAME,  LabelKey: 'lastName',  MaxLength: 100,  IsDate: false, Group: 'recipient' },
+    { Id: eClientField.TELEPHONE,  LabelKey: 'telephone', MaxLength: 100,  IsDate: false, Group: 'recipient' },
+    { Id: eClientField.ADDRESS,    LabelKey: 'address',   MaxLength: 100,  IsDate: false, Group: 'recipient' },
+    { Id: eClientField.CITY,       LabelKey: 'city',      MaxLength: 100,  IsDate: false, Group: 'recipient' },
+    { Id: eClientField.STATE,      LabelKey: 'state',     MaxLength: 100,  IsDate: false, Group: 'recipient' },
+    { Id: eClientField.COUNTRY,    LabelKey: 'country',   MaxLength: 100,  IsDate: false, Group: 'recipient' },
+    { Id: eClientField.ZIP,        LabelKey: 'zip',       MaxLength: 50,   IsDate: false, Group: 'recipient' },
+    { Id: eClientField.COMPANY,    LabelKey: 'company',   MaxLength: 100,  IsDate: false, Group: 'recipient' },
+    { Id: eClientField.BIRTH_DATE, LabelKey: 'birthDate', MaxLength: null, IsDate: true,  Group: 'recipient' }
+];
 
 // Free-text filter operator (whitelist enforced server-side): equals / startsWith / contains.
 export enum eFilterOperator {
@@ -155,6 +234,13 @@ export interface UploadColumnDef {
     FormatHint: eFormatHint;
     SemanticRole: eSemanticRole;
     IsSearchable: boolean;
+    /**
+     * Optional write-back target on the recipient's own record. null / absent = this column only
+     * lives in the source, which is the default and what every existing version reads back as.
+     * Appended LAST on purpose: dbo.DataSourceColumnType binds by column ORDER, so a new member
+     * may only ever be added at the end and existing members may never be reordered or removed.
+     */
+    ClientFieldTarget?: eClientField | null;
 }
 
 export interface RowsFilter {
