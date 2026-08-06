@@ -71,5 +71,11 @@
     "teamSaved": "הצוות נשמר בהצלחה",
     "teamDeleted": "הצוות נמחק בהצלחה",
     "genericError": "משהו השתבש. נסה שוב."
+  },
+  "serviceLimits": {
+    "agentsLabel": "סוכני שירות WhatsApp",
+    "agentLimitReached": "הגעת למגבלת סוכני שירות ה-WhatsApp בתוכנית שלך.",
+    "upgradeCta": "שדרג תוכנית",
+    "usageFormat": "{{current}} / {{max}} {{label}}"
   }
 }
