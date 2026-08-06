@@ -439,7 +439,9 @@ const DataSources = ({ classes }: ClassesType) => {
                 canExport={canExport}
             />
             {/* delete confirmation */}
-            <Dialog open={dialog?.type === 'delete'} onClose={() => setDialog(null)} dir="rtl" PaperProps={{ className: dsDialog.paper }}>
+            {/* Reactive dir, not hardcoded "rtl" — see UploadWizardDialog.tsx for why the attribute
+                is mandatory on a portalled Dialog and why hardcoding it broke en/pl. */}
+            <Dialog open={dialog?.type === 'delete'} onClose={() => setDialog(null)} dir={isRtl ? 'rtl' : 'ltr'} PaperProps={{ className: dsDialog.paper }}>
                 <DialogTitle>{t('DataSources.delete.title')}</DialogTitle>
                 <DialogContent><Typography>{t('DataSources.delete.body')}</Typography></DialogContent>
                 <DialogActions>
@@ -448,7 +450,7 @@ const DataSources = ({ classes }: ClassesType) => {
                 </DialogActions>
             </Dialog>
             {/* delete blocked by campaigns */}
-            <Dialog open={dialog?.type === 'deleteBlocked'} onClose={() => setDialog(null)} dir="rtl" PaperProps={{ className: dsDialog.paper }}>
+            <Dialog open={dialog?.type === 'deleteBlocked'} onClose={() => setDialog(null)} dir={isRtl ? 'rtl' : 'ltr'} PaperProps={{ className: dsDialog.paper }}>
                 <DialogTitle>{t('DataSources.delete.blockedTitle')}</DialogTitle>
                 <DialogContent>
                     <Typography>{t('DataSources.delete.blockedBody')}</Typography>

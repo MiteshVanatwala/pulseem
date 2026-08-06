@@ -98,7 +98,10 @@ const DrawerStack: React.FC<Props> = ({ stack, isRTL, onPop, onClose, children }
                                 {top.Subtitle && (
                                     <Typography
                                         component="div"
-                                        style={{ fontSize: 13, color: '#5b6b7b', marginTop: 2, direction: 'ltr', textAlign: 'right' }}
+                                        /* Branched, not 'start': the element's own `direction: ltr`
+                                           (needed so the subtitle's IDs/emails do not reorder) would
+                                           make 'start' resolve to LEFT even in Hebrew. */
+                                        style={{ fontSize: 13, color: '#5b6b7b', marginTop: 2, direction: 'ltr', textAlign: isRTL ? 'right' : 'left' }}
                                     >
                                         {top.Subtitle}
                                     </Typography>

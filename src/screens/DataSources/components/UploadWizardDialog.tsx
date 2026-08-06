@@ -67,14 +67,18 @@ const classifyColumn = (vals: any[]): ColKind => {
 // stripped from the payload before upload (the server has no such column).
 type WizardColumn = UploadColumnDef & { IsSupervisorEmail?: boolean };
 
-// Dropdown menus must open BELOW the field (never over it) and stay right-anchored in RTL.
+// Dropdown menus must open BELOW the field (never over it) and stay anchored to the field's START
+// edge — right under RTL, left under LTR. The branch is required: anchorOrigin is a PROP, not CSS,
+// so jss-rtl never sees it, and MUI v4's Popover has no direction handling of its own. Hardcoding
+// 'right' pinned the menu to the field's END edge for en/pl, so a menu wider than its field grew
+// outwards instead of along the field.
 // getContentAnchorEl:null is what lets anchorOrigin.vertical:'bottom' actually take effect in MUI v4.
-const MENU_PROPS: any = {
+const menuPropsFor = (isRtl: boolean): any => ({
     getContentAnchorEl: null,
-    anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
-    transformOrigin: { vertical: 'top', horizontal: 'right' },
+    anchorOrigin: { vertical: 'bottom', horizontal: isRtl ? 'right' : 'left' },
+    transformOrigin: { vertical: 'top', horizontal: isRtl ? 'right' : 'left' },
     PaperProps: { style: { maxHeight: 320, marginTop: 4 } }
-};
+});
 
 // Role dropdown value → SemanticRole. 'none' and 'sup' are deliberately absent: both persist as
 // SemanticRole NONE ('sup' adds the UI-only supervisor flag), so they map to NONE by lookup miss.
@@ -94,7 +98,11 @@ const extOf = (name: string) => {
 };
 
 const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessage, existingSources = [], accountExtraFields }: UploadWizardDialogProps) => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+    // Fallback 'rtl' matches DataSources.tsx:113 — Hebrew is the default locale, so an i18n
+    // instance without dir() must not silently downgrade the app to LTR.
+    const isRtl = (i18n.dir?.() ?? 'rtl') === 'rtl';
+    const MENU_PROPS = menuPropsFor(isRtl);
     const dispatch = useDispatch();
     const dsDialog = useDsDialogStyles();
     const { uploadProgress, quota } = useSelector((s: any) => s.dataSources);
@@ -765,7 +773,13 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
     const canNext = step === 0 ? (!!file && previewRows.length > 0) : true;
 
     return (
-        <Dialog open={open} onClose={requestClose} fullWidth maxWidth="md" dir="rtl" PaperProps={{ className: dsDialog.paper }}>
+        // `dir` is MANDATORY on every Dialog here and is NOT inherited: MUI v4 Dialogs portal into
+        // document.body, outside the <div dir={isRTL...}> at App.js:1024, and <html dir> is stuck at
+        // "ltr" because App.js:733-736 writes it once at mount from i18n.language — still the 'en'
+        // default from i18n.js at that point. jss-rtl mirrors CSS but never sets `direction`, so it
+        // cannot compensate. Reactive, NOT hardcoded "rtl", so en/pl accounts render LTR — same idiom
+        // as TestSendDialog.tsx:69 and SmartSendManageTab.tsx:305.
+        <Dialog open={open} onClose={requestClose} fullWidth maxWidth="md" dir={isRtl ? 'rtl' : 'ltr'} PaperProps={{ className: dsDialog.paper }}>
             <DialogTitle>{t('DataSources.wizard.title')}</DialogTitle>
             <DialogContent>
                 <Stepper activeStep={step} alternativeLabel>

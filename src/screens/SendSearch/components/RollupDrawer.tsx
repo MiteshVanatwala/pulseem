@@ -81,7 +81,9 @@ const Num: React.FC<{ label: string; value: string; tone?: StateTone }> = ({ lab
 );
 
 const RollupDrawer: React.FC<Props> = ({ row, roster, provenance, onOpenAgent }) => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+    // Same idiom as DataSources.tsx:113 — fallback 'rtl' because Hebrew is the default locale.
+    const isRtl = (i18n.dir?.() ?? 'rtl') === 'rtl';
 
     // NARROWED FIRST, here and at every roster row below. Reading `row.EngagementState` raw bypassed
     // `toChannelAttempt`, so an out-of-domain value printed the untranslated key
@@ -157,7 +159,9 @@ const RollupDrawer: React.FC<Props> = ({ row, roster, provenance, onOpenAgent })
                     {verdict}
                 </Typography>
                 {row.SentAt && (
-                    <Typography component="div" style={{ fontSize: 14, color: '#5b6b7b', marginTop: 5, direction: 'ltr', textAlign: 'right' }}>
+                    // `direction: ltr` is for the timestamp itself; the alignment has to be branched
+                    // because 'start' would resolve off that ltr, not off the page direction.
+                    <Typography component="div" style={{ fontSize: 14, color: '#5b6b7b', marginTop: 5, direction: 'ltr', textAlign: isRtl ? 'right' : 'left' }}>
                         {moment(row.SentAt).format(DateFormats.DATE_TIME_24)}
                     </Typography>
                 )}
@@ -249,7 +253,7 @@ const RollupDrawer: React.FC<Props> = ({ row, roster, provenance, onOpenAgent })
                             >
                                 <TableCell align="right">
                                     <Typography component="div" style={{ fontSize: 14 }}>{r.RecipientName}</Typography>
-                                    <Typography component="div" style={{ fontSize: 12, color: '#5b6b7b', direction: 'ltr', textAlign: 'right' }}>
+                                    <Typography component="div" style={{ fontSize: 12, color: '#5b6b7b', direction: 'ltr', textAlign: isRtl ? 'right' : 'left' }}>
                                         {r.RecipientEmail}
                                     </Typography>
                                 </TableCell>
