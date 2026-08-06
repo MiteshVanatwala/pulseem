@@ -415,7 +415,6 @@ const NewsletterManagnentScreen = ({ classes }) => {
         uIcon: EditIcon,
         disable: Status !== 1 || AutomationID !== 0,
         lable: t('campaigns.Image2Resource1.ToolTip'),
-        remove: windowSize === 'xs',
         onClick: () => {
           if ((!emailProps?.IsVerified || emailProps?.IsRestricted) && !IsSharedDomain(FromEmail)) {
             domainErrorObj.preText = t(`common.domainVerification.campaignManagement.edit.${emailProps?.IsRestricted ? 'restricted' : 'nonVerified'}.preText`).replace('##campaignId##', CampaignID);
