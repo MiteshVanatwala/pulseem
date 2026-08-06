@@ -113,6 +113,8 @@ import ChatWidgetConfigPage from './screens/Widgets/ChatWidgetConfigPage';
 import WidgetListPage from './screens/Widgets/WidgetListPage';
 import Conversations from './screens/Service/Conversations/Conversations';
 import Dashboard from './screens/Service/Dashboard/Dashboard';
+import ChatbotList from './screens/Service/Chatbot/ChatbotList';
+import ChatbotBuilder from './screens/Service/Chatbot/ChatbotBuilder';
 
 const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
   const transferUrl =
@@ -711,6 +713,21 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
         exact
         path={`${sitePrefix}Conversations/:conversationId`}
         element={<Conversations classes={classes} />}
+      />
+      <Route
+        exact
+        path={`${sitePrefix}Chatbots`}
+        element={<ChatbotList classes={classes} />}
+      />
+      <Route
+        exact
+        path={`${sitePrefix}Chatbots/create`}
+        element={<ChatbotBuilder classes={classes} />}
+      />
+      <Route
+        exact
+        path={`${sitePrefix}Chatbots/:chatbotId`}
+        element={<ChatbotBuilder classes={classes} />}
       />
     </Routes>
   )

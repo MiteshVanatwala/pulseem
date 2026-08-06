@@ -318,6 +318,12 @@ export const getRoutes = (
           href: `${sitePrefix}Widgets`,
           isShow: true,
         },
+        {
+          key: 'serviceChatbots',
+          title: "Chatbots",
+          href: `${sitePrefix}Chatbots`,
+          isShow: true,
+        },
       ],
     },
     {
