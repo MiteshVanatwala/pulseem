@@ -36,7 +36,7 @@
 	"loginWithFacebookCoexistence": "Login With Facebook (Coexistence)",
 	"coexistenceColumn": "Coexistence",
 	"syncColumn": "Sync Last 6 months History",
-	"syncTooltip": "It should be set within 24 hours after onboarding.",
+	"syncTooltip": "Imports your last 6 months of WhatsApp chat history into Pulseem. It can only be enabled within 24 hours of onboarding (a Meta limit) — after that it can't be done.",
 	"SyncCoexistenceHistoryResponseCode": {
 		"9": "This request can only be made within 24 hours of onboarding. The sync window for this number has closed."
 	},

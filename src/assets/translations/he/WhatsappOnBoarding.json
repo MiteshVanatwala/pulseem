@@ -36,7 +36,7 @@
 	"loginWithFacebookCoexistence": "התחבר עם פייסבוק (Coexistence)",
 	"coexistenceColumn": "דו-קיום",
 	"syncColumn": "סנכרון היסטוריה מ-6 החודשים האחרונים",
-	"syncTooltip": "יש להגדיר בתוך 24 שעות מרגע החיבור.",
+	"syncTooltip": "מייבא ל-Pulseem את היסטוריית שיחות ה-WhatsApp מ-6 החודשים האחרונים. ניתן להפעיל זאת רק בתוך 24 שעות מרגע החיבור (מגבלה של Meta) — לאחר מכן לא ניתן לבצע זאת.",
 	"SyncCoexistenceHistoryResponseCode": {
 		"9": "ניתן לבצע בקשה זו רק בתוך 24 שעות מרגע החיבור. חלון הסנכרון עבור מספר זה נסגר."
 	},
