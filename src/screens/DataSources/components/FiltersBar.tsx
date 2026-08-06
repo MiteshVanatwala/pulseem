@@ -19,18 +19,21 @@ interface FiltersBarProps {
 // Free-text search + structured filters. Only IsSearchable columns can be filtered (a non-searchable
 // column would be rejected by the SP → COLUMN_NOT_SEARCHABLE); "contains" shows a slow-search hint.
 const FiltersBar = ({ classes, columns, filters, onFiltersChange, freeText, onFreeTextChange, onSearch }: FiltersBarProps) => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+    const isRtl = (i18n.dir?.() ?? 'rtl') === 'rtl';
     const searchable = (columns || []).filter(c => c.IsSearchable);
     const [draftColumn, setDraftColumn] = useState<number | ''>('');
     const [draftOperator, setDraftOperator] = useState<eFilterOperator>(eFilterOperator.EQUALS);
     const [draftValue, setDraftValue] = useState('');
 
-    // Dropdowns must drop BELOW the field (not cover it) and stay right-anchored in RTL.
+    // Dropdowns must drop BELOW the field (not cover it) and stay anchored to its START edge:
+    // right in RTL, left in LTR. anchorOrigin is a prop, not CSS, so jss-rtl never mirrors it and
+    // MUI v4's Popover does not either — hardcoding 'right' anchored en/pl menus to the END edge.
     // getContentAnchorEl:null is what lets anchorOrigin.vertical:'bottom' actually apply in MUI v4.
     const menuProps: any = {
         getContentAnchorEl: null,
-        anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
-        transformOrigin: { vertical: 'top', horizontal: 'right' },
+        anchorOrigin: { vertical: 'bottom', horizontal: isRtl ? 'right' : 'left' },
+        transformOrigin: { vertical: 'top', horizontal: isRtl ? 'right' : 'left' },
         PaperProps: { style: { maxHeight: 320, marginTop: 4 } }
     };
 

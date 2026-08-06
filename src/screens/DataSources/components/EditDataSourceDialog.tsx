@@ -24,7 +24,8 @@ interface EditDataSourceDialogProps {
 // Shared by the list and the view screens. 409 NAME_EXISTS renders as the name field's helperText;
 // other failures show a generic inline error. Success calls onSaved (parent refreshes + toasts).
 const EditDataSourceDialog = ({ classes, open, source, onClose, onSaved }: EditDataSourceDialogProps) => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+    const isRtl = (i18n.dir?.() ?? 'rtl') === 'rtl';
     const dispatch = useDispatch();
     const dsDialog = useDsDialogStyles();
     const [name, setName] = useState('');
@@ -80,7 +81,9 @@ const EditDataSourceDialog = ({ classes, open, source, onClose, onSaved }: EditD
     };
 
     return (
-        <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm" dir="rtl" PaperProps={{ className: dsDialog.paper }}>
+        // Reactive dir, not hardcoded "rtl" — see UploadWizardDialog.tsx for why the attribute is
+        // mandatory on a portalled Dialog and why hardcoding it broke en/pl.
+        <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm" dir={isRtl ? 'rtl' : 'ltr'} PaperProps={{ className: dsDialog.paper }}>
             <DialogTitle>{t('DataSources.edit.title')}</DialogTitle>
             <DialogContent>
                 <Box style={{ display: 'flex', flexDirection: 'column', gap: 12, paddingTop: 4 }}>

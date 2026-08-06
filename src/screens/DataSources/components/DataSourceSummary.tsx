@@ -24,7 +24,8 @@ const TEXT_QUIET = '#a9bdd4';
 // Per-channel upload summary. ResultsJson is parsed defensively (any missing field renders '—'), so a
 // malformed or partial blob never crashes the dialog. truncatedCells is shown only when > 0.
 const DataSourceSummary = ({ classes, open, details, onClose }: DataSourceSummaryProps) => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+    const isRtl = (i18n.dir?.() ?? 'rtl') === 'rtl';
     const dsDialog = useDsDialogStyles();
 
     const parsed: ResultsJson = useMemo(() => {
@@ -75,7 +76,9 @@ const DataSourceSummary = ({ classes, open, details, onClose }: DataSourceSummar
     );
 
     return (
-        <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm" dir="rtl" scroll="body" PaperProps={{ className: dsDialog.paper }}>
+        // Reactive dir, not hardcoded "rtl" — see UploadWizardDialog.tsx for why the attribute is
+        // mandatory on a portalled Dialog and why hardcoding it broke en/pl.
+        <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm" dir={isRtl ? 'rtl' : 'ltr'} scroll="body" PaperProps={{ className: dsDialog.paper }}>
             <DialogTitle>{t('DataSources.summary.title')}</DialogTitle>
             <DialogContent style={{ overflowY: 'visible', height: 'auto' }}>
                 <Grid container spacing={2}>

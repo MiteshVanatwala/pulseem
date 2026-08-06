@@ -23,7 +23,8 @@ interface EditColumnDialogProps {
 // SemanticRole is locked (identity change = new version). Searchable quota is enforced client-side and
 // server-side (-7 → tooManySearchable). -8 = column locked by an active campaign.
 const EditColumnDialog = ({ classes, open, column, searchableRemaining, maxSearchable, onClose, onSaved }: EditColumnDialogProps) => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+    const isRtl = (i18n.dir?.() ?? 'rtl') === 'rtl';
     const dispatch = useDispatch();
     const dsDialog = useDsDialogStyles();
     const [displayName, setDisplayName] = useState('');
@@ -36,11 +37,13 @@ const EditColumnDialog = ({ classes, open, column, searchableRemaining, maxSearc
     // Field titles must be clearly readable — slightly larger than the field's own text (16px, from the
     // shared dialog scale), so the size comes from that same scale (17px) and only the weight is set here.
     const labelStyle: any = { fontWeight: 600, color: '#344054', marginBottom: 6 };
-    // Dropdowns drop below the field, right-anchored (RTL).
+    // Dropdowns drop below the field, anchored to its START edge: right in RTL, left in LTR.
+    // anchorOrigin is a prop, not CSS, so jss-rtl never mirrors it and MUI v4's Popover does not
+    // either — hardcoding 'right' anchored en/pl menus to the field's END edge.
     const menuProps: any = {
         getContentAnchorEl: null,
-        anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
-        transformOrigin: { vertical: 'top', horizontal: 'right' },
+        anchorOrigin: { vertical: 'bottom', horizontal: isRtl ? 'right' : 'left' },
+        transformOrigin: { vertical: 'top', horizontal: isRtl ? 'right' : 'left' },
         PaperProps: { style: { maxHeight: 320, marginTop: 4 } }
     };
 
@@ -84,7 +87,10 @@ const EditColumnDialog = ({ classes, open, column, searchableRemaining, maxSearc
     };
 
     return (
-        <Dialog open={open} onClose={saving ? undefined : onClose} fullWidth maxWidth="sm" dir="rtl" PaperProps={{ className: dsDialog.paper }}>
+        // Reactive dir, not hardcoded "rtl": Dialogs portal outside App.js:1024's <div dir> and
+        // <html dir> is stuck at "ltr", so the attribute is mandatory — but hardcoding it forced
+        // en/pl dialogs to render RTL. Full note at UploadWizardDialog.tsx.
+        <Dialog open={open} onClose={saving ? undefined : onClose} fullWidth maxWidth="sm" dir={isRtl ? 'rtl' : 'ltr'} PaperProps={{ className: dsDialog.paper }}>
             <DialogTitle>{t('DataSources.column.editTitle')}</DialogTitle>
             <DialogContent>
                 <Box style={{ display: 'flex', flexDirection: 'column', gap: 16, paddingTop: 4 }}>
