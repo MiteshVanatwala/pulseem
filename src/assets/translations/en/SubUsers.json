@@ -71,5 +71,11 @@
     "teamSaved": "Team saved successfully",
     "teamDeleted": "Team deleted successfully",
     "genericError": "Something went wrong. Please try again."
+  },
+  "serviceLimits": {
+    "agentsLabel": "WhatsApp Service Agents",
+    "agentLimitReached": "You've reached your plan's WhatsApp Service Agent limit.",
+    "upgradeCta": "Upgrade Plan",
+    "usageFormat": "{{current}} / {{max}} {{label}}"
   }
 }
