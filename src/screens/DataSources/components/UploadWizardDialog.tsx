@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import {
     Dialog, DialogTitle, DialogContent, DialogActions, Button, Box, Typography, Stepper, Step, StepLabel,
     Table, TableBody, TableCell, TableHead, TableRow, Select, MenuItem, Checkbox, FormControlLabel,
-    TextField, LinearProgress, FormControl
+    TextField, LinearProgress, FormControl, ListSubheader
 } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
@@ -10,7 +10,8 @@ import * as XLSX from 'xlsx';
 import Papa from 'papaparse';
 import { ERROR_TYPE } from '../../../helpers/Types/common';
 import {
-    UploadColumnDef, eDataType, eFormatHint, eSemanticRole, DataSourceLimits
+    UploadColumnDef, eDataType, eFormatHint, eSemanticRole, DataSourceLimits,
+    eClientField, ClientFieldOption, CLIENT_FIELD_CATALOGUE
 } from '../../../Models/DataSources/DataSource';
 import { checkQuota, insertDataSource, setUploadProgress } from '../../../redux/reducers/dataSourcesSlice';
 import { useDsDialogStyles } from './dialogStyles';
@@ -25,6 +26,11 @@ interface UploadWizardDialogProps {
     // typed name matches an existing source (see the seeding effect below). A caller that omits it
     // still gets correct behaviour, just an empty box.
     existingSources?: { Name: string; VersionNumber: number; Description?: string }[];
+    /* The account's own names for ExtraField1..13 / ExtraDate1..4, already filtered to the named
+       ones. Optional on purpose: omit it and the write-back picker still offers the ten fixed
+       recipient fields, which is the whole of phase one. Labels live on dbo.AccountExtraFields and
+       are per ACCOUNT, so every sub-account of the same customer sees the same names. */
+    accountExtraFields?: ClientFieldOption[];
 }
 
 const ALLOWED = ['csv', 'xls', 'xlsx', 'tsv'];
@@ -87,7 +93,7 @@ const extOf = (name: string) => {
     return parts.length > 0 ? parts[parts.length - 1].toLowerCase() : '';
 };
 
-const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessage, existingSources = [] }: UploadWizardDialogProps) => {
+const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessage, existingSources = [], accountExtraFields }: UploadWizardDialogProps) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const dsDialog = useDsDialogStyles();
@@ -103,12 +109,12 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [createMissingClients, setCreateMissingClients] = useState(true);
-    // Name enrichment of ALREADY-MATCHED recipients. Both default to false: UpdateClientNames = 0 is
-    // the back-compat guarantee (behaviour byte-identical to today), and an overwrite of a real name
-    // leaves no audit trail (tr_clients_update_log logs only Email/Status/Cellphone/SmsStatus), so it
-    // must always be an explicit per-upload opt-in.
-    const [updateClientNames, setUpdateClientNames] = useState(false);
-    const [overwriteClientNames, setOverwriteClientNames] = useState(false);
+    /* Status for recipients this upload CREATES. Existing recipients never have their status
+       touched, so this is meaningful only while createMissingClients is on — the checkbox is
+       nested under it and reset with it. Default off = created active, today's behaviour.
+       ClientStatus.Pending = 5 and SmsStatus.Pending = 5, both verified against the live lookup
+       tables on 2026-08-05 (note the C# SmsStatus enum is missing its Pending member). */
+    const [createAsPending, setCreateAsPending] = useState(false);
     const [errors, setErrors] = useState<{ [k: string]: string }>({});
     const [uploading, setUploading] = useState(false);
     const [parsing, setParsing] = useState(false);
@@ -135,7 +141,7 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
         setStep(0); setFile(null); setHeaders([]); setPreviewRows([]); setColumns([]);
         setRowCount(null); setName(''); setDescription(''); setCreateMissingClients(true);
         descriptionTouched.current = false;   // fresh open => box is empty AND re-seedable again
-        setUpdateClientNames(false); setOverwriteClientNames(false);
+        setCreateAsPending(false);
         setErrors({}); setUploading(false); setParsing(false);
         dispatch(setUploadProgress(null));
     };
@@ -380,8 +386,37 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
             ? { ...c, DataType: dt, FormatHint: dt === eDataType.NUMBER ? c.FormatHint : eFormatHint.NONE }
             : c));
 
-    const setFormatHint = (idx: number, fh: eFormatHint) =>
-        setColumns(cols => cols.map((c, i) => i === idx ? { ...c, FormatHint: fh } : c));
+    /* setFormatHint was removed with the "format" column on 2026-08-05. FormatHint itself is still
+       part of the payload and stays at NONE for every column, so nothing downstream changed. */
+
+    const setClientFieldTarget = (idx: number, target: eClientField | null) =>
+        setColumns(cols => cols.map((c, i) => i === idx ? { ...c, ClientFieldTarget: target } : c));
+
+    /* The account's own names for ExtraField1..13 / ExtraDate1..4. Optional: when the host does not
+       supply them the extra-field groups simply do not appear, and the ten fixed recipient fields
+       work on their own. That is what lets the first phase ship without the account-labels endpoint. */
+    const clientFieldOptions: ClientFieldOption[] = [
+        ...CLIENT_FIELD_CATALOGUE,
+        ...(accountExtraFields ?? [])
+    ];
+
+    /* One target may be claimed by one column only — two columns writing the same field would make
+       the winner arbitrary. Enforced again server-side; here it just greys the taken options out. */
+    const takenClientFields = new Set<eClientField>(
+        columns.map(c => c.ClientFieldTarget).filter((v): v is eClientField => v != null)
+    );
+
+    const clientFieldLabel = (o: ClientFieldOption) =>
+        o.AccountLabel ? o.AccountLabel : t(`DataSources.wizard.clientFields.${o.LabelKey}`);
+
+    /* Grouped so ~26 options stay readable, and so the account's "phone" extra field cannot be
+       mistaken for the recipient record's own Telephone — they sit under different headings. */
+    const clientFieldGroups = ([
+        { key: 'recipient' as const },
+        { key: 'extraField' as const },
+        { key: 'extraDate' as const }
+    ]).map(g => ({ ...g, options: clientFieldOptions.filter(o => o.Group === g.key) }))
+        .filter(g => g.options.length > 0);
 
     const hasEmail = columns.some(c => c.SemanticRole === eSemanticRole.RECIPIENT_EMAIL);
     const hasCell = columns.some(c => c.SemanticRole === eSemanticRole.RECIPIENT_CELLPHONE);
@@ -430,15 +465,17 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
         fd.append('name', name.trim());
         fd.append('description', description || '');
         fd.append('createMissingClients', createMissingClients ? 'true' : 'false');
-        fd.append('updateClientNames', updateClientNames ? 'true' : 'false');
-        // `&& updateClientNames` keeps the pair coherent on the wire even if a future edit breaks the
-        // checkbox's reset — overwrite is meaningless (and dangerous to read as intent) without update.
-        fd.append('overwriteClientNames', (updateClientNames && overwriteClientNames) ? 'true' : 'false');
+        // `&& createMissingClients` keeps the pair coherent on the wire even if a future edit breaks
+        // the nesting — "create them pending" is meaningless without "create them".
+        fd.append('createAsPending', (createMissingClients && createAsPending) ? 'true' : 'false');
         // Supervisor email is a UI-only tag — send only the server-known fields (it persists as a
         // plain info field: SemanticRole NONE + DataType EMAIL).
         const payloadColumns: UploadColumnDef[] = columns.map(c => ({
             Ordinal: c.Ordinal, SourceHeader: c.SourceHeader, DisplayName: c.DisplayName,
-            DataType: c.DataType, FormatHint: c.FormatHint, SemanticRole: c.SemanticRole, IsSearchable: c.IsSearchable
+            DataType: c.DataType, FormatHint: c.FormatHint, SemanticRole: c.SemanticRole, IsSearchable: c.IsSearchable,
+            // null, not undefined: JSON.stringify drops undefined members, and the server binds by
+            // name — an absent member and an explicit null must not mean different things here.
+            ClientFieldTarget: c.ClientFieldTarget ?? null
         }));
         fd.append('columns', JSON.stringify(payloadColumns));
 
@@ -459,6 +496,10 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
         if (code === 405) { setErrors({ upload: t('DataSources.errors.quotaExceeded') }); return; }
         if (code === 403) { setErrors({ upload: t('DataSources.errors.invalidChars') }); return; }
         if (code === 400 && payload?.Message === 'IDENTITY_COLUMNS_INVALID') { setErrors({ upload: t('DataSources.errors.duplicateIdentity') }); return; }
+        // Two columns claiming the same recipient field. The picker already greys taken
+        // options out, so reaching this means a stale tab or a non-UI caller — say which
+        // rule was broken rather than falling through to "something went wrong".
+        if (code === 400 && payload?.Message === 'CLIENT_FIELD_DUPLICATE') { setErrors({ upload: t('DataSources.errors.duplicateClientField') }); return; }
         setErrors({ upload: t('DataSources.errors.generalError') });
     };
 
@@ -469,20 +510,20 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
     };
 
     // ── render ──────────────────────────────────────────────────────────────
+    /* firstName / lastName were removed here on 2026-08-05: they are write-back targets, not matching
+       roles, and they are now two entries in the client-field picker alongside the other 24 instead of
+       two special cases. roleValueOf still MAPS roles 3/4 so a version saved before the change still
+       renders sensibly, even though the live DB confirms no such version exists. */
     const roleOptions = [
         { value: 'none', label: t('DataSources.wizard.roleNone') },
         { value: 'email', label: t('DataSources.wizard.roleEmail') },
         { value: 'cell', label: t('DataSources.wizard.roleCellphone') },
-        { value: 'firstName', label: t('DataSources.wizard.roleFirstName') },
-        { value: 'lastName', label: t('DataSources.wizard.roleLastName') },
         { value: 'sup', label: t('DataSources.wizard.roleSupervisorEmail') }
     ];
     // Both 'none' and 'sup' map to SemanticRole NONE, so the dropdown value is derived, not the role.
     const roleValueOf = (c: WizardColumn) => c.IsSupervisorEmail ? 'sup'
         : c.SemanticRole === eSemanticRole.RECIPIENT_EMAIL ? 'email'
-            : c.SemanticRole === eSemanticRole.RECIPIENT_CELLPHONE ? 'cell'
-                : c.SemanticRole === eSemanticRole.FIRST_NAME ? 'firstName'
-                    : c.SemanticRole === eSemanticRole.LAST_NAME ? 'lastName' : 'none';
+            : c.SemanticRole === eSemanticRole.RECIPIENT_CELLPHONE ? 'cell' : 'none';
 
     // Readable, slightly-larger-than-field header labels for the mapping table.
     // (16 keeps the intended one-step lead now that the shared dialog scale puts body cells at 15.)
@@ -532,9 +573,17 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
                 <Table size="small">
                     <TableHead><TableRow>
                         <TableCell style={hdrCellStyle}>{t('DataSources.wizard.columnNameLabel')}</TableCell>
-                        <TableCell style={hdrCellStyle}>{t('DataSources.wizard.steps.identity')}</TableCell>
+                        {/* Own key, not steps.identity: that string also labels the stepper and the
+                            step-3 summary line, and this column is no longer only about identity. */}
+                        <TableCell style={hdrCellStyle}>{t('DataSources.wizard.columnRoleLabel')}</TableCell>
                         <TableCell style={hdrCellStyle}>{t('DataSources.column.dataType')}</TableCell>
-                        <TableCell style={hdrCellStyle}>{t('DataSources.column.formatHint')}</TableCell>
+                        {/* The "format" column (FormatHint: None/Currency/Percent) was removed on
+                            2026-08-05. Nothing anywhere consumed it — the sender carries it but
+                            annotates it "not applied in v1", the worker calls it "display metadata
+                            only", and no SP branches on it — so it was a control that could only
+                            ever be set to None and never had an effect. FormatHint itself is still
+                            sent (always NONE) so the payload shape is unchanged; restoring the
+                            column is re-adding this header cell and its body cell, nothing more. */}
                         <TableCell align="center" style={hdrCellStyle}>{t('DataSources.wizard.searchableLabel')}</TableCell>
                     </TableRow></TableHead>
                     <TableBody>
@@ -563,6 +612,53 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
                                                 {roleOptions.map(o => <MenuItem key={o.value} value={o.value}>{o.label}</MenuItem>)}
                                             </Select>
                                         </FormControl>
+                                        {/* ADDITIVE, not exclusive: the column keeps the role above AND may also
+                                            update the recipient's own record. Rendered as one Select with a custom
+                                            renderValue so it reads as a quiet link while unset and as a removable
+                                            tag once set — no anchor state, no second menu component. */}
+                                        <Select
+                                            value={c.ClientFieldTarget ?? ''}
+                                            /* The `undefined` guard is load-bearing. MUI v4 clones EVERY child of a
+                                               Select with its own onClick (SelectInput.js:335-337) — group headings
+                                               included, because ListSubheader passes React.isValidElement like any
+                                               other node. Clicking one fires onChange with target.value === undefined,
+                                               and `undefined === ''` is false, so Number(undefined) would land NaN in
+                                               ClientFieldTarget. NaN survives `?? null`, JSON.stringify turns it into
+                                               null, and renderValue finds no match and falls back to the "add" label —
+                                               so the operator's choice is silently erased with no visible sign, by
+                                               clicking the widest target in the list. */
+                                            onChange={(e) => {
+                                                if (e.target.value === undefined) return;   // group heading, not an option
+                                                setClientFieldTarget(i, e.target.value === '' ? null : Number(e.target.value) as eClientField);
+                                            }}
+                                            displayEmpty
+                                            disableUnderline
+                                            MenuProps={MENU_PROPS}
+                                            renderValue={() => {
+                                                const opt = clientFieldOptions.find(o => o.Id === c.ClientFieldTarget);
+                                                return opt
+                                                    ? <span style={{ fontSize: 12.5, color: '#0b7285', fontWeight: 600 }}>
+                                                        {t('DataSources.wizard.clientFieldTag', { name: clientFieldLabel(opt) })}
+                                                    </span>
+                                                    : <span style={{ fontSize: 12.5, color: '#5b6b7b' }}>
+                                                        {t('DataSources.wizard.clientFieldAdd')}
+                                                    </span>;
+                                            }}
+                                            style={{ fontSize: 12.5, marginTop: 4 }}
+                                        >
+                                            <MenuItem value=""><em>{t('DataSources.wizard.clientFieldNone')}</em></MenuItem>
+                                            {clientFieldGroups.map(g => ([
+                                                <ListSubheader key={`h-${g.key}`} disableSticky style={{ fontSize: 12, lineHeight: '28px' }}>
+                                                    {t(`DataSources.wizard.clientFieldGroups.${g.key}`)}
+                                                </ListSubheader>,
+                                                ...g.options.map(o => (
+                                                    <MenuItem key={o.Id} value={o.Id}
+                                                        disabled={takenClientFields.has(o.Id) && c.ClientFieldTarget !== o.Id}>
+                                                        {clientFieldLabel(o)}
+                                                    </MenuItem>
+                                                ))
+                                            ]))}
+                                        </Select>
                                     </TableCell>
                                     <TableCell>
                                         {/* Identity + supervisor columns are type-locked (Email/Phone); info columns pick Text/Number/Date. */}
@@ -575,17 +671,7 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
                                             </Select>
                                         </FormControl>
                                     </TableCell>
-                                    <TableCell>
-                                        {/* Currency/Percent only apply to numeric info columns. */}
-                                        <FormControl variant="outlined" size="small" style={{ minWidth: 110 }}>
-                                            <Select value={c.FormatHint} disabled={!isInfo || c.DataType !== eDataType.NUMBER} MenuProps={MENU_PROPS} style={{ fontSize: 14 }}
-                                                onChange={(e) => setFormatHint(i, Number(e.target.value) as eFormatHint)}>
-                                                {[eFormatHint.NONE, eFormatHint.CURRENCY, eFormatHint.PERCENT].map(v => (
-                                                    <MenuItem key={v} value={v}>{t(`DataSources.column.formatHints.${v}`)}</MenuItem>
-                                                ))}
-                                            </Select>
-                                        </FormControl>
-                                    </TableCell>
+                                    {/* format cell removed 2026-08-05 — see the header comment. */}
                                     <TableCell align="center">
                                         <Checkbox checked={c.IsSearchable} onChange={(e) => toggleSearchable(i, e.target.checked)}
                                             disabled={!c.IsSearchable && searchableRemaining <= 0} />
@@ -596,35 +682,32 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
                     </TableBody>
                 </Table>
             </Box>
-            <FormControlLabel
-                control={<Checkbox checked={createMissingClients} onChange={(e) => setCreateMissingClients(e.target.checked)} />}
-                label={t('DataSources.wizard.createMissingClients')}
-            />
-            {/* Name enrichment of recipients that ALREADY exist. Two nested questions: "update at all?"
-                then "overwrite an existing name?". Unchecking the first must reset the second — leaving
-                a stale checked-but-disabled overwrite would send OverwriteClientNames=1 the moment the
-                user re-checks update, which is the one irreversible, unaudited write in this feature. */}
+            {/* The two name-enrichment checkboxes ("update client names" / "overwrite existing names")
+                were removed on 2026-08-05. Choosing a client field on a column IS the opt-in now, so a
+                separate "should I write it" question asked the same thing twice, and the overwrite
+                half of it is expressed by the write rule itself: a non-empty source value wins, an
+                empty one never erases. */}
             <Box style={{ display: 'flex', flexDirection: 'column' }}>
                 <FormControlLabel
-                    control={<Checkbox checked={updateClientNames} onChange={(e) => {
+                    control={<Checkbox checked={createMissingClients} onChange={(e) => {
                         const on = e.target.checked;
-                        setUpdateClientNames(on);
-                        if (!on) setOverwriteClientNames(false);
+                        setCreateMissingClients(on);
+                        if (!on) setCreateAsPending(false);   // meaningless without "create"
                     }} />}
-                    label={t('DataSources.wizard.updateClientNames')}
+                    label={t('DataSources.wizard.createMissingClients')}
                 />
-                <Typography style={{ fontSize: 12, color: '#95A5A6', marginTop: -6, marginInlineStart: 32 }}>
-                    {t('DataSources.wizard.updateClientNamesHint')}
-                </Typography>
+                {/* Applies to recipients this upload CREATES and to nobody else — an existing
+                    recipient never has their status touched. Nested under create-missing and reset
+                    with it, so a stale tick can never ride along after the parent is unchecked. */}
                 <Box style={{ paddingInlineStart: 26 }}>
                     <FormControlLabel
-                        disabled={!updateClientNames}
-                        control={<Checkbox checked={overwriteClientNames} disabled={!updateClientNames}
-                            onChange={(e) => setOverwriteClientNames(e.target.checked)} />}
-                        label={t('DataSources.wizard.overwriteClientNames')}
+                        disabled={!createMissingClients}
+                        control={<Checkbox checked={createAsPending} disabled={!createMissingClients}
+                            onChange={(e) => setCreateAsPending(e.target.checked)} />}
+                        label={t('DataSources.wizard.createAsPending')}
                     />
                     <Typography style={{ fontSize: 12, color: '#95A5A6', marginTop: -6, marginInlineStart: 32 }}>
-                        {t('DataSources.wizard.overwriteClientNamesHint')}
+                        {t('DataSources.wizard.createAsPendingHint')}
                     </Typography>
                 </Box>
             </Box>

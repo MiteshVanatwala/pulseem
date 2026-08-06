@@ -112,18 +112,15 @@ const EditColumnDialog = ({ classes, open, column, searchableRemaining, maxSearc
                         </FormControl>
                     </Box>
 
-                    <Box>
-                        <Typography style={labelStyle}>{t('DataSources.column.formatHint')}</Typography>
-                        {/* Currency/Percent apply only to numeric info columns. */}
-                        <FormControl variant="outlined" size="small" fullWidth>
-                            <Select value={formatHint} disabled={isIdentity || dataType !== eDataType.NUMBER} MenuProps={menuProps}
-                                onChange={(e) => setFormatHint(Number(e.target.value) as eFormatHint)}>
-                                {[eFormatHint.NONE, eFormatHint.CURRENCY, eFormatHint.PERCENT].map(v => (
-                                    <MenuItem key={v} value={v}>{t(`DataSources.column.formatHints.${v}`)}</MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                    </Box>
+                    {/* The "format" control (FormatHint: None/Currency/Percent) was removed on
+                        2026-08-05, here and in the upload wizard, for the same reason: nothing in the
+                        product ever consumed the value. The sender carries it but annotates it "not
+                        applied in v1", the worker calls it "display metadata only", and no stored
+                        procedure branches on it. Hiding it in only one of the two screens would have
+                        left the value editable in one place and frozen in the other; hiding it in both
+                        means it is provably pinned at NONE. `formatHint` state is deliberately kept and
+                        still sent (unchanged) so the payload shape and the SP contract do not move —
+                        restoring the control is re-adding this block, nothing more. */}
 
                     <FormControlLabel
                         control={<Checkbox checked={isSearchable} disabled={saving}
