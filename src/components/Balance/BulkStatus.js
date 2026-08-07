@@ -25,7 +25,7 @@ import { BiCog } from 'react-icons/bi';
 import { getAccountBilling } from '../../redux/reducers/BillingSlice';
 import BillingSettings from '../BillingSettings/BillingSettings';
 import TierPlans from '../TierPlans/TierPlans';
-import { contactSalesForScale, deletePolandSubscription, getCurrentPlan } from '../../redux/reducers/TiersSlice';
+import { contactSalesForScale, deletePolandSubscription, cancelEmailWithTier, getCurrentPlan } from '../../redux/reducers/TiersSlice';
 import { getAccountSettings } from '../../redux/reducers/AccountSettingsSlice';
 import { Loader } from '../Loader/Loader';
 import ConfirmDeletePopUp from '../../screens/Groups/Management/Popup/ConfirmDeletePopUp';
@@ -250,11 +250,15 @@ const BulkStatus = ({ classes }) => {
   }
 
   const handleEmailTierCancelPlan = async () => {
-    setIsOpenCancelConfirmDialog(false);    
+    setIsOpenCancelConfirmDialog(false);
     setIsLoader(true);
-    
-    // For cancel plan, we typically downgrade to the free/basic tier (ID: 1)
-    const response = await dispatch(deletePolandSubscription());
+
+    // Israeli Email With Tier (product 11) accounts cancel via cancelEmailWithTier
+    // (arrears "won't renew" cancel). Poland's per-recipient plan uses its own
+    // deletePolandSubscription action - the two must never be conflated.
+    const response = Newsletters?.IsEmailTierSubscribed && !hideEmailWithTier
+      ? await dispatch(cancelEmailWithTier())
+      : await dispatch(deletePolandSubscription());
     setIsLoader(false);
     
     switch (response?.payload?.StatusCode) {
@@ -767,7 +771,9 @@ const BulkStatus = ({ classes }) => {
           dispatch(getPackagesDetails());
         }}
         isEmailMarketing={true}
-        isBankTransferForTiers={Newsletters?.IsBankTransferForTiers}
+        // Email With Tier (11) reads the account's PaymentType (IsEmailWithTierBankTransfer),
+        // NOT the shared IsBankTransferForTiers flag product 10 uses.
+        isBankTransferForTiers={Newsletters?.IsEmailWithTierBankTransfer}
         onCancelClick={() => setIsOpenCancelConfirmDialog(true)}
       />
         <PayPerRecipientNew
