@@ -62,7 +62,9 @@ const SendSearchTable: React.FC<Props> = ({
     items, totalCount, pageIndex, pageSize, loading, hasFilter,
     onOpenRow, onPageChange, onPageSizeChange, onClearAll,
 }) => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+    // Same idiom as DataSources.tsx:113 — fallback 'rtl' because Hebrew is the default locale.
+    const isRtl = (i18n.dir?.() ?? 'rtl') === 'rtl';
 
     // The left/leading stripe encodes WHAT KIND of row this is (`Mock-v3:78-80`):
     //   blue  (--blue)  roll-up / supervisor recipient
@@ -152,7 +154,11 @@ const SendSearchTable: React.FC<Props> = ({
                     </Box>
                     <Typography
                         component="div"
-                        style={{ color: '#5b6b7b', fontSize: 12.5, direction: 'ltr', textAlign: 'right' }}
+                        /* `direction: ltr` keeps the "email · phone" run from reordering, but it also
+                           makes textAlign:'start' resolve to LEFT — so the page-start alignment has
+                           to be branched explicitly. Physical 'right' left the contact line hugging
+                           the end edge under en/pl while the name above it sat at the start edge. */
+                        style={{ color: '#5b6b7b', fontSize: 12.5, direction: 'ltr', textAlign: isRtl ? 'right' : 'left' }}
                     >
                         {[r.RecipientEmail, r.RecipientCellphone].filter((v) => !!v).join(' · ')}
                     </Typography>

@@ -116,8 +116,12 @@ const SendStatusCell: React.FC<Props> = ({ attempts, dense }) => {
                 <Typography
                     component="span"
                     style={{
+                        // 'start', not 'right': this is an INLINE style, so jss-rtl never mirrors it
+                        // and a physical 'right' kept the label pinned to the end edge under en/pl
+                        // instead of lining the gutter up with the page's start edge. The element has
+                        // no `direction` of its own, so 'start' resolves off the inherited page dir.
                         fontSize: 12, color: '#5b6b7b', width: dense ? 44 : 52, flex: 'none',
-                        textAlign: 'right', unicodeBidi: 'isolate',
+                        textAlign: 'start', unicodeBidi: 'isolate',
                     }}
                 >
                     {t(getChannelDescriptor(a.Channel as eSendChannel).labelKey)}
@@ -145,7 +149,9 @@ const SendStatusCell: React.FC<Props> = ({ attempts, dense }) => {
     };
 
     return (
-        <Box style={{ display: 'flex', flexDirection: 'column', gap: 3, alignItems: 'flex-start', textAlign: 'right' }}>
+        // textAlign 'start' (logical), not 'right': inline styles bypass jss-rtl, so a physical
+        // 'right' aligned the stack to the end edge under en/pl.
+        <Box style={{ display: 'flex', flexDirection: 'column', gap: 3, alignItems: 'flex-start', textAlign: 'start' }}>
             {attempts.map(renderLine)}
         </Box>
     );

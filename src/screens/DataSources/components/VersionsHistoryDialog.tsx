@@ -36,11 +36,14 @@ const VersionsHistoryDialog = ({
     classes, open, versions, activeVersionId, onClose, onViewVersion, onExportVersion, onShowSummary,
     canView = true, canExport = true
 }: VersionsHistoryDialogProps) => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+    const isRtl = (i18n.dir?.() ?? 'rtl') === 'rtl';
     const dsDialog = useDsDialogStyles();
 
     return (
-        <Dialog open={open} onClose={onClose} fullWidth maxWidth="md" dir="rtl" PaperProps={{ className: dsDialog.paper }}>
+        // Reactive dir, not hardcoded "rtl" — see UploadWizardDialog.tsx for why the attribute is
+        // mandatory on a portalled Dialog and why hardcoding it broke en/pl.
+        <Dialog open={open} onClose={onClose} fullWidth maxWidth="md" dir={isRtl ? 'rtl' : 'ltr'} PaperProps={{ className: dsDialog.paper }}>
             <DialogTitle>{t('DataSources.versions.title')}</DialogTitle>
             <DialogContent>
                 <Box style={{ overflowX: 'auto' }}>

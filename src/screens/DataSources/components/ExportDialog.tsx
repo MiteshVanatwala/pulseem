@@ -23,7 +23,8 @@ interface ExportDialogProps {
 const CSV_ONLY_THRESHOLD = 100000;
 
 const ExportDialog = ({ classes, open, dataSource, versionId, totalRows, onClose, setToastMessage }: ExportDialogProps) => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+    const isRtl = (i18n.dir?.() ?? 'rtl') === 'rtl';
     const dispatch = useDispatch();
     const Redirect = useRedirect();
     const dsDialog = useDsDialogStyles();
@@ -68,7 +69,9 @@ const ExportDialog = ({ classes, open, dataSource, versionId, totalRows, onClose
     };
 
     return (
-        <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm" dir="rtl" PaperProps={{ className: dsDialog.paper }}>
+        // Reactive dir, not hardcoded "rtl" — see UploadWizardDialog.tsx for why the attribute is
+        // mandatory on a portalled Dialog and why hardcoding it broke en/pl.
+        <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm" dir={isRtl ? 'rtl' : 'ltr'} PaperProps={{ className: dsDialog.paper }}>
             <DialogTitle>{t('DataSources.export.title')}</DialogTitle>
             <DialogContent>
                 <Box style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>

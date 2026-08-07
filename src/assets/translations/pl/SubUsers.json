@@ -22,5 +22,11 @@
     "teamSaved": "Zespół został zapisany",
     "teamDeleted": "Zespół został usunięty",
     "genericError": "Coś poszło nie tak. Spróbuj ponownie."
+  },
+  "serviceLimits": {
+    "agentsLabel": "TBD",
+    "agentLimitReached": "TBD",
+    "upgradeCta": "TBD",
+    "usageFormat": "{{current}} / {{max}} {{label}}"
   }
 }
