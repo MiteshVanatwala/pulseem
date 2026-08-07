@@ -579,10 +579,11 @@ const BulkStatus = ({ classes }) => {
                                   </Grid>
                                   <Grid item md={4} xs={4} className={clsx(classes.justifyContentEnd)}>
                                     <Button
-                                      className={clsx(classes.btn, classes.btnRounded, classes.smallButton)}
+                                      className={clsx(classes.btn, classes.btnRounded, classes.f12)}
                                       onClick={() => { setIsOpenEmailTierPlans(true); }}
                                     >
                                       {t('dashboard.purchase')}
+                                      {isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                                     </Button>
                                   </Grid>
                                 </Grid>

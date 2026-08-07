@@ -956,15 +956,29 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false, isBankT
               isEmailMarketing && (
                 <>
                   {existingPlan && (
-                    <Box sx={{ display: 'flex', alignItems: 'left', marginBottom: '8px' }}>
-                      <Typography variant="subtitle1" className={clsx(classes.bold)}>
-                        {t('common.tier.current')}: &nbsp;
-                        {existingPlan?.AccountCategoryFeatureTier || existingPlan?.Name || ''}
-                      </Typography>
-                      <Typography variant="body1" className={clsx(classes.marginSides5, classes.bold, classes.paddingInline30)}>
-                        {t('common.price')}: &nbsp;
-                        {existingPlan?.Price != null ? (accountIsCurrencySymbolPrefix ? `${accountCurrencySymbol}${existingPlan.Price}` : `${existingPlan.Price}${accountCurrencySymbol}`) : ''}
-                      </Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                      <Box sx={{ display: 'flex', alignItems: 'left' }}>
+                        <Typography variant="subtitle1" className={clsx(classes.bold)}>
+                          {t('common.tier.current')}: &nbsp;
+                          {existingPlan?.AccountCategoryFeatureTier || existingPlan?.Name || ''}
+                        </Typography>
+                        <Typography variant="body1" className={clsx(classes.marginSides5, classes.bold, classes.paddingInline30)}>
+                          {t('common.price')}: &nbsp;
+                          {existingPlan?.Price != null ? (accountIsCurrencySymbolPrefix ? `${accountCurrencySymbol}${existingPlan.Price}` : `${existingPlan.Price}${accountCurrencySymbol}`) : ''}
+                        </Typography>
+                      </Box>
+                      {activeStep === 0 && onCancelClick && (
+                        <Button
+                          variant="outlined"
+                          color="primary"
+                          size="small"
+                          className={clsx(classes.btn, classes.btnRounded, classes.tierPlanBtn, classes.marginSides5)}
+                          style={{ marginTop: '5px', marginBottom: '5px' }}
+                          onClick={onCancelClick}
+                        >
+                          {t('common.cancel')}
+                        </Button>
+                      )}
                     </Box>
                   )}
                   <EmailMarketingSlider
@@ -1037,24 +1051,10 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false, isBankT
         onCancel={handleClose}
         showDefaultButtons={false}
         renderTitle={() => (
-          <Box style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Box style={{ width: '100%', display: 'flex', alignItems: 'center' }}>
             <Typography className={clsx(classes?.dialogTitle)}>
               {t('billing.tier.ui.upgradeYourPlan')}
             </Typography>
-            {/* Cancel Email With Tier subscription: lives here (top-right of the tier/band popup),
-                deliberately separate from the per-plan "Choose X" / Upgrade buttons below, and only
-                shown once the account already has an active Email With Tier subscription. */}
-            {isEmailMarketing && existingPlan && activeStep === 0 && onCancelClick && (
-              <Button
-                variant="outlined"
-                color="primary"
-                size="small"
-                className={clsx(classes.btn, classes.btnRounded, classes.tierPlanBtn, classes.marginSides5)}
-                onClick={onCancelClick}
-              >
-                {t('common.cancel')}
-              </Button>
-            )}
           </Box>
         )}
         renderButtons={() => (
