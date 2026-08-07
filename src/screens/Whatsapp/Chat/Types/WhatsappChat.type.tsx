@@ -335,6 +335,11 @@ export type APIWhatsappChatSessionData = {
 	RecentMsgDate?: string;
 	LastCurrentChatMsgId?: number | null;
 	LastAllChatsMsgId?: number | null;
+	// Q3 - coexistence echo: message the business sent from the WhatsApp Business App
+	IsNewEcho?: boolean;
+	RecentEchoMsg?: string;
+	RecentEchoMsgDate?: string;
+	LastEchoMsgId?: number | null;
 };
 
 export type ContactsPaginationSetting = {

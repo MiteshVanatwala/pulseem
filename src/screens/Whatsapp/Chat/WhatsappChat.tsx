@@ -142,6 +142,11 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	// Cursors for SP-level scan optimisation
 	const lastCurrentChatMsgIdRef = useRef<number | null>(null); // last known msg Id from active contact
 	const lastAllChatsMsgIdRef    = useRef<number | null>(null); // last known msg Id from any other contact
+	// Q3 cursor: last known echo (message the business sent from the WhatsApp Business App)
+	// for the active chat. Unlike the two above this is an ApiWhatsappSendLogs.ID, which is
+	// global across every conversation — it MUST be reset on contact switch or a high cursor
+	// carried over from another chat silently swallows this chat's echoes.
+	const lastEchoMsgIdRef        = useRef<number | null>(null);
 
 	// Debounce timer ref for the full contacts-list API refresh (5-second debounce)
 	const contactsRefreshDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -257,6 +262,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			Minute: '0',
 			Second: '0',
 			IsNewMessage: false,
+			IsNewEcho: false,
 		});
 
 	const { t: translator } = useTranslation();
@@ -594,6 +600,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 						activeUserNumber: activeChatContacts.PhoneNumber,
 						lastCurrentChatMsgId: lastCurrentChatMsgIdRef.current,
 						lastAllChatsMsgId: lastAllChatsMsgIdRef.current,
+						lastEchoMsgId: lastEchoMsgIdRef.current,
 					}),
 				);
 			if (whatsAppChatSessionStatus?.Status === apiStatus.SUCCESS) {
@@ -606,6 +613,12 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 						IsIn24Window: data.IsIn24Window,
 						ExpiryTime: data.ExpiryTime,
 						IsNewMessage: data.IsNewMessage,
+						// Q3: true only on the poll that first sees a new echo — the SP advances the
+						// cursor, so the next poll reports false again. ChatUi watches this to reload
+						// just the open thread.
+						IsNewEcho: data.IsNewEcho ?? false,
+						RecentEchoMsg: data.RecentEchoMsg,
+						RecentEchoMsgDate: data.RecentEchoMsgDate,
 						Hour: data.Hour ?? '0',
 						Minute: data.Minute ?? '0',
 						Second: data.Second ?? '0',
@@ -614,6 +627,12 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 					// Advance Q1 cursor to the latest known message ID
 					if (data.LastCurrentChatMsgId != null) {
 						lastCurrentChatMsgIdRef.current = data.LastCurrentChatMsgId;
+					}
+
+					// Advance Q3 cursor. The SP never lets this regress to NULL when there is
+					// nothing new, so a non-null value is always safe to store.
+					if (data.LastEchoMsgId != null) {
+						lastEchoMsgIdRef.current = data.LastEchoMsgId;
 					}
 
 					// Q2: new message from another contact detected — update sidebar
@@ -671,6 +690,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 					Minute: '0',
 					Second: '0',
 					IsNewMessage: false,
+					IsNewEcho: false,
 				});
 				whatsAppChatSessionStatus?.Message
 					? setToastMessage({
@@ -1020,6 +1040,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		// Reset cursors whenever the active contact changes (setAPIInboundChatStatus is recreated on contact change)
 		lastCurrentChatMsgIdRef.current  = null;
 		lastAllChatsMsgIdRef.current     = null;
+		lastEchoMsgIdRef.current         = null;
 		lastSeenRecentMsgDateRef.current = '';
 
 		let pollingTimer: ReturnType<typeof setTimeout> | null = null;

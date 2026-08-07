@@ -195,8 +195,12 @@ const ChatUi = ({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [chatContacts?.PhoneNumber]);
 
+	// IsNewMessage: customer replied. IsNewEcho: the business replied from the WhatsApp
+	// Business App (coexistence). Either way reload only the open thread — GetWhatsAppChat
+	// does not filter on SendID, so echo rows come back as normal outgoing bubbles.
+	// Passing true skips the loader, keeping this a silent background refresh.
 	useEffect(() => {
-		if (whatsappChatSession?.IsNewMessage && !isStatusUpdating) {
+		if ((whatsappChatSession?.IsNewMessage || whatsappChatSession?.IsNewEcho) && !isStatusUpdating) {
 			getAPIAllWhatsappChat(true);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
