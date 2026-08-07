@@ -138,6 +138,13 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 
 	// Tracks the last RecentMsgDate we processed so we only act on genuinely new inbound messages
 	const lastSeenRecentMsgDateRef = useRef<string>('');
+	// Same idea as lastSeenRecentMsgDateRef, but for the currently-open contact's own sidebar row
+	// (Q1/IsNewMessage), which the SP never surfaces through LastAllChatsMsgId since that field is
+	// reserved for messages from OTHER contacts.
+	const lastSeenActiveMsgDateRef = useRef<string>('');
+	// Tracks the last RecentEchoMsgDate we processed so a business-sent echo (Q3) only triggers
+	// one debounced contacts-list refresh, not one per poll while IsNewEcho stays true.
+	const lastSeenEchoMsgDateRef = useRef<string>('');
 
 	// Cursors for SP-level scan optimisation
 	const lastCurrentChatMsgIdRef = useRef<number | null>(null); // last known msg Id from active contact
@@ -635,6 +642,53 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 						lastEchoMsgIdRef.current = data.LastEchoMsgId;
 					}
 
+					// Q3: business replied via the WhatsApp Business App (echo). ChatUi reloads the
+					// open thread for this already, but the sidebar list itself is stale until we
+					// pull it fresh — same debounced refresh used for Q2 inbound messages below.
+					if (data.IsNewEcho && data.RecentEchoMsg) {
+						const isNewEchoForRefresh =
+							data.RecentEchoMsgDate && data.RecentEchoMsgDate !== lastSeenEchoMsgDateRef.current;
+
+						if (isNewEchoForRefresh) {
+							lastSeenEchoMsgDateRef.current = data.RecentEchoMsgDate!;
+
+							if (contactsRefreshDebounceRef.current) {
+								clearTimeout(contactsRefreshDebounceRef.current);
+							}
+							contactsRefreshDebounceRef.current = setTimeout(() => {
+								suppressNextLoaderRef.current = true;
+								fetchMoreContactsRef.current?.(sideBarSearchTextRef.current, filterBySelected, true);
+							}, 5000);
+						}
+					}
+
+					// Q1: new message for the contact whose thread is currently open. The SP only
+					// reports LastAllChatsMsgId for OTHER contacts, so the active contact's own
+					// sidebar row would otherwise never get its preview/order updated.
+					if (data.IsNewMessage && activeChatContacts?.PhoneNumber) {
+						const isNewActiveInbound =
+							data.RecentMsgDate && data.RecentMsgDate !== lastSeenActiveMsgDateRef.current;
+
+						if (isNewActiveInbound) {
+							lastSeenActiveMsgDateRef.current = data.RecentMsgDate!;
+
+							setSideChatContacts((prev) => {
+								const idx = prev.findIndex((c) =>
+									compareLastNineDigits(c.PhoneNumber, activeChatContacts.PhoneNumber),
+								);
+								if (idx === -1) return prev;
+								const updated = [...prev];
+								updated[idx] = {
+									...updated[idx],
+									LastMessage: data.RecentMsg ?? updated[idx].LastMessage,
+									LastMessageDate: data.RecentMsgDate ?? updated[idx].LastMessageDate,
+								};
+								const [promoted] = updated.splice(idx, 1);
+								return [promoted, ...updated];
+							});
+						}
+					}
+
 					// Q2: new message from another contact detected — update sidebar
 					// LastAllChatsMsgId is non-null only when SP found a row from another contact after the cursor
 					if (data.LastAllChatsMsgId != null) {
@@ -1042,6 +1096,8 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		lastAllChatsMsgIdRef.current     = null;
 		lastEchoMsgIdRef.current         = null;
 		lastSeenRecentMsgDateRef.current = '';
+		lastSeenActiveMsgDateRef.current = '';
+		lastSeenEchoMsgDateRef.current = '';
 
 		let pollingTimer: ReturnType<typeof setTimeout> | null = null;
 		let cancelled = false;
@@ -1325,7 +1381,13 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 					contact?.PhoneNumber ===
 					whatsAppChatContactsData?.Data?.Items[0]?.PhoneNumber
 				) {
-					return whatsAppChatContactsData?.Data?.Items[0];
+					// Merge, don't replace: ConversationStatusId is optimistically owned by
+					// setWhatsappChatCoversationStatus and can outrun this read, so keep the
+					// locally-known status and take everything else from the server.
+					return {
+						...whatsAppChatContactsData.Data.Items[0],
+						ConversationStatusId: contact.ConversationStatusId,
+					};
 				}
 				return contact;
 			});
