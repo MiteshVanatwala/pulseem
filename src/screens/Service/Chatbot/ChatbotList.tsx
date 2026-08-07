@@ -28,21 +28,24 @@ import { sitePrefix } from '../../../config';
 import { getChatbots, deleteChatbot, toggleChatbot } from '../../../redux/reducers/chatbotSlice';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import { ChatbotTrigger, IChatbotListItem } from '../../../Models/Service/Chatbot';
-import { Switch, ManagmentIcon, SearchField, TablePagination } from '../../../components/managment';
+import { Switch, ManagmentIcon, TablePagination } from '../../../components/managment';
 import { Title } from '../../../components/managment/Title';
 import { EditIcon, DeleteIcon } from '../../../assets/images/managment';
 import { Loader } from '../../../components/Loader/Loader';
 import './chatbot.css';
 
-// SearchField.js has no prop types, so TS infers its default handler params as `() => null`.
-const AnySearchField = SearchField as any;
-
 const ROWS_PER_PAGE_OPTIONS = [6, 10, 20, 50];
 
 const TRIGGER_LABEL: Record<ChatbotTrigger, string> = {
-  any: 'Any message',
+  any: 'Any Message',
   whatsapp: 'WhatsApp only',
   widget: 'Widget only',
+};
+
+const TRIGGER_KEY: Record<ChatbotTrigger, string> = {
+  any: 'chatbot_any_message',
+  whatsapp: 'chatbot_trigger_whatsapp',
+  widget: 'chatbot_trigger_widget',
 };
 
 const formatDate = (iso: string) =>
@@ -114,7 +117,7 @@ const ChatbotList = ({ classes }: { classes?: any }) => {
         key: 'edit',
         icon: undefined,
         uIcon: EditIcon,
-        lable: t('common_edit', 'Edit'),
+        lable: t('common.edit', 'Edit'),
         rootClass: classes.paddingIcon,
         onClick: () => goEdit(bot.id),
       },
@@ -122,13 +125,13 @@ const ChatbotList = ({ classes }: { classes?: any }) => {
         key: 'delete',
         icon: undefined,
         uIcon: DeleteIcon,
-        lable: t('common_delete', 'Delete'),
+        lable: t('common.delete', 'Delete'),
         rootClass: classes.paddingIcon,
         onClick: () => setPendingDeleteId(bot.id),
       },
     ];
     return (
-      <Grid container direction="row" justifyContent="flex-end">
+      <Grid container direction="row" justifyContent={windowSize === 'xs' ? 'flex-start' : 'flex-end'}>
         {iconsMap.map((icon) => (
           <Grid key={icon.key} item className="rowIconContainer">
             <ManagmentIcon
@@ -195,7 +198,7 @@ const ChatbotList = ({ classes }: { classes?: any }) => {
       </TableCell>
       <TableCell classes={cellStyle} align="center" className={classes.flex1}>
         <Typography className={classes.middleText}>
-          {t(`chatbot_trigger_${bot.trigger}`, TRIGGER_LABEL[bot.trigger])}
+          {t(TRIGGER_KEY[bot.trigger], TRIGGER_LABEL[bot.trigger])}
         </Typography>
       </TableCell>
       <TableCell classes={cellStyle} align="center" className={classes.flex1}>
@@ -210,35 +213,47 @@ const ChatbotList = ({ classes }: { classes?: any }) => {
     </TableRow>
   );
 
+  const renderPhoneRow = (bot: IChatbotListItem) => (
+    <TableRow key={bot.id} component="div" classes={rowStyle}>
+      <TableCell classes={{ root: clsx(classes.tableCellRoot, classes.flex1, classes.tabelCellPadding) }}>
+        <Box className={classes.justifyBetween}>
+          <Box className={classes.inlineGrid}>
+            <Typography className={classes.nameEllipsis}>{bot.name}</Typography>
+            <Typography className={classes.grayTextCell}>
+              {t(TRIGGER_KEY[bot.trigger], TRIGGER_LABEL[bot.trigger])} · {formatDate(bot.updatedAt)}
+            </Typography>
+            <Typography className={classes.grayTextCell}>
+              {t('chatbot_step_count', '{{count}} steps', { count: bot.stepCount })}
+              {bot.cooldownEnabled
+                ? ` · ${t('chatbot_cooldown_hours', '{{hours}}h cooldown', { hours: bot.cooldownHours })}`
+                : ` · ${t('chatbot_no_cooldown', 'no cooldown')}`}
+            </Typography>
+          </Box>
+          <Box>{renderStatusCell(bot)}</Box>
+        </Box>
+        {renderCellIcons(bot)}
+      </TableCell>
+    </TableRow>
+  );
+
   const renderTable = () => (
     <TableContainer className={classes.tableStyle}>
       <Table className={classes.tableContainer}>
-        {renderTableHead()}
+        {windowSize !== 'xs' && renderTableHead()}
         <Box className="tableBodyContainer">
-          <TableBody>{pagedList.map(renderRow)}</TableBody>
+          <TableBody>{pagedList.map((bot) => (windowSize === 'xs' ? renderPhoneRow(bot) : renderRow(bot)))}</TableBody>
         </Box>
       </Table>
     </TableContainer>
   );
 
   const renderSearchLine = () => {
-    if (windowSize === 'xs') {
-      return (
-        <Grid container className="searchLine">
-          <AnySearchField
-            classes={classes}
-            value={nameSearch}
-            onChange={(e: any) => setNameSearch(e.target.value)}
-            onClick={handleSearch}
-            onKeyPress={handleKeyPress}
-            placeholder={t('chatbot_search_placeholder', 'Name') as string}
-          />
-        </Grid>
-      );
-    }
-
     return (
-      <Grid container spacing={2} className={clsx(classes.lineTopMarging, 'searchLine')}>
+      <Grid
+        container
+        spacing={2}
+        className={clsx(windowSize === 'xs' || windowSize === 'sm' ? classes.mt15 : classes.lineTopMarging, 'searchLine')}
+      >
         <Grid item>
           <TextField
             variant="outlined"
@@ -256,7 +271,7 @@ const ChatbotList = ({ classes }: { classes?: any }) => {
             className={clsx(classes.btn, classes.btnRounded, classes.searchButton)}
             endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
           >
-            {t('common_search', 'Search')}
+            {t('common.search', 'Search')}
           </Button>
         </Grid>
         {isSearching && (
@@ -266,7 +281,7 @@ const ChatbotList = ({ classes }: { classes?: any }) => {
               className={clsx(classes.btn, classes.btnRounded, classes.searchButton)}
               endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
             >
-              {t('common_clear', 'Clear')}
+              {t('common.clear', 'Clear')}
             </Button>
           </Grid>
         )}
@@ -295,75 +310,73 @@ const ChatbotList = ({ classes }: { classes?: any }) => {
       containerClass={clsx(classes?.management)}
       hideSideImages
     >
-      <div className="svc-cb">
-        <Box className={'topSection'}>
-          <Title Text={t('chatbot_list_title', 'Chatbots')} classes={classes} />
-          <Typography variant="body2" color="textSecondary" style={{ marginTop: 8, marginLeft: 15 }}>
-            {t('chatbot_list_subtitle', 'Automated first-response flows for WhatsApp and the website widget.')}
-          </Typography>
-          {renderSearchLine()}
-        </Box>
+      <Box className={'topSection'}>
+        <Title Text={t('chatbot_list_title', 'Chatbots')} classes={classes} />
+        <Typography variant="body2" color="textSecondary" style={{ marginTop: 8, marginLeft: 15 }}>
+          {t('chatbot_list_subtitle', 'Automated first-response flows for WhatsApp and the website widget.')}
+        </Typography>
+        {renderSearchLine()}
+      </Box>
 
-        <Grid container spacing={2} className={classes.linePadding} alignItems="center">
-          <Grid item>
-            <Tooltip title={atLimit ? (t('chatbot_limit_reached', 'Chatbot limit reached for your plan') as string) : ''}>
-              <span>
-                <Button
-                  onClick={goCreate}
-                  disabled={atLimit}
-                  endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-                  className={clsx(classes.btn, classes.btnRounded, atLimit && classes.btnDisabled)}
-                >
-                  {t('chatbot_create', 'Create Chatbot')}
-                </Button>
-              </span>
-            </Tooltip>
-          </Grid>
-          <Grid item className={classes.groupsLableContainer}>
-            <Typography className={classes.groupsLable}>
-              {`${visibleList.length} ${t('chatbot_list_title', 'Chatbots')}`}
-            </Typography>
-          </Grid>
-        </Grid>
-
-        {!loadingList && list.length === 0 ? (
-          <Box textAlign="center" py={8}>
-            <SmartToyIcon style={{ fontSize: 40, color: '#d0d5dd', marginBottom: 10 }} />
-            <Typography className={classes.grayTextCell}>
-              {t('chatbot_empty_state', 'No chatbots yet. Create your first one to start automating responses.')}
-            </Typography>
-          </Box>
-        ) : !loadingList && visibleList.length === 0 ? (
-          <Box textAlign="center" py={8}>
-            <Typography className={classes.grayTextCell}>
-              {t('chatbot_search_empty', 'No chatbots match "{{query}}".', { query: nameSearch.trim() })}
-            </Typography>
-          </Box>
-        ) : (
-          <>
-            {renderTable()}
-            {renderTablePagination()}
-          </>
-        )}
-
-        {tierLimit && (
-          <div className="svc-cb-limit-note">
-            ⚠️
+      <Grid container spacing={2} className={classes.linePadding} alignItems="center">
+        <Grid item>
+          <Tooltip title={atLimit ? (t('chatbot_limit_reached', 'Chatbot limit reached for your plan') as string) : ''}>
             <span>
-              <b>
-                {tierLimit.planName} {t('chatbot_plan', 'plan')}:
-              </b>{' '}
-              {tierLimit.limit >= 0
-                ? t('chatbot_limit_usage', '{{used}} of {{limit}} chatbots used.', {
-                    used: tierLimit.used,
-                    limit: tierLimit.limit,
-                  })
-                : t('chatbot_limit_unlimited', 'Unlimited chatbots on your plan.')}
-              {atLimit && ` ${t('chatbot_limit_upgrade', 'Delete one or upgrade your plan to create another.')}`}
+              <Button
+                onClick={goCreate}
+                disabled={atLimit}
+                endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+                className={clsx(classes.btn, classes.btnRounded, atLimit && classes.btnDisabled)}
+              >
+                {t('chatbot_create', 'Create Chatbot')}
+              </Button>
             </span>
-          </div>
-        )}
-      </div>
+          </Tooltip>
+        </Grid>
+        <Grid item className={classes.groupsLableContainer}>
+          <Typography className={classes.groupsLable}>
+            {`${visibleList.length} ${t('chatbot_list_title', 'Chatbots')}`}
+          </Typography>
+        </Grid>
+      </Grid>
+
+      {!loadingList && list.length === 0 ? (
+        <Box textAlign="center" py={8}>
+          <SmartToyIcon style={{ fontSize: 40, color: '#d0d5dd', marginBottom: 10 }} />
+          <Typography className={classes.grayTextCell}>
+            {t('chatbot_empty_state', 'No chatbots yet. Create your first one to start automating responses.')}
+          </Typography>
+        </Box>
+      ) : !loadingList && visibleList.length === 0 ? (
+        <Box textAlign="center" py={8}>
+          <Typography className={classes.grayTextCell}>
+            {t('chatbot_search_empty', 'No chatbots match "{{query}}".', { query: nameSearch.trim() })}
+          </Typography>
+        </Box>
+      ) : (
+        <>
+          {renderTable()}
+          {renderTablePagination()}
+        </>
+      )}
+
+      {tierLimit && (
+        <div className="svc-cb-limit-note">
+          ⚠️
+          <span>
+            <b>
+              {tierLimit.planName} {t('chatbot_plan', 'plan')}:
+            </b>{' '}
+            {tierLimit.limit >= 0
+              ? t('chatbot_limit_usage', '{{used}} of {{limit}} chatbots used.', {
+                  used: tierLimit.used,
+                  limit: tierLimit.limit,
+                })
+              : t('chatbot_limit_unlimited', 'Unlimited chatbots on your plan.')}
+            {atLimit && ` ${t('chatbot_limit_upgrade', 'Delete one or upgrade your plan to create another.')}`}
+          </span>
+        </div>
+      )}
 
       <Dialog open={!!pendingDeleteId} onClose={() => setPendingDeleteId(null)}>
         <DialogTitle>{t('chatbot_delete_title', 'Delete this chatbot?')}</DialogTitle>
@@ -372,10 +385,10 @@ const ChatbotList = ({ classes }: { classes?: any }) => {
         </DialogContent>
         <DialogActions>
           <button className="svc-cb-btn svc-cb-btn-ghost" onClick={() => setPendingDeleteId(null)}>
-            {t('common_cancel', 'Cancel')}
+            {t('common.cancel', 'Cancel')}
           </button>
           <button className="svc-cb-btn svc-cb-btn-primary" style={{ background: '#b42318' }} onClick={confirmDelete}>
-            {t('common_delete', 'Delete')}
+            {t('common.delete', 'Delete')}
           </button>
         </DialogActions>
       </Dialog>

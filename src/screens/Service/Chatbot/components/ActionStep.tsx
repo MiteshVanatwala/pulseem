@@ -1,5 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Menu, MenuItem } from '@material-ui/core';
+import { IoIosArrowDown, IoIosCheckmark } from 'react-icons/io';
+import { MdFlashOn, MdChatBubbleOutline, MdOutlineArticle, MdOutlineChat, MdOutlineWebhook } from 'react-icons/md';
 import { ChatbotActionType, IActionStep, IWhatsAppTemplate } from '../../../../Models/Service/Chatbot';
 
 interface ActionStepProps {
@@ -13,6 +16,13 @@ const ACTION_LABEL: Record<ChatbotActionType, string> = {
   send_wa_template: 'Send WhatsApp Template',
   send_wa_chat: 'Send WhatsApp Chat',
   send_webhook: 'Send Webhook',
+};
+
+const ACTION_ICON: Record<ChatbotActionType, React.ComponentType<{ size?: number }>> = {
+  send_widget: MdChatBubbleOutline,
+  send_wa_template: MdOutlineArticle,
+  send_wa_chat: MdOutlineChat,
+  send_webhook: MdOutlineWebhook,
 };
 
 const defaultPayload = (actionType: ChatbotActionType, templates: IWhatsAppTemplate[]): IActionStep['payload'] => {
@@ -30,6 +40,7 @@ const defaultPayload = (actionType: ChatbotActionType, templates: IWhatsAppTempl
 
 const ActionStep = ({ step, templates, onChange }: ActionStepProps) => {
   const { t } = useTranslation();
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const payload = step.payload as any;
 
   const changeActionType = (actionType: ChatbotActionType) => {
@@ -41,23 +52,49 @@ const ActionStep = ({ step, templates, onChange }: ActionStepProps) => {
   };
 
   const selectedTemplate = templates.find((tpl) => tpl.id === payload.templateId);
+  const SelectedIcon = ACTION_ICON[step.actionType];
 
   return (
     <div>
-      <span className="svc-cb-step-kind svc-cb-kind-action">{t('chatbot_action', 'Action')}</span>
+      <span className="svc-cb-step-kind svc-cb-kind-action">
+        <MdFlashOn size={12} />
+        {t('chatbot_action', 'Action')}
+      </span>
       <div className="svc-cb-field">
         <label>{t('chatbot_action_type', 'Action type')}</label>
-        <select
-          className="svc-cb-select"
-          value={step.actionType}
-          onChange={(e) => changeActionType(e.target.value as ChatbotActionType)}
+        <button type="button" className="svc-cb-dropdown-btn" onClick={(e) => setAnchorEl(e.currentTarget)}>
+          <SelectedIcon size={16} />
+          <span>{t(`chatbot_${step.actionType}`, ACTION_LABEL[step.actionType])}</span>
+          <IoIosArrowDown size={15} className="svc-cb-select-arrow" />
+        </button>
+        <Menu
+          anchorEl={anchorEl}
+          open={!!anchorEl}
+          onClose={() => setAnchorEl(null)}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+          transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+          PaperProps={{ className: 'svc-cb-dropdown-menu' }}
         >
-          {Object.entries(ACTION_LABEL).map(([value, label]) => (
-            <option key={value} value={value}>
-              {t(`chatbot_${value}`, label)}
-            </option>
-          ))}
-        </select>
+          {Object.entries(ACTION_LABEL).map(([value, label]) => {
+            const Icon = ACTION_ICON[value as ChatbotActionType];
+            return (
+              <MenuItem
+                key={value}
+                selected={value === step.actionType}
+                onClick={() => {
+                  changeActionType(value as ChatbotActionType);
+                  setAnchorEl(null);
+                }}
+              >
+                <span className="svc-cb-dropdown-item-icon">
+                  <Icon size={16} />
+                </span>
+                <span style={{ flex: 1 }}>{t(`chatbot_${value}`, label)}</span>
+                {value === step.actionType && <IoIosCheckmark size={20} className="svc-cb-dropdown-check" />}
+              </MenuItem>
+            );
+          })}
+        </Menu>
       </div>
 
       {step.actionType === 'send_widget' && (

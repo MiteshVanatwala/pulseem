@@ -2,6 +2,10 @@
    The list page's title, table, and action buttons use the shared managment/ components
    and style/classes/* classes instead, matching the Automations and Popup Management pages. */
 
+.svc-cb {
+  font-family: 'Assistant', 'Helvetica Neue', Arial, sans-serif;
+}
+
 /* ── Buttons ────────────────────────────────────────────────────── */
 .svc-cb-btn {
   font-size: 13.5px;
@@ -11,7 +15,7 @@
   border: 1px solid transparent;
   cursor: pointer;
   white-space: nowrap;
-  font-family: inherit;
+  font-family: 'Assistant', 'Helvetica Neue', Arial, sans-serif;
 }
 .svc-cb-btn-primary {
   background: #2563eb;
@@ -45,33 +49,13 @@
   border-radius: 10px;
   font-size: 12.5px;
   color: #b54708;
+  font-family: 'Assistant', 'Helvetica Neue', Arial, sans-serif;
 }
 .svc-cb-limit-note b {
   color: #101828;
 }
 
 /* ── Builder ────────────────────────────────────────────────────── */
-.svc-cb-builder-head {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  margin-bottom: 22px;
-  flex-wrap: wrap;
-}
-.svc-cb-name-input {
-  font-size: 19px;
-  font-weight: 700;
-  color: #101828;
-  border: none;
-  background: transparent;
-  padding: 4px 2px;
-  flex: 1 1 240px;
-  min-width: 160px;
-  font-family: inherit;
-}
-.svc-cb-name-input:focus {
-  outline: none;
-}
 .svc-cb-toggle-wrap {
   display: flex;
   align-items: center;
@@ -110,13 +94,6 @@
   left: 18px;
 }
 
-.svc-cb-card {
-  background: #f9fafb;
-  border: 1px solid #e4e8ee;
-  border-radius: 12px;
-  padding: 18px 20px;
-  margin-bottom: 18px;
-}
 .svc-cb-card-title {
   font-size: 11.5px;
   text-transform: uppercase;
@@ -140,40 +117,141 @@
   margin-bottom: 7px;
   font-weight: 600;
 }
-.svc-cb-segmented {
-  display: inline-flex;
-  border: 1px solid #d0d5dd;
-  border-radius: 8px;
-  overflow: hidden;
-}
-.svc-cb-segmented button {
-  padding: 8px 14px;
-  font-size: 12.5px;
-  font-weight: 600;
-  color: #475467;
-  border: none;
-  border-right: 1px solid #d0d5dd;
+
+/* ── Trigger section ────────────────────────────────────────────── */
+.svc-cb-trigger-card {
   background: #fff;
-  cursor: pointer;
-  font-family: inherit;
+  border: 1px solid #eaecf0;
+  border-radius: 14px;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+  overflow: hidden;
+  margin-bottom: 22px;
 }
-.svc-cb-segmented button:last-child {
-  border-right: none;
-}
-.svc-cb-segmented button.sel {
-  background: #2563eb;
-  color: #fff;
-}
-.svc-cb-cooldown-row {
+.svc-cb-trigger-row {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 16px;
+  padding: 20px 22px;
+  flex-wrap: wrap;
+}
+.svc-cb-trigger-row + .svc-cb-trigger-row {
+  border-top: 1px solid #f2f4f7;
+}
+.svc-cb-trigger-row-icon {
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.svc-cb-trigger-row-icon-fires {
+  background: #eef4ff;
+  color: #2c50c9;
+}
+.svc-cb-trigger-row-icon-cooldown {
+  background: #fff4e6;
+  color: #b54708;
+}
+.svc-cb-trigger-row-text {
+  flex: 1 1 220px;
+}
+.svc-cb-trigger-row-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: #101828;
+}
+.svc-cb-trigger-row-desc {
+  font-size: 12.5px;
+  color: #667085;
+  margin-top: 3px;
+}
+.svc-cb-trigger-control {
+  display: flex;
+  justify-content: flex-end;
+  flex: 0 0 auto;
+}
+.svc-cb-cooldown-detail {
+  padding-top: 0;
+  padding-bottom: 20px;
+}
+.svc-cb-cooldown-detail .svc-cb-trigger-row-icon {
+  background: transparent;
+}
+
+.svc-cb-dropdown-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 190px;
+  border: 1px solid #d0d5dd;
+  border-radius: 9px;
+  background: #fff;
+  padding: 9px 14px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #101828;
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+.svc-cb-dropdown-btn span {
+  flex: 1;
+  text-align: left;
+}
+.svc-cb-dropdown-btn:hover,
+.svc-cb-dropdown-btn:focus {
+  border-color: #2563eb;
+  outline: none;
+}
+.svc-cb-select-arrow {
+  color: #98a2b3;
+  flex: 0 0 auto;
+}
+.svc-cb-dropdown-menu .MuiMenuItem-root {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-width: 190px;
+  font-size: 13.5px;
+  font-family: inherit;
+}
+.svc-cb-dropdown-check {
+  color: #2563eb;
+}
+.svc-cb-dropdown-item-icon {
+  display: flex;
+  align-items: center;
+  color: #667085;
+}
+
+.svc-cb-stepper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   font-size: 13px;
   color: #475467;
 }
-.svc-cb-mini-input {
-  width: 60px;
-  padding: 7px 8px;
+.svc-cb-stepper button {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  border: 1px solid #d0d5dd;
+  background: #fff;
+  color: #475467;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+}
+.svc-cb-stepper button:hover {
+  border-color: #2563eb;
+  color: #2563eb;
+}
+.svc-cb-stepper input {
+  width: 48px;
+  padding: 6px 4px;
   border: 1px solid #d0d5dd;
   border-radius: 7px;
   background: #fff;
@@ -182,44 +260,66 @@
   text-align: center;
   font-family: inherit;
 }
-.svc-cb-mini-input:disabled {
-  background: #f2f4f7;
-  color: #98a2b3;
+.svc-cb-stepper-unit {
+  font-weight: 600;
+  color: #101828;
+}
+
+/* ── Flow (Conditions & Action tab) ────────────────────────────────── */
+.svc-cb-flow-heading {
+  margin-bottom: 18px;
+}
+.svc-cb-flow-heading-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #101828;
+}
+.svc-cb-flow-heading-desc {
+  font-size: 12.5px;
+  color: #667085;
+  margin-top: 3px;
 }
 
 .svc-cb-flow {
   position: relative;
-  padding-left: 22px;
+  padding-left: 26px;
 }
 .svc-cb-flow::before {
   content: '';
   position: absolute;
-  left: 6px;
-  top: 6px;
-  bottom: 6px;
+  left: 7px;
+  top: 4px;
+  bottom: 10px;
   width: 2px;
   background: #e4e8ee;
 }
 .svc-cb-step {
   position: relative;
-  margin-bottom: 14px;
+  margin-bottom: 16px;
 }
 .svc-cb-step::before {
   content: '';
   position: absolute;
-  left: -22px;
-  top: 18px;
-  width: 10px;
-  height: 10px;
+  left: -26px;
+  top: 22px;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
   background: #fff;
   border: 2px solid #2563eb;
+  box-shadow: 0 0 0 3px #fff;
 }
 .svc-cb-step-card {
   background: #fff;
-  border: 1px solid #e4e8ee;
-  border-radius: 10px;
-  padding: 14px 16px;
+  border: 1px solid #eaecf0;
+  border-radius: 14px;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+  padding: 18px 20px;
+  transition: box-shadow 0.15s ease, border-color 0.15s ease;
+}
+.svc-cb-step-card:hover {
+  border-color: #d0d5dd;
+  box-shadow: 0 2px 8px rgba(16, 24, 40, 0.06);
 }
 .svc-cb-step-head {
   display: flex;
@@ -235,12 +335,12 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  padding: 3px 9px;
-  border-radius: 6px;
-  margin-bottom: 9px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  margin-bottom: 12px;
 }
 .svc-cb-kind-condition {
-  background: #fff8ec;
+  background: #fff4e6;
   color: #b54708;
 }
 .svc-cb-kind-action {
@@ -248,15 +348,21 @@
   color: #2c50c9;
 }
 .svc-cb-step-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
   border: none;
   background: transparent;
   color: #98a2b3;
   cursor: pointer;
-  font-size: 16px;
-  line-height: 1;
-  padding: 2px;
+  flex: 0 0 auto;
+  transition: background 0.15s ease, color 0.15s ease;
 }
 .svc-cb-step-remove:hover {
+  background: #fef3f2;
   color: #b42318;
 }
 
@@ -264,21 +370,33 @@
 .svc-cb-text-input,
 .svc-cb-textarea {
   width: 100%;
-  padding: 8px 10px;
+  padding: 9px 12px;
   border: 1px solid #d0d5dd;
-  border-radius: 7px;
+  border-radius: 9px;
   background: #fff;
   color: #101828;
   font-size: 13px;
   font-family: inherit;
   box-sizing: border-box;
+  transition: border-color 0.15s ease;
+}
+.svc-cb-select:hover,
+.svc-cb-text-input:hover,
+.svc-cb-textarea:hover {
+  border-color: #98a2b3;
+}
+.svc-cb-select:focus,
+.svc-cb-text-input:focus,
+.svc-cb-textarea:focus {
+  outline: none;
+  border-color: #2563eb;
 }
 .svc-cb-textarea {
   resize: vertical;
   min-height: 64px;
 }
 .svc-cb-step-field {
-  margin-top: 10px;
+  margin-top: 12px;
 }
 .svc-cb-step-field label {
   display: block;
@@ -298,15 +416,22 @@
 
 .svc-cb-branches {
   display: flex;
-  gap: 18px;
-  margin-top: 14px;
-  padding-left: 4px;
+  gap: 16px;
+  margin-top: 16px;
   flex-wrap: wrap;
 }
 .svc-cb-branch {
   flex: 1 1 240px;
-  border-left: 2px dashed #e4e8ee;
-  padding-left: 14px;
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+.svc-cb-branch-match {
+  background: #f6fef9;
+  border: 1px solid #d3f0e0;
+}
+.svc-cb-branch-nomatch {
+  background: #fef7f6;
+  border: 1px solid #f6dcd8;
 }
 .svc-cb-branch-head {
   display: flex;
@@ -319,7 +444,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  margin-bottom: 9px;
+  margin-bottom: 10px;
 }
 .svc-cb-branch-label.match {
   color: #16a34a;
@@ -329,30 +454,158 @@
 }
 
 .svc-cb-add-step {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
   border: 1px dashed #d0d5dd;
   border-radius: 9px;
   padding: 10px 12px;
   font-size: 12.5px;
   font-weight: 600;
-  color: #98a2b3;
+  color: #667085;
   text-align: center;
   cursor: pointer;
   margin-top: 8px;
   background: transparent;
   width: 100%;
   font-family: inherit;
+  transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
 }
 .svc-cb-add-step:hover {
   border-color: #2563eb;
   color: #2563eb;
+  background: #f5f8ff;
+}
+.svc-cb-add-branch {
+  width: auto;
+  padding: 8px 14px;
 }
 
 .svc-cb-add-kind-menu {
   display: flex;
-  gap: 8px;
+  gap: 12px;
   margin-top: 8px;
   flex-wrap: wrap;
 }
-.svc-cb-add-kind-menu button {
-  flex: 1 1 auto;
+.svc-cb-add-kind-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1 1 220px;
+  border: 1px solid #eaecf0;
+  border-radius: 12px;
+  background: #fff;
+  padding: 14px 16px;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
+}
+.svc-cb-add-kind-option:hover {
+  border-color: #2563eb;
+  box-shadow: 0 2px 8px rgba(16, 24, 40, 0.08);
+  transform: translateY(-1px);
+}
+.svc-cb-add-kind-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
+  border-radius: 10px;
+}
+.svc-cb-add-kind-condition .svc-cb-add-kind-icon {
+  background: #fff4e6;
+  color: #b54708;
+}
+.svc-cb-add-kind-action .svc-cb-add-kind-icon {
+  background: #eef4ff;
+  color: #2c50c9;
+}
+.svc-cb-add-kind-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.svc-cb-add-kind-title {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #101828;
+}
+.svc-cb-add-kind-desc {
+  font-size: 11.5px;
+  color: #667085;
+}
+
+/* ── Mobile / responsive ────────────────────────────────────────── */
+@media screen and (max-width: 768px) {
+  /* Cancel/Save footer stacks full-width, matching the wizard footer
+     pattern used across the app's other create/edit screens. */
+  .svc-cb .wizardButtonContainer {
+    flex-direction: column;
+    align-items: center;
+    width: 100% !important;
+  }
+  .svc-cb .wizardButtonContainer > div {
+    width: 100%;
+    margin: 0 !important;
+    display: flex;
+    flex-direction: column;
+  }
+  .svc-cb .wizardButtonContainer button {
+    width: 100%;
+    margin: 6px 0 0 !important;
+  }
+
+  .svc-cb-trigger-row {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 16px;
+  }
+  .svc-cb-trigger-row-text {
+    flex: 0 1 auto;
+  }
+  .svc-cb-trigger-control {
+    width: 100%;
+    justify-content: flex-start;
+    margin-top: 4px;
+  }
+  .svc-cb-dropdown-btn {
+    width: 100%;
+    min-width: 0;
+  }
+  .svc-cb-cooldown-detail .svc-cb-trigger-row-icon {
+    display: none;
+  }
+
+  .svc-cb-step-card {
+    padding: 14px;
+  }
+  .svc-cb-flow {
+    padding-left: 20px;
+  }
+  .svc-cb-step::before {
+    left: -20px;
+  }
+  .svc-cb-branches {
+    gap: 12px;
+  }
+  .svc-cb-branch {
+    flex: 1 1 100%;
+  }
+  .svc-cb-add-kind-option {
+    flex: 1 1 100%;
+  }
+
+  .svc-cb-field-row {
+    gap: 14px;
+  }
+}
+
+@media screen and (max-width: 475px) {
+  .svc-cb-stepper {
+    flex-wrap: wrap;
+  }
 }

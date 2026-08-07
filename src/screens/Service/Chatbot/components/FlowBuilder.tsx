@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { MdAdd, MdCallSplit, MdFlashOn, MdClose } from 'react-icons/md';
 import {
   ChatbotActionType,
   IActionStep,
@@ -34,12 +35,7 @@ const newActionStep = (actionType: ChatbotActionType): IActionStep => ({
   payload: actionType === 'send_webhook' ? { url: '' } : actionType === 'send_wa_template' ? { templateId: '', variables: {} } : { text: '' },
 });
 
-const ACTION_CHOICES: { type: ChatbotActionType; label: string }[] = [
-  { type: 'send_widget', label: 'Widget response' },
-  { type: 'send_wa_template', label: 'WhatsApp template' },
-  { type: 'send_wa_chat', label: 'WhatsApp chat' },
-  { type: 'send_webhook', label: 'Webhook' },
-];
+const DEFAULT_ACTION_TYPE: ChatbotActionType = 'send_widget';
 
 const AddStepControl = ({ onAdd, label }: { onAdd: (step: IFlowStep) => void; label?: string }) => {
   const { t } = useTranslation();
@@ -48,7 +44,8 @@ const AddStepControl = ({ onAdd, label }: { onAdd: (step: IFlowStep) => void; la
   if (!open) {
     return (
       <button type="button" className="svc-cb-add-step" onClick={() => setOpen(true)}>
-        + {label ?? t('chatbot_add_step', 'Add step')}
+        <MdAdd size={16} />
+        {label ?? t('chatbot_add_step', 'Add step')}
       </button>
     );
   }
@@ -57,27 +54,38 @@ const AddStepControl = ({ onAdd, label }: { onAdd: (step: IFlowStep) => void; la
     <div className="svc-cb-add-kind-menu">
       <button
         type="button"
-        className="svc-cb-btn svc-cb-btn-ghost"
+        className="svc-cb-add-kind-option svc-cb-add-kind-condition"
         onClick={() => {
           onAdd(newConditionStep());
           setOpen(false);
         }}
       >
-        {t('chatbot_condition', 'Condition')}
+        <span className="svc-cb-add-kind-icon">
+          <MdCallSplit size={18} />
+        </span>
+        <span className="svc-cb-add-kind-copy">
+          <span className="svc-cb-add-kind-title">{t('chatbot_condition', 'Condition')}</span>
+          <span className="svc-cb-add-kind-desc">
+            {t('chatbot_condition_add_desc', 'Branch the flow based on the message content')}
+          </span>
+        </span>
       </button>
-      {ACTION_CHOICES.map((choice) => (
-        <button
-          key={choice.type}
-          type="button"
-          className="svc-cb-btn svc-cb-btn-ghost"
-          onClick={() => {
-            onAdd(newActionStep(choice.type));
-            setOpen(false);
-          }}
-        >
-          {t(`chatbot_${choice.type}`, choice.label)}
-        </button>
-      ))}
+      <button
+        type="button"
+        className="svc-cb-add-kind-option svc-cb-add-kind-action"
+        onClick={() => {
+          onAdd(newActionStep(DEFAULT_ACTION_TYPE));
+          setOpen(false);
+        }}
+      >
+        <span className="svc-cb-add-kind-icon">
+          <MdFlashOn size={18} />
+        </span>
+        <span className="svc-cb-add-kind-copy">
+          <span className="svc-cb-add-kind-title">{t('chatbot_action', 'Action')}</span>
+          <span className="svc-cb-add-kind-desc">{t('chatbot_action_add_desc', 'Send a reply or call a webhook')}</span>
+        </span>
+      </button>
     </div>
   );
 };
@@ -142,14 +150,14 @@ const FlowBuilder = ({ steps, onChange, templates }: FlowBuilderProps) => {
                 title={t('chatbot_remove_step', 'Remove step') as string}
                 onClick={() => removeAt(idx)}
               >
-                ✕
+                <MdClose size={16} />
               </button>
             </div>
 
             {step.type === 'condition' && (
               <div className="svc-cb-branches">
                 {step.branches.map((branch) => (
-                  <div className="svc-cb-branch" key={branch.id}>
+                  <div className="svc-cb-branch svc-cb-branch-match" key={branch.id}>
                     <div className="svc-cb-branch-head">
                       <div className="svc-cb-branch-label match">✓ {t(`chatbot_op_${step.operator}`, OPERATOR_VERB[step.operator])}</div>
                       {step.branches.length > 1 && (
@@ -159,7 +167,7 @@ const FlowBuilder = ({ steps, onChange, templates }: FlowBuilderProps) => {
                           title={t('chatbot_remove_branch', 'Remove branch') as string}
                           onClick={() => removeBranch(idx, branch.id)}
                         >
-                          ✕
+                          <MdClose size={14} />
                         </button>
                       )}
                     </div>
@@ -178,11 +186,12 @@ const FlowBuilder = ({ steps, onChange, templates }: FlowBuilderProps) => {
                   </div>
                 ))}
 
-                <button type="button" className="svc-cb-add-step" onClick={() => addBranch(idx)}>
-                  + {t('chatbot_add_branch', 'Add branch')}
+                <button type="button" className="svc-cb-add-step svc-cb-add-branch" onClick={() => addBranch(idx)}>
+                  <MdAdd size={15} />
+                  {t('chatbot_add_branch', 'Add branch')}
                 </button>
 
-                <div className="svc-cb-branch">
+                <div className="svc-cb-branch svc-cb-branch-nomatch">
                   <div className="svc-cb-branch-label nomatch">✕ {t('chatbot_else', 'Else (no branch matches)')}</div>
                   <FlowBuilder
                     steps={step.elseBranch}
