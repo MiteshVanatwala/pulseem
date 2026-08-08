@@ -212,7 +212,18 @@ const DataSourceView = ({ classes }: ClassesType) => {
                 )}
             </Box>
             <Box style={{ display: 'flex', gap: 2 }}>
-                {canExport && details?.Status === eDataSourceStatus.READY && (
+                {/* 🔴 GATED ON `!isHistorical` 2026-08-08 (review R3-02).
+                    This header button exports the ACTIVE version. While the screen is showing a
+                    HISTORICAL version — grid reloaded, orange banner up, version chip changed — it
+                    still exported the active one: a different row count and different content, with
+                    nothing in the dialog, the filename or the downloads page naming a version. The
+                    file is what a manager forwards to a regulator, so the divergence is discoverable
+                    only by someone who already knows the answer.
+                    Fail CLOSED rather than guess at export plumbing: on a historical version the
+                    button is withheld, and the per-version export that already exists in the
+                    versions dialog (`DataSources.versions.exportVersion`) is the correct route —
+                    it is the only one that names the version it is exporting. */}
+                {canExport && details?.Status === eDataSourceStatus.READY && !isHistorical && (
                     <Tooltip title={t('DataSources.actions.export')}><IconButton aria-label={t('DataSources.actions.export')} onClick={() => setDialog({ type: 'export' })}><GetApp /></IconButton></Tooltip>
                 )}
                 {canEditMeta && (

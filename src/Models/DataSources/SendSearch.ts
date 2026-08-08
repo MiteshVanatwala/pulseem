@@ -323,6 +323,25 @@ export interface SendSearchFilterField {
     FieldKey: string;            // = SourceHeader — the identity, sent back verbatim in the clause
     DisplayName: string;
     DataType: eDataType;
+    // ── COVERAGE PAIR — added 2026-08-08 (review R1-02). NOT decoration, and NOT optional. ──
+    // `dbo.DataSources_SearchSendsFilterCatalog` has always projected these and `SendSearchFilterField`
+    // in C# has always carried them; only this interface stopped at three members, so the numbers
+    // arrived at runtime and were then unreachable to every consumer.
+    //
+    // WHY THEY MUST BE HERE: the search spans several campaigns, and a column such as "מספר פוליסה"
+    // may exist in two of the four data sources behind them. Filtering on it drops EVERY row from the
+    // other two — the operator asked to narrow by a value and narrowed the POPULATION instead. The
+    // builder prints "חל על 2 מתוך 4 קמפיינים" from exactly this pair (`isPartialCoverage`,
+    // SendSearchAdvanced.ts:91). Declaring them required is what makes this type assignable to
+    // `SendSearchField`, which is the seam that was broken: the panel read a state key the slice
+    // never wrote, and a rename alone would have handed the builder a field with no coverage numbers
+    // — i.e. traded a visibly-dead feature for a silently-row-dropping one.
+    CampaignCount: number;
+    TotalCampaigns: number;
+    // Optional: the SP degrades a header whose DataType differs across versions to TEXT and raises
+    // this flag (B3 #57). Optional rather than required so a server deployed before the catalog SP
+    // simply leaves it undefined instead of breaking the mapping.
+    IsAmbiguousType?: boolean;
 }
 
 // Blank clause for a field. Value2 starts null even for BETWEEN: an empty second bound is not the
@@ -525,6 +544,27 @@ export interface SendSearchFilters {
     SortDescending: boolean;
 }
 
+/**
+ * A date-only "to" value the user picked, turned into the EXCLUSIVE upper bound the SP expects.
+ *
+ * `dbo.DataSources_SearchSends` filters with `csl.[TimeStamp] < @prm_DateTo`, so an inclusive
+ * calendar day has to travel as midnight of the NEXT day. Review R1-04.
+ *
+ * Returns the input unchanged when it is null/empty (the SP then defaults @prm_DateTo to GETDATE(),
+ * which is already inclusive of everything sent so far) or when it is not a bare `yyyy-MM-dd` —
+ * a value that already carries a time component is a caller that knows what it is doing, and
+ * shifting it again would move the bound by a day for no reason.
+ */
+export const exclusiveUpperBound = (dateOnly: string | null): string | null => {
+    if (!dateOnly || !/^\d{4}-\d{2}-\d{2}$/.test(dateOnly)) return dateOnly;
+    const parts = dateOnly.split('-');
+    // UTC arithmetic on purpose: Date.UTC + toISOString never shifts the calendar day through the
+    // browser's timezone, which a local-time Date would do for every user east or west of the server.
+    const d = new Date(Date.UTC(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2])));
+    d.setUTCDate(d.getUTCDate() + 1);
+    return d.toISOString().slice(0, 10);
+};
+
 export const DEFAULT_PAGE_SIZE = 50;          // CONTRACT §2.2 @prm_PageSize default
 export const MAX_PAGE_SIZE = 200;             // server clamp (§3.2) — mirrored so the UI cannot ask for more
 export const PAGE_SIZE_OPTIONS: number[] = [20, 50, 100];
@@ -571,7 +611,20 @@ export const toSendSearchRequest = (f: SendSearchFilters): SendSearchRequest => 
         RowKind: f.RowKind,
         CampaignID: f.CampaignID,
         DateFrom: f.DateFrom,
-        DateTo: f.DateTo,
+        // 🔴 FIXED 2026-08-08 (review R1-04). The picker yields a DATE-ONLY ISO string ("2026-08-08",
+        // SendSearchFilters.tsx:120-125), Newtonsoft binds it as 2026-08-08T00:00:00, and the SP's
+        // predicate is HALF-OPEN: `AND csl.[TimeStamp] < @prm_DateTo` (DataSources_SearchSends:384).
+        // So choosing "עד 08/08/2026" silently dropped EVERY send made on 8 August — out of the grid,
+        // out of TotalCount and out of the export — while the chip still read "until 08/08/2026".
+        // Picking today as the end date is the most natural thing an auditor does, so this fired
+        // constantly and looked like nothing.
+        //
+        // Converted to an EXCLUSIVE upper bound here, at the wire boundary, rather than by changing
+        // the SP to `<=`: the predicate is shared by every tenant on this platform and by the
+        // catalog SP, and widening it there would silently change what every existing saved search
+        // returns for everyone. The state keeps the date the user actually picked, so the input and
+        // the chip still render it — only the value on the wire is shifted.
+        DateTo: exclusiveUpperBound(f.DateTo),
         IncludeOverOneYear: f.IncludeOverOneYear,
         PageIndex: Math.max(f.PageIndex, 0),
         PageSize: size,

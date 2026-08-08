@@ -228,6 +228,7 @@
   "viewOnlyTooltip": "This source has no identity columns — it cannot be sent to",
   "activeVersion": "Active",
   "historicalVersionBanner": "Showing historical version V{{n}}",
+  "historicalVersionEditNote": "In a historical version only column searchability can be changed — the display name and type describe a send that already went out.",
   "backToActiveVersion": "Back to the active version",
   "lastVersionFailedTooltip": "The latest version failed; the active version is: V{{n}}",
   "table": {
@@ -384,7 +385,20 @@
     "identityLocked": "Identity cannot be changed after processing — to change identity upload a new version",
     "buildingSearchIndex": "Building search index — this may take a few minutes",
     "searchableRemaining": "{{n}} searchable columns remaining in this version",
-    "searchableQuotaReached": "The searchable-columns quota ({{max}}) is used up — turn off search on another column to mark this one"
+    "searchableQuotaReached": "The searchable-columns quota ({{max}}) is used up — turn off search on another column to mark this one",
+    "showThousandsSeparator": "Show thousands separator",
+    "historicalEditNotice": "This is a historical version. Only searchability can be changed here. The name and type describe a send that already went out, so they are locked.",
+    "typeEvidence": {
+      "ariaLabel": "Why this type was chosen",
+      "title": "What this type is based on",
+      "match": "{{pct}}% of the values in this column fit {{type}}",
+      "counts": "{{matched}} of {{total}} non-empty values checked",
+      "samples": "Examples from your file",
+      "lowConfidence": "Some values do not fit this type. Worth checking before you continue.",
+      "overridden": "The type was changed manually to {{type}}. The percentage above describes the automatic detection.",
+      "noEvidence": "This column has no non-empty values, so the type defaults to text.",
+      "changeType": "Change type"
+    }
   },
   "versions": {
     "title": "Version history",

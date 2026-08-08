@@ -18,6 +18,19 @@ import { eDataType } from '../../../Models/DataSources/DataSourceEnums';
 /** A column is typed when at least this share of its NON-EMPTY sampled cells fit the candidate. */
 export const DETECT_THRESHOLD = 0.9;
 
+// ── small-sample rule (review R2-02, 2026-08-08) ─────────────────────────────────────────────
+// DETECT_THRESHOLD alone is meaningless on a tiny sample: with the five rows the upload wizard
+// supplies, "≥ 90%" rounds up to 5 of 5 — unanimity, which is precisely the behaviour the ratio was
+// introduced to replace. At or below SMALL_SAMPLE_MAX the decision therefore switches from a ratio
+// to a bounded miss count. SMALL_SAMPLE_MIN_HITS keeps the degenerate cases out: 1-of-2 and 0-of-1
+// are not evidence of anything.
+/** At or below this many non-empty sampled values, judge by miss count rather than by ratio. */
+export const SMALL_SAMPLE_MAX = 10;
+/** How many non-matching cells a small sample may contain and still be typed. */
+export const SMALL_SAMPLE_MAX_MISSES = 1;
+/** A small sample must still show at least this many real matches. */
+export const SMALL_SAMPLE_MIN_HITS = 2;
+
 /** Max number of real values from the user's own file kept as evidence. */
 export const MAX_SAMPLES = 3;
 
@@ -112,7 +125,29 @@ export const detectColumnType = (values: any[]): ColumnDetection => {
     for (let i = 0; i < CANDIDATES.length; i++) {
         const c = CANDIDATES[i];
         const hits = vals.filter(c.test);
-        if (hits.length / total >= DETECT_THRESHOLD) {
+        // 🔴 FIXED 2026-08-08 (review R2-02). The condition was `hits.length / total >= 0.9` alone,
+        // and the wizard hands this function a FIVE-ROW sample (UploadWizardDialog header, line 43).
+        // 4/5 = 0.8 < 0.9, so the "≥90% of non-empty cells" vote was ARITHMETICALLY IDENTICAL to the
+        // `vals.every(...)` unanimity it was written to replace: one "n/a" in a five-row sample still
+        // demoted a whole amount column to TEXT — the exact case named in that header comment and in
+        // LEDGER #36 as the reason for the change.
+        //
+        // Two consequences, both silent: the column lost its NUMBER operators, so "who sold above X"
+        // was simply not offered on it; and because the TEXT fallback below reports confidence 100,
+        // the evidence popover said "100% טקסט" and the amber 85-95% state Idan asked for (§4.2c)
+        // was unreachable by construction.
+        //
+        // A ratio needs a denominator big enough to express it. Below SMALL_SAMPLE_MAX the ratio is
+        // too coarse, so a bounded MISS COUNT is used instead: one dirty cell is tolerated, provided
+        // at least two cells actually matched (which rejects the degenerate 1-of-2 and 0-of-1 cases).
+        // A column typed this way reports its true percentage — 4/5 renders as 80%, which lands in
+        // the amber band and tells the user exactly what to look at.
+        const misses = total - hits.length;
+        const ratioOk = hits.length / total >= DETECT_THRESHOLD;
+        const smallSampleOk = total <= SMALL_SAMPLE_MAX
+            && misses <= SMALL_SAMPLE_MAX_MISSES
+            && hits.length >= SMALL_SAMPLE_MIN_HITS;
+        if (ratioOk || smallSampleOk) {
             return {
                 type: c.type,
                 confidence: Math.round((hits.length / total) * 100),
@@ -171,6 +206,22 @@ export const runColumnTypeDetectSelfTests = (): SelfTestResult[] => {
     eq('9/10 confidence is 90', dirty.confidence, 90);
     const tooDirty = detectColumnType(['1', '2', '3', '4', '5', '6', '7', '8', 'n/a', 'x']);
     eq('8/10 numbers -> TEXT', tooDirty.type, eDataType.TEXT);
+
+    // ── small-sample rule (review R2-02) ──────────────────────────────────────────────────────
+    // THE CASE THE WHOLE MODULE EXISTS FOR, and the one the ratio alone silently failed: the upload
+    // wizard hands this function FIVE rows, and 4/5 = 0.8 falls under DETECT_THRESHOLD, so before
+    // this rule a single "n/a" still demoted an amount column to TEXT — the exact behaviour of the
+    // `vals.every(...)` unanimity the vote replaced. These four assertions pin the rule so a future
+    // edit to DETECT_THRESHOLD or the constants cannot quietly restore unanimity.
+    const fiveRowDirty = detectColumnType(['153000', '102094', 'n/a', '167000', '116094']);
+    eq('4/5 numbers -> NUMBER (was TEXT before R2-02)', fiveRowDirty.type, eDataType.NUMBER);
+    eq('4/5 reports its real 80, not 100', fiveRowDirty.confidence, 80);
+    // …and the degenerate cases the miss-count rule must NOT let through.
+    eq('1/2 numbers -> TEXT', detectColumnType(['7', 'n/a']).type, eDataType.TEXT);
+    eq('0/1 -> TEXT', detectColumnType(['n/a']).type, eDataType.TEXT);
+    eq('2/3 numbers -> NUMBER', detectColumnType(['7', '8', 'n/a']).type, eDataType.NUMBER);
+    // two dirty cells in a small sample is still too many — one miss is the budget
+    eq('3/5 numbers -> TEXT', detectColumnType(['7', '8', '9', 'n/a', 'x']).type, eDataType.TEXT);
 
     // empties are excluded from the denominator, not counted as misses
     const withBlanks = detectColumnType(['1', '', '   ', null, undefined, '2']);

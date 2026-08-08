@@ -228,6 +228,7 @@
   "viewOnlyTooltip": "To źródło nie ma kolumn tożsamości — nie można do niego wysyłać",
   "activeVersion": "Aktywna",
   "historicalVersionBanner": "Wyświetlana wersja historyczna V{{n}}",
+  "historicalVersionEditNote": "W wersji historycznej można zmienić tylko możliwość wyszukiwania kolumny — nazwa wyświetlana i typ opisują wysyłkę, która już się odbyła.",
   "backToActiveVersion": "Powrót do wersji aktywnej",
   "lastVersionFailedTooltip": "Ostatnia wersja nie powiodła się; wersja aktywna: V{{n}}",
   "table": {
@@ -384,7 +385,20 @@
     "identityLocked": "Tożsamości nie można zmienić po przetworzeniu — aby ją zmienić, prześlij nową wersję",
     "buildingSearchIndex": "Tworzenie indeksu wyszukiwania — ta operacja może potrwać kilka minut",
     "searchableRemaining": "Pozostało {{n}} kolumn wyszukiwania w tej wersji",
-    "searchableQuotaReached": "Wykorzystano limit kolumn wyszukiwania ({{max}}) — wyłącz wyszukiwanie w innej kolumnie, aby zaznaczyć tę"
+    "searchableQuotaReached": "Wykorzystano limit kolumn wyszukiwania ({{max}}) — wyłącz wyszukiwanie w innej kolumnie, aby zaznaczyć tę",
+    "showThousandsSeparator": "Pokaż separator tysięcy",
+    "historicalEditNotice": "To wersja historyczna. Można zmienić tylko możliwość wyszukiwania. Nazwa i typ opisują wysyłkę, która już się odbyła, więc są zablokowane.",
+    "typeEvidence": {
+      "ariaLabel": "Dlaczego wybrano ten typ",
+      "title": "Na czym oparto ten typ",
+      "match": "{{pct}}% wartości w tej kolumnie pasuje do typu {{type}}",
+      "counts": "{{matched}} z {{total}} sprawdzonych niepustych wartości",
+      "samples": "Przykłady z Twojego pliku",
+      "lowConfidence": "Część wartości nie pasuje do tego typu. Warto sprawdzić przed kontynuowaniem.",
+      "overridden": "Typ zmieniono ręcznie na {{type}}. Powyższy procent opisuje wykrywanie automatyczne.",
+      "noEvidence": "Ta kolumna nie ma niepustych wartości, więc typ ustawiono na tekst.",
+      "changeType": "Zmień typ"
+    }
   },
   "versions": {
     "title": "Historia wersji",
