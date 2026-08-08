@@ -21,9 +21,10 @@
 
 import React, { useState, useEffect } from 'react';
 import {
-    Box, Button, ButtonGroup, Checkbox, FormControlLabel, InputAdornment, MenuItem, TextField, Typography,
+    Badge, Box, Button, ButtonGroup, Checkbox, Chip, Collapse, FormControlLabel, InputAdornment,
+    MenuItem, TextField, Tooltip, Typography,
 } from '@material-ui/core';
-import { Search } from '@material-ui/icons';
+import { ExpandLess, ExpandMore, Search } from '@material-ui/icons';
 import { useTranslation } from 'react-i18next';
 import {
     SS,
@@ -31,6 +32,15 @@ import {
     eRoleFilter,
     eRowKind,
 } from '../../../Models/DataSources/SendSearch';
+import AdvancedFilterBuilder from './AdvancedFilterBuilder';
+import {
+    SendSearchField,
+    SendSearchFilterRule,
+    SendSearchSort,
+    completeRules,
+    defaultSendSearchSort,
+    fieldByKey,
+} from './SendSearchAdvanced';
 
 // The campaign dropdown's options. There is no campaign-list endpoint in this contract (§3.3 defines
 // only Search and Provenance), so the screen derives the options from the campaigns present in the
@@ -51,6 +61,17 @@ interface Props {
     onClearAll: () => void;
     campaigns: CampaignOption[];
     loading?: boolean;
+
+    // ── advanced filter builder (CONTRACT §2) ────────────────────────────────────────────────
+    // ALL OPTIONAL, and that is the degrade path, not laziness: against a server that does not yet
+    // project the searchable-field list, `fields` is undefined ⇒ the "עוד מסננים" button stays
+    // DISABLED with a tooltip that says why. CONTRACT §2 makes that the CORRECT behaviour rather
+    // than a bug — an enabled button over an empty field list is a builder that can express nothing.
+    fields?: SendSearchField[];
+    rules?: SendSearchFilterRule[];
+    onRulesChange?: (rules: SendSearchFilterRule[]) => void;
+    sort?: SendSearchSort;
+    onSortChange?: (sort: SendSearchSort) => void;
 }
 
 const KIND_ORDER: eRowKind[] = [eRowKind.All, eRowKind.Agents, eRowKind.Rollup];
@@ -60,8 +81,29 @@ const KIND_KEY: { [k in eRowKind]: string } = {
     [eRowKind.Rollup]: 'kind.rollup',
 };
 
-const SendSearchFilters: React.FC<Props> = ({ value, onChange, onSearch, onClearAll, campaigns, loading }) => {
+const SendSearchFilters: React.FC<Props> = ({
+    value, onChange, onSearch, onClearAll, campaigns, loading,
+    fields, rules, onRulesChange, sort, onSortChange,
+}) => {
     const { t } = useTranslation();
+
+    // ── advanced panel ────────────────────────────────────────────────────────────────────────
+    const advFields: SendSearchField[] = fields ?? [];
+    const advRules: SendSearchFilterRule[] = rules ?? [];
+    const advSort: SendSearchSort = sort ?? defaultSendSearchSort();
+    // The builder is reachable only when the server actually offered fields AND the screen wired a
+    // change handler. Either missing ⇒ the button stays disabled, exactly as it shipped in V1: a
+    // button that opens a panel which can express nothing is worse than a disabled one, because the
+    // user concludes the FILTER found nothing rather than that the field list is absent.
+    const advAvailable = advFields.length > 0 && !!onRulesChange;
+    const [advOpen, setAdvOpen] = useState(false);
+    // COUNT = complete rules only. An incomplete rule is not sent (see `isRuleComplete`), so
+    // counting it would tell the user a filter is active that is not.
+    const activeRules = completeRules(advRules, advFields);
+    // A sort on a hidden field is also an active, invisible modification of what the grid shows, so
+    // it is counted alongside the rules — otherwise a user who collapses the panel sees a reordered
+    // grid with a badge reading 0.
+    const activeCount = activeRules.length + (advSort.FieldKey ? 1 : 0);
 
     // Local text state: typing must not refetch. Committed by "חפש" or Enter — the same
     // searchInput/doSearch split DataSources.tsx and SmartSendManageTab.tsx:60,102 use.
@@ -165,12 +207,37 @@ const SendSearchFilters: React.FC<Props> = ({ value, onChange, onSearch, onClear
                 <Button variant="contained" color="primary" disabled={loading} onClick={commitText}>
                     {t(`${SS}search`)}
                 </Button>
-                {/* The mock's "עוד מסננים ▾" is a stub (`:183` — no handler, no panel). V1 ships it
-                    DISABLED rather than wired to nothing: a button that opens nothing teaches the user
-                    the screen is broken. CONTRACT §4.2 explicitly permits the stub. */}
-                <Button variant="outlined" disabled title={t(`${SS}moreFilters`)}>
-                    {t(`${SS}moreFilters`)}
-                </Button>
+                {/* "עוד מסננים ▾" — was a DISABLED stub in V1 (`Mock-v3:183` has no handler and no
+                    panel). It now toggles the advanced builder, and it goes back to being disabled
+                    the moment the server offers no searchable fields. That is not a regression to
+                    the stub: CONTRACT §2 makes "no fields ⇒ no builder" the correct answer, and the
+                    tooltip says which of the two states this is, so a disabled button is never
+                    mistaken for a broken one.
+                    The Tooltip wraps a <span>, not the Button: MUI attaches its listeners to the
+                    child, a disabled button fires no pointer events, and the tooltip that explains
+                    WHY it is disabled would be the one tooltip that never appears. */}
+                <Tooltip title={(advAvailable ? t(`${SS}moreFilters`) : t(`${SS}adv.unavailable`)) as string}>
+                    <span>
+                        <Badge
+                            color="primary"
+                            badgeContent={activeCount}
+                            // Hidden while the panel is OPEN: the rules are on screen and counting
+                            // them twice is noise. Collapsed, the badge is the only trace that the
+                            // grid is being narrowed by something the user cannot see.
+                            invisible={advOpen || activeCount === 0}
+                        >
+                            <Button
+                                variant="outlined"
+                                disabled={!advAvailable}
+                                aria-expanded={advOpen}
+                                onClick={() => setAdvOpen((v) => !v)}
+                                endIcon={advOpen ? <ExpandLess /> : <ExpandMore />}
+                            >
+                                {t(`${SS}moreFilters`)}
+                            </Button>
+                        </Badge>
+                    </span>
+                </Tooltip>
             </Box>
 
             {/* ── row 2: segmented row-kind · clear all · >1-year opt-in ── */}
@@ -227,6 +294,78 @@ const SendSearchFilters: React.FC<Props> = ({ value, onChange, onSearch, onClear
                     }
                 />
             </Box>
+
+            {/* ── row 3: the advanced builder ──────────────────────────────────────────────────
+                INSIDE the same card, with the SAME dashed separator treatment as row 2 — it is a
+                third row of one filter, not a second filter mechanism. A separate popover would let
+                the user see the grid without the rules that are narrowing it. */}
+            {advAvailable && (
+                <Collapse in={advOpen} timeout="auto" unmountOnExit>
+                    <Box style={{ marginTop: 12, paddingTop: 11, borderTop: '1px dashed #e0e0e0' }}>
+                        <AdvancedFilterBuilder
+                            fields={advFields}
+                            rules={advRules}
+                            onRulesChange={onRulesChange!}
+                            sort={advSort}
+                            onSortChange={onSortChange ?? (() => undefined)}
+                            onApply={onSearch}
+                            loading={loading}
+                        />
+                    </Box>
+                </Collapse>
+            )}
+
+            {/* ── active-filter chips, COLLAPSED ONLY ──────────────────────────────────────────
+                When the panel is open the rules themselves are the display. When it is closed these
+                chips are the only thing standing between the user and a grid that is silently
+                narrowed — so they name the FIELD, not just "3 filters", and each one removes its own
+                rule. Rendered only for COMPLETE rules, because only those are actually sent. */}
+            {advAvailable && !advOpen && activeCount > 0 && (
+                <Box
+                    style={{
+                        display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center',
+                        marginTop: 12, paddingTop: 11, borderTop: '1px dashed #e0e0e0',
+                    }}
+                >
+                    <Typography component="span" style={{ fontSize: 12.5, color: '#5b6b7b' }}>
+                        {t(`${SS}adv.activeCount`, { count: activeCount })}
+                    </Typography>
+                    {activeRules.map((r) => {
+                        const f = fieldByKey(advFields, r.FieldKey);
+                        const name = f ? (f.DisplayName || f.FieldKey) : r.FieldKey;
+                        // Operator label by KEY CONSTRUCTION from the frozen number — the same
+                        // `adv.op.<n>` keys the builder's select uses, so the chip and the rule can
+                        // never read differently for the same operator.
+                        const op = t(`${SS}adv.op.${r.Operator}`);
+                        const val = r.Value2 ? `${r.Value1} – ${r.Value2}` : r.Value1;
+                        return (
+                            <Chip
+                                key={r.Id}
+                                size="small"
+                                // Removing a chip must REFETCH, not just drop the chip: the rule was
+                                // narrowing the grid, and leaving the grid narrowed under a chip
+                                // that is gone is the exact "silently misled about what you are
+                                // looking at" failure this row exists to prevent.
+                                onDelete={() => { onRulesChange!(advRules.filter((x) => x.Id !== r.Id)); onSearch(); }}
+                                label={`${name} ${op} ${val}`}
+                                style={{ backgroundColor: '#E7F1F8', color: '#0e4a6e', fontSize: 12 }}
+                            />
+                        );
+                    })}
+                    {!!advSort.FieldKey && (
+                        <Chip
+                            size="small"
+                            onDelete={onSortChange
+                                ? () => { onSortChange(defaultSendSearchSort()); onSearch(); }
+                                : undefined}
+                            label={`${t(`${SS}sort.label`)}: ${
+                                (fieldByKey(advFields, advSort.FieldKey)?.DisplayName) || advSort.FieldKey
+                            } · ${t(`${SS}sort.${advSort.Dir}`)}`}
+                            style={{ backgroundColor: '#F2F4F7', color: '#3b4754', fontSize: 12 }}
+                        />
+                    )}
+                </Box>
+            )}
         </Box>
     );
 };

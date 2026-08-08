@@ -10,11 +10,14 @@ import * as XLSX from 'xlsx';
 import Papa from 'papaparse';
 import { ERROR_TYPE } from '../../../helpers/Types/common';
 import {
-    UploadColumnDef, eDataType, eFormatHint, eSemanticRole, DataSourceLimits,
-    eClientField, ClientFieldOption, CLIENT_FIELD_CATALOGUE
+    UploadColumnDef, eFormatHint, eSemanticRole, DataSourceLimits,
+    eClientField, ClientFieldOption, CLIENT_FIELD_CATALOGUE, ColumnDetection
 } from '../../../Models/DataSources/DataSource';
+import { eDataType } from '../../../Models/DataSources/DataSourceEnums';
 import { checkQuota, insertDataSource, setUploadProgress } from '../../../redux/reducers/dataSourcesSlice';
 import { useDsDialogStyles } from './dialogStyles';
+import { detectColumnType } from './columnTypeDetect';
+import TypeEvidencePopover from './TypeEvidencePopover';
 
 interface UploadWizardDialogProps {
     classes: { [key: string]: string };
@@ -35,37 +38,19 @@ interface UploadWizardDialogProps {
 
 const ALLOWED = ['csv', 'xls', 'xlsx', 'tsv'];
 
-// ── per-column value classification (drives the wizard's auto-typing) ──
-const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
-const cleanDigits = (v: any) => String(v).replace(/[\s\-()+]/g, '');
-const isEmailVal = (v: any) => EMAIL_RE.test(String(v).trim());
-// Israeli mobile only, per spec: local 05 + 8 digits (10 total), or intl 9725 + 8 digits (12 total).
-const isPhoneVal = (v: any) => { const c = cleanDigits(v); return /^05\d{8}$/.test(c) || /^9725\d{8}$/.test(c); };
-/* Three digit groups separated by / - or . , with an OPTIONAL time part.
-   The time part is why this changed: the old expression anchored $ straight after the year, so a
-   real export like "14/12/2017 12:47 PM" failed and the whole column silently fell through to
-   text. `\s+` (not a single space) because Excel exports do emit double spaces before the time.
-   Deliberately NOT validated as a real date — 99/99/9999 matches. This only decides a DISPLAY
-   LABEL: the cell is stored and sent as the raw string either way, and nothing downstream parses
-   it. Do not "improve" this into a real date parser without deciding day-first vs month-first
-   first — 05/04/1956 is ambiguous and today nobody has to resolve it. */
-const isDateVal = (v: any) => /^\d{1,4}[-/.]\d{1,2}[-/.]\d{1,4}(?:(?:\s+|T)\d{1,2}:\d{2}(?::\d{2})?(?:\s*[AaPp]\.?[Mm]\.?)?)?$/.test(String(v).trim());
-const isNumberVal = (v: any) => { const s = String(v).trim(); return s !== '' && (/^-?\d{1,3}(,\d{3})*(\.\d+)?$/.test(s) || /^-?\d+(\.\d+)?$/.test(s)); };
-type ColKind = 'email' | 'phone' | 'date' | 'number' | 'text';
-// Order matters: email → phone (phones are all-digits too) → date → number → text.
-const classifyColumn = (vals: any[]): ColKind => {
-    if (vals.length === 0) return 'text';
-    if (vals.every(isEmailVal)) return 'email';
-    if (vals.every(isPhoneVal)) return 'phone';
-    if (vals.every(isDateVal)) return 'date';
-    if (vals.every(isNumberVal)) return 'number';
-    return 'text';
-};
+/* Per-column value classification MOVED OUT to columnTypeDetect.ts on 2026-08-08.
+   The predicates that used to live here were duplicated nowhere else, but the DECISION they fed was
+   `vals.every(...)` — unanimity. One "n/a" in a 5-row sample demoted a whole amount column to text,
+   and the UI gave the user no way to see that had happened, let alone why. columnTypeDetect votes
+   over the sample (≥90% of non-empty cells) and returns the evidence it voted on, which is what
+   TypeEvidencePopover renders. The predicates themselves are carried over unchanged except for the
+   third phone shape (5 + 8 digits — Excel eats the leading zero) and the leading-zero rule. */
 
 // A "supervisor email" is stored as a plain INFO field (SemanticRole NONE, DataType EMAIL) — this
 // UI-only flag just remembers the wizard's supervisor tag so the role dropdown reflects it. It is
-// stripped from the payload before upload (the server has no such column).
-type WizardColumn = UploadColumnDef & { IsSupervisorEmail?: boolean };
+// stripped from the payload before upload (the server has no such column). `Detection` is UI-only
+// too: it is the evidence behind the auto-picked DataType and never leaves the browser.
+type WizardColumn = UploadColumnDef & { IsSupervisorEmail?: boolean; Detection?: ColumnDetection };
 
 // Dropdown menus must open BELOW the field (never over it) and stay anchored to the field's START
 // edge — right under RTL, left under LTR. The branch is required: anchorOrigin is a PROP, not CSS,
@@ -255,8 +240,15 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
         return hdrs.map((h, i) => {
             const header = (h && h.trim()) ? h.trim() : `${t('DataSources.table.name')} ${i + 1}`;
             const lower = header.toLowerCase();
-            const colVals = sample.map(r => r[i]).filter(v => v !== undefined && v !== null && String(v).trim() !== '');
-            const kind = classifyColumn(colVals);
+            const colVals = sample.map(r => r[i]);
+            // ONE decision per column, taken here, from the sample — never per cell. The evidence
+            // rides along on the column so the ℹ️ can show it without re-deriving anything.
+            const detection = detectColumnType(colVals);
+            const kind = detection.total === 0 ? 'text'
+                : detection.type === eDataType.EMAIL ? 'email'
+                    : detection.type === eDataType.PHONE ? 'phone'
+                        : detection.type === eDataType.DATE ? 'date'
+                            : detection.type === eDataType.NUMBER ? 'number' : 'text';
             const headerEmail = /mail|אימייל|דוא/.test(lower);
             const headerPhone = /phone|נייד|סלולר|cell|mobile|טלפון/.test(lower);
 
@@ -264,8 +256,10 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
             let dataType: eDataType = eDataType.TEXT;
             let isSupervisor = false;
 
-            const looksEmail = kind === 'email' || (headerEmail && colVals.length === 0);
-            const looksPhone = kind === 'phone' || (headerPhone && colVals.length === 0);
+            // `detection.total === 0` (no non-empty sampled value), not `colVals.length === 0`:
+            // colVals now carries the blanks too, because the detector owns the emptiness rule.
+            const looksEmail = kind === 'email' || (headerEmail && detection.total === 0);
+            const looksPhone = kind === 'phone' || (headerPhone && detection.total === 0);
 
             if (looksEmail) {
                 if (emailCount === 0) { role = eSemanticRole.RECIPIENT_EMAIL; dataType = eDataType.EMAIL; }
@@ -288,7 +282,10 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
                 Ordinal: i + 1, SourceHeader: header,
                 DisplayName: isSupervisor ? t('DataSources.wizard.roleSupervisorEmail') : header,
                 DataType: dataType, FormatHint: eFormatHint.NONE, SemanticRole: role,
-                IsSearchable: isSearchable, IsSupervisorEmail: isSupervisor
+                IsSearchable: isSearchable,
+                // Default ON, matching the DB default — a number in a grid is meant to be read.
+                ShowThousandsSeparator: true,
+                IsSupervisorEmail: isSupervisor, Detection: detection
             };
         });
     };
@@ -389,10 +386,15 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
         setColumns(cols => cols.map((c, i) => i === idx ? { ...c, DisplayName: val } : c));
 
     // Info columns only. Switching away from Number resets the format (Currency/Percent apply to numbers).
+    // ShowThousandsSeparator is deliberately NOT reset here: a user who turns separators off, switches
+    // to Text to look at something and switches back would otherwise silently get them again.
     const setDataType = (idx: number, dt: eDataType) =>
         setColumns(cols => cols.map((c, i) => i === idx
             ? { ...c, DataType: dt, FormatHint: dt === eDataType.NUMBER ? c.FormatHint : eFormatHint.NONE }
             : c));
+
+    const setShowThousandsSeparator = (idx: number, value: boolean) =>
+        setColumns(cols => cols.map((c, i) => i === idx ? { ...c, ShowThousandsSeparator: value } : c));
 
     /* setFormatHint was removed with the "format" column on 2026-08-05. FormatHint itself is still
        part of the payload and stays at NONE for every column, so nothing downstream changed. */
@@ -483,7 +485,12 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
             DataType: c.DataType, FormatHint: c.FormatHint, SemanticRole: c.SemanticRole, IsSearchable: c.IsSearchable,
             // null, not undefined: JSON.stringify drops undefined members, and the server binds by
             // name — an absent member and an explicit null must not mean different things here.
-            ClientFieldTarget: c.ClientFieldTarget ?? null
+            ClientFieldTarget: c.ClientFieldTarget ?? null,
+            // Explicit true, never undefined, for the same reason. Sent for every column (not only
+            // NUMBER) so the value on the row always matches the DB default and a later type change
+            // does not land on a NULL flag. `!== false` so a column built before the flag existed
+            // still uploads as "on".
+            ShowThousandsSeparator: c.ShowThousandsSeparator !== false
         }));
         fd.append('columns', JSON.stringify(payloadColumns));
 
@@ -670,14 +677,36 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
                                     </TableCell>
                                     <TableCell>
                                         {/* Identity + supervisor columns are type-locked (Email/Phone); info columns pick Text/Number/Date. */}
-                                        <FormControl variant="outlined" size="small" style={{ minWidth: 120 }}>
-                                            <Select value={c.DataType} disabled={!isInfo} MenuProps={MENU_PROPS} style={{ fontSize: 14 }}
-                                                onChange={(e) => setDataType(i, Number(e.target.value) as eDataType)}>
-                                                {(isInfo ? [eDataType.TEXT, eDataType.NUMBER, eDataType.DATE] : [c.DataType]).map(v => (
-                                                    <MenuItem key={v} value={v}>{t(`DataSources.column.dataTypes.${v}`)}</MenuItem>
-                                                ))}
-                                            </Select>
-                                        </FormControl>
+                                        <Box style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                                            <FormControl variant="outlined" size="small" style={{ minWidth: 120 }}>
+                                                <Select value={c.DataType} disabled={!isInfo} MenuProps={MENU_PROPS} style={{ fontSize: 14 }}
+                                                    onChange={(e) => setDataType(i, Number(e.target.value) as eDataType)}>
+                                                    {(isInfo ? [eDataType.TEXT, eDataType.NUMBER, eDataType.DATE] : [c.DataType]).map(v => (
+                                                        <MenuItem key={v} value={v}>{t(`DataSources.column.dataTypes.${v}`)}</MenuItem>
+                                                    ))}
+                                                </Select>
+                                            </FormControl>
+                                            {/* Why the type is what it is, in the user's own values. Type-locked
+                                                columns still get the ℹ️ — the evidence is the answer to "why is
+                                                this greyed out as Phone?" — but with no change control. */}
+                                            <TypeEvidencePopover
+                                                detection={c.Detection}
+                                                value={c.DataType}
+                                                options={isInfo ? [eDataType.TEXT, eDataType.NUMBER, eDataType.DATE] : [c.DataType]}
+                                                onChange={(dt) => setDataType(i, dt)}
+                                                disabled={!isInfo}
+                                            />
+                                        </Box>
+                                        {/* NUMBER only. On any other type the flag is meaningless, and showing a
+                                            dead checkbox on every text column is noise. Default ON. */}
+                                        {c.DataType === eDataType.NUMBER && (
+                                            <FormControlLabel
+                                                style={{ marginInlineStart: 0, marginTop: 2 }}
+                                                control={<Checkbox size="small" checked={c.ShowThousandsSeparator !== false}
+                                                    onChange={(e) => setShowThousandsSeparator(i, e.target.checked)} />}
+                                                label={<span style={{ fontSize: 12.5, color: '#5b6b7b' }}>{t('DataSources.column.showThousandsSeparator')}</span>}
+                                            />
+                                        )}
                                     </TableCell>
                                     {/* format cell removed 2026-08-05 — see the header comment. */}
                                     <TableCell align="center">

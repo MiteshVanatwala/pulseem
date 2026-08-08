@@ -38,6 +38,7 @@ import {
 } from '../../../Models/DataSources/SendSearch';
 import SendStatusCell from './SendStatusCell';
 import VersionBadge from './VersionBadge';
+import { sortValueDisplayOf } from './SendSearchAdvanced';
 
 const TONE_COLOR: { [k in StateTone]: string } = {
     ok: '#067647', bad: '#B42318', warn: '#B54708', muted: '#5b6b7b',
@@ -54,13 +55,24 @@ interface Props {
     onPageChange: (pageIndex: number) => void;
     onPageSizeChange: (pageSize: number) => void;
     onClearAll: () => void;
+    // ── the sort-value column (CONTRACT §2) ──────────────────────────────────────────────────
+    // The DISPLAY NAME of the field the grid is currently sorted by, or null for the server's
+    // default order. When set, one extra column appears showing `row.SortValueDisplay` — the raw
+    // value the server actually sorted on.
+    //
+    // WHY THE COLUMN IS MANDATORY WHEN SORTING BY A HIDDEN FIELD: the user can sort by any
+    // searchable column, and almost none of them are columns of this grid. Without this cell the
+    // rows simply reorder for no visible reason — indistinguishable, on screen, from a paging bug —
+    // and the user cannot check that the ordering is the one they asked for. §2 requires it on RS1,
+    // MapRow, both row models and the channel≠1 stub for exactly this reason; this is its render.
+    sortFieldLabel?: string | null;
 }
 
 const fmt = (iso: string | null): string => (iso ? moment(iso).format(DateFormats.DATE_TIME_24) : '—');
 
 const SendSearchTable: React.FC<Props> = ({
     items, totalCount, pageIndex, pageSize, loading, hasFilter,
-    onOpenRow, onPageChange, onPageSizeChange, onClearAll,
+    onOpenRow, onPageChange, onPageSizeChange, onClearAll, sortFieldLabel,
 }) => {
     const { t, i18n } = useTranslation();
     // Same idiom as DataSources.tsx:113 — fallback 'rtl' because Hebrew is the default locale.
@@ -198,6 +210,23 @@ const SendSearchTable: React.FC<Props> = ({
                     {fmt(r.SentAt)}
                 </TableCell>
 
+                {/* ── ערך המיון ── present ONLY while a sort field is chosen ──
+                    `direction:'ltr'` because the values are ids, policy numbers, amounts and dates —
+                    RTL reorders their digits and the operator would read a different number than the
+                    one the server sorted on. An ABSENT value says "אין ערך" in words rather than
+                    showing a dash: a row with no value for the sort field is sorted into a group
+                    (§2 `SortIsUnknown`), and a dash would read as "the value is empty", which is a
+                    different fact. */}
+                {!!sortFieldLabel && (
+                    <TableCell align="center" style={{ direction: 'ltr', fontSize: 13.5 }}>
+                        {sortValueDisplayOf(r) ?? (
+                            <Typography component="span" style={{ fontSize: 12.5, color: '#a8b2bb' }}>
+                                {t(`${SS}sort.unknownValue`)}
+                            </Typography>
+                        )}
+                    </TableCell>
+                )}
+
                 {/* ── action ── the row is clickable; this is the affordance, not a second path.
                     stopPropagation is deliberate: without it the row handler fires too and the
                     drawer would be pushed twice, which under the depth cap silently swallows the
@@ -225,6 +254,13 @@ const SendSearchTable: React.FC<Props> = ({
                 <TableCell align="center">{t(`${SS}col.lastEvidence`)}</TableCell>
                 <TableCell align="center">{t(`${SS}version.label`)}</TableCell>
                 <TableCell align="center">{t(`${SS}col.sent`)}</TableCell>
+                {/* The header NAMES the field being sorted on ("ערך המיון · מספר פוליסה"). A generic
+                    "ערך המיון" would leave the user to guess which of their columns produced it. */}
+                {!!sortFieldLabel && (
+                    <TableCell align="center">
+                        {`${t(`${SS}col.sortValue`)} · ${sortFieldLabel}`}
+                    </TableCell>
+                )}
                 <TableCell align="center" />
             </TableRow>
         </TableHead>

@@ -4,7 +4,8 @@ import {
 } from '@material-ui/core';
 import { Search, Add } from '@material-ui/icons';
 import { useTranslation } from 'react-i18next';
-import { DataSourceColumn, RowsFilter, eFilterOperator } from '../../../Models/DataSources/DataSource';
+import { DataSourceColumn, RowsFilter } from '../../../Models/DataSources/DataSource';
+import { eFilterOperator } from '../../../Models/DataSources/DataSourceEnums';
 
 interface FiltersBarProps {
     classes: { [key: string]: string };
@@ -73,6 +74,15 @@ const FiltersBar = ({ classes, columns, filters, onFiltersChange, freeText, onFr
                         {searchable.map(c => <MenuItem key={c.ColumnID} value={c.ColumnID}>{c.DisplayName}</MenuItem>)}
                     </Select>
                 </FormControl>
+                {/* ⚠️ EXACTLY THREE OPERATORS, DELIBERATELY — do NOT extend this list from the enum.
+                    `eFilterOperator` now also carries GT/LT/GTE/LTE/BETWEEN (5..9), but those exist
+                    for `dbo.DataSources_SearchSends` (the SendSearch screen). THIS bar builds a
+                    `RowsFilter` for `dbo.DataSources_GetRows`, which whitelists 1/2/3 and rejects
+                    anything else — offering 5..9 here would put a filter in the menu that the server
+                    answers with a red error. The whitelist is `GET_ROWS_OPERATORS` in
+                    DataSourceEnums.ts. The options are also NOT derived from the column's DataType
+                    here (unlike SendSearch's `operatorsForType`), so widening the enum changed
+                    nothing on this screen. */}
                 <FormControl variant="outlined" size="small" style={{ minWidth: 140 }}>
                     <Select value={draftOperator} onChange={(e) => setDraftOperator(Number(e.target.value) as eFilterOperator)} MenuProps={menuProps}>
                         <MenuItem value={eFilterOperator.EQUALS}>{t('DataSources.view.operator.1')}</MenuItem>

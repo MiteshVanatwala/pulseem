@@ -17,7 +17,7 @@
 //     passes showTitle so it keeps its own heading.
 // ═══════════════════════════════════════════════════════════════════════════════════════════
 
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Box, Button, Typography } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
@@ -39,6 +39,14 @@ import {
     toSendSearchRequest,
 } from '../../Models/DataSources/SendSearch';
 import SendSearchFiltersBar, { CampaignOption } from './components/SendSearchFilters';
+import {
+    SendSearchField,
+    SendSearchFilterRule,
+    SendSearchSort,
+    completeRules,
+    defaultSendSearchSort,
+    fieldByKey,
+} from './components/SendSearchAdvanced';
 import SendSearchTable from './components/SendSearchTable';
 import AgentDrawer from './components/AgentDrawer';
 import RollupDrawer from './components/RollupDrawer';
@@ -61,11 +69,72 @@ const SendSearchPanel: React.FC<Props> = ({ showTitle }) => {
     const items: SendSearchRow[] = sendSearch.items ?? [];
     const drawerStack: DrawerEntry[] = sendSearch.drawerStack ?? [];
 
+    // ── advanced filters + sort (CONTRACT §2) ────────────────────────────────────────────────
+    // Held HERE and not in the slice, deliberately and temporarily: `sendSearchSlice.ts` and
+    // `SendSearchFilters` (the state type) belong to B4, and CONTRACT §3 gives a file exactly one
+    // owner. Local state keeps this screen compiling and behaving correctly on its own; when B4's
+    // slice fields land, these three lines move into `useSelector` and NOTHING else in this file or
+    // in the two components below changes, because the shapes are the same. Recorded in LEDGER.
+    //
+    // The field list comes off the (untyped) slice, so a server that does not project it yet yields
+    // an empty array ⇒ "עוד מסננים" stays DISABLED. §2's correct degrade, not a bug.
+    const searchableFields: SendSearchField[] = sendSearch.searchableFields ?? [];
+    const [advRules, setAdvRules] = useState<SendSearchFilterRule[]>([]);
+    const [advSort, setAdvSort] = useState<SendSearchSort>(defaultSendSearchSort());
+
+    // A REF beside the state, read by `buildRequest`. The chips fire `onRulesChange` and `onSearch`
+    // in the same handler; reading `advRules` there would send the value from BEFORE the removal —
+    // the grid would come back still narrowed by a rule the user just deleted, which is worse than
+    // not refetching at all. The ref is written synchronously, so the request is never one render
+    // behind what is on screen.
+    const advRef = useRef<{ rules: SendSearchFilterRule[]; sort: SendSearchSort }>({
+        rules: [], sort: defaultSendSearchSort(),
+    });
+
+    const setRules = (next: SendSearchFilterRule[]) => { advRef.current.rules = next; setAdvRules(next); };
+    const setSort = (next: SendSearchSort) => { advRef.current.sort = next; setAdvSort(next); };
+
+    // The wire request. The advanced parts are appended to the frozen §3.2 body; the cast is on the
+    // OBJECT and not on the individual fields so that the base projection stays type-checked, and it
+    // exists only because `SendSearchRequest` is B4's to extend. Incomplete rules are dropped by
+    // `completeRules` — never sent with a blank value, which a CONTAINS would read as "match all".
+    // `FilterGroupID` is NOT sent: CONTRACT §2 says the SERVER assigns it by order.
+    const buildRequest = () => {
+        const rules = completeRules(advRef.current.rules, searchableFields);
+        const sort = advRef.current.sort;
+        return {
+            ...toSendSearchRequest(filters),
+            Filters: rules.map((r) => ({
+                FieldKey: r.FieldKey,
+                Operator: r.Operator,
+                Value1: r.Value1,
+                // Value2 is BETWEEN-only; '' would bind an empty nvarchar where the TVP wants NULL.
+                Value2: (r.Value2 || '').trim() === '' ? null : r.Value2,
+            })),
+            // FROZEN WIRE NAMES (ORCHESTRATOR AMENDMENT 2026-08-06): `SortField` / `SortDescending`,
+            // matching the C# DTO member-for-member. This object is cast `as any` below, so tsc CANNOT
+            // catch a misspelling here — and Newtonsoft drops an unknown key without a word, which is
+            // exactly how the header showed a sort the grid was not performing.
+            SortField: sort.FieldKey ? sort.FieldKey : null,
+            SortDescending: sort.Dir === 'desc',
+        } as any;
+    };
+
+    // The grid header for the sort column: the field's DISPLAY name, or null when unsorted (which
+    // is what hides the column entirely).
+    const sortFieldLabel: string | null = advSort.FieldKey
+        ? ((fieldByKey(searchableFields, advSort.FieldKey)?.DisplayName) || advSort.FieldKey)
+        : null;
+
     // One fetch per committed filter object. The free-text box is local state inside the filter bar
     // until "חפש"/Enter commits it, so typing never fires a request; every OTHER control commits
     // immediately, which is what the mock does (its selects call applyF() directly).
+    // NOTE the dependency list: `filters` ONLY. The advanced rules are deliberately NOT here — a
+    // rule is applied by "החל מסננים" (or by deleting its chip), not on every keystroke inside a
+    // value box, which would fire a search per character and show the user results for a prefix of
+    // the number they are typing.
     useEffect(() => {
-        dispatch(searchSends(toSendSearchRequest(filters)));
+        dispatch(searchSends(buildRequest()));
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [dispatch, filters]);
 
@@ -90,7 +159,11 @@ const SendSearchPanel: React.FC<Props> = ({ showTitle }) => {
         || filters.RowKind !== eRowKind.All
         || filters.CampaignID != null
         || filters.DateFrom != null
-        || filters.DateTo != null;
+        || filters.DateTo != null
+        // An advanced rule is a filter like any other: without this, a search narrowed to nothing by
+        // an advanced rule showed the "no results" state WITHOUT the "נקה הכל" way out, and the user
+        // had to guess that the empty grid was caused by the panel they had collapsed.
+        || completeRules(advRules, searchableFields).length > 0;
 
     // ── drawer ────────────────────────────────────────────────────────────────────────────────
     // The stack stores the row's COMPOSITE KEY, never a copy of the row (Models/…/SendSearch.ts
@@ -242,8 +315,20 @@ const SendSearchPanel: React.FC<Props> = ({ showTitle }) => {
                 // The filter bar's "חפש" commits the text through onChange; the effect above already
                 // refetches on any committed change, so onSearch only needs to force a refetch for the
                 // case where the text did NOT change (the user pressing חפש again on the same term).
-                onSearch={() => dispatch(searchSends(toSendSearchRequest(filters)))}
-                onClearAll={() => dispatch(clearFilters())}
+                onSearch={() => dispatch(searchSends(buildRequest()))}
+                // "נקה הכל" clears the ADVANCED rules and the sort too. Leaving them behind would
+                // make a cleared screen still silently narrowed and still silently reordered, under
+                // a button that just told the user everything was cleared.
+                onClearAll={() => {
+                    setRules([]);
+                    setSort(defaultSendSearchSort());
+                    dispatch(clearFilters());
+                }}
+                fields={searchableFields}
+                rules={advRules}
+                onRulesChange={setRules}
+                sort={advSort}
+                onSortChange={setSort}
             />
 
             <Box style={{ display: 'flex', alignItems: 'baseline', gap: 8, margin: '15px 0 9px', flexWrap: 'wrap' }}>
@@ -268,7 +353,14 @@ const SendSearchPanel: React.FC<Props> = ({ showTitle }) => {
                 onOpenRow={openRow}
                 onPageChange={(p: number) => dispatch(setPageIndex(p))}
                 onPageSizeChange={(s: number) => dispatch(setPageSize(s))}
-                onClearAll={() => dispatch(clearFilters())}
+                onClearAll={() => {
+                    setRules([]);
+                    setSort(defaultSendSearchSort());
+                    dispatch(clearFilters());
+                }}
+                // Null unless a sort field is chosen — that is what keeps the extra column out of
+                // the grid entirely in the default case.
+                sortFieldLabel={sortFieldLabel}
             />
 
             {/* The two standing caveats (`Mock-v3:209-212`). They are page furniture, not a tooltip:
