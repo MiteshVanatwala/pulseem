@@ -4,6 +4,7 @@ import { Box } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import { Loader } from '../../../components/Loader/Loader';
 import { getSampleValues, getNewsletterPreviewWrapped } from '../../../redux/reducers/smartSendSlice';
+import { replaceTokensForPreview } from '../../../helpers/Functions/tokenPreview';
 
 // §11.1/§13 step 7 · DISPLAY-ONLY preview. Fetches the campaign HTML through the WRAPPED
 // preview thunk (obeys USE_SEND_MOCK — never the real self-dispatching EmailPreviewComponent,
@@ -15,33 +16,11 @@ import { getSampleValues, getNewsletterPreviewWrapped } from '../../../redux/red
 // ##..##, §7.2); an UNMAPPED token has no sample value and stays raw (the sender can't resolve
 // it) — UnmappedTokensWarning blocks send. Rendered in a shadow DOM, clicks suppressed.
 
-const GRAPH_URL_RE = /pulseemmonitorgraph[^"'\s>]*/g;
-const GRAPH_PARAM_RE = /([?&;])(p\d+=)([^&"'\s>]*)/g;
-const TOKEN_RE = /##([^#]+)##/g;
-
-const escapeHtml = (s: string) =>
-    String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-
-// Replace graph tokens inside one pulseemmonitorgraph URL: decode each pN, substitute mapped
-// tokens with the (URL-encoded) sample value, re-encode. Unmapped/absent → left as-is.
-const replaceGraphTokens = (url: string, values: { [k: string]: string }) =>
-    url.replace(GRAPH_PARAM_RE, (_m, sep, key, val) => {
-        let decoded: string;
-        try { decoded = decodeURIComponent(val); } catch { decoded = val; }
-        const resolved = decoded.replace(TOKEN_RE, (raw, name) =>
-            Object.prototype.hasOwnProperty.call(values, name) ? values[name] : raw);
-        return sep + key + encodeURIComponent(resolved);
-    });
-
-export const replaceTokensForPreview = (html: string, values: { [k: string]: string }) => {
-    if (!html) return '';
-    const safe = values || {};
-    // Graph tokens first (inside the img src pN params), then raw text tokens in the body.
-    let out = html.replace(GRAPH_URL_RE, (url) => replaceGraphTokens(url, safe));
-    out = out.replace(TOKEN_RE, (raw, name) =>
-        Object.prototype.hasOwnProperty.call(safe, name) ? escapeHtml(safe[name]) : raw);
-    return out;
-};
+// The token-merge logic MOVED to helpers/Functions/tokenPreview.ts (step A1) so the SendSearch
+// per-recipient sent-email preview can share it verbatim instead of forking a second copy.
+// Re-exported here because existing importers reference this path — do NOT remove the re-export
+// without updating every call site.
+export { replaceTokensForPreview };
 
 const SmartSendPreview: React.FC<{ campaignId: number; height?: number | string }> = ({ campaignId, height = 400 }) => {
     const dispatch = useDispatch();

@@ -5,6 +5,8 @@ import {
 import { Edit as EditIcon } from '@material-ui/icons';
 import { useTranslation } from 'react-i18next';
 import { DataSourceColumn, DataSourceRow, eMatchType } from '../../../Models/DataSources/DataSource';
+import { eDataType } from '../../../Models/DataSources/DataSourceEnums';
+import { formatValueForColumn } from './formatValue';
 
 interface RowsTableProps {
     classes: { [key: string]: string };
@@ -19,7 +21,8 @@ interface RowsTableProps {
 // sticky (insetInlineStart:0 — logical, works in RTL). RowJson is parsed per row inside try/catch so
 // a single malformed row degrades to blank cells instead of crashing the table.
 const RowsTable = ({ classes, columns, rows, loading, readOnly, onColumnClick }: RowsTableProps) => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+    const isRtl = (i18n.dir?.() ?? 'rtl') === 'rtl';
     const ordered = useMemo(() => [...(columns || [])].sort((a, b) => a.Ordinal - b.Ordinal), [columns]);
 
     const parsed = useMemo(() => (rows || []).map(r => {
@@ -75,8 +78,18 @@ const RowsTable = ({ classes, columns, rows, loading, readOnly, onColumnClick }:
                     {rows.map((row, ri) => (
                         <TableRow key={row.RowID}>
                             {ordered.map((c, ci) => (
-                                <TableCell key={c.ColumnID} style={{ ...stickyStyle(ci === 0), whiteSpace: 'nowrap' }}>
-                                    {parsed[ri] && parsed[ri][c.ColumnKey] !== undefined && parsed[ri][c.ColumnKey] !== null ? String(parsed[ri][c.ColumnKey]) : ''}
+                                <TableCell key={c.ColumnID} style={{
+                                    ...stickyStyle(ci === 0), whiteSpace: 'nowrap',
+                                    /* A number, a phone or an email is never Hebrew: without an explicit
+                                       ltr the bidi algorithm reorders "1,234.50-" style runs on an RTL
+                                       page and the value on screen stops being the value in the file.
+                                       textAlign follows the page so the column still lines up. */
+                                    ...(c.DataType === eDataType.TEXT ? {} : { direction: 'ltr' as const, textAlign: isRtl ? 'right' as const : 'left' as const })
+                                }}>
+                                    {/* ONE formatter, shared with every other screen — see formatValue.ts.
+                                        Per COLUMN (c.DataType), never per cell: a column that renders with
+                                        separators on some rows and without on others reads as a bug. */}
+                                    {formatValueForColumn(parsed[ri] ? parsed[ri][c.ColumnKey] : null, c)}
                                 </TableCell>
                             ))}
                             <TableCell>{renderMatch('email', row.EmailMatchType, row.IsEmailDuplicate)}</TableCell>

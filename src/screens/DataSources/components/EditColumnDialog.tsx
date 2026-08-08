@@ -6,8 +6,10 @@ import {
 import { useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { updateColumnMeta } from '../../../redux/reducers/dataSourcesSlice';
-import { DataSourceColumn, eDataType, eFormatHint, eSemanticRole } from '../../../Models/DataSources/DataSource';
+import { DataSourceColumn, eFormatHint, eSemanticRole, ColumnDetection } from '../../../Models/DataSources/DataSource';
+import { eDataType } from '../../../Models/DataSources/DataSourceEnums';
 import { useDsDialogStyles } from './dialogStyles';
+import TypeEvidencePopover from './TypeEvidencePopover';
 
 interface EditColumnDialogProps {
     classes: { [key: string]: string };
@@ -15,6 +17,16 @@ interface EditColumnDialogProps {
     column: DataSourceColumn | null;
     searchableRemaining: number;
     maxSearchable: number;
+    /** Evidence for the column's type, re-derived from the rows currently on screen. Null = none. */
+    detection?: ColumnDetection | null;
+    /**
+     * HISTORICAL VERSION. Only IsSearchable may be changed; DisplayName and DataType are frozen.
+     * A past version is the record of how a send that already happened was described — renaming a
+     * column or re-typing it after the fact rewrites that record, and a report of that send would
+     * then disagree with itself. Searchability is not part of the description: it only decides
+     * whether the value is indexed for lookup, which is a decision about TODAY.
+     */
+    restrictedToSearchable?: boolean;
     onClose: () => void;
     onSaved: () => void;
 }
@@ -22,7 +34,7 @@ interface EditColumnDialogProps {
 // Synchronous save (the SP builds SearchValues in batches; the UI shows "building index" + disabled).
 // SemanticRole is locked (identity change = new version). Searchable quota is enforced client-side and
 // server-side (-7 → tooManySearchable). -8 = column locked by an active campaign.
-const EditColumnDialog = ({ classes, open, column, searchableRemaining, maxSearchable, onClose, onSaved }: EditColumnDialogProps) => {
+const EditColumnDialog = ({ classes, open, column, searchableRemaining, maxSearchable, detection = null, restrictedToSearchable = false, onClose, onSaved }: EditColumnDialogProps) => {
     const { t, i18n } = useTranslation();
     const isRtl = (i18n.dir?.() ?? 'rtl') === 'rtl';
     const dispatch = useDispatch();
@@ -31,6 +43,9 @@ const EditColumnDialog = ({ classes, open, column, searchableRemaining, maxSearc
     const [dataType, setDataType] = useState<eDataType>(eDataType.TEXT);
     const [formatHint, setFormatHint] = useState<eFormatHint>(eFormatHint.NONE);
     const [isSearchable, setIsSearchable] = useState(false);
+    // `!== false` and not `!!`: a column saved before ShowThousandsSeparator existed reads back as
+    // undefined and must behave like the DB default (1 = on), not like "off".
+    const [showThousands, setShowThousands] = useState(true);
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState('');
 
@@ -53,6 +68,7 @@ const EditColumnDialog = ({ classes, open, column, searchableRemaining, maxSearc
             setDataType(column.DataType);
             setFormatHint(column.FormatHint);
             setIsSearchable(column.IsSearchable);
+            setShowThousands(column.ShowThousandsSeparator !== false);
             setError('');
             setSaving(false);
         }
@@ -73,7 +89,8 @@ const EditColumnDialog = ({ classes, open, column, searchableRemaining, maxSearc
             DisplayName: displayName,
             DataType: dataType,
             FormatHint: formatHint,
-            IsSearchable: isSearchable
+            IsSearchable: isSearchable,
+            ShowThousandsSeparator: showThousands
         }));
         setSaving(false);
         const payload = res?.payload;
@@ -94,9 +111,18 @@ const EditColumnDialog = ({ classes, open, column, searchableRemaining, maxSearc
             <DialogTitle>{t('DataSources.column.editTitle')}</DialogTitle>
             <DialogContent>
                 <Box style={{ display: 'flex', flexDirection: 'column', gap: 16, paddingTop: 4 }}>
+                    {restrictedToSearchable && (
+                        <Box style={{ background: '#fff4e5', border: '1px solid #f5d9b0', borderRadius: 8, padding: '8px 12px' }}>
+                            <Typography style={{ color: '#b54708', fontSize: 13 }}>
+                                {t('DataSources.column.historicalEditNotice')}
+                            </Typography>
+                        </Box>
+                    )}
+
                     <Box>
                         <Typography style={labelStyle}>{t('DataSources.column.displayName')}</Typography>
                         <TextField variant="outlined" size="small" value={displayName}
+                            disabled={restrictedToSearchable}
                             onChange={(e) => setDisplayName(e.target.value)}
                             inputProps={{ maxLength: 200 }} fullWidth />
                     </Box>
@@ -104,19 +130,40 @@ const EditColumnDialog = ({ classes, open, column, searchableRemaining, maxSearc
                     <Box>
                         <Typography style={labelStyle}>{t('DataSources.column.dataType')}</Typography>
                         {/* Identity columns are locked to Email(4)/Phone(5); info columns pick Text/Number/Date — same rule as the wizard. */}
-                        <FormControl variant="outlined" size="small" fullWidth>
-                            <Select value={dataType} disabled={isIdentity} MenuProps={menuProps}
-                                onChange={(e) => {
-                                    const dt = Number(e.target.value) as eDataType;
-                                    setDataType(dt);
-                                    if (dt !== eDataType.NUMBER) setFormatHint(eFormatHint.NONE);
-                                }}>
-                                {(isIdentity ? [dataType] : [eDataType.TEXT, eDataType.NUMBER, eDataType.DATE]).map(v => (
-                                    <MenuItem key={v} value={v}>{t(`DataSources.column.dataTypes.${v}`)}</MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
+                        <Box style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                            <FormControl variant="outlined" size="small" fullWidth>
+                                <Select value={dataType} disabled={isIdentity || restrictedToSearchable} MenuProps={menuProps}
+                                    onChange={(e) => {
+                                        const dt = Number(e.target.value) as eDataType;
+                                        setDataType(dt);
+                                        if (dt !== eDataType.NUMBER) setFormatHint(eFormatHint.NONE);
+                                    }}>
+                                    {(isIdentity ? [dataType] : [eDataType.TEXT, eDataType.NUMBER, eDataType.DATE]).map(v => (
+                                        <MenuItem key={v} value={v}>{t(`DataSources.column.dataTypes.${v}`)}</MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                            {/* Evidence re-derived from the rows on screen — the same values the user is
+                                looking at, so "92% of these are numbers" is checkable on the spot. */}
+                            <TypeEvidencePopover
+                                detection={detection}
+                                value={dataType}
+                                options={(isIdentity || restrictedToSearchable) ? [dataType] : [eDataType.TEXT, eDataType.NUMBER, eDataType.DATE]}
+                                onChange={(dt) => { setDataType(dt); if (dt !== eDataType.NUMBER) setFormatHint(eFormatHint.NONE); }}
+                                disabled={isIdentity || restrictedToSearchable}
+                            />
+                        </Box>
                     </Box>
+
+                    {/* NUMBER only — the flag has no meaning on any other type, and a permanently
+                        disabled checkbox on every text column is noise. Default ON. */}
+                    {dataType === eDataType.NUMBER && (
+                        <FormControlLabel
+                            control={<Checkbox checked={showThousands} disabled={saving || restrictedToSearchable}
+                                onChange={(e) => setShowThousands(e.target.checked)} />}
+                            label={t('DataSources.column.showThousandsSeparator')}
+                        />
+                    )}
 
                     {/* The "format" control (FormatHint: None/Currency/Percent) was removed on
                         2026-08-05, here and in the upload wizard, for the same reason: nothing in the
