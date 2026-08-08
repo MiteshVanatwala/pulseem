@@ -50,6 +50,22 @@ interface SendSearchState {
     // send — it is what makes the row 'Inferred'/'Unverifiable', and it must not look like a spinner
     // that never finished).
     provenanceCampaignId: number | null;
+    // 🔴 ADDED 2026-08-08 (review R2-01). `getSendProvenance` was the ONLY one of this slice's four
+    // thunks with no stale-response guard: `searchReqId` (:47), `rowValuesReqId` (:78) and
+    // `filterFieldsReqId` (:96) all existed, this one did not, and both `.fulfilled` and `.rejected`
+    // wrote unconditionally.
+    //
+    // `provenanceCampaignId` above CANNOT stand in for it, for the reason already argued at :73-78
+    // for rowValues: the NEWER request's `pending` has already advanced the id, so the older
+    // response matches it and passes. (It is also never read outside this slice, so it guards
+    // nothing today in any case.)
+    //
+    // What it prevents: open campaign 100's agent, close, open campaign 200's agent before the first
+    // response lands. 100 resolves last and, unguarded, writes ITS SentAt / DataSourceName /
+    // VersionNumber into state — and AgentDrawer.tsx:305-314 renders them with a hardcoded
+    // `ProvenanceSource="Recorded"` badge under campaign 200's agent. A positive, false provenance
+    // claim on an insurer's audit screen.
+    provenanceReqId: string;
     // A FAILED provenance fetch must not be indistinguishable from a genuinely empty history.
     // Without this flag both land on `provenance: []`, and AgentDrawer's empty branch prints the
     // reassuring sentence "there is no send record, but the mapping was not touched, so this IS the
@@ -177,6 +193,7 @@ const initialState: SendSearchState = {
     provenanceLoading: false,
     searchReqId: '',
     provenanceCampaignId: null,
+    provenanceReqId: '',
     provenanceError: null,
     rowValues: [],
     rowValuesLoading: false,
@@ -376,10 +393,12 @@ export const sendSearchSlice = createSlice({
         builder.addCase(getSendProvenance.pending, (state, action: any) => {
             state.provenanceLoading = true;
             state.provenanceCampaignId = action.meta.arg?.campaignId ?? null;
+            state.provenanceReqId = action.meta.requestId;     // R2-01
             state.provenance = [];
             state.provenanceError = null;
         });
         builder.addCase(getSendProvenance.fulfilled, (state, action: any) => {
+            if (action.meta.requestId !== state.provenanceReqId) return;   // stale response — R2-01
             state.provenanceLoading = false;
             state.provenance = action.payload?.Data ?? [];
             // A 200 whose body carries no `Data` at all is a failure that did not throw — treated as
@@ -390,6 +409,10 @@ export const sendSearchSlice = createSlice({
                 : (action.payload?.Message ?? 'PROVENANCE_FAILED');
         });
         builder.addCase(getSendProvenance.rejected, (state, action: any) => {
+            // R2-01: guarded for the mirror reason — a STALE failure belonging to the campaign the
+            // operator already navigated away from would otherwise wipe the current campaign's
+            // correct history and paint error.loadFailed over it.
+            if (action.meta.requestId !== state.provenanceReqId) return;
             state.provenanceLoading = false;
             state.provenance = [];
             state.provenanceError = action.payload?.error ?? action.error?.message ?? 'PROVENANCE_FAILED';

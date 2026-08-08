@@ -24,7 +24,7 @@ import { useTranslation } from 'react-i18next';
 import { Loader } from '../../components/Loader/Loader';
 import InlineBanner from '../SmartSend/components/InlineBanner';
 import {
-    searchSends, getSendProvenance, getSendRowValues,
+    searchSends, getSendProvenance, getSendRowValues, getSendSearchFilterFields,
     setFilters, setPageIndex, setPageSize, clearFilters,
     pushDrawer, popDrawer, closeDrawer,
 } from '../../redux/reducers/sendSearchSlice';
@@ -76,9 +76,17 @@ const SendSearchPanel: React.FC<Props> = ({ showTitle }) => {
     // slice fields land, these three lines move into `useSelector` and NOTHING else in this file or
     // in the two components below changes, because the shapes are the same. Recorded in LEDGER.
     //
-    // The field list comes off the (untyped) slice, so a server that does not project it yet yields
-    // an empty array ⇒ "עוד מסננים" stays DISABLED. §2's correct degrade, not a bug.
-    const searchableFields: SendSearchField[] = sendSearch.searchableFields ?? [];
+    // 🔴 FIXED 2026-08-08 (review R1-02). This read was `sendSearch.searchableFields`, a key the
+    // reducer NEVER writes — the slice's field list is `filterFields` (sendSearchSlice.ts:88, :186,
+    // :466). The selector above is `(state: any)`, so tsc could not see it; `?? []` then yielded an
+    // empty array for the life of the session, `advAvailable` (SendSearchFilters.tsx:98) was
+    // permanently false, "עוד מסננים" was permanently disabled, and `AdvancedFilterBuilder` was never
+    // mounted at all (:302). The whole client half of CONTRACT §2 was inert on a live audit screen.
+    //
+    // The comment that stood here claimed the empty array was "§2's correct degrade, not a bug" —
+    // it pre-labelled the broken state as intentional, which is why three reviews walked past it.
+    // The premise was false: the server projects the list fine; the CLIENT was reading the wrong key.
+    const searchableFields: SendSearchField[] = sendSearch.filterFields ?? [];
     const [advRules, setAdvRules] = useState<SendSearchFilterRule[]>([]);
     const [advSort, setAdvSort] = useState<SendSearchSort>(defaultSendSearchSort());
 
@@ -137,6 +145,24 @@ const SendSearchPanel: React.FC<Props> = ({ showTitle }) => {
         dispatch(searchSends(buildRequest()));
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [dispatch, filters]);
+
+    // 🔴 ADDED 2026-08-08 (review R1-03). `getSendSearchFilterFields` was defined, exported and had
+    // all three extraReducer cases wired (sendSearchSlice.ts:155, :443, :455, :474) — and NOTHING in
+    // the entire tree ever dispatched it. `GET api/SendSearch/FilterFields` was therefore never
+    // issued by the browser (confirmed on staging: the request is absent from the Network tab, not
+    // failing — absent), so `filterFields` stayed `[]` for the whole session.
+    //
+    // This is the SECOND of two stacked breaks: repointing the selector at `filterFields` (above)
+    // fixes nothing on its own, because the array it now reads was never populated.
+    //
+    // Keyed on the CHANNEL alone, deliberately, and NOT on `filters`: the catalog's domain is the
+    // set of searchable columns behind the sends of a channel. Re-fetching it on every date tweak or
+    // keystroke would be one request per interaction for a list that cannot change, and the slice's
+    // `filterFieldsReqId` stale-guard (:456) exists precisely because a fast double channel switch
+    // would otherwise land the FIRST channel's list last.
+    useEffect(() => {
+        dispatch(getSendSearchFilterFields({ channel: filters.Channel }));
+    }, [dispatch, filters.Channel]);
 
     // Campaign dropdown options. §3.3 defines no campaign-list endpoint, so the options are the
     // distinct campaigns present in the CURRENT result set. Consequence, stated plainly: the list can

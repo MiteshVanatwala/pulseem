@@ -32,7 +32,8 @@
     "mailing": "Mailing",
     "channelsAndResult": "Channels and result",
     "lastEvidence": "Latest evidence",
-    "sent": "Sent"
+    "sent": "Sent",
+    "sortValue": "Sort value"
   },
   "roster": {
     "title": "The {{count}} recipients this roll-up covered",
@@ -114,5 +115,52 @@
   },
   "export": {
     "button": "Export"
+  },
+  "preview": {
+    "button": "View the sent email",
+    "title": "The email that was sent",
+    "close": "Close",
+    "frameTitle": "Preview of the sent email",
+    "disabled": "The email cannot be shown: the server supplied no preview link for this row (a non-email channel, or a missing recipient or campaign id).",
+    "noTrackNote": "This preview is not recorded as an open by the recipient, and the links inside it are disabled."
+  },
+  "adv": {
+    "unavailable": "There are currently no fields available to filter by",
+    "field": "Field",
+    "operator": "Condition",
+    "value": "Value",
+    "valueFrom": "From",
+    "valueTo": "To",
+    "addRule": "Add filter",
+    "removeRule": "Remove filter",
+    "clear": "Clear advanced filters",
+    "apply": "Apply filters",
+    "activeCount": "{{count}} active filters",
+    "incomplete": "Missing a value — this filter is not applied",
+    "coverage": "Applies to {{count}} of {{total}} campaigns",
+    "partialWarning": "This field does not exist in every campaign in the results. Filtering by it will return no rows from the campaigns that lack it.",
+    "empty": {
+      "title": "There are no fields to filter by",
+      "body": "Filterable fields are defined on the Data Sources screen: mark a column as searchable in the source settings and it will appear here on the next send."
+    },
+    "op": {
+      "1": "equals",
+      "2": "starts with",
+      "3": "contains",
+      "5": "greater than",
+      "6": "less than",
+      "7": "at least",
+      "8": "at most",
+      "9": "between"
+    }
+  },
+  "sort": {
+    "label": "Sort by",
+    "dir": "Order",
+    "none": "Default (send date)",
+    "asc": "Ascending",
+    "desc": "Descending",
+    "hiddenFieldNote": "The sort uses a field that is not a column of the grid. Each row's sort value is shown in the \"Sort value\" column.",
+    "unknownValue": "No value"
   }
 }
