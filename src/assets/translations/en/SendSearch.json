@@ -18,7 +18,11 @@
     "supervisor": "Supervisor"
   },
   "campaign": {
-    "all": "All campaigns"
+    "all": "All campaigns",
+    "label": "Campaigns",
+    "search": "Search campaign…",
+    "none": "No campaign found",
+    "loadFailed": "Could not load the campaign list"
   },
   "dateFrom": "From date",
   "dateTo": "To date",

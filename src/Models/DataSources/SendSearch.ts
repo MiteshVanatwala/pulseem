@@ -344,6 +344,37 @@ export interface SendSearchFilterField {
     IsAmbiguousType?: boolean;
 }
 
+// One option in the multi-select campaign picker — result set [1] of
+// `dbo.DataSources_SearchSendsFilterCatalog` (51-CatalogSP-Campaigns.sql).
+//
+// It comes from the SAME `#Camp` set the field catalog is built from, which is the whole point: the
+// identical ownership predicate, the identical date window, and the identical "has actually sent"
+// filter. Every checkbox therefore corresponds to a campaign the grid can genuinely return rows for.
+//
+// This REPLACES a list the screen used to accumulate from whatever result rows happened to be loaded
+// (SendSearchPanel). That list could only ever hold campaigns from a page already fetched —
+// survivable for a single select, actively misleading under a search box, where "not found" would
+// mean "not loaded yet" and the user would conclude the campaign does not exist.
+export interface SendSearchCampaign {
+    CampaignID: number;
+    CampaignName: string;
+}
+
+// Response body of `GET api/SendSearch/FilterFields` — `PulseemResponse.Data`.
+//
+// 🔴 THIS SHAPE CHANGED. `Data` used to be a bare `SendSearchFilterField[]`. Both lists now ride on
+// ONE call because the catalog SP's `#Camp` prologue aggregates over `dbo.CampaignSendingLog`
+// (395,378,174 rows, verified on stage 2026-08-09) and a second endpoint would make every page load
+// pay it twice.
+//
+// Both members are optional HERE and only here: the server always sends both, but a client deployed
+// against an API that has not shipped yet would otherwise crash on `.map` of undefined. The slice
+// normalises them to `[]` at the boundary, so nothing downstream ever sees undefined.
+export interface SendSearchCatalogResult {
+    Fields?: SendSearchFilterField[];
+    Campaigns?: SendSearchCampaign[];
+}
+
 // Blank clause for a field. Value2 starts null even for BETWEEN: an empty second bound is not the
 // same claim as "no upper bound", and `isClauseComplete` below refuses to send a half-built range.
 export const newFilterClause = (f: SendSearchFilterField): SendSearchFilterClause => ({
@@ -384,6 +415,16 @@ export interface SendSearchRequest {
     RoleFilter: eRoleFilter;        // 0=all, 1=agent, 2=supervisor
     RowKind: eRowKind;              // 0=all, 1=agents, 2=rollup
     CampaignID: number | null;
+    // Multi-select campaign filter. Becomes the `dbo.ListOfIntegers` TVP server-side and is UNIONed
+    // with `CampaignID` above inside the SP's #CampFilter — the two are not alternatives to keep in
+    // sync. Always an array, never null, for the same reason `Filters` is: a missing property and an
+    // empty list must not be two ways to say "no campaign filter".
+    //
+    // ⚠️ WIRE NAME IS FROZEN: `CampaignIDs`, matching the C# member EXACTLY. Newtonsoft drops an
+    // unknown key on a REQUEST in SILENCE, so `CampaignIds` here would bind nothing: the server would
+    // see an empty list, return EVERY campaign, and the bar would still show N checkboxes ticked.
+    // No 400, no exception, no log — the same failure mode SortField/SortDescending documents below.
+    CampaignIDs: number[];
     DateFrom: string | null;        // ISO-8601; C# DateTime?
     DateTo: string | null;          // ISO-8601; C# DateTime?
     IncludeOverOneYear: boolean;
@@ -526,7 +567,11 @@ export interface SendSearchFilters {
     SearchText: string;
     RoleFilter: eRoleFilter;
     RowKind: eRowKind;
+    // BOTH are kept, and that is not redundancy. `CampaignID` stays because it is part of the frozen
+    // §3.2 body and the SP still honours it; `CampaignIDs` is what the checkbox picker writes. The SP
+    // unions them, so a screen that sets only one behaves identically to before.
     CampaignID: number | null;
+    CampaignIDs: number[];
     DateFrom: string | null;
     DateTo: string | null;
     IncludeOverOneYear: boolean;
@@ -575,6 +620,7 @@ export const defaultSendSearchFilters = (): SendSearchFilters => ({
     RoleFilter: eRoleFilter.All,
     RowKind: eRowKind.All,
     CampaignID: null,
+    CampaignIDs: [],                           // empty = all campaigns; never null (see the interface)
     DateFrom: null,
     DateTo: null,
     IncludeOverOneYear: false,
@@ -610,6 +656,15 @@ export const toSendSearchRequest = (f: SendSearchFilters): SendSearchRequest => 
         RoleFilter: f.RoleFilter,
         RowKind: f.RowKind,
         CampaignID: f.CampaignID,
+        // De-duplicated and stripped of anything <= 0 HERE, at the wire boundary, on top of the same
+        // cleaning in SendSearchLogic and in the SP's #CampFilter. Three layers is deliberate: a
+        // duplicate id reaching #Camp is a PRIMARY KEY violation, i.e. a 500 on every search — the
+        // same failure class as the PK_Match incident, and this screen has a proven history of
+        // double-dispatching. `filter(Boolean)`-style checks are avoided because 0 is a legal-looking
+        // id that must be dropped, and `Boolean(0)` and `Boolean(null)` are indistinguishable.
+        CampaignIDs: (f.CampaignIDs || [])
+            .filter((id) => typeof id === 'number' && id > 0)
+            .filter((id, i, arr) => arr.indexOf(id) === i),
         DateFrom: f.DateFrom,
         // 🔴 FIXED 2026-08-08 (review R1-04). The picker yields a DATE-ONLY ISO string ("2026-08-08",
         // SendSearchFilters.tsx:120-125), Newtonsoft binds it as 2026-08-08T00:00:00, and the SP's

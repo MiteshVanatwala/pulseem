@@ -18,7 +18,11 @@
     "supervisor": "Przełożony"
   },
   "campaign": {
-    "all": "Wszystkie kampanie"
+    "all": "Wszystkie kampanie",
+    "label": "Kampanie",
+    "search": "Szukaj kampanii…",
+    "none": "Nie znaleziono kampanii",
+    "loadFailed": "Nie udało się wczytać listy kampanii"
   },
   "dateFrom": "Data od",
   "dateTo": "Data do",
