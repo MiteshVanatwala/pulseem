@@ -141,7 +141,7 @@ const SmartSendManageTab = ({ classes }: ClassesType) => {
     const renderVersionChip = (row: SmartSendListItem) => {
         if (row.IsOutdated) {
             return (
-                <Tooltip title={t('DataSources.send.stale.title')}>
+                <Tooltip title={t('DataSources.send.stale.title')} PopperProps={{ style: { direction: isRTL ? 'rtl' : 'ltr' } }}>
                     <Chip
                         size="small"
                         clickable
@@ -265,6 +265,7 @@ const SmartSendManageTab = ({ classes }: ClassesType) => {
                     rowsPerPage={searchData.PageSize}
                     onRowsPerPageChange={changeRows}
                     rowsPerPageOptions={ROWS_OPTIONS}
+                    SelectProps={{ MenuProps: { PaperProps: { dir: isRTL ? 'rtl' : 'ltr' } } }}
                 />
             </>
         );

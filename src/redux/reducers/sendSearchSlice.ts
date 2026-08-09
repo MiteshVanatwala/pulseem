@@ -28,6 +28,8 @@ import {
     defaultSendSearchFilters,
     SendSearchFilterClause,
     SendSearchFilterField,
+    SendSearchCampaign,
+    exclusiveUpperBound,
 } from '../../Models/DataSources/SendSearch';
 
 const api = 'SendSearch/';
@@ -110,6 +112,18 @@ interface SendSearchState {
     // which the SP rejects. There is no second identity field here (no `filterFieldsChannel`)
     // because the request id already fully orders the responses.
     filterFieldsReqId: string;
+    // ── campaign picker options (same GET, result set [1]) ───────────────────────────────────
+    // Rides on the FilterFields request rather than one of its own: the catalog SP aggregates over
+    // dbo.CampaignSendingLog (395M rows) to build #Camp, and a second endpoint would pay that twice
+    // per page load. So there is no `campaignsReqId` — `filterFieldsReqId` already orders these
+    // responses, and a second id derived from the same request could only ever agree with it.
+    //
+    // `campaignsError` is separate from `filterFieldsError` even though one request produces both.
+    // They fail independently in the way that matters: against a server where 51_ has not run, the
+    // FIELD list arrives perfectly and the campaign list is simply absent. Sharing one flag would
+    // paint the working half as broken.
+    campaigns: SendSearchCampaign[];
+    campaignsError: string | null;
 }
 
 // ── Thunks ───────────────────────────────────────────────────────────────────────────────────
@@ -168,11 +182,49 @@ export const getSendRowValues = createAsyncThunk(
 // There is deliberately NO preview thunk anywhere in this slice: §1 puts the whole preview contract
 // on `SendSearchRow.PreviewUrl`. Adding one would be a second authority over an already-answered
 // question.
+// Returns BOTH the searchable-field catalog and the campaign picker's options — result sets [0] and
+// [1] of one call to dbo.DataSources_SearchSendsFilterCatalog.
+//
+// 🔴 THE DATE SCOPE IS NOW SENT, and it is not a refinement — without it the campaign list would be
+// a lie. The SP defaults @prm_DateTo to GETDATE() and floors @prm_DateFrom at 12 months back, so a
+// channel-only call always describes the last twelve months. A user who ticks "כלול חיפוש שליחות
+// מעל שנה" would then get a grid full of older sends while the picker offered no campaign to match
+// them, and would reasonably conclude the campaign was gone.
+//
+// It also corrects the FIELD list, which had the same defect quietly: the columns offered were
+// always the last-12-months set regardless of the dates on screen.
+//
+// The endpoint already accepted these four parameters (SendSearchController.cs:524) — this is a
+// caller-side fix, not a new API surface.
+//
+// NOT sent: the selected campaign ids. The picker's own options must never be narrowed by the
+// picker's own selection — that is exactly the self-narrowing bug the accumulated client-side list
+// used to have, where choosing a campaign collapsed the list to that one campaign.
 export const getSendSearchFilterFields = createAsyncThunk(
-    'SendSearch/FilterFields', async (arg: { channel: eSendChannel }, thunkAPI) => {
+    'SendSearch/FilterFields', async (
+        arg: {
+            channel: eSendChannel;
+            dateFrom?: string | null;
+            dateTo?: string | null;
+            includeOverOneYear?: boolean;
+        },
+        thunkAPI,
+    ) => {
         try {
             const response = await PulseemReactInstance.get(`${api}FilterFields`, {
-                params: { channel: arg.channel }
+                params: {
+                    channel: arg.channel,
+                    // Omitted rather than sent empty: the SP's own NULL defaults are the correct
+                    // "no bound", and '' would bind as a DateTime the controller then 400s.
+                    dateFrom: arg.dateFrom ? arg.dateFrom : undefined,
+                    // SAME exclusive-upper-bound shift the search request applies
+                    // (`toSendSearchRequest`). The catalog SP's predicate is the identical half-open
+                    // `fs.FirstSentAt < @prm_DateTo`, so without this the picker would silently drop
+                    // every campaign whose first send was on the end date the user picked — while
+                    // the grid, which DOES shift, still showed its rows.
+                    dateTo: arg.dateTo ? exclusiveUpperBound(arg.dateTo) : undefined,
+                    includeOverOneYear: !!arg.includeOverOneYear,
+                }
             });
             return response.data;
         } catch (error: any) {
@@ -204,6 +256,8 @@ const initialState: SendSearchState = {
     filterFieldsLoading: false,
     filterFieldsError: null,
     filterFieldsReqId: '',
+    campaigns: [],
+    campaignsError: null,
 };
 
 // One definition of "forget the recipient's values", shared by `closeDrawer`, `popDrawer` (last
@@ -474,6 +528,12 @@ export const sendSearchSlice = createSlice({
             // filter row's field selector to "unknown field" and read as "your filters were deleted".
             // Any clause pointing at a field that has genuinely disappeared is rejected by the SP,
             // which is the correct authority for that.
+            //
+            // `campaigns` is left in place for the same reason and one more: the picker's VALUE is a
+            // set of ids, and blanking the options mid-refresh would leave every ticked checkbox
+            // pointing at an option that no longer exists — MUI would drop the chips and the user
+            // would watch their selection erase itself on every date change.
+            state.campaignsError = null;
         });
         builder.addCase(getSendSearchFilterFields.fulfilled, (state, action: any) => {
             if (action.meta.requestId !== state.filterFieldsReqId) return;   // stale response
@@ -483,16 +543,33 @@ export const sendSearchSlice = createSlice({
                 // it is gated like RowValues is. Its own value, not a generic failure: "you may not
                 // see this" and "this broke" are different facts (see :302-312).
                 state.filterFields = [];
+                state.campaigns = [];
                 state.filterFieldsError = 'PERMISSION_DENIED';
+                state.campaignsError = 'PERMISSION_DENIED';
                 return;
             }
-            state.filterFields = action.payload?.Data ?? [];
+            // 🔴 `Data` IS NOW AN OBJECT, not an array: { Fields, Campaigns }. Both halves ride on one
+            // request so the catalog SP — which aggregates over dbo.CampaignSendingLog (395M rows) to
+            // build #Camp — runs ONCE per page load instead of twice.
+            const data = action.payload?.Data;
+            state.filterFields = data?.Fields ?? [];
             // A 200 whose body carries no `Data` at all is a failure that did not throw. An empty
             // ARRAY is a legitimate answer — an account whose sources have no filterable columns —
             // and leaves the flag null so the bar can say so in words instead of showing an error.
-            state.filterFieldsError = action.payload && 'Data' in action.payload && action.payload.Data != null
+            state.filterFieldsError = action.payload && 'Data' in action.payload && data != null
                 ? null
                 : (action.payload?.Message ?? 'FILTERFIELDS_FAILED');
+
+            // The campaign list is judged SEPARATELY, and the distinction is a real deployment state,
+            // not defensive noise: against a server where 51-CatalogSP-Campaigns.sql has not run, the
+            // SP returns one result set, the C# leaves `Campaigns` an empty array, and `Fields`
+            // arrives perfectly. `Campaigns` ABSENT (undefined) means the server cannot supply the
+            // list; `Campaigns` EMPTY means it supplied it and there are genuinely none in scope.
+            // Collapsing the two would either hide a broken picker or accuse a working one.
+            state.campaigns = data?.Campaigns ?? [];
+            state.campaignsError = data && Array.isArray(data.Campaigns)
+                ? null
+                : (state.filterFieldsError ?? 'CAMPAIGNS_UNAVAILABLE');
         });
         builder.addCase(getSendSearchFilterFields.rejected, (state, action: any) => {
             if (action.meta.requestId !== state.filterFieldsReqId) return;
@@ -502,6 +579,11 @@ export const sendSearchSlice = createSlice({
             // build a clause against a field we cannot confirm exists.
             state.filterFields = [];
             state.filterFieldsError = action.payload?.error ?? action.error?.message ?? 'FILTERFIELDS_FAILED';
+            // Cleared for the same reason and with the same force: a picker still offering yesterday's
+            // campaigns beside a failed load invites the operator to tick a box we cannot confirm is
+            // still in scope, and the resulting empty grid reads as "nothing was sent".
+            state.campaigns = [];
+            state.campaignsError = action.payload?.error ?? action.error?.message ?? 'CAMPAIGNS_FAILED';
         });
     }
 });

@@ -67,7 +67,7 @@ const TypeEvidencePopover = ({ detection, value, options, onChange, disabled }: 
                 // panel opens off the field in en/pl. Same rule as every Select in this folder.
                 anchorOrigin={{ vertical: 'bottom', horizontal: isRtl ? 'right' : 'left' }}
                 transformOrigin={{ vertical: 'top', horizontal: isRtl ? 'right' : 'left' }}
-                PaperProps={{ style: { padding: 14, maxWidth: 320 } }}
+                PaperProps={{ dir: isRtl ? 'rtl' : 'ltr', style: { padding: 14, maxWidth: 320 } }}
             >
                 <Box dir={isRtl ? 'rtl' : 'ltr'} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                     <Typography style={{ fontWeight: 700, color: '#344054' }}>
@@ -133,7 +133,8 @@ const TypeEvidencePopover = ({ detection, value, options, onChange, disabled }: 
                                     MenuProps={{
                                         getContentAnchorEl: null,
                                         anchorOrigin: { vertical: 'bottom', horizontal: isRtl ? 'right' : 'left' },
-                                        transformOrigin: { vertical: 'top', horizontal: isRtl ? 'right' : 'left' }
+                                        transformOrigin: { vertical: 'top', horizontal: isRtl ? 'right' : 'left' },
+                                        PaperProps: { dir: isRtl ? 'rtl' : 'ltr' }
                                     }}
                                     onChange={(e) => {
                                         // Grouped-select guard kept even though this list is flat:

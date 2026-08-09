@@ -38,7 +38,7 @@ const RowsTable = ({ classes, columns, rows, loading, readOnly, onColumnClick }:
         const label = t(`DataSources.view.match.${channel}.${matchType}`);
         if (isDup) {
             return (
-                <Tooltip title={t('DataSources.view.duplicateTooltip')}>
+                <Tooltip title={t('DataSources.view.duplicateTooltip')} PopperProps={{ style: { direction: isRtl ? 'rtl' : 'ltr' } }}>
                     <Typography style={{ color: '#95A5A6' }}>{label}</Typography>
                 </Tooltip>
             );

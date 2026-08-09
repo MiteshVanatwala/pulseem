@@ -35,7 +35,7 @@ const FiltersBar = ({ classes, columns, filters, onFiltersChange, freeText, onFr
         getContentAnchorEl: null,
         anchorOrigin: { vertical: 'bottom', horizontal: isRtl ? 'right' : 'left' },
         transformOrigin: { vertical: 'top', horizontal: isRtl ? 'right' : 'left' },
-        PaperProps: { style: { maxHeight: 320, marginTop: 4 } }
+        PaperProps: { dir: isRtl ? 'rtl' : 'ltr', style: { maxHeight: 320, marginTop: 4 } }
     };
 
     const addFilter = () => {

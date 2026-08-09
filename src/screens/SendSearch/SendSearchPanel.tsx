@@ -155,91 +155,66 @@ const SendSearchPanel: React.FC<Props> = ({ showTitle }) => {
     // This is the SECOND of two stacked breaks: repointing the selector at `filterFields` (above)
     // fixes nothing on its own, because the array it now reads was never populated.
     //
-    // Keyed on the CHANNEL alone, deliberately, and NOT on `filters`: the catalog's domain is the
-    // set of searchable columns behind the sends of a channel. Re-fetching it on every date tweak or
-    // keystroke would be one request per interaction for a list that cannot change, and the slice's
-    // `filterFieldsReqId` stale-guard (:456) exists precisely because a fast double channel switch
-    // would otherwise land the FIRST channel's list last.
+    // 🔴 RE-KEYED 2026-08-09 (multi-campaign). This was keyed on the CHANNEL alone, on the argument
+    // that the catalog "cannot change" within a channel. That argument was wrong, and the campaign
+    // picker is what made it visible.
+    //
+    // The catalog SP takes @prm_DateFrom / @prm_DateTo / @prm_IncludeOverOneYear and scopes its
+    // #Camp by them. A channel-only call therefore always describes the SP's default window — the
+    // last twelve months — no matter what dates are on screen. Two consequences:
+    //   • the campaign picker would offer only the last year's campaigns, so ticking "כלול חיפוש
+    //     שליחות מעל שנה" would fill the GRID with older sends the PICKER could not name;
+    //   • the field list had the same defect already, quietly: the columns offered were the
+    //     last-12-months set even when the user had chosen a narrower or wider range.
+    //
+    // The cost is one request per committed date change. Dates are COMMITTED filters, not
+    // keystrokes — the same standard that lets them refetch the grid — so this is one request per
+    // deliberate user action, not per character. The slice's `filterFieldsReqId` stale-guard already
+    // orders the responses, which is what makes a chattier key safe.
+    //
+    // NOT keyed on the campaign selection, and that is the one exclusion that matters: the picker's
+    // options must never be narrowed by the picker's own selection. That is precisely the
+    // self-narrowing failure the deleted client-side catalog had.
     useEffect(() => {
-        dispatch(getSendSearchFilterFields({ channel: filters.Channel }));
-    }, [dispatch, filters.Channel]);
+        dispatch(getSendSearchFilterFields({
+            channel: filters.Channel,
+            dateFrom: filters.DateFrom,
+            dateTo: filters.DateTo,
+            includeOverOneYear: filters.IncludeOverOneYear,
+        }));
+    }, [dispatch, filters.Channel, filters.DateFrom, filters.DateTo, filters.IncludeOverOneYear]);
 
-    // Campaign dropdown options. §3.3 defines no campaign-list endpoint, so the options are still the
-    // distinct campaigns present in RESULT ROWS — but ACCUMULATED into a catalog rather than recomputed
-    // from the current page, so a campaign filter cannot shrink the list to the one campaign just picked.
+    // ── campaign picker options ───────────────────────────────────────────────────────────────
+    // 🔴 REPLACED 2026-08-09 (multi-campaign). This was ~70 lines of client-side accumulation: the
+    // options were the distinct campaigns found in RESULT ROWS, merged into a growing catalog, with
+    // a second effect resetting it whenever the search scope changed. All of it is deleted.
     //
-    // 🔴 FIXED 2026-08-09 (campaign dropdown self-narrowing). The first version of this screen rebuilt
-    // the list from `items` on every fetch, and `items` is the CAMPAIGN-FILTERED result set: the instant
-    // the user picked a campaign, the search returned only that campaign's rows (SP :378 `@prm_CampaignID`)
-    // and the list collapsed to the single campaign just chosen — the filter ate its own options and the
-    // user could not switch straight from one campaign to another.
+    // It existed only because §3.3 defined no campaign-list endpoint. There is one now — result set
+    // [1] of dbo.DataSources_SearchSendsFilterCatalog (51-CatalogSP-Campaigns.sql), built from the
+    // SAME #Camp set the field catalog uses, so every option is a campaign the grid can genuinely
+    // return rows for.
     //
-    // The fix is two effects, deliberately kept SEPARATE so the catalog stays in step with `items`, not
-    // with the render:
+    // The deleted code had two documented completeness ceilings that no amount of client cleverness
+    // could close: a campaign living only on an unvisited PAGE was unknown, and changing scope while
+    // filtered to one campaign could only ever reveal that one campaign. Both were survivable for a
+    // single-select. Neither survives a SEARCH BOX: the user types a campaign name, gets "not
+    // found", and concludes the campaign does not exist — when the truth is that its page was never
+    // fetched. That is a confident falsehood on an audit screen, which is the one thing this screen
+    // is built not to produce. Deleting the accumulation is what makes the search box honest.
     //
-    //   • MERGE (below) folds each result page's campaigns into the catalog, de-duped, first-seen order,
-    //     and NEVER removes. A campaign-filtered page therefore adds nothing (the picked campaign is
-    //     already known), so selecting a campaign — or paging, or returning to "all campaigns" — can only
-    //     grow the list, never shrink it. This alone kills both the self-narrowing and the return-flicker.
-    //
-    //   • RESET (below) clears the catalog when the search SCOPE that decides which campaigns exist
-    //     changes — channel / text / date range / >1-year — so a campaign from a previous date range does
-    //     not linger. It CLEARS rather than rebuilds: at the render where the scope changes, `items` is
-    //     still the PREVIOUS scope's page (the refetch is dispatched from a post-commit effect that has
-    //     not run yet), so rebuilding from it would re-seed the stale campaigns. The merge refills from
-    //     the new page once it lands.
-    //
-    // Folding the reset INTO the merge (an earlier version of this fix) read that stale `items` in the
-    // same pass and left the previous scope's campaigns in the list permanently — the reset became a
-    // no-op. Splitting the two is what makes the catalog actually converge to the current scope.
-    //
-    // TWO honest completeness ceilings remain, both inherent to having no campaign-list endpoint, and
-    // both recoverable by picking "all campaigns" (neither is a regression — the pre-fix code narrowed on
-    // these paths too):
-    //   1. Paging — a campaign only on an unvisited page is unknown until that page loads.
-    //   2. Changing scope WHILE filtered to one campaign — the new scope's search is itself
-    //      campaign-filtered, so it can only reveal that one campaign until the user clears back to all.
-    //
-    // JSON.stringify, not join('|'), so a SearchText that contains the separator cannot make two
-    // different scopes collide onto one key and skip a reset.
-    const campaignScopeKey = JSON.stringify([
-        filters.Channel, filters.SearchText, filters.DateFrom, filters.DateTo, filters.IncludeOverOneYear,
-    ]);
-    const [campaigns, setCampaigns] = useState<CampaignOption[]>([]);
-
-    // RESET on scope change. Keeps ONLY the selected campaign (not a blanket clear) so the <Select>'s
-    // value always has a matching option during the reload — no transient blank / MUI out-of-range
-    // warning; the merge refills the rest from the new scope's page. `items` is stale at this render (the
-    // refetch runs from a later effect), so we do not rebuild from it here. `filters.CampaignID` is read
-    // but deliberately NOT a dependency: the reset must fire on SCOPE changes, never on a campaign pick.
-    useEffect(() => {
-        setCampaigns((prev) => prev.filter((c) => c.CampaignID === filters.CampaignID));
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [campaignScopeKey]);
-
-    // MERGE the current page's campaigns in, de-duped, never removing — so a campaign filter or a page
-    // change can only ADD to the list, never collapse it.
-    useEffect(() => {
-        setCampaigns((prev) => {
-            const seen: { [id: number]: boolean } = {};
-            prev.forEach((c) => { seen[c.CampaignID] = true; });
-            let changed = false;
-            const next = prev.slice();
-            items.forEach((r) => {
-                if (!seen[r.ChannelCampaignID]) {
-                    seen[r.ChannelCampaignID] = true;
-                    next.push({ CampaignID: r.ChannelCampaignID, CampaignName: r.CampaignName });
-                    changed = true;
-                }
-            });
-            return changed ? next : prev;
-        });
-    }, [items]);
+    // Kept deliberately as a plain read with no fallback to the old behaviour: a half-list that
+    // LOOKS complete is worse than an empty picker that says it could not load. `campaignsError`
+    // carries that distinction to the bar.
+    const campaigns: CampaignOption[] = sendSearch.campaigns ?? [];
 
     const hasFilter = !!filters.SearchText
         || filters.RoleFilter !== eRoleFilter.All
         || filters.RowKind !== eRowKind.All
         || filters.CampaignID != null
+        // The multi-select is a filter like any other: without this, narrowing to a campaign that
+        // returns nothing would show the "no results" state WITHOUT the "נקה הכל" way out, and the
+        // user would be stuck looking at an empty grid with no visible cause.
+        || (filters.CampaignIDs != null && filters.CampaignIDs.length > 0)
         || filters.DateFrom != null
         || filters.DateTo != null
         // An advanced rule is a filter like any other: without this, a search narrowed to nothing by
@@ -392,6 +367,11 @@ const SendSearchPanel: React.FC<Props> = ({ showTitle }) => {
             <SendSearchFiltersBar
                 value={filters}
                 campaigns={campaigns}
+                // Lets the picker say "could not load the campaign list" instead of rendering an
+                // empty menu, which would assert — from a failed request — that this account has no
+                // campaigns. Also covers the pre-51 server, where the field list arrives fine and
+                // only the campaign result set is absent.
+                campaignsError={sendSearch.campaignsError ?? null}
                 loading={!!sendSearch.loading}
                 onChange={(patch: Partial<Filters>) => dispatch(setFilters(patch))}
                 // The filter bar's "חפש" commits the text through onChange; the effect above already

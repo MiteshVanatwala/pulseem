@@ -58,11 +58,16 @@ type WizardColumn = UploadColumnDef & { IsSupervisorEmail?: boolean; Detection?:
 // 'right' pinned the menu to the field's END edge for en/pl, so a menu wider than its field grew
 // outwards instead of along the field.
 // getContentAnchorEl:null is what lets anchorOrigin.vertical:'bottom' actually take effect in MUI v4.
+// PaperProps.dir is the other half, and it is NOT optional: MUI v4 portals the menu Paper to
+// document.body, outside App.js's <div dir={isRTL}>, and <html dir> is stuck at "ltr" app-wide
+// (App.js sets it in a mount-only effect, before i18n has switched off its 'en' default). The theme's
+// direction:'rtl' and jss-rtl do not help either — they mirror physical CSS properties and never emit
+// a `direction`. Without this the menu items render LTR inside an otherwise RTL dialog.
 const menuPropsFor = (isRtl: boolean): any => ({
     getContentAnchorEl: null,
     anchorOrigin: { vertical: 'bottom', horizontal: isRtl ? 'right' : 'left' },
     transformOrigin: { vertical: 'top', horizontal: isRtl ? 'right' : 'left' },
-    PaperProps: { style: { maxHeight: 320, marginTop: 4 } }
+    PaperProps: { dir: isRtl ? 'rtl' : 'ltr', style: { maxHeight: 320, marginTop: 4 } }
 });
 
 // Role dropdown value → SemanticRole. 'none' and 'sup' are deliberately absent: both persist as
@@ -544,6 +549,32 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
     // (16 keeps the intended one-step lead now that the shared dialog scale puts body cells at 15.)
     const hdrCellStyle: any = { fontSize: 16, fontWeight: 700, color: '#344054' };
 
+    /* One shared vertical grid for every cell of a mapping row. The row is pinned to
+       verticalAlign:'top' below; each cell then puts its primary control in the same 40px band and
+       its secondary line in the same 28px band underneath.
+       Without this, MuiTableRow's default verticalAlign:'middle' centres each cell's WHOLE content
+       block against the tallest sibling. The role cell is the only one that always carries a second
+       line ("+ עדכן גם שדה לקוח"), so it sets the row height and every shorter cell floats down to
+       the middle of it — up to 18px of drift, plus a 14px jump between rows depending on whether the
+       column happens to be a NUMBER (which adds "הצג מפריד אלפים" and nothing else does).
+       40 absorbs the natural mismatch between the dense TextField (~37.6px), the dense Selects (40px)
+       and the default Checkbox (42px). */
+    const PRIMARY_BAND: any = { minHeight: 40, display: 'flex', alignItems: 'center' };
+    const SUB_BAND: any = { minHeight: 28, marginTop: 8, display: 'flex', alignItems: 'center' };
+    /* A FIXED width is the point: the table is auto-layout and the renderValue text changes length
+       when a field is chosen ("+ עדכן גם שדה לקוח" -> "עדכן גם: <name>"), so an auto-sized control
+       here re-measured the cell and shifted the other three columns sideways on every pick.
+       14 is MUI's own outlined helper-text inset, which lines the link up under the Select's TEXT
+       rather than its border.
+       14 + 151 matches the role FormControl's `minWidth: 165` — but note that 165 is a MINIMUM, not
+       a reservation, and the FormControl is the only flex item in a shrink-to-fit band. Where a role
+       label is wider than 165 the Select grows and the link below it stops being flush with its end.
+       That is a locale-dependent cosmetic drift (pl's "Telefon komórkowy (tożsamość)" is the long
+       one; he and en both fit), NOT the row-baseline problem this change fixes — that is handled by
+       verticalAlign + the bands above and is width-independent. */
+    const CLIENT_FIELD_W = 151;
+    const CLIENT_FIELD_INSET = 14;
+
     const renderFileStep = () => (
         <Box>
             <Box
@@ -612,21 +643,27 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
                             // Currency/Percent on a person's name is never a legal combination.
                             const isInfo = c.SemanticRole === eSemanticRole.NONE && !c.IsSupervisorEmail;
                             return (
-                                <TableRow key={i}>
+                                <TableRow key={i} style={{ verticalAlign: 'top' }}>
                                     <TableCell style={{ minWidth: 190 }}>
-                                        <TextField variant="outlined" size="small" value={c.DisplayName} onChange={(e) => setDisplayName(i, e.target.value)}
-                                            inputProps={{ maxLength: 200, style: { fontSize: 14 } }} fullWidth />
-                                        <Typography style={{ fontSize: 12, color: '#95A5A6', marginTop: 2 }}>
-                                            {`${t('DataSources.wizard.originalHeader')}: ${c.SourceHeader}`}
-                                        </Typography>
+                                        <Box style={PRIMARY_BAND}>
+                                            <TextField variant="outlined" size="small" value={c.DisplayName} onChange={(e) => setDisplayName(i, e.target.value)}
+                                                inputProps={{ maxLength: 200, style: { fontSize: 14 } }} fullWidth />
+                                        </Box>
+                                        <Box style={SUB_BAND}>
+                                            <Typography style={{ fontSize: 12, color: '#95A5A6' }}>
+                                                {`${t('DataSources.wizard.originalHeader')}: ${c.SourceHeader}`}
+                                            </Typography>
+                                        </Box>
                                     </TableCell>
                                     <TableCell>
-                                        <FormControl variant="outlined" size="small" style={{ minWidth: 165 }}>
-                                            <Select value={roleValueOf(c)} MenuProps={MENU_PROPS} style={{ fontSize: 14 }}
-                                                onChange={(e) => setRoleValue(i, String(e.target.value))}>
-                                                {roleOptions.map(o => <MenuItem key={o.value} value={o.value}>{o.label}</MenuItem>)}
-                                            </Select>
-                                        </FormControl>
+                                        <Box style={PRIMARY_BAND}>
+                                            <FormControl variant="outlined" size="small" style={{ minWidth: 165 }}>
+                                                <Select value={roleValueOf(c)} MenuProps={MENU_PROPS} style={{ fontSize: 14 }}
+                                                    onChange={(e) => setRoleValue(i, String(e.target.value))}>
+                                                    {roleOptions.map(o => <MenuItem key={o.value} value={o.value}>{o.label}</MenuItem>)}
+                                                </Select>
+                                            </FormControl>
+                                        </Box>
                                         {/* ADDITIVE, not exclusive: the column keeps the role above AND may also
                                             update the recipient's own record. Rendered as one Select with a custom
                                             renderValue so it reads as a quiet link while unset and as a removable
@@ -652,14 +689,21 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
                                             renderValue={() => {
                                                 const opt = clientFieldOptions.find(o => o.Id === c.ClientFieldTarget);
                                                 return opt
-                                                    ? <span style={{ fontSize: 12.5, color: '#0b7285', fontWeight: 600 }}>
+                                                    ? <span style={{ fontSize: 12.5, color: '#0b7285', fontWeight: 600, display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+                                                        title={t('DataSources.wizard.clientFieldTag', { name: clientFieldLabel(opt) })}>
                                                         {t('DataSources.wizard.clientFieldTag', { name: clientFieldLabel(opt) })}
                                                     </span>
-                                                    : <span style={{ fontSize: 12.5, color: '#5b6b7b' }}>
+                                                    : <span style={{ fontSize: 12.5, color: '#5b6b7b', display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                                                         {t('DataSources.wizard.clientFieldAdd')}
                                                     </span>;
                                             }}
-                                            style={{ fontSize: 12.5, marginTop: 4 }}
+                                            /* Fixed width + start inset, not auto: the table is auto-layout, so letting
+                                               this Select size to its own text made every other column jump sideways the
+                                               moment a client field was picked and the label grew from "+ עדכן גם שדה
+                                               לקוח" to "עדכן גם: <name>". The ellipsis on the spans above is the other
+                                               half of that — a long account label truncates instead of widening.
+                                               marginTop 8 (was 4) is the extra breathing room under the role Select. */
+                                            style={{ fontSize: 12.5, marginTop: 8, width: CLIENT_FIELD_W, marginInlineStart: CLIENT_FIELD_INSET }}
                                         >
                                             <MenuItem value=""><em>{t('DataSources.wizard.clientFieldNone')}</em></MenuItem>
                                             {clientFieldGroups.map(g => ([
@@ -677,7 +721,7 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
                                     </TableCell>
                                     <TableCell>
                                         {/* Identity + supervisor columns are type-locked (Email/Phone); info columns pick Text/Number/Date. */}
-                                        <Box style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                                        <Box style={{ ...PRIMARY_BAND, gap: 2 }}>
                                             <FormControl variant="outlined" size="small" style={{ minWidth: 120 }}>
                                                 <Select value={c.DataType} disabled={!isInfo} MenuProps={MENU_PROPS} style={{ fontSize: 14 }}
                                                     onChange={(e) => setDataType(i, Number(e.target.value) as eDataType)}>
@@ -698,20 +742,27 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
                                             />
                                         </Box>
                                         {/* NUMBER only. On any other type the flag is meaningless, and showing a
-                                            dead checkbox on every text column is noise. Default ON. */}
-                                        {c.DataType === eDataType.NUMBER && (
-                                            <FormControlLabel
-                                                style={{ marginInlineStart: 0, marginTop: 2 }}
-                                                control={<Checkbox size="small" checked={c.ShowThousandsSeparator !== false}
-                                                    onChange={(e) => setShowThousandsSeparator(i, e.target.checked)} />}
-                                                label={<span style={{ fontSize: 12.5, color: '#5b6b7b' }}>{t('DataSources.column.showThousandsSeparator')}</span>}
-                                            />
-                                        )}
+                                            dead checkbox on every text column is noise. Default ON.
+                                            The BAND is unconditional even though the control is not — that is the point:
+                                            reserving it on every row is what stops a NUMBER row and a text row from
+                                            having different heights, which was half the misalignment. */}
+                                        <Box style={SUB_BAND}>
+                                            {c.DataType === eDataType.NUMBER && (
+                                                <FormControlLabel
+                                                    style={{ marginInlineStart: 0, marginTop: 0, marginRight: 0 }}
+                                                    control={<Checkbox size="small" checked={c.ShowThousandsSeparator !== false}
+                                                        onChange={(e) => setShowThousandsSeparator(i, e.target.checked)} />}
+                                                    label={<span style={{ fontSize: 12.5, color: '#5b6b7b' }}>{t('DataSources.column.showThousandsSeparator')}</span>}
+                                                />
+                                            )}
+                                        </Box>
                                     </TableCell>
                                     {/* format cell removed 2026-08-05 — see the header comment. */}
                                     <TableCell align="center">
-                                        <Checkbox checked={c.IsSearchable} onChange={(e) => toggleSearchable(i, e.target.checked)}
-                                            disabled={!c.IsSearchable && searchableRemaining <= 0} />
+                                        <Box style={{ ...PRIMARY_BAND, justifyContent: 'center' }}>
+                                            <Checkbox checked={c.IsSearchable} onChange={(e) => toggleSearchable(i, e.target.checked)}
+                                                disabled={!c.IsSearchable && searchableRemaining <= 0} />
+                                        </Box>
                                     </TableCell>
                                 </TableRow>
                             );

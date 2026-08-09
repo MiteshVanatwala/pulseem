@@ -22,9 +22,16 @@
 import React, { useState, useEffect } from 'react';
 import {
     Badge, Box, Button, ButtonGroup, Checkbox, Chip, Collapse, FormControlLabel, InputAdornment,
-    MenuItem, TextField, Tooltip, Typography,
+    Paper, TextField, Tooltip, Typography,
 } from '@material-ui/core';
 import { ExpandLess, ExpandMore, Search } from '@material-ui/icons';
+// v4-alpha lab, the same source `GroupSelectorDropDown.tsx:4` uses. Deliberately NOT a
+// `<Select multiple>`: a search box placed inside a MUI v4 Select's MenuList fights the list's
+// built-in type-ahead, which swallows keystrokes and jumps the highlight on every letter typed.
+// Autocomplete's input IS the search box, so there is no second keyboard consumer to fight.
+import { Autocomplete } from '@material-ui/lab';
+import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
+import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import {
@@ -60,6 +67,10 @@ interface Props {
     onSearch: () => void;
     onClearAll: () => void;
     campaigns: CampaignOption[];
+    // Distinguishes "the server could not give us the list" from "the list is genuinely empty".
+    // Without it the picker's empty state would assert, from a failed request, that this account has
+    // no campaigns — a claim about the DATA made from a fact about the NETWORK.
+    campaignsError?: string | null;
     loading?: boolean;
 
     // ── advanced filter builder (CONTRACT §2) ────────────────────────────────────────────────
@@ -82,15 +93,30 @@ const KIND_KEY: { [k in eRowKind]: string } = {
 };
 
 const SendSearchFilters: React.FC<Props> = ({
-    value, onChange, onSearch, onClearAll, campaigns, loading,
+    value, onChange, onSearch, onClearAll, campaigns, campaignsError, loading,
     fields, rules, onRulesChange, sort, onSortChange,
 }) => {
     const { t } = useTranslation();
-    // MUI Select portals its menu to document.body — outside App's inner <div dir> — and <html dir>
-    // is stuck "ltr", so the dropdown opens LTR. Force direction on the menu Paper, exactly as
-    // BusinessColumnsPicker (SmartSend) does. isRTL is the same redux source App uses for the body div.
+    // MUI portals its popups to document.body — outside App's inner <div dir> — and <html dir> is
+    // stuck "ltr", so any menu opens LTR unless its own Paper is given a direction. Applied below to
+    // the Autocomplete's PaperComponent, exactly as BusinessColumnsPicker (SmartSend) does for a
+    // Select. isRTL is the same redux source App uses for the body div.
     const isRTL = useSelector((s: any) => s.core && s.core.isRTL);
-    const rtlSelectProps = { MenuProps: { PaperProps: { dir: isRTL ? 'rtl' : 'ltr' } } };
+
+    // ── campaign picker value ─────────────────────────────────────────────────────────────────
+    // The slice stores IDS; Autocomplete wants the option OBJECTS. Derived here rather than kept as
+    // a second piece of state, so there is exactly one source of truth for the selection.
+    //
+    // 🔴 THE FALLBACK IS THE POINT. An id whose option is not in the list — the catalog has not
+    // loaded yet, or the user narrowed the date range so the campaign left scope — still produces a
+    // chip, labelled `#id`. Silently dropping it would leave the grid filtered by a campaign with
+    // NOTHING on screen to say so: the user would see a near-empty result, no chips, and conclude
+    // that nothing was sent. Showing an ugly `#4821` chip they can remove is strictly better than
+    // hiding an active filter, and it is the same principle as the advanced-rule chips below.
+    const selectedCampaigns: CampaignOption[] = (value.CampaignIDs || []).map(
+        (id) => campaigns.filter((c) => c.CampaignID === id)[0]
+            ?? { CampaignID: id, CampaignName: '' },
+    );
 
     // ── advanced panel ────────────────────────────────────────────────────────────────────────
     const advFields: SendSearchField[] = fields ?? [];
@@ -171,27 +197,78 @@ const SendSearchFilters: React.FC<Props> = ({
                     sent to the SP unchanged, so text search now always spans BOTH agent and supervisor
                     — the SP's own default. Nothing on the wire or in the SP changed. */}
 
-                <TextField
-                    select
-                    variant="outlined"
+                {/* ── campaign multi-select ────────────────────────────────────────────────────
+                    Was a single <TextField select> holding one CampaignID with a -1 sentinel for
+                    "all". It is now a checkbox picker with a search field, writing `CampaignIDs`.
+
+                    NO SENTINEL any more, and that is a simplification rather than a rewrite: an
+                    EMPTY selection already means "all campaigns", both on the wire and in the SP
+                    (`@HasCampFilter = 0` ⇒ the predicate is inert). The old -1 existed only because
+                    MUI's Select cannot hold null; an array has no such problem.
+
+                    `CampaignID` (scalar) is deliberately left untouched at its default null — the
+                    SP unions the two, so writing both would be two sources of truth for one filter.
+
+                    The options are the SERVER's list now (result set [1] of the catalog SP), not the
+                    campaigns scraped from loaded result rows. That change is what makes the search
+                    box honest: it searches every campaign that has actually sent in scope, so
+                    "not found" means the campaign does not exist rather than "not fetched yet". */}
+                <Autocomplete
+                    multiple
+                    disableCloseOnSelect
                     size="small"
-                    SelectProps={rtlSelectProps}
-                    // -1 is the sentinel for "all campaigns": MUI's select cannot hold `null` as a
-                    // value without falling back to the uncontrolled/empty rendering, and 0 is a
-                    // legal-looking campaign id. Converted back to null on the way out.
-                    value={value.CampaignID ?? -1}
-                    onChange={(e) => {
-                        const n = Number(e.target.value);
-                        onChange({ CampaignID: n === -1 ? null : n });
-                    }}
-                    style={{ minWidth: 190 }}
-                    inputProps={{ 'aria-label': t(`${SS}campaign.all`) }}
-                >
-                    <MenuItem value={-1}>{t(`${SS}campaign.all`)}</MenuItem>
-                    {campaigns.map((c) => (
-                        <MenuItem key={c.CampaignID} value={c.CampaignID}>{c.CampaignName}</MenuItem>
-                    ))}
-                </TextField>
+                    options={campaigns}
+                    value={selectedCampaigns}
+                    onChange={(_e: any, next: any) => onChange({
+                        CampaignIDs: ((next || []) as CampaignOption[]).map((c) => c.CampaignID),
+                    })}
+                    // A campaign with no name still has to be pickable and, more importantly,
+                    // READABLE once picked — an unlabelled chip is a filter the user cannot identify.
+                    getOptionLabel={(o: any) => (o && o.CampaignName ? o.CampaignName : `#${o && o.CampaignID}`)}
+                    // Identity is the ID, never the object: `selectedCampaigns` rebuilds its objects
+                    // on every render, so reference equality would tick nothing.
+                    getOptionSelected={(o: any, v: any) => !!o && !!v && o.CampaignID === v.CampaignID}
+                    // Beyond two, chips eat the whole filter row. "+N" stays clickable and the full
+                    // list is one click away in the open menu.
+                    limitTags={2}
+                    // The menu is portaled out of App's inner <div dir>, and <html dir> is stuck
+                    // "ltr" — same defect the Select menus work around above. Forced on the Paper.
+                    PaperComponent={(props: any) => <Paper {...props} dir={isRTL ? 'rtl' : 'ltr'} />}
+                    noOptionsText={campaignsError
+                        ? t(`${SS}campaign.loadFailed`)
+                        : t(`${SS}campaign.none`)}
+                    style={{ minWidth: 260, flex: '0 1 320px' }}
+                    renderOption={(option: any, { selected }: any) => (
+                        <>
+                            <Checkbox
+                                icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
+                                checkedIcon={<CheckBoxIcon fontSize="small" />}
+                                style={{ marginInlineEnd: 8 }}
+                                checked={selected}
+                                color="primary"
+                            />
+                            <Typography component="span" style={{ fontSize: 13.5 }}>
+                                {option && option.CampaignName ? option.CampaignName : `#${option && option.CampaignID}`}
+                            </Typography>
+                        </>
+                    )}
+                    renderInput={(params: any) => (
+                        <TextField
+                            {...params}
+                            variant="outlined"
+                            // The placeholder carries the state: with nothing ticked the filter IS
+                            // "all campaigns", and saying so is what replaces the removed menu item.
+                            placeholder={selectedCampaigns.length === 0
+                                ? t(`${SS}campaign.all`)
+                                : t(`${SS}campaign.search`)}
+                            inputProps={{
+                                ...params.inputProps,
+                                'aria-label': t(`${SS}campaign.label`),
+                                autoComplete: 'off',
+                            }}
+                        />
+                    )}
+                />
 
                 <TextField
                     type="date"
