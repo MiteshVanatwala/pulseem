@@ -206,7 +206,7 @@ const DataSourceView = ({ classes }: ClassesType) => {
                 {details && <StatusChip status={details.Status} progress={null} runDateStart={details.RunDateStart ?? null} createdDate={details.CreatedDate} t={t} />}
                 {details && <Chip size="small" label={`V${details.VersionNumber ?? ''}`} style={{ direction: 'ltr' }} />}
                 {isViewOnly && (
-                    <Tooltip title={t('DataSources.viewOnlyTooltip')}>
+                    <Tooltip title={t('DataSources.viewOnlyTooltip')} PopperProps={{ style: { direction: isRtl ? 'rtl' : 'ltr' } }}>
                         <Chip size="small" label={t('DataSources.viewOnlyBadge')} style={{ background: '#f1ebfb', color: '#6941c6' }} />
                     </Tooltip>
                 )}
@@ -224,17 +224,17 @@ const DataSourceView = ({ classes }: ClassesType) => {
                     versions dialog (`DataSources.versions.exportVersion`) is the correct route —
                     it is the only one that names the version it is exporting. */}
                 {canExport && details?.Status === eDataSourceStatus.READY && !isHistorical && (
-                    <Tooltip title={t('DataSources.actions.export')}><IconButton aria-label={t('DataSources.actions.export')} onClick={() => setDialog({ type: 'export' })}><GetApp /></IconButton></Tooltip>
+                    <Tooltip title={t('DataSources.actions.export')} PopperProps={{ style: { direction: isRtl ? 'rtl' : 'ltr' } }}><IconButton aria-label={t('DataSources.actions.export')} onClick={() => setDialog({ type: 'export' })}><GetApp /></IconButton></Tooltip>
                 )}
                 {canEditMeta && (
-                    <Tooltip title={t('DataSources.actions.edit')}><IconButton aria-label={t('DataSources.actions.edit')} onClick={() => setDialog({ type: 'editSource' })}><EditIcon /></IconButton></Tooltip>
+                    <Tooltip title={t('DataSources.actions.edit')} PopperProps={{ style: { direction: isRtl ? 'rtl' : 'ltr' } }}><IconButton aria-label={t('DataSources.actions.edit')} onClick={() => setDialog({ type: 'editSource' })}><EditIcon /></IconButton></Tooltip>
                 )}
-                <Tooltip title={t('DataSources.actions.versions')}><IconButton aria-label={t('DataSources.actions.versions')} onClick={() => setDialog({ type: 'versions' })}><History /></IconButton></Tooltip>
+                <Tooltip title={t('DataSources.actions.versions')} PopperProps={{ style: { direction: isRtl ? 'rtl' : 'ltr' } }}><IconButton aria-label={t('DataSources.actions.versions')} onClick={() => setDialog({ type: 'versions' })}><History /></IconButton></Tooltip>
                 {details?.Status === eDataSourceStatus.READY && (
-                    <Tooltip title={t('DataSources.actions.summary')}><IconButton aria-label={t('DataSources.actions.summary')} onClick={() => openSummary()}><Assessment /></IconButton></Tooltip>
+                    <Tooltip title={t('DataSources.actions.summary')} PopperProps={{ style: { direction: isRtl ? 'rtl' : 'ltr' } }}><IconButton aria-label={t('DataSources.actions.summary')} onClick={() => openSummary()}><Assessment /></IconButton></Tooltip>
                 )}
                 {canSend && details?.[EMAIL_IDENTITY_FLAG] && details?.Status === eDataSourceStatus.READY && (
-                    <Tooltip title={t('DataSources.goToSend')}><IconButton aria-label={t('DataSources.goToSend')} onClick={() => Redirect({ url: `${sitePrefix}SmartSend?dataSourceId=${details?.DataSourceID}`, openNewTab: false })}><Send style={sendIconStyle} /></IconButton></Tooltip>
+                    <Tooltip title={t('DataSources.goToSend')} PopperProps={{ style: { direction: isRtl ? 'rtl' : 'ltr' } }}><IconButton aria-label={t('DataSources.goToSend')} onClick={() => Redirect({ url: `${sitePrefix}SmartSend?dataSourceId=${details?.DataSourceID}`, openNewTab: false })}><Send style={sendIconStyle} /></IconButton></Tooltip>
                 )}
             </Box>
         </Box>
@@ -318,6 +318,7 @@ const DataSourceView = ({ classes }: ClassesType) => {
                     rowsPerPage={ROWS_PAGE_SIZE}
                     rowsPerPageOptions={[ROWS_PAGE_SIZE]}
                     onRowsPerPageChange={() => { /* fixed page size for the content grid */ }}
+                    SelectProps={{ MenuProps: { PaperProps: { dir: isRtl ? 'rtl' : 'ltr' } } }}
                 />
             </>
         );

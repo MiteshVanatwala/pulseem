@@ -130,6 +130,34 @@ export const CLIENT_FIELD_CATALOGUE: ClientFieldOption[] = [
     { Id: eClientField.BIRTH_DATE, LabelKey: 'birthDate', MaxLength: null, IsDate: true,  Group: 'recipient' }
 ];
 
+/**
+ * The other half of the catalogue: the account's OWN names for its extra-field slots, as served by
+ * `GET Account/GetExtraFields` (dbo.AccountExtraFields, one row per main account — so every
+ * sub-account of a customer sees the same names).
+ *
+ * A blank label is skipped, never offered. That is the contract `ClientFieldOption.AccountLabel`
+ * already documents: an unnamed slot means the account never assigned it a meaning, and offering a
+ * bare "ExtraField7" asks the operator to map a column onto something nobody can identify.
+ *
+ * Ids are positional, matching the eClientField blocks: ExtraField<n> => 100+n, ExtraDate<n> =>
+ * 200+n. MaxLength 1000 mirrors dbo.ClientExtraData.ExtraField1..13 nvarchar(1000); the four
+ * ExtraDate columns are datetime, hence null.
+ */
+export const buildAccountExtraFieldOptions = (labels: any): ClientFieldOption[] => {
+    if (!labels) return [];
+    const named = (key: string) => String(labels[key] ?? '').trim();
+    const options: ClientFieldOption[] = [];
+    for (let n = 1; n <= 13; n++) {
+        const label = named(`ExtraField${n}`);
+        if (label) options.push({ Id: (100 + n) as eClientField, AccountLabel: label, MaxLength: 1000, IsDate: false, Group: 'extraField' });
+    }
+    for (let n = 1; n <= 4; n++) {
+        const label = named(`ExtraDate${n}`);
+        if (label) options.push({ Id: (200 + n) as eClientField, AccountLabel: label, MaxLength: null, IsDate: true, Group: 'extraDate' });
+    }
+    return options;
+};
+
 // Aligned to DB §7½ GetMany resultset (dual per-channel resolve). `DataSourceVersionID` is the
 // active version's id (Get RS1 calls the same concept `ActiveVersionID`).
 export interface DataSourceListItem {
