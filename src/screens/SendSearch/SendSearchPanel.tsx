@@ -17,7 +17,7 @@
 //     passes showTitle so it keeps its own heading.
 // ═══════════════════════════════════════════════════════════════════════════════════════════
 
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Box, Button, Typography } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
@@ -164,20 +164,76 @@ const SendSearchPanel: React.FC<Props> = ({ showTitle }) => {
         dispatch(getSendSearchFilterFields({ channel: filters.Channel }));
     }, [dispatch, filters.Channel]);
 
-    // Campaign dropdown options. §3.3 defines no campaign-list endpoint, so the options are the
-    // distinct campaigns present in the CURRENT result set. Consequence, stated plainly: the list can
-    // only offer campaigns the user can already see rows for. That is a smaller promise than a full
-    // campaign list, and it is a promise this screen can keep without inventing API surface.
-    const campaigns: CampaignOption[] = useMemo(() => {
-        const seen: { [id: number]: boolean } = {};
-        const out: CampaignOption[] = [];
-        items.forEach((r) => {
-            if (!seen[r.ChannelCampaignID]) {
-                seen[r.ChannelCampaignID] = true;
-                out.push({ CampaignID: r.ChannelCampaignID, CampaignName: r.CampaignName });
-            }
+    // Campaign dropdown options. §3.3 defines no campaign-list endpoint, so the options are still the
+    // distinct campaigns present in RESULT ROWS — but ACCUMULATED into a catalog rather than recomputed
+    // from the current page, so a campaign filter cannot shrink the list to the one campaign just picked.
+    //
+    // 🔴 FIXED 2026-08-09 (campaign dropdown self-narrowing). The first version of this screen rebuilt
+    // the list from `items` on every fetch, and `items` is the CAMPAIGN-FILTERED result set: the instant
+    // the user picked a campaign, the search returned only that campaign's rows (SP :378 `@prm_CampaignID`)
+    // and the list collapsed to the single campaign just chosen — the filter ate its own options and the
+    // user could not switch straight from one campaign to another.
+    //
+    // The fix is two effects, deliberately kept SEPARATE so the catalog stays in step with `items`, not
+    // with the render:
+    //
+    //   • MERGE (below) folds each result page's campaigns into the catalog, de-duped, first-seen order,
+    //     and NEVER removes. A campaign-filtered page therefore adds nothing (the picked campaign is
+    //     already known), so selecting a campaign — or paging, or returning to "all campaigns" — can only
+    //     grow the list, never shrink it. This alone kills both the self-narrowing and the return-flicker.
+    //
+    //   • RESET (below) clears the catalog when the search SCOPE that decides which campaigns exist
+    //     changes — channel / text / date range / >1-year — so a campaign from a previous date range does
+    //     not linger. It CLEARS rather than rebuilds: at the render where the scope changes, `items` is
+    //     still the PREVIOUS scope's page (the refetch is dispatched from a post-commit effect that has
+    //     not run yet), so rebuilding from it would re-seed the stale campaigns. The merge refills from
+    //     the new page once it lands.
+    //
+    // Folding the reset INTO the merge (an earlier version of this fix) read that stale `items` in the
+    // same pass and left the previous scope's campaigns in the list permanently — the reset became a
+    // no-op. Splitting the two is what makes the catalog actually converge to the current scope.
+    //
+    // TWO honest completeness ceilings remain, both inherent to having no campaign-list endpoint, and
+    // both recoverable by picking "all campaigns" (neither is a regression — the pre-fix code narrowed on
+    // these paths too):
+    //   1. Paging — a campaign only on an unvisited page is unknown until that page loads.
+    //   2. Changing scope WHILE filtered to one campaign — the new scope's search is itself
+    //      campaign-filtered, so it can only reveal that one campaign until the user clears back to all.
+    //
+    // JSON.stringify, not join('|'), so a SearchText that contains the separator cannot make two
+    // different scopes collide onto one key and skip a reset.
+    const campaignScopeKey = JSON.stringify([
+        filters.Channel, filters.SearchText, filters.DateFrom, filters.DateTo, filters.IncludeOverOneYear,
+    ]);
+    const [campaigns, setCampaigns] = useState<CampaignOption[]>([]);
+
+    // RESET on scope change. Keeps ONLY the selected campaign (not a blanket clear) so the <Select>'s
+    // value always has a matching option during the reload — no transient blank / MUI out-of-range
+    // warning; the merge refills the rest from the new scope's page. `items` is stale at this render (the
+    // refetch runs from a later effect), so we do not rebuild from it here. `filters.CampaignID` is read
+    // but deliberately NOT a dependency: the reset must fire on SCOPE changes, never on a campaign pick.
+    useEffect(() => {
+        setCampaigns((prev) => prev.filter((c) => c.CampaignID === filters.CampaignID));
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [campaignScopeKey]);
+
+    // MERGE the current page's campaigns in, de-duped, never removing — so a campaign filter or a page
+    // change can only ADD to the list, never collapse it.
+    useEffect(() => {
+        setCampaigns((prev) => {
+            const seen: { [id: number]: boolean } = {};
+            prev.forEach((c) => { seen[c.CampaignID] = true; });
+            let changed = false;
+            const next = prev.slice();
+            items.forEach((r) => {
+                if (!seen[r.ChannelCampaignID]) {
+                    seen[r.ChannelCampaignID] = true;
+                    next.push({ CampaignID: r.ChannelCampaignID, CampaignName: r.CampaignName });
+                    changed = true;
+                }
+            });
+            return changed ? next : prev;
         });
-        return out;
     }, [items]);
 
     const hasFilter = !!filters.SearchText

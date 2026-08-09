@@ -26,10 +26,10 @@ import {
 } from '@material-ui/core';
 import { ExpandLess, ExpandMore, Search } from '@material-ui/icons';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 import {
     SS,
     SendSearchFilters as Filters,
-    eRoleFilter,
     eRowKind,
 } from '../../../Models/DataSources/SendSearch';
 import AdvancedFilterBuilder from './AdvancedFilterBuilder';
@@ -86,6 +86,11 @@ const SendSearchFilters: React.FC<Props> = ({
     fields, rules, onRulesChange, sort, onSortChange,
 }) => {
     const { t } = useTranslation();
+    // MUI Select portals its menu to document.body — outside App's inner <div dir> — and <html dir>
+    // is stuck "ltr", so the dropdown opens LTR. Force direction on the menu Paper, exactly as
+    // BusinessColumnsPicker (SmartSend) does. isRTL is the same redux source App uses for the body div.
+    const isRTL = useSelector((s: any) => s.core && s.core.isRTL);
+    const rtlSelectProps = { MenuProps: { PaperProps: { dir: isRTL ? 'rtl' : 'ltr' } } };
 
     // ── advanced panel ────────────────────────────────────────────────────────────────────────
     const advFields: SendSearchField[] = fields ?? [];
@@ -113,8 +118,15 @@ const SendSearchFilters: React.FC<Props> = ({
     useEffect(() => { setText(value.SearchText); }, [value.SearchText]);
 
     const commitText = () => {
-        onChange({ SearchText: text.trim() });
-        onSearch();
+        // FIX 2026-08-09: fire ONE fetch per click, not two. onChange -> setFilters makes the
+        // `filters` effect in SendSearchPanel refetch on a committed change; calling onSearch()
+        // as well produced two identical POST /Search calls per "חפש"/Enter — which, under the
+        // (previously) named PK_Match constraint on #Match, also raced into "There is already an
+        // object named 'PK_Match'". onSearch() is only needed when the text did NOT change, so the
+        // effect will not fire on its own.
+        const next = text.trim();
+        if (next !== value.SearchText) onChange({ SearchText: next });
+        else onSearch();
     };
 
     // Dates are exchanged as ISO `yyyy-MM-dd` — the value shape a native date input uses and a shape
@@ -148,24 +160,22 @@ const SendSearchFilters: React.FC<Props> = ({
                     inputProps={{ 'aria-label': t(`${SS}searchPlaceholder`), autoComplete: 'off' }}
                 />
 
-                <TextField
-                    select
-                    variant="outlined"
-                    size="small"
-                    value={value.RoleFilter}
-                    onChange={(e) => onChange({ RoleFilter: Number(e.target.value) as eRoleFilter })}
-                    style={{ minWidth: 150 }}
-                    inputProps={{ 'aria-label': t(`${SS}role.all`) }}
-                >
-                    <MenuItem value={eRoleFilter.All}>{t(`${SS}role.all`)}</MenuItem>
-                    <MenuItem value={eRoleFilter.Agent}>{t(`${SS}role.agent`)}</MenuItem>
-                    <MenuItem value={eRoleFilter.Supervisor}>{t(`${SS}role.supervisor`)}</MenuItem>
-                </TextField>
+                {/* RoleFilter dropdown REMOVED 2026-08-09. It was a search-text SCOPE ("search agent
+                    identity" vs "search supervisor value"), NOT a row filter — inert unless a search
+                    term was typed (SP 21_SendSearch_SearchSends_SP.sql:532 wraps its whole clause in
+                    `@Search IS NULL OR …`), so on an empty box it changed nothing and read as a broken
+                    control. Its options ("סוכן בלבד"/"מפקח בלבד") also duplicated, to the eye, the
+                    RowKind segmented control below ("סוכנים בלבד"/"מפקחים בלבד"). In this domain
+                    מפקח ≡ נמען-ריכוז, so RowKind already gives the agent/supervisor split the operator
+                    wants. `RoleFilter` stays in state at its default eRoleFilter.All (0) and is still
+                    sent to the SP unchanged, so text search now always spans BOTH agent and supervisor
+                    — the SP's own default. Nothing on the wire or in the SP changed. */}
 
                 <TextField
                     select
                     variant="outlined"
                     size="small"
+                    SelectProps={rtlSelectProps}
                     // -1 is the sentinel for "all campaigns": MUI's select cannot hold `null` as a
                     // value without falling back to the uncontrolled/empty rendering, and 0 is a
                     // legal-looking campaign id. Converted back to null on the way out.

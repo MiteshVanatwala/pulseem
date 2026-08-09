@@ -28,6 +28,7 @@ import {
 } from '@material-ui/core';
 import { Add, DeleteOutline, InfoOutlined } from '@material-ui/icons';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 import { SS } from '../../../Models/DataSources/SendSearch';
 import {
     SendSearchField,
@@ -56,6 +57,11 @@ const AdvancedFilterBuilder: React.FC<Props> = ({
     fields, rules, onRulesChange, sort, onSortChange, onApply, loading,
 }) => {
     const { t } = useTranslation();
+    // MUI Select portals its menu to document.body — outside App's inner <div dir> — and <html dir>
+    // is stuck "ltr", so the dropdown opens LTR. Force direction on the menu Paper, exactly as
+    // BusinessColumnsPicker (SmartSend) does. isRTL is the same redux source App uses for the body div.
+    const isRTL = useSelector((s: any) => s.core && s.core.isRTL);
+    const rtlSelectProps = { MenuProps: { PaperProps: { dir: isRTL ? 'rtl' : 'ltr' } } };
 
     // ── empty state ──────────────────────────────────────────────────────────────────────────
     // No searchable columns anywhere in scope. This is a legitimate configuration, not an error, so
@@ -156,6 +162,7 @@ const AdvancedFilterBuilder: React.FC<Props> = ({
                     select
                     variant="outlined"
                     size="small"
+                    SelectProps={rtlSelectProps}
                     label={t(`${SS}adv.field`)}
                     value={r.FieldKey}
                     onChange={onFieldChange(r)}
@@ -170,6 +177,7 @@ const AdvancedFilterBuilder: React.FC<Props> = ({
                     select
                     variant="outlined"
                     size="small"
+                    SelectProps={rtlSelectProps}
                     label={t(`${SS}adv.operator`)}
                     value={r.Operator}
                     onChange={onOperatorChange(r, f)}
@@ -245,6 +253,7 @@ const AdvancedFilterBuilder: React.FC<Props> = ({
                     select
                     variant="outlined"
                     size="small"
+                    SelectProps={rtlSelectProps}
                     label={t(`${SS}sort.label`)}
                     value={sort.FieldKey}
                     onChange={(e) => onSortChange({ ...sort, FieldKey: String(e.target.value) })}
@@ -259,6 +268,7 @@ const AdvancedFilterBuilder: React.FC<Props> = ({
                     select
                     variant="outlined"
                     size="small"
+                    SelectProps={rtlSelectProps}
                     label={t(`${SS}sort.dir`)}
                     value={sort.Dir}
                     disabled={!sort.FieldKey}
