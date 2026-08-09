@@ -61,9 +61,13 @@ const EmailPreviewDialog: React.FC<Props> = ({
             maxWidth="md"
             fullWidth
             aria-labelledby="sendsearch-preview-title"
-            // ~80vh, as specified. `PaperProps` rather than a class: this file may not add a
+            // Near-full-height (owner request, 2026-08-09). Sent HTML is often long, and 80vh
+            // clipped it more than it needed to; `calc(100vh - 64px)` keeps MUI's default 32px
+            // Paper margin top+bottom so the dialog fills the screen without overflowing it. The
+            // frame host below is flex:1 inside this Paper, so the iframe grows to the new height
+            // and scrolls internally. `PaperProps` rather than a class: this file may not add a
             // stylesheet, and the height has to reach the Paper, not the content.
-            PaperProps={{ style: { height: '80vh', maxHeight: '80vh' } }}
+            PaperProps={{ style: { height: 'calc(100vh - 64px)', maxHeight: 'calc(100vh - 64px)' } }}
         >
             <DialogTitle id="sendsearch-preview-title" disableTypography style={{ paddingBottom: 8 }}>
                 <Box style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
