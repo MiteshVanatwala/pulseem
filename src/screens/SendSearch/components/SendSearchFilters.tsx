@@ -118,8 +118,15 @@ const SendSearchFilters: React.FC<Props> = ({
     useEffect(() => { setText(value.SearchText); }, [value.SearchText]);
 
     const commitText = () => {
-        onChange({ SearchText: text.trim() });
-        onSearch();
+        // FIX 2026-08-09: fire ONE fetch per click, not two. onChange -> setFilters makes the
+        // `filters` effect in SendSearchPanel refetch on a committed change; calling onSearch()
+        // as well produced two identical POST /Search calls per "חפש"/Enter — which, under the
+        // (previously) named PK_Match constraint on #Match, also raced into "There is already an
+        // object named 'PK_Match'". onSearch() is only needed when the text did NOT change, so the
+        // effect will not fire on its own.
+        const next = text.trim();
+        if (next !== value.SearchText) onChange({ SearchText: next });
+        else onSearch();
     };
 
     // Dates are exchanged as ISO `yyyy-MM-dd` — the value shape a native date input uses and a shape
