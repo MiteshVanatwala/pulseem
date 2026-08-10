@@ -986,6 +986,10 @@ export const getManagmentStyle = (windowSize, isRTL, theme, IsPoland = false) =>
       flex: '0 0 88px',
       maxWidth: 88,
     },
+    ["@media screen and (max-width: 600px)"]: {
+      flex: '0 0 70px',
+      maxWidth: 70,
+    },
   },
 
   customDialog: {
