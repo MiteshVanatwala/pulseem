@@ -180,52 +180,6 @@
   background: transparent;
 }
 
-.svc-cb-dropdown-btn {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-width: 190px;
-  border: 1px solid #d0d5dd;
-  border-radius: 9px;
-  background: #fff;
-  padding: 9px 14px;
-  font-size: 13.5px;
-  font-weight: 600;
-  color: #101828;
-  font-family: inherit;
-  cursor: pointer;
-  transition: border-color 0.15s ease;
-}
-.svc-cb-dropdown-btn span {
-  flex: 1;
-  text-align: left;
-}
-.svc-cb-dropdown-btn:hover,
-.svc-cb-dropdown-btn:focus {
-  border-color: #2563eb;
-  outline: none;
-}
-.svc-cb-select-arrow {
-  color: #98a2b3;
-  flex: 0 0 auto;
-}
-.svc-cb-dropdown-menu .MuiMenuItem-root {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  min-width: 190px;
-  font-size: 13.5px;
-  font-family: inherit;
-}
-.svc-cb-dropdown-check {
-  color: #2563eb;
-}
-.svc-cb-dropdown-item-icon {
-  display: flex;
-  align-items: center;
-  color: #667085;
-}
 
 .svc-cb-stepper {
   display: flex;
@@ -280,34 +234,14 @@
   margin-top: 3px;
 }
 
-.svc-cb-flow {
-  position: relative;
-  padding-left: 26px;
+.svc-cb-flow-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
-.svc-cb-flow::before {
-  content: '';
-  position: absolute;
-  left: 7px;
-  top: 4px;
-  bottom: 10px;
-  width: 2px;
-  background: #e4e8ee;
-}
-.svc-cb-step {
-  position: relative;
-  margin-bottom: 16px;
-}
-.svc-cb-step::before {
-  content: '';
-  position: absolute;
-  left: -26px;
-  top: 22px;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: #fff;
-  border: 2px solid #2563eb;
-  box-shadow: 0 0 0 3px #fff;
+.svc-cb-flow-list-nested {
+  margin-top: 4px;
+  gap: 8px;
 }
 .svc-cb-step-card {
   background: #fff;
@@ -321,32 +255,127 @@
   border-color: #d0d5dd;
   box-shadow: 0 2px 8px rgba(16, 24, 40, 0.06);
 }
-.svc-cb-step-head {
+.svc-cb-step-row {
   display: flex;
-  justify-content: space-between;
   align-items: flex-start;
   gap: 10px;
 }
-.svc-cb-step-kind {
-  display: inline-flex;
+.svc-cb-step-row > *:first-child {
+  flex: 1;
+  min-width: 0;
+}
+.svc-cb-condition-head {
+  display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 10.5px;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.svc-cb-rule-if {
+  font-size: 13px;
+  font-weight: 600;
+  color: #101828;
+  flex: 0 0 auto;
+}
+.svc-cb-rule-keyword {
+  flex: 1 1 160px;
+  min-width: 120px;
+}
+
+.svc-cb-branch {
+  margin-top: 14px;
+  padding: 12px 14px;
+  border: 1px solid #16a34a;
+  border-inline-start: 3px solid #15803d;
+  background: #f6fef9;
+  border-radius: 8px;
+}
+.svc-cb-branch-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.svc-cb-branch-label {
+  font-size: 13.5px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  padding: 4px 10px;
+  color: #fff;
+  background: #15803d;
+  padding: 4px 12px;
   border-radius: 20px;
-  margin-bottom: 12px;
+  flex: 0 0 auto;
 }
-.svc-cb-kind-condition {
-  background: #fff4e6;
+.svc-cb-branch-label-else {
+  background: #475467;
+}
+.svc-cb-branch-else {
+  margin-top: 16px;
+  border-color: #667085;
+  border-inline-start-color: #475467;
+  background: #f9fafb;
+}
+
+/* Per-action-type accent, so the flow's action steps are recognizable at a glance. */
+.svc-cb-action-row {
+  border: 1px solid #d0d5dd;
+  border-inline-start: 4px solid transparent;
+  border-radius: 8px;
+  padding: 12px 14px;
+  background: #fff;
+}
+.svc-cb-accent-widget {
+  border-color: #2563eb;
+  border-inline-start-color: #1d4ed8;
+  background: #f5f9ff;
+}
+.svc-cb-accent-template {
+  border-color: #7c3aed;
+  border-inline-start-color: #6d28d9;
+  background: #faf9ff;
+}
+.svc-cb-accent-chat {
+  border-color: #16a34a;
+  border-inline-start-color: #15803d;
+  background: #f6fef9;
+}
+.svc-cb-accent-webhook {
+  border-color: #ea580c;
+  border-inline-start-color: #c2410c;
+  background: #fffaf5;
+}
+
+.svc-cb-add-row {
+  display: flex;
+  gap: 18px;
+  margin-top: 4px;
+}
+.svc-cb-add-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  padding: 4px 0;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+}
+.svc-cb-add-link:hover {
+  text-decoration: underline;
+}
+.svc-cb-add-link-condition {
   color: #b54708;
 }
-.svc-cb-kind-action {
-  background: #eef4ff;
-  color: #2c50c9;
+.svc-cb-add-link-action {
+  color: #2563eb;
 }
+.svc-cb-add-branch-link {
+  margin-top: 10px;
+  color: #16a34a;
+}
+
 .svc-cb-step-remove {
   display: inline-flex;
   align-items: center;
@@ -365,8 +394,11 @@
   background: #fef3f2;
   color: #b42318;
 }
+.svc-cb-step-remove-sm {
+  width: 20px;
+  height: 20px;
+}
 
-.svc-cb-select,
 .svc-cb-text-input,
 .svc-cb-textarea {
   width: 100%;
@@ -380,12 +412,10 @@
   box-sizing: border-box;
   transition: border-color 0.15s ease;
 }
-.svc-cb-select:hover,
 .svc-cb-text-input:hover,
 .svc-cb-textarea:hover {
   border-color: #98a2b3;
 }
-.svc-cb-select:focus,
 .svc-cb-text-input:focus,
 .svc-cb-textarea:focus {
   outline: none;
@@ -414,133 +444,13 @@
   margin-top: 8px;
 }
 
-.svc-cb-branches {
-  display: flex;
-  gap: 16px;
-  margin-top: 16px;
-  flex-wrap: wrap;
-}
-.svc-cb-branch {
-  flex: 1 1 240px;
-  border-radius: 12px;
-  padding: 14px 16px;
-}
-.svc-cb-branch-match {
-  background: #f6fef9;
-  border: 1px solid #d3f0e0;
-}
-.svc-cb-branch-nomatch {
-  background: #fef7f6;
-  border: 1px solid #f6dcd8;
-}
-.svc-cb-branch-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 8px;
-}
-.svc-cb-branch-label {
-  font-size: 10.5px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  margin-bottom: 10px;
-}
-.svc-cb-branch-label.match {
-  color: #16a34a;
-}
-.svc-cb-branch-label.nomatch {
-  color: #b42318;
-}
-
-.svc-cb-add-step {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  border: 1px dashed #d0d5dd;
-  border-radius: 9px;
-  padding: 10px 12px;
-  font-size: 12.5px;
-  font-weight: 600;
-  color: #667085;
-  text-align: center;
-  cursor: pointer;
-  margin-top: 8px;
-  background: transparent;
-  width: 100%;
-  font-family: inherit;
-  transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
-}
-.svc-cb-add-step:hover {
-  border-color: #2563eb;
-  color: #2563eb;
-  background: #f5f8ff;
-}
-.svc-cb-add-branch {
-  width: auto;
-  padding: 8px 14px;
-}
-
-.svc-cb-add-kind-menu {
-  display: flex;
-  gap: 12px;
-  margin-top: 8px;
-  flex-wrap: wrap;
-}
-.svc-cb-add-kind-option {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex: 1 1 220px;
-  border: 1px solid #eaecf0;
-  border-radius: 12px;
-  background: #fff;
-  padding: 14px 16px;
-  text-align: left;
-  cursor: pointer;
-  font-family: inherit;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
-}
-.svc-cb-add-kind-option:hover {
-  border-color: #2563eb;
-  box-shadow: 0 2px 8px rgba(16, 24, 40, 0.08);
-  transform: translateY(-1px);
-}
-.svc-cb-add-kind-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 38px;
-  height: 38px;
-  min-width: 38px;
-  border-radius: 10px;
-}
-.svc-cb-add-kind-condition .svc-cb-add-kind-icon {
-  background: #fff4e6;
-  color: #b54708;
-}
-.svc-cb-add-kind-action .svc-cb-add-kind-icon {
-  background: #eef4ff;
-  color: #2c50c9;
-}
-.svc-cb-add-kind-copy {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-.svc-cb-add-kind-title {
-  font-size: 13.5px;
-  font-weight: 700;
-  color: #101828;
-}
-.svc-cb-add-kind-desc {
-  font-size: 11.5px;
-  color: #667085;
-}
-
 /* ── Mobile / responsive ────────────────────────────────────────── */
-@media screen and (max-width: 768px) {
+/* Matches the app's own 'xs' breakpoint (theme.js: sm starts at 600px) so this
+   CSS-driven mobile layout never disagrees with ChatbotBuilder's `isMobile` flag
+   (windowSize === 'xs') — a mismatched band here previously let a MUI Grid's
+   spacing={8} negative-margin overflow slip through un-cancelled, which threw off
+   native <select> dropdown positioning on narrow screens. */
+@media screen and (max-width: 599px) {
   /* Cancel/Save footer stacks full-width, matching the wizard footer
      pattern used across the app's other create/edit screens. */
   .svc-cb .wizardButtonContainer {
@@ -572,9 +482,10 @@
     justify-content: flex-start;
     margin-top: 4px;
   }
-  .svc-cb-dropdown-btn {
+  .svc-cb-trigger-control .MuiFormControl-root {
     width: 100%;
-    min-width: 0;
+    min-width: 160px;
+    flex: 1 1 auto;
   }
   .svc-cb-cooldown-detail .svc-cb-trigger-row-icon {
     display: none;
@@ -583,24 +494,39 @@
   .svc-cb-step-card {
     padding: 14px;
   }
-  .svc-cb-flow {
-    padding-left: 20px;
-  }
-  .svc-cb-step::before {
-    left: -20px;
-  }
-  .svc-cb-branches {
-    gap: 12px;
-  }
   .svc-cb-branch {
-    flex: 1 1 100%;
+    padding-inline-start: 12px;
   }
-  .svc-cb-add-kind-option {
+  .svc-cb-step-row {
+    flex-wrap: wrap;
+  }
+  .svc-cb-step-row > *:first-child {
+    min-width: 160px;
+  }
+  .svc-cb-condition-head {
+    width: 100%;
+  }
+  .svc-cb-condition-head .MuiFormControl-root {
+    flex: 1 1 140px;
+    min-width: 140px;
+  }
+  .svc-cb-branch-head {
+    flex-wrap: wrap;
+  }
+  .svc-cb-rule-keyword {
     flex: 1 1 100%;
+    min-width: 140px;
+  }
+  .svc-cb-add-row {
+    flex-wrap: wrap;
+    gap: 10px 18px;
   }
 
   .svc-cb-field-row {
     gap: 14px;
+  }
+  .svc-cb-field {
+    flex-basis: 100%;
   }
 }
 

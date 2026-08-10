@@ -49,6 +49,9 @@ export interface IConditionStep {
   elseBranch: IFlowStep[]; // fallback when no branch's keyword matches
 }
 
+// A step is either a condition (which fans out into match branches + an else branch,
+// each holding their own nested steps) or a terminal-looking action that can still be
+// followed by another step in the same sequence — see IChatbotFlow.steps.
 export type IFlowStep = IConditionStep | IActionStep;
 
 export interface IChatbotFlow {

@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Menu, MenuItem } from '@material-ui/core';
-import { IoIosArrowDown, IoIosCheckmark } from 'react-icons/io';
+import { FormControl, Select } from '@material-ui/core';
+import { IoIosArrowDown } from 'react-icons/io';
 import { MdFlashOn, MdTimer } from 'react-icons/md';
 import { ChatbotTrigger } from '../../../../Models/Service/Chatbot';
 
@@ -10,7 +10,7 @@ interface TriggerSectionProps {
   cooldownEnabled: boolean;
   cooldownHours: number;
   onChange: (patch: Partial<{ trigger: ChatbotTrigger; cooldownEnabled: boolean; cooldownHours: number }>) => void;
-  classes?: any;
+  classes: any;
 }
 
 const OPTIONS: { value: ChatbotTrigger; label: string; key: string }[] = [
@@ -19,10 +19,8 @@ const OPTIONS: { value: ChatbotTrigger; label: string; key: string }[] = [
   { value: 'widget', label: 'Widget only', key: 'chatbot_trigger_widget' },
 ];
 
-const TriggerSection = ({ trigger, cooldownEnabled, cooldownHours, onChange }: TriggerSectionProps) => {
+const TriggerSection = ({ trigger, cooldownEnabled, cooldownHours, onChange, classes }: TriggerSectionProps) => {
   const { t } = useTranslation();
-  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-  const selected = OPTIONS.find((opt) => opt.value === trigger) ?? OPTIONS[0];
 
   return (
     <div className="svc-cb-trigger-card">
@@ -37,32 +35,22 @@ const TriggerSection = ({ trigger, cooldownEnabled, cooldownHours, onChange }: T
           </div>
         </div>
         <div className="svc-cb-trigger-control">
-          <button type="button" className="svc-cb-dropdown-btn" onClick={(e) => setAnchorEl(e.currentTarget)}>
-            <span>{t(selected.key, selected.label)}</span>
-            <IoIosArrowDown size={15} className="svc-cb-select-arrow" />
-          </button>
-          <Menu
-            anchorEl={anchorEl}
-            open={!!anchorEl}
-            onClose={() => setAnchorEl(null)}
-            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-            transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-            PaperProps={{ className: 'svc-cb-dropdown-menu' }}
-          >
-            {OPTIONS.map((opt) => (
-              <MenuItem
-                key={opt.value}
-                selected={opt.value === trigger}
-                onClick={() => {
-                  onChange({ trigger: opt.value });
-                  setAnchorEl(null);
-                }}
-              >
-                <span>{t(opt.key, opt.label)}</span>
-                {opt.value === trigger && <IoIosCheckmark size={20} className="svc-cb-dropdown-check" />}
-              </MenuItem>
-            ))}
-          </Menu>
+          <FormControl variant="standard" className={classes.selectInputFormControl}>
+            <Select
+              native
+              variant="standard"
+              value={trigger}
+              className={classes.pbt5}
+              onChange={(event: any) => onChange({ trigger: event.target.value })}
+              IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+            >
+              {OPTIONS.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {t(opt.key, opt.label)}
+                </option>
+              ))}
+            </Select>
+          </FormControl>
         </div>
       </div>
 

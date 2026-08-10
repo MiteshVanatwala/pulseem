@@ -45,10 +45,12 @@ const ChatbotBuilder = ({ classes }: { classes?: any }) => {
   const handleSave = () => {
     if (!flow.name.trim()) {
       setError(t('chatbot_error_name_required', 'Give this chatbot a name before saving.') as string);
+      setTabValue('1');
       return;
     }
     if (flow.steps.length === 0) {
       setError(t('chatbot_error_step_required', 'Add at least one step before saving.') as string);
+      setTabValue('2');
       return;
     }
     setError(null);
@@ -102,17 +104,20 @@ const ChatbotBuilder = ({ classes }: { classes?: any }) => {
           )}
 
           <TabContext value={tabValue}>
-            <TabPanel value="1">
+            <TabPanel value="1" className={classes.p0} style={{ paddingTop: 20 }}>
               <Grid
                 container
                 direction="row"
                 justifyContent="flex-start"
-                alignItems="center"
+                alignItems="flex-start"
                 spacing={isMobile ? 2 : 8}
-                className={clsx(classes.dialogButtonsContainer, classes.flexStart)}
+                className={classes.dialogButtonsContainer}
+                style={{ justifyContent: 'flex-start' }}
               >
                 <Grid item xs={12} sm={6} md={3} style={{ paddingBottom: isMobile ? 8 : 20 }}>
-                  <Typography className={classes.alignDir}>* {t('chatbot_name_label', 'Chatbot name')}</Typography>
+                  <Typography className={classes.alignDir}>
+                    {t('chatbot_name_label', 'Chatbot name')} <span style={{ color: 'red' }}>*</span>
+                  </Typography>
                   <TextField
                     id="chatbotName"
                     required
@@ -149,17 +154,21 @@ const ChatbotBuilder = ({ classes }: { classes?: any }) => {
               </div>
             </TabPanel>
 
-            <TabPanel value="2">
+            <TabPanel value="2" className={classes.p0}>
               <div className="svc-cb-flow-heading">
                 <div className="svc-cb-flow-heading-title">{t('chatbot_flow', 'Flow')}</div>
                 <div className="svc-cb-flow-heading-desc">
-                  {t('chatbot_flow_desc', 'Build the condition and action steps that run when this chatbot is triggered.')}
+                  {t(
+                    'chatbot_flow_desc',
+                    'Add a condition to branch on a keyword, or an action to reply directly. Each branch can keep going with more conditions or actions.',
+                  )}
                 </div>
               </div>
               <FlowBuilder
                 steps={flow.steps}
                 templates={MOCK_WA_TEMPLATES}
                 onChange={(steps) => setFlow({ ...flow, steps })}
+                classes={classes}
               />
             </TabPanel>
           </TabContext>
