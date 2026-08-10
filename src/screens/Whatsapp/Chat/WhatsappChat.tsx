@@ -160,6 +160,11 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 
 	// Always holds the latest fetchMoreContacts callback — avoids a forward-reference TS error
 	const fetchMoreContactsRef = useRef<((searchText: string, ChatStatus: number, isPaginationReset: boolean) => void) | null>(null);
+	// Always holds the latest setAPIInboundChatStatus callback so the polling loop below can call
+	// it without depending on its identity — activeChatContacts (one of its deps) gets a new
+	// object reference on unrelated updates (tag/status edits, sidebar refresh), and depending on
+	// it directly would tear down and restart the poll loop mid-request, resetting the cursors below.
+	const setAPIInboundChatStatusRef = useRef<(() => Promise<void>) | null>(null);
 	// Set to true before a background sidebar refresh so fetchMoreContacts skips the global loader
 	const suppressNextLoaderRef = useRef<boolean>(false);
 
@@ -756,6 +761,10 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		}
 	}, [activeChatContacts, activePhoneNumber, dispatch, ToastMessages, filterBySelected]);
 
+	useEffect(() => {
+		setAPIInboundChatStatusRef.current = setAPIInboundChatStatus;
+	}, [setAPIInboundChatStatus]);
+
 	const setAPIWhatsAppChatContacts = useCallback(
 		async (activeUser: string, isInitial: boolean = false, overrideAgentId?: number) => {
 			// Ensure mapping is built before loading contacts
@@ -1091,7 +1100,10 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	}, []);
 
 	useEffect(() => {
-		// Reset cursors whenever the active contact changes (setAPIInboundChatStatus is recreated on contact change)
+		// Reset cursors whenever the active contact actually changes. Deliberately keyed on the
+		// phone numbers, not on setAPIInboundChatStatus's identity — that callback is recreated on
+		// unrelated activeChatContacts updates (tag/status edits, sidebar refresh) which must NOT
+		// restart this loop or reset the cursors below.
 		lastCurrentChatMsgIdRef.current  = null;
 		lastAllChatsMsgIdRef.current     = null;
 		lastEchoMsgIdRef.current         = null;
@@ -1104,7 +1116,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 
 		const poll = async () => {
 			try {
-				await setAPIInboundChatStatus();
+				await setAPIInboundChatStatusRef.current?.();
 			} catch {
 				// errors are handled inside setAPIInboundChatStatus; loop must not break on failure
 			}
@@ -1122,7 +1134,8 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				clearTimeout(contactsRefreshDebounceRef.current);
 			}
 		};
-	}, [setAPIInboundChatStatus]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [activeChatContacts?.PhoneNumber, activePhoneNumber]);
 
 
 	useEffect(() => {
