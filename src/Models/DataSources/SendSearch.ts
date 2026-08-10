@@ -20,6 +20,9 @@
 // ═══════════════════════════════════════════════════════════════════════════════════════════
 
 import { eSendChannel } from './SmartSend';
+// From the NEUTRAL leaf module, never from './DataSource': DataSource.ts consumes `eFilterOperator`
+// (RowsFilter.Operator), so importing from it here would close a direct cycle.
+import { eDataType, eFilterOperator } from './DataSourceEnums';
 
 // i18n namespace prefix. The repo convention is one JSON namespace per file whose NAME prefixes
 // every key — `dataSourcesSlice.ts:175` uses 'DataSources.errors.generalError' for the file
@@ -236,6 +239,175 @@ const OK_ENGAGEMENT: readonly string[] = ['Opened', 'Clicked', 'Read', 'Replied'
 export const engagementTone = (state: string | null | undefined): StateTone =>
     (!!state && OK_ENGAGEMENT.indexOf(state) > -1) ? 'ok' : 'muted';
 
+// ═══════════════════════════════════════════════════════════════════════════════════════════
+// COLUMN FILTERS + SORT — the single home of the filter vocabulary (CONTRACT §2)
+// ═══════════════════════════════════════════════════════════════════════════════════════════
+// Same rule as the status vocabulary above (D10): NO component may carry its own map, switch or
+// lookup of "which operators does this data type allow" / "does this operator need a second value".
+// The moment two components each own a copy, one of them acquires an operator the SP will reject —
+// and the user finds out as a red error on a filter the UI itself offered them.
+//
+// `eFilterOperator` itself is NOT declared here any more — it lives in `./DataSourceEnums`, the
+// neutral leaf module, together with the reserved-value rationale for 4 and 10. It moved because
+// `DataSource.ts` declared a rival THREE-value copy of the same enum: identical wire values, so
+// nothing on the wire disagreed, but no file could import both and the old DataSources filter bar
+// imported the short one. It is re-exported from here unchanged, so every `from
+// '.../Models/DataSources/SendSearch'` import of it keeps working.
+export { eFilterOperator } from './DataSourceEnums';
+
+// Which operators a column of each type may offer, per CONTRACT §2 ("משפחות טיפוס"):
+//   NUMBER(2) → 1,5,6,7,8,9 · DATE(3) → 1,5,6,9 · TEXT(1)/EMAIL(4)/PHONE(5) → 1,2,3
+// DATE has no GTE/LTE on purpose: comparison is on `CAST(... AS date)` and `BETWEEN` is INCLUSIVE of
+// both ends (§2), so "on or after X" is already what `>= X` means at date granularity — offering a
+// second spelling of the same predicate is two ways to ask one question, and they must never differ.
+// TEXT/EMAIL/PHONE get no ordering operators: the indexed value is a string, and `>` on a string is
+// a collation question the user did not think they were asking.
+export const OPERATORS_BY_TYPE: { [dt: number]: readonly eFilterOperator[] } = {
+    [eDataType.TEXT]: [eFilterOperator.EQUALS, eFilterOperator.STARTS_WITH, eFilterOperator.CONTAINS],
+    [eDataType.NUMBER]: [eFilterOperator.EQUALS, eFilterOperator.GT, eFilterOperator.LT,
+        eFilterOperator.GTE, eFilterOperator.LTE, eFilterOperator.BETWEEN],
+    [eDataType.DATE]: [eFilterOperator.EQUALS, eFilterOperator.GT, eFilterOperator.LT, eFilterOperator.BETWEEN],
+    [eDataType.EMAIL]: [eFilterOperator.EQUALS, eFilterOperator.STARTS_WITH, eFilterOperator.CONTAINS],
+    [eDataType.PHONE]: [eFilterOperator.EQUALS, eFilterOperator.STARTS_WITH, eFilterOperator.CONTAINS],
+};
+
+// The lookup every component must use. Returns the TEXT family for an unknown/absent type rather
+// than an empty list: an unrecognised tinyint from the server is a server defect, and answering it
+// with "no operators at all" renders a filter row that cannot be completed and cannot be explained.
+// EQUALS/STARTS_WITH/CONTAINS are safe against any indexed value, so the degraded answer is still a
+// working filter. Never returns undefined — a caller holding `undefined.map` unmounts the bar.
+export const operatorsForType = (dt: eDataType | number | null | undefined): readonly eFilterOperator[] =>
+    OPERATORS_BY_TYPE[dt as number] ?? OPERATORS_BY_TYPE[eDataType.TEXT];
+
+// BETWEEN is the ONLY operator with a second value (`dbo.SendSearchFilterType.Value2` — "BETWEEN
+// בלבד", §2). Asked here rather than compared inline, so no component grows its own copy of the rule.
+export const operatorNeedsValue2 = (op: eFilterOperator): boolean => op === eFilterOperator.BETWEEN;
+
+// i18n key SUFFIX for an operator — the twin of `camelCaseState` above, and here for the same
+// reason: building `filter.op.` + a hand-written string in a component is how one cell renders a
+// translated label and the cell beside it renders the raw key. Namespace is `SS` (= 'SendSearch.'),
+// so the runtime key is `SendSearch.filter.op.between`.
+// An unknown operator resolves to 'unknown', which HAS a key — never to a blank chip.
+const OPERATOR_KEYS: { [op: number]: string } = {
+    [eFilterOperator.EQUALS]: 'equals',
+    [eFilterOperator.STARTS_WITH]: 'startsWith',
+    [eFilterOperator.CONTAINS]: 'contains',
+    [eFilterOperator.GT]: 'gt',
+    [eFilterOperator.LT]: 'lt',
+    [eFilterOperator.GTE]: 'gte',
+    [eFilterOperator.LTE]: 'lte',
+    [eFilterOperator.BETWEEN]: 'between',
+};
+export const operatorKey = (op: eFilterOperator | number | null | undefined): string =>
+    `${SS}filter.op.${OPERATOR_KEYS[op as number] ?? 'unknown'}`;
+
+// One filter clause, exactly the client-supplied columns of `dbo.SendSearchFilterType` (§2).
+// `FilterGroupID` is ABSENT on purpose: §2 says it is "מוקצה בשרת לפי סדר, לא ע\"י הלקוח" — the
+// server numbers the rows by their order in the list. A client-side group id would be a second
+// authority over grouping, and the two would disagree the first time a clause is removed.
+//
+// FIELD IDENTITY IS `SourceHeader`, never `ColumnID` (IDENTITY — changes on every upload, and an
+// IDOR handle) and never `ColumnKey` (`c1`,`c2` — POSITIONAL, so it silently re-points at a
+// different column when a source is re-uploaded with a different column order). §2.
+export interface SendSearchFilterClause {
+    FieldKey: string;            // = DataSourceColumns.SourceHeader
+    Operator: eFilterOperator;
+    Value1: string | null;
+    Value2: string | null;       // BETWEEN only; null for every other operator
+}
+
+// A field the user may filter or sort on — one entry per filterable `DataSourceColumns` row.
+// `DataType` drives `operatorsForType`; `DisplayName` is the operator-facing label (the SourceHeader
+// is the identity and can be a raw spreadsheet header, so it is NOT what gets rendered).
+export interface SendSearchFilterField {
+    FieldKey: string;            // = SourceHeader — the identity, sent back verbatim in the clause
+    DisplayName: string;
+    DataType: eDataType;
+    // ── COVERAGE PAIR — added 2026-08-08 (review R1-02). NOT decoration, and NOT optional. ──
+    // `dbo.DataSources_SearchSendsFilterCatalog` has always projected these and `SendSearchFilterField`
+    // in C# has always carried them; only this interface stopped at three members, so the numbers
+    // arrived at runtime and were then unreachable to every consumer.
+    //
+    // WHY THEY MUST BE HERE: the search spans several campaigns, and a column such as "מספר פוליסה"
+    // may exist in two of the four data sources behind them. Filtering on it drops EVERY row from the
+    // other two — the operator asked to narrow by a value and narrowed the POPULATION instead. The
+    // builder prints "חל על 2 מתוך 4 קמפיינים" from exactly this pair (`isPartialCoverage`,
+    // SendSearchAdvanced.ts:91). Declaring them required is what makes this type assignable to
+    // `SendSearchField`, which is the seam that was broken: the panel read a state key the slice
+    // never wrote, and a rename alone would have handed the builder a field with no coverage numbers
+    // — i.e. traded a visibly-dead feature for a silently-row-dropping one.
+    CampaignCount: number;
+    TotalCampaigns: number;
+    // Optional: the SP degrades a header whose DataType differs across versions to TEXT and raises
+    // this flag (B3 #57). Optional rather than required so a server deployed before the catalog SP
+    // simply leaves it undefined instead of breaking the mapping.
+    IsAmbiguousType?: boolean;
+}
+
+// One option in the multi-select campaign picker — result set [1] of
+// `dbo.DataSources_SearchSendsFilterCatalog` (51-CatalogSP-Campaigns.sql).
+//
+// It comes from the SAME `#Camp` set the field catalog is built from, which is the whole point: the
+// identical ownership predicate, the identical date window, and the identical "has actually sent"
+// filter. Every checkbox therefore corresponds to a campaign the grid can genuinely return rows for.
+//
+// This REPLACES a list the screen used to accumulate from whatever result rows happened to be loaded
+// (SendSearchPanel). That list could only ever hold campaigns from a page already fetched —
+// survivable for a single select, actively misleading under a search box, where "not found" would
+// mean "not loaded yet" and the user would conclude the campaign does not exist.
+export interface SendSearchCampaign {
+    CampaignID: number;
+    CampaignName: string;
+}
+
+// Response body of `GET api/SendSearch/FilterFields` — `PulseemResponse.Data`.
+//
+// 🔴 THIS SHAPE CHANGED. `Data` used to be a bare `SendSearchFilterField[]`. Both lists now ride on
+// ONE call because the catalog SP's `#Camp` prologue aggregates over `dbo.CampaignSendingLog`
+// (395,378,174 rows, verified on stage 2026-08-09) and a second endpoint would make every page load
+// pay it twice.
+//
+// Both members are optional HERE and only here: the server always sends both, but a client deployed
+// against an API that has not shipped yet would otherwise crash on `.map` of undefined. The slice
+// normalises them to `[]` at the boundary, so nothing downstream ever sees undefined.
+export interface SendSearchCatalogResult {
+    Fields?: SendSearchFilterField[];
+    Campaigns?: SendSearchCampaign[];
+}
+
+// Blank clause for a field. Value2 starts null even for BETWEEN: an empty second bound is not the
+// same claim as "no upper bound", and `isClauseComplete` below refuses to send a half-built range.
+export const newFilterClause = (f: SendSearchFilterField): SendSearchFilterClause => ({
+    FieldKey: f.FieldKey,
+    Operator: operatorsForType(f.DataType)[0],
+    Value1: null,
+    Value2: null,
+});
+
+// Is this clause safe to send? A clause with an empty Value1 would reach the SP as an empty-string
+// comparison, and `DataSourceRowSearchValues` does not index empty values (§2 / LEDGER #7) — so it
+// would silently match NOTHING and look exactly like "no recipient meets your filter". Half-built
+// clauses are therefore DROPPED at the projection boundary rather than sent, and the bar renders
+// them as incomplete instead. BETWEEN additionally requires both bounds, for the same reason.
+export const isClauseComplete = (c: SendSearchFilterClause): boolean => {
+    const v1 = (c.Value1 ?? '').trim();
+    if (v1.length === 0) return false;
+    if (!operatorNeedsValue2(c.Operator)) return true;
+    return (c.Value2 ?? '').trim().length > 0;
+};
+
+// ── sort (CONTRACT §2 "מיון") ────────────────────────────────────────────────────────────────
+// Direction is a BOOLEAN, not a 'ASC'|'DESC' string, and that is deliberate: it binds to a SQL `bit`
+// and therefore CANNOT carry an invalid value, so the SP needs no whitelist and there is no string
+// that could ever reach an ORDER BY. The sort FIELD is `SourceHeader` for the same reason the filter
+// field is (§2) — never ColumnID, never ColumnKey, never a column ordinal.
+//
+// `null` field = "no user sort" ⇒ the SP's default order. It is a third state, not `''`: an empty
+// string is a FieldKey that matches no column, which the server would have to reject.
+//
+// i18n suffix for the direction, so no component writes `desc ? 'יורד' : 'עולה'` inline.
+export const sortDirectionKey = (desc: boolean): string => `${SS}sort.${desc ? 'desc' : 'asc'}`;
+
 // ── DataSources_SearchSends → SendSearchRequest (mirror of CONTRACT §3.2) ────────────────────
 export interface SendSearchRequest {
     Channel: eSendChannel;          // default 1 (EMAIL) — the only wired channel in V1
@@ -243,11 +415,32 @@ export interface SendSearchRequest {
     RoleFilter: eRoleFilter;        // 0=all, 1=agent, 2=supervisor
     RowKind: eRowKind;              // 0=all, 1=agents, 2=rollup
     CampaignID: number | null;
+    // Multi-select campaign filter. Becomes the `dbo.ListOfIntegers` TVP server-side and is UNIONed
+    // with `CampaignID` above inside the SP's #CampFilter — the two are not alternatives to keep in
+    // sync. Always an array, never null, for the same reason `Filters` is: a missing property and an
+    // empty list must not be two ways to say "no campaign filter".
+    //
+    // ⚠️ WIRE NAME IS FROZEN: `CampaignIDs`, matching the C# member EXACTLY. Newtonsoft drops an
+    // unknown key on a REQUEST in SILENCE, so `CampaignIds` here would bind nothing: the server would
+    // see an empty list, return EVERY campaign, and the bar would still show N checkboxes ticked.
+    // No 400, no exception, no log — the same failure mode SortField/SortDescending documents below.
+    CampaignIDs: number[];
     DateFrom: string | null;        // ISO-8601; C# DateTime?
     DateTo: string | null;          // ISO-8601; C# DateTime?
     IncludeOverOneYear: boolean;
     PageIndex: number;
     PageSize: number;               // the SERVER clamps to 1..200 (§3.2) — the client must not rely on that
+    // Column filters — becomes the `dbo.SendSearchFilterType` TVP server-side, ONE ROW PER CLAUSE, in
+    // THIS ORDER: the server assigns `FilterGroupID` by position (§2). Always an array, never null:
+    // a missing property and an empty list must not be two ways to say "no filters".
+    Filters: SendSearchFilterClause[];
+    // null = no user sort ⇒ the SP's default order. Never '' (see the sort note above).
+    // ⚠️ WIRE NAMES ARE FROZEN: `SortField` / `SortDescending` (ORCHESTRATOR AMENDMENT 2026-08-06).
+    // They must match the C# DTO member names EXACTLY — Newtonsoft drops an unknown JSON key in
+    // SILENCE, so a misspelling here binds nothing server-side: the grid renders the SP's default
+    // order while the UI header shows a sort that is not happening. No 400, no exception, no log.
+    SortField: string | null;
+    SortDescending: boolean;        // binds to a SQL bit — cannot carry an out-of-domain value
 }
 
 // ── one report row (mirror of CONTRACT §3.2 SendSearchRow, field-for-field) ──────────────────
@@ -287,6 +480,34 @@ export interface SendSearchRow {
     // Added so the drawer can ask GET api/SendSearch/RowValues what this person actually received —
     // without it the row identifies a PERSON on screen but nothing the server can key on.
     ClientID: number;
+    // The value this row was SORTED BY, already formatted for display by the server (§2: "SortValueDisplay
+    // חובה ב-RS1 + MapRow + שני מודלי השורה + ה-stub של ערוץ≠1").
+    //
+    // Server-formatted rather than client-formatted on purpose: the sort ORDER was decided by
+    // `SortNum`/`SortDate` on the server, so a client that re-derived the label from the raw text
+    // could print a value that disagrees with the position the row is in — a number rendered with a
+    // thousands separator the sort did not use, or a date parsed in the wrong locale. One authority.
+    //
+    // `string | null` because the C# member is a `string` (reference type) and the row may genuinely
+    // have no value in the sorted column — which is what `SortIsUnknown` marks server-side (§2).
+    // null must stay distinguishable from '' : "no value in this column" is not "the empty string".
+    SortValueDisplay: string | null;
+    // ── §1: the email preview. NOT an endpoint and NOT a thunk — the whole preview contract is this
+    // ONE field. The server builds an encrypted `PreviewCampaign.aspx?id=…&noTrack=1` URL and the
+    // client drops it into an iframe; there is nothing for the client to compute or decide.
+    //
+    // `null` is a FIRST-CLASS value and means "the button is DISABLED", not "we failed to build it".
+    // The server returns null whenever the preview would be a lie: a non-email channel, a missing
+    // ChannelCampaignID, and — critically — `ClientID <= 0` (§1.1: an id carrying CampaignID WITHOUT
+    // clientid does not throw, it renders a plausible-looking GENERIC campaign that is not this
+    // agent's data). Until script 23 runs, `ClientID` is 0 for every row, so this is null for every
+    // row and every preview button is disabled. THAT IS THE CORRECT BEHAVIOUR, not a bug (§1.1).
+    // The client must therefore never synthesise a URL of its own when this is null.
+    //
+    // LAST member, with SortValueDisplay immediately before it — the same order as the C# model
+    // (LEDGER #22, B1). TS interface order is not load-bearing, but a reader diffing the two shapes
+    // must not have to decide whether a difference in order means a difference in contract.
+    PreviewUrl: string | null;
 }
 
 export interface SendSearchResponse {
@@ -346,13 +567,48 @@ export interface SendSearchFilters {
     SearchText: string;
     RoleFilter: eRoleFilter;
     RowKind: eRowKind;
+    // BOTH are kept, and that is not redundancy. `CampaignID` stays because it is part of the frozen
+    // §3.2 body and the SP still honours it; `CampaignIDs` is what the checkbox picker writes. The SP
+    // unions them, so a screen that sets only one behaves identically to before.
     CampaignID: number | null;
+    CampaignIDs: number[];
     DateFrom: string | null;
     DateTo: string | null;
     IncludeOverOneYear: boolean;
     PageIndex: number;
     PageSize: number;
+    // The clauses AS EDITED, including half-built ones — this object is "what is on screen", and a
+    // clause the user is still typing into is on screen. `toSendSearchRequest` is what drops the
+    // incomplete ones; storing only complete clauses here would make the bar unable to render a row
+    // being edited, which is the only reason a filter bar has rows at all.
+    Filters: SendSearchFilterClause[];
+    // Same two names as the wire request (ORCHESTRATOR AMENDMENT 2026-08-06). The state shape and the
+    // wire shape deliberately share one spelling per concept so a reader never has to ask which
+    // spelling a given site wants.
+    SortField: string | null;
+    SortDescending: boolean;
 }
+
+/**
+ * A date-only "to" value the user picked, turned into the EXCLUSIVE upper bound the SP expects.
+ *
+ * `dbo.DataSources_SearchSends` filters with `csl.[TimeStamp] < @prm_DateTo`, so an inclusive
+ * calendar day has to travel as midnight of the NEXT day. Review R1-04.
+ *
+ * Returns the input unchanged when it is null/empty (the SP then defaults @prm_DateTo to GETDATE(),
+ * which is already inclusive of everything sent so far) or when it is not a bare `yyyy-MM-dd` —
+ * a value that already carries a time component is a caller that knows what it is doing, and
+ * shifting it again would move the bound by a day for no reason.
+ */
+export const exclusiveUpperBound = (dateOnly: string | null): string | null => {
+    if (!dateOnly || !/^\d{4}-\d{2}-\d{2}$/.test(dateOnly)) return dateOnly;
+    const parts = dateOnly.split('-');
+    // UTC arithmetic on purpose: Date.UTC + toISOString never shifts the calendar day through the
+    // browser's timezone, which a local-time Date would do for every user east or west of the server.
+    const d = new Date(Date.UTC(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2])));
+    d.setUTCDate(d.getUTCDate() + 1);
+    return d.toISOString().slice(0, 10);
+};
 
 export const DEFAULT_PAGE_SIZE = 50;          // CONTRACT §2.2 @prm_PageSize default
 export const MAX_PAGE_SIZE = 200;             // server clamp (§3.2) — mirrored so the UI cannot ask for more
@@ -364,11 +620,15 @@ export const defaultSendSearchFilters = (): SendSearchFilters => ({
     RoleFilter: eRoleFilter.All,
     RowKind: eRowKind.All,
     CampaignID: null,
+    CampaignIDs: [],                           // empty = all campaigns; never null (see the interface)
     DateFrom: null,
     DateTo: null,
     IncludeOverOneYear: false,
     PageIndex: 0,                              // the SP is 0-based (§2.2 @prm_PageIndex int = 0)
     PageSize: DEFAULT_PAGE_SIZE,
+    Filters: [],
+    SortField: null,                           // no user sort ⇒ the SP's own default order
+    SortDescending: false,
 });
 
 // Pure projection filters → wire request. Empty text is sent as NULL, not '' — the SP's
@@ -376,17 +636,58 @@ export const defaultSendSearchFilters = (): SendSearchFilters => ({
 export const toSendSearchRequest = (f: SendSearchFilters): SendSearchRequest => {
     const text = (f.SearchText || '').trim();
     const size = Math.min(Math.max(f.PageSize, 1), MAX_PAGE_SIZE);
+    // Only COMPLETE clauses cross the wire (see `isClauseComplete`): an empty Value1 would reach the
+    // SP as a comparison against '', which `DataSourceRowSearchValues` never indexes, so it would
+    // match nothing and be indistinguishable on screen from "no recipient meets your filter".
+    // Values are trimmed and non-BETWEEN clauses have Value2 forced to null, so the TVP never carries
+    // a stale second bound left behind by switching an operator away from BETWEEN.
+    const clauses: SendSearchFilterClause[] = (f.Filters || []).filter(isClauseComplete).map(c => ({
+        FieldKey: c.FieldKey,
+        Operator: c.Operator,
+        Value1: (c.Value1 ?? '').trim(),
+        Value2: operatorNeedsValue2(c.Operator) ? (c.Value2 ?? '').trim() : null,
+    }));
+    // '' is normalised to null for the same reason SearchText is: '' is a FieldKey that matches no
+    // column, and the server would have to reject it; null is the legitimate "no sort" state.
+    const sortKey = (f.SortField ?? '').trim();
     return {
         Channel: f.Channel,
         SearchText: text.length > 0 ? text : null,
         RoleFilter: f.RoleFilter,
         RowKind: f.RowKind,
         CampaignID: f.CampaignID,
+        // De-duplicated and stripped of anything <= 0 HERE, at the wire boundary, on top of the same
+        // cleaning in SendSearchLogic and in the SP's #CampFilter. Three layers is deliberate: a
+        // duplicate id reaching #Camp is a PRIMARY KEY violation, i.e. a 500 on every search — the
+        // same failure class as the PK_Match incident, and this screen has a proven history of
+        // double-dispatching. `filter(Boolean)`-style checks are avoided because 0 is a legal-looking
+        // id that must be dropped, and `Boolean(0)` and `Boolean(null)` are indistinguishable.
+        CampaignIDs: (f.CampaignIDs || [])
+            .filter((id) => typeof id === 'number' && id > 0)
+            .filter((id, i, arr) => arr.indexOf(id) === i),
         DateFrom: f.DateFrom,
-        DateTo: f.DateTo,
+        // 🔴 FIXED 2026-08-08 (review R1-04). The picker yields a DATE-ONLY ISO string ("2026-08-08",
+        // SendSearchFilters.tsx:120-125), Newtonsoft binds it as 2026-08-08T00:00:00, and the SP's
+        // predicate is HALF-OPEN: `AND csl.[TimeStamp] < @prm_DateTo` (DataSources_SearchSends:384).
+        // So choosing "עד 08/08/2026" silently dropped EVERY send made on 8 August — out of the grid,
+        // out of TotalCount and out of the export — while the chip still read "until 08/08/2026".
+        // Picking today as the end date is the most natural thing an auditor does, so this fired
+        // constantly and looked like nothing.
+        //
+        // Converted to an EXCLUSIVE upper bound here, at the wire boundary, rather than by changing
+        // the SP to `<=`: the predicate is shared by every tenant on this platform and by the
+        // catalog SP, and widening it there would silently change what every existing saved search
+        // returns for everyone. The state keeps the date the user actually picked, so the input and
+        // the chip still render it — only the value on the wire is shifted.
+        DateTo: exclusiveUpperBound(f.DateTo),
         IncludeOverOneYear: f.IncludeOverOneYear,
         PageIndex: Math.max(f.PageIndex, 0),
         PageSize: size,
+        Filters: clauses,
+        SortField: sortKey.length > 0 ? sortKey : null,
+        // A direction with no field is meaningless; forced false so two "no sort" requests are
+        // byte-identical and cannot look like two different sorts to a cache or a log.
+        SortDescending: sortKey.length > 0 ? !!f.SortDescending : false,
     };
 };
 

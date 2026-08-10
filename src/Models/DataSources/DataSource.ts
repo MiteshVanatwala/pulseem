@@ -2,6 +2,23 @@
 // Property names are 1:1 case-sensitive aliases of the SP resultset columns
 // (see DataSources-DB-MasterPlan §7½ and the Implementation Plan §4).
 
+// `eDataType` and `eFilterOperator` USED to be declared here. They now live in the neutral leaf
+// module `./DataSourceEnums`, because `SendSearch.ts` needs both and already imports from this file
+// — declaring `eFilterOperator` in both places meant no file could import both, and the copy here
+// was the SHORT (1/2/3) one, which is why `FiltersBar.tsx` could never see GT/LT/BETWEEN.
+// Importing them from `SendSearch.ts` instead would have made a direct cycle
+// (SendSearch → DataSource → SendSearch), so the shared vocabulary went DOWN, not sideways.
+//
+// They are RE-EXPORTED verbatim so that every existing consumer of
+// `Models/DataSources/DataSource` keeps compiling unchanged. New code should import from
+// `./DataSourceEnums` directly.
+//
+// ⚠️ `eFilterOperator` is now the EIGHT-value union of what the family understands. `RowsFilter`
+// below still travels to `dbo.DataSources_GetRows`, which whitelists 1/2/3 ONLY — see
+// `GET_ROWS_OPERATORS` in DataSourceEnums.ts. Widening the enum did NOT widen that contract.
+import { eDataType, eFilterOperator } from './DataSourceEnums';
+export { eDataType, eFilterOperator, GET_ROWS_OPERATORS } from './DataSourceEnums';
+
 export enum eDataSourceStatus {
     PENDING = 0,
     PROCESSING = 1,
@@ -15,14 +32,6 @@ export enum eMatchType {
     MATCHED = 1,
     CREATED = 2,
     NOT_FOUND = 3
-}
-
-export enum eDataType {
-    TEXT = 1,
-    NUMBER = 2,
-    DATE = 3,
-    EMAIL = 4,
-    PHONE = 5
 }
 
 export enum eFormatHint {
@@ -121,12 +130,33 @@ export const CLIENT_FIELD_CATALOGUE: ClientFieldOption[] = [
     { Id: eClientField.BIRTH_DATE, LabelKey: 'birthDate', MaxLength: null, IsDate: true,  Group: 'recipient' }
 ];
 
-// Free-text filter operator (whitelist enforced server-side): equals / startsWith / contains.
-export enum eFilterOperator {
-    EQUALS = 1,
-    STARTS_WITH = 2,
-    CONTAINS = 3
-}
+/**
+ * The other half of the catalogue: the account's OWN names for its extra-field slots, as served by
+ * `GET Account/GetExtraFields` (dbo.AccountExtraFields, one row per main account — so every
+ * sub-account of a customer sees the same names).
+ *
+ * A blank label is skipped, never offered. That is the contract `ClientFieldOption.AccountLabel`
+ * already documents: an unnamed slot means the account never assigned it a meaning, and offering a
+ * bare "ExtraField7" asks the operator to map a column onto something nobody can identify.
+ *
+ * Ids are positional, matching the eClientField blocks: ExtraField<n> => 100+n, ExtraDate<n> =>
+ * 200+n. MaxLength 1000 mirrors dbo.ClientExtraData.ExtraField1..13 nvarchar(1000); the four
+ * ExtraDate columns are datetime, hence null.
+ */
+export const buildAccountExtraFieldOptions = (labels: any): ClientFieldOption[] => {
+    if (!labels) return [];
+    const named = (key: string) => String(labels[key] ?? '').trim();
+    const options: ClientFieldOption[] = [];
+    for (let n = 1; n <= 13; n++) {
+        const label = named(`ExtraField${n}`);
+        if (label) options.push({ Id: (100 + n) as eClientField, AccountLabel: label, MaxLength: 1000, IsDate: false, Group: 'extraField' });
+    }
+    for (let n = 1; n <= 4; n++) {
+        const label = named(`ExtraDate${n}`);
+        if (label) options.push({ Id: (200 + n) as eClientField, AccountLabel: label, MaxLength: null, IsDate: true, Group: 'extraDate' });
+    }
+    return options;
+};
 
 // Aligned to DB §7½ GetMany resultset (dual per-channel resolve). `DataSourceVersionID` is the
 // active version's id (Get RS1 calls the same concept `ActiveVersionID`).
@@ -195,6 +225,36 @@ export interface DataSourceColumn {
     FormatHint: eFormatHint;
     SemanticRole: eSemanticRole;
     IsSearchable: boolean;
+    /**
+     * Display-only: group the integer part of a NUMBER column with thousands separators.
+     * Mirrors dbo.DataSourceColumns.ShowThousandsSeparator BIT NOT NULL DEFAULT 1, so it is ON
+     * unless the user turned it off. LAST member on purpose — see UploadColumnDef below.
+     * A version saved before the column existed reads back as `undefined`, which is why every
+     * consumer tests `!== false` and never `!flag` (formatValue.ts).
+     */
+    ShowThousandsSeparator: boolean;
+}
+
+/**
+ * The result of typing ONE column from a sample of its values (columnTypeDetect.ts).
+ *
+ * It carries the EVIDENCE, not just the verdict, because the type control has to be able to answer
+ * "why did you pick this?" with the user's own data: `matched` of `total` non-empty sampled cells
+ * fit `type`, and `samples` are up to three of those actual values. A verdict with no evidence is
+ * indistinguishable from a guess, and the user has no way to judge whether to override it.
+ *
+ * total === 0 means "no non-empty value was sampled" — that is NOT the same as 100% confidence in
+ * TEXT, and the UI must render it differently.
+ */
+export interface ColumnDetection {
+    type: eDataType;
+    /** 0-100, share of the NON-EMPTY sampled cells that fit `type`. 0 when total === 0. */
+    confidence: number;
+    matched: number;
+    /** Non-empty sampled cells. Blank cells are excluded from the denominator, not counted as misses. */
+    total: number;
+    /** Up to 3 REAL values from the user's own file — never invented examples. */
+    samples: string[];
 }
 
 // Aligned to DB §7½ Get RS3 (version history).
@@ -241,6 +301,13 @@ export interface UploadColumnDef {
      * may only ever be added at the end and existing members may never be reordered or removed.
      */
     ClientFieldTarget?: eClientField | null;
+    /**
+     * Display-only flag for NUMBER columns; meaningless (and always sent as true) for every other
+     * type. Appended AFTER ClientFieldTarget for the same reason ClientFieldTarget was appended
+     * last: dbo.DataSourceColumnType binds by column ORDER, so a new member may only ever go at the
+     * end and existing members may never be reordered or removed.
+     */
+    ShowThousandsSeparator?: boolean;
 }
 
 export interface RowsFilter {
@@ -279,6 +346,9 @@ export interface UpdateColumnMetaRequest {
     DataType: eDataType;
     FormatHint: eFormatHint;
     IsSearchable: boolean;
+    /** LAST member — the request is bound positionally on the way to the SP. Optional so a caller
+     *  written before the flag existed still compiles and still means "leave it at the default". */
+    ShowThousandsSeparator?: boolean;
 }
 
 export interface ExportRequest {

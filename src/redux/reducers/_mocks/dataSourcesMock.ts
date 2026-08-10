@@ -27,11 +27,11 @@
 
 import {
     eDataSourceStatus,
-    eDataType,
     eFormatHint,
     eMatchType,
     eSemanticRole
 } from '../../../Models/DataSources/DataSource';
+import { eDataType } from '../../../Models/DataSources/DataSourceEnums';
 
 // ── columns: one of every type + format, edited display names, he/en headers ──
 const richColumns = [

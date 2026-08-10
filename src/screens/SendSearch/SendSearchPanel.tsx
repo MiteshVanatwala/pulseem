@@ -17,14 +17,14 @@
 //     passes showTitle so it keeps its own heading.
 // ═══════════════════════════════════════════════════════════════════════════════════════════
 
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Box, Button, Typography } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import { Loader } from '../../components/Loader/Loader';
 import InlineBanner from '../SmartSend/components/InlineBanner';
 import {
-    searchSends, getSendProvenance, getSendRowValues,
+    searchSends, getSendProvenance, getSendRowValues, getSendSearchFilterFields,
     setFilters, setPageIndex, setPageSize, clearFilters,
     pushDrawer, popDrawer, closeDrawer,
 } from '../../redux/reducers/sendSearchSlice';
@@ -39,6 +39,14 @@ import {
     toSendSearchRequest,
 } from '../../Models/DataSources/SendSearch';
 import SendSearchFiltersBar, { CampaignOption } from './components/SendSearchFilters';
+import {
+    SendSearchField,
+    SendSearchFilterRule,
+    SendSearchSort,
+    completeRules,
+    defaultSendSearchSort,
+    fieldByKey,
+} from './components/SendSearchAdvanced';
 import SendSearchTable from './components/SendSearchTable';
 import AgentDrawer from './components/AgentDrawer';
 import RollupDrawer from './components/RollupDrawer';
@@ -61,36 +69,158 @@ const SendSearchPanel: React.FC<Props> = ({ showTitle }) => {
     const items: SendSearchRow[] = sendSearch.items ?? [];
     const drawerStack: DrawerEntry[] = sendSearch.drawerStack ?? [];
 
+    // ── advanced filters + sort (CONTRACT §2) ────────────────────────────────────────────────
+    // Held HERE and not in the slice, deliberately and temporarily: `sendSearchSlice.ts` and
+    // `SendSearchFilters` (the state type) belong to B4, and CONTRACT §3 gives a file exactly one
+    // owner. Local state keeps this screen compiling and behaving correctly on its own; when B4's
+    // slice fields land, these three lines move into `useSelector` and NOTHING else in this file or
+    // in the two components below changes, because the shapes are the same. Recorded in LEDGER.
+    //
+    // 🔴 FIXED 2026-08-08 (review R1-02). This read was `sendSearch.searchableFields`, a key the
+    // reducer NEVER writes — the slice's field list is `filterFields` (sendSearchSlice.ts:88, :186,
+    // :466). The selector above is `(state: any)`, so tsc could not see it; `?? []` then yielded an
+    // empty array for the life of the session, `advAvailable` (SendSearchFilters.tsx:98) was
+    // permanently false, "עוד מסננים" was permanently disabled, and `AdvancedFilterBuilder` was never
+    // mounted at all (:302). The whole client half of CONTRACT §2 was inert on a live audit screen.
+    //
+    // The comment that stood here claimed the empty array was "§2's correct degrade, not a bug" —
+    // it pre-labelled the broken state as intentional, which is why three reviews walked past it.
+    // The premise was false: the server projects the list fine; the CLIENT was reading the wrong key.
+    const searchableFields: SendSearchField[] = sendSearch.filterFields ?? [];
+    const [advRules, setAdvRules] = useState<SendSearchFilterRule[]>([]);
+    const [advSort, setAdvSort] = useState<SendSearchSort>(defaultSendSearchSort());
+
+    // A REF beside the state, read by `buildRequest`. The chips fire `onRulesChange` and `onSearch`
+    // in the same handler; reading `advRules` there would send the value from BEFORE the removal —
+    // the grid would come back still narrowed by a rule the user just deleted, which is worse than
+    // not refetching at all. The ref is written synchronously, so the request is never one render
+    // behind what is on screen.
+    const advRef = useRef<{ rules: SendSearchFilterRule[]; sort: SendSearchSort }>({
+        rules: [], sort: defaultSendSearchSort(),
+    });
+
+    const setRules = (next: SendSearchFilterRule[]) => { advRef.current.rules = next; setAdvRules(next); };
+    const setSort = (next: SendSearchSort) => { advRef.current.sort = next; setAdvSort(next); };
+
+    // The wire request. The advanced parts are appended to the frozen §3.2 body; the cast is on the
+    // OBJECT and not on the individual fields so that the base projection stays type-checked, and it
+    // exists only because `SendSearchRequest` is B4's to extend. Incomplete rules are dropped by
+    // `completeRules` — never sent with a blank value, which a CONTAINS would read as "match all".
+    // `FilterGroupID` is NOT sent: CONTRACT §2 says the SERVER assigns it by order.
+    const buildRequest = () => {
+        const rules = completeRules(advRef.current.rules, searchableFields);
+        const sort = advRef.current.sort;
+        return {
+            ...toSendSearchRequest(filters),
+            Filters: rules.map((r) => ({
+                FieldKey: r.FieldKey,
+                Operator: r.Operator,
+                Value1: r.Value1,
+                // Value2 is BETWEEN-only; '' would bind an empty nvarchar where the TVP wants NULL.
+                Value2: (r.Value2 || '').trim() === '' ? null : r.Value2,
+            })),
+            // FROZEN WIRE NAMES (ORCHESTRATOR AMENDMENT 2026-08-06): `SortField` / `SortDescending`,
+            // matching the C# DTO member-for-member. This object is cast `as any` below, so tsc CANNOT
+            // catch a misspelling here — and Newtonsoft drops an unknown key without a word, which is
+            // exactly how the header showed a sort the grid was not performing.
+            SortField: sort.FieldKey ? sort.FieldKey : null,
+            SortDescending: sort.Dir === 'desc',
+        } as any;
+    };
+
+    // The grid header for the sort column: the field's DISPLAY name, or null when unsorted (which
+    // is what hides the column entirely).
+    const sortFieldLabel: string | null = advSort.FieldKey
+        ? ((fieldByKey(searchableFields, advSort.FieldKey)?.DisplayName) || advSort.FieldKey)
+        : null;
+
     // One fetch per committed filter object. The free-text box is local state inside the filter bar
     // until "חפש"/Enter commits it, so typing never fires a request; every OTHER control commits
     // immediately, which is what the mock does (its selects call applyF() directly).
+    // NOTE the dependency list: `filters` ONLY. The advanced rules are deliberately NOT here — a
+    // rule is applied by "החל מסננים" (or by deleting its chip), not on every keystroke inside a
+    // value box, which would fire a search per character and show the user results for a prefix of
+    // the number they are typing.
     useEffect(() => {
-        dispatch(searchSends(toSendSearchRequest(filters)));
+        dispatch(searchSends(buildRequest()));
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [dispatch, filters]);
 
-    // Campaign dropdown options. §3.3 defines no campaign-list endpoint, so the options are the
-    // distinct campaigns present in the CURRENT result set. Consequence, stated plainly: the list can
-    // only offer campaigns the user can already see rows for. That is a smaller promise than a full
-    // campaign list, and it is a promise this screen can keep without inventing API surface.
-    const campaigns: CampaignOption[] = useMemo(() => {
-        const seen: { [id: number]: boolean } = {};
-        const out: CampaignOption[] = [];
-        items.forEach((r) => {
-            if (!seen[r.ChannelCampaignID]) {
-                seen[r.ChannelCampaignID] = true;
-                out.push({ CampaignID: r.ChannelCampaignID, CampaignName: r.CampaignName });
-            }
-        });
-        return out;
-    }, [items]);
+    // 🔴 ADDED 2026-08-08 (review R1-03). `getSendSearchFilterFields` was defined, exported and had
+    // all three extraReducer cases wired (sendSearchSlice.ts:155, :443, :455, :474) — and NOTHING in
+    // the entire tree ever dispatched it. `GET api/SendSearch/FilterFields` was therefore never
+    // issued by the browser (confirmed on staging: the request is absent from the Network tab, not
+    // failing — absent), so `filterFields` stayed `[]` for the whole session.
+    //
+    // This is the SECOND of two stacked breaks: repointing the selector at `filterFields` (above)
+    // fixes nothing on its own, because the array it now reads was never populated.
+    //
+    // 🔴 RE-KEYED 2026-08-09 (multi-campaign). This was keyed on the CHANNEL alone, on the argument
+    // that the catalog "cannot change" within a channel. That argument was wrong, and the campaign
+    // picker is what made it visible.
+    //
+    // The catalog SP takes @prm_DateFrom / @prm_DateTo / @prm_IncludeOverOneYear and scopes its
+    // #Camp by them. A channel-only call therefore always describes the SP's default window — the
+    // last twelve months — no matter what dates are on screen. Two consequences:
+    //   • the campaign picker would offer only the last year's campaigns, so ticking "כלול חיפוש
+    //     שליחות מעל שנה" would fill the GRID with older sends the PICKER could not name;
+    //   • the field list had the same defect already, quietly: the columns offered were the
+    //     last-12-months set even when the user had chosen a narrower or wider range.
+    //
+    // The cost is one request per committed date change. Dates are COMMITTED filters, not
+    // keystrokes — the same standard that lets them refetch the grid — so this is one request per
+    // deliberate user action, not per character. The slice's `filterFieldsReqId` stale-guard already
+    // orders the responses, which is what makes a chattier key safe.
+    //
+    // NOT keyed on the campaign selection, and that is the one exclusion that matters: the picker's
+    // options must never be narrowed by the picker's own selection. That is precisely the
+    // self-narrowing failure the deleted client-side catalog had.
+    useEffect(() => {
+        dispatch(getSendSearchFilterFields({
+            channel: filters.Channel,
+            dateFrom: filters.DateFrom,
+            dateTo: filters.DateTo,
+            includeOverOneYear: filters.IncludeOverOneYear,
+        }));
+    }, [dispatch, filters.Channel, filters.DateFrom, filters.DateTo, filters.IncludeOverOneYear]);
+
+    // ── campaign picker options ───────────────────────────────────────────────────────────────
+    // 🔴 REPLACED 2026-08-09 (multi-campaign). This was ~70 lines of client-side accumulation: the
+    // options were the distinct campaigns found in RESULT ROWS, merged into a growing catalog, with
+    // a second effect resetting it whenever the search scope changed. All of it is deleted.
+    //
+    // It existed only because §3.3 defined no campaign-list endpoint. There is one now — result set
+    // [1] of dbo.DataSources_SearchSendsFilterCatalog (51-CatalogSP-Campaigns.sql), built from the
+    // SAME #Camp set the field catalog uses, so every option is a campaign the grid can genuinely
+    // return rows for.
+    //
+    // The deleted code had two documented completeness ceilings that no amount of client cleverness
+    // could close: a campaign living only on an unvisited PAGE was unknown, and changing scope while
+    // filtered to one campaign could only ever reveal that one campaign. Both were survivable for a
+    // single-select. Neither survives a SEARCH BOX: the user types a campaign name, gets "not
+    // found", and concludes the campaign does not exist — when the truth is that its page was never
+    // fetched. That is a confident falsehood on an audit screen, which is the one thing this screen
+    // is built not to produce. Deleting the accumulation is what makes the search box honest.
+    //
+    // Kept deliberately as a plain read with no fallback to the old behaviour: a half-list that
+    // LOOKS complete is worse than an empty picker that says it could not load. `campaignsError`
+    // carries that distinction to the bar.
+    const campaigns: CampaignOption[] = sendSearch.campaigns ?? [];
 
     const hasFilter = !!filters.SearchText
         || filters.RoleFilter !== eRoleFilter.All
         || filters.RowKind !== eRowKind.All
         || filters.CampaignID != null
+        // The multi-select is a filter like any other: without this, narrowing to a campaign that
+        // returns nothing would show the "no results" state WITHOUT the "נקה הכל" way out, and the
+        // user would be stuck looking at an empty grid with no visible cause.
+        || (filters.CampaignIDs != null && filters.CampaignIDs.length > 0)
         || filters.DateFrom != null
-        || filters.DateTo != null;
+        || filters.DateTo != null
+        // An advanced rule is a filter like any other: without this, a search narrowed to nothing by
+        // an advanced rule showed the "no results" state WITHOUT the "נקה הכל" way out, and the user
+        // had to guess that the empty grid was caused by the panel they had collapsed.
+        || completeRules(advRules, searchableFields).length > 0;
 
     // ── drawer ────────────────────────────────────────────────────────────────────────────────
     // The stack stores the row's COMPOSITE KEY, never a copy of the row (Models/…/SendSearch.ts
@@ -237,13 +367,30 @@ const SendSearchPanel: React.FC<Props> = ({ showTitle }) => {
             <SendSearchFiltersBar
                 value={filters}
                 campaigns={campaigns}
+                // Lets the picker say "could not load the campaign list" instead of rendering an
+                // empty menu, which would assert — from a failed request — that this account has no
+                // campaigns. Also covers the pre-51 server, where the field list arrives fine and
+                // only the campaign result set is absent.
+                campaignsError={sendSearch.campaignsError ?? null}
                 loading={!!sendSearch.loading}
                 onChange={(patch: Partial<Filters>) => dispatch(setFilters(patch))}
                 // The filter bar's "חפש" commits the text through onChange; the effect above already
                 // refetches on any committed change, so onSearch only needs to force a refetch for the
                 // case where the text did NOT change (the user pressing חפש again on the same term).
-                onSearch={() => dispatch(searchSends(toSendSearchRequest(filters)))}
-                onClearAll={() => dispatch(clearFilters())}
+                onSearch={() => dispatch(searchSends(buildRequest()))}
+                // "נקה הכל" clears the ADVANCED rules and the sort too. Leaving them behind would
+                // make a cleared screen still silently narrowed and still silently reordered, under
+                // a button that just told the user everything was cleared.
+                onClearAll={() => {
+                    setRules([]);
+                    setSort(defaultSendSearchSort());
+                    dispatch(clearFilters());
+                }}
+                fields={searchableFields}
+                rules={advRules}
+                onRulesChange={setRules}
+                sort={advSort}
+                onSortChange={setSort}
             />
 
             <Box style={{ display: 'flex', alignItems: 'baseline', gap: 8, margin: '15px 0 9px', flexWrap: 'wrap' }}>
@@ -268,7 +415,14 @@ const SendSearchPanel: React.FC<Props> = ({ showTitle }) => {
                 onOpenRow={openRow}
                 onPageChange={(p: number) => dispatch(setPageIndex(p))}
                 onPageSizeChange={(s: number) => dispatch(setPageSize(s))}
-                onClearAll={() => dispatch(clearFilters())}
+                onClearAll={() => {
+                    setRules([]);
+                    setSort(defaultSendSearchSort());
+                    dispatch(clearFilters());
+                }}
+                // Null unless a sort field is chosen — that is what keeps the extra column out of
+                // the grid entirely in the default case.
+                sortFieldLabel={sortFieldLabel}
             />
 
             {/* The two standing caveats (`Mock-v3:209-212`). They are page furniture, not a tooltip:

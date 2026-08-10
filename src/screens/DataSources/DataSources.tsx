@@ -26,8 +26,10 @@ import { sitePrefix } from '../../config';
 import {
     getDataSources, getDataSource, deleteDataSource
 } from '../../redux/reducers/dataSourcesSlice';
+import { GetExtraFields } from '../../redux/reducers/ExtraFieldsSlice';
 import {
-    DataSourceListItem, DataSourceDetails, DataSourceVersion, eDataSourceStatus
+    DataSourceListItem, DataSourceDetails, DataSourceVersion, eDataSourceStatus,
+    ClientFieldOption, buildAccountExtraFieldOptions
 } from '../../Models/DataSources/DataSource';
 import { getChannelDescriptor, eSendChannel } from '../../Models/DataSources/SmartSend';
 import StatusChip from './components/StatusChip';
@@ -92,6 +94,12 @@ const DataSources = ({ classes }: ClassesType) => {
     // Which tab is showing. The sources tab keeps its own PAGE_NAME/search/polling unchanged; the
     // Smart Send management tab owns its own state (PAGE_NAME_SS='DataSourcesSmartSend') inside SmartSendManageTab.
     const [activeTab, setActiveTab] = useState('sources');
+    /* The account's named ExtraField/ExtraDate slots, for the upload wizard's client-field write-back
+       picker. Fetched here rather than inside the wizard so it is loaded once per screen instead of
+       on every open, and so the wizard stays a pure presentational component with the catalogue
+       injected. Empty array = this account named no slots, which is a legitimate steady state — the
+       wizard then shows the ten fixed recipient fields exactly as before. */
+    const [accountExtraFields, setAccountExtraFields] = useState<ClientFieldOption[]>([]);
 
     const pollingRef = useRef<any>(null);
     const prevStatusesRef = useRef<Map<number, number>>(new Map());
@@ -113,6 +121,14 @@ const DataSources = ({ classes }: ClassesType) => {
     const isRtl = (i18n.dir?.() ?? 'rtl') === 'rtl';
     const sendIconStyle = isRtl ? { transform: 'scaleX(-1)' } : undefined;
 
+    /* Every floating layer MUI renders — Tooltip, and the rows-per-page Menu behind TablePagination —
+       is portalled to document.body, outside App.js's <div dir={isRTL}>. <html dir> is stuck at "ltr"
+       app-wide (App.js sets it in a mount-only effect that runs before i18n leaves its 'en' default),
+       and neither theme.direction nor jss-rtl emits a `direction` of its own. So each portal has to
+       carry its own. */
+    const rtlPopperProps = { style: { direction: isRtl ? 'rtl' : 'ltr' } as any };
+    const rtlMenuSelectProps = { MenuProps: { PaperProps: { dir: isRtl ? 'rtl' : 'ltr' } } };
+
     const items: DataSourceListItem[] = list?.items ?? [];
     const total: number = list?.total ?? 0;
 
@@ -121,6 +137,34 @@ const DataSources = ({ classes }: ClassesType) => {
         if (accountFeatures?.length && accountFeatures.indexOf(PulseemFeatures.DATA_SOURCES) === -1)
             Redirect({ url: sitePrefix ?? '', openNewTab: false });
     }, [accountFeatures]);
+
+    /* ── the account's extra-field labels, for the upload wizard's write-back picker ──
+       ⚠ DEPLOY ORDER. This is the ONLY thing that exposes ClientFieldTarget ids 101-113 / 201-204
+       in the UI. dbo.DataSources_ResolveVersionClients writes back only ids 1..10 until its phase-B
+       body is deployed (_delivery\ClientFieldWriteBack-PhaseB\ in the project tree); its own comment
+       says "Ids outside 1..10 are ignored here, so mapping one today is inert". Everything upstream
+       accepts them — the API range-checks 1..204 and the FK to LU_DataSourceClientField is seeded —
+       so WITHOUT phase B an operator maps a column, the upload reports success, and nothing is ever
+       written. Do not ship this file ahead of that SP.
+
+       Fetched once on mount, not on wizard open: the payload is 17 short strings, and the picker has
+       to be populated the moment the wizard renders. StatusCode 201 is this API's success code (same
+       check as Settings/ExtraFields.tsx).
+       A failure is deliberately non-fatal and deliberately silent: the catalogue falls back to the
+       ten fixed recipient fields and the upload still works, which beats blocking an operator who
+       was not going to map an extra field anyway. The accepted cost is that a transient 500 looks
+       exactly like "this account named no slots" — both render no extra-field group — so a support
+       report of "the extra fields vanished" is a page reload before it is a bug. */
+    useEffect(() => {
+        let cancelled = false;
+        (async () => {
+            const response = await dispatch(GetExtraFields()) as any;
+            if (cancelled) return;
+            if (response?.payload?.StatusCode === 201)
+                setAccountExtraFields(buildAccountExtraFieldOptions(response.payload?.Data));
+        })();
+        return () => { cancelled = true; };
+    }, []);
 
     // ── load on searchData change + persist page state ──
     useEffect(() => {
@@ -260,35 +304,35 @@ const DataSources = ({ classes }: ClassesType) => {
         return (
             <Box style={{ display: 'flex', gap: 6, flexWrap: 'wrap', justifyContent: 'center' }}>
                 {canViewRecipients && canViewContent && (
-                    <Tooltip title={t('DataSources.actions.view')}>
+                    <Tooltip title={t('DataSources.actions.view')} PopperProps={rtlPopperProps}>
                         <IconButton size="small" style={ACTION_BTN_STYLE} aria-label={t('DataSources.actions.view')} onClick={() => goToView(row.DataSourceID)}><Visibility fontSize="small" style={ACTION_ICON_STYLE} /></IconButton>
                     </Tooltip>
                 )}
                 {canExport && row.Status === eDataSourceStatus.READY && (
-                    <Tooltip title={t('DataSources.actions.export')}>
+                    <Tooltip title={t('DataSources.actions.export')} PopperProps={rtlPopperProps}>
                         <IconButton size="small" style={ACTION_BTN_STYLE} aria-label={t('DataSources.actions.export')} onClick={() => setDialog({ type: 'export', data: row })}><GetApp fontSize="small" style={ACTION_ICON_STYLE} /></IconButton>
                     </Tooltip>
                 )}
                 {canUpload && (
-                    <Tooltip title={t('DataSources.actions.edit')}>
+                    <Tooltip title={t('DataSources.actions.edit')} PopperProps={rtlPopperProps}>
                         <IconButton size="small" style={ACTION_BTN_STYLE} aria-label={t('DataSources.actions.edit')} onClick={() => setDialog({ type: 'edit', data: row })}><EditIcon fontSize="small" style={ACTION_ICON_STYLE} /></IconButton>
                     </Tooltip>
                 )}
-                <Tooltip title={t('DataSources.actions.versions')}>
+                <Tooltip title={t('DataSources.actions.versions')} PopperProps={rtlPopperProps}>
                     <IconButton size="small" style={ACTION_BTN_STYLE} aria-label={t('DataSources.actions.versions')} onClick={() => openVersions(row.DataSourceID)}><History fontSize="small" style={ACTION_ICON_STYLE} /></IconButton>
                 </Tooltip>
                 {row.Status === eDataSourceStatus.READY && (
-                    <Tooltip title={t('DataSources.actions.summary')}>
+                    <Tooltip title={t('DataSources.actions.summary')} PopperProps={rtlPopperProps}>
                         <IconButton size="small" style={ACTION_BTN_STYLE} aria-label={t('DataSources.actions.summary')} onClick={() => openSummary(row.DataSourceID)}><Assessment fontSize="small" style={ACTION_ICON_STYLE} /></IconButton>
                     </Tooltip>
                 )}
                 {canDelete && (
-                    <Tooltip title={t('DataSources.actions.delete')}>
+                    <Tooltip title={t('DataSources.actions.delete')} PopperProps={rtlPopperProps}>
                         <IconButton size="small" style={ACTION_BTN_STYLE} aria-label={t('DataSources.actions.delete')} onClick={() => setDialog({ type: 'delete', data: row })}><DeleteIcon fontSize="small" style={ACTION_ICON_STYLE} /></IconButton>
                     </Tooltip>
                 )}
                 {canSend && row[EMAIL_IDENTITY_FLAG] && row.Status === eDataSourceStatus.READY && (
-                    <Tooltip title={t('DataSources.goToSend')}>
+                    <Tooltip title={t('DataSources.goToSend')} PopperProps={rtlPopperProps}>
                         <IconButton size="small" style={ACTION_BTN_STYLE} aria-label={t('DataSources.goToSend')} onClick={() => goToSend(row.DataSourceID)}><Send fontSize="small" style={{ ...ACTION_ICON_STYLE, ...sendIconStyle }} /></IconButton>
                     </Tooltip>
                 )}
@@ -301,7 +345,7 @@ const DataSources = ({ classes }: ClassesType) => {
             <Box style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
                 <Typography style={{ fontWeight: 600 }}>{row.Name}</Typography>
                 {isViewOnly(row) && (
-                    <Tooltip title={t('DataSources.viewOnlyTooltip')}>
+                    <Tooltip title={t('DataSources.viewOnlyTooltip')} PopperProps={rtlPopperProps}>
                         <Chip size="small" label={t('DataSources.viewOnlyBadge')} style={{ background: '#f1ebfb', color: '#6941c6' }} />
                     </Tooltip>
                 )}
@@ -401,6 +445,7 @@ const DataSources = ({ classes }: ClassesType) => {
                     rowsPerPage={searchData.PageSize}
                     onRowsPerPageChange={changeRows}
                     rowsPerPageOptions={ROWS_OPTIONS}
+                    SelectProps={rtlMenuSelectProps}
                 />
             </>
         );
@@ -408,7 +453,7 @@ const DataSources = ({ classes }: ClassesType) => {
 
     const renderDialogs = () => (
         <>
-            <UploadWizardDialog classes={classes} open={wizardOpen} onClose={() => setWizardOpen(false)} onUploaded={onUploaded} setToastMessage={setToastMessage} existingSources={items.map(i => ({ Name: i.Name, VersionNumber: i.VersionNumber, Description: i.Description }))} />
+            <UploadWizardDialog classes={classes} open={wizardOpen} onClose={() => setWizardOpen(false)} onUploaded={onUploaded} setToastMessage={setToastMessage} existingSources={items.map(i => ({ Name: i.Name, VersionNumber: i.VersionNumber, Description: i.Description }))} accountExtraFields={accountExtraFields} />
             <EditDataSourceDialog
                 classes={classes}
                 open={dialog?.type === 'edit'}

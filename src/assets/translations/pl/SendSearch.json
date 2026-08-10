@@ -18,7 +18,11 @@
     "supervisor": "Przełożony"
   },
   "campaign": {
-    "all": "Wszystkie kampanie"
+    "all": "Wszystkie kampanie",
+    "label": "Kampanie",
+    "search": "Szukaj kampanii…",
+    "none": "Nie znaleziono kampanii",
+    "loadFailed": "Nie udało się wczytać listy kampanii"
   },
   "dateFrom": "Data od",
   "dateTo": "Data do",
@@ -32,7 +36,8 @@
     "mailing": "Wysyłka",
     "channelsAndResult": "Kanały i wynik",
     "lastEvidence": "Najnowszy dowód",
-    "sent": "Wysłano"
+    "sent": "Wysłano",
+    "sortValue": "Wartość sortowania"
   },
   "roster": {
     "title": "{{count}} odbiorców objętych wysyłką zbiorczą",
@@ -114,5 +119,52 @@
   },
   "export": {
     "button": "Eksport"
+  },
+  "preview": {
+    "button": "Zobacz wysłany e-mail",
+    "title": "Wysłany e-mail",
+    "close": "Zamknij",
+    "frameTitle": "Podgląd wysłanego e-maila",
+    "disabled": "Nie można wyświetlić e-maila: serwer nie podał linku podglądu dla tego wiersza (kanał inny niż e-mail albo brak identyfikatora odbiorcy lub kampanii).",
+    "noTrackNote": "Ten podgląd nie jest zapisywany jako otwarcie przez odbiorcę, a linki w nim są wyłączone."
+  },
+  "adv": {
+    "unavailable": "Obecnie brak pól, według których można filtrować",
+    "field": "Pole",
+    "operator": "Warunek",
+    "value": "Wartość",
+    "valueFrom": "Od",
+    "valueTo": "Do",
+    "addRule": "Dodaj filtr",
+    "removeRule": "Usuń filtr",
+    "clear": "Wyczyść filtry zaawansowane",
+    "apply": "Zastosuj filtry",
+    "activeCount": "Aktywne filtry: {{count}}",
+    "incomplete": "Brak wartości — ten filtr nie działa",
+    "coverage": "Dotyczy {{count}} z {{total}} kampanii",
+    "partialWarning": "To pole nie istnieje we wszystkich kampaniach w wynikach. Filtrowanie po nim nie zwróci wierszy z kampanii, które go nie mają.",
+    "empty": {
+      "title": "Brak pól do filtrowania",
+      "body": "Pola do filtrowania definiuje się na ekranie Źródła danych: oznacz kolumnę jako wyszukiwalną w ustawieniach źródła, a pojawi się tutaj przy następnej wysyłce."
+    },
+    "op": {
+      "1": "równa się",
+      "2": "zaczyna się od",
+      "3": "zawiera",
+      "5": "większe niż",
+      "6": "mniejsze niż",
+      "7": "co najmniej",
+      "8": "co najwyżej",
+      "9": "pomiędzy"
+    }
+  },
+  "sort": {
+    "label": "Sortuj według",
+    "dir": "Kierunek",
+    "none": "Domyślnie (data wysyłki)",
+    "asc": "Rosnąco",
+    "desc": "Malejąco",
+    "hiddenFieldNote": "Sortowanie używa pola, które nie jest kolumną tabeli. Wartość sortowania każdego wiersza jest widoczna w kolumnie „Wartość sortowania”.",
+    "unknownValue": "Brak wartości"
   }
 }

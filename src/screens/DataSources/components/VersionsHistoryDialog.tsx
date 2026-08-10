@@ -76,16 +76,16 @@ const VersionsHistoryDialog = ({
                                             {!purged && v.Status === eDataSourceStatus.READY && (
                                                 <Box style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
                                                     {canView && (
-                                                        <Tooltip title={t('DataSources.versions.viewVersion')}>
+                                                        <Tooltip title={t('DataSources.versions.viewVersion')} PopperProps={{ style: { direction: isRtl ? 'rtl' : 'ltr' } }}>
                                                             <IconButton size="small" style={actionBtnStyle} aria-label={t('DataSources.versions.viewVersion')} onClick={() => onViewVersion(v.DataSourceVersionID)}><Visibility style={actionIconStyle} /></IconButton>
                                                         </Tooltip>
                                                     )}
                                                     {canExport && (
-                                                        <Tooltip title={t('DataSources.versions.exportVersion')}>
+                                                        <Tooltip title={t('DataSources.versions.exportVersion')} PopperProps={{ style: { direction: isRtl ? 'rtl' : 'ltr' } }}>
                                                             <IconButton size="small" style={actionBtnStyle} aria-label={t('DataSources.versions.exportVersion')} onClick={() => onExportVersion(v.DataSourceVersionID, v.TotalRows ?? 0)}><GetApp style={actionIconStyle} /></IconButton>
                                                         </Tooltip>
                                                     )}
-                                                    <Tooltip title={t('DataSources.versions.summary')}>
+                                                    <Tooltip title={t('DataSources.versions.summary')} PopperProps={{ style: { direction: isRtl ? 'rtl' : 'ltr' } }}>
                                                         <IconButton size="small" style={actionBtnStyle} aria-label={t('DataSources.versions.summary')} onClick={() => onShowSummary(v)}><Assessment style={actionIconStyle} /></IconButton>
                                                     </Tooltip>
                                                 </Box>

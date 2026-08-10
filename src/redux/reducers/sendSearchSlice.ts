@@ -26,6 +26,10 @@ import {
     DrawerEntry,
     MAX_DRAWER_DEPTH,
     defaultSendSearchFilters,
+    SendSearchFilterClause,
+    SendSearchFilterField,
+    SendSearchCampaign,
+    exclusiveUpperBound,
 } from '../../Models/DataSources/SendSearch';
 
 const api = 'SendSearch/';
@@ -48,6 +52,22 @@ interface SendSearchState {
     // send — it is what makes the row 'Inferred'/'Unverifiable', and it must not look like a spinner
     // that never finished).
     provenanceCampaignId: number | null;
+    // 🔴 ADDED 2026-08-08 (review R2-01). `getSendProvenance` was the ONLY one of this slice's four
+    // thunks with no stale-response guard: `searchReqId` (:47), `rowValuesReqId` (:78) and
+    // `filterFieldsReqId` (:96) all existed, this one did not, and both `.fulfilled` and `.rejected`
+    // wrote unconditionally.
+    //
+    // `provenanceCampaignId` above CANNOT stand in for it, for the reason already argued at :73-78
+    // for rowValues: the NEWER request's `pending` has already advanced the id, so the older
+    // response matches it and passes. (It is also never read outside this slice, so it guards
+    // nothing today in any case.)
+    //
+    // What it prevents: open campaign 100's agent, close, open campaign 200's agent before the first
+    // response lands. 100 resolves last and, unguarded, writes ITS SentAt / DataSourceName /
+    // VersionNumber into state — and AgentDrawer.tsx:305-314 renders them with a hardcoded
+    // `ProvenanceSource="Recorded"` badge under campaign 200's agent. A positive, false provenance
+    // claim on an insurer's audit screen.
+    provenanceReqId: string;
     // A FAILED provenance fetch must not be indistinguishable from a genuinely empty history.
     // Without this flag both land on `provenance: []`, and AgentDrawer's empty branch prints the
     // reassuring sentence "there is no send record, but the mapping was not touched, so this IS the
@@ -74,6 +94,36 @@ interface SendSearchState {
     // the id field says B — AgentDrawer's clientId check then passes and A's national-ID / policy
     // numbers render under B's name, permanently. Only the request identity catches that ordering.
     rowValuesReqId: string;
+    // ── the columns the user may filter / sort on (CONTRACT §2) ──────────────────────────────
+    // Same four-field shape as rowValues above, for the same reasons: its own loading flag, its own
+    // error flag, and its own request id.
+    //
+    // The error flag is NOT decoration here. The filter bar's empty state is "this account has no
+    // filterable columns" — a statement ABOUT THE DATA. A failed fetch also lands on `[]`, and
+    // without a flag the bar would make that positive claim from a request that never came back,
+    // then leave the user unable to filter with no reason given. Identical failure mode to
+    // `provenanceError` (:51-56).
+    filterFields: SendSearchFilterField[];
+    filterFieldsLoading: boolean;
+    filterFieldsError: string | null;
+    // Stale-response guard, same mechanism as rowValuesReqId (:76). The list is per-channel, so
+    // switching channel twice quickly can land the FIRST channel's columns last — and the operator
+    // would then be offered filter fields that do not exist for the channel on screen, every one of
+    // which the SP rejects. There is no second identity field here (no `filterFieldsChannel`)
+    // because the request id already fully orders the responses.
+    filterFieldsReqId: string;
+    // ── campaign picker options (same GET, result set [1]) ───────────────────────────────────
+    // Rides on the FilterFields request rather than one of its own: the catalog SP aggregates over
+    // dbo.CampaignSendingLog (395M rows) to build #Camp, and a second endpoint would pay that twice
+    // per page load. So there is no `campaignsReqId` — `filterFieldsReqId` already orders these
+    // responses, and a second id derived from the same request could only ever agree with it.
+    //
+    // `campaignsError` is separate from `filterFieldsError` even though one request produces both.
+    // They fail independently in the way that matters: against a server where 51_ has not run, the
+    // FIELD list arrives perfectly and the campaign list is simply absent. Sharing one flag would
+    // paint the working half as broken.
+    campaigns: SendSearchCampaign[];
+    campaignsError: string | null;
 }
 
 // ── Thunks ───────────────────────────────────────────────────────────────────────────────────
@@ -119,6 +169,69 @@ export const getSendRowValues = createAsyncThunk(
         }
     });
 
+// GET api/SendSearch/FilterFields?channel=  →  Data: List<SendSearchFilterField>   (CONTRACT §2)
+// Same `.get` + `params` + `return response.data` shape as the two thunks above.
+//
+// ⚠️ CONTRACT GAP (recorded in LEDGER, "בעיות שנמצאו בחוזה" #1): §2 freezes the filter VOCABULARY
+// but never names the endpoint that lists the available fields. `FilterFields` is B4's choice and is
+// recorded as a binding decision so B1 can bind the controller action to the same name. `channel` is
+// passed because the filterable columns follow the data source behind the sends, which is per-channel
+// — and an extra query param a parameterless controller action ignores is harmless, whereas a
+// missing one a controller requires is a 404/500.
+//
+// There is deliberately NO preview thunk anywhere in this slice: §1 puts the whole preview contract
+// on `SendSearchRow.PreviewUrl`. Adding one would be a second authority over an already-answered
+// question.
+// Returns BOTH the searchable-field catalog and the campaign picker's options — result sets [0] and
+// [1] of one call to dbo.DataSources_SearchSendsFilterCatalog.
+//
+// 🔴 THE DATE SCOPE IS NOW SENT, and it is not a refinement — without it the campaign list would be
+// a lie. The SP defaults @prm_DateTo to GETDATE() and floors @prm_DateFrom at 12 months back, so a
+// channel-only call always describes the last twelve months. A user who ticks "כלול חיפוש שליחות
+// מעל שנה" would then get a grid full of older sends while the picker offered no campaign to match
+// them, and would reasonably conclude the campaign was gone.
+//
+// It also corrects the FIELD list, which had the same defect quietly: the columns offered were
+// always the last-12-months set regardless of the dates on screen.
+//
+// The endpoint already accepted these four parameters (SendSearchController.cs:524) — this is a
+// caller-side fix, not a new API surface.
+//
+// NOT sent: the selected campaign ids. The picker's own options must never be narrowed by the
+// picker's own selection — that is exactly the self-narrowing bug the accumulated client-side list
+// used to have, where choosing a campaign collapsed the list to that one campaign.
+export const getSendSearchFilterFields = createAsyncThunk(
+    'SendSearch/FilterFields', async (
+        arg: {
+            channel: eSendChannel;
+            dateFrom?: string | null;
+            dateTo?: string | null;
+            includeOverOneYear?: boolean;
+        },
+        thunkAPI,
+    ) => {
+        try {
+            const response = await PulseemReactInstance.get(`${api}FilterFields`, {
+                params: {
+                    channel: arg.channel,
+                    // Omitted rather than sent empty: the SP's own NULL defaults are the correct
+                    // "no bound", and '' would bind as a DateTime the controller then 400s.
+                    dateFrom: arg.dateFrom ? arg.dateFrom : undefined,
+                    // SAME exclusive-upper-bound shift the search request applies
+                    // (`toSendSearchRequest`). The catalog SP's predicate is the identical half-open
+                    // `fs.FirstSentAt < @prm_DateTo`, so without this the picker would silently drop
+                    // every campaign whose first send was on the end date the user picked — while
+                    // the grid, which DOES shift, still showed its rows.
+                    dateTo: arg.dateTo ? exclusiveUpperBound(arg.dateTo) : undefined,
+                    includeOverOneYear: !!arg.includeOverOneYear,
+                }
+            });
+            return response.data;
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    });
+
 // ── Slice ────────────────────────────────────────────────────────────────────────────────────
 
 const initialState: SendSearchState = {
@@ -132,12 +245,19 @@ const initialState: SendSearchState = {
     provenanceLoading: false,
     searchReqId: '',
     provenanceCampaignId: null,
+    provenanceReqId: '',
     provenanceError: null,
     rowValues: [],
     rowValuesLoading: false,
     rowValuesError: null,
     rowValuesClientId: null,
     rowValuesReqId: '',
+    filterFields: [],
+    filterFieldsLoading: false,
+    filterFieldsError: null,
+    filterFieldsReqId: '',
+    campaigns: [],
+    campaignsError: null,
 };
 
 // One definition of "forget the recipient's values", shared by `closeDrawer`, `popDrawer` (last
@@ -152,6 +272,19 @@ const clearRowValuesState = (state: SendSearchState) => {
     // repopulate the slot for a recipient nobody is looking at any more.
     state.rowValuesReqId = '';
 };
+
+// ONE definition of "the result set just changed shape, so the page number is meaningless".
+//
+// Every filter-clause and sort reducer below calls it, and that is not defensive tidiness: page 4 of
+// a result set filtered down to 30 rows is EMPTY, and an empty grid is how this screen says "no
+// recipient matches" — so a forgotten reset does not look like a bug, it looks like an answer. The
+// existing `setFilters` (:163) already inlines the same rule; this is the shared spelling for the
+// reducers that cannot use it because they edit `Filters` structurally.
+//
+// Sort resets the page too. The rows on page 4 of an ASC sort are a different set of PEOPLE from the
+// rows on page 4 of a DESC sort, so keeping the index silently swaps the population under the
+// operator while the pager claims nothing moved.
+const resetPage = (state: SendSearchState) => { state.filters.PageIndex = 0; };
 
 export const sendSearchSlice = createSlice({
     name: 'sendSearch',
@@ -176,6 +309,56 @@ export const sendSearchSlice = createSlice({
             const keepChannel = state.filters.Channel;
             const keepSize = state.filters.PageSize;
             state.filters = { ...defaultSendSearchFilters(), Channel: keepChannel, PageSize: keepSize };
+        },
+        // ── column filters (CONTRACT §2) ──────────────────────────────────────────────────────
+        // Clauses are stored AS EDITED, half-built ones included: this slice holds "what is on
+        // screen", and `toSendSearchRequest` is the one place that decides what is complete enough
+        // to send. Storing only complete clauses would make a row the user is still typing into
+        // unrenderable.
+        setFilterClauses: (state, action: { payload: SendSearchFilterClause[]; type: string }) => {
+            state.filters.Filters = action.payload ?? [];
+            resetPage(state);
+        },
+        addFilterClause: (state, action: { payload: SendSearchFilterClause; type: string }) => {
+            state.filters.Filters.push(action.payload);
+            // The page resets even though a BLANK new clause changes no result yet: it will change
+            // them the moment a value is typed, and resetting at both ends is free while forgetting
+            // one end is an empty grid that reads as "no matches".
+            resetPage(state);
+        },
+        updateFilterClause: (state, action: { payload: { index: number; clause: SendSearchFilterClause }; type: string }) => {
+            const { index, clause } = action.payload;
+            // Bounds-checked rather than trusted: a stale index from a component that removed a row
+            // in the same tick would otherwise APPEND a clause at `Filters[7]` on a 3-item array,
+            // leaving holes that `filter(isClauseComplete)` walks straight into.
+            if (index < 0 || index >= state.filters.Filters.length) return;
+            state.filters.Filters[index] = clause;
+            resetPage(state);
+        },
+        removeFilterClause: (state, action: { payload: number; type: string }) => {
+            const index = action.payload;
+            if (index < 0 || index >= state.filters.Filters.length) return;
+            state.filters.Filters.splice(index, 1);
+            resetPage(state);
+        },
+        clearFilterClauses: (state) => {
+            state.filters.Filters = [];
+            resetPage(state);
+        },
+        // ── sort (CONTRACT §2) ────────────────────────────────────────────────────────────────
+        // `fieldKey: null` is the explicit "no user sort" state — the SP's own default order — and is
+        // NOT the same as sorting ascending by some field. `desc` is forced false alongside it so two
+        // "no sort" states can never differ.
+        setSort: (state, action: { payload: { fieldKey: string | null; desc: boolean }; type: string }) => {
+            const key = (action.payload?.fieldKey ?? '').trim();
+            state.filters.SortField = key.length > 0 ? key : null;
+            state.filters.SortDescending = key.length > 0 ? !!action.payload?.desc : false;
+            resetPage(state);
+        },
+        clearSort: (state) => {
+            state.filters.SortField = null;
+            state.filters.SortDescending = false;
+            resetPage(state);
         },
         // ── drawer stack (Mock-v3:341-356) ───────────────────────────────────────────────────
         pushDrawer: (state, action: { payload: DrawerEntry; type: string }) => {
@@ -264,10 +447,12 @@ export const sendSearchSlice = createSlice({
         builder.addCase(getSendProvenance.pending, (state, action: any) => {
             state.provenanceLoading = true;
             state.provenanceCampaignId = action.meta.arg?.campaignId ?? null;
+            state.provenanceReqId = action.meta.requestId;     // R2-01
             state.provenance = [];
             state.provenanceError = null;
         });
         builder.addCase(getSendProvenance.fulfilled, (state, action: any) => {
+            if (action.meta.requestId !== state.provenanceReqId) return;   // stale response — R2-01
             state.provenanceLoading = false;
             state.provenance = action.payload?.Data ?? [];
             // A 200 whose body carries no `Data` at all is a failure that did not throw — treated as
@@ -278,6 +463,10 @@ export const sendSearchSlice = createSlice({
                 : (action.payload?.Message ?? 'PROVENANCE_FAILED');
         });
         builder.addCase(getSendProvenance.rejected, (state, action: any) => {
+            // R2-01: guarded for the mirror reason — a STALE failure belonging to the campaign the
+            // operator already navigated away from would otherwise wipe the current campaign's
+            // correct history and paint error.loadFailed over it.
+            if (action.meta.requestId !== state.provenanceReqId) return;
             state.provenanceLoading = false;
             state.provenance = [];
             state.provenanceError = action.payload?.error ?? action.error?.message ?? 'PROVENANCE_FAILED';
@@ -326,11 +515,83 @@ export const sendSearchSlice = createSlice({
             state.rowValues = [];
             state.rowValuesError = action.payload?.error ?? action.error?.message ?? 'ROWVALUES_FAILED';
         });
+
+        // Filter fields — same three-case shape and same stale guard as row values above.
+        builder.addCase(getSendSearchFilterFields.pending, (state, action: any) => {
+            state.filterFieldsLoading = true;
+            state.filterFieldsReqId = action.meta.requestId;
+            state.filterFieldsError = null;
+            // The PREVIOUS list is deliberately LEFT IN PLACE while the new one is in flight, unlike
+            // rowValues (:293) which is cleared. Opposite reasons, both about not lying: row values
+            // are one person's data and showing them under another person's name is a false claim,
+            // whereas the field list is a menu — blanking it mid-refresh would collapse every open
+            // filter row's field selector to "unknown field" and read as "your filters were deleted".
+            // Any clause pointing at a field that has genuinely disappeared is rejected by the SP,
+            // which is the correct authority for that.
+            //
+            // `campaigns` is left in place for the same reason and one more: the picker's VALUE is a
+            // set of ids, and blanking the options mid-refresh would leave every ticked checkbox
+            // pointing at an option that no longer exists — MUI would drop the chips and the user
+            // would watch their selection erase itself on every date change.
+            state.campaignsError = null;
+        });
+        builder.addCase(getSendSearchFilterFields.fulfilled, (state, action: any) => {
+            if (action.meta.requestId !== state.filterFieldsReqId) return;   // stale response
+            state.filterFieldsLoading = false;
+            if (action.payload?.StatusCode === 405) {
+                // eSubUserPermissions.HideRecipietns — the field list describes recipient columns, so
+                // it is gated like RowValues is. Its own value, not a generic failure: "you may not
+                // see this" and "this broke" are different facts (see :302-312).
+                state.filterFields = [];
+                state.campaigns = [];
+                state.filterFieldsError = 'PERMISSION_DENIED';
+                state.campaignsError = 'PERMISSION_DENIED';
+                return;
+            }
+            // 🔴 `Data` IS NOW AN OBJECT, not an array: { Fields, Campaigns }. Both halves ride on one
+            // request so the catalog SP — which aggregates over dbo.CampaignSendingLog (395M rows) to
+            // build #Camp — runs ONCE per page load instead of twice.
+            const data = action.payload?.Data;
+            state.filterFields = data?.Fields ?? [];
+            // A 200 whose body carries no `Data` at all is a failure that did not throw. An empty
+            // ARRAY is a legitimate answer — an account whose sources have no filterable columns —
+            // and leaves the flag null so the bar can say so in words instead of showing an error.
+            state.filterFieldsError = action.payload && 'Data' in action.payload && data != null
+                ? null
+                : (action.payload?.Message ?? 'FILTERFIELDS_FAILED');
+
+            // The campaign list is judged SEPARATELY, and the distinction is a real deployment state,
+            // not defensive noise: against a server where 51-CatalogSP-Campaigns.sql has not run, the
+            // SP returns one result set, the C# leaves `Campaigns` an empty array, and `Fields`
+            // arrives perfectly. `Campaigns` ABSENT (undefined) means the server cannot supply the
+            // list; `Campaigns` EMPTY means it supplied it and there are genuinely none in scope.
+            // Collapsing the two would either hide a broken picker or accuse a working one.
+            state.campaigns = data?.Campaigns ?? [];
+            state.campaignsError = data && Array.isArray(data.Campaigns)
+                ? null
+                : (state.filterFieldsError ?? 'CAMPAIGNS_UNAVAILABLE');
+        });
+        builder.addCase(getSendSearchFilterFields.rejected, (state, action: any) => {
+            if (action.meta.requestId !== state.filterFieldsReqId) return;
+            state.filterFieldsLoading = false;
+            // Cleared HERE but not on pending: a failed fetch means we no longer know what the menu
+            // contains, and offering a stale menu next to an error message invites the operator to
+            // build a clause against a field we cannot confirm exists.
+            state.filterFields = [];
+            state.filterFieldsError = action.payload?.error ?? action.error?.message ?? 'FILTERFIELDS_FAILED';
+            // Cleared for the same reason and with the same force: a picker still offering yesterday's
+            // campaigns beside a failed load invites the operator to tick a box we cannot confirm is
+            // still in scope, and the resulting empty grid reads as "nothing was sent".
+            state.campaigns = [];
+            state.campaignsError = action.payload?.error ?? action.error?.message ?? 'CAMPAIGNS_FAILED';
+        });
     }
 });
 
 export const {
     setFilters, setPageIndex, setPageSize, clearFilters,
+    setFilterClauses, addFilterClause, updateFilterClause, removeFilterClause, clearFilterClauses,
+    setSort, clearSort,
     pushDrawer, popDrawer, closeDrawer, clearProvenance, clearRowValues,
 } = sendSearchSlice.actions;
 

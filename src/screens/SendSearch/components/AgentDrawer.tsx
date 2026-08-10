@@ -23,15 +23,29 @@
 //     values would read as "this recipient was deliberately sent empty text", which is precisely
 //     the confident over-claim this header exists to forbid.
 //
+// THE PREVIEW BUTTON — a second reversal, and the note above it used to forbid it.
+// The old rule ("no preview button, no token minted from this screen") was defending against a
+// CLIENT-SIDE REBUILD of the mail: template + data merged in the browser is a second rendering
+// engine that knows less than the sender's and drifts from it. That objection is intact and is
+// exactly why the button does NOT do that. It opens an IFRAME over `PreviewCampaign.aspx` — the
+// same page that rendered the mail — using an encrypted id the SERVER minted onto the row as
+// `PreviewUrl` (CONTRACT §1, LEDGER #1). This screen still mints no token, still merges nothing.
+//   🔴 `PreviewUrl == null` ⇒ the button is DISABLED with a tooltip that says why. Null is the
+//   server's answer for a non-email channel, a missing ChannelCampaignID, and — the one that
+//   matters — `ClientID <= 0` (§1.1): an id carrying a CampaignID without a clientid does not
+//   throw, it renders a GENERIC campaign that looks entirely plausible and is not this agent's
+//   mail. `ClientID` is 0 until deploy script 23 runs, so the button ships disabled. That is the
+//   CORRECT behaviour, not a bug.
+//
 // What is STILL deliberately NOT here:
 //   • no percentages (the denominator differs per channel — `:443`);
-//   • no reconstructed message body, and no preview button — deferred by Idan's explicit decision,
-//     so no preview token is minted from this screen. The message drawer level is opened only when
-//     the caller says a stored message exists.
+//   • no reconstructed message body. The message drawer level is opened only when the caller says
+//     a stored message exists.
 // ═══════════════════════════════════════════════════════════════════════════════════════════
 
-import React from 'react';
-import { Box, Button, CircularProgress, Typography } from '@material-ui/core';
+import React, { useState } from 'react';
+import { Box, Button, CircularProgress, Tooltip, Typography } from '@material-ui/core';
+import { MailOutline } from '@material-ui/icons';
 import { useTranslation } from 'react-i18next';
 import moment from 'moment';
 import { DateFormats } from '../../../helpers/Constants';
@@ -51,6 +65,8 @@ import {
 } from '../../../Models/DataSources/SendSearch';
 import SendStatusCell from './SendStatusCell';
 import VersionBadge from './VersionBadge';
+import EmailPreviewDialog from './EmailPreviewDialog';
+import { previewUrlOf } from './SendSearchAdvanced';
 
 const TONE_COLOR: { [k in StateTone]: string } = {
     ok: '#067647', bad: '#B42318', warn: '#B54708', muted: '#5b6b7b',
@@ -104,6 +120,12 @@ const AgentDrawer: React.FC<Props> = ({
 }) => {
     const { t } = useTranslation();
 
+    // The ONE gate in front of the iframe. `previewUrlOf` returns null for absent, empty, and
+    // non-http(s) — see its comment: an `<iframe src="">` loads the HOSTING page inside itself, so
+    // the operator would be looking at the report nested in the report and reading it as the email.
+    const previewUrl = previewUrlOf(row);
+    const [previewOpen, setPreviewOpen] = useState(false);
+
     const values: SendRowValue[] = rowValues ?? [];
     // The recipient has a source row in the sent version. `HasRow` is a per-CLIENT fact that the SP
     // repeats on every returned row, so `some` and `every` agree in practice; `some` is used because
@@ -147,6 +169,22 @@ const AgentDrawer: React.FC<Props> = ({
 
     return (
         <>
+            {/* Mounted only once opened, so a drawer that is never asked for a preview never loads
+                the campaign page — one request per DELIBERATE view, not one per opened row. */}
+            {previewOpen && (
+                <EmailPreviewDialog
+                    open={previewOpen}
+                    onClose={() => setPreviewOpen(false)}
+                    url={previewUrl}
+                    recipientName={row.RecipientName}
+                    recipientEmail={row.RecipientEmail}
+                    sentAt={row.SentAt}
+                    VersionNumber={row.VersionNumber}
+                    ProvenanceSource={row.ProvenanceSource}
+                    VersionState={row.VersionState}
+                />
+            )}
+
             {/* A row with no source row in the locked version means nothing was sent to this person —
                 and the operator must not tell them "it was sent to you". Stated at the TOP, before the
                 verdict, because it changes what the verdict means. */}
@@ -189,11 +227,37 @@ const AgentDrawer: React.FC<Props> = ({
                         VersionState={row.VersionState}
                     />
                 </Kv>
-                <Kv label={t(`${SS}col.sent`)}>
-                    <Typography component="span" style={{ fontWeight: 700, direction: 'ltr' }}>
-                        {row.SentAt ? moment(row.SentAt).format(DateFormats.DATE_TIME_24) : '—'}
-                    </Typography>
-                </Kv>
+                {/* The sent date shares its row with the preview action: the button lives beside
+                    the fact it acts on, instead of taking a strip of its own at the top of the
+                    drawer (owner request, 2026-08-09). Right side (RTL start) is the "sent" label
+                    with the timestamp beneath it; left side is the button. The Tooltip still wraps
+                    a <span> so a row whose PreviewUrl is null — a non-email channel — still shows
+                    the tooltip that explains why the button is disabled, since a disabled button
+                    emits no pointer events of its own. */}
+                <Box style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, paddingTop: 12 }}>
+                    <Box>
+                        <Typography component="div" style={{ color: '#5b6b7b', fontSize: 12.5, marginBottom: 2 }}>
+                            {t(`${SS}col.sent`)}
+                        </Typography>
+                        <Typography component="div" style={{ fontWeight: 700, fontSize: 15, direction: 'ltr', textAlign: 'right' }}>
+                            {row.SentAt ? moment(row.SentAt).format(DateFormats.DATE_TIME_24) : '—'}
+                        </Typography>
+                    </Box>
+                    <Tooltip title={(previewUrl ? t(`${SS}preview.button`) : t(`${SS}preview.disabled`)) as string}>
+                        <span>
+                            <Button
+                                variant="outlined"
+                                size="small"
+                                color="primary"
+                                disabled={!previewUrl}
+                                startIcon={<MailOutline />}
+                                onClick={() => setPreviewOpen(true)}
+                            >
+                                {t(`${SS}preview.button`)}
+                            </Button>
+                        </span>
+                    </Tooltip>
+                </Box>
                 {row.RollupValue && (
                     <Kv label={t(`${SS}roster.gap`)}>
                         <Typography component="span" style={{ fontWeight: 700, direction: 'ltr' }}>{row.RollupValue}</Typography>
@@ -259,7 +323,8 @@ const AgentDrawer: React.FC<Props> = ({
                 see the reversal note in the header. Order is the SERVER's (the SP already sorts by
                 tm.DisplayOrder, tm.TokenMapID); this must never re-sort, or the card stops matching
                 the mapping screen the operator has open beside it.
-                NO preview button: deferred by decision, so this screen mints no preview token. */}
+                These are the RECORDED token values; the header's preview button shows the RENDERED
+                mail. Two different pieces of evidence, neither derived from the other. */}
             <Card title={t(`${SS}drawer.rowValues`)}>
                 {rowValuesLoading && <CircularProgress size={18} />}
                 {!rowValuesLoading && (!!rowValuesError || valuesUnavailable) && (

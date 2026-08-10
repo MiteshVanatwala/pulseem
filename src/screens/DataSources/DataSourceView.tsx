@@ -28,6 +28,7 @@ import StatusChip from './components/StatusChip';
 import RowsTable from './components/RowsTable';
 import FiltersBar from './components/FiltersBar';
 import EditColumnDialog from './components/EditColumnDialog';
+import { detectColumnType } from './components/columnTypeDetect';
 import VersionsHistoryDialog from './components/VersionsHistoryDialog';
 import ExportDialog from './components/ExportDialog';
 import DataSourceSummary from './components/DataSourceSummary';
@@ -141,6 +142,23 @@ const DataSourceView = ({ classes }: ClassesType) => {
     const changePage = (_: any, p: number) => { setPage(p + 1); loadRows(numId, viewVersionId, filters, freeText, p + 1); };
 
     const openColumnEdit = (col: DataSourceColumn) => setDialog({ type: 'column', data: col });
+
+    /* Evidence for the column editor's ℹ️, re-derived from the rows CURRENTLY ON SCREEN.
+       The server does not store the wizard's detection result, and re-uploading the file just to
+       explain a type would be absurd — but the page already holds a page of real values for this
+       column, and those are the same values the user is looking at while the dialog is open, which
+       makes the percentage checkable on the spot. It is a sample of the page, not of the file, and
+       that is the honest thing to show here. RowJson is parsed inside try/catch, exactly like
+       RowsTable does, so one malformed row degrades the evidence instead of breaking the dialog. */
+    const detectionFor = (col: DataSourceColumn | null) => {
+        if (!col) return null;
+        const items: any[] = rows?.items ?? [];
+        if (items.length === 0) return null;
+        const values = items.map(r => {
+            try { return JSON.parse(r.RowJson || '{}')[col.ColumnKey]; } catch { return null; }
+        });
+        return detectColumnType(values);
+    };
     const onColumnSaved = () => {
         setDialog(null);
         setToastMessage({ ...ToastMessages.COLUMN_UPDATED });
@@ -188,24 +206,35 @@ const DataSourceView = ({ classes }: ClassesType) => {
                 {details && <StatusChip status={details.Status} progress={null} runDateStart={details.RunDateStart ?? null} createdDate={details.CreatedDate} t={t} />}
                 {details && <Chip size="small" label={`V${details.VersionNumber ?? ''}`} style={{ direction: 'ltr' }} />}
                 {isViewOnly && (
-                    <Tooltip title={t('DataSources.viewOnlyTooltip')}>
+                    <Tooltip title={t('DataSources.viewOnlyTooltip')} PopperProps={{ style: { direction: isRtl ? 'rtl' : 'ltr' } }}>
                         <Chip size="small" label={t('DataSources.viewOnlyBadge')} style={{ background: '#f1ebfb', color: '#6941c6' }} />
                     </Tooltip>
                 )}
             </Box>
             <Box style={{ display: 'flex', gap: 2 }}>
-                {canExport && details?.Status === eDataSourceStatus.READY && (
-                    <Tooltip title={t('DataSources.actions.export')}><IconButton aria-label={t('DataSources.actions.export')} onClick={() => setDialog({ type: 'export' })}><GetApp /></IconButton></Tooltip>
+                {/* 🔴 GATED ON `!isHistorical` 2026-08-08 (review R3-02).
+                    This header button exports the ACTIVE version. While the screen is showing a
+                    HISTORICAL version — grid reloaded, orange banner up, version chip changed — it
+                    still exported the active one: a different row count and different content, with
+                    nothing in the dialog, the filename or the downloads page naming a version. The
+                    file is what a manager forwards to a regulator, so the divergence is discoverable
+                    only by someone who already knows the answer.
+                    Fail CLOSED rather than guess at export plumbing: on a historical version the
+                    button is withheld, and the per-version export that already exists in the
+                    versions dialog (`DataSources.versions.exportVersion`) is the correct route —
+                    it is the only one that names the version it is exporting. */}
+                {canExport && details?.Status === eDataSourceStatus.READY && !isHistorical && (
+                    <Tooltip title={t('DataSources.actions.export')} PopperProps={{ style: { direction: isRtl ? 'rtl' : 'ltr' } }}><IconButton aria-label={t('DataSources.actions.export')} onClick={() => setDialog({ type: 'export' })}><GetApp /></IconButton></Tooltip>
                 )}
                 {canEditMeta && (
-                    <Tooltip title={t('DataSources.actions.edit')}><IconButton aria-label={t('DataSources.actions.edit')} onClick={() => setDialog({ type: 'editSource' })}><EditIcon /></IconButton></Tooltip>
+                    <Tooltip title={t('DataSources.actions.edit')} PopperProps={{ style: { direction: isRtl ? 'rtl' : 'ltr' } }}><IconButton aria-label={t('DataSources.actions.edit')} onClick={() => setDialog({ type: 'editSource' })}><EditIcon /></IconButton></Tooltip>
                 )}
-                <Tooltip title={t('DataSources.actions.versions')}><IconButton aria-label={t('DataSources.actions.versions')} onClick={() => setDialog({ type: 'versions' })}><History /></IconButton></Tooltip>
+                <Tooltip title={t('DataSources.actions.versions')} PopperProps={{ style: { direction: isRtl ? 'rtl' : 'ltr' } }}><IconButton aria-label={t('DataSources.actions.versions')} onClick={() => setDialog({ type: 'versions' })}><History /></IconButton></Tooltip>
                 {details?.Status === eDataSourceStatus.READY && (
-                    <Tooltip title={t('DataSources.actions.summary')}><IconButton aria-label={t('DataSources.actions.summary')} onClick={() => openSummary()}><Assessment /></IconButton></Tooltip>
+                    <Tooltip title={t('DataSources.actions.summary')} PopperProps={{ style: { direction: isRtl ? 'rtl' : 'ltr' } }}><IconButton aria-label={t('DataSources.actions.summary')} onClick={() => openSummary()}><Assessment /></IconButton></Tooltip>
                 )}
                 {canSend && details?.[EMAIL_IDENTITY_FLAG] && details?.Status === eDataSourceStatus.READY && (
-                    <Tooltip title={t('DataSources.goToSend')}><IconButton aria-label={t('DataSources.goToSend')} onClick={() => Redirect({ url: `${sitePrefix}SmartSend?dataSourceId=${details?.DataSourceID}`, openNewTab: false })}><Send style={sendIconStyle} /></IconButton></Tooltip>
+                    <Tooltip title={t('DataSources.goToSend')} PopperProps={{ style: { direction: isRtl ? 'rtl' : 'ltr' } }}><IconButton aria-label={t('DataSources.goToSend')} onClick={() => Redirect({ url: `${sitePrefix}SmartSend?dataSourceId=${details?.DataSourceID}`, openNewTab: false })}><Send style={sendIconStyle} /></IconButton></Tooltip>
                 )}
             </Box>
         </Box>
@@ -243,6 +272,12 @@ const DataSourceView = ({ classes }: ClassesType) => {
                     <Box style={{ background: '#fff4e5', border: '1px solid #f5d9b0', borderRadius: 8, padding: '8px 12px', margin: '12px 0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <Typography style={{ color: '#b54708' }}>
                             {t('DataSources.historicalVersionBanner', { n: versions.find(v => v.DataSourceVersionID === viewVersionId)?.VersionNumber ?? '' })}
+                            {/* Second sentence, added with the column-edit change: the user can now open
+                                a column here and find most of it greyed out. Saying WHICH field is
+                                editable and WHY turns a dead control into an understood rule — the name
+                                and type describe a send that already went out, searchability does not. */}
+                            {' '}
+                            {t('DataSources.historicalVersionEditNote')}
                         </Typography>
                         <Button size="small" onClick={backToActive}>{t('DataSources.backToActiveVersion')}</Button>
                     </Box>
@@ -261,7 +296,18 @@ const DataSourceView = ({ classes }: ClassesType) => {
                     columns={rows?.columns ?? columns}
                     rows={rows?.items ?? []}
                     loading={rowsStatus === 'loading'}
-                    readOnly={!!isHistorical || !canEditMeta}
+                    /* WAS `!!isHistorical || !canEditMeta`.
+                       `readOnly` is consumed in exactly one place (RowsTable): it decides whether a
+                       header cell is CLICKABLE and shows the pencil. So on a historical version it did
+                       not "lock the fields" — it removed the only door to them, and IsSearchable went
+                       with them even though searchability is a decision about today, not a description
+                       of a send that already happened.
+                       The lock now lives where the fields are (EditColumnDialog.restrictedToSearchable),
+                       which is the only place that can distinguish between them. readOnly keeps its
+                       original, narrower meaning: no permission to open the editor at all. Widening it
+                       to anything else would unlock more than intended, because the flag is a door and
+                       not a per-field rule. */
+                    readOnly={!canEditMeta}
                     onColumnClick={openColumnEdit}
                 />
                 <TablePagination
@@ -272,6 +318,7 @@ const DataSourceView = ({ classes }: ClassesType) => {
                     rowsPerPage={ROWS_PAGE_SIZE}
                     rowsPerPageOptions={[ROWS_PAGE_SIZE]}
                     onRowsPerPageChange={() => { /* fixed page size for the content grid */ }}
+                    SelectProps={{ MenuProps: { PaperProps: { dir: isRtl ? 'rtl' : 'ltr' } } }}
                 />
             </>
         );
@@ -289,6 +336,8 @@ const DataSourceView = ({ classes }: ClassesType) => {
                     column={dialog?.type === 'column' ? dialog.data : null}
                     searchableRemaining={searchableRemaining}
                     maxSearchable={maxSearchable}
+                    detection={dialog?.type === 'column' ? detectionFor(dialog.data) : null}
+                    restrictedToSearchable={!!isHistorical}
                     onClose={() => setDialog(null)}
                     onSaved={onColumnSaved}
                 />
