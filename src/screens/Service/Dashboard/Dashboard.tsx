@@ -31,7 +31,6 @@ const Dashboard = ({ classes }: any) => {
     return () => clearInterval(id);
   }, [dispatch]);
 
-  const goConversations = () => navigate(`${sitePrefix}Conversations`);
   const goWidgets = () => navigate(`${sitePrefix}Widgets`);
 
   return (
@@ -64,7 +63,6 @@ const Dashboard = ({ classes }: any) => {
           <RecentConversationsPanel
             conversations={data?.recentConversations ?? []}
             loading={loading}
-            onViewAll={goConversations}
           />
         </Grid>
         <Grid item xs={12} md={6} lg={4}>

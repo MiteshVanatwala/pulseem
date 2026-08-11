@@ -9,7 +9,6 @@ import EmptyState from './EmptyState';
 interface Props {
   conversations: IConversation[];
   loading: boolean;
-  onViewAll: () => void;
 }
 
 const pathnameOf = (url: string): string => {
@@ -21,7 +20,7 @@ const pathnameOf = (url: string): string => {
   }
 };
 
-const RecentConversationsPanel = ({ conversations, loading, onViewAll }: Props) => {
+const RecentConversationsPanel = ({ conversations, loading }: Props) => {
   const { t } = useTranslation();
 
   return (
@@ -33,9 +32,6 @@ const RecentConversationsPanel = ({ conversations, loading, onViewAll }: Props) 
           </span>
           <h3 className="svc-panel-title">{t('dashboard_recent_convs', 'Recent Conversations')}</h3>
         </div>
-        <span className="svc-panel-link" onClick={onViewAll}>
-          {t('dashboard_view_all', 'View All')}
-        </span>
       </div>
 
       {loading && !conversations.length ? (
