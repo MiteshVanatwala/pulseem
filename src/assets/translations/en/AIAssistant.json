@@ -1,0 +1,119 @@
+{
+  "pageTitle": "AI Assistant",
+  "header": {
+    "knowledgeItemsLabel": "Knowledge Items",
+    "knowledgeItemsFormat": "{{active}} / {{total}} active",
+    "trainingDataLabel": "Training Data",
+    "trainingDataFormat": "{{words}} words",
+    "statusLabel": "AI Status",
+    "statusReady": "Ready",
+    "statusNotReady": "Not Ready"
+  },
+  "tabs": {
+    "knowledgeBase": "Knowledge Base",
+    "settings": "Settings",
+    "testChat": "Test Chat",
+    "analytics": "Analytics"
+  },
+  "placeholderTab": {
+    "testChatNotice": "Test Chat is coming in Slice 3.",
+    "analyticsNotice": "Analytics is coming in Slice 5."
+  },
+  "knowledgeBase": {
+    "searchPlaceholder": "Search knowledge items by title or content",
+    "addButton": "Add Knowledge",
+    "empty": "No knowledge items yet. Add one to get started.",
+    "noResults": "No knowledge items match your search or filter.",
+    "usageLabel": "Knowledge items",
+    "typeFilter": {
+      "all": "All",
+      "text": "Text Content",
+      "faq": "FAQ",
+      "url": "URL Reference"
+    }
+  },
+  "knowledgeItemCard": {
+    "active": "Active",
+    "inactive": "Inactive",
+    "wordCountFormat": "{{count}} words",
+    "edit": "Edit",
+    "delete": "Delete",
+    "activate": "Activate",
+    "deactivate": "Deactivate"
+  },
+  "deleteConfirm": {
+    "title": "Delete knowledge item?",
+    "message": "This will permanently delete \"{{title}}\". This can't be undone.",
+    "confirm": "Delete",
+    "cancel": "Cancel"
+  },
+  "knowledgeItemForm": {
+    "createTitle": "Add Knowledge",
+    "editTitle": "Edit Knowledge",
+    "titleLabel": "Title",
+    "titleRequired": "Title is required",
+    "titleTooLong": "Title must be 200 characters or fewer",
+    "typeLabel": "Type",
+    "typeOptions": {
+      "text": "Text Content",
+      "faq": "FAQ",
+      "url": "URL Reference"
+    },
+    "contentLabel": "Content",
+    "contentRequired": "Content is required",
+    "contentTooLong": "Content must be 20,000 characters or fewer",
+    "contentPlaceholderText": "Write the information the AI can use to answer customer questions",
+    "questionLabel": "Question",
+    "questionPlaceholder": "What do customers ask?",
+    "answerLabel": "Answer",
+    "answerPlaceholder": "How should the AI answer?",
+    "urlLabel": "URL",
+    "urlPlaceholder": "https://example.com/help-article",
+    "urlNotice": "This URL is stored as a reference only — it is not fetched or crawled by the AI.",
+    "urlInvalid": "Enter a valid http(s) URL",
+    "tagsLabel": "Tags",
+    "tagsPlaceholder": "Comma-separated, up to 10",
+    "tagsMax": "You can add up to 10 tags",
+    "tagTooLong": "Each tag must be 50 characters or fewer",
+    "privacyNotice": "Knowledge base content may be surfaced to customers in AI replies. Don't paste internal-only information here.",
+    "serverErrorFallback": "The server rejected this item. Please review and try again.",
+    "capReachedFallback": "You've reached the {{limit}}-item limit for your knowledge base."
+  },
+  "formActions": {
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+  "settings": {
+    "title": "Settings",
+    "responseStyleLabel": "Response Style",
+    "responseStyleOptions": {
+      "professional": "Professional",
+      "friendly": "Friendly",
+      "concise": "Concise"
+    },
+    "defaultLanguageLabel": "Default Language",
+    "confidenceLabel": "Confidence Threshold",
+    "confidenceTooltip": "This score reflects how closely a customer's question matches your knowledge base content — it is not a measure of whether the answer is correct.",
+    "autoEscalateLabel": "Auto-escalate to a human agent",
+    "escalationMessageLabel": "Escalation Message",
+    "escalationMessageTooLong": "Escalation message must be 1,000 characters or fewer",
+    "maxContextWordsLabel": "Max Context Words",
+    "maxContextWordsRange": "Max context words must be between 100 and 10,000",
+    "maxContextWordsCeiling": "Your plan allows up to {{max}} words",
+    "maxContextWordsUnlimited": "Your plan allows unlimited context words",
+    "unlimited": "Unlimited",
+    "includeHistoryLabel": "Include conversation history"
+  },
+  "settingsActions": {
+    "save": "Save Settings",
+    "unsavedChanges": "You have unsaved changes",
+    "leaveGuardMessage": "You have unsaved AI Assistant settings. Leave without saving?",
+    "saved": "Settings saved"
+  },
+  "locked": {
+    "message": "AI Assistant is available on a higher plan. Upgrade to set up your knowledge base and start answering customers automatically."
+  },
+  "validation": {
+    "genericError": "Something went wrong. Please try again."
+  }
+}

@@ -1,0 +1,119 @@
+{
+  "pageTitle": "Asystent AI",
+  "header": {
+    "knowledgeItemsLabel": "Elementy bazy wiedzy",
+    "knowledgeItemsFormat": "{{active}} / {{total}} aktywnych",
+    "trainingDataLabel": "Dane treningowe",
+    "trainingDataFormat": "{{words}} słów",
+    "statusLabel": "Status AI",
+    "statusReady": "Gotowy",
+    "statusNotReady": "Niegotowy"
+  },
+  "tabs": {
+    "knowledgeBase": "Baza wiedzy",
+    "settings": "Ustawienia",
+    "testChat": "Czat testowy",
+    "analytics": "Analityka"
+  },
+  "placeholderTab": {
+    "testChatNotice": "Czat testowy będzie dostępny w kolejnym etapie (Slice 3).",
+    "analyticsNotice": "Analityka będzie dostępna w kolejnym etapie (Slice 5)."
+  },
+  "knowledgeBase": {
+    "searchPlaceholder": "Szukaj elementów wiedzy według tytułu lub treści",
+    "addButton": "Dodaj wiedzę",
+    "empty": "Brak elementów wiedzy. Dodaj pierwszy, aby zacząć.",
+    "noResults": "Żaden element wiedzy nie odpowiada wyszukiwaniu lub filtrowi.",
+    "usageLabel": "Elementy wiedzy",
+    "typeFilter": {
+      "all": "Wszystkie",
+      "text": "Treść tekstowa",
+      "faq": "FAQ",
+      "url": "Odnośnik URL"
+    }
+  },
+  "knowledgeItemCard": {
+    "active": "Aktywny",
+    "inactive": "Nieaktywny",
+    "wordCountFormat": "{{count}} słów",
+    "edit": "Edytuj",
+    "delete": "Usuń",
+    "activate": "Aktywuj",
+    "deactivate": "Dezaktywuj"
+  },
+  "deleteConfirm": {
+    "title": "Usunąć element wiedzy?",
+    "message": "Spowoduje to trwałe usunięcie \"{{title}}\". Tej operacji nie można odwrócić.",
+    "confirm": "Usuń",
+    "cancel": "Anuluj"
+  },
+  "knowledgeItemForm": {
+    "createTitle": "Dodaj wiedzę",
+    "editTitle": "Edytuj wiedzę",
+    "titleLabel": "Tytuł",
+    "titleRequired": "Tytuł jest wymagany",
+    "titleTooLong": "Tytuł może mieć maksymalnie 200 znaków",
+    "typeLabel": "Typ",
+    "typeOptions": {
+      "text": "Treść tekstowa",
+      "faq": "FAQ",
+      "url": "Odnośnik URL"
+    },
+    "contentLabel": "Treść",
+    "contentRequired": "Treść jest wymagana",
+    "contentTooLong": "Treść może mieć maksymalnie 20 000 znaków",
+    "contentPlaceholderText": "Wpisz informacje, które AI może wykorzystać do odpowiadania na pytania klientów",
+    "questionLabel": "Pytanie",
+    "questionPlaceholder": "O co pytają klienci?",
+    "answerLabel": "Odpowiedź",
+    "answerPlaceholder": "Jak AI powinno odpowiedzieć?",
+    "urlLabel": "URL",
+    "urlPlaceholder": "https://example.com/help-article",
+    "urlNotice": "Ten adres URL jest zapisywany jedynie jako odnośnik — AI nie pobiera ani nie przeszukuje jego treści.",
+    "urlInvalid": "Podaj prawidłowy adres URL zaczynający się od http lub https",
+    "tagsLabel": "Tagi",
+    "tagsPlaceholder": "Rozdzielone przecinkami, maksymalnie 10",
+    "tagsMax": "Możesz dodać maksymalnie 10 tagów",
+    "tagTooLong": "Każdy tag może mieć maksymalnie 50 znaków",
+    "privacyNotice": "Treść bazy wiedzy może być wykorzystywana w odpowiedziach AI kierowanych do klientów. Nie wklejaj tutaj informacji przeznaczonych wyłącznie do użytku wewnętrznego.",
+    "serverErrorFallback": "Serwer odrzucił ten element. Sprawdź dane i spróbuj ponownie.",
+    "capReachedFallback": "Osiągnąłeś limit {{limit}} elementów w bazie wiedzy."
+  },
+  "formActions": {
+    "save": "Zapisz",
+    "cancel": "Anuluj"
+  },
+  "settings": {
+    "title": "Ustawienia",
+    "responseStyleLabel": "Styl odpowiedzi",
+    "responseStyleOptions": {
+      "professional": "Profesjonalny",
+      "friendly": "Przyjazny",
+      "concise": "Zwięzły"
+    },
+    "defaultLanguageLabel": "Język domyślny",
+    "confidenceLabel": "Próg pewności",
+    "confidenceTooltip": "Ten wskaźnik pokazuje, jak dokładnie pytanie klienta odpowiada treści Twojej bazy wiedzy — nie oznacza to, że odpowiedź jest poprawna.",
+    "autoEscalateLabel": "Automatyczne przekazanie do konsultanta",
+    "escalationMessageLabel": "Wiadomość przy przekazaniu",
+    "escalationMessageTooLong": "Wiadomość przy przekazaniu może mieć maksymalnie 1000 znaków",
+    "maxContextWordsLabel": "Maksymalna liczba słów kontekstu",
+    "maxContextWordsRange": "Maksymalna liczba słów kontekstu musi wynosić od 100 do 10 000",
+    "maxContextWordsCeiling": "Twój plan pozwala na maksymalnie {{max}} słów",
+    "maxContextWordsUnlimited": "Twój plan pozwala na nieograniczoną liczbę słów kontekstu",
+    "unlimited": "Bez limitu",
+    "includeHistoryLabel": "Uwzględnij historię rozmowy"
+  },
+  "settingsActions": {
+    "save": "Zapisz ustawienia",
+    "unsavedChanges": "Masz niezapisane zmiany",
+    "leaveGuardMessage": "Masz niezapisane ustawienia Asystenta AI. Wyjść bez zapisywania?",
+    "saved": "Ustawienia zapisane"
+  },
+  "locked": {
+    "message": "Asystent AI jest dostępny w wyższym planie. Zaktualizuj plan, aby skonfigurować bazę wiedzy i zacząć automatycznie odpowiadać klientom."
+  },
+  "validation": {
+    "genericError": "Coś poszło nie tak. Spróbuj ponownie."
+  }
+}

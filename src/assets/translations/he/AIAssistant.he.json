@@ -1,0 +1,119 @@
+{
+  "pageTitle": "עוזר AI",
+  "header": {
+    "knowledgeItemsLabel": "פריטי ידע",
+    "knowledgeItemsFormat": "{{active}} / {{total}} פעילים",
+    "trainingDataLabel": "נתוני אימון",
+    "trainingDataFormat": "{{words}} מילים",
+    "statusLabel": "סטטוס AI",
+    "statusReady": "מוכן",
+    "statusNotReady": "לא מוכן"
+  },
+  "tabs": {
+    "knowledgeBase": "מאגר ידע",
+    "settings": "הגדרות",
+    "testChat": "בדיקת שיח",
+    "analytics": "אנליטיקס"
+  },
+  "placeholderTab": {
+    "testChatNotice": "בדיקת שיח תתאפשר ב-Slice 3.",
+    "analyticsNotice": "אנליטיקס תתאפשר ב-Slice 5."
+  },
+  "knowledgeBase": {
+    "searchPlaceholder": "חיפוש פריטי ידע לפי כותרת או תוכן",
+    "addButton": "הוספת ידע",
+    "empty": "אין עדיין פריטי ידע. הוסיפו פריט כדי להתחיל.",
+    "noResults": "אין פריטי ידע התואמים לחיפוש או לסינון שלכם.",
+    "usageLabel": "פריטי ידע",
+    "typeFilter": {
+      "all": "הכול",
+      "text": "תוכן טקסטואלי",
+      "faq": "שאלות ותשובות",
+      "url": "הפניית URL"
+    }
+  },
+  "knowledgeItemCard": {
+    "active": "פעיל",
+    "inactive": "לא פעיל",
+    "wordCountFormat": "{{count}} מילים",
+    "edit": "עריכה",
+    "delete": "מחיקה",
+    "activate": "הפעלה",
+    "deactivate": "השבתה"
+  },
+  "deleteConfirm": {
+    "title": "למחוק את פריט הידע?",
+    "message": "פעולה זו תמחק לצמיתות את \"{{title}}\". לא ניתן לשחזר פעולה זו.",
+    "confirm": "מחיקה",
+    "cancel": "ביטול"
+  },
+  "knowledgeItemForm": {
+    "createTitle": "הוספת ידע",
+    "editTitle": "עריכת ידע",
+    "titleLabel": "כותרת",
+    "titleRequired": "כותרת היא שדה חובה",
+    "titleTooLong": "הכותרת יכולה להכיל עד 200 תווים",
+    "typeLabel": "סוג",
+    "typeOptions": {
+      "text": "תוכן טקסטואלי",
+      "faq": "שאלות ותשובות",
+      "url": "הפניית URL"
+    },
+    "contentLabel": "תוכן",
+    "contentRequired": "תוכן הוא שדה חובה",
+    "contentTooLong": "התוכן יכול להכיל עד 20,000 תווים",
+    "contentPlaceholderText": "כתבו את המידע שה-AI יכול להשתמש בו כדי לענות לשאלות לקוחות",
+    "questionLabel": "שאלה",
+    "questionPlaceholder": "מה לקוחות שואלים?",
+    "answerLabel": "תשובה",
+    "answerPlaceholder": "כיצד ה-AI צריך לענות?",
+    "urlLabel": "כתובת URL",
+    "urlPlaceholder": "https://example.com/help-article",
+    "urlNotice": "כתובת ה-URL נשמרת כהפניה בלבד — היא לא נשלפת או נסרקת על ידי ה-AI.",
+    "urlInvalid": "יש להזין כתובת URL תקינה המתחילה ב-http או https",
+    "tagsLabel": "תגיות",
+    "tagsPlaceholder": "מופרדות בפסיקים, עד 10 תגיות",
+    "tagsMax": "ניתן להוסיף עד 10 תגיות",
+    "tagTooLong": "כל תגית יכולה להכיל עד 50 תווים",
+    "privacyNotice": "תוכן ממאגר הידע עשוי להיחשף ללקוחות בתשובות ה-AI. אין להדביק כאן מידע פנימי בלבד.",
+    "serverErrorFallback": "השרת דחה את הפריט. יש לבדוק ולנסות שוב.",
+    "capReachedFallback": "הגעתם למגבלה של {{limit}} פריטים במאגר הידע שלכם."
+  },
+  "formActions": {
+    "save": "שמירה",
+    "cancel": "ביטול"
+  },
+  "settings": {
+    "title": "הגדרות",
+    "responseStyleLabel": "סטייל תגובה",
+    "responseStyleOptions": {
+      "professional": "מקצועי",
+      "friendly": "חברותי",
+      "concise": "תמציתי"
+    },
+    "defaultLanguageLabel": "שפת ברירת מחדל",
+    "confidenceLabel": "סף ביטחון",
+    "confidenceTooltip": "הציון הזה משקף עד כמה שאלת הלקוח תואמת לתוכן במאגר הידע שלכם — הוא אינו מדד לכך שהתשובה נכונה.",
+    "autoEscalateLabel": "העברה אוטומטית לנציג אנושי",
+    "escalationMessageLabel": "הודעת העברה",
+    "escalationMessageTooLong": "הודעת ההעברה יכולה להכיל עד 1,000 תווים",
+    "maxContextWordsLabel": "מקסימום מילות קונטקסט",
+    "maxContextWordsRange": "מספר מילות הקונטקסט חייב להיות בין 100 ל-10,000",
+    "maxContextWordsCeiling": "התוכנית שלכם מאפשרת עד {{max}} מילים",
+    "maxContextWordsUnlimited": "התוכנית שלכם מאפשרת מילות קונטקסט ללא הגבלה",
+    "unlimited": "ללא הגבלה",
+    "includeHistoryLabel": "הכללת היסטוריית שיחה"
+  },
+  "settingsActions": {
+    "save": "שמירת הגדרות",
+    "unsavedChanges": "יש לכם שינויים שלא נשמרו",
+    "leaveGuardMessage": "יש לכם שינויים שלא נשמרו בהגדרות עוזר ה-AI. לצאת בלי לשמור?",
+    "saved": "ההגדרות נשמרו"
+  },
+  "locked": {
+    "message": "עוזר ה-AI זמין בתוכנית גבוהה יותר. שדרגו כדי להקים מאגר ידע ולהתחיל לענות ללקוחות באופן אוטומטי."
+  },
+  "validation": {
+    "genericError": "משהו השתבש. נסו שוב."
+  }
+}

@@ -46,6 +46,7 @@ import PopupTriggers from './PopupTriggers.json';
 import Popup from './Popup.json'
 import DataSources from './DataSources.json';
 import SendSearch from './SendSearch.json';
+import AIAssistant from './AIAssistant.json';
 
 export const en = {
 	PopupTriggers,
@@ -95,5 +96,6 @@ export const en = {
 	RemoveMyData,
 	Popup,
 	DataSources,
-	SendSearch
+	SendSearch,
+	AIAssistant
 };

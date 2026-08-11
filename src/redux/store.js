@@ -47,6 +47,7 @@ import smartSendReducer from './reducers/smartSendSlice';
 import sendSearchReducer from './reducers/sendSearchSlice';
 import conversationsReducer from './reducers/conversationsSlice';
 import serviceLimitsReducer from './reducers/serviceLimitsSlice';
+import aiAssistantReducer from './reducers/aiAssistantSlice';
 
 
 export default configureStore({
@@ -98,5 +99,6 @@ export default configureStore({
     sendSearch: sendSearchReducer,
     conversations: conversationsReducer,
     serviceLimits: serviceLimitsReducer,
+    aiAssistant: aiAssistantReducer,
   },
 });

@@ -43,6 +43,7 @@ import AI from './AI.json';
 import SubUsers from './SubUsers.json';
 import DataSources from './DataSources.json';
 import SendSearch from './SendSearch.json';
+import AIAssistant from './AIAssistant.json';
 
 export const pl = {
 	PopupTriggers,
@@ -89,5 +90,6 @@ export const pl = {
 	AI,
 	SubUsers,
 	DataSources,
-	SendSearch
+	SendSearch,
+	AIAssistant
 };
