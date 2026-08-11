@@ -10,7 +10,6 @@ import {
   MdOutlineArticle,
   MdOutlineChat,
   MdOutlineWebhook,
-  MdKeyboardArrowDown,
 } from 'react-icons/md';
 import {
   ChatbotActionType,
@@ -145,14 +144,12 @@ const ConditionBlock = ({ step, templates, classes, depth, onChange, onRemove }:
         </button>
       </div>
 
-      <div className="svc-cb-connector">
-        <MdKeyboardArrowDown size={18} />
-      </div>
-
-      {step.branches.map((branch) => (
+      {step.branches.map((branch, branchIndex) => (
         <div className={depth === 0 ? 'svc-cb-branch svc-cb-branch-top' : 'svc-cb-branch'} key={branch.id}>
           <div className="svc-cb-branch-head">
-            <span className="svc-cb-branch-label">{t('chatbot_if', 'If')}</span>
+            <span className="svc-cb-branch-label">
+              {branchIndex === 0 ? t('chatbot_if', 'If') : t('chatbot_else_if', 'Else if')}
+            </span>
             <input
               className="svc-cb-text-input svc-cb-rule-keyword"
               value={branch.keyword}

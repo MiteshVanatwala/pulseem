@@ -312,9 +312,6 @@ const ChatbotList = ({ classes }: { classes?: any }) => {
     >
       <Box className={'topSection'}>
         <Title Text={t('chatbot_list_title', 'Chatbots')} classes={classes} />
-        <Typography variant="body2" color="textSecondary" style={{ marginTop: 8, marginLeft: 15 }}>
-          {t('chatbot_list_subtitle', 'Automated first-response flows for WhatsApp and the website widget.')}
-        </Typography>
         {renderSearchLine()}
       </Box>
 

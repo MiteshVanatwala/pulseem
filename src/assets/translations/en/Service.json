@@ -96,9 +96,12 @@
 
   "chatbot_create_title": "Create Chatbot",
   "chatbot_edit_title": "Edit Chatbot",
-  "chatbot_name_label": "Chatbot name",
-  "chatbot_error_name_required": "Give this chatbot a name before saving.",
+  "chatbot_name_label": "Chatbot Name",
+  "chatbot_error_name_required": "Chatbot Name is required",
   "chatbot_error_step_required": "Add at least one step before saving.",
+  "chatbot_error_action_field_required": "Fill in the required field for each action before saving.",
+  "chatbot_error_condition_keyword_required": "Fill in the message text for each condition before saving.",
+  "chatbot_validation_title": "The following fields are invalid",
   "chatbot_tab_trigger": "Trigger",
   "chatbot_tab_conditions_actions": "Conditions & Action",
 
@@ -120,6 +123,7 @@
   "chatbot_remove_branch": "Remove branch",
   "chatbot_add_branch": "Add another match",
   "chatbot_if": "If",
+  "chatbot_else_if": "Else if",
   "chatbot_else": "Else",
   "chatbot_keyword_placeholder": "e.g. price",
 

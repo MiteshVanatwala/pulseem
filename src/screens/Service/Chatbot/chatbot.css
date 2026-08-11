@@ -165,10 +165,13 @@
 .svc-cb-trigger-row-text {
   flex: 1 1 220px;
 }
+/* Matches Subscriber Settings' row labels in the Landing Page wizard — those are
+   plain, unstyled MUI <Typography> (body1: 16px/400 weight/text-primary color),
+   not a bold custom label. */
 .svc-cb-trigger-row-label {
-  font-size: 14px;
-  font-weight: 700;
-  color: #101828;
+  font-size: 16px;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.87);
 }
 .svc-cb-trigger-row-desc {
   font-size: 12.5px;
@@ -250,7 +253,11 @@
 .svc-cb-flow-list-nested {
   margin-top: 4px;
   gap: 8px;
-  padding-inline-start: 16px;
+  /* Inset from both edges of the parent branch — start-only padding left the
+     inner container's right edge flush with the outer one while its left
+     edge was pushed in, an asymmetric gutter between container and inner
+     container. */
+  padding-inline: 16px;
 }
 .svc-cb-step-card {
   position: relative;
@@ -352,7 +359,12 @@
 
 .svc-cb-branch {
   margin-top: 14px;
-  padding: 12px 14px;
+  padding-block: 12px;
+  /* border-inline-start is 2px thicker than the other sides (accent color) —
+     trim that same 2px off the start padding so content sits evenly inset on
+     both sides instead of appearing pushed further in on the accent side. */
+  padding-inline-start: 12px;
+  padding-inline-end: 14px;
   border: 1px solid #16a34a;
   border-inline-start: 3px solid #15803d;
   background: #f6fef9;
@@ -586,7 +598,7 @@
     width: 100%;
   }
   .svc-cb-flow-list-nested {
-    padding-inline-start: 10px;
+    padding-inline: 10px;
   }
   .svc-cb-step-row {
     flex-wrap: wrap;
