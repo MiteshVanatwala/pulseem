@@ -55,7 +55,14 @@ const SmartSendPreview: React.FC<{ campaignId: number; height?: number | string 
     }, [rendered]);
 
     return (
-        <Box style={{ position: 'relative', height, overflow: 'auto', border: '1px solid #e0e0e0', borderRadius: 4, background: '#fff', direction: 'ltr' }}>
+        // SUPERVISOR-BOXSIZING: boxSizing is load-bearing, not tidiness. This app ships no global
+        // reset — no CssBaseline anywhere in src/, and index.css has no `*` rule — so the default
+        // is content-box. With height:'100%' plus a 1px border the box is 2px TALLER than its slot.
+        // Those 2px escape the minHeight:0 flex parent and are caught by the first scroll container
+        // above (SendSummaryDialog's `col`, overflowY:auto), which then paints a SECOND, near-empty
+        // scrollbar beside the preview's real one. In RTL they land on opposite edges, because this
+        // box forces direction:'ltr' so the email renders in its own direction.
+        <Box style={{ position: 'relative', height, boxSizing: 'border-box', overflow: 'auto', border: '1px solid #e0e0e0', borderRadius: 4, background: '#fff', direction: 'ltr' }}>
             <div ref={hostRef} style={{ width: '100%' }} aria-label={t('DataSources.send.preview')} onClickCapture={(e) => e.preventDefault()} />
             <Loader isOpen={loading} showBackdrop={true} />
         </Box>

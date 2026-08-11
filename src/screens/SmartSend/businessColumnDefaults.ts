@@ -69,11 +69,17 @@ const SEMANTIC_ROLE_RECIPIENT_EMAIL = 1;
 // unique per version, enforced by the filtered index IX_DataSourceColumns__VersionID_EmailRole.
 const columnText = (c: SmartSendColumn) => `${c.DisplayName || ''} ${c.SourceHeader || ''}`;
 
+// SUPERVISOR-PREDICATE-EXPORT: these two were file-private. The send-summary dialog needs the
+// SAME predicates the picker's default uses, so that the pre-send warning and the auto-pick can
+// never disagree about what counts as a usable supervisor address. Re-deriving them there would
+// create a second source of truth for one rule — which is exactly how the checkbox and the
+// mapping drifted apart in the first place. Export only; the logic is untouched.
+
 // Not the recipient identity — the one hard requirement in every tier below.
-const isNotIdentity = (c: SmartSendColumn) => c.SemanticRole !== SEMANTIC_ROLE_RECIPIENT_EMAIL;
+export const isNotIdentity = (c: SmartSendColumn) => c.SemanticRole !== SEMANTIC_ROLE_RECIPIENT_EMAIL;
 
 // Looks like it carries email addresses, by tag OR by name.
-const isEmailish = (c: SmartSendColumn) =>
+export const isEmailish = (c: SmartSendColumn) =>
     c.DataType === DATA_TYPE_EMAIL || EMAIL_NAME_RE.test(columnText(c));
 
 /**

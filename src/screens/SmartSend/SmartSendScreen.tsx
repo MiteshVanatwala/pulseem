@@ -162,7 +162,18 @@ const SmartSendScreen = ({ classes }: any) => {
             Channel: smartSend.selectedChannel,
             DataSourceID: smartSend.dataSource?.DataSourceID,
             DataSourceVersionID: smartSend.lockedVersionId,
-            SupervisorColumnID: smartSend.supervisorColumnId,
+            // A MACHINE GUESS IS NOT A DECISION AND IS NOT PERSISTED. Changed 2026-08-11
+            // (deep review R1-02). pickDefaultSupervisorColumn fills this in with no user action —
+            // its first tier matches on the column NAME alone, with no e-mail requirement — and
+            // this line used to post it verbatim, so opening the send summary (which saves
+            // silently) or letting the 750 ms autosave fire after any token edit was enough to
+            // write a SupervisorColumnID the operator never chose.
+            // null, not omitted: the field is bound server-side either way, and omitting it would
+            // make the SP clear a value the operator HAD deliberately saved. Sending null while the
+            // value is only a suggestion is the state that is actually true.
+            // smartSendSlice.setBusinessColumn clears the flag the moment the picker is touched,
+            // including a deliberate "None", so a real choice still persists on the next save.
+            SupervisorColumnID: smartSend.supervisorColumnIsGuess ? null : smartSend.supervisorColumnId,
             GapColumnID: smartSend.gapColumnId,
             SortColumnID: smartSend.sortColumnId,
             // Only tokens mapped to a column that still EXISTS in the locked version. A
@@ -226,7 +237,11 @@ const SmartSendScreen = ({ classes }: any) => {
         if (!hasColumns || !dirty || sendLockedRef.current) return undefined;
         const hasAnyMapping =
             Object.values(smartSend.tokenMap).some((c: any) => c && c > 0) ||
-            smartSend.supervisorColumnId != null || smartSend.gapColumnId != null ||
+            // `&& !supervisorColumnIsGuess` added 2026-08-11 (deep review R1-02): an unconfirmed
+            // guess must not be the reason a save fires. Without this the helper's own output
+            // triggered the autosave that then persisted it — the value was its own justification.
+            (smartSend.supervisorColumnId != null && !smartSend.supervisorColumnIsGuess) ||
+            smartSend.gapColumnId != null ||
             smartSend.sortColumnId != null || smartSend.isMapped;
         if (!hasAnyMapping) return undefined;
         saveTimer.current = setTimeout(() => { saveTimer.current = null; runAutoSave(); }, 750);

@@ -45,6 +45,17 @@ interface SmartSendState {
     columnsReqId: string;                     // latest loadSourceColumns request — drops out-of-order responses
     tokenMap: { [token: string]: number | null };   // the working (unsaved) mapping
     supervisorColumnId: number | null;
+    // TRUE when supervisorColumnId came from pickDefaultSupervisorColumn's MACHINE GUESS and no
+    // operator has confirmed it. Added 2026-08-11 (deep review R1-02).
+    // Why this has to exist: the guess is written into this slice with no user action, and
+    // buildSaveRequest posted it verbatim — so merely picking a source and editing one token
+    // persisted a SupervisorColumnID nobody chose. That value is not inert. It flips
+    // IsSearchable = 1 on the shared version (06_SP_Sending.sql:405-409) and can then no longer be
+    // turned off (04_SP_Write.sql:255-269 returns -8), and once script 18 is deployed it is also
+    // the predicate the OR gate and the router both key on (18:1477, 18:1571-1584) — i.e. it
+    // silently decides that a campaign mails its supervisors through V3. Script 18's header
+    // promises that only happens "deliberately". This flag is what makes that word true.
+    supervisorColumnIsGuess: boolean;
     gapColumnId: number | null;
     sortColumnId: number | null;
     // What the SERVER returned for gap/sort, before any UI default was applied. The gap and sort
@@ -312,6 +323,7 @@ const initialState: SmartSendState = {
     columnsReqId: '',
     tokenMap: {},
     supervisorColumnId: null,
+    supervisorColumnIsGuess: false,
     gapColumnId: null,
     sortColumnId: null,
     storedGapColumnId: null,
@@ -371,6 +383,7 @@ export const smartSendSlice = createSlice({
             state.dataSourceId = sourceId;
             state.tokenMap = {};
             state.supervisorColumnId = null;
+            state.supervisorColumnIsGuess = false;
             state.gapColumnId = null;
             state.sortColumnId = null;
             // The legacy gap!=sort warning describes the SAVED mapping; switching source discards
@@ -390,7 +403,13 @@ export const smartSendSlice = createSlice({
         },
         setBusinessColumn: (state, action) => {
             const { role, columnId } = action.payload || {};
-            if (role === 'supervisor') state.supervisorColumnId = columnId ?? null;
+            if (role === 'supervisor') {
+                state.supervisorColumnId = columnId ?? null;
+                // THE CONFIRMATION POINT. This reducer runs only from BusinessColumnsPicker's
+                // onChange, i.e. only when a human moved the control — including choosing "None".
+                // From here on the value is a decision and buildSaveRequest may persist it.
+                state.supervisorColumnIsGuess = false;
+            }
             // 'gapSort' is the MERGED control: the UI now shows one picker where there used to be
             // two, and it writes the SAME ColumnID into both slots. The server keeps storing them
             // as two independent columns (SortColumnID is persisted "as given"; readers compute
@@ -442,6 +461,11 @@ export const smartSendSlice = createSlice({
                         sortColumnId: data.SortColumnID,
                     }, !data.IsMapped);
                     state.supervisorColumnId = bc.supervisorColumnId;
+                    // A guess is exactly "the server had nothing and the helper filled it in".
+                    // Derived here rather than returned by applyBusinessColumnDefaults so that
+                    // helper keeps its single responsibility and its other callers are unaffected.
+                    state.supervisorColumnIsGuess =
+                        data.SupervisorColumnID == null && bc.supervisorColumnId != null;
                     state.gapColumnId = bc.gapColumnId;
                     state.sortColumnId = bc.sortColumnId;
                     // What the SERVER actually has, kept separately so BusinessColumnsPicker can
@@ -510,7 +534,18 @@ export const smartSendSlice = createSlice({
                         gapColumnId: state.gapColumnId,
                         sortColumnId: state.sortColumnId,
                     }, true);
+                    const wasNull = state.supervisorColumnId == null;
                     state.supervisorColumnId = bc.supervisorColumnId;
+                    // Source-pick path: selectSource cleared the value a moment ago, so anything
+                    // non-null here is the helper's guess by definition.
+                    // SET-ONLY, never assign. Changed 2026-08-11 during fix verification: a plain
+                    // assignment would CLEAR a true flag whenever this handler runs with the value
+                    // already populated, and the comment above ("selectSource cleared it a moment
+                    // ago") is an invariant this reducer does not own — the surrounding block says
+                    // it "runs on every visit", and two loadSourceColumns dispatches
+                    // (SourcePicker.tsx:128, SmartSendScreen.tsx:438) do not pair with selectSource.
+                    // setBusinessColumn is the only place a guess may be downgraded to a decision.
+                    if (wasNull && bc.supervisorColumnId != null) state.supervisorColumnIsGuess = true;
                     state.gapColumnId = bc.gapColumnId;
                     state.sortColumnId = bc.sortColumnId;
                     // A brand-new source has no stored mapping yet — nothing to warn about.

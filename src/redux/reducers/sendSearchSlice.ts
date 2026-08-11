@@ -29,6 +29,8 @@ import {
     SendSearchFilterClause,
     SendSearchFilterField,
     SendSearchCampaign,
+    SendSearchCampaignSource,
+    SendSearchExportRequest,
     exclusiveUpperBound,
 } from '../../Models/DataSources/SendSearch';
 
@@ -124,6 +126,12 @@ interface SendSearchState {
     // paint the working half as broken.
     campaigns: SendSearchCampaign[];
     campaignsError: string | null;
+    // ── data-source map for the CURRENT result set (Search, result set 3) ────────────────────
+    // Replaced with every search, never merged: it describes this result and nothing else.
+    // `sourcesAvailable` is the deploy-skew signal and the ONLY thing that decides whether the grid
+    // renders a source line — see the Search.fulfilled case.
+    sources: SendSearchCampaignSource[];
+    sourcesAvailable: boolean;
 }
 
 // ── Thunks ───────────────────────────────────────────────────────────────────────────────────
@@ -232,6 +240,34 @@ export const getSendSearchFilterFields = createAsyncThunk(
         }
     });
 
+// POST api/SendSearch/Export  →  Data: SendSearchExportResult   (FROZEN EXPORT CONTRACT)
+//
+// Same `.post` + `return response.data` shape as `searchSends` above, and that is not incidental:
+// the body EXTENDS `SendSearchRequest`, so the export is literally the same query the grid ran,
+// plus the display-ready criteria, the 22 headers and the token→text map.
+//
+// 🔴 NO extraReducers, NO new state, and no `exportLoading` flag anywhere in this slice — this is
+// the same shape `exportDataSource` (dataSourcesSlice.ts:138) ships with, and the reason is not
+// symmetry for its own sake. The export result is a MODAL CONVERSATION: it belongs to the dialog
+// that is open, it is meaningless the moment that dialog closes, and it must not survive into the
+// next one. State here would outlive the dialog and re-paint a stale "the file is ready" — with a
+// link to a download from a DIFFERENT filter set — on top of a freshly opened export. The dialog
+// owns its own status for exactly as long as the status is true.
+//
+// The four terminal statuses (201 / 202 / 409 TOO_MANY_ROWS / 409 EXPORT_IN_PROGRESS) all arrive
+// here as a normal `PulseemResponse` body with HTTP 200 — the house convention this whole API uses
+// (SendSearchController returns the envelope object, never an HTTP status), so `payload.StatusCode`
+// is the discriminant and `rejected` means the NETWORK failed, not that the export was refused.
+export const exportSendSearch = createAsyncThunk(
+    'SendSearch/Export', async (req: SendSearchExportRequest, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.post(`${api}Export`, req);
+            return response.data;
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    });
+
 // ── Slice ────────────────────────────────────────────────────────────────────────────────────
 
 const initialState: SendSearchState = {
@@ -258,6 +294,8 @@ const initialState: SendSearchState = {
     filterFieldsReqId: '',
     campaigns: [],
     campaignsError: null,
+    sources: [],
+    sourcesAvailable: false,
 };
 
 // One definition of "forget the recipient's values", shared by `closeDrawer`, `popDrawer` (last
@@ -425,6 +463,14 @@ export const sendSearchSlice = createSlice({
             } else if (data) {
                 state.items = data.Items ?? [];
                 state.totalCount = data.TotalCount ?? 0;
+                // The source map travels WITH the rows and is replaced with them, never merged and
+                // never accumulated: it describes exactly this result set, and a stale entry from a
+                // previous search would put a source name on a row that did not come from it.
+                state.sources = data.Sources ?? [];
+                // Read from the FLAG, not from the list. `=== true` and not a truthy coercion, so an
+                // older API that omits the property lands on false rather than on undefined — the
+                // grid then renders no source line at all, instead of "unknown source" on every row.
+                state.sourcesAvailable = data.SourcesAvailable === true;
                 state.error = null;
             } else {
                 // A 200 with no Data is a server-side failure that did not throw. Surfacing it as an

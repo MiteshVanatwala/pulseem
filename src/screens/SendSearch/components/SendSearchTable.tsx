@@ -27,6 +27,7 @@ import { DateFormats } from '../../../helpers/Constants';
 import {
     SS,
     SendSearchRow,
+    SendSearchCampaignSource,
     StateTone,
     camelCaseState,
     deliveryTone,
@@ -66,17 +67,160 @@ interface Props {
     // and the user cannot check that the ordering is the one they asked for. §2 requires it on RS1,
     // MapRow, both row models and the channel≠1 stub for exactly this reason; this is its render.
     sortFieldLabel?: string | null;
+
+    // ── data-source identity (52-SearchSends-SourceColumn.sql, result set 3) ─────────────────
+    // The map for THIS result set. Rows carry `EffectiveDataSourceID`; the name is joined here.
+    sources?: SendSearchCampaignSource[];
+    // 🔴 THE GATE. false ⇒ the server has not shipped 52_ ⇒ render NO source line at all. It must
+    // never degrade into a line reading "unknown source" on every row: that is a claim about the
+    // DATA, made from a fact about the DEPLOYMENT.
+    sourcesAvailable?: boolean;
 }
 
 const fmt = (iso: string | null): string => (iso ? moment(iso).format(DateFormats.DATE_TIME_24) : '—');
 
+// Screen-reader-only. Written out rather than imported: `visuallyHidden` is MUI v5, this is v4.
+const SR_ONLY: React.CSSProperties = {
+    position: 'absolute', width: 1, height: 1, padding: 0, margin: -1,
+    overflow: 'hidden', clip: 'rect(0 0 0 0)', whiteSpace: 'nowrap', border: 0,
+};
+
 const SendSearchTable: React.FC<Props> = ({
     items, totalCount, pageIndex, pageSize, loading, hasFilter,
     onOpenRow, onPageChange, onPageSizeChange, onClearAll, sortFieldLabel,
+    sources, sourcesAvailable,
 }) => {
     const { t, i18n } = useTranslation();
     // Same idiom as DataSources.tsx:113 — fallback 'rtl' because Hebrew is the default locale.
     const isRtl = (i18n.dir?.() ?? 'rtl') === 'rtl';
+
+    // ── data-source line ─────────────────────────────────────────────────────────────────────
+    // Built once per render, not per row: 50 rows × a linear scan would be 50 scans of the map.
+    const srcList: SendSearchCampaignSource[] = sources ?? [];
+    const srcById: { [id: number]: SendSearchCampaignSource } = {};
+    srcList.forEach((s) => { srcById[s.DataSourceID] = s; });
+
+    // Which NAMES are carried by more than one id. Case-folded and trimmed, because "תיק סוכן" and
+    // "תיק סוכן " are the same name to a reader and the filtered unique index does not stop them
+    // from coexisting once one side is deleted.
+    //
+    // This drives EMPHASIS only — never whether the id is shown. The id is unconditional: this map
+    // covers the filtered result, so a search returning only the deleted twin contains no collision,
+    // and a conditional id would vanish exactly where it is most needed while its absence read as a
+    // positive claim of uniqueness.
+    const nameCounts: { [name: string]: number } = {};
+    srcList.forEach((s) => {
+        const key = (s.DataSourceName ?? '').trim().toLowerCase();
+        if (key === '') return;
+        nameCounts[key] = (nameCounts[key] || 0) + 1;
+    });
+
+    const renderSourceLine = (r: SendSearchRow) => {
+        // The gate. Absent flag ⇒ the SERVER cannot tell us ⇒ no line at all. Never a line that
+        // asserts something about the data from a fact about the deployment.
+        if (!sourcesAvailable) return null;
+
+        const id = r.EffectiveDataSourceID;
+        const src = id != null ? srcById[id] : undefined;
+        const name = src ? src.DataSourceName : null;
+        const isDeleted = !!(src && src.IsDeleted);
+        const collides = !!(name && nameCounts[name.trim().toLowerCase()] > 1);
+
+        // 🔴 WHERE THE ID CAME FROM, and this qualifier is not cosmetic.
+        // The server resolves it as COALESCE(provenance.DataSourceID, mapping.DataSourceID). The
+        // first arm is a RECORD of the send. The second is the mapping AS IT IS NOW — and
+        // dbo.CampaignsToDataSources has PK (CampaignID, Channel) with no history, so re-pointing a
+        // campaign is an in-place UPDATE that erases what it used to be.
+        //
+        // So on a row the SP already graded 'Unverifiable' (the mapping was touched after the send),
+        // an unqualified source name is a confident claim about which file was sent — asserted from
+        // a mapping that may since have been pointed somewhere else entirely. That is exactly the
+        // failure this screen exists to prevent, and it is NOT covered by the provenance badge three
+        // cells away: this line reads as an independent statement.
+        //
+        // The qualifier names the SOURCE OF THE FACT ("according to the mapping"), deliberately NOT
+        // a certainty word. The certainty ladder (מתועד/משוחזר/לא ניתן לאימות) stays the exclusive
+        // vocabulary of the version cell; adding a fourth term here would make the reader count two
+        // findings where there is one.
+        const fromRecord = r.ProvenanceSource === 'Recorded';
+
+        // Six states, six different appearances. (ה) and (ו) differ STRUCTURALLY — one has no
+        // number, the other has one — so a screenshot can tell them apart.
+        let body: React.ReactNode;
+        let a11y: string;
+        if (id == null) {
+            // (ה) no source recorded at all. A record fact, NOT a certainty verdict: the words
+            // "לא ניתן לאימות" belong to the version cell and must not be echoed three cells away,
+            // or the reader counts two findings where there is one.
+            body = <span style={{ fontSize: 12, color: '#5b6b7b' }}>{t(`${SS}source.noRecord`)}</span>;
+            a11y = t(`${SS}source.a11y.cellNoRecord`);
+        } else if (!src || name === null) {
+            // (ו) we have an id, the map has no entry for it. Different from (ה): there ARE digits.
+            body = (
+                <>
+                    <span dir="ltr" style={{ direction: 'ltr', unicodeBidi: 'isolate', fontSize: 11.5, color: '#5b6b7b' }}>{`#${id}`}</span>
+                    <span style={{ fontSize: 12, color: '#5b6b7b' }}>{` · ${t(`${SS}source.nameNotFound`)}`}</span>
+                </>
+            );
+            a11y = t(`${SS}source.a11y.cellNameNotFound`, { id });
+        } else {
+            // (א)/(ב)/(ג). `<bdi>` is first-strong isolation: a Hebrew name renders RTL, an
+            // "AgentPortfolio_Q3" renders LTR, and neither drags the label or the number to the
+            // wrong end. Setting direction on the whole row instead would reorder the Hebrew.
+            body = (
+                <>
+                    <bdi style={{
+                        flex: '1 1 auto', minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap', fontSize: 12, fontWeight: 500, color: '#5b6b7b',
+                    }}>{name === '' ? t(`${SS}source.nameNotFound`) : name}</bdi>
+                    <span dir="ltr" style={{
+                        flex: '0 0 auto', direction: 'ltr', unicodeBidi: 'isolate', fontSize: 11.5,
+                        color: '#5b6b7b', fontVariantNumeric: 'tabular-nums',
+                        fontWeight: collides ? 700 : 400,
+                    }}>{`#${id}`}</span>
+                </>
+            );
+            a11y = isDeleted
+                ? t(fromRecord ? `${SS}source.a11y.cellDeleted` : `${SS}source.a11y.cellDeletedMapped`, { name, id })
+                : t(fromRecord ? `${SS}source.a11y.cell` : `${SS}source.a11y.cellMapped`, { name, id });
+        }
+
+        return (
+            <>
+                <Box aria-hidden style={{
+                    display: 'flex', alignItems: 'baseline', gap: 6, marginTop: 2,
+                    direction: isRtl ? 'rtl' : 'ltr', textAlign: isRtl ? 'right' : 'left',
+                }}>
+                    {/* The chip REPLACES the "מקור:" label rather than trailing the name: it then
+                        carries the noun, forms a vertical rule of identical rectangles at one x for
+                        a 50-row scan, and is never the part the ellipsis eats (`flex:'0 0 auto'` —
+                        only the <bdi> shortens).
+                        borderRadius 3 + a border is deliberately the OPPOSITE shape language to
+                        every other chip on this screen (radius 11, borderless), so the shape itself
+                        is a carrier and the signal does not rest on colour — WCAG 1.4.1.
+                        NEVER the warn palette (#B54708/#FCF0E6): that pair means "we cannot vouch
+                        for which version was sent". Deletion is a certain lifecycle fact, and
+                        painting it as a warning raises an alarm on a row that may read "מתועד". */}
+                    {isDeleted ? (
+                        <span style={{
+                            flex: '0 0 auto', fontSize: 11, fontWeight: 800, lineHeight: '15px',
+                            color: '#3b4754', background: '#EDF0F3', border: '1px solid #838F9B',
+                            borderRadius: 3, padding: '0 5px', whiteSpace: 'nowrap',
+                        }}>{t(fromRecord ? `${SS}source.deletedChip` : `${SS}source.deletedChipMapped`)}</span>
+                    ) : (
+                        <span style={{ flex: '0 0 auto', fontSize: 12, color: '#5b6b7b' }}>
+                            {t(fromRecord ? `${SS}source.prefix` : `${SS}source.prefixMapped`)}
+                        </span>
+                    )}
+                    {body}
+                </Box>
+                {/* The visual row is aria-hidden and the whole fact is spoken as one sentence:
+                    a screen reader announcing "hash 412" out of a flex row is noise, and
+                    "מזהה 412" inside a sentence is the same fact, usable. */}
+                <span style={SR_ONLY}>{a11y}</span>
+            </>
+        );
+    };
 
     // The left/leading stripe encodes WHAT KIND of row this is (`Mock-v3:78-80`):
     //   blue  (--blue)  roll-up / supervisor recipient
@@ -183,9 +327,18 @@ const SendSearchTable: React.FC<Props> = ({
                         : <Typography component="span" style={{ color: '#a8b2bb' }}>—</Typography>}
                 </TableCell>
 
-                {/* ── דיוור ── */}
-                <TableCell align="center">
-                    <Typography component="span" style={{ fontSize: 14 }}>{r.CampaignName}</Typography>
+                {/* ── דיוור ── campaign, and under it the DATA SOURCE the send came from ──
+                    align="right", not "center": two lines of different lengths with no shared axis
+                    read as floating caption rather than as one cell. The header (:252) moves with it.
+
+                    The source line answers a question the grid could not answer before: the version
+                    cell says "גרסה 3" without saying "of what". With one source that was tolerable;
+                    with ten it misleads on an audit artifact. */}
+                <TableCell align="right">
+                    <Typography component="div" style={{ fontSize: 14, fontWeight: 600, color: '#3b4754' }}>
+                        {r.CampaignName}
+                    </Typography>
+                    {renderSourceLine(r)}
                 </TableCell>
 
                 {/* ── ערוצים ותוצאה ── one line per channel actually attempted; no dash matrix ── */}
@@ -249,7 +402,10 @@ const SendSearchTable: React.FC<Props> = ({
             <TableRow>
                 <TableCell align="right">{t(`${SS}col.recipient`)}</TableCell>
                 <TableCell align="center">{t(`${SS}col.supervisor`)}</TableCell>
-                <TableCell align="center">{t(`${SS}col.mailing`)}</TableCell>
+                {/* align="right" to match the body cell, which now holds two lines of different
+                    lengths and needs a shared start axis. One start-aligned column among centred
+                    ones is a conscious cost — a floating second line is worse. */}
+                <TableCell align="right">{t(`${SS}col.mailing`)}</TableCell>
                 <TableCell align="center">{t(`${SS}col.channelsAndResult`)}</TableCell>
                 <TableCell align="center">{t(`${SS}col.lastEvidence`)}</TableCell>
                 <TableCell align="center">{t(`${SS}version.label`)}</TableCell>

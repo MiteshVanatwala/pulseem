@@ -104,6 +104,10 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
     const [previewRows, setPreviewRows] = useState<string[][]>([]);
     const [columns, setColumns] = useState<WizardColumn[]>([]);
     const [rowCount, setRowCount] = useState<number | null>(null);
+    /* Non-blank count per column ordinal, from the same full pass that produced rowCount. null when the
+       count could not be established (an oversized or unreadable workbook), in which case step 3 simply
+       omits the blank notice rather than guessing. */
+    const [columnNonEmpty, setColumnNonEmpty] = useState<number[] | null>(null);
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [createMissingClients, setCreateMissingClients] = useState(true);
@@ -137,7 +141,7 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
 
     const reset = () => {
         setStep(0); setFile(null); setHeaders([]); setPreviewRows([]); setColumns([]);
-        setRowCount(null); setName(''); setDescription(''); setCreateMissingClients(true);
+        setRowCount(null); setColumnNonEmpty(null); setName(''); setDescription(''); setCreateMissingClients(true);
         descriptionTouched.current = false;   // fresh open => box is empty AND re-seedable again
         setCreateAsPending(false);
         setErrors({}); setUploading(false); setParsing(false);
@@ -165,7 +169,25 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
 
     // Resolves the preview rows plus the sheet's total row count (header row INCLUDED, exactly like
     // countCsvRows), or null when the count could not be established.
-    const parseXlsx = (file: File): Promise<{ rows: string[][]; rowCount: number | null }> => new Promise((resolve, reject) => {
+    /* Non-blank cell count per column ordinal, over the DATA rows only (the header is excluded by the
+       caller). Both parse paths already make one full pass over the file — xlsx materialises the whole
+       sheet to count rows, csv streams every row for the same reason — so this rides along for free.
+       It is what lets step 3 tell the operator "this column is blank in 300 of 1,000 rows, and those
+       recipients keep whatever they already have", which is the one thing the write rule does that
+       nobody expects. */
+    const countNonEmptyPerColumn = (dataRows: any[][]): number[] => {
+        const out: number[] = [];
+        for (const row of dataRows) {
+            if (!Array.isArray(row)) continue;
+            for (let i = 0; i < row.length; i++) {
+                const c = row[i];
+                if (c !== null && c !== undefined && String(c).trim() !== '') out[i] = (out[i] || 0) + 1;
+            }
+        }
+        return out;
+    };
+
+    const parseXlsx = (file: File): Promise<{ rows: string[][]; rowCount: number | null; nonEmpty: number[] | null }> => new Promise((resolve, reject) => {
         const r = new FileReader();
         r.onload = (e: any) => {
             try {
@@ -202,14 +224,37 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
                 // same thing by "rows". Best-effort: any failure leaves the count unknown rather than
                 // losing a preview that already parsed fine.
                 let total: number | null = null;
+                let nonEmpty: number[] | null = null;
                 if (file.size <= XLSX_COUNT_MAX_BYTES) {
                     try {
                         const fullWb = XLSX.read(data, { type: 'array' });
                         const fullSheet = fullWb.Sheets[fullWb.SheetNames[0]];
-                        if (fullSheet) total = (XLSX.utils.sheet_to_json(fullSheet, { header: 1, blankrows: false }) as any[]).length;
-                    } catch { total = null; }
+                        if (fullSheet) {
+                            const all = XLSX.utils.sheet_to_json(fullSheet, { header: 1, blankrows: false }) as any[][];
+                            total = all.length;
+                            /* The blank counts MUST be aligned to the same origin as `columns`, and two
+                               separate things can shift them apart:
+                                 1. `rows` above starts at `start`, the header's first PRESENT cell, so
+                                    columns[j] is raw column start+j. Counting from raw 0 would report
+                                    every column's blanks against the column `start` places to its left.
+                                 2. sheet_to_json(header:1) indexes RELATIVE to the sheet range's first
+                                    column, and the capped read (sheetRows:6) can resolve a different
+                                    first column than this uncapped one — a column blank in rows 1-6 but
+                                    populated at row 500 moves the origin even when start === 0.
+                               Applying the SAME "skip to the header's first present cell" rule to this
+                               read fixes both: the header row exists in both reads, so anchoring each on
+                               its own first present header cell anchors both on the same ABSOLUTE column.
+                               Getting this wrong is worse than omitting the notice — it would tell the
+                               operator a confident, wrong number about their own file, right before an
+                               irreversible write. */
+                            const allHdr: any[] = all.length > 0 ? all[0] : [];
+                            let fullStart = 0;
+                            while (fullStart < allHdr.length && !(fullStart in allHdr)) fullStart++;
+                            nonEmpty = countNonEmptyPerColumn(all.slice(1).map(row => Array.isArray(row) ? row.slice(fullStart) : row));
+                        }
+                    } catch { total = null; nonEmpty = null; }
                 }
-                resolve({ rows, rowCount: total });
+                resolve({ rows, rowCount: total, nonEmpty });
             } catch (err) { reject(err); }
         };
         r.onerror = reject;
@@ -224,12 +269,22 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
         });
     });
 
-    const countCsvRows = (file: File, encoding: string): Promise<number> => new Promise((resolve, reject) => {
+    const countCsvRows = (file: File, encoding: string): Promise<{ count: number; nonEmpty: number[] }> => new Promise((resolve, reject) => {
         let count = 0;
+        const nonEmpty: number[] = [];
         Papa.parse(file as any, {
             skipEmptyLines: true, encoding, worker: true,
-            step: () => { count++; },
-            complete: () => resolve(count),
+            step: (res: any) => {
+                count++;
+                if (count === 1) return;   // header row — not data
+                const row = res.data;
+                if (!Array.isArray(row)) return;
+                for (let i = 0; i < row.length; i++) {
+                    const c = row[i];
+                    if (c !== null && c !== undefined && String(c).trim() !== '') nonEmpty[i] = (nonEmpty[i] || 0) + 1;
+                }
+            },
+            complete: () => resolve({ count, nonEmpty }),
             error: reject
         });
     });
@@ -312,14 +367,18 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
         try {
             let rows: string[][];
             let count: number | null = null;
+            let nonEmpty: number[] | null = null;
             if (ext === 'xls' || ext === 'xlsx') {
                 const parsed = await parseXlsx(chosen); // count is null on oversized/unreadable workbooks (worker still enforces MaxRows)
                 rows = parsed.rows;
                 count = parsed.rowCount;
+                nonEmpty = parsed.nonEmpty;
             } else {
                 const enc = await detectEncoding(chosen);
                 rows = await parseCsvPreview(chosen, enc);
-                count = await countCsvRows(chosen, enc);
+                const counted = await countCsvRows(chosen, enc);
+                count = counted.count;
+                nonEmpty = counted.nonEmpty;
             }
             if (!rows || rows.length === 0 || (rows.length === 1 && rows[0].every(c => !c))) {
                 setParsing(false);
@@ -339,6 +398,7 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
             setPreviewRows(dataRows);
             setColumns(buildColumns(hdrs, dataRows));
             setRowCount(count);
+            setColumnNonEmpty(nonEmpty);
             setName(chosen.name.replace(/\.[^.]+$/, '').substring(0, 100));
             setParsing(false);
         } catch (err) {
@@ -432,6 +492,49 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
         { key: 'extraDate' as const }
     ]).map(g => ({ ...g, options: clientFieldOptions.filter(o => o.Group === g.key) }))
         .filter(g => g.options.length > 0);
+
+    /* The chosen write-backs, resolved once for step 3's summary. The array index IS the file's column
+       ordinal — buildColumns maps headers positionally and the wizard never reorders columns — which is
+       what lets columnNonEmpty line up. `blank` is how many DATA rows have an empty cell in that column;
+       those recipients keep whatever they already have, which is the half of the write rule nobody
+       expects. Both counts stay null when the row count could not be established, and step 3 then omits
+       the notice rather than guessing. */
+    const clientFieldMappings = columns
+        .map((c, i) => ({ col: c, ordinal: i, opt: clientFieldOptions.find(o => o.Id === c.ClientFieldTarget) }))
+        .filter(m => m.opt != null)
+        .map(m => {
+            const total = rowCount !== null ? rowCount - 1 : null;
+            const filled = columnNonEmpty ? (columnNonEmpty[m.ordinal] || 0) : null;
+            const opt = m.opt as ClientFieldOption;
+            return {
+                ...m,
+                opt,
+                total,
+                blank: (total !== null && filled !== null) ? Math.max(0, total - filled) : null,
+                /* A DATE target only stores values the engine can read as DAY-FIRST dates: it does
+                   TRY_CONVERT(DATETIME, value, 103) and then COALESCE(NULL, current), so an unparseable
+                   value silently leaves the field as it was.
+                   This is flagged for EVERY date target, not gated on the column's detected DataType.
+                   An earlier version gated it on `DataType !== DATE` and that was wrong in both
+                   directions: `DataType` appears ZERO times in the stored procedure, so it has no
+                   bearing on what is written. A TEXT-typed column full of real dd/MM/yyyy values (the
+                   type detector falls back to TEXT on 2 misses in a 5-row sample) writes fine, and the
+                   warning was a false alarm telling the operator to unmap something that works — while
+                   a DATE-typed column of month-first values writes nothing and got no warning at all.
+                   Worse, the remedy that version printed — "change the column's data type to Date" —
+                   changes nothing in the write path; it only silenced this predicate. */
+                isDateTarget: opt.IsDate === true,
+                /* Which physical slot is being overwritten. An account may name two extra fields the
+                   same thing, or name one exactly like a built-in recipient field — and then the label
+                   alone cannot tell the operator which CRM column they are about to overwrite, on the
+                   one surface that exists to review that. Qualified HERE and not in clientFieldLabel:
+                   that feeds the 151px tag too, where the RTL ellipsis would cut the qualifier off
+                   first and leave the ambiguity untouched. The summary box has the width. */
+                slot: opt.Group === 'extraField' ? { key: 'extraFieldSlot', n: opt.Id - 100 }
+                    : opt.Group === 'extraDate' ? { key: 'extraDateSlot', n: opt.Id - 200 }
+                        : null
+            };
+        });
 
     const hasEmail = columns.some(c => c.SemanticRole === eSemanticRole.RECIPIENT_EMAIL);
     const hasCell = columns.some(c => c.SemanticRole === eSemanticRole.RECIPIENT_CELLPHONE);
@@ -686,6 +789,17 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
                                             displayEmpty
                                             disableUnderline
                                             MenuProps={MENU_PROPS}
+                                            /* a11y. disableUnderline above strips the only focus affordance MUI v4 gives a
+                                               standard Select, and its default :focus treatment is a 5%-grey wash — invisible
+                                               behind 12.5px grey text on a white row. The control IS tab-reachable and
+                                               Enter/Space opens it, so a keyboard user could reach it and never see where they
+                                               were. Outline is set on the display node directly rather than through the shared
+                                               dialogStyles sheet, which six other components also consume. */
+                                            SelectDisplayProps={{
+                                                'aria-label': t('DataSources.wizard.clientFieldAdd'),
+                                                onFocus: (e: any) => { e.currentTarget.style.outline = '2px solid #0b7285'; e.currentTarget.style.outlineOffset = '2px'; },
+                                                onBlur: (e: any) => { e.currentTarget.style.outline = 'none'; }
+                                            } as any}
                                             renderValue={() => {
                                                 const opt = clientFieldOptions.find(o => o.Id === c.ClientFieldTarget);
                                                 return opt
@@ -707,7 +821,18 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
                                         >
                                             <MenuItem value=""><em>{t('DataSources.wizard.clientFieldNone')}</em></MenuItem>
                                             {clientFieldGroups.map(g => ([
-                                                <ListSubheader key={`h-${g.key}`} disableSticky style={{ fontSize: 12, lineHeight: '28px' }}>
+                                                /* Sticky (disableSticky removed 2026-08-09). With 1 + 3 headings + up to 27
+                                                   options in a 320px menu, the heading that tells "פרטי הנמען" apart from
+                                                   "שדות נוספים" scrolls out of view — and an account extra field the account
+                                                   named "טלפון" is then character-identical to the recipient's own "טלפון".
+                                                   The explicit background is REQUIRED with sticky: MUI v4's sticky class is
+                                                   backgroundColor:'inherit' and the Menu's own list element is transparent, so
+                                                   without it the options scroll straight through the pinned heading. That is
+                                                   almost certainly why disableSticky was there in the first place.
+                                                   NOTE: a plain block comment, NOT a braced JSX comment — these elements are
+                                                   members of an ARRAY literal, where a braced JSX comment parses as an empty
+                                                   object and becomes a bogus array element. */
+                                                <ListSubheader key={`h-${g.key}`} style={{ fontSize: 12, lineHeight: '28px', background: '#fff' }}>
                                                     {t(`DataSources.wizard.clientFieldGroups.${g.key}`)}
                                                 </ListSubheader>,
                                                 ...g.options.map(o => (
@@ -776,6 +901,17 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
                 half of it is expressed by the write rule itself: a non-empty source value wins, an
                 empty one never erases. */}
             <Box style={{ display: 'flex', flexDirection: 'column' }}>
+                {/* The overwrite rule, stated where the operator can read it. It lived ONLY in a code
+                    comment until 2026-08-09 — the engine enforced a rule the UI never mentioned, and the
+                    dangerous mental model ("it only fills blanks") was the natural one to arrive at.
+                    Placed at the head of THIS block, not next to identityBanner: identityBanner is about
+                    how columns are STORED, while this is about what happens to recipients — which is
+                    exactly what createMissingClients / createAsPending below are about too. Rendered once
+                    per table, never per row: the mapping row already carries four controls and two
+                    sub-captions across four cells and is at its density limit. */}
+                <Typography style={{ fontSize: 12, color: '#95A5A6', marginBottom: 8 }}>
+                    {t('DataSources.wizard.clientFieldHint')}
+                </Typography>
                 <FormControlLabel
                     control={<Checkbox checked={createMissingClients} onChange={(e) => {
                         const on = e.target.checked;
@@ -843,7 +979,68 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
                         {[hasEmail ? t('DataSources.wizard.identityEmailShort') : null, hasCell ? t('DataSources.wizard.identityCellShort') : null].filter(Boolean).join(', ') || t('DataSources.wizard.identityNoneShort')}
                     </Typography>
                 </Box>
+                {/* The write-backs, listed before the commit. Until 2026-08-09 the only surface between
+                    picking a target on row 1 and pressing "העלה" was a 151px control that ellipsises its
+                    own label, nineteen table rows earlier — so this is the ONLY review moment before a bulk
+                    mutation of recipient records that has no undo and no audit surface anywhere in the
+                    product. Deliberately step 3 and not a step-2 recap: a summary that sits beside the
+                    controls it summarises is not an independent check. */}
+                {clientFieldMappings.length > 0 && (
+                    <Box style={{ marginTop: 8, paddingTop: 8, borderTop: '1px solid #e3ebf3' }}>
+                        <Typography color="textSecondary">{t('DataSources.wizard.clientFieldSummaryLabel')}</Typography>
+                        {clientFieldMappings.map(m => (
+                            <Typography key={m.opt.Id} style={{ fontWeight: 700, marginTop: 2 }}>
+                                {t('DataSources.wizard.clientFieldSummaryRow', {
+                                    field: clientFieldLabel(m.opt) + (m.slot ? ' ' + t(`DataSources.wizard.${m.slot.key}`, { n: m.slot.n }) : ''),
+                                    column: m.col.DisplayName
+                                })}
+                            </Typography>
+                        ))}
+                        {/* Above the blank notice, because "0 blank rows" reads as "everything will be
+                            written" and for a date target that does not follow. */}
+                        {clientFieldMappings.filter(m => m.isDateTarget).map(m => (
+                            <Typography key={`dt-${m.opt.Id}`} style={{ fontSize: 12, color: '#b54708', marginTop: 2 }}>
+                                {t('DataSources.wizard.clientFieldDateNotice', { column: m.col.DisplayName, field: clientFieldLabel(m.opt) })}
+                            </Typography>
+                        ))}
+                        {/* The counts above come from the FILE. The engine writes only recipients it
+                            resolved to a record — matched on email/cellphone, or created when
+                            create-missing is on — and only the first source row per recipient. So the
+                            written population is at most the file's rows and is often materially fewer.
+                            Stating it here is the difference between a summary and a promise. */}
+                        <Typography style={{ fontSize: 12, color: '#95A5A6', marginTop: 4 }}>
+                            {t('DataSources.wizard.clientFieldScopeNotice')}
+                        </Typography>
+                        {/* The blank-cell count, for THIS file. The rule is COALESCE(new, current): a blank
+                            cell does not clear the field, it leaves whatever is already on the recipient. So
+                            a file blank in 300 of 1,000 rows leaves the CRM in a state present in neither the
+                            file nor the previous CRM — 700 fresh values and 300 stale ones, indistinguishable
+                            afterwards. Stating the rule above the table is necessary but does not tell the
+                            operator that this column, right now, has 300 of them. */}
+                        {clientFieldMappings.filter(m => m.blank !== null && m.blank > 0).map(m => (
+                            <Typography key={`blank-${m.opt.Id}`} style={{ fontSize: 12, color: '#b54708', marginTop: 2 }}>
+                                {t('DataSources.wizard.clientFieldBlankNotice', {
+                                    column: m.col.DisplayName,
+                                    blank: (m.blank as number).toLocaleString(),
+                                    total: (m.total as number).toLocaleString(),
+                                    field: clientFieldLabel(m.opt)
+                                })}
+                            </Typography>
+                        ))}
+                    </Box>
+                )}
             </Box>
+            {/* Fires on a RE-upload, whether or not anything is mapped — forgetting to re-pick is the
+                failure, so it cannot be gated on a mapping existing. ClientFieldTarget is deliberately not
+                inherited from the previous version (the filtered unique index on DataSourceColumns would
+                otherwise let two columns claim one target), and nothing in the product can show what the
+                last version mapped — no GET returns the field, no view or history dialog renders it. So the
+                omission is invisible: the upload succeeds, resolves normally, and writes nothing. */}
+            {nameExists && (
+                <Typography style={{ fontSize: 12, color: '#b54708' }}>
+                    {t('DataSources.wizard.clientFieldVersionReminder')}
+                </Typography>
+            )}
             {uploading && uploadProgress !== null && <LinearProgress variant="determinate" value={uploadProgress} />}
             {errors.upload && <Typography style={{ color: '#B42318' }}>{errors.upload}</Typography>}
         </Box>
