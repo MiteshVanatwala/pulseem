@@ -117,10 +117,6 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 
 	// Tracks the last RecentMsgDate we processed so we only act on genuinely new inbound messages
 	const lastSeenRecentMsgDateRef = useRef<string>('');
-	// Same idea as lastSeenRecentMsgDateRef, but for the currently-open contact's own sidebar row
-	// (Q1/IsNewMessage), which the SP never surfaces through LastAllChatsMsgId since that field is
-	// reserved for messages from OTHER contacts.
-	const lastSeenActiveMsgDateRef = useRef<string>('');
 	// Tracks the last RecentEchoMsgDate we processed so a business-sent echo (Q3) only triggers
 	// one debounced contacts-list refresh, not one per poll while IsNewEcho stays true.
 	const lastSeenEchoMsgDateRef = useRef<string>('');
@@ -596,7 +592,10 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 						Second: data.Second ?? '0',
 					}));
 
-					// Advance Q1 cursor to the latest known message ID
+					// Advance Q1 cursor to the latest known message ID. The pre-advance value is kept
+					// because it is what tells a genuinely new message apart from history: it is null
+					// only on the baseline poll fired right after a chat is opened.
+					const prevCurrentChatMsgId = lastCurrentChatMsgIdRef.current;
 					if (data.LastCurrentChatMsgId != null) {
 						lastCurrentChatMsgIdRef.current = data.LastCurrentChatMsgId;
 					}
@@ -629,29 +628,47 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 
 					// Q1: new message for the contact whose thread is currently open. The SP only
 					// reports LastAllChatsMsgId for OTHER contacts, so the active contact's own
-					// sidebar row would otherwise never get its preview/order updated.
-					if (data.IsNewMessage && activeChatContacts?.PhoneNumber) {
-						const isNewActiveInbound =
-							data.RecentMsgDate && data.RecentMsgDate !== lastSeenActiveMsgDateRef.current;
+					// sidebar row would otherwise never get its order updated.
+					//
+					// Detection is cursor-based on purpose. The two obvious-looking signals are both
+					// wrong here:
+					//   - RecentMsg/RecentMsgDate are Q2 outputs (newest message from some OTHER
+					//     contact) and say nothing about this chat, so using them overwrote the open
+					//     chat's preview with a stranger's text and let contact B promote contact A.
+					//   - IsNewMessage is raised whenever the active contact's newest inbound row is
+					//     still Unread, which is exactly the state of a chat the moment it is opened.
+					// Together they made merely opening a chat jump it to the top of the sidebar.
+					//
+					// A row now moves only when LastCurrentChatMsgId advances past an already
+					// established (non-null) cursor — i.e. a message really arrived while the chat
+					// was open. The baseline poll right after opening has a null cursor and is
+					// skipped, so opening a chat leaves the list order untouched.
+					const hasNewActiveInbound =
+						prevCurrentChatMsgId !== null &&
+						data.LastCurrentChatMsgId != null &&
+						data.LastCurrentChatMsgId > prevCurrentChatMsgId;
 
-						if (isNewActiveInbound) {
-							lastSeenActiveMsgDateRef.current = data.RecentMsgDate!;
+					if (hasNewActiveInbound && activeChatContacts?.PhoneNumber) {
+						setSideChatContacts((prev) => {
+							const idx = prev.findIndex((c) =>
+								compareLastNineDigits(c.PhoneNumber, activeChatContacts.PhoneNumber),
+							);
+							if (idx === -1) return prev;
+							const updated = [...prev];
+							const [promoted] = updated.splice(idx, 1);
+							return [promoted, ...updated];
+						});
 
-							setSideChatContacts((prev) => {
-								const idx = prev.findIndex((c) =>
-									compareLastNineDigits(c.PhoneNumber, activeChatContacts.PhoneNumber),
-								);
-								if (idx === -1) return prev;
-								const updated = [...prev];
-								updated[idx] = {
-									...updated[idx],
-									LastMessage: data.RecentMsg ?? updated[idx].LastMessage,
-									LastMessageDate: data.RecentMsgDate ?? updated[idx].LastMessageDate,
-								};
-								const [promoted] = updated.splice(idx, 1);
-								return [promoted, ...updated];
-							});
+						// The preview text/date for this row has to come from the server — the only
+						// message body in this response belongs to another contact. Same debounced
+						// full refresh Q2 and Q3 use.
+						if (contactsRefreshDebounceRef.current) {
+							clearTimeout(contactsRefreshDebounceRef.current);
 						}
+						contactsRefreshDebounceRef.current = setTimeout(() => {
+							suppressNextLoaderRef.current = true;
+							fetchMoreContactsRef.current?.(sideBarSearchTextRef.current, filterBySelected, true);
+						}, 5000);
 					}
 
 					// Q2: new message from another contact detected — update sidebar
@@ -1068,7 +1085,6 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		lastAllChatsMsgIdRef.current     = null;
 		lastEchoMsgIdRef.current         = null;
 		lastSeenRecentMsgDateRef.current = '';
-		lastSeenActiveMsgDateRef.current = '';
 		lastSeenEchoMsgDateRef.current = '';
 
 		let pollingTimer: ReturnType<typeof setTimeout> | null = null;
@@ -1427,8 +1443,26 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 					}
 				}
 
-				// To update contact list
-				// updateContactList();
+				// A message we just sent is the newest activity on this conversation, so the row
+				// belongs at the top of the sidebar. The inbound poll cannot do this — its Q1
+				// cursor tracks ApiWhatsappInboundLogs and never moves for outbound traffic.
+				const sentMessage = sentChat?.TODAY?.[0];
+				if (sentMessage && activeChatContacts?.PhoneNumber) {
+					setSideChatContacts((prev) => {
+						const idx = prev.findIndex((c) =>
+							compareLastNineDigits(c.PhoneNumber, activeChatContacts.PhoneNumber),
+						);
+						if (idx === -1) return prev;
+						const updated = [...prev];
+						updated[idx] = {
+							...updated[idx],
+							LastMessage: sentMessage.Message ?? updated[idx].LastMessage,
+							LastMessageDate: sentMessage.MessageDate ?? updated[idx].LastMessageDate,
+						};
+						const [promoted] = updated.splice(idx, 1);
+						return [promoted, ...updated];
+					});
+				}
 			} else {
 				if (sendWhatsappChat.StatusCode === 112) {
 					setDialogType({
