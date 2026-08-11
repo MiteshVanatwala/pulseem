@@ -47,7 +47,12 @@ const TokenPreviewSurface: React.FC<TokenPreviewSurfaceProps> = ({
     }, [html]);
 
     return (
-        <Box style={{ position: 'relative', height, overflow: 'auto', border: '1px solid #e0e0e0', borderRadius: 4, background: '#fff', direction: 'ltr' }}>
+        // SUPERVISOR-BOXSIZING-SURFACE: identical fix to SmartSendPreview.tsx — this style object was
+        // a byte-for-byte copy of it and carried the same latent defect. It has no consumers today,
+        // so the defect was dormant rather than live; fixed here so it cannot ship when SendSearch's
+        // per-recipient modal wires this surface up. The two components are deliberately NOT merged
+        // in this change.
+        <Box style={{ position: 'relative', height, boxSizing: 'border-box', overflow: 'auto', border: '1px solid #e0e0e0', borderRadius: 4, background: '#fff', direction: 'ltr' }}>
             <div ref={hostRef} style={{ width: '100%' }} aria-label={ariaLabel} onClickCapture={(e) => e.preventDefault()} />
             <Loader isOpen={loading} showBackdrop={true} />
         </Box>

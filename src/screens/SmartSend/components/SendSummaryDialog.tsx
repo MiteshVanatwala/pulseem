@@ -4,10 +4,13 @@ import { Dialog, Box, Typography, Button, Checkbox, FormControlLabel, CircularPr
 import { makeStyles } from '@material-ui/core/styles';
 import { Close } from '@material-ui/icons';
 import { useTranslation } from 'react-i18next';
-import { sendSmart } from '../../../redux/reducers/smartSendSlice';
+import { sendSmart, setBusinessColumn } from '../../../redux/reducers/smartSendSlice';
 import { eSendChannel } from '../../../Models/DataSources/SmartSend';
 import SmartSendPreview from './SmartSendPreview';
 import InlineBanner from './InlineBanner';
+// SUPERVISOR-PREDICATE-IMPORT: the SAME predicates the mapping screen's auto-pick uses, so the
+// pre-send warning and the picker can never disagree about what a usable supervisor address is.
+import { isEmailish, isNotIdentity } from '../businessColumnDefaults';
 
 // §11.4/§13 step 8-9 · the send-summary + confirm dialog. SmartSend-OWNED (the legacy
 // SummaryDialog is tightly coupled to non-exported Newsletter-wizard styles + un-mockable
@@ -63,19 +66,71 @@ const SendSummaryDialog: React.FC<{ open: boolean; campaignId: number; onClose: 
         const isRTL = useSelector((s: any) => s.core && s.core.isRTL);
         const summary = useSelector((s: any) => s.newsletter && s.newsletter.newsletterSendSummary);
         const channel = useSelector((s: any) => s.smartSend.selectedChannel) as eSendChannel;
+        // SUPERVISOR-INTENT: the mapping the user actually made. sum.HasSupervisors is the LEGACY
+        // per-SubAccount flag (EmailController stamps it from Newsletter_HasSupervisors over
+        // dbo.SupervisorToAgents) and knows nothing about this campaign's supervisor column — which
+        // is why the control could appear with no mapping, and hide with one.
+        const supervisorColumnId = useSelector((s: any) => s.smartSend && s.smartSend.supervisorColumnId);
+        const supervisorColumns = useSelector((s: any) => (s.smartSend && s.smartSend.columns) || []);
         const [sendToSupervisor, setSendToSupervisor] = useState(false);
         const [phase, setPhase] = useState<'summary' | 'sending' | 'result'>('summary');
         const [result, setResult] = useState<any>(null);
 
+        // SUPERVISOR-SUMMARY-GUARD: a POSITIVE test, so it fails closed. newsletterSendSummary is
+        // session-sticky (seeded to [], nothing clears it but the new .rejected case), and
+        // GetSendSummary answers Data = null on four separate paths. Without this the dialog could
+        // open on a stale object and show another campaign's recipient count — and now its
+        // supervisor default — next to a live Send button. CampaignID is always populated on the
+        // success path (Newsletter_GetSummary selects it under WHERE CampaignID = @prm_CampaignID).
+        const summaryUsable = !!summary && !Array.isArray(summary)
+            && Number(summary.CampaignID) === Number(campaignId);
+        const sum: any = summaryUsable ? summary : {};
+
+        // SUPERVISOR-CONTROL: one control, and exactly one warning — is the mapped column actually
+        // usable as a supervisor address. The three-tier confidence scale was dropped deliberately:
+        // the upload wizard renames an auto-detected second email column to the localized
+        // "supervisor email" label AND tags it EMAIL, so the ordinary path already produces the
+        // strongest possible signal, and the mapping screen already offers "none" as the place to
+        // say no. Re-asking at send time was duplication; warning on a column that cannot hold an
+        // address is not.
+        const supervisorColumn = supervisorColumnId != null
+            ? supervisorColumns.find((c: any) => c && c.ColumnID === supervisorColumnId)
+            : undefined;
+        const supervisorIssue: 'none' | 'notEmail' | 'isRecipient' =
+            !supervisorColumn ? 'none'
+                : !isNotIdentity(supervisorColumn) ? 'isRecipient'
+                    : !isEmailish(supervisorColumn) ? 'notEmail'
+                        : 'none';
+        // Visible for a mapped campaign OR a legacy tenant — the server gate is the OR of the same
+        // two sources, so the control must mirror it or the UI and the backend disagree.
+        const supervisorVisible = !!supervisorColumn || !!sum.HasSupervisors;
+        // ON by default: the mapping is already the decision. Off only when the column cannot work.
+        // `&& !supervisorColumnIsGuess` added 2026-08-11 (deep review R1-02). D1 says the default is
+        // ON *because the mapping is already the decision* — that reasoning holds for a column an
+        // operator picked and fails completely for one pickDefaultSupervisorColumn guessed.
+        // The old expression was inverted relative to risk: guess tiers 2 and 3 are "emailish" by
+        // construction, so supervisorIssue was always 'none' for them and the box shipped TICKED,
+        // while the warning banner below fired only for tier 1 — the tier with the STRONGEST
+        // evidence of intent. An unconfirmed guess now starts OFF and the operator opts in, which
+        // is the one direction that cannot send mail to an address nobody chose.
+        const supervisorColumnIsGuess = useSelector(
+            (s: any) => !!(s.smartSend && s.smartSend.supervisorColumnIsGuess));
+        const supervisorDefaultOn =
+            !!supervisorColumn && !supervisorColumnIsGuess && supervisorIssue === 'none';
+
         // The dialog stays mounted (open toggled by the parent), so reset to a clean
         // summary view on every open — otherwise a prior send's result banner persists and
         // blocks re-viewing the summary / retrying after a fixable pipeline error.
+        // [open] alone is the correct dependency: SmartSendScreen.openSummary awaits the summary
+        // fetch BEFORE flipping open, so supervisorDefaultOn is already settled in the render that
+        // turns it true. Adding it to the deps would silently undo the user's own un-tick whenever
+        // redux updated.
         useEffect(() => {
-            if (open) { setPhase('summary'); setResult(null); setSendToSupervisor(false); }
+            if (open) { setPhase('summary'); setResult(null); setSendToSupervisor(supervisorDefaultOn); }
+            // eslint-disable-next-line react-hooks/exhaustive-deps
         }, [open]);
 
         if (!open) return null;
-        const sum = summary || {};
         const isCombined = typeof sum.Groups === 'string' && sum.Groups.split(',').length > 1;
 
         const doSend = async () => {
@@ -105,7 +160,25 @@ const SendSummaryDialog: React.FC<{ open: boolean; campaignId: number; onClose: 
         const renderResult = () => {
             const code = result ? result.StatusCode : 0;
             if (code === 200 || code === 201) {
-                return <InlineBanner severity="info" size="lg" title={t('DataSources.send.result.success')} body={t('DataSources.send.result.successDesc')} />;
+                // SUPERVISOR-RECEIPT-UI: the campaign sent — that is what the status code means, and
+                // it is deliberately NOT re-coded when the supervisor enqueue fails, because a
+                // non-success code would withhold the parent's `sent` latch and permit a SECOND real
+                // send. The receipt rides in Data instead. id <= 0 covers both non-positive cases
+                // (-1 = the SP declined, 0 = a SqlException swallowed inside DataAccess); an absent
+                // field means this environment is running an API build without the receipt, which is
+                // reported as unknown rather than quietly as success.
+                const receipt = result && result.Data && typeof result.Data.SupervisorRequestID === 'number'
+                    ? result.Data.SupervisorRequestID as number
+                    : null;
+                if (sendToSupervisor && receipt !== null && receipt <= 0) {
+                    return <InlineBanner severity="warning" role="alert" size="lg"
+                        title={t('DataSources.send.result.supervisorNotQueuedTitle')}
+                        body={t('DataSources.send.result.supervisorNotQueuedBody')} />;
+                }
+                const extra = !sendToSupervisor ? ''
+                    : receipt === null ? ' ' + t('DataSources.send.result.supervisorUnknown')
+                        : ' ' + t('DataSources.send.result.supervisorQueued', { id: receipt });
+                return <InlineBanner severity="info" size="lg" title={t('DataSources.send.result.success')} body={t('DataSources.send.result.successDesc') + extra} />;
             }
             const meta = RESULTS[code];
             const key = meta ? meta.key : 'genericError';
@@ -123,7 +196,14 @@ const SendSummaryDialog: React.FC<{ open: boolean; campaignId: number; onClose: 
                     <IconButton size="small" onClick={onClose} aria-label={t('DataSources.send.close')}><Close /></IconButton>
                 </Box>
                 <Box className={classes.body}>
-                    {phase === 'result' ? renderResult() : (
+                    {phase === 'result' ? renderResult() : !summaryUsable ? (
+                        // SUPERVISOR-SUMMARY-GUARD render arm. An error banner alone is not enough —
+                        // the Send button below is also disabled, because showing a plausible-looking
+                        // but stale summary next to a live Send is the actual hazard.
+                        <InlineBanner severity="error" role="alert" size="lg"
+                            title={t('DataSources.send.summary.staleTitle')}
+                            body={t('DataSources.send.summary.staleBody')} />
+                    ) : (
                         <>
                             <Box className={classes.grid}>
                                 <Box className={classes.col}>
@@ -155,10 +235,70 @@ const SendSummaryDialog: React.FC<{ open: boolean; campaignId: number; onClose: 
                                     <InlineBanner severity="info" title={t('DataSources.send.summary.combinedTitle')} body={t('DataSources.send.summary.combinedNote')} />
                                 </Box>
                             )}
-                            {sum.HasSupervisors && (
-                                <FormControlLabel style={{ marginTop: 8 }}
-                                    control={<Checkbox color="primary" checked={sendToSupervisor} onChange={(e) => setSendToSupervisor(e.target.checked)} />}
-                                    label={t('DataSources.send.summary.sendToSupervisor')} />
+                            {supervisorVisible && (
+                                <Box style={{ marginTop: 8 }}>
+                                    {supervisorIssue !== 'none' && (
+                                        // Wrapped rather than passing an id to InlineBanner: that
+                                        // component is shared across this feature and an additive prop
+                                        // there is a wider blast radius than a Box here.
+                                        <Box id="supervisor-issue" style={{ marginBottom: 8 }}>
+                                            <InlineBanner
+                                                severity="warning"
+                                                role="alert"
+                                                size="lg"
+                                                title={t('DataSources.send.summary.supervisor.' + supervisorIssue + 'Title')}
+                                                body={t('DataSources.send.summary.supervisor.' + supervisorIssue + 'Body',
+                                                    { name: (supervisorColumn && supervisorColumn.DisplayName) || '' })} />
+                                        </Box>
+                                    )}
+                                    <FormControlLabel
+                                        control={<Checkbox
+                                            color="primary"
+                                            checked={sendToSupervisor}
+                                            inputProps={{ 'aria-describedby': 'supervisor-caption' } as any}
+                                            onChange={(e) => {
+                                                setSendToSupervisor(e.target.checked);
+                                                // TICKING THE BOX IS THE CONFIRMATION. Added 2026-08-11
+                                                // during fix verification. Making an unconfirmed guess
+                                                // start OFF (see supervisorDefaultOn) left a hole: the
+                                                // control was visible and tickable, but the guessed
+                                                // SupervisorColumnID was never persisted, so the server's
+                                                // OR gate saw NULL, and for a post-migration tenant with
+                                                // HasSupervisors = 0 the enqueue returned -1 AFTER the
+                                                // campaign had already gone out. The operator ticked
+                                                // "send to supervisors", the campaign sent, and the
+                                                // report did not — with no re-queue path in the UI.
+                                                // Promoting the guess here closes it: setBusinessColumn
+                                                // clears supervisorColumnIsGuess and marks the screen
+                                                // dirty, so the mapping is saved with a real column
+                                                // before doSend runs saveMapping.
+                                                if (e.target.checked && supervisorColumnIsGuess && supervisorColumn) {
+                                                    dispatch(setBusinessColumn({
+                                                        role: 'supervisor',
+                                                        columnId: supervisorColumn.ColumnID,
+                                                    }));
+                                                }
+                                            }} />}
+                                        label={t('DataSources.send.summary.supervisor.label')} />
+                                    {/* Muted, never MUI `disabled`. Disabled would drop the control out
+                                        of the tab order, read as "unavailable" to a screen reader, and
+                                        make "with the option to cancel" impossible to act on — the whole
+                                        point of shipping it pre-ticked. body1, not body2: index.css
+                                        applies body{zoom:0.95} between 1024 and 1440px and dialogs portal
+                                        into document.body, so body2 lands around 13.3px effective. */}
+                                    <Typography
+                                        id="supervisor-caption"
+                                        variant="body1"
+                                        aria-live="polite"
+                                        style={{ marginTop: 2, color: 'rgba(0, 0, 0, 0.6)' }}>
+                                        {!sendToSupervisor
+                                            ? t('DataSources.send.summary.supervisor.off')
+                                            : supervisorColumn
+                                                ? t('DataSources.send.summary.supervisor.byColumn',
+                                                    { name: supervisorColumn.DisplayName || '' })
+                                                : t('DataSources.send.summary.supervisor.byAccount')}
+                                    </Typography>
+                                </Box>
                             )}
                         </>
                     )}
@@ -168,7 +308,7 @@ const SendSummaryDialog: React.FC<{ open: boolean; campaignId: number; onClose: 
                         <Button variant="contained" color="primary" onClick={onClose}>{t('DataSources.send.close')}</Button>
                     ) : (
                         <>
-                            <Button variant="contained" color="primary" disabled={phase === 'sending'} onClick={doSend}>
+                            <Button variant="contained" color="primary" disabled={phase === 'sending' || !summaryUsable} onClick={doSend}>
                                 {phase === 'sending' ? <CircularProgress size={18} color="inherit" /> : t('DataSources.send.actions.sendToAll')}
                             </Button>
                             <Button onClick={onClose} disabled={phase === 'sending'}>{t('DataSources.send.cancel')}</Button>

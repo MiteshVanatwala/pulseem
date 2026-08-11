@@ -19,7 +19,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Box, Button, Typography } from '@material-ui/core';
+import { Box, Button, Tooltip, Typography } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import { Loader } from '../../components/Loader/Loader';
 import InlineBanner from '../SmartSend/components/InlineBanner';
@@ -30,6 +30,7 @@ import {
 } from '../../redux/reducers/sendSearchSlice';
 import {
     SS,
+    SendSearchRequest,
     SendSearchRow,
     SendSearchFilters as Filters,
     DrawerEntry,
@@ -47,10 +48,12 @@ import {
     defaultSendSearchSort,
     fieldByKey,
 } from './components/SendSearchAdvanced';
+import { PulseemFeatures } from '../../model/PulseemFields/Fields';
 import SendSearchTable from './components/SendSearchTable';
 import AgentDrawer from './components/AgentDrawer';
 import RollupDrawer from './components/RollupDrawer';
 import DrawerStack from './components/DrawerStack';
+import SendSearchExportDialog from './components/SendSearchExportDialog';
 
 interface Props {
     // The standalone route renders its own heading; the tab does not. Default off, so embedding
@@ -63,6 +66,12 @@ const SendSearchPanel: React.FC<Props> = ({ showTitle }) => {
     const { t } = useTranslation();
 
     const isRTL = useSelector((state: any) => state.core && state.core.isRTL);
+    // Sub-user permissions, from the same `state.core` slice `DataSources.tsx:72` reads them from.
+    const userRoles = useSelector((state: any) => state.core && state.core.userRoles);
+    // ACCOUNT-level entitlements, a different axis from the sub-user permissions above. Read from
+    // `state.common` — the shape `Groups.js:68` and `DynamicGroups.tsx:73` read it from — because of
+    // LOCK_EXPORT_DATA; see `canExport`.
+    const { accountFeatures } = useSelector((state: any) => state.common);
     const sendSearch = useSelector((state: any) => state.sendSearch);
 
     const filters: Filters = sendSearch.filters;
@@ -128,6 +137,30 @@ const SendSearchPanel: React.FC<Props> = ({ showTitle }) => {
         } as any;
     };
 
+    // 🔴 THE BODY THAT ACTUALLY RAN. Added after review (2026-08-09).
+    //
+    // `buildRequest()` reads `advRef.current`, which the advanced panel writes on EVERY edit
+    // (AdvancedFilterBuilder.tsx:84 updateRule, :109 addRule, :112 removeRule, :238 clear) — and none
+    // of those dispatch a search, because a rule is applied by "החל מסננים" and not per keystroke
+    // (see the effect below). So between an edit and an Apply, `buildRequest()` describes a query the
+    // GRID HAS NEVER RUN. The export used to call it fresh at click time, which meant the file could
+    // answer a different question from the screen that produced it, while the dialog printed the row
+    // count of the OLD search — over-reporting in the direction that matters most: the operator
+    // confirms "ייוצאו 4,312 שורות" and files a 118-row audit answer. The mirror case is worse in the
+    // other direction: blanking a rule's value drops it at the wire boundary, so the file comes back
+    // WIDER than the screen.
+    //
+    // Every dispatch goes through `runSearch` and records its body here, so the export posts the body
+    // that produced the rows on screen, by construction rather than by discipline. This ref is the
+    // single reason `SendSearchExportDialog`'s criteria table, its row count and the file can be
+    // relied on to describe one search.
+    const lastSentRef = useRef<SendSearchRequest | null>(null);
+    const runSearch = () => {
+        const body = buildRequest();
+        lastSentRef.current = body;
+        dispatch(searchSends(body));
+    };
+
     // The grid header for the sort column: the field's DISPLAY name, or null when unsorted (which
     // is what hides the column entirely).
     const sortFieldLabel: string | null = advSort.FieldKey
@@ -142,7 +175,7 @@ const SendSearchPanel: React.FC<Props> = ({ showTitle }) => {
     // value box, which would fire a search per character and show the user results for a prefix of
     // the number they are typing.
     useEffect(() => {
-        dispatch(searchSends(buildRequest()));
+        runSearch();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [dispatch, filters]);
 
@@ -221,6 +254,53 @@ const SendSearchPanel: React.FC<Props> = ({ showTitle }) => {
         // an advanced rule showed the "no results" state WITHOUT the "נקה הכל" way out, and the user
         // had to guess that the empty grid was caused by the panel they had collapsed.
         || completeRules(advRules, searchableFields).length > 0;
+
+    // ── export (POST api/SendSearch/Export) ───────────────────────────────────────────────────
+    // HIDDEN, not disabled, for a sub-user who may not export. That is the house convention and the
+    // reason is not cosmetic: `DataSources.tsx:110-114` derives the identical pair, and
+    // `DownloadFiles.tsx:67` simply omits the whole download column rather than greying it out.
+    // A greyed-out button with an explanatory tooltip would tell a deliberately restricted user
+    // exactly which capability was withheld from them — a permission denial explained to the person
+    // it is aimed at. The server enforces the same rule anyway (405 USER_PERMISSION_NOT_ALLOWED),
+    // so this is the UI half of a gate that exists on both sides.
+    //
+    // HideRecipients is part of the condition and not an afterthought: every one of the 22 export
+    // columns is recipient data — name, email, mobile, ClientID — so a user who may not SEE
+    // recipients on screen must certainly not be able to write them to a file and take them home.
+    // Same composition DataSources.tsx:114 uses.
+    //
+    // 🔴 ADDED after review (2026-08-09) — LOCK_EXPORT_DATA. The two sub-user permissions above are
+    // only half the gate this product actually enforces. Account feature 13 (LOCK_EXPORT_DATA,
+    // `Dal/Models/AccountFeatures/AccountFeatures.cs:17`) is the switch an account buys to stop
+    // recipient data leaving the product at all, and EVERY other export in this app honours it:
+    // ClientSearch, Groups (:460), DynamicGroups, the newsletter archive, DirectSendReport,
+    // SmsReplies, WhatsappInbound, MmsReport, NewslettersReport, ProductsReport, SmsReport and
+    // LandingPages — twelve screens, all with the identical `indexOf(...) === -1` composition copied
+    // here. Omitting it made THIS screen the way around it, on the most recipient-revealing dataset
+    // in the product: name + email + mobile + ClientID + supervisor for up to 20,000 people.
+    //
+    // Client-side only, and that is not an oversight — it is where this feature is enforced. A
+    // repo-wide grep of WebSiteApiNew for LockExportData returns the enum declaration and NOTHING
+    // else: no C# code anywhere checks feature 13. Adding a server gate here would make SendSearch
+    // the single endpoint in the product that enforces it, would widen the frozen contract's 405
+    // condition (!AllowExport OR HideRecipietns), and belongs to whoever decides it product-wide.
+    const canExport = !!userRoles?.AllowExport
+        && !userRoles?.HideRecipients
+        && accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1;
+    const [exportOpen, setExportOpen] = useState(false);
+    // The wire body, CAPTURED at the moment the dialog opens rather than recomputed on every render
+    // of the panel behind it. Two reasons, both about the file matching the screen:
+    //   • the criteria table the operator confirms and the `Criteria` the server writes into the
+    //     file are then provably the same object, not two evaluations of the same function;
+    //   • nothing the panel does while the dialog is open can move it. `buildRequest()` reads
+    //     `advRef.current`, which is written synchronously by the chips — a recompute mid-dialog
+    //     could silently swap the criteria under a table the user is reading.
+    const [exportRequest, setExportRequest] = useState<SendSearchRequest | null>(null);
+    // Rules the user built but did not finish. `toSendSearchRequest` drops them, so they narrow
+    // nothing — the dialog states that in the criteria block rather than letting the file imply a
+    // narrower search than the one that ran.
+    const incompleteRuleCount = Math.max(advRules.length - completeRules(advRules, searchableFields).length, 0);
+    const exportDisabled = !!sendSearch.loading || (sendSearch.totalCount ?? 0) === 0;
 
     // ── drawer ────────────────────────────────────────────────────────────────────────────────
     // The stack stores the row's COMPOSITE KEY, never a copy of the row (Models/…/SendSearch.ts
@@ -377,7 +457,7 @@ const SendSearchPanel: React.FC<Props> = ({ showTitle }) => {
                 // The filter bar's "חפש" commits the text through onChange; the effect above already
                 // refetches on any committed change, so onSearch only needs to force a refetch for the
                 // case where the text did NOT change (the user pressing חפש again on the same term).
-                onSearch={() => dispatch(searchSends(buildRequest()))}
+                onSearch={() => runSearch()}
                 // "נקה הכל" clears the ADVANCED rules and the sort too. Leaving them behind would
                 // make a cleared screen still silently narrowed and still silently reordered, under
                 // a button that just told the user everything was cleared.
@@ -398,11 +478,41 @@ const SendSearchPanel: React.FC<Props> = ({ showTitle }) => {
                     {/* A COUNT, never a percentage. */}
                     {t(`${SS}results.count`, { count: sendSearch.totalCount ?? 0 })}
                 </Typography>
-                {/* No export endpoint exists in §3.3, so the mock's ייצוא stays a visible-but-disabled
-                    affordance rather than a button that silently does nothing. */}
-                <Button size="small" variant="outlined" disabled style={{ marginInlineStart: 'auto' }}>
-                    {t(`${SS}export.button`)}
-                </Button>
+                {/* ייצוא. Rendered only for a user who is allowed to export (see `canExport` above —
+                    hidden, never greyed, for a restricted sub-user).
+                    The Tooltip wraps a <span> and not the Button, for the reason spelled out at
+                    SendSearchFilters.tsx:303-305: MUI attaches its listeners to the child, a disabled
+                    button fires no pointer events, and the tooltip that explains WHY it is disabled
+                    would be the one tooltip that never appears. */}
+                {canExport && (
+                    <Tooltip
+                        title={(exportDisabled
+                            ? t(sendSearch.loading ? `${SS}export.disabledLoading` : `${SS}export.disabledNoRows`)
+                            : t(`${SS}export.tooltip`)) as string}
+                    >
+                        <span style={{ marginInlineStart: 'auto' }}>
+                            <Button
+                                size="small"
+                                variant="outlined"
+                                disabled={exportDisabled}
+                                // The LAST DISPATCHED body, never a fresh buildRequest() — see
+                                // `lastSentRef` above. There is deliberately no fallback to
+                                // buildRequest() here: a fallback would silently restore the exact
+                                // divergence the ref exists to remove. It cannot be null in practice
+                                // anyway — `exportDisabled` requires totalCount > 0, which requires a
+                                // search to have completed.
+                                onClick={() => {
+                                    const body = lastSentRef.current;
+                                    if (!body) return;
+                                    setExportRequest(body);
+                                    setExportOpen(true);
+                                }}
+                            >
+                                {t(`${SS}export.button`)}
+                            </Button>
+                        </span>
+                    </Tooltip>
+                )}
             </Box>
 
             <SendSearchTable
@@ -423,6 +533,13 @@ const SendSearchPanel: React.FC<Props> = ({ showTitle }) => {
                 // Null unless a sort field is chosen — that is what keeps the extra column out of
                 // the grid entirely in the default case.
                 sortFieldLabel={sortFieldLabel}
+                // The source map for THIS result set, and the flag that decides whether the grid
+                // renders a source line at all. Passed as a pair on purpose: the list alone cannot
+                // distinguish "the server has not shipped 52_" from "this result references no
+                // source", and rendering the first as the second would put a claim about the data
+                // on screen that came from a fact about the deployment.
+                sources={sendSearch.sources ?? []}
+                sourcesAvailable={!!sendSearch.sourcesAvailable}
             />
 
             {/* The two standing caveats (`Mock-v3:209-212`). They are page furniture, not a tooltip:
@@ -446,6 +563,35 @@ const SendSearchPanel: React.FC<Props> = ({ showTitle }) => {
             >
                 {renderDrawerBody()}
             </DrawerStack>
+
+            {/* Mounted once a request has been captured, and left mounted afterwards so closing it
+                animates out instead of vanishing. `open` alone drives visibility; the dialog resets
+                all of its own state on every open, so a second export never starts inside the
+                previous one's result.
+                🔴 The reset is not the whole guard, and reading it as the whole guard was a defect.
+                Because the component is left MOUNTED, a request still in flight from the previous
+                open resolves onto the live dialog and used to write "the file is ready" over the
+                criteria of the search now on screen — a different search than the file answers.
+                What actually closes that is inside the dialog: an export-session counter bumped on
+                every open and re-checked after the await, plus ESC/backdrop being disabled while a
+                request is in flight. Do not "simplify" either of them away on the strength of this
+                reset. */}
+            {canExport && exportRequest && (
+                <SendSearchExportDialog
+                    open={exportOpen}
+                    onClose={() => setExportOpen(false)}
+                    filters={filters}
+                    request={exportRequest}
+                    totalCount={sendSearch.totalCount ?? 0}
+                    campaigns={campaigns}
+                    // Same flag the filter bar gets: it is what lets the criteria row say "the
+                    // campaign names could not be loaded" instead of printing bare ids as if that
+                    // were the whole truth.
+                    campaignsError={sendSearch.campaignsError ?? null}
+                    fields={searchableFields}
+                    incompleteRuleCount={incompleteRuleCount}
+                />
+            )}
         </>
     );
 };

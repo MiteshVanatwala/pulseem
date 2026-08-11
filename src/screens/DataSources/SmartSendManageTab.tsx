@@ -329,8 +329,14 @@ const SmartSendManageTab = ({ classes }: ClassesType) => {
                 autoHideDuration={3500}
                 onClose={() => setToast({ ...toast, open: false })}
                 message={toast.msg}
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-                ContentProps={{ style: { backgroundColor: toast.ok ? '#2e7d32' : '#c0392b' } }}
+                /* Snackbar is a portalled layer too, and it was the one this screen's RTL sweep missed.
+                   It carries Hebrew success/failure text, so without a direction it renders as an LTR
+                   paragraph (trailing punctuation and alignment flip). The anchor is mirrored for the
+                   same reason the Send glyph is: "bottom-left" is the far corner in LTR and the near one
+                   in RTL. A plain block comment, not a braced one — inside a JSX attribute list a braced
+                   comment is not a legal attribute. */
+                anchorOrigin={{ vertical: 'bottom', horizontal: isRTL ? 'right' : 'left' }}
+                ContentProps={{ style: { backgroundColor: toast.ok ? '#2e7d32' : '#c0392b', direction: isRTL ? 'rtl' : 'ltr' } }}
             />
         </Box>
     );

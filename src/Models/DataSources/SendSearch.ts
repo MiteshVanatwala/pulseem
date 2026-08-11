@@ -459,6 +459,14 @@ export interface SendSearchRow {
     RowID: number;                       // C# long — JS number is exact to 2^53, and RowID is an int-range identity
     DataSourceVersionID: number | null;
     VersionNumber: number | null;
+    // The data source the send actually came FROM (RS1 column 21, 52-SearchSends-SourceColumn.sql).
+    // Same COALESCE arm order as DataSourceVersionID above — provenance first, mapping as fallback —
+    // so the source and the version can never come from two different provenance rows.
+    //
+    // NULL means the server has not shipped 52_ yet, or genuinely has no source for the row. The
+    // client never renders a source line for it; see `SourcesAvailable` for which of the two it is.
+    // Only the ID travels per row; the NAME arrives once in `Sources`.
+    EffectiveDataSourceID: number | null;
     ProvenanceSource: string;            // Recorded | Inferred | Unverifiable
     VersionState: string;                // Available | Purged | Scrubbed
     Channel: eSendChannel;
@@ -510,9 +518,38 @@ export interface SendSearchRow {
     PreviewUrl: string | null;
 }
 
+// One data source referenced by the current result set — result set 3 of the search SP.
+//
+// 🔴 TWO SOURCES CAN SHARE A NAME. The uniqueness index is FILTERED:
+// `IX_DataSources__SubAccountID_Name … WHERE ([IsDeleted]=(0))`, so a deleted "תיק סוכן" and a live
+// "תיק סוכן" coexist legally in one account. That is why the grid prints `#id` on EVERY row and not
+// only when a collision is visible: this map covers the filtered result, and a search that happens
+// to return only the deleted twin contains no collision at all — a conditional id would be absent
+// exactly when it is most needed, and its absence would read as a positive claim of uniqueness.
+//
+// `IsDeleted` is rendered, never used to filter. The send happened; a source deleted afterwards is
+// still the source it came from, and hiding the row would delete evidence.
+export interface SendSearchCampaignSource {
+    DataSourceID: number;
+    // `null` = no map entry. `''` = a source whose name really is blank. Different states, rendered
+    // differently — never coalesce one into the other.
+    DataSourceName: string | null;
+    IsDeleted: boolean;
+    DeletedDate: string | null;   // ISO-8601; drawer only — a second numeric token on 50 grid rows
+    DeletedBy: string | null;     // competes with the id that is doing the actual disambiguating
+}
+
 export interface SendSearchResponse {
     Items: SendSearchRow[];
     TotalCount: number;
+    // Present only from a server that has shipped 52_. Optional here so an older API cannot crash
+    // the grid on `.map` of undefined; the slice normalises to [].
+    Sources?: SendSearchCampaignSource[];
+    // 🔴 THE FLAG, NOT THE LIST LENGTH, DECIDES WHETHER TO RENDER THE SOURCE LINE.
+    // false ⇒ the server cannot tell us yet ⇒ render NO source line at all.
+    // true + empty ⇒ the server told us, and this result references no source.
+    // Those must never look alike, and `IsDeleted` is NEVER inferred from a missing map entry.
+    SourcesAvailable?: boolean;
 }
 
 // ── provenance history row (mirror of CONTRACT §3.1 SendProvenanceRow, field-for-field) ─────
@@ -766,3 +803,657 @@ export const rowChannelAttempt = (r: SendSearchRow): ChannelAttempt => toChannel
 // of the same campaign, so it can identify neither a list item nor an open drawer level.
 export const sendSearchRowKey = (r: SendSearchRow): string =>
     `${r.Channel}-${r.ChannelCampaignID}-${r.RowID}-${r.SentAt ?? 'never'}`;
+
+// ═══════════════════════════════════════════════════════════════════════════════════════════
+// EXPORT — the client half of the FROZEN `POST api/SendSearch/Export` contract
+// ═══════════════════════════════════════════════════════════════════════════════════════════
+// Everything the export needs to SAY lives here and not in the dialog, for the same D10 reason the
+// status vocabulary above does: the dialog renders the criteria table AND the same rows travel to
+// the server as `Criteria` and are written verbatim into the file. One function, two uses — so the
+// file physically cannot describe a different search from the one the operator was shown.
+//
+// 🔴 `toSendSearchRequest` and `exclusiveUpperBound` above are NOT touched by any of this. The
+// export body INHERITS the search body field-for-field (that is what makes the export and the grid
+// the same query), so the projection that builds the search body stays the single authority over
+// what a filter looks like on the wire.
+
+// The translate function, structurally. Same shape `StatusChip.tsx:10` already uses to receive `t`
+// as a parameter — an interface, not an import of i18next's `TFunction`, so this module stays free
+// of a react-i18next dependency and can be unit-called with a stub.
+export type ExportT = (key: string, options?: any) => string;
+
+// One display-ready row of the criteria block. `{Label, Value}` are the C# `ExportCriterion`
+// member names EXACTLY — Newtonsoft drops an unknown key on a request in SILENCE (the same failure
+// class `CampaignIDs` and `SortField` document above), so a lower-case `label` here would travel as
+// two nulls and the file would carry a criteria block of empty rows with no error anywhere.
+export interface ExportCriterion {
+    Label: string;
+    Value: string;
+}
+
+// The export body = the search body + four members. `extends SendSearchRequest` rather than a
+// re-declaration, so a filter added to the search can never be missing from the export: the export
+// would stop compiling at the call site instead of silently exporting an UNFILTERED superset of what
+// the grid showed — the worst possible defect in an audit deliverable.
+export interface SendSearchExportRequest extends SendSearchRequest {
+    Criteria: ExportCriterion[];
+    // EXACTLY 22 entries in EXPORT_COLUMN_KEYS order. The server answers 400 DATA_INCORRECT on any
+    // other count rather than writing a file whose header row does not match its data rows.
+    ColumnHeaders: string[];
+    // token → display text. The server performs NO default substitution: a token missing from this
+    // map is written RAW into the file (CONTRACT D10, SendSearchController.cs:44-46). That is the
+    // whole point — a client-side dictionary that quietly renames a code it does not recognise is
+    // the RecipientReport export bug (`renderSMSStatus`, RecipientReport.tsx:510-522), where failed
+    // WhatsApp messages were exported as "נשלח".
+    Labels: { [token: string]: string };
+    // Optional. `null`, never '' — an empty string is an address the server would have to validate
+    // and reject, whereas null is the legitimate "do not email me".
+    NotifyEmail: string | null;
+}
+
+// `PulseemResponse.Data` of a 201 / 202.
+export interface SendSearchExportResult {
+    FileName: string;        // the BARE GUID, exactly as DataSources' export returns it
+    Rows: number;
+    Async: boolean;          // true ⇒ the 202 background path; the file is not on disk yet
+    XlsxIncluded: boolean;   // false ⇒ CSV only (above SendSearchExportXlsxMaxRows)
+}
+
+// `PulseemResponse.Data` of the 409 TOO_MANY_ROWS. Both numbers are surfaced to the user verbatim:
+// "too many rows" with neither the count nor the ceiling is an error the operator cannot act on.
+export interface SendSearchExportLimits {
+    MaxRows: number;
+    Rows: number;
+}
+
+// ── the 22 export columns ───────────────────────────────────────────────────────────────────
+// THIS EXACT ORDER, both sides. The array is the contract: the server projects its 22 values in
+// this order and the client sends 22 headers in this order, so the two lists are positional and a
+// reordering here without the matching server change puts every header over the wrong column —
+// a file that is wrong in a way no error message would ever report.
+export const EXPORT_COLUMN_KEYS: readonly string[] = [
+    'CampaignName', 'Channel', 'RecipientName', 'RecipientEmail',
+    'RecipientCellphone', 'ClientID', 'IsSupervisor', 'SupervisorName',
+    'SentAt', 'DeliveryState', 'EngagementState', 'EngagementAt',
+    'VersionNumber', 'ProvenanceSource', 'VersionState', 'HasRow',
+    'IsSynthetic', 'RollupValue', 'SortValueDisplay', 'DataSourceVersionID',
+    'ChannelCampaignID', 'RowID',
+];
+
+// The count the server validates against (400 DATA_INCORRECT when `ColumnHeaders.Count != 22`).
+// DERIVED, never restated as a literal: a 23rd column added above without the server change must
+// fail loudly at the boundary, and a hand-written `22` here would let it through to a file whose
+// header row is one column short of its data.
+export const EXPORT_COLUMN_COUNT = EXPORT_COLUMN_KEYS.length;
+
+// Header text for the 22 columns, in order. The i18n suffix is `camelCaseState` of the column key
+// — the SAME transformation the status keys use ('CampaignName' → 'campaignName', 'RowID' →
+// 'rowID'), so there is no second naming convention and no hand-written key table to drift.
+export const buildExportColumnHeaders = (t: ExportT): string[] =>
+    EXPORT_COLUMN_KEYS.map((k) => t(`${SS}export.col.${camelCaseState(k)}`));
+
+// ── Labels: the token → display-text map the server writes with ─────────────────────────────
+// i18n key suffix per channel. Declared here rather than inside the dialog for the same D10 reason
+// every other map in this file is: a component-local copy is a second place that must learn about
+// channel 4, and the two always drift.
+const CHANNEL_KEYS: { [c: number]: string } = {
+    [eSendChannel.EMAIL]: 'email',
+    [eSendChannel.SMS]: 'sms',
+    [eSendChannel.WHATSAPP]: 'whatsapp',
+};
+
+// Display text for a channel. An out-of-domain channel resolves to a key that EXISTS
+// (`export.channel.unknown`) rather than to a raw number or a missing-key string.
+export const exportChannelLabel = (t: ExportT, c: eSendChannel | number): string =>
+    t(`${SS}export.channel.${CHANNEL_KEYS[c as number] ?? 'unknown'}`);
+
+export const exportBoolLabel = (t: ExportT, v: boolean): string =>
+    t(`${SS}export.bool.${v ? 'true' : 'false'}`);
+
+/**
+ * The `Labels` dictionary. Every entry is a token the SERVER will look up while writing a cell;
+ * a token that is absent is written RAW (CONTRACT D10) — which is why this map is built from the
+ * frozen runtime domains above and not from a hand-written list: a state added to
+ * `DELIVERY_STATES` is covered here automatically, and one that is NOT in the domain is supposed
+ * to reach the file raw, because a raw 'Bounced' in an audit file is evidence of a server defect
+ * and a silently substituted "לא ידוע" is the erasure of that evidence.
+ *
+ * Lookup keys are the contract's: `channel.1|2|3`, `bool.true`/`bool.false`, and the string states
+ * under their OWN raw value ('Recorded', 'Available', 'Delivered', …).
+ */
+export const buildExportLabels = (t: ExportT): { [token: string]: string } => {
+    const labels: { [token: string]: string } = {};
+
+    // Channel → "channel.<tinyint>". Built from the enum values, so a fourth channel added to
+    // `eSendChannel` + CHANNEL_KEYS lands here without touching this function.
+    Object.keys(CHANNEL_KEYS).forEach((c) => {
+        labels[`channel.${c}`] = t(`${SS}export.channel.${CHANNEL_KEYS[Number(c)]}`);
+    });
+
+    labels['bool.true'] = exportBoolLabel(t, true);
+    labels['bool.false'] = exportBoolLabel(t, false);
+
+    // The four string domains, each under its own raw token.
+    DELIVERY_STATES.forEach((s) => { labels[s] = t(`${SS}delivery.${camelCaseState(s)}`); });
+    ENGAGEMENT_STATES.forEach((s) => { labels[s] = t(`${SS}engagement.${camelCaseState(s)}`); });
+    PROVENANCE_SOURCES.forEach((s) => { labels[s] = t(`${SS}version.source.${camelCaseState(s)}`); });
+    VERSION_STATES.forEach((s) => { labels[s] = t(`${SS}version.state.${camelCaseState(s)}`); });
+
+    // 🔴 THE ONE COLLISION, resolved deliberately and last. 'Unknown' is a member of BOTH
+    // `DELIVERY_STATES` and `ENGAGEMENT_STATES`, and the contract keys the string states by their
+    // RAW value — so one flat dictionary can hold only one text for it, and whichever loop ran last
+    // would otherwise decide silently. The screen's two texts differ ("סטטוס לא מזוהה" vs "לא
+    // מזוהה") and neither reads correctly in the other's column, so the file gets a third, neutral
+    // one that is true in both: this is the only place in the export where the file's wording is
+    // allowed to differ from the grid's, and it is recorded here so the difference is not read as
+    // a bug.
+    labels['Unknown'] = t(`${SS}export.unknownState`);
+
+    // Not a cell value — the download NAME. The server builds "<N>-<this>" when several campaigns
+    // are ticked (frozen contract, "the download name"), so this is the bare noun, never a
+    // sentence and never a format string.
+    labels['export.campaignsCount'] = t(`${SS}export.campaignsCount`);
+
+    return labels;
+};
+
+// ── the criteria block ──────────────────────────────────────────────────────────────────────
+// i18n suffixes for the two enum filters. Same rationale as CHANNEL_KEYS above.
+// NOTE for whoever next opens `SendSearchFilters.tsx`: that file carries a private `KIND_KEY`
+// (:88-92) predating this module's export section. It is the same three strings; collapse it onto
+// `exportRowKindLabel` when you are in there for another reason. It is left alone here because the
+// filter bar is outside this change's blast radius and a drive-by edit to a shared audit screen is
+// how unrelated regressions arrive.
+const ROLE_FILTER_KEYS: { [v: number]: string } = {
+    [eRoleFilter.All]: 'all',
+    [eRoleFilter.Agent]: 'agent',
+    [eRoleFilter.Supervisor]: 'supervisor',
+};
+const ROW_KIND_KEYS: { [v: number]: string } = {
+    [eRowKind.All]: 'all',
+    [eRowKind.Agents]: 'agents',
+    [eRowKind.Rollup]: 'rollup',
+};
+
+// An out-of-domain value falls back to the RAW NUMBER rather than to a plausible-looking label:
+// the server rejects RoleFilter > 2 with a 400 (SendSearchController.cs), so seeing `7` in the
+// criteria row is the honest description of a client bug, and "סוכן ומפקח" would hide it.
+export const exportRoleFilterLabel = (t: ExportT, v: eRoleFilter | number): string =>
+    (ROLE_FILTER_KEYS[v as number] ? t(`${SS}role.${ROLE_FILTER_KEYS[v as number]}`) : String(v));
+export const exportRowKindLabel = (t: ExportT, v: eRowKind | number): string =>
+    (ROW_KIND_KEYS[v as number] ? t(`${SS}kind.${ROW_KIND_KEYS[v as number]}`) : String(v));
+
+/**
+ * Display text for a filter operator, for the criteria block.
+ *
+ * 🔴 IT READS `adv.op.<NUMBER>`, NOT `operatorKey()` — and that is a correction, not a preference.
+ * `operatorKey` (:301) builds `SendSearch.filter.op.<name>`, a key family that B4 registered in the
+ * LEDGER (#48) and that was NEVER applied to any of the three translation files. Verified 2026-08-09:
+ * `filter.op.*` appears in zero of he/en/pl, and before this line `operatorKey` had ZERO call sites
+ * in the repo — it is dead code, so nothing had ever exposed the gap. The family that actually ships
+ * is B5's `adv.op.<frozen number>` (he/SendSearch.he.json:150-159 and the same block in en/pl), and
+ * it is what the filter chips and the advanced builder already render.
+ *
+ * Using `operatorKey` here would have written the literal string "SendSearch.filter.op.equals" into
+ * the criteria block of an audit file — i18next returns the key when it cannot resolve it, silently.
+ * Registering the missing family instead was rejected: LEDGER #48 leaves the choice of which family
+ * survives to the orchestrator, and the export must not be the change that quietly decides it.
+ *
+ * An operator with no key resolves to its RAW NUMBER rather than to a leaked `SendSearch.…` path:
+ * i18next hands the key back verbatim when it misses, so the comparison below is the only way to
+ * tell "translated" from "not found". A bare `10` in the file is an honest, greppable description
+ * of an operator this build does not know; an i18n path is noise that looks like a rendering bug.
+ */
+export const exportOperatorLabel = (t: ExportT, op: eFilterOperator | number): string => {
+    const key = `${SS}adv.op.${op}`;
+    const text = t(key);
+    return text === key ? String(op) : text;
+};
+
+/**
+ * `yyyy-MM-dd` → `dd/MM/yyyy`, by STRING SURGERY and never through a `Date`.
+ *
+ * A `new Date('2026-08-08')` is parsed as UTC midnight and printed in the browser's local zone, so
+ * every user west of Greenwich would see the previous day in the criteria row while the grid showed
+ * the right one — the identical class of off-by-one-day defect that `exclusiveUpperBound` above
+ * exists to document. Anything that is not a bare date is returned VERBATIM: an unexpected shape is
+ * a value we cannot claim to understand, and printing it unchanged is the honest answer.
+ */
+export const formatCriterionDate = (iso: string | null): string => {
+    if (!iso) return '';
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return iso;
+    const p = iso.split('-');
+    return `${p[2]}/${p[1]}/${p[0]}`;
+};
+
+/**
+ * `yyyy-MM-dd` shifted back by whole months, in UTC — the same discipline as `exclusiveUpperBound`:
+ * a local-time `Date` would move the calendar day for every user east or west of the server.
+ *
+ * Used ONLY to decide whether the SP's 12-month floor will bite (see the DateFrom renderer). It is
+ * never printed, so the one edge where JS and `DATEADD(month, -12, …)` disagree — 29 February rolls
+ * forward to 1 March here and clamps to 28 February there — can shift the decision by a single day
+ * at the boundary, where the clamp it is detecting is itself a one-day clamp. Printing a computed
+ * floor date would have put that discrepancy into an audit file; describing the narrowing in words
+ * does not.
+ */
+const monthsBefore = (iso: string, months: number): string => {
+    const p = iso.split('-');
+    const d = new Date(Date.UTC(Number(p[0]), Number(p[1]) - 1, Number(p[2])));
+    d.setUTCMonth(d.getUTCMonth() - months);
+    return d.toISOString().slice(0, 10);
+};
+
+const todayIso = (): string => new Date().toISOString().slice(0, 10);
+
+/**
+ * 🔴 THE BUDGET THAT KEEPS A 13-CAMPAIGN EXPORT FROM FAILING. Added after review (2026-08-09).
+ *
+ * The campaign criterion renders the ticked campaigns' NAMES, joined, and the picker permits 500 ids
+ * (server `CAMPAIGN_IDS_MAX`). With real Clal names that single Value crossed the server's
+ * per-criterion bound at THIRTEEN campaigns, and the export was answered 400 DATA_INCORRECT before
+ * the search ever ran — deterministically, on the ordinary multi-campaign audit the picker exists
+ * for, with nothing on screen naming the campaign count as the cause.
+ *
+ * `chunkJoined` SPLITS the list across rows and never truncates it: the campaign names are the audit
+ * evidence, so dropping the tail would trade a visible failure for an invisible one. The budget sits
+ * below the server's `CRITERIA_TEXT_MAX` (4000, SendSearchExportLogic.cs) so a chunk still clears it
+ * after a row template wraps it in a count prefix. A single name longer than the budget — not
+ * reachable through the picker, but a bound has to be total — is elided rather than allowed to blow
+ * the row.
+ */
+const CRITERION_VALUE_SOFT_MAX = 3200;
+
+const chunkJoined = (parts: string[], sep: string): string[] => {
+    const out: string[] = [];
+    let cur = '';
+    parts.forEach((raw) => {
+        const piece = raw.length > CRITERION_VALUE_SOFT_MAX
+            ? `${raw.slice(0, CRITERION_VALUE_SOFT_MAX - 1)}…`
+            : raw;
+        if (cur.length === 0) { cur = piece; return; }
+        if (cur.length + sep.length + piece.length > CRITERION_VALUE_SOFT_MAX) { out.push(cur); cur = piece; return; }
+        cur += sep + piece;
+    });
+    if (cur.length > 0) out.push(cur);
+    return out;
+};
+
+// What the criteria builder needs beyond the two filter objects.
+export interface ExportCriteriaContext {
+    t: ExportT;
+    // Campaign id → name. From `sendSearch.campaigns`; may be missing ids (see campaignsError).
+    campaigns: SendSearchCampaign[];
+    // Set ⇒ the picker's option list could not be loaded, so some ticked ids have NO name available.
+    // The row then SAYS so, instead of rendering bare numbers as if they were the whole truth.
+    campaignsError: string | null;
+    // For the advanced rules' display names. `FieldKey` is a `SourceHeader` and can be a raw
+    // spreadsheet header, so it is the identity — not what a human should be shown.
+    fields: SendSearchFilterField[];
+    // Rules the user built but did NOT finish. They are dropped at the wire boundary
+    // (`isClauseComplete`), so they filter nothing — and an audit file that silently omits them
+    // would let the reader believe the search was narrower than it was.
+    incompleteRuleCount?: number;
+}
+
+const crit = (Label: string, Value: string): ExportCriterion => ({ Label, Value });
+
+// Structural equality, deep enough for the four shapes this state actually holds (scalar, array of
+// numbers, array of clause objects, null). `JSON.stringify` is used only for the object leaf, where
+// key order is fixed by `toSendSearchRequest`'s own object literal and therefore stable.
+const sameCriterionValue = (a: any, b: any): boolean => {
+    if (Array.isArray(a) || Array.isArray(b)) {
+        const aa: any[] = Array.isArray(a) ? a : [];
+        const bb: any[] = Array.isArray(b) ? b : [];
+        if (aa.length !== bb.length) return false;
+        return aa.every((v, i) => sameCriterionValue(v, bb[i]));
+    }
+    if (a && b && typeof a === 'object' && typeof b === 'object') {
+        return JSON.stringify(a) === JSON.stringify(b);
+    }
+    return a === b;
+};
+
+const campaignNameOf = (ctx: ExportCriteriaContext, id: number): string => {
+    const hit = ctx.campaigns.filter((c) => c.CampaignID === id)[0];
+    return hit && hit.CampaignName ? hit.CampaignName : '';
+};
+
+// Field DISPLAY name for an advanced rule. Falls back to the FieldKey — which is the SourceHeader,
+// i.e. still a real, recognisable column header — rather than to "unknown field".
+const fieldDisplayOf = (ctx: ExportCriteriaContext, fieldKey: string): string => {
+    const hit = ctx.fields.filter((f) => f.FieldKey === fieldKey)[0];
+    return hit && hit.DisplayName ? hit.DisplayName : fieldKey;
+};
+
+type CriterionRenderer = (
+    f: SendSearchFilters,
+    req: SendSearchRequest,
+    ctx: ExportCriteriaContext,
+) => ExportCriterion[];
+
+// Keys whose DEFAULT is itself a substantive statement about the file's contents, and which are
+// therefore listed even when untouched. Everything else obeys the omit-when-default rule.
+//   • Channel — a file that does not say which channel it describes becomes ambiguous the day
+//     channel 2 is wired, and it is unreadable as evidence a year from now.
+//   • DateFrom — its renderer prints the whole RANGE, and "no dates picked" is NOT "all time":
+//     dbo.DataSources_SearchSends floors the window at twelve months back unless
+//     IncludeOverOneYear is set. Omitting the row would let the reader assume the file covers
+//     everything ever sent.
+const ALWAYS_LISTED: readonly string[] = ['Channel', 'DateFrom'];
+
+// Per-key renderers. This table is NOT the list of criteria — the SCAN below is, and it walks the
+// state object itself. A key with no entry here still produces a row, through `fallbackCriterion`.
+// That is the whole design: adding a filter to `SendSearchFilters` can never silently drop it from
+// the audit file, it can only make its row uglier until someone adds the renderer.
+const CRITERION_RENDERERS: { [key: string]: CriterionRenderer } = {
+    Channel: (f, req, ctx) => [crit(
+        ctx.t(`${SS}export.criteria.channel`),
+        exportChannelLabel(ctx.t, f.Channel),
+    )],
+
+    // The TRIMMED text, i.e. what actually travelled — `toSendSearchRequest` sends null for
+    // whitespace-only input, and a criteria row reading `"   "` would claim a filter that is not
+    // running.
+    SearchText: (f, req, ctx) => {
+        const text = (req.SearchText ?? '').trim();
+        if (text.length === 0) return [];
+        return [crit(ctx.t(`${SS}export.criteria.searchText`), text)];
+    },
+
+    RoleFilter: (f, req, ctx) => [crit(
+        ctx.t(`${SS}export.criteria.role`),
+        exportRoleFilterLabel(ctx.t, f.RoleFilter),
+    )],
+
+    RowKind: (f, req, ctx) => [crit(
+        ctx.t(`${SS}export.criteria.rowKind`),
+        exportRowKindLabel(ctx.t, f.RowKind),
+    )],
+
+    // The legacy SCALAR campaign filter. It is permanently null since the picker went multi-select,
+    // but the SP still honours it and the field is still on the frozen body — so it is still
+    // scanned. If it is ever non-null again, this row appears rather than the filter being invisible.
+    CampaignID: (f, req, ctx) => {
+        if (req.CampaignID == null) return [];
+        const name = campaignNameOf(ctx, req.CampaignID);
+        return [crit(
+            ctx.t(`${SS}export.criteria.campaign`),
+            name || `#${req.CampaignID}`,
+        )];
+    },
+
+    // Read from the REQUEST, not from the state: `toSendSearchRequest` de-duplicates the ids and
+    // drops anything <= 0, so the request is the set the server will actually filter by. A row
+    // built from the raw state could list a campaign the wire never carried.
+    CampaignIDs: (f, req, ctx) => {
+        const ids = req.CampaignIDs ?? [];
+        if (ids.length === 0) return [];
+        const label = ctx.t(`${SS}export.criteria.campaigns`);
+        const named: string[] = [];
+        const unnamedIds: number[] = [];
+        const parts: string[] = ids.map((id) => {
+            const name = campaignNameOf(ctx, id);
+            if (name) { named.push(name); return name; }
+            unnamedIds.push(id);
+            // `#4821` and not a bare `4821`: a bare number in a name list reads as a campaign
+            // literally called "4821". The hash marks it as an identifier we could not resolve —
+            // the same convention the picker's chips already use (SendSearchFilters.tsx:114-117).
+            return `#${id}`;
+        });
+        // CHUNKED, not joined into one string — see `chunkJoined` for the 400 DATA_INCORRECT this
+        // prevents. The FIRST chunk carries the count template; the rest continue under the same
+        // label, which reads in the file exactly like a wrapped list and keeps the count stated once.
+        const chunks = chunkJoined(parts, ', ');
+        const list = chunks[0] ?? '';
+        const continuation: ExportCriterion[] = chunks.slice(1).map((c) => crit(label, c));
+
+        // Every id resolved. One campaign prints its name alone; several print a count first, so a
+        // reader can check the file against the number of boxes that were ticked.
+        if (unnamedIds.length === 0) {
+            return [crit(label, ids.length === 1
+                ? list
+                : ctx.t(`${SS}export.criteria.campaignsValue`, { n: ids.length, list }))].concat(continuation);
+        }
+        // Some ids have no name. WHY matters, and the two reasons produce different sentences:
+        //   • the whole list failed to load  ⇒ we cannot name ANY of them and must say so;
+        //   • the list loaded and this id is not in it ⇒ the campaign is outside the picker's
+        //     current date scope, the filter still applies to it, and the reader must not conclude
+        //     the id is bogus.
+        // Rendering the ids and nothing else would let the reader assume the names were simply
+        // omitted for brevity; rendering nothing would hide an active filter outright.
+        return [crit(label, ctx.t(
+            ctx.campaignsError
+                ? `${SS}export.criteria.campaignsNamesUnavailable`
+                : `${SS}export.criteria.campaignsPartial`,
+            { n: ids.length, list },
+        ))].concat(continuation);
+    },
+
+    // ONE row for the whole window, rendered from the STATE — the state holds the inclusive date
+    // the user picked and the chip shows, while `req.DateTo` is the exclusive bound
+    // `exclusiveUpperBound` shifted for the SP's half-open predicate. Printing the wire value would
+    // tell the operator the file covers a day it does not.
+    DateFrom: (f, req, ctx) => {
+        const from = formatCriterionDate(f.DateFrom);
+        const to = formatCriterionDate(f.DateTo);
+        const label = ctx.t(`${SS}export.criteria.dateRange`);
+        const rows: ExportCriterion[] = [];
+        if (from && to) rows.push(crit(label, ctx.t(`${SS}export.criteria.dateBoth`, { from, to })));
+        else if (from) rows.push(crit(label, ctx.t(`${SS}export.criteria.dateFromOnly`, { from })));
+        else if (to) rows.push(crit(label, ctx.t(`${SS}export.criteria.dateToOnly`, { to })));
+        // No dates picked. NOT "all time" — the SP's own window applies, and which window that is
+        // depends on the >1-year opt-in. This branch already NAMES the twelve-month default, so the
+        // clamp notice below would be saying the same thing twice.
+        else {
+            return [crit(label, ctx.t(f.IncludeOverOneYear
+                ? `${SS}export.criteria.dateNoLimit`
+                : `${SS}export.criteria.dateDefaultWindow`))];
+        }
+
+        // 🔴 THE FILE MUST NOT CLAIM COVERAGE IT DOES NOT HAVE. Added after review (2026-08-09).
+        //
+        // The picked dates are printed above exactly as the operator chose them — and when
+        // "כלול חיפוש שליחות מעל שנה" is OFF, the SP OVERWRITES the lower bound:
+        //   50-SearchSends-MultiCampaign.sql:188-196 — @prm_DateTo defaults to GETDATE(),
+        //   @OneYearFloor = DATEADD(month,-12,@prm_DateTo), and with @prm_IncludeOverOneYear = 0 a
+        //   @prm_DateFrom that is NULL or older than the floor is SET TO the floor.
+        // That floor is the cheap-path guarantee (a closed two-sided range on
+        // NCI_CampaignSendingLog_TimeStamp) and is not something to fight. But it means an export
+        // asked for 01/01/2023 → today returns only the last twelve months, while the criteria block
+        // — the block that exists precisely to state what the file covers — read "מ-01/01/2023" and
+        // nothing anywhere said otherwise. A reader would conclude that no matching sends occurred in
+        // the years in between. The IncludeOverOneYear renderer below emits a row only when the flag
+        // is TRUE, so the state that CAUSES the truncation was the one state invisible in the file.
+        //
+        // Three of the four branches above can be narrowed: from+to, from-only (upper bound is the
+        // SP's "now"), and to-only (a NULL DateFrom is floored too, so "up to X" overstates just as
+        // badly). The extra row states the narrowing and how to lift it; it is never a substitute for
+        // the requested window, which stays printed above so the file records what was ASKED as well
+        // as what was answered.
+        if (!f.IncludeOverOneYear) {
+            const floor = monthsBefore(f.DateTo ?? todayIso(), 12);
+            if (f.DateFrom == null || f.DateFrom < floor) {
+                rows.push(crit(
+                    ctx.t(`${SS}export.criteria.dateClamped`),
+                    ctx.t(`${SS}export.criteria.dateClampedValue`),
+                ));
+            }
+        }
+        return rows;
+    },
+
+    // Folded into the DateFrom row above. Returning [] is deliberate and is NOT the same as having
+    // no renderer: no renderer would send it through `fallbackCriterion` and the file would carry
+    // the shifted, exclusive wire date as a second, contradictory row.
+    DateTo: () => [],
+
+    IncludeOverOneYear: (f, req, ctx) => (req.IncludeOverOneYear
+        ? [crit(ctx.t(`${SS}export.criteria.includeOverOneYear`), exportBoolLabel(ctx.t, true))]
+        : []),
+
+    // Paging is NOT a criterion, and this is the one place it has to be said out loud: the export
+    // walks EVERY matching row (the server re-pages internally at 200), so the grid's page index and
+    // page size describe the screen, never the file. A "page 3 of 50" row in an audit file would
+    // invite exactly the wrong conclusion about what is missing from it.
+    PageIndex: () => [],
+    PageSize: () => [],
+
+    // One row per COMPLETE clause, read from the request — which is where the panel's locally-held
+    // advanced rules land (SendSearchPanel `buildRequest`), and which has already dropped the
+    // half-built ones. The incomplete count is reported separately by the builder below.
+    Filters: (f, req, ctx) => (req.Filters ?? []).map((c) => {
+        const op = exportOperatorLabel(ctx.t, c.Operator);
+        const v1 = c.Value1 ?? '';
+        const value = operatorNeedsValue2(c.Operator)
+            ? ctx.t(`${SS}export.criteria.filterRuleBetween`, { op, from: v1, to: c.Value2 ?? '' })
+            : ctx.t(`${SS}export.criteria.filterRuleValue`, { op, value: v1 });
+        return crit(
+            ctx.t(`${SS}export.criteria.filterRule`, { field: fieldDisplayOf(ctx, c.FieldKey) }),
+            value,
+        );
+    }),
+
+    // Field AND direction in one row: a direction without its field is meaningless, and two rows
+    // could be separated by a future insertion and read apart.
+    SortField: (f, req, ctx) => {
+        if (!req.SortField) return [];
+        const rows: ExportCriterion[] = [crit(
+            ctx.t(`${SS}export.criteria.sort`),
+            ctx.t(`${SS}export.criteria.sortValue`, {
+                field: fieldDisplayOf(ctx, req.SortField),
+                dir: ctx.t(sortDirectionKey(!!req.SortDescending)),
+            }),
+        )];
+
+        // 🔴 THE FILE MUST NOT ASSERT AN ORDER IT MAY NOT HAVE. Added after review (2026-08-09).
+        // Same doctrine as the date clamp above: the row above records what was ASKED, this row
+        // records what may have been ANSWERED — it never replaces the requested sort.
+        //
+        // A sort key here is always a data-source `SourceHeader` (the sort is picked in the advanced
+        // panel, out of the searchable-field catalogue — SendSearchPanel `advSort`), and the SP
+        // resolves it against the columns of the data-source versions IN SCOPE:
+        //   50-SearchSends-MultiCampaign.sql:792-803 — #SCol = DataSourceColumns JOIN #Ver on
+        //   `SourceHeader = @SortKey AND IsSearchable = 1`, then
+        //   `IF NOT EXISTS (SELECT 1 FROM #SCol) SET @SortMode = 0;`
+        // — and #Ver is built from #Camp (:577-585), i.e. from the campaigns that were TICKED. With
+        // @SortMode = 0 every arm of the ORDER BY collapses to NULL (:876-882) and the rows come
+        // back in the default order, `SentAt DESC, CampaignID DESC, RecipientID ASC` (:883).
+        //
+        // That degrade is SILENT: the SP emits no mode flag, no second result set and no return
+        // code, so neither this client nor the server-side export can detect it. Without this row
+        // the criteria block would state "מיון: סכום פרמיה (יורד)" at the head of a file ordered by
+        // send time, and a regulator reading the top rows as the largest premiums would be reading
+        // an ordering the file does not have. The only trace in the file is that the "ערך המיון"
+        // column is empty on every row, and nothing connects a blank column to a dropped sort.
+        //
+        // UNCONDITIONAL, and that is the considered choice: no client-side state can rule the
+        // degrade out. The field catalogue is fetched WITHOUT the campaign selection
+        // (SendSearchPanel:208-218 — deliberately, it must never be narrowed by the picker), so a
+        // field being present in it does not mean the ticked campaigns can resolve it. Asserting
+        // "applied" or "not applied" off that catalogue would swap one wrong statement for another;
+        // naming the condition, and how to check it in this very file, is the only honest row
+        // available until the SP reports the mode it actually used.
+        rows.push(crit(
+            ctx.t(`${SS}export.criteria.sortNotGuaranteed`),
+            ctx.t(`${SS}export.criteria.sortNotGuaranteedValue`),
+        ));
+        return rows;
+    },
+    // Folded into SortField, same reasoning as DateTo.
+    SortDescending: () => [],
+};
+
+// A filter the scan found but no renderer knows about. It is printed with its RAW field name and a
+// best-effort value — deliberately ugly, deliberately present. This is the function that makes the
+// "never from a hand-written list" rule true rather than aspirational.
+const stringifyCriterionValue = (ctx: ExportCriteriaContext, v: any): string => {
+    if (v == null) return '';
+    if (typeof v === 'boolean') return exportBoolLabel(ctx.t, v);
+    if (Array.isArray(v)) {
+        return v.map((x) => (x != null && typeof x === 'object' ? JSON.stringify(x) : String(x))).join(', ');
+    }
+    if (typeof v === 'object') return JSON.stringify(v);
+    return String(v);
+};
+
+/**
+ * The criteria block: every filter currently in effect, one row each.
+ *
+ * IT IS BUILT BY SCANNING THE STATE, not from a list. `defaultSendSearchFilters()` and its wire
+ * projection are walked key by key; a key still at its default is omitted, a key that moved is
+ * rendered. A filter added to `SendSearchFilters` next month therefore appears in this table — and
+ * in the exported file — on the day it is added, with no edit here. A hand-written list would have
+ * gone stale at exactly that moment, and the failure would have been INVISIBLE: a file that looks
+ * complete while omitting the one filter that explains why it is short.
+ *
+ * Two objects go in, and the distinction is load-bearing:
+ *   • `f`   — screen state: the dates the user picked, shown inclusive, matching the chips.
+ *   • `req` — the wire body: trimmed text, de-duplicated campaign ids, COMPLETE clauses only, the
+ *             advanced rules the panel holds in local state, and the exclusive DateTo. This is what
+ *             the server will actually run.
+ * A key is "at default" only when BOTH are at default, so the advanced rules — which live in `req`
+ * and never in `f` — are never mistaken for absent.
+ */
+export const buildExportCriteria = (
+    f: SendSearchFilters,
+    req: SendSearchRequest,
+    ctx: ExportCriteriaContext,
+): ExportCriterion[] => {
+    const defF = defaultSendSearchFilters();
+    const defR = toSendSearchRequest(defF);
+    const out: ExportCriterion[] = [];
+    const seen: { [k: string]: boolean } = {};
+
+    // Key ORDER is the declaration order of `defaultSendSearchFilters()` — JS preserves insertion
+    // order for string keys — so the criteria block reads in the same order every time and two files
+    // of the same search are diffable. The request's keys come next (a member that exists only on
+    // the WIRE, synthesised by the projection), and the LIVE objects come last.
+    //
+    // 🔴 THE LIVE OBJECTS ARE PART OF THE SCAN, and that is the whole anti-staleness guarantee, not
+    // belt-and-braces. Caught by the smoke test 2026-08-09: scanning only the two DEFAULT objects
+    // silently drops any key that is present on the actual filters/request but absent from
+    // `defaultSendSearchFilters()` — a field spread in from elsewhere, or one added to the state
+    // shape before its default. Such a key compares against `undefined`, is therefore never "at
+    // default", and now renders through the fallback. Scanning defaults alone would have produced
+    // the precise failure this design exists to prevent: an audit file that looks complete while
+    // omitting an active filter.
+    const keys: string[] = Object.keys(defF)
+        .concat(Object.keys(defR))
+        .concat(Object.keys(f ?? {}))
+        .concat(Object.keys(req ?? {}));
+
+    keys.forEach((key) => {
+        if (seen[key]) return;
+        seen[key] = true;
+
+        const atDefault = sameCriterionValue((f as any)[key], (defF as any)[key])
+            && sameCriterionValue((req as any)[key], (defR as any)[key]);
+        if (atDefault && ALWAYS_LISTED.indexOf(key) < 0) return;
+
+        const render = CRITERION_RENDERERS[key];
+        if (render) {
+            render(f, req, ctx).forEach((row) => out.push(row));
+            return;
+        }
+        // No renderer: print it anyway, labelled as a field this dialog does not yet know how to
+        // describe. Ugly and honest beats absent and tidy.
+        out.push(crit(
+            ctx.t(`${SS}export.criteria.unlisted`, { field: key }),
+            stringifyCriterionValue(ctx, (req as any)[key] !== undefined ? (req as any)[key] : (f as any)[key]),
+        ));
+    });
+
+    // Rules the user built but never finished. They are dropped by `isClauseComplete` before the
+    // request is made, so they narrow nothing — and a reader of the file who saw the operator's
+    // screen would otherwise expect them to have applied.
+    const incomplete = ctx.incompleteRuleCount ?? 0;
+    if (incomplete > 0) {
+        out.push(crit(
+            ctx.t(`${SS}export.criteria.incompleteRules`),
+            ctx.t(`${SS}export.criteria.incompleteRulesValue`, { n: incomplete }),
+        ));
+    }
+
+    return out;
+};
