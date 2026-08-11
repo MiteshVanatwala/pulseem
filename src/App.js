@@ -113,6 +113,7 @@ import { openHelpDrawer, closeHelpDrawer, toggleHelpDrawer } from './redux/reduc
 import ChatWidgetConfigPage from './screens/Widgets/ChatWidgetConfigPage';
 import WidgetListPage from './screens/Widgets/WidgetListPage';
 import Conversations from './screens/Service/Conversations/Conversations';
+import AIAssistant from './screens/Service/AIAssistant/AIAssistant';
 
 const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
   const transferUrl =
@@ -710,6 +711,11 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
         exact
         path={`${sitePrefix}Conversations/:conversationId`}
         element={<Conversations classes={classes} />}
+      />
+      <Route
+        exact
+        path={`${sitePrefix}AIAssistant`}
+        element={<AIAssistant classes={classes} />}
       />
     </Routes>
   )

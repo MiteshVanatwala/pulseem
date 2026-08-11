@@ -44,6 +44,7 @@ import helpDrawerReducer from './reducers/helpDrawerSlice';
 import contactSupportReducer from './reducers/contactSupportSlice';
 import conversationsReducer from './reducers/conversationsSlice';
 import serviceLimitsReducer from './reducers/serviceLimitsSlice';
+import aiAssistantReducer from './reducers/aiAssistantSlice';
 
 
 export default configureStore({
@@ -92,5 +93,6 @@ export default configureStore({
     contactSupport: contactSupportReducer,
     conversations: conversationsReducer,
     serviceLimits: serviceLimitsReducer,
+    aiAssistant: aiAssistantReducer,
   },
 });
