@@ -31,6 +31,13 @@
     "deletedChipMapped": "Deleted source · per mapping",
     "noRecord": "No record",
     "nameNotFound": "name not found",
+    "markButton": "Mark campaigns by source",
+    "markCount": "{{count}} campaigns",
+    "markDone": "Marked {{count}} campaigns associated with «{{name}}» (#{{id}}) — by record or by the current mapping",
+    "markAlready": "All {{count}} campaigns of «{{name}}» (#{{id}}) are already marked — nothing changed",
+    "markNone": "«{{name}}» (#{{id}}) has no campaigns in the selected range — nothing was marked",
+    "markTooMany": "Marking «{{name}}» would reach {{count}} campaigns and the maximum is {{max}}. Narrow the date range and try again — nothing was marked",
+    "markUndo": "Undo",
     "a11y": {
       "cell": "Data source: {{name}}, id {{id}}.",
       "cellMapped": "Data source per the current mapping: {{name}}, id {{id}}. No source was recorded at send time.",

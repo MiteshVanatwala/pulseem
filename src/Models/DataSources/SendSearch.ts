@@ -355,6 +355,17 @@ export interface SendSearchFilterField {
 // (SendSearchPanel). That list could only ever hold campaigns from a page already fetched —
 // survivable for a single select, actively misleading under a search box, where "not found" would
 // mean "not loaded yet" and the user would conclude the campaign does not exist.
+// 🔴 MIRRORS THE SERVER. `SendSearchLogic.CAMPAIGN_IDS_MAX = 500`, enforced by
+// `SendSearchController` as a flat 400 DATA_INCORRECT — the controller REFUSES rather than
+// truncating, on purpose, because silently dropping a campaign under-reports an audit screen.
+//
+// It is duplicated here only so the source-expansion action can refuse IN WORDS before the
+// request is built; the server stays the authority and this number must never be the thing
+// that decides what is sent. IF THE SERVER CONSTANT MOVES, THIS ONE MUST MOVE WITH IT — a
+// client cap ABOVE the server's turns a worded refusal into a generic "load failed" banner,
+// and a cap BELOW it refuses work the server would have accepted.
+export const CAMPAIGN_IDS_MAX = 500;
+
 export interface SendSearchCampaign {
     CampaignID: number;
     CampaignName: string;
@@ -373,6 +384,45 @@ export interface SendSearchCampaign {
 export interface SendSearchCatalogResult {
     Fields?: SendSearchFilterField[];
     Campaigns?: SendSearchCampaign[];
+    // ── the source map (script 54) ──────────────────────────────────────────────────────
+    // Feeds the "mark the campaigns that sent from source X" action beside the campaign
+    // picker. NOTHING HERE EVER REACHES `SendSearchRequest`. The action expands one click
+    // into CampaignIDs and the request stays an ordinary campaign multi-select — which is
+    // why the search wire contract, the 22 export columns and `toSendSearchRequest` are all
+    // untouched by this feature.
+    //
+    // 🔴 `SourceMapAvailable` is the deployment gate and the server derives it from TABLE
+    // PRESENCE, not from these lists being non-empty. Read the flag, never `Sources.length`:
+    // an empty list means "no source sent in this window", a false flag means "script 54 has
+    // not run here". Hide the action on false; an empty menu on true is a legitimate answer.
+    // Same discipline `sourcesAvailable` follows for the grid's source line.
+    SourceMapAvailable?: boolean;
+    Sources?: SendSearchCatalogSource[];
+    SourceCampaigns?: SendSearchSourceCampaign[];
+}
+
+// One data source with at least one campaign in the current window.
+export interface SendSearchCatalogSource {
+    DataSourceID: number;
+    // `''` is a source whose name really is blank — a real state, rendered as "שם לא נמצא"
+    // but never coalesced with a missing entry. Same rule as SendSearchCampaignSource below.
+    DataSourceName: string | null;
+    // Reported, never filtered server-side: a send that went out from a source deleted
+    // afterwards still went out from it. The menu marks it rather than hiding it.
+    IsDeleted: boolean;
+    // Campaigns attributable to this source in the window. Shown in the menu so the operator
+    // sees the size of the expansion BEFORE committing, and used to refuse in words when the
+    // resulting union would exceed the server's campaign cap.
+    CampaignCount: number;
+}
+
+// A (source, campaign) pair, provenance-closed: it carries both what was RECORDED at send
+// time and what the mapping says NOW. A campaign that once sent from source A and is mapped
+// to B today appears under BOTH — over-inclusion is visible, because every grid row shows its
+// own source, whereas a silent omission of historical sends would not be.
+export interface SendSearchSourceCampaign {
+    DataSourceID: number;
+    CampaignID: number;
 }
 
 // Blank clause for a field. Value2 starts null even for BETWEEN: an empty second bound is not the

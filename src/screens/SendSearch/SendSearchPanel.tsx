@@ -452,6 +452,13 @@ const SendSearchPanel: React.FC<Props> = ({ showTitle }) => {
                 // campaigns. Also covers the pre-51 server, where the field list arrives fine and
                 // only the campaign result set is absent.
                 campaignsError={sendSearch.campaignsError ?? null}
+                // The source map (script 54). Three separate props rather than one object, so the
+                // availability flag can never be inferred from the lists: the flag is a DEPLOYMENT
+                // fact and the lists are a DATA fact, and the filter bar has to tell them apart
+                // before it renders a control that acts on the operator's behalf.
+                sourceMapAvailable={sendSearch.sourceMapAvailable === true}
+                sourceOptions={sendSearch.sourceOptions ?? []}
+                sourceCampaigns={sendSearch.sourceCampaigns ?? []}
                 loading={!!sendSearch.loading}
                 onChange={(patch: Partial<Filters>) => dispatch(setFilters(patch))}
                 // The filter bar's "חפש" commits the text through onChange; the effect above already

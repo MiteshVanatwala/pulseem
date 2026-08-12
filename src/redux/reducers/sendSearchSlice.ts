@@ -30,6 +30,8 @@ import {
     SendSearchFilterField,
     SendSearchCampaign,
     SendSearchCampaignSource,
+    SendSearchCatalogSource,
+    SendSearchSourceCampaign,
     SendSearchExportRequest,
     exclusiveUpperBound,
 } from '../../Models/DataSources/SendSearch';
@@ -126,6 +128,19 @@ interface SendSearchState {
     // paint the working half as broken.
     campaigns: SendSearchCampaign[];
     campaignsError: string | null;
+    // ── source map for the PICKER (catalog, result sets 2 and 3 — script 54) ─────────────────
+    // Do not confuse this with `sources` below. That one describes the CURRENT RESULT SET and is
+    // replaced on every search; this one describes WHICH CAMPAIGNS BELONG TO WHICH SOURCE in the
+    // catalog window, and exists only to expand one menu click into a set of CampaignIDs.
+    // Nothing here is ever sent to the server.
+    //
+    // `sourceMapAvailable` is the deployment gate and it is FALSE until the server proves
+    // otherwise. It has no error twin on purpose: unlike the campaign list, an absent source map
+    // is not a degraded state the operator needs told about — the action simply is not offered,
+    // exactly as the grid's source line is simply not drawn when `sourcesAvailable` is false.
+    sourceMapAvailable: boolean;
+    sourceOptions: SendSearchCatalogSource[];
+    sourceCampaigns: SendSearchSourceCampaign[];
     // ── data-source map for the CURRENT result set (Search, result set 3) ────────────────────
     // Replaced with every search, never merged: it describes this result and nothing else.
     // `sourcesAvailable` is the deploy-skew signal and the ONLY thing that decides whether the grid
@@ -294,6 +309,9 @@ const initialState: SendSearchState = {
     filterFieldsReqId: '',
     campaigns: [],
     campaignsError: null,
+    sourceMapAvailable: false,
+    sourceOptions: [],
+    sourceCampaigns: [],
     sources: [],
     sourcesAvailable: false,
 };
@@ -592,6 +610,12 @@ export const sendSearchSlice = createSlice({
                 state.campaigns = [];
                 state.filterFieldsError = 'PERMISSION_DENIED';
                 state.campaignsError = 'PERMISSION_DENIED';
+                // The source map goes with them. A user who may not see recipient columns must
+                // not be handed a menu that ticks campaigns on their behalf either — and the
+                // map is derived from the same gated catalog call.
+                state.sourceMapAvailable = false;
+                state.sourceOptions = [];
+                state.sourceCampaigns = [];
                 return;
             }
             // 🔴 `Data` IS NOW AN OBJECT, not an array: { Fields, Campaigns }. Both halves ride on one
@@ -616,6 +640,14 @@ export const sendSearchSlice = createSlice({
             state.campaignsError = data && Array.isArray(data.Campaigns)
                 ? null
                 : (state.filterFieldsError ?? 'CAMPAIGNS_UNAVAILABLE');
+            // The source map (script 54). Read the FLAG, never the list length — the server
+            // derives it from table presence precisely so that "script 54 has not run" and
+            // "no source sent in this window" stay distinguishable. `=== true` rather than a
+            // truthy test for the same reason `sourcesAvailable` uses it: an absent field on
+            // an older API must resolve to false, not undefined.
+            state.sourceMapAvailable = data?.SourceMapAvailable === true;
+            state.sourceOptions = data?.Sources ?? [];
+            state.sourceCampaigns = data?.SourceCampaigns ?? [];
         });
         builder.addCase(getSendSearchFilterFields.rejected, (state, action: any) => {
             if (action.meta.requestId !== state.filterFieldsReqId) return;
@@ -630,6 +662,14 @@ export const sendSearchSlice = createSlice({
             // still in scope, and the resulting empty grid reads as "nothing was sent".
             state.campaigns = [];
             state.campaignsError = action.payload?.error ?? action.error?.message ?? 'CAMPAIGNS_FAILED';
+            // Cleared with the campaigns, and this one matters more than it looks: the source
+            // action ticks CAMPAIGN IDS, so a map that outlives the campaign list would let one
+            // click tick ids the picker can no longer name — bare `#4821` chips against a search
+            // the operator cannot read back. Availability goes false too, so the action HIDES
+            // rather than offering an expansion we can no longer honour.
+            state.sourceMapAvailable = false;
+            state.sourceOptions = [];
+            state.sourceCampaigns = [];
         });
     }
 });
