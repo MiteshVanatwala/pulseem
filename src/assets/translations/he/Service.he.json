@@ -152,6 +152,9 @@
   "chatbot_message_text": "טקסט ההודעה",
   "chatbot_template": "תבנית מאושרת",
   "chatbot_webhook_url": "כתובת Webhook",
+  "chatbot_var_plan_name": "שם התוכנית",
+  "chatbot_var_order_id": "מספר הזמנה",
+  "chatbot_var_eta": "זמן הגעה משוער",
   "chatbot_widget_placeholder": "הודעה המוצגת למבקר בצ'אט הווידג'ט",
   "chatbot_wa_chat_placeholder": "הודעת טקסט חופשי הנשלחת בתוך שיחת WhatsApp פתוחה",
   "chatbot_wa_session_warning": "פועל רק בתוך חלון שיחת WhatsApp פתוח של 24 שעות — אחרת שלב זה ידולג."

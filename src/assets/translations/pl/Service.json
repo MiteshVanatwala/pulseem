@@ -91,6 +91,9 @@
   "chatbot_message_text": "Treść wiadomości",
   "chatbot_template": "Zatwierdzony szablon",
   "chatbot_webhook_url": "Adres URL Webhooka",
+  "chatbot_var_plan_name": "Nazwa planu",
+  "chatbot_var_order_id": "Numer zamówienia",
+  "chatbot_var_eta": "Szacowany czas dostawy",
   "chatbot_widget_placeholder": "Wiadomość wyświetlana odwiedzającemu w czacie widżetu",
   "chatbot_wa_chat_placeholder": "Dowolna wiadomość tekstowa wysyłana w ramach otwartej sesji WhatsApp",
   "chatbot_wa_session_warning": "Działa tylko w ramach otwartej 24-godzinnej sesji WhatsApp — w przeciwnym razie ten krok zostanie pominięty."

@@ -144,6 +144,9 @@
   "chatbot_message_text": "Message text",
   "chatbot_template": "Approved template",
   "chatbot_webhook_url": "Webhook URL",
+  "chatbot_var_plan_name": "Plan Name",
+  "chatbot_var_order_id": "Order ID",
+  "chatbot_var_eta": "Estimated Arrival",
   "chatbot_widget_placeholder": "Message shown to the visitor in the widget chat",
   "chatbot_wa_chat_placeholder": "Free-text message sent within an open WhatsApp session",
   "chatbot_wa_session_warning": "Only works within an open 24h WhatsApp session — otherwise this step is skipped."

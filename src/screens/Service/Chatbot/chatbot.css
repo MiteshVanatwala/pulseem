@@ -124,6 +124,12 @@
   margin-bottom: 7px;
   font-weight: 600;
 }
+/* The raw {{merge_tag}} kept next to the translated variable label, so admins
+   can still see the exact placeholder syntax the template actually uses. */
+.svc-cb-var-tag {
+  font-weight: 400;
+  color: #98a2b3;
+}
 
 /* ── Trigger section ────────────────────────────────────────────── */
 .svc-cb-trigger-card {

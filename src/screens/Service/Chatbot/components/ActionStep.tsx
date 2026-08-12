@@ -120,7 +120,10 @@ const ActionStep = ({ step, templates, onChange, classes }: ActionStepProps) => 
             <div className="svc-cb-field-row" style={{ marginTop: 10 }}>
               {selectedTemplate.variables.map((varName) => (
                 <div className="svc-cb-field" key={varName}>
-                  <label>{`{{${varName}}}`}</label>
+                  <label>
+                    {t(`chatbot_var_${varName}`, varName)}{' '}
+                    <span className="svc-cb-var-tag">{`{{${varName}}}`}</span>
+                  </label>
                   <input
                     className="svc-cb-text-input"
                     value={payload.variables?.[varName] ?? ''}
