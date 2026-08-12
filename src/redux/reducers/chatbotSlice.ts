@@ -1,20 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
 import { IChatbotFlow, IChatbotListItem, IChatbotTierLimit } from '../../Models/Service/Chatbot';
-import { MOCK_CHATBOT_FLOWS, MOCK_TIER_LIMIT, emptyFlow, toListItem } from '../../screens/Service/Chatbot/mockChatbots';
-
-// ⚠️ PREVIEW FLAG — true = use local mock data (no backend needed); false = call
-// the real Service/Chatbots endpoints. Re-enabled while the backend deploy
-// (CORS fix in ChatbotController.cs) is pending — flip back to false once
-// that's confirmed live, so real create/edit/delete/toggle actually persist.
-const USE_MOCK = true;
-
-// In-memory stand-in for the backend while USE_MOCK is true — lets create/edit/delete
-// persist for the length of the session instead of resetting on every navigation.
-const mockDb: Record<string, IChatbotFlow> = { ...MOCK_CHATBOT_FLOWS };
-
-const mockDelay = <T = any>(data: T, ms = 250): Promise<T> =>
-  new Promise((r) => setTimeout(() => r(data), ms));
+import { emptyFlow, toListItem } from '../../screens/Service/Chatbot/mockChatbots';
 
 // ChatbotController always answers with HTTP 200 - the real result is the
 // PulseemResponse body's own StatusCode/Message (e.g. 400 missing name, 403
@@ -31,12 +18,6 @@ const unwrapOrThrow = <T = any>(data: any): T => {
 };
 
 export const getChatbots = createAsyncThunk('Service/GetChatbots', async (_: void, thunkAPI) => {
-  if (USE_MOCK) {
-    return mockDelay({
-      list: Object.values(mockDb).map(toListItem),
-      tierLimit: MOCK_TIER_LIMIT,
-    });
-  }
   try {
     const res = await PulseemReactInstance.get('api/Service/GetChatbots');
     return unwrapOrThrow<{ list: IChatbotListItem[]; tierLimit: IChatbotTierLimit }>(res.data);
@@ -49,7 +30,6 @@ export const getChatbotFlow = createAsyncThunk(
   'Service/GetChatbotFlow',
   async (id: string | undefined, thunkAPI) => {
     if (!id) return emptyFlow();
-    if (USE_MOCK) return mockDelay(mockDb[id] ?? emptyFlow());
     try {
       const res = await PulseemReactInstance.get(`api/Service/GetChatbot/${id}`);
       return unwrapOrThrow<IChatbotFlow>(res.data);
@@ -60,11 +40,6 @@ export const getChatbotFlow = createAsyncThunk(
 );
 
 export const saveChatbot = createAsyncThunk('Service/SaveChatbot', async (flow: IChatbotFlow, thunkAPI) => {
-  if (USE_MOCK) {
-    const saved: IChatbotFlow = { ...flow, updatedAt: new Date().toISOString() };
-    mockDb[saved.id] = saved;
-    return mockDelay(saved);
-  }
   try {
     const res = await PulseemReactInstance.post('api/Service/SaveChatbot', flow);
     return unwrapOrThrow<IChatbotFlow>(res.data);
@@ -74,10 +49,6 @@ export const saveChatbot = createAsyncThunk('Service/SaveChatbot', async (flow: 
 });
 
 export const deleteChatbot = createAsyncThunk('Service/DeleteChatbot', async (id: string, thunkAPI) => {
-  if (USE_MOCK) {
-    delete mockDb[id];
-    return mockDelay(id);
-  }
   try {
     const res = await PulseemReactInstance.delete(`api/Service/DeleteChatbot/${id}`);
     unwrapOrThrow(res.data);
@@ -90,10 +61,6 @@ export const deleteChatbot = createAsyncThunk('Service/DeleteChatbot', async (id
 export const toggleChatbot = createAsyncThunk(
   'Service/ToggleChatbot',
   async ({ id, enabled }: { id: string; enabled: boolean }, thunkAPI) => {
-    if (USE_MOCK) {
-      if (mockDb[id]) mockDb[id] = { ...mockDb[id], enabled, updatedAt: new Date().toISOString() };
-      return mockDelay({ id, enabled });
-    }
     try {
       const res = await PulseemReactInstance.post('api/Service/ToggleChatbot', { id, enabled });
       unwrapOrThrow(res.data);

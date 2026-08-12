@@ -1,7 +1,6 @@
 // Data model for the Service "Chatbot" builder (PR-3179, Phase 3).
 // Steps are stored as a nested tree client-side, persisted verbatim as JSON by
 // the backend (dbo.ChatbotFlows.StepsJson) - see chatbotSlice.ts / ChatbotLogic.cs.
-// chatbotSlice's USE_MOCK flag is currently on while that backend deploy is pending.
 import { ConversationChannel } from './Conversation';
 
 export type ChatbotTrigger = 'any' | ConversationChannel; // 'any' | 'widget' | 'whatsapp'
