@@ -239,6 +239,39 @@
       "tabSendSearch": "Wyszukiwanie agentów i przełożonych"
     }
   },
+  "preview": {
+    "title": "Wysyłka testowa (próbka agentów)",
+    "banner": {
+      "title": "Próbka prawdziwych agentów",
+      "body": "Na podany adres zostanie wysłana jedna wiadomość zawierająca do 5 prawdziwych agentów ze źródła danych kampanii — z ich wartościami oraz linkiem, który wyświetla kampanię dokładnie tak, jak otrzyma ją dany agent. Niezmapowane pola i puste komórki są wyraźnie oznaczone. Sami agenci nie otrzymują niczego."
+    },
+    "toLabel": "Adres docelowy",
+    "toHelper": "Wiadomość trafi wyłącznie na ten adres.",
+    "toTooLong": "Adres jest dłuższy niż 50 znaków. Użyj krótszego adresu.",
+    "sampleSizeLabel": "Liczba agentów w próbce",
+    "seedLabel": "Identyfikator próbki",
+    "seedHelper": "Ten sam identyfikator próbki i ta sama pozycja zwracają tych samych agentów, dzięki czemu po poprawieniu arkusza można ponownie sprawdzić tego samego agenta.",
+    "prev": "‹ Poprzedni",
+    "next": "Następni ›",
+    "prevAria": "Pokaż poprzednich agentów",
+    "nextAria": "Pokaż następnych agentów",
+    "countLabel": "Próbka {{n}} z {{total}}",
+    "countLoading": "Ładowanie liczby agentów…",
+    "countError": "Nie udało się wczytać liczby agentów.",
+    "sentOk": "Wiadomość testowa została wysłana",
+    "sentFail": "Wysyłka testowa nie powiodła się",
+    "errors": {
+      "badRequest": "Nie można wysłać wiadomości testowej z tymi danymi. Odśwież stronę i spróbuj ponownie.",
+      "session": "Sesja wygasła. Zaloguj się ponownie i spróbuj jeszcze raz.",
+      "notFound": "Nie znaleziono kampanii ani mapowania źródła danych. Upewnij się, że kampania jest powiązana ze źródłem danych, a mapowanie zostało zapisane.",
+      "noPermission": "Nie masz uprawnień do wysłania wiadomości testowej. Skontaktuj się z administratorem konta.",
+      "noCandidates": "Źródło danych kampanii nie zawiera pasujących agentów do wysyłki.",
+      "tooLarge": "Wiadomość testowa jest za duża, aby ją wysłać. Zmniejsz liczbę agentów w próbce i spróbuj ponownie.",
+      "invalidEmail": "Adres docelowy jest nieprawidłowy lub dłuższy niż 50 znaków. Podaj poprawny adres o długości do 50 znaków.",
+      "serverError": "Wysyłka testowa nie powiodła się z powodu błędu serwera. Spróbuj ponownie za kilka minut.",
+      "featureOff": "Źródła danych nie są włączone na tym koncie. Skontaktuj się z administratorem konta."
+    }
+  },
   "retry": "Spróbuj ponownie",
   "viewOnlyBadge": "Tylko do podglądu",
   "viewOnlyTooltip": "To źródło nie ma kolumn tożsamości — nie można do niego wysyłać",

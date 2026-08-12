@@ -205,6 +205,46 @@ export const deleteMapping = createAsyncThunk(
         }
     });
 
+// ── Pre-send preview (SmartSendPreview contract §3.2 / §4.1) ─────────────────
+// These two replace the old clone-based test send for MAPPED campaigns. They live on
+// DataSourcesSender and NOT on CampaignEditor on purpose: /CampaignEditor/TestSend is
+// shared with the BEE editor and other surfaces and must keep working unchanged.
+//
+// No USE_SEND_MOCK guard, unlike the thunks above: the switch is already false and the
+// mock module is scheduled for deletion, so a fixture added now would be dead code that
+// the flip commit's `grep smartSendMock must return 0` check would then trip over.
+
+// GET DataSourcesSender/PreviewSampleInfo/{campaignId}?channel=1
+// Data: { CandidateCount, DataSourceID, DataSourceVersionID, VersionNumber, DataSourceName }
+// — CandidateCount is the SEND POPULATION of the campaign's LOCKED version, which is what
+// the dialog shows as "מדגם של 5 מתוך N". Read-only; safe to call on every dialog open.
+export const getPreviewSampleInfo = createAsyncThunk(
+    'SmartSend/PreviewSampleInfo', async (arg: { campaignId: number; channel?: eSendChannel }, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.get(
+                `${api}PreviewSampleInfo/${arg.campaignId}?channel=${arg.channel ?? eSendChannel.EMAIL}`);
+            return response.data;
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    });
+
+// PUT DataSourcesSender/PreviewSend/{campaignId}?channel=1
+// body { ToEmail, SampleSize, Seed, Offset } — PascalCase, server JSON keys, no renaming.
+// RS0 comes back verbatim as PulseemResponse: StatusCode 201 queued / 404 / 406 / 413 /
+// 422 / 500. The CALLER must treat 201 as the only success — 200 is NOT success here.
+export const sendPreview = createAsyncThunk(
+    'SmartSend/PreviewSend', async (arg: { campaignId: number; channel?: eSendChannel; toEmail: string; sampleSize: number; seed: number; offset: number }, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.put(
+                `${api}PreviewSend/${arg.campaignId}?channel=${arg.channel ?? eSendChannel.EMAIL}`,
+                { ToEmail: arg.toEmail, SampleSize: arg.sampleSize, Seed: arg.seed, Offset: arg.offset });
+            return response.data;
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    });
+
 // ── Wrapper-thunks over the REUSED pipeline (§7.1) ───────────────────────────
 // SmartSend components call ONLY these. In mock mode they return fixtures. TWO of
 // them (summary / send-settings) additionally HYDRATE the reused slice state by

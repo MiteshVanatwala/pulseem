@@ -239,6 +239,39 @@
       "tabSendSearch": "Agent & supervisor search"
     }
   },
+  "preview": {
+    "title": "Test send (agent sample)",
+    "banner": {
+      "title": "A sample of real agents",
+      "body": "One email will be sent to the address you enter, containing up to 5 real agents from the campaign's data source — with their resolved values and a link that renders the campaign exactly as that agent will receive it. Unmapped fields and empty cells are flagged explicitly. The agents themselves receive nothing."
+    },
+    "toLabel": "Destination address",
+    "toHelper": "The email goes to this address only.",
+    "toTooLong": "The address is longer than 50 characters. Use a shorter address.",
+    "sampleSizeLabel": "Agents in the sample",
+    "seedLabel": "Sample id",
+    "seedHelper": "The same sample id and the same position return the same agents, so you can re-check the same agent after fixing the sheet.",
+    "prev": "‹ Previous",
+    "next": "Next ›",
+    "prevAria": "Show the previous agents",
+    "nextAria": "Show the next agents",
+    "countLabel": "A sample of {{n}} out of {{total}}",
+    "countLoading": "Loading the agent count…",
+    "countError": "The agent count could not be loaded.",
+    "sentOk": "The test email was sent",
+    "sentFail": "The test send failed",
+    "errors": {
+      "badRequest": "The test email could not be sent with these details. Refresh the page and try again.",
+      "session": "Your session has expired. Sign in again and try again.",
+      "notFound": "The campaign or its data-source mapping was not found. Make sure the campaign is linked to a data source and the mapping is saved.",
+      "noPermission": "You do not have permission to send a test email. Contact your account administrator.",
+      "noCandidates": "The campaign's data source has no matching agents to send to.",
+      "tooLarge": "The test email is too large to send. Reduce the number of agents in the sample and try again.",
+      "invalidEmail": "The destination address is invalid or longer than 50 characters. Enter a valid address of up to 50 characters.",
+      "serverError": "The test send failed because of a server error. Try again in a few minutes.",
+      "featureOff": "Data sources are not enabled for this account. Contact your account administrator."
+    }
+  },
   "retry": "Try again",
   "viewOnlyBadge": "View only",
   "viewOnlyTooltip": "This source has no identity columns — it cannot be sent to",
