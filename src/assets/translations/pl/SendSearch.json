@@ -31,6 +31,13 @@
     "deletedChipMapped": "Usunięte źródło · wg mapowania",
     "noRecord": "Brak zapisu",
     "nameNotFound": "nie znaleziono nazwy",
+    "markButton": "Zaznacz kampanie według źródła",
+    "markCount": "kampanii: {{count}}",
+    "markDone": "Zaznaczono kampanie ({{count}}) powiązane ze źródłem «{{name}}» (#{{id}}) — według zapisu lub bieżącego mapowania",
+    "markAlready": "Wszystkie kampanie ({{count}}) źródła «{{name}}» (#{{id}}) są już zaznaczone — nic się nie zmieniło",
+    "markNone": "Źródło «{{name}}» (#{{id}}) nie ma kampanii w wybranym zakresie — nic nie zaznaczono",
+    "markTooMany": "Zaznaczenie «{{name}}» dałoby {{count}} kampanii, a maksimum to {{max}}. Zawęź zakres dat i spróbuj ponownie — nic nie zaznaczono",
+    "markUndo": "Cofnij",
     "a11y": {
       "cell": "Źródło danych: {{name}}, identyfikator {{id}}.",
       "cellMapped": "Źródło danych wg bieżącego mapowania: {{name}}, identyfikator {{id}}. Nie zapisano źródła w chwili wysyłki.",

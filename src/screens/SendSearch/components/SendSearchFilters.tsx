@@ -22,7 +22,7 @@
 import React, { useState, useEffect } from 'react';
 import {
     Badge, Box, Button, ButtonGroup, Checkbox, Chip, Collapse, FormControlLabel, InputAdornment,
-    Paper, TextField, Tooltip, Typography,
+    Menu, MenuItem, Paper, TextField, Tooltip, Typography,
 } from '@material-ui/core';
 import { ExpandLess, ExpandMore, Search } from '@material-ui/icons';
 // v4-alpha lab, the same source `GroupSelectorDropDown.tsx:4` uses. Deliberately NOT a
@@ -37,6 +37,9 @@ import { useSelector } from 'react-redux';
 import {
     SS,
     SendSearchFilters as Filters,
+    SendSearchCatalogSource,
+    SendSearchSourceCampaign,
+    CAMPAIGN_IDS_MAX,
     eRowKind,
 } from '../../../Models/DataSources/SendSearch';
 import AdvancedFilterBuilder from './AdvancedFilterBuilder';
@@ -73,6 +76,19 @@ interface Props {
     campaignsError?: string | null;
     loading?: boolean;
 
+    // ── "mark the campaigns that sent from source X" (script 54) ─────────────────────────────
+    // A MOMENTARY ACTION, not a filter. It ticks campaigns into the picker above and then has no
+    // further existence: no value is kept, nothing is added to `Filters`, nothing new goes on the
+    // wire. That is precisely why this feature needs no SP parameter and cannot 500 a search.
+    //
+    // `sourceMapAvailable` is the deployment gate and the server derives it from TABLE PRESENCE,
+    // not from the lists being non-empty. False ⇒ the button is not rendered AT ALL. A control
+    // that is visible but silently ticks nothing is the RoleFilter defect this screen deleted once
+    // already (see the note at the role ButtonGroup below).
+    sourceMapAvailable?: boolean;
+    sourceOptions?: SendSearchCatalogSource[];
+    sourceCampaigns?: SendSearchSourceCampaign[];
+
     // ── advanced filter builder (CONTRACT §2) ────────────────────────────────────────────────
     // ALL OPTIONAL, and that is the degrade path, not laziness: against a server that does not yet
     // project the searchable-field list, `fields` is undefined ⇒ the "עוד מסננים" button stays
@@ -94,6 +110,7 @@ const KIND_KEY: { [k in eRowKind]: string } = {
 
 const SendSearchFilters: React.FC<Props> = ({
     value, onChange, onSearch, onClearAll, campaigns, campaignsError, loading,
+    sourceMapAvailable, sourceOptions, sourceCampaigns,
     fields, rules, onRulesChange, sort, onSortChange,
 }) => {
     const { t } = useTranslation();
@@ -117,6 +134,114 @@ const SendSearchFilters: React.FC<Props> = ({
         (id) => campaigns.filter((c) => c.CampaignID === id)[0]
             ?? { CampaignID: id, CampaignName: '' },
     );
+
+    // ── "mark the campaigns that sent from source X" ──────────────────────────────────────────
+    // THE GATE, and it has three arms rather than one. The map must exist (script 54 ran), the
+    // campaign list must have loaded, and it must not have failed — because this action ticks
+    // CAMPAIGN IDS, and ticking ids the picker cannot name produces bare `#4821` chips against a
+    // search the operator then cannot read back. Same doctrine as the grid's source line: never
+    // act on a list we could not load.
+    const srcMenuAvailable = sourceMapAvailable === true
+        && !campaignsError
+        && campaigns.length > 0
+        && (sourceOptions ?? []).length > 0;
+
+    const [srcAnchor, setSrcAnchor] = useState<any>(null);
+    // Component state, DELIBERATELY not part of `Filters`: buildExportCriteria scans the live
+    // filter object and would print any unknown key into the export's criteria block as a
+    // criterion — a source claim the 22 exported columns contain nothing to corroborate.
+    //
+    // It is retired by the effect below, and by nothing else. Do not describe it as "transient" or
+    // as "wiped by the next filter change": an earlier version of this very comment said exactly
+    // that while nothing in the file wiped it, and under Immer a date or text patch leaves
+    // `CampaignIDs`' reference intact, so "the next filter change" was never the trigger anyway.
+    // `after` is the selection the action PRODUCED. It is what makes the notice self-invalidating:
+    // the effect below drops the whole notice the moment the live selection stops matching it.
+    //
+    // 🔴 THAT EFFECT IS NOT POLISH. Without it the notice was component state with no writer but its
+    // own Undo, so it outlived everything: after "נקה הכל" the sentence still read "סומנו 37
+    // קמפיינים ששלחו ממקור X" while CampaignIDs had become [] — which SendSearch.ts documents as
+    // ALL CAMPAIGNS. limitTags={2} collapses the chips to "+35", so that sentence is the only
+    // human-readable statement of scope on the screen, and it was asserting one source over a
+    // result set covering the entire sub-account. On an audit grid that is the exact failure the
+    // whole screen exists to prevent, and it ran in the dangerous direction.
+    const [srcNotice, setSrcNotice] = useState<
+        { text: string; undo: number[] | null; after: number[] } | null
+    >(null);
+
+    // Campaign ids attributable to a source, intersected with what the picker can actually show.
+    // The server builds the pair set from the same #Camp the campaign list comes from, so this
+    // intersection should be a no-op — it is here because "should be" is not "is", and a pair the
+    // picker cannot render is exactly the bare-`#id` chip this action must never create.
+    const campaignIdsForSource = (dsId: number): number[] => {
+        const known = new Set(campaigns.map((c) => c.CampaignID));
+        const out: number[] = [];
+        (sourceCampaigns ?? []).forEach((p) => {
+            if (p.DataSourceID === dsId && known.has(p.CampaignID) && out.indexOf(p.CampaignID) < 0) {
+                out.push(p.CampaignID);
+            }
+        });
+        return out;
+    };
+
+    const applySourceExpansion = (s: SendSearchCatalogSource) => {
+        setSrcAnchor(null);
+        const name = s.DataSourceName || t(`${SS}source.nameNotFound`);
+        const expansion = campaignIdsForSource(s.DataSourceID);
+
+        // REFUSAL BAND 1 — zero yield. This is not a courtesy message, it is a correctness guard:
+        // an EMPTY CampaignIDs array means ALL CAMPAIGNS, so dispatching a zero-yield expansion
+        // would turn a narrowing click into "show me the entire account" while the operator
+        // believes they just filtered to one source.
+        if (expansion.length === 0) {
+            setSrcNotice({ text: t(`${SS}source.markNone`, { name, id: s.DataSourceID }), undo: null, after: [] });
+            return;
+        }
+
+        const prev = value.CampaignIDs || [];
+        const added = expansion.filter((id) => prev.indexOf(id) < 0);
+
+        // NO-OP GUARD. Clicking the same source twice — or a second source whose campaigns are
+        // already ticked — used to dispatch an identical selection and store `undo: prev` where
+        // `prev` WAS the current selection. The Undo button then dismissed the only sentence
+        // describing the scope while un-ticking nothing, and each redundant click cost two full
+        // POST /Search round-trips over a 395-million-row SP. Refuse, say so, offer no Undo.
+        if (added.length === 0) {
+            setSrcNotice({
+                text: t(`${SS}source.markAlready`, { count: expansion.length, name, id: s.DataSourceID }),
+                undo: null,
+                after: [],
+            });
+            return;
+        }
+
+        const union = prev.concat(added);
+
+        // REFUSAL BAND 2 — over the server's cap. The server answers 400 DATA_INCORRECT, which the
+        // screen paints as a generic "load failed" banner, so the operator would be told the search
+        // broke rather than that they asked for too much. Refuse here, name both numbers, and leave
+        // the existing ticks exactly as they were.
+        if (union.length > CAMPAIGN_IDS_MAX) {
+            setSrcNotice({
+                text: t(`${SS}source.markTooMany`, { name, count: union.length, max: CAMPAIGN_IDS_MAX }),
+                undo: null,
+                after: [],
+            });
+            return;
+        }
+
+        // ONE dispatch. Two would be two identical POST /Search — the double-fetch class already
+        // fixed on this screen once.
+        onChange({ CampaignIDs: union });
+        setSrcNotice({
+            // `added.length`, not `expansion.length`: the sentence must count what THIS CLICK did.
+            // Reporting the source's full size after a partial expansion would name a number the
+            // operator cannot reconcile with the chips.
+            text: t(`${SS}source.markDone`, { count: added.length, name, id: s.DataSourceID }),
+            undo: prev,
+            after: union,
+        });
+    };
 
     // ── advanced panel ────────────────────────────────────────────────────────────────────────
     const advFields: SendSearchField[] = fields ?? [];
@@ -142,6 +267,32 @@ const SendSearchFilters: React.FC<Props> = ({
     // Re-sync when the slice's text changes from the outside (e.g. "נקה הכל"), otherwise the box would
     // keep showing a term that is no longer being filtered on.
     useEffect(() => { setText(value.SearchText); }, [value.SearchText]);
+
+    // THE NOTICE IS ONLY TRUE WHILE THE SELECTION IT DESCRIBES IS STILL THE SELECTION.
+    // Compared by VALUE, not by reference: `value.CampaignIDs` is rebuilt by the reducer on every
+    // patch, so an identity check would clear the notice immediately and a length check would miss
+    // a same-size swap. Order-insensitive because the picker rewrites the array on every tick.
+    // A refusal notice (undo === null) describes no selection, so it survives until the next action
+    // or an explicit dismiss — it is a message about a click that did NOT happen.
+    useEffect(() => {
+        if (!srcNotice) return;
+        // A REFUSAL notice (undo === null) describes a click that changed NOTHING, so there is no
+        // selection to compare it against — and the first version of this effect returned early on
+        // it, which left "…would reach 700 campaigns, the maximum is 500, narrow the date range" on
+        // screen for the life of the mount. That reproduced the very defect this effect was added
+        // to fix, in the one branch it skipped, and it was worse: the message instructs an action
+        // (narrow the dates) which by itself could never clear it. Any change to the filters it
+        // referred to retires it.
+        if (srcNotice.undo === null) { setSrcNotice(null); return; }
+        const now = value.CampaignIDs || [];
+        const same = now.length === srcNotice.after.length
+            && srcNotice.after.every((id) => now.indexOf(id) >= 0);
+        if (!same) setSrcNotice(null);
+        // The date/range fields are dependencies for the REFUSAL branch, not the success branch:
+        // under Immer a date patch leaves `CampaignIDs`' reference intact, so keying on the ids
+        // alone would never fire and a refusal would outlive the range that produced it.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [value.CampaignIDs, value.DateFrom, value.DateTo, value.IncludeOverOneYear, value.RowKind]);
 
     const commitText = () => {
         // FIX 2026-08-09: fire ONE fetch per click, not two. onChange -> setFilters makes the
@@ -270,6 +421,86 @@ const SendSearchFilters: React.FC<Props> = ({
                     )}
                 />
 
+                {/* ── "סמן קמפיינים ששלחו ממקור …" ────────────────────────────────────────────
+                    BESIDE the Autocomplete, never a header inside its popup. A groupBy header in
+                    MUI v4 is not an option — not focusable, not selectable — so putting it there
+                    means rewriting useAutocomplete on a control that shipped days ago and has
+                    never been run in a browser.
+
+                    The LABEL IS A VERB naming the derivation. Not "מקור:" — a noun beside
+                    "כל הקמפיינים" promises a filter, and the moment the user reads it as a filter
+                    they will expect the grid to narrow to that source and nothing else. What this
+                    does is tick campaigns; the label has to say so.
+
+                    Rendered only when the gate holds. Not disabled — ABSENT. A disabled control
+                    invites the question "why", and the honest answer ("the server has not had
+                    script 54 run") is not something to put in a tooltip on an auditor's screen. */}
+                {srcMenuAvailable && (
+                    <>
+                        <Button
+                            size="small"
+                            variant="outlined"
+                            onClick={(e: any) => setSrcAnchor(e.currentTarget)}
+                            style={{ whiteSpace: 'nowrap', flex: '0 0 auto' }}
+                        >
+                            {t(`${SS}source.markButton`)}
+                        </Button>
+                        <Menu
+                            anchorEl={srcAnchor}
+                            open={!!srcAnchor}
+                            onClose={() => setSrcAnchor(null)}
+                            // Same portal/direction problem as every other popup on this screen.
+                            PaperProps={{ dir: isRTL ? 'rtl' : 'ltr', style: { maxHeight: 360 } }}
+                            getContentAnchorEl={null}
+                            anchorOrigin={{ vertical: 'bottom', horizontal: isRTL ? 'right' : 'left' }}
+                            transformOrigin={{ vertical: 'top', horizontal: isRTL ? 'right' : 'left' }}
+                        >
+                            {(sourceOptions ?? []).map((s) => (
+                                <MenuItem key={s.DataSourceID} onClick={() => applySourceExpansion(s)}>
+                                    <Box style={{ display: 'flex', alignItems: 'baseline', gap: 8, width: '100%' }}>
+                                        {/* first-strong isolation: a Hebrew name renders RTL, an
+                                            "AgentPortfolio_Q3" renders LTR, and neither drags the
+                                            id to the wrong end. Same treatment the grid's source
+                                            line uses. */}
+                                        <bdi style={{
+                                            flex: '1 1 auto', minWidth: 0, overflow: 'hidden',
+                                            textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 13.5,
+                                        }}>
+                                            {s.DataSourceName === '' || s.DataSourceName == null
+                                                ? t(`${SS}source.nameNotFound`)
+                                                : s.DataSourceName}
+                                        </bdi>
+                                        {/* Deleted sources are LISTED, not hidden: a send that went
+                                            out from a source deleted afterwards still went out from
+                                            it, and dropping it here would erase evidence. */}
+                                        {s.IsDeleted && (
+                                            <Chip
+                                                size="small"
+                                                label={t(`${SS}source.deletedChip`)}
+                                                style={{ flex: '0 0 auto', height: 18, fontSize: 11, borderRadius: 3 }}
+                                                variant="outlined"
+                                            />
+                                        )}
+                                        {/* The id is ALWAYS shown. Two live sources may legally
+                                            carry the same name — the unique index on the name is
+                                            filtered to IsDeleted = 0 — so the name alone cannot
+                                            disambiguate and the operator must see which one they
+                                            are about to expand. */}
+                                        <span dir="ltr" style={{
+                                            flex: '0 0 auto', direction: 'ltr', unicodeBidi: 'isolate',
+                                            fontSize: 11.5, color: '#5b6b7b', fontVariantNumeric: 'tabular-nums',
+                                        }}>{`#${s.DataSourceID}`}</span>
+                                        {/* The size of the expansion, BEFORE committing to it. */}
+                                        <span style={{ flex: '0 0 auto', fontSize: 11.5, color: '#5b6b7b' }}>
+                                            {t(`${SS}source.markCount`, { count: s.CampaignCount })}
+                                        </span>
+                                    </Box>
+                                </MenuItem>
+                            ))}
+                        </Menu>
+                    </>
+                )}
+
                 <TextField
                     type="date"
                     variant="outlined"
@@ -359,6 +590,74 @@ const SendSearchFilters: React.FC<Props> = ({
                 <Button variant="text" onClick={onClearAll} style={{ color: '#0371AD', textDecoration: 'underline' }}>
                     {t(`${SS}clearAll`)}
                 </Button>
+
+                {/* ── readback for the source expansion ───────────────────────────────────────
+                    Why this exists at all: `limitTags={2}` means an expansion of 37 campaigns
+                    renders as two chips and "+35". Without a sentence saying what just happened,
+                    a bulk action is indistinguishable from the screen glitching, and the operator
+                    has no way to know how many rows the grid is now scoped to.
+
+                    `aria-live="polite"` because the visual change (chips appearing above) is not
+                    announced, and the whole point is that the operator knows a machine acted on
+                    their behalf.
+
+                    It never enters `Filters`, and therefore cannot leak into the export's criteria
+                    block — where a source claim would be uncorroborable, since none of the 22
+                    exported columns carries a data source.
+
+                    🔴 IT IS SELF-INVALIDATING, and that is enforced by the effect near the top of
+                    this component, NOT by being "transient". An earlier version of this comment
+                    claimed the notice was "wiped by the next filter change" while nothing in the
+                    file wiped it — a comment asserting behaviour that did not exist, which is the
+                    same class of defect this screen's own review history keeps catching. If you
+                    change the notice, change that effect with it.
+
+                    THE REGION IS RENDERED UNCONDITIONALLY, and that is not a style choice. A live
+                    region that is INSERTED into the DOM already carrying its text is unreliably
+                    announced — NVDA and JAWS commonly miss it, because there was no region present
+                    to observe a change in. The Box therefore always exists and only its contents
+                    swap. `height:0` when empty so it costs no layout. */}
+                <Box
+                    aria-live="polite"
+                    style={srcNotice
+                        ? {
+                            flex: '1 1 100%', display: 'flex', alignItems: 'center', gap: 10,
+                            fontSize: 12.5, color: '#5b6b7b',
+                        }
+                        : { flex: '0 0 0px', height: 0, overflow: 'hidden' }}
+                >
+                    {srcNotice && (
+                        <>
+                        <span>{srcNotice.text}</span>
+                        {/* Undo restores the EXACT previous array, not "remove this source's ids":
+                            the two differ whenever a campaign was already ticked by hand and also
+                            belongs to the source, and silently un-ticking a manual choice is the
+                            one thing this action must never do. */}
+                        {/* `!== null`, NOT a truthy test. `undo: []` is the ordinary case — nothing
+                            was ticked before the click — and `[]` is truthy in JS, which is fine
+                            here but only by accident; the explicit null check is what states the
+                            actual rule. Restoring `[]` is a CORRECT undo (it puts the picker back
+                            to "all campaigns", which is what it was), and it is safe to offer only
+                            because the effect above drops this whole notice the moment the
+                            selection stops matching what the action produced — so the array being
+                            replayed can never be stale. Refusal notices carry undo: null and get
+                            no button, because they changed nothing to undo. */}
+                        {srcNotice.undo !== null && (
+                            <Button
+                                size="small"
+                                variant="text"
+                                style={{ color: '#0371AD', textDecoration: 'underline', padding: 0, minWidth: 0 }}
+                                onClick={() => {
+                                    onChange({ CampaignIDs: srcNotice.undo as number[] });
+                                    setSrcNotice(null);
+                                }}
+                            >
+                                {t(`${SS}source.markUndo`)}
+                            </Button>
+                        )}
+                        </>
+                    )}
+                </Box>
 
                 {/* Pinned to the far (logical) end — `margin-inline-start:auto` in the mock (`:195`).
                     `marginInlineStart` is used, not marginLeft, so the pin follows the RTL direction. */}
