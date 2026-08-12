@@ -1,5 +1,7 @@
-// Preview mock for the Chatbot builder. Used only while chatbotSlice's USE_MOCK flag
-// is true (flip it to false once the pulseem-communication backend is deployed).
+// Preview mock for the Chatbot builder. Used only while chatbotSlice's USE_MOCK
+// flag is true — re-added so front-end work can continue while the real
+// ChatbotFlows backend deploy (CORS fix in ChatbotController.cs) is pending.
+// Flip USE_MOCK back to false once that's confirmed live.
 import {
   IChatbotFlow,
   IChatbotListItem,
@@ -155,13 +157,15 @@ export const toListItem = (flow: IChatbotFlow): IChatbotListItem => ({
 
 export const MOCK_CHATBOTS: IChatbotListItem[] = Object.values(MOCK_CHATBOT_FLOWS).map(toListItem);
 
+// New chatbots default to enabled — matches ChatbotLogic.SaveChatbot, which
+// enforces this server-side on create regardless of what the client sends.
 export const emptyFlow = (): IChatbotFlow => ({
   id: `cb_${Date.now()}`,
   name: '',
   trigger: 'any',
   cooldownEnabled: false,
   cooldownHours: 24,
-  enabled: false,
+  enabled: true,
   updatedAt: new Date().toISOString(),
   steps: [],
 });

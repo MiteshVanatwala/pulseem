@@ -15,15 +15,13 @@ import {
   TableHead,
   TableCell,
   TableContainer,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
 } from '@material-ui/core';
 import SmartToyIcon from '@material-ui/icons/Android';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import clsx from 'clsx';
 import DefaultScreen from '../../DefaultScreen';
+import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
+import Toast from '../../../components/Toast/Toast.component';
 import { sitePrefix } from '../../../config';
 import { getChatbots, deleteChatbot, toggleChatbot } from '../../../redux/reducers/chatbotSlice';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
@@ -51,6 +49,17 @@ const TRIGGER_KEY: Record<ChatbotTrigger, string> = {
 const formatDate = (iso: string) =>
   new Date(iso).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
 
+// dispatch(thunk).unwrap() throws the raw value passed to rejectWithValue(...)
+// directly - a plain string here, not an Error - so reading err.message on it
+// is always undefined. This pulls the real backend message out regardless of
+// which shape the rejection actually took.
+const getErrorMessage = (err: any, fallbackKey: string): string => {
+  if (typeof err === 'string' && err) return err;
+  if (err?.message) return err.message;
+  if (err?.Message) return err.Message;
+  return fallbackKey;
+};
+
 const ChatbotList = ({ classes }: { classes?: any }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -58,10 +67,18 @@ const ChatbotList = ({ classes }: { classes?: any }) => {
   const { list, tierLimit, loadingList } = useSelector((s: any) => s.chatbot);
   const { isRTL, windowSize, rowsPerPage } = useSelector((s: any) => s.core);
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
+  const [pendingToggle, setPendingToggle] = useState<IChatbotListItem | null>(null);
   const [nameSearch, setNameSearch] = useState('');
   const [page, setPage] = useState(1);
   const [isSearching, setSearching] = useState(false);
   const [searchResults, setSearchResults] = useState<IChatbotListItem[] | null>(null);
+  const [toastMessage, setToastMessage] = useState<any>(null);
+
+  useEffect(() => {
+    if (!toastMessage) return;
+    const timer = setTimeout(() => setToastMessage(null), 3000);
+    return () => clearTimeout(timer);
+  }, [toastMessage]);
 
   useEffect(() => {
     dispatch(getChatbots());
@@ -102,13 +119,37 @@ const ChatbotList = ({ classes }: { classes?: any }) => {
   const goCreate = () => navigate(`${sitePrefix}Chatbots/create`);
   const goEdit = (id: string) => navigate(`${sitePrefix}Chatbots/${id}`);
 
+  // Opens the confirm popup instead of toggling immediately - same
+  // confirm-before-activate/deactivate pattern as AutomationsManagment.js.
   const handleToggle = (bot: IChatbotListItem) => {
-    dispatch(toggleChatbot({ id: bot.id, enabled: !bot.enabled }));
+    setPendingToggle(bot);
   };
 
-  const confirmDelete = () => {
-    if (pendingDeleteId) dispatch(deleteChatbot(pendingDeleteId));
+  const confirmToggle = async () => {
+    if (!pendingToggle) return;
+    const bot = pendingToggle;
+    setPendingToggle(null);
+    // Same as Newsletter's delete/restore confirms - drop out of search mode
+    // rather than trying to keep the frozen searchResults snapshot in sync, so
+    // the list view (now showing the live `list`) reflects the change immediately.
+    clearSearch();
+    try {
+      await dispatch(toggleChatbot({ id: bot.id, enabled: !bot.enabled })).unwrap();
+    } catch (err: any) {
+      setToastMessage({ severity: 'error', color: 'error', message: getErrorMessage(err, 'chatbot_action_failed') });
+    }
+  };
+
+  const confirmDelete = async () => {
+    if (!pendingDeleteId) return;
     setPendingDeleteId(null);
+    clearSearch();
+    try {
+      await dispatch(deleteChatbot(pendingDeleteId)).unwrap();
+      setToastMessage({ severity: 'success', color: 'success', message: 'chatbot_delete_success' });
+    } catch (err: any) {
+      setToastMessage({ severity: 'error', color: 'error', message: getErrorMessage(err, 'chatbot_action_failed') });
+    }
   };
 
   const renderCellIcons = (bot: IChatbotListItem) => {
@@ -375,20 +416,45 @@ const ChatbotList = ({ classes }: { classes?: any }) => {
         </div>
       )}
 
-      <Dialog open={!!pendingDeleteId} onClose={() => setPendingDeleteId(null)}>
-        <DialogTitle>{t('chatbot_delete_title', 'Delete this chatbot?')}</DialogTitle>
-        <DialogContent>
-          {t('chatbot_delete_body', 'This flow will stop running immediately and cannot be recovered.')}
-        </DialogContent>
-        <DialogActions>
-          <button className="svc-cb-btn svc-cb-btn-ghost" onClick={() => setPendingDeleteId(null)}>
-            {t('common.cancel', 'Cancel')}
-          </button>
-          <button className="svc-cb-btn svc-cb-btn-primary" style={{ background: '#b42318' }} onClick={confirmDelete}>
-            {t('common.delete', 'Delete')}
-          </button>
-        </DialogActions>
-      </Dialog>
+      {!!pendingDeleteId && (
+        <BaseDialog
+          classes={classes}
+          open={!!pendingDeleteId}
+          title={t('chatbot_delete_title', 'Delete chatbot')}
+          showDivider={false}
+          onClose={() => setPendingDeleteId(null)}
+          onCancel={() => setPendingDeleteId(null)}
+          onConfirm={confirmDelete}
+        >
+          <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+            {t('chatbot_delete_body', 'Do you want to delete the chatbot?')}
+          </Typography>
+        </BaseDialog>
+      )}
+
+      {!!pendingToggle && (
+        <BaseDialog
+          classes={classes}
+          open={!!pendingToggle}
+          title={
+            pendingToggle.enabled
+              ? t('chatbot_deactivate_title', 'Deactivate Chatbot')
+              : t('chatbot_activate_title', 'Activate Chatbot')
+          }
+          showDivider={false}
+          onClose={() => setPendingToggle(null)}
+          onCancel={() => setPendingToggle(null)}
+          onConfirm={confirmToggle}
+        >
+          <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+            {pendingToggle.enabled
+              ? t('chatbot_deactivate_body', 'Are you sure you want to deactivate Chatbot?')
+              : t('chatbot_activate_body', 'Are you sure you want to activate Chatbot?')}
+          </Typography>
+        </BaseDialog>
+      )}
+
+      {toastMessage && <Toast data={toastMessage} />}
 
       <Loader isOpen={loadingList} />
     </DefaultScreen>

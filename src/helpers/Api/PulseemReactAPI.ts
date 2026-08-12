@@ -74,6 +74,13 @@ PulseemReactInstance.interceptors.request.use(async (config: any) => {
 PulseemReactInstance.interceptors.response.use(
     res => res,
     error => {
+        if (!error.response) {
+            // No HTTP response reached the client at all — network failure, CORS
+            // block, timeout, or the server being unreachable. Reject with a real
+            // Error (so callers' err.message keeps working) instead of crashing
+            // here on error.response.status.
+            return Promise.reject(new Error(error.message || 'Network error - could not reach the server.'))
+        }
         if (error.response.status === 401) {
             redirectToLogin()
         }

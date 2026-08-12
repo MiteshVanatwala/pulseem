@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
@@ -7,6 +7,8 @@ import { TabContext, TabPanel } from '@material-ui/lab';
 import clsx from 'clsx';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import DefaultScreen from '../../DefaultScreen';
+import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
+import Toast from '../../../components/Toast/Toast.component';
 import { Title } from '../../../components/managment/Title';
 import { sitePrefix } from '../../../config';
 import { getChatbotFlow, saveChatbot, clearCurrentFlow } from '../../../redux/reducers/chatbotSlice';
@@ -15,6 +17,17 @@ import { MOCK_WA_TEMPLATES, emptyFlow } from './mockChatbots';
 import TriggerSection from './components/TriggerSection';
 import FlowBuilder from './components/FlowBuilder';
 import './chatbot.css';
+
+// dispatch(thunk).unwrap() throws the raw value passed to rejectWithValue(...)
+// directly - a plain string here, not an Error - so reading err.message on it
+// is always undefined. This pulls the real backend message out regardless of
+// which shape the rejection actually took.
+const getErrorMessage = (err: any, fallbackKey: string): string => {
+  if (typeof err === 'string' && err) return err;
+  if (err?.message) return err.message;
+  if (err?.Message) return err.Message;
+  return fallbackKey;
+};
 
 // Walks the whole step tree (branches + else, recursively) looking for an action
 // step whose required field is still empty — e.g. a Webhook step with no URL yet,
@@ -71,6 +84,12 @@ const ChatbotBuilder = ({ classes }: { classes?: any }) => {
   const [conditionKeywordInvalid, setConditionKeywordInvalid] = useState(false);
   const [actionFieldInvalid, setActionFieldInvalid] = useState(false);
   const [tabValue, setTabValue] = useState<string>('1');
+  const [showUnsavedDialog, setShowUnsavedDialog] = useState(false);
+  const [toastMessage, setToastMessage] = useState<any>(null);
+
+  // Snapshot of the flow as it was when last loaded/saved — Cancel compares the
+  // live `flow` against this to decide whether there's anything to warn about.
+  const initialFlowRef = useRef<IChatbotFlow>(flow);
 
   useEffect(() => {
     dispatch(getChatbotFlow(chatbotId));
@@ -80,24 +99,128 @@ const ChatbotBuilder = ({ classes }: { classes?: any }) => {
   }, [dispatch, chatbotId]);
 
   useEffect(() => {
-    if (currentFlow) setFlow(currentFlow);
+    if (currentFlow) {
+      setFlow(currentFlow);
+      initialFlowRef.current = currentFlow;
+    }
   }, [currentFlow]);
+
+  useEffect(() => {
+    if (!toastMessage) return;
+    const timer = setTimeout(() => setToastMessage(null), 3000);
+    return () => clearTimeout(timer);
+  }, [toastMessage]);
 
   const goBack = () => navigate(`${sitePrefix}Chatbots`);
 
-  const handleSave = () => {
-    // Save acts as "Next" on the Trigger tab — a valid name just advances to
-    // Conditions & Action instead of submitting. The form is only actually
-    // submitted from the second tab, once its own validation passes.
+  const isDirty = () => JSON.stringify(flow) !== JSON.stringify(initialFlowRef.current);
+
+  const handleCancelClick = () => {
+    if (isDirty()) {
+      setShowUnsavedDialog(true);
+    } else {
+      goBack();
+    }
+  };
+
+  // "Yes, save" from the unsaved-changes popup — runs the same validation as
+  // that tab's own Save button before actually saving, so leaving from the
+  // popup can never persist an incomplete name or an incomplete step tree.
+  // On failure it just closes the popup and leaves the tab's own inline error
+  // showing, rather than saving invalid data or blocking the user from leaving.
+  const handleSaveAndLeave = async () => {
     if (tabValue === '1') {
       const isNameMissing = !flow.name.trim();
       setNameInvalid(isNameMissing);
-      if (isNameMissing) return;
+      if (isNameMissing) {
+        setShowUnsavedDialog(false);
+        return;
+      }
+    } else {
+      const areStepsMissing = flow.steps.length === 0;
+      const isConditionKeywordMissing = hasEmptyConditionKeyword(flow.steps);
+      const isActionFieldMissing = hasEmptyActionField(flow.steps, MOCK_WA_TEMPLATES);
+      setStepsInvalid(areStepsMissing);
+      setConditionKeywordInvalid(isConditionKeywordMissing);
+      setActionFieldInvalid(isActionFieldMissing);
+      if (areStepsMissing || isConditionKeywordMissing || isActionFieldMissing) {
+        setShowUnsavedDialog(false);
+        return;
+      }
+    }
 
+    try {
+      await dispatch(saveChatbot(flow)).unwrap();
+      setShowUnsavedDialog(false);
+      setToastMessage({
+        severity: 'success',
+        color: 'success',
+        message: tabValue === '1' ? 'chatbot_trigger_saved' : 'chatbot_condition_action_saved',
+      });
+      // Give the toast a moment on screen before navigating away, same delay
+      // SmsCreator.js uses between its save-success toast and the redirect.
+      setTimeout(() => {
+        setToastMessage(null);
+        goBack();
+      }, 1200);
+    } catch (err: any) {
+      // Save failed server-side (e.g. tier limit reached) - stay put, don't
+      // leave, and surface the real reason instead of silently discarding it.
+      setShowUnsavedDialog(false);
+      setToastMessage({ severity: 'error', color: 'error', message: getErrorMessage(err, 'chatbot_save_failed') });
+    }
+  };
+
+  const handleDiscardAndLeave = () => {
+    setShowUnsavedDialog(false);
+    goBack();
+  };
+
+  // Shared by the Trigger tab's Save and Continue buttons — both persist the
+  // flow as it currently stands (same flow.id throughout, so this updates the
+  // same record rather than creating a new one each time); only Continue also
+  // advances the tab.
+  const validateTriggerTab = (): boolean => {
+    const isNameMissing = !flow.name.trim();
+    setNameInvalid(isNameMissing);
+    return !isNameMissing;
+  };
+
+  const handleSaveTrigger = async () => {
+    if (!validateTriggerTab()) return;
+    if (!isDirty()) return; // nothing changed since the last save — no need to submit again
+
+    try {
+      await dispatch(saveChatbot(flow)).unwrap();
+      setToastMessage({ severity: 'success', color: 'success', message: 'chatbot_trigger_saved' });
+    } catch (err: any) {
+      setToastMessage({ severity: 'error', color: 'error', message: getErrorMessage(err, 'chatbot_save_failed') });
+    }
+  };
+
+  const handleContinue = async () => {
+    if (!validateTriggerTab()) return;
+
+    if (!isDirty()) {
+      // Trigger data already matches what's saved — just move on, no need to
+      // submit and show a "saved" message for a no-op save.
       setTabValue('2');
       return;
     }
 
+    try {
+      await dispatch(saveChatbot(flow)).unwrap();
+      setToastMessage({ severity: 'success', color: 'success', message: 'chatbot_trigger_saved' });
+      setTabValue('2');
+    } catch (err: any) {
+      // Save failed - stay on the Trigger tab, don't advance.
+      setToastMessage({ severity: 'error', color: 'error', message: getErrorMessage(err, 'chatbot_save_failed') });
+    }
+  };
+
+  // Conditions & Action tab's Save — the actual final submit, which returns to
+  // the chatbot list once it succeeds.
+  const handleSaveConditions = async () => {
     const areStepsMissing = flow.steps.length === 0;
     setStepsInvalid(areStepsMissing);
     if (areStepsMissing) return;
@@ -110,7 +233,42 @@ const ChatbotBuilder = ({ classes }: { classes?: any }) => {
     setActionFieldInvalid(isActionFieldMissing);
     if (isActionFieldMissing) return;
 
-    dispatch(saveChatbot(flow)).then(() => goBack());
+    try {
+      await dispatch(saveChatbot(flow)).unwrap();
+      goBack();
+    } catch (err: any) {
+      setToastMessage({ severity: 'error', color: 'error', message: getErrorMessage(err, 'chatbot_save_failed') });
+    }
+  };
+
+  // Back — same validation as the tab's own Save, but on success it returns to
+  // the Trigger tab instead of the chatbot list.
+  const handleBackToTrigger = async () => {
+    const areStepsMissing = flow.steps.length === 0;
+    setStepsInvalid(areStepsMissing);
+    if (areStepsMissing) return;
+
+    const isConditionKeywordMissing = hasEmptyConditionKeyword(flow.steps);
+    setConditionKeywordInvalid(isConditionKeywordMissing);
+    if (isConditionKeywordMissing) return;
+
+    const isActionFieldMissing = hasEmptyActionField(flow.steps, MOCK_WA_TEMPLATES);
+    setActionFieldInvalid(isActionFieldMissing);
+    if (isActionFieldMissing) return;
+
+    if (!isDirty()) {
+      // Nothing changed since the last save — just go back, no need to submit.
+      setTabValue('1');
+      return;
+    }
+
+    try {
+      await dispatch(saveChatbot(flow)).unwrap();
+      setToastMessage({ severity: 'success', color: 'success', message: 'chatbot_condition_action_saved' });
+      setTabValue('1');
+    } catch (err: any) {
+      setToastMessage({ severity: 'error', color: 'error', message: getErrorMessage(err, 'chatbot_save_failed') });
+    }
   };
 
   if (loadingFlow) {
@@ -269,27 +427,84 @@ const ChatbotBuilder = ({ classes }: { classes?: any }) => {
                 className={clsx(classes.btn, classes.btnRounded, classes.middle)}
                 endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                 style={{ margin: '8px' }}
-                onClick={goBack}
+                onClick={handleCancelClick}
               >
                 {t('common.cancel', 'Cancel')}
               </Button>
-              <Button
-                className={clsx(classes.btn, classes.btnRounded, classes.middle)}
-                endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-                style={{ margin: '8px' }}
-                onClick={handleSave}
-                disabled={saving}
-              >
-                {saving
-                  ? t('common.saving', 'Saving…')
-                  : tabValue === '1'
-                    ? t('common.continue', 'Continue')
-                    : t('common.save', 'Save')}
-              </Button>
+
+              {tabValue === '1' ? (
+                <>
+                  <Button
+                    className={clsx(classes.btn, classes.btnRounded, classes.middle)}
+                    endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+                    style={{ margin: '8px' }}
+                    onClick={handleSaveTrigger}
+                    disabled={saving}
+                  >
+                    {saving ? t('common.saving', 'Saving…') : t('common.save', 'Save')}
+                  </Button>
+                  <Button
+                    className={clsx(classes.btn, classes.btnRounded, classes.middle)}
+                    endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+                    style={{ margin: '8px' }}
+                    onClick={handleContinue}
+                    disabled={saving}
+                  >
+                    {saving ? t('common.saving', 'Saving…') : t('common.saveAndContinue', 'Save and Continue')}
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button
+                    className={clsx(classes.btn, classes.btnRounded, classes.middle)}
+                    endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+                    style={{ margin: '8px' }}
+                    onClick={handleBackToTrigger}
+                  >
+                    {t('common.back', 'Back')}
+                  </Button>
+                  <Button
+                    className={clsx(classes.btn, classes.btnRounded, classes.middle)}
+                    endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+                    style={{ margin: '8px' }}
+                    onClick={handleSaveConditions}
+                    disabled={saving}
+                  >
+                    {saving ? t('common.saving', 'Saving…') : t('common.save', 'Save')}
+                  </Button>
+                </>
+              )}
             </Box>
           </div>
         </div>
       </div>
+
+      {toastMessage && <Toast data={toastMessage} />}
+
+      {showUnsavedDialog && (
+        <BaseDialog
+          classes={classes}
+          open={showUnsavedDialog}
+          title={
+            tabValue === '1'
+              ? t('chatbot_unsaved_title_trigger', 'Leave Chatbot Creation')
+              : t('chatbot_unsaved_title_conditions', 'Leave Chatbot Configuration')
+          }
+          showDivider={false}
+          disableBackdropClick
+          confirmText={t('common.Yes', 'Yes')}
+          cancelText={t('common.No', 'No')}
+          onConfirm={handleSaveAndLeave}
+          onCancel={handleDiscardAndLeave}
+          onClose={handleDiscardAndLeave}
+        >
+          <Typography className={classes.f14}>
+            {tabValue === '1'
+              ? t('chatbot_unsaved_body_trigger', 'Would you like to save the chatbot before exit?')
+              : t('chatbot_unsaved_body_conditions', 'Would you like to save it before exit?')}
+          </Typography>
+        </BaseDialog>
+      )}
     </DefaultScreen>
   );
 };
