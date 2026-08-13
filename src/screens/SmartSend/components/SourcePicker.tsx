@@ -9,7 +9,7 @@ import moment from 'moment';
 import { DateFormats } from '../../../helpers/Constants';
 import { getChannelDescriptor } from '../../../Models/DataSources/SmartSend';
 import { eDataSourceStatus } from '../../../Models/DataSources/DataSource';
-import { selectSource, loadSourceColumns } from '../../../redux/reducers/smartSendSlice';
+import { selectSource, loadSourceColumns, selectHasMappingWork } from '../../../redux/reducers/smartSendSlice';
 import { getDataSources } from '../../../redux/reducers/dataSourcesSlice';
 import InlineBanner from './InlineBanner';
 
@@ -73,6 +73,17 @@ const SourcePicker: React.FC = () => {
     const dataSourceId = useSelector((s: any) => s.smartSend.dataSourceId);
     const currentSourceId = useSelector((s: any) => s.smartSend.dataSource?.DataSourceID ?? s.smartSend.dataSourceId ?? null);
     const hasColumns = useSelector((s: any) => s.smartSend.columns.length > 0);
+    // "Is this click going to cost the operator anything?" — the SHARED definition, so this gate
+    // and the screen's autosave gate can never drift apart.
+    const hasWork = useSelector(selectHasMappingWork);
+    const savedMapping = useSelector((s: any) => s.smartSend.savedMapping);
+    const workingIsFromServer = useSelector((s: any) => s.smartSend.workingIsFromServer);
+    const campaignId = useSelector((s: any) => s.smartSend.campaignId);
+    // The campaignId equality is not paranoia: clearSmartSend has zero dispatch sites, so this
+    // slice survives the whole SPA session across campaigns, and a savedMapping left behind by a
+    // previous campaign must never be the reason this one asks for confirmation.
+    const atStake = hasWork
+        || (savedMapping != null && savedMapping.campaignId === campaignId && workingIsFromServer);
     const descriptor = getChannelDescriptor(selectedChannel);
     const cardRefs = useRef<Array<HTMLDivElement | null>>([]);
 
@@ -154,24 +165,50 @@ const SourcePicker: React.FC = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [dataSourceId, mappedSourceId, ready, descriptor.identityFlag]);
 
-    // Switching source is DESTRUCTIVE and un-undoable from this screen: selectSource
-    // (smartSendSlice.ts:287-302) drops tokenMap, supervisorColumnId, gapColumnId, sortColumnId,
-    // lockedVersionId, columns, sampleValues and isMapped — up to 20 hand-made field mappings —
-    // and nothing on this screen can bring them back. The banner button therefore only OPENS this
-    // confirm, and the confirm is the ONLY route from the banner into `pick`. (A direct card
-    // click still calls `pick` unguarded — that one is the user explicitly choosing a different
-    // source, not a button sitting under reassuring text.) No auto-focus / ok-by-default
-    // shortcut: the destructive button is a deliberate second click.
-    const [confirmOpen, setConfirmOpen] = useState(false);
+    // Switching source CLEARS THE SCREEN: selectSource (smartSendSlice.ts:419-439) drops tokenMap,
+    // supervisorColumnId, gapColumnId, sortColumnId, lockedVersionId, columns, sampleValues and
+    // isMapped — up to 20 hand-made field mappings. It writes NOTHING to the server, and
+    // `savedMapping` deliberately survives it, so a mapping that was already SAVED is recoverable
+    // from the screen (the restore banner in SmartSendScreen) right up until the next successful
+    // setMapping under the new source. UNSAVED edits are not recoverable at all.
+    //
+    // Hence the confirm below, and hence it is now reachable from EVERY route into a switch — the
+    // card click, the keyboard (Enter/Space on the radiogroup), and the incoming-source banner —
+    // instead of the banner alone. `pendingPick` HOLDS THE CANDIDATE and dispatches nothing:
+    // cancelling is the absence of an event, not an undo.
+    //
+    // A BOOLEAN HERE WAS A TRAP. The dialog used to live inside the `{incoming && (` block, so a
+    // `confirmOpen` flag flipped from a card click rendered NO dialog on the common path (incoming
+    // is null unless a ?dataSourceId= names a different source) — source switching would have
+    // stopped working silently. Holding the candidate itself, in a dialog rendered unconditionally,
+    // makes that unrepresentable. No auto-focus / ok-by-default shortcut: the destructive button is
+    // a deliberate second click.
+    const [pendingPick, setPendingPick] = useState<any | null>(null);
 
-    const pick = (it: any) => {
-        if (!canSend(it) || it.DataSourceID === currentSourceId) return;
+    // The old placement gave the dialog structural self-invalidation (it unmounted with `incoming`).
+    // Hoisted out, that guarantee becomes a convention and has to be written down: never act on a
+    // candidate chosen before the current source changed underneath us.
+    useEffect(() => { setPendingPick(null); }, [currentSourceId]);
+
+    const doPick = (it: any) => {
         // Claim the id before dispatching so the preselect effect above — which is about to
         // re-run, since selectSource changes dataSourceId and clears columns — sees it as
         // already handled and does not fire a duplicate load.
         preselectedFor.current = it.DataSourceID;
         dispatch(selectSource(it.DataSourceID));
         dispatch(loadSourceColumns(it.DataSourceID));
+    };
+
+    const pick = (it: any) => {
+        if (!canSend(it) || it.DataSourceID === currentSourceId) return;
+        // NO FRICTION WHEN NOTHING IS AT STAKE. Asking on a campaign with nothing to lose is its
+        // own kind of unprofessional, and it would fire on the FIRST source pick of every new
+        // campaign. `atStake` is true either because there is unsaved work in the table, or
+        // because what is on screen is the server's own mapping and this click is the first
+        // departure from it. Browsing on between candidate sources afterwards costs nothing more:
+        // the server row is still intact and the restore banner is still on screen.
+        if (!atStake) { doPick(it); return; }
+        setPendingPick(it);
     };
 
     const moveFocus = (fromIdx: number, dir: 1 | -1) => {
@@ -249,19 +286,25 @@ const SourcePicker: React.FC = () => {
                         title={t('DataSources.send.source.incomingTitle')}
                         body={t('DataSources.send.source.incomingBody', { name: incoming.Name })}
                         action={(
-                            /* Opens the confirm — it does NOT switch. The banner explains what is
-                               about to be lost; the dialog is where the user accepts it. */
-                            <Button size="small" variant="outlined" color="primary" onClick={() => setConfirmOpen(true)}>
+                            /* Proposes the candidate — it does NOT switch. `pick` runs the same
+                               at-stake gate a card click does, so this button lands on the same
+                               confirm (or, on an unmapped campaign, switches straight away). */
+                            <Button size="small" variant="outlined" color="primary" onClick={() => pick(incoming)}>
                                 {t('DataSources.send.source.incomingSwitch')}
                             </Button>
                         )}
                     />
-                    {/* Rendered inside the `incoming &&` block on purpose: if the conflict resolves
-                        for any reason (the switch lands, the mapping reloads, the list refreshes)
-                        the dialog goes with it and cannot act on a stale source. */}
+                </Box>
+            )}
+            {/* HOISTED OUT of the `{incoming && (` block. It used to live inside it, which meant a
+                card click could never reach it — see the `pendingPick` comment above for why that
+                made a boolean flag unsafe here. It now renders unconditionally and is driven purely
+                by whether a candidate is held. `pendingPick` is nulled whenever currentSourceId
+                changes, which replaces the self-invalidation the old placement gave for free. */}
+            {pendingPick && (
                     <Dialog
-                        open={confirmOpen}
-                        onClose={() => setConfirmOpen(false)}
+                        open
+                        onClose={() => setPendingPick(null)}
                         maxWidth="sm"
                         fullWidth
                         // Portalled to document.body, outside App.js:1018's <div dir=...>, and
@@ -274,34 +317,49 @@ const SourcePicker: React.FC = () => {
                     >
                         <Box className={classes.dlgHead}>
                             <Typography variant="h6" id="smartsend-switch-confirm-title">
-                                {t('DataSources.send.source.incomingConfirmTitle')}
+                                {t('DataSources.send.source.switchConfirmTitle')}
                             </Typography>
-                            <IconButton size="small" onClick={() => setConfirmOpen(false)} aria-label={t('DataSources.send.close')}>
+                            <IconButton size="small" onClick={() => setPendingPick(null)} aria-label={t('DataSources.send.close')}>
                                 <Close />
                             </IconButton>
                         </Box>
                         <Box className={classes.dlgBody}>
+                            {/* Two bodies, because the two situations have OPPOSITE outcomes and
+                                saying so is the whole point. Unsaved work is genuinely gone;
+                                a saved mapping is not deleted until the next save under the new
+                                source, and can be restored in one click until then. Telling the
+                                operator "this cannot be undone" when it can is what teaches them
+                                to distrust the screen. `hasWork` first: if there is ANY unsaved
+                                work the destructive statement is the true one. */}
                             <Typography variant="body2" id="smartsend-switch-confirm-body">
-                                {t('DataSources.send.source.incomingConfirmBody', { name: incoming.Name })}
+                                {hasWork
+                                    ? t('DataSources.send.source.switchConfirmBodyUnsaved', { to: pendingPick.Name })
+                                    : t('DataSources.send.source.switchConfirmBodySaved', {
+                                        to: pendingPick.Name,
+                                        from: savedMapping?.dataSourceName ?? '',
+                                        mapped: savedMapping?.mappedTokenCount ?? 0,
+                                        total: savedMapping?.tokenCount ?? 0,
+                                    })}
                             </Typography>
                         </Box>
                         <Box className={classes.dlgFoot}>
-                            {/* The ONLY caller of `pick` for the banner path. It runs the exact same
-                                selectSource + loadSourceColumns a manual card click does — including
-                                claiming the preselect latch, which stops the effect above from firing
-                                a duplicate load when dataSourceId/columns flip. Close first so the
-                                dialog never lingers over the re-rendering picker. */}
+                            {/* The ONLY route from a held candidate into an actual dispatch. It runs
+                                the exact same selectSource + loadSourceColumns a manual card click
+                                does — including claiming the preselect latch, which stops the effect
+                                above from firing a duplicate load when dataSourceId/columns flip.
+                                Clear the candidate FIRST so the dialog never lingers over the
+                                re-rendering picker, and read it into a local so the handler cannot
+                                act on a value the clear has already dropped. */}
                             <Button
                                 variant="contained"
                                 color="primary"
-                                onClick={() => { setConfirmOpen(false); pick(incoming); }}
+                                onClick={() => { const it = pendingPick; setPendingPick(null); if (it) doPick(it); }}
                             >
-                                {t('DataSources.send.source.incomingSwitch')}
+                                {t('DataSources.send.source.switchConfirmAction')}
                             </Button>
-                            <Button onClick={() => setConfirmOpen(false)}>{t('DataSources.send.cancel')}</Button>
+                            <Button onClick={() => setPendingPick(null)}>{t('DataSources.send.cancel')}</Button>
                         </Box>
                     </Dialog>
-                </Box>
             )}
             {!ready.length ? (
                 <Typography variant="body2" color="textSecondary" style={{ marginTop: 8 }}>

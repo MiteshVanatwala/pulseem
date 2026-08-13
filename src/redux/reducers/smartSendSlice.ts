@@ -64,6 +64,36 @@ interface SmartSendState {
     // collapsing them on the next save. Not sent to the server, never edited by the user.
     storedGapColumnId: number | null;
     storedSortColumnId: number | null;
+    // ── THE CAMPAIGN'S PERSISTED MAPPING, AS THE SERVER LAST REPORTED OR ACCEPTED IT ──────────
+    // FIVE SCALARS. No ColumnIDs, no token pairings, no `columns`, no version id — deliberately
+    // NOTHING the save path could ever read back. This is a claim about the SERVER, and it is the
+    // only field the screen may use to assert what is stored.
+    //
+    // WHY THIS IS NOT A MAPPING CACHE, AND WHY ONE MUST NEVER BE ADDED HERE:
+    // PK_CampaignsToDataSources is CLUSTERED (CampaignID, Channel) — ONE mapping per campaign,
+    // ever — and CampaignsToDataSources_Set UPSERTs that row and delete-and-reinserts the whole
+    // token map. So from the first autosave under a NEW source, any client-held copy of the OLD
+    // token->column pairs would be the SOLE SURVIVING COPY of a production mapping, living in one
+    // browser tab. That converts today's loud, immediate, visible loss into a quiet one discovered
+    // the next day, on a live insurance mailing. Decision 2026-08-13, by the product owner, after
+    // a five-proposal design panel: CACHE THE FACT, NEVER THE DATA. The accepted price is that
+    // work started on a second source and then abandoned IS lost.
+    //
+    // NEVER derived from working state. NEVER cleared by selectSource — that survival is the
+    // entire mechanism (see the comment there).
+    savedMapping: {
+        campaignId: number;
+        dataSourceId: number | null;
+        dataSourceName: string | null;
+        mappedTokenCount: number;
+        tokenCount: number;
+    } | null;
+    // TRUE while what the mapping table shows came from the server; FALSE from the moment the
+    // operator picks a different source. THIS — not a comparison of source ids — is what arms the
+    // restore affordance. A source-id comparison goes false on A->B->A while tokenMap is still
+    // empty, which is precisely the reported complaint, and would let the header confidently
+    // assert "14 מתוך 17" over an empty table.
+    workingIsFromServer: boolean;
     // Campaign-picker field counts, keyed by CampaignID. Token NAMES in order of first
     // appearance; the card's number is `.length`. Kept OUT of `tokens` (which belongs to the one
     // campaign the mapping screen is editing) so the two can never overwrite each other.
@@ -368,6 +398,8 @@ const initialState: SmartSendState = {
     sortColumnId: null,
     storedGapColumnId: null,
     storedSortColumnId: null,
+    savedMapping: null,
+    workingIsFromServer: false,
     campaignTokens: {},
     campaignTokensStatus: {},
     syntheticGroupId: null,
@@ -436,6 +468,13 @@ export const smartSendSlice = createSlice({
             state.isMapped = false;
             state.dataSource = null; // repopulated from loadSourceColumns (the source's details)
             state.columnsStatus = 'loading'; // the new source's columns are about to load
+            // LOAD-BEARING — DO NOT DELETE, AND DO NOT ADD `state.savedMapping = null` BESIDE IT.
+            // savedMapping SURVIVING this wipe is the entire mechanism: it is what lets the screen
+            // keep saying "your saved mapping is still there, on source X, 14 of 17 fields" while
+            // the table is empty, and what arms the one-click restore. Clearing it reproduces the
+            // original complaint exactly — A->B->A gets no offer, and the header goes back to
+            // asserting "לא ממופה" over a campaign that is mapped.
+            state.workingIsFromServer = false;
         },
         setTokenMapping: (state, action) => {
             const { token, columnId } = action.payload || {};
@@ -523,15 +562,41 @@ export const smartSendSlice = createSlice({
                 const map: { [token: string]: number | null } = {};
                 (data.Tokens || []).forEach(t => { map[t.Token] = t.MappedColumnID; });
                 state.tokenMap = map;
+                // The server has just stated what it holds — the ONE place (with setMapping below)
+                // allowed to write this. Null when unmapped: the honesty rule is that an unknown
+                // or absent mapping renders NOTHING, never an optimistic placeholder.
+                state.savedMapping = data.IsMapped ? {
+                    campaignId: data.CampaignID,
+                    dataSourceId: data.DataSource?.DataSourceID ?? null,
+                    dataSourceName: data.DataSource?.Name ?? null,
+                    mappedTokenCount: (data.Tokens || [])
+                        .filter((tk: any) => tk.MappedColumnID != null && tk.MappedColumnID > 0).length,
+                    tokenCount: (data.Tokens || []).length,
+                } : null;
+                state.workingIsFromServer = true;
+                // LOAD-BEARING — DO NOT DELETE. getMapping is authoritative for `columns` (written
+                // a few lines above), but a loadSourceColumns fired for the OTHER source may still
+                // be on the wire, and its fulfilled handler's staleness guard only compares against
+                // columnsReqId. Left untouched it would pass that guard, overwrite these columns,
+                // and then re-run applyBusinessColumnDefaults(..., true) over the other source's
+                // business ids — which the SP rejects with -9 (DATA_INCORRECT) on every subsequent
+                // save, with a Retry button that re-sends the identical request forever.
+                state.columnsReqId = '';
                 state.mappingStatus = 'succeeded';
             } else {
                 state.mappingStatus = 'failed';
                 state.mappingError = payload?.StatusCode ?? null; // 404/927 drive distinct UI (§16)
+                // Unknown ⇒ silent. A failed read must not leave a stale claim about the server on
+                // screen, and must never be optimistic.
+                state.savedMapping = null;
+                state.workingIsFromServer = false;
             }
         });
         builder.addCase(getMapping.rejected, (state) => {
             state.mappingStatus = 'failed';
             state.mappingError = null; // network/5xx → generic message
+            state.savedMapping = null;
+            state.workingIsFromServer = false;
         });
 
         builder.addCase(setMapping.pending, (state) => {
@@ -540,9 +605,38 @@ export const smartSendSlice = createSlice({
         builder.addCase(setMapping.fulfilled, (state, action: any) => {
             const payload = action.payload;
             if (payload?.StatusCode === 200 && payload.Data) {
+                // Request/send-pipeline state — unconditional, as before. Gating these would risk
+                // the send flow, and neither makes a claim about which source is on screen.
                 state.syntheticGroupId = payload.Data.SyntheticGroupID ?? state.syntheticGroupId;
-                state.isMapped = true;
                 state.saveStatus = 'succeeded';
+                // LOAD-BEARING — DO NOT DELETE. The three writes below are SEMANTIC: they re-badge
+                // the screen as "mapped, to this source". A save can outlive a source switch, and
+                // an ungated `isMapped = true` (which is what this used to do) would then label the
+                // screen with the source the operator has just left, while the banner offers to
+                // "restore" the source they are already on. buildSaveRequest takes DataSourceID
+                // from state.dataSource?.DataSourceID, so meta.arg carries the source the request
+                // was BUILT for; when it disagrees with live state the response is about something
+                // no longer on screen. Because the gate holds, state.dataSource IS the right source
+                // whenever we do write — which is what makes reading the name below safe.
+                // Same latest-wins idiom the loadSourceColumns handlers use.
+                const arg: any = action.meta && action.meta.arg ? action.meta.arg : {};
+                const live = state.dataSource?.DataSourceID ?? state.dataSourceId;
+                if (arg.CampaignID === state.campaignId && arg.DataSourceID === live) {
+                    state.isMapped = true;
+                    state.workingIsFromServer = true;
+                    state.savedMapping = {
+                        campaignId: state.campaignId as number,
+                        dataSourceId: live ?? null,
+                        dataSourceName: state.dataSource?.Name ?? null,
+                        // What was SENT. Correct ONLY because CampaignsToDataSources_Set is a
+                        // delete-then-reinsert of the whole TVP, so a 200 means the set landed
+                        // verbatim. If that SP ever gains a filter or a partial-failure path, this
+                        // line starts asserting a count that is not true — which is exactly the
+                        // class of lie this whole field exists to eliminate. Re-check on any SP change.
+                        mappedTokenCount: (arg.Mappings || []).length,
+                        tokenCount: state.tokens.length,
+                    };
+                }
             } else {
                 state.saveStatus = 'failed';
             }
@@ -694,6 +788,26 @@ export const selectUnmappedTokens = (state: any): string[] => {
             return m == null || m <= 0 || !colSet.has(m);
         })
         .map((tk: any) => tk.Token);
+};
+
+// THE ONE DEFINITION OF "is there real work in the working state". Read by BOTH the screen's
+// autosave gate and SourcePicker's confirm gate — two private copies of this rule WILL drift, and
+// the two consumers disagreeing is how a confirm dialog starts appearing over nothing.
+//
+// LOAD-BEARING — the `.some(c => c && c > 0)` is the whole point and must not become a key count.
+// getMapping seeds tokenMap with a key for EVERY token, mapped or not, so
+// `Object.keys(tokenMap).length > 0` is true on every UNMAPPED campaign: the first source pick on
+// every brand-new campaign would then open a dialog headed "למחוק את מיפוי השדות הנוכחי?" over
+// nothing at all, and a cautious operator could never pick a source.
+//
+// supervisorColumnId counts only when it is NOT a guess: a machine-written value is not the
+// operator's work and must never be the reason they are asked to confirm losing something.
+export const selectHasMappingWork = (state: any): boolean => {
+    const ss = state.smartSend;
+    return Object.values(ss.tokenMap || {}).some((c: any) => c && c > 0)
+        || (ss.supervisorColumnId != null && !ss.supervisorColumnIsGuess)
+        || ss.gapColumnId != null
+        || ss.sortColumnId != null;
 };
 
 export const {
