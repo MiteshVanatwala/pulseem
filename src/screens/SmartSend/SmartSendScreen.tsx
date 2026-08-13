@@ -12,8 +12,9 @@ import { PulseemFeatures } from '../../model/PulseemFields/Fields';
 import {
     getMapping, setCampaignContext, setTokenMapping, setBusinessColumn,
     setMapping, fillAndSummarize, setEmailSendSettingsWrapped, loadSourceColumns,
-    getSendSummaryWrapped, getEmailSendSettingsWrapped, selectUnmappedTokens,
+    getSendSummaryWrapped, getEmailSendSettingsWrapped, selectUnmappedTokens, selectHasMappingWork,
 } from '../../redux/reducers/smartSendSlice';
+import InlineBanner from './components/InlineBanner';
 import SourcePicker from './components/SourcePicker';
 import TokenMappingTable from './components/TokenMappingTable';
 import BusinessColumnsPicker from './components/BusinessColumnsPicker';
@@ -71,6 +72,21 @@ const SmartSendScreen = ({ classes }: any) => {
     const currentSourceId = smartSend.dataSource?.DataSourceID ?? smartSend.dataSourceId ?? null;
     const hasColumns = smartSend.columns.length > 0;
 
+    // ── what the SERVER holds, and whether the table still shows it ─────────────────────────────
+    // `savedMapping` is five scalars written only by the server round trips; it deliberately
+    // survives selectSource (smartSendSlice.ts, see the comment there). The campaignId equality is
+    // required, not defensive: clearSmartSend has zero dispatch sites, so this slice outlives a
+    // campaign-to-campaign navigation and a descriptor left by the PREVIOUS campaign must never
+    // label this one. Same read-site pattern as campaignName above.
+    const savedRaw = smartSend.savedMapping;
+    const saved = savedRaw && savedRaw.campaignId === campaignId ? savedRaw : null;
+    // Gated on workingIsFromServer, NEVER on `saved.dataSourceId !== currentSourceId`: the id
+    // comparison goes false on A→B→A while tokenMap is still empty, which is the exact reported
+    // complaint — no offer to restore, and a header confidently asserting "14 מתוך 17" over an
+    // empty table.
+    const showRestore = saved != null && !smartSend.workingIsFromServer;
+    const hasMappingWork = useSelector(selectHasMappingWork);
+
     const [confirmUnmapped, setConfirmUnmapped] = useState(false);
     const [saving, setSaving] = useState(false);
     const [showPreview, setShowPreview] = useState(false);
@@ -92,6 +108,16 @@ const SmartSendScreen = ({ classes }: any) => {
     const [exitOpen, setExitOpen] = useState(false);
     const [exitSaveFailed, setExitSaveFailed] = useState(false);
     const [toast, setToast] = useState<{ open: boolean; ok: boolean; msg: string }>({ open: false, ok: true, msg: '' });
+    // Restore-from-server lifecycle. `restoring` also keeps the body mounted through the reload —
+    // see the restoreOverlay guard in renderBody, without which this feature performs the very
+    // disappearance it exists to prevent.
+    const [restoring, setRestoring] = useState(false);
+    const [restoreFailed, setRestoreFailed] = useState(false);
+    // WHICH source the last failed autosave belonged to. The Retry button rebuilds the request from
+    // FRESH state, so after a source switch it would post the new source's snapshot as the "retry"
+    // of the old source's save.
+    const [failedSaveSourceId, setFailedSaveSourceId] = useState<number | null>(null);
+    const [replaceConfirmOpen, setReplaceConfirmOpen] = useState(false);
 
     // ── auto-save (replaces the manual Save button) ─────────────────────────────────────────────
     // saveState drives the header status indicator. The refs coordinate a DEBOUNCED, SINGLE-FLIGHT
@@ -105,8 +131,30 @@ const SmartSendScreen = ({ classes }: any) => {
     const saveInFlight = useRef(false);
     const savePending = useRef(false);
     const sendLockedRef = useRef(false);
+    // MONOTONIC EDIT COUNTER. Bumped by markEdited() on every user edit, captured when a save
+    // request is BUILT, and re-read when it resolves. It exists because `dirty` alone cannot
+    // distinguish "the edits I just saved" from "edits that arrived while I was saving", and
+    // clearing it unconditionally on a 200 STRANDS the latter:
+    //   t=0    edit          → dirty=true, timer armed for t=750
+    //   t=750  timer fires   → buildSaveRequest() snapshots state HERE; request in flight
+    //   t=900  edit          → dirty is ALREADY true so nothing changes, but the debounce effect
+    //                          re-runs on the new tokenMap and arms a fresh timer for t=1650
+    //   t=1200 200 comes back→ setDirty(false) ⇒ the effect's cleanup CLEARS the t=1650 timer and
+    //                          its body then bails on !dirty. The t=900 edit is never sent, and
+    //                          the sticky bar reads "כל השינויים נשמרו".
+    // `savePending` does NOT cover this: it is only set when runAutoSave is CALLED while a save is
+    // in flight (see below), which needs the round trip to outlast the 750ms debounce. The window
+    // above — the common one, where the response beats the next timer — stays wide open.
+    // The falsely-cleared `dirty` is not only a lost edit: it also disarms the beforeunload handler,
+    // the three-way exit confirm, and TestSendDialog's "the preview uses the SAVED mapping" warning,
+    // so the operator's one pre-send check silently answers wrong.
+    const editSeq = useRef(0);
 
     const showToast = (ok: boolean, msg: string) => setToast({ open: true, ok, msg });
+
+    // The ONE place an edit is recorded. Both onChange handlers below route through it so the
+    // counter and `dirty` can never disagree — two call sites setting them separately WILL drift.
+    const markEdited = () => { editSeq.current += 1; setDirty(true); };
 
     useEffect(() => {
         // `accountFeatures?.length &&`, NOT `accountFeatures &&` — the same guard SmartSendPicker.tsx:38,
@@ -134,6 +182,10 @@ const SmartSendScreen = ({ classes }: any) => {
     // its identity is the load signal; a plain setTokenMapping never touches it.
     useEffect(() => {
         setDirty(false);
+        // Same signal, same meaning: `tokens` is a fresh array only on a SUCCESSFUL getMapping
+        // (the failure branches write mappingStatus/mappingError and nothing else), so this clears
+        // the restore error exactly when a reload has landed — and on any source switch.
+        setRestoreFailed(false);
     }, [smartSend.tokens, currentSourceId]);
 
     // item 3: warn on tab close / refresh while there are unsaved mapping changes. react-router
@@ -192,6 +244,12 @@ const SmartSendScreen = ({ classes }: any) => {
     //    dialog — calls saveMapping only; the attach is deferred to a confirmed Send. ──
     const saveMapping = async (silent?: boolean): Promise<{ ok: boolean; gid: number | null }> => {
         setSaving(true);
+        // Snapshot the edit counter alongside the request body, for the same reason runAutoSave
+        // does. This path is NOT modal-protected: openSummary calls saveMapping(true) and then
+        // awaits fillAndSummarize + getSendSummary + getEmailSendSettings — four sequential round
+        // trips — before setSummaryOpen(true), and the mapping table is fully interactive for all
+        // of them. An edit made in that window must not be marked saved.
+        const seq = editSeq.current;
         const res: any = await dispatch(setMapping(buildSaveRequest()));
         const r = res && res.payload ? res.payload : {};
         if (r.StatusCode !== 200) {
@@ -201,7 +259,12 @@ const SmartSendScreen = ({ classes }: any) => {
         }
         const gid = r.Data && r.Data.SyntheticGroupID;
         setSaving(false);
-        setDirty(false); // the mapping is persisted — the unsaved-changes bar must go away
+        // The mapping is persisted — the unsaved-changes bar must go away, but ONLY if what landed
+        // is still what is on screen. If the operator edited during the round trip the screen is
+        // genuinely dirty and must stay so: the debounce effect then keeps its timer and persists
+        // the newer state. `ok: true` is still correct — the request itself succeeded, which is
+        // what the send/exit callers are asking about.
+        if (editSeq.current === seq) setDirty(false);
         if (!silent) showToast(true, t('DataSources.send.toasts.mappingSaved'));
         return { ok: true, gid: gid != null ? Number(gid) : null };
     };
@@ -213,20 +276,47 @@ const SmartSendScreen = ({ classes }: any) => {
         if (saveInFlight.current) { savePending.current = true; return; }
         saveInFlight.current = true;
         setSaveState('saving');
+        // Captured on the same line-of-execution as the request body, so `seq` describes EXACTLY
+        // the state this request carries. Everything below compares against it.
+        const seq = editSeq.current;
         const res: any = await dispatch(setMapping(buildSaveRequest()));
         const r = res && res.payload ? res.payload : {};
         saveInFlight.current = false;
+        // TRUE when the operator edited while this request was on the wire. The response is then a
+        // truthful answer about a snapshot that is no longer on screen, and treating it as "saved"
+        // is what strands the edit (see the editSeq header).
+        const superseded = editSeq.current !== seq;
         if (r.StatusCode === 200) {
-            setDirty(false);
-            setSaveState('saved');
+            if (superseded) {
+                // Do NOT clear dirty and do NOT paint "נשמר" — the screen really does hold unsaved
+                // work. Stay on 'saving'; the re-fire below sends the newer snapshot.
+                setSaveState('saving');
+            } else {
+                setDirty(false);
+                setSaveState('saved');
+            }
         } else if (r.Message === 'EDIT_BLOCKED_DURING_SEND') {
             sendLockedRef.current = true;          // campaign is sending — stop auto-saving
             setSaveState('locked');
         } else {
             setSaveState('error');                 // keep dirty=true so Retry + beforeunload stay armed
+            // Remember WHOSE save failed. Retry rebuilds from fresh state, so once the operator has
+            // switched source it would post the new source's snapshot under the guise of retrying
+            // the old one. The bar keeps reporting the failure either way — swallowing it is not an
+            // option, because the same source switch also clears `dirty` and disarms beforeunload,
+            // so the red bar is the ONLY remaining evidence that N mappings were never persisted.
+            setFailedSaveSourceId(smartSend.dataSource?.DataSourceID ?? null);
         }
         // Re-fire once with the latest snapshot if edits arrived while this save was in flight.
-        if (savePending.current && !sendLockedRef.current) { savePending.current = false; runAutoSave(); }
+        // `superseded` is the case the old `savePending` flag could not see: savePending is only
+        // set when runAutoSave is CALLED mid-flight, which needs the round trip to outlast the
+        // 750ms debounce, whereas superseded catches every edit regardless of timing. Both re-fire
+        // through the same line so a save can still never overlap another (saveInFlight guards the
+        // entry). The recursion terminates because editSeq only advances on human input.
+        if ((savePending.current || superseded) && !sendLockedRef.current) {
+            savePending.current = false;
+            runAutoSave();
+        }
     };
 
     // Debounced trigger: whenever the mapping changes and there is something to persist, schedule a
@@ -235,14 +325,13 @@ const SmartSendScreen = ({ classes }: any) => {
     // the slice fields, NOT the onChange handlers, so buildSaveRequest reads FRESH post-dispatch state.
     useEffect(() => {
         if (!hasColumns || !dirty || sendLockedRef.current) return undefined;
-        const hasAnyMapping =
-            Object.values(smartSend.tokenMap).some((c: any) => c && c > 0) ||
-            // `&& !supervisorColumnIsGuess` added 2026-08-11 (deep review R1-02): an unconfirmed
-            // guess must not be the reason a save fires. Without this the helper's own output
-            // triggered the autosave that then persisted it — the value was its own justification.
-            (smartSend.supervisorColumnId != null && !smartSend.supervisorColumnIsGuess) ||
-            smartSend.gapColumnId != null ||
-            smartSend.sortColumnId != null || smartSend.isMapped;
+        // Bit-identical to the inline expression this replaced — selectHasMappingWork IS those four
+        // clauses, including the `&& !supervisorColumnIsGuess` added 2026-08-11 (deep review R1-02):
+        // an unconfirmed guess must not be the reason a save fires, or the helper's own output
+        // triggers the autosave that then persists it and the value becomes its own justification.
+        // Extracted so SourcePicker's confirm gate reads the SAME rule; two private copies drift,
+        // and the two consumers disagreeing is how a confirm starts appearing over nothing.
+        const hasAnyMapping = hasMappingWork || smartSend.isMapped;
         if (!hasAnyMapping) return undefined;
         saveTimer.current = setTimeout(() => { saveTimer.current = null; runAutoSave(); }, 750);
         return () => { if (saveTimer.current) { clearTimeout(saveTimer.current); saveTimer.current = null; } };
@@ -339,6 +428,56 @@ const SmartSendScreen = ({ classes }: any) => {
         setSummaryOpen(true);
     };
 
+    // LOAD-BEARING — DO NOT DELETE. `openSummary` saves UNCONDITIONALLY (no `dirty` check), and
+    // `canSend` is true on `hasColumns` alone whenever nothing is unmapped — which includes a
+    // template with zero tokens. So "שלח לכולם" is a SECOND point of no return, and a faster one
+    // than the 750ms debounce: one click writes an empty mapping under the new source and the SP
+    // delete-and-reinserts the token map, destroying the saved mapping. Without this gate the
+    // restore banner would be on screen asserting that mapping still exists at the exact moment a
+    // single click removes it — the screen contradicting itself about the only thing that matters.
+    const requestSummary = () => {
+        if (showRestore && !hasMappingWork) { setReplaceConfirmOpen(true); return; }
+        openSummary();
+    };
+
+    // ── restore the campaign's SAVED mapping ───────────────────────────────────────────────────
+    // Re-runs the mount effect's own pair (setCampaignContext + getMapping) — the exact code path
+    // F5 takes, minus the reload. It reads the SERVER; nothing is replayed from memory, so this
+    // can never resurrect something the server would refuse, and it is structurally incapable of
+    // becoming a send payload.
+    //
+    // setCampaignContext is load-bearing, not tidiness: getMapping.fulfilled does not write
+    // state.dataSourceId, so without it the store keeps the abandoned source's id and
+    // SourcePicker's `incoming` banner pops back up on top of the restored screen.
+    const restoreSaved = async () => {
+        // LOAD-BEARING — DO NOT DELETE. An autosave timer armed moments ago would otherwise fire
+        // AFTER this click and post the NEW source with Mappings=[] — and
+        // CampaignsToDataSources_Set delete-and-reinserts the token map, so it would wipe the very
+        // mapping this button just restored, while the sticky bar painted "✓ נשמר" over it. The
+        // recovery button would destroy the thing it promises to recover. openSummary already
+        // clears the timer for exactly this reason.
+        if (saveInFlight.current || saving) return;
+        if (saveTimer.current) { clearTimeout(saveTimer.current); saveTimer.current = null; }
+        savePending.current = false;
+        setDirty(false);
+        // 'locked' is a latched fact about the campaign, not about this screen's edit state — it
+        // must survive. Anything else is stale the moment the server's mapping is back on screen.
+        setSaveState((s) => (s === 'locked' ? s : 'idle'));
+        setRestoring(true);
+        setRestoreFailed(false);
+        dispatch(setCampaignContext({ campaignId, dataSourceId: parsedDsId }));
+        const res: any = await dispatch(getMapping(campaignId));
+        setRestoring(false);
+        if (res?.payload?.StatusCode !== 200) setRestoreFailed(true);
+    };
+
+    // The sticky bar must not carry a verdict from the previous source across a switch — a green
+    // "כל השינויים נשמרו" over a freshly emptied table is the screen asserting something false.
+    // 'error' and 'locked' are deliberately preserved: see the failedSaveSourceId comment above.
+    useEffect(() => {
+        setSaveState((s) => (s === 'error' || s === 'locked') ? s : 'idle');
+    }, [currentSourceId]);
+
     // item 3: leaving the loaded screen. The only in-screen exit is the back-to-picker link (the
     // 404 branch has nothing to lose; the summary-close redirect runs only after a real send).
     const doExit = () => Redirect({ url: `${sitePrefix}SmartSend${parsedDsId != null ? `?dataSourceId=${parsedDsId}` : ''}`, openNewTab: false });
@@ -359,8 +498,16 @@ const SmartSendScreen = ({ classes }: any) => {
         if (!campaignId || Number.isNaN(campaignId) || campaignId <= 0) {
             return <Typography>{t('DataSources.send.errors.notFound')}</Typography>;
         }
-        if (smartSend.mappingStatus === 'loading' || smartSend.mappingStatus === 'idle') return <LinearProgress />;
-        if (smartSend.mappingStatus === 'failed') {
+        // LOAD-BEARING — DO NOT DELETE THE `!restoreOverlay` GUARDS ON THESE TWO RETURNS.
+        // getMapping.pending sets mappingStatus='loading', so a restore click would otherwise
+        // replace the whole body — including the restore button, its spinner and its own error
+        // line — with a bare progress bar: the fix for "everything vanished" would itself make
+        // everything vanish, and a FAILED restore would dead-end the screen with the working state
+        // unreachable. A failed getMapping writes only mappingStatus/mappingError — tokens, columns
+        // and tokenMap all survive — so the previous body is still renderable underneath.
+        const restoreOverlay = restoring || restoreFailed;
+        if (!restoreOverlay && (smartSend.mappingStatus === 'loading' || smartSend.mappingStatus === 'idle')) return <LinearProgress />;
+        if (!restoreOverlay && smartSend.mappingStatus === 'failed') {
             // §16: distinct UI per code. 404 (foreign/deleted campaign) → back to the list;
             // 927 (feature off) → its own message; everything else → generic retry text.
             if (smartSend.mappingError === 404) {
@@ -403,11 +550,58 @@ const SmartSendScreen = ({ classes }: any) => {
             <Box>
                 <StaleVersionBanner />
                 <MappingMismatchBanner />
-                <Typography variant="body1" style={{ marginBottom: 8 }}>
-                    {smartSend.isMapped
-                        ? t('DataSources.send.mappedTo', { name: smartSend.dataSource?.Name ?? '' })
-                        : t('DataSources.send.notMapped')}
+                {/* WHAT THE SERVER HOLDS — stated from `savedMapping`, never from working state.
+                    This line used to read `isMapped ? mappedTo : notMapped`, and since selectSource
+                    clears isMapped it announced "הקמפיין עדיין לא ממופה למקור נתונים" over a
+                    campaign whose mapping was sitting intact in the database. That single false
+                    sentence is what made a source switch read as "everything vanished".
+                    Three states, each true: drafting elsewhere / showing the saved mapping / no
+                    saved mapping at all. The last renders only once the load has actually
+                    succeeded, so an in-flight or failed read stays silent rather than optimistic.
+                    aria-live so the switch and the restore are both announced, not just painted. */}
+                <Typography variant="body1" style={{ marginBottom: 8 }} aria-live="polite">
+                    {saved && !smartSend.workingIsFromServer
+                        ? t('DataSources.send.source.savedLineDraft', {
+                            name: saved.dataSourceName ?? '', mapped: saved.mappedTokenCount, total: saved.tokenCount })
+                        : saved
+                            ? t('DataSources.send.source.savedLine', {
+                                name: saved.dataSourceName ?? '', mapped: saved.mappedTokenCount, total: saved.tokenCount })
+                            : smartSend.mappingStatus === 'succeeded'
+                                ? t('DataSources.send.source.savedNone')
+                                : null}
                 </Typography>
+                {/* THE RECOVERY. Self-invalidating by construction: workingIsFromServer flips true
+                    on the next successful save or restore, which is precisely the moment the
+                    server's copy of the old mapping stops existing. The banner therefore cannot
+                    outlive what it promises. */}
+                {showRestore && saved && (
+                    <Box style={{ marginBottom: 8 }}>
+                        <InlineBanner
+                            severity="warning"
+                            role="status"
+                            title={t('DataSources.send.source.restoreTitle')}
+                            body={t('DataSources.send.source.restoreBody', { name: saved.dataSourceName ?? '' })}
+                            action={(
+                                <Button
+                                    size="small"
+                                    variant="outlined"
+                                    color="primary"
+                                    disabled={restoring || saving || saveState === 'saving'}
+                                    onClick={restoreSaved}
+                                >
+                                    {restoring
+                                        ? <CircularProgress size={16} />
+                                        : t('DataSources.send.source.restoreAction')}
+                                </Button>
+                            )}
+                        />
+                        {restoreFailed && (
+                            <Typography variant="body2" color="error" style={{ marginTop: 6 }}>
+                                {t('DataSources.send.source.restoreFailed')}
+                            </Typography>
+                        )}
+                    </Box>
+                )}
                 <Typography variant="body2" color="textSecondary" style={{ marginBottom: 16 }}>
                     {t('DataSources.send.tokensFound', { count: smartSend.tokens.length })}
                 </Typography>
@@ -447,7 +641,7 @@ const SmartSendScreen = ({ classes }: any) => {
                             tokens={smartSend.tokens}
                             columns={smartSend.columns}
                             value={smartSend.tokenMap}
-                            onChange={(token, columnId) => { dispatch(setTokenMapping({ token, columnId })); setDirty(true); }}
+                            onChange={(token, columnId) => { dispatch(setTokenMapping({ token, columnId })); markEdited(); }}
                             warnSystemFieldOverride
                         />
                         {/* Gap + Sort are ONE control now; `setBusinessColumn('gapSort')` writes the
@@ -461,7 +655,7 @@ const SmartSendScreen = ({ classes }: any) => {
                             gapColumnId={smartSend.gapColumnId}
                             storedGapColumnId={smartSend.storedGapColumnId}
                             storedSortColumnId={smartSend.storedSortColumnId}
-                            onChange={(role, columnId) => { dispatch(setBusinessColumn({ role, columnId })); setDirty(true); }}
+                            onChange={(role, columnId) => { dispatch(setBusinessColumn({ role, columnId })); markEdited(); }}
                             supervisorEnabled
                         />
 
@@ -478,7 +672,9 @@ const SmartSendScreen = ({ classes }: any) => {
                             <Button variant="outlined" color="primary" onClick={() => setTestOpen(true)}>
                                 {t('DataSources.send.actions.testSend')}
                             </Button>
-                            <Button variant="contained" color="primary" disabled={!canSend || saving} onClick={openSummary}>
+                            {/* requestSummary, NOT openSummary — see the guard's comment: this
+                                button is a second and faster point of no return than the debounce. */}
+                            <Button variant="contained" color="primary" disabled={!canSend || saving} onClick={requestSummary}>
                                 {t('DataSources.send.actions.sendToAll')}
                             </Button>
                         </Box>
@@ -593,9 +789,22 @@ const SmartSendScreen = ({ classes }: any) => {
                         {saveState === 'error' && (
                             <>
                                 <Typography variant="body2" style={{ color: '#8a1c1c', fontWeight: 600 }}>{t('DataSources.send.autosave.saveFailed')}</Typography>
-                                <Button variant="outlined" color="primary" size="small" startIcon={<Refresh />} onClick={() => runAutoSave()}>
-                                    {t('DataSources.send.errors.retryAction')}
-                                </Button>
+                                {/* Retry ONLY for the source the failed save belonged to. runAutoSave
+                                    rebuilds the request from FRESH state, so after a source switch
+                                    this button would post the new source's snapshot while presenting
+                                    itself as retrying the old one. The failure is still reported —
+                                    it must be, because the same switch cleared `dirty` and disarmed
+                                    beforeunload, leaving this bar as the only evidence that those
+                                    mappings were never persisted. */}
+                                {failedSaveSourceId === currentSourceId ? (
+                                    <Button variant="outlined" color="primary" size="small" startIcon={<Refresh />} onClick={() => runAutoSave()}>
+                                        {t('DataSources.send.errors.retryAction')}
+                                    </Button>
+                                ) : (
+                                    <Typography variant="body2" style={{ color: '#8a1c1c' }}>
+                                        {t('DataSources.send.source.saveFailedOtherSource')}
+                                    </Typography>
+                                )}
                             </>
                         )}
                     </Box>
@@ -654,6 +863,37 @@ const SmartSendScreen = ({ classes }: any) => {
                         {t('DataSources.send.exit.exitWithoutSaving')}
                     </Button>
                     <Button onClick={() => setExitOpen(false)} disabled={saving}>{t('DataSources.send.cancel')}</Button>
+                </Box>
+            </Dialog>
+
+            {/* The send-replaces-the-saved-mapping confirm. Reached only from requestSummary, i.e.
+                only when the restore banner is on screen (a saved mapping exists and the table is
+                NOT showing it) AND nothing has been mapped under the new source — the one shape in
+                which pressing "שלח לכולם" silently trades a real mapping for an empty one. Same
+                skeleton as the exit dialog above, including the mandatory `dir`: MUI v4 portals to
+                document.body, outside App's <div dir>, and <html dir> is stuck at "ltr". */}
+            <Dialog open={replaceConfirmOpen} onClose={() => setReplaceConfirmOpen(false)} maxWidth="xs" fullWidth dir={isRTL ? 'rtl' : 'ltr'}>
+                <Box style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 24px', borderBottom: '1px solid #e0e0e0' }}>
+                    <Typography variant="h6">{t('DataSources.send.source.sendReplaceTitle')}</Typography>
+                </Box>
+                <Box style={{ padding: 24 }}>
+                    <Typography variant="body2" color="textSecondary">
+                        {t('DataSources.send.source.sendReplaceBody', {
+                            to: smartSend.dataSource?.Name ?? '',
+                            from: saved?.dataSourceName ?? '',
+                            mapped: saved?.mappedTokenCount ?? 0,
+                        })}
+                    </Typography>
+                </Box>
+                <Box style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '16px 24px', borderTop: '1px solid #e0e0e0' }}>
+                    {/* No autoFocus: the destructive button is a deliberate second click, the same
+                        rule the source-switch confirm follows. */}
+                    <Button variant="contained" color="primary" disabled={saving}
+                        onClick={() => { setReplaceConfirmOpen(false); openSummary(); }}>
+                        {t('DataSources.send.actions.sendToAll')}
+                    </Button>
+                    <Box style={{ flex: 1 }} />
+                    <Button onClick={() => setReplaceConfirmOpen(false)} disabled={saving}>{t('DataSources.send.cancel')}</Button>
                 </Box>
             </Dialog>
 

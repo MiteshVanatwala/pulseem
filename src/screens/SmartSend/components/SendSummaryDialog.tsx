@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Dialog, Box, Typography, Button, Checkbox, FormControlLabel, CircularProgress, IconButton } from '@material-ui/core';
+import { Dialog, Box, Typography, Button, Checkbox, FormControlLabel, CircularProgress, IconButton, Fade } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { Close } from '@material-ui/icons';
+import { Close, Check, Warning, NewReleases } from '@material-ui/icons';
 import { useTranslation } from 'react-i18next';
 import { sendSmart, setBusinessColumn } from '../../../redux/reducers/smartSendSlice';
 import { eSendChannel } from '../../../Models/DataSources/SmartSend';
@@ -30,6 +30,21 @@ const RESULTS: { [code: number]: { sev: 'error' | 'warning'; key: string } } = {
     422: { sev: 'error', key: 'bodyEmpty' },
 };
 
+// RESULT-PHASE TONE. The ramps are InlineBanner.tsx:11-13 verbatim, so a result card and a banner
+// elsewhere in this flow stay one family — but `success` exists only here. InlineBanner has no
+// success severity, which is why the single most consequential positive outcome in the feature was
+// dressed as severity="info" (blue #1a56db) until now. It is NOT added to InlineBanner: that file
+// has 9 importers / 14 render sites across SmartSend AND SendSearch, plus a hand-copied colour twin
+// at SmartSendScreen.tsx:566-567 that no compiler tracks. Same reasoning as the wrapper Box below.
+// Success is a SOLID disc; warning/error are tinted with a ring. Five of the seven mapped codes are
+// states to resolve (550 pending approval, 551 under review, 423/451/402 recoverable), and a solid
+// red 64px disc escalates "queued for approval" into "catastrophe".
+const TONE: { [k: string]: { bg: string; ring: string; glyph: string; Icon: any } } = {
+    success: { bg: '#2e7d32', ring: 'none', glyph: '#ffffff', Icon: Check },
+    warning: { bg: '#fff8e1', ring: '2px solid #ffe082', glyph: '#b7791f', Icon: NewReleases },
+    error: { bg: '#fdecea', ring: '2px solid #f5c6cb', glyph: '#c0392b', Icon: Warning },
+};
+
 const useStyles = makeStyles((theme) => ({
     // head/foot fixed, body takes the rest: the dialog now has an explicit 90vh
     // height (see the Dialog below) so the preview can fill the column instead of
@@ -53,12 +68,54 @@ const useStyles = makeStyles((theme) => ({
     // #2e7d32 is the established success green used elsewhere in this feature.
     big: { fontSize: 22, fontWeight: 700, color: '#2e7d32' },
     muted: { color: theme.palette.text.secondary },
+
+    // ---- RESULT PHASE ----------------------------------------------------------------
+    // NO physical direction in any rule below (no left/right/marginLeft/textAlign:'left').
+    // makeStyles auto-flips under RTL (makeStyles.js sets flip: theme.direction === 'rtl', which
+    // jss-rtl reads), and it would flip `direction: ltr` into `direction: rtl` — silently undoing
+    // the isolation on Latin runs. Every LTR-forced run is therefore an INLINE style, which never
+    // reaches JSS and is never mirrored. Same idiom as SmartSendPreview.tsx:65.
+    // NO `max-width` transition on the Paper — deliberately reverted during adversarial review.
+    // Easing the lg→sm shrink was pleasant, but it also made a PRE-EXISTING stale render visible.
+    // The dialog is permanently mounted (SmartSendScreen.tsx:617) and `if (!open) return null`
+    // does not reset state, so re-opening after a recoverable failure (402/423/451) commits one
+    // frame still holding phase==='result' before the passive reset effect runs. Un-eased, that is
+    // an imperceptible single-frame class swap. Eased, the operator watches the summary dialog
+    // visibly grow 600→1367px on every retry — and MUI's own reflow(node) in the container Fade
+    // guarantees the two style recalcs do not coalesce. An instant snap is what MUI does natively
+    // and is the correct trade here.
+    // outline:'none' because this element is focused programmatically on entering the result phase
+    // (see the effect below) — the heading text is the announcement, a focus ring around the whole
+    // card is not. Focus has to move: the foot goes from a Fragment to a single Button, so React
+    // unmounts the Send button the user just pressed and focus falls to <body>.
+    resultWrap: {
+        display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center',
+        padding: theme.spacing(4, 3, 2), outline: 'none',
+    },
+    resultDisc: {
+        width: 64, height: 64, borderRadius: '50%', flexShrink: 0,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+    },
+    // 22/700 and 17 are the house Data Sources dialog scale (dialogStyles.ts:11-13). Written out
+    // rather than inherited: this dialog builds raw Boxes and never mounts useDsDialogStyles, so
+    // that scale does not cascade here. Text stays neutral in all three tones — #b7791f as a 22px
+    // headline is 3.64:1 on white and fails AA, and under index.css:11-15 (`body{zoom:0.95}`) it
+    // paints at 20.9px, where the AA-large 3:1 margin is already thin.
+    resultTitle: { fontSize: 22, fontWeight: 700, lineHeight: 1.3, color: 'rgba(0, 0, 0, 0.87)', marginTop: theme.spacing(2) },
+    resultBody: { fontSize: 17, lineHeight: 1.55, color: 'rgba(0, 0, 0, 0.6)', marginTop: theme.spacing(1), maxWidth: 440 },
+    resultRule: {
+        width: '100%', maxWidth: 440, marginTop: theme.spacing(2),
+        paddingTop: theme.spacing(2), borderTop: '1px solid #e0e0e0',
+    },
+    resultMeta: { fontSize: 15, color: 'rgba(0, 0, 0, 0.6)' },
+    resultCode: { fontSize: 13, color: 'rgba(0, 0, 0, 0.6)' },
+    resultLinks: { fontSize: 15, color: 'rgba(0, 0, 0, 0.6)', wordBreak: 'break-all', maxHeight: 160, overflowY: 'auto' },
 }));
 
 const SendSummaryDialog: React.FC<{ open: boolean; campaignId: number; onClose: () => void; onSent?: () => void; beforeSend?: () => Promise<boolean> }> =
     ({ open, campaignId, onClose, onSent, beforeSend }) => {
         const dispatch = useDispatch();
-        const { t } = useTranslation();
+        const { t, i18n } = useTranslation();
         const classes = useStyles();
         // Dialogs portal outside App.js:1018's <div dir=...>, and <html dir> is stuck at "ltr"
         // (App.js:727-730 runs once at mount, when i18n.language is still the 'en' default set at
@@ -130,6 +187,21 @@ const SendSummaryDialog: React.FC<{ open: boolean; campaignId: number; onClose: 
             // eslint-disable-next-line react-hooks/exhaustive-deps
         }, [open]);
 
+        // FOCUS ON RESULT. Entering 'result' swaps the foot from a Fragment (Send + Cancel) to a
+        // single Button: React sees different element types at that position, unmounts the subtree,
+        // and the Send button the operator just pressed disappears WHILE FOCUSED — the browser then
+        // drops focus to <body>. MUI's TrapFocus notices and pushes focus back to the dialog
+        // CONTAINER div (which has outline:0, so nothing is visible) via a 50ms interval, leaving a
+        // window where focus is genuinely outside the dialog and the next Tab lands on the header ✕
+        // rather than on Close. Focusing the card in the same commit as the phase change wins that
+        // race — TrapFocus only intervenes when focus is outside the root, and this target is inside.
+        // The card, not the Close button: on a failure the button reads "סגור", which tells a screen
+        // reader nothing about what happened, while the card leads with the outcome heading.
+        const resultRef = useRef<HTMLDivElement | null>(null);
+        useEffect(() => {
+            if (open && phase === 'result' && resultRef.current) resultRef.current.focus();
+        }, [open, phase]);
+
         if (!open) return null;
         const isCombined = typeof sum.Groups === 'string' && sum.Groups.split(',').length > 1;
 
@@ -157,8 +229,14 @@ const SendSummaryDialog: React.FC<{ open: boolean; campaignId: number; onClose: 
             </Box>
         );
 
-        const renderResult = () => {
-            const code = result ? result.StatusCode : 0;
+        // The result phase is a CARD, not a banner. InlineBanner is by construction a SUBORDINATE
+        // surface: it carries marginBottom (InlineBanner.tsx:19) and a leading icon rail, i.e. the
+        // grammar of "read this, then act on what follows". In this phase nothing follows — the whole
+        // summary subtree is unmounted — so a tinted strip pinned to the top of an empty body is what
+        // made the screen read as broken. InlineBanner remains correct for the summary-phase banners
+        // below, which do sit above content the operator must still act on.
+        const buildResult = () => {
+            const code = result && typeof result.StatusCode === 'number' ? result.StatusCode : 0;
             if (code === 200 || code === 201) {
                 // SUPERVISOR-RECEIPT-UI: the campaign sent — that is what the status code means, and
                 // it is deliberately NOT re-coded when the supervisor enqueue fails, because a
@@ -170,32 +248,206 @@ const SendSummaryDialog: React.FC<{ open: boolean; campaignId: number; onClose: 
                 const receipt = result && result.Data && typeof result.Data.SupervisorRequestID === 'number'
                     ? result.Data.SupervisorRequestID as number
                     : null;
-                if (sendToSupervisor && receipt !== null && receipt <= 0) {
-                    return <InlineBanner severity="warning" role="alert" size="lg"
-                        title={t('DataSources.send.result.supervisorNotQueuedTitle')}
-                        body={t('DataSources.send.result.supervisorNotQueuedBody')} />;
-                }
-                const extra = !sendToSupervisor ? ''
-                    : receipt === null ? ' ' + t('DataSources.send.result.supervisorUnknown')
-                        : ' ' + t('DataSources.send.result.supervisorQueued', { id: receipt });
-                return <InlineBanner severity="info" size="lg" title={t('DataSources.send.result.success')} body={t('DataSources.send.result.successDesc') + extra} />;
+                // A failed supervisor enqueue no longer REPLACES the success message. The campaign
+                // did go out; suppressing that on the one path where it matters most left the
+                // operator unable to tell whether recipients had been mailed at all. Same card,
+                // warning tone, and the reason stated in the body.
+                const notQueued = sendToSupervisor && receipt !== null && receipt <= 0;
+                return {
+                    tone: notQueued ? 'warning' : 'success',
+                    role: notQueued ? 'alert' : 'status',
+                    headline: notQueued
+                        ? t('DataSources.send.result.supervisorNotQueuedTitle')
+                        : t('DataSources.send.result.success'),
+                    detail: notQueued
+                        ? t('DataSources.send.result.supervisorNotQueuedBody')
+                        : t('DataSources.send.result.successDesc'),
+                    // Its own row under a rule, no longer string-concatenated onto the description:
+                    // this is a transactional identifier the operator may have to quote. Rendered
+                    // only when the report was actually requested — the operator who did not ask for
+                    // one is owed silence, not a line explaining its absence.
+                    meta: notQueued || !sendToSupervisor ? null
+                        : receipt === null
+                            ? t('DataSources.send.result.supervisorUnknown')
+                            : t('DataSources.send.result.supervisorQueued', { id: receipt }),
+                    links: null as string[] | null,
+                    code: null as string | null,
+                };
             }
-            const meta = RESULTS[code];
-            const key = meta ? meta.key : 'genericError';
-            const body = code === 423 && Array.isArray(result.Data)
-                ? result.Data.join('  ·  ')
-                : t('DataSources.send.result.' + key);
-            return <InlineBanner severity={meta ? meta.sev : 'error'} role="alert" size="lg" title={t('DataSources.send.result.' + key)} body={body} />;
+            const known = RESULTS[code];
+            const key = known ? known.key : 'genericError';
+            // TITLE AND BODY USED TO BE THE SAME STRING — both arms resolved to
+            // t('…result.' + key), so InlineBanner printed one sentence twice: once bold and
+            // coloured, once grey directly beneath it. That is what the screenshot shows under
+            // "שליחה חסומה", and it reads as a rendering fault. The headline is now the only
+            // required copy; a body appears when — and only when — a matching `…Desc` key exists.
+            // No new translation keys are needed to ship this, and adding one later is copy-only.
+            const descKey = 'DataSources.send.result.' + key + 'Desc';
+            return {
+                tone: known ? known.sev : 'error',
+                // 550/551 are NOT failures: the campaign is queued and goes out on approval. Every
+                // non-2xx code used to get role="alert" — assertive interruption — which framed a
+                // normal approval hold as a malfunction. A warning gets the polite region.
+                role: known && known.sev === 'warning' ? 'status' : 'alert',
+                headline: t('DataSources.send.result.' + key),
+                detail: i18n.exists(descKey) ? t(descKey) : null,
+                meta: null as string | null,
+                links: code === 423 && result && Array.isArray(result.Data) && result.Data.length
+                    ? (result.Data as string[]) : null,
+                // Quotable diagnostic. Message rides on every payload and was never surfaced.
+                // The `code > 0` guard alone would switch this row OFF on the one class of failure
+                // where the outcome is genuinely unknown: on a REJECTED thunk there is no
+                // StatusCode at all. Two sub-cases, and they differ — verified, not assumed:
+                //  · the server DID answer non-2xx → the response interceptor rejects with
+                //    error.response.data (PulseemReactAPI.ts:80), whose field is `Message` not
+                //    `message`, so smartSendSlice.ts:147 stores { error: undefined } — a TRUTHY
+                //    object, which is also why doSend's `{ StatusCode: 500 }` fallback never fires.
+                //    Nothing to show; the headline carries it alone.
+                //  · no response at all (network drop / timeout) → PulseemReactAPI.ts:77 dereferences
+                //    error.response unguarded and throws a TypeError, whose .message IS a string.
+                // The fallback below is what surfaces that string, and the transport path is exactly
+                // where it is the only thing the operator can hand to support.
+                // STILL OPEN (B4, deferred by the owner): the HEADLINE on this path is
+                // "השליחה נכשלה" — asserted as fact when the send may well have completed and only
+                // the response was lost. Correcting that needs a new key ("לא ידוע אם השליחה בוצעה").
+                code: code > 0
+                    ? code + ' · ' + ((result && result.Message) || key)
+                    : (result && typeof result.error === 'string' && result.error) || null,
+            };
+        };
+        const rv = phase === 'result' ? buildResult() : null;
+        const tone = TONE[(rv && rv.tone) || 'success'];
+
+        const renderResult = () => {
+            if (!rv) return null;
+            const Icon = tone.Icon;
+            return (
+                <Fade in timeout={200}>
+                    {/* a plain div, not Box: MUI v4's BoxProps does not declare `ref`, and this node
+                        needs one for the focus move above (it is also the ref Fade forks onto). */}
+                    {/* aria-labelledby is required, not decorative: both role="status" and
+                        role="alert" are "name from author" — neither derives a name from its
+                        contents — so without it the element that receives focus has an EMPTY
+                        accessible name and the outcome is not announced on the focus move. */}
+                    <div className={classes.resultWrap} role={rv.role} tabIndex={-1} ref={resultRef}
+                        aria-labelledby="send-summary-outcome">
+                        <Box className={classes.resultDisc} style={{ background: tone.bg, border: tone.ring }}>
+                            <Icon style={{ fontSize: 34, color: tone.glyph }} aria-hidden="true" />
+                        </Box>
+                        {/* component="h2": the dialog header h6 is this surface's heading level 1,
+                            and until now the result had no heading at all to navigate to. */}
+                        <Typography component="h2" id="send-summary-outcome" className={classes.resultTitle}>{rv.headline}</Typography>
+                        {rv.detail && <Typography component="p" className={classes.resultBody}>{rv.detail}</Typography>}
+                        {rv.links && (
+                            // Latin URLs. direction/textAlign are INLINE on purpose — the same rule
+                            // inside makeStyles would be flipped to rtl by jss-rtl and undo the
+                            // isolation. 'start' rather than 'left' so it is correct in both modes,
+                            // and never centred: a wrapped URL centred line-by-line is unreadable.
+                            <Box className={`${classes.resultRule} ${classes.resultLinks}`}
+                                style={{ direction: 'ltr', textAlign: 'start' }}>
+                                {rv.links.map((u, i) => <div key={i}>{u}</div>)}
+                            </Box>
+                        )}
+                        {rv.meta && (
+                            <Box className={classes.resultRule}>
+                                <Typography className={classes.resultMeta}>{rv.meta}</Typography>
+                            </Box>
+                        )}
+                        {rv.code && (
+                            <Box className={classes.resultRule}>
+                                <Typography className={classes.resultCode}
+                                    style={{ direction: 'ltr', display: 'inline-block' }}>{rv.code}</Typography>
+                            </Box>
+                        )}
+                    </div>
+                </Fade>
+            );
         };
 
+        const sending = phase === 'sending';
+        const isResult = phase === 'result';
+
         return (
-            <Dialog open={open} onClose={onClose} maxWidth="lg" fullWidth dir={isRTL ? 'rtl' : 'ltr'}
-                PaperProps={{ style: { height: '90vh' } }}>
+            <Dialog
+                open={open}
+                // B1 — DISMISSAL GUARD, copied from the sibling TestSendDialog.tsx:381-385 which
+                // already guards the identical hazard. Without it, ESC or a backdrop click during
+                // 'sending' calls onClose while the send is still in flight: this component then
+                // returns null at the top of render, doSend nevertheless reaches setPhase('result')
+                // and onSent, and SmartSendScreen.tsx:621-624 has ALREADY run its close handler with
+                // `sent` still false — so there is no banner, no redirect and no toast. A real
+                // production campaign goes out and the operator is shown nothing at all.
+                // The RESULT phase is deliberately NOT locked: dismissing a receipt is fine, and
+                // every exit still routes through onClose so the post-send redirect fires.
+                // SCOPE OF THE LOCK — ESC AND BACKDROP ONLY. The header ✕ stays live (see below).
+                // Locking all three, as TestSendDialog does, is not safe here: `sending` is cleared
+                // ONLY by doSend's own continuation, and that continuation can be delayed for a very
+                // long time or never arrive. PulseemReactAPI.ts:48 refreshes the token with a BARE
+                // `axios.get` — the default instance, no timeout; the `timeout: 300000` at :32
+                // belongs to PulseemReactInstance and does not apply — and it is awaited at :65
+                // inside the REQUEST interceptor, i.e. before the adapter that would enforce a
+                // timeout even runs. If RefreshToken.ashx stalls, the PUT is never issued and no
+                // timer is ever armed. Even with nothing wrong, a slow send holds 'sending' for up
+                // to the full 5 minutes. With all three exits gone the operator's only way out of a
+                // full-screen modal is F5 — a worse failure than the one this guard fixes.
+                onClose={() => { if (!sending) onClose(); }}
+                disableEscapeKeyDown={sending}
+                disableBackdropClick={sending}
+                // The dialog had no accessible name at all — role="dialog" announced as just
+                // "dialog". It matters more now that focus is moved deliberately on the result.
+                aria-labelledby="send-summary-title"
+                // GEOMETRY IS PHASE-DEPENDENT, on ONE Dialog element — never two conditionally
+                // rendered ones, which would be a real unmount: Fade replays, TrapFocus restores and
+                // re-acquires, and ModalManager tears down and re-applies the body scroll lock.
+                // `maxWidth` selects a pre-generated static class (Dialog.js:113-151), so this swaps
+                // a className on the same Paper. lg resolves to 1367 here, not MUI's stock 1280
+                // (theme.js:36); sm is 600.
+                // The switch happens ONLY on the edge into 'result'. 'sending' keeps the summary
+                // geometry because doSend bounces back to 'summary' when beforeSend fails, which
+                // would otherwise shrink then re-grow the dialog with no state change to explain it.
+                maxWidth={isResult ? 'sm' : 'lg'}
+                fullWidth
+                dir={isRTL ? 'rtl' : 'ltr'}
+                PaperProps={{
+                    // 90vh is what lets the summary's preview iframe fill its column. In the result
+                    // phase the body is a single card, so height comes from content — a 1367x727 box
+                    // holding one 74px banner is the entire reported bug.
+                    style: isResult
+                        ? { height: 'auto', maxHeight: 'calc(100% - 64px)' }
+                        : { height: '90vh' },
+                }}>
                 <Box className={classes.head}>
-                    <Typography variant="h6">{t('DataSources.send.summary.title')}</Typography>
-                    <IconButton size="small" onClick={onClose} aria-label={t('DataSources.send.close')}><Close /></IconButton>
+                    <Typography variant="h6" id="send-summary-title">{t('DataSources.send.summary.title')}</Typography>
+                    {/* size="small" is left exactly as it was. An earlier draft of this change added
+                        style={{ padding: 7 }} to enlarge the hit target, believing MUI renders 24x24
+                        here. That premise was wrong. SvgIcon.js:38 hard-sets fontSize: pxToRem(24)
+                        on .root, and :103 adds a fontSize class ONLY when the prop is neither
+                        'default' nor 'medium' — so <Close /> is 24px and IconButton's sizeSmall
+                        fontSize: pxToRem(18) (IconButton.js:109-111) never reaches it. The real
+                        target is 24 + 2*3 = 30x30 CSS = 28.5 painted under index.css:11-15, ALREADY
+                        clear of the 24x24 minimum. padding: 7 would have made it 38x38, and because
+                        `head` is alignItems:'center' with no height, that grew the header row ~6px
+                        in ALL THREE phases — including the summary phase this change promised not
+                        to touch. Reverted.
+                        DELIBERATELY NOT disabled while sending — this is the escape hatch, and the
+                        one exit that must never be taken away. ESC and a backdrop click are slips;
+                        pressing ✕ is a decision. Guarding the two accidental exits removes the
+                        reported hazard (a campaign going out with the operator shown nothing),
+                        while leaving this one guarantees the modal can always be dismissed even if
+                        `sending` never clears — see the timeout analysis on the Dialog above. */}
+                    <IconButton size="small" onClick={onClose}
+                        aria-label={t('DataSources.send.close')}><Close /></IconButton>
                 </Box>
-                <Box className={classes.body}>
+                {/* padding only. `flex:'0 0 auto'` was here and was WRONG: it overrode the class's
+                    `flex:'1 1 auto'` (:body), so the body could no longer shrink and its own
+                    overflowY:auto never engaged. head and foot are already 0 0 auto, so on a short
+                    viewport with tall content — a 423 card carrying a link list — the whole PAPER
+                    scrolled instead, and the ✕ and the Close button, the only two dismiss
+                    affordances, scrolled out of view on a card that looked complete. Leaving the
+                    class's flex alone keeps head/foot pinned and scrolls the body, as in every
+                    other phase. With height:'auto' there is nothing to grow into, so the body
+                    still sizes to its content and no stray scrollbar appears. */}
+                <Box className={classes.body} style={isResult ? { padding: 0 } : undefined}>
                     {phase === 'result' ? renderResult() : !summaryUsable ? (
                         // SUPERVISOR-SUMMARY-GUARD render arm. An error banner alone is not enough —
                         // the Send button below is also disabled, because showing a plausible-looking
@@ -303,9 +555,31 @@ const SendSummaryDialog: React.FC<{ open: boolean; campaignId: number; onClose: 
                         </>
                     )}
                 </Box>
-                <Box className={classes.foot}>
-                    {phase === 'result' ? (
-                        <Button variant="contained" color="primary" onClick={onClose}>{t('DataSources.send.close')}</Button>
+                <Box className={classes.foot} style={isResult ? { justifyContent: 'flex-end' } : undefined}>
+                    {isResult ? (
+                        // `flex-end` is logical, so it lands on the physically-left edge under RTL —
+                        // where a lone dismissive action belongs — with nothing for jss-rtl to flip.
+                        // outlined, not contained-primary: palette.primary.main is #FF1744
+                        // (theme.js:43), the exact red this file already rejected as "reads as an
+                        // error" on a healthy outcome (see `big` above), and white on it is 3.85:1 —
+                        // under AA for a 15px label. Green outline on success (#2e7d32 on white =
+                        // 5.13:1); neutral outline otherwise, so the disc stays the only colour.
+                        // Never variant="text": a lone text button in an empty footer is the other
+                        // half of what made this screen look unfinished.
+                        // No autoFocus — the effect above focuses the card so a screen reader leads
+                        // with the outcome, not with the word "סגור". Two focus owners would race.
+                        <Button variant="outlined" onClick={onClose}
+                            // borderColor is set on BOTH arms. MUI's stock outlined border is
+                            // rgba(0,0,0,0.23) — #C4C4C4 over white, 1.74:1, and WCAG 1.4.11 wants
+                            // 3:1 for the boundary of an active control. It is the only visual
+                            // affordance this button has, so leaving the default would have traded
+                            // the label's 3.85:1 for a boundary WORSE than the contained button it
+                            // replaced. rgba(0,0,0,0.5) is #808080 = 3.95:1; #2e7d32 is 5.13:1.
+                            style={rv && rv.tone === 'success'
+                                ? { color: '#2e7d32', borderColor: '#2e7d32', fontSize: 15, minWidth: 120 }
+                                : { borderColor: 'rgba(0, 0, 0, 0.5)', fontSize: 15, minWidth: 120 }}>
+                            {t('DataSources.send.close')}
+                        </Button>
                     ) : (
                         <>
                             <Button variant="contained" color="primary" disabled={phase === 'sending' || !summaryUsable} onClick={doSend}>

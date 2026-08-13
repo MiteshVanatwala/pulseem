@@ -37,7 +37,9 @@ const useStyles = makeStyles((theme) => ({
     // field to own its own focus ring and overflow, which in MUI v4 means re-implementing
     // OutlinedInput — a lot of surface for a cosmetic gain. Above keeps the stock TextField
     // untouched, wraps naturally at any width, and reads correctly in RTL.
-    chips: { display: 'flex', gap: theme.spacing(0.75), flexWrap: 'wrap', marginTop: theme.spacing(1) },
+    // marginBottom, not a bigger marginTop on sampleRow: the gap belongs to the chips, so it only
+    // exists when there ARE chips. Otherwise the sample row drifts down on an empty dialog.
+    chips: { display: 'flex', gap: theme.spacing(0.75), flexWrap: 'wrap', marginTop: theme.spacing(1), marginBottom: theme.spacing(2) },
     // Seed is metadata, not an input: narrow, monospace, disabled. See the seed block below.
     seedBox: { width: 132 },
 }));

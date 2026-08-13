@@ -5,9 +5,9 @@
   "searchPlaceholder": "Szukaj według nazwy lub opisu",
   "clearSearch": "Wyczyść",
   "backToList": "Powrót do listy źródeł",
-  "goToSend": "Przejdź do strony wysyłki",
+  "goToSend": "Wybierz kampanię do wysyłki z tego źródła",
   "send": {
-    "title": "Inteligentna wysyłka",
+    "title": "Wysyłka ze źródła",
     "campaignLabel": "Kampania: {{name}}",
     "notMapped": "Ta kampania nie jest jeszcze zmapowana do źródła danych",
     "mappedTo": "Zmapowano do źródła: {{name}}",
@@ -37,10 +37,24 @@
       "loadError": "Nie udało się wczytać listy źródeł",
       "truncated": "Wyświetlono {{shown}} z {{total}} źródeł",
       "incomingTitle": "Zażądano innego źródła",
-      "incomingBody": "Przyszedłeś ze źródła „{{name}}”, ale ta kampania jest zmapowana do innego źródła. Przełączenie wyczyści bieżące mapowanie pól.",
-      "incomingSwitch": "Przełącz i wyczyść mapowanie",
-      "incomingConfirmTitle": "Wyczyścić bieżące mapowanie pól?",
-      "incomingConfirmBody": "Przełączenie na „{{name}}” usunie wszystkie mapowania pól tej kampanii. Nie można tego cofnąć z tego ekranu."
+      "incomingBody": "Przyszedłeś ze źródła „{{name}}”, ale ta kampania jest zmapowana do innego źródła. Przełączenie wyczyści tabelę mapowania na ekranie.",
+      "incomingSwitch": "Zmień źródło",
+      "incomingConfirmTitle": "Zmienić źródło danych?",
+      "incomingConfirmBody": "Przełączenie na „{{name}}” wyczyści tabelę mapowania na ekranie. Zapisane mapowanie nie zostaje usunięte.",
+      "savedLine": "Zapisane mapowanie: „{{name}}” · {{mapped}} z {{total}} pól zmapowanych",
+      "savedLineDraft": "Zapisane na serwerze: „{{name}}” · {{mapped}} z {{total}} pól · pracujesz teraz nad nowym, niezapisanym mapowaniem",
+      "savedNone": "Ta kampania nie ma jeszcze zapisanego mapowania",
+      "restoreTitle": "Zapisane mapowanie nadal istnieje",
+      "restoreBody": "Zmieniono źródło, więc tabela mapowania została wyczyszczona. Mapowanie zapisane ze źródłem „{{name}}” nie zostało usunięte — możesz do niego wrócić, dopóki nie zmapujesz pola w nowym źródle.",
+      "restoreAction": "Wróć do zapisanego mapowania",
+      "restoreFailed": "Wczytanie zapisanego mapowania nie powiodło się. Nie zostało usunięte — możesz spróbować ponownie.",
+      "switchConfirmTitle": "Zmienić źródło danych?",
+      "switchConfirmBodySaved": "Przełączenie na „{{to}}” wyczyści tabelę mapowania na ekranie. Zapisane mapowanie — „{{from}}”, {{mapped}} z {{total}} pól — zostanie zastąpione dopiero wtedy, gdy zmapujesz pole w nowym źródle. Do tego czasu możesz do niego wrócić jednym kliknięciem.",
+      "switchConfirmBodyUnsaved": "Masz niezapisane zmiany. Przełączenie na „{{to}}” spowoduje ich odrzucenie i nie będzie można ich odzyskać.",
+      "switchConfirmAction": "Zmień źródło",
+      "saveFailedOtherSource": "Ostatni zapis w poprzednim źródle nie powiódł się i tamto mapowanie nie zostało zapisane.",
+      "sendReplaceTitle": "Wysłać z nowym źródłem?",
+      "sendReplaceBody": "Nie zmapowano jeszcze żadnego pola w źródle „{{to}}”. Wysłanie teraz zapisze puste mapowanie i trwale zastąpi zapisane mapowanie „{{from}}” ({{mapped}} pól)."
     },
     "mapping": {
       "title": "Mapowanie pól",
@@ -99,7 +113,7 @@
     },
     "testSendWarn": "Wysyłka testowa duplikuje kampanię bez mapowania — pola źródła pojawią się w surowej postaci (##pole##) w e-mailu testowym.",
     "saveFirst": "Zapisz mapowanie, aby przejść do podglądu i wysyłki",
-    "smartSendAction": "Inteligentna wysyłka (źródło danych)",
+    "smartSendAction": "Wysyłka ze źródła",
     "close": "Zamknij",
     "cancel": "Anuluj",
     "backToCampaigns": "Powrót do kampanii",
@@ -188,7 +202,7 @@
       "retryAction": "Spróbuj ponownie"
     },
     "picker": {
-      "title": "Inteligentna wysyłka",
+      "title": "Wysyłka ze źródła",
       "step1": "Krok 1",
       "step2": "Krok 2 — Wybór kampanii",
       "fromSource": "Wysyłka ze źródła: {{name}}",
@@ -216,7 +230,7 @@
       "selectAria": "Wybierz kampanię do wysyłki"
     },
     "manage": {
-      "title": "Kampanie inteligentnej wysyłki",
+      "title": "Kampanie wysyłki ze źródła",
       "edit": "Edytuj",
       "delete": "Usuń",
       "deleteConfirmTitle": "Usunąć mapowanie?",
@@ -232,11 +246,11 @@
         "updated": "Ostatnia aktualizacja",
         "actions": "Akcje"
       },
-      "empty": "Brak kampanii inteligentnej wysyłki",
+      "empty": "Brak kampanii wysyłki ze źródła",
       "outdatedOnly": "Pokaż tylko nieaktualne",
       "staleChip": "V{{mapped}} · V{{latest}}",
       "tabSources": "Źródła",
-      "tabSmartSend": "Inteligentna wysyłka",
+      "tabSmartSend": "Kampanie wysyłki ze źródła",
       "tabSendSearch": "Wyszukiwanie agentów i przełożonych"
     }
   },

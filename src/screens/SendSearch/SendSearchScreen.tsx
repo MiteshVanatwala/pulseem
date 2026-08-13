@@ -1,9 +1,11 @@
 // ═══════════════════════════════════════════════════════════════════════════════════════════
-// SendSearchScreen (חיפוש שליחות) — the STANDALONE route.
+// SendSearchScreen (דוח מקורות) — the STANDALONE route.
 //
-// The screen body now lives in `SendSearchPanel.tsx`, because the same view also renders as the
-// third tab of the DataSources screen (מקורות | שליחה חכמה | חיפוש סוכנים ומפקחים). This file is
-// what the panel needs and the tab does not: the page shell and the feature gate.
+// The screen body now lives in `SendSearchPanel.tsx`, because the same view also renders as the last
+// tab of the DataSources screen (מקורות | קמפיינים לשליחה ממקור | חיפוש סוכנים ומפקחים — a
+// permission-gated strip, so 1–3 tabs wide). The tab is labelled "חיפוש סוכנים ומפקחים" and this
+// route "דוח מקורות": two names for one view, on purpose (PO decision), so do not "fix" the drift.
+// This file is what the panel needs and the tab does not: the page shell and the feature gate.
 //
 // Shape and conventions follow the house style of `screens/SmartSend/SmartSendScreen.tsx`:
 // `({ classes }: ClassesType)`, `DefaultScreen` wrapper, and the feature gate + `Redirect` pattern

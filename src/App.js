@@ -669,7 +669,12 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
         path={`${sitePrefix}SmartSend`}
         element={<SmartSendPicker classes={classes} />}
       />}
-      {accountFeatures && accountFeatures?.indexOf(PulseemFeatures.DATA_SOURCES) > -1 && <Route
+      {/* Deliberately NOT gated on AllowSend — this is a read-only report and supervisors/support
+          need it without send permission. HideRecipients IS gated: SendSearchController answers the
+          Search action with 405 for that permission because the grid returns recipient PII, so the
+          route would only ever open a page that cannot search. Must stay identical to the sidebar
+          gate in routes.tsx (P3.2). */}
+      {accountFeatures && accountFeatures?.indexOf(PulseemFeatures.DATA_SOURCES) > -1 && !userRoles?.HideRecipients && <Route
         exact
         path={`${sitePrefix}SendSearch`}
         element={<SendSearchScreen classes={classes} />}
