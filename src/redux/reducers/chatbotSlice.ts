@@ -19,7 +19,7 @@ const unwrapOrThrow = <T = any>(data: any): T => {
 
 export const getChatbots = createAsyncThunk('Service/GetChatbots', async (_: void, thunkAPI) => {
   try {
-    const res = await PulseemReactInstance.get('api/Service/GetChatbots');
+    const res = await PulseemReactInstance.get('Service/GetChatbots');
     return unwrapOrThrow<{ list: IChatbotListItem[]; tierLimit: IChatbotTierLimit }>(res.data);
   } catch (err: any) {
     return thunkAPI.rejectWithValue(err.message ?? 'Failed to load chatbots');
@@ -31,7 +31,7 @@ export const getChatbotFlow = createAsyncThunk(
   async (id: string | undefined, thunkAPI) => {
     if (!id) return emptyFlow();
     try {
-      const res = await PulseemReactInstance.get(`api/Service/GetChatbot/${id}`);
+      const res = await PulseemReactInstance.get(`Service/GetChatbot/${id}`);
       return unwrapOrThrow<IChatbotFlow>(res.data);
     } catch (err: any) {
       return thunkAPI.rejectWithValue(err.message ?? 'Failed to load chatbot');
@@ -41,7 +41,7 @@ export const getChatbotFlow = createAsyncThunk(
 
 export const saveChatbot = createAsyncThunk('Service/SaveChatbot', async (flow: IChatbotFlow, thunkAPI) => {
   try {
-    const res = await PulseemReactInstance.post('api/Service/SaveChatbot', flow);
+    const res = await PulseemReactInstance.post('Service/SaveChatbot', flow);
     return unwrapOrThrow<IChatbotFlow>(res.data);
   } catch (err: any) {
     return thunkAPI.rejectWithValue(err.message ?? 'Failed to save chatbot');
@@ -50,7 +50,7 @@ export const saveChatbot = createAsyncThunk('Service/SaveChatbot', async (flow: 
 
 export const deleteChatbot = createAsyncThunk('Service/DeleteChatbot', async (id: string, thunkAPI) => {
   try {
-    const res = await PulseemReactInstance.delete(`api/Service/DeleteChatbot/${id}`);
+    const res = await PulseemReactInstance.delete(`Service/DeleteChatbot/${id}`);
     unwrapOrThrow(res.data);
     return id;
   } catch (err: any) {
@@ -62,7 +62,7 @@ export const toggleChatbot = createAsyncThunk(
   'Service/ToggleChatbot',
   async ({ id, enabled }: { id: string; enabled: boolean }, thunkAPI) => {
     try {
-      const res = await PulseemReactInstance.post('api/Service/ToggleChatbot', { id, enabled });
+      const res = await PulseemReactInstance.post('Service/ToggleChatbot', { id, enabled });
       unwrapOrThrow(res.data);
       return { id, enabled };
     } catch (err: any) {

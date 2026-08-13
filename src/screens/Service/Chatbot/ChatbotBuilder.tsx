@@ -12,8 +12,11 @@ import Toast from '../../../components/Toast/Toast.component';
 import { Title } from '../../../components/managment/Title';
 import { sitePrefix } from '../../../config';
 import { getChatbotFlow, saveChatbot, clearCurrentFlow } from '../../../redux/reducers/chatbotSlice';
+import { getSavedTemplates } from '../../../redux/reducers/whatsappSlice';
+import { getTemplatePreviewData, getDynamicFields, getVariableValue, getTemplateName } from '../../Whatsapp/Common';
+import { templateStatusIdsByStatusName } from '../../Whatsapp/Constant';
 import { IChatbotFlow, IFlowStep, IWhatsAppTemplate } from '../../../Models/Service/Chatbot';
-import { MOCK_WA_TEMPLATES, emptyFlow } from './mockChatbots';
+import { emptyFlow } from './mockChatbots';
 import TriggerSection from './components/TriggerSection';
 import FlowBuilder from './components/FlowBuilder';
 import './chatbot.css';
@@ -31,8 +34,8 @@ const getErrorMessage = (err: any, fallbackKey: string): string => {
 
 // Walks the whole step tree (branches + else, recursively) looking for an action
 // step whose required field is still empty — e.g. a Webhook step with no URL yet,
-// or a WhatsApp Template step missing one of its template's dynamic fields
-// (e.g. pricing_info_v2's {{plan_name}}, order_status_update's {{order_id}}/{{eta}}).
+// or a WhatsApp Template step missing a value for one of its template's {{n}}
+// placeholders (extracted from the approved template's body text).
 const hasEmptyActionField = (steps: IFlowStep[], templates: IWhatsAppTemplate[]): boolean =>
   steps.some((step) => {
     if (step.type === 'action') {
@@ -79,6 +82,7 @@ const ChatbotBuilder = ({ classes }: { classes?: any }) => {
   const { currentFlow, loadingFlow, saving } = useSelector((s: any) => s.chatbot);
 
   const [flow, setFlow] = useState<IChatbotFlow>(emptyFlow());
+  const [templates, setTemplates] = useState<IWhatsAppTemplate[]>([]);
   const [nameInvalid, setNameInvalid] = useState(false);
   const [stepsInvalid, setStepsInvalid] = useState(false);
   const [conditionKeywordInvalid, setConditionKeywordInvalid] = useState(false);
@@ -97,6 +101,22 @@ const ChatbotBuilder = ({ classes }: { classes?: any }) => {
       dispatch(clearCurrentFlow());
     };
   }, [dispatch, chatbotId]);
+
+  // Approved WhatsApp templates only - matches the "templateStatus: 3" filter used
+  // by every other template picker (Campaign, Chat, Editor) that lets a user send one.
+  useEffect(() => {
+    (async () => {
+      const result: any = await dispatch(getSavedTemplates({ templateStatus: templateStatusIdsByStatusName.Approved }));
+      const items = result?.payload?.Data?.Items ?? [];
+      setTemplates(
+        items.map((tpl: any) => {
+          const preview = getTemplatePreviewData(tpl.Data?.types);
+          const variables = getDynamicFields(preview?.templateData?.templateText).map(getVariableValue);
+          return { id: tpl.TemplateId, name: getTemplateName(tpl), variables };
+        }),
+      );
+    })();
+  }, [dispatch]);
 
   useEffect(() => {
     if (currentFlow) {
@@ -139,7 +159,7 @@ const ChatbotBuilder = ({ classes }: { classes?: any }) => {
     } else {
       const areStepsMissing = flow.steps.length === 0;
       const isConditionKeywordMissing = hasEmptyConditionKeyword(flow.steps);
-      const isActionFieldMissing = hasEmptyActionField(flow.steps, MOCK_WA_TEMPLATES);
+      const isActionFieldMissing = hasEmptyActionField(flow.steps, templates);
       setStepsInvalid(areStepsMissing);
       setConditionKeywordInvalid(isConditionKeywordMissing);
       setActionFieldInvalid(isActionFieldMissing);
@@ -229,7 +249,7 @@ const ChatbotBuilder = ({ classes }: { classes?: any }) => {
     setConditionKeywordInvalid(isConditionKeywordMissing);
     if (isConditionKeywordMissing) return;
 
-    const isActionFieldMissing = hasEmptyActionField(flow.steps, MOCK_WA_TEMPLATES);
+    const isActionFieldMissing = hasEmptyActionField(flow.steps, templates);
     setActionFieldInvalid(isActionFieldMissing);
     if (isActionFieldMissing) return;
 
@@ -252,7 +272,7 @@ const ChatbotBuilder = ({ classes }: { classes?: any }) => {
     setConditionKeywordInvalid(isConditionKeywordMissing);
     if (isConditionKeywordMissing) return;
 
-    const isActionFieldMissing = hasEmptyActionField(flow.steps, MOCK_WA_TEMPLATES);
+    const isActionFieldMissing = hasEmptyActionField(flow.steps, templates);
     setActionFieldInvalid(isActionFieldMissing);
     if (isActionFieldMissing) return;
 
@@ -420,12 +440,12 @@ const ChatbotBuilder = ({ classes }: { classes?: any }) => {
               )}
               <FlowBuilder
                 steps={flow.steps}
-                templates={MOCK_WA_TEMPLATES}
+                templates={templates}
                 onChange={(steps) => {
                   setFlow({ ...flow, steps });
                   if (steps.length > 0) setStepsInvalid(false);
                   if (!hasEmptyConditionKeyword(steps)) setConditionKeywordInvalid(false);
-                  if (!hasEmptyActionField(steps, MOCK_WA_TEMPLATES)) setActionFieldInvalid(false);
+                  if (!hasEmptyActionField(steps, templates)) setActionFieldInvalid(false);
                 }}
                 classes={classes}
               />

@@ -1,13 +1,5 @@
-// Shared helpers for the Chatbot builder. MOCK_WA_TEMPLATES remains a stand-in
-// until there's a real "approved WhatsApp templates" endpoint to call - every
-// other fixture here was removed once the real ChatbotFlows backend went live.
-import { IChatbotFlow, IChatbotListItem, IWhatsAppTemplate } from '../../../Models/Service/Chatbot';
-
-export const MOCK_WA_TEMPLATES: IWhatsAppTemplate[] = [
-  { id: 'pricing_info_v2', name: 'pricing_info_v2', variables: ['plan_name'] },
-  { id: 'business_hours', name: 'business_hours', variables: [] },
-  { id: 'order_status_update', name: 'order_status_update', variables: ['order_id', 'eta'] },
-];
+// Shared helpers for the Chatbot builder.
+import { IChatbotFlow, IChatbotListItem } from '../../../Models/Service/Chatbot';
 
 const countSteps = (steps: IChatbotFlow['steps']): number =>
   steps.reduce((total, step) => {
