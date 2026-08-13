@@ -277,7 +277,8 @@
     "toAtCapacity": "Reached the maximum of {{max}} addresses",
     "sentOkN": "Check sent to {{n}} addresses",
     "sentPartial": "{{ok}} sent, {{fail}} failed — {{reason}}",
-    "sendingProgress": "Sending {{done}} of {{total}}…"
+    "sendingProgress": "Sending {{done}} of {{total}}…",
+    "toDropped": "{{n}} address(es) not added — the maximum is {{max}}"
   },
   "retry": "Try again",
   "viewOnlyBadge": "View only",

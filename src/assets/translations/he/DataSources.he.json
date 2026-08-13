@@ -277,7 +277,8 @@
     "toAtCapacity": "הגעת ל-{{max}} כתובות, המקסימום",
     "sentOkN": "הבדיקה נשלחה ל-{{n}} כתובות",
     "sentPartial": "{{ok}} נשלחו, {{fail}} נכשלו — {{reason}}",
-    "sendingProgress": "שולח {{done}} מתוך {{total}}…"
+    "sendingProgress": "שולח {{done}} מתוך {{total}}…",
+    "toDropped": "{{n}} כתובות לא נוספו — המקסימום הוא {{max}}"
   },
   "retry": "נסה שוב",
   "viewOnlyBadge": "לצפייה בלבד",
