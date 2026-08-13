@@ -61,13 +61,26 @@ const EmailPreviewDialog: React.FC<Props> = ({
             maxWidth="md"
             fullWidth
             aria-labelledby="sendsearch-preview-title"
-            // Near-full-height (owner request, 2026-08-09). Sent HTML is often long, and 80vh
-            // clipped it more than it needed to; `calc(100vh - 64px)` keeps MUI's default 32px
-            // Paper margin top+bottom so the dialog fills the screen without overflowing it. The
-            // frame host below is flex:1 inside this Paper, so the iframe grows to the new height
-            // and scrolls internally. `PaperProps` rather than a class: this file may not add a
-            // stylesheet, and the height has to reach the Paper, not the content.
-            PaperProps={{ style: { height: 'calc(100vh - 64px)', maxHeight: 'calc(100vh - 64px)' } }}
+            // Near-full-height (owner request, 2026-08-09). Sent HTML is often long, and 80vh clipped
+            // it more than it needed to.
+            //
+            // 🔴 A PERCENTAGE, NOT `vh`, and the `maxHeight` is gone on purpose (2026-08-13). This read
+            // `calc(100vh - 64px)` for both, and `src/index.css:11-15` sets `body{zoom:0.95}` for
+            // viewports 1024–1440px — the band this product is actually used in. Under that zoom a `vh`
+            // length is scaled with everything else, so the dialog rendered at ~0.95 of the height it
+            // asked for: measured ~699px in an 800px viewport instead of ~739px, i.e. it gave away ~40px
+            // of the mail while claiming to be near-full-height. A percentage resolves against
+            // `.MuiDialog-container`, which is `height:100%` inside the Modal's `position:fixed` inset-0
+            // root (Dialog.js:72-73), and comes out exact. Leaving the old inline `maxHeight` behind
+            // would have reproduced the old pixel result exactly — the two are one edit, not two.
+            // `100%` rather than `calc(100% - 64px)` because MUI's own
+            // `.MuiDialog-paperScrollPaper { max-height: calc(100% - 64px) }` (Dialog.js:94-97, applied
+            // because `scroll` defaults to 'paper') already supplies that cap — so the hardcoded 64 is
+            // deleted rather than retyped, and the Paper margin stays MUI's.
+            // The frame host below is flex:1 inside this Paper, so the iframe grows to the height and
+            // scrolls internally. `PaperProps` rather than a class: this file may not add a stylesheet,
+            // and the height has to reach the Paper, not the content.
+            PaperProps={{ style: { height: '100%' } }}
         >
             <DialogTitle id="sendsearch-preview-title" disableTypography style={{ paddingBottom: 8 }}>
                 <Box style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
@@ -112,8 +125,12 @@ const EmailPreviewDialog: React.FC<Props> = ({
                 {/* Fixed-height, horizontally scrollable frame host. Sent HTML is table-based and
                     routinely wider than a dialog; `overflow-x:auto` lets the operator scroll to the
                     right-hand column instead of seeing it clipped and concluding the mail was
-                    malformed. The height is fixed (flex:1 inside an 80vh Paper) because an iframe
-                    with no height collapses to 150px in every browser. */}
+                    malformed. The height is fixed (flex:1 inside the full-height Paper set at :83 —
+                    this said "an 80vh Paper" long after that stopped being true) because an iframe with
+                    no height collapses to 150px in every browser. `overflowY:'hidden'` clips nothing:
+                    the iframe is its own viewport, so a 4000px mail scrolls INSIDE it, and hiding the
+                    host's vertical overflow is what stops a second, useless scrollbar appearing beside
+                    the frame's own. */}
                 <Box
                     style={{
                         flex: 1, minHeight: 0, overflowX: 'auto', overflowY: 'hidden',

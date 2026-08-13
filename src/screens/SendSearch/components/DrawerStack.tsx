@@ -24,9 +24,55 @@
 
 import React from 'react';
 import { Box, Button, Drawer, IconButton, Typography } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import { Close } from '@material-ui/icons';
 import { useTranslation } from 'react-i18next';
 import { SS, DrawerEntry } from '../../../Models/DataSources/SendSearch';
+
+// ── THE SCROLL AFFORDANCE, and why it is a stylesheet and not a layout change ────────────────────
+// Reported as "the drawer is cut off at the bottom, it must stay at 100% and have a scroll". It is
+// already at 100% and it already scrolls — MUI gives the paper `height:100%` and `overflowY:'auto'`
+// (Drawer.js:52,:55) and nothing in this repo overrides either, so the panel is exactly the viewport
+// height. Measured in Chrome on a faithful copy of the generated CSS: 842px of content in an 800px
+// paper, scrollable, and `height:100%` stays exact even under the `body{zoom:0.95}` of
+// `src/index.css:11-15`. What was missing is the only thing that TELLS the operator so.
+//
+// `src/screens/Whatsapp/Chat/css/overrides.css:31-42` declares an UNSCOPED
+// `::-webkit-scrollbar { width:6px !important }` with a 20%-black thumb on a ~transparent track, and
+// it reaches every screen in the product: `App.js:71` imports WhatsappChat STATICALLY (there is no
+// React.lazy anywhere in this app), `WhatsappChat.tsx:3` imports `./css/index.css`, and
+// `css/index.css:1` `@import`s that file. Measured: a 16px scrollbar becomes 5 device px under the
+// 0.95 zoom. And because this paper is `dir="rtl"`, those 5px sit at x=0 — the browser window's own
+// edge — running the full viewport height alongside the white header, so they read as browser chrome
+// rather than as "there is more content below". That is the entire defect.
+//
+// Re-declared below SCOPED TO THIS PAPER. `!important` on the width because the leaking rule carries
+// it too and a class selector is what wins the tie. The leak itself is deliberately left alone
+// (owner decision, 2026-08-13): un-scoping it would restyle every scrollbar in the product, which is
+// a product-wide visual change and not this screen's to make.
+//
+// 🔴 DO NOT "fix" this by moving the scroll onto the content Box below. `Modal.js:266-268` puts
+// `tabIndex="-1"` on the Modal's child and `Slide.js:235-241` clones it onto this paper, so TrapFocus
+// focuses THE PAPER on open: the scroller and the focused element are the same node, which is what
+// makes PageDown / Space / arrows scroll the drawer today. An inner scroller carries no tabindex, and
+// the depth-1 agent drawer has no focusable descendant at all — its preview button ships `disabled`
+// while ClientID is 0 (AgentDrawer.tsx:33-38) and the back button exists only at depth ≥ 2 — so the
+// panel would become keyboard-unscrollable (WCAG 2.1.1). `overflow:'hidden'` on the paper is out for
+// a related reason: per CSS Overflow 3 an `overflow-y:auto` box already computes overflow-x to
+// `auto`, so hiding it would clip the LTR subtitle at :151-157 from its start edge in RTL — hiding
+// recorded text, which is the one failure mode this screen forbids.
+const useStyles = makeStyles({
+    paper: {
+        '&::-webkit-scrollbar': { width: '10px !important' },
+        '&::-webkit-scrollbar-track': { background: '#e9edf2' },
+        // The 2px border is what makes a 10px bar read as a rounded thumb with breathing room
+        // instead of a solid stripe; it is drawn in the track colour on purpose.
+        '&::-webkit-scrollbar-thumb': {
+            background: '#98a5b3', borderRadius: 8, border: '2px solid #e9edf2',
+        },
+        '&::-webkit-scrollbar-thumb:hover': { background: '#7d8b9b' },
+    },
+});
 
 interface Props {
     stack: DrawerEntry[];
@@ -38,6 +84,7 @@ interface Props {
 
 const DrawerStack: React.FC<Props> = ({ stack, isRTL, onPop, onClose, children }) => {
     const { t } = useTranslation();
+    const styles = useStyles();
 
     const open = stack.length > 0;
     const top: DrawerEntry | null = open ? stack[stack.length - 1] : null;
@@ -60,6 +107,12 @@ const DrawerStack: React.FC<Props> = ({ stack, isRTL, onPop, onClose, children }
             // Every dialog in the DataSources folder carries the same prop — SmartSendManageTab.tsx:305.
             PaperProps={{
                 dir: isRTL ? 'rtl' : 'ltr',
+                // MERGED, not overriding: Drawer.js:190 composes
+                // clsx(classes.paper, classes.paperAnchorX, PaperProps.className), so the paper keeps
+                // MUI's own height:100% / overflowY:auto / position:fixed and only gains the
+                // scrollbar rules. Passing this as `classes={{ paper }}` would work identically; it
+                // lives here so the three things this file says about the paper stay in one place.
+                className: styles.paper,
                 style: { width: 'min(780px, 100%)', background: '#f5f6fa' },
             }}
             ModalProps={{ keepMounted: false }}

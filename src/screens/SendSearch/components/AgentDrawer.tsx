@@ -165,7 +165,28 @@ const AgentDrawer: React.FC<Props> = ({
             ? t(`${SS}engagement.${camelCaseState(a.EngagementState)}`)
             : t(`${SS}delivery.${camelCaseState(a.DeliveryState)}`));
 
-    const verdictWhen = hasEngagement ? row.EngagementAt : row.SentAt;
+    // ── which provenance row this recipient's version actually came from, or null ─────────────────
+    // Added 2026-08-13 (owner request): put the source NAME and the DATE up beside V1 in the version
+    // row, so the separate "איזו גרסה נשלחה" card below stops repeating them. This const is the ONLY
+    // condition under which that card is suppressed.
+    //
+    // 🔴 NOT `provenance.length === 1` on its own. That is TOP-1 attribution, which
+    // RollupDrawer.tsx:131-142 forbids in writing. The list is fetched per CAMPAIGN + CHANNEL
+    // (SendSearchPanel.tsx:350) and carries no ClientID (SendProvenanceRow, CONTRACT §3.1), so a lone
+    // row can legitimately belong to a LATER send than this recipient's — a campaign sent before the
+    // provenance table existed and re-sent after it produces exactly that shape. Printing that row's
+    // name and date beside this person's V1 while ALSO deleting the card that would have exposed the
+    // mismatch is precisely the confident-lie failure mode this file's header exists to forbid.
+    //
+    // `row.ProvenanceSource === 'Recorded'` is the SERVER's own statement (CONTRACT §2.2 precedence)
+    // that this row's version was resolved FROM a provenance row of this campaign+channel. With
+    // exactly one such row in scope, that row is the one the server matched. Every other shape —
+    // zero rows, more than one, a failed fetch, still loading, or a row graded Inferred/Unverifiable —
+    // leaves the card standing and unchanged.
+    const attributed: SendProvenanceRow | null = (!provenanceLoading && !provenanceError
+        && provenance.length === 1 && row.ProvenanceSource === 'Recorded')
+        ? provenance[0]
+        : null;
 
     return (
         <>
@@ -201,50 +222,72 @@ const AgentDrawer: React.FC<Props> = ({
                 <Typography component="div" style={{ fontSize: 20, fontWeight: 800, lineHeight: 1.3, color: TONE_COLOR[tone] }}>
                     {verdict}
                 </Typography>
-                {verdictWhen && (
-                    <Typography component="div" style={{ fontSize: 14, color: '#5b6b7b', marginTop: 5, direction: 'ltr', textAlign: 'right' }}>
-                        {moment(verdictWhen).format(DateFormats.DATE_TIME_24)}
-                    </Typography>
-                )}
-                <Box style={{ marginTop: 12 }}>
-                    <SendStatusCell attempts={attempts} />
-                </Box>
-            </Card>
-
-            <Card title={t(`${SS}drawer.sendDetails`)}>
-                <Kv label={t(`${SS}col.mailing`)}>
-                    <Typography component="span" style={{ fontWeight: 700 }}>{row.CampaignName}</Typography>
-                </Kv>
-                <Kv label={t(`${SS}col.supervisor`)}>
-                    <Typography component="span" style={{ fontWeight: 700 }}>{row.SupervisorName || '—'}</Typography>
-                </Kv>
-                {/* The version travels WITH the send details, never in a separate tab: "which version"
-                    and "when" are one answer. Never blank — VersionBadge guarantees that. */}
-                <Kv label={t(`${SS}version.label`)}>
-                    <VersionBadge
-                        VersionNumber={row.VersionNumber}
-                        ProvenanceSource={row.ProvenanceSource}
-                        VersionState={row.VersionState}
-                    />
-                </Kv>
-                {/* The sent date shares its row with the preview action: the button lives beside
-                    the fact it acts on, instead of taking a strip of its own at the top of the
-                    drawer (owner request, 2026-08-09). Right side (RTL start) is the "sent" label
-                    with the timestamp beneath it; left side is the button. The Tooltip still wraps
-                    a <span> so a row whose PreviewUrl is null — a non-email channel — still shows
-                    the tooltip that explains why the button is disabled, since a disabled button
-                    emits no pointer events of its own. */}
-                <Box style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, paddingTop: 12 }}>
-                    <Box>
-                        <Typography component="div" style={{ color: '#5b6b7b', fontSize: 12.5, marginBottom: 2 }}>
-                            {t(`${SS}col.sent`)}
+                {/* THE TWO FACTS, LABELLED, plus the action — moved here 2026-08-13 (owner request).
+                    What stood here was ONE UNLABELLED timestamp (`hasEngagement ? EngagementAt :
+                    SentAt`), so under a "נכשל" headline it read as "the time it failed" — a value the
+                    server does not record: §3.2 gives this row `SentAt` and `EngagementAt`, nothing
+                    else. The label is what fixes that, and it is what lets the send time live here
+                    instead of 50px lower in a second card.
+                    `col.sent`, not the literal "אימייל נשלח": it is the grid's own header for the same
+                    value and it must stay channel-neutral — this row can be SMS or WhatsApp. The
+                    channel IS named, one line down, by SendStatusCell.
+                    NO `direction` and NO `textAlign` here. The `textAlign:'right'` that stood on this
+                    block was a live en/pl defect: inline styles bypass jss-rtl (the bug
+                    SendStatusCell.tsx:119-124 records), so a physical 'right' pinned the line to the
+                    END edge under a LTR locale. Each timestamp is isolated on its own instead, and
+                    `unicodeBidi:'isolate'` is load-bearing rather than decoration — `direction:'ltr'`
+                    alone on an inline span is inert, and 'DD/MM/YYYY HH:mm' then renders as
+                    "10:04 09/08/2026". */}
+                <Box style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', marginTop: 5 }}>
+                    {attempts.length > 0 && (
+                        <Typography component="div" style={{ fontSize: 14, color: '#5b6b7b' }}>
+                            <Typography component="span" style={{ whiteSpace: 'nowrap' }}>
+                                {t(`${SS}col.sent`)}{' '}
+                                <Typography component="span" style={{ direction: 'ltr', unicodeBidi: 'isolate' }}>
+                                    {/* An em-dash, never a bare label: a row can carry EngagementAt with
+                                        no SentAt, and "נשלח" followed by nothing would assert a send the
+                                        server never recorded. Same fallback the deleted row used. */}
+                                    {row.SentAt ? moment(row.SentAt).format(DateFormats.DATE_TIME_24) : '—'}
+                                </Typography>
+                                {hasEngagement ? ' ·' : ''}
+                            </Typography>
+                            {/* OMITTED, not printed as "לא נרשמה פעילות", when there is no engagement
+                                (owner decision 2026-08-13). Absence of an open is not evidence the mail
+                                was not read — email open tracking is image-load based — and the caveat
+                                that says so lives on the panel OUTSIDE this drawer
+                                (SendSearchPanel.tsx:552-561). Nothing else on this screen states the
+                                absence per row either: SendStatusCell.tsx:97-98 drops the engagement
+                                half when the state is None. */}
+                            {hasEngagement && (
+                                <Typography component="span" style={{ whiteSpace: 'nowrap' }}>
+                                    {/* Built from the NARROWED `a.EngagementState`, never from
+                                        row.EngagementState — the same expression the headline uses. An
+                                        out-of-domain value read off the raw row would print the literal
+                                        key `SendSearch.engagement.bounced` here while SendStatusCell,
+                                        three lines below, printed "לא מזוהה" (D10). */}
+                                    {' '}{t(`${SS}engagement.${camelCaseState(a.EngagementState)}`)}{' '}
+                                    {row.EngagementAt && (
+                                        <Typography component="span" style={{ direction: 'ltr', unicodeBidi: 'isolate' }}>
+                                            {moment(row.EngagementAt).format(DateFormats.DATE_TIME_24)}
+                                        </Typography>
+                                    )}
+                                </Typography>
+                            )}
                         </Typography>
-                        <Typography component="div" style={{ fontWeight: 700, fontSize: 15, direction: 'ltr', textAlign: 'right' }}>
-                            {row.SentAt ? moment(row.SentAt).format(DateFormats.DATE_TIME_24) : '—'}
-                        </Typography>
-                    </Box>
+                    )}
+                    {/* The preview action, moved up from "פרטי השליחה". The 2026-08-09 note that put it
+                        beside the sent date is honoured, not reversed — the sent date moved here with it.
+                        `marginInlineStart:'auto'` and not a physical margin: inline styles bypass
+                        jss-rtl, so only the logical property lands on the end edge in he AND en/pl. Same
+                        idiom as SendSearchPanel.tsx:500.
+                        The Tooltip must keep wrapping a <span> rather than the Button: MUI v4 attaches
+                        its listeners to the cloned child, a disabled <button> emits no pointer events,
+                        and `PreviewUrl` is null for EVERY row until deploy script 23 runs (:33-38) — so
+                        the disabled path IS the production path, and the tooltip that explains it would
+                        be the one tooltip that never appears. REACT-TEST-PLAN.md:162 makes not asserting
+                        on tooltips explicit policy, so no test would catch that regression. */}
                     <Tooltip title={(previewUrl ? t(`${SS}preview.button`) : t(`${SS}preview.disabled`)) as string}>
-                        <span>
+                        <span style={{ marginInlineStart: 'auto' }}>
                             <Button
                                 variant="outlined"
                                 size="small"
@@ -258,6 +301,81 @@ const AgentDrawer: React.FC<Props> = ({
                         </span>
                     </Tooltip>
                 </Box>
+                <Box style={{ marginTop: 12 }}>
+                    <SendStatusCell attempts={attempts} />
+                </Box>
+            </Card>
+
+            <Card title={t(`${SS}drawer.sendDetails`)}>
+                <Kv label={t(`${SS}col.mailing`)}>
+                    <Typography component="span" style={{ fontWeight: 700 }}>{row.CampaignName}</Typography>
+                </Kv>
+                <Kv label={t(`${SS}col.supervisor`)}>
+                    <Typography component="span" style={{ fontWeight: 700 }}>{row.SupervisorName || '—'}</Typography>
+                </Kv>
+                {/* The version travels WITH the send details, never in a separate tab: "which version"
+                    and "when" are one answer. Never blank — VersionBadge guarantees that.
+                    When the send is ATTRIBUTABLE (see `attributed` above) the source name and the
+                    recorded date join it here and the card below disappears — one answer in one place,
+                    which is what the owner asked for on 2026-08-13. */}
+                <Kv label={t(`${SS}version.label`)}>
+                    {attributed ? (
+                        // The same flex group the provenance card uses, so badge + name + date wrap
+                        // instead of running off the end of the row.
+                        <Box style={{ display: 'flex', gap: 6, alignItems: 'baseline', flexWrap: 'wrap' }}>
+                            <VersionBadge
+                                // ALL FIVE PROPS FROM ONE RECORD. A badge fed half from `row` and half
+                                // from the provenance row could decorate one version number with an
+                                // outdated flag computed for a different one.
+                                VersionNumber={attributed.VersionNumber}
+                                // A provenance ROW is by definition a recorded send — that is what the
+                                // table is, and it is the same assertion the card below makes.
+                                ProvenanceSource="Recorded"
+                                VersionState={attributed.VersionState}
+                                // 🔴 NOT OPTIONAL. `version.outdated` ("מיושנת") and `version.latest` are
+                                // reachable ONLY through these two props (VersionBadge.tsx:101-104), and
+                                // the provenance card was the ONLY agent-path caller that passed them.
+                                // Suppressing that card without carrying them here would silently delete
+                                // the outdated-version warning in the common case.
+                                IsOutdated={attributed.IsOutdated}
+                                LatestVersionNumber={attributed.LatestVersionNumber}
+                            />
+                            {/* <bdi>, not a plain span: a Latin source name ("AgentPortfolio_Q3") would
+                                otherwise drag the date to the wrong end of the line — same reason
+                                SendSearchTable.tsx:167-169 wraps the source name. Falls back to the
+                                existing `source.nameNotFound` string rather than rendering an empty gap.
+                                No `#id` and no `source.prefix` here, deliberately: the card this replaces
+                                shows neither, and `prefixMapped` would be a claim about the CURRENT
+                                mapping, which a provenance-row name is not. */}
+                            <bdi style={{ fontSize: 13.5, fontWeight: 400, color: '#5b6b7b' }}>
+                                {attributed.DataSourceName || t(`${SS}source.nameNotFound`)}
+                            </bdi>
+                            {/* LABELLED, and the label matters: this is the provenance RECORD's timestamp,
+                                not this recipient's send time (row.SentAt, in the verdict card above).
+                                They can be days apart — 09/08 09:16 against 12/08 10:04 on the owner's own
+                                row — so two bare dates in one drawer would be unreadable. The date is its
+                                own isolated node because a Hebrew label and two Latin number runs in one
+                                text node swap the clock and the date around. */}
+                            <Typography component="span" style={{ fontSize: 13.5, fontWeight: 400, color: '#5b6b7b' }}>
+                                {t(`${SS}version.recordedAt`)}{' '}
+                                <Typography component="span" style={{ direction: 'ltr', unicodeBidi: 'isolate' }}>
+                                    {moment(attributed.SentAt).format(DateFormats.DATE_TIME_24)}
+                                </Typography>
+                            </Typography>
+                        </Box>
+                    ) : (
+                        <VersionBadge
+                            VersionNumber={row.VersionNumber}
+                            ProvenanceSource={row.ProvenanceSource}
+                            VersionState={row.VersionState}
+                        />
+                    )}
+                </Kv>
+                {/* The "נשלח <date>" row and the preview button that shared it BOTH moved up into the
+                    verdict card on 2026-08-13 (owner request), where the sent time now sits beside the
+                    engagement time under one pair of labels. The 2026-08-09 rule that the button lives
+                    beside the fact it acts on is preserved, not reversed: the fact moved with it. Do not
+                    re-add a second "נשלח" here — it would be the third print of one timestamp. */}
                 {row.RollupValue && (
                     <Kv label={t(`${SS}roster.gap`)}>
                         <Typography component="span" style={{ fontWeight: 700, direction: 'ltr' }}>{row.RollupValue}</Typography>
@@ -269,7 +387,18 @@ const AgentDrawer: React.FC<Props> = ({
                 A campaign can legitimately have MANY provenance rows: the table has no unique
                 constraint on (CampaignID, Channel) precisely because a repeat send gets its own row
                 (CONTRACT §2.1). So this is a LIST, newest first as the SP returns it — collapsing it
-                to "the version" would hide a second send. */}
+                to "the version" would hide a second send.
+
+                SUPPRESSED (2026-08-13) only when `attributed` is non-null — i.e. when a SINGLE
+                'Recorded' row is the server's own attribution for this recipient, in which case its
+                name, date and version already sit in the גרסה row above and this card would be a
+                verbatim repeat. Every other shape keeps it: zero rows (this card carries the
+                recorded/inferred/unverifiable sentence, which lives nowhere else), MORE than one row (a
+                repeat send must stay visible), a failed fetch, still loading, and any row the server
+                graded Inferred or Unverifiable (an unattributable version must not be quoted beside
+                this recipient's badge). The card is deliberately NOT re-indented under the guard — the
+                diff would be 47 lines of whitespace over a two-line change. */}
+            {!attributed && (
             <Card title={t(`${SS}drawer.provenance`)}>
                 {provenanceLoading && <CircularProgress size={18} />}
                 {!provenanceLoading && !!provenanceError && (
@@ -317,6 +446,7 @@ const AgentDrawer: React.FC<Props> = ({
                     </Kv>
                 ))}
             </Card>
+            )}
 
             {/* ── the values this recipient actually received (GET api/SendSearch/RowValues) ──
                 Read from the LOCKED source version that was sent, not rebuilt from the template —

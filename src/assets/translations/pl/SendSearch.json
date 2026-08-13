@@ -75,6 +75,7 @@
     "number": "V{{n}}",
     "outdated": "Nieaktualna",
     "latest": "Najnowsza wersja: V{{n}}",
+    "recordedAt": "Zapisana",
     "source": {
       "recorded": "Zapisana",
       "inferred": "Wywnioskowana",

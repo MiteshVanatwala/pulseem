@@ -75,6 +75,7 @@
     "number": "V{{n}}",
     "outdated": "מיושנת",
     "latest": "הגרסה העדכנית: V{{n}}",
+    "recordedAt": "נרשמה",
     "source": {
       "recorded": "מתועד",
       "inferred": "משוחזר",
