@@ -94,7 +94,8 @@
       "saveMapping": "Save mapping",
       "preview": "Preview",
       "testSend": "Test send",
-      "sendToAll": "Send to all"
+      "sendToAll": "Send to all",
+      "testSendN": "Send check ({{n}})"
     },
     "testSendWarn": "Test send duplicates the campaign without the mapping — source fields will appear raw (##field##) in the test email.",
     "saveFirst": "Save the mapping to continue to preview and send",
@@ -270,7 +271,13 @@
       "invalidEmail": "The destination address is invalid or longer than 50 characters. Enter a valid address of up to 50 characters.",
       "serverError": "The test send failed because of a server error. Try again in a few minutes.",
       "featureOff": "Data sources are not enabled for this account. Contact your account administrator."
-    }
+    },
+    "toHelperMulti": "Comma or space adds an address · up to {{max}}",
+    "toInvalid": "Invalid address: {{email}}",
+    "toAtCapacity": "Reached the maximum of {{max}} addresses",
+    "sentOkN": "Check sent to {{n}} addresses",
+    "sentPartial": "{{ok}} sent, {{fail}} failed — {{reason}}",
+    "sendingProgress": "Sending {{done}} of {{total}}…"
   },
   "retry": "Try again",
   "viewOnlyBadge": "View only",
@@ -468,7 +475,7 @@
     "title": "Export source",
     "format": "Format",
     "formatNote": "The file is generated once — the downloads page lets you take it as CSV or Excel",
-    "notifyEmail":"Notification email (optional)",
+    "notifyEmail": "Notification email (optional)",
     "csvOnly": "Above 100,000 rows you can export to CSV only",
     "runningInBackground": "The export is running in the background — the file will appear on the downloads page and a notification will be sent by email",
     "ready": "The file is ready on the downloads page",
