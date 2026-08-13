@@ -151,6 +151,8 @@ const TestSendDialog: React.FC<{ open: boolean; campaignId: number; onClose: () 
         const [seed, setSeed] = useState(0);
         const [sending, setSending] = useState(false);
         const [progress, setProgress] = useState<{ done: number; total: number } | null>(null);
+        // How many pasted addresses were refused for exceeding MAX_RECIPIENTS. Shown, never silent.
+        const [dropped, setDropped] = useState(0);
         const [savingMapping, setSavingMapping] = useState(false);
         const [info, setInfo] = useState<{ status: 'idle' | 'loading' | 'ok' | 'failed'; count: number }>({ status: 'idle', count: 0 });
 
@@ -170,9 +172,17 @@ const TestSendDialog: React.FC<{ open: boolean; campaignId: number; onClose: () 
             // one sample still while you fix a cell and re-send, not to freeze the same five agents
             // forever: persisting it would mean nobody ever sees a different agent without walking.
             const saved = loadSaved(userEmail);
-            const restored = saved && saved.recipients.length ? saved.recipients : (userEmail ? [userEmail] : []);
-            setRecipients(restored.filter(isValidRecipient).slice(0, MAX_RECIPIENTS));
-            setDraft('');
+            const restored = (saved && saved.recipients.length ? saved.recipients : (userEmail ? [userEmail] : []))
+                .filter(isValidRecipient).slice(0, MAX_RECIPIENTS);
+            // A SINGLE restored address goes into the INPUT, not into a chip. That is the default
+            // case — "send the check to me" — and before this change the field held that address,
+            // so select-all-and-type replaced it. As a chip the field reads empty, and the same
+            // keystrokes ADD a second recipient instead of replacing the first: the operator who
+            // meant to check as a colleague mails both. Two or more restored addresses are a
+            // deliberate list, and chips are the right shape for a list.
+            if (restored.length === 1) { setRecipients([]); setDraft(restored[0]); }
+            else { setRecipients(restored); setDraft(''); }
+            setDropped(0);
             if (saved) setSampleSize(saved.sampleSize);
             setInfo({ status: 'loading', count: 0 });
             let cancelled = false;
@@ -219,16 +229,21 @@ const TestSendDialog: React.FC<{ open: boolean; campaignId: number; onClose: () 
             if (!parts.length) return;
             setRecipients((prev) => {
                 const next = prev.slice();
+                let overflow = 0;
                 parts.forEach((p) => {
                     // Duplicates are dropped silently rather than flagged: adding the same address
                     // twice is an obvious slip, and two identical digests is a worse outcome than
                     // no feedback. Comparison is case-insensitive on the whole address — the local
                     // part is technically case-sensitive, but no real mailbox relies on it and a
                     // tester typing Idan@ and idan@ means one inbox.
-                    if (next.length >= MAX_RECIPIENTS) return;
+                    // Over the cap is NOT silent. Dropping an address the operator pasted, while
+                    // the toast then reports success, is the "sent to fewer people than intended"
+                    // failure this whole dialog exists to avoid.
+                    if (next.length >= MAX_RECIPIENTS) { overflow += 1; return; }
                     if (next.some((x) => x.toLowerCase() === p.toLowerCase())) return;
                     next.push(p);
                 });
+                setDropped(overflow);
                 return next;
             });
         };
@@ -320,11 +335,18 @@ const TestSendDialog: React.FC<{ open: boolean; campaignId: number; onClose: () 
                 onClose();
                 return;
             }
-            // PARTIAL FAILURE KEEPS THE DIALOG OPEN. Closing here would report "3 of 5 sent" in a
-            // toast that vanishes, with no way to see which two failed or to retry them — and the
-            // whole point of this feature is not lying about what was sent. The first failure's
-            // code carries the reason; they are near-always identical across recipients because the
-            // campaign-level refusals (no candidates, body too large) do not vary per address.
+            // PARTIAL FAILURE KEEPS THE DIALOG OPEN — and the list is REDUCED TO THE FAILURES.
+            // Without this the comment above was a promise the code did not keep: `recipients` was
+            // left untouched, so the only available action — pressing Send again — re-dispatched to
+            // all five, and the three people who already had the digest received a second,
+            // byte-identical copy (the seed does not re-roll inside an open dialog). Shrinking the
+            // list makes retry mean "retry what failed", which is what the operator intends, and
+            // makes the failures visible as the chips that remain.
+            if (okCount) {
+                const failedAddrs = failed.map((x) => x.to);
+                setRecipients(failedAddrs);
+                setDraft('');
+            }
             onToast({
                 ok: false,
                 msg: okCount
@@ -346,10 +368,23 @@ const TestSendDialog: React.FC<{ open: boolean; campaignId: number; onClose: () 
             // Every sibling DataSources dialog already carries this attribute (ExportDialog.tsx:71,
             // EditColumnDialog.tsx:87, UploadWizardDialog.tsx:555, DataSources.tsx:439/448).
             // Reactive, not hardcoded "rtl", so en/pl accounts still render LTR.
-            <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth dir={isRTL ? 'rtl' : 'ltr'}>
+            // LOCKED WHILE SENDING — every exit, not only the Cancel button.
+            // This component never unmounts: SmartSendScreen.tsx:627 renders it unconditionally
+            // and only flips `open`, so closing mid-loop returns null at the top of render while
+            // doSend keeps dispatching against its captured `targets`. The operator would watch
+            // the dialog disappear and believe they had stopped it, while recipients 3, 4 and 5
+            // still received the digest. Cancel was already guarded; the ✕, ESC and the backdrop
+            // were not, which made them the ONLY exits an operator could actually reach.
+            <Dialog
+                open={open}
+                onClose={() => { if (!sending) onClose(); }}
+                disableEscapeKeyDown={sending}
+                disableBackdropClick={sending}
+                maxWidth="sm" fullWidth dir={isRTL ? 'rtl' : 'ltr'}
+            >
                 <Box className={classes.head}>
                     <Typography variant="h6">{t('DataSources.preview.title')}</Typography>
-                    <IconButton size="small" onClick={onClose} aria-label={t('DataSources.send.close')}><Close /></IconButton>
+                    <IconButton size="small" onClick={onClose} disabled={sending} aria-label={t('DataSources.send.close')}><Close /></IconButton>
                 </Box>
                 <Box className={classes.body}>
                     {/* severity="info", not "warning": this is no longer a caveat about degraded
@@ -362,7 +397,7 @@ const TestSendDialog: React.FC<{ open: boolean; campaignId: number; onClose: () 
                             title={t('DataSources.send.testSavePrompt.title')}
                             body={t('DataSources.send.testSavePrompt.body')}
                             action={(
-                                <Button size="small" variant="outlined" color="primary" disabled={savingMapping} onClick={doSaveMapping}>
+                                <Button size="small" variant="outlined" color="primary" disabled={savingMapping || sending} onClick={doSaveMapping}>
                                     {savingMapping ? <CircularProgress size={16} color="inherit" /> : t('DataSources.send.actions.saveMapping')}
                                 </Button>
                             )}
@@ -395,14 +430,33 @@ const TestSendDialog: React.FC<{ open: boolean; campaignId: number; onClose: () 
                                 setDraft(last);
                             }
                         }}
-                        inputProps={{ maxLength: MAX_TO_EMAIL }}
+                        // NO maxLength. MAX_TO_EMAIL is the PER-ADDRESS server ceiling
+                        // (dbo.DirectApi_SendEmail.@ToEmail NVARCHAR(50)); as a maxLength on a field
+                        // that now holds a LIST it clipped the whole paste at the DOM, before
+                        // onChange ever ran. Measured: pasting three clalbit.co.il addresses (69
+                        // chars) silently produced TWO chips and a green Send button; pasting three
+                        // clal.co.il addresses (51 chars) produced three, the last of them
+                        // "avi@clal.co.i" — a domain the operator never typed, which passes both
+                        // this regex and the server's MailAddress check. Length is enforced where
+                        // it belongs instead: isValidRecipient, per address, on every chip.
+                        onPaste={(e) => {
+                            // Own the paste so the full clipboard text is parsed, not a clipped
+                            // prefix. preventDefault is what keeps the DOM out of it.
+                            const text = e.clipboardData.getData('text');
+                            if (!text || !/[,;\s]/.test(text)) return;   // single address: let it through
+                            e.preventDefault();
+                            commitDraft(`${draft} ${text}`);
+                            setDraft('');
+                        }}
                         error={invalid.length > 0}
                         helperText={
                             invalid.length > 0
                                 ? t('DataSources.preview.toInvalid', { email: invalid[0] })
-                                : atCapacity
-                                    ? t('DataSources.preview.toAtCapacity', { max: MAX_RECIPIENTS })
-                                    : t('DataSources.preview.toHelperMulti', { max: MAX_RECIPIENTS })
+                                : dropped > 0
+                                    ? t('DataSources.preview.toDropped', { n: dropped, max: MAX_RECIPIENTS })
+                                    : atCapacity
+                                        ? t('DataSources.preview.toAtCapacity', { max: MAX_RECIPIENTS })
+                                        : t('DataSources.preview.toHelperMulti', { max: MAX_RECIPIENTS })
                         }
                     />
 
@@ -413,7 +467,10 @@ const TestSendDialog: React.FC<{ open: boolean; campaignId: number; onClose: () 
                                     key={email}
                                     size="small"
                                     label={email}
-                                    onDelete={() => removeRecipient(email)}
+                                    // Deleting a chip mid-send removes it from the screen but NOT
+                                    // from the loop's captured targets — the address still gets the
+                                    // mail, the toast still counts it, and localStorage saves it.
+                                    onDelete={sending ? undefined : () => removeRecipient(email)}
                                     // An invalid chip is coloured, not silently dropped: the operator
                                     // typed it and must see WHICH one the send will refuse.
                                     color={isValidRecipient(email) ? 'default' : 'secondary'}
@@ -431,6 +488,9 @@ const TestSendDialog: React.FC<{ open: boolean; campaignId: number; onClose: () 
                             select variant="outlined" size="small" style={{ minWidth: 160 }}
                             label={t('DataSources.preview.sampleSizeLabel')}
                             value={sampleSize}
+                            // Locked mid-send: doSend captured sampleSize, so changing it here
+                            // would leave the screen claiming a size the mails in flight do not use.
+                            disabled={sending}
                             // Changing the size restarts the walk: keeping a stale offset would page
                             // past the end (or straddle a previous page) with no visible cause.
                             onChange={(e) => { setSampleSize(Number(e.target.value)); setOffset(0); }}
