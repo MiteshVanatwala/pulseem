@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
 import { IChatbotFlow, IChatbotListItem, IChatbotTierLimit } from '../../Models/Service/Chatbot';
-import { emptyFlow, toListItem } from '../../screens/Service/Chatbot/mockChatbots';
+import { emptyFlow, toListItem } from '../../screens/Service/Chatbot/chatbotHelpers';
 
 // ChatbotController always answers with HTTP 200 - the real result is the
 // PulseemResponse body's own StatusCode/Message (e.g. 400 missing name, 403

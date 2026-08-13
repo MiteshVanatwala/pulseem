@@ -16,7 +16,7 @@ import { getSavedTemplates } from '../../../redux/reducers/whatsappSlice';
 import { getTemplatePreviewData, getDynamicFields, getVariableValue, getTemplateName } from '../../Whatsapp/Common';
 import { templateStatusIdsByStatusName } from '../../Whatsapp/Constant';
 import { IChatbotFlow, IFlowStep, IWhatsAppTemplate } from '../../../Models/Service/Chatbot';
-import { emptyFlow } from './mockChatbots';
+import { emptyFlow } from './chatbotHelpers';
 import TriggerSection from './components/TriggerSection';
 import FlowBuilder from './components/FlowBuilder';
 import './chatbot.css';
