@@ -297,12 +297,16 @@ const SendSummaryDialog: React.FC<{ open: boolean; campaignId: number; onClose: 
                 // Quotable diagnostic. Message rides on every payload and was never surfaced.
                 // The `code > 0` guard alone would switch this row OFF on the one class of failure
                 // where the outcome is genuinely unknown: on a REJECTED thunk there is no
-                // StatusCode at all, because the response interceptor rejects with
-                // error.response.data (PulseemReactAPI.ts:74-80) whose field is `Message`, not
-                // `message`, so smartSendSlice.ts:146 stores { error: undefined } — a TRUTHY object,
-                // which also means doSend's `{ StatusCode: 500 }` fallback never fires. Falling back
-                // to the error string keeps the row alive on the transport path, where it is the
-                // only thing the operator can hand to support.
+                // StatusCode at all. Two sub-cases, and they differ — verified, not assumed:
+                //  · the server DID answer non-2xx → the response interceptor rejects with
+                //    error.response.data (PulseemReactAPI.ts:80), whose field is `Message` not
+                //    `message`, so smartSendSlice.ts:147 stores { error: undefined } — a TRUTHY
+                //    object, which is also why doSend's `{ StatusCode: 500 }` fallback never fires.
+                //    Nothing to show; the headline carries it alone.
+                //  · no response at all (network drop / timeout) → PulseemReactAPI.ts:77 dereferences
+                //    error.response unguarded and throws a TypeError, whose .message IS a string.
+                // The fallback below is what surfaces that string, and the transport path is exactly
+                // where it is the only thing the operator can hand to support.
                 // STILL OPEN (B4, deferred by the owner): the HEADLINE on this path is
                 // "השליחה נכשלה" — asserted as fact when the send may well have completed and only
                 // the response was lost. Correcting that needs a new key ("לא ידוע אם השליחה בוצעה").
@@ -378,8 +382,8 @@ const SendSummaryDialog: React.FC<{ open: boolean; campaignId: number; onClose: 
                 // SCOPE OF THE LOCK — ESC AND BACKDROP ONLY. The header ✕ stays live (see below).
                 // Locking all three, as TestSendDialog does, is not safe here: `sending` is cleared
                 // ONLY by doSend's own continuation, and that continuation can be delayed for a very
-                // long time or never arrive. PulseemReactAPI.ts:47 refreshes the token with a BARE
-                // `axios.get` — the default instance, no timeout; the `timeout: 300000` at :31
+                // long time or never arrive. PulseemReactAPI.ts:48 refreshes the token with a BARE
+                // `axios.get` — the default instance, no timeout; the `timeout: 300000` at :32
                 // belongs to PulseemReactInstance and does not apply — and it is awaited at :65
                 // inside the REQUEST interceptor, i.e. before the adapter that would enforce a
                 // timeout even runs. If RefreshToken.ashx stalls, the PUT is never issued and no
@@ -414,17 +418,24 @@ const SendSummaryDialog: React.FC<{ open: boolean; campaignId: number; onClose: 
                 }}>
                 <Box className={classes.head}>
                     <Typography variant="h6" id="send-summary-title">{t('DataSources.send.summary.title')}</Typography>
-                    {/* padding 7, not size="small"'s 3: MUI renders a 24x24 target there, and
-                        index.css:11-15 paints this dialog at zoom 0.95, giving 22.8px — under the
-                        24x24 minimum. 7 makes it 32x32 CSS / 30.4 painted. The head row is sized by
-                        the h6's 32px line-box, so header height is unchanged.
+                    {/* size="small" is left exactly as it was. An earlier draft of this change added
+                        style={{ padding: 7 }} to enlarge the hit target, believing MUI renders 24x24
+                        here. That premise was wrong. SvgIcon.js:38 hard-sets fontSize: pxToRem(24)
+                        on .root, and :103 adds a fontSize class ONLY when the prop is neither
+                        'default' nor 'medium' — so <Close /> is 24px and IconButton's sizeSmall
+                        fontSize: pxToRem(18) (IconButton.js:109-111) never reaches it. The real
+                        target is 24 + 2*3 = 30x30 CSS = 28.5 painted under index.css:11-15, ALREADY
+                        clear of the 24x24 minimum. padding: 7 would have made it 38x38, and because
+                        `head` is alignItems:'center' with no height, that grew the header row ~6px
+                        in ALL THREE phases — including the summary phase this change promised not
+                        to touch. Reverted.
                         DELIBERATELY NOT disabled while sending — this is the escape hatch, and the
                         one exit that must never be taken away. ESC and a backdrop click are slips;
                         pressing ✕ is a decision. Guarding the two accidental exits removes the
                         reported hazard (a campaign going out with the operator shown nothing),
                         while leaving this one guarantees the modal can always be dismissed even if
                         `sending` never clears — see the timeout analysis on the Dialog above. */}
-                    <IconButton size="small" style={{ padding: 7 }} onClick={onClose}
+                    <IconButton size="small" onClick={onClose}
                         aria-label={t('DataSources.send.close')}><Close /></IconButton>
                 </Box>
                 {/* padding only. `flex:'0 0 auto'` was here and was WRONG: it overrode the class's

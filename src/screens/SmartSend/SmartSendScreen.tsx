@@ -105,8 +105,30 @@ const SmartSendScreen = ({ classes }: any) => {
     const saveInFlight = useRef(false);
     const savePending = useRef(false);
     const sendLockedRef = useRef(false);
+    // MONOTONIC EDIT COUNTER. Bumped by markEdited() on every user edit, captured when a save
+    // request is BUILT, and re-read when it resolves. It exists because `dirty` alone cannot
+    // distinguish "the edits I just saved" from "edits that arrived while I was saving", and
+    // clearing it unconditionally on a 200 STRANDS the latter:
+    //   t=0    edit          → dirty=true, timer armed for t=750
+    //   t=750  timer fires   → buildSaveRequest() snapshots state HERE; request in flight
+    //   t=900  edit          → dirty is ALREADY true so nothing changes, but the debounce effect
+    //                          re-runs on the new tokenMap and arms a fresh timer for t=1650
+    //   t=1200 200 comes back→ setDirty(false) ⇒ the effect's cleanup CLEARS the t=1650 timer and
+    //                          its body then bails on !dirty. The t=900 edit is never sent, and
+    //                          the sticky bar reads "כל השינויים נשמרו".
+    // `savePending` does NOT cover this: it is only set when runAutoSave is CALLED while a save is
+    // in flight (see below), which needs the round trip to outlast the 750ms debounce. The window
+    // above — the common one, where the response beats the next timer — stays wide open.
+    // The falsely-cleared `dirty` is not only a lost edit: it also disarms the beforeunload handler,
+    // the three-way exit confirm, and TestSendDialog's "the preview uses the SAVED mapping" warning,
+    // so the operator's one pre-send check silently answers wrong.
+    const editSeq = useRef(0);
 
     const showToast = (ok: boolean, msg: string) => setToast({ open: true, ok, msg });
+
+    // The ONE place an edit is recorded. Both onChange handlers below route through it so the
+    // counter and `dirty` can never disagree — two call sites setting them separately WILL drift.
+    const markEdited = () => { editSeq.current += 1; setDirty(true); };
 
     useEffect(() => {
         // `accountFeatures?.length &&`, NOT `accountFeatures &&` — the same guard SmartSendPicker.tsx:38,
@@ -192,6 +214,12 @@ const SmartSendScreen = ({ classes }: any) => {
     //    dialog — calls saveMapping only; the attach is deferred to a confirmed Send. ──
     const saveMapping = async (silent?: boolean): Promise<{ ok: boolean; gid: number | null }> => {
         setSaving(true);
+        // Snapshot the edit counter alongside the request body, for the same reason runAutoSave
+        // does. This path is NOT modal-protected: openSummary calls saveMapping(true) and then
+        // awaits fillAndSummarize + getSendSummary + getEmailSendSettings — four sequential round
+        // trips — before setSummaryOpen(true), and the mapping table is fully interactive for all
+        // of them. An edit made in that window must not be marked saved.
+        const seq = editSeq.current;
         const res: any = await dispatch(setMapping(buildSaveRequest()));
         const r = res && res.payload ? res.payload : {};
         if (r.StatusCode !== 200) {
@@ -201,7 +229,12 @@ const SmartSendScreen = ({ classes }: any) => {
         }
         const gid = r.Data && r.Data.SyntheticGroupID;
         setSaving(false);
-        setDirty(false); // the mapping is persisted — the unsaved-changes bar must go away
+        // The mapping is persisted — the unsaved-changes bar must go away, but ONLY if what landed
+        // is still what is on screen. If the operator edited during the round trip the screen is
+        // genuinely dirty and must stay so: the debounce effect then keeps its timer and persists
+        // the newer state. `ok: true` is still correct — the request itself succeeded, which is
+        // what the send/exit callers are asking about.
+        if (editSeq.current === seq) setDirty(false);
         if (!silent) showToast(true, t('DataSources.send.toasts.mappingSaved'));
         return { ok: true, gid: gid != null ? Number(gid) : null };
     };
@@ -213,12 +246,25 @@ const SmartSendScreen = ({ classes }: any) => {
         if (saveInFlight.current) { savePending.current = true; return; }
         saveInFlight.current = true;
         setSaveState('saving');
+        // Captured on the same line-of-execution as the request body, so `seq` describes EXACTLY
+        // the state this request carries. Everything below compares against it.
+        const seq = editSeq.current;
         const res: any = await dispatch(setMapping(buildSaveRequest()));
         const r = res && res.payload ? res.payload : {};
         saveInFlight.current = false;
+        // TRUE when the operator edited while this request was on the wire. The response is then a
+        // truthful answer about a snapshot that is no longer on screen, and treating it as "saved"
+        // is what strands the edit (see the editSeq header).
+        const superseded = editSeq.current !== seq;
         if (r.StatusCode === 200) {
-            setDirty(false);
-            setSaveState('saved');
+            if (superseded) {
+                // Do NOT clear dirty and do NOT paint "נשמר" — the screen really does hold unsaved
+                // work. Stay on 'saving'; the re-fire below sends the newer snapshot.
+                setSaveState('saving');
+            } else {
+                setDirty(false);
+                setSaveState('saved');
+            }
         } else if (r.Message === 'EDIT_BLOCKED_DURING_SEND') {
             sendLockedRef.current = true;          // campaign is sending — stop auto-saving
             setSaveState('locked');
@@ -226,7 +272,15 @@ const SmartSendScreen = ({ classes }: any) => {
             setSaveState('error');                 // keep dirty=true so Retry + beforeunload stay armed
         }
         // Re-fire once with the latest snapshot if edits arrived while this save was in flight.
-        if (savePending.current && !sendLockedRef.current) { savePending.current = false; runAutoSave(); }
+        // `superseded` is the case the old `savePending` flag could not see: savePending is only
+        // set when runAutoSave is CALLED mid-flight, which needs the round trip to outlast the
+        // 750ms debounce, whereas superseded catches every edit regardless of timing. Both re-fire
+        // through the same line so a save can still never overlap another (saveInFlight guards the
+        // entry). The recursion terminates because editSeq only advances on human input.
+        if ((savePending.current || superseded) && !sendLockedRef.current) {
+            savePending.current = false;
+            runAutoSave();
+        }
     };
 
     // Debounced trigger: whenever the mapping changes and there is something to persist, schedule a
@@ -447,7 +501,7 @@ const SmartSendScreen = ({ classes }: any) => {
                             tokens={smartSend.tokens}
                             columns={smartSend.columns}
                             value={smartSend.tokenMap}
-                            onChange={(token, columnId) => { dispatch(setTokenMapping({ token, columnId })); setDirty(true); }}
+                            onChange={(token, columnId) => { dispatch(setTokenMapping({ token, columnId })); markEdited(); }}
                             warnSystemFieldOverride
                         />
                         {/* Gap + Sort are ONE control now; `setBusinessColumn('gapSort')` writes the
@@ -461,7 +515,7 @@ const SmartSendScreen = ({ classes }: any) => {
                             gapColumnId={smartSend.gapColumnId}
                             storedGapColumnId={smartSend.storedGapColumnId}
                             storedSortColumnId={smartSend.storedSortColumnId}
-                            onChange={(role, columnId) => { dispatch(setBusinessColumn({ role, columnId })); setDirty(true); }}
+                            onChange={(role, columnId) => { dispatch(setBusinessColumn({ role, columnId })); markEdited(); }}
                             supervisorEnabled
                         />
 
