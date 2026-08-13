@@ -20,7 +20,7 @@ const unwrapOrThrow = <T = any>(data: any): T => {
 export const getChatbots = createAsyncThunk('Service/GetChatbots', async (_: void, thunkAPI) => {
   try {
     const res = await PulseemReactInstance.get('Service/GetChatbots');
-    return unwrapOrThrow<{ list: IChatbotListItem[]; tierLimit: IChatbotTierLimit }>(res.data);
+    return unwrapOrThrow<{ list: IChatbotListItem[]; tierLimit: IChatbotTierLimit; maxActiveChatbots: number }>(res.data);
   } catch (err: any) {
     return thunkAPI.rejectWithValue(err.message ?? 'Failed to load chatbots');
   }
@@ -74,6 +74,10 @@ export const toggleChatbot = createAsyncThunk(
 interface ChatbotState {
   list: IChatbotListItem[];
   tierLimit: IChatbotTierLimit | null;
+  // Cap on concurrently-enabled chatbots, resolved per-Account on the backend
+  // (ChatbotLogic.GetMaxActiveChatbots / ServiceLimitsLogic) - -1 means unlimited.
+  // Defaults to 5 (the backend's own live default) before the first load completes.
+  maxActiveChatbots: number;
   loadingList: boolean;
   currentFlow: IChatbotFlow | null;
   loadingFlow: boolean;
@@ -84,6 +88,7 @@ interface ChatbotState {
 const initialState: ChatbotState = {
   list: [],
   tierLimit: null,
+  maxActiveChatbots: 5,
   loadingList: false,
   currentFlow: null,
   loadingFlow: false,
@@ -109,6 +114,7 @@ const chatbotSlice = createSlice({
         state.loadingList = false;
         state.list = action.payload.list;
         state.tierLimit = action.payload.tierLimit;
+        state.maxActiveChatbots = action.payload.maxActiveChatbots;
       })
       .addCase(getChatbots.rejected, (state, action) => {
         state.loadingList = false;

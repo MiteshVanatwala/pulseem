@@ -64,7 +64,7 @@ const ChatbotList = ({ classes }: { classes?: any }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const dispatch = useDispatch<any>();
-  const { list, tierLimit, loadingList } = useSelector((s: any) => s.chatbot);
+  const { list, tierLimit, maxActiveChatbots, loadingList } = useSelector((s: any) => s.chatbot);
   const { isRTL, windowSize, rowsPerPage } = useSelector((s: any) => s.core);
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
   const [pendingToggle, setPendingToggle] = useState<IChatbotListItem | null>(null);
@@ -85,6 +85,12 @@ const ChatbotList = ({ classes }: { classes?: any }) => {
   }, [dispatch]);
 
   const atLimit = !!tierLimit && tierLimit.limit >= 0 && tierLimit.used >= tierLimit.limit;
+  // maxActiveChatbots is resolved per-Account on the backend (-1 = unlimited) - see
+  // ChatbotLogic.GetMaxActiveChatbots / ServiceLimitsLogic. This only lets the switch
+  // look disabled up front instead of the user finding out via an error toast; the
+  // backend enforces the real cap regardless of what this computes.
+  const activeCount = list.filter((bot: IChatbotListItem) => bot.enabled).length;
+  const atActiveLimit = maxActiveChatbots >= 0 && activeCount >= maxActiveChatbots;
   const visibleList: IChatbotListItem[] = isSearching ? (searchResults as IChatbotListItem[]) : list;
   const rpp = parseInt(rowsPerPage, 10);
   const pagedList = visibleList.slice((page - 1) * rpp, (page - 1) * rpp + rpp);
@@ -121,7 +127,22 @@ const ChatbotList = ({ classes }: { classes?: any }) => {
 
   // Opens the confirm popup instead of toggling immediately - same
   // confirm-before-activate/deactivate pattern as AutomationsManagment.js.
+  // Disabling is always allowed; enabling is blocked client-side once the active
+  // cap is hit (the backend enforces this too - see ChatbotLogic.SaveChatbot /
+  // ToggleChatbot - this just avoids a round trip for the common case).
   const handleToggle = (bot: IChatbotListItem) => {
+    if (!bot.enabled && atActiveLimit) {
+      setToastMessage({
+        severity: 'error',
+        color: 'error',
+        message: t(
+          'chatbot_active_limit_reached',
+          'Active chatbot limit reached ({{limit}}). Disable another chatbot first.',
+          { limit: maxActiveChatbots },
+        ),
+      });
+      return;
+    }
     setPendingToggle(bot);
   };
 
@@ -188,7 +209,21 @@ const ChatbotList = ({ classes }: { classes?: any }) => {
 
   const renderStatusCell = (bot: IChatbotListItem) => (
     <Box>
-      <Switch checked={bot.enabled} onChange={() => handleToggle(bot)} />
+      <Tooltip
+        title={
+          !bot.enabled && atActiveLimit
+            ? (t(
+                'chatbot_active_limit_reached',
+                'Active chatbot limit reached ({{limit}}). Disable another chatbot first.',
+                { limit: maxActiveChatbots },
+              ) as string)
+            : ''
+        }
+      >
+        <span>
+          <Switch checked={bot.enabled} onChange={() => handleToggle(bot)} />
+        </span>
+      </Tooltip>
       <Typography
         className={clsx(classes.middleText, classes.txtCenter, {
           [classes.switchActive]: bot.enabled,
