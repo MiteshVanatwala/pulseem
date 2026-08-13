@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Dialog, Box, Typography, Button, TextField, IconButton, CircularProgress, MenuItem } from '@material-ui/core';
+import { Dialog, Box, Typography, Button, TextField, IconButton, CircularProgress, MenuItem, Chip, Tooltip } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { Close } from '@material-ui/icons';
 import { useTranslation } from 'react-i18next';
@@ -33,6 +33,13 @@ const useStyles = makeStyles((theme) => ({
     // Sample row: size + seed + the offset walkers on one line, wrapping on narrow viewports.
     sampleRow: { display: 'flex', gap: theme.spacing(1.5), alignItems: 'flex-start', flexWrap: 'wrap', marginTop: theme.spacing(1) },
     walk: { display: 'flex', gap: theme.spacing(1), alignItems: 'center', marginTop: theme.spacing(1) },
+    // The chips live ABOVE the input rather than inside it. Inside-the-field chips need the
+    // field to own its own focus ring and overflow, which in MUI v4 means re-implementing
+    // OutlinedInput — a lot of surface for a cosmetic gain. Above keeps the stock TextField
+    // untouched, wraps naturally at any width, and reads correctly in RTL.
+    chips: { display: 'flex', gap: theme.spacing(0.75), flexWrap: 'wrap', marginTop: theme.spacing(1) },
+    // Seed is metadata, not an input: narrow, monospace, disabled. See the seed block below.
+    seedBox: { width: 132 },
 }));
 
 // The destination lands in dbo.DirectApi_SendEmail.@ToEmail, which is NVARCHAR(50). A longer
@@ -40,6 +47,59 @@ const useStyles = makeStyles((theme) => ({
 // the mangled string in the blacklist. Enforced here for the message and server-side for real.
 const MAX_TO_EMAIL = 50;
 const MAX_SAMPLE_SIZE = 5;
+
+// One digest per recipient: PreviewSend takes ONE @ToEmail (dbo.DirectApi_SendEmail sends to a
+// single address), so N addresses means N calls. Capped at 5 — the same ceiling the legacy test
+// send used, and the point at which "a check for me" becomes "a distribution list carrying five
+// named agents' figures".
+const MAX_RECIPIENTS = 5;
+
+// Scoped PER USER, and deliberately NOT per campaign — the two are separate decisions.
+//
+// Not per campaign: the addresses a tester checks with belong to the PERSON, not the campaign —
+// the same inbox, usually the same colleague, across every campaign they touch. A per-campaign
+// key means retyping on every new campaign, which is when people stop using the feature.
+//
+// But scoped to the LOGGED-IN USER, not global. A shared browser — an agency machine, a support
+// laptop, one desk two people — would otherwise show operator B the addresses operator A checks
+// with. Those are colleagues' addresses at an insurance client; they are not a UI preference.
+// Scoping to the user still survives what the feature is for: the SAME person, the NEXT campaign.
+// No identity ⇒ no key ⇒ nothing is written. Failing to remember is not a cost worth a leak.
+const storageKey = (user: string) => (user ? `smartsend.preview.recipients.v1::${user.toLowerCase()}` : '');
+
+// Client-side sanity only; dbo/SmartSendPreviewLogic.IsValidToEmail (MailAddress + the 50-char
+// ceiling) is the authority and runs again server-side. This exists to stop an obvious typo
+// before it costs a round trip, not to be a specification of what an address is.
+const EMAIL_RE = /^[^\s@,;]+@[^\s@,;]+\.[^\s@,;]+$/;
+const isValidRecipient = (e: string) => EMAIL_RE.test(e) && e.length <= MAX_TO_EMAIL;
+
+// localStorage throws in Safari private mode and when the quota is full. A preview dialog must
+// never fail to open because a convenience feature could not read a string.
+const loadSaved = (user: string): { recipients: string[]; sampleSize: number } | null => {
+    const key = storageKey(user);
+    if (!key) return null;
+    try {
+        const raw = window.localStorage.getItem(key);
+        if (!raw) return null;
+        const p = JSON.parse(raw);
+        const recipients = Array.isArray(p.recipients)
+            ? p.recipients.filter((x: any) => typeof x === 'string' && isValidRecipient(x)).slice(0, MAX_RECIPIENTS)
+            : [];
+        const sampleSize = Number(p.sampleSize) >= 1 && Number(p.sampleSize) <= MAX_SAMPLE_SIZE
+            ? Number(p.sampleSize) : MAX_SAMPLE_SIZE;
+        return { recipients, sampleSize };
+    } catch (e) { return null; }
+};
+
+// Saved on SEND, not on every keystroke: what is worth restoring is the set the operator actually
+// committed to, not a half-typed address they abandoned.
+const saveChoice = (user: string, recipients: string[], sampleSize: number) => {
+    const key = storageKey(user);
+    if (!key) return;
+    try {
+        window.localStorage.setItem(key, JSON.stringify({ recipients, sampleSize }));
+    } catch (e) { /* storage unavailable — the feature degrades to "no memory", nothing else */ }
+};
 
 // Failure copy is keyed on the STATUS CODE, never on the server's `Message`.
 //
@@ -81,11 +141,16 @@ const TestSendDialog: React.FC<{ open: boolean; campaignId: number; onClose: () 
                 && s.core.subUserObject.Data.Emails[0] && s.core.subUserObject.Data.Emails[0].AuthValue)
             || (s.core && s.core.email) || '');
         const channel = useSelector((s: any) => s.smartSend && s.smartSend.selectedChannel);
-        const [toEmail, setToEmail] = useState('');
+        // THE one state change this whole feature rests on: the destination was a string, it is now
+        // a LIST plus whatever is being typed. Everything else — validation, the send, what gets
+        // remembered — is derived from these two, so nothing else had to grow a special case.
+        const [recipients, setRecipients] = useState<string[]>([]);
+        const [draft, setDraft] = useState('');
         const [sampleSize, setSampleSize] = useState(MAX_SAMPLE_SIZE);
         const [offset, setOffset] = useState(0);
         const [seed, setSeed] = useState(0);
         const [sending, setSending] = useState(false);
+        const [progress, setProgress] = useState<{ done: number; total: number } | null>(null);
         const [savingMapping, setSavingMapping] = useState(false);
         const [info, setInfo] = useState<{ status: 'idle' | 'loading' | 'ok' | 'failed'; count: number }>({ status: 'idle', count: 0 });
 
@@ -100,7 +165,15 @@ const TestSendDialog: React.FC<{ open: boolean; campaignId: number; onClose: () 
             // visibly a real one.
             setSeed(Math.floor(Math.random() * 2147483646) + 1);
             setOffset(0);
-            setToEmail(userEmail || '');
+            // Restore last time's choice; fall back to the logged-in address. The SEED is
+            // deliberately NOT restored — it is re-rolled above on every open. Its job is to hold
+            // one sample still while you fix a cell and re-send, not to freeze the same five agents
+            // forever: persisting it would mean nobody ever sees a different agent without walking.
+            const saved = loadSaved(userEmail);
+            const restored = saved && saved.recipients.length ? saved.recipients : (userEmail ? [userEmail] : []);
+            setRecipients(restored.filter(isValidRecipient).slice(0, MAX_RECIPIENTS));
+            setDraft('');
+            if (saved) setSampleSize(saved.sampleSize);
             setInfo({ status: 'loading', count: 0 });
             let cancelled = false;
             (async () => {
@@ -136,8 +209,55 @@ const TestSendDialog: React.FC<{ open: boolean; campaignId: number; onClose: () 
             return key ? t(key) : t('DataSources.preview.sentFail');
         };
 
-        const trimmedEmail = toEmail.trim();
-        const emailTooLong = trimmedEmail.length > MAX_TO_EMAIL;
+        // ── the chip input ───────────────────────────────────────────────────────────────────
+        // One commit function, four triggers: ',' / ' ' / Enter / blur. They all mean the same
+        // thing — "that address is finished" — so they must not drift apart.
+        // Paste is covered for free: a pasted "a@x.com, b@y.com" arrives through onChange and the
+        // separator split below turns it into two chips in one keystroke-equivalent.
+        const commitDraft = (raw: string): void => {
+            const parts = raw.split(/[,;\s]+/).map((s) => s.trim()).filter(Boolean);
+            if (!parts.length) return;
+            setRecipients((prev) => {
+                const next = prev.slice();
+                parts.forEach((p) => {
+                    // Duplicates are dropped silently rather than flagged: adding the same address
+                    // twice is an obvious slip, and two identical digests is a worse outcome than
+                    // no feedback. Comparison is case-insensitive on the whole address — the local
+                    // part is technically case-sensitive, but no real mailbox relies on it and a
+                    // tester typing Idan@ and idan@ means one inbox.
+                    if (next.length >= MAX_RECIPIENTS) return;
+                    if (next.some((x) => x.toLowerCase() === p.toLowerCase())) return;
+                    next.push(p);
+                });
+                return next;
+            });
+        };
+
+        const handleDraftChange = (v: string) => {
+            // A separator ENDS an address. Anything before the last separator is committed; the
+            // tail keeps being typed. This is what makes "type, comma, type, comma" feel natural
+            // without a keydown handler racing the controlled value.
+            if (/[,;\s]/.test(v)) {
+                const lastSep = Math.max(v.lastIndexOf(','), v.lastIndexOf(';'), v.lastIndexOf(' '));
+                commitDraft(v.slice(0, lastSep + 1));
+                setDraft(v.slice(lastSep + 1));
+                return;
+            }
+            setDraft(v);
+        };
+
+        const removeRecipient = (email: string) =>
+            setRecipients((prev) => prev.filter((x) => x !== email));
+
+        const draftTrimmed = draft.trim();
+        // The list the send will actually use — the draft counts even if the operator never pressed
+        // anything after typing it. Losing a typed address because it was not "committed" is the
+        // classic chip-input bug, and it silently sends to fewer people than the screen implies.
+        const effective = draftTrimmed && !recipients.some((x) => x.toLowerCase() === draftTrimmed.toLowerCase())
+            ? recipients.concat([draftTrimmed]).slice(0, MAX_RECIPIENTS)
+            : recipients;
+        const invalid = effective.filter((e) => !isValidRecipient(e));
+        const atCapacity = recipients.length >= MAX_RECIPIENTS;
         // How many agents this offset can actually yield — the last page is short, and claiming
         // "5 out of 12" while standing at offset 10 would be a lie the mail then contradicts.
         const shownInSample = info.status === 'ok'
@@ -147,24 +267,70 @@ const TestSendDialog: React.FC<{ open: boolean; campaignId: number; onClose: () 
         const canNext = info.status === 'ok' && offset + sampleSize < info.count;
 
         const doSend = async () => {
+            const targets = effective.filter(isValidRecipient);
+            if (!targets.length) return;
             setSending(true);
-            const res: any = await dispatch(sendPreview({
-                campaignId, channel, toEmail: trimmedEmail, sampleSize, seed, offset
-            }));
-            setSending(false);
-            const r = res && res.payload ? res.payload : {};
-            // 201 ONLY. The previous implementation accepted `200 || 201`, and 200 is exactly what
-            // the shared test-send path returns when the send FAILED (NewsletterLogic.cs:479/:589) —
-            // a failed test looked sent. The new endpoint returns 201 for "queued" and nothing else.
-            const ok = r.StatusCode === 201;
+
+            // SEQUENTIAL, not Promise.all. Each call composes its own digest and mints its own
+            // preview tokens, so five parallel calls are five concurrent samplings against the same
+            // campaign for no gain — and a partial failure in flight becomes far harder to report
+            // honestly. Five requests one after another is well inside a dialog's patience budget.
+            //
+            // Same seed and offset for every recipient on purpose: everyone must be looking at THE
+            // SAME five agents, otherwise two people comparing notes are discussing different mail.
+            const results: Array<{ to: string; ok: boolean; code: number }> = [];
+            try {
+                for (let i = 0; i < targets.length; i += 1) {
+                    // Progress is shown per address rather than as one opaque spinner: five
+                    // sequential composes is seconds, not milliseconds, and a spinner that sits
+                    // still for that long reads as "stuck" — which is when people click again.
+                    setProgress({ done: i, total: targets.length });
+                    /* eslint-disable no-await-in-loop */
+                    const res: any = await dispatch(sendPreview({
+                        campaignId, channel, toEmail: targets[i], sampleSize, seed, offset
+                    }));
+                    /* eslint-enable no-await-in-loop */
+                    const r = res && res.payload ? res.payload : {};
+                    // 201 ONLY. The previous implementation accepted `200 || 201`, and 200 is
+                    // exactly what the shared test-send path returns when the send FAILED
+                    // (NewsletterLogic.cs:479/:589) — a failed test looked sent. This endpoint
+                    // returns 201 for "queued" and nothing else.
+                    results.push({ to: targets[i], ok: r.StatusCode === 201, code: r.StatusCode });
+                }
+            } catch (err) {
+                // A thunk that REJECTS (network down, unhandled 500) would otherwise escape this
+                // loop with `sending` still true — a permanently spinning button on an open dialog,
+                // with no way out but a page reload. Anything not yet attempted is reported as
+                // failed rather than quietly forgotten.
+                while (results.length < targets.length) {
+                    results.push({ to: targets[results.length], ok: false, code: 0 });
+                }
+            } finally {
+                setSending(false);
+                setProgress(null);
+            }
+
+            const okCount = results.filter((x) => x.ok).length;
+            const failed = results.filter((x) => !x.ok);
+
+            if (okCount) saveChoice(userEmail, targets, sampleSize);
+
+            if (!failed.length) {
+                onToast({ ok: true, msg: t('DataSources.preview.sentOkN', { n: okCount }) });
+                onClose();
+                return;
+            }
+            // PARTIAL FAILURE KEEPS THE DIALOG OPEN. Closing here would report "3 of 5 sent" in a
+            // toast that vanishes, with no way to see which two failed or to retry them — and the
+            // whole point of this feature is not lying about what was sent. The first failure's
+            // code carries the reason; they are near-always identical across recipients because the
+            // campaign-level refusals (no candidates, body too large) do not vary per address.
             onToast({
-                ok,
-                // The server still explains WHY it refused (no candidates / body over budget /
-                // bad address) — but through its StatusCode, translated here. r.Message is a
-                // machine code and is never rendered; see PREVIEW_ERROR_KEYS above.
-                msg: ok ? t('DataSources.preview.sentOk') : previewErrorMsg(r.StatusCode)
+                ok: false,
+                msg: okCount
+                    ? t('DataSources.preview.sentPartial', { ok: okCount, fail: failed.length, reason: previewErrorMsg(failed[0].code) })
+                    : previewErrorMsg(failed[0].code)
             });
-            onClose();
         };
 
         return (
@@ -204,14 +370,61 @@ const TestSendDialog: React.FC<{ open: boolean; campaignId: number; onClose: () 
                     )}
                     <TextField
                         fullWidth variant="outlined" size="small" style={{ marginTop: 8 }}
-                        type="email"
+                        // NOT type="email": the browser's own validation bubble fires on a value
+                        // that is mid-typing here, and the field legitimately holds a partial
+                        // address between separators.
                         label={t('DataSources.preview.toLabel')}
-                        value={toEmail}
-                        onChange={(e) => setToEmail(e.target.value)}
+                        value={draft}
+                        // NOT disabled at capacity. Disabling it also disables the Backspace path
+                        // below, so the one way to correct the fifth address would be to delete
+                        // the chip and retype it from scratch. commitDraft already refuses to go
+                        // past MAX_RECIPIENTS, and the helper text says why — so the field stays
+                        // usable and simply will not accept a sixth.
+                        onChange={(e) => handleDraftChange(e.target.value)}
+                        onBlur={() => { commitDraft(draft); setDraft(''); }}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') { e.preventDefault(); commitDraft(draft); setDraft(''); }
+                            // Backspace on an EMPTY draft pulls the last chip back into the field
+                            // rather than deleting it outright: the common reason to reach for
+                            // backspace here is a typo in the address just committed, and undoing
+                            // it into an editable state is what every mail client does.
+                            if (e.key === 'Backspace' && !draft && recipients.length) {
+                                e.preventDefault();
+                                const last = recipients[recipients.length - 1];
+                                setRecipients((prev) => prev.slice(0, -1));
+                                setDraft(last);
+                            }
+                        }}
                         inputProps={{ maxLength: MAX_TO_EMAIL }}
-                        error={emailTooLong}
-                        helperText={emailTooLong ? t('DataSources.preview.toTooLong') : t('DataSources.preview.toHelper')}
+                        error={invalid.length > 0}
+                        helperText={
+                            invalid.length > 0
+                                ? t('DataSources.preview.toInvalid', { email: invalid[0] })
+                                : atCapacity
+                                    ? t('DataSources.preview.toAtCapacity', { max: MAX_RECIPIENTS })
+                                    : t('DataSources.preview.toHelperMulti', { max: MAX_RECIPIENTS })
+                        }
                     />
+
+                    {recipients.length > 0 && (
+                        <Box className={classes.chips}>
+                            {recipients.map((email) => (
+                                <Chip
+                                    key={email}
+                                    size="small"
+                                    label={email}
+                                    onDelete={() => removeRecipient(email)}
+                                    // An invalid chip is coloured, not silently dropped: the operator
+                                    // typed it and must see WHICH one the send will refuse.
+                                    color={isValidRecipient(email) ? 'default' : 'secondary'}
+                                    // The address is always LTR even in an RTL dialog — an email
+                                    // rendered RTL puts the domain on the wrong side and reads as a
+                                    // different address entirely.
+                                    dir="ltr"
+                                />
+                            ))}
+                        </Box>
+                    )}
 
                     <Box className={classes.sampleRow}>
                         <TextField
@@ -224,13 +437,21 @@ const TestSendDialog: React.FC<{ open: boolean; campaignId: number; onClose: () 
                         >
                             {[1, 2, 3, 4, 5].map((n) => <MenuItem key={n} value={n}>{n}</MenuItem>)}
                         </TextField>
-                        <TextField
-                            variant="outlined" size="small" style={{ minWidth: 180 }}
-                            label={t('DataSources.preview.seedLabel')}
-                            value={seed}
-                            InputProps={{ readOnly: true }}
-                            helperText={t('DataSources.preview.seedHelper')}
-                        />
+                        {/* The seed is OUTPUT, not input. It was a full-width read-only TextField
+                            with a label and helper text, which made it look exactly as editable as
+                            the selector beside it and invited people to type in it.
+                            Now: narrow, monospace, and `disabled` — which greys it AND removes it
+                            from the tab order, the two things that actually say "not for you".
+                            The explanation moved into a tooltip so the row stays one line high. */}
+                        <Tooltip title={t('DataSources.preview.seedHelper') as string}>
+                            <TextField
+                                variant="outlined" size="small" className={classes.seedBox}
+                                label={t('DataSources.preview.seedLabel')}
+                                value={seed}
+                                disabled
+                                inputProps={{ dir: 'ltr', style: { fontFamily: 'Consolas, monospace', fontSize: 12 } }}
+                            />
+                        </Tooltip>
                     </Box>
 
                     <Box className={classes.walk}>
@@ -252,8 +473,20 @@ const TestSendDialog: React.FC<{ open: boolean; campaignId: number; onClose: () 
                     </Box>
                 </Box>
                 <Box className={classes.foot}>
-                    <Button variant="contained" color="primary" disabled={sending || !trimmedEmail || emailTooLong} onClick={doSend}>
-                        {sending ? <CircularProgress size={18} color="inherit" /> : t('DataSources.send.actions.testSend')}
+                    <Button variant="contained" color="primary"
+                        disabled={sending || !effective.length || invalid.length > 0}
+                        onClick={doSend}>
+                        {sending
+                            ? (
+                                <Box display="flex" alignItems="center" style={{ gap: 8 }}>
+                                    <CircularProgress size={18} color="inherit" />
+                                    {progress && progress.total > 1
+                                        && t('DataSources.preview.sendingProgress', { done: progress.done + 1, total: progress.total })}
+                                </Box>
+                            )
+                            : effective.length > 1
+                                ? t('DataSources.send.actions.testSendN', { n: effective.length })
+                                : t('DataSources.send.actions.testSend')}
                     </Button>
                     <Button onClick={onClose} disabled={sending}>{t('DataSources.send.cancel')}</Button>
                 </Box>

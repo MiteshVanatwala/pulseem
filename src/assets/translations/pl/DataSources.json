@@ -94,7 +94,8 @@
       "saveMapping": "Zapisz mapowanie",
       "preview": "Podgląd",
       "testSend": "Wysyłka testowa",
-      "sendToAll": "Wyślij do wszystkich"
+      "sendToAll": "Wyślij do wszystkich",
+      "testSendN": "Wyślij sprawdzenie ({{n}})"
     },
     "testSendWarn": "Wysyłka testowa duplikuje kampanię bez mapowania — pola źródła pojawią się w surowej postaci (##pole##) w e-mailu testowym.",
     "saveFirst": "Zapisz mapowanie, aby przejść do podglądu i wysyłki",
@@ -270,7 +271,13 @@
       "invalidEmail": "Adres docelowy jest nieprawidłowy lub dłuższy niż 50 znaków. Podaj poprawny adres o długości do 50 znaków.",
       "serverError": "Wysyłka testowa nie powiodła się z powodu błędu serwera. Spróbuj ponownie za kilka minut.",
       "featureOff": "Źródła danych nie są włączone na tym koncie. Skontaktuj się z administratorem konta."
-    }
+    },
+    "toHelperMulti": "Przecinek lub spacja dodaje adres · maks. {{max}}",
+    "toInvalid": "Nieprawidłowy adres: {{email}}",
+    "toAtCapacity": "Osiągnięto maksimum {{max}} adresów",
+    "sentOkN": "Sprawdzenie wysłane na {{n}} adresów",
+    "sentPartial": "{{ok}} wysłano, {{fail}} nie powiodło się — {{reason}}",
+    "sendingProgress": "Wysyłanie {{done}} z {{total}}…"
   },
   "retry": "Spróbuj ponownie",
   "viewOnlyBadge": "Tylko do podglądu",
@@ -468,7 +475,7 @@
     "title": "Eksport źródła",
     "format": "Format",
     "formatNote": "Plik jest generowany raz — na stronie pobierania możesz go pobrać jako CSV lub Excel",
-    "notifyEmail":"E-mail powiadomienia (opcjonalnie)",
+    "notifyEmail": "E-mail powiadomienia (opcjonalnie)",
     "csvOnly": "Powyżej 100 000 wierszy można eksportować tylko do CSV",
     "runningInBackground": "Eksport działa w tle — plik pojawi się na stronie pobierania, a powiadomienie zostanie wysłane e-mailem",
     "ready": "Plik jest gotowy na stronie pobierania",
