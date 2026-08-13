@@ -136,20 +136,36 @@ export const getRoutes = (
           isShow: !!(features && features.indexOf(PulseemFeatures.DATA_SOURCES) > -1)
         },
         {
+          // HIDDEN FROM THE SIDEBAR ON PURPOSE (PO decision) — Smart Send is a step, not a destination:
+          // it is reached from the Data Sources header button, from any source row, from the campaign
+          // row action, from the BEE editor, and from the mapping registry tab. SmartSendScreen itself
+          // already declares currentPage="groups", so the app never treated this as its own place.
+          //
+          // isShow:false, NOT deletion. DefaultScreen.js:41-43 derives the browser <title> from THIS
+          // record, matching on `key` alone and ignoring isShow — so the entry has to survive for
+          // /SmartSend and /Campaigns/SmartSend/:id to keep their tab titles. Deleting it drops them to
+          // a bare "מערכת פולסים" in the tab, in history and in every bookmark.
+          //
+          // Both routes stay registered in App.js — only the sidebar entry goes.
           key: 'smartSend',
           title: t('DataSources.send.title'),
           href: `${sitePrefix}SmartSend`,
-          isShow: !!(userRoles?.AllowSend && features && features.indexOf(PulseemFeatures.DATA_SOURCES) > -1)
+          isShow: false
         },
         {
-          // Feature-gated only — NOT gated on AllowSend, unlike smartSend above. SendSearch is a
-          // read-only report; requiring send permission would hide it from the supervisors and
-          // support staff it exists for. Same gate as the `dataSources` entry, and it must stay
-          // identical to the route gate in App.js (P3.2).
+          // NOT gated on AllowSend, unlike smartSend above. SendSearch is a read-only report;
+          // requiring send permission would hide it from the supervisors and support staff it exists
+          // for. That stays true. It must stay identical to the route gate in App.js (P3.2).
+          //
+          // HideRecipients IS gated, and that is a different permission from AllowSend — no conflict
+          // with the paragraph above. SendSearchController refuses the Search action outright with 405
+          // for this permission ("It returns recipient PII"), so without this the entry was a dead menu
+          // item: it opened a page on which every search came back empty with a permission error.
+          // Same test as the `clientSearch` entry above, for the same reason.
           key: 'sendSearch',
           title: t('SendSearch.nav.sendSearch'),
           href: `${sitePrefix}SendSearch`,
-          isShow: !!(features && features.indexOf(PulseemFeatures.DATA_SOURCES) > -1)
+          isShow: !!(features && features.indexOf(PulseemFeatures.DATA_SOURCES) > -1 && !userRoles?.HideRecipients)
         }
       ],
     },

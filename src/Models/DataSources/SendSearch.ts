@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════════════════════════════════
-// SendSearch (חיפוש שליחות) models — V1.
+// SendSearch (דוח מקורות; the DataSources tab labels it "חיפוש סוכנים ומפקחים") models — V1.
 //
 // DELIVERY PATH:  _delivery\SendSearch-V1\react\Models\SendSearch.ts
 // TARGET PATH:    ReactCode\src\Models\DataSources\SendSearch.ts   (CONTRACT §4.3)
@@ -1304,7 +1304,7 @@ const CRITERION_RENDERERS: { [key: string]: CriterionRenderer } = {
         // 🔴 THE FILE MUST NOT CLAIM COVERAGE IT DOES NOT HAVE. Added after review (2026-08-09).
         //
         // The picked dates are printed above exactly as the operator chose them — and when
-        // "כלול חיפוש שליחות מעל שנה" is OFF, the SP OVERWRITES the lower bound:
+        // "כלול תוצאות מלפני יותר משנה" is OFF, the SP OVERWRITES the lower bound:
         //   50-SearchSends-MultiCampaign.sql:188-196 — @prm_DateTo defaults to GETDATE(),
         //   @OneYearFloor = DATEADD(month,-12,@prm_DateTo), and with @prm_IncludeOverOneYear = 0 a
         //   @prm_DateFrom that is NULL or older than the floor is SET TO the floor.

@@ -5,9 +5,9 @@
   "searchPlaceholder": "Search by name or description",
   "clearSearch": "Clear",
   "backToList": "Back to sources list",
-  "goToSend": "Go to send page",
+  "goToSend": "Choose a campaign to send from this source",
   "send": {
-    "title": "Smart Send",
+    "title": "Send from source",
     "campaignLabel": "Campaign: {{name}}",
     "notMapped": "This campaign is not mapped to a data source yet",
     "mappedTo": "Mapped to source: {{name}}",
@@ -113,7 +113,7 @@
     },
     "testSendWarn": "Test send duplicates the campaign without the mapping — source fields will appear raw (##field##) in the test email.",
     "saveFirst": "Save the mapping to continue to preview and send",
-    "smartSendAction": "Smart send (data source)",
+    "smartSendAction": "Send from source",
     "close": "Close",
     "cancel": "Cancel",
     "backToCampaigns": "Back to campaigns",
@@ -202,7 +202,7 @@
       "retryAction": "Try again"
     },
     "picker": {
-      "title": "Smart Send",
+      "title": "Send from source",
       "step1": "Step 1",
       "step2": "Step 2 — Select a campaign",
       "fromSource": "Sending from source: {{name}}",
@@ -230,7 +230,7 @@
       "selectAria": "Select a campaign to send"
     },
     "manage": {
-      "title": "Smart Send campaigns",
+      "title": "Send-from-source campaigns",
       "edit": "Edit",
       "delete": "Delete",
       "deleteConfirmTitle": "Delete the mapping?",
@@ -246,11 +246,11 @@
         "updated": "Last updated",
         "actions": "Actions"
       },
-      "empty": "No smart-send campaigns yet",
+      "empty": "No send-from-source campaigns yet",
       "outdatedOnly": "Show outdated only",
       "staleChip": "V{{mapped}} · V{{latest}}",
       "tabSources": "Sources",
-      "tabSmartSend": "Smart Send",
+      "tabSmartSend": "Send-from-source campaigns",
       "tabSendSearch": "Agent & supervisor search"
     }
   },

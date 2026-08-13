@@ -3,15 +3,20 @@
 //
 // Extracted from SendSearchScreen.tsx so the same code can render in two places:
 //   • `SendSearchScreen.tsx`            — the standalone /SendSearch route (DefaultScreen + gate)
-//   • `DataSources.tsx` tab "sendsearch" — the third tab, מקורות | שליחה חכמה | חיפוש סוכנים ומפקחים
+//   • `DataSources.tsx` tab "sendsearch" — the LAST tab. The strip is built from a permission-gated
+//     registry there, so it is 1–3 tabs wide, not a fixed three:
+//     מקורות | קמפיינים לשליחה ממקור | חיפוש סוכנים ומפקחים
 // Neither copy may fork: a filter that behaves differently depending on how the user got here is
 // exactly the invisible inconsistency this screen exists to expose in the SEND data.
+// The two hosts do NOT share a title string, and that is deliberate: the standalone route is named
+// "דוח מקורות" (a product name), the tab keeps the literal "חיפוש סוכנים ומפקחים" (PO decision).
 //
 // What this component deliberately does NOT do, because its two hosts already do it:
 //   • No `DefaultScreen` wrapper — the host owns the page shell.
-//   • No feature gate / Redirect — SendSearchScreen gates on DATA_SOURCES, and DataSources.tsx
-//     gates on the same entitlement before it renders any tab. Gating a third time here would be
-//     a third place to keep in sync.
+//   • No feature gate / Redirect — SendSearchScreen gates on DATA_SOURCES *and* !HideRecipients
+//     (matching SendSearchController, which answers Search with 405 for that permission), and
+//     DataSources.tsx applies BOTH tests to the tab entry in its TABS registry before rendering it.
+//     Gating a third time here would be a third place to keep in sync.
 //   • No <h1> unless asked (`showTitle`) — inside the tab the page title is "מקורות נתונים" and
 //     the tab label already names this view, so a second heading is noise. The standalone route
 //     passes showTitle so it keeps its own heading.

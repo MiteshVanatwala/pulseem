@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import DefaultScreen from '../DefaultScreen';
 import clsx from 'clsx';
 import {
@@ -91,9 +92,9 @@ const DataSources = ({ classes }: ClassesType) => {
     const [versionsData, setVersionsData] = useState<{ dataSourceId: number | null; versions: DataSourceVersion[]; activeVersionId: number | null }>({ dataSourceId: null, versions: [], activeVersionId: null });
     const [toastMessage, setToastMessage] = useState<ERROR_TYPE>(null);
     const [loading, setLoading] = useState(false);
-    // Which tab is showing. The sources tab keeps its own PAGE_NAME/search/polling unchanged; the
+    // Which tab is showing is NOT state — it is derived from ?tab= in the TABS block below, which has
+    // to sit after `canSend`. The sources tab keeps its own PAGE_NAME/search/polling unchanged; the
     // Smart Send management tab owns its own state (PAGE_NAME_SS='DataSourcesSmartSend') inside SmartSendManageTab.
-    const [activeTab, setActiveTab] = useState('sources');
     /* The account's named ExtraField/ExtraDate slots, for the upload wizard's client-field write-back
        picker. Fetched here rather than inside the wizard so it is loaded once per screen instead of
        on every open, and so the wizard stays a pure presentational component with the catalogue
@@ -115,6 +116,52 @@ const DataSources = ({ classes }: ClassesType) => {
     // Mirrors the server's AllowSend gate on every Smart Send action (SetMapping/FillAndSummarize/Send),
     // so a user who cannot send never reaches a screen where every action 405s after the mapping work.
     const canSend = !!userRoles?.AllowSend;
+
+    /* ── Tabs: ONE registry, three consumers ─────────────────────────────────────────────────────
+       Which <Tab> renders, which ?tab= values are legal, and which panel shows — all three read from
+       THIS array. Deriving them from one source is what makes the permission gate and the deep link
+       structurally incapable of disagreeing; two separate lists fail as a ?tab= value that is legal
+       but selects no tab, which MUI renders as a strip with nothing highlighted.
+
+       The Smart Send entry is SPREAD in, never written as `{canSend && <Tab/>}` — MUI v4's <Tabs>
+       maps over its children and would be handed a literal `false`.
+
+       WHY canSend GATES THE MIDDLE TAB — this is a fix, not a refactor: SmartSendManageTab carries no
+       permission check of its own, and its "עריכה" action navigates to Campaigns/SmartSend/:id, a route
+       App.js registers ONLY when userRoles.AllowSend. Before this gate, a sub-user without send
+       permission saw the full mapping list and hit the bare 404 catch-all on the first click.
+
+       WHY canViewRecipients GATES THE THIRD TAB — it renders the very same SendSearchPanel that the
+       /SendSearch route renders, and that route plus its sidebar entry are both gated on
+       !HideRecipients because SendSearchController answers Search with 405 for that permission. The
+       panel fetches on mount and carries no gate of its own, so an ungated tab left the exact dead
+       surface those two gates exist to remove sitting one click inside this page — and, once ?tab=
+       became a legal deep link, bookmarkable too. All three surfaces now read the same permission. */
+    const TABS = useMemo(() => [
+        { value: 'sources', label: t('DataSources.send.manage.tabSources') },
+        ...(canSend ? [{ value: 'smartsend', label: t('DataSources.send.manage.tabSmartSend') }] : []),
+        ...(canViewRecipients ? [{ value: 'sendsearch', label: t('DataSources.send.manage.tabSendSearch') }] : []),
+    ], [canSend, canViewRecipients, t]);
+
+    /* activeTab is derived from the URL rather than held in state — that single choice is what buys
+       refresh, browser Back and a shareable link with no syncing code to get out of step. A value
+       that is unknown, or legal for someone else but not for this user, falls back to 'sources':
+       before this the render ternary's default branch meant ANY unrecognised ?tab= showed the send
+       report. `sources` clears the param instead of writing ?tab=sources, so the default tab keeps
+       the bare /DataSources URL every existing link and bookmark already uses. */
+    const [searchParams, setSearchParams] = useSearchParams();
+    const requestedTab = searchParams.get('tab');
+    const activeTab = TABS.some(x => x.value === requestedTab) ? (requestedTab as string) : 'sources';
+    const selectTab = (value: string) => {
+        // Re-clicking the tab you are already on must not push an identical entry: the screen would
+        // not change, so the only visible effect would be a Back press that appears to do nothing.
+        // Guarded here rather than in the onChange arrow so any future caller is covered too.
+        if (value === activeTab) return;
+        const next = new URLSearchParams(searchParams);
+        if (value === 'sources') next.delete('tab'); else next.set('tab', value);
+        // Push, not replace: Back stepping through the tabs is the behaviour being added here.
+        setSearchParams(next);
+    };
 
     // The Send glyph is a paper-plane pointing forward-in-LTR; in an RTL UI "forward" is leftward, so
     // mirror it horizontally (scaleX, NOT rotate — rotate would flip it upside-down).
@@ -533,14 +580,12 @@ const DataSources = ({ classes }: ClassesType) => {
 
                 <Tabs
                     value={activeTab}
-                    onChange={(_: any, v: string) => setActiveTab(v)}
+                    onChange={(_: any, v: string) => selectTab(v)}
                     indicatorColor="primary"
                     textColor="primary"
                     style={{ borderBottom: '1px solid #e0e0e0', marginTop: 8 }}
                 >
-                    <Tab value="sources" style={TAB_LABEL_STYLE} label={t('DataSources.send.manage.tabSources')} />
-                    <Tab value="smartsend" style={TAB_LABEL_STYLE} label={t('DataSources.send.manage.tabSmartSend')} />
-                    <Tab value="sendsearch" style={TAB_LABEL_STYLE} label={t('DataSources.send.manage.tabSendSearch')} />
+                    {TABS.map(tb => <Tab key={tb.value} value={tb.value} style={TAB_LABEL_STYLE} label={tb.label} />)}
                 </Tabs>
 
                 {activeTab === 'sources' ? (
@@ -569,6 +614,8 @@ const DataSources = ({ classes }: ClassesType) => {
                 ) : activeTab === 'smartsend' ? (
                     <SmartSendManageTab classes={classes} />
                 ) : (
+                    // Reachable ONLY as 'sendsearch' now: activeTab is validated against TABS above, so
+                    // this default branch can no longer be hit by a stray ?tab= value the way it was.
                     // No `showTitle` — the page heading above ("מקורות נתונים") plus the tab label
                     // already name this view; a second <h1> inside the tab would be duplicate chrome.
                     <SendSearchPanel />

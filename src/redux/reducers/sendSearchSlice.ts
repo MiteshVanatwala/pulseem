@@ -210,8 +210,8 @@ export const getSendRowValues = createAsyncThunk(
 //
 // 🔴 THE DATE SCOPE IS NOW SENT, and it is not a refinement — without it the campaign list would be
 // a lie. The SP defaults @prm_DateTo to GETDATE() and floors @prm_DateFrom at 12 months back, so a
-// channel-only call always describes the last twelve months. A user who ticks "כלול חיפוש שליחות
-// מעל שנה" would then get a grid full of older sends while the picker offered no campaign to match
+// channel-only call always describes the last twelve months. A user who ticks "כלול תוצאות מלפני
+// יותר משנה" would then get a grid full of older sends while the picker offered no campaign to match
 // them, and would reasonably conclude the campaign was gone.
 //
 // It also corrects the FIELD list, which had the same defect quietly: the columns offered were

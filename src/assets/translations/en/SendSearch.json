@@ -1,7 +1,7 @@
 {
-  "title": "Send search",
+  "title": "Sources report",
   "nav": {
-    "sendSearch": "Send search"
+    "sendSearch": "Sources report"
   },
   "searchPlaceholder": "Name, email or mobile of an agent or supervisor…",
   "role": {
@@ -56,7 +56,7 @@
   "col": {
     "recipient": "Recipient",
     "supervisor": "Supervisor",
-    "mailing": "Mailing",
+    "mailing": "Campaign",
     "channelsAndResult": "Channels and result",
     "lastEvidence": "Latest evidence",
     "sent": "Sent",
