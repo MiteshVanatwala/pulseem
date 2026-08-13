@@ -308,7 +308,18 @@ const ChatbotBuilder = ({ classes }: { classes?: any }) => {
             variant="scrollable"
             scrollButtons="auto"
             value={tabValue}
-            onChange={(_e, value) => setTabValue(value)}
+            onChange={(_e, value) => {
+              if (value === tabValue) return;
+              // Switching tabs via the tab headers runs the same validate+save
+              // as the wizard buttons (Save and Continue / Back), so the flow
+              // is never left mid-edit just because the user clicked a tab
+              // instead of a button.
+              if (value === '2') {
+                handleContinue();
+              } else {
+                handleBackToTrigger();
+              }
+            }}
             classes={{ indicator: classes.hideIndicator }}
           >
             <Tab
