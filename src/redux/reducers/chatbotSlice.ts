@@ -79,6 +79,9 @@ interface ChatbotState {
   // Defaults to 5 (the backend's own live default) before the first load completes.
   maxActiveChatbots: number;
   loadingList: boolean;
+  // True while a delete/toggle is in flight - separate from loadingList so the
+  // list itself doesn't need to be re-fetched to show a busy state for these.
+  mutating: boolean;
   currentFlow: IChatbotFlow | null;
   loadingFlow: boolean;
   saving: boolean;
@@ -90,6 +93,7 @@ const initialState: ChatbotState = {
   tierLimit: null,
   maxActiveChatbots: 5,
   loadingList: false,
+  mutating: false,
   currentFlow: null,
   loadingFlow: false,
   saving: false,
@@ -147,17 +151,35 @@ const chatbotSlice = createSlice({
         state.saving = false;
         state.error = (action.payload as string) ?? action.error.message ?? 'Failed to save chatbot';
       })
+      .addCase(deleteChatbot.pending, (state) => {
+        state.mutating = true;
+        state.error = null;
+      })
       .addCase(deleteChatbot.fulfilled, (state, action) => {
+        state.mutating = false;
         state.list = state.list.filter((c) => c.id !== action.payload);
+        // tierLimit.used is a snapshot from the last GetChatbots call - decrement it
+        // here too, otherwise atLimit in ChatbotList stays true (Create button stuck
+        // disabled) until the next full list refresh even though a slot just freed up.
+        if (state.tierLimit && state.tierLimit.used > 0) {
+          state.tierLimit.used -= 1;
+        }
       })
       .addCase(deleteChatbot.rejected, (state, action) => {
+        state.mutating = false;
         state.error = (action.payload as string) ?? action.error.message ?? 'Failed to delete chatbot';
       })
+      .addCase(toggleChatbot.pending, (state) => {
+        state.mutating = true;
+        state.error = null;
+      })
       .addCase(toggleChatbot.fulfilled, (state, action) => {
+        state.mutating = false;
         const item = state.list.find((c) => c.id === action.payload.id);
         if (item) item.enabled = action.payload.enabled;
       })
       .addCase(toggleChatbot.rejected, (state, action) => {
+        state.mutating = false;
         state.error = (action.payload as string) ?? action.error.message ?? 'Failed to update chatbot';
       });
   },

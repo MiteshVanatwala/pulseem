@@ -64,7 +64,7 @@ const ChatbotList = ({ classes }: { classes?: any }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const dispatch = useDispatch<any>();
-  const { list, tierLimit, maxActiveChatbots, loadingList } = useSelector((s: any) => s.chatbot);
+  const { list, tierLimit, maxActiveChatbots, loadingList, mutating } = useSelector((s: any) => s.chatbot);
   const { isRTL, windowSize, rowsPerPage } = useSelector((s: any) => s.core);
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
   const [pendingToggle, setPendingToggle] = useState<IChatbotListItem | null>(null);
@@ -491,7 +491,7 @@ const ChatbotList = ({ classes }: { classes?: any }) => {
 
       {toastMessage && <Toast data={toastMessage} />}
 
-      <Loader isOpen={loadingList} />
+      <Loader isOpen={loadingList || mutating} />
     </DefaultScreen>
   );
 };

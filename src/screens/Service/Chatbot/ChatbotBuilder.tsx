@@ -9,6 +9,7 @@ import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import DefaultScreen from '../../DefaultScreen';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import Toast from '../../../components/Toast/Toast.component';
+import { Loader } from '../../../components/Loader/Loader';
 import { Title } from '../../../components/managment/Title';
 import { sitePrefix } from '../../../config';
 import { getChatbotFlow, saveChatbot, clearCurrentFlow } from '../../../redux/reducers/chatbotSlice';
@@ -291,21 +292,6 @@ const ChatbotBuilder = ({ classes }: { classes?: any }) => {
     }
   };
 
-  if (loadingFlow) {
-    return (
-      <DefaultScreen
-        classes={classes}
-        currentPage="service"
-        subPage="serviceChatbots"
-        customPadding
-        containerClass={clsx(classes.mb50, classes.editorCont)}
-        hideSideImages
-      >
-        <div className="svc-cb">{t('common.loading', 'Loading…')}</div>
-      </DefaultScreen>
-    );
-  }
-
   return (
     <DefaultScreen
       classes={classes}
@@ -511,6 +497,8 @@ const ChatbotBuilder = ({ classes }: { classes?: any }) => {
       </div>
 
       {toastMessage && <Toast data={toastMessage} />}
+
+      <Loader isOpen={loadingFlow || saving} />
 
       {showUnsavedDialog && (
         <BaseDialog
