@@ -111,7 +111,6 @@ import LegacyPageFrame, { LegacyPageWild } from './screens/LegacyPage/LegacyPage
 import { openHelpDrawer, closeHelpDrawer, toggleHelpDrawer } from './redux/reducers/helpDrawerSlice';
 import ChatWidgetConfigPage from './screens/Widgets/ChatWidgetConfigPage';
 import WidgetListPage from './screens/Widgets/WidgetListPage';
-import Conversations from './screens/Service/Conversations/Conversations';
 import Dashboard from './screens/Service/Dashboard/Dashboard';
 import ChatbotList from './screens/Service/Chatbot/ChatbotList';
 import ChatbotBuilder from './screens/Service/Chatbot/ChatbotBuilder';
@@ -703,16 +702,6 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
         exact
         path={`${sitePrefix}Dashboard`}
         element={<Dashboard classes={classes} />}
-      />
-      <Route
-        exact
-        path={`${sitePrefix}Conversations`}
-        element={<Conversations classes={classes} />}
-      />
-      <Route
-        exact
-        path={`${sitePrefix}Conversations/:conversationId`}
-        element={<Conversations classes={classes} />}
       />
       <Route
         exact

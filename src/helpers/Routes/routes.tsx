@@ -307,12 +307,6 @@ export const getRoutes = (
           isShow: true,
         },
         {
-          key: 'serviceConversations',
-          title: "Conversations",
-          href: `${sitePrefix}Conversations`,
-          isShow: true,
-        },
-        {
           key: 'serviceWidgets',
           title: "Widgets",
           href: `${sitePrefix}Widgets`,

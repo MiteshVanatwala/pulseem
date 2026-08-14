@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { Grid } from '@material-ui/core';
 import DefaultScreen from '../../DefaultScreen';
 import { sitePrefix } from '../../../config';
+import { whatsappRoutes } from '../../Whatsapp/Constant';
 import { getDashboardData } from '../../../redux/reducers/serviceDashboardSlice';
 import { IDashboardData } from '../../../Models/Service/Dashboard';
 import StatsCards from './components/StatsCards';
@@ -31,7 +32,9 @@ const Dashboard = ({ classes }: any) => {
     return () => clearInterval(id);
   }, [dispatch]);
 
-  const goConversations = () => navigate(`${sitePrefix}Conversations`);
+  // Widget conversations live inside the WhatsApp Chat inbox rather than a second
+  // page, so "View all" filters that inbox to the widget channel.
+  const goConversations = () => navigate(`${whatsappRoutes.CHAT}?channel=widget`);
   const goWidgets = () => navigate(`${sitePrefix}Widgets`);
 
   return (

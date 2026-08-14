@@ -1,0 +1,268 @@
+/*
+  Widget styles. Scoped to the iframe document, so nothing here can leak into the
+  customer's page and nothing of theirs can reach in — that isolation is the whole
+  reason the widget renders in an iframe.
+
+  --brand is written at runtime from the widget's primaryColor.
+*/
+
+:root {
+  --brand: #007bff;
+  --brand-ink: #fff;
+  --ink: #16181d;
+  --ink-2: #5b6270;
+  --ink-3: #8b93a3;
+  --line: #e4e7ec;
+  --surface: #fff;
+  --surface-2: #f5f7fa;
+  --radius: 12px;
+  --shadow: 0 6px 24px rgba(16, 24, 40, .16);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: transparent;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 14px;
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+body.rtl { direction: rtl; }
+
+/* ── Bubble ──────────────────────────────────────────────────────────────── */
+
+#bubble {
+  position: absolute;
+  bottom: 0;
+  width: 60px;
+  height: 60px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--brand);
+  color: var(--brand-ink);
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform .15s ease;
+}
+body[data-side="right"] #bubble { right: 0; }
+body[data-side="left"]  #bubble { left: 0; }
+#bubble:hover { transform: scale(1.06); }
+#bubble[hidden] { display: none; }
+
+/* ── Greeting bubble ─────────────────────────────────────────────────────── */
+
+.greeting {
+  position: absolute;
+  bottom: 70px;
+  max-width: 260px;
+  background: var(--surface);
+  color: var(--ink);
+  padding: .7rem .85rem;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  font-size: 13.5px;
+  line-height: 1.45;
+}
+body[data-side="right"] .greeting { right: 0; }
+body[data-side="left"]  .greeting { left: 0; }
+.greeting[hidden] { display: none; }
+
+/* ── Panel ───────────────────────────────────────────────────────────────── */
+
+.panel {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.panel[hidden] { display: none; }
+
+.panel-head {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  padding: .85rem 1rem;
+  background: var(--brand);
+  color: var(--brand-ink);
+  flex: none;
+}
+.head-text { display: flex; flex-direction: column; line-height: 1.25; min-width: 0; }
+.head-text strong { font-size: 15px; font-weight: 600; }
+.head-status { font-size: 11.5px; opacity: .85; }
+
+.icon-btn {
+  margin-inline-start: auto;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  padding: .25rem;
+  border-radius: 6px;
+  display: flex;
+  flex: none;
+}
+.icon-btn:hover { background: rgba(255, 255, 255, .18); }
+
+.panel-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+  background: var(--surface-2);
+}
+
+.branding {
+  flex: none;
+  text-align: center;
+  padding: .5rem;
+  font-size: 11.5px;
+  color: var(--ink-3);
+  background: var(--surface);
+  border-top: 1px solid var(--line);
+}
+.branding[hidden] { display: none; }
+
+/* ── Forms (identification, marketing, feedback) ─────────────────────────── */
+
+.form-intro { margin: 0 0 .9rem; color: var(--ink-2); line-height: 1.5; }
+
+.field { margin-bottom: .8rem; }
+.field label {
+  display: block;
+  font-size: 12.5px;
+  font-weight: 600;
+  margin-bottom: .3rem;
+  color: var(--ink-2);
+}
+.field .req { color: #d92d20; }
+
+.field input,
+.field textarea {
+  width: 100%;
+  padding: .55rem .65rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font: inherit;
+  color: var(--ink);
+  background: var(--surface);
+}
+.field textarea { resize: vertical; min-height: 72px; }
+.field input:focus,
+.field textarea:focus { outline: 2px solid var(--brand); outline-offset: -1px; border-color: transparent; }
+
+.field-error { color: #d92d20; font-size: 12px; margin-top: .25rem; }
+
+.btn {
+  width: 100%;
+  padding: .65rem;
+  border: 0;
+  border-radius: 8px;
+  background: var(--brand);
+  color: var(--brand-ink);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btn:disabled { opacity: .55; cursor: default; }
+.btn-secondary {
+  background: transparent;
+  color: var(--ink-2);
+  font-weight: 500;
+  margin-top: .4rem;
+}
+
+/* ── Messages ────────────────────────────────────────────────────────────── */
+
+.messages { display: flex; flex-direction: column; gap: .55rem; }
+
+.msg { max-width: 82%; padding: .55rem .75rem; border-radius: 12px; line-height: 1.45; word-wrap: break-word; }
+.msg-visitor { align-self: flex-end; background: var(--brand); color: var(--brand-ink); border-bottom-right-radius: 4px; }
+.msg-agent   { align-self: flex-start; background: var(--surface); border: 1px solid var(--line); border-bottom-left-radius: 4px; }
+.msg-ai      { align-self: flex-start; background: #eef4ff; border: 1px solid #d6e4ff; border-bottom-left-radius: 4px; }
+.msg-system  { align-self: center; background: transparent; color: var(--ink-3); font-size: 12.5px; text-align: center; max-width: 100%; }
+
+.msg-meta { display: block; font-size: 11px; opacity: .7; margin-top: .2rem; }
+
+.composer {
+  flex: none;
+  display: flex;
+  gap: .5rem;
+  padding: .65rem;
+  border-top: 1px solid var(--line);
+  background: var(--surface);
+  align-items: flex-end;
+}
+.composer textarea {
+  flex: 1;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: .5rem .6rem;
+  font: inherit;
+  resize: none;
+  max-height: 96px;
+  min-height: 38px;
+  color: var(--ink);
+  background: var(--surface);
+}
+.composer textarea:focus { outline: 2px solid var(--brand); outline-offset: -1px; }
+.send-btn {
+  flex: none;
+  width: 38px;
+  height: 38px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--brand);
+  color: var(--brand-ink);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.send-btn:disabled { opacity: .45; cursor: default; }
+
+/* The chat screen manages its own scrolling, so the body must not double-scroll. */
+.panel-body.is-chat { display: flex; flex-direction: column; padding: 0; overflow: hidden; }
+.panel-body.is-chat .messages { flex: 1; overflow-y: auto; padding: 1rem; }
+
+/* ── Stars ───────────────────────────────────────────────────────────────── */
+
+.stars { display: flex; gap: .3rem; margin-bottom: .9rem; }
+.star {
+  border: 0;
+  background: transparent;
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+  color: #d3d8e0;
+  padding: 0;
+}
+.star.on { color: #f5b716; }
+
+.tags { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: .9rem; }
+.tag {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  border-radius: 999px;
+  padding: .3rem .7rem;
+  font-size: 12.5px;
+  cursor: pointer;
+  color: var(--ink-2);
+}
+.tag.on { background: var(--brand); color: var(--brand-ink); border-color: transparent; }
+
+.notice { text-align: center; color: var(--ink-2); padding: 1.5rem .5rem; line-height: 1.5; }
+
+@media (prefers-reduced-motion: reduce) {
+  #bubble, .panel { transition: none; }
+}

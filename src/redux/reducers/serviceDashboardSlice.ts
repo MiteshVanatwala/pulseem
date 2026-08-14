@@ -1,24 +1,30 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
 import { IDashboardData } from '../../Models/Service/Dashboard';
-import { MOCK_DASHBOARD } from '../../screens/Service/Dashboard/mockDashboard';
-
-// ⚠️ PREVIEW FLAG — true = use local mock data (no backend needed); false = call the
-// real Service/Dashboard endpoint. Flip to false once the Dashboard backend is deployed.
-const USE_MOCK = true;
 
 // The Service backend returns a double-encoded JSON string (see conversationsSlice).
 const unwrap = <T = any>(data: any): { StatusCode: number; Message: string; Data: T } =>
   typeof data === 'string' ? JSON.parse(data) : data;
 
-const mockDelay = <T = any>(data: T, ms = 250): Promise<T> =>
-  new Promise((r) => setTimeout(() => r(data), ms));
+export const getDashboardData = createAsyncThunk(
+  'Service/GetDashboard',
+  async (_: void, thunkAPI) => {
+    try {
+      const res = await PulseemReactInstance.get('api/Service/Dashboard');
+      const body = unwrap<IDashboardData>(res.data);
 
-export const getDashboardData = createAsyncThunk('Service/GetDashboard', async () => {
-  if (USE_MOCK) return mockDelay(MOCK_DASHBOARD);
-  const res = await PulseemReactInstance.get('api/Service/Dashboard');
-  return unwrap<IDashboardData>(res.data).Data;
-});
+      // The API answers 200 at the transport layer and puts the real outcome in the
+      // envelope, so a non-200 StatusCode has to be surfaced explicitly or the screen
+      // silently renders an empty dashboard as though it were real data.
+      if (body.StatusCode !== 200) {
+        return thunkAPI.rejectWithValue(body.Message || 'Failed to load dashboard');
+      }
+      return body.Data;
+    } catch (e: any) {
+      return thunkAPI.rejectWithValue(e?.message ?? 'Failed to load dashboard');
+    }
+  },
+);
 
 interface ServiceDashboardState {
   data: IDashboardData | null;
@@ -48,7 +54,8 @@ const serviceDashboardSlice = createSlice({
       })
       .addCase(getDashboardData.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message ?? 'Failed to load dashboard';
+        state.error =
+          (action.payload as string) ?? action.error.message ?? 'Failed to load dashboard';
       });
   },
 });

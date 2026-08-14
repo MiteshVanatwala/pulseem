@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Box, Typography, Button } from '@material-ui/core';
 import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
+import { widgetCdnURL } from '../../../config';
 
 interface EmbedCodeGeneratorProps {
   widgetId?: string;
@@ -23,15 +24,26 @@ const EmbedCodeGenerator: React.FC<EmbedCodeGeneratorProps> = ({ widgetId }) => 
 
   const siteId = widgetId || 'YOUR_SITE_ID';
 
+  // Environment-driven so a stage build hands out the stage bundle. Hardcoding
+  // this meant stage widgets loaded production JS against the stage API.
+  const scriptSrc = `${widgetCdnURL}/pulseem.js`;
+
   // Plain-text snippet used for copy-to-clipboard.
+  //
+  // The argument list must line up with the parameter list. An earlier version passed
+  // four arguments to six parameters, which left `e` undefined — so `window.pulseem`
+  // was never defined and `pulseem('init', …)` threw. It also called
+  // createElement(s) with s='pulseem', building a <pulseem> element instead of a
+  // <script>, then appendChild'd it *into* the first <script>, where nothing runs.
+  // The widget never loaded on any page using it.
   const snippet = `<!-- Pulseem Chat Widget -->
 <script>
-  (function(p,u,l,s,e,m){
+  (function(p,u,l,s,e,m,a){
     p['PulseemObject']=e;p[e]=p[e]||function(){
     (p[e].q=p[e].q||[]).push(arguments)};
-    m=u.createElement(s);m.async=1;m.src='https://cdn.pulseem.com/widget/v1/pulseem.js';
-    u.getElementsByTagName(l)[0].appendChild(m);
-  })(window,document,'script','pulseem');
+    m=u.createElement(l);m.async=1;m.src=s;
+    a=u.getElementsByTagName(l)[0];a.parentNode.insertBefore(m,a);
+  })(window,document,'script','${scriptSrc}','pulseem');
   pulseem('init', '${siteId}');
 </script>
 <!-- End Pulseem Chat Widget -->`;
@@ -86,12 +98,12 @@ const EmbedCodeGenerator: React.FC<EmbedCodeGeneratorProps> = ({ widgetId }) => 
         >
           {s('<!-- Pulseem Chat Widget -->', C.comment)}{'\n'}
           {s('<script>', C.keyword)}{'\n'}
-          {'  (function(p,u,l,s,e,m){\n'}
+          {'  (function(p,u,l,s,e,m,a){\n'}
           {'    p['}{s("'PulseemObject'", C.string)}{']=e;p[e]=p[e]||function(){\n'}
           {'    (p[e].q=p[e].q||[]).push(arguments)};\n'}
-          {'    m=u.createElement(s);m.async=1;m.src='}{s("'https://cdn.pulseem.com/widget/v1/pulseem.js'", C.string)}{';\n'}
-          {'    u.getElementsByTagName(l)[0].appendChild(m);\n'}
-          {'  })(window,document,'}{s("'script'", C.string)}{','}{s("'pulseem'", C.string)}{');\n'}
+          {'    m=u.createElement(l);m.async=1;m.src=s;\n'}
+          {'    a=u.getElementsByTagName(l)[0];a.parentNode.insertBefore(m,a);\n'}
+          {'  })(window,document,'}{s("'script'", C.string)}{','}{s(`'${scriptSrc}'`, C.string)}{','}{s("'pulseem'", C.string)}{');\n'}
           {'  '}{s('pulseem', C.ident)}{'('}{s("'init'", C.string)}{', '}{s(`'${siteId}'`, C.string)}{');\n'}
           {s('</script>', C.keyword)}{'\n'}
           {s('<!-- End Pulseem Chat Widget -->', C.comment)}
