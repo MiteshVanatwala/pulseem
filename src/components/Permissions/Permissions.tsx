@@ -13,7 +13,6 @@ import { CommonRedux } from "../../screens/Whatsapp/Editor/Types/WhatsappCreator
 import { ValidateEmailAddress } from "../../helpers/Utils/common";
 import { eSubUserAction, eSubUserPermissions, SubUserModel } from "../../Models/SubUser/SubUsers";
 import { useServiceLimits } from "../../hooks/useServiceLimits";
-import UsageCounter from "../UsageCounter/UsageCounter";
 import UpgradePrompt from "../UpgradePrompt/UpgradePrompt";
 
 const Permissions = ({ classes, isOpen, subUser, onClose, onConfirm, showButtons }: any) => {
@@ -45,6 +44,7 @@ const Permissions = ({ classes, isOpen, subUser, onClose, onConfirm, showButtons
 
 	const { usage, getLimit, isAtLimit } = useServiceLimits();
 	const agentCount = usage?.serviceAgents as number;
+	const safeAgentCount = typeof agentCount === 'number' && Number.isFinite(agentCount) ? agentCount : 0;
 	const maxServiceAgents = getLimit('maxServiceAgents');
 	const alreadyHasAgentPermission = subUser?.UserPermissionsList?.indexOf(eSubUserPermissions.AllowWhatsAppToAgent) > -1;
 	const agentLimitReached = isAtLimit('maxServiceAgents', agentCount);
@@ -663,13 +663,7 @@ const Permissions = ({ classes, isOpen, subUser, onClose, onConfirm, showButtons
 					</Grid>
 				</Grid>
 
-				<UsageCounter
-					current={agentCount}
-					max={maxServiceAgents}
-					labelKey='SubUsers.serviceLimits.agentsLabel'
-				/>
-
-				<Grid container>
+				<Grid container alignItems="center">
 					<Grid item md={1} xs={1} className={clsx(isRTL && classes.textRight, classes.pt10)}>
 						<FormControlLabel
 							control={
@@ -716,7 +710,14 @@ const Permissions = ({ classes, isOpen, subUser, onClose, onConfirm, showButtons
 						/>
 					</Grid>
 					<Grid item md={11} xs={11} className={clsx(classes.pt10, classes.dFlex, classes.alignItemsCenter)}>
-						<Typography style={{ marginInline: 10 }}>{t('SubUsers.whatsappAgent')}</Typography>
+						<Typography className={classes.mlr10}>
+							{t('SubUsers.whatsappAgent')}
+							{maxServiceAgents !== null && (
+								<span dir={isRTL ? 'rtl' : 'ltr'} className={clsx(classes.font14, classes.bold, classes.marginInlineStart5)}>
+									({t('SubUsers.serviceLimits.usageFormat', { current: safeAgentCount, max: maxServiceAgents, label: t('SubUsers.serviceLimits.agentsLabel') })})
+								</span>
+							)}
+						</Typography>
 					</Grid>
 				</Grid>
 
