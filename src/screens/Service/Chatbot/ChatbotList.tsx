@@ -72,6 +72,7 @@ const ChatbotList = ({ classes }: { classes?: any }) => {
   const [page, setPage] = useState(1);
   const [isSearching, setSearching] = useState(false);
   const [searchResults, setSearchResults] = useState<IChatbotListItem[] | null>(null);
+  const [searchLoading, setSearchLoading] = useState(false);
   const [toastMessage, setToastMessage] = useState<any>(null);
 
   useEffect(() => {
@@ -97,9 +98,16 @@ const ChatbotList = ({ classes }: { classes?: any }) => {
 
   const handleSearch = () => {
     const query = nameSearch.trim().toLowerCase();
-    setSearchResults(list.filter((bot: IChatbotListItem) => bot.name.toLowerCase().includes(query)));
-    setSearching(true);
-    setPage(1);
+    setSearchLoading(true);
+    // Filtering itself is instant (in-memory), but without a beat before
+    // resolving, React batches the true->false loading flip into one render
+    // and the spinner never actually paints - the timeout is what makes it visible.
+    setTimeout(() => {
+      setSearchResults(list.filter((bot: IChatbotListItem) => bot.name.toLowerCase().includes(query)));
+      setSearching(true);
+      setPage(1);
+      setSearchLoading(false);
+    }, 300);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -109,10 +117,17 @@ const ChatbotList = ({ classes }: { classes?: any }) => {
   };
 
   const clearSearch = () => {
-    setNameSearch('');
-    setSearchResults(null);
-    setSearching(false);
-    setPage(1);
+    setSearchLoading(true);
+    setTimeout(() => {
+      // isSearching must flip off before searchResults is nulled - visibleList
+      // reads searchResults only while isSearching is true, so the reverse order
+      // renders visibleList=null (searchResults) for a tick and crashes on .slice.
+      setSearching(false);
+      setNameSearch('');
+      setSearchResults(null);
+      setPage(1);
+      setSearchLoading(false);
+    }, 300);
   };
 
   const handleRowsPerPageChange = (val: number) => {
@@ -491,7 +506,7 @@ const ChatbotList = ({ classes }: { classes?: any }) => {
 
       {toastMessage && <Toast data={toastMessage} />}
 
-      <Loader isOpen={loadingList || mutating} />
+      <Loader isOpen={loadingList || mutating || searchLoading} />
     </DefaultScreen>
   );
 };
