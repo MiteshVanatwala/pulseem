@@ -28,12 +28,15 @@ import { UserRoles } from '../../Models/SubUser/SubUsers';
 import store from '../../redux/store';
 
 // ── Chat Widget dark launch ────────────────────────────────────────────────
-// Phase 2 ships hidden: only this login sees the feature while it is finished
-// off. Three places consume this — the sidebar section below, the routes in
-// App.js, and the channel dropdown in the WhatsApp Chat sidebar.
+// Phase 2 ships with no menu entry at all — see isShow: false on the section
+// below. The feature is reachable by direct URL, and only for this login:
 //
-// To release it to everyone, make isChatWidgetPreviewUser() return true (or
-// remove its three call sites); nothing else is gated on it.
+//   • sidebar section  → isShow: false           (nobody, preview user included)
+//   • routes in App.js → preview user only       (others get PageNotFound)
+//   • channel dropdown → preview user only       (WhatsApp Chat sidebar)
+//
+// To release it, set isShow on the section (see the comment there) and make
+// isChatWidgetPreviewUser() return true.
 //
 // This is visibility, not security. The API is unguarded, so a determined user
 // could still call the endpoints directly — the goal is to keep unfinished UI
@@ -446,9 +449,14 @@ export const getRoutes = (
       // white as every other section — an inline colour opts out of that.
       iconName: 'FiSliders',
       href: `${sitePrefix}Dashboard`,
-      // Dark launch — see CHAT_WIDGET_PREVIEW_USER at the top of this file.
-      // Drop isChatWidgetPreviewUser() to release the section to everyone.
-      isShow: isChatWidgetPreviewUser() && !accountSettings?.SubAccountSettings?.IsTokenAccount,
+      // Dark launch: the section is listed for nobody — not even the preview user.
+      // Access is by direct URL only; App.js registers those routes for the preview
+      // user alone. isShow is a conditional render, so this keeps the entry out of
+      // the DOM entirely rather than hiding it with CSS.
+      //
+      // To release it, restore:
+      //   isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount,
+      isShow: false,
       options: [
         {
           key: "serviceDashboard",
