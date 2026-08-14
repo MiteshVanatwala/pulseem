@@ -21,6 +21,13 @@ import {
 	getWhatsappChat,
 	getWhatsappChatTag,
 } from '../../../../redux/reducers/whatsappSlice';
+import moment from 'moment';
+import {
+	getMessages as getServiceMessages,
+	sendMessage as sendServiceMessage,
+	uploadFile as uploadServiceFile,
+} from '../../../../redux/reducers/conversationsSlice';
+import { IMessage } from '../../../../Models/Service/Conversation';
 import ChatTemplate from './ChatTemplate';
 import ChatFooterContent from './ChatFooterContent';
 import clsx from 'clsx';
@@ -37,6 +44,53 @@ import AddRecipientPopup from '../../../Groups/Management/Popup/AddRecipientPopu
 import { PulseemReactInstance } from '../../../../helpers/Api/PulseemReactAPI';
 import Toast from '../../../../components/Toast/Toast.component';
 import { useNavigate } from 'react-router-dom';
+
+// ── Widget (service) message adapters — PR-2455 ─────────────────────────────
+// Widget conversations arrive as a flat IMessage[]; this pane renders a shape
+// bucketed by date label, so they are adapted rather than the pane forked.
+
+const adaptWidgetMessages = (msgs: IMessage[]): APIWhatsappChatItemsData => {
+	const buckets: APIWhatsappChatItemsData = {};
+	(msgs || []).forEach((m) => {
+		const dateLabel = moment(m.sentAt).format('DD/MM/YYYY');
+		if (!buckets[dateLabel]) buckets[dateLabel] = [];
+		buckets[dateLabel].push({
+			IsInbound: m.sender === 'visitor',
+			IsTemplate: false,
+			MediaContentType: '',
+			MediaUrl: m.fileUrl || '',
+			Message: m.content || '',
+			MessageDate: m.sentAt,
+			MessageDateText: moment(m.sentAt).format('HH:mm'),
+			SmsStatus: '',
+			SmsStatusId: 0,
+		} as any);
+	});
+	return buckets;
+};
+
+// Appends one message to the bucketed shape, so an agent's reply appears
+// instantly instead of waiting for a full reload.
+const appendWidgetMessage = (
+	buckets: APIWhatsappChatItemsData | undefined,
+	m: IMessage,
+): APIWhatsappChatItemsData => {
+	const dateLabel = moment(m.sentAt).format('DD/MM/YYYY');
+	const next: APIWhatsappChatItemsData = { ...(buckets || {}) };
+	const detail = {
+		IsInbound: m.sender === 'visitor',
+		IsTemplate: false,
+		MediaContentType: '',
+		MediaUrl: m.fileUrl || '',
+		Message: m.content || '',
+		MessageDate: m.sentAt,
+		MessageDateText: moment(m.sentAt).format('HH:mm'),
+		SmsStatus: '',
+		SmsStatusId: 0,
+	} as any;
+	next[dateLabel] = [...(next[dateLabel] || []), detail];
+	return next;
+};
 
 const ChatUi = ({
 	classes,
@@ -214,6 +268,58 @@ const ChatUi = ({
 		firstAgentId,
 	]);
 
+	const isWidgetChat = (chatContacts as any)?.channel === 'widget';
+
+	const scrollChatToBottom = () => {
+		const el = document.getElementById('chat-messages');
+		if (el) setTimeout(() => { el.scrollTop = el.scrollHeight; }, 100);
+	};
+
+	// Send a widget reply through the Service slice and append it optimistically,
+	// so the agent sees it immediately rather than after the next poll.
+	const handleWidgetSend = async () => {
+		const conversationId =
+			(chatContacts as any)?.conversationId || chatContacts?.PhoneNumber;
+		const text = (newMessage || '').trim();
+		if (!conversationId || !text) return;
+		setNewMessage('');
+		try {
+			const res: any = await dispatch<any>(
+				sendServiceMessage({ conversationId, content: text }),
+			);
+			const msg: IMessage | undefined = res?.payload;
+			if (msg) setAllWhatsappChat(appendWidgetMessage(allWhatsappChat, msg));
+			scrollChatToBottom();
+		} catch {
+			/* keep the composer responsive on failure */
+		}
+	};
+
+	// Upload a file for a widget reply, then send it as a message.
+	const handleWidgetAttach = async (file: File) => {
+		const conversationId =
+			(chatContacts as any)?.conversationId || chatContacts?.PhoneNumber;
+		if (!conversationId || !file) return;
+		try {
+			const up: any = await dispatch<any>(uploadServiceFile(file));
+			const fileUrl = up?.payload?.fileUrl;
+			if (!fileUrl) return;
+			const res: any = await dispatch<any>(
+				sendServiceMessage({
+					conversationId,
+					content: (newMessage || '').trim() || file.name,
+					fileUrl,
+				}),
+			);
+			const msg: IMessage | undefined = res?.payload;
+			if (msg) setAllWhatsappChat(appendWidgetMessage(allWhatsappChat, msg));
+			setNewMessage('');
+			scrollChatToBottom();
+		} catch {
+			/* upload failed — leave the composer as it was */
+		}
+	};
+
 	const renderToast = () => {
 		if (toastMessage) {
 			setTimeout(() => {
@@ -225,6 +331,25 @@ const ChatUi = ({
 	};
 
 	const getAPIAllWhatsappChat = async (isNewMessage: boolean = false) => {
+		// Widget conversations come from the Service slice, not the WhatsApp API.
+		// Handled first so the WhatsApp path below is completely unchanged.
+		if ((chatContacts as any)?.channel === 'widget') {
+			const conversationId =
+				(chatContacts as any)?.conversationId || chatContacts?.PhoneNumber;
+			if (!conversationId) return;
+			!isNewMessage && setIsLoader(true);
+			try {
+				const res: any = await dispatch<any>(getServiceMessages(conversationId));
+				const msgs: IMessage[] = res?.payload || [];
+				setAllWhatsappChat(adaptWidgetMessages(msgs));
+			} catch {
+				setAllWhatsappChat(undefined);
+			} finally {
+				!isNewMessage && setIsLoader(false);
+			}
+			return;
+		}
+
 		if (activePhoneNumber && chatContacts?.PhoneNumber) {
 			!isNewMessage && setIsLoader(true);
 			const allWhatsAppChatData: APIWhatsappChatData = await dispatch<any>(
@@ -577,7 +702,9 @@ const ChatUi = ({
 					savedTemplate={savedTemplate}
 					dynamicVariable={dynamicVariable}
 					whatsappChatSession={whatsappChatSession}
-					onChatSend={onChatSend}
+					isWidget={isWidgetChat}
+					onWidgetAttach={handleWidgetAttach}
+					onChatSend={isWidgetChat ? handleWidgetSend : onChatSend}
 					activeChatContacts={activeChatContacts}
 					ChatContacts={ChatContacts}
 					isContactLoader={isContactLoader}

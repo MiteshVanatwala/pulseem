@@ -25,6 +25,35 @@ import { WhatsappIcon } from '../../assets/images/drawer/index';
 import { PulseemFeatures } from '../../model/PulseemFields/Fields';
 import { WhiteLabelObject } from '../../components/WhiteLabel/WhiteLabelMigrate';
 import { UserRoles } from '../../Models/SubUser/SubUsers';
+import store from '../../redux/store';
+
+// ── Chat Widget dark launch ────────────────────────────────────────────────
+// Phase 2 ships hidden: only this login sees the feature while it is finished
+// off. Three places consume this — the sidebar section below, the routes in
+// App.js, and the channel dropdown in the WhatsApp Chat sidebar.
+//
+// To release it to everyone, make isChatWidgetPreviewUser() return true (or
+// remove its three call sites); nothing else is gated on it.
+//
+// This is visibility, not security. The API is unguarded, so a determined user
+// could still call the endpoints directly — the goal is to keep unfinished UI
+// out of customers' way.
+const CHAT_WIDGET_PREVIEW_USER = 'pulseem';
+
+export const isChatWidgetPreviewUser = (): boolean => {
+  try {
+    const state: any = store.getState();
+    // nameid → companyName is the username typed at login; user.username is the
+    // same value re-dispatched. Both are checked so this keeps working if either
+    // path changes.
+    const candidates = [state?.core?.companyName, state?.user?.username];
+    return candidates.some(
+      (n) => typeof n === 'string' && n.trim().toLowerCase() === CHAT_WIDGET_PREVIEW_USER,
+    );
+  } catch {
+    return false;
+  }
+};
 // export const rootDomain = !isProdMode ? 'http://localhost:58123' : '/Pulseem/';
 export const rootDomain = '/Pulseem';
 
@@ -406,6 +435,42 @@ export const getRoutes = (
       href: `${sitePrefix}Integrations`,
       isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount && userRoles?.AllowSend,
       iconName: 'MdOutlineDashboardCustomize',
+    },
+    {
+      // Service section (Phase 2). Conversations has no entry of its own — widget
+      // chats appear inside the WhatsApp Chat inbox via its channel filter.
+      key: "service",
+      title: t("common.widget_chat_widget"),
+      pageTitle: t("common.widget_chat_widget"),
+      // iconName (not a hardcoded <icon>) so the sidebar renders it in the same
+      // white as every other section — an inline colour opts out of that.
+      iconName: 'FiSliders',
+      href: `${sitePrefix}Dashboard`,
+      // Dark launch — see CHAT_WIDGET_PREVIEW_USER at the top of this file.
+      // Drop isChatWidgetPreviewUser() to release the section to everyone.
+      isShow: isChatWidgetPreviewUser() && !accountSettings?.SubAccountSettings?.IsTokenAccount,
+      options: [
+        {
+          key: "serviceDashboard",
+          title: t("common.service_dashboard"),
+          href: `${sitePrefix}Dashboard`,
+          isShow: true,
+        },
+        {
+          key: "serviceConversations",
+          title: t("common.service_conversations"),
+          // Opens the WhatsApp Chat inbox pre-filtered to widget conversations;
+          // WhatsappChat reads ?channel= on mount.
+          href: `${whatsappRoutes.CHAT}?channel=widget`,
+          isShow: true,
+        },
+        {
+          key: "chatWidget",
+          title: t("common.widget_add_chat_widget"),
+          href: `${sitePrefix}Widgets`,
+          isShow: true,
+        }
+      ],
     },
     {
       key: "notifications",

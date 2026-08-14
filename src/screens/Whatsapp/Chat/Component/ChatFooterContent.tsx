@@ -46,8 +46,14 @@ const useStyles = makeStyles({
 	},
 });
 
+import { MdAttachFile } from 'react-icons/md';
+
 const ChatFooterContent = ({
 	classes,
+	// Widget conversations have no WhatsApp 24-hour window or template rules, so
+	// the composer is always open and offers a plain attachment instead.
+	isWidget = false,
+	onWidgetAttach,
 	updatedDynamicVariable,
 	setDynamicModalVariable,
 	setIsDynamcFieldModal,
@@ -172,8 +178,29 @@ const ChatFooterContent = ({
 			<div className={`${classes.whatsappChat} chat__input-wrapper`}>
 				{!activeChatContacts?.IsUnsubscribed ? (
 					<>
-						{whatsappChatSession.IsIn24Window || savedTemplate?.length > 0 ? (
+						{whatsappChatSession.IsIn24Window || savedTemplate?.length > 0 || isWidget ? (
 							<>
+								{isWidget && (
+									<>
+										<input
+											type="file"
+											id="svc-widget-attach"
+											style={{ display: 'none' }}
+											onChange={(e) => {
+												const f = e.target.files?.[0];
+												if (f && onWidgetAttach) onWidgetAttach(f);
+												(e.target as HTMLInputElement).value = '';
+											}}
+										/>
+										<button
+											aria-label="Attach file"
+											title="Attach file"
+											onClick={() => document.getElementById('svc-widget-attach')?.click()}
+										>
+											<MdAttachFile size={22} />
+										</button>
+									</>
+								)}
 								{savedTemplate?.length === 0 && (
 									<button
 										aria-label="Emojis"
@@ -321,7 +348,7 @@ const ChatFooterContent = ({
 							</>
 						)}{' '}
 						{(whatsappChatSession.IsIn24Window ||
-							savedTemplate?.length > 0) && (
+							savedTemplate?.length > 0 || isWidget) && (
 							<button aria-label="Send message" onClick={onChatSend}>
 								<Icon
 									id="send"

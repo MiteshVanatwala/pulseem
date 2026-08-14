@@ -109,6 +109,10 @@ import PopupSummary from './screens/Popups/PopupSummary';
 import HelpDrawer from './components/HelpDrawer';
 import LegacyPageFrame, { LegacyPageWild } from './screens/LegacyPage/LegacyPageFrame';
 import { openHelpDrawer, closeHelpDrawer, toggleHelpDrawer } from './redux/reducers/helpDrawerSlice';
+import ChatWidgetConfigPage from './screens/Widgets/ChatWidgetConfigPage';
+import ServiceDashboard from './screens/Service/Dashboard/Dashboard';
+import { isChatWidgetPreviewUser } from './helpers/Routes/routes';
+import WidgetListPage from './screens/Widgets/WidgetListPage';
 
 const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
   const transferUrl =
@@ -682,6 +686,24 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
         exact
         path={`${sitePrefix}ClientSearch`}
         element={<ClientSearch classes={classes} />}
+      />}
+      {/* Chat Widget dark launch — routes are only registered for the preview
+          user, so everyone else falls through to the "*" PageNotFound below.
+          See isChatWidgetPreviewUser in helpers/Routes/routes. */}
+      {isChatWidgetPreviewUser() && <Route
+        exact
+        path={`${sitePrefix}Widgets`}
+        element={<WidgetListPage classes={classes} />}
+      />}
+      {isChatWidgetPreviewUser() && <Route
+        exact
+        path={`${sitePrefix}Dashboard`}
+        element={<ServiceDashboard classes={classes} />}
+      />}
+      {isChatWidgetPreviewUser() && <Route
+        exact
+        path={`${sitePrefix}Widgets/:widgetId`}
+        element={<ChatWidgetConfigPage classes={classes} />}
       />}
     </Routes>
   )
