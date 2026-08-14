@@ -372,7 +372,11 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
       }
 
       {
-        userRoles?.AllowWhatsAppToAgent &&
+        // Widget conversations live inside this inbox, so the dark-launch preview
+        // user needs the route even without the WhatsApp agent permission. The
+        // WhatsApp-specific features inside re-check AllowWhatsAppToAgent for
+        // themselves and stay inert. Drop the second term when the feature ships.
+        (userRoles?.AllowWhatsAppToAgent || isChatWidgetPreviewUser()) &&
         <Route
           path={whatsappRoutes.CHAT}
         >
