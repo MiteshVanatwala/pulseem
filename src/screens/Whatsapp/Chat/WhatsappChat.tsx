@@ -15,7 +15,7 @@ import {
 	APIWhatsappChatItemsData,
 	ContactsPaginationSetting,
 } from './Types/WhatsappChat.type';
-import { BaseSyntheticEvent, useEffect, useState, useCallback } from 'react';
+import { BaseSyntheticEvent, useEffect, useState, useCallback, useMemo } from 'react';
 import { flushSync } from 'react-dom';
 import {
 	callToActionProps,
@@ -103,11 +103,39 @@ import {
 import { BsTrash } from 'react-icons/bs';
 import ConfirmDeletePopUp from '../../Groups/Management/Popup/ConfirmDeletePopUp';
 import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
+import { ServiceChannel } from '../../Service/Conversations/ServiceChannelDropdown';
+import { IConversation } from '../../../Models/Service/Conversation';
+import { getConversations as getServiceConversations } from '../../../redux/reducers/conversationsSlice';
 import TierPlans from '../../../components/TierPlans/TierPlans';
 import { get } from 'lodash';
 
 import { useRef } from 'react';
 import { searchAllClients } from '../../../redux/reducers/clientSlice';
+
+// ── Service (widget) conversations — PR-2455 ────────────────────────────────
+// This inbox is shared between WhatsApp and site-widget chats. Widget rows are
+// adapted into the same sidebar shape so one contact list can render both.
+
+const svcHostOf = (c: IConversation): string => {
+	if (c.domain) return c.domain;
+	try { return c.pageUrl ? new URL(c.pageUrl).host : ''; } catch { return ''; }
+};
+
+const SVC_STATUS_ID: Record<string, number> = { new: 0, open: 1, resolved: 3, archived: 4 };
+
+const adaptWidgetToSidebar = (list: IConversation[]): APIWhatsappChatSidebarContactsItemsData[] =>
+	list.map((c) => ({
+		ConversationStatusId: SVC_STATUS_ID[c.status] ?? 0,
+		IsTemplate: false,
+		IsUnsubscribed: false,
+		LastMessage: c.lastMessage || '',
+		LastMessageDate: c.lastActivityAt || '',
+		PhoneNumber: c.id,
+		Unread: 0,
+		UserName: c.visitorName || `Visitor ${(c.visitorId || '').slice(-6)}`,
+		channel: 'widget',
+		conversationId: c.id,
+	} as APIWhatsappChatSidebarContactsItemsData));
 
 const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const dispatch = useDispatch();
@@ -223,6 +251,72 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const [totalSolvedContacts, setTotalSolvedContacts] = useState<number>(0);
 	const [activePhoneNumber, setActivePhoneNumber] = useState<string>('');
 	const [filterBySelected, setFilterBySelected] = useState(0);
+
+	// ── Service channel (PR-2455) ──────────────────────────────────────────
+	// Opens on a specific channel when linked with ?channel=widget|all|whatsapp
+	// (e.g. from the Service Dashboard "View Chats" action); defaults to WhatsApp
+	// so nothing changes for anyone arriving the normal way.
+	const [selectedChannel, setSelectedChannel] = useState<ServiceChannel>(() => {
+		try {
+			const ch = new URLSearchParams(window.location.search).get('channel');
+			return ch === 'all' || ch === 'widget' || ch === 'whatsapp' ? ch : 'whatsapp';
+		} catch {
+			return 'whatsapp';
+		}
+	});
+	const [widgetConversations, setWidgetConversations] = useState<IConversation[]>([]);
+	const [serviceDomain, setServiceDomain] = useState<string>('');
+	// All-mode source filter: 'all' | 'wa:<number>' | 'dom:<domain>'
+	const [allSource, setAllSource] = useState<string>('all');
+
+	// Memoized so they don't recompute on every render (polling / search keystrokes).
+	const serviceDomains = useMemo(
+		() => Array.from(new Set(widgetConversations.map(svcHostOf).filter(Boolean))),
+		[widgetConversations],
+	);
+	const widgetSidebarContacts = useMemo(
+		() =>
+			adaptWidgetToSidebar(
+				serviceDomain
+					? widgetConversations.filter((c) => svcHostOf(c) === serviceDomain)
+					: widgetConversations,
+			),
+		[widgetConversations, serviceDomain],
+	);
+	// "All" merges WhatsApp + widget rows, newest first (both share the sidebar shape).
+	const allSidebarContacts = useMemo(
+		() =>
+			[...sideChatContacts, ...widgetSidebarContacts].sort(
+				(a, b) =>
+					new Date(b.LastMessageDate || 0).getTime() -
+					new Date(a.LastMessageDate || 0).getTime(),
+			),
+		[sideChatContacts, widgetSidebarContacts],
+	);
+	// The list actually shown, per channel and (in All mode) the source filter.
+	const displayedSidebarContacts = useMemo(() => {
+		if (selectedChannel === 'widget') return widgetSidebarContacts;
+		if (selectedChannel === 'all') {
+			if (allSource.startsWith('wa:')) return sideChatContacts;
+			if (allSource.startsWith('dom:')) return widgetSidebarContacts;
+			return allSidebarContacts;
+		}
+		return sideChatContacts;
+	}, [selectedChannel, allSource, sideChatContacts, widgetSidebarContacts, allSidebarContacts]);
+
+	// Widget conversations are only fetched once the agent actually switches to a
+	// channel that shows them — a WhatsApp-only user never pays for this call.
+	useEffect(() => {
+		if (selectedChannel === 'whatsapp') return;
+		(dispatch as any)(getServiceConversations(undefined)).then((res: any) => {
+			const list: IConversation[] = res?.payload || [];
+			setWidgetConversations(list);
+			const domains = Array.from(new Set(list.map(svcHostOf).filter(Boolean)));
+			setServiceDomain((prev) => prev || domains[0] || '');
+		});
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [selectedChannel]);
+
 	const [agentSelected, setAgentSelected] = useState(
 		Number(getCookie(agentCookieKey) || 0),
 	);
@@ -2253,7 +2347,14 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 									activePhoneNumber={activePhoneNumber}
 									setActiveUser={setActivePhoneNumber}
 									onActiveUserChange={onActiveUserChange}
-									sideChatContacts={sideChatContacts}
+									selectedServiceChannel={selectedChannel}
+									onServiceChannelChange={setSelectedChannel}
+									serviceDomains={serviceDomains}
+									serviceDomain={serviceDomain}
+									onServiceDomainChange={setServiceDomain}
+									serviceSource={allSource}
+									onServiceSourceChange={setAllSource}
+									sideChatContacts={displayedSidebarContacts}
 									phoneNumbersList={phoneNumbersList}
 									handleUserStatus={handleUserStatus}
 									getStatusClass={getStatusClass}

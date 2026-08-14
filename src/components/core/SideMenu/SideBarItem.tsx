@@ -7,7 +7,7 @@ import { Collapse, IconButton, List, ListItem, ListItemText, Typography } from "
 import { FaChevronDown, FaChevronUp, FaWhatsapp, FaRegWindowRestore } from "react-icons/fa";
 import { MdPeople, MdMarkEmailRead, MdSms, MdSettings, MdNotificationsActive, MdAccountCircle, MdOutlineDashboardCustomize } from "react-icons/md";
 import { BiPencil, BiSitemap } from "react-icons/bi";
-import { FiZap, FiSmartphone, FiFileText, FiPieChart } from "react-icons/fi";
+import { FiZap, FiSmartphone, FiFileText, FiPieChart, FiSliders } from "react-icons/fi";
 import { IoLogoWhatsapp } from "react-icons/io";
 import clsx from 'clsx';
 import SidebarTooltip from "./SidebarTooltip";
@@ -70,6 +70,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
     if (item?.iconName === 'FiPieChart') return <FiPieChart size={24} />;
     if (item?.iconName === 'MdAccountCircle') return <MdAccountCircle size={28} />;
     if (item?.iconName === 'MdOutlineDashboardCustomize') return <MdOutlineDashboardCustomize size={28} />;
+    if (item?.iconName === 'FiSliders') return <FiSliders size={26} />;
     return null;
   };
 

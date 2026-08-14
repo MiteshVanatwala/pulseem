@@ -35,6 +35,10 @@ import StartNewChatModal from '../Popups/StartNewChatModal';
 import { BaseSyntheticEvent, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import SideHeaderContactDropDown from './SideHeaderContactDropDown';
+import { isChatWidgetPreviewUser } from '../../../../helpers/Routes/routes';
+import ServiceChannelDropdown from '../../../Service/Conversations/ServiceChannelDropdown';
+import ServiceDomainDropdown from '../../../Service/Conversations/ServiceDomainDropdown';
+import ServiceSourceDropdown from '../../../Service/Conversations/ServiceSourceDropdown';
 import SideBarContactList from './SideBarContactList';
 import useDebounce from '../Hook/useDebounce';
 import { useSelector, useDispatch } from 'react-redux';
@@ -53,6 +57,15 @@ import DynamicConfirmDialog from '../../../../components/DialogTemplates/Dynamic
 
 const SideBar = ({
 	classes,
+	// Service channel filter (PR-2455). Defaults keep the sidebar behaving exactly
+	// as before for callers that pass none of these.
+	selectedServiceChannel = 'whatsapp',
+	onServiceChannelChange,
+	serviceDomains = [],
+	serviceDomain = '',
+	onServiceDomainChange,
+	serviceSource = 'all',
+	onServiceSourceChange,
 	isMobileSideBar,
 	handleChatId,
 	onActiveUserChange,
@@ -88,6 +101,9 @@ const SideBar = ({
 	onRegisterMobileActions,
 }: WhatsappChatSideBarProps) => {
 	const { t: translator } = useTranslation();
+	// Dark launch: without this the channel dropdown would expose the feature to
+	// every WhatsApp Chat user even though the menu entry is hidden.
+	const showServiceChannel = isChatWidgetPreviewUser();
 	const { isRTL, userRoles } = useSelector(
 		(state: { core: coreProps }) => state.core,
 	);
@@ -950,12 +966,41 @@ const SideBar = ({
 							className={`${classes.whatsappChat} avatar`}
 						/>
 					</div>
-					<SideHeaderContactDropDown
-						classes={classes}
-						phoneNumbersList={phoneNumbersList}
-						onActiveUserChange={onActiveUserChange}
-						activePhoneNumber={activePhoneNumber}
-					/>
+					{/* Service channel filter (PR-2455). This inbox is shared between
+					    WhatsApp and site-widget conversations, so the second dropdown
+					    changes meaning with the channel: widget → pick a domain,
+					    all → pick any source, whatsapp → the original number picker.
+					    Hidden while the feature is dark-launched, so WhatsApp Chat
+					    looks untouched for everyone else. */}
+					{showServiceChannel && (
+						<div style={{ flexShrink: 0, width: 'auto', marginInlineEnd: 12, display: 'flex', alignItems: 'center' }}>
+							<ServiceChannelDropdown
+								value={selectedServiceChannel}
+								onChange={(ch) => onServiceChannelChange && onServiceChannelChange(ch)}
+							/>
+						</div>
+					)}
+					{showServiceChannel && selectedServiceChannel === 'widget' ? (
+						<ServiceDomainDropdown
+							domains={serviceDomains}
+							value={serviceDomain}
+							onChange={onServiceDomainChange}
+						/>
+					) : showServiceChannel && selectedServiceChannel === 'all' ? (
+						<ServiceSourceDropdown
+							numbers={phoneNumbersList || []}
+							domains={serviceDomains}
+							value={serviceSource}
+							onChange={onServiceSourceChange}
+						/>
+					) : (
+						<SideHeaderContactDropDown
+							classes={classes}
+							phoneNumbersList={phoneNumbersList}
+							onActiveUserChange={onActiveUserChange}
+							activePhoneNumber={activePhoneNumber}
+						/>
+					)}
 					<div className={classes.agentManagementButtonsWrapper}>
 						{!userRoles?.HideRecipients && (
 							<IconButton

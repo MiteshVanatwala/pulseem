@@ -42,6 +42,8 @@ import TiersSlice from './reducers/TiersSlice';
 import emailTierScalingReducer from './reducers/emailTierScalingSlice';
 import helpDrawerReducer from './reducers/helpDrawerSlice';
 import contactSupportReducer from './reducers/contactSupportSlice';
+import conversationsReducer from './reducers/conversationsSlice';
+import serviceDashboardReducer from './reducers/serviceDashboardSlice';
 
 
 export default configureStore({
@@ -88,5 +90,7 @@ export default configureStore({
     emailTierScaling: emailTierScalingReducer,
     helpDrawer: helpDrawerReducer,
     contactSupport: contactSupportReducer,
+    conversations: conversationsReducer,
+    serviceDashboard: serviceDashboardReducer,
   },
 });
