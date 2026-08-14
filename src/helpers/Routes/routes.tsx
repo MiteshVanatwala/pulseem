@@ -25,6 +25,38 @@ import { WhatsappIcon } from '../../assets/images/drawer/index';
 import { PulseemFeatures } from '../../model/PulseemFields/Fields';
 import { WhiteLabelObject } from '../../components/WhiteLabel/WhiteLabelMigrate';
 import { UserRoles } from '../../Models/SubUser/SubUsers';
+import store from '../../redux/store';
+
+// ── Chat Widget dark launch ────────────────────────────────────────────────
+// Phase 2 ships with no menu entry at all — see isShow: false on the section
+// below. The feature is reachable by direct URL, and only for this login:
+//
+//   • sidebar section  → isShow: false           (nobody, preview user included)
+//   • routes in App.js → preview user only       (others get PageNotFound)
+//   • channel dropdown → preview user only       (WhatsApp Chat sidebar)
+//
+// To release it, set isShow on the section (see the comment there) and make
+// isChatWidgetPreviewUser() return true.
+//
+// This is visibility, not security. The API is unguarded, so a determined user
+// could still call the endpoints directly — the goal is to keep unfinished UI
+// out of customers' way.
+const CHAT_WIDGET_PREVIEW_USER = 'pulseem';
+
+export const isChatWidgetPreviewUser = (): boolean => {
+  try {
+    const state: any = store.getState();
+    // nameid → companyName is the username typed at login; user.username is the
+    // same value re-dispatched. Both are checked so this keeps working if either
+    // path changes.
+    const candidates = [state?.core?.companyName, state?.user?.username];
+    return candidates.some(
+      (n) => typeof n === 'string' && n.trim().toLowerCase() === CHAT_WIDGET_PREVIEW_USER,
+    );
+  } catch {
+    return false;
+  }
+};
 // export const rootDomain = !isProdMode ? 'http://localhost:58123' : '/Pulseem/';
 export const rootDomain = '/Pulseem';
 
@@ -406,6 +438,47 @@ export const getRoutes = (
       href: `${sitePrefix}Integrations`,
       isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount && userRoles?.AllowSend,
       iconName: 'MdOutlineDashboardCustomize',
+    },
+    {
+      // Service section (Phase 2). Conversations has no entry of its own — widget
+      // chats appear inside the WhatsApp Chat inbox via its channel filter.
+      key: "service",
+      title: t("common.widget_chat_widget"),
+      pageTitle: t("common.widget_chat_widget"),
+      // iconName (not a hardcoded <icon>) so the sidebar renders it in the same
+      // white as every other section — an inline colour opts out of that.
+      iconName: 'FiSliders',
+      href: `${sitePrefix}Dashboard`,
+      // Dark launch: the section is listed for nobody — not even the preview user.
+      // Access is by direct URL only; App.js registers those routes for the preview
+      // user alone. isShow is a conditional render, so this keeps the entry out of
+      // the DOM entirely rather than hiding it with CSS.
+      //
+      // To release it, restore:
+      //   isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount,
+      isShow: false,
+      options: [
+        {
+          key: "serviceDashboard",
+          title: t("common.service_dashboard"),
+          href: `${sitePrefix}Dashboard`,
+          isShow: true,
+        },
+        {
+          key: "serviceConversations",
+          title: t("common.service_conversations"),
+          // Opens the WhatsApp Chat inbox pre-filtered to widget conversations;
+          // WhatsappChat reads ?channel= on mount.
+          href: `${whatsappRoutes.CHAT}?channel=widget`,
+          isShow: true,
+        },
+        {
+          key: "chatWidget",
+          title: t("common.widget_add_chat_widget"),
+          href: `${sitePrefix}Widgets`,
+          isShow: true,
+        }
+      ],
     },
     {
       key: "notifications",
