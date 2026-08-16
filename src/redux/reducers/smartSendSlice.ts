@@ -495,10 +495,46 @@ export const smartSendSlice = createSlice({
             // ISNULL(Sort, Gap)), so writing both keeps the stored shape unambiguous and needs no
             // API or SP change. Clearing to "none" clears both.
             // 'gap'/'sort' are kept for compatibility with any caller that still addresses one
-            // slot; nothing in the app does today.
+            // slot; nothing in the app does today. They deliberately do NOT clear
+            // supervisorColumnIsGuess: the argument below rests entirely on the MERGED picker's
+            // disabled state, and a caller poking a single slot bypasses that UI — so it carries no
+            // evidence that a human ever saw the supervisor value.
             else if (role === 'gapSort') {
                 state.gapColumnId = columnId ?? null;
                 state.sortColumnId = columnId ?? null;
+                // THE SECOND CONFIRMATION POINT — added 2026-08-16. Touching the shortfall picker
+                // also confirms the supervisor value, and it does so for a STRUCTURAL reason rather
+                // than a generous one: the shortfall picker is DISABLED while no supervisor value is
+                // on screen — BusinessColumnsPicker.tsx:136,
+                //     gapDisabled = supervisorEnabled && supervisorColumnId == null
+                // — so this branch cannot be reached from the merged control unless a supervisor
+                // column was already rendered right beside it. Moving the control next to a
+                // displayed value is an acknowledgement of that value.
+                //
+                // WITHOUT this line the two existing rules combine into silent data loss. A guessed
+                // supervisor column is posted as NULL (SmartSendScreen.tsx:266) while a real choice
+                // is posted verbatim, and touching gap arms the 750ms autosave
+                // (SmartSendScreen.tsx:369-382, whose deps include gapColumnId/sortColumnId). So an
+                // operator who ACCEPTED the suggested supervisor column the only way the UI offers
+                // — by leaving it alone — and then picked the shortfall column, saved
+                // SupervisorColumnID=NULL together with GapColumnID=<real id>: a half-configured
+                // supervisor send, produced by an edit that never touched the supervisor picker.
+                //
+                // And it does not self-heal. That same save sets IsMapped, after which the
+                // `!data.IsMapped` gate in getMapping.fulfilled (see below) refuses to re-apply the
+                // default on every subsequent load — correctly, because a saved NULL is supposed to
+                // mean "the operator chose ללא". The suggestion is therefore suppressed PERMANENTLY
+                // and the campaign quietly stops mailing supervisors, with the picker showing the
+                // empty state that looks identical to a deliberate one.
+                //
+                // KNOCK-ON, and intended: SendSummaryDialog.tsx:175-176 pre-ticks "send to
+                // supervisor" only for a NON-guess column, so in this scenario the checkbox now
+                // ships TICKED where it previously shipped clear. That is the right reading of the
+                // interaction — the operator worked alongside the value instead of ignoring it —
+                // and it is exactly what the supervisor branch above has always done when the
+                // picker itself is touched. The 2026-08-11 R1-02 rule ("an unconfirmed guess starts
+                // OFF") is untouched: this value is no longer unconfirmed.
+                state.supervisorColumnIsGuess = false;
             } else if (role === 'gap') state.gapColumnId = columnId ?? null;
             else if (role === 'sort') state.sortColumnId = columnId ?? null;
         },

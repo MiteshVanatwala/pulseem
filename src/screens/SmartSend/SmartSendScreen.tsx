@@ -209,6 +209,31 @@ const SmartSendScreen = ({ classes }: any) => {
     // synthetic group MERGED into GroupIds (§10). Read-modify-write, never a partial body. ──
     const buildSaveRequest = () => {
         const colSet = new Set(smartSend.columns.map((c: any) => c.ColumnID));
+        // EVERY ColumnID leaving this function must exist in the LOCKED version — not just the
+        // token mappings. Added 2026-08-16. colSet was already built for Mappings (below) and the
+        // filter there cites the SP's -9; the business columns are checked by a SECOND, separate
+        // guard in the same proc — dbo.CampaignsToDataSources_Set.StoredProcedure.sql:133-145 —
+        // which LEFT JOINs (@prm_SupervisorColumnID, @prm_GapColumnID, @prm_SortColumnID) against
+        // DataSourceColumns for @LockVersionID and returns -9 if any non-null id is missing. These
+        // three lines used to post state verbatim, so one stale id failed the ENTIRE save, and
+        // failed it in the worst possible shape: the mapping edit the operator was making is
+        // rejected because of a business column they never touched, the error surfaces as the
+        // generic retry text, and Retry (the failed-save button at :844) rebuilds the
+        // identical request from the same
+        // state — an unbreakable loop with no control on screen that can clear the offending value
+        // (the picker cannot show, let alone deselect, a column that is no longer in `columns`).
+        //
+        // Scrubbing to null is the same treatment Mappings already gives a vanished id, and it is
+        // the honest one: a column that is not in the locked version is not a business column any
+        // more, so persisting "no supervisor / no shortfall" states what is actually true. It is
+        // also recoverable — the value is only dropped on a save that would otherwise have been
+        // rejected outright, and the picker is free to set a live column afterwards.
+        //
+        // Empty `columns` cannot reach here: the whole body renders behind `hasColumns` (:681) and
+        // the autosave effect bails on it first (:370). If it ever did, Mappings would
+        // already be posting [] — a full mapping wipe — so these three are not the exposure.
+        const inLockedVersion = (id: number | null | undefined): number | null =>
+            (id != null && colSet.has(id)) ? id : null;
         return {
             CampaignID: campaignId,
             Channel: smartSend.selectedChannel,
@@ -223,11 +248,29 @@ const SmartSendScreen = ({ classes }: any) => {
             // null, not omitted: the field is bound server-side either way, and omitting it would
             // make the SP clear a value the operator HAD deliberately saved. Sending null while the
             // value is only a suggestion is the state that is actually true.
-            // smartSendSlice.setBusinessColumn clears the flag the moment the picker is touched,
-            // including a deliberate "None", so a real choice still persists on the next save.
-            SupervisorColumnID: smartSend.supervisorColumnIsGuess ? null : smartSend.supervisorColumnId,
-            GapColumnID: smartSend.gapColumnId,
-            SortColumnID: smartSend.sortColumnId,
+            // smartSendSlice.setBusinessColumn clears the flag the moment EITHER business picker is
+            // touched — including a deliberate "None", and including the shortfall picker, which is
+            // reachable only while a supervisor value is displayed beside it (see the
+            // second-confirmation-point note in smartSendSlice.setBusinessColumn) — so a real
+            // choice still persists on the next save.
+            //
+            // THE TWO RULES COMPOSE, and they compose in one direction only: the guess rule and the
+            // locked-version rule both resolve to null, so a guessed value is posted as null even
+            // when its column is perfectly valid, and a confirmed value is posted as null once its
+            // column has vanished. Order is therefore irrelevant, but the guess test stays OUTSIDE
+            // inLockedVersion on purpose — a guess must not become persistable merely by pointing
+            // at a live column, which is what folding it into the same predicate would allow.
+            // Both write null EXPLICITLY rather than omitting the field, for the reason above: the
+            // field is bound server-side either way and an omission makes the SP clear a value the
+            // operator deliberately saved.
+            SupervisorColumnID: smartSend.supervisorColumnIsGuess
+                ? null
+                : inLockedVersion(smartSend.supervisorColumnId),
+            // Gap and Sort have no guess flag — nothing ever fills them in without a click
+            // (businessColumnDefaults.ts returns them untouched), so the locked-version scrub is
+            // the whole rule for them.
+            GapColumnID: inLockedVersion(smartSend.gapColumnId),
+            SortColumnID: inLockedVersion(smartSend.sortColumnId),
             // Only tokens mapped to a column that still EXISTS in the locked version. A
             // vanished mapping (id ∉ columns) is treated as unmapped (sent raw) — the same
             // definition selectUnmappedTokens/TokenMappingTable use — otherwise the SP would
@@ -657,6 +700,11 @@ const SmartSendScreen = ({ classes }: any) => {
                             storedSortColumnId={smartSend.storedSortColumnId}
                             onChange={(role, columnId) => { dispatch(setBusinessColumn({ role, columnId })); markEdited(); }}
                             supervisorEnabled
+                            /* A guessed supervisor column is posted as NULL by buildSaveRequest
+                               above, so while the guess stands the shortfall column provably has no
+                               effect — the picker disables itself and hides its chip rather than
+                               offering a control that cannot change what gets saved. */
+                            supervisorColumnIsGuess={smartSend.supervisorColumnIsGuess}
                         />
 
                         <Box style={{ marginTop: 24 }}>

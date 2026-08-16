@@ -85,7 +85,10 @@
       "none": "Brak",
       "hint": "Te kolumny wpływają tylko na e-mail przełożonego. Agenci są wypisani według różnicy do celu, od najmniejszej.",
       "needSupervisor": "Wybierz kolumnę przełożonego, aby kolumna różnicy miała efekt",
-      "legacySortDiffers": "Zapisane mapowanie używa innej kolumny sortowania („{{sort}}”) niż kolumny różnicy („{{gap}}”). Zmiana kolumny poniżej zastąpi także zapisaną kolumnę sortowania."
+      "legacySortDiffers": "Zapisane mapowanie używa innej kolumny sortowania („{{sort}}”) niż kolumny różnicy („{{gap}}”). Zmiana kolumny poniżej zastąpi także zapisaną kolumnę sortowania.",
+      "suggestApply": "Sugestia: {{name}}",
+      "suggestTip": "Kliknij, aby wybrać tę kolumnę",
+      "vanishedColumn": "Wybrana kolumna nie istnieje w tej wersji — wybierz ponownie"
     },
     "stale": {
       "title": "Dostępna jest nowsza wersja",

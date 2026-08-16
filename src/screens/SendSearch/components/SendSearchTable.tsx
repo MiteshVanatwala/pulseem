@@ -169,8 +169,12 @@ const SendSearchTable: React.FC<Props> = ({
             // wrong end. Setting direction on the whole row instead would reorder the Hebrew.
             body = (
                 <>
+                    {/* `0 1 auto`, not `1 1 auto` (CHANGED 2026-08-16): a GROW item absorbs all free
+                        space, which pushed the #id to the far edge and made the row full-bleed — so
+                        the justifyContent above would have had nothing left to centre. Shrink is
+                        kept, so with minWidth:0 + nowrap a long name still ellipsizes. */}
                     <bdi style={{
-                        flex: '1 1 auto', minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis',
+                        flex: '0 1 auto', minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis',
                         whiteSpace: 'nowrap', fontSize: 12, fontWeight: 500, color: '#5b6b7b',
                     }}>{name === '' ? t(`${SS}source.nameNotFound`) : name}</bdi>
                     <span dir="ltr" style={{
@@ -187,9 +191,13 @@ const SendSearchTable: React.FC<Props> = ({
 
         return (
             <>
+                {/* CHANGED 2026-08-16. justifyContent, NOT textAlign: this is a flex row, and
+                    textAlign never positioned its items — the line rendered edge-to-edge while the
+                    campaign name above it centred, so the cell had two lines on two different axes.
+                    `direction` stays: it decides which end the label and the #id sit at. */}
                 <Box aria-hidden style={{
-                    display: 'flex', alignItems: 'baseline', gap: 6, marginTop: 2,
-                    direction: isRtl ? 'rtl' : 'ltr', textAlign: isRtl ? 'right' : 'left',
+                    display: 'flex', alignItems: 'baseline', justifyContent: 'center', gap: 6,
+                    marginTop: 2, direction: isRtl ? 'rtl' : 'ltr',
                 }}>
                     {/* The chip REPLACES the "מקור:" label rather than trailing the name: it then
                         carries the noun, forms a vertical rule of identical rectangles at one x for
@@ -291,9 +299,19 @@ const SendSearchTable: React.FC<Props> = ({
                 style={{ cursor: 'pointer' }}
             >
                 {/* ── נמען ── name + (email · cellphone) beneath, the contact line forced LTR ── */}
+                {/* CHANGED 2026-08-16. The identity column is the ONLY start-aligned one in the grid;
+                    everything else is centred. `align="right"` was physical and therefore wrong under
+                    en/pl, where the reading edge is the LEFT. Nothing in THIS cell moves today —
+                    both children position themselves (a block-level flex row, and a Typography that
+                    carries its own textAlign) — so this states the rule where it belongs, for the day
+                    a bare text child is added. The visible fix for this column is on the HEADER. */}
                 <TableCell
-                    align="right"
-                    style={{ minWidth: 230, boxShadow: leading ? `inset 3px 0 0 ${leading}` : undefined }}
+                    align="inherit"
+                    style={{
+                        minWidth: 230,
+                        textAlign: isRtl ? 'right' : 'left',
+                        boxShadow: leading ? `inset 3px 0 0 ${leading}` : undefined,
+                    }}
                 >
                     <Box style={{ display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap' }}>
                         <Typography component="span" style={{ fontWeight: 700 }}>{r.RecipientName}</Typography>
@@ -328,22 +346,34 @@ const SendSearchTable: React.FC<Props> = ({
                 </TableCell>
 
                 {/* ── דיוור ── campaign, and under it the DATA SOURCE the send came from ──
-                    align="right", not "center": two lines of different lengths with no shared axis
-                    read as floating caption rather than as one cell. The header (:252) moves with it.
+                    CHANGED 2026-08-16: centred. It was `align="right"` on the argument that two lines
+                    of different lengths need a shared start axis — but a single physically-right
+                    column among centred ones read as a misalignment in the grid, and under en/pl the
+                    physical value was simply the wrong edge. Both lines share a centre axis instead,
+                    which is the axis every other column in this table already uses.
 
                     The source line answers a question the grid could not answer before: the version
                     cell says "גרסה 3" without saying "of what". With one source that was tolerable;
                     with ten it misleads on an audit artifact. */}
-                <TableCell align="right">
+                <TableCell align="center">
                     <Typography component="div" style={{ fontSize: 14, fontWeight: 600, color: '#3b4754' }}>
                         {r.CampaignName}
                     </Typography>
                     {renderSourceLine(r)}
                 </TableCell>
 
-                {/* ── ערוצים ותוצאה ── one line per channel actually attempted; no dash matrix ── */}
-                <TableCell align="right">
-                    <SendStatusCell attempts={rowAttempts(r)} />
+                {/* ── ערוצים ותוצאה ── one line per channel actually attempted; no dash matrix ──
+                    CHANGED 2026-08-16: centred. align="center" ALONE is a no-op here — SendStatusCell's
+                    root is a BLOCK-level flex column with its own `alignItems:'flex-start'` and
+                    `textAlign:'start'` (SendStatusCell.tsx:154), so it fills the cell and the cell's
+                    textAlign cannot reach it. The inline-block wrapper shrink-wraps the stack so the
+                    cell centres it as ONE unit, while each channel line keeps reading from its own
+                    start edge. SendStatusCell itself is shared with AgentDrawer and RollupDrawer and
+                    must not be changed for a grid-only alignment rule. */}
+                <TableCell align="center">
+                    <Box style={{ display: 'inline-block' }}>
+                        <SendStatusCell attempts={rowAttempts(r)} />
+                    </Box>
                 </TableCell>
 
                 {/* ── הראיה האחרונה ── */}
@@ -414,12 +444,15 @@ const SendSearchTable: React.FC<Props> = ({
     const renderHead = () => (
         <TableHead>
             <TableRow>
-                <TableCell align="right">{t(`${SS}col.recipient`)}</TableCell>
+                {/* CHANGED 2026-08-16. The identity column is the only start-aligned one, and it is
+                    branched on direction rather than pinned physically right — under en/pl the
+                    reading edge is the LEFT. Its body cell carries the identical rule. Every other
+                    header below is centred, matching its body cell. */}
+                <TableCell align="inherit" style={{ textAlign: isRtl ? 'right' : 'left' }}>
+                    {t(`${SS}col.recipient`)}
+                </TableCell>
                 <TableCell align="center">{t(`${SS}col.supervisor`)}</TableCell>
-                {/* align="right" to match the body cell, which now holds two lines of different
-                    lengths and needs a shared start axis. One start-aligned column among centred
-                    ones is a conscious cost — a floating second line is worse. */}
-                <TableCell align="right">{t(`${SS}col.mailing`)}</TableCell>
+                <TableCell align="center">{t(`${SS}col.mailing`)}</TableCell>
                 <TableCell align="center">{t(`${SS}col.channelsAndResult`)}</TableCell>
                 <TableCell align="center">{t(`${SS}col.lastEvidence`)}</TableCell>
                 <TableCell align="center">{t(`${SS}version.label`)}</TableCell>

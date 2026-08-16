@@ -174,6 +174,9 @@
     "unknownOutcomeHint": "Check the downloads page before exporting again — exporting now could create a second copy of the same file.",
     "unknownState": "Unknown",
     "campaignsCount": "campaigns",
+    "reportName": "Sources report",
+    "roleSupervisors": "Supervisors",
+    "roleAgents": "Agents",
     "channel": {
       "email": "Email",
       "sms": "SMS",

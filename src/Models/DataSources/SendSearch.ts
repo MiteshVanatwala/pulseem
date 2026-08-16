@@ -1120,6 +1120,20 @@ export const buildExportLabels = (t: ExportT): { [token: string]: string } => {
     // sentence and never a format string.
     labels['export.campaignsCount'] = t(`${SS}export.campaignsCount`);
 
+    // ADDED 2026-08-16. Also not a cell value — the download name's STEM, i.e. what this report is
+    // CALLED. The file used to be named "SendSearch_…", an internal screen id that means nothing to
+    // the operator who opens it. It travels through Labels rather than being hard-coded on the
+    // server for the same reason everything else here does: the server has no dictionary, and the
+    // en/pl builds must not receive a Hebrew file name. A bare noun phrase, never a sentence.
+    labels['export.reportName'] = t(`${SS}export.reportName`);
+
+    // The download name's ROLE segment, emitted by the server only when RowKind is not "all".
+    // BARE NOUNS, deliberately not the filter captions `kind.rollup` / `kind.agent`
+    // ("מפקחים בלבד"): a filter caption inside a file name states a UI control rather than what the
+    // file holds — the same confusion already recorded on the supervisor chip in SendSearchTable.
+    labels['export.roleSupervisors'] = t(`${SS}export.roleSupervisors`);
+    labels['export.roleAgents'] = t(`${SS}export.roleAgents`);
+
     return labels;
 };
 
