@@ -174,6 +174,9 @@
     "unknownOutcomeHint": "בדקו בעמוד ההורדות לפני ייצוא נוסף — ייצוא עכשיו עלול ליצור עותק שני של אותו קובץ.",
     "unknownState": "לא ידוע",
     "campaignsCount": "קמפיינים",
+    "reportName": "דוח מקורות",
+    "roleSupervisors": "מפקחים",
+    "roleAgents": "סוכנים",
     "channel": {
       "email": "אימייל",
       "sms": "SMS",
