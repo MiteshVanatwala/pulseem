@@ -33,6 +33,9 @@ import {
     SendSearchCatalogSource,
     SendSearchSourceCampaign,
     SendSearchExportRequest,
+    SupervisorSendRow,
+    SupervisorAgentRow,
+    SupervisorSendRequest,
     exclusiveUpperBound,
 } from '../../Models/DataSources/SendSearch';
 
@@ -147,6 +150,39 @@ interface SendSearchState {
     // renders a source line — see the Search.fulfilled case.
     sources: SendSearchCampaignSource[];
     sourcesAvailable: boolean;
+    // ── supervisor sends (POST api/SendSearch/SupervisorSends) ────────────────────────────────
+    // The מפקח's own copy of the mailing, with opens/clicks and the sent-HTML viewer URL. Same
+    // three-flag shape as `searchSends` (loading + rows + error) plus a latest-request stale guard,
+    // so opening one supervisor's rollup and then another's before the first responds cannot leave
+    // the wrong supervisor's opens/clicks on screen. 405 = HideRecipietns (SupervisorEmail is PII).
+    supervisorSends: SupervisorSendRow[];
+    supervisorSendsTotal: number;
+    supervisorSendsLoading: boolean;
+    supervisorSendsError: string | null;
+    supervisorSendsReqId: string;
+    // ── supervisor agent roster (POST api/SendSearch/SupervisorAgents) ────────────────────────
+    // The RECORDED agents a rollup covered. Its own loading/error flags for the same honesty reason
+    // provenance/rowValues carry them: a FAILED fetch ("could not load") must never look like a
+    // genuinely empty roster ("nobody was covered"). `supervisorAgentsKey` (= requestId+email)
+    // distinguishes "not fetched yet" from "fetched and empty"; `supervisorAgentsReqId` orders
+    // out-of-order responses when the user moves between rollups quickly.
+    supervisorAgents: SupervisorAgentRow[];
+    supervisorAgentsLoading: boolean;
+    supervisorAgentsError: string | null;
+    supervisorAgentsReqId: string;
+    supervisorAgentsKey: string | null;
+    // ── supervisor sent-HTML (POST api/SendSearch/SupervisorSentEmail) — the SECURE viewer ────
+    // The stored as-sent HTML of ONE supervisor mail, fetched LAZILY when the operator clicks
+    // "צפה במייל שנשלח". Modal-scoped: EmailPreviewDialog renders `supervisorSentHtml` in an
+    // <iframe srcDoc> (a STRING — the id never rides in a loadable URL, which is the whole IDOR
+    // fix), shows a spinner while `...Loading`, and "לא זמין" on `...Error` OR a null result (an
+    // unowned / unknown id returns Html null — a legitimate "not available", not a failure).
+    // Cleared on drawer/dialog close (like the roster). `...ReqId` drops out-of-order responses
+    // when the operator opens one supervisor's mail and then another's quickly.
+    supervisorSentHtml: string | null;
+    supervisorSentHtmlLoading: boolean;
+    supervisorSentHtmlError: string | null;
+    supervisorSentHtmlReqId: string;
 }
 
 // ── Thunks ───────────────────────────────────────────────────────────────────────────────────
@@ -283,6 +319,56 @@ export const exportSendSearch = createAsyncThunk(
         }
     });
 
+// POST api/SendSearch/SupervisorSends  →  Data: SupervisorSendResponse  (the מפקח's own send:
+// opens/clicks + the sent-HTML viewer URL). Cloned VERBATIM in shape from `searchSends` above —
+// same `.post` + `return response.data` + rejectWithValue — because it is the same envelope.
+export const searchSupervisorSends = createAsyncThunk(
+    'SendSearch/SupervisorSends', async (req: SupervisorSendRequest, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.post(`${api}SupervisorSends`, req);
+            return response.data;
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    });
+
+// POST api/SendSearch/SupervisorAgents  (body: { RequestID, SupervisorEmail })  →  Data: List<SupervisorAgentRow>
+// The RECORDED agents a rollup covered. POST, NOT GET: the identifying SupervisorEmail is recipient PII
+// and must not land in a URL / access log — the same reason Search and SupervisorSends are POST (this
+// matches the C# controller's [HttpPost] SupervisorAgents([FromBody] SupervisorAgentsRequest)). The body
+// uses the C# model's PascalCase property names.
+export const getSupervisorAgents = createAsyncThunk(
+    'SendSearch/SupervisorAgents',
+    async (arg: { requestId: number; supervisorEmail: string }, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.post(`${api}SupervisorAgents`, {
+                RequestID: arg.requestId, SupervisorEmail: arg.supervisorEmail
+            });
+            return response.data;
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    });
+
+// POST api/SendSearch/SupervisorSentEmail  (body: { SendLogId })  →  Data: SupervisorSentEmailResult { Html }
+// 🔴 THE SECURITY FIX. The tenancy-gated fetch of a supervisor mail's stored as-sent HTML — the SECURE
+// replacement for the old DirectEmailPreview.aspx?id=<raw id> reuse (a cross-tenant IDOR). Cloned
+// VERBATIM in shape from getSupervisorAgents above: same `.post` + `return response.data` +
+// rejectWithValue. The SendLogId is the ONLY input and it NEVER lands in a URL — the client renders
+// Data.Html in an <iframe srcDoc> (a string, not a loadable src). The C# controller gates the read on
+// the JWT SubAccountID (never the body), so an unowned / unknown id comes back with Html null (a 200,
+// not a 404). Body uses the C# model's PascalCase member name (SendLogId).
+export const getSupervisorSentEmailHtml = createAsyncThunk(
+    'SendSearch/SupervisorSentEmail',
+    async (sendLogId: number, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.post(`${api}SupervisorSentEmail`, { SendLogId: sendLogId });
+            return response.data;
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    });
+
 // ── Slice ────────────────────────────────────────────────────────────────────────────────────
 
 const initialState: SendSearchState = {
@@ -314,6 +400,20 @@ const initialState: SendSearchState = {
     sourceCampaigns: [],
     sources: [],
     sourcesAvailable: false,
+    supervisorSends: [],
+    supervisorSendsTotal: 0,
+    supervisorSendsLoading: false,
+    supervisorSendsError: null,
+    supervisorSendsReqId: '',
+    supervisorAgents: [],
+    supervisorAgentsLoading: false,
+    supervisorAgentsError: null,
+    supervisorAgentsReqId: '',
+    supervisorAgentsKey: null,
+    supervisorSentHtml: null,
+    supervisorSentHtmlLoading: false,
+    supervisorSentHtmlError: null,
+    supervisorSentHtmlReqId: '',
 };
 
 // One definition of "forget the recipient's values", shared by `closeDrawer`, `popDrawer` (last
@@ -327,6 +427,29 @@ const clearRowValuesState = (state: SendSearchState) => {
     // Also invalidate the in-flight request: a response that lands after the drawer closed must not
     // repopulate the slot for a recipient nobody is looking at any more.
     state.rowValuesReqId = '';
+};
+
+// The twin of `clearRowValuesState` for the supervisor roster: "the drawer closed, forget the
+// roster". Runs on `closeDrawer` and on the LAST `popDrawer`, so a roster fetched for one
+// supervisor cannot flash under the next drawer, and a late response cannot repopulate a slot
+// nobody is looking at (the reqId is invalidated too).
+const clearSupervisorRosterState = (state: SendSearchState) => {
+    state.supervisorAgents = [];
+    state.supervisorAgentsKey = null;
+    state.supervisorAgentsLoading = false;
+    state.supervisorAgentsError = null;
+    state.supervisorAgentsReqId = '';
+};
+
+// The twin for the supervisor sent-HTML viewer: "the drawer/dialog closed, forget the mail". Runs on
+// closeDrawer, on the LAST popDrawer, and from the dialog's own onClose (clearSupervisorSentHtml), so a
+// mail fetched for one supervisor cannot flash under the next, and a late response cannot repopulate a
+// slot nobody is looking at (the reqId is invalidated too).
+const clearSupervisorSentHtmlState = (state: SendSearchState) => {
+    state.supervisorSentHtml = null;
+    state.supervisorSentHtmlLoading = false;
+    state.supervisorSentHtmlError = null;
+    state.supervisorSentHtmlReqId = '';
 };
 
 // ONE definition of "the result set just changed shape, so the page number is meaningless".
@@ -429,7 +552,13 @@ export const sendSearchSlice = createSlice({
             state.drawerStack.pop();
             // Popping the LAST level is a close, so the same cleanup runs. Popping an inner level is
             // not: the level underneath is a different person and re-reads its own values on open.
-            if (state.drawerStack.length === 0) clearRowValuesState(state);
+            // The supervisor roster is only cleared on a full close for the same reason the values
+            // are: popping agent → rollup returns to the SAME supervisor, whose roster still applies.
+            if (state.drawerStack.length === 0) {
+                clearRowValuesState(state);
+                clearSupervisorRosterState(state);
+                clearSupervisorSentHtmlState(state);
+            }
         },
         // Scrim click / ✕ closes ALL levels (Mock-v3:354 `closeD`).
         closeDrawer: (state) => {
@@ -440,6 +569,8 @@ export const sendSearchSlice = createSlice({
             // thunk's `pending`, because the next drawer may never fire a fetch at all (a row with
             // no ClientID) and would then render the previous recipient's values indefinitely.
             clearRowValuesState(state);
+            clearSupervisorRosterState(state);
+            clearSupervisorSentHtmlState(state);
         },
         clearProvenance: (state) => {
             state.provenance = [];
@@ -455,6 +586,12 @@ export const sendSearchSlice = createSlice({
         // B.4 requires the values to be cleared when the drawer closes.
         clearRowValues: (state) => {
             clearRowValuesState(state);
+        },
+        // The twin of clearRowValues for the sent-HTML viewer: dispatched from EmailPreviewDialog's
+        // onClose so reopening the preview never flashes the previous supervisor's mail while the new
+        // fetch is in flight. (closeDrawer/popDrawer also clear it, for a full drawer close.)
+        clearSupervisorSentHtml: (state) => {
+            clearSupervisorSentHtmlState(state);
         },
     },
     extraReducers: (builder) => {
@@ -671,6 +808,114 @@ export const sendSearchSlice = createSlice({
             state.sourceOptions = [];
             state.sourceCampaigns = [];
         });
+
+        // Supervisor sends — same three-case shape + 405 handling + stale guard as `searchSends`.
+        builder.addCase(searchSupervisorSends.pending, (state, action: any) => {
+            state.supervisorSendsReqId = action.meta.requestId;
+            state.supervisorSendsLoading = true;
+            state.supervisorSendsError = null;
+        });
+        builder.addCase(searchSupervisorSends.fulfilled, (state, action: any) => {
+            if (action.meta.requestId !== state.supervisorSendsReqId) return;   // stale response
+            state.supervisorSendsLoading = false;
+            const data = action.payload?.Data;
+            if (action.payload?.StatusCode === 405) {
+                // SupervisorEmail is recipient PII, so this endpoint is gated exactly like Search
+                // (HideRecipietns → 405). Its own value, not a generic failure — see searchSends.
+                state.supervisorSends = [];
+                state.supervisorSendsTotal = 0;
+                state.supervisorSendsError = 'PERMISSION_DENIED';
+            } else if (data) {
+                state.supervisorSends = data.Items ?? [];
+                state.supervisorSendsTotal = data.TotalCount ?? 0;
+                state.supervisorSendsError = null;
+            } else {
+                // A 200 with no Data is a failure that did not throw — surfaced, never left as stale
+                // rows under a new rollup (same reasoning as searchSends.fulfilled).
+                state.supervisorSends = [];
+                state.supervisorSendsTotal = 0;
+                state.supervisorSendsError = action.payload?.Message ?? 'SUPERVISOR_SENDS_FAILED';
+            }
+        });
+        builder.addCase(searchSupervisorSends.rejected, (state, action: any) => {
+            if (action.meta.requestId !== state.supervisorSendsReqId) return;
+            state.supervisorSendsLoading = false;
+            state.supervisorSends = [];
+            state.supervisorSendsTotal = 0;
+            state.supervisorSendsError = action.payload?.error ?? action.error?.message ?? 'SUPERVISOR_SENDS_FAILED';
+        });
+
+        // Supervisor agents (roster) — same three-case shape + stale guard as provenance/rowValues.
+        builder.addCase(getSupervisorAgents.pending, (state, action: any) => {
+            state.supervisorAgentsLoading = true;
+            state.supervisorAgentsReqId = action.meta.requestId;
+            state.supervisorAgentsKey = action.meta.arg
+                ? `${action.meta.arg.requestId}-${action.meta.arg.supervisorEmail}` : null;
+            // Cleared on PENDING so the previous supervisor's roster is never shown under the new one
+            // while the request is in flight (same rule as rowValues).
+            state.supervisorAgents = [];
+            state.supervisorAgentsError = null;
+        });
+        builder.addCase(getSupervisorAgents.fulfilled, (state, action: any) => {
+            if (action.meta.requestId !== state.supervisorAgentsReqId) return;   // stale response
+            state.supervisorAgentsLoading = false;
+            if (action.payload?.StatusCode === 405) {
+                // The roster is recipient data (names + emails), so it is gated like RowValues.
+                state.supervisorAgents = [];
+                state.supervisorAgentsError = 'PERMISSION_DENIED';
+                return;
+            }
+            state.supervisorAgents = action.payload?.Data ?? [];
+            // A 200 whose body carries no `Data` at all is a failure that did not throw. An empty
+            // ARRAY is a legitimate answer (a rollup that covered nobody) and leaves the flag null.
+            state.supervisorAgentsError = action.payload && 'Data' in action.payload && action.payload.Data != null
+                ? null
+                : (action.payload?.Message ?? 'SUPERVISOR_AGENTS_FAILED');
+        });
+        builder.addCase(getSupervisorAgents.rejected, (state, action: any) => {
+            if (action.meta.requestId !== state.supervisorAgentsReqId) return;
+            state.supervisorAgentsLoading = false;
+            state.supervisorAgents = [];
+            state.supervisorAgentsError = action.payload?.error ?? action.error?.message ?? 'SUPERVISOR_AGENTS_FAILED';
+        });
+
+        // Supervisor sent-HTML (the srcDoc viewer) — same three-case shape + 405 handling + stale guard
+        // as the roster above.
+        builder.addCase(getSupervisorSentEmailHtml.pending, (state, action: any) => {
+            state.supervisorSentHtmlLoading = true;
+            state.supervisorSentHtmlReqId = action.meta.requestId;
+            // Cleared on PENDING so the previous supervisor's mail is never shown while the new fetch is
+            // in flight (same rule as rowValues / the roster).
+            state.supervisorSentHtml = null;
+            state.supervisorSentHtmlError = null;
+        });
+        builder.addCase(getSupervisorSentEmailHtml.fulfilled, (state, action: any) => {
+            if (action.meta.requestId !== state.supervisorSentHtmlReqId) return;   // stale response
+            state.supervisorSentHtmlLoading = false;
+            if (action.payload?.StatusCode === 405) {
+                // The sent mail is recipient data, so it is gated like the roster (HideRecipietns).
+                state.supervisorSentHtml = null;
+                state.supervisorSentHtmlError = 'PERMISSION_DENIED';
+                return;
+            }
+            const data = action.payload?.Data;
+            // A 200 whose body carries no Data object at all is a failure that did not throw. Html === null
+            // IS a legitimate answer (unowned / unknown id, or no stored HTML) and leaves the error flag
+            // null — the dialog renders "לא זמין" for it, never an error.
+            if (action.payload && 'Data' in action.payload && data != null) {
+                state.supervisorSentHtml = data.Html ?? null;
+                state.supervisorSentHtmlError = null;
+            } else {
+                state.supervisorSentHtml = null;
+                state.supervisorSentHtmlError = action.payload?.Message ?? 'SUPERVISOR_SENT_HTML_FAILED';
+            }
+        });
+        builder.addCase(getSupervisorSentEmailHtml.rejected, (state, action: any) => {
+            if (action.meta.requestId !== state.supervisorSentHtmlReqId) return;
+            state.supervisorSentHtmlLoading = false;
+            state.supervisorSentHtml = null;
+            state.supervisorSentHtmlError = action.payload?.error ?? action.error?.message ?? 'SUPERVISOR_SENT_HTML_FAILED';
+        });
     }
 });
 
@@ -678,7 +923,7 @@ export const {
     setFilters, setPageIndex, setPageSize, clearFilters,
     setFilterClauses, addFilterClause, updateFilterClause, removeFilterClause, clearFilterClauses,
     setSort, clearSort,
-    pushDrawer, popDrawer, closeDrawer, clearProvenance, clearRowValues,
+    pushDrawer, popDrawer, closeDrawer, clearProvenance, clearRowValues, clearSupervisorSentHtml,
 } = sendSearchSlice.actions;
 
 export default sendSearchSlice.reducer;

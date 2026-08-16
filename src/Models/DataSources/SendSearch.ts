@@ -602,6 +602,105 @@ export interface SendSearchResponse {
     SourcesAvailable?: boolean;
 }
 
+// ═══════════════════════════════════════════════════════════════════════════════════════════
+// SUPERVISOR SENDS — the מפקח's own copy of the mailing, plus the RECORDED agent roster.
+// Feature "supervisor sends in SendSearch". DB procs dbo.DataSources_SearchSupervisorSends (page
+// rows + TotalCount) and dbo.DataSources_GetSupervisorSentAgents (roster). Shared contract:
+// CONTRACT-CSharpReact.md, "React layer".
+//
+// 🔴 PascalCase, NOT camelCase — the SAME rule as SendSearchRow above, and it is load-bearing.
+// The C# `SendSearchModels.cs` header states it outright: "Newtonsoft serializes property names
+// verbatim — PascalCase", and there is no camelCase contract resolver anywhere in PulseemSiteApi.
+// The binding integration invariant is "match how the existing Search row serializes", and the
+// existing Search row (SendSearchRow) is PascalCase. A camelCase key here would read `undefined`
+// off every PascalCase JSON field — the precise silent failure this whole file is built to avoid.
+// (The task brief phrased these fields in camelCase; that phrasing is overruled by the invariant
+// and by the actual wire. Recorded as an assumption for the owner to confirm.)
+//
+// DeliveryState / EngagementState reuse the SAME frozen §2.2 string domains as SendSearchRow (D10):
+// narrowed at the render boundary by `toChannelAttempt`, never mapped inside a component.
+// Opens / Clicks / SendLogId are `number | null`. NULL means "no linked send" and MUST render as
+// "לא זמין", never "0" (house rule "אין אחוזים" + the contract's explicit null rule). Use
+// `engagementCountKind` below to make that decision in one place.
+// 🔴 SentEmailUrl is DEPRECATED and now ALWAYS null — it WAS the DirectEmailPreview.aspx?id=<raw id>
+// cross-tenant IDOR, and it is server-neutralized in SendSearchLogic.BuildSentEmailUrl. The viewer no
+// longer uses it: the "צפה במייל שנשלח" button is enabled on HasSentHtml and fetches the stored HTML via
+// POST api/SendSearch/SupervisorSentEmail (SupervisorSentEmailResult), rendered in-iframe via `srcDoc`
+// (a STRING — the id never rides in a loadable URL). The field is kept only for wire-compat.
+// ═══════════════════════════════════════════════════════════════════════════════════════════
+
+// One row of dbo.DataSources_SearchSupervisorSends result set 1 — the supervisor's own send.
+export interface SupervisorSendRow {
+    RequestID: number;
+    CampaignID: number;
+    CampaignName: string;
+    SupervisorEmail: string;
+    SupervisorName: string;
+    AgentCount: number;
+    SentDate: string | null;         // DateTime? → ISO-8601 string | null (moment() parses at render)
+    DeliveryState: string | null;    // server-normalised; SAME domain + narrowing as SendSearchRow
+    EngagementState: string | null;  // server-normalised; SAME domain + narrowing as SendSearchRow
+    Opens: number | null;            // int? — NULL ⇒ no linked send ⇒ "לא זמין", never "0"
+    Clicks: number | null;           // int? — NULL ⇒ no linked send ⇒ "לא זמין", never "0"
+    SendLogId: number | null;        // ApiEmailSendLogs.ID — NULL ⇒ view + opens/clicks disabled
+    HasSentHtml: boolean;            // whether captured sent-HTML exists for this SendLogId
+    SentEmailUrl: string | null;     // DEPRECATED — always null now (was the DirectEmailPreview.aspx IDOR); use HasSentHtml + the SupervisorSentEmail srcDoc fetch. Kept for wire-compat.
+    IsSupervisor: boolean;           // always true on this result set (=1)
+}
+
+// One row of dbo.DataSources_GetSupervisorSentAgents — the RECORDED agents a rollup covered.
+// This is authoritative, unlike RollupDrawer's name-matched reconstruction (`rosterReconstructed`):
+// it comes from the send log itself. PreviewLink is the per-agent sent-mail viewer URL; null ⇒ that
+// agent's preview button is disabled. Validated by the SAME `previewUrlOf` gate before an <iframe>.
+export interface SupervisorAgentRow {
+    ClientID: number;
+    FirstName: string;
+    LastName: string;
+    Email: string;
+    PreviewLink: string | null;      // nvarchar(max) — server-built viewer URL, or null
+    ApiEmailSendLogID: number | null;
+}
+
+// Request body of POST api/SendSearch/SupervisorSends. A focused subset of the proc params —
+// SubAccountID is NEVER on the wire (it comes from the JWT), same rule as SendSearchRequest.
+export interface SupervisorSendRequest {
+    Channel: eSendChannel;           // default 1 (EMAIL) — the only channel supervisor sends use
+    CampaignID: number | null;
+    SearchText: string | null;       // supervisor name / email; '' is sent as null (see the panel)
+    DateFrom: string | null;         // ISO-8601
+    DateTo: string | null;           // ISO-8601
+    PageIndex: number;               // 0-based, matching the proc
+    PageSize: number;
+}
+
+// PulseemResponse.Data of POST api/SendSearch/SupervisorSends — RS1 rows + RS2 TotalCount.
+export interface SupervisorSendResponse {
+    Items: SupervisorSendRow[];
+    TotalCount: number;
+}
+
+// PulseemResponse.Data of POST api/SendSearch/SupervisorSentEmail — the SECURE sent-mail viewer.
+//
+// 🔴 THE IDOR FIX, ON THE WIRE. This REPLACES SupervisorSendRow.SentEmailUrl (the
+// DirectEmailPreview.aspx?id=<raw id> URL, now server-neutralized to null): the stored as-sent HTML
+// arrives as a STRING and the client renders it via <iframe srcDoc=…> — the id never rides in a
+// loadable/iframe-able URL, so it cannot be enumerated. `Html` is null when the id is not owned by
+// the caller's tenant or no HTML was stored — a legitimate "not available" the server answers 200
+// (never 404), so the dialog shows "לא זמין", not an error. (The C# result also carries a
+// PascalCase `IsOriginalCopy`; TS ignores unknown keys on a response, so it is not declared here.)
+export interface SupervisorSentEmailResult {
+    Html: string | null;
+}
+
+// Opens/Clicks → the three-way display decision, WITHOUT i18n (the caller supplies `t`, so this
+// stays a pure, unit-callable function like `camelCaseState`). It is the ONE home of the "אין
+// אחוזים" rule for these counts, so no component grows its own copy (D10): NULL is a FIRST-CLASS
+// state that is never rendered as "0" — null ⇒ 'unavailable' (caller shows "לא זמין"), 0 ⇒ 'none'
+// (a linked send with nothing recorded), >0 ⇒ 'count' (the caller prints the word + "×N").
+export type EngagementCountKind = 'unavailable' | 'none' | 'count';
+export const engagementCountKind = (n: number | null | undefined): EngagementCountKind =>
+    (n == null ? 'unavailable' : (n > 0 ? 'count' : 'none'));
+
 // ── provenance history row (mirror of CONTRACT §3.1 SendProvenanceRow, field-for-field) ─────
 export interface SendProvenanceRow {
     SendProvenanceID: number;            // C# long
