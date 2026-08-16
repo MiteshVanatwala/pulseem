@@ -8,10 +8,11 @@ import { Warning, ShowChart, VpnKey, TextFields, Search } from '@material-ui/ico
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { SmartSendColumn, SmartSendTokenInfo } from '../../../Models/DataSources/SmartSend';
+import { resolveColumnLabel } from '../columnLabel';
 import { suggestMapping } from '../suggestMapping';
 
 // §11.4 · one row per ##token## → a Select over the version's columns (labelled by
-// `resolveColumnLabel` below — DisplayName, but never blank).
+// `resolveColumnLabel`, imported from ../columnLabel — DisplayName, but never blank).
 // Mapping is by ColumnID (rename-safe). Each token carries exactly one badge: graph /
 // system-field / free. Warnings: unmapped (blocks send at M9), a mapped column that
 // VANISHED in the locked version (remap), and a system-field token mapped to a source
@@ -50,38 +51,6 @@ interface Props {
     onChange: (token: string, columnId: number | null) => void;
     warnSystemFieldOverride?: boolean;
 }
-
-// THE single resolution of "what is this column called", shared by every surface in this file that
-// names a column: the suggestion chip's label and the Select's own MenuItem.
-//
-// WHY IT EXISTS (review finding): the chip's label was built from `DisplayName` alone, and the API
-// models that as a plain `string`, not as required-non-empty (Models/DataSources/SmartSend.ts:53).
-// A column whose DisplayName is "" therefore rendered a NAMELESS chip — "הצעה: " / "Suggested: "
-// with nothing after it. The user was being asked to accept a suggestion they could not identify.
-//
-// THIS IS NOW THE WHOLE SAFETY ARGUMENT FOR SUGGESTIONS, not a cosmetic fix: with the bulk button
-// gone, what stops a high-scoring but WRONG candidate (`MobilePhone` → "טלפון נייד חסום") is that
-// the user reads the column's real name before clicking. A blank or unrecognisable label would put
-// the guess back beyond review, which is exactly the failure the button was removed for.
-//
-// WHY BOTH SURFACES AND NOT JUST THE CHIP: fixing the chip alone would leave the dropdown rendering
-// a blank <MenuItem> for the same column, so the two controls would name one column differently —
-// the chip would say something and the Select nothing. That is worse than the original hole, because
-// a user who accepted the chip could no longer find the row's value in the list. Anything that puts
-// a column's name on screen goes through here.
-//
-// THE CHAIN, WEAKEST LAST: DisplayName is what the user renamed the column to and is what the rest
-// of the screen means by "column"; SourceHeader is the raw header the file was uploaded with (same
-// model, :52) and is the nearest thing the user would still recognise; the ColumnID is the last
-// resort — meaningless to a human, but never blank, and that is exactly the point: the return value
-// is non-empty BY CONSTRUCTION, so no caller downstream can render nothing. Whitespace-only names
-// are trimmed into the empty case for the same reason (" " is as unidentifiable as "").
-// NO NEW i18n KEY: none of the three is copy — all three are data already carried on the column.
-const resolveColumnLabel = (c: SmartSendColumn): string => (
-    (c.DisplayName && c.DisplayName.trim())
-    || (c.SourceHeader && c.SourceHeader.trim())
-    || String(c.ColumnID)
-);
 
 const useStyles = makeStyles((theme) => ({
     header: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: theme.spacing(1) },

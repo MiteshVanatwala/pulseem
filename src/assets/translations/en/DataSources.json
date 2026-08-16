@@ -85,7 +85,10 @@
       "none": "None",
       "hint": "These columns affect the supervisor email only. Agents are listed by shortfall to target, smallest first.",
       "needSupervisor": "Pick a supervisor column so the shortfall column takes effect",
-      "legacySortDiffers": "The saved mapping uses a different sort column (\"{{sort}}\") from its gap column (\"{{gap}}\"). Changing the column below will replace the saved sort column too."
+      "legacySortDiffers": "The saved mapping uses a different sort column (\"{{sort}}\") from its gap column (\"{{gap}}\"). Changing the column below will replace the saved sort column too.",
+      "suggestApply": "Suggested: {{name}}",
+      "suggestTip": "Click to select this column",
+      "vanishedColumn": "The selected column no longer exists in this version — pick again"
     },
     "stale": {
       "title": "A newer version is available",
