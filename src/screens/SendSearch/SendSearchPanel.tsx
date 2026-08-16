@@ -30,6 +30,7 @@ import { Loader } from '../../components/Loader/Loader';
 import InlineBanner from '../SmartSend/components/InlineBanner';
 import {
     searchSends, getSendProvenance, getSendRowValues, getSendSearchFilterFields,
+    searchSupervisorSends, getSupervisorAgents,
     setFilters, setPageIndex, setPageSize, clearFilters,
     pushDrawer, popDrawer, closeDrawer,
 } from '../../redux/reducers/sendSearchSlice';
@@ -38,9 +39,11 @@ import {
     SendSearchRequest,
     SendSearchRow,
     SendSearchFilters as Filters,
+    SupervisorSendRow,
     DrawerEntry,
     eRowKind,
     eRoleFilter,
+    DEFAULT_PAGE_SIZE,
     sendSearchRowKey,
     toSendSearchRequest,
 } from '../../Models/DataSources/SendSearch';
@@ -356,6 +359,21 @@ const SendSearchPanel: React.FC<Props> = ({ showTitle }) => {
         // The values card lives in AgentDrawer only, so the roll-up level does not pay for a request
         // it will not render. `fetchRowValues` guards the ClientID.
         if (level === 'agent') fetchRowValues(row);
+        // A rollup is a supervisor: fetch that supervisor's OWN send (opens/clicks + sent-HTML),
+        // scoped to THIS campaign and narrowed by the supervisor's email. One request per opened
+        // rollup. The roster (SupervisorAgents) is fetched by the effect below, once this returns a
+        // RequestID — the report row itself carries no RequestID to key the roster on.
+        if (level === 'rollup') {
+            dispatch(searchSupervisorSends({
+                Channel: row.Channel,
+                CampaignID: row.ChannelCampaignID,
+                SearchText: row.RecipientEmail || null,
+                DateFrom: null,
+                DateTo: null,
+                PageIndex: 0,
+                PageSize: DEFAULT_PAGE_SIZE,
+            }));
+        }
     };
 
     // Roster row → push the agent level ON TOP of the roll-up (Mock-v3:473 `pushAgent`). The
@@ -389,6 +407,32 @@ const SendSearchPanel: React.FC<Props> = ({ showTitle }) => {
             && !!r.SupervisorName
             && r.SupervisorName === rollupRow.RecipientName);
 
+    // ── supervisor sends (feature) ────────────────────────────────────────────────────────────
+    // The supervisor send matching the OPEN rollup, from the campaign-scoped list openRow fetched.
+    // Matched on campaign + email, case-insensitively: RecipientEmail (report row) and
+    // SupervisorEmail (SupervisorSends row) are the same address projected by two different procs.
+    // Null until the fetch returns, and null forever on a server that has not shipped SupervisorSends
+    // — in which case RollupDrawer renders exactly as it did before this feature.
+    const supervisorSends: SupervisorSendRow[] = sendSearch.supervisorSends ?? [];
+    const topEntry: DrawerEntry | null = drawerStack.length > 0 ? drawerStack[drawerStack.length - 1] : null;
+    const openRollupRow: SendSearchRow | null = topEntry && topEntry.Level === 'rollup'
+        ? rowByKey(topEntry.RowKey) : null;
+    const supervisorSendForOpen: SupervisorSendRow | null = openRollupRow
+        ? (supervisorSends.filter((s) => s.CampaignID === openRollupRow.ChannelCampaignID
+            && (s.SupervisorEmail || '').toLowerCase() === (openRollupRow.RecipientEmail || '').toLowerCase())[0] ?? null)
+        : null;
+
+    // The roster keys on RequestID + SupervisorEmail, which ONLY the SupervisorSendRow carries — the
+    // report row has no RequestID — so this is a DEPENDENT fetch, dispatched once the supervisor send
+    // above resolves. Keyed on the two primitives so it fires once per (request, supervisor), no loop.
+    const supReqId = supervisorSendForOpen?.RequestID ?? 0;
+    const supEmail = supervisorSendForOpen?.SupervisorEmail ?? '';
+    useEffect(() => {
+        if (supReqId > 0 && supEmail) {
+            dispatch(getSupervisorAgents({ requestId: supReqId, supervisorEmail: supEmail }));
+        }
+    }, [dispatch, supReqId, supEmail]);
+
     const renderDrawerBody = () => {
         const top = drawerStack.length > 0 ? drawerStack[drawerStack.length - 1] : null;
         if (!top) return null;
@@ -401,6 +445,13 @@ const SendSearchPanel: React.FC<Props> = ({ showTitle }) => {
                     roster={rosterFor(row)}
                     provenance={sendSearch.provenance ?? []}
                     onOpenAgent={openAgentFromRoster}
+                    // The supervisor's own send (opens/clicks + sent-HTML). Null ⇒ the card renders
+                    // as before. The recorded roster is passed ONLY once we have a matching supervisor
+                    // send, so a pre-feature server keeps the reconstructed roster (no regression).
+                    supervisorSend={supervisorSendForOpen}
+                    supervisorAgents={supervisorSendForOpen ? (sendSearch.supervisorAgents ?? []) : undefined}
+                    supervisorAgentsLoading={!!sendSearch.supervisorAgentsLoading}
+                    supervisorAgentsError={sendSearch.supervisorAgentsError ?? null}
                 />
             );
         }

@@ -16,10 +16,12 @@
 //     recorded one is the same class of over-claim as a blank version cell.
 // ═══════════════════════════════════════════════════════════════════════════════════════════
 
-import React from 'react';
+import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import {
-    Box, Button, Table, TableBody, TableCell, TableHead, TableRow, Typography,
+    Box, Button, CircularProgress, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, Typography,
 } from '@material-ui/core';
+import { MailOutline } from '@material-ui/icons';
 import { useTranslation } from 'react-i18next';
 import moment from 'moment';
 import { DateFormats } from '../../../helpers/Constants';
@@ -28,16 +30,22 @@ import {
     SS,
     SendSearchRow,
     SendProvenanceRow,
+    SupervisorSendRow,
+    SupervisorAgentRow,
     StateTone,
     camelCaseState,
     deliveryTone,
     engagementTone,
+    engagementCountKind,
     rowAttempts,
     rowChannelAttempt,
     sendSearchRowKey,
 } from '../../../Models/DataSources/SendSearch';
 import SendStatusCell from './SendStatusCell';
 import VersionBadge from './VersionBadge';
+import EmailPreviewDialog from './EmailPreviewDialog';
+import { previewUrlOf } from './SendSearchAdvanced';
+import { getSupervisorSentEmailHtml, clearSupervisorSentHtml } from '../../../redux/reducers/sendSearchSlice';
 
 const TONE_COLOR: { [k in StateTone]: string } = {
     ok: '#067647', bad: '#B42318', warn: '#B54708', muted: '#5b6b7b',
@@ -52,6 +60,18 @@ interface Props {
     roster: SendSearchRow[];
     provenance: SendProvenanceRow[];
     onOpenAgent: (row: SendSearchRow) => void;
+    // ── supervisor-sends feature (all OPTIONAL, so the existing agent/rollup path is unchanged) ──
+    // The supervisor's OWN send (opens/clicks/sent-HTML). When present, the top verdict card grows
+    // the opens/clicks line and the "צפה במייל שנשלח" button. Absent ⇒ the card renders exactly as
+    // before (a server that has not shipped SupervisorSends, or a rollup we could not match).
+    supervisorSend?: SupervisorSendRow | null;
+    // The RECORDED roster from GET api/SendSearch/SupervisorAgents. When PROVIDED (not undefined),
+    // it REPLACES the reconstructed roster below with the authoritative one (each row offers a
+    // per-agent sent-mail preview). Left undefined ⇒ the existing reconstructed roster is kept, so
+    // nothing regresses on a pre-feature server.
+    supervisorAgents?: SupervisorAgentRow[];
+    supervisorAgentsLoading?: boolean;
+    supervisorAgentsError?: string | null;
 }
 
 const Card: React.FC<{ title?: string; children: React.ReactNode }> = ({ title, children }) => (
@@ -80,10 +100,53 @@ const Num: React.FC<{ label: string; value: string; tone?: StateTone }> = ({ lab
     </Box>
 );
 
-const RollupDrawer: React.FC<Props> = ({ row, roster, provenance, onOpenAgent }) => {
+const RollupDrawer: React.FC<Props> = ({
+    row, roster, provenance, onOpenAgent,
+    supervisorSend, supervisorAgents, supervisorAgentsLoading, supervisorAgentsError,
+}) => {
     const { t, i18n } = useTranslation();
+    const dispatch = useDispatch();
     // Same idiom as DataSources.tsx:113 — fallback 'rtl' because Hebrew is the default locale.
     const isRtl = (i18n.dir?.() ?? 'rtl') === 'rtl';
+
+    // The tenancy-gated sent-HTML for the supervisor's OWN mail — the SECURE viewer's content. Read
+    // from the store because the "צפה במייל שנשלח" button dispatches getSupervisorSentEmailHtml (the
+    // fetch is lazy — the stored HTML can be large, so it is not pulled until the operator asks to see
+    // it). Cleared by the slice on drawer/dialog close and on clearSupervisorSentHtml (dialog onClose).
+    const supervisorSentHtml: string | null = useSelector((s: any) => s.sendSearch?.supervisorSentHtml ?? null);
+    const supervisorSentHtmlLoading: boolean = useSelector((s: any) => !!(s.sendSearch?.supervisorSentHtmlLoading));
+
+    // ONE dialog instance, parameterised by whichever mail is being viewed. `mode` selects how the
+    // dialog renders it: 'url' = an agent's server-minted PreviewCampaign.aspx URL (unchanged legacy
+    // path, run through `previewUrlOf` first); 'srcDoc' = the supervisor's stored HTML fetched above,
+    // rendered as a STRING (no id in a URL — the IDOR fix). `preview === null` ⇒ closed.
+    const [preview, setPreview] = useState<{
+        mode: 'url' | 'srcDoc'; url: string | null; name: string; email: string; sentAt: string | null;
+    } | null>(null);
+
+    // Opens/clicks as WORDS + "×N", never a percentage and never a bare "0". `engagementCountKind`
+    // is the single home of that rule (Model, D10). NULL ⇒ "לא זמין" (supervisor.notAvailable);
+    // 0 ⇒ the existing engagement.none; >0 ⇒ the existing engagement.opened/clicked + "×N". The
+    // status WORD reuses the same i18n keys the agent card uses — no new status vocabulary.
+    const countPhrase = (n: number | null, wordKey: string): string => {
+        const kind = engagementCountKind(n);
+        if (kind === 'unavailable') return t(`${SS}supervisor.notAvailable`);
+        if (kind === 'none') return t(`${SS}engagement.none`);
+        return `${t(`${SS}${wordKey}`)} · ×${n}`;
+    };
+    const countTone = (n: number | null): StateTone => (engagementCountKind(n) === 'count' ? 'ok' : 'muted');
+
+    // Whether the supervisor's own sent mail can be viewed. 🔴 SECURITY FIX: this NO LONGER derives a
+    // URL from SentEmailUrl (that field is now server-neutralized to null — it WAS the IDOR). The
+    // button is enabled iff the send has captured HTML (HasSentHtml ⇔ SendLogId != null); the HTML
+    // itself is fetched on click via the tenancy-gated thunk and rendered in-iframe via `srcDoc`.
+    const canViewSupMail = !!supervisorSend?.HasSentHtml;
+
+    // The roster is driven by the RECORDED list when the screen provided it (feature active),
+    // otherwise by the reconstructed `roster` prop (unchanged legacy path). `!== undefined` and not a
+    // truthiness check: an empty recorded roster is a real answer ("covered nobody") and must not
+    // silently fall back to the reconstructed list.
+    const useRecordedRoster = supervisorAgents !== undefined;
 
     // NARROWED FIRST, here and at every roster row below. Reading `row.EngagementState` raw bypassed
     // `toChannelAttempt`, so an out-of-domain value printed the untranslated key
@@ -154,6 +217,30 @@ const RollupDrawer: React.FC<Props> = ({ row, roster, provenance, onOpenAgent })
 
     return (
         <>
+            {/* One shared preview dialog, mounted only while a mail is being viewed (supervisor's own
+                or a single agent's). Version props are the honest minimum: the sent-HTML IS the
+                recorded mail, so 'Recorded'/'Available' with no version number renders "מתועד"
+                (VersionBadge never blanks) — there is no template-version concept for a captured send. */}
+            {preview && (
+                <EmailPreviewDialog
+                    open={!!preview}
+                    // Closing also drops the fetched HTML from the store, so reopening the preview never
+                    // flashes the previous supervisor's mail while the next fetch is in flight.
+                    onClose={() => { setPreview(null); dispatch(clearSupervisorSentHtml()); }}
+                    // url drives the agent path (unchanged); srcDoc+loading drive the supervisor path.
+                    // Exactly one is active per `mode`, so the dialog's own precedence never mixes them.
+                    url={preview.mode === 'url' ? preview.url : null}
+                    srcDoc={preview.mode === 'srcDoc' ? supervisorSentHtml : undefined}
+                    loading={preview.mode === 'srcDoc' ? supervisorSentHtmlLoading : undefined}
+                    recipientName={preview.name}
+                    recipientEmail={preview.email}
+                    sentAt={preview.sentAt}
+                    VersionNumber={null}
+                    ProvenanceSource="Recorded"
+                    VersionState="Available"
+                />
+            )}
+
             <Card>
                 <Typography component="div" style={{ fontSize: 20, fontWeight: 800, lineHeight: 1.3, color: TONE_COLOR[tone] }}>
                     {verdict}
@@ -188,6 +275,62 @@ const RollupDrawer: React.FC<Props> = ({ row, roster, provenance, onOpenAgent })
                             />
                         )}
                 </Box>
+
+                {/* ── the supervisor's OWN send: opens/clicks (counts, never %) + view sent mail ──
+                    Rendered only when the screen supplied the SupervisorSendRow. The labels above the
+                    values are what keeps opens vs clicks legible when BOTH read "לא זמין" (null). */}
+                {supervisorSend && (
+                    <Box style={{ marginTop: 14, borderTop: '1px solid #eef1f5', paddingTop: 12, display: 'flex', gap: 20, alignItems: 'flex-end', flexWrap: 'wrap' }}>
+                        <Box>
+                            <Typography component="div" style={{ fontSize: 12, color: '#5b6b7b' }}>{t(`${SS}supervisor.opens`)}</Typography>
+                            <Typography component="div" style={{ fontSize: 15, fontWeight: 700, color: TONE_COLOR[countTone(supervisorSend.Opens)] }}>
+                                {countPhrase(supervisorSend.Opens, 'engagement.opened')}
+                            </Typography>
+                        </Box>
+                        <Box>
+                            <Typography component="div" style={{ fontSize: 12, color: '#5b6b7b' }}>{t(`${SS}supervisor.clicks`)}</Typography>
+                            <Typography component="div" style={{ fontSize: 15, fontWeight: 700, color: TONE_COLOR[countTone(supervisorSend.Clicks)] }}>
+                                {countPhrase(supervisorSend.Clicks, 'engagement.clicked')}
+                            </Typography>
+                        </Box>
+                        {/* Beside the counts it describes. Tooltip wraps a <span> so a DISABLED button
+                            (null url/SendLogId) still shows why — a disabled button emits no pointer
+                            events (same idiom as AgentDrawer). Disabled ⇒ the "לא זמין" caption too. */}
+                        <Box style={{ marginInlineStart: 'auto', display: 'flex', alignItems: 'center', gap: 8 }}>
+                            {!canViewSupMail && (
+                                <Typography component="span" style={{ fontSize: 12.5, color: '#5b6b7b' }}>
+                                    {t(`${SS}supervisor.notAvailable`)}
+                                </Typography>
+                            )}
+                            <Tooltip title={(canViewSupMail ? t(`${SS}preview.button`) : t(`${SS}preview.disabled`)) as string}>
+                                <span>
+                                    <Button
+                                        variant="outlined"
+                                        size="small"
+                                        color="primary"
+                                        disabled={!canViewSupMail}
+                                        startIcon={<MailOutline />}
+                                        onClick={() => {
+                                            if (!supervisorSend?.SendLogId) return;
+                                            // Fetch the stored HTML (tenancy-gated) and open the dialog
+                                            // in srcDoc mode. The id travels in the POST body, NEVER a URL.
+                                            dispatch(getSupervisorSentEmailHtml(supervisorSend.SendLogId));
+                                            setPreview({
+                                                mode: 'srcDoc',
+                                                url: null,
+                                                name: supervisorSend.SupervisorName || row.RecipientName,
+                                                email: supervisorSend.SupervisorEmail || row.RecipientEmail,
+                                                sentAt: supervisorSend.SentDate ?? row.SentAt,
+                                            });
+                                        }}
+                                    >
+                                        {t(`${SS}preview.button`)}
+                                    </Button>
+                                </span>
+                            </Tooltip>
+                        </Box>
+                    </Box>
+                )}
             </Card>
 
             <Card title={t(`${SS}drawer.coverage`)}>
@@ -214,7 +357,10 @@ const RollupDrawer: React.FC<Props> = ({ row, roster, provenance, onOpenAgent })
                 </Typography>
             </Card>
 
-            {/* The count MUST be supplied at both call sites — see the note on the tile above. */}
+            {/* LEGACY roster — reconstructed by name-match, kept intact for the pre-feature path.
+                Rendered only when the screen did NOT supply the recorded roster (see useRecordedRoster).
+                The count MUST be supplied at both call sites — see the note on the tile above. */}
+            {!useRecordedRoster && (
             <Card title={t(`${SS}roster.title`, { count: covered })}>
                 <InlineBanner
                     severity="info"
@@ -279,6 +425,77 @@ const RollupDrawer: React.FC<Props> = ({ row, roster, provenance, onOpenAgent })
                     </TableBody>
                 </Table>
             </Card>
+            )}
+
+            {/* RECORDED roster — the authoritative agents from GET api/SendSearch/SupervisorAgents.
+                No "reconstructed" caveat: unlike the legacy list this IS the send-log record. Each row
+                offers a direct sent-mail preview (the point of the feature) rather than opening the
+                agent drawer, since a SupervisorAgentRow is not a SendSearchRow. Honest states: a failed
+                fetch says "load failed", never renders as an empty roster. */}
+            {useRecordedRoster && (
+            <Card title={t(`${SS}roster.title`, { count: (supervisorAgents ?? []).length })}>
+                {supervisorAgentsLoading && <CircularProgress size={18} />}
+                {!supervisorAgentsLoading && !!supervisorAgentsError && (
+                    <Typography component="div" style={{ fontSize: 13.5, color: '#B42318', fontWeight: 700 }}>
+                        {t(supervisorAgentsError === 'PERMISSION_DENIED'
+                            ? `${SS}error.permissionDenied`
+                            : `${SS}error.loadFailed`)}
+                    </Typography>
+                )}
+                {!supervisorAgentsLoading && !supervisorAgentsError && (
+                    <Table size="small">
+                        <TableHead>
+                            <TableRow>
+                                <TableCell align="right">{t(`${SS}roster.recipient`)}</TableCell>
+                                <TableCell align="right" />
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {(supervisorAgents ?? []).length === 0 && (
+                                <TableRow>
+                                    <TableCell colSpan={2} align="right">
+                                        <Typography component="span" style={{ fontSize: 13, color: '#5b6b7b' }}>
+                                            {t(`${SS}empty.noResults`)}
+                                        </Typography>
+                                    </TableCell>
+                                </TableRow>
+                            )}
+                            {(supervisorAgents ?? []).map((ag) => {
+                                const agName = [ag.FirstName, ag.LastName].filter((v) => !!v).join(' ');
+                                const agUrl = previewUrlOf({ PreviewUrl: ag.PreviewLink });
+                                return (
+                                    <TableRow key={`${ag.ClientID}-${ag.Email}`}>
+                                        <TableCell align="right">
+                                            <Typography component="div" style={{ fontSize: 14 }}>{agName || ag.Email}</Typography>
+                                            <Typography component="div" style={{ fontSize: 12, color: '#5b6b7b', direction: 'ltr', textAlign: isRtl ? 'right' : 'left' }}>
+                                                {ag.Email}
+                                            </Typography>
+                                        </TableCell>
+                                        <TableCell align="right">
+                                            <Tooltip title={(agUrl ? t(`${SS}preview.button`) : t(`${SS}preview.disabled`)) as string}>
+                                                <span>
+                                                    <Button
+                                                        size="small"
+                                                        variant="outlined"
+                                                        disabled={!agUrl}
+                                                        startIcon={<MailOutline />}
+                                                        onClick={() => setPreview({
+                                                            mode: 'url', url: agUrl, name: agName || ag.Email, email: ag.Email, sentAt: null,
+                                                        })}
+                                                    >
+                                                        {t(`${SS}preview.button`)}
+                                                    </Button>
+                                                </span>
+                                            </Tooltip>
+                                        </TableCell>
+                                    </TableRow>
+                                );
+                            })}
+                        </TableBody>
+                    </Table>
+                )}
+            </Card>
+            )}
         </>
     );
 };

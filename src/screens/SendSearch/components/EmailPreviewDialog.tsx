@@ -23,7 +23,7 @@
 
 import React from 'react';
 import {
-    Box, Dialog, DialogContent, DialogTitle, IconButton, Typography,
+    Box, CircularProgress, Dialog, DialogContent, DialogTitle, IconButton, Typography,
 } from '@material-ui/core';
 import { Close } from '@material-ui/icons';
 import { useTranslation } from 'react-i18next';
@@ -38,6 +38,15 @@ interface Props {
     // Already validated by `previewUrlOf` at the call site. Null is still handled here rather than
     // trusted away: this component is the last thing between a null and an <iframe>.
     url: string | null;
+    // ── SECURE srcDoc PATH (supervisor sent-HTML) — BACKWARD-COMPATIBLE, both optional ─────────
+    // When `srcDoc` is provided the dialog renders the STORED HTML STRING directly in a sandboxed
+    // iframe (via `srcDoc`, NOT `src`), so the id never rides in a loadable URL — that is the IDOR
+    // fix. `loading` shows a spinner while the tenancy-gated fetch runs. When BOTH are omitted the
+    // dialog behaves EXACTLY as before, driving the iframe from `url` (the agent-row path — this must
+    // never regress). srcDoc null while not loading ⇒ the "לא זמין"/disabled branch (error or empty
+    // result look the same to the reader, per contract).
+    srcDoc?: string | null;
+    loading?: boolean;
     recipientName: string;
     recipientEmail: string;
     sentAt: string | null;
@@ -47,7 +56,7 @@ interface Props {
 }
 
 const EmailPreviewDialog: React.FC<Props> = ({
-    open, onClose, url, recipientName, recipientEmail, sentAt,
+    open, onClose, url, srcDoc, loading, recipientName, recipientEmail, sentAt,
     VersionNumber, ProvenanceSource, VersionState,
 }) => {
     const { t, i18n } = useTranslation();
@@ -137,7 +146,24 @@ const EmailPreviewDialog: React.FC<Props> = ({
                         background: '#f4f6f8', borderTop: '1px solid #e0e0e0',
                     }}
                 >
-                    {url ? (
+                    {loading ? (
+                        // The tenancy-gated sent-HTML fetch is in flight. A spinner, never an empty
+                        // frame and never the "disabled" message — neither of which is true yet.
+                        <Box style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+                            <CircularProgress size={28} />
+                        </Box>
+                    ) : srcDoc ? (
+                        // SECURE PATH (supervisor sent-HTML): the STORED as-sent HTML rendered as a
+                        // STRING via `srcDoc`. No `src`, so the id never appears in a loadable URL and
+                        // nothing here is enumerable (the IDOR fix). `sandbox="allow-same-origin"` WITHOUT
+                        // `allow-scripts` so the captured mail cannot execute JS in the report's context.
+                        <iframe
+                            srcDoc={srcDoc}
+                            sandbox="allow-same-origin"
+                            title={t(`${SS}preview.frameTitle`)}
+                            style={{ display: 'block', width: '100%', height: '100%', minWidth: 640, border: 0, background: '#fff' }}
+                        />
+                    ) : url ? (
                         <iframe
                             src={url}
                             title={t(`${SS}preview.frameTitle`)}

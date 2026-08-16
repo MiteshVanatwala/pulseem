@@ -70,6 +70,11 @@
     "viewEvidence": "ראיית צפייה",
     "covered": "נמענים שכוסו"
   },
+  "supervisor": {
+    "opens": "פתיחות",
+    "clicks": "הקלקות",
+    "notAvailable": "לא זמין"
+  },
   "version": {
     "label": "גרסה",
     "number": "V{{n}}",

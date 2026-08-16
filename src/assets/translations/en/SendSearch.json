@@ -70,6 +70,11 @@
     "viewEvidence": "Viewing evidence",
     "covered": "Recipients covered"
   },
+  "supervisor": {
+    "opens": "Opens",
+    "clicks": "Clicks",
+    "notAvailable": "Not available"
+  },
   "version": {
     "label": "Version",
     "number": "V{{n}}",
