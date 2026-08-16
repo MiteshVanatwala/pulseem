@@ -168,7 +168,18 @@ const RollupDrawer: React.FC<Props> = ({
     // ── coverage COUNTS (never percentages) ──
     // The counts read the NARROWED states too: a raw NULL is not 'None' and would otherwise have
     // been counted as "has viewing evidence", inflating the one number a supervisor acts on.
-    const covered = roster.length;
+    //
+    // CHANGED 2026-08-16. `roster` is RECONSTRUCTED from the rows on the CURRENT PAGE — the screen's
+    // `rosterFor` filters `items`, which is one page (server-clamped to 200). It is a SUBSET, never a
+    // total: on page 2 of a real report it is 0, and under RowKind=2 the agent rows are not in `items`
+    // at all. Where the RECORDED roster exists it is the only honest denominator — otherwise these
+    // tiles print a plausible number that contradicts the recorded count in the card directly beneath
+    // them, which is the failure mode rule 2 at the top of this file exists to forbid.
+    const recordedRoster = supervisorAgents ?? [];
+    // Empty WHILE THE DEPENDENT FETCH IS IN FLIGHT, so a bare `.length` would print a confident 0 next
+    // to the spinner the roster card below is showing.
+    const coverageUnavailable = useRecordedRoster && (supervisorAgentsLoading || !!supervisorAgentsError);
+    const covered = useRecordedRoster ? recordedRoster.length : roster.length;
     const failed = roster.filter((r) => deliveryTone(rowChannelAttempt(r).DeliveryState) === 'bad').length;
     // "ללא ראיית צפייה" is not the same as "did not read": open tracking is image-load based
     // (`:210,431`). The count is stated plainly and the caveat banner carries the meaning.
@@ -257,23 +268,39 @@ const RollupDrawer: React.FC<Props> = ({
                 </Box>
                 <Box style={{ marginTop: 12, display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
                     <Typography component="span" style={{ fontSize: 13.5, color: '#5b6b7b' }}>{t(`${SS}version.label`)}</Typography>
-                    {rollupProvenance
+                    {/* ADDED 2026-08-16. A supervisor SUMMARY mail is not a data-source send: the SP
+                        emits ProvenanceSource 'Unverifiable' with DataSourceVersionID NULL for it.
+                        Both branches below would state something untrue about such a row — the first
+                        borrows the CAMPAIGN's provenance and hard-codes ProvenanceSource="Recorded",
+                        printing "מתועד · V7" as documented fact, which is the confident-wrong-version
+                        outcome the note above this block exists to forbid; the second renders the
+                        Unverifiable badge, whose tooltip gives a SPECIFIC reason ("המיפוי עודכן אחרי
+                        השליחה") that is false for a mail with no mapping and no version concept.
+                        The honest answer is the WORD — a dash would read as "the version is empty",
+                        which is a different claim. */}
+                    {row.IsSupervisor
                         ? (
-                            <VersionBadge
-                                VersionNumber={rollupProvenance.VersionNumber}
-                                ProvenanceSource="Recorded"
-                                VersionState={rollupProvenance.VersionState}
-                                IsOutdated={rollupProvenance.IsOutdated}
-                                LatestVersionNumber={rollupProvenance.LatestVersionNumber}
-                            />
+                            <Typography component="span" style={{ fontSize: 13.5, color: '#5b6b7b' }}>
+                                {t(`${SS}supervisor.notAvailable`)}
+                            </Typography>
                         )
-                        : (
-                            <VersionBadge
-                                VersionNumber={row.VersionNumber}
-                                ProvenanceSource={row.ProvenanceSource}
-                                VersionState={row.VersionState}
-                            />
-                        )}
+                        : rollupProvenance
+                            ? (
+                                <VersionBadge
+                                    VersionNumber={rollupProvenance.VersionNumber}
+                                    ProvenanceSource="Recorded"
+                                    VersionState={rollupProvenance.VersionState}
+                                    IsOutdated={rollupProvenance.IsOutdated}
+                                    LatestVersionNumber={rollupProvenance.LatestVersionNumber}
+                                />
+                            )
+                            : (
+                                <VersionBadge
+                                    VersionNumber={row.VersionNumber}
+                                    ProvenanceSource={row.ProvenanceSource}
+                                    VersionState={row.VersionState}
+                                />
+                            )}
                 </Box>
 
                 {/* ── the supervisor's OWN send: opens/clicks (counts, never %) + view sent mail ──
@@ -345,9 +372,23 @@ const RollupDrawer: React.FC<Props> = ({
                         count printed the placeholder verbatim ("{{count}} הנמענים…" next to "12"),
                         because i18next leaves an unsupplied variable in place rather than throwing.
                         The tile needs a bare noun, so it uses its own key. */}
-                    <Num label={t(`${SS}roster.covered`)} value={String(covered)} />
-                    <Num label={t(`${SS}delivery.failed`)} value={String(failed)} tone={failed > 0 ? 'bad' : undefined} />
-                    <Num label={t(`${SS}roster.viewEvidence`)} value={String(covered - noEvidence)} />
+                    <Num
+                        label={t(`${SS}roster.covered`)}
+                        value={coverageUnavailable ? (t(`${SS}supervisor.notAvailable`) as string) : String(covered)}
+                    />
+                    {/* CHANGED 2026-08-16. Delivery and viewing evidence can only be derived from GRID
+                        rows, i.e. from the page-scoped reconstruction. Beside a RECORDED roster they
+                        would be a subset presented as a total, so on that path they are not printed at
+                        all rather than printed wrong. The recorded roster card below states the covered
+                        list itself, name by name. Restoring these two for real needs a per-supervisor
+                        delivery/engagement aggregate from the server — a SupervisorAgentRow carries
+                        neither — which is a separate piece of work, not a line here. */}
+                    {!useRecordedRoster && (
+                        <Num label={t(`${SS}delivery.failed`)} value={String(failed)} tone={failed > 0 ? 'bad' : undefined} />
+                    )}
+                    {!useRecordedRoster && (
+                        <Num label={t(`${SS}roster.viewEvidence`)} value={String(covered - noEvidence)} />
+                    )}
                 </Box>
                 <Typography component="p" style={{ fontSize: 13, color: '#5b6b7b', margin: '10px 0 0' }}>
                     {/* The caveat is part of the number, not decoration: email has no delivery receipt,

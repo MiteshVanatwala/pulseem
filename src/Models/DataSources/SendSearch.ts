@@ -950,8 +950,25 @@ export const rowChannelAttempt = (r: SendSearchRow): ChannelAttempt => toChannel
 // Row identity per CONTRACT §9: "the report's row key is (Channel, ChannelCampaignID, RowID, SentAt)".
 // Used as the React key AND as `DrawerEntry.RowKey` — RowID alone is NOT unique across repeat sends
 // of the same campaign, so it can identify neither a list item nor an open drawer level.
+// CHANGED 2026-08-16. Supervisor roll-up rows need a fourth discriminator. They have no
+// DataSourceRows row, so the SP projects the RowID 0 sentinel for ALL of them, and SentAt is NULL
+// for every failed and every skipped send — so two supervisors of one campaign key to the same
+// `1-<campaign>-0-never`, and clicking the second one opens the FIRST one's roster, opens/clicks
+// and sent HTML.
+//
+// The suffix is ClientID, NOT the address. On a supervisor row ClientID is the SP's synthetic
+// -CampaignSupervisorSendLog.ID, so it is unique PER LOG ROW and needs no other field to be
+// distinct. The address is not enough: measured on 14008, campaign 1513132 has SIX log rows with a
+// NULL SentDate across only THREE distinct supervisors — the same supervisor processed more than
+// once — so an address suffix would still have collided two-to-one there.
+//
+// Agent rows are byte-identical to before — the suffix is empty for them — so no existing key moves.
+// Deliberately NOT fixed server-side by projecting that id into RowID: RowID is defined by contract
+// as a DataSourceRows key with 0 meaning "no source row", and DrawerEntry.RowID carries it onward.
+// Corrupting a contract field to repair a key is the worse trade.
 export const sendSearchRowKey = (r: SendSearchRow): string =>
-    `${r.Channel}-${r.ChannelCampaignID}-${r.RowID}-${r.SentAt ?? 'never'}`;
+    `${r.Channel}-${r.ChannelCampaignID}-${r.RowID}-${r.SentAt ?? 'never'}`
+    + (r.IsSupervisor ? `-${r.ClientID}` : '');
 
 // ═══════════════════════════════════════════════════════════════════════════════════════════
 // EXPORT — the client half of the FROZEN `POST api/SendSearch/Export` contract

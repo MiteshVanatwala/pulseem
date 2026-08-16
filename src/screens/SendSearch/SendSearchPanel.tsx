@@ -397,15 +397,32 @@ const SendSearchPanel: React.FC<Props> = ({ showTitle }) => {
     };
 
     // The recipients a roll-up covered. §3.2 gives a report row only `SupervisorName` — a STRING; there
-    // is no supervisor id — so the grouping key is the name, scoped to the same campaign and channel to
-    // keep a name collision from pulling in another campaign's agents. The drawer states, in a banner,
+    // is no supervisor id — so the grouping key is that string, scoped to the same campaign and channel
+    // to keep a collision from pulling in another campaign's agents. The drawer states, in a banner,
     // that the roster is reconstructed rather than recorded (Mock-v3:461-463).
-    const rosterFor = (rollupRow: SendSearchRow): SendSearchRow[] =>
-        items.filter((r) => !r.IsSupervisor
+    //
+    // CHANGED 2026-08-16 (defect D2). The key is the ADDRESS, not the display name.
+    // `SupervisorName` is the RAW supervisor-column value from the row's RowJson — for a data-source
+    // campaign that is an e-mail. The roll-up row's own identity is `RecipientEmail`. Comparing the
+    // value to `RecipientName` therefore compared an address to a display name, never matched, and left
+    // `roster` empty — which is why the drawer's three coverage tiles read 0 while the recorded roster
+    // card beneath them listed five people.
+    //
+    // `!r.IsSupervisor` is KEPT ON PURPOSE. It is NOT what excluded a dual-role person: the SP now
+    // stamps IsSupervisor = 0 on every CampaignSendingLog row, so someone who is both supervisor and
+    // agent is admitted here by his AGENT row. The clause's only remaining job is to keep a supervisor's
+    // own roll-up row out of its own roster, and it costs nothing to keep.
+    const rosterFor = (rollupRow: SendSearchRow): SendSearchRow[] => {
+        const supKey = (rollupRow.RecipientEmail || '').toLowerCase();
+        // A roll-up row with no address can match nothing. Without this guard the comparison below
+        // would be '' === '' for any row whose SupervisorName is an empty string.
+        if (!supKey) return [];
+        return items.filter((r) => !r.IsSupervisor
             && r.Channel === rollupRow.Channel
             && r.ChannelCampaignID === rollupRow.ChannelCampaignID
             && !!r.SupervisorName
-            && r.SupervisorName === rollupRow.RecipientName);
+            && r.SupervisorName.toLowerCase() === supKey);
+    };
 
     // ── supervisor sends (feature) ────────────────────────────────────────────────────────────
     // The supervisor send matching the OPEN rollup, from the campaign-scoped list openRow fetched.

@@ -349,13 +349,27 @@ const SendSearchTable: React.FC<Props> = ({
                 {/* ── הראיה האחרונה ── */}
                 <TableCell align="center">{renderEvidence(r)}</TableCell>
 
-                {/* ── גרסה ── IMMEDIATELY BEFORE נשלח (CONTRACT §4.2). Never blank. ── */}
+                {/* ── גרסה ── IMMEDIATELY BEFORE נשלח (CONTRACT §4.2). Never blank. ──
+                    CHANGED 2026-08-16. A supervisor SUMMARY row has EffectiveVersionID NULL, so
+                    VersionState is NULL and the badge forces its warning tone and attaches the tooltip
+                    "המיפוי עודכן אחרי השליחה — לא ניתן לקבוע בוודאות איזו גרסה נשלחה": a specific,
+                    checkable, UNTRUE reason for a mail that has no mapping and no version concept at
+                    all. The honest answer is the word "לא זמין" — never a dash, which would read as
+                    "the version is empty", a different claim. */}
                 <TableCell align="center">
-                    <VersionBadge
-                        VersionNumber={r.VersionNumber}
-                        ProvenanceSource={r.ProvenanceSource}
-                        VersionState={r.VersionState}
-                    />
+                    {r.IsSupervisor
+                        ? (
+                            <Typography component="span" style={{ fontSize: 13.5, color: '#5b6b7b' }}>
+                                {t(`${SS}supervisor.notAvailable`)}
+                            </Typography>
+                        )
+                        : (
+                            <VersionBadge
+                                VersionNumber={r.VersionNumber}
+                                ProvenanceSource={r.ProvenanceSource}
+                                VersionState={r.VersionState}
+                            />
+                        )}
                 </TableCell>
 
                 {/* ── נשלח ── */}
