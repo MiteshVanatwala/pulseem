@@ -5,6 +5,7 @@ import {
 	APIWhatsappChatData,
 	WhatsappChatUiProps,
 	APIWhatsappChatDetailData,
+	APIWhatsappChatItemsData,
 } from '../Types/WhatsappChat.type';
 import { Box, IconButton, MenuItem, Chip, Menu } from '@material-ui/core';
 import Select, { SelectChangeEvent } from '@mui/material/Select';

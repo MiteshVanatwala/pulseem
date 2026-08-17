@@ -172,19 +172,21 @@ const WidgetListPage = ({ classes }: { classes?: any }) => {
         onCancel={() => setCreateOpen(false)}
         onConfirm={handleCreate}
       >
-        <Typography variant="body2" color="textSecondary" style={{ marginBottom: 12 }}>
-          {t('common.widget_create_domain_prompt', 'Which website domain is this widget for?')}
-        </Typography>
-        <TextField
-          autoFocus
-          fullWidth
-          size="small"
-          variant="outlined"
-          placeholder="www.example.com"
-          value={newDomain}
-          onChange={(e) => setNewDomain(e.target.value)}
-          onKeyDown={(e) => { if (e.key === 'Enter') handleCreate(); }}
-        />
+        <>
+          <Typography variant="body2" color="textSecondary" style={{ marginBottom: 12 }}>
+            {t('common.widget_create_domain_prompt', 'Which website domain is this widget for?')}
+          </Typography>
+          <TextField
+            autoFocus
+            fullWidth
+            size="small"
+            variant="outlined"
+            placeholder="www.example.com"
+            value={newDomain}
+            onChange={(e) => setNewDomain(e.target.value)}
+            onKeyDown={(e) => { if (e.key === 'Enter') handleCreate(); }}
+          />
+        </>
       </BaseDialog>
     </DefaultScreen>
   );

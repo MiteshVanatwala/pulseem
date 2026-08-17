@@ -25,6 +25,7 @@ import {
 	getVariableValue,
 } from '../../Common';
 import { useSelector } from 'react-redux';
+import { MdAttachFile } from 'react-icons/md';
 
 const useStyles = makeStyles({
 	customWidth: {
@@ -45,8 +46,6 @@ const useStyles = makeStyles({
 		},
 	},
 });
-
-import { MdAttachFile } from 'react-icons/md';
 
 const ChatFooterContent = ({
 	classes,
