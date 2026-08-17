@@ -199,6 +199,7 @@ export const BaseDialog = ({
   return (
     <Dialog
       disableEnforceFocus
+      // @ts-ignore
       style={style}
       open={!!open}
       className={clsx(classes.dialogContainer, customContainerStyle)}

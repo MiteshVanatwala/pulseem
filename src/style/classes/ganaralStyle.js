@@ -198,6 +198,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
     "& .MuiDialog-paperWidthSm": {
       minWidth: 400,
       maxWidth: `${maxDialogWidth[windowSize]}px !important`,
+      "@media screen and (max-width: 450px)": {
+        minWidth: "unset",
+        maxWidth: "96vw !important",
+      },
     },
     "& .MuiDialog-paperScrollPaper": {
       maxHeight: "100%",
@@ -1251,6 +1255,22 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
   },
   btnRounded: {
     borderRadius: 20,
+  },
+  btnStepActive: {
+    background: 'linear-gradient(90deg, #FF0076 0%, #FF0054 23.8%, #FF4D2A 100%) !important',
+    color: '#fff !important',
+    '& svg': {
+      color: '#fff !important',
+      fill: '#fff !important',
+    },
+    '&:hover': {
+      background: 'linear-gradient(90deg, #cc005e 0%, #cc0043 23.8%, #cc3d21 100%) !important',
+      color: '#fff !important',
+      '& svg': {
+        color: '#fff !important',
+        fill: '#fff !important',
+      },
+    },
   },
   buttonForm: {
     display: "flex",
@@ -5669,8 +5689,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
       backgroundColor: 'rgba(255, 51, 67, 0.08)'
     }
   },
-  // Sidebar Header styling
-  sidebarHeader: {
+  // Sidebar Header styling (WhatsApp chat contact-list header — named distinctly from
+  // sideMenuStyle.js's own "sidebarHeader" key, which was silently overwriting this one
+  // since both get spread into the same combined classes object in style/classes/index.js)
+  whatsappSidebarHeader: {
     display: 'flex',
     gap: '4px',
     alignItems: 'center',

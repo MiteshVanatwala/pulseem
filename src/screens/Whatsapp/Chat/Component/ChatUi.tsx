@@ -6,10 +6,12 @@ import {
 	WhatsappChatUiProps,
 	APIWhatsappChatDetailData,
 } from '../Types/WhatsappChat.type';
-import { Box, IconButton, MenuItem, Chip } from '@material-ui/core';
+import { Box, IconButton, MenuItem, Chip, Menu } from '@material-ui/core';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import { FaBars } from 'react-icons/fa';
-import { MdEdit, MdSupportAgent, MdClose } from 'react-icons/md';
+import { MdEdit, MdSupportAgent, MdClose, MdAdd, MdMoreVert, MdRefresh, MdAddComment } from 'react-icons/md';
+import { BsPeopleFill, BsFillTagsFill } from 'react-icons/bs';
 import ChatTemplateModal from '../Popups/ChatTemplateModal';
 import { apiStatus } from '../../Constant';
 import { useDispatch, useSelector } from 'react-redux';
@@ -75,6 +77,11 @@ const ChatUi = ({
 	ToastMessages,
 	refetchActiveChatContact,
 	onTagsUpdated,
+	onAddAgent,
+	onEditAgents,
+	onRefreshChat,
+	onOpenNewChat,
+	onOpenEditTags,
 }: WhatsappChatUiProps) => {
 	const navigate = useNavigate();
 	const { t: translator } = useTranslation();
@@ -87,6 +94,11 @@ const ChatUi = ({
 	const [localAgentId, setLocalAgentId] = useState<number>(
 		(chatContacts as any)?.Agents?.[0]?.AgentID || 0
 	);
+	const [mobileActionsAnchor, setMobileActionsAnchor] = useState<null | HTMLElement>(null);
+	const [isRefreshingMobile, setIsRefreshingMobile] = useState(false);
+	// Matches the breakpoint that hides the sidebar (and its New Chat/Edit Tags/Manage
+	// Agent/Refresh actions) on mobile, so this menu appears exactly when those are unreachable.
+	const isMobileChat = useMediaQuery('(max-width:1024px)');
 
 	// Handler to remove a tag from the current chat contact
 	const onChatTagRemove = async (tagId: string) => {
@@ -183,8 +195,12 @@ const ChatUi = ({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [chatContacts?.PhoneNumber]);
 
+	// IsNewMessage: customer replied. IsNewEcho: the business replied from the WhatsApp
+	// Business App (coexistence). Either way reload only the open thread — GetWhatsAppChat
+	// does not filter on SendID, so echo rows come back as normal outgoing bubbles.
+	// Passing true skips the loader, keeping this a silent background refresh.
 	useEffect(() => {
-		if (whatsappChatSession?.IsNewMessage && !isStatusUpdating) {
+		if ((whatsappChatSession?.IsNewMessage || whatsappChatSession?.IsNewEcho) && !isStatusUpdating) {
 			getAPIAllWhatsappChat(true);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -273,6 +289,71 @@ const ChatUi = ({
 				>
 					<FaBars />
 				</IconButton>
+				{isMobileChat && (
+					<>
+						<IconButton
+							onClick={(e) => setMobileActionsAnchor(e.currentTarget)}
+							title={translator('whatsappChat.moreActions')}
+						>
+							<MdMoreVert />
+						</IconButton>
+						<Menu
+							anchorEl={mobileActionsAnchor}
+							open={Boolean(mobileActionsAnchor)}
+							onClose={() => setMobileActionsAnchor(null)}
+						>
+							<MenuItem
+								onClick={() => {
+									setMobileActionsAnchor(null);
+									onEditAgents?.();
+								}}
+							>
+								<Box style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+									<BsPeopleFill size={16} />
+									{translator('common.manageAgent')}
+								</Box>
+							</MenuItem>
+							<MenuItem
+								onClick={() => {
+									setMobileActionsAnchor(null);
+									onOpenEditTags?.();
+								}}
+							>
+								<Box style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+									<BsFillTagsFill size={16} />
+									{translator('whatsappChat.editTags')}
+								</Box>
+							</MenuItem>
+							<MenuItem
+								onClick={() => {
+									setMobileActionsAnchor(null);
+									onOpenNewChat?.();
+								}}
+							>
+								<Box style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+									<MdAddComment size={16} />
+									{translator('whatsappChat.startNewChatTooltip')}
+								</Box>
+							</MenuItem>
+							<MenuItem
+								onClick={async () => {
+									setMobileActionsAnchor(null);
+									setIsRefreshingMobile(true);
+									await onRefreshChat?.();
+									setIsRefreshingMobile(false);
+								}}
+							>
+								<Box style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+									<MdRefresh
+										size={16}
+										style={{ animation: isRefreshingMobile ? 'spin 0.8s linear infinite' : 'none' }}
+									/>
+									{translator('whatsappChat.refreshChat')}
+								</Box>
+							</MenuItem>
+						</Menu>
+					</>
+				)}
 				<div className={`${classes.whatsappChat} chat__avatar-wrapper`}>
 					<img
 						src={AccountUser}
@@ -330,7 +411,25 @@ const ChatUi = ({
 									classes.selectFieldStyle,
 								)}
 								autoWidth
-								value={String(localAgentId)}  
+								displayEmpty
+								value={String(localAgentId)}
+								renderValue={(value) => {
+									const assignedAgent = agentList?.find(
+										(a: WhatsappAgent) => String(a.AgentId) === value,
+									);
+									return (
+										<Box
+											style={{
+												display: 'flex',
+												alignItems: 'center',
+												gap: '8px',
+											}}
+										>
+											<MdSupportAgent size={16} />
+											{assignedAgent?.Name || translator('whatsappChat.setAgent')}
+										</Box>
+									);
+								}}
 								variant="standard"
 								MenuProps={{
 									PaperProps: {
@@ -340,6 +439,11 @@ const ChatUi = ({
 									},
 								}}
 								onChange={(e: SelectChangeEvent) => {
+									if (e.target.value === 'add-new') {
+										onAddAgent?.();
+										return;
+									}
+
 									let agentToSession: WhatsappPhoneSession = {
 										AgentId: -1,
 										Cellphone: activeChatContacts.PhoneNumber,
@@ -388,6 +492,20 @@ const ChatUi = ({
 										</MenuItem>
 									);
 								})}
+								{onAddAgent && (
+									<MenuItem value="add-new">
+										<Box
+											style={{
+												display: 'flex',
+												alignItems: 'center',
+												gap: '8px',
+											}}
+										>
+											<MdAdd size={16} />
+											{translator('whatsappChat.addAgent')}
+										</Box>
+									</MenuItem>
+								)}
 							</Select>
 						</div>
 						<IconButton

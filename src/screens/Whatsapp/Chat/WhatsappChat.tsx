@@ -117,22 +117,41 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 
 	// Tracks the last RecentMsgDate we processed so we only act on genuinely new inbound messages
 	const lastSeenRecentMsgDateRef = useRef<string>('');
+	// Same idea as lastSeenRecentMsgDateRef, but for the currently-open contact's own sidebar row
+	// (Q1/IsNewMessage), which the SP never surfaces through LastAllChatsMsgId since that field is
+	// reserved for messages from OTHER contacts.
+	const lastSeenActiveMsgDateRef = useRef<string>('');
+	// Tracks the last RecentEchoMsgDate we processed so a business-sent echo (Q3) only triggers
+	// one debounced contacts-list refresh, not one per poll while IsNewEcho stays true.
+	const lastSeenEchoMsgDateRef = useRef<string>('');
 
 	// Cursors for SP-level scan optimisation
 	const lastCurrentChatMsgIdRef = useRef<number | null>(null); // last known msg Id from active contact
 	const lastAllChatsMsgIdRef    = useRef<number | null>(null); // last known msg Id from any other contact
+	// Q3 cursor: last known echo (message the business sent from the WhatsApp Business App)
+	// for the active chat. Unlike the two above this is an ApiWhatsappSendLogs.ID, which is
+	// global across every conversation — it MUST be reset on contact switch or a high cursor
+	// carried over from another chat silently swallows this chat's echoes.
+	const lastEchoMsgIdRef        = useRef<number | null>(null);
 
 	// Debounce timer ref for the full contacts-list API refresh (5-second debounce)
 	const contactsRefreshDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
 	// Always holds the latest fetchMoreContacts callback — avoids a forward-reference TS error
 	const fetchMoreContactsRef = useRef<((searchText: string, ChatStatus: number, isPaginationReset: boolean) => void) | null>(null);
+	// Always holds the latest setAPIInboundChatStatus callback so the polling loop below can call
+	// it without depending on its identity — activeChatContacts (one of its deps) gets a new
+	// object reference on unrelated updates (tag/status edits, sidebar refresh), and depending on
+	// it directly would tear down and restart the poll loop mid-request, resetting the cursors below.
+	const setAPIInboundChatStatusRef = useRef<(() => Promise<void>) | null>(null);
 	// Set to true before a background sidebar refresh so fetchMoreContacts skips the global loader
 	const suppressNextLoaderRef = useRef<boolean>(false);
 
 	const activePhoneNumberRef = useRef<string>('');
 	const filterBySelectedRef = useRef<number>(0);
 	const agentAutoSelectedRef = useRef<boolean>(false);
+	const userRolesRef = useRef<any>(null);
+	const isAccountAdminRef = useRef<boolean>(false);
 	const changeContactReadStatusRef = useRef<((contacts: APIWhatsappChatSidebarContactsItemsData, sideChatContactList?: APIWhatsappChatSidebarContactsItemsData[]) => void) | null>(null);
 	const sideBarSearchTextRef = useRef<string>('');
     
@@ -167,8 +186,15 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const { subAccount } = useSelector((state: any) => state.common);
 	const { isRTL, windowSize, isLoader = false, isOnlyWhatsAppChat } = useSelector((state: { core: coreProps }) => state.core);
 	const { agentList } = useSelector((state: StateType) => state.whatsapp);
-	const { userRoles, isAdmin, subUserObject } = useSelector((state: any) => state.core);
+	const { userRoles, subUserObject } = useSelector((state: any) => state.core);
 	const agentCookieKey = `whatsappSelectedAgentId_${subUserObject?.Data?.Emails?.[0]?.AuthValue || ''}`;
+	const isAccountAdmin = !!(
+		userRoles &&
+		userRoles.AllowSend &&
+		userRoles.AllowExport &&
+		userRoles.AllowDelete &&
+		!userRoles.HideRecipients
+	);
 	const { currentPlan, availablePlans } = useSelector(
 		(state: any) => state.tiers,
 	);
@@ -208,6 +234,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			Minute: '0',
 			Second: '0',
 			IsNewMessage: false,
+			IsNewEcho: false,
 		});
 
 	const { t: translator } = useTranslation();
@@ -269,6 +296,12 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const totalPendingContactsRef = useRef<number>(0);
 	const totalSolvedContactsRef = useRef<number>(0);
 	const contactsPaginationSettingRef = useRef(contactsPaginationSetting);
+	// Populated by SideBar so the mobile chat header can trigger its "New Chat"/"Edit Tags"
+	// actions too, even though the sidebar itself is display:none while a chat is open on mobile.
+	const mobileSideBarActionsRef = useRef<{ openNewChat: () => void; openEditTags: () => void }>({
+		openNewChat: () => {},
+		openEditTags: () => {},
+	});
 
 	useEffect(() => {
 		activeChatContactsRef.current = activeChatContacts;
@@ -302,6 +335,14 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	useEffect(() => {
 		filterBySelectedRef.current = filterBySelected;
 	}, [filterBySelected]);
+
+	useEffect(() => {
+		userRolesRef.current = userRoles;
+	}, [userRoles]);
+
+	useEffect(() => {
+		isAccountAdminRef.current = isAccountAdmin;
+	}, [isAccountAdmin]);
 
 	useEffect(() => {
 		contactsPaginationSettingRef.current = contactsPaginationSetting;
@@ -531,6 +572,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 						activeUserNumber: activeChatContacts.PhoneNumber,
 						lastCurrentChatMsgId: lastCurrentChatMsgIdRef.current,
 						lastAllChatsMsgId: lastAllChatsMsgIdRef.current,
+						lastEchoMsgId: lastEchoMsgIdRef.current,
 					}),
 				);
 			if (whatsAppChatSessionStatus?.Status === apiStatus.SUCCESS) {
@@ -543,6 +585,12 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 						IsIn24Window: data.IsIn24Window,
 						ExpiryTime: data.ExpiryTime,
 						IsNewMessage: data.IsNewMessage,
+						// Q3: true only on the poll that first sees a new echo — the SP advances the
+						// cursor, so the next poll reports false again. ChatUi watches this to reload
+						// just the open thread.
+						IsNewEcho: data.IsNewEcho ?? false,
+						RecentEchoMsg: data.RecentEchoMsg,
+						RecentEchoMsgDate: data.RecentEchoMsgDate,
 						Hour: data.Hour ?? '0',
 						Minute: data.Minute ?? '0',
 						Second: data.Second ?? '0',
@@ -551,6 +599,59 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 					// Advance Q1 cursor to the latest known message ID
 					if (data.LastCurrentChatMsgId != null) {
 						lastCurrentChatMsgIdRef.current = data.LastCurrentChatMsgId;
+					}
+
+					// Advance Q3 cursor. The SP never lets this regress to NULL when there is
+					// nothing new, so a non-null value is always safe to store.
+					if (data.LastEchoMsgId != null) {
+						lastEchoMsgIdRef.current = data.LastEchoMsgId;
+					}
+
+					// Q3: business replied via the WhatsApp Business App (echo). ChatUi reloads the
+					// open thread for this already, but the sidebar list itself is stale until we
+					// pull it fresh — same debounced refresh used for Q2 inbound messages below.
+					if (data.IsNewEcho && data.RecentEchoMsg) {
+						const isNewEchoForRefresh =
+							data.RecentEchoMsgDate && data.RecentEchoMsgDate !== lastSeenEchoMsgDateRef.current;
+
+						if (isNewEchoForRefresh) {
+							lastSeenEchoMsgDateRef.current = data.RecentEchoMsgDate!;
+
+							if (contactsRefreshDebounceRef.current) {
+								clearTimeout(contactsRefreshDebounceRef.current);
+							}
+							contactsRefreshDebounceRef.current = setTimeout(() => {
+								suppressNextLoaderRef.current = true;
+								fetchMoreContactsRef.current?.(sideBarSearchTextRef.current, filterBySelected, true);
+							}, 5000);
+						}
+					}
+
+					// Q1: new message for the contact whose thread is currently open. The SP only
+					// reports LastAllChatsMsgId for OTHER contacts, so the active contact's own
+					// sidebar row would otherwise never get its preview/order updated.
+					if (data.IsNewMessage && activeChatContacts?.PhoneNumber) {
+						const isNewActiveInbound =
+							data.RecentMsgDate && data.RecentMsgDate !== lastSeenActiveMsgDateRef.current;
+
+						if (isNewActiveInbound) {
+							lastSeenActiveMsgDateRef.current = data.RecentMsgDate!;
+
+							setSideChatContacts((prev) => {
+								const idx = prev.findIndex((c) =>
+									compareLastNineDigits(c.PhoneNumber, activeChatContacts.PhoneNumber),
+								);
+								if (idx === -1) return prev;
+								const updated = [...prev];
+								updated[idx] = {
+									...updated[idx],
+									LastMessage: data.RecentMsg ?? updated[idx].LastMessage,
+									LastMessageDate: data.RecentMsgDate ?? updated[idx].LastMessageDate,
+								};
+								const [promoted] = updated.splice(idx, 1);
+								return [promoted, ...updated];
+							});
+						}
 					}
 
 					// Q2: new message from another contact detected — update sidebar
@@ -608,6 +709,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 					Minute: '0',
 					Second: '0',
 					IsNewMessage: false,
+					IsNewEcho: false,
 				});
 				whatsAppChatSessionStatus?.Message
 					? setToastMessage({
@@ -619,8 +721,12 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		}
 	}, [activeChatContacts, activePhoneNumber, dispatch, ToastMessages, filterBySelected]);
 
+	useEffect(() => {
+		setAPIInboundChatStatusRef.current = setAPIInboundChatStatus;
+	}, [setAPIInboundChatStatus]);
+
 	const setAPIWhatsAppChatContacts = useCallback(
-		async (activeUser: string, isInitial: boolean = false) => {
+		async (activeUser: string, isInitial: boolean = false, overrideAgentId?: number) => {
 			// Ensure mapping is built before loading contacts
 			if (Object.keys(phoneToClientIdMap.current).length === 0) {
 				await buildPhoneToClientIdMap();
@@ -650,12 +756,15 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			const resetPageNo = 1;
 			const resetPageSize = contactsPaginationSettingRef.current?.PageSize || 20;
 
+			const effectiveAgentId =
+				overrideAgentId !== undefined ? overrideAgentId : agentSelected;
+
 			const {
 				payload: whatsAppChatContactsData,
 			}: APIWhatsappChatSidebarContactsData = await dispatch<any>(
-				agentSelected > 0
+				effectiveAgentId > 0
 					? getWhatsappChatContactsByAgent({
-						AgentId: agentSelected,
+						AgentId: effectiveAgentId,
 						IsPagination: true,
 						pageNo: resetPageNo,
 						pageSize: resetPageSize,
@@ -785,6 +894,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		const response: any = await dispatch<any>(getChatAgents());
 		const agents: WhatsappAgent[] = response?.payload?.Data as any;
 		setAllAgents(agents);
+		return agents;
 	}, [dispatch]);
 
 	const getTags = useCallback(async () => {
@@ -814,12 +924,12 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		}
 	}, [activePhoneNumber, dispatch]);
 
-	const getPhoneNumber = useCallback(async () => {
+	const getPhoneNumber = useCallback(async (overrideAgentId?: number) => {
 		const { payload: phoneNumberData }: phoneNumberAPIProps =
 			await dispatch<any>(userPhoneNumbers());
 		if (phoneNumberData?.Data?.length > 0) {
 			setActivePhoneNumber(phoneNumberData?.Data[0]);
-			await setAPIWhatsAppChatContacts(phoneNumberData?.Data[0], true);
+			await setAPIWhatsAppChatContacts(phoneNumberData?.Data[0], true, overrideAgentId);
 			setPhoneNumbersList(phoneNumberData?.Data);
 			await fetchTotalsUnfiltered();
 			return phoneNumberData?.Data;
@@ -912,24 +1022,31 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				phoneNumberData?.Data?.length > 0
 			) {
 				/**
-				 * Load all initial data in parallel for better performance
+				 * Load the agent list and other independent data in parallel;
 				 */
-				if (!personalFields || landingPages?.length <= 0) {
-					await Promise.all([
-						getDynamicModalValues(),
-						getSavedTemplateFields(),
-						getAgents(),
-						getTags(),
-						getPhoneNumber(),
-					]);
-				} else {
-					await Promise.all([
-						getSavedTemplateFields(),
-						getAgents(),
-						getTags(),
-						getPhoneNumber(),
-					]);
+				const otherLoads =
+					!personalFields || landingPages?.length <= 0
+						? [getDynamicModalValues(), getSavedTemplateFields(), getTags()]
+						: [getSavedTemplateFields(), getTags()];
+
+				const [agents] = await Promise.all([getAgents(), ...otherLoads]);
+
+				let resolvedAgentId = agentSelected;
+				if (
+					resolvedAgentId === 0 &&
+					userRolesRef.current?.AllowWhatsAppToAgent &&
+					!isAccountAdminRef.current
+				) {
+					const matchingAgent = agents?.find(
+						(agent: WhatsappAgent) => !agent.IsDeleted && agent.IsCurrentUser,
+					);
+					if (matchingAgent) {
+						resolvedAgentId = matchingAgent.AgentId;
+						handleAgentSelection(resolvedAgentId);
+					}
 				}
+
+				await getPhoneNumber(resolvedAgentId);
 				setIsAccountSetup(true);
 			} else {
 				setIsAccountSetup(false);
@@ -943,17 +1060,23 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	}, []);
 
 	useEffect(() => {
-		// Reset cursors whenever the active contact changes (setAPIInboundChatStatus is recreated on contact change)
+		// Reset cursors whenever the active contact actually changes. Deliberately keyed on the
+		// phone numbers, not on setAPIInboundChatStatus's identity — that callback is recreated on
+		// unrelated activeChatContacts updates (tag/status edits, sidebar refresh) which must NOT
+		// restart this loop or reset the cursors below.
 		lastCurrentChatMsgIdRef.current  = null;
 		lastAllChatsMsgIdRef.current     = null;
+		lastEchoMsgIdRef.current         = null;
 		lastSeenRecentMsgDateRef.current = '';
+		lastSeenActiveMsgDateRef.current = '';
+		lastSeenEchoMsgDateRef.current = '';
 
 		let pollingTimer: ReturnType<typeof setTimeout> | null = null;
 		let cancelled = false;
 
 		const poll = async () => {
 			try {
-				await setAPIInboundChatStatus();
+				await setAPIInboundChatStatusRef.current?.();
 			} catch {
 				// errors are handled inside setAPIInboundChatStatus; loop must not break on failure
 			}
@@ -971,7 +1094,8 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				clearTimeout(contactsRefreshDebounceRef.current);
 			}
 		};
-	}, [setAPIInboundChatStatus]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [activeChatContacts?.PhoneNumber, activePhoneNumber]);
 
 
 	useEffect(() => {
@@ -1230,7 +1354,13 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 					contact?.PhoneNumber ===
 					whatsAppChatContactsData?.Data?.Items[0]?.PhoneNumber
 				) {
-					return whatsAppChatContactsData?.Data?.Items[0];
+					// Merge, don't replace: ConversationStatusId is optimistically owned by
+					// setWhatsappChatCoversationStatus and can outrun this read, so keep the
+					// locally-known status and take everything else from the server.
+					return {
+						...whatsAppChatContactsData.Data.Items[0],
+						ConversationStatusId: contact.ConversationStatusId,
+					};
 				}
 				return contact;
 			});
@@ -1258,6 +1388,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				FromNumber: activePhoneNumber,
 				ToNumber: activeChatContacts?.PhoneNumber,
 				IsFreeFormChat: savedTemplate?.length === 0 ? true : false,
+				IsNewchat: false,
 			};
 			if (savedTemplate?.length > 0) {
 				chatReqPayload.TemplateId = savedTemplate;
@@ -2051,6 +2182,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	}, [dialogType, classes, getValidationDialog, getExceedDailyLimit, getTierValidationDialog, getNoPermissionDialog, getDynamicModalDialog, addAgentModalDialog, editAgentsModalDialog]);
 
 	const handleAgentSelection = useCallback((value: number) => {
+		agentAutoSelectedRef.current = true;
 		setAgentSelected(value);
 		setCookie(agentCookieKey, value.toString());
 	}, [agentCookieKey]);
@@ -2076,13 +2208,12 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		[agentList],
 	);
 
-	// Runs once per session after initial data is ready; never overwrites a manual selection.
-	// Guards: isAdmin excludes super-users who inherit AllowWhatsAppToAgent=true by default.
+	// Guards: isAccountAdmin excludes super-users who inherit AllowWhatsAppToAgent=true by default.
 	useEffect(() => {
 		if (!isAccountSetup) return;
 		if (agentAutoSelectedRef.current) return;
 		if (!userRoles?.AllowWhatsAppToAgent) return;
-		if (isAdmin) return;
+		if (isAccountAdmin) return;
 		if (agentSelected !== 0) return;
 		if (!allAgents || allAgents.length === 0) return;
 		if (!activePhoneNumber) return;
@@ -2092,9 +2223,8 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		);
 		if (!matchingAgent) return;
 
-		agentAutoSelectedRef.current = true;
 		handleAgentSelection(matchingAgent.AgentId);
-	}, [isAccountSetup, allAgents, activePhoneNumber, userRoles, isAdmin, agentSelected, handleAgentSelection]);
+	}, [isAccountSetup, allAgents, activePhoneNumber, userRoles, isAccountAdmin, agentSelected, handleAgentSelection]);
 
 	return (
 		<>
@@ -2174,9 +2304,22 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 									personalFields={personalFields}
 									landingPageData={landingPages}
 									searchTextRef={sideBarSearchTextRef}
+									onRegisterMobileActions={(actions) => {
+										mobileSideBarActionsRef.current = actions;
+									}}
 								/>
 								<ChatUi
 									refetchActiveChatContact={refetchActiveChatContact}
+									onAddAgent={() => {
+										setDialogType({ type: 'addAgent', data: null });
+									}}
+									onEditAgents={() => {
+										getAgents();
+										setDialogType({ type: 'editAgents' });
+									}}
+									onRefreshChat={onRefreshChat}
+									onOpenNewChat={() => mobileSideBarActionsRef.current.openNewChat()}
+									onOpenEditTags={() => mobileSideBarActionsRef.current.openEditTags()}
 									isMobileSideBar={isMobileSideBar}
 									classes={classes}
 									setIsMobileSideBar={() =>

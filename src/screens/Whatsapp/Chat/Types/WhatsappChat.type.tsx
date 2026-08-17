@@ -64,6 +64,11 @@ export type WhatsappChatUiProps = {
 	tagsList?: Array<{ id: string; TagName: string; TagColor: string }>;
 	onTagsUpdated?: (phoneNumber: string, tagIds: number[], tags?: any[], senderNumber?: string) => void;
 	refetchActiveChatContact?: (phoneNumber: string) => void;
+	onAddAgent?: () => void;
+	onEditAgents?: () => void;
+	onRefreshChat?: () => Promise<void>;
+	onOpenNewChat?: () => void;
+	onOpenEditTags?: () => void;
 };
 
 export type SideBarContactListProps = {
@@ -184,6 +189,7 @@ export type WhatsappChatSideBarProps = {
 	personalFields: { [key: string]: string };
 	landingPageData: { CampaignID: number; CampaignName: string; PageHref: string }[];
 	searchTextRef: React.MutableRefObject<string>;
+	onRegisterMobileActions?: (actions: { openNewChat: () => void; openEditTags: () => void }) => void;
 };
 
 export type StartNewChatStep = 'phone' | 'template' | 'variables' | 'review';
@@ -320,6 +326,11 @@ export type APIWhatsappChatSessionData = {
 	RecentMsgDate?: string;
 	LastCurrentChatMsgId?: number | null;
 	LastAllChatsMsgId?: number | null;
+	// Q3 - coexistence echo: message the business sent from the WhatsApp Business App
+	IsNewEcho?: boolean;
+	RecentEchoMsg?: string;
+	RecentEchoMsgDate?: string;
+	LastEchoMsgId?: number | null;
 };
 
 export type ContactsPaginationSetting = {
@@ -352,6 +363,7 @@ export type APISendWhatsAppChatReqPayload = {
 	FromNumber: string;
 	ToNumber: string;
 	IsFreeFormChat: boolean;
+	IsNewchat: boolean;
 	TextMessage?: string;
 	mediaUrl?: string;
 	TemplateId?: string;
