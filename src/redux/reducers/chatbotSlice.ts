@@ -158,12 +158,6 @@ const chatbotSlice = createSlice({
       .addCase(deleteChatbot.fulfilled, (state, action) => {
         state.mutating = false;
         state.list = state.list.filter((c) => c.id !== action.payload);
-        // tierLimit.used is a snapshot from the last GetChatbots call - decrement it
-        // here too, otherwise atLimit in ChatbotList stays true (Create button stuck
-        // disabled) until the next full list refresh even though a slot just freed up.
-        if (state.tierLimit && state.tierLimit.used > 0) {
-          state.tierLimit.used -= 1;
-        }
       })
       .addCase(deleteChatbot.rejected, (state, action) => {
         state.mutating = false;

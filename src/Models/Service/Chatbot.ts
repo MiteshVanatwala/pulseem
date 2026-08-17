@@ -78,7 +78,5 @@ export interface IChatbotListItem {
 }
 
 export interface IChatbotTierLimit {
-  limit: number; // -1 = unlimited
-  used: number;
   planName: string;
 }

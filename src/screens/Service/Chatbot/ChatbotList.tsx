@@ -85,13 +85,16 @@ const ChatbotList = ({ classes }: { classes?: any }) => {
     dispatch(getChatbots());
   }, [dispatch]);
 
-  const atLimit = !!tierLimit && tierLimit.limit >= 0 && tierLimit.used >= tierLimit.limit;
   // maxActiveChatbots is resolved per-Account on the backend (-1 = unlimited) - see
   // ChatbotLogic.GetMaxActiveChatbots / ServiceLimitsLogic. This only lets the switch
   // look disabled up front instead of the user finding out via an error toast; the
   // backend enforces the real cap regardless of what this computes.
   const activeCount = list.filter((bot: IChatbotListItem) => bot.enabled).length;
   const atActiveLimit = maxActiveChatbots >= 0 && activeCount >= maxActiveChatbots;
+  // Create button and the usage note below both gate on the same enabled-count
+  // cap as the toggle switch, driven by maxActiveChatbots from the backend -
+  // not tierLimit.limit, which used to fall back to a stale per-plan value.
+  const atLimit = atActiveLimit;
   const visibleList: IChatbotListItem[] = isSearching ? (searchResults as IChatbotListItem[]) : list;
   const rpp = parseInt(rowsPerPage, 10);
   const pagedList = visibleList.slice((page - 1) * rpp, (page - 1) * rpp + rpp);
@@ -408,7 +411,15 @@ const ChatbotList = ({ classes }: { classes?: any }) => {
 
       <Grid container spacing={2} className={classes.linePadding} alignItems="center">
         <Grid item>
-          <Tooltip title={atLimit ? (t('chatbot_limit_reached', 'Chatbot limit reached for your plan') as string) : ''}>
+          <Tooltip
+            title={
+              atLimit
+                ? (t('chatbot_limit_reached', 'Chatbot limit reached ({{limit}}). Delete/Disable one to create another.', {
+                    limit: maxActiveChatbots,
+                  }) as string)
+                : ''
+            }
+          >
             <span>
               <Button
                 onClick={goCreate}
@@ -453,15 +464,15 @@ const ChatbotList = ({ classes }: { classes?: any }) => {
           ⚠️
           <span>
             <b>
-              {tierLimit.planName} {t('chatbot_plan', 'plan')}:
+              {t('chatbot_plan', 'plan')}:
             </b>{' '}
-            {tierLimit.limit >= 0
+            {maxActiveChatbots >= 0
               ? t('chatbot_limit_usage', '{{used}} of {{limit}} chatbots used.', {
-                  used: tierLimit.used,
-                  limit: tierLimit.limit,
+                  used: activeCount,
+                  limit: maxActiveChatbots,
                 })
               : t('chatbot_limit_unlimited', 'Unlimited chatbots on your plan.')}
-            {atLimit && ` ${t('chatbot_limit_upgrade', 'Delete one or upgrade your plan to create another.')}`}
+            {atLimit && ` ${t('chatbot_limit_upgrade', 'Delete/Disable one to create another.')}`}
           </span>
         </div>
       )}
