@@ -266,13 +266,6 @@ const Yotpo = ({ classes }: any) => {
     }
   }
 
-  const copyWebhookUrl = () => {
-    if (settings?.WebhookUrl) {
-      navigator.clipboard.writeText(settings.WebhookUrl);
-      setToastMessage({ severity: 'success', color: 'success', message: t('integrations.Yotpo.webhookCopied'), showAnimtionCheck: false } as any);
-    }
-  }
-
   const renderResetDialog = () => ({
     title: '',
     showDivider: false,
@@ -461,35 +454,6 @@ const Yotpo = ({ classes }: any) => {
               </Grid>
             </Grid>
             <Grid container spacing={3}>
-              <Grid item md={10} xs={12}>
-                <Typography className={clsx(classes.bold)} style={{ fontSize: "18px" }}>
-                  {t("integrations.Yotpo.webhookUrl")}
-                </Typography>
-                <Typography style={{ maxWidth: 700, wordBreak: 'break-word' }}>
-                  {RenderHtml(t("integrations.Yotpo.webhookDesc"))}
-                </Typography>
-                <Box style={{ display: 'flex', alignItems: 'center', gap: 8, paddingTop: 8 }}>
-                  <TextField
-                    size="small"
-                    name="YotpoWebhookUrl"
-                    value={settings?.WebhookUrl || ''}
-                    className={clsx(classes.dBlock, classes.shopifySettingTextBox)}
-                    style={{ minWidth: 420 }}
-                    disabled
-                  />
-                  <Button
-                    onClick={copyWebhookUrl}
-                    variant='contained'
-                    size='medium'
-                    className={clsx(classes.btn, classes.btnRounded)}
-                    color="primary"
-                    endIcon={<CopyIcon />}
-                  >
-                    {t("integrations.Yotpo.copy")}
-                  </Button>
-                </Box>
-              </Grid>
-
               <Grid item md={10} xs={12}>
                 <FormControlLabel
                   style={{ alignItems: 'start', marginRight: 0 }}
