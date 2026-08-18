@@ -15,9 +15,9 @@ const PerformanceInsightsPanel = ({ data, loading }: Props) => {
   const widgetPill = () => {
     if (!data) return null;
     const map = {
-      active: { cls: 'svc-pill-green', label: t('dashboard_widget_active', 'Active') },
-      paused: { cls: 'svc-pill-yellow', label: t('dashboard_widget_paused', 'Paused') },
-      not_configured: { cls: 'svc-pill-gray', label: t('dashboard_widget_not_configured', 'Not configured') },
+      active: { cls: 'svc-pill-green', label: t('common.dashboard_widget_active', 'Active') },
+      paused: { cls: 'svc-pill-yellow', label: t('common.dashboard_widget_paused', 'Paused') },
+      not_configured: { cls: 'svc-pill-gray', label: t('common.dashboard_widget_not_configured', 'Not configured') },
     }[data.widgetStatus];
     return <span className={`svc-pill ${map.cls}`}>{map.label}</span>;
   };
@@ -29,7 +29,7 @@ const PerformanceInsightsPanel = ({ data, loading }: Props) => {
           <span className="svc-panel-icon" style={{ background: '#e7f7ee', color: '#12894f' }}>
             <SpeedIcon />
           </span>
-          <h3 className="svc-panel-title">{t('dashboard_performance', 'Performance Insights')}</h3>
+          <h3 className="svc-panel-title">{t('common.dashboard_performance', 'Performance Insights')}</h3>
         </div>
       </div>
 
@@ -38,28 +38,34 @@ const PerformanceInsightsPanel = ({ data, loading }: Props) => {
       ) : data ? (
         <>
           <div className="svc-kv">
-            <span className="svc-kv-label">{t('dashboard_avg_response', 'Avg Response')}</span>
-            <span className="svc-kv-value">{data.avgResponseMinutes} {t('dashboard_minutes', 'min')}</span>
-          </div>
-          <div className="svc-kv">
-            <span className="svc-kv-label">{t('dashboard_resolution_rate', 'Resolution Rate')}</span>
-            <span className="svc-kv-value">{data.resolutionRate}%</span>
-          </div>
-          <div className="svc-kv">
-            <span className="svc-kv-label">{t('dashboard_widget_status', 'Widget Status')}</span>
-            <span className="svc-kv-value">{widgetPill()}</span>
-          </div>
-          <div className="svc-kv">
-            <span className="svc-kv-label">{t('dashboard_active_hours', 'Active Hours')}</span>
+            <span className="svc-kv-label">{t('common.dashboard_avg_response', 'Avg Response')}</span>
+            {/* null = nothing answered yet. Showing "0 min" here would claim instant
+                replies, so show a dash until the number is real. */}
             <span className="svc-kv-value">
-              {data.activeHours === 'custom' ? t('dashboard_hours_custom', 'Custom') : '24/7'}
+              {data.avgResponseMinutes == null
+                ? '—'
+                : `${data.avgResponseMinutes} ${t('common.dashboard_minutes', 'min')}`}
             </span>
           </div>
           <div className="svc-kv">
-            <span className="svc-kv-label">{t('dashboard_ai_status', 'AI Assistant')}</span>
+            <span className="svc-kv-label">{t('common.dashboard_resolution_rate', 'Resolution Rate')}</span>
+            <span className="svc-kv-value">{data.resolutionRate}%</span>
+          </div>
+          <div className="svc-kv">
+            <span className="svc-kv-label">{t('common.dashboard_widget_status', 'Widget Status')}</span>
+            <span className="svc-kv-value">{widgetPill()}</span>
+          </div>
+          <div className="svc-kv">
+            <span className="svc-kv-label">{t('common.dashboard_active_hours', 'Active Hours')}</span>
+            <span className="svc-kv-value">
+              {data.activeHours === 'custom' ? t('common.dashboard_hours_custom', 'Custom') : '24/7'}
+            </span>
+          </div>
+          <div className="svc-kv">
+            <span className="svc-kv-label">{t('common.dashboard_ai_status', 'AI Assistant')}</span>
             <span className="svc-kv-value">
               <span className={`svc-pill ${data.aiStatus === 'enabled' ? 'svc-pill-green' : 'svc-pill-gray'}`}>
-                {data.aiStatus === 'enabled' ? t('dashboard_enabled', 'Enabled') : t('dashboard_disabled', 'Disabled')}
+                {data.aiStatus === 'enabled' ? t('common.dashboard_enabled', 'Enabled') : t('common.dashboard_disabled', 'Disabled')}
               </span>
             </span>
           </div>

@@ -69,9 +69,13 @@
     "xlsx": "^0.17.2"
   },
   "scripts": {
+    "prestart-ssl": "node scripts/stage-widget-runtime.mjs",
     "start-ssl": "react-scripts --openssl-legacy-provider --max_old_space_size=8000 start",
+    "prestart": "node scripts/stage-widget-runtime.mjs",
     "start": "react-scripts --max_old_space_size=8000 start",
+    "prebuild": "node scripts/stage-widget-runtime.mjs",
     "build": "react-scripts --max_old_space_size=8000 build",
+    "prebuild-ssl": "node scripts/stage-widget-runtime.mjs",
     "build-ssl": "react-scripts --openssl-legacy-provider  --max_old_space_size=8000 build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

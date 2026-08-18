@@ -47,9 +47,9 @@ const Dashboard = ({ classes }: any) => {
     >
     <div className="svc-dash">
       <div className="svc-dash-head">
-        <h1 className="svc-dash-title">{t('dashboard_title', 'Dashboard')}</h1>
+        <h1 className="svc-dash-title">{t('common.dashboard_title', 'Dashboard')}</h1>
         <p className="svc-dash-subtitle">
-          {t('dashboard_subtitle', 'A real-time overview of your support operation')}
+          {t('common.dashboard_subtitle', 'A real-time overview of your support operation')}
         </p>
       </div>
 

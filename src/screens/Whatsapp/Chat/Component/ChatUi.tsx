@@ -26,8 +26,17 @@ import {
 	getMessages as getServiceMessages,
 	sendMessage as sendServiceMessage,
 	uploadFile as uploadServiceFile,
+	getAgents as getServiceAgents,
+	getConversationDetail as getServiceConversationDetail,
+	updateConversation as updateServiceConversation,
 } from '../../../../redux/reducers/conversationsSlice';
-import { IMessage } from '../../../../Models/Service/Conversation';
+import {
+	IMessage,
+	IAgentOption,
+	IVisitorInfo,
+	IPageVisit,
+	ConversationStatus,
+} from '../../../../Models/Service/Conversation';
 import ChatTemplate from './ChatTemplate';
 import ChatFooterContent from './ChatFooterContent';
 import clsx from 'clsx';
@@ -260,6 +269,35 @@ const ChatUi = ({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [whatsappChatSession, isStatusUpdating]);
 
+	// The refresh above is driven by the WhatsApp inbound-status poll, which never runs
+	// for a widget conversation — so an open widget thread would sit still while the
+	// visitor typed. Poll the thread directly instead, on the same 5s cadence, and only
+	// while a widget conversation is actually open. Passing true keeps it silent (no
+	// loader flash on every tick).
+	useEffect(() => {
+		if ((chatContacts as any)?.channel !== 'widget') return;
+
+		let cancelled = false;
+		let timer: ReturnType<typeof setTimeout> | null = null;
+
+		const tick = async () => {
+			try {
+				await getAPIAllWhatsappChat(true);
+			} catch {
+				// keep polling; a dropped refresh is recovered on the next tick
+			}
+			if (!cancelled) timer = setTimeout(tick, 5000);
+		};
+
+		timer = setTimeout(tick, 5000);
+
+		return () => {
+			cancelled = true;
+			if (timer) clearTimeout(timer);
+		};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [(chatContacts as any)?.channel, (chatContacts as any)?.conversationId, chatContacts?.PhoneNumber]);
+
 	useEffect(() => {
 		setLocalAgentId(firstAgentId);
 	}, [
@@ -269,6 +307,67 @@ const ChatUi = ({
 	]);
 
 	const isWidgetChat = (chatContacts as any)?.channel === 'widget';
+
+	// The WhatsApp status Select speaks numeric ids; a widget conversation speaks the
+	// Service vocabulary. Map between the two rather than introducing a second control,
+	// so the header keeps one status widget whichever channel is open.
+	const SVC_ID_TO_STATUS: Record<number, ConversationStatus> = {
+		0: 'new',
+		1: 'open',
+		3: 'resolved',
+		4: 'archived',
+	};
+	const SVC_STATUS_TO_ID: Record<string, number> = { new: 0, open: 1, resolved: 3, archived: 4 };
+
+	const [serviceAgents, setServiceAgents] = useState<IAgentOption[]>([]);
+	const [visitorInfo, setVisitorInfo] = useState<IVisitorInfo | null>(null);
+	const [pageTrail, setPageTrail] = useState<IPageVisit[]>([]);
+	const [widgetStatusId, setWidgetStatusId] = useState<number>(0);
+
+	const widgetConversationId =
+		(chatContacts as any)?.conversationId || chatContacts?.PhoneNumber;
+
+	// Agent list and visitor context for the open widget conversation. Both endpoints
+	// existed unused until now; without them the header could show a status but not
+	// change it, and nothing could be assigned.
+	useEffect(() => {
+		if (!isWidgetChat || !widgetConversationId) {
+			setVisitorInfo(null);
+			setPageTrail([]);
+			return;
+		}
+		setWidgetStatusId(Number(chatContacts?.ConversationStatusId ?? 0));
+		(dispatch as any)(getServiceAgents()).then((res: any) =>
+			setServiceAgents(res?.payload || []),
+		);
+		(dispatch as any)(getServiceConversationDetail(widgetConversationId)).then((res: any) => {
+			setVisitorInfo(res?.payload?.visitorInfo || null);
+			// Last 5 pages, most recent first — the ticket's "Page Navigation" trail.
+			setPageTrail((res?.payload?.pageTrail || []).slice(-5).reverse());
+		});
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [isWidgetChat, widgetConversationId]);
+
+	// Status change on a widget conversation — the WhatsApp path writes through a
+	// different API and keys on a phone number, which a widget visitor does not have.
+	const handleWidgetStatus = (statusId: number) => {
+		const status = SVC_ID_TO_STATUS[statusId];
+		if (!status || !widgetConversationId) return;
+		setWidgetStatusId(statusId);   // optimistic; the list poll reconciles
+		(dispatch as any)(updateServiceConversation({ id: widgetConversationId, status }));
+	};
+
+	// Assignment on a widget conversation. agentId 0 from the picker means "unassign",
+	// which the API models as an explicit null rather than an omitted field.
+	const handleWidgetAgent = (agentId: number) => {
+		if (!widgetConversationId) return;
+		const match = serviceAgents.find((a) => a.id === agentId);
+		(dispatch as any)(updateServiceConversation({
+			id: widgetConversationId,
+			agentId: agentId > 0 ? agentId : null,
+			agentName: match ? match.name : null,
+		}));
+	};
 
 	const scrollChatToBottom = () => {
 		const el = document.getElementById('chat-messages');
@@ -507,10 +606,17 @@ const ChatUi = ({
 								classes.f12,
 							)}
 							autoWidth
-							value={`${chatContacts?.ConversationStatusId || ''}`}
+							value={
+								isWidgetChat
+									? `${widgetStatusId}`
+									: `${chatContacts?.ConversationStatusId || ''}`
+							}
 							variant="standard"
 							style={
-								chatContacts.ConversationStatusId
+								// A widget conversation starts at 'new' (id 0), which is falsy — so the
+								// WhatsApp truthiness test would hide the control on exactly the
+								// conversations an agent most needs to action.
+								isWidgetChat || chatContacts.ConversationStatusId
 									? {
 										padding: '8px 0px 8px 8px',
 										// position: 'absolute',
@@ -521,12 +627,23 @@ const ChatUi = ({
 									: { display: 'none' }
 							}
 							onChange={(e: SelectChangeEvent) =>
-								handleUserStatus(e, chatContacts.PhoneNumber, setIsStatusUpdating)
+								isWidgetChat
+									? handleWidgetStatus(Number(e.target.value))
+									: handleUserStatus(e, chatContacts.PhoneNumber, setIsStatusUpdating)
 							}
 						>
-							<MenuItem value={1}>{translator('whatsappChat.open')}</MenuItem>
-							<MenuItem value={2}>{translator('whatsappChat.pending')}</MenuItem>
-							<MenuItem value={3}>{translator('whatsappChat.solved')}</MenuItem>
+							{isWidgetChat
+								? [
+									<MenuItem key="new" value={0}>{translator('whatsappChat.status_new')}</MenuItem>,
+									<MenuItem key="open" value={1}>{translator('whatsappChat.open')}</MenuItem>,
+									<MenuItem key="resolved" value={3}>{translator('whatsappChat.solved')}</MenuItem>,
+									<MenuItem key="archived" value={4}>{translator('whatsappChat.status_archived')}</MenuItem>,
+								]
+								: [
+									<MenuItem key="open" value={1}>{translator('whatsappChat.open')}</MenuItem>,
+									<MenuItem key="pending" value={2}>{translator('whatsappChat.pending')}</MenuItem>,
+									<MenuItem key="solved" value={3}>{translator('whatsappChat.solved')}</MenuItem>,
+								]}
 						</Select>
 						<div className={classes.agentSelectorContainer}>
 							<Select
@@ -537,11 +654,20 @@ const ChatUi = ({
 								)}
 								autoWidth
 								displayEmpty
-								value={String(localAgentId)}
+								value={
+									isWidgetChat
+										? String((chatContacts as any)?.assignedAgentId ?? 0)
+										: String(localAgentId)
+								}
 								renderValue={(value) => {
-									const assignedAgent = agentList?.find(
-										(a: WhatsappAgent) => String(a.AgentId) === value,
-									);
+									const assignedAgent = isWidgetChat
+										? (() => {
+											const a = serviceAgents.find((x) => String(x.id) === value);
+											return a ? ({ Name: a.name } as any) : undefined;
+										})()
+										: agentList?.find(
+											(a: WhatsappAgent) => String(a.AgentId) === value,
+										);
 									return (
 										<Box
 											style={{
@@ -566,6 +692,14 @@ const ChatUi = ({
 								onChange={(e: SelectChangeEvent) => {
 									if (e.target.value === 'add-new') {
 										onAddAgent?.();
+										return;
+									}
+
+									// A widget conversation is assigned through the Service API; the
+									// WhatsApp session path below is keyed on a phone number the
+									// visitor does not have.
+									if (isWidgetChat) {
+										handleWidgetAgent(Number(e.target.value));
 										return;
 									}
 
@@ -601,7 +735,24 @@ const ChatUi = ({
 										{translator('whatsappChat.setAgent')}
 									</Box>
 								</MenuItem>
-								{agentList?.map((agent: WhatsappAgent) => {
+								{/* A widget conversation is assigned to a Pulseem sub-user (Service
+								    GetAgents), not to a WhatsApp agent — different list, same picker. */}
+								{isWidgetChat &&
+									serviceAgents.map((agent: IAgentOption) => (
+										<MenuItem key={agent.id} value={agent.id}>
+											<Box
+												style={{
+													display: 'flex',
+													alignItems: 'center',
+													gap: '8px',
+												}}
+											>
+												<MdSupportAgent size={16} />
+												{agent.name}
+											</Box>
+										</MenuItem>
+									))}
+								{!isWidgetChat && agentList?.map((agent: WhatsappAgent) => {
 									return (
 										<MenuItem key={agent.AgentId} value={agent.AgentId}>
 											<Box
@@ -617,7 +768,9 @@ const ChatUi = ({
 										</MenuItem>
 									);
 								})}
-								{onAddAgent && (
+								{/* "Add agent" creates a WhatsApp agent, which would not appear in
+								    the Service list — offering it here would look broken. */}
+								{onAddAgent && !isWidgetChat && (
 									<MenuItem value="add-new">
 										<Box
 											style={{
@@ -640,6 +793,58 @@ const ChatUi = ({
 						>
 							<MdEdit size={18} color="#333" />
 						</IconButton>
+						{/* Visitor context for a widget conversation — browser, location and the
+						    page they arrived from. A WhatsApp contact has a phone number and a
+						    name; a website visitor is anonymous, so this is the only identifying
+						    detail an agent gets. Rendered inline rather than in a side panel to
+						    avoid restructuring the WhatsApp layout. */}
+						{isWidgetChat && visitorInfo && (
+							<Box
+								style={{
+									display: 'flex',
+									flexWrap: 'wrap',
+									alignItems: 'center',
+									gap: '12px',
+									fontSize: 12,
+									color: '#6b7280',
+									marginInlineStart: 8,
+								}}
+							>
+								{visitorInfo.browser && <span>{visitorInfo.browser}</span>}
+								{visitorInfo.location && <span>{visitorInfo.location}</span>}
+								{pageTrail.length > 0 && (
+									<span
+										title={pageTrail
+											.map((v) => `${v.url}  ${moment(v.visitedAt).format('DD/MM HH:mm')}`)
+											.join('\n')}
+										style={{ maxWidth: 300, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+									>
+										{translator('whatsappChat.page_navigation')}:{' '}
+										{pageTrail.map((v) => {
+											try {
+												return new URL(v.url).pathname;
+											} catch {
+												return v.url;
+											}
+										}).join(' ← ')}
+									</span>
+								)}
+								{visitorInfo.referrerUrl && (
+									<span
+										title={visitorInfo.referrerUrl}
+										style={{
+											maxWidth: 260,
+											overflow: 'hidden',
+											textOverflow: 'ellipsis',
+											whiteSpace: 'nowrap',
+										}}
+									>
+										{visitorInfo.referrerUrl}
+									</span>
+								)}
+							</Box>
+						)}
+
 						{/* Tag Chips Display */}
 						<Box className={classes.tagChipsContainer}>
 							{contactTags &&

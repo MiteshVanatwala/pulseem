@@ -17,10 +17,10 @@ const StatsCards = ({ stats, loading }: Props) => {
   const { t } = useTranslation();
 
   const cards = [
-    { key: 'newConversations', label: t('dashboard_new_conversations', 'New Conversations'), value: stats?.newConversations, icon: <FiberNewIcon />, fg: '#3b82f6', bg: '#dbeafe' },
-    { key: 'openConversations', label: t('dashboard_open_conversations', 'Open Conversations'), value: stats?.openConversations, icon: <ChatBubbleOutlineIcon />, fg: '#f97316', bg: '#ffedd5' },
-    { key: 'marketingConsent', label: t('dashboard_marketing_consent', 'Marketing Consent'), value: stats?.marketingConsent, icon: <MailOutlineIcon />, fg: '#8b5cf6', bg: '#ede9fe' },
-    { key: 'totalConversations', label: t('dashboard_total_conversations', 'Total Conversations'), value: stats?.totalConversations, icon: <ForumOutlinedIcon />, fg: '#0ea5e9', bg: '#e0f2fe' },
+    { key: 'newConversations', label: t('common.dashboard_new_conversations', 'New Conversations'), value: stats?.newConversations, icon: <FiberNewIcon />, fg: '#3b82f6', bg: '#dbeafe' },
+    { key: 'openConversations', label: t('common.dashboard_open_conversations', 'Open Conversations'), value: stats?.openConversations, icon: <ChatBubbleOutlineIcon />, fg: '#f97316', bg: '#ffedd5' },
+    { key: 'marketingConsent', label: t('common.dashboard_marketing_consent', 'Marketing Consent'), value: stats?.marketingConsent, icon: <MailOutlineIcon />, fg: '#8b5cf6', bg: '#ede9fe' },
+    { key: 'totalConversations', label: t('common.dashboard_total_conversations', 'Total Conversations'), value: stats?.totalConversations, icon: <ForumOutlinedIcon />, fg: '#0ea5e9', bg: '#e0f2fe' },
   ];
 
   return (

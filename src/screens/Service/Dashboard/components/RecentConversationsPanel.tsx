@@ -31,10 +31,10 @@ const RecentConversationsPanel = ({ conversations, loading, onViewAll }: Props) 
           <span className="svc-panel-icon" style={{ background: '#eff4ff', color: '#2563eb' }}>
             <ChatBubbleOutlineIcon />
           </span>
-          <h3 className="svc-panel-title">{t('dashboard_recent_convs', 'Recent Conversations')}</h3>
+          <h3 className="svc-panel-title">{t('common.dashboard_recent_convs', 'Recent Conversations')}</h3>
         </div>
         <span className="svc-panel-link" onClick={onViewAll}>
-          {t('dashboard_view_all', 'View All')}
+          {t('common.dashboard_view_all', 'View All')}
         </span>
       </div>
 
@@ -49,7 +49,7 @@ const RecentConversationsPanel = ({ conversations, loading, onViewAll }: Props) 
           </div>
         ))
       ) : !conversations.length ? (
-        <EmptyState icon={<ChatBubbleOutlineIcon fontSize="inherit" />} text={t('dashboard_no_convs', 'No conversations yet')} />
+        <EmptyState icon={<ChatBubbleOutlineIcon fontSize="inherit" />} text={t('common.dashboard_no_convs', 'No conversations yet')} />
       ) : (
         conversations.map((c) => {
           const name = c.visitorName || `Visitor ${(c.visitorId || '').slice(-6)}`;

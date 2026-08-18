@@ -135,6 +135,10 @@ const adaptWidgetToSidebar = (list: IConversation[]): APIWhatsappChatSidebarCont
 		UserName: c.visitorName || `Visitor ${(c.visitorId || '').slice(-6)}`,
 		channel: 'widget',
 		conversationId: c.id,
+		// Carried through so the chat header's agent picker can show the current
+		// assignment; without these it would read as unassigned on every conversation.
+		assignedAgentId: c.assignedAgentId ?? 0,
+		assignedAgentName: c.assignedAgentName ?? null,
 	} as APIWhatsappChatSidebarContactsItemsData));
 
 const WhatsappChat = ({ classes }: WhatsappChatProps) => {
@@ -306,14 +310,42 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 
 	// Widget conversations are only fetched once the agent actually switches to a
 	// channel that shows them — a WhatsApp-only user never pays for this call.
+	//
+	// Then it keeps polling, because nothing here listens on a socket: a visitor's
+	// message would otherwise not reach the agent until they switched channels or
+	// reloaded. Same shape as the WhatsApp inbound loop below — chained setTimeout
+	// rather than setInterval, so a slow response cannot stack up requests.
 	useEffect(() => {
 		if (selectedChannel === 'whatsapp') return;
-		(dispatch as any)(getServiceConversations(undefined)).then((res: any) => {
-			const list: IConversation[] = res?.payload || [];
-			setWidgetConversations(list);
-			const domains = Array.from(new Set(list.map(svcHostOf).filter(Boolean)));
-			setServiceDomain((prev) => prev || domains[0] || '');
-		});
+
+		let cancelled = false;
+		let timer: ReturnType<typeof setTimeout> | null = null;
+
+		const load = async () => {
+			try {
+				const res: any = await (dispatch as any)(getServiceConversations({
+					status: 'all',
+					search: '',
+					agentId: null,
+					channel: selectedChannel === 'widget' ? 'widget' : 'all',
+				}));
+				if (cancelled) return;
+				const list: IConversation[] = res?.payload || [];
+				setWidgetConversations(list);
+				const domains = Array.from(new Set(list.map(svcHostOf).filter(Boolean)));
+				setServiceDomain((prev) => prev || domains[0] || '');
+			} catch {
+				// A failed refresh must not kill the loop — the next tick retries.
+			}
+			if (!cancelled) timer = setTimeout(load, 5000);
+		};
+
+		load();
+
+		return () => {
+			cancelled = true;
+			if (timer) clearTimeout(timer);
+		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [selectedChannel]);
 

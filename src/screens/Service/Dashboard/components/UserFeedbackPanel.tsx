@@ -24,8 +24,8 @@ const UserFeedbackPanel = ({ data, loading, onSettings }: Props) => {
       return (
         <EmptyState
           icon={<StarBorderIcon fontSize="inherit" />}
-          text={t('dashboard_no_feedback', 'No feedback collected yet')}
-          linkText={t('dashboard_feedback_settings', 'Enable in widget settings')}
+          text={t('common.dashboard_no_feedback', 'No feedback collected yet')}
+          linkText={t('common.dashboard_feedback_settings', 'Enable in widget settings')}
           onLink={onSettings}
         />
       );
@@ -38,11 +38,11 @@ const UserFeedbackPanel = ({ data, loading, onSettings }: Props) => {
             <div className="svc-fb-stars">{stars(data.avgRating)}</div>
           </div>
           <div>
-            <div className="svc-fb-sub">{data.totalReviews} {t('dashboard_reviews', 'reviews')}</div>
+            <div className="svc-fb-sub">{data.totalReviews} {t('common.dashboard_reviews', 'reviews')}</div>
             <div className="svc-fb-sentiment">
-              <span className="svc-pill svc-pill-green">{t('dashboard_positive', 'Positive')} {data.positive}</span>
+              <span className="svc-pill svc-pill-green">{t('common.dashboard_positive', 'Positive')} {data.positive}</span>
               <span className="svc-pill svc-pill-gray">{data.neutral}</span>
-              <span className="svc-pill svc-pill-yellow">{t('dashboard_needs_attention', 'Needs Attention')} {data.negative}</span>
+              <span className="svc-pill svc-pill-yellow">{t('common.dashboard_needs_attention', 'Needs Attention')} {data.negative}</span>
             </div>
           </div>
         </div>
@@ -68,7 +68,7 @@ const UserFeedbackPanel = ({ data, loading, onSettings }: Props) => {
           <span className="svc-panel-icon" style={{ background: '#fef5e0', color: '#d97706' }}>
             <StarBorderIcon />
           </span>
-          <h3 className="svc-panel-title">{t('dashboard_user_feedback', 'User Feedback')}</h3>
+          <h3 className="svc-panel-title">{t('common.dashboard_user_feedback', 'User Feedback')}</h3>
         </div>
       </div>
       {renderBody()}

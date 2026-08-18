@@ -10,7 +10,7 @@ export const getDashboardData = createAsyncThunk(
   'Service/GetDashboard',
   async (_: void, thunkAPI) => {
     try {
-      const res = await PulseemReactInstance.get('api/Service/Dashboard');
+      const res = await PulseemReactInstance.get('Service/Dashboard');
       const body = unwrap<IDashboardData>(res.data);
 
       // The API answers 200 at the transport layer and puts the real outcome in the
