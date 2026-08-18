@@ -30,6 +30,8 @@ import { Switch, ManagmentIcon, TablePagination } from '../../../components/mana
 import { Title } from '../../../components/managment/Title';
 import { EditIcon, DeleteIcon } from '../../../assets/images/managment';
 import { Loader } from '../../../components/Loader/Loader';
+// TypeScript may not have declarations for CSS imports in this project setup.
+// @ts-ignore
 import './chatbot.css';
 
 const ROWS_PER_PAGE_OPTIONS = [6, 10, 20, 50];
@@ -384,13 +386,12 @@ const ChatbotList = ({ classes }: { classes?: any }) => {
   };
 
   const renderTablePagination = () => (
-    // @ts-ignore
     <TablePagination
       classes={classes}
       rows={visibleList.length}
       rowsPerPage={rowsPerPage}
       onRowsPerPageChange={handleRowsPerPageChange}
-      rowsPerPageOptions={ROWS_PER_PAGE_OPTIONS}
+      rowsPerPageOptions={ROWS_PER_PAGE_OPTIONS as any}
       page={page}
       onPageChange={setPage}
     />
