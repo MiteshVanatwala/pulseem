@@ -22,6 +22,11 @@
 
 const GRAPH_URL_RE = /pulseemmonitorgraph[^"'\s>]*/g;
 const GRAPH_PARAM_RE = /([?&;])(p\d+=)([^&"'\s>]*)/g;
+// The editor sentinel that buildLink bakes into every saved tier-graph URL. While it survives,
+// pulseemmonitorgraph.png treats the request as the EDITOR CANVAS and answers with the
+// design-time sample instead of 0 for a value this recipient does not have. A preview whose job
+// is to show what the recipient gets must therefore look like a recipient render, not the editor.
+const GRAPH_EDITOR_SENTINEL_RE = new RegExp('([?&;])c=ClientIDReplaceFromEditor(?=[&;]|$)', 'g');
 const TOKEN_RE = /##([^#]+)##/g;
 
 // WIDENED IN STEP A3 to cover " and '.
@@ -55,7 +60,20 @@ export const escapeHtml = (s: string) =>
 // Values here are NOT run through escapeHtml — they are URL-encoded instead, which is the correct
 // escaping for this position.
 export const replaceGraphTokens = (url: string, values: { [k: string]: string }) =>
-    url.replace(GRAPH_PARAM_RE, (_m, sep, key, val) => {
+    // Strip the editor sentinel FIRST. Without this the preview lies in exactly the case it exists
+    // to catch: a token that is mapped but empty, or not mapped at all, renders as the design-time
+    // sample here while the same recipient's real mail renders 0 — and the operator approves the
+    // send believing the graph is populated. The sender performs the identical rewrite for real
+    // mail (DBProxyStandard, beside the "==ClientID==" replace); this is the preview equivalent.
+    // Removed outright rather than set to a fake id, so nothing downstream can mistake it for a
+    // real client.
+    // The separator is put BACK when it is the leading "?", otherwise dropping it would turn
+    // "...png?c=SENTINEL&gt=stairs" into "...png&gt=stairs" — a URL with no query string at all,
+    // so the graph would not render rather than merely render wrong. No builder in the repo emits
+    // c= first today (buildLink and global.js both start with gt=), but a later re-ordering must
+    // not be able to break previews silently. "?&gt=..." is valid: the empty first pair is ignored.
+    url.replace(GRAPH_EDITOR_SENTINEL_RE, (_m, sep) => (sep === '?' ? '?' : ''))
+        .replace(GRAPH_PARAM_RE, (_m, sep, key, val) => {
         let decoded: string;
         try { decoded = decodeURIComponent(val); } catch { decoded = val; }
         const resolved = decoded.replace(TOKEN_RE, (raw, name) =>

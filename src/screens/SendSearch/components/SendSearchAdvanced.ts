@@ -154,13 +154,53 @@ export const defaultSendSearchSort = (): SendSearchSort => ({ FieldKey: '', Dir:
 // CampaignID without a clientid does NOT throw, it renders a GENERIC campaign that looks entirely
 // plausible and is not this agent's mail. The server is what prevents that (it emits null); this
 // reader prevents the other half — an iframe whose src is '' loads the HOSTING PAGE inside itself.
+// Does the URL already carry a `noTrack` query parameter? Key-wise, not substring-wise, and
+// case-insensitively — ASP.NET's Request[...] reads query keys through an OrdinalIgnoreCase
+// NameValueCollection, so `notrack=1` counts as present and appending a second one would still
+// produce a duplicate.
+const hasNoTrackParam = (url: string): boolean => {
+    const q = url.indexOf('?');
+    if (q < 0) return false;
+    const query = url.slice(q + 1).split('#')[0];
+    return query.split('&').some((pair) => pair.split('=')[0].trim().toLowerCase() === 'notrack');
+};
+
 export const previewUrlOf = (row: { PreviewUrl?: string | null }): string | null => {
     const u = (row.PreviewUrl ?? '').trim();
     if (u === '') return null;
     // Only http(s). A relative or `javascript:` src is never something the server contract emits,
     // so anything else is either a bug or an injection and is treated as "no preview".
     if (u.indexOf('http://') !== 0 && u.indexOf('https://') !== 0) return null;
-    return u;
+
+    // ── noTrack is enforced HERE, at the gate, not trusted from each producer ──────────────────
+    // Every URL that reaches this function is about to become the src of an iframe INSIDE THE
+    // REPORT, and a view from the report is not a recipient's view. Without the flag,
+    // PreviewCampaign.aspx.cs does three things on that request — named by SYMBOL, because these
+    // pointers rot: `SetOpensCampaignSendingLog` records an open for the AGENT who never opened
+    // anything; `ClientsInfo.UpdateClientsInfo` overwrites the AGENT's stored IP/User-Agent with
+    // the viewer's; and `noTrackLinkGuard` is built empty, so every link in the framed mail stays
+    // LIVE and a manager can genuinely unsubscribe an agent while the dialog footer says the links
+    // are disabled. A fourth write, the once-only `CampaignSupervisorPreviewToken_SetAccessed`
+    // stamp, needs this flag too but is NOT controlled by it alone: that call is additionally
+    // gated on an authenticated session, so the mailed link cannot suppress its own audit record.
+    //
+    // Two producers feed this gate and they disagreed. The ordinary agent row is built server-side
+    // WITH the flag (SendSearchLogic.cs `PREVIEW_NO_TRACK`). The supervisor roster's per-agent link
+    // is NOT: `DataSources_GetSupervisorSentAgents` selects `a.PreviewLink` verbatim out of
+    // CampaignSupervisorAgentLog, and that column holds the very link that was MAILED to the
+    // supervisor — which must keep tracking when the SUPERVISOR clicks it from the mail. So the
+    // same URL serves two purposes with opposite tracking requirements, and only the report's use
+    // of it may suppress tracking. That is why the flag belongs to this gate and not to the stored
+    // value, and why no producer can be trusted to carry it.
+    //
+    // Idempotent on purpose. Appending blindly would give the agent path `noTrack=1&noTrack=1`, and
+    // ASP.NET returns "1,1" for a duplicated key, so the `Request["noTrack"] == "1"` test on the
+    // page would be FALSE and tracking would switch back on for the one path that works today.
+    if (hasNoTrackParam(u)) return u;
+    const hash = u.indexOf('#');
+    const base = hash < 0 ? u : u.slice(0, hash);
+    const fragment = hash < 0 ? '' : u.slice(hash);
+    return base + (base.indexOf('?') < 0 ? '?' : '&') + 'noTrack=1' + fragment;
 };
 
 export const sortValueDisplayOf = (row: { SortValueDisplay?: string | null }): string | null => {
