@@ -1,0 +1,929 @@
+// ═══════════════════════════════════════════════════════════════════════════════════════════
+// SendSearch slice — V1.
+//
+// DELIVERY PATH:  _delivery\SendSearch-V1\react\redux\sendSearchSlice.ts
+// TARGET PATH:    ReactCode\src\redux\reducers\sendSearchSlice.ts   (CONTRACT §4.3)
+//
+// Registration in `store.js` under the key `sendSearch` is REACT-PATCH's patch (§4.3) — nothing
+// about the store is declared here.
+//
+// Pattern copied from `redux/reducers/dataSourcesSlice.ts`: createSlice + createAsyncThunk,
+// `PulseemReactInstance` for the HTTP call, `return response.data` (NO JSON.parse — the new
+// controllers return an object), `catch → thunkAPI.rejectWithValue({ error: error.message })`,
+// and the payload unwrapped as `action.payload?.Data` because every response is a
+// `PulseemResponse { StatusCode, Message, Data }` (CONTRACT §3).
+// ═══════════════════════════════════════════════════════════════════════════════════════════
+
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
+import { eSendChannel } from '../../Models/DataSources/SmartSend';
+import {
+    SendSearchRow,
+    SendSearchRequest,
+    SendSearchFilters,
+    SendProvenanceRow,
+    SendRowValue,
+    DrawerEntry,
+    MAX_DRAWER_DEPTH,
+    defaultSendSearchFilters,
+    SendSearchFilterClause,
+    SendSearchFilterField,
+    SendSearchCampaign,
+    SendSearchCampaignSource,
+    SendSearchCatalogSource,
+    SendSearchSourceCampaign,
+    SendSearchExportRequest,
+    SupervisorSendRow,
+    SupervisorAgentRow,
+    SupervisorSendRequest,
+    exclusiveUpperBound,
+} from '../../Models/DataSources/SendSearch';
+
+const api = 'SendSearch/';
+
+interface SendSearchState {
+    items: SendSearchRow[];
+    totalCount: number;
+    filters: SendSearchFilters;
+    loading: boolean;
+    error: string | null;
+    drawerStack: DrawerEntry[];
+    provenance: SendProvenanceRow[];
+    provenanceLoading: boolean;
+    // Latest-request id — drops out-of-order Search responses. Rapid paging / hitting "חפש" twice
+    // resolves out of order often enough that without this the grid can end up showing page 1's rows
+    // under page 2's pager. Same guard as dataSourcesSlice.ts:43-45 (currentReqId / rowsReqId).
+    searchReqId: string;
+    // The campaign id whose provenance is currently loaded, so the drawer can tell "not fetched yet"
+    // from "fetched and genuinely empty" (an empty list is the NORMAL answer for a pre-provenance
+    // send — it is what makes the row 'Inferred'/'Unverifiable', and it must not look like a spinner
+    // that never finished).
+    provenanceCampaignId: number | null;
+    // 🔴 ADDED 2026-08-08 (review R2-01). `getSendProvenance` was the ONLY one of this slice's four
+    // thunks with no stale-response guard: `searchReqId` (:47), `rowValuesReqId` (:78) and
+    // `filterFieldsReqId` (:96) all existed, this one did not, and both `.fulfilled` and `.rejected`
+    // wrote unconditionally.
+    //
+    // `provenanceCampaignId` above CANNOT stand in for it, for the reason already argued at :73-78
+    // for rowValues: the NEWER request's `pending` has already advanced the id, so the older
+    // response matches it and passes. (It is also never read outside this slice, so it guards
+    // nothing today in any case.)
+    //
+    // What it prevents: open campaign 100's agent, close, open campaign 200's agent before the first
+    // response lands. 100 resolves last and, unguarded, writes ITS SentAt / DataSourceName /
+    // VersionNumber into state — and AgentDrawer.tsx:305-314 renders them with a hardcoded
+    // `ProvenanceSource="Recorded"` badge under campaign 200's agent. A positive, false provenance
+    // claim on an insurer's audit screen.
+    provenanceReqId: string;
+    // A FAILED provenance fetch must not be indistinguishable from a genuinely empty history.
+    // Without this flag both land on `provenance: []`, and AgentDrawer's empty branch prints the
+    // reassuring sentence "there is no send record, but the mapping was not touched, so this IS the
+    // version that was sent" — a positive claim about the data, asserted from a request that never
+    // came back. That is the same over-claim as a blank version cell, only worse: it is confident.
+    provenanceError: string | null;
+    // ── per-recipient sent values (GET api/SendSearch/RowValues) ─────────────────────────────
+    // Same three-field shape as provenance above, for the same three reasons: its own loading flag
+    // so it never blanks the grid behind it, its own error flag so a FAILED fetch is not read as
+    // "this recipient received nothing", and its own identity field so "not fetched yet" is
+    // distinguishable from "fetched and genuinely empty".
+    rowValues: SendRowValue[];
+    rowValuesLoading: boolean;
+    rowValuesError: string | null;
+    // The ClientID whose values are currently loaded. Provenance keys on campaign; this keys on the
+    // PERSON, because that is what changes when the user pops the roll-up drawer and opens a second
+    // agent from the roster — the campaign is identical, the recipient is not. Without it the second
+    // agent's card would show the first agent's values, which is the exact confident-lie failure this
+    // card exists to prevent.
+    rowValuesClientId: number | null;
+    // Stale-response guard, same mechanism as searchReqId (:45). rowValuesClientId alone is NOT
+    // enough: open recipient A, then B before A resolves. `pending` for B has already moved
+    // rowValuesClientId to B, so when A's slower response lands last it overwrites rowValues while
+    // the id field says B — AgentDrawer's clientId check then passes and A's national-ID / policy
+    // numbers render under B's name, permanently. Only the request identity catches that ordering.
+    rowValuesReqId: string;
+    // ── the columns the user may filter / sort on (CONTRACT §2) ──────────────────────────────
+    // Same four-field shape as rowValues above, for the same reasons: its own loading flag, its own
+    // error flag, and its own request id.
+    //
+    // The error flag is NOT decoration here. The filter bar's empty state is "this account has no
+    // filterable columns" — a statement ABOUT THE DATA. A failed fetch also lands on `[]`, and
+    // without a flag the bar would make that positive claim from a request that never came back,
+    // then leave the user unable to filter with no reason given. Identical failure mode to
+    // `provenanceError` (:51-56).
+    filterFields: SendSearchFilterField[];
+    filterFieldsLoading: boolean;
+    filterFieldsError: string | null;
+    // Stale-response guard, same mechanism as rowValuesReqId (:76). The list is per-channel, so
+    // switching channel twice quickly can land the FIRST channel's columns last — and the operator
+    // would then be offered filter fields that do not exist for the channel on screen, every one of
+    // which the SP rejects. There is no second identity field here (no `filterFieldsChannel`)
+    // because the request id already fully orders the responses.
+    filterFieldsReqId: string;
+    // ── campaign picker options (same GET, result set [1]) ───────────────────────────────────
+    // Rides on the FilterFields request rather than one of its own: the catalog SP aggregates over
+    // dbo.CampaignSendingLog (395M rows) to build #Camp, and a second endpoint would pay that twice
+    // per page load. So there is no `campaignsReqId` — `filterFieldsReqId` already orders these
+    // responses, and a second id derived from the same request could only ever agree with it.
+    //
+    // `campaignsError` is separate from `filterFieldsError` even though one request produces both.
+    // They fail independently in the way that matters: against a server where 51_ has not run, the
+    // FIELD list arrives perfectly and the campaign list is simply absent. Sharing one flag would
+    // paint the working half as broken.
+    campaigns: SendSearchCampaign[];
+    campaignsError: string | null;
+    // ── source map for the PICKER (catalog, result sets 2 and 3 — script 54) ─────────────────
+    // Do not confuse this with `sources` below. That one describes the CURRENT RESULT SET and is
+    // replaced on every search; this one describes WHICH CAMPAIGNS BELONG TO WHICH SOURCE in the
+    // catalog window, and exists only to expand one menu click into a set of CampaignIDs.
+    // Nothing here is ever sent to the server.
+    //
+    // `sourceMapAvailable` is the deployment gate and it is FALSE until the server proves
+    // otherwise. It has no error twin on purpose: unlike the campaign list, an absent source map
+    // is not a degraded state the operator needs told about — the action simply is not offered,
+    // exactly as the grid's source line is simply not drawn when `sourcesAvailable` is false.
+    sourceMapAvailable: boolean;
+    sourceOptions: SendSearchCatalogSource[];
+    sourceCampaigns: SendSearchSourceCampaign[];
+    // ── data-source map for the CURRENT result set (Search, result set 3) ────────────────────
+    // Replaced with every search, never merged: it describes this result and nothing else.
+    // `sourcesAvailable` is the deploy-skew signal and the ONLY thing that decides whether the grid
+    // renders a source line — see the Search.fulfilled case.
+    sources: SendSearchCampaignSource[];
+    sourcesAvailable: boolean;
+    // ── supervisor sends (POST api/SendSearch/SupervisorSends) ────────────────────────────────
+    // The מפקח's own copy of the mailing, with opens/clicks and the sent-HTML viewer URL. Same
+    // three-flag shape as `searchSends` (loading + rows + error) plus a latest-request stale guard,
+    // so opening one supervisor's rollup and then another's before the first responds cannot leave
+    // the wrong supervisor's opens/clicks on screen. 405 = HideRecipietns (SupervisorEmail is PII).
+    supervisorSends: SupervisorSendRow[];
+    supervisorSendsTotal: number;
+    supervisorSendsLoading: boolean;
+    supervisorSendsError: string | null;
+    supervisorSendsReqId: string;
+    // ── supervisor agent roster (POST api/SendSearch/SupervisorAgents) ────────────────────────
+    // The RECORDED agents a rollup covered. Its own loading/error flags for the same honesty reason
+    // provenance/rowValues carry them: a FAILED fetch ("could not load") must never look like a
+    // genuinely empty roster ("nobody was covered"). `supervisorAgentsKey` (= requestId+email)
+    // distinguishes "not fetched yet" from "fetched and empty"; `supervisorAgentsReqId` orders
+    // out-of-order responses when the user moves between rollups quickly.
+    supervisorAgents: SupervisorAgentRow[];
+    supervisorAgentsLoading: boolean;
+    supervisorAgentsError: string | null;
+    supervisorAgentsReqId: string;
+    supervisorAgentsKey: string | null;
+    // ── supervisor sent-HTML (POST api/SendSearch/SupervisorSentEmail) — the SECURE viewer ────
+    // The stored as-sent HTML of ONE supervisor mail, fetched LAZILY when the operator clicks
+    // "צפה במייל שנשלח". Modal-scoped: EmailPreviewDialog renders `supervisorSentHtml` in an
+    // <iframe srcDoc> (a STRING — the id never rides in a loadable URL, which is the whole IDOR
+    // fix), shows a spinner while `...Loading`, and "לא זמין" on `...Error` OR a null result (an
+    // unowned / unknown id returns Html null — a legitimate "not available", not a failure).
+    // Cleared on drawer/dialog close (like the roster). `...ReqId` drops out-of-order responses
+    // when the operator opens one supervisor's mail and then another's quickly.
+    supervisorSentHtml: string | null;
+    supervisorSentHtmlLoading: boolean;
+    supervisorSentHtmlError: string | null;
+    supervisorSentHtmlReqId: string;
+}
+
+// ── Thunks ───────────────────────────────────────────────────────────────────────────────────
+
+// POST api/SendSearch/Search  →  Data: SendSearchResponse   (CONTRACT §3.3)
+export const searchSends = createAsyncThunk(
+    'SendSearch/Search', async (req: SendSearchRequest, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.post(`${api}Search`, req);
+            return response.data;
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    });
+
+// GET api/SendSearch/Provenance?campaignId=&channel=  →  Data: List<SendProvenanceRow>  (§3.3)
+export const getSendProvenance = createAsyncThunk(
+    'SendSearch/Provenance', async (arg: { campaignId: number; channel: eSendChannel }, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.get(`${api}Provenance`, {
+                params: { campaignId: arg.campaignId, channel: arg.channel }
+            });
+            return response.data;
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    });
+
+// GET api/SendSearch/RowValues?campaignId=&clientId=&channel=  →  Data: List<SendRowValue>  (B.3)
+// Cloned from getSendProvenance above, deliberately verbatim in shape: same `.get` + `params`, same
+// `return response.data`, same rejectWithValue. The only difference is the third param — this asks
+// about a PERSON inside a campaign, provenance asks about the campaign.
+export const getSendRowValues = createAsyncThunk(
+    'SendSearch/RowValues',
+    async (arg: { campaignId: number; clientId: number; channel: eSendChannel }, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.get(`${api}RowValues`, {
+                params: { campaignId: arg.campaignId, clientId: arg.clientId, channel: arg.channel }
+            });
+            return response.data;
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    });
+
+// GET api/SendSearch/FilterFields?channel=  →  Data: List<SendSearchFilterField>   (CONTRACT §2)
+// Same `.get` + `params` + `return response.data` shape as the two thunks above.
+//
+// ⚠️ CONTRACT GAP (recorded in LEDGER, "בעיות שנמצאו בחוזה" #1): §2 freezes the filter VOCABULARY
+// but never names the endpoint that lists the available fields. `FilterFields` is B4's choice and is
+// recorded as a binding decision so B1 can bind the controller action to the same name. `channel` is
+// passed because the filterable columns follow the data source behind the sends, which is per-channel
+// — and an extra query param a parameterless controller action ignores is harmless, whereas a
+// missing one a controller requires is a 404/500.
+//
+// There is deliberately NO preview thunk anywhere in this slice: §1 puts the whole preview contract
+// on `SendSearchRow.PreviewUrl`. Adding one would be a second authority over an already-answered
+// question.
+// Returns BOTH the searchable-field catalog and the campaign picker's options — result sets [0] and
+// [1] of one call to dbo.DataSources_SearchSendsFilterCatalog.
+//
+// 🔴 THE DATE SCOPE IS NOW SENT, and it is not a refinement — without it the campaign list would be
+// a lie. The SP defaults @prm_DateTo to GETDATE() and floors @prm_DateFrom at 12 months back, so a
+// channel-only call always describes the last twelve months. A user who ticks "כלול תוצאות מלפני
+// יותר משנה" would then get a grid full of older sends while the picker offered no campaign to match
+// them, and would reasonably conclude the campaign was gone.
+//
+// It also corrects the FIELD list, which had the same defect quietly: the columns offered were
+// always the last-12-months set regardless of the dates on screen.
+//
+// The endpoint already accepted these four parameters (SendSearchController.cs:524) — this is a
+// caller-side fix, not a new API surface.
+//
+// NOT sent: the selected campaign ids. The picker's own options must never be narrowed by the
+// picker's own selection — that is exactly the self-narrowing bug the accumulated client-side list
+// used to have, where choosing a campaign collapsed the list to that one campaign.
+export const getSendSearchFilterFields = createAsyncThunk(
+    'SendSearch/FilterFields', async (
+        arg: {
+            channel: eSendChannel;
+            dateFrom?: string | null;
+            dateTo?: string | null;
+            includeOverOneYear?: boolean;
+        },
+        thunkAPI,
+    ) => {
+        try {
+            const response = await PulseemReactInstance.get(`${api}FilterFields`, {
+                params: {
+                    channel: arg.channel,
+                    // Omitted rather than sent empty: the SP's own NULL defaults are the correct
+                    // "no bound", and '' would bind as a DateTime the controller then 400s.
+                    dateFrom: arg.dateFrom ? arg.dateFrom : undefined,
+                    // SAME exclusive-upper-bound shift the search request applies
+                    // (`toSendSearchRequest`). The catalog SP's predicate is the identical half-open
+                    // `fs.FirstSentAt < @prm_DateTo`, so without this the picker would silently drop
+                    // every campaign whose first send was on the end date the user picked — while
+                    // the grid, which DOES shift, still showed its rows.
+                    dateTo: arg.dateTo ? exclusiveUpperBound(arg.dateTo) : undefined,
+                    includeOverOneYear: !!arg.includeOverOneYear,
+                }
+            });
+            return response.data;
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    });
+
+// POST api/SendSearch/Export  →  Data: SendSearchExportResult   (FROZEN EXPORT CONTRACT)
+//
+// Same `.post` + `return response.data` shape as `searchSends` above, and that is not incidental:
+// the body EXTENDS `SendSearchRequest`, so the export is literally the same query the grid ran,
+// plus the display-ready criteria, the 22 headers and the token→text map.
+//
+// 🔴 NO extraReducers, NO new state, and no `exportLoading` flag anywhere in this slice — this is
+// the same shape `exportDataSource` (dataSourcesSlice.ts:138) ships with, and the reason is not
+// symmetry for its own sake. The export result is a MODAL CONVERSATION: it belongs to the dialog
+// that is open, it is meaningless the moment that dialog closes, and it must not survive into the
+// next one. State here would outlive the dialog and re-paint a stale "the file is ready" — with a
+// link to a download from a DIFFERENT filter set — on top of a freshly opened export. The dialog
+// owns its own status for exactly as long as the status is true.
+//
+// The four terminal statuses (201 / 202 / 409 TOO_MANY_ROWS / 409 EXPORT_IN_PROGRESS) all arrive
+// here as a normal `PulseemResponse` body with HTTP 200 — the house convention this whole API uses
+// (SendSearchController returns the envelope object, never an HTTP status), so `payload.StatusCode`
+// is the discriminant and `rejected` means the NETWORK failed, not that the export was refused.
+export const exportSendSearch = createAsyncThunk(
+    'SendSearch/Export', async (req: SendSearchExportRequest, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.post(`${api}Export`, req);
+            return response.data;
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    });
+
+// POST api/SendSearch/SupervisorSends  →  Data: SupervisorSendResponse  (the מפקח's own send:
+// opens/clicks + the sent-HTML viewer URL). Cloned VERBATIM in shape from `searchSends` above —
+// same `.post` + `return response.data` + rejectWithValue — because it is the same envelope.
+export const searchSupervisorSends = createAsyncThunk(
+    'SendSearch/SupervisorSends', async (req: SupervisorSendRequest, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.post(`${api}SupervisorSends`, req);
+            return response.data;
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    });
+
+// POST api/SendSearch/SupervisorAgents  (body: { RequestID, SupervisorEmail })  →  Data: List<SupervisorAgentRow>
+// The RECORDED agents a rollup covered. POST, NOT GET: the identifying SupervisorEmail is recipient PII
+// and must not land in a URL / access log — the same reason Search and SupervisorSends are POST (this
+// matches the C# controller's [HttpPost] SupervisorAgents([FromBody] SupervisorAgentsRequest)). The body
+// uses the C# model's PascalCase property names.
+export const getSupervisorAgents = createAsyncThunk(
+    'SendSearch/SupervisorAgents',
+    async (arg: { requestId: number; supervisorEmail: string }, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.post(`${api}SupervisorAgents`, {
+                RequestID: arg.requestId, SupervisorEmail: arg.supervisorEmail
+            });
+            return response.data;
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    });
+
+// POST api/SendSearch/SupervisorSentEmail  (body: { SendLogId })  →  Data: SupervisorSentEmailResult { Html }
+// 🔴 THE SECURITY FIX. The tenancy-gated fetch of a supervisor mail's stored as-sent HTML — the SECURE
+// replacement for the old DirectEmailPreview.aspx?id=<raw id> reuse (a cross-tenant IDOR). Cloned
+// VERBATIM in shape from getSupervisorAgents above: same `.post` + `return response.data` +
+// rejectWithValue. The SendLogId is the ONLY input and it NEVER lands in a URL — the client renders
+// Data.Html in an <iframe srcDoc> (a string, not a loadable src). The C# controller gates the read on
+// the JWT SubAccountID (never the body), so an unowned / unknown id comes back with Html null (a 200,
+// not a 404). Body uses the C# model's PascalCase member name (SendLogId).
+export const getSupervisorSentEmailHtml = createAsyncThunk(
+    'SendSearch/SupervisorSentEmail',
+    async (sendLogId: number, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.post(`${api}SupervisorSentEmail`, { SendLogId: sendLogId });
+            return response.data;
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    });
+
+// ── Slice ────────────────────────────────────────────────────────────────────────────────────
+
+const initialState: SendSearchState = {
+    items: [],
+    totalCount: 0,
+    filters: defaultSendSearchFilters(),
+    loading: false,
+    error: null,
+    drawerStack: [],
+    provenance: [],
+    provenanceLoading: false,
+    searchReqId: '',
+    provenanceCampaignId: null,
+    provenanceReqId: '',
+    provenanceError: null,
+    rowValues: [],
+    rowValuesLoading: false,
+    rowValuesError: null,
+    rowValuesClientId: null,
+    rowValuesReqId: '',
+    filterFields: [],
+    filterFieldsLoading: false,
+    filterFieldsError: null,
+    filterFieldsReqId: '',
+    campaigns: [],
+    campaignsError: null,
+    sourceMapAvailable: false,
+    sourceOptions: [],
+    sourceCampaigns: [],
+    sources: [],
+    sourcesAvailable: false,
+    supervisorSends: [],
+    supervisorSendsTotal: 0,
+    supervisorSendsLoading: false,
+    supervisorSendsError: null,
+    supervisorSendsReqId: '',
+    supervisorAgents: [],
+    supervisorAgentsLoading: false,
+    supervisorAgentsError: null,
+    supervisorAgentsReqId: '',
+    supervisorAgentsKey: null,
+    supervisorSentHtml: null,
+    supervisorSentHtmlLoading: false,
+    supervisorSentHtmlError: null,
+    supervisorSentHtmlReqId: '',
+};
+
+// One definition of "forget the recipient's values", shared by `closeDrawer`, `popDrawer` (last
+// level) and `clearRowValues`, so the four fields can never be reset in three slightly different
+// ways. Takes the Immer draft; mutates it in place, exactly as the reducers do.
+const clearRowValuesState = (state: SendSearchState) => {
+    state.rowValues = [];
+    state.rowValuesClientId = null;
+    state.rowValuesLoading = false;
+    state.rowValuesError = null;
+    // Also invalidate the in-flight request: a response that lands after the drawer closed must not
+    // repopulate the slot for a recipient nobody is looking at any more.
+    state.rowValuesReqId = '';
+};
+
+// The twin of `clearRowValuesState` for the supervisor roster: "the drawer closed, forget the
+// roster". Runs on `closeDrawer` and on the LAST `popDrawer`, so a roster fetched for one
+// supervisor cannot flash under the next drawer, and a late response cannot repopulate a slot
+// nobody is looking at (the reqId is invalidated too).
+const clearSupervisorRosterState = (state: SendSearchState) => {
+    state.supervisorAgents = [];
+    state.supervisorAgentsKey = null;
+    state.supervisorAgentsLoading = false;
+    state.supervisorAgentsError = null;
+    state.supervisorAgentsReqId = '';
+};
+
+// The twin for the supervisor sent-HTML viewer: "the drawer/dialog closed, forget the mail". Runs on
+// closeDrawer, on the LAST popDrawer, and from the dialog's own onClose (clearSupervisorSentHtml), so a
+// mail fetched for one supervisor cannot flash under the next, and a late response cannot repopulate a
+// slot nobody is looking at (the reqId is invalidated too).
+const clearSupervisorSentHtmlState = (state: SendSearchState) => {
+    state.supervisorSentHtml = null;
+    state.supervisorSentHtmlLoading = false;
+    state.supervisorSentHtmlError = null;
+    state.supervisorSentHtmlReqId = '';
+};
+
+// ONE definition of "the result set just changed shape, so the page number is meaningless".
+//
+// Every filter-clause and sort reducer below calls it, and that is not defensive tidiness: page 4 of
+// a result set filtered down to 30 rows is EMPTY, and an empty grid is how this screen says "no
+// recipient matches" — so a forgotten reset does not look like a bug, it looks like an answer. The
+// existing `setFilters` (:163) already inlines the same rule; this is the shared spelling for the
+// reducers that cannot use it because they edit `Filters` structurally.
+//
+// Sort resets the page too. The rows on page 4 of an ASC sort are a different set of PEOPLE from the
+// rows on page 4 of a DESC sort, so keeping the index silently swaps the population under the
+// operator while the pager claims nothing moved.
+const resetPage = (state: SendSearchState) => { state.filters.PageIndex = 0; };
+
+export const sendSearchSlice = createSlice({
+    name: 'sendSearch',
+    initialState,
+    reducers: {
+        // Any filter change resets to page 0 EXCEPT an explicit page change — a filter edit that kept
+        // the page index would fetch page 4 of a 1-page result and render an empty grid that looks
+        // like "no matches".
+        setFilters: (state, action: { payload: Partial<SendSearchFilters>; type: string }) => {
+            state.filters = { ...state.filters, ...action.payload, PageIndex: 0 };
+        },
+        setPageIndex: (state, action: { payload: number; type: string }) => {
+            state.filters.PageIndex = Math.max(action.payload, 0);
+        },
+        setPageSize: (state, action: { payload: number; type: string }) => {
+            state.filters.PageSize = action.payload;
+            state.filters.PageIndex = 0;
+        },
+        clearFilters: (state) => {
+            // Channel and PageSize survive "נקה הכל": the channel is not a user filter in V1 (§8 puts
+            // a channel facet out of scope) and resetting the page size would fight the pager.
+            const keepChannel = state.filters.Channel;
+            const keepSize = state.filters.PageSize;
+            state.filters = { ...defaultSendSearchFilters(), Channel: keepChannel, PageSize: keepSize };
+        },
+        // ── column filters (CONTRACT §2) ──────────────────────────────────────────────────────
+        // Clauses are stored AS EDITED, half-built ones included: this slice holds "what is on
+        // screen", and `toSendSearchRequest` is the one place that decides what is complete enough
+        // to send. Storing only complete clauses would make a row the user is still typing into
+        // unrenderable.
+        setFilterClauses: (state, action: { payload: SendSearchFilterClause[]; type: string }) => {
+            state.filters.Filters = action.payload ?? [];
+            resetPage(state);
+        },
+        addFilterClause: (state, action: { payload: SendSearchFilterClause; type: string }) => {
+            state.filters.Filters.push(action.payload);
+            // The page resets even though a BLANK new clause changes no result yet: it will change
+            // them the moment a value is typed, and resetting at both ends is free while forgetting
+            // one end is an empty grid that reads as "no matches".
+            resetPage(state);
+        },
+        updateFilterClause: (state, action: { payload: { index: number; clause: SendSearchFilterClause }; type: string }) => {
+            const { index, clause } = action.payload;
+            // Bounds-checked rather than trusted: a stale index from a component that removed a row
+            // in the same tick would otherwise APPEND a clause at `Filters[7]` on a 3-item array,
+            // leaving holes that `filter(isClauseComplete)` walks straight into.
+            if (index < 0 || index >= state.filters.Filters.length) return;
+            state.filters.Filters[index] = clause;
+            resetPage(state);
+        },
+        removeFilterClause: (state, action: { payload: number; type: string }) => {
+            const index = action.payload;
+            if (index < 0 || index >= state.filters.Filters.length) return;
+            state.filters.Filters.splice(index, 1);
+            resetPage(state);
+        },
+        clearFilterClauses: (state) => {
+            state.filters.Filters = [];
+            resetPage(state);
+        },
+        // ── sort (CONTRACT §2) ────────────────────────────────────────────────────────────────
+        // `fieldKey: null` is the explicit "no user sort" state — the SP's own default order — and is
+        // NOT the same as sorting ascending by some field. `desc` is forced false alongside it so two
+        // "no sort" states can never differ.
+        setSort: (state, action: { payload: { fieldKey: string | null; desc: boolean }; type: string }) => {
+            const key = (action.payload?.fieldKey ?? '').trim();
+            state.filters.SortField = key.length > 0 ? key : null;
+            state.filters.SortDescending = key.length > 0 ? !!action.payload?.desc : false;
+            resetPage(state);
+        },
+        clearSort: (state) => {
+            state.filters.SortField = null;
+            state.filters.SortDescending = false;
+            resetPage(state);
+        },
+        // ── drawer stack (Mock-v3:341-356) ───────────────────────────────────────────────────
+        pushDrawer: (state, action: { payload: DrawerEntry; type: string }) => {
+            // Hard depth cap. The mock's stack is rollup → agent → message; a 4th level has no design
+            // and no back-label, so it is REFUSED rather than rendered as an unreachable state.
+            if (state.drawerStack.length >= MAX_DRAWER_DEPTH) return;
+            state.drawerStack.push(action.payload);
+        },
+        // Esc pops exactly ONE level; when only one level is left, popping closes the drawer
+        // (Mock-v3:353 `popD`).
+        popDrawer: (state) => {
+            state.drawerStack.pop();
+            // Popping the LAST level is a close, so the same cleanup runs. Popping an inner level is
+            // not: the level underneath is a different person and re-reads its own values on open.
+            // The supervisor roster is only cleared on a full close for the same reason the values
+            // are: popping agent → rollup returns to the SAME supervisor, whose roster still applies.
+            if (state.drawerStack.length === 0) {
+                clearRowValuesState(state);
+                clearSupervisorRosterState(state);
+                clearSupervisorSentHtmlState(state);
+            }
+        },
+        // Scrim click / ✕ closes ALL levels (Mock-v3:354 `closeD`).
+        closeDrawer: (state) => {
+            state.drawerStack = [];
+            // The values card is about ONE recipient. Left in the store, it is the next drawer's
+            // first paint — someone else's ID numbers and policy numbers under this person's name,
+            // for as long as the new fetch is in flight. Cleared here rather than only in the
+            // thunk's `pending`, because the next drawer may never fire a fetch at all (a row with
+            // no ClientID) and would then render the previous recipient's values indefinitely.
+            clearRowValuesState(state);
+            clearSupervisorRosterState(state);
+            clearSupervisorSentHtmlState(state);
+        },
+        clearProvenance: (state) => {
+            state.provenance = [];
+            state.provenanceCampaignId = null;
+            state.provenanceLoading = false;
+            state.provenanceError = null;
+        },
+        // The twin of `clearProvenance`, kept for callers that need to drop the values without
+        // touching the drawer stack. NOTE: unlike `clearProvenance` — which is exported but
+        // dispatched nowhere in the repo, so provenance is in practice only ever reset by the next
+        // fetch's `pending` — the row-values cleanup ALSO runs from `closeDrawer`/`popDrawer` above.
+        // Mirroring `clearProvenance` exactly would have produced a cleanup that never runs, and
+        // B.4 requires the values to be cleared when the drawer closes.
+        clearRowValues: (state) => {
+            clearRowValuesState(state);
+        },
+        // The twin of clearRowValues for the sent-HTML viewer: dispatched from EmailPreviewDialog's
+        // onClose so reopening the preview never flashes the previous supervisor's mail while the new
+        // fetch is in flight. (closeDrawer/popDrawer also clear it, for a full drawer close.)
+        clearSupervisorSentHtml: (state) => {
+            clearSupervisorSentHtmlState(state);
+        },
+    },
+    extraReducers: (builder) => {
+        // Search — only the latest request commits.
+        builder.addCase(searchSends.pending, (state, action: any) => {
+            state.searchReqId = action.meta.requestId;
+            state.loading = true;
+            state.error = null;
+        });
+        builder.addCase(searchSends.fulfilled, (state, action: any) => {
+            if (action.meta.requestId !== state.searchReqId) return;   // stale response
+            state.loading = false;
+            const data = action.payload?.Data;
+            if (action.payload?.StatusCode === 405) {
+                // The Search endpoint suppresses the WHOLE response when the sub-user carries
+                // eSubUserPermissions.HideRecipietns — that is the repo-wide convention (verified
+                // across 11 call sites; not one endpoint blanks PII columns and returns 200).
+                // Surfaced as its own state, not as a generic failure: "you are not allowed to see
+                // recipients" and "the search broke" are different facts, and showing the second for
+                // the first sends the operator debugging a working system.
+                state.items = [];
+                state.totalCount = 0;
+                state.error = 'PERMISSION_DENIED';
+            } else if (data) {
+                state.items = data.Items ?? [];
+                state.totalCount = data.TotalCount ?? 0;
+                // The source map travels WITH the rows and is replaced with them, never merged and
+                // never accumulated: it describes exactly this result set, and a stale entry from a
+                // previous search would put a source name on a row that did not come from it.
+                state.sources = data.Sources ?? [];
+                // Read from the FLAG, not from the list. `=== true` and not a truthy coercion, so an
+                // older API that omits the property lands on false rather than on undefined — the
+                // grid then renders no source line at all, instead of "unknown source" on every row.
+                state.sourcesAvailable = data.SourcesAvailable === true;
+                state.error = null;
+            } else {
+                // A 200 with no Data is a server-side failure that did not throw. Surfacing it as an
+                // error is the honest read; leaving the previous rows on screen under new filters is
+                // the invisible failure this whole feature exists to prevent.
+                state.items = [];
+                state.totalCount = 0;
+                state.error = action.payload?.Message ?? 'SEARCH_FAILED';
+            }
+        });
+        builder.addCase(searchSends.rejected, (state, action: any) => {
+            if (action.meta.requestId !== state.searchReqId) return;
+            state.loading = false;
+            state.items = [];
+            state.totalCount = 0;
+            state.error = action.payload?.error ?? action.error?.message ?? 'SEARCH_FAILED';
+        });
+
+        // Provenance (drawer) — its own loading flag so it never blanks the grid behind it.
+        builder.addCase(getSendProvenance.pending, (state, action: any) => {
+            state.provenanceLoading = true;
+            state.provenanceCampaignId = action.meta.arg?.campaignId ?? null;
+            state.provenanceReqId = action.meta.requestId;     // R2-01
+            state.provenance = [];
+            state.provenanceError = null;
+        });
+        builder.addCase(getSendProvenance.fulfilled, (state, action: any) => {
+            if (action.meta.requestId !== state.provenanceReqId) return;   // stale response — R2-01
+            state.provenanceLoading = false;
+            state.provenance = action.payload?.Data ?? [];
+            // A 200 whose body carries no `Data` at all is a failure that did not throw — treated as
+            // one here, for the same reason `searchSends.fulfilled` does. An empty ARRAY, by contrast,
+            // is the normal, meaningful answer for a pre-provenance send and leaves the flag null.
+            state.provenanceError = action.payload && 'Data' in action.payload && action.payload.Data != null
+                ? null
+                : (action.payload?.Message ?? 'PROVENANCE_FAILED');
+        });
+        builder.addCase(getSendProvenance.rejected, (state, action: any) => {
+            // R2-01: guarded for the mirror reason — a STALE failure belonging to the campaign the
+            // operator already navigated away from would otherwise wipe the current campaign's
+            // correct history and paint error.loadFailed over it.
+            if (action.meta.requestId !== state.provenanceReqId) return;
+            state.provenanceLoading = false;
+            state.provenance = [];
+            state.provenanceError = action.payload?.error ?? action.error?.message ?? 'PROVENANCE_FAILED';
+        });
+
+        // Row values (drawer) — same three-case shape as provenance, same reasons.
+        builder.addCase(getSendRowValues.pending, (state, action: any) => {
+            state.rowValuesLoading = true;
+            state.rowValuesClientId = action.meta.arg?.clientId ?? null;
+            state.rowValuesReqId = action.meta.requestId;
+            // Cleared on PENDING, not only on fulfilled: the previous recipient's values must not
+            // stay on screen under the new recipient's name while the request is in flight.
+            state.rowValues = [];
+            state.rowValuesError = null;
+        });
+        builder.addCase(getSendRowValues.fulfilled, (state, action: any) => {
+            // Stale response: a slower request for a PREVIOUS recipient landing after a newer one.
+            // Must return before touching rowValues — writing them here would paint one recipient's
+            // values under another's name and rowValuesClientId would not catch it (see :71).
+            if (action.meta.requestId !== state.rowValuesReqId) return;
+            state.rowValuesLoading = false;
+            if (action.payload?.StatusCode === 405) {
+                // eSubUserPermissions.HideRecipietns. This endpoint returns raw recipient data, so it
+                // is gated where Provenance is not (B.3). Surfaced as its own value rather than as a
+                // generic failure: "you may not see recipient data" and "the request broke" are
+                // different facts, and the card must not tell the operator to go debug a working
+                // system. It is emphatically NOT the empty branch — that one asserts something about
+                // the DATA, and we were told nothing about the data.
+                state.rowValues = [];
+                state.rowValuesError = 'PERMISSION_DENIED';
+                return;
+            }
+            state.rowValues = action.payload?.Data ?? [];
+            // A 200 whose body carries no `Data` at all is a failure that did not throw. An empty
+            // ARRAY is a legitimate answer (the campaign has no token mapping, B.1) and leaves the
+            // flag null so the card can say so in words.
+            state.rowValuesError = action.payload && 'Data' in action.payload && action.payload.Data != null
+                ? null
+                : (action.payload?.Message ?? 'ROWVALUES_FAILED');
+        });
+        builder.addCase(getSendRowValues.rejected, (state, action: any) => {
+            // Same stale guard as fulfilled: a failed OLD request must not clear the values of the
+            // recipient the user is actually looking at, nor flip the card into an error state.
+            if (action.meta.requestId !== state.rowValuesReqId) return;
+            state.rowValuesLoading = false;
+            state.rowValues = [];
+            state.rowValuesError = action.payload?.error ?? action.error?.message ?? 'ROWVALUES_FAILED';
+        });
+
+        // Filter fields — same three-case shape and same stale guard as row values above.
+        builder.addCase(getSendSearchFilterFields.pending, (state, action: any) => {
+            state.filterFieldsLoading = true;
+            state.filterFieldsReqId = action.meta.requestId;
+            state.filterFieldsError = null;
+            // The PREVIOUS list is deliberately LEFT IN PLACE while the new one is in flight, unlike
+            // rowValues (:293) which is cleared. Opposite reasons, both about not lying: row values
+            // are one person's data and showing them under another person's name is a false claim,
+            // whereas the field list is a menu — blanking it mid-refresh would collapse every open
+            // filter row's field selector to "unknown field" and read as "your filters were deleted".
+            // Any clause pointing at a field that has genuinely disappeared is rejected by the SP,
+            // which is the correct authority for that.
+            //
+            // `campaigns` is left in place for the same reason and one more: the picker's VALUE is a
+            // set of ids, and blanking the options mid-refresh would leave every ticked checkbox
+            // pointing at an option that no longer exists — MUI would drop the chips and the user
+            // would watch their selection erase itself on every date change.
+            state.campaignsError = null;
+        });
+        builder.addCase(getSendSearchFilterFields.fulfilled, (state, action: any) => {
+            if (action.meta.requestId !== state.filterFieldsReqId) return;   // stale response
+            state.filterFieldsLoading = false;
+            if (action.payload?.StatusCode === 405) {
+                // eSubUserPermissions.HideRecipietns — the field list describes recipient columns, so
+                // it is gated like RowValues is. Its own value, not a generic failure: "you may not
+                // see this" and "this broke" are different facts (see :302-312).
+                state.filterFields = [];
+                state.campaigns = [];
+                state.filterFieldsError = 'PERMISSION_DENIED';
+                state.campaignsError = 'PERMISSION_DENIED';
+                // The source map goes with them. A user who may not see recipient columns must
+                // not be handed a menu that ticks campaigns on their behalf either — and the
+                // map is derived from the same gated catalog call.
+                state.sourceMapAvailable = false;
+                state.sourceOptions = [];
+                state.sourceCampaigns = [];
+                return;
+            }
+            // 🔴 `Data` IS NOW AN OBJECT, not an array: { Fields, Campaigns }. Both halves ride on one
+            // request so the catalog SP — which aggregates over dbo.CampaignSendingLog (395M rows) to
+            // build #Camp — runs ONCE per page load instead of twice.
+            const data = action.payload?.Data;
+            state.filterFields = data?.Fields ?? [];
+            // A 200 whose body carries no `Data` at all is a failure that did not throw. An empty
+            // ARRAY is a legitimate answer — an account whose sources have no filterable columns —
+            // and leaves the flag null so the bar can say so in words instead of showing an error.
+            state.filterFieldsError = action.payload && 'Data' in action.payload && data != null
+                ? null
+                : (action.payload?.Message ?? 'FILTERFIELDS_FAILED');
+
+            // The campaign list is judged SEPARATELY, and the distinction is a real deployment state,
+            // not defensive noise: against a server where 51-CatalogSP-Campaigns.sql has not run, the
+            // SP returns one result set, the C# leaves `Campaigns` an empty array, and `Fields`
+            // arrives perfectly. `Campaigns` ABSENT (undefined) means the server cannot supply the
+            // list; `Campaigns` EMPTY means it supplied it and there are genuinely none in scope.
+            // Collapsing the two would either hide a broken picker or accuse a working one.
+            state.campaigns = data?.Campaigns ?? [];
+            state.campaignsError = data && Array.isArray(data.Campaigns)
+                ? null
+                : (state.filterFieldsError ?? 'CAMPAIGNS_UNAVAILABLE');
+            // The source map (script 54). Read the FLAG, never the list length — the server
+            // derives it from table presence precisely so that "script 54 has not run" and
+            // "no source sent in this window" stay distinguishable. `=== true` rather than a
+            // truthy test for the same reason `sourcesAvailable` uses it: an absent field on
+            // an older API must resolve to false, not undefined.
+            state.sourceMapAvailable = data?.SourceMapAvailable === true;
+            state.sourceOptions = data?.Sources ?? [];
+            state.sourceCampaigns = data?.SourceCampaigns ?? [];
+        });
+        builder.addCase(getSendSearchFilterFields.rejected, (state, action: any) => {
+            if (action.meta.requestId !== state.filterFieldsReqId) return;
+            state.filterFieldsLoading = false;
+            // Cleared HERE but not on pending: a failed fetch means we no longer know what the menu
+            // contains, and offering a stale menu next to an error message invites the operator to
+            // build a clause against a field we cannot confirm exists.
+            state.filterFields = [];
+            state.filterFieldsError = action.payload?.error ?? action.error?.message ?? 'FILTERFIELDS_FAILED';
+            // Cleared for the same reason and with the same force: a picker still offering yesterday's
+            // campaigns beside a failed load invites the operator to tick a box we cannot confirm is
+            // still in scope, and the resulting empty grid reads as "nothing was sent".
+            state.campaigns = [];
+            state.campaignsError = action.payload?.error ?? action.error?.message ?? 'CAMPAIGNS_FAILED';
+            // Cleared with the campaigns, and this one matters more than it looks: the source
+            // action ticks CAMPAIGN IDS, so a map that outlives the campaign list would let one
+            // click tick ids the picker can no longer name — bare `#4821` chips against a search
+            // the operator cannot read back. Availability goes false too, so the action HIDES
+            // rather than offering an expansion we can no longer honour.
+            state.sourceMapAvailable = false;
+            state.sourceOptions = [];
+            state.sourceCampaigns = [];
+        });
+
+        // Supervisor sends — same three-case shape + 405 handling + stale guard as `searchSends`.
+        builder.addCase(searchSupervisorSends.pending, (state, action: any) => {
+            state.supervisorSendsReqId = action.meta.requestId;
+            state.supervisorSendsLoading = true;
+            state.supervisorSendsError = null;
+        });
+        builder.addCase(searchSupervisorSends.fulfilled, (state, action: any) => {
+            if (action.meta.requestId !== state.supervisorSendsReqId) return;   // stale response
+            state.supervisorSendsLoading = false;
+            const data = action.payload?.Data;
+            if (action.payload?.StatusCode === 405) {
+                // SupervisorEmail is recipient PII, so this endpoint is gated exactly like Search
+                // (HideRecipietns → 405). Its own value, not a generic failure — see searchSends.
+                state.supervisorSends = [];
+                state.supervisorSendsTotal = 0;
+                state.supervisorSendsError = 'PERMISSION_DENIED';
+            } else if (data) {
+                state.supervisorSends = data.Items ?? [];
+                state.supervisorSendsTotal = data.TotalCount ?? 0;
+                state.supervisorSendsError = null;
+            } else {
+                // A 200 with no Data is a failure that did not throw — surfaced, never left as stale
+                // rows under a new rollup (same reasoning as searchSends.fulfilled).
+                state.supervisorSends = [];
+                state.supervisorSendsTotal = 0;
+                state.supervisorSendsError = action.payload?.Message ?? 'SUPERVISOR_SENDS_FAILED';
+            }
+        });
+        builder.addCase(searchSupervisorSends.rejected, (state, action: any) => {
+            if (action.meta.requestId !== state.supervisorSendsReqId) return;
+            state.supervisorSendsLoading = false;
+            state.supervisorSends = [];
+            state.supervisorSendsTotal = 0;
+            state.supervisorSendsError = action.payload?.error ?? action.error?.message ?? 'SUPERVISOR_SENDS_FAILED';
+        });
+
+        // Supervisor agents (roster) — same three-case shape + stale guard as provenance/rowValues.
+        builder.addCase(getSupervisorAgents.pending, (state, action: any) => {
+            state.supervisorAgentsLoading = true;
+            state.supervisorAgentsReqId = action.meta.requestId;
+            state.supervisorAgentsKey = action.meta.arg
+                ? `${action.meta.arg.requestId}-${action.meta.arg.supervisorEmail}` : null;
+            // Cleared on PENDING so the previous supervisor's roster is never shown under the new one
+            // while the request is in flight (same rule as rowValues).
+            state.supervisorAgents = [];
+            state.supervisorAgentsError = null;
+        });
+        builder.addCase(getSupervisorAgents.fulfilled, (state, action: any) => {
+            if (action.meta.requestId !== state.supervisorAgentsReqId) return;   // stale response
+            state.supervisorAgentsLoading = false;
+            if (action.payload?.StatusCode === 405) {
+                // The roster is recipient data (names + emails), so it is gated like RowValues.
+                state.supervisorAgents = [];
+                state.supervisorAgentsError = 'PERMISSION_DENIED';
+                return;
+            }
+            state.supervisorAgents = action.payload?.Data ?? [];
+            // A 200 whose body carries no `Data` at all is a failure that did not throw. An empty
+            // ARRAY is a legitimate answer (a rollup that covered nobody) and leaves the flag null.
+            state.supervisorAgentsError = action.payload && 'Data' in action.payload && action.payload.Data != null
+                ? null
+                : (action.payload?.Message ?? 'SUPERVISOR_AGENTS_FAILED');
+        });
+        builder.addCase(getSupervisorAgents.rejected, (state, action: any) => {
+            if (action.meta.requestId !== state.supervisorAgentsReqId) return;
+            state.supervisorAgentsLoading = false;
+            state.supervisorAgents = [];
+            state.supervisorAgentsError = action.payload?.error ?? action.error?.message ?? 'SUPERVISOR_AGENTS_FAILED';
+        });
+
+        // Supervisor sent-HTML (the srcDoc viewer) — same three-case shape + 405 handling + stale guard
+        // as the roster above.
+        builder.addCase(getSupervisorSentEmailHtml.pending, (state, action: any) => {
+            state.supervisorSentHtmlLoading = true;
+            state.supervisorSentHtmlReqId = action.meta.requestId;
+            // Cleared on PENDING so the previous supervisor's mail is never shown while the new fetch is
+            // in flight (same rule as rowValues / the roster).
+            state.supervisorSentHtml = null;
+            state.supervisorSentHtmlError = null;
+        });
+        builder.addCase(getSupervisorSentEmailHtml.fulfilled, (state, action: any) => {
+            if (action.meta.requestId !== state.supervisorSentHtmlReqId) return;   // stale response
+            state.supervisorSentHtmlLoading = false;
+            if (action.payload?.StatusCode === 405) {
+                // The sent mail is recipient data, so it is gated like the roster (HideRecipietns).
+                state.supervisorSentHtml = null;
+                state.supervisorSentHtmlError = 'PERMISSION_DENIED';
+                return;
+            }
+            const data = action.payload?.Data;
+            // A 200 whose body carries no Data object at all is a failure that did not throw. Html === null
+            // IS a legitimate answer (unowned / unknown id, or no stored HTML) and leaves the error flag
+            // null — the dialog renders "לא זמין" for it, never an error.
+            if (action.payload && 'Data' in action.payload && data != null) {
+                state.supervisorSentHtml = data.Html ?? null;
+                state.supervisorSentHtmlError = null;
+            } else {
+                state.supervisorSentHtml = null;
+                state.supervisorSentHtmlError = action.payload?.Message ?? 'SUPERVISOR_SENT_HTML_FAILED';
+            }
+        });
+        builder.addCase(getSupervisorSentEmailHtml.rejected, (state, action: any) => {
+            if (action.meta.requestId !== state.supervisorSentHtmlReqId) return;
+            state.supervisorSentHtmlLoading = false;
+            state.supervisorSentHtml = null;
+            state.supervisorSentHtmlError = action.payload?.error ?? action.error?.message ?? 'SUPERVISOR_SENT_HTML_FAILED';
+        });
+    }
+});
+
+export const {
+    setFilters, setPageIndex, setPageSize, clearFilters,
+    setFilterClauses, addFilterClause, updateFilterClause, removeFilterClause, clearFilterClauses,
+    setSort, clearSort,
+    pushDrawer, popDrawer, closeDrawer, clearProvenance, clearRowValues, clearSupervisorSentHtml,
+} = sendSearchSlice.actions;
+
+export default sendSearchSlice.reducer;

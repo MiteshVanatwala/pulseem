@@ -83,6 +83,11 @@ import SurveyDetails from './screens/LandingPages/Survey/SurveyDetails';
 import WebformSummary from './screens/LandingPages/Wizard/WebformSummary';
 import HtmlPreview from './screens/Preview/HtmlPreview';
 import FileUploads from './screens/Groups/FileUploads/FileUploads';
+import DataSources from './screens/DataSources/DataSources';
+import DataSourceView from './screens/DataSources/DataSourceView';
+import SmartSendScreen from './screens/SmartSend/SmartSendScreen';
+import SmartSendPicker from './screens/SmartSend/SmartSendPicker';
+import SendSearchScreen from './screens/SendSearch/SendSearchScreen';
 import AmpRegistration from './screens/Newsletter/AMP/AmpRegistration';
 import AffiliateProgram from './screens/Affiliate/Management/AffiliateProgram';
 import AccountUsers from './screens/AccountUsers/AccountUsers';
@@ -635,6 +640,36 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
         path="/Pulseem/:aspxPage"
         element={<LegacyPageWild classes={classes} />}
       />
+      {accountFeatures && accountFeatures?.indexOf(PulseemFeatures.DATA_SOURCES) > -1 && <Route
+        exact
+        path={`${sitePrefix}DataSources`}
+        element={<DataSources classes={classes} />}
+      />}
+      {accountFeatures && accountFeatures?.indexOf(PulseemFeatures.DATA_SOURCES) > -1 && <Route
+        exact
+        path={`${sitePrefix}DataSources/View/:id`}
+        element={<DataSourceView classes={classes} />}
+      />}
+      {userRoles?.AllowSend && accountFeatures && accountFeatures?.indexOf(PulseemFeatures.DATA_SOURCES) > -1 && <Route
+        exact
+        path={`${sitePrefix}Campaigns/SmartSend/:id`}
+        element={<SmartSendScreen classes={classes} />}
+      />}
+      {userRoles?.AllowSend && accountFeatures && accountFeatures?.indexOf(PulseemFeatures.DATA_SOURCES) > -1 && <Route
+        exact
+        path={`${sitePrefix}SmartSend`}
+        element={<SmartSendPicker classes={classes} />}
+      />}
+      {/* Deliberately NOT gated on AllowSend — this is a read-only report and supervisors/support
+          need it without send permission. HideRecipients IS gated: SendSearchController answers the
+          Search action with 405 for that permission because the grid returns recipient PII, so the
+          route would only ever open a page that cannot search. Must stay identical to the sidebar
+          gate in routes.tsx (P3.2). */}
+      {accountFeatures && accountFeatures?.indexOf(PulseemFeatures.DATA_SOURCES) > -1 && !userRoles?.HideRecipients && <Route
+        exact
+        path={`${sitePrefix}SendSearch`}
+        element={<SendSearchScreen classes={classes} />}
+      />}
       <Route
         path="*" element={<PageNotFound classes={classes} />}
       />
