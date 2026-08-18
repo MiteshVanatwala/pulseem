@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
   Grid, Typography, Box, Button, CircularProgress, TextField,
@@ -78,6 +78,20 @@ const WidgetListPage = ({ classes }: { classes?: any }) => {
   const [widgets, setWidgets] = useState<WidgetSummary[]>([]);
   const [createOpen, setCreateOpen] = useState(false);
   const [newDomain, setNewDomain] = useState('');
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // The Dashboard's "New Widget" quick action links to /Widgets?action=create so it
+  // lands on creating a widget rather than on the list. Consume the parameter once
+  // and strip it, otherwise a refresh — or a back-navigation after cancelling —
+  // reopens the dialog with no way to dismiss it for good.
+  useEffect(() => {
+    if (searchParams.get('action') !== 'create') return;
+    setCreateOpen(true);
+    const rest = new URLSearchParams(searchParams);
+    rest.delete('action');
+    setSearchParams(rest, { replace: true });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
 
   useEffect(() => {
     let cancelled = false;

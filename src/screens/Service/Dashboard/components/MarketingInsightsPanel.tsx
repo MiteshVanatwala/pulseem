@@ -19,7 +19,7 @@ const MarketingInsightsPanel = ({ data, loading }: Props) => {
           <span className="svc-panel-icon" style={{ background: '#f1ecfe', color: '#7c3aed' }}>
             <TrendingUpIcon />
           </span>
-          <h3 className="svc-panel-title">{t('dashboard_marketing_insights', 'Marketing Insights')}</h3>
+          <h3 className="svc-panel-title">{t('common.dashboard_marketing_insights', 'Marketing Insights')}</h3>
         </div>
       </div>
 
@@ -28,19 +28,19 @@ const MarketingInsightsPanel = ({ data, loading }: Props) => {
       ) : data ? (
         <>
           <div className="svc-kv">
-            <span className="svc-kv-label">{t('dashboard_total_contacts', 'Total Contacts')}</span>
+            <span className="svc-kv-label">{t('common.dashboard_total_contacts', 'Total Contacts')}</span>
             <span className="svc-kv-value">{data.totalContacts}</span>
           </div>
           <div className="svc-kv">
-            <span className="svc-kv-label">{t('dashboard_this_week', 'This Week')}</span>
+            <span className="svc-kv-label">{t('common.dashboard_this_week', 'This Week')}</span>
             <span className="svc-kv-value">{data.thisWeek}</span>
           </div>
           <div className="svc-kv">
-            <span className="svc-kv-label">{t('dashboard_this_month', 'This Month')}</span>
+            <span className="svc-kv-label">{t('common.dashboard_this_month', 'This Month')}</span>
             <span className="svc-kv-value">{data.thisMonth}</span>
           </div>
           <div className="svc-kv">
-            <span className="svc-kv-label">{t('dashboard_conversion_rate', 'Conversion Rate')}</span>
+            <span className="svc-kv-label">{t('common.dashboard_conversion_rate', 'Conversion Rate')}</span>
             <span className="svc-kv-value">{data.conversionRate}%</span>
           </div>
         </>

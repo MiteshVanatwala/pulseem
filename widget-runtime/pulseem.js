@@ -36,14 +36,39 @@
     return found;
   }
 
-  var queued = readQueue();
+  // The directory this file was served from — the iframe and stylesheet live beside
+// it. Read immediately: document.currentScript is null by the time async callbacks
+// run, and the embed snippet loads this file with async=1.
+var SELF_SRC = (function () {
+  try {
+    if (document.currentScript && document.currentScript.src) return document.currentScript.src;
+    // Fallback for browsers/paths where currentScript is unavailable.
+    var tags = document.getElementsByTagName('script');
+    for (var i = tags.length - 1; i >= 0; i--) {
+      if (tags[i].src && tags[i].src.indexOf('pulseem.js') !== -1) return tags[i].src;
+    }
+  } catch (e) {}
+  return '';
+})();
+
+function scriptDir() {
+  if (!SELF_SRC) return '';
+  return SELF_SRC.replace(/[?#].*$/, '').replace(/\/[^/]*$/, '');
+}
+
+var queued = readQueue();
   var CONFIG = window.PulseemWidgetConfig || queued.config || {};
   var WIDGET_ID = window.PulseemWidgetID || CONFIG.widgetId || queued.widgetId;
 
   // Where to fetch config and post messages. Overridable so the widget can be
   // pointed at a local dev server without editing this file.
   var API_BASE = (CONFIG.apiBase || 'https://api.pulseem.com').replace(/\/$/, '');
-  var ASSET_BASE = (CONFIG.assetBase || 'https://cdn.pulseem.com/widget/v1').replace(/\/$/, '');
+  // Default to the directory this script was served from, so the same file works on
+// stage, on production and behind any CDN without a rebuild. Hardcoding the
+// production CDN meant a stage deploy silently pulled the iframe from production.
+// document.currentScript is unavailable to async scripts once loading finishes, so
+// it is captured at parse time above.
+var ASSET_BASE = (CONFIG.assetBase || scriptDir() || 'https://cdn.pulseem.com/widget/v1').replace(/\/$/, '');
   var SOCKET_URL = CONFIG.socketUrl || '';
 
   var BUBBLE_SIZE = 60;

@@ -41,7 +41,7 @@ import store from '../../redux/store';
 // This is visibility, not security. The API is unguarded, so a determined user
 // could still call the endpoints directly — the goal is to keep unfinished UI
 // out of customers' way.
-const CHAT_WIDGET_PREVIEW_USER = 'pulseem';
+const CHAT_WIDGET_PREVIEW_USER = 'pulseemmeta';
 
 export const isChatWidgetPreviewUser = (): boolean => {
   try {
