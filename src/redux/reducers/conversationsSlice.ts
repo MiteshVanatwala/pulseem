@@ -9,8 +9,10 @@ import {
 } from '../../screens/Service/Conversations/mockData';
 
 // ⚠️ PREVIEW FLAG — true = use local mock data (no backend needed); false = call the
-// real Service/* endpoints. Flip to false once the Service backend is deployed.
-const USE_MOCK = true;
+// real Service/* endpoints. The Service backend (ServiceController, PR-2455) is now
+// on the branch, so this runs against the real API; flip back to true only to work
+// the UI without a backend.
+const USE_MOCK = false;
 
 // The Service backend (ServiceController) returns `JsonConvert.SerializeObject(...)`,
 // i.e. a double-encoded JSON string (same as WidgetController), so axios hands back
@@ -19,15 +21,26 @@ const USE_MOCK = true;
 const unwrap = <T = any>(data: any): { StatusCode: number; Message: string; Data: T } =>
   typeof data === 'string' ? JSON.parse(data) : data;
 
+// Ceiling on a single conversations fetch. Matches the proc's default; raise both
+// together, or add paging UI, if an account outgrows it.
+export const CONVERSATION_PAGE_SIZE = 200;
+
 const mockDelay = <T = any>(data: T, ms = 200): Promise<T> => new Promise((r) => setTimeout(() => r(data), ms));
 
 export const getConversations = createAsyncThunk(
   'Service/GetConversations',
   async (filters: IConversationListFilter | undefined) => {
     if (USE_MOCK) return mockDelay(MOCK_CONVERSATIONS);
-    const body = filters
-      ? { status: filters.status === 'all' ? null : filters.status, search: filters.search || null, agentId: filters.agentId }
-      : {};
+    // pageSize is sent explicitly rather than left to the proc default so the ceiling
+    // is visible here, where the list is consumed. There is no paging UI yet: this is
+    // the most recent PAGE_SIZE conversations, not necessarily all of them.
+    const body: any = { pageNumber: 1, pageSize: CONVERSATION_PAGE_SIZE };
+    if (filters) {
+      body.status = filters.status === 'all' ? null : filters.status;
+      body.search = filters.search || null;
+      body.agentId = filters.agentId;
+      body.channel = filters.channel && filters.channel !== 'all' ? filters.channel : null;
+    }
     const res = await PulseemReactInstance.post('Service/GetConversations', body);
     const env = unwrap<IConversation[]>(res.data);
     return env.Data || [];

@@ -14,7 +14,10 @@ export type ActiveHours = 'custom' | '24_7';
 export type AIStatus = 'enabled' | 'disabled';
 
 export interface IPerformanceInsights {
-  avgResponseMinutes: number; // placeholder (ticket: hardcoded 2.3 until timestamp data exists)
+  // First-response time, computed from ServiceMessages.SentAt. Null when no
+  // conversation has been answered yet — the panel shows a dash rather than a 0,
+  // which would read as "instant replies".
+  avgResponseMinutes: number | null;
   resolutionRate: number; // resolved / total * 100
   widgetStatus: WidgetStatus;
   activeHours: ActiveHours;

@@ -26,3 +26,7 @@ yarn-error.log*
 yarn.lock
 package-lock.json
 .history 
+
+# Staged from widget-runtime/ by scripts/stage-widget-runtime.mjs on every build
+# and start. Generated, never edited by hand — change widget-runtime/ instead.
+/public/widget

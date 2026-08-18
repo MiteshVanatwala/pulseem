@@ -54,6 +54,10 @@ export interface IConversationListFilter {
   status: ConversationStatus | 'all';
   search: string;
   agentId: number | null;
+  // Which inbox this list is for. Omitted/'all' returns every channel; the widget
+  // inbox passes 'widget' so it cannot show WhatsApp threads once those also live
+  // in ServiceConversations.
+  channel?: ConversationChannel | 'all';
 }
 
 // new = blue, open = orange, resolved = green, archived = gray
