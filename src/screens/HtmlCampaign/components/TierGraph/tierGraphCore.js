@@ -356,7 +356,14 @@ export const buildLink = (state) => {
     })),
   };
 
+  // `c` is the product's existing editor/recipient discriminator, already load-bearing for the pie
+  // and roundedbar graphs on the same endpoint: Scripts/global.js emits it into every graph URL,
+  // and the sender and PreviewCampaign.aspx.cs both rewrite the literal to the real ClientID
+  // unconditionally before the image is ever fetched for a person. The server keeps the design-time
+  // sample ONLY while the literal survives; a real id — or no `c` at all — is a recipient and gets 0.
+  // POSITION: kept ahead of the pN params, matching how global.js orders it for the pie graphs.
   const url = TIER_GRAPH_ENDPOINT + '?gt=stairs&cfg=' + b64url(JSON.stringify(cfg))
+    + '&c=ClientIDReplaceFromEditor'
     + (params.length ? '&' + params.join('&') : '');
   const imgTag = '<img src="' + url + '" alt="גרף התקדמות" width="' + state.width + '" />';
   return { url, imgTag };
@@ -392,8 +399,18 @@ export const parseTierGraphUrl = (url) => {
     // height slot -> { t, s }
     const geo = (slot) => {
       if (slot && slot.dyn) {
-        if (params[slot.dyn] != null && params[slot.dyn] !== '') return { t: params[slot.dyn], s: slot.s };
+        const raw = params[slot.dyn];
+        const has = raw != null && raw !== '';
+        // A URL copied out of a SENT email carries ONE recipient's own value in pN (e.g. '35000'),
+        // not a token. Importing it verbatim made buildLink emit `{ v: '35000' }` — a STATIC slot,
+        // which the server returns at its `v != null` line, UPSTREAM of every policy fix there —
+        // turning one agent's personal figure into a hard-coded constant for the whole campaign.
+        // Recover the original token from slot.n, where buildLink stored it for exactly this kind
+        // of recovery. A MIXED token ('בונוס ##X##') has no `n`, so it clears VISIBLY — an empty
+        // amount field in the editor — rather than silently keeping a stranger's number.
+        if (has && isTok(raw)) return { t: raw, s: slot.s };
         if (slot.n) return { t: '##' + slot.n + '##', s: slot.s }; // recover a pure token from a truncated URL
+        if (has) return { t: '', s: slot.s };
       }
       return { t: String(slot && slot.v != null ? slot.v : ''), s: undefined };
     };
