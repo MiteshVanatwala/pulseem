@@ -1,0 +1,960 @@
+import React, { useEffect, useState, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useParams, useSearchParams } from 'react-router-dom';
+import { Box, LinearProgress, Typography, Button, Snackbar, CircularProgress, Dialog } from '@material-ui/core';
+import { Refresh } from '@material-ui/icons';
+import { useTranslation } from 'react-i18next';
+import clsx from 'clsx';
+import DefaultScreen from '../DefaultScreen';
+import useRedirect from '../../helpers/Routes/Redirect';
+import { sitePrefix } from '../../config';
+import { PulseemFeatures } from '../../model/PulseemFields/Fields';
+import {
+    getMapping, setCampaignContext, setTokenMapping, setBusinessColumn,
+    setMapping, fillAndSummarize, setEmailSendSettingsWrapped, loadSourceColumns,
+    getSendSummaryWrapped, getEmailSendSettingsWrapped, selectUnmappedTokens, selectHasMappingWork,
+} from '../../redux/reducers/smartSendSlice';
+import InlineBanner from './components/InlineBanner';
+import SourcePicker from './components/SourcePicker';
+import TokenMappingTable from './components/TokenMappingTable';
+import BusinessColumnsPicker from './components/BusinessColumnsPicker';
+import StaleVersionBanner from './components/StaleVersionBanner';
+import MappingMismatchBanner from './components/MappingMismatchBanner';
+import UnmappedTokensWarning from './components/UnmappedTokensWarning';
+import SmartSendPreview from './components/SmartSendPreview';
+import SendSummaryDialog from './components/SendSummaryDialog';
+import TestSendDialog from './components/TestSendDialog';
+
+// Smart-Send screen (מסך השליחה החכמה). Wizard: SourcePicker →
+// TokenMappingTable → BusinessColumnsPicker → Preview → Summary → Send (§11/§13).
+// Route: `${sitePrefix}Campaigns/SmartSend/:id` (+ optional ?dataSourceId= from entry A).
+const ERR_KEY: { [k: string]: string } = {
+    EDIT_BLOCKED_DURING_SEND: 'editBlockedDuringSend', VIEW_ONLY: 'viewOnlyBlocked',
+    GROUP_MERGE_LIMIT: 'groupMergeLimit', DATA_INCORRECT: 'dataIncorrect',
+    CHANNEL_NOT_SUPPORTED: 'channelNotSupported', NOT_FOUND: 'notFound',
+};
+
+const SmartSendScreen = ({ classes }: any) => {
+    const dispatch = useDispatch();
+    const { t } = useTranslation();
+    const Redirect = useRedirect();
+    const { id } = useParams();
+    const [searchParams] = useSearchParams();
+    const dataSourceId = searchParams.get('dataSourceId');
+    // Entry A ?dataSourceId — a garbage param must land as null, never as a bogus id.
+    // A NaN guard alone is NOT enough: `Number('')` is 0 (and `Number(' ')` is 0 too), so
+    // `?dataSourceId=` — which the picker emits whenever its source chip is cleared, and
+    // which any hand-edited URL can produce — would pass the guard and store 0. SourcePicker
+    // then treats a stored id as "an id to preselect". Reject anything <= 0 as well, so the
+    // only values that reach the store are real, positive source ids.
+    // Hoisted out of the load effect because the back-to-picker link in the header has to hand
+    // the SAME sanitised id back to the picker.
+    const dsNum = dataSourceId != null ? Number(dataSourceId) : NaN;
+    const parsedDsId = !Number.isNaN(dsNum) && dsNum > 0 ? dsNum : null;
+
+    const campaignId = Number(id);
+    const { accountFeatures } = useSelector((state: any) => state.common);
+    const isRTL = useSelector((state: any) => state.core && state.core.isRTL);
+    const smartSend = useSelector((state: any) => state.smartSend);
+    const unmapped = useSelector(selectUnmappedTokens);
+    // The campaign identity shown in the header. It comes from the newsletter summary the reused
+    // pipeline hydrates (getSendSummaryWrapped, dispatched from openSummary) — deliberately NO
+    // extra fetch is added here, so until that lands the line is simply absent rather than a
+    // placeholder. `newsletterSendSummary` is session-sticky (newsletterSlice.js:263 seeds it to
+    // [] and nothing ever clears it), so a summary left over from a DIFFERENT campaign would
+    // otherwise label this screen with the wrong name — the whole point of the label is that the
+    // user can trust it, so it renders only when the hydrated CampaignID is this campaign's.
+    const sendSummary = useSelector((state: any) => state.newsletter && state.newsletter.newsletterSendSummary);
+    const campaignName: string | null = sendSummary && sendSummary.CampaignID === campaignId
+        ? (sendSummary.CampaignName || null)
+        : null;
+
+    const currentSourceId = smartSend.dataSource?.DataSourceID ?? smartSend.dataSourceId ?? null;
+    const hasColumns = smartSend.columns.length > 0;
+
+    // ── what the SERVER holds, and whether the table still shows it ─────────────────────────────
+    // `savedMapping` is five scalars written only by the server round trips; it deliberately
+    // survives selectSource (smartSendSlice.ts, see the comment there). The campaignId equality is
+    // required, not defensive: clearSmartSend has zero dispatch sites, so this slice outlives a
+    // campaign-to-campaign navigation and a descriptor left by the PREVIOUS campaign must never
+    // label this one. Same read-site pattern as campaignName above.
+    const savedRaw = smartSend.savedMapping;
+    const saved = savedRaw && savedRaw.campaignId === campaignId ? savedRaw : null;
+    // Gated on workingIsFromServer, NEVER on `saved.dataSourceId !== currentSourceId`: the id
+    // comparison goes false on A→B→A while tokenMap is still empty, which is the exact reported
+    // complaint — no offer to restore, and a header confidently asserting "14 מתוך 17" over an
+    // empty table.
+    const showRestore = saved != null && !smartSend.workingIsFromServer;
+    const hasMappingWork = useSelector(selectHasMappingWork);
+
+    const [confirmUnmapped, setConfirmUnmapped] = useState(false);
+    const [saving, setSaving] = useState(false);
+    const [showPreview, setShowPreview] = useState(false);
+    const [summaryOpen, setSummaryOpen] = useState(false);
+    const [testOpen, setTestOpen] = useState(false);
+    // Set by SendSummaryDialog's onSent (a 200/201 from sendSmart) and NOT acted on until the
+    // user closes the dialog — see the SendSummaryDialog block at the bottom of this file.
+    const [sent, setSent] = useState(false);
+    // The working tokenMap differs from what is persisted. There is no dirty flag in the slice
+    // and none can be derived from it: setMapping.fulfilled does not write the new mapping back
+    // onto `tokens`, so comparing tokenMap to `tokens[].MappedColumnID` would keep claiming
+    // "unsaved" straight after a successful save. Tracked here instead, at the one place in this
+    // screen that edits the map.
+    const [dirty, setDirty] = useState(false);
+    // item 2: the synthetic group id returned by saveMapping, held so the confirmed Send inside
+    // SendSummaryDialog can attach it (attachGroup) — the attach is deferred out of openSummary.
+    const [pendingGid, setPendingGid] = useState<number | null>(null);
+    // item 3: three-way exit confirm (Save & exit / Exit without saving / Cancel).
+    const [exitOpen, setExitOpen] = useState(false);
+    const [exitSaveFailed, setExitSaveFailed] = useState(false);
+    const [toast, setToast] = useState<{ open: boolean; ok: boolean; msg: string }>({ open: false, ok: true, msg: '' });
+    // Restore-from-server lifecycle. `restoring` also keeps the body mounted through the reload —
+    // see the restoreOverlay guard in renderBody, without which this feature performs the very
+    // disappearance it exists to prevent.
+    const [restoring, setRestoring] = useState(false);
+    const [restoreFailed, setRestoreFailed] = useState(false);
+    // WHICH source the last failed autosave belonged to. The Retry button rebuilds the request from
+    // FRESH state, so after a source switch it would post the new source's snapshot as the "retry"
+    // of the old source's save.
+    const [failedSaveSourceId, setFailedSaveSourceId] = useState<number | null>(null);
+    const [replaceConfirmOpen, setReplaceConfirmOpen] = useState(false);
+
+    // ── auto-save (replaces the manual Save button) ─────────────────────────────────────────────
+    // saveState drives the header status indicator. The refs coordinate a DEBOUNCED, SINGLE-FLIGHT
+    // persist: only one setMapping is ever in flight, and edits made while one is running are
+    // coalesced into a single trailing re-save — so two saves can never land out of order and
+    // silently drop a column (each save is a full snapshot and setMapping has no server ordering
+    // guard). sendLockedRef latches auto-save OFF once the campaign is sending (-6), so a permanent
+    // 409 can never turn into a retry loop.
+    const [saveState, setSaveState] = useState<'idle' | 'saving' | 'saved' | 'error' | 'locked'>('idle');
+    const saveTimer = useRef<any>(null);
+    const saveInFlight = useRef(false);
+    const savePending = useRef(false);
+    const sendLockedRef = useRef(false);
+    // MONOTONIC EDIT COUNTER. Bumped by markEdited() on every user edit, captured when a save
+    // request is BUILT, and re-read when it resolves. It exists because `dirty` alone cannot
+    // distinguish "the edits I just saved" from "edits that arrived while I was saving", and
+    // clearing it unconditionally on a 200 STRANDS the latter:
+    //   t=0    edit          → dirty=true, timer armed for t=750
+    //   t=750  timer fires   → buildSaveRequest() snapshots state HERE; request in flight
+    //   t=900  edit          → dirty is ALREADY true so nothing changes, but the debounce effect
+    //                          re-runs on the new tokenMap and arms a fresh timer for t=1650
+    //   t=1200 200 comes back→ setDirty(false) ⇒ the effect's cleanup CLEARS the t=1650 timer and
+    //                          its body then bails on !dirty. The t=900 edit is never sent, and
+    //                          the sticky bar reads "כל השינויים נשמרו".
+    // `savePending` does NOT cover this: it is only set when runAutoSave is CALLED while a save is
+    // in flight (see below), which needs the round trip to outlast the 750ms debounce. The window
+    // above — the common one, where the response beats the next timer — stays wide open.
+    // The falsely-cleared `dirty` is not only a lost edit: it also disarms the beforeunload handler,
+    // the three-way exit confirm, and TestSendDialog's "the preview uses the SAVED mapping" warning,
+    // so the operator's one pre-send check silently answers wrong.
+    const editSeq = useRef(0);
+
+    const showToast = (ok: boolean, msg: string) => setToast({ open: true, ok, msg });
+
+    // The ONE place an edit is recorded. Both onChange handlers below route through it so the
+    // counter and `dirty` can never disagree — two call sites setting them separately WILL drift.
+    const markEdited = () => { editSeq.current += 1; setDirty(true); };
+
+    useEffect(() => {
+        // `accountFeatures?.length &&`, NOT `accountFeatures &&` — the same guard SmartSendPicker.tsx:38,
+        // DataSources.tsx:90 and DataSourceView.tsx:73 use. The cookie-backed list is null until it
+        // loads (commonSlice.js:239) and a bare truthiness check would let an unentitled user through
+        // on `undefined`; `?.length` also covers an empty array. Redirect only once features arrived.
+        if (accountFeatures?.length && accountFeatures.indexOf(PulseemFeatures.DATA_SOURCES) === -1) {
+            // `sitePrefix` is `string | undefined` (it comes straight from process.env), so it
+            // needs the same `?? ''` the other feature-gate redirects use — see
+            // DataSources.tsx:88 and DataSourceView.tsx:72.
+            Redirect({ url: sitePrefix ?? '', openNewTab: false });
+        }
+    }, [accountFeatures]);
+
+    // The "send anyway" confirmation must apply ONLY to the exact unmapped set the user
+    // acknowledged — reset it whenever the mapping/columns change (e.g. a source switch
+    // clears the map), so a stale confirm can never bypass the §16 raw-token gate.
+    useEffect(() => {
+        setConfirmUnmapped(false);
+    }, [smartSend.columns, smartSend.tokenMap]);
+
+    // Nothing is unsaved right after the mapping (re)loads — getMapping.fulfilled reseeds
+    // `tokens` AND `tokenMap` from the server — nor right after a source switch, which empties
+    // the map (selectSource, smartSendSlice.ts:292). `tokens` is a fresh array on every load, so
+    // its identity is the load signal; a plain setTokenMapping never touches it.
+    useEffect(() => {
+        setDirty(false);
+        // Same signal, same meaning: `tokens` is a fresh array only on a SUCCESSFUL getMapping
+        // (the failure branches write mappingStatus/mappingError and nothing else), so this clears
+        // the restore error exactly when a reload has landed — and on any source switch.
+        setRestoreFailed(false);
+    }, [smartSend.tokens, currentSourceId]);
+
+    // item 3: warn on tab close / refresh while there are unsaved mapping changes. react-router
+    // 6.4.2 exposes no useBlocker, so this covers only real unloads; in-SPA navigation is
+    // mitigated by the sticky save bar. Pattern mirrors LegacyPageFrame.tsx:17-27.
+    useEffect(() => {
+        if (!dirty) return undefined;
+        const handler = (e: BeforeUnloadEvent) => { e.preventDefault(); e.returnValue = ''; };
+        window.addEventListener('beforeunload', handler);
+        return () => window.removeEventListener('beforeunload', handler);
+    }, [dirty]);
+
+    useEffect(() => {
+        if (!campaignId || Number.isNaN(campaignId) || campaignId <= 0) return;
+        dispatch(setCampaignContext({ campaignId, dataSourceId: parsedDsId }));
+        dispatch(getMapping(campaignId));
+    }, [dispatch, campaignId, parsedDsId]);
+
+    // ── save flow (§13 step 6): setMapping (lock + PulseemDS_ group + TokenMap) → get
+    // SyntheticGroupID → READ the campaign's current send settings → post them back with the
+    // synthetic group MERGED into GroupIds (§10). Read-modify-write, never a partial body. ──
+    const buildSaveRequest = () => {
+        const colSet = new Set(smartSend.columns.map((c: any) => c.ColumnID));
+        // EVERY ColumnID leaving this function must exist in the LOCKED version — not just the
+        // token mappings. Added 2026-08-16. colSet was already built for Mappings (below) and the
+        // filter there cites the SP's -9; the business columns are checked by a SECOND, separate
+        // guard in the same proc — dbo.CampaignsToDataSources_Set.StoredProcedure.sql:133-145 —
+        // which LEFT JOINs (@prm_SupervisorColumnID, @prm_GapColumnID, @prm_SortColumnID) against
+        // DataSourceColumns for @LockVersionID and returns -9 if any non-null id is missing. These
+        // three lines used to post state verbatim, so one stale id failed the ENTIRE save, and
+        // failed it in the worst possible shape: the mapping edit the operator was making is
+        // rejected because of a business column they never touched, the error surfaces as the
+        // generic retry text, and Retry (the failed-save button at :844) rebuilds the
+        // identical request from the same
+        // state — an unbreakable loop with no control on screen that can clear the offending value
+        // (the picker cannot show, let alone deselect, a column that is no longer in `columns`).
+        //
+        // Scrubbing to null is the same treatment Mappings already gives a vanished id, and it is
+        // the honest one: a column that is not in the locked version is not a business column any
+        // more, so persisting "no supervisor / no shortfall" states what is actually true. It is
+        // also recoverable — the value is only dropped on a save that would otherwise have been
+        // rejected outright, and the picker is free to set a live column afterwards.
+        //
+        // Empty `columns` cannot reach here: the whole body renders behind `hasColumns` (:681) and
+        // the autosave effect bails on it first (:370). If it ever did, Mappings would
+        // already be posting [] — a full mapping wipe — so these three are not the exposure.
+        const inLockedVersion = (id: number | null | undefined): number | null =>
+            (id != null && colSet.has(id)) ? id : null;
+        return {
+            CampaignID: campaignId,
+            Channel: smartSend.selectedChannel,
+            DataSourceID: smartSend.dataSource?.DataSourceID,
+            DataSourceVersionID: smartSend.lockedVersionId,
+            // A MACHINE GUESS IS NOT A DECISION AND IS NOT PERSISTED. Changed 2026-08-11
+            // (deep review R1-02). pickDefaultSupervisorColumn fills this in with no user action —
+            // its first tier matches on the column NAME alone, with no e-mail requirement — and
+            // this line used to post it verbatim, so opening the send summary (which saves
+            // silently) or letting the 750 ms autosave fire after any token edit was enough to
+            // write a SupervisorColumnID the operator never chose.
+            // null, not omitted: the field is bound server-side either way, and omitting it would
+            // make the SP clear a value the operator HAD deliberately saved. Sending null while the
+            // value is only a suggestion is the state that is actually true.
+            // smartSendSlice.setBusinessColumn clears the flag the moment EITHER business picker is
+            // touched — including a deliberate "None", and including the shortfall picker, which is
+            // reachable only while a supervisor value is displayed beside it (see the
+            // second-confirmation-point note in smartSendSlice.setBusinessColumn) — so a real
+            // choice still persists on the next save.
+            //
+            // THE TWO RULES COMPOSE, and they compose in one direction only: the guess rule and the
+            // locked-version rule both resolve to null, so a guessed value is posted as null even
+            // when its column is perfectly valid, and a confirmed value is posted as null once its
+            // column has vanished. Order is therefore irrelevant, but the guess test stays OUTSIDE
+            // inLockedVersion on purpose — a guess must not become persistable merely by pointing
+            // at a live column, which is what folding it into the same predicate would allow.
+            // Both write null EXPLICITLY rather than omitting the field, for the reason above: the
+            // field is bound server-side either way and an omission makes the SP clear a value the
+            // operator deliberately saved.
+            SupervisorColumnID: smartSend.supervisorColumnIsGuess
+                ? null
+                : inLockedVersion(smartSend.supervisorColumnId),
+            // Gap and Sort have no guess flag — nothing ever fills them in without a click
+            // (businessColumnDefaults.ts returns them untouched), so the locked-version scrub is
+            // the whole rule for them.
+            GapColumnID: inLockedVersion(smartSend.gapColumnId),
+            SortColumnID: inLockedVersion(smartSend.sortColumnId),
+            // Only tokens mapped to a column that still EXISTS in the locked version. A
+            // vanished mapping (id ∉ columns) is treated as unmapped (sent raw) — the same
+            // definition selectUnmappedTokens/TokenMappingTable use — otherwise the SP would
+            // reject the whole save with -9 and the confirm-then-send path would dead-end.
+            Mappings: smartSend.tokens
+                .filter((tk: any) => { const c = smartSend.tokenMap[tk.Token]; return c && c > 0 && colSet.has(c); })
+                .map((tk: any, i: number) => ({ Token: tk.Token, DataSourceColumnID: smartSend.tokenMap[tk.Token], GroupNo: 0, GroupTitle: null, DisplayOrder: i + 1 })),
+        };
+    };
+
+    // ── save flow, SPLIT (item 2): saveMapping persists the mapping and returns the synthetic
+    //    group id but does NOT attach it; attachGroup performs the GroupIds merge (the mutation
+    //    that decides who the campaign sends to). Opening the summary — or saving from the test
+    //    dialog — calls saveMapping only; the attach is deferred to a confirmed Send. ──
+    const saveMapping = async (silent?: boolean): Promise<{ ok: boolean; gid: number | null }> => {
+        setSaving(true);
+        // Snapshot the edit counter alongside the request body, for the same reason runAutoSave
+        // does. This path is NOT modal-protected: openSummary calls saveMapping(true) and then
+        // awaits fillAndSummarize + getSendSummary + getEmailSendSettings — four sequential round
+        // trips — before setSummaryOpen(true), and the mapping table is fully interactive for all
+        // of them. An edit made in that window must not be marked saved.
+        const seq = editSeq.current;
+        const res: any = await dispatch(setMapping(buildSaveRequest()));
+        const r = res && res.payload ? res.payload : {};
+        if (r.StatusCode !== 200) {
+            setSaving(false);
+            showToast(false, t('DataSources.send.errors.' + (ERR_KEY[r.Message] || 'generalError')));
+            return { ok: false, gid: null };
+        }
+        const gid = r.Data && r.Data.SyntheticGroupID;
+        setSaving(false);
+        // The mapping is persisted — the unsaved-changes bar must go away, but ONLY if what landed
+        // is still what is on screen. If the operator edited during the round trip the screen is
+        // genuinely dirty and must stay so: the debounce effect then keeps its timer and persists
+        // the newer state. `ok: true` is still correct — the request itself succeeded, which is
+        // what the send/exit callers are asking about.
+        if (editSeq.current === seq) setDirty(false);
+        if (!silent) showToast(true, t('DataSources.send.toasts.mappingSaved'));
+        return { ok: true, gid: gid != null ? Number(gid) : null };
+    };
+
+    // Auto-save the mapping. Calls setMapping ONLY (never attachGroup / fillAndSummarize), so it can
+    // NEVER arm a send — the persist/arm split is preserved. Single-flight with a trailing coalesce.
+    const runAutoSave = async () => {
+        if (sendLockedRef.current) return;
+        if (saveInFlight.current) { savePending.current = true; return; }
+        saveInFlight.current = true;
+        setSaveState('saving');
+        // Captured on the same line-of-execution as the request body, so `seq` describes EXACTLY
+        // the state this request carries. Everything below compares against it.
+        const seq = editSeq.current;
+        const res: any = await dispatch(setMapping(buildSaveRequest()));
+        const r = res && res.payload ? res.payload : {};
+        saveInFlight.current = false;
+        // TRUE when the operator edited while this request was on the wire. The response is then a
+        // truthful answer about a snapshot that is no longer on screen, and treating it as "saved"
+        // is what strands the edit (see the editSeq header).
+        const superseded = editSeq.current !== seq;
+        if (r.StatusCode === 200) {
+            if (superseded) {
+                // Do NOT clear dirty and do NOT paint "נשמר" — the screen really does hold unsaved
+                // work. Stay on 'saving'; the re-fire below sends the newer snapshot.
+                setSaveState('saving');
+            } else {
+                setDirty(false);
+                setSaveState('saved');
+            }
+        } else if (r.Message === 'EDIT_BLOCKED_DURING_SEND') {
+            sendLockedRef.current = true;          // campaign is sending — stop auto-saving
+            setSaveState('locked');
+        } else {
+            setSaveState('error');                 // keep dirty=true so Retry + beforeunload stay armed
+            // Remember WHOSE save failed. Retry rebuilds from fresh state, so once the operator has
+            // switched source it would post the new source's snapshot under the guise of retrying
+            // the old one. The bar keeps reporting the failure either way — swallowing it is not an
+            // option, because the same source switch also clears `dirty` and disarms beforeunload,
+            // so the red bar is the ONLY remaining evidence that N mappings were never persisted.
+            setFailedSaveSourceId(smartSend.dataSource?.DataSourceID ?? null);
+        }
+        // Re-fire once with the latest snapshot if edits arrived while this save was in flight.
+        // `superseded` is the case the old `savePending` flag could not see: savePending is only
+        // set when runAutoSave is CALLED mid-flight, which needs the round trip to outlast the
+        // 750ms debounce, whereas superseded catches every edit regardless of timing. Both re-fire
+        // through the same line so a save can still never overlap another (saveInFlight guards the
+        // entry). The recursion terminates because editSeq only advances on human input.
+        if ((savePending.current || superseded) && !sendLockedRef.current) {
+            savePending.current = false;
+            runAutoSave();
+        }
+    };
+
+    // Debounced trigger: whenever the mapping changes and there is something to persist, schedule a
+    // single trailing save (~750ms). CREATE-ON-FIRST-PICK — an empty post-source-select map has
+    // nothing to save, so merely picking a source writes nothing to the (shared prod) DB. Driven off
+    // the slice fields, NOT the onChange handlers, so buildSaveRequest reads FRESH post-dispatch state.
+    useEffect(() => {
+        if (!hasColumns || !dirty || sendLockedRef.current) return undefined;
+        // Bit-identical to the inline expression this replaced — selectHasMappingWork IS those four
+        // clauses, including the `&& !supervisorColumnIsGuess` added 2026-08-11 (deep review R1-02):
+        // an unconfirmed guess must not be the reason a save fires, or the helper's own output
+        // triggers the autosave that then persists it and the value becomes its own justification.
+        // Extracted so SourcePicker's confirm gate reads the SAME rule; two private copies drift,
+        // and the two consumers disagreeing is how a confirm starts appearing over nothing.
+        const hasAnyMapping = hasMappingWork || smartSend.isMapped;
+        if (!hasAnyMapping) return undefined;
+        saveTimer.current = setTimeout(() => { saveTimer.current = null; runAutoSave(); }, 750);
+        return () => { if (saveTimer.current) { clearTimeout(saveTimer.current); saveTimer.current = null; } };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [smartSend.tokenMap, smartSend.supervisorColumnId, smartSend.gapColumnId, smartSend.sortColumnId, dirty, hasColumns]);
+
+    // Attach the synthetic group to the campaign's GroupIds — called ONLY from a confirmed Send
+    // (SendSummaryDialog.beforeSend), never on preview.
+    const attachGroup = async (gid: number | null): Promise<boolean> => {
+
+        // Attaching the synthetic group means posting the WHOLE settings row back, not a patch:
+        // the server handler (NewsletterLogic.cs:1175-1193) forwards EVERY SendSettings field to
+        // the stored proc, so a field missing from this body arrives as its DEFAULT and silently
+        // overwrites whatever the user configured on the classic send-settings screen —
+        // PulseAmount, TimeInterval, FromDate/ToDate, the IsOpened/IsOpenedClicked/IsNotClicked/
+        // IsNotOpened filters, ExceptionalDays, ExeptionalCampaigns, ExeptionalGroups,
+        // AutoSendingByUserField, AutoSendDelay, IsBestTime. Hence read-modify-write, with the
+        // read as a HARD precondition: if it fails there is nothing to preserve, and posting a
+        // minimal body "anyway" is precisely the data loss this guards against — fail the save.
+        // GetSendSettings answers 201 on success (EmailController.cs:517), NOT 200 — the SmartSend
+        // mock returns 200, which is exactly what would hide this until the mock is switched off.
+        // Both are accepted so the screen behaves identically in mock and real mode.
+        const cur: any = await dispatch(getEmailSendSettingsWrapped(campaignId));
+        const curPayload = cur && cur.payload ? cur.payload : {};
+        const ok = curPayload.StatusCode === 201 || curPayload.StatusCode === 200;
+        const settings = ok && curPayload.Data ? curPayload.Data.Settings : null;
+        // `!settings` alone would pass an [] or {} straight through (both truthy / spreadable to an
+        // empty body), producing a POST with no CampaignID — worse than the minimal body this
+        // replaced. Require the identifying field.
+        if (!settings || !settings.CampaignID) {
+            showToast(false, t('DataSources.send.errors.' + (ERR_KEY[curPayload.Message] || 'generalError')));
+            return false;
+        }
+
+        // GroupIds (CSV) is the ONE field that changes — and the authoritative one: SendSettings
+        // .GroupList (SendSettings.cs:35-41) is a getter-only computed property, so the GroupList
+        // that came back from the GET rides along untouched and is simply ignored server-side.
+        // MERGE, never replace: a combined campaign (source + regular groups, §16) keeps its
+        // regular groups. Trim + de-dupe so a loose or empty CSV ('', '301,,302', '301, 302')
+        // yields no empty entries and a re-save cannot append the synthetic group twice.
+        const ids: string[] = String(settings.GroupIds ?? '').split(',').map((s: string) => s.trim()).filter((s: string) => s !== '');
+        // A 200 with no SyntheticGroupID must never push the literal "undefined" into the CSV;
+        // post the settings back unchanged rather than corrupt the group list.
+        if (gid != null && Number(gid) > 0 && ids.indexOf(String(gid)) === -1) ids.push(String(gid));
+        // Everything else rides verbatim — EXCEPT two scheduling fields that cannot be echoed back
+        // blindly, both mirroring what the classic screen already does with the SAME payload:
+        //  1. SendingMethod: 0 is a real stored value, and the classic normalises it to 1 on every
+        //     post (NewsletterSendSettings.js:409). Echoing 0 writes back an invalid send method.
+        //  2. A stored "scheduled" method with no SendDate is a reachable state — the classic
+        //     DISABLES its save button on exactly that combination (NewsletterSendSettings.js:895-898)
+        //     and the server answers 405 SEND_DATE_MISSING. Echoing it verbatim would make the
+        //     mapping permanently unsavable for that campaign. Only an ALREADY-INVALID combination
+        //     is normalised to "send now"; a valid schedule is preserved untouched.
+        const METHOD_SCHEDULED = 2, METHOD_AUTO = 3;
+        let method = settings.SendingMethod === 0 ? 1 : (settings.SendingMethod ?? 1);
+        let sendDate = settings.SendDate;
+        const scheduleBroken =
+            (method === METHOD_SCHEDULED && !sendDate) ||
+            (method === METHOD_AUTO && !sendDate && !settings.AutoSendDelay);
+        if (scheduleBroken) { method = 1; sendDate = null; }
+        const setRes: any = await dispatch(setEmailSendSettingsWrapped({
+            ...settings, GroupIds: ids.join(','), SendingMethod: method, SendDate: sendDate,
+        }));
+        const s = setRes && setRes.payload ? setRes.payload : {};
+        // SetSendSettings answers 201 on success (NewsletterSendSettings.js:429-431 switches on
+        // exactly these codes). Anything else — 401/405/409/410/500 — means the synthetic group
+        // was NOT attached, so the campaign would still send to its old recipients: that is a
+        // FAILED save. It must not clear `dirty` and must not show the success toast.
+        if (s.StatusCode !== 201 && s.StatusCode !== 200) {
+            showToast(false, t('DataSources.send.errors.' + (ERR_KEY[s.Message] || 'generalError')));
+            return false;
+        }
+        return true;
+    };
+
+    const openSummary = async () => {
+        // item 2: persist the mapping (fillAndSummarize needs it) and stash the synthetic group
+        // id, but DO NOT attach it here — the attach is deferred to the confirmed Send
+        // (SendSummaryDialog.beforeSend → attachGroup). fillAndSummarize fills the staging group
+        // and feeds the recipient counts the dialog shows; it does not wire the campaign, so
+        // opening — and abandoning — the summary leaves GroupIds untouched (item 2 / §6).
+        // KNOWN EDGE (adversarial review): if the campaign was already attached by a PRIOR send
+        // whose pipeline then failed (attachGroup ok but sendSmart errored → no detach exists,
+        // §6), its group is still in GroupIds, so re-filling here refreshes an already-armed
+        // campaign. No worse than the pre-split behaviour; a durable fix needs a detach endpoint.
+        // Flagged to the product owner.
+        if (saveTimer.current) { clearTimeout(saveTimer.current); saveTimer.current = null; }
+        const { ok, gid } = await saveMapping(true);
+        if (!ok) return;
+        setPendingGid(gid);
+        await dispatch(fillAndSummarize({ campaignId, channel: smartSend.selectedChannel }));
+        await dispatch(getSendSummaryWrapped(campaignId));
+        await dispatch(getEmailSendSettingsWrapped(campaignId));
+        setSummaryOpen(true);
+    };
+
+    // LOAD-BEARING — DO NOT DELETE. `openSummary` saves UNCONDITIONALLY (no `dirty` check), and
+    // `canSend` is true on `hasColumns` alone whenever nothing is unmapped — which includes a
+    // template with zero tokens. So "שלח לכולם" is a SECOND point of no return, and a faster one
+    // than the 750ms debounce: one click writes an empty mapping under the new source and the SP
+    // delete-and-reinserts the token map, destroying the saved mapping. Without this gate the
+    // restore banner would be on screen asserting that mapping still exists at the exact moment a
+    // single click removes it — the screen contradicting itself about the only thing that matters.
+    const requestSummary = () => {
+        if (showRestore && !hasMappingWork) { setReplaceConfirmOpen(true); return; }
+        openSummary();
+    };
+
+    // ── restore the campaign's SAVED mapping ───────────────────────────────────────────────────
+    // Re-runs the mount effect's own pair (setCampaignContext + getMapping) — the exact code path
+    // F5 takes, minus the reload. It reads the SERVER; nothing is replayed from memory, so this
+    // can never resurrect something the server would refuse, and it is structurally incapable of
+    // becoming a send payload.
+    //
+    // setCampaignContext is load-bearing, not tidiness: getMapping.fulfilled does not write
+    // state.dataSourceId, so without it the store keeps the abandoned source's id and
+    // SourcePicker's `incoming` banner pops back up on top of the restored screen.
+    const restoreSaved = async () => {
+        // LOAD-BEARING — DO NOT DELETE. An autosave timer armed moments ago would otherwise fire
+        // AFTER this click and post the NEW source with Mappings=[] — and
+        // CampaignsToDataSources_Set delete-and-reinserts the token map, so it would wipe the very
+        // mapping this button just restored, while the sticky bar painted "✓ נשמר" over it. The
+        // recovery button would destroy the thing it promises to recover. openSummary already
+        // clears the timer for exactly this reason.
+        if (saveInFlight.current || saving) return;
+        if (saveTimer.current) { clearTimeout(saveTimer.current); saveTimer.current = null; }
+        savePending.current = false;
+        setDirty(false);
+        // 'locked' is a latched fact about the campaign, not about this screen's edit state — it
+        // must survive. Anything else is stale the moment the server's mapping is back on screen.
+        setSaveState((s) => (s === 'locked' ? s : 'idle'));
+        setRestoring(true);
+        setRestoreFailed(false);
+        dispatch(setCampaignContext({ campaignId, dataSourceId: parsedDsId }));
+        const res: any = await dispatch(getMapping(campaignId));
+        setRestoring(false);
+        if (res?.payload?.StatusCode !== 200) setRestoreFailed(true);
+    };
+
+    // The sticky bar must not carry a verdict from the previous source across a switch — a green
+    // "כל השינויים נשמרו" over a freshly emptied table is the screen asserting something false.
+    // 'error' and 'locked' are deliberately preserved: see the failedSaveSourceId comment above.
+    useEffect(() => {
+        setSaveState((s) => (s === 'error' || s === 'locked') ? s : 'idle');
+    }, [currentSourceId]);
+
+    // item 3: leaving the loaded screen. The only in-screen exit is the back-to-picker link (the
+    // 404 branch has nothing to lose; the summary-close redirect runs only after a real send).
+    const doExit = () => Redirect({ url: `${sitePrefix}SmartSend${parsedDsId != null ? `?dataSourceId=${parsedDsId}` : ''}`, openNewTab: false });
+    const handleBackToPicker = () => { if (dirty) { setExitSaveFailed(false); setExitOpen(true); } else doExit(); };
+    // Save & exit must NOT navigate on a failed save (saveMapping returns ok:false on StatusCode
+    // != 200); navigating then would silently drop the very changes the user asked to keep.
+    const handleSaveAndExit = async () => {
+        const { ok } = await saveMapping();
+        if (ok) { setExitOpen(false); doExit(); } else setExitSaveFailed(true);
+    };
+
+    // `!sent`: once sendSmart has answered 200/201 for this campaign the screen must not be able
+    // to arm a second send. Closing the summary dialog navigates away, but this gate deliberately
+    // does not depend on that navigation actually happening.
+    const canSend = hasColumns && !sent && (unmapped.length === 0 || confirmUnmapped);
+
+    const renderBody = () => {
+        if (!campaignId || Number.isNaN(campaignId) || campaignId <= 0) {
+            return <Typography>{t('DataSources.send.errors.notFound')}</Typography>;
+        }
+        // LOAD-BEARING — DO NOT DELETE THE `!restoreOverlay` GUARDS ON THESE TWO RETURNS.
+        // getMapping.pending sets mappingStatus='loading', so a restore click would otherwise
+        // replace the whole body — including the restore button, its spinner and its own error
+        // line — with a bare progress bar: the fix for "everything vanished" would itself make
+        // everything vanish, and a FAILED restore would dead-end the screen with the working state
+        // unreachable. A failed getMapping writes only mappingStatus/mappingError — tokens, columns
+        // and tokenMap all survive — so the previous body is still renderable underneath.
+        const restoreOverlay = restoring || restoreFailed;
+        if (!restoreOverlay && (smartSend.mappingStatus === 'loading' || smartSend.mappingStatus === 'idle')) return <LinearProgress />;
+        if (!restoreOverlay && smartSend.mappingStatus === 'failed') {
+            // §16: distinct UI per code. 404 (foreign/deleted campaign) → back to the list;
+            // 927 (feature off) → its own message; everything else → generic retry text.
+            if (smartSend.mappingError === 404) {
+                return (
+                    <Box>
+                        <Typography style={{ marginBottom: 12 }}>{t('DataSources.send.errors.notFound')}</Typography>
+                        <Button variant="outlined" color="primary" onClick={() => Redirect({ url: `${sitePrefix}Campaigns`, openNewTab: false })}>
+                            {t('DataSources.send.backToCampaigns')}
+                        </Button>
+                    </Box>
+                );
+            }
+            // 927 (feature off) and the generic branch were both bare text: the screen has no
+            // other control on it in this state, so a transient failure — or an entitlement that
+            // was switched on server-side moments ago — left the user with a dead end and no way
+            // out but the browser. Both now re-run the only request this screen loads with.
+            const retry = (
+                <Button variant="outlined" color="primary" size="small" startIcon={<Refresh />}
+                    onClick={() => dispatch(getMapping(campaignId))}>
+                    {t('DataSources.send.errors.retryAction')}
+                </Button>
+            );
+            if (smartSend.mappingError === 927) {
+                return (
+                    <Box>
+                        <Typography style={{ marginBottom: 12 }}>{t('DataSources.send.errors.featureOff')}</Typography>
+                        {retry}
+                    </Box>
+                );
+            }
+            return (
+                <Box>
+                    <Typography style={{ marginBottom: 12 }}>{t('DataSources.send.errors.generalError')}</Typography>
+                    {retry}
+                </Box>
+            );
+        }
+
+        return (
+            <Box>
+                <StaleVersionBanner />
+                <MappingMismatchBanner />
+                {/* WHAT THE SERVER HOLDS — stated from `savedMapping`, never from working state.
+                    This line used to read `isMapped ? mappedTo : notMapped`, and since selectSource
+                    clears isMapped it announced "הקמפיין עדיין לא ממופה למקור נתונים" over a
+                    campaign whose mapping was sitting intact in the database. That single false
+                    sentence is what made a source switch read as "everything vanished".
+                    Three states, each true: drafting elsewhere / showing the saved mapping / no
+                    saved mapping at all. The last renders only once the load has actually
+                    succeeded, so an in-flight or failed read stays silent rather than optimistic.
+                    aria-live so the switch and the restore are both announced, not just painted. */}
+                <Typography variant="body1" style={{ marginBottom: 8 }} aria-live="polite">
+                    {saved && !smartSend.workingIsFromServer
+                        ? t('DataSources.send.source.savedLineDraft', {
+                            name: saved.dataSourceName ?? '', mapped: saved.mappedTokenCount, total: saved.tokenCount })
+                        : saved
+                            ? t('DataSources.send.source.savedLine', {
+                                name: saved.dataSourceName ?? '', mapped: saved.mappedTokenCount, total: saved.tokenCount })
+                            : smartSend.mappingStatus === 'succeeded'
+                                ? t('DataSources.send.source.savedNone')
+                                : null}
+                </Typography>
+                {/* THE RECOVERY. Self-invalidating by construction: workingIsFromServer flips true
+                    on the next successful save or restore, which is precisely the moment the
+                    server's copy of the old mapping stops existing. The banner therefore cannot
+                    outlive what it promises. */}
+                {showRestore && saved && (
+                    <Box style={{ marginBottom: 8 }}>
+                        <InlineBanner
+                            severity="warning"
+                            role="status"
+                            title={t('DataSources.send.source.restoreTitle')}
+                            body={t('DataSources.send.source.restoreBody', { name: saved.dataSourceName ?? '' })}
+                            action={(
+                                <Button
+                                    size="small"
+                                    variant="outlined"
+                                    color="primary"
+                                    disabled={restoring || saving || saveState === 'saving'}
+                                    onClick={restoreSaved}
+                                >
+                                    {restoring
+                                        ? <CircularProgress size={16} />
+                                        : t('DataSources.send.source.restoreAction')}
+                                </Button>
+                            )}
+                        />
+                        {restoreFailed && (
+                            <Typography variant="body2" color="error" style={{ marginTop: 6 }}>
+                                {t('DataSources.send.source.restoreFailed')}
+                            </Typography>
+                        )}
+                    </Box>
+                )}
+                <Typography variant="body2" color="textSecondary" style={{ marginBottom: 16 }}>
+                    {t('DataSources.send.tokensFound', { count: smartSend.tokens.length })}
+                </Typography>
+
+                {/* The channel is no longer picked here — it is chosen on the SmartSend picker
+                    screen, which dispatches setChannel before navigating to this route. Landing
+                    on this route directly (campaign-row icon, BEE editor button, or a pasted URL)
+                    simply skips that step, and smartSend.selectedChannel correctly falls back to
+                    the slice default (eSendChannel.EMAIL); it is still read from the slice and
+                    sent in every request that carries a channel.
+                    NOTE: `clearSmartSend` (smartSendSlice.ts:316) is exported but has ZERO
+                    dispatch sites, so nothing ever resets the slice — selectedChannel is written
+                    once by the picker and then survives the entire SPA session, across campaigns.
+                    Harmless today because EMAIL is the only enabled channel (setChannel rejects
+                    disabled ones), so the fallback and the sticky value are the same value. This
+                    MUST be revisited when SMS is wired: a channel chosen for campaign A would
+                    otherwise silently apply to a campaign B reached by a direct link. */}
+                <SourcePicker />
+
+                {/* Source-column load (after a pick) — loading spinner + error/retry so a
+                    failed getDataSource never silently strands the user with no mapping table. */}
+                {!hasColumns && currentSourceId != null && smartSend.columnsStatus === 'loading' && (
+                    <Box style={{ marginTop: 20 }}><CircularProgress size={22} /></Box>
+                )}
+                {!hasColumns && currentSourceId != null && smartSend.columnsStatus === 'failed' && (
+                    <Box style={{ marginTop: 20, display: 'flex', gap: 12, alignItems: 'center' }}>
+                        <Typography color="error">{t('DataSources.send.source.loadError')}</Typography>
+                        <Button size="small" startIcon={<Refresh />} onClick={() => dispatch(loadSourceColumns(currentSourceId as number))}>
+                            {t('DataSources.retry')}
+                        </Button>
+                    </Box>
+                )}
+
+                {hasColumns && (
+                    <>
+                        <TokenMappingTable
+                            tokens={smartSend.tokens}
+                            columns={smartSend.columns}
+                            value={smartSend.tokenMap}
+                            onChange={(token, columnId) => { dispatch(setTokenMapping({ token, columnId })); markEdited(); }}
+                            warnSystemFieldOverride
+                        />
+                        {/* Gap + Sort are ONE control now; `setBusinessColumn('gapSort')` writes the
+                            same ColumnID into both slice fields, so buildSaveRequest keeps sending
+                            both server fields and no API/SP change was needed. `stored*` are the raw
+                            server values, used only to warn when a pre-merge mapping held two
+                            different columns. */}
+                        <BusinessColumnsPicker
+                            columns={smartSend.columns}
+                            supervisorColumnId={smartSend.supervisorColumnId}
+                            gapColumnId={smartSend.gapColumnId}
+                            storedGapColumnId={smartSend.storedGapColumnId}
+                            storedSortColumnId={smartSend.storedSortColumnId}
+                            onChange={(role, columnId) => { dispatch(setBusinessColumn({ role, columnId })); markEdited(); }}
+                            supervisorEnabled
+                            /* A guessed supervisor column is posted as NULL by buildSaveRequest
+                               above, so while the guess stands the shortfall column provably has no
+                               effect — the picker disables itself and hides its chip rather than
+                               offering a control that cannot change what gets saved. */
+                            supervisorColumnIsGuess={smartSend.supervisorColumnIsGuess}
+                        />
+
+                        <Box style={{ marginTop: 24 }}>
+                            <UnmappedTokensWarning tokens={unmapped} confirmed={confirmUnmapped} onConfirmChange={setConfirmUnmapped} />
+                        </Box>
+
+                        {/* wizard actions. Save moved to the sticky save bar (shown only when
+                            there are unsaved changes), co-located with the unsaved indicator. */}
+                        <Box style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginTop: 20, borderTop: '1px solid #e0e0e0', paddingTop: 18 }}>
+                            <Button variant="outlined" color="primary" onClick={() => setShowPreview((v) => !v)}>
+                                {t('DataSources.send.actions.preview')}
+                            </Button>
+                            <Button variant="outlined" color="primary" onClick={() => setTestOpen(true)}>
+                                {t('DataSources.send.actions.testSend')}
+                            </Button>
+                            {/* requestSummary, NOT openSummary — see the guard's comment: this
+                                button is a second and faster point of no return than the debounce. */}
+                            <Button variant="contained" color="primary" disabled={!canSend || saving} onClick={requestSummary}>
+                                {t('DataSources.send.actions.sendToAll')}
+                            </Button>
+                        </Box>
+
+                        {/* Preview moved from an inline block into a dialog. Same SmartSendPreview,
+                            same campaignId — only the container changed. The toggle button above opens
+                            it; onClose (backdrop / Esc / close button) closes it. Body-height is
+                            viewport-relative (90vh) so it fits laptops; the email scrolls INSIDE the
+                            preview, header/footer stay pinned. dir like the screen's other dialogs:
+                            MUI v4 portals into document.body, outside App's inner <div dir>. */}
+                        <Dialog
+                            open={showPreview}
+                            onClose={() => setShowPreview(false)}
+                            maxWidth="md"
+                            fullWidth
+                            dir={isRTL ? 'rtl' : 'ltr'}
+                            PaperProps={{ style: { height: '90vh' } }}
+                        >
+                            <Box style={{ flex: '0 0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 24px', borderBottom: '1px solid #e0e0e0' }}>
+                                <Typography variant="h6">{t('DataSources.send.preview')}</Typography>
+                            </Box>
+                            <Box style={{ flex: '1 1 auto', minHeight: 0, padding: 12 }}>
+                                <SmartSendPreview campaignId={campaignId} height="100%" />
+                            </Box>
+                            <Box style={{ flex: '0 0 auto', display: 'flex', justifyContent: 'flex-end', gap: 12, padding: '16px 24px', borderTop: '1px solid #e0e0e0' }}>
+                                <Button onClick={() => setShowPreview(false)}>{t('DataSources.send.cancel')}</Button>
+                            </Box>
+                        </Dialog>
+                    </>
+                )}
+            </Box>
+        );
+    };
+
+    return (
+        // subPage drives BOTH the side-menu highlight (SideBarItem.tsx:256 matches
+        // `option.key === subPage`) and the document title (DefaultScreen.js:41-43 looks the
+        // option up by key inside the `groups` route). This screen's own route entry is
+        // `smartSend` (routes.tsx), so `dataSources` highlighted the wrong sibling and titled
+        // the page "Data Sources" for every user who continued from the picker.
+        <DefaultScreen currentPage="groups" subPage="smartSend" classes={classes} containerClass={clsx(classes.management, classes.mb50)}>
+            {/* paddingBottom reserves clearance so the sticky save bar (below) never rests over
+                the "Send to all" button / last action row (contract §3). */}
+            <Box style={{ padding: 16, paddingBottom: 88 }}>
+                <Box style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap', marginBottom: 16 }}>
+                    <Box>
+                        <Typography variant="h5">{t('DataSources.send.title')}</Typography>
+                        {/* Which campaign is about to go out. On entry A (a source tile → this
+                            screen) the title alone identified nothing, so the user could confirm a
+                            send to every recipient in the source without ever seeing the campaign
+                            name. Absent (or belonging to another campaign) → render nothing; a
+                            placeholder here would be worse than no line at all. */}
+                        {campaignName && (
+                            <Typography variant="body2" color="textSecondary">
+                                {t('DataSources.send.campaignLabel', { name: campaignName })}
+                            </Typography>
+                        )}
+                    </Box>
+                    <Box style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                        {/* Unsaved changes now surface in a sticky save bar at the bottom of the
+                            screen (next to the Save action), not as a caption here. Per the
+                            product-owner reversal the screen DOES guard exits: a beforeunload
+                            handler (above) for tab close/refresh, and a three-way confirm dialog on
+                            the back-to-picker link (below). In-SPA side-menu navigation still cannot
+                            be intercepted (react-router 6.4.2 has no useBlocker) — the sticky bar is
+                            the mitigation for that path.
+                            The picker is this screen's entry point, so the way back to it must exist
+                            on the NORMAL path too — not only in the 404 branch. Rendered in the header
+                            (outside renderBody) so it is also reachable while the mapping is still
+                            loading or has failed. `Redirect` requires `openNewTab`.
+                            The ?dataSourceId= the screen was entered with is handed BACK: without it
+                            the picker loses the "sending from source" context the user started in and
+                            a second continue would drop the source entirely. The sanitised
+                            `parsedDsId` is used, not the raw param, so garbage is not round-tripped;
+                            it is a positive number, so it needs no encoding (contrast
+                            SmartSendPicker.tsx:64, which forwards the raw string). */}
+                        <Button size="small" color="primary" onClick={handleBackToPicker}>
+                            {t('DataSources.send.backToPicker')}
+                        </Button>
+                    </Box>
+                </Box>
+                {renderBody()}
+
+                {/* item 3: sticky save bar — shown only when there are unsaved mapping changes.
+                    Background + border mirror InlineBanner's `warning` severity; the text is
+                    DARKENED to #8a5a00 (not InlineBanner's #b7791f) for WCAG-AA contrast — keep it
+                    dark. It hosts the Save action so the unsaved indicator and the way to resolve
+                    it sit together (replacing the old header caption that sat far from the Save
+                    button). Sticky (not fixed) so it keeps its place in the RTL content column and
+                    never overlaps the side menu. */}
+                {saveState !== 'idle' && (
+                    <Box style={{
+                        position: 'sticky', bottom: 0, marginTop: 20, zIndex: 2,
+                        display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap',
+                        padding: '10px 16px', borderRadius: 6,
+                        background: (saveState === 'error' || saveState === 'locked') ? '#fdecea' : '#f1f8e9',
+                        border: `1px solid ${(saveState === 'error' || saveState === 'locked') ? '#f5c6cb' : '#c5e1a5'}`,
+                        boxShadow: '0 -2px 8px rgba(0,0,0,0.06)',
+                    }} aria-live="polite">
+                        {saveState === 'saving' && (
+                            <>
+                                <CircularProgress size={16} />
+                                <Typography variant="body2" style={{ color: '#5b6b7b' }}>{t('DataSources.send.autosave.saving')}</Typography>
+                            </>
+                        )}
+                        {saveState === 'saved' && (
+                            <Typography variant="body2" style={{ color: '#33691e', fontWeight: 600 }}>{`✓ ${t('DataSources.send.autosave.saved')}`}</Typography>
+                        )}
+                        {saveState === 'locked' && (
+                            <Typography variant="body2" style={{ color: '#8a1c1c', fontWeight: 600 }}>{t('DataSources.send.errors.editBlockedDuringSend')}</Typography>
+                        )}
+                        {saveState === 'error' && (
+                            <>
+                                <Typography variant="body2" style={{ color: '#8a1c1c', fontWeight: 600 }}>{t('DataSources.send.autosave.saveFailed')}</Typography>
+                                {/* Retry ONLY for the source the failed save belonged to. runAutoSave
+                                    rebuilds the request from FRESH state, so after a source switch
+                                    this button would post the new source's snapshot while presenting
+                                    itself as retrying the old one. The failure is still reported —
+                                    it must be, because the same switch cleared `dirty` and disarmed
+                                    beforeunload, leaving this bar as the only evidence that those
+                                    mappings were never persisted. */}
+                                {failedSaveSourceId === currentSourceId ? (
+                                    <Button variant="outlined" color="primary" size="small" startIcon={<Refresh />} onClick={() => runAutoSave()}>
+                                        {t('DataSources.send.errors.retryAction')}
+                                    </Button>
+                                ) : (
+                                    <Typography variant="body2" style={{ color: '#8a1c1c' }}>
+                                        {t('DataSources.send.source.saveFailedOtherSource')}
+                                    </Typography>
+                                )}
+                            </>
+                        )}
+                    </Box>
+                )}
+            </Box>
+
+            {/* onSent fires only on a 200/201 from sendSmart, on the line right after the dialog
+                sets its own phase to 'result' (SendSummaryDialog.tsx:69-70). It must therefore do
+                NOTHING that unmounts or navigates: React 17 renders both updates before the
+                browser ever paints, so closing the dialog here made the dialog's success banner
+                literally impossible to see — a completed send gave the user zero confirmation.
+                It only records the outcome now; the dialog stays open on its result phase and
+                renders the banner itself.
+                Navigation is moved onto the close of a SUCCESSFUL send (every exit the dialog
+                offers — its Close button, the X and the backdrop — comes through onClose), which
+                still keeps the user off a screen whose "Send to all" would otherwise be re-armed.
+                `canSend` also gates on `sent`, so the second send is blocked even if the redirect
+                does not happen. */}
+            <SendSummaryDialog
+                open={summaryOpen}
+                campaignId={campaignId}
+                beforeSend={() => attachGroup(pendingGid)}
+                onClose={() => {
+                    setSummaryOpen(false);
+                    if (sent) Redirect({ url: `${sitePrefix}Campaigns`, openNewTab: false });
+                }}
+                onSent={() => setSent(true)}
+            />
+            <TestSendDialog open={testOpen} campaignId={campaignId} dirty={dirty} onSaveMapping={saveMapping} onClose={() => setTestOpen(false)} onToast={(r) => showToast(r.ok, r.msg)} />
+
+            {/* item 3: three-way exit confirm. Save & exit is primary + autofocus; Exit without
+                saving is muted and set apart (destructive — up to ~20 mappings); Esc → Cancel via
+                onClose. A failed save keeps the dialog open and does NOT navigate. */}
+            {/* dir is required: MUI v4 Dialogs portal into document.body, outside the
+                <div dir={isRTL...}> at App.js:1018, and <html dir> is permanently "ltr" because
+                App.js:727-730 sets it once at mount from i18n.language, which is still the 'en'
+                default from i18n.js:20 at that moment (the real language lands later, App.js:806). */}
+            <Dialog open={exitOpen} onClose={() => setExitOpen(false)} maxWidth="xs" fullWidth dir={isRTL ? 'rtl' : 'ltr'}>
+                <Box style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 24px', borderBottom: '1px solid #e0e0e0' }}>
+                    <Typography variant="h6">{t('DataSources.send.exit.title')}</Typography>
+                </Box>
+                <Box style={{ padding: 24 }}>
+                    <Typography variant="body2" color="textSecondary">{t('DataSources.send.exit.body')}</Typography>
+                    {exitSaveFailed && (
+                        <Typography variant="body2" style={{ color: '#c0392b', marginTop: 12 }}>
+                            {t('DataSources.send.exit.saveFailed')}
+                        </Typography>
+                    )}
+                </Box>
+                <Box style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '16px 24px', borderTop: '1px solid #e0e0e0' }}>
+                    <Button variant="contained" color="primary" disabled={saving} onClick={handleSaveAndExit} autoFocus>
+                        {saving ? <CircularProgress size={18} color="inherit" /> : t('DataSources.send.exit.saveAndExit')}
+                    </Button>
+                    <Box style={{ flex: 1 }} />
+                    <Button variant="text" disabled={saving} onClick={doExit} style={{ color: '#8a8a8a' }}>
+                        {t('DataSources.send.exit.exitWithoutSaving')}
+                    </Button>
+                    <Button onClick={() => setExitOpen(false)} disabled={saving}>{t('DataSources.send.cancel')}</Button>
+                </Box>
+            </Dialog>
+
+            {/* The send-replaces-the-saved-mapping confirm. Reached only from requestSummary, i.e.
+                only when the restore banner is on screen (a saved mapping exists and the table is
+                NOT showing it) AND nothing has been mapped under the new source — the one shape in
+                which pressing "שלח לכולם" silently trades a real mapping for an empty one. Same
+                skeleton as the exit dialog above, including the mandatory `dir`: MUI v4 portals to
+                document.body, outside App's <div dir>, and <html dir> is stuck at "ltr". */}
+            <Dialog open={replaceConfirmOpen} onClose={() => setReplaceConfirmOpen(false)} maxWidth="xs" fullWidth dir={isRTL ? 'rtl' : 'ltr'}>
+                <Box style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 24px', borderBottom: '1px solid #e0e0e0' }}>
+                    <Typography variant="h6">{t('DataSources.send.source.sendReplaceTitle')}</Typography>
+                </Box>
+                <Box style={{ padding: 24 }}>
+                    <Typography variant="body2" color="textSecondary">
+                        {t('DataSources.send.source.sendReplaceBody', {
+                            to: smartSend.dataSource?.Name ?? '',
+                            from: saved?.dataSourceName ?? '',
+                            mapped: saved?.mappedTokenCount ?? 0,
+                        })}
+                    </Typography>
+                </Box>
+                <Box style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '16px 24px', borderTop: '1px solid #e0e0e0' }}>
+                    {/* No autoFocus: the destructive button is a deliberate second click, the same
+                        rule the source-switch confirm follows. */}
+                    <Button variant="contained" color="primary" disabled={saving}
+                        onClick={() => { setReplaceConfirmOpen(false); openSummary(); }}>
+                        {t('DataSources.send.actions.sendToAll')}
+                    </Button>
+                    <Box style={{ flex: 1 }} />
+                    <Button onClick={() => setReplaceConfirmOpen(false)} disabled={saving}>{t('DataSources.send.cancel')}</Button>
+                </Box>
+            </Dialog>
+
+            <Snackbar
+                open={toast.open}
+                autoHideDuration={3500}
+                onClose={() => setToast({ ...toast, open: false })}
+                message={toast.msg}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+                ContentProps={{ style: { backgroundColor: toast.ok ? '#2e7d32' : '#c0392b' } }}
+            />
+        </DefaultScreen>
+    );
+};
+
+export default SmartSendScreen;

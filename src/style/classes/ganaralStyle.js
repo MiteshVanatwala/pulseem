@@ -219,6 +219,31 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
       minWidth: '0 !important',
     }
   },
+  // OUTER MUI paper override for the tier-graph dialog ONLY. The doubled '&&' beats
+  // dialogContainer's `& .MuiDialog-paperWidthSm { maxWidth: 1080px !important }` (0,2,0) with (0,3,0),
+  // lifting the 1080 cap so the outer paper is the single width source of truth. Passed as
+  // customContainerStyle (BaseDialog ignores PaperProps/fullWidth). Same trick as
+  // newNavigationDialogContainer above.
+  // The paper now TRACKS THE IMAGE instead of always taking 94vw, so a 640px graph no longer sits in
+  // wide grey margins. --tg-img-w is published on <html> by TierGraphDialog. --tg-chrome-w defaults to
+  // 416px = editor panel 380 (flex-basis 380 with boxSizing:'border-box', so its own 16px padding and
+  // 1px inline-start border are INSIDE the 380) + stage column padding 18*2. Nothing else contributes:
+  // tierGraphDialogPaperProps / tierGraphDialogContent / tierGraphDialogChildren all force padding 0.
+  // maxWidth was 75%, which BEAT the width line above and re-broke the §17 one-row header on every
+  // laptop: at 1366px it capped the paper at 1024.5px, ~32px under the 1056px a default 640px graph
+  // asks for, so the header wrapped again below ~1408px of viewport. 95% keeps a ceiling for large
+  // graphs while letting the 94vw term above be the real cap (it is always the smaller of the two).
+  tierGraphDialogContainer: {
+    '&& .MuiDialog-paperWidthSm': {
+      minWidth: '0 !important',
+      width: 'min(calc(var(--tg-img-w, 640px) + var(--tg-chrome-w, 416px)), 94vw) !important',
+      maxWidth: '95% !important',
+      margin: '16px !important',
+    },
+    '&& .MuiDialog-paperScrollPaper': {
+      maxHeight: 'calc(100% - 32px)', // leave room for the 16px top/bottom margin
+    },
+  },
   newNavigationDialogPaper: {
     width: 462,
     maxWidth: '96vw !important',
@@ -6155,6 +6180,42 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
     fontSize: 20,
     color: '#374151',
     marginTop: 3,
+  },
+  // INNER paper (BaseDialog's <Paper>, via paperStyle): FILLS the outer paper exactly so it can
+  // never overflow it in either direction — the actual width lives on the OUTER paper
+  // (tierGraphDialogContainer). inner margin-box == outer content box => overflowX:hidden has
+  // nothing to clip, in RTL or LTR, at any viewport.
+  tierGraphDialogPaperProps: {
+    borderRadius: 15,
+    padding: '0px',
+    width: '100%',
+    maxWidth: '100% !important',
+    minWidth: '0 !important',
+    maxHeight: '92vh',
+    margin: '0 !important',        // gutter comes solely from the outer paper (no double margin)
+    boxSizing: 'border-box',
+    overflow: 'hidden',
+    // undo the app-wide "::placeholder { color: red }" leak (Whatsapp/Chat/css/overrides.css) — scope a
+    // neutral placeholder color to this dialog only. Higher specificity beats the global rule.
+    '& input::placeholder': { color: '#9aa1ad', opacity: 1 },
+    '& input::-ms-input-placeholder': { color: '#9aa1ad' },
+  },
+  // reclaim dialogContent's residual 1rem side margin + minWidth so the graph is full-bleed
+  tierGraphDialogContent: {
+    border: 'none !important',
+    margin: '0 !important',
+    padding: '0 !important',
+    minWidth: '0 !important',
+    width: '100%',
+    boxSizing: 'border-box',
+  },
+  // reclaim dialogChildren's marginBlock / summaryPadding (overflowY stays auto for tall dialogs)
+  tierGraphDialogChildren: {
+    margin: '0 !important',
+    marginBlock: '0 !important',
+    padding: '0 !important',
+    minWidth: '0 !important',
+    overflowX: 'hidden',
   },
   displayConditionDialogPaperProps: {
     borderRadius: 8,

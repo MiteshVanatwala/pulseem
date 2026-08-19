@@ -1,0 +1,292 @@
+{
+  "title": "Sources report",
+  "nav": {
+    "sendSearch": "Sources report"
+  },
+  "searchPlaceholder": "Name, email or mobile of an agent or supervisor…",
+  "role": {
+    "all": "Agent and supervisor",
+    "agent": "Agent only",
+    "supervisor": "Supervisor only"
+  },
+  "kind": {
+    "all": "All",
+    "agents": "Agents only",
+    "rollup": "Supervisors only"
+  },
+  "badge": {
+    "supervisor": "Supervisor"
+  },
+  "campaign": {
+    "all": "All campaigns",
+    "label": "Campaigns",
+    "search": "Search campaign…",
+    "none": "No campaign found",
+    "loadFailed": "Could not load the campaign list"
+  },
+  "source": {
+    "prefix": "Source:",
+    "prefixMapped": "Source per current mapping:",
+    "deletedChip": "Deleted source",
+    "deletedChipMapped": "Deleted source · per mapping",
+    "noRecord": "No record",
+    "nameNotFound": "name not found",
+    "markButton": "Mark campaigns by source",
+    "markCount": "{{count}} campaigns",
+    "markDone": "Marked {{count}} campaigns associated with «{{name}}» (#{{id}}) — by record or by the current mapping",
+    "markAlready": "All {{count}} campaigns of «{{name}}» (#{{id}}) are already marked — nothing changed",
+    "markNone": "«{{name}}» (#{{id}}) has no campaigns in the selected range — nothing was marked",
+    "markTooMany": "Marking «{{name}}» would reach {{count}} campaigns and the maximum is {{max}}. Narrow the date range and try again — nothing was marked",
+    "markUndo": "Undo",
+    "a11y": {
+      "cell": "Data source: {{name}}, id {{id}}.",
+      "cellMapped": "Data source per the current mapping: {{name}}, id {{id}}. No source was recorded at send time.",
+      "cellDeleted": "Data source: {{name}}, id {{id}} — deleted source. The send itself is recorded.",
+      "cellDeletedMapped": "Data source per the current mapping: {{name}}, id {{id}} — deleted source. No source was recorded at send time.",
+      "cellNoRecord": "No data source was recorded for this send.",
+      "cellNameNotFound": "Data source: id {{id}}. The source name is unavailable."
+    }
+  },
+  "dateFrom": "From date",
+  "dateTo": "To date",
+  "search": "Search",
+  "moreFilters": "More filters ▾",
+  "clearAll": "Clear all",
+  "includeOverOneYear": "Include sends older than one year (the search will take longer)",
+  "col": {
+    "recipient": "Recipient",
+    "supervisor": "Supervisor",
+    "mailing": "Campaign",
+    "channelsAndResult": "Channels and result",
+    "lastEvidence": "Latest evidence",
+    "sent": "Sent",
+    "sortValue": "Sort value"
+  },
+  "roster": {
+    "title": "The {{count}} recipients this roll-up covered",
+    "recipient": "Recipient",
+    "channels": "Channels",
+    "gap": "Gap",
+    "viewEvidence": "Viewing evidence",
+    "covered": "Recipients covered"
+  },
+  "supervisor": {
+    "opens": "Opens",
+    "clicks": "Clicks",
+    "notAvailable": "Not available"
+  },
+  "version": {
+    "label": "Version",
+    "number": "V{{n}}",
+    "outdated": "Outdated",
+    "latest": "Latest version: V{{n}}",
+    "recordedAt": "Recorded",
+    "source": {
+      "recorded": "Recorded",
+      "inferred": "Inferred",
+      "unverifiable": "Unverifiable"
+    },
+    "state": {
+      "available": "Available",
+      "purged": "Purged",
+      "scrubbed": "Identifying details removed"
+    },
+    "tooltip": {
+      "recorded": "The version was recorded at the moment of the send — this is the version that was actually sent.",
+      "inferred": "There is no send record for the version, but the mapping has not been changed since the send — so this is the version that was sent.",
+      "unverifiable": "The mapping was changed after the send — which version was sent cannot be established with certainty."
+    }
+  },
+  "delivery": {
+    "pending": "Pending",
+    "sent": "Sent",
+    "delivered": "Delivered",
+    "failed": "Failed",
+    "unsubscribed": "Unsubscribe request",
+    "canceled": "Canceled",
+    "stopped": "Stopped",
+    "invalidNumber": "Invalid number",
+    "noSession": "No active conversation window",
+    "unknown": "Unrecognised status"
+  },
+  "engagement": {
+    "none": "No activity recorded",
+    "opened": "Open recorded",
+    "clicked": "Clicked",
+    "read": "Read",
+    "replied": "Replied",
+    "unknown": "Unrecognised"
+  },
+  "empty": {
+    "noResults": "No results match your search",
+    "notSent": "Not sent on any channel"
+  },
+  "results": {
+    "count": "{{count}} results"
+  },
+  "action": {
+    "view": "Details",
+    "viewRollup": "Roll-up details",
+    "back": "Back to {{name}}",
+    "close": "Close"
+  },
+  "drawer": {
+    "sendDetails": "Send details",
+    "provenance": "Which version was sent",
+    "rowValues": "The values sent to this recipient",
+    "noRowValues": "No source row was sent for this recipient — the tokens were sent empty",
+    "coverage": "Roll-up coverage",
+    "coverageCaveat": "These are counts, not percentages: email has no delivery receipt, SMS has no open metric, and a recipient may have been reached on more than one channel — so the denominator differs per channel.",
+    "rosterReconstructed": "This recipient list is reconstructed from the current mapping and is not a record of who was actually sent to."
+  },
+  "footnote": {
+    "tracking": "Open and click data come from tracking and are not available on every channel; no recorded activity is not proof the message went unseen."
+  },
+  "error": {
+    "loadFailed": "Loading the results failed",
+    "permissionDenied": "You do not have permission to view recipient details"
+  },
+  "export": {
+    "button": "Export",
+    "title": "Export search results",
+    "tooltip": "Export every result matching the current filters",
+    "disabledNoRows": "There are no results to export",
+    "disabledLoading": "The search is still running",
+    "rowCount": "{{n}} rows will be exported — every result matching the current filters, not just the page on screen.",
+    "criteriaTitle": "The filters that will be recorded in the file",
+    "criteriaNote": "These rows are written at the top of the file exactly as shown here, so the file documents the search that produced it.",
+    "zeroPrefixNote": "The Excel (.xls) file keeps the leading zero in phone numbers; the CSV does not, and Excel may show 052… as 52…. Open the Excel version when the numbers matter.",
+    "notifyEmail": "Email me when it is ready (optional)",
+    "notifyEmailHint": "Leave it empty and the file will still be waiting on the downloads page.",
+    "ready": "The file is ready — {{n}} rows.",
+    "readyBoth": "Two versions were produced: CSV and Excel.",
+    "readyCsvOnly": "Because of the number of rows, only a CSV file was produced — no Excel version.",
+    "goToDownloads": "Go to the downloads page",
+    "runningInBackground": "The file is being prepared. We will email you when it is ready, and it will appear on the downloads page.",
+    "runningInBackgroundNoEmail": "The file is being prepared. No email address was given, so you will be notified through the notifications bell and the file will wait for you on the downloads page.",
+    "invalidRequest": "The request was rejected: one of the export details is not valid. Check the notification email address, and reduce the number of selected campaigns or filters. Trying again unchanged will be rejected again.",
+    "tooManyRows": "The current search has {{rows}} rows, and the export limit is {{max}}.",
+    "tooManyRowsHint": "Narrow the search — a shorter date range, specific campaigns, or one more filter — and try again.",
+    "inProgress": "Another export is already running. Wait for it to finish and try again.",
+    "notAllowed": "You do not have permission to export these results.",
+    "failed": "The export failed. Try again, and contact support if it keeps happening.",
+    "unknownOutcome": "The connection dropped before the server answered. The export may still have completed.",
+    "unknownOutcomeHint": "Check the downloads page before exporting again — exporting now could create a second copy of the same file.",
+    "unknownState": "Unknown",
+    "campaignsCount": "campaigns",
+    "reportName": "Sources report",
+    "roleSupervisors": "Supervisors",
+    "roleAgents": "Agents",
+    "channel": {
+      "email": "Email",
+      "sms": "SMS",
+      "whatsapp": "WhatsApp",
+      "unknown": "Unrecognised channel"
+    },
+    "bool": {
+      "true": "Yes",
+      "false": "No"
+    },
+    "criteria": {
+      "channel": "Channel",
+      "searchText": "Free-text search",
+      "role": "Role",
+      "rowKind": "Row kind",
+      "campaign": "Campaign",
+      "campaigns": "Campaigns",
+      "campaignsValue": "{{n}} campaigns: {{list}}",
+      "campaignsPartial": "{{n}} campaigns: {{list}}. The entries marked with # are not in the campaign list that was loaded (they may fall outside the selected date range) — the filter still applies to them in full.",
+      "campaignsNamesUnavailable": "{{n}} campaigns: {{list}}. The campaign name list could not be loaded, so some campaigns are identified by number only.",
+      "dateRange": "Date range",
+      "dateBoth": "{{from}} to {{to}} (inclusive)",
+      "dateFromOnly": "From {{from}} onwards",
+      "dateToOnly": "Up to {{to}} (inclusive)",
+      "dateDefaultWindow": "Default: the last 12 months",
+      "dateNoLimit": "No date limit — includes sends older than one year",
+      "dateClamped": "Range narrowed automatically",
+      "dateClampedValue": "The selected range is wider than 12 months, so the search was narrowed automatically to the last 12 months and this file does not contain sends from before that. To cover the full selected range, tick \"Include sends older than one year\" and export again.",
+      "includeOverOneYear": "Includes sends older than one year",
+      "filterRule": "Filter: {{field}}",
+      "filterRuleValue": "{{op}} {{value}}",
+      "filterRuleBetween": "{{op}} {{from}} — {{to}}",
+      "sort": "Sort",
+      "sortValue": "{{field}} ({{dir}})",
+      "sortNotGuaranteed": "The sort may not have been applied",
+      "sortNotGuaranteedValue": "The sort is applied only when the selected field exists as a searchable column in the data-source versions of the campaigns included in the search. If it does not, the server returns the results in the default order — by send time, newest first — and does not report it. To check in this file: if the \"Sort value\" column is empty on every row, the requested sort was not applied.",
+      "incompleteRules": "Filters that were not applied",
+      "incompleteRulesValue": "{{n}} filters were left without a value and were therefore not applied to the results",
+      "unlisted": "{{field}} (new filter field)"
+    },
+    "col": {
+      "campaignName": "Campaign name",
+      "channel": "Channel",
+      "recipientName": "Recipient name",
+      "recipientEmail": "Email",
+      "recipientCellphone": "Mobile",
+      "clientID": "Recipient ID",
+      "isSupervisor": "Supervisor",
+      "supervisorName": "Supervisor name",
+      "sentAt": "Sent at",
+      "deliveryState": "Delivery status",
+      "engagementState": "Engagement status",
+      "engagementAt": "Engagement at",
+      "versionNumber": "Version",
+      "provenanceSource": "Version evidence",
+      "versionState": "Version state",
+      "hasRow": "Source row exists",
+      "isSynthetic": "Synthetic row",
+      "rollupValue": "Roll-up value",
+      "sortValueDisplay": "Sort value",
+      "dataSourceVersionID": "Data source version ID",
+      "channelCampaignID": "Campaign ID",
+      "rowID": "Row ID"
+    }
+  },
+  "preview": {
+    "button": "View the sent email",
+    "title": "The email that was sent",
+    "close": "Close",
+    "frameTitle": "Preview of the sent email",
+    "disabled": "The email cannot be shown: the server supplied no preview link for this row (a non-email channel, or a missing recipient or campaign id).",
+    "noTrackNote": "This preview is not recorded as an open by the recipient, and the links inside it are disabled."
+  },
+  "adv": {
+    "unavailable": "There are currently no fields available to filter by",
+    "field": "Field",
+    "operator": "Condition",
+    "value": "Value",
+    "valueFrom": "From",
+    "valueTo": "To",
+    "addRule": "Add filter",
+    "removeRule": "Remove filter",
+    "clear": "Clear advanced filters",
+    "apply": "Apply filters",
+    "activeCount": "{{count}} active filters",
+    "incomplete": "Missing a value — this filter is not applied",
+    "coverage": "Applies to {{count}} of {{total}} campaigns",
+    "partialWarning": "This field does not exist in every campaign in the results. Filtering by it will return no rows from the campaigns that lack it.",
+    "empty": {
+      "title": "There are no fields to filter by",
+      "body": "Filterable fields are defined on the Data Sources screen: mark a column as searchable in the source settings and it will appear here on the next send."
+    },
+    "op": {
+      "1": "equals",
+      "2": "starts with",
+      "3": "contains",
+      "5": "greater than",
+      "6": "less than",
+      "7": "at least",
+      "8": "at most",
+      "9": "between"
+    }
+  },
+  "sort": {
+    "label": "Sort by",
+    "dir": "Order",
+    "none": "Default (send date)",
+    "asc": "Ascending",
+    "desc": "Descending",
+    "hiddenFieldNote": "The sort uses a field that is not a column of the grid. Each row's sort value is shown in the \"Sort value\" column.",
+    "unknownValue": "No value"
+  }
+}

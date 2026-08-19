@@ -59,7 +59,9 @@ import OverwriteTemplatePopUp from '../Groups/Management/Popup/OverwriteTemplate
 import SaveTemplate from './modals/SaveTemplate';
 /* END Bee */
 import { sitePrefix } from '../../config';
-import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
+import { MdArrowBackIos, MdArrowForwardIos, MdBarChart } from 'react-icons/md';
+import { buildTierGraphRow } from './helper/Template';
+import TierGraphDialog from './components/TierGraph/TierGraphDialog';
 import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
 import { getAuthorizedEmails } from '../../redux/reducers/commonSlice';
 import DomainVerification from '../../Shared/Dialogs/DomainVerification';
@@ -825,6 +827,10 @@ const CampaignEditor = ({ classes, ...props }) => {
   //#endregion Init Bee Token & Configuration
   //#region Pulseem Methods (Save, Delete, Exit, Back, Test Send)
   const onSave = async (args) => {
+    // Keep the design snapshot fresh: features that clone the current design (e.g. the tier-graph
+    // "add to email") read latestEditorJsonRef. onSave receives the authoritative JSON, so refresh
+    // it here — otherwise the snapshot can lag/stay empty and the clone fails ("Editor JSON not ready").
+    if (args?.JsonData) updateLatestEditorJson(args.JsonData);
     // Calculate email size BEFORE any other validations
     const sizeInfo = calculateEmailSize(args.HtmlData, args.AmpData);
     updateEmailSize(sizeInfo);
@@ -1688,6 +1694,57 @@ const CampaignEditor = ({ classes, ...props }) => {
     }
   }
 
+  // Inject the tier-graph as a new BEE image row, then reload + save (pattern:
+  // removeDeletedConditionFromDesign + loadNewTemplate). Rejects on failure so
+  // TierGraphDialog can show insertError and keep the popup open. Plan §4.4.
+  const insertTierGraphRow = async (url, width) => {
+    if (!editorRef.current) throw new Error('Editor not ready');
+
+    // Resolve a valid base design to clone. The tier-graph row is appended to the CURRENT design,
+    // so we need a BEE template snapshot ({ page: { rows: [...] } }). That snapshot lives in
+    // latestEditorJsonRef (seeded at init; refreshed by BEE onLoad/onChange and by onSave). As a
+    // safety net we also accept the onChange snapshot (prevEditorJsonRef) and a bare page object
+    // (some BEE callbacks emit the page directly). ROOT CAUSE of the old "add to email" failure:
+    // this ref was EMPTY on stale builds, so the guard threw "Editor JSON not ready" before any
+    // load/save ever ran (no console error, no network call — verified on stage).
+    const toTemplate = (j) => {
+      if (!j || typeof j !== 'object') return null;
+      if (j.page && Array.isArray(j.page.rows)) return j;   // already a full template
+      if (Array.isArray(j.rows)) return { page: j };         // bare page object -> wrap it
+      return null;
+    };
+    const base = toTemplate(latestEditorJsonRef.current) || toTemplate(prevEditorJsonRef.current);
+    if (!base) throw new Error('Editor JSON not ready');
+
+    const updatedJson = JSON.parse(JSON.stringify(base));
+    try {
+      updatedJson.page.rows.push(
+        buildTierGraphRow(url, width, t('campaigns.tierGraph.imgAlt'))
+      );
+      updateLatestEditorJson(updatedJson);
+      // In-place refresh: prefer .reload (soft refresh of the current design) over
+      // .load (full new-template load). This mirrors removeDeletedConditionFromDesign
+      // — the proven pattern for MODIFYING the existing design. .load has been the
+      // suspect for "add to email" rejecting on some designs; .reload is gentler.
+      if (typeof editorRef.current.reload === 'function') {
+        await editorRef.current.reload(updatedJson);
+      } else {
+        await editorRef.current.load(updatedJson);
+      }
+      saveDesign(false, null, false);               // persist in background — fire-and-forget, EXACTLY like
+                                                     // loadNewTemplate. Awaiting it would surface a background
+                                                     // save error (e.g. onSave size/link check) as a false
+                                                     // "insert failed", even though the row was already added.
+    } catch (e) {
+      console.error('insertTierGraphRow failed:', e);
+      // Re-throw with a readable message so the dialog can SHOW the real BEE rejection
+      // (the handoff calls this out: the actual error is needed to diagnose).
+      const detail = e && (e.message || (typeof e === 'string' ? e : JSON.stringify(e)));
+      throw new Error(detail || 'reload/load rejected');
+    }
+    // NOTE: the dialog closes itself (onClose) on success.
+  };
+
   const renderTemplateButtons = () => {
     return <>
       <Button onClick={() => {
@@ -1736,6 +1793,25 @@ const CampaignEditor = ({ classes, ...props }) => {
         key={'aiButton'}
       >{t('campaigns.aiDeisgner')}</Button>
       }
+      {/* Tier graph ("גרף המדרגות") — generic tool, no feature gate by default.
+          TODO(owner: product): to stage the rollout, add a `TierGraph` code to
+          PulseemFeatures (Fields.ts, precedent DisplayConditions:'74') and wrap
+          this button in `accountFeatures?.indexOf(PulseemFeatures.TierGraph) > -1`. */}
+      <Button
+        disabled={buttonDisabled}
+        onClick={() => setDialogType({ type: 'tierGraph' })}
+        variant='contained'
+        size='small'
+        className={clsx(
+          classes.btn,
+          classes.btnRounded
+        )}
+        style={{ margin: '8px' }}
+        startIcon={<MdBarChart />}
+        key={'tierGraphButton'}
+      >
+        {t('campaigns.tierGraph.openButton')}
+      </Button>
     </>
   }
 
@@ -2134,6 +2210,26 @@ const CampaignEditor = ({ classes, ...props }) => {
       currentDialog = getProblematicLinksDialog(data);
     } else if (type === 'AIDialog') {
       currentDialog = AI_Dialog();
+    } else if (type === 'tierGraph') {
+      currentDialog = {
+        title: t('campaigns.tierGraph.title'),
+        showDefaultButtons: false,
+        maxHeight: '86vh',                                      // raise the children cap so the FIXED-height dialog body (TierGraphDialog root: 80vh) never clips — panel scrolls, popup never jumps
+        customContainerStyle: classes.tierGraphDialogContainer, // sizes the OUTER MUI paper past the 1080 cap (this dialog only)
+        paperStyle: classes.tierGraphDialogPaperProps,          // INNER paper — now fills the outer, never overflows
+        contentStyle: classes.tierGraphDialogContent,           // drop dialogContent's 1rem margin / minWidth
+        childrenStyle: classes.tierGraphDialogChildren,         // drop dialogChildren's marginBlock / padding
+        content: (
+          <TierGraphDialog
+            mergeData={Array.isArray(mergeData) ? mergeData : []} // MANDATORY guard — initial mergeData is {}
+            t={t}
+            isRTL={isRTL}
+            classes={classes}
+            onInsert={insertTierGraphRow}
+            onClose={() => setDialogType(null)}
+          />
+        )
+      };
     }
 
     if (type) {
@@ -2204,6 +2300,17 @@ const CampaignEditor = ({ classes, ...props }) => {
           key={'createButton'}
         >{t('common.continue')}</Button>
         }
+        {/* Entry B (§11.2): after saving the design, go straight to the smart-send screen
+            (gated on DATA_SOURCES). Sends via a data source instead of the regular flow. */}
+        {userRoles?.AllowSend && accountFeatures?.indexOf(PulseemFeatures.DATA_SOURCES) > -1 && campaignId && <Button
+          onClick={() => saveDesign(true, `${sitePrefix}Campaigns/SmartSend/${campaignId}`)}
+          variant='outlined'
+          size='small'
+          className={clsx(classes.btn, classes.btnRounded, classes.backButton)}
+          style={{ marginInlineStart: '8px' }}
+          color="primary"
+          key={'smartSendButton'}
+        >{t('DataSources.send.smartSendAction')}</Button>}
       </>)
     }
     else {
