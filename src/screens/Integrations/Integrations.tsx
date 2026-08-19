@@ -278,7 +278,8 @@ const tabToKeyMap: Record<string, string> = {
   '4': 'ecwid',
   '5': 'eshop',
   '10': 'klaviyo',
-  '14': 'verifone'
+  '14': 'verifone',
+  '15': 'yotpo'
 };
 
 const keyToTabMap: Record<string, string> = {
@@ -290,7 +291,8 @@ const keyToTabMap: Record<string, string> = {
   'ecwid': '4',
   'eshop': '5',
   'klaviyo': '10',
-  'verifone': '14'
+  'verifone': '14',
+  'yotpo': '15'
 };
 
 const Integrations = ({ classes }: any) => {
@@ -408,8 +410,7 @@ const Integrations = ({ classes }: any) => {
       icon: VerifoneIcon,
       desc: t('integrations.verifoneDesc'),
       category: 'retail',
-      hasStatus: true,
-      showOnlyFor: 'LizaD'
+      hasStatus: true
     },
     {
       key: 'yotpo',
@@ -418,7 +419,7 @@ const Integrations = ({ classes }: any) => {
       icon: YotpoIcon,
       desc: t('integrations.yotpoDesc'),
       category: 'marketing',
-      hasStatus: false
+      hasStatus: true
     }
   ], [t]);
 
@@ -459,6 +460,7 @@ const Integrations = ({ classes }: any) => {
           { key: 'eshop', code: LU_Plugin.EShop, check: (data: any) => !!(data?.ApiKey) },
           { key: 'klaviyo', code: LU_Plugin.Klaviyo, check: (data: any) => !!(data?.ApiKey) },
           { key: 'verifone', code: LU_Plugin.Verifone, check: (data: any) => !!(data?.username || data?.chainID) },
+          { key: 'yotpo', code: LU_Plugin.Yotpo, check: (data: any) => !!(data?.ApiKey) },
         ];
 
         const newStatuses = { ...statuses };
@@ -500,9 +502,9 @@ const Integrations = ({ classes }: any) => {
   const filteredIntegrations = useMemo(() => {
     return integrationsData.filter(item => {
       // 1. Check company name restriction (e.g. Verifone)
-      if (item.showOnlyFor && companyName !== item.showOnlyFor) {
-        return false;
-      }
+      // if (item.showOnlyFor && companyName !== item.showOnlyFor) {
+      //   return false;
+      // }
 
       return true;
     });
@@ -541,6 +543,8 @@ const Integrations = ({ classes }: any) => {
         return <Klaviyo classes={classes} />;
       case 'verifone':
         return <VerifoneSetting classes={classes} />;
+      case 'yotpo':
+        return <Yotpo classes={classes} />;
       default:
         return null;
     }
