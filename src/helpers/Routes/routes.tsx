@@ -459,7 +459,7 @@ export const getRoutes = (
       //
       // To release it, restore:
       //   isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount,
-      isShow: false,
+      isShow: true,
       options: [
         {
           key: "serviceDashboard",
