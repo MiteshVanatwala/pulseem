@@ -41,7 +41,10 @@ import store from '../../redux/store';
 // This is visibility, not security. The API is unguarded, so a determined user
 // could still call the endpoints directly — the goal is to keep unfinished UI
 // out of customers' way.
-const CHAT_WIDGET_PREVIEW_USER = 'pulseemmeta';
+// Both internal logins are accepted: the account actually used on stage reports
+// nameid 'Pulseem', while 'pulseemmeta' was the name originally asked for.
+// Compared lowercased, so the casing typed at login does not matter.
+const CHAT_WIDGET_PREVIEW_USERS = ['pulseem', 'pulseemmeta'];
 
 export const isChatWidgetPreviewUser = (): boolean => {
   try {
@@ -51,7 +54,7 @@ export const isChatWidgetPreviewUser = (): boolean => {
     // path changes.
     const candidates = [state?.core?.companyName, state?.user?.username];
     return candidates.some(
-      (n) => typeof n === 'string' && n.trim().toLowerCase() === CHAT_WIDGET_PREVIEW_USER,
+      (n) => typeof n === 'string' && CHAT_WIDGET_PREVIEW_USERS.includes(n.trim().toLowerCase()),
     );
   } catch {
     return false;
