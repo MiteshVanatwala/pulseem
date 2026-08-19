@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Widget test page</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      color: #1a1a1a;
+      background: #f7f8fa;
+      line-height: 1.6;
+    }
+    .wrap { max-width: 44rem; margin: 0 auto; padding: 3rem 1.5rem 8rem; }
+    h1 { font-size: 1.9rem; letter-spacing: -.02em; margin: 0 0 .4rem; }
+    .sub { color: #667085; margin: 0 0 2.5rem; }
+    .card { background: #fff; border: 1px solid #e4e7ec; border-radius: 10px; padding: 1.25rem 1.4rem; margin-bottom: 1rem; }
+    h2 { font-size: 1rem; margin: 0 0 .6rem; }
+    ol { margin: 0; padding-left: 1.2rem; }
+    li { margin-bottom: .4rem; }
+    code { background: #f2f4f7; border: 1px solid #e4e7ec; border-radius: 3px; padding: .1em .35em; font-size: .87em; }
+    .hint { color: #667085; font-size: .9rem; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Pretend customer website</h1>
+    <p class="sub">This page carries nothing but the embed snippet — exactly what a customer pastes in. Everything else you see comes from the widget.</p>
+
+    <div class="card">
+      <h2>What to try</h2>
+      <ol>
+        <li>Click the bubble in the corner.</li>
+        <li>Fill in the identification form — try submitting it empty first to see validation.</li>
+        <li>Send a message. A mock agent replies after ~2.5 seconds.</li>
+        <li>After that reply the marketing opt-in appears (this config uses <code>after_first_response</code>).</li>
+        <li>Close the panel to trigger the feedback form.</li>
+      </ol>
+    </div>
+
+    <div class="card">
+      <h2>Check what the backend received</h2>
+      <p class="hint">Open <code>/__state</code> to see the captured conversation, messages, opt-in and feedback — the local stand-in for querying <code>ServiceConversations</code>.</p>
+    </div>
+
+    <div class="card">
+      <h2>The snippet on this page</h2>
+      <p class="hint">Identical in shape to what <code>EmbedCodeGenerator.tsx</code> produces. Only <code>apiBase</code> and <code>assetBase</code> differ, pointing at the dev server instead of the CDN.</p>
+    </div>
+  </div>
+
+  <!-- ── The embed snippet ────────────────────────────────────────────────
+       In production this is one line pointing at cdn.pulseem.com. Here the
+       bases are overridden so the widget talks to the local dev server.     -->
+  <script>
+    // Points the widget at the dev server instead of the CDN. In production this
+    // block does not exist — the snippet below is the whole installation.
+    window.PulseemWidgetConfig = {
+      apiBase: 'http://localhost:4300',
+      assetBase: 'http://localhost:4300',
+      socketUrl: 'http://localhost:4400' // set to test the socket path
+    };
+  </script>
+
+  <!-- Verbatim output of EmbedCodeGenerator.tsx, except that src points at the
+       dev server. Using the real snippet here means the queue-stub path is what
+       gets exercised locally, not a shortcut. -->
+  <script>
+    (function(p,u,l,s,e,m,a){
+      p['PulseemObject']=e;p[e]=p[e]||function(){
+      (p[e].q=p[e].q||[]).push(arguments)};
+      m=u.createElement(l);m.async=1;m.src=s;
+      a=u.getElementsByTagName(l)[0];a.parentNode.insertBefore(m,a);
+    })(window,document,'script','http://localhost:4300/pulseem.js','pulseem');
+    pulseem('init', '11111111-2222-3333-4444-555555555555');
+  </script>
+</body>
+</html>

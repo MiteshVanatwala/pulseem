@@ -119,6 +119,10 @@ export type ChatFooterContentProps = {
 	isContactLoader: boolean;
 	personalFields: personalFieldDataProps;
 	onChatTemplateDelete: () => void;
+	// Widget conversations reuse this footer but have no WhatsApp template/session
+	// rules, so the composer switches to a plain text + attachment mode.
+	isWidget?: boolean;
+	onWidgetAttach?: (file: File) => void;
 };
 
 export type ChatTemplateProps = {
@@ -131,6 +135,16 @@ export type ChatTemplateProps = {
 
 export type WhatsappChatSideBarProps = {
 	classes: ClassesType['classes'];
+	// Service channel filter (PR-2455). The inbox is shared between WhatsApp and
+	// site-widget conversations; these drive the channel/source dropdowns above the
+	// contact list. All optional so existing WhatsApp-only callers are unaffected.
+	selectedServiceChannel?: 'all' | 'whatsapp' | 'widget';
+	onServiceChannelChange?: (channel: 'all' | 'whatsapp' | 'widget') => void;
+	serviceDomains?: string[];
+	serviceDomain?: string;
+	onServiceDomainChange?: (domain: string) => void;
+	serviceSource?: string;
+	onServiceSourceChange?: (value: string) => void;
 	isMobileSideBar: boolean;
 	setIsMobileSideBar: () => void;
 	handleChatId: (

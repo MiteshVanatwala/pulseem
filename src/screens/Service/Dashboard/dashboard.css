@@ -1,0 +1,231 @@
+/* Service Dashboard (PR-2453) — visual styling. Layout columns use MUI Grid. */
+
+.svc-dash {
+  padding: 8px 0 28px;
+  background: transparent;
+  box-sizing: border-box;
+}
+
+.svc-dash-head { margin-bottom: 22px; }
+.svc-dash-title {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #101828;
+  margin: 0 0 3px;
+}
+.svc-dash-subtitle {
+  font-size: 13.5px;
+  color: #667085;
+  margin: 0;
+}
+
+/* ── Cards / panels ─────────────────────────────────────────────── */
+.svc-card {
+  background: #fff;
+  border: 1px solid #e4e8ee;
+  border-radius: 14px;
+  padding: 18px 20px;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05), 0 1px 3px rgba(16, 24, 40, 0.04);
+  box-sizing: border-box;
+  height: 100%;
+  transition: box-shadow 0.18s ease, transform 0.18s ease;
+}
+.svc-card:hover {
+  box-shadow: 0 6px 18px rgba(16, 24, 40, 0.08);
+  transform: translateY(-2px);
+}
+
+/* ── Stat cards ─────────────────────────────────────────────────── */
+.svc-stat {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  position: relative;
+  overflow: hidden;
+}
+.svc-stat::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 4px;
+  background: var(--svc-accent, #3b82f6);
+}
+.svc-stat-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.svc-stat-icon svg { font-size: 26px; }
+.svc-stat-value {
+  font-size: 30px;
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: #101828;
+}
+.svc-stat-label {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: #667085;
+  margin-top: 3px;
+}
+
+/* ── Quick actions ──────────────────────────────────────────────── */
+.svc-qa-row { display: flex; gap: 12px; flex-wrap: wrap; }
+.svc-qa-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  border: none;
+  border-radius: 11px;
+  padding: 12px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(16, 24, 40, 0.12);
+  transition: transform 0.08s ease, box-shadow 0.18s ease, filter 0.15s ease;
+}
+.svc-qa-btn:hover { filter: brightness(1.05); box-shadow: 0 5px 14px rgba(16, 24, 40, 0.18); }
+.svc-qa-btn:active { transform: translateY(1px); }
+.svc-qa-btn svg { font-size: 19px; }
+
+/* ── Panel header ───────────────────────────────────────────────── */
+.svc-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: -2px 0 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f1f3f7;
+}
+.svc-panel-title-wrap { display: flex; align-items: center; gap: 10px; }
+.svc-panel-icon {
+  width: 30px; height: 30px;
+  border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.svc-panel-icon svg { font-size: 18px; }
+.svc-panel-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1d2939;
+  margin: 0;
+}
+.svc-panel-link {
+  font-size: 13px;
+  font-weight: 600;
+  color: #2563eb;
+  cursor: pointer;
+  text-decoration: none;
+  padding: 4px 10px;
+  border-radius: 7px;
+  transition: background 0.15s ease;
+}
+.svc-panel-link:hover { background: #eff4ff; }
+
+/* ── Recent conversations rows ──────────────────────────────────── */
+.svc-rc-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 8px;
+  margin: 0 -8px;
+  border-radius: 10px;
+  transition: background 0.14s ease;
+}
+.svc-rc-row:hover { background: #f7f9fc; }
+.svc-rc-avatar {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  color: #fff;
+  font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  font-size: 15px;
+  box-shadow: 0 2px 5px rgba(16, 24, 40, 0.15);
+}
+.svc-rc-main { flex: 1; min-width: 0; }
+.svc-rc-name { font-size: 14px; font-weight: 600; color: #1d2939; }
+.svc-rc-meta { font-size: 12px; color: #667085; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 1px; }
+.svc-rc-right { text-align: right; flex-shrink: 0; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+.svc-rc-time { font-size: 11.5px; color: #98a2b3; }
+
+.svc-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  text-transform: capitalize;
+  letter-spacing: 0.01em;
+}
+
+/* ── Insight rows (performance / marketing) ─────────────────────── */
+.svc-kv {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 11px 0;
+  border-bottom: 1px solid #f4f5f8;
+}
+.svc-kv:last-child { border-bottom: none; }
+.svc-kv-label { font-size: 13px; color: #667085; font-weight: 500; }
+.svc-kv-value { font-size: 15px; font-weight: 700; color: #101828; }
+.svc-pill {
+  padding: 3px 11px; border-radius: 999px; font-size: 12px; font-weight: 700;
+  display: inline-flex; align-items: center; gap: 5px;
+}
+.svc-pill::before {
+  content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; opacity: 0.9;
+}
+.svc-pill-green { background: #e7f7ee; color: #12894f; }
+.svc-pill-yellow { background: #fef5e0; color: #b7791f; }
+.svc-pill-gray { background: #eef1f5; color: #667085; }
+
+/* ── Feedback ───────────────────────────────────────────────────── */
+.svc-fb-top {
+  display: flex; gap: 18px; align-items: center; margin-bottom: 16px;
+  padding: 14px; background: #f8fafc; border-radius: 12px;
+}
+.svc-fb-rating { font-size: 34px; font-weight: 800; color: #101828; line-height: 1; letter-spacing: -0.02em; }
+.svc-fb-stars { color: #f5a623; font-size: 15px; letter-spacing: 1px; }
+.svc-fb-sub { font-size: 12px; color: #667085; margin-bottom: 6px; }
+.svc-fb-sentiment { display: flex; gap: 6px; flex-wrap: wrap; }
+.svc-fb-items { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 960px) { .svc-fb-items { grid-template-columns: 1fr; } }
+.svc-fb-item { padding: 12px 14px; border: 1px solid #eef1f5; border-radius: 10px; background: #fcfdfe; }
+.svc-fb-item-text {
+  font-size: 13px; color: #475467; margin-top: 4px; line-height: 1.5;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+
+/* ── Empty state ────────────────────────────────────────────────── */
+.svc-empty {
+  text-align: center;
+  padding: 34px 12px;
+  color: #98a2b3;
+}
+.svc-empty-icon { font-size: 40px; opacity: 0.4; margin-bottom: 10px; }
+.svc-empty-text { font-size: 13.5px; color: #667085; }
+.svc-empty-link { display: inline-block; margin-top: 10px; font-size: 13px; font-weight: 600; color: #2563eb; cursor: pointer; }
+.svc-empty-link:hover { text-decoration: underline; }
+
+/* ── Skeleton shimmer ───────────────────────────────────────────── */
+.svc-skel {
+  background: linear-gradient(90deg, #eceef2 25%, #f5f6f8 37%, #eceef2 63%);
+  background-size: 400% 100%;
+  animation: svc-shimmer 1.3s ease infinite;
+  border-radius: 6px;
+}
+@keyframes svc-shimmer {
+  0% { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}
