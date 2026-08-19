@@ -534,6 +534,12 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			SmsStatus: translator('common.smsStatus'),
 			CreationDate: translator('client.subscribedOn'),
 			ReminderDate: translator('recipient.reminderDate'),
+			// PR-3418 — Yotpo loyalty personalization tokens
+			loyalty_points: translator('campaigns.loyalty.points'),
+			loyalty_tier: translator('campaigns.loyalty.tier'),
+			loyalty_points_earned: translator('campaigns.loyalty.pointsEarned'),
+			loyalty_tier_multiplier: translator('campaigns.loyalty.tierMultiplier'),
+			loyalty_points_expiry: translator('campaigns.loyalty.pointsExpiry'),
 		};
 		const { payload: personalFieldData }: personalFieldAPIProps =
 			await dispatch<any>(getAccountExtraData());

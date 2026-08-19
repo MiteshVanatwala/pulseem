@@ -138,5 +138,17 @@
   "smsCampaign": "Kampania SMS",
   "maxUploadLimitation": "Możesz przesłać do 5000 odbiorców jednocześnie",
   "whatsappCampaign": "Kampania Whatsapp",
-  "backgroundImport": "<b>Uwaga</b><br/>Poprosiłeś o przesłanie dużej liczby odbiorców<br/>System wykonuje przesyłanie w tle.<br/>Wyniki przesyłania można zobaczyć na stronie przesyłania plików"
+  "backgroundImport": "<b>Uwaga</b><br/>Poprosiłeś o przesłanie dużej liczby odbiorców<br/>System wykonuje przesyłanie w tle.<br/>Wyniki przesyłania można zobaczyć na stronie przesyłania plików",
+  "loyalty": {
+    "title": "Dane lojalnościowe (Yotpo)",
+    "readOnly": "Tylko do odczytu · Synchronizowane z Yotpo",
+    "points": "Punkty lojalnościowe",
+    "tier": "Poziom lojalnościowy",
+    "pointsEarned": "Zdobyte punkty (łącznie)",
+    "tierMultiplier": "Mnożnik poziomu",
+    "pointsExpiry": "Data ważności punktów",
+    "referrals": "Ukończone polecenia",
+    "optedIn": "Zapisany",
+    "lastSynced": "Ostatnia synchronizacja"
+  }
 }

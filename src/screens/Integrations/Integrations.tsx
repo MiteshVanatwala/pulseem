@@ -23,6 +23,8 @@ import EShop from "./EShop";
 import Wix from "./Wix";
 import Klaviyo from "./Klaviyo";
 import { useDispatch, useSelector } from "react-redux";
+import Yotpo from "./Yotpo";
+import YotpoIcon from '../../assets/images/yotpo.png';
 import { StateType } from "../../Models/StateTypes";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getIntegration } from "../../redux/reducers/integrationSlice";
@@ -408,6 +410,15 @@ const Integrations = ({ classes }: any) => {
       category: 'retail',
       hasStatus: true,
       showOnlyFor: 'LizaD'
+    },
+    {
+      key: 'yotpo',
+      tabValue: '15',
+      title: t('integrations.Yotpo.title'),
+      icon: YotpoIcon,
+      desc: t('integrations.yotpoDesc'),
+      category: 'marketing',
+      hasStatus: false
     }
   ], [t]);
 
