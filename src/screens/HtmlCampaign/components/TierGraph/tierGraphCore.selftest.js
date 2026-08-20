@@ -113,10 +113,10 @@ eq('amountDisp mixed token', amountDisp({ t: 'בונוס ##ExtraField1##', s: 10
 const L = computeLayout(defaultState());
 eq('layout chartBottom', L.chartBottom, defaultState().height - 152);
 eq('layout chartTop', L.chartTop, 78);
-const autoBarW4 = Math.min(190, (defaultState().width - 92 - L.gap * 3) / 4);
-eq('layout barWs cap (all tiers)', L.barWs, [autoBarW4, autoBarW4, autoBarW4, autoBarW4]);
+const autoBarW2 = Math.min(190, (defaultState().width - 92 - L.gap) / 2);   // n=2: the 190 cap binds
+eq('layout barWs cap (all tiers)', L.barWs, [autoBarW2, autoBarW2]);
 eq('layout cardWs default = barW + 8', L.cardWs, L.barWs.map((b) => b + 8));
-eq('layout radii default 18', L.radii, [18, 18, 18, 18]);
+eq('layout radii default 18', L.radii, [18, 18]);
 ok('scalar barW REMOVED from return (contract §4)', !('barW' in L));
 eq('layout return key set', Object.keys(L).sort(), [
   'H', 'W', 'axisMax', 'barWs', 'cardWs', 'cardX', 'chartBottom', 'chartTop', 'gap',
@@ -150,7 +150,7 @@ ok('axisMax floor 1', computeLayout({ ...defaultState(), tiers: [{ amount: { t: 
 });
 
 /* -------- geometry cascade: overrides win, no redistribution -------- */
-const sOv = defaultState();
+const sOv = defaultState(); sOv.tierCountActive = 4;
 sOv.gap = 0; sOv.barWidth = 100;             // 0 must survive — `??` not `||`
 sOv.tiers[1].barWidth = 60;
 sOv.tiers[2].cardWidth = 200;
@@ -178,7 +178,7 @@ eq('override totalW = Σ barWs + gap*(n-1)', LOv.totalW, 360);
 ok('no redistribution — tier0 unaffected by tier1 override', LOv.barWs[0] === 100);
 
 /* -------- A1 (§16b): an explicit width shrinks the AUTO tiers, never overflows ---- */
-const sA1 = defaultState();                    // W 640 -> usable 548, auto gap 28
+const sA1 = defaultState(); sA1.tierCountActive = 4;                    // W 640 -> usable 548, auto gap 28
 sA1.tiers[0].barWidth = 190;                   // one fixed tier, three auto
 const LA1 = computeLayout(sA1);
 const gapA1 = Math.min(28, 548 * 0.05);
@@ -189,15 +189,15 @@ ok('A1 auto tiers stay equal to each other',
   LA1.barWs[1] === LA1.barWs[2] && LA1.barWs[2] === LA1.barWs[3]);
 ok('A1 totalW <= usable (pre-A1: 621.55 > 548, bars spilled)', LA1.totalW <= LA1.usable + 1e-9);
 ok('A1 no longer equals the override-blind §3 autoBarW (116)', Math.abs(LA1.barWs[1] - 116) > 1);
-const sA1f = defaultState(); sA1f.barWidth = 24;   // freeCount 0 -> the fallback branch
+const sA1f = defaultState(); sA1f.tierCountActive = 4; sA1f.barWidth = 24;   // freeCount 0 -> the fallback branch
 eq('A1 freeCount==0 fallback still resolves', computeLayout(sA1f).barWs, [24, 24, 24, 24]);
 
 /* -------- A2 (§16b): imported / hand-edited out-of-range values are clamped ------- */
-const sA2 = defaultState(); sA2.barWidth = 400; sA2.gap = 999;   // e.g. a hand-forged cfg
+const sA2 = defaultState(); sA2.tierCountActive = 4; sA2.barWidth = 400; sA2.gap = 999;   // e.g. a hand-forged cfg
 const LA2 = computeLayout(sA2);
 eq('A2 global barWidth 400 -> 190 (was a 210px JS/C# divergence)', LA2.barWs, [190, 190, 190, 190]);
 eq('A2 gap 999 -> (usable - n*24)/(n-1)', LA2.gap, (548 - 4 * 24) / 3);
-const sA2b = defaultState();
+const sA2b = defaultState(); sA2b.tierCountActive = 4;
 sA2b.tiers[0].barWidth = 1; sA2b.tiers[1].cardWidth = 9999;
 sA2b.tiers[2].cornerRadius = 500; sA2b.tiers[3].cornerRadius = -7;
 const LA2b = computeLayout(sA2b);
@@ -206,7 +206,7 @@ ok('A2 cardWidth -> min(barW + gap, barW + 84)',
   LA2b.cardWs[1] === Math.min(LA2b.barWs[1] + LA2b.gap, LA2b.barWs[1] + 84));
 eq('A2 cornerRadius 500 -> min(40, floor(barW/2))', LA2b.radii[2], Math.min(40, Math.floor(LA2b.barWs[2] / 2)));
 eq('A2 cornerRadius -7 -> 0', LA2b.radii[3], 0);
-const sA2c = defaultState(); sA2c.width = 320;   // n=4 -> cardWidth hi ~59.85 < lo 90
+const sA2c = defaultState(); sA2c.tierCountActive = 4; sA2c.width = 320;   // n=4 -> cardWidth hi ~59.85 < lo 90
 sA2c.tiers[0].cardWidth = 300; sA2c.tiers[1].cardWidth = 10;
 const LA2c = computeLayout(sA2c);
 const hiA2c = Math.min(LA2c.barWs[0] + LA2c.gap, LA2c.barWs[0] + 84);
@@ -220,15 +220,15 @@ eq('A5 arrays follow the clamped n', [computeLayout(sA5).barWs.length,
   computeLayout(sA5).cardWs.length, computeLayout(sA5).radii.length], [4, 4, 4]);
 const sA5b = defaultState(); sA5b.tierCountActive = 0;
 eq('A5 n clamps low to 1', computeLayout(sA5b).n, 1);
-eq('A5 n=4 (default) is unchanged', computeLayout(defaultState()).n, 4);
+eq('A5 n=2 (the new default) needs no clamping', computeLayout(defaultState()).n, 2);
 
 /* -------- A6 (§16b): NaN is ABSENT; cornerRadius rounds to an int ---------------- */
-const sA6 = defaultState();
+const sA6 = defaultState(); sA6.tierCountActive = 4;
 sA6.barWidth = NaN; sA6.gap = NaN;               // one parseFloat('abc') used to blank ALL
 sA6.tiers[0].barWidth = NaN; sA6.tiers[0].cardWidth = NaN; sA6.tiers[0].cornerRadius = NaN;
 sA6.tiers[1].cornerRadius = 12.5; sA6.tiers[2].cornerRadius = 12.4;
 const LA6 = computeLayout(sA6);
-const LClean = computeLayout(defaultState());
+const LClean = computeLayout({ ...defaultState(), tierCountActive: 4 });
 eq('A6 NaN everywhere == no keys at all', [LA6.gap, LA6.barWs, LA6.cardWs],
   [LClean.gap, LClean.barWs, LClean.cardWs]);
 ok('A6 no NaN leaks into any layout number',   // JSON.stringify(NaN) === 'null'
@@ -248,7 +248,7 @@ ok('A6 Stage clip radius is taken over an integer bar height',
 /* -------- A8 (§16c): the radius clamp by bar WIDTH applies to the DEFAULT too ----- */
 // GDI+ receives diameter > rect.Width and emits a self-intersecting path; SVG hides it
 // by clamping rx to width/2 implicitly. Trigger: any bar 24-35px wide with NO `br`.
-const sA8 = defaultState();
+const sA8 = defaultState(); sA8.tierCountActive = 4;
 sA8.tiers[0].barWidth = 24;                     // no cornerRadius -> the default 18
 const LA8 = computeLayout(sA8);
 eq('A8 a 24px bar defaults to radius 12, not 18', LA8.radii[0], 12);
@@ -274,7 +274,7 @@ for (let w = 320; w <= 1400; w += 10) {
 }
 ok('A8 min auto bar width over W 320..1400 x n 1..4 is 48.45 (>= 36)',
   Math.abs(minAutoBar - 48.45) < 1e-9 && Math.floor(minAutoBar / 2) >= 18);
-const sA8c = defaultState(); sA8c.width = 320;   // n=4 -> the 48.45 auto bar itself
+const sA8c = defaultState(); sA8c.tierCountActive = 4; sA8c.width = 320;   // n=4 -> the 48.45 auto bar itself
 eq('A8 a 48.45px auto bar still yields exactly 18', computeLayout(sA8c).radii, [18, 18, 18, 18]);
 // A8 is what lets A9 skip a width-leg cap on the ring: radius + 3 <= (barW + 6)/2.
 let a8Guard = 0;
@@ -313,7 +313,7 @@ ok('A9 capped rx is within 2px of the height SVG would clamp ry to',
 ok('A9 tall bar is UNAFFECTED — the cap is inert (byte-identical to today)',
   ringOf(LA9, 1) === LA9.radii[1] + 3);
 let a9Drift = 0;                       // default graph: the cap must never bind
-const LA9d = computeLayout(defaultState());
+const LA9d = computeLayout({ ...defaultState(), tierCountActive: 4 });
 for (let i = 0; i < LA9d.n; i++) if (ringOf(LA9d, i) !== LA9d.radii[i] + 3) a9Drift++;
 eq('A9 default graph ring radius unchanged (radii[i] + 3)', a9Drift, 0);
 // the exported helpers must equal the C# SPEC, written out here in C#'s own spelling:
@@ -416,7 +416,7 @@ ok('A21c geoNum is the SAME rule computeLayout uses (A6 behaviour unchanged)',
 // Repro from NORMAL USE, not a hand-forged cfg: the default 640x420 graph with `0` typed
 // into the top bar's Gap box. usable 548 / n 4 -> barW 137, auto card 145, bars touching:
 // every pair of adjacent cards overlapped by 8px. C# had the identical gap.
-const sHa = defaultState(); sHa.gap = 0;
+const sHa = defaultState(); sHa.tierCountActive = 4; sHa.gap = 0;
 const LHa = computeLayout(sHa);
 eq('H-a gap 0 on the DEFAULT graph: barW 137, card 137 (was 145 — an 8px overlap)',
   [LHa.barWs[0], LHa.cardWs[0]], [137, 137]);
@@ -440,7 +440,7 @@ eq('H-a the DEFAULT graph\'s cardWs are unchanged (barW + 8, byte-for-byte)',
   computeLayout(defaultState()).cardWs, computeLayout(defaultState()).barWs.map((b) => b + 8));
 // the floor is deliberately NOT applied to an auto card: at W=320/n=4 hi is 59.85 < 90, and
 // §9's upper-bound-wins tie-break would have widened a 56.45px legacy card to 59.85.
-const sHaS = defaultState(); sHaS.width = 320;
+const sHaS = defaultState(); sHaS.tierCountActive = 4; sHaS.width = 320;
 const LHaS = computeLayout(sHaS);
 ok('H-a on an inverted interval the auto card keeps barW + 8 (56.45), NOT the 59.85 ceiling',
   Math.abs(LHaS.cardWs[0] - (LHaS.barWs[0] + 8)) < 1e-9
@@ -587,7 +587,7 @@ eq('cfg bwg/gp values (gp:0 not dropped)', [cfgTop.bwg, cfgTop.gp], [120, 0]);
 eq('cfg here keys', Object.keys(cfg.here).sort(), ['color', 'show', 't', 'v']);
 eq('cfg static here.t stays', cfg.here.t, { v: 'אתה כאן' });
 ok('cfg contains no ## token', !JSON.stringify(cfg).includes('##'));
-eq('cfg tiers length == active', cfg.tiers.length, 4);
+eq('cfg tiers length == active', cfg.tiers.length, 2);
 
 /* ---------------- deterministic pN order + only active tiers ------------- */
 const s3 = defaultState();
@@ -649,8 +649,8 @@ eq('b64url hebrew round-trip', round, 'אתה כאן · ₪42,000');
 // default (all static) round-trip
 const rtDef = parseTierGraphUrl(buildLink(defaultState()).url);
 eq('parse default width/height', [rtDef.width, rtDef.height], [640, 420]);
-eq('parse default tierCount', rtDef.tierCountActive, 4);
-eq('parse default tier0 amount token', [rtDef.tiers[0].amount.t, rtDef.tiers[0].amount.s], ['##פרס עמודה ראשונה##', 120000]);
+eq('parse default tierCount', rtDef.tierCountActive, 2);
+eq('parse default tier0 amount token', [rtDef.tiers[0].amount.t, rtDef.tiers[0].amount.s], ['##יעד מדרגה ראשונה##', 120000]);
 eq('parse default here text', rtDef.here.text, 'אתה כאן');
 eq('parse default box texts', [rtDef.tiers[0].box.line1, rtDef.tiers[0].box.cat1], ['יחיד', 'פרס טיסה']);
 
@@ -709,6 +709,23 @@ eq('defaultState() has no geometry keys (contract §1/§2)',
   ['barWidth', 'gap'].filter((k) => k in defaultState())
     .concat(['barWidth', 'cardWidth', 'cornerRadius'].filter((k) => k in defaultState().tiers[0])), []);
 
+/* ---------------- FIX A/B/C: the new defaults, pinned ---------------- */
+eq('FIX B defaultState() opens with 2 active tiers', defaultState().tierCountActive, 2);
+eq('FIX B the tiers ARRAY still carries 4 — the pad source every `% 4` site indexes', defaultState().tiers.length, 4);
+eq('FIX C the four default amount tokens', defaultState().tiers.map((t) => t.amount.t),
+  ['##יעד מדרגה ראשונה##', '##יעד מדרגה שנייה##', '##יעד מדרגה שלישית##', '##יעד מדרגה רביעית##']);
+ok('FIX A showCurrency defaults to ON', defaultState().showCurrency === true);
+eq('FIX A amountDisp suppresses the sign only when asked',
+  [amountDisp({ t: '120000' }), amountDisp({ t: '120000' }, '')], ['₪120,000', '120,000']);
+ok('FIX A the DEFAULT cfg carries no nc key at all', !/"nc"/.test(JSON.stringify(cfgDef)));
+const sNC = defaultState(); sNC.showCurrency = false;
+const uNC = buildLink(sNC).url;
+const cfgNC = decodeCfg(uNC.split('cfg=')[1].split('&')[0]);
+eq('FIX A opting out emits exactly ONE extra root key nc:1', [cfgNC.nc, Object.keys(cfgNC).sort()],
+  [1, ['axisMax', 'bg', 'font', 'h', 'here', 'nc', 'pg', 'tiers', 'w']]);
+eq('FIX A nc:1 -> false, absent nc -> true',
+  [parseTierGraphUrl(uNC).showCurrency, parseTierGraphUrl(buildLink(defaultState()).url).showCurrency], [false, true]);
+
 /* ---------------- PRE-CHANGE cfg fixture (already-sent URL regression) ------ */
 // Captured from the module BEFORE the geometry keys existed: w=800 h=500, 3 static
 // tiers, no pN params. It must still parse, and must still lay out identically.
@@ -731,6 +748,8 @@ eq('pre-change layout radii/cardWs', [LPre.radii, LPre.cardWs], [[18, 18, 18], [
 // re-emitting a parsed pre-change graph must reproduce the ORIGINAL cfg byte-for-byte
 eq('pre-change cfg re-emits byte-identically',
   buildLink(rtPre).url.split('cfg=')[1].split('&')[0], PRE_CHANGE_CFG64);
+
+ok('FIX A a pre-nc SAVED cfg parses as showCurrency TRUE — today\'s shekel is preserved', rtPre.showCurrency === true);
 
 /* ---------------- summary ---------------- */
 // Every assertion above is a TOP-LEVEL statement, so the suite has already finished by the time an
