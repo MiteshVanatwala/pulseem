@@ -66,7 +66,7 @@ const Groups = ({ classes }) => {
     const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF';
     const { language, windowSize, isRTL, rowsPerPage, CoreToastMessages, userRoles } = useSelector(state => state.core)
     const { accountFeatures } = useSelector(state => state.common);
-    const { groupData, ToastMessages, subAccountAllGroups } = useSelector((state) => state.group);
+    const { groupData, ToastMessages } = useSelector((state) => state.group);
     const { extraData } = useSelector(state => state.sms);
     // New Logic to implement
     // const { extraData } = useSelector(state => state.extraFields);
@@ -1743,14 +1743,14 @@ const Groups = ({ classes }) => {
     const handleConfirmExport = async (formatType, notifyEmail) => {
         setShowConfirmDialog(false);
         setLoader(true);
-        const group = subAccountAllGroups.find((g) => { return g.GroupID === selectedGroups[0] });
+        const group = groupData?.Groups?.find((g) => { return g.GroupID === selectedGroups[0] });
 
         const requestObject = {
             GroupIds: selectedGroups,
             NotifyEmail: notifyEmail,
             FileType: formatType,
             Culture: isRTL ? 0 : 1,
-            FileName: selectedGroups.length === 1 ? group.GroupName : 'PulseemGroups',
+            FileName: selectedGroups.length === 1 ? (group?.GroupName || 'PulseemGroups') : 'PulseemGroups',
             ExportGroupNames: exportGroupNames
         };
 
