@@ -44,7 +44,10 @@ import RemoveMyData from './RemoveMyData.json';
 import PopupTriggers from './PopupTriggers.json';
 import Popup from './Popup.he.json';
 
+import service from './Service.he.json';
+
 export const he = {
+	...service,
 	PopupTriggers,
 	automations,
 	campaigns,

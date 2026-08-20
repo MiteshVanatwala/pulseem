@@ -113,6 +113,8 @@ import ChatWidgetConfigPage from './screens/Widgets/ChatWidgetConfigPage';
 import ServiceDashboard from './screens/Service/Dashboard/Dashboard';
 import { isChatWidgetPreviewUser } from './helpers/Routes/routes';
 import WidgetListPage from './screens/Widgets/WidgetListPage';
+import ChatbotList from './screens/Service/Chatbot/ChatbotList';
+import ChatbotBuilder from './screens/Service/Chatbot/ChatbotBuilder';
 
 const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
   const transferUrl =
@@ -709,6 +711,21 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
         path={`${sitePrefix}Widgets/:widgetId`}
         element={<ChatWidgetConfigPage classes={classes} />}
       />}
+      <Route
+        exact
+        path={`${sitePrefix}Chatbots`}
+        element={<ChatbotList classes={classes} />}
+      />
+      <Route
+        exact
+        path={`${sitePrefix}Chatbots/create`}
+        element={<ChatbotBuilder classes={classes} />}
+      />
+      <Route
+        exact
+        path={`${sitePrefix}Chatbots/:chatbotId`}
+        element={<ChatbotBuilder classes={classes} />}
+      />
     </Routes>
   )
 }

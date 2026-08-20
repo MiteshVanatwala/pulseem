@@ -1,0 +1,646 @@
+/* Service Chatbot builder (PR-3179, Phase 3) — visual styling. Scoped to .svc-cb-* classes.
+   The list page's title, table, and action buttons use the shared managment/ components
+   and style/classes/* classes instead, matching the Automations and Popup Management pages. */
+
+.svc-cb {
+  font-family: 'Assistant', 'Helvetica Neue', Arial, sans-serif;
+}
+/* Without this, each nested IF/ELSE branch's padding/border is added on top of
+   its declared width (content-box default) instead of being carved out of it.
+   Stacking a few levels of condition nesting then pushes inner boxes past
+   their parent's right edge — the "overlapping" boxes seen on mobile. */
+.svc-cb, .svc-cb *, .svc-cb *::before, .svc-cb *::after {
+  box-sizing: border-box;
+}
+
+/* ── Buttons ────────────────────────────────────────────────────── */
+.svc-cb-btn {
+  font-size: 13.5px;
+  font-weight: 600;
+  padding: 9px 16px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  font-family: 'Assistant', 'Helvetica Neue', Arial, sans-serif;
+}
+.svc-cb-btn-primary {
+  background: #2563eb;
+  color: #fff;
+}
+.svc-cb-btn-primary:hover {
+  background: #1d4ed8;
+}
+.svc-cb-btn-primary:disabled {
+  background: #cbd5e1;
+  cursor: not-allowed;
+}
+.svc-cb-btn-ghost {
+  background: #fff;
+  color: #475467;
+  border-color: #d0d5dd;
+}
+.svc-cb-btn-ghost:hover {
+  border-color: #98a2b3;
+  color: #101828;
+}
+/* ── List page banners ──────────────────────────────────────────── */
+.svc-cb-limit-note {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  margin-top: 16px;
+  padding: 12px 16px;
+  background: #fff8ec;
+  border: 1px solid #f9dbaf;
+  border-radius: 10px;
+  font-size: 12.5px;
+  color: #b54708;
+  font-family: 'Assistant', 'Helvetica Neue', Arial, sans-serif;
+}
+.svc-cb-limit-note b {
+  color: #101828;
+}
+
+/* ── Builder ────────────────────────────────────────────────────── */
+.svc-cb-toggle-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  color: #475467;
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+}
+.svc-cb-switch {
+  width: 36px;
+  height: 20px;
+  border-radius: 100px;
+  background: #d0d5dd;
+  position: relative;
+  transition: background 0.15s ease;
+  flex: 0 0 auto;
+}
+.svc-cb-switch.on {
+  background: #16a34a;
+}
+.svc-cb-switch::after {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  top: 2px;
+  left: 2px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+  transition: left 0.15s ease;
+}
+.svc-cb-switch.on::after {
+  left: 18px;
+}
+
+.svc-cb-card-title {
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 700;
+  color: #98a2b3;
+  margin: 0 0 14px;
+}
+.svc-cb-field-row {
+  display: flex;
+  gap: 26px;
+  flex-wrap: wrap;
+}
+.svc-cb-field {
+  flex: 1 1 220px;
+}
+.svc-cb-field label {
+  display: block;
+  font-size: 12px;
+  color: #475467;
+  margin-bottom: 7px;
+  font-weight: 600;
+}
+/* The raw {{merge_tag}} kept next to the translated variable label, so admins
+   can still see the exact placeholder syntax the template actually uses. */
+.svc-cb-var-tag {
+  font-weight: 400;
+  color: #98a2b3;
+}
+
+/* ── Trigger section ────────────────────────────────────────────── */
+.svc-cb-trigger-card {
+  background: #fff;
+  border: 1px solid #eaecf0;
+  border-radius: 14px;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+  overflow: hidden;
+  margin-bottom: 22px;
+  width: 60%;
+}
+.svc-cb-trigger-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 22px;
+  flex-wrap: wrap;
+}
+.svc-cb-trigger-row + .svc-cb-trigger-row {
+  border-top: 1px solid #f2f4f7;
+}
+.svc-cb-trigger-row-icon {
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.svc-cb-trigger-row-icon-fires {
+  background: #eef4ff;
+  color: #2c50c9;
+}
+.svc-cb-trigger-row-icon-cooldown {
+  background: #fff4e6;
+  color: #b54708;
+}
+.svc-cb-trigger-row-text {
+  flex: 1 1 220px;
+}
+/* Matches Subscriber Settings' row labels in the Landing Page wizard — those are
+   plain, unstyled MUI <Typography> (body1: 16px/400 weight/text-primary color),
+   not a bold custom label. */
+.svc-cb-trigger-row-label {
+  font-size: 16px;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.87);
+}
+.svc-cb-trigger-row-desc {
+  font-size: 12.5px;
+  color: #667085;
+  margin-top: 3px;
+}
+.svc-cb-trigger-control {
+  display: flex;
+  justify-content: flex-end;
+  flex: 0 0 auto;
+}
+.svc-cb-cooldown-detail {
+  padding-top: 0;
+  padding-bottom: 20px;
+}
+.svc-cb-cooldown-detail .svc-cb-trigger-row-icon {
+  background: transparent;
+}
+
+
+.svc-cb-stepper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: #475467;
+}
+.svc-cb-stepper button {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  border: 1px solid #d0d5dd;
+  background: #fff;
+  color: #475467;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+}
+.svc-cb-stepper button:hover {
+  border-color: #2563eb;
+  color: #2563eb;
+}
+.svc-cb-stepper input {
+  width: 48px;
+  padding: 6px 4px;
+  border: 1px solid #d0d5dd;
+  border-radius: 7px;
+  background: #fff;
+  color: #101828;
+  font-size: 13px;
+  text-align: center;
+  font-family: inherit;
+}
+.svc-cb-stepper-unit {
+  font-weight: 600;
+  color: #101828;
+}
+
+/* ── Flow (Conditions & Action tab) ────────────────────────────────── */
+.svc-cb-flow-heading {
+  margin-bottom: 18px;
+}
+.svc-cb-flow-heading-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #101828;
+}
+.svc-cb-flow-heading-desc {
+  font-size: 12.5px;
+  color: #667085;
+  margin-top: 3px;
+}
+
+.svc-cb-flow-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.svc-cb-flow-list-nested {
+  margin-top: 4px;
+  gap: 8px;
+  /* Inset from both edges of the parent branch — start-only padding left the
+     inner container's right edge flush with the outer one while its left
+     edge was pushed in, an asymmetric gutter between container and inner
+     container. */
+  padding-inline: 16px;
+}
+.svc-cb-step-card {
+  position: relative;
+  background: #fff;
+  border: 1px solid #eaecf0;
+  border-radius: 14px;
+  box-shadow: 0 1px 3px rgba(16, 24, 40, 0.05);
+  padding: 20px 22px 22px 30px;
+  transition: box-shadow 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+.svc-cb-step-card:hover {
+  border-color: #d0d5dd;
+  box-shadow: 0 6px 16px rgba(16, 24, 40, 0.08);
+  transform: translateY(-1px);
+}
+.svc-cb-step-number {
+  position: absolute;
+  top: -12px;
+  left: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #2563eb;
+  color: #fff;
+  font-size: 11.5px;
+  font-weight: 700;
+  box-shadow: 0 0 0 3px #fff;
+}
+.svc-cb-type-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  min-width: 26px;
+  border-radius: 50%;
+  flex: 0 0 auto;
+}
+.svc-cb-type-icon-condition {
+  background: #fff4e6;
+  color: #b54708;
+}
+.svc-cb-accent-widget-icon {
+  background: #eff6ff;
+  color: #2563eb;
+}
+.svc-cb-accent-template-icon {
+  background: #f5f3ff;
+  color: #7c3aed;
+}
+.svc-cb-accent-chat-icon {
+  background: #f0fdf4;
+  color: #16a34a;
+}
+.svc-cb-accent-webhook-icon {
+  background: #fff7ed;
+  color: #ea580c;
+}
+.svc-cb-connector {
+  display: flex;
+  justify-content: flex-start;
+  padding-inline-start: 2px;
+  margin: 2px 0;
+  color: #98a2b3;
+}
+.svc-cb-action-row-main {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.svc-cb-step-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.svc-cb-step-row > *:first-child {
+  flex: 1;
+  min-width: 0;
+}
+.svc-cb-condition-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.svc-cb-rule-if {
+  font-size: 15px;
+  font-weight: 600;
+  color: #101828;
+  flex: 0 0 auto;
+}
+.svc-cb-rule-keyword {
+  flex: 1 1 160px;
+  min-width: 120px;
+}
+
+.svc-cb-branch {
+  margin-top: 14px;
+  padding-block: 12px;
+  /* border-inline-start is 2px thicker than the other sides (accent color) —
+     trim that same 2px off the start padding so content sits evenly inset on
+     both sides instead of appearing pushed further in on the accent side. */
+  padding-inline-start: 12px;
+  padding-inline-end: 14px;
+  border: 1px solid #16a34a;
+  border-inline-start: 3px solid #15803d;
+  background: #f6fef9;
+  border-radius: 8px;
+}
+.svc-cb-branch-top {
+  width: 60%;
+}
+.svc-cb-branch-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.svc-cb-branch-label {
+  font-size: 13.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #fff;
+  background: #15803d;
+  padding: 4px 12px;
+  border-radius: 20px;
+  flex: 0 0 auto;
+}
+.svc-cb-branch-label-else {
+  background: #475467;
+}
+.svc-cb-branch-else {
+  margin-top: 16px;
+  border-color: #667085;
+  border-inline-start-color: #475467;
+  background: #f9fafb;
+}
+
+/* Per-action-type accent, so the flow's action steps are recognizable at a glance. */
+.svc-cb-action-row {
+  border: 1px solid #d0d5dd;
+  border-inline-start: 4px solid transparent;
+  border-radius: 8px;
+  padding: 12px 14px;
+  background: #fff;
+}
+.svc-cb-accent-widget {
+  border-color: #2563eb;
+  border-inline-start-color: #1d4ed8;
+  background: #f5f9ff;
+}
+.svc-cb-accent-template {
+  border-color: #7c3aed;
+  border-inline-start-color: #6d28d9;
+  background: #faf9ff;
+}
+.svc-cb-accent-chat {
+  border-color: #16a34a;
+  border-inline-start-color: #15803d;
+  background: #f6fef9;
+}
+.svc-cb-accent-webhook {
+  border-color: #ea580c;
+  border-inline-start-color: #c2410c;
+  background: #fffaf5;
+}
+
+.svc-cb-add-row {
+  display: flex;
+  gap: 12px;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+.svc-cb-add-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid transparent;
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: transform 0.1s ease, box-shadow 0.15s ease;
+}
+.svc-cb-add-pill:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(16, 24, 40, 0.1);
+}
+.svc-cb-add-pill-condition {
+  color: #b54708;
+  background: #fff4e6;
+  border-color: #fde5c4;
+}
+.svc-cb-add-pill-action {
+  color: #2563eb;
+  background: #eff6ff;
+  border-color: #d6e6fe;
+}
+.svc-cb-add-pill-branch {
+  color: #16a34a;
+  background: #f0fdf4;
+  border-color: #d3f0e0;
+  padding: 6px 14px;
+}
+.svc-cb-add-branch-link {
+  margin-top: 10px;
+}
+
+.svc-cb-step-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: #98a2b3;
+  cursor: pointer;
+  flex: 0 0 auto;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.svc-cb-step-remove:hover {
+  background: #fef3f2;
+  color: #b42318;
+}
+.svc-cb-step-remove-sm {
+  width: 20px;
+  height: 20px;
+}
+
+.svc-cb-text-input,
+.svc-cb-textarea {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid #d0d5dd;
+  border-radius: 9px;
+  background: #fff;
+  color: #101828;
+  font-size: 13px;
+  font-family: inherit;
+  box-sizing: border-box;
+  transition: border-color 0.15s ease;
+}
+.svc-cb-text-input:hover,
+.svc-cb-textarea:hover {
+  border-color: #98a2b3;
+}
+.svc-cb-text-input:focus,
+.svc-cb-textarea:focus {
+  outline: none;
+  border-color: #2563eb;
+}
+.svc-cb-textarea {
+  resize: vertical;
+  min-height: 64px;
+}
+.svc-cb-step-field {
+  margin-top: 12px;
+}
+.svc-cb-step-field label {
+  display: block;
+  font-size: 11.5px;
+  color: #667085;
+  margin-bottom: 5px;
+  font-weight: 600;
+}
+.svc-cb-step-note {
+  font-size: 11.5px;
+  color: #b54708;
+  background: #fff8ec;
+  border-radius: 6px;
+  padding: 6px 9px;
+  margin-top: 8px;
+}
+
+/* ── Mobile / responsive ────────────────────────────────────────── */
+/* Matches the app's own 'xs' breakpoint (theme.js: sm starts at 600px) so this
+   CSS-driven mobile layout never disagrees with ChatbotBuilder's `isMobile` flag
+   (windowSize === 'xs') — a mismatched band here previously let a MUI Grid's
+   spacing={8} negative-margin overflow slip through un-cancelled, which threw off
+   native <select> dropdown positioning on narrow screens. */
+@media screen and (max-width: 599px) {
+  /* Cancel/Save footer stacks full-width, matching the wizard footer
+     pattern used across the app's other create/edit screens. */
+  .svc-cb .wizardButtonContainer {
+    flex-direction: column;
+    align-items: center;
+    width: 100% !important;
+  }
+  .svc-cb .wizardButtonContainer > div {
+    width: 100%;
+    margin: 0 !important;
+    display: flex;
+    flex-direction: column;
+  }
+  .svc-cb .wizardButtonContainer button {
+    width: 100%;
+    margin: 6px 0 0 !important;
+  }
+
+  .svc-cb-trigger-card {
+    width: 100%;
+  }
+  .svc-cb-trigger-row {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 16px;
+  }
+  .svc-cb-trigger-row-text {
+    flex: 0 1 auto;
+  }
+  .svc-cb-trigger-control {
+    width: 100%;
+    justify-content: flex-start;
+    margin-top: 4px;
+  }
+  .svc-cb-trigger-control .MuiFormControl-root {
+    width: 100%;
+    min-width: 160px;
+    flex: 1 1 auto;
+  }
+  .svc-cb-cooldown-detail .svc-cb-trigger-row-icon {
+    display: none;
+  }
+
+  .svc-cb-step-card {
+    padding: 14px;
+  }
+  .svc-cb-branch {
+    padding-inline-start: 12px;
+    width: 100%;
+  }
+  .svc-cb-flow-list-nested {
+    padding-inline: 10px;
+  }
+  .svc-cb-step-row {
+    flex-wrap: wrap;
+  }
+  .svc-cb-step-row > *:first-child {
+    min-width: 160px;
+  }
+  .svc-cb-condition-head {
+    width: 100%;
+  }
+  .svc-cb-condition-head .MuiFormControl-root {
+    flex: 1 1 140px;
+    min-width: 140px;
+  }
+  .svc-cb-branch-head {
+    flex-wrap: wrap;
+  }
+  .svc-cb-rule-keyword {
+    flex: 1 1 100%;
+    min-width: 140px;
+  }
+  .svc-cb-add-row {
+    flex-wrap: wrap;
+    gap: 10px 18px;
+  }
+
+  .svc-cb-field-row {
+    gap: 14px;
+  }
+  .svc-cb-field {
+    flex-basis: 100%;
+  }
+}
+
+@media screen and (max-width: 475px) {
+  .svc-cb-stepper {
+    flex-wrap: wrap;
+  }
+}

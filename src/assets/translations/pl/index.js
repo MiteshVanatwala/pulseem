@@ -41,8 +41,10 @@ import PopupTriggers from './PopupTriggers.json'
 import Popup from './Popup.json';
 import AI from './AI.json';
 import SubUsers from './SubUsers.json';
+import service from './Service.json';
 
 export const pl = {
+	...service,
 	PopupTriggers,
 	automations,
 	campaigns,
