@@ -480,6 +480,12 @@ export const getRoutes = (
           title: t("common.widget_add_chat_widget"),
           href: `${sitePrefix}Widgets`,
           isShow: true,
+        },
+        {
+          key: "serviceChatbots",
+          title: t("chatbot_list_title"),
+          href: `${sitePrefix}Chatbots`,
+          isShow: true,
         }
       ],
     },
