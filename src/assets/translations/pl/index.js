@@ -43,8 +43,10 @@ import AI from './AI.json';
 import SubUsers from './SubUsers.json';
 import DataSources from './DataSources.json';
 import SendSearch from './SendSearch.json';
+import service from './Service.json';
 
 export const pl = {
+	...service,
 	PopupTriggers,
 	automations,
 	campaigns,

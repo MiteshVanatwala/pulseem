@@ -47,6 +47,7 @@ import smartSendReducer from './reducers/smartSendSlice';
 import sendSearchReducer from './reducers/sendSearchSlice';
 import conversationsReducer from './reducers/conversationsSlice';
 import serviceDashboardReducer from './reducers/serviceDashboardSlice';
+import chatbotReducer from './reducers/chatbotSlice';
 
 
 export default configureStore({
@@ -98,5 +99,6 @@ export default configureStore({
     sendSearch: sendSearchReducer,
     conversations: conversationsReducer,
     serviceDashboard: serviceDashboardReducer,
+    chatbot: chatbotReducer,
   },
 });

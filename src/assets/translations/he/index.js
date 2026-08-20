@@ -46,7 +46,10 @@ import Popup from './Popup.he.json';
 import DataSources from './DataSources.he.json';
 import SendSearch from './SendSearch.he.json';
 
+import service from './Service.he.json';
+
 export const he = {
+	...service,
 	PopupTriggers,
 	automations,
 	campaigns,
