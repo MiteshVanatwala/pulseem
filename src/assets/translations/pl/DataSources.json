@@ -414,6 +414,11 @@
     "cellSection": "Kanał telefoniczny",
     "matched": "Dopasowane do istniejących odbiorców",
     "notFound": "Nie znaleziono",
+    "clientFieldsTitle": "Pola klienta, które chcesz zaktualizować",
+    "clientFieldsNone": "To przesyłanie nie zawierało prośby o aktualizację pól klienta",
+    "clientFieldsUnknown": "Szczegóły aktualizacji pól klienta są niedostępne dla tego źródła",
+    "clientFieldsFromColumn": "z kolumny «{{column}}»",
+    "clientsUpdated": "Zaktualizowane rekordy odbiorców",
     "failTitle": "Przesyłanie nie powiodło się",
     "uploadAgain": "Prześlij ponownie"
   },
@@ -534,6 +539,7 @@
   },
   "actions": {
     "view": "Wyświetl zawartość",
+    "viewWhileProcessing": "Plik jest przetwarzany — podgląd otworzy się po zakończeniu",
     "export": "Eksport",
     "edit": "Edytuj",
     "versions": "Historia wersji",
