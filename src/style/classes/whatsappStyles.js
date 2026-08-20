@@ -1955,8 +1955,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		//MainChat
 		'&.chat': {
 			display: 'flex',
-			position: 'relative',			
-			minWidth: '0',			
+			position: 'relative',							
 		},
 		'&.chat__body': {
 			minWidth: '300px',
