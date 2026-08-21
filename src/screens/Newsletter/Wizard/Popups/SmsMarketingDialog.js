@@ -110,12 +110,6 @@ const SmsMarketingDialog = ({
         var isNumber = /^[0-9]*$/;
         var english = /^[A-Za-z0-9 ]*$/;
 
-        if (!text.match(isNumber) && text.match(english) && text.length >= 10) {
-            e.target.value = text.substring(0, 10);
-        }
-        if (text.match(isNumber) && text.length >= 13) {
-            e.target.value = text.substring(0, 13);
-        }
         if (!text.match(english)) {
             e.target.value = e.target.value.replace(lastChar, '');
         }

@@ -83,6 +83,11 @@ import SurveyDetails from './screens/LandingPages/Survey/SurveyDetails';
 import WebformSummary from './screens/LandingPages/Wizard/WebformSummary';
 import HtmlPreview from './screens/Preview/HtmlPreview';
 import FileUploads from './screens/Groups/FileUploads/FileUploads';
+import DataSources from './screens/DataSources/DataSources';
+import DataSourceView from './screens/DataSources/DataSourceView';
+import SmartSendScreen from './screens/SmartSend/SmartSendScreen';
+import SmartSendPicker from './screens/SmartSend/SmartSendPicker';
+import SendSearchScreen from './screens/SendSearch/SendSearchScreen';
 import AmpRegistration from './screens/Newsletter/AMP/AmpRegistration';
 import AffiliateProgram from './screens/Affiliate/Management/AffiliateProgram';
 import AccountUsers from './screens/AccountUsers/AccountUsers';
@@ -108,6 +113,7 @@ import { advisorConfig, supportConfig } from './components/AI/chatConfig';
 import { getAvailablePlans, getCurrentPlan } from './redux/reducers/TiersSlice';
 import PopupSummary from './screens/Popups/PopupSummary';
 import HelpDrawer from './components/HelpDrawer';
+import LegacyPageFrame, { LegacyPageWild } from './screens/LegacyPage/LegacyPageFrame';
 import { openHelpDrawer, closeHelpDrawer, toggleHelpDrawer } from './redux/reducers/helpDrawerSlice';
 
 const renderRoutes = (classes, redirect, userRoles, accountFeatures, isBeeperAccount) => {
@@ -254,8 +260,8 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures, isBeeperAcc
         element={transferUrl('/Pulseem/CampaignsAbTestings.aspx')}
       />
       <Route
-        path={`/AutoSendPlans`}
-        element={transferUrl('/Pulseem/AutoSendPlans.aspx')}
+        path={`${sitePrefix}AutoSendPlans`}
+        element={<LegacyPageFrame path="AutoSendPlans.aspx" classes={classes} />}
       />
       {/* <Route
         path={`/CampaignTemplates`}
@@ -267,7 +273,7 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures, isBeeperAcc
       />
       <Route
         path={`/SMSSmartResponses`}
-        component={transferUrl('/Pulseem/SMSSmartResponses.aspx')}
+        element={<LegacyPageFrame path="SMSSmartResponses.aspx" classes={classes} />}
       />
       <Route
         path={`/SMSPreviewCampaign/:id`}
@@ -285,7 +291,7 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures, isBeeperAcc
       />}
       <Route
         path="/CreateMmsCampaign"
-        component={transferUrl('/Pulseem/MmsCampaignEdit.aspx')}
+        element={<LegacyPageFrame path="MmsCampaignEdit.aspx" classes={classes} />}
       />
       <Route
         path='/MmsCampaignEdit/:id'
@@ -302,57 +308,80 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures, isBeeperAcc
       {/* Landing Pages */}
       {/* Whatsapp */}
 
-      <Route
-        path={whatsappRoutes.CREATE_TEMPLATE}
-        element={<WhatsappCreator classes={classes} key="wa-create" />}
-      />
+      {
+        userRoles?.AllowWhatsAppToAgent &&
+        <Route
+          path={whatsappRoutes.CREATE_TEMPLATE}
+          element={<WhatsappCreator classes={classes} key="wa-create" />}
+        />
+      }
+      {
+        userRoles?.AllowWhatsAppToAgent && 
+        <Route
+          path={whatsappRoutes.CREATE_CAMPAIGN_PAGE1}
+          element={<SaveCampain classes={classes} />}
+        />
+      }
+      {
+        userRoles?.AllowWhatsAppToAgent &&
+        <Route
+          path={whatsappRoutes.CREATE_CAMPAIGN_PAGE2}
+          element={<SendCampaign classes={classes} key="wa-send" />}
+        />
+      }
+      {
+        userRoles?.AllowWhatsAppToAgent &&
+        <Route
+          path={whatsappRoutes.TEMPLATE_MANAGEMENT}
+          element={<ManageWhatsAppTemplates classes={classes} key="wa-template-management" />}
+        />
+      }
+      {
+        userRoles?.AllowWhatsAppToAgent &&
+        <Route
+          path={whatsappRoutes.REPORTS}
+          element={<WhatsappReports classes={classes} key="wa-reports" />}
+        />
+      }
+      {
+        userRoles?.AllowWhatsAppToAgent &&
+        <Route
+          path={whatsappRoutes.CAMPAIGN_MANAGEMENT}
+          element={<ManageWhatsAppCampaigns classes={classes} key="wa-CAMPAIGN_MANAGEMENT" />}
+        />
+      }
 
-      <Route
-        path={whatsappRoutes.CREATE_CAMPAIGN_PAGE1}
-        element={<SaveCampain classes={classes} />}
-      />
+      {
+        userRoles?.AllowWhatsAppToAgent &&
+        <Route
+          path={whatsappRoutes.EDIT_TEMPLATE}
+          element={<WhatsappCreator classes={classes} key="wa-edit" />}
+        />
+      }
+      {
+        userRoles?.AllowWhatsAppToAgent &&
+        <Route
+          path={whatsappRoutes.EDIT_CAMPAIGN_PAGE1}
+          element={<SaveCampain classes={classes} />}
+        />
+      }
+      {
+        userRoles?.AllowWhatsAppToAgent &&
+        <Route
+          path={whatsappRoutes.EDIT_CAMPAIGN_PAGE2}
+          element={<SendCampaign classes={classes} key="wa-send-campaign-page2" />}
+        />
+      }
 
-      <Route
-        path={whatsappRoutes.CREATE_CAMPAIGN_PAGE2}
-        element={<SendCampaign classes={classes} key="wa-send" />}
-      />
-
-      <Route
-        path={whatsappRoutes.TEMPLATE_MANAGEMENT}
-        element={<ManageWhatsAppTemplates classes={classes} key="wa-template-management" />}
-      />
-
-      <Route
-        path={whatsappRoutes.REPORTS}
-        element={<WhatsappReports classes={classes} key="wa-reports" />}
-      />
-
-      <Route
-        path={whatsappRoutes.CAMPAIGN_MANAGEMENT}
-        element={<ManageWhatsAppCampaigns classes={classes} key="wa-CAMPAIGN_MANAGEMENT" />}
-      />
-
-      <Route
-        path={whatsappRoutes.EDIT_TEMPLATE}
-        element={<WhatsappCreator classes={classes} key="wa-edit" />}
-      />
-
-      <Route
-        path={whatsappRoutes.EDIT_CAMPAIGN_PAGE1}
-        element={<SaveCampain classes={classes} />}
-      />
-
-      <Route
-        path={whatsappRoutes.EDIT_CAMPAIGN_PAGE2}
-        element={<SendCampaign classes={classes} key="wa-send-campaign-page2" />}
-      />
-
-      <Route
-        path={whatsappRoutes.CHAT}
-      >
-        <Route index element={<WhatsappChat classes={classes} key="wa-chate" />} />
-        <Route path=":contactID" element={<WhatsappChat classes={classes} key="wa-chat-conversation" />} />
-      </Route>
+      {
+        userRoles?.AllowWhatsAppToAgent &&
+        <Route
+          path={whatsappRoutes.CHAT}
+        >
+          <Route index element={<WhatsappChat classes={classes} key="wa-chate" />} />
+          <Route path=":contactID" element={<WhatsappChat classes={classes} key="wa-chat-conversation" />} />
+        </Route>
+      }
       <Route
         path='/NewWebForm/NewFormEdit/:id'
         component={transferUrl('/Pulseem/NewWebForm/NewFormEdit/', 'id')}
@@ -384,7 +413,7 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures, isBeeperAcc
       />
       <Route
         path={`${sitePrefix}Popups/Create`}
-        element={<CreateLandingPage classes={classes} isPopup={true}  key="popup-create"/>}
+        element={<CreateLandingPage classes={classes} isPopup={true} key="popup-create" />}
       />
       <Route
         path={`${sitePrefix}Popups/Create/:id`}
@@ -404,11 +433,11 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures, isBeeperAcc
       />
       <Route
         path={`/Survey`}
-        component={transferUrl('/Pulseem/LandingPageWizard.aspx')}
+        element={<LegacyPageFrame path="LandingPageWizard.aspx" classes={classes} />}
       />
       <Route
         path={`/FormTemplates`}
-        component={transferUrl('/Pulseem/FormTemplates.aspx')}
+        element={<LegacyPageFrame path="FormTemplates.aspx" classes={classes} />}
       />
       {/* Reports */}
       <Route
@@ -417,7 +446,7 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures, isBeeperAcc
       />
       <Route
         path={`/ClalReport`}
-        component={transferUrl('/Pulseem/ClalReport.aspx')}
+        element={<LegacyPageFrame path="ClalReport.aspx" classes={classes} />}
       />
       <Route
         path={`${sitePrefix}Reports/SMSMainReport`}
@@ -437,20 +466,20 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures, isBeeperAcc
         component={transferUrl('/Pulseem/AbTestsReport.aspx')}
       /> */}
       <Route
-        path={`/AccountReport`}
-        component={transferUrl('/Pulseem/AccountReport.aspx')}
+        path={`${sitePrefix}AccountReport`}
+        element={<LegacyPageFrame path="AccountReport.aspx" classes={classes} />}
       />
       <Route
-        path={`/EmailAutoReports`}
-        component={transferUrl('/Pulseem/EmailAutoReports.aspx')}
+        path={`${sitePrefix}EmailAutoReports`}
+        element={<LegacyPageFrame path="EmailAutoReports.aspx" classes={classes} />}
       />
       <Route
-        path={`/RemovedStats`}
-        component={transferUrl('/Pulseem/RemovedStats.aspx')}
+        path={`${sitePrefix}RemovedStats`}
+        element={<LegacyPageFrame path="RemovedStats.aspx" classes={classes} />}
       />
       <Route
-        path={`/DirectEmailReport`}
-        component={transferUrl('/Pulseem/DirectEmailReport.aspx')}
+        path={`${sitePrefix}DirectEmailReport`}
+        element={<LegacyPageFrame path="DirectEmailReport.aspx" classes={classes} />}
       />
       {!userRoles?.HideRecipients && <Route
         exact
@@ -463,8 +492,8 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures, isBeeperAcc
         element={<DirectSendReport classes={classes} isArchive={true} />}
       />}
       <Route
-        path={`/EmailCampaignStatistics`}
-        component={transferUrl('/Pulseem/EmailCampaignStatistics.aspx')}
+        path={`${sitePrefix}EmailCampaignStatistics`}
+        element={<LegacyPageFrame path="EmailCampaignStatistics.aspx" classes={classes} />}
       />
       <Route
         path={`${sitePrefix}reports/LinksClicksReport`}
@@ -477,8 +506,8 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures, isBeeperAcc
         element={<AutomationManagment classes={classes} />}
       />
       <Route
-        path={`/CreateAutomations`}
-        component={transferUrl('/Pulseem/CreateAutomations.aspx')}
+        path={`${sitePrefix}CreateAutomations`}
+        element={<LegacyPageFrame path="CreateAutomations.aspx" classes={classes} />}
       />
       <Route
         path={`${sitePrefix}Automations/Create`}
@@ -530,8 +559,8 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures, isBeeperAcc
         element={<BillingSettingsPage classes={classes} />}
       />}
       <Route
-        path={`/AccountBilling`}
-        component={transferUrl('/Pulseem/AccountBilling.aspx')}
+        path={`${sitePrefix}AccountBilling`}
+        element={<LegacyPageFrame path="AccountBilling.aspx" classes={classes} />}
       />
       {userRoles === UserRoles.Admin && <Route
         exact
@@ -539,12 +568,12 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures, isBeeperAcc
         element={<AccountUsers classes={classes} />}
       />}
       {userRoles === UserRoles.Admin && <Route
-        path={`/AccountUsersReport`}
-        component={transferUrl('/Pulseem/AccountUsersReport.aspx')}
+        path={`${sitePrefix}AccountUsersReport`}
+        element={<LegacyPageFrame path="AccountUsersReport.aspx" classes={classes} />}
       />}
       <Route
-        path={`/ExtraFieldsDefinition`}
-        component={transferUrl('/Pulseem/ExtraFieldsDefinition.aspx')}
+        path={`${sitePrefix}ExtraFieldsDefinition`}
+        element={<LegacyPageFrame path="ExtraFieldsDefinition.aspx" classes={classes} />}
       />
       {userRoles?.AllowSend && <Route
         path={`${sitePrefix}ApiSettings`}
@@ -576,10 +605,13 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures, isBeeperAcc
         path={`${sitePrefix}Integrations`}
         element={<Integrations classes={classes} />}
       />}
-      <Route exact
-        path={`${sitePrefix}whatsapp-onboarding`}
-        element={<WhatsappOnBoarding classes={classes} />}
-      />
+      {
+        userRoles?.AllowWhatsAppToAgent && 
+        <Route exact
+          path={`${sitePrefix}whatsapp-onboarding`}
+          element={<WhatsappOnBoarding classes={classes} />}
+        />
+      }
       {!userRoles?.HideRecipients && <Route
         exact
         path={`${sitePrefix}reports/Inbound`}
@@ -605,6 +637,40 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures, isBeeperAcc
         path={`${sitePrefix}Groups/Download`}
         element={<DownloadFiles classes={classes} />}
       />
+      <Route
+        path="/Pulseem/:aspxPage"
+        element={<LegacyPageWild classes={classes} />}
+      />
+      {accountFeatures && accountFeatures?.indexOf(PulseemFeatures.DATA_SOURCES) > -1 && <Route
+        exact
+        path={`${sitePrefix}DataSources`}
+        element={<DataSources classes={classes} />}
+      />}
+      {accountFeatures && accountFeatures?.indexOf(PulseemFeatures.DATA_SOURCES) > -1 && <Route
+        exact
+        path={`${sitePrefix}DataSources/View/:id`}
+        element={<DataSourceView classes={classes} />}
+      />}
+      {userRoles?.AllowSend && accountFeatures && accountFeatures?.indexOf(PulseemFeatures.DATA_SOURCES) > -1 && <Route
+        exact
+        path={`${sitePrefix}Campaigns/SmartSend/:id`}
+        element={<SmartSendScreen classes={classes} />}
+      />}
+      {userRoles?.AllowSend && accountFeatures && accountFeatures?.indexOf(PulseemFeatures.DATA_SOURCES) > -1 && <Route
+        exact
+        path={`${sitePrefix}SmartSend`}
+        element={<SmartSendPicker classes={classes} />}
+      />}
+      {/* Deliberately NOT gated on AllowSend — this is a read-only report and supervisors/support
+          need it without send permission. HideRecipients IS gated: SendSearchController answers the
+          Search action with 405 for that permission because the grid returns recipient PII, so the
+          route would only ever open a page that cannot search. Must stay identical to the sidebar
+          gate in routes.tsx (P3.2). */}
+      {accountFeatures && accountFeatures?.indexOf(PulseemFeatures.DATA_SOURCES) > -1 && !userRoles?.HideRecipients && <Route
+        exact
+        path={`${sitePrefix}SendSearch`}
+        element={<SendSearchScreen classes={classes} />}
+      />}
       <Route
         path="*" element={<PageNotFound classes={classes} />}
       />
@@ -783,6 +849,37 @@ const App = ({ screenSize }) => {
 
   const theme = getTheme(language)
   const redirect = useNavigate()
+
+  useEffect(() => {
+    const pageRoutes = {
+      dashboard:        `${sitePrefix}`,
+      campaigns:        `${sitePrefix}Campaigns`,
+      sms:              `${sitePrefix}SMSCampaigns`,
+      mms:              `${sitePrefix}MmsCampaigns`,
+      automations:      `${sitePrefix}Automations`,
+      notifications:    `${sitePrefix}Notifications`,
+      groups:           `${sitePrefix}Groups`,
+      landingpages:     `${sitePrefix}EditRegistrationPage`,
+      newsletters:      `${sitePrefix}Reports/NewsletterReports`,
+      smsreport:        `${sitePrefix}Reports/SMSMainReport`,
+      mmsreport:        `${sitePrefix}Reports/MmsMainReport`,
+      billing:          `${sitePrefix}BillingSettings`,
+      accountsettings:  `${sitePrefix}AccountSettings`,
+      integrations:     `${sitePrefix}Integrations`,
+      subusers:         `${sitePrefix}SubUsers`,
+      whatsapp:         whatsappRoutes.CAMPAIGN_MANAGEMENT,
+    };
+    const handleIframeMessage = (e) => {
+      if (e.data?.type === 'react-navigate' && e.data?.page) {
+        const page = e.data.page.toLowerCase();
+        if (page === 'back') return redirect(-1);
+        const route = pageRoutes[page] ?? pageRoutes['dashboard'];
+        redirect(route);
+      }
+    };
+    window.addEventListener('message', handleIframeMessage);
+    return () => window.removeEventListener('message', handleIframeMessage);
+  }, [redirect]);
   document.body.classList.add(classes.sidebar);
 
   if (isRTL) document.body.classList.add('rtl');
@@ -820,7 +917,7 @@ const App = ({ screenSize }) => {
   const renderRoutesByCondition = (classes, redirect) => {
     const ignoreCookie = getCookie('ignoreTerm')
 
-    if (isOnlyWhatsAppChat) {
+    if (isOnlyWhatsAppChat && userRoles?.AllowWhatsAppToAgent) {
       return <Routes>
         <Route
           path={whatsappRoutes.CHAT}
@@ -949,7 +1046,9 @@ const App = ({ screenSize }) => {
 function useWidth() {
   const { language } = useSelector((state) => state.core);
   const theme = getTheme(language);
-  const keys = [...theme.breakpoints.keys].reverse();
+  // theme.breakpoints.keys is hardcoded by MUI to ['xs','sm','md','lg','xl'] and ignores
+  // custom keys added to theme.js's breakpoint values, so 'sl' is inserted here manually.
+  const keys = ['xl', 'lg', 'sl', 'md', 'sm', 'xs'];
   return (
     keys.reduce((output, key) => {
       // eslint-disable-next-line react-hooks/rules-of-hooks

@@ -63,11 +63,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme, IsPoland = false) =>
   return ({
   management: {
     maxWidth: 1500,
-    '&.MuiContainer-root': {
-      marginLeft: 207
-    },
     '& .topSection': {
-      marginTop: 37.870,
+      // marginTop: 37.870,
       border: '2px solid #F0F5FF',
       borderRadius: 10,
       paddingBottom: 31,
@@ -605,7 +602,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme, IsPoland = false) =>
   },
 
   tableStyle: {
-    overflowX: "clip",
+    overflowX: "auto",
     border: "2px solid #F0F5FF",
     borderRadius: 20
   },
@@ -970,6 +967,30 @@ export const getManagmentStyle = (windowSize, isRTL, theme, IsPoland = false) =>
   lineTopMarging: {
     marginTop: "2rem",
   },
+  newsletterActionsContainer: {
+    flexWrap: 'wrap',
+    rowGap: 8,
+    columnGap: 4,
+    ["@media screen and (max-width: 1700px)"]: {
+      justifyContent: 'flex-start',
+    },
+  },
+  newsletterActionItem: {
+    alignItems: 'center',
+    position: 'relative',
+    ["@media screen and (max-width: 1700px)"]: {
+      flex: '0 0 96px',
+      maxWidth: 96,
+    },
+    ["@media screen and (max-width: 1366px)"]: {
+      flex: '0 0 88px',
+      maxWidth: 88,
+    },
+    ["@media screen and (max-width: 600px)"]: {
+      flex: '0 0 70px',
+      maxWidth: 70,
+    },
+  },
 
   customDialog: {
     "& .MuiDialog-paperScrollPaper": {
@@ -1163,7 +1184,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme, IsPoland = false) =>
   },
   contactUs: {
     fontSize: 12,
-    marginTop: 20,
+    marginTop: 30,
   },
   verifyLink: {
     paddingInlineStart: 5,
@@ -1685,18 +1706,18 @@ export const getManagmentStyle = (windowSize, isRTL, theme, IsPoland = false) =>
       marginInlineEnd: 0,
     },
   },
-  tipMargin: {
-    [theme.breakpoints.up("lg")]: {
-      marginInlineEnd: 0,
-    },
-  },
+  // tipMargin: {
+  //   [theme.breakpoints.up("lg")]: {
+  //     marginInlineEnd: 0,
+  //   },
+  // },
   tipItem: {
     padding: "0 30px 20px 30px",
   },
   tipulseemMsg: {
     fontSize: tipsFontSize[windowSize],
     padding: "0px 20px 20px 20px",
-    maxWidth: 204,
+    maxWidth: 260,
     textAlign: 'center',
     margin: 'auto',
     ['@media (max-width:1280px)']: {

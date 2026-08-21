@@ -23,6 +23,8 @@
 	"uploading": "Uploading...",
 	"totalSize": "Total Size",
 	"fileDescription": "Only one file - up to 5 MB",
+	"replaceFileNotice": "Replace file - Notice! You can only replace the file using the same file format you submitted",
+	"replaceFileTooltip": "For example: if I submitted a template with a PNG file, I can't replace it with an MP3 file",
 	"send": "Send",
 
 	"whatsappTemplate": "Create New WhatsApp Template",

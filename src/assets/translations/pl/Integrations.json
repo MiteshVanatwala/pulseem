@@ -160,5 +160,27 @@
     "newAsActiveDesc2": "Zmiana wyżej wymienionych ustawień odbywa się na Twoją wyłączną odpowiedzialność i dokonując tego potwierdzasz, że Pulseem nie ponosi żadnej odpowiedzialności za jakiekolwiek szkody wyrządzone Tobie i/lub Pulseem w wyniku tego, a zatem szkody te będą dotyczyć wyłącznie Ciebie.",
     "importFromKlaviyo": "Importuj z Klaviyo",
     "integrationSaved": "Zmiany zostały zapisane"
-  }
+  },
+  "hubTitle": "Integracje",
+  "hubSubtitle": "Połącz swoje ulubione aplikacje i platformy, aby zautomatyzować przepływy marketingowe i synchronizować kontakty.",
+  "cardCta": "Przejdź do integracji",
+  "cardCtaGuide": "Przejdź do przewodnika",
+  "searchPlaceholder": "Szukaj integracji...",
+  "categoryAll": "Wszystkie",
+  "categoryEcommerce": "E-Commerce",
+  "categoryMarketing": "Marketing",
+  "categoryRetail": "Handel detaliczny",
+  "statusConnected": "Połączono",
+  "statusDisconnected": "Nie połączono",
+  "statusGuide": "Instrukcja konfiguracji",
+  "backToHub": "Powrót do integracji",
+  "shopifyDesc": "Synchronizuj klientów Shopify, śledź zdarzenia w koszyku, rejestruj dane zakupowe i wysyłaj kampanie odzyskiwania koszyków.",
+  "wixDesc": "Połącz swój sklep Wix, aby automatycznie synchronizować kontakty i śledzić aktywność subskrybentów w czasie rzeczywistym.",
+  "woocommerceDesc": "Zintegruj WooCommerce, aby synchronizować klientów i zdarzenia sprzedaży w celu automatyzacji kampanii SMS i newsletterów.",
+  "cashcowDesc": "Synchronizuj kupujących i wykorzystuj dane sprzedażowe CashCow do uruchamiania automatycznych kampanii marketingowych.",
+  "istoresDesc": "Synchronizuj listy klientów, zarządzaj danymi kasowymi i na bieżąco aktualizuj wypisania między platformami.",
+  "ecwidDesc": "Połącz Ecwid, aby automatycznie importować klientów i śledzić konwersje zakupowe ze swojego sklepu.",
+  "eshopDesc": "Zintegruj E-Shop, aby przechwytywać dane kupujących, synchronizować kontakty i konfigurować automatyczne procesy.",
+  "klaviyoDesc": "Połącz Klaviyo, aby importować listy, synchronizować preferencje użytkowników i koordynować działania wielokanałowe.",
+  "verifoneDesc": "Połącz swoje konto Verifone, aby automatycznie synchronizować dane klientów i śledzić zdarzenia zakupów detalicznych."
 }

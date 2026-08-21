@@ -45,6 +45,8 @@
 	"oneContact": "Send to one contact",
 	"testGroups": "Send to test groups",
 	"sendTitle": "Select group for test sending",
+	"noPermission": "No permission",
+	"noPermissionToSend": "This user is not allowed to enter WhatsApp Chat Contact your admin to get authorization",
 	"sendValidation": "The following fields are invalid",
 	"sendButton": "SEND",
 	"checkLimit": "Check your limit",
@@ -78,5 +80,10 @@
 	"atTime": "at",
 	"filterInputText": "Don't send to recipients that got Whatsapp Campaign in last previous days",
 	"metaBusinessNotVerified": "Meta business is not verified",
-	"metaPhoneNumberNotVerified": "Meta phone number is not verified"
+	"metaPhoneNumberNotVerified": "Meta phone number is not verified",
+	"media_url": "Media URL",
+	"media_url_placeholder": "Enter media file URL",
+	"media_type_mismatch_error": "Media type does not match the approved template",
+	"media_text": "Message Text",
+	"media_text_placeholder": "Insert text here - up to 1024 characters"
 }

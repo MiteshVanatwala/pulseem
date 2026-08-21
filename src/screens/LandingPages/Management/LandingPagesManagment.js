@@ -362,7 +362,6 @@ const LandingPagesesManagment = ({ classes }) => {
         key: 'preview',
         uIcon: PreviewIcon,
         lable: t('campaigns.Image1Resource1.ToolTip'),
-        remove: windowSize === 'xs',
         disable: !PageLink,
         rootClass: classes.paddingIcon,
         onClick: () => {
@@ -928,7 +927,9 @@ const LandingPagesesManagment = ({ classes }) => {
   }
   return (
     <DefaultScreen
+      key="landingPagesManagement"
       currentPage='landingPages'
+      subPage='landingPagesManagement'
       classes={classes}
       containerClass={clsx(classes.management, classes.mb50)}>
       <Box className={'topSection'}>

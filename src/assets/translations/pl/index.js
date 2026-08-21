@@ -40,6 +40,9 @@ import RemoveMyData from './RemoveMyData.json'
 import PopupTriggers from './PopupTriggers.json'
 import Popup from './Popup.json';
 import AI from './AI.json';
+import SubUsers from './SubUsers.json';
+import DataSources from './DataSources.json';
+import SendSearch from './SendSearch.json';
 
 export const pl = {
 	PopupTriggers,
@@ -83,5 +86,8 @@ export const pl = {
 	WhatsappOnBoarding,
 	RemoveMyData,
 	Popup,
-	AI
+	AI,
+	SubUsers,
+	DataSources,
+	SendSearch
 };

@@ -359,7 +359,8 @@ const NewsLetterInfo = ({ classes }) => {
     const handleGetNewsletterResponse = (res) => {
         switch (res?.StatusCode || 201) {
             case 201: {
-                setCampaingnValues({ ...res?.Message })
+                const campaignData = res?.Message;
+                setCampaingnValues({ ...campaignData });
                 setCampaignLoaded(true);
                 break;
             }
@@ -403,6 +404,10 @@ const NewsLetterInfo = ({ classes }) => {
             }
             case 406: {
                 setToastMessage(ToastMessages.NULL_FILE)
+                break;
+            }
+            case 426: {
+                setErrors({ ...errors, FromEmail: t('campaigns.newsLetterEditor.errors.fromEmailNotVerified') })
                 break;
             }
             case 451: {
@@ -598,6 +603,7 @@ const NewsLetterInfo = ({ classes }) => {
         //     setShowDomainVerification(true);
         // }
     }
+
 
     const handleHideNewCautionMessage = (e) => {
         setHideCautionNewMessage(e);
@@ -897,60 +903,51 @@ const NewsLetterInfo = ({ classes }) => {
                             <Box className='selectWrapper'>
                                 <Typography title={t("campaigns.newsLetterEditor.fromEmail").replace('<b>', '').replace('</b>', '')} className={classes.alignDir}>{RenderHtml(t("campaigns.newsLetterEditor.fromEmail"))}</Typography>
                                 <FormControl
-                                    className={clsx(classes.selectInputFormControl, classes.w100)}
-                                >
-                                    <Select
-                                        native
-                                        variant="standard"
-                                        name="FromEmail"
-                                        value={campaingnValues?.FromEmail}
-                                        className={clsx(classes.pbt5, classes.fromEmailSelect, !isVerifiedDomain ? classes.errorBg : null)}
-                                        onChange={(event, val) => {
-                                            handleFromEmailChange(event);
-                                        }}
-                                        IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
-                                        MenuProps={{
-                                            PaperProps: {
-                                                style: {
-                                                    maxHeight: 300,
-                                                },
-                                            },
-                                        }}
+                                        className={clsx(classes.selectInputFormControl, classes.w100)}
                                     >
-                                        <option
-                                            key='-1'
-                                            value='-1'
-                                            disabled
+                                        <Select
+                                            native
+                                            variant="standard"
+                                            name="FromEmail"
+                                            value={campaingnValues?.FromEmail}
+                                            className={clsx(classes.pbt5, classes.fromEmailSelect, !isVerifiedDomain ? classes.errorBg : null)}
+                                            onChange={(event, val) => {
+                                                handleFromEmailChange(event);
+                                            }}
+                                            IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+                                            MenuProps={{
+                                                PaperProps: {
+                                                    style: {
+                                                        maxHeight: 300,
+                                                    },
+                                                },
+                                            }}
                                         >
-                                            {t("common.select")}
-                                        </option>
-                                        {verifiedEmails.map((item, index) => {
-                                            // if (item && item.IsRestricted) {
-                                            //     return false;
-                                            // }
-                                            return <option
-                                                key={index}
-                                                value={item.Number}
-                                                name={item.Number}
+                                            <option
+                                                key='-1'
+                                                value='-1'
+                                                disabled
                                             >
-                                                {/* {item?.IsVerified && <ListItemIcon style={{ minWidth: 25 }}>
-                                                    <MdOutlineVerified style={{ color: 'green', fontSize: 20 }} title={t('common.domainVerification.verifiedDomain')} />
-                                                </ListItemIcon>} */}
-                                                {t(item.Number)}
+                                                {t("common.select")}
                                             </option>
-                                        })}
-                                        {accountFeatures?.indexOf(PulseemFeatures.HIDE_SHARED_DOMAIN) === -1 && accountSettings?.SubAccountSettings?.SharedEmailDomain && <option
-                                            key={verifiedEmails.length + 1}
-                                            value={accountSettings?.SubAccountSettings?.SharedEmailDomain}
-                                            name={accountSettings?.SubAccountSettings?.SharedEmailDomain}
-                                        >
-                                            {/* <ListItemIcon style={{ minWidth: 25 }}>
-                                                <MdOutlineVerified style={{ color: 'green', fontSize: 20 }} title={t('common.domainVerification.verifiedDomain')} />
-                                            </ListItemIcon> */}
-                                            {t(accountSettings?.SubAccountSettings?.SharedEmailDomain)}
-                                        </option>}
-                                    </Select>
-                                </FormControl>
+                                            {verifiedEmails.filter(e => e.IsOptIn === true).map((item, index) => {
+                                                return <option
+                                                    key={index}
+                                                    value={item.Number}
+                                                    name={item.Number}
+                                                >
+                                                    {t(item.Number)}
+                                                </option>
+                                            })}
+                                            {accountFeatures?.indexOf(PulseemFeatures.HIDE_SHARED_DOMAIN) === -1 && accountSettings?.SubAccountSettings?.SharedEmailDomain && <option
+                                                key={verifiedEmails.length + 1}
+                                                value={accountSettings?.SubAccountSettings?.SharedEmailDomain}
+                                                name={accountSettings?.SubAccountSettings?.SharedEmailDomain}
+                                            >
+                                                {t(accountSettings?.SubAccountSettings?.SharedEmailDomain)}
+                                            </option>}
+                                        </Select>
+                                    </FormControl>
                                 <Typography className={clsx(errors.FromEmail ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
                                     {errors.FromEmail ? errors.FromEmail : helperTexts.FromEmail + ' '}
                                     <strong className={clsx(classes.link, classes.textRed)} onClick={() => setVerPopupOpen(true)}>{t('campaigns.newsLetterEditor.helpTexts.clickToVerify')}</strong>

@@ -311,7 +311,7 @@ const FORM_COMPANY_DETAILS = ({
               <DateField
                 toolbarDisabled={false}
                 classes={classes}
-                value={companyDetails?.BirthDate}
+                value={companyDetails?.BirthDate ?? ''}
                 onChange={(value: any) => handleChange(value, "BirthDate")}
               />
             </Grid>
@@ -339,7 +339,7 @@ const FORM_COMPANY_DETAILS = ({
                 variant="outlined"
                 size="small"
                 name="CellPhone"
-                value={companyDetails?.CellPhone}
+                value={companyDetails?.CellPhone ?? ''}
                 onKeyPress={IsNumberField}
                 onChange={handleChange}
                 className={clsx(classes.textField, classes.minWidth252)}
@@ -463,14 +463,13 @@ const FORM_COMPANY_DETAILS = ({
           }}
         />
         <Box className={clsx("formContainer", classes.pt20)}>
-          <Grid container className={"form"} style={{ maxWidth: '100%' }}>
+          <Grid container className={"form"} style={{ maxWidth: '100%' }} alignItems="center">
             {accountFeatures?.indexOf(PulseemFeatures.DISABLE_TWO_FACTOR_AUTH) === -1 && <Grid
               item
               xs={12}
               sm={3}
               md={4}
               className={clsx(windowSize !== 'xs' ? classes.dFlex : '', classes.mt3, classes.mr15, "selectWrapper")}
-              alignItems="center"
             >
               <Typography>
                 {t("settings.accountSettings.fixedComDetails.fields.enableTwoFactorAuth")}

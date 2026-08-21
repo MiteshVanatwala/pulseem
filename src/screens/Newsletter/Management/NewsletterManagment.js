@@ -415,7 +415,6 @@ const NewsletterManagnentScreen = ({ classes }) => {
         uIcon: EditIcon,
         disable: Status !== 1 || AutomationID !== 0,
         lable: t('campaigns.Image2Resource1.ToolTip'),
-        remove: windowSize === 'xs',
         onClick: () => {
           if ((!emailProps?.IsVerified || emailProps?.IsRestricted) && !IsSharedDomain(FromEmail)) {
             domainErrorObj.preText = t(`common.domainVerification.campaignManagement.edit.${emailProps?.IsRestricted ? 'restricted' : 'nonVerified'}.preText`).replace('##campaignId##', CampaignID);
@@ -578,11 +577,29 @@ const NewsletterManagnentScreen = ({ classes }) => {
           }
         }
       },
+      {
+        // Entry B (§11.2): smart send from the campaign the user is already looking at. BEE
+        // campaigns only, sendable status, feature-gated (§17.3). The data source is picked on
+        // the mapping screen — entry A now goes straight to the SmartSend picker instead.
+        key: 'smartSend',
+        uIcon: SendIcon,
+        // Short label + the ordinary secondary-action styling. The long
+        // `send.smartSendAction` string with the primary `sendIcon` treatment (copied from the
+        // 'send' action above, whose label is just "שלח") stretched the filled block across half
+        // the row. This is a secondary action and should not outweigh Send visually.
+        lable: t('DataSources.send.title'),
+        remove: !userRoles?.AllowSend || Status !== 1 || !IsNewEditor || !(accountFeatures?.indexOf(PulseemFeatures.DATA_SOURCES) > -1) || windowSize === 'xs',
+        rootClass: clsx(classes.paddingIcon, 'smartSendIcon'),
+        onClick: () => {
+          navigate(`${sitePrefix}Campaigns/SmartSend/${CampaignID}`);
+        }
+      },
     ]]
     return (
       <Grid
         container
-        direction={windowSize === 'sm' ? 'column' : 'row'}
+        direction='row'
+        className={classes.newsletterActionsContainer}
         justifyContent={windowSize === 'xs' ? 'flex-start' : 'flex-end'}>
         {iconsMap.map((map, index) => (
           <Grid
@@ -592,10 +609,15 @@ const NewsletterManagnentScreen = ({ classes }) => {
               container
               className={windowSize === 'xs' ? classes.mt1 : ''}
             >
-              {map.map(icon => (
+              {map.filter(icon => !icon.remove).map(icon => (
                 <Grid
-                  style={{ flex: 1, alignItems: 'center', position: 'relative' }}
-                  className={clsx(icon.disable && classes.disabledCursor, 'rowIconContainer', classes.justifyCenter, classes.alignSelfCenter)}
+                  className={clsx(
+                    icon.disable && classes.disabledCursor,
+                    'rowIconContainer',
+                    classes.justifyCenter,
+                    classes.alignSelfCenter,
+                    classes.newsletterActionItem
+                  )}
                   key={icon.key}
                   item>
                   {icon?.errorElement}
@@ -614,7 +636,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
     )
   }
 
-  const renderStatusCell = (status) => {
+  const renderStatusCell = (status, isPulseSend) => {
     const statuses = {
       1: 'common.Created',
       2: 'common.Sending',
@@ -625,7 +647,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
       7: 'campaigns.Approve'
     }
     return (
-      <>
+      <Box>
         <Typography className={clsx(
           classes.middleText,
           classes.recipientsStatus,
@@ -638,7 +660,12 @@ const NewsletterManagnentScreen = ({ classes }) => {
         )}>
           {t(statuses[status])}
         </Typography>
-      </>
+        {isPulseSend && (
+          <Typography className={classes.pulseSendPill}>
+            {t('common.pulseSendPill')}
+          </Typography>
+        )}
+      </Box>
     )
   }
 
@@ -720,7 +747,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
 
   const renderRow = (row, isParent = true, isEven = false) => {
     const childItems = (isParent ? newslettersChildCampaigns.filter(childCampaign => childCampaign?.ParentCampaignId === row?.CampaignID) : []).sort((a, b) => a.CampaignID - b.CampaignID);
-    const rowPlusChildItems = [ row, ...childItems ];
+    const rowPlusChildItems = [row, ...childItems];
     const isExpanded = expandedIds.indexOf(row.CampaignID) > -1;
     return (
       <>
@@ -751,7 +778,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
             classes={cellStyle}
             align='center'
             className={classes.flex1}>
-            {!(isExpanded && isParent) && renderStatusCell(row.Status)}
+            {!(isExpanded && isParent) && renderStatusCell(row.Status, row.IsPulseSend === true || row.Name?.includes('_Pulse_') || (row.PulseAmount > 0) || newslettersChildCampaigns.some(c => c?.ParentCampaignId === row.CampaignID && c.Name?.includes('_Pulse_')))}
           </TableCell>
           <TableCell
             component='th'
@@ -813,7 +840,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
                 {renderNameCell(row, isParent)}
               </Box>
               <Box>
-                {!(isExpanded && isParent) && renderStatusCell(row.Status)}
+                {!(isExpanded && isParent) && renderStatusCell(row.Status, row.IsPulseSend === true || row.Name?.includes('_Pulse_') || (row.PulseAmount > 0) || newslettersChildCampaigns.some(c => c?.ParentCampaignId === row.CampaignID && c.Name?.includes('_Pulse_')))}
               </Box>
             </Box>
             {renderCellIcons(row)}
@@ -1075,7 +1102,9 @@ const NewsletterManagnentScreen = ({ classes }) => {
 
   return (
     <DefaultScreen
+      key="newsletter"
       currentPage='newsletter'
+      subPage='newsletterManagment'
       classes={classes}
       containerClass={clsx(classes.management, classes.mb50)}>
       <Box className={'topSection'}>

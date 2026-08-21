@@ -733,7 +733,13 @@ const VerificationDialog = ({
                                         setVerificationError({ Number: t('sms.onlyEnglishChars') });
                                         return;
                                     }
-                                    !!verificationError?.Number && setVerificationError({ Number: '' });
+                                    const isNumeric = /^[0-9+\-\s]*$/.test(val);
+                                    const startsWith972 = /^\+?972/.test(val.trim());
+                                    if (!startsWith972 && val.length > 11) {
+                                        setVerificationError({ Number: isNumeric ? t("mainReport.campaignFromNumberMaxLength") : t("mainReport.campaignFromMaxLength") });
+                                    } else {
+                                        !!verificationError?.Number && setVerificationError({ Number: '' });
+                                    }
                                     setSelectedVerificationContact(val.trim());
                                 }}
                                 className={clsx(classes.textField, classes.maxWidth400, classes.txtCenter, classes.directionLTR)}
@@ -747,6 +753,12 @@ const VerificationDialog = ({
                                 onClick={async () => {
                                     if (!selectedVerificationContact) {
                                         setVerificationError({ Number: t('sms.newSenderRequired') });
+                                        return;
+                                    }
+                                    const isNumeric = /^[0-9+\-\s]*$/.test(selectedVerificationContact);
+                                    const startsWith972 = /^\+?972/.test(selectedVerificationContact.trim());
+                                    if (!startsWith972 && selectedVerificationContact.length > 11) {
+                                        setVerificationError({ Number: isNumeric ? t("mainReport.campaignFromNumberMaxLength") : t("mainReport.campaignFromMaxLength") });
                                         return;
                                     }
                                     const normalized = selectedVerificationContact.replace(/-/g, '');

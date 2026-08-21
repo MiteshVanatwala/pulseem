@@ -198,6 +198,7 @@ export interface ClientResponse extends Client {
     ExtraField11: string;
     ExtraField12: string;
     ExtraField13: string;
+    IsPulseemFlagged?: boolean;
 }
 export enum ePageType {
     Undefined,

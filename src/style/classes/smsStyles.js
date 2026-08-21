@@ -521,7 +521,7 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
             // marginLeft: 207
         },
         '& .topSection': {
-            marginTop: 37.870,
+            // marginTop: 37.870,
             border: '2px solid #F0F5FF',
             borderRadius: 10,
             paddingBottom: 31,
@@ -598,6 +598,16 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
             '& button': {
                 marginBottom: 10,
             }
+        },
+    },
+    manualButtonGroup:
+    {
+        display: "flex",
+        alignItems: "center",
+        gap: theme.spacing(1),
+        flexWrap: "wrap",
+        [theme.breakpoints.down('xs')]: {
+            justifyContent: 'center',
         },
     },
     listValues:

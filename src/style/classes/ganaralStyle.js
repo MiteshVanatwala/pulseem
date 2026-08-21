@@ -100,7 +100,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
     }
   },
   appBody: {
-    maxWidth: 'calc(100vw - 6px)',
+    overflowX: 'hidden',
     '& input::placeholder': {
       color: 'rgba(0,0,0,.65)',
       opacity: 1/* Firefox */
@@ -129,39 +129,34 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
       width: 6,
       height: 6,
     },
-    /* Track */
     "&::-webkit-scrollbar-track": {
       boxShadow: "inset 0 0 0px",
       borderRadius: 10,
       backgroundColor: "#fff !important",
     },
-    /* Handle */
     "&::-webkit-scrollbar-thumb": {
       background: "#ccc",
       borderRadius: 10,
     },
-    /* Handle on hover */
     "&::-webkit-scrollbar-thumb:hover": {
       background: "#999",
     },
+
     '& *': {
       "&::-webkit-scrollbar": {
         display: "block !important",
         width: 6,
         height: 6,
       },
-      /* Track */
       "&::-webkit-scrollbar-track": {
         boxShadow: "inset 0 0 0px",
         borderRadius: 10,
         backgroundColor: "#fff !important",
       },
-      /* Handle */
       "&::-webkit-scrollbar-thumb": {
         background: "#ccc",
         borderRadius: 10,
       },
-      /* Handle on hover */
       "&::-webkit-scrollbar-thumb:hover": {
         background: "#999",
       },
@@ -203,6 +198,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
     "& .MuiDialog-paperWidthSm": {
       minWidth: 400,
       maxWidth: `${maxDialogWidth[windowSize]}px !important`,
+      "@media screen and (max-width: 450px)": {
+        minWidth: "unset",
+        maxWidth: "96vw !important",
+      },
     },
     "& .MuiDialog-paperScrollPaper": {
       maxHeight: "100%",
@@ -214,6 +213,78 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
   },
   noMargin: {
     margin: '0px !important',
+  },
+  newNavigationDialogContainer: {
+    '&& .MuiDialog-paperWidthSm': {
+      minWidth: '0 !important',
+    }
+  },
+  // OUTER MUI paper override for the tier-graph dialog ONLY. The doubled '&&' beats
+  // dialogContainer's `& .MuiDialog-paperWidthSm { maxWidth: 1080px !important }` (0,2,0) with (0,3,0),
+  // lifting the 1080 cap so the outer paper is the single width source of truth. Passed as
+  // customContainerStyle (BaseDialog ignores PaperProps/fullWidth). Same trick as
+  // newNavigationDialogContainer above.
+  // The paper now TRACKS THE IMAGE instead of always taking 94vw, so a 640px graph no longer sits in
+  // wide grey margins. --tg-img-w is published on <html> by TierGraphDialog. --tg-chrome-w defaults to
+  // 416px = editor panel 380 (flex-basis 380 with boxSizing:'border-box', so its own 16px padding and
+  // 1px inline-start border are INSIDE the 380) + stage column padding 18*2. Nothing else contributes:
+  // tierGraphDialogPaperProps / tierGraphDialogContent / tierGraphDialogChildren all force padding 0.
+  // maxWidth was 75%, which BEAT the width line above and re-broke the §17 one-row header on every
+  // laptop: at 1366px it capped the paper at 1024.5px, ~32px under the 1056px a default 640px graph
+  // asks for, so the header wrapped again below ~1408px of viewport. 95% keeps a ceiling for large
+  // graphs while letting the 94vw term above be the real cap (it is always the smaller of the two).
+  tierGraphDialogContainer: {
+    '&& .MuiDialog-paperWidthSm': {
+      minWidth: '0 !important',
+      width: 'min(calc(var(--tg-img-w, 640px) + var(--tg-chrome-w, 416px)), 94vw) !important',
+      maxWidth: '95% !important',
+      margin: '16px !important',
+    },
+    '&& .MuiDialog-paperScrollPaper': {
+      maxHeight: 'calc(100% - 32px)', // leave room for the 16px top/bottom margin
+    },
+  },
+  newNavigationDialogPaper: {
+    width: 462,
+    maxWidth: '96vw !important',
+    minWidth: '0 !important',
+    borderRadius: '15px !important',
+    overflow: 'hidden',
+  },
+  newNavigationCloseButton: {
+    position: 'absolute',
+    right: isRTL ? 'initial' : 8,
+    left: !isRTL ? 'initial' : 8,
+    top: 8,
+    background: 'transparent',
+    color: '#fff',
+    filter: 'drop-shadow(0 1px 3px rgba(0,0,0,0.4))',
+    '&:hover': {
+      background: 'rgba(255,255,255,0.15)',
+    },
+  },
+  newNavigationDialogContent: {
+    '&&': {
+      border: 'none',
+      margin: 0,
+      padding: 0,
+      minWidth: '0 !important',
+    },
+  },
+  newNavigationDialogChildren: {
+    '&&': {
+      margin: 0,
+      marginBlock: 0,
+      marginTop: 0,
+      padding: 0,
+      paddingRight: '0px !important',
+      paddingLeft: '0px !important',
+      minWidth: '0 !important',
+      overflowX: 'hidden !important',
+      '&::-webkit-scrollbar': {
+        display: 'none !important'
+      }
+    },
   },
   wizardFlex: {
     flex: 1,
@@ -1184,6 +1255,22 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
   },
   btnRounded: {
     borderRadius: 20,
+  },
+  btnStepActive: {
+    background: 'linear-gradient(90deg, #FF0076 0%, #FF0054 23.8%, #FF4D2A 100%) !important',
+    color: '#fff !important',
+    '& svg': {
+      color: '#fff !important',
+      fill: '#fff !important',
+    },
+    '&:hover': {
+      background: 'linear-gradient(90deg, #cc005e 0%, #cc0043 23.8%, #cc3d21 100%) !important',
+      color: '#fff !important',
+      '& svg': {
+        color: '#fff !important',
+        fill: '#fff !important',
+      },
+    },
   },
   buttonForm: {
     display: "flex",
@@ -2976,7 +3063,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
     height: '100%',
     marginBottom: 68,
     background: '#fff',
-    marginTop: 30,
+    // marginTop: 30,
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
     '& .head': {
@@ -3031,7 +3118,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
           },
           '& .svg_app_settings': {
             position: 'absolute',
-            top: 121.3,
+            top: 40,
             right: isRTL ? 'auto' : 90,
             left: isRTL ? 90 : 'auto',
             transform: isRTL ? 'scaleX(1)' : 'scaleX(-1)'
@@ -3500,7 +3587,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
   checkbox: {
     '&.MuiCheckbox-root': {
       color: '#FF3343',
-      '&$checked': {
+      '&.Mui-checked': {
         color: 'FF3343',
       },
     },
@@ -3655,9 +3742,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
         minHeight: 25,
         display: 'block',
         alignItems: 'center',
-        '&:focus': {
-          backgroundColor: '#fff !important'
-        }
+        // '&:focus': {
+        //   backgroundColor: '#fff !important'
+        // }
       },
       '& svg': {
         color: '#ff3343',
@@ -3705,8 +3792,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
     maxWidth: 390
   },
   containerFullHeight: {
-    minHeight: 'calc(100vh - 80px)',
-    height: 'calc(100vh - 80px)'
+    minHeight: 'calc(100vh - 140px)',
+    height: 'calc(100vh - 140px)'
   },
   pb15: {
     paddingBottom: 15
@@ -5243,6 +5330,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
       borderRadius: 15
     },
   },
+  apiErrorDialogContainer: {
+    "& .MuiDialog-paperWidthSm": {
+      maxWidth: '600px !important',
+      width: '100% !important',
+      minWidth: 'unset !important',
+      margin: '0 auto',
+    },
+  },
   textUnderlineDialogButton: {
     textDecoration: 'underline',
     cursor: 'pointer',
@@ -5594,8 +5689,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
       backgroundColor: 'rgba(255, 51, 67, 0.08)'
     }
   },
-  // Sidebar Header styling
-  sidebarHeader: {
+  // Sidebar Header styling (WhatsApp chat contact-list header — named distinctly from
+  // sideMenuStyle.js's own "sidebarHeader" key, which was silently overwriting this one
+  // since both get spread into the same combined classes object in style/classes/index.js)
+  whatsappSidebarHeader: {
     display: 'flex',
     gap: '4px',
     alignItems: 'center',
@@ -6084,6 +6181,42 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
     color: '#374151',
     marginTop: 3,
   },
+  // INNER paper (BaseDialog's <Paper>, via paperStyle): FILLS the outer paper exactly so it can
+  // never overflow it in either direction — the actual width lives on the OUTER paper
+  // (tierGraphDialogContainer). inner margin-box == outer content box => overflowX:hidden has
+  // nothing to clip, in RTL or LTR, at any viewport.
+  tierGraphDialogPaperProps: {
+    borderRadius: 15,
+    padding: '0px',
+    width: '100%',
+    maxWidth: '100% !important',
+    minWidth: '0 !important',
+    maxHeight: '92vh',
+    margin: '0 !important',        // gutter comes solely from the outer paper (no double margin)
+    boxSizing: 'border-box',
+    overflow: 'hidden',
+    // undo the app-wide "::placeholder { color: red }" leak (Whatsapp/Chat/css/overrides.css) — scope a
+    // neutral placeholder color to this dialog only. Higher specificity beats the global rule.
+    '& input::placeholder': { color: '#9aa1ad', opacity: 1 },
+    '& input::-ms-input-placeholder': { color: '#9aa1ad' },
+  },
+  // reclaim dialogContent's residual 1rem side margin + minWidth so the graph is full-bleed
+  tierGraphDialogContent: {
+    border: 'none !important',
+    margin: '0 !important',
+    padding: '0 !important',
+    minWidth: '0 !important',
+    width: '100%',
+    boxSizing: 'border-box',
+  },
+  // reclaim dialogChildren's marginBlock / summaryPadding (overflowY stays auto for tall dialogs)
+  tierGraphDialogChildren: {
+    margin: '0 !important',
+    marginBlock: '0 !important',
+    padding: '0 !important',
+    minWidth: '0 !important',
+    overflowX: 'hidden',
+  },
   displayConditionDialogPaperProps: {
     borderRadius: 8,
     padding: '0px',
@@ -6281,5 +6414,87 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
     marginInlineStart: 8,
     minWidth: 90,
   },
+  // Desktop TopMenu styles - white background
+  topMenu: {
+    display: 'flex',
+    gap: 15,
+    paddingBottom: 2,
+    paddingTop: 5,
+    marginInlineEnd: 20,
+    marginBottom: 0,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    backgroundColor: '#fff !important',
+    background: '#fff !important',
+    position: 'relative',
+    zIndex: 1,
+    minHeight: 40,
+    '& > *': {
+      flexShrink: 0,
+      minWidth: 'auto'
+    }
+  },
+  
+  // Mobile TopMenu styles
+  mobileTopMenu: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 56,
+    backgroundColor: '#fff',
+    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+    display: 'flex',
+    alignItems: 'center',
+    padding: '0 16px',
+    zIndex: 1200,
+    justifyContent: 'space-between',
+    marginBlock: 0,
+    gap: 8
+  },
+  
+  mobileHamburgerButton: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 40,
+    height: 40,
+    backgroundColor: 'transparent',
+    border: 'none',
+    cursor: 'pointer',
+    borderRadius: 4,
+    '&:hover': {
+      backgroundColor: 'rgba(0,0,0,0.04)'
+    }
+  },
+  
+  mobileRightItems: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 8
+  },
+  
+  desktopRightItems: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 15,
+    '& > *': {
+      flexShrink: 0
+    }
+  },
+  backToAdminButton: {
+    padding: '6px 16px',
+    borderRadius: 50,
+    background: 'linear-gradient(90deg, #FF0076 0%, #FF0054 23.8%, #FF4D2A 100%)',
+    color: '#fff',
+    fontWeight: 600,
+    fontSize: '0.85rem',
+    textTransform: 'none',
+    whiteSpace: 'nowrap',
+    '&:hover': {
+      background: 'linear-gradient(90deg, #FF0076 0%, #FF0054 23.8%, #FF4D2A 100%)',
+      opacity: 0.9,
+    },
+  }
 });
 }

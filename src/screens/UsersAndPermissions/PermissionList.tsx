@@ -10,20 +10,62 @@ const PermissionList: React.FC<PermissionListProps> = ({ list }) => {
   const { t } = useTranslation();
 
   const renderSubUserType = (permissionList: any[]) => {
-    // Map the array to text
-    const texts = list.map(getPermissionText);
+    const hasReadOnly = permissionList.indexOf(eSubUserPermissions.HideRecipients) > -1 ||
+      permissionList.indexOf(4) > -1 ||
+      permissionList.indexOf('4') > -1;
+
+    const hasWhatsApp = permissionList.indexOf(eSubUserPermissions.AllowWhatsAppToAgent) > -1;
+
+    const hasSend = permissionList.indexOf(eSubUserPermissions.AllowSend) > -1;
+    const hasExport = permissionList.indexOf(eSubUserPermissions.AllowExport) > -1;
+    const hasDelete = permissionList.indexOf(eSubUserPermissions.AllowDelete) > -1;
+
+    const isAdmin = hasSend && hasExport && hasDelete;
+    const hasLimitedAccess = hasSend || hasExport || hasDelete;
+
+    // Filter out WhatsApp permission for main permission display
+    const mainPermissions = permissionList.filter(p =>
+      parseInt(p) !== eSubUserPermissions.AllowWhatsAppToAgent
+    );
+    console.log('mainPermissions', mainPermissions);
+
+    // Get text for main permissions
+    const mainTexts = mainPermissions.map(getPermissionText).filter(text => text !== '');
+    console.log('mainTexts', mainTexts);
+
     let permissionText = <></> as any;
 
-    if (permissionList.indexOf(4) > -1 || permissionList.indexOf('4') > -1) {
-      permissionText = <b>{t('SubUsers.readOnly')}</b>
+    // ReadOnly
+    if (hasReadOnly) {
+      if (hasWhatsApp) {
+        permissionText = <><b>{t('SubUsers.readOnly')}</b>, <b>{t('SubUsers.whatsappAgent')}</b></>;
+      } else {
+        permissionText = <b>{t('SubUsers.readOnly')}</b>;
+      }
     }
+    // Only WhatsApp Agent (no other permissions)
+    else if (hasWhatsApp && !hasLimitedAccess) {
+      permissionText = <b>{t('SubUsers.whatsappAgent')}</b>;
+    }
+    // Admin
+    else if (isAdmin) {
+      if (hasWhatsApp) {
+        permissionText = <><b>{t('SubUsers.admin')}: </b> {mainTexts.join(', ')}, <b>{t('SubUsers.whatsappAgent')}</b></>;
+      } else {
+        permissionText = <><b>{t('SubUsers.admin')}: </b> {mainTexts.join(', ')}</>;
+      }
+    }
+    // Limited Access
+    else if (hasLimitedAccess) {
+      if (hasWhatsApp) {
+        permissionText = <><b>{t('SubUsers.limitedAccess')}: </b> {mainTexts.join(', ')}, <b>{t('SubUsers.whatsappAgent')}</b></>;
+      } else {
+        permissionText = <><b>{t('SubUsers.limitedAccess')}: </b> {mainTexts.join(', ')}</>;
+      }
+    }
+    // No permissions
     else {
-      if (permissionList?.length > 2) {
-        permissionText = <><b>{t('SubUsers.admin')}: </b> {texts.join(', ')}</>
-      }
-      else {
-        permissionText = <><b>{t('SubUsers.limitedAccess')}: </b> {texts.join(', ')}</>
-      }
+      permissionText = <></>;
     }
 
     return permissionText;
@@ -40,6 +82,8 @@ const PermissionList: React.FC<PermissionListProps> = ({ list }) => {
         return t('SubUsers.allowDeleting');
       case eSubUserPermissions.HideRecipients:
         return t('SubUsers.readOnly');
+      case eSubUserPermissions.AllowWhatsAppToAgent:
+        return t('SubUsers.whatsappAgent');
       default:
         return '';
     }

@@ -51,7 +51,7 @@ import {
 import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
 import { useNavigate } from 'react-router-dom';
 import { GetPageNyName } from '../../../helpers/UI/SessionStorageManager';
-import { campaignStatus } from '../Constant';
+import { campaignStatus, campaignStatuses } from '../Constant';
 import {
 	AllReportReq,
 	PageTypeRequest,
@@ -286,6 +286,9 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 					: translator('common.SentOn');
 		}
 
+		const isPulseSend = row.IsPulseSend === true;
+		const isCancelled = row.Status === campaignStatuses.CANCELED;
+
 		return (
 			<>
 				<CustomTooltip
@@ -307,6 +310,16 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 				<Typography className={classes.grayTextCell}>
 					{`${text} ${date.format(DateFormats.DATE_TIME_24)}`}
 				</Typography>
+				{isCancelled && (
+					<Typography className={clsx(classes.whatsappCampaignStatus, classes.whatsappCampaignStatusCanceled)}>
+						{translator(`whatsappManagement.${campaignStatus[row.Status]?.toLocaleLowerCase()}`)}
+					</Typography>
+				)}
+				{isPulseSend && (
+					<Typography className={classes.pulseSendPill}>
+						{translator('common.pulseSendPill')}
+					</Typography>
+				)}
 			</>
 		);
 	};
@@ -1122,7 +1135,8 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 
 	return (
 		<DefaultScreen
-			subPage={'WhatsappReports'}
+			key="whatsappReports"
+			subPage="whatsappReports"
 			currentPage='reports'
 			classes={classes}
 			customPadding={false}

@@ -37,6 +37,8 @@ export interface ConfigOptions {
     onEditorJsonChange?: Function;
     setIsDisplayConditionDialogOpen?: Function;
     hasDisplayConditions?: boolean;
+    /** Called on every onChange with the full editor JSON so the parent can scan all font-family values. */
+    onFontChange?: (jsonFile: any) => void;
 }
 
 export const BeeConfig = (Options: ConfigOptions) => {
@@ -65,7 +67,8 @@ export const BeeConfig = (Options: ConfigOptions) => {
         onConditionDeletedFromDesign,
         onEditorJsonChange,
         setIsDisplayConditionDialogOpen,
-        hasDisplayConditions
+        hasDisplayConditions,
+        onFontChange,
     } = Options;
 
     const getConditionId = (condition?: any) => condition?.id ?? condition?.ID ?? null;
@@ -279,6 +282,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
         translations: {
             ...(IsRTL ? TRANSLATE_HEBREW : TRANSLATE_ENGLISH),
             "bee-newsletter-modules-html": {
+                ...(IsRTL ? TRANSLATE_HEBREW : TRANSLATE_ENGLISH)["bee-newsletter-modules-html"],
                 "widget-warning-desc": t('campaigns.htmlDocTypeNotAllowedWarning'),
             }
         },
@@ -524,6 +528,9 @@ export const BeeConfig = (Options: ConfigOptions) => {
         onChange: (jsonFile: any) => {
             onEditorJsonChange?.(jsonFile);
             DesignChange();
+            // Forward full JSON to parent for complete font-change detection
+            // (covers global, block-level, and inline text toolbar font changes)
+            onFontChange?.(jsonFile);
         }
         // onChange: (jsonFile: any, response: any) => {
         // https://docs.beefree.io/beefree-sdk/tracking-message-changes#content-codes - Codes

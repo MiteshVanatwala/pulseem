@@ -832,6 +832,9 @@
   "maxPrice": "Maximum Price",
   "abandonedCart": "Abandoned Cart in",
   "pageViewed": "Page Viewed in",
+  "page_viewed_match_exact": "Exact",
+  "page_viewed_match_contains": "Contains",
+  "field_required": "Required field",
   "priceRangeError": "Maximum price cannot be larger then Minimum Price",
   "verifyByEmail": "Via Email",
   "verifyBySms": "Via SMS",
@@ -887,6 +890,7 @@
   "polyAgentIconTitle": "Hi, I'm Pulsy, your smart AI Analyst ",
   "polyAgentIconTitleSupport": "Hi, I'm Pulsy, your support AI Agent",
   "polyAgentIconTitleMarquee": "Hi! I'm Pulsy, What would you like to improve today?",
+  "dragHint": "You can drag me anywhere 👋",
   "agentPlaceholder": "Ask me something... (like: \"What are my campaign performance?\") Write freely...",
   "agentPlaceholderSupport": "Ask me anything about Pulseem...(e.g. \"How do I send an SMS?\"). Type freely",
   "welcomeMessage": "Hi, my name is {USERNAME}",
@@ -996,5 +1000,8 @@
   "allNumbers": "All Numbers",
   "field": "Field",
   "operator": "Operator",
-  "value": "Value"
+  "value": "Value",
+  "pulseSendPill": "Pulse Send",
+  "page_viewed_contains_placeholder": "/checkout",
+  "page_viewed_contains_tooltip": "Matches contacts who visited any page whose URL contains this text. Case-insensitive. URL parameters are included (e.g. utm_source=email). Enter one value only — not comma-separated."
 }

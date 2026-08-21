@@ -7,7 +7,7 @@ import { getPackagesDetails } from '../../redux/reducers/dashboardSlice';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
-import { MdArrowBackIos, MdArrowForwardIos, MdSupportAgent } from 'react-icons/md';
+import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { BellIcon, WhatsappIcon, SmsIcon, CardIcon, NewsletterIcon } from '../../assets/images/dashboard/index'
 import { TooltipBubble } from '../../assets/images/dashboard/index';
 import { BaseDialog } from '../DialogTemplates/BaseDialog';
@@ -25,7 +25,6 @@ import { BiCog } from 'react-icons/bi';
 import { getAccountBilling } from '../../redux/reducers/BillingSlice';
 import BillingSettings from '../BillingSettings/BillingSettings';
 import TierPlans from '../TierPlans/TierPlans';
-import { toggleHelpDrawer } from '../../redux/reducers/helpDrawerSlice';
 import { contactSalesForScale, deletePolandSubscription, getCurrentPlan } from '../../redux/reducers/TiersSlice';
 import { getAccountSettings } from '../../redux/reducers/AccountSettingsSlice';
 import { Loader } from '../Loader/Loader';
@@ -372,34 +371,10 @@ const BulkStatus = ({ classes }) => {
                   {t('dashboard.yourBulkStatus')}
                 </Typography>
               </Box>
-              {isWhiteLabel ? <Box className={clsx(classes.mr15, 'bubbleNew')}>
+              {isWhiteLabel && <Box className={clsx(classes.mr15, 'bubbleNew')}>
                 <Typography className='bubbleText'>{t('common.new')}</Typography>
                 <TooltipBubble />
-              </Box> :
-                <Box className={clsx(classes.dFlex, classes.flexWrap)} justifyContent='center' alignItems='center'>
-                  <Tooltip
-                    arrow
-                    title={t('dashboard.helpDrawer.support.helpCenter.title')}
-                    placement={"top"}
-                    open
-                    classes={{
-                      tooltip: clsx(classes.tooltipPrimary, classes.f12),
-                      arrow: classes.colrPrimary
-                    }}
-                  >
-                    <IconButton
-                      size="small"
-                      className={clsx(classes.noPadding)}
-                      onClick={() => {
-                        // window.open(URLS.ContactUs, '_blank')
-                        dispatch(toggleHelpDrawer())
-                      }}
-                    >
-                      <MdSupportAgent className={classes.linkNoDesign} style={{ fontSize: 30, color: '#ff3343' }} title={t('master.RadMenuItemResource21.Text')} />
-                    </IconButton>
-                  </Tooltip>
-                </Box>
-              }
+              </Box>}
             </Box>
           </Grid>
           <Grid

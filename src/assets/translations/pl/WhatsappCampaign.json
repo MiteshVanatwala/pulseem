@@ -45,6 +45,8 @@
 	"oneContact": "Wyślij do jednego kontaktu",
 	"testGroups": "Wyślij do grup testowych",
 	"sendTitle": "Wybierz grupę do testowego wysyłania",
+	"noPermission": "Brak uprawnień",
+	"noPermissionToSend": "Brak uprawnień do wysyłania",
 	"sendValidation": "Następujące pola są nieprawidłowe",
 	"sendButton": "WYŚLIJ",
 	"checkLimit": "Sprawdź swój limit",
@@ -78,5 +80,10 @@
 	"atTime": "o",
 	"filterInputText": "Nie wysyłaj do odbiorców, którzy otrzymali kampanię WhatsApp w ciągu ostatnich dni",
 	"metaBusinessNotVerified": "Biznes Meta nie jest zweryfikowany",
-	"metaPhoneNumberNotVerified": "Numer telefonu Meta nie jest zweryfikowany"
+	"metaPhoneNumberNotVerified": "Numer telefonu Meta nie jest zweryfikowany",
+	"media_url": "Adres URL mediów",
+	"media_url_placeholder": "Wprowadź adres URL pliku",
+	"media_type_mismatch_error": "Typ mediów nie pasuje do zatwierdzonego szablonu",
+	"media_text": "Treść wiadomości",
+	"media_text_placeholder": "Wstaw tekst tutaj - do 1024 znaków"
 }

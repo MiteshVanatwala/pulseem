@@ -1,17 +1,21 @@
-import { Box, Button, Typography } from '@material-ui/core';
+import { Box, Button, Tooltip, Typography } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import { FileUploadProps, coreProps } from '../Types/WhatsappCreator.types';
 import { BaseSyntheticEvent, useEffect, useState } from 'react';
 import clsx from 'clsx';
 import { useSelector } from 'react-redux';
 import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
+import { MdUpload, MdClose, MdInfoOutline } from 'react-icons/md';
 
 const FileUpload = ({
 	classes,
 	fileData,
 	buttonType,
 	setFileData,
-	sourceFileSize = ''
+	sourceFileSize = '',
+	accept = 'image/png, image/jpeg, application/pdf, video/mp4',
+	showReplaceNotice = false,
+	title,
 }: FileUploadProps) => {
 	const { t: translator } = useTranslation();
 	const [fileSize, setFileSize] = useState<string>('');
@@ -78,7 +82,7 @@ const FileUpload = ({
 	return (
 		<Box className={clsx(classes.buttonForm, classes.fileUpload)}>
 			<Typography className={classes.buttonHead}>
-				<>{translator('whatsapp.uploadFileTitle')}</>
+				<>{title ?? translator('whatsapp.uploadFileTitle')}</>
 			</Typography>
 			<label
 				className={classes.customFileUpload}
@@ -91,7 +95,8 @@ const FileUpload = ({
 				<input
 					type='file'
 					className={classes.formFieldInput}
-					accept='image/png, image/jpeg, application/pdf, video/mp4'
+					style={{ display: 'none' }}
+					accept={accept}
 					onClick={(e) => checkFileUploadAvailability(e)}
 					onChange={(e) => onFileUploadChange(e)}
 				/>
@@ -112,17 +117,17 @@ const FileUpload = ({
 							[fileData?.fileLink?.split('/')?.length - 1]?.substring(0, 25) +
 								'...'}
 							&emsp;
-							<i
+							<MdClose
 								style={{
 									padding: '2px 4px',
 									cursor: 'pointer',
 								}}
 								onClick={(e) => onFileDeselect(e)}
-								className='zmdi zmdi-close'></i>
+							/>
 						</Button>
 					</div>
 				) : (
-					<i className='zmdi zmdi-upload'></i>
+					<MdUpload />
 				)}
 			</label>
 
@@ -137,6 +142,29 @@ const FileUpload = ({
 					<>{translator('whatsapp.fileDescription')}</>
 				)}
 			</Typography>
+			{showReplaceNotice && fileData?.fileLink?.length > 0 && (
+				<Typography
+					style={{
+						fontSize: 12,
+						color: '#e65100',
+						marginTop: 6,
+						display: 'flex',
+						alignItems: 'center',
+						gap: 4,
+						direction: isRTL ? 'rtl' : 'ltr',
+					}}>
+					{translator('whatsapp.replaceFileNotice')}
+					<Tooltip
+						arrow
+						placement={isRTL ? 'left' : 'right'}
+						title={translator('whatsapp.replaceFileTooltip')}>
+						<span
+							style={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center' }}>
+							<MdInfoOutline style={{ fontSize: 16 }} />
+						</span>
+					</Tooltip>
+				</Typography>
+			)}
 			{renderDialog()}
 		</Box>
 	);
