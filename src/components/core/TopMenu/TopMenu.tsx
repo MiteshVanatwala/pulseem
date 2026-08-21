@@ -12,6 +12,7 @@ import { MdSupportAgent } from 'react-icons/md';
 import { toggleHelpDrawer } from "../../../redux/reducers/helpDrawerSlice";
 import i18n from "../../../i18n";
 import SidebarTooltip from '../SideMenu/SidebarTooltip';
+import { getIsBeeperAccount } from '../../WhiteLabel/WhiteLabelMigrate';
 
 
 const LanguageSelector: React.FC<{ classes: any }> = ({ classes }) => {
@@ -128,8 +129,10 @@ const TopMenu: React.FC<TopMenuProps> = ({ classes, onMenuToggle }) => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const { windowSize, cameFromSubAccount, isAdmin } = useSelector((state: any) => state.core);
+    const { accountSettings } = useSelector((state: any) => state.common);
     const isMobile = windowSize === 'xs' || windowSize === 'sm' || windowSize === 'md';
     const showBackToAdmin = !cameFromSubAccount && isAdmin !== '' && isAdmin !== 'True';
+    const isBeeperAccount = getIsBeeperAccount(accountSettings);
 
     const returnToAdmin = () => {
         window.location.href = '/Pulseem/ReactRedirect.aspx';
@@ -179,22 +182,24 @@ const TopMenu: React.FC<TopMenuProps> = ({ classes, onMenuToggle }) => {
                         </Button>
                     </Box>
                 )}
-                <Box>
-                    <SidebarTooltip
-                        title={t('dashboard.helpDrawer.support.helpCenter.title')}
-                        placement="bottom"
-                    >
-                        <IconButton
-                            size="small"
-                            className={clsx(classes.noPadding)}
-                            onClick={() => {
-                                dispatch(toggleHelpDrawer());
-                            }}
+                {!isBeeperAccount && (
+                    <Box>
+                        <SidebarTooltip
+                            title={t('dashboard.helpDrawer.support.helpCenter.title')}
+                            placement="bottom"
                         >
-                            <MdSupportAgent style={{ fontSize: 26, color: '#000' }} />
-                        </IconButton>
-                    </SidebarTooltip>
-                </Box>
+                            <IconButton
+                                size="small"
+                                className={clsx(classes.noPadding)}
+                                onClick={() => {
+                                    dispatch(toggleHelpDrawer());
+                                }}
+                            >
+                                <MdSupportAgent style={{ fontSize: 26, color: '#000' }} />
+                            </IconButton>
+                        </SidebarTooltip>
+                    </Box>
+                )}
                 <Box>
                     <NotificationBell classes={classes} />
                 </Box>
