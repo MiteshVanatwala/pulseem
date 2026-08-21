@@ -74,10 +74,10 @@ export const numG = (g) => sizeG(g);
 // bubble display — exactly 4 states:
 //  static numeric -> '₪'+fmt(t) ; static text -> t as-is ; pure token ->
 //  name·₪fmt(sample) ; mixed token -> '₪'+fmt(sample) [DECLARED DEVIATION #6].
-export const amountDisp = (g) => {
-  if (!isTok(g.t)) return /\d/.test(g.t) ? CUR + fmt(g.t) : String(g.t);
+export const amountDisp = (g, cur = CUR) => {
+  if (!isTok(g.t)) return /\d/.test(g.t) ? cur + fmt(g.t) : String(g.t);
   const sample = gv(g.t, g.s);
-  return pureTok(g.t) ? tokName(g.t) + ' · ' + CUR + fmt(sample) : CUR + fmt(sample);
+  return pureTok(g.t) ? tokName(g.t) + ' · ' + cur + fmt(sample) : cur + fmt(sample);
 };
 
 // Auto-highlight: index of the tier the current value is working toward — the smallest tier value
@@ -103,18 +103,23 @@ export const defaultState = () => ({
   bg: '#fdf0ea', font: 'Assistant',
   axisMax: 0,                 // 0 = automatic
   progressFill: '#7ed98c',
-  tierCountActive: 4,
+  // FIX A: present and TRUE by default. buildLink emits `nc` ONLY when this is false, so a graph
+  // that keeps the shekel costs the cfg zero bytes. Position is free (the localStorage merge at
+  // TierGraphDialog.jsx:424-426 spreads `...d` first, so the merged object always carries THIS
+  // order), and TierGraphDialog.jsx:419-422 documents that a key added here cannot arrive undefined.
+  showCurrency: true,
+  tierCountActive: 2,
   tiers: [
-    { amount: { t: '##פרס עמודה ראשונה##', s: 120000 }, fill: '#c4cdf2', labelColor: '#3b3b6b',
+    { amount: { t: '##יעד מדרגה ראשונה##', s: 120000 }, fill: '#c4cdf2', labelColor: '#3b3b6b',
       box: { fill: '#ffffff', textColor: '#1e7e34', accent: '#2bb24c',
              line1: 'יחיד', cat1: 'פרס טיסה', line2: 'זוגי', cat2: 'פרס משפחות' } },
-    { amount: { t: '##פרס עמודה שנייה##', s: 150000 }, fill: '#c4cdf2', labelColor: '#3b3b6b',
+    { amount: { t: '##יעד מדרגה שנייה##', s: 150000 }, fill: '#c4cdf2', labelColor: '#3b3b6b',
       box: { fill: '#ffffff', textColor: '#1e7e34', accent: '#2bb24c',
              line1: 'זוגי', cat1: 'פרס טיסה', line2: '+1', cat2: 'פרס משפחות' } },
-    { amount: { t: '##פרס עמודה שלישית##', s: 180000 }, fill: '#c4cdf2', labelColor: '#3b3b6b',
+    { amount: { t: '##יעד מדרגה שלישית##', s: 180000 }, fill: '#c4cdf2', labelColor: '#3b3b6b',
       box: { fill: '#ffffff', textColor: '#1e7e34', accent: '#2bb24c',
              line1: 'זוגי', cat1: 'פרס טיסה', line2: '+2', cat2: 'פרס משפחות' } },
-    { amount: { t: '##פרס עמודה רביעית##', s: 240000 }, fill: '#c4cdf2', labelColor: '#3b3b6b',
+    { amount: { t: '##יעד מדרגה רביעית##', s: 240000 }, fill: '#c4cdf2', labelColor: '#3b3b6b',
       box: { fill: '#ffffff', textColor: '#1e7e34', accent: '#2bb24c',
              line1: 'זוגי', cat1: 'פרס טיסה', line2: '+3', cat2: 'פרס משפחות' } },
   ],
@@ -323,6 +328,12 @@ export const buildLink = (state) => {
     // size keys below — because gap = 0 is a legal user choice and truthy drops it.
     ...(state.barWidth != null ? { bwg: state.barWidth } : {}),
     ...(state.gap != null ? { gp: state.gap } : {}),
+    // FIX A: a boolean DISPLAY flag, so this follows the `row1Show === false -> r1: 0` convention
+    // in the box below — NOT the `!= null` convention on the line above, which exists only because
+    // gap 0 is a legal NUMBER that a truthy guard would drop. Emitted ONLY in the OFF state, so a
+    // graph that keeps the shekel costs the cfg zero bytes and every already-sent URL re-emits
+    // byte-for-byte. A PLAIN SCALAR, never geoSlot/txtSlot, so pCounter is untouched.
+    ...(state.showCurrency === false ? { nc: 1 } : {}),
     here: {
       show: state.here.show, color: state.here.color,
       v: geoSlot(state.here.value), t: txtSlot(state.here.text),
@@ -430,6 +441,12 @@ export const parseTierGraphUrl = (url) => {
       bg: cfg.bg || d.bg, font: cfg.font || d.font,
       axisMax: cfg.axisMax || 0, progressFill: cfg.pg || d.progressFill,
       barWidth: cfg.bwg, gap: cfg.gp,          // G: no `||` default — absent MUST stay undefined
+      // FIX A: a PRESENCE test on the integer 1 — NEVER `cfg.nc || true` in the idiom of the line
+      // above: for an OFF graph cfg.nc is 1, `1 || true` is the truthy 1, the graph re-imports as
+      // "shekel on", and the next buildLink drops nc entirely — the user's setting destroyed and
+      // the emailed PNG changed back. Anything that is not the number 1 (absent, 0, "1", junk)
+      // means today's shekel, matching C#'s Type == JTokenType.Integer guard.
+      showCurrency: cfg.nc !== 1,
       tierCountActive: Array.isArray(cfg.tiers) && cfg.tiers.length ? cfg.tiers.length : d.tierCountActive,
       tiers: (Array.isArray(cfg.tiers) ? cfg.tiers : []).map((tr) => {
         const box = tr.box || {};

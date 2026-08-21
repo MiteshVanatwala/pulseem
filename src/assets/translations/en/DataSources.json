@@ -414,6 +414,11 @@
     "cellSection": "Mobile channel",
     "matched": "Matched to existing recipients",
     "notFound": "Not found",
+    "clientFieldsTitle": "Client fields you asked to update",
+    "clientFieldsNone": "This upload did not request any client-field update",
+    "clientFieldsUnknown": "Client-field update details are not available for this source",
+    "clientFieldsFromColumn": "from column «{{column}}»",
+    "clientsUpdated": "Recipient records updated",
     "failTitle": "The upload failed",
     "uploadAgain": "Upload again"
   },
@@ -534,6 +539,7 @@
   },
   "actions": {
     "view": "View content",
+    "viewWhileProcessing": "The file is being processed — viewing opens when it finishes",
     "export": "Export",
     "edit": "Edit",
     "versions": "Version history",

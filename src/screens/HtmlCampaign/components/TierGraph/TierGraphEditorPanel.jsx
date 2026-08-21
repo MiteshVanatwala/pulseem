@@ -161,6 +161,13 @@ export default function TierGraphEditorPanel({ graph, selected, dispatch, mergeD
         <NumField label={t('campaigns.tierGraph.heightLabel')} value={graph.height} min={320} max={900} step={10} onChange={(v) => dispatch({ type: 'SET_BG_FIELD', key: 'height', val: v })} />
         <NumField label={t('campaigns.tierGraph.axisMaxLabel')} value={graph.axisMax} min={0} step={1000} onChange={(v) => dispatch({ type: 'SET_BG_FIELD', key: 'axisMax', val: v })} />
         <div style={{ fontSize: 11.5, color: '#6b7280', marginTop: -8, marginBottom: 10 }}>{t('campaigns.tierGraph.axisMaxAuto')}</div>
+        {/* Currency sign — GRAPH-WIDE, hence this screen and not the tier screen: the sign is
+            drawn on the amount bubbles AND on the "here" pill (TierGraphStage.jsx:160 and
+            :232), so no indexed screen owns it, and the carrier is a single cfg root key.
+            `!== false` because ToggleField is `checked={!!value}` — a graph lacking the key
+            must still render as ON. */}
+        <ToggleField label={t('campaigns.tierGraph.showCurrency')} value={graph.showCurrency !== false} onChange={(v) => dispatch({ type: 'SET_BG_FIELD', key: 'showCurrency', val: v })} />
+        <div style={{ fontSize: 11.5, color: '#6b7280', marginTop: -8, marginBottom: 10, lineHeight: 1.5 }}>{t('campaigns.tierGraph.showCurrencyHint')}</div>
         <ColorField label={t('campaigns.tierGraph.progressColor')} value={graph.progressFill} onChange={(v) => dispatch({ type: 'SET_BG_FIELD', key: 'progressFill', val: v })} />
       </div>
     );
@@ -189,6 +196,12 @@ export default function TierGraphEditorPanel({ graph, selected, dispatch, mergeD
         <Head icon="📊" name={t('campaigns.tierGraph.tierTitle', { n: i + 1 })} t={t} />
         {/* tier amounts may be personalized too — a ##Field## resolves per-recipient at send time */}
         <GeoField label={t('campaigns.tierGraph.amountLabel')} geo={tr.amount} mergeData={mergeData} t={t} fontSize={tr.amountSize} onFontSize={(v) => dispatch({ type: 'SET_TIER_FIELD', i, key: 'amountSize', val: v })} onChange={(geo) => dispatch({ type: 'SET_GEO', path: i, geo })} />
+        {/* Pointer, NOT a control — the owner's instinct is to look for this beside the amount.
+            Navigation wording only: it names where the setting lives and its scope, so it stays
+            true whether the sign is on or off and asserts no side (bidi makes the prefix read
+            last in Hebrew). The string quotes bgTitle's value; if bgTitle is ever retranslated,
+            showCurrencyElsewhere must move with it. */}
+        <div style={{ fontSize: 11.5, color: '#6b7280', marginTop: -6, marginBottom: 10, lineHeight: 1.5 }}>{t('campaigns.tierGraph.showCurrencyElsewhere')}</div>
         <ColorField label={t('campaigns.tierGraph.fillColor')} value={tr.fill} onChange={(v) => dispatch({ type: 'SET_TIER_FIELD', i, key: 'fill', val: v })} />
         <ColorField label={t('campaigns.tierGraph.labelColor')} value={tr.labelColor} onChange={(v) => dispatch({ type: 'SET_TIER_FIELD', i, key: 'labelColor', val: v })} />
         {/* geometry overrides — plain numbers, empty = inherit the global / auto value.

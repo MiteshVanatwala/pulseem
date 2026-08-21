@@ -29,7 +29,7 @@ import {
 } from '../../redux/reducers/dataSourcesSlice';
 import { GetExtraFields } from '../../redux/reducers/ExtraFieldsSlice';
 import {
-    DataSourceListItem, DataSourceDetails, DataSourceVersion, eDataSourceStatus,
+    DataSourceListItem, DataSourceDetails, DataSourceVersion, DataSourceColumn, eDataSourceStatus,
     ClientFieldOption, buildAccountExtraFieldOptions
 } from '../../Models/DataSources/DataSource';
 import { getChannelDescriptor, eSendChannel } from '../../Models/DataSources/SmartSend';
@@ -89,6 +89,12 @@ const DataSources = ({ classes }: ClassesType) => {
     const [wizardOpen, setWizardOpen] = useState(false);
     const [dialog, setDialog] = useState<{ type: string; data?: any } | null>(null);
     const [summaryDetails, setSummaryDetails] = useState<DataSourceDetails | null>(null);
+    // [CFT] The same response's columns, kept beside the details they belong to so the summary can
+    // list the requested client-field write-backs. Held as its own state rather than read from the
+    // `current` slice: this screen never populates `current` (only DataSourceView does), and the two
+    // must come from ONE response or the dialog could pair version N's mappings with version M's
+    // figures.
+    const [summaryColumns, setSummaryColumns] = useState<DataSourceColumn[]>([]);
     const [versionsData, setVersionsData] = useState<{ dataSourceId: number | null; versions: DataSourceVersion[]; activeVersionId: number | null }>({ dataSourceId: null, versions: [], activeVersionId: null });
     const [toastMessage, setToastMessage] = useState<ERROR_TYPE>(null);
     const [loading, setLoading] = useState(false);
@@ -287,6 +293,9 @@ const DataSources = ({ classes }: ClassesType) => {
         const res: any = await dispatch(getDataSource(id));
         if (res?.payload?.StatusCode === 200) {
             setSummaryDetails(res.payload.Data.details);
+            // [CFT] Same response, same version — see the state declaration. `?? []` because a source
+            // whose first version has not completed has no active version, and Get RS2 is then empty.
+            setSummaryColumns(res.payload.Data.columns ?? []);
             setDialog({ type: 'summary' });
         }
     };
@@ -348,11 +357,27 @@ const DataSources = ({ classes }: ClassesType) => {
 
     const renderActions = (row: DataSourceListItem) => {
         const canViewContent = row.Status === eDataSourceStatus.READY || row.Status === eDataSourceStatus.PROCESSING || row.Status === eDataSourceStatus.PENDING;
+        /* [VW] The view screen renders the ACTIVE version, and a version only becomes active when the
+           worker completes it (DataSources_CompleteVersion, under Status = 2). While the newest version
+           is still being processed there are only two possible outcomes and neither is worth a click:
+           on a FIRST upload there is no active version at all, so DataSources_Get RS1 returns a NULL
+           status that the API maps to 0 and the screen renders an indeterminate progress bar it never
+           refreshes — the hang this fixes; on a RE-upload the screen silently shows the PREVIOUS
+           version's rows with nothing saying so, which is worse than an honest "not yet".
+           So: rendered but disabled until the newest version is READY. The icon keeps its slot (a
+           conditional render would make a six-icon row jump), and the 4s poll below already re-fetches
+           status while anything is in flight, so it re-enables itself within one tick of the worker
+           finishing — no reload, no dead button.
+           The <span> is required: MUI v4 disabled buttons fire no mouse events, so without it the
+           Tooltip that explains the disabled state disappears exactly when it is needed. */
+        const viewNotReady = row.Status !== eDataSourceStatus.READY;
         return (
             <Box style={{ display: 'flex', gap: 6, flexWrap: 'wrap', justifyContent: 'center' }}>
                 {canViewRecipients && canViewContent && (
-                    <Tooltip title={t('DataSources.actions.view')} PopperProps={rtlPopperProps}>
-                        <IconButton size="small" style={ACTION_BTN_STYLE} aria-label={t('DataSources.actions.view')} onClick={() => goToView(row.DataSourceID)}><Visibility fontSize="small" style={ACTION_ICON_STYLE} /></IconButton>
+                    <Tooltip title={t(viewNotReady ? 'DataSources.actions.viewWhileProcessing' : 'DataSources.actions.view')} PopperProps={rtlPopperProps}>
+                        <span style={{ display: 'inline-flex' }}>
+                            <IconButton size="small" style={ACTION_BTN_STYLE} disabled={viewNotReady} aria-label={t('DataSources.actions.view')} onClick={() => goToView(row.DataSourceID)}><Visibility fontSize="small" style={ACTION_ICON_STYLE} /></IconButton>
+                        </span>
                     </Tooltip>
                 )}
                 {canExport && row.Status === eDataSourceStatus.READY && (
@@ -508,7 +533,9 @@ const DataSources = ({ classes }: ClassesType) => {
                 onClose={() => setDialog(null)}
                 onSaved={onEditSaved}
             />
-            <DataSourceSummary classes={classes} open={dialog?.type === 'summary'} details={summaryDetails} onClose={() => setDialog(null)} />
+            {/* [CFT] accountExtraFields is already fetched on mount for the wizard's picker, so the
+                summary gets the account's own names for ExtraField1..13 / ExtraDate1..4 for free. */}
+            <DataSourceSummary classes={classes} open={dialog?.type === 'summary'} details={summaryDetails} columns={summaryColumns} extraFieldOptions={accountExtraFields} onClose={() => setDialog(null)} />
             <ExportDialog
                 classes={classes}
                 open={dialog?.type === 'export'}
