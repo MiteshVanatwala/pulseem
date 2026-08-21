@@ -29,5 +29,7 @@
   "englishLetterNotApprovedDescription": "In order to open this option, you must go through a video verification process with our customer support<br/>please contact by email <a href='mailto:support@beeper.ltd'>support@beeper.ltd</a>",
   "smsCreatorPageTitle": "Create SMS | Beeper",
   "verificationNote": "If you send with the number assigned to you in Beeper, there is no need for verification.",  
-  "batchSend": "Batch Sending"
+  "batchSend": "Batch Sending",
+  "batchSendTip": "Choose a group and when to send to organize your Batch Sending.",
+  "batchCancel": "Cancel batch send"
 }

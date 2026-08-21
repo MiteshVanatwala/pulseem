@@ -1379,7 +1379,7 @@ const SmsSend = ({ classes, ...props }) => {
           <Tooltip
             disableFocusListener
             style={{ marginInlineEnd: isRTL ? 5 : 0, marginInlineStart: 5 }}
-            title={t("smsReport.pulseSendTip")}
+            title={isBeeperAccount ? t("Beeper.batchSendTip") : t("smsReport.pulseSendTip")}
             classes={{ tooltip: classes.customWidth }}
             className={clsx(classes.ml5, classes.mt1)}
           >
@@ -1390,14 +1390,14 @@ const SmsSend = ({ classes, ...props }) => {
           <Tooltip
             disableFocusListener
             style={{ marginInlineEnd: isRTL ? 5 : 0, marginInlineStart: 5 }}
-            title={t("smsReport.pulseCancel")}
+            title={isBeeperAccount ? t("Beeper.batchCancel") : t("smsReport.pulseCancel")}
             classes={{ tooltip: classes.customWidth }}
             className={clsx(classes.ml5, classes.mt1)}
           >
             <IconButton
               style={{ padding: 0, marginInlineStart: 10 }}
               className={clsx(classes.icon_Info, classes.f20)}
-              aria-label={t("smsReport.pulseCancel")}
+              aria-label={isBeeperAccount ? t("Beeper.batchCancel") : t("smsReport.pulseCancel")}
               onClick={() => setDialogType({ type: "cancelPulse" })}
             >
               <Close />
