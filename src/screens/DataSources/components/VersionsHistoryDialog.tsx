@@ -85,9 +85,25 @@ const VersionsHistoryDialog = ({
                                                             <IconButton size="small" style={actionBtnStyle} aria-label={t('DataSources.versions.exportVersion')} onClick={() => onExportVersion(v.DataSourceVersionID, v.TotalRows ?? 0)}><GetApp style={actionIconStyle} /></IconButton>
                                                         </Tooltip>
                                                     )}
-                                                    <Tooltip title={t('DataSources.versions.summary')} PopperProps={{ style: { direction: isRtl ? 'rtl' : 'ltr' } }}>
-                                                        <IconButton size="small" style={actionBtnStyle} aria-label={t('DataSources.versions.summary')} onClick={() => onShowSummary(v)}><Assessment style={actionIconStyle} /></IconButton>
-                                                    </Tooltip>
+                                                    {/* Active version only. Neither handler wired to onShowSummary reads the
+                                                        version it is handed — DataSourceView.tsx:222 declares `v` and never uses
+                                                        it, DataSources.tsx:556 discards it and opens by DataSourceID — and both
+                                                        render from the ACTIVE version's columns (DataSourceView.tsx:80 is
+                                                        `current?.columns`, and DataSources_Get RS2 scopes those to
+                                                        @ActiveVersionID). So on a non-active row this button silently showed the
+                                                        active version's mappings under a different version's number. This panel
+                                                        names which recipient fields an upload overwrote, and that write has no
+                                                        undo — attributing it to the wrong version is the one wrong answer this
+                                                        dialog must not give, and it gives it silently rather than as an error.
+                                                        Gated rather than deleted because on the active row the answer IS correct.
+                                                        To restore it per-version, fetch that version via DataSources_GetRows
+                                                        (@prm_VersionID — its RS1 already carries ClientFieldTarget) instead of
+                                                        reusing `current`. */}
+                                                    {isActive && (
+                                                        <Tooltip title={t('DataSources.versions.summary')} PopperProps={{ style: { direction: isRtl ? 'rtl' : 'ltr' } }}>
+                                                            <IconButton size="small" style={actionBtnStyle} aria-label={t('DataSources.versions.summary')} onClick={() => onShowSummary(v)}><Assessment style={actionIconStyle} /></IconButton>
+                                                        </Tooltip>
+                                                    )}
                                                 </Box>
                                             )}
                                         </TableCell>
