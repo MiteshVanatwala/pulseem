@@ -20,8 +20,10 @@ import { sitePrefix } from '../../config';
 import {
     getDataSource, getRows, checkQuota, clearCurrent, clearRows
 } from '../../redux/reducers/dataSourcesSlice';
+import { GetExtraFields } from '../../redux/reducers/ExtraFieldsSlice';
 import {
-    DataSourceColumn, DataSourceVersion, RowsFilter, eDataSourceStatus
+    DataSourceColumn, DataSourceVersion, RowsFilter, eDataSourceStatus,
+    ClientFieldOption, buildAccountExtraFieldOptions
 } from '../../Models/DataSources/DataSource';
 import { getChannelDescriptor, eSendChannel } from '../../Models/DataSources/SmartSend';
 import StatusChip from './components/StatusChip';
@@ -35,6 +37,10 @@ import DataSourceSummary from './components/DataSourceSummary';
 import EditDataSourceDialog from './components/EditDataSourceDialog';
 
 const ROWS_PAGE_SIZE = 50;
+// [VW] How often this screen re-checks a source that is still being processed. Deliberately the same
+// 4s the list screen polls at (DataSources.tsx POLL_MS) — the two are showing the same worker, and a
+// user who has both open should not see them disagree about whether it has finished.
+const VIEW_POLL_MS = 4000;
 // Same gate the mapping screen's SourcePicker applies for the only wired channel — see the note in
 // DataSources.tsx. "Not view-only" would let a cell-only source through to a screen that drops it.
 const EMAIL_IDENTITY_FLAG = getChannelDescriptor(eSendChannel.EMAIL).identityFlag;
@@ -59,6 +65,14 @@ const DataSourceView = ({ classes }: ClassesType) => {
     const [viewVersionId, setViewVersionId] = useState<number | null>(null); // null = active version
     const [dialog, setDialog] = useState<{ type: string; data?: any } | null>(null);
     const [summaryDetails, setSummaryDetails] = useState<any>(null);
+    /* [CFT] The account's names for ExtraField1..13 / ExtraDate1..4, for the summary's write-back list.
+       Fetched LAZILY on first summary open, not on mount as the list screen does: this screen's job is
+       showing rows, and most visits never open the dialog — an unconditional call would put a request
+       on every page load to label a list that is usually not rendered. Cached in state afterwards, so
+       reopening the dialog costs nothing. Without it the summary still names every target, it just
+       falls back to the physical slot ("שדה נוסף 3") instead of the account's own word for it. */
+    const [accountExtraFields, setAccountExtraFields] = useState<ClientFieldOption[]>([]);
+    const extraFieldsLoadedRef = useRef(false);
     const [toastMessage, setToastMessage] = useState<ERROR_TYPE>(null);
     const requestedIdRef = useRef<number>(0);
 
@@ -95,6 +109,28 @@ const DataSourceView = ({ classes }: ClassesType) => {
         return () => { dispatch(clearCurrent()); dispatch(clearRows()); };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id]);
+
+    /* ── [VW] keep a processing source refreshing until it resolves ──────────────────────────────
+       The effect above runs on `[id]` alone, so before this the screen loaded ONCE. A source whose
+       first version is still being processed has no active version yet, and DataSources_Get RS1 then
+       returns a NULL status that the API maps to 0 (PENDING) — so renderBody drew an indeterminate
+       progress bar that nothing would ever replace. The page sat there until a manual reload.
+       Gating the eye in the list is not enough on its own, because this screen has two other
+       entrances that carry no status with them: a pasted /DataSources/View/:id URL (App.js route)
+       and the versions-history dialog's "view" action. Fixing it HERE closes all three at once.
+       Same cadence and same shape as the list screen's poll, deliberately: one interval, created
+       only while something is in flight, cleared the moment it is not. The status this reads comes
+       from the same getDataSource response the rest of the screen uses, and loadSource already
+       loads the rows itself once the status turns READY — so the bar is replaced by real content
+       without a reload and without a second code path. */
+    useEffect(() => {
+        const st = details?.Status;
+        if (st !== eDataSourceStatus.PENDING && st !== eDataSourceStatus.PROCESSING) return;
+        if (!Number.isFinite(numId)) return;
+        const timer = setInterval(() => { loadSource(numId); }, VIEW_POLL_MS);
+        return () => clearInterval(timer);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [details?.Status, numId]);
 
     const loadSource = async (dsId: number) => {
         const res: any = await dispatch(getDataSource(dsId));
@@ -183,9 +219,21 @@ const DataSourceView = ({ classes }: ClassesType) => {
         loadSource(numId);
     };
 
-    const openSummary = (v?: DataSourceVersion) => {
+    const openSummary = async (v?: DataSourceVersion) => {
         setSummaryDetails(details);
         setDialog({ type: 'summary' });
+        /* [CFT] Fetch the account's extra-field names once, AFTER the dialog is already open, so a slow
+           or failing catalogue never delays it. The list re-labels itself when the names arrive.
+           A failure is deliberately silent and non-fatal, the same contract DataSources.tsx documents
+           for this endpoint: the summary falls back to the physical slot names, which is degraded but
+           never wrong. The ref, not the array's length, guards the call — an account that named no
+           extra fields legitimately returns an empty list, and keying on length would re-request it
+           on every open forever. */
+        if (extraFieldsLoadedRef.current) return;
+        extraFieldsLoadedRef.current = true;
+        const response: any = await dispatch(GetExtraFields());
+        if (response?.payload?.StatusCode === 201)
+            setAccountExtraFields(buildAccountExtraFieldOptions(response.payload?.Data));
     };
 
     // Auto-dismiss the toast from an effect (one timer per toast), not from render.
@@ -362,7 +410,10 @@ const DataSourceView = ({ classes }: ClassesType) => {
                     onClose={() => setDialog(null)}
                     setToastMessage={setToastMessage}
                 />
-                <DataSourceSummary classes={classes} open={dialog?.type === 'summary'} details={summaryDetails} onClose={() => setDialog(null)} />
+                {/* [CFT] `columns` is the ACTIVE version's column list, from the same getDataSource
+                    response that produced `details` — so the mappings shown always belong to the
+                    version whose figures are shown beside them. */}
+                <DataSourceSummary classes={classes} open={dialog?.type === 'summary'} details={summaryDetails} columns={columns} extraFieldOptions={accountExtraFields} onClose={() => setDialog(null)} />
                 <EditDataSourceDialog
                     classes={classes}
                     open={dialog?.type === 'editSource'}

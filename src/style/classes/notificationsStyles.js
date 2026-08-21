@@ -1,10 +1,13 @@
 import mobileBg from '../../assets/images/mobile.png';
 import mobileFullBg from '../../assets/images/mobile_prev.png';
 
+// [SLB] 'sl' breakpoint (theme.js:36 = 1300..1366) had no entry in any map here.
+// See ClalNewDesignFinalVersion/CHANGE-REGISTRY-2026-08-20.md section G.
 const galleryWidth = {
     // xs: 360,
     // sm: 390,
     md: 780,
+    sl: 950,
     lg: 950,
     xl: 950
 }
@@ -13,6 +16,7 @@ const previewWidth = {
     xs: 280,
     sm: 335,
     md: 335,
+    sl: 335,
     lg: 335,
     xl: 335,
 }
@@ -22,6 +26,7 @@ const bubble = {
         xs: 14,
         sm: 18,
         md: 18,
+        sl: 18,
         lg: 18,
         xl: 18,
     },
@@ -30,6 +35,7 @@ const bubble = {
             xs: 205,
             sm: 250,
             md: 250,
+            sl: 250,
             lg: 250,
             xl: 250,
         },
@@ -37,6 +43,7 @@ const bubble = {
             xs: 125,
             sm: 160,
             md: 160,
+            sl: 160,
             lg: 160,
             xl: 160,
         },
@@ -44,6 +51,7 @@ const bubble = {
             xs: 40,
             sm: 45,
             md: 45,
+            sl: 45,
             lg: 45,
             xl: 45,
         },
@@ -51,6 +59,7 @@ const bubble = {
             xs: 278,
             sm: 348,
             md: 348,
+            sl: 348,
             lg: 348,
             xl: 348,
         }
@@ -60,6 +69,7 @@ const bubble = {
             xs: '75%',
             sm: '80%',
             md: '80%',
+            sl: '80%',
             lg: '80%',
             xl: '80%',
         }
@@ -71,6 +81,7 @@ const mobileMinHeight = {
     xs: 500,
     sm: 630,
     md: 630,
+    sl: 630,
     lg: 630,
     xl: 630,
 }
@@ -78,6 +89,7 @@ const sidePaddingSizes = {
     xs: 15,
     sm: 25,
     md: 95,
+    sl: '5rem',
     lg: '5rem',
     xl: '5rem'
 }
@@ -85,6 +97,7 @@ const summaryTitleMargin = {
     xs: 0,
     sm: 0,
     md: 10,
+    sl: 10,
     lg: 10,
     xl: 15
 }
@@ -103,6 +116,7 @@ const mobileNotificationSize = {
 }
 
 const notificationIconWidth = {
+    sl: 90,
     xs: 100,
     sm: 100,
     md: 100,
@@ -111,6 +125,7 @@ const notificationIconWidth = {
 }
 
 const notificationIconHeight = {
+    sl: 90,
     xs: 90,
     sm: 98,
     md: 100,
@@ -120,6 +135,7 @@ const notificationIconHeight = {
 const folderSize = {
     sm: 70,
     md: 180,
+    sl: 400,
     lg: 400,
     xl: 400
 }
@@ -127,6 +143,7 @@ const galleryHeight = {
     xs: 250,
     sm: 400,
     md: 400,
+    sl: 400,
     lg: 400,
     xl: 400
 }

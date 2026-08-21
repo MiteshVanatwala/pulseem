@@ -97,6 +97,10 @@ function selBox(sel, L) {
 export default function TierGraphStage({ graph, selected, onSelect, onInlineAmountEdit, measureText }) {
   const [edit, setEdit] = useState(null); // { index, value, left, top }
   const L = computeLayout(graph);
+  // FIX A: '' when this graph opted out of the shekel, else CUR. `=== false`, NEVER
+  // `!graph.showCurrency`: a graph saved before this key existed has undefined, and
+  // `!undefined` is true — which would strip the sign from every pre-existing graph.
+  const curSign = graph.showCurrency === false ? '' : CUR;
   // NOTE: there is no scalar `barW` — widths are per tier. Index barWs[i] / cardWs[i] / radii[i].
   const { W, H, n, marginX, chartTop, chartBottom, plotH, barWs, cardWs, radii, xRight, cardX, hereY, sizes } = L;
   const tiers = graph.tiers.slice(0, n);
@@ -157,7 +161,7 @@ export default function TierGraphStage({ graph, selected, onSelect, onInlineAmou
           // amount bubble: a pure ##token## shows the VALUE big with the field NAME small under it
           // (2 lines — stops the long "name · value" from being clipped); the bubble grows with the font.
           const isPure = pureTok(tr.amount.t);
-          const valTxt = isPure ? (CUR + fmt(gv(tr.amount.t, tr.amount.s))) : amountDisp(tr.amount);
+          const valTxt = isPure ? (curSign + fmt(gv(tr.amount.t, tr.amount.s))) : amountDisp(tr.amount, curSign);
           const nameTxt = isPure ? tokName(tr.amount.t) : '';
           const valSize = fontPx(tr.amountSize, 17);   // D + grows with the font. H-b: [6,200] else 17
           const nameSize = Math.max(9, Math.round(valSize * 0.6));
@@ -229,7 +233,7 @@ export default function TierGraphStage({ graph, selected, onSelect, onInlineAmou
         })}
 
         {graph.here.show ? (() => {
-          const lbl = graph.here.text + ' · ' + CUR + fmt(hereVal);
+          const lbl = graph.here.text + ' · ' + curSign + fmt(hereVal);
           const pSize = fontPx(graph.here.textSize, 14);   // D: pill font size. H-b: [6,200] else 14
           const pBarW = barWs[hiIdx >= 0 ? hiIdx : 0];                  // the highlighted column's own width
           const colCx = hiIdx >= 0 ? xRight(hiIdx) + pBarW / 2 : W / 2; // (W - barW)/2 + barW/2 === W/2
