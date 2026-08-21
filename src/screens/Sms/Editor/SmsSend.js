@@ -56,7 +56,7 @@ import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
 import { IoIosArrowDown } from "react-icons/io";
 import QuickManualUploadDialog from "../../Newsletter/Wizard/Popups/QuickManualUploadDialog";
 import { IsValidPhone } from "../../../helpers/Utils/Validations";
-import { WhiteLabelObject } from "../../../components/WhiteLabel/WhiteLabelMigrate";
+import { WhiteLabelObject, getIsBeeperAccount } from "../../../components/WhiteLabel/WhiteLabelMigrate";
 import Pulse from "../../../components/Pulse/Pulse";
 import TierPlans from "../../../components/TierPlans/TierPlans";
 import { DateFormats, TierFeatures } from "../../../helpers/Constants";
@@ -76,6 +76,7 @@ const SmsSend = ({ classes, ...props }) => {
   const { OTPPassed, ToastMessages, extraData, getCampaignSum, testGroups, finishedCampaigns } = useSelector((state) => state.sms);
   const { subAccountAllGroups } = useSelector((state) => state.group);
   const { accountSettings, subAccount, verifiedNumbers, isSwippingApprovalSMS } = useSelector((state) => state.common);
+  const isBeeperAccount = getIsBeeperAccount(accountSettings);
   const { currentPlan, availablePlans } = useSelector((state) => state.tiers);
 
   const dispatch = useDispatch();
@@ -1373,7 +1374,7 @@ const SmsSend = ({ classes, ...props }) => {
             }}
           >
             <FaRegCalendarAlt className={clsx(classes.paddingSides5)} />
-            {t("mainReport.pulseSend")}
+            {isBeeperAccount ? t("Beeper.batchSend") : t("mainReport.pulseSend")}
           </Button>
           <Tooltip
             disableFocusListener
