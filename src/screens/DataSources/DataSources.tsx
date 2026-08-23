@@ -29,7 +29,7 @@ import {
 } from '../../redux/reducers/dataSourcesSlice';
 import { GetExtraFields } from '../../redux/reducers/ExtraFieldsSlice';
 import {
-    DataSourceListItem, DataSourceDetails, DataSourceVersion, eDataSourceStatus,
+    DataSourceListItem, DataSourceDetails, DataSourceVersion, DataSourceColumn, eDataSourceStatus,
     ClientFieldOption, buildAccountExtraFieldOptions
 } from '../../Models/DataSources/DataSource';
 import { getChannelDescriptor, eSendChannel } from '../../Models/DataSources/SmartSend';
@@ -89,6 +89,12 @@ const DataSources = ({ classes }: ClassesType) => {
     const [wizardOpen, setWizardOpen] = useState(false);
     const [dialog, setDialog] = useState<{ type: string; data?: any } | null>(null);
     const [summaryDetails, setSummaryDetails] = useState<DataSourceDetails | null>(null);
+    // [CFT] The same response's columns, kept beside the details they belong to so the summary can
+    // list the requested client-field write-backs. Held as its own state rather than read from the
+    // `current` slice: this screen never populates `current` (only DataSourceView does), and the two
+    // must come from ONE response or the dialog could pair version N's mappings with version M's
+    // figures.
+    const [summaryColumns, setSummaryColumns] = useState<DataSourceColumn[]>([]);
     const [versionsData, setVersionsData] = useState<{ dataSourceId: number | null; versions: DataSourceVersion[]; activeVersionId: number | null }>({ dataSourceId: null, versions: [], activeVersionId: null });
     const [toastMessage, setToastMessage] = useState<ERROR_TYPE>(null);
     const [loading, setLoading] = useState(false);
@@ -287,6 +293,9 @@ const DataSources = ({ classes }: ClassesType) => {
         const res: any = await dispatch(getDataSource(id));
         if (res?.payload?.StatusCode === 200) {
             setSummaryDetails(res.payload.Data.details);
+            // [CFT] Same response, same version — see the state declaration. `?? []` because a source
+            // whose first version has not completed has no active version, and Get RS2 is then empty.
+            setSummaryColumns(res.payload.Data.columns ?? []);
             setDialog({ type: 'summary' });
         }
     };
@@ -348,11 +357,27 @@ const DataSources = ({ classes }: ClassesType) => {
 
     const renderActions = (row: DataSourceListItem) => {
         const canViewContent = row.Status === eDataSourceStatus.READY || row.Status === eDataSourceStatus.PROCESSING || row.Status === eDataSourceStatus.PENDING;
+        /* [VW] The view screen renders the ACTIVE version, and a version only becomes active when the
+           worker completes it (DataSources_CompleteVersion, under Status = 2). While the newest version
+           is still being processed there are only two possible outcomes and neither is worth a click:
+           on a FIRST upload there is no active version at all, so DataSources_Get RS1 returns a NULL
+           status that the API maps to 0 and the screen renders an indeterminate progress bar it never
+           refreshes — the hang this fixes; on a RE-upload the screen silently shows the PREVIOUS
+           version's rows with nothing saying so, which is worse than an honest "not yet".
+           So: rendered but disabled until the newest version is READY. The icon keeps its slot (a
+           conditional render would make a six-icon row jump), and the 4s poll below already re-fetches
+           status while anything is in flight, so it re-enables itself within one tick of the worker
+           finishing — no reload, no dead button.
+           The <span> is required: MUI v4 disabled buttons fire no mouse events, so without it the
+           Tooltip that explains the disabled state disappears exactly when it is needed. */
+        const viewNotReady = row.Status !== eDataSourceStatus.READY;
         return (
             <Box style={{ display: 'flex', gap: 6, flexWrap: 'wrap', justifyContent: 'center' }}>
                 {canViewRecipients && canViewContent && (
-                    <Tooltip title={t('DataSources.actions.view')} PopperProps={rtlPopperProps}>
-                        <IconButton size="small" style={ACTION_BTN_STYLE} aria-label={t('DataSources.actions.view')} onClick={() => goToView(row.DataSourceID)}><Visibility fontSize="small" style={ACTION_ICON_STYLE} /></IconButton>
+                    <Tooltip title={t(viewNotReady ? 'DataSources.actions.viewWhileProcessing' : 'DataSources.actions.view')} PopperProps={rtlPopperProps}>
+                        <span style={{ display: 'inline-flex' }}>
+                            <IconButton size="small" style={ACTION_BTN_STYLE} disabled={viewNotReady} aria-label={t('DataSources.actions.view')} onClick={() => goToView(row.DataSourceID)}><Visibility fontSize="small" style={ACTION_ICON_STYLE} /></IconButton>
+                        </span>
                     </Tooltip>
                 )}
                 {canExport && row.Status === eDataSourceStatus.READY && (
@@ -398,7 +423,17 @@ const DataSources = ({ classes }: ClassesType) => {
                 )}
             </Box>
             <Typography style={{ fontSize: 12, color: '#5b6b7b' }}>
-                {RenderHtml(t('DataSources.table.uploadedBy', { name: row.UploadedBy, date: moment(row.CreatedDate).format(DateFormats.DATE_TIME_24) }))}
+                {/* LastUploadDate, NOT CreatedDate. DataSources_GetMany:62 projects
+                    `LastUploadDate = v.CreatedDate` from the ACTIVE VERSION (the OUTER APPLY at :78-87,
+                    TOP 1 ORDER BY VersionNumber DESC), while :38 `ds.CreatedDate` is the SOURCE row and
+                    never moves — DataSources_Insert contains no UPDATE of dbo.DataSources at all, so a
+                    re-upload leaves it frozen at V1. The label promises the upload event in all three
+                    locales ("הועלה ע\"י X בתאריך Y" / "Uploaded by X on Y"), and `name` is already
+                    v.UploadedBy from :61, so pairing it with the source date put two different events in
+                    one sentence. `??` and not `||`: the OUTER APPLY yields NULL for a source with no
+                    version row (the SP handles that case at :46), and bare moment(undefined) renders NOW
+                    — a silently plausible wrong timestamp — while moment(null) renders "Invalid date". */}
+                {RenderHtml(t('DataSources.table.uploadedBy', { name: row.UploadedBy, date: moment(row.LastUploadDate ?? row.CreatedDate).format(DateFormats.DATE_TIME_24) }))}
             </Typography>
         </Box>
     );
@@ -408,7 +443,14 @@ const DataSources = ({ classes }: ClassesType) => {
             <TableCell classes={cellStyle} align="center" className={clsx(classes.flex3)}>{renderNameCell(row)}</TableCell>
             <TableCell classes={cellStyle} align="center" className={clsx(classes.flex2)}>{row.Description}</TableCell>
             <TableCell classes={cellStyle} align="center" className={clsx(classes.flex2)}>
-                <StatusChip status={row.Status} progress={row.ProgressPercent} runDateStart={row.RunDateStart} createdDate={row.CreatedDate} t={t} align="center" />
+                {/* createdDate feeds StatusChip's 2h "processing delayed" threshold, which falls back to it
+                    while RunDateStart is null. A new version is born with RunDateStart NULL — it is stamped
+                    at claim by DataSourceProcessQueue_SelectManyAndUpdateStatus, and DataSources_Insert never
+                    writes it — so passing the SOURCE's CreatedDate made every re-upload of a source older
+                    than 2h read "העיבוד מתעכב" the instant it was queued. LastUploadDate is the version's
+                    own upload time, so the threshold now measures the queue wait it was meant to measure.
+                    A genuinely stalled run is unaffected: it has a RunDateStart, which still wins the ||. */}
+                <StatusChip status={row.Status} progress={row.ProgressPercent} runDateStart={row.RunDateStart} createdDate={row.LastUploadDate ?? row.CreatedDate} t={t} align="center" />
             </TableCell>
             <TableCell classes={cellStyle} align="center" className={clsx(classes.flex1)} style={{ direction: 'ltr' }}>
                 {row.TotalRows !== null && row.TotalRows !== undefined ? row.TotalRows.toLocaleString() : '—'}
@@ -425,7 +467,9 @@ const DataSources = ({ classes }: ClassesType) => {
                     <CardContent>
                         {renderNameCell(row)}
                         <Box style={{ marginTop: 8 }}>
-                            <StatusChip status={row.Status} progress={row.ProgressPercent} runDateStart={row.RunDateStart} createdDate={row.CreatedDate} t={t} align="center" />
+                            {/* Same fix as the desktop row above — the mobile card is a second call site of
+                                the identical defect and has to move with it. */}
+                            <StatusChip status={row.Status} progress={row.ProgressPercent} runDateStart={row.RunDateStart} createdDate={row.LastUploadDate ?? row.CreatedDate} t={t} align="center" />
                         </Box>
                         <Box style={{ marginTop: 8 }}>{renderActions(row)}</Box>
                     </CardContent>
@@ -508,7 +552,9 @@ const DataSources = ({ classes }: ClassesType) => {
                 onClose={() => setDialog(null)}
                 onSaved={onEditSaved}
             />
-            <DataSourceSummary classes={classes} open={dialog?.type === 'summary'} details={summaryDetails} onClose={() => setDialog(null)} />
+            {/* [CFT] accountExtraFields is already fetched on mount for the wizard's picker, so the
+                summary gets the account's own names for ExtraField1..13 / ExtraDate1..4 for free. */}
+            <DataSourceSummary classes={classes} open={dialog?.type === 'summary'} details={summaryDetails} columns={summaryColumns} extraFieldOptions={accountExtraFields} onClose={() => setDialog(null)} />
             <ExportDialog
                 classes={classes}
                 open={dialog?.type === 'export'}

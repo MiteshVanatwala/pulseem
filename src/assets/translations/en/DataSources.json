@@ -414,6 +414,11 @@
     "cellSection": "Mobile channel",
     "matched": "Matched to existing recipients",
     "notFound": "Not found",
+    "clientFieldsTitle": "Client fields you asked to update",
+    "clientFieldsNone": "This upload did not request any client-field update",
+    "clientFieldsUnknown": "Client-field update details are not available for this source",
+    "clientFieldsFromColumn": "from column «{{column}}»",
+    "clientsUpdated": "Recipient records updated",
     "failTitle": "The upload failed",
     "uploadAgain": "Upload again"
   },
@@ -424,9 +429,14 @@
     "operator": {
       "1": "Equals",
       "2": "Starts with",
-      "3": "Contains"
+      "3": "Contains",
+      "5": "Greater than",
+      "6": "Less than",
+      "7": "Greater or equal",
+      "8": "Less or equal"
     },
     "containsSlowHint": "A \"contains\" search may be slow on large sources",
+    "numericFilterHint": "You can type the number with separators, e.g. 250,000",
     "notSearchableTooltip": "Enable search for this column in the column editor",
     "noRows": "No rows match the filter",
     "clearFilters": "Clear filters",
@@ -534,6 +544,7 @@
   },
   "actions": {
     "view": "View content",
+    "viewWhileProcessing": "The file is being processed — viewing opens when it finishes",
     "export": "Export",
     "edit": "Edit",
     "versions": "Version history",
