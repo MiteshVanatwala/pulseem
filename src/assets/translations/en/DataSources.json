@@ -429,9 +429,14 @@
     "operator": {
       "1": "Equals",
       "2": "Starts with",
-      "3": "Contains"
+      "3": "Contains",
+      "5": "Greater than",
+      "6": "Less than",
+      "7": "Greater or equal",
+      "8": "Less or equal"
     },
     "containsSlowHint": "A \"contains\" search may be slow on large sources",
+    "numericFilterHint": "You can type the number with separators, e.g. 250,000",
     "notSearchableTooltip": "Enable search for this column in the column editor",
     "noRows": "No rows match the filter",
     "clearFilters": "Clear filters",

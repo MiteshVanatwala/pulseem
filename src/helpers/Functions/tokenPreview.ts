@@ -29,6 +29,65 @@ const GRAPH_PARAM_RE = /([?&;])(p\d+=)([^&"'\s>]*)/g;
 const GRAPH_EDITOR_SENTINEL_RE = new RegExp('([?&;])c=ClientIDReplaceFromEditor(?=[&;]|$)', 'g');
 const TOKEN_RE = /##([^#]+)##/g;
 
+// ── [NFFLAG] 2026-08-23 ──────────────────────────────────────────────────────────────────────
+// `nf=1` tells pulseemmonitorgraph.png to PRINT a dyn slot's pN value as it received it instead of
+// re-grouping it with "#,##0.###". Without it the renderer regroups unconditionally
+// (PulseemHandler.cs StairFmt), so a column whose ShowThousandsSeparator is 0 still draws with
+// commas and the preview disagrees with the delivered mail.
+//
+// OPT-IN, AND THAT IS THE WHOLE POINT. Absent ⇒ the renderer behaves exactly as it does today.
+// Every graph URL already sitting in a delivered inbox lacks the key, so nothing already sent can
+// change — the <img> is re-fetched on every open and there is no cache on that handler.
+//
+// THREE PRODUCERS MUST AGREE, in three languages, with nothing linking them:
+//   this file                                        — the operator's SmartSend preview
+//   PulseemSystem2\PulseemSystem\PreviewCampaign.aspx.cs   — the shareable/browser preview
+//   EmailSender\...\DBProxyStandard.cs ReplaceGraphTokens  — the delivered mail
+// A change to the key or to the placement rule below has to be made in all three.
+//
+// NEVER APPEND AT THE END. Here GRAPH_URL_RE does stop at a quote, so appending would be safe in
+// THIS file — but the sender's SmartSendGraphUrlRegex deliberately over-matches past a closing `'`,
+// and appending there lands outside the real URL and corrupts the markup. The three producers are
+// kept identical in placement so they cannot drift.
+//
+// 🔴 INSERTED AFTER `gt=stairs`, NOT AFTER THE `?` — a bug fix, not a style choice. The first
+// implementation spliced right after the `?`, producing `...png?nf=1&gt=stairs&cfg=...`. That form
+// is fine here (the browser follows the HTML5 rule that an unterminated named reference followed by
+// `=` is literal inside an attribute value) but it is NOT fine in the sender: an entity normaliser
+// downstream of DBProxyStandard rewrote every bare `&` to `&amp;` and completed the bare `&gt` to
+// `&gt;`, so delivered mail carried `?nf=1&gt;=stairs`, the client decoded it to `>`, the graph-type
+// parameter was destroyed and the recipient got the fallback donut. Observed on stage 2026-08-23.
+// `&nf` is not the prefix of any named character reference, so no encoder can complete it. This
+// file matches the two C# producers so the shape cannot drift apart again.
+//
+// ONLY WHEN A TOKEN WAS ACTUALLY SUBSTITUTED. An unresolved ##Token## must reach the renderer
+// untouched: it is what makes the renderer treat the slot as preview and draw its design-time
+// sample. Flagging such a URL would assert "these values are already display-ready" about a value
+// that is not a value at all.
+//
+// PRECONDITION, and it is NOT latched on this path. The flag asserts that the producer already
+// applied the per-column display decision. Here that is true only because SQL script 26_ wraps
+// dbo.DataSources_GetSampleValuesForMapping in dbo.fn_FormatDataSourceCell (run 2026-08-23).
+// The sender has a runtime latch for its own equivalent (map.HasThousandsMetadata); React has
+// none, so on a database without 26_ this preview would flag raw values. Verify 26_ before
+// deploying this file to an environment.
+const GRAPH_STAIRS = 'gt=stairs';
+// NOT /g — used with .test(), and a global regex carries lastIndex between calls.
+const GRAPH_NO_FORMAT_PRESENT_RE = /[?&;]nf=1(?=[&;"'\s>]|$)/;
+
+const addGraphNoFormatFlag = (url: string) => {
+    // Stairs only. The same handler renders pie/roundedbar from a different parameter set that
+    // knows nothing about this key, and asserting a formatting contract at them means nothing.
+    const gt = url.indexOf(GRAPH_STAIRS);
+    if (gt < 0) return url;
+    if (GRAPH_NO_FORMAT_PRESENT_RE.test(url)) return url;   // idempotent: never emit it twice
+    // Mirror the separator already in use: buildLink emits a raw '&', but entity-encoded '&amp;'
+    // occurs in stored campaign HTML, which is why GRAPH_PARAM_RE accepts ';' as a separator.
+    const sep = url.indexOf('&amp;') >= 0 ? '&amp;' : '&';
+    const at = gt + GRAPH_STAIRS.length;
+    return url.slice(0, at) + sep + 'nf=1' + url.slice(at);
+};
+
 // WIDENED IN STEP A3 to cover " and '.
 //
 // `&` MUST stay first, or the ampersands of the later entities get double-escaped.
@@ -59,7 +118,11 @@ export const escapeHtml = (s: string) =>
 // tokens with the (URL-encoded) sample value, re-encode. Unmapped/absent → left as-is.
 // Values here are NOT run through escapeHtml — they are URL-encoded instead, which is the correct
 // escaping for this position.
-export const replaceGraphTokens = (url: string, values: { [k: string]: string }) =>
+export const replaceGraphTokens = (url: string, values: { [k: string]: string }) => {
+    // [NFFLAG] Set only when a ##Token## was really replaced — see the note beside
+    // addGraphNoFormatFlag for why an unresolved token must not be flagged.
+    let substituted = false;
+    const rewritten =
     // Strip the editor sentinel FIRST. Without this the preview lies in exactly the case it exists
     // to catch: a token that is mapped but empty, or not mapped at all, renders as the design-time
     // sample here while the same recipient's real mail renders 0 — and the operator approves the
@@ -78,8 +141,11 @@ export const replaceGraphTokens = (url: string, values: { [k: string]: string })
         try { decoded = decodeURIComponent(val); } catch { decoded = val; }
         const resolved = decoded.replace(TOKEN_RE, (raw, name) =>
             Object.prototype.hasOwnProperty.call(values, name) ? values[name] : raw);
+        if (resolved !== decoded) substituted = true;   // [NFFLAG]
         return sep + key + encodeURIComponent(resolved);
     });
+    return substituted ? addGraphNoFormatFlag(rewritten) : rewritten;   // [NFFLAG]
+};
 
 export const replaceTokensForPreview = (html: string, values: { [k: string]: string }) => {
     if (!html) return '';
