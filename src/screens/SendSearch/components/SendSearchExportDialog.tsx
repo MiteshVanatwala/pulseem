@@ -214,7 +214,7 @@ const SendSearchExportDialog: React.FC<Props> = ({
         if (code === 405) { setOutcome({ kind: 'notAllowed' }); return; }
 
         // 400 DATA_INCORRECT — the envelope this dialog built was rejected: the criteria block, the
-        // 22 headers, the Labels map or the notification address. It gets its own answer because it
+        // 14 headers, the Labels map or the notification address. It gets its own answer because it
         // is the one failure a retry cannot clear — the same click rebuilds the same body and is
         // rejected identically. Told apart from 500 so an operator narrows or fixes the field she can
         // act on instead of opening a bug against a working server.

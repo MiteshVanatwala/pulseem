@@ -187,6 +187,10 @@
       "true": "כן",
       "false": "לא"
     },
+    "rowType": {
+      "agent": "סוכן",
+      "supervisor": "מפקח"
+    },
     "criteria": {
       "channel": "ערוץ",
       "searchText": "חיפוש חופשי",
@@ -212,34 +216,26 @@
       "sort": "מיון",
       "sortValue": "{{field}} ({{dir}})",
       "sortNotGuaranteed": "המיון עשוי שלא לחול",
-      "sortNotGuaranteedValue": "המיון חל רק כאשר השדה שנבחר קיים כעמודה ניתנת לחיפוש בגרסאות מקור הנתונים של הקמפיינים שנכללו בחיפוש. אם אינו קיים בהן, השרת מחזיר את התוצאות בסדר ברירת המחדל — לפי מועד השליחה, מהחדש לישן — ואינו מודיע על כך. לבדיקה בקובץ הזה: אם עמודת \"ערך המיון\" ריקה בכל השורות, המיון המבוקש לא הוחל.",
+      "sortNotGuaranteedValue": "המיון חל רק כאשר השדה שנבחר קיים כעמודה ניתנת לחיפוש בגרסאות מקור הנתונים של הקמפיינים שנכללו בחיפוש. אם אינו קיים בהן, השרת מחזיר את התוצאות בסדר ברירת המחדל — לפי מועד השליחה, מהחדש לישן — ואינו מודיע על כך. סדר השורות בקובץ הזה עשוי אפוא להיות סדר ברירת המחדל ולא המיון המבוקש, ואין דרך להבחין בין השניים מתוך הקובץ.",
       "incompleteRules": "מסננים שלא הוחלו",
       "incompleteRulesValue": "{{n}} מסננים נותרו ללא ערך ולכן לא הוחלו על התוצאות",
       "unlisted": "{{field}} (שדה סינון חדש)"
     },
     "col": {
       "campaignName": "שם הקמפיין",
-      "channel": "ערוץ",
+      "recipientType": "סוג הנמען",
       "recipientName": "שם הנמען",
       "recipientEmail": "אימייל",
       "recipientCellphone": "סלולרי",
-      "clientID": "מזהה נמען",
-      "isSupervisor": "מפקח",
       "supervisorName": "שם המפקח",
       "sentAt": "מועד השליחה",
-      "deliveryState": "סטטוס מסירה",
+      "deliveryState": "סטטוס שליחה",
       "engagementState": "סטטוס פעילות",
       "engagementAt": "מועד הפעילות",
       "versionNumber": "גרסה",
       "provenanceSource": "מקור זיהוי הגרסה",
-      "versionState": "מצב הגרסה",
-      "hasRow": "קיימת שורת מקור",
-      "isSynthetic": "שורה מסונתזת",
-      "rollupValue": "ערך הריכוז",
-      "sortValueDisplay": "ערך המיון",
-      "dataSourceVersionID": "מזהה גרסת מקור הנתונים",
-      "channelCampaignID": "מזהה הקמפיין",
-      "rowID": "מזהה השורה"
+      "rollupValue": "ערך הפער",
+      "channelCampaignID": "מזהה הקמפיין"
     }
   },
   "preview": {

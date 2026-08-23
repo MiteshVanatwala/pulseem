@@ -388,7 +388,7 @@ export interface SendSearchCatalogResult {
     // Feeds the "mark the campaigns that sent from source X" action beside the campaign
     // picker. NOTHING HERE EVER REACHES `SendSearchRequest`. The action expands one click
     // into CampaignIDs and the request stays an ordinary campaign multi-select — which is
-    // why the search wire contract, the 22 export columns and `toSendSearchRequest` are all
+    // why the search wire contract, the 14 export columns and `toSendSearchRequest` are all
     // untouched by this feature.
     //
     // 🔴 `SourceMapAvailable` is the deployment gate and the server derives it from TABLE
@@ -1003,7 +1003,7 @@ export interface ExportCriterion {
 // the grid showed — the worst possible defect in an audit deliverable.
 export interface SendSearchExportRequest extends SendSearchRequest {
     Criteria: ExportCriterion[];
-    // EXACTLY 22 entries in EXPORT_COLUMN_KEYS order. The server answers 400 DATA_INCORRECT on any
+    // EXACTLY 14 entries in EXPORT_COLUMN_KEYS order. The server answers 400 DATA_INCORRECT on any
     // other count rather than writing a file whose header row does not match its data rows.
     ColumnHeaders: string[];
     // token → display text. The server performs NO default substitution: a token missing from this
@@ -1032,27 +1032,63 @@ export interface SendSearchExportLimits {
     Rows: number;
 }
 
-// ── the 22 export columns ───────────────────────────────────────────────────────────────────
-// THIS EXACT ORDER, both sides. The array is the contract: the server projects its 22 values in
-// this order and the client sends 22 headers in this order, so the two lists are positional and a
+// ── the 14 export columns ───────────────────────────────────────────────────────────────────
+// THIS EXACT ORDER, both sides. The array is the contract: the server projects its 14 values in
+// this order and the client sends 14 headers in this order, so the two lists are positional and a
 // reordering here without the matching server change puts every header over the wrong column —
 // a file that is wrong in a way no error message would ever report.
+//
+// NARROWED 2026-08-23, on Idan's decision, from 22 columns to these 14. The dropped nine —
+// Channel, ClientID, IsSupervisor, VersionState, HasRow, IsSynthetic, SortValueDisplay,
+// DataSourceVersionID, RowID — were either CONSTANT down a whole file (Channel: the request
+// carries one channel; SortValueDisplay: empty unless a sort was requested; HasRow/IsSynthetic/
+// VersionState: the non-default value is the rare exception), or an internal key the reader
+// cannot use (ClientID, DataSourceVersionID), or actively misleading: RowID reads as a unique
+// row key and is neither unique across repeat sends nor always present (0 = no source row).
+//
+// 🔴 IsSupervisor is the one that was REPLACED rather than dropped, and the first attempt to drop
+// it outright was WRONG. The reasoning was "SupervisorName already tells you — filled ⇒ an agent
+// under that supervisor, blank ⇒ nothing went to a supervisor". The SP says otherwise: on a
+// supervisor row RecipientName AND RecipientEmail are both csl.SupervisorEmail
+// (dbo.DataSources_SearchSends:536-537) and SupervisorName is NULL, because it comes from RowJson
+// (sv.val, :964) and a supervisor row has no DataSourceRows row at all (RowID NULL, :534). The
+// blank therefore lands on exactly the rows that ARE the mail to the supervisor, and RowKind
+// defaults to 0 = all (:14, :59) so those rows are in the ordinary export. Nothing else separated
+// them either — VersionNumber NULL with ProvenanceSource 'Unverifiable' (:532-533) also happens on
+// agent rows. So the fact is kept, as a WORD instead of a boolean: `RecipientType` → סוכן / מפקח.
+//
+// The other 13 are a PURE SUBSET IN THE ORIGINAL RELATIVE ORDER — no surviving column moved past
+// another. On a positional contract that matters: a removal can be verified by reading this array
+// against the server's side by side, and a reorder cannot. RecipientType at position 2 is the one
+// genuine insertion.
+//
+// 🔴 The twin is `SendSearchExportLogic.EXPORT_COLUMN_KEYS` + its `ProjectRow` array. All three
+// move in ONE deployment.
+//
+// For THIS change — 22 → 14 — BOTH skew directions are loud and neither is silent: the server
+// compares `ColumnHeaders.Count` against its own array length, and 22 ≠ 14 either way round, so
+// every export 400s for the length of the window. Deploy API and client together; if they must be
+// sequenced, CLIENT FIRST is the smaller blast radius (only sessions that reload break, instead of
+// every open tab at once). Operators with a tab open across the deploy must hard-refresh — the 400
+// copy (`export.invalidRequest`) tells them to check their e-mail address and narrow their filters,
+// none of which is the actual cause.
+//
+// The genuinely SILENT hazard is a REORDER, not a resize: the count still matches, and every header
+// lands over the wrong column with no error anywhere.
 export const EXPORT_COLUMN_KEYS: readonly string[] = [
-    'CampaignName', 'Channel', 'RecipientName', 'RecipientEmail',
-    'RecipientCellphone', 'ClientID', 'IsSupervisor', 'SupervisorName',
-    'SentAt', 'DeliveryState', 'EngagementState', 'EngagementAt',
-    'VersionNumber', 'ProvenanceSource', 'VersionState', 'HasRow',
-    'IsSynthetic', 'RollupValue', 'SortValueDisplay', 'DataSourceVersionID',
-    'ChannelCampaignID', 'RowID',
+    'CampaignName', 'RecipientType', 'RecipientName', 'RecipientEmail',
+    'RecipientCellphone', 'SupervisorName', 'SentAt', 'DeliveryState',
+    'EngagementState', 'EngagementAt', 'VersionNumber', 'ProvenanceSource',
+    'RollupValue', 'ChannelCampaignID',
 ];
 
-// The count the server validates against (400 DATA_INCORRECT when `ColumnHeaders.Count != 22`).
-// DERIVED, never restated as a literal: a 23rd column added above without the server change must
-// fail loudly at the boundary, and a hand-written `22` here would let it through to a file whose
+// The count the server validates against (400 DATA_INCORRECT when `ColumnHeaders.Count` differs).
+// DERIVED, never restated as a literal: a 14th column added above without the server change must
+// fail loudly at the boundary, and a hand-written count here would let it through to a file whose
 // header row is one column short of its data.
 export const EXPORT_COLUMN_COUNT = EXPORT_COLUMN_KEYS.length;
 
-// Header text for the 22 columns, in order. The i18n suffix is `camelCaseState` of the column key
+// Header text for the 14 columns, in order. The i18n suffix is `camelCaseState` of the column key
 // — the SAME transformation the status keys use ('CampaignName' → 'campaignName', 'RowID' →
 // 'rowID'), so there is no second naming convention and no hand-written key table to drift.
 export const buildExportColumnHeaders = (t: ExportT): string[] =>
@@ -1098,6 +1134,14 @@ export const buildExportLabels = (t: ExportT): { [token: string]: string } => {
 
     labels['bool.true'] = exportBoolLabel(t, true);
     labels['bool.false'] = exportBoolLabel(t, false);
+
+    // RecipientType (column 2) → "rowType.agent" / "rowType.supervisor". Its own namespace and not
+    // the `bool.*` pair above, deliberately: the column answers "what kind of row is this", and the
+    // words סוכן / מפקח are what make it readable. Reusing bool.* would tie this column's wording to
+    // any future boolean and re-create the "מפקח: לא" reading that got the old IsSupervisor column
+    // replaced. The server picks between the two tokens in `ProjectRow` (RowTypeToken).
+    labels['rowType.agent'] = t(`${SS}export.rowType.agent`);
+    labels['rowType.supervisor'] = t(`${SS}export.rowType.supervisor`);
 
     // The four string domains, each under its own raw token.
     DELIVERY_STATES.forEach((s) => { labels[s] = t(`${SS}delivery.${camelCaseState(s)}`); });
@@ -1524,16 +1568,25 @@ const CRITERION_RENDERERS: { [key: string]: CriterionRenderer } = {
         // code, so neither this client nor the server-side export can detect it. Without this row
         // the criteria block would state "מיון: סכום פרמיה (יורד)" at the head of a file ordered by
         // send time, and a regulator reading the top rows as the largest premiums would be reading
-        // an ordering the file does not have. The only trace in the file is that the "ערך המיון"
-        // column is empty on every row, and nothing connects a blank column to a dropped sort.
+        // an ordering the file does not have.
+        //
+        // 🔴 CHANGED 2026-08-23 with the narrowing to 14 columns. This note used to end by telling
+        // the reader how to check: "if the ערך המיון column is empty on every row, the sort was not
+        // applied". SortValueDisplay is no longer exported, so that instruction became one the
+        // reader cannot carry out — worse than no instruction, because it reads as a check that
+        // was available and reassures whoever does not try it. The note now states the residual
+        // risk plainly instead: the row order may be the default one, and the file cannot tell you
+        // which it is. If that trade is ever judged wrong, the fix is to put SortValueDisplay back
+        // into EXPORT_COLUMN_KEYS on BOTH sides and restore the check sentence — not to leave a
+        // sentence pointing at a column that is not there.
         //
         // UNCONDITIONAL, and that is the considered choice: no client-side state can rule the
         // degrade out. The field catalogue is fetched WITHOUT the campaign selection
         // (SendSearchPanel:208-218 — deliberately, it must never be narrowed by the picker), so a
         // field being present in it does not mean the ticked campaigns can resolve it. Asserting
         // "applied" or "not applied" off that catalogue would swap one wrong statement for another;
-        // naming the condition, and how to check it in this very file, is the only honest row
-        // available until the SP reports the mode it actually used.
+        // naming the condition is the only honest row available until the SP reports the mode it
+        // actually used.
         rows.push(crit(
             ctx.t(`${SS}export.criteria.sortNotGuaranteed`),
             ctx.t(`${SS}export.criteria.sortNotGuaranteedValue`),
