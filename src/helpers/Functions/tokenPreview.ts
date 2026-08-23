@@ -45,10 +45,20 @@ const TOKEN_RE = /##([^#]+)##/g;
 //   EmailSender\...\DBProxyStandard.cs ReplaceGraphTokens  — the delivered mail
 // A change to the key or to the placement rule below has to be made in all three.
 //
-// SPLICE AFTER THE FIRST '?', NEVER APPEND. Here GRAPH_URL_RE does stop at a quote, so appending
-// would be safe in THIS file — but the sender's SmartSendGraphUrlRegex deliberately over-matches
-// past a closing `'`, and appending there lands outside the real URL and corrupts the markup.
-// The three producers are kept byte-identical in placement so they cannot drift.
+// NEVER APPEND AT THE END. Here GRAPH_URL_RE does stop at a quote, so appending would be safe in
+// THIS file — but the sender's SmartSendGraphUrlRegex deliberately over-matches past a closing `'`,
+// and appending there lands outside the real URL and corrupts the markup. The three producers are
+// kept identical in placement so they cannot drift.
+//
+// 🔴 INSERTED AFTER `gt=stairs`, NOT AFTER THE `?` — a bug fix, not a style choice. The first
+// implementation spliced right after the `?`, producing `...png?nf=1&gt=stairs&cfg=...`. That form
+// is fine here (the browser follows the HTML5 rule that an unterminated named reference followed by
+// `=` is literal inside an attribute value) but it is NOT fine in the sender: an entity normaliser
+// downstream of DBProxyStandard rewrote every bare `&` to `&amp;` and completed the bare `&gt` to
+// `&gt;`, so delivered mail carried `?nf=1&gt;=stairs`, the client decoded it to `>`, the graph-type
+// parameter was destroyed and the recipient got the fallback donut. Observed on stage 2026-08-23.
+// `&nf` is not the prefix of any named character reference, so no encoder can complete it. This
+// file matches the two C# producers so the shape cannot drift apart again.
 //
 // ONLY WHEN A TOKEN WAS ACTUALLY SUBSTITUTED. An unresolved ##Token## must reach the renderer
 // untouched: it is what makes the renderer treat the slot as preview and draw its design-time
@@ -61,19 +71,21 @@ const TOKEN_RE = /##([^#]+)##/g;
 // The sender has a runtime latch for its own equivalent (map.HasThousandsMetadata); React has
 // none, so on a database without 26_ this preview would flag raw values. Verify 26_ before
 // deploying this file to an environment.
-const GRAPH_NO_FORMAT_FLAG = 'nf=1';
-// NOT /g — these are used with .test(), and a global regex carries lastIndex between calls.
-const GRAPH_STAIRS_RE = /[?&;]gt=stairs(?=[&;]|$)/;
-const GRAPH_NO_FORMAT_PRESENT_RE = /[?&;]nf=1(?=[&;]|$)/;
+const GRAPH_STAIRS = 'gt=stairs';
+// NOT /g — used with .test(), and a global regex carries lastIndex between calls.
+const GRAPH_NO_FORMAT_PRESENT_RE = /[?&;]nf=1(?=[&;"'\s>]|$)/;
 
 const addGraphNoFormatFlag = (url: string) => {
     // Stairs only. The same handler renders pie/roundedbar from a different parameter set that
     // knows nothing about this key, and asserting a formatting contract at them means nothing.
-    if (!GRAPH_STAIRS_RE.test(url)) return url;
+    const gt = url.indexOf(GRAPH_STAIRS);
+    if (gt < 0) return url;
     if (GRAPH_NO_FORMAT_PRESENT_RE.test(url)) return url;   // idempotent: never emit it twice
-    const q = url.indexOf('?');
-    if (q < 0) return url;
-    return url.slice(0, q + 1) + GRAPH_NO_FORMAT_FLAG + '&' + url.slice(q + 1);
+    // Mirror the separator already in use: buildLink emits a raw '&', but entity-encoded '&amp;'
+    // occurs in stored campaign HTML, which is why GRAPH_PARAM_RE accepts ';' as a separator.
+    const sep = url.indexOf('&amp;') >= 0 ? '&amp;' : '&';
+    const at = gt + GRAPH_STAIRS.length;
+    return url.slice(0, at) + sep + 'nf=1' + url.slice(at);
 };
 
 // WIDENED IN STEP A3 to cover " and '.
