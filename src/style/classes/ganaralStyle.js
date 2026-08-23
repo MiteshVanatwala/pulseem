@@ -4,19 +4,26 @@ const dialogWidth = {
   xs: "200px",
   sm: "350px",
   md: "350px",
+  sl: "460px",
   lg: "460px",
 };
 
+// [SLB] 'sl' (theme.js:36 = 1300..1366) became reachable from useWidth() when App.js:1049
+// added it to the hardcoded breakpoints.keys list. Without an entry here,
+// maxDialogWidth[windowSize] is undefined and line ~200 emits "undefinedpx !important"
+// on every dialog — 1366px is the most common laptop width.
 const minDialogWidth = {
   xs: 330,
   sm: 330,
   md: 500,
+  sl: 500,
   lg: 500,
   xl: 620,
 };
 
 const maxDialogWidth = {
   md: 1080,
+  sl: 1080,
   lg: 1080,
   xl: 1080,
 };
@@ -34,6 +41,7 @@ const summaryPadding = {
   xs: 0,
   sm: 0,
   md: 0,
+  sl: 25,
   lg: 25,
   xl: 25,
 };

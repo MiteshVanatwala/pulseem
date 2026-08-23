@@ -149,7 +149,7 @@ const SendSearchFilters: React.FC<Props> = ({
     const [srcAnchor, setSrcAnchor] = useState<any>(null);
     // Component state, DELIBERATELY not part of `Filters`: buildExportCriteria scans the live
     // filter object and would print any unknown key into the export's criteria block as a
-    // criterion — a source claim the 22 exported columns contain nothing to corroborate.
+    // criterion — a source claim the 14 exported columns contain nothing to corroborate.
     //
     // It is retired by the effect below, and by nothing else. Do not describe it as "transient" or
     // as "wiped by the next filter change": an earlier version of this very comment said exactly
@@ -602,7 +602,7 @@ const SendSearchFilters: React.FC<Props> = ({
                     their behalf.
 
                     It never enters `Filters`, and therefore cannot leak into the export's criteria
-                    block — where a source claim would be uncorroborable, since none of the 22
+                    block — where a source claim would be uncorroborable, since none of the 14
                     exported columns carries a data source.
 
                     🔴 IT IS SELF-INVALIDATING, and that is enforced by the effect near the top of

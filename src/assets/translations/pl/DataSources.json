@@ -414,6 +414,11 @@
     "cellSection": "Kanał telefoniczny",
     "matched": "Dopasowane do istniejących odbiorców",
     "notFound": "Nie znaleziono",
+    "clientFieldsTitle": "Pola klienta, które chcesz zaktualizować",
+    "clientFieldsNone": "To przesyłanie nie zawierało prośby o aktualizację pól klienta",
+    "clientFieldsUnknown": "Szczegóły aktualizacji pól klienta są niedostępne dla tego źródła",
+    "clientFieldsFromColumn": "z kolumny «{{column}}»",
+    "clientsUpdated": "Zaktualizowane rekordy odbiorców",
     "failTitle": "Przesyłanie nie powiodło się",
     "uploadAgain": "Prześlij ponownie"
   },
@@ -424,9 +429,14 @@
     "operator": {
       "1": "Równa się",
       "2": "Zaczyna się od",
-      "3": "Zawiera"
+      "3": "Zawiera",
+      "5": "Większe niż",
+      "6": "Mniejsze niż",
+      "7": "Większe lub równe",
+      "8": "Mniejsze lub równe"
     },
     "containsSlowHint": "Wyszukiwanie „zawiera” może być wolne w dużych źródłach",
+    "numericFilterHint": "Liczbę można wpisać z separatorami, np. 250,000",
     "notSearchableTooltip": "Włącz wyszukiwanie dla tej kolumny w edytorze kolumny",
     "noRows": "Brak wierszy pasujących do filtra",
     "clearFilters": "Wyczyść filtry",
@@ -534,6 +544,7 @@
   },
   "actions": {
     "view": "Wyświetl zawartość",
+    "viewWhileProcessing": "Plik jest przetwarzany — podgląd otworzy się po zakończeniu",
     "export": "Eksport",
     "edit": "Edytuj",
     "versions": "Historia wersji",

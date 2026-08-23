@@ -187,6 +187,10 @@
       "true": "Tak",
       "false": "Nie"
     },
+    "rowType": {
+      "agent": "Agent",
+      "supervisor": "Przełożony"
+    },
     "criteria": {
       "channel": "Kanał",
       "searchText": "Wyszukiwanie tekstowe",
@@ -212,34 +216,26 @@
       "sort": "Sortowanie",
       "sortValue": "{{field}} ({{dir}})",
       "sortNotGuaranteed": "Sortowanie mogło nie zostać zastosowane",
-      "sortNotGuaranteedValue": "Sortowanie jest stosowane tylko wtedy, gdy wybrane pole istnieje jako kolumna przeszukiwalna w wersjach źródła danych kampanii objętych wyszukiwaniem. Jeśli nie istnieje, serwer zwraca wyniki w kolejności domyślnej — według czasu wysyłki, od najnowszych — i nie zgłasza tego. Jak sprawdzić w tym pliku: jeśli kolumna \"Wartość sortowania\" jest pusta we wszystkich wierszach, żądane sortowanie nie zostało zastosowane.",
+      "sortNotGuaranteedValue": "Sortowanie jest stosowane tylko wtedy, gdy wybrane pole istnieje jako kolumna przeszukiwalna w wersjach źródła danych kampanii objętych wyszukiwaniem. Jeśli nie istnieje, serwer zwraca wyniki w kolejności domyślnej — według czasu wysyłki, od najnowszych — i nie zgłasza tego. Kolejność wierszy w tym pliku może zatem być kolejnością domyślną, a nie żądanym sortowaniem, i sam plik nie pozwala tego rozróżnić.",
       "incompleteRules": "Filtry, których nie zastosowano",
       "incompleteRulesValue": "Filtry bez wartości: {{n}} — nie zostały zastosowane do wyników",
       "unlisted": "{{field}} (nowe pole filtra)"
     },
     "col": {
       "campaignName": "Nazwa kampanii",
-      "channel": "Kanał",
+      "recipientType": "Typ odbiorcy",
       "recipientName": "Nazwa odbiorcy",
       "recipientEmail": "E-mail",
       "recipientCellphone": "Telefon komórkowy",
-      "clientID": "Identyfikator odbiorcy",
-      "isSupervisor": "Przełożony",
       "supervisorName": "Nazwa przełożonego",
       "sentAt": "Data wysyłki",
-      "deliveryState": "Status dostarczenia",
+      "deliveryState": "Status wysyłki",
       "engagementState": "Status aktywności",
       "engagementAt": "Data aktywności",
       "versionNumber": "Wersja",
       "provenanceSource": "Źródło ustalenia wersji",
-      "versionState": "Stan wersji",
-      "hasRow": "Istnieje wiersz źródłowy",
-      "isSynthetic": "Wiersz syntetyczny",
-      "rollupValue": "Wartość zbiorcza",
-      "sortValueDisplay": "Wartość sortowania",
-      "dataSourceVersionID": "Identyfikator wersji źródła danych",
-      "channelCampaignID": "Identyfikator kampanii",
-      "rowID": "Identyfikator wiersza"
+      "rollupValue": "Wartość luki",
+      "channelCampaignID": "Identyfikator kampanii"
     }
   },
   "preview": {

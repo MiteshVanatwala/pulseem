@@ -1,3 +1,5 @@
+// [SLB] 'sl' breakpoint (theme.js:36 = 1300..1366) had no entry in any map here.
+// See ClalNewDesignFinalVersion/CHANGE-REGISTRY-2026-08-20.md section G.
 const mobileWidth = {
     sm: 180,
     md: 250,
@@ -20,6 +22,7 @@ const phoneTopPosition = {
 const pulseDialogWidth = {
     sm: '100%',
     md: 450,
+    sl: 550,
     lg: 550,
     xl: 650
 }

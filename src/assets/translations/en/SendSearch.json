@@ -187,6 +187,10 @@
       "true": "Yes",
       "false": "No"
     },
+    "rowType": {
+      "agent": "Agent",
+      "supervisor": "Supervisor"
+    },
     "criteria": {
       "channel": "Channel",
       "searchText": "Free-text search",
@@ -212,34 +216,26 @@
       "sort": "Sort",
       "sortValue": "{{field}} ({{dir}})",
       "sortNotGuaranteed": "The sort may not have been applied",
-      "sortNotGuaranteedValue": "The sort is applied only when the selected field exists as a searchable column in the data-source versions of the campaigns included in the search. If it does not, the server returns the results in the default order — by send time, newest first — and does not report it. To check in this file: if the \"Sort value\" column is empty on every row, the requested sort was not applied.",
+      "sortNotGuaranteedValue": "The sort is applied only when the selected field exists as a searchable column in the data-source versions of the campaigns included in the search. If it does not, the server returns the results in the default order — by send time, newest first — and does not report it. The row order in this file may therefore be the default order rather than the requested sort, and the file itself cannot distinguish the two.",
       "incompleteRules": "Filters that were not applied",
       "incompleteRulesValue": "{{n}} filters were left without a value and were therefore not applied to the results",
       "unlisted": "{{field}} (new filter field)"
     },
     "col": {
       "campaignName": "Campaign name",
-      "channel": "Channel",
+      "recipientType": "Recipient type",
       "recipientName": "Recipient name",
       "recipientEmail": "Email",
       "recipientCellphone": "Mobile",
-      "clientID": "Recipient ID",
-      "isSupervisor": "Supervisor",
       "supervisorName": "Supervisor name",
       "sentAt": "Sent at",
-      "deliveryState": "Delivery status",
+      "deliveryState": "Send status",
       "engagementState": "Engagement status",
       "engagementAt": "Engagement at",
       "versionNumber": "Version",
       "provenanceSource": "Version evidence",
-      "versionState": "Version state",
-      "hasRow": "Source row exists",
-      "isSynthetic": "Synthetic row",
-      "rollupValue": "Roll-up value",
-      "sortValueDisplay": "Sort value",
-      "dataSourceVersionID": "Data source version ID",
-      "channelCampaignID": "Campaign ID",
-      "rowID": "Row ID"
+      "rollupValue": "Gap value",
+      "channelCampaignID": "Campaign ID"
     }
   },
   "preview": {
