@@ -423,7 +423,17 @@ const DataSources = ({ classes }: ClassesType) => {
                 )}
             </Box>
             <Typography style={{ fontSize: 12, color: '#5b6b7b' }}>
-                {RenderHtml(t('DataSources.table.uploadedBy', { name: row.UploadedBy, date: moment(row.CreatedDate).format(DateFormats.DATE_TIME_24) }))}
+                {/* LastUploadDate, NOT CreatedDate. DataSources_GetMany:62 projects
+                    `LastUploadDate = v.CreatedDate` from the ACTIVE VERSION (the OUTER APPLY at :78-87,
+                    TOP 1 ORDER BY VersionNumber DESC), while :38 `ds.CreatedDate` is the SOURCE row and
+                    never moves — DataSources_Insert contains no UPDATE of dbo.DataSources at all, so a
+                    re-upload leaves it frozen at V1. The label promises the upload event in all three
+                    locales ("הועלה ע\"י X בתאריך Y" / "Uploaded by X on Y"), and `name` is already
+                    v.UploadedBy from :61, so pairing it with the source date put two different events in
+                    one sentence. `??` and not `||`: the OUTER APPLY yields NULL for a source with no
+                    version row (the SP handles that case at :46), and bare moment(undefined) renders NOW
+                    — a silently plausible wrong timestamp — while moment(null) renders "Invalid date". */}
+                {RenderHtml(t('DataSources.table.uploadedBy', { name: row.UploadedBy, date: moment(row.LastUploadDate ?? row.CreatedDate).format(DateFormats.DATE_TIME_24) }))}
             </Typography>
         </Box>
     );
@@ -433,7 +443,14 @@ const DataSources = ({ classes }: ClassesType) => {
             <TableCell classes={cellStyle} align="center" className={clsx(classes.flex3)}>{renderNameCell(row)}</TableCell>
             <TableCell classes={cellStyle} align="center" className={clsx(classes.flex2)}>{row.Description}</TableCell>
             <TableCell classes={cellStyle} align="center" className={clsx(classes.flex2)}>
-                <StatusChip status={row.Status} progress={row.ProgressPercent} runDateStart={row.RunDateStart} createdDate={row.CreatedDate} t={t} align="center" />
+                {/* createdDate feeds StatusChip's 2h "processing delayed" threshold, which falls back to it
+                    while RunDateStart is null. A new version is born with RunDateStart NULL — it is stamped
+                    at claim by DataSourceProcessQueue_SelectManyAndUpdateStatus, and DataSources_Insert never
+                    writes it — so passing the SOURCE's CreatedDate made every re-upload of a source older
+                    than 2h read "העיבוד מתעכב" the instant it was queued. LastUploadDate is the version's
+                    own upload time, so the threshold now measures the queue wait it was meant to measure.
+                    A genuinely stalled run is unaffected: it has a RunDateStart, which still wins the ||. */}
+                <StatusChip status={row.Status} progress={row.ProgressPercent} runDateStart={row.RunDateStart} createdDate={row.LastUploadDate ?? row.CreatedDate} t={t} align="center" />
             </TableCell>
             <TableCell classes={cellStyle} align="center" className={clsx(classes.flex1)} style={{ direction: 'ltr' }}>
                 {row.TotalRows !== null && row.TotalRows !== undefined ? row.TotalRows.toLocaleString() : '—'}
@@ -450,7 +467,9 @@ const DataSources = ({ classes }: ClassesType) => {
                     <CardContent>
                         {renderNameCell(row)}
                         <Box style={{ marginTop: 8 }}>
-                            <StatusChip status={row.Status} progress={row.ProgressPercent} runDateStart={row.RunDateStart} createdDate={row.CreatedDate} t={t} align="center" />
+                            {/* Same fix as the desktop row above — the mobile card is a second call site of
+                                the identical defect and has to move with it. */}
+                            <StatusChip status={row.Status} progress={row.ProgressPercent} runDateStart={row.RunDateStart} createdDate={row.LastUploadDate ?? row.CreatedDate} t={t} align="center" />
                         </Box>
                         <Box style={{ marginTop: 8 }}>{renderActions(row)}</Box>
                     </CardContent>
