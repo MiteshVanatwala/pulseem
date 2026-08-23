@@ -29,6 +29,53 @@ const GRAPH_PARAM_RE = /([?&;])(p\d+=)([^&"'\s>]*)/g;
 const GRAPH_EDITOR_SENTINEL_RE = new RegExp('([?&;])c=ClientIDReplaceFromEditor(?=[&;]|$)', 'g');
 const TOKEN_RE = /##([^#]+)##/g;
 
+// ── [NFFLAG] 2026-08-23 ──────────────────────────────────────────────────────────────────────
+// `nf=1` tells pulseemmonitorgraph.png to PRINT a dyn slot's pN value as it received it instead of
+// re-grouping it with "#,##0.###". Without it the renderer regroups unconditionally
+// (PulseemHandler.cs StairFmt), so a column whose ShowThousandsSeparator is 0 still draws with
+// commas and the preview disagrees with the delivered mail.
+//
+// OPT-IN, AND THAT IS THE WHOLE POINT. Absent ⇒ the renderer behaves exactly as it does today.
+// Every graph URL already sitting in a delivered inbox lacks the key, so nothing already sent can
+// change — the <img> is re-fetched on every open and there is no cache on that handler.
+//
+// THREE PRODUCERS MUST AGREE, in three languages, with nothing linking them:
+//   this file                                        — the operator's SmartSend preview
+//   PulseemSystem2\PulseemSystem\PreviewCampaign.aspx.cs   — the shareable/browser preview
+//   EmailSender\...\DBProxyStandard.cs ReplaceGraphTokens  — the delivered mail
+// A change to the key or to the placement rule below has to be made in all three.
+//
+// SPLICE AFTER THE FIRST '?', NEVER APPEND. Here GRAPH_URL_RE does stop at a quote, so appending
+// would be safe in THIS file — but the sender's SmartSendGraphUrlRegex deliberately over-matches
+// past a closing `'`, and appending there lands outside the real URL and corrupts the markup.
+// The three producers are kept byte-identical in placement so they cannot drift.
+//
+// ONLY WHEN A TOKEN WAS ACTUALLY SUBSTITUTED. An unresolved ##Token## must reach the renderer
+// untouched: it is what makes the renderer treat the slot as preview and draw its design-time
+// sample. Flagging such a URL would assert "these values are already display-ready" about a value
+// that is not a value at all.
+//
+// PRECONDITION, and it is NOT latched on this path. The flag asserts that the producer already
+// applied the per-column display decision. Here that is true only because SQL script 26_ wraps
+// dbo.DataSources_GetSampleValuesForMapping in dbo.fn_FormatDataSourceCell (run 2026-08-23).
+// The sender has a runtime latch for its own equivalent (map.HasThousandsMetadata); React has
+// none, so on a database without 26_ this preview would flag raw values. Verify 26_ before
+// deploying this file to an environment.
+const GRAPH_NO_FORMAT_FLAG = 'nf=1';
+// NOT /g — these are used with .test(), and a global regex carries lastIndex between calls.
+const GRAPH_STAIRS_RE = /[?&;]gt=stairs(?=[&;]|$)/;
+const GRAPH_NO_FORMAT_PRESENT_RE = /[?&;]nf=1(?=[&;]|$)/;
+
+const addGraphNoFormatFlag = (url: string) => {
+    // Stairs only. The same handler renders pie/roundedbar from a different parameter set that
+    // knows nothing about this key, and asserting a formatting contract at them means nothing.
+    if (!GRAPH_STAIRS_RE.test(url)) return url;
+    if (GRAPH_NO_FORMAT_PRESENT_RE.test(url)) return url;   // idempotent: never emit it twice
+    const q = url.indexOf('?');
+    if (q < 0) return url;
+    return url.slice(0, q + 1) + GRAPH_NO_FORMAT_FLAG + '&' + url.slice(q + 1);
+};
+
 // WIDENED IN STEP A3 to cover " and '.
 //
 // `&` MUST stay first, or the ampersands of the later entities get double-escaped.
@@ -59,7 +106,11 @@ export const escapeHtml = (s: string) =>
 // tokens with the (URL-encoded) sample value, re-encode. Unmapped/absent → left as-is.
 // Values here are NOT run through escapeHtml — they are URL-encoded instead, which is the correct
 // escaping for this position.
-export const replaceGraphTokens = (url: string, values: { [k: string]: string }) =>
+export const replaceGraphTokens = (url: string, values: { [k: string]: string }) => {
+    // [NFFLAG] Set only when a ##Token## was really replaced — see the note beside
+    // addGraphNoFormatFlag for why an unresolved token must not be flagged.
+    let substituted = false;
+    const rewritten =
     // Strip the editor sentinel FIRST. Without this the preview lies in exactly the case it exists
     // to catch: a token that is mapped but empty, or not mapped at all, renders as the design-time
     // sample here while the same recipient's real mail renders 0 — and the operator approves the
@@ -78,8 +129,11 @@ export const replaceGraphTokens = (url: string, values: { [k: string]: string })
         try { decoded = decodeURIComponent(val); } catch { decoded = val; }
         const resolved = decoded.replace(TOKEN_RE, (raw, name) =>
             Object.prototype.hasOwnProperty.call(values, name) ? values[name] : raw);
+        if (resolved !== decoded) substituted = true;   // [NFFLAG]
         return sep + key + encodeURIComponent(resolved);
     });
+    return substituted ? addGraphNoFormatFlag(rewritten) : rewritten;   // [NFFLAG]
+};
 
 export const replaceTokensForPreview = (html: string, values: { [k: string]: string }) => {
     if (!html) return '';
