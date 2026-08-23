@@ -61,11 +61,66 @@ export enum eFilterOperator {
     // 10 = NOT_CONTAINS   — RESERVED, not expressible in v1 (see above)
 }
 
-// The operators `dbo.DataSources_GetRows` whitelists — the ONLY set the legacy DataSources row
-// filter (`FiltersBar.tsx` / `RowsFilter`) may send. Declared here, beside the enum, so the two
-// cannot drift: widening the enum for SendSearch must never silently widen that screen's menu.
+// The operators `dbo.DataSources_GetRows` accepts — the ONLY set the DataSources row filter
+// (`FiltersBar.tsx` / `RowsFilter`) may send. Declared here, beside the enum, so the two cannot
+// drift: widening the enum for SendSearch must never silently widen that screen's menu.
+//
+// [NUMFILT] 2026-08-23 — this used to be a flat three-value list. It is now keyed by the COLUMN's
+// DataType, because the numeric comparisons are legal on a NUMBER column and on nothing else.
+// Kept as a flat export as well, because `DataSource.ts:20` re-exports the name and something
+// outside this repo may be importing it.
+//
+// THE SERVER SIDE OF THIS LIST IS NOT ADVISORY. `DataSources_GetRows` does NOT reject an operator
+// it cannot implement: `@FilterCount` counts the filter anyway and the final
+// `HAVING COUNT(DISTINCT ColID) = @FilterCount` then matches nothing — so an operator this list
+// admits before the SQL ships comes back as an EMPTY GRID with HTTP 200, not as an error.
+// Deploy order is SQL → C# → React, and this file is the last step.
 export const GET_ROWS_OPERATORS: readonly eFilterOperator[] = [
     eFilterOperator.EQUALS,
     eFilterOperator.STARTS_WITH,
     eFilterOperator.CONTAINS,
 ];
+
+// NUMBER additionally gets GT/LT/GTE/LTE.
+//
+// DELIBERATE DEVIATION, so it is not read as an oversight: `fn_DataSourceNormalizeValue:67` states
+// the family contract as "NUMBER(2) -> operators 1,5,6,7,8,9", i.e. WITHOUT 2 (starts-with) and 3
+// (contains). Those two are kept here anyway. They work on this screen today — operator 3 scans
+// RowJson and never looks at the column type at all — and silently removing a control an operator
+// may be using is a regression this change was not asked to make. This screen is additive only.
+//
+// BETWEEN (9) is absent everywhere: `dbo.DataSourceFilterType` carries ONE value per clause, and a
+// table type cannot be ALTERed. It also cannot be faked with two clauses on one column — the SP
+// counts DISTINCT columns, so two clauses on the same column behave as OR, not AND.
+const GET_ROWS_OPERATORS_BY_TYPE: { [dt: number]: readonly eFilterOperator[] } = {
+    [eDataType.TEXT]: GET_ROWS_OPERATORS,
+    [eDataType.NUMBER]: [
+        eFilterOperator.EQUALS,
+        eFilterOperator.STARTS_WITH,
+        eFilterOperator.CONTAINS,
+        eFilterOperator.GT,
+        eFilterOperator.LT,
+        eFilterOperator.GTE,
+        eFilterOperator.LTE,
+    ],
+    [eDataType.DATE]: GET_ROWS_OPERATORS,
+    [eDataType.EMAIL]: GET_ROWS_OPERATORS,
+    [eDataType.PHONE]: GET_ROWS_OPERATORS,
+};
+
+/**
+ * The operators the row filter may offer for a column of this type.
+ *
+ * An unknown / missing type degrades to the three text operators rather than to the widest set —
+ * the same direction `SendSearch.operatorsForType` chose. Offering `>` on a column whose type we
+ * could not read would be answered by the SP with ReturnCode -10, i.e. a red error on a control
+ * the UI itself put in front of the user.
+ */
+export const getRowsOperatorsForType = (
+    dt: eDataType | number | null | undefined
+): readonly eFilterOperator[] => GET_ROWS_OPERATORS_BY_TYPE[dt as number] ?? GET_ROWS_OPERATORS;
+
+/** True for the operators that compare numerically — the ones that need a NUMBER column. */
+export const isNumericOperator = (op: eFilterOperator | number): boolean =>
+    op === eFilterOperator.GT || op === eFilterOperator.LT ||
+    op === eFilterOperator.GTE || op === eFilterOperator.LTE;
