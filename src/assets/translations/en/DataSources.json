@@ -8,6 +8,7 @@
   "goToSend": "Choose a campaign to send from this source",
   "send": {
     "title": "Send from source",
+    "noSourceTooltip": "To send from a data source you first have to upload one, on the Data sources screen.",
     "campaignLabel": "Campaign: {{name}}",
     "notMapped": "This campaign is not mapped to a data source yet",
     "mappedTo": "Mapped to source: {{name}}",
@@ -165,7 +166,10 @@
         "isRecipientBody": "The column \"{{name}}\" is the recipient's own address. Ticking this box sends every agent a report about themselves.",
         "noColumnTitle": "No supervisor email column is selected",
         "noColumnBody": "Without a supervisor column the supervisor report cannot be built from this data source. Pick a supervisor email column on the mapping screen, then come back and send.",
-        "noColumnAction": "Pick a column"
+        "noColumnAction": "Pick a column",
+        "unconfirmedTitle": "The supervisor column was auto-detected and never confirmed",
+        "unconfirmedBody": "The column \"{{name}}\" was detected automatically but is not saved in the mapping, so the supervisor report cannot be built from it. Confirm it on the mapping screen — click the suggestion next to the picker — then come back and send.",
+        "unconfirmedAction": "Confirm the column"
       },
       "combinedTitle": "Combined campaign",
       "combinedNote": "A recipient from a regular group (not from the source) — a mapped field is replaced with an empty string."
