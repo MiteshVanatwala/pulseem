@@ -162,7 +162,10 @@
         "notEmailTitle": "The selected column is not an email column",
         "notEmailBody": "The column \"{{name}}\" is marked as the supervisor column, but it does not hold email addresses — so no supervisor would receive a report. Fix it on the mapping screen before sending.",
         "isRecipientTitle": "The selected column is the recipient's own address",
-        "isRecipientBody": "The column \"{{name}}\" is the recipient's own address. Ticking this box sends every agent a report about themselves."
+        "isRecipientBody": "The column \"{{name}}\" is the recipient's own address. Ticking this box sends every agent a report about themselves.",
+        "noColumnTitle": "No supervisor email column is selected",
+        "noColumnBody": "Without a supervisor column the supervisor report cannot be built from this data source. Pick a supervisor email column on the mapping screen, then come back and send.",
+        "noColumnAction": "Pick a column"
       },
       "combinedTitle": "Combined campaign",
       "combinedNote": "A recipient from a regular group (not from the source) — a mapped field is replaced with an empty string."
