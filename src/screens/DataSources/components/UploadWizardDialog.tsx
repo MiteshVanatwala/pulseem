@@ -297,7 +297,7 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
         let emailCount = 0;
         let hasCell = false;
         let searchableBudget = maxSearchable;
-        return hdrs.map((h, i) => {
+        const cols = hdrs.map((h, i) => {
             const header = (h && h.trim()) ? h.trim() : `${t('DataSources.table.name')} ${i + 1}`;
             const lower = header.toLowerCase();
             const colVals = sample.map(r => r[i]);
@@ -348,6 +348,15 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
                 IsSupervisorEmail: isSupervisor, Detection: detection
             };
         });
+        // A NUMBER column is only filterable while it is searchable, so it defaults to searchable
+        // too — but in a SECOND pass, deliberately. The identities above allocate first: a file whose
+        // numeric columns precede its email/cellphone column must not spend the version's budget
+        // before the identity that the whole match runs on gets its slot.
+        for (const c of cols) {
+            if (searchableBudget <= 0) break;
+            if (!c.IsSearchable && c.DataType === eDataType.NUMBER) { c.IsSearchable = true; searchableBudget--; }
+        }
+        return cols;
     };
 
     const onFileChosen = async (chosen: File | null) => {
