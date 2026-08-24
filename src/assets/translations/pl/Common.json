@@ -1148,7 +1148,7 @@
   "widget_no_widgets_subtitle": "Utwórz swój pierwszy widżet, aby rozpocząć czat z odwiedzającymi Twoją stronę",
   "widget_create_domain_prompt": "Dla jakiej domeny strony jest ten widżet?",
   "service_section": "Service",
-  "service_dashboard": "Dashboard",
+  "service_dashboard": "Pulpit",
   "service_conversations": "Conversations",
   "widget_add_chat_widget": "Add Chat Widget"
 }

@@ -297,8 +297,7 @@ const ChatbotBuilder = ({ classes }: { classes?: any }) => {
       classes={classes}
       currentPage="service"
       subPage="serviceChatbots"
-      customPadding
-      containerClass={clsx(classes.mb50, classes.editorCont)}
+      containerClass={clsx(classes.management)}
       hideSideImages
     >
       <div className="svc-cb">
