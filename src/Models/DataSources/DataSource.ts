@@ -226,6 +226,16 @@ export interface DataSourceColumn {
     SemanticRole: eSemanticRole;
     IsSearchable: boolean;
     /**
+     * [CFT] Which recipient field this column writes back to, or null when it writes nowhere.
+     * Persisted since the feature shipped but only exposed on the READ path from 2026-08-20: the
+     * upload summary has to be able to say which fields the operator asked to update, and until now
+     * that answer existed only inside the wizard, which is closed by the time the summary opens.
+     * Reads back `undefined` on a client running ahead of the SQL script that adds it to
+     * DataSources_Get RS2 — so consumers must treat undefined and null alike ("writes nowhere")
+     * and must never render a bare id.
+     */
+    ClientFieldTarget?: eClientField | null;
+    /**
      * Display-only: group the integer part of a NUMBER column with thousands separators.
      * Mirrors dbo.DataSourceColumns.ShowThousandsSeparator BIT NOT NULL DEFAULT 1, so it is ON
      * unless the user turned it off. LAST member on purpose — see UploadColumnDef below.
@@ -384,4 +394,13 @@ export interface ResultsJson {
     rows?: { total: number; columns: number };
     truncatedCells?: number;
     invalidEmails?: number;
+    /**
+     * [CFT] How many recipient records the write-back actually UPDATED. Already emitted by
+     * dbo.DataSources_ResolveVersionClients (`"clientsUpdated"`, verified in the current snapshot) —
+     * it was simply never declared here, so the summary could not show it. No SQL change needed.
+     * Counts UPDATEs only: a file that just CREATES recipients writes every mapped field and still
+     * reports 0, so this is rendered beside the created counts and never on its own.
+     * Absent on a version resolved before the SP emitted it → `undefined` → rendered as '—'.
+     */
+    clientsUpdated?: number;
 }

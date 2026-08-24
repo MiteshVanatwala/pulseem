@@ -272,9 +272,11 @@ const SendSearchPanel: React.FC<Props> = ({ showTitle }) => {
     // it is aimed at. The server enforces the same rule anyway (405 USER_PERMISSION_NOT_ALLOWED),
     // so this is the UI half of a gate that exists on both sides.
     //
-    // HideRecipients is part of the condition and not an afterthought: every one of the 22 export
-    // columns is recipient data — name, email, mobile, ClientID — so a user who may not SEE
-    // recipients on screen must certainly not be able to write them to a file and take them home.
+    // HideRecipients is part of the condition and not an afterthought: three of the 14 export
+    // columns are recipient data — name, e-mail, mobile — so a user who may not SEE recipients on
+    // screen must certainly not be able to write them to a file and take them home. (The 2026-08-23
+    // narrowing dropped ClientID, which does NOT weaken the case for this gate: name/e-mail/mobile
+    // are the identifying fields and all three survive.)
     // Same composition DataSources.tsx:114 uses.
     //
     // 🔴 ADDED after review (2026-08-09) — LOCK_EXPORT_DATA. The two sub-user permissions above are
@@ -285,7 +287,7 @@ const SendSearchPanel: React.FC<Props> = ({ showTitle }) => {
     // SmsReplies, WhatsappInbound, MmsReport, NewslettersReport, ProductsReport, SmsReport and
     // LandingPages — twelve screens, all with the identical `indexOf(...) === -1` composition copied
     // here. Omitting it made THIS screen the way around it, on the most recipient-revealing dataset
-    // in the product: name + email + mobile + ClientID + supervisor for up to 20,000 people.
+    // in the product: name + email + mobile + supervisor address for up to 20,000 people.
     //
     // Client-side only, and that is not an oversight — it is where this feature is enforced. A
     // repo-wide grep of WebSiteApiNew for LockExportData returns the enum declaration and NOTHING

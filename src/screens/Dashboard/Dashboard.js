@@ -123,7 +123,8 @@ const DashboardScreen = ({ classes }) => {
             <Grid item xs={12} sm={12} md={6} lg={shouldStackDashboardCards ? 12 : 5}>
               <RecipientChart classes={classes} />
             </Grid>
-            <Grid item xs={12} sm={12} md={12} lg={shouldStackDashboardCards ? 12 : 3} className={windowSize === "xs" ? classes.pt20 : null} style={{ alignSelf: 'flex-start', transform: (shouldStackDashboardCards || windowSize === 'xs' || windowSize === 'sm' || windowSize === 'md') ? 'none' : (isRTL ? 'translateX(4%)' : 'translateX(-4%)') }}>
+            {/* [SLB] positive OR chain - 'sl' must be added with ||, unlike the negated AND-chain above */}
+            <Grid item xs={12} sm={12} md={12} lg={shouldStackDashboardCards ? 12 : 3} className={windowSize === "xs" ? classes.pt20 : null} style={{ alignSelf: 'flex-start', transform: (shouldStackDashboardCards || windowSize === 'xs' || windowSize === 'sm' || windowSize === 'md' || windowSize === 'sl') ? 'none' : (isRTL ? 'translateX(4%)' : 'translateX(-4%)') }}>
               <Shortcut
                 windowSize={windowSize}
                 classes={classes}

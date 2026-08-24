@@ -14,10 +14,13 @@
 //     xl: 'calc(100vh - 40px)'
 // }
 
+// [SLB] 'sl' breakpoint (theme.js:36 = 1300..1366) had no entry in any map here.
+// See ClalNewDesignFinalVersion/CHANGE-REGISTRY-2026-08-20.md section G.
 const shortcutBoxWidth = {
     xs: 'auto',
     sm: '92.1%',
     md: '92.1%',
+    sl: '92.1%',
     lg: '92.1%',
     xl: 'auto'
 }

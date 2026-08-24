@@ -1953,7 +1953,10 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		// '@import url(./darktheme.css)': true,
 
 		//MainChat
-		'&.chat': { display: 'flex', position: 'relative' },
+		'&.chat': {
+			display: 'flex',
+			position: 'relative',							
+		},
 		'&.chat__body': {
 			minWidth: '300px',
 			flex: '40%',
