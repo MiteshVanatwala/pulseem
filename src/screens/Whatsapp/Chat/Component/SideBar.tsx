@@ -23,7 +23,7 @@ import {
 	Typography,
 } from '@material-ui/core';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
-import { FaBars, FaCalendar, FaFilter, FaTrash } from 'react-icons/fa';
+import { FaCalendar, FaFilter, FaTrash } from 'react-icons/fa';
 import { MdAddComment, MdRefresh } from 'react-icons/md';
 import {
 	BsFillTagsFill,
@@ -54,7 +54,6 @@ import DynamicConfirmDialog from '../../../../components/DialogTemplates/Dynamic
 const SideBar = ({
 	classes,
 	isMobileSideBar,
-	setIsMobileSideBar,
 	handleChatId,
 	onActiveUserChange,
 	sideChatContacts,
@@ -70,6 +69,7 @@ const SideBar = ({
 	setFilterBySelected,
 	selectedAgent,
 	setAgentSelected,
+	agentCookieKey,
 	onAddAgent,
 	onEditAgents,
 	onTagsUpdated,
@@ -85,6 +85,7 @@ const SideBar = ({
 	personalFields,
 	landingPageData,
 	searchTextRef,
+	onRegisterMobileActions,
 }: WhatsappChatSideBarProps) => {
 	const { t: translator } = useTranslation();
 	const { isRTL, userRoles } = useSelector(
@@ -147,6 +148,14 @@ const SideBar = ({
 	useEffect(() => {
 		// No default date range - user can select one if needed
 	}, []);
+
+	useEffect(() => {
+		if (selectedAgent && selectedAgent > 0) {
+			setSelectedAgents((prev) =>
+				prev.includes(selectedAgent) ? prev : [...prev, selectedAgent],
+			);
+		}
+	}, [selectedAgent]);
 
 	useEffect(() => {
 		searchTextRef.current = searchText;
@@ -282,7 +291,7 @@ const SideBar = ({
 
 	const handleAgentSelected = (e: SelectChangeEvent) => {
 		setAgentSelected(Number(e.target.value));
-		setCookie('whatsappSelectedAgentId', e.target.value);
+		setCookie(agentCookieKey, e.target.value);
 	};
 
 	// Helper function to get date chip label with time
@@ -345,14 +354,16 @@ const SideBar = ({
 		const newSelectedAgents = selectedAgents.filter((id) => id !== agentId);
 		setSelectedAgents(newSelectedAgents);
 
-		// Update single agent selector if needed
 		if (newSelectedAgents.length === 0) {
 			setAgentSelected(0);
-			setCookie('whatsappSelectedAgentId', '0');
-		} else if (selectedAgent === agentId) {
+			setCookie(agentCookieKey, '0');
+			return;
+		}
+
+		if (selectedAgent === agentId) {
 			// If we removed the currently selected single agent, update to first remaining
 			setAgentSelected(newSelectedAgents[0]);
-			setCookie('whatsappSelectedAgentId', String(newSelectedAgents[0]));
+			setCookie(agentCookieKey, String(newSelectedAgents[0]));
 		}
 
 		// Trigger fetch immediately with remaining filters
@@ -406,13 +417,14 @@ const SideBar = ({
 
 	// Clear all filters at once
 	const handleClearAllFilters = () => {
+		setSearchText('');
 		setTimePeriod('');
 		setStartDate('');
 		setEndDate('');
 		setStartTime('');
 		setEndTime('');
 		setAgentSelected(0);
-		setCookie('whatsappSelectedAgentId', '0');
+		setCookie(agentCookieKey, '0');
 		setSelectedAgents([]);
 		setSelectedTags([]);
 		// Note: useEffects will handle the fetch after state updates
@@ -452,27 +464,27 @@ const SideBar = ({
 		// If agents selected, apply the first one as selectedAgent
 		if (dialogSelectedAgents.length > 0) {
 			setAgentSelected(dialogSelectedAgents[0]);
-			setCookie('whatsappSelectedAgentId', String(dialogSelectedAgents[0]));
+			setCookie(agentCookieKey, String(dialogSelectedAgents[0]));
+
+			// AND logic: send agents and tags separately
+			fetchMoreContacts(
+				searchText,
+				filterBySelected,
+				true,
+				contactsPaginationSetting?.PageSize || 10,
+				1,
+				false,
+				dialogStartDate,
+				dialogEndDate,
+				dialogSelectedAgents,
+				dialogSelectedTags,
+				dialogStartTime,
+				dialogEndTime,
+			);
 		} else {
 			setAgentSelected(0);
-			setCookie('whatsappSelectedAgentId', '0');
+			setCookie(agentCookieKey, '0');
 		}
-
-		// AND logic: send agents and tags separately
-		fetchMoreContacts(
-			searchText,
-			filterBySelected,
-			true,
-			contactsPaginationSetting?.PageSize || 10,
-			1,
-			false,
-			dialogStartDate,
-			dialogEndDate,
-			dialogSelectedAgents,
-			dialogSelectedTags,
-			dialogStartTime,
-			dialogEndTime,
-		);
 	};
 
 	const handleSetDateRange = (period: string) => {
@@ -602,6 +614,16 @@ const SideBar = ({
 	const handleCloseEditTags = () => {
 		setShowEditTagsDialog(false);
 	};
+
+	// Expose these two mobile-hidden actions (their dialogs live here, driven by
+	// local state/data like tagsList) so the chat header can trigger them too,
+	// since on mobile this sidebar is display:none while a chat is open.
+	useEffect(() => {
+		onRegisterMobileActions?.({
+			openNewChat: () => setIsStartNewChatOpen(true),
+			openEditTags: handleOpenEditTags,
+		});
+	});
 
 	const handleUpdateTag = (
 		index: number,
@@ -915,7 +937,7 @@ const SideBar = ({
 				<header
 					className={clsx(
 						`${classes.whatsappChat} sidebar-header`,
-						classes.sidebarHeader,
+						classes.whatsappSidebarHeader,
 					)}
 				>
 					<div
@@ -935,12 +957,14 @@ const SideBar = ({
 						activePhoneNumber={activePhoneNumber}
 					/>
 					<div className={classes.agentManagementButtonsWrapper}>
-						<IconButton
-							onClick={() => onEditAgents()}
-							title={translator('common.manageAgent')}
-						>
-							<BsPeopleFill />
-						</IconButton>
+						{!userRoles?.HideRecipients && (
+							<IconButton
+								onClick={() => onEditAgents()}
+								title={translator('common.manageAgent')}
+							>
+								<BsPeopleFill />
+							</IconButton>
+						)}
 						<IconButton onClick={() => handleOpenEditTags()} title={translator('whatsappChat.editTags')}>
 							<BsFillTagsFill />
 						</IconButton>
@@ -961,17 +985,6 @@ const SideBar = ({
 							title={translator('whatsappChat.refreshChat')}
 						>
 							<MdRefresh style={{ animation: isRefreshing ? 'spin 0.8s linear infinite' : 'none' }} />
-						</IconButton>
-					</div>
-					<div
-						className={`${classes.whatsappChat} sidebar__actions`}
-						style={{ flexShrink: 0 }}
-					>
-						<IconButton
-							className={classes.whatsappChatBarButton}
-							onClick={setIsMobileSideBar}
-						>
-							<FaBars />
 						</IconButton>
 					</div>
 				</header>

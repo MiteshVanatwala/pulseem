@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from 'uuid';
+
 const paragraphDescriptor = {
   "paragraph": {
     "html": "",
@@ -293,3 +295,85 @@ export const PulDynamicProductDetail = {
   "uuid": "",
   "locked": false
 }
+
+/**
+ * buildTierGraphRow — a GENUINE one-column-empty BEE row (byte-for-byte the shape
+ * DefaultContent(...).defaultTemplate.page.rows[0] produces in helper/Config.tsx)
+ * holding a native image module whose src is the tier-graph link.
+ *
+ * IMPORTANT: we build a clean row literal, NOT a clone of PulRow. PulRow is a
+ * 'Dynamic-Products' / 'Product Catalog' row carrying `synced`, product `metadata`,
+ * a `product-block-container` marker and product-ish container/content — mutating
+ * a few of its fields leaves a "Frankenstein" row whose extra keys BEE can silently
+ * reject on load/reload (onError is a no-op), which breaks "Add to email". A real
+ * one-column-empty row has NO metadata/name/synced keys — exactly this shape.
+ * The image renders full-width & fluid (center autowidth + style width/max-width:100%); `width`
+ * sets a px cap on descriptor.image.width (the graph's natural width).
+ */
+export const buildTierGraphRow = (url: string, width: number, alt: string) => {
+  const img = JSON.parse(JSON.stringify(PulImage)); // native BEE image module (Template.tsx:34)
+  img.descriptor.image.src = url;
+  img.descriptor.image.alt = alt;                   // t('campaigns.tierGraph.imgAlt')
+  img.descriptor.image.href = '';                   // NO <a> wrapper — ever
+  img.uuid = uuidv4();
+
+  // Force FULL-WIDTH responsive display. PulImage defaults to `align:right` + `right fixedwidth`
+  // + `autoWidth:50%`, which BEE rendered at ~15% (small, right-aligned). Switch to centered
+  // `autowidth` at 100% so the graph fills the email column at full width on every client.
+  img.align = 'center';
+  img.autoWidth = '100%';
+  img.descriptor.image.percWidth = '100';
+  img.descriptor.image.width = (width && width > 0 ? Math.round(width) : 600) + 'px';
+  img.descriptor.image.style = { width: '100%', 'max-width': '100%' };
+  img.descriptor.style = { ...(img.descriptor.style || {}), width: '100%' };
+  img.descriptor.computedStyle = {
+    ...(img.descriptor.computedStyle || {}),
+    class: 'center autowidth',
+    width: '100%',
+  };
+
+  return {
+    type: 'one-column-empty',
+    container: {
+      style: {
+        'background-color': 'transparent',
+        'background-image': 'none',
+        'background-repeat': 'no-repeat',
+        'background-position': 'top left',
+      },
+    },
+    content: {
+      style: {
+        'background-color': 'transparent',
+        color: '#000000',
+        width: '600px',
+        'background-image': 'none',
+        'background-repeat': 'no-repeat',
+        'background-position': 'top left',
+      },
+      computedStyle: {
+        rowColStackOnMobile: true,
+        rowReverseColStackOnMobile: false,
+      },
+    },
+    columns: [
+      {
+        'grid-columns': 12,
+        modules: [img],
+        style: {
+          'background-color': 'transparent',
+          'padding-top': '5px',
+          'padding-right': '0px',
+          'padding-bottom': '5px',
+          'padding-left': '0px',
+          'border-top': '0px solid transparent',
+          'border-right': '0px solid transparent',
+          'border-bottom': '0px solid transparent',
+          'border-left': '0px solid transparent',
+        },
+        uuid: uuidv4(),
+      },
+    ],
+    uuid: uuidv4(),
+  };
+};

@@ -1,0 +1,288 @@
+{
+  "title": "Raport źródeł",
+  "nav": {
+    "sendSearch": "Raport źródeł"
+  },
+  "searchPlaceholder": "Imię, e-mail lub telefon agenta albo przełożonego…",
+  "role": {
+    "all": "Agent i przełożony",
+    "agent": "Tylko agent",
+    "supervisor": "Tylko przełożony"
+  },
+  "kind": {
+    "all": "Wszystko",
+    "agents": "Tylko agenci",
+    "rollup": "Tylko przełożeni"
+  },
+  "badge": {
+    "supervisor": "Przełożony"
+  },
+  "campaign": {
+    "all": "Wszystkie kampanie",
+    "label": "Kampanie",
+    "search": "Szukaj kampanii…",
+    "none": "Nie znaleziono kampanii",
+    "loadFailed": "Nie udało się wczytać listy kampanii"
+  },
+  "source": {
+    "prefix": "Źródło:",
+    "prefixMapped": "Źródło wg bieżącego mapowania:",
+    "deletedChip": "Usunięte źródło",
+    "deletedChipMapped": "Usunięte źródło · wg mapowania",
+    "noRecord": "Brak zapisu",
+    "nameNotFound": "nie znaleziono nazwy",
+    "markButton": "Zaznacz kampanie według źródła",
+    "markCount": "kampanii: {{count}}",
+    "markDone": "Zaznaczono kampanie ({{count}}) powiązane ze źródłem «{{name}}» (#{{id}}) — według zapisu lub bieżącego mapowania",
+    "markAlready": "Wszystkie kampanie ({{count}}) źródła «{{name}}» (#{{id}}) są już zaznaczone — nic się nie zmieniło",
+    "markNone": "Źródło «{{name}}» (#{{id}}) nie ma kampanii w wybranym zakresie — nic nie zaznaczono",
+    "markTooMany": "Zaznaczenie «{{name}}» dałoby {{count}} kampanii, a maksimum to {{max}}. Zawęź zakres dat i spróbuj ponownie — nic nie zaznaczono",
+    "markUndo": "Cofnij",
+    "a11y": {
+      "cell": "Źródło danych: {{name}}, identyfikator {{id}}.",
+      "cellMapped": "Źródło danych wg bieżącego mapowania: {{name}}, identyfikator {{id}}. Nie zapisano źródła w chwili wysyłki.",
+      "cellDeleted": "Źródło danych: {{name}}, identyfikator {{id}} — usunięte źródło. Sama wysyłka jest zapisana.",
+      "cellDeletedMapped": "Źródło danych wg bieżącego mapowania: {{name}}, identyfikator {{id}} — usunięte źródło. Nie zapisano źródła w chwili wysyłki.",
+      "cellNoRecord": "Dla tej wysyłki nie zapisano źródła danych.",
+      "cellNameNotFound": "Źródło danych: identyfikator {{id}}. Nazwa źródła jest niedostępna."
+    }
+  },
+  "dateFrom": "Data od",
+  "dateTo": "Data do",
+  "search": "Szukaj",
+  "moreFilters": "Więcej filtrów ▾",
+  "clearAll": "Wyczyść wszystko",
+  "includeOverOneYear": "Uwzględnij wysyłki starsze niż rok (wyszukiwanie potrwa dłużej)",
+  "col": {
+    "recipient": "Odbiorca",
+    "supervisor": "Przełożony",
+    "mailing": "Kampania",
+    "channelsAndResult": "Kanały i wynik",
+    "lastEvidence": "Najnowszy dowód",
+    "sent": "Wysłano",
+    "sortValue": "Wartość sortowania"
+  },
+  "roster": {
+    "title": "{{count}} odbiorców objętych wysyłką zbiorczą",
+    "recipient": "Odbiorca",
+    "channels": "Kanały",
+    "gap": "Luka",
+    "viewEvidence": "Dowód wyświetlenia",
+    "covered": "Objęci odbiorcy"
+  },
+  "supervisor": {
+    "opens": "Otwarcia",
+    "clicks": "Kliknięcia",
+    "notAvailable": "Niedostępne"
+  },
+  "version": {
+    "label": "Wersja",
+    "number": "V{{n}}",
+    "outdated": "Nieaktualna",
+    "latest": "Najnowsza wersja: V{{n}}",
+    "recordedAt": "Zapisana",
+    "source": {
+      "recorded": "Zapisana",
+      "inferred": "Wywnioskowana",
+      "unverifiable": "Niemożliwa do potwierdzenia"
+    },
+    "state": {
+      "available": "Dostępna",
+      "purged": "Usunięta",
+      "scrubbed": "Dane identyfikujące usunięte"
+    },
+    "tooltip": {
+      "recorded": "Wersja została zapisana w momencie wysyłki — to wersja, która faktycznie została wysłana.",
+      "inferred": "Brak zapisu wysyłki dla wersji, ale mapowanie nie zmieniło się od czasu wysyłki — więc to ta wersja została wysłana.",
+      "unverifiable": "Mapowanie zmieniono po wysyłce — nie da się jednoznacznie ustalić, która wersja została wysłana."
+    }
+  },
+  "delivery": {
+    "pending": "Oczekuje",
+    "sent": "Wysłano",
+    "delivered": "Dostarczono",
+    "failed": "Niepowodzenie",
+    "unsubscribed": "Żądanie usunięcia",
+    "canceled": "Anulowano",
+    "stopped": "Zatrzymano",
+    "invalidNumber": "Nieprawidłowy numer",
+    "noSession": "Brak aktywnego okna rozmowy",
+    "unknown": "Nierozpoznany status"
+  },
+  "engagement": {
+    "none": "Brak zarejestrowanej aktywności",
+    "opened": "Zarejestrowano otwarcie",
+    "clicked": "Kliknięto",
+    "read": "Przeczytano",
+    "replied": "Odpowiedziano",
+    "unknown": "Nierozpoznane"
+  },
+  "empty": {
+    "noResults": "Brak wyników odpowiadających wyszukiwaniu",
+    "notSent": "Nie wysłano w żadnym kanale"
+  },
+  "results": {
+    "count": "Wyniki: {{count}}"
+  },
+  "action": {
+    "view": "Szczegóły",
+    "viewRollup": "Szczegóły zbiorcze",
+    "back": "Powrót do {{name}}",
+    "close": "Zamknij"
+  },
+  "drawer": {
+    "sendDetails": "Szczegóły wysyłki",
+    "provenance": "Która wersja została wysłana",
+    "rowValues": "Wartości wysłane do tego odbiorcy",
+    "noRowValues": "Dla tego odbiorcy nie wysłano wiersza źródłowego — tokeny zostały wysłane puste",
+    "coverage": "Zasięg wysyłki zbiorczej",
+    "coverageCaveat": "To liczby, nie procenty: e-mail nie ma potwierdzenia doręczenia, SMS nie ma wskaźnika otwarć, a odbiorca mógł zostać osiągnięty w więcej niż jednym kanale — mianownik jest inny dla każdego kanału.",
+    "rosterReconstructed": "Ta lista odbiorców została odtworzona z bieżącego mapowania i nie jest zapisem tego, do kogo faktycznie wysłano."
+  },
+  "footnote": {
+    "tracking": "Dane o otwarciach i kliknięciach pochodzą ze śledzenia i nie są dostępne w każdym kanale; brak zarejestrowanej aktywności nie dowodzi, że wiadomość nie została zobaczona."
+  },
+  "error": {
+    "loadFailed": "Nie udało się wczytać wyników",
+    "permissionDenied": "Nie masz uprawnień do przeglądania danych odbiorców"
+  },
+  "export": {
+    "button": "Eksport",
+    "title": "Eksport wyników wyszukiwania",
+    "tooltip": "Eksportuj wszystkie wyniki pasujące do bieżących filtrów",
+    "disabledNoRows": "Brak wyników do wyeksportowania",
+    "disabledLoading": "Wyszukiwanie nadal trwa",
+    "rowCount": "Zostanie wyeksportowanych {{n}} wierszy — wszystkie wyniki pasujące do bieżących filtrów, nie tylko widoczna strona.",
+    "criteriaTitle": "Filtry, które zostaną zapisane w pliku",
+    "criteriaNote": "Te wiersze są zapisywane na początku pliku dokładnie tak, jak widać je tutaj, aby plik dokumentował wyszukiwanie, z którego powstał.",
+    "zeroPrefixNote": "Plik Excel (.xls) zachowuje zero wiodące w numerach telefonów; plik CSV go nie zachowuje, a Excel może pokazać 052… jako 52…. Gdy numery są istotne, otwórz wersję Excel.",
+    "notifyEmail": "E-mail z powiadomieniem po zakończeniu (opcjonalnie)",
+    "notifyEmailHint": "Jeśli zostawisz puste, plik i tak będzie czekał na stronie pobierania.",
+    "ready": "Plik jest gotowy — {{n}} wierszy.",
+    "readyBoth": "Powstały dwie wersje: CSV i Excel.",
+    "readyCsvOnly": "Ze względu na liczbę wierszy powstał tylko plik CSV, bez wersji Excel.",
+    "goToDownloads": "Przejdź do strony pobierania",
+    "runningInBackground": "Plik jest przygotowywany. Powiadomimy Cię e-mailem, gdy będzie gotowy, i pojawi się na stronie pobierania.",
+    "runningInBackgroundNoEmail": "Plik jest przygotowywany. Nie podano adresu e-mail, więc powiadomienie o zakończeniu pojawi się w dzwonku powiadomień, a plik będzie czekał na stronie pobierania.",
+    "invalidRequest": "Żądanie zostało odrzucone: jeden ze szczegółów eksportu jest nieprawidłowy. Sprawdź adres e-mail do powiadomienia i ogranicz liczbę wybranych kampanii lub filtrów. Ponowna próba bez zmian zostanie odrzucona tak samo.",
+    "tooManyRows": "Bieżące wyszukiwanie ma {{rows}} wierszy, a limit eksportu to {{max}}.",
+    "tooManyRowsHint": "Zawęź wyszukiwanie — krótszy zakres dat, konkretne kampanie lub dodatkowy filtr — i spróbuj ponownie.",
+    "inProgress": "Inny eksport już trwa. Poczekaj na jego zakończenie i spróbuj ponownie.",
+    "notAllowed": "Nie masz uprawnień do eksportowania tych wyników.",
+    "failed": "Eksport nie powiódł się. Spróbuj ponownie, a jeśli problem się powtarza, skontaktuj się z pomocą techniczną.",
+    "unknownOutcome": "Połączenie zostało przerwane, zanim serwer odpowiedział. Eksport mógł mimo to zostać ukończony.",
+    "unknownOutcomeHint": "Sprawdź stronę pobierania przed ponownym eksportem — eksport teraz może utworzyć drugą kopię tego samego pliku.",
+    "unknownState": "Nieznany",
+    "campaignsCount": "kampanie",
+    "reportName": "Raport źródeł",
+    "roleSupervisors": "Nadzorcy",
+    "roleAgents": "Agenci",
+    "channel": {
+      "email": "E-mail",
+      "sms": "SMS",
+      "whatsapp": "WhatsApp",
+      "unknown": "Nierozpoznany kanał"
+    },
+    "bool": {
+      "true": "Tak",
+      "false": "Nie"
+    },
+    "rowType": {
+      "agent": "Agent",
+      "supervisor": "Przełożony"
+    },
+    "criteria": {
+      "channel": "Kanał",
+      "searchText": "Wyszukiwanie tekstowe",
+      "role": "Rola",
+      "rowKind": "Rodzaj wierszy",
+      "campaign": "Kampania",
+      "campaigns": "Kampanie",
+      "campaignsValue": "Kampanie ({{n}}): {{list}}",
+      "campaignsPartial": "Kampanie ({{n}}): {{list}}. Pozycje oznaczone znakiem # nie znajdują się na wczytanej liście kampanii (mogą być poza wybranym zakresem dat) — filtr nadal w pełni ich dotyczy.",
+      "campaignsNamesUnavailable": "Kampanie ({{n}}): {{list}}. Nie udało się wczytać listy nazw kampanii, dlatego część kampanii jest identyfikowana tylko numerem.",
+      "dateRange": "Zakres dat",
+      "dateBoth": "Od {{from}} do {{to}} (włącznie)",
+      "dateFromOnly": "Od {{from}}",
+      "dateToOnly": "Do {{to}} (włącznie)",
+      "dateDefaultWindow": "Domyślnie: ostatnie 12 miesięcy",
+      "dateNoLimit": "Bez ograniczenia daty — uwzględnia wysyłki starsze niż rok",
+      "dateClamped": "Zakres automatycznie zawężony",
+      "dateClampedValue": "Wybrany zakres jest szerszy niż 12 miesięcy, dlatego wyszukiwanie zostało automatycznie zawężone do ostatnich 12 miesięcy, a ten plik nie zawiera wysyłek wcześniejszych. Aby objąć cały wybrany zakres, zaznacz \"Uwzględnij wysyłki starsze niż rok\" i wyeksportuj ponownie.",
+      "includeOverOneYear": "Uwzględnia wysyłki starsze niż rok",
+      "filterRule": "Filtr: {{field}}",
+      "filterRuleValue": "{{op}} {{value}}",
+      "filterRuleBetween": "{{op}} {{from}} — {{to}}",
+      "sort": "Sortowanie",
+      "sortValue": "{{field}} ({{dir}})",
+      "sortNotGuaranteed": "Sortowanie mogło nie zostać zastosowane",
+      "sortNotGuaranteedValue": "Sortowanie jest stosowane tylko wtedy, gdy wybrane pole istnieje jako kolumna przeszukiwalna w wersjach źródła danych kampanii objętych wyszukiwaniem. Jeśli nie istnieje, serwer zwraca wyniki w kolejności domyślnej — według czasu wysyłki, od najnowszych — i nie zgłasza tego. Kolejność wierszy w tym pliku może zatem być kolejnością domyślną, a nie żądanym sortowaniem, i sam plik nie pozwala tego rozróżnić.",
+      "incompleteRules": "Filtry, których nie zastosowano",
+      "incompleteRulesValue": "Filtry bez wartości: {{n}} — nie zostały zastosowane do wyników",
+      "unlisted": "{{field}} (nowe pole filtra)"
+    },
+    "col": {
+      "campaignName": "Nazwa kampanii",
+      "recipientType": "Typ odbiorcy",
+      "recipientName": "Nazwa odbiorcy",
+      "recipientEmail": "E-mail",
+      "recipientCellphone": "Telefon komórkowy",
+      "supervisorName": "Nazwa przełożonego",
+      "sentAt": "Data wysyłki",
+      "deliveryState": "Status wysyłki",
+      "engagementState": "Status aktywności",
+      "engagementAt": "Data aktywności",
+      "versionNumber": "Wersja",
+      "provenanceSource": "Źródło ustalenia wersji",
+      "rollupValue": "Wartość luki",
+      "channelCampaignID": "Identyfikator kampanii"
+    }
+  },
+  "preview": {
+    "button": "Zobacz wysłany e-mail",
+    "title": "Wysłany e-mail",
+    "close": "Zamknij",
+    "frameTitle": "Podgląd wysłanego e-maila",
+    "disabled": "Nie można wyświetlić e-maila: serwer nie podał linku podglądu dla tego wiersza (kanał inny niż e-mail albo brak identyfikatora odbiorcy lub kampanii).",
+    "noTrackNote": "Ten podgląd nie jest zapisywany jako otwarcie przez odbiorcę, a linki w nim są wyłączone."
+  },
+  "adv": {
+    "unavailable": "Obecnie brak pól, według których można filtrować",
+    "field": "Pole",
+    "operator": "Warunek",
+    "value": "Wartość",
+    "valueFrom": "Od",
+    "valueTo": "Do",
+    "addRule": "Dodaj filtr",
+    "removeRule": "Usuń filtr",
+    "clear": "Wyczyść filtry zaawansowane",
+    "apply": "Zastosuj filtry",
+    "activeCount": "Aktywne filtry: {{count}}",
+    "incomplete": "Brak wartości — ten filtr nie działa",
+    "coverage": "Dotyczy {{count}} z {{total}} kampanii",
+    "partialWarning": "To pole nie istnieje we wszystkich kampaniach w wynikach. Filtrowanie po nim nie zwróci wierszy z kampanii, które go nie mają.",
+    "empty": {
+      "title": "Brak pól do filtrowania",
+      "body": "Pola do filtrowania definiuje się na ekranie Źródła danych: oznacz kolumnę jako wyszukiwalną w ustawieniach źródła, a pojawi się tutaj przy następnej wysyłce."
+    },
+    "op": {
+      "1": "równa się",
+      "2": "zaczyna się od",
+      "3": "zawiera",
+      "5": "większe niż",
+      "6": "mniejsze niż",
+      "7": "co najmniej",
+      "8": "co najwyżej",
+      "9": "pomiędzy"
+    }
+  },
+  "sort": {
+    "label": "Sortuj według",
+    "dir": "Kierunek",
+    "none": "Domyślnie (data wysyłki)",
+    "asc": "Rosnąco",
+    "desc": "Malejąco",
+    "hiddenFieldNote": "Sortowanie używa pola, które nie jest kolumną tabeli. Wartość sortowania każdego wiersza jest widoczna w kolumnie „Wartość sortowania”.",
+    "unknownValue": "Brak wartości"
+  }
+}

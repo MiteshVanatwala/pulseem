@@ -158,6 +158,7 @@
       "SubAccounts": "Subkonta",
       "UserManagementPermissions": "Zarządzanie użytkownikami i uprawnieniami",
       "PopUpsUnlimited": "Okienka pop-up (nieograniczone)",
+      "multiStepPopup": "Wieloetapowe okienko pop-up",
       "AMPEmail": "AMP dla e-maili (w tym karuzela obrazów – wymaga zatwierdzenia przez Google i Yahoo)",
       "VIPSupport": "Wsparcie VIP",
       "PersonalTraining": "Indywidualne szkolenie",
@@ -288,7 +289,9 @@
     "AI_LANDING_PAGE_DESIGNER": "AI Landing Page Designer",
     "RCS_MESSAGING": "RCS Messaging",
     "KOSHER_SEND": "Kosher Send",
-    "LANDING_PAGE_HTML_BLOCK": "Blok HTML"
+    "LANDING_PAGE_HTML_BLOCK": "Blok HTML",
+    "POPUP_STEPS": "Wieloetapowe Popupy",
+    "POPUP_MANGEMENT": "Zarządzanie Popupami"
   },
   "EmailMarketingList": "Jaki jest rozmiar Twojej listy mailingowej?",
   "EmailMarketingListSending": "(Nielimitowane wysyłanie w zależności od wielkości listy)",

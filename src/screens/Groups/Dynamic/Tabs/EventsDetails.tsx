@@ -1,11 +1,13 @@
 import clsx from 'clsx';
 import {
-    Grid, Checkbox, FormControlLabel, InputLabel, TextField, Button, FormHelperText
+    Grid, Checkbox, FormControlLabel, InputLabel, TextField, Button, FormHelperText,
+    Select, FormControl, Tooltip
 } from '@material-ui/core'
+import { IoIosArrowDown } from 'react-icons/io';
 import 'moment/locale/he';
 import { ActivityEvent, ActivtyTimeInterval } from '../../../../Models/Groups/DynamicGroup';
 import { useTranslation } from 'react-i18next';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import SelectActivityInteval from '../Components/SelectActivityInteval';
 import { DateField } from '../../../../components/managment';
 import moment from 'moment';
@@ -17,15 +19,7 @@ import SelectProductUrl from '../Components/SelectProductUrl';
 
 const EventsDetails = ({ classes, data, onUpdate }: any) => {
     const { t } = useTranslation();
-    const [optionsDisabled, setOptionDisabled] = useState<boolean>(false);
-
-    useEffect(() => {
-        setOptionDisabled(data.dynamicData?.MyActivities.IsPurchased ||
-            data.dynamicData?.MyActivities.IsNotPurchased ||
-            data.dynamicData?.MyActivities.IsAbandoned ||
-            data.dynamicData?.MyActivities.IsPageViewed
-        )
-    }, [data.dynamicData?.MyActivities]);
+    const [containsTextError, setContainsTextError] = useState<boolean>(false);
 
     const renderIsPurchased = () => {
         return (
@@ -34,7 +28,6 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                     <FormControlLabel
                         control={
                             <Checkbox
-                                disabled={optionsDisabled && !data.dynamicData?.MyActivities.IsPurchased}
                                 onChange={(event: any) => onUpdate('IsPurchased', !!event.target.checked)}
                                 checked={!!data.dynamicData?.MyActivities.IsPurchased}
                                 name="openedinlast"
@@ -224,8 +217,6 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                     <FormControlLabel
                         control={
                             <Checkbox
-                                disabled={optionsDisabled && !data.dynamicData?.MyActivities.IsNotPurchased}
-                                // disabled={data.dynamicData?.MyActivities?.IsPurchased === true}
                                 onChange={(event: any) => onUpdate('IsNotPurchased', !!event.target.checked)}
                                 checked={!!data.dynamicData?.MyActivities.IsNotPurchased}
                                 name="openedinlast"
@@ -415,8 +406,6 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                     <FormControlLabel
                         control={
                             <Checkbox
-                                disabled={optionsDisabled && !data.dynamicData?.MyActivities.IsAbandoned}
-                                // disabled={data.dynamicData?.MyActivities?.IsPurchased === true}
                                 onChange={(event: any) => onUpdate('IsAbandoned', !!event.target.checked)}
                                 checked={!!data.dynamicData?.MyActivities.IsAbandoned}
                                 name="openedinlast"
@@ -600,15 +589,17 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
     }
 
     const renderPageViewed = () => {
+        const matchType = data.dynamicData?.MyActivities.PageViewedMatchType || 'exact';
+        const isPageViewed = !!data.dynamicData?.MyActivities.IsPageViewed;
+
         return (
             <Grid container spacing={4} className={classes.pt25}>
                 <Grid item xs={6} sm={6} md={2}>
                     <FormControlLabel
                         control={
                             <Checkbox
-                                disabled={optionsDisabled && !data.dynamicData?.MyActivities.IsPageViewed}
                                 onChange={(event: any) => onUpdate('IsPageViewed', !!event.target.checked)}
-                                checked={!!data.dynamicData?.MyActivities.IsPageViewed}
+                                checked={isPageViewed}
                                 name="openedinlast"
                                 color="primary"
                             />
@@ -619,7 +610,7 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                 </Grid>
                 <Grid item xs={12} sm={4} md={2} className={clsx(classes.p10, classes.pb25)}>
                     <SelectActivityInteval
-                        Disabled={!data.dynamicData?.MyActivities.IsPageViewed}
+                        Disabled={!isPageViewed}
                         OnUpdate={(event: any) => onUpdate('IsPageViewedInterval', event.target.value)}
                         Value={data.dynamicData?.MyActivities.IsPageViewedInterval}
                         classes={classes}
@@ -637,7 +628,7 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                                         minDate={undefined}
                                         maximumDate={moment().add(100, 'y')}
                                         classes={classes}
-                                        value={data.dynamicData?.MyActivities?.IsPageViewed && data.dynamicData?.MyActivities.IsPageViewedFromDate}
+                                        value={isPageViewed && data.dynamicData?.MyActivities.IsPageViewedFromDate}
                                         onChange={(value: any) => onUpdate('IsPageViewedFromDate', moment(value).format(DateFormats.DATEPICKER_DATE_FORMAT))}
                                         placeholder={t('common.FromDate')}
                                         timePickerOpen={true}
@@ -649,7 +640,7 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                                         hideInvalidDateMessage={true}
                                     />
                                     {
-                                        data.dynamicData?.MyActivities?.IsPageViewedFromDate && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate('IsAbandonedFromDate', null)}>{t("recipient.reset")}</Button>
+                                        data.dynamicData?.MyActivities?.IsPageViewedFromDate && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate('IsPageViewedFromDate', null)}>{t("recipient.reset")}</Button>
                                     }
                                 </Grid>
 
@@ -660,7 +651,7 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                                         minDate={data.dynamicData?.MyActivities.IsPageViewedFromDate || undefined}
                                         maximumDate={moment().add(100, 'y')}
                                         classes={classes}
-                                        value={data.dynamicData?.MyActivities?.IsPageViewed && data.dynamicData?.MyActivities.IsPageViewedToDate}
+                                        value={isPageViewed && data.dynamicData?.MyActivities.IsPageViewedToDate}
                                         onChange={(value: any) => onUpdate('IsPageViewedToDate', moment(value).format(DateFormats.DATEPICKER_DATE_FORMAT))}
                                         placeholder={t('common.ToDate')}
                                         timePickerOpen={false}
@@ -672,27 +663,91 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                                         hideInvalidDateMessage={true}
                                     />
                                     {
-                                        data.dynamicData?.MyActivities?.IsPageViewedToDate && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate('IsAbandonedToDate', null)}>{t("recipient.reset")}</Button>
+                                        data.dynamicData?.MyActivities?.IsPageViewedToDate && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate('IsPageViewedToDate', null)}>{t("recipient.reset")}</Button>
                                     }
                                 </Grid>
                             </Grid>
                         </Grid>
                     )
                 }
-                <Grid item xs={6} sm={6} md={4}>
-                    <SelectProductUrl
-                        classes={classes}
-                        disabled={!data.dynamicData?.MyActivities.IsPageViewed}
-                        data={data.dynamicData?.MyActivities?.PageViewedUrlIDs?.split(',')}
-                        onUpdate={(value: any) => {
-                            if (value !== null) {
-                                onUpdate('PageViewedUrlIDs', value.join(','))
-                            }
-                            else {
-                                onUpdate('PageViewedUrlIDs', value)
-                            }
-                        }} />
+                <Grid item xs={6} sm={6} md={2}>
+                    <FormControl
+                        variant="standard"
+                        className={clsx(classes.selectInputFormControl, classes.w100)}
+                    >
+                        <Select
+                            native
+                            disabled={!isPageViewed}
+                            variant='standard'
+                            value={matchType}
+                            onChange={(event: any) => {
+                                const newMatchType = event.target.value as 'exact' | 'contains';
+                                setContainsTextError(false);
+                                onUpdate('', '', {
+                                    PageViewedMatchType: newMatchType,
+                                    PageViewedUrlIDs: null,
+                                    PageViewedContainsText: ''
+                                });
+                            }}
+                            IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+                            className={clsx(classes.w100, classes.mt10, !isPageViewed ? classes.disabled : null)}
+                        >
+                            <option value="exact">{t('common.page_viewed_match_exact')}</option>
+                            <option value="contains">{t('common.page_viewed_match_contains')}</option>
+                        </Select>
+                    </FormControl>
                 </Grid>
+                {matchType === 'exact' ? (
+                    <Grid item xs={6} sm={6} md={2}>
+                        <SelectProductUrl
+                            classes={classes}
+                            disabled={!isPageViewed}
+                            data={data.dynamicData?.MyActivities?.PageViewedUrlIDs?.split(',')}
+                            onUpdate={(value: any) => {
+                                if (value !== null) {
+                                    onUpdate('PageViewedUrlIDs', value.join(','))
+                                }
+                                else {
+                                    onUpdate('PageViewedUrlIDs', value)
+                                }
+                            }} />
+                    </Grid>
+                ) : (
+                    <Grid item xs={6} sm={6} md={2}>
+                        <FormControl
+                            variant="standard"
+                            className={clsx(classes.selectInputFormControl, classes.w100)}
+                            style={{ paddingLeft: 15, paddingRight: 10, marginTop: 12 }}
+                        >
+                            <Tooltip title={t('common.page_viewed_contains_tooltip')} placement="top" arrow>
+                                <span>
+                                    <TextField
+                                        disabled={!isPageViewed}
+                                        placeholder={t('common.page_viewed_contains_placeholder')}
+                                        variant='standard'
+                                        fullWidth
+                                        value={data.dynamicData?.MyActivities?.PageViewedContainsText || ''}
+                                        error={containsTextError}
+                                        onChange={(event: any) => {
+                                            const val = event.target.value;
+                                            setContainsTextError(false);
+                                            onUpdate('PageViewedContainsText', val);
+                                        }}
+                                        onBlur={() => {
+                                            if (!data.dynamicData?.MyActivities?.PageViewedContainsText?.trim()) {
+                                                setContainsTextError(true);
+                                            }
+                                        }}
+                                        InputProps={{ disableUnderline: true }}
+                                    />
+                                </span>
+                            </Tooltip>
+                        </FormControl>
+                        <FormHelperText error={containsTextError} style={{ paddingLeft: 18 }}>
+                            {containsTextError ? t('common.field_required') : ' '}
+                        </FormHelperText>
+                    </Grid>
+                )}
             </Grid>
 
         );

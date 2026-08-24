@@ -33,7 +33,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	},
 	whatsappFuncDiv: {
 		width: '100%',
-		height: '60px',
+		minHeight: '60px',
 		boxSizing: 'border-box',
 		display: 'inline-block',
 		gridTemplateColumns: '64px auto',
@@ -321,6 +321,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			transform: 'translateY(-50%)',
 			margin: '0 0 0 8px',
 			fontWeight: '600',
+			'& svg': { display: 'block', fontSize: '14px' },
 		},
 	},
 	/* Chat */
@@ -352,18 +353,23 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			position: 'relative',
 			top: '50%',
 		},
+		'& .back': {
+			'& svg': { display: 'block', fontSize: '24px' },
+		},
 		'& .actions': {
 			float: isRTL ? 'left' : 'right',
-			margin: isRTL ? '5px 0 0 0' : '5px 0 0 10px',
+			margin: isRTL ? '0' : '0 0 0 10px',
 			'& img': {
 				height: '28px',
 			},
+			'& svg': { display: 'block', fontSize: '28px' },
 			'&.more': {
-				margin: isRTL ? '0 20px 0 12px' : '0 12px 0 20px',
+				margin: isRTL ? '0 8px 0 0' : '0 0 0 8px',
+				'& svg': { display: 'block', fontSize: '24px' },
 			},
 			'&.attachment': {
-				margin: isRTL ? '0 20px 0 0' : '0 0 0 20px',
-				'& i': { display: 'block' },
+				margin: isRTL ? '0 16px 0 0' : '0 0 0 16px',
+			    '& svg': { display: 'block', fontSize: '24px' }
 			},
 		},
 		'& .avatar': {
@@ -385,7 +391,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			margin: isRTL ? '0 8px 0 0' : '0 0 0 8px',
 			overflow: 'hidden',
 			whiteSpace: 'nowrap',
-			width: 'calc(100% - 177px)',
+			width: 'calc(100% - 200px)',
 		},
 		'& .status': {
 			display: 'block',
@@ -1729,7 +1735,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		// '@import url(./App.darktheme.css)': true,
 		//App
 		'&.app': {
-			marginTop: 20,
+			marginTop: 5,
 			width: '100%',
 			background: '#dddbd1',
 			position: 'relative',
@@ -1747,7 +1753,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		'&.app__mobile-message': { display: 'none' },
 		'&.app-content': {
 			width: '100%',
-			height: 'calc(100vh - 100px)',
+			height: 'calc(100vh - 57px)',
 			margin: '0 auto',
 			boxShadow:
 				'0 1px 1px 0 rgba(0, 0, 0, 0.06), 0 2px 5px 0 rgba(0, 0, 0, 0.2)',
@@ -1947,7 +1953,10 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		// '@import url(./darktheme.css)': true,
 
 		//MainChat
-		'&.chat': { display: 'flex', position: 'relative' },
+		'&.chat': {
+			display: 'flex',
+			position: 'relative',							
+		},
 		'&.chat__body': {
 			minWidth: '300px',
 			flex: '40%',
@@ -2574,10 +2583,14 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 				display: 'none',
 				position: 'fixed',
 				zIndex: '9999',
-				top: 0,
+				// Start below the app's global TopMenu bar (56px) instead of at the viewport
+				// top; otherwise this fixed overlay's own header renders behind the opaque
+				// TopMenu (the aside lives inside .app-content's z-index:100 stacking context,
+				// so its z-index:9999 can't beat the TopMenu) and stays invisible.
+				top: 56,
 				left: 0,
 				width: '100%',
-				height: '100vh',
+				height: 'calc(100vh - 56px)',
 				overflow: 'hidden',
 				'&.mobile-side-bar': {
 					display: 'flex',
@@ -2685,12 +2698,6 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			},
 		},
 		'&.sidebar-contact:hover': { backgroundColor: '#EBEBEB' },
-		'&.sidebar-contact__avatar-wrapper': {
-			width: '50px',
-			height: '50px',
-			marginRight: isRTL ? 'unset' : '10px',
-			marginLeft: isRTL ? '10px' : 'unset',
-		},
 		'&.sidebar-contact__content': { overflow: 'hidden', flex: '1', margin: '4px 0px', },
 		'&.sidebar-contact__top-content, .sidebar-contact__bottom-content, .sidebar-contact__message-wrapper':
 		{
@@ -2915,6 +2922,16 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	whatsappCampaignStatusSending: {
 		color: '#F59A23',
 		fontWeight: 700,
+	},
+	pulseSendPill: {
+		display: 'inline-block',
+		backgroundColor: '#F59A23',
+		color: '#FFFFFF',
+		borderRadius: 12,
+		padding: '2px 10px',
+		fontSize: 13,
+		fontWeight: 700,
+		marginTop: 4,
 	},
 	whatsappChatStatusSelect: {
 		borderRadius: '22px',
@@ -3388,5 +3405,8 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		'& .MuiButton-root': {
 			color: '#fff',
 		}
+	}, 
+	whatsAppCampaignPadding: {
+		padding: '8px 12px 8px 4px',
 	}
 });

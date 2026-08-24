@@ -1,6 +1,7 @@
 import {
 	Box,
 	Button,
+	Chip,
 	FormControl,
 	Grid,
 	MenuItem,
@@ -251,6 +252,9 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 					icon={undefined}
 					titleStyle={undefined}
 				/>
+				{row?.media_type && ['IMAGE', 'VIDEO', 'DOCUMENT'].includes(row.media_type) && (
+					<Chip size='small' variant='outlined' label={row.media_type} />
+				)}
 				<Typography className={classes.grayTextCell}>
 					{`${text} ${date.format(DateFormats.DATE_TIME_24)}`}
 				</Typography>
@@ -508,7 +512,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 
 			case 'pl':
 				return authenticationTypes.AUTHENTICATIONPOLSKI;
-		
+
 			case 'en':
 			default:
 				return authenticationTypes.AUTHENTICATIONEN;
@@ -577,7 +581,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 				onClick: (key: string, Id: string) => onRowIconClick(key, Id),
 				classes: classes,
 				rootClass: classes.paddingIcon,
-				id: row.Id.toString(),
+				id: row.Id?.toString(),
 			},
 			{
 				key: 'edit',
@@ -589,7 +593,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 				classes: classes,
 				rootClass: classes.paddingIcon,
 				href: `${sitePrefix}whatsapp/template/edit/${row?.Id?.toString()}`,
-				id: row.Id.toString(),
+				id: row.Id?.toString(),
 			},
 			{
 				key: 'duplicate',
@@ -599,7 +603,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 				onClick: (key: string, Id: string) => onRowIconClick(key, Id),
 				classes: classes,
 				rootClass: classes.paddingIcon,
-				id: row.Id.toString(),
+				id: row.Id?.toString(),
 			},
 			{
 				key: 'delete',
@@ -622,7 +626,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 				classes: classes,
 				rootClass: clsx(classes.sendIcon, 'sendIcon'),
 				textClass: classes.sendIconText,
-				id: row.Id.toString(),
+				id: row.Id?.toString(),
 			},
 		];
 		return (
@@ -1060,8 +1064,10 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 
 	return (
 		<DefaultScreen
-			subPage={'manage'}
+			key="templatemanagement"
+			subPage={'templatemanagement'}
 			currentPage='whatsapp'
+
 			classes={classes}
 			customPadding={false}
 			containerClass={clsx(classes.management, classes.mb50, classes.whatsapp)}>

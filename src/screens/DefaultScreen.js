@@ -15,6 +15,8 @@ import useRedirect from '../helpers/Routes/Redirect';
 import { getCookie } from '../helpers/Functions/cookies';
 import { get } from 'lodash';
 import { getIsBeeperAccount } from '../components/WhiteLabel/WhiteLabelMigrate';
+import { MainLayout } from '../components/core/SideMenu/MainLayout';
+import TopMenu from '../components/core/TopMenu/TopMenu';
 
 const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', containerClass, customPadding = false, showAppBar = true, customStyle = '', hideSideImages = false }) => {
   const { t } = useTranslation();
@@ -78,22 +80,26 @@ const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', cont
       <Helmet>
         <title>{title}</title>
       </Helmet>
-      {(!isDebtAccount || isDebtAccount === false) && <TopAppBar
-        showAppBar={showAppBar}
+      {(!isDebtAccount || isDebtAccount === false) && <MainLayout
         classes={classes}
         currentPage={currentPage}
-      />}
-      <Container
-        maxWidth='xl'
-        className={clsx(customPadding ? classes.sidePadding : null, containerClass ?? null, customStyle)}
+        showAppBar={showAppBar}
+        subPage={subPage}
       >
-        {!hideSideImages && <div className={classes.background}>
-          <Illustration_BG_BL className={isRTL ? 'rightSvg' : 'leftSvg'} />
-          <Illustration_BG_BR className={isRTL ? 'leftSvg' : 'rightSvg'} />
-        </div>}
-        <DomainVerification classes={classes} domain={domainVerificationPopUp} />
-        {children}
-      </Container>
+        <TopMenu classes={classes} />
+        <Container
+          maxWidth='xl'
+          className={clsx(customPadding ? classes.sidePadding : null, containerClass ?? null, customStyle)}
+        >
+          {!hideSideImages && <div className={classes.background}>
+            <Illustration_BG_BL className={isRTL ? 'rightSvg' : 'leftSvg'} />
+            <Illustration_BG_BR className={isRTL ? 'leftSvg' : 'rightSvg'} />
+          </div>}
+          <DomainVerification classes={classes} domain={domainVerificationPopUp} />
+          {children}
+        </Container>
+
+      </MainLayout>}
       { !isOnlyWhatsAppChat && <TawkToContainer itemId={reKey} /> }
     </HelmetProvider>
   )

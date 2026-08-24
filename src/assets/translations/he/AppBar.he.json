@@ -1,5 +1,6 @@
 {
   "admin": "מערכת ניהול",
+  "backToAdmin": "חזרה למערכת ניהול",
   "dashboard": "לוח בקרה",
   "groups": {
     "title": "קבוצות",
@@ -39,5 +40,6 @@
     "title": "נוטיפיקציות"
   },
   "logout": "יציאה",
-  "returnToMainAccount": "חשבון ראשי"
+  "returnToMainAccount": "חשבון ראשי",
+  "myAccount": "החשבון שלי"
 }

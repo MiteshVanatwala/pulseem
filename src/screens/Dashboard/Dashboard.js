@@ -23,9 +23,10 @@ import { updateTermsOfUse } from '../../redux/reducers/TermsOfUseSlice';
 import { getCommonFeatures } from '../../redux/reducers/commonSlice';
 import { getCookie, setCookie } from '../../helpers/Functions/cookies';
 import BusinessSectorActivity from './Popup/BusinessSectorActivity';
+import { IS_MAX_WINDOW_WIDTH_WHEN_DRAWER_OPEN } from '../../helpers/Constants';
 
 const DashboardScreen = ({ classes }) => {
-  const { windowSize, isRTL, isAdmin } = useSelector(state => state.core);
+  const { windowSize, isRTL, isAdmin, isDrawerOpen } = useSelector(state => state.core);
   const { accountSettings, isGlobal, companyAdmin } = useSelector(state => state.common);
   const { t } = useTranslation();
   const [toastMessage, setToastMessage] = useState(null);
@@ -72,6 +73,8 @@ const DashboardScreen = ({ classes }) => {
     }
   }, [accountSettings])
 
+  // Remove unused useEffect for tablet view, as isTabletMode is already derived from Redux state
+
   const renderToast = () => {
     setTimeout(() => {
       setToastMessage(null);
@@ -84,6 +87,9 @@ const DashboardScreen = ({ classes }) => {
   }
 
   const isWhiteLabel = accountSettings.Account?.ReferrerID > 0 && WhiteLabelObject[accountSettings.Account?.ReferrerID] !== undefined;
+  // const isCompactDashboard = window.innerWidth <= 1500;
+  // const shouldStackDashboardCards = isCompactDashboard || (isDrawerOpen && IS_MAX_WINDOW_WIDTH_WHEN_DRAWER_OPEN);
+  const shouldStackDashboardCards = isDrawerOpen && IS_MAX_WINDOW_WIDTH_WHEN_DRAWER_OPEN();
 
   const onIgnoreTerms = async () => {
     setShowTermsOfUse(false);
@@ -101,32 +107,42 @@ const DashboardScreen = ({ classes }) => {
     setShowBusinessSectorActivity(false);
   }
 
-
   return (
     <DefaultScreen
       currentPage='dashboard'
       classes={classes}
-      customStyle={clsx(classes.dashboard, classes.mb75)}>
+      customStyle={clsx(classes.dashboard)}>
       <Grid container>
-        <Grid item xs={12} sm={8} md={9} lg={9} xl={10} className={clsx(classes.pt20, classes.dashboardTop)}>
+        {/* Previous layout with shortcuts: lg={9} xl={10} */}
+        <Grid item xs={12} sm={12} md={12} lg={12} xl={12} className={clsx(classes.dashboardTop)}>
           <Grid container direction='row'>
-            <Grid item xs={12} sm={12} md={12} lg={4}>
+            <Grid item xs={12} sm={12} md={6} lg={shouldStackDashboardCards ? 12 : 4} style={{ marginInlineEnd: (shouldStackDashboardCards && windowSize !== 'xs' && windowSize !== 'sm' && windowSize !== 'md' && windowSize !== 'sl') ? '30px' : '' }}>
               {<BulkStatus classes={classes} />}
               {<GlobalBalance classes={classes} />}
             </Grid>
-            <Grid item xs={12} sm={12} md={12} lg={8} className={windowSize === "xs" ? classes.pt20 : null}>
+            <Grid item xs={12} sm={12} md={6} lg={shouldStackDashboardCards ? 12 : 5}>
               <RecipientChart classes={classes} />
+            </Grid>
+            {/* [SLB] positive OR chain - 'sl' must be added with ||, unlike the negated AND-chain above */}
+            <Grid item xs={12} sm={12} md={12} lg={shouldStackDashboardCards ? 12 : 3} className={windowSize === "xs" ? classes.pt20 : null} style={{ alignSelf: 'flex-start', transform: (shouldStackDashboardCards || windowSize === 'xs' || windowSize === 'sm' || windowSize === 'md' || windowSize === 'sl') ? 'none' : (isRTL ? 'translateX(4%)' : 'translateX(-4%)') }}>
+              <Shortcut
+                windowSize={windowSize}
+                classes={classes}
+                t={t}
+                isRTL={isRTL}
+                variant='horizontal'
+              />
             </Grid>
           </Grid>
           <Grid container direction='row' className={classes.pt20}>
-            {!isWhiteLabel && <Grid item xs={12} sm={12} md={12} lg={4}>
+            {!isWhiteLabel && <Grid item xs={12} sm={12} md={12} lg={shouldStackDashboardCards ? 12 : 4} style={{ marginInlineEnd: shouldStackDashboardCards ? '30px' : '' }}>
               <PulseemTips
                 classes={classes}
                 t={t}
                 isRTL={isRTL}
               />
             </Grid>}
-            <Grid item xs={12} sm={12} md={12} lg={!isWhiteLabel ? 8 : 12}>
+            <Grid item xs={12} sm={12} md={12} lg={!isWhiteLabel ? (shouldStackDashboardCards ? 12 : 8) : 12}>
               <LatestReports
                 classes={classes}
                 windowSize={windowSize}
@@ -137,14 +153,14 @@ const DashboardScreen = ({ classes }) => {
             </Grid>
           </Grid>
         </Grid>
-        <Grid item xs={12} sm={4} md={3} lg={3} xl={2} className={classes.dashboardSide}>
+        {/* <Grid item xs={12} sm={12} md={12} lg={3} xl={2} className={classes.dashboardSide}>
           <Shortcut
             windowSize={windowSize}
             classes={classes}
             t={t}
             isRTL={isRTL}
           />
-        </Grid>
+        </Grid> */}
       </Grid>
       {toastMessage && renderToast()}
       {showChangePassword && <ChangePassword

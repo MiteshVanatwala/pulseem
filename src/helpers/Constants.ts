@@ -696,6 +696,14 @@ export const CountryCodes = [
     { code: '+263', country: 'ZW', name: 'Zimbabwe', flag: '🇿🇼' }
 ];
 
+
+export const MAX_TEXTFIELD_LENGTH = {
+    CAMPAIGN_NAME: 100,
+    NAME: 100,
+    CAMPAIGN_SUBJECT: 150,
+    EMAIL_ADDRESS: 100
+}
+
 export const BASED_ON_LANG = {
     0: 'he',
     1: 'en',
@@ -826,7 +834,8 @@ export const TIER_PLANS = [
             // 'billing.tier.features.manageUsersPermissions',
             'billing.tier.features.phoneSupport',
             'billing.tier.features.displayCondition',
-            'billing.tier.features.AMPEmail'
+            'billing.tier.features.AMPEmail',
+            'billing.tier.features.multiStepPopup',
             // 'billing.tier.features.dynamicProducts'
         ],
         isPopular: true,
@@ -885,6 +894,7 @@ export const TierFeatures = {
   "WHATSAPP_RESPONSE_REPORT": "billing.featureNames.WHATSAPP_RESPONSE_REPORT",
   "WHATSAPP_REPORT": "billing.featureNames.WHATSAPP_REPORT",
   "WHATSAPP_CHAT_INTERFACE": "billing.featureNames.WHATSAPP_CHAT_INTERFACE",
+  "WHATSAPP_COEXISTENCE": "billing.featureNames.WHATSAPP_COEXISTENCE",
   "SMS_RESPONSE_REPORT": "billing.featureNames.SMS_RESPONSE_REPORT",
   "SMS_REPORT": "billing.featureNames.SMS_REPORT",
   "SMS_BASIC_PERSONALIZATION": "billing.featureNames.SMS_BASIC_PERSONALIZATION",
@@ -935,9 +945,14 @@ export const TierFeatures = {
   "RCS_MESSAGING": "billing.featureNames.RCS_MESSAGING",
   "KOSHER_SEND": "billing.featureNames.KOSHER_SEND",
   "LANDING_PAGE_HTML_BLOCK": "billing.featureNames.LANDING_PAGE_HTML_BLOCK",
+  "POPUP_STEPS": "billing.featureNames.POPUP_STEPS",
+  "POPUP_MANGEMENT": "billing.featureNames.POPUP_MANGEMENT"
 }
 
 
 export const CLOSE_BUTTON_HTML = "<div ID='PulseemCloseButton' data-color='#000000' data-bgcolor='#fee6e6' data-Size='20' data-Position='Right'>X</div>"
 
 export const COLORS = ['#E74C3C', '#F39C12', '#27AE60', '#3498DB', '#9B59B6'];
+// Function, not a frozen constant: window.innerWidth must be read live on each call,
+// not baked in once at module load (which was frozen at whatever width the page first loaded at).
+export const IS_MAX_WINDOW_WIDTH_WHEN_DRAWER_OPEN = () => window.innerWidth <= 1400;

@@ -141,9 +141,10 @@ const LinkClickReport = ({ classes }: any) => {
           return exportRow;
         });
 
-        const excelHeader = (Object.values(exportData.header) as string[]).map((field: string) => {
+        const excelHeader: any = {};
+        Object.keys(exportData.header).forEach((field: string) => {
           const translated = t(`report.linksClicksReport.${field}`);
-          return translated === `report.linksClicksReport.${field}` ? field : translated;
+          excelHeader[field] = translated === `report.linksClicksReport.${field}` ? field : translated;
         });
 
         ExportFile({

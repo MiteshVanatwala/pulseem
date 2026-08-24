@@ -1,3 +1,5 @@
+// [SLB] 'sl' breakpoint (theme.js:36 = 1300..1366) had no entry in any map here.
+// See ClalNewDesignFinalVersion/CHANGE-REGISTRY-2026-08-20.md section G.
 const mobileWidth = {
     sm: 180,
     md: 250,
@@ -20,6 +22,7 @@ const phoneTopPosition = {
 const pulseDialogWidth = {
     sm: '100%',
     md: 450,
+    sl: 550,
     lg: 550,
     xl: 650
 }
@@ -521,7 +524,7 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
             // marginLeft: 207
         },
         '& .topSection': {
-            marginTop: 37.870,
+            // marginTop: 37.870,
             border: '2px solid #F0F5FF',
             borderRadius: 10,
             paddingBottom: 31,
@@ -598,6 +601,16 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
             '& button': {
                 marginBottom: 10,
             }
+        },
+    },
+    manualButtonGroup:
+    {
+        display: "flex",
+        alignItems: "center",
+        gap: theme.spacing(1),
+        flexWrap: "wrap",
+        [theme.breakpoints.down('xs')]: {
+            justifyContent: 'center',
         },
     },
     listValues:

@@ -169,6 +169,7 @@
       "SubAccounts": "חשבונות משנה",
       "UserManagementPermissions": "ניהול משתמשים והרשאות",
       "PopUpsUnlimited": "פופ-אפים (ללא הגבלה)",
+      "multiStepPopup": "פופ-אפ רב-שלבי",
       "AMPEmail": "AMP לאימייל (כולל קרוסלת תמונות – דורש אישור Google & Yahoo)",
       "VIPSupport": "תמיכת VIP",
       "PersonalTraining": "הדרכות אישיות",
@@ -299,7 +300,9 @@
     "AI_LANDING_PAGE_DESIGNER": "מעצב דפי נחיתה מבוסס AI",
     "RCS_MESSAGING": "הודעות RCS",
     "KOSHER_SEND": "שליחת מוחזר",
-    "LANDING_PAGE_HTML_BLOCK": "בלוק HTML"
+    "LANDING_PAGE_HTML_BLOCK": "בלוק HTML",
+    "POPUP_STEPS": "פופאפ רב-שלבי",
+    "POPUP_MANGEMENT": "ניהול פופאפים"
   },
   "EmailMarketingList": "מה גודל רשימת התפוצה שלכם ?",
   "EmailMarketingListSending": "(שליחה ללא הגבלה לפי גודל רשימת התפוצה)",

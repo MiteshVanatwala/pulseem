@@ -49,7 +49,8 @@
     "notClickChannelRequired": "יש לבחור לפחות ערוץ קמפיינים אחד לפחות על מנת לחפש לקוחות שלא הקליקו",
     "specificDateIsRequired": "יש לבחור תאריכים ספציפיים",
     "daysBackError": "יש להזין מספר ימים אחורה",
-    "pageUrlRequired": "יש לבחור עמוד אחד לפחות מרשימת העמודים"
+    "pageUrlRequired": "יש לבחור עמוד אחד לפחות מרשימת העמודים",
+    "events_conflict_purchased_validation": "לא ניתן לבחור 'בוצעה רכישה' ו'לא בוצעה רכישה' עם אותה תקופת זמן. אנא שנה אחת מהן."
   },
   "updateFrequency": "אופן העלאה",
   "results": "לחץ לתוצאות",
@@ -76,5 +77,6 @@
   "exportGroupNames": "ייצא גם שמות קבוצות (עלול לקחת יותר זמן)",
   "exportGroupNamesTooltip": "This will take a little bit more time",
   "selectePages": "בחר עמודים",
-  "featuredDisallowDeleteGroup": "לא ניתן למחוק קבוצות אשר משוייך להן אחד מן הפיצ'רים הבאים:<br/><br/><li>AutoResponder</li><li>אוטומציה</li><li>דף נחיתה</li>"
+  "featuredDisallowDeleteGroup": "לא ניתן למחוק קבוצות אשר משוייך להן אחד מן הפיצ'רים הבאים:<br/><br/><li>AutoResponder</li><li>אוטומציה</li><li>דף נחיתה</li>",
+  "dynamic_group_purchase_conflict": "לא ניתן לבחור גם \"רכש\" וגם \"לא רכש\" בו-זמנית"
 }

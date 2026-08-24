@@ -56,7 +56,7 @@ import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
 import { IoIosArrowDown } from "react-icons/io";
 import QuickManualUploadDialog from "../../Newsletter/Wizard/Popups/QuickManualUploadDialog";
 import { IsValidPhone } from "../../../helpers/Utils/Validations";
-import { WhiteLabelObject } from "../../../components/WhiteLabel/WhiteLabelMigrate";
+import { WhiteLabelObject, getIsBeeperAccount } from "../../../components/WhiteLabel/WhiteLabelMigrate";
 import Pulse from "../../../components/Pulse/Pulse";
 import TierPlans from "../../../components/TierPlans/TierPlans";
 import { DateFormats, TierFeatures } from "../../../helpers/Constants";
@@ -76,6 +76,7 @@ const SmsSend = ({ classes, ...props }) => {
   const { OTPPassed, ToastMessages, extraData, getCampaignSum, testGroups, finishedCampaigns } = useSelector((state) => state.sms);
   const { subAccountAllGroups } = useSelector((state) => state.group);
   const { accountSettings, subAccount, verifiedNumbers, isSwippingApprovalSMS } = useSelector((state) => state.common);
+  const isBeeperAccount = getIsBeeperAccount(accountSettings);
   const { currentPlan, availablePlans } = useSelector((state) => state.tiers);
 
   const dispatch = useDispatch();
@@ -932,11 +933,9 @@ const SmsSend = ({ classes, ...props }) => {
           {manualClick === true ? (
             <div className={classes.manualChild} style={{ justifyContent: areaData === "" ? "flex-end" : "space-between" }}>
               {areaData !== "" ? (
-                <div>
+                <div className={classes.manualButtonGroup}>
                   <Button
-                    className={clsx(
-                      classes.ml5,
-                      classes.btn, classes.btnRounded)}
+                    className={clsx(classes.btn, classes.btnRounded)}
                     onClick={() => {
                       handlePasted();
                     }}
@@ -945,10 +944,7 @@ const SmsSend = ({ classes, ...props }) => {
                     {t("sms.editFields")}
                   </Button>
                   <Button
-                    className={clsx(
-                      classes.ml5,
-                      windowSize === "xs" ? classes.mt1 : '',
-                      classes.btn, classes.btnRounded)}
+                    className={clsx(classes.btn, classes.btnRounded)}
                     onClick={() => {
                       setareaData("");
                       setContacts([]);
@@ -1378,12 +1374,12 @@ const SmsSend = ({ classes, ...props }) => {
             }}
           >
             <FaRegCalendarAlt className={clsx(classes.paddingSides5)} />
-            {t("mainReport.pulseSend")}
+            {isBeeperAccount ? t("Beeper.batchSend") : t("mainReport.pulseSend")}
           </Button>
           <Tooltip
             disableFocusListener
             style={{ marginInlineEnd: isRTL ? 5 : 0, marginInlineStart: 5 }}
-            title={t("smsReport.pulseSendTip")}
+            title={isBeeperAccount ? t("Beeper.batchSendTip") : t("smsReport.pulseSendTip")}
             classes={{ tooltip: classes.customWidth }}
             className={clsx(classes.ml5, classes.mt1)}
           >
@@ -1394,14 +1390,14 @@ const SmsSend = ({ classes, ...props }) => {
           <Tooltip
             disableFocusListener
             style={{ marginInlineEnd: isRTL ? 5 : 0, marginInlineStart: 5 }}
-            title={t("smsReport.pulseCancel")}
+            title={isBeeperAccount ? t("Beeper.batchCancel") : t("smsReport.pulseCancel")}
             classes={{ tooltip: classes.customWidth }}
             className={clsx(classes.ml5, classes.mt1)}
           >
             <IconButton
               style={{ padding: 0, marginInlineStart: 10 }}
               className={clsx(classes.icon_Info, classes.f20)}
-              aria-label={t("smsReport.pulseCancel")}
+              aria-label={isBeeperAccount ? t("Beeper.batchCancel") : t("smsReport.pulseCancel")}
               onClick={() => setDialogType({ type: "cancelPulse" })}
             >
               <Close />

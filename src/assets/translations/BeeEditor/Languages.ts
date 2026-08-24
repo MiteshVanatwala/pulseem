@@ -1045,7 +1045,7 @@ export const TRANSLATE_HEBREW = {
         "error-browser-details": "יישום זה עובד בצורה הטובה ביותר בדפדפנים כרום, פיירפוקס, אדג' וספארי."
     },
     "bee-newsletter-modules-html": {
-        "html": "<div class=\"our-class\"> אני בלוק HTML חדש. </div>",
+        "html": "<div class=\"our-class\" dir=\"rtl\"> אני בלוק HTML חדש. </div>",
         "widget-warning-desc": "שימוש בקוד משלך עשוי להשפיע על אופן עיבוד ההודעה. הקפד להשתמש ב-HTML נכון ומגיב.",
         "widget-warning-title": "מומחי HTML בלבד"
     },

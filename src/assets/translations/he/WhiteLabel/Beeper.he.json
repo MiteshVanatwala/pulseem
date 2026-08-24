@@ -28,5 +28,8 @@
   "notEnoughCreditLeftDesc": "על מנת להוסיף קרדיטים לחשבון,<br/>יש ליצור עמנו קשר במייל <a href='mailto:support@beeper.ltd'>support@beeper.ltd</a>",
   "englishLetterNotApprovedDescription": "כדי לפתוח אפשרות זו עליך לעבור תהליך אימות בוידאו עם שירות הלקוחות שלנו<br/>אנא פנה אלינו במייל <a href='mailto:support@beeper.ltd'>support@beeper.ltd</a>",
   "smsCreatorPageTitle": "יצירת SMS | Beeper",
-  "verificationNote": "במידה ואתם שולחים עם המספר שהוקצה לכם ב-Beeper, אין צורך באימות."
+  "verificationNote": "במידה ואתם שולחים עם המספר שהוקצה לכם ב-Beeper, אין צורך באימות.",
+  "batchSend": "שליחה במנות",
+  "batchSendTip": "בחר קבוצה ומתי לשלוח כדי לארגן את שליחת המנות שלך.",
+  "batchCancel": "בטל שליחת מנה"
 }

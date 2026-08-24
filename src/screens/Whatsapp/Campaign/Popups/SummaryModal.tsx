@@ -52,7 +52,8 @@ const SummaryModal = ({
 	randomlyCount,
 	setRandomlyCount,
 	resetRandomCount,
-	pulseData
+	pulseData,
+	overrideMediaUrl,
 }: SummaryModalProps) => {
 	const dispatch = useDispatch();
 	const { campaignID } = useParams();
@@ -201,10 +202,12 @@ const SummaryModal = ({
 		return null;
 	};
 
+	const isPulseEnabled = pulseData?.togglePulse || pulseData?.toggleRandom;
+
 	const validateSummary = () => {
 		let validationErrors = [];
 		let isValidated = true;
-		const showTierAlert = isShowTierAlert(
+		const showTierAlert = !isPulseEnabled && isShowTierAlert(
 			campaignSummary?.WhatsappSmsLeft || 0,
 			campaignSummary?.FinalCount || 0,
 			campaignSummary?.WhatsappTierID || 1,
@@ -513,7 +516,7 @@ const SummaryModal = ({
 										</Box>
 									)
 								}
-								{isShowTierAlert(
+								{!isPulseEnabled && isShowTierAlert(
 									campaignSummary?.WhatsappSmsLeft || 0,
 									campaignSummary?.FinalCount || 0,
 									campaignSummary?.WhatsappTierID || 1,
@@ -594,7 +597,11 @@ const SummaryModal = ({
 										classes={classes}
 										templateData={templateData}
 										buttonType={buttonType}
-										fileData={fileData}
+										fileData={
+											overrideMediaUrl
+												? { ...fileData, fileLink: overrideMediaUrl }
+												: fileData
+										}
 									/>
 								</Box>
 

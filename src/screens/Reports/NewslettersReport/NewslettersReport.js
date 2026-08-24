@@ -17,7 +17,7 @@ import { getGetEmailReportsManagement } from '../../../redux/reducers/newsletter
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import { getCookie, setCookie } from '../../../helpers/Functions/cookies';
 import { ExportFile } from '../../../helpers/Export/ExportFile';
-import { EmailStatus, SEND_1, PULSE_1, SizeOptionsOfHandHeldDevices, DateFormats } from '../../../helpers/Constants';
+import { EmailStatus, SEND_1, PULSE_1, SizeOptionsOfHandHeldDevices, DateFormats, IS_MAX_WINDOW_WIDTH_WHEN_DRAWER_OPEN } from '../../../helpers/Constants';
 import { HandleExportData } from '../../../helpers/Export/ExportHelper';
 import { Loader } from '../../../components/Loader/Loader';
 import { useNavigate, useLocation } from 'react-router';
@@ -39,7 +39,7 @@ const NewslettersReport = ({ classes }) => {
   const { state } = useLocation();
   const from = state?.from || "/";
 
-  const { language, windowSize, isRTL, rowsPerPage, userRoles } = useSelector(state => state.core)
+  const { language, windowSize, isRTL, rowsPerPage, userRoles, isDrawerOpen } = useSelector(state => state.core)
   const { accountFeatures, currencySymbol, isCurrencySymbolPrefix } = useSelector(state => state.common);
   const { newslettersReportsParentCampaigns, newslettersReportsChildCampaigns } = useSelector(state => state.newsletter)
   const { t } = useTranslation()
@@ -66,7 +66,12 @@ const NewslettersReport = ({ classes }) => {
   const [expandedIds, setExpandedIds] = useState([]);
   const [parentCampaignsWithChild, setParentCampaignsWithChild] = useState([]);
   const virtuosoRef = useRef();
-
+  const responsiveStyle = (isDrawerOpen && IS_MAX_WINDOW_WIDTH_WHEN_DRAWER_OPEN()) ? {
+      flexWrap: "wrap",
+      textAlign: "right",
+      gap: "10px",
+      justifyContent: "end"
+    } : {}
   moment.locale(language)
 
   const getHrefs = (id, Name, revenue = 0, isParent = false) => ({
@@ -200,8 +205,8 @@ const NewslettersReport = ({ classes }) => {
     },
     RemoveReasons: {
       title: t("mainReport.locRemovedReason.HeaderText"),
-      href: `/Pulseem/RemovedStats.aspx?CampaignID=${id}&fromreact=true`,
-      onClick: () => !userRoles?.HideRecipients && navigate(`/Pulseem/RemovedStats.aspx?CampaignID=${id}&fromreact=true`),
+      href: `${sitePrefix}RemovedStats?CampaignID=${id}`,
+      onClick: () => !userRoles?.HideRecipients && navigate(`${sitePrefix}RemovedStats?CampaignID=${id}`),
       icon: '\uE15D'
     },
     Revenue: {
@@ -453,7 +458,7 @@ const NewslettersReport = ({ classes }) => {
     return (
       <Grid
         container
-        spacing={2}
+        spacing={1}
         className={clsx(SizeOptionsOfHandHeldDevices.indexOf(windowSize) > -1 ? classes.mt15 : classes.lineTopMarging, 'searchLine')}>
         <Grid item>
           <TextField
@@ -468,7 +473,7 @@ const NewslettersReport = ({ classes }) => {
         </Grid>
 
         {windowSize !== 'xs' ?
-          <Grid item>
+          <Grid item md={2}>
             <DateField
               toolbarDisabled={false}
               classes={classes}
@@ -480,7 +485,7 @@ const NewslettersReport = ({ classes }) => {
           : null}
 
         {windowSize !== 'xs' ?
-          <Grid item>
+          <Grid item md={2}>
             <DateField
               toolbarDisabled={false}
               classes={classes}
@@ -610,6 +615,7 @@ const NewslettersReport = ({ classes }) => {
 
   const renderNameCell = (row, isParent) => {
     const { CampaignID, Name, SendDate, isChecked = false, Status, LastEditDate } = row
+    const isPulseSend = row.IsPulseSend === true || row.Name?.includes('_Pulse_') || (row.PulseAmount > 0) || newslettersReportsChildCampaigns.some(c => c?.ParentCampaignId === row.CampaignID && c.Name?.includes('_Pulse_'));
 
     const date = SendDate ? moment(SendDate) : ''
     const showDate = SendDate ? date.format(DateFormats.DATE_ONLY) : ''
@@ -647,6 +653,11 @@ const NewslettersReport = ({ classes }) => {
               </Typography>
             )
           }
+          {isPulseSend && (
+            <Typography className={classes.pulseSendPill}>
+              {t('common.pulseSendPill')}
+            </Typography>
+          )}
         </>
       )
     }
@@ -702,6 +713,11 @@ const NewslettersReport = ({ classes }) => {
                 {t("common.UpdatedOn")} {`${isRTL ? showUpdateDate : moment(showUpdateDate).format(DateFormats.DATE_ONLY)} ${showTimeUpdate}`}
               </Typography>
             )}
+          {isPulseSend && (
+            <Typography className={classes.pulseSendPill}>
+              {t('common.pulseSendPill')}
+            </Typography>
+          )}
         </Grid>
       </Grid>
     )
@@ -904,7 +920,7 @@ const NewslettersReport = ({ classes }) => {
             classes={borderCellStyle}
             align='center'
             className={classes.flex3}>
-            <Grid container className={clsx(classes.justifyEvenly, classes.responsiveFlex)}>
+            <Grid container className={clsx(classes.justifyEvenly, classes.responsiveFlex)} style={responsiveStyle}>
               <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
                 {renderDataTooltip(isParent ? SumOpenCount : row.OpenCount, 'green', hrefs.OpenCount, 'mainReport.OpensTotalTooltip.Text', row.CampaignID)}
               </Grid>
@@ -922,7 +938,7 @@ const NewslettersReport = ({ classes }) => {
             classes={borderCellStyle}
             align='center'
             className={classes.flex3}>
-            <Grid container className={clsx(classes.justifyEvenly, classes.responsiveFlex)}>
+            <Grid container className={clsx(classes.justifyEvenly, classes.responsiveFlex)}  style={responsiveStyle}>
               <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
                 {renderDataTooltip(isParent ? SumClickCount : row.ClickCount, 'blue', hrefs.ClickCount, 'mainReport.ClicksTotalTooltip.Text')}
               </Grid>
@@ -939,7 +955,7 @@ const NewslettersReport = ({ classes }) => {
             classes={borderCellStyle}
             align='center'
             className={classes.flex3}>
-            <Grid container className={clsx(classes.justifyEvenly, classes.responsiveFlex)}>
+            <Grid container className={clsx(classes.justifyEvenly, classes.responsiveFlex)} style={responsiveStyle}>
               <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
                 {renderIntData(isParent ? SumSendError : row.SendError, 'red', hrefs.SendError, isParent && childItems.length > 0 ? false : true, t('mainReport.GridButtonColumnResource4.HeaderText'), childItems.length > 0 ? isParent : false)}
               </Grid>
@@ -1059,7 +1075,7 @@ const NewslettersReport = ({ classes }) => {
                       {renderIntData(isParent ? SumOpenCount : OpenCount, 'green', hrefs.OpenCount, false)}
                     </Grid>
                     <Grid item xs={6}>
-                      {renderIntData(isParent ? SumOpenCountUnique : OpenCountUnique, 'green', hrefs.OpenCountUnique, false)}
+                      {renderIntData(isParent ? SumOpenCountUnique : OpenCountUnique, 'green', hrefs.OpenCountUnique, true)}
                     </Grid>
                   </Grid>
                 </Grid>
@@ -1072,7 +1088,7 @@ const NewslettersReport = ({ classes }) => {
                       {renderIntData(isParent ? SumClickCount : ClickCount, 'blue', hrefs.ClickCount, false)}
                     </Grid>
                     <Grid item xs={6}>
-                      {renderIntData(isParent ? SumClickCountUnique : ClickCountUnique, 'blue', hrefs.ClickCountUnique, false)}
+                      {renderIntData(isParent ? SumClickCountUnique : ClickCountUnique, 'blue', hrefs.ClickCountUnique, true)}
                     </Grid>
                   </Grid>
                 </Grid>
@@ -1093,19 +1109,19 @@ const NewslettersReport = ({ classes }) => {
                 <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
                   {t("mainReport.GridButtonColumnResource4.HeaderText")}
                 </Typography>
-                {renderIntData(isParent ? SumSendError : SendError, 'red', hrefs.SendError, false)}
+                {renderIntData(isParent ? SumSendError : SendError, 'red', hrefs.SendError, isParent && parentCampaignsWithChild.indexOf(row.CampaignID) > -1 ? false : true)}
               </Grid>
               <Grid item xs={3}>
                 <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
                   {t("mainReport.removals")}
                 </Typography>
-                {renderIntData(isParent ? SumRemovedClients : RemovedClients, 'red', hrefs.RemovedClients, false)}
+                {renderIntData(isParent ? SumRemovedClients : RemovedClients, 'red', hrefs.RemovedClients, true)}
               </Grid>
               <Grid item xs={3}>
                 <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
                   {t("mainReport.GridButtonColumnResource3.HeaderText")}
                 </Typography>
-                {renderIntData(isParent ? SumNotOpened : NotOpened, 'red', hrefs.NotOpened, false)}
+                {renderIntData(isParent ? SumNotOpened : NotOpened, 'red', hrefs.NotOpened, true)}
               </Grid>
               {hasRevenue && <Grid item xs={3}>
                 <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
@@ -1208,6 +1224,8 @@ const NewslettersReport = ({ classes }) => {
 
   return (
     <DefaultScreen
+      key="newsletterReport"
+      subPage='newsletterReport'
       currentPage='reports'
       classes={classes}
       containerClass={clsx(classes.management, classes.mb50)}>

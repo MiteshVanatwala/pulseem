@@ -5,6 +5,7 @@ const rtlLanguages = ['he', 'ar']
 
 export const isSuperUserSelector = (permissions) => {
   if (permissions.indexOf(-1) > -1) return true;
+  if (permissions.indexOf(4) > -1) return false;
   const adminPermissions = [1, 2, 3];
   return adminPermissions?.every(permission =>
     permissions?.indexOf(permission) > -1
@@ -17,6 +18,11 @@ export const coreSlice = createSlice({
     language: 'he',
     isRTL: false,
     windowSize: 'lg',
+    isSidebarCollapsed: (() => {
+      const cookie = getCookie('SidebarCollapsed');
+      if (cookie !== null) return cookie === 'true';
+      return false;
+    })(),
     basename: '',
     email: '',
     imageURL: '',
@@ -62,7 +68,8 @@ export const coreSlice = createSlice({
           }
         ]
       }
-    }
+    },
+    isDrawerOpen: false
   },
   reducers: {
     setIsClal: (state, action) => {
@@ -74,6 +81,10 @@ export const coreSlice = createSlice({
     },
     setWindowSize: (state, action) => {
       state.windowSize = action.payload
+    },
+    setSidebarCollapsed: (state, action) => {
+      state.isSidebarCollapsed = action.payload
+      setCookie('SidebarCollapsed', action.payload, { maxAge: 2147483647 })
     },
     setRowsPerPage: (state, action) => {
       state.rowsPerPage = action.payload
@@ -102,11 +113,14 @@ export const coreSlice = createSlice({
       state.subUserObject.Data.Cellphones[0].AuthValue = userToken?.Cellphone;
       state.isOnlyWhatsAppChat = payload?.isOnlyWhatsAppChat || false;
 
-      if (isSuperUser) {
+      if (isSuperUser && !isReadOnly) {
         state.userRoles = UserRoles.Admin;
       }
       else if (isReadOnly) {
-        state.userRoles = UserRoles.ReadOnly;
+        const hasWhatsAppAgent = userToken?.UserPermissions?.indexOf(eSubUserPermissions.AllowWhatsAppToAgent) > -1;
+        state.userRoles = hasWhatsAppAgent
+          ? { ...UserRoles.ReadOnly, AllowWhatsAppToAgent: true }
+          : UserRoles.ReadOnly;
       }
       else {
         const roles = {
@@ -114,7 +128,8 @@ export const coreSlice = createSlice({
           Restricted: {
             AllowSend: userToken.UserPermissions.indexOf(eSubUserPermissions.AllowSend) > -1,
             AllowExport: userToken.UserPermissions.indexOf(eSubUserPermissions.AllowExport) > -1,
-            AllowDelete: userToken.UserPermissions.indexOf(eSubUserPermissions.AllowDelete) > -1
+            AllowDelete: userToken.UserPermissions.indexOf(eSubUserPermissions.AllowDelete) > -1,
+            AllowWhatsAppToAgent: userToken.UserPermissions.indexOf(eSubUserPermissions.AllowWhatsAppToAgent) > -1
           }
         }
         state.userRoles = roles.Restricted;
@@ -122,11 +137,14 @@ export const coreSlice = createSlice({
     },
     setIsLoader: (state, { payload }) => {
       state.isLoader = payload
+    },
+    setIsDrawerOpen: (state, { payload }) => {
+      state.isDrawerOpen = payload
     }
   }
 })
 
 export const selectUserObject = (state) => state.core.subUserObject;
-export const { setLanguage, setWindowSize, setCoreData, setRowsPerPage, setIsClal, setIsLoader } = coreSlice.actions // setSmsOldVersion
+export const { setLanguage, setWindowSize, setCoreData, setRowsPerPage, setIsClal, setIsLoader, setIsDrawerOpen, setSidebarCollapsed } = coreSlice.actions // setSmsOldVersion
 
 export default coreSlice.reducer

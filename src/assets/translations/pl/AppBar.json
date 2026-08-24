@@ -1,5 +1,6 @@
 {
   "admin": "Admin",
+  "backToAdmin": "Powrót do Admina",
   "dashboard": "Pulpit",
   "groups": {
     "title": "Grupy",

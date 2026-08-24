@@ -120,7 +120,7 @@ export const getArchiveSMSDirectReport = createAsyncThunk(
 	'directReport/GetArchiveSmsDirect',
 	async (data, thunkAPI) => {
 		try {
-			const response = await PulseemReactInstance.post(`directReport/GetArchiveSmsDirect`, data);
+			const response = await PulseemReactInstance.post(`directReport/GetArchiveSmsDirect`, data, { timeout: 30000 });
 			return JSON.parse(response.data);
 		} catch (error) {
 			return thunkAPI.rejectWithValue({ error: error.message });

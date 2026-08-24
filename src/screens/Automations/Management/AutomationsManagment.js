@@ -278,7 +278,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
         key: 'preview',
         uIcon: PreviewIcon,
         lable: t('campaigns.Image1Resource1.ToolTip'),
-        remove: windowSize === 'xs',
+        remove: false,
         rootClass: classes.paddingIcon,
         onClick: () => {
           pulseemNewTab(`CreateAutomations.aspx?Mode=show&AutomationID=${ID}&Culture=${getLanguageCulture(language)}`)
@@ -512,24 +512,27 @@ const AutomationsManagnentScreen = ({ classes }) => {
         component='div'
         classes={rowStyle}>
         <TableCell style={{ flex: 1 }} classes={{ root: clsx(classes.tableCellRoot, classes.tabelCellPadding) }}>
-          <Box className={classes.inlineGrid}>
-            {renderNameCell(row)}
+          <Box className={classes.justifyBetween}>
+            <Box className={classes.inlineGrid}>
+              {renderNameCell(row)}
+            </Box>
+            {renderStatusCell(row)}
           </Box>
-          <Grid container justifyContent={'space-between'}>
-            <Grid item container className={classes.widthUnset}>
-              <Grid item className={clsx(classes.flexColumn2, classes.txtCenter, classes.pt14)}>
-                {renderRecipientsCell(row.Recipients)}
-              </Grid>
-              <Grid item className={clsx(classes.flexColumn2, classes.txtCenter, classes.pt14)}>
-                {renderDaysActiveCell(row.activeDaysCount)}
-              </Grid>
-
+          <Grid container className={classes.pt5}>
+            <Grid item xs={6} sm={6}>
+              <Typography className={classes.middleText}>
+                {t('campaigns.recipients')}: {(row.Recipients || 0).toLocaleString()}
+              </Typography>
             </Grid>
-            <Grid item style={{ display: 'flex', alignItems: 'center' }}>
-              {renderStatusCell(row)}
-              {renderCellIcons(row)}
+            <Grid item xs={6} sm={6}>
+              <Typography className={classes.middleText}>
+                {t('automations.days')}: {(row.activeDaysCount || 0).toLocaleString()}
+              </Typography>
             </Grid>
           </Grid>
+          <Box className={classes.pt10}>
+            {renderCellIcons(row)}
+          </Box>
         </TableCell>
       </TableRow>
     )
@@ -930,7 +933,9 @@ const getTierValidationDialog = () => ({
   }
   return (
     <DefaultScreen
+      key="automations"
       currentPage='automations'
+      subPage='automations'
       classes={classes}
       containerClass={clsx(classes.management, classes.mb50)}>
       <Box className={'topSection'}>

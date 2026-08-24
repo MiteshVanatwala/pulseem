@@ -827,6 +827,9 @@
   "maxPrice": "מחיר מקסימלי",
   "abandonedCart": "נטש עגלה ב",
   "pageViewed": "צפה בעמוד ב",
+  "page_viewed_match_exact": "בדיוק",
+  "page_viewed_match_contains": "כולל",
+  "field_required": "שדה חובה",
   "priceRangeError": "מחיר המקסימום גבוה ממחיר המינימום",
   "verifyByEmail": "אימות באימייל",
   "verifyBySms": "אימות ב-SMS",
@@ -882,6 +885,7 @@
   "polyAgentIconTitle": "היי, אני פולסי. בואו נדבר",
   "polyAgentIconTitleSupport": "היי, אני פולסי, סוכן התמיכה שלך",
   "polyAgentIconTitleMarquee": "היי! אני פולסי, מה תרצו לשפר היום?",
+  "dragHint": "אפשר לגרור אותי לכל מקום 👋",
   "agentPlaceholder": "תשאלו אותי משהו... (למשל: \"מה ביצועי הקמפיינים שלי?\") תכתבו חופשי...",
   "agentPlaceholderSupport": "שאלו אותי על Pulseem... (למשל: \"איך שולחים SMS?\") תכתבו חופשי ...",  
   "welcomeMessage": "היי, קוראים לי מיטש {USERNAME}",
@@ -941,5 +945,8 @@
   "typeSubject": "הקלד נושא",
   "manageAgent": "נהל סוכן",
   "clearAllFilters": "נקה את כל המסננים",
-  "allNumbers": "כל המספרים"
+  "allNumbers": "כל המספרים",
+  "pulseSendPill": "שליחה בפולסים",
+  "page_viewed_contains_placeholder": "/checkout",
+  "page_viewed_contains_tooltip": "מתאים לאנשי קשר שביקרו בעמוד שה-URL שלו מכיל טקסט זה. לא תלוי רישיות. כולל פרמטרים של URL. יש להזין ערך אחד בלבד – ללא פסיקים."
 }

@@ -1,5 +1,5 @@
 {
-	"title": "Onboarding WhatsApp",
+	"title": "WhatsApp Onboarding",
 	"instruction_step_1": "Upewnij się, że Twoje konto biznesowe Meta jest zweryfikowane. Jeśli Twoje konto nie jest zweryfikowane, zweryfikuj je zgodnie z <a href='https://www.facebook.com/business/help/2058515294227817?id=180505742745347'>tym przewodnikiem</a>",
 	"instruction_step_2": "Kup wirtualny numer od Pulseem.",
 	"instruction_step_3": "Kliknij \"Zaloguj się przez Facebooka\". Udziel dostępu Pulseem i wypełnij wszystkie niezbędne pola zgodnie z instrukcjami.",
@@ -20,13 +20,26 @@
 	"ID": "ID",
 	"phoneNumber": "Numer Telefonu",
 	"tier": "Poziom",
-	"limit": "limit",
+	"limit": "Limit",
 	"enterPin": "Wprowadź PIN",
 	"pin": "PIN",
 	"registerPIN": "Zarejestruj PIN",
 	"phoneNumberRegistered": "Numer telefonu został pomyślnie zarejestrowany.",
+	"coexistenceSyncStarted": "Połączono pomyślnie. Kontakty i historia wiadomości zostaną zsynchronizowane automatycznie w ciągu 24 godzin.",
+	"coexistenceToggleLabel": "Synchronizacja z aplikacją WhatsApp Business (Coexistence)",
+	"coexistenceToggleDescription": "Włącz, aby synchronizować wiadomości między Pulseem a natywną aplikacją WhatsApp Business.",
+	"coexistenceNotAllowed": "Coexistence jest dostępne tylko w planie PRO.",
+	"newBusinessAccount": "Nowe konto WhatsApp Business",
+	"alreadyUseWhatsAppApp": "Korzystam już z aplikacji WhatsApp Business",
 	"enterValidPIN": "Wprowadź prawidłowy PIN",
 	"loginWithFacebook": "Zaloguj się przez Facebooka",
+	"loginWithFacebookCoexistence": "Zaloguj się przez Facebooka (Coexistence)",
+	"coexistenceColumn": "Coexistence",
+	"syncColumn": "Synchronizuj historię z ostatnich 6 miesięcy",
+	"syncTooltip": "Importuje do Pulseem historię czatów WhatsApp z ostatnich 6 miesięcy. Opcję tę można włączyć tylko w ciągu 24 godzin od podłączenia (ograniczenie Meta) — później nie będzie to możliwe.",
+	"SyncCoexistenceHistoryResponseCode": {
+		"9": "To żądanie można wykonać tylko w ciągu 24 godzin od podłączenia. Okno synchronizacji dla tego numeru zostało zamknięte."
+	},
 	"SaveWhatsappMetaClientsResponseCode": {
 		"3": "Subkonto nie znalezione",
 		"4": "Brak konfiguracji Meta",
@@ -34,6 +47,7 @@
 		"6": "Nie możesz użyć innego konta biznesowego WhatsApp",
 		"7": "Token dostępu nie znaleziony w Meta",
 		"8": "Dane telefonu nie znalezione w Meta",
+		"9": "Coexistence jest dostępne tylko w planie PRO",
 		"100": "Błąd wewnętrzny"
 	},
 	"MetaPhoneRegister": {

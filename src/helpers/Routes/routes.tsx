@@ -56,7 +56,7 @@ export const getSettingsItem = (
     { key: 'Integrations', title: t('integrations.title'), href: `${sitePrefix}Integrations`, iconSrc: SettingsMenuIcon, isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount && userRoles.AllowSend },
     { key: 'SubUsers', title: t('SubUsers.title'), href: `${sitePrefix}SubUsers`, iconSrc: SettingsMenuIcon, isShow: true },
     //@ts-ignore
-    { key: 'Guides', title: t('common.UserGuides'), href: `https://site.pulseem.co.il/%D7%9E%D7%93%D7%A8%D7%99%D7%9B%D7%99%D7%9D/`, iconSrc: SettingsMenuIcon, isShow: (!accountSettings?.SubAccountSettings?.IsTokenAccount && (WhiteLabelObject[accountSettings?.Account?.ReferrerID] === undefined || !accountSettings?.Account?.ReferrerID || accountSettings?.Account?.ReferrerID === 0)) ? true : false, openInNewWindow: true },
+    { key: 'Guides', title: t('common.UserGuides'), href: `https://site.pulseem.co.il/guides-2/`, iconSrc: SettingsMenuIcon, isShow: (!accountSettings?.SubAccountSettings?.IsTokenAccount && (WhiteLabelObject[accountSettings?.Account?.ReferrerID] === undefined || !accountSettings?.Account?.ReferrerID || accountSettings?.Account?.ReferrerID === 0)) ? true : false, openInNewWindow: true },
     { title: t("appBar.logout"), onClick: logout, iconSrc: isRTL ? HiArrowLeft : HiArrowRight, isFaIcon: true, isShow: true },
   ],
 });
@@ -89,7 +89,7 @@ export const getRoutes = (
       iconUnicode: "\ue0d5",
       href: `${sitePrefix}groups`,
       isShow: true,
-      icon: <img alt="Groups" src={GroupsIcon} />,
+      iconName: 'MdPeople',
       options: [
         {
           key: "groupManagement",
@@ -121,15 +121,54 @@ export const getRoutes = (
           isShow: false,
         },
         {
+          key: 'fileUploads',
           title: t("master.RadMenuItemResourceFileUploads.Text"),
           href: `${sitePrefix}Groups/FileUploads`,
           isShow: true,
         },
         {
-          key: 'downloadReports',
+          key: 'downloadfiles',
           title: t('master.fileDownload'),
           href: `${sitePrefix}groups/Download`,
           isShow: true
+        },
+        {
+          key: 'dataSources',
+          title: t('DataSources.menuTitle'),
+          href: `${sitePrefix}DataSources`,
+          isShow: !!(features && features.indexOf(PulseemFeatures.DATA_SOURCES) > -1)
+        },
+        {
+          // HIDDEN FROM THE SIDEBAR ON PURPOSE (PO decision) — Smart Send is a step, not a destination:
+          // it is reached from the Data Sources header button, from any source row, from the campaign
+          // row action, from the BEE editor, and from the mapping registry tab. SmartSendScreen itself
+          // already declares currentPage="groups", so the app never treated this as its own place.
+          //
+          // isShow:false, NOT deletion. DefaultScreen.js:41-43 derives the browser <title> from THIS
+          // record, matching on `key` alone and ignoring isShow — so the entry has to survive for
+          // /SmartSend and /Campaigns/SmartSend/:id to keep their tab titles. Deleting it drops them to
+          // a bare "מערכת פולסים" in the tab, in history and in every bookmark.
+          //
+          // Both routes stay registered in App.js — only the sidebar entry goes.
+          key: 'smartSend',
+          title: t('DataSources.send.title'),
+          href: `${sitePrefix}SmartSend`,
+          isShow: false
+        },
+        {
+          // NOT gated on AllowSend, unlike smartSend above. SendSearch is a read-only report;
+          // requiring send permission would hide it from the supervisors and support staff it exists
+          // for. That stays true. It must stay identical to the route gate in App.js (P3.2).
+          //
+          // HideRecipients IS gated, and that is a different permission from AllowSend — no conflict
+          // with the paragraph above. SendSearchController refuses the Search action outright with 405
+          // for this permission ("It returns recipient PII"), so without this the entry was a dead menu
+          // item: it opened a page on which every search came back empty with a permission error.
+          // Same test as the `clientSearch` entry above, for the same reason.
+          key: 'sendSearch',
+          title: t('SendSearch.nav.sendSearch'),
+          href: `${sitePrefix}SendSearch`,
+          isShow: !!(features && features.indexOf(PulseemFeatures.DATA_SOURCES) > -1 && !userRoles?.HideRecipients)
         }
       ],
     },
@@ -140,7 +179,7 @@ export const getRoutes = (
       iconUnicode: "\ue0a1",
       href: `${sitePrefix}Campaigns`,
       isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount && !isBeeperAccount,
-      icon: <img alt="Newsletter" src={NewsletterIcon} />,
+      iconName: 'MdMarkEmailRead',
       options: [
         {
           key: "newsletterInfo",
@@ -149,6 +188,7 @@ export const getRoutes = (
           isShow: true,
         },
         {
+          key: "newsletterManagment",
           title: t("master.RadMenuItemResource9.Text"),
           href: `${sitePrefix}Campaigns`,
           isShow: true,
@@ -210,7 +250,7 @@ export const getRoutes = (
         features !== null &&
         features.indexOf("7") > -1 &&
         !accountSettings?.SubAccountSettings?.IsTokenAccount,
-      icon: <img alt="Sms" src={SmsIcon} />,
+      iconName: 'MdSms',
       options: [
         {
           key: "create",
@@ -219,6 +259,7 @@ export const getRoutes = (
           isShow: true,
         },
         {
+          key: "smsManagment",
           title: t("master.RadMenuItemResource102.Text"),
           href: `${sitePrefix}SMSCampaigns`,
           isShow: true,
@@ -249,10 +290,9 @@ export const getRoutes = (
       key: 'whatsapp',
       title: 'Whatsapp',
       pageTitle: t('whatsapp.Title'),
-      iconUnicode: <MdOutlineWhatsapp />,
+      iconName: 'IoLogoWhatsapp',
       href: whatsappRoutes.CAMPAIGN_MANAGEMENT,
       isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount && !isBeeperAccount,
-      icon: <WhatsappIcon className='header-whatsapp-icon' />,
       options: [
         {
           key: 'create',
@@ -261,7 +301,7 @@ export const getRoutes = (
           isShow: true,
         },
         {
-          key: 'send',
+          key: 'createWhatsappCampaign',
           title: t('whatsapp.SendWhatsappCampaign'),
           href: whatsappRoutes.CREATE_CAMPAIGN_PAGE1,
           isShow: true,
@@ -282,7 +322,7 @@ export const getRoutes = (
           key: 'chat',
           title: t('whatsapp.ChatWhatsapp'),
           href: whatsappRoutes.CHAT,
-          isShow: true,
+          isShow: userRoles?.AllowWhatsAppToAgent,
         },
         {
           key: 'onboarding',
@@ -299,15 +339,16 @@ export const getRoutes = (
       iconUnicode: "\ue09d",
       href: `${sitePrefix}EditRegistrationPage`,
       isShow: true,
-      icon: <img alt="Landing Pages" src={LandingPageIcon} />,
+      iconName: 'FiFileText',
       options: [
         {
+          key: "createLandingPage",
           title: t("master.RadMenuItemLandingPage.Text"),
           href: `${sitePrefix}LandingPages/Create`,
           isShow: true,
         },
         {
-        title: t("master.RadMenuItemLandingManagement.Text"),
+          title: t("master.RadMenuItemLandingManagement.Text"),
           href: `${sitePrefix}EditRegistrationPage`,
           isShow: true,
         },
@@ -350,8 +391,31 @@ export const getRoutes = (
           key: 'previewer',
           title: t("landingPages.editLandingPage"),
           href: ``,
-          isShow: false
+          isShow: false,
         }
+      ],
+    },
+    {
+      key: "popups",
+      title: t("landingPages.popups") || "Pop Ups",
+      pageTitle: t("landingPages.popups") || "Pop Ups",
+      iconUnicode: "\ue09d",
+      href: `${sitePrefix}PopUpManagement`,
+      isShow: features && features?.indexOf(PulseemFeatures.Popup) > -1,
+      iconName: 'FaRegWindowRestore',
+      options: [
+        {
+          key: "createPopup",
+          title: t("landingPages.createPopup"),
+          href: `${sitePrefix}Popups/Create`,
+          isShow: true,
+        },
+        {
+          key: "popupManagement",
+          title: t("master.RadMenuItemPopupManagement.Text"),
+          href: `${sitePrefix}PopUpManagement`,
+          isShow: true,
+        },
       ],
     },
     {
@@ -361,7 +425,7 @@ export const getRoutes = (
       iconUnicode: "\ue087",
       href: `${sitePrefix}Automations`,
       isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount && !isBeeperAccount,
-      icon: <img alt="Automations" src={AutomationsIcon} />,
+      iconName: 'BiSitemap',
       options: [
         {
           title: t("master.createTemplate"),
@@ -380,11 +444,20 @@ export const getRoutes = (
           isShow: true,
         },
         {
+          key: "automations",
           title: t("master.RadMenuItemManageAutomationResource.Text"),
           href: `${sitePrefix}Automations`,
           isShow: true,
         },
       ],
+    },
+    {
+      key: "Integrations",
+      title: t("integrations.hubTitle"),
+      pageTitle: t("integrations.hubTitle"),
+      href: `${sitePrefix}Integrations`,
+      isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount && userRoles?.AllowSend,
+      iconName: 'MdOutlineDashboardCustomize',
     },
     {
       key: "notifications",
@@ -399,15 +472,16 @@ export const getRoutes = (
         features.indexOf("35") > -1 &&
         !accountSettings?.SubAccountSettings?.IsTokenAccount &&
         !isBeeperAccount,
-      icon: <img alt="Notifications" src={NotificationsIcon} />,
+      iconName: 'MdNotificationsActive',
       options: [
         {
-          key: "create",
+          key: "createNotification",
           title: t("master.createNotification"),
           href: `${sitePrefix}Notification/create`,
           isShow: true,
         },
         {
+          key: "notifications",
           title: t("master.manageNotifications"),
           href: `${sitePrefix}Notifications`,
           isShow: true,
@@ -421,10 +495,10 @@ export const getRoutes = (
       iconUnicode: "\ue049",
       href: `${sitePrefix}Reports/NewsletterReports`,
       isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount,
-      icon: <img alt="Reports" src={ReportsIcon} />,
+      iconName: 'FiPieChart',
       options: [
         { title: t('master.clalCollage'), href: `${rootDomain}/ClalReport.aspx?fromreact=true`, isShow: (isClalAccount === 'true' || isClalAccount === true) },
-        { title: t('master.RadMenuItemResource13.Text'), href: `${sitePrefix}reports/NewsletterReports`, isShow: !isBeeperAccount },
+        { key: "newsletterReport", title: t('master.RadMenuItemResource13.Text'), href: `${sitePrefix}reports/NewsletterReports`, isShow: !isBeeperAccount },
         { key: 'SmsReport', title: t('master.RadMenuItemResource24.Text'), href: `${sitePrefix}reports/SMSMainReport`, isShow: true },
         // { key: 'MmsReport', title: t('mmsreport.mmsReport'), href: `${sitePrefix}Reports/MMSMainReport`, isShow: true },
         { key: 'whatsappReports', title: t('whatsapp.ReportsWhatsapp'), href: whatsappRoutes.REPORTS, isShow: !isBeeperAccount },

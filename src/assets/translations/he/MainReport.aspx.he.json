@@ -513,6 +513,8 @@
   "campaignRequire":"שם הקמפיין - שדה חובה",
   "msgRequire":"טקסט לשליחה - שדה חובה",
   "campaignFromRequire":"קמפיין מאת - שדה חובה",
+  "campaignFromMaxLength":"שם השולח לא יכול לעלות על 11 תווים",
+  "campaignFromNumberMaxLength":"מספר השולח לא יכול לעלות על 11 תווים",
   "confirmSms":"אישור",
   "waizeTitle":"הוסף קישור ניווט לווייז",
   "searchSms":"חיפוש",

@@ -34,7 +34,7 @@ const DEFAULT_FILTER = {
     CategoryID: [],
     IsExport: false,
     OrderBY: 0,
-    OrderByParameter: null
+    OrderByParameter: 'Purchased'
 }
 
 const ProductsReport = ({ classes }) => {

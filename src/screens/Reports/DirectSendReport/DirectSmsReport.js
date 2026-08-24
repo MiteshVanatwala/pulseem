@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import Toast from '../../../components/Toast/Toast.component';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import {
@@ -51,7 +52,14 @@ const DirectSMSReportTab = ({
   const noborderCell = { body: clsx(classes.tableCellBody, classes.noborder), root: classes.tableCellRoot };
   const { t } = useTranslation();
   const [showLoader, setLoader] = useState(false)
+  const [toastMessage, setToastMessage] = useState(null)
   const { showContent } = useSelector(state => state.report);
+
+  useEffect(() => {
+    if (!toastMessage) return;
+    const timer = setTimeout(() => setToastMessage(null), 4000);
+    return () => clearTimeout(timer);
+  }, [toastMessage]);
   const { isGlobal } = useSelector((state) => state.common)
 
   const handleSearch = async () => {
@@ -78,10 +86,15 @@ const DirectSMSReportTab = ({
       }
     })
 
-    await dispatch(isArchive ? getArchiveSMSDirectReport(searchObjects) : getSMSDirectReport(searchObjects))
-    if (isGlobal) dispatch(GetGlobalAccountPackagesDetails());
-    handleSearching('sms', true);
-    setLoader(false);
+    try {
+      await dispatch(isArchive ? getArchiveSMSDirectReport(searchObjects) : getSMSDirectReport(searchObjects)).unwrap()
+      if (isGlobal) dispatch(GetGlobalAccountPackagesDetails());
+      handleSearching('sms', true);
+    } catch (error) {
+      setToastMessage({ severity: 'error', color: 'error', message: 'report.archiveSearchError', showAnimtionCheck: false });
+    } finally {
+      setLoader(false);
+    }
   }
 
   const searchRequest = async (pageSize, pageIndex) => {
@@ -93,8 +106,13 @@ const DirectSMSReportTab = ({
       ...sms
     };
     params["ShowContent"] = sms.ShowContent ?? showContent;
-    await dispatch(isArchive ? getArchiveSMSDirectReport(params) : getSMSDirectReport(params))
-    setLoader(false);
+    try {
+      await dispatch(isArchive ? getArchiveSMSDirectReport(params) : getSMSDirectReport(params)).unwrap()
+    } catch (error) {
+      setToastMessage({ severity: 'error', color: 'error', message: 'report.archiveSearchError', showAnimtionCheck: false });
+    } finally {
+      setLoader(false);
+    }
   }
 
   const handlePageSearching = (val) => {
@@ -662,6 +680,7 @@ const DirectSMSReportTab = ({
       {renderTablePagination()}
       {directSmsReport && <TotalSection classes={classes} TotalObject={directSmsReport} callerType="sms" />}
       <Loader isOpen={showLoader} />
+      {toastMessage && <Toast data={toastMessage} />}
     </>
   );
 }

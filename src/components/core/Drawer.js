@@ -5,10 +5,10 @@ import {
   List, ListItem, ListItemIcon, ListItemText, Collapse
 } from '@material-ui/core';
 import { useTranslation } from "react-i18next";
-//import {useSelector,useDispatch} from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { ContactIcon, GuidsIcon, LogoutIcon } from '../../assets/images/drawer/index'
 import { getRoutes } from '../../helpers/Routes/routes'
-import { useSelector } from 'react-redux';
+import { setIsDrawerOpen } from '../../redux/reducers/coreSlice';
 
 const DrawerItem = ({
   item,
@@ -118,6 +118,7 @@ export const Drawer = ({ classes }) => {
   const [open, setOpen] = useState(true)
   const [currentRoute, setCurrentRoute] = useState('')
   const { t } = useTranslation()
+  const dispatch = useDispatch();
   const { windowSize, isRTL, isClal } = useSelector(state => state.core)
   const { accountSettings, accountFeatures } = useSelector(state => state.common);
 
@@ -126,6 +127,7 @@ export const Drawer = ({ classes }) => {
   const handleOpen = () => {
     setOpen(!open)
     setCurrentRoute('')
+    dispatch(setIsDrawerOpen(!open)); // <-- dispatch drawer open/close
   }
 
   const BorgerButton = ({ onClick = () => null }) => {

@@ -39,7 +39,7 @@ export const getNewsletterDirectReport = createAsyncThunk(
 export const getArchiveDirectReport = createAsyncThunk(
   'directReport/GetArchiveEmailDirectReport', async (data, thunkAPI) => {
     try {
-      const response = await PulseemReactInstance.post(`directReport/GetArchiveEmailDirectReport`, data);
+      const response = await PulseemReactInstance.post(`directReport/GetArchiveEmailDirectReport`, data, { timeout: 30000 });
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -331,6 +331,17 @@ export const newsletterSlice = createSlice({
     })
     builder.addCase(getSendSummary.fulfilled, (state, { payload }) => {
       state.newsletterSendSummary = payload.Data
+    })
+    // SUPERVISOR-SUMMARY-REJECTED: this thunk was the only one in the block without a .rejected
+    // case, and the field it writes is session-sticky — it is seeded to [] and nothing ever
+    // clears it. GetSendSummary also answers Data = null on four separate paths (the security
+    // check, 553 payment failed, 552 payment processing, 406 no summary), and .fulfilled then
+    // stores that null over a PREVIOUS campaign's summary only if it resolves at all. On a
+    // rejection the stale object simply survived, so the confirm dialog could open showing
+    // another campaign's recipient count and supervisor flag next to a live Send button.
+    // Clearing here is half the fix; the dialog also guards on CampaignID before rendering.
+    builder.addCase(getSendSummary.rejected, (state) => {
+      state.newsletterSendSummary = null
     })
     builder.addCase(getEmailSendSettings.fulfilled, (state, { payload }) => {
       state.newsletterSettings = payload?.Data?.Settings;

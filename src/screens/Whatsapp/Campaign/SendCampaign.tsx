@@ -27,6 +27,7 @@ import {
 	GetTestGroups,
 	ApiSendCampaignData,
 	coreProps,
+	CampaignDetailById,
 } from './Types/WhatsappCampaign.types';
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
@@ -46,6 +47,7 @@ import {
 	deleteCampaign,
 	getAccountExtraData,
 	getAllGroups,
+	getCampaignDetailById,
 	getCampaignSettings,
 	getWhatsAppCampaignSummary,
 	getWhatsappCampaignNameFilter,
@@ -61,6 +63,7 @@ import {
 	resetToastData,
 	tabs,
 	whatsappRoutes,
+	tierSetting,
 } from '../Constant';
 import { getTestGroups } from '../../../redux/reducers/smsSlice';
 import {
@@ -156,6 +159,7 @@ const SendCampaign = ({
 		type: '',
 		data: ''
 	});
+	const [mediaOverrideUrl, setMediaOverrideUrl] = useState<string | undefined>(undefined);
 	const [showTierPlans, setShowTierPlans] = useState(false);
 	
 	const [ pulseData, setPulseData ] = useState({
@@ -361,6 +365,17 @@ const SendCampaign = ({
 					pulsesOpen: false
 				})
 			}
+
+			const { payload: campaignData }: CampaignDetailById =
+				await dispatch<any>(getCampaignDetailById(campaignID));
+			if (campaignData?.Status === apiStatus.SUCCESS) {
+				const mediaEntry = campaignData?.Data?.VariableValues?.find(
+					(v: any) => v.FieldTypeId === -1
+				);
+				if (mediaEntry?.VariableValue) {
+					setMediaOverrideUrl(mediaEntry.VariableValue);
+				}
+			}
 		}
 	};
 
@@ -507,7 +522,8 @@ const SendCampaign = ({
 								sendType === '3'
 							) {
 								setDialogType({
-									type: 'summary'
+									type: 'summary',
+									overrideMediaUrl: mediaOverrideUrl,
 								})
 							} else {
 								setDialogType({
@@ -516,7 +532,8 @@ const SendCampaign = ({
 							}
 						} else {
 							setDialogType({
-								type: 'summary'
+								type: 'summary',
+								overrideMediaUrl: mediaOverrideUrl,
 							})
 						}
 					} else {
@@ -801,6 +818,18 @@ const SendCampaign = ({
 				setTierMessageCode(sendCampaignData?.Message);
 				setDialogType({ type: 'tier' })
 			}
+			else if (sendCampaignData?.StatusCode === 7 || sendCampaignData?.StatusCode === "7") {
+				const matchedTier = tierSetting.find(tier => tier.value === String(campaignSummary?.WhatsappTierID));
+				let tierLimit = matchedTier ? matchedTier.messageLimit : 'X';
+				if (typeof tierLimit === 'number') {
+					tierLimit = tierLimit.toLocaleString('en-US');
+				}
+				
+				setDialogType({ 
+					type: 'apiError',
+					data: translator('settings.accountSettings.actDetails.fields.metaExceedLimitMessage', { limit: tierLimit })
+				});
+			}
 			else if (sendCampaignData?.Status === apiStatus.SUCCESS) {
 				setDialogType({
 					type: 'sendCampaignSuccess'
@@ -959,6 +988,7 @@ const SendCampaign = ({
 				setRandomlyCount={setRandomlyCount}
 				resetRandomCount={() => setRandomlyCount('')}
 				pulseData={pulseData}
+				overrideMediaUrl={dialogType?.overrideMediaUrl}
 			/>
 		),
 		onConfirm: async () => {
@@ -1049,6 +1079,20 @@ const SendCampaign = ({
 		)
 	})
 
+	const getApiErrorDialog = () => ({
+		title: '',
+		showDivider: false,
+		customContainerStyle: classes.apiErrorDialogContainer,
+		content: (
+			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+				{dialogType?.data}
+			</Typography>
+		),
+		onConfirm: async () => {
+			setDialogType({ type: '', data: '' });
+		}
+	});
+
 	const renderDialog = () => {
 		const { type } = dialogType || {}
 		let currentDialog: any = {};
@@ -1068,6 +1112,8 @@ const SendCampaign = ({
 			currentDialog = getTierValidationDialog();
 		} else if (type === 'cancelPulse') {
 			currentDialog = getCancelPulseDialog();
+		} else if (type === 'apiError') {
+			currentDialog = getApiErrorDialog();
 		}
 
 		if (type) {

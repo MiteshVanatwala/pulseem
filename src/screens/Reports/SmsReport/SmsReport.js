@@ -14,7 +14,7 @@ import 'moment/locale/he';
 import { getSmsReport, getSmsGraph } from '../../../redux/reducers/smsSlice';
 import { Loader } from '../../../components/Loader/Loader';
 import { ExportFile } from '../../../helpers/Export/ExportFile';
-import { DateFormats, SizeOptionsOfHandHeldDevices, smsReportStatus, TierFeatures } from '../../../helpers/Constants';
+import { DateFormats, IS_MAX_WINDOW_WIDTH_WHEN_DRAWER_OPEN, SizeOptionsOfHandHeldDevices, smsReportStatus, TierFeatures } from '../../../helpers/Constants';
 import { HandleExportData } from '../../../helpers/Export/ExportHelper';
 import GraphReport from '../../../components/Reports/GraphReport';
 import { useNavigate, useLocation } from 'react-router';
@@ -44,7 +44,7 @@ const SmsReport = ({ classes }) => {
   const { state } = useLocation();
   const from = state?.from || "/";
   const { accountFeatures, currencySymbol, isCurrencySymbolPrefix, subAccount } = useSelector(state => state.common);
-  const { language, windowSize, isRTL, userRoles } = useSelector(state => state.core)
+  const { language, windowSize, isRTL, userRoles, isDrawerOpen } = useSelector(state => state.core)
   const { smsReport, smsGraph } = useSelector(state => state.sms)
   const { currentPlan, availablePlans } = useSelector(state => state.tiers)
   const { t } = useTranslation()
@@ -66,6 +66,12 @@ const SmsReport = ({ classes }) => {
   const [dialogType, setDialogType] = useState(null);
   const [TierMessageCode, setTierMessageCode] = useState('');
   const [showTierPlans, setShowTierPlans] = useState(false);
+  const responsiveStyle = (isDrawerOpen && IS_MAX_WINDOW_WIDTH_WHEN_DRAWER_OPEN()) ? {
+      flexWrap: "wrap",
+      textAlign: "right",
+      gap: "10px",
+      justifyContent: "end"
+    } : {}
 
   const handleGetPlanForFeature = (tierMessageCode) => {
     const planName = findPlanByFeatureCode(
@@ -458,7 +464,7 @@ const SmsReport = ({ classes }) => {
     return (
       <Grid
         container
-        spacing={2}
+        spacing={1}
         className={clsx(SizeOptionsOfHandHeldDevices.indexOf(windowSize) > -1 ? classes.mt15 : classes.lineTopMarging, 'searchLine')}>
         <Grid item>
           <TextField
@@ -621,6 +627,7 @@ const SmsReport = ({ classes }) => {
     const udate = UpdateDate ? moment(UpdateDate) : null
     const isSchedule = date ? date > moment() : false
 
+    const isPulseSend = row.IsPulseSend === true;
     return (
       <>
         <Typography className={classes.nameEllipsis}>
@@ -639,7 +646,11 @@ const SmsReport = ({ classes }) => {
             </Typography>
           )
         }
-
+        {isPulseSend && (
+          <Typography className={classes.pulseSendPill}>
+            {t('common.pulseSendPill')}
+          </Typography>
+        )}
       </>
     )
   }
@@ -732,7 +743,7 @@ const SmsReport = ({ classes }) => {
           classes={borderCellStyle}
           align='center'
           className={classes.flex3}>
-          <Grid container direction={'row'} className={classes.justifyEvenly}>
+          <Grid container direction={'row'} className={classes.justifyEvenly} style={responsiveStyle}>
             <Grid item className={classes.plr10}>
               <Tooltip
                 title={t('mainReport.clickCountTooltip')}
@@ -996,12 +1007,23 @@ const SmsReport = ({ classes }) => {
         </>
 
       ),
-      onClose: () => { setDialogType(null) },
-      onConfirm: async () => {
-        setDialogType(null);
+      onClose: () => {
         if (showNoticeDialog) {
-          setCookie('SMSReportNotice', showNoticeDialog);
+          setCookie('SMSReportNotice', 'true', { maxAge: 2147483647 });
         }
+        setDialogType(null);
+      },
+      onCancel: () => {
+        if (showNoticeDialog) {
+          setCookie('SMSReportNotice', 'true', { maxAge: 2147483647 });
+        }
+        setDialogType(null);
+      },
+      onConfirm: () => {
+        if (showNoticeDialog) {
+          setCookie('SMSReportNotice', 'true', { maxAge: 2147483647 });
+        }
+        setDialogType(null);
       }
     }
   }
