@@ -361,7 +361,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
 
     const cautionPopup = getCookie('showCautionDuplicateCampaign');
     const showCautionNewEditor = !IsNewEditor && (cautionPopup !== "false" ?? false);
-    const emailProps = verifiedEmails?.filter((ve) => { return ve?.Number === FromEmail })[0];
+    const emailProps = verifiedEmails?.filter((ve) => { return ve?.Number?.toLowerCase() === FromEmail?.toLowerCase() })[0];
 
     const campaignSettingsUrl = `/react/Campaigns/Create/${CampaignID}`;
     const editUrlArray = { NEW: `/react/Campaigns/Editor/${CampaignID}`, OLD: `/Pulseem/Editor/CampaignEdit/${CampaignID}?fromreact=true`, BASIC: `/Pulseem/CampaignEdit.aspx?CampaignID=${CampaignID}&Culture=he-IL&fromreact=true` };
