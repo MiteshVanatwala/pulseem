@@ -3,11 +3,17 @@
 The embeddable chat widget: the `pulseem.js` a customer pastes into their site, and
 the chat app that runs inside the injected iframe.
 
-Ships to the URL already baked into `EmbedCodeGenerator.tsx`:
+Ships to `REACT_APP_WIDGET_CDN_URL`, which `EmbedCodeGenerator.tsx` writes into the
+snippet customers paste. The whole installation is one line:
 
+```html
+<script async src="<REACT_APP_WIDGET_CDN_URL>/pulseem.js?id=<widgetId>"></script>
 ```
-https://cdn.pulseem.com/widget/v1/pulseem.js
-```
+
+`pulseem.js` reads `?id=` off its own `<script>` tag, and derives the iframe/asset
+base from its own `src`, so the same file works on stage, on production and behind
+any CDN with no rebuild. The older inline snippet that installed a `pulseem('init',
+…)` queue stub is still honoured, so anything already pasted keeps working.
 
 No build step. Vanilla JS, so what is in `app/` is what deploys.
 
