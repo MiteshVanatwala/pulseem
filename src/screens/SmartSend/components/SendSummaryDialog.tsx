@@ -62,12 +62,34 @@ const useStyles = makeStyles((theme) => ({
     foot: { display: 'flex', gap: theme.spacing(1.5), padding: theme.spacing(2, 3), borderTop: '1px solid #e0e0e0', flex: '0 0 auto' },
     // flex:1 + minHeight:0 rather than height:100% — the combined banner and the
     // supervisor checkbox are siblings, and height:100% would push them past the body.
-    grid: { display: 'flex', flexWrap: 'wrap', gap: theme.spacing(3), flex: 1, minHeight: 0 },
+    // overflowY:auto is the containment backstop for the WRAPPED case only. `col` carries
+    // minWidth:260, so below ~544px of body width the two columns break onto two flex lines and
+    // their combined cross size exceeds this box whatever maxHeight says — and without a scroll
+    // container here that overflow paints straight over the supervisor block below. Side by side
+    // there is no overflow and no scrollbar appears.
+    grid: { display: 'flex', flexWrap: 'wrap', gap: theme.spacing(3), flex: 1, minHeight: 0, overflowY: 'auto' },
     // overflowY:auto is required, not cosmetic. `grid` is flex:1 + minHeight:0, so on a short
     // viewport it is squeezed below its content height; without a scroll container here the
     // summary rows overflow VISIBLY and paint over the combined-campaign banner and the
     // send-to-supervisor checkbox below — a control that changes who actually receives the send.
-    col: { flex: 1, minWidth: 260, display: 'flex', flexDirection: 'column', minHeight: 0, overflowY: 'auto' },
+    // maxHeight:100% is what actually binds the columns to `grid`, and it is NOT redundant with
+    // minHeight:0. `grid` is flexWrap:'wrap' — a MULTI-line flex container — and only a SINGLE-line
+    // one adopts the container's definite cross size for its line (CSS Flexbox §9.4 step 8). A wrap
+    // container sizes its line to the tallest item's HYPOTHETICAL cross size instead: here the
+    // preview column, whose content is a whole email. Measured, both columns were laid out 1626px
+    // tall inside a 580px grid and spilled over everything below — the preview's white background
+    // painting across the supervisor banner's text, which is what read as the banner being "cut in
+    // half". maxHeight:100% resolves against the grid's definite height, clamps that hypothetical
+    // size, and hands the overflow back to each column's own scroller.
+    col: { flex: 1, minWidth: 260, display: 'flex', flexDirection: 'column', minHeight: 0, maxHeight: '100%', overflowY: 'auto' },
+    // The supervisor block is not a full-width strip: it belongs to the summary column and has to
+    // line up with the rows above it. Built as a SECOND FLEX ROW from the same rule as `grid` —
+    // same gap, same wrap, items on the same `flex:1 + minWidth:260` — rather than a hand-written
+    // `calc(50% - 12px)`. A literal would be correct at this width and wrong the moment the columns
+    // wrap, where this block has to take the whole row exactly as the columns do. The second item
+    // is an empty spacer, which is what keeps the first one to one half.
+    belowGrid: { display: 'flex', flexWrap: 'wrap', gap: theme.spacing(3), flex: '0 0 auto' },
+    belowGridCol: { flex: 1, minWidth: 260 },
     line: { display: 'flex', justifyContent: 'space-between', padding: theme.spacing(0.75, 0), borderBottom: '1px dashed #eee' },
     line_b: { fontWeight: 600, color: '#42526b' },
     // Not a warning colour: this is the final-recipient count on a healthy send.
@@ -549,7 +571,8 @@ const SendSummaryDialog: React.FC<{ open: boolean; campaignId: number; onClose: 
                                 </Box>
                             )}
                             {supervisorVisible && (
-                                <Box style={{ marginTop: 8 }}>
+                                <Box className={classes.belowGrid} style={{ marginTop: 8 }}>
+                                  <Box className={classes.belowGridCol}>
                                     {supervisorIssue !== 'none' && (
                                         // Wrapped rather than passing an id to InlineBanner: that
                                         // component is shared across this feature and an additive prop
@@ -625,6 +648,12 @@ const SendSummaryDialog: React.FC<{ open: boolean; campaignId: number; onClose: 
                                                     { name: supervisorColumn.DisplayName || '' })
                                                 : t('DataSources.send.summary.supervisor.byAccount')}
                                     </Typography>
+                                  </Box>
+                                  {/* The empty half. Present so the block above is sized by the SAME
+                                      flex rule as the columns instead of a percentage that would have
+                                      to be kept in sync with `grid` by hand. aria-hidden because it is
+                                      pure layout — it holds no content to announce. */}
+                                  <Box className={classes.belowGridCol} aria-hidden="true" />
                                 </Box>
                             )}
                         </>
