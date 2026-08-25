@@ -181,7 +181,7 @@ const WhatsappTemplateEditor = ({
 								: isRTL
 								? 'rtl'
 								: 'ltr',
-						overflowY: 'hidden',
+						overflowY: 'auto',
 					}}
 					onChange={onEditorChange}
 					value={templateText}></textarea>
