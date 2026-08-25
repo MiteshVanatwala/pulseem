@@ -446,6 +446,26 @@ export const getRoutes = (
       iconName: 'MdOutlineDashboardCustomize',
     },
     {
+      // CLAL CENTER — a TOP-LEVEL entry, on the `Integrations` pattern directly above (a live
+      // top-level record with no `options` at all). It is deliberately NOT a child of `groups`:
+      // that menu is Contacts/Groups — group management, client search, data sources — all of it
+      // about recipients and sends. A content CMS for a public portal does not belong there, and
+      // for a Clal editor this is the only screen they will ever open.
+      //
+      // ⚠️ `DefaultScreen.js:42` runs `route[0].options.filter(...)`, so a screen pointing at this
+      // record MUST declare `currentPage="clalCenter"` with NO `subPage` — there are no `options`
+      // here to filter. Working precedent: `Integrations.tsx`.
+      //
+      // Placing it between two existing top-level records touches no existing line.
+      key: "clalCenter",
+      title: t("ClalCenter.menuTitle"),
+      pageTitle: t("ClalCenter.title"),
+      href: `${sitePrefix}ClalCenter`,
+      // Must stay identical to the route gate in App.js.
+      isShow: !!(features && features.indexOf(PulseemFeatures.CLAL_CENTER) > -1),
+      iconName: 'MdOutlineDashboardCustomize',
+    },
+    {
       key: "notifications",
       title: t("master.notifications"),
       pageTitle: t("notifications.notificationManagement"),

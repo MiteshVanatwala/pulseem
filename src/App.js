@@ -88,6 +88,7 @@ import DataSourceView from './screens/DataSources/DataSourceView';
 import SmartSendScreen from './screens/SmartSend/SmartSendScreen';
 import SmartSendPicker from './screens/SmartSend/SmartSendPicker';
 import SendSearchScreen from './screens/SendSearch/SendSearchScreen';
+import ClalCenterScreen from './screens/ClalCenter/ClalCenterScreen';
 import AmpRegistration from './screens/Newsletter/AMP/AmpRegistration';
 import AffiliateProgram from './screens/Affiliate/Management/AffiliateProgram';
 import AccountUsers from './screens/AccountUsers/AccountUsers';
@@ -669,6 +670,14 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
         exact
         path={`${sitePrefix}SendSearch`}
         element={<SendSearchScreen classes={classes} />}
+      />}
+      {/* CLAL CENTER (מרכז כלל). The ROUTE carries its own gate, not just the sidebar entry:
+          without it, typing /ClalCenter renders the screen for every logged-in user in every
+          account. Must stay identical to the sidebar gate in routes.tsx. */}
+      {accountFeatures && accountFeatures?.indexOf(PulseemFeatures.CLAL_CENTER) > -1 && <Route
+        exact
+        path={`${sitePrefix}ClalCenter`}
+        element={<ClalCenterScreen classes={classes} />}
       />}
       <Route
         path="*" element={<PageNotFound classes={classes} />}
