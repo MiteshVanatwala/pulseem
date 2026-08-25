@@ -49,7 +49,7 @@ import { logout } from '../../../helpers/Api/PulseemReactAPI'
 import { RenderHtml } from "../../../helpers/Utils/HtmlUtils";
 import useRedirect from "../../../helpers/Routes/Redirect";
 import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
-import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog';
+import VerificationDialog, { canonicalizeSenderName } from '../../../components/DialogTemplates/VerificationDialog';
 import { sitePrefix } from '../../../config';
 import { Title } from "../../../components/managment/Title";
 import { Stack } from "@mui/material";
@@ -578,7 +578,7 @@ const SmsCreator = ({ classes }) => {
     }
 
     const isNumeric = onlyNumbersWithHyphenAndSpace.test(e.target.value);
-    const startsWith972 = /^\+?972/.test(e.target.value.trim());
+    const startsWith972 = /^\+?972\d*$/.test(e.target.value.replace(/[-\s]/g, ''));
     setSenderNumberTooLong(isNumeric && !startsWith972 && e.target.value.length > FROM_NUMBER_MAX);
     setSenderNameTooLong(!isNumeric && !startsWith972 && e.target.value.length > FROM_NUMBER_MAX);
 
@@ -604,18 +604,19 @@ const SmsCreator = ({ classes }) => {
     let validPattern = /^[A-Za-z0-9_ -]*$/;
     let onlyNumbersWithHyphen = /^[0-9-]*$/;
     let onlyNumbers = /^[0-9]*$/;
+    const canonicalCampaignNumber = canonicalizeSenderName(campaignNumber);
 
-    if (campaignNumber === "" ||
-      (onlyNumbersWithHyphen.test(campaignNumber) && !onlyNumbers.test(campaignNumber)) ||
-      !validPattern.test(campaignNumber)) {
+    if (canonicalCampaignNumber === "" ||
+      (onlyNumbersWithHyphen.test(canonicalCampaignNumber) && !onlyNumbers.test(canonicalCampaignNumber)) ||
+      !validPattern.test(canonicalCampaignNumber)) {
       setcampaignNumberValidated(true);
       isValid = false;
     }
 
-    const startsWith972 = /^\+?972/.test(campaignNumber.trim());
-    if (!startsWith972 && campaignNumber.length > FROM_NUMBER_MAX) {
+    const startsWith972 = /^\+?972\d*$/.test(canonicalCampaignNumber.replace(/[-\s]/g, ''));
+    if (!startsWith972 && canonicalCampaignNumber.length > FROM_NUMBER_MAX) {
       setcampaignNumberValidated(true);
-      const isNumericSender = /^[0-9 -]*$/.test(campaignNumber);
+      const isNumericSender = /^[0-9 -]*$/.test(canonicalCampaignNumber);
       if (isNumericSender) {
         setSenderNumberTooLong(true);
       } else {
