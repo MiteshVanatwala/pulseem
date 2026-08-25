@@ -20,6 +20,10 @@ import { Loader } from '../Loader/Loader';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 import { IsValidNonGlobalPhoneNumber, IsValidPhoneNumberKeyPress, IsValidPhoneNumberWithCountryCode } from '../../helpers/Utils/Validations';
 
+// Canonical form for an alphanumeric SMS sender name.
+// Trims outer whitespace and collapses internal runs to a single space.
+// Must stay behaviourally identical to the backend helper of the same name.
+export const canonicalizeSenderName = (v) => (v || '').trim().replace(/\s+/g, ' ');
 
 const VerificationDialog = ({
     classes,
@@ -54,7 +58,7 @@ const VerificationDialog = ({
     let trials = localStorage.getItem('verificationTrial') ? Number(localStorage.getItem('verificationTrial')) : 0
     const SLIDE_HEIGHTS = [25, 20, 20, 20, 20];
     const isIsraeliPhoneNumber = (val) => /^(\+972|972|0)5\d{8}$/.test(val);
-    
+
     useEffect(() => {
         setDeleteValue(null);
         setAddToFromEmailToSend(false);
@@ -187,9 +191,9 @@ const VerificationDialog = ({
         }
     }
 
-    const handleSubmitAlphabeticalSender = async () => {
+    const handleSubmitAlphabeticalSender = async (senderNameOverride) => {
         setShowLoader(true);
-        const res = await dispatch(sendVerificationCode({ number: selectedVerificationContact }));
+        const res = await dispatch(sendVerificationCode({ number: senderNameOverride ?? selectedVerificationContact }));
         setShowLoader(false);
   
         if (res?.payload) {
@@ -727,15 +731,19 @@ const VerificationDialog = ({
                                         setVerificationError({ Number: t('sms.onlyEnglishChars') });
                                         return;
                                     }
-                                    const isNumeric = /^[0-9+\-\s]*$/.test(val);
-                                    const startsWith972 = /^\+?972/.test(val.trim());
-                                    if (!startsWith972 && val.length > 11) {
+                                    const trimmedVal = val.trim();
+                                    const isNumeric = /^[0-9+\-\s]*$/.test(trimmedVal);
+                                    // detection-only normalisation — same rule as the submit handler
+                                    const phoneCandidate = val.replace(/[-\s]/g, '');
+                                    const isPhoneShaped = isIsraeliPhoneNumber(phoneCandidate) || /^\+?972\d*$/.test(phoneCandidate);
+                                    if (!isPhoneShaped && canonicalizeSenderName(val).length > 11) {
                                         setVerificationError({ Number: isNumeric ? t("mainReport.campaignFromNumberMaxLength") : t("mainReport.campaignFromMaxLength") });
                                     } else {
                                         !!verificationError?.Number && setVerificationError({ Number: '' });
                                     }
-                                    setSelectedVerificationContact(val.trim());
+                                    setSelectedVerificationContact(val);
                                 }}
+                                onBlur={() => setSelectedVerificationContact((prev) => canonicalizeSenderName(prev))}
                                 className={clsx(classes.textField, classes.maxWidth400, classes.txtCenter, classes.directionLTR)}
                                 placeholder={t('sms.newSenderPlaceholder')}
                                 error={!!verificationError?.Number}
@@ -745,22 +753,27 @@ const VerificationDialog = ({
                             <Button
                                 className={clsx(classes.btn, classes.btnRounded)}
                                 onClick={async () => {
-                                    if (!selectedVerificationContact) {
+                                    // Checked against the canonical value, not the raw one —
+                                    // otherwise whitespace-only input (e.g. "   ") is truthy
+                                    // and slips past this into an empty sender-name submission.
+                                    const canonical = canonicalizeSenderName(selectedVerificationContact);
+                                    if (!canonical) {
                                         setVerificationError({ Number: t('sms.newSenderRequired') });
                                         return;
                                     }
-                                    const isNumeric = /^[0-9+\-\s]*$/.test(selectedVerificationContact);
-                                    const startsWith972 = /^\+?972/.test(selectedVerificationContact.trim());
-                                    if (!startsWith972 && selectedVerificationContact.length > 11) {
+                                    const isNumeric = /^[0-9+\-\s]*$/.test(canonical);
+                                    const phoneCandidate = canonical.replace(/[-\s]/g, '');
+                                    const isPhoneShaped = isIsraeliPhoneNumber(phoneCandidate) || /^\+?972\d*$/.test(phoneCandidate);
+                                    if (!isPhoneShaped && canonical.length > 11) {
                                         setVerificationError({ Number: isNumeric ? t("mainReport.campaignFromNumberMaxLength") : t("mainReport.campaignFromMaxLength") });
                                         return;
                                     }
-                                    const normalized = selectedVerificationContact.replace(/-/g, '');
-                                    if (isIsraeliPhoneNumber(normalized)) {
-                                        setSelectedVerificationContact(normalized);
-                                        handleSendCode(normalized);
+                                    if (isIsraeliPhoneNumber(phoneCandidate)) {
+                                        setSelectedVerificationContact(phoneCandidate);
+                                        handleSendCode(phoneCandidate);
                                     } else {
-                                        handleSubmitAlphabeticalSender();
+                                        setSelectedVerificationContact(canonical);
+                                        handleSubmitAlphabeticalSender(canonical);
                                     }
                                 }}
                             >{t('sms.submitSender')}</Button>
