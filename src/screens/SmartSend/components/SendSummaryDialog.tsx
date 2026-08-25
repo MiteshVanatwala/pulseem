@@ -4,13 +4,20 @@ import { Dialog, Box, Typography, Button, Checkbox, FormControlLabel, CircularPr
 import { makeStyles } from '@material-ui/core/styles';
 import { Close, Check, Warning, NewReleases } from '@material-ui/icons';
 import { useTranslation } from 'react-i18next';
-import { sendSmart, setBusinessColumn } from '../../../redux/reducers/smartSendSlice';
+import { sendSmart } from '../../../redux/reducers/smartSendSlice';
 import { eSendChannel } from '../../../Models/DataSources/SmartSend';
 import SmartSendPreview from './SmartSendPreview';
 import InlineBanner from './InlineBanner';
 // SUPERVISOR-PREDICATE-IMPORT: the SAME predicates the mapping screen's auto-pick uses, so the
 // pre-send warning and the picker can never disagree about what a usable supervisor address is.
 import { isEmailish, isNotIdentity } from '../businessColumnDefaults';
+// COLUMN-NAME-IMPORT: columnLabel.ts:33-37 makes this mandatory for every surface that puts a column
+// name on screen — DisplayName is a plain `string` in the API model and a blank one is a reviewed,
+// reachable case, so a raw interpolation can render `the column ""`. The banner below points the
+// operator at the picker's suggestion chip, which names the SAME column through the SAME helper
+// (BusinessColumnsPicker.tsx:290); naming it differently here is the exact split that helper exists
+// to prevent.
+import { resolveColumnLabel } from '../columnLabel';
 
 // §11.4/§13 step 8-9 · the send-summary + confirm dialog. SmartSend-OWNED (the legacy
 // SummaryDialog is tightly coupled to non-exported Newsletter-wizard styles + un-mockable
@@ -130,6 +137,11 @@ const SendSummaryDialog: React.FC<{ open: boolean; campaignId: number; onClose: 
         const supervisorColumnId = useSelector((s: any) => s.smartSend && s.smartSend.supervisorColumnId);
         const supervisorColumns = useSelector((s: any) => (s.smartSend && s.smartSend.columns) || []);
         const [sendToSupervisor, setSendToSupervisor] = useState(false);
+        // REFUSED-TICK FLAG — see `supervisorUnusable` below. Not a validation error: nothing is
+        // wrong with the summary, the operator has simply asked for a report this campaign cannot
+        // produce. Set only by a refused tick and cleared on every open, so an operator who never
+        // touches the box never sees it.
+        const [needColumn, setNeedColumn] = useState(false);
         const [phase, setPhase] = useState<'summary' | 'sending' | 'result'>('summary');
         const [result, setResult] = useState<any>(null);
 
@@ -161,6 +173,21 @@ const SendSummaryDialog: React.FC<{ open: boolean; campaignId: number; onClose: 
         // Visible for a mapped campaign OR a legacy tenant — the server gate is the OR of the same
         // two sources, so the control must mirror it or the UI and the backend disagree.
         const supervisorVisible = !!supervisorColumn || !!sum.HasSupervisors;
+        // BACK TO THE PICKER. The mapping screen is this dialog's parent and its supervisor control
+        // sits directly above the "send to all" button, so closing IS the navigation — no new prop to
+        // thread down, no route. `onClose` is the parent's own handler (SmartSendScreen.tsx:878-881),
+        // which redirects only after a SUCCESSFUL send (`sent`); nothing has been sent on this path.
+        // The scroll target is the InputLabel id BusinessColumnsPicker already renders for each picker
+        // (`bc-${role}-label`, BusinessColumnsPicker.tsx:259) — an anchor that exists beats a ref the
+        // parent would have to pass down for one call. Deferred a tick: MUI tears the dialog portal
+        // down on close, and a scroll issued before that runs while the backdrop still covers the page.
+        const goToSupervisorPicker = () => {
+            onClose();
+            window.setTimeout(() => {
+                const el = document.getElementById('bc-supervisor-label');
+                if (el) el.scrollIntoView({ block: 'center', behavior: 'smooth' });
+            }, 0);
+        };
         // ON by default: the mapping is already the decision. Off only when the column cannot work.
         // `&& !supervisorColumnIsGuess` added 2026-08-11 (deep review R1-02). D1 says the default is
         // ON *because the mapping is already the decision* — that reasoning holds for a column an
@@ -175,6 +202,40 @@ const SendSummaryDialog: React.FC<{ open: boolean; campaignId: number; onClose: 
         const supervisorDefaultOn =
             !!supervisorColumn && !supervisorColumnIsGuess && supervisorIssue === 'none';
 
+        // NOT USABLE AS A SUPERVISOR MAPPING — the two states in which ticking the box cannot do what
+        // its label says. Deliberately the same rule the mapping screen applies to its own shortfall
+        // picker (BusinessColumnsPicker.tsx:187-189, `supervisorUsable`): one rule, two screens.
+        //
+        //  1. NO COLUMN AT ALL — the control is on screen only because of the legacy per-SubAccount
+        //     flag above. What the deployed chain does with the tick: DataSourcesSenderController.cs
+        //     :658-668 enqueues the request whatever the mapping says, CampaignSupervisorSendRequest_
+        //     Insert gates only on Newsletter_HasSupervisors so a positive id comes back, and the
+        //     router (CampaignSupervisorJob_Run:49-69) picks V3 when the campaign has a column OR
+        //     already carries a [V3 ENGINE] fingerprint — so a campaign that has mailed supervisors
+        //     before stays on V3, where ProcessRequest_V3:85-89 writes Status = 3 and sends NO mail.
+        //     A never-V3 campaign falls to V2, which parses the campaign BODY for its table, mails the
+        //     ClientExtraData addresses named by SupervisorToAgents, and then NULLs that field for
+        //     every client in the send plan (ProcessRequest_V2:1005-1013). Both ends show "queued #N".
+        //  2. AN UNCONFIRMED GUESS — pickDefaultSupervisorColumn filled the picker and nobody has
+        //     confirmed it, so buildSaveRequest posts SupervisorColumnID as NULL while the flag stands
+        //     (SmartSendScreen.tsx:266-268). The database is therefore in state 1 exactly, while the
+        //     caption below promises a report "by column X".
+        //
+        // ARM 2 ADDED 2026-08-24, replacing the promote-on-tick branch this file used to carry. That
+        // branch could not work and its comment said otherwise: openSummary has ALREADY saved before
+        // the dialog opens (SmartSendScreen.tsx:464-471), this component receives no onSaveMapping
+        // (contrast TestSendDialog), doSend calls only beforeSend + sendSmart, and the 750ms autosave
+        // bails on `dirty` — screen state a dialog cannot write (SmartSendScreen.tsx:370). The
+        // promotion reached redux and nothing else, so the campaign went out with NULL. The confirm
+        // now happens where it persists: the picker, whose onChange sets `dirty` and saves.
+        // `supervisorColumn`, not `supervisorColumnId`: an id pointing at a column that vanished from
+        // the locked version resolves to undefined here and is scrubbed to NULL on save, so it is a
+        // missing column in every way that matters.
+        const supervisorUnusable = !supervisorColumn || supervisorColumnIsGuess;
+        // Which of the two arms fired, so the banner can name the right remedy. A displayed column
+        // means arm 2 — the operator has something to confirm rather than something to choose.
+        const needColumnKey = supervisorColumn ? 'unconfirmed' : 'noColumn';
+
         // The dialog stays mounted (open toggled by the parent), so reset to a clean
         // summary view on every open — otherwise a prior send's result banner persists and
         // blocks re-viewing the summary / retrying after a fixable pipeline error.
@@ -183,7 +244,7 @@ const SendSummaryDialog: React.FC<{ open: boolean; campaignId: number; onClose: 
         // turns it true. Adding it to the deps would silently undo the user's own un-tick whenever
         // redux updated.
         useEffect(() => {
-            if (open) { setPhase('summary'); setResult(null); setSendToSupervisor(supervisorDefaultOn); }
+            if (open) { setPhase('summary'); setResult(null); setNeedColumn(false); setSendToSupervisor(supervisorDefaultOn); }
             // eslint-disable-next-line react-hooks/exhaustive-deps
         }, [open]);
 
@@ -503,33 +564,47 @@ const SendSummaryDialog: React.FC<{ open: boolean; campaignId: number; onClose: 
                                                     { name: (supervisorColumn && supervisorColumn.DisplayName) || '' })} />
                                         </Box>
                                     )}
+                                    {/* Rendered after a refused tick, and ONLY while the supervisorIssue banner above is silent.
+                                        That exclusion used to be automatic — the refusal needed a MISSING column and the issue
+                                        banner needs a present one — and it stopped being automatic the moment the refusal grew its
+                                        second arm: an unconfirmed GUESS is a present column, and pickDefaultSupervisorColumn's
+                                        first tier matches on the NAME alone, so a column called "מפקח" with DataType TEXT is both a
+                                        guess and 'notEmail'. Stacked, the two banners contradict each other: one says the column
+                                        cannot hold an address, the other tells the operator to go and confirm it. The issue banner
+                                        is the one that must win — confirming a column that cannot carry an address fixes nothing.
+                                        `action`, not a link in the body: InlineBanner already has the slot (InlineBanner.tsx:33,57)
+                                        and a button is what the operator has to press. size="lg" like its sibling — index.css's
+                                        body{zoom:0.95} leaves body2 at ~13.3px inside a dialog. */}
+                                    {needColumn && supervisorUnusable && supervisorIssue === 'none' && (
+                                        <Box id="supervisor-needcolumn" style={{ marginBottom: 8 }}>
+                                            <InlineBanner
+                                                severity="warning"
+                                                role="alert"
+                                                size="lg"
+                                                title={t('DataSources.send.summary.supervisor.' + needColumnKey + 'Title')}
+                                                body={t('DataSources.send.summary.supervisor.' + needColumnKey + 'Body',
+                                                    { name: supervisorColumn ? resolveColumnLabel(supervisorColumn) : '' })}
+                                                action={(
+                                                    <Button size="small" variant="outlined" color="primary" disabled={sending}
+                                                            onClick={goToSupervisorPicker}>
+                                                        {t('DataSources.send.summary.supervisor.' + needColumnKey + 'Action')}
+                                                    </Button>
+                                                )} />
+                                        </Box>
+                                    )}
                                     <FormControlLabel
                                         control={<Checkbox
                                             color="primary"
                                             checked={sendToSupervisor}
                                             inputProps={{ 'aria-describedby': 'supervisor-caption' } as any}
                                             onChange={(e) => {
+                                                // REFUSE, DO NOT SILENTLY ACCEPT. The Checkbox is controlled, so returning before
+                                                // setSendToSupervisor leaves it visibly clear — the state it has to be in for the send
+                                                // to be honest — and the banner above says what to do about it. Only the TICK is
+                                                // refused: un-ticking always goes through, so this can never trap the box on.
+                                                if (e.target.checked && supervisorUnusable) { setNeedColumn(true); return; }
+                                                setNeedColumn(false);
                                                 setSendToSupervisor(e.target.checked);
-                                                // TICKING THE BOX IS THE CONFIRMATION. Added 2026-08-11
-                                                // during fix verification. Making an unconfirmed guess
-                                                // start OFF (see supervisorDefaultOn) left a hole: the
-                                                // control was visible and tickable, but the guessed
-                                                // SupervisorColumnID was never persisted, so the server's
-                                                // OR gate saw NULL, and for a post-migration tenant with
-                                                // HasSupervisors = 0 the enqueue returned -1 AFTER the
-                                                // campaign had already gone out. The operator ticked
-                                                // "send to supervisors", the campaign sent, and the
-                                                // report did not — with no re-queue path in the UI.
-                                                // Promoting the guess here closes it: setBusinessColumn
-                                                // clears supervisorColumnIsGuess and marks the screen
-                                                // dirty, so the mapping is saved with a real column
-                                                // before doSend runs saveMapping.
-                                                if (e.target.checked && supervisorColumnIsGuess && supervisorColumn) {
-                                                    dispatch(setBusinessColumn({
-                                                        role: 'supervisor',
-                                                        columnId: supervisorColumn.ColumnID,
-                                                    }));
-                                                }
                                             }} />}
                                         label={t('DataSources.send.summary.supervisor.label')} />
                                     {/* Muted, never MUI `disabled`. Disabled would drop the control out
