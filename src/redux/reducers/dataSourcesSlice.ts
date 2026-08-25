@@ -34,6 +34,10 @@ type LoadStatus = 'idle' | 'loading' | 'succeeded' | 'failed';
 interface DataSourcesState {
     list: { items: DataSourceListItem[]; total: number; page: number; pageSize: number } | null;
     listStatus: LoadStatus; // silent polling never touches this
+    // "does this account have ANY data source?" — a one-bit answer for screens that gate an
+    // ENTRY POINT rather than render a list. null = not asked yet, or asked and the call failed;
+    // callers must read null as "unknown" and stay permissive (see probeHasDataSources).
+    hasAnyDataSource: boolean | null;
     current: { details: DataSourceDetails; columns: DataSourceColumn[]; versions: DataSourceVersion[] } | null;
     rows: { columns: DataSourceColumn[]; items: DataSourceRow[]; total: number } | null;
     rowsStatus: LoadStatus;
@@ -56,6 +60,24 @@ export const getDataSources = createAsyncThunk(
         try {
             const response = await PulseemReactInstance.get(`${api}GetMany`, {
                 params: { search: req.SearchTerm, page: req.PageIndex, pageSize: req.PageSize }
+            });
+            return response.data;
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    });
+
+// The cheapest possible "has the account got any source at all?". Page 1 / size 1 over the SAME
+// GetMany endpoint — no new server surface — and its reducer writes ONLY `hasAnyDataSource`.
+// A separate thunk rather than getDataSources({PageSize: 1}) on purpose: `list` is shared with the
+// DataSources screen and with SmartSend's SourcePicker, and seeding it with a ONE-ITEM page would
+// make whichever of them mounts next render a truncated list until its own load lands.
+export const probeHasDataSources = createAsyncThunk(
+    'DataSources/Probe', async (_arg, thunkAPI) => {
+        if (USE_DS_MOCK) return mockGetMany({ SearchTerm: '', PageIndex: 1, PageSize: 1 });
+        try {
+            const response = await PulseemReactInstance.get(`${api}GetMany`, {
+                params: { search: '', page: 1, pageSize: 1 }
             });
             return response.data;
         } catch (error: any) {
@@ -162,6 +184,7 @@ export const checkQuota = createAsyncThunk(
 const initialState: DataSourcesState = {
     list: null,
     listStatus: 'idle',
+    hasAnyDataSource: null,
     current: null,
     rows: null,
     rowsStatus: 'idle',
@@ -211,10 +234,27 @@ export const dataSourcesSlice = createSlice({
         builder.addCase(getDataSources.fulfilled, (state, action: any) => {
             const data = action.payload?.Data;
             if (data) state.list = { items: data.items, total: data.total, page: data.page, pageSize: data.pageSize };
+            // A SEARCHED load says nothing about the account: "0 results for xyz" is not "no
+            // sources". Only an unfiltered page may answer the one-bit question.
+            if (data && !action.meta.arg?.SearchTerm) state.hasAnyDataSource = (data.total ?? 0) > 0;
             if (!action.meta.arg?.silent) state.listStatus = 'succeeded';
         });
         builder.addCase(getDataSources.rejected, (state, action) => {
             if (!action.meta.arg?.silent) state.listStatus = 'failed';
+        });
+
+        // Probe. NO rejected case on purpose: a failed probe leaves the flag null, and null means
+        // "unknown", which every consumer must treat as permissive. A network hiccup must never be
+        // the reason an entry point disappears.
+        builder.addCase(probeHasDataSources.fulfilled, (state, action: any) => {
+            const data = action.payload?.Data;
+            // ONLY a successful envelope may answer. The controller catches its own exceptions and returns
+            // HTTP 200 carrying StatusCode 500 with no Data (DataSourcesController.cs:142-145), so axios
+            // resolves and this reducer runs on a FAILURE. Writing false there would latch the gate closed
+            // on a transient server error — the exact outcome the null-means-unknown rule above forbids.
+            if (action.payload?.StatusCode === 200 && data) {
+                state.hasAnyDataSource = (data.total ?? 0) > 0;
+            }
         });
 
         // Get (details + columns + versions) — only the latest request commits (out-of-order guard)
@@ -248,7 +288,17 @@ export const dataSourcesSlice = createSlice({
         });
 
         // Insert — reset the network-progress bar when the request settles
-        builder.addCase(insertDataSource.fulfilled, (state) => {
+        builder.addCase(insertDataSource.fulfilled, (state, action: any) => {
+            // An upload that produced a DataSourceID answers the one-bit question by itself, so a
+            // screen gating on it (the campaigns list) is correct on the very next mount without a
+            // second round trip. 202 "RunningInBackground" is the ONLY success code this endpoint
+            // returns (DataSourcesController.cs:446-448) — the row exists from that moment, the worker
+            // only fills it. Guarded on the payload rather than on "fulfilled": the thunk also
+            // resolves for a body carrying an error StatusCode.
+            const p = action.payload;
+            if (p && p.StatusCode === 202 && p.Data?.DataSourceID) {
+                state.hasAnyDataSource = true;
+            }
             state.uploadProgress = null;
         });
         builder.addCase(insertDataSource.rejected, (state) => {
