@@ -25,7 +25,8 @@ import { BiCog } from 'react-icons/bi';
 import { getAccountBilling } from '../../redux/reducers/BillingSlice';
 import BillingSettings from '../BillingSettings/BillingSettings';
 import TierPlans from '../TierPlans/TierPlans';
-import { contactSalesForScale, deletePolandSubscription, getCurrentPlan } from '../../redux/reducers/TiersSlice';
+import { toggleHelpDrawer } from '../../redux/reducers/helpDrawerSlice';
+import { contactSalesForScale, deletePolandSubscription, cancelEmailWithTier, getCurrentPlan } from '../../redux/reducers/TiersSlice';
 import { getAccountSettings } from '../../redux/reducers/AccountSettingsSlice';
 import { Loader } from '../Loader/Loader';
 import ConfirmDeletePopUp from '../../screens/Groups/Management/Popup/ConfirmDeletePopUp';
@@ -59,7 +60,8 @@ const BulkStatus = ({ classes }) => {
 
   const { Mms = {}, Newsletters = {}, Notifications = {}, Sms = {}, Whatsapp = {}, SMSVC } = packagesDetails || {};
 
-  const hideEmailWithTier = true;
+  // Email With Tier (11) is Israeli/ILS only - show only for non-global, non-Poland accounts.
+  const hideEmailWithTier = isGlobal || IsPoland;
 
   const getBillingTypeText = (product) => {
     switch (product?.eBillingType) {
@@ -248,11 +250,15 @@ const BulkStatus = ({ classes }) => {
   }
 
   const handleEmailTierCancelPlan = async () => {
-    setIsOpenCancelConfirmDialog(false);    
+    setIsOpenCancelConfirmDialog(false);
     setIsLoader(true);
-    
-    // For cancel plan, we typically downgrade to the free/basic tier (ID: 1)
-    const response = await dispatch(deletePolandSubscription());
+
+    // Israeli Email With Tier (product 11) accounts cancel via cancelEmailWithTier
+    // (arrears "won't renew" cancel). Poland's per-recipient plan uses its own
+    // deletePolandSubscription action - the two must never be conflated.
+    const response = Newsletters?.IsEmailTierSubscribed && !hideEmailWithTier
+      ? await dispatch(cancelEmailWithTier())
+      : await dispatch(deletePolandSubscription());
     setIsLoader(false);
     
     switch (response?.payload?.StatusCode) {
@@ -521,7 +527,7 @@ const BulkStatus = ({ classes }) => {
                             <>
                               <Divider className={clsx(classes.rocketImage, classes.mt1)} />
                               <Grid container className={clsx(classes.mt1)} alignItems='center'>
-                                <Grid item md={5} xs={4}>
+                                <Grid item md={4} xs={4}>
                                   <Typography className={clsx(classes.bulkTitle, classes.mlr30, classes.pl5)}>{t('billing.plan')}</Typography>
                                 </Grid>
                                 <Grid item md={3} xs={4} className={clsx(classes.paddingSides10, windowSize === 'xs' ? classes.textRight : '')}>
@@ -541,13 +547,15 @@ const BulkStatus = ({ classes }) => {
                                     </Tooltip>
                                   }
                                 </Grid>
-                                 <Grid item md={4} xs={4} className={clsx(classes.justifyContentEnd)}>
+                                 <Grid item md={5} xs={4} className={clsx(classes.justifyContentEnd)}>
                                   <Button
+                                    variant="contained"
+                                    color="primary"
                                     className={clsx(
                                       classes.btn,
                                       classes.btnRounded,
                                       classes.marginSides5,
-                                      classes.smallButton
+                                      classes.tierPlanBtn
                                     )}
                                     onClick={() => {
                                       setIsOpenEmailTierPlans(true);
@@ -555,22 +563,32 @@ const BulkStatus = ({ classes }) => {
                                   >
                                     {t('billing.tier.steps.upgrade')}
                                   </Button>
-                                  <Button
-                                    className={clsx(
-                                      classes.btn,
-                                      classes.btnRounded,
-                                      classes.smallButton
-                                    )}
-                                    onClick={() => {
-                                      setIsOpenCancelConfirmDialog(true);
-                                    }}
-                                  >
-                                    {t('common.cancel')}
-                                  </Button>
+                                  {/* Cancel moved into the TierPlans (tier & band) popup, top-right - see onCancelClick prop below */}
                                 </Grid>
                               </Grid>
                             </>
-                          ) : null
+                          ) : (
+                            // Not yet subscribed -> show the Subscribe button that opens the Email With Tier plans.
+                            isAllowNewsletterSubscription && !Newsletters?.IsEmailTierSubscribed ? (
+                              <>
+                                <Divider className={clsx(classes.rocketImage, classes.mt1)} />
+                                <Grid container className={clsx(classes.mt1)} alignItems='center'>
+                                  <Grid item md={8} xs={8}>
+                                    <Typography className={clsx(classes.bulkTitle, classes.mlr30, classes.pl5)}>{t('billing.plan')}</Typography>
+                                  </Grid>
+                                  <Grid item md={4} xs={4} className={clsx(classes.justifyContentEnd)}>
+                                    <Button
+                                      className={clsx(classes.btn, classes.btnRounded, classes.f12)}
+                                      onClick={() => { setIsOpenEmailTierPlans(true); }}
+                                    >
+                                      {t('dashboard.purchase')}
+                                      {isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+                                    </Button>
+                                  </Grid>
+                                </Grid>
+                              </>
+                            ) : null
+                          )
                       }
                     </>
                   )
@@ -752,7 +770,10 @@ const BulkStatus = ({ classes }) => {
           dispatch(getPackagesDetails());
         }}
         isEmailMarketing={true}
-        isBankTransferForTiers={Newsletters?.IsBankTransferForTiers}
+        // Email With Tier (11) reads the account's PaymentType (IsEmailWithTierBankTransfer),
+        // NOT the shared IsBankTransferForTiers flag product 10 uses.
+        isBankTransferForTiers={Newsletters?.IsEmailWithTierBankTransfer}
+        onCancelClick={() => setIsOpenCancelConfirmDialog(true)}
       />
         <PayPerRecipientNew
           classes={classes}

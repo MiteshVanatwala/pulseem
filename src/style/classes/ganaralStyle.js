@@ -3571,7 +3571,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
       fontSize: 30
     },
     '& .dialogTitle': {
-      width: '85%',
+      width: 'calc(100% - 65px)',
       direction: isRTL ? 'rtl' : 'ltr',
     }
   },
@@ -5420,6 +5420,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
     fontSize: '9px !important',
     padding: '0px 6px',
     minWidth: 'auto',
+  },
+  tierPlanBtn: {
+    minHeight: 'auto',
+    fontSize: '12px !important',
+    fontWeight: 600,
+    padding: '5px 16px !important',
+    minWidth: '80px',
+    whiteSpace: 'nowrap',
   },
   filterChip: {
     fontSize: '12px',

@@ -51,7 +51,7 @@ import Toast from '../Toast/Toast.component';
 import ContactUsDialog from '../EmailPlans/ContactUsDialog';
 import BillingSettings from '../BillingSettings/BillingSettings';
 
-const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false, isBankTransferForTiers = false  }: any) => {
+const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false, isBankTransferForTiers = false, onCancelClick = undefined }: any) => {
   const { t, i18n } = useTranslation();
   const dispatch = useDispatch();
   const [activeStep, setActiveStep] = useState(0);
@@ -307,10 +307,23 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false, isBankT
               displayPrice = emailPriceTier.Price;
             }
           }
-          // Determine if the plan is lower than the current plan
-          const currentLevel = currentPlan?.Level ?? currentPlan?.level ?? currentPlan?.Id ?? 0;
+          // Determine if the plan is lower than the current plan.
+          // For Email With Tier, "lower" only makes sense once the account is already
+          // subscribed to an Email With Tier plan (existingPlan) - compare against THAT,
+          // not the account's unrelated product-10 tier (currentPlan). A fresh account
+          // (e.g. Starter on product 10, no EWT subscription yet) must be able to pick
+          // ANY tier - including Starter - as their first Email With Tier purchase.
           const planLevel = plan.Level ?? plan.level ?? plan.Id ?? 0;
-          const isLowerPlan = planLevel <= currentLevel;
+          let isLowerPlan = false;
+          if (isEmailMarketing) {
+            if (existingPlan) {
+              const currentEmailLevel = existingPlan?.AccountCategoryFeatureTier_Id ?? 0;
+              isLowerPlan = planLevel <= currentEmailLevel;
+            }
+          } else {
+            const currentLevel = currentPlan?.Level ?? currentPlan?.level ?? currentPlan?.Id ?? 0;
+            isLowerPlan = planLevel <= currentLevel;
+          }
           return (
             <Grid item xs={12} sm={6} md={3} key={plan.Id}>
               <Box 
@@ -943,15 +956,29 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false, isBankT
               isEmailMarketing && (
                 <>
                   {existingPlan && (
-                    <Box sx={{ display: 'flex', alignItems: 'left', marginBottom: '8px' }}>
-                      <Typography variant="subtitle1" className={clsx(classes.bold)}>
-                        {t('common.tier.current')}: &nbsp;
-                        {existingPlan?.AccountCategoryFeatureTier || existingPlan?.Name || ''}
-                      </Typography>
-                      <Typography variant="body1" className={clsx(classes.marginSides5, classes.bold, classes.paddingInline30)}>
-                        {t('common.price')}: &nbsp;
-                        {existingPlan?.Price != null ? (accountIsCurrencySymbolPrefix ? `${accountCurrencySymbol}${existingPlan.Price}` : `${existingPlan.Price}${accountCurrencySymbol}`) : ''}
-                      </Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                      <Box sx={{ display: 'flex', alignItems: 'left' }}>
+                        <Typography variant="subtitle1" className={clsx(classes.bold)}>
+                          {t('common.tier.current')}: &nbsp;
+                          {existingPlan?.AccountCategoryFeatureTier || existingPlan?.Name || ''}
+                        </Typography>
+                        <Typography variant="body1" className={clsx(classes.marginSides5, classes.bold, classes.paddingInline30)}>
+                          {t('common.price')}: &nbsp;
+                          {existingPlan?.Price != null ? (accountIsCurrencySymbolPrefix ? `${accountCurrencySymbol}${existingPlan.Price}` : `${existingPlan.Price}${accountCurrencySymbol}`) : ''}
+                        </Typography>
+                      </Box>
+                      {activeStep === 0 && onCancelClick && (
+                        <Button
+                          variant="outlined"
+                          color="primary"
+                          size="small"
+                          className={clsx(classes.btn, classes.btnRounded, classes.tierPlanBtn, classes.marginSides5)}
+                          style={{ marginTop: '5px', marginBottom: '5px' }}
+                          onClick={onCancelClick}
+                        >
+                          {t('common.cancel')}
+                        </Button>
+                      )}
                     </Box>
                   )}
                   <EmailMarketingSlider
@@ -1023,6 +1050,13 @@ const TierPlans = ({ classes, isOpen, onClose, isEmailMarketing = false, isBankT
         onClose={handleClose}
         onCancel={handleClose}
         showDefaultButtons={false}
+        renderTitle={() => (
+          <Box style={{ width: '100%', display: 'flex', alignItems: 'center' }}>
+            <Typography className={clsx(classes?.dialogTitle)}>
+              {t('billing.tier.ui.upgradeYourPlan')}
+            </Typography>
+          </Box>
+        )}
         renderButtons={() => (
           <Box style={{ padding: '8px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <Box>
