@@ -13,6 +13,7 @@ import {
   setCookie,
   cookieListener,
 } from './helpers/Functions/cookies';
+import { buildPulseemUser } from './helpers/Functions/buildPulseemUser';
 import { create } from 'jss';
 import rtl from 'jss-rtl';
 import jwt_decode from "jwt-decode";
@@ -726,7 +727,7 @@ const App = ({ screenSize }) => {
   let location = useLocation();
   const dispatch = useDispatch();
 
-  const { language, isRTL, windowSize, isClal, isDebtAccount, isAdmin, isLoader, userRoles, isOnlyWhatsAppChat } = useSelector(state => state.core)
+  const { language, isRTL, windowSize, isClal, isDebtAccount, isAdmin, isLoader, userRoles, isOnlyWhatsAppChat, subUserName, subUserObject, email, companyName } = useSelector(state => state.core)
   const { accountSettings, currencyList, accountFeatures } = useSelector(state => state.common)
   const IsPoland = language === 'pl';
   const { isOpen } = useSelector((state) => state.helpDrawer);
@@ -734,11 +735,22 @@ const App = ({ screenSize }) => {
   setCookie('accountSettings', '');
   const isSignup = isSignupPage(location.pathname);
   const isConfirmationPage = isSubUserConfirmationPage(location.pathname)
+  const isDirectAccount = accountSettings?.IsDirectAccount;
 
   useEffect(() => {
     const direction = getDirection(i18n.language);
     document.documentElement.setAttribute('dir', direction);
   }, []);
+
+  // Identify the logged-in user to the pulseemsupport.com chat widget (public/index.html) so
+  // support agents see who they're talking to without asking. window.pulseem.currentUser is
+  // the widget's own read of a host-page global (confirmed against its live source) - it is
+  // not a DOM attribute or URL param, so PII here never becomes visible markup.
+  useEffect(() => {
+    const user = buildPulseemUser({ subUserName, subUserObject, email, companyName, isDirectAccount });
+    window.pulseem = window.pulseem || {};
+    window.pulseem.currentUser = user ? { ...user, name: user.username } : undefined;
+  }, [subUserName, subUserObject, email, companyName, isDirectAccount]);
 
   React.useEffect(() => {
     !isSignup && !isConfirmationPage && dispatch(getNotificationUpdates());
