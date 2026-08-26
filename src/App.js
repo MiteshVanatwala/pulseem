@@ -735,7 +735,6 @@ const App = ({ screenSize }) => {
   setCookie('accountSettings', '');
   const isSignup = isSignupPage(location.pathname);
   const isConfirmationPage = isSubUserConfirmationPage(location.pathname)
-  const isDirectAccount = accountSettings?.IsDirectAccount;
 
   useEffect(() => {
     const direction = getDirection(i18n.language);
@@ -746,11 +745,13 @@ const App = ({ screenSize }) => {
   // support agents see who they're talking to without asking. window.pulseem.currentUser is
   // the widget's own read of a host-page global (confirmed against its live source) - it is
   // not a DOM attribute or URL param, so PII here never becomes visible markup.
+  const subUserEmail = subUserObject?.Data?.Emails?.[0]?.AuthValue;
+  const subUserCellphone = subUserObject?.Data?.Cellphones?.[0]?.AuthValue;
   useEffect(() => {
-    const user = buildPulseemUser({ subUserName, subUserObject, email, companyName, isDirectAccount });
+    const user = buildPulseemUser({ subUserName, subUserEmail, subUserCellphone, email, companyName });
     window.pulseem = window.pulseem || {};
     window.pulseem.currentUser = user ? { ...user, name: user.username } : undefined;
-  }, [subUserName, subUserObject, email, companyName, isDirectAccount]);
+  }, [subUserName, subUserEmail, subUserCellphone, email, companyName]);
 
   React.useEffect(() => {
     !isSignup && !isConfirmationPage && dispatch(getNotificationUpdates());

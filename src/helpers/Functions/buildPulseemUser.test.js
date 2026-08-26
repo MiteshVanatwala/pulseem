@@ -5,35 +5,30 @@ describe('buildPulseemUser', () => {
     expect(buildPulseemUser({ subUserName: '', companyName: '' })).toBeNull();
   });
 
-  it('classifies a main-account login as Main', () => {
+  it('uses companyName as username for a main-account login', () => {
     const user = buildPulseemUser({
       subUserName: undefined,
       companyName: 'acme',
-      isDirectAccount: false,
     });
-    expect(user.accountType).toBe('Main');
-    expect(user.accountId).toBe('acme');
     expect(user.username).toBe('acme');
   });
 
-  it('classifies a direct account login as Direct', () => {
-    const user = buildPulseemUser({
-      subUserName: undefined,
-      companyName: 'acme',
-      isDirectAccount: true,
-    });
-    expect(user.accountType).toBe('Direct');
-  });
-
-  it('classifies a sub-user login as SubUser regardless of isDirectAccount', () => {
+  it('uses subUserName as username for a sub-user login', () => {
     const user = buildPulseemUser({
       subUserName: 'jane',
       companyName: 'acme',
-      isDirectAccount: true,
     });
-    expect(user.accountType).toBe('SubUser');
     expect(user.username).toBe('jane');
-    expect(user.accountId).toBe('acme');
+  });
+
+  it('never includes accountId or accountType', () => {
+    const user = buildPulseemUser({
+      subUserName: 'jane',
+      companyName: 'acme',
+      email: 'jane@acme.com',
+    });
+    expect('accountId' in user).toBe(false);
+    expect('accountType' in user).toBe(false);
   });
 
   it('prefers the sub-user email/cellphone over the account-level email', () => {
@@ -41,12 +36,8 @@ describe('buildPulseemUser', () => {
       subUserName: 'jane',
       companyName: 'acme',
       email: 'account@acme.com',
-      subUserObject: {
-        Data: {
-          Emails: [{ AuthValue: 'jane@acme.com' }],
-          Cellphones: [{ AuthValue: '123456' }],
-        },
-      },
+      subUserEmail: 'jane@acme.com',
+      subUserCellphone: '123456',
     });
     expect(user.email).toBe('jane@acme.com');
     expect(user.cellphone).toBe('123456');
@@ -57,7 +48,8 @@ describe('buildPulseemUser', () => {
       subUserName: 'jane',
       companyName: 'acme',
       email: 'account@acme.com',
-      subUserObject: { Data: { Emails: [{ AuthValue: '' }], Cellphones: [{ AuthValue: '' }] } },
+      subUserEmail: '',
+      subUserCellphone: '',
     });
     expect(user.email).toBe('account@acme.com');
     expect(user.cellphone).toBeUndefined();
