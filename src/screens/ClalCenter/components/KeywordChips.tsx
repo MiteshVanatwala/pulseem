@@ -206,6 +206,9 @@ export const NameSuggestField = ({
                     placeholder={placeholder}
                     variant="outlined"
                     autoFocus={autoFocus}
+                    // Groups.Title is nvarchar(255). params.inputProps carries Autocomplete's own
+                    // wiring (ref, aria, value handling) — spread it first, never replace it.
+                    inputProps={{ ...params.inputProps, maxLength: 255 }}
                     onKeyDown={(e: React.KeyboardEvent<HTMLDivElement>) => {
                         if (e.key === 'Enter' && onEnter) { e.preventDefault(); onEnter(); }
                     }}

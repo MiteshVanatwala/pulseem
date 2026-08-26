@@ -181,7 +181,8 @@ const GroupRow = ({
                     variant="outlined"
                     size="small"
                     value={draft}
-                    inputProps={{ 'aria-label': t(`${CC}group.renameLabel`) }}
+                    // Groups.Title is nvarchar(255) — cap the input rather than truncate silently in T-SQL.
+                    inputProps={{ 'aria-label': t(`${CC}group.renameLabel`), maxLength: 255 }}
                     onChange={e => setDraft(e.target.value)}
                     onBlur={commitRename}
                     onKeyDown={e => {

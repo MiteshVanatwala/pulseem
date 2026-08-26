@@ -86,6 +86,18 @@ interface DeleteTarget {
     itemIds: number[];
 }
 
+/**
+ * What `persistItem` hands back. The DTO alone is not enough: `saved.Status` is the status as
+ * SaveItem left it, and SP5 never changes an existing item's status — so it is the status BEFORE
+ * the hide switch is applied by the SetStatus that follows. Callers need BOTH ends of the
+ * transition to choose honest copy.
+ */
+interface PersistResult {
+    saved: ItemDto;
+    priorStatus: eClalItemStatus;
+    finalStatus: eClalItemStatus;
+}
+
 const ClalCenterScreen = ({ classes }: ClassesType) => {
     const { t } = useTranslation();
     const dispatch = useDispatch<any>();
@@ -93,7 +105,11 @@ const ClalCenterScreen = ({ classes }: ClassesType) => {
     const handleStyles = useHandleStyles();
 
     const { accountFeatures } = useSelector((state: any) => state.common);
-    const { groups, items, config, loadStatus } = useSelector((state: any) => state.clalCenter);
+    // `error` is selected on purpose: the slice writes it on getClalTree.rejected, and without it
+    // a failed load renders the chrome over a void — no spinner (not 'loading'), no empty state
+    // (that needs 'succeeded'), no message. That is exactly what a wrong
+    // ClalCenter.AllowedSubAccountID looks like on day one of W5.
+    const { groups, items, config, loadStatus, error } = useSelector((state: any) => state.clalCenter);
     const { toast, show, dismiss } = useClalToast();
 
     const isRTL = (i18n.dir?.() ?? 'rtl') === 'rtl';
@@ -305,6 +321,13 @@ const ClalCenterScreen = ({ classes }: ClassesType) => {
         await flushReorders();
         const result: any = await dispatch(publishClalCenter({}));
         if (result?.error) showErrorKey(result?.payload?.error ?? 'publish_failed');
+        // ItemCount is the number of items the artifact actually EMITTED. Zero means the portal is
+        // now showing "התוכן יעלה בקרוב" to every agent — the same green toast for that as for a
+        // normal update is how a site gets emptied without anyone noticing.
+        // 'info', not 'error': the publish SUCCEEDED — the artifact was written and verified.
+        // A red toast on a successful action invites a re-click, and red is what the frozen error
+        // table reserves for publish_failed / server_error.
+        else if (result?.payload?.ItemCount === 0) show(t(`${CC}toast.siteUpdatedEmpty`), 'info');
         else show(t(`${CC}toast.siteUpdated`));
         await refresh();
         setBusy(false);
@@ -474,44 +497,73 @@ const ClalCenterScreen = ({ classes }: ClassesType) => {
         else show(t(`${CC}toast.itemsMoved`));
     };
 
-    /** Case (ג) (ב): N×DeleteItem, then DeleteGroup. Undo is N×RestoreItem, then RestoreGroup. */
+    /**
+     * Case (ג) (ב): N×DeleteItem, then DeleteGroup. Undo is N×RestoreItem, then RestoreGroup.
+     *
+     * The undo is built from what was ACTUALLY deleted so far, and it is offered on the failure
+     * paths too. A failure at item 8 of 12 used to leave seven items soft-deleted with no undo at
+     * all — and SP1/SP4 filter IsDeleted=0, so those rows are invisible in the admin from that
+     * moment on. The only recovery left was a manual UPDATE by the owner.
+     */
     const deleteGroupWithContent = async () => {
         if (!deleteTarget) return;
         const { group, itemIds } = deleteTarget;
+        const isCategory = !group.ParentGroupID;
+        const hadLive = itemIds.some(id =>
+            (items as ItemDto[]).find(i => i.ItemID === id)?.Status === eClalItemStatus.PUBLISHED);
+        const deleted: number[] = [];
+
+        // Restores only what this run destroyed; `groupToo` is false when DeleteGroup never landed.
+        const undoFor = (ids: number[], groupToo: boolean) => ({
+            label: t(`${CC}toast.undo`),
+            onClick: async () => {
+                // Every restore is checked. Discarding these results would re-create, inside the undo
+                // itself, the exact defect the item-save path was just fixed for: a green toast over
+                // an operation that did not happen.
+                let failed = 0;
+                for (let index = 0; index < ids.length; index++) {
+                    const r: any = await dispatch(restoreClalItem({ ItemID: ids[index] }));
+                    if (r?.error) failed++;
+                }
+                if (groupToo) {
+                    const undo: any = await dispatch(restoreClalGroup({ GroupID: group.GroupID }));
+                    if (undo?.error) { showErrorKey(undo?.payload?.error ?? 'server_error'); await refresh(); return; }
+                }
+                if (failed) show(t(`${CC}toast.undoFailed`), 'error');
+                else show(t(`${CC}toast.undone`));
+                await refresh();
+            }
+        });
+
         setBusy(true);
         for (let index = 0; index < itemIds.length; index++) {
             const result: any = await dispatch(deleteClalItem({ ItemID: itemIds[index] }));
             if (result?.error) {
                 setBusy(false);
-                showErrorKey(result?.payload?.error ?? 'server_error');
+                setDeleteTarget(null);
                 await refresh();
+                // Partial destruction. Offer the undo for exactly what went, alongside the error.
+                if (deleted.length) show(t(`${CC}error.${result?.payload?.error ?? 'server_error'}`), 'error', [undoFor(deleted, false)]);
+                else showErrorKey(result?.payload?.error ?? 'server_error');
                 return;
             }
+            deleted.push(itemIds[index]);
         }
         const result: any = await dispatch(deleteClalGroup({ GroupID: group.GroupID }));
         setBusy(false);
         setDeleteTarget(null);
-        if (result?.error) { showErrorKey(result?.payload?.error ?? 'server_error'); await refresh(); return; }
-        const hadLive = itemIds.some(id =>
-            (items as ItemDto[]).find(i => i.ItemID === id)?.Status === eClalItemStatus.PUBLISHED);
+        if (result?.error) {
+            await refresh();
+            // Every item is gone but the group survived — the worst state to leave without an undo.
+            show(t(`${CC}error.${result?.payload?.error ?? 'server_error'}`), 'error', [undoFor(deleted, false)]);
+            return;
+        }
         await refresh();
-        const isCategory = !group.ParentGroupID;
         const message = t(`${CC}toast.${isCategory ? 'categoryDeleted' : 'subGroupDeleted'}`);
         // SP17 restores groups only — SP13 never deletes items, so the item restores are the
         // CLIENT's job, and this screen is the only place that knows which ids went with it.
         // Order per §C1 SP17: N×RestoreItem, then RestoreGroup.
-        const undoAction = {
-            label: t(`${CC}toast.undo`),
-            onClick: async () => {
-                for (let index = 0; index < itemIds.length; index++) {
-                    await dispatch(restoreClalItem({ ItemID: itemIds[index] }));
-                }
-                const undo: any = await dispatch(restoreClalGroup({ GroupID: group.GroupID }));
-                if (undo?.error) showErrorKey(undo?.payload?.error ?? 'server_error');
-                else show(t(`${CC}toast.undone`));
-                await refresh();
-            }
-        };
+        const undoAction = undoFor(deleted, true);
         // One toast, not two — the second would wipe the undo before it could be clicked.
         if (hadLive) offerSiteUpdate(message, [undoAction]);
         else show(message, 'success', [undoAction]);
@@ -608,22 +660,39 @@ const ClalCenterScreen = ({ classes }: ClassesType) => {
         setRestoredFromSession(false);
     }, [draft]);
 
-    /** Esc and the ✕ are DRAFT-AWARE: unsaved edits get a confirm, never a silent discard. */
+    /**
+     * Esc and the ✕ are DRAFT-AWARE: unsaved edits get a confirm, never a silent discard.
+     * The guard follows the DRAFT, not the top drawer. The preview sits ON TOP of the item drawer
+     * with the same unsaved draft behind it, so a ✕/Esc/backdrop there used to discard the edit
+     * with no question AND wipe its sessionStorage copy — losing the one safety net §C6 mandates.
+     */
     const requestCloseDrawers = useCallback(() => {
-        if (stack.length && stack[stack.length - 1].Level === 'item' && isDirty) {
+        // `isDirty` already implies an open item draft (it needs both draft and snapshot), so the
+        // draft itself is the whole condition. Testing the top drawer's level was an allow-list that
+        // silently excluded any future stack — a history drawer opened over a dirty draft would have
+        // taken the un-guarded path and discarded it, sessionStorage copy included.
+        if (isDirty) {
             setConfirmDiscard(true);
             return;
         }
         closeDrawers();
-    }, [closeDrawers, isDirty, stack]);
+    }, [closeDrawers, isDirty]);
 
     const popDrawer = useCallback(() => {
         if (stack.length > 1) { setStack(stack.slice(0, -1)); setPreviewOnly(false); return; }
         requestCloseDrawers();
     }, [requestCloseDrawers, stack]);
 
-    /** SaveItem (+ SetStatus for the hide switch). Returns the saved DTO, or null on failure. */
-    const persistItem = async (current: ItemDraft): Promise<ItemDto | null> => {
+    /**
+     * SaveItem (+ SetStatus for the hide switch). Returns the saved DTO WITH the status transition,
+     * or null on failure.
+     *
+     * Two things this must not do, both of which were live defects:
+     *  • report success when the SetStatus half failed — the item would stay live on the portal
+     *    while the editor is told it was hidden;
+     *  • let the caller read `saved.Status` as the outcome — it is the status BEFORE the switch.
+     */
+    const persistItem = async (current: ItemDraft): Promise<PersistResult | null> => {
         const validation = draftValidationError(current);
         if (validation) { showErrorKey(validation); return null; }
         if (!current.GroupID) { showErrorKey('server_error'); return null; }
@@ -647,33 +716,58 @@ const ClalCenterScreen = ({ classes }: ClassesType) => {
         if (result?.error) { showErrorKey(result?.payload?.error ?? 'server_error'); return null; }
 
         const saved: ItemDto = result.payload;
+        const priorStatus: eClalItemStatus = saved.Status;
+        let finalStatus: eClalItemStatus = saved.Status;
+
         if (current.ItemID) {
             const isHidden = saved.Status === eClalItemStatus.HIDDEN;
-            if (current.Hidden && !isHidden) {
-                await dispatch(setClalItemStatus({ ItemID: saved.ItemID, Status: eClalItemStatus.HIDDEN }));
-            } else if (!current.Hidden && isHidden) {
-                await dispatch(setClalItemStatus({
-                    ItemID: saved.ItemID,
-                    Status: saved.PrevStatus ?? eClalItemStatus.DRAFT
-                }));
+            let next: eClalItemStatus | null = null;
+            if (current.Hidden && !isHidden) next = eClalItemStatus.HIDDEN;
+            else if (!current.Hidden && isHidden) next = saved.PrevStatus ?? eClalItemStatus.DRAFT;
+
+            if (next !== null) {
+                const status: any = await dispatch(setClalItemStatus({ ItemID: saved.ItemID, Status: next }));
+                // The save landed but the status did not. Two distinct failures, and only the first
+                // rejects: SP7's UPDATE carries `AND Status <> @Status` and returns
+                // `SELECT @@ROWCOUNT`, so a row that was deleted or moved between SaveItem and here
+                // comes back as HTTP 200 with Updated = 0. Both must fail the save, or the editor
+                // gets the very toast this guard exists to prevent.
+                if (status?.error) { showErrorKey(status?.payload?.error ?? 'server_error'); return null; }
+                if ((status?.payload?.Updated ?? 0) === 0) { showErrorKey('server_error'); return null; }
+                finalStatus = next;
             }
         }
-        return saved;
+        return { saved, priorStatus, finalStatus };
     };
 
     const saveDraftOnly = async () => {
         if (!draft) return;
         setBusy(true);
-        const saved = await persistItem(draft);
+        const res = await persistItem(draft);
         setBusy(false);
-        if (!saved) return;
+        if (!res) return;
+        const { priorStatus, finalStatus } = res;
         clearDraftSession(draft.ItemID);
         closeDrawers(false);
         await refresh();
-        if (draft.Hidden) { show(t(`${CC}toast.savedHidden`)); return; }
+
+        // Branch on the TRANSITION, never on the switch position. The site changes only at the next
+        // update, so hiding a LIVE item leaves it on the portal — "does not appear on the site" is
+        // false there, and no update was being offered at all.
+        if (finalStatus === eClalItemStatus.HIDDEN) {
+            if (priorStatus === eClalItemStatus.PUBLISHED) offerSiteUpdate(t(`${CC}toast.itemHidden`));
+            else show(t(`${CC}toast.savedHidden`));   // a draft was hidden: nothing to remove, stay quiet
+            return;
+        }
+        // Came back from hidden through the switch — §C6 "החזרה מותנית", by PrevStatus.
+        if (priorStatus === eClalItemStatus.HIDDEN) {
+            if (finalStatus === eClalItemStatus.PUBLISHED) offerSiteUpdate(t(`${CC}toast.itemRestoredLive`));
+            else show(t(`${CC}toast.itemRestoredDraft`));
+            return;
+        }
         // C6 v12 §6: saving a LIVE item does not demote it — and the toast must not say the site
         // is unaffected, because the edit WILL go up on the next update.
-        if (saved.Status === eClalItemStatus.PUBLISHED) show(t(`${CC}toast.savedLive`));
+        if (finalStatus === eClalItemStatus.PUBLISHED) show(t(`${CC}toast.savedLive`));
         else show(t(`${CC}toast.savedDraft`));
     };
 
@@ -693,16 +787,17 @@ const ClalCenterScreen = ({ classes }: ClassesType) => {
     const publishFromPreview = async () => {
         if (!draft) return;
         setBusy(true);
-        const saved = await persistItem(draft);
-        if (!saved) { setBusy(false); return; }
+        const res = await persistItem(draft);
+        if (!res) { setBusy(false); return; }
         // Two calls, in this order. If the second fails the save DID happen, so the copy must be
         // the partial one — never "האתר לא השתנה".
-        const result: any = await dispatch(publishClalCenter({ ItemIds: [saved.ItemID] }));
+        const result: any = await dispatch(publishClalCenter({ ItemIds: [res.saved.ItemID] }));
         setBusy(false);
         clearDraftSession(draft.ItemID);
         closeDrawers(false);
         await refresh();
         if (result?.error) show(t(`${CC}toast.savePublishPartial`), 'error');
+        else if (result?.payload?.ItemCount === 0) show(t(`${CC}toast.siteUpdatedEmpty`), 'info');
         else show(t(`${CC}toast.publishedOk`), 'success', [{
             label: t(`${CC}viewPortal`),
             onClick: () => { if (config?.PortalUrl) window.open(config.PortalUrl, '_blank', 'noopener'); }
@@ -803,9 +898,11 @@ const ClalCenterScreen = ({ classes }: ClassesType) => {
         setTimeout(() => document.getElementById(handleDomId(dragId))?.focus(), 0);
     };
 
-    const reorderCategories = (fromIndex: number, toIndex: number) => {
+    const reorderCategories = (fromIndex: number, toIndex: number): boolean => {
         const ids = categories.map(c => c.GroupID);
-        if (toIndex < 0 || toIndex >= ids.length || fromIndex === toIndex) return;
+        // Out of range or a no-op: report it so the caller does not move the roving tab stop
+        // to an index that has no row — that empties the whole list out of the Tab order.
+        if (toIndex < 0 || toIndex >= ids.length || fromIndex === toIndex) return false;
         const next = arrayMove(ids, fromIndex, toIndex);
         reorder({ level: 1, parentId: null }, next);
         // Category order changes the JSON only when there is live content to reorder.
@@ -814,12 +911,15 @@ const ClalCenterScreen = ({ classes }: ClassesType) => {
             name: categories[fromIndex].Title, pos: toIndex + 1, total: ids.length
         }));
         focusHandleLater(groupDragId(categories[fromIndex].GroupID));
+        return true;
     };
 
-    const reorderSubGroups = (categoryId: number, fromIndex: number, toIndex: number) => {
+    const reorderSubGroups = (categoryId: number, fromIndex: number, toIndex: number): boolean => {
         const list = subGroupsOf(categoryId);
         const ids = list.map(g => g.GroupID);
-        if (toIndex < 0 || toIndex >= ids.length || fromIndex === toIndex) return;
+        // Out of range or a no-op: report it so the caller does not move the roving tab stop
+        // to an index that has no row — that empties the whole list out of the Tab order.
+        if (toIndex < 0 || toIndex >= ids.length || fromIndex === toIndex) return false;
         const next = arrayMove(ids, fromIndex, toIndex);
         reorder({ level: 2, parentId: categoryId }, next);
         // C6 v12 §14: sub-group operations are classified with the CATEGORY branch — conservative,
@@ -829,12 +929,15 @@ const ClalCenterScreen = ({ classes }: ClassesType) => {
             name: list[fromIndex].Title, pos: toIndex + 1, total: ids.length
         }));
         focusHandleLater(groupDragId(list[fromIndex].GroupID));
+        return true;
     };
 
-    const reorderItems = (groupId: number, fromIndex: number, toIndex: number) => {
+    const reorderItems = (groupId: number, fromIndex: number, toIndex: number): boolean => {
         const list = itemsOf(groupId);
         const ids = list.map(i => i.ItemID);
-        if (toIndex < 0 || toIndex >= ids.length || fromIndex === toIndex) return;
+        // Out of range or a no-op: report it so the caller does not move the roving tab stop
+        // to an index that has no row — that empties the whole list out of the Tab order.
+        if (toIndex < 0 || toIndex >= ids.length || fromIndex === toIndex) return false;
         const next = arrayMove(ids, fromIndex, toIndex);
         reorder({ level: 3, parentId: groupId }, next);
         // Item order matters to the site only if THIS group actually has something live in it.
@@ -843,6 +946,7 @@ const ClalCenterScreen = ({ classes }: ClassesType) => {
             name: list[fromIndex].Title, pos: toIndex + 1, total: ids.length
         }));
         focusHandleLater(itemDragId(list[fromIndex].ItemID));
+        return true;
     };
 
     /**
@@ -1078,8 +1182,7 @@ const ClalCenterScreen = ({ classes }: ClassesType) => {
                                                             if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return;
                                                             e.preventDefault();
                                                             const delta = e.key === 'ArrowUp' ? -1 : 1;
-                                                            setRoving(listId, index + delta);
-                                                            reorderItems(subGroup.GroupID, index, index + delta);
+                                                            if (reorderItems(subGroup.GroupID, index, index + delta)) setRoving(listId, index + delta);
                                                         }}
                                                         aria-label={t(`${CC}reorder.handleItem`, {
                                                             name: item.Title, pos: index + 1, total: allRows.length
@@ -1264,8 +1367,7 @@ const ClalCenterScreen = ({ classes }: ClassesType) => {
                                                     if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return;
                                                     e.preventDefault();
                                                     const delta = e.key === 'ArrowUp' ? -1 : 1;
-                                                    setRoving(listId, index + delta);
-                                                    reorderSubGroups(category.GroupID, index, index + delta);
+                                                    if (reorderSubGroups(category.GroupID, index, index + delta)) setRoving(listId, index + delta);
                                                 }
                                             }}
                                             canMoveUp={index > 0}
@@ -1478,6 +1580,28 @@ const ClalCenterScreen = ({ classes }: ClassesType) => {
                 </Box>
             )}
 
+            {loadStatus === 'failed' && (
+                <Box
+                    role="alert"
+                    style={{
+                        display: 'flex', alignItems: 'center', gap: 12, padding: 24, margin: '16px 0',
+                        border: '1px solid #e0c3c3', borderRadius: 8, background: '#fdf5f5'
+                    }}
+                >
+                    <Typography style={{ flex: 1, color: '#7a2020' }}>
+                        {t(`${CC}error.${error || 'server_error'}`)}
+                    </Typography>
+                    <Button
+                        variant="outlined"
+                        size="small"
+                        disabled={loadStatus === 'loading' || busy}
+                        onClick={() => { refresh(); }}
+                    >
+                        {t(`${CC}retry`)}
+                    </Button>
+                </Box>
+            )}
+
             {treeEmpty ? (
                 <Box style={{ marginTop: 14 }}>
                     <FirstScreen
@@ -1493,7 +1617,7 @@ const ClalCenterScreen = ({ classes }: ClassesType) => {
                                 size="small"
                                 value={newCategoryName}
                                 placeholder={t(`${CC}newCategoryName`)}
-                                inputProps={{ 'aria-label': t(`${CC}newCategoryName`) }}
+                                inputProps={{ 'aria-label': t(`${CC}newCategoryName`), maxLength: 255 }}
                                 onChange={e => setNewCategoryName(e.target.value)}
                                 onKeyDown={e => {
                                     if (e.key === 'Enter') { e.preventDefault(); createCategory(); }
@@ -1576,8 +1700,7 @@ const ClalCenterScreen = ({ classes }: ClassesType) => {
                                                             if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return;
                                                             e.preventDefault();
                                                             const delta = e.key === 'ArrowUp' ? -1 : 1;
-                                                            setRoving(listId, index + delta);
-                                                            reorderCategories(index, index + delta);
+                                                            if (reorderCategories(index, index + delta)) setRoving(listId, index + delta);
                                                         }
                                                     }}
                                                     canMoveUp={index > 0}
@@ -1643,7 +1766,7 @@ const ClalCenterScreen = ({ classes }: ClassesType) => {
                                 size="small"
                                 value={newCategoryName}
                                 placeholder={t(`${CC}newCategoryName`)}
-                                inputProps={{ 'aria-label': t(`${CC}newCategoryName`) }}
+                                inputProps={{ 'aria-label': t(`${CC}newCategoryName`), maxLength: 255 }}
                                 onChange={e => setNewCategoryName(e.target.value)}
                                 onKeyDown={e => {
                                     if (e.key === 'Enter') { e.preventDefault(); createCategory(); }

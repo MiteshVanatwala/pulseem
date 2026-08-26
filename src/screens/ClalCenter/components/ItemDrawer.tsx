@@ -25,6 +25,7 @@
 // ═══════════════════════════════════════════════════════════════════════════════════════════
 
 import React, { useRef, useState } from 'react';
+import moment from 'moment';
 import {
     Box, Button, CircularProgress, LinearProgress, Switch, TextField, Typography
 } from '@material-ui/core';
@@ -33,6 +34,7 @@ import {
     CC, ClalErrorKey, FileRefDto, GroupDto, ItemDto, eClalItemStatus, eClalItemType
 } from '../../../Models/ClalCenter/ClalCenter';
 import { uploadClalFile, toErrorKey } from '../../../redux/reducers/clalCenterSlice';
+import { DateFormats } from '../../../helpers/Constants';
 import { norm } from '../searchNormalizer';
 import GroupPathPicker from './GroupPathPicker';
 import { KeywordChips, keywordsTooLong, MAX_KEYWORDS } from './KeywordChips';
@@ -61,6 +63,9 @@ export interface ItemDraft {
     ExistingFileUrl: string | null;
     /** The item's server-side status — drives the button label, never sent by SaveItem on update. */
     Status: eClalItemStatus;
+    /** SPEC §8 / §2 — display only. Never sent back; SaveItem stamps these server-side. */
+    UpdatedDate: string | null;
+    UpdatedBy: string | null;
 }
 
 export const emptyDraft = (groupId: number | null): ItemDraft => ({
@@ -76,7 +81,9 @@ export const emptyDraft = (groupId: number | null): ItemDraft => ({
     FileRef: null,
     ExistingFileName: null,
     ExistingFileUrl: null,
-    Status: eClalItemStatus.DRAFT
+    Status: eClalItemStatus.DRAFT,
+    UpdatedDate: null,
+    UpdatedBy: null
 });
 
 export const draftFromItem = (item: ItemDto): ItemDraft => ({
@@ -92,7 +99,9 @@ export const draftFromItem = (item: ItemDto): ItemDraft => ({
     FileRef: null,
     ExistingFileName: item.FileName ?? null,
     ExistingFileUrl: item.ItemType === eClalItemType.FILE ? item.Url ?? null : null,
-    Status: item.Status
+    Status: item.Status,
+    UpdatedDate: item.UpdatedDate ?? null,
+    UpdatedBy: item.UpdatedBy ?? null
 });
 
 /**
@@ -276,6 +285,10 @@ const ItemDrawer = ({
                 error={titleMissing}
                 helperText={titleMissing ? t(`${CC}drawer.titleRequiredField`) : ' '}
                 onChange={e => onChange({ Title: e.target.value })}
+                // Items.Title is nvarchar(255). The cap PREVENTS over-length input; the server
+                // keeps a backstop, but a T-SQL parameter assignment truncates SILENTLY (no 8152),
+                // so without this the editor's text is cut with no error anywhere.
+                inputProps={{ maxLength: 255 }}
             />
 
             <Box>
@@ -305,8 +318,26 @@ const ItemDrawer = ({
                     onBlur={() => setUrlTouched(true)}
                     // The value is a URL: it must not reorder inside an RTL paragraph
                     // (E3 RTL_NOTES 6). textAlign is branched, not 'start'.
-                    inputProps={{ dir: 'ltr', style: { direction: 'ltr', textAlign: isRTL ? 'right' : 'left' } }}
+                    // Items.Url is nvarchar(1000) — see the Title note above.
+                    inputProps={{ dir: 'ltr', maxLength: 1000, style: { direction: 'ltr', textAlign: isRTL ? 'right' : 'left' } }}
                 />
+            )}
+
+            {/* SPEC §3: "אפשרות לפתוח ולבדוק את היעד לפני הפרסום". A file already has this
+                (openFile, below); a link had no equivalent, which is why a truncated paste could
+                reach the portal unchecked. Rendered only for a URL that passed validation, so this
+                never offers to open something the server would reject. */}
+            {draft.ItemType === eClalItemType.LINK && !urlBad && /^https:\/\//i.test(draft.Url.trim()) && (
+                <Box style={{ marginTop: -8 }}>
+                    <a
+                        href={draft.Url.trim()}
+                        target="_blank"
+                        rel="noreferrer noopener"
+                        style={{ fontSize: 13, color: '#FF1744', fontWeight: 600 }}
+                    >
+                        {t(`${CC}drawer.openLink`)}
+                    </a>
+                </Box>
             )}
 
             {draft.ItemType === eClalItemType.FILE && (
@@ -375,6 +406,37 @@ const ItemDrawer = ({
                         </Box>
                     )}
                 </Box>
+            )}
+
+            {/* C15: Description is wired end to end — column, DTO, published.json, and the portal
+                renders it under every card — but no input existed, so it could only ever be NULL.
+                Items.Description is nvarchar(500). */}
+            <TextField
+                label={t(`${CC}drawer.fieldDescription`)}
+                variant="outlined"
+                fullWidth
+                multiline
+                minRows={2}
+                value={draft.Description}
+                helperText={t(`${CC}drawer.descriptionHelp`)}
+                onChange={e => onChange({ Description: e.target.value })}
+                inputProps={{ maxLength: 500 }}
+            />
+
+            {/* SPEC §2 "הצגת מועד העדכון האחרון וסטטוס הפריט" — the status is the chip in the header;
+                this is the other half. In the drawer rather than a sixth table column: the approved
+                mock is five columns and a date column costs width in RTL. */}
+            {!!draft.UpdatedDate && (
+                <Typography style={{ fontSize: 12.5, color: '#6b7a88' }}>
+                    {draft.UpdatedBy
+                        ? t(`${CC}drawer.lastUpdatedBy`, {
+                            when: moment(draft.UpdatedDate).format(DateFormats.DATE_TIME_24),
+                            who: draft.UpdatedBy
+                        })
+                        : t(`${CC}drawer.lastUpdated`, {
+                            when: moment(draft.UpdatedDate).format(DateFormats.DATE_TIME_24)
+                        })}
+                </Typography>
             )}
 
             {draft.ItemType === eClalItemType.INFO && (

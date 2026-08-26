@@ -372,7 +372,10 @@ export const clalCenterSlice = createSlice({
     extraReducers: builder => {
         builder
             .addCase(getClalTree.pending, state => {
-                state.loadStatus = state.loadStatus === 'idle' ? 'loading' : state.loadStatus;
+                // 'succeeded' stays put so a background refresh does not blank a populated tree.
+                // 'failed' must NOT stay put: a retry has to show the loading row, or the button
+                // appears dead and a second failure looks identical to the first.
+                state.loadStatus = state.loadStatus === 'succeeded' ? 'succeeded' : 'loading';
             })
             .addCase(getClalTree.fulfilled, (state, { payload }: any) => {
                 state.loadStatus = 'succeeded';
