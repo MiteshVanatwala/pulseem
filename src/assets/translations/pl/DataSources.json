@@ -8,6 +8,7 @@
   "goToSend": "Wybierz kampanię do wysyłki z tego źródła",
   "send": {
     "title": "Wysyłka ze źródła",
+    "noSourceTooltip": "Aby wysłać ze źródła danych, najpierw prześlij źródło na ekranie Źródła danych.",
     "campaignLabel": "Kampania: {{name}}",
     "notMapped": "Ta kampania nie jest jeszcze zmapowana do źródła danych",
     "mappedTo": "Zmapowano do źródła: {{name}}",
@@ -162,7 +163,13 @@
         "notEmailTitle": "Wybrana kolumna nie jest kolumną e-mail",
         "notEmailBody": "Kolumna \"{{name}}\" jest oznaczona jako kolumna przełożonego, ale nie zawiera adresów e-mail — żaden przełożony nie otrzyma raportu. Popraw to na ekranie mapowania przed wysyłką.",
         "isRecipientTitle": "Wybrana kolumna to adres samego odbiorcy",
-        "isRecipientBody": "Kolumna \"{{name}}\" to adres samego odbiorcy. Zaznaczenie tego pola wyśle każdemu agentowi raport o nim samym."
+        "isRecipientBody": "Kolumna \"{{name}}\" to adres samego odbiorcy. Zaznaczenie tego pola wyśle każdemu agentowi raport o nim samym.",
+        "noColumnTitle": "Nie wybrano kolumny e-mail przełożonego",
+        "noColumnBody": "Bez kolumny przełożonego raportu dla przełożonych nie można zbudować z tego źródła danych. Wybierz kolumnę e-mail przełożonego na ekranie mapowania, a następnie wróć i wyślij.",
+        "noColumnAction": "Wybierz kolumnę",
+        "unconfirmedTitle": "Kolumna przełożonego została wykryta automatycznie i nie została potwierdzona",
+        "unconfirmedBody": "Kolumna \"{{name}}\" została wykryta automatycznie, ale nie jest zapisana w mapowaniu, więc nie można z niej zbudować raportu dla przełożonych. Potwierdź ją na ekranie mapowania — kliknij sugestię obok listy — a następnie wróć i wyślij.",
+        "unconfirmedAction": "Potwierdź kolumnę"
       },
       "combinedTitle": "Kampania łączona",
       "combinedNote": "Odbiorca z grupy zwykłej (nie ze źródła) — zmapowane pole zostanie zastąpione pustym ciągiem."
