@@ -15,7 +15,9 @@ const ServiceDomainDropdown = ({ domains, value, onChange }: Props) => (
     onChange={(e) => onChange && onChange(e.target.value as string)}
     variant="outlined"
     displayEmpty
-    style={{ height: 40, width: 200, minWidth: 0, maxWidth: 200, background: '#fff' }}
+    // flex rather than a fixed 200px: the sidebar header has to fit the avatar and
+    // four action icons too, and a rigid width pushed the last icon off the edge.
+    style={{ height: 40, flex: '1 1 auto', minWidth: 0, maxWidth: 200, background: '#fff' }}
     renderValue={(v: any) => (
       <Box display="flex" alignItems="center" style={{ minWidth: 0 }}>
         <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{v || 'All domains'}</span>

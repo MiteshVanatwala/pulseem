@@ -13,6 +13,9 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { FaBars } from 'react-icons/fa';
 import { MdEdit, MdSupportAgent, MdClose, MdAdd, MdMoreVert, MdRefresh, MdAddComment } from 'react-icons/md';
 import { BsPeopleFill, BsFillTagsFill } from 'react-icons/bs';
+import WhatsAppIcon from '@material-ui/icons/WhatsApp';
+import ChatBubbleOutlineIcon from '@material-ui/icons/ChatBubbleOutline';
+import { isChatWidgetPreviewUser } from '../../../../helpers/Routes/routes';
 import ChatTemplateModal from '../Popups/ChatTemplateModal';
 import { apiStatus } from '../../Constant';
 import { useDispatch, useSelector } from 'react-redux';
@@ -307,7 +310,10 @@ const ChatUi = ({
 		firstAgentId,
 	]);
 
-	const isWidgetChat = (chatContacts as any)?.channel === 'widget';
+	const isWidgetChat = chatContacts?.channel === 'widget';
+	// Same dark launch as the sidebar's channel tabs: for a WhatsApp-only account
+	// every conversation is WhatsApp, so the badge would be pure noise.
+	const showChannelBadge = isChatWidgetPreviewUser();
 
 	// The WhatsApp status Select speaks numeric ids; a widget conversation speaks the
 	// Service vocabulary. Map between the two rather than introducing a second control,
@@ -871,17 +877,42 @@ const ChatUi = ({
 								))}
 						</Box>
 					</Box>
-					<Box className="clock-font-size">
-						{whatsappChatSession?.IsIn24Window &&
-							Number(whatsappChatSession.Hour) > 0 &&
-							Number(whatsappChatSession.Minute) > 0 &&
-							Number(whatsappChatSession.Second) > 0 && (
-								<ChatHeaderContent
-									classes={classes}
-									whatsappChatSession={whatsappChatSession}
-									setWhatsappChatSession={setWhatsappChatSession}
-								/>
-							)}
+					<Box className={classes.chatHeaderRightSlot}>
+						{showChannelBadge && (
+							<Box
+								className={clsx(
+									classes.chatChannelBadge,
+									isWidgetChat
+										? classes.chatChannelBadgeWidget
+										: classes.chatChannelBadgeWhatsapp,
+								)}
+							>
+								{isWidgetChat ? (
+									<ChatBubbleOutlineIcon style={{ fontSize: 15 }} />
+								) : (
+									<WhatsAppIcon style={{ fontSize: 15 }} />
+								)}
+								<span>
+									{translator(
+										isWidgetChat
+											? 'whatsappChat.channelWidget'
+											: 'whatsappChat.channelWhatsapp',
+									)}
+								</span>
+							</Box>
+						)}
+						<Box className="clock-font-size">
+							{whatsappChatSession?.IsIn24Window &&
+								Number(whatsappChatSession.Hour) > 0 &&
+								Number(whatsappChatSession.Minute) > 0 &&
+								Number(whatsappChatSession.Second) > 0 && (
+									<ChatHeaderContent
+										classes={classes}
+										whatsappChatSession={whatsappChatSession}
+										setWhatsappChatSession={setWhatsappChatSession}
+									/>
+								)}
+						</Box>
 					</Box>
 				</Box>
 			</header>

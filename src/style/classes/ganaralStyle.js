@@ -5544,13 +5544,141 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
     textTransform: 'none',
     fontWeight: '600'
   },
+  // ===== WhatsApp Chat channel tabs (All / WhatsApp / Widget) =====
+  // Sits directly above the status tabs and reuses the same `custom-tab` look, so
+  // the two filter rows read as one stack rather than a dropdown plus a tab row.
+  channelTab: {
+    // Single-line row: no count underneath, so it stays shorter than the status row.
+    // The height is explicit rather than content-derived so this row is one knob to
+    // tune: 24px is half the status row below, which renders ~48px once its longest
+    // label wraps to two lines. `&&` doubles the specificity so these beat the
+    // shorthand `padding` on `.custom-tab` in whatsappStyles.js.
+    '&&': {
+      minHeight: 24,
+      height: 24,
+      paddingTop: 0,
+      paddingBottom: 0
+    },
+    // Drives the icon colour too — the icons inherit currentColor, so they flip to
+    // white together with the label once the tab sits on the selected gradient.
+    color: '#000000',
+    '&.Mui-selected': {
+      color: '#ffffff'
+    }
+  },
+  channelTabLabel: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 5,
+    minWidth: 0,
+    // `&&` raises specificity above the shared `.custom-tab h2` rule in
+    // whatsappStyles.js, which otherwise re-applies the status-tab margin and
+    // wrapping to this single-line label.
+    '&& h2': {
+      margin: 0,
+      fontSize: 13,
+      lineHeight: '16px',
+      whiteSpace: 'nowrap',
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+      minWidth: 0
+    }
+  },
+  // ===== Channel identity colours =====
+  // One vocabulary in two places: the tab icon and the row stripe use the same
+  // colour per channel, so the tab row doubles as the legend for the stripes.
+  // Values match ServiceChannelDropdown, the original home of these colours.
+  channelTabWhatsapp: {
+    '&& svg': { color: '#25D366' },
+    '&&.Mui-selected svg': { color: '#ffffff' }
+  },
+  channelTabWidget: {
+    '&& svg': { color: '#f4511e' },
+    '&&.Mui-selected svg': { color: '#ffffff' }
+  },
+  // ===== Chat header channel badge =====
+  // Top-right of the open conversation. Answers "what kind of chat am I in" before
+  // the agent reaches for the composer — WhatsApp's 24-hour window and template
+  // rules do not apply to widget chats, so mistaking one for the other is a real
+  // error, not just a cosmetic one. Same hues as the sidebar stripe and tab icons.
+  chatHeaderRightSlot: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 8,
+    flexShrink: 0
+  },
+  chatChannelBadge: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: 5,
+    height: 22,
+    padding: '0 8px',
+    borderRadius: 11,
+    fontSize: 12,
+    fontWeight: 600,
+    whiteSpace: 'nowrap',
+    flexShrink: 0,
+    border: '1px solid transparent',
+    boxSizing: 'border-box'
+  },
+  // Text is a darkened shade of the channel colour rather than the colour itself:
+  // #25D366 on its own 12% tint does not carry enough contrast to read at 12px.
+  chatChannelBadgeWhatsapp: {
+    color: '#1b7f4d',
+    background: 'rgba(37, 211, 102, 0.12)',
+    borderColor: 'rgba(37, 211, 102, 0.35)',
+    '& svg': { color: '#25D366' }
+  },
+  chatChannelBadgeWidget: {
+    color: '#b23c10',
+    background: 'rgba(244, 81, 30, 0.12)',
+    borderColor: 'rgba(244, 81, 30, 0.35)',
+    '& svg': { color: '#f4511e' }
+  },
+  // Base stripe: a transparent border on every row so switching channels never
+  // shifts the text sideways. `sidebar-contact` pads 20px, so 3px of border plus
+  // 17px of padding keeps content on exactly the same line as an unstriped row.
+  // `&&` outranks the `padding` shorthand on `.sidebar-contact`, which is a single
+  // class and would otherwise win or lose on stylesheet order alone.
+  contactChannelStripe: {
+    '&&': {
+      [isRTL ? 'borderRight' : 'borderLeft']: '3px solid transparent',
+      [isRTL ? 'paddingRight' : 'paddingLeft']: 17
+    }
+  },
+  contactChannelWhatsapp: {
+    '&&': {
+      [isRTL ? 'borderRightColor' : 'borderLeftColor']: '#25D366'
+    }
+  },
+  contactChannelWidget: {
+    '&&': {
+      [isRTL ? 'borderRightColor' : 'borderLeftColor']: '#f4511e'
+    }
+  },
+  // MUI's Tabs root also carries a 48px minHeight of its own, independent of the
+  // Tab minHeight — both have to go or the row keeps its original height.
+  tabsRootCompact: {
+    minHeight: 0
+  },
+  // Replaces the generic `p5` (5px) on the two tab containers so the rows are not
+  // padded taller than the labels need.
+  tabContainerCompact: {
+    padding: 2
+  },
   // Agent Management Buttons Wrapper
   agentManagementButtonsWrapper: {
     display: 'flex',
-    gap: '4px',
+    gap: '2px',
     alignItems: 'center',
     flexDirection: isRTL ? 'row-reverse' : 'row',
-    flexShrink: 0
+    flexShrink: 0,
+    // MUI's default IconButton padding is 12px, so four of them claimed ~176px of
+    // a 300px-minimum sidebar header and pushed the last icon out of view.
+    '& .MuiIconButton-root': {
+      padding: 6
+    }
   },
   // Start New Chat button in sidebar header — same color as manage agent icon (inherited)
   startNewChatIconButton: {
@@ -5676,14 +5804,24 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
     flexDirection: isRTL ? 'row-reverse' : 'row',
     justifyContent: 'space-between',
     width: '100%',
-    overflow: 'hidden',
+    minWidth: 0,
     boxSizing: 'border-box',
+    // No overflow:'hidden' here. It used to hide the symptom by clipping whatever
+    // ran past the sidebar edge, which is why the trailing refresh icon appeared
+    // sliced in half. Instead, only the middle dropdown is allowed to shrink; the
+    // avatar and the action-icon row keep their intrinsic width and stay whole.
     '& > *': {
-      flexShrink: 1,
+      flexShrink: 0,
       minWidth: 0
     },
     '& .chat__contact-wrapper': {
       flex: 1,
+      minWidth: 0,
+      overflow: 'hidden'
+    },
+    // The WhatsApp-number picker: the one flexible item in the header.
+    '& .chat__contact-wrapper-header': {
+      flex: '1 1 auto',
       minWidth: 0,
       overflow: 'hidden'
     }
