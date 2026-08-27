@@ -15,16 +15,18 @@ export function buildPulseemUser({
   subUserCellphone,
   email,
   companyName,
+  defaultCellNumber,
 }) {
   try {
     if (!subUserName && !companyName) return null;
 
     const resolvedEmail = subUserEmail || email;
+    const resolvedCellphone = subUserCellphone || defaultCellNumber;
     const username = subUserName || companyName;
 
     const user = { username };
     if (resolvedEmail) user.email = resolvedEmail;
-    if (subUserCellphone) user.cellphone = subUserCellphone;
+    if (resolvedCellphone) user.cellphone = resolvedCellphone;
 
     if (process.env.NODE_ENV !== 'production') {
       const unexpectedKeys = Object.keys(user).filter(key => !PULSEEM_USER_KEYS.includes(key));
