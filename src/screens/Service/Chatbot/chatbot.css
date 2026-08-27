@@ -12,6 +12,22 @@
 .svc-cb, .svc-cb *, .svc-cb *::before, .svc-cb *::after {
   box-sizing: border-box;
 }
+/* classes.management (the outer containerClass on DefaultScreen) has no rule for
+   .containerBody, unlike the editor pages' classes.editorCont — so this card was
+   rendering with no border/background/padding at all. Scoped here instead of
+   switching to editorCont so the outer container's own margin/maxWidth (shared
+   with every other classes.management page) is left untouched. */
+.svc-cb .containerBody {
+  padding: 20px;
+  background-color: #fff;
+  border: 2px solid #f0f5ff;
+  border-radius: 10px;
+}
+@media screen and (max-width: 599px) {
+  .svc-cb .containerBody {
+    padding: 10px;
+  }
+}
 
 /* ── Buttons ────────────────────────────────────────────────────── */
 .svc-cb-btn {
@@ -161,12 +177,12 @@
   justify-content: center;
 }
 .svc-cb-trigger-row-icon-fires {
-  background: #eef4ff;
-  color: #2c50c9;
+  background: rgb(255, 51, 67);
+  color: #fff;
 }
 .svc-cb-trigger-row-icon-cooldown {
-  background: #fff4e6;
-  color: #b54708;
+  background: rgb(255, 51, 67);
+  color: #fff;
 }
 .svc-cb-trigger-row-text {
   flex: 1 1 220px;

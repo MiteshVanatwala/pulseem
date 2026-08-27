@@ -343,13 +343,12 @@ const ChatbotBuilder = ({ classes }: { classes?: any }) => {
           </Tabs>
 
           <TabContext value={tabValue}>
-            <TabPanel value="1" className={classes.p0} style={{ paddingTop: 20 }}>
+            <TabPanel value="1" className={clsx(classes.p0, classes.ps15)} style={{ paddingTop: 24, paddingBottom: 24 }}>
               <Grid
                 container
                 direction="row"
                 justifyContent="flex-start"
                 alignItems="flex-start"
-                spacing={isMobile ? 2 : 8}
                 className={classes.dialogButtonsContainer}
                 style={{ justifyContent: 'flex-start' }}
               >
