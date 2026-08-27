@@ -74,10 +74,10 @@ PulseemReactInstance.interceptors.request.use(async (config: any) => {
 PulseemReactInstance.interceptors.response.use(
     res => res,
     error => {
-        if (error.response.status === 401) {
+        if (error?.response?.status === 401) {
             redirectToLogin()
         }
-        return Promise.reject(error.response.data)
+        return Promise.reject(error?.response?.data ?? error)
     })
 
 let isForcedLogoutInProgress = false;
