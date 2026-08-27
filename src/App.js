@@ -747,11 +747,12 @@ const App = ({ screenSize }) => {
   // not a DOM attribute or URL param, so PII here never becomes visible markup.
   const subUserEmail = subUserObject?.Data?.Emails?.[0]?.AuthValue;
   const subUserCellphone = subUserObject?.Data?.Cellphones?.[0]?.AuthValue;
+  const defaultCellNumber = accountSettings?.DefaultCellNumber;
   useEffect(() => {
-    const user = buildPulseemUser({ subUserName, subUserEmail, subUserCellphone, email, companyName });
+    const user = buildPulseemUser({ subUserName, subUserEmail, subUserCellphone, email, companyName, defaultCellNumber });
     window.pulseem = window.pulseem || {};
     window.pulseem.currentUser = user ? { ...user, name: user.username } : undefined;
-  }, [subUserName, subUserEmail, subUserCellphone, email, companyName]);
+  }, [subUserName, subUserEmail, subUserCellphone, email, companyName, defaultCellNumber]);
 
   React.useEffect(() => {
     !isSignup && !isConfirmationPage && dispatch(getNotificationUpdates());
