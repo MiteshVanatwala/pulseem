@@ -16,7 +16,7 @@ const MarketingInsightsPanel = ({ data, loading }: Props) => {
     <div className="svc-card">
       <div className="svc-panel-head">
         <div className="svc-panel-title-wrap">
-          <span className="svc-panel-icon" style={{ background: '#f1ecfe', color: '#7c3aed' }}>
+          <span className="svc-panel-icon" style={{ background: '#FF1744', color: '#fff' }}>
             <TrendingUpIcon />
           </span>
           <h3 className="svc-panel-title">{t('common.dashboard_marketing_insights', 'Marketing Insights')}</h3>

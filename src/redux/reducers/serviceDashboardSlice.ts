@@ -6,11 +6,18 @@ import { IDashboardData } from '../../Models/Service/Dashboard';
 const unwrap = <T = any>(data: any): { StatusCode: number; Message: string; Data: T } =>
   typeof data === 'string' ? JSON.parse(data) : data;
 
+/** Reporting windows offered by the dashboard. Resolved to actual dates by the API. */
+export type DashboardRange = '24h' | '7d' | '30d' | 'all';
+
 export const getDashboardData = createAsyncThunk(
   'Service/GetDashboard',
-  async (_: void, thunkAPI) => {
+  async (range: DashboardRange | void, thunkAPI) => {
     try {
-      const res = await PulseemReactInstance.get('Service/Dashboard');
+      // Omitted entirely when not supplied, so the request stays byte-identical to
+      // the previous one and the endpoint keeps its all-time default.
+      const res = await PulseemReactInstance.get(
+        range ? `Service/Dashboard?range=${range}` : 'Service/Dashboard',
+      );
       const body = unwrap<IDashboardData>(res.data);
 
       // The API answers 200 at the transport layer and puts the real outcome in the
