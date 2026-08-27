@@ -7,7 +7,8 @@ import { NoAuthenticationAPIs } from '../Constants';
 const refreshTokenURL = `${actionURL}RefreshToken.ashx`
 const logoutURL = `${actionURL}LogoutSession.ashx`
 
-const redirectToLogin = () => {
+export const redirectToLogin = () => {
+    if ((window as any).pulseem) (window as any).pulseem.currentUser = undefined
     window.location.href = '/Pulseem/Login.aspx?ReturnUrl=/Pulseem/HomePageMiddleware.aspx?fromreact=true'
 }
 
