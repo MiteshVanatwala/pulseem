@@ -64,7 +64,7 @@ const useStyles = makeStyles({
   },
 });
 
-const TYPE_ICON: Record<KnowledgeItemType, React.ReactNode> = {
+export const TYPE_ICON: Record<KnowledgeItemType, React.ReactNode> = {
   text: <DescriptionOutlinedIcon fontSize="small" />,
   faq: <HelpOutlineIcon fontSize="small" />,
   url: <LinkIcon fontSize="small" />,

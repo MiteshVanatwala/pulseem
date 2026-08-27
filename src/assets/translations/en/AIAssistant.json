@@ -16,7 +16,6 @@
     "analytics": "Analytics"
   },
   "placeholderTab": {
-    "testChatNotice": "Test Chat is coming in Slice 3.",
     "analyticsNotice": "Analytics is coming in Slice 5."
   },
   "knowledgeBase": {
@@ -113,7 +112,42 @@
   "locked": {
     "message": "AI Assistant is available on a higher plan. Upgrade to set up your knowledge base and start answering customers automatically."
   },
+  "loadError": {
+    "retry": "Retry"
+  },
   "validation": {
     "genericError": "Something went wrong. Please try again."
+  },
+  "testChat": {
+    "intro": "Send a test message to see how the AI would respond to a real customer, using your current knowledge base and settings.",
+    "inputPlaceholder": "Type a message as a customer would...",
+    "sendButton": "Send",
+    "thinking": "Thinking… ({{seconds}}s)",
+    "confidenceLabel": "Confidence",
+    "noSources": "No knowledge sources were referenced for this reply.",
+    "escalatedBanner": "This reply would have been escalated to a human agent.",
+    "responseTimeFormat": "Responded in {{ms}} ms",
+    "goodResponse": "Good Response",
+    "needsImprovement": "Needs Improvement",
+    "feedbackThanks": "Thanks for the feedback",
+    "rateLimited": "You've sent a lot of test messages in a short time. Please wait a bit before trying again.",
+    "rateLimitedWithLimit": "You've reached your daily limit of {{limit}} test messages. Please try again tomorrow.",
+    "genericError": "Something went wrong sending your test message. Please try again.",
+    "messageTooLong": "Message must be 2,000 characters or fewer",
+    "empty": "No messages yet. Send one to test how the AI responds."
+  },
+  "analytics": {
+    "fromDateLabel": "From",
+    "toDateLabel": "To",
+    "loading": "Loading analytics...",
+    "testModeBannerTitle": "You're only seeing test-mode data",
+    "testModeBannerBody": "There are no live customer conversations in this date range. The data below reflects Test Chat activity only, not real customers.",
+    "emptyTitle": "No activity in this date range",
+    "emptyBody": "Nothing was recorded for the AI Assistant in this period. Try a different date range.",
+    "mostReferencedTitle": "Most Referenced Content",
+    "mostReferencedEmpty": "No knowledge items were referenced in this date range.",
+    "unusedContentTitle": "Unused Content",
+    "unusedContentSubtitle": "These knowledge items were never referenced in this date range. Consider reviewing or removing them.",
+    "unusedContentEmpty": "Every knowledge item was referenced at least once in this date range."
   }
 }

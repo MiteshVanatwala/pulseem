@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { PulseemReactInstance } from "../../helpers/Api/PulseemReactAPI";
 import { PulseemResponse } from "../../Models/APIResponse";
-import { IAiAssistantSettings, IKnowledgeItem, IKnowledgeItemInput } from "../../Models/Service/AIAssistant";
+import { IAiAssistantSettings, IKnowledgeItem, IKnowledgeItemInput, ITestChatResponse, ITestChatExchange, IAiAssistantAnalytics, IAnalyticsDateRange } from "../../Models/Service/AIAssistant";
 
 const SUCCESS = 201;
 const EMPTY = 404; // GetKnowledgeItems only: "no items yet" — a valid state, not an error
@@ -9,6 +9,21 @@ const VALIDATION_FAILED = 400;
 const NOT_FOUND = 404; // Save(update)/Delete/Toggle: not found OR belongs to another account — indistinguishable by design
 const ROLLOUT_DISABLED = 423;
 const NOT_ENTITLED = 403;
+const RATE_LIMITED = 429; // TestAIMessage only
+
+// TestAIMessage confirmed (backend Phase 0) to succeed on 201, but this is intentionally
+// its OWN constant, not a reuse of the shared SUCCESS above — TestAIMessage's 201 is a
+// deliberate, confirmed exception; SUCCESS above is otherwise an unconfirmed inference
+// for the rest of this page's endpoints. Do not collapse these back into one constant —
+// if SUCCESS is ever corrected for the other endpoints, TestAIMessage must not move with it.
+const TEST_MESSAGE_SUCCESS = 201;
+
+// SaveTestFeedback confirmed (backend Phase 0) to use the "normal" 200 convention —
+// unlike TestAIMessage, this one is NOT an exception, so it deliberately does not use
+// TEST_MESSAGE_SUCCESS or the shared SUCCESS(201) constant above.
+const FEEDBACK_SUCCESS = 200;
+const FEEDBACK_VALIDATION_FAILED = 400;
+const FEEDBACK_NOT_FOUND = 404;
 
 const DATA_INCORRECT_MESSAGE = 'Group Name is too long or missing';
 
@@ -68,6 +83,32 @@ const toServerSettings = (settings: IAiAssistantSettings) => ({
   EscalationMessage: settings.escalationMessage,
   MaxContextWords: settings.maxContextWords,
   IncludeConversationHistory: settings.includeConversationHistory,
+});
+
+// TestAIMessage's Data is camelCase (confirmed) — NOT PascalCase like the rest of
+// ServiceAI. knowledgeSources items use `id`/`title`, not `Id`/`Title`.
+const fromServerTestChatResponse = (raw: any): ITestChatResponse => ({
+  responseLogId: raw.responseLogId,
+  reply: raw.response,
+  confidenceScore: raw.confidence,
+  escalated: raw.escalated,
+  knowledgeSources: (raw.knowledgeSources || []).map((source: any) => ({ id: source.id, title: source.title })),
+  responseTimeMs: raw.responseTimeMs,
+});
+
+// GetAIAnalytics's Data is camelCase (confirmed), like TestAIMessage's — but its array
+// items key on `knowledgeItemId`, NOT `id` like TestAIMessage's knowledgeSources. The
+// two endpoints do not share a field name here; do not copy this mapper's shape onto
+// fromServerTestChatResponse or vice versa.
+const fromServerAnalytics = (raw: any): IAiAssistantAnalytics => ({
+  liveModeCount: raw.liveModeCount,
+  testModeCount: raw.testModeCount,
+  unusedContentItems: (raw.unusedKnowledgeItems || []).map((item: any) => ({ id: item.knowledgeItemId, title: item.title })),
+  mostReferencedItems: (raw.mostReferencedKnowledge || []).map((item: any) => ({
+    id: item.knowledgeItemId,
+    title: item.title,
+    referenceCount: item.citationCount,
+  })),
 });
 
 const asNetworkError = (error: any) => ({ message: error?.Message || error?.message || 'Network error' });
@@ -220,6 +261,95 @@ export const saveAiAssistantSettings = createAsyncThunk(
   }
 );
 
+// Each call is a standalone message, not a stateful server-side conversation — the
+// gate is re-checked every time for the same reason every other mutation thunk
+// re-checks it (a session can go stale mid-tab, e.g. a downgrade).
+export const sendTestChatMessage = createAsyncThunk(
+  'AIAssistant/TestAIMessage',
+  async (message: string, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.post(`ServiceAI/TestAIMessage`, { Message: message });
+      const body = response.data as PulseemResponse;
+      const gateFailure = checkGate(body);
+      if (gateFailure) return thunkAPI.rejectWithValue(gateFailure);
+
+      // Deliberate exception: TestAIMessage succeeds on 201, confirmed by backend —
+      // see TEST_MESSAGE_SUCCESS's definition above before "fixing" this to SUCCESS/200.
+      if (body?.StatusCode === TEST_MESSAGE_SUCCESS) return fromServerTestChatResponse(body.Data);
+
+      if (body?.StatusCode === RATE_LIMITED) {
+        // Confirmed absent: RetryAfterSeconds. The 429 body carries a daily cap instead.
+        return thunkAPI.rejectWithValue({
+          rateLimited: true,
+          maxRequestsPerDay: body.Data?.MaxRequestsPerDay,
+          message: body.Message,
+        });
+      }
+      if (body?.StatusCode === VALIDATION_FAILED) {
+        // Confirmed: Data is null on validation failure, message is body.Message directly
+        // (no nested Data.Reason the way the gate/rate-limit cases use).
+        return thunkAPI.rejectWithValue({ validation: true, message: body.Message });
+      }
+      return thunkAPI.rejectWithValue({ message: body?.Message || 'Unexpected response' });
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(asNetworkError(error));
+    }
+  }
+);
+
+// SaveTestFeedback — real, confirmed endpoint (backend Phase 0). Uses responseLogId
+// from the original TestAIMessage response, not the client-side exchange id.
+export const submitTestChatFeedback = createAsyncThunk(
+  'AIAssistant/SaveTestFeedback',
+  async (args: { exchangeId: string; responseLogId: number; feedback: 'good' | 'needs_improvement' }, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.post(`ServiceAI/SaveTestFeedback`, {
+        responseLogId: args.responseLogId,
+        feedback: args.feedback,
+      });
+      const body = response.data as PulseemResponse;
+      const gateFailure = checkGate(body);
+      if (gateFailure) return thunkAPI.rejectWithValue(gateFailure);
+
+      // Not the TestAIMessage exception — this endpoint uses the normal 200 convention.
+      if (body?.StatusCode === FEEDBACK_SUCCESS) return { exchangeId: args.exchangeId, helpful: args.feedback === 'good' };
+      if (body?.StatusCode === FEEDBACK_VALIDATION_FAILED) {
+        return thunkAPI.rejectWithValue({ validation: true, message: body.Message });
+      }
+      if (body?.StatusCode === FEEDBACK_NOT_FOUND) {
+        return thunkAPI.rejectWithValue({ notFound: true, message: body.Message });
+      }
+      return thunkAPI.rejectWithValue({ message: body?.Message || 'Unexpected response' });
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(asNetworkError(error));
+    }
+  }
+);
+
+// Re-checks the gate for the same reason every other mutation/query thunk on this page
+// does — a session can go stale mid-tab (e.g. a downgrade) even on a read-only call.
+export const fetchAiAssistantAnalytics = createAsyncThunk(
+  'AIAssistant/GetAIAnalytics',
+  async (range: IAnalyticsDateRange, thunkAPI) => {
+    try {
+      // Confirmed: POST only — the GET variant has a different, non-date-ranged shape
+      // with no testModeCount/liveModeCount and must not be used. Request body is
+      // camelCase (dateRangeStart/dateRangeEnd), unlike GetAISettings/SaveKnowledgeItem etc.
+      const response = await PulseemReactInstance.post(`ServiceAI/GetAIAnalytics`, {
+        dateRangeStart: range.startDate,
+        dateRangeEnd: range.endDate,
+      });
+      const body = response.data as PulseemResponse;
+      const gateFailure = checkGate(body);
+      if (gateFailure) return thunkAPI.rejectWithValue(gateFailure);
+      if (body?.StatusCode === SUCCESS) return { range, analytics: fromServerAnalytics(body.Data) };
+      return thunkAPI.rejectWithValue({ message: body?.Message || 'Unexpected response' });
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(asNetworkError(error));
+    }
+  }
+);
+
 type AsyncStatus = 'idle' | 'loading' | 'succeeded' | 'failed';
 
 interface AiAssistantState {
@@ -229,6 +359,11 @@ interface AiAssistantState {
   saving: AsyncStatus;
   error: string | null;
   gateStatus: GateStatus;
+  testChatExchanges: ITestChatExchange[];
+  testChatSending: AsyncStatus;
+  analytics: IAiAssistantAnalytics | null;
+  analyticsLoading: AsyncStatus;
+  analyticsError: string | null;
 }
 
 const initialState: AiAssistantState = {
@@ -238,6 +373,11 @@ const initialState: AiAssistantState = {
   saving: 'idle',
   error: null,
   gateStatus: 'unknown',
+  testChatExchanges: [],
+  testChatSending: 'idle',
+  analytics: null,
+  analyticsLoading: 'idle',
+  analyticsError: null,
 };
 
 const applyGateRejection = (state: AiAssistantState, action: any) => {
@@ -344,6 +484,59 @@ const aiAssistantSlice = createSlice({
         state.saving = 'failed';
         if (!applyGateRejection(state, action) && !action.payload?.validation) {
           state.error = action.payload?.message || 'Failed to save settings';
+        }
+      })
+      .addCase(sendTestChatMessage.pending, (state, action) => {
+        state.testChatSending = 'loading';
+        state.testChatExchanges.push({
+          id: action.meta.requestId,
+          question: action.meta.arg,
+          status: 'pending',
+          response: null,
+          errorMessage: null,
+          feedback: null,
+        });
+      })
+      .addCase(sendTestChatMessage.fulfilled, (state, action) => {
+        state.testChatSending = 'succeeded';
+        state.gateStatus = 'available';
+        const exchange = state.testChatExchanges.find((e) => e.id === action.meta.requestId);
+        if (exchange) {
+          exchange.status = 'succeeded';
+          exchange.response = action.payload;
+        }
+      })
+      .addCase(sendTestChatMessage.rejected, (state, action: any) => {
+        state.testChatSending = 'failed';
+        // Always resolve the pending bubble, even on a gate rejection (rollout/
+        // entitlement went stale mid-tab) — the page hides the whole tab on next
+        // render anyway, but an unresolved 'pending' entry would otherwise sit
+        // stuck on "Thinking…" forever if it's ever inspected before that happens.
+        const exchange = state.testChatExchanges.find((e) => e.id === action.meta.requestId);
+        if (exchange) {
+          exchange.status = action.payload?.rateLimited ? 'rateLimited' : 'failed';
+          exchange.errorMessage = action.payload?.message || null;
+          exchange.maxRequestsPerDay = action.payload?.maxRequestsPerDay;
+        }
+        applyGateRejection(state, action);
+      })
+      .addCase(submitTestChatFeedback.fulfilled, (state, action) => {
+        const exchange = state.testChatExchanges.find((e) => e.id === action.payload.exchangeId);
+        if (exchange) exchange.feedback = action.payload.helpful ? 'helpful' : 'needsImprovement';
+      })
+      .addCase(fetchAiAssistantAnalytics.pending, (state) => {
+        state.analyticsLoading = 'loading';
+        state.analyticsError = null;
+      })
+      .addCase(fetchAiAssistantAnalytics.fulfilled, (state, action) => {
+        state.analyticsLoading = 'succeeded';
+        state.gateStatus = 'available';
+        state.analytics = action.payload.analytics;
+      })
+      .addCase(fetchAiAssistantAnalytics.rejected, (state, action: any) => {
+        state.analyticsLoading = 'failed';
+        if (!applyGateRejection(state, action)) {
+          state.analyticsError = action.payload?.message || 'Failed to load analytics';
         }
       });
   },

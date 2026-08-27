@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import clsx from 'clsx';
 import {
   Dialog,
   DialogTitle,
@@ -11,10 +12,13 @@ import {
   MenuItem,
   Chip,
   Box,
+  Grid,
   Typography,
+  IconButton,
 } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import { makeStyles } from '@material-ui/core/styles';
+import { Close as CloseIcon } from '@material-ui/icons';
 import {
   IKnowledgeItem,
   IKnowledgeItemInput,
@@ -28,10 +32,58 @@ import {
   splitFaqContent,
   combineFaqContent,
 } from '../../../../Models/Service/AIAssistant';
+import { TYPE_ICON } from './KnowledgeItemCard';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
+  dialog: {
+    '& .MuiDialog-paper': {
+      borderRadius: theme.spacing(2),
+      overflow: 'hidden',
+    },
+  },
+  dialogTitleBar: {
+    background: 'linear-gradient(90deg, #FF0076 1.31%, #FF0054 33.07%, #FF4D2A 134.74%)',
+    color: '#fff',
+    padding: theme.spacing(2, 3),
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    minHeight: 'auto',
+  },
+  dialogTitleText: {
+    fontWeight: 600,
+    fontSize: '1.25rem',
+    flex: 1,
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+  },
+  closeButton: {
+    color: '#fff',
+    padding: theme.spacing(1),
+    flexShrink: 0,
+    marginLeft: theme.spacing(1),
+  },
   field: {
     marginBlockEnd: 16,
+    '& .MuiOutlinedInput-root': {
+      borderRadius: 30,
+      backgroundColor: '#fff',
+      '& fieldset': {
+        borderColor: '#e0e0e0',
+      },
+      '&:hover fieldset': {
+        borderColor: '#FF0076',
+      },
+      '&.Mui-focused fieldset': {
+        borderColor: '#FF0076',
+      },
+    },
+  },
+  multilineField: {
+    '& .MuiOutlinedInput-root': {
+      borderRadius: 20,
+    },
   },
   tagsChipRow: {
     display: 'flex',
@@ -39,7 +91,16 @@ const useStyles = makeStyles({
     gap: 4,
     marginBlockStart: 8,
   },
-});
+  typeMenuItem: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 8,
+  },
+  privacyNotice: {
+    marginBlockStart: 8,
+    marginBlockEnd: 8,
+  },
+}));
 
 const VALIDATION_FIELD_MAP: Record<string, 'title' | 'type' | 'content' | 'tags'> = {
   'Title is required': 'title',
@@ -140,6 +201,10 @@ const KnowledgeItemForm = ({ open, mode, item, saving, serverError, onClose, onS
           ? t('AIAssistant.knowledgeItemForm.urlInvalid')
           : '';
 
+  const handleRemoveTag = (index: number) => {
+    setForm({ ...form, tagsInput: tags.filter((_, i) => i !== index).join(', ') });
+  };
+
   const tagsError = serverFieldErrors.tags
     ? serverFieldErrors.tags
     : tags.length > MAX_TAGS_PER_ITEM
@@ -178,9 +243,14 @@ const KnowledgeItemForm = ({ open, mode, item, saving, serverError, onClose, onS
   };
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm" dir={isRTL ? 'rtl' : 'ltr'}>
-      <DialogTitle>
-        {mode === 'create' ? t('AIAssistant.knowledgeItemForm.createTitle') : t('AIAssistant.knowledgeItemForm.editTitle')}
+    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm" dir={isRTL ? 'rtl' : 'ltr'} className={classes.dialog}>
+      <DialogTitle className={classes.dialogTitleBar} disableTypography dir={isRTL ? 'rtl' : 'ltr'}>
+        <Typography className={classes.dialogTitleText}>
+          {mode === 'create' ? t('AIAssistant.knowledgeItemForm.createTitle') : t('AIAssistant.knowledgeItemForm.editTitle')}
+        </Typography>
+        <IconButton className={classes.closeButton} onClick={onClose} size="small" disabled={saving}>
+          <CloseIcon />
+        </IconButton>
       </DialogTitle>
       <DialogContent>
         {serverError?.capReached && (
@@ -194,35 +264,48 @@ const KnowledgeItemForm = ({ open, mode, item, saving, serverError, onClose, onS
           </Alert>
         )}
 
-        <TextField
-          className={classes.field}
-          fullWidth
-          label={t('AIAssistant.knowledgeItemForm.titleLabel')}
-          value={form.title}
-          onChange={(e) => setForm({ ...form, title: e.target.value })}
-          error={!!titleError}
-          helperText={titleError || `${form.title.length}/${MAX_TITLE_LENGTH}`}
-          inputProps={{ maxLength: MAX_TITLE_LENGTH }}
-        />
+        <Alert severity="info" className={classes.privacyNotice}>
+          {t('AIAssistant.knowledgeItemForm.privacyNotice')}
+        </Alert>
 
-        <TextField
-          select
-          className={classes.field}
-          fullWidth
-          label={t('AIAssistant.knowledgeItemForm.typeLabel')}
-          value={form.type}
-          onChange={(e) => setForm({ ...form, type: e.target.value as KnowledgeItemType })}
-        >
-          {KNOWLEDGE_ITEM_TYPES.map((type) => (
-            <MenuItem key={type} value={type}>
-              {t(`AIAssistant.knowledgeItemForm.typeOptions.${type}`)}
-            </MenuItem>
-          ))}
-        </TextField>
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={7}>
+            <TextField
+              variant="outlined"
+              className={classes.field}
+              fullWidth
+              label={t('AIAssistant.knowledgeItemForm.titleLabel')}
+              value={form.title}
+              onChange={(e) => setForm({ ...form, title: e.target.value })}
+              error={!!titleError}
+              helperText={titleError || `${form.title.length}/${MAX_TITLE_LENGTH}`}
+              inputProps={{ maxLength: MAX_TITLE_LENGTH }}
+            />
+          </Grid>
+          <Grid item xs={12} sm={5}>
+            <TextField
+              select
+              variant="outlined"
+              className={classes.field}
+              fullWidth
+              label={t('AIAssistant.knowledgeItemForm.typeLabel')}
+              value={form.type}
+              onChange={(e) => setForm({ ...form, type: e.target.value as KnowledgeItemType })}
+            >
+              {KNOWLEDGE_ITEM_TYPES.map((type) => (
+                <MenuItem key={type} value={type} className={classes.typeMenuItem}>
+                  {TYPE_ICON[type]}
+                  {t(`AIAssistant.knowledgeItemForm.typeOptions.${type}`)}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+        </Grid>
 
         {form.type === 'text' && (
           <TextField
-            className={classes.field}
+            variant="outlined"
+            className={clsx(classes.field, classes.multilineField)}
             fullWidth
             multiline
             minRows={4}
@@ -238,6 +321,7 @@ const KnowledgeItemForm = ({ open, mode, item, saving, serverError, onClose, onS
         {form.type === 'faq' && (
           <>
             <TextField
+              variant="outlined"
               className={classes.field}
               fullWidth
               label={t('AIAssistant.knowledgeItemForm.questionLabel')}
@@ -246,7 +330,8 @@ const KnowledgeItemForm = ({ open, mode, item, saving, serverError, onClose, onS
               onChange={(e) => setForm({ ...form, question: e.target.value })}
             />
             <TextField
-              className={classes.field}
+              variant="outlined"
+              className={clsx(classes.field, classes.multilineField)}
               fullWidth
               multiline
               minRows={3}
@@ -263,6 +348,7 @@ const KnowledgeItemForm = ({ open, mode, item, saving, serverError, onClose, onS
         {form.type === 'url' && (
           <>
             <TextField
+              variant="outlined"
               className={classes.field}
               fullWidth
               label={t('AIAssistant.knowledgeItemForm.urlLabel')}
@@ -279,6 +365,7 @@ const KnowledgeItemForm = ({ open, mode, item, saving, serverError, onClose, onS
         )}
 
         <TextField
+          variant="outlined"
           className={classes.field}
           fullWidth
           label={t('AIAssistant.knowledgeItemForm.tagsLabel')}
@@ -291,14 +378,17 @@ const KnowledgeItemForm = ({ open, mode, item, saving, serverError, onClose, onS
         {tags.length > 0 && (
           <Box className={classes.tagsChipRow}>
             {tags.map((tag, i) => (
-              <Chip key={`${tag}-${i}`} size="small" label={tag} />
+              <Chip
+                key={`${tag}-${i}`}
+                size="small"
+                label={tag}
+                onDelete={saving ? undefined : () => handleRemoveTag(i)}
+              />
             ))}
           </Box>
         )}
-
-        <Alert severity="info">{t('AIAssistant.knowledgeItemForm.privacyNotice')}</Alert>
       </DialogContent>
-      <DialogActions>
+      <DialogActions style={{ padding: '12px 24px' }}>
         <Button onClick={onClose} disabled={saving}>
           {t('AIAssistant.formActions.cancel')}
         </Button>

@@ -105,7 +105,8 @@ export const getRoutes = (
   windowSize: string | number | null = null,
   isRTL: Boolean = false,
   userRoles: any = null,
-  isPolandAccount: Boolean = false
+  isPolandAccount: Boolean = false,
+  aiAssistantRolloutEnabled: Boolean = false
 ) => [
     // smsOldVersion
     {
@@ -497,7 +498,7 @@ export const getRoutes = (
       href: `${sitePrefix}AIAssistant`,
       isShow:
         !accountSettings?.SubAccountSettings?.IsTokenAccount &&
-        accountSettings?.SubAccountSettings?.AiAssistantRolloutEnabled === true,
+        aiAssistantRolloutEnabled === true,
       icon: <FaRobot size={24} color="#fff" />,
       options: [
         {

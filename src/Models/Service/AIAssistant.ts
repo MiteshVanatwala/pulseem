@@ -63,6 +63,73 @@ export const MAX_MAX_CONTEXT_WORDS = 10000;
 export const DEFAULT_CONFIDENCE_THRESHOLD = 70;
 export const DEFAULT_MAX_CONTEXT_WORDS = 2000;
 
+// Test Chat (Slice 3). Contract confirmed by backend (Phase 0, PR-2457 Group B).
+// TestAIMessage's success body is camelCase, unlike the rest of ServiceAI's PascalCase
+// convention (SaveKnowledgeItem, GetAISettings, etc.) — do not assume the two share a
+// casing convention when writing the server<->client mapper.
+export type TestChatMessageStatus = 'pending' | 'succeeded' | 'failed' | 'rateLimited';
+
+export interface IKnowledgeSourceRef {
+  id: number;
+  title: string;
+}
+
+export interface ITestChatResponse {
+  responseLogId: number; // required by SaveTestFeedback (Slice 3 feedback buttons)
+  reply: string;
+  confidenceScore: number; // 0-100, compare against IAiAssistantSettings.confidenceThreshold
+  escalated: boolean;
+  knowledgeSources: IKnowledgeSourceRef[];
+  responseTimeMs: number;
+}
+
+// Client-side conversation entry — the server has no concept of a Test Chat
+// "conversation," each message is a standalone TestAIMessage call.
+export interface ITestChatExchange {
+  id: string;
+  question: string;
+  status: TestChatMessageStatus;
+  response: ITestChatResponse | null;
+  errorMessage: string | null;
+  // TestAIMessage's 429 body has no RetryAfterSeconds field (confirmed absent) — it
+  // returns a daily cap instead.
+  maxRequestsPerDay?: number;
+  feedback?: 'helpful' | 'needsImprovement' | null;
+}
+
+export const MAX_TEST_MESSAGE_LENGTH = 2000;
+
+// Analytics (Slice 5). Contract confirmed by backend (Phase 0, PR-2457 Group B): POST
+// only (the GET variant has a different, non-date-ranged shape with no
+// testModeCount/liveModeCount and must not be used). Response body is camelCase, like
+// TestAIMessage's, unlike the rest of ServiceAI. liveModeCount/testModeCount are
+// server-verified ground truth (backed by a NOT NULL IsTestMode column), not a
+// heuristic — safe to key the test-mode banner off directly.
+//
+// The wire arrays use `knowledgeItemId`, NOT `id` — different from TestAIMessage's
+// `knowledgeSources`, which uses `id`. Don't assume the two endpoints share a field
+// name; see fromServerAnalytics vs fromServerTestChatResponse in aiAssistantSlice.ts.
+export interface IAnalyticsReferencedItem extends IKnowledgeSourceRef {
+  referenceCount: number;
+}
+
+export interface IAiAssistantAnalytics {
+  liveModeCount: number;
+  testModeCount: number;
+  // {id, title} only — confirmed the wire has no itemType or lastReferencedDate today
+  // (a possible future backend addition, not built here). Do not fabricate either
+  // client-side; the Unused Content card only renders what's actually returned.
+  unusedContentItems: IKnowledgeSourceRef[];
+  mostReferencedItems: IAnalyticsReferencedItem[];
+}
+
+export interface IAnalyticsDateRange {
+  startDate: string; // ISO yyyy-MM-dd
+  endDate: string; // ISO yyyy-MM-dd
+}
+
+export const DEFAULT_ANALYTICS_RANGE_DAYS = 30;
+
 export const isValidHttpUrl = (value: string): boolean => {
   try {
     const parsed = new URL(value);

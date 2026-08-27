@@ -52,6 +52,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     accountFeatures,
     isGlobal,
     IsPoland,
+    AiAssistantRolloutEnabled,
     subAccount
   } = useSelector((state: any) => state.common);
 
@@ -99,8 +100,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
     windowSize,
     isRTL,
     userRoles,
-    isGlobal && IsPoland
-  ), [t, isClal, accountFeatures, accountSettings, windowSize, isRTL, userRoles, isGlobal, IsPoland]);
+    isGlobal && IsPoland,
+    AiAssistantRolloutEnabled
+  ), [t, isClal, accountFeatures, accountSettings, windowSize, isRTL, userRoles, isGlobal, IsPoland, AiAssistantRolloutEnabled]);
 
   const getAccountName = () => {
     if (accountSettings?.IsDirectAccount && subAccount?.DirectAccountCompanyName) {

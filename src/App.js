@@ -117,6 +117,7 @@ import WidgetListPage from './screens/Widgets/WidgetListPage';
 import ChatbotList from './screens/Service/Chatbot/ChatbotList';
 import ChatbotBuilder from './screens/Service/Chatbot/ChatbotBuilder';
 import AIAssistant from './screens/Service/AIAssistant/AIAssistant';
+import AIAssistantDiagnosticHarness from './screens/Service/AIAssistant/dev/AIAssistantDiagnosticHarness';
 
 const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
   const transferUrl =
@@ -149,6 +150,19 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
         exact
         path={`${sitePrefix}remove-my-data`}
         element={<RemoveMyData classes={classes} />}
+      />
+      {/* Internal-only diagnostic harness for AIAssistantLogic.SimulateIncomingMessage —
+          deliberately not in SideBar or routes.tsx nav config, reachable only by typing
+          this URL directly. No frontend accountFeatures gate here (backend Phase 0,
+          PR-2457 Group B, confirmed no internal/staff-only flag convention exists to gate
+          against) — SimulateIncomingMessage enforces its own server-side JWT/subAccountId
+          checks and reads Feature.ServiceAI.WidgetRuntime.Enabled from Web.config,
+          failing closed with a 423 if that's not enabled. That's real, independent
+          protection; this route doesn't need to duplicate it. */}
+      <Route
+        exact
+        path={`${sitePrefix}internal-ai-diagnostics`}
+        element={<AIAssistantDiagnosticHarness />}
       />
       <Route
         exact

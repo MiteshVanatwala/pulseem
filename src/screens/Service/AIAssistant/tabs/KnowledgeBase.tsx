@@ -14,11 +14,13 @@ import {
   DialogActions,
   InputAdornment,
   Tooltip,
+  IconButton,
 } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import { makeStyles } from '@material-ui/core/styles';
 import AddIcon from '@material-ui/icons/Add';
 import SearchIcon from '@material-ui/icons/Search';
+import CloseIcon from '@material-ui/icons/Close';
 import KnowledgeItemCard from '../components/KnowledgeItemCard';
 import KnowledgeItemForm, { KnowledgeItemServerError } from '../components/KnowledgeItemForm';
 import UsageCounter from '../../../../components/UsageCounter/UsageCounter';
@@ -38,7 +40,7 @@ import {
 
 type TypeFilter = 'all' | KnowledgeItemType;
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   toolbar: {
     display: 'flex',
     gap: 12,
@@ -57,7 +59,36 @@ const useStyles = makeStyles({
     padding: 48,
     color: '#6b7280',
   },
-});
+  dialog: {
+    '& .MuiDialog-paper': {
+      borderRadius: theme.spacing(2),
+      overflow: 'hidden',
+    },
+  },
+  dialogTitleBar: {
+    background: 'linear-gradient(90deg, #FF0076 1.31%, #FF0054 33.07%, #FF4D2A 134.74%)',
+    color: '#fff',
+    padding: theme.spacing(2, 3),
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    minHeight: 'auto',
+  },
+  dialogTitleText: {
+    fontWeight: 600,
+    fontSize: '1.25rem',
+    flex: 1,
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+  },
+  closeButton: {
+    color: '#fff',
+    padding: theme.spacing(1),
+    flexShrink: 0,
+    marginLeft: theme.spacing(1),
+  },
+}));
 
 const KnowledgeBase = () => {
   const classes = useStyles();
@@ -231,14 +262,19 @@ const KnowledgeBase = () => {
         onSubmit={handleSubmit}
       />
 
-      <Dialog open={!!deleteTarget} onClose={() => setDeleteTarget(null)} dir={isRTL ? 'rtl' : 'ltr'}>
-        <DialogTitle>{t('AIAssistant.deleteConfirm.title')}</DialogTitle>
-        <DialogContent>
+      <Dialog open={!!deleteTarget} onClose={() => setDeleteTarget(null)} dir={isRTL ? 'rtl' : 'ltr'} className={classes.dialog}>
+        <DialogTitle className={classes.dialogTitleBar} disableTypography dir={isRTL ? 'rtl' : 'ltr'}>
+          <Typography className={classes.dialogTitleText}>{t('AIAssistant.deleteConfirm.title')}</Typography>
+          <IconButton className={classes.closeButton} onClick={() => setDeleteTarget(null)} size="small">
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent style={{ paddingTop: 20 }}>
           <Typography>
             {t('AIAssistant.deleteConfirm.message', { title: deleteTarget?.title })}
           </Typography>
         </DialogContent>
-        <DialogActions>
+        <DialogActions style={{ padding: '12px 24px' }}>
           <Button onClick={() => setDeleteTarget(null)}>{t('AIAssistant.deleteConfirm.cancel')}</Button>
           <Button onClick={confirmDelete} color="secondary" variant="contained">
             {t('AIAssistant.deleteConfirm.confirm')}

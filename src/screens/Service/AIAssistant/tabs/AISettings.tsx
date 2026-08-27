@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import clsx from 'clsx';
 import {
   Box,
   Grid,
@@ -40,6 +41,24 @@ const useStyles = makeStyles({
   },
   field: {
     marginBlockEnd: 24,
+    '& .MuiOutlinedInput-root': {
+      borderRadius: 30,
+      backgroundColor: '#fff',
+      '& fieldset': {
+        borderColor: '#e0e0e0',
+      },
+      '&:hover fieldset': {
+        borderColor: '#FF0076',
+      },
+      '&.Mui-focused fieldset': {
+        borderColor: '#FF0076',
+      },
+    },
+  },
+  multilineField: {
+    '& .MuiOutlinedInput-root': {
+      borderRadius: 20,
+    },
   },
   saveBar: {
     display: 'flex',
@@ -174,6 +193,8 @@ const AISettings = ({ onDirtyChange }: AISettingsProps) => {
           <Grid item xs={12} sm={6}>
             <TextField
               select
+              variant="outlined"
+              className={classes.field}
               fullWidth
               label={t('AIAssistant.settings.responseStyleLabel')}
               value={form.responseStyle}
@@ -191,6 +212,8 @@ const AISettings = ({ onDirtyChange }: AISettingsProps) => {
           <Grid item xs={12} sm={6}>
             <TextField
               select
+              variant="outlined"
+              className={classes.field}
               fullWidth
               label={t('AIAssistant.settings.defaultLanguageLabel')}
               value={form.defaultLanguage}
@@ -244,7 +267,8 @@ const AISettings = ({ onDirtyChange }: AISettingsProps) => {
 
         {form.autoEscalate && (
           <TextField
-            className={classes.field}
+            variant="outlined"
+            className={clsx(classes.field, classes.multilineField)}
             fullWidth
             multiline
             minRows={3}
@@ -259,6 +283,8 @@ const AISettings = ({ onDirtyChange }: AISettingsProps) => {
         <Box className={classes.field}>
           <TextField
             type="number"
+            variant="outlined"
+            className={classes.field}
             fullWidth={false}
             label={t('AIAssistant.settings.maxContextWordsLabel')}
             value={form.maxContextWords}

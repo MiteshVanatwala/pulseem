@@ -16,7 +16,6 @@
     "analytics": "Analityka"
   },
   "placeholderTab": {
-    "testChatNotice": "Czat testowy będzie dostępny w kolejnym etapie (Slice 3).",
     "analyticsNotice": "Analityka będzie dostępna w kolejnym etapie (Slice 5)."
   },
   "knowledgeBase": {
@@ -113,7 +112,42 @@
   "locked": {
     "message": "Asystent AI jest dostępny w wyższym planie. Zaktualizuj plan, aby skonfigurować bazę wiedzy i zacząć automatycznie odpowiadać klientom."
   },
+  "loadError": {
+    "retry": "Spróbuj ponownie"
+  },
   "validation": {
     "genericError": "Coś poszło nie tak. Spróbuj ponownie."
+  },
+  "testChat": {
+    "intro": "Wyślij testową wiadomość, aby zobaczyć, jak AI odpowie prawdziwemu klientowi, korzystając z Twojej bazy wiedzy i aktualnych ustawień.",
+    "inputPlaceholder": "Wpisz wiadomość tak, jak zrobiłby to klient...",
+    "sendButton": "Wyślij",
+    "thinking": "Myślę… ({{seconds}}s)",
+    "confidenceLabel": "Pewność",
+    "noSources": "Żadne źródło wiedzy nie zostało wykorzystane w tej odpowiedzi.",
+    "escalatedBanner": "Ta odpowiedź zostałaby przekazana do konsultanta.",
+    "responseTimeFormat": "Odpowiedziano w {{ms}} ms",
+    "goodResponse": "Dobra odpowiedź",
+    "needsImprovement": "Wymaga poprawy",
+    "feedbackThanks": "Dziękujemy za opinię",
+    "rateLimited": "Wysłano zbyt wiele wiadomości testowych w krótkim czasie. Poczekaj chwilę przed kolejną próbą.",
+    "rateLimitedWithLimit": "Osiągnięto dzienny limit {{limit}} wiadomości testowych. Spróbuj ponownie jutro.",
+    "genericError": "Coś poszło nie tak podczas wysyłania wiadomości testowej. Spróbuj ponownie.",
+    "messageTooLong": "Wiadomość może mieć maksymalnie 2000 znaków",
+    "empty": "Brak wiadomości. Wyślij jedną, aby przetestować odpowiedzi AI."
+  },
+  "analytics": {
+    "fromDateLabel": "Od",
+    "toDateLabel": "Do",
+    "loading": "Wczytywanie analityki...",
+    "testModeBannerTitle": "Widzisz teraz tylko dane testowe",
+    "testModeBannerBody": "W tym zakresie dat nie ma żadnych rozmów z prawdziwymi klientami. Poniższe dane pochodzą wyłącznie z aktywności czatu testowego, nie od rzeczywistych klientów.",
+    "emptyTitle": "Brak aktywności w tym zakresie dat",
+    "emptyBody": "W tym okresie nie odnotowano żadnej aktywności Asystenta AI. Spróbuj wybrać inny zakres dat.",
+    "mostReferencedTitle": "Najczęściej wykorzystywana treść",
+    "mostReferencedEmpty": "W tym zakresie dat żaden element wiedzy nie został wykorzystany.",
+    "unusedContentTitle": "Nieużywana treść",
+    "unusedContentSubtitle": "Te elementy wiedzy nie zostały wykorzystane w tym zakresie dat. Warto je przejrzeć lub usunąć.",
+    "unusedContentEmpty": "Każdy element wiedzy został wykorzystany przynajmniej raz w tym zakresie dat."
   }
 }

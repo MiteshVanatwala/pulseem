@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import { Grid, Paper, Typography, Tabs, Tab, Box } from '@material-ui/core';
+import { Grid, Paper, Typography, Tabs, Tab, Button } from '@material-ui/core';
+import { Alert } from '@material-ui/lab';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import DefaultScreen from '../../DefaultScreen';
 import TabPanel from './components/TabPanel';
 import KnowledgeBase from './tabs/KnowledgeBase';
 import AISettings from './tabs/AISettings';
+import TestChat from './tabs/TestChat';
+import Analytics from './tabs/Analytics';
 import UpgradePrompt from '../../../components/UpgradePrompt/UpgradePrompt';
 import { fetchAiAssistantOverview } from '../../../redux/reducers/aiAssistantSlice';
 import { computeStats } from '../../../Models/Service/AIAssistant';
@@ -18,6 +21,10 @@ const useStyles = makeStyles({
   },
   statCard: {
     padding: 16,
+    textAlign: 'center',
+  },
+  errorSection: {
+    padding: 24,
     textAlign: 'center',
   },
 });
@@ -31,11 +38,11 @@ const AIAssistant = ({ classes: pageClasses }: AIAssistantProps) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { isRTL } = useSelector((state: any) => state.core);
-  const { knowledgeItems, gateStatus } = useSelector((state: any) => state.aiAssistant);
+  const { knowledgeItems, gateStatus, loading, error } = useSelector((state: any) => state.aiAssistant);
 
   const [tabIndex, setTabIndex] = useState(0);
   const [settingsDirty, setSettingsDirty] = useState(false);
-
+  
   useEffect(() => {
     dispatch(fetchAiAssistantOverview() as any);
   }, [dispatch]);
@@ -48,7 +55,15 @@ const AIAssistant = ({ classes: pageClasses }: AIAssistantProps) => {
     setTabIndex(newValue);
   };
 
-  if (gateStatus === 'rolloutDisabled' || gateStatus === 'unknown') {
+  if (gateStatus === 'rolloutDisabled') {
+    return null;
+  }
+
+  // A rejection that isn't a recognized gate (423/429/network error/etc.) leaves
+  // gateStatus at 'unknown' forever — without this, the page renders null forever
+  // with no error surfaced. Still loading only while there's no failure yet.
+  const isGenericLoadFailure = gateStatus === 'unknown' && loading === 'failed';
+  if (gateStatus === 'unknown' && !isGenericLoadFailure) {
     return null;
   }
 
@@ -62,6 +77,19 @@ const AIAssistant = ({ classes: pageClasses }: AIAssistantProps) => {
 
       {gateStatus === 'notEntitled' ? (
         <UpgradePrompt classes={pageClasses} messageKey="AIAssistant.locked.message" />
+      ) : isGenericLoadFailure ? (
+        <Paper variant="outlined" className={localClasses.errorSection}>
+          <Alert severity="error" style={{ marginBlockEnd: 16 }}>
+            {error || t('AIAssistant.validation.genericError')}
+          </Alert>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => dispatch(fetchAiAssistantOverview() as any)}
+          >
+            {t('AIAssistant.loadError.retry')}
+          </Button>
+        </Paper>
       ) : (
         <>
           <Grid container spacing={2} className={localClasses.statsRow}>
@@ -109,8 +137,8 @@ const AIAssistant = ({ classes: pageClasses }: AIAssistantProps) => {
           >
             <Tab label={t('AIAssistant.tabs.knowledgeBase')} />
             <Tab label={t('AIAssistant.tabs.settings')} />
-            <Tab label={t('AIAssistant.tabs.testChat')} disabled />
-            <Tab label={t('AIAssistant.tabs.analytics')} disabled />
+            <Tab label={t('AIAssistant.tabs.testChat')} />
+            <Tab label={t('AIAssistant.tabs.analytics')} />
           </Tabs>
 
           <TabPanel value={tabIndex} index={0}>
@@ -120,16 +148,10 @@ const AIAssistant = ({ classes: pageClasses }: AIAssistantProps) => {
             <AISettings onDirtyChange={setSettingsDirty} />
           </TabPanel>
           <TabPanel value={tabIndex} index={2}>
-            {/* TODO(Slice 3): Test Chat */}
-            <Box p={2}>
-              <Typography color="textSecondary">{t('AIAssistant.placeholderTab.testChatNotice')}</Typography>
-            </Box>
+            <TestChat />
           </TabPanel>
           <TabPanel value={tabIndex} index={3}>
-            {/* TODO(Slice 5): Analytics */}
-            <Box p={2}>
-              <Typography color="textSecondary">{t('AIAssistant.placeholderTab.analyticsNotice')}</Typography>
-            </Box>
+            <Analytics />
           </TabPanel>
         </>
       )}
