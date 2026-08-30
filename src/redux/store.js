@@ -45,9 +45,12 @@ import contactSupportReducer from './reducers/contactSupportSlice';
 import dataSourcesReducer from './reducers/dataSourcesSlice';
 import smartSendReducer from './reducers/smartSendSlice';
 import sendSearchReducer from './reducers/sendSearchSlice';
+// Conflict: Mitesh appended the service imports here on ClientStageV4, Idan appended
+// clalCenter on ClalCenter. Unrelated features landing on the same anchor, so both stay.
 import conversationsReducer from './reducers/conversationsSlice';
 import serviceDashboardReducer from './reducers/serviceDashboardSlice';
 import chatbotReducer from './reducers/chatbotSlice';
+import clalCenterReducer from './reducers/clalCenterSlice';
 
 
 export default configureStore({
@@ -97,8 +100,10 @@ export default configureStore({
     dataSources: dataSourcesReducer,
     smartSend: smartSendReducer,
     sendSearch: sendSearchReducer,
+    // Same conflict as the imports above. The keys are distinct, all four are needed.
     conversations: conversationsReducer,
     serviceDashboard: serviceDashboardReducer,
     chatbot: chatbotReducer,
+    clalCenter: clalCenterReducer,
   },
 });

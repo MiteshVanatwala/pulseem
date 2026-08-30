@@ -220,5 +220,9 @@ export const PulseemFeatures = {
   Popup: '70',
   PolyAISupport: '73',
   DisplayConditions: '74',
-  DATA_SOURCES: '76'
+  DATA_SOURCES: '76',
+  // CLAL CENTER (מרכז כלל) — the agent-portal CMS. '77' verified free in THIS numbering, which is
+  // the cookie-backed AccountFeatures list and NOT FeatureTierCode (where 77 is taken). The client
+  // gates on this flag only; the server gates on the ClalCenter.AllowedSubAccountID appSetting.
+  CLAL_CENTER: '77'
 }
