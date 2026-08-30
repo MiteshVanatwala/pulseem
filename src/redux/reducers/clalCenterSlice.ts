@@ -20,20 +20,6 @@ import {
     eClalItemStatus,
     eClalEntityType
 } from '../../Models/ClalCenter/ClalCenter';
-import {
-    mockGetTree, mockSaveGroup, mockDeleteGroup, mockRestoreGroup, mockReorderGroups,
-    mockSetGroupVisibility, mockSaveItem, mockSetStatus, mockDeleteItem, mockRestoreItem,
-    mockReorderItems, mockUploadFile, mockPublish, mockGetHistory
-} from './_mocks/clalCenterMock';
-
-// ── MOCK SWITCH ──────────────────────────────────────────────────────────────
-// While the API (W2) is not wired, every call short-circuits to a mock. The single dedicated
-// "mock switch" commit by W5, right after the API merges, flips this to false, deletes
-// ./_mocks/clalCenterMock.ts (THE FILE ONLY — the folder is shared), removes the guard lines and
-// the mock imports, and re-runs the W3 acceptance criteria against the real API. After that,
-// `Select-String` over src for USE_CC_MOCK|clalCenterMock must return 0.
-// The exact lines are listed in src/screens/ClalCenter/FLIP-NOTES.md.
-const USE_CC_MOCK = true;
 
 const api = 'ClalCenter/';
 
@@ -111,7 +97,6 @@ const initialState: ClalCenterState = {
 
 export const getClalTree = createAsyncThunk(
     'ClalCenter/GetTree', async (_: void, thunkAPI) => {
-        if (USE_CC_MOCK) return mockGetTree();
         try {
             const response = await PulseemReactInstance.get(`${api}GetTree`);
             return unwrap<GetTreeResponse>(response.data);
@@ -122,10 +107,6 @@ export const getClalTree = createAsyncThunk(
 
 export const saveClalGroup = createAsyncThunk(
     'ClalCenter/SaveGroup', async (req: SaveGroupRequest, thunkAPI) => {
-        if (USE_CC_MOCK) {
-            try { return await mockSaveGroup(req); }
-            catch (error: any) { return thunkAPI.rejectWithValue({ error: toErrorKey(error) }); }
-        }
         try {
             const response = await PulseemReactInstance.post(`${api}SaveGroup`, req);
             return unwrap<SaveGroupResult>(response.data);
@@ -136,10 +117,6 @@ export const saveClalGroup = createAsyncThunk(
 
 export const deleteClalGroup = createAsyncThunk(
     'ClalCenter/DeleteGroup', async (req: { GroupID: number }, thunkAPI) => {
-        if (USE_CC_MOCK) {
-            try { return await mockDeleteGroup(req); }
-            catch (error: any) { return thunkAPI.rejectWithValue({ error: toErrorKey(error) }); }
-        }
         try {
             const response = await PulseemReactInstance.post(`${api}DeleteGroup`, req);
             return unwrap<UpdatedResult>(response.data);
@@ -150,10 +127,6 @@ export const deleteClalGroup = createAsyncThunk(
 
 export const restoreClalGroup = createAsyncThunk(
     'ClalCenter/RestoreGroup', async (req: { GroupID: number }, thunkAPI) => {
-        if (USE_CC_MOCK) {
-            try { return await mockRestoreGroup(req); }
-            catch (error: any) { return thunkAPI.rejectWithValue({ error: toErrorKey(error) }); }
-        }
         try {
             const response = await PulseemReactInstance.post(`${api}RestoreGroup`, req);
             return unwrap<UpdatedResult>(response.data);
@@ -164,10 +137,6 @@ export const restoreClalGroup = createAsyncThunk(
 
 export const reorderClalGroups = createAsyncThunk(
     'ClalCenter/ReorderGroups', async (req: ReorderGroupsRequest, thunkAPI) => {
-        if (USE_CC_MOCK) {
-            try { return await mockReorderGroups(req); }
-            catch (error: any) { return thunkAPI.rejectWithValue({ error: toErrorKey(error) }); }
-        }
         try {
             const response = await PulseemReactInstance.post(`${api}ReorderGroups`, req);
             return unwrap<UpdatedResult>(response.data);
@@ -178,10 +147,6 @@ export const reorderClalGroups = createAsyncThunk(
 
 export const setClalGroupVisibility = createAsyncThunk(
     'ClalCenter/SetGroupVisibility', async (req: { GroupID: number; IsHidden: boolean }, thunkAPI) => {
-        if (USE_CC_MOCK) {
-            try { return await mockSetGroupVisibility(req); }
-            catch (error: any) { return thunkAPI.rejectWithValue({ error: toErrorKey(error) }); }
-        }
         try {
             const response = await PulseemReactInstance.post(`${api}SetGroupVisibility`, req);
             return unwrap<UpdatedResult>(response.data);
@@ -192,10 +157,6 @@ export const setClalGroupVisibility = createAsyncThunk(
 
 export const saveClalItem = createAsyncThunk(
     'ClalCenter/SaveItem', async (req: SaveItemRequest, thunkAPI) => {
-        if (USE_CC_MOCK) {
-            try { return await mockSaveItem(req); }
-            catch (error: any) { return thunkAPI.rejectWithValue({ error: toErrorKey(error) }); }
-        }
         try {
             const response = await PulseemReactInstance.post(`${api}SaveItem`, req);
             return unwrap<ItemDto>(response.data);
@@ -206,10 +167,6 @@ export const saveClalItem = createAsyncThunk(
 
 export const setClalItemStatus = createAsyncThunk(
     'ClalCenter/SetStatus', async (req: { ItemID: number; Status: eClalItemStatus }, thunkAPI) => {
-        if (USE_CC_MOCK) {
-            try { return await mockSetStatus(req); }
-            catch (error: any) { return thunkAPI.rejectWithValue({ error: toErrorKey(error) }); }
-        }
         try {
             const response = await PulseemReactInstance.post(`${api}SetStatus`, req);
             return unwrap<UpdatedResult>(response.data);
@@ -220,10 +177,6 @@ export const setClalItemStatus = createAsyncThunk(
 
 export const deleteClalItem = createAsyncThunk(
     'ClalCenter/DeleteItem', async (req: { ItemID: number }, thunkAPI) => {
-        if (USE_CC_MOCK) {
-            try { return await mockDeleteItem(req); }
-            catch (error: any) { return thunkAPI.rejectWithValue({ error: toErrorKey(error) }); }
-        }
         try {
             const response = await PulseemReactInstance.post(`${api}DeleteItem`, req);
             return unwrap<UpdatedResult>(response.data);
@@ -234,10 +187,6 @@ export const deleteClalItem = createAsyncThunk(
 
 export const restoreClalItem = createAsyncThunk(
     'ClalCenter/RestoreItem', async (req: { ItemID: number }, thunkAPI) => {
-        if (USE_CC_MOCK) {
-            try { return await mockRestoreItem(req); }
-            catch (error: any) { return thunkAPI.rejectWithValue({ error: toErrorKey(error) }); }
-        }
         try {
             const response = await PulseemReactInstance.post(`${api}RestoreItem`, req);
             return unwrap<UpdatedResult>(response.data);
@@ -248,10 +197,6 @@ export const restoreClalItem = createAsyncThunk(
 
 export const reorderClalItems = createAsyncThunk(
     'ClalCenter/ReorderItems', async (req: ReorderItemsRequest, thunkAPI) => {
-        if (USE_CC_MOCK) {
-            try { return await mockReorderItems(req); }
-            catch (error: any) { return thunkAPI.rejectWithValue({ error: toErrorKey(error) }); }
-        }
         try {
             const response = await PulseemReactInstance.post(`${api}ReorderItems`, req);
             return unwrap<UpdatedResult>(response.data);
@@ -263,10 +208,6 @@ export const reorderClalItems = createAsyncThunk(
 /** Empty body ⇒ rebuild-only: applies hides/deletes/restores without promoting any draft. */
 export const publishClalCenter = createAsyncThunk(
     'ClalCenter/Publish', async (req: PublishRequest, thunkAPI) => {
-        if (USE_CC_MOCK) {
-            try { return await mockPublish(req); }
-            catch (error: any) { return thunkAPI.rejectWithValue({ error: toErrorKey(error) }); }
-        }
         try {
             const response = await PulseemReactInstance.post(`${api}Publish`, req);
             return unwrap<PublishResult>(response.data);
@@ -284,7 +225,6 @@ export async function getClalHistory(
     entityId: number,
     top = 50
 ): Promise<ChangeRowDto[]> {
-    if (USE_CC_MOCK) return mockGetHistory(entityType, entityId, top);
     const response = await PulseemReactInstance.get(`${api}GetHistory`, {
         params: { entityType, entityId, top }
     });
@@ -295,21 +235,6 @@ export async function uploadClalFile(
     file: File,
     onProgress?: (percent: number) => void
 ): Promise<UploadFileResponse> {
-    if (USE_CC_MOCK) {
-        // The real request reports progress; the mock has to, or the progress bar is untested.
-        let p = 0;
-        const tick = setInterval(() => {
-            p = Math.min(95, p + 17);
-            onProgress?.(p);
-        }, 120);
-        try {
-            const result = await mockUploadFile(file);
-            onProgress?.(100);
-            return result;
-        } finally {
-            clearInterval(tick);
-        }
-    }
     const form = new FormData();
     form.append('file', file, file.name);
     const response = await uploaderInstance.put(`${api}UploadFile`, form, {

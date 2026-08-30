@@ -72,10 +72,8 @@ import SortableRow, {
     DragLevel, DropStrip, SortableData, groupDragId, itemDragId, parseDragId, useHandleStyles
 } from './components/SortableRow';
 import useReorder, { listIdOf } from './hooks/useReorder';
-import { MIN_QUERY_CHARS, SEARCH_DEBOUNCE_MS, matchesTokens, norm, tokenize, verifyC5Vectors } from './searchNormalizer';
+import { MIN_QUERY_CHARS, SEARCH_DEBOUNCE_MS, matchesTokens, norm, tokenize } from './searchNormalizer';
 import { STARTER_CALL_COUNT, STARTER_CATEGORY_ORDER } from './starterTree';
-
-const USE_CC_MOCK = true;
 
 const handleDomId = (dragId: string) => `cc-handle-${dragId}`;
 
@@ -174,18 +172,6 @@ const ClalCenterScreen = ({ classes }: ClassesType) => {
     useEffect(() => {
         refresh();
     }, [refresh]);
-
-    // The eight C5 equivalence vectors, run as CODE (an acceptance criterion) rather than as a
-    // claim in a document. Printed only while the mock switch is on; the W5 flip removes this
-    // block along with the flag. `verifyC5Vectors` itself is pure and ships either way.
-    useEffect(() => {
-        if (!USE_CC_MOCK) return;
-        const { allPass, results } = verifyC5Vectors();
-        // eslint-disable-next-line no-console
-        console.log(`[ClalCenter] C5 vectors: ${results.filter(r => r.pass).length}/${results.length} pass — ${allPass ? 'ALL PASS' : 'FAILURE'}`);
-        // eslint-disable-next-line no-console
-        console.table(results.map(r => ({ '#': r.index, a: r.a, b: r.b, 'norm(a)': r.normA, 'norm(b)': r.normB, pass: r.pass })));
-    }, []);
 
     // debounced search — same 150ms and same 2-character minimum as the portal (§C5)
     useEffect(() => {
