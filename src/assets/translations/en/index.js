@@ -45,6 +45,7 @@ import PopupTriggers from './PopupTriggers.json';
 import Popup from './Popup.json'
 import DataSources from './DataSources.json';
 import SendSearch from './SendSearch.json';
+import ClalCenter from './ClalCenter.json';
 
 import service from './Service.json';
 
@@ -96,5 +97,6 @@ export const en = {
 	RemoveMyData,
 	Popup,
 	DataSources,
-	SendSearch
+	SendSearch,
+	ClalCenter
 };

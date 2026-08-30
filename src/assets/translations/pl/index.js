@@ -43,7 +43,10 @@ import AI from './AI.json';
 import SubUsers from './SubUsers.json';
 import DataSources from './DataSources.json';
 import SendSearch from './SendSearch.json';
+// Conflict: Mitesh added service here and Idan added ClalCenter, on the same line in pl.
+// en and he merged clean because there the two landed apart. Both are used below.
 import service from './Service.json';
+import ClalCenter from './ClalCenter.json';
 
 export const pl = {
 	...service,
@@ -91,5 +94,6 @@ export const pl = {
 	AI,
 	SubUsers,
 	DataSources,
-	SendSearch
+	SendSearch,
+	ClalCenter
 };
