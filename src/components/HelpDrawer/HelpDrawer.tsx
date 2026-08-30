@@ -253,15 +253,20 @@ export const HelpDrawer: React.FC = () => {
         return URLS.HelpCenter;
     }
   }, [language]);
-
+  
   const handleOpenSupportChat = () => {
-    // handleClose();
-
-    setTimeout(() => {
-      if (typeof window !== 'undefined' && (window as any).Tawk_API) {
-        (window as any).Tawk_API.maximize();
+    const tryOpen = () => {
+      const bubble = document.getElementById('pw-bubble');
+      const win = document.getElementById('pw-win');
+      if (bubble && (!win || win.classList.contains('pw-hide'))) {
+        bubble.click();
+        return true;
       }
-    }, 300);
+      return false;
+    };
+    if (!tryOpen()) {
+      setTimeout(tryOpen, 300);
+    }
   };
 
   const handleOpenContactForm = () => {

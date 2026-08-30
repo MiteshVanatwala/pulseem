@@ -462,9 +462,20 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
     // Info columns only. Switching away from Number resets the format (Currency/Percent apply to numbers).
     // ShowThousandsSeparator is deliberately NOT reset here: a user who turns separators off, switches
     // to Text to look at something and switches back would otherwise silently get them again.
+    // IsSearchable IS released, and the asymmetry is the point: separators are a free display choice,
+    // while a searchable column costs one of the version's ten slots AND a row per data row in
+    // DataSourceRowSearchValues. A tick the operator never made must not hold either.
     const setDataType = (idx: number, dt: eDataType) =>
         setColumns(cols => cols.map((c, i) => i === idx
-            ? { ...c, DataType: dt, FormatHint: dt === eDataType.NUMBER ? c.FormatHint : eFormatHint.NONE }
+            ? {
+                ...c, DataType: dt,
+                FormatHint: dt === eDataType.NUMBER ? c.FormatHint : eFormatHint.NONE,
+                // A NUMBER column arrives pre-ticked (buildColumns, second pass), so a column retyped
+                // to Text/Date is holding a tick that came from its type, not from the operator. The
+                // Select is disabled unless isInfo, so this can never reach an identity or supervisor
+                // column. Re-ticking by hand still works — the checkbox is right there.
+                IsSearchable: dt === eDataType.NUMBER ? c.IsSearchable : false
+            }
             : c));
 
     const setShowThousandsSeparator = (idx: number, value: boolean) =>

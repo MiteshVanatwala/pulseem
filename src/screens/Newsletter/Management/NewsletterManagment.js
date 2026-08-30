@@ -40,6 +40,7 @@ import { getPublicTemplates, getAllTemplatesBySubaccountId } from '../../../redu
 import DuplicateCampaign from '../../../components/Campaigns/DuplicateCampaign';
 import Toast from '../../../components/Toast/Toast.component';
 import { getGroupsBySubAccountId } from '../../../redux/reducers/groupSlice';
+import { probeHasDataSources } from '../../../redux/reducers/dataSourcesSlice';
 import DomainVerification from '../../../Shared/Dialogs/DomainVerification';
 import { IsSharedDomain } from '../../../helpers/Functions/DomainVerificationHelper';
 import { SEND_1, PULSE_1, DateFormats } from '../../../helpers/Constants';
@@ -47,6 +48,11 @@ import { Virtuoso } from 'react-virtuoso';
 
 const NewsletterManagnentScreen = ({ classes }) => {
   const { accountFeatures, verifiedEmails } = useSelector(state => state.common);
+  // SMART-SEND ENTRY GATE. "שליחה ממקור" cannot do anything until the account has at least one data
+  // source, so ask once — one row, nothing rendered from it — and only for accounts that can see the
+  // action at all (the same DATA_SOURCES feature test the descriptor below applies).
+  const hasAnyDataSource = useSelector(state => state.dataSources.hasAnyDataSource);
+  const hasDataSourcesFeature = accountFeatures?.indexOf(PulseemFeatures.DATA_SOURCES) > -1;
   const { language, windowSize, rowsPerPage, isRTL, userRoles } = useSelector(state => state.core)
   const { newslettersDeletedData, newslettersParentCampaigns, newslettersChildCampaigns } = useSelector(state => state.newsletter)
   const { ToastMessages } = useSelector(state => state.client);
@@ -113,6 +119,15 @@ const NewsletterManagnentScreen = ({ classes }) => {
     setLoader(true);
     getData();
   }, [dispatch]);
+
+  // Once per mount, not once per session: a source uploaded in ANOTHER TAB (or by a colleague) leaves
+  // this tab holding a stale `false`, and nothing else on this screen would ever re-ask — remounting
+  // hits the same gate and the store outlives every route change. One row, no payload, and it makes
+  // the answer no older than the screen. `hasAnyDataSource` is deliberately NOT a dependency: it
+  // changes when the probe answers, and depending on it would re-fire the probe it just answered.
+  useEffect(() => {
+    if (hasDataSourcesFeature) dispatch(probeHasDataSources());
+  }, [hasDataSourcesFeature, dispatch]);
 
   useEffect(() => {
     if (!publicTemplates.length) dispatch(getPublicTemplates(isRTL));
@@ -589,6 +604,13 @@ const NewsletterManagnentScreen = ({ classes }) => {
         // the row. This is a secondary action and should not outweigh Send visually.
         lable: t('DataSources.send.title'),
         remove: !userRoles?.AllowSend || Status !== 1 || !IsNewEditor || !(accountFeatures?.indexOf(PulseemFeatures.DATA_SOURCES) > -1) || windowSize === 'xs',
+        // DISABLED, NOT REMOVED, while the account has no source at all: this action is where the
+        // feature gets discovered, so hiding it teaches nothing and leaves the operator wondering where
+        // "שליחה ממקור" went. `=== false` is deliberate — the probe answers null while it is in flight
+        // and STAYS null if it failed, and an unanswered question must never take a working entry point
+        // away. The tooltip is the whole reason to disable rather than hide.
+        disable: hasAnyDataSource === false,
+        tooltip: hasAnyDataSource === false ? t('DataSources.send.noSourceTooltip') : null,
         rootClass: clsx(classes.paddingIcon, 'smartSendIcon'),
         onClick: () => {
           navigate(`${sitePrefix}Campaigns/SmartSend/${CampaignID}`);
@@ -609,26 +631,43 @@ const NewsletterManagnentScreen = ({ classes }) => {
               container
               className={windowSize === 'xs' ? classes.mt1 : ''}
             >
-              {map.filter(icon => !icon.remove).map(icon => (
-                <Grid
-                  className={clsx(
-                    icon.disable && classes.disabledCursor,
-                    'rowIconContainer',
-                    classes.justifyCenter,
-                    classes.alignSelfCenter,
-                    classes.newsletterActionItem
-                  )}
-                  key={icon.key}
-                  item>
-                  {icon?.errorElement}
-                  <ManagmentIcon
-                    classes={classes}
-                    {...icon}
-                    uIcon={<icon.uIcon width={18} height={20} className={'rowIcon'} />}
-                  />
-                  {icon.key === 'copy' && renderCopyToClipoard}
-                </Grid>
-              ))}
+              {map.filter(icon => !icon.remove).map(icon => {
+                const iconEl = (
+                  <ManagmentIcon classes={classes} {...icon} uIcon={<icon.uIcon width={18} height={20} className={'rowIcon'} />} />
+                );
+                return (
+                  <Grid
+                    className={clsx(
+                      icon.disable && classes.disabledCursor,
+                      'rowIconContainer',
+                      classes.justifyCenter,
+                      classes.alignSelfCenter,
+                      classes.newsletterActionItem
+                    )}
+                    key={icon.key}
+                    item>
+                    {icon?.errorElement}
+                    {icon.tooltip ? (
+                      /* The span is load-bearing: MUI Tooltip attaches its listeners to the CHILD, and a
+                         disabled MUI Button emits no pointer events — without a wrapper, the tooltip that
+                         explains WHY the action is disabled would never open, which is the one thing it
+                         exists to do. Same reason the MUI docs give in their own disabled-element example. */
+                      <CustomTooltip isSimpleTooltip={false} classes={classes} placement={'top'} title={icon.tooltip}
+                                      enterTouchDelay={0} leaveTouchDelay={6000}>
+                        {/* inline-block, not the bare span the MUI docs show: a disabled MUI Button carries
+                            pointer-events:none, so the hit test falls through to this wrapper — and an INLINE
+                            wrapper only covers a line-height strip around the baseline, leaving most of the
+                            icon and its label as dead zone where the explanation never appears. tabIndex makes
+                            the same explanation reachable without a pointer: the disabled Button is out of the
+                            tab order, and CustomTooltip's non-simple branch keeps its focus listener. */}
+                        <span className={classes.disabledCursor} tabIndex={0}
+                              style={{ display: 'inline-block' }}>{iconEl}</span>
+                      </CustomTooltip>
+                    ) : iconEl}
+                    {icon.key === 'copy' && renderCopyToClipoard}
+                  </Grid>
+                );
+              })}
             </Grid>
           </Grid>
         ))}
