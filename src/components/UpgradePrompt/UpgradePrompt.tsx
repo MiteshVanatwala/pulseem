@@ -8,7 +8,6 @@ import TierPlans from "../TierPlans/TierPlans";
 interface UpgradePromptProps {
   classes: any;
   messageKey: string;
-  featureKey?: string;
 }
 
 const UpgradePrompt = ({ classes, messageKey }: UpgradePromptProps) => {

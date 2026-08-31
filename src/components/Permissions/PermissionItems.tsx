@@ -40,7 +40,9 @@ const PermissionItems = ({ classes, userDetails, updateSubUserDetails, permissio
   const { usage, getLimit, isAtLimit } = useServiceLimits();
   const agentCount = usage?.serviceAgents as number;
   const maxServiceAgents = getLimit('maxServiceAgents');
+  const alreadyHasAgentPermission = userDetails.UserPermissionsList?.indexOf(eSubUserPermissions.AllowWhatsAppToAgent) > -1;
   const agentLimitReached = isAtLimit('maxServiceAgents', agentCount);
+  const disableAgentToggle = agentLimitReached && !alreadyHasAgentPermission;
 
   const reloadForm = () => {
     setErrors({
@@ -351,8 +353,8 @@ const PermissionItems = ({ classes, userDetails, updateSubUserDetails, permissio
         <FormControlLabel
           control={
             <Tooltip
-              title={agentLimitReached ? t('SubUsers.serviceLimits.agentLimitReached') : ''}
-              disableHoverListener={!agentLimitReached}
+              title={disableAgentToggle ? t('SubUsers.serviceLimits.agentLimitReached') : ''}
+              disableHoverListener={!disableAgentToggle}
             >
               <span>
                 <PulseemSwitch
@@ -365,8 +367,8 @@ const PermissionItems = ({ classes, userDetails, updateSubUserDetails, permissio
                   activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
                   height={15}
                   className={clsx({ [classes.rtlSwitch]: isRTL })}
-                  checked={userDetails.UserPermissionsList?.indexOf(eSubUserPermissions.AllowWhatsAppToAgent) > -1}
-                  disabled={agentLimitReached}
+                  checked={alreadyHasAgentPermission}
+                  disabled={disableAgentToggle}
                   onChange={(e: any) => {
                     if (e.target.checked) {
                       updateSubUserDetails({
