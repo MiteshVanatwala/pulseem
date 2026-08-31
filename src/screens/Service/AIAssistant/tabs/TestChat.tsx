@@ -253,7 +253,7 @@ const TestChat = () => {
 
   const confidenceThreshold = settings?.confidenceThreshold ?? 0;
   const isSending = testChatSending === 'loading';
-  const isTooLong = draft.length > MAX_TEST_MESSAGE_LENGTH;
+  const isTooLong = draft.trim().length > MAX_TEST_MESSAGE_LENGTH;
 
   const handleSend = () => {
     const trimmed = draft.trim();

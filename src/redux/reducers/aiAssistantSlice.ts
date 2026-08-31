@@ -56,7 +56,7 @@ const fromServerItem = (raw: any): IKnowledgeItem => ({
 });
 
 const toServerItem = (input: IKnowledgeItemInput, id?: number) => ({
-  Id: id || null,
+  Id: id ?? null,
   Title: input.title,
   ItemType: input.type,
   Content: input.content,

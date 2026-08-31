@@ -112,7 +112,7 @@ import LegacyPageFrame, { LegacyPageWild } from './screens/LegacyPage/LegacyPage
 import { openHelpDrawer, closeHelpDrawer, toggleHelpDrawer } from './redux/reducers/helpDrawerSlice';
 import ChatWidgetConfigPage from './screens/Widgets/ChatWidgetConfigPage';
 import ServiceDashboard from './screens/Service/Dashboard/Dashboard';
-import { isChatWidgetPreviewUser } from './helpers/Routes/routes';
+import { isChatWidgetPreviewUser, isInternalStaffSession } from './helpers/Routes/routes';
 import WidgetListPage from './screens/Widgets/WidgetListPage';
 import ChatbotList from './screens/Service/Chatbot/ChatbotList';
 import ChatbotBuilder from './screens/Service/Chatbot/ChatbotBuilder';
@@ -152,18 +152,18 @@ const renderRoutes = (classes, redirect, userRoles, accountFeatures) => {
         element={<RemoveMyData classes={classes} />}
       />
       {/* Internal-only diagnostic harness for AIAssistantLogic.SimulateIncomingMessage —
-          deliberately not in SideBar or routes.tsx nav config, reachable only by typing
-          this URL directly. No frontend accountFeatures gate here (backend Phase 0,
-          PR-2457 Group B, confirmed no internal/staff-only flag convention exists to gate
-          against) — SimulateIncomingMessage enforces its own server-side JWT/subAccountId
+          deliberately not in SideBar or routes.tsx nav config, and gated behind
+          isInternalStaffSession() (a Pulseem staff member impersonating this account)
+          so a regular customer can't reach it even by typing the URL directly.
+          SimulateIncomingMessage also enforces its own server-side JWT/subAccountId
           checks and reads Feature.ServiceAI.WidgetRuntime.Enabled from Web.config,
-          failing closed with a 423 if that's not enabled. That's real, independent
-          protection; this route doesn't need to duplicate it. */}
-      <Route
+          failing closed with a 423 if that's not enabled — this route's gate is on
+          top of that, not instead of it. */}
+      {isInternalStaffSession() && <Route
         exact
         path={`${sitePrefix}internal-ai-diagnostics`}
         element={<AIAssistantDiagnosticHarness />}
-      />
+      />}
       <Route
         exact
         path={sitePrefix}

@@ -60,6 +60,20 @@ export const isChatWidgetPreviewUser = (): boolean => {
     return false;
   }
 };
+// Staff-only gate for internal tooling (e.g. the AI Assistant diagnostic harness).
+// core.isAdmin holds the raw JWT `role` claim. Mirrors the exact "Back to Admin"
+// condition already used in AppBar/TopMenu: non-empty and not the literal string
+// 'True' (that specific value is excluded there too, so it is kept excluded here
+// for consistency rather than assumed to mean staff).
+export const isInternalStaffSession = (): boolean => {
+  try {
+    const state: any = store.getState();
+    const isAdmin = state?.core?.isAdmin;
+    return isAdmin !== '' && isAdmin != null && isAdmin !== 'True';
+  } catch {
+    return false;
+  }
+};
 // export const rootDomain = !isProdMode ? 'http://localhost:58123' : '/Pulseem/';
 export const rootDomain = '/Pulseem';
 
