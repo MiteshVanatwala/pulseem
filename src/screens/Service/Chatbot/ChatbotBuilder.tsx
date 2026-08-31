@@ -256,7 +256,9 @@ const ChatbotBuilder = ({ classes }: { classes?: any }) => {
 
     try {
       await dispatch(saveChatbot(flow)).unwrap();
-      goBack();
+      setToastMessage({ severity: 'success', color: 'success', message: 'chatbot_condition_action_saved' });
+      // Give the toast a moment to actually render before the list navigation unmounts this page.
+      setTimeout(goBack, 1000);
     } catch (err: any) {
       setToastMessage({ severity: 'error', color: 'error', message: getErrorMessage(err, 'chatbot_save_failed') });
     }
