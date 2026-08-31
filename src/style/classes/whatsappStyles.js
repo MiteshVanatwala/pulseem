@@ -2596,31 +2596,52 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		},
 		'&.tab-wrapper': {
 			background: '#f6f6f6',
-			padding: '4px 8px 0px 8px',
+			padding: '3px 8px 0px 8px',
 			justifyContent: 'center',
 		},
 		'&.tab-container': {
 			backgroundColor: '#fff',
-			marginTop: 4,
+			marginTop: 2,
 			borderRadius: 16,
 			width: '100%',
+			minWidth: 0,
+			boxSizing: 'border-box',
 		},
 		'&.custom-tab': {
 			textTransform: 'none',
-			minWidth: '25%',
-			padding: theme.spacing(.75, 1),
+			// Was minWidth:'25%'. Combined with MUI's own 90px-per-Tab minimum, four
+			// tabs needed ~360px of row while the sidebar is only 300px at its
+			// narrowest — so the row overflowed and the last tab ("Solved") was cut
+			// off at the container edge. Now each tab flexes from a zero basis and
+			// shares the row evenly, whatever the sidebar width.
+			flex: '1 1 0',
+			minWidth: 0,
+			// MUI gives every Tab a 48px minHeight; the label here is only ~30px of
+			// text, so that minimum was most of the row's excess height.
+			minHeight: 0,
+			padding: theme.spacing(.25, .5),
 			borderRadius: theme.shape.borderRadius * 2.5,
 			fontWeight: 'bold',
 			'& h2': {
 				color: '#000000',
-				lineHeight: '16px',
-				margin: '0px 0px 4px 0px',
+				// 13px keeps the longest label ("In Progress") on one line at the
+				// sidebar's usual width. It used to wrap to two lines, which made the
+				// whole row taller since MUI stretches every Tab to the tallest one.
+				fontSize: 13,
+				lineHeight: '15px',
+				margin: '0px 0px 1px 0px',
 				fontWeight: 'bold',
+				// Still allowed to wrap if the sidebar gets narrow enough — better a
+				// second line than a label truncated to "In Prog…".
+				whiteSpace: 'normal',
+				overflowWrap: 'break-word',
+				maxWidth: '100%',
 			},
 			'& h6': {
 				color: '#0000008a',
-				lineHeight: '14px',
-				margin: '0px 0px 2px 0px',
+				fontSize: 12,
+				lineHeight: '13px',
+				margin: 0,
 			},
 			'&.Mui-selected': {
 				background: 'linear-gradient(90deg, #FF0076 1.31%, #FF0054 33.07%, #FF4D2A 134.74%)',

@@ -51,8 +51,8 @@
   </div>
 
   <!-- ── The embed snippet ────────────────────────────────────────────────
-       In production this is one line pointing at cdn.pulseem.com. Here the
-       bases are overridden so the widget talks to the local dev server.     -->
+       In production this is the one <script> line below on its own. Here it is
+       preceded by a config block so the widget talks to the local dev server.  -->
   <script>
     // Points the widget at the dev server instead of the CDN. In production this
     // block does not exist — the snippet below is the whole installation.
@@ -64,16 +64,8 @@
   </script>
 
   <!-- Verbatim output of EmbedCodeGenerator.tsx, except that src points at the
-       dev server. Using the real snippet here means the queue-stub path is what
-       gets exercised locally, not a shortcut. -->
-  <script>
-    (function(p,u,l,s,e,m,a){
-      p['PulseemObject']=e;p[e]=p[e]||function(){
-      (p[e].q=p[e].q||[]).push(arguments)};
-      m=u.createElement(l);m.async=1;m.src=s;
-      a=u.getElementsByTagName(l)[0];a.parentNode.insertBefore(m,a);
-    })(window,document,'script','http://localhost:4300/pulseem.js','pulseem');
-    pulseem('init', '11111111-2222-3333-4444-555555555555');
-  </script>
+       dev server. Using the real snippet here means the id-on-the-script-tag path
+       customers get is what gets exercised locally, not a shortcut. -->
+  <script async src="http://localhost:4300/pulseem.js?id=11111111-2222-3333-4444-555555555555"></script>
 </body>
 </html>

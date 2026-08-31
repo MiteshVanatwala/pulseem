@@ -13,14 +13,20 @@
 (function (window, document) {
   'use strict';
 
-  // Two ways in, both supported.
+  // Three ways in, all supported.
   //
-  // 1. The queue stub the embed snippet installs:
+  // 1. The query string on this file's own <script> tag:
+  //        <script async src=".../pulseem.js?id=<widgetId>"></script>
+  //    This is what EmbedCodeGenerator hands to customers. One line, and no inline
+  //    JavaScript, so it survives a strict Content-Security-Policy on the host page
+  //    — the earlier inline snippet was blocked outright on those sites.
+  //
+  // 2. The queue stub the older embed snippet installed:
   //        pulseem('init', '<widgetId>')
-  //    Calls can be made before this file finishes loading; they land in a queue
-  //    we drain here. This is what EmbedCodeGenerator hands to customers.
+  //    Calls can be made before this file finishes loading; they land in a queue we
+  //    drain here. Kept so snippets already pasted on customer sites keep working.
   //
-  // 2. Direct globals — window.PulseemWidgetID / window.PulseemWidgetConfig —
+  // 3. Direct globals — window.PulseemWidgetID / window.PulseemWidgetConfig —
   //    used by the local demo page and by anyone overriding apiBase/assetBase.
   function readQueue() {
     var name = window.PulseemObject;
@@ -56,9 +62,31 @@ function scriptDir() {
   return SELF_SRC.replace(/[?#].*$/, '').replace(/\/[^/]*$/, '');
 }
 
+// The widget id carried by the one-line snippet's query string. Parsed off the same
+// captured src as scriptDir(), because document.currentScript is already null by the
+// time an async script's callbacks run. Hand-rolled rather than URLSearchParams to
+// keep this file ES5, since it executes on whatever browsers visitors bring.
+function scriptWidgetId() {
+  if (!SELF_SRC) return '';
+  var query = SELF_SRC.split('#')[0].split('?')[1];
+  if (!query) return '';
+  var pairs = query.split('&');
+  for (var i = 0; i < pairs.length; i++) {
+    var pair = pairs[i].split('=');
+    if (pair[0] === 'id' && pair[1]) {
+      try {
+        return decodeURIComponent(pair[1].replace(/\+/g, ' '));
+      } catch (e) {
+        return pair[1];
+      }
+    }
+  }
+  return '';
+}
+
 var queued = readQueue();
   var CONFIG = window.PulseemWidgetConfig || queued.config || {};
-  var WIDGET_ID = window.PulseemWidgetID || CONFIG.widgetId || queued.widgetId;
+  var WIDGET_ID = window.PulseemWidgetID || CONFIG.widgetId || queued.widgetId || scriptWidgetId();
 
   // Where to fetch config and post messages. Overridable so the widget can be
   // pointed at a local dev server without editing this file.
@@ -77,7 +105,7 @@ var ASSET_BASE = (CONFIG.assetBase || scriptDir() || 'https://cdn.pulseem.com/wi
   var PANEL_HEIGHT = 620;
 
   if (!WIDGET_ID) {
-    console.warn('[pulseem] No widget id. Set window.PulseemWidgetID before loading this script.');
+    console.warn('[pulseem] No widget id. Load this script as pulseem.js?id=<widgetId>, or set window.PulseemWidgetID before it.');
     return;
   }
 

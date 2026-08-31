@@ -36,9 +36,12 @@ import { BaseSyntheticEvent, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import SideHeaderContactDropDown from './SideHeaderContactDropDown';
 import { isChatWidgetPreviewUser } from '../../../../helpers/Routes/routes';
-import ServiceChannelDropdown from '../../../Service/Conversations/ServiceChannelDropdown';
+import { ServiceChannel } from '../../../Service/Conversations/ServiceChannelDropdown';
 import ServiceDomainDropdown from '../../../Service/Conversations/ServiceDomainDropdown';
 import ServiceSourceDropdown from '../../../Service/Conversations/ServiceSourceDropdown';
+import WhatsAppIcon from '@material-ui/icons/WhatsApp';
+import ChatBubbleOutlineIcon from '@material-ui/icons/ChatBubbleOutline';
+import AllInboxIcon from '@material-ui/icons/AllInbox';
 import SideBarContactList from './SideBarContactList';
 import useDebounce from '../Hook/useDebounce';
 import { useSelector, useDispatch } from 'react-redux';
@@ -54,6 +57,31 @@ import { getWhatsappChatTag } from '../../../../redux/reducers/whatsappSlice';
 import { PulseemReactInstance } from '../../../../helpers/Api/PulseemReactAPI';
 import Toast from '../../../../components/Toast/Toast.component';
 import DynamicConfirmDialog from '../../../../components/DialogTemplates/DynamicConfirmDialog';
+
+// Channel tabs (PR-2455). These used to be a Select in the sidebar header; that
+// third dropdown pushed the action icons past the sidebar edge, so the channel
+// filter now renders as its own tab row above the status tabs.
+const CHANNEL_TABS: {
+	value: ServiceChannel;
+	labelKey: string;
+	icon: JSX.Element;
+}[] = [
+	{
+		value: 'all',
+		labelKey: 'whatsappChat.channelAll',
+		icon: <AllInboxIcon style={{ fontSize: 16 }} />,
+	},
+	{
+		value: 'whatsapp',
+		labelKey: 'whatsappChat.channelWhatsapp',
+		icon: <WhatsAppIcon style={{ fontSize: 16 }} />,
+	},
+	{
+		value: 'widget',
+		labelKey: 'whatsappChat.channelWidget',
+		icon: <ChatBubbleOutlineIcon style={{ fontSize: 16 }} />,
+	},
+];
 
 const SideBar = ({
 	classes,
@@ -967,19 +995,12 @@ const SideBar = ({
 						/>
 					</div>
 					{/* Service channel filter (PR-2455). This inbox is shared between
-					    WhatsApp and site-widget conversations, so the second dropdown
-					    changes meaning with the channel: widget → pick a domain,
-					    all → pick any source, whatsapp → the original number picker.
-					    Hidden while the feature is dark-launched, so WhatsApp Chat
-					    looks untouched for everyone else. */}
-					{showServiceChannel && (
-						<div style={{ flexShrink: 0, width: 'auto', marginInlineEnd: 12, display: 'flex', alignItems: 'center' }}>
-							<ServiceChannelDropdown
-								value={selectedServiceChannel}
-								onChange={(ch) => onServiceChannelChange && onServiceChannelChange(ch)}
-							/>
-						</div>
-					)}
+					    WhatsApp and site-widget conversations, so this dropdown changes
+					    meaning with the channel picked in the channel tab row below:
+					    widget → pick a domain, all → pick any source, whatsapp → the
+					    original number picker. The channel itself used to be a third
+					    dropdown here; it overflowed the header and clipped the action
+					    icons, so it now lives in its own tab row (see channelTabs). */}
 					{showServiceChannel && selectedServiceChannel === 'widget' ? (
 						<ServiceDomainDropdown
 							domains={serviceDomains}
@@ -1033,18 +1054,76 @@ const SideBar = ({
 						</IconButton>
 					</div>
 				</header>
+				{/* Channel section — replaces the old channel dropdown in the header.
+				    Styled to match the status row below it (All / Open / In Progress /
+				    Solved) so both filters read as one segmented control stack. */}
+				{showServiceChannel && (
+					<div
+						className={clsx(`${classes.whatsappChat} tab-wrapper`, classes.dFlex)}
+					>
+						<Box
+							className={clsx(
+								`${classes.whatsappChat} tab-container`,
+								classes.tabContainerCompact,
+							)}
+						>
+							<Tabs
+								classes={{
+									root: classes.tabsRootCompact,
+									indicator: classes.hideIndicator,
+								}}
+								variant="fullWidth"
+								value={Math.max(
+									0,
+									CHANNEL_TABS.findIndex(
+										(c) => c.value === selectedServiceChannel,
+									),
+								)}
+								onChange={(_e, index: number) =>
+									onServiceChannelChange &&
+									onServiceChannelChange(CHANNEL_TABS[index].value)
+								}
+								aria-label="channel tabs"
+							>
+								{CHANNEL_TABS.map((channel) => (
+									<Tab
+										className={clsx(
+											`${classes.whatsappChat} custom-tab`,
+											classes.channelTab,
+											channel.value === 'whatsapp' &&
+												classes.channelTabWhatsapp,
+											channel.value === 'widget' &&
+												classes.channelTabWidget,
+										)}
+										key={channel.value}
+										label={
+											<Box className={classes.channelTabLabel}>
+												{channel.icon}
+												<h2>{translator(channel.labelKey)}</h2>
+											</Box>
+										}
+									/>
+								))}
+							</Tabs>
+						</Box>
+					</div>
+				)}
 				<div
 					className={clsx(`${classes.whatsappChat} tab-wrapper`, classes.dFlex)}
 				>
 					<Box
 						className={clsx(
 							`${classes.whatsappChat} tab-container`,
-							classes.p5,
+							classes.tabContainerCompact,
 						)}
 					>
 						<Tabs
 							className={`${classes.whatsappChat} tabs-main`}
-							classes={{ indicator: classes.hideIndicator }}
+							classes={{
+								root: classes.tabsRootCompact,
+								indicator: classes.hideIndicator,
+							}}
+							variant="fullWidth"
 							value={activeTab}
 							onChange={handleFilterByStatus}
 							aria-label="status tabs"
@@ -1055,10 +1134,8 @@ const SideBar = ({
 									key={`${tab}_${index}`}
 									label={
 										<Box>
-											<h2 className={classes.font16}>
-												{translator(tab?.status)}
-											</h2>
-											<h6 className={classes.font14}>{tab?.count}</h6>
+											<h2>{translator(tab?.status)}</h2>
+											<h6>{tab?.count}</h6>
 										</Box>
 									}
 								/>
@@ -1330,6 +1407,9 @@ const SideBar = ({
 				<SideBarContactList
 					classes={classes}
 					ChatContacts={sideChatContacts}
+					showChannelStripe={
+						showServiceChannel && selectedServiceChannel === 'all'
+					}
 					handleChatId={handleChatId}
 					handleUserStatus={handleUserStatus}
 					getStatusClass={getStatusClass}
