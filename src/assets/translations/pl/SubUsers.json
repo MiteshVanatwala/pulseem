@@ -1,3 +1,26 @@
 {
-  "userDeletedSessionEnded": "Twój użytkownik został usunięty z konta. Zostałeś wylogowany."
+  "userDeletedSessionEnded": "Twój użytkownik został usunięty z konta. Zostałeś wylogowany.",
+  "teams": {
+    "sectionTitle": "Zarządzanie zespołami",
+    "teamsCount": "Zespoły",
+    "createTeam": "Utwórz zespół",
+    "createTitle": "Utwórz nowy zespół",
+    "editTitle": "Edytuj zespół",
+    "nameLabel": "Nazwa zespołu *",
+    "nameRequired": "Nazwa zespołu jest wymagana",
+    "nameTooLong": "Nazwa zespołu nie może przekraczać 100 znaków",
+    "agentsLabel": "Agenci",
+    "selected": "wybrane",
+    "noAgents": "Brak dostępnych agentów",
+    "rosterTruncated": "Wyświetlane jest pierwszych 1000 subkont. Niektórzy agenci mogą nie być widoczni na tej liście.",
+    "noTeams": "Nie utworzono jeszcze żadnego zespołu",
+    "name": "Nazwa",
+    "agentCount": "Agenci",
+    "save": "Zapisz zespół",
+    "cancel": "Anuluj",
+    "deleteTeamPrompt": "Czy na pewno chcesz usunąć ten zespół?",
+    "teamSaved": "Zespół został zapisany",
+    "teamDeleted": "Zespół został usunięty",
+    "genericError": "Coś poszło nie tak. Spróbuj ponownie."
+  }
 }

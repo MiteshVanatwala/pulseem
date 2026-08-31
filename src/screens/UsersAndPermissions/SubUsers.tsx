@@ -542,7 +542,7 @@ const SubUsers = ({ classes }: any) => {
         availablePlans,
         currentPlan.Id
     );
-    
+
     if (planName) {
       return t('billing.tier.featureNotAvailable').replace('{feature}', t(TierFeatures[tierMessageCode as keyof typeof TierFeatures] || tierMessageCode)).replace('{planName}', planName);
     } else {

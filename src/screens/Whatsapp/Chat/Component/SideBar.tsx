@@ -1,7 +1,6 @@
 import Icon from './Icon';
 import clsx from 'clsx';
 import { WhatsappChatSideBarProps } from '../Types/WhatsappChat.type';
-import AccountUser from '../../../../assets/images/acc-user.jpg';
 import {
 	Box,
 	Button,
@@ -984,16 +983,6 @@ const SideBar = ({
 						classes.whatsappSidebarHeader,
 					)}
 				>
-					<div
-						className={`${classes.whatsappChat} sidebar__avatar-wrapper`}
-						style={{ flexShrink: 0 }}
-					>
-						<img
-							src={AccountUser}
-							alt="Avatar"
-							className={`${classes.whatsappChat} avatar`}
-						/>
-					</div>
 					{/* Service channel filter (PR-2455). This inbox is shared between
 					    WhatsApp and site-widget conversations, so this dropdown changes
 					    meaning with the channel picked in the channel tab row below:
