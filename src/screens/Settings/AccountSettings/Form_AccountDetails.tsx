@@ -45,7 +45,6 @@ const FORM_ACCOUNT_DETAILS = ({
 	onVerificationEmail,
 	onRefresh = () => { }
 }: AccDtlPropTypes) => {
-	console.log(Settings);
 	const dispatch = useDispatch();
 	const { t } = useTranslation();
 	const { isRTL, windowSize } = useSelector((state: any) => state.core);
