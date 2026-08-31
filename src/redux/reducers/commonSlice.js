@@ -256,6 +256,7 @@ export const commonSlice = createSlice({
     WhatsAppPlatformID: null,
     TierData: [],
     IsPoland: false,
+    AiAssistantRolloutEnabled: false,
     companyAdmin: '',
     smsConfig: null,
     isSwippingApprovalSMS: false,
@@ -349,6 +350,9 @@ export const commonSlice = createSlice({
         state.WhatsAppPlatformID = get(payload, 'Data.WhatsappPlatformId', null)
         state.TierData = get(payload, 'Data.TierData', [])
         state.IsPoland = get(payload, 'Data.IsPoland', false)
+        // Boolean on AfterLoginInitialDataModel, same payload as WhatsappPlatformId/IsPoland
+        // above (not nested under SubAccountSettings) — fails closed to false, same as IsPoland.
+        state.AiAssistantRolloutEnabled = get(payload, 'Data.AiAssistantRolloutEnabled', false)
         state.smsConfig = {
           Country: get(payload, 'Data.Country', '-1'),
           SmsLength: get(payload, 'Data.SmsLength', null),

@@ -45,6 +45,8 @@ import contactSupportReducer from './reducers/contactSupportSlice';
 import conversationsReducer from './reducers/conversationsSlice';
 import serviceDashboardReducer from './reducers/serviceDashboardSlice';
 import chatbotReducer from './reducers/chatbotSlice';
+import serviceLimitsReducer from './reducers/serviceLimitsSlice';
+import aiAssistantReducer from './reducers/aiAssistantSlice';
 
 
 export default configureStore({
@@ -94,5 +96,7 @@ export default configureStore({
     conversations: conversationsReducer,
     serviceDashboard: serviceDashboardReducer,
     chatbot: chatbotReducer,
+    serviceLimits: serviceLimitsReducer,
+    aiAssistant: aiAssistantReducer,
   },
 });
