@@ -87,6 +87,10 @@ export type SideBarContactListProps = {
 	tagsList?: Array<{ id: string; TagName: string; TagColor: string }>;
 	onTagsUpdated?: (phoneNumber: string, tagIds: number[], tags?: any[], senderNumber?: string) => void;
 	activePhoneNumber: string;
+	// Draws the per-channel colour stripe on each row. Only switched on for the
+	// merged "All" view — in a single-channel list every row would carry an
+	// identical stripe, which is noise rather than information.
+	showChannelStripe?: boolean;
 };
 
 export type SideHeaderContactDropDownProps = {
@@ -250,6 +254,10 @@ export type APIWhatsappChatSidebarContactsItemsData = {
 	Tags?: Array<{ id?: string; Id?: string; TagName: string; TagColor: string }>;
 	ClientId?: number; // Standardized for WhatsApp chat edit mapping
 	Agents?: Array<{ AgentID: number; AgentName: string }> | null;
+	// Which inbox a row came from. Set to 'widget' by adaptWidgetToSidebar; absent
+	// on rows straight from the WhatsApp API, which are treated as 'whatsapp'.
+	// Only meaningful in the merged "All" view, where both kinds sit in one list.
+	channel?: 'whatsapp' | 'widget';
 };
 
 //SidebarContacts Main inbound data types

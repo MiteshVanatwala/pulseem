@@ -7,6 +7,42 @@
 }
 
 .svc-dash-head { margin-bottom: 22px; }
+.svc-dash-head-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+/* ── Reporting window toggle ─────────────────────────────────────── */
+.svc-range {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  background: #f2f4f7;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+.svc-range-btn {
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #667085;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+}
+.svc-range-btn:hover { color: #1d2939; }
+.svc-range-btn--on {
+  background: #FF1744;
+  color: #fff;
+  box-shadow: 0 1px 3px rgba(255, 23, 68, 0.35);
+}
+.svc-range-btn--on:hover { color: #fff; }
 .svc-dash-title {
   font-size: 24px;
   font-weight: 800;
@@ -19,6 +55,19 @@
   color: #667085;
   margin: 0;
 }
+
+/* ── Section headings ───────────────────────────────────────────── */
+/* Groups the page into labelled bands. Without these the cards read as one
+   undifferentiated wall; the eye has nothing to anchor to. */
+.svc-section {
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #98a2b3;
+  margin: 26px 0 12px;
+}
+.svc-section:first-of-type { margin-top: 4px; }
 
 /* ── Cards / panels ─────────────────────────────────────────────── */
 .svc-card {
@@ -38,29 +87,40 @@
 
 /* ── Stat cards ─────────────────────────────────────────────────── */
 .svc-stat {
+  /* Label and icon on the top row, value beneath. Reads faster than the previous
+     icon-left/value-right arrangement because the number lands where the eye
+     finishes rather than competing with the icon. */
   display: flex;
-  align-items: center;
-  gap: 16px;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 14px;
+  min-height: 104px;
   position: relative;
   overflow: hidden;
+}
+.svc-stat-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
 }
 .svc-stat::before {
   content: '';
   position: absolute;
   left: 0; top: 0; bottom: 0;
   width: 4px;
-  background: var(--svc-accent, #3b82f6);
+  background: var(--svc-accent, #FF1744);
 }
 .svc-stat-icon {
-  width: 50px;
-  height: 50px;
-  border-radius: 14px;
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
 }
-.svc-stat-icon svg { font-size: 26px; }
+.svc-stat-icon svg { font-size: 20px; }
 .svc-stat-value {
   font-size: 30px;
   font-weight: 800;
@@ -70,9 +130,36 @@
 }
 .svc-stat-label {
   font-size: 12.5px;
-  font-weight: 500;
+  font-weight: 600;
   color: #667085;
-  margin-top: 3px;
+  line-height: 1.35;
+}
+
+/* Cards that filter the conversation list are buttons. The rest keep the default
+   cursor so nothing invites a click that does nothing. */
+.svc-stat--clickable {
+  cursor: pointer;
+  text-align: inherit;
+  font: inherit;
+  color: inherit;
+  width: 100%;
+}
+.svc-stat--clickable:focus-visible {
+  outline: 2px solid #FF1744;
+  outline-offset: 2px;
+}
+/* Selected filter: brand fill, and the icon chip drops back to grey so it stops
+   competing with the number now that the whole card carries the colour. */
+.svc-stat--selected {
+  background: linear-gradient(135deg, #FF1744 0%, #F4511E 100%);
+  border-color: transparent;
+}
+.svc-stat--selected::before { display: none; }
+.svc-stat--selected .svc-stat-label { color: rgba(255, 255, 255, 0.9); }
+.svc-stat--selected .svc-stat-value { color: #fff !important; }
+.svc-stat--selected .svc-stat-icon {
+  background: rgba(255, 255, 255, 0.18) !important;
+  color: #e5e7eb !important;
 }
 
 /* ── Quick actions ──────────────────────────────────────────────── */
@@ -94,6 +181,27 @@
 .svc-qa-btn:hover { filter: brightness(1.05); box-shadow: 0 5px 14px rgba(16, 24, 40, 0.18); }
 .svc-qa-btn:active { transform: translateY(1px); }
 .svc-qa-btn svg { font-size: 19px; }
+
+/* Three tones of the Pulseem accent rather than three unrelated hues. All-solid
+   would make the row a block of red where nothing leads; this keeps the primary
+   action obvious while the row still reads as one family. */
+.svc-qa-btn--primary {
+  background: #FF1744;
+  color: #fff;
+}
+.svc-qa-btn--secondary {
+  background: #fff;
+  color: #FF1744;
+  border: 1.5px solid #FF1744;
+  box-shadow: none;
+}
+.svc-qa-btn--secondary:hover { background: #FFF5F7; filter: none; }
+.svc-qa-btn--tertiary {
+  background: #FFEBEF;
+  color: #D5003A;
+  box-shadow: none;
+}
+.svc-qa-btn--tertiary:hover { background: #FFDDE4; filter: none; }
 
 /* ── Panel header ───────────────────────────────────────────────── */
 .svc-panel-head {
@@ -121,14 +229,14 @@
 .svc-panel-link {
   font-size: 13px;
   font-weight: 600;
-  color: #2563eb;
+  color: #FF1744;
   cursor: pointer;
   text-decoration: none;
   padding: 4px 10px;
   border-radius: 7px;
   transition: background 0.15s ease;
 }
-.svc-panel-link:hover { background: #eff4ff; }
+.svc-panel-link:hover { background: #FFF1F3; }
 
 /* ── Recent conversations rows ──────────────────────────────────── */
 .svc-rc-row {
@@ -177,7 +285,11 @@
   border-bottom: 1px solid #f4f5f8;
 }
 .svc-kv:last-child { border-bottom: none; }
+.svc-kv-main { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .svc-kv-label { font-size: 13px; color: #667085; font-weight: 500; }
+/* Says what the number actually measures. "Avg Response" alone leaves the reader
+   guessing between first reply and every reply. */
+.svc-kv-help { font-size: 11.5px; color: #98a2b3; line-height: 1.4; }
 .svc-kv-value { font-size: 15px; font-weight: 700; color: #101828; }
 .svc-pill {
   padding: 3px 11px; border-radius: 999px; font-size: 12px; font-weight: 700;
@@ -215,7 +327,7 @@
 }
 .svc-empty-icon { font-size: 40px; opacity: 0.4; margin-bottom: 10px; }
 .svc-empty-text { font-size: 13.5px; color: #667085; }
-.svc-empty-link { display: inline-block; margin-top: 10px; font-size: 13px; font-weight: 600; color: #2563eb; cursor: pointer; }
+.svc-empty-link { display: inline-block; margin-top: 10px; font-size: 13px; font-weight: 600; color: #FF1744; cursor: pointer; }
 .svc-empty-link:hover { text-decoration: underline; }
 
 /* ── Skeleton shimmer ───────────────────────────────────────────── */

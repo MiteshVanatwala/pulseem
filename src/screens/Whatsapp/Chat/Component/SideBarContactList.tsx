@@ -43,6 +43,7 @@ const SideBarContactList = ({
 	tagsList = [],
 	onTagsUpdated,
 	activePhoneNumber,
+	showChannelStripe = false,
 }: SideBarContactListProps) => {
 	const { t: translator } = useTranslation();
 	const { contactID } = useParams();
@@ -251,7 +252,21 @@ const SideBarContactList = ({
 												contact?.PhoneNumber === contactID &&
 												'active-contact'
 											}`,
+											showChannelStripe && classes.contactChannelStripe,
+											showChannelStripe &&
+												(contact.channel === 'widget'
+													? classes.contactChannelWidget
+													: classes.contactChannelWhatsapp),
 										)}
+										title={
+											showChannelStripe
+												? translator(
+														contact.channel === 'widget'
+															? 'whatsappChat.channelWidget'
+															: 'whatsappChat.channelWhatsapp',
+												  )
+												: undefined
+										}
 										key={i}
 										to={`/react/whatsapp/chat/${contact?.PhoneNumber}`}
 										onClick={(e) => handleChatId(e, contact)}

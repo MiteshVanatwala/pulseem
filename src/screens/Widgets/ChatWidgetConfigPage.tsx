@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { Grid, Typography, Box, Tabs, Tab, TextField, Button, IconButton, Chip, CircularProgress } from '@material-ui/core';
+import { Grid, Typography, Box, Tabs, Tab, TextField, Button, IconButton, Chip, CircularProgress, Tooltip } from '@material-ui/core';
 import StarBorderIcon from '@material-ui/icons/StarBorder';
 import clsx from 'clsx';
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
@@ -20,6 +20,7 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import ImageOutlinedIcon from '@material-ui/icons/ImageOutlined';
 import ChatBubbleOutlineIcon from '@material-ui/icons/ChatBubbleOutline';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import CodeIcon from '@material-ui/icons/Code';
 import { FaBullhorn } from 'react-icons/fa';
 import DefaultScreen from '../DefaultScreen';
 import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
@@ -94,6 +95,7 @@ const ChatWidgetConfigContent = ({ classes, initialConfig, initialWidgetId, init
   const [previewDevice, setPreviewDevice] = useState<PreviewDevice>('desktop');
   const [zoom, setZoom] = useState(1);
   const [tierBlockedFeature, setTierBlockedFeature] = useState<string | null>(null);
+  const [showEmbed, setShowEmbed] = useState(false);
 
   // Once a widgetId exists (first save's response, or an existing widget being
   // edited) it's the authoritative target for every further save/status call;
@@ -309,23 +311,48 @@ const ChatWidgetConfigContent = ({ classes, initialConfig, initialWidgetId, init
               </Typography>
               <InfoOutlinedIcon style={{ fontSize: 16, color: '#9ca3af' }} />
             </Box>
-            <Box display="flex" alignItems="center" border="1px solid #e5e7eb" borderRadius={8} style={{ padding: 2 }}>
-              {devices.map((d) => (
-                <IconButton
-                  key={d.key}
-                  size="small"
-                  onClick={() => setPreviewDevice(d.key)}
-                  style={{
-                    color: previewDevice === d.key ? ACCENT : '#9ca3af',
-                    border: previewDevice === d.key ? `1px solid ${ACCENT}` : '1px solid transparent',
-                    borderRadius: 6,
-                    padding: 5,
-                    margin: 1,
-                  }}
-                >
-                  {d.icon}
-                </IconButton>
-              ))}
+            <Box display="flex" alignItems="center">
+              {widgetId && (
+                <Tooltip title={status === 'active' ? '' : t('common.widget_embed_requires_active', 'Activate the widget to get its install code')}>
+                  {/* span so the tooltip still fires while the button is disabled */}
+                  <span>
+                    <Button
+                      size="small"
+                      disabled={status !== 'active'}
+                      onClick={() => setShowEmbed(true)}
+                      startIcon={<CodeIcon style={{ fontSize: 16 }} />}
+                      style={{
+                        textTransform: 'none',
+                        color: status === 'active' ? ACCENT : '#9ca3af',
+                        fontWeight: 600,
+                        fontSize: '0.8rem',
+                        marginInlineEnd: 12,
+                        padding: '4px 8px',
+                      }}
+                    >
+                      {t('common.widget_embed_code', 'Embed code')}
+                    </Button>
+                  </span>
+                </Tooltip>
+              )}
+              <Box display="flex" alignItems="center" border="1px solid #e5e7eb" borderRadius={8} style={{ padding: 2 }}>
+                {devices.map((d) => (
+                  <IconButton
+                    key={d.key}
+                    size="small"
+                    onClick={() => setPreviewDevice(d.key)}
+                    style={{
+                      color: previewDevice === d.key ? ACCENT : '#9ca3af',
+                      border: previewDevice === d.key ? `1px solid ${ACCENT}` : '1px solid transparent',
+                      borderRadius: 6,
+                      padding: 5,
+                      margin: 1,
+                    }}
+                  >
+                    {d.icon}
+                  </IconButton>
+                ))}
+              </Box>
             </Box>
           </Box>
 
@@ -600,10 +627,6 @@ const ChatWidgetConfigContent = ({ classes, initialConfig, initialWidgetId, init
             </Box>
           </Box>
 
-          <Box mt={4}>
-            <EmbedCodeGenerator widgetId={widgetId} />
-          </Box>
-
           <style>{`
             @keyframes slideUp {
               from { transform: translateY(20px); opacity: 0; }
@@ -616,6 +639,13 @@ const ChatWidgetConfigContent = ({ classes, initialConfig, initialWidgetId, init
           `}</style>
         </Grid>
       </Grid>
+
+      <EmbedCodeGenerator
+        widgetId={widgetId}
+        open={showEmbed}
+        onClose={() => setShowEmbed(false)}
+        classes={classes}
+      />
 
       {/* BaseDialog rather than a raw MUI Dialog, so the upgrade prompt matches every
           other popup in the app — same chrome, buttons and exit affordance. */}

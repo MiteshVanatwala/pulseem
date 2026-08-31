@@ -28,7 +28,7 @@ const RecentConversationsPanel = ({ conversations, loading, onViewAll }: Props) 
     <div className="svc-card">
       <div className="svc-panel-head">
         <div className="svc-panel-title-wrap">
-          <span className="svc-panel-icon" style={{ background: '#eff4ff', color: '#2563eb' }}>
+          <span className="svc-panel-icon" style={{ background: '#FF1744', color: '#fff' }}>
             <ChatBubbleOutlineIcon />
           </span>
           <h3 className="svc-panel-title">{t('common.dashboard_recent_convs', 'Recent Conversations')}</h3>

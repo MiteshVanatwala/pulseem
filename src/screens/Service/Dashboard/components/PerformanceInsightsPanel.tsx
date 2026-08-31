@@ -26,7 +26,7 @@ const PerformanceInsightsPanel = ({ data, loading }: Props) => {
     <div className="svc-card">
       <div className="svc-panel-head">
         <div className="svc-panel-title-wrap">
-          <span className="svc-panel-icon" style={{ background: '#e7f7ee', color: '#12894f' }}>
+          <span className="svc-panel-icon" style={{ background: '#FF1744', color: '#fff' }}>
             <SpeedIcon />
           </span>
           <h3 className="svc-panel-title">{t('common.dashboard_performance', 'Performance Insights')}</h3>
@@ -38,7 +38,12 @@ const PerformanceInsightsPanel = ({ data, loading }: Props) => {
       ) : data ? (
         <>
           <div className="svc-kv">
-            <span className="svc-kv-label">{t('common.dashboard_avg_response', 'Avg Response')}</span>
+            <div className="svc-kv-main">
+              <span className="svc-kv-label">{t('common.dashboard_avg_response', 'Avg Response')}</span>
+              <span className="svc-kv-help">
+                {t('common.dashboard_avg_response_help', 'Time from a visitor message to the first agent reply')}
+              </span>
+            </div>
             {/* null = nothing answered yet. Showing "0 min" here would claim instant
                 replies, so show a dash until the number is real. */}
             <span className="svc-kv-value">
@@ -48,21 +53,32 @@ const PerformanceInsightsPanel = ({ data, loading }: Props) => {
             </span>
           </div>
           <div className="svc-kv">
-            <span className="svc-kv-label">{t('common.dashboard_resolution_rate', 'Resolution Rate')}</span>
+            <div className="svc-kv-main">
+              <span className="svc-kv-label">{t('common.dashboard_resolution_rate', 'Resolution Rate')}</span>
+              <span className="svc-kv-help">
+                {t('common.dashboard_resolution_rate_help', 'Share of all conversations marked resolved')}
+              </span>
+            </div>
             <span className="svc-kv-value">{data.resolutionRate}%</span>
           </div>
           <div className="svc-kv">
-            <span className="svc-kv-label">{t('common.dashboard_widget_status', 'Widget Status')}</span>
+            <div className="svc-kv-main">
+              <span className="svc-kv-label">{t('common.dashboard_widget_status', 'Widget Status')}</span>
+            </div>
             <span className="svc-kv-value">{widgetPill()}</span>
           </div>
           <div className="svc-kv">
-            <span className="svc-kv-label">{t('common.dashboard_active_hours', 'Active Hours')}</span>
+            <div className="svc-kv-main">
+              <span className="svc-kv-label">{t('common.dashboard_active_hours', 'Active Hours')}</span>
+            </div>
             <span className="svc-kv-value">
               {data.activeHours === 'custom' ? t('common.dashboard_hours_custom', 'Custom') : '24/7'}
             </span>
           </div>
           <div className="svc-kv">
-            <span className="svc-kv-label">{t('common.dashboard_ai_status', 'AI Assistant')}</span>
+            <div className="svc-kv-main">
+              <span className="svc-kv-label">{t('common.dashboard_ai_status', 'AI Assistant')}</span>
+            </div>
             <span className="svc-kv-value">
               <span className={`svc-pill ${data.aiStatus === 'enabled' ? 'svc-pill-green' : 'svc-pill-gray'}`}>
                 {data.aiStatus === 'enabled' ? t('common.dashboard_enabled', 'Enabled') : t('common.dashboard_disabled', 'Disabled')}

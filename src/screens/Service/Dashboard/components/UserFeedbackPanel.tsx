@@ -65,7 +65,7 @@ const UserFeedbackPanel = ({ data, loading, onSettings }: Props) => {
     <div className="svc-card">
       <div className="svc-panel-head">
         <div className="svc-panel-title-wrap">
-          <span className="svc-panel-icon" style={{ background: '#fef5e0', color: '#d97706' }}>
+          <span className="svc-panel-icon" style={{ background: '#FF1744', color: '#fff' }}>
             <StarBorderIcon />
           </span>
           <h3 className="svc-panel-title">{t('common.dashboard_user_feedback', 'User Feedback')}</h3>

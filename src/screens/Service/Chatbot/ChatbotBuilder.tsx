@@ -256,7 +256,9 @@ const ChatbotBuilder = ({ classes }: { classes?: any }) => {
 
     try {
       await dispatch(saveChatbot(flow)).unwrap();
-      goBack();
+      setToastMessage({ severity: 'success', color: 'success', message: 'chatbot_condition_action_saved' });
+      // Give the toast a moment to actually render before the list navigation unmounts this page.
+      setTimeout(goBack, 1000);
     } catch (err: any) {
       setToastMessage({ severity: 'error', color: 'error', message: getErrorMessage(err, 'chatbot_save_failed') });
     }
@@ -297,8 +299,7 @@ const ChatbotBuilder = ({ classes }: { classes?: any }) => {
       classes={classes}
       currentPage="service"
       subPage="serviceChatbots"
-      customPadding
-      containerClass={clsx(classes.mb50, classes.editorCont)}
+      containerClass={clsx(classes.management, classes.mb50)}
       hideSideImages
     >
       <div className="svc-cb">
@@ -344,13 +345,12 @@ const ChatbotBuilder = ({ classes }: { classes?: any }) => {
           </Tabs>
 
           <TabContext value={tabValue}>
-            <TabPanel value="1" className={classes.p0} style={{ paddingTop: 20 }}>
+            <TabPanel value="1" className={clsx(classes.p0, classes.ps15)} style={{ paddingTop: 24, paddingBottom: 24 }}>
               <Grid
                 container
                 direction="row"
                 justifyContent="flex-start"
                 alignItems="flex-start"
-                spacing={isMobile ? 2 : 8}
                 className={classes.dialogButtonsContainer}
                 style={{ justifyContent: 'flex-start' }}
               >
