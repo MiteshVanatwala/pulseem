@@ -42,6 +42,7 @@ import Popup from './Popup.json';
 import AI from './AI.json';
 import SubUsers from './SubUsers.json';
 import service from './Service.json';
+import AIAssistant from './AIAssistant.json';
 
 export const pl = {
 	...service,
@@ -87,5 +88,6 @@ export const pl = {
 	RemoveMyData,
 	Popup,
 	AI,
-	SubUsers
+	SubUsers,
+	AIAssistant
 };

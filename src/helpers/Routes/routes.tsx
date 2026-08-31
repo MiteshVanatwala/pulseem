@@ -16,7 +16,7 @@ import {
   GrafMenuIcon,
   GroupMenuIcon,
 } from '../../assets/images/settings/index';
-import { FaBinoculars } from 'react-icons/fa';
+import { FaBinoculars, FaCommentDots, FaRobot } from 'react-icons/fa';
 import { whatsappRoutes } from '../../screens/Whatsapp/Constant';
 import { logout } from "../Api/PulseemReactAPI";
 import { HiArrowLeft, HiArrowRight } from "react-icons/hi";
@@ -56,6 +56,20 @@ export const isChatWidgetPreviewUser = (): boolean => {
     return candidates.some(
       (n) => typeof n === 'string' && CHAT_WIDGET_PREVIEW_USERS.includes(n.trim().toLowerCase()),
     );
+  } catch {
+    return false;
+  }
+};
+// Staff-only gate for internal tooling (e.g. the AI Assistant diagnostic harness).
+// core.isAdmin holds the raw JWT `role` claim. Mirrors the exact "Back to Admin"
+// condition already used in AppBar/TopMenu: non-empty and not the literal string
+// 'True' (that specific value is excluded there too, so it is kept excluded here
+// for consistency rather than assumed to mean staff).
+export const isInternalStaffSession = (): boolean => {
+  try {
+    const state: any = store.getState();
+    const isAdmin = state?.core?.isAdmin;
+    return isAdmin !== '' && isAdmin != null && isAdmin !== 'True';
   } catch {
     return false;
   }
@@ -105,7 +119,8 @@ export const getRoutes = (
   windowSize: string | number | null = null,
   isRTL: Boolean = false,
   userRoles: any = null,
-  isPolandAccount: Boolean = false
+  isPolandAccount: Boolean = false,
+  aiAssistantRolloutEnabled: Boolean = false
 ) => [
     // smsOldVersion
     {
@@ -486,6 +501,24 @@ export const getRoutes = (
           key: "serviceChatbots",
           title: t("chatbot_list_title"),
           href: `${sitePrefix}Chatbots`,
+          isShow: true,
+        }
+      ],
+    },
+    {
+      key: "aiAssistant",
+      title: t("AIAssistant.pageTitle"),
+      pageTitle: t("AIAssistant.pageTitle"),
+      href: `${sitePrefix}AIAssistant`,
+      isShow:
+        !accountSettings?.SubAccountSettings?.IsTokenAccount &&
+        aiAssistantRolloutEnabled === true,
+      icon: <FaRobot size={24} color="#fff" />,
+      options: [
+        {
+          key: "aiAssistant",
+          title: t("AIAssistant.pageTitle"),
+          href: `${sitePrefix}AIAssistant`,
           isShow: true,
         }
       ],
