@@ -299,7 +299,7 @@ const ChatbotBuilder = ({ classes }: { classes?: any }) => {
       classes={classes}
       currentPage="service"
       subPage="serviceChatbots"
-      containerClass={clsx(classes.management)}
+      containerClass={clsx(classes.management, classes.mb50)}
       hideSideImages
     >
       <div className="svc-cb">
