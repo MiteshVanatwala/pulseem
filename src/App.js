@@ -29,6 +29,7 @@ import {
   setIsClal
 } from './redux/reducers/coreSlice'; //smsOldVersion
 import { GetAfterLoginInitialData, getCommonFeatures, GetCurrencyList, GetGlobalAccountPackagesDetails, GetSmsCountries, isClalAccount } from './redux/reducers/commonSlice';
+import { getAccountSettings } from './redux/reducers/AccountSettingsSlice';
 import { getNotificationUpdates } from './redux/reducers/notificationUpdateSlice';
 import { setUsername } from './redux/reducers/userSlice';
 import { getTheme } from './style/theme';
@@ -779,8 +780,9 @@ const App = ({ screenSize }) => {
   let location = useLocation();
   const dispatch = useDispatch();
 
-  const { language, isRTL, windowSize, isClal, isDebtAccount, isAdmin, isLoader, userRoles, isOnlyWhatsAppChat, subUserName, subUserObject, email, companyName } = useSelector(state => state.core)
+  const { language, isRTL, windowSize, isClal, isDebtAccount, isAdmin, isLoader, userRoles, isOnlyWhatsAppChat } = useSelector(state => state.core)
   const { accountSettings, currencyList, accountFeatures } = useSelector(state => state.common)
+  const { account } = useSelector(state => state.accountSettings)
   const IsPoland = language === 'pl';
   const { isOpen } = useSelector((state) => state.helpDrawer);
   const classes = useClasses(windowSize, isRTL, IsPoland)();
@@ -793,18 +795,15 @@ const App = ({ screenSize }) => {
     document.documentElement.setAttribute('dir', direction);
   }, []);
 
-  // Identify the logged-in user to the pulseemsupport.com chat widget (public/index.html) so
-  // support agents see who they're talking to without asking. window.pulseem.currentUser is
-  // the widget's own read of a host-page global (confirmed against its live source) - it is
-  // not a DOM attribute or URL param, so PII here never becomes visible markup.
-  const subUserEmail = subUserObject?.Data?.Emails?.[0]?.AuthValue;
-  const subUserCellphone = subUserObject?.Data?.Cellphones?.[0]?.AuthValue;
-  const defaultCellNumber = accountSettings?.DefaultCellNumber;
+  const loginUserName = account?.Data?.LoginUserName;
+  const accountName = account?.Data?.CompanyName;
+  const accountEmail = account?.Data?.Email;
+  const accountCellPhone = account?.Data?.CellPhone;
   useEffect(() => {
-    const user = buildPulseemUser({ subUserName, subUserEmail, subUserCellphone, email, companyName, defaultCellNumber });
+    const user = buildPulseemUser({ loginUserName, companyName: accountName, email: accountEmail, cellPhone: accountCellPhone });
     window.pulseem = window.pulseem || {};
-    window.pulseem.currentUser = user ? { ...user, name: user.username } : undefined;
-  }, [subUserName, subUserEmail, subUserCellphone, email, companyName, defaultCellNumber]);
+    window.pulseem.currentUser = user || undefined;
+  }, [loginUserName, accountName, accountEmail, accountCellPhone]);
 
   React.useEffect(() => {
     !isSignup && !isConfirmationPage && dispatch(getNotificationUpdates());
@@ -825,6 +824,9 @@ const App = ({ screenSize }) => {
     const initFeatures = async () => {
       if (!accountSettings) {
         await dispatch(getCommonFeatures());
+      }
+      if (!account?.Data || Object.keys(account.Data).length === 0) {
+        await dispatch(getAccountSettings());
       }
       if (isClal === null) {
         const response = await dispatch(isClalAccount());
