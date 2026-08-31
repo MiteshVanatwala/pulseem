@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { StateType } from "../../Models/StateTypes";
-import { Box, Button, Divider, FormControlLabel, Grid, TextField, Typography } from "@material-ui/core";
+import { Box, Button, Divider, FormControlLabel, Grid, TextField, Tooltip, Typography } from "@material-ui/core";
 import clsx from 'clsx';
 import { BaseDialog } from "../DialogTemplates/BaseDialog";
 import { MdTaskAlt } from "react-icons/md";
@@ -12,6 +12,8 @@ import { IsValidNonGlobalPhoneNumber, IsValidPhoneNumberKeyPress, IsValidPhoneNu
 import { CommonRedux } from "../../screens/Whatsapp/Editor/Types/WhatsappCreator.types";
 import { ValidateEmailAddress } from "../../helpers/Utils/common";
 import { eSubUserAction, eSubUserPermissions, SubUserModel } from "../../Models/SubUser/SubUsers";
+import { useServiceLimits } from "../../hooks/useServiceLimits";
+import UpgradePrompt from "../UpgradePrompt/UpgradePrompt";
 
 const Permissions = ({ classes, isOpen, subUser, onClose, onConfirm, showButtons }: any) => {
 	const { isRTL, windowSize } = useSelector((state: StateType) => state.core);
@@ -39,6 +41,14 @@ const Permissions = ({ classes, isOpen, subUser, onClose, onConfirm, showButtons
 		eSubUserPermissions.AllowDelete,
 		eSubUserPermissions.AllowExport
 	];
+
+	const { usage, getLimit, isAtLimit } = useServiceLimits();
+	const agentCount = usage?.serviceAgents as number;
+	const safeAgentCount = typeof agentCount === 'number' && Number.isFinite(agentCount) ? agentCount : 0;
+	const maxServiceAgents = getLimit('maxServiceAgents');
+	const alreadyHasAgentPermission = subUser?.UserPermissionsList?.indexOf(eSubUserPermissions.AllowWhatsAppToAgent) > -1;
+	const agentLimitReached = isAtLimit('maxServiceAgents', agentCount);
+	const disableAgentToggle = agentLimitReached && !alreadyHasAgentPermission;
 
 	const reloadForm = () => {
 		setErrors({
@@ -653,48 +663,70 @@ const Permissions = ({ classes, isOpen, subUser, onClose, onConfirm, showButtons
 					</Grid>
 				</Grid>
 
-				<Grid container>
+				<Grid container alignItems="center">
 					<Grid item md={1} xs={1} className={clsx(isRTL && classes.textRight, classes.pt10)}>
 						<FormControlLabel
 							control={
-								<PulseemSwitch
-									id="whatsapp-agent"
-									switchType='ios'
-									classes={classes}
-									onColor="#0371ad"
-									handleDiameter={20}
-									boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
-									activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
-									height={15}
-									className={clsx({ [classes.rtlSwitch]: isRTL })}
-									checked={permissions.allowWhatsAppAgent}
-									onChange={(e: any) => {
-										if (e.target.checked) {
-											setPermissions({ ...permissions, allowWhatsAppAgent: true });
-											setUserDetails({
-												...userDetails,
-												SubUserPermissions: [...userDetails.UserPermissionsList, eSubUserPermissions.AllowWhatsAppToAgent].join(','),
-												UserPermissionsList: [...userDetails.UserPermissionsList, eSubUserPermissions.AllowWhatsAppToAgent]
-											})
-										} else {
-											setPermissions({ ...permissions, allowWhatsAppAgent: false });
-											const filteredPermissions = userDetails.UserPermissionsList.filter((x: any) => x !== eSubUserPermissions.AllowWhatsAppToAgent);
-											setUserDetails({
-												...userDetails,
-												SubUserPermissions: filteredPermissions.join(','),
-												UserPermissionsList: filteredPermissions
-											})
-										}
-									}}
-								/>
+								<Tooltip
+									title={disableAgentToggle ? t('SubUsers.serviceLimits.agentLimitReached') : ''}
+									disableHoverListener={!disableAgentToggle}
+								>
+									<span>
+										<PulseemSwitch
+											id="whatsapp-agent"
+											switchType='ios'
+											classes={classes}
+											onColor="#0371ad"
+											handleDiameter={20}
+											boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+											activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+											height={15}
+											className={clsx({ [classes.rtlSwitch]: isRTL })}
+											checked={permissions.allowWhatsAppAgent}
+											disabled={disableAgentToggle}
+											onChange={(e: any) => {
+												if (e.target.checked) {
+													setPermissions({ ...permissions, allowWhatsAppAgent: true });
+													setUserDetails({
+														...userDetails,
+														SubUserPermissions: [...userDetails.UserPermissionsList, eSubUserPermissions.AllowWhatsAppToAgent].join(','),
+														UserPermissionsList: [...userDetails.UserPermissionsList, eSubUserPermissions.AllowWhatsAppToAgent]
+													})
+												} else {
+													setPermissions({ ...permissions, allowWhatsAppAgent: false });
+													const filteredPermissions = userDetails.UserPermissionsList.filter((x: any) => x !== eSubUserPermissions.AllowWhatsAppToAgent);
+													setUserDetails({
+														...userDetails,
+														SubUserPermissions: filteredPermissions.join(','),
+														UserPermissionsList: filteredPermissions
+													})
+												}
+											}}
+										/>
+									</span>
+								</Tooltip>
 							}
 							label=''
 						/>
 					</Grid>
 					<Grid item md={11} xs={11} className={clsx(classes.pt10, classes.dFlex, classes.alignItemsCenter)}>
-						<Typography style={{ marginInline: 10 }}>{t('SubUsers.whatsappAgent')}</Typography>
+						<Typography className={classes.mlr10}>
+							{t('SubUsers.whatsappAgent')}
+							{maxServiceAgents !== null && (
+								<span dir={isRTL ? 'rtl' : 'ltr'} className={clsx(classes.font14, classes.bold, classes.marginInlineStart5)}>
+									({t('SubUsers.serviceLimits.usageFormat', { current: safeAgentCount, max: maxServiceAgents, label: t('SubUsers.serviceLimits.agentsLabel') })})
+								</span>
+							)}
+						</Typography>
 					</Grid>
 				</Grid>
+
+				{agentLimitReached && (
+					<UpgradePrompt
+						classes={classes}
+						messageKey='SubUsers.serviceLimits.agentLimitReached'
+					/>
+				)}
 
 				<Box className='textBoxWrapper'>
 					<Typography className={clsx(errors.accessType ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>

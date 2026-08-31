@@ -29,6 +29,7 @@ import { BiMailSend } from 'react-icons/bi';
 import { findPlanByFeatureCode } from '../../redux/reducers/TiersSlice';
 import TierPlans from '../../components/TierPlans/TierPlans';
 import { get } from 'lodash';
+import { useServiceLimits } from '../../hooks/useServiceLimits';
 
 const SubUsers = ({ classes }: any) => {
   const { language, windowSize, isRTL, rowsPerPage, userRoles, subUserName } = useSelector((state: any) => state.core);
@@ -37,6 +38,7 @@ const SubUsers = ({ classes }: any) => {
   const { subAccount } = useSelector((state: any) => state.common);
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const { refresh: refreshServiceLimits } = useServiceLimits();
   const [isSearching, setIsSearching] = useState<boolean>(false);
   const [showLoader, setShowLoader] = useState<boolean>(true);
   const [toastMessage, setToastMessage] = useState<toastProps['SUCCESS']>(resetToastData);
@@ -107,6 +109,19 @@ const SubUsers = ({ classes }: any) => {
     setOpenPermissionsDialog(false);
     setShowLoader(true);
     const response = await dispatch(save(subUserItem)) as any;
+
+    if (response?.payload?.StatusCode === 403 && response?.payload?.Data?.Reason === 'SERVICE_AGENT_LIMIT_REACHED') {
+      setToastMessage({
+        severity: 'error',
+        color: 'error',
+        message: 'SubUsers.serviceLimits.agentLimitReached',
+        showAnimtionCheck: false
+      });
+      refreshServiceLimits();
+      setShowLoader(false);
+      return;
+    }
+
     switch (response?.payload?.StatusCode) {
       case 927: {
         setTierMessageCode(response?.payload?.Message || 'USER_PERMISSIONS');
@@ -121,6 +136,7 @@ const SubUsers = ({ classes }: any) => {
         setToastMessage(ToastMessages.USER_CREATED_SUCCESSFULLY);
         getData();
         setOpenSaveUserDialog(false)
+        refreshServiceLimits();
         break;
       }
       case 400: {
