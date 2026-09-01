@@ -1,0 +1,153 @@
+{
+  "pageTitle": "AI Assistant",
+  "header": {
+    "knowledgeItemsLabel": "Knowledge Items",
+    "knowledgeItemsFormat": "{{active}} / {{total}} active",
+    "trainingDataLabel": "Training Data",
+    "trainingDataFormat": "{{words}} words",
+    "statusLabel": "AI Status",
+    "statusReady": "Ready",
+    "statusNotReady": "Not Ready"
+  },
+  "tabs": {
+    "knowledgeBase": "Knowledge Base",
+    "settings": "Settings",
+    "testChat": "Test Chat",
+    "analytics": "Analytics"
+  },
+  "placeholderTab": {
+    "analyticsNotice": "Analytics is coming in Slice 5."
+  },
+  "knowledgeBase": {
+    "searchPlaceholder": "Search knowledge items by title or content",
+    "addButton": "Add Knowledge",
+    "empty": "No knowledge items yet. Add one to get started.",
+    "noResults": "No knowledge items match your search or filter.",
+    "usageLabel": "Knowledge items",
+    "typeFilter": {
+      "all": "All",
+      "text": "Text Content",
+      "faq": "FAQ",
+      "url": "URL Reference"
+    }
+  },
+  "knowledgeItemCard": {
+    "active": "Active",
+    "inactive": "Inactive",
+    "wordCountFormat": "{{count}} words",
+    "edit": "Edit",
+    "delete": "Delete",
+    "activate": "Activate",
+    "deactivate": "Deactivate"
+  },
+  "deleteConfirm": {
+    "title": "Delete knowledge item?",
+    "message": "This will permanently delete \"{{title}}\". This can't be undone.",
+    "confirm": "Delete",
+    "cancel": "Cancel"
+  },
+  "knowledgeItemForm": {
+    "createTitle": "Add Knowledge",
+    "editTitle": "Edit Knowledge",
+    "titleLabel": "Title",
+    "titleRequired": "Title is required",
+    "titleTooLong": "Title must be 200 characters or fewer",
+    "typeLabel": "Type",
+    "typeOptions": {
+      "text": "Text Content",
+      "faq": "FAQ",
+      "url": "URL Reference"
+    },
+    "contentLabel": "Content",
+    "contentRequired": "Content is required",
+    "contentTooLong": "Content must be 20,000 characters or fewer",
+    "contentPlaceholderText": "Write the information the AI can use to answer customer questions",
+    "questionLabel": "Question",
+    "questionPlaceholder": "What do customers ask?",
+    "answerLabel": "Answer",
+    "answerPlaceholder": "How should the AI answer?",
+    "urlLabel": "URL",
+    "urlPlaceholder": "https://example.com/help-article",
+    "urlNotice": "This URL is stored as a reference only — it is not fetched or crawled by the AI.",
+    "urlInvalid": "Enter a valid http(s) URL",
+    "tagsLabel": "Tags",
+    "tagsPlaceholder": "Comma-separated, up to 10",
+    "tagsMax": "You can add up to 10 tags",
+    "tagTooLong": "Each tag must be 50 characters or fewer",
+    "privacyNotice": "Knowledge base content may be surfaced to customers in AI replies. Don't paste internal-only information here.",
+    "serverErrorFallback": "The server rejected this item. Please review and try again.",
+    "capReachedFallback": "You've reached the {{limit}}-item limit for your knowledge base."
+  },
+  "formActions": {
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+  "settings": {
+    "title": "Settings",
+    "responseStyleLabel": "Response Style",
+    "responseStyleOptions": {
+      "professional": "Professional",
+      "friendly": "Friendly",
+      "concise": "Concise"
+    },
+    "defaultLanguageLabel": "Default Language",
+    "confidenceLabel": "Confidence Threshold",
+    "confidenceTooltip": "This score reflects how closely a customer's question matches your knowledge base content — it is not a measure of whether the answer is correct.",
+    "autoEscalateLabel": "Auto-escalate to a human agent",
+    "escalationMessageLabel": "Escalation Message",
+    "escalationMessageTooLong": "Escalation message must be 1,000 characters or fewer",
+    "maxContextWordsLabel": "Max Context Words",
+    "maxContextWordsRange": "Max context words must be between 100 and 10,000",
+    "maxContextWordsCeiling": "Your plan allows up to {{max}} words",
+    "maxContextWordsUnlimited": "Your plan allows unlimited context words",
+    "unlimited": "Unlimited",
+    "includeHistoryLabel": "Include conversation history"
+  },
+  "settingsActions": {
+    "save": "Save Settings",
+    "unsavedChanges": "You have unsaved changes",
+    "leaveGuardMessage": "You have unsaved AI Assistant settings. Leave without saving?",
+    "saved": "Settings saved"
+  },
+  "locked": {
+    "message": "AI Assistant is available on a higher plan. Upgrade to set up your knowledge base and start answering customers automatically."
+  },
+  "loadError": {
+    "retry": "Retry"
+  },
+  "validation": {
+    "genericError": "Something went wrong. Please try again."
+  },
+  "testChat": {
+    "intro": "Send a test message to see how the AI would respond to a real customer, using your current knowledge base and settings.",
+    "inputPlaceholder": "Type a message as a customer would...",
+    "sendButton": "Send",
+    "thinking": "Thinking… ({{seconds}}s)",
+    "confidenceLabel": "Confidence",
+    "noSources": "No knowledge sources were referenced for this reply.",
+    "escalatedBanner": "This reply would have been escalated to a human agent.",
+    "responseTimeFormat": "Responded in {{ms}} ms",
+    "goodResponse": "Good Response",
+    "needsImprovement": "Needs Improvement",
+    "feedbackThanks": "Thanks for the feedback",
+    "rateLimited": "You've sent a lot of test messages in a short time. Please wait a bit before trying again.",
+    "rateLimitedWithLimit": "You've reached your daily limit of {{limit}} test messages. Please try again tomorrow.",
+    "genericError": "Something went wrong sending your test message. Please try again.",
+    "messageTooLong": "Message must be 2,000 characters or fewer",
+    "empty": "No messages yet. Send one to test how the AI responds."
+  },
+  "analytics": {
+    "fromDateLabel": "From",
+    "toDateLabel": "To",
+    "loading": "Loading analytics...",
+    "testModeBannerTitle": "You're only seeing test-mode data",
+    "testModeBannerBody": "There are no live customer conversations in this date range. The data below reflects Test Chat activity only, not real customers.",
+    "emptyTitle": "No activity in this date range",
+    "emptyBody": "Nothing was recorded for the AI Assistant in this period. Try a different date range.",
+    "mostReferencedTitle": "Most Referenced Content",
+    "mostReferencedEmpty": "No knowledge items were referenced in this date range.",
+    "unusedContentTitle": "Unused Content",
+    "unusedContentSubtitle": "These knowledge items were never referenced in this date range. Consider reviewing or removing them.",
+    "unusedContentEmpty": "Every knowledge item was referenced at least once in this date range."
+  }
+}

@@ -3,6 +3,9 @@ import SideBar from './Component/SideBar';
 import './css/index.css';
 import clsx from 'clsx';
 import DefaultScreen from '../../DefaultScreen';
+import { ServiceChannel } from '../../Service/Conversations/ServiceChannelDropdown';
+import { getConversations as getServiceConversations } from '../../../redux/reducers/conversationsSlice';
+import { IConversation } from '../../../Models/Service/Conversation';
 import {
 	APIWhatsappChatConversationStatusData,
 	APIWhatsappChatSessionData,
@@ -103,9 +106,6 @@ import {
 import { BsTrash } from 'react-icons/bs';
 import ConfirmDeletePopUp from '../../Groups/Management/Popup/ConfirmDeletePopUp';
 import { findPlanByFeatureCode } from '../../../redux/reducers/TiersSlice';
-import { ServiceChannel } from '../../Service/Conversations/ServiceChannelDropdown';
-import { IConversation } from '../../../Models/Service/Conversation';
-import { getConversations as getServiceConversations } from '../../../redux/reducers/conversationsSlice';
 import TierPlans from '../../../components/TierPlans/TierPlans';
 import { get } from 'lodash';
 

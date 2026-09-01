@@ -2,12 +2,15 @@ import { useTranslation } from "react-i18next";
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { StateType } from "../../Models/StateTypes";
-import { Divider, FormControlLabel, Grid, Typography } from "@material-ui/core";
+import { Divider, FormControlLabel, Grid, Tooltip, Typography } from "@material-ui/core";
 import clsx from 'clsx';
 import PulseemSwitch from "../Controlls/PulseemSwitch";
 import { PermissionTypes } from "../../config/enum";
 import { eSubUserPermissions, SubUserModel } from "../../Models/SubUser/SubUsers";
 import _ from "lodash";
+import { useServiceLimits } from "../../hooks/useServiceLimits";
+import UsageCounter from "../UsageCounter/UsageCounter";
+import UpgradePrompt from "../UpgradePrompt/UpgradePrompt";
 
 interface refs {
   classes: any;
@@ -33,6 +36,13 @@ const PermissionItems = ({ classes, userDetails, updateSubUserDetails, permissio
     accessType: '',
     limitedAccess: '',
   });
+
+  const { usage, getLimit, isAtLimit } = useServiceLimits();
+  const agentCount = usage?.serviceAgents as number;
+  const maxServiceAgents = getLimit('maxServiceAgents');
+  const alreadyHasAgentPermission = userDetails.UserPermissionsList?.indexOf(eSubUserPermissions.AllowWhatsAppToAgent) > -1;
+  const agentLimitReached = isAtLimit('maxServiceAgents', agentCount);
+  const disableAgentToggle = agentLimitReached && !alreadyHasAgentPermission;
 
   const reloadForm = () => {
     setErrors({
@@ -332,38 +342,52 @@ const PermissionItems = ({ classes, userDetails, updateSubUserDetails, permissio
       </Grid>
     </Grid>
 
+    <UsageCounter
+      current={agentCount}
+      max={maxServiceAgents}
+      labelKey='SubUsers.serviceLimits.agentsLabel'
+    />
+
     <Grid container>
       <Grid item md={1} xs={1} className={clsx(classes.textRight, classes.pt10)}>
         <FormControlLabel
           control={
-            <PulseemSwitch
-              id="whatsapp-agent"
-              switchType='ios'
-              classes={classes}
-              onColor="#0371ad"
-              handleDiameter={20}
-              boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
-              activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
-              height={15}
-              className={clsx({ [classes.rtlSwitch]: isRTL })}
-              checked={userDetails.UserPermissionsList?.indexOf(eSubUserPermissions.AllowWhatsAppToAgent) > -1}
-              onChange={(e: any) => {
-                if (e.target.checked) {
-                  updateSubUserDetails({
-                    ...userDetails,
-                    SubUserPermissions: [...userDetails.UserPermissionsList, eSubUserPermissions.AllowWhatsAppToAgent].join(','),
-                    UserPermissionsList: [...userDetails.UserPermissionsList, eSubUserPermissions.AllowWhatsAppToAgent]
-                  })
-                } else {
-                  const filteredPermissions = userDetails.UserPermissionsList.filter((x: any) => x !== eSubUserPermissions.AllowWhatsAppToAgent);
-                  updateSubUserDetails({
-                    ...userDetails,
-                    SubUserPermissions: filteredPermissions.join(','),
-                    UserPermissionsList: filteredPermissions
-                  })
-                }
-              }}
-            />
+            <Tooltip
+              title={disableAgentToggle ? t('SubUsers.serviceLimits.agentLimitReached') : ''}
+              disableHoverListener={!disableAgentToggle}
+            >
+              <span>
+                <PulseemSwitch
+                  id="whatsapp-agent"
+                  switchType='ios'
+                  classes={classes}
+                  onColor="#0371ad"
+                  handleDiameter={20}
+                  boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+                  activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+                  height={15}
+                  className={clsx({ [classes.rtlSwitch]: isRTL })}
+                  checked={alreadyHasAgentPermission}
+                  disabled={disableAgentToggle}
+                  onChange={(e: any) => {
+                    if (e.target.checked) {
+                      updateSubUserDetails({
+                        ...userDetails,
+                        SubUserPermissions: [...userDetails.UserPermissionsList, eSubUserPermissions.AllowWhatsAppToAgent].join(','),
+                        UserPermissionsList: [...userDetails.UserPermissionsList, eSubUserPermissions.AllowWhatsAppToAgent]
+                      })
+                    } else {
+                      const filteredPermissions = userDetails.UserPermissionsList.filter((x: any) => x !== eSubUserPermissions.AllowWhatsAppToAgent);
+                      updateSubUserDetails({
+                        ...userDetails,
+                        SubUserPermissions: filteredPermissions.join(','),
+                        UserPermissionsList: filteredPermissions
+                      })
+                    }
+                  }}
+                />
+              </span>
+            </Tooltip>
           }
           label=''
         />
@@ -372,6 +396,13 @@ const PermissionItems = ({ classes, userDetails, updateSubUserDetails, permissio
         {t('SubUsers.whatsappAgent')}
       </Grid>
     </Grid>
+
+    {agentLimitReached && (
+      <UpgradePrompt
+        classes={classes}
+        messageKey='SubUsers.serviceLimits.agentLimitReached'
+      />
+    )}
   </>
 }
 

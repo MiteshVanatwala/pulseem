@@ -48,5 +48,34 @@
     "emailAlreadyExists": "כתובת מייל כבר קיימת"
   },
   "changeUserPassword": "לצורך אבטחת חשבונך, עלינו לאמת את זהותך לפני שינוי הסיסמה. בלחיצה על 'המשך', אתה מסכים לקבל קוד אימות חד-פעמי באמצעות SMS למספר הטלפון או באמצעות כתובת המייל הרשומים בחשבונך. <br/>קוד זה יפוג תוקף תוך 10 דקות ותקף רק עבור בקשת שינוי הסיסמה הנוכחית.",
-  "userDeletedSessionEnded": "המשתמש שלך נמחק מהחשבון. נותקת מהמערכת."
+  "userDeletedSessionEnded": "המשתמש שלך נמחק מהחשבון. נותקת מהמערכת.",
+  "teams": {
+    "sectionTitle": "ניהול צוותים",
+    "teamsCount": "צוותים",
+    "createTeam": "יצירת צוות",
+    "createTitle": "יצירת צוות חדש",
+    "editTitle": "עריכת צוות",
+    "nameLabel": "שם צוות *",
+    "nameRequired": "שם הצוות הוא שדה חובה",
+    "nameTooLong": "שם הצוות חייב להיות עד 100 תווים",
+    "agentsLabel": "סוכנים",
+    "selected": "נבחרו",
+    "noAgents": "אין סוכנים זמינים כרגע",
+    "rosterTruncated": "מוצגים 1000 תת-המשתמשים הראשונים בלבד. חלק מהסוכנים עלולים לא להופיע ברשימה זו.",
+    "noTeams": "לא נוצרו צוותים עדיין",
+    "name": "שם",
+    "agentCount": "סוכנים",
+    "save": "שמירת צוות",
+    "cancel": "ביטול",
+    "deleteTeamPrompt": "האם אתה בטוח שברצונך למחוק צוות זה?",
+    "teamSaved": "הצוות נשמר בהצלחה",
+    "teamDeleted": "הצוות נמחק בהצלחה",
+    "genericError": "משהו השתבש. נסה שוב."
+  },
+  "serviceLimits": {
+    "agentsLabel": "סוכני שירות WhatsApp",
+    "agentLimitReached": "הגעת למגבלת סוכני שירות ה-WhatsApp בתוכנית שלך.",
+    "upgradeCta": "שדרג תוכנית",
+    "usageFormat": "{{current}} / {{max}} {{label}}"
+  }
 }

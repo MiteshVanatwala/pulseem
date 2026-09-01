@@ -51,6 +51,8 @@ import conversationsReducer from './reducers/conversationsSlice';
 import serviceDashboardReducer from './reducers/serviceDashboardSlice';
 import chatbotReducer from './reducers/chatbotSlice';
 import clalCenterReducer from './reducers/clalCenterSlice';
+import serviceLimitsReducer from './reducers/serviceLimitsSlice';
+import aiAssistantReducer from './reducers/aiAssistantSlice';
 
 
 export default configureStore({
@@ -105,5 +107,7 @@ export default configureStore({
     serviceDashboard: serviceDashboardReducer,
     chatbot: chatbotReducer,
     clalCenter: clalCenterReducer,
+    serviceLimits: serviceLimitsReducer,
+    aiAssistant: aiAssistantReducer,
   },
 });

@@ -48,5 +48,34 @@
     "emailAlreadyExists": "Email already exists"
   },
   "changeUserPassword": "For your security, we need to verify your identity before allowing password changes. By clicking 'Continue', you agree to receive a one-time verification code via SMS to the phone number or via the Email registered with your account. <br/>This code will expire in 10 minutes and is only valid for this password change request.",
-  "userDeletedSessionEnded": "Your user has been deleted from the account. You have been logged out."
+  "userDeletedSessionEnded": "Your user has been deleted from the account. You have been logged out.",
+  "teams": {
+    "sectionTitle": "Team Management",
+    "teamsCount": "Teams",
+    "createTeam": "Create Team",
+    "createTitle": "Create New Team",
+    "editTitle": "Edit Team",
+    "nameLabel": "Team Name *",
+    "nameRequired": "Team name is required",
+    "nameTooLong": "Team name must be 100 characters or fewer",
+    "agentsLabel": "Agents",
+    "selected": "selected",
+    "noAgents": "No agents available yet",
+    "rosterTruncated": "Showing the first 1000 sub-users. Some agents may not appear in this list.",
+    "noTeams": "No teams created yet",
+    "name": "Name",
+    "agentCount": "Agents",
+    "save": "Save Team",
+    "cancel": "Cancel",
+    "deleteTeamPrompt": "Are you sure you want to delete this team?",
+    "teamSaved": "Team saved successfully",
+    "teamDeleted": "Team deleted successfully",
+    "genericError": "Something went wrong. Please try again."
+  },
+  "serviceLimits": {
+    "agentsLabel": "WhatsApp Service Agents",
+    "agentLimitReached": "You've reached your plan's WhatsApp Service Agent limit.",
+    "upgradeCta": "Upgrade Plan",
+    "usageFormat": "{{current}} / {{max}} {{label}}"
+  }
 }

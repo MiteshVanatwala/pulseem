@@ -47,6 +47,7 @@ import SendSearch from './SendSearch.json';
 // en and he merged clean because there the two landed apart. Both are used below.
 import service from './Service.json';
 import ClalCenter from './ClalCenter.json';
+import AIAssistant from './AIAssistant.json';
 
 export const pl = {
 	...service,
@@ -95,5 +96,6 @@ export const pl = {
 	SubUsers,
 	DataSources,
 	SendSearch,
-	ClalCenter
+	ClalCenter,
+	AIAssistant
 };

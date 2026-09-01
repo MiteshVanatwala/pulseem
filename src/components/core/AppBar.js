@@ -230,8 +230,8 @@ export const TopAppBar = ({ classes, currentPage = '', showAppBar = true }) => {
   }
   const { t } = useTranslation();
   const { username } = useSelector(state => state.user);
-  const { isGlobal, IsPoland } = useSelector(state => state.common);
-  const routes = getRoutes(t, isClal, accountFeatures, accountSettings, windowSize, isRTL, userRoles, isGlobal && IsPoland) // smsOldVersion
+  const { isGlobal, IsPoland, AiAssistantRolloutEnabled } = useSelector(state => state.common);
+  const routes = getRoutes(t, isClal, accountFeatures, accountSettings, windowSize, isRTL, userRoles, isGlobal && IsPoland, AiAssistantRolloutEnabled) // smsOldVersion
   const settings = getSettingsItem(t, classes.appBarSettingIcon,
     (isAllowSwitchAccount && (isAllowSwitchAccount.toLowerCase() === 'true' || isAdmin !== '')), username.length > 20 ? `${username.slice(0, 20)}...` : username, isRTL, accountSettings, accountFeatures, get(subAccount, 'CompanyAdmin', false), userRoles)
 

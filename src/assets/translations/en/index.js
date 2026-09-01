@@ -46,6 +46,7 @@ import Popup from './Popup.json'
 import DataSources from './DataSources.json';
 import SendSearch from './SendSearch.json';
 import ClalCenter from './ClalCenter.json';
+import AIAssistant from './AIAssistant.json';
 
 import service from './Service.json';
 
@@ -98,5 +99,6 @@ export const en = {
 	Popup,
 	DataSources,
 	SendSearch,
-	ClalCenter
+	ClalCenter,
+	AIAssistant
 };
