@@ -233,6 +233,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const [isAccountSetup, setIsAccountSetup] = useState<boolean | null>(null);
 	const [isTrackLink, setIsTrackLink] = useState<boolean>(false);
 	const [nextMessageAvailable, setNextMessageAvailable] = useState<string>('');
+	const [messageVolumeLimitInfo, setMessageVolumeLimitInfo] = useState<{ limit: number; current: number } | null>(null);
 	const [dialogType, setDialogType] = useState<any>({});
 	const [showTierPlans, setShowTierPlans] = useState(false);
 	const [activeChatContacts, setActiveChatContacts] =
@@ -1578,6 +1579,15 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 					setDialogType({
 						type: 'tier',
 					});
+				} else if (sendWhatsappChat.StatusCode === 113) {
+					// PR-3767: monthly message volume limit reached
+					setMessageVolumeLimitInfo({
+						limit: sendWhatsappChat?.Data?.Limit ?? -1,
+						current: sendWhatsappChat?.Data?.Current ?? 0,
+					});
+					setDialogType({
+						type: 'messageVolumeLimit',
+					});
 				} else {
 					sendWhatsappChat?.Message
 						? setToastMessage({
@@ -1971,6 +1981,59 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		],
 	);
 
+	const getMessageVolumeLimitDialog = useCallback(
+		() => ({
+			title: translator('billing.messageVolume.limitReachedTitle', 'Monthly message limit reached'),
+			showDivider: false,
+			content: (
+				<Typography style={{ textAlign: 'center' }}>
+					{messageVolumeLimitInfo && messageVolumeLimitInfo.limit >= 0
+						? translator(
+								'billing.messageVolume.limitReachedMessage',
+								"You've used all {{limit}} messages included in your plan this month. Upgrade to keep sending.",
+								{ limit: messageVolumeLimitInfo.limit },
+							)
+						: translator(
+								'billing.messageVolume.limitReachedMessageGeneric',
+								'You have reached your plan’s monthly message limit. Upgrade to keep sending.',
+							)}
+				</Typography>
+			),
+			renderButtons: () => (
+				<Grid
+					container
+					spacing={2}
+					className={clsx(
+						classes.dialogButtonsContainer,
+						isRTL ? classes.rowReverse : null,
+						!get(subAccount, 'CompanyAdmin', false) ? classes.dNone : '',
+					)}
+				>
+					<Grid item>
+						<Button
+							onClick={() => {
+								setDialogType({ type: '', data: '' });
+								setShowTierPlans(true);
+							}}
+							className={clsx(classes.btn, classes.btnRounded)}
+						>
+							{translator('billing.upgradePlan')}
+						</Button>
+					</Grid>
+					<Grid item>
+						<Button
+							onClick={() => setDialogType({ type: '', data: '' })}
+							className={clsx(classes.btn, classes.btnRounded)}
+						>
+							{translator('common.cancel')}
+						</Button>
+					</Grid>
+				</Grid>
+			),
+		}),
+		[translator, classes, messageVolumeLimitInfo, isRTL, subAccount],
+	);
+
 	const getDynamicModalDialog = useCallback(
 		() => ({
 			title: translator('whatsappCampaign.dfieldTitle'),
@@ -2281,6 +2344,8 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			currentDialog = getNoPermissionDialog(); // Add this
 		} else if (type === 'tier') {
 			currentDialog = getTierValidationDialog();
+		} else if (type === 'messageVolumeLimit') {
+			currentDialog = getMessageVolumeLimitDialog();
 		} else if (type === 'dynamicModal') {
 			currentDialog = getDynamicModalDialog();
 		} else if (type === 'addAgent') {

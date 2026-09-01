@@ -403,6 +403,10 @@ export type APISendWhatsappChatData = {
 export type APISendWhatsappChatDataData = {
 	Data: APISendWhatsappChatData;
 	NextAvailableTime?: string;
+	// PR-3767: present when StatusCode is 113 (MESSAGE_VOLUME_LIMIT_REACHED)
+	Reason?: string;
+	Limit?: number;
+	Current?: number;
 };
 
 export type APISendWhatsappChatPayload = {
