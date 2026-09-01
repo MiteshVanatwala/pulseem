@@ -21,6 +21,7 @@ import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import clsx from 'clsx';
 import DefaultScreen from '../../DefaultScreen';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
+import TierPlans from '../../../components/TierPlans/TierPlans';
 import Toast from '../../../components/Toast/Toast.component';
 import { sitePrefix } from '../../../config';
 import { getChatbots, deleteChatbot, toggleChatbot } from '../../../redux/reducers/chatbotSlice';
@@ -76,6 +77,7 @@ const ChatbotList = ({ classes }: { classes?: any }) => {
   const [searchResults, setSearchResults] = useState<IChatbotListItem[] | null>(null);
   const [searchLoading, setSearchLoading] = useState(false);
   const [toastMessage, setToastMessage] = useState<any>(null);
+  const [showTierPlans, setShowTierPlans] = useState(false);
 
   useEffect(() => {
     if (!toastMessage) return;
@@ -460,7 +462,7 @@ const ChatbotList = ({ classes }: { classes?: any }) => {
         </>
       )}
 
-      {tierLimit && (
+      {(tierLimit || atLimit) && (
         <div className="svc-cb-limit-note">
           ⚠️
           <span>
@@ -473,9 +475,23 @@ const ChatbotList = ({ classes }: { classes?: any }) => {
                   limit: maxActiveChatbots,
                 })
               : t('chatbot_limit_unlimited', 'Unlimited chatbots on your plan.')}
-            {atLimit && ` ${t('chatbot_limit_upgrade', 'Delete/Disable one to create another.')}`}
+            {atLimit && ` ${t('chatbot_limit_upgrade', 'Delete/Disable one to create another, or upgrade your plan.')}`}
           </span>
+          {atLimit && (
+            <Button
+              onClick={() => setShowTierPlans(true)}
+              className={clsx(classes.btn, classes.btnRounded)}
+              style={{ marginLeft: 12 }}
+              size="small"
+            >
+              {t('chatbot_limit_upgrade_cta', 'Upgrade Plan')}
+            </Button>
+          )}
         </div>
+      )}
+
+      {showTierPlans && (
+        <TierPlans classes={classes} isOpen={showTierPlans} onClose={() => setShowTierPlans(false)} />
       )}
 
       {!!pendingDeleteId && (
