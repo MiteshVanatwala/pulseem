@@ -1,7 +1,8 @@
 /*
   Pulseem chat widget loader.
-  Built to the URL already handed to customers by EmbedCodeGenerator.tsx:
-      https://cdn.pulseem.com/widget/v1/pulseem.js
+  Served from the same application that hosts the visitor endpoints, so both the
+  iframe assets and the API base are derived from this file's own URL:
+      https://<host>/widget/v1/pulseem.js?id=<widgetId>
 
   Runs on somebody else's website, so it must not touch their globals, styles or
   network beyond its own iframe. Everything visual lives inside the iframe; this
@@ -62,6 +63,16 @@ function scriptDir() {
   return SELF_SRC.replace(/[?#].*$/, '').replace(/\/[^/]*$/, '');
 }
 
+// The origin this file was served from. The visitor endpoints live in the same
+// application that serves this script, so the API base is derived rather than
+// configured: same host, nothing to set per environment, nothing to get wrong.
+// (pulseempopupload.js takes the same approach with window._host.)
+function scriptOrigin() {
+  if (!SELF_SRC) return '';
+  var m = SELF_SRC.match(/^(https?:\/\/[^\/]+)/i);
+  return m ? m[1] : '';
+}
+
 // The widget id carried by the one-line snippet's query string. Parsed off the same
 // captured src as scriptDir(), because document.currentScript is already null by the
 // time an async script's callbacks run. Hand-rolled rather than URLSearchParams to
@@ -90,19 +101,27 @@ var queued = readQueue();
 
   // Where to fetch config and post messages. Overridable so the widget can be
   // pointed at a local dev server without editing this file.
-  var API_BASE = (CONFIG.apiBase || 'https://api.pulseem.com').replace(/\/$/, '');
+  var API_BASE = (CONFIG.apiBase || scriptOrigin()).replace(/\/$/, '');
   // Default to the directory this script was served from, so the same file works on
 // stage, on production and behind any CDN without a rebuild. Hardcoding the
 // production CDN meant a stage deploy silently pulled the iframe from production.
 // document.currentScript is unavailable to async scripts once loading finishes, so
 // it is captured at parse time above.
-var ASSET_BASE = (CONFIG.assetBase || scriptDir() || 'https://cdn.pulseem.com/widget/v1').replace(/\/$/, '');
+var ASSET_BASE = (CONFIG.assetBase || scriptDir()).replace(/\/$/, '');
   var SOCKET_URL = CONFIG.socketUrl || '';
 
   var BUBBLE_SIZE = 60;
   var BUBBLE_MARGIN = 20;
   var PANEL_WIDTH = 384;
   var PANEL_HEIGHT = 620;
+
+  if (!API_BASE) {
+    // An empty base would resolve every request against the customer's own domain
+    // and 404 there, which is a baffling way to fail on somebody else's website.
+    console.warn('[pulseem] Could not determine the API base from this script\'s URL. ' +
+                 'Load pulseem.js over http(s), or set window.PulseemWidgetConfig.apiBase.');
+    return;
+  }
 
   if (!WIDGET_ID) {
     console.warn('[pulseem] No widget id. Load this script as pulseem.js?id=<widgetId>, or set window.PulseemWidgetID before it.');
@@ -134,9 +153,29 @@ var ASSET_BASE = (CONFIG.assetBase || scriptDir() || 'https://cdn.pulseem.com/wi
   }
 
   // The backend wraps payloads in PulseemResponse { StatusCode, Message, Data }.
-  // Accept both that and a bare object so a mock server can stay simple.
+  //
+  // WebSiteAPI actions return that envelope as a *serialised string*, so Web API
+  // serialises it a second time and the response body is a JSON string containing
+  // JSON:
+  //     "{\"StatusCode\":200,\"Data\":{...}}"
+  // One JSON.parse of that yields a string, not an object — so `body.Data` was
+  // undefined, this function fell through to `return body`, and the widget started
+  // with a string as its config. Every field read off it was undefined, which is why
+  // the customer's colour, greeting and position were silently ignored and the widget
+  // always rendered with defaults.
+  //
+  // Parse again when the first parse produced a string. Also accepts a bare object so
+  // the local dev server can stay simple.
   function unwrap(body) {
     if (!body) return null;
+    if (typeof body === 'string') {
+      try {
+        body = JSON.parse(body);
+      } catch (e) {
+        return null;
+      }
+      if (!body) return null;
+    }
     if (body.Data !== undefined) return body.Data;
     if (body.data !== undefined) return body.data;
     return body;
@@ -263,8 +302,10 @@ var ASSET_BASE = (CONFIG.assetBase || scriptDir() || 'https://cdn.pulseem.com/wi
       return;
     }
     var config = unwrap(body);
-    if (!config) {
-      console.warn('[pulseem] Widget config was empty for id ' + WIDGET_ID);
+    if (!config || typeof config !== 'object') {
+      // Belt and braces: if the envelope shape changes again, fail loudly here
+      // rather than rendering a widget that quietly ignores its configuration.
+      console.warn('[pulseem] Widget config was empty or malformed for id ' + WIDGET_ID);
       return;
     }
     if (config.status && config.status !== 'active') {
