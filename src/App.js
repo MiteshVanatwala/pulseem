@@ -105,7 +105,7 @@ import BeeEditorPopup from './screens/Editors/BeeEditorPopup';
 import AIFloatingButton from './components/AI/AIFloatingButton';
 import AIChatWidget from './components/AI/AIChatWidget';
 import { advisorConfig, supportConfig } from './components/AI/chatConfig';
-import { getAvailablePlans, getCurrentPlan } from './redux/reducers/TiersSlice';
+import { getAvailablePlans, getCurrentPlan, getAccountServiceLimits } from './redux/reducers/TiersSlice';
 import PopupSummary from './screens/Popups/PopupSummary';
 import HelpDrawer from './components/HelpDrawer';
 import LegacyPageFrame, { LegacyPageWild } from './screens/LegacyPage/LegacyPageFrame';
@@ -871,6 +871,9 @@ const App = ({ screenSize }) => {
     !isSignup && !isConfirmationPage && dispatch(GetAfterLoginInitialData());
     !isSignup && !isConfirmationPage && dispatch(getCurrentPlan());
     !isSignup && !isConfirmationPage && dispatch(getAvailablePlans());
+    // PR-3179 Step 5: fetch account-specific Service plan limits before any
+    // Service screen renders, so enterprise overrides are available immediately.
+    !isSignup && !isConfirmationPage && dispatch(getAccountServiceLimits());
   }, [dispatch])
 
   const getDirection = (lang) => {

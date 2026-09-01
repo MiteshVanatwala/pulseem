@@ -3,11 +3,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Grid } from '@material-ui/core';
+import { Alert } from '@material-ui/lab';
 import DefaultScreen from '../../DefaultScreen';
 import { sitePrefix } from '../../../config';
 import { whatsappRoutes } from '../../Whatsapp/Constant';
 import { getDashboardData, DashboardRange } from '../../../redux/reducers/serviceDashboardSlice';
+import { getMessageVolumeUsage } from '../../../redux/reducers/TiersSlice';
 import { IDashboardData } from '../../../Models/Service/Dashboard';
+import { useServicePlanLimits } from '../../../hooks/useServicePlanLimits';
+import UsageCounter from '../../../components/Service/UsageCounter';
 import StatsCards, { StatFilter } from './components/StatsCards';
 import QuickActions from './components/QuickActions';
 import RecentConversationsPanel from './components/RecentConversationsPanel';
@@ -34,6 +38,13 @@ const Dashboard = ({ classes }: any) => {
   // Which stat card is filtering the conversation list. null = show everything.
   const [statFilter, setStatFilter] = useState<StatFilter>(null);
 
+  const { limits } = useServicePlanLimits();
+  // PR-3767: real current-calendar-month usage (dbo.MessageVolumeUsage via
+  // Service/GetMessageVolumeUsage). null while loading/on failure - treated as 0 so
+  // the 80% Alert never false-positives before the fetch resolves.
+  const messageVolumeUsage = useSelector((s: any) => s.tiers?.messageVolumeUsage);
+  const messageVolumeUsed = messageVolumeUsage?.used ?? 0;
+
   useEffect(() => {
     (dispatch as any)(getDashboardData(range));
     const id = setInterval(() => (dispatch as any)(getDashboardData(range)), REFRESH_MS);
@@ -41,6 +52,10 @@ const Dashboard = ({ classes }: any) => {
     // refresh keeps polling the window the user is actually looking at.
     return () => clearInterval(id);
   }, [dispatch, range]);
+
+  useEffect(() => {
+    (dispatch as any)(getMessageVolumeUsage());
+  }, [dispatch]);
 
   // Widget conversations live inside the WhatsApp Chat inbox rather than a second
   // page, so "View all" filters that inbox to the widget channel.
@@ -99,6 +114,15 @@ const Dashboard = ({ classes }: any) => {
           </div>
         </div>
       </div>
+
+      {/* Message Volume usage */}
+      <div className="svc-section">{t('common.dashboard_section_message_volume', 'Message Volume')}</div>
+      <UsageCounter current={messageVolumeUsed} max={limits.monthlyMessageVolume} label="Monthly Messages" />
+      {limits.monthlyMessageVolume !== -1 && messageVolumeUsed / limits.monthlyMessageVolume >= 0.8 && (
+        <Alert severity="warning">
+          You've used 80% of your monthly message volume. Upgrade to avoid interruptions.
+        </Alert>
+      )}
 
       {/* Stats cards — 4-col desktop, 2-col tablet, 1-col mobile */}
       <div className="svc-section">{t('common.dashboard_section_conversations', 'Conversations')}</div>

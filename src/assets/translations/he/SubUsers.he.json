@@ -75,8 +75,6 @@
   "serviceLimits": {
     "agentsLabel": "סוכני שירות WhatsApp",
     "agentLimitReached": "הגעת למגבלת סוכני שירות ה-WhatsApp בתוכנית שלך.",
-    "chatbotsLabel": "צ'אטבוטים",
-    "chatbotLimitReached": "הגעת למגבלת הצ'אטבוטים בתוכנית שלך. מחק או השבת אחד כדי ליצור אחר, או שדרג את התוכנית שלך.",
     "upgradeCta": "שדרג תוכנית",
     "usageFormat": "{{current}} / {{max}} {{label}}"
   }

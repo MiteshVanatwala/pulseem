@@ -20,7 +20,7 @@ const unwrapOrThrow = <T = any>(data: any): T => {
 export const getChatbots = createAsyncThunk('Service/GetChatbots', async (_: void, thunkAPI) => {
   try {
     const res = await PulseemReactInstance.get('Service/GetChatbots');
-    return unwrapOrThrow<{ list: IChatbotListItem[]; tierLimit: IChatbotTierLimit; maxChatbots: number }>(res.data);
+    return unwrapOrThrow<{ list: IChatbotListItem[]; tierLimit: IChatbotTierLimit }>(res.data);
   } catch (err: any) {
     return thunkAPI.rejectWithValue(err.message ?? 'Failed to load chatbots');
   }
@@ -74,12 +74,6 @@ export const toggleChatbot = createAsyncThunk(
 interface ChatbotState {
   list: IChatbotListItem[];
   tierLimit: IChatbotTierLimit | null;
-  // Cap on total chatbot count, resolved per-Account on the backend (PR-3765 -
-  // mirrors Agent limits exactly: ChatbotLogic.GetMaxChatbots / ServiceLimitsLogic.
-  // CheckChatbotIncreaseAllowed) - -1 means unlimited. Defaults to -1 (same as the
-  // backend's own fail-open default) before the first load completes, so nothing
-  // looks artificially capped while data is still loading.
-  maxChatbots: number;
   loadingList: boolean;
   // True while a delete/toggle is in flight - separate from loadingList so the
   // list itself doesn't need to be re-fetched to show a busy state for these.
@@ -93,7 +87,6 @@ interface ChatbotState {
 const initialState: ChatbotState = {
   list: [],
   tierLimit: null,
-  maxChatbots: -1,
   loadingList: false,
   mutating: false,
   currentFlow: null,
@@ -120,7 +113,6 @@ const chatbotSlice = createSlice({
         state.loadingList = false;
         state.list = action.payload.list;
         state.tierLimit = action.payload.tierLimit;
-        state.maxChatbots = action.payload.maxChatbots;
       })
       .addCase(getChatbots.rejected, (state, action) => {
         state.loadingList = false;

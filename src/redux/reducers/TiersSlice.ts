@@ -25,6 +25,31 @@ export const contactSalesForScale = createAsyncThunk(
     }
 );
 
+// PR-3179 Step 5: account-specific Service plan limits (enterprise overrides via
+// backoffice). Dispatched at app init so limits are available before any Service
+// screen renders - see App.js.
+export const getAccountServiceLimits = createAsyncThunk('Service/GetAccountLimits', async (_, thunkAPI) => {
+    try {
+        const res = await PulseemReactInstance.get('Service/GetAccountLimits');
+        return res.data; // overrides SERVICE_PLAN_LIMITS if backoffice has custom limits set
+    } catch (e: any) {
+        return thunkAPI.rejectWithValue({ error: e.message });
+        // Fall back to SERVICE_PLAN_LIMITS config on failure
+    }
+});
+
+// PR-3767: real current-calendar-month message usage, for the ServiceDashboard
+// UsageCounter/80%-Alert. Fetched on demand (Dashboard mount) rather than at app
+// init like getAccountServiceLimits, since it's only needed on that one screen.
+export const getMessageVolumeUsage = createAsyncThunk('Service/GetMessageVolumeUsage', async (_, thunkAPI) => {
+    try {
+        const res = await PulseemReactInstance.get('Service/GetMessageVolumeUsage');
+        return res.data;
+    } catch (e: any) {
+        return thunkAPI.rejectWithValue({ error: e.message });
+    }
+});
+
 // Get Current Plan
 export const getCurrentPlan = createAsyncThunk(
     'FeatureTier/GetCurrentPlan',
@@ -186,6 +211,27 @@ interface TiersState {
     availablePlans: PulseemResponse;
     userCreditCards: PulseemResponse;
     subscriptionCardIframeURL: PulseemResponse;
+    // PR-3179 Step 5 - account-specific Service plan limits (enterprise overrides via
+    // backoffice), fetched via getAccountServiceLimits. null until loaded/on failure -
+    // useServicePlanLimits falls back to the hardcoded SERVICE_PLAN_LIMITS in that case.
+    serviceLimits: {
+        planId: number | null;
+        limits: {
+            maxServiceAgents: number;
+            maxChatbots: number;
+            aiAssistantEnabled: boolean;
+            maxAiContextWords: number;
+            monthlyMessageVolume: number;
+        } | null;
+    } | null;
+    // PR-3767: real current-calendar-month message usage, for the ServiceDashboard.
+    // null until getMessageVolumeUsage resolves - the Dashboard treats null the same
+    // as 0 used so it never shows a false-positive 80% warning while loading.
+    messageVolumeUsage: {
+        used: number;
+        limit: number;
+        period: string;
+    } | null;
     loading: {
         currentPlan: boolean;
         availablePlans: boolean;
@@ -211,6 +257,8 @@ const initialState: TiersState = {
     availablePlans: { Data: null, Message: '', StatusCode: 100 },
     userCreditCards: { Data: null, Message: '', StatusCode: 100 },
     subscriptionCardIframeURL: { Data: null, Message: '', StatusCode: 100 },
+    serviceLimits: null,
+    messageVolumeUsage: null,
     loading: {
         currentPlan: false,
         availablePlans: false,
@@ -332,6 +380,32 @@ const TiersSlice = createSlice({
             .addCase(getUserCreditCards.rejected, (state, action) => {
                 state.loading.userCreditCards = false;
                 state.error.userCreditCards = action.payload as string;
+            });
+
+        // PR-3179 Step 5 - account-specific Service plan limits
+        builder
+            .addCase(getAccountServiceLimits.fulfilled, (state, action: any) => {
+                const data = action.payload?.Data;
+                if (data?.limits) {
+                    state.serviceLimits = { planId: data.planId ?? null, limits: data.limits };
+                }
+            })
+            .addCase(getAccountServiceLimits.rejected, (state) => {
+                // Leave serviceLimits as-is (null on first failure) - useServicePlanLimits
+                // falls back to the hardcoded SERVICE_PLAN_LIMITS config in that case.
+                state.serviceLimits = null;
+            });
+
+        // PR-3767 - Message Volume usage
+        builder
+            .addCase(getMessageVolumeUsage.fulfilled, (state, action: any) => {
+                const data = action.payload?.Data;
+                if (data && typeof data.used === 'number') {
+                    state.messageVolumeUsage = { used: data.used, limit: data.limit, period: data.period };
+                }
+            })
+            .addCase(getMessageVolumeUsage.rejected, (state) => {
+                state.messageVolumeUsage = null;
             });
 
         // Contact Sales for Scale

@@ -26,8 +26,6 @@
   "serviceLimits": {
     "agentsLabel": "TBD",
     "agentLimitReached": "TBD",
-    "chatbotsLabel": "TBD",
-    "chatbotLimitReached": "TBD",
     "upgradeCta": "TBD",
     "usageFormat": "{{current}} / {{max}} {{label}}"
   }
