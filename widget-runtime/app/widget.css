@@ -25,6 +25,11 @@ html, body {
   margin: 0;
   padding: 0;
   height: 100%;
+  /* The loader sizes this iframe to the exact pixels of whatever is showing — 60x60
+     for the bubble. Anything spilling past that makes the browser draw scrollbars
+     inside the iframe, which showed as arrows over the bubble and clipped it square.
+     Nothing here should scroll; the chat screen scrolls its own message list. */
+  overflow: hidden;
   background: transparent;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   font-size: 14px;
@@ -50,11 +55,18 @@ body.rtl { direction: rtl; }
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform .15s ease;
+  transition: box-shadow .15s ease, filter .15s ease;
 }
 body[data-side="right"] #bubble { right: 0; }
 body[data-side="left"]  #bubble { left: 0; }
-#bubble:hover { transform: scale(1.06); }
+/* Lift and brighten instead of scaling. A transform grew the button past the edge of
+   its own iframe, and the iframe is sized to the bubble, so the extra pixels had
+   nowhere to go. Same affordance, without changing the element's box. */
+#bubble:hover {
+  box-shadow: 0 8px 28px rgba(16, 24, 40, .26);
+  filter: brightness(1.08);
+}
+#bubble:active { filter: brightness(.96); }
 #bubble[hidden] { display: none; }
 
 /* ── Greeting bubble ─────────────────────────────────────────────────────── */

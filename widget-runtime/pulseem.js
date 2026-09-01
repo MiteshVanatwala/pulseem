@@ -208,6 +208,9 @@ var ASSET_BASE = (CONFIG.assetBase || scriptDir()).replace(/\/$/, '');
       'widgetId=' + encodeURIComponent(WIDGET_ID) +
       '&apiBase=' + encodeURIComponent(API_BASE) +
       '&side=' + encodeURIComponent(side) +
+      // This file runs on the customer's page, so it is the only place that reliably
+      // knows which page the visitor is on. The iframe cannot read it.
+      '&pageUrl=' + encodeURIComponent(location.href) +
       (SOCKET_URL ? '&socketUrl=' + encodeURIComponent(SOCKET_URL) : '');
 
     frame.src = ASSET_BASE + '/app/index.html?' + params;
