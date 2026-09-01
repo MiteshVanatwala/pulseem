@@ -111,7 +111,7 @@ const Dashboard = ({ classes }: any) => {
 
       {/* Quick actions */}
       <div style={{ margin: '20px 0' }}>
-        <QuickActions />
+        <QuickActions classes={classes} />
       </div>
 
       {/* Insight panels — 2-col desktop, 1-col below. Was 3-col, but Marketing and
