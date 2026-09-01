@@ -75,6 +75,8 @@
   "serviceLimits": {
     "agentsLabel": "WhatsApp Service Agents",
     "agentLimitReached": "You've reached your plan's WhatsApp Service Agent limit.",
+    "chatbotsLabel": "Chatbots",
+    "chatbotLimitReached": "You've reached your plan's chatbot limit. Delete or disable one to create another, or upgrade your plan for more.",
     "upgradeCta": "Upgrade Plan",
     "usageFormat": "{{current}} / {{max}} {{label}}"
   }

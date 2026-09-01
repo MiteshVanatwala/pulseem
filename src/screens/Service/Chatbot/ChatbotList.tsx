@@ -30,6 +30,8 @@ import { Switch, ManagmentIcon, TablePagination } from '../../../components/mana
 import { Title } from '../../../components/managment/Title';
 import { EditIcon, DeleteIcon } from '../../../assets/images/managment';
 import { Loader } from '../../../components/Loader/Loader';
+import UsageCounter from '../../../components/UsageCounter/UsageCounter';
+import UpgradePrompt from '../../../components/UpgradePrompt/UpgradePrompt';
 // TypeScript may not have declarations for CSS imports in this project setup.
 // @ts-ignore
 import './chatbot.css';
@@ -66,7 +68,7 @@ const ChatbotList = ({ classes }: { classes?: any }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const dispatch = useDispatch<any>();
-  const { list, tierLimit, maxActiveChatbots, loadingList, mutating } = useSelector((s: any) => s.chatbot);
+  const { list, tierLimit, maxChatbots, loadingList, mutating } = useSelector((s: any) => s.chatbot);
   const { isRTL, windowSize, rowsPerPage } = useSelector((s: any) => s.core);
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
   const [pendingToggle, setPendingToggle] = useState<IChatbotListItem | null>(null);
@@ -87,16 +89,16 @@ const ChatbotList = ({ classes }: { classes?: any }) => {
     dispatch(getChatbots());
   }, [dispatch]);
 
-  // maxActiveChatbots is resolved per-Account on the backend (-1 = unlimited) - see
-  // ChatbotLogic.GetMaxActiveChatbots / ServiceLimitsLogic. This only lets the switch
-  // look disabled up front instead of the user finding out via an error toast; the
-  // backend enforces the real cap regardless of what this computes.
+  // maxChatbots is resolved per-Account on the backend (-1 = unlimited) - see
+  // ChatbotLogic.GetMaxChatbots / ServiceLimitsLogic.CheckChatbotIncreaseAllowed. The cap
+  // is on concurrently-ENABLED chatbot count, not total (PR-3765) - chatbots have a real
+  // disable lever (unlike Service Agents), so a downgrade can be remediated by
+  // auto-disabling the newest overage rather than needing to delete anything - see
+  // ChatbotLogic.ApplyChatbotLimitAfterDowngrade. This only lets the UI look disabled up
+  // front instead of the user finding out via an error toast; the backend enforces the
+  // real cap regardless of what this computes.
   const activeCount = list.filter((bot: IChatbotListItem) => bot.enabled).length;
-  const atActiveLimit = maxActiveChatbots >= 0 && activeCount >= maxActiveChatbots;
-  // Create button and the usage note below both gate on the same enabled-count
-  // cap as the toggle switch, driven by maxActiveChatbots from the backend -
-  // not tierLimit.limit, which used to fall back to a stale per-plan value.
-  const atLimit = atActiveLimit;
+  const atLimit = maxChatbots >= 0 && activeCount >= maxChatbots;
   const visibleList: IChatbotListItem[] = isSearching ? (searchResults as IChatbotListItem[]) : list;
   const rpp = parseInt(rowsPerPage, 10);
   const pagedList = visibleList.slice((page - 1) * rpp, (page - 1) * rpp + rpp);
@@ -146,19 +148,19 @@ const ChatbotList = ({ classes }: { classes?: any }) => {
   const goEdit = (id: string) => navigate(`${sitePrefix}Chatbots/${id}`);
 
   // Opens the confirm popup instead of toggling immediately - same
-  // confirm-before-activate/deactivate pattern as AutomationsManagment.js.
-  // Disabling is always allowed; enabling is blocked client-side once the active
-  // cap is hit (the backend enforces this too - see ChatbotLogic.SaveChatbot /
-  // ToggleChatbot - this just avoids a round trip for the common case).
+  // confirm-before-activate/deactivate pattern as AutomationsManagment.js. Disabling is
+  // always allowed; enabling is blocked client-side once the active cap is hit (the
+  // backend enforces this too - see ChatbotLogic.SaveChatbot / ToggleChatbot - this just
+  // avoids a round trip for the common case).
   const handleToggle = (bot: IChatbotListItem) => {
-    if (!bot.enabled && atActiveLimit) {
+    if (!bot.enabled && atLimit) {
       setToastMessage({
         severity: 'error',
         color: 'error',
         message: t(
           'chatbot_active_limit_reached',
           'Active chatbot limit reached ({{limit}}). Disable another chatbot first.',
-          { limit: maxActiveChatbots },
+          { limit: maxChatbots },
         ),
       });
       return;
@@ -231,11 +233,11 @@ const ChatbotList = ({ classes }: { classes?: any }) => {
     <Box>
       <Tooltip
         title={
-          !bot.enabled && atActiveLimit
+          !bot.enabled && atLimit
             ? (t(
                 'chatbot_active_limit_reached',
                 'Active chatbot limit reached ({{limit}}). Disable another chatbot first.',
-                { limit: maxActiveChatbots },
+                { limit: maxChatbots },
               ) as string)
             : ''
         }
@@ -412,15 +414,7 @@ const ChatbotList = ({ classes }: { classes?: any }) => {
 
       <Grid container spacing={2} className={classes.linePadding} alignItems="center">
         <Grid item>
-          <Tooltip
-            title={
-              atLimit
-                ? (t('chatbot_limit_reached', 'Chatbot limit reached ({{limit}}). Delete/Disable one to create another.', {
-                    limit: maxActiveChatbots,
-                  }) as string)
-                : ''
-            }
-          >
+          <Tooltip title={atLimit ? (t('SubUsers.serviceLimits.chatbotLimitReached') as string) : ''}>
             <span>
               <Button
                 onClick={goCreate}
@@ -462,19 +456,20 @@ const ChatbotList = ({ classes }: { classes?: any }) => {
 
       {tierLimit && (
         <div className="svc-cb-limit-note">
-          ⚠️
-          <span>
-            <b>
-              {t('chatbot_plan', 'plan')}:
-            </b>{' '}
-            {maxActiveChatbots >= 0
-              ? t('chatbot_limit_usage', '{{used}} of {{limit}} chatbots used.', {
-                  used: activeCount,
-                  limit: maxActiveChatbots,
-                })
-              : t('chatbot_limit_unlimited', 'Unlimited chatbots on your plan.')}
-            {atLimit && ` ${t('chatbot_limit_upgrade', 'Delete/Disable one to create another.')}`}
-          </span>
+          <div className="svc-cb-limit-note-row">
+            ⚠️
+            <span>
+              <b>{t('chatbot_plan', 'plan')}:</b>{' '}
+              {maxChatbots >= 0
+                ? t('chatbot_limit_usage', '{{used}} of {{limit}} chatbots used.', {
+                    used: activeCount,
+                    limit: maxChatbots,
+                  })
+                : t('chatbot_limit_unlimited', 'Unlimited chatbots on your plan.')}
+            </span>
+          </div>
+          <UsageCounter current={activeCount} max={maxChatbots} labelKey="SubUsers.serviceLimits.chatbotsLabel" />
+          {atLimit && <UpgradePrompt classes={classes} messageKey="SubUsers.serviceLimits.chatbotLimitReached" />}
         </div>
       )}
 
