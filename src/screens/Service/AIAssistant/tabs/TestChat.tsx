@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import clsx from 'clsx';
 import {
   Box,
   Paper,
@@ -20,15 +21,17 @@ import { ITestChatExchange, MAX_TEST_MESSAGE_LENGTH } from '../../../../Models/S
 const useStyles = makeStyles({
   section: {
     padding: 24,
+    borderRadius: 8,
+    boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06)',
   },
   intro: {
-    marginBlockEnd: 16,
+    marginBlockEnd: 20,
   },
   conversation: {
     display: 'flex',
     flexDirection: 'column',
     gap: 16,
-    marginBlockEnd: 16,
+    marginBlockEnd: 20,
     maxHeight: 520,
     overflowY: 'auto',
   },
@@ -88,7 +91,7 @@ const useStyles = makeStyles({
   },
   inputRow: {
     display: 'flex',
-    gap: 8,
+    gap: 12,
     alignItems: 'flex-end',
   },
   field: {
@@ -141,10 +144,11 @@ interface ExchangeItemProps {
   exchange: ITestChatExchange;
   confidenceThreshold: number;
   classes: any;
+  pageClasses?: any;
   onFeedback: (exchangeId: string, responseLogId: number, helpful: boolean) => void;
 }
 
-const ExchangeItem = ({ exchange, confidenceThreshold, classes, onFeedback }: ExchangeItemProps) => {
+const ExchangeItem = ({ exchange, confidenceThreshold, classes, pageClasses, onFeedback }: ExchangeItemProps) => {
   const { t } = useTranslation();
 
   return (
@@ -193,7 +197,7 @@ const ExchangeItem = ({ exchange, confidenceThreshold, classes, onFeedback }: Ex
               />
             </Box>
             <Tooltip title={t('AIAssistant.settings.confidenceTooltip') as string}>
-              <InfoOutlinedIcon fontSize="small" />
+              <InfoOutlinedIcon fontSize="small" style={{ color: '#9ca3af' }} />
             </Tooltip>
           </Box>
 
@@ -216,17 +220,31 @@ const ExchangeItem = ({ exchange, confidenceThreshold, classes, onFeedback }: Ex
           <Box className={classes.feedbackRow}>
             <Button
               size="small"
+              className={clsx(pageClasses?.btn, pageClasses?.btnRounded)}
               variant={exchange.feedback === 'helpful' ? 'contained' : 'outlined'}
               disabled={!!exchange.feedback}
               onClick={() => onFeedback(exchange.id, exchange.response!.responseLogId, true)}
+              // `btn` forces a white background, hiding MUI's selected/unselected
+              // variant difference — use its hover gradient as the selected look.
+              style={
+                exchange.feedback === 'helpful'
+                  ? { background: 'linear-gradient(90deg, #FF0076 0%, #FF0054 23.8%, #FF4D2A 100%)', color: '#fff' }
+                  : undefined
+              }
             >
               {t('AIAssistant.testChat.goodResponse')}
             </Button>
             <Button
               size="small"
+              className={clsx(pageClasses?.btn, pageClasses?.btnRounded)}
               variant={exchange.feedback === 'needsImprovement' ? 'contained' : 'outlined'}
               disabled={!!exchange.feedback}
               onClick={() => onFeedback(exchange.id, exchange.response!.responseLogId, false)}
+              style={
+                exchange.feedback === 'needsImprovement'
+                  ? { background: 'linear-gradient(90deg, #FF0076 0%, #FF0054 23.8%, #FF4D2A 100%)', color: '#fff' }
+                  : undefined
+              }
             >
               {t('AIAssistant.testChat.needsImprovement')}
             </Button>
@@ -242,7 +260,11 @@ const ExchangeItem = ({ exchange, confidenceThreshold, classes, onFeedback }: Ex
   );
 };
 
-const TestChat = () => {
+interface TestChatProps {
+  pageClasses?: any;
+}
+
+const TestChat = ({ pageClasses }: TestChatProps) => {
   const classes = useStyles();
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -293,6 +315,7 @@ const TestChat = () => {
                 exchange={exchange}
                 confidenceThreshold={confidenceThreshold}
                 classes={classes}
+                pageClasses={pageClasses}
                 onFeedback={handleFeedback}
               />
             ))
@@ -318,6 +341,7 @@ const TestChat = () => {
           <Button
             variant="contained"
             color="primary"
+            className={clsx(pageClasses?.btn, pageClasses?.btnRounded)}
             disabled={isSending || !draft.trim() || isTooLong}
             onClick={handleSend}
           >

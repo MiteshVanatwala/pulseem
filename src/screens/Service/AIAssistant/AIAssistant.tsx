@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import { Grid, Paper, Typography, Tabs, Tab, Button } from '@material-ui/core';
+import { Grid, Paper, Typography, Tabs, Tab, Button, Box } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
+import LibraryBooksOutlinedIcon from '@material-ui/icons/LibraryBooksOutlined';
+import DescriptionOutlinedIcon from '@material-ui/icons/DescriptionOutlined';
+import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
+import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
 import DefaultScreen from '../../DefaultScreen';
 import TabPanel from './components/TabPanel';
 import KnowledgeBase from './tabs/KnowledgeBase';
@@ -17,15 +21,32 @@ import { computeStats } from '../../../Models/Service/AIAssistant';
 
 const useStyles = makeStyles({
   statsRow: {
-    marginBlockEnd: 16,
+    marginBlockEnd: 24,
   },
   statCard: {
-    padding: 16,
-    textAlign: 'center',
+    padding: 24,
+    display: 'flex',
+    alignItems: 'center',
+    gap: 16,
+    borderRadius: 8,
+    boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06)',
+  },
+  statIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: '50%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+    backgroundColor: '#fee2e2',
+    color: '#FF0076',
   },
   errorSection: {
     padding: 24,
     textAlign: 'center',
+    borderRadius: 8,
+    boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06)',
   },
 });
 
@@ -71,7 +92,7 @@ const AIAssistant = ({ classes: pageClasses }: AIAssistantProps) => {
 
   return (
     <DefaultScreen currentPage="aiAssistant" classes={pageClasses} containerClass={clsx(pageClasses?.management)}>
-      <Typography variant="h5" style={{ marginBlockEnd: 16 }}>
+      <Typography className={clsx(pageClasses?.managementTitle, 'mgmtTitle')} style={{ marginBlockEnd: 24 }}>
         {t('AIAssistant.pageTitle')}
       </Typography>
 
@@ -85,6 +106,7 @@ const AIAssistant = ({ classes: pageClasses }: AIAssistantProps) => {
           <Button
             variant="contained"
             color="primary"
+            className={clsx(pageClasses?.btn, pageClasses?.btnRounded)}
             onClick={() => dispatch(fetchAiAssistantOverview() as any)}
           >
             {t('AIAssistant.loadError.retry')}
@@ -92,66 +114,105 @@ const AIAssistant = ({ classes: pageClasses }: AIAssistantProps) => {
         </Paper>
       ) : (
         <>
-          <Grid container spacing={2} className={localClasses.statsRow}>
+          <Grid container spacing={3} className={localClasses.statsRow}>
             <Grid item xs={12} sm={4}>
               <Paper variant="outlined" className={localClasses.statCard}>
-                <Typography variant="body2" color="textSecondary">
-                  {t('AIAssistant.header.knowledgeItemsLabel')}
-                </Typography>
-                <Typography variant="h6">
-                  {t('AIAssistant.header.knowledgeItemsFormat', {
-                    active: stats.activeKnowledgeItems,
-                    total: stats.totalKnowledgeItems,
-                  })}
-                </Typography>
+                <Box className={localClasses.statIcon}>
+                  <LibraryBooksOutlinedIcon />
+                </Box>
+                <Box>
+                  <Typography variant="body2" color="textSecondary">
+                    {t('AIAssistant.header.knowledgeItemsLabel')}
+                  </Typography>
+                  <Typography variant="h6">
+                    {t('AIAssistant.header.knowledgeItemsFormat', {
+                      active: stats.activeKnowledgeItems,
+                      total: stats.totalKnowledgeItems,
+                    })}
+                  </Typography>
+                </Box>
               </Paper>
             </Grid>
             <Grid item xs={12} sm={4}>
               <Paper variant="outlined" className={localClasses.statCard}>
-                <Typography variant="body2" color="textSecondary">
-                  {t('AIAssistant.header.trainingDataLabel')}
-                </Typography>
-                <Typography variant="h6">
-                  {t('AIAssistant.header.trainingDataFormat', { words: stats.totalWordCount })}
-                </Typography>
+                <Box className={localClasses.statIcon}>
+                  <DescriptionOutlinedIcon />
+                </Box>
+                <Box>
+                  <Typography variant="body2" color="textSecondary">
+                    {t('AIAssistant.header.trainingDataLabel')}
+                  </Typography>
+                  <Typography variant="h6">
+                    {t('AIAssistant.header.trainingDataFormat', { words: stats.totalWordCount })}
+                  </Typography>
+                </Box>
               </Paper>
             </Grid>
             <Grid item xs={12} sm={4}>
               <Paper variant="outlined" className={localClasses.statCard}>
-                <Typography variant="body2" color="textSecondary">
-                  {t('AIAssistant.header.statusLabel')}
-                </Typography>
-                <Typography variant="h6" style={{ color: stats.status === 'ready' ? '#16a34a' : '#ed6c02' }}>
-                  {stats.status === 'ready' ? t('AIAssistant.header.statusReady') : t('AIAssistant.header.statusNotReady')}
-                </Typography>
+                <Box
+                  className={localClasses.statIcon}
+                  style={
+                    stats.status === 'ready'
+                      ? { backgroundColor: '#dcfce7', color: '#16a34a' }
+                      : { backgroundColor: '#fff7ed', color: '#ed6c02' }
+                  }
+                >
+                  {stats.status === 'ready' ? <CheckCircleOutlineIcon /> : <ErrorOutlineIcon />}
+                </Box>
+                <Box>
+                  <Typography variant="body2" color="textSecondary">
+                    {t('AIAssistant.header.statusLabel')}
+                  </Typography>
+                  <Typography variant="h6" style={{ color: stats.status === 'ready' ? '#16a34a' : '#ed6c02' }}>
+                    {stats.status === 'ready' ? t('AIAssistant.header.statusReady') : t('AIAssistant.header.statusNotReady')}
+                  </Typography>
+                </Box>
               </Paper>
             </Grid>
           </Grid>
 
           <Tabs
+            variant="scrollable"
+            scrollButtons="auto"
             value={tabIndex}
             onChange={handleTabChange}
-            indicatorColor="primary"
-            textColor="primary"
             dir={isRTL ? 'rtl' : 'ltr'}
+            classes={{ indicator: pageClasses?.hideIndicator }}
           >
-            <Tab label={t('AIAssistant.tabs.knowledgeBase')} />
-            <Tab label={t('AIAssistant.tabs.settings')} />
-            <Tab label={t('AIAssistant.tabs.testChat')} />
-            <Tab label={t('AIAssistant.tabs.analytics')} />
+            <Tab
+              label={t('AIAssistant.tabs.knowledgeBase')}
+              classes={{ root: pageClasses?.tabText, selected: pageClasses?.activeTab }}
+              className={pageClasses?.f18}
+            />
+            <Tab
+              label={t('AIAssistant.tabs.settings')}
+              classes={{ root: pageClasses?.tabText, selected: pageClasses?.activeTab }}
+              className={pageClasses?.f18}
+            />
+            <Tab
+              label={t('AIAssistant.tabs.testChat')}
+              classes={{ root: pageClasses?.tabText, selected: pageClasses?.activeTab }}
+              className={pageClasses?.f18}
+            />
+            <Tab
+              label={t('AIAssistant.tabs.analytics')}
+              classes={{ root: pageClasses?.tabText, selected: pageClasses?.activeTab }}
+              className={pageClasses?.f18}
+            />
           </Tabs>
 
           <TabPanel value={tabIndex} index={0}>
-            <KnowledgeBase />
+            <KnowledgeBase pageClasses={pageClasses} />
           </TabPanel>
           <TabPanel value={tabIndex} index={1}>
-            <AISettings onDirtyChange={setSettingsDirty} />
+            <AISettings pageClasses={pageClasses} onDirtyChange={setSettingsDirty} />
           </TabPanel>
           <TabPanel value={tabIndex} index={2}>
-            <TestChat />
+            <TestChat pageClasses={pageClasses} />
           </TabPanel>
           <TabPanel value={tabIndex} index={3}>
-            <Analytics />
+            <Analytics pageClasses={pageClasses} />
           </TabPanel>
         </>
       )}
