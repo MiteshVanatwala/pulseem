@@ -8,19 +8,17 @@ import {
   MenuItem,
   Button,
   Typography,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
   InputAdornment,
   Tooltip,
-  IconButton,
+  Paper,
 } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import { makeStyles } from '@material-ui/core/styles';
+import clsx from 'clsx';
 import AddIcon from '@material-ui/icons/Add';
 import SearchIcon from '@material-ui/icons/Search';
-import CloseIcon from '@material-ui/icons/Close';
+import LibraryBooksOutlinedIcon from '@material-ui/icons/LibraryBooksOutlined';
+import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
 import KnowledgeItemCard from '../components/KnowledgeItemCard';
 import KnowledgeItemForm, { KnowledgeItemServerError } from '../components/KnowledgeItemForm';
 import UsageCounter from '../../../../components/UsageCounter/UsageCounter';
@@ -40,13 +38,13 @@ import {
 
 type TypeFilter = 'all' | KnowledgeItemType;
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles({
   toolbar: {
     display: 'flex',
-    gap: 12,
+    gap: 16,
     alignItems: 'center',
     flexWrap: 'wrap',
-    marginBlockEnd: 16,
+    marginBlockEnd: 20,
   },
   search: {
     flex: '1 1 260px',
@@ -56,41 +54,25 @@ const useStyles = makeStyles((theme) => ({
   },
   empty: {
     textAlign: 'center',
-    padding: 48,
+    padding: 56,
+    borderRadius: 8,
+    boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06)',
+  },
+  emptyIcon: {
+    fontSize: 48,
+    color: '#9ca3af',
+    marginBlockEnd: 12,
+  },
+  emptyBody: {
     color: '#6b7280',
   },
-  dialog: {
-    '& .MuiDialog-paper': {
-      borderRadius: theme.spacing(2),
-      overflow: 'hidden',
-    },
-  },
-  dialogTitleBar: {
-    background: 'linear-gradient(90deg, #FF0076 1.31%, #FF0054 33.07%, #FF4D2A 134.74%)',
-    color: '#fff',
-    padding: theme.spacing(2, 3),
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    minHeight: 'auto',
-  },
-  dialogTitleText: {
-    fontWeight: 600,
-    fontSize: '1.25rem',
-    flex: 1,
-    whiteSpace: 'nowrap',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-  },
-  closeButton: {
-    color: '#fff',
-    padding: theme.spacing(1),
-    flexShrink: 0,
-    marginLeft: theme.spacing(1),
-  },
-}));
+});
 
-const KnowledgeBase = () => {
+interface KnowledgeBaseProps {
+  pageClasses?: any;
+}
+
+const KnowledgeBase = ({ pageClasses }: KnowledgeBaseProps) => {
   const classes = useStyles();
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -217,6 +199,7 @@ const KnowledgeBase = () => {
             <Button
               variant="contained"
               color="primary"
+              className={clsx(pageClasses?.btn, pageClasses?.btnRounded)}
               startIcon={<AddIcon />}
               onClick={openCreate}
               disabled={atCap}
@@ -234,11 +217,19 @@ const KnowledgeBase = () => {
       />
 
       {knowledgeItems.length === 0 ? (
-        <Typography className={classes.empty}>{t('AIAssistant.knowledgeBase.empty')}</Typography>
+        <Paper variant="outlined" className={classes.empty}>
+          <LibraryBooksOutlinedIcon className={classes.emptyIcon} />
+          <Typography variant="h6">{t('AIAssistant.knowledgeBase.empty')}</Typography>
+        </Paper>
       ) : filteredItems.length === 0 ? (
-        <Typography className={classes.empty}>{t('AIAssistant.knowledgeBase.noResults')}</Typography>
+        <Paper variant="outlined" className={classes.empty}>
+          <SearchIcon className={classes.emptyIcon} />
+          <Typography variant="body1" className={classes.emptyBody}>
+            {t('AIAssistant.knowledgeBase.noResults')}
+          </Typography>
+        </Paper>
       ) : (
-        <Grid container spacing={2}>
+        <Grid container spacing={3}>
           {filteredItems.map((item) => (
             <Grid item xs={12} sm={6} md={4} key={item.id}>
               <KnowledgeItemCard
@@ -253,6 +244,7 @@ const KnowledgeBase = () => {
       )}
 
       <KnowledgeItemForm
+        pageClasses={pageClasses}
         open={formOpen}
         mode={formMode}
         item={editingItem}
@@ -262,25 +254,40 @@ const KnowledgeBase = () => {
         onSubmit={handleSubmit}
       />
 
-      <Dialog open={!!deleteTarget} onClose={() => setDeleteTarget(null)} dir={isRTL ? 'rtl' : 'ltr'} className={classes.dialog}>
-        <DialogTitle className={classes.dialogTitleBar} disableTypography dir={isRTL ? 'rtl' : 'ltr'}>
-          <Typography className={classes.dialogTitleText}>{t('AIAssistant.deleteConfirm.title')}</Typography>
-          <IconButton className={classes.closeButton} onClick={() => setDeleteTarget(null)} size="small">
-            <CloseIcon />
-          </IconButton>
-        </DialogTitle>
-        <DialogContent style={{ paddingTop: 20 }}>
-          <Typography>
-            {t('AIAssistant.deleteConfirm.message', { title: deleteTarget?.title })}
-          </Typography>
-        </DialogContent>
-        <DialogActions style={{ padding: '12px 24px' }}>
-          <Button onClick={() => setDeleteTarget(null)}>{t('AIAssistant.deleteConfirm.cancel')}</Button>
-          <Button onClick={confirmDelete} color="secondary" variant="contained">
-            {t('AIAssistant.deleteConfirm.confirm')}
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <BaseDialog
+        classes={pageClasses}
+        open={!!deleteTarget}
+        onClose={() => setDeleteTarget(null)}
+        onCancel={() => setDeleteTarget(null)}
+        title={t('AIAssistant.deleteConfirm.title') as string}
+        showDefaultButtons={false}
+        renderButtons={() => (
+          <Grid container spacing={2} className={clsx(pageClasses?.dialogButtonsContainer, isRTL ? pageClasses?.rowReverse : null)}>
+            <Grid item>
+              <Button
+                onClick={confirmDelete}
+                className={clsx(pageClasses?.btn, pageClasses?.btnRounded, pageClasses?.redButton)}
+              >
+                {t('AIAssistant.deleteConfirm.confirm')}
+              </Button>
+            </Grid>
+            <Grid item>
+              <Button
+                variant="contained"
+                size="small"
+                onClick={() => setDeleteTarget(null)}
+                className={clsx(pageClasses?.btn, pageClasses?.btnRounded)}
+              >
+                {t('AIAssistant.deleteConfirm.cancel')}
+              </Button>
+            </Grid>
+          </Grid>
+        )}
+      >
+        <Typography>
+          {t('AIAssistant.deleteConfirm.message', { title: deleteTarget?.title })}
+        </Typography>
+      </BaseDialog>
     </Box>
   );
 };

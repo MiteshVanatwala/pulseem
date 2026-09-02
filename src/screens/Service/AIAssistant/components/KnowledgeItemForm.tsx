@@ -3,10 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import clsx from 'clsx';
 import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
   Button,
   TextField,
   MenuItem,
@@ -14,11 +10,10 @@ import {
   Box,
   Grid,
   Typography,
-  IconButton,
 } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import { makeStyles } from '@material-ui/core/styles';
-import { Close as CloseIcon } from '@material-ui/icons';
+import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
 import {
   IKnowledgeItem,
   IKnowledgeItemInput,
@@ -34,36 +29,7 @@ import {
 } from '../../../../Models/Service/AIAssistant';
 import { TYPE_ICON } from './KnowledgeItemCard';
 
-const useStyles = makeStyles((theme) => ({
-  dialog: {
-    '& .MuiDialog-paper': {
-      borderRadius: theme.spacing(2),
-      overflow: 'hidden',
-    },
-  },
-  dialogTitleBar: {
-    background: 'linear-gradient(90deg, #FF0076 1.31%, #FF0054 33.07%, #FF4D2A 134.74%)',
-    color: '#fff',
-    padding: theme.spacing(2, 3),
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    minHeight: 'auto',
-  },
-  dialogTitleText: {
-    fontWeight: 600,
-    fontSize: '1.25rem',
-    flex: 1,
-    whiteSpace: 'nowrap',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-  },
-  closeButton: {
-    color: '#fff',
-    padding: theme.spacing(1),
-    flexShrink: 0,
-    marginLeft: theme.spacing(1),
-  },
+const useStyles = makeStyles(() => ({
   field: {
     marginBlockEnd: 16,
     '& .MuiOutlinedInput-root': {
@@ -88,24 +54,30 @@ const useStyles = makeStyles((theme) => ({
   tagsChipRow: {
     display: 'flex',
     flexWrap: 'wrap',
-    gap: 4,
+    gap: 6,
     marginBlockStart: 8,
   },
+  // Wrapped so this survives MUI v4's closed Select, which re-renders only the
+  // MenuItem's children and drops its own className.
   typeMenuItem: {
     display: 'flex',
     alignItems: 'center',
-    gap: 8,
+    gap: 10,
+    '& svg': {
+      color: '#FF0076',
+    },
   },
   privacyNotice: {
     marginBlockStart: 8,
-    marginBlockEnd: 8,
+    marginBlockEnd: 12,
+    borderRadius: 12,
   },
 }));
 
 const VALIDATION_FIELD_MAP: Record<string, 'title' | 'type' | 'content' | 'tags'> = {
   'Title is required': 'title',
   'Title must be 200 characters or fewer': 'title',
-  "Item type must be 'text', 'faq', or 'url'": 'type',
+  'Type must be one of: text, faq, url': 'type',
   'Content is required': 'content',
   'Content must be 20,000 characters or fewer': 'content',
   "Content must be an absolute http or https URL when item type is 'url'": 'content',
@@ -123,6 +95,7 @@ export interface KnowledgeItemServerError {
 }
 
 interface KnowledgeItemFormProps {
+  pageClasses?: any;
   open: boolean;
   mode: 'create' | 'edit';
   item?: IKnowledgeItem | null;
@@ -147,7 +120,7 @@ const parseTags = (tagsInput: string): string[] =>
     .map((tag) => tag.trim())
     .filter((tag) => tag.length > 0);
 
-const KnowledgeItemForm = ({ open, mode, item, saving, serverError, onClose, onSubmit }: KnowledgeItemFormProps) => {
+const KnowledgeItemForm = ({ pageClasses, open, mode, item, saving, serverError, onClose, onSubmit }: KnowledgeItemFormProps) => {
   const classes = useStyles();
   const { t } = useTranslation();
   const { isRTL } = useSelector((state: any) => state.core);
@@ -243,16 +216,39 @@ const KnowledgeItemForm = ({ open, mode, item, saving, serverError, onClose, onS
   };
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm" dir={isRTL ? 'rtl' : 'ltr'} className={classes.dialog}>
-      <DialogTitle className={classes.dialogTitleBar} disableTypography dir={isRTL ? 'rtl' : 'ltr'}>
-        <Typography className={classes.dialogTitleText}>
-          {mode === 'create' ? t('AIAssistant.knowledgeItemForm.createTitle') : t('AIAssistant.knowledgeItemForm.editTitle')}
-        </Typography>
-        <IconButton className={classes.closeButton} onClick={onClose} size="small" disabled={saving}>
-          <CloseIcon />
-        </IconButton>
-      </DialogTitle>
-      <DialogContent>
+    <BaseDialog
+      classes={pageClasses}
+      open={open}
+      onClose={onClose}
+      onCancel={() => { if (!saving) onClose(); }}
+      title={mode === 'create' ? (t('AIAssistant.knowledgeItemForm.createTitle') as string) : (t('AIAssistant.knowledgeItemForm.editTitle') as string)}
+      showDefaultButtons={false}
+      renderButtons={() => (
+        <Grid container spacing={2} className={clsx(pageClasses?.dialogButtonsContainer, isRTL ? pageClasses?.rowReverse : null)}>
+          <Grid item>
+            <Button
+              onClick={handleSubmit}
+              disabled={saving}
+              className={clsx(pageClasses?.btn, pageClasses?.btnRounded)}
+            >
+              {t('AIAssistant.formActions.save')}
+            </Button>
+          </Grid>
+          <Grid item>
+            <Button
+              variant="contained"
+              size="small"
+              onClick={onClose}
+              disabled={saving}
+              className={clsx(pageClasses?.btn, pageClasses?.btnRounded)}
+            >
+              {t('AIAssistant.formActions.cancel')}
+            </Button>
+          </Grid>
+        </Grid>
+      )}
+    >
+      <>
         {serverError?.capReached && (
           <Alert severity="warning" style={{ marginBlockEnd: 16 }}>
             {serverError.message || t('AIAssistant.knowledgeItemForm.capReachedFallback', { limit: serverError.limit })}
@@ -293,9 +289,11 @@ const KnowledgeItemForm = ({ open, mode, item, saving, serverError, onClose, onS
               onChange={(e) => setForm({ ...form, type: e.target.value as KnowledgeItemType })}
             >
               {KNOWLEDGE_ITEM_TYPES.map((type) => (
-                <MenuItem key={type} value={type} className={classes.typeMenuItem}>
-                  {TYPE_ICON[type]}
-                  {t(`AIAssistant.knowledgeItemForm.typeOptions.${type}`)}
+                <MenuItem key={type} value={type}>
+                  <Box className={classes.typeMenuItem}>
+                    {TYPE_ICON[type]}
+                    <span>{t(`AIAssistant.knowledgeItemForm.typeOptions.${type}`)}</span>
+                  </Box>
                 </MenuItem>
               ))}
             </TextField>
@@ -309,6 +307,7 @@ const KnowledgeItemForm = ({ open, mode, item, saving, serverError, onClose, onS
             fullWidth
             multiline
             minRows={4}
+            maxRows={10}
             label={t('AIAssistant.knowledgeItemForm.contentLabel')}
             placeholder={t('AIAssistant.knowledgeItemForm.contentPlaceholderText') as string}
             value={form.content}
@@ -335,6 +334,7 @@ const KnowledgeItemForm = ({ open, mode, item, saving, serverError, onClose, onS
               fullWidth
               multiline
               minRows={3}
+              maxRows={10}
               label={t('AIAssistant.knowledgeItemForm.answerLabel')}
               placeholder={t('AIAssistant.knowledgeItemForm.answerPlaceholder') as string}
               value={form.answer}
@@ -387,16 +387,8 @@ const KnowledgeItemForm = ({ open, mode, item, saving, serverError, onClose, onS
             ))}
           </Box>
         )}
-      </DialogContent>
-      <DialogActions style={{ padding: '12px 24px' }}>
-        <Button onClick={onClose} disabled={saving}>
-          {t('AIAssistant.formActions.cancel')}
-        </Button>
-        <Button onClick={handleSubmit} color="primary" variant="contained" disabled={saving}>
-          {t('AIAssistant.formActions.save')}
-        </Button>
-      </DialogActions>
-    </Dialog>
+      </>
+    </BaseDialog>
   );
 };
 
