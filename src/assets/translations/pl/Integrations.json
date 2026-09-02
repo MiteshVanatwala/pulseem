@@ -183,6 +183,19 @@
     "newAsActiveDesc2": "Zmiana wyżej wymienionych ustawień odbywa się na Twoją wyłączną odpowiedzialność i dokonując tego potwierdzasz, że Pulseem nie ponosi żadnej odpowiedzialności za jakiekolwiek szkody wyrządzone Tobie i/lub Pulseem w wyniku tego, a zatem szkody te będą dotyczyć wyłącznie Ciebie.",
     "importFromYotpo": "Importuj z Yotpo",
     "integrationSaved": "Zmiany zostały zapisane",
-    "iApprove": "Zatwierdzam"
+    "iApprove": "Zatwierdzam",
+    "importFromCsvTitle": "Importuj klientów z CSV Yotpo",
+    "importHowTitle": "Jak wyeksportować klientów z Yotpo:",
+    "importStep1": "Przejdź do panelu administracyjnego Yotpo Loyalty",
+    "importStep2": "Otwórz sekcję Customers",
+    "importStep3": "Kliknij Export (prawy górny róg tabeli)",
+    "importStep4": "Wybierz \"All of my customers\" i kliknij Export My Customers",
+    "importStep5": "Plik CSV zostanie wysłany na Twój email — prześlij wszystkie części tutaj",
+    "importBtn": "Importuj",
+    "importing": "Przesyłanie...",
+    "importQueued": "Pliki zostały przesłane — import działa w tle",
+    "importProcessing": "Przetwarzanie... {{processed}} zaimportowano, {{failed}} błędów",
+    "importDone": "Import zakończony — {{processed}} zaimportowano, {{failed}} błędów",
+    "importError": "Import nie powiódł się, spróbuj ponownie"
   }
 }
