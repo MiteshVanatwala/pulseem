@@ -461,7 +461,7 @@ const ChatbotList = ({ classes }: { classes?: any }) => {
           {`You have ${activeCount} enabled chatbots, which is over your current plan's limit of ${limits.maxChatbots}. Existing chatbots remain active, but you won't be able to enable more until you disable some.`}
         </Alert>
       )}
-      {chatbotLimitReached && <UpgradePrompt feature="more chatbots" />}
+      {chatbotLimitReached && <UpgradePrompt feature="more chatbots" classes={classes} />}
 
       {!loadingList && list.length === 0 ? (
         <Box textAlign="center" py={8}>
