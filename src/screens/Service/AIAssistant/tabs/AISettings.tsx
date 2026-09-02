@@ -19,7 +19,7 @@ import { Alert } from '@material-ui/lab';
 import { makeStyles } from '@material-ui/core/styles';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
-import { useServiceLimits } from '../../../../hooks/useServiceLimits';
+import { useServicePlanLimits } from '../../../../hooks/useServicePlanLimits';
 import { saveAiAssistantSettings } from '../../../../redux/reducers/aiAssistantSlice';
 import {
   IAiAssistantSettings,
@@ -109,9 +109,13 @@ const AISettings = ({ onDirtyChange }: AISettingsProps) => {
   const dispatch = useDispatch();
   const { isRTL } = useSelector((state: any) => state.core);
   const { settings, saving } = useSelector((state: any) => state.aiAssistant);
-  const { getLimit } = useServiceLimits();
+  const { limits } = useServicePlanLimits();
 
-  const contextWordsCeiling = getLimit('maxAiContextWords'); // null = plan has no ceiling (-1 server-side)
+  // PR-3766: sourced from ServicePlanLimits.MaxAiContextWords (via GetAccountLimits),
+  // same -1-means-unlimited convention as every other limit here - null here means
+  // "plan has no ceiling", not "0 words allowed", so it must never be passed to
+  // inputProps.max as -1 literally.
+  const contextWordsCeiling = limits.maxAIContextLength === -1 ? null : limits.maxAIContextLength;
   const effectiveMax = contextWordsCeiling !== null ? Math.min(MAX_MAX_CONTEXT_WORDS, contextWordsCeiling) : MAX_MAX_CONTEXT_WORDS;
 
   const [form, setForm] = useState<IAiAssistantSettings>(settings || buildDefaults());
