@@ -15,17 +15,24 @@ const useStyles = makeStyles({
     height: '100%',
     display: 'flex',
     flexDirection: 'column',
+    borderRadius: 8,
+    boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06)',
+    transition: 'box-shadow 0.2s ease',
+    '&:hover': {
+      boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05)',
+    },
   },
   headerRow: {
     display: 'flex',
     alignItems: 'flex-start',
     justifyContent: 'space-between',
     gap: 8,
+    marginBlockEnd: 8,
   },
   titleRow: {
     display: 'flex',
     alignItems: 'center',
-    gap: 6,
+    gap: 8,
     minWidth: 0,
   },
   title: {
@@ -40,7 +47,7 @@ const useStyles = makeStyles({
     WebkitBoxOrient: 'vertical',
     overflow: 'hidden',
     minHeight: '2.6em',
-    marginBlock: 8,
+    marginBlock: 12,
     color: '#6b7280',
   },
   badgeRow: {
@@ -48,26 +55,29 @@ const useStyles = makeStyles({
     alignItems: 'center',
     gap: 6,
     flexWrap: 'wrap',
-    marginBlockEnd: 8,
+    marginBlockEnd: 12,
   },
   tagsRow: {
     display: 'flex',
     flexWrap: 'wrap',
     gap: 4,
-    marginBlockEnd: 8,
+    marginBlockEnd: 12,
   },
   footerRow: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
     marginTop: 'auto',
+    paddingTop: 8,
   },
 });
 
+const typeIconStyle = { color: '#FF0076' };
+
 export const TYPE_ICON: Record<KnowledgeItemType, React.ReactNode> = {
-  text: <DescriptionOutlinedIcon fontSize="small" />,
-  faq: <HelpOutlineIcon fontSize="small" />,
-  url: <LinkIcon fontSize="small" />,
+  text: <DescriptionOutlinedIcon fontSize="small" style={typeIconStyle} />,
+  faq: <HelpOutlineIcon fontSize="small" style={typeIconStyle} />,
+  url: <LinkIcon fontSize="small" style={typeIconStyle} />,
 };
 
 interface KnowledgeItemCardProps {
@@ -84,7 +94,7 @@ const KnowledgeItemCard = ({ item, onEdit, onDelete, onToggleActive }: Knowledge
 
   return (
     <Card dir={isRTL ? 'rtl' : 'ltr'} variant="outlined" className={classes.card}>
-      <CardContent style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+      <CardContent style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: 20 }}>
         <div className={classes.headerRow}>
           <div className={classes.titleRow}>
             {TYPE_ICON[item.type]}
@@ -128,7 +138,7 @@ const KnowledgeItemCard = ({ item, onEdit, onDelete, onToggleActive }: Knowledge
           <Typography variant="caption" color="textSecondary">
             {t('AIAssistant.knowledgeItemCard.wordCountFormat', { count: item.wordCount })}
           </Typography>
-          <Box display="flex" alignItems="center">
+          <Box display="flex" alignItems="center" style={{ gap: 4 }}>
             <Tooltip title={t('AIAssistant.knowledgeItemCard.edit') as string}>
               <IconButton size="small" onClick={() => onEdit(item)} aria-label={t('AIAssistant.knowledgeItemCard.edit') as string}>
                 <EditOutlinedIcon fontSize="small" />

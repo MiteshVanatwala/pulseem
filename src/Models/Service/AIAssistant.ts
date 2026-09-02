@@ -7,7 +7,7 @@ export type ResponseStyle = 'professional' | 'friendly' | 'concise';
 export type AiAssistantStatus = 'ready' | 'notReady';
 
 // Server never returns a split Question/Answer or a dedicated Url field — there is
-// only ever `Content` (a single string) plus `ItemType` to say how to interpret it.
+// only ever `Content` (a single string) plus `Type` to say how to interpret it.
 export interface IKnowledgeItem {
   id: number;
   title: string;

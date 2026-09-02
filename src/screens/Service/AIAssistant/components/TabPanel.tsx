@@ -10,7 +10,7 @@ interface TabPanelProps {
 function TabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
   return (
-    <div role="tabpanel" hidden={value !== index} {...other} style={{ paddingTop: 8 }}>
+    <div role="tabpanel" hidden={value !== index} {...other} style={{ paddingTop: 20 }}>
       {value === index && children}
     </div>
   );
