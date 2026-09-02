@@ -15,6 +15,8 @@
   var params = new URLSearchParams(location.search);
   var API_BASE = (params.get('apiBase') || '').replace(/\/$/, '');
   var SOCKET_URL = params.get('socketUrl') || '';
+  // The customer's page URL, passed in by pulseem.js which runs there.
+  var HOST_URL = params.get('pageUrl') || '';
   var WIDGET_ID = params.get('widgetId') || '';
   var SIDE = params.get('side') === 'left' ? 'left' : 'right';
 
@@ -403,8 +405,25 @@
     xhr.send(JSON.stringify(payload));
   }
 
+  // WebSiteAPI actions return the PulseemResponse envelope as a serialised string, so
+  // Web API serialises it again and the body is a JSON string containing JSON:
+  //     "{\"StatusCode\":200,\"Data\":{...}}"
+  // One JSON.parse yields a string, whose .Data is undefined — so this returned the
+  // string itself, `data.conversationId` came out undefined, and startConversation
+  // fell into failScreen() even though the request had succeeded with 200. That is
+  // what "We could not start the chat right now" was actually reporting.
+  //
+  // pulseem.js parses the same envelope and carries the same fix.
   function unwrap(body) {
     if (!body) return null;
+    if (typeof body === 'string') {
+      try {
+        body = JSON.parse(body);
+      } catch (e) {
+        return null;
+      }
+      if (!body) return null;
+    }
     if (body.Data !== undefined) return body.Data;
     if (body.data !== undefined) return body.data;
     return body;
@@ -414,7 +433,11 @@
     setBody('<p class="notice">Starting chat…</p>');
     post('/api/WidgetPublic/StartConversation', {
       widgetId: WIDGET_ID,
-      pageUrl: document.referrer || location.href,
+      // Handed down by the loader, which runs on the customer's page. Inside the
+      // iframe document.referrer is empty under a strict referrer policy, so this
+      // fell back to location.href — the iframe's own URL — and the agent inbox
+      // showed "/widget/v1/app/index.html" instead of the visitor's actual page.
+      pageUrl: HOST_URL || document.referrer || location.href,
       referrer: document.referrer || '',
       userAgent: navigator.userAgent,
       fields: fields || {}
