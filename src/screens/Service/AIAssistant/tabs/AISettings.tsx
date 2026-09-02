@@ -38,6 +38,8 @@ const useStyles = makeStyles({
   section: {
     padding: 24,
     marginBlockEnd: 16,
+    borderRadius: 8,
+    boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06)',
   },
   field: {
     marginBlockEnd: 24,
@@ -63,8 +65,14 @@ const useStyles = makeStyles({
   saveBar: {
     display: 'flex',
     alignItems: 'center',
-    gap: 12,
-    marginBlockStart: 8,
+    gap: 16,
+    marginBlockStart: 20,
+    paddingBottom: 16,
+  },
+  labelRow: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 6,
   },
 });
 
@@ -100,10 +108,11 @@ interface SettingsServerError {
 }
 
 interface AISettingsProps {
+  pageClasses?: any;
   onDirtyChange?: (dirty: boolean) => void;
 }
 
-const AISettings = ({ onDirtyChange }: AISettingsProps) => {
+const AISettings = ({ pageClasses, onDirtyChange }: AISettingsProps) => {
   const classes = useStyles();
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -231,12 +240,12 @@ const AISettings = ({ onDirtyChange }: AISettingsProps) => {
         </Grid>
 
         <Box className={classes.field} style={{ marginBlockStart: 24 }}>
-          <Box display="flex" alignItems="center" style={{ gap: 8 }}>
+          <Box className={classes.labelRow}>
             <Typography>
               {t('AIAssistant.settings.confidenceLabel')}: {form.confidenceThreshold}
             </Typography>
             <Tooltip title={t('AIAssistant.settings.confidenceTooltip') as string}>
-              <InfoOutlinedIcon fontSize="small" style={{ marginInlineStart: 6 }} />
+              <InfoOutlinedIcon fontSize="small" style={{ color: '#9ca3af' }} />
             </Tooltip>
           </Box>
           <Slider
@@ -245,6 +254,15 @@ const AISettings = ({ onDirtyChange }: AISettingsProps) => {
             max={MAX_CONFIDENCE_THRESHOLD}
             valueLabelDisplay="auto"
             onChange={(_e, value) => setForm({ ...form, confidenceThreshold: value as number })}
+            classes={{
+              root: pageClasses?.sliderRootPopupTrigger,
+              rail: pageClasses?.railPopupTrigger,
+              track: pageClasses?.trackPopupTrigger,
+              thumb: pageClasses?.thumbPopupTrigger,
+            }}
+            // Reuses Popup Triggers' slider structure but overrides its green-to-red
+            // gradient, which reads backwards here (higher confidence = safer).
+            style={{ background: 'linear-gradient(90deg, #FF0076 0%, #FF0054 23.8%, #FF4D2A 100%)' }}
           />
           {serverField === 'confidenceThreshold' && (
             <Typography variant="caption" color="error">
@@ -272,6 +290,7 @@ const AISettings = ({ onDirtyChange }: AISettingsProps) => {
             fullWidth
             multiline
             minRows={3}
+            maxRows={10}
             label={t('AIAssistant.settings.escalationMessageLabel')}
             value={form.escalationMessage || ''}
             onChange={(e) => setForm({ ...form, escalationMessage: e.target.value })}
@@ -280,25 +299,27 @@ const AISettings = ({ onDirtyChange }: AISettingsProps) => {
           />
         )}
 
-        <Box className={classes.field}>
-          <TextField
-            type="number"
-            variant="outlined"
-            className={classes.field}
-            fullWidth={false}
-            label={t('AIAssistant.settings.maxContextWordsLabel')}
-            value={form.maxContextWords}
-            onChange={(e) => setForm({ ...form, maxContextWords: Number(e.target.value) })}
-            error={!!contextWordsError}
-            helperText={contextWordsError}
-            inputProps={{ min: MIN_MAX_CONTEXT_WORDS, max: effectiveMax }}
-          />
-          <Typography variant="caption" color="textSecondary" style={{ display: 'block', marginBlockStart: 4 }}>
-            {contextWordsCeiling !== null
-              ? t('AIAssistant.settings.maxContextWordsCeiling', { max: contextWordsCeiling })
-              : t('AIAssistant.settings.maxContextWordsUnlimited')}
-          </Typography>
-        </Box>
+        <Grid container spacing={3}>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              type="number"
+              variant="outlined"
+              className={classes.field}
+              fullWidth
+              label={t('AIAssistant.settings.maxContextWordsLabel')}
+              value={form.maxContextWords}
+              onChange={(e) => setForm({ ...form, maxContextWords: Number(e.target.value) })}
+              error={!!contextWordsError}
+              helperText={contextWordsError}
+              inputProps={{ min: MIN_MAX_CONTEXT_WORDS, max: effectiveMax }}
+            />
+            <Typography variant="caption" color="textSecondary" style={{ display: 'block', marginBlockStart: 4 }}>
+              {contextWordsCeiling !== null
+                ? t('AIAssistant.settings.maxContextWordsCeiling', { max: contextWordsCeiling })
+                : t('AIAssistant.settings.maxContextWordsUnlimited')}
+            </Typography>
+          </Grid>
+        </Grid>
 
         <FormControlLabel
           control={
@@ -318,6 +339,7 @@ const AISettings = ({ onDirtyChange }: AISettingsProps) => {
         <Button
           variant="contained"
           color="primary"
+          className={clsx(pageClasses?.btn, pageClasses?.btnRounded)}
           disabled={!isDirty || !isValid || saving === 'loading'}
           onClick={handleSave}
         >

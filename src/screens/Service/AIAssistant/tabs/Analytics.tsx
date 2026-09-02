@@ -2,14 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import moment from 'moment';
-import { Box, Paper, Typography, Grid, Chip } from '@material-ui/core';
-import { KeyboardDatePicker } from '@material-ui/pickers';
+import { Box, Paper, Typography, Grid, Chip, InputLabel } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import { makeStyles } from '@material-ui/core/styles';
 import WarningRoundedIcon from '@material-ui/icons/WarningRounded';
 import TrendingUpIcon from '@material-ui/icons/TrendingUp';
 import InboxOutlinedIcon from '@material-ui/icons/InboxOutlined';
-import CalendarTodayIcon from '@material-ui/icons/CalendarToday';
+import { DateField } from '../../../../components/managment/DateField';
 import { fetchAiAssistantAnalytics } from '../../../../redux/reducers/aiAssistantSlice';
 import { IAnalyticsReferencedItem, IKnowledgeSourceRef, DEFAULT_ANALYTICS_RANGE_DAYS } from '../../../../Models/Service/AIAssistant';
 
@@ -17,12 +16,18 @@ const useStyles = makeStyles({
   toolbar: {
     display: 'flex',
     gap: 16,
-    alignItems: 'flex-end',
-    flexWrap: 'wrap',
-    marginBlockEnd: 20,
+    alignItems: 'flex-start',
+    flexWrap: 'nowrap',
+    marginBlockEnd: 24,
   },
-  datePicker: {
-    minWidth: 160,
+  fieldGroup: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 4,
+  },
+  fieldLabel: {
+    color: '#000',
+    fontWeight: 500,
   },
   // Deliberately loud: thick colored left border, larger padding, bold heading — a
   // banner about missing real customer data must not read like routine page copy.
@@ -30,6 +35,7 @@ const useStyles = makeStyles({
     padding: '20px 24px',
     marginBlockEnd: 24,
     borderInlineStart: '6px solid #ed6c02',
+    borderRadius: 8,
     alignItems: 'flex-start',
   },
   testModeBannerTitle: {
@@ -40,6 +46,8 @@ const useStyles = makeStyles({
     textAlign: 'center',
     padding: 56,
     color: '#6b7280',
+    borderRadius: 8,
+    boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06)',
   },
   emptyIcon: {
     fontSize: 48,
@@ -49,6 +57,8 @@ const useStyles = makeStyles({
   card: {
     padding: 24,
     height: '100%',
+    borderRadius: 8,
+    boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06)',
   },
   cardHeader: {
     display: 'flex',
@@ -178,7 +188,11 @@ const UnusedContentCard = ({ items, classes }: UnusedContentCardProps) => {
   );
 };
 
-const Analytics = () => {
+interface AnalyticsProps {
+  pageClasses?: any;
+}
+
+const Analytics = ({ pageClasses }: AnalyticsProps) => {
   const classes = useStyles();
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -208,33 +222,29 @@ const Analytics = () => {
   return (
     <Box dir={isRTL ? 'rtl' : 'ltr'}>
       <Box className={classes.toolbar}>
-        <KeyboardDatePicker
-          className={classes.datePicker}
-          inputVariant="outlined"
-          size="small"
-          variant="inline"
-          format="DD/MM/YYYY"
-          keyboardIcon={<CalendarTodayIcon fontSize="small" />}
-          label={t('AIAssistant.analytics.fromDateLabel')}
-          maxDate={range.endDate}
-          value={range.startDate}
-          onChange={(date: any) => date && setRange((prev) => ({ ...prev, startDate: date }))}
-          autoOk
-        />
-        <KeyboardDatePicker
-          className={classes.datePicker}
-          inputVariant="outlined"
-          size="small"
-          variant="inline"
-          format="DD/MM/YYYY"
-          keyboardIcon={<CalendarTodayIcon fontSize="small" />}
-          label={t('AIAssistant.analytics.toDateLabel')}
-          minDate={range.startDate}
-          maxDate={moment()}
-          value={range.endDate}
-          onChange={(date: any) => date && setRange((prev) => ({ ...prev, endDate: date }))}
-          autoOk
-        />
+        <Box className={classes.fieldGroup}>
+          <InputLabel className={classes.fieldLabel}>{t('AIAssistant.analytics.fromDateLabel')}</InputLabel>
+          {/* @ts-ignore - DateField (plain JS) has no optional prop types */}
+          <DateField
+            toolbarDisabled={false}
+            classes={pageClasses}
+            value={range.startDate}
+            onChange={(date: any) => date && setRange((prev) => ({ ...prev, startDate: date }))}
+            maximumDate={range.endDate}
+          />
+        </Box>
+        <Box className={classes.fieldGroup}>
+          <InputLabel className={classes.fieldLabel}>{t('AIAssistant.analytics.toDateLabel')}</InputLabel>
+          {/* @ts-ignore - DateField (plain JS) has no optional prop types */}
+          <DateField
+            toolbarDisabled={false}
+            classes={pageClasses}
+            value={range.endDate}
+            onChange={(date: any) => date && setRange((prev) => ({ ...prev, endDate: date }))}
+            minDate={range.startDate}
+            maximumDate={moment()}
+          />
+        </Box>
       </Box>
 
       {analyticsError && (

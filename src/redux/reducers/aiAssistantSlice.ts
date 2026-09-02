@@ -3,7 +3,7 @@ import { PulseemReactInstance } from "../../helpers/Api/PulseemReactAPI";
 import { PulseemResponse } from "../../Models/APIResponse";
 import { IAiAssistantSettings, IKnowledgeItem, IKnowledgeItemInput, ITestChatResponse, ITestChatExchange, IAiAssistantAnalytics, IAnalyticsDateRange } from "../../Models/Service/AIAssistant";
 
-const SUCCESS = 201;
+const SUCCESS = 200;
 const EMPTY = 404; // GetKnowledgeItems only: "no items yet" — a valid state, not an error
 const VALIDATION_FAILED = 400;
 const NOT_FOUND = 404; // Save(update)/Delete/Toggle: not found OR belongs to another account — indistinguishable by design
@@ -42,37 +42,41 @@ const checkGate = (body: PulseemResponse | undefined): GateFailure | null => {
   return null;
 };
 
+// Confirmed live: GetKnowledgeItems returns camelCase, unlike SaveKnowledgeItem's
+// PascalCase request body (see toServerItem) — the two directions don't match.
 const fromServerItem = (raw: any): IKnowledgeItem => ({
-  id: raw.Id,
-  title: raw.Title,
-  type: (raw.ItemType || '').toLowerCase(),
-  content: raw.Content,
-  tags: raw.Tags || [],
-  isActive: raw.IsActive,
-  wordCount: raw.WordCount,
-  createdDate: raw.CreatedDate,
-  modifiedDate: raw.ModifiedDate,
-  lastReferencedDate: raw.LastReferencedDate,
+  id: raw.id,
+  title: raw.title,
+  type: (raw.type || '').toLowerCase(),
+  content: raw.content,
+  tags: raw.tags || [],
+  isActive: raw.isActive,
+  wordCount: raw.wordCount,
+  createdDate: raw.createdDate,
+  modifiedDate: raw.modifiedDate,
+  lastReferencedDate: raw.lastReferencedDate,
 });
 
+// Confirmed via SaveKnowledgeItem's 400 body: the field is `Type`, not `ItemType`.
 const toServerItem = (input: IKnowledgeItemInput, id?: number) => ({
   Id: id ?? null,
   Title: input.title,
-  ItemType: input.type,
+  Type: input.type,
   Content: input.content,
   Tags: input.tags,
 });
 
+// Confirmed live: GetAISettings' response Data is camelCase, NOT PascalCase.
 const fromServerSettings = (raw: any): IAiAssistantSettings => ({
-  responseStyle: raw.ResponseStyle,
-  defaultLanguage: raw.DefaultLanguage,
-  confidenceThreshold: raw.ConfidenceThreshold,
-  autoEscalate: raw.AutoEscalate,
-  escalationMessage: raw.EscalationMessage,
-  maxContextWords: raw.MaxContextWords,
-  includeConversationHistory: raw.IncludeConversationHistory,
-  createdDate: raw.CreatedDate,
-  modifiedDate: raw.ModifiedDate,
+  responseStyle: raw.responseStyle,
+  defaultLanguage: raw.defaultLanguage,
+  confidenceThreshold: raw.confidenceThreshold,
+  autoEscalate: raw.autoEscalate,
+  escalationMessage: raw.escalationMessage,
+  maxContextWords: raw.maxContextWords,
+  includeConversationHistory: raw.includeConversationHistory,
+  createdDate: raw.createdDate,
+  modifiedDate: raw.modifiedDate,
 });
 
 const toServerSettings = (settings: IAiAssistantSettings) => ({
@@ -113,6 +117,10 @@ const fromServerAnalytics = (raw: any): IAiAssistantAnalytics => ({
 
 const asNetworkError = (error: any) => ({ message: error?.Message || error?.message || 'Network error' });
 
+// Some ServiceAI responses arrive as a JSON string, not a parsed object — parse
+// defensively so StatusCode checks don't silently compare against undefined.
+const parseResponse = (data: any): PulseemResponse => (typeof data === 'string' ? JSON.parse(data) : data);
+
 // Combined initial load for the page shell — GetKnowledgeItems' 404 "No Records
 // found" is a valid empty state here, not a failure; only the gate, a genuine 400/401/
 // 500, or a network error reject this thunk.
@@ -124,8 +132,8 @@ export const fetchAiAssistantOverview = createAsyncThunk(
         PulseemReactInstance.post(`ServiceAI/GetKnowledgeItems`, {}),
         PulseemReactInstance.post(`ServiceAI/GetAISettings`, {}),
       ]);
-      const itemsBody = itemsRes.data as PulseemResponse;
-      const settingsBody = settingsRes.data as PulseemResponse;
+      const itemsBody = parseResponse(itemsRes.data);
+      const settingsBody = parseResponse(settingsRes.data);
       const gateFailure = checkGate(itemsBody) || checkGate(settingsBody);
       if (gateFailure) return thunkAPI.rejectWithValue(gateFailure);
 
@@ -157,7 +165,7 @@ export const fetchKnowledgeItems = createAsyncThunk(
   async (_data: void, thunkAPI) => {
     try {
       const response = await PulseemReactInstance.post(`ServiceAI/GetKnowledgeItems`, {});
-      const body = response.data as PulseemResponse;
+      const body = parseResponse(response.data);
       const gateFailure = checkGate(body);
       if (gateFailure) return thunkAPI.rejectWithValue(gateFailure);
       if (body?.StatusCode === EMPTY) return [];
@@ -178,7 +186,7 @@ export const saveKnowledgeItem = createAsyncThunk(
   async (args: { id?: number; input: IKnowledgeItemInput }, thunkAPI) => {
     try {
       const response = await PulseemReactInstance.post(`ServiceAI/SaveKnowledgeItem`, toServerItem(args.input, args.id));
-      const body = response.data as PulseemResponse;
+      const body = parseResponse(response.data);
       const gateFailure = checkGate(body);
       if (gateFailure) return thunkAPI.rejectWithValue(gateFailure);
 
@@ -208,7 +216,7 @@ export const deleteKnowledgeItem = createAsyncThunk(
   async (id: number, thunkAPI) => {
     try {
       const response = await PulseemReactInstance.delete(`ServiceAI/DeleteKnowledgeItem/${id}`);
-      const body = response.data as PulseemResponse;
+      const body = parseResponse(response.data);
       const gateFailure = checkGate(body);
       if (gateFailure) return thunkAPI.rejectWithValue(gateFailure);
       if (body?.StatusCode === SUCCESS) return id;
@@ -226,7 +234,7 @@ export const toggleKnowledgeItem = createAsyncThunk(
   async (args: { id: number; isActive: boolean }, thunkAPI) => {
     try {
       const response = await PulseemReactInstance.post(`ServiceAI/ToggleKnowledgeItem`, { Id: args.id, IsActive: args.isActive });
-      const body = response.data as PulseemResponse;
+      const body = parseResponse(response.data);
       const gateFailure = checkGate(body);
       if (gateFailure) return thunkAPI.rejectWithValue(gateFailure);
       if (body?.StatusCode === SUCCESS) return args;
@@ -246,7 +254,7 @@ export const saveAiAssistantSettings = createAsyncThunk(
   async (settings: IAiAssistantSettings, thunkAPI) => {
     try {
       const response = await PulseemReactInstance.post(`ServiceAI/SaveAISettings`, toServerSettings(settings));
-      const body = response.data as PulseemResponse;
+      const body = parseResponse(response.data);
       const gateFailure = checkGate(body);
       if (gateFailure) return thunkAPI.rejectWithValue(gateFailure);
       if (body?.StatusCode === SUCCESS) return fromServerSettings(body.Data);
@@ -269,7 +277,7 @@ export const sendTestChatMessage = createAsyncThunk(
   async (message: string, thunkAPI) => {
     try {
       const response = await PulseemReactInstance.post(`ServiceAI/TestAIMessage`, { Message: message });
-      const body = response.data as PulseemResponse;
+      const body = parseResponse(response.data);
       const gateFailure = checkGate(body);
       if (gateFailure) return thunkAPI.rejectWithValue(gateFailure);
 
@@ -307,7 +315,7 @@ export const submitTestChatFeedback = createAsyncThunk(
         responseLogId: args.responseLogId,
         feedback: args.feedback,
       });
-      const body = response.data as PulseemResponse;
+      const body = parseResponse(response.data);
       const gateFailure = checkGate(body);
       if (gateFailure) return thunkAPI.rejectWithValue(gateFailure);
 
@@ -339,7 +347,7 @@ export const fetchAiAssistantAnalytics = createAsyncThunk(
         dateRangeStart: range.startDate,
         dateRangeEnd: range.endDate,
       });
-      const body = response.data as PulseemResponse;
+      const body = parseResponse(response.data);
       const gateFailure = checkGate(body);
       if (gateFailure) return thunkAPI.rejectWithValue(gateFailure);
       if (body?.StatusCode === SUCCESS) return { range, analytics: fromServerAnalytics(body.Data) };
