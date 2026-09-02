@@ -501,75 +501,7 @@ const Yotpo = ({ classes }: any) => {
                 <Typography style={{ fontSize: "18px", color: "#000" }}>{RenderHtml(t("integrations.Yotpo.notice"))}</Typography>
               </Grid>
             </Grid>
-            <Grid container spacing={3}>
-              <Grid item md={10} xs={12}>
-                <FormControlLabel
-                  style={{ alignItems: 'start', marginRight: 0 }}
-                  control={
-                    <PulseemSwitch
-                      id={'isSyncRecipients'}
-                      switchType='ios'
-                      classes={classes}
-                      checked={settings?.isSyncRecipients === true}
-                      height={20}
-                      width={48}
-                      className={{ [classes.rtlSwitch]: isRTL }}
-                      onChange={(e: any) => {
-                        handleSave({ ...settings, isSyncRecipients: !settings?.isSyncRecipients })
-                      }}
-                    />
-                  }
-                  label={<Box className={classes.radio}>
-                    <Typography style={{ fontSize: "18px" }}>
-                      <b>{t("integrations.Yotpo.syncRecipients")}</b>
-                    </Typography>
-                    <Typography style={{ maxWidth: 500, wordBreak: 'break-word' }}>
-                      {RenderHtml(t("integrations.Yotpo.syncRecipientsDesc"))}
-                    </Typography>
-                  </Box>}
-                />
-              </Grid>
-
-              <Grid item md={10} xs={12}>
-                <FormControlLabel
-                  style={{ display: 'flex', alignItems: 'start' }}
-                  control={
-                    <PulseemSwitch
-                      id={'IsInsertAsActive'}
-                      switchType='ios'
-                      classes={classes}
-                      checked={settings?.IsInsertAsActive === true}
-                      height={20}
-                      width={48}
-                      className={{ [classes.rtlSwitch]: isRTL }}
-                      onChange={(e: any) => {
-                        if (!settings?.IsInsertAsActive) {
-                          setActiveImportType(normalizedRegisterAsActiveOptionsID);
-                          setDialogType('newToActive');
-                        } else {
-                          handleSave({ ...settings, IsInsertAsActive: false });
-                        }
-                      }}
-                    />
-                  }
-                  label={<Box className={classes.radio}>
-                    <Typography style={{ wordBreak: 'break-word', fontSize: '18px' }}>
-                      <b>{t("integrations.Yotpo.newAsActive")}</b>
-                      {settings?.IsInsertAsActive && (
-                        <span style={{ fontWeight: 'normal', marginLeft: 8 }}>
-                          ({normalizedRegisterAsActiveOptionsID === UnsubscribePreferenceType.Email
-                            ? t('integrations.Yotpo.emailOnly')
-                            : normalizedRegisterAsActiveOptionsID === UnsubscribePreferenceType.Sms
-                            ? t('integrations.Yotpo.SMSOnly')
-                            : t('integrations.Yotpo.bothEmailSMS')})
-                        </span>
-                      )}
-                    </Typography>
-                  </Box>}
-                />
-              </Grid>
-            </Grid>
-          </Box>
+            </Box>
         )
       }
       {isAuthenticated && <Box className={"formContainer"}>
@@ -589,29 +521,57 @@ const Yotpo = ({ classes }: any) => {
         </Grid>
       </Box>}
       {isAuthenticated && (
-        <Box className={"formContainer"} style={{ marginTop: 24 }}>
-          <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.pb15)}>
-            <Typography className={clsx(classes.bold)} style={{ fontSize: 16, marginBottom: 8 }}>
+        <Box style={{ marginTop: 24, border: '1px solid #E0E4EE', borderRadius: 6, background: '#fff', overflow: 'hidden', boxShadow: '0 1px 4px rgba(26,26,46,0.08)' }}>
+          {/* Header */}
+          <Box style={{ padding: '14px 20px 12px', borderBottom: '1px solid #E0E4EE', display: 'flex', alignItems: 'center', gap: 9 }}>
+            <Typography style={{ fontSize: 14, fontWeight: 700, color: '#1A1A2E' }}>
               {t('integrations.Yotpo.importFromCsvTitle')}
             </Typography>
-            <Box style={{ background: '#f5f5f5', borderRadius: 6, padding: '12px 16px', marginBottom: 12 }}>
-              <Typography style={{ fontWeight: 600, marginBottom: 4 }}>{t('integrations.Yotpo.importHowTitle')}</Typography>
-              <ol style={{ margin: 0, paddingLeft: 20 }}>
-                <li>{t('integrations.Yotpo.importStep1')}</li>
-                <li>{t('integrations.Yotpo.importStep2')}</li>
-                <li>{t('integrations.Yotpo.importStep3')}</li>
-                <li>{t('integrations.Yotpo.importStep4')}</li>
-                <li>{t('integrations.Yotpo.importStep5')}</li>
-              </ol>
+          </Box>
+
+          {/* Steps */}
+          <Box style={{ display: 'flex', padding: '16px 20px 14px', borderBottom: '1px solid #E0E4EE', overflowX: 'auto', gap: 0 }}>
+            {[1,2,3,4,5].map((n, i) => (
+              <Box key={n} style={{ flex: 1, minWidth: 100, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', position: 'relative', paddingRight: 12 }}>
+                {i < 4 && <Box style={{ position: 'absolute', top: 11, left: 22, right: 0, height: 1, background: '#E0E4EE' }} />}
+                <Box style={{ width: 22, height: 22, borderRadius: '50%', background: '#D93A5B', color: '#fff', fontSize: 10.5, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 7, flexShrink: 0, position: 'relative', zIndex: 1 }}>
+                  {n}
+                </Box>
+                <Typography style={{ fontSize: 11, color: '#6B7A99', lineHeight: 1.5, maxWidth: 105 }}>
+                  {t(`integrations.Yotpo.importStep${n}`)}
+                </Typography>
+              </Box>
+            ))}
+          </Box>
+
+          {/* Upload zone + button */}
+          <Box style={{ display: 'flex', alignItems: 'flex-start', gap: 16, padding: '18px 20px', flexWrap: 'wrap' }}>
+            <Box
+              style={{ flex: 1, minWidth: 200, border: `1.5px dashed ${csvFiles && csvFiles.length > 0 ? '#D93A5B' : '#E0E4EE'}`, borderRadius: 6, padding: '18px 14px', textAlign: 'center', cursor: 'pointer', background: csvFiles && csvFiles.length > 0 ? '#FDF1F4' : '#F0F3F8', transition: 'border-color 0.15s, background 0.15s' }}
+              onClick={() => (document.getElementById('yotpoCsvInput') as HTMLInputElement)?.click()}
+              onDragOver={(e) => { e.preventDefault(); }}
+              onDrop={(e) => { e.preventDefault(); setCsvFiles(e.dataTransfer.files); }}
+            >
+              <Typography style={{ fontSize: 13, fontWeight: 600, color: '#1A1A2E', marginBottom: 2 }}>
+                {csvFiles && csvFiles.length > 0
+                  ? `${csvFiles.length} ${csvFiles.length > 1 ? t('integrations.Yotpo.importing').replace('...','') : ''} ${Array.from(csvFiles).map(f => f.name).join(', ')}`
+                  : t('integrations.Yotpo.importHowTitle').split(':')[0]}
+              </Typography>
+              <Typography style={{ fontSize: 11, color: '#6B7A99' }}>
+                {csvFiles && csvFiles.length > 0 ? t('integrations.Yotpo.importStep5').split('—')[1]?.trim() : t('integrations.Yotpo.importStep5')}
+              </Typography>
+              {csvFiles && csvFiles.length > 0 && (
+                <Box style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 4, marginTop: 8 }}>
+                  {Array.from(csvFiles).map((f, i) => (
+                    <Box key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, background: '#FDF1F4', border: '1px solid #F2C0CC', borderRadius: 4, padding: '2px 7px', fontSize: 11, color: '#D93A5B', fontWeight: 500 }}>
+                      📄 {f.name}
+                    </Box>
+                  ))}
+                </Box>
+              )}
+              <Typography style={{ fontSize: 10.5, color: '#A0AABF', marginTop: 7 }}>.csv {t('integrations.Yotpo.importStep5').includes('email') ? 'files only' : ''}</Typography>
             </Box>
-            <input
-              type="file"
-              accept=".csv"
-              multiple
-              style={{ marginBottom: 12 }}
-              onChange={(e) => setCsvFiles(e.target.files)}
-            />
-            <Box>
+            <Box style={{ display: 'flex', flexDirection: 'column', gap: 0, justifyContent: 'center', paddingTop: 2 }}>
               <Button
                 onClick={handleCsvImport}
                 variant='contained'
@@ -623,23 +583,47 @@ const Yotpo = ({ classes }: any) => {
                 {importLoading ? t('integrations.Yotpo.importing') : t('integrations.Yotpo.importBtn')}
               </Button>
             </Box>
-            {importStatus && (
-              <Box style={{ marginTop: 12 }}>
-                {importStatus.status === 'queued' && <Typography style={{ color: '#1976d2' }}>{importStatus.message}</Typography>}
-                {importStatus.status === 'processing' && (
-                  <Typography style={{ color: '#1976d2' }}>
-                    {t('integrations.Yotpo.importProcessing', { processed: importStatus.processed, failed: importStatus.failed })}
+          </Box>
+          <input type="file" id="yotpoCsvInput" accept=".csv" multiple style={{ display: 'none' }} onChange={(e) => setCsvFiles(e.target.files)} />
+
+          {/* Status bar */}
+          {importStatus && (
+            <Box style={{
+              margin: '0 20px 16px',
+              borderRadius: 6,
+              padding: '12px 14px',
+              border: '1px solid',
+              borderColor: importStatus.status === 'done' ? '#A0D8C0' : importStatus.status === 'error' ? '#F0B0B0' : importStatus.status === 'processing' ? '#F2C0CC' : '#F0D090',
+              background: importStatus.status === 'done' ? '#F0FAF5' : importStatus.status === 'error' ? '#FFF0F0' : importStatus.status === 'processing' ? '#FDF1F4' : '#FFF8EC',
+            }}>
+              <Box style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+                <Box style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <Box style={{ width: 8, height: 8, borderRadius: '50%', background: importStatus.status === 'done' ? '#2E9E6E' : importStatus.status === 'error' ? '#C0303A' : importStatus.status === 'processing' ? '#D93A5B' : '#C97C10' }} />
+                  <Typography style={{ fontSize: 12.5, fontWeight: 600, color: '#1A1A2E' }}>
+                    {importStatus.status === 'queued' && t('integrations.Yotpo.importQueued')}
+                    {importStatus.status === 'processing' && t('integrations.Yotpo.importProcessing', { processed: importStatus.processed, failed: importStatus.failed })}
+                    {importStatus.status === 'done' && t('integrations.Yotpo.importDone', { processed: importStatus.processed, failed: importStatus.failed })}
+                    {importStatus.status === 'error' && (importStatus.message || importStatus.error || t('integrations.Yotpo.importError'))}
+                  </Typography>
+                </Box>
+                {(importStatus.processed || importStatus.total) && (
+                  <Typography style={{ fontSize: 11.5, color: '#6B7A99' }}>
+                    {importStatus.processed} / {importStatus.total}
                   </Typography>
                 )}
-                {importStatus.status === 'done' && (
-                  <Typography style={{ color: 'green' }}>
-                    {t('integrations.Yotpo.importDone', { processed: importStatus.processed, failed: importStatus.failed })}
-                  </Typography>
-                )}
-                {importStatus.status === 'error' && <Typography style={{ color: 'red' }}>{importStatus.message || importStatus.error}</Typography>}
               </Box>
-            )}
-          </Grid>
+              <Box style={{ height: 4, background: '#E0E4EE', borderRadius: 2, overflow: 'hidden' }}>
+                <Box style={{
+                  height: '100%',
+                  borderRadius: 2,
+                  background: importStatus.status === 'done' ? '#2E9E6E' : importStatus.status === 'error' ? '#C0303A' : '#D93A5B',
+                  width: importStatus.status === 'done' || importStatus.status === 'error' ? '100%'
+                    : importStatus.total ? `${Math.round((importStatus.processed / importStatus.total) * 100)}%` : '5%',
+                  transition: 'width 0.4s ease'
+                }} />
+              </Box>
+            </Box>
+          )}
         </Box>
       )}
       <Loader isOpen={showLoader} showBackdrop={true} />
