@@ -1261,22 +1261,33 @@ const AddRecipientPopup = ({ classes,
         </Grid>
     )
 
-    // PR-3418 — read-only loyalty snapshot panel (Yotpo). Renders only in edit
-    // mode when the client has a loyalty_accounts row.
     const LOYALTY_PANEL = () => {
         const fmtDate = (d) => {
             if (!d) return '';
             try { return moment(d).format(dateFormat || 'DD/MM/YYYY'); } catch (e) { return '' + d; }
         };
-        const expiringSoon = loyaltyData?.PointsExpiryDate
-            ? moment(loyaltyData.PointsExpiryDate).diff(moment(), 'days') <= 30
-            : false;
-        const row = (label, value, warn) => (
-            <Box style={{ display: 'flex', flexDirection: 'column', minWidth: 180, flex: 1, padding: '6px 8px' }}>
-                <Typography style={{ color: '#7C3AED', fontSize: 13, fontWeight: 600 }}>{t(label)}</Typography>
-                <Typography style={{ fontSize: 15, color: warn ? '#DC2626' : '#111', fontWeight: warn ? 700 : 500 }}>
-                    {warn ? '⚠️ ' : ''}{(value === null || value === undefined || value === '') ? '-' : value}
-                </Typography>
+        const fieldStyle = {
+            border: 'none',
+            borderBottom: '1px solid #BFCADD',
+            background: 'transparent',
+            padding: '5px 0',
+            fontSize: 14,
+            color: '#1A1A2E',
+            fontFamily: 'inherit',
+            width: '100%',
+            outline: 'none',
+            cursor: 'default',
+        };
+        const labelStyle = { fontSize: 12, fontWeight: 500, color: '#6B7A99', marginBottom: 4 };
+        const field = (label, value) => (
+            <Box style={{ display: 'flex', flexDirection: 'column' }}>
+                <Typography style={labelStyle}>{t(label)}</Typography>
+                <input
+                    readOnly
+                    style={fieldStyle}
+                    value={(value === null || value === undefined || value === '') ? '' : value}
+                    placeholder="-"
+                />
             </Box>
         );
         return (
@@ -1293,28 +1304,29 @@ const AddRecipientPopup = ({ classes,
                 >
                     <Box className={classes.fullWidth}>
                         <Typography align="left" className={clsx(classes.font18, classes.bold, localClasses.headLabel)}>
-                            {'💎 '}{t('recipient.loyalty.title')}
-                            <span style={{ fontSize: 12, fontWeight: 400, color: '#888', marginInlineStart: 8 }}>
+                            {t('recipient.loyalty.title')}
+                            <span style={{ fontSize: 11, fontWeight: 400, color: '#A0AABF', marginInlineStart: 8 }}>
                                 {t('recipient.loyalty.readOnly')}
                             </span>
-                            {
-                                loyaltyExpanded ? <GrFormSubtract size={26} className={localClasses.accordionIcons} /> : <GrFormAdd size={26} className={localClasses.accordionIcons} />
+                            {loyaltyExpanded
+                                ? <GrFormSubtract size={26} className={localClasses.accordionIcons} />
+                                : <GrFormAdd size={26} className={localClasses.accordionIcons} />
                             }
                         </Typography>
                     </Box>
                 </AccordionSummary>
                 <AccordionDetails>
                     <Box style={{ width: '100%' }}>
-                        <Box style={{ display: 'flex', flexWrap: 'wrap' }}>
-                            {row('recipient.loyalty.points', loyaltyData?.Points ?? '')}
-                            {row('recipient.loyalty.tier', loyaltyData?.Tier ?? '')}
-                            {row('recipient.loyalty.pointsEarned', loyaltyData?.PointsEarnedTotal ?? '')}
-                            {row('recipient.loyalty.tierMultiplier', loyaltyData?.TierMultiplier != null ? ('×' + Number(loyaltyData.TierMultiplier).toFixed(2)) : '')}
-                            {row('recipient.loyalty.pointsExpiry', fmtDate(loyaltyData?.PointsExpiryDate), expiringSoon)}
-                            {row('recipient.loyalty.referrals', loyaltyData?.ReferralCount ?? '')}
-                            {row('recipient.loyalty.optedIn', loyaltyData?.OptedIn != null ? (loyaltyData.OptedIn ? t('common.Yes') : t('common.No')) : '')}
+                        <Box style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '18px 28px' }}>
+                            {field('recipient.loyalty.points', loyaltyData?.Points ?? '')}
+                            {field('recipient.loyalty.tier', loyaltyData?.Tier ?? '')}
+                            {field('recipient.loyalty.pointsEarned', loyaltyData?.PointsEarnedTotal ?? '')}
+                            {field('recipient.loyalty.tierMultiplier', loyaltyData?.TierMultiplier != null ? ('×' + Number(loyaltyData.TierMultiplier).toFixed(2)) : '')}
+                            {field('recipient.loyalty.pointsExpiry', fmtDate(loyaltyData?.PointsExpiryDate))}
+                            {field('recipient.loyalty.referrals', loyaltyData?.ReferralCount ?? '')}
+                            {field('recipient.loyalty.optedIn', loyaltyData?.OptedIn != null ? (loyaltyData.OptedIn ? t('common.Yes') : t('common.No')) : '')}
                         </Box>
-                        <Typography style={{ fontSize: 12, color: '#888', paddingInlineStart: 8, paddingTop: 6 }}>
+                        <Typography style={{ fontSize: 11.5, color: '#A0AABF', marginTop: 14, paddingTop: 10, borderTop: '1px solid #E0E4EE' }}>
                             {t('recipient.loyalty.lastSynced')}: {loyaltyData?.LastSyncedAt ? fmtDate(loyaltyData.LastSyncedAt) : '-'}
                         </Typography>
                     </Box>
