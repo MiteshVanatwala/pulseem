@@ -227,6 +227,19 @@
     "newAsActiveDesc2": "שינוי הגדרות כאמור מתבצע על אחריותכם בלבד, ובביצועו הינכם מאשרים כי פולסים לא תישא בכל אחריות לכל נזק שיגרם לך ו/או לחברת פולסים כתוצאה מכך והם יחולו עליכם בלבד. ",
     "importFromYotpo": "יבוא מ-Yotpo",
     "integrationSaved": "השינויים נשמרו",
-    "iApprove": "אני מאשר\\ת"
+    "iApprove": "אני מאשר\\ת",
+    "importFromCsvTitle": "יבוא לקוחות מקובץ CSV של Yotpo",
+    "importHowTitle": "כיצד לייצא לקוחות מ-Yotpo:",
+    "importStep1": "היכנס לממשק הניהול של Yotpo Loyalty",
+    "importStep2": "פתח את עמוד Customers",
+    "importStep3": "לחץ על Export (בפינה הימנית העליונה של הטבלה)",
+    "importStep4": "בחר \"All of my customers\" ולחץ Export My Customers",
+    "importStep5": "קובץ ה-CSV ישלח לאימייל שלך — העלה את כל הקבצים כאן",
+    "importBtn": "יבוא",
+    "importing": "מעלה...",
+    "importQueued": "הקבצים הועלו — היבוא מתבצע ברקע",
+    "importProcessing": "מעבד... {{processed}} יובאו, {{failed}} נכשלו",
+    "importDone": "היבוא הושלם — {{processed}} יובאו, {{failed}} נכשלו",
+    "importError": "היבוא נכשל, אנא נסה שוב"
   }
 }

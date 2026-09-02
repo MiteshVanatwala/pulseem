@@ -45,6 +45,10 @@ const Yotpo = ({ classes }: any) => {
   } as YotpoModel);
   const [isAuthenticated, setAuthenticated] = useState(false);
   const [activeImportType, setActiveImportType] = useState<UnsubscribePreferenceType>(UnsubscribePreferenceType.Both);
+  const [csvFiles, setCsvFiles] = useState<FileList | null>(null);
+  const [importJobIds, setImportJobIds] = useState<number[]>([]);
+  const [importStatus, setImportStatus] = useState<any>(null);
+  const [importLoading, setImportLoading] = useState(false);
   const ArrowDownIcon = (): JSX.Element => React.createElement('span', null, React.createElement(IoIosArrowDown as any, { size: 20, className: classes.dropdownIconComponent }));
   const CopyIcon = (): JSX.Element => React.createElement('span', null, React.createElement(MdContentCopy as any, null));
 
@@ -353,6 +357,50 @@ const Yotpo = ({ classes }: any) => {
     }
   }
 
+  const handleCsvImport = async () => {
+    if (!csvFiles || csvFiles.length === 0) return;
+    setImportLoading(true);
+    setImportStatus(null);
+    try {
+      const formData = new FormData();
+      for (let i = 0; i < csvFiles.length; i++) {
+        formData.append('files', csvFiles[i]);
+      }
+      const response = await fetch('/api/Integrations/Yotpo/QueueCsvImport', {
+        method: 'POST',
+        body: formData,
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+      });
+      const data = await response.json();
+      if (data?.StatusCode === 201 && data?.Data?.length > 0) {
+        setImportJobIds(data.Data);
+        setImportStatus({ status: 'queued', message: t('integrations.Yotpo.importQueued') });
+        pollImportStatus(data.Data[0]);
+      } else {
+        setImportStatus({ status: 'error', message: data?.Message || t('integrations.Yotpo.importError') });
+      }
+    } catch {
+      setImportStatus({ status: 'error', message: t('integrations.Yotpo.importError') });
+    }
+    setImportLoading(false);
+  };
+
+  const pollImportStatus = (jobId: number) => {
+    const interval = setInterval(async () => {
+      try {
+        const response = await fetch(`/api/Integrations/Yotpo/ImportStatus/${jobId}`, {
+          headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+        });
+        const data = await response.json();
+        const job = data?.Data;
+        if (job) {
+          setImportStatus({ status: job.Status, processed: job.Processed, failed: job.Failed, total: job.TotalRows, error: job.Error });
+          if (job.Status === 'done' || job.Status === 'failed') clearInterval(interval);
+        }
+      } catch { clearInterval(interval); }
+    }, 10000);
+  };
+
   const normalizedRegisterAsActiveOptionsID = normalizePreferenceType(settings?.RegisterAsActiveOptionsID, UnsubscribePreferenceType.Both);
 
   return (
@@ -540,6 +588,60 @@ const Yotpo = ({ classes }: any) => {
           </Button>
         </Grid>
       </Box>}
+      {isAuthenticated && (
+        <Box className={"formContainer"} style={{ marginTop: 24 }}>
+          <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.pb15)}>
+            <Typography className={clsx(classes.bold)} style={{ fontSize: 16, marginBottom: 8 }}>
+              {t('integrations.Yotpo.importFromCsvTitle')}
+            </Typography>
+            <Box style={{ background: '#f5f5f5', borderRadius: 6, padding: '12px 16px', marginBottom: 12 }}>
+              <Typography style={{ fontWeight: 600, marginBottom: 4 }}>{t('integrations.Yotpo.importHowTitle')}</Typography>
+              <ol style={{ margin: 0, paddingLeft: 20 }}>
+                <li>{t('integrations.Yotpo.importStep1')}</li>
+                <li>{t('integrations.Yotpo.importStep2')}</li>
+                <li>{t('integrations.Yotpo.importStep3')}</li>
+                <li>{t('integrations.Yotpo.importStep4')}</li>
+                <li>{t('integrations.Yotpo.importStep5')}</li>
+              </ol>
+            </Box>
+            <input
+              type="file"
+              accept=".csv"
+              multiple
+              style={{ marginBottom: 12 }}
+              onChange={(e) => setCsvFiles(e.target.files)}
+            />
+            <Box>
+              <Button
+                onClick={handleCsvImport}
+                variant='contained'
+                size='medium'
+                disabled={importLoading || !csvFiles || csvFiles.length === 0}
+                className={clsx(classes.btn, classes.btnRounded)}
+                color="primary"
+              >
+                {importLoading ? t('integrations.Yotpo.importing') : t('integrations.Yotpo.importBtn')}
+              </Button>
+            </Box>
+            {importStatus && (
+              <Box style={{ marginTop: 12 }}>
+                {importStatus.status === 'queued' && <Typography style={{ color: '#1976d2' }}>{importStatus.message}</Typography>}
+                {importStatus.status === 'processing' && (
+                  <Typography style={{ color: '#1976d2' }}>
+                    {t('integrations.Yotpo.importProcessing', { processed: importStatus.processed, failed: importStatus.failed })}
+                  </Typography>
+                )}
+                {importStatus.status === 'done' && (
+                  <Typography style={{ color: 'green' }}>
+                    {t('integrations.Yotpo.importDone', { processed: importStatus.processed, failed: importStatus.failed })}
+                  </Typography>
+                )}
+                {importStatus.status === 'error' && <Typography style={{ color: 'red' }}>{importStatus.message || importStatus.error}</Typography>}
+              </Box>
+            )}
+          </Grid>
+        </Box>
+      )}
       <Loader isOpen={showLoader} showBackdrop={true} />
       {renderDialog()}
     </>

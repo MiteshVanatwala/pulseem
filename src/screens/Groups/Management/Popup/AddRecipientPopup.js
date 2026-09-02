@@ -1268,7 +1268,7 @@ const AddRecipientPopup = ({ classes,
             if (!d) return '';
             try { return moment(d).format(dateFormat || 'DD/MM/YYYY'); } catch (e) { return '' + d; }
         };
-        const expiringSoon = loyaltyData.PointsExpiryDate
+        const expiringSoon = loyaltyData?.PointsExpiryDate
             ? moment(loyaltyData.PointsExpiryDate).diff(moment(), 'days') <= 30
             : false;
         const row = (label, value, warn) => (
@@ -1306,16 +1306,16 @@ const AddRecipientPopup = ({ classes,
                 <AccordionDetails>
                     <Box style={{ width: '100%' }}>
                         <Box style={{ display: 'flex', flexWrap: 'wrap' }}>
-                            {row('recipient.loyalty.points', loyaltyData.Points)}
-                            {row('recipient.loyalty.tier', loyaltyData.Tier)}
-                            {row('recipient.loyalty.pointsEarned', loyaltyData.PointsEarnedTotal)}
-                            {row('recipient.loyalty.tierMultiplier', loyaltyData.TierMultiplier != null ? ('×' + Number(loyaltyData.TierMultiplier).toFixed(2)) : '')}
-                            {row('recipient.loyalty.pointsExpiry', fmtDate(loyaltyData.PointsExpiryDate), expiringSoon)}
-                            {row('recipient.loyalty.referrals', loyaltyData.ReferralCount)}
-                            {row('recipient.loyalty.optedIn', loyaltyData.OptedIn ? t('common.Yes') : t('common.No'))}
+                            {row('recipient.loyalty.points', loyaltyData?.Points ?? '')}
+                            {row('recipient.loyalty.tier', loyaltyData?.Tier ?? '')}
+                            {row('recipient.loyalty.pointsEarned', loyaltyData?.PointsEarnedTotal ?? '')}
+                            {row('recipient.loyalty.tierMultiplier', loyaltyData?.TierMultiplier != null ? ('×' + Number(loyaltyData.TierMultiplier).toFixed(2)) : '')}
+                            {row('recipient.loyalty.pointsExpiry', fmtDate(loyaltyData?.PointsExpiryDate), expiringSoon)}
+                            {row('recipient.loyalty.referrals', loyaltyData?.ReferralCount ?? '')}
+                            {row('recipient.loyalty.optedIn', loyaltyData?.OptedIn != null ? (loyaltyData.OptedIn ? t('common.Yes') : t('common.No')) : '')}
                         </Box>
                         <Typography style={{ fontSize: 12, color: '#888', paddingInlineStart: 8, paddingTop: 6 }}>
-                            {t('recipient.loyalty.lastSynced')}: {loyaltyData.LastSyncedAt ? fmtDate(loyaltyData.LastSyncedAt) : '-'}
+                            {t('recipient.loyalty.lastSynced')}: {loyaltyData?.LastSyncedAt ? fmtDate(loyaltyData.LastSyncedAt) : '-'}
                         </Typography>
                     </Box>
                 </AccordionDetails>
@@ -1460,8 +1460,8 @@ const AddRecipientPopup = ({ classes,
                     ADD_RECIPIENT_TABS.map((label, index) => ActiveForm(label, index))
                 }
                 {
-                    /* PR-3418 — read-only Yotpo loyalty panel (edit mode, only when data exists) */
-                    recipientData && loyaltyData && LOYALTY_PANEL()
+                    /* PR-3418 — read-only Yotpo loyalty panel (edit mode always) */
+                    recipientData && LOYALTY_PANEL()
                 }
             </Box>
             <Loader isOpen={showLaoder} />
