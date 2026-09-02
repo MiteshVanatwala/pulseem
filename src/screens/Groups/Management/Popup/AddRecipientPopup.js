@@ -1318,16 +1318,16 @@ const AddRecipientPopup = ({ classes,
                 <AccordionDetails>
                     <Box style={{ width: '100%' }}>
                         <Box style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '18px 28px' }}>
-                            {field('recipient.loyalty.points', loyaltyData?.Points ?? '')}
-                            {field('recipient.loyalty.tier', loyaltyData?.Tier ?? '')}
-                            {field('recipient.loyalty.pointsEarned', loyaltyData?.PointsEarnedTotal ?? '')}
+                            {field('recipient.loyalty.points', loyaltyData?.PointsBalance ?? '')}
+                            {field('recipient.loyalty.tier', loyaltyData?.TierName ?? '')}
+                            {field('recipient.loyalty.pointsEarned', loyaltyData?.PointsEarned ?? '')}
                             {field('recipient.loyalty.tierMultiplier', loyaltyData?.TierMultiplier != null ? ('×' + Number(loyaltyData.TierMultiplier).toFixed(2)) : '')}
                             {field('recipient.loyalty.pointsExpiry', fmtDate(loyaltyData?.PointsExpiryDate))}
                             {field('recipient.loyalty.referrals', loyaltyData?.ReferralCount ?? '')}
                             {field('recipient.loyalty.optedIn', loyaltyData?.OptedIn != null ? (loyaltyData.OptedIn ? t('common.Yes') : t('common.No')) : '')}
                         </Box>
                         <Typography style={{ fontSize: 11.5, color: '#A0AABF', marginTop: 14, paddingTop: 10, borderTop: '1px solid #E0E4EE' }}>
-                            {t('recipient.loyalty.lastSynced')}: {loyaltyData?.LastSyncedAt ? fmtDate(loyaltyData.LastSyncedAt) : '-'}
+                            {t('recipient.loyalty.lastSynced')}: {loyaltyData?.LastUpdatedAt ? fmtDate(loyaltyData.LastUpdatedAt) : '-'}
                         </Typography>
                     </Box>
                 </AccordionDetails>
