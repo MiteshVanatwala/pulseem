@@ -161,7 +161,7 @@ const AddRecipientPopup = ({ classes,
                     try {
                         const res = await dispatch(getClientLoyaltyData(cid));
                         const data = res?.payload?.Data;
-                        setLoyaltyData(data && data.HasData ? data : null);
+                        setLoyaltyData(data ?? null);
                     } catch (e) {
                         setLoyaltyData(null);
                     }
