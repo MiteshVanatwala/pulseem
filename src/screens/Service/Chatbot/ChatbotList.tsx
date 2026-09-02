@@ -31,7 +31,6 @@ import { Switch, ManagmentIcon, TablePagination } from '../../../components/mana
 import { Title } from '../../../components/managment/Title';
 import { EditIcon, DeleteIcon } from '../../../assets/images/managment';
 import { Loader } from '../../../components/Loader/Loader';
-import UsageCounter from '../../../components/Service/UsageCounter';
 import UpgradePrompt from '../../../components/Service/UpgradePrompt';
 import { useServicePlanLimits } from '../../../hooks/useServicePlanLimits';
 // TypeScript may not have declarations for CSS imports in this project setup.
@@ -92,20 +91,25 @@ const ChatbotList = ({ classes }: { classes?: any }) => {
   }, [dispatch]);
 
   // PR-3179: plan limit now sourced from useServicePlanLimits (src/config/
-  // servicePlanLimits.ts) rather than the per-account backend value the chatbot
-  // slice used to carry. chatbotLimitReached gates chatbot creation (total count,
-  // per the PR-3179 spec); atLimit keeps gating the enable/disable toggle against
-  // the enabled count specifically, since disabling doesn't free up a "total count" slot.
+  // servicePlanLimits.ts). The cap is on concurrently-ENABLED chatbot count, not
+  // total (matches the backend exactly - ChatbotLogic.SaveChatbot/ToggleChatbot
+  // both gate on activeCountExcludingSelf) - a chatbot has a real disable lever,
+  // so e.g. 10/10 chatbots with 1 disabled (9 enabled) must still allow creating
+  // an 11th enabled one. chatbotLimitReached and atLimit are now the same check;
+  // kept as two names since they read more clearly at their respective call
+  // sites (Create button vs. the per-row toggle).
   const { limits, isAtLimit } = useServicePlanLimits();
   const activeCount = list.filter((bot: IChatbotListItem) => bot.enabled).length;
-  const chatbotLimitReached = isAtLimit('maxChatbots', list.length);
-  const atLimit = isAtLimit('maxChatbots', activeCount);
+  const chatbotLimitReached = isAtLimit('maxChatbots', activeCount);
+  const atLimit = chatbotLimitReached;
   // Plan Downgrade Handling: nothing gets auto-disabled on downgrade (see
   // FeatureTierLogic.DowngradePlan) - existing chatbots stay active, so a downgrade
-  // can leave the account strictly OVER its new limit, not just at it. Distinct from
-  // chatbotLimitReached (>=, blocks new creation) - this is specifically >, surfaced
-  // as a standing warning until the user manually removes the excess.
-  const overLimit = limits.maxChatbots !== -1 && list.length > limits.maxChatbots;
+  // can leave the account strictly OVER its new limit on enabled count, not just at
+  // it. Distinct from chatbotLimitReached (>=, blocks new creation) - this is
+  // specifically >, surfaced as a standing warning until the user manually
+  // disables/removes the excess. Same activeCount basis as the guards above, so
+  // this banner and the Create button's disabled state never disagree.
+  const overLimit = limits.maxChatbots !== -1 && activeCount > limits.maxChatbots;
   const visibleList: IChatbotListItem[] = isSearching ? (searchResults as IChatbotListItem[]) : list;
   const rpp = parseInt(rowsPerPage, 10);
   const pagedList = visibleList.slice((page - 1) * rpp, (page - 1) * rpp + rpp);
@@ -422,7 +426,11 @@ const ChatbotList = ({ classes }: { classes?: any }) => {
       <Grid container spacing={2} className={classes.linePadding} alignItems="center">
         <Grid item>
           <Tooltip
-            title={chatbotLimitReached ? `Your plan allows ${limits.maxChatbots} chatbots. Upgrade to create more.` : ''}
+            title={
+              chatbotLimitReached
+                ? `Your plan allows ${limits.maxChatbots} enabled chatbots. Disable one or upgrade to create more.`
+                : ''
+            }
           >
             <span>
               <Button
@@ -443,10 +451,14 @@ const ChatbotList = ({ classes }: { classes?: any }) => {
         </Grid>
       </Grid>
 
-      <UsageCounter current={list.length} max={limits.maxChatbots} label="Chatbots" />
+      {limits.maxChatbots !== -1 && (
+        <Typography variant="body2" color="textSecondary" style={{ marginBlockEnd: 8 }}>
+          {`${activeCount} / ${limits.maxChatbots} enabled chatbots`}
+        </Typography>
+      )}
       {overLimit && (
         <Alert severity="warning" style={{ marginBlockEnd: 8 }}>
-          {`You have ${list.length} chatbots, which is over your current plan's limit of ${limits.maxChatbots}. Existing chatbots remain active, but you won't be able to create more until you remove the excess.`}
+          {`You have ${activeCount} enabled chatbots, which is over your current plan's limit of ${limits.maxChatbots}. Existing chatbots remain active, but you won't be able to enable more until you disable some.`}
         </Alert>
       )}
       {chatbotLimitReached && <UpgradePrompt feature="more chatbots" />}
