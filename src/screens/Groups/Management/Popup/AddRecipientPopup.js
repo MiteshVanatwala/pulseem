@@ -30,6 +30,7 @@ import { Loader } from "../../../../components/Loader/Loader";
 import { getAccountExtraData } from "../../../../redux/reducers/smsSlice";
 import { CLIENT_CONSTANTS } from "../../../../model/Clients/Contants";
 import { changeClientStatus, getClientLoyaltyData } from "../../../../redux/reducers/clientSlice";
+import { getIntegration } from "../../../../redux/reducers/integrationSlice";
 import { IoIosArrowDown, IoMdClose } from "react-icons/io";
 import { BaseDialog } from "../../../../components/DialogTemplates/BaseDialog";
 import { ReplaceExtraFieldHeader } from "../../../../helpers/UI/AccountExtraField";
@@ -111,6 +112,7 @@ const AddRecipientPopup = ({ classes,
     // PR-3418 — read-only Yotpo loyalty snapshot (edit mode only)
     const [loyaltyData, setLoyaltyData] = useState(null)
     const [loyaltyExpanded, setLoyaltyExpanded] = useState(false)
+    const [isYotpoConnected, setIsYotpoConnected] = useState(false)
     const [errors, setErrors] = useState({
         Email: '',
         Cellphone: '',
@@ -154,19 +156,24 @@ const AddRecipientPopup = ({ classes,
             let { ExtraFields, ...restData } = { ...addRecipientData, ...recipientData }
             setAddRecipientData({ ...restData, ...ExtraFields })
             setSelectedLocalGroups([...selectedGroups])
-            // PR-3418 — lazy-load loyalty snapshot for the edited recipient
+            // PR-3418 — check if Yotpo is connected, then lazy-load loyalty snapshot
             const cid = recipientData.ClientID || recipientData.ClientId || recipientData.clientId;
-            if (cid) {
-                (async () => {
-                    try {
+            (async () => {
+                try {
+                    const yotpoRes = await dispatch(getIntegration(11)); // 11 = Yotpo
+                    const yotpoSettings = yotpoRes?.payload?.Data;
+                    const connected = !!(yotpoSettings?.ApiKey);
+                    setIsYotpoConnected(connected);
+                    if (connected && cid) {
                         const res = await dispatch(getClientLoyaltyData(cid));
                         const data = res?.payload?.Data;
                         setLoyaltyData(data ?? null);
-                    } catch (e) {
-                        setLoyaltyData(null);
                     }
-                })();
-            }
+                } catch (e) {
+                    setIsYotpoConnected(false);
+                    setLoyaltyData(null);
+                }
+            })();
         }
 
     }, [recipientData])
@@ -1290,6 +1297,7 @@ const AddRecipientPopup = ({ classes,
                 />
             </Box>
         );
+        if (!isYotpoConnected) return null;
         return (
             <Accordion
                 expanded={loyaltyExpanded}
