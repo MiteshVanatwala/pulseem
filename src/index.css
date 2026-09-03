@@ -154,3 +154,38 @@ html[data-url*="remove-my-data"] .grecaptcha-badge {
 .popup-editor-bee .background-video-container {
   display: none !important;
 }
+
+/* Support widget bubble (pulseemsupport.com/widget.js, injected via index.html —
+   entirely outside this React app, so it can't read Redux/RTL state itself and must
+   be steered from plain global CSS instead, the same way #INDmenu-btn is above).
+   Its own default is `position:fixed; right:24px; bottom:24px` (see widget.js),
+   which is fine in LTR (sidebar is on the left, opposite side — no conflict) but
+   collides with the sidebar in RTL, where the sidebar anchors to the right too.
+   `body.sidebar-collapsed` is toggled from App.js alongside the existing `rtl`
+   class, exposing the sidebar's collapsed/expanded width (70px / 224px, see
+   SIDEBAR_WIDTH / SIDEBAR_COLLAPSED_WIDTH in style/classes/sideMenuStyle.js) so the
+   bubble can slide with it, the same way the AI mascot icons already do. Scoped to
+   desktop widths (matching SideBar's own isMobile breakpoint, which treats <1280px
+   as a temporary overlay drawer) — below that the widget keeps its own default. */
+@media (min-width: 1280px) {
+  body.rtl #pw-bubble {
+    transition: right 0.3s ease;
+    /* The support mascot icon (AIFloatingButton, featureId 73) sits on this same
+       side in RTL at `bottom: calc(125px - 5vh)` (105px base + the 20px RTL nudge
+       applied there). Placing the bubble (56px tall) below it, with an 8px gap,
+       needs `bottom: calc(61px - 5vh)` — but on a tall viewport (5vh > 61px, i.e.
+       taller than ~1220px) that goes negative and would push the bubble off the
+       bottom of the screen, so it's clamped with `max()` to never sit closer than
+       4px from the edge. On tall viewports the gap shrinks below 8px rather than
+       the bubble disappearing — there just isn't room for a full 8px gap between
+       the mascot and the screen edge there. Keep this in sync with the mascot's
+       own bottom formula in AIFloatingButton.tsx if that changes again. */
+    bottom: max(4px, calc(61px - 5vh)) !important;
+  }
+  body.rtl.sidebar-collapsed #pw-bubble {
+    right: 94px !important; /* 70px collapsed-rail width + widget's own 24px gap */
+  }
+  body.rtl:not(.sidebar-collapsed) #pw-bubble {
+    right: 248px !important; /* 224px expanded-sidebar width + widget's own 24px gap */
+  }
+}
