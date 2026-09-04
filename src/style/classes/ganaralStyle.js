@@ -2605,6 +2605,59 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
       width: "100% !important",
     },
   },
+  /* Wraps additionalButtonsOnStart so the toolbar breaks BETWEEN the two button
+     clusters instead of tearing one of them in half.
+     Below 768px baseButtonsContainer switches to column-reverse and reverses its
+     DIRECT children; display:contents keeps these buttons direct children there,
+     preserving the stacking order they had before this wrapper existed. */
+  wizardStartGroup: {
+    display: "flex",
+    flexWrap: "wrap",
+    alignItems: "center",
+    flexShrink: 0,
+    maxWidth: "100%",
+    ...(isRTL ? { marginLeft: "auto" } : { marginRight: "auto" }),
+    "@media screen and (max-width: 768px)": {
+      display: "contents",
+    },
+  },
+  /* common.lastSaveAt caption, shown under the trailing action button after a save.
+     Absolutely positioned on purpose: it must never take part in the button row's
+     inline flow. It only appears after the first save, so in the flow it widens the
+     row mid-session and pushes a button onto a second line (visible at ~110% zoom).
+     Branch on isRTL like the rest of this file: jss-rtl is registered in App.js but
+     does NOT flip this sheet, because useClasses() runs in App (App.js:733) while
+     MuiThemeProvider is inside App's own return (App.js:1028) — so makeStyles sees
+     the default LTR theme and passes flip:false.
+     Below 768px the toolbar is a column-reverse stack and this box is no longer
+     last, so absolute positioning would drop the caption on top of the buttons
+     underneath it — there the caption returns to normal flow. */
+  wizardHelperText: {
+    position: "absolute",
+    top: "calc(100% - 6px)",
+    ...(isRTL ? { left: 8 } : { right: 8 }),
+    whiteSpace: "nowrap",
+    fontSize: 12,
+    lineHeight: "14px",
+    fontWeight: 500,
+    opacity: 0.6,
+    pointerEvents: "none",
+    animation: "$wizardHelperTextIn 0.25s ease-out",
+    "@media screen and (max-width: 768px)": {
+      position: "static",
+      whiteSpace: "normal",
+      width: "100%",
+      textAlign: "center",
+      fontSize: 13,
+      opacity: 0.7,
+      padding: "4px 0",
+      animation: "none",
+    },
+  },
+  "@keyframes wizardHelperTextIn": {
+    from: { opacity: 0, transform: "translateY(-4px)" },
+    to: { opacity: 0.6, transform: "none" },
+  },
   flexColCenter: {
     display: "flex",
     flexDirection: "column",

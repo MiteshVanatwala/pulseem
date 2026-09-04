@@ -2423,7 +2423,7 @@ const CampaignEditor = ({ classes, ...props }) => {
         onShowDocuments={() => { setShowDocuments(true) }}
         additionalButtons={renderButtons()}
         additionalButtonsOnStart={renderTemplateButtons()}
-        helperText={<label style={{ fontSize: 14 }}>{lastSaveText}</label>}
+        helperText={lastSaveText}
       />
       <OverwriteTemplatePopUp
         classes={classes}
