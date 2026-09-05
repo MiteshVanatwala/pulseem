@@ -4,7 +4,7 @@ import { Check } from '@material-ui/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { toggleChat } from '../../redux/reducers/aiChatSlice';
 import { toggleSupportChat } from '../../redux/reducers/supportChatSlice';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, Theme } from '@material-ui/core/styles';
 import AIImage from "../../assets/images/AI-icon.png";
 import { useTranslation } from 'react-i18next';
 import { StateType } from '../../Models/StateTypes';
@@ -39,8 +39,18 @@ const markHintSeen = (): void => {
   try { window.localStorage.setItem(HINT_FLAG, '1'); } catch { /* private mode — hint may re-show */ }
 };
 
-const useStyles = makeStyles((theme) => ({
+// jss-rtl (wired up globally in App.js via `create({ plugins: [...jssPreset().plugins, rtl()] })`)
+// auto-flips left/right CSS on anything rendered inside a dir="rtl" container (Hebrew
+// etc). `container`/`smallIcon`/`smallIconRTL69` below already compute their own
+// left/right per isRTL, so without `flip: false` the plugin flips them AGAIN on top of
+// that — landing the icon on the wrong side/offset and overlapping the sidebar,
+// Hebrew-only. `flip` isn't part of MUI's typed CSSProperties, hence the `as any`.
+type AIFloatingButtonClassKey =
+  'container' | 'fab' | 'smallIcon' | 'smallIconRTL69' | 'polyIcon' | 'customTooltip';
+
+const useStyles = makeStyles<Theme, StyleProps, AIFloatingButtonClassKey>((theme) => ({
   container: {
+    flip: false,
     position: 'fixed',
     width: '60px',
     height: '60px',
@@ -96,6 +106,7 @@ const useStyles = makeStyles((theme) => ({
     animation: '$pulse 2s infinite',
   },
   smallIcon: {
+    flip: false,
     position: 'absolute',
     top: '-5px',
     bottom: 'auto',
@@ -112,6 +123,7 @@ const useStyles = makeStyles((theme) => ({
     }
   },
   smallIconRTL69: {
+    flip: false,
     top: 'auto',
     bottom: '-5px',
     right: 'auto',
@@ -145,7 +157,7 @@ const useStyles = makeStyles((theme) => ({
     textAlign: 'center',
     lineHeight: 1.3,
   }
-}));
+} as any));
 
 interface AIFloatingButtonProps {
   config?: AIChatConfig;

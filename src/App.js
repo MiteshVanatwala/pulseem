@@ -726,7 +726,7 @@ const App = ({ screenSize }) => {
   let location = useLocation();
   const dispatch = useDispatch();
 
-  const { language, isRTL, windowSize, isClal, isDebtAccount, isAdmin, isLoader, userRoles, isOnlyWhatsAppChat } = useSelector(state => state.core)
+  const { language, isRTL, windowSize, isClal, isDebtAccount, isAdmin, isLoader, userRoles, isOnlyWhatsAppChat, isDrawerOpen } = useSelector(state => state.core)
   const { accountSettings, currencyList, accountFeatures } = useSelector(state => state.common)
   const IsPoland = language === 'pl';
   const { isOpen } = useSelector((state) => state.helpDrawer);
@@ -882,6 +882,15 @@ const App = ({ screenSize }) => {
 
   if (isRTL) document.body.classList.add('rtl');
   else document.body.classList.remove('rtl');
+
+  // Exposes the sidebar's collapsed/expanded state to plain global CSS, the same way
+  // `rtl` above exposes direction — needed so the externally-hosted support widget
+  // (pulseemsupport.com/widget.js, injected via index.html, entirely outside this
+  // React tree) can be repositioned to clear the sidebar via CSS alone. Note:
+  // redux's `isDrawerOpen` is named for the toggle action, not the visual result — it
+  // is actually true when the sidebar IS collapsed (narrow rail), false when expanded.
+  if (isDrawerOpen) document.body.classList.add('sidebar-collapsed');
+  else document.body.classList.remove('sidebar-collapsed');
 
   // Add polish-account class for Polish accounts
   if (IsPoland) document.body.classList.add('polish-account');
