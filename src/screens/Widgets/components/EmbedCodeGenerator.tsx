@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Box, Typography, TextField } from '@material-ui/core';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
@@ -18,6 +18,19 @@ interface EmbedCodeGeneratorProps {
 const EmbedCodeGenerator: React.FC<EmbedCodeGeneratorProps> = ({ widgetId, open, onClose, classes }) => {
   const { t } = useTranslation();
   const [copied, setCopied] = useState(false);
+  const [copyFailed, setCopyFailed] = useState(false);
+
+  // The dialog stays mounted between openings, so a failure from last time would
+  // still be on screen the next time it is opened.
+  useEffect(() => {
+    if (open) { setCopyFailed(false); setCopied(false); }
+  }, [open]);
+
+  // MUI spreads onClick onto the TextField root, so the handler fires for the
+  // padding and the outlined border too, where e.target is a div/fieldset with no
+  // .select(). Holding the input itself means a click anywhere in the field selects
+  // the whole snippet, which is the point of it.
+  const snippetRef = useRef<HTMLTextAreaElement | null>(null);
 
   const siteId = widgetId || 'YOUR_SITE_ID';
 
@@ -31,16 +44,44 @@ const EmbedCodeGenerator: React.FC<EmbedCodeGeneratorProps> = ({ widgetId, open,
   // then never appears and says nothing about why.
   const snippet = `<script async src="${scriptSrc}?id=${siteId}"></script>`;
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(snippet).then(() => {
-      setCopied(true);
-      // Leave the confirmation on screen briefly before closing, so the copy is
-      // visibly acknowledged — this dialog has no toast of its own.
-      setTimeout(() => {
-        setCopied(false);
-        onClose();
-      }, 900);
-    });
+  // navigator.clipboard exists only in a secure context, so it is undefined when the
+  // dashboard is served over plain http — reading .writeText off it threw and took
+  // the dialog with it. Selecting the field and using execCommand still works there,
+  // and if even that fails the snippet is left selected so Ctrl+C is one key away.
+  const copySnippet = async (): Promise<boolean> => {
+    try {
+      if (window.isSecureContext && navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(snippet);
+        return true;
+      }
+    } catch {
+      // Denied or unavailable — fall through to the selection-based path.
+    }
+    const field = snippetRef.current;
+    if (!field) return false;
+    field.select();
+    try {
+      return document.execCommand('copy');
+    } catch {
+      return false;
+    }
+  };
+
+  const handleCopy = async () => {
+    const copied = await copySnippet();
+    // A failed copy must not close the dialog: the snippet is selected and the
+    // visitor can still copy it by hand, which is impossible once it is gone.
+    if (!copied) {
+      setCopyFailed(true);
+      return;
+    }
+    setCopied(true);
+    // Leave the confirmation on screen briefly before closing, so the copy is
+    // visibly acknowledged — this dialog has no toast of its own.
+    setTimeout(() => {
+      setCopied(false);
+      onClose();
+    }, 900);
   };
 
   return (
@@ -66,8 +107,17 @@ const EmbedCodeGenerator: React.FC<EmbedCodeGeneratorProps> = ({ widgetId, open,
           variant="outlined"
           value={snippet}
           InputProps={{ readOnly: true }}
-          onClick={(e: any) => e.target.select()}
+          inputRef={snippetRef}
+          onClick={() => snippetRef.current?.select()}
         />
+        {copyFailed && (
+          <Typography variant="caption" color="error" style={{ display: 'block', marginTop: 8 }}>
+            {t(
+              'common.widget_embed_copy_failed',
+              'Your browser blocked the copy. The code is selected — press Ctrl+C to copy it.',
+            )}
+          </Typography>
+        )}
       </Box>
     </BaseDialog>
   );

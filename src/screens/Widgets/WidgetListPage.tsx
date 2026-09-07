@@ -1,84 +1,69 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useDispatch, useSelector } from 'react-redux';
 import {
-  Grid, Typography, Box, Button, CircularProgress, TextField,
+  Grid, Typography, Box, Button, TextField, FormControl, InputLabel, Select, MenuItem,
 } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
-import LanguageIcon from '@material-ui/icons/Language';
+import { Language, Code } from '@material-ui/icons';
 import { FaCommentDots } from 'react-icons/fa';
 import clsx from 'clsx';
 import DefaultScreen from '../DefaultScreen';
 import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
+import { Title } from '../../components/managment/Title';
+import { TablePagination } from '../../components/managment/index';
+import { Loader } from '../../components/Loader/Loader';
+import Toast from '../../components/Toast/Toast.component';
+// Generic (title / value / change), and shared so both management screens keep the
+// same stat row. Worth promoting to components/managment if a third screen needs it.
+import StatCard from '../LandingPages/PopUpManagement/StatCard';
 import { sitePrefix } from '../../config';
 import { getAllWidgets, WidgetSummary } from '../../helpers/Api/WidgetAPI';
+import WidgetCard from './components/WidgetCard';
+import EmbedCodeGenerator from './components/EmbedCodeGenerator';
+import { getDashboardData } from '../../redux/reducers/serviceDashboardSlice';
+import { IDashboardData } from '../../Models/Service/Dashboard';
 
-// Pulseem brand accent — matches palette.primary.main in style/theme.js. The page
-// previously used the mockup's orange (#f4511e), which belonged to no palette.
-const ACCENT = '#FF1744';
-const ACCENT_SOFT = '#fff0f3';
+const STATUS_FILTERS = [
+  { value: 'All', labelKey: 'landingPages.popupManagement.filters.all', fallback: 'All' },
+  { value: 'active', labelKey: 'landingPages.popupManagement.filters.active', fallback: 'Active' },
+  { value: 'paused', labelKey: 'common.widget_status_paused', fallback: 'Paused' },
+  { value: 'draft', labelKey: 'landingPages.popupManagement.filters.draft', fallback: 'Draft' },
+];
 
-const STATUS_BADGE: Record<string, { label: string; bg: string; color: string }> = {
-  active: { label: 'Active', bg: '#dcfce7', color: '#166534' },
-  paused: { label: 'Paused', bg: '#fef9c3', color: '#854d0e' },
-  draft: { label: 'Draft', bg: '#f3f4f6', color: '#6b7280' },
-};
+const PAGE_SIZE_OPTIONS = [6, 12, 18];
 
-const WidgetCard = ({ widget, onClick }: { widget: WidgetSummary; onClick: () => void }) => {
-  const { t } = useTranslation();
-  const badge = STATUS_BADGE[widget.status] || STATUS_BADGE.draft;
-  return (
-    <Box
-      p={3}
-      bgcolor="#ffffff"
-      borderRadius={16}
-      boxShadow="0 4px 20px rgba(0,0,0,0.04)"
-      border="1px solid #e5e7eb"
-      style={{ cursor: 'pointer', transition: 'box-shadow 0.15s ease' }}
-      onClick={onClick}
-    >
-      <Box display="flex" justifyContent="space-between" alignItems="flex-start" mb={1.5}>
-        <Box display="flex" alignItems="center">
-          <Box
-            width={40} height={40} borderRadius={10} bgcolor={ACCENT_SOFT}
-            display="flex" alignItems="center" justifyContent="center" mr={1.5}
-          >
-            <FaCommentDots size={18} color={ACCENT} />
-          </Box>
-          <Box>
-            <Typography style={{ fontWeight: 700, color: '#111827', fontSize: '1.05rem' }}>
-              {widget.name || t('common.widget_default_name', 'Chat with us')}
-            </Typography>
-            <Box display="flex" alignItems="center" mt={0.25}>
-              <LanguageIcon style={{ fontSize: 14, color: '#9ca3af', marginRight: 4 }} />
-              <Typography variant="caption" style={{ color: '#6b7280' }}>
-                {widget.domain || t('common.widget_no_domain', 'No domain set')}
-              </Typography>
-            </Box>
-          </Box>
-        </Box>
-        <Box
-          px={1.25} py={0.4} borderRadius={6}
-          style={{ backgroundColor: badge.bg, color: badge.color, fontWeight: 600, fontSize: '0.75rem', textTransform: 'capitalize' }}
-        >
-          {badge.label}
-        </Box>
-      </Box>
-      <Typography variant="body2" color="textSecondary" style={{ wordBreak: 'break-all' }}>
-        {widget.websiteUrl || t('common.widget_no_url', 'No website URL set')}
-      </Typography>
-    </Box>
-  );
-};
+// Widgets are created per domain, but the field is nullable, so anything without one
+// still needs a group to sit in rather than vanishing from the list.
+const UNGROUPED = '__no_domain__';
 
 const WidgetListPage = ({ classes }: { classes?: any }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const [loading, setLoading] = useState(true);
   const [widgets, setWidgets] = useState<WidgetSummary[]>([]);
   const [createOpen, setCreateOpen] = useState(false);
   const [newDomain, setNewDomain] = useState('');
+  const [toastMessage, setToastMessage] = useState<any>(null);
+  const [embedWidgetId, setEmbedWidgetId] = useState<string | null>(null);
   const [searchParams, setSearchParams] = useSearchParams();
+
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('All');
+  const [sortBy, setSortBy] = useState<'createdDate' | 'name' | 'status'>('createdDate');
+  const [sortDirection, setSortDirection] = useState<'ASC' | 'DESC'>('DESC');
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(PAGE_SIZE_OPTIONS[1]);
+
+  // Account-wide engagement figures, not per-widget: the same aggregate the Service
+  // Dashboard renders. There is no per-widget stats endpoint, so the stat row
+  // summarises the account and the cards below stay descriptive.
+  const { data: dashboard, loading: dashboardLoading } = useSelector(
+    (s: any) => s.serviceDashboard as { data: IDashboardData | null; loading: boolean },
+  ) || { data: null, loading: false };
 
   // The Dashboard's "New Widget" quick action links to /Widgets?action=create so it
   // lands on creating a widget rather than on the list. Consume the parameter once
@@ -97,12 +82,80 @@ const WidgetListPage = ({ classes }: { classes?: any }) => {
     let cancelled = false;
     getAllWidgets()
       .then((data) => { if (!cancelled) setWidgets(data); })
-      .catch((err) => { console.error('Failed to load widgets', err); })
+      .catch((err) => {
+        console.error('Failed to load widgets', err);
+        if (!cancelled) {
+          setToastMessage({
+            severity: 'error',
+            message: t('common.widget_load_failed', 'Could not load your widgets. Refresh to try again.'),
+          });
+        }
+      })
       .finally(() => { if (!cancelled) setLoading(false); });
     return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const openWidget = (widgetId: string) => navigate(`${sitePrefix}Widgets/${widgetId}`);
+  useEffect(() => {
+    // Stat row only — a failure here must not block the list, so the rejection is
+    // swallowed and those cards fall back to a dash.
+    (dispatch as any)(getDashboardData());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Auto-dismiss, matching the popup management screen's toast behaviour.
+  useEffect(() => {
+    if (!toastMessage) return undefined;
+    const timer = setTimeout(() => setToastMessage(null), 3000);
+    return () => clearTimeout(timer);
+  }, [toastMessage]);
+
+  const counts = useMemo(() => ({
+    total: widgets.length,
+    active: widgets.filter((w) => w.status === 'active').length,
+    paused: widgets.filter((w) => w.status === 'paused').length,
+    draft: widgets.filter((w) => w.status === 'draft').length,
+  }), [widgets]);
+
+  // Filtering, sorting and paging are all client-side: getAllWidgets returns the
+  // whole set and there is one widget per domain, so the list stays small. Move
+  // these server-side if that stops being true.
+  const visible = useMemo(() => {
+    const term = searchTerm.trim().toLowerCase();
+    let rows = widgets.filter((w) => {
+      if (statusFilter !== 'All' && w.status !== statusFilter) return false;
+      if (!term) return true;
+      return [w.name, w.domain, w.websiteUrl]
+        .some((field) => (field || '').toLowerCase().includes(term));
+    });
+
+    const direction = sortDirection === 'ASC' ? 1 : -1;
+    rows = [...rows].sort((a, b) => {
+      let result = 0;
+      if (sortBy === 'name') result = (a.name || '').localeCompare(b.name || '');
+      else if (sortBy === 'status') result = a.status.localeCompare(b.status);
+      else result = new Date(a.createdDate).getTime() - new Date(b.createdDate).getTime();
+      return result * direction;
+    });
+    return rows;
+  }, [widgets, searchTerm, statusFilter, sortBy, sortDirection]);
+
+  // A filter change can leave the current page beyond the end of the results, which
+  // would render an empty grid with rows still available on page 1.
+  useEffect(() => { setPage(1); }, [searchTerm, statusFilter, sortBy, sortDirection]);
+
+  const paged = useMemo(
+    () => visible.slice((page - 1) * pageSize, page * pageSize),
+    [visible, page, pageSize],
+  );
+
+  // The card toggles optimistically and calls back here, because the list is owned
+  // by this component — including the revert when the request fails.
+  const applyStatus = (widgetId: string, status: 'active' | 'paused') => {
+    setWidgets((prev) => prev.map(
+      (w) => (w.widgetId === widgetId ? { ...w, status } : w),
+    ));
+  };
 
   const handleCreate = () => {
     const domain = newDomain.trim();
@@ -112,66 +165,270 @@ const WidgetListPage = ({ classes }: { classes?: any }) => {
     navigate(`${sitePrefix}Widgets/new?domain=${encodeURIComponent(domain)}`);
   };
 
-  return (
-    <DefaultScreen
-      currentPage="widgets"
-      classes={classes}
-      containerClass={clsx(classes?.management, classes?.mb50)}
-    >
-      <Box display="flex" justifyContent="space-between" alignItems="flex-start" mb={4} mt={2}>
-        <Box>
-          <Typography variant="h4" style={{ fontWeight: 'bold', color: '#1a1a1a', marginBottom: 4 }}>
-            {t('common.widget_chat_widget', 'Chat Widget')}
-          </Typography>
-          <Typography variant="body1" color="textSecondary">
-            {t('common.widget_list_subtitle', 'Manage your embeddable chat widgets, one per website domain')}
-          </Typography>
-        </Box>
+  const renderTopSection = () => (
+    <Box>
+      <Box pt={4}>
+        <Title
+          Text={t('common.widget_chat_widget', 'Chat Widget')}
+          classes={classes}
+        />
+      </Box>
+      <Box pt={3} className={classes?.responsiveActions}>
         <Button
-          className={clsx(classes?.btn, classes?.btnRounded, classes?.redButton)}
+          variant="contained"
+          color="primary"
+          className={clsx(classes?.btn, classes?.btnRounded)}
           startIcon={<AddIcon />}
           onClick={() => setCreateOpen(true)}
         >
           {t('common.widget_create_new', 'Create Widget')}
         </Button>
       </Box>
+      <Box mt={3}>
+        <Grid container spacing={3}>
+          <Grid item xs={12} sm={6} md={3}>
+            <StatCard
+              classes={classes}
+              title={t('common.widget_stat_total', 'Total Widgets')}
+              value={counts.total.toString()}
+              change={`${counts.active} ${t('landingPages.popupManagement.filters.active', 'Active')} • ${counts.paused} ${t('common.widget_status_paused', 'Paused')} • ${counts.draft} ${t('landingPages.popupManagement.filters.draft', 'Draft')}`}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6} md={3}>
+            <StatCard
+              classes={classes}
+              title={t('common.dashboard_total_conversations', 'Total Conversations')}
+              value={dashboard ? dashboard.stats.totalConversations.toLocaleString() : '—'}
+              change={dashboard
+                ? `${dashboard.stats.newConversations} ${t('common.dashboard_new_conversations', 'New')} • ${dashboard.stats.openConversations} ${t('common.dashboard_open_conversations', 'Open')}`
+                : ''}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6} md={3}>
+            <StatCard
+              classes={classes}
+              title={t('common.widget_stat_avg_response', 'Avg. Response Time')}
+              // Null until a conversation has actually been answered. A dash rather
+              // than 0, which would read as instant replies.
+              value={dashboard && dashboard.performance.avgResponseMinutes !== null
+                ? `${dashboard.performance.avgResponseMinutes} ${t('common.widget_stat_minutes', 'min')}`
+                : '—'}
+              change={dashboard
+                ? `${dashboard.performance.resolutionRate.toFixed(0)}% ${t('common.widget_stat_resolved', 'resolved')}`
+                : ''}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6} md={3}>
+            <StatCard
+              classes={classes}
+              title={t('common.widget_stat_satisfaction', 'Satisfaction')}
+              value={dashboard && dashboard.feedback.totalReviews > 0
+                ? dashboard.feedback.avgRating.toFixed(1)
+                : '—'}
+              change={dashboard && dashboard.feedback.totalReviews > 0
+                ? `${dashboard.feedback.totalReviews} ${t('common.widget_stat_reviews', 'reviews')}`
+                : ''}
+            />
+          </Grid>
+        </Grid>
+      </Box>
+    </Box>
+  );
 
-      {loading ? (
-        <Box display="flex" justifyContent="center" alignItems="center" minHeight="300px">
-          <CircularProgress />
-        </Box>
-      ) : widgets.length === 0 ? (
-        <Box
-          p={6}
-          textAlign="center"
-          bgcolor="#ffffff"
-          borderRadius={16}
-          border="1px dashed #d1d5db"
-        >
-          <FaCommentDots size={40} color="#d1d5db" />
-          <Typography variant="h6" style={{ fontWeight: 700, color: '#374151', marginTop: 16, marginBottom: 6 }}>
-            {t('common.widget_no_widgets_title', 'No chat widgets yet')}
-          </Typography>
-          <Typography variant="body2" color="textSecondary" style={{ marginBottom: 20 }}>
-            {t('common.widget_no_widgets_subtitle', 'Create your first widget to start chatting with visitors on your website')}
-          </Typography>
+  const renderSearchAndFilterSection = () => (
+    <Box mt={3}>
+      <Grid className={classes?.widgetToolbar} container spacing={2} alignItems="center">
+        <Grid item xs={12} md={4}>
+          <TextField
+            fullWidth
+            variant="outlined"
+            size="small"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder={t('common.widget_search_placeholder', 'Search by name, domain or URL')}
+            inputProps={{ 'aria-label': t('common.widget_search_placeholder', 'Search by name, domain or URL') }}
+          />
+        </Grid>
+        <Grid item>
+          {STATUS_FILTERS.map((filter) => (
+            <Button
+              key={filter.value}
+              variant={statusFilter === filter.value ? 'contained' : 'text'}
+              color={statusFilter === filter.value ? 'primary' : 'default'}
+              className={classes?.btnRounded}
+              onClick={() => setStatusFilter(filter.value)}
+              style={{ marginRight: '5px' }}
+            >
+              {t(filter.labelKey, filter.fallback)}
+            </Button>
+          ))}
+        </Grid>
+        <Grid item xs />
+        <Grid item>
+          <FormControl variant="outlined" size="small" style={{ minWidth: 130, marginRight: '10px' }}>
+            <InputLabel>{t('landingPages.popupManagement.filters.sortBy', 'Sort by')}</InputLabel>
+            <Select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as 'createdDate' | 'name' | 'status')}
+              label={t('landingPages.popupManagement.filters.sortBy', 'Sort by')}
+            >
+              <MenuItem value="createdDate">{t('landingPages.popupManagement.filters.createdDate', 'Created date')}</MenuItem>
+              <MenuItem value="name">{t('landingPages.popupManagement.filters.name', 'Name')}</MenuItem>
+              <MenuItem value="status">{t('common.widget_sort_status', 'Status')}</MenuItem>
+            </Select>
+          </FormControl>
+          <FormControl variant="outlined" size="small" style={{ minWidth: 110 }}>
+            <InputLabel>{t('landingPages.popupManagement.filters.direction', 'Direction')}</InputLabel>
+            <Select
+              value={sortDirection}
+              onChange={(e) => setSortDirection(e.target.value as 'ASC' | 'DESC')}
+              label={t('landingPages.popupManagement.filters.direction', 'Direction')}
+            >
+              <MenuItem value="ASC">{t('landingPages.popupManagement.filters.ascending', 'Ascending')}</MenuItem>
+              <MenuItem value="DESC">{t('landingPages.popupManagement.filters.descending', 'Descending')}</MenuItem>
+            </Select>
+          </FormControl>
+        </Grid>
+      </Grid>
+    </Box>
+  );
+
+  // Grouped by domain with a header carrying the Embed action, and one full-width
+  // card per widget — the same shape as the popup management screen. A widget with
+  // no domain set is grouped separately rather than dropped.
+  const renderCardView = () => {
+    const grouped = paged.reduce((acc: Record<string, WidgetSummary[]>, widget) => {
+      const key = widget.domain || UNGROUPED;
+      if (!acc[key]) acc[key] = [];
+      acc[key].push(widget);
+      return acc;
+    }, {} as Record<string, WidgetSummary[]>);
+
+    return (
+      <Box>
+        {Object.entries(grouped).map(([domain, domainWidgets]) => {
+          // Only a published widget has a snippet worth handing out, and the dialog
+          // needs a specific widget id, so the header acts on the first active one.
+          const embeddable = domainWidgets.find((w) => w.status !== 'draft');
+          return (
+            <Box key={domain} mb={4}>
+              <Box mb={2} className={classes?.widgetDomainHeader}>
+                <Box className={classes?.widgetDomainIcon}>
+                  <Language style={{ fontSize: 22 }} />
+                </Box>
+                <Typography variant="h6" className={classes?.widgetDomainName}>
+                  {domain === UNGROUPED
+                    ? t('common.widget_no_domain', 'No domain set')
+                    : domain}
+                </Typography>
+                <Button
+                  variant="outlined"
+                  size="small"
+                  className={clsx(classes?.btn, classes?.btnRounded, classes?.ml5)}
+                  startIcon={<Code />}
+                  disabled={!embeddable}
+                  onClick={() => embeddable && setEmbedWidgetId(embeddable.widgetId)}
+                >
+                  {t('landingPages.popupManagement.actions.embed', 'Embed')}
+                </Button>
+              </Box>
+
+              <Grid container spacing={3}>
+                {domainWidgets.map((widget) => (
+                  <Grid item xs={12} key={widget.widgetId}>
+                    <WidgetCard
+                      widget={widget}
+                      classes={classes}
+                      onEmbed={(w) => setEmbedWidgetId(w.widgetId)}
+                      onStatusChange={applyStatus}
+                      onError={(message) => setToastMessage({ severity: 'error', message })}
+                    />
+                  </Grid>
+                ))}
+              </Grid>
+            </Box>
+          );
+        })}
+      </Box>
+    );
+  };
+
+  const renderEmptyState = () => {
+    // A search that matches nothing is not the same as having no widgets, and
+    // offering "Create Widget" to someone who has widgets but mistyped is wrong.
+    const filtered = widgets.length > 0;
+    return (
+      <Box className={classes?.widgetEmptyState}>
+        <FaCommentDots size={40} className={classes?.widgetEmptyIcon} />
+        <Typography variant="h6" style={{ fontWeight: 600, marginTop: 16, marginBottom: 6 }}>
+          {filtered
+            ? t('common.widget_no_results_title', 'No widgets match your filters')
+            : t('common.widget_no_widgets_title', 'No chat widgets yet')}
+        </Typography>
+        <Typography variant="body2" color="textSecondary" style={{ marginBottom: 20 }}>
+          {filtered
+            ? t('common.widget_no_results_subtitle', 'Try a different search term or clear the status filter.')
+            : t('common.widget_no_widgets_subtitle', 'Create your first widget to start chatting with visitors on your website')}
+        </Typography>
+        {filtered ? (
           <Button
-            className={clsx(classes?.btn, classes?.btnRounded, classes?.redButton)}
+            variant="outlined"
+            className={clsx(classes?.btn, classes?.btnRounded)}
+            onClick={() => { setSearchTerm(''); setStatusFilter('All'); }}
+          >
+            {t('common.widget_clear_filters', 'Clear filters')}
+          </Button>
+        ) : (
+          <Button
+            variant="contained"
+            color="primary"
+            className={clsx(classes?.btn, classes?.btnRounded)}
             startIcon={<AddIcon />}
             onClick={() => setCreateOpen(true)}
           >
             {t('common.widget_create_new', 'Create Widget')}
           </Button>
-        </Box>
-      ) : (
-        <Grid container spacing={3}>
-          {widgets.map((widget) => (
-            <Grid item xs={12} sm={6} md={4} key={widget.widgetId}>
-              <WidgetCard widget={widget} onClick={() => openWidget(widget.widgetId)} />
-            </Grid>
-          ))}
-        </Grid>
+        )}
+      </Box>
+    );
+  };
+
+  return (
+    <DefaultScreen
+      currentPage="widgets"
+      classes={classes}
+      containerClass={clsx(classes?.management, classes?.mb50)}
+    >
+      {renderTopSection()}
+      {renderSearchAndFilterSection()}
+
+      <Box mt={3}>
+        {/* Nothing is rendered while loading — the shared Loader covers the screen,
+            as it does on the popup management page. */}
+        {loading ? null : visible.length === 0 ? renderEmptyState() : renderCardView()}
+      </Box>
+
+      {visible.length > 0 && (
+        <TablePagination
+          classes={classes}
+          rows={visible.length}
+          rowsPerPage={pageSize}
+          rowsPerPageOptions={PAGE_SIZE_OPTIONS}
+          onRowsPerPageChange={(val: number) => { setPageSize(val); setPage(1); }}
+          page={page}
+          onPageChange={(p: number) => setPage(p)}
+        />
       )}
+
+      <EmbedCodeGenerator
+        open={embedWidgetId !== null}
+        widgetId={embedWidgetId || undefined}
+        classes={classes}
+        onClose={() => setEmbedWidgetId(null)}
+      />
+
+      <Loader isOpen={loading || dashboardLoading} />
+      {toastMessage && <Toast data={toastMessage} />}
 
       {/* BaseDialog rather than a raw MUI Dialog, so the popup carries the same
           chrome, buttons and exit affordance as every other dialog in the app. */}
