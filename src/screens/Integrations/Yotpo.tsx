@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Toast from "../../components/Toast/Toast.component";
 import { Loader } from "../../components/Loader/Loader";
 import { authenticate, getIntegration, resetIntegration, setIntegration } from "../../redux/reducers/integrationSlice";
+import { PulseemReactInstance } from "../../helpers/Api/PulseemReactAPI";
 import { YotpoModel, UnsubscribePreferenceType } from '../../Models/Integrations/Integration';
 import { LU_Plugin, IntegrationRequest } from '../../Models/Integrations/Integration';
 import { getAllGroupsBySubAccountId } from "../../redux/reducers/groupSlice";
@@ -371,12 +372,10 @@ const Yotpo = ({ classes }: any) => {
       for (let i = 0; i < csvFiles.length; i++) {
         formData.append('files', csvFiles[i]);
       }
-      const response = await fetch('/api/Integrations/Yotpo/QueueCsvImport', {
-        method: 'POST',
-        body: formData,
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+      const response = await PulseemReactInstance.post('Integrations/Yotpo/QueueCsvImport', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
       });
-      const data = await response.json();
+      const data = response.data;
       if (data?.StatusCode === 201 && data?.Data?.length > 0) {
         setImportJobIds(data.Data);
         setImportStatus({ status: 'queued', message: t('integrations.Yotpo.importQueued') });
@@ -393,10 +392,8 @@ const Yotpo = ({ classes }: any) => {
   const pollImportStatus = (jobId: number) => {
     const interval = setInterval(async () => {
       try {
-        const response = await fetch(`/api/Integrations/Yotpo/ImportStatus/${jobId}`, {
-          headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-        });
-        const data = await response.json();
+        const response = await PulseemReactInstance.get(`Integrations/Yotpo/ImportStatus/${jobId}`);
+        const data = response.data;
         const job = data?.Data;
         if (job) {
           setImportStatus({ status: job.Status, processed: job.Processed, failed: job.Failed, total: job.TotalRows, error: job.Error });
