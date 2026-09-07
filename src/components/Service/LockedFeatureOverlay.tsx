@@ -4,13 +4,18 @@ import { MdLock } from 'react-icons/md';
 import { sitePrefix } from '../../config';
 
 interface Props {
+  // PR-2457: the actual call site (AIAssistant.tsx) passes a single combined
+  // message rather than separate planName/description - kept both shapes so
+  // either a short one-liner (message) or a fuller planName+description layout
+  // can be used depending on the caller.
+  message?: string;
   planName?: string;
   description?: string;
 }
 
 // Full-page overlay for completely locked features (e.g. AI on Starter)
 // Shows: lock icon + plan name + description + upgrade CTA
-const LockedFeatureOverlay = ({ planName, description }: Props) => {
+const LockedFeatureOverlay = ({ message, planName, description }: Props) => {
   const navigate = useNavigate();
 
   const handleUpgrade = () => {
@@ -31,9 +36,9 @@ const LockedFeatureOverlay = ({ planName, description }: Props) => {
     >
       <MdLock size={40} />
       {planName && <Typography variant="h6">{planName}</Typography>}
-      {description && (
+      {(message || description) && (
         <Typography variant="body2" color="textSecondary" style={{ maxWidth: 420 }}>
-          {description}
+          {message || description}
         </Typography>
       )}
       <Button variant="contained" color="primary" onClick={handleUpgrade} style={{ marginBlockStart: 8 }}>

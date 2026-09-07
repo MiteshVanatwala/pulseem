@@ -11,7 +11,6 @@ import { getDashboardData, DashboardRange } from '../../../redux/reducers/servic
 import { getMessageVolumeUsage } from '../../../redux/reducers/TiersSlice';
 import { IDashboardData } from '../../../Models/Service/Dashboard';
 import { useServicePlanLimits } from '../../../hooks/useServicePlanLimits';
-import UsageCounter from '../../../components/Service/UsageCounter';
 import StatsCards, { StatFilter } from './components/StatsCards';
 import QuickActions from './components/QuickActions';
 import RecentConversationsPanel from './components/RecentConversationsPanel';
@@ -44,6 +43,8 @@ const Dashboard = ({ classes }: any) => {
   // the 80% Alert never false-positives before the fetch resolves.
   const messageVolumeUsage = useSelector((s: any) => s.tiers?.messageVolumeUsage);
   const messageVolumeUsed = messageVolumeUsage?.used ?? 0;
+  const messageVolumeNearLimit =
+    limits.monthlyMessageVolume !== -1 && messageVolumeUsed / limits.monthlyMessageVolume >= 0.8;
 
   useEffect(() => {
     (dispatch as any)(getDashboardData(range));
@@ -115,17 +116,31 @@ const Dashboard = ({ classes }: any) => {
         </div>
       </div>
 
-      {/* Message Volume usage */}
-      <div className="svc-section">{t('common.dashboard_section_message_volume', 'Message Volume')}</div>
-      <UsageCounter current={messageVolumeUsed} max={limits.monthlyMessageVolume} label="Monthly Messages" />
-      {limits.monthlyMessageVolume !== -1 && messageVolumeUsed / limits.monthlyMessageVolume >= 0.8 && (
-        <Alert severity="warning">
+      {messageVolumeNearLimit && (
+        <Alert severity="warning" style={{ marginBlockEnd: 8 }}>
           You've used 80% of your monthly message volume. Upgrade to avoid interruptions.
         </Alert>
       )}
 
       {/* Stats cards — 4-col desktop, 2-col tablet, 1-col mobile */}
-      <div className="svc-section">{t('common.dashboard_section_conversations', 'Conversations')}</div>
+      <div className="svc-section" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <span>{t('common.dashboard_section_conversations', 'Conversations')}</span>
+        {/* Simple right-aligned text, no card/progress bar. */}
+        <span
+          style={{
+            fontSize: 12,
+            padding: '4px 8px',
+            borderRadius: 6,
+            color: messageVolumeNearLimit ? '#d32f2f' : '#FF1744',
+            background: messageVolumeNearLimit ? 'rgba(211,47,47,0.1)' : 'rgba(255,23,68,0.08)',
+          }}
+        >
+          {t('common.dashboard_message_volume_label', 'Monthly Messages')}:{' '}
+          <strong>
+            {limits.monthlyMessageVolume !== -1 ? `${messageVolumeUsed} / ${limits.monthlyMessageVolume}` : messageVolumeUsed}
+          </strong>
+        </span>
+      </div>
       <StatsCards
         stats={data?.stats ?? null}
         loading={loading}
