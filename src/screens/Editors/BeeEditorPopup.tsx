@@ -2351,7 +2351,7 @@ const BeeEditorPopup = ({ classes, clientId: propClientId, clientSecret: propCli
         additionalButtonsOnStart={renderTemplateButtons()}
         // additionalButtonsOnStart={<></>}
         //@ts-ignore
-        helperText={<label style={{ fontSize: 14 }}>{lastSaveText}</label>}
+        helperText={lastSaveText}
       />
       {renderDialog()}
       <Loader isOpen={showLoader} showBackdrop={false} />
