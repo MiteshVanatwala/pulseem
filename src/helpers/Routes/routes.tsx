@@ -16,7 +16,7 @@ import {
   GrafMenuIcon,
   GroupMenuIcon,
 } from '../../assets/images/settings/index';
-import { FaBinoculars, FaCommentDots, FaRobot } from 'react-icons/fa';
+import { FaBinoculars, FaCommentDots } from 'react-icons/fa';
 import { whatsappRoutes } from '../../screens/Whatsapp/Constant';
 import { logout } from "../Api/PulseemReactAPI";
 import { HiArrowLeft, HiArrowRight } from "react-icons/hi";
@@ -502,24 +502,14 @@ export const getRoutes = (
           title: t("chatbot_list_title"),
           href: `${sitePrefix}Chatbots`,
           isShow: true,
-        }
-      ],
-    },
-    {
-      key: "aiAssistant",
-      title: t("AIAssistant.pageTitle"),
-      pageTitle: t("AIAssistant.pageTitle"),
-      href: `${sitePrefix}AIAssistant`,
-      isShow:
-        !accountSettings?.SubAccountSettings?.IsTokenAccount &&
-        aiAssistantRolloutEnabled === true,
-      icon: <FaRobot size={24} color="#fff" />,
-      options: [
+        },
         {
           key: "aiAssistant",
           title: t("AIAssistant.pageTitle"),
           href: `${sitePrefix}AIAssistant`,
-          isShow: true,
+          isShow:
+            !accountSettings?.SubAccountSettings?.IsTokenAccount &&
+            aiAssistantRolloutEnabled === true,
         }
       ],
     },
