@@ -304,7 +304,8 @@
     "POPUP_STEPS": "פופאפ רב-שלבי",
     "POPUP_MANGEMENT": "ניהול פופאפים",
     "WIDGET_FEEDBACK": "משוב ווידג'ט הצ'אט",
-    "WIDGET_MARKETING": "שיווק ווידג'ט הצ'אט"
+    "WIDGET_MARKETING": "שיווק ווידג'ט הצ'אט",
+    "SITE_CHAT_WIDGET": "ווידג'ט צ'אט לאתר"
   },
   "EmailMarketingList": "מה גודל רשימת התפוצה שלכם ?",
   "EmailMarketingListSending": "(שליחה ללא הגבלה לפי גודל רשימת התפוצה)",

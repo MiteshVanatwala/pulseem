@@ -293,7 +293,8 @@
     "POPUP_STEPS": "Wieloetapowe Popupy",
     "POPUP_MANGEMENT": "Zarządzanie Popupami",
     "WIDGET_FEEDBACK": "Opinie widżetu czatu",
-    "WIDGET_MARKETING": "Marketing widżetu czatu"
+    "WIDGET_MARKETING": "Marketing widżetu czatu",
+    "SITE_CHAT_WIDGET": "Widżet czatu na stronie"
   },
   "EmailMarketingList": "Jaki jest rozmiar Twojej listy mailingowej?",
   "EmailMarketingListSending": "(Nielimitowane wysyłanie w zależności od wielkości listy)",

@@ -104,11 +104,16 @@ const ChatWidgetConfigContent = ({ classes, initialConfig, initialWidgetId, init
     setWidgetId(result.widgetId);
     setStatus(result.status as WidgetStatus);
   }, widgetId, domain, (featureCode) => {
-    // Revert whichever toggle triggered the block, then prompt to upgrade.
+    // Backend sends the single consolidated SITE_CHAT_WIDGET code (WidgetController
+    // no longer distinguishes which toggle triggered the block), so both options
+    // must be reverted here. Leaving either one on would keep the autosave effect's
+    // `data` reference changing every render, re-arming its debounce timer and
+    // re-triggering this same block on a loop - reopening the dialog on its own
+    // even after the user closes it, with no further action from them.
     setConfig(prev => ({
       ...prev,
-      enableFeedback: featureCode === 'WIDGET_FEEDBACK' ? false : prev.enableFeedback,
-      enableMarketing: featureCode === 'WIDGET_MARKETING' ? false : prev.enableMarketing,
+      enableFeedback: false,
+      enableMarketing: false,
     }));
     setTierBlockedFeature(featureCode);
   });
