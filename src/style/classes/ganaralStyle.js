@@ -2612,8 +2612,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
      the content area. Desktop only — below 768px the toolbar is a full-width stack
      and the global `.baseButtonsContainer *` rule overrides child widths anyway. */
   wizardActionsBar: {
+    // The project has no box-sizing reset (no CssBaseline, no `*` rule in index.css), so this
+    // box is content-box by default. baseButtonsContainer sets width:100%, which means a bare
+    // padding-left would widen the border box past 100% and simply overflow leftward in RTL,
+    // leaving the buttons exactly where they were. border-box is what makes the padding move them.
+    boxSizing: "border-box",
     "@media screen and (min-width: 769px)": {
-      paddingLeft: 75,
+      paddingLeft: 64,
     },
   },
   /* Wraps additionalButtonsOnStart so the toolbar breaks BETWEEN the two button
