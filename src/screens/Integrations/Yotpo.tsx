@@ -9,6 +9,8 @@ import { Loader } from "../../components/Loader/Loader";
 import { authenticate, getIntegration, resetIntegration, setIntegration } from "../../redux/reducers/integrationSlice";
 import { YotpoModel, UnsubscribePreferenceType } from '../../Models/Integrations/Integration';
 import { LU_Plugin, IntegrationRequest } from '../../Models/Integrations/Integration';
+import { getAllGroupsBySubAccountId } from "../../redux/reducers/groupSlice";
+import GroupTags from "../../components/Groups/GroupTags";
 import { logout } from "../../helpers/Api/PulseemReactAPI";
 import { BaseDialog } from "../../components/DialogTemplates/BaseDialog";
 import { StateType } from "../../Models/StateTypes";
@@ -49,6 +51,7 @@ const Yotpo = ({ classes }: any) => {
   const [importJobIds, setImportJobIds] = useState<number[]>([]);
   const [importStatus, setImportStatus] = useState<any>(null);
   const [importLoading, setImportLoading] = useState(false);
+  const allGroups = useSelector((state: StateType) => state.group?.subAccountAllGroups || []);
   const ArrowDownIcon = (): JSX.Element => React.createElement('span', null, React.createElement(IoIosArrowDown as any, { size: 20, className: classes.dropdownIconComponent }));
   const CopyIcon = (): JSX.Element => React.createElement('span', null, React.createElement(MdContentCopy as any, null));
 
@@ -71,6 +74,7 @@ const Yotpo = ({ classes }: any) => {
 
   const initSettings = async () => {
     setShowLoader(true);
+    await dispatch(getAllGroupsBySubAccountId());
     const settingResponse = await dispatch(getIntegration(LU_Plugin.Yotpo)) as any;
     setShowLoader(false);
     handleGetIntegrationResponse(settingResponse);
@@ -128,7 +132,8 @@ const Yotpo = ({ classes }: any) => {
         if (resp?.ApiKey) {
           const resolvedResp = {
             ...resp,
-            RegisterAsActiveOptionsID: normalizePreferenceType(resp.RegisterAsActiveOptionsID, UnsubscribePreferenceType.Both)
+            RegisterAsActiveOptionsID: normalizePreferenceType(resp.RegisterAsActiveOptionsID, UnsubscribePreferenceType.Both),
+            RegisterGroups: resp.RegisterGroups || []
           } as YotpoModel;
           setSettings(resolvedResp);
           setAuthenticated(true);
@@ -501,6 +506,37 @@ const Yotpo = ({ classes }: any) => {
                 <Typography style={{ fontSize: "18px", color: "#000" }}>{RenderHtml(t("integrations.Yotpo.notice"))}</Typography>
               </Grid>
             </Grid>
+            <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.pb15)}>
+              <Grid item xs={12}>
+                <Typography className={clsx(classes.mb5)} style={{ fontWeight: 600 }}>
+                  {t("integrations.Yotpo.registerGroup") || "Register Group"}
+                </Typography>
+                <Typography className={clsx(classes.mb5)} style={{ fontSize: 13, color: '#666' }}>
+                  {t("integrations.Yotpo.registerGroupSubtitle") || "New Yotpo customers will be added to this group in Pulseem"}
+                </Typography>
+              </Grid>
+              <Grid item xs={12} sm={8} md={6}>
+                <Box className={'group-dropdown'}>
+                  <GroupTags
+                    className='group-select'
+                    groupSelected={settings.RegisterGroups || []}
+                    classes={classes}
+                    title={'siteTracking.typeGroupName'}
+                    dropdown
+                    dropDownProps={{
+                      onChange: (_e: any, val: any) => {
+                        setSettings({
+                          ...settings,
+                          RegisterGroups: val.reduce((prev: any, cur: any) => [...prev, cur.GroupID], [])
+                        });
+                      },
+                      selectedGroups: settings.RegisterGroups || [],
+                      groups: allGroups
+                    }}
+                  />
+                </Box>
+              </Grid>
+            </Grid>
             </Box>
         )
       }
@@ -521,7 +557,7 @@ const Yotpo = ({ classes }: any) => {
         </Grid>
       </Box>}
       {isAuthenticated && (
-        <Box style={{ marginTop: 24, border: '1px solid #E0E4EE', borderRadius: 6, background: '#fff', overflow: 'hidden', boxShadow: '0 1px 4px rgba(26,26,46,0.08)' }}>
+        <Box style={{ marginTop: 24, border: '1px solid #E0E4EE', borderRadius: 6, background: '#fff', overflow: 'hidden', boxShadow: '0 1px 4px rgba(26,26,46,0.08)', paddingBottom: 16 }}>
           {/* Header */}
           <Box style={{ padding: '14px 20px 12px', borderBottom: '1px solid #E0E4EE', display: 'flex', alignItems: 'center', gap: 9 }}>
             <Typography style={{ fontSize: 14, fontWeight: 700, color: '#1A1A2E' }}>
@@ -529,23 +565,8 @@ const Yotpo = ({ classes }: any) => {
             </Typography>
           </Box>
 
-          {/* Steps */}
-          <Box style={{ display: 'flex', padding: '16px 20px 14px', borderBottom: '1px solid #E0E4EE', overflowX: 'auto', gap: 0 }}>
-            {[1,2,3,4,5].map((n, i) => (
-              <Box key={n} style={{ flex: 1, minWidth: 100, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', position: 'relative', paddingRight: 12 }}>
-                {i < 4 && <Box style={{ position: 'absolute', top: 11, left: 22, right: 0, height: 1, background: '#E0E4EE' }} />}
-                <Box style={{ width: 22, height: 22, borderRadius: '50%', background: '#D93A5B', color: '#fff', fontSize: 10.5, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 7, flexShrink: 0, position: 'relative', zIndex: 1 }}>
-                  {n}
-                </Box>
-                <Typography style={{ fontSize: 11, color: '#6B7A99', lineHeight: 1.5, maxWidth: 105 }}>
-                  {t(`integrations.Yotpo.importStep${n}`)}
-                </Typography>
-              </Box>
-            ))}
-          </Box>
-
-          {/* Upload zone + button */}
-          <Box style={{ display: 'flex', alignItems: 'flex-start', gap: 16, padding: '18px 20px', flexWrap: 'wrap' }}>
+          {/* Upload zone + button — shown first so widgets don't cover it */}
+          <Box style={{ display: 'flex', alignItems: 'flex-start', gap: 16, padding: '18px 20px 14px', flexWrap: 'wrap', borderBottom: '1px solid #E0E4EE' }}>
             <Box
               style={{ flex: 1, minWidth: 200, border: `1.5px dashed ${csvFiles && csvFiles.length > 0 ? '#D93A5B' : '#E0E4EE'}`, borderRadius: 6, padding: '18px 14px', textAlign: 'center', cursor: 'pointer', background: csvFiles && csvFiles.length > 0 ? '#FDF1F4' : '#F0F3F8', transition: 'border-color 0.15s, background 0.15s' }}
               onClick={() => (document.getElementById('yotpoCsvInput') as HTMLInputElement)?.click()}
@@ -585,6 +606,21 @@ const Yotpo = ({ classes }: any) => {
             </Box>
           </Box>
           <input type="file" id="yotpoCsvInput" accept=".csv" multiple style={{ display: 'none' }} onChange={(e) => setCsvFiles(e.target.files)} />
+
+          {/* Steps — shown below upload so they don't push the button down */}
+          <Box style={{ display: 'flex', padding: '16px 20px 4px', overflowX: 'auto', gap: 0 }}>
+            {[1,2,3,4,5].map((n, i) => (
+              <Box key={n} style={{ flex: 1, minWidth: 100, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', position: 'relative', paddingRight: 12 }}>
+                {i < 4 && <Box style={{ position: 'absolute', top: 11, left: 22, right: 0, height: 1, background: '#E0E4EE' }} />}
+                <Box style={{ width: 22, height: 22, borderRadius: '50%', background: '#D93A5B', color: '#fff', fontSize: 10.5, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 7, flexShrink: 0, position: 'relative', zIndex: 1 }}>
+                  {n}
+                </Box>
+                <Typography style={{ fontSize: 11, color: '#6B7A99', lineHeight: 1.5, maxWidth: 105 }}>
+                  {t(`integrations.Yotpo.importStep${n}`)}
+                </Typography>
+              </Box>
+            ))}
+          </Box>
 
           {/* Status bar */}
           {importStatus && (

@@ -79,6 +79,7 @@ export interface YotpoModel {
     IsInsertAsActive?: boolean;
     RegisterAsActiveOptionsID?: UnsubscribePreferenceType;
     WebhookUrl?: string;
+    RegisterGroups?: number[];
 }
 
 export enum UnsubscribePreferenceType {
