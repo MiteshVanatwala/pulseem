@@ -213,6 +213,8 @@
     "guidRequired": "Please insert your Yotpo GUID",
     "apiKeyRequired": "Please insert your Yotpo API key",
     "notice": "Your Yotpo loyalty program is connected. Loyalty data (points, tier, expiry) will sync automatically for matching recipients.",
+    "registerGroup": "Register Group",
+    "registerGroupSubtitle": "New Yotpo customers will be added to this group in Pulseem",
     "webhookUrl": "Webhook URL",
     "webhookDesc": "Copy this URL and register it in your Yotpo admin under <b>Settings &gt; Webhooks</b> for the topics: points earned, points changed, tier earned, tier lost, referral completed and opt in/out. This keeps loyalty data updated in real time.",
     "copy": "Copy",
