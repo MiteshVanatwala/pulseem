@@ -320,7 +320,8 @@
     "POPUP_STEPS": "Multi-Step Popups",
     "POPUP_MANGEMENT": "Popup Management",
     "WIDGET_FEEDBACK": "Chat Widget User Feedback",
-    "WIDGET_MARKETING": "Chat Widget Marketing"
+    "WIDGET_MARKETING": "Chat Widget Marketing",
+    "SITE_CHAT_WIDGET": "Site Chat Widget"
   },
   "EmailMarketingList": "What's your mailing list size?",
   "EmailMarketingListSending": "(Unlimited sending based on list size)",

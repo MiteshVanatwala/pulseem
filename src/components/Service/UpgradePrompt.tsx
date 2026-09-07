@@ -1,21 +1,21 @@
-import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import { Box, Button, Typography } from '@material-ui/core';
 import { MdLock } from 'react-icons/md';
-import { sitePrefix } from '../../config';
+import clsx from 'clsx';
+import TierPlans from '../TierPlans/TierPlans';
 
 interface Props {
   message?: string;
   feature?: string;
+  classes?: any;
 }
 
 // Renders: lock icon + message + "Upgrade Plan" button
-// "Upgrade Plan" → navigates to pricing/account settings page
-const UpgradePrompt = ({ message, feature }: Props) => {
-  const navigate = useNavigate();
-
-  const handleUpgrade = () => {
-    navigate(`${sitePrefix}BillingSettings`);
-  };
+// "Upgrade Plan" → opens the same plan-picker modal (TierPlans) used from the
+// sidebar's own "Upgrade Plan" button, rather than just navigating to Billing
+// Settings, so the user can pick/confirm a plan right here.
+const UpgradePrompt = ({ message, feature, classes }: Props) => {
+  const [showTierPlans, setShowTierPlans] = useState(false);
 
   const displayMessage =
     message || (feature ? `${feature} is not available on your current plan.` : 'This feature is not available on your current plan.');
@@ -26,9 +26,19 @@ const UpgradePrompt = ({ message, feature }: Props) => {
       <Typography variant="body2" style={{ marginInlineEnd: 8 }}>
         {displayMessage}
       </Typography>
-      <Button size="small" variant="outlined" onClick={handleUpgrade}>
+      {/* Same classes as the Chatbot list page's Search button (classes.btn +
+          classes.btnRounded + classes.searchButton) - identical look, no custom
+          color override. */}
+      <Button onClick={() => setShowTierPlans(true)} className={clsx(classes?.btn, classes?.btnRounded, classes?.searchButton)}>
         Upgrade Plan
       </Button>
+      {showTierPlans && (
+        <TierPlans
+          classes={classes}
+          isOpen={showTierPlans}
+          onClose={() => setShowTierPlans(false)}
+        />
+      )}
     </Box>
   );
 };

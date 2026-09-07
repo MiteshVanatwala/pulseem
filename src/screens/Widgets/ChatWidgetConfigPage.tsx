@@ -36,6 +36,7 @@ import { getWidget, setWidgetStatus } from '../../helpers/Api/WidgetAPI';
 import { findPlanByFeatureCode } from '../../redux/reducers/TiersSlice';
 import { TierFeatures } from '../../helpers/Constants';
 import { sitePrefix } from '../../config';
+import TierPlans from '../../components/TierPlans/TierPlans';
 
 // Pulseem brand accent — matches palette.primary.main in style/theme.js. Applies to
 // page chrome only: tabs, device toggles, dialogs. The live preview deliberately
@@ -94,8 +95,11 @@ const ChatWidgetConfigContent = ({ classes, initialConfig, initialWidgetId, init
   const [statusUpdating, setStatusUpdating] = useState(false);
   const [previewDevice, setPreviewDevice] = useState<PreviewDevice>('desktop');
   const [zoom, setZoom] = useState(1);
-  const [tierBlockedFeature, setTierBlockedFeature] = useState<string | null>(null);
   const [showEmbed, setShowEmbed] = useState(false);
+
+  const [TierMessageCode, setTierMessageCode] = useState<string>('');
+  const [dialogType, setDialogType] = useState<{ type: string } | null>({ type: '' });
+  const [showTierPlans, setShowTierPlans] = useState(false);
 
   // Once a widgetId exists (first save's response, or an existing widget being
   // edited) it's the authoritative target for every further save/status call;
@@ -104,18 +108,20 @@ const ChatWidgetConfigContent = ({ classes, initialConfig, initialWidgetId, init
     setWidgetId(result.widgetId);
     setStatus(result.status as WidgetStatus);
   }, widgetId, domain, (featureCode) => {
-    // Revert whichever toggle triggered the block, then prompt to upgrade.
+    // Backend sends the single consolidated SITE_CHAT_WIDGET code (WidgetController
+    // no longer distinguishes which toggle triggered the block), so both options
+    // must be reverted here. Leaving either one on would keep the autosave effect's
+    // `data` reference changing every render, re-arming its debounce timer and
+    // re-triggering this same block on a loop - reopening the dialog on its own
+    // even after the user closes it, with no further action from them.
     setConfig(prev => ({
       ...prev,
-      enableFeedback: featureCode === 'WIDGET_FEEDBACK' ? false : prev.enableFeedback,
-      enableMarketing: featureCode === 'WIDGET_MARKETING' ? false : prev.enableMarketing,
+      enableFeedback: false,
+      enableMarketing: false,
     }));
-    setTierBlockedFeature(featureCode);
+    setTierMessageCode(featureCode);
+    setDialogType({ type: 'tier' });
   });
-
-  const upgradePlanName = tierBlockedFeature
-    ? findPlanByFeatureCode(tierBlockedFeature, availablePlans, currentPlan?.Id)
-    : null;
 
   const handleStatusChange = async (nextStatus: 'active' | 'paused') => {
     if (statusUpdating || status === nextStatus) return;
@@ -169,6 +175,78 @@ const ChatWidgetConfigContent = ({ classes, initialConfig, initialWidgetId, init
     { key: 'tablet', icon: <TabletMacIcon style={{ fontSize: 18 }} /> },
     { key: 'mobile', icon: <SmartphoneIcon style={{ fontSize: 18 }} /> },
   ];
+
+  const handleGetPlanForFeature = (tierMessageCode: string) => {
+		const planName = findPlanByFeatureCode(
+			tierMessageCode,
+			availablePlans,
+			currentPlan.Id
+		);
+		
+		if (planName) {
+			return t('billing.tier.featureNotAvailable').replace('{feature}', t(TierFeatures[tierMessageCode as keyof typeof TierFeatures] || tierMessageCode)).replace('{planName}', planName);
+		} else {
+			return t('billing.tier.noFeatureAvailable');
+		}
+	};
+
+  const getTierValidationDialog = () => ({
+      title: t('billing.tier.permission'),
+      showDivider: false,
+      content: (
+        <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+          {handleGetPlanForFeature(TierMessageCode)}
+        </Typography>
+      ),
+      renderButtons: () => (
+        <Grid
+          container
+          spacing={2}
+          className={clsx(classes.dialogButtonsContainer)}
+        >
+          <Grid item>
+            <Button
+              onClick={() => {
+              setDialogType(null);
+              setShowTierPlans(true);
+            }}
+            className={clsx(classes.btn, classes.btnRounded)}
+            >
+              {t('billing.upgradePlan')}
+            </Button>
+          </Grid>
+          <Grid item>
+            <Button
+              onClick={() => setDialogType(null)}
+              className={clsx(classes.btn, classes.btnRounded)}
+            >
+              {t('common.cancel')}
+            </Button>
+          </Grid>
+        </Grid>
+      )
+    });
+
+  const renderDialog = () => {
+    const { type } = dialogType || {};
+    if (type === 'tier') {
+      const currentDialog = getTierValidationDialog();
+      return (
+        <BaseDialog
+          contentStyle={classes.maxWidth540}
+          classes={classes}
+          open={!!dialogType}
+          onCancel={() => setDialogType(null)}
+          onClose={() => setDialogType(null)}
+          {...currentDialog}
+        >
+          {currentDialog.content}
+        </BaseDialog>
+      );
+    }
+    return null;
+  };
+
 
   return (
     <DefaultScreen
@@ -647,26 +725,14 @@ const ChatWidgetConfigContent = ({ classes, initialConfig, initialWidgetId, init
         classes={classes}
       />
 
-      {/* BaseDialog rather than a raw MUI Dialog, so the upgrade prompt matches every
-          other popup in the app — same chrome, buttons and exit affordance. */}
-      <BaseDialog
-        open={!!tierBlockedFeature}
-        classes={classes}
-        title={t('billing.tier.permission', 'Upgrade required')}
-        confirmText={t('billing.upgradePlan', 'Upgrade Plan')}
-        cancelText={t('common.cancel', 'Cancel')}
-        onClose={() => setTierBlockedFeature(null)}
-        onCancel={() => setTierBlockedFeature(null)}
-        onConfirm={() => { window.location.href = `${sitePrefix}BillingSettings`; }}
-      >
-        <Typography variant="body2">
-          {upgradePlanName
-            ? t('billing.tier.featureNotAvailable', 'This feature ({{feature}}) requires the {{planName}} plan.')
-                .replace('{feature}', t((TierFeatures as Record<string, string>)[tierBlockedFeature || ''] || tierBlockedFeature || ''))
-                .replace('{planName}', upgradePlanName)
-            : t('billing.tier.noFeatureAvailable', 'This feature is not available on your current plan.')}
-        </Typography>
-      </BaseDialog>
+      {renderDialog()}
+      {showTierPlans && (
+        <TierPlans
+          classes={classes}
+          isOpen={showTierPlans}
+          onClose={() => setShowTierPlans(false)}
+        />
+      )}
     </DefaultScreen>
   );
 };

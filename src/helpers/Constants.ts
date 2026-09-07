@@ -949,6 +949,7 @@ export const TierFeatures = {
   "POPUP_MANGEMENT": "billing.featureNames.POPUP_MANGEMENT",
   "WIDGET_FEEDBACK": "billing.featureNames.WIDGET_FEEDBACK",
   "WIDGET_MARKETING": "billing.featureNames.WIDGET_MARKETING",
+  "SITE_CHAT_WIDGET": "billing.featureNames.SITE_CHAT_WIDGET",
 }
 
 

@@ -19,7 +19,6 @@ import { Alert } from '@material-ui/lab';
 import { makeStyles } from '@material-ui/core/styles';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
-import { useServiceLimits } from '../../../../hooks/useServiceLimits';
 import { saveAiAssistantSettings } from '../../../../redux/reducers/aiAssistantSlice';
 import {
   IAiAssistantSettings,
@@ -118,10 +117,6 @@ const AISettings = ({ pageClasses, onDirtyChange }: AISettingsProps) => {
   const dispatch = useDispatch();
   const { isRTL } = useSelector((state: any) => state.core);
   const { settings, saving } = useSelector((state: any) => state.aiAssistant);
-  const { getLimit } = useServiceLimits();
-
-  const contextWordsCeiling = getLimit('maxAiContextWords'); // null = plan has no ceiling (-1 server-side)
-  const effectiveMax = contextWordsCeiling !== null ? Math.min(MAX_MAX_CONTEXT_WORDS, contextWordsCeiling) : MAX_MAX_CONTEXT_WORDS;
 
   const [form, setForm] = useState<IAiAssistantSettings>(settings || buildDefaults());
   const [savedSnapshot, setSavedSnapshot] = useState<IAiAssistantSettings>(settings || buildDefaults());
@@ -311,13 +306,8 @@ const AISettings = ({ pageClasses, onDirtyChange }: AISettingsProps) => {
               onChange={(e) => setForm({ ...form, maxContextWords: Number(e.target.value) })}
               error={!!contextWordsError}
               helperText={contextWordsError}
-              inputProps={{ min: MIN_MAX_CONTEXT_WORDS, max: effectiveMax }}
+              inputProps={{ min: MIN_MAX_CONTEXT_WORDS, max: MAX_MAX_CONTEXT_WORDS }}
             />
-            <Typography variant="caption" color="textSecondary" style={{ display: 'block', marginBlockStart: 4 }}>
-              {contextWordsCeiling !== null
-                ? t('AIAssistant.settings.maxContextWordsCeiling', { max: contextWordsCeiling })
-                : t('AIAssistant.settings.maxContextWordsUnlimited')}
-            </Typography>
           </Grid>
         </Grid>
 

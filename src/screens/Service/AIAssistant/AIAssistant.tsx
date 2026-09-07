@@ -15,7 +15,6 @@ import KnowledgeBase from './tabs/KnowledgeBase';
 import AISettings from './tabs/AISettings';
 import TestChat from './tabs/TestChat';
 import Analytics from './tabs/Analytics';
-import UpgradePrompt from '../../../components/UpgradePrompt/UpgradePrompt';
 import { fetchAiAssistantOverview } from '../../../redux/reducers/aiAssistantSlice';
 import { computeStats } from '../../../Models/Service/AIAssistant';
 
@@ -63,7 +62,7 @@ const AIAssistant = ({ classes: pageClasses }: AIAssistantProps) => {
 
   const [tabIndex, setTabIndex] = useState(0);
   const [settingsDirty, setSettingsDirty] = useState(false);
-  
+
   useEffect(() => {
     dispatch(fetchAiAssistantOverview() as any);
   }, [dispatch]);
@@ -76,6 +75,9 @@ const AIAssistant = ({ classes: pageClasses }: AIAssistantProps) => {
     setTabIndex(newValue);
   };
 
+  // Rollout kill-switch (Feature.ServiceAI.Enabled) - separate concern from plan
+  // entitlement below: this is "not launched yet for anyone", not "not on your
+  // plan", so it stays hidden entirely rather than showing a locked state.
   if (gateStatus === 'rolloutDisabled') {
     return null;
   }
@@ -96,9 +98,7 @@ const AIAssistant = ({ classes: pageClasses }: AIAssistantProps) => {
         {t('AIAssistant.pageTitle')}
       </Typography>
 
-      {gateStatus === 'notEntitled' ? (
-        <UpgradePrompt classes={pageClasses} messageKey="AIAssistant.locked.message" />
-      ) : isGenericLoadFailure ? (
+      {isGenericLoadFailure ? (
         <Paper variant="outlined" className={localClasses.errorSection}>
           <Alert severity="error" style={{ marginBlockEnd: 16 }}>
             {error || t('AIAssistant.validation.genericError')}
