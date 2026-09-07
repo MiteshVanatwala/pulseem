@@ -2618,7 +2618,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
     // leaving the buttons exactly where they were. border-box is what makes the padding move them.
     boxSizing: "border-box",
     "@media screen and (min-width: 769px)": {
-      paddingLeft: 64,
+      ...(isRTL
+        ? { paddingRight: 45, paddingLeft: 35 }
+        : { paddingRight: 60, paddingLeft: 0 }),
     },
   },
   /* Wraps additionalButtonsOnStart so the toolbar breaks BETWEEN the two button
