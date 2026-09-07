@@ -446,6 +446,7 @@
     "numericFilterHint": "You can type the number with separators, e.g. 250,000",
     "notSearchableTooltip": "Enable search for this column in the column editor",
     "noRows": "No rows match the filter",
+    "gridAriaLabel": "Data source rows",
     "clearFilters": "Clear filters",
     "processing": "Processing is in progress — the data will be shown when it completes",
     "match": {

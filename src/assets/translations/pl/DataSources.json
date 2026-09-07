@@ -446,6 +446,7 @@
     "numericFilterHint": "Liczbę można wpisać z separatorami, np. 250,000",
     "notSearchableTooltip": "Włącz wyszukiwanie dla tej kolumny w edytorze kolumny",
     "noRows": "Brak wierszy pasujących do filtra",
+    "gridAriaLabel": "Wiersze źródła danych",
     "clearFilters": "Wyczyść filtry",
     "processing": "Trwa przetwarzanie — dane zostaną wyświetlone po jego zakończeniu",
     "match": {
