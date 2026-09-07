@@ -15,8 +15,6 @@ import KnowledgeBase from './tabs/KnowledgeBase';
 import AISettings from './tabs/AISettings';
 import TestChat from './tabs/TestChat';
 import Analytics from './tabs/Analytics';
-import LockedFeatureOverlay from '../../../components/Service/LockedFeatureOverlay';
-import { useServicePlanLimits } from '../../../hooks/useServicePlanLimits';
 import { fetchAiAssistantOverview } from '../../../redux/reducers/aiAssistantSlice';
 import { computeStats } from '../../../Models/Service/AIAssistant';
 
@@ -61,7 +59,6 @@ const AIAssistant = ({ classes: pageClasses }: AIAssistantProps) => {
   const dispatch = useDispatch();
   const { isRTL } = useSelector((state: any) => state.core);
   const { knowledgeItems, gateStatus, loading, error } = useSelector((state: any) => state.aiAssistant);
-  const { limits } = useServicePlanLimits();
 
   const [tabIndex, setTabIndex] = useState(0);
   const [settingsDirty, setSettingsDirty] = useState(false);
@@ -91,19 +88,6 @@ const AIAssistant = ({ classes: pageClasses }: AIAssistantProps) => {
   const isGenericLoadFailure = gateStatus === 'unknown' && loading === 'failed';
   if (gateStatus === 'unknown' && !isGenericLoadFailure) {
     return null;
-  }
-
-  // PR-2457 / PR-3766: plan-gated - shown as a locked state with an upgrade
-  // prompt (AC: "rather than being hidden entirely"), not a blank page. Sourced
-  // from useServicePlanLimits (ServicePlanLimits.AiAssistantEnabled via
-  // GetAccountLimits), which is what the SQL sync script keying off FeatureTierId
-  // now sets per tier - see dbo.ServicePlanLimits.AiAssistant.Update.sql.
-  if (!limits.aiAssistantEnabled) {
-    return (
-      <DefaultScreen currentPage="aiAssistant" classes={pageClasses} containerClass={clsx(pageClasses?.management)}>
-        <LockedFeatureOverlay message="AI Assistant is available on Pro and Scale plans" />
-      </DefaultScreen>
-    );
   }
 
   const stats = computeStats(knowledgeItems);
