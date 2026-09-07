@@ -4,7 +4,7 @@ import PulseemColorPicker from '../../../../../components/Controlls/PulseemColor
 import { PALETTE } from '../tierGraphCore';
 
 /**
- * ColorField — 13 palette swatches + a free hex input + the existing
+ * ColorField — 12 palette swatches (PALETTE in tierGraphCore: Clal brand colors first) + a free hex input + the existing
  * PulseemColorPicker (react-color) inside an MUI Popover. No new color library.
  * Props: { label, value:hex, onChange(hex) }
  */

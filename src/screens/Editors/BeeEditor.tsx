@@ -1519,7 +1519,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
         //@ts-ignore
         additionalButtonsOnStart={renderTemplateButtons()}
         //@ts-ignore
-        helperText={<label style={{ fontSize: 14 }}>{lastSaveText}</label>}
+        helperText={lastSaveText}
       />
       {renderDialog()}
       <Loader isOpen={showLoader} showBackdrop={true} color="inherit" />
