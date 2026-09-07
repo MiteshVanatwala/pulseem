@@ -9,7 +9,7 @@ import clsx from 'clsx';
 import Illustration_BG_BL from '../assets/images/Illustration_BG_BL';
 import Illustration_BG_BR from '../assets/images/Illustration_BG_BR';
 import DomainVerification from '../Shared/Dialogs/DomainVerification';
-import TawkToContainer from '../components/TawkTo/TawkToContainer';
+
 import { sitePrefix } from '../config';
 import useRedirect from '../helpers/Routes/Redirect';
 import { getCookie } from '../helpers/Functions/cookies';
@@ -21,8 +21,8 @@ const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', cont
   const { t } = useTranslation();
   const { isAdmin, isAllowSwitchAccount, windowSize, isRTL, isDebtAccount, isClal, userRoles, isOnlyWhatsAppChat } = useSelector(state => state.core)
   const { domainVerificationPopUp } = useSelector(state => state.newsletter);
-  const { username } = useSelector(state => state.user)
-  const [reKey, setReKey] = useState(0);
+  const { username } = useSelector(state => state.user)  
+  
   const Redirect = useRedirect();
   const { accountSettings, accountFeatures, subAccount } = useSelector(state => state.common);
 
@@ -52,7 +52,6 @@ const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', cont
 
 
   useEffect(() => {
-    setReKey(reKey + 1);
     if (isDebtAccount === true && window.location.href.toLowerCase().indexOf('billingsettings') <= -1) {
       Redirect({ url: `${sitePrefix}BillingSettings?p=2` })
     }
@@ -89,7 +88,7 @@ const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', cont
         </Container>
 
       </MainLayout>}
-      { !isOnlyWhatsAppChat && <TawkToContainer itemId={reKey} /> }
+     
     </HelmetProvider>
   )
 }

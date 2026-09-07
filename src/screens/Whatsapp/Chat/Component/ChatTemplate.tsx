@@ -155,6 +155,10 @@ const ChatTemplate = ({
 			message.MediaContentType?.includes('spreadsheetml.sheet') ||
 			message.MediaContentType?.includes('presentationml.presentation')
 		) {
+			const fileNameSource = message?.MediaUrl || message?.Message || '';
+			const fileName = fileNameSource.split('/')[fileNameSource.split('/')?.length - 1];
+			const documentCaption = message?.MediaUrl && message?.Message;
+
 			return (
 				<div
 					className={clsx(
@@ -169,7 +173,7 @@ const ChatTemplate = ({
 							alt="uploaded-file-preview"
 						/>
 						<div className={clsx(classes.pdfFileName, 'inbound')}>
-							{message?.Message?.split('/')[message?.Message?.split('/')?.length - 1]}
+							{fileName}
 						</div>
 						<a href={message?.MediaUrl} target="_blank" rel="noreferrer">
 							<img
@@ -179,6 +183,11 @@ const ChatTemplate = ({
 							/>
 						</a>
 					</Grid>
+					{documentCaption && (
+						<span style={{ display: 'block', marginTop: 4, fontSize: '0.85rem' }}>
+							{renderMessageText(message.Message)}
+						</span>
+					)}
 				</div>
 			);
 		}
