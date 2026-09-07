@@ -1,8 +1,8 @@
-import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import { Box, Button, Typography } from '@material-ui/core';
 import { MdLock } from 'react-icons/md';
 import clsx from 'clsx';
-import { sitePrefix } from '../../config';
+import TierPlans from '../TierPlans/TierPlans';
 
 interface Props {
   message?: string;
@@ -11,13 +11,11 @@ interface Props {
 }
 
 // Renders: lock icon + message + "Upgrade Plan" button
-// "Upgrade Plan" → navigates to pricing/account settings page
+// "Upgrade Plan" → opens the same plan-picker modal (TierPlans) used from the
+// sidebar's own "Upgrade Plan" button, rather than just navigating to Billing
+// Settings, so the user can pick/confirm a plan right here.
 const UpgradePrompt = ({ message, feature, classes }: Props) => {
-  const navigate = useNavigate();
-
-  const handleUpgrade = () => {
-    navigate(`${sitePrefix}BillingSettings`);
-  };
+  const [showTierPlans, setShowTierPlans] = useState(false);
 
   const displayMessage =
     message || (feature ? `${feature} is not available on your current plan.` : 'This feature is not available on your current plan.');
@@ -31,9 +29,16 @@ const UpgradePrompt = ({ message, feature, classes }: Props) => {
       {/* Same classes as the Chatbot list page's Search button (classes.btn +
           classes.btnRounded + classes.searchButton) - identical look, no custom
           color override. */}
-      <Button onClick={handleUpgrade} className={clsx(classes?.btn, classes?.btnRounded, classes?.searchButton)}>
+      <Button onClick={() => setShowTierPlans(true)} className={clsx(classes?.btn, classes?.btnRounded, classes?.searchButton)}>
         Upgrade Plan
       </Button>
+      {showTierPlans && (
+        <TierPlans
+          classes={classes}
+          isOpen={showTierPlans}
+          onClose={() => setShowTierPlans(false)}
+        />
+      )}
     </Box>
   );
 };
