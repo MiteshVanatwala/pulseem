@@ -30,7 +30,7 @@ const WizardActions = ({
         <Grid container style={{ ...innerStyle }}
             className={disabled ? classes.disableChildButtons : null}>
             <Grid item xs={12}>
-                <Box className={clsx(classes.wizardButtonContainer, classes.baseButtonsContainer, 'baseButtonsContainer', classes.flexWrap, { [classes.flexJustifyCenter]: windowSize === 'xs' })} style={{ paddingBottom: ignorePaddingBottom ? null : 40 }}>
+                <Box className={clsx(classes.wizardButtonContainer, classes.baseButtonsContainer, 'baseButtonsContainer', classes.flexWrap, classes.wizardActionsBar, { [classes.flexJustifyCenter]: windowSize === 'xs' })} style={{ paddingBottom: ignorePaddingBottom ? null : 40 }}>
                     {onBack &&
                         <Button
                             size="small"
@@ -46,9 +46,6 @@ const WizardActions = ({
                     }
                     {additionalButtonsOnStart && <Box className={classes.wizardStartGroup}>{additionalButtonsOnStart}</Box>}
                     <Box style={{ position: "relative", display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "flex-end", flexShrink: 0, maxWidth: "100%", ...(isRTL ? { marginRight: "auto" } : { marginLeft: "auto" }) }}>
-                        {
-                            helperText && <span key={typeof helperText === "string" ? helperText : "helper"} className={classes.wizardHelperText}>{helperText}</span>
-                        }
                         {userRoles?.AllowDelete && onDelete &&
                             <Button
                                 size="small"
@@ -142,7 +139,12 @@ const WizardActions = ({
                                 endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                             >{t('common.continue')}</Button>
                         }
-                        {additionalButtons}
+                        {(additionalButtons || helperText) &&
+                            <Box className={classes.wizardEndGroup}>
+                                {helperText && <span key={typeof helperText === "string" ? helperText : "helper"} className={classes.wizardHelperText}>{helperText}</span>}
+                                {additionalButtons}
+                            </Box>
+                        }
                     </Box>
                 </Box>
             </Grid>

@@ -2605,6 +2605,17 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
       width: "100% !important",
     },
   },
+  /* Reserves room for the Nagich accessibility button, which overlaps the bottom of
+     the toolbar. It is on the LEFT in BOTH directions, so the padding is physical,
+     not logical: in RTL it keeps its own bottom-left default, and in LTR
+     TawkToContainer.tsx pins it to `left: sidebarWidth + 5`, i.e. the left edge of
+     the content area. Desktop only — below 768px the toolbar is a full-width stack
+     and the global `.baseButtonsContainer *` rule overrides child widths anyway. */
+  wizardActionsBar: {
+    "@media screen and (min-width: 769px)": {
+      paddingLeft: 75,
+    },
+  },
   /* Wraps additionalButtonsOnStart so the toolbar breaks BETWEEN the two button
      clusters instead of tearing one of them in half.
      Below 768px baseButtonsContainer switches to column-reverse and reverses its
@@ -2621,7 +2632,17 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
       display: "contents",
     },
   },
-  /* common.lastSaveAt caption, shown under the trailing action button after a save.
+  /* Positioning anchor for wizardHelperText. additionalButtons always opens with the
+     save button in all three Bee editors, so the caption anchored to this box's
+     inline-start edge lands directly under save, in both directions. */
+  wizardEndGroup: {
+    position: "relative",
+    display: "flex",
+    flexWrap: "wrap",
+    alignItems: "center",
+    flexShrink: 0,
+  },
+  /* common.lastSaveAt caption, shown under the save button after a save.
      Absolutely positioned on purpose: it must never take part in the button row's
      inline flow. It only appears after the first save, so in the flow it widens the
      row mid-session and pushes a button onto a second line (visible at ~110% zoom).
@@ -2629,13 +2650,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme = {}) => {
      does NOT flip this sheet, because useClasses() runs in App (App.js:733) while
      MuiThemeProvider is inside App's own return (App.js:1028) — so makeStyles sees
      the default LTR theme and passes flip:false.
-     Below 768px the toolbar is a column-reverse stack and this box is no longer
-     last, so absolute positioning would drop the caption on top of the buttons
-     underneath it — there the caption returns to normal flow. */
+     Below 768px the toolbar is a vertical stack, so absolute positioning would drop
+     the caption on top of the buttons underneath it — there it returns to normal
+     flow and sits directly above the save button it belongs to. */
   wizardHelperText: {
     position: "absolute",
     top: "calc(100% - 6px)",
-    ...(isRTL ? { left: 8 } : { right: 8 }),
+    ...(isRTL ? { right: 8 } : { left: 8 }),
     whiteSpace: "nowrap",
     fontSize: 12,
     lineHeight: "14px",
