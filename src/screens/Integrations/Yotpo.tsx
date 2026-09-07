@@ -9,6 +9,8 @@ import { Loader } from "../../components/Loader/Loader";
 import { authenticate, getIntegration, resetIntegration, setIntegration } from "../../redux/reducers/integrationSlice";
 import { YotpoModel, UnsubscribePreferenceType } from '../../Models/Integrations/Integration';
 import { LU_Plugin, IntegrationRequest } from '../../Models/Integrations/Integration';
+import { getAllGroupsBySubAccountId } from "../../redux/reducers/groupSlice";
+import GroupTags from "../../components/Groups/GroupTags";
 import { logout } from "../../helpers/Api/PulseemReactAPI";
 import { BaseDialog } from "../../components/DialogTemplates/BaseDialog";
 import { StateType } from "../../Models/StateTypes";
@@ -49,6 +51,7 @@ const Yotpo = ({ classes }: any) => {
   const [importJobIds, setImportJobIds] = useState<number[]>([]);
   const [importStatus, setImportStatus] = useState<any>(null);
   const [importLoading, setImportLoading] = useState(false);
+  const allGroups = useSelector((state: StateType) => state.group?.subAccountAllGroups || []);
   const ArrowDownIcon = (): JSX.Element => React.createElement('span', null, React.createElement(IoIosArrowDown as any, { size: 20, className: classes.dropdownIconComponent }));
   const CopyIcon = (): JSX.Element => React.createElement('span', null, React.createElement(MdContentCopy as any, null));
 
@@ -71,6 +74,7 @@ const Yotpo = ({ classes }: any) => {
 
   const initSettings = async () => {
     setShowLoader(true);
+    await dispatch(getAllGroupsBySubAccountId());
     const settingResponse = await dispatch(getIntegration(LU_Plugin.Yotpo)) as any;
     setShowLoader(false);
     handleGetIntegrationResponse(settingResponse);
@@ -128,7 +132,8 @@ const Yotpo = ({ classes }: any) => {
         if (resp?.ApiKey) {
           const resolvedResp = {
             ...resp,
-            RegisterAsActiveOptionsID: normalizePreferenceType(resp.RegisterAsActiveOptionsID, UnsubscribePreferenceType.Both)
+            RegisterAsActiveOptionsID: normalizePreferenceType(resp.RegisterAsActiveOptionsID, UnsubscribePreferenceType.Both),
+            RegisterGroups: resp.RegisterGroups || []
           } as YotpoModel;
           setSettings(resolvedResp);
           setAuthenticated(true);
@@ -499,6 +504,37 @@ const Yotpo = ({ classes }: any) => {
             <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.pb15, classes.pt14)}>
               <Grid item xs={12}>
                 <Typography style={{ fontSize: "18px", color: "#000" }}>{RenderHtml(t("integrations.Yotpo.notice"))}</Typography>
+              </Grid>
+            </Grid>
+            <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.pb15)}>
+              <Grid item xs={12}>
+                <Typography className={clsx(classes.mb5)} style={{ fontWeight: 600 }}>
+                  {t("integrations.Yotpo.registerGroup") || "Register Group"}
+                </Typography>
+                <Typography className={clsx(classes.mb5)} style={{ fontSize: 13, color: '#666' }}>
+                  {t("integrations.Yotpo.registerGroupSubtitle") || "New Yotpo customers will be added to this group in Pulseem"}
+                </Typography>
+              </Grid>
+              <Grid item xs={12} sm={8} md={6}>
+                <Box className={'group-dropdown'}>
+                  <GroupTags
+                    className='group-select'
+                    groupSelected={settings.RegisterGroups || []}
+                    classes={classes}
+                    title={'siteTracking.typeGroupName'}
+                    dropdown
+                    dropDownProps={{
+                      onChange: (_e: any, val: any) => {
+                        setSettings({
+                          ...settings,
+                          RegisterGroups: val.reduce((prev: any, cur: any) => [...prev, cur.GroupID], [])
+                        });
+                      },
+                      selectedGroups: settings.RegisterGroups || [],
+                      groups: allGroups
+                    }}
+                  />
+                </Box>
               </Grid>
             </Grid>
             </Box>
