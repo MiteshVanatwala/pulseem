@@ -656,7 +656,7 @@ const Yotpo = ({ classes }: any) => {
                 <Box style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                   <Box style={{ width: 8, height: 8, borderRadius: '50%', background: importStatus.status === 'done' ? '#2E9E6E' : importStatus.status === 'error' ? '#C0303A' : importStatus.status === 'processing' ? '#D93A5B' : '#C97C10' }} />
                   <Typography style={{ fontSize: 12.5, fontWeight: 600, color: '#1A1A2E' }}>
-                    {importStatus.status === 'queued' && t('integrations.Yotpo.importQueued')}
+                    {(importStatus.status === 'queued' || importStatus.status === 'pending') && t('integrations.Yotpo.importQueued')}
                     {importStatus.status === 'processing' && t('integrations.Yotpo.importProcessing', { processed: importStatus.processed, failed: importStatus.failed })}
                     {importStatus.status === 'done' && t('integrations.Yotpo.importDone', { processed: importStatus.processed, failed: importStatus.failed })}
                     {importStatus.status === 'error' && (importStatus.message || importStatus.error || t('integrations.Yotpo.importError'))}
