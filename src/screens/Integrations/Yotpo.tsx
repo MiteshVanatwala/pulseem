@@ -77,8 +77,20 @@ const Yotpo = ({ classes }: any) => {
     setShowLoader(true);
     await dispatch(getAllGroupsBySubAccountId());
     const settingResponse = await dispatch(getIntegration(LU_Plugin.Yotpo)) as any;
-    setShowLoader(false);
     handleGetIntegrationResponse(settingResponse);
+    // restore latest import job status
+    try {
+      const latestRes = await PulseemReactInstance.get('Integrations/Yotpo/LatestImport');
+      const job = latestRes?.data?.Data;
+      if (job) {
+        setImportStatus({ status: job.Status, processed: job.Processed, failed: job.Failed, total: job.TotalRows, error: job.Error });
+        setImportJobIds([job.ID]);
+        if (job.Status === 'pending' || job.Status === 'processing') {
+          pollImportStatus(job.ID);
+        }
+      }
+    } catch { }
+    setShowLoader(false);
     setIsPageLoading(false);
   }
 
@@ -532,6 +544,17 @@ const Yotpo = ({ classes }: any) => {
                     }}
                   />
                 </Box>
+              </Grid>
+              <Grid item xs={12} style={{ marginTop: 12 }}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  size="medium"
+                  className={clsx(classes.btn, classes.btnRounded)}
+                  onClick={() => handleSave(settings)}
+                >
+                  {t("integrations.save") || "Save"}
+                </Button>
               </Grid>
             </Grid>
             </Box>
