@@ -18,7 +18,9 @@
 				"reqCompName": "נדרש שם חברה",
 				"reqContctName": "נדרש שם איש קשר",
 				"verifyEmail": "יש לאשר את כתובת המייל שהוזנה",
-				"verifyPhone": "יש לאשר את מספר הנייד שהוזן"
+				"verifyPhone": "יש לאשר את מספר הנייד שהוזן",
+				"emailNotVerified": "האימייל שהוזן אינו מאומת",
+				"cellphoneNotVerified": "מספר הנייד שהוזן אינו מאומת"
 			},
 			"securitySettings": "הגדרות אבטחת חשבון",
 			"btnChangePwd": "שינוי סיסמא",

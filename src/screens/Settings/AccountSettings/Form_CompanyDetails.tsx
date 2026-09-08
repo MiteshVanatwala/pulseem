@@ -32,6 +32,7 @@ import {
 import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
 import { AccountSettings } from '../../../Models/Account/AccountSettings';
 import { resetTwoFA, update2FASettings } from "../../../redux/reducers/AccountSettingsSlice";
+import { getAuthorizedEmails, getAuthorizeNumbers } from "../../../redux/reducers/commonSlice";
 import { useSearchParams } from 'react-router-dom';
 import ChangePassword from "./Password/ChangePassword";
 import { Title } from "../../../components/managment/Title";
@@ -50,7 +51,7 @@ const FORM_COMPANY_DETAILS = ({
 }: CompDtlPropTypes) => {
   const { t } = useTranslation();
   const { isRTL, windowSize } = useSelector((state: any) => state.core);
-  const { accountSettings, accountFeatures, currencyList, countryCodeList, isGlobal, IsPoland } = useSelector((state: any) => state.common);
+  const { accountSettings, accountFeatures, currencyList, countryCodeList, isGlobal, IsPoland, verifiedEmails, verifiedNumbers } = useSelector((state: any) => state.common);
   const { twoFAUpdated } = useSelector((state: any) => state?.accountSettings);
   const dispatch = useDispatch();
 
@@ -62,6 +63,7 @@ const FORM_COMPANY_DETAILS = ({
   const [showChangePassword, setShowChangePassword] = useState<boolean>(false);
   const [companyDetails, setCompanyDetails] = useState<AccountSettings | null>({} as AccountSettings);
   const [searchParams, setSearchParams] = useSearchParams();
+  const [verifiedListsLoaded, setVerifiedListsLoaded] = useState<boolean>(false);
 
   const [errors, setErrors] = useState<AccountSettings>({
     CompanyName: "",
@@ -93,6 +95,19 @@ const FORM_COMPANY_DETAILS = ({
           "settings.accountSettings.fixedComDetails.errors.invalidEmail"
         ),
       };
+    } else if (verifiedListsLoaded && companyDetails?.Email !== Settings?.Email) {
+      const isEmailVerified = verifiedEmails?.some(
+        (verified: any) => verified?.Number === companyDetails?.Email && verified?.IsOptIn
+      );
+      if (!isEmailVerified) {
+        isValid = false;
+        tempErrors = {
+          ...tempErrors,
+          Email: t(
+            "settings.accountSettings.fixedComDetails.errors.emailNotVerified"
+          ),
+        };
+      }
     }
     if (!companyDetails?.CellPhone) {
       isValid = false;
@@ -110,6 +125,19 @@ const FORM_COMPANY_DETAILS = ({
           "settings.accountSettings.fixedComDetails.errors.invalidMobile"
         ),
       };
+    } else if (verifiedListsLoaded && companyDetails?.CellPhone !== Settings?.CellPhone) {
+      const isCellPhoneVerified = verifiedNumbers?.some(
+        (verified: any) => verified?.Number === companyDetails?.CellPhone && verified?.IsOptIn
+      );
+      if (!isCellPhoneVerified) {
+        isValid = false;
+        tempErrors = {
+          ...tempErrors,
+          CellPhone: t(
+            "settings.accountSettings.fixedComDetails.errors.cellphoneNotVerified"
+          ),
+        };
+      }
     }
     if (!companyDetails?.CompanyName) {
       isValid = false;
@@ -140,6 +168,12 @@ const FORM_COMPANY_DETAILS = ({
     if (Settings)
       handleQueryString2FA();
   }, [accountFeatures, Settings]);
+
+  useEffect(() => {
+    Promise.all([dispatch(getAuthorizedEmails()), dispatch(getAuthorizeNumbers())]).finally(() => {
+      setVerifiedListsLoaded(true);
+    });
+  }, []);
 
   useEffect(() => {
     if (twoFAUpdated !== undefined && twoFAUpdated?.Data !== '') {

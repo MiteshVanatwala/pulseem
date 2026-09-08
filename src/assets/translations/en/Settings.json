@@ -18,7 +18,9 @@
 				"reqCompName": "Company name is required",
 				"reqContctName": "Contact name is required",
 				"verifyEmail": "Please verify the typed Email",
-				"verifyPhone": "Please verify the typed Phone Number"
+				"verifyPhone": "Please verify the typed Phone Number",
+				"emailNotVerified": "Entered email is not verified",
+				"cellphoneNotVerified": "Entered cellphone is not verified"
 			},
 			"securitySettings": "Security Settings",
 			"btnChangePwd": "Change Password",
