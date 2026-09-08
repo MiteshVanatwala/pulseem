@@ -553,7 +553,7 @@ const Yotpo = ({ classes }: any) => {
                   className={clsx(classes.btn, classes.btnRounded)}
                   onClick={() => handleSave(settings)}
                 >
-                  {t("integrations.save") || "Save"}
+                  {t("common.Save") || "Save"}
                 </Button>
               </Grid>
             </Grid>
