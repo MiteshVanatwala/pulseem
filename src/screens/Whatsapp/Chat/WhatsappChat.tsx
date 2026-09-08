@@ -5,7 +5,8 @@ import clsx from 'clsx';
 import DefaultScreen from '../../DefaultScreen';
 import { ServiceChannel } from '../../Service/Conversations/ServiceChannelDropdown';
 import { getConversations as getServiceConversations } from '../../../redux/reducers/conversationsSlice';
-import { IConversation } from '../../../Models/Service/Conversation';
+import { IConversation, IMessage } from '../../../Models/Service/Conversation';
+import { useServiceSocket } from '../../../hooks/useServiceSocket';
 import {
 	APIWhatsappChatConversationStatusData,
 	APIWhatsappChatSessionData,
@@ -308,13 +309,73 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		return sideChatContacts;
 	}, [selectedChannel, allSource, sideChatContacts, widgetSidebarContacts, allSidebarContacts]);
 
+	// ── Real-time updates for the widget inbox ──────────────────────────────
+	// Everything the sidebar renders derives from widgetConversations, so patching
+	// that one piece of state makes the whole list live.
+
+	const applyRealtimeMessage = useCallback((conversationId: string, message: IMessage) => {
+		setWidgetConversations((prev) =>
+			prev.map((c) =>
+				c.id === conversationId
+					? {
+							...c,
+							lastMessage: message.content || c.lastMessage,
+							lastMessageSender: message.sender || c.lastMessageSender,
+							lastActivityAt: message.sentAt || new Date().toISOString(),
+							messageCount: (c.messageCount || 0) + 1,
+					  }
+					: c,
+			),
+		);
+	}, []);
+
+	const applyRealtimeCreated = useCallback((conversation: IConversation) => {
+		setWidgetConversations((prev) =>
+			prev.some((c) => c.id === conversation.id) ? prev : [conversation, ...prev],
+		);
+	}, []);
+
+	// Patched field-by-field rather than replaced: the update event carries only what
+	// changed, so spreading it over the row would blank the fields it never mentions.
+	const applyRealtimeUpdated = useCallback((conversation: IConversation) => {
+		setWidgetConversations((prev) =>
+			prev.map((c) => {
+				if (c.id !== conversation.id) return c;
+				const next = { ...c };
+				if (conversation.status) next.status = conversation.status;
+				if (Object.prototype.hasOwnProperty.call(conversation, 'assignedAgentId')) {
+					next.assignedAgentId = conversation.assignedAgentId ?? null;
+					next.assignedAgentName = conversation.assignedAgentName ?? null;
+				}
+				if (conversation.lastMessage) next.lastMessage = conversation.lastMessage;
+				if (conversation.lastActivityAt) next.lastActivityAt = conversation.lastActivityAt;
+				return next;
+			}),
+		);
+	}, []);
+
+	const { isLive: socketLive } = useServiceSocket({
+		enabled: selectedChannel !== 'whatsapp',
+		onMessage: applyRealtimeMessage,
+		onConversationCreated: applyRealtimeCreated,
+		onConversationUpdated: applyRealtimeUpdated,
+	});
+
+	// Read inside the polling loop, which is set up once and must see the current
+	// value rather than the one captured when its effect ran.
+	const socketLiveRef = useRef(false);
+	useEffect(() => {
+		socketLiveRef.current = socketLive;
+	}, [socketLive]);
+
 	// Widget conversations are only fetched once the agent actually switches to a
 	// channel that shows them — a WhatsApp-only user never pays for this call.
 	//
-	// Then it keeps polling, because nothing here listens on a socket: a visitor's
-	// message would otherwise not reach the agent until they switched channels or
-	// reloaded. Same shape as the WhatsApp inbound loop below — chained setTimeout
-	// rather than setInterval, so a slow response cannot stack up requests.
+	// It then keeps polling as a fallback. While the socket is connected the interval
+	// drops to a slow reconciliation sweep — updates arrive over the socket, but a
+	// missed event would otherwise leave the list wrong until the agent reloaded. With
+	// no socket it falls back to the original 5s so the inbox still works. Chained
+	// setTimeout rather than setInterval, so a slow response cannot stack up requests.
 	useEffect(() => {
 		if (selectedChannel === 'whatsapp') return;
 
@@ -337,7 +398,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			} catch {
 				// A failed refresh must not kill the loop — the next tick retries.
 			}
-			if (!cancelled) timer = setTimeout(load, 5000);
+			if (!cancelled) timer = setTimeout(load, socketLiveRef.current ? 60000 : 5000);
 		};
 
 		load();

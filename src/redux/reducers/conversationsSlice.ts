@@ -47,6 +47,24 @@ export const getConversations = createAsyncThunk(
   }
 );
 
+// Credential + address for the real-time socket. Kept as a thunk so it goes through
+// the same axios instance (and session refresh) as every other Service call.
+//
+// Returns null rather than throwing when real-time is switched off — the backend
+// answers 200 with enabled:false when the socket secret or URL is unset, and the
+// inbox is expected to carry on polling in that case.
+export const getSocketToken = createAsyncThunk(
+  'Service/SocketToken',
+  async (): Promise<{ token: string; url: string } | null> => {
+    if (USE_MOCK) return null;
+    const res = await PulseemReactInstance.get('Service/SocketToken');
+    const env = unwrap<{ token: string; url: string; enabled: boolean }>(res.data);
+    const data = env.Data;
+    if (!data || !data.enabled || !data.token || !data.url) return null;
+    return { token: data.token, url: data.url };
+  }
+);
+
 export const getAgents = createAsyncThunk('Service/GetAgents', async () => {
   if (USE_MOCK) return mockDelay(MOCK_AGENTS);
   const res = await PulseemReactInstance.get('Service/GetAgents');
@@ -169,6 +187,70 @@ const conversationsSlice = createSlice({
       state.visitorInfo = null;
       state.pageTrail = [];
     },
+
+    // ── Real-time (socket) ────────────────────────────────────────────────
+    // These mirror what a refetch would have produced, so the reducers below stay
+    // the single place that knows the state shape whether an update arrived by
+    // poll or by socket.
+
+    /**
+     * A message arrived for some conversation. Appended only when that thread is the
+     * one on screen; the list row is updated either way so unopened threads still
+     * show the new preview and move to the top.
+     *
+     * De-duplicated by id because the sender also receives its own message back over
+     * the socket, and sendMessage.fulfilled has already pushed it.
+     */
+    socketMessageReceived(state, action) {
+      const { conversationId, message } = action.payload || {};
+      if (!conversationId || !message) return;
+
+      if (state.selectedConversation && state.selectedConversation.id === conversationId) {
+        const exists = message.id && state.messages.some((m) => m.id === message.id);
+        if (!exists) state.messages.push(message);
+      }
+
+      const row = state.conversations.find((c) => c.id === conversationId);
+      if (row) {
+        row.lastMessage = message.content || row.lastMessage;
+        row.lastMessageSender = message.sender || row.lastMessageSender;
+        row.lastActivityAt = message.sentAt || new Date().toISOString();
+        row.messageCount = (row.messageCount || 0) + 1;
+      }
+    },
+
+    /** A brand-new conversation appeared. Ignored if we already know it. */
+    socketConversationCreated(state, action) {
+      const conversation = action.payload;
+      if (!conversation || !conversation.id) return;
+      if (state.conversations.some((c) => c.id === conversation.id)) return;
+      state.conversations.unshift(conversation);
+      state.totalCount += 1;
+    },
+
+    /**
+     * Status or assignment changed elsewhere. Patched field-by-field rather than
+     * replaced: the socket payload carries only what changed, so overwriting the row
+     * would blank out fields the event never mentions.
+     */
+    socketConversationUpdated(state, action) {
+      const incoming = action.payload;
+      if (!incoming || !incoming.id) return;
+      const apply = (c: IConversation) => {
+        if (incoming.status) c.status = incoming.status;
+        if (Object.prototype.hasOwnProperty.call(incoming, 'assignedAgentId')) {
+          c.assignedAgentId = incoming.assignedAgentId ?? null;
+          c.assignedAgentName = incoming.assignedAgentName ?? null;
+        }
+        if (incoming.lastMessage) c.lastMessage = incoming.lastMessage;
+        if (incoming.lastActivityAt) c.lastActivityAt = incoming.lastActivityAt;
+      };
+      const row = state.conversations.find((c) => c.id === incoming.id);
+      if (row) apply(row);
+      if (state.selectedConversation && state.selectedConversation.id === incoming.id) {
+        apply(state.selectedConversation);
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -222,5 +304,11 @@ const conversationsSlice = createSlice({
   },
 });
 
-export const { setFilters, clearSelected } = conversationsSlice.actions;
+export const {
+  setFilters,
+  clearSelected,
+  socketMessageReceived,
+  socketConversationCreated,
+  socketConversationUpdated,
+} = conversationsSlice.actions;
 export default conversationsSlice.reducer;

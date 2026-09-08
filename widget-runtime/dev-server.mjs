@@ -70,6 +70,11 @@ const conversations = new Map(); // conversationId -> { messages: [], fields, fe
 // Must match the accountId an agent connects with, or they land in different rooms.
 const MOCK_ACCOUNT_ID = Number(process.env.MOCK_ACCOUNT_ID || 999999);
 
+// Mirrors WidgetConfigPublicController reading Service.CommunicationUrl — set this to
+// the running pulseem-communication instance to exercise the real socketUrl handoff
+// through the demo page instead of setting window.PulseemWidgetConfig.socketUrl by hand.
+const SOCKET_URL = process.env.SOCKET_URL || '';
+
 const WIDGET_CONFIG = {
   widgetId: '11111111-2222-3333-4444-555555555555',
   status: 'active',
@@ -79,6 +84,7 @@ const WIDGET_CONFIG = {
   primaryColor: '#c2185b',
   greetingMessage: 'Hi! Any questions? We usually reply in a few minutes.',
   showBranding: true,
+  socketUrl: SOCKET_URL,
 
   autoOpen: false,
   autoOpenDelay: 5,
