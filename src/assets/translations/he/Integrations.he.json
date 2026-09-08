@@ -240,6 +240,11 @@
     "importQueued": "הקבצים הועלו — היבוא מתבצע ברקע",
     "importProcessing": "מעבד... {{processed}} יובאו, {{failed}} נכשלו",
     "importDone": "היבוא הושלם — {{processed}} יובאו, {{failed}} נכשלו",
-    "importError": "היבוא נכשל, אנא נסה שוב"
+    "importError": "היבוא נכשל, אנא נסה שוב",
+    "registerGroup": "קבוצת הרשמה",
+    "registerGroupSubtitle": "לקוחות Yotpo חדשים יתווספו לקבוצה זו בפולסים",
+    "filesSelected": "נבחרו {{count}} קבצים",
+    "csvOnlyHint": "קבצי .csv בלבד",
+    "importNotCsv": "ניתן לייבא קבצי .csv בלבד. לא קובץ CSV: {{files}}"
   }
 }

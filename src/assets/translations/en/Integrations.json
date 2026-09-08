@@ -242,6 +242,9 @@
     "importQueued": "Files uploaded — import is running in the background",
     "importProcessing": "Processing... {{processed}} imported, {{failed}} failed",
     "importDone": "Import complete — {{processed}} imported, {{failed}} failed",
-    "importError": "Import failed, please try again"
+    "importError": "Import failed, please try again",
+    "filesSelected": "{{count}} file(s) selected",
+    "csvOnlyHint": ".csv files only",
+    "importNotCsv": "Only .csv files can be imported. Not a CSV: {{files}}"
   }
 }

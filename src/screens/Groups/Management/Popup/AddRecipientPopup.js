@@ -31,6 +31,7 @@ import { getAccountExtraData } from "../../../../redux/reducers/smsSlice";
 import { CLIENT_CONSTANTS } from "../../../../model/Clients/Contants";
 import { changeClientStatus, getClientLoyaltyData } from "../../../../redux/reducers/clientSlice";
 import { getIntegration } from "../../../../redux/reducers/integrationSlice";
+import { LU_Plugin } from "../../../../Models/Integrations/Integration";
 import { IoIosArrowDown, IoMdClose } from "react-icons/io";
 import { BaseDialog } from "../../../../components/DialogTemplates/BaseDialog";
 import { ReplaceExtraFieldHeader } from "../../../../helpers/UI/AccountExtraField";
@@ -158,22 +159,30 @@ const AddRecipientPopup = ({ classes,
             setSelectedLocalGroups([...selectedGroups])
             // PR-3418 — check if Yotpo is connected, then lazy-load loyalty snapshot
             const cid = recipientData.ClientID || recipientData.ClientId || recipientData.clientId;
+            // Two sequential awaits, so a recipient switch mid-flight could let the
+            // previous response land last and show one recipient's loyalty data
+            // against another's name. Also stops the writes if the popup closes.
+            let stale = false;
             (async () => {
                 try {
-                    const yotpoRes = await dispatch(getIntegration(11)); // 11 = Yotpo
+                    const yotpoRes = await dispatch(getIntegration(LU_Plugin.Yotpo));
+                    if (stale) return;
                     const yotpoSettings = yotpoRes?.payload?.Data;
                     const connected = !!(yotpoSettings?.ApiKey);
                     setIsYotpoConnected(connected);
                     if (connected && cid) {
                         const res = await dispatch(getClientLoyaltyData(cid));
+                        if (stale) return;
                         const data = res?.payload?.Data;
                         setLoyaltyData(data ?? null);
                     }
                 } catch (e) {
+                    if (stale) return;
                     setIsYotpoConnected(false);
                     setLoyaltyData(null);
                 }
             })();
+            return () => { stale = true; };
         }
 
     }, [recipientData])

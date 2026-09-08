@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import React from "react";
 import { Box, Typography, Button, Grid, TextField, FormControlLabel, FormControl, MenuItem } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
@@ -20,6 +20,7 @@ import { RenderHtml } from "../../helpers/Utils/HtmlUtils";
 import { Select } from "@mui/material";
 import { IoIosArrowDown } from "react-icons/io";
 import { MdContentCopy } from "react-icons/md";
+import { aggregateImportStatus, pendingImportJobIds, partitionCsvFiles } from "./yotpoImport";
 
 const Yotpo = ({ classes }: any) => {
   const { t } = useTranslation();
@@ -48,10 +49,19 @@ const Yotpo = ({ classes }: any) => {
   } as YotpoModel);
   const [isAuthenticated, setAuthenticated] = useState(false);
   const [activeImportType, setActiveImportType] = useState<UnsubscribePreferenceType>(UnsubscribePreferenceType.Both);
-  const [csvFiles, setCsvFiles] = useState<FileList | null>(null);
-  const [importJobIds, setImportJobIds] = useState<number[]>([]);
+  const [csvFiles, setCsvFiles] = useState<File[] | null>(null);
   const [importStatus, setImportStatus] = useState<any>(null);
   const [importLoading, setImportLoading] = useState(false);
+  // Holds the live poll so it can be stopped from outside its own callback: on
+  // unmount, and before a second import starts. Without this the interval survived
+  // navigation away from the screen and kept calling setState on a dead component,
+  // and a second import left the first one running — both writing importStatus, so
+  // the older job could overwrite the newer job's progress.
+  const importPollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  // Every job in the current import, and the last status seen for each. A finished
+  // job stops being requested but its numbers stay in the aggregate, so the totals
+  // do not drop as files complete.
+  const importJobSnapshotsRef = useRef<Record<number, any>>({});
   const allGroups = useSelector((state: StateType) => state.group?.subAccountAllGroups || []);
   const ArrowDownIcon = (): JSX.Element => React.createElement('span', null, React.createElement(IoIosArrowDown as any, { size: 20, className: classes.dropdownIconComponent }));
   const CopyIcon = (): JSX.Element => React.createElement('span', null, React.createElement(MdContentCopy as any, null));
@@ -83,10 +93,11 @@ const Yotpo = ({ classes }: any) => {
       const latestRes = await PulseemReactInstance.get('Integrations/Yotpo/LatestImport');
       const job = latestRes?.data?.Data;
       if (job) {
+        // LatestImport returns one job, so a reload mid-import resumes tracking that
+        // one only, even if the original upload had several files.
         setImportStatus({ status: job.Status, processed: job.Processed, failed: job.Failed, total: job.TotalRows, error: job.Error });
-        setImportJobIds([job.ID]);
         if (job.Status === 'pending' || job.Status === 'processing') {
-          pollImportStatus(job.ID);
+          pollImportStatus([job.ID]);
         }
       }
     } catch { }
@@ -375,6 +386,42 @@ const Yotpo = ({ classes }: any) => {
     }
   }
 
+  const stopImportPolling = () => {
+    if (importPollRef.current) {
+      clearInterval(importPollRef.current);
+      importPollRef.current = null;
+    }
+  };
+
+  // Leaving the screen must stop the poll — the import itself keeps running
+  // server-side. Without this the interval outlived the component and went on
+  // calling setState on it every 10 seconds for the life of the page.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => stopImportPolling, []);
+
+  const acceptCsvFiles = (incoming: File[]) => {
+    const { rejected } = partitionCsvFiles(incoming);
+    if (rejected.length > 0) {
+      setCsvFiles(null);
+      setImportStatus({
+        status: 'error',
+        message: t('integrations.Yotpo.importNotCsv', { files: rejected.map((f) => f.name).join(', ') }),
+      });
+      return;
+    }
+    setImportStatus(null);
+    setCsvFiles(incoming.length > 0 ? incoming : null);
+  };
+
+  const handleCsvSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    // Read the list out before clearing the input: clearing value empties the live
+    // FileList. Resetting it is what lets the same file be picked again after a
+    // failed import — otherwise onChange never fires and the screen looks stuck.
+    const picked = Array.from(event.target.files || []);
+    event.target.value = '';
+    acceptCsvFiles(picked);
+  };
+
   const handleCsvImport = async () => {
     if (!csvFiles || csvFiles.length === 0) return;
     setImportLoading(true);
@@ -389,9 +436,8 @@ const Yotpo = ({ classes }: any) => {
       });
       const data = response.data;
       if (data?.StatusCode === 201 && data?.Data?.length > 0) {
-        setImportJobIds(data.Data);
-        setImportStatus({ status: 'queued', message: t('integrations.Yotpo.importQueued') });
-        pollImportStatus(data.Data[0]);
+        setImportStatus({ status: 'queued', message: t('integrations.Yotpo.importQueued'), filesTotal: data.Data.length, filesDone: 0 });
+        pollImportStatus(data.Data);
       } else {
         setImportStatus({ status: 'error', message: data?.Message || t('integrations.Yotpo.importError') });
       }
@@ -401,21 +447,54 @@ const Yotpo = ({ classes }: any) => {
     setImportLoading(false);
   };
 
-  const pollImportStatus = (jobId: number) => {
-    const interval = setInterval(async () => {
-      try {
-        const response = await PulseemReactInstance.get(`Integrations/Yotpo/ImportStatus/${jobId}`);
-        const data = response.data;
-        const job = data?.Data;
-        if (job) {
-          setImportStatus({ status: job.Status, processed: job.Processed, failed: job.Failed, total: job.TotalRows, error: job.Error });
-          if (job.Status === 'done' || job.Status === 'failed') clearInterval(interval);
-        }
-      } catch { clearInterval(interval); }
-    }, 10000);
+  const pollImportStatus = (jobIds: number[]) => {
+    // A previous import may still be polling; two intervals would race on
+    // importStatus and the stale one could win.
+    stopImportPolling();
+    importJobSnapshotsRef.current = {};
+    if (!jobIds || jobIds.length === 0) return;
+
+    const tick = async () => {
+      const snapshots = importJobSnapshotsRef.current;
+      // Finished jobs are not re-requested, so a 5-file import winds down to one
+      // request per cycle instead of five for as long as the screen stays open.
+      const pending = pendingImportJobIds(jobIds, snapshots);
+      if (pending.length === 0) { stopImportPolling(); return; }
+
+      const results = await Promise.all(pending.map(
+        (id) => PulseemReactInstance.get(`Integrations/Yotpo/ImportStatus/${id}`)
+          .then((response: any) => ({ id, job: response?.data?.Data ?? null }))
+          // One failed request must not abandon the whole import the way a single
+          // throw used to — the other files are still worth reporting.
+          .catch(() => ({ id, job: null })),
+      ));
+
+      let received = 0;
+      results.forEach(({ id, job }) => {
+        if (job) { snapshots[id] = job; received++; }
+      });
+
+      // Nothing came back at all: the endpoint or the network is down, so stop
+      // rather than retry forever.
+      if (received === 0 && Object.keys(snapshots).length === 0) {
+        setImportStatus({ status: 'error', message: t('integrations.Yotpo.importError') });
+        stopImportPolling();
+        return;
+      }
+
+      const next = aggregateImportStatus(jobIds, snapshots);
+      setImportStatus(next);
+      if (next.isTerminal) stopImportPolling();
+    };
+
+    importPollRef.current = setInterval(tick, 10000);
   };
 
   const normalizedRegisterAsActiveOptionsID = normalizePreferenceType(settings?.RegisterAsActiveOptionsID, UnsubscribePreferenceType.Both);
+  // 'error' is set by this screen when a request fails; 'failed' comes from the job
+  // itself. Both mean the same thing to the person reading the status bar, and
+  // 'failed' previously matched no branch at all — amber dot, empty message.
+  const isImportFailed = importStatus?.status === 'error' || importStatus?.status === 'failed';
 
   return (
     <>
@@ -518,10 +597,10 @@ const Yotpo = ({ classes }: any) => {
             <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.pb15)}>
               <Grid item xs={12}>
                 <Typography className={clsx(classes.mb5)} style={{ fontWeight: 600 }}>
-                  {t("integrations.Yotpo.registerGroup") || "Register Group"}
+                  {t("integrations.Yotpo.registerGroup")}
                 </Typography>
                 <Typography className={clsx(classes.mb5)} style={{ fontSize: 13, color: '#666' }}>
-                  {t("integrations.Yotpo.registerGroupSubtitle") || "New Yotpo customers will be added to this group in Pulseem"}
+                  {t("integrations.Yotpo.registerGroupSubtitle")}
                 </Typography>
               </Grid>
               <Grid item xs={12} sm={8} md={6}>
@@ -591,11 +670,11 @@ const Yotpo = ({ classes }: any) => {
               style={{ flex: 1, minWidth: 200, border: `1.5px dashed ${csvFiles && csvFiles.length > 0 ? '#D93A5B' : '#E0E4EE'}`, borderRadius: 6, padding: '18px 14px', textAlign: 'center', cursor: 'pointer', background: csvFiles && csvFiles.length > 0 ? '#FDF1F4' : '#F0F3F8', transition: 'border-color 0.15s, background 0.15s' }}
               onClick={() => (document.getElementById('yotpoCsvInput') as HTMLInputElement)?.click()}
               onDragOver={(e) => { e.preventDefault(); }}
-              onDrop={(e) => { e.preventDefault(); setCsvFiles(e.dataTransfer.files); }}
+              onDrop={(e) => { e.preventDefault(); acceptCsvFiles(Array.from(e.dataTransfer.files || [])); }}
             >
               <Typography style={{ fontSize: 13, fontWeight: 600, color: '#1A1A2E', marginBottom: 2 }}>
                 {csvFiles && csvFiles.length > 0
-                  ? `${csvFiles.length} ${csvFiles.length > 1 ? t('integrations.Yotpo.importing').replace('...','') : ''} ${Array.from(csvFiles).map(f => f.name).join(', ')}`
+                  ? `${t('integrations.Yotpo.filesSelected', { count: csvFiles.length })}: ${Array.from(csvFiles).map(f => f.name).join(', ')}`
                   : t('integrations.Yotpo.importHowTitle').split(':')[0]}
               </Typography>
               <Typography style={{ fontSize: 11, color: '#6B7A99' }}>
@@ -610,7 +689,7 @@ const Yotpo = ({ classes }: any) => {
                   ))}
                 </Box>
               )}
-              <Typography style={{ fontSize: 10.5, color: '#A0AABF', marginTop: 7 }}>.csv {t('integrations.Yotpo.importStep5').includes('email') ? 'files only' : ''}</Typography>
+              <Typography style={{ fontSize: 10.5, color: '#A0AABF', marginTop: 7 }}>{t('integrations.Yotpo.csvOnlyHint')}</Typography>
             </Box>
             <Box style={{ display: 'flex', flexDirection: 'column', gap: 0, justifyContent: 'center', paddingTop: 2 }}>
               <Button
@@ -625,7 +704,7 @@ const Yotpo = ({ classes }: any) => {
               </Button>
             </Box>
           </Box>
-          <input type="file" id="yotpoCsvInput" accept=".csv" multiple style={{ display: 'none' }} onChange={(e) => setCsvFiles(e.target.files)} />
+          <input type="file" id="yotpoCsvInput" accept=".csv" multiple style={{ display: 'none' }} onChange={handleCsvSelect} />
 
           {/* Steps — shown below upload so they don't push the button down */}
           <Box style={{ display: 'flex', padding: '16px 20px 4px', overflowX: 'auto', gap: 0 }}>
@@ -649,31 +728,36 @@ const Yotpo = ({ classes }: any) => {
               borderRadius: 6,
               padding: '12px 14px',
               border: '1px solid',
-              borderColor: importStatus.status === 'done' ? '#A0D8C0' : importStatus.status === 'error' ? '#F0B0B0' : importStatus.status === 'processing' ? '#F2C0CC' : '#F0D090',
-              background: importStatus.status === 'done' ? '#F0FAF5' : importStatus.status === 'error' ? '#FFF0F0' : importStatus.status === 'processing' ? '#FDF1F4' : '#FFF8EC',
+              borderColor: importStatus.status === 'done' ? '#A0D8C0' : isImportFailed ? '#F0B0B0' : importStatus.status === 'processing' ? '#F2C0CC' : '#F0D090',
+              background: importStatus.status === 'done' ? '#F0FAF5' : isImportFailed ? '#FFF0F0' : importStatus.status === 'processing' ? '#FDF1F4' : '#FFF8EC',
             }}>
               <Box style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
                 <Box style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <Box style={{ width: 8, height: 8, borderRadius: '50%', background: importStatus.status === 'done' ? '#2E9E6E' : importStatus.status === 'error' ? '#C0303A' : importStatus.status === 'processing' ? '#D93A5B' : '#C97C10' }} />
+                  <Box style={{ width: 8, height: 8, borderRadius: '50%', background: importStatus.status === 'done' ? '#2E9E6E' : isImportFailed ? '#C0303A' : importStatus.status === 'processing' ? '#D93A5B' : '#C97C10' }} />
                   <Typography style={{ fontSize: 12.5, fontWeight: 600, color: '#1A1A2E' }}>
                     {(importStatus.status === 'queued' || importStatus.status === 'pending') && t('integrations.Yotpo.importQueued')}
                     {importStatus.status === 'processing' && t('integrations.Yotpo.importProcessing', { processed: importStatus.processed, failed: importStatus.failed })}
                     {importStatus.status === 'done' && t('integrations.Yotpo.importDone', { processed: importStatus.processed, failed: importStatus.failed })}
-                    {importStatus.status === 'error' && (importStatus.message || importStatus.error || t('integrations.Yotpo.importError'))}
+                    {isImportFailed && (importStatus.message || importStatus.error || t('integrations.Yotpo.importError'))}
                   </Typography>
                 </Box>
-                {(importStatus.processed || importStatus.total) && (
+                {/* Ternary, not `&&`: `0 && <jsx>` renders a literal "0". */}
+                {(Number(importStatus.processed) > 0 || Number(importStatus.total) > 0) ? (
                   <Typography style={{ fontSize: 11.5, color: '#6B7A99' }}>
                     {importStatus.processed} / {importStatus.total}
+                    {/* Numeric so it needs no translated string. */}
+                    {Number(importStatus.filesTotal) > 1
+                      ? ` · 📄 ${importStatus.filesDone}/${importStatus.filesTotal}`
+                      : ''}
                   </Typography>
-                )}
+                ) : null}
               </Box>
               <Box style={{ height: 4, background: '#E0E4EE', borderRadius: 2, overflow: 'hidden' }}>
                 <Box style={{
                   height: '100%',
                   borderRadius: 2,
-                  background: importStatus.status === 'done' ? '#2E9E6E' : importStatus.status === 'error' ? '#C0303A' : '#D93A5B',
-                  width: importStatus.status === 'done' || importStatus.status === 'error' ? '100%'
+                  background: importStatus.status === 'done' ? '#2E9E6E' : isImportFailed ? '#C0303A' : '#D93A5B',
+                  width: importStatus.status === 'done' || isImportFailed ? '100%'
                     : importStatus.total ? `${Math.round((importStatus.processed / importStatus.total) * 100)}%` : '5%',
                   transition: 'width 0.4s ease'
                 }} />

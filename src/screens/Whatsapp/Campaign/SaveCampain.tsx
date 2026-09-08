@@ -41,7 +41,8 @@ import {
 import CampaignFields from './Components/CampaignFields';
 import FileUpload from '../Editor/Components/FileUpload';
 import Gallery from '../../../components/Gallery/Gallery.component';
-import { PulseemFolderType } from '../../../model/PulseemFields/Fields';
+import { PulseemFolderType, LoyaltyPersonalizationFields } from '../../../model/PulseemFields/Fields';
+import { LU_Plugin } from '../../../Models/Integrations/Integration';
 import { getIntegration } from '../../../redux/reducers/integrationSlice';
 import clsx from 'clsx';
 import WhatsappMobilePreview from '../Editor/Components/WhatsappMobilePreview';
@@ -536,14 +537,15 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			CreationDate: translator('client.subscribedOn'),
 			ReminderDate: translator('recipient.reminderDate'),
 		};
-		const yotpoRes = await dispatch<any>(getIntegration(11));
+		const yotpoRes = await dispatch<any>(getIntegration(LU_Plugin.Yotpo));
 		const isYotpoConnected = !!(yotpoRes?.payload?.Data?.ApiKey);
 		if (isYotpoConnected) {
-			staticPersonalField['loyalty_points'] = translator('campaigns.loyalty.points');
-			staticPersonalField['loyalty_tier'] = translator('campaigns.loyalty.tier');
-			staticPersonalField['loyalty_points_earned'] = translator('campaigns.loyalty.pointsEarned');
-			staticPersonalField['loyalty_tier_multiplier'] = translator('campaigns.loyalty.tierMultiplier');
-			staticPersonalField['loyalty_points_expiry'] = translator('campaigns.loyalty.pointsExpiry');
+			// Driven off the shared list so a new loyalty token only has to be added in
+			// Fields.ts — this block used to re-list all five by hand, which meant the
+			// SMS and newsletter editors could offer a token WhatsApp silently lacked.
+			LoyaltyPersonalizationFields.forEach((field) => {
+				staticPersonalField[field.value] = translator(field.label);
+			});
 		}
 		const { payload: personalFieldData }: personalFieldAPIProps =
 			await dispatch<any>(getAccountExtraData());

@@ -57,6 +57,7 @@ import PulseemSwitch from "../../../components/Controlls/PulseemSwitch";
 import { IoIosArrowDown } from "react-icons/io";
 import { MdArrowBackIos, MdArrowForwardIos, MdOutlineCampaign } from "react-icons/md";
 import { PulseemFeatures, LoyaltyPersonalizationFields } from "../../../model/PulseemFields/Fields";
+import { LU_Plugin } from "../../../Models/Integrations/Integration";
 import { getIntegration } from '../../../redux/reducers/integrationSlice';
 import { CgWebsite } from "react-icons/cg";
 import { DynamicProductLink } from "../../../Models/PushNotifications/Enums";
@@ -416,7 +417,7 @@ const SmsCreator = ({ classes }) => {
     for (let i = 0; i < additionalExtraData.length; i++) {
       defaultAccountExtraData.push({ ...additionalExtraData[i], selected: false })
     }
-    const yotpoRes = await dispatch(getIntegration(11));
+    const yotpoRes = await dispatch(getIntegration(LU_Plugin.Yotpo));
     const isYotpoConnected = !!(yotpoRes?.payload?.Data?.ApiKey);
     if (isYotpoConnected) {
       for (let i = 0; i < LoyaltyPersonalizationFields.length; i++) {

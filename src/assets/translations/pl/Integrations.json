@@ -218,6 +218,11 @@
     "importQueued": "Pliki zostały przesłane — import działa w tle",
     "importProcessing": "Przetwarzanie... {{processed}} zaimportowano, {{failed}} błędów",
     "importDone": "Import zakończony — {{processed}} zaimportowano, {{failed}} błędów",
-    "importError": "Import nie powiódł się, spróbuj ponownie"
+    "importError": "Import nie powiódł się, spróbuj ponownie",
+    "registerGroup": "Grupa rejestracji",
+    "registerGroupSubtitle": "Nowi klienci Yotpo zostaną dodani do tej grupy w Pulseem",
+    "filesSelected": "Wybrano {{count}} plik(ów)",
+    "csvOnlyHint": "tylko pliki .csv",
+    "importNotCsv": "Można importować tylko pliki .csv. To nie jest plik CSV: {{files}}"
   }
 }
