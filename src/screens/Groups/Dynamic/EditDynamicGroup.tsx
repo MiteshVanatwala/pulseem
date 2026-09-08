@@ -833,12 +833,12 @@ const EditDynamicGroup = ({ classes }: any) => {
                                 value='4'
                             />
 
-                            <Tab
+                            {/* <Tab
                                 label={t('groups.loyalty.tabTitle')}
                                 classes={{ root: classes.tabText, selected: classes.activeTab }}
                                 className={classes.iconTab}
                                 value='6'
-                            />
+                            /> */}
 
                             <Tab
                                 label={t('group.updateGroup')}
@@ -895,9 +895,9 @@ const EditDynamicGroup = ({ classes }: any) => {
                                 </div>
                             </TabPanel>
 
-                            <TabPanel value='6'>
+                            {/* <TabPanel value='6'>
                                 <LoyaltyDetails classes={classes} data={dynamicGroupModel} onUpdate={updateMyConditions} />
-                            </TabPanel>
+                            </TabPanel> */}
 
                             <TabPanel value='5'>
                                 <UpdateGroup classes={classes} data={dynamicGroupModel} onUpdate={updateGroup} />
