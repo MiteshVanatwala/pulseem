@@ -34,10 +34,17 @@ import { actionURL } from '../../../../config'; // ReactCode\src\config\index.js
 export const STATE_VERSION = 4;
 export const CUR = '₪';
 
-// Exactly 13 colors, in the exact POC order.
+// Swatches shown under every ColorField (8 pickers: bg, progress, "here", tier fill/label,
+// box fill/text/accent). 12 colors = exactly ONE row in the 380px side panel
+// (12×20px + 11×5px gap = 295px; 13 wrapped). RTL: PALETTE[0] renders at the far right.
+// [0..9]   Clal brand palette, brand-guide order (owner, 2026-09-03):
+//          תכלת · כחול דיגיטלי · כחול עמוק · כחול שחור · קרם · מנטה בהיר · מנטה · ירוק · ורוד אפרסק · כתום אפרסק
+// [10..11] complements the brand set lacks: white (box fill) and a slate mid-grey (muted text/lines).
+// C# never reads this list — StairColor() accepts any hex.
 export const PALETTE = [
-  '#c4cdf2', '#aab6ee', '#8e9ce9', '#7ed98c', '#2bb24c', '#1e7e34', '#ffffff',
-  '#fdf0ea', '#fff3cd', '#e0e0e0', '#3b3b6b', '#1f2937', '#dc2626',
+  '#d2e1ff', '#3d6ced', '#293768', '#262b3a', '#fbf2eb',
+  '#f8ffd2', '#b0ffae', '#59d189', '#ffbdbd', '#ff8c64',
+  '#ffffff', '#8f96a8',
 ];
 
 // Absolute endpoint. In prod actionURL = `https://${host}/Pulseem/`.

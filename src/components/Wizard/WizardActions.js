@@ -30,7 +30,7 @@ const WizardActions = ({
         <Grid container style={{ ...innerStyle }}
             className={disabled ? classes.disableChildButtons : null}>
             <Grid item xs={12}>
-                <Box className={clsx(classes.wizardButtonContainer, classes.baseButtonsContainer, 'baseButtonsContainer', { [classes.flexJustifyCenter]: windowSize === 'xs', [classes.flexWrap]: windowSize === 'xs' })} style={{ paddingBottom: ignorePaddingBottom ? null : 40 }}>
+                <Box className={clsx(classes.wizardButtonContainer, classes.baseButtonsContainer, 'baseButtonsContainer', classes.flexWrap, classes.wizardActionsBar, { [classes.flexJustifyCenter]: windowSize === 'xs' })} style={{ paddingBottom: ignorePaddingBottom ? null : 40 }}>
                     {onBack &&
                         <Button
                             size="small"
@@ -44,11 +44,8 @@ const WizardActions = ({
                             style={{ margin: '8px' }}
                         >{onBack?.text ?? t('notifications.back')}</Button>
                     }
-                    {additionalButtonsOnStart}
-                    <Box style={isRTL ? { marginRight: "auto" } : { marginLeft: "auto" }}>
-                        {
-                            helperText && <span className={clsx(classes.paddingSides5, classes.semibold)}>{helperText}</span>
-                        }
+                    {additionalButtonsOnStart && <Box className={classes.wizardStartGroup}>{additionalButtonsOnStart}</Box>}
+                    <Box style={{ position: "relative", display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "flex-end", flexShrink: 0, maxWidth: "100%", ...(isRTL ? { marginRight: "auto" } : { marginLeft: "auto" }) }}>
                         {userRoles?.AllowDelete && onDelete &&
                             <Button
                                 size="small"
@@ -142,7 +139,12 @@ const WizardActions = ({
                                 endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                             >{t('common.continue')}</Button>
                         }
-                        {additionalButtons}
+                        {(additionalButtons || helperText) &&
+                            <Box className={classes.wizardEndGroup}>
+                                {helperText && <span key={typeof helperText === "string" ? helperText : "helper"} className={classes.wizardHelperText}>{helperText}</span>}
+                                {additionalButtons}
+                            </Box>
+                        }
                     </Box>
                 </Box>
             </Grid>
