@@ -11,6 +11,17 @@ export const deleteFromGroups = createAsyncThunk(
     }
   });
 
+// PR-3418 — read-only loyalty snapshot for the Edit Recipient panel
+export const getClientLoyaltyData = createAsyncThunk(
+  'client/GetLoyaltyData', async (clientId, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.get(`client/GetLoyaltyData/${clientId}`);
+      return response.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  });
+
 export const removeEmailClient = createAsyncThunk(
   'client/RemoveEmailClient', async (id, thunkAPI) => {
     try {

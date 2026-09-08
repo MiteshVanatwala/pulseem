@@ -8,7 +8,24 @@
     "search": "Szukaj",
     "advencedSearch": "Wyszukiwanie Zaawansowane",
     "dynamicGroups": "Grupy Dynamiczne",
-    "fileUploads": "Przesyłanie Plików"
+    "fileUploads": "Przesyłanie Plików",
+    "loyalty": {
+      "tabTitle": "Lojalność",
+      "title": "Warunki lojalnościowe (Yotpo)",
+      "optedIn": "Zapisany do programu",
+      "op": {
+        "over": "Powyżej",
+        "under": "Poniżej",
+        "equals": "Równe",
+        "between": "Pomiędzy",
+        "is": "Jest",
+        "isNot": "Nie jest",
+        "withinDays": "Wygasa w ciągu (dni)",
+        "after": "Wygasa po",
+        "before": "Wygasa przed",
+        "noExpiry": "Nigdy nie wygasa"
+      }
+    }
   },
   "newsletter": {
     "title": "Newsletter"
