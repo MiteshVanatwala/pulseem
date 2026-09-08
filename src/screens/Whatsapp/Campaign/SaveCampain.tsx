@@ -42,6 +42,7 @@ import CampaignFields from './Components/CampaignFields';
 import FileUpload from '../Editor/Components/FileUpload';
 import Gallery from '../../../components/Gallery/Gallery.component';
 import { PulseemFolderType } from '../../../model/PulseemFields/Fields';
+import { getIntegration } from '../../../redux/reducers/integrationSlice';
 import clsx from 'clsx';
 import WhatsappMobilePreview from '../Editor/Components/WhatsappMobilePreview';
 import {
@@ -532,13 +533,16 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			SmsStatus: translator('common.smsStatus'),
 			CreationDate: translator('client.subscribedOn'),
 			ReminderDate: translator('recipient.reminderDate'),
-			// PR-3418 — Yotpo loyalty personalization tokens
-			loyalty_points: translator('campaigns.loyalty.points'),
-			loyalty_tier: translator('campaigns.loyalty.tier'),
-			loyalty_points_earned: translator('campaigns.loyalty.pointsEarned'),
-			loyalty_tier_multiplier: translator('campaigns.loyalty.tierMultiplier'),
-			loyalty_points_expiry: translator('campaigns.loyalty.pointsExpiry'),
 		};
+		const yotpoRes = await dispatch<any>(getIntegration(11));
+		const isYotpoConnected = !!(yotpoRes?.payload?.Data?.ApiKey);
+		if (isYotpoConnected) {
+			staticPersonalField['loyalty_points'] = translator('campaigns.loyalty.points');
+			staticPersonalField['loyalty_tier'] = translator('campaigns.loyalty.tier');
+			staticPersonalField['loyalty_points_earned'] = translator('campaigns.loyalty.pointsEarned');
+			staticPersonalField['loyalty_tier_multiplier'] = translator('campaigns.loyalty.tierMultiplier');
+			staticPersonalField['loyalty_points_expiry'] = translator('campaigns.loyalty.pointsExpiry');
+		}
 		const { payload: personalFieldData }: personalFieldAPIProps =
 			await dispatch<any>(getAccountExtraData());
 		const { payload: landingPageData }: landingPageAPIProps =

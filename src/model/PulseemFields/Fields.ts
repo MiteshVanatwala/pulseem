@@ -53,26 +53,14 @@ export const ClientFields = [
     value: "ReminderDate",
     label: "common.reminder_date"
   },
-  {
-    value: "loyalty_points",
-    label: "campaigns.loyalty.points"
-  },
-  {
-    value: "loyalty_tier",
-    label: "campaigns.loyalty.tier"
-  },
-  {
-    value: "loyalty_points_earned",
-    label: "campaigns.loyalty.pointsEarned"
-  },
-  {
-    value: "loyalty_tier_multiplier",
-    label: "campaigns.loyalty.tierMultiplier"
-  },
-  {
-    value: "loyalty_points_expiry",
-    label: "campaigns.loyalty.pointsExpiry"
-  }
+];
+
+export const LoyaltyPersonalizationFields = [
+  { value: "loyalty_points", label: "campaigns.loyalty.points" },
+  { value: "loyalty_tier", label: "campaigns.loyalty.tier" },
+  { value: "loyalty_points_earned", label: "campaigns.loyalty.pointsEarned" },
+  { value: "loyalty_tier_multiplier", label: "campaigns.loyalty.tierMultiplier" },
+  { value: "loyalty_points_expiry", label: "campaigns.loyalty.pointsExpiry" },
 ];
 
 export const LangugeCode = [
