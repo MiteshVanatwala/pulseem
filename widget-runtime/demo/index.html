@@ -56,10 +56,14 @@
   <script>
     // Points the widget at the dev server instead of the CDN. In production this
     // block does not exist — the snippet below is the whole installation.
+    //
+    // socketUrl is deliberately NOT set here: in production it comes from the widget
+    // config response (WidgetConfigPublicController reading Service.CommunicationUrl),
+    // not from this pre-load block. Leaving it out exercises that real path — set
+    // SOCKET_URL when starting dev-server.mjs to test it.
     window.PulseemWidgetConfig = {
       apiBase: 'http://localhost:4300',
-      assetBase: 'http://localhost:4300',
-      socketUrl: 'http://localhost:4400' // set to test the socket path
+      assetBase: 'http://localhost:4300'
     };
   </script>
 

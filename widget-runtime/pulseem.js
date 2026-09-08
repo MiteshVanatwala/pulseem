@@ -202,6 +202,13 @@ var ASSET_BASE = (CONFIG.assetBase || scriptDir()).replace(/\/$/, '');
     style.background = 'transparent';
     style.transition = 'width .18s ease, height .18s ease';
 
+    // The fetched widget config is the source of truth for where the socket lives —
+    // it comes from the same Service.CommunicationUrl the backend posts events to, so
+    // the two can never disagree about environment. SOCKET_URL (the pre-load
+    // PulseemWidgetConfig.socketUrl) is a manual override for local development, same
+    // precedence as apiBase/assetBase above.
+    var socketUrl = SOCKET_URL || config.socketUrl || '';
+
     // Config travels in the URL so the iframe renders correctly on first paint
     // rather than flashing unstyled while it waits for a postMessage.
     var params =
@@ -211,7 +218,7 @@ var ASSET_BASE = (CONFIG.assetBase || scriptDir()).replace(/\/$/, '');
       // This file runs on the customer's page, so it is the only place that reliably
       // knows which page the visitor is on. The iframe cannot read it.
       '&pageUrl=' + encodeURIComponent(location.href) +
-      (SOCKET_URL ? '&socketUrl=' + encodeURIComponent(SOCKET_URL) : '');
+      (socketUrl ? '&socketUrl=' + encodeURIComponent(socketUrl) : '');
 
     frame.src = ASSET_BASE + '/app/index.html?' + params;
     return frame;
