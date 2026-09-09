@@ -15,7 +15,7 @@ import Toast from '../../../components/Toast/Toast.component';
 import WizardActions from '../../../components/Wizard/WizardActions';
 import { getAccountExtraData } from "../../../redux/reducers/smsSlice";
 import Gallery from '../../../components/Gallery/Gallery.component';
-import { ClientFields, LoyaltyPersonalizationFields, PulseemFolderType } from "../../../model/PulseemFields/Fields";
+import { ClientFields, PulseemFolderType } from "../../../model/PulseemFields/Fields";
 import { LU_Plugin } from "../../../Models/Integrations/Integration";
 import { RandomID } from '../../../helpers/Functions/functions';
 import { getAuthorizedEmails } from '../../../redux/reducers/commonSlice';
@@ -507,7 +507,13 @@ const NewsLetterInfo = ({ classes }) => {
             const yotpoRes = await dispatch(getIntegration(LU_Plugin.Yotpo));
             const isYotpoConnected = !!(yotpoRes?.payload?.Data?.ApiKey);
             const loyaltyFields = isYotpoConnected
-                ? LoyaltyPersonalizationFields.map(f => ({ ...f, selected: false }))
+                ? [
+                    { loyalty_points: t('campaigns.loyalty.points'), selected: false },
+                    { loyalty_tier: t('campaigns.loyalty.tier'), selected: false },
+                    { loyalty_points_earned: t('campaigns.loyalty.pointsEarned'), selected: false },
+                    { loyalty_tier_multiplier: t('campaigns.loyalty.tierMultiplier'), selected: false },
+                    { loyalty_points_expiry: t('campaigns.loyalty.pointsExpiry'), selected: false },
+                ]
                 : [];
             setextraAccountDATA([..._clientFields, ...arr, ...loyaltyFields])
         }

@@ -44,6 +44,8 @@ import { FileGallery } from '../../Models/Files/FileGallery';
 import { DemoModal } from '../HtmlCampaign/components/DemoModal';
 import { ClientForm } from '../../Models/BeeModels/BeeModel';
 import { getAccountExtraData, getPreviousLandingData, getTestGroups } from '../../redux/reducers/smsSlice';
+import { getIntegration } from '../../redux/reducers/integrationSlice';
+import { LU_Plugin } from '../../Models/Integrations/Integration';
 import GroupSelectorPopUp from '../Groups/GroupSelectorPopUp';
 import LPTemplates from './modals/Templates';
 import { GenericModal } from '../HtmlCampaign/components/GenericModal';
@@ -137,7 +139,16 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
   }
   const initFields = () => {
     loadAccountExtraData().then((ed: any) => {
-      initExtraDataField(extraData, t).then((exData) => {
+      initExtraDataField(extraData, t).then(async (exData: any[]) => {
+        const yotpoRes: any = await dispatch(getIntegration(LU_Plugin.Yotpo));
+        const isYotpoConnected = !!(yotpoRes?.payload?.Data?.ApiKey);
+        if (isYotpoConnected) {
+          exData.push({ value: '##loyalty_points##', name: t('campaigns.loyalty.points') });
+          exData.push({ value: '##loyalty_tier##', name: t('campaigns.loyalty.tier') });
+          exData.push({ value: '##loyalty_points_earned##', name: t('campaigns.loyalty.pointsEarned') });
+          exData.push({ value: '##loyalty_tier_multiplier##', name: t('campaigns.loyalty.tierMultiplier') });
+          exData.push({ value: '##loyalty_points_expiry##', name: t('campaigns.loyalty.pointsExpiry') });
+        }
         setPulseemMergeData(exData);
         initClientForm(ed, t, landingPage?.Data?.WebForm?.BaseLanguage).then((res) => {
           setClientForm(res);
