@@ -16,6 +16,7 @@ import PersonalDetails from './Tabs/PersonalDetails';
 import EventsDetails from './Tabs/EventsDetails';
 import DateDetails from './Tabs/DateDetails';
 import ActivityDetails from './Tabs/ActivityDetails';
+import LoyaltyDetails from './Tabs/LoyaltyDetails';
 import { getById, save } from '../../../redux/reducers/DynamicGroupsSlice';
 import { useParams, useNavigate } from 'react-router-dom';
 import useRedirect from '../../../helpers/Routes/Redirect';
@@ -832,6 +833,13 @@ const EditDynamicGroup = ({ classes }: any) => {
                                 value='4'
                             />
 
+                            {/* <Tab
+                                label={t('groups.loyalty.tabTitle')}
+                                classes={{ root: classes.tabText, selected: classes.activeTab }}
+                                className={classes.iconTab}
+                                value='6'
+                            /> */}
+
                             <Tab
                                 label={t('group.updateGroup')}
                                 classes={{ root: classes.tabText, selected: classes.activeTab }}
@@ -886,6 +894,10 @@ const EditDynamicGroup = ({ classes }: any) => {
                                     />
                                 </div>
                             </TabPanel>
+
+                            {/* <TabPanel value='6'>
+                                <LoyaltyDetails classes={classes} data={dynamicGroupModel} onUpdate={updateMyConditions} />
+                            </TabPanel> */}
 
                             <TabPanel value='5'>
                                 <UpdateGroup classes={classes} data={dynamicGroupModel} onUpdate={updateGroup} />
