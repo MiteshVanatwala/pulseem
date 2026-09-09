@@ -508,11 +508,11 @@ const NewsLetterInfo = ({ classes }) => {
             const isYotpoConnected = !!(yotpoRes?.payload?.Data?.ApiKey);
             const loyaltyFields = isYotpoConnected
                 ? [
-                    { loyalty_points: t('campaigns.loyalty.points'), selected: false },
-                    { loyalty_tier: t('campaigns.loyalty.tier'), selected: false },
-                    { loyalty_points_earned: t('campaigns.loyalty.pointsEarned'), selected: false },
-                    { loyalty_tier_multiplier: t('campaigns.loyalty.tierMultiplier'), selected: false },
-                    { loyalty_points_expiry: t('campaigns.loyalty.pointsExpiry'), selected: false },
+                    { value: 'loyalty_points', label: 'campaigns.loyalty.points', selected: false },
+                    { value: 'loyalty_tier', label: 'campaigns.loyalty.tier', selected: false },
+                    { value: 'loyalty_points_earned', label: 'campaigns.loyalty.pointsEarned', selected: false },
+                    { value: 'loyalty_tier_multiplier', label: 'campaigns.loyalty.tierMultiplier', selected: false },
+                    { value: 'loyalty_points_expiry', label: 'campaigns.loyalty.pointsExpiry', selected: false },
                 ]
                 : [];
             setextraAccountDATA([..._clientFields, ...arr, ...loyaltyFields])

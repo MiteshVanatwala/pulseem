@@ -29,6 +29,7 @@ import clsx from "clsx";
 import { Loader } from "../Loader/Loader";
 import EmojiPicker from "../Emojis/EmojiPicker";
 import { PulseemFeatures } from "../../model/PulseemFields/Fields";
+import { getIntegration } from "../../redux/reducers/integrationSlice";
 import { IoIosArrowDown } from "react-icons/io";
 import { computeCreditsForSms } from "../../helpers/Utils/SmsCreditsHelper";
 
@@ -252,6 +253,17 @@ const Editorbox = ({
         for (let i = 0; i < additionalExtraData.length; i++) {
             defaultAccountExtraData.push({ ...additionalExtraData[i], selected: false })
         }
+
+        const yotpoRes = await dispatch(getIntegration(11));
+        const isYotpoConnected = !!(yotpoRes?.payload?.Data?.ApiKey);
+        if (isYotpoConnected) {
+            defaultAccountExtraData.push({ loyalty_points: 'campaigns.loyalty.points', selected: false });
+            defaultAccountExtraData.push({ loyalty_tier: 'campaigns.loyalty.tier', selected: false });
+            defaultAccountExtraData.push({ loyalty_points_earned: 'campaigns.loyalty.pointsEarned', selected: false });
+            defaultAccountExtraData.push({ loyalty_tier_multiplier: 'campaigns.loyalty.tierMultiplier', selected: false });
+            defaultAccountExtraData.push({ loyalty_points_expiry: 'campaigns.loyalty.pointsExpiry', selected: false });
+        }
+
         setextraAccountDATA(defaultAccountExtraData)
         await initFromNumber();
         setIsPageLoaded(true);
