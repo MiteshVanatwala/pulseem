@@ -313,6 +313,11 @@ const CampaignEditor = ({ classes, ...props }) => {
   //#region Get Extra fields & Landing pages, after Data Ready
   const initFields = () => {
     initExtraDataField(extraData, t).then((exData) => {
+      exData.push({ value: '##loyalty_points##', name: t('campaigns.loyalty.points') });
+      exData.push({ value: '##loyalty_tier##', name: t('campaigns.loyalty.tier') });
+      exData.push({ value: '##loyalty_points_earned##', name: t('campaigns.loyalty.pointsEarned') });
+      exData.push({ value: '##loyalty_tier_multiplier##', name: t('campaigns.loyalty.tierMultiplier') });
+      exData.push({ value: '##loyalty_points_expiry##', name: t('campaigns.loyalty.pointsExpiry') });
       setPulseemMergeData(exData);
     })
   }
@@ -573,7 +578,14 @@ const CampaignEditor = ({ classes, ...props }) => {
       }
 
       config.uid = accountSettings?.SubAccountSettings?.BeeUniqueID;
-      config.mergeTags = mergeData;
+      const loyaltyMergeItems = [
+        { value: '##loyalty_points##', name: t('campaigns.loyalty.points') },
+        { value: '##loyalty_tier##', name: t('campaigns.loyalty.tier') },
+        { value: '##loyalty_points_earned##', name: t('campaigns.loyalty.pointsEarned') },
+        { value: '##loyalty_tier_multiplier##', name: t('campaigns.loyalty.tierMultiplier') },
+        { value: '##loyalty_points_expiry##', name: t('campaigns.loyalty.pointsExpiry') },
+      ];
+      config.mergeTags = Array.isArray(mergeData) ? [...mergeData, ...loyaltyMergeItems] : loyaltyMergeItems;
       config.specialLinks = specialLinksFiles;
       config.titleDefaultStyles = defaultContent.titleDefaultStyles;
       config.contentDefaults = defaultContent.contentDefaults;
