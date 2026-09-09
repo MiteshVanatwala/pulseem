@@ -49,7 +49,7 @@ const FlexGrid = ({ gridArr = [],
                             return <></>
                         }
                         return (
-                            <Box className={localClasses.iconBox} key={idx} onClick={(e) => obj.onClick?.(e)} style={{ cursor: obj.isDisabled ? 'not-allowed' : 'pointer' }}>
+                            <Box className={localClasses.iconBox} key={idx} onClick={(e) => obj.onClick?.(e)} style={{ cursor: obj.isDisabled ? 'not-allowed' : 'pointer', ...obj.containerStyle }}>
                                 {reverse &&
                                     <Typography variant={textVariant} align={alignText} className={obj.classes?.text || null}>{obj.label}</Typography>
                                 }

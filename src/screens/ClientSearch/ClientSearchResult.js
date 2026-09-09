@@ -1669,9 +1669,10 @@ const ClientSearchResult = ({ classes }) => {
               ClientID: ClientID
             })}
           </TableCell>}
-        <TableCell classes={cellStyle} align="center" className={classes.flex4}>
+        <TableCell classes={cellStyle} align="center" className={classes.flex4} style={{ overflow: 'hidden' }}>
           <FlexGrid
-            customStyle={{ justifyContent: 'space-between' }}
+            direction="column"
+            customStyle={{ justifyContent: 'center', alignItems: 'center' }}
             gridArr={[
               {
                 label: t(""),
@@ -1687,11 +1688,12 @@ const ClientSearchResult = ({ classes }) => {
                     style={{ fontWeight: "bold" }}
                     placement={"top"}
                     title={<Typography title={Email} className={classes.bold}>{`${Email}`}</Typography>}
-                    text={<Box style={{ direction: 'ltr' }}>{`${Email && Email.length > 20 ? Email.substring(0, 20) + '...' : Email}`}</Box>}
+                    text={<Box style={{ direction: 'ltr', maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{`${Email}`}</Box>}
                   >
                   </CustomTooltip>
                 ),
                 classes: { text: localClasses.noWrap },
+                containerStyle: { minWidth: 0, maxWidth: '100%', flexShrink: 1 },
               },
               {
                 label: "",
@@ -1718,16 +1720,20 @@ const ClientSearchResult = ({ classes }) => {
             align="center"
           />
         </TableCell>
-        <TableCell classes={cellStyle} align="center" className={classes.flex3} style={{ border: 'none' }}>
+        <TableCell classes={cellStyle} align="center" className={classes.flex3} style={{ border: 'none', overflow: 'hidden' }}>
           <FlexGrid
-            customStyle={{ justifyContent: 'space-between' }}
+            direction="column"
+            customStyle={{ justifyContent: 'center', alignItems: 'center' }}
             gridArr={[
               {
                 label: t(""),
                 component: (
-                  <Typography className={classes.bold}>{Cellphone}</Typography>
+                  <Box style={{ maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    <Typography className={classes.bold}>{Cellphone}</Typography>
+                  </Box>
                 ),
                 classes: { text: localClasses.noWrap },
+                containerStyle: { minWidth: 0, maxWidth: '100%', flexShrink: 1 },
               },
               {
                 label: "",
