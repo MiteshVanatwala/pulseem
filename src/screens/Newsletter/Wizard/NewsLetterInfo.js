@@ -15,9 +15,11 @@ import Toast from '../../../components/Toast/Toast.component';
 import WizardActions from '../../../components/Wizard/WizardActions';
 import { getAccountExtraData } from "../../../redux/reducers/smsSlice";
 import Gallery from '../../../components/Gallery/Gallery.component';
-import { ClientFields, PulseemFolderType } from "../../../model/PulseemFields/Fields";
+import { ClientFields, LoyaltyPersonalizationFields, PulseemFolderType } from "../../../model/PulseemFields/Fields";
+import { LU_Plugin } from "../../../Models/Integrations/Integration";
 import { RandomID } from '../../../helpers/Functions/functions';
 import { getAuthorizedEmails } from '../../../redux/reducers/commonSlice';
+import { getIntegration } from '../../../redux/reducers/integrationSlice';
 import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog';
 import { useNavigate, useParams } from 'react-router-dom';
 import { AdditionalText } from './components/AdditionalText';
@@ -502,7 +504,12 @@ const NewsLetterInfo = ({ classes }) => {
                 }
             }, [])
 
-            setextraAccountDATA([..._clientFields, ...arr])
+            const yotpoRes = await dispatch(getIntegration(LU_Plugin.Yotpo));
+            const isYotpoConnected = !!(yotpoRes?.payload?.Data?.ApiKey);
+            const loyaltyFields = isYotpoConnected
+                ? LoyaltyPersonalizationFields.map(f => ({ ...f, selected: false }))
+                : [];
+            setextraAccountDATA([..._clientFields, ...arr, ...loyaltyFields])
         }
 
         initClientFields();

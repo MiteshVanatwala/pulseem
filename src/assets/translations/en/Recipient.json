@@ -138,5 +138,17 @@
   "smsCampaign": "SMS Campaign",
   "maxUploadLimitation": "You are able to upload up to 5,000 recipients at once",
   "whatsappCampaign": "Whatsapp Campaign",
-  "backgroundImport": "<b>Please note</b><br/>You requested to upload a large amount of recipients<br/>The system performs the upload in the background.<br/>The results of the upload can be seen on the File upload page"
+  "backgroundImport": "<b>Please note</b><br/>You requested to upload a large amount of recipients<br/>The system performs the upload in the background.<br/>The results of the upload can be seen on the File upload page",
+  "loyalty": {
+    "title": "Loyalty Data (Yotpo)",
+    "readOnly": "Read-only · Synced from Yotpo",
+    "points": "Loyalty Points",
+    "tier": "Loyalty Tier",
+    "pointsEarned": "Points Earned (Total)",
+    "tierMultiplier": "Tier Multiplier",
+    "pointsExpiry": "Points Expiry Date",
+    "referrals": "Referrals Completed",
+    "optedIn": "Opted In",
+    "lastSynced": "Last synced"
+  }
 }
