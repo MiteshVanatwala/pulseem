@@ -16,10 +16,8 @@ import WizardActions from '../../../components/Wizard/WizardActions';
 import { getAccountExtraData } from "../../../redux/reducers/smsSlice";
 import Gallery from '../../../components/Gallery/Gallery.component';
 import { ClientFields, PulseemFolderType } from "../../../model/PulseemFields/Fields";
-import { LU_Plugin } from "../../../Models/Integrations/Integration";
 import { RandomID } from '../../../helpers/Functions/functions';
 import { getAuthorizedEmails } from '../../../redux/reducers/commonSlice';
-import { getIntegration } from '../../../redux/reducers/integrationSlice';
 import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog';
 import { useNavigate, useParams } from 'react-router-dom';
 import { AdditionalText } from './components/AdditionalText';
@@ -504,17 +502,13 @@ const NewsLetterInfo = ({ classes }) => {
                 }
             }, [])
 
-            const yotpoRes = await dispatch(getIntegration(LU_Plugin.Yotpo));
-            const isYotpoConnected = !!(yotpoRes?.payload?.Data?.ApiKey);
-            const loyaltyFields = isYotpoConnected
-                ? [
-                    { value: 'loyalty_points', label: 'campaigns.loyalty.points', selected: false },
-                    { value: 'loyalty_tier', label: 'campaigns.loyalty.tier', selected: false },
-                    { value: 'loyalty_points_earned', label: 'campaigns.loyalty.pointsEarned', selected: false },
-                    { value: 'loyalty_tier_multiplier', label: 'campaigns.loyalty.tierMultiplier', selected: false },
-                    { value: 'loyalty_points_expiry', label: 'campaigns.loyalty.pointsExpiry', selected: false },
-                ]
-                : [];
+            const loyaltyFields = [
+                { value: 'loyalty_points', label: t('campaigns.loyalty.points'), selected: false },
+                { value: 'loyalty_tier', label: t('campaigns.loyalty.tier'), selected: false },
+                { value: 'loyalty_points_earned', label: t('campaigns.loyalty.pointsEarned'), selected: false },
+                { value: 'loyalty_tier_multiplier', label: t('campaigns.loyalty.tierMultiplier'), selected: false },
+                { value: 'loyalty_points_expiry', label: t('campaigns.loyalty.pointsExpiry'), selected: false },
+            ];
             setextraAccountDATA([..._clientFields, ...arr, ...loyaltyFields])
         }
 
