@@ -317,7 +317,7 @@ const NewsLetterInfo = ({ classes }) => {
     useEffect(() => {
         if (campaingnValues && campaingnValues?.FromEmail && verifiedEmails?.length > 0) {
             if (campaingnValues?.FromEmail !== '') {
-                const isVerified = verifiedEmails?.filter((ve) => { return ve.Number === campaingnValues?.FromEmail })[0]?.IsVerified;
+                const isVerified = verifiedEmails?.filter((ve) => { return ve.Number?.trim().toLowerCase() == campaingnValues?.FromEmail?.trim().toLowerCase() })[0]?.IsVerified;
                 const isSharedDomain = IsSharedDomain(campaingnValues?.FromEmail)
                 setIsVerifiedDomain(isSharedDomain || isVerified);
             }
@@ -415,7 +415,7 @@ const NewsLetterInfo = ({ classes }) => {
             case 451: {
                 if (!isExit) {
                     const saveInfo = JSON.parse(res.Message);
-                    const emailProps = verifiedEmails.filter((ve) => { return ve.Number === campaingnValues.FromEmail })[0];
+                    const emailProps = verifiedEmails.filter((ve) => { return ve.Number?.trim().toLowerCase() == campaingnValues.FromEmail?.trim().toLowerCase() })[0];
                     const isSharedDomain = campaingnValues.FromEmail.split("@").pop() === SharedEmailDomain;
                     const emailObj = {
                         NonVerified: 'common.domainVerification.campaignCreation.nonVerified.preText',

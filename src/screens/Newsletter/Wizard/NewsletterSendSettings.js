@@ -243,7 +243,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     useEffect(() => {
         if ((verifiedEmails && verifiedEmails?.length > 0) && (newsletterInfo && newsletterInfo?.CampaignID > 0)) {
             const email = verifiedEmails.filter((email) => {
-                return email?.Number === newsletterInfo.FromEmail;
+                return email?.Number?.trim().toLowerCase() == newsletterInfo.FromEmail?.trim().toLowerCase();
             });
 
             if (!email[0]?.IsVerified && !IsSharedDomain(newsletterInfo?.FromEmail)) {
@@ -258,7 +258,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
 
     const checkEmailAuth = () => {
         const isVerified = verifiedEmails.filter((email) => {
-            return email?.Number === newsletterInfo.FromEmail || IsSharedDomain(newsletterInfo.FromEmail);
+            return email?.Number?.trim().toLowerCase() == newsletterInfo.FromEmail?.trim().toLowerCase() || IsSharedDomain(newsletterInfo.FromEmail);
         });
         setIsEmailVerified(isVerified?.length > 0);
         setNewEmailVerification(isVerified?.length <= 0);
@@ -530,7 +530,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
 
         if (r.payload.StatusCode === 201) {
             const isVerified = verifiedEmails.filter((email) => {
-                return email?.Number === newsletterInfo.FromEmail || IsSharedDomain(newsletterInfo.FromEmail);
+                return email?.Number?.trim().toLowerCase() == newsletterInfo.FromEmail?.trim().toLowerCase() || IsSharedDomain(newsletterInfo.FromEmail);
             });
             onSaveSettings(true, groupId.toString()).then(async () => {
                 if (isEmailVerified || isVerified?.length > 0 || IsSharedDomain(newsletterInfo?.FromEmail)) {

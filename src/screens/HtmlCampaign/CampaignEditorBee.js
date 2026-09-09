@@ -501,7 +501,7 @@ const CampaignEditor = ({ classes, ...props }) => {
 
 
   const initRestrictions = async () => {
-    const subAccountEmails = verifiedEmails?.filter((ve) => { return ve?.Number === campaign.FromEmail })[0];
+    const subAccountEmails = verifiedEmails?.filter((ve) => { return ve?.Number?.trim().toLowerCase() == campaign.FromEmail?.trim().toLowerCase() })[0];
     setEmailProps(subAccountEmails);
   }
   useEffect(() => {
