@@ -14,22 +14,22 @@ const LoyaltyDetails = ({ classes, data, onUpdate }: any) => {
 
     const numOps = [
         { v: '', l: 'common.select' },
-        { v: 'gt', l: 'groups.loyalty.op.over' },
-        { v: 'lt', l: 'groups.loyalty.op.under' },
-        { v: 'eq', l: 'groups.loyalty.op.equals' },
-        { v: 'between', l: 'groups.loyalty.op.between' },
+        { v: 'gt', l: 'appBar.groups.loyalty.op.over' },
+        { v: 'lt', l: 'appBar.groups.loyalty.op.under' },
+        { v: 'eq', l: 'appBar.groups.loyalty.op.equals' },
+        { v: 'between', l: 'appBar.groups.loyalty.op.between' },
     ];
     const tierOps = [
         { v: '', l: 'common.select' },
-        { v: 'eq', l: 'groups.loyalty.op.is' },
-        { v: 'neq', l: 'groups.loyalty.op.isNot' },
+        { v: 'eq', l: 'appBar.groups.loyalty.op.is' },
+        { v: 'neq', l: 'appBar.groups.loyalty.op.isNot' },
     ];
     const expiryOps = [
         { v: '', l: 'common.select' },
-        { v: 'withindays', l: 'groups.loyalty.op.withinDays' },
-        { v: 'after', l: 'groups.loyalty.op.after' },
-        { v: 'before', l: 'groups.loyalty.op.before' },
-        { v: 'hasnoexpiry', l: 'groups.loyalty.op.noExpiry' },
+        { v: 'withindays', l: 'appBar.groups.loyalty.op.withinDays' },
+        { v: 'after', l: 'appBar.groups.loyalty.op.after' },
+        { v: 'before', l: 'appBar.groups.loyalty.op.before' },
+        { v: 'hasnoexpiry', l: 'appBar.groups.loyalty.op.noExpiry' },
     ];
     const optedOps = [
         { v: '', l: 'common.select' },
@@ -73,7 +73,7 @@ const LoyaltyDetails = ({ classes, data, onUpdate }: any) => {
     return (
         <Box className={clsx(classes.pt14)}>
             <Typography className={clsx(classes.mb5)} style={{ color: '#7C3AED', fontWeight: 600 }}>
-                {'💎 '}{t('groups.loyalty.title')}
+                {'💎 '}{t('appBar.groups.loyalty.title')}
             </Typography>
 
             {row('campaigns.loyalty.points', opSelect('LoyaltyPointsCond', numOps),
@@ -94,7 +94,7 @@ const LoyaltyDetails = ({ classes, data, onUpdate }: any) => {
                 valueField('LoyaltyExpiry', cond.LoyaltyExpiryCond === 'withindays' ? 'number' : 'date',
                     cond.LoyaltyExpiryCond === 'hasnoexpiry'))}
 
-            {row('groups.loyalty.optedIn', opSelect('LoyaltyOptedInCond', optedOps), <span />)}
+            {row('appBar.groups.loyalty.optedIn', opSelect('LoyaltyOptedInCond', optedOps), <span />)}
         </Box>
     );
 };
