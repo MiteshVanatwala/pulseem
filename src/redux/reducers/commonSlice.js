@@ -2,6 +2,7 @@ import { find, get } from 'lodash';
 import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
 import { getCookie, setCookie } from '../../helpers/Functions/cookies';
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { LU_Plugin } from '../../Models/Integrations/Integration';
 
 export const isClalAccount = createAsyncThunk(
   '/IsClalAccount',
@@ -44,6 +45,19 @@ export const getCommonFeatures = createAsyncThunk(
     }
   }
 );
+export const checkYotpoConnection = createAsyncThunk(
+  'common/checkYotpoConnection',
+  async (_, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.get(`Integrations/GetIntegration/${LU_Plugin.Yotpo}`);
+      const data = response.data;
+      return !!(data?.Data?.ApiKey);
+    } catch (error) {
+      return false;
+    }
+  }
+);
+
 export const isAlive = createAsyncThunk('IsAlive', async (_, thunkAPI) => {
   try {
     const response = await PulseemReactInstance.get(`IsAlive`);
@@ -259,6 +273,7 @@ export const commonSlice = createSlice({
     companyAdmin: '',
     smsConfig: null,
     isSwippingApprovalSMS: false,
+    isYotpoConnected: null,
   },
   extraReducers: builder => {
     builder
@@ -356,6 +371,9 @@ export const commonSlice = createSlice({
         }
         state.isSwippingApprovalSMS = get(payload, 'Data.IsSwippingApprovalSMS', false)
       });
+    builder.addCase(checkYotpoConnection.fulfilled, (state, { payload }) => {
+      state.isYotpoConnected = payload;
+    });
   },
   reducers: {
     updateDefaultFromEmail: (state, action) => {

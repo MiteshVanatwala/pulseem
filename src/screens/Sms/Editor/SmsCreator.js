@@ -137,7 +137,7 @@ const SmsCreator = ({ classes }) => {
     ToastMessages,
     extraData
   } = useSelector((state) => state.sms);
-  const { accountSettings, accountFeatures, countryCodeList, isGlobal, subAccount, IsPoland, smsConfig, isSwippingApprovalSMS, verifiedNumbers } = useSelector((state) => state.common)
+  const { accountSettings, accountFeatures, countryCodeList, isGlobal, subAccount, IsPoland, smsConfig, isSwippingApprovalSMS, verifiedNumbers, isYotpoConnected } = useSelector((state) => state.common)
   const [dialogType, setDialogType] = useState(null)
   const [alignment, setAlignment] = useState('right');
   const [checked, setChecked] = React.useState(false);
@@ -415,15 +415,17 @@ const SmsCreator = ({ classes }) => {
     for (let i = 0; i < additionalExtraData.length; i++) {
       defaultAccountExtraData.push({ ...additionalExtraData[i], selected: false })
     }
-    const loyaltyTokens = [
-      { loyalty_points: 'campaigns.loyalty.points' },
-      { loyalty_tier: 'campaigns.loyalty.tier' },
-      { loyalty_points_earned: 'campaigns.loyalty.pointsEarned' },
-      { loyalty_tier_multiplier: 'campaigns.loyalty.tierMultiplier' },
-      { loyalty_points_expiry: 'campaigns.loyalty.pointsExpiry' },
-    ];
-    for (let i = 0; i < loyaltyTokens.length; i++) {
-      defaultAccountExtraData.push({ ...loyaltyTokens[i], selected: false })
+    if (isYotpoConnected) {
+      const loyaltyTokens = [
+        { loyalty_points: 'campaigns.loyalty.points' },
+        { loyalty_tier: 'campaigns.loyalty.tier' },
+        { loyalty_points_earned: 'campaigns.loyalty.pointsEarned' },
+        { loyalty_tier_multiplier: 'campaigns.loyalty.tierMultiplier' },
+        { loyalty_points_expiry: 'campaigns.loyalty.pointsExpiry' },
+      ];
+      for (let i = 0; i < loyaltyTokens.length; i++) {
+        defaultAccountExtraData.push({ ...loyaltyTokens[i], selected: false })
+      }
     }
     setextraAccountDATA(defaultAccountExtraData)
 

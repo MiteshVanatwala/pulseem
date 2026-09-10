@@ -166,7 +166,7 @@ const NewsLetterInfo = ({ classes }) => {
     const [toastMessage, setToastMessage] = useState(null);
     const [showLoader, setLoader] = useState(true);
     const [extraAccountDATA, setextraAccountDATA] = useState([]);
-    const { verifiedEmails, accountSettings, accountFeatures, isGlobal, IsPoland } = useSelector(state => state.common);
+    const { verifiedEmails, accountSettings, accountFeatures, isGlobal, IsPoland, isYotpoConnected } = useSelector(state => state.common);
     const { ToastMessages } = useSelector(state => state.newsletter);
     const { currentPlan, availablePlans } = useSelector((state) => state.tiers);
     const [showGallery, setShowGallery] = useState(false);
@@ -502,13 +502,13 @@ const NewsLetterInfo = ({ classes }) => {
                 }
             }, [])
 
-            const loyaltyFields = [
+            const loyaltyFields = isYotpoConnected ? [
                 { value: 'loyalty_points', label: t('campaigns.loyalty.points'), selected: false },
                 { value: 'loyalty_tier', label: t('campaigns.loyalty.tier'), selected: false },
                 { value: 'loyalty_points_earned', label: t('campaigns.loyalty.pointsEarned'), selected: false },
                 { value: 'loyalty_tier_multiplier', label: t('campaigns.loyalty.tierMultiplier'), selected: false },
                 { value: 'loyalty_points_expiry', label: t('campaigns.loyalty.pointsExpiry'), selected: false },
-            ];
+            ] : [];
             setextraAccountDATA([..._clientFields, ...arr, ...loyaltyFields])
         }
 
