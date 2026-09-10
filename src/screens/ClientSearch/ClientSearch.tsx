@@ -15,6 +15,7 @@ import ClientSearchLocation from "./ClientSearchLocation";
 import ClientSearchDates from "./ClientSearchDates";
 import ClientSearchCampaigns from "./ClientSearchCampaigns";
 import ClientSearchExtraFields from "./ClientSearchExtraFields";
+import ClientSearchLoyalty from "./ClientSearchLoyalty";
 import { CLIENT_CONSTANTS } from "../../model/Clients/Contants";
 import { useNavigate } from "react-router-dom";
 import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
@@ -24,6 +25,7 @@ import { DEFAULT_CLIENT_SEARCH } from "../../helpers/Constants";
 
 const ClientSearch = ({ classes }: any) => {
   const { isRTL } = useSelector((state: any) => state.core);
+  const { isYotpoConnected } = useSelector((state: any) => state.common);
   const { t } = useTranslation();
   const qs = (window.location.search && queryString.parse(window.location.search)) as any;
   const [openPanels, setOpenPanels] = useState<string[]>([qs?.p || '1', '6']);
@@ -252,6 +254,31 @@ const ClientSearch = ({ classes }: any) => {
             </Box>
           </AccordionDetails>
         </Accordion>
+        {isYotpoConnected && (
+          <Accordion expanded={openPanels.indexOf('7') > -1} onChange={() => handlePanels('7')} elevation={0}
+            classes={{
+              root: classes.MuiAccordionroot
+            }}>
+            <AccordionSummary aria-controls="7-content" id="7-header">
+              <Title autoWidth={false} isIcon={false} classes={classes}
+                Element={<Box className={classes.dFlex} style={{ alignItems: 'center' }}>
+                  {openPanels.indexOf('7') > -1 ? <IoIosArrowUp /> : <IoIosArrowDown />}
+                  <Typography
+                    style={{ width: 'auto', marginInlineStart: 15 }}
+                    className={clsx(classes.managementTitle, "mgmtTitle")}
+                  >
+                    {t("AppBar.groups.loyalty.title")}
+                  </Typography>
+                </Box>}
+              />
+            </AccordionSummary>
+            <AccordionDetails>
+              <Box style={{ paddingInline: 25, paddingBlock: 20, width: '100%' }} className={classes.dFlex}>
+                <ClientSearchLoyalty classes={classes} data={searchModel?.MyConditions?.[0]} onUpdate={updateMyConditions} />
+              </Box>
+            </AccordionDetails>
+          </Accordion>
+        )}
         <Accordion expanded={openPanels.indexOf('6') > -1} onChange={() => handlePanels('6')} elevation={0}
           classes={{
             root: classes.MuiAccordionroot

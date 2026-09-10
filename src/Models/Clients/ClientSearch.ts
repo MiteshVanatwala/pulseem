@@ -119,4 +119,17 @@ export interface Conditions {
     ExtraDate3To: Date | string | null;
     ExtraDate4From: Date | string | null;
     ExtraDate4To: Date | string | null;
+    // Yotpo Loyalty filters
+    LoyaltyPoints?: number | null;
+    LoyaltyPointsCond?: string | null;
+    LoyaltyPointsTo?: number | null;
+    LoyaltyTier?: string | null;
+    LoyaltyTierCond?: string | null;
+    LoyaltyPointsEarned?: number | null;
+    LoyaltyPointsEarnedCond?: string | null;
+    LoyaltyPointsEarnedTo?: number | null;
+    LoyaltyExpiryDays?: number | null;
+    LoyaltyExpiryCond?: string | null;
+    LoyaltyExpiryDate?: Date | string | null;
+    LoyaltyOptedIn?: boolean | null;
 }
