@@ -7,7 +7,7 @@ import {
 } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import {
-    ArrowBack, GetApp, Edit as EditIcon, History, Assessment, Send
+    ArrowBack, GetApp, Edit as EditIcon, History, Assessment, Send, GroupAdd
 } from '@material-ui/icons';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
@@ -33,6 +33,7 @@ import EditColumnDialog from './components/EditColumnDialog';
 import { detectColumnType } from './components/columnTypeDetect';
 import VersionsHistoryDialog from './components/VersionsHistoryDialog';
 import ExportDialog from './components/ExportDialog';
+import AddToGroupDialog from './components/AddToGroupDialog';
 import DataSourceSummary from './components/DataSourceSummary';
 import EditDataSourceDialog from './components/EditDataSourceDialog';
 
@@ -86,6 +87,53 @@ const DataSourceView = ({ classes }: ClassesType) => {
     const canSend = !!userRoles?.AllowSend;
     const isHistorical = viewVersionId !== null && details && viewVersionId !== details.ActiveVersionID;
     const isViewOnly = details && !details.HasEmailIdentity && !details.HasCellIdentity;
+    /* The version actually ON SCREEN. `details` always describes the ACTIVE version — openVersion()
+       swaps the grid without refetching it — so anything that must describe what the user is looking
+       at has to resolve through `versions` first and fall back to `details` only for the active case. */
+    const viewedVersion: DataSourceVersion | null =
+        viewVersionId !== null ? (versions.find(v => v.DataSourceVersionID === viewVersionId) ?? null) : null;
+    /* On the ACTIVE view this must resolve through `versions` too. `details.VersionNumber` is not a
+       fallback — DataSources_Get RS1 does not select it (verified 2026-09-09 against the SP and its
+       _Stage variant), so it is always null and gating the chip on it made the chip disappear from the
+       active view entirely. RS3 carries the number; ActiveVersionID identifies the row. */
+    const activeVersion: DataSourceVersion | null =
+        details?.ActiveVersionID != null ? (versions.find(v => v.DataSourceVersionID === details.ActiveVersionID) ?? null) : null;
+    const viewedVersionNumber: number | null = viewedVersion ? viewedVersion.VersionNumber : (activeVersion?.VersionNumber ?? null);
+
+    /* 🔴 THE STATUS THIS SCREEN RENDERS FROM (fixed 2026-09-10, deep-review K20).
+       `details.Status` is RS1's `v.Status`, reached through
+       `LEFT JOIN DataSourceVersions v ON v.DataSourceVersionID = ds.ActiveVersionID` — so it describes
+       the ACTIVE version, and ActiveVersionID only moves when a version COMPLETES
+       (DataSources_CompleteVersion swaps it under Status = 2 only).
+
+       A source whose only version FAILED or was CANCELLED therefore still has ActiveVersionID NULL,
+       the LEFT JOIN yields NULL, the C# maps DBNull to 0, and 0 is PENDING. The consequences were both
+       user-visible and unbounded: renderBody showed "processing" FOREVER, the poll effect below
+       re-fetched every 4 seconds with no terminating condition (the value it waits on could never
+       change), and the FAIL and CANCELLED branches of renderBody were unreachable dead code.
+
+       When there IS an active version, details.Status is exactly right and is used unchanged. When
+       there is not, the newest version in RS3 is what actually describes the source. Same fix as the
+       one applied to the wizard's pre-submit check — RS3 carries per-version Status; RS1 does not.
+
+       KNOWN REMAINING GAP, deliberately not fixed here: the FAIL branch renders details.ErrorData,
+       and RS1 does not select ErrorData either, so it is always null and the failure REASON still
+       cannot be shown. Surfacing it needs the SP to project it — an API change, out of scope. */
+    const newestVersion: DataSourceVersion | null = versions.length
+        ? versions.reduce((a, b) => ((b.VersionNumber ?? 0) > (a.VersionNumber ?? 0) ? b : a))
+        : null;
+    const effectiveStatus: eDataSourceStatus | undefined =
+        details?.ActiveVersionID != null ? details?.Status : (newestVersion?.Status ?? details?.Status);
+    const viewedVersionId: number | null = viewVersionId !== null ? viewVersionId : (details?.ActiveVersionID ?? null);
+    /* WHICH VERSIONS have already been added to a group this session — not a bare boolean.
+       It was one session-wide flag, and a single AddToGroupDialog instance serves both entry points,
+       so adding a HISTORICAL version from the versions dialog disabled the header button (which
+       targets the ACTIVE version) and told the operator "this version's recipients have already been
+       added" about a version nobody had touched — false, and it blocked the primary path for the rest
+       of the session. Keyed by version id, the guard still stops a double-submit of the SAME version
+       while leaving every other version reachable. (Fixed 2026-09-09, deep-review R3/trust-1.) */
+    const [addedVersionIds, setAddedVersionIds] = useState<number[]>([]);
+    const activeAlreadyAdded = details?.ActiveVersionID != null && addedVersionIds.indexOf(details.ActiveVersionID) !== -1;
 
     const maxSearchable = quota?.Limits?.MaxSearchableColumnsPerVersion ?? 10;
     const searchableRemaining = Math.max(0, maxSearchable - columns.filter(c => c.IsSearchable).length);
@@ -124,13 +172,13 @@ const DataSourceView = ({ classes }: ClassesType) => {
        loads the rows itself once the status turns READY — so the bar is replaced by real content
        without a reload and without a second code path. */
     useEffect(() => {
-        const st = details?.Status;
+        const st = effectiveStatus;
         if (st !== eDataSourceStatus.PENDING && st !== eDataSourceStatus.PROCESSING) return;
         if (!Number.isFinite(numId)) return;
         const timer = setInterval(() => { loadSource(numId); }, VIEW_POLL_MS);
         return () => clearInterval(timer);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [details?.Status, numId]);
+    }, [effectiveStatus, numId]);
 
     const loadSource = async (dsId: number) => {
         const res: any = await dispatch(getDataSource(dsId));
@@ -251,15 +299,54 @@ const DataSourceView = ({ classes }: ClassesType) => {
                     {t('DataSources.backToList')}
                 </Button>
                 <Typography style={{ fontSize: 20, fontWeight: 700 }}>{details?.Name}</Typography>
-                {details && <StatusChip status={details.Status} progress={null} runDateStart={details.RunDateStart ?? null} createdDate={details.CreatedDate} t={t} />}
-                {details && <Chip size="small" label={`V${details.VersionNumber ?? ''}`} style={{ direction: 'ltr' }} />}
+                {details && <StatusChip status={effectiveStatus ?? details.Status} progress={null} runDateStart={details.RunDateStart ?? null} createdDate={details.CreatedDate} t={t} />}
+                {/* 🔴 FIXED 2026-09-09: this rendered details.VersionNumber unconditionally, i.e. the
+                    ACTIVE version's number, while openVersion() swaps the grid to a historical version
+                    without refetching `details`. A user who opened V2 from the history dialog saw the
+                    grid change, the orange historical banner appear — and the chip beside it still say
+                    "V4". The chip is the only always-visible statement of WHICH version is on screen,
+                    so it was the one element that had to be right. Now resolved through `versions`,
+                    falling back to details only for the active view. */}
+                {details && viewedVersionNumber !== null && <Chip size="small" label={`V${viewedVersionNumber}`} style={{ direction: 'ltr' }} />}
                 {isViewOnly && (
                     <Tooltip title={t('DataSources.viewOnlyTooltip')} PopperProps={{ style: { direction: isRtl ? 'rtl' : 'ltr' } }}>
                         <Chip size="small" label={t('DataSources.viewOnlyBadge')} style={{ background: '#f1ebfb', color: '#6941c6' }} />
                     </Tooltip>
                 )}
             </Box>
-            <Box style={{ display: 'flex', gap: 2 }}>
+            <Box style={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+                {/* LABELLED, unlike the five icons beside it, and that inconsistency is deliberate.
+                    Those five are conventional glyphs for read-only or reversible actions the user has
+                    seen elsewhere in the product. This is the only OUTBOUND WRITE in the cluster, it
+                    has no conventional glyph, and nobody has muscle memory for it — icon-only would
+                    cost hover, wait, read, click anyway. Default size (no size="small"): the
+                    IconButtons here are full height, and a small button in a 2px gap sits visibly off
+                    the baseline. marginInlineEnd rather than raising the container gap, which would
+                    re-space the five existing icons.
+
+                    HIDDEN on a historical view, exactly as Export is (R3-02 above): a write attributed
+                    to the wrong version is strictly worse than the read that gate was added for. The
+                    historical route is the per-version icon in the versions dialog, which names its
+                    version by construction.
+
+                    DISABLED rather than hidden for a view-only source, because the header already
+                    shows the view-only chip — the disabled button finishes an explanation the chip
+                    started. The span wrapper + tabIndex keep that tooltip reachable: MUI v4 disabled
+                    buttons fire no mouse events and leave the tab order. */}
+                {canEditMeta && details?.Status === eDataSourceStatus.READY && !isHistorical && (
+                    <Tooltip title={t(isViewOnly ? 'DataSources.addToGroup.disabledNoIdentity' : (activeAlreadyAdded ? 'DataSources.addToGroup.queuedTooltip' : 'DataSources.actions.addToGroup'))} PopperProps={{ style: { direction: isRtl ? 'rtl' : 'ltr' } }}>
+                        <span style={{ display: 'inline-flex', marginInlineEnd: 8 }} tabIndex={0}>
+                            <Button
+                                variant="outlined" color="primary" startIcon={<GroupAdd />}
+                                disabled={!!isViewOnly || activeAlreadyAdded}
+                                aria-label={t('DataSources.actions.addToGroup')}
+                                onClick={() => setDialog({ type: 'addToGroup' })}
+                            >
+                                {t('DataSources.actions.addToGroup')}
+                            </Button>
+                        </span>
+                    </Tooltip>
+                )}
                 {/* 🔴 GATED ON `!isHistorical` 2026-08-08 (review R3-02).
                     This header button exports the ACTIVE version. While the screen is showing a
                     HISTORICAL version — grid reloaded, orange banner up, version chip changed — it
@@ -290,7 +377,7 @@ const DataSourceView = ({ classes }: ClassesType) => {
 
     const renderBody = () => {
         if (!details) return <LinearProgress />;
-        if (details.Status === eDataSourceStatus.PENDING || details.Status === eDataSourceStatus.PROCESSING) {
+        if (effectiveStatus === eDataSourceStatus.PENDING || effectiveStatus === eDataSourceStatus.PROCESSING) {
             return (
                 <Box style={{ textAlign: 'center', padding: 40 }}>
                     <Typography style={{ marginBottom: 12 }}>{t('DataSources.view.processing')}</Typography>
@@ -298,7 +385,7 @@ const DataSourceView = ({ classes }: ClassesType) => {
                 </Box>
             );
         }
-        if (details.Status === eDataSourceStatus.FAIL) {
+        if (effectiveStatus === eDataSourceStatus.FAIL) {
             return (
                 <Alert severity="error" style={{ marginTop: 16 }}
                     action={<Button color="inherit" size="small" onClick={() => Redirect({ url: `${sitePrefix}DataSources`, openNewTab: false })}>{t('DataSources.summary.uploadAgain')}</Button>}>
@@ -307,7 +394,7 @@ const DataSourceView = ({ classes }: ClassesType) => {
                 </Alert>
             );
         }
-        if (details.Status === eDataSourceStatus.CANCELLED) {
+        if (effectiveStatus === eDataSourceStatus.CANCELLED) {
             return (
                 <Alert severity="warning" style={{ marginTop: 16 }}>
                     <Typography style={{ fontWeight: 700 }}>{t('DataSources.statuses.4')}</Typography>
@@ -398,9 +485,39 @@ const DataSourceView = ({ classes }: ClassesType) => {
                     onViewVersion={openVersion}
                     onExportVersion={(vid, totalRows) => setDialog({ type: 'export', data: { versionId: vid, totalRows } })}
                     onShowSummary={(v) => openSummary(v)}
+                    /* Closes the versions dialog before opening this one — two stacked MUI dialogs
+                       leave the lower one's backdrop and focus trap in play, and the user cannot reach
+                       the Autocomplete underneath it. The version id is carried explicitly, which is
+                       what makes this the safe route for a historical version. */
+                    onAddToGroupVersion={(vid) => setDialog({ type: 'addToGroup', data: { versionId: vid } })}
                     canView={canEditMeta}
                     canExport={canExport}
+                    canAddToGroup={canEditMeta && !isViewOnly}
                 />
+                {/* Both entry points funnel here. `data.versionId` is set by the versions-dialog
+                    route (a historical version, named explicitly); its absence means the header route,
+                    which is only rendered on the active view — so viewedVersionId is right for both and
+                    the version is never inferred server-side. Counts come from the matching version
+                    record rather than from `details`, which always describes the ACTIVE version. */}
+                {(() => {
+                    const dVid: number | null = dialog?.type === 'addToGroup' ? (dialog.data?.versionId ?? viewedVersionId) : viewedVersionId;
+                    const v = dVid != null ? (versions.find(x => x.DataSourceVersionID === dVid) ?? null) : null;
+                    return (
+                        <AddToGroupDialog
+                            classes={classes}
+                            open={dialog?.type === 'addToGroup'}
+                            dataSource={details ? { ID: details.DataSourceID, Name: details.Name } : null}
+                            versionId={dVid}
+                            versionNumber={v ? v.VersionNumber : viewedVersionNumber}
+                            totalRows={v ? v.TotalRows : (details?.TotalRows ?? null)}
+                            resolvedEmail={v ? v.ResolvedRowsEmail : (details?.ResolvedRowsEmail ?? 0)}
+                            resolvedCell={v ? v.ResolvedRowsCell : (details?.ResolvedRowsCell ?? 0)}
+                            onClose={() => setDialog(null)}
+                            onAdded={() => { if (dVid != null) setAddedVersionIds(ids => (ids.indexOf(dVid) === -1 ? [...ids, dVid] : ids)); }}
+                            setToastMessage={setToastMessage}
+                        />
+                    );
+                })()}
                 <ExportDialog
                     classes={classes}
                     open={dialog?.type === 'export'}

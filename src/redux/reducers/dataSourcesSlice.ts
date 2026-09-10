@@ -13,7 +13,8 @@ import {
     GetRowsRequest,
     UpdateDataSourceRequest,
     UpdateColumnMetaRequest,
-    ExportRequest
+    ExportRequest,
+    AddToGroupRequest
 } from '../../Models/DataSources/DataSource';
 import {
     mockGetMany, mockGet, mockGetRows, mockCheckQuota,
@@ -168,6 +169,16 @@ export const exportDataSource = createAsyncThunk(
         }
     });
 
+export const addToGroup = createAsyncThunk(
+    'DataSources/AddToGroup', async (req: AddToGroupRequest, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.post(`${api}AddToGroup`, req);
+            return response.data;
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    });
+
 export const checkQuota = createAsyncThunk(
     'DataSources/CheckQuota', async (_, thunkAPI) => {
         if (USE_DS_MOCK) return mockCheckQuota();
@@ -197,6 +208,10 @@ const initialState: DataSourcesState = {
     ToastMessages: {
         GENERAL_ERROR: { severity: 'error', color: 'error', message: 'DataSources.errors.generalError', showAnimtionCheck: false },
         SOURCE_CREATED: { severity: 'success', color: 'success', message: 'DataSources.toasts.created', showAnimtionCheck: true },
+        // Distinct from SOURCE_CREATED: on the version path nothing was CREATED, and telling a user
+        // "the source was created" about a source they already had is how a version quietly reads as
+        // a duplicate. Same shape, different sentence.
+        VERSION_CREATED: { severity: 'success', color: 'success', message: 'DataSources.toasts.versionCreated', showAnimtionCheck: true },
         SOURCE_READY: { severity: 'success', color: 'success', message: 'DataSources.toasts.ready', showAnimtionCheck: true },
         SOURCE_FAILED: { severity: 'error', color: 'error', message: 'DataSources.toasts.failed', showAnimtionCheck: false },
         SOURCE_UPDATED: { severity: 'success', color: 'success', message: 'DataSources.toasts.updated', showAnimtionCheck: true },

@@ -14,9 +14,11 @@ import {
     eClientField, ClientFieldOption, CLIENT_FIELD_CATALOGUE, ColumnDetection
 } from '../../../Models/DataSources/DataSource';
 import { eDataType } from '../../../Models/DataSources/DataSourceEnums';
-import { checkQuota, insertDataSource, setUploadProgress } from '../../../redux/reducers/dataSourcesSlice';
+import { eDataSourceStatus } from '../../../Models/DataSources/DataSource';
+import { checkQuota, getDataSource, insertDataSource, setUploadProgress } from '../../../redux/reducers/dataSourcesSlice';
 import { useDsDialogStyles } from './dialogStyles';
 import { detectColumnType } from './columnTypeDetect';
+import { Lock } from '@material-ui/icons';
 import TypeEvidencePopover from './TypeEvidencePopover';
 
 interface UploadWizardDialogProps {
@@ -34,6 +36,30 @@ interface UploadWizardDialogProps {
        recipient fields, which is the whole of phase one. Labels live on dbo.AccountExtraFields and
        are per ACCOUNT, so every sub-account of the same customer sees the same names. */
     accountExtraFields?: ClientFieldOption[];
+    /* VERSION MODE — set by the per-row "add version" action (DataSources.tsx) to target ONE existing
+       source. Absent everywhere else, and while absent every behaviour in this file is bit-identical
+       to the plain new-source wizard.
+
+       WHY AN OBJECT AND NOT AN ID: there is no id-addressed versioning path to call. The backend keys
+       versioning on (SubAccountID, Name) through the filtered unique index
+       IX_DataSources__SubAccountID_Name, and DataSources_Insert branches "existing source => new
+       version" off that lookup alone. The NAME is the payload that does the work. The rest of the
+       object is what step 2 needs to state the consequence truthfully: VersionNumber (so the confirm
+       button can name V{n+1}), Description (seeded into the box), and the two identity flags that
+       power the identity-regression warning.
+
+       WHY NOT REUSE `existingSources`: that prop is built from the CURRENT PAGE of the list, so its
+       `.find()` silently misses a source on page 2 and the user gets no new-version notice at all.
+       Guessing is acceptable for someone free-typing a name; it stops being acceptable once the user
+       has pointed at a specific row. In version mode the wizard is TOLD its target and never guesses. */
+    versionOf?: {
+        DataSourceID: number;
+        Name: string;
+        Description?: string;
+        VersionNumber: number;
+        HadEmailIdentity: boolean;
+        HadCellIdentity: boolean;
+    };
 }
 
 const ALLOWED = ['csv', 'xls', 'xlsx', 'tsv'];
@@ -87,7 +113,7 @@ const extOf = (name: string) => {
     return parts.length > 0 ? parts[parts.length - 1].toLowerCase() : '';
 };
 
-const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessage, existingSources = [], accountExtraFields }: UploadWizardDialogProps) => {
+const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessage, existingSources = [], accountExtraFields, versionOf }: UploadWizardDialogProps) => {
     const { t, i18n } = useTranslation();
     // Fallback 'rtl' matches DataSources.tsx:113 — Hebrew is the default locale, so an i18n
     // instance without dir() must not silently downgrade the app to LTR.
@@ -131,17 +157,36 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
     const searchableCount = columns.filter(c => c.IsSearchable).length;
     const searchableRemaining = Math.max(0, maxSearchable - searchableCount);
 
+    /* 🔴 KEYED ON THE TARGET'S IDENTITY, NOT JUST `open` (fixed 2026-09-09, deep-review R2/lifecycle-0).
+       This depended on [open] alone, so `reset()` — the ONLY place `name` is seeded in version mode —
+       ran exactly once per opening. If `versionOf` then changed while the dialog was already open,
+       every derived value followed the new target (title, locked panel, matchedSource/nextVersion, the
+       description seeding, and the pre-submit re-check, which fetches versionOf.DataSourceID) while
+       `name` stayed on the OLD one. `name` is the versioning key, so the upload silently attached
+       source B's recipient file as a new VERSION OF SOURCE A — server-authoritative, no undo.
+
+       That was reachable by double-clicking two different rows on a slow link: openAddVersion awaits a
+       GET before it sets the target, so a second click's response can land after `open` is already true.
+       The call sites are guarded too (see DataSources.tsx), but this dependency is the invariant that
+       makes the disagreement structurally impossible rather than merely unlikely — any future caller
+       that re-targets the dialog now re-seeds it instead of forking a source.
+
+       Re-running reset() here DISCARDS a part-built mapping when the target changes. That is the point:
+       the mapping belonged to the previous source, and silently carrying it to another one is the bug. */
     useEffect(() => {
         if (open) {
             reset();
             dispatch(checkQuota());
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [open]);
+    }, [open, versionOf?.DataSourceID]);
 
     const reset = () => {
         setStep(0); setFile(null); setHeaders([]); setPreviewRows([]); setColumns([]);
-        setRowCount(null); setColumnNonEmpty(null); setName(''); setDescription(''); setCreateMissingClients(true);
+        // In version mode the name is a FIXED FACT about the target source, not an empty field waiting
+        // for input — seeding it here (rather than leaving '' until step 2) is what makes the locked
+        // panel, the confirm label and the pre-submit guard all read the same value from the first render.
+        setRowCount(null); setColumnNonEmpty(null); setName(versionOf ? versionOf.Name : ''); setDescription(''); setCreateMissingClients(true);
         descriptionTouched.current = false;   // fresh open => box is empty AND re-seedable again
         setCreateAsPending(false);
         setErrors({}); setUploading(false); setParsing(false);
@@ -408,7 +453,14 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
             setColumns(buildColumns(hdrs, dataRows));
             setRowCount(count);
             setColumnNonEmpty(nonEmpty);
-            setName(chosen.name.replace(/\.[^.]+$/, '').substring(0, 100));
+            /* NEVER in version mode. This is the single most dangerous line in the feature: the
+               name IS the versioning key, so silently replacing it with the picked file’s basename
+               retargets the upload — DataSources_Insert then finds no source by that name and creates
+               a BRAND-NEW one carrying the entire recipient list. The failure is silent, server-
+               authoritative and has no undo: the user asked for "version 4 of Clal Q3" and got a
+               second source called "clal_q3_final_v2". The locked panel on step 2 is the visible
+               half of the lock; this guard is the half that actually holds. */
+            if (!versionOf) setName(chosen.name.replace(/\.[^.]+$/, '').substring(0, 100));
             setParsing(false);
         } catch (err) {
             setParsing(false);
@@ -558,7 +610,20 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
 
     const hasEmail = columns.some(c => c.SemanticRole === eSemanticRole.RECIPIENT_EMAIL);
     const hasCell = columns.some(c => c.SemanticRole === eSemanticRole.RECIPIENT_CELLPHONE);
-    const matchedSource = name ? existingSources.find(s => s.Name && s.Name.trim().toLowerCase() === name.trim().toLowerCase()) : undefined;
+    /* In version mode the target is GIVEN, so this stops being a lookup. That one redirect is what
+       makes nameExists, nextVersion, the description-seeding effect below, descriptionKeepHint and
+       clientFieldVersionReminder all correct with no further code — and it drops this path's
+       dependence on `existingSources`, which only ever holds the current page of the list. */
+    const matchedSource = versionOf
+        ? versionOf
+        : (name ? existingSources.find(s => s.Name && s.Name.trim().toLowerCase() === name.trim().toLowerCase()) : undefined);
+    const isVersionMode = !!versionOf;
+    // Identity regression: the previous version resolved recipients on a channel this mapping drops.
+    // Both sides are already in hand, so this costs nothing but catches the one silent failure that
+    // disables sending from the source entirely (no email identity => HasEmailIdentity false =>
+    // isViewOnly => the Send button disappears and Smart Send has nothing to match on).
+    const identityRegressionEmail = isVersionMode && !!versionOf.HadEmailIdentity && !hasEmail;
+    const identityRegressionCell = isVersionMode && !!versionOf.HadCellIdentity && !hasCell;
     const nameExists = !!matchedSource;
     const nextVersion = matchedSource ? (matchedSource.VersionNumber || 0) + 1 : 0;
 
@@ -594,13 +659,119 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
     // ── upload ────────────────────────────────────────────────────────────────
     const doUpload = async () => {
         setErrors({});
+        /* Set only when the pre-submit re-check finds the source was RENAMED while the wizard sat
+           open. It exists because setName() is a state update: it does not land before the FormData a
+           few lines below is built, so posting `name` there would send the stale name and fork a new
+           source — the exact failure the re-check is there to prevent. setName() is still called, so
+           the dialog is consistent if the user cancels out of the following confirm. */
+        let nameOverride: string | null = null;
         if (!name || !name.trim()) { setErrors({ name: t('DataSources.wizard.errors.nameRequired') }); return; }
         if (name.length > 100) { setErrors({ name: t('DataSources.wizard.errors.nameTooLong') }); return; }
         if (!file) return;
 
+        /* 🔴 CLAIM `uploading` BEFORE the awaited re-check below, not after it
+           (fixed 2026-09-09, deep-review R6/fresh3-0).
+           `uploading` is the ONLY thing that disables Confirm (footer) and the ONLY thing
+           requestClose() checks. It used to be set after the whole version-mode re-check block, which
+           begins with an awaited GET — so for that entire round trip the dialog looked idle: no
+           progress bar, Cancel live, Escape live, backdrop live.
+           The bad outcome is not the double-click (DataSources_Insert holds UPDLOCK/HOLDLOCK on both
+           the name lookup and the in-flight EXISTS, so a second POST is refused -4/409). It is CANCEL:
+           requestClose() ran, onClose() closed the dialog, and the SUSPENDED doUpload continuation
+           then resumed and POSTed the file anyway — an irreversible new ACTIVE version created after
+           the operator explicitly abandoned, announced only by a success toast. The component is
+           rendered unconditionally with an `open` prop, so it is never unmounted and there is no
+           unmount guard to save us.
+           The window is far wider than one round trip in practice: requestClose() calls
+           window.confirm(abandonConfirm), which BLOCKS the JS thread, so the GET's response queues and
+           runs the instant the human clicks OK on "abandon?".
+           Every early return inside the re-check now releases the flag; the sole path that does not is
+           the 404 one, which closes the dialog outright (reset() clears it on the next open).
+           This also closes the feedback-free window recorded as K25 — the progress bar and the
+           disabled buttons now appear on the first click. */
+        if (uploading) return;
+        setUploading(true);
+
+        /* ── pre-submit re-check, VERSION MODE ONLY ───────────────────────────────────────────────
+           The wizard can sit open for minutes while someone maps columns, and everything that makes
+           this upload correct is a fact about a row fetched when it opened. Three of those facts can
+           change underneath it, and all three fail SILENTLY and IRREVERSIBLY if we just post:
+
+             - RENAMED. The name is the versioning key. Posting the stale name creates a SECOND SOURCE
+               under the old name instead of a version of the renamed one.
+             - A NEW VERSION LANDED. Two people both saw "V4"; one stacks on the other's work while
+               believing they replaced it, and the confirm button they clicked said the wrong number.
+             - NOW PROCESSING. The server answers 409 anyway — but only after the whole file has been
+               uploaded, so the user waits through a progress bar to be told no.
+
+           Cheap because getDataSource is one GET the list screen already makes. Deliberately NOT run
+           on the new-source path, where none of these hazards exist. */
+        if (versionOf) {
+            const fresh: any = await dispatch(getDataSource(versionOf.DataSourceID));
+            const code = fresh?.payload?.StatusCode;
+            const cur = fresh?.payload?.Data?.details;
+            /* RS3. Both facts this block needs live here and NOT on `details` — see the two comments
+               below. Empty only while a first upload has never completed. */
+            const freshVersions: { VersionNumber: number; Status: eDataSourceStatus }[] =
+                fresh?.payload?.Data?.versions ?? [];
+            if (code === 404 || (code === 200 && !cur)) {
+                setToastMessage({ severity: 'error', color: 'error', message: 'DataSources.errors.sourceDeleted' } as ERROR_TYPE);
+                onClose();
+                return;
+            }
+            if (code === 200 && cur) {
+                /* 🔴 IN-FLIGHT IS A QUESTION ABOUT ANY VERSION, NOT THE ACTIVE ONE
+                   (fixed 2026-09-09, deep-review R1/wizard-2 + wizard-3).
+                   This read `cur.Status`, which is RS1's `v.Status` reached through
+                   `LEFT JOIN DataSourceVersions v ON v.DataSourceVersionID = ds.ActiveVersionID`.
+                   ActiveVersionID only moves when a version COMPLETES (DataSources_CompleteVersion
+                   swaps it under Status = 2 only), so that column was wrong in both directions:
+
+                   FALSE POSITIVE — a source whose only version FAILED or was CANCELLED still has
+                   ActiveVersionID NULL, the LEFT JOIN yields NULL, the C# maps DBNull to 0, and 0 is
+                   PENDING. Re-uploading is the documented recovery path for a failed version, and the
+                   list button correctly offers it (GetMany projects the LATEST version's status), so
+                   the user reached this line, lost their column mapping, and was told "the source is
+                   currently being processed" — untrue, and untrue forever.
+
+                   FALSE NEGATIVE — while a NEW version is Pending/Processing the active version is
+                   still the previous Ready one, so this read 2 and let the upload through to fail
+                   server-side after the whole file had been sent.
+
+                   The server's predicate is EXISTS(any version with Status IN (0,1)); matching it here
+                   is what makes this a real pre-flight instead of a differently-wrong second opinion. */
+                if (freshVersions.some(v => v.Status === eDataSourceStatus.PENDING || v.Status === eDataSourceStatus.PROCESSING)) {
+                    setErrors({ upload: t('DataSources.wizard.uploadInProgressInline') });
+                    setUploading(false);
+                    return;
+                }
+                if (cur.Name && cur.Name !== versionOf.Name) {
+                    // eslint-disable-next-line no-restricted-globals
+                    if (!window.confirm(t('DataSources.wizard.renamedConfirm', { old: versionOf.Name, new: cur.Name }))) { setUploading(false); return; }
+                    // Post the FRESH name: same DataSourceID, so this targets the source the user
+                    // pointed at, which is the whole point. Keeping the stale name would fork a source.
+                    setName(cur.Name);
+                    nameOverride = cur.Name;
+                }
+                /* 🔴 WAS DEAD CODE (fixed 2026-09-09, deep-review R1/wizard-1). The guard read
+                   `typeof cur.VersionNumber === 'number'`, and RS1 does not carry VersionNumber at all,
+                   so the value was always null — and `typeof null === 'object'`. The condition could
+                   never be true, which removed the concurrent-version hazard from a block whose whole
+                   purpose is the three hazards listed above it, silently. Reading MAX over RS3 is both
+                   the fix and the reason the guard now has a number to compare. */
+                const freshLatest = freshVersions.length
+                    ? freshVersions.reduce((mx, v) => Math.max(mx, v.VersionNumber ?? 0), 0)
+                    : null;
+                if (freshLatest !== null && freshLatest !== versionOf.VersionNumber) {
+                    // eslint-disable-next-line no-restricted-globals
+                    if (!window.confirm(t('DataSources.wizard.versionMovedConfirm', { n: freshLatest + 1, stale: nextVersion }))) { setUploading(false); return; }
+                }
+            }
+        }
+
         const fd = new FormData();
         fd.append('file', file, file.name);
-        fd.append('name', name.trim());
+        fd.append('name', (nameOverride ?? name).trim());
         fd.append('description', description || '');
         fd.append('createMissingClients', createMissingClients ? 'true' : 'false');
         // `&& createMissingClients` keeps the pair coherent on the wire even if a future edit breaks
@@ -730,6 +901,13 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
     const renderIdentityStep = () => (
         <Box>
             <Typography color="textSecondary" style={{ marginBottom: 8 }}>{t('DataSources.wizard.identityBanner')}</Typography>
+            {/* Stated as a RULE, not computed as a diff against the previous version. A real column
+                diff would need the previous version's columns fetched into this dialog plus a diff UI
+                and its loading state; the rule is always true, costs one line, and answers the actual
+                question ("did I just break the old version?" — no). */}
+            {isVersionMode && (
+                <Typography color="textSecondary" style={{ marginBottom: 8, fontSize: 13 }}>{t('DataSources.wizard.versionColumnsRule')}</Typography>
+            )}
             {!hasEmail && !hasCell && (
                 <Box style={{ background: '#fff4e5', border: '1px solid #f5d9b0', borderRadius: 8, padding: '8px 12px', marginBottom: 10 }}>
                     <Typography style={{ color: '#b54708' }}>{t('DataSources.wizard.noIdentityWarning')}</Typography>
@@ -960,8 +1138,39 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
 
     const renderDetailsStep = () => (
         <Box style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-            <TextField variant="outlined" label={t('DataSources.wizard.nameLabel')} value={name} onChange={(e) => setName(e.target.value)}
-                error={!!errors.name} helperText={errors.name} inputProps={{ maxLength: 100 }} fullWidth />
+            {isVersionMode ? (
+                /* A FACT, NOT A DISABLED CONTROL. The name is the thing the user must verify before an
+                   irreversible upload, so it is rendered as a stated value in the wizard's existing
+                   "given information" panel idiom rather than as a TextField. A disabled TextField
+                   greys the most important fact on the screen to ~38% opacity and reads as "broken /
+                   not loaded"; a readOnly one keeps full contrast and a caret, then silently swallows
+                   keystrokes — which is the definition of broken. errors.name cannot fire here (the
+                   value comes from the source, never from input), so no error slot is rendered.
+
+                   #667085 and not the #95A5A6 used elsewhere in this file: #95A5A6 on #f6f9fc computes
+                   to 2.42:1, below AA for both text and the glyph. The whole argument for stating the
+                   rule instead of grey-ing a control collapses if the rule is rendered less legibly
+                   than MUI's own disabled state. #667085 is 4.70:1. (The #95A5A6 instances elsewhere
+                   are pre-existing debt — named here, deliberately not fixed globally in this change.)
+
+                   <bdi> around the name: a source called "Clal Q3 (2026)" inside a Hebrew sentence has
+                   its parentheses mirrored and its trailing punctuation displaced by the bidi
+                   algorithm — in the one place the user is being asked to check the name. */
+                <Box style={{ background: '#f6f9fc', borderRadius: 8, padding: 12 }}>
+                    <Box style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+                        <Lock style={{ fontSize: 16, color: '#667085' }} />
+                        <Typography style={{ fontSize: 13, color: '#5b6b7b' }}>{t('DataSources.wizard.lockedNameLabel')}</Typography>
+                    </Box>
+                    <Typography style={{ fontSize: 16, fontWeight: 700, wordBreak: 'break-word' }}><bdi>{versionOf.Name}</bdi></Typography>
+                    <Typography style={{ fontSize: 13, color: '#667085', marginTop: 4 }}>
+                        {t('DataSources.wizard.versionLine', { next: nextVersion, prev: versionOf.VersionNumber })}
+                    </Typography>
+                    <Typography style={{ fontSize: 12, color: '#667085', marginTop: 2 }}>{t('DataSources.wizard.lockedNameHint')}</Typography>
+                </Box>
+            ) : (
+                <TextField variant="outlined" label={t('DataSources.wizard.nameLabel')} value={name} onChange={(e) => setName(e.target.value)}
+                    error={!!errors.name} helperText={errors.name} inputProps={{ maxLength: 100 }} fullWidth />
+            )}
             {/* descriptionTouched: from the first keystroke the box belongs to the user and the
                 seeding effect above stops writing to it — including when the user clears it.
 
@@ -978,9 +1187,32 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
                 onChange={(e) => { descriptionTouched.current = true; setDescription(e.target.value); }}
                 helperText={nameExists ? t('DataSources.wizard.descriptionKeepHint') : undefined}
                 inputProps={{ maxLength: 500 }} multiline rows={2} fullWidth />
-            {nameExists && (
+            {/* SUPPRESSED in version mode, and only this block. Its copy ("a source with this name
+                already exists — the file will be uploaded as a new version…") is written for someone
+                who STUMBLED into a name collision. A user who deliberately clicked "add version" on a
+                specific row is being warned about their own intent, and amber spent on an expected
+                outcome stops working when it is needed. The title, the locked panel and the confirm
+                button already state the target three times.
+
+                Note for anyone tempted to wrap the neighbouring amber blocks the same way: do not.
+                descriptionKeepHint and clientFieldVersionReminder share this colour but not this
+                reasoning — both are MORE load-bearing in version mode, not less. */}
+            {nameExists && !isVersionMode && (
                 <Typography style={{ color: '#b54708', fontSize: 13 }}>
                     {t('DataSources.wizard.newVersionNotice', { n: nextVersion })}
+                </Typography>
+            )}
+            {/* The one warning in this feature that must never be cut. Every other edge case here
+                degrades to "the user is mildly surprised"; this one silently disables the source's
+                send path, and nothing downstream says why. */}
+            {identityRegressionEmail && (
+                <Typography style={{ color: '#b54708', fontSize: 13 }}>
+                    {t('DataSources.wizard.identityRegressionEmail', { prev: versionOf.VersionNumber })}
+                </Typography>
+            )}
+            {identityRegressionCell && (
+                <Typography style={{ color: '#b54708', fontSize: 13 }}>
+                    {t('DataSources.wizard.identityRegressionCell', { prev: versionOf.VersionNumber })}
                 </Typography>
             )}
             {/* Summary: muted label + bold value, one pair per line (it used to read as two raw
@@ -1077,7 +1309,7 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
         // cannot compensate. Reactive, NOT hardcoded "rtl", so en/pl accounts render LTR — same idiom
         // as TestSendDialog.tsx:69 and SmartSendManageTab.tsx:305.
         <Dialog open={open} onClose={requestClose} fullWidth maxWidth="md" dir={isRtl ? 'rtl' : 'ltr'} PaperProps={{ className: dsDialog.paper }}>
-            <DialogTitle>{t('DataSources.wizard.title')}</DialogTitle>
+            <DialogTitle>{isVersionMode ? t('DataSources.wizard.titleNewVersion', { name: versionOf.Name }) : t('DataSources.wizard.title')}</DialogTitle>
             <DialogContent>
                 <Stepper activeStep={step} alternativeLabel>
                     {steps.map((label) => <Step key={label}><StepLabel>{label}</StepLabel></Step>)}
@@ -1090,7 +1322,7 @@ const UploadWizardDialog = ({ classes, open, onClose, onUploaded, setToastMessag
                 <Button onClick={requestClose} disabled={uploading}>{t('common.cancel')}</Button>
                 {step > 0 && <Button onClick={() => setStep(step - 1)} disabled={uploading}>{t('DataSources.wizard.back')}</Button>}
                 {step < 2 && <Button color="primary" variant="contained" onClick={() => setStep(step + 1)} disabled={!canNext}>{t('DataSources.wizard.next')}</Button>}
-                {step === 2 && <Button color="primary" variant="contained" onClick={doUpload} disabled={uploading}>{t('DataSources.wizard.confirmUpload')}</Button>}
+                {step === 2 && <Button color="primary" variant="contained" onClick={doUpload} disabled={uploading}>{isVersionMode ? t('DataSources.wizard.confirmUploadVersion', { n: nextVersion }) : t('DataSources.wizard.confirmUpload')}</Button>}
             </DialogActions>
         </Dialog>
     );
