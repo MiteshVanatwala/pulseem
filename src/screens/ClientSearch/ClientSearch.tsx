@@ -267,7 +267,7 @@ const ClientSearch = ({ classes }: any) => {
                     style={{ width: 'auto', marginInlineStart: 15 }}
                     className={clsx(classes.managementTitle, "mgmtTitle")}
                   >
-                    {t("AppBar.groups.loyalty.title")}
+                    {t("appBar.groups.loyalty.title")}
                   </Typography>
                 </Box>}
               />

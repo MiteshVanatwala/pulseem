@@ -9,22 +9,22 @@ export const ClientSearchLoyalty = ({ classes, data, onUpdate }: any) => {
   };
 
   const pointsCondOptions = [
-    { value: 'gt', label: t('AppBar.groups.loyalty.op.over') },
-    { value: 'lt', label: t('AppBar.groups.loyalty.op.under') },
-    { value: 'eq', label: t('AppBar.groups.loyalty.op.equals') },
-    { value: 'between', label: t('AppBar.groups.loyalty.op.between') },
+    { value: 'gt', label: t('appBar.groups.loyalty.op.over') },
+    { value: 'lt', label: t('appBar.groups.loyalty.op.under') },
+    { value: 'eq', label: t('appBar.groups.loyalty.op.equals') },
+    { value: 'between', label: t('appBar.groups.loyalty.op.between') },
   ];
 
   const tierCondOptions = [
-    { value: 'eq', label: t('AppBar.groups.loyalty.op.is') },
-    { value: 'neq', label: t('AppBar.groups.loyalty.op.isNot') },
+    { value: 'eq', label: t('appBar.groups.loyalty.op.is') },
+    { value: 'neq', label: t('appBar.groups.loyalty.op.isNot') },
   ];
 
   const expiryCondOptions = [
-    { value: 'withindays', label: t('AppBar.groups.loyalty.op.withinDays') },
-    { value: 'after', label: t('AppBar.groups.loyalty.op.after') },
-    { value: 'before', label: t('AppBar.groups.loyalty.op.before') },
-    { value: 'noexpiry', label: t('AppBar.groups.loyalty.op.noExpiry') },
+    { value: 'withindays', label: t('appBar.groups.loyalty.op.withinDays') },
+    { value: 'after', label: t('appBar.groups.loyalty.op.after') },
+    { value: 'before', label: t('appBar.groups.loyalty.op.before') },
+    { value: 'noexpiry', label: t('appBar.groups.loyalty.op.noExpiry') },
   ];
 
   const optedInOptions = [
@@ -172,7 +172,7 @@ export const ClientSearchLoyalty = ({ classes, data, onUpdate }: any) => {
       {(data?.LoyaltyExpiryCond === 'withindays') && (
         <Grid item xs={12} sm={6} md={2}>
           <TextField
-            label={t('AppBar.groups.loyalty.op.withinDays')}
+            label={t('appBar.groups.loyalty.op.withinDays')}
             variant="standard"
             size="small"
             type="number"
@@ -203,7 +203,7 @@ export const ClientSearchLoyalty = ({ classes, data, onUpdate }: any) => {
       {/* Opted In */}
       <Grid item xs={12} sm={6} md={3}>
         <FormControl variant="standard" fullWidth className={classes?.mt25}>
-          <InputLabel style={{ fontSize: 17 }}>{t('AppBar.groups.loyalty.optedIn')}</InputLabel>
+          <InputLabel style={{ fontSize: 17 }}>{t('appBar.groups.loyalty.optedIn')}</InputLabel>
           <Select
             value={data?.LoyaltyOptedIn === true ? 'true' : data?.LoyaltyOptedIn === false ? 'false' : ''}
             onChange={(e) => {
