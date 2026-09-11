@@ -3,7 +3,7 @@ import { BaseDialog } from "../../components/DialogTemplates/BaseDialog";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { getGroupsBySubAccountId } from "../../redux/reducers/groupSlice";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Loader } from "../../components/Loader/Loader";
 import clsx from 'clsx';
 import { createGroup } from "../../redux/reducers/groupSlice";
@@ -12,6 +12,7 @@ import { Autocomplete } from "@mui/material";
 import { findPlanByFeatureCode } from "../../redux/reducers/TiersSlice";
 import TierPlans from "../../components/TierPlans/TierPlans";
 import { get } from "lodash";
+import { DefaultGroupSort, sortGroupsByUpdateDate } from "../../helpers/Utils/groupSortUtils";
 
 interface GroupSelection {
     classes: any;
@@ -21,6 +22,12 @@ interface GroupSelection {
     onConfirm: any;
     isOpen: boolean;
     selectedGroups: Array<number> | never | any;
+}
+
+interface SelectableGroup {
+    GroupID: number;
+    GroupName: string;
+    UpdateDate?: string | null;
 }
 
 const GroupSelectorPopUp = ({
@@ -100,6 +107,11 @@ const GroupSelectorPopUp = ({
         setShowLoader(false);
     }
 
+    const sortedSubAccountAllGroups = useMemo(
+        () => sortGroupsByUpdateDate<SelectableGroup>(subAccountAllGroups ?? [], DefaultGroupSort.DIRECTION),
+        [subAccountAllGroups]
+    );
+
     const onGroupSelect = (a: any, groups: any, eventType: any, item: any) => {
 
         let tempSelection: any[] = [...newSelection];
@@ -127,7 +139,7 @@ const GroupSelectorPopUp = ({
                 placeholder={t(title)}
                 className={classes.autoComplete}
                 id="groups-selection"
-                options={subAccountAllGroups}
+                options={sortedSubAccountAllGroups}
                 disableCloseOnSelect
                 isOptionEqualToValue={(option, value) => {
                     return option?.GroupID === value.GroupID;

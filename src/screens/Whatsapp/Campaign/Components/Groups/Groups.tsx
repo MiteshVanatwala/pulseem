@@ -1,4 +1,4 @@
-import { BaseSyntheticEvent, useState } from 'react';
+import { BaseSyntheticEvent, useMemo, useState } from 'react';
 import {
 	Typography,
 	Grid,
@@ -30,6 +30,7 @@ import {
 import { coreProps } from '../../../Editor/Types/WhatsappCreator.types';
 import GroupsList from './Component/GroupsList';
 import GroupsSelectAll from './Component/GroupsSelectAll';
+import { DefaultGroupSort, sortGroupsByUpdateDate } from '../../../../../helpers/Utils/groupSortUtils';
 
 const Groups = ({
 	classes,
@@ -99,8 +100,8 @@ const Groups = ({
 		},
 	];
 
-	const [sortBySelected, setSortBy] = useState('Group Name');
-	const [sortDirection, setSortDirection] = useState('asc');
+	const [sortBySelected, setSortBy] = useState<string>(DefaultGroupSort.FIELD);
+	const [sortDirection, setSortDirection] = useState<string>(DefaultGroupSort.DIRECTION);
 	const renderSortItems = () => {
 		return groupSortOptions.map((sortBy) => {
 			return (
@@ -112,55 +113,42 @@ const Groups = ({
 	};
 	const handleSortBySelected = (event: SelectChangeEvent) => {
 		setSortBy(event.target.value);
-		sortBy(event.target.value, sortDirection);
 	};
 	const handleSortDirection = () => {
-		const selected = sortDirection === 'asc' ? 'desc' : 'asc';
-		setSortDirection(selected);
-		sortBy(sortBySelected, selected);
+		setSortDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'));
 	};
 
-	const sortBy = (sortBy: string, direction: string) => {
-		if (list) {
-			if (sortBy === 'Group Name') {
-				direction === 'asc'
-					? list.sort((a: testGroupDataProps, b: testGroupDataProps) =>
-							a.GroupName.toUpperCase() < b.GroupName.toUpperCase()
-								? -1
-								: Number(a.GroupName.toUpperCase() > b.GroupName.toUpperCase())
-					  )
-					: list.sort((a: testGroupDataProps, b: testGroupDataProps) =>
-							b.GroupName.toUpperCase() < a.GroupName.toUpperCase()
-								? -1
-								: Number(b.GroupName.toUpperCase() > a.GroupName.toUpperCase())
-					  );
-			} else if (sortBy === 'Update Date' && list[0] && list[0].UpdateDate) {
-				direction === 'asc'
-					? list.sort((a: testGroupDataProps, b: testGroupDataProps) =>
-							a.UpdateDate !== null && b.UpdateDate !== null
-								? Date.parse(a.UpdateDate) - Date.parse(b.UpdateDate)
-								: -1
-					  )
-					: list.sort((a: testGroupDataProps, b: testGroupDataProps) =>
-							a.UpdateDate !== null && b.UpdateDate !== null
-								? Date.parse(b.UpdateDate) - Date.parse(a.UpdateDate)
-								: -1
-					  );
-			} else if (sortBy === 'Creation Date') {
-				direction === 'asc'
-					? list.sort((a: testGroupDataProps, b: testGroupDataProps) =>
-							a.CreationDate !== null && b.CreationDate !== null
-								? Date.parse(a.CreationDate) - Date.parse(b.CreationDate)
-								: -1
-					  )
-					: list.sort((a: testGroupDataProps, b: testGroupDataProps) =>
-							a.CreationDate !== null && b.CreationDate !== null
-								? Date.parse(b.CreationDate) - Date.parse(a.CreationDate)
-								: -1
-					  );
-			}
+	const sortedList = useMemo(() => {
+		if (!list) return list;
+		if (sortBySelected === 'Group Name') {
+			return sortDirection === 'asc'
+				? [...list].sort((a: testGroupDataProps, b: testGroupDataProps) =>
+						a.GroupName.toUpperCase() < b.GroupName.toUpperCase()
+							? -1
+							: Number(a.GroupName.toUpperCase() > b.GroupName.toUpperCase())
+				  )
+				: [...list].sort((a: testGroupDataProps, b: testGroupDataProps) =>
+						b.GroupName.toUpperCase() < a.GroupName.toUpperCase()
+							? -1
+							: Number(b.GroupName.toUpperCase() > a.GroupName.toUpperCase())
+				  );
+		} else if (sortBySelected === 'Update Date') {
+			return sortGroupsByUpdateDate(list, sortDirection, 'GroupID');
+		} else if (sortBySelected === 'Creation Date') {
+			return sortDirection === 'asc'
+				? [...list].sort((a: testGroupDataProps, b: testGroupDataProps) =>
+						a.CreationDate !== null && b.CreationDate !== null
+							? Date.parse(a.CreationDate) - Date.parse(b.CreationDate)
+							: -1
+				  )
+				: [...list].sort((a: testGroupDataProps, b: testGroupDataProps) =>
+						a.CreationDate !== null && b.CreationDate !== null
+							? Date.parse(b.CreationDate) - Date.parse(a.CreationDate)
+							: -1
+				  );
 		}
-	};
+		return list;
+	}, [list, sortBySelected, sortDirection]);
 
 	return (
 		<Box className={classes.groupsContainer} key={uniqueKey}>
@@ -341,12 +329,12 @@ const Groups = ({
 						<GroupsSelectAll
 							classes={classes}
 							onSelectAllGroup={onSelectAllGroup}
-							allSelected={list.length === selectedList.length}
+							allSelected={sortedList.length === selectedList.length}
 						/>
 					)}
 					<GroupsList
 						classes={classes}
-						list={list}
+						list={sortedList}
 						groupNameSearch={groupNameSearch}
 						selectedList={selectedList}
 						onSelectGroup={(group) => onSelectGroup(group)}

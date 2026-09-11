@@ -15,6 +15,7 @@ import { BsSearch, BsDot, BsFilter } from 'react-icons/bs';
 import { BiSortDown, BiSortUp } from 'react-icons/bi';
 import { MdClear } from 'react-icons/md';
 import { debounce } from 'lodash'; // Add lodash for debouncing
+import { DefaultGroupSort, sortGroupsByUpdateDate } from '../../../helpers/Utils/groupSortUtils';
 
 const ITEM_HEIGHT = 54; // Height of each list item in pixels
 
@@ -46,8 +47,8 @@ const Groups = ({
     const [clearInput, setClearInput] = useState(false);
     const [groupHover, setIsHover] = useState(null);
     const [showTestGroups, setShowTestGroups] = useState(false);
-    const [sortBySelected, setSortBy] = useState('Group Name');
-    const [sortDirection, setSortDirection] = useState('asc');
+    const [sortBySelected, setSortBy] = useState(DefaultGroupSort.FIELD);
+    const [sortDirection, setSortDirection] = useState(DefaultGroupSort.DIRECTION);
 
     // Debounced search to prevent excessive filtering
     const debouncedSearch = useCallback(
@@ -87,12 +88,9 @@ const Groups = ({
                     ? aName.localeCompare(bName)
                     : bName.localeCompare(aName);
             });
-        } else if (sortBySelected === "Update Date" && tempList[0]?.UpdateDate) {
-            tempList.sort((a, b) => {
-                const aDate = a.UpdateDate ? Date.parse(a.UpdateDate) : 0;
-                const bDate = b.UpdateDate ? Date.parse(b.UpdateDate) : 0;
-                return sortDirection === 'asc' ? aDate - bDate : bDate - aDate;
-            });
+        } else if (sortBySelected === "Update Date") {
+            const idKey = groupCompareKey === '' ? (isNotifications ? "Id" : "GroupID") : groupCompareKey;
+            tempList = sortGroupsByUpdateDate(tempList, sortDirection, idKey);
         } else if (sortBySelected === "Creation Date") {
             tempList.sort((a, b) => {
                 const dateKey = isSms ? 'CreationDate' : 'CreatedDate';
@@ -103,7 +101,7 @@ const Groups = ({
         }
 
         return tempList;
-    }, [list, groupNameSearch, sortBySelected, sortDirection, isCampaign, isSms]);
+    }, [list, groupNameSearch, sortBySelected, sortDirection, isCampaign, isSms, isNotifications, groupCompareKey]);
 
     const resetSearch = useCallback(() => {
         document.querySelector('#searchGroup').value = '';
