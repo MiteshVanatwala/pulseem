@@ -429,7 +429,7 @@ const Yotpo = ({ classes }: any) => {
     try {
       const formData = new FormData();
       for (let i = 0; i < csvFiles.length; i++) {
-        formData.append('files', csvFiles[i]);
+        formData.append(`files[${i}]`, csvFiles[i]);
       }
       const response = await PulseemReactInstance.post('Integrations/Yotpo/QueueCsvImport', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }

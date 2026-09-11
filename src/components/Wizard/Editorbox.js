@@ -252,6 +252,13 @@ const Editorbox = ({
         for (let i = 0; i < additionalExtraData.length; i++) {
             defaultAccountExtraData.push({ ...additionalExtraData[i], selected: false })
         }
+
+        defaultAccountExtraData.push({ loyalty_points: t('campaigns.loyalty.points') });
+        defaultAccountExtraData.push({ loyalty_tier: t('campaigns.loyalty.tier') });
+        defaultAccountExtraData.push({ loyalty_points_earned: t('campaigns.loyalty.pointsEarned') });
+        defaultAccountExtraData.push({ loyalty_tier_multiplier: t('campaigns.loyalty.tierMultiplier') });
+        defaultAccountExtraData.push({ loyalty_points_expiry: t('campaigns.loyalty.pointsExpiry') });
+
         setextraAccountDATA(defaultAccountExtraData)
         await initFromNumber();
         setIsPageLoaded(true);
