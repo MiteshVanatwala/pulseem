@@ -65,7 +65,7 @@ const Groups = ({ classes }) => {
     const { t } = useTranslation();
     const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF';
     const { language, windowSize, isRTL, rowsPerPage, CoreToastMessages, userRoles } = useSelector(state => state.core)
-    const { accountFeatures } = useSelector(state => state.common);
+    const { accountFeatures, isYotpoConnected } = useSelector(state => state.common);
     const { groupData, ToastMessages } = useSelector((state) => state.group);
     const { extraData } = useSelector(state => state.sms);
     // New Logic to implement
@@ -143,6 +143,14 @@ const Groups = ({ classes }) => {
                 "ExtraField11": t('common.ExtraField11'),
                 "ExtraField12": t('common.ExtraField12'),
                 "ExtraField13": t('common.ExtraField13'),
+            }
+            if (isYotpoConnected) {
+                updatingObject = {
+                    ...updatingObject,
+                    "LoyaltyPoints": t('appBar.groups.loyalty.points'),
+                    "LoyaltyTier": t('appBar.groups.loyalty.tier'),
+                    "LoyaltyPointsEarned": t('appBar.groups.loyalty.pointsEarned'),
+                }
             }
             updatingObject = ReplaceExtraFieldHeader(updatingObject, extraData);
             exportColumnHeader.current = updatingObject;

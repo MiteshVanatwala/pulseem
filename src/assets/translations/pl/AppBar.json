@@ -13,6 +13,9 @@
       "tabTitle": "Lojalność",
       "title": "Warunki lojalnościowe (Yotpo)",
       "optedIn": "Zapisany do programu",
+      "points": "Punkty lojalnościowe",
+      "tier": "Poziom lojalnościowy",
+      "pointsEarned": "Łączna liczba zdobytych punktów",
       "op": {
         "over": "Powyżej",
         "under": "Poniżej",
