@@ -1676,9 +1676,10 @@ const ClientSearchResult = ({ classes }) => {
               ClientID: ClientID
             })}
           </TableCell>}
-        <TableCell classes={cellStyle} align="center" className={classes.flex4}>
+        <TableCell classes={cellStyle} align="center" className={classes.flex4} style={{ overflow: 'hidden' }}>
           <FlexGrid
-            customStyle={{ justifyContent: 'space-between' }}
+            direction="column"
+            customStyle={{ justifyContent: 'center', alignItems: 'center' }}
             gridArr={[
               {
                 label: t(""),
@@ -1694,11 +1695,12 @@ const ClientSearchResult = ({ classes }) => {
                     style={{ fontWeight: "bold" }}
                     placement={"top"}
                     title={<Typography title={Email} className={classes.bold}>{`${Email}`}</Typography>}
-                    text={<Box style={{ direction: 'ltr' }}>{`${Email && Email.length > 20 ? Email.substring(0, 20) + '...' : Email}`}</Box>}
+                    text={<Box style={{ direction: 'ltr', maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{`${Email}`}</Box>}
                   >
                   </CustomTooltip>
                 ),
                 classes: { text: localClasses.noWrap },
+                containerStyle: { minWidth: 0, maxWidth: '100%', flexShrink: 1 },
               },
               {
                 label: "",
@@ -1725,16 +1727,20 @@ const ClientSearchResult = ({ classes }) => {
             align="center"
           />
         </TableCell>
-        <TableCell classes={cellStyle} align="center" className={classes.flex3} style={{ border: 'none' }}>
+        <TableCell classes={cellStyle} align="center" className={classes.flex3} style={{ border: 'none', overflow: 'hidden' }}>
           <FlexGrid
-            customStyle={{ justifyContent: 'space-between' }}
+            direction="column"
+            customStyle={{ justifyContent: 'center', alignItems: 'center' }}
             gridArr={[
               {
                 label: t(""),
                 component: (
-                  <Typography className={classes.bold}>{Cellphone}</Typography>
+                  <Box style={{ maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    <Typography className={classes.bold}>{Cellphone}</Typography>
+                  </Box>
                 ),
                 classes: { text: localClasses.noWrap },
+                containerStyle: { minWidth: 0, maxWidth: '100%', flexShrink: 1 },
               },
               {
                 label: "",
@@ -1797,24 +1803,23 @@ const ClientSearchResult = ({ classes }) => {
             <Box className={classes.flex}>
               <Box className={clsx(classes.flex6, classes.w60)}>
                 <Typography className={classes.bold}>{t("recipient.emails")}</Typography>
-                <Typography className={clsx(classes.elipsis, classes.dFlex)}>
-                  {Email}&nbsp;{Status === 4 && IsPulseemFlagged
-                    ? <Box style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      <Typography align='left' className={clsx(classes.middle, classes.bold, Status === 1 ? classes.sendIconText : classes.textColorRed)}>({switchStatus(true)})</Typography>
-                      <CustomTooltip
-                        enterTouchDelay={50}
-                        leaveTouchDelay={3000}
-                        isSimpleTooltip={false}
-                        placement={"top"}
-                        arrow={true}
-                        title={<Typography className={classes.bold}>{t("client.clientStatus.email.invalidTooltip")}</Typography>}
-                      >
-                        <span style={{ flexShrink: 0, display: 'inline-flex' }}><BsInfoCircle style={{ cursor: 'pointer' }} /></span>
-                      </CustomTooltip>
-                    </Box>
-                    : <Typography align='left' className={clsx(classes.middle, classes.bold, Status === 1 ? classes.sendIconText : classes.textColorRed)}>({switchStatus(true)})</Typography>
-                  }
-                </Typography>
+                <Box style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '100%' }}>{Email}</Box>
+                {Status === 4 && IsPulseemFlagged
+                  ? <Box style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <Typography align='left' className={clsx(classes.middle, classes.bold, Status === 1 ? classes.sendIconText : classes.textColorRed)}>({switchStatus(true)})</Typography>
+                    <CustomTooltip
+                      enterTouchDelay={50}
+                      leaveTouchDelay={3000}
+                      isSimpleTooltip={false}
+                      placement={"top"}
+                      arrow={true}
+                      title={<Typography className={classes.bold}>{t("client.clientStatus.email.invalidTooltip")}</Typography>}
+                    >
+                      <span style={{ flexShrink: 0, display: 'inline-flex' }}><BsInfoCircle style={{ cursor: 'pointer' }} /></span>
+                    </CustomTooltip>
+                  </Box>
+                  : <Typography align='left' className={clsx(classes.middle, classes.bold, Status === 1 ? classes.sendIconText : classes.textColorRed)}>({switchStatus(true)})</Typography>
+                }
               </Box>
             </Box>
           </Box>
@@ -1822,7 +1827,8 @@ const ClientSearchResult = ({ classes }) => {
             <Box className={classes.flex}>
               <Box className={clsx(classes.flex6)}>
                 <Typography className={classes.bold}>{t("common.Cellphone")}</Typography>
-                <Typography className={classes.dFlex}>{Cellphone}&nbsp;<Typography align='left' className={clsx(classes.middle, classes.bold, SmsStatus === 0 ? classes.sendIconText : classes.textColorRed)}>({switchStatus(false)})</Typography></Typography>
+                <Box style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '100%' }}>{Cellphone}</Box>
+                <Typography align='left' className={clsx(classes.middle, classes.bold, SmsStatus === 0 ? classes.sendIconText : classes.textColorRed)}>({switchStatus(false)})</Typography>
               </Box>
             </Box>
           </Box>
