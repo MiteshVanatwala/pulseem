@@ -147,9 +147,11 @@ const Groups = ({ classes }) => {
             if (isYotpoConnected) {
                 updatingObject = {
                     ...updatingObject,
-                    "LoyaltyPoints": t('appBar.groups.loyalty.points'),
-                    "LoyaltyTier": t('appBar.groups.loyalty.tier'),
-                    "LoyaltyPointsEarned": t('appBar.groups.loyalty.pointsEarned'),
+                    "LoyaltyPoints": t('campaigns.loyalty.points'),
+                    "LoyaltyTier": t('campaigns.loyalty.tier'),
+                    "LoyaltyPointsEarned": t('campaigns.loyalty.pointsEarned'),
+                    "LoyaltyExpiryDate": t('campaigns.loyalty.pointsExpiry'),
+                    "LoyaltyOptedIn": t('appBar.groups.loyalty.optedIn'),
                 }
             }
             updatingObject = ReplaceExtraFieldHeader(updatingObject, extraData);

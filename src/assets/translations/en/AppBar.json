@@ -13,9 +13,6 @@
       "tabTitle": "Loyalty",
       "title": "Loyalty conditions (Yotpo)",
       "optedIn": "Opted in to loyalty",
-      "points": "Loyalty Points",
-      "tier": "Loyalty Tier",
-      "pointsEarned": "Points Earned (Total)",
       "op": {
         "over": "Over",
         "under": "Under",
