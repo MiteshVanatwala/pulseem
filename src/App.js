@@ -27,7 +27,7 @@ import {
   setRowsPerPage,
   setIsClal
 } from './redux/reducers/coreSlice'; //smsOldVersion
-import { GetAfterLoginInitialData, getCommonFeatures, GetCurrencyList, GetGlobalAccountPackagesDetails, GetSmsCountries, isClalAccount } from './redux/reducers/commonSlice';
+import { GetAfterLoginInitialData, getCommonFeatures, GetCurrencyList, GetGlobalAccountPackagesDetails, GetSmsCountries, isClalAccount, checkYotpoConnection } from './redux/reducers/commonSlice';
 import { getNotificationUpdates } from './redux/reducers/notificationUpdateSlice';
 import { setUsername } from './redux/reducers/userSlice';
 import { getTheme } from './style/theme';
@@ -760,6 +760,7 @@ const App = ({ screenSize }) => {
       if (!accountSettings) {
         await dispatch(getCommonFeatures());
       }
+      await dispatch(checkYotpoConnection());
       if (isClal === null) {
         const response = await dispatch(isClalAccount());
         dispatch(setIsClal(response.payload));
