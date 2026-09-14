@@ -16,6 +16,7 @@ import PersonalDetails from './Tabs/PersonalDetails';
 import EventsDetails from './Tabs/EventsDetails';
 import DateDetails from './Tabs/DateDetails';
 import ActivityDetails from './Tabs/ActivityDetails';
+import LoyaltyDetails from './Tabs/LoyaltyDetails';
 import { getById, save } from '../../../redux/reducers/DynamicGroupsSlice';
 import { useParams, useNavigate } from 'react-router-dom';
 import useRedirect from '../../../helpers/Routes/Redirect';
@@ -43,7 +44,7 @@ const EditDynamicGroup = ({ classes }: any) => {
     const Redirect = useRedirect();
     const { subAccountAllGroups } = useSelector((state: any) => state.group);
     const { testGroups } = useSelector((state: any) => state.sms);
-    const { subAccount } = useSelector((state: any) => state.common);
+    const { subAccount, isYotpoConnected } = useSelector((state: any) => state.common);
     const [toastMessage, setToastMessage] = useState(null);
     const [showLoader, setLoader] = useState(true);
     const [showTierPlans, setShowTierPlans] = useState(false);
@@ -832,6 +833,15 @@ const EditDynamicGroup = ({ classes }: any) => {
                                 value='4'
                             />
 
+                            {isYotpoConnected && (
+                                <Tab
+                                    label={t('appBar.groups.loyalty.title')}
+                                    classes={{ root: classes.tabText, selected: classes.activeTab }}
+                                    className={classes.iconTab}
+                                    value='6'
+                                />
+                            )}
+
                             <Tab
                                 label={t('group.updateGroup')}
                                 classes={{ root: classes.tabText, selected: classes.activeTab }}
@@ -886,6 +896,12 @@ const EditDynamicGroup = ({ classes }: any) => {
                                     />
                                 </div>
                             </TabPanel>
+
+                            {isYotpoConnected && (
+                                <TabPanel value='6'>
+                                    <LoyaltyDetails classes={classes} data={dynamicGroupModel} onUpdate={updateMyConditions} />
+                                </TabPanel>
+                            )}
 
                             <TabPanel value='5'>
                                 <UpdateGroup classes={classes} data={dynamicGroupModel} onUpdate={updateGroup} />

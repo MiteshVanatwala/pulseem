@@ -29,7 +29,9 @@ import { sendToTeamChannel } from "../../../../redux/reducers/ConnectorsSlice";
 import { Loader } from "../../../../components/Loader/Loader";
 import { getAccountExtraData } from "../../../../redux/reducers/smsSlice";
 import { CLIENT_CONSTANTS } from "../../../../model/Clients/Contants";
-import { changeClientStatus } from "../../../../redux/reducers/clientSlice";
+import { changeClientStatus, getClientLoyaltyData } from "../../../../redux/reducers/clientSlice";
+import { getIntegration } from "../../../../redux/reducers/integrationSlice";
+import { LU_Plugin } from "../../../../Models/Integrations/Integration";
 import { IoIosArrowDown, IoMdClose } from "react-icons/io";
 import { BaseDialog } from "../../../../components/DialogTemplates/BaseDialog";
 import { ReplaceExtraFieldHeader } from "../../../../helpers/UI/AccountExtraField";
@@ -108,6 +110,10 @@ const AddRecipientPopup = ({ classes,
     const [showLaoder, setLoader] = useState(false)
     const [accountExtraFields, setAccountExtraFields] = useState(null);
     const [expandedIndexes, setExpandedIndexes] = useState([0])
+    // PR-3418 — read-only Yotpo loyalty snapshot (edit mode only)
+    const [loyaltyData, setLoyaltyData] = useState(null)
+    const [loyaltyExpanded, setLoyaltyExpanded] = useState(false)
+    const [isYotpoConnected, setIsYotpoConnected] = useState(false)
     const [errors, setErrors] = useState({
         Email: '',
         Cellphone: '',
@@ -151,6 +157,32 @@ const AddRecipientPopup = ({ classes,
             let { ExtraFields, ...restData } = { ...addRecipientData, ...recipientData }
             setAddRecipientData({ ...restData, ...ExtraFields })
             setSelectedLocalGroups([...selectedGroups])
+            // PR-3418 — check if Yotpo is connected, then lazy-load loyalty snapshot
+            const cid = recipientData.ClientID || recipientData.ClientId || recipientData.clientId;
+            // Two sequential awaits, so a recipient switch mid-flight could let the
+            // previous response land last and show one recipient's loyalty data
+            // against another's name. Also stops the writes if the popup closes.
+            let stale = false;
+            (async () => {
+                try {
+                    const yotpoRes = await dispatch(getIntegration(LU_Plugin.Yotpo));
+                    if (stale) return;
+                    const yotpoSettings = yotpoRes?.payload?.Data;
+                    const connected = !!(yotpoSettings?.ApiKey);
+                    setIsYotpoConnected(connected);
+                    if (connected && cid) {
+                        const res = await dispatch(getClientLoyaltyData(cid));
+                        if (stale) return;
+                        const data = res?.payload?.Data;
+                        setLoyaltyData(data ?? null);
+                    }
+                } catch (e) {
+                    if (stale) return;
+                    setIsYotpoConnected(false);
+                    setLoyaltyData(null);
+                }
+            })();
+            return () => { stale = true; };
         }
 
     }, [recipientData])
@@ -1245,6 +1277,81 @@ const AddRecipientPopup = ({ classes,
         </Grid>
     )
 
+    const LOYALTY_PANEL = () => {
+        const fmtDate = (d) => {
+            if (!d) return '';
+            try { return moment(d).format(dateFormat || 'DD/MM/YYYY'); } catch (e) { return '' + d; }
+        };
+        const fieldStyle = {
+            border: 'none',
+            borderBottom: '1px solid #BFCADD',
+            background: 'transparent',
+            padding: '5px 0',
+            fontSize: 14,
+            color: '#1A1A2E',
+            fontFamily: 'inherit',
+            width: '100%',
+            outline: 'none',
+            cursor: 'default',
+        };
+        const labelStyle = { fontSize: 12, fontWeight: 500, color: '#6B7A99', marginBottom: 4 };
+        const field = (label, value) => (
+            <Box style={{ display: 'flex', flexDirection: 'column' }}>
+                <Typography style={labelStyle}>{t(label)}</Typography>
+                <input
+                    readOnly
+                    style={fieldStyle}
+                    value={(value === null || value === undefined || value === '') ? '' : value}
+                    placeholder="-"
+                />
+            </Box>
+        );
+        if (!isYotpoConnected) return null;
+        return (
+            <Accordion
+                expanded={loyaltyExpanded}
+                className={clsx(classes.noBoxShadow, localClasses.expandedBox)}
+                key="loyalty"
+            >
+                <AccordionSummary
+                    expandIcon={""}
+                    aria-controls="loyalty-content"
+                    id="loyalty-header"
+                    onClick={() => setLoyaltyExpanded(!loyaltyExpanded)}
+                >
+                    <Box className={classes.fullWidth}>
+                        <Typography align="left" className={clsx(classes.font18, classes.bold, localClasses.headLabel)}>
+                            {t('recipient.loyalty.title')}
+                            <span style={{ fontSize: 11, fontWeight: 400, color: '#A0AABF', marginInlineStart: 8 }}>
+                                {t('recipient.loyalty.readOnly')}
+                            </span>
+                            {loyaltyExpanded
+                                ? <GrFormSubtract size={26} className={localClasses.accordionIcons} />
+                                : <GrFormAdd size={26} className={localClasses.accordionIcons} />
+                            }
+                        </Typography>
+                    </Box>
+                </AccordionSummary>
+                <AccordionDetails>
+                    <Box style={{ width: '100%' }}>
+                        <Box style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '18px 28px' }}>
+                            {field('recipient.loyalty.points', loyaltyData?.PointsBalance ?? '')}
+                            {field('recipient.loyalty.tier', loyaltyData?.TierName ?? '')}
+                            {field('recipient.loyalty.pointsEarned', loyaltyData?.PointsEarned ?? '')}
+                            {field('recipient.loyalty.tierMultiplier', loyaltyData?.TierMultiplier != null ? ('×' + Number(loyaltyData.TierMultiplier).toFixed(2)) : '')}
+                            {field('recipient.loyalty.pointsExpiry', fmtDate(loyaltyData?.PointsExpiryDate))}
+                            {field('recipient.loyalty.referrals', loyaltyData?.ReferralCount ?? '')}
+                            {field('recipient.loyalty.optedIn', loyaltyData?.OptedIn != null ? (loyaltyData.OptedIn ? t('common.Yes') : t('common.No')) : '')}
+                        </Box>
+                        <Typography style={{ fontSize: 11.5, color: '#A0AABF', marginTop: 14, paddingTop: 10, borderTop: '1px solid #E0E4EE' }}>
+                            {t('recipient.loyalty.lastSynced')}: {loyaltyData?.LastUpdatedAt ? fmtDate(loyaltyData.LastUpdatedAt) : '-'}
+                        </Typography>
+                    </Box>
+                </AccordionDetails>
+            </Accordion>
+        );
+    };
+
     const ActiveForm = (label, index) => {
         return (
             <Accordion
@@ -1380,6 +1487,10 @@ const AddRecipientPopup = ({ classes,
             <Box className={clsx(localClasses.contentBox, classes.mt10)}>
                 {
                     ADD_RECIPIENT_TABS.map((label, index) => ActiveForm(label, index))
+                }
+                {
+                    /* PR-3418 — read-only Yotpo loyalty panel (edit mode always) */
+                    recipientData && LOYALTY_PANEL()
                 }
             </Box>
             <Loader isOpen={showLaoder} />

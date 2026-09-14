@@ -8,7 +8,24 @@
     "search": "Search",
     "advencedSearch": "Advenced Search",
     "dynamicGroups": "Dynamic Groups",
-    "fileUploads": "File Uploads"
+    "fileUploads": "File Uploads",
+    "loyalty": {
+      "tabTitle": "Loyalty",
+      "title": "Loyalty conditions (Yotpo)",
+      "optedIn": "Opted in to loyalty",
+      "op": {
+        "over": "Over",
+        "under": "Under",
+        "equals": "Equals",
+        "between": "Between",
+        "is": "Is",
+        "isNot": "Is not",
+        "withinDays": "Expires within (days)",
+        "after": "Expires after",
+        "before": "Expires before",
+        "noExpiry": "Never expires"
+      }
+    }
   },
   "newsletter": {
     "title": "Newsletter"

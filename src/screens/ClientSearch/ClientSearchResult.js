@@ -111,7 +111,7 @@ const ClientSearchResult = ({ classes }) => {
     isRTL,
     userRoles
   } = useSelector((state) => state.core);
-  const { accountFeatures, currencySymbol, isCurrencySymbolPrefix, WhatsAppPlatformID } = useSelector(state => state.common);
+  const { accountFeatures, currencySymbol, isCurrencySymbolPrefix, WhatsAppPlatformID, isYotpoConnected } = useSelector(state => state.common);
   const { t } = useTranslation();
   const { extraData } = useSelector(state => state.sms);
   const navigate = useNavigate()
@@ -367,10 +367,17 @@ const ClientSearchResult = ({ classes }) => {
         (searchData?.PageType ?? searchData?.PageType) === CLIENT_CONSTANTS.PAGE_TYPES.WhatsappFailed) {
         updatingObject["ErrorTypeText"] = t('recipient.errorMessage');
       }
+      if (isYotpoConnected) {
+        updatingObject["LoyaltyPoints"] = t('campaigns.loyalty.points');
+        updatingObject["LoyaltyTier"] = t('campaigns.loyalty.tier');
+        updatingObject["LoyaltyPointsEarned"] = t('campaigns.loyalty.pointsEarned');
+        updatingObject["LoyaltyExpiryDate"] = t('campaigns.loyalty.pointsExpiry');
+        updatingObject["LoyaltyOptedIn"] = t('appBar.groups.loyalty.optedIn');
+      }
       exportColumnHeader.current = updatingObject;
     }
 
-  }, [extraData])
+  }, [extraData, isYotpoConnected])
 
 
   useEffect(() => {

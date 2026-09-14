@@ -8,7 +8,24 @@
     "search": "חיפוש",
     "advencedSearch": "חיפוש מתקדם",
     "dynamicGroups": "קבוצות דינאמיות",
-    "fileUploads": "היסטוריית העלאת נמענים"
+    "fileUploads": "היסטוריית העלאת נמענים",
+    "loyalty": {
+      "tabTitle": "מועדון",
+      "title": "תנאי מועדון (Yotpo)",
+      "optedIn": "הצטרף למועדון",
+      "op": {
+        "over": "מעל",
+        "under": "מתחת",
+        "equals": "שווה",
+        "between": "בין",
+        "is": "הוא",
+        "isNot": "אינו",
+        "withinDays": "פג תוך (ימים)",
+        "after": "פג אחרי",
+        "before": "פג לפני",
+        "noExpiry": "לא פג"
+      }
+    }
   },
   "newsletter": {
     "title": "ניוזלטר"
@@ -17,13 +34,10 @@
     "title": "SMS"
   },
   "whatsapp": {
-    "title": "Whatsapp"
+    "title": "WhatsApp"
   },
   "mms": {
     "title": "MMS"
-  },
-  "whatsapp": {
-    "title": "WhatsApp"
   },
   "landingPages": {
     "title": "דפי נחיתה"
