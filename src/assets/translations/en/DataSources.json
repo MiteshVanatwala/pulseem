@@ -406,7 +406,18 @@
       "maxRowsExceeded": "The file contains more than {{max}} rows — above the allowed quota",
       "nameRequired": "Please enter a source name",
       "nameTooLong": "Source name is longer than 100 characters"
-    }
+    },
+    "titleNewVersion": "Upload a new version — {{name}}",
+    "lockedNameLabel": "Source name (can't be changed)",
+    "versionLine": "The file will be saved as V{{next}} and will become the active version. V{{prev}} stays in history for viewing and export only — it cannot be made active again.",
+    "lockedNameHint": "The name comes from the data source and cannot be changed here. To rename it, edit the data source.",
+    "versionColumnsRule": "The column layout is set per version; earlier versions are unchanged.",
+    "identityRegressionEmail": "V{{prev}} identified recipients by email. This mapping defines no email column — after this version is uploaded you won't be able to send from this source.",
+    "identityRegressionCell": "V{{prev}} identified recipients by mobile. This mapping defines no mobile column — after this version is uploaded you won't be able to send from this source.",
+    "confirmUploadVersion": "Upload as V{{n}}",
+    "renamedConfirm": "While this window was open, the source was renamed from \"{{old}}\" to \"{{new}}\". If you continue, the file will be saved as a new version of \"{{new}}\".",
+    "versionMovedConfirm": "A new version was created while this window was open. The file will be saved as V{{n}}, not V{{stale}}.",
+    "uploadInProgressInline": "This source is being processed right now. Try again in a few minutes — the file you picked is kept."
   },
   "summary": {
     "title": "Upload summary",
@@ -505,7 +516,8 @@
     "title": "Version history",
     "viewVersion": "View this version",
     "exportVersion": "Export this version",
-    "summary": "Summary"
+    "summary": "Summary",
+    "addToGroup": "Add V{{v}}'s recipients to a group"
   },
   "export": {
     "title": "Export source",
@@ -548,7 +560,8 @@
     "updated": "The source was updated",
     "deleted": "The source was deleted",
     "columnUpdated": "The column was updated",
-    "exportStarted": "The export has started"
+    "exportStarted": "The export has started",
+    "versionCreated": "The new version was sent for processing"
   },
   "actions": {
     "view": "View content",
@@ -557,6 +570,42 @@
     "edit": "Edit",
     "versions": "Version history",
     "delete": "Delete",
-    "summary": "Upload summary"
+    "summary": "Upload summary",
+    "addVersion": "Upload a new version",
+    "addVersionWhileProcessing": "Can't upload a version while this source is processing",
+    "addToGroup": "Add to group"
+  },
+  "addToGroup": {
+    "disabledNoIdentity": "This source has no identity column (email or mobile), so there are no recipients to add.",
+    "queuedTooltip": "This version's recipients have already been added to a group",
+    "title": "Add recipients to a group",
+    "destinationQuestion": "Where should the recipients be added?",
+    "optionExisting": "An existing group",
+    "optionNew": "A new group",
+    "pickPlaceholder": "Select a group",
+    "newNamePlaceholder": "New group name",
+    "newNameDefault": "{{name}} — V{{v}}",
+    "mergeNotice": "The recipients join the group's current recipients. No existing recipient is removed.",
+    "countUpperBound": "Up to {{max}} recipients will be added to the group.",
+    "countBreakdown": "This version has {{total}} rows: {{email}} matched by email, {{cell}} by mobile.",
+    "unresolvedNotice": "Rows that didn't match a recipient in the system won't be added. The exact number is shown when it finishes.",
+    "nothingToAdd": "No row in V{{v}} matched a recipient in the system, so there is nothing to add.",
+    "confirmExisting": "Add to \"{{group}}\"",
+    "confirmNew": "Create the group and add the recipients",
+    "doneAdded": "Done — added to \"{{group}}\". Recipients added: {{n}}.",
+    "doneAlready": "Already in the group: {{n}}.",
+    "doneSkipped": "Rows that didn't match and weren't added: {{n}}.",
+    "goToGroups": "Go to groups",
+    "nameExists": "A group named \"{{name}}\" already exists. Pick it from the existing groups list, or enter a different name.",
+    "tierBlocked": "Creating a new group isn't included in your current plan. You can add to an existing group.",
+    "processing": "This source is being processed. Try again when it finishes.",
+    "noPermission": "You don't have permission to add recipients to a group. Contact the account administrator.",
+    "failed": "Adding to the group failed and no recipients were added. Try again.",
+    "invalidName": "The group name contains characters that are not allowed. Choose a different name.",
+    "unknownOutcome": "The connection was lost and it isn't known whether the recipients were added. Check the group before trying again.",
+    "dynamicGroup": "This is a dynamic group — its recipients are computed automatically from its saved criteria, so recipients cannot be added to it manually. Pick a regular group, or create a new one.",
+    "testGroup": "This is a test group, meant for trial sends to a small number of recipients. The source’s recipients cannot be added to it. Pick a regular group, or create a new one.",
+    "nameTooLong": "The group name is too long. The maximum is {{max}} characters.",
+    "tooManyRecipients": "This version has too many recipients to add to a group in one operation. Split the source into smaller versions, or add to the group in parts."
   }
 }

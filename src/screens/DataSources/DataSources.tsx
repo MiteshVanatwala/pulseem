@@ -8,7 +8,8 @@ import {
     DialogTitle, DialogContent, DialogActions, Tabs, Tab
 } from '@material-ui/core';
 import {
-    Visibility, GetApp, Edit as EditIcon, History, Assessment, Delete as DeleteIcon, Send, Search, Add
+    Visibility, GetApp, Edit as EditIcon, History, Assessment, Delete as DeleteIcon, Send, Search, Add,
+    LibraryAdd
 } from '@material-ui/icons';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
@@ -87,6 +88,14 @@ const DataSources = ({ classes }: ClassesType) => {
     });
     const [searchInput, setSearchInput] = useState(searchData.SearchTerm);
     const [wizardOpen, setWizardOpen] = useState(false);
+    /* Non-null only while the wizard is open in VERSION mode. Doubles as the mode flag — the wizard's
+       `versionOf` prop is exactly this value — so there is no second boolean that can disagree with it. */
+    // In-flight flag for openAddVersion — see the guard there.
+    const addVersionBusyRef = useRef(false);
+    const [versionTarget, setVersionTarget] = useState<{
+        DataSourceID: number; Name: string; Description?: string; VersionNumber: number;
+        HadEmailIdentity: boolean; HadCellIdentity: boolean;
+    } | null>(null);
     const [dialog, setDialog] = useState<{ type: string; data?: any } | null>(null);
     const [summaryDetails, setSummaryDetails] = useState<DataSourceDetails | null>(null);
     // [CFT] The same response's columns, kept beside the details they belong to so the summary can
@@ -300,6 +309,69 @@ const DataSources = ({ classes }: ClassesType) => {
         }
     };
 
+    /* Re-fetches instead of using the row we already have. The list row can be up to 4s stale (the
+       poll interval) and every field below is load-bearing at the moment of upload: Name IS the
+       versioning key, the version number is printed on the confirm button, and the two identity flags
+       drive the identity-regression warning. Same GET openSummary and openVersions already make.
+
+       🔴 THE VERSION NUMBER COMES FROM RS3, NOT RS1 (fixed 2026-09-09, deep-review R1/wizard-0).
+       It was read from `details.VersionNumber`, which LOOKS right and is always null: DataSources_Get
+       RS1 selects DataSourceID, Name, Description, ActiveVersionID, Status, TotalRows, the two
+       Resolved* aggregates, NoIdentityRows, DuplicateRows, the two Has*Identity flags, CreatedBy,
+       CreatedDate and ResultsJson — and no VersionNumber (verified against both
+       dbo.DataSources_Get.StoredProcedure.sql and the _Stage variant Web.config actually routes to).
+       The C# maps an absent column to null (GIntN), and DataSource.ts:210 already types the field
+       optional and labels it a "§7½ gap". So `?? 0` fired on EVERY call: nextVersion was always 1,
+       and every screen in version mode said "will be saved as V1 / V0 stays in history" no matter how
+       many versions the source really had — on the last screen before an irreversible upload.
+
+       RS3 (`versions`) is the resultset that carries VersionNumber, so the newest version's number is
+       MAX over it — the same value DataSources_Insert derives server-side. `row.VersionNumber` (from
+       GetMany's OUTER APPLY to the latest version) is the fallback for the case where RS3 comes back
+       empty, which is exactly the first-upload-still-processing case. */
+    const openAddVersion = async (row: DataSourceListItem) => {
+        /* Re-entry guard. This awaits a GET before it opens anything, so without it a user clicking
+           two different rows on a slow link queues two openings whose responses can land in either
+           order — and the wizard would then be showing one source while holding another's name.
+           A ref, not state: it must be readable and writable synchronously within one click handler,
+           and it must not trigger a render. Cleared on every exit path, including the failure one. */
+        if (addVersionBusyRef.current || wizardOpen) return;
+        addVersionBusyRef.current = true;
+        try {
+            const res: any = await dispatch(getDataSource(row.DataSourceID));
+            const d = res?.payload?.Data?.details;
+            const vs: DataSourceVersion[] = res?.payload?.Data?.versions ?? [];
+            if (res?.payload?.StatusCode === 200 && d) {
+                const latest = vs.length
+                    ? vs.reduce((mx, v) => Math.max(mx, v.VersionNumber ?? 0), 0)
+                    : (row.VersionNumber ?? 0);
+                /* Re-checked AFTER the await, not only before it. The pre-await check cannot
+                   see a wizard the user opened DURING this GET — and the `wizardOpen` it reads is a
+                   stale closure anyway. anyModalOpenRef is the live mirror (kept current by the
+                   effect below), so if anything opened meanwhile we drop this result rather than
+                   re-target a dialog the user is already working in. Dropping it is the correct
+                   resolution: the user's later action is the one they meant. */
+                if (anyModalOpenRef.current) return;
+                setVersionTarget({
+                    DataSourceID: d.DataSourceID,
+                    Name: d.Name,
+                    Description: d.Description,
+                    VersionNumber: latest,
+                    HadEmailIdentity: !!d.HasEmailIdentity,
+                    HadCellIdentity: !!d.HasCellIdentity
+                });
+                setWizardOpen(true);
+                return;
+            }
+            // Deleted from under us (or unreadable): say so and resync rather than opening a wizard
+            // pointed at a source that no longer exists.
+            setToastMessage({ ...ToastMessages.GENERAL_ERROR });
+            setSearchData(s => ({ ...s }));
+        } finally {
+            addVersionBusyRef.current = false;
+        }
+    };
+
     const openVersions = async (id: number) => {
         const res: any = await dispatch(getDataSource(id));
         if (res?.payload?.StatusCode === 200) {
@@ -334,9 +406,16 @@ const DataSources = ({ classes }: ClassesType) => {
     };
 
     const onUploaded = () => {
+        const wasVersion = !!versionTarget;
         setWizardOpen(false);
-        setToastMessage({ ...ToastMessages.SOURCE_CREATED });
-        setSearchData(s => ({ ...s, PageIndex: 1 }));
+        setVersionTarget(null);
+        setToastMessage({ ...(wasVersion ? ToastMessages.VERSION_CREATED : ToastMessages.SOURCE_CREATED) });
+        /* No page reset on the version path. Nothing was created and the row the user acted on is the
+           one they are already looking at — jumping them to page 1 would lose their place to show them
+           a row that has not visibly changed yet. The 4s poll flips it to PROCESSING and then READY on
+           its own. A NEW source, by contrast, lands at the top of the default sort, so page 1 is where
+           it actually is. */
+        setSearchData(s => (wasVersion ? { ...s } : { ...s, PageIndex: 1 }));
     };
 
     // Auto-dismiss the toast from an effect (one timer per toast) — not from render, where the 4s poll's
@@ -393,6 +472,31 @@ const DataSources = ({ classes }: ClassesType) => {
                 <Tooltip title={t('DataSources.actions.versions')} PopperProps={rtlPopperProps}>
                     <IconButton size="small" style={ACTION_BTN_STYLE} aria-label={t('DataSources.actions.versions')} onClick={() => openVersions(row.DataSourceID)}><History fontSize="small" style={ACTION_ICON_STYLE} /></IconButton>
                 </Tooltip>
+                {/* Placed immediately after History so the two version-domain actions read as one pair
+                    rather than an eighth loose glyph. Gated on canUpload — the same permission as the
+                    page's Upload button and the Edit icon — because this IS an upload; the server
+                    enforces it independently with 405 USER_PERMISSION_NOT_ALLOWED.
+
+                    DISABLED, not hidden, while the source is mid-flight: hiding teaches the user the
+                    feature does not exist for that row, and the 4s poll re-enables it within a tick of
+                    the worker finishing. The predicate is PENDING-or-PROCESSING and deliberately NOT
+                    `!== READY`: re-uploading is the documented recovery path for a FAILED or CANCELLED
+                    version, so those must stay clickable.
+
+                    The <span> wrapper is required — MUI v4 disabled buttons fire no mouse events, so
+                    without it the tooltip explaining WHY it is disabled vanishes exactly when it is
+                    needed. tabIndex={0} on the span because a disabled button also leaves the tab
+                    order, which would put that explanation out of reach of keyboard users entirely. */}
+                {canUpload && (() => {
+                    const versionBlocked = row.Status === eDataSourceStatus.PENDING || row.Status === eDataSourceStatus.PROCESSING;
+                    return (
+                        <Tooltip title={t(versionBlocked ? 'DataSources.actions.addVersionWhileProcessing' : 'DataSources.actions.addVersion')} PopperProps={rtlPopperProps}>
+                            <span style={{ display: 'inline-flex' }} tabIndex={0}>
+                                <IconButton size="small" style={ACTION_BTN_STYLE} disabled={versionBlocked} aria-label={t('DataSources.actions.addVersion')} onClick={() => openAddVersion(row)}><LibraryAdd fontSize="small" style={ACTION_ICON_STYLE} /></IconButton>
+                            </span>
+                        </Tooltip>
+                    );
+                })()}
                 {row.Status === eDataSourceStatus.READY && (
                     <Tooltip title={t('DataSources.actions.summary')} PopperProps={rtlPopperProps}>
                         <IconButton size="small" style={ACTION_BTN_STYLE} aria-label={t('DataSources.actions.summary')} onClick={() => openSummary(row.DataSourceID)}><Assessment fontSize="small" style={ACTION_ICON_STYLE} /></IconButton>
@@ -504,8 +608,11 @@ const DataSources = ({ classes }: ClassesType) => {
                     <>
                         <Typography style={{ fontSize: 20, fontWeight: 700 }}>{t('DataSources.emptyState.title')}</Typography>
                         <Typography style={{ marginTop: 8 }}>{t('DataSources.emptyState.subtitle')}</Typography>
+                        {/* Clears versionTarget: this button means "a NEW source". Without it, an
+                            add-version click whose GET was still in flight would land afterwards and
+                            silently flip this freshly-opened wizard into version mode. */}
                         {canUpload && (
-                            <Button variant="contained" color="primary" startIcon={<Add />} style={{ marginTop: 16 }} onClick={() => setWizardOpen(true)}>
+                            <Button variant="contained" color="primary" startIcon={<Add />} style={{ marginTop: 16 }} onClick={() => { setVersionTarget(null); setWizardOpen(true); }}>
                                 {t('DataSources.emptyState.cta')}
                             </Button>
                         )}
@@ -544,7 +651,7 @@ const DataSources = ({ classes }: ClassesType) => {
 
     const renderDialogs = () => (
         <>
-            <UploadWizardDialog classes={classes} open={wizardOpen} onClose={() => setWizardOpen(false)} onUploaded={onUploaded} setToastMessage={setToastMessage} existingSources={items.map(i => ({ Name: i.Name, VersionNumber: i.VersionNumber, Description: i.Description }))} accountExtraFields={accountExtraFields} />
+            <UploadWizardDialog classes={classes} open={wizardOpen} onClose={() => { setWizardOpen(false); setVersionTarget(null); }} onUploaded={onUploaded} setToastMessage={setToastMessage} existingSources={items.map(i => ({ Name: i.Name, VersionNumber: i.VersionNumber, Description: i.Description }))} accountExtraFields={accountExtraFields} versionOf={versionTarget ?? undefined} />
             <EditDataSourceDialog
                 classes={classes}
                 open={dialog?.type === 'edit'}
@@ -610,8 +717,9 @@ const DataSources = ({ classes }: ClassesType) => {
                     <Title Text={t('DataSources.title')} classes={classes} ContainerStyle={{ border: 'none !important' }} />
                     {activeTab === 'sources' && (
                         <Box style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                            {/* Clears versionTarget — same reason as the empty-state button above. */}
                             {canUpload && (
-                                <Button variant="contained" color="primary" startIcon={<Add />} onClick={() => setWizardOpen(true)}>
+                                <Button variant="contained" color="primary" startIcon={<Add />} onClick={() => { setVersionTarget(null); setWizardOpen(true); }}>
                                     {t('DataSources.uploadButton')}
                                 </Button>
                             )}

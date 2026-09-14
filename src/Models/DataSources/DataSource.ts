@@ -361,6 +361,34 @@ export interface UpdateColumnMetaRequest {
     ShowThousandsSeparator?: boolean;
 }
 
+/* Adds every RESOLVED recipient of ONE data-source version into ONE contact group.
+
+   VersionID is REQUIRED and always sent explicitly — never left for the server to infer as "the
+   current version". The View screen can be showing a historical version, and attributing a write to
+   the wrong version is the same defect class the export button was gated to avoid (R3-02).
+
+   Exactly one of GroupID / NewGroupName is sent. The new group is created SERVER-SIDE inside this
+   request rather than client-side beforehand: creating it first leaves an orphan empty group behind
+   whenever the add then fails, and the user's retry collides (422) with the group their own failed
+   attempt created. */
+export interface AddToGroupRequest {
+    DataSourceID: number;
+    VersionID: number;
+    GroupID?: number;
+    NewGroupName?: string;
+}
+
+export interface AddToGroupResult {
+    /** Recipients actually inserted into the group by this call. */
+    Added: number;
+    /** Resolved recipients that were already members — absorbed by the (ClientID, GroupID) PK. */
+    AlreadyMembers: number;
+    /** Rows that resolved to no platform client at all, so they COULD not be added. */
+    Skipped: number;
+    GroupID: number;
+    GroupName: string;
+}
+
 export interface ExportRequest {
     DataSourceID: number;
     VersionID: number | null;
