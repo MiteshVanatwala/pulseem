@@ -68,7 +68,7 @@ const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', cont
       <Helmet>
         <title>{title}</title>
       </Helmet>
-      {(!isDebtAccount || isDebtAccount === false) && <MainLayout
+      <MainLayout
         classes={classes}
         currentPage={currentPage}
         showAppBar={showAppBar}
@@ -87,8 +87,8 @@ const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', cont
           {children}
         </Container>
 
-      </MainLayout>}
-     
+      </MainLayout>
+
     </HelmetProvider>
   )
 }

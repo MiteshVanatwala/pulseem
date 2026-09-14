@@ -2,10 +2,11 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux'
 import { Checkbox, Paper, TextField } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import { getTestGroups } from '../../redux/reducers/groupSlice';
+import { DefaultGroupSort, sortGroupsByUpdateDate } from '../../helpers/Utils/groupSortUtils';
 
 
 const GroupSelectorDropDown = ({ classes,
@@ -52,6 +53,11 @@ const GroupSelectorDropDown = ({ classes,
     initGroups();
   }, [])
 
+  const sortedTestGroups = useMemo(
+    () => sortGroupsByUpdateDate(testGroups ?? [], DefaultGroupSort.DIRECTION),
+    [testGroups]
+  );
+
   const DropDownPanel = () => (
     <Autocomplete
       multiple
@@ -60,7 +66,7 @@ const GroupSelectorDropDown = ({ classes,
       debug={true}
       className={classes.autoCompleteTag}
       disableCloseOnSelect
-      options={testGroups ?? []}
+      options={sortedTestGroups}
       getOptionLabel={(option) => option?.GroupName}
       value={testGroups?.reduce((prevVal: any, newVal: any) => {
         if (dropDownProps.selectedGroups.indexOf(newVal.GroupID) !== -1) {

@@ -11,8 +11,9 @@ import {
 	testGroupModalProps,
 } from '../Types/WhatsappCampaign.types';
 import clsx from 'clsx';
-import { BaseSyntheticEvent, useEffect, useState } from 'react';
+import { BaseSyntheticEvent, useEffect, useMemo, useState } from 'react';
 import TestGroupModalRows from './TestGroupModalRows';
+import { DefaultGroupSort, sortGroupsByUpdateDate } from '../../../../helpers/Utils/groupSortUtils';
 
 const TestGroupModal = ({
 	classes,
@@ -26,8 +27,13 @@ const TestGroupModal = ({
 		testGroupDataProps[]
 	>([]);
 
+	const sortedTestGroupData = useMemo(
+		() => sortGroupsByUpdateDate(testGroupData ?? [], DefaultGroupSort.DIRECTION),
+		[testGroupData]
+	);
+
 	useEffect(() => {
-		const searchedGroup = testGroupData.filter(
+		const searchedGroup = sortedTestGroupData.filter(
 			(testGroup: testGroupDataProps) =>
 				testGroup?.GroupName?.substring(
 					0,
@@ -35,7 +41,7 @@ const TestGroupModal = ({
 				)?.toLowerCase() === searchText?.toLowerCase()
 		);
 		setSearchGroupResult(searchedGroup);
-	}, [searchText, testGroupData]);
+	}, [searchText, sortedTestGroupData]);
 
 	const isSelectdGroup = (groupID: number) => {
 		const selectedGroup = selectedTestGroup.find(
@@ -94,7 +100,7 @@ const TestGroupModal = ({
 					<TestGroupModalRows
 						classes={classes}
 						searchText={searchText}
-						testGroupData={testGroupData}
+						testGroupData={sortedTestGroupData}
 						searchGroupResult={searchGroupResult}
 						onSelectGroup={(groupID: number) => onSelectGroup(groupID)}
 						isSelectdGroup={(groupID: number) => isSelectdGroup(groupID)}
