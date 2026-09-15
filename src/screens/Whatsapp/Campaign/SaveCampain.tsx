@@ -1228,8 +1228,13 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				setDialogType({ type: 'tier' })
 			}
 			else if (data.Status === apiStatus.SUCCESS) {
+				const pageParams = new URLSearchParams();
+				if (FromAutomation) pageParams.set('FromAutomation', String(FromAutomation));
+				if (NodeToEdit) pageParams.set('NodeToEdit', String(NodeToEdit));
+				if (isSendCampaign) pageParams.set('new', String(isSendCampaign));
+				const queryString = pageParams.toString() ? `?${pageParams.toString()}` : '';
 				navigate(
-					`${sitePrefix}whatsapp/campaign/edit/page2/${data?.Data?.WACampaignId}?FromAutomation=${FromAutomation}&NodeToEdit=${NodeToEdit}&new=${isSendCampaign}`,
+					`${sitePrefix}whatsapp/campaign/edit/page2/${data?.Data?.WACampaignId}${queryString}`,
 					{ state: { from: `edit/page1/${data?.Data?.WACampaignId}&new=${isSendCampaign}` } }
 				);
 			} else {
