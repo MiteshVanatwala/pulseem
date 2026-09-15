@@ -406,7 +406,18 @@
       "maxRowsExceeded": "Plik zawiera więcej niż {{max}} wierszy — powyżej dozwolonego limitu",
       "nameRequired": "Wprowadź nazwę źródła",
       "nameTooLong": "Nazwa źródła przekracza 100 znaków"
-    }
+    },
+    "titleNewVersion": "Prześlij nową wersję — {{name}}",
+    "lockedNameLabel": "Nazwa źródła (nie można zmienić)",
+    "versionLine": "Plik zostanie zapisany jako V{{next}} i stanie się wersją aktywną. V{{prev}} pozostanie w historii wyłącznie do podglądu i eksportu — nie można jej ponownie uaktywnić.",
+    "lockedNameHint": "Nazwa pochodzi ze źródła danych i nie można jej tutaj zmienić. Aby ją zmienić, edytuj źródło danych.",
+    "versionColumnsRule": "Układ kolumn jest ustalany osobno dla każdej wersji; wcześniejsze wersje pozostają bez zmian.",
+    "identityRegressionEmail": "W V{{prev}} odbiorcy byli identyfikowani po adresie e-mail. To mapowanie nie zawiera kolumny e-mail — po przesłaniu tej wersji nie będzie można wysyłać z tego źródła.",
+    "identityRegressionCell": "W V{{prev}} odbiorcy byli identyfikowani po numerze telefonu. To mapowanie nie zawiera kolumny telefonu — po przesłaniu tej wersji nie będzie można wysyłać z tego źródła.",
+    "confirmUploadVersion": "Prześlij jako V{{n}}",
+    "renamedConfirm": "Gdy to okno było otwarte, źródło zostało przemianowane z „{{old}}” na „{{new}}”. Jeśli będziesz kontynuować, plik zostanie zapisany jako nowa wersja „{{new}}”.",
+    "versionMovedConfirm": "Gdy to okno było otwarte, utworzono nową wersję. Plik zostanie zapisany jako V{{n}}, a nie V{{stale}}.",
+    "uploadInProgressInline": "To źródło jest właśnie przetwarzane. Spróbuj ponownie za kilka minut — wybrany plik został zachowany."
   },
   "summary": {
     "title": "Podsumowanie przesyłania",
@@ -505,7 +516,8 @@
     "title": "Historia wersji",
     "viewVersion": "Wyświetl tę wersję",
     "exportVersion": "Eksportuj tę wersję",
-    "summary": "Podsumowanie"
+    "summary": "Podsumowanie",
+    "addToGroup": "Dodaj odbiorców V{{v}} do grupy"
   },
   "export": {
     "title": "Eksport źródła",
@@ -548,7 +560,8 @@
     "updated": "Źródło zostało zaktualizowane",
     "deleted": "Źródło zostało usunięte",
     "columnUpdated": "Kolumna została zaktualizowana",
-    "exportStarted": "Rozpoczęto eksport"
+    "exportStarted": "Rozpoczęto eksport",
+    "versionCreated": "Nowa wersja została wysłana do przetworzenia"
   },
   "actions": {
     "view": "Wyświetl zawartość",
@@ -557,6 +570,42 @@
     "edit": "Edytuj",
     "versions": "Historia wersji",
     "delete": "Usuń",
-    "summary": "Podsumowanie przesyłania"
+    "summary": "Podsumowanie przesyłania",
+    "addVersion": "Prześlij nową wersję",
+    "addVersionWhileProcessing": "Nie można przesłać wersji, gdy źródło jest przetwarzane",
+    "addToGroup": "Dodaj do grupy"
+  },
+  "addToGroup": {
+    "disabledNoIdentity": "To źródło nie ma kolumny identyfikującej (e-mail lub telefon), więc nie ma odbiorców do dodania.",
+    "queuedTooltip": "Odbiorcy tej wersji zostali już dodani do grupy",
+    "title": "Dodaj odbiorców do grupy",
+    "destinationQuestion": "Gdzie dodać odbiorców?",
+    "optionExisting": "Istniejąca grupa",
+    "optionNew": "Nowa grupa",
+    "pickPlaceholder": "Wybierz grupę",
+    "newNamePlaceholder": "Nazwa nowej grupy",
+    "newNameDefault": "{{name}} — V{{v}}",
+    "mergeNotice": "Odbiorcy zostaną dodani do obecnych odbiorców grupy. Żaden istniejący odbiorca nie zostanie usunięty.",
+    "countUpperBound": "Do grupy zostanie dodanych maksymalnie {{max}} odbiorców.",
+    "countBreakdown": "Ta wersja ma {{total}} wierszy: {{email}} dopasowano po e-mailu, {{cell}} po telefonie.",
+    "unresolvedNotice": "Wiersze niedopasowane do odbiorcy w systemie nie zostaną dodane. Dokładna liczba pojawi się po zakończeniu.",
+    "nothingToAdd": "Żaden wiersz w V{{v}} nie został dopasowany do odbiorcy w systemie, więc nie ma nic do dodania.",
+    "confirmExisting": "Dodaj do „{{group}}”",
+    "confirmNew": "Utwórz grupę i dodaj odbiorców",
+    "doneAdded": "Gotowe — dodano do „{{group}}”. Liczba dodanych odbiorców: {{n}}.",
+    "doneAlready": "Już w grupie: {{n}}.",
+    "doneSkipped": "Wiersze niedopasowane i niedodane: {{n}}.",
+    "goToGroups": "Przejdź do grup",
+    "nameExists": "Grupa o nazwie „{{name}}” już istnieje. Wybierz ją z listy istniejących grup lub podaj inną nazwę.",
+    "tierBlocked": "Tworzenie nowej grupy nie jest objęte bieżącym planem. Możesz dodać do istniejącej grupy.",
+    "processing": "To źródło jest przetwarzane. Spróbuj ponownie po zakończeniu.",
+    "noPermission": "Nie masz uprawnień do dodawania odbiorców do grupy. Skontaktuj się z administratorem konta.",
+    "failed": "Dodawanie do grupy nie powiodło się i nie dodano żadnych odbiorców. Spróbuj ponownie.",
+    "invalidName": "Nazwa grupy zawiera niedozwolone znaki. Wybierz inną nazwę.",
+    "unknownOutcome": "Połączenie zostało przerwane i nie wiadomo, czy odbiorcy zostali dodani. Sprawdź grupę przed ponowną próbą.",
+    "dynamicGroup": "To grupa dynamiczna — jej odbiorcy są wyliczani automatycznie na podstawie zapisanych kryteriów, więc nie można ich dodawać ręcznie. Wybierz zwykłą grupę lub utwórz nową.",
+    "testGroup": "To grupa testowa, przeznaczona do wysyłek próbnych do niewielkiej liczby odbiorców. Nie można dodać do niej odbiorców źródła. Wybierz zwykłą grupę lub utwórz nową.",
+    "nameTooLong": "Nazwa grupy jest za długa. Maksimum to {{max}} znaków.",
+    "tooManyRecipients": "Ta wersja ma zbyt wielu odbiorców, aby dodać ich do grupy w jednej operacji. Podziel źródło na mniejsze wersje lub dodawaj do grupy partiami."
   }
 }

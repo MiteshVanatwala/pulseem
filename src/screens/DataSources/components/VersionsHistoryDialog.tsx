@@ -2,7 +2,7 @@ import {
     Dialog, DialogTitle, DialogContent, DialogActions, Button, Table, TableBody, TableCell, TableHead,
     TableRow, Chip, Tooltip, IconButton, Box
 } from '@material-ui/core';
-import { Visibility, GetApp, Assessment } from '@material-ui/icons';
+import { Visibility, GetApp, Assessment, GroupAdd } from '@material-ui/icons';
 import { useTranslation } from 'react-i18next';
 import moment from 'moment';
 import { DataSourceVersion, eDataSourceStatus } from '../../../Models/DataSources/DataSource';
@@ -28,13 +28,20 @@ interface VersionsHistoryDialogProps {
     onViewVersion: (vid: number) => void;
     onExportVersion: (vid: number, totalRows: number) => void;
     onShowSummary: (v: DataSourceVersion) => void;
+    /* Optional, and its absence is what keeps this dialog usable from the list screen: only the View
+       screen mounts AddToGroupDialog, so only it passes a handler. Mirrors onExportVersion exactly —
+       the version id is passed EXPLICITLY, which is the entire reason this is the historical route.
+       The header button on the View screen is hidden on a historical view precisely because it cannot
+       name its version; this one names it by construction. */
+    onAddToGroupVersion?: (versionId: number, versionNumber: number) => void;
     canView?: boolean;
     canExport?: boolean;
+    canAddToGroup?: boolean;
 }
 
 const VersionsHistoryDialog = ({
     classes, open, versions, activeVersionId, onClose, onViewVersion, onExportVersion, onShowSummary,
-    canView = true, canExport = true
+    onAddToGroupVersion, canView = true, canExport = true, canAddToGroup = true
 }: VersionsHistoryDialogProps) => {
     const { t, i18n } = useTranslation();
     const isRtl = (i18n.dir?.() ?? 'rtl') === 'rtl';
@@ -99,6 +106,15 @@ const VersionsHistoryDialog = ({
                                                         To restore it per-version, fetch that version via DataSources_GetRows
                                                         (@prm_VersionID — its RS1 already carries ClientFieldTarget) instead of
                                                         reusing `current`. */}
+                                                    {/* Same enable rule as the per-version export beside it: a
+                                                        READY, non-purged version. Rendered only when the host
+                                                        screen passed a handler — the list screen has no dialog to
+                                                        open, so it passes none and this simply does not appear. */}
+                                                    {canAddToGroup && onAddToGroupVersion && (
+                                                        <Tooltip title={t('DataSources.versions.addToGroup', { v: v.VersionNumber })} PopperProps={{ style: { direction: isRtl ? 'rtl' : 'ltr' } }}>
+                                                            <IconButton size="small" style={actionBtnStyle} aria-label={t('DataSources.versions.addToGroup', { v: v.VersionNumber })} onClick={() => onAddToGroupVersion(v.DataSourceVersionID, v.VersionNumber)}><GroupAdd style={actionIconStyle} /></IconButton>
+                                                        </Tooltip>
+                                                    )}
                                                     {isActive && (
                                                         <Tooltip title={t('DataSources.versions.summary')} PopperProps={{ style: { direction: isRtl ? 'rtl' : 'ltr' } }}>
                                                             <IconButton size="small" style={actionBtnStyle} aria-label={t('DataSources.versions.summary')} onClick={() => onShowSummary(v)}><Assessment style={actionIconStyle} /></IconButton>
