@@ -4,7 +4,8 @@ import { apiURL, actionURL, isProdMode } from '../../config/index'
 
 const refreshTokenURL = `${actionURL}RefreshToken.ashx`
 
-const redirectToLogin = () => {
+export const redirectToLogin = () => {
+    if ((window as any).pulseem) (window as any).pulseem.currentUser = undefined
     window.location.href = '/Pulseem/Login.aspx?ReturnUrl=/Pulseem/HomePageMiddleware.aspx?fromreact=true'
 }
 
