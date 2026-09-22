@@ -130,6 +130,7 @@ export const sideMenuStyle = (windowSize, isRTL, theme) => ({
         marginInlineStart: 6,
         borderInlineStart: '4px solid #ffffff',
         borderRadius: 6,
+        backgroundColor: 'rgba(255, 255, 255, 0.2)',
         paddingLeft: isRTL ? 18 : 30,
         paddingRight: isRTL ? 28 : 18,
       },
