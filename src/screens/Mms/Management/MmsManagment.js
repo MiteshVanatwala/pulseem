@@ -744,6 +744,7 @@ const MmsManagnentScreen = ({ classes }) => {
   return (
     <DefaultScreen
       currentPage='sms'
+      subPage='mmsCampaignManagement'
       classes={classes}
       containerClass={clsx(classes.management, classes.mb50)}>
       <Box className={'topSection'}>

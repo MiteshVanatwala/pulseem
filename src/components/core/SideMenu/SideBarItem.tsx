@@ -253,7 +253,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
           <List className={classes.sidebarSubmenu} style={{ paddingTop: 0, paddingBottom: 0 }}>
             {item.options && item.options.filter((option: any) => option.isShow !== false).map((option: any, index: number) => (
               <SidebarItem
-                isActive={option.key === subPage}
+                isActive={item.key === currentPage && option.key === subPage}
                 currentPage={null}
                 subPage={subPage}
                 key={`${option.key || 'item'}-${index}`}

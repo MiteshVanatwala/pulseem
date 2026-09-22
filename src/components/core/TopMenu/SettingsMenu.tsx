@@ -13,7 +13,7 @@ import { getTooltipPortalRoot } from "../../../helpers/Functions/tooltipPortalRo
 
 const DESKTOP_DROPDOWN_GAP = 8;
 
-const SettingsMenu = ({ classes, isOpen: controlledIsOpen, onOpenChange }: any) => {
+const SettingsMenu = ({ classes, isOpen: controlledIsOpen, onOpenChange, currentPage, subPage }: any) => {
     const { t } = useTranslation();
     const [internalShowSettings, setInternalShowSettings] = useState<boolean>(false);
     // Controlled by the parent (SideBar) when isOpen/onOpenChange are passed, so it can
@@ -252,8 +252,12 @@ const SettingsMenu = ({ classes, isOpen: controlledIsOpen, onOpenChange }: any) 
                         </style>
                         <MenuList style={{ padding: '6px 4px', direction: isRTL ? 'rtl' : 'ltr' }}>
                             {settings.options && settings.options.filter((item) => item.isShow !== false)
-                                .map((option: any, index: any, row: any) => {
+                                .map((option: any, index: any) => {
                                     const isLogout = option.title === t("appBar.logout");
+                                    const isActive = option.key !== undefined && (
+                                        (currentPage === 'settings' && option.key === subPage) ||
+                                        option.key === currentPage
+                                    );
                                     return (
                                         <a
                                             key={index}
@@ -281,7 +285,7 @@ const SettingsMenu = ({ classes, isOpen: controlledIsOpen, onOpenChange }: any) 
                                                     opacity: 0,
                                                     animation: `${isRTL ? 'slideTextRTL' : 'slideText'} 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards`,
                                                     animationDelay: `${0.03 + (index * 0.03)}s`,
-                                                    borderInlineStart: '3px solid transparent',
+                                                    borderInlineStart: isActive ? '3px solid #FF1744' : '3px solid transparent',
                                                     textAlign: isRTL ? 'right' : 'left',
                                                 }}
                                                 onMouseEnter={(e: any) => {
@@ -293,7 +297,7 @@ const SettingsMenu = ({ classes, isOpen: controlledIsOpen, onOpenChange }: any) 
                                                 onMouseLeave={(e: any) => {
                                                     e.currentTarget.style.backgroundColor = 'transparent';
                                                     e.currentTarget.style.color = isLogout ? '#FF1744' : '#424242';
-                                                    e.currentTarget.style.borderInlineStart = '3px solid transparent';
+                                                    e.currentTarget.style.borderInlineStart = isActive ? '3px solid #FF1744' : '3px solid transparent';
                                                     e.currentTarget.style.transform = 'translateX(0)';
                                                 }}
                                             >

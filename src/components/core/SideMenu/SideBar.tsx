@@ -271,7 +271,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </div>
 
       {!isCollapsed && !isMobile && (
-        <SettingsMenu classes={classes} />
+        <SettingsMenu classes={classes} currentPage={currentPage} subPage={subPage} />
       )}
 
       {currentPlan && currentPlan.Name && currentPlan.Name !== 'GRAND_FATHER' && (() => {
@@ -352,7 +352,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {/* Content */}
       <div className={classes.sidebarContent}>
         {!isCollapsed && isMobile && (
-          <SettingsMenu classes={classes} />
+          <SettingsMenu classes={classes} currentPage={currentPage} subPage={subPage} />
         )}
         {/* Navigation */}
         <nav className={classes.sidebarNav}>

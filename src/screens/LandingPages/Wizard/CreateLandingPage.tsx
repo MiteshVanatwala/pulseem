@@ -987,9 +987,8 @@ const CreateLandingPage = ({ classes, isPopup = false }: ClassesType & { isPopup
 	return (
 		<DefaultScreen
 			key="createLandingPage"
-			currentPage="landingPages"
-			subPage={isPopup ? "createPopup" : (id ? "EditLandingPage" : "CreateLandingPage")}
-			// subPage="createLandingPage"
+			currentPage={isPopup ? "popups" : "landingPages"}
+			subPage={isPopup ? "createPopup" : (id ? "EditLandingPage" : "createLandingPage")}
 			classes={classes}
 			customPadding={true}
 			containerClass={clsx(classes.mb50, classes.editorCont)}

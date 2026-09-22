@@ -48,9 +48,9 @@ export const getSettingsItem = (
     { key: 'affiliateManagement', title: t('master.affiliateManagement'), href: `${sitePrefix}AffiliateManagement`, iconSrc: DolarMenuIcon, isShow: features && features?.indexOf(PulseemFeatures.AFFILIATE) > -1 && !accountSettings?.SubAccountSettings?.IsTokenAccount && userRoles === UserRoles.Admin },
     { key: 'accountUsers', title: t('master.RadMenuItemResource3.Text'), href: `${sitePrefix}AccountUsers`, iconSrc: GroupMenuIcon, isShow: companyAdmin && !accountSettings?.SubAccountSettings?.IsTokenAccount && userRoles === UserRoles.Admin },
     { title: t('master.RadMenuItemResource4.Text'), href: `${rootDomain}/AccountUsersReport.aspx?fromreact=true`, iconSrc: GrafMenuIcon, isShow: companyAdmin && !accountSettings?.SubAccountSettings?.IsTokenAccount && userRoles === UserRoles.Admin },
-    { title: t('master.RadMenuItemResource23.Text'), href: `${sitePrefix}AccountSettings/ExtraFields`, iconSrc: StarMenuIcon, isShow: true },
+    { key: 'accountExtraFields', title: t('master.RadMenuItemResource23.Text'), href: `${sitePrefix}AccountSettings/ExtraFields`, iconSrc: StarMenuIcon, isShow: true },
     //@ts-ignore
-    { title: t('master.linkApiSettingsResource1.Text'), href: `${sitePrefix}ApiSettings`, iconSrc: CodeMenuIcon, isShow: userRoles.AllowSend && (!accountSettings?.SubAccountSettings?.IsTokenAccount && (WhiteLabelObject[accountSettings?.Account?.ReferrerID] === undefined || !accountSettings?.Account?.ReferrerID || accountSettings?.Account?.ReferrerID === 0)) ? true : false },
+    { key: 'apiSettings', title: t('master.linkApiSettingsResource1.Text'), href: `${sitePrefix}ApiSettings`, iconSrc: CodeMenuIcon, isShow: userRoles.AllowSend && (!accountSettings?.SubAccountSettings?.IsTokenAccount && (WhiteLabelObject[accountSettings?.Account?.ReferrerID] === undefined || !accountSettings?.Account?.ReferrerID || accountSettings?.Account?.ReferrerID === 0)) ? true : false },
     { key: 'SiteTracking', title: t('master.siteTracking'), href: `${sitePrefix}SiteTracking`, iconSrc: FaBinoculars, isFaIcon: true, isShow: userRoles.AllowSend && !accountSettings?.SubAccountSettings?.IsTokenAccount },
     { key: 'Integrations', title: t('integrations.title'), href: `${sitePrefix}Integrations`, iconSrc: SettingsMenuIcon, isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount && userRoles.AllowSend },
     { key: 'SubUsers', title: t('SubUsers.title'), href: `${sitePrefix}SubUsers`, iconSrc: SettingsMenuIcon, isShow: true },
@@ -277,6 +277,7 @@ export const getRoutes = (
           isShow: features && features?.indexOf(PulseemFeatures.MMS) > -1,
         },
         {
+          key: 'mmsCampaignManagement',
           title: t("master.MmsCampaignMnage.Text"),
           href: `${sitePrefix}MmsCampaigns`,
           isShow: features && features?.indexOf(PulseemFeatures.MMS) > -1,
@@ -346,6 +347,7 @@ export const getRoutes = (
           isShow: true,
         },
         {
+          key: "landingPagesManagement",
           title: t("master.RadMenuItemLandingManagement.Text"),
           href: `${sitePrefix}EditRegistrationPage`,
           isShow: true,
@@ -354,12 +356,6 @@ export const getRoutes = (
           title: t("master.FormTemplatesResource1.Text"),
           href: `${rootDomain}/FormTemplates.aspx?fromreact=true`,
           isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount,
-        },
-        {
-          key: 'CreateLandingPage',
-          title: t("landingPages.createLandingPage"),
-          href: ``,
-          isShow: false,
         },
         {
           key: 'EditLandingPage',

@@ -97,15 +97,6 @@ export const sideMenuStyle = (windowSize, isRTL, theme) => ({
     '&:hover': {
       backgroundColor: 'rgba(255, 255, 255, 0.1)',
     },
-    '&.active': {
-      color: '#fff',
-      '$sidebarItemIcon, & svg': {
-        color: '#fff',
-      },
-      '& .MuiListItemText-primary': {
-        fontWeight: 600,
-      },
-    },
   },
   sidebarItemIcon: {
     color: '#ffffff',
@@ -134,7 +125,14 @@ export const sideMenuStyle = (windowSize, isRTL, theme) => ({
       '&:hover': {
         backgroundColor: 'rgba(255, 255, 255, 0.2)',
         color: "#fff"
-      }
+      },
+      '&.active': {
+        marginInlineStart: 6,
+        borderInlineStart: '4px solid #ffffff',
+        borderRadius: 6,
+        paddingLeft: isRTL ? 18 : 30,
+        paddingRight: isRTL ? 28 : 18,
+      },
     },
     '& .MuiListItem-root': {
       paddingLeft: isRTL ? 18 : 40,
